@@ -48,36 +48,53 @@ Compile Java source files to bytecode (.class files) using the javac command.
 
 ```bash
 # Compile single source file
-javac HelloWorld.java
+javac HelloWorld.java  # => Compiles HelloWorld.java to HelloWorld.class (bytecode)
+                       # => Creates .class file in same directory as source
+                       # => Bytecode runs on any JVM (platform-independent)
 
 # Execute compiled class
-java HelloWorld
+java HelloWorld  # => Runs HelloWorld.class bytecode
+                 # => JVM finds HelloWorld.class in current directory
+                 # => Executes main() method
+                 # => Note: NO .class extension in command
 ```
 
 **Multiple source files**:
 
 ```bash
 # Compile all Java files in current directory
-javac *.java
+javac *.java  # => Compiles ALL .java files: Main.java, Utils.java, Calculator.java → .class files
+              # => * is shell glob pattern (expands to all .java files)
+              # => Creates: Main.class, Utils.class, Calculator.class
 
 # Compile with explicit source files
-javac Main.java Utils.java Calculator.java
+javac Main.java Utils.java Calculator.java  # => Compiles specified files in order
+                                             # => Automatically compiles dependencies if needed
+                                             # => If Main.java uses Utils.java, javac compiles Utils.java first
 
 # Execute main class
-java Main
+java Main  # => Runs Main.class (must contain public static void main(String[] args))
+           # => JVM loads Main.class, Utils.class, Calculator.class as needed
+           # => Classpath is current directory by default
 ```
 
 **Output directory** (-d flag):
 
 ```bash
 # Create output directory
-mkdir -p build/classes
+mkdir -p build/classes  # => Creates build/classes directory (parent directories created with -p)
+                        # => -p flag prevents error if directory already exists
 
 # Compile to specific directory
-javac -d build/classes src/Main.java src/Utils.java
+javac -d build/classes src/Main.java src/Utils.java  # => -d flag specifies output directory for .class files
+                                                      # => Compiles src/Main.java → build/classes/Main.class
+                                                      # => Compiles src/Utils.java → build/classes/Utils.class
+                                                      # => Preserves package structure if classes have package declarations
 
 # Execute from output directory
-java -cp build/classes Main
+java -cp build/classes Main  # => -cp (classpath) flag tells JVM where to find .class files
+                              # => JVM looks in build/classes directory for Main.class
+                              # => Loads dependencies (Utils.class) from same directory
 ```
 
 ### Managing Dependencies (Classpath)
@@ -88,13 +105,21 @@ Include external libraries using the classpath (-cp flag).
 
 ```bash
 # Download dependency manually (example: JSON library)
-curl -o libs/json.jar https://repo1.maven.org/maven2/org/json/json/20240303/json-20240303.jar
+curl -o libs/json.jar https://repo1.maven.org/maven2/org/json/json/20240303/json-20240303.jar  # => Downloads JSON library JAR from Maven Central
+                                                                                                # => Saves as libs/json.jar
+                                                                                                # => Manual dependency management (tedious for multiple dependencies)
 
 # Compile with classpath
-javac -cp libs/json.jar -d build/classes src/JsonExample.java
+javac -cp libs/json.jar -d build/classes src/JsonExample.java  # => -cp libs/json.jar adds JSON library to classpath
+                                                                # => Compiler can resolve imports from org.json package
+                                                                # => Compiles JsonExample.java → build/classes/JsonExample.class
 
 # Execute with classpath
-java -cp build/classes:libs/json.jar JsonExample
+java -cp build/classes:libs/json.jar JsonExample  # => -cp specifies TWO classpath entries separated by colon (Linux/Mac)
+                                                   # => build/classes contains JsonExample.class
+                                                   # => libs/json.jar contains org.json classes
+                                                   # => JVM searches both locations for classes
+                                                   # => Windows uses semicolon separator: build\classes;libs\json.jar
 ```
 
 **Multiple dependencies**:
@@ -121,29 +146,38 @@ Package compiled classes into distributable JAR files using the jar command.
 
 ```bash
 # Create JAR from compiled classes
-jar -cvf myapp.jar -C build/classes .
+jar -cvf myapp.jar -C build/classes .  # => Creates JAR archive named myapp.jar
+                                       # => -C build/classes changes directory to build/classes
+                                       # => . adds all files from build/classes directory
+                                       # => Result: myapp.jar contains all .class files
 
 # Flags:
-#   -c: create archive
-#   -v: verbose output
-#   -f: specify filename
-#   -C: change to directory before adding files
+#   -c: create archive  # => Creates new JAR file (not executable without manifest)
+#   -v: verbose output  # => Prints files being added to JAR
+#   -f: specify filename  # => Next argument is JAR filename (myapp.jar)
+#   -C: change to directory before adding files  # => Avoids including directory structure in JAR
 ```
 
 **Executable JAR** (with manifest):
 
 ```bash
 # Create manifest file
-cat > manifest.txt <<'EOF'
-Main-Class: com.example.Main
-Class-Path: libs/json.jar libs/commons-lang3.jar
-EOF
+cat > manifest.txt <<'EOF'  # => Creates manifest.txt with heredoc syntax
+Main-Class: com.example.Main  # => Specifies entry point class (must have main method)
+Class-Path: libs/json.jar libs/commons-lang3.jar  # => Specifies external JAR dependencies (relative paths)
+EOF  # => Each entry on new line, blank line at end REQUIRED
 
 # Create executable JAR
-jar -cvfm myapp.jar manifest.txt -C build/classes .
+jar -cvfm myapp.jar manifest.txt -C build/classes .  # => -m flag includes manifest.txt in JAR
+                                                     # => Manifest stored in META-INF/MANIFEST.MF inside JAR
+                                                     # => JAR now executable with java -jar
 
 # Execute JAR
-java -jar myapp.jar
+java -jar myapp.jar  # => -jar flag executes JAR as application
+                     # => JVM reads Main-Class from manifest
+                     # => Loads com.example.Main and calls main() method
+                     # => Searches for dependencies in Class-Path locations
+                     # => Requires libs/json.jar and libs/commons-lang3.jar present
 ```
 
 **Uber JAR** (fat JAR with dependencies):

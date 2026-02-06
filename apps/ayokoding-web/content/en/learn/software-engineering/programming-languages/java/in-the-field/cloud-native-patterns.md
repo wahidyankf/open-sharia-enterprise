@@ -44,50 +44,83 @@ This guide covers essential cloud-native patterns using MicroProfile and Spring 
 
 ```java
 import org.eclipse.microprofile.health.*;
+// => MicroProfile Health: standard cloud-native health check API
 import jakarta.enterprise.context.ApplicationScoped;
+// => CDI scope: singleton bean, one instance per application
 
 @Liveness
+// => Liveness probe: tells Kubernetes if service should be restarted
+// => Failure action: kill and restart container
 @ApplicationScoped
+// => CDI managed bean: container manages lifecycle
 public class LivenessCheck implements HealthCheck {
+// => HealthCheck interface: requires call() method returning health status
     @Override
     public HealthCheckResponse call() {
+// => Called by framework: executed when /health/live endpoint accessed
         // CHECK: Can service process requests?
         boolean isAlive = checkInternalState();
+// => Internal health: checks if service core components functional
+// => True: service can process, False: service should restart
 
         return HealthCheckResponse
+// => Builder pattern: constructs health check response
             .named("service-liveness")
+// => Check name: identifies this health check in response
             .status(isAlive)
+// => Health status: UP if true, DOWN if false
             .withData("uptime", getUptimeSeconds())
+// => Additional data: metadata for debugging (uptime seconds)
             .build();
+// => Returns response: JSON with status and data
     }
 
     private boolean checkInternalState() {
+// => Internal check: verifies critical service components
         // Verify critical components
         return threadPoolHealthy() && memoryAvailable();
+// => Composite check: AND condition (all must be healthy)
+// => Thread pool + memory: essential for request processing
     }
 }
 
 @Readiness
+// => Readiness probe: tells Kubernetes if service can accept traffic
+// => Failure action: remove from service load balancer (no restart)
 @ApplicationScoped
 public class ReadinessCheck implements HealthCheck {
+// => Readiness check: verifies external dependencies available
     @Inject
+// => CDI injection: container provides database connection
     DatabaseConnection database;
+// => Database dependency: service can't function without database
 
     @Inject
     CacheConnection cache;
+// => Cache dependency: performance optimization layer
 
     @Override
     public HealthCheckResponse call() {
+// => Called on /health/ready: executed every readiness probe interval
         // CHECK: Are dependencies available?
         boolean databaseReady = database.ping();
+// => Database ping: quick connectivity check (not full query)
+// => Returns false: database unreachable or timeout
         boolean cacheReady = cache.ping();
+// => Cache ping: verifies cache connection active
 
         return HealthCheckResponse
             .named("service-readiness")
+// => Check name: distinguishes from liveness check
             .status(databaseReady && cacheReady)
+// => Status: UP only if BOTH dependencies available
+// => Not ready: removed from load balancer until dependencies recover
             .withData("database", databaseReady)
+// => Individual status: shows which dependency failed
             .withData("cache", cacheReady)
+// => Diagnostic data: helps troubleshoot readiness failures
             .build();
+// => Returns JSON: {"status": "UP/DOWN", "checks": [...]}
     }
 }
 ```
@@ -154,36 +187,62 @@ spec:
 
 ```java
 import org.eclipse.microprofile.metrics.*;
+// => MicroProfile Metrics: cloud-native metrics API (Prometheus-compatible)
 import org.eclipse.microprofile.metrics.annotation.*;
+// => Metric annotations: declarative metrics via @Counted, @Timed, @Gauge
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
+// => Singleton bean: one instance for entire application
 public class OrderService {
+// => Service with metrics: demonstrates annotation-based and programmatic metrics
     @Inject
+// => CDI injection: container provides MetricRegistry instance
     MetricRegistry registry;
+// => Metric registry: access to programmatic metric creation
 
     @Counted(name = "orders_created_total", description = "Total orders created")
+// => @Counted: automatically increments counter every time method called
+// => Counter metric: monotonically increasing count (never decreases)
     @Timed(name = "order_creation_duration", description = "Order creation duration")
+// => @Timed: automatically tracks method execution time and call rate
+// => Records: call count, sum of durations, min/max/mean, percentiles (p50/p95/p99)
     public Order createOrder(OrderRequest request) {
+// => Method instrumented: both counter and timer track this method
         // METRICS: Automatically tracked
+// => Automatic: framework intercepts method, records metrics before/after
         return processOrder(request);
+// => Business logic: metrics transparent to implementation
     }
 
     @Gauge(name = "active_orders", unit = MetricUnits.NONE,
            description = "Currently active orders")
+// => @Gauge: snapshot of current value (can increase or decrease)
+// => Sampled metric: framework calls method when metrics scraped
     public long getActiveOrderCount() {
+// => Called on scrape: Prometheus queries this value periodically
         return orderRepository.countActive();
+// => Live query: returns current count from database
+// => Gauge behavior: value reflects current state (not accumulated)
     }
 
     public void recordPaymentProcessing(long durationMillis) {
+// => Manual metric: programmatic alternative to annotations
         // CUSTOM HISTOGRAM
         Histogram paymentDuration = registry.histogram(
+// => Histogram: tracks distribution of values (duration buckets)
+// => Use case: percentile calculations (p50, p95, p99 latency)
             Metadata.builder()
+// => Builder pattern: constructs metric metadata
                 .withName("payment_processing_duration")
+// => Metric name: Prometheus metric identifier
                 .withDescription("Payment processing time in milliseconds")
+// => Description: appears in Prometheus HELP comment
                 .build()
         );
         paymentDuration.update(durationMillis);
+// => Records value: adds duration to histogram distribution
+// => Prometheus calculates: percentiles, min, max, mean from distribution
     }
 }
 ```
@@ -220,24 +279,39 @@ Monitor three key metrics for every service:
 
 ```java
 @ApplicationScoped
+// => Singleton: one metrics collector instance for app
 public class MetricsCollector {
+// => RED Method implementation: Rate, Errors, Duration metrics
     @Inject
     MetricRegistry registry;
+// => Injected registry: programmatic metric access
 
     public void recordRequest(long durationMillis, boolean success) {
+// => Records request: tracks all three RED metrics
         // RATE: Request counter
         Counter requests = registry.counter("http_requests_total");
+// => Counter: total requests (all successes + failures)
+// => Rate calculation: Prometheus derives requests/sec from counter
         requests.inc();
+// => Increments by 1: each request increases counter
+// => Prometheus PromQL: rate(http_requests_total[5m]) for requests/sec
 
         // ERRORS: Error counter
         if (!success) {
+// => Conditional increment: only failed requests
             Counter errors = registry.counter("http_requests_errors_total");
+// => Error counter: subset of total requests
             errors.inc();
+// => Error rate: (errors_total / requests_total) * 100 = error percentage
         }
 
         // DURATION: Response time histogram
         Histogram duration = registry.histogram("http_request_duration_milliseconds");
+// => Histogram: tracks response time distribution
+// => Percentiles: p50 (median), p95, p99 latency calculated from histogram
         duration.update(durationMillis);
+// => Records duration: adds to distribution for percentile calculation
+// => Alerting: p95 > SLA threshold triggers alert
     }
 }
 ```
@@ -262,29 +336,48 @@ public class MetricsCollector {
 
 ```java
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+// => MicroProfile Config: standard cloud-native configuration API
 import jakarta.inject.Inject;
+// => CDI injection: injects configuration values at runtime
 
 @ApplicationScoped
+// => Application-scoped bean: singleton for entire application
 public class DatabaseService {
+// => Service with externalized config: follows Twelve-Factor App principles
     @Inject
+// => CDI injection: triggers configuration resolution
     @ConfigProperty(name = "database.url")
+// => Config property: reads from env vars, system props, or application.properties
+// => Source priority: System props > Env vars > Config files
     String databaseUrl;
+// => Injected at startup: value resolved when bean created
+// => Environment-specific: different URL per environment (dev/staging/prod)
 
     @Inject
     @ConfigProperty(name = "database.pool.size", defaultValue = "10")
+// => Default value: fallback if property not defined in any source
+// => Optional config: service still starts without explicit configuration
     int poolSize;
+// => Type conversion: MicroProfile Config converts string to int automatically
 
     @Inject
     @ConfigProperty(name = "database.username")
+// => Username injection: no default, property required
     String username;
 
     @Inject
     @ConfigProperty(name = "database.password")
     String password;  // INJECT: Never hardcode
+// => Secret injection: password from env var (DATABASE_PASSWORD)
+// => Security: keeps credentials out of source code
+// => Kubernetes: secret mounted as environment variable
 
     public Connection getConnection() {
+// => Uses injected config: no hardcoded values
         // USE: Injected configuration
         return DriverManager.getConnection(databaseUrl, username, password);
+// => Runtime values: configuration resolved based on deployment environment
+// => Twelve-Factor: same code deployed to all environments, config externalized
     }
 }
 ```
@@ -349,38 +442,69 @@ spec:
 
 ```java
 import org.eclipse.microprofile.faulttolerance.*;
+// => MicroProfile Fault Tolerance: circuit breakers, retries, timeouts, fallbacks
 import java.time.temporal.ChronoUnit;
+// => Time units: MILLIS, SECONDS for timeout/delay configuration
 
 @ApplicationScoped
+// => Singleton bean: one client instance for app
 public class ExternalServiceClient {
+// => Client with fault tolerance: prevents cascading failures
     @Retry(
+// => Retry annotation: automatically retries failed operations
         maxRetries = 3,
+// => Max 3 retries: attempts operation up to 4 times total (initial + 3 retries)
         delay = 100,
+// => Delay between retries: waits 100 milliseconds before retry
         delayUnit = ChronoUnit.MILLIS,
+// => Time unit: delay specified in milliseconds
         jitter = 50
+// => Jitter: random delay ±50ms to prevent thundering herd (all clients retrying simultaneously)
     )
     @Timeout(value = 2, unit = ChronoUnit.SECONDS)
+// => Timeout: aborts operation after 2 seconds, throws TimeoutException
+// => Prevents hanging: doesn't wait indefinitely for slow external service
     @CircuitBreaker(
+// => Circuit breaker: stops calling failing service to allow recovery
         requestVolumeThreshold = 10,
+// => Minimum requests: circuit opens after 10 requests (statistical significance)
         failureRatio = 0.5,
+// => Failure threshold: opens circuit if 50% of requests fail
+// => Circuit states: CLOSED (normal) → OPEN (failing) → HALF_OPEN (testing) → CLOSED
         delay = 10000
+// => Recovery delay: waits 10 seconds before trying HALF_OPEN state
     )
     @Fallback(fallbackMethod = "getCachedData")
+// => Fallback: calls getCachedData() if operation fails after retries/timeout/circuit open
     public String fetchData(String key) {
+// => Protected method: all fault tolerance annotations apply
         // PROTECTED: Retry + Timeout + Circuit Breaker + Fallback
+// => Execution order: Retry → Timeout → Circuit Breaker → Fallback
         return externalService.get(key);
+// => External call: may fail, timeout, or be blocked by open circuit
+// => Graceful degradation: fallback provides alternative result
     }
 
     public String getCachedData(String key) {
+// => Fallback method: must have same signature as protected method
         // FALLBACK: Return cached data if available
         String cached = cache.get(key);
+// => Cache lookup: provides stale data when external service unavailable
         return cached != null ? cached : "Service temporarily unavailable";
+// => Degraded service: returns cache or default message instead of failing
+// => User experience: partial functionality better than complete failure
     }
 
     @Bulkhead(value = 10, waitingTaskQueue = 20)
+// => Bulkhead: limits concurrent executions to prevent resource exhaustion
+// => Thread isolation: maximum 10 threads executing simultaneously
+// => Queue: up to 20 requests waiting in queue
     public void processRequest(Request request) {
+// => Rate-limited method: rejects requests when 10 active + 20 queued
         // RATE LIMIT: Max 10 concurrent, 20 queued
+// => Rejection: throws BulkheadException when queue full (request 31+)
         // Prevents resource exhaustion
+// => Protects service: prevents one slow operation from consuming all threads
     }
 }
 ```
@@ -403,47 +527,81 @@ public class ExternalServiceClient {
 
 ```java
 import io.opentelemetry.api.trace.*;
+// => OpenTelemetry: vendor-neutral observability framework (tracing, metrics, logs)
 import io.opentelemetry.context.Context;
+// => Context propagation: carries trace context across threads and services
 
 @ApplicationScoped
+// => Singleton service: one instance for entire app
 public class OrderService {
+// => Service with distributed tracing: tracks requests across service boundaries
     @Inject
+// => Injected tracer: OpenTelemetry tracer instance
     Tracer tracer;
+// => Tracer: creates and manages spans for operations
 
     public Order createOrder(OrderRequest request) {
+// => Parent operation: root span for order creation workflow
         // CREATE SPAN: Track operation
         Span span = tracer.spanBuilder("create-order")
+// => Span builder: constructs span for operation tracking
+// => Span name: identifies operation in trace visualization
             .setSpanKind(SpanKind.SERVER)
+// => SERVER span: this service receives request (vs CLIENT for outgoing)
             .startSpan();
+// => Starts span: begins timing and creates trace ID if none exists
 
         try (var scope = span.makeCurrent()) {
+// => Try-with-resources: makes span current context (automatic cleanup)
+// => Context propagation: child spans inherit trace ID
             span.setAttribute("order.id", request.getId());
+// => Span attribute: adds metadata for filtering/search in trace UI
             span.setAttribute("order.items", request.getItems().size());
+// => Business data: enriches trace with domain-specific details
 
             // NESTED OPERATION: Child span
             validateOrder(request);
+// => Creates child span: validateOrder() creates nested span under current
+// => Parent-child relationship: visualizes operation hierarchy
 
             // EXTERNAL CALL: Propagate trace context
             paymentService.processPayment(request);
+// => Cross-service call: HTTP headers carry trace ID to payment service
+// => Distributed trace: payment service creates child span with same trace ID
 
             span.setStatus(StatusCode.OK);
+// => Success status: marks span as successful operation
             return saveOrder(request);
+// => Returns order: span remains active until try block exits
         } catch (Exception e) {
+// => Exception handling: records error in span
             span.recordException(e);
+// => Records exception: captures stack trace in trace backend
             span.setStatus(StatusCode.ERROR, e.getMessage());
+// => Error status: marks span as failed, shows error message
             throw e;
+// => Propagates exception: re-throws after recording in trace
         } finally {
             span.end();
+// => Ends span: stops timing, sends to trace collector (Jaeger, Zipkin)
+// => Always executed: span finalized even if exception thrown
         }
     }
 
     private void validateOrder(OrderRequest request) {
+// => Nested operation: creates child span under parent
         Span span = tracer.spanBuilder("validate-order")
+// => Child span: inherits trace ID from parent context
             .startSpan();
+// => Starts child: linked to parent span automatically
         try (var scope = span.makeCurrent()) {
+// => Makes current: subsequent operations see this as parent
             // Validation logic
+// => Business logic: duration tracked by span
         } finally {
             span.end();
+// => Ends span: child span duration recorded
+// => Trace visualization: shows validate-order nested under create-order
         }
     }
 }

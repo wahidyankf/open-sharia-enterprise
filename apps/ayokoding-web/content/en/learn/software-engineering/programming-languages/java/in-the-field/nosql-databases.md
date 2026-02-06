@@ -182,13 +182,17 @@ MongoDB stores JSON-like documents with flexible schema and rich query capabilit
 import com.mongodb.client.*;
 import org.bson.Document;
 
-String connectionString = "mongodb://localhost:27017";
-try (MongoClient mongoClient = MongoClients.create(connectionString)) {
-    MongoDatabase database = mongoClient.getDatabase("myapp");
-    MongoCollection<Document> collection = database.getCollection("users");
+String connectionString = "mongodb://localhost:27017";  // => MongoDB connection URI (type: String)
+                                                        // => Format: mongodb://host:port
+try (MongoClient mongoClient = MongoClients.create(connectionString)) {  // => Create client connection (type: MongoClient)
+                                                                         // => try-with-resources ensures close()
+    MongoDatabase database = mongoClient.getDatabase("myapp");  // => Get database "myapp" (type: MongoDatabase)
+                                                                // => Database created lazily if doesn't exist
+    MongoCollection<Document> collection = database.getCollection("users");  // => Get collection "users" (type: MongoCollection<Document>)
+                                                                             // => Collection created on first write
 
     // Perform operations
-}
+}  // => mongoClient.close() called automatically
 ```
 
 ### CRUD Operations
@@ -196,13 +200,18 @@ try (MongoClient mongoClient = MongoClients.create(connectionString)) {
 **Insert document**:
 
 ```java
-Document user = new Document("name", "Alice")
-    .append("email", "alice@example.com")
-    .append("age", 30)
-    .append("tags", Arrays.asList("developer", "java"));
+Document user = new Document("name", "Alice")  // => Create document with name field (type: Document)
+                                               // => Documents are BSON (Binary JSON) structures
+    .append("email", "alice@example.com")  // => Add email field (type: String)
+    .append("age", 30)  // => Add age field (type: int)
+    .append("tags", Arrays.asList("developer", "java"));  // => Add tags array (type: List<String>)
+                                                          // => Flexible schema: can add any fields
 
-collection.insertOne(user);
-System.out.println("Inserted with ID: " + user.getObjectId("_id"));
+collection.insertOne(user);  // => Insert document into collection
+                            // => MongoDB auto-generates _id field (type: ObjectId)
+                            // => Returns immediately after acknowledgment
+System.out.println("Inserted with ID: " + user.getObjectId("_id"));  // => Output: Inserted with ID: 507f1f77bcf86cd799439011
+                                                                      // => _id is unique identifier
 ```
 
 **Find documents**:
@@ -450,25 +459,35 @@ Redis is an in-memory data structure store supporting strings, hashes, lists, se
 ```java
 import redis.clients.jedis.*;
 
-try (Jedis jedis = new Jedis("localhost", 6379)) {
+try (Jedis jedis = new Jedis("localhost", 6379)) {  // => Create Redis connection (type: Jedis)
+                                                    // => localhost:6379 is default Redis port
+                                                    // => try-with-resources ensures close()
     // Set/Get
-    jedis.set("user:1000:name", "Alice");
-    String name = jedis.get("user:1000:name");
+    jedis.set("user:1000:name", "Alice");  // => Set key-value pair (returns "OK")
+                                          // => Key: "user:1000:name", Value: "Alice"
+                                          // => Overwrites if key exists
+    String name = jedis.get("user:1000:name");  // => Get value by key (type: String)
     System.out.println("Name: " + name);  // Output: Name: Alice
 
     // Set with expiration (TTL)
-    jedis.setex("session:abc123", 3600, "user-data");  // Expires in 1 hour
+    jedis.setex("session:abc123", 3600, "user-data");  // => Set with TTL (Time To Live)
+                                                       // => Expires in 3600 seconds (1 hour)
+                                                       // => Automatically deleted after expiration
 
     // Increment counter
-    jedis.incr("page:views");
-    Long views = jedis.incrBy("page:views", 5);
+    jedis.incr("page:views");  // => Atomically increment by 1 (type: Long)
+                              // => Creates key with value 1 if doesn't exist
+    Long views = jedis.incrBy("page:views", 5);  // => Atomically increment by 5 (type: Long)
+                                                 // => views is new value after increment
 
     // Check existence
-    boolean exists = jedis.exists("user:1000:name");
+    boolean exists = jedis.exists("user:1000:name");  // => Check if key exists (type: boolean)
+                                                      // => Returns true if exists, false otherwise
 
     // Delete
-    jedis.del("session:abc123");
-}
+    jedis.del("session:abc123");  // => Delete key (type: Long - number of keys deleted)
+                                 // => Key no longer exists after deletion
+}  // => jedis.close() called automatically
 ```
 
 ### Hash Operations (Object Storage)

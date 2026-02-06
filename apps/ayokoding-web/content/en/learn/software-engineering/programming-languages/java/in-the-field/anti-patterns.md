@@ -54,31 +54,58 @@ This guide catalogs Java anti-patterns organized by category, explains their pro
 ```java
 // PROBLEMATIC: Unbounded thread creation
 public class ReportGenerator {
+// => ANTI-PATTERN: creates new thread for every request
     public void generateReport(ReportRequest request) {
+// => Called for each report: creates unbounded threads
         new Thread(() -> {
+// => Manual thread creation: no pool, no lifecycle management
+// => Lambda runnable: executes report processing asynchronously
             // No lifecycle management - thread leaks
+// => Thread never joined or tracked: leaks after completion
+// => No shutdown mechanism: threads accumulate over time
             processReport(request);
+// => Processes report: blocking work on unmanaged thread
         }).start();
+// => Starts thread immediately: no queuing, no back-pressure
+// => Memory leak: Thread objects and stacks never garbage collected
     }
 }
 
 // SOLUTION: Managed thread pool
 public class ReportGenerator {
+// => SOLUTION: uses thread pool for bounded concurrency
     private final ExecutorService executor = Executors.newFixedThreadPool(10);
+// => Fixed thread pool: reuses 10 threads for all tasks
+// => Bounded concurrency: maximum 10 reports processed simultaneously
+// => Queues excess work: prevents resource exhaustion
 
     public void generateReport(ReportRequest request) {
+// => Submits work to pool: doesn't create new thread
         executor.submit(() -> processReport(request));
+// => submit(): schedules task, returns Future for result tracking
+// => Thread reuse: same 10 threads handle all reports
+// => Automatic queuing: excess tasks wait in queue
     }
 
     public void shutdown() {
+// => Cleanup method: must be called during application shutdown
         executor.shutdown();
+// => Graceful shutdown: stops accepting new tasks, finishes queued work
+// => Does not interrupt: running tasks complete normally
         try {
             if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+// => awaitTermination: waits up to 60 seconds for tasks to complete
+// => Returns false: if timeout expires before all tasks finish
                 executor.shutdownNow();
+// => Force shutdown: interrupts running tasks immediately
+// => Returns List<Runnable>: tasks that never started
             }
         } catch (InterruptedException e) {
+// => Interrupted while waiting: shutdown process itself interrupted
             executor.shutdownNow();
+// => Force immediate shutdown: don't wait any longer
             Thread.currentThread().interrupt();
+// => Restore interrupt status: preserves interruption for caller
         }
     }
 }
@@ -144,13 +171,21 @@ public class ReportGenerator {
 ```java
 // PROBLEMATIC: Inconsistent lock ordering causes deadlock
 public class AccountManager {
+// => ANTI-PATTERN: multiple locks acquired in inconsistent order
     private final Object accountLock = new Object();
+// => First lock: protects account operations
     private final Object balanceLock = new Object();
+// => Second lock: protects balance operations
+// => Two locks: creates potential for deadlock
 
     // Thread 1: accountLock → balanceLock
     public void transfer(Account from, Account to, BigDecimal amount) {
+// => Transfer method: acquires locks in order A → B
         synchronized (accountLock) {
+// => Acquires accountLock first: locks account operations
             synchronized (balanceLock) {
+// => Then acquires balanceLock: nested lock acquisition
+// => Lock order: accountLock THEN balanceLock
                 // Transfer logic
             }
         }
@@ -158,8 +193,13 @@ public class AccountManager {
 
     // Thread 2: balanceLock → accountLock (DEADLOCK!)
     public void updateBalance(Account account, BigDecimal amount) {
+// => Update method: acquires locks in order B → A (OPPOSITE!)
         synchronized (balanceLock) {
+// => Acquires balanceLock first: DIFFERENT ORDER than transfer()
             synchronized (accountLock) {
+// => Then acquires accountLock: creates circular wait condition
+// => Lock order: balanceLock THEN accountLock (REVERSED!)
+// => DEADLOCK SCENARIO: Thread 1 holds A waiting for B, Thread 2 holds B waiting for A
                 // Update logic
             }
         }
@@ -168,17 +208,26 @@ public class AccountManager {
 
 // SOLUTION: Single lock or consistent ordering
 public class AccountManager {
+// => SOLUTION: eliminates deadlock with single lock
     private final Object lock = new Object();
+// => Single lock: no lock ordering issues possible
+// => Simpler reasoning: all synchronized blocks use same lock
 
     public void transfer(Account from, Account to, BigDecimal amount) {
+// => Transfer uses single lock: no deadlock possible
         synchronized (lock) {
+// => Acquires single lock: all operations synchronized on same object
             // All operations use same lock
+// => No nested locks: eliminates circular wait conditions
         }
     }
 
     public void updateBalance(Account account, BigDecimal amount) {
+// => Update uses same lock: consistent with transfer()
         synchronized (lock) {
+// => Same lock as transfer(): ensures mutual exclusion
             // Consistent ordering
+// => Lock order irrelevant: only one lock exists
         }
     }
 }
@@ -240,30 +289,51 @@ public class AccountManager {
 ```java
 // PROBLEMATIC: Swallowing interruption
 public void processQueue() {
+// => ANTI-PATTERN: ignores thread interruption, runs forever
     while (true) {
+// => Infinite loop: no exit condition, ignores interruption
         try {
             Task task = queue.take();
+// => BlockingQueue.take(): waits for available task, throws InterruptedException
+// => Interruptible: responds to Thread.interrupt() by throwing exception
             process(task);
+// => Processes task: business logic
         } catch (InterruptedException e) {
+// => Catches interruption: thread signaled to stop
             // WRONG: Ignoring interruption signal
+// => ANTI-PATTERN: swallows exception, clears interrupt status
+// => Loop continues: thread never terminates despite interrupt request
+// => Breaks shutdown: application can't stop this thread gracefully
         }
     }
 }
 
 // SOLUTION: Restore interrupt status
 public void processQueue() {
+// => SOLUTION: properly handles interruption, allows graceful shutdown
     try {
         while (!Thread.currentThread().isInterrupted()) {
+// => Loop condition: checks interrupt flag before each iteration
+// => isInterrupted(): returns true if thread interrupted, exits loop
             try {
                 Task task = queue.take();
+// => Blocking call: throws InterruptedException if interrupted
                 process(task);
+// => Processes task: business logic runs only if not interrupted
             } catch (InterruptedException e) {
+// => Catches interruption: thread signaled to terminate
                 Thread.currentThread().interrupt();
+// => Restores interrupt status: makes flag true again (take() cleared it)
+// => Propagates signal: allows outer loop condition to detect interruption
                 break;
+// => Exits inner try: transfers control to outer loop condition check
+// => Loop will exit: isInterrupted() returns true after restore
             }
         }
     } finally {
+// => Always executed: cleanup runs whether loop exits normally or via exception
         cleanup();
+// => Resource cleanup: releases resources before thread termination
     }
 }
 ```
@@ -300,39 +370,65 @@ public void processQueue() {
 ```java
 // PROBLEMATIC: Resources not closed on exception
 public List<Record> getRecords(int year) {
+// => ANTI-PATTERN: leaks resources when exception thrown
     List<Record> records = new ArrayList<>();
+// => Result accumulator: collects database records
     try {
         Connection conn = dataSource.getConnection();
+// => Acquires connection: resource #1, not in try-with-resources
         PreparedStatement stmt = conn.prepareStatement(sql);
+// => Creates statement: resource #2, depends on connection
         ResultSet rs = stmt.executeQuery();
+// => Executes query: resource #3, depends on statement
 
         while (rs.next()) {
+// => Iterates rows: may throw SQLException during mapping
             records.add(mapRecord(rs));
+// => Maps row: if this throws, resources never closed
         }
 
         rs.close();  // Skipped if exception occurs!
+// => Manual close: only runs if no exception above
+// => RESOURCE LEAK: if mapRecord() throws, rs never closed
         stmt.close();
+// => Statement close: skipped if earlier exception
         conn.close();
+// => Connection close: skipped if earlier exception
+// => CRITICAL LEAK: connection not returned to pool
     } catch (SQLException e) {
+// => Catches exception: but resources already leaked
         throw new RuntimeException(e);
+// => Wraps exception: doesn't fix resource leak
     }
     return records;
 }
 
 // SOLUTION: try-with-resources guarantees cleanup
 public List<Record> getRecords(int year) {
+// => SOLUTION: guarantees resource cleanup even on exception
     List<Record> records = new ArrayList<>();
     try (Connection conn = dataSource.getConnection();
+// => Try-with-resources: Connection implements AutoCloseable
+// => Automatic close: close() called when exiting try block (normal or exception)
          PreparedStatement stmt = conn.prepareStatement(sql);
+// => Semicolon separation: multiple resources in one try-with-resources
+// => Close order: stmt.close() called BEFORE conn.close() (reverse declaration order)
          ResultSet rs = stmt.executeQuery()) {
+// => ResultSet in resources: guaranteed close even if while loop throws
+// => Automatic cleanup: all three resources closed in correct order
 
         while (rs.next()) {
+// => Iterates rows: safe to throw here, cleanup guaranteed
             records.add(mapRecord(rs));
+// => Maps row: if throws, try-with-resources closes all resources
         }
     } catch (SQLException e) {
+// => Catches exception: resources already closed by try-with-resources
         throw new RuntimeException(e);
+// => Wraps exception: resources properly cleaned up before propagation
     }
     return records;
+// => Returns results: all resources guaranteed closed
 }
 ```
 
@@ -418,44 +514,77 @@ public List<Record> getRecords(int year) {
 ```java
 // PROBLEMATIC: God class handling everything
 public class OrderManager {
+// => ANTI-PATTERN: violates Single Responsibility Principle
     // Handles customers, products, payments, notifications, audit, risk, etc.
-    // Thousands of lines, dozens of dependencies
+// => Multiple responsibilities: customer management, order processing, payment, notifications
+// => Thousands of lines, dozens of dependencies
+// => High coupling: changes to any concern affect entire class
+// => Hard to test: requires mocking all dependencies for any test
 
     public Customer createCustomer(CustomerData data) { /* ... */ }
+// => Customer responsibility: not related to orders
     public void updateCustomer(Customer customer) { /* ... */ }
+// => Customer management: separate concern
     public Order createOrder(OrderData data) { /* ... */ }
+// => Order responsibility: core but mixed with unrelated concerns
     public void processPayment(Payment payment) { /* ... */ }
+// => Payment processing: different responsibility from orders
     public void sendNotification(String customerId, String message) { /* ... */ }
+// => Notification delivery: infrastructure concern, not business logic
     public void auditAction(String action) { /* ... */ }
+// => Audit logging: cross-cutting concern
     // 50+ more methods...
+// => Unmaintainable: too many reasons to change
+// => Team conflicts: multiple developers editing same massive file
 }
 
 // SOLUTION: Focused services with single responsibility
 public class CustomerService {
+// => SOLUTION: single responsibility (customer management only)
+// => Cohesive: all methods relate to customer lifecycle
     public Customer createCustomer(CustomerData data) { /* ... */ }
+// => Customer creation: focused responsibility
     public void updateCustomer(Customer customer) { /* ... */ }
+// => Customer updates: same domain, same service
 }
 
 public class OrderService {
+// => Single responsibility: order processing only
+// => Clear boundaries: doesn't handle customers, payments, or notifications
     public Order createOrder(OrderData data) { /* ... */ }
+// => Order creation: core responsibility of this service
     public Order getOrder(String orderId) { /* ... */ }
+// => Order retrieval: focused on order operations
 }
 
 public class PaymentService {
+// => Payment responsibility: isolated payment processing
     public void processPayment(Payment payment) { /* ... */ }
+// => Payment logic: encapsulated in dedicated service
 }
 
 // Orchestrator coordinates services
 public class OrderApplicationService {
+// => Application service: orchestrates domain services (no business logic)
     private final CustomerService customerService;
+// => Injected dependency: customer operations
     private final OrderService orderService;
+// => Injected dependency: order operations
     private final PaymentService paymentService;
+// => Injected dependency: payment operations
+// => Composition: combines services without violating SRP
 
     public OrderResult processNewOrder(OrderRequest request) {
+// => Workflow orchestration: coordinates services for complete use case
         Customer customer = customerService.getCustomer(request.getCustomerId());
+// => Delegates to CustomerService: validates customer exists
         Order order = orderService.createOrder(request.toOrderData());
+// => Delegates to OrderService: creates order domain object
         paymentService.processPayment(request.toPayment());
+// => Delegates to PaymentService: processes payment transaction
         return OrderResult.success(order);
+// => Returns result: workflow completed successfully
+// => Each service focused: customer/order/payment separated, orchestrator coordinates
     }
 }
 ```
@@ -495,50 +624,77 @@ public class OrderApplicationService {
 ```java
 // PROBLEMATIC: Primitives with scattered validation
 public class Account {
+// => ANTI-PATTERN: uses primitives for domain concepts
     public void transfer(String fromAccountNumber, String toAccountNumber,
                         double amount, String currency) {
+// => All primitives: no type safety, easy to swap parameters
+// => String for account: could be any string, no validation at type level
+// => double for money: floating-point precision errors (0.1 + 0.2 != 0.3)
         // Validation scattered everywhere
         if (fromAccountNumber == null || fromAccountNumber.length() != 10) {
+// => Duplicate validation: same logic repeated in every method using account numbers
             throw new IllegalArgumentException("Invalid account number");
         }
         if (amount <= 0) {
+// => Amount validation: duplicated wherever amounts used
             throw new IllegalArgumentException("Amount must be positive");
         }
         // Easy to swap parameters!
         // transfer("USD", "ACC123", "ACC456", 100.0) - compiles but wrong
+// => Type system can't help: all strings look the same to compiler
+// => Runtime errors: parameter swap compiles successfully, fails at runtime
     }
 }
 
 // SOLUTION: Value objects with encapsulated validation
 public class AccountNumber {
+// => Value object: represents domain concept with type safety
     private final String value;
+// => Encapsulated value: hides representation details
 
     public AccountNumber(String value) {
+// => Validates on construction: fails fast with invalid input
         if (value == null || value.length() != 10) {
+// => Single validation point: centralized business rule
             throw new IllegalArgumentException("Invalid account number");
+// => Constructor guarantee: impossible to create invalid AccountNumber
         }
         this.value = value;
+// => Immutable: final field assigned once
     }
 
     public String getValue() { return value; }
+// => Accessor: exposes value when needed (e.g., persistence)
 }
 
 public class Money {
+// => Value object: encapsulates amount + currency
     private final BigDecimal amount;
+// => BigDecimal: precise decimal arithmetic (no floating-point errors)
     private final Currency currency;
+// => Currency type: validates ISO codes, type-safe
 
     public Money(BigDecimal amount, Currency currency) {
+// => Constructor validation: ensures invariants before object creation
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+// => Business rule: enforces positive amounts
             throw new IllegalArgumentException("Amount must be positive");
+// => Fail-fast: rejects invalid state immediately
         }
         this.amount = amount;
         this.currency = currency;
+// => Immutable: both fields final, object cannot change after construction
     }
 }
 
 public class Account {
+// => SOLUTION: uses value objects for type safety
     public void transfer(AccountNumber from, AccountNumber to, Money amount) {
+// => Type-safe parameters: compiler prevents parameter swaps
+// => Pre-validated: all values guaranteed valid by constructors
         // Type-safe, validated, can't swap parameters
+// => No validation needed: value objects guarantee invariants
+// => Parameter order enforced: AccountNumber vs Money distinguishable by compiler
     }
 }
 ```
@@ -606,24 +762,44 @@ public class Account {
 ```java
 // PROBLEMATIC: N+1 queries
 public List<OrderDTO> getOrders() {
+// => ANTI-PATTERN: executes 1 + N database queries
     List<Order> orders = orderRepository.findAll(); // 1 query
+// => First query: SELECT * FROM orders (fetches all orders)
+// => Returns 100 orders: triggers 100 additional queries below
 
     return orders.stream()
+// => Streams over orders: processes each order individually
         .map(order -> {
+// => Maps each order: executes for every order in list
             Customer customer = customerRepository.findById(order.getCustomerId()); // N queries!
+// => N+1 PROBLEM: one query per order (if 100 orders, 100 customer queries)
+// => Each query: SELECT * FROM customers WHERE id = ?
+// => Database round trips: 1 + 100 = 101 total queries
+// => Linear scaling: doubles queries when orders double
             return new OrderDTO(order, customer);
+// => Creates DTO: combines order and customer data
         })
         .collect(Collectors.toList());
+// => Collects DTOs: returns list after all 101 queries complete
 }
 
 // SOLUTION: Join fetch or batch loading
 public List<OrderDTO> getOrders() {
+// => SOLUTION: uses single query with JOIN
     // Single query with join
     List<Order> orders = orderRepository.findAllWithCustomers();
+// => Single query: SELECT o.*, c.* FROM orders o JOIN customers c ON o.customer_id = c.id
+// => Eager loading: fetches orders and customers in one database round trip
+// => Returns orders: each Order already contains associated Customer (no lazy loading)
+// => Performance: constant time regardless of result size (1 query for 100 or 1000 orders)
 
     return orders.stream()
+// => Streams preloaded orders: all customer data already available
         .map(order -> new OrderDTO(order, order.getCustomer()))
+// => No queries executed: customer already loaded from join
+// => order.getCustomer(): returns customer from join, doesn't query database
         .collect(Collectors.toList());
+// => Collects results: creates DTO list without additional database calls
 }
 ```
 

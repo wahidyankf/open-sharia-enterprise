@@ -76,6 +76,7 @@ abstract class DataProcessor {
 class CSVProcessor extends DataProcessor {
                                      // => Inherits template method process()
                                      // => Must implement 3 abstract methods
+                                     // => Concrete class can be instantiated (unlike abstract parent)
 
     @Override
     protected void loadData() {      // => Implements abstract method
@@ -98,6 +99,7 @@ class CSVProcessor extends DataProcessor {
 
 class JSONProcessor extends DataProcessor {
                                      // => Different implementations, same interface
+                                     // => Also inherits process() template method
 
     @Override
     protected void loadData() {
@@ -121,6 +123,7 @@ class JSONProcessor extends DataProcessor {
 // USAGE
 DataProcessor csv = new CSVProcessor();
                                      // => Creates concrete instance
+                                     // => Polymorphism: variable type is DataProcessor, runtime type is CSVProcessor
 csv.process();                       // => Executes 4-step pipeline
                                      // => Calls CSVProcessor's overridden methods
                                      // => Output: Loading CSV file
@@ -130,6 +133,7 @@ csv.process();                       // => Executes 4-step pipeline
 
 DataProcessor json = new JSONProcessor();
 // => Different processor, same workflow structure
+// => Runtime type is JSONProcessor (polymorphic binding)
 json.process();
 // => Uses JSONProcessor implementations
 // => Output: Loading JSON file
@@ -157,144 +161,91 @@ Composition builds objects from reusable components rather than inheriting from 
 // Component interfaces
 interface Engine {                   // => Contract: all engines must implement start()
                                      // => Enables polymorphism across engine types
-                                     // => Interface = pure abstraction (no state)
-    void start();                    // => No body: abstract by default in interfaces
-                                     // => Implementing classes provide behavior
-                                     // => Return type: void (no return value)
+                                     // => Abstract: no implementation details
+    void start();
 }
 
 interface Transmission {             // => Contract: all transmissions must implement shift()
-                                     // => Allows different shifting strategies
-                                     // => Defines behavior without implementation
-    void shift(int gear);            // => Parameter: target gear number (int)
-                                     // => Method signature defines contract
-                                     // => Implementing classes handle shifting logic
+                                     // => Abstraction allows different shifting strategies
+    void shift(int gear);            // => Parameter: target gear number
 }
 
 // Component implementations
 class ElectricEngine implements Engine {
-                                     // => Concrete implementation of Engine interface
                                      // => Must implement all abstract methods (start())
-                                     // => Electric motor behavior
-                                     // => Type: implements Engine (can be used polymorphically)
     public void start() {
-                                     // => Override start() from Engine interface
-                                     // => @Override annotation implicit (interface methods)
         System.out.println("Electric motor starting silently");
                                      // => Electric-specific: quiet startup
-                                     // => Calls System.out.println() with String argument
                                      // => Output: "Electric motor starting silently"
     }
 }
 
 class GasEngine implements Engine {
-                                     // => Concrete implementation of Engine interface
-                                     // => Combustion engine behavior
                                      // => Different implementation, same interface
     public void start() {
-                                     // => Override start() from Engine interface
-                                     // => Polymorphism: same method signature, different behavior
         System.out.println("Gas engine roaring to life");
-                                     // => Gas-specific: loud startup with ignition
-                                     // => Different output from ElectricEngine.start()
+                                     // => Gas-specific: loud startup
                                      // => Output: "Gas engine roaring to life"
     }
 }
 
 class ManualTransmission implements Transmission {
-                                     // => Concrete implementation of Transmission interface
-                                     // => Manual gear control strategy
-                                     // => Must implement shift(int gear) method
     public void shift(int gear) {
-                                     // => Override shift() from Transmission interface
-                                     // => Parameter gear: target gear number
         System.out.println("Manual shift to gear " + gear);
-                                     // => String concatenation: "Manual shift to gear " + gear
-                                     // => gear converted to String automatically
                                      // => Driver controls each gear change
-                                     // => Output: "Manual shift to gear N" (N = gear value)
+                                     // => Output: "Manual shift to gear N"
     }
 }
 
 class AutomaticTransmission implements Transmission {
-                                     // => Concrete implementation of Transmission interface
-                                     // => Automatic gear control strategy
-                                     // => Different shifting logic from ManualTransmission
     public void shift(int gear) {
-                                     // => Override shift() from Transmission interface
-                                     // => Same signature as ManualTransmission.shift()
         System.out.println("Automatic shift to gear " + gear);
-                                     // => Concatenates string with gear number
                                      // => System determines shift timing
-                                     // => Output: "Automatic shift to gear N" (automatic variant)
+                                     // => Output: "Automatic shift to gear N"
     }
 }
 
 // COMPOSED CLASS - has-a relationship
 class Car {                          // => Car contains components (composition)
-                                     // => Aggregates behavior from Engine and Transmission
-                                     // => No inheritance: uses delegation instead
+                                     // => No inheritance: uses delegation
     private final Engine engine;     // => HAS-A Engine (can be any Engine implementation)
                                      // => Final: cannot be reassigned after construction
-                                     // => Interface type: polymorphic (ElectricEngine or GasEngine)
     private final Transmission transmission;
-                                     // => HAS-A Transmission (can be any Transmission type)
-                                     // => Final field: immutable reference after construction
-                                     // => Interface type: can be Manual or Automatic
+                                     // => HAS-A Transmission (can be any type)
 
     public Car(Engine engine, Transmission transmission) {
-                                     // => Constructor accepts interfaces (not concrete types)
-                                     // => Dependency injection pattern
-                                     // => Caller provides components (inversion of control)
-        this.engine = engine;        // => Store engine reference in private field
-                                     // => Assigns parameter to instance field
+                                     // => Constructor accepts interfaces (dependency injection)
+                                     // => Decouples Car from specific implementations
+        this.engine = engine;
         this.transmission = transmission;
-                                     // => Store transmission reference in private field
-                                     // => Both fields now initialized (final requirement met)
     }
 
-    public void drive() {            // => Coordinate components
-                                     // => Orchestrates behavior of composed objects
-                                     // => Delegates to components (no own engine/shift logic)
+    public void drive() {            // => Orchestrates behavior of composed objects
+                                     // => Coordination logic lives in Car, not components
         engine.start();              // => Delegate to composed engine
                                      // => Polymorphic call: runtime type determines behavior
-                                     // => Could call ElectricEngine.start() or GasEngine.start()
         transmission.shift(1);       // => Shift to 1st gear
-                                     // => Delegates to transmission component
-                                     // => Passes gear=1 as argument
         transmission.shift(2);       // => Shift to 2nd gear
-                                     // => Sequential gear changes
-                                     // => Passes gear=2 as argument
     }
 }
 
 // USAGE - flexible assembly of behaviors
 Car electricAuto = new Car(new ElectricEngine(), new AutomaticTransmission());
-                                     // => Creates Car with specific component implementations
-                                     // => new ElectricEngine(): creates electric engine instance
-                                     // => new AutomaticTransmission(): creates automatic transmission
                                      // => Mix electric engine + automatic transmission
                                      // => Components passed to constructor (dependency injection)
+                                     // => Runtime assembly: any Engine + any Transmission valid
 electricAuto.drive();
-                                     // => Calls drive() on electricAuto instance
-                                     // => Delegates to composed components
-                                     // => Executes: engine.start(), transmission.shift(1), shift(2)
-// => Output: Electric motor starting silently (from ElectricEngine.start())
-// =>         Automatic shift to gear 1 (from AutomaticTransmission.shift(1))
-// =>         Automatic shift to gear 2 (from AutomaticTransmission.shift(2))
+// => Output: Electric motor starting silently
+// =>         Automatic shift to gear 1
+// =>         Automatic shift to gear 2
 
 Car gasManual = new Car(new GasEngine(), new ManualTransmission());
-                                     // => Creates Car with different component implementations
-                                     // => new GasEngine(): creates gas engine instance
-                                     // => new ManualTransmission(): creates manual transmission
                                      // => Mix gas engine + manual transmission
                                      // => Same Car class, different behaviors
 gasManual.drive();
-                                     // => Calls drive() on gasManual instance
-                                     // => Same method, different behavior (polymorphism)
-// => Output: Gas engine roaring to life (from GasEngine.start())
-// =>         Manual shift to gear 1 (from ManualTransmission.shift(1))
-// =>         Manual shift to gear 2 (from ManualTransmission.shift(2))
+// => Output: Gas engine roaring to life
+// =>         Manual shift to gear 1
+// =>         Manual shift to gear 2
 
 // CONTRAST: Inheritance approach (rigid, explosive class hierarchy)
 // => Would need: ElectricAutoCar, ElectricManualCar, GasAutoCar, GasManualCar
@@ -470,103 +421,48 @@ graph TD
 
 ```java
 import java.lang.reflect.*;
-// => Import reflection API classes
-// => Imports Class, Method, Field, Constructor types
-// => Enables runtime introspection and manipulation
 
 class Person {
-    // => Simple class for reflection demonstration
-    // => Plain POJO with private/public members
-    // => Designed to show reflection capabilities
     private String name;
-    // => Private field: not accessible without setAccessible()
-    // => Encapsulation: normal access blocked (getName() required)
-    // => Reflection can bypass with setAccessible(true)
     public int age;
-    // => Public field: directly accessible via reflection
-    // => No getter needed (poor encapsulation practice)
-    // => Reflection reads/writes directly
 
     public Person() {}
-    // => Default constructor (no-arg constructor)
-    // => Required for reflection instantiation without parameters
-    // => Leaves fields uninitialized (name=null, age=0)
 
     public Person(String name, int age) {
-        // => Parameterized constructor
-        // => Parameters: name (String), age (int)
-        // => Initializes all fields
         this.name = name;
-        // => Assigns parameter to private field
-        // => this.name refers to instance field, name refers to parameter
         this.age = age;
-        // => Assigns parameter to public field
-        // => Now: name=parameter, age=parameter (object initialized)
     }
 
     private void secretMethod() {
-        // => Private method: needs setAccessible() to invoke
-        // => Encapsulation: not meant for external access
-        // => Reflection bypasses with setAccessible(true)
         System.out.println("Secret: " + name);
-        // => Prints private field value
-        // => Concatenates "Secret: " with name field
-        // => Output format: "Secret: [name value]"
     }
 
     public String getName() {
-        // => Public getter method
-        // => Encapsulation: controlled access to private field
-        // => Return type: String (returns name field)
         return name;
-        // => Returns private name field value
-        // => Caller receives String or null (if uninitialized)
     }
 }
 
 // REFLECTION USAGE
 Class<?> clazz = Person.class;
-                                 // => Obtain Class metadata object for Person
-                                 // => .class literal retrieves compile-time Class reference
-                                 // => <?> wildcard: type-safe reflection (unknown generic type)
-                                 // => Alternative: Class.forName("Person") loads by string name
-                                 // => Class object contains all runtime type information
+                                 // => Obtain Class metadata for Person
 
 // GET CLASS INFORMATION
 String className = clazz.getName();
-                                 // => Returns fully qualified name (package + class)
-                                 // => Result: "Person" (or "com.example.Person" if in package)
-                                 // => Includes package prefix for uniqueness
+                                 // => Returns fully qualified name: "Person"
 String simpleName = clazz.getSimpleName();
-                                 // => Returns class name without package prefix
-                                 // => Result: "Person" (just class name)
-                                 // => Used for display/logging purposes
+                                 // => Returns class name without package: "Person"
 
 // INSTANTIATE via reflection
 Constructor<?> constructor = clazz.getConstructor(String.class, int.class);
-                                 // => Finds public constructor matching parameter types
-                                 // => getConstructor() searches public constructors only
-                                 // => Parameter types: String.class, int.class (varargs)
-                                 // => Throws NoSuchMethodException if no matching constructor
-                                 // => Constructor<?> holds reference to constructor metadata
+                                 // => Finds public constructor with String, int parameters
 Object instance = constructor.newInstance("Alice", 30);
-                                 // => Invokes constructor with arguments
-                                 // => newInstance() calls Constructor with varargs Object[]
                                  // => Creates instance: new Person("Alice", 30)
-                                 // => Returns Object (generic type, needs casting for type safety)
-                                 // => Throws InstantiationException, IllegalAccessException, InvocationTargetException
 
 // ACCESS FIELDS
 Field ageField = clazz.getField("age");
-                                 // => Gets PUBLIC field named "age" by string lookup
-                                 // => getField() searches public fields only (not private)
-                                 // => Throws NoSuchFieldException if field not found or not public
-                                 // => Field object wraps field metadata
+                                 // => Gets public field "age"
 int ageValue = (int) ageField.get(instance);
-                                 // => Reads field value from specific instance
-                                 // => ageField.get() returns Object, requires cast to int
-                                 // => Retrieves value from Person object's age field
-                                 // => Result: 30 (initial value from constructor)
+                                 // => Reads age value: 30
                                  // => Autoboxing: int → Integer → Object → (int) unbox
 ageField.set(instance, 31);      // => Modifies field value reflectively
                                  // => ageField.set(object, value) mutates field on instance
@@ -652,13 +548,11 @@ import java.lang.reflect.*;
 
 // DEFINE CUSTOM ANNOTATION
 @Retention(RetentionPolicy.RUNTIME)  // => Available at runtime via reflection
-                                     // => Enables runtime inspection of annotation data
                                      // => Retention policy determines when annotation accessible
                                      // => SOURCE: discarded after compilation (compile-time only)
                                      // => CLASS: stored in .class file but not available at runtime
                                      // => RUNTIME: stored in .class and accessible via reflection
 @Target(ElementType.METHOD)          // => Can only be applied to methods
-                                     // => Compile error if used on class/field
                                      // => ElementType options: TYPE (class), FIELD, METHOD, PARAMETER, CONSTRUCTOR, etc.
                                      // => Restricts where annotation can appear syntactically
 public @interface Test {             // => @interface keyword defines annotation type
@@ -821,15 +715,10 @@ import java.util.*;
 // GENERIC METHOD - type parameter before return type
 public static <T> void printArray(T[] array) {
                                  // => <T> declares type parameter for this method
-                                 // => Type parameter scope: entire method body
                                  // => T can be any type (inferred from argument)
-                                 // => Enables one method implementation for all types
     for (T element : array) {    // => Enhanced for-loop iterates array elements
                                  // => Each element has type T (type-safe)
-                                 // => No casting needed (compiler knows type)
         System.out.print(element + " ");
-                                 // => Prints element followed by space
-                                 // => Calls element.toString() implicitly
     }
     System.out.println();        // => Newline after all elements printed
 }
@@ -838,17 +727,11 @@ public static <T> void printArray(T[] array) {
 public static <T extends Number> double sum(List<T> numbers) {
                                  // => T must be Number or subclass (Integer, Double, etc.)
                                  // => Upper bound enables calling Number methods
-                                 // => Without bound, would treat T as Object only
     double total = 0;            // => Accumulator initialized to 0.0
-                                 // => Primitive double (not boxed Double)
     for (T num : numbers) {      // => Iterates each element of type T
-                                 // => num guaranteed to be Number (or subclass)
         total += num.doubleValue();  // => Can call Number methods because of bound
-                                     // => Extracts double value from Number wrapper
-                                     // => Accumulates sum: total = total + num.doubleValue()
     }
     return total;                // => Returns accumulated sum as double
-                                 // => Method signature guarantees double return
 }
 
 // MULTIPLE BOUNDS - must extend class AND implement interfaces
@@ -1052,207 +935,175 @@ copy(src, dst);                  // => T = Integer (inferred)
 
 ---
 
-## Example 38: Collections Framework Deep Dive
+## Example 38: ArrayList vs LinkedList Performance
 
-The Collections Framework provides algorithms for sorting, searching, and transforming collections. Understanding time complexities and choosing appropriate implementations is critical for performance.
+ArrayList and LinkedList both implement the List interface but have different performance characteristics. ArrayList uses a resizable array (O(1) indexed access, O(n) insertions), while LinkedList uses doubly-linked nodes (O(1) insertions at ends, O(n) indexed access).
 
-**Code**:
+**Comparison**: When to use each implementation
+
+**ArrayList approach** (array-backed):
 
 ```java
 import java.util.*;
-                                 // => Import collections framework classes
 
-// CHOOSING COLLECTION TYPES based on requirements
+List<String> arrayList = new ArrayList<>(); // => Backed by resizable array
+                                 // => Initial capacity 10, grows by 50% when full
+arrayList.add("A");              // => O(1) amortized append
+                                 // => Appends to end of internal array
+arrayList.add("B");              // => arrayList is ["A", "B"]
+arrayList.add("C");              // => arrayList is ["A", "B", "C"]
 
-// ArrayList - indexed access, dynamic size
-List<String> arrayList = new ArrayList<>();
-                                 // => Creates empty ArrayList (backed by array)
-                                 // => Default capacity: 10 elements (grows when needed)
-                                 // => Internal: Object[] elementData array
-                                 // => Interface type: List<String> (can swap implementations)
-                                 // => Concrete type: ArrayList<String> (array-based implementation)
-arrayList.add("A");              // => O(1) amortized append operation
-                                 // => Adds to end of internal array (no shifting needed)
-                                 // => Increments size counter (now size=1)
-                                 // => If array full: creates larger array (1.5x growth), copies elements
-                                 // => arrayList is ["A"]
-String value = arrayList.get(0); // => O(1) random access by index
-                                 // => Direct array access: elementData[0]
-                                 // => Very fast (cache-friendly sequential memory)
-                                 // => No iteration needed (direct indexing)
-                                 // => value is "A"
-arrayList.remove(0);             // => O(n) due to element shifting
-                                 // => Removes element at index 0
-                                 // => All elements after index 0 shift left (System.arraycopy)
-                                 // => If had ["A", "B", "C"]: "B" moves to index 0, "C" moves to index 1
-                                 // => Expensive for large lists (copies n-1 elements)
-                                 // => arrayList is [] (now empty)
+String value = arrayList.get(1); // => O(1) random access, value is "B"
+                                 // => Direct array indexing (array[1])
 
-// LinkedList - efficient insertion/deletion
-List<String> linkedList = new LinkedList<>();
-                                 // => Creates empty LinkedList (doubly-linked nodes)
-                                 // => Each node stores element + prev/next references
-linkedList.add("A");             // => O(1) append to tail
-                                 // => Updates tail pointer only
-linkedList.add(0, "B");          // => O(1) prepend to head
-                                 // => Updates head pointer only
-                                 // => linkedList is ["B", "A"]
-String first = linkedList.get(0); // => O(n) traversal from head
-                                 // => Must iterate through nodes
-                                 // => first is "B"
-
-// HashSet - unique elements, O(1) operations
-Set<String> hashSet = new HashSet<>();
-                                 // => Creates empty HashSet (backed by HashMap internally)
-                                 // => Uses element.hashCode() for bucketing
-                                 // => Internal: HashMap<E, Object> (value is dummy PRESENT object)
-                                 // => Default capacity: 16 buckets, load factor: 0.75
-                                 // => No duplicate elements allowed (enforced by HashMap keys)
-hashSet.add("A");                // => O(1) insert using hash function
-                                 // => Calculates "A".hashCode() → finds bucket
-                                 // => Stores "A" as HashMap key (value=PRESENT)
-                                 // => If already exists: returns false (no duplicate added)
-                                 // => hashSet is {"A"}
-boolean contains = hashSet.contains("A");
-                                 // => O(1) lookup using hash function
-                                 // => Calculates "A".hashCode() → checks bucket
-                                 // => Uses equals() to confirm match in bucket (handles collisions)
-                                 // => Average O(1), worst O(log n) if bucket becomes tree (Java 8+)
-                                 // => contains is true
-
-// TreeSet - sorted, O(log n) operations
-Set<Integer> treeSet = new TreeSet<>();
-                                 // => Creates empty TreeSet (backed by red-black tree)
-                                 // => Maintains sorted order using Comparable/Comparator
-                                 // => Elements must implement Comparable<T> or provide Comparator
-                                 // => Internal: TreeMap<E, Object> (self-balancing binary search tree)
-                                 // => Guarantees log(n) operations (height-balanced tree)
-treeSet.add(3);                  // => O(log n) insert with rebalancing
-                                 // => Compares 3 with existing elements (none, becomes root)
-                                 // => Tree structure: [3]
-                                 // => treeSet is {3}
-treeSet.add(1);                  // => Auto-sorted: inserts at correct position
-                                 // => Compares 1 < 3 → inserts as left child
-                                 // => Tree structure: [3, 1]
-                                 // => treeSet is {1, 3}
-treeSet.add(2);                  // => Maintains sorted order
-                                 // => Compares 2 < 3 → go left, 2 > 1 → inserts as right child of 1
-                                 // => Tree structure: [3, 1, 2] (may rebalance for optimal height)
-                                 // => treeSet is {1, 2, 3}
-System.out.println(treeSet);     // => Output: [1, 2, 3]
-                                 // => Iteration visits elements in sorted order
-                                 // => In-order traversal of tree (left → root → right)
-                                 // => Always sorted regardless of insertion order
-
-// HashMap - key-value pairs, O(1) operations
-Map<String, Integer> hashMap = new HashMap<>();
-                                 // => Creates empty HashMap (hash table implementation)
-                                 // => Default capacity: 16 buckets, load factor: 0.75
-                                 // => Internal: array of Node<K,V>[] buckets (linked lists or trees)
-                                 // => When load exceeds 0.75: rehashes to double capacity
-                                 // => Null keys/values allowed (one null key, multiple null values)
-hashMap.put("Alice", 30);        // => O(1) insert using key.hashCode()
-                                 // => Calculates "Alice".hashCode() → determines bucket index
-                                 // => Stores Entry<String, Integer>("Alice", 30) in bucket
-                                 // => If collision: chains entry (linked list or tree if many collisions)
-                                 // => Returns previous value (null if new key)
-                                 // => hashMap is {"Alice"=30}
-Integer age = hashMap.get("Alice"); // => O(1) lookup by key
-                                 // => Calculates "Alice".hashCode() → finds bucket
-                                 // => Iterates bucket entries, uses equals() to match key
-                                 // => Average O(1), worst O(log n) if bucket is tree (Java 8+)
-                                 // => Returns Integer value or null (if key not found)
-                                 // => age is 30
-
-// TreeMap - sorted by keys, O(log n) operations
-Map<String, Integer> treeMap = new TreeMap<>();
-                                 // => Creates empty TreeMap (red-black tree implementation)
-                                 // => Keys sorted by natural order or Comparator
-                                 // => Keys must implement Comparable<K> or provide Comparator<K>
-                                 // => Internal: red-black tree (self-balancing BST)
-                                 // => Null keys not allowed (would cause NullPointerException on compare)
-treeMap.put("Charlie", 25);      // => O(log n) insert with balancing
-                                 // => Compares "Charlie" with existing keys (none, becomes root)
-                                 // => Creates Entry<String, Integer>("Charlie", 25)
-                                 // => Tree structure: ["Charlie"=25]
-treeMap.put("Alice", 30);        // => Keys maintained in sorted order
-                                 // => Compares "Alice" < "Charlie" → inserts left
-                                 // => Tree may rebalance (red-black tree invariants)
-                                 // => Tree structure: ["Charlie"=25, "Alice"=30]
-treeMap.put("Bob", 28);          // => Maintains sorted order by key
-                                 // => Compares "Bob" < "Charlie" → left, "Bob" > "Alice" → right of Alice
-                                 // => Tree inserts at correct position, rebalances if needed
-                                 // => Alphabetically: Alice < Bob < Charlie
-System.out.println(treeMap);     // => Output: {Alice=30, Bob=28, Charlie=25}
-                                 // => Iteration visits entries in key-sorted order
-                                 // => In-order traversal of tree (sorted keys)
-                                 // => toString() uses entrySet().iterator()
-
-// COLLECTIONS UTILITY METHODS
-List<Integer> numbers = Arrays.asList(3, 1, 4, 1, 5, 9);
-                                 // => Arrays.asList() creates fixed-size list
-                                 // => Backed by array: cannot add/remove elements
-                                 // => Can modify elements (set operation allowed)
-                                 // => Returns List<Integer> (interface type)
-                                 // => Concrete type: Arrays.ArrayList (different from java.util.ArrayList)
-                                 // => numbers is [3, 1, 4, 1, 5, 9]
-
-Collections.sort(numbers);       // => In-place sort (mutates original)
-                                 // => Uses TimSort algorithm (hybrid merge/insertion sort)
-                                 // => Stable sort: preserves relative order of equal elements
-                                 // => O(n log n) time complexity (worst/average case)
-                                 // => Requires elements implement Comparable<T>
-                                 // => Overload: sort(List, Comparator) for custom ordering
-                                 // => numbers is [1, 1, 3, 4, 5, 9]
-Collections.reverse(numbers);    // => In-place reversal
-                                 // => Swaps elements from ends toward middle
-                                 // => Front index increments, back index decrements until they meet
-                                 // => O(n) time complexity (n/2 swaps)
-                                 // => numbers is [9, 5, 4, 3, 1, 1]
-Collections.shuffle(numbers);    // => Randomizes order (uses Random)
-                                 // => Fisher-Yates shuffle algorithm
-                                 // => Each element has equal probability at any position
-                                 // => Uses default Random instance (can provide custom Random)
-                                 // => O(n) time complexity
-                                 // => numbers is [unpredictable order]
-
-int max = Collections.max(numbers); // => Finds maximum element
-                                 // => Iterates entire collection once
-                                 // => Uses Comparable.compareTo() to compare elements
-                                 // => O(n) time complexity (linear scan)
-                                 // => Throws NoSuchElementException if collection empty
-                                 // => max is 9
-int min = Collections.min(numbers); // => Finds minimum element
-                                 // => Iterates entire collection once
-                                 // => Uses Comparable.compareTo() to compare elements
-                                 // => O(n) time complexity (linear scan)
-                                 // => min is 1
-
-int frequency = Collections.frequency(numbers, 1);
-                                 // => Counts occurrences of target element (1)
-                                 // => Iterates collection, compares each element with target
-                                 // => Uses equals() for comparison (null-safe)
-                                 // => O(n) time complexity (full iteration)
-                                 // => Works with any Collection type
-                                 // => frequency is 2 (1 appears twice)
-
-// IMMUTABLE COLLECTIONS (Java 9+)
-List<String> immutable = List.of("A", "B", "C");
-                                 // => immutable is ["A", "B", "C"] (cannot modify)
-// immutable.add("D");           // => UnsupportedOperationException (immutable)
-
-Map<String, Integer> immutableMap = Map.of("A", 1, "B", 2);
-                                 // => immutableMap is {"A"=1, "B"=2} (cannot modify)
-// immutableMap.put("C", 3);     // => UnsupportedOperationException (immutable)
+arrayList.remove(0);             // => O(n) removal, shifts elements left, arrayList is ["B", "C"]
+                                 // => System.arraycopy() shifts remaining elements
 ```
 
-**Key Takeaway**: Choose collection types based on access patterns: ArrayList for indexed access, LinkedList for frequent insertions/deletions, HashSet for uniqueness with O(1) operations, TreeSet for sorted uniqueness, HashMap for key-value O(1) lookups, TreeMap for sorted keys. Understand time complexity tradeoffs to avoid performance pitfalls.
+**Problem**: ArrayList excels at random access but removal from middle/start requires shifting elements—expensive for large lists.
 
-**Why It Matters**: Choosing the wrong collection type causes severe performance issues at scale—using ArrayList.contains() in a loop creates O(n²) complexity vs. HashSet's O(n). A common pitfall: using LinkedList thinking "linked list is always better for insertions," but ArrayList's cache locality makes it faster for small-to-medium lists. TreeSet/TreeMap's O(log n) seems close to HashMap's O(1), but with millions of entries, the difference is dramatic (20 operations vs. 1). Java 9's List.of() and Map.of() factory methods create space-efficient immutable collections (no separate unmodifiable wrappers), essential for functional programming patterns. The Collections Framework standardized algorithms that previously required manual implementation, eliminating bugs from manual binary search or sort implementations.
+**LinkedList approach** (node-based):
+
+```java
+List<String> linkedList = new LinkedList<>(); // => Doubly-linked nodes
+                                 // => Each node has prev/next pointers
+linkedList.add("A");             // => O(1) append to tail
+linkedList.add(0, "B");          // => O(1) prepend, updates head pointer
+                                 // => Just updates first.prev reference
+linkedList.add("C");             // => linkedList is ["B", "A", "C"]
+
+String first = linkedList.get(0); // => O(n) access, must traverse nodes, first is "B"
+                                 // => Optimized: searches from head if index < size/2
+
+linkedList.remove(0);            // => O(1) removal from head, linkedList is ["A", "C"]
+                                 // => Updates head pointer, no element shifting needed
+```
+
+**Benefit**: LinkedList is efficient for insertions/deletions at ends (O(1)) but slow for random access (O(n) traversal).
+
+**Key Takeaway**: Use ArrayList for random access and iteration (default choice). Use LinkedList only for frequent insertions/deletions at ends (queue/deque operations). ArrayList's cache locality makes it faster than LinkedList for most use cases, even with insertions.
+
+**Why It Matters**: The "ArrayList vs LinkedList" decision is one of Java's most common performance traps. Many developers assume LinkedList is always better for insertions, but ArrayList's cache-friendly sequential memory layout makes it faster for small-to-medium lists (even with O(n) shifts). LinkedList's pointer-chasing destroys CPU cache performance. Benchmark: inserting 10,000 elements in middle of list—ArrayList (array copy overhead) often beats LinkedList (cache misses) by 2-3x. Use LinkedList only for Deque operations (addFirst/removeFirst) or when you truly need O(1) insertions at arbitrary positions (rare). Default to ArrayList.
 
 ---
 
-## Example 39: Concurrent Collections for Thread Safety
+## Example 39: HashSet vs TreeSet for Unique Collections
+
+HashSet and TreeSet both enforce uniqueness but differ in ordering and performance. HashSet uses hashing (O(1) operations, no order), while TreeSet uses a red-black tree (O(log n) operations, sorted order).
+
+**HashSet approach** (hash table):
+
+```java
+import java.util.*;
+
+Set<String> hashSet = new HashSet<>(); // => Backed by HashMap
+                                 // => Uses hashCode() for bucket placement
+hashSet.add("banana");           // => O(1) insert, hashSet is {"banana"}
+                                 // => Computes hashCode("banana") to find bucket
+hashSet.add("apple");            // => hashSet is {"banana", "apple"} (arbitrary order)
+hashSet.add("cherry");           // => hashSet is {"banana", "apple", "cherry"}
+hashSet.add("apple");            // => Duplicate ignored
+                                 // => equals("apple") detects existing value
+
+boolean contains = hashSet.contains("apple"); // => O(1) lookup, contains is true
+                                 // => hashCode + equals for fast lookup
+
+System.out.println(hashSet);     // => Output: [banana, apple, cherry]
+                                 // => Iteration order unpredictable (hash-based)
+```
+
+**Problem**: HashSet has O(1) operations but no predictable iteration order—elements appear in hash order, not insertion or sorted order.
+
+**TreeSet approach** (red-black tree):
+
+```java
+Set<String> treeSet = new TreeSet<>(); // => Red-black tree, self-balancing BST
+                                 // => Maintains sorted order automatically
+treeSet.add("banana");           // => O(log n) insert
+                                 // => Uses compareTo() for positioning
+treeSet.add("apple");            // => treeSet is {"apple", "banana"} (sorted)
+treeSet.add("cherry");           // => treeSet is {"apple", "banana", "cherry"}
+treeSet.add("apple");            // => Duplicate ignored
+                                 // => compareTo("apple") returns 0 (equal)
+
+boolean contains = treeSet.contains("apple"); // => O(log n) lookup, contains is true
+                                 // => Binary search through tree structure
+
+System.out.println(treeSet);     // => Output: [apple, banana, cherry]
+                                 // => Natural alphabetical ordering (Comparable)
+```
+
+**Benefit**: TreeSet maintains sorted order and provides range operations (subSet, headSet, tailSet). Elements must implement Comparable or provide Comparator.
+
+**Key Takeaway**: Use HashSet for fast O(1) operations when order doesn't matter. Use TreeSet when you need sorted iteration or range queries (O(log n) operations). HashSet is default choice for uniqueness checks.
+
+**Why It Matters**: The O(1) vs O(log n) difference seems small but scales dramatically. With 1 million elements, HashSet lookup is ~1 operation vs TreeSet's ~20 operations (log₂(1,000,000) ≈ 20). However, TreeSet provides sorted iteration "for free"—if you need both uniqueness AND sorted order, TreeSet eliminates the need for separate sorting (Collections.sort() is O(n log n)). TreeSet also enables efficient range operations: finding all elements between "B" and "M" is O(log n + k) where k is result size. Use TreeSet for sorted uniqueness, range queries, or when iteration order matters. Otherwise default to HashSet.
+
+---
+
+## Example 40: HashMap vs TreeMap and Collections Utilities
+
+HashMap and TreeMap both store key-value pairs but differ in ordering and performance. HashMap uses hashing (O(1) operations), TreeMap uses red-black tree (O(log n) operations, sorted by keys).
+
+**HashMap approach** (hash table):
+
+```java
+import java.util.*;
+
+Map<String, Integer> hashMap = new HashMap<>(); // => Hash table
+                                 // => Unordered key-value storage
+hashMap.put("Alice", 30);        // => O(1) insert
+                                 // => Uses hashCode() to determine bucket
+hashMap.put("Charlie", 25);      // => hashMap is {"Alice"=30, "Charlie"=25}
+hashMap.put("Bob", 28);          // => hashMap is {"Alice"=30, "Charlie"=25, "Bob"=28}
+
+Integer age = hashMap.get("Alice"); // => O(1) lookup, age is 30
+                                 // => hashCode("Alice") finds bucket, equals() confirms key
+
+System.out.println(hashMap);     // => Output: {Alice=30, Charlie=25, Bob=28}
+                                 // => Arbitrary insertion order (not sorted)
+```
+
+**TreeMap approach** (red-black tree, sorted by keys):
+
+```java
+Map<String, Integer> treeMap = new TreeMap<>(); // => Red-black tree
+                                 // => Self-balancing binary search tree
+treeMap.put("Alice", 30);        // => O(log n) insert
+                                 // => Uses compareTo() for key ordering
+treeMap.put("Charlie", 25);      // => treeMap is {"Alice"=30, "Charlie"=25}
+treeMap.put("Bob", 28);          // => treeMap is {"Alice"=30, "Bob"=28, "Charlie"=25} (sorted)
+                                 // => Automatically maintains sorted order (natural ordering)
+
+System.out.println(treeMap);     // => Output: {Alice=30, Bob=28, Charlie=25}
+                                 // => Keys sorted alphabetically
+```
+
+**Collections utility methods** (sort, reverse, shuffle, etc.):
+
+```java
+List<Integer> numbers = Arrays.asList(3, 1, 4, 1, 5, 9); // => Fixed-size list
+
+Collections.sort(numbers);       // => In-place sort, numbers is [1, 1, 3, 4, 5, 9]
+Collections.reverse(numbers);    // => In-place reversal, numbers is [9, 5, 4, 3, 1, 1]
+
+int max = Collections.max(numbers); // => max is 9
+int min = Collections.min(numbers); // => min is 1
+int freq = Collections.frequency(numbers, 1); // => freq is 2
+
+// Immutable collections (Java 9+)
+List<String> immutable = List.of("A", "B", "C"); // => Immutable list
+Map<String, Integer> immutableMap = Map.of("A", 1, "B", 2); // => Immutable map
+// immutable.add("D");           // => UnsupportedOperationException
+```
+
+**Key Takeaway**: Use HashMap for O(1) key-value lookups (default choice). Use TreeMap for sorted keys or range queries (O(log n)). Collections class provides utility methods for sorting, reversing, finding max/min, and counting frequencies. Java 9+ List.of/Map.of create space-efficient immutable collections.
+
+**Why It Matters**: HashMap vs TreeMap parallels HashSet vs TreeSet—O(1) vs O(log n) tradeoff for unsorted vs sorted data. With millions of entries, HashMap dramatically outperforms TreeMap for get/put operations. However, TreeMap provides sorted iteration and range operations (subMap, headMap, tailMap) essential for ordered data processing. Collections utility methods (sort, reverse, max, min, frequency) eliminate manual algorithm implementations—use them instead of writing loops. Java 9's List.of/Map.of create compact immutable collections (no separate unmodifiable wrapper overhead), enabling functional programming patterns and preventing accidental mutation.
+
+---
+
+## Example 41: Concurrent Collections for Thread Safety
 
 Concurrent collections provide thread-safe operations without external synchronization. They use lock-free algorithms and fine-grained locking for better concurrency than synchronized collections.
 
@@ -1279,158 +1130,82 @@ import java.util.*;
 
 // CONCURRENTHASHMAP - thread-safe without single lock
 ConcurrentHashMap<String, Integer> concurrentMap = new ConcurrentHashMap<>();
-                                 // => concurrentMap is {} (empty, thread-safe map)
-                                 // => Uses segment-based locking (Java 7) or CAS operations (Java 8+)
-                                 // => Default: 16 segments (Java 7), lock-free bins (Java 8+)
-                                 // => Multiple threads can write concurrently to different buckets
-                                 // => No global lock: high concurrency (10-100x vs synchronized)
+                                 // => Uses fine-grained locking (per bucket)
+                                 // => Multiple threads can write concurrently
+                                 // => Better scalability than synchronized collections
 
 // Thread-safe operations
-concurrentMap.put("key", 1);     // => Thread-safe put without blocking all threads
-                                 // => Only locks affected bucket (fine-grained locking)
-                                 // => Other threads can access different buckets simultaneously
-                                 // => Returns previous value (null if new key)
+concurrentMap.put("key", 1);     // => Thread-safe put, locks only affected bucket
                                  // => concurrentMap is {"key"=1}
+                                 // => Other buckets remain accessible to other threads
 Integer value = concurrentMap.get("key");
-                                 // => Thread-safe get (lock-free read in Java 8+)
-                                 // => No locking needed for reads (optimistic concurrency)
-                                 // => Uses volatile reads to see latest writes
-                                 // => value is 1
+                                 // => Lock-free read (Java 8+), value is 1
 
 // ATOMIC OPERATIONS
 concurrentMap.putIfAbsent("key", 2);
-                                 // => Only puts if key doesn't exist (atomic check-and-set)
-                                 // => Check and put happen atomically (no race condition)
-                                 // => Equivalent to: if (!map.containsKey(k)) map.put(k, v) but thread-safe
-                                 // => Key "key" already exists with value 1
-                                 // => Returns 1 (key exists, not inserted)
-                                 // => concurrentMap is {"key"=1} (unchanged)
+                                 // => Atomic check-and-set, returns 1 (key exists)
+                                 // => concurrentMap unchanged
 
 concurrentMap.computeIfAbsent("newKey", k -> k.length());
-                                 // => Computes value atomically if key absent
-                                 // => Lambda: k -> k.length() receives key as parameter
-                                 // => "newKey".length() returns 6 (String length)
-                                 // => Computation happens inside lock (atomic with insertion)
-                                 // => Only computes if key absent (avoids unnecessary work)
-                                 // => Returns computed value (6)
-                                 // => concurrentMap is {"key"=1, "newKey"=6}
+                                 // => Computes value atomically if absent
+                                 // => Returns 6, concurrentMap is {"key"=1, "newKey"=6}
 
 concurrentMap.merge("key", 1, Integer::sum);
-                                 // => Atomically updates: old value + new value
-                                 // => Merge function: Integer::sum (equivalent to (old, new) -> old + new)
-                                 // => Retrieves existing value (1), adds new value (1)
-                                 // => Merges 1 (existing) + 1 (new) = 2 using Integer.sum()
-                                 // => Updates map atomically with merged result
-                                 // => Returns merged value (2)
+                                 // => Atomically merges: 1 (old) + 1 (new) = 2
                                  // => concurrentMap is {"key"=2, "newKey"=6}
 
-// COPYONWRITEARRAYLIST - reads without locking, writes copy entire array
+// COPYONWRITEARRAYLIST - optimized for read-heavy workloads
 CopyOnWriteArrayList<String> cowList = new CopyOnWriteArrayList<>();
-                                 // => cowList is [] (empty, optimized for reads)
-                                 // => Internal: volatile Object[] array reference
-                                 // => Every write creates new array (copy-on-write semantics)
-                                 // => Reads never block (no locks for iteration/get)
-                                 // => Best for read-heavy workloads (100:1 read:write ratio)
-cowList.add("A");                // => Creates new array copy with "A"
-                                 // => Process: 1. Lock mutex, 2. Copy array, 3. Add element, 4. Swap reference, 5. Unlock
-                                 // => Old array: [], New array: ["A"]
-                                 // => Updates volatile reference atomically
-                                 // => cowList is ["A"] (write expensive O(n), read cheap O(1))
-cowList.add("B");                // => Every write copies array (O(n) write cost)
-                                 // => Old array: ["A"], New array: ["A", "B"]
-                                 // => Memory overhead: creates temporary arrays on each write
-                                 // => cowList is ["A", "B"]
+                                 // => Every write creates new array copy
+                                 // => Reads never block
+                                 // => Expensive writes, but safe concurrent iteration
+cowList.add("A");                // => Creates copy, cowList is ["A"]
+                                 // => Write operation copies entire array
+cowList.add("B");                // => cowList is ["A", "B"]
 
 // Safe iteration during concurrent modifications
-for (String item : cowList) {    // => Iteration uses snapshot (no ConcurrentModificationException)
-                                 // => Iterator holds reference to array snapshot at creation time
-                                 // => Snapshot array: ["A", "B"] (frozen at iterator creation)
-                                 // => Iterates over: ["A", "B"]
-    cowList.add("C");            // => Modifications don't affect ongoing iteration
-                                 // => Creates new array: ["A", "B", "C"]
-                                 // => Updates volatile reference to new array
-                                 // => Iterator still sees old snapshot ["A", "B"]
-                                 // => Two iterations add "C" twice (once per loop iteration)
+for (String item : cowList) {    // => Iterator uses snapshot (no ConcurrentModificationException)
+    cowList.add("C");            // => Modifications don't affect iteration
 }                                // => After loop: cowList is ["A", "B", "C", "C"]
-                                 // => Final array reference points to ["A", "B", "C", "C"]
 
 // BLOCKINGQUEUE - producer-consumer pattern
 BlockingQueue<String> queue = new LinkedBlockingQueue<>(10);
-                                 // => queue capacity is 10 (blocks when full)
-                                 // => Uses locks and conditions (thread coordination)
-                                 // => Internal: ReentrantLock + Condition for blocking/waiting
-                                 // => Two conditions: notEmpty (consumers wait), notFull (producers wait)
-                                 // => Bounded queue prevents memory overflow from fast producers
+                                 // => Bounded queue, capacity 10
+                                 // => Thread-safe queue for producer-consumer scenarios
 
 // Producer thread
-new Thread(() -> {               // => Lambda creates producer thread
-                                 // => Runnable functional interface: () -> void
-                                 // => Thread executes lambda body when started
+new Thread(() -> {
     try {
-        queue.put("item");       // => Blocks if queue full (waits for space)
-                                 // => Acquires lock, checks if queue has space
-                                 // => If full: awaits notFull condition (releases lock, waits)
-                                 // => When space available: adds "item", signals notEmpty
-                                 // => Wakes up consumers waiting for items
+        queue.put("item");       // => Blocks if queue full
+                                 // => Waits until space available
     } catch (InterruptedException e) {
-                                 // => InterruptedException thrown if thread interrupted while waiting
-                                 // => Happens when thread.interrupt() called
-        e.printStackTrace();     // => Handle thread interruption
-                                 // => Prints stack trace to stderr
+        e.printStackTrace();
     }
-}).start();                      // => Start producer thread immediately
-                                 // => Invokes Thread.start() → runs lambda in new thread
+}).start();                      // => Start producer thread
 
 // Consumer thread
-new Thread(() -> {               // => Lambda creates consumer thread
-                                 // => Separate thread from producer (concurrent execution)
+new Thread(() -> {
     try {
-        String item = queue.take(); // => Blocks if queue empty (waits for item)
-                                 // => Acquires lock, checks if queue has elements
-                                 // => If empty: awaits notEmpty condition (releases lock, waits)
-                                 // => When item available: removes and returns item, signals notFull
-                                 // => item is "item" (from producer)
+        String item = queue.take(); // => Blocks if queue empty, item is "item"
         System.out.println("Consumed: " + item);
-                                 // => Prints consumed item
-                                 // => Concatenates "Consumed: " with item value
                                  // => Output: Consumed: item
     } catch (InterruptedException e) {
-                                 // => InterruptedException if thread interrupted during take()
-        e.printStackTrace();     // => Handle thread interruption
-                                 // => Prints exception stack trace
+        e.printStackTrace();
     }
-}).start();                      // => Start consumer thread immediately
-                                 // => Both threads now running concurrently
+}).start();                      // => Start consumer thread
 
 // CONCURRENTSKIPLISTMAP - sorted, concurrent alternative to TreeMap
 ConcurrentSkipListMap<Integer, String> skipListMap = new ConcurrentSkipListMap<>();
-                                 // => skipListMap is {} (empty skip list, sorted + thread-safe)
-                                 // => Skip list: probabilistic data structure with multiple layers
-                                 // => O(log n) operations like TreeMap but allows concurrent access
-                                 // => No global locks: uses CAS operations for updates
-                                 // => Maintains sorted order by key (natural ordering or Comparator)
-skipListMap.put(3, "three");     // => O(log n) concurrent insert
-                                 // => Finds position in skip list using multiple levels
-                                 // => Inserts at correct sorted position without global lock
-                                 // => skipListMap is {3="three"}
-skipListMap.put(1, "one");       // => Concurrent insert maintaining sort order
-                                 // => Compares 1 < 3 → inserts before 3
-                                 // => skipListMap is {1="one", 3="three"} (auto-sorted)
-skipListMap.put(2, "two");       // => Inserts between 1 and 3
-                                 // => Maintains sorted order: 1 < 2 < 3
-                                 // => skipListMap is {1="one", 2="two", 3="three"}
-System.out.println(skipListMap);  // => Output: {1=one, 2=two, 3=three} (sorted, thread-safe)
-                                 // => Iteration visits entries in sorted key order
-                                 // => Thread-safe iteration (snapshot-based)
+                                 // => Skip list with O(log n) operations, sorted + thread-safe
+skipListMap.put(3, "three");     // => Concurrent insert, skipListMap is {3="three"}
+skipListMap.put(1, "one");       // => skipListMap is {1="one", 3="three"} (auto-sorted)
+skipListMap.put(2, "two");       // => skipListMap is {1="one", 2="two", 3="three"}
+System.out.println(skipListMap);  // => Output: {1=one, 2=two, 3=three}
+                                 // => Keys automatically sorted by natural ordering
 
 // CONTRAST: Synchronized wrapper (poor concurrency)
 Map<String, Integer> syncMap = Collections.synchronizedMap(new HashMap<>());
-                                 // => syncMap is {} (wrapped HashMap)
-                                 // => Wrapper adds synchronized keyword to all methods
-                                 // => Single lock for all operations (severe bottleneck)
-                                 // => All threads block each other (no concurrency)
-                                 // => get() blocks put(), put() blocks other puts
-                                 // => Performance degrades linearly with thread count
+                                 // => Single lock for all operations (bottleneck)
                                  // => Avoid in favor of ConcurrentHashMap
 ```
 
@@ -1440,7 +1215,7 @@ Map<String, Integer> syncMap = Collections.synchronizedMap(new HashMap<>());
 
 ---
 
-## Example 40: Stream Pipeline Optimization
+## Example 42: Stream Pipeline Optimization
 
 Stream operations are lazy (intermediate) or eager (terminal). Understanding laziness enables building efficient pipelines that short-circuit and minimize iterations.
 
@@ -1471,138 +1246,76 @@ import java.util.stream.*;
 
 List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
                                  // => numbers is [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-                                 // => Fixed-size list backed by array
-                                 // => Source data for stream operations
+                                 // => Immutable list created via Arrays.asList()
 
 // LAZY EVALUATION - intermediate operations don't execute until terminal operation
 Stream<Integer> stream = numbers.stream()
-                                 // => Creates stream from list (no processing yet)
-                                 // => Stream is pipeline specification, not result
-                                 // => No elements traversed yet (lazy initialization)
-                                 // => Returns Stream<Integer> (interface type)
+                                 // => Creates stream (no processing yet)
+                                 // => Stream is just a pipeline definition, not execution
     .filter(n -> {
         System.out.println("Filter: " + n);
-                                 // => Side effect for demonstration (shows when executed)
-                                 // => In production: avoid side effects in filter
-        return n % 2 == 0;       // => NOT executed yet (lazy intermediate operation)
-                                 // => Predicate: keeps even numbers, discards odd
-                                 // => Defines filtering logic, doesn't apply it
-                                 // => Returns boolean: true keeps element, false discards
+        return n % 2 == 0;       // => NOT executed yet (lazy)
+                                 // => Lambda not invoked until terminal operation
     })
     .map(n -> {
         System.out.println("Map: " + n);
-                                 // => Side effect for demonstration
-                                 // => Shows which elements reach map stage (only even numbers)
-        return n * 2;            // => NOT executed yet (lazy intermediate operation)
-                                 // => Transformation function: doubles each element
-                                 // => Defines mapping logic, doesn't apply it
-                                 // => Function<Integer, Integer>: transforms n to n*2
+        return n * 2;            // => NOT executed yet (lazy)
+                                 // => Transformation deferred until terminal operation
     });
 // => No output yet (no terminal operation)
-// => Stream pipeline defined but not executed
-// => No System.out.println calls made
-// => stream holds pipeline specification: source → filter → map
+                                 // => Pipeline built but not executed
 
 List<Integer> result = stream.collect(Collectors.toList());
-                                 // => Terminal operation triggers pipeline execution
-                                 // => Traverses source collection (numbers list)
-                                 // => Executes filter and map for each element in pipeline
-                                 // => Process per element: filter(1)→false(skip), filter(2)→true→map(2)→4
-                                 // => Collector accumulates results into ArrayList
+                                 // => Terminal operation triggers execution
 // => Output: Filter: 1, Filter: 2, Map: 2, Filter: 3, Filter: 4, Map: 4, ...
-// => Shows lazy evaluation: filter→map happen per element, not all filters then all maps
-// => result is [4, 8, 12, 16, 20] (even numbers doubled)
+// => result is [4, 8, 12, 16, 20]
 
 // SHORT-CIRCUITING - stops processing when result determined
 Optional<Integer> first = numbers.stream()
-                                 // => Creates new stream from numbers
-                                 // => Fresh stream (streams are single-use)
     .filter(n -> {
         System.out.println("Checking: " + n);
-                                 // => Side effect to demonstrate short-circuit behavior
-                                 // => Shows which elements get processed
         return n > 5;            // => Filter for n > 5
-                                 // => Predicate returns true for 6, 7, 8, 9, 10
     })
     .findFirst();                // => Short-circuits after first match
-                                 // => Terminal operation that stops early
-                                 // => Returns Optional<Integer> (may be empty if no match)
-                                 // => Stops immediately when match found (doesn't process remaining)
+                                 // => Stops processing when first element found
 // => Output: Checking: 1, Checking: 2, ..., Checking: 6
-// => Stops at 6 (first n > 5), doesn't process 7, 8, 9, 10
-// => Processes only 6 elements instead of all 10 (40% reduction)
+// => Stops at 6, doesn't process 7-10
+                                 // => Early termination improves performance
 // => first is Optional[6]
 
 // PARALLEL STREAMS - splits work across threads
 long count = numbers.parallelStream()
-                                 // => Splits collection across ForkJoinPool threads
-                                 // => Default ForkJoinPool.commonPool() (CPU cores - 1 threads)
-                                 // => Divides work into chunks (fork-join algorithm)
-                                 // => NOT always faster: overhead for small collections
-    .filter(n -> n % 2 == 0)     // => Parallel filtering (each thread processes subset)
-                                 // => Thread 1 might process [1,2,3], Thread 2 processes [4,5,6], etc.
-                                 // => Filters: 2, 4, 6, 8, 10 (order of processing not guaranteed)
-                                 // => Each thread maintains local result
-    .count();                    // => Terminal operation: counts matches
-                                 // => Parallel execution (order not guaranteed)
-                                 // => Combines local counts from each thread
-                                 // => count is 5
+                                 // => Uses ForkJoinPool threads
+                                 // => Work distributed across CPU cores
+    .filter(n -> n % 2 == 0)     // => Parallel filtering
+                                 // => Multiple threads process different elements concurrently
+    .count();                    // => count is 5
 
 // OPTIMIZATION: limit() short-circuits infinite streams
-Stream.iterate(0, n -> n + 1)    // => Infinite stream: 0, 1, 2, 3, ... (unbounded)
-                                 // => iterate(seed, function): seed=0, function increments
-                                 // => Generates: 0, 1, 2, 3, 4, 5, ... (never terminates without limit)
-                                 // => Without limit(), would run forever (memory overflow)
-    .filter(n -> n % 2 == 0)     // => Even numbers: 0, 2, 4, 6, 8, ...
-                                 // => Predicate: n % 2 == 0 (keeps even, discards odd)
-                                 // => Filter is lazy: only processes when needed
-    .limit(5)                    // => Take first 5: stops after 5 elements
-                                 // => Short-circuits infinite stream (prevents infinite loop)
-                                 // => Processes: 0(even)→keep, 1(odd)→skip, 2(even)→keep, ... until 5 evens
-                                 // => limit() is stateful but short-circuits
+Stream.iterate(0, n -> n + 1)    // => Infinite stream: 0, 1, 2, 3, ...
+                                 // => Without limit, would run forever
+    .filter(n -> n % 2 == 0)     // => Even numbers
+    .limit(5)                    // => Take first 5, stops infinite stream
+                                 // => Short-circuits after 5 matches (not 5 iterations)
     .forEach(System.out::println);
-                                 // => Terminal operation: prints each element
-                                 // => forEach() executes pipeline (triggers lazy operations)
-                                 // => Method reference: System.out::println (equivalent to n -> System.out.println(n))
-// => Output: 0, 2, 4, 6, 8 (stops, doesn't run forever)
+                                 // => Terminal operation: prints each
+// => Output: 0, 2, 4, 6, 8
 
 // PRIMITIVE STREAMS - avoid autoboxing overhead
 IntStream.range(1, 1000000)      // => Primitive int stream (no Integer objects)
-                                 // => range(start, end): generates [1, 2, ..., 999999] (exclusive end)
-                                 // => IntStream: primitive specialization (not Stream<Integer>)
-                                 // => Avoids boxing: no int→Integer conversions
-                                 // => Memory efficient: no wrapper objects (saves ~16 bytes per element)
+                                 // => Efficient: avoids creating 1 million Integer wrappers
     .filter(n -> n % 2 == 0)     // => Filters even numbers (no boxing)
-                                 // => IntPredicate: primitive specialization (not Predicate<Integer>)
-                                 // => Works directly with int primitives (no wrapper overhead)
-    .sum();                      // => sum() on IntStream (no boxing/unboxing)
-                                 // => Specialized sum() for primitives (not available on Stream<Integer>)
-                                 // => Returns primitive int sum directly (efficient)
-                                 // => Avoids accumulation overhead from boxing/unboxing in loop
+                                 // => Works directly with primitives (int)
+    .sum();                      // => Specialized sum() for primitives
+                                 // => Returns primitive long (not Long wrapper)
 
 // STATELESS vs STATEFUL operations
-numbers.stream()                 // => Creates stream from numbers [1, 2, ..., 10]
-                                 // => Source for demonstrating stateless vs stateful
-    .filter(n -> n > 5)          // => Stateless: each element processed independently
-                                 // => No need to see other elements to decide
-                                 // => Predicate evaluates per element: 1>5? no, 6>5? yes
-                                 // => Allows streaming (process one at a time)
-                                 // => Filters: 6, 7, 8, 9, 10
+numbers.stream()
+    .filter(n -> n > 5)          // => Stateless: independent
     .map(n -> n * 2)             // => Stateless: independent transformation
-                                 // => Each element mapped without knowledge of others
-                                 // => Function applies per element: 6*2=12, 7*2=14, etc.
-                                 // => No accumulation or comparison needed
-                                 // => Maps to: 12, 14, 16, 18, 20
     .sorted()                    // => STATEFUL: requires all elements (breaks streaming)
-                                 // => Cannot sort without seeing all elements first
-                                 // => Collects all into memory: [12, 14, 16, 18, 20]
-                                 // => Sorts using natural order (Comparable)
-                                 // => Breaks laziness: must process entire stream before continuing
-                                 // => Memory overhead: stores all elements at once
     .collect(Collectors.toList());
-                                 // => Terminal: collects to List
-                                 // => Accumulates sorted stream into ArrayList
-                                 // => Result is [12, 14, 16, 18, 20] (sorted)
+                                 // => Result is [12, 14, 16, 18, 20]
 ```
 
 **Key Takeaway**: Intermediate operations (filter, map) are lazy—they don't execute until a terminal operation (collect, forEach, count) triggers the pipeline. Short-circuiting operations (findFirst, limit, anyMatch) stop processing early. Use primitive streams (IntStream, LongStream, DoubleStream) to avoid autoboxing overhead for numeric operations.
@@ -1611,7 +1324,7 @@ numbers.stream()                 // => Creates stream from numbers [1, 2, ..., 1
 
 ---
 
-## Example 41: Collectors and Stream Reduction
+## Example 43: Collectors and Stream Reduction
 
 Collectors transform stream results into collections, maps, or aggregated values. Custom collectors enable complex reductions beyond built-in options.
 
@@ -1642,92 +1355,49 @@ List<String> words = Arrays.asList("apple", "banana", "apricot", "blueberry", "a
 
 // COLLECTING TO COLLECTIONS
 List<String> list = words.stream()
-                                 // => Creates stream from words list
-                                 // => Stream<String> for filtering and collecting
     .filter(w -> w.startsWith("a"))
-                                 // => Predicate: w.startsWith("a") tests first character
-                                 // => Tests: apple(true), banana(false), apricot(true), blueberry(false), avocado(true)
                                  // => Keeps: apple, apricot, avocado
     .collect(Collectors.toList());
-                                 // => Collects to ArrayList (default implementation)
-                                 // => Terminal operation: triggers pipeline execution
-                                 // => Accumulates filtered elements into mutable ArrayList
                                  // => list is [apple, apricot, avocado]
 
 Set<String> set = words.stream()
-                                 // => Creates new stream (streams single-use)
     .collect(Collectors.toSet());
-                                 // => Collects to HashSet (unordered)
-                                 // => Removes duplicates (Set contract)
-                                 // => No ordering guarantee (HashSet uses hash table)
-                                 // => set is {apple, banana, apricot, blueberry, avocado} (order varies)
+                                 // => Collects to HashSet, set is {apple, banana, apricot, blueberry, avocado}
 
 // JOINING STRINGS
 String joined = words.stream()
-                                 // => Creates Stream<String> from words list
-                                 // => Stream contains: apple, banana, apricot, blueberry, avocado
     .collect(Collectors.joining(", "));
-                                 // => joining(delimiter) concatenates with delimiter
-                                 // => Delimiter: ", " (comma + space)
-                                 // => Joins all words with ", " between each
                                  // => joined is "apple, banana, apricot, blueberry, avocado"
 
 String prefixed = words.stream()
-                                 // => Creates new stream (streams are single-use)
     .collect(Collectors.joining(", ", "[", "]"));
-                                 // => joining(delimiter, prefix, suffix)
-                                 // => Delimiter: ", ", Prefix: "[", Suffix: "]"
-                                 // => Wraps joined string with brackets
+                                 // => Wraps with brackets
                                  // => prefixed is "[apple, banana, apricot, blueberry, avocado]"
 
 // GROUPING BY
 Map<Character, List<String>> grouped = words.stream()
-                                 // => Stream<String> for grouping operation
     .collect(Collectors.groupingBy(w -> w.charAt(0)));
-                                 // => groupingBy() partitions by classification function
-                                 // => Lambda: w -> w.charAt(0) extracts first character
-                                 // => Groups words by first letter
-                                 // => Returns Map<Character, List<String>>
-                                 // => Groups: 'a' → [apple, apricot, avocado], 'b' → [banana, blueberry]
+                                 // => Groups by first letter
                                  // => {a=[apple, apricot, avocado], b=[banana, blueberry]}
 
 // COUNTING
 Map<Character, Long> counts = words.stream()
-                                 // => Stream<String> from words list
     .collect(Collectors.groupingBy(w -> w.charAt(0), Collectors.counting()));
-                                 // => groupingBy() with downstream collector
-                                 // => First: group by w.charAt(0) (first character)
-                                 // => Then: count elements in each group
-                                 // => Groups: 'a' → [apple, apricot, avocado], 'b' → [banana, blueberry]
-                                 // => Counts: 'a' → 3, 'b' → 2
-                                 // => Result type: Map<Character, Long>
-                                 // => {a=3, b=2}
+                                 // => Groups and counts: {a=3, b=2}
 
 // PARTITIONING (boolean predicate)
 Map<Boolean, List<String>> partitioned = words.stream()
-                                 // => Stream<String> from words list
     .collect(Collectors.partitioningBy(w -> w.length() > 6));
-                                 // => partitioningBy() creates 2 groups: true/false
-                                 // => Predicate: w.length() > 6 (words longer than 6 chars)
-                                 // => true group: [apricot(7), blueberry(9), avocado(7)]
-                                 // => false group: [apple(5), banana(6)]
-                                 // => Always returns Map with both keys (even if empty)
+                                 // => Splits by length > 6
                                  // => {false=[apple, banana], true=[apricot, blueberry, avocado]}
 
 // MAPPING WITHIN GROUPING
 Map<Character, List<Integer>> lengths = words.stream()
-                                 // => Stream<String> from words list
     .collect(Collectors.groupingBy(
-        w -> w.charAt(0),        // => Groups by first character ('a' or 'b')
-                                 // => Classification function determines groups
+        w -> w.charAt(0),        // => Groups by first character
         Collectors.mapping(String::length, Collectors.toList())
-                                 // => Downstream collector transforms elements
-                                 // => mapping() applies String::length to each word
-                                 // => Then collects results to List
-                                 // => 'a' group: apple→5, apricot→7, avocado→7
-                                 // => 'b' group: banana→6, blueberry→9
+                                 // => Maps to lengths within groups
     ));
-                                 // => Result: Map<Character, List<Integer>>
                                  // => {a=[5, 7, 7], b=[6, 9]}
 
 // CUSTOM COLLECTOR - joining with custom logic
@@ -1825,7 +1495,7 @@ Map<String, Object> stats = words.stream()
 
 ---
 
-## Example 42: Method References and Function Composition
+## Example 44: Method References and Function Composition
 
 Method references provide shorthand for lambdas that delegate to existing methods. Composing functions creates reusable transformation pipelines.
 
@@ -1839,69 +1509,46 @@ import java.util.function.*;
 
 // 1. STATIC METHOD REFERENCE
 Function<String, Integer> parser1 = Integer::parseInt;
-                                 // => Method reference to static method
-                                 // => Integer::parseInt refers to Integer.parseInt(String)
                                  // => Equivalent to: s -> Integer.parseInt(s)
-                                 // => Type: Function<String, Integer> (String → Integer)
-int value = parser1.apply("123"); // => Applies function to "123" string
+                                 // => Type: Function<String, Integer>
+int value = parser1.apply("123");
                                  // => Calls Integer.parseInt("123")
-                                 // => Parses string to int, boxes to Integer
                                  // => value is 123
 
 // 2. INSTANCE METHOD REFERENCE (on particular object)
-String prefix = "Hello, ";       // => String object to bind to method reference
-                                 // => Specific instance (not any String)
+String prefix = "Hello, ";
 Function<String, String> greeter = prefix::concat;
-                                 // => Method reference to instance method on specific object
-                                 // => prefix::concat refers to prefix.concat(String)
                                  // => Captures 'prefix' variable (bound method reference)
                                  // => Equivalent to: s -> prefix.concat(s)
 String greeting = greeter.apply("World");
-                                 // => Applies function to "World" argument
                                  // => Calls prefix.concat("World")
-                                 // => Concatenates "Hello, " + "World"
                                  // => greeting is "Hello, World"
 
 // 3. INSTANCE METHOD REFERENCE (on arbitrary object)
 Function<String, Integer> lengthGetter = String::length;
-                                 // => Method reference to instance method on any String
-                                 // => String::length refers to any String's length() method
-                                 // => Equivalent to: s -> s.length()
                                  // => Calls length() on parameter (not specific object)
-                                 // => Type: Function<String, Integer>
+                                 // => Equivalent to: s -> s.length()
 int length = lengthGetter.apply("test");
-                                 // => Applies function to "test" string argument
-                                 // => "test" becomes receiver object for length()
                                  // => "test".length() returns 4
                                  // => length is 4
 
 // 4. CONSTRUCTOR REFERENCE
 Supplier<List<String>> listMaker = ArrayList::new;
                                  // => Equivalent to: () -> new ArrayList<>()
-                                 // => References no-arg constructor
-                                 // => Type: Supplier<List<String>>
 List<String> list = listMaker.get();
-                                 // => Calls ArrayList::new (creates new ArrayList)
                                  // => list is empty ArrayList<String>
 
 Function<String, Person> personMaker = Person::new;
-                                 // => References Person constructor taking String
+                                 // => References Person(String name) constructor
                                  // => Equivalent to: name -> new Person(name)
-                                 // => Calls Person(String name) constructor
 
 // FUNCTION COMPOSITION - chaining transformations
 Function<String, String> trim = String::trim;
-                                 // => Function: removes leading/trailing whitespace
 Function<String, String> upper = String::toUpperCase;
-                                 // => Function: converts to uppercase
 Function<String, Integer> length = String::length;
-                                 // => Function: returns string length
 
 Function<String, Integer> pipeline = trim.andThen(upper).andThen(length);
-                                 // => andThen() chains functions left-to-right
-                                 // => trim first, then upper, then length
-                                 // => Type: Function<String, Integer>
-                                 // => Execution order: trim → upper → length
+                                 // => andThen() chains left-to-right: trim → upper → length
 int result = pipeline.apply("  hello  ");
                                  // => Step 1: trim("  hello  ") → "hello"
                                  // => Step 2: upper("hello") → "HELLO"
@@ -1910,58 +1557,39 @@ int result = pipeline.apply("  hello  ");
 
 Function<String, Integer> composed = length.compose(upper).compose(trim);
                                  // => compose() chains right-to-left (reverse order)
-                                 // => trim first, then upper, then length
                                  // => Same result as andThen, different syntax
 
 // PREDICATE COMPOSITION - combining conditions
 Predicate<String> startsWithA = s -> s.startsWith("a");
-                                 // => Predicate: tests if string starts with 'a'
 Predicate<String> longerThan5 = s -> s.length() > 5;
-                                 // => Predicate: tests if string length > 5
 
 Predicate<String> combined = startsWithA.and(longerThan5);
-                                 // => and() creates logical AND predicate
-                                 // => Both conditions must be true
-                                 // => Type: Predicate<String>
+                                 // => Logical AND: both conditions must be true
 boolean test1 = combined.test("apple");
-                                 // => "apple" starts with 'a': true
-                                 // => "apple".length() is 5, not > 5: false
+                                 // => "apple" starts with 'a': true, length 5 not > 5: false
                                  // => AND result: false
 boolean test2 = combined.test("apricot");
-                                 // => "apricot" starts with 'a': true
-                                 // => "apricot".length() is 7 > 5: true
+                                 // => "apricot" starts with 'a': true, length 7 > 5: true
                                  // => AND result: true
 
 Predicate<String> either = startsWithA.or(longerThan5);
-                                 // => or() creates logical OR predicate
-                                 // => At least one condition must be true
-                                 // => Type: Predicate<String>
+                                 // => Logical OR: at least one condition must be true
 
 Predicate<String> negated = startsWithA.negate();
-                                 // => negate() inverts predicate result
-                                 // => Returns true if string does NOT start with 'a'
+                                 // => Inverts result: true if does NOT start with 'a'
 
 // PRACTICAL EXAMPLE - reusable transformations
 List<String> inputs = Arrays.asList("  apple  ", "  BANANA  ", "  cherry  ");
-                                 // => Input list with whitespace and mixed case
 
 List<String> processed = inputs.stream()
-                                 // => Creates Stream<String> from list
-    .map(String::trim)           // => Method reference: removes whitespace
-                                 // => "  apple  " → "apple"
-                                 // => "  BANANA  " → "BANANA"
-                                 // => "  cherry  " → "cherry"
-    .map(String::toLowerCase)    // => Method reference: converts to lowercase
-                                 // => "apple" → "apple" (no change)
-                                 // => "BANANA" → "banana"
-                                 // => "cherry" → "cherry" (no change)
+    .map(String::trim)           // => Removes whitespace
+                                 // => ["apple", "BANANA", "cherry"]
+    .map(String::toLowerCase)    // => Converts to lowercase
+                                 // => ["apple", "banana", "cherry"]
     .filter(s -> s.length() > 5)
-                                 // => Lambda predicate: keeps strings with length > 5
-                                 // => "apple" (5 chars): false (filtered out)
-                                 // => "banana" (6 chars): true (kept)
-                                 // => "cherry" (6 chars): true (kept)
+                                 // => Keeps strings longer than 5 chars
+                                 // => ["banana", "cherry"] (apple filtered out)
     .collect(Collectors.toList());
-                                 // => Collects remaining elements to List
                                  // => processed is ["banana", "cherry"]
 ```
 
@@ -1971,7 +1599,7 @@ List<String> processed = inputs.stream()
 
 ---
 
-## Example 43: NIO.2 File Operations and Path API
+## Example 45: NIO.2 File Operations and Path API
 
 NIO.2 (java.nio.file) provides modern file I/O with Path abstraction, symbolic link support, and directory traversal. It replaces legacy java.io.File with clearer semantics.
 
@@ -1984,138 +1612,85 @@ import java.util.stream.Stream;
 
 // PATH OPERATIONS - modern file path abstraction
 Path path = Paths.get("data", "file.txt");
-                                 // => Factory method creates Path object
-                                 // => Paths.get(String first, String... more) joins components
-                                 // => Joins path components with system separator (/ on Unix, \ on Windows)
-                                 // => Creates path to data/file.txt
-                                 // => Type: Path (interface, implementation varies by OS: UnixPath, WindowsPath, etc.)
-                                 // => This is relative path (not absolute from root)
+                                 // => Joins path components with system separator (/ or \)
+                                 // => Creates path to data/file.txt (relative path)
+                                 // => Path is interface, implementation varies by OS
 Path absolute = path.toAbsolutePath();
-                                 // => Converts relative path to absolute
-                                 // => Prepends current working directory (System.getProperty("user.dir"))
-                                 // => Example: /home/user/project/data/file.txt (on Unix)
-                                 // => Example: C:\Users\user\project\data\file.txt (on Windows)
-                                 // => Returns new Path instance (doesn't modify original)
+                                 // => Prepends current working directory
+                                 // => Example: /home/user/project/data/file.txt
+                                 // => Returns new Path instance
 Path parent = path.getParent();
                                  // => Extracts parent directory path
-                                 // => Removes last component ("file.txt")
                                  // => parent is "data" (Path object, not String)
-                                 // => Returns null if path has no parent (e.g., root or single component)
 Path filename = path.getFileName();
-                                 // => Extracts file name component
                                  // => Gets last component of path
                                  // => filename is "file.txt" (Path object, not String)
-                                 // => Returns null for empty path
 
 // FILE OPERATIONS
 try {
     // Create file
     Files.createFile(path);      // => Creates empty file at path
-                                 // => Throws FileAlreadyExistsException if file exists
-                                 // => Throws NoSuchFileException if parent directory doesn't exist
-                                 // => Atomic operation (guaranteed by OS, file appears fully created or not at all)
-                                 // => Sets default file permissions based on OS
+                                 // => Atomic operation, throws if file exists
 
     // Write content
     String content = "Hello, NIO.2!";
-                                 // => Content string to write
-                                 // => String literal in memory
+                                 // => String to write to file
     Files.writeString(path, content);
-                                 // => Writes string to file using UTF-8
-                                 // => Java 11+ convenience method
-                                 // => Overwrites existing content completely (not append)
-                                 // => Creates file if doesn't exist
-                                 // => Convenient for small text files (entire content in memory)
-                                 // => Equivalent to: Files.write(path, content.getBytes(UTF_8))
+                                 // => Writes string to file using UTF-8 (Java 11+)
+                                 // => Overwrites existing content (not append)
 
     // Read content
     String read = Files.readString(path);
-                                 // => Reads entire file into String
-                                 // => Java 11+ convenience method
-                                 // => Uses UTF-8 encoding by default
+                                 // => Reads entire file into String (UTF-8)
                                  // => read is "Hello, NIO.2!"
-                                 // => Suitable for small files (loads all into memory)
-                                 // => Large files: OutOfMemoryError risk
-                                 // => Equivalent to: new String(Files.readAllBytes(path), UTF_8)
+                                 // => Loads all into memory (OutOfMemoryError risk for large files)
 
     // Append content
     Files.writeString(path, "\nNew line", StandardOpenOption.APPEND);
-                                 // => StandardOpenOption.APPEND: adds to end
-                                 // => "\n" creates new line before text (platform-specific: \n on Unix, \r\n on Windows)
-                                 // => Preserves existing content
-                                 // => Opens file, seeks to end, writes, closes
+                                 // => APPEND: adds to end, preserves existing content
                                  // => File now contains 2 lines
-                                 // => Other options: CREATE, TRUNCATE_EXISTING, etc.
 
     // Read all lines
     List<String> lines = Files.readAllLines(path);
-                                 // => Reads file, splits by line breaks
-                                 // => Detects \n, \r\n, or \r as line separators (platform-independent)
-                                 // => Returns List<String> with each line
+                                 // => Splits by line breaks, returns List<String>
                                  // => lines is ["Hello, NIO.2!", "New line"]
-                                 // => Entire file loaded into memory (ArrayList)
-                                 // => Line separators stripped from each line (not included)
+                                 // => Loads entire file into memory
 
     // STREAMING LINES (for large files)
     try (Stream<String> stream = Files.lines(path)) {
-                                 // => Creates Stream<String> lazily reading lines
-                                 // => Efficient for large files (doesn't load all into memory)
-                                 // => Reads lines on-demand as stream processes
-                                 // => Uses BufferedReader internally
-                                 // => try-with-resources ensures stream closed (CRITICAL: prevents resource leak)
-                                 // => Stream must be closed to release file handle
+                                 // => Lazy stream reads lines on-demand (efficient for large files)
+                                 // => try-with-resources ensures stream closed (CRITICAL for resource cleanup)
         stream.filter(line -> line.startsWith("Hello"))
-                                 // => Filters lines starting with "Hello"
-                                 // => Lazy intermediate operation (doesn't execute until terminal)
-                                 // => Predicate: line.startsWith("Hello")
-                                 // => Tests: "Hello, NIO.2!" (true), "New line" (false)
-                                 // => Keeps only: "Hello, NIO.2!"
+                                 // => Keeps only lines starting with "Hello"
               .forEach(System.out::println);
-                                 // => Prints each matching line
-                                 // => Terminal operation (triggers stream processing)
-                                 // => Method reference: System.out::println
                                  // => Output: Hello, NIO.2!
-    }                            // => Stream auto-closed here
-                                 // => try-with-resources calls stream.close()
-                                 // => Releases underlying BufferedReader and file handle
+    }
 
     // FILE METADATA
     boolean exists = Files.exists(path);
-                                 // => Checks if file exists on filesystem
                                  // => exists is true (we just created it)
     boolean isReadable = Files.isReadable(path);
                                  // => Checks read permission
-                                 // => isReadable likely true (depends on permissions)
     boolean isDirectory = Files.isDirectory(path);
-                                 // => Tests if path is directory
                                  // => isDirectory is false (it's a file)
     long size = Files.size(path);
                                  // => Returns file size in bytes
-                                 // => size depends on content written
 
     // COPY and MOVE
     Path backup = Paths.get("data", "backup.txt");
-                                 // => Target path for copy operation
+                                 // => Target path for copy
     Files.copy(path, backup, StandardCopyOption.REPLACE_EXISTING);
-                                 // => Copies file to backup location
-                                 // => REPLACE_EXISTING: overwrites if backup.txt exists
-                                 // => Creates new file with same content
+                                 // => Copies file, REPLACE_EXISTING overwrites if exists
 
     Path moved = Paths.get("data", "moved.txt");
-                                 // => Target path for move operation
+                                 // => Target path for move
     Files.move(backup, moved, StandardCopyOption.ATOMIC_MOVE);
-                                 // => Moves backup.txt to moved.txt
                                  // => ATOMIC_MOVE: guaranteed atomic on same filesystem
                                  // => backup.txt deleted, moved.txt created
-                                 // => Original path (backup) no longer exists
 
     // DELETE
-    Files.delete(moved);         // => Deletes moved.txt file
-                                 // => Throws NoSuchFileException if file doesn't exist
-                                 // => Throws DirectoryNotEmptyException if directory with contents
-    Files.deleteIfExists(path);  // => Deletes file.txt if it exists
-                                 // => Returns boolean: true if deleted, false if didn't exist
-                                 // => No exception if file not found
+    Files.delete(moved);         // => Deletes file, throws if not found
+    Files.deleteIfExists(path);  // => Returns boolean, no exception if not found
 
 } catch (IOException e) {
     e.printStackTrace();
@@ -2124,60 +1699,35 @@ try {
 // DIRECTORY OPERATIONS
 try {
     Path dir = Paths.get("mydir");
-                                 // => Creates Path to directory "mydir"
-                                 // => Relative path from current directory
+                                 // => Path to directory
     Files.createDirectory(dir);  // => Creates single directory
-                                 // => Throws NoSuchFileException if parent doesn't exist
-                                 // => Throws FileAlreadyExistsException if directory already exists
-                                 // => Atomic operation (directory fully created or not at all)
-                                 // => Sets default directory permissions
+                                 // => Throws if parent doesn't exist or dir already exists
 
     Path nested = Paths.get("my/nested/dir");
                                  // => Path to deeply nested directory
-                                 // => Three-level hierarchy: my/nested/dir
     Files.createDirectories(nested);
                                  // => Creates all parent directories if needed
-                                 // => Idempotent: doesn't fail if directories exist
-                                 // => Creates "my", "my/nested", "my/nested/dir" in sequence
-                                 // => Equivalent to: mkdir -p (Unix)
-                                 // => No error if directory already exists (unlike createDirectory)
+                                 // => Idempotent: no error if directories exist (unlike createDirectory)
 
     // LIST DIRECTORY CONTENTS
     try (Stream<Path> paths = Files.list(dir)) {
-                                 // => Returns Stream<Path> of direct children
-                                 // => NOT recursive (only immediate children, no subdirectories' contents)
-                                 // => Returns both files and subdirectories at this level
-                                 // => Order not guaranteed (depends on filesystem)
-                                 // => try-with-resources closes stream (releases directory handle)
+                                 // => Returns direct children only (NOT recursive)
+                                 // => try-with-resources releases directory handle
         paths.forEach(System.out::println);
-                                 // => Prints each child path
-                                 // => Method reference: System.out::println
                                  // => Output: one line per file/directory in mydir
-                                 // => Path printed as absolute or relative depending on dir
     }
 
     // WALK DIRECTORY TREE (recursive)
     try (Stream<Path> paths = Files.walk(nested)) {
-                                 // => Returns Stream<Path> recursively traversing tree
-                                 // => Includes all descendants (files and directories)
-                                 // => Depth-first traversal (visits subdirectories before siblings)
-                                 // => Default: unlimited depth (visits entire tree)
-                                 // => Overload: Files.walk(path, maxDepth) limits depth
-                                 // => CRITICAL: Must close stream to release directory handles
+                                 // => Recursively traverses entire tree (depth-first)
+                                 // => CRITICAL: Must close stream to release handles
         paths.filter(Files::isRegularFile)
                                  // => Filters to only regular files (not directories)
-                                 // => Method reference to Files.isRegularFile(Path)
-                                 // => Predicate<Path>: returns true for files, false for directories
-                                 // => Excludes directories, symlinks, special files
              .forEach(System.out::println);
-                                 // => Prints path of each file in tree
-                                 // => Method reference: System.out::println
                                  // => Output: all files in nested and subdirectories
-                                 // => Each file path printed on separate line
     }
 
 } catch (IOException e) {
-                                 // => Handles I/O exceptions from directory operations
     e.printStackTrace();
 }
 ```
@@ -2188,7 +1738,7 @@ try {
 
 ---
 
-## Example 44: Thread Basics and Runnable
+## Example 46: Thread Basics and Runnable
 
 Threads enable concurrent execution. Java provides Runnable interface for defining thread tasks and Thread class for execution management.
 
@@ -2197,45 +1747,27 @@ Threads enable concurrent execution. Java provides Runnable interface for defini
 ```java
 // RUNNABLE - task to execute in thread
 class PrintTask implements Runnable {
-                                 // => Implements Runnable functional interface
-                                 // => Runnable has single method: void run()
-                                 // => Defines task to execute in thread
+                                 // => Runnable: functional interface with single run() method
     private final String message;
                                  // => Immutable message field (thread-safe)
-                                 // => final: cannot be reassigned after construction
-                                 // => Each PrintTask instance has own message
 
     public PrintTask(String message) {
-                                 // => Constructor initializes task
-                                 // => Parameter: message to print in loop
         this.message = message;  // => Stores message for run() method
-                                 // => Assigns constructor parameter to instance field
     }
 
     @Override
     public void run() {          // => Executed when thread starts
-                                 // => This code runs in separate thread (not main thread)
-                                 // => void return type (cannot return value from thread)
+                                 // => Runs in separate thread (not main thread)
                                  // => Exceptions thrown here don't propagate to caller
         for (int i = 0; i < 5; i++) {
-                                 // => Loop 5 times (iterations 0-4)
-                                 // => Each iteration prints and sleeps
             System.out.println(message + " " + i);
-                                 // => Output: message + iteration number
-                                 // => Concatenates: "Thread-1 0", "Thread-1 1", etc.
-                                 // => System.out synchronized (thread-safe printing)
+                                 // => Output: "Thread-1 0", "Thread-1 1", etc.
             try {
                 Thread.sleep(100); // => Pause 100ms (yields CPU to other threads)
-                                 // => Puts thread in TIMED_WAITING state
-                                 // => Allows context switching (scheduler runs other threads)
-                                 // => Releases CPU but not locks
+                                 // => TIMED_WAITING state, releases CPU but not locks
             } catch (InterruptedException e) {
                                  // => Thrown if thread interrupted during sleep
-                                 // => InterruptedException: checked exception
-                                 // => Happens when another thread calls interrupt()
                 e.printStackTrace();
-                                 // => Print stack trace to stderr
-                                 // => Shows where interruption occurred
             }
         }
     }
@@ -2244,81 +1776,49 @@ class PrintTask implements Runnable {
 // CREATE AND START THREADS
 Thread thread1 = new Thread(new PrintTask("Thread-1"));
                                  // => Creates Thread with Runnable task
-                                 // => PrintTask implements Runnable interface
-                                 // => Thread(Runnable target) constructor
                                  // => Thread not started yet (NEW state)
-                                 // => No OS resources allocated yet (lightweight)
 Thread thread2 = new Thread(new PrintTask("Thread-2"));
-                                 // => Second independent thread
-                                 // => Each has separate execution context
-                                 // => Different Runnable instance (different message)
-                                 // => Also in NEW state
+                                 // => Second independent thread with separate execution context
 
 thread1.start();                 // => Starts thread (calls run() in new thread)
-                                 // => Creates OS thread (allocates stack, registers with scheduler)
-                                 // => Transitions NEW → RUNNABLE state
-                                 // => run() executes concurrently with main thread
+                                 // => NEW → RUNNABLE state, allocates OS thread
                                  // => Calling start() twice throws IllegalThreadStateException
-thread2.start();                 // => Starts second thread concurrently
-                                 // => Both threads execute independently
-                                 // => Both compete for CPU time (scheduled by OS)
+thread2.start();                 // => Both threads execute concurrently
                                  // => Output interleaved (non-deterministic order)
                                  // => Example: Thread-1 0, Thread-2 0, Thread-1 1...
-                                 // => Order depends on scheduler (cannot predict)
 
 // WAIT FOR COMPLETION
 try {
     thread1.join();              // => Blocks until thread1 completes
-                                 // => Main thread waits for thread1 to finish
                                  // => Main thread enters WAITING state (releases CPU)
-                                 // => Resumes when thread1 terminates (enters TERMINATED state)
-                                 // => Ensures thread1 done before proceeding
     thread2.join();              // => Blocks until thread2 completes
-                                 // => Main thread waits for thread2 to finish
                                  // => Both threads guaranteed finished after this
-                                 // => Alternative: join(millisTimeout) waits max time
 } catch (InterruptedException e) {
                                  // => Thrown if waiting thread interrupted
-                                 // => Happens when another thread calls mainThread.interrupt()
-                                 // => InterruptedException: checked exception
-    e.printStackTrace();         // => Print exception details
-                                 // => Shows which join() was interrupted
+    e.printStackTrace();
 }
 
 // LAMBDA SYNTAX (Java 8+)
 Thread thread3 = new Thread(() -> {
                                  // => Lambda implements Runnable.run()
-                                 // => Runnable is functional interface (single abstract method)
-                                 // => () -> { ... } syntax replaces anonymous class
                                  // => Concise syntax for simple tasks
     System.out.println("Lambda thread running");
                                  // => Output: Lambda thread running
-                                 // => Executes in separate thread when started
 });
 thread3.start();                 // => Starts thread executing lambda
-                                 // => Lambda code runs in new thread
-                                 // => Much shorter than implementing Runnable class
 
 // THREAD PROPERTIES
 Thread current = Thread.currentThread();
                                  // => Gets reference to currently executing thread
-                                 // => Static method: returns thread that calls it
-                                 // => In main: returns main thread
-                                 // => In thread1: would return thread1 reference
+                                 // => Static method, returns thread that calls it
 String name = current.getName();
-                                 // => Thread name (default: Thread-N)
-                                 // => name might be "main" if in main thread
-                                 // => Can set custom name: thread.setName("CustomName")
+                                 // => Thread name (default: "Thread-N")
+                                 // => Can set: thread.setName("CustomName")
 long id = current.getId();       // => Unique thread ID (positive long)
                                  // => Assigned by JVM, never reused
-                                 // => Monotonically increasing (1, 2, 3, ...)
-                                 // => Example: 1 (main thread), 2, 3, ...
 int priority = current.getPriority();
-                                 // => Priority hint for scheduler (1-10)
-                                 // => Default: 5 (Thread.NORM_PRIORITY)
-                                 // => MIN_PRIORITY=1, NORM_PRIORITY=5, MAX_PRIORITY=10
+                                 // => Priority hint for scheduler (1-10, default: 5)
                                  // => Higher priority MAY get more CPU time (not guaranteed)
-                                 // => OS scheduler has final say (priority is hint)
 ```
 
 **Key Takeaway**: Implement Runnable to define thread tasks, create Thread objects wrapping Runnable, and call start() to begin execution. Use join() to wait for thread completion. Never call run() directly—it executes in current thread without concurrency.
@@ -2327,7 +1827,7 @@ int priority = current.getPriority();
 
 ---
 
-## Example 45: Synchronization and Thread Safety
+## Example 47: Synchronization and Thread Safety
 
 Shared mutable state requires synchronization to prevent race conditions. Java provides synchronized keyword, locks, and atomic classes for thread safety.
 
@@ -2539,7 +2039,7 @@ System.out.println("Final count: " + counter.getCount());
 
 ---
 
-## Example 46: ExecutorService and Thread Pools
+## Example 48: ExecutorService and Thread Pools
 
 ExecutorService manages thread pools for executing tasks without manual Thread creation. It provides lifecycle management, Future results, and efficient thread reuse.
 
@@ -2702,7 +2202,7 @@ try {
 
 ---
 
-## Example 47: CompletableFuture for Async Programming
+## Example 49: CompletableFuture for Async Programming
 
 CompletableFuture enables composable asynchronous operations with functional-style transformations. It replaces callback hell with declarative async pipelines.
 
@@ -2878,7 +2378,7 @@ Modern Java idioms leverage features from Java 17+ (records, sealed classes, pat
 
 ---
 
-## Example 48: Records for Immutable Data
+## Example 50: Records for Immutable Data
 
 Records provide concise syntax for immutable data carriers, automatically generating constructors, getters, equals(), hashCode(), and toString().
 
@@ -2898,16 +2398,28 @@ graph TD
 ```java
 // TRADITIONAL CLASS - verbose
 public final class Payment {
+    // => Pre-record approach: manual immutability
+    // => final: prevents inheritance (security/design)
     private final BigDecimal amount;
+        // => Immutable field: cannot be changed after construction
+        // => BigDecimal: precise decimal math for money
     private final LocalDate date;
+        // => Immutable field: payment date
+        // => LocalDate: date without time component
 
     public Payment(BigDecimal amount, LocalDate date) {
+        // => Constructor: manually assign all fields
+        // => No validation (caller responsibility)
         this.amount = amount;
+            // => Field assignment (manual)
         this.date = date;
+            // => Field assignment (manual)
     }
 
     public BigDecimal amount() { return amount; }
+        // => Getter without "get" prefix (record-style naming)
     public LocalDate date() { return date; }
+        // => Getter without "get" prefix
 
     @Override
     public boolean equals(Object o) {
@@ -2915,75 +2427,110 @@ public final class Payment {
         // => Compares all fields for structural equality
         // => Handles null and type checking
         if (this == o) return true;
+            // => Same reference: equal
         if (o == null || getClass() != o.getClass()) return false;
+            // => Null or different class: not equal
         Payment payment = (Payment) o;
+            // => Safe cast after type check
         return Objects.equals(amount, payment.amount) &&
                Objects.equals(date, payment.date);
+            // => Field-by-field equality (null-safe)
     }
 
     @Override
     public int hashCode() {
         // => Generates hash from all fields
+        // => Required: equals() overridden → hashCode() must match
         return Objects.hash(amount, date);
+            // => Consistent hash based on fields
     }
 
     @Override
     public String toString() {
         // => String representation for debugging
+        // => Format: ClassName{field=value, ...}
         return "Payment{amount=" + amount + ", date=" + date + '}';
+            // => Manual string concatenation
     }
 }
 
 // RECORD - concise (Java 17+)
 public record PaymentRecord(
+    // => Record declaration: replaces 50+ lines of boilerplate
+    // => Automatically: final class, private final fields, constructor, getters, equals, hashCode, toString
     BigDecimal amount,       // => Final field, auto-getter: amount()
                              // => Immutable: no setter generated
+                             // => Component: not "field" until after compact constructor
     LocalDate date           // => Final field, auto-getter: date()
+                             // => Component: parameter-like until initialization
 ) {
     // COMPACT CONSTRUCTOR - validation only
     public PaymentRecord {   // => No parameter list (uses record components)
                              // => Runs BEFORE field initialization
                              // => Validates before assignment (fail-fast)
+                             // => Compact form: no explicit field assignment needed
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
                              // => Business rule: amount must be positive
+                             // => amount is component parameter here (not field yet)
             throw new IllegalArgumentException("Amount must be positive");
                              // => Throws immediately (object never created)
+                             // => No partial construction: all-or-nothing
         }
         Objects.requireNonNull(date, "Date required");
                              // => Null check with custom message
                              // => Prevents null dates
+                             // => date is component parameter here
         // => After this block: fields initialized to params
+        // => Automatic: this.amount = amount; this.date = date;
         // => No explicit this.amount = amount needed
     }
 
     // DERIVED METHODS - business logic
     public boolean isRecent() {
         // => Custom method beyond auto-generated ones
+        // => Can add domain logic to records
         return date.isAfter(LocalDate.now().minusDays(30));
+                             // => LocalDate.now() = current date
+                             // => minusDays(30) = 30 days ago
+                             // => isAfter checks if payment date > threshold
                              // => Returns true if within last 30 days
     }
 }
 
 // USAGE
 PaymentRecord payment = new PaymentRecord(
+    // => Create record instance via canonical constructor
     new BigDecimal("150.00"),// => amount field
+                             // => String constructor for exact decimal
     LocalDate.of(2026, 1, 15)// => date field
+                             // => Static factory: year, month, day
 );                           // => Compact constructor runs validation
+                             // => amount > 0 ✓, date != null ✓
                              // => Fields initialized after validation passes
+                             // => payment = PaymentRecord[amount=150.00, date=2026-01-15]
 
 System.out.println(payment.amount());
-                             // => Output: 150.00
                              // => Auto-generated getter (no get prefix)
+                             // => payment.amount() returns BigDecimal 150.00
+                             // => Output: 150.00
 System.out.println(payment.date());
+                             // => Auto-generated getter
+                             // => payment.date() returns LocalDate 2026-01-15
                              // => Output: 2026-01-15
 System.out.println(payment);
+                             // => Auto-generated toString()
+                             // => Format: RecordName[field=value, field=value]
                              // => Output: PaymentRecord[amount=150.00, date=2026-01-15]
-                             // => Auto-generated toString with field names
+                             // => Field names included (better debugging than traditional)
 
 PaymentRecord copy = new PaymentRecord(payment.amount(), payment.date());
                              // => Records have no setters (immutable)
                              // => Create new instance to "modify"
+                             // => copy = PaymentRecord[amount=150.00, date=2026-01-15]
 System.out.println(payment.equals(copy));
+                             // => Auto-generated equals() compares all fields
+                             // => payment.amount == copy.amount ✓
+                             // => payment.date == copy.date ✓
                              // => Output: true
                              // => Auto-generated structural equality
 ```
@@ -2994,7 +2541,7 @@ System.out.println(payment.equals(copy));
 
 ---
 
-## Example 49: Sealed Classes for Closed Hierarchies
+## Example 51: Sealed Classes for Closed Hierarchies
 
 Sealed classes restrict which classes can extend or implement them, enabling exhaustive pattern matching and domain modeling.
 
@@ -3017,120 +2564,200 @@ graph TD
 ```java
 // SEALED INTERFACE - restricts implementors
 public sealed interface TransactionType
+    // => sealed: restricts which types can implement this interface
+    // => Java 17+ feature for closed type hierarchies
     permits CashTransaction, CardTransaction, BankTransfer {
                              // => Only these 3 classes can implement
                              // => Compiler prevents other implementations
+                             // => permits clause is exhaustive list
                              // => Enables exhaustive pattern matching
+                             // => All permitted types must be in same module/package
 
     BigDecimal amount();     // => All subtypes must provide amount
+                             // => Abstract method: no implementation here
     String description();    // => Common interface method
+                             // => Each subtype provides specific description
 }
 
 // PERMITTED IMPLEMENTATIONS
 public final class CashTransaction implements TransactionType {
                              // => final prevents further subclassing
                              // => Must be in permits clause above
+                             // => Implements sealed interface
     private final BigDecimal amount;
+        // => Immutable field: transaction amount
     private final String currency;
+        // => Immutable field: currency code (USD, EUR, etc.)
 
     public CashTransaction(BigDecimal amount, String currency) {
+        // => Constructor: initialize cash transaction
         this.amount = amount;
+            // => Store transaction amount
         this.currency = currency;
+            // => Store currency code
     }
 
     @Override
-    public BigDecimal amount() { return amount; }
+    public BigDecimal amount() {
+        // => Implement abstract method from interface
+        return amount;
+            // => Return transaction amount
+    }
 
     @Override
     public String description() {
+        // => Implement abstract method from interface
+        // => Provide cash-specific description format
         return "Cash: " + amount + " " + currency;
+                             // => Example: "Cash: 100.00 USD"
                              // => Returns: "Cash: 100.00 USD"
     }
 }
 
 public final class CardTransaction implements TransactionType {
                              // => Second permitted subtype
+                             // => final: no further subclassing
+                             // => Must be listed in permits clause
     private final BigDecimal amount;
+        // => Transaction amount for card payment
     private final String last4Digits;
+        // => Last 4 digits of card number (security)
+        // => Don't store full card number
 
     public CardTransaction(BigDecimal amount, String last4Digits) {
+        // => Constructor: initialize card transaction
         this.amount = amount;
+            // => Store payment amount
         this.last4Digits = last4Digits;
+            // => Store last 4 digits for display
     }
 
     @Override
-    public BigDecimal amount() { return amount; }
+    public BigDecimal amount() {
+        // => Implement interface method
+        return amount;
+            // => Return card payment amount
+    }
 
     @Override
     public String description() {
+        // => Implement interface method
+        // => Card-specific description format
         return "Card ending " + last4Digits + ": " + amount;
+                             // => Example: "Card ending 1234: 50.00"
                              // => Returns: "Card ending 1234: 50.00"
     }
 }
 
 public final class BankTransfer implements TransactionType {
                              // => Third permitted subtype
+                             // => final: closes inheritance hierarchy
+                             // => Must be in permits clause
     private final BigDecimal amount;
+        // => Transfer amount
     private final String accountNumber;
+        // => Destination account number
 
     public BankTransfer(BigDecimal amount, String accountNumber) {
+        // => Constructor: initialize bank transfer
         this.amount = amount;
+            // => Store transfer amount
         this.accountNumber = accountNumber;
+            // => Store destination account
     }
 
     @Override
-    public BigDecimal amount() { return amount; }
+    public BigDecimal amount() {
+        // => Implement interface method
+        return amount;
+            // => Return transfer amount
+    }
 
     @Override
     public String description() {
+        // => Implement interface method
+        // => Bank transfer specific format
         return "Bank transfer to " + accountNumber + ": " + amount;
+                             // => Example: "Bank transfer to 123456: 200.00"
                              // => Returns: "Bank transfer to 123456: 200.00"
     }
 }
 
 // EXHAUSTIVE PATTERN MATCHING (Java 21+)
 public String processTransaction(TransactionType txn) {
+    // => Pattern matching switch expression (Java 21+)
+    // => txn: sealed type (TransactionType)
     return switch (txn) {    // => Compiler checks ALL permitted types covered
                              // => No default case needed (exhaustiveness guaranteed)
+                             // => Sealed interface permits exactly 3 types
+                             // => Switch must handle all 3
         case CashTransaction c ->
                              // => Matches CashTransaction, binds to 'c'
                              // => No casting needed (pattern variable)
+                             // => c has type CashTransaction (compile-time known)
             "Processing cash: " + c.description();
+                             // => Calls CashTransaction.description()
+                             // => c.description() returns "Cash: 100.00 USD"
                              // => Returns: "Processing cash: Cash: 100.00 USD"
 
         case CardTransaction card ->
                              // => Matches CardTransaction, binds to 'card'
+                             // => card has type CardTransaction
             "Processing card: " + card.description();
+                             // => Calls CardTransaction.description()
+                             // => card.description() returns "Card ending 1234: 50.00"
                              // => Returns: "Processing card: Card ending 1234: 50.00"
 
         case BankTransfer bank ->
                              // => Matches BankTransfer, binds to 'bank'
+                             // => bank has type BankTransfer
             "Processing bank: " + bank.description();
+                             // => Calls BankTransfer.description()
+                             // => bank.description() returns "Bank transfer to 123456: 200.00"
                              // => Returns: "Processing bank: Bank transfer to 123456: 200.00"
         // => No default needed: compiler knows these are ALL types
         // => If permits clause changes, compiler errors here (catches bugs)
+        // => Exhaustiveness check: all 3 types covered ✓
     };
 }
 
 // USAGE
 TransactionType txn1 = new CashTransaction(
+    // => Create CashTransaction (permitted type)
+    // => Assign to sealed interface type
     new BigDecimal("100.00"),// => amount
+                             // => Precise decimal for money
     "USD"                    // => currency
+                             // => US Dollar
 );
+    // => txn1 = CashTransaction instance
+    // => Stored as TransactionType (interface reference)
 System.out.println(processTransaction(txn1));
+                             // => Calls processTransaction with CashTransaction
+                             // => Switch matches CashTransaction case
+                             // => Returns "Processing cash: Cash: 100.00 USD"
                              // => Output: Processing cash: Cash: 100.00 USD
 
 TransactionType txn2 = new CardTransaction(
+    // => Create CardTransaction (permitted type)
     new BigDecimal("50.00"), // => amount
+                             // => Payment amount
     "1234"                   // => last 4 digits
+                             // => Security: partial card number
 );
+    // => txn2 = CardTransaction instance
+    // => Stored as TransactionType
 System.out.println(processTransaction(txn2));
+                             // => Calls processTransaction with CardTransaction
+                             // => Switch matches CardTransaction case
+                             // => Returns "Processing card: Card ending 1234: 50.00"
                              // => Output: Processing card: Card ending 1234: 50.00
 
 // COMPILE ERROR if trying to add new implementation
 // public final class CheckTransaction implements TransactionType {
 //                               // => Compiler error: not in permits clause
 //                               // => Cannot implement sealed interface
+//                               // => Only CashTransaction, CardTransaction, BankTransfer permitted
 // }
 ```
 
@@ -3140,7 +2767,7 @@ System.out.println(processTransaction(txn2));
 
 ---
 
-## Example 50: Pattern Matching for Switch
+## Example 52: Pattern Matching for Switch
 
 Pattern matching for switch combines type checking, casting, and conditional logic in concise syntax.
 
@@ -3324,7 +2951,7 @@ System.out.println(describePoint(diagonal));
 
 ---
 
-## Example 51: Optional for Null Safety
+## Example 53: Optional for Null Safety
 
 Optional explicitly models presence/absence of values, eliminating NullPointerException through functional composition.
 
@@ -3543,7 +3170,7 @@ List<String> emails = users.stream()
 
 ---
 
-## Example 52: Stream API Collectors
+## Example 54: Stream API Collectors
 
 Collectors transform streams into collections, maps, or aggregate values through terminal operations.
 
@@ -3552,18 +3179,27 @@ Collectors transform streams into collections, maps, or aggregate values through
 ```java
 record Employee(String name, String department, int salary) {}
                              // => Simple employee record
+                             // => Immutable data carrier for employee information
 
 List<Employee> employees = List.of(
+    // => Creates immutable list of 5 employees
     new Employee("Alice", "Engineering", 80000),
+                             // => Engineering employee, $80k salary
     new Employee("Bob", "Sales", 60000),
+                             // => Sales employee, $60k salary
     new Employee("Charlie", "Engineering", 90000),
+                             // => Engineering employee, $90k salary (highest)
     new Employee("Diana", "HR", 55000),
+                             // => HR employee, $55k salary (lowest)
     new Employee("Eve", "Sales", 65000)
-);                           // => Sample employee data
+                             // => Sales employee, $65k salary
+);                           // => Sample employee data for collector examples
 
 // BASIC COLLECTION
 List<String> names = employees.stream()
+                             // => Creates stream pipeline for name extraction
     .map(Employee::name)     // => Extracts names: Stream<String>
+                             // => Transforms Employee objects to String names
     .collect(Collectors.toList());
                              // => Collects to List<String>
                              // => Returns: ["Alice", "Bob", "Charlie", "Diana", "Eve"]
@@ -3577,8 +3213,11 @@ Set<String> uniqueDepts = employees.stream()
 
 // GROUPING BY
 Map<String, List<Employee>> byDepartment = employees.stream()
+                             // => Stream of 5 employees
     .collect(Collectors.groupingBy(Employee::department));
                              // => groupingBy() creates Map<String, List<Employee>>
+                             // => Classifier function: Employee::department
+                             // => Automatically groups employees by department string
                              // => Key: department name
                              // => Value: List of employees in that department
                              // => Returns: {
@@ -3589,10 +3228,14 @@ Map<String, List<Employee>> byDepartment = employees.stream()
 
 // GROUPING WITH DOWNSTREAM COLLECTOR
 Map<String, Long> employeeCountByDept = employees.stream()
+                             // => Creates stream for processing
     .collect(Collectors.groupingBy(
         Employee::department,// => Classifier: groups by department
+                             // => First-level aggregation by department
         Collectors.counting()// => Downstream collector: counts employees
+                             // => Second-level aggregation within each group
     ));                      // => Returns Map<String, Long>
+                             // => Two-stage collection: group then count
                              // => Returns: {
                              //   "Engineering": 2,
                              //   "Sales": 2,
@@ -3600,11 +3243,15 @@ Map<String, Long> employeeCountByDept = employees.stream()
                              // }
 
 Map<String, Integer> totalSalaryByDept = employees.stream()
+                             // => Stream all employees for salary aggregation
     .collect(Collectors.groupingBy(
         Employee::department,// => Groups by department
+                             // => Creates separate buckets for each department
         Collectors.summingInt(Employee::salary)
                              // => Downstream: sums salaries in each group
+                             // => Extracts salary and adds within group
     ));                      // => Returns Map<String, Integer>
+                             // => Engineering: 80000+90000, Sales: 60000+65000, HR: 55000
                              // => Returns: {
                              //   "Engineering": 170000,
                              //   "Sales": 125000,
@@ -3612,10 +3259,13 @@ Map<String, Integer> totalSalaryByDept = employees.stream()
                              // }
 
 Map<String, Optional<Employee>> highestPaidByDept = employees.stream()
+                             // => Stream for finding highest paid per department
     .collect(Collectors.groupingBy(
         Employee::department,
+                             // => Groups employees by department first
         Collectors.maxBy(Comparator.comparingInt(Employee::salary))
                              // => Downstream: finds employee with max salary
+                             // => Comparator compares employees by salary field
     ));                      // => Returns Map<String, Optional<Employee>>
                              // => Optional because group might be empty
                              // => Returns: {
@@ -3626,9 +3276,11 @@ Map<String, Optional<Employee>> highestPaidByDept = employees.stream()
 
 // PARTITIONING BY (boolean predicate)
 Map<Boolean, List<Employee>> partitionedBySalary = employees.stream()
+                             // => Stream for binary classification
     .collect(Collectors.partitioningBy(e -> e.salary() > 65000));
                              // => partitioningBy() splits into 2 groups: true/false
                              // => Predicate: salary > 65000
+                             // => Always returns 2 keys: true and false
                              // => Returns Map<Boolean, List<Employee>>
                              // => Returns: {
                              //   true: [Alice(80000), Charlie(90000)],
@@ -3637,12 +3289,17 @@ Map<Boolean, List<Employee>> partitionedBySalary = employees.stream()
 
 // MAPPING DOWNSTREAM
 Map<String, List<String>> namesByDept = employees.stream()
+                             // => Stream for extracting names by department
     .collect(Collectors.groupingBy(
         Employee::department,
+                             // => First-level: group by department
         Collectors.mapping(
+                             // => Second-level: transform Employee to String
             Employee::name,  // => Extracts name from each employee
+                             // => Mapping function applied within each group
             Collectors.toList()
                              // => Collects mapped names to List
+                             // => Collects transformed Strings, not Employee objects
         )
     ));                      // => Returns Map<String, List<String>>
                              // => Returns: {
@@ -3684,17 +3341,25 @@ Optional<Employee> highestPaid = employees.stream()
 
 // STATISTICS
 IntSummaryStatistics stats = employees.stream()
+                             // => Stream for comprehensive salary statistics
     .collect(Collectors.summarizingInt(Employee::salary));
                              // => summarizingInt() computes count, sum, min, avg, max
+                             // => Single-pass collection of all statistics
+                             // => More efficient than 5 separate stream operations
 System.out.println(stats.getCount());
+                             // => Number of employees processed
                              // => Output: 5
 System.out.println(stats.getSum());
+                             // => Total of all salaries (80k+60k+90k+55k+65k)
                              // => Output: 350000
 System.out.println(stats.getMin());
+                             // => Lowest salary (Diana's)
                              // => Output: 55000
 System.out.println(stats.getMax());
+                             // => Highest salary (Charlie's)
                              // => Output: 90000
 System.out.println(stats.getAverage());
+                             // => Mean salary (350000 / 5)
                              // => Output: 70000.0
 
 // TO MAP
@@ -3767,7 +3432,7 @@ List<String> allTeams = departments.stream()
 
 ---
 
-## Example 53: Text Blocks for Multi-Line Strings
+## Example 55: Text Blocks for Multi-Line Strings
 
 Text blocks (Java 17+) provide clean syntax for multi-line strings without escape sequences or concatenation.
 
@@ -3776,46 +3441,81 @@ Text blocks (Java 17+) provide clean syntax for multi-line strings without escap
 ```java
 // TRADITIONAL STRING CONCATENATION - verbose
 String sqlOld = "SELECT users.id, users.name, users.email\n" +
+                // => Pre-Java 17 approach: manual string building
+                // => Each line is separate String literal
+                // => String concatenation at compile time
                 "FROM users\n" +
+                // => + operator concatenates strings
+                // => \n explicitly added for newline
+                // => Must escape newline characters
                 "JOIN orders ON users.id = orders.user_id\n" +
+                // => Must manually maintain formatting
+                // => Concatenation operator required for continuation
                 "WHERE orders.status = 'ACTIVE'\n" +
+                // => Single quotes inside double quotes
+                // => Mixing quotes increases complexity
                 "ORDER BY users.name";
+                // => No \n on last line
                              // => Requires explicit \n for newlines
                              // => Requires + operator for concatenation
                              // => Each line needs quotes and +
                              // => Unreadable formatting (no natural structure)
                              // => Easy to forget \n or +
                              // => Error-prone: missing \n breaks SQL syntax
+                             // => Result: valid SQL but hard to maintain
+                             // => Developer cognitive load high
 
 // TEXT BLOCK (Java 17+)
 String sqlNew = """
+    // => Opening """ starts text block
+    // => MUST be followed by newline (syntax requirement)
+    // => Compiler feature: text blocks are String type
     SELECT users.id, users.name, users.email
+        // => SQL query line 1
+        // => Indentation preserved relative to closing """
+        // => No concatenation operator needed
     FROM users
+        // => SQL query line 2
+        // => Natural multi-line syntax
     JOIN orders ON users.id = orders.user_id
+        // => SQL query line 3
+        // => Single quotes don't need escaping
+        // => Readability improved dramatically
     WHERE orders.status = 'ACTIVE'
+        // => SQL query line 4
+        // => Maintains SQL structure visually
     ORDER BY users.name
-    """;                     // => Triple quotes (""") delimit text block
+        // => SQL query line 5 (final line)
+        // => Newlines automatically inserted between lines
+    """;                     // => Closing """ at indentation level 4
+                             // => Triple quotes (""") delimit text block
                              // => Opening """ must be followed by newline
                              // => Automatic newline preservation (no \n needed)
                              // => No escape sequences needed (except \ and """)
                              // => Closing """ determines indentation level
                              // => All lines dedented to match closing """ position
                              // => Result: natural SQL formatting preserved
+                             // => sqlNew contains multi-line string with newlines
+                             // => Type: String (interchangeable with traditional strings)
 
 // FORMATTING WITH TEXT BLOCKS
 String userId = "user123";   // => Variable to inject into SQL
+                             // => String interpolation requires placeholder approach
 String status = "ACTIVE";    // => Another variable for WHERE clause
 
 String formattedSql = """
     SELECT users.id, users.name, users.email
     FROM users
     WHERE users.id = '%s'
+        // => %s is placeholder for String formatting
     AND users.status = '%s'
+        // => Second placeholder
     """.formatted(userId, status);
                              // => formatted() method replaces %s placeholders
                              // => First %s replaced with userId ("user123")
                              // => Second %s replaced with status ("ACTIVE")
                              // => Type-safe: requires exact number of arguments
+                             // => Compile-time check for argument count mismatch
                              // => Returns multi-line string with substitutions:
                              //    SELECT users.id, users.name, users.email
                              //    FROM users
@@ -3827,13 +3527,19 @@ String jsonTemplate = """
     {
       "user": {
         "id": "%s",
+            // => Placeholder for user ID
         "name": "%s",
+            // => Placeholder for name
         "email": "%s",
+            // => Placeholder for email
         "active": %b
+            // => Boolean placeholder (%b for boolean formatting)
+            // => Text blocks preserve JSON structure naturally
       }
     }
     """.formatted("user123", "Alice", "alice@example.com", true);
                              // => No escaping " needed inside text block
+                             // => Double quotes preserved naturally in JSON structure
                              // => Returns valid JSON:
                              // {
                              //   "user": {
@@ -3850,15 +3556,19 @@ String htmlTemplate = """
     <html>
       <head>
         <title>%s</title>
+            // => Title placeholder
       </head>
       <body>
         <h1>Welcome, %s!</h1>
+            // => Name placeholder in heading
         <p>Email: %s</p>
+            // => Email placeholder in paragraph
       </body>
     </html>
     """.formatted("User Profile", "Alice", "alice@example.com");
                              // => Natural HTML formatting
                              // => No escape sequences for quotes
+                             // => HTML structure preserved exactly as written
 
 // ESCAPE SEQUENCES IN TEXT BLOCKS
 String withEscapes = """
@@ -3963,7 +3673,7 @@ String newWay = """
 
 ---
 
-## Example 54: Local Variable Type Inference (var)
+## Example 56: Local Variable Type Inference (var)
 
 The `var` keyword (Java 10+) infers local variable types from initializers, reducing verbosity while maintaining type safety.
 
@@ -4150,7 +3860,7 @@ var transactionsByUser = new HashMap<String, List<Transaction>>();
 
 ---
 
-## Example 55: Try-With-Resources for Resource Management
+## Example 57: Try-With-Resources for Resource Management
 
 Try-with-resources (Java 7+) automatically closes resources implementing AutoCloseable, eliminating finally-block boilerplate and resource leaks.
 
@@ -4421,7 +4131,7 @@ try (var fis = new FileInputStream("data.txt")) {
 
 ---
 
-## Example 56: Builder Pattern for Complex Objects
+## Example 58: Builder Pattern for Complex Objects
 
 Builder pattern creates complex objects step-by-step, providing readable construction with validation and optional parameters.
 
@@ -4430,6 +4140,7 @@ Builder pattern creates complex objects step-by-step, providing readable constru
 ```java
 // PROBLEM - complex constructor
 public class LoanAgreement {
+                             // => Class demonstrates telescoping constructor anti-pattern
     private final String id;       // => Immutable field (final)
     private final String borrower; // => Borrower identifier
     private final String lender;   // => Lender identifier
@@ -4441,6 +4152,7 @@ public class LoanAgreement {
     private final boolean secured; // => Secured/unsecured flag
     private final List<String> collateral; // => Collateral items (optional)
                              // => 10 fields: some required, some optional
+                             // => Too many fields for simple constructor
 
     // BAD: telescoping constructor
     public LoanAgreement(String id, String borrower, String lender,
@@ -4448,12 +4160,14 @@ public class LoanAgreement {
                         int termMonths, LocalDate startDate) {
                              // => Constructor with 7 required parameters
                              // => Delegates to main constructor
+                             // => Constructor chaining to avoid duplication
         this(id, borrower, lender, principal, interestRate,
              termMonths, startDate, null, false, List.of());
                              // => Calls overloaded constructor with defaults
                              // => purpose=null, secured=false, collateral=[]
                              // => Hard to read: which parameter is which?
                              // => Telescoping: multiple overloaded constructors
+                             // => Anti-pattern: requires many constructor overloads
     }
 
     public LoanAgreement(String id, String borrower, String lender,
@@ -4482,24 +4196,28 @@ public class LoanAgreement {
 // SOLUTION - Builder Pattern
 public class LoanAgreement {
     // Immutable fields
-    private final String id;
-    private final String borrower;
-    private final String lender;
-    private final BigDecimal principal;
-    private final BigDecimal interestRate;
-    private final int termMonths;
-    private final LocalDate startDate;
-    private final String purpose;
-    private final boolean secured;
-    private final List<String> collateral;
+    private final String id;         // => final: immutable after construction
+                             // => Cannot be reassigned after initialization
+    private final String borrower;   // => Borrower identifier
+    private final String lender;     // => Lender identifier
+    private final BigDecimal principal; // => Loan amount (required)
+    private final BigDecimal interestRate; // => Annual interest rate (required)
+    private final int termMonths;    // => Loan term in months (required)
+    private final LocalDate startDate; // => Loan start date (required)
+    private final String purpose;    // => Loan purpose (optional, can be empty)
+    private final boolean secured;   // => Secured/unsecured flag (optional, default false)
+    private final List<String> collateral; // => Collateral items (optional, default empty)
+                             // => All fields final: object is immutable after construction
 
     // PRIVATE CONSTRUCTOR - only builder can create
     private LoanAgreement(Builder builder) {
                              // => Accepts Builder, not individual fields
                              // => Private: only Builder.build() can call
                              // => Enforces builder pattern usage
+                             // => Single constructor reduces duplication
                              // => Validation in one place (not scattered)
         this.id = builder.id;    // => Copies id from builder
+                             // => Builder already validated these fields
         this.borrower = builder.borrower; // => Copies borrower
         this.lender = builder.lender; // => Copies lender
         this.principal = builder.principal; // => Copies principal
@@ -4509,6 +4227,7 @@ public class LoanAgreement {
         this.purpose = builder.purpose; // => Copies optional purpose
         this.secured = builder.secured; // => Copies secured flag
         this.collateral = builder.collateral; // => Shares list reference (already defensive copied)
+                             // => All fields assigned from builder state
 
         validate();          // => Centralized validation after all fields set
                              // => Ensures object invariants before construction completes
@@ -4539,43 +4258,56 @@ public class LoanAgreement {
                              // => Prevents invalid objects from existing
     }
 
-    // Getters
-    public String id() { return id; }
-    public String borrower() { return borrower; }
-    public BigDecimal principal() { return principal; }
-    // ... other getters
+    // Getters - simple accessors for immutable fields
+    public String id() { return id; } // => Returns loan identifier
+    public String borrower() { return borrower; } // => Returns borrower identifier
+    public BigDecimal principal() { return principal; } // => Returns loan principal amount
+    // ... other getters (interestRate, termMonths, startDate, purpose, secured, collateral)
 
     // BUILDER CLASS
     public static class Builder {
                              // => Static nested class (no outer instance reference)
                              // => Mutable fields (before building)
                              // => Fluent interface pattern (method chaining)
+                             // => Separates mutable construction from immutable object
+                             // => Builder holds temporary state during construction
         // Required fields (no defaults)
         private String id;       // => Initially null (set via id() method)
+                             // => Must be set before build() or validation fails
         private String borrower; // => Initially null (required)
         private String lender;   // => Initially null (required)
         private BigDecimal principal; // => Initially null (required)
         private BigDecimal interestRate; // => Initially null (required)
         private int termMonths;  // => Initially 0 (required, validated)
         private LocalDate startDate; // => Initially null (required)
+                             // => Required fields have no defaults (must be set explicitly)
+                             // => Null/zero values indicate field not yet set
 
         // Optional fields with defaults
         private String purpose = ""; // => Default: empty string
+                             // => Optional: caller can skip setting this
         private boolean secured = false; // => Default: unsecured loan
+                             // => Most loans are unsecured
         private List<String> collateral = List.of(); // => Default: empty immutable list
+                             // => No collateral by default
+                             // => Optional fields provide sensible defaults
+                             // => Caller can override if needed
 
         // REQUIRED FIELD SETTERS - return this for chaining
         public Builder id(String id) {
                              // => Setter for required field
+                             // => Mutable setter on builder (not LoanAgreement itself)
             this.id = id;    // => Sets id field on builder
             return this;     // => Returns builder for method chaining
                              // => Enables: builder.id(...).borrower(...)
+                             // => Fluent interface: reads like natural language
         }
 
         public Builder borrower(String borrower) {
                              // => Setter for required borrower field
             this.borrower = borrower;
                              // => Stores borrower value
+                             // => No validation here (validation happens in build())
             return this;     // => Returns this for chaining
         }
 
@@ -4584,6 +4316,7 @@ public class LoanAgreement {
             this.lender = lender;
                              // => Stores lender value
             return this;     // => Returns this for chaining
+                             // => Allows continuing builder chain
         }
 
         public Builder principal(BigDecimal principal) {
@@ -4604,30 +4337,39 @@ public class LoanAgreement {
                              // => Setter for loan term (required)
             this.termMonths = termMonths;
                              // => Stores term duration in months
+                             // => No validation yet (validation deferred to build())
             return this;     // => Returns this for chaining
+                             // => Enables: .termMonths(36).startDate(...)
         }
 
         public Builder startDate(LocalDate startDate) {
                              // => Setter for loan start date (required)
             this.startDate = startDate;
                              // => Stores loan start date
+                             // => LocalDate is immutable (thread-safe)
             return this;     // => Returns this for chaining
+                             // => Final required field before build()
         }
 
         // OPTIONAL FIELD SETTERS
         public Builder purpose(String purpose) {
                              // => Setter for optional purpose field
+                             // => Unlike required fields, has default value
             this.purpose = purpose;
                              // => Overrides default empty string
+                             // => Caller can omit if purpose not needed
             return this;     // => Optional: caller can skip this
                              // => Returns this for chaining
+                             // => Pattern: optional setters identical to required
         }
 
         public Builder secured(boolean secured) {
                              // => Setter for optional secured flag
             this.secured = secured;
                              // => Overrides default false
+                             // => Most loans are unsecured (default matches common case)
             return this;     // => Returns this for chaining
+                             // => Only call if loan is secured
         }
 
         public Builder collateral(List<String> collateral) {
@@ -4635,19 +4377,25 @@ public class LoanAgreement {
             this.collateral = List.copyOf(collateral);
                              // => Defensive copy (prevents external modification)
                              // => Creates immutable copy of input list
+                             // => Caller can't modify list after passing to builder
                              // => Ensures builder immutability guarantee
+                             // => List.copyOf() throws if input is null
             return this;     // => Returns this for chaining
+                             // => Enables: .collateral(...).build()
         }
 
         // BUILD METHOD - creates LoanAgreement
         public LoanAgreement build() {
                              // => Terminal operation (ends chaining)
                              // => Creates immutable LoanAgreement from builder
+                             // => Final method in builder chain
             return new LoanAgreement(this);
                              // => Calls private constructor with builder
                              // => Passes entire builder (not individual fields)
+                             // => Single-argument constructor simplifies signature
                              // => Validation happens in constructor
                              // => Throws if validation fails
+                             // => Returns fully initialized immutable object
         }
     }
 
@@ -4655,57 +4403,101 @@ public class LoanAgreement {
     public static Builder builder() {
                              // => Static factory method for builder creation
                              // => Entry point for builder pattern
+                             // => Clearer than "new Builder()" syntax
                              // => Usage: LoanAgreement.builder().id(...).build()
+                             // => Conventional naming: "builder()" not "newBuilder()"
         return new Builder();// => Returns new builder instance
                              // => Builder has default values for optional fields
+                             // => Required fields initialized to null/0
     }
 }
 
 // USAGE - fluent API
 LoanAgreement loan = LoanAgreement.builder()
                              // => Creates builder
+                             // => Entry point for building process
+                             // => Returns Builder instance with defaults
     .id("LOAN-2024-001")    // => Sets id, returns builder
+                             // => First method call in chain
     .borrower("John Doe")   // => Sets borrower, returns builder
+                             // => Chain continues (fluent pattern)
     .lender("Bank Corp")    // => Method chaining (fluent interface)
+                             // => Reads like natural language
+                             // => No parameter position confusion
     .principal(new BigDecimal("50000"))
+                             // => $50,000 loan amount
     .interestRate(new BigDecimal("0.065"))
+                             // => 6.5% annual interest rate
     .termMonths(36)
+                             // => 3-year loan term (36 months)
     .startDate(LocalDate.of(2024, 1, 1))
+                             // => Loan starts January 1, 2024
     .purpose("Home renovation")
                              // => Optional field (can be omitted)
+                             // => Named parameters simulate (no parameter order confusion)
+                             // => Self-documenting code (purpose is clear)
     .secured(true)          // => Another optional field
+                             // => Indicates loan is secured by collateral
     .collateral(List.of("Property deed"))
                              // => Optional list parameter
+                             // => Specifies what secures the loan
     .build();               // => Builds LoanAgreement instance
                              // => Validation runs here
+                             // => Returns immutable object or throws exception
+                             // => loan is fully initialized LoanAgreement
 
 // USAGE - minimal required fields only
 LoanAgreement minimalLoan = LoanAgreement.builder()
+                             // => Create builder for minimal loan
     .id("LOAN-2024-002")
+                             // => Second loan example
     .borrower("Jane Smith")
+                             // => Different borrower
     .lender("Credit Union")
+                             // => Different lender
     .principal(new BigDecimal("25000"))
+                             // => $25,000 loan (smaller than first example)
     .interestRate(new BigDecimal("0.055"))
+                             // => 5.5% interest (lower rate)
     .termMonths(24)
+                             // => 2-year term (shorter than first)
     .startDate(LocalDate.now())
+                             // => Start date is today
     .build();               // => Optional fields use defaults
+                             // => purpose="", secured=false, collateral=[]
+                             // => No .purpose(), .secured(), .collateral() calls
+                             // => Demonstrates optional parameter flexibility
                              // => purpose = "", secured = false, collateral = []
+                             // => minimalLoan is unsecured loan with no stated purpose
 
 // VALIDATION FAILURE
 try {
+                             // => Try block for validation exception handling
     LoanAgreement invalid = LoanAgreement.builder()
+                             // => Attempt to build invalid loan
         .id("LOAN-2024-003")
+                             // => Valid ID
         .borrower("")       // => Invalid: blank borrower
+                             // => Will trigger validation error
         .lender("Bank")
+                             // => Valid lender
         .principal(new BigDecimal("-1000"))
                              // => Invalid: negative principal
+                             // => Business rule violation
         .interestRate(new BigDecimal("0.05"))
+                             // => Valid interest rate
         .termMonths(-12)    // => Invalid: negative term
+                             // => Another business rule violation
         .startDate(LocalDate.now())
+                             // => Valid start date
         .build();           // => Throws IllegalArgumentException
+                             // => Validation in constructor detects first error
+                             // => Fails fast: stops at first violation
 } catch (IllegalArgumentException e) {
+                             // => Catches validation exception
     System.out.println("Validation error: " + e.getMessage());
                              // => Output: Validation error: Borrower required
+                             // => Shows first validation error found
 }
 
 // ALTERNATIVE: RECORD WITH BUILDER (Java 17+)
@@ -4755,7 +4547,7 @@ SimpleLoan simple = SimpleLoan.builder()
 
 ---
 
-## Example 57: Immutability Patterns with Records
+## Example 59: Immutability Patterns with Records
 
 Immutability ensures objects never change after creation, providing thread safety and predictable behavior. Records (Java 17+) enforce immutability by default.
 
@@ -4764,66 +4556,94 @@ Immutability ensures objects never change after creation, providing thread safet
 ```java
 // MUTABLE CLASS - problematic
 public class MutableAccount {
+    // => Traditional mutable design (pre-records)
     private BigDecimal balance;
                              // => Not final: can be changed after construction
+                             // => Mutable field: reassignable via setter
     private String owner;
+                             // => Also not final: mutable
 
     public MutableAccount(BigDecimal balance, String owner) {
+                             // => Constructor sets initial state
         this.balance = balance;
+                             // => Initial balance assignment
         this.owner = owner;
+                             // => Initial owner assignment
     }
 
     public void setBalance(BigDecimal balance) {
                              // => Setter allows mutation
+                             // => Public API to change state after construction
                              // => Thread-unsafe: concurrent modifications
+                             // => Race condition: two threads calling setBalance simultaneously
         this.balance = balance;
+                             // => Direct field mutation (problematic)
     }
 
     public BigDecimal getBalance() {
         return balance;      // => Returns current balance
+                             // => Value may change between calls (unpredictable)
     }
 
     // PROBLEM: shared mutable state
     MutableAccount account = new MutableAccount(new BigDecimal("1000"), "Alice");
+                             // => Creates account with initial balance 1000
     processPayment(account); // => Modifies account.balance
+                             // => Side effect: account state changed
     generateReport(account); // => Sees modified balance (unexpected)
+                             // => Reports different value than initial
                              // => Hard to reason about state changes
+                             // => Who modified balance? When? Why?
 }
 
 // IMMUTABLE CLASS - traditional approach
 public final class ImmutableAccount {
                              // => final class: prevents subclassing
                              // => Subclasses could add mutable fields
+                             // => Without final, subclass could break immutability
     private final BigDecimal balance;
                              // => final field: cannot be reassigned
+                             // => Assigned once in constructor, never changes
     private final String owner;
                              // => All fields final (deeply immutable)
+                             // => No setters exist to modify these
 
     public ImmutableAccount(BigDecimal balance, String owner) {
+                             // => Constructor is only place to set fields
         this.balance = balance;
+                             // => First and last assignment to balance
         this.owner = owner;  // => Fields set once in constructor
+                             // => After construction, object frozen
     }
 
     // NO SETTERS - only getters
     public BigDecimal balance() { return balance; }
+                             // => Read-only access, no setter available
     public String owner() { return owner; }
+                             // => Accessor returns field value, cannot modify
 
     // MODIFIED COPY - returns new instance
     public ImmutableAccount withBalance(BigDecimal newBalance) {
                              // => Functional update: returns NEW object
+                             // => Pattern: "with" prefix for copy methods
                              // => Original object unchanged
+                             // => This object (this.balance, this.owner) remains frozen
         return new ImmutableAccount(newBalance, this.owner);
                              // => Creates copy with updated field
+                             // => New object with newBalance, keeps original owner
     }
 
     public ImmutableAccount deposit(BigDecimal amount) {
+                             // => Business operation returns new instance
         return new ImmutableAccount(
             this.balance.add(amount),
                              // => Calculates new balance
+                             // => BigDecimal.add() also returns new instance (immutable)
             this.owner
+                             // => Owner unchanged, copied to new instance
         );                   // => Returns new ImmutableAccount
                              // => Original account unchanged
-    }
+                             // => Caller must use returned value
 }
 
 // USAGE - immutable operations
@@ -4838,34 +4658,52 @@ System.out.println(updated.balance());
 
 // RECORD - immutable by default (Java 17+)
 public record Account(
+                             // => record keyword: compact immutable class
     BigDecimal balance,      // => Implicitly final
+                             // => Compiler generates private final field
     String owner             // => Implicitly final
+                             // => Record components become final fields
 ) {                          // => No boilerplate: equals, hashCode, toString auto-generated
+                             // => Auto-generated: balance(), owner() accessors
 
     // COMPACT CONSTRUCTOR - validation
     public Account {         // => Runs before field initialization
+                             // => No parameter list (compact syntax)
+                             // => Parameters (balance, owner) available automatically
         if (balance.compareTo(BigDecimal.ZERO) < 0) {
+                             // => Validation: balance >= 0
             throw new IllegalArgumentException("Balance cannot be negative");
+                             // => Fails fast on invalid state
         }
         Objects.requireNonNull(owner, "Owner required");
+                             // => Null check: owner must exist
+                             // => After validation, fields initialized automatically
     }
 
     // FUNCTIONAL UPDATES - return new instances
     public Account deposit(BigDecimal amount) {
+                             // => Business method: returns new instance
         return new Account(balance.add(amount), owner);
                              // => Creates new record with updated balance
+                             // => Original record unchanged (this.balance still 1000)
     }
 
     public Account withdraw(BigDecimal amount) {
+                             // => Withdrawal with validation
         if (balance.compareTo(amount) < 0) {
+                             // => Validates sufficient funds
             throw new IllegalArgumentException("Insufficient funds");
+                             // => Fails instead of returning invalid state
         }
         return new Account(balance.subtract(amount), owner);
+                             // => Returns new record with reduced balance
     }
 
     public Account transferOwner(String newOwner) {
+                             // => Ownership transfer (balance unchanged)
         return new Account(balance, newOwner);
                              // => Creates new record with different owner
+                             // => Balance copied, owner replaced
     }
 }
 
@@ -4886,24 +4724,31 @@ System.out.println(account3.balance());
 public record MutableFieldRecord(List<String> items) {
                              // => List is mutable type (not String/BigDecimal)
                              // => DANGER: external code can modify list
+                             // => Records don't automatically defend against mutable fields
 
     // BAD: exposes mutable internal state
     // Caller can do: record.items().add("hack");
+    // => Without defensive copy, caller mutates internal state
+    // => Breaks immutability guarantee
 
     // GOOD: defensive copy in compact constructor
     public MutableFieldRecord {
+                             // => Compact constructor intercepts initialization
         items = List.copyOf(items);
                              // => Creates immutable copy
                              // => List.copyOf() returns unmodifiable list
                              // => External changes don't affect record
+                             // => items parameter replaced with immutable copy
     }
 
     // ALTERNATIVE: return copy from accessor
     @Override
     public List<String> items() {
+                             // => Overrides auto-generated accessor
         return List.copyOf(items);
                              // => Returns immutable copy
                              // => Caller cannot modify internal state
+                             // => Two-layer defense: copy in constructor + accessor
     }
 }
 
@@ -4918,21 +4763,30 @@ System.out.println(record.items());
 // NESTED IMMUTABILITY
 public record Address(String street, String city, String zip) {}
                              // => Immutable nested record
+                             // => All fields (street, city, zip) final
 
 public record Person(String name, Address address) {
                              // => Nested immutable structure
+                             // => address field is final reference to immutable Address
+                             // => Deep immutability: Person and Address both frozen
 
     public Person withAddress(Address newAddress) {
+                             // => Replace entire address
         return new Person(name, newAddress);
                              // => Functional update
+                             // => New Person with different Address instance
     }
 
     public Person withCity(String newCity) {
+                             // => Update nested field (city within address)
         return new Person(
             name,
+                             // => Name unchanged
             new Address(address.street(), newCity, address.zip())
                              // => Creates new Address with updated city
+                             // => street and zip copied from original address
         );                   // => Deep immutability: all levels immutable
+                             // => New Person with new Address (both objects replaced)
     }
 }
 
@@ -4949,26 +4803,38 @@ System.out.println(person2.address().city());
 // IMMUTABLE COLLECTIONS
 public record Portfolio(Map<String, BigDecimal> holdings) {
                              // => Map is mutable type
+                             // => Need defensive copy to maintain immutability
 
     public Portfolio {
+                             // => Compact constructor for defensive copy
         holdings = Map.copyOf(holdings);
                              // => Defensive copy: immutable map
+                             // => Map.copyOf() returns unmodifiable map
                              // => Prevents external modification
+                             // => Internal map cannot be changed after construction
     }
 
     public Portfolio addHolding(String symbol, BigDecimal shares) {
+                             // => Functional update: add holding
         var updated = new HashMap<>(holdings);
                              // => Creates mutable copy of immutable map
+                             // => Need mutable copy to modify
         updated.put(symbol, shares);
                              // => Adds new holding
+                             // => Modifies temporary mutable copy
         return new Portfolio(updated);
                              // => Returns new Portfolio with updated holdings
+                             // => Original Portfolio unchanged
     }
 
     public Portfolio removeHolding(String symbol) {
+                             // => Functional update: remove holding
         var updated = new HashMap<>(holdings);
+                             // => Mutable copy for modification
         updated.remove(symbol);
+                             // => Removes holding from copy
         return new Portfolio(updated);
+                             // => New Portfolio without removed holding
     }
 }
 
@@ -5008,7 +4874,7 @@ Master compile-time type safety through modern Java features: sealed classes for
 
 ## Error Handling Patterns
 
-## Example 58: Try-With-Resources Automatic Cleanup
+## Example 60: Try-With-Resources Automatic Cleanup
 
 Try-with-resources automatically closes resources that implement AutoCloseable interface. Resources are closed in reverse order of declaration, even if exceptions occur.
 
@@ -5016,27 +4882,42 @@ Try-with-resources automatically closes resources that implement AutoCloseable i
 
 ```java
 import java.io.*;
+    // => Import IOException, BufferedReader, FileReader
 
 public class ResourceManagement {
     // MANUAL CLEANUP - verbose, error-prone
     public String manualCleanup(String path) throws IOException {
+        // => Old-style resource management (pre-Java 7)
+        // => path: file path to read from
         BufferedReader reader = null;
             // => Must initialize outside try
+            // => null allows use in finally block
+            // => Required for proper scope
 
         try {
             reader = new BufferedReader(new FileReader(path));
                 // => Open resource
+                // => FileReader opens file
+                // => BufferedReader wraps for efficient reading
             return reader.readLine();
                 // => Read data
+                // => Returns first line of file
+                // => Early return: finally block still executes
         } finally {
+            // => Cleanup block: always executes
+            // => Executes even if return or exception
             if (reader != null) {
                 // => Null check required
+                // => Prevents NPE if new FileReader failed
                 try {
                     reader.close();
                         // => Nested try-catch for close()
+                        // => close() can throw IOException
                 } catch (IOException e) {
                     // => Handle close() exception separately
+                    // => Close exception doesn't hide primary exception
                     e.printStackTrace();
+                        // => Log close failure
                 }
             }
         }
@@ -5045,16 +4926,23 @@ public class ResourceManagement {
 
     // AUTOMATIC CLEANUP - concise, safe
     public String automaticCleanup(String path) throws IOException {
+        // => Modern resource management (Java 7+)
+        // => path: file path to read from
         try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
             // => Resource declared in try(...) parentheses
             // => Must implement AutoCloseable interface
             // => Automatically closed when try block exits
+            // => reader scope limited to try block
+            // => No null check needed
 
             return reader.readLine();
                 // => Read data
+                // => Returns first line of file
+                // => reader.close() called before return
         } // => reader.close() called automatically here
           // => Even if exception thrown or return executed
           // => No explicit close() needed
+          // => Exception handling: close exception suppressed if primary exists
 
         // => Benefits: concise (no manual close), safe (always closed), proper exception handling
     }
@@ -5065,31 +4953,52 @@ public class ResourceManagement {
 
 ```java
 import java.io.*;
+    // => Import IOException, BufferedReader, BufferedWriter, etc.
 
 public class MultipleResources {
     public void copyFile(String source, String dest) throws IOException {
+        // => Copy file contents from source to dest
+        // => source: path to input file
+        // => dest: path to output file
         try (
+            // MULTIPLE RESOURCES - declared in try-with-resources
             // Resource 1: opened first
             BufferedReader reader = new BufferedReader(new FileReader(source));
                 // => reader created first
+                // => new FileReader(source) opens file for reading
+                // => BufferedReader wraps for efficient line reading
+                // => reader implements AutoCloseable
 
             // Resource 2: opened second
             BufferedWriter writer = new BufferedWriter(new FileWriter(dest))
                 // => writer created second
+                // => new FileWriter(dest) opens file for writing
+                // => BufferedWriter wraps for efficient writing
+                // => writer implements AutoCloseable
+                // => Note: no semicolon after last resource
         ) {
             String line;
+                // => Variable to hold each line read from source
             while ((line = reader.readLine()) != null) {
                 // => Read each line from source
+                // => reader.readLine() returns String or null (EOF)
+                // => Assignment + null check in one expression
+                // => Loop continues until EOF (line == null)
                 writer.write(line);
                     // => Write to destination
+                    // => line contains current line content (no newline)
                 writer.newLine();
                     // => Add newline
+                    // => Platform-appropriate line separator
             }
+            // => All lines copied when loop exits
 
-        } // => Automatic closing happens here
+        } // => Automatic closing happens here (REVERSE ORDER)
           // => Order: writer.close() called FIRST (reverse order)
+          // => writer flushed and closed (output file finalized)
           // => Then: reader.close() called SECOND
           // => Reverse order ensures dependent resources closed first
+          // => Even if exception thrown, both resources closed
     }
 }
 ```
@@ -5099,49 +5008,76 @@ public class MultipleResources {
 ```java
 // CUSTOM RESOURCE - implements AutoCloseable
 class DatabaseConnection implements AutoCloseable {
+    // => Custom resource for automatic cleanup with try-with-resources
+    // => Must implement close() method from AutoCloseable
     private boolean closed = false;
+        // => Track resource state to prevent double-close
+        // => Initially false (connection open)
 
     public DatabaseConnection(String url) {
+        // => Constructor: initialize database connection
+        // => url: connection string (e.g., "jdbc:mysql://localhost")
         System.out.println("Opening connection to: " + url);
+            // => Simulate connection establishment
             // => Output: Opening connection to: jdbc:mysql://localhost
             // => Resource initialization
+            // => closed remains false (connection is open)
     }
 
     public void executeQuery(String sql) {
+        // => Execute SQL query on connection
+        // => sql: SQL statement to execute
         if (closed) {
             // => Check if resource already closed
+            // => Prevents use-after-close bugs
             throw new IllegalStateException("Connection closed");
+                // => Runtime exception: cannot use closed connection
         }
         System.out.println("Executing: " + sql);
+            // => Simulate query execution
             // => Output: Executing: SELECT * FROM users
+            // => Only reached if connection still open
     }
 
     @Override
     public void close() {
         // => Required by AutoCloseable interface
         // => Called automatically by try-with-resources
+        // => Cleanup method: release database connection
 
         if (!closed) {
+            // => Only close if not already closed
+            // => Idempotent: safe to call multiple times
             System.out.println("Closing database connection");
+                // => Simulate connection release
                 // => Output: Closing database connection
             closed = true;
                 // => Mark as closed
+                // => Subsequent executeQuery() calls will fail
         }
+        // => If already closed, do nothing (idempotent)
     }
 }
 
 // USAGE - automatic cleanup
 public class DatabaseExample {
     public void queryDatabase() {
+        // => Demonstrate automatic resource management
         try (DatabaseConnection conn = new DatabaseConnection("jdbc:mysql://localhost")) {
             // => Opens connection
+            // => conn = new DatabaseConnection("jdbc:mysql://localhost")
             // => Output: Opening connection to: jdbc:mysql://localhost
+            // => conn.close() will be called automatically at block exit
 
             conn.executeQuery("SELECT * FROM users");
+                // => Execute query while connection open
                 // => Output: Executing: SELECT * FROM users
+                // => closed = false (connection still open)
 
-        } // => conn.close() called automatically
+        } // => conn.close() called automatically HERE
+          // => Happens even if executeQuery throws exception
           // => Output: Closing database connection
+          // => closed = true (connection now closed)
           // => Guaranteed cleanup even if exception thrown
     }
 }
@@ -5151,47 +5087,74 @@ public class DatabaseExample {
 
 ```java
 import java.io.*;
+    // => Import IOException and AutoCloseable
 
 class ProblematicResource implements AutoCloseable {
+    // => Custom resource that throws during both use AND close
+    // => Demonstrates exception suppression mechanism
     private final String name;
+        // => Resource identifier for error messages
 
     public ProblematicResource(String name) {
+        // => Constructor: initialize resource name
         this.name = name;
+            // => Store name for later use in exceptions
     }
 
     public void useResource() throws IOException {
+        // => Simulate resource usage that fails
         throw new IOException("Error using " + name);
             // => Primary exception from resource use
+            // => Example: "Error using db"
+            // => This is the MAIN exception (not suppressed)
     }
 
     @Override
     public void close() throws IOException {
+        // => AutoCloseable contract: cleanup resource
+        // => Called automatically by try-with-resources
         throw new IOException("Error closing " + name);
             // => Secondary exception from close()
+            // => Example: "Error closing db"
+            // => This will be SUPPRESSED (attached to primary)
     }
 }
 
 public class SuppressionExample {
     public void demonstrateSuppression() {
+        // => Demonstrate exception suppression in try-with-resources
         try (ProblematicResource resource = new ProblematicResource("db")) {
             // => Resource created successfully
+            // => resource.name = "db"
+            // => close() will be called automatically on exit
 
             resource.useResource();
                 // => Throws IOException: "Error using db"
                 // => This is PRIMARY exception
+                // => After this throws, close() is called automatically
+                // => close() also throws: "Error closing db"
+                // => Close exception is SUPPRESSED (not lost!)
 
         } catch (IOException e) {
             // => Catches primary exception from useResource()
+            // => e = IOException("Error using db")
+            // => Close exception attached as suppressed
             System.out.println("Primary exception: " + e.getMessage());
+                // => e.getMessage() = "Error using db"
                 // => Output: Primary exception: Error using db
 
             // SUPPRESSED EXCEPTIONS - from close()
             Throwable[] suppressed = e.getSuppressed();
                 // => Array of exceptions suppressed during cleanup
                 // => suppressed.length is 1
+                // => suppressed[0] = IOException("Error closing db")
+                // => Access exceptions from close() that were attached
 
             for (Throwable s : suppressed) {
+                // => Iterate over suppressed exceptions
+                // => s = IOException("Error closing db")
                 System.out.println("Suppressed exception: " + s.getMessage());
+                    // => s.getMessage() = "Error closing db"
                     // => Output: Suppressed exception: Error closing db
             }
         }
@@ -5199,6 +5162,7 @@ public class SuppressionExample {
         // => Primary exception preserved: "Error using db"
         // => Close exception attached as suppressed: "Error closing db"
         // => Both exceptions available for debugging
+        // => No exceptions lost during cleanup
     }
 }
 ```
@@ -5207,7 +5171,7 @@ public class SuppressionExample {
 
 **Why It Matters**: Manual resource cleanup is error-prone: forgot to close (resource leak), close() throws exception (complicates error handling), and null check required (verbose). Try-with-resources eliminates these issues: guaranteed cleanup (even with exception or return), proper exception handling (suppressed exceptions), and no null checks (resource initialized in try statement). Real-world impact: resource leaks cause production outages (file descriptor exhaustion crashes server), memory leaks from unclosed connections (heap exhaustion), and database connection pool starvation (blocked transactions). AutoCloseable contract: close() method is idempotent (safe to call multiple times), close() releases resources (file handles, network sockets, database connections), and close() should not throw exceptions if possible (simplifies cleanup). Multiple resource order matters: writer depends on reader (close writer first to flush buffers), child resource depends on parent (close child first), and reverse order ensures proper cleanup cascade. Exception suppression preserves debugging context: primary exception is what went wrong in business logic, suppressed exceptions show cleanup failures, and both available in stack trace. Modern practice: always use try-with-resources for AutoCloseable objects, implement AutoCloseable for custom resources needing cleanup, and make close() idempotent (track state, guard against double-close).
 
-## Example 59: Custom Result Type for Functional Error Handling
+## Example 61: Custom Result Type for Functional Error Handling
 
 Result<T, E> type represents computation that may succeed with value T or fail with error E. Enables functional error handling without exceptions.
 
@@ -5218,109 +5182,184 @@ Result<T, E> type represents computation that may succeed with value T or fail w
 public sealed interface Result<T, E> permits Success, Failure {
     // => Sealed: only Success and Failure can implement Result
     // => Compiler enforces handling both cases
+    // => T = success value type, E = error type
+    // => Alternative to throwing exceptions
 
     // FACTORY METHODS
     static <T, E> Result<T, E> success(T value) {
+        // => Create successful result
+        // => Generic method: infers T and E from context
         return new Success<>(value);
             // => Wrap successful value
+            // => Returns Success<T, E> as Result<T, E>
     }
 
     static <T, E> Result<T, E> failure(E error) {
+        // => Create failed result
+        // => Generic method: infers T and E from context
         return new Failure<>(error);
             // => Wrap error value
+            // => Returns Failure<T, E> as Result<T, E>
     }
 
     // QUERY METHODS
     boolean isSuccess();
+        // => Returns true if Success, false if Failure
+        // => Use for conditional logic
     boolean isFailure();
+        // => Returns true if Failure, false if Success
+        // => Opposite of isSuccess()
 
     // TRANSFORMATION METHODS
     <U> Result<U, E> map(Function<T, U> mapper);
         // => Transform success value
+        // => Signature: T → U (function that transforms value)
+        // => Returns: Result<U, E> (new success type, same error type)
+        // => Example: Result<String, E> → Result<Integer, E>
 
     <U> Result<U, E> flatMap(Function<T, Result<U, E>> mapper);
         // => Chain operations that return Result
+        // => Signature: T → Result<U, E> (function returns Result)
+        // => Returns: Result<U, E> (unwrapped, not Result<Result<U, E>>)
+        // => Prevents nesting when chaining Result-returning operations
 
     T orElse(T defaultValue);
         // => Extract value or provide default
+        // => Returns: T (the success value or defaultValue)
+        // => Use when you need a value regardless of success/failure
 
     T orElseThrow(Function<E, ? extends RuntimeException> exceptionMapper);
         // => Convert to exception if failure
+        // => Signature: E → RuntimeException (convert error to exception)
+        // => Returns: T (success value) or throws RuntimeException
+        // => Bridge between Result style and exception style
 }
 
 // SUCCESS CASE - contains value
 record Success<T, E>(T value) implements Result<T, E> {
     // => Record: immutable, automatic equals/hashCode/toString
     // => value is the successful result
+    // => Component accessor: value() returns T
+    // => Compact constructor validates value not null (optional)
 
     @Override
-    public boolean isSuccess() { return true; }
+    public boolean isSuccess() {
+        // => Query method implementation
+        return true;
+            // => Success always returns true for isSuccess()
+    }
 
     @Override
-    public boolean isFailure() { return false; }
+    public boolean isFailure() {
+        // => Query method implementation
+        return false;
+            // => Success always returns false for isFailure()
+    }
 
     @Override
     public <U> Result<U, E> map(Function<T, U> mapper) {
+        // => Transform the success value
+        // => mapper: T → U (transforms value to new type)
         return Result.success(mapper.apply(value));
             // => Apply transformation to value
-            // => Wrap result in new Success
+            // => mapper.apply(value) returns U
+            // => Wrap result in new Success<U, E>
+            // => Type changes: Result<T, E> → Result<U, E>
     }
 
     @Override
     public <U> Result<U, E> flatMap(Function<T, Result<U, E>> mapper) {
+        // => Chain operation that returns Result
+        // => mapper: T → Result<U, E> (returns Result, not plain value)
         return mapper.apply(value);
             // => Apply transformation that returns Result
+            // => mapper.apply(value) returns Result<U, E>
             // => Return Result directly (no double-wrapping)
+            // => Prevents Result<Result<U, E>> nesting
     }
 
     @Override
     public T orElse(T defaultValue) {
+        // => Extract value or use default
+        // => defaultValue: fallback if this were Failure
         return value;
             // => Success: return actual value (ignore default)
+            // => defaultValue parameter unused in Success case
     }
 
     @Override
     public T orElseThrow(Function<E, ? extends RuntimeException> exceptionMapper) {
+        // => Extract value or throw exception
+        // => exceptionMapper: E → RuntimeException (unused in Success)
         return value;
             // => Success: return value (no exception)
+            // => exceptionMapper parameter unused in Success case
     }
 }
 
 // FAILURE CASE - contains error
 record Failure<T, E>(E error) implements Result<T, E> {
     // => error is the failure reason
+    // => Component accessor: error() returns E
+    // => No value of type T (failure state)
 
     @Override
-    public boolean isSuccess() { return false; }
+    public boolean isSuccess() {
+        // => Query method implementation
+        return false;
+            // => Failure always returns false for isSuccess()
+    }
 
     @Override
-    public boolean isFailure() { return true; }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public <U> Result<U, E> map(Function<T, U> mapper) {
-        return (Result<U, E>) this;
-            // => Failure: skip transformation (no value to transform)
-            // => Cast is safe: Failure<anything, E> is compatible
+    public boolean isFailure() {
+        // => Query method implementation
+        return true;
+            // => Failure always returns true for isFailure()
     }
 
     @Override
     @SuppressWarnings("unchecked")
+        // => Suppress warning: unchecked cast is safe here
+    public <U> Result<U, E> map(Function<T, U> mapper) {
+        // => Transform attempt: but no value to transform
+        // => mapper: T → U (unused, no T value exists)
+        return (Result<U, E>) this;
+            // => Failure: skip transformation (no value to transform)
+            // => Cast is safe: Failure<anything, E> is compatible
+            // => this is Failure<T, E>, cast to Result<U, E>
+            // => Works because Failure only cares about E, not T
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+        // => Suppress warning: unchecked cast is safe here
     public <U> Result<U, E> flatMap(Function<T, Result<U, E>> mapper) {
+        // => Chain attempt: but no value to chain from
+        // => mapper: T → Result<U, E> (unused, no T value)
         return (Result<U, E>) this;
             // => Failure: skip transformation
+            // => Cast reasoning same as map()
+            // => Preserves error, changes result type signature
     }
 
     @Override
     public T orElse(T defaultValue) {
+        // => Extract value or use default
+        // => No value in Failure, so use defaultValue
         return defaultValue;
             // => Failure: return default (no actual value)
+            // => defaultValue becomes the result
     }
 
     @Override
     public T orElseThrow(Function<E, ? extends RuntimeException> exceptionMapper) {
+        // => Extract value or throw exception
+        // => Failure has no value, so throw
+        // => exceptionMapper: E → RuntimeException (convert error type)
         throw exceptionMapper.apply(error);
             // => Failure: convert error to exception and throw
+            // => exceptionMapper.apply(error) creates RuntimeException
+            // => Method never returns (always throws)
     }
 }
 ```
@@ -5330,18 +5369,26 @@ record Failure<T, E>(E error) implements Result<T, E> {
 ```java
 // ERROR TYPE - domain-specific errors
 enum UserError {
+    // => Enum constants with associated messages
     USER_NOT_FOUND("User not found"),
+        // => Error case: user ID doesn't exist in system
     INVALID_EMAIL("Invalid email format"),
+        // => Error case: email validation failed
     DATABASE_ERROR("Database connection failed");
+        // => Error case: infrastructure failure
 
     private final String message;
+        // => Each enum constant has a message field
 
     UserError(String message) {
+        // => Constructor called for each enum constant
         this.message = message;
+            // => Store message for later retrieval
     }
 
     public String getMessage() {
         return message;
+            // => Expose error message to callers
     }
 }
 
@@ -5350,40 +5397,59 @@ class UserService {
     public Result<String, UserError> findUserEmail(String userId) {
         // => Returns Result: either Success<String> or Failure<UserError>
         // => No exceptions thrown!
+        // => Type: Result<String, UserError> (email string or user error)
 
         if (userId == null || userId.isEmpty()) {
+            // => Validate input: null/empty is invalid
             return Result.failure(UserError.INVALID_EMAIL);
                 // => Validation failure
+                // => Returns Failure<String, UserError>
         }
 
         if (userId.equals("123")) {
+            // => Check if user exists (simplified lookup)
             return Result.success("user@example.com");
                 // => Success case: email found
+                // => Returns Success<String, UserError>
+                // => Wrapped value: "user@example.com"
         }
 
         return Result.failure(UserError.USER_NOT_FOUND);
             // => Failure case: user doesn't exist
+            // => Returns Failure<String, UserError>
     }
 
     public Result<String, UserError> getUserDomain(String userId) {
         // => Chain operations using flatMap
+        // => Type: Result<String, UserError> (domain or error)
         return findUserEmail(userId)
                 // => Returns Result<String, UserError>
+                // => Could be Success("user@example.com") or Failure(USER_NOT_FOUND)
             .flatMap(email -> extractDomain(email));
                 // => Only called if findUserEmail succeeds
                 // => extractDomain returns Result<String, UserError>
                 // => flatMap unwraps: no nested Result
+                // => Final type: Result<String, UserError> (domain or error)
     }
 
     private Result<String, UserError> extractDomain(String email) {
+        // => Parse email to extract domain part
         int atIndex = email.indexOf('@');
+            // => Find position of '@' character
+            // => Returns -1 if not found
         if (atIndex < 0) {
+            // => No '@' found: invalid email
             return Result.failure(UserError.INVALID_EMAIL);
                 // => Invalid email format
+                // => Returns Failure<String, UserError>
         }
         String domain = email.substring(atIndex + 1);
+            // => Extract everything after '@'
+            // => Example: "user@example.com" → "example.com"
         return Result.success(domain);
             // => Extracted domain
+            // => Returns Success<String, UserError>
+            // => Wrapped value: domain string
     }
 }
 
@@ -5391,66 +5457,103 @@ class UserService {
 public class ResultDemo {
     public void demonstrateResult() {
         UserService service = new UserService();
+            // => Create service instance for demonstrations
 
         // EXAMPLE 1: Pattern matching (exhaustive)
         Result<String, UserError> result1 = service.findUserEmail("123");
+            // => Call findUserEmail with existing user ID
+            // => Returns Success("user@example.com")
+            // => Type: Result<String, UserError>
 
         String message1 = switch (result1) {
+            // => Pattern match on Result (sealed interface: exhaustive)
+            // => Compiler ensures all cases covered
             case Success<String, UserError> s -> "Email: " + s.value();
                 // => Success case: extract value
-                // => Output: Email: user@example.com
+                // => s.value() returns "user@example.com"
+                // => message1 = "Email: user@example.com"
 
             case Failure<String, UserError> f -> "Error: " + f.error().getMessage();
                 // => Failure case: extract error
                 // => Not executed for userId "123"
+                // => f.error() would return UserError enum
         };
+            // => switch expression returns String
+            // => message1 = "Email: user@example.com"
         System.out.println(message1);
             // => Output: Email: user@example.com
 
         // EXAMPLE 2: orElse for default value
         String email2 = service.findUserEmail("456")
+            // => Call with non-existent user ID
+            // => Returns Failure(USER_NOT_FOUND)
             .orElse("no-email@example.com");
                 // => Success: return email
                 // => Failure: return default "no-email@example.com"
+                // => email2 = "no-email@example.com" (failure case)
         System.out.println("Email: " + email2);
             // => Output: Email: no-email@example.com
 
         // EXAMPLE 3: orElseThrow to convert to exception
         try {
             String email3 = service.findUserEmail("456")
+                // => Returns Failure(USER_NOT_FOUND)
                 .orElseThrow(error -> new RuntimeException(error.getMessage()));
                     // => Failure: convert UserError to RuntimeException
+                    // => error = USER_NOT_FOUND
+                    // => Throws RuntimeException("User not found")
+                    // => This line never returns normally
         } catch (RuntimeException e) {
+            // => Catch thrown exception
+            // => e.getMessage() = "User not found"
             System.err.println("Exception: " + e.getMessage());
                 // => Output: Exception: User not found
         }
 
         // EXAMPLE 4: Chaining with flatMap
         Result<String, UserError> domainResult = service.getUserDomain("123");
+            // => Chain: findUserEmail("123") → extractDomain(email)
+            // => findUserEmail returns Success("user@example.com")
+            // => extractDomain returns Success("example.com")
+            // => flatMap prevents nesting: Result<Result<...>>
+            // => Final: domainResult = Success("example.com")
 
         switch (domainResult) {
+            // => Pattern match on Result<String, UserError>
             case Success<String, UserError> s ->
+                // => Success case executed
                 System.out.println("Domain: " + s.value());
+                    // => s.value() = "example.com"
                     // => Output: Domain: example.com
 
             case Failure<String, UserError> f ->
+                // => Failure case: not executed (success scenario)
                 System.err.println("Error: " + f.error().getMessage());
-                    // => Not executed (success case)
+                    // => Would print error message if failure
         }
 
         // EXAMPLE 5: Multiple operations with map
         Result<Integer, UserError> lengthResult = service.findUserEmail("123")
+            // => Returns Success("user@example.com")
             .map(String::length);
                 // => Success("user@example.com") → Success(16)
+                // => map applies String::length to value
+                // => "user@example.com".length() = 16
                 // => Failure preserved if findUserEmail failed
+                // => lengthResult = Success<Integer>(16)
 
         switch (lengthResult) {
+            // => Pattern match on Result<Integer, UserError>
             case Success<Integer, UserError> s ->
+                // => Success case executed
                 System.out.println("Email length: " + s.value());
+                    // => s.value() = 16
                     // => Output: Email length: 16
 
             case Failure<Integer, UserError> f ->
+                // => Failure case: not executed (success scenario)
                 System.err.println("Error: " + f.error().getMessage());
+                    // => Would print error message if failure
         }
     }
 }

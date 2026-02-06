@@ -66,55 +66,60 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class UserService {
-    private final Map<String, User> cache = new ConcurrentHashMap<>();
+    private final Map<String, User> cache = new ConcurrentHashMap<>();  // => Thread-safe cache (type: ConcurrentHashMap<String, User>)
+                                                                         // => Key: userId (type: String), Value: User object (type: User)
 
-    public User getUser(String userId) {
+    public User getUser(String userId) {  // => userId is lookup key (type: String)
         // Check cache first
-        User cached = cache.get(userId);
-        if (cached != null) {
-            return cached;
+        User cached = cache.get(userId);  // => Lookup in cache (O(1) operation, type: User or null)
+        if (cached != null) {  // => Cache hit check
+            return cached;  // => Return cached value (fast path, avoids database)
         }
 
         // Cache miss: fetch from database
-        User user = fetchFromDatabase(userId);
+        User user = fetchFromDatabase(userId);  // => Expensive operation (type: User)
+                                               // => Database query, network I/O
 
         // Store in cache
-        cache.put(userId, user);
+        cache.put(userId, user);  // => Store result for future lookups
+                                 // => Next getUser("user-123") will be cache hit
 
-        return user;
+        return user;  // => Return freshly fetched user (type: User)
     }
 
     private User fetchFromDatabase(String userId) {
         // Expensive database query
-        System.out.println("Fetching user " + userId + " from database");
+        System.out.println("Fetching user " + userId + " from database");  // => Indicates cache miss
         // Simulate DB query
-        return new User(userId, "User " + userId);
+        return new User(userId, "User " + userId);  // => Creates User object (type: User)
     }
 
     public static void main(String[] args) {
-        UserService service = new UserService();
+        UserService service = new UserService();  // => service has empty cache (type: UserService)
 
         // First call: cache miss
-        User user1 = service.getUser("user-123");
-        System.out.println("Got: " + user1.getName());
+        User user1 = service.getUser("user-123");  // => Cache miss: calls fetchFromDatabase()
+                                                   // => Output: "Fetching user user-123 from database"
+        System.out.println("Got: " + user1.getName());  // => Output: Got: User user-123
 
         // Second call: cache hit (no database query)
-        User user2 = service.getUser("user-123");
-        System.out.println("Got: " + user2.getName());
+        User user2 = service.getUser("user-123");  // => Cache hit: returns cached User
+                                                   // => No database query (no "Fetching..." output)
+        System.out.println("Got: " + user2.getName());  // => Output: Got: User user-123
     }
 }
 
 class User {
-    private final String id;
-    private final String name;
+    private final String id;  // => User ID field (type: String, immutable)
+    private final String name;  // => User name field (type: String, immutable)
 
-    public User(String id, String name) {
-        this.id = id;
-        this.name = name;
+    public User(String id, String name) {  // => Constructor (type: String, String)
+        this.id = id;  // => Assign id parameter to field
+        this.name = name;  // => Assign name parameter to field
     }
 
-    public String getId() { return id; }
-    public String getName() { return name; }
+    public String getId() { return id; }  // => Getter for id (type: String)
+    public String getName() { return name; }  // => Getter for name (type: String)
 }
 ```
 

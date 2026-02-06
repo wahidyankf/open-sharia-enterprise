@@ -52,21 +52,20 @@ This guide covers pure functions, functional interfaces, method references, stre
 **Example transformation:**
 
 ```java
-// PROBLEMATIC: Impure function with side effects
-public class ImpureCalculator {
-    private static int callCount = 0;  // MUTABLE STATE
-
-    public static int addImpure(int x, int y) {
-        callCount++;  // SIDE EFFECT
-        System.out.println("Adding " + x + " + " + y");  // I/O SIDE EFFECT
-        return x + y;
+        // => PROBLEM 3: Cannot parallelize safely
     }
 }
 
-// SOLUTION: Pure function
+// => SOLUTION: Pure function (no side effects)
 public class Calculator {
     public static int add(int x, int y) {
-        return x + y;  // PURE: same inputs → same outputs
+        return x + y;
+        // => PURE: Same inputs always produce same output
+        // => NO SIDE EFFECTS: Doesn't modify external state
+        // => NO I/O: Doesn't interact with outside world
+        // => REFERENTIALLY TRANSPARENT: Can replace add(2, 3) with 5
+        // => PARALLELIZABLE: Safe to call concurrently
+        // => TESTABLE: No mocking needed, just input to output
     }
 }
 ```
@@ -94,18 +93,29 @@ Function<T, R> represents transformations from type T to type R. The foundation 
 
 **Key operations:**
 
-```java
+````java
 Function<String, Integer> stringLength = s -> s.length();
+// => TRANSFORMATION: String to Integer (measures length)
+// => Example: "hello" maps to 5
 Function<Integer, String> formatNumber = n -> String.format("Value: %d", n);
+// => TRANSFORMATION: Integer to String (formatting)
+// => Example: 42 maps to "Value: 42"
 
-// COMPOSITION: andThen (left to right)
+// => COMPOSITION: andThen (left to right execution)
 Function<String, String> pipeline =
     stringLength.andThen(n -> n * 2).andThen(n -> "Result: " + n);
+// => PIPELINE: stringLength (String to Integer)
+// => THEN: multiply by 2 (Integer to Integer)
+// => THEN: format as string (Integer to String)
+// => Example: "hello" to 5 to 10 to "Result: 10"
 
-// COMPOSITION: compose (right to left, mathematical notation)
+// => COMPOSITION: compose (right to left, mathematical notation)
 Function<Integer, Integer> composed =
-    addFive.compose(multiplyByTwo);  // multiplyByTwo THEN addFive
-```
+    addFive.compose(multiplyByTwo);
+// => EXECUTE: multiplyByTwo FIRST (right side)
+// => THEN: addFive (left side)
+// => Example: 3 to 6 (multiply) to 11 (add five)
+// => Mathematical: f(g(x)) where f = addFive, g = multiplyByTwo
 
 ### Predicate Interface - Filtering
 
@@ -113,12 +123,18 @@ Predicate<T> represents boolean-valued functions for testing conditions.
 
 ```java
 Predicate<Integer> isPositive = n -> n > 0;
+// => TEST: Returns true if n > 0, false otherwise
 Predicate<Integer> isEven = n -> n % 2 == 0;
+// => TEST: Returns true if even, false if odd
 
-// LOGICAL COMPOSITION
+// => LOGICAL COMPOSITION: and, or, negate
 Predicate<Integer> isEvenAndPositive = isEven.and(isPositive);
+// => COMBINED: true only if BOTH even AND positive
+// => Example: 4 returns true, -4 returns false, 3 returns false
 Predicate<Integer> isOddOrNegative = isEven.negate().or(isPositive.negate());
-```
+// => COMBINED: true if NOT even OR NOT positive
+// => negate() inverts predicate result
+// => Example: 3 returns true (odd), -2 returns true (negative)
 
 **Comparison:**
 
@@ -136,23 +152,27 @@ Predicate<Integer> isOddOrNegative = isEven.negate().or(isPositive.negate());
 ```java
 Consumer<Transaction> logTransaction = t ->
     System.out.println("[LOG] " + t.id());
+// => SIDE EFFECT: Writes to console (no return value)
 Consumer<Transaction> auditTransaction = t ->
     System.out.println("[AUDIT] " + t.id());
+// => SIDE EFFECT: Audit logging
 
-// PIPELINE
+// => PIPELINE: Chain consumers for sequential side effects
 Consumer<Transaction> processTransaction =
     logTransaction.andThen(auditTransaction);
-```
+// => EXECUTION: logTransaction FIRST, then auditTransaction
+// => Example: processTransaction.accept(tx) logs then audits
 
-**Supplier<T>**: Takes no input, returns value (lazy evaluation).
-
-```java
+// => SUPPLIER: Lazy value generation (no inputs)
 Supplier<String> expensiveOperation = () -> computeResult();
+// => DEFERRED: Not executed until get() called
+// => Returns: Result of computeResult()
 
-// LAZY EVALUATION
+// => LAZY EVALUATION with Optional
 String result = maybeName.orElseGet(() -> expensiveOperation());
-// Only called if Optional empty
-```
+// => LAZY: expensiveOperation only called if maybeName empty
+// => EAGER alternative: orElse(expensiveOperation.get())
+// => Would call expensiveOperation ALWAYS (wasteful)
 
 | Use Case     | Consumer                | Supplier               |
 | ------------ | ----------------------- | ---------------------- |
@@ -191,7 +211,7 @@ words.stream()
     .map(String::toUpperCase)  // METHOD REFERENCE
     .filter(w -> w.startsWith("A"))  // LAMBDA (condition check)
     .forEach(System.out::println);  // METHOD REFERENCE
-```
+````
 
 ## Streams API - Declarative Collection Processing
 
@@ -228,19 +248,31 @@ graph LR
 **Comparison:**
 
 ```java
-// IMPERATIVE: How to do it
+// => IMPERATIVE: How to do it (step-by-step mutation)
 List<Integer> result = new ArrayList<>();
+// => MUTABLE: Empty list, will be modified
 for (Integer n : numbers) {
+    // => LOOP: Manual iteration
     if (n % 2 == 0) {
+        // => FILTER: Check each element
         result.add(n * 2);
+        // => SIDE EFFECT: Mutate result list
     }
 }
+// => Result: List of even numbers doubled
 
-// DECLARATIVE: What to do
+// => DECLARATIVE: What to do (express intent)
 List<Integer> result = numbers.stream()
     .filter(n -> n % 2 == 0)
+    // => FILTER: Keep only even numbers
+    // => Example: [1,2,3,4] becomes [2,4]
     .map(n -> n * 2)
+    // => MAP: Transform each element (double it)
+    // => Example: [2,4] becomes [4,8]
     .toList();
+    // => COLLECT: Gather results into immutable list
+// => NO MUTATION: Original numbers unchanged
+// => FUNCTIONAL: Describes transformation pipeline
 ```
 
 ### Lazy Evaluation
@@ -251,12 +283,19 @@ List<Integer> result = numbers.stream()
 Stream<Integer> stream = numbers.stream()
     .filter(n -> {
         System.out.println("Filtering: " + n);  // NOT executed yet
+        // => LAZY: No processing happens at stream creation
         return n > 0;
     });
-// NO OUTPUT YET
+// => NO OUTPUT YET: Intermediate operations are lazy
+// => Stream is just a recipe, not executed
 
-List<Integer> result = stream.toList();  // NOW executes entire pipeline
+List<Integer> result = stream.toList();
+// => TERMINAL OPERATION: NOW executes entire pipeline
+// => Output: "Filtering: 1", "Filtering: 2", etc.
+// => Benefits: Short-circuit optimization, infinite streams support
 ```
+
+````
 
 Benefits:
 
@@ -283,21 +322,34 @@ Benefits:
 | Sharing           | Defensive copying     | Direct reference (safe)        |
 
 **Example:**
-
 ```java
-// MUTABLE
+// => PROBLEM: MUTABLE
 public class MutablePerson {
-    private String name;  // MUTABLE
-    public void setName(String name) { this.name = name; }
-}
-
-// IMMUTABLE
-public record Person(String name, int age) {
-    public Person withName(String newName) {  // FUNCTIONAL UPDATE
-        return new Person(newName, this.age);
+    private String name;  // MUTABLE: Can be changed after creation
+    public void setName(String name) {
+        this.name = name;
+        // => MUTATION: Modifies existing object state
+        // => THREAD UNSAFE: Concurrent modifications possible
+        // => DEFENSIVE COPYING: Must copy when sharing
     }
 }
-```
+
+// => SOLUTION: IMMUTABLE
+public record Person(String name, int age) {
+    // => RECORD: Final fields, no setters
+    // => THREAD SAFE: No mutable state
+    public Person withName(String newName) {
+        // => FUNCTIONAL UPDATE: Returns NEW instance
+        return new Person(newName, this.age);
+        // => ORIGINAL UNCHANGED: Old Person object unmodified
+        // => Example: person.withName("Alice") creates new Person
+    }
+}
+````
+
+}
+
+````
 
 ## Functional Error Handling
 
@@ -315,23 +367,32 @@ public record Person(String name, int age) {
 **Example:**
 
 ```java
-// TRADITIONAL: Exceptions break flow
+// => PROBLEM: TRADITIONAL - Exceptions break flow
 public User findUser(String id) throws NotFoundException {
     User user = database.get(id);
     if (user == null) throw new NotFoundException();
+    // => EXCEPTION: Breaks functional composition
+    // => SIDE EFFECT: Non-local control flow
     return user;
 }
 
-// FUNCTIONAL: Errors as values
+// => SOLUTION: FUNCTIONAL - Errors as values
 public Optional<User> findUser(String id) {
     return Optional.ofNullable(database.get(id));
+    // => NO EXCEPTION: Returns Optional.empty() for null
+    // => COMPOSABLE: Can chain with map/flatMap
+    // => TYPE SAFE: Compiler forces handling
 }
 
-// USAGE
+// => USAGE: Monadic chaining
 String userName = findUser("123")
     .map(User::name)
+    // => MAP: Extract name if user present
+    // => SHORT-CIRCUIT: Skip if empty
     .orElse("Unknown");
-```
+    // => DEFAULT: Return "Unknown" if empty
+// => NO NULL CHECKS: Optional handles absence
+````
 
 ## Practical Patterns
 
@@ -341,11 +402,18 @@ Build complex transformations from simple operations:
 
 ```java
 Function<String, String> sanitize = String::trim;
+// => TRANSFORMATION: Remove whitespace
 Function<String, String> normalize = String::toLowerCase;
+// => TRANSFORMATION: Lowercase conversion
 Function<String, Integer> countWords = s -> s.split("\\s+").length;
+// => TRANSFORMATION: Count words by splitting on whitespace
 
 Function<String, Integer> pipeline =
     sanitize.andThen(normalize).andThen(countWords);
+// => COMPOSITION: Chain three functions left-to-right
+// => EXECUTION: sanitize → normalize → countWords
+// => Example: "  Hello WORLD  " → "hello world" → 2
+// => REUSABLE: Single pipeline, multiple invocations
 ```
 
 ### Monadic Chaining
@@ -354,8 +422,16 @@ Handle nested Optional values without explicit null checks:
 
 ```java
 Optional<Address> address = findUser(userId)
-    .flatMap(User::getAddress)  // Optional<Optional<Address>> → Optional<Address>
+    .flatMap(User::getAddress)
+    // => flatMap: Flattens Optional<Optional<Address>> to Optional<Address>
+    // => User::getAddress returns Optional<Address>
+    // => Without flatMap: Would get Optional<Optional<Address>> (nested)
+    // => SHORT-CIRCUIT: If user absent, skips remaining operations
     .filter(addr -> addr.isValid());
+    // => FILTER: Keep address only if valid
+    // => Returns: Optional.empty() if invalid
+// => NO NULL CHECKS: Entire chain handles absence functionally
+// => COMPOSABLE: Can add more operations with map/flatMap/filter
 ```
 
 ### Parallel Streams
@@ -364,9 +440,19 @@ Automatic parallelization with thread-safe operations:
 
 ```java
 long count = hugeList.parallelStream()
-    .filter(isPrime)  // PURE FUNCTION: safe to parallelize
+    // => PARALLEL: Splits collection across multiple threads
+    // => ForkJoinPool: Uses common pool by default
+    .filter(isPrime)
+    // => PURE FUNCTION: No side effects, safe to parallelize
+    // => THREAD SAFE: Each thread filters independently
+    // => STATELESS: No shared mutable state
     .count();
+    // => REDUCTION: Combines results from all threads
+// => AUTOMATIC: No explicit thread management needed
+// => PERFORMANCE: Speedup proportional to cores (if work is CPU-bound)
 ```
+
+````
 
 **Requirements for parallel streams:**
 
@@ -404,52 +490,81 @@ long count = hugeList.parallelStream()
 Transform imperative code to functional style incrementally:
 
 **Phase 1**: Replace loops with streams
-
 ```java
-// BEFORE
+// => BEFORE: Imperative loop
 for (User user : users) {
+    // => MANUAL ITERATION: Explicit loop
     if (user.isActive()) {
+        // => FILTER: Check condition inline
         process(user);
+        // => PROCESS: Side effect
     }
 }
 
-// AFTER
+// => AFTER: Functional stream
 users.stream()
     .filter(User::isActive)
+    // => FILTER: Declarative condition
+    // => METHOD REFERENCE: Concise syntax
     .forEach(this::process);
-```
+    // => SIDE EFFECT: Process each active user
+// => BENEFITS: Readable intent, potential parallelization
+
+````
 
 **Phase 2**: Extract pure functions
 
 ```java
-// BEFORE: Mixed logic
+// => BEFORE: Mixed logic (impure)
 public double calculateDiscount(Order order) {
     double total = 0;
+    // => MUTABLE STATE: Accumulator variable
     for (Item item : order.getItems()) {
         total += item.getPrice();
+        // => MUTATION: Modifying total
     }
     return total > 100 ? total * 0.1 : 0;
+    // => MIXED CONCERNS: Calculation + business rule
 }
 
-// AFTER: Pure extraction
+// => AFTER: Pure extraction (functional)
 public double calculateDiscount(Order order) {
-    double total = calculateTotal(order);  // PURE
-    return applyDiscountRule(total);  // PURE
+    double total = calculateTotal(order);
+    // => PURE FUNCTION: No side effects
+    // => TESTABLE: Easy to verify correctness
+    return applyDiscountRule(total);
+    // => PURE FUNCTION: Single responsibility
+    // => COMPOSABLE: Can reuse independently
 }
+// => BENEFITS: Easier testing, clearer intent, reusable logic
 ```
 
+}
+
+````
+
 **Phase 3**: Introduce immutability
-
 ```java
-// BEFORE: Mutable
+// => BEFORE: Mutable (imperative)
 public void updateUserName(User user, String name) {
-    user.setName(name);  // MUTATES
+    user.setName(name);
+    // => MUTATION: Modifies existing user object
+    // => SIDE EFFECT: Changes visible to all references
+    // => VOID RETURN: No new value returned
+    // => THREAD UNSAFE: Concurrent modifications possible
 }
 
-// AFTER: Immutable
+// => AFTER: Immutable (functional)
 public User updateUserName(User user, String name) {
-    return user.withName(name);  // NEW INSTANCE
+    return user.withName(name);
+    // => NEW INSTANCE: Creates new User object
+    // => ORIGINAL UNCHANGED: Old user unmodified
+    // => RETURN VALUE: Returns updated user
+    // => THREAD SAFE: No shared mutable state
 }
+// => BENEFITS: Thread safety, easier reasoning, no defensive copying
+````
+
 ```
 
 ## Conclusion
@@ -462,3 +577,4 @@ Functional programming in Java provides:
 - **Easier reasoning**: Referential transparency enables substitution
 
 Start small: replace imperative loops with streams, extract pure functions, and gradually adopt functional patterns. The Java 8+ functional features (lambdas, streams, Optional) make functional programming practical and performant for modern Java applications.
+```

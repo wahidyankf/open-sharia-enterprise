@@ -1552,10 +1552,20 @@ Deploy incomplete features behind runtime toggles.
 
 ```java
 if (featureFlags.isEnabled("new-checkout-flow")) {
+// => Feature flag check: queries runtime configuration (not compile-time)
+// => Flag source: database, config service, environment variable
+// => Dynamic behavior: can toggle without code deployment
     return newCheckoutService.process(order);
+// => New implementation: executes when flag enabled
+// => Gradual rollout: enable for 1% → 10% → 100% of users
 } else {
+// => Fallback path: executes when flag disabled
     return legacyCheckoutService.process(order);
+// => Legacy implementation: existing proven code
+// => Zero-downtime rollback: disable flag instantly if new code has issues
 }
+// => Feature toggle pattern: both implementations deployed, flag controls activation
+// => CI/CD benefit: merge code before feature complete, activate when ready
 ```
 
 **Benefits**:

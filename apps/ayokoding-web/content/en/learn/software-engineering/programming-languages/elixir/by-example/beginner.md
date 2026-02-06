@@ -737,21 +737,16 @@ Named functions are defined in modules using `def` (public) or `defp` (private).
 ```elixir
 defmodule Math do              # => Defines module Math (namespace for functions)
   def add(a, b) do             # => Public function add/2 (def = exported)
-                               # => Takes 2 parameters: a and b
     a + b                      # => Returns sum of a and b
-                               # => No explicit return keyword needed
-  end                          # => Ends function definition
+  end                          # => Ends add function
 
   def subtract(a, b), do: a - b  # => Single-line function syntax (do: shorthand)
-                                  # => Public function subtract/2
                                   # => Returns a - b
 
   defp internal_multiply(a, b), do: a * b  # => Private function (defp = not exported)
                                             # => Only callable within Math module
-                                            # => Returns a * b
 
   def describe(0), do: "zero"  # => First clause: pattern matches 0 exactly
-                               # => Returns "zero" when arg is 0
   def describe(n) when n > 0, do: "positive"  # => Second clause: guard n > 0
                                                # => Returns "positive" when arg > 0
   def describe(n) when n < 0, do: "negative"  # => Third clause: guard n < 0
@@ -759,18 +754,18 @@ defmodule Math do              # => Defines module Math (namespace for functions
 
   def greet(name, greeting \\ "Hello") do  # => Default argument: greeting defaults to "Hello"
                                             # => \\ syntax defines default value
-    "#{greeting}, #{name}!"    # => String interpolation
+    "#{greeting}, #{name}!"    # => String interpolation with greeting and name
                                # => Returns formatted greeting string
-  end
+  end                          # => Ends greet function
 
   def factorial(0), do: 1      # => Base case: factorial of 0 is 1
-                               # => Stops recursion
+                               # => Returns 1 (stops recursion)
   def factorial(n) when n > 0, do: n * factorial(n - 1)  # => Recursive case: n * factorial(n-1)
                                                           # => Guard ensures n > 0
                                                           # => Calls itself with n-1
 
   def sum_list([]), do: 0      # => Base case: empty list sums to 0
-                               # => Stops recursion
+                               # => Returns 0 (stops recursion)
   def sum_list([head | tail]), do: head + sum_list(tail)  # => Recursive case: head + sum of tail
                                                            # => Pattern matches [head | tail]
                                                            # => Processes list recursively
@@ -782,8 +777,8 @@ defmodule Math do              # => Defines module Math (namespace for functions
                                                             # => Guard: is_number(a) and is_number(b)
     {:ok, a / b}               # => Returns success tuple with result
                                # => Division always returns float
-  end
-end                            # => Ends module definition
+  end                          # => Ends divide function
+end                            # => Ends Math module definition
 
 Math.add(5, 3)                 # => Calls add/2 with 5 and 3
                                # => 5 + 3 = 8
@@ -830,7 +825,7 @@ defmodule Example do           # => Defines module Example
                                # => Returns a unchanged
   def func(a, b), do: a + b    # => Function func/2 (arity 2, different function!)
                                # => Returns sum of a and b
-end                            # => Ends module definition
+end                            # => Ends Example module
 
 Example.func(5)                # => Calls func/1 with 5
                                # => Matches first definition (arity 1)
@@ -1269,10 +1264,8 @@ count_evens = Enum.count(numbers, fn x -> rem(x, 2) == 0 end)  # => Counts eleme
                                                                 # => Returns 2
 
 sum = Enum.sum(numbers)        # => Sums all numeric elements
-                                # => 1+2+3+4+5 = 15
                                 # => Returns 15
 product = Enum.product(numbers)  # => Multiplies all numeric elements
-                                  # => 1*2*3*4*5 = 120
                                   # => Returns 120
 
 sorted = Enum.sort([3, 1, 4, 1, 5, 9])  # => Sorts in ascending order (default)
@@ -1340,33 +1333,27 @@ Ranges represent sequences of integers from start to end. They're memory-efficie
 range1 = 1..10                     # => Creates range from 1 to 10 (inclusive both endpoints)
                                    # => range1 is 1..10 (type: Range)
 range2 = 1..10//1                  # => Creates range with explicit step of 1
-                                   # => Same as 1..10, but step is explicit
                                    # => range2 is 1..10//1
 range3 = 10..1//-1                 # => Creates descending range (10 down to 1)
-                                   # => Step -1 makes range go backwards
                                    # => range3 is 10..1//-1
 
 5 in 1..10                         # => Tests if 5 is in range 1..10
-                                   # => Returns true (5 is between 1 and 10)
+                                   # => Returns true
 15 in 1..10                        # => Tests if 15 is in range 1..10
-                                   # => Returns false (15 exceeds 10)
+                                   # => Returns false
 0 in 1..10                         # => Tests if 0 is in range 1..10
-                                   # => Returns false (0 below 1)
+                                   # => Returns false
 
 Enum.to_list(1..5)                 # => Converts range to list
-                                   # => Materializes all values: [1, 2, 3, 4, 5]
                                    # => Returns [1, 2, 3, 4, 5]
 Enum.to_list(10..1//-1)            # => Converts descending range to list
-                                   # => Materializes: [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
                                    # => Returns [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 
 evens = 0..10//2                   # => Creates range with step 2 (every even number)
-                                   # => evens is 0..10//2 (0, 2, 4, 6, 8, 10)
 Enum.to_list(evens)                # => Converts to list
                                    # => Returns [0, 2, 4, 6, 8, 10]
 
 odds = 1..10//2                    # => Creates range with step 2 starting at 1
-                                   # => odds is 1..10//2 (1, 3, 5, 7, 9)
 Enum.to_list(odds)                 # => Converts to list
                                    # => Returns [1, 3, 5, 7, 9]
 
@@ -1444,7 +1431,6 @@ first = "Bob"                      # => Binds first to "Bob"
 last = "Smith"                     # => Binds last to "Smith"
                                    # => last is "Smith"
 "Full name: #{first} #{last}"      # => Interpolates multiple variables
-                                   # => first is "Bob", last is "Smith"
                                    # => Returns "Full name: Bob Smith"
 
 x = 10                             # => Binds x to integer 10
@@ -1957,7 +1943,6 @@ defmodule Factorial do             # => Defines module Factorial
                                    # => Returns 1 (factorial of 0 is 1)
   def calc(n) when n > 0, do: n * calc(n - 1)  # => Recursive case: guard n > 0
                                                 # => Returns n * calc(n-1)
-                                                # => Tail-recursive call
 end                                # => Ends module definition
 
 Factorial.calc(5)                  # => Calls calc/1 with 5
@@ -2775,42 +2760,34 @@ In Elixir, only `false` and `nil` are falsy—everything else is truthy. This di
 ```elixir
 if false, do: "Truthy", else: "Falsy"  # => Tests false for truthiness
                                         # => false is falsy (one of two falsy values)
-                                        # => else clause executes
                                         # => Returns "Falsy"
 if nil, do: "Truthy", else: "Falsy"  # => Tests nil for truthiness
                                       # => nil is falsy (the other falsy value)
-                                      # => else clause executes
                                       # => Returns "Falsy"
 
 if true, do: "Truthy"              # => Tests true for truthiness
-                                   # => true is truthy
                                    # => Returns "Truthy"
 if 0, do: "Truthy"                 # => Tests 0 for truthiness
-                                   # => 0 is truthy (unlike JavaScript/Python!)
                                    # => Returns "Truthy"
 if "", do: "Truthy"                # => Tests empty string for truthiness
-                                   # => "" is truthy
                                    # => Returns "Truthy"
 if [], do: "Truthy"                # => Tests empty list for truthiness
-                                   # => [] is truthy
                                    # => Returns "Truthy"
 if {}, do: "Truthy"                # => Tests empty tuple for truthiness
-                                   # => {} is truthy
                                    # => Returns "Truthy"
 if %{}, do: "Truthy"               # => Tests empty map for truthiness
-                                   # => %{} is truthy
                                    # => Returns "Truthy"
 
 if :ok, do: "Truthy"               # => Tests atom :ok for truthiness
-                                   # => :ok is truthy (all atoms except false and nil)
+                                   # => All atoms except false and nil are truthy
                                    # => Returns "Truthy"
 if :error, do: "Truthy"            # => Tests atom :error for truthiness
                                    # => :error is truthy
                                    # => Returns "Truthy"
 
 nil || false || 0                  # => || returns first truthy value
-                                   # => nil is falsy, false is falsy
-                                   # => 0 is truthy, returns 0
+                                   # => nil is falsy, false is falsy, 0 is truthy
+                                   # => Returns 0
 nil || false || nil || "default"   # => All nil and false are falsy
                                    # => "default" is first truthy
                                    # => Returns "default"
@@ -2818,20 +2795,16 @@ nil || false || nil || "default"   # => All nil and false are falsy
 true && "value"                    # => && returns last value if all truthy
                                    # => true is truthy, evaluates second
                                    # => Returns "value"
-5 && 10                            # => Both truthy
-                                   # => Returns last value: 10
+5 && 10                            # => Both truthy, returns last value: 10
 nil && "never"                     # => First value nil (falsy), short-circuits
-                                   # => Doesn't evaluate "never"
                                    # => Returns nil
 
 name = nil                         # => Binds name to nil
-                                   # => name is nil
 display_name = name || "Guest"     # => || for default value pattern
                                    # => name is nil (falsy)
                                    # => Returns "Guest"
 
 config = %{timeout: nil}           # => Creates map with nil timeout
-                                   # => config is %{timeout: nil}
 timeout = config[:timeout] || 5000  # => Accesses :timeout key (nil)
                                     # => nil is falsy, uses default 5000
                                     # => Returns 5000
@@ -2902,7 +2875,6 @@ data && data.field                 # => data is nil (falsy), short-circuits
                                    # => Returns nil
 
 data = %{field: "value"}           # => Rebinds data to map
-                                   # => data is %{field: "value"}
 data && data.field                 # => data is truthy, evaluates second part
                                    # => Accesses .field
                                    # => Returns "value"

@@ -244,21 +244,34 @@ Create checkstyle.xml with rules to enforce.
 ```java
 // GOOD: Class name PascalCase
 public class PaymentService { }
+// => PascalCase: first letter uppercase, each word capitalized
+// => Naming convention: matches Java language standards for classes
 
 // BAD: Class name lowercase
 public class paymentService { }
+// => VIOLATION: class names must start with uppercase letter
+// => Checkstyle error: TypeName check fails
 
 // GOOD: Method name camelCase
 public void processPayment() { }
+// => camelCase: first letter lowercase, subsequent words capitalized
+// => Convention: standard Java naming for methods and variables
 
 // BAD: Method name PascalCase
 public void ProcessPayment() { }
+// => VIOLATION: method names must start with lowercase letter
+// => Checkstyle error: MethodName check fails
+// => Looks like class: confuses readers
 
 // GOOD: Constant UPPER_SNAKE_CASE
 private static final int MAX_RETRIES = 3;
+// => UPPER_SNAKE_CASE: all caps, words separated by underscores
+// => static final: constants use screaming snake case convention
 
 // BAD: Constant camelCase
 private static final int maxRetries = 3;
+// => VIOLATION: constants must use UPPER_SNAKE_CASE
+// => Checkstyle error: ConstantName check fails
 ```
 
 **Import rules**:
@@ -266,18 +279,33 @@ private static final int maxRetries = 3;
 ```java
 // BAD: Star imports
 import java.util.*;
+// => VIOLATION: star import (*) imports entire package
+// => Problems: pollutes namespace, hides which classes used
+// => Checkstyle error: AvoidStarImport check fails
 import com.example.*;
+// => Wildcard import: imports all public classes from package
+// => Conflicts: higher risk of class name collisions
 
 // GOOD: Explicit imports
 import java.util.List;
+// => Explicit import: only imports List interface
+// => Clear dependency: shows exactly which classes used
 import java.util.ArrayList;
+// => Specific import: imports only ArrayList implementation
 import com.example.PaymentService;
+// => Fully qualified: shows exact class dependency
+// => Readability: easier to understand code dependencies
 
 // BAD: Unused import
 import java.util.Map; // Not used in code
+// => VIOLATION: imports class never used in file
+// => Checkstyle error: UnusedImports check fails
+// => Dead code: adds noise, confuses readers
 
 // GOOD: Only used imports
 import java.util.List;
+// => Used import: List actually referenced in code
+// => Clean: only necessary imports present
 ```
 
 **Whitespace rules**:
@@ -285,8 +313,15 @@ import java.util.List;
 ```java
 // GOOD: Proper spacing
 public class Example {
+// => Space before brace: "Example {" not "Example{"
+// => WhitespaceAround: spaces around operators and keywords
     public void method(int x, int y) {
+// => Space after comma: "x, int y" not "x,int y"
+// => WhitespaceAfter: comma, semicolon spacing
         if (x > 0) {
+// => Space after keyword: "if (" not "if("
+// => Space around operator: "x > 0" not "x>0"
+// => Readability: spacing improves visual parsing
             return;
         }
     }
@@ -294,8 +329,15 @@ public class Example {
 
 // BAD: Missing spaces
 public class Example{
+// => VIOLATION: no space before brace "Example{" should be "Example {"
+// => Checkstyle error: WhitespaceAround check fails
     public void method(int x,int y){
+// => VIOLATION: missing space after comma "x,int" should be "x, int"
+// => VIOLATION: no space before brace "{" after parameter list
         if(x>0){
+// => VIOLATION: no space after if keyword "if(" should be "if ("
+// => VIOLATION: no spaces around operator "x>0" should be "x > 0"
+// => Hard to read: cramped spacing reduces readability
             return;
         }
     }
@@ -327,16 +369,24 @@ Suppress specific violations when necessary (use sparingly).
 ```java
 // Suppress specific check
 @SuppressWarnings("checkstyle:MagicNumber")
+// => @SuppressWarnings: annotation disables specific Checkstyle check
+// => checkstyle:MagicNumber: suppresses magic number warnings for this method
 public void calculate() {
     int result = value * 100; // Magic number acceptable here
+// => 100 allowed: magic number suppression permits literal
+// => Use sparingly: document why suppression needed
 }
 
 // Suppress for entire file
 // checkstyle:off
+// => Comment directive: disables all Checkstyle checks below this line
 public class LegacyCode {
+// => Legacy code: may have many violations during migration
     // Legacy code with many violations
+// => Temporary suppression: should fix violations and remove later
 }
 // checkstyle:on
+// => Re-enables checks: subsequent code must follow standards
 ```
 
 **Suppress in configuration**:
@@ -433,47 +483,72 @@ SpotBugs detects bugs in multiple categories.
 ```java
 // BUG: Null pointer dereference
 public void process(String value) {
+// => BUG: calls method on potentially null value
     if (value == null) {
+// => Null check: detects null case
         System.out.println("Null value");
+// => Logs null: but doesn't return, continues execution
     }
     // SpotBugs: Possible null pointer dereference
+// => SpotBugs warning: value could be null at this point
     System.out.println(value.length());
+// => CRASH RISK: NullPointerException if value is null
+// => Bug detected: if condition doesn't prevent continuation
 }
 
 // FIXED: Proper null handling
 public void process(String value) {
+// => FIXED: early return prevents null pointer dereference
     if (value == null) {
+// => Guard clause: checks null condition
         System.out.println("Null value");
+// => Logs null case
         return;
+// => Early exit: prevents execution of value.length() when null
     }
     System.out.println(value.length());
+// => Safe call: guaranteed non-null after guard clause
 }
 
 // BUG: equals() without hashCode()
 public class User {
+// => BUG: violates equals-hashCode contract
     private String id;
 
     @Override
     public boolean equals(Object obj) {
+// => Overrides equals: custom equality logic
         if (!(obj instanceof User)) return false;
+// => Type check: ensures obj is User instance
         return this.id.equals(((User) obj).id);
+// => ID comparison: considers users equal if IDs match
     }
     // SpotBugs: equals() defined without hashCode()
+// => VIOLATION: equals() overridden but hashCode() not implemented
+// => Contract broken: equal objects may have different hash codes
+// => HashMap/HashSet broken: cannot find equal objects
 }
 
 // FIXED: Implement both
 public class User {
+// => FIXED: implements both equals() and hashCode()
     private String id;
 
     @Override
     public boolean equals(Object obj) {
+// => Equality: custom comparison logic
         if (!(obj instanceof User)) return false;
         return this.id.equals(((User) obj).id);
+// => ID-based equality: users equal if IDs equal
     }
 
     @Override
     public int hashCode() {
+// => hashCode implementation: satisfies equals-hashCode contract
         return Objects.hash(id);
+// => Objects.hash(): generates hash from fields used in equals()
+// => Contract satisfied: equal objects have same hash code
+// => HashMap/HashSet work: can find equal objects in hash-based collections
     }
 }
 ```
@@ -672,41 +747,65 @@ mvn pmd:pmd
 ```java
 // VIOLATION: EmptyCatchBlock
 try {
+// => Try block: executes risky operation
     riskyOperation();
+// => May throw exception: but catch block ignores it
 } catch (Exception e) {
+// => Empty catch: swallows exception without handling
     // Empty catch block
+// => PMD VIOLATION: EmptyCatchBlock rule triggered
+// => Silent failure: errors go unnoticed, debugging impossible
 }
 
 // FIXED: Handle or log exception
 try {
+// => Try block: same risky operation
     riskyOperation();
 } catch (Exception e) {
+// => Catches exception: proper error handling
     logger.error("Risk operation failed", e);
+// => Logs error: records failure with stack trace for debugging
     throw new ServiceException("Operation failed", e);
+// => Wraps exception: converts to domain exception, propagates to caller
+// => Proper handling: errors visible, actionable, traceable
 }
 
 // VIOLATION: AvoidInstantiatingObjectsInLoops
 for (int i = 0; i < 1000; i++) {
+// => Loop: executes 1000 times
     Object temp = new Object(); // Creates 1000 objects
+// => PMD VIOLATION: creates new object every iteration
+// => Performance impact: 1000 objects allocated, garbage collected
+// => Memory churn: unnecessary allocations strain GC
     process(temp);
 }
 
 // FIXED: Reuse object if possible
 Object temp = new Object();
+// => Creates once: single object allocation before loop
 for (int i = 0; i < 1000; i++) {
+// => Reuses object: same instance for all iterations
     process(temp);
+// => Better performance: one allocation instead of 1000
+// => Reduced GC pressure: fewer objects to collect
 }
 
 // VIOLATION: UnusedPrivateMethod
 public class Service {
+// => Service class with dead code
     private void helperMethod() {
+// => PMD VIOLATION: UnusedPrivateMethod detected
         // Never called
+// => Dead code: method defined but never invoked
+// => Code smell: confuses readers, increases maintenance burden
     }
 }
 
 // FIXED: Remove unused method
 public class Service {
+// => Clean class: no dead code
     // Method removed
+// => Improved: only necessary methods remain
 }
 ```
 
@@ -771,22 +870,36 @@ Error Prone detects bugs at compile time.
 ```java
 // BUG: Precedence confusion
 if (x = y) { // Assignment instead of comparison
+// => ERROR PRONE BUG: assignment (=) instead of comparison (==)
+// => Assigns y to x: always evaluates to y's value (truthy if non-zero)
     // Error Prone: "Assignment in condition"
+// => Compile-time error: Error Prone catches this during compilation
+// => Common typo: single = instead of double ==
 }
 
 // FIXED
 if (x == y) {
+// => FIXED: proper comparison operator (==)
     // Proper comparison
+// => Compares values: returns boolean (true if equal, false if not)
+// => Error Prone passes: correct comparison operator
 }
 
 // BUG: String comparison
 if (str == "test") { // Reference comparison
+// => ERROR PRONE BUG: reference equality (==) instead of value equality
+// => Compares references: only true if same object in memory
     // Error Prone: "StringEquality"
+// => Wrong for strings: "test" and new String("test") are different references
+// => Compile-time warning: Error Prone detects string == pattern
 }
 
 // FIXED
 if (str.equals("test")) {
+// => FIXED: value comparison using equals()
     // Value comparison
+// => Compares content: returns true if strings have same characters
+// => Correct for strings: works regardless of object identity
 }
 
 // BUG: Collection incompatible type

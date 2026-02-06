@@ -44,15 +44,20 @@ JDBC (Java Database Connectivity) is the standard API for database access in Jav
 **Pattern** (without pooling):
 
 ```java
-String url = "jdbc:postgresql://localhost:5432/mydb";
-String user = "dbuser";
-String password = "dbpass";
+String url = "jdbc:postgresql://localhost:5432/mydb";  // => JDBC connection URL
+                                                         // => Format: jdbc:<database>://<host>:<port>/<database-name>
+                                                         // => postgresql is database type, localhost:5432 is server
+String user = "dbuser";  // => Database username
+String password = "dbpass";  // => Database password (NEVER hardcode in production - use environment variables!)
 
-try (Connection conn = DriverManager.getConnection(url, user, password)) {
-    // Use connection
-} catch (SQLException e) {
-    System.err.println("Connection error: " + e.getMessage());
-}
+try (Connection conn = DriverManager.getConnection(url, user, password)) {  // => Establishes TCP connection to database
+                                                                             // => Authenticates with username/password
+                                                                             // => Connection is "conn" object
+                                                                             // => try-with-resources auto-closes connection
+    // Use connection  // => Execute queries, inserts, updates, deletes
+} catch (SQLException e) {  // => Catches database errors (connection failed, authentication failed)
+    System.err.println("Connection error: " + e.getMessage());  // => Prints error message
+}  // => Connection automatically closed here (try-with-resources)
 ```
 
 **Problem**: Creating connections is expensive (TCP handshake, authentication). Creating per-query is inefficient.
@@ -105,29 +110,43 @@ try (Connection conn = getConnection();
 
 ```java
 // DANGEROUS - SQL INJECTION VULNERABILITY
-String username = request.getParameter("username");
-String sql = "SELECT * FROM users WHERE username = '" + username + "'";
-// Attack: username = "' OR '1'='1"
+String username = request.getParameter("username");  // => Gets username from HTTP request (user-controlled input!)
+String sql = "SELECT * FROM users WHERE username = '" + username + "'";  // => String concatenation creates SQL
+                                                                          // => If username = "alice", SQL is: SELECT * FROM users WHERE username = 'alice'
+                                                                          // => If username = "' OR '1'='1", SQL is: SELECT * FROM users WHERE username = '' OR '1'='1'
+                                                                          // => Attack SQL returns ALL users (bypasses authentication!)
+// Attack: username = "' OR '1'='1"  // => Attacker closes quote, adds OR condition always true
+                                     // => '1'='1' is always true → query returns all rows
+                                     // => Can also use: "; DROP TABLE users; --" to delete table
 ```
 
 **Safe code** (parameterized):
 
 ```java
-String sql = "SELECT * FROM users WHERE username = ?";
+String sql = "SELECT * FROM users WHERE username = ?";  // => Parameterized query with ? placeholder
+                                                          // => ? is parameter marker (NOT string concatenation)
+                                                          // => Database treats parameter as DATA, never as SQL code
 
-try (Connection conn = getConnection();
-     PreparedStatement stmt = conn.prepareStatement(sql)) {
+try (Connection conn = getConnection();  // => Gets connection from pool or DriverManager
+     PreparedStatement stmt = conn.prepareStatement(sql)) {  // => Creates PreparedStatement (compiles SQL once)
+                                                              // => PreparedStatement is reusable, efficient
 
-    stmt.setString(1, username);  // Parameter binding prevents injection
+    stmt.setString(1, username);  // Parameter binding prevents injection  // => Binds username to parameter 1 (first ?)
+                                                                            // => Parameter index starts at 1 (NOT 0!)
+                                                                            // => Database escapes special characters automatically
+                                                                            // => If username = "' OR '1'='1", treated as LITERAL string (not SQL)
+                                                                            // => Attack SQL becomes: SELECT * FROM users WHERE username = '\' OR \'1\'=\'1\''
+                                                                            // => Returns zero rows (safe!)
 
-    try (ResultSet rs = stmt.executeQuery()) {
-        while (rs.next()) {
-            // Process results
+    try (ResultSet rs = stmt.executeQuery()) {  // => Executes prepared statement
+                                                 // => Returns ResultSet with query results
+        while (rs.next()) {  // => Iterates through result rows
+            // Process results  // => Extract columns with rs.getString(), rs.getInt(), etc.
         }
-    }
-} catch (SQLException e) {
+    }  // => ResultSet auto-closed
+} catch (SQLException e) {  // => Catches database errors
     System.err.println("Query error: " + e.getMessage());
-}
+}  // => PreparedStatement and Connection auto-closed
 ```
 
 **Type-safe parameter binding**:
@@ -208,27 +227,38 @@ HikariCP is the fastest, most reliable connection pool for Java.
 ```java
 import com.zaxxer.hikari.*;
 
-HikariConfig config = new HikariConfig();
-config.setJdbcUrl("jdbc:postgresql://localhost:5432/mydb");
-config.setUsername("dbuser");
-config.setPassword("dbpass");
+HikariConfig config = new HikariConfig();  // => Creates configuration object
+config.setJdbcUrl("jdbc:postgresql://localhost:5432/mydb");  // => Database connection URL
+config.setUsername("dbuser");  // => Database username
+config.setPassword("dbpass");  // => Database password (use environment variables in production!)
 
 // Pool configuration
-config.setMaximumPoolSize(10);              // Max connections
-config.setMinimumIdle(2);                   // Min idle connections
-config.setConnectionTimeout(30000);          // 30s connection timeout
-config.setIdleTimeout(600000);              // 10min idle timeout
-config.setMaxLifetime(1800000);             // 30min max lifetime
+config.setMaximumPoolSize(10);              // Max connections  // => Maximum 10 connections in pool
+                                                                 // => Requests wait if all connections busy
+                                                                 // => Too many connections waste memory, too few causes contention
+config.setMinimumIdle(2);                   // Min idle connections  // => Keeps 2 connections ready (minimizes wait time)
+                                                                       // => Pool grows from 2 to 10 based on demand
+config.setConnectionTimeout(30000);          // 30s connection timeout  // => Wait max 30 seconds for connection before throwing exception
+                                                                         // => Prevents infinite waiting if pool exhausted
+config.setIdleTimeout(600000);              // 10min idle timeout  // => Idle connections closed after 10 minutes (saves resources)
+                                                                    // => Pool shrinks back to minimumIdle when idle
+config.setMaxLifetime(1800000);             // 30min max lifetime  // => Connections recycled after 30 minutes (prevents stale connections)
+                                                                    // => Database may close connections after idle time - this prevents errors
 
-HikariDataSource dataSource = new HikariDataSource(config);
+HikariDataSource dataSource = new HikariDataSource(config);  // => Creates connection pool
+                                                              // => Opens minimum idle connections immediately
+                                                              // => Pool ready for requests
 
 // Use connections
-try (Connection conn = dataSource.getConnection()) {
-    // Execute queries
-}
+try (Connection conn = dataSource.getConnection()) {  // => Gets connection from pool (fast: ~1ms vs ~50-100ms without pooling)
+                                                       // => Waits if all connections busy (up to connectionTimeout)
+    // Execute queries  // => Use connection for database operations
+}  // => try-with-resources returns connection to pool (NOT closed, reused!)
+   // => Connection immediately available for next request
 
 // Shutdown pool
-dataSource.close();
+dataSource.close();  // => Closes all connections in pool
+                     // => Call on application shutdown ONLY (not per request!)
 ```
 
 **Recommended pool sizes**:
@@ -250,31 +280,41 @@ Transactions ensure data consistency with ACID properties (Atomicity, Consistenc
 **Pattern**:
 
 ```java
-Connection conn = null;
+Connection conn = null;  // => Declare outside try for finally access
 try {
-    conn = dataSource.getConnection();
-    conn.setAutoCommit(false);  // Start transaction
+    conn = dataSource.getConnection();  // => Gets connection from pool
+    conn.setAutoCommit(false);  // Start transaction  // => Disables auto-commit (default: each statement commits immediately)
+                                                        // => Transaction starts - changes not visible until commit()
 
     // Multiple operations in transaction
-    updateInventory(conn, productId, -quantity);
-    createOrder(conn, userId, productId, quantity);
-    chargePayment(conn, userId, amount);
+    updateInventory(conn, productId, -quantity);  // => UPDATE inventory SET quantity = quantity - ? WHERE product_id = ?
+                                                   // => Deducts quantity from inventory
+    createOrder(conn, userId, productId, quantity);  // => INSERT INTO orders (user_id, product_id, quantity) VALUES (?, ?, ?)
+                                                      // => Creates order record
+    chargePayment(conn, userId, amount);  // => INSERT INTO payments (user_id, amount) VALUES (?, ?)
+                                          // => Charges customer
+                                          // => All three operations in SAME transaction - atomic
 
-    conn.commit();  // Commit if all succeed
-} catch (SQLException e) {
-    if (conn != null) {
+    conn.commit();  // Commit if all succeed  // => Makes all changes permanent
+                                               // => Other connections can see changes
+                                               // => Releases locks
+} catch (SQLException e) {  // => Catches ANY database error in transaction
+    if (conn != null) {  // => Check connection not null
         try {
-            conn.rollback();  // Rollback on error
-        } catch (SQLException ex) {
+            conn.rollback();  // Rollback on error  // => Undoes ALL changes in transaction
+                                                     // => Inventory NOT deducted, order NOT created, payment NOT charged
+                                                     // => Database returns to state before transaction
+                                                     // => CRITICAL: All-or-nothing guarantee
+        } catch (SQLException ex) {  // => Rollback can also fail (connection lost)
             ex.printStackTrace();
         }
     }
-    throw new RuntimeException("Transaction failed", e);
-} finally {
+    throw new RuntimeException("Transaction failed", e);  // => Re-throw to caller
+} finally {  // => Always executes (success or failure)
     if (conn != null) {
         try {
-            conn.setAutoCommit(true);  // Restore auto-commit
-            conn.close();
+            conn.setAutoCommit(true);  // Restore auto-commit  // => Re-enables auto-commit for connection reuse
+            conn.close();  // => Returns connection to pool (doesn't actually close)
         } catch (SQLException e) {
             e.printStackTrace();
         }

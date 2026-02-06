@@ -61,37 +61,46 @@ Use synchronized to ensure mutual exclusion.
 
 ```java
 public class Counter {
-    private int count = 0;
+    private int count = 0;  // => Shared mutable state (type: int)
+                            // => Without synchronization, race condition guaranteed
 
     // Synchronized method (locks this object)
-    public synchronized void increment() {
-        count++; // Atomic operation under lock
+    public synchronized void increment() {  // => synchronized keyword acquires intrinsic lock on 'this'
+        count++;  // => Atomic operation under lock
+                  // => Without lock: read-modify-write not atomic (race condition)
     }
 
-    public synchronized int getCount() {
-        return count;
+    public synchronized int getCount() {  // => Must synchronize reads too for memory visibility
+        return count;  // => Returns current value (type: int)
+                      // => Without synchronized: might read stale value from thread cache
     }
 
     public static void main(String[] args) throws InterruptedException {
-        Counter counter = new Counter();
+        Counter counter = new Counter();  // => counter is shared reference (type: Counter)
 
         // Create 10 threads incrementing 1000 times each
-        Thread[] threads = new Thread[10];
-        for (int i = 0; i < 10; i++) {
-            threads[i] = new Thread(() -> {
-                for (int j = 0; j < 1000; j++) {
-                    counter.increment();
+        Thread[] threads = new Thread[10];  // => threads array holds 10 Thread references (type: Thread[])
+        for (int i = 0; i < 10; i++) {  // => i from 0 to 9 (type: int)
+            threads[i] = new Thread(() -> {  // => Lambda captures counter reference (final/effectively final)
+                                             // => Each thread gets separate lambda instance
+                for (int j = 0; j < 1000; j++) {  // => Each thread: 1000 increments
+                    counter.increment();  // => Acquires lock, increments, releases lock
+                                         // => Threads contend for same lock (serialized access)
                 }
             });
-            threads[i].start();
+            threads[i].start();  // => Starts thread execution (asynchronous)
+                                // => main thread continues immediately
         }
 
         // Wait for all threads
-        for (Thread thread : threads) {
-            thread.join();
+        for (Thread thread : threads) {  // => Iterate all 10 threads (type: Thread)
+            thread.join();  // => Blocks main thread until this thread completes
+                           // => Ensures all increments finish before reading count
         }
 
-        System.out.println("Final count: " + counter.getCount()); // 10000 (correct)
+        System.out.println("Final count: " + counter.getCount());  // => Output: Final count: 10000 (correct)
+                                                                    // => 10 threads × 1000 increments = 10000
+                                                                    // => Synchronized guarantees correctness
     }
 }
 ```
@@ -100,29 +109,33 @@ public class Counter {
 
 ```java
 public class BankAccount {
-    private double balance = 0.0;
-    private final Object balanceLock = new Object();
+    private double balance = 0.0;  // => Shared mutable state (type: double)
+    private final Object balanceLock = new Object();  // => Dedicated lock object (type: Object)
+                                                       // => Better than synchronizing on 'this' (prevents external lock access)
 
-    public void deposit(double amount) {
+    public void deposit(double amount) {  // => amount is deposit value (type: double)
         // Only synchronize critical section
-        synchronized (balanceLock) {
-            balance += amount;
-        }
+        synchronized (balanceLock) {  // => Acquires balanceLock monitor
+                                      // => Other threads block here if lock held
+            balance += amount;  // => Critical section: read balance, add amount, write back
+                               // => Atomic under lock protection
+        }  // => Releases balanceLock (even if exception thrown)
     }
 
-    public void withdraw(double amount) {
-        synchronized (balanceLock) {
-            if (balance >= amount) {
-                balance -= amount;
+    public void withdraw(double amount) {  // => amount is withdrawal value (type: double)
+        synchronized (balanceLock) {  // => Same lock as deposit (mutual exclusion)
+            if (balance >= amount) {  // => Check: sufficient funds?
+                balance -= amount;  // => Deduct amount if sufficient
             } else {
-                throw new IllegalStateException("Insufficient funds");
+                throw new IllegalStateException("Insufficient funds");  // => Throws exception (lock still released)
             }
         }
     }
 
     public double getBalance() {
-        synchronized (balanceLock) {
-            return balance;
+        synchronized (balanceLock) {  // => Must lock reads for memory visibility
+            return balance;  // => Returns current balance (type: double)
+                            // => Without lock: might read stale value from cache
         }
     }
 }
@@ -159,73 +172,75 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class ProducerConsumer {
-    private final Queue<Integer> queue = new LinkedList<>();
-    private final int capacity = 5;
-    private final Object lock = new Object();
+    private final Queue<Integer> queue = new LinkedList<>();  // => Shared buffer (type: LinkedList<Integer>)
+    private final int capacity = 5;  // => Maximum queue size (type: int)
+    private final Object lock = new Object();  // => Shared lock for coordination (type: Object)
 
-    public void produce(int value) throws InterruptedException {
-        synchronized (lock) {
+    public void produce(int value) throws InterruptedException {  // => value is item to produce (type: int)
+        synchronized (lock) {  // => Acquire lock for exclusive access
             // Wait while queue is full
-            while (queue.size() == capacity) {
+            while (queue.size() == capacity) {  // => MUST use while (not if) - recheck after wakeup
                 System.out.println("Queue full, producer waiting...");
-                lock.wait(); // Release lock and wait
+                lock.wait();  // => Releases lock atomically and waits
+                             // => Wakes up when notified by consumer
             }
 
-            queue.add(value);
+            queue.add(value);  // => Add item to queue (queue now has space)
             System.out.println("Produced: " + value + ", Queue size: " + queue.size());
 
             // Notify consumers
-            lock.notifyAll();
-        }
+            lock.notifyAll();  // => Wake all waiting consumers
+        }  // => Release lock
     }
 
     public int consume() throws InterruptedException {
-        synchronized (lock) {
+        synchronized (lock) {  // => Acquire same lock as producer
             // Wait while queue is empty
-            while (queue.isEmpty()) {
+            while (queue.isEmpty()) {  // => MUST use while (not if) for safety
                 System.out.println("Queue empty, consumer waiting...");
-                lock.wait();
+                lock.wait();  // => Release lock and wait
             }
 
-            int value = queue.poll();
+            int value = queue.poll();  // => Remove item from queue (type: int)
             System.out.println("Consumed: " + value + ", Queue size: " + queue.size());
 
             // Notify producers
-            lock.notifyAll();
+            lock.notifyAll();  // => Wake all waiting producers
 
-            return value;
+            return value;  // => Return consumed value (type: int)
         }
     }
 
     public static void main(String[] args) {
-        ProducerConsumer pc = new ProducerConsumer();
+        ProducerConsumer pc = new ProducerConsumer();  // => Shared ProducerConsumer instance (type: ProducerConsumer)
 
         // Producer thread
-        Thread producer = new Thread(() -> {
-            for (int i = 1; i <= 10; i++) {
+        Thread producer = new Thread(() -> {  // => Lambda creates producer task
+            for (int i = 1; i <= 10; i++) {  // => Produce 10 items (i from 1 to 10, type: int)
                 try {
-                    pc.produce(i);
-                    Thread.sleep(100);
+                    pc.produce(i);  // => Produce item i
+                    Thread.sleep(100);  // => Slow producer: 100ms between items
                 } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
+                    Thread.currentThread().interrupt();  // => Restore interrupt status
                 }
             }
         });
 
         // Consumer thread
-        Thread consumer = new Thread(() -> {
-            for (int i = 1; i <= 10; i++) {
+        Thread consumer = new Thread(() -> {  // => Lambda creates consumer task
+            for (int i = 1; i <= 10; i++) {  // => Consume 10 items
                 try {
-                    pc.consume();
-                    Thread.sleep(200);
+                    pc.consume();  // => Consume one item
+                    Thread.sleep(200);  // => Slower consumer: 200ms between items
+                                       // => Consumer slower than producer → queue fills up
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
             }
         });
 
-        producer.start();
-        consumer.start();
+        producer.start();  // => Start producer thread (asynchronous)
+        consumer.start();  // => Start consumer thread (asynchronous)
     }
 }
 ```

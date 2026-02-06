@@ -103,33 +103,40 @@ import javax.naming.InitialContext;
 public class JmsQueueProducer {
     public static void main(String[] args) throws Exception {
         // SETUP: Connection factory and queue
-        InitialContext context = new InitialContext();
-        ConnectionFactory factory = (ConnectionFactory) context.lookup("ConnectionFactory");
-        Queue queue = (Queue) context.lookup("OrderQueue");
+        InitialContext context = new InitialContext();  // => JNDI context for lookup (type: InitialContext)
+        ConnectionFactory factory = (ConnectionFactory) context.lookup("ConnectionFactory");  // => Lookup connection factory from JNDI
+                                                                                              // => factory creates connections to JMS broker (type: ConnectionFactory)
+        Queue queue = (Queue) context.lookup("OrderQueue");  // => Lookup queue destination from JNDI
+                                                             // => queue is target for messages (type: Queue)
 
         // CREATE: Connection and session
-        Connection connection = factory.createConnection();
-        connection.start();
+        Connection connection = factory.createConnection();  // => Creates connection to broker (type: Connection)
+        connection.start();  // => Starts message delivery (required before receiving)
+                            // => Does not affect sending
 
-        Session session = connection.createSession(
-            false,  // NOT TRANSACTED
-            Session.AUTO_ACKNOWLEDGE
+        Session session = connection.createSession(  // => Session is single-threaded context (type: Session)
+            false,  // NOT TRANSACTED => Auto-commit mode (message acknowledged immediately after send)
+            Session.AUTO_ACKNOWLEDGE  // => Acknowledgement mode: session automatically acknowledges
         );
 
         // PRODUCER: Send messages
-        MessageProducer producer = session.createProducer(queue);
+        MessageProducer producer = session.createProducer(queue);  // => Producer bound to OrderQueue (type: MessageProducer)
 
-        TextMessage message = session.createTextMessage("Order #12345");
-        message.setStringProperty("orderId", "12345");
-        message.setIntProperty("priority", 5);
+        TextMessage message = session.createTextMessage("Order #12345");  // => Create text message (type: TextMessage)
+                                                                          // => Body: "Order #12345"
+        message.setStringProperty("orderId", "12345");  // => Set custom property orderId = "12345"
+                                                       // => Properties used for message routing/filtering
+        message.setIntProperty("priority", 5);  // => Set priority property = 5
+                                               // => Can be used by consumer to prioritize processing
 
-        producer.send(message);  // SEND: Message to queue
-        System.out.println("Sent: " + message.getText());
+        producer.send(message);  // SEND: Message to queue => Message now in queue (persistent by default)
+                                // => Returns when message acknowledged by broker
+        System.out.println("Sent: " + message.getText());  // => Output: Sent: Order #12345
 
         // CLEANUP
-        producer.close();
-        session.close();
-        connection.close();
+        producer.close();  // => Release producer resources
+        session.close();  // => Close session (cleans up resources)
+        connection.close();  // => Close connection to broker
     }
 }
 ```
@@ -344,41 +351,50 @@ import java.util.Properties;
 public class KafkaProducerExample {
     public static void main(String[] args) {
         // CONFIGURATION
-        Properties props = new Properties();
-        props.put("bootstrap.servers", "localhost:9092");  // Kafka broker addresses
-        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("acks", "all");  // Wait for all replicas to acknowledge
-        props.put("retries", 3);  // Retry failed sends
+        Properties props = new Properties();  // => Configuration properties (type: Properties)
+        props.put("bootstrap.servers", "localhost:9092");  // => Kafka broker addresses (comma-separated list)
+                                                           // => Producer connects to these brokers
+        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");  // => Serializer for message keys
+                                                                                                 // => Converts String key → bytes
+        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");  // => Serializer for message values
+        props.put("acks", "all");  // => Wait for all replicas to acknowledge (strongest durability)
+                                  // => "0" = no ack, "1" = leader ack, "all" = all in-sync replicas ack
+        props.put("retries", 3);  // => Retry failed sends up to 3 times
+                                 // => Handles transient failures
 
         // CREATE: Producer
-        KafkaProducer<String, String> producer = new KafkaProducer<>(props);
+        KafkaProducer<String, String> producer = new KafkaProducer<>(props);  // => Creates producer with config (type: KafkaProducer<String, String>)
+                                                                              // => Thread-safe (can be shared)
 
         // SEND: Messages
-        for (int i = 0; i < 10; i++) {
-            String key = "order-" + i;
-            String value = "Order details for order " + i;
+        for (int i = 0; i < 10; i++) {  // => Send 10 messages (i from 0 to 9, type: int)
+            String key = "order-" + i;  // => Message key: "order-0" to "order-9" (type: String)
+                                       // => Key determines partition (hash(key) % partition_count)
+            String value = "Order details for order " + i;  // => Message value (payload, type: String)
 
-            ProducerRecord<String, String> record = new ProducerRecord<>(
-                "orders",  // TOPIC
-                key,       // KEY: Determines partition (same key → same partition)
-                value      // VALUE: Message content
+            ProducerRecord<String, String> record = new ProducerRecord<>(  // => Record to send (type: ProducerRecord<String, String>)
+                "orders",  // TOPIC => Topic name where message goes (type: String)
+                key,       // KEY: Determines partition (same key → same partition => ordering guarantee)
+                value      // VALUE: Message content (actual data)
             );
 
             // ASYNC SEND: Fire and forget
-            producer.send(record, (metadata, exception) -> {
-                if (exception != null) {
-                    System.err.println("Error sending: " + exception.getMessage());
-                } else {
-                    System.out.println("Sent to partition " + metadata.partition() +
-                        ", offset " + metadata.offset());
+            producer.send(record, (metadata, exception) -> {  // => Async send with callback (non-blocking)
+                                                              // => Callback invoked when send completes or fails
+                if (exception != null) {  // => exception is Throwable if send failed, null if success
+                    System.err.println("Error sending: " + exception.getMessage());  // => Log error
+                } else {  // => Send succeeded
+                    System.out.println("Sent to partition " + metadata.partition() +  // => partition number (type: int)
+                                                                                      // => Partition determined by key hash
+                        ", offset " + metadata.offset());  // => offset in partition (type: long)
+                                                          // => Unique position of message in partition
                 }
             });
         }
 
         // FLUSH: Wait for all sends to complete
-        producer.flush();
-        producer.close();
+        producer.flush();  // => Blocks until all async sends complete (ensures delivery)
+        producer.close();  // => Clean up producer resources (closes network connections)
     }
 }
 ```

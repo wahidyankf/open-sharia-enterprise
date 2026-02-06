@@ -776,28 +776,43 @@ Defer expensive initialization until needed.
 ```java
 public class ReportService {
     private volatile ExpensiveResource resource;
+    // => volatile: Ensures visibility across threads (happens-before guarantee)
 
-    // Lazy initialization (thread-safe)
+    // => DOUBLE-CHECKED LOCKING: Lazy initialization with minimal locking
     public ExpensiveResource getResource() {
         if (resource == null) {
+            // => FIRST CHECK: Fast path (no locking if already initialized)
+            // => Most calls take this path after first initialization
             synchronized (this) {
+                // => LOCK: Only if resource null (rare after initialization)
                 if (resource == null) {
+                    // => SECOND CHECK: Another thread may have initialized
+                    // => Between first check and acquiring lock
                     resource = new ExpensiveResource();
+                    // => EXPENSIVE: Only called once
                 }
             }
         }
         return resource;
+        // => Returns: Initialized resource (thread-safe)
     }
 }
 
-// Better: Initialization-on-demand holder
+// => BETTER: Initialization-on-demand holder idiom
 public class ReportService {
     private static class ResourceHolder {
+        // => STATIC INITIALIZER: JVM guarantees thread-safe initialization
         static final ExpensiveResource INSTANCE = new ExpensiveResource();
+        // => Initialized on first access to ResourceHolder class
+        // => NOT initialized when ReportService loaded
     }
 
     public ExpensiveResource getResource() {
-        return ResourceHolder.INSTANCE;  // Thread-safe, lazy, no locking
+        return ResourceHolder.INSTANCE;
+        // => LAZY: ResourceHolder loaded on first getResource() call
+        // => THREAD-SAFE: JVM class loading is synchronized
+        // => NO LOCKING: After initialization, direct field access
+        // => PERFORMANCE: Zero synchronization overhead
     }
 }
 ```

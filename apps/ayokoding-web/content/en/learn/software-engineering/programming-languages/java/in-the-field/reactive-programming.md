@@ -64,18 +64,25 @@ import java.util.concurrent.Executors;
 public class CompletableFutureBasics {
     public static void main(String[] args) {
         // Simple async computation
-        CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
+        CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {  // => Creates async task (type: CompletableFuture<String>)
+                                                                                   // => Lambda runs in background thread
             // Runs in ForkJoinPool.commonPool()
-            return "Hello from " + Thread.currentThread().getName();
-        });
+            return "Hello from " + Thread.currentThread().getName();  // => Returns thread name (type: String)
+                                                                      // => Thread name like "ForkJoinPool.commonPool-worker-1"
+        });  // => Returns immediately (non-blocking)
+            // => Main thread continues without waiting
 
         // Non-blocking callback
-        future.thenAccept(result ->
-            System.out.println("Result: " + result)
+        future.thenAccept(result ->  // => Registers callback for when future completes
+                                    // => result is computed value (type: String)
+            System.out.println("Result: " + result)  // => Prints result when available
+                                                    // => Callback runs on completing thread
         );
 
         // Block to see output (don't do this in production)
-        future.join();
+        future.join();  // => Blocks main thread until future completes
+                       // => Only for demo - defeats purpose of async!
+                       // => In production: use callbacks or reactive streams
     }
 }
 ```
@@ -86,29 +93,35 @@ public class CompletableFutureBasics {
 
 ```java
 public class UserService {
-    public CompletableFuture<User> getUser(long userId) {
-        return CompletableFuture.supplyAsync(() -> {
+    public CompletableFuture<User> getUser(long userId) {  // => userId is user ID (type: long)
+        return CompletableFuture.supplyAsync(() -> {  // => Returns CompletableFuture<User> immediately
+                                                      // => Actual work runs asynchronously
             // Simulate database call
-            return fetchUserFromDb(userId);
+            return fetchUserFromDb(userId);  // => Expensive I/O operation (type: User)
+                                            // => Runs on ForkJoinPool thread
         });
     }
 
-    public CompletableFuture<List<Order>> getOrders(long userId) {
+    public CompletableFuture<List<Order>> getOrders(long userId) {  // => Returns orders future (type: CompletableFuture<List<Order>>)
         return CompletableFuture.supplyAsync(() -> {
             // Simulate API call
-            return fetchOrdersFromApi(userId);
+            return fetchOrdersFromApi(userId);  // => External API call (type: List<Order>)
+                                               // => Runs in parallel with getUser()
         });
     }
 
     public CompletableFuture<UserProfile> getUserProfile(long userId) {
         // Compose two async operations
-        CompletableFuture<User> userFuture = getUser(userId);
-        CompletableFuture<List<Order>> ordersFuture = getOrders(userId);
+        CompletableFuture<User> userFuture = getUser(userId);  // => Start async user fetch (type: CompletableFuture<User>)
+        CompletableFuture<List<Order>> ordersFuture = getOrders(userId);  // => Start async orders fetch (type: CompletableFuture<List<Order>>)
+                                                                          // => Both execute in parallel
 
-        return userFuture.thenCombine(ordersFuture, (user, orders) -> {
+        return userFuture.thenCombine(ordersFuture, (user, orders) -> {  // => Combine when BOTH complete (type: CompletableFuture<UserProfile>)
+                                                                         // => user is User, orders is List<Order>
             // Combine results when both complete
-            return new UserProfile(user, orders);
-        });
+            return new UserProfile(user, orders);  // => Create profile with both results (type: UserProfile)
+                                                  // => Only executes when both futures complete
+        });  // => Returns future immediately (non-blocking)
     }
 }
 ```
@@ -213,23 +226,34 @@ import reactor.core.publisher.Mono;
 
 public class MonoExamples {
     // Simple value
-    Mono<String> mono = Mono.just("Hello");
+    Mono<String> mono = Mono.just("Hello");  // => Creates Mono with immediate value (type: Mono<String>)
+                                             // => Emits "Hello" when subscribed
+                                             // => Completes after emitting value
 
     // Empty Mono
-    Mono<String> empty = Mono.empty();
+    Mono<String> empty = Mono.empty();  // => Creates Mono that emits nothing (type: Mono<String>)
+                                       // => Completes immediately without emitting value
+                                       // => Represents "no result" case
 
     // Mono from Callable
-    Mono<User> user = Mono.fromCallable(() -> {
+    Mono<User> user = Mono.fromCallable(() -> {  // => Deferred execution (type: Mono<User>)
+                                                 // => Callable NOT invoked until subscription
         // Deferred execution - runs when subscribed
-        return userRepository.findById(123);
+        return userRepository.findById(123);  // => Expensive operation deferred (type: User)
+                                             // => Executes on subscribing thread
     });
 
     // Mono with error
-    Mono<String> error = Mono.error(new RuntimeException("Failed"));
+    Mono<String> error = Mono.error(new RuntimeException("Failed"));  // => Creates Mono that emits error (type: Mono<String>)
+                                                                      // => Error signal sent to subscriber
+                                                                      // => No value emitted, only error
 
-    public Mono<User> getUserById(long id) {
-        return Mono.fromCallable(() -> userRepository.findById(id))
-                   .subscribeOn(Schedulers.boundedElastic()); // Run on I/O thread pool
+    public Mono<User> getUserById(long id) {  // => id is user ID (type: long)
+        return Mono.fromCallable(() -> userRepository.findById(id))  // => Wrap blocking call (type: Mono<User>)
+                                                                     // => Returns Mono immediately
+                   .subscribeOn(Schedulers.boundedElastic());  // => Execute on elastic I/O thread pool
+                                                               // => Prevents blocking main thread
+                                                               // => boundedElastic for blocking operations
     }
 }
 ```
@@ -246,20 +270,31 @@ import java.time.Duration;
 
 public class FluxExamples {
     // Fixed sequence
-    Flux<String> flux = Flux.just("A", "B", "C");
+    Flux<String> flux = Flux.just("A", "B", "C");  // => Creates Flux with 3 elements (type: Flux<String>)
+                                                   // => Emits "A", "B", "C" when subscribed
+                                                   // => Completes after emitting all values
 
     // From collection
-    Flux<Integer> numbers = Flux.fromIterable(List.of(1, 2, 3, 4, 5));
+    Flux<Integer> numbers = Flux.fromIterable(List.of(1, 2, 3, 4, 5));  // => Creates Flux from collection (type: Flux<Integer>)
+                                                                        // => Emits each element sequentially
+                                                                        // => Useful for converting existing collections
 
     // Infinite sequence
-    Flux<Long> interval = Flux.interval(Duration.ofSeconds(1));
+    Flux<Long> interval = Flux.interval(Duration.ofSeconds(1));  // => Creates infinite Flux (type: Flux<Long>)
+                                                                 // => Emits 0, 1, 2, 3... every second
+                                                                 // => Never completes (infinite stream)
+                                                                 // => Use with take() to limit
 
     // Range
-    Flux<Integer> range = Flux.range(1, 100); // 1 to 100
+    Flux<Integer> range = Flux.range(1, 100); // 1 to 100  // => Creates Flux of 100 integers (type: Flux<Integer>)
+                                                           // => Emits 1, 2, 3... 100 sequentially
+                                                           // => Completes after emitting 100
 
-    public Flux<Product> getAllProducts() {
-        return Flux.fromIterable(productRepository.findAll())
-                   .subscribeOn(Schedulers.boundedElastic());
+    public Flux<Product> getAllProducts() {  // => Returns all products (type: Flux<Product>)
+        return Flux.fromIterable(productRepository.findAll())  // => Convert List<Product> to Flux (type: Flux<Product>)
+                                                               // => findAll() is blocking operation
+                   .subscribeOn(Schedulers.boundedElastic());  // => Execute on elastic thread pool
+                                                              // => Prevents blocking main thread
     }
 }
 ```
@@ -270,55 +305,76 @@ Reactor provides **operators** for transforming reactive streams.
 
 **Mapping operators:**
 
-```java
-Flux<String> names = Flux.just("alice", "bob", "charlie");
+````java
+Flux<String> names = Flux.just("alice", "bob", "charlie");  // => Creates Flux with 3 names (type: Flux<String>)
+                                                            // => Source stream for transformations
 
 // map - transform each element
-Flux<String> uppercase = names.map(String::toUpperCase);
+Flux<String> uppercase = names.map(String::toUpperCase);  // => Transform each element (type: Flux<String>)
+                                                          // => Synchronous 1-to-1 transformation
+                                                          // => name -> name.toUpperCase()
 // Emits: "ALICE", "BOB", "CHARLIE"
 
 // filter - keep elements matching predicate
-Flux<String> longNames = names.filter(name -> name.length() > 3);
-// Emits: "alice", "charlie"
+Flux<String> longNames = names.filter(name -> name.length() > 3);  // => Keep only matching elements (type: Flux<String>)
+                                                                   // => name is element being tested (type: String)
+                                                                   // => Predicate returns boolean
+// Emits: "alice", "charlie"  // => "bob" filtered out (length = 3)
 
 // flatMap - async transformation returning Publisher
-Flux<Order> orders = Flux.just(1L, 2L, 3L)
-    .flatMap(userId -> orderService.getOrders(userId));
+Flux<Order> orders = Flux.just(1L, 2L, 3L)  // => Creates Flux of user IDs (type: Flux<Long>)
+    .flatMap(userId -> orderService.getOrders(userId));  // => userId is each ID (type: Long)
+                                                         // => getOrders() returns Flux<Order> or Mono<List<Order>>
+                                                         // => Flattens nested Publishers into single Flux
+                                                         // => Executes async calls in parallel
 // Flattens Mono<List<Order>> results into single Flux<Order>
-```
 
 **Combining streams:**
 
 ```java
-Flux<String> flux1 = Flux.just("A", "B");
-Flux<String> flux2 = Flux.just("C", "D");
+Flux<String> flux1 = Flux.just("A", "B");  // => First flux (type: Flux<String>)
+                                           // => Emits "A", "B"
+Flux<String> flux2 = Flux.just("C", "D");  // => Second flux (type: Flux<String>)
+                                           // => Emits "C", "D"
 
 // concat - sequential (flux1 completes, then flux2)
-Flux<String> sequential = Flux.concat(flux1, flux2);
-// Emits: "A", "B", "C", "D"
+Flux<String> sequential = Flux.concat(flux1, flux2);  // => Concatenate sequentially (type: Flux<String>)
+                                                      // => Waits for flux1 to complete
+                                                      // => Then subscribes to flux2
+// Emits: "A", "B", "C", "D"  // => Guaranteed order
 
 // merge - interleaved (subscribe to both, emit as items arrive)
-Flux<String> merged = Flux.merge(flux1, flux2);
-// Emits: "A", "C", "B", "D" (order depends on timing)
+Flux<String> merged = Flux.merge(flux1, flux2);  // => Merge concurrently (type: Flux<String>)
+                                                 // => Subscribes to both immediately
+                                                 // => Emits items as they arrive
+// Emits: "A", "C", "B", "D" (order depends on timing)  // => Non-deterministic order
 
 // zip - pair corresponding elements
-Flux<String> zipped = Flux.zip(flux1, flux2, (a, b) -> a + b);
-// Emits: "AC", "BD"
-```
+Flux<String> zipped = Flux.zip(flux1, flux2, (a, b) -> a + b);  // => Combine paired elements (type: Flux<String>)
+                                                                // => a is from flux1, b is from flux2 (both type: String)
+                                                                // => Waits for both elements before emitting
+                                                                // => Completes when shortest flux completes
+// Emits: "AC", "BD"  // => ("A" + "C"), ("B" + "D")`
 
 **Error handling:**
 
 ```java
-Flux<String> flux = Flux.just("A", "B", "C")
-    .map(s -> {
-        if (s.equals("B")) throw new RuntimeException("Error on B");
-        return s;
+Flux<String> flux = Flux.just("A", "B", "C")  // => Creates source flux (type: Flux<String>)
+    .map(s -> {  // => s is each element (type: String)
+        if (s.equals("B")) throw new RuntimeException("Error on B");  // => Throws on "B"
+        return s;  // => Returns unchanged for "A", "C"
     })
-    .onErrorReturn("DEFAULT")      // Fallback value
-    .onErrorResume(e -> Flux.empty()) // Fallback publisher
-    .onErrorContinue((err, item) -> {
+    .onErrorReturn("DEFAULT")      // Fallback value  // => Replaces error with fallback (type: String)
+                                                      // => Terminates stream with this value
+                                                      // => Stream completes after error
+    .onErrorResume(e -> Flux.empty()) // Fallback publisher  // => e is the error (type: Throwable)
+                                                              // => Returns fallback Flux on error
+                                                              // => Flux.empty() completes without values
+    .onErrorContinue((err, item) -> {  // => err is error, item is failing element
+                                      // => Does NOT terminate stream
         // Log and skip failing items
-        log.error("Failed on item: " + item, err);
+        log.error("Failed on item: " + item, err);  // => item is "B" (type: String)
+                                                    // => Stream continues with "C"
     });
 ```
 
@@ -327,23 +383,34 @@ Flux<String> flux = Flux.just("A", "B", "C")
 When producer is faster than consumer, **backpressure** controls flow.
 
 ```java
-Flux<Integer> fast = Flux.range(1, 1000);
+Flux<Integer> fast = Flux.range(1, 1000);  // => Creates fast producer (type: Flux<Integer>)
+                                           // => Emits 1000 items rapidly
+                                           // => Faster than consumer can process
 
 // Strategy 1: Buffer (store in memory)
-fast.onBackpressureBuffer(100) // Buffer up to 100 items
-    .subscribe(item -> slowConsumer(item));
+fast.onBackpressureBuffer(100) // Buffer up to 100 items  // => Creates buffer of size 100
+                                                          // => Stores excess items in memory
+                                                          // => Throws error if buffer overflows
+    .subscribe(item -> slowConsumer(item));  // => item is buffered integer (type: Integer)
+                                            // => Consumer processes at own pace
 
 // Strategy 2: Drop (discard excess items)
-fast.onBackpressureDrop()
-    .subscribe(item -> slowConsumer(item));
+fast.onBackpressureDrop()  // => Drops items when consumer can't keep up
+                          // => No buffering, immediate discard
+                          // => Data loss acceptable (metrics, monitoring)
+    .subscribe(item -> slowConsumer(item));  // => item is Integer, some values skipped
 
 // Strategy 3: Latest (keep only latest item)
-fast.onBackpressureLatest()
-    .subscribe(item -> slowConsumer(item));
+fast.onBackpressureLatest()  // => Keeps only most recent item
+                            // => Drops intermediate values
+                            // => Always processes latest state
+    .subscribe(item -> slowConsumer(item));  // => item is latest Integer (e.g., jumps 1→500→1000)
 
 // Strategy 4: Error (fail if consumer too slow)
-fast.onBackpressureError()
-    .subscribe(item -> slowConsumer(item));
+fast.onBackpressureError()  // => Signals error immediately when overflow detected
+                           // => No buffering or dropping
+                           // => Fails fast strategy
+    .subscribe(item -> slowConsumer(item));  // => Throws MissingBackpressureException if too slow
 ```
 
 **Production choice:** Use `onBackpressureBuffer` with size limit for bursty loads, `onBackpressureDrop` for metrics/monitoring where data loss is acceptable.
@@ -355,19 +422,29 @@ Reactive operations are **non-blocking** but still need threads. **Schedulers** 
 ```java
 import reactor.core.scheduler.Schedulers;
 
-// Schedulers.immediate() - current thread (default)
-// Schedulers.single() - single reusable thread
-// Schedulers.parallel() - fixed pool (CPU-bound, size = CPU cores)
-// Schedulers.boundedElastic() - elastic pool (I/O-bound, grows/shrinks)
+// Schedulers.immediate() - current thread (default)  // => No thread switching
+                                                      // => Executes on calling thread
+// Schedulers.single() - single reusable thread  // => Single shared thread for all subscribers
+                                                 // => Useful for sequential tasks
+// Schedulers.parallel() - fixed pool (CPU-bound, size = CPU cores)  // => Thread pool sized to CPU count
+                                                                     // => Optimized for CPU-intensive work
+// Schedulers.boundedElastic() - elastic pool (I/O-bound, grows/shrinks)  // => Thread pool grows dynamically (max ~10x CPU cores)
+                                                                          // => For blocking I/O operations
+                                                                          // => Threads released when idle
 
-Mono<User> user = Mono.fromCallable(() -> {
+Mono<User> user = Mono.fromCallable(() -> {  // => Lambda NOT executed until subscription
     // This blocks! Use boundedElastic for blocking I/O
-    return jdbcTemplate.queryForObject(sql, User.class);
-}).subscribeOn(Schedulers.boundedElastic());
+    return jdbcTemplate.queryForObject(sql, User.class);  // => BLOCKING JDBC call (type: User)
+                                                          // => Must run on boundedElastic
+}).subscribeOn(Schedulers.boundedElastic());  // => Subscribes on I/O thread pool
+                                             // => Prevents blocking main thread
 
-Flux<String> flux = Flux.just("A", "B", "C")
-    .publishOn(Schedulers.parallel())  // Downstream runs on parallel scheduler
-    .map(s -> heavyCpuWork(s));
+Flux<String> flux = Flux.just("A", "B", "C")  // => Creates source flux (type: Flux<String>)
+    .publishOn(Schedulers.parallel())  // Downstream runs on parallel scheduler  // => Switches thread for downstream operators
+                                                                                 // => map() executes on parallel thread
+    .map(s -> heavyCpuWork(s));  // => s is element (type: String)
+                                // => CPU-intensive transformation
+                                // => Runs on parallel scheduler thread
 ```
 
 **Critical rules:**
@@ -398,35 +475,41 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@RestController
-@RequestMapping("/api/users")
+@RestController  // => Spring REST controller
+@RequestMapping("/api/users")  // => Base path for all endpoints
 public class UserController {
-    private final UserService userService;
+    private final UserService userService;  // => Reactive service (returns Mono/Flux)
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService) {  // => Constructor injection
         this.userService = userService;
     }
 
-    @GetMapping("/{id}")
-    public Mono<User> getUser(@PathVariable Long id) {
-        return userService.findById(id);
+    @GetMapping("/{id}")  // => GET /api/users/123
+    public Mono<User> getUser(@PathVariable Long id) {  // => id from URL path (type: Long)
+        return userService.findById(id);  // => Returns Mono<User> (type: Mono<User>)
+                                         // => WebFlux subscribes automatically
+                                         // => Response sent when Mono completes
     }
 
-    @GetMapping
-    public Flux<User> getAllUsers() {
-        return userService.findAll();
+    @GetMapping  // => GET /api/users
+    public Flux<User> getAllUsers() {  // => Returns stream of users (type: Flux<User>)
+        return userService.findAll();  // => Returns Flux<User> (type: Flux<User>)
+                                      // => WebFlux collects to JSON array
     }
 
-    @PostMapping
-    public Mono<User> createUser(@RequestBody User user) {
-        return userService.save(user);
+    @PostMapping  // => POST /api/users
+    public Mono<User> createUser(@RequestBody User user) {  // => user from request body (type: User)
+        return userService.save(user);  // => Returns saved user (type: Mono<User>)
+                                       // => Returns 200 OK with created user
     }
 
-    @GetMapping(value = "/stream", produces = "text/event-stream")
-    public Flux<User> streamUsers() {
+    @GetMapping(value = "/stream", produces = "text/event-stream")  // => Server-Sent Events endpoint
+    public Flux<User> streamUsers() {  // => Continuous stream (type: Flux<User>)
         // Server-Sent Events - pushes updates to clients
-        return userService.findAll()
-            .delayElements(Duration.ofSeconds(1));
+        return userService.findAll()  // => Get all users (type: Flux<User>)
+            .delayElements(Duration.ofSeconds(1));  // => Emit one user per second
+                                                   // => Simulates real-time updates
+                                                   // => Connection stays open
     }
 }
 ```
@@ -453,26 +536,35 @@ import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public interface UserRepository extends R2dbcRepository<User, Long> {
-    Flux<User> findByLastName(String lastName);
-    Mono<User> findByEmail(String email);
+public interface UserRepository extends R2dbcRepository<User, Long> {  // => R2dbcRepository for reactive database access
+                                                                       // => User is entity, Long is ID type
+    Flux<User> findByLastName(String lastName);  // => lastName is search parameter (type: String)
+                                                // => Returns stream of matching users (type: Flux<User>)
+                                                // => Query derived from method name
+    Mono<User> findByEmail(String email);  // => email is search parameter (type: String)
+                                          // => Returns single user or empty (type: Mono<User>)
+                                          // => Email typically unique
 }
 
-@Service
+@Service  // => Spring service component
 public class UserService {
-    private final UserRepository repository;
+    private final UserRepository repository;  // => Reactive repository (returns Mono/Flux)
 
-    public UserService(UserRepository repository) {
+    public UserService(UserRepository repository) {  // => Constructor injection
         this.repository = repository;
     }
 
-    public Mono<User> findById(Long id) {
-        return repository.findById(id)
-            .switchIfEmpty(Mono.error(new NotFoundException("User not found")));
+    public Mono<User> findById(Long id) {  // => id is user ID (type: Long)
+        return repository.findById(id)  // => Returns Mono<User> (type: Mono<User>)
+                                       // => Non-blocking database query
+            .switchIfEmpty(Mono.error(new NotFoundException("User not found")));  // => Replace empty with error
+                                                                                  // => Signals 404 Not Found
     }
 
-    public Flux<User> findAll() {
-        return repository.findAll();
+    public Flux<User> findAll() {  // => Returns all users (type: Flux<User>)
+        return repository.findAll();  // => Returns Flux<User> (type: Flux<User>)
+                                     // => Non-blocking database query
+                                     // => Streams results as they arrive
     }
 }
 ```
@@ -502,19 +594,32 @@ public class UserService {
 import io.reactivex.rxjava3.core.*;
 
 // Single - exactly one item or error
-Single<String> single = Single.just("Hello");
+Single<String> single = Single.just("Hello");  // => Creates Single with value (type: Single<String>)
+                                               // => Must emit exactly one value
+                                               // => No onComplete signal (value IS completion)
 
 // Maybe - zero or one item
-Maybe<String> maybe = Maybe.empty();
+Maybe<String> maybe = Maybe.empty();  // => Creates empty Maybe (type: Maybe<String>)
+                                     // => Emits 0 or 1 item
+                                     // => Similar to Mono in Project Reactor
 
 // Observable - zero to many items (no backpressure)
-Observable<String> observable = Observable.just("A", "B", "C");
+Observable<String> observable = Observable.just("A", "B", "C");  // => Creates Observable (type: Observable<String>)
+                                                                 // => Emits 0 to N items
+                                                                 // => NO backpressure support
+                                                                 // => Can overwhelm slow consumers
 
 // Flowable - zero to many items (with backpressure)
-Flowable<String> flowable = Flowable.just("A", "B", "C");
+Flowable<String> flowable = Flowable.just("A", "B", "C");  // => Creates Flowable (type: Flowable<String>)
+                                                           // => Emits 0 to N items
+                                                           // => WITH backpressure support
+                                                           // => Similar to Flux in Project Reactor
 
 // Completable - no items, just completion or error signal
-Completable completable = Completable.complete();
+Completable completable = Completable.complete();  // => Creates completed signal (type: Completable)
+                                                  // => No values emitted
+                                                  // => Only signals completion or error
+                                                  // => Useful for side effects (save, delete)
 ```
 
 **Project Reactor vs RxJava:**
@@ -553,43 +658,50 @@ import reactor.test.StepVerifier;
 
 @Test
 void testMonoSuccess() {
-    Mono<String> mono = Mono.just("Hello");
+    Mono<String> mono = Mono.just("Hello");  // => Creates test Mono (type: Mono<String>)
 
-    StepVerifier.create(mono)
-        .expectNext("Hello")
-        .verifyComplete();
+    StepVerifier.create(mono)  // => Creates verifier for mono
+        .expectNext("Hello")  // => Expects single emission with value "Hello"
+                             // => Fails test if different value or no emission
+        .verifyComplete();  // => Expects onComplete signal
+                           // => Subscribes and blocks until completion
 }
 
 @Test
 void testFluxSequence() {
-    Flux<Integer> flux = Flux.just(1, 2, 3);
+    Flux<Integer> flux = Flux.just(1, 2, 3);  // => Creates test Flux (type: Flux<Integer>)
 
-    StepVerifier.create(flux)
-        .expectNext(1)
-        .expectNext(2)
-        .expectNext(3)
-        .verifyComplete();
+    StepVerifier.create(flux)  // => Creates verifier for flux
+        .expectNext(1)  // => Expects first emission = 1
+        .expectNext(2)  // => Expects second emission = 2
+        .expectNext(3)  // => Expects third emission = 3
+        .verifyComplete();  // => Expects onComplete signal
+                           // => Verifies exact sequence and completion
 }
 
 @Test
 void testFluxError() {
-    Flux<String> flux = Flux.error(new RuntimeException("Error"));
+    Flux<String> flux = Flux.error(new RuntimeException("Error"));  // => Creates error-emitting Flux
 
-    StepVerifier.create(flux)
-        .expectError(RuntimeException.class)
-        .verify();
+    StepVerifier.create(flux)  // => Creates verifier for error flux
+        .expectError(RuntimeException.class)  // => Expects RuntimeException signal
+                                             // => Fails if different error or no error
+        .verify();  // => Subscribes and verifies error
 }
 
 @Test
 void testBackpressure() {
-    Flux<Integer> flux = Flux.range(1, 100);
+    Flux<Integer> flux = Flux.range(1, 100);  // => Creates Flux of 100 integers
 
-    StepVerifier.create(flux, 10) // Request only 10 items
-        .expectNextCount(10)
-        .thenRequest(10)           // Request 10 more
-        .expectNextCount(10)
-        .thenCancel()              // Cancel subscription
-        .verify();
+    StepVerifier.create(flux, 10) // Request only 10 items  // => Initial request = 10 (backpressure)
+                                                            // => Doesn't request all items upfront
+        .expectNextCount(10)  // => Expects exactly 10 emissions
+                             // => Verifies backpressure respected
+        .thenRequest(10)           // Request 10 more  // => Request 10 additional items
+        .expectNextCount(10)  // => Expects another 10 emissions
+        .thenCancel()              // Cancel subscription  // => Cancels before completion
+                                                          // => Remaining 80 items not requested
+        .verify();  // => Executes verification
 }
 ```
 
@@ -599,13 +711,21 @@ void testBackpressure() {
 @Test
 void testDelayWithVirtualTime() {
     // Without virtual time, this test would take 10 seconds
-    Flux<Long> flux = Flux.interval(Duration.ofSeconds(1)).take(10);
+    Flux<Long> flux = Flux.interval(Duration.ofSeconds(1)).take(10);  // => Creates flux emitting 0-9 every second
+                                                                      // => Would take 10 seconds in real time
 
-    StepVerifier.withVirtualTime(() -> flux)
-        .expectSubscription()
-        .thenAwait(Duration.ofSeconds(10))
-        .expectNextCount(10)
-        .verifyComplete();
+    StepVerifier.withVirtualTime(() -> flux)  // => Uses virtual time scheduler (type: StepVerifier.FirstStep<Long>)
+                                             // => Lambda defers flux creation
+                                             // => Allows scheduler replacement before subscription
+        .expectSubscription()  // => Expects onSubscribe signal
+                              // => Verifies subscription happened
+        .thenAwait(Duration.ofSeconds(10))  // => Advances virtual time by 10 seconds
+                                           // => Happens instantly (not real time)
+                                           // => Triggers 10 interval emissions
+        .expectNextCount(10)  // => Expects 10 emissions (0, 1, 2... 9)
+                             // => Verifies all interval ticks happened
+        .verifyComplete();  // => Expects onComplete signal
+                           // => Test completes instantly
 }
 ```
 
@@ -615,41 +735,48 @@ void testDelayWithVirtualTime() {
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-@WebFluxTest(UserController.class)
+@WebFluxTest(UserController.class)  // => Loads only UserController (slice test)
+                                    // => Autoconfigures WebTestClient
 class UserControllerTest {
-    @Autowired
-    private WebTestClient webClient;
+    @Autowired  // => Injected test client
+    private WebTestClient webClient;  // => Non-blocking HTTP client for tests (type: WebTestClient)
 
-    @MockBean
-    private UserService userService;
+    @MockBean  // => Mock service in Spring context
+    private UserService userService;  // => Mocked dependency (returns Mono/Flux)
 
     @Test
     void testGetUser() {
-        User user = new User(1L, "Alice");
-        when(userService.findById(1L)).thenReturn(Mono.just(user));
+        User user = new User(1L, "Alice");  // => Test user (type: User)
+        when(userService.findById(1L)).thenReturn(Mono.just(user));  // => Mock returns Mono with user
+                                                                     // => Simulates successful database lookup
 
-        webClient.get()
-            .uri("/api/users/1")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(User.class)
-            .isEqualTo(user);
+        webClient.get()  // => Start GET request builder
+            .uri("/api/users/1")  // => Request URI (ID = 1)
+            .exchange()  // => Execute request (type: WebTestClient.ResponseSpec)
+                        // => Non-blocking execution
+            .expectStatus().isOk()  // => Expects HTTP 200 OK
+            .expectBody(User.class)  // => Expects User in response body
+                                    // => Deserializes JSON to User
+            .isEqualTo(user);  // => Verifies response equals expected user
     }
 
     @Test
     void testGetAllUsers() {
-        Flux<User> users = Flux.just(
+        Flux<User> users = Flux.just(  // => Test flux with 2 users (type: Flux<User>)
             new User(1L, "Alice"),
             new User(2L, "Bob")
         );
-        when(userService.findAll()).thenReturn(users);
+        when(userService.findAll()).thenReturn(users);  // => Mock returns Flux with users
+                                                       // => Simulates database query
 
-        webClient.get()
-            .uri("/api/users")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBodyList(User.class)
-            .hasSize(2);
+        webClient.get()  // => Start GET request
+            .uri("/api/users")  // => Request all users endpoint
+            .exchange()  // => Execute request
+            .expectStatus().isOk()  // => Expects HTTP 200 OK
+            .expectBodyList(User.class)  // => Expects List<User> in response body
+                                        // => Collects Flux to List
+            .hasSize(2);  // => Verifies exactly 2 users
+                         // => Validates collection size
     }
 }
 ```
@@ -662,21 +789,30 @@ class UserControllerTest {
 
 ```java
 // Imperative (Spring MVC + JDBC) - blocks thread per request
-@GetMapping("/users/{id}")
-public User getUser(@PathVariable Long id) {
+@GetMapping("/users/{id}")  // => Traditional Spring MVC endpoint
+public User getUser(@PathVariable Long id) {  // => id from URL path (type: Long)
+                                              // => Returns User immediately (type: User)
     // Thread blocked waiting for database
-    return userRepository.findById(id).orElseThrow();
+    return userRepository.findById(id).orElseThrow();  // => BLOCKING JDBC call
+                                                       // => Thread waits for database response
+                                                       // => Thread cannot handle other requests
 }
-// 1000 concurrent requests = 1000 blocked threads = high memory, context switching
+// 1000 concurrent requests = 1000 blocked threads = high memory, context switching  // => 1000 threads × ~1MB stack = ~1GB memory
+                                                                                     // => High context switching overhead
 
 // Reactive (WebFlux + R2DBC) - non-blocking
-@GetMapping("/users/{id}")
-public Mono<User> getUser(@PathVariable Long id) {
+@GetMapping("/users/{id}")  // => Reactive WebFlux endpoint
+public Mono<User> getUser(@PathVariable Long id) {  // => id from URL path (type: Long)
+                                                    // => Returns Mono immediately (type: Mono<User>)
     // Thread released immediately, callback when data arrives
-    return userRepository.findById(id)
-        .switchIfEmpty(Mono.error(new NotFoundException()));
+    return userRepository.findById(id)  // => Non-blocking R2DBC query
+                                       // => Thread released while waiting for database
+                                       // => Can handle other requests
+        .switchIfEmpty(Mono.error(new NotFoundException()));  // => Error if not found
 }
-// 1000 concurrent requests = small fixed thread pool = low memory, minimal context switching
+// 1000 concurrent requests = small fixed thread pool = low memory, minimal context switching  // => Maybe 8-16 threads total
+                                                                                               // => Low memory footprint
+                                                                                               // => Minimal context switching
 ```
 
 **Performance gain:** 10-100x higher concurrency with same resources.
@@ -687,8 +823,11 @@ public Mono<User> getUser(@PathVariable Long id) {
 
 ```java
 // Reactive doesn't help here - CPU is the bottleneck, not I/O
-Flux<BufferedImage> images = Flux.fromIterable(imageFiles)
-    .map(file -> expensiveImageProcessing(file)); // Still blocks CPU
+Flux<BufferedImage> images = Flux.fromIterable(imageFiles)  // => Creates flux from image files (type: Flux<File>)
+    .map(file -> expensiveImageProcessing(file)); // Still blocks CPU  // => file is File (type: File)
+                                                                       // => expensiveImageProcessing() uses CPU
+                                                                       // => Non-blocking I/O doesn't help CPU work
+                                                                       // => Should use parallel() or Schedulers.parallel()
 ```
 
 **Simple CRUD with low concurrency:** Reactive complexity not justified if you're handling <100 concurrent requests.
@@ -699,14 +838,20 @@ Reactive streams are memory-efficient for **bounded streams** but can leak with 
 
 ```java
 // Memory leak - buffers infinite stream
-Flux.interval(Duration.ofMillis(1))
-    .buffer(Duration.ofSeconds(10)) // Buffers 10000 items every 10 seconds
-    .subscribe();
+Flux.interval(Duration.ofMillis(1))  // => Creates infinite flux (type: Flux<Long>)
+                                    // => Emits every 1ms (1000 items/second)
+    .buffer(Duration.ofSeconds(10)) // Buffers 10000 items every 10 seconds  // => Collects 10 seconds of items
+                                                                             // => 10000 items buffered
+                                                                             // => Memory grows unbounded
+    .subscribe();  // => Subscribes but doesn't process fast enough
+                  // => Buffer grows continuously
 
 // Fixed - use backpressure strategies
-Flux.interval(Duration.ofMillis(1))
-    .onBackpressureDrop() // Drop excess items
-    .subscribe();
+Flux.interval(Duration.ofMillis(1))  // => Same infinite flux
+    .onBackpressureDrop() // Drop excess items  // => Drops items when consumer slow
+                                               // => No buffering, constant memory
+    .subscribe();  // => Subscribes safely
+                  // => Memory usage bounded
 ```
 
 ## Common Pitfalls
@@ -715,17 +860,23 @@ Flux.interval(Duration.ofMillis(1))
 
 ```java
 // ❌ WRONG - Nothing executes!
-Mono<User> user = userService.findById(1L);
-// Code never runs because Mono is lazy
+Mono<User> user = userService.findById(1L);  // => Creates Mono but DOESN'T execute (type: Mono<User>)
+                                            // => Only builds reactive pipeline
+// Code never runs because Mono is lazy  // => Database query NEVER happens
+                                         // => Common beginner mistake
 
 // ✅ CORRECT - Subscribe to trigger execution
-Mono<User> user = userService.findById(1L);
-user.subscribe(u -> System.out.println(u));
+Mono<User> user = userService.findById(1L);  // => Creates Mono (type: Mono<User>)
+user.subscribe(u -> System.out.println(u));  // => Subscribes and triggers execution
+                                            // => u is emitted User (type: User)
+                                            // => NOW database query happens
 
 // ✅ In WebFlux controllers, framework subscribes automatically
 @GetMapping("/{id}")
-public Mono<User> getUser(@PathVariable Long id) {
-    return userService.findById(id); // Framework subscribes
+public Mono<User> getUser(@PathVariable Long id) {  // => id from path (type: Long)
+    return userService.findById(id); // Framework subscribes  // => WebFlux subscribes automatically
+                                                              // => No manual subscribe() needed
+                                                              // => Framework handles subscription lifecycle
 }
 ```
 
@@ -733,54 +884,78 @@ public Mono<User> getUser(@PathVariable Long id) {
 
 ```java
 // ❌ WRONG - Defeats purpose of reactive (blocks thread)
-Mono<User> user = Mono.fromCallable(() -> {
-    return jdbcTemplate.queryForObject(sql, User.class); // BLOCKS!
+Mono<User> user = Mono.fromCallable(() -> {  // => Creates Mono (type: Mono<User>)
+    return jdbcTemplate.queryForObject(sql, User.class); // BLOCKS!  // => BLOCKING JDBC call
+                                                                     // => Runs on subscribing thread
+                                                                     // => Blocks event loop thread
+                                                                     // => Kills reactive performance
 });
 
 // ✅ CORRECT - Use boundedElastic scheduler for blocking code
-Mono<User> user = Mono.fromCallable(() -> {
-    return jdbcTemplate.queryForObject(sql, User.class);
-}).subscribeOn(Schedulers.boundedElastic());
+Mono<User> user = Mono.fromCallable(() -> {  // => Creates Mono (type: Mono<User>)
+    return jdbcTemplate.queryForObject(sql, User.class);  // => Still BLOCKING JDBC
+                                                          // => But runs on separate thread
+}).subscribeOn(Schedulers.boundedElastic());  // => Executes on I/O thread pool
+                                             // => Event loop thread not blocked
+                                             // => Bridge pattern for legacy code
 
 // ✅ BETTER - Use reactive database driver (R2DBC)
-Mono<User> user = r2dbcRepository.findById(id); // Non-blocking
+Mono<User> user = r2dbcRepository.findById(id); // Non-blocking  // => id is user ID (type: Long)
+                                                               // => Returns Mono immediately (type: Mono<User>)
+                                                               // => TRUE non-blocking I/O
+                                                               // => No thread blocking at all
 ```
 
 ### Pitfall 3: Swallowing Errors
 
 ```java
 // ❌ WRONG - Error disappears silently
-flux.subscribe(
-    item -> process(item),
-    error -> {} // Empty error handler swallows errors
+flux.subscribe(  // => flux is some Flux<T>
+    item -> process(item),  // => item is each element (type: T)
+                           // => onNext handler processes items
+    error -> {} // Empty error handler swallows errors  // => error is Throwable (type: Throwable)
+                                                        // => SILENTLY ignores errors
+                                                        // => Impossible to debug
 );
 
 // ✅ CORRECT - Log errors
-flux.subscribe(
-    item -> process(item),
-    error -> log.error("Processing failed", error)
+flux.subscribe(  // => Same flux
+    item -> process(item),  // => Process each item
+    error -> log.error("Processing failed", error)  // => error is Throwable
+                                                    // => Logs error for debugging
+                                                    // => At least visible in logs
 );
 
 // ✅ BETTER - Handle errors in pipeline
-flux.onErrorResume(error -> {
-    log.error("Processing failed", error);
-    return Flux.empty(); // Fallback
-}).subscribe();
+flux.onErrorResume(error -> {  // => error is Throwable (type: Throwable)
+                              // => Catches errors in pipeline
+    log.error("Processing failed", error);  // => Log error
+    return Flux.empty(); // Fallback  // => Returns fallback Flux (type: Flux<T>)
+                                      // => Stream continues with empty result
+}).subscribe();  // => Simple subscribe() without error handler
+                // => Errors already handled in pipeline
 ```
 
 ### Pitfall 4: Creating Mono/Flux Eagerly
 
 ```java
 // ❌ WRONG - Executes immediately, not lazily
-public Mono<User> getUser(Long id) {
-    User user = repository.findById(id).block(); // Executes here!
-    return Mono.just(user); // Too late
+public Mono<User> getUser(Long id) {  // => id is user ID (type: Long)
+    User user = repository.findById(id).block(); // Executes here!  // => BLOCKS immediately
+                                                                    // => Executes BEFORE method returns
+                                                                    // => Not deferred
+    return Mono.just(user); // Too late  // => Returns already-fetched user (type: Mono<User>)
+                                         // => Defeats lazy evaluation
+                                         // => Already blocked calling thread
 }
 
 // ✅ CORRECT - Defer execution
-public Mono<User> getUser(Long id) {
-    return Mono.fromCallable(() -> repository.findById(id).block());
-    // Or better: return repository.findById(id); if repository is reactive
+public Mono<User> getUser(Long id) {  // => id is user ID (type: Long)
+    return Mono.fromCallable(() -> repository.findById(id).block());  // => Lambda defers execution (type: Mono<User>)
+                                                                      // => Executes only when subscribed
+                                                                      // => Lazy evaluation preserved
+    // Or better: return repository.findById(id); if repository is reactive  // => If repository already returns Mono<User>
+                                                                             // => No block() needed at all
 }
 ```
 
@@ -798,20 +973,25 @@ Replace blocking I/O with reactive equivalents:
 
 ```java
 // Before (Spring MVC)
-@RestController
+@RestController  // => Traditional Spring MVC controller
 public class UserController {
     @GetMapping("/users/{id}")
-    public User getUser(@PathVariable Long id) {
-        return userService.findById(id);
+    public User getUser(@PathVariable Long id) {  // => id from path (type: Long)
+                                                  // => Returns User immediately (type: User)
+        return userService.findById(id);  // => Blocking call (type: User)
+                                         // => Thread waits for service
     }
 }
 
 // After (Spring WebFlux)
-@RestController
+@RestController  // => Reactive WebFlux controller
 public class UserController {
     @GetMapping("/users/{id}")
-    public Mono<User> getUser(@PathVariable Long id) {
-        return userService.findById(id);
+    public Mono<User> getUser(@PathVariable Long id) {  // => id from path (type: Long)
+                                                        // => Returns Mono immediately (type: Mono<User>)
+        return userService.findById(id);  // => Non-blocking (type: Mono<User>)
+                                         // => WebFlux subscribes automatically
+                                         // => Thread released while waiting
     }
 }
 ```
@@ -820,19 +1000,25 @@ public class UserController {
 
 ```java
 // Before
-@Service
+@Service  // => Traditional service
 public class UserService {
-    public User findById(Long id) {
-        return repository.findById(id).orElseThrow();
+    public User findById(Long id) {  // => id is user ID (type: Long)
+                                     // => Returns User immediately (type: User)
+        return repository.findById(id).orElseThrow();  // => Blocking repository call (type: Optional<User>)
+                                                       // => orElseThrow() on Optional
+                                                       // => Throws if user not found
     }
 }
 
 // After
-@Service
+@Service  // => Reactive service
 public class UserService {
-    public Mono<User> findById(Long id) {
-        return repository.findById(id)
-            .switchIfEmpty(Mono.error(new NotFoundException()));
+    public Mono<User> findById(Long id) {  // => id is user ID (type: Long)
+                                           // => Returns Mono immediately (type: Mono<User>)
+        return repository.findById(id)  // => Reactive repository (type: Mono<User>)
+                                       // => Returns Mono, not Optional
+            .switchIfEmpty(Mono.error(new NotFoundException()));  // => Replace empty with error
+                                                                  // => Reactive equivalent of orElseThrow()
     }
 }
 ```
@@ -842,15 +1028,20 @@ public class UserService {
 If you can't replace blocking libraries immediately:
 
 ```java
-@Service
+@Service  // => Service wrapping legacy code
 public class LegacyService {
-    private final Scheduler scheduler = Schedulers.boundedElastic();
+    private final Scheduler scheduler = Schedulers.boundedElastic();  // => Reusable I/O scheduler (type: Scheduler)
+                                                                      // => For blocking operations
 
-    public Mono<Data> getLegacyData() {
-        return Mono.fromCallable(() -> {
+    public Mono<Data> getLegacyData() {  // => Returns reactive type (type: Mono<Data>)
+        return Mono.fromCallable(() -> {  // => Defers execution (type: Mono<Data>)
+                                         // => Lambda wraps blocking call
             // Legacy blocking JDBC call
-            return jdbcTemplate.queryForObject(sql, Data.class);
-        }).subscribeOn(scheduler);
+            return jdbcTemplate.queryForObject(sql, Data.class);  // => BLOCKING JDBC (type: Data)
+                                                                  // => But runs on separate thread
+        }).subscribeOn(scheduler);  // => Executes on boundedElastic pool
+                                   // => Event loop thread not blocked
+                                   // => Bridge to legacy code
     }
 }
 ```
@@ -875,67 +1066,97 @@ Reactive programming adds complexity. Avoid it when:
 
 ```java
 // Use Mono for single results
-Mono<User> getUser(Long id)
+Mono<User> getUser(Long id)  // => id is user ID (type: Long)
+                             // => Returns 0 or 1 user (type: Mono<User>)
+                             // => Single entity lookup
 
 // Use Flux for collections
-Flux<User> getAllUsers()
+Flux<User> getAllUsers()  // => Returns 0 to N users (type: Flux<User>)
+                         // => Collection of entities
+                         // => Can stream millions of records
 
 // Use Mono<Void> for operations with no return
-Mono<Void> deleteUser(Long id)
+Mono<Void> deleteUser(Long id)  // => id is user ID (type: Long)
+                               // => Returns completion signal (type: Mono<Void>)
+                               // => No value, only success/error signal
 ```
 
 ### 2. Handle Errors Close to Source
 
 ```java
-Mono<User> user = repository.findById(id)
-    .onErrorMap(SQLException.class, e -> new DatabaseException(e))
-    .switchIfEmpty(Mono.error(new NotFoundException()));
+Mono<User> user = repository.findById(id)  // => id is user ID (type: Long)
+                                          // => Returns Mono<User> (type: Mono<User>)
+    .onErrorMap(SQLException.class, e -> new DatabaseException(e))  // => e is SQLException (type: SQLException)
+                                                                    // => Converts to domain exception
+                                                                    // => Hides infrastructure details
+    .switchIfEmpty(Mono.error(new NotFoundException()));  // => Replace empty with error
+                                                          // => Not found = business error
 ```
 
 ### 3. Use Operators, Not Imperative Logic
 
 ```java
 // ❌ WRONG - Breaking reactive chain
-List<User> users = userFlux.collectList().block();
-for (User u : users) {
-    if (u.isActive()) {
-        processUser(u);
+List<User> users = userFlux.collectList().block();  // => BLOCKS thread (type: List<User>)
+                                                    // => Defeats reactive purpose
+                                                    // => Collects entire stream to memory
+for (User u : users) {  // => u is each user (type: User)
+                       // => Imperative loop
+    if (u.isActive()) {  // => Imperative condition
+        processUser(u);  // => Blocking processing
     }
 }
 
 // ✅ CORRECT - Stay in reactive pipeline
-userFlux
-    .filter(User::isActive)
-    .flatMap(u -> processUser(u))
-    .subscribe();
+userFlux  // => userFlux is Flux<User>
+    .filter(User::isActive)  // => Keeps only active users
+                            // => Reactive operator
+    .flatMap(u -> processUser(u))  // => u is active user (type: User)
+                                   // => processUser() returns Mono/Flux
+                                   // => Async processing
+    .subscribe();  // => Subscribes to trigger execution
+                  // => Never blocks
 ```
 
 ### 4. Limit Concurrency with flatMap
 
 ```java
 // Can overwhelm downstream services
-userFlux.flatMap(user -> externalApiCall(user));
+userFlux.flatMap(user -> externalApiCall(user));  // => user is each User (type: User)
+                                                  // => externalApiCall() returns Mono/Flux
+                                                  // => Unbounded concurrency
+                                                  // => Can make 1000s of parallel API calls
+                                                  // => Overwhelms external service
 
 // Limit to 10 concurrent calls
-userFlux.flatMap(user -> externalApiCall(user), 10);
+userFlux.flatMap(user -> externalApiCall(user), 10);  // => user is each User (type: User)
+                                                      // => 10 is concurrency limit (type: int)
+                                                      // => Maximum 10 concurrent API calls
+                                                      // => Protects downstream service
 ```
 
 ### 5. Use publishOn Sparingly
 
 ```java
 // Too many publishOn calls hurt performance
-flux.publishOn(Schedulers.parallel())
-    .map(this::step1)
-    .publishOn(Schedulers.boundedElastic())
-    .map(this::step2)
-    .publishOn(Schedulers.parallel())
-    .map(this::step3);
+flux.publishOn(Schedulers.parallel())  // => Switch to parallel thread
+                                       // => Thread context switch overhead
+    .map(this::step1)  // => Runs on parallel thread
+    .publishOn(Schedulers.boundedElastic())  // => Switch to elastic thread
+                                            // => Another context switch
+    .map(this::step2)  // => Runs on elastic thread
+    .publishOn(Schedulers.parallel())  // => Switch back to parallel
+                                       // => Third context switch
+    .map(this::step3);  // => Runs on parallel thread
+                       // => Too much thread switching
 
 // Better - one publishOn for entire chain
-flux.publishOn(Schedulers.boundedElastic())
-    .map(this::step1)
-    .map(this::step2)
-    .map(this::step3);
+flux.publishOn(Schedulers.boundedElastic())  // => Single thread switch
+                                            // => All downstream on elastic
+    .map(this::step1)  // => Runs on elastic thread
+    .map(this::step2)  // => Same elastic thread
+    .map(this::step3);  // => Same elastic thread
+                       // => Minimal context switching
 ```
 
 ## Related Topics
@@ -960,3 +1181,4 @@ flux.publishOn(Schedulers.boundedElastic())
 
 - "Hands-On Reactive Programming in Spring 5" by Oleh Dokuka, Igor Lozynskyi
 - "Reactive Programming with RxJava" by Tomasz Nurkiewicz, Ben Christensen
+````

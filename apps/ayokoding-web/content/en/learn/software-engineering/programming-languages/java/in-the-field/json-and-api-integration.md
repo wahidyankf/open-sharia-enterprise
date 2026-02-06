@@ -48,22 +48,25 @@ Convert a simple Java object to JSON manually.
 
 ```java
 public class Person {
-    private String name;
-    private int age;
+    private String name;  // => Field: person's name
+    private int age;  // => Field: person's age
 
-    public Person(String name, int age) {
-        this.name = name;
-        this.age = age;
+    public Person(String name, int age) {  // => Constructor
+        this.name = name;  // => Sets name field
+        this.age = age;  // => Sets age field
     }
 
     public String toJson() {
-        return "{\"name\":\"" + name + "\",\"age\":" + age + "}";
+        return "{\"name\":\"" + name + "\",\"age\":" + age + "}";  // => Manually constructs JSON string
+                                                                    // => Escapes quotes with backslash: \" → "
+                                                                    // => age is number (unquoted), name is string (quoted)
+                                                                    // => Result: {"name":"Alice","age":30}
     }
 
     public static void main(String[] args) {
-        Person person = new Person("Alice", 30);
-        String json = person.toJson();
-        System.out.println(json);
+        Person person = new Person("Alice", 30);  // => Creates Person: name="Alice", age=30
+        String json = person.toJson();  // => Converts to JSON: "{\"name\":\"Alice\",\"age\":30}"
+        System.out.println(json);  // => Prints: {"name":"Alice","age":30}
         // Output: {"name":"Alice","age":30}
     }
 }

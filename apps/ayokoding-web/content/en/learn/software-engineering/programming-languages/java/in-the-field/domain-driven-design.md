@@ -43,62 +43,88 @@ tags:
 
 ```java
 public record Money(BigDecimal amount, Currency currency) {
-    // Compact constructor validates invariants
+    // => VALUE OBJECT: Immutable, equality by all fields
+    // => Compact constructor validates invariants before field assignment
     public Money {
         if (amount == null) {
             throw new IllegalArgumentException("Amount cannot be null");
+            // => INVARIANT: amount must exist
         }
         if (currency == null) {
             throw new IllegalArgumentException("Currency cannot be null");
+            // => INVARIANT: currency must exist
         }
-        // Ensure consistent scale
+        // => Ensure consistent scale (2 decimal places for currency)
         amount = amount.setScale(2, RoundingMode.HALF_UP);
+        // => NORMALIZATION: amount is now always "123.45" format
     }
 
-    // Factory methods
+    // => FACTORY METHOD: Named constructor for clarity
     public static Money of(BigDecimal amount, String currencyCode) {
         return new Money(amount, Currency.getInstance(currencyCode));
+        // => Returns: Money with validated amount and ISO currency
     }
 
+    // => FACTORY METHOD: Common case optimization
     public static Money zero(Currency currency) {
         return new Money(BigDecimal.ZERO, currency);
+        // => Returns: Money(0.00, currency) - useful for initialization
     }
 
-    // Business operations return new instances
+    // => DOMAIN OPERATION: Addition with currency validation
+    // => Business operations return new instances (immutability)
     public Money add(Money other) {
         if (!this.currency.equals(other.currency)) {
             throw new CurrencyMismatchException(this.currency, other.currency);
+            // => INVARIANT: Cannot add USD + EUR (must convert first)
         }
         return new Money(this.amount.add(other.amount), this.currency);
+        // => Returns: New Money instance with summed amount
+        // => Example: Money(100, USD) + Money(50, USD) => Money(150, USD)
     }
 
+    // => DOMAIN OPERATION: Subtraction with currency validation
     public Money subtract(Money other) {
         if (!this.currency.equals(other.currency)) {
             throw new CurrencyMismatchException(this.currency, other.currency);
+            // => INVARIANT: Same currency required for subtraction
         }
         return new Money(this.amount.subtract(other.amount), this.currency);
+        // => Returns: New Money instance with difference
+        // => Example: Money(100, USD) - Money(30, USD) => Money(70, USD)
     }
 
+    // => DOMAIN OPERATION: Scalar multiplication
     public Money multiply(BigDecimal factor) {
         return new Money(this.amount.multiply(factor), this.currency);
+        // => Returns: New Money with amount * factor
+        // => Example: Money(100, USD) * 1.5 => Money(150, USD)
     }
 
-    // Query methods
+    // => QUERY METHOD: Check for negative values
     public boolean isNegative() {
         return amount.compareTo(BigDecimal.ZERO) < 0;
+        // => Returns: true if amount < 0
     }
 
+    // => QUERY METHOD: Check for negative or zero
     public boolean isNegativeOrZero() {
         return amount.compareTo(BigDecimal.ZERO) <= 0;
+        // => Returns: true if amount <= 0
     }
 
-    // Domain-specific operations
+    // => DOMAIN-SPECIFIC OPERATION: Islamic zakat calculation (2.5%)
     public Money calculateZakat() {
-        return this.multiply(new BigDecimal("0.025"));  // 2.5%
+        return this.multiply(new BigDecimal("0.025"));
+        // => Returns: 2.5% of this amount
+        // => Example: Money(10000, USD).calculateZakat() => Money(250, USD)
     }
 
+    // => DOMAIN-SPECIFIC OPERATION: Fee calculation
     public Money calculateFee(FeeRate feeRate) {
         return this.multiply(feeRate.value());
+        // => Returns: amount * fee rate
+        // => Example: Money(1000, USD).calculateFee(0.03) => Money(30, USD)
     }
 }
 ```
@@ -115,35 +141,49 @@ public record Money(BigDecimal amount, Currency currency) {
 
 ```java
 public record EmailAddress(String value) {
+    // => REGEX PATTERN: RFC 5322 simplified email validation
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
         "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
     );
+    // => Pattern matches: user@domain.tld format
 
-    // Compact constructor validates and normalizes
+    // => COMPACT CONSTRUCTOR: Validates and normalizes input
     public EmailAddress {
         if (value == null || value.isBlank()) {
             throw new IllegalArgumentException("Email cannot be null or blank");
+            // => INVARIANT: Email must have content
         }
 
         String normalized = value.toLowerCase().trim();
+        // => NORMALIZATION: "User@Example.COM" -> "user@example.com"
+        // => Ensures: Case-insensitive equality, no whitespace
 
         if (!EMAIL_PATTERN.matcher(normalized).matches()) {
             throw new IllegalArgumentException("Invalid email format: " + value);
+            // => VALIDATION: Rejects malformed emails at construction
         }
 
         value = normalized;
+        // => ASSIGNMENT: Store normalized value
+        // => After this line, value field is guaranteed valid and normalized
     }
 
+    // => FACTORY METHOD: Alternative constructor
     public static EmailAddress of(String email) {
         return new EmailAddress(email);
+        // => Returns: Validated and normalized EmailAddress
     }
 
+    // => QUERY METHOD: Extract domain portion
     public String getDomain() {
         return value.substring(value.indexOf('@') + 1);
+        // => Returns: "example.com" from "user@example.com"
     }
 
+    // => QUERY METHOD: Extract local part (username)
     public String getLocalPart() {
         return value.substring(0, value.indexOf('@'));
+        // => Returns: "user" from "user@example.com"
     }
 }
 ```

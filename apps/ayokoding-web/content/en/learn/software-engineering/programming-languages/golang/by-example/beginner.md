@@ -32,19 +32,23 @@ graph TD
 **Code**:
 
 ```go
-package main // => Declares main executable package
+package main // => Declares main executable package (required for executables)
              // => "main" package tells compiler to create executable (not library)
+             // => Any other package name creates library, not runnable binary
 
 import (
     "fmt" // => Import formatting package from standard library
           // => Provides I/O functions (Printf, Println, Sprintf, etc.)
+          // => Import path "fmt" resolves to $GOROOT/src/fmt
 )
 
 func main() { // => Entry point - every executable needs main() in main package
               // => Go runtime calls this when program starts
+              // => Signature must be: func main() with no parameters, no returns
 
     fmt.Println("Hello, World!") // => Println writes to stdout and adds newline
                                   // => Returns (n int, err error) but we ignore them here
+                                  // => n is bytes written, err is write error (rare for stdout)
     // => Output: Hello, World!
 }
 ```
@@ -68,39 +72,51 @@ func main() {
     // Short declaration with type inference
     x := 10                     // => x is 10 (type: int, inferred from literal)
                                  // => := creates variable and assigns in one step
+                                 // => Short declaration only works inside functions
 
     y := 3.14                   // => y is 3.14 (type: float64, default for decimals)
+                                 // => Untyped literal 3.14 defaults to float64
 
     name := "Go"                // => name is "Go" (type: string, immutable UTF-8)
+                                 // => Strings are value types (copied on assignment)
 
     isActive := true            // => isActive is true (type: bool)
+                                 // => bool has two values: true, false (no truthy/falsy)
 
     fmt.Println(x, y, name, isActive) // => Println accepts variadic arguments, separates with spaces
+                                       // => Variadic: func Println(a ...interface{})
     // => Output: 10 3.14 Go true
 
     // Explicit type declaration
     var count int = 5           // => count is 5 (type: int, explicitly declared)
                                  // => var keyword allows explicit type specification
+                                 // => var works at package level, := only inside functions
 
     var message string          // => message is "" (string zero value)
                                  // => Variables declared without initialization get zero value
+                                 // => No nil/null/undefined - always initialized
 
     var percentage float64      // => percentage is 0.0 (float64 zero value)
+                                 // => Zero values: 0 for numbers, "" for strings, false for bool
 
     fmt.Println(count, message, percentage)
     // => Output: 5  0
+    // => Empty string prints nothing (between two spaces)
 
     // Type conversion requires explicit cast
     floatValue := 9.8           // => floatValue is 9.8 (type: float64)
+                                 // => Decimal literals always float64 by default
 
     intValue := int(floatValue) // => intValue is 9 (type: int)
                                  // => Conversion truncates decimal (9.8 becomes 9, not 10)
+                                 // => No implicit conversions - must be explicit
 
     fmt.Println(intValue)
     // => Output: 9
 
     // Multiple variable declaration
     var a, b, c int             // => a, b, c all initialized to 0 (int zero value)
+                                 // => All three share type int (shorthand syntax)
 
     fmt.Println(a, b, c)
     // => Output: 0 0 0
@@ -143,12 +159,15 @@ func main() {
         StatusPending    = iota // => StatusPending is 0 (iota starts at 0)
                                  // => iota is reset to 0 at start of each const block
                                  // => Useful for creating enumeration-like patterns
+                                 // => Type is untyped integer (works as any integer type)
 
         StatusApproved          // => StatusApproved is 1 (iota auto-increments)
                                  // => No need to repeat "= iota" - implicit continuation
                                  // => Each line gets next iota value automatically
+                                 // => Expression from previous line repeated with new iota
 
         StatusRejected          // => StatusRejected is 2 (iota continues incrementing)
+                                 // => iota increments even for blank lines or comments
 
         StatusArchived          // => StatusArchived is 3 (final value in this block)
     )
@@ -159,9 +178,11 @@ func main() {
     // Constants must be determined at compile-time
     const Pi = 3.14159         // => Pi is 3.14159 (typed constant, float64)
                                  // => Value known at compile-time, immutable
+                                 // => Compiler replaces references with literal value
 
     const Message = "Go is simple" // => Message is "Go is simple" (untyped constant)
                                     // => Untyped constants work wherever type fits
+                                    // => No type conversion needed for assignments
 
     fmt.Println(Pi, Message)
     // => Output: 3.14159 Go is simple
@@ -169,17 +190,22 @@ func main() {
     // This would cause compilation error
     // const x = someFunction() // => ERROR: function calls not allowed in const
                                   // => Constants must be compile-time computable
+                                  // => Only literals, operators, and built-ins allowed
 
     var x = 5                   // => x is 5 (variables allow runtime values)
+                                 // => Variables can be assigned from function calls
 
     fmt.Println(x)
     // => Output: 5
 
     // iota with expressions
     const (
-        KB = 1 << (10 * iota)   // => KB is 1 << 0 = 1
-        MB                       // => MB is 1 << 10 = 1024
-        GB                       // => GB is 1 << 20 = 1048576
+        KB = 1 << (10 * iota)   // => KB is 1 << 0 = 1 (bit shift by 0 positions)
+                                 // => iota is 0, so 1 << (10*0) = 1 << 0 = 1
+        MB                       // => MB is 1 << 10 = 1024 (iota is 1)
+                                 // => Expression repeated: 1 << (10*1) = 1024
+        GB                       // => GB is 1 << 20 = 1048576 (iota is 2)
+                                 // => 1 << (10*2) = 1 << 20 = 1048576
     )
 
     fmt.Println(KB, MB, GB)
@@ -221,12 +247,15 @@ func main() {
     // Array - fixed size, size is part of type
     arr := [3]int{10, 20, 30}  // => arr is [10 20 30] (type: [3]int)
                                 // => [3]int and [4]int are DIFFERENT types
+                                // => Arrays passed by value (entire array copied)
 
     fmt.Println(arr, len(arr)) // => len() returns array size (always 3 for [3]int)
+                                // => len() is compile-time constant for arrays
     // => Output: [10 20 30] 3
 
     arr[0] = 100               // => arr[0] is now 100 (arrays are mutable)
                                 // => arr is now [100 20 30]
+                                // => Index access is bounds-checked at runtime
 
     fmt.Println(arr)
     // => Output: [100 20 30]
@@ -234,50 +263,61 @@ func main() {
     // Slice - dynamic size, backed by array
     slice := []int{1, 2, 3}    // => slice is [1 2 3] (type: []int, no size in brackets)
                                 // => Creates backing array automatically
+                                // => Slice is 24-byte header: pointer, len, cap
 
     fmt.Println(len(slice), cap(slice)) // => len is current elements, cap is capacity
                                         // => cap() is backing array size
+                                        // => len <= cap always
     // => Output: 3 3
 
     // Append - creates new backing array if needed
     slice = append(slice, 4)   // => slice is now [1 2 3 4]
                                 // => Capacity exceeded, Go allocates new backing array
                                 // => Must assign back to variable
+                                // => New capacity typically 2x old capacity
 
     fmt.Println(slice, len(slice), cap(slice))
     // => Output: [1 2 3 4] 4 6
+    // => Capacity doubled (3 -> 6) with room to grow
 
     // Slice from array or slice
     subslice := slice[1:3]     // => subslice is [2 3] (elements at indices 1 and 2)
                                 // => Syntax: [low:high] where high is exclusive
                                 // => Shares backing array with original slice
+                                // => No data copying (just new slice header)
 
     fmt.Println(subslice)
     // => Output: [2 3]
 
     fmt.Println(cap(subslice)) // => Capacity from start to end of backing array
                                 // => Remaining capacity is 6 - 1 = 5
+                                // => subslice starts at index 1 of backing array
     // => Output: 5
 
     // Modifying subslice affects original (shared backing array)
     subslice[0] = 999          // => subslice[0] is same as slice[1] (shared memory)
                                 // => slice is now [1 999 3 4]
+                                // => Aliasing: multiple slices reference same data
 
     fmt.Println("After subslice modify:", slice)
     // => Output: After subslice modify: [1 999 3 4]
 
     // Reset for copy example
     slice = []int{1, 2, 3, 4}  // => slice is [1 2 3 4]
+                                // => Creates new backing array
 
     // Copy creates independent slice
     copied := make([]int, len(slice)) // => copied is [0 0 0 0] (zero values, len=4, cap=4)
                                        // => make([]T, len, cap) allocates new slice
+                                       // => make allocates new backing array
 
     copy(copied, slice)        // => copy(dst, src) copies elements from src to dst
                                 // => copied is now [1 2 3 4] (different backing array)
+                                // => Returns number of elements copied (min(len(dst), len(src)))
 
     copied[0] = 999            // => copied[0] is now 999
                                 // => slice remains [1 2 3 4] (independent)
+                                // => No aliasing - separate backing arrays
 
     fmt.Println(slice, copied)
     // => Output: [1 2 3 4] [999 2 3 4]
@@ -304,30 +344,37 @@ func main() {
     ages := make(map[string]int) // => ages is empty map[string]int{}
                                   // => make() allocates and initializes map
                                   // => Syntax: make(map[KeyType]ValueType)
+                                  // => Maps are reference types (passed by reference)
 
     ages["Alice"] = 30           // => Insert key "Alice" with value 30
                                   // => Map lookup/insertion is O(1) average case
+                                  // => Hash table implementation under the hood
 
     ages["Bob"] = 25              // => ages is now map[Alice:30 Bob:25]
     ages["Charlie"] = 35          // => ages is now map[Alice:30 Bob:25 Charlie:35]
+                                   // => Insertion order NOT preserved
 
     fmt.Println(ages["Alice"])   // => Returns 30 (key exists)
+                                  // => Hash lookup finds value
     // => Output: 30
 
     fmt.Println(ages["Unknown"]) // => Returns 0 (zero value for int, no panic)
     // => Output: 0
                                   // => Map returns zero value for missing keys
+                                  // => No nil pointer errors unlike some languages
 
     // Comma-ok idiom - check if key exists
     age, exists := ages["Bob"]   // => age is 25, exists is true
                                   // => Standard pattern for safe map access
                                   // => Distinguishes zero value from missing key
+                                  // => Second return is boolean presence indicator
 
     fmt.Println(age, exists)     // => Prints value and existence boolean
     // => Output: 25 true
 
     age, exists = ages["David"]  // => age is 0, exists is false (key not found)
                                   // => Reuses age and exists variables
+                                  // => age gets zero value when key missing
 
     fmt.Println(age, exists)     // => Shows zero value and false for missing key
     // => Output: 0 false
@@ -336,14 +383,17 @@ func main() {
     delete(ages, "Bob")          // => Remove "Bob" key from map
                                   // => delete() is safe - no panic if key doesn't exist
                                   // => ages is now map[Alice:30 Charlie:35]
+                                  // => Built-in function, not a method
 
     fmt.Println(ages)            // => Prints remaining map entries
+                                  // => Order unpredictable
     // => Output: map[Alice:30 Charlie:35]
 
     // Map iteration order is randomized
     for name, age := range ages { // => Iterate over key-value pairs
                                    // => Order is deliberately randomized each run
                                    // => Never rely on iteration order
+                                   // => Randomization prevents order-dependent bugs
 
         fmt.Printf("%s is %d\n", name, age)
                                    // => Formats and prints each key-value pair
@@ -352,6 +402,7 @@ func main() {
     // Iterate over keys only
     for name := range ages {     // => Iterate over keys only (ignore values)
                                   // => Use _ to explicitly ignore: for name, _ := range
+                                  // => Single variable gets key, not value
 
         fmt.Println(name)        // => Prints just the key names
     }
@@ -360,7 +411,7 @@ func main() {
     scores := map[string]int{    // => scores is map[Alice:95 Bob:87]
         "Alice": 95,              // => More concise than make() + assignments
         "Bob":   87,              // => Trailing comma required for multi-line literals
-    }
+    }                             // => Map literal creates and initializes in one step
 
     fmt.Println(scores)          // => Prints entire map
     // => Output: map[Alice:95 Bob:87]
@@ -411,8 +462,10 @@ func main() {
     // Define struct type and create instance
     type Person struct {
         Name string // => Exported field (capital N) - accessible from other packages
+                     // => Lowercase name would be unexported (package-private)
 
         Age  int    // => Exported field (capital A)
+                     // => Capital letter = public, lowercase = private
 
         City string // => Exported field (capital C)
                      // => string zero value is ""
@@ -422,6 +475,7 @@ func main() {
     p1 := Person{"Alice", 30, "New York"} // => p1 is Person{Name:"Alice", Age:30, City:"New York"}
                                            // => Positional initialization (fragile, avoid in production)
                                            // => Order must match struct definition exactly
+                                           // => Struct is value type (copied on assignment)
 
     fmt.Println(p1)
     // => Output: {Alice 30 New York}
@@ -429,13 +483,16 @@ func main() {
     // Create struct using named fields (better readability)
     p2 := Person{Name: "Bob", Age: 25, City: "Boston"} // => p2 is Person{Name:"Bob", Age:25, City:"Boston"}
                                                         // => Named field initialization (order doesn't matter)
+                                                        // => Best practice: always use named fields
 
     fmt.Println(p2.Name, p2.Age)          // => Access fields with dot notation
+                                           // => Dot operator works on both values and pointers
     // => Output: Bob 25
 
     // Partial initialization with named fields
     p4 := Person{Name: "Charlie"}         // => p4.Name is "Charlie", Age is 0, City is ""
                                            // => Unspecified fields get zero values
+                                           // => No nil/undefined - always safe
 
     fmt.Println(p4)
     // => Output: {Charlie 0 }
@@ -443,12 +500,14 @@ func main() {
     // Uninitialized struct gets zero values
     var p3 Person                         // => p3.Name is "", p3.Age is 0, p3.City is ""
                                            // => All fields initialized to zero values
+                                           // => Struct zero value has all fields zero
 
     fmt.Println(p3)
     // => Output: { 0 }
 
     // Struct field assignment
     p3.Name = "Diana"                     // => p3.Name is now "Diana"
+                                           // => Individual field mutation allowed
     p3.Age = 28                            // => p3.Age is now 28
 
     fmt.Println(p3)
@@ -456,10 +515,11 @@ func main() {
 
     // Anonymous struct - used for one-off data
     response := struct {                  // => Define struct type inline (no name)
-        Status int
+        Status int                         // => Fields follow same export rules
         Body   string
     }{200, "OK"}                          // => Initialize immediately after definition
                                            // => Useful for temporary data structures
+                                           // => No reusable type name
 
     fmt.Println(response.Status)
     // => Output: 200
@@ -487,6 +547,7 @@ import "fmt"
 func main() {
     // Function with single return
     result := add(3, 5)         // => result is 8
+                                 // => Function call evaluates to return value
 
     fmt.Println(result)
     // => Output: 8
@@ -494,6 +555,7 @@ func main() {
     // Function with multiple returns
     quotient, remainder := divide(17, 5) // => quotient is 3, remainder is 2
                                           // => Commonly used for (result, error) pattern
+                                          // => Multiple assignment from multiple returns
 
     fmt.Println(quotient, remainder)
     // => Output: 3 2
@@ -501,6 +563,7 @@ func main() {
     // Ignore return value with underscore
     q, _ := divide(20, 3)       // => q is 6, remainder ignored with _
                                  // => _ is blank identifier (discards value)
+                                 // => Compiler enforces all returns used or explicitly ignored
 
     fmt.Println(q)
     // => Output: 6
@@ -508,6 +571,7 @@ func main() {
     // Named return values
     name, greeting := greet("Go") // => name is "Go", greeting is "Hello, Go!"
                                    // => Named returns improve documentation
+                                   // => Caller still receives positional returns
 
     fmt.Println(name, greeting)
     // => Output: Go Hello, Go!
@@ -516,13 +580,16 @@ func main() {
 // Single parameter and return
 func add(a int, b int) int {    // => Parameters: a and b (both int)
                                  // => Return type: int (after parameters)
+                                 // => Parameters passed by value (copied)
 
     return a + b                // => Returns a + b
+                                 // => Computed result returned to caller
 }
 
 // Shorthand parameter syntax
 func multiply(a, b int) int {   // => a and b share type int (shorthand)
                                  // => Equivalent to: (a int, b int)
+                                 // => Only works for consecutive params of same type
 
     return a * b                // => Returns product
 }
@@ -531,6 +598,7 @@ func multiply(a, b int) int {   // => a and b share type int (shorthand)
 func divide(dividend int, divisor int) (int, int) { // => Two int params, two int returns
                                                      // => Return types in parentheses
                                                      // => First return is quotient, second is remainder
+                                                     // => Multiple returns enable error handling pattern
 
     return dividend / divisor, dividend % divisor   // => Return two values separated by comma
                                                      // => dividend/divisor is integer division
@@ -541,14 +609,18 @@ func divide(dividend int, divisor int) (int, int) { // => Two int params, two in
 // Named return values - improves documentation
 func greet(lang string) (language string, message string) { // => Named return values pre-declared
                                                              // => Acts as documentation
+                                                             // => language and message are zero-initialized
 
     language = lang                              // => language is now "Go"
+                                                  // => Assigning to named return variable
 
     message = fmt.Sprintf("Hello, %s!", lang)   // => message is now "Hello, Go!"
                                                   // => Sprintf formats string without printing
+                                                  // => Assigning to named return variable
 
     return                                       // => Naked return (uses named return values)
                                                   // => Returns language and message implicitly
+                                                  // => Avoid naked returns in long functions (clarity)
 }
 ```
 
@@ -574,17 +646,19 @@ func main() {
     if age >= 18 {              // => Condition: 25 >= 18 is true
                                  // => Braces mandatory (no single-line if)
                                  // => Executes if block
+                                 // => No parentheses around condition (Go style)
 
         fmt.Println("Adult")    // => Output: Adult
                                  // => Prints to stdout with newline
     } else {                    // => Skipped (condition was true)
-        fmt.Println("Minor")
+        fmt.Println("Minor")    // => Not executed
     }
 
     // if with initialization statement
     if x := 10; x > 5 {         // => x is 10, scoped to if/else block only
                                  // => Condition: 10 > 5 is true
                                  // => x NOT accessible outside this if/else
+                                 // => Initialization runs before condition check
 
         fmt.Println("x is greater than 5")
         // => Output: x is greater than 5
@@ -714,44 +788,54 @@ import "fmt"
 
 func main() {
     x := 10                 // => x is 10 (stored at memory address like 0x1234)
+                             // => x lives on stack or heap (compiler decides)
 
     p := &x                 // => p is pointer to x (type: *int)
                              // => & operator gets memory address of x
+                             // => p holds address, not value
 
     fmt.Println(p)
     // => Output: 0xc0000a0008 (actual address varies)
+    // => Hexadecimal memory address printed
 
     fmt.Println(*p)         // => * dereferences pointer - reads value at address
                              // => *p is 10 (the value of x)
+                             // => Follow pointer to get value
     // => Output: 10
 
     *p = 20                 // => Dereference p and modify value at that address
                              // => x is now 20 (modified through pointer)
+                             // => Indirect modification via pointer
 
     fmt.Println(x)
     // => Output: 20
 
     // Pointers enable modification in functions
     modifyValue(&x)         // => Pass address of x (function can modify original)
+                             // => &x creates pointer for function parameter
 
     fmt.Println(x)          // => x is now 30
+                             // => Function changed x through pointer
     // => Output: 30
 
     // Value vs pointer semantics
     y := 100
     modifyValueCopy(y)      // => Pass value (copy), not address
+                             // => Function receives copy of 100
     fmt.Println(y)          // => y is still 100 (copy was modified)
+                             // => Original unchanged - pass by value
     // => Output: 100
 
     // nil pointer - points to nothing
     var nilPtr *int         // => nilPtr is nil (zero value for pointers)
                              // => nil is safe to check, unsafe to dereference
+                             // => Similar to null in other languages
 
     fmt.Println(nilPtr)
     // => Output: <nil>
 
-    if nilPtr != nil {
-        fmt.Println(*nilPtr)
+    if nilPtr != nil {      // => Check before dereferencing
+        fmt.Println(*nilPtr) // => Not executed (nilPtr is nil)
     } else {
         fmt.Println("Pointer is nil, cannot dereference")
     }
@@ -759,12 +843,15 @@ func main() {
 
     // Dereferencing nil causes panic - always check!
     // *nilPtr = 50         // => PANIC: runtime error: invalid memory address
+                             // => Dereferencing nil crashes program
 
     // Create pointer with new()
     ptr := new(int)         // => ptr is pointer to new int (initialized to 0)
                              // => new() allocates memory and returns pointer
+                             // => Allocates on heap, zero-initialized
 
     *ptr = 42               // => *ptr is now 42
+                             // => Modify value at allocated address
 
     fmt.Println(*ptr)
     // => Output: 42
@@ -772,16 +859,20 @@ func main() {
 
 func modifyValue(ptr *int) { // => ptr is pointer to int (type: *int)
                               // => Receives memory address, not value copy
+                              // => Can modify caller's variable
 
     *ptr = 30              // => Dereference ptr and modify value at that address
                             // => Changes original variable in caller
+                            // => Indirect mutation through pointer
 }
 
 func modifyValueCopy(val int) { // => val is copy of argument (type: int)
                                  // => val is independent of original
+                                 // => Go passes by value (copies data)
 
     val = 999              // => Modify copy only
                             // => Original in caller unchanged
+                            // => Copy discarded after function returns
 }
 ```
 
@@ -829,15 +920,18 @@ import "fmt"
 
 func main() {
     p := Person{Name: "Alice", Age: 30} // => p is Person{Name:"Alice", Age:30}
+                                         // => p is value type (not pointer)
 
     // Call method with value receiver
     p.PrintInfo()                // => Calls PrintInfo on COPY of p
                                   // => Original p unchanged
+                                  // => Method receives entire struct copy
     // => Output: Name: Alice, Age: 30
 
     // Call method with pointer receiver
     p.HaveBirthday()             // => Go automatically converts p to &p
                                   // => p.Age is now 31 (modified through pointer)
+                                  // => Syntactic sugar: p.method() becomes (&p).method()
 
     fmt.Println(p.Age)
     // => Output: 31
@@ -845,18 +939,22 @@ func main() {
     // Pointer methods called on values
     p.HaveBirthday()             // => Go converts p to &p automatically
                                   // => p.Age is now 32
+                                  // => Compiler handles address-of operator
 
     fmt.Println(p.Age)
     // => Output: 32
 
     // Pointer variable calling methods
     ptr := &Person{Name: "Bob", Age: 25} // => ptr is *Person (pointer to Person)
+                                          // => Composite literal creates value, & takes address
 
     ptr.PrintInfo()              // => Go automatically dereferences ptr
+                                  // => Syntactic sugar: ptr.method() becomes (*ptr).method()
     // => Output: Name: Bob, Age: 25
 
     ptr.HaveBirthday()           // => Pointer receiver modifies original
                                   // => (*ptr).Age is now 26
+                                  // => Direct pointer method call
 
     fmt.Println(ptr.Age)
     // => Output: 26
@@ -864,50 +962,61 @@ func main() {
     // Value receiver doesn't modify original
     p.UpdateName("Charlie")      // => Calls method on copy of p
                                   // => Original p.Name unchanged
+                                  // => Copy's Name becomes "Charlie", then discarded
 
     fmt.Println(p.Name)
     // => Output: Alice
 
     // Pointer receiver modifies original
     p.UpdateNamePointer("Charlie") // => Modifies original p.Name
+                                    // => Go converts p to &p automatically
+                                    // => Changes persist in p
 
     fmt.Println(p.Name)
     // => Output: Charlie
 }
 
 type Person struct {
-    Name string
-    Age  int
+    Name string              // => Exported field
+    Age  int                 // => Exported field
 }
 
 // Value receiver - receiver gets copy of data
 func (p Person) PrintInfo() {   // => p is copy of caller's Person
                                  // => Type: Person (not *Person)
                                  // => Modifications to p don't affect caller
+                                 // => Copy entire struct on each call
 
     fmt.Printf("Name: %s, Age: %d\n", p.Name, p.Age) // => Read fields from copy
+                                                       // => Safe for concurrent calls
 }
 
 // Value receiver that modifies copy (doesn't affect original)
 func (p Person) UpdateName(newName string) { // => p is copy
+                                              // => newName parameter passed by value
     p.Name = newName            // => Modify copy's Name
                                  // => Original unchanged (copy discarded after method returns)
+                                 // => Caller's Person never sees this change
 }
 
 // Pointer receiver - receiver shares original data
 func (p *Person) HaveBirthday() { // => p is pointer to caller's Person
                                    // => Type: *Person
                                    // => Can modify original through pointer
+                                   // => No copy - efficient for large structs
 
     p.Age++                      // => Increment Age of original Person
                                   // => Equivalent to: (*p).Age++
                                   // => Go allows p.Age shorthand for (*p).Age
+                                  // => Syntactic sugar: dot works on pointers
 }
 
 // Pointer receiver that modifies original
 func (p *Person) UpdateNamePointer(newName string) { // => p is pointer
+                                                      // => Can mutate caller's data
     p.Name = newName            // => Modify original's Name through pointer
                                  // => Changes persist after method returns
+                                 // => Caller sees modified Name
 }
 ```
 
@@ -944,63 +1053,79 @@ func main() {
     // Without interfaces - hardcoded types
     file := &File{Name: "data.txt"} // => file is *File (pointer to File)
                                      // => Type-specific variable
+                                     // => Composite literal creates File, & takes address
 
     saveData(file, "content")    // => Pass *File to function accepting Writer
                                   // => *File satisfies Writer (has Write method)
+                                  // => Implicit interface satisfaction
     // => Output: Writing to data.txt: content
 
     // With interfaces - work with any Writer
     var buffer Buffer            // => buffer is Buffer (zero value)
                                   // => buffer.data is nil (slice zero value)
+                                  // => No initialization needed
 
     saveData(&buffer, "content") // => Pass *Buffer to same function
                                   // => *Buffer also satisfies Writer interface
                                   // => Polymorphism without inheritance!
+                                  // => Same function works with different types
     // => No output (Buffer stores data internally)
 
     // Empty interface - accepts anything
     var anything interface{} = 42 // => anything holds int value 42
                                    // => interface{} is empty interface (no method requirements)
                                    // => Can store any type
+                                   // => Interface holds (type, value) pair: (int, 42)
 
     printValue(anything)         // => Print int value and type
+                                  // => Type information preserved in interface
     // => Output: Value: 42 (Type: int)
 
     anything = "string"          // => Reassign to string (different type)
                                   // => Interface can change underlying type
                                   // => anything now holds string "string"
+                                  // => Type changed from int to string
 
     printValue(anything)         // => Print string value and type
+                                  // => Interface reflects new type
     // => Output: Value: string (Type: string)
 
     // Using an interface as a type
     var w Writer                 // => w is Writer interface (zero value is nil)
                                   // => Interface variable holds (type, value) pair
                                   // => Currently: (nil, nil)
+                                  // => Nil interface has no concrete type assigned
 
     w = &File{Name: "test.txt"} // => w now holds (*File, &File{Name:"test.txt"})
                                   // => Type: *File, Value: pointer to File instance
                                   // => Assignment works because *File satisfies Writer
+                                  // => Interface stores type information and value
 
     fmt.Println(w)               // => Print interface value
+                                  // => Prints underlying concrete value
     // => Output: &{test.txt}
 
     w = &Buffer{}                // => w now holds (*Buffer, &Buffer{})
                                   // => Changed underlying type from *File to *Buffer
                                   // => Interface adapts to different concrete types
+                                  // => Same variable, different implementation
 
     fmt.Println(w)               // => Print new interface value
+                                  // => Reflects new concrete type
     // => Output: &{[]}
 
     // Calling interface methods
     w.Write("test data")         // => Call Write on whatever type w holds
                                   // => Currently *Buffer, so Buffer.Write executes
                                   // => Interface dispatches to correct method
+                                  // => Dynamic dispatch at runtime
 
     // Interface with nil check
     var nilWriter Writer         // => nilWriter is nil (no concrete type assigned)
-    if nilWriter == nil {
+                                  // => Both type and value are nil
+    if nilWriter == nil {        // => Check if interface is nil
         fmt.Println("Writer is nil") // => Executes (nil interface)
+                                      // => Prevents calling methods on nil
     }
     // => Output: Writer is nil
 }
@@ -1010,6 +1135,7 @@ type Writer interface {
     Write(data string) error  // => Method signature only (no implementation)
                                // => Any type with Write(string) error satisfies this
                                // => No explicit "implements" keyword needed
+                               // => Duck typing: looks like Writer, is Writer
 }
 
 // File type implements Write method - satisfies Writer implicitly
@@ -1021,9 +1147,11 @@ func (f *File) Write(data string) error { // => *File has Write method
                                            // => Method signature matches Writer interface
                                            // => *File implicitly satisfies Writer
                                            // => No declaration needed
+                                           // => Compiler verifies match
 
     fmt.Printf("Writing to %s: %s\n", f.Name, data) // => Print to stdout
     return nil                         // => Return nil error (success)
+                                        // => Implements error return from interface
 }
 
 // Buffer type also implements Write - also satisfies Writer
@@ -1033,24 +1161,31 @@ type Buffer struct {
 
 func (b *Buffer) Write(data string) error { // => *Buffer also has Write method
                                              // => *Buffer satisfies Writer implicitly
+                                             // => Different implementation, same interface
 
     b.data = append(b.data, data) // => Append to internal slice (no stdout)
+                                   // => Different behavior than File.Write
 
-    return nil
+    return nil                     // => Return nil error (success)
 }
 
 // Function works with any Writer
 func saveData(w Writer, data string) { // => Accepts ANY type implementing Writer
                                         // => Compile-time type safety, runtime polymorphism
+                                        // => w is interface variable
 
     w.Write(data)                // => Interface dispatches to concrete implementation
+                                  // => Dynamic dispatch based on runtime type
+                                  // => Method call resolved at runtime
 }
 
 // Empty interface accepts any type
 func printValue(v interface{}) {       // => v can hold any value of any type
                                         // => interface{} has no method requirements
+                                        // => Most permissive interface
 
     fmt.Printf("Value: %v (Type: %T)\n", v, v) // => %v prints value, %T prints type
+                                                 // => Type information preserved in interface
 }
 ```
 
@@ -1076,25 +1211,30 @@ func main() {
     // Function returning error
     result, err := divide(10, 2)  // => result is 5, err is nil
                                    // => Go's idiomatic (int, error) pattern
+                                   // => Multiple returns enable explicit error handling
 
     if err != nil {               // => Check if error occurred (nil means success)
                                    // => Always check err before using result
+                                   // => Error-first checking pattern
 
         fmt.Println("Error:", err)
     } else {
-        fmt.Println("Result:", result)
+        fmt.Println("Result:", result)  // => Safe to use result (err is nil)
     }
     // => Output: Result: 5
 
     // Function that errors
     result, err = divide(10, 0)   // => result is 0 (zero value), err is ErrDivisionByZero
                                    // => result unsafe to use when err is non-nil
+                                   // => Convention: return zero value + error on failure
 
     if err != nil {               // => err is not nil (error occurred)
                                    // => This branch executes
+                                   // => Must handle error before proceeding
 
         fmt.Println("Error:", err) // => Print error message
                                     // => err.Error() returns "cannot divide by zero"
+                                    // => err implements error interface
         // => Output: Error: cannot divide by zero
     }
 
@@ -1103,10 +1243,12 @@ func main() {
                                                           // => %w preserves original error
                                                           // => Creates error chain for debugging
                                                           // => wrappedErr contains both messages
+                                                          // => Outer error adds context
 
     if errors.Is(wrappedErr, ErrDivisionByZero) { // => Check if error chain contains sentinel
                                                    // => errors.Is unwraps and compares
                                                    // => Returns true (ErrDivisionByZero in chain)
+                                                   // => Works through multiple wrapping layers
 
         fmt.Println("Detected division by zero") // => Executes (match found)
         // => Output: Detected division by zero
@@ -1116,22 +1258,27 @@ func main() {
     originalErr := errors.Unwrap(wrappedErr) // => Extract wrapped error
                                               // => Returns ErrDivisionByZero
                                               // => Only unwraps one level
+                                              // => Returns nil if no wrapped error
 
     fmt.Println(originalErr)      // => Print original error
+                                   // => Shows inner error message
     // => Output: cannot divide by zero
 
     // Create custom error
     customErr := errors.New("custom error message") // => Create new error
                                                      // => Returns error interface
                                                      // => customErr.Error() returns message
+                                                     // => errors.New creates simple error type
 
     fmt.Println(customErr)        // => Print custom error
+                                   // => Calls customErr.Error() implicitly
     // => Output: custom error message
 
     // Error with formatting
     formattedErr := fmt.Errorf("operation failed: value=%d", 42) // => Format error message
                                                                   // => Similar to Sprintf
                                                                   // => No wrapping (no %w)
+                                                                  // => Creates formatted error
 
     fmt.Println(formattedErr)     // => Print formatted error
     // => Output: operation failed: value=42
@@ -1139,8 +1286,10 @@ func main() {
     // Checking nil error explicitly
     _, err = divide(20, 4)        // => err is nil (successful operation)
                                    // => Ignore result with _
+                                   // => Check only error status
 
     if err == nil {               // => Explicit nil check
+                                   // => Positive check (success case)
         fmt.Println("Operation succeeded") // => Executes (no error)
         // => Output: Operation succeeded
     }
@@ -1150,20 +1299,25 @@ func main() {
 var ErrDivisionByZero = errors.New("cannot divide by zero") // => Package-level error
                                                              // => Sentinel errors are comparable
                                                              // => Can use == or errors.Is
+                                                             // => Defined once, referenced many times
 
 func divide(a, b int) (int, error) { // => Returns (result, error) tuple
                                       // => Idiomatic Go error handling
                                       // => Always return zero value + error on failure
+                                      // => Error is last return value (convention)
 
     if b == 0 {                   // => Validate input
+                                   // => Check for error condition first
         return 0, ErrDivisionByZero  // => Return zero value and sentinel error
                                       // => 0 is int zero value (caller shouldn't use)
                                       // => Return ErrDivisionByZero for comparison
+                                      // => Early return on error
     }
 
     return a / b, nil             // => Return result and nil error (success)
                                    // => nil means no error occurred
                                    // => Caller can safely use result
+                                   // => Happy path: valid result + nil
 }
 ```
 
@@ -1179,42 +1333,54 @@ Go organizes code with packages. Every file starts with `package`, and a directo
 
 ```go
 package main                    // => Executable package (vs library package)
+                                // => main package produces binary, other packages are libraries
 
 import (
     "fmt"                       // => Formatting I/O
+                                // => Import from standard library
     "math"                      // => Math constants and functions
+                                // => Import path resolves to $GOROOT/src/math
 )
 
 func main() {
     fmt.Println("Pi:", math.Pi)              // => Pi: 3.141592653589793
+                                              // => Access exported constant from math package
     fmt.Println("Sqrt(16):", math.Sqrt(16))  // => Sqrt(16): 4
+                                              // => Call exported function from math package
 
     msg := PublicFunction()                  // => No prefix (same package)
+                                              // => Can call directly without qualifier
     fmt.Println(msg)                         // => callable from other packages
 
     private := privateFunction()             // => Unexported but same package
+                                              // => Accessible within package boundaries
     fmt.Println(private)                     // => only callable within this package
 
     // Circle area calculation
-    pi := math.Pi
-    radius := 5.0
-    area := pi * radius * radius
+    pi := math.Pi                            // => Copy Pi constant to local variable
+    radius := 5.0                            // => radius is 5.0 (float64)
+    area := pi * radius * radius            // => area is 78.53981633974483
     fmt.Printf("Circle area: %.2f\n", area)  // => Circle area: 78.54
+                                              // => %.2f formats to 2 decimal places
 }
 
 // Exported function (capitalized)
 func PublicFunction() string {               // => Visible to other packages
-    return "callable from other packages"
+                                              // => Capital P makes it exported
+    return "callable from other packages"    // => Can be imported and called externally
 }
 
 // Unexported function (lowercase)
 func privateFunction() string {              // => Private to this package
-    return "only callable within this package"
+                                              // => Lowercase p makes it unexported
+    return "only callable within this package" // => Package-private visibility
 }
 
 // Visibility via capitalization
 const ExportedConst = 100                    // => Public (Capital E)
+                                              // => Accessible from other packages
 const unexportedConst = 200                  // => Private (lowercase u)
+                                              // => Only accessible within package
 ```
 
 **Key Takeaway**: `package main` declares an executable. Other packages are libraries. `import` makes packages available. Capitalization controls visibility: `Exported` is public, `unexported` is private to the package.
@@ -1461,52 +1627,75 @@ import "fmt"
 
 func main() {
     // Compound assignment operators
-    x := 10
+    x := 10                    // => Initialize x to 10
+                               // => Short variable declaration (type inferred as int)
     x += 5                     // => x = x + 5, now 15
+                               // => Compound addition: combines + and = in single operation
     fmt.Println(x)             // => 15
 
     x -= 3                     // => x = x - 3, now 12
+                               // => Compound subtraction: shorthand for x = x - 3
     fmt.Println(x)             // => 12
 
     x *= 2                     // => x = x * 2, now 24
+                               // => Compound multiplication: more concise than x = x * 2
     fmt.Println(x)             // => 24
 
     x /= 4                     // => x = x / 4, now 6
+                               // => Integer division: discards fractional part
     fmt.Println(x)             // => 6
 
     x %= 4                     // => x = x % 4, now 2 (remainder)
+                               // => Modulo operator: returns remainder of 6 / 4 = 2
     fmt.Println(x)             // => 2
 
     // Bitwise operators on integers
     a := 12                    // => binary: 1100
+                               // => Decimal 12 represented as 4 bits
     b := 10                    // => binary: 1010
+                               // => Decimal 10 represented as 4 bits
 
     fmt.Println(a & b)         // => AND: 1000 = 8 (bits in BOTH)
+                               // => Bitwise AND: only bits set in BOTH operands remain set
     fmt.Println(a | b)         // => OR: 1110 = 14 (bits in EITHER)
+                               // => Bitwise OR: bits set in EITHER operand remain set
     fmt.Println(a ^ b)         // => XOR: 0110 = 6 (bits in ONE only)
+                               // => Bitwise XOR: bits set in ONE operand only (exclusive OR)
     fmt.Println(^a)            // => NOT: inverts all bits = -13
+                               // => Bitwise NOT: flips all bits (uses two's complement)
 
     // Bit shifting
     fmt.Println(a << 1)        // => left shift: 11000 = 24 (multiply by 2)
+                               // => Shifts bits left by 1: equivalent to multiplying by 2^1
     fmt.Println(a >> 1)        // => right shift: 0110 = 6 (divide by 2)
+                               // => Shifts bits right by 1: equivalent to dividing by 2^1
 
     // Compound bitwise assignment
     c := 5                     // => binary: 0101
+                               // => Initialize c to 5 for bitwise demonstration
     c &= 3                     // => 0101 & 0011 = 0001, c now 1
+                               // => Compound bitwise AND: c = c & 3
     fmt.Println(c)             // => 1
 
     // Practical use: flag manipulation
     const (
         FlagRead  = 1 << 0     // => 1 (bit 0)
+                               // => Shift 1 left by 0 positions = binary 0001
         FlagWrite = 1 << 1     // => 2 (bit 1)
+                               // => Shift 1 left by 1 position = binary 0010
         FlagExec  = 1 << 2     // => 4 (bit 2)
+                               // => Shift 1 left by 2 positions = binary 0100
     )
 
     permissions := FlagRead | FlagWrite    // => 3 (bits 0 and 1 set)
+                                           // => OR operation: 0001 | 0010 = 0011 (decimal 3)
     fmt.Println(permissions)               // => 3
+                                           // => Output: 3
 
     hasWrite := (permissions & FlagWrite) != 0 // => true (bit 1 is set)
+                                               // => AND operation checks if FlagWrite bit is set
     fmt.Println(hasWrite)                      // => true
+                                               // => Output: true (write permission is set)
 }
 ```
 
@@ -2842,49 +3031,75 @@ package main
 import "fmt"
 
 func main() {
-    type Person struct {
-        Name string
-        Age  int
+    type Person struct {        // => Define struct with two fields
+        Name string             // => String field for name
+        Age  int                // => Integer field for age
     }
 
-    p := Person{"Alice", 30}
-    num := 255
-    pi := 3.14159
+    p := Person{"Alice", 30}    // => Initialize Person with field values
+                                // => Creates Person{Name:"Alice", Age:30}
+    num := 255                  // => Integer for numeric formatting examples
+                                // => Binary: 11111111, Hex: 0xFF
+    pi := 3.14159               // => Float64 for floating-point formatting examples
+                                // => Demonstrates precision control
 
     // Struct formatting verbs
     fmt.Printf("%v\n", p)           // => {Alice 30} (default format)
+                                    // => General value format: shows field values only
     fmt.Printf("%+v\n", p)          // => {Name:Alice Age:30} (with field names)
+                                    // => Plus flag adds field names to output
     fmt.Printf("%#v\n", p)          // => main.Person{Name:"Alice", Age:30} (Go syntax)
+                                    // => Sharp flag shows Go-syntax representation
     fmt.Printf("%T\n", p)           // => main.Person (type)
+                                    // => Type verb shows runtime type including package
 
     // Integer formatting verbs
     fmt.Printf("%d\n", num)         // => 255 (decimal)
+                                    // => Decimal base-10 representation
     fmt.Printf("%b\n", num)         // => 11111111 (binary)
+                                    // => Binary base-2 representation
     fmt.Printf("%o\n", num)         // => 377 (octal)
+                                    // => Octal base-8 representation
     fmt.Printf("%x\n", num)         // => ff (hex lowercase)
+                                    // => Hexadecimal lowercase representation
     fmt.Printf("%X\n", num)         // => FF (hex uppercase)
+                                    // => Hexadecimal uppercase representation
     fmt.Printf("%c\n", num)         // => ÿ (character)
+                                    // => Character representation (Unicode code point 255)
 
     // Float formatting verbs
     fmt.Printf("%f\n", pi)          // => 3.141590 (6 decimals default)
+                                    // => Floating-point with default 6 decimal precision
     fmt.Printf("%.2f\n", pi)        // => 3.14 (2 decimals)
+                                    // => Precision specified: rounds to 2 decimal places
     fmt.Printf("%e\n", pi)          // => 3.141590e+00 (scientific lowercase)
+                                    // => Scientific notation with lowercase 'e'
     fmt.Printf("%E\n", pi)          // => 3.141590E+00 (scientific uppercase)
+                                    // => Scientific notation with uppercase 'E'
 
     // String formatting verbs
     fmt.Printf("%s\n", "hello")     // => hello (plain)
+                                    // => Plain string output without quotes
     fmt.Printf("%q\n", "hello")     // => "hello" (quoted)
+                                    // => Quoted string with double quotes (safe representation)
     fmt.Printf("%10s\n", "hello")   // =>      hello (width 10, right)
+                                    // => Width 10: pads left with spaces (right-aligned)
     fmt.Printf("%-10s\n", "hello")  // => hello      (width 10, left)
+                                    // => Minus flag: pads right with spaces (left-aligned)
 
     // Pointer and boolean
     fmt.Printf("%p\n", &p)          // => 0xc0000a0000 (pointer address)
+                                    // => Hexadecimal memory address of p
     fmt.Printf("%t\n", true)        // => true (boolean)
+                                    // => Boolean value as "true" or "false"
 
     // Width and precision
     fmt.Printf("|%5d|\n", 42)       // => |   42| (width 5, right)
+                                    // => Width 5: pads left with spaces (right-aligned)
     fmt.Printf("|%-5d|\n", 42)      // => |42   | (width 5, left)
+                                    // => Minus flag: pads right with spaces (left-aligned)
     fmt.Printf("|%05d|\n", 42)      // => |00042| (width 5, zero-pad)
+                                    // => Zero flag: pads left with zeros instead of spaces
 }
 ```
 
