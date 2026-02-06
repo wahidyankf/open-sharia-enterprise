@@ -487,15 +487,15 @@ record DonationMetrics(double totalDonations, double avgProcessingTime, double m
 
 **OSE Explanation Foundation**:
 
-- [Java Deployment](../../programming-languages/java/ex-soen-prla-ja__build-configuration.md) - Java packaging baseline
+- [Java Deployment](../../../programming-languages/java/ex-soen-prla-ja__build-configuration.md) - Java packaging baseline
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Deployment patterns
 - [Spring Framework Configuration](./ex-soen-plwe-to-jvsp__configuration.md) - Environment configuration
 - [Spring Framework Performance](./ex-soen-plwe-to-jvsp__performance.md) - Production tuning
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring By Example - Deployment](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/deployment) - Code examples
-- [Spring In-the-Field - Production Deployment](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/deployment) - Real-world deployment
+- [Spring By Example - Deployment](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/deployment.md) - Code examples
+- [Spring In-the-Field - Production Deployment](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/deployment.md) - Real-world deployment
 
 **Spring Boot Extension**:
 

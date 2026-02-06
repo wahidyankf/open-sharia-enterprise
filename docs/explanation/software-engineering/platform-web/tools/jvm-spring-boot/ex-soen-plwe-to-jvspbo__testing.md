@@ -1667,13 +1667,13 @@ class CompleteWaqfTest {
 **OSE Explanation Foundation**:
 
 - [Spring Framework Testing](../jvm-spring/ex-soen-plwe-to-jvsp__testing.md) - Manual Spring testing
-- [Java Testing](../../programming-languages/java/ex-soen-prla-ja__testing-standards.md) - Java test baseline
+- [Java Testing](../../../programming-languages/java/ex-soen-prla-ja__testing-standards.md) - Java test baseline
 - [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Testing patterns
 - [Spring Boot Best Practices](./ex-soen-plwe-to-jvspbo__best-practices.md) - Test standards
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring Boot By Example - Testing](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/testing) - Code examples
-- [Spring Boot In-the-Field - Test Strategies](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/testing) - Production testing
+- [Spring Boot By Example - Testing](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/testing.md) - Code examples
+- [Spring Boot In-the-Field - Test Strategies](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/testing.md) - Production testing
 
 **Last Updated**: 2026-01-26

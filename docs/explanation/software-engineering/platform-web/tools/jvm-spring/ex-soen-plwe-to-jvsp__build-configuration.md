@@ -19,7 +19,7 @@ updated: 2026-02-06
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Spring Framework fundamentals from [AyoKoding Spring Framework Learning Path](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/).
+**REQUIRED**: You MUST understand Spring Framework fundamentals from [AyoKoding Spring Framework Learning Path](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/).
 
 **This document is OSE Platform-specific**, not a Spring Framework tutorial.
 
@@ -604,14 +604,14 @@ api → application → domain ← infrastructure
 
 **AyoKoding Spring Framework**:
 
-- [Spring Framework By Example - Maven Setup](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/maven-configuration) - Maven configuration examples
-- [Spring Framework In-the-Field - Multi-Module Projects](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/multi-module-maven) - Production multi-module patterns
+- [Spring Framework By Example - Maven Setup](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/maven-configuration.md) - Maven configuration examples
+- [Spring Framework In-the-Field - Multi-Module Projects](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/multi-module-maven.md) - Production multi-module patterns
 
 **OSE Explanation**:
 
 - [Spring Framework Configuration](./ex-soen-plwe-to-jvsp__configuration.md) - Spring Java config and XML setup
 - [Spring Framework Dependency Injection](./ex-soen-plwe-to-jvsp__dependency-injection.md) - IoC container fundamentals
-- [Java Build Configuration](../../programming-languages/java/ex-soen-prla-ja__build-configuration.md) - Java Maven baseline
+- [Java Build Configuration](../../../programming-languages/java/ex-soen-prla-ja__build-configuration.md) - Java Maven baseline
 
 ## Software Engineering Principles
 
@@ -637,7 +637,7 @@ api → application → domain ← infrastructure
 
 **OSE Platform Standards**:
 
-- [Java Build Configuration](../../programming-languages/java/ex-soen-prla-ja__build-configuration.md) - Java Maven baseline
+- [Java Build Configuration](../../../programming-languages/java/ex-soen-prla-ja__build-configuration.md) - Java Maven baseline
 - [Spring Framework Code Quality](./ex-soen-plwe-to-jvsp__code-quality.md) - Spotless, Error Prone, NullAway
 - [Spring Boot Build Configuration](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__build-configuration.md) - Spring Boot Maven patterns
 
@@ -651,15 +651,15 @@ api → application → domain ← infrastructure
 
 **OSE Explanation Foundation**:
 
-- [Java Build Tools](../../programming-languages/java/ex-soen-prla-ja__build-configuration.md) - Java build baseline
+- [Java Build Tools](../../../programming-languages/java/ex-soen-prla-ja__build-configuration.md) - Java build baseline
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Build patterns
 - [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Build standards
 - [Spring Framework Deployment](./ex-soen-plwe-to-jvsp__deployment.md) - Packaging
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring By Example - Build Setup](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/build-setup) - Code examples
-- [Spring In-the-Field - CI/CD](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/build) - Production builds
+- [Spring By Example - Build Setup](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/build-setup.md) - Code examples
+- [Spring In-the-Field - CI/CD](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/build.md) - Production builds
 
 **Spring Boot Extension**:
 

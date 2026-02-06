@@ -387,11 +387,11 @@ Testing standards are enforced through:
 For learning Java fundamentals and concepts referenced in these standards, see:
 
 - **[Java Learning Path](https://ayokoding.com/en/learn/software-engineering/programming-languages/java)** - Complete Java learning journey
-- **[Java By Example](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/by-example)** - 157+ annotated code examples
-  - **[Intermediate Examples](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/by-example/intermediate)** - Testing with JUnit, Mockito, AssertJ
-  - **[Advanced Examples](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/by-example/advanced)** - TestContainers, integration testing
-- **[Java In Practice](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/in-practice)** - Test-Driven Development (TDD) and Behavior-Driven Development (BDD) practices
-- **[Java Release Highlights](https://ayokoding.com/en/learn/software-engineering/programming-languages/java/release-highlights)** - Java 17, 21, and 25 LTS features
+- **[Java By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example.md)** - 157+ annotated code examples
+  - **[Intermediate Examples](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/intermediate.md)** - Testing with JUnit, Mockito, AssertJ
+  - **[Advanced Examples](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/advanced.md)** - TestContainers, integration testing
+- **[Java In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-practice.md)** - Test-Driven Development (TDD) and Behavior-Driven Development (BDD) practices
+- **[Java Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/release-highlights.md)** - Java 17, 21, and 25 LTS features
 
 **Note**: These standards assume you've learned Java basics from ayokoding-web. We don't re-explain fundamental concepts here.
 

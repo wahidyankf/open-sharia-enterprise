@@ -34,7 +34,7 @@ related:
 
 **This document is OSE Platform-specific**, not a Spring Boot tutorial. We define HOW to apply AOP in THIS platform, not WHAT AOP is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../../governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -861,14 +861,14 @@ These AOP standards enforce the five software engineering principles:
 **OSE Explanation Foundation**:
 
 - [Spring Framework AOP](../jvm-spring/ex-soen-plwe-to-jvsp__aop.md) - Manual Spring AOP
-- [Java Patterns](../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline patterns
+- [Java Patterns](../../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline patterns
 - [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - AOP patterns
 - [Spring Boot Security](./ex-soen-plwe-to-jvspbo__security.md) - Security aspects
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring Boot By Example - AOP](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/aop) - Code examples
-- [Spring Boot In-the-Field - Cross-Cutting Concerns](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/aop) - Production aspects
+- [Spring Boot By Example - AOP](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/aop.md) - Code examples
+- [Spring Boot In-the-Field - Cross-Cutting Concerns](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/aop.md) - Production aspects
 
 ---
 

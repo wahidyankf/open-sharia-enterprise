@@ -35,7 +35,7 @@ related:
 
 **This document is OSE Platform-specific**, not a Spring Boot tutorial. We define HOW to deploy Spring Boot in THIS platform, not WHAT Spring Boot deployment is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../../governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -1074,14 +1074,14 @@ These deployment standards enforce the five software engineering principles:
 **OSE Explanation Foundation**:
 
 - [Spring Framework Deployment](../jvm-spring/ex-soen-plwe-to-jvsp__deployment.md) - Manual Spring deployment
-- [Java Deployment](../../programming-languages/java/ex-soen-prla-ja__build-configuration.md) - Java packaging baseline
+- [Java Deployment](../../../programming-languages/java/ex-soen-prla-ja__build-configuration.md) - Java packaging baseline
 - [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Deployment patterns
 - [Spring Boot Configuration](./ex-soen-plwe-to-jvspbo__configuration.md) - Environment configuration
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring Boot By Example - Deployment](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/deployment) - Code examples
-- [Spring Boot In-the-Field - Production Deployment](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/deployment) - Real-world deployment
+- [Spring Boot By Example - Deployment](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/deployment.md) - Code examples
+- [Spring Boot In-the-Field - Production Deployment](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/deployment.md) - Real-world deployment
 
 ---
 

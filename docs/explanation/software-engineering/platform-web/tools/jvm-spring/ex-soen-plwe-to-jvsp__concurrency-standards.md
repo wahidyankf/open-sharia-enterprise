@@ -30,7 +30,7 @@ updated: 2026-02-06
 
 **OSE-specific prescriptive standards** for concurrency in Spring-based Shariah-compliant financial applications. This document defines **mandatory requirements** using RFC 2119 keywords (MUST, SHOULD, MAY).
 
-**Prerequisites**: Understanding of Spring Framework fundamentals from [AyoKoding Spring Framework](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring) and Java concurrency from [Java Concurrency Standards](../../../programming-languages/java/ex-soen-prla-ja__concurrency-standards.md).
+**Prerequisites**: Understanding of Spring Framework fundamentals from [AyoKoding Spring Framework](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring) and Java concurrency from [Java Concurrency Standards](../../../../programming-languages/java/ex-soen-prla-ja__concurrency-standards.md).
 
 ## Purpose
 
@@ -622,7 +622,7 @@ management.metrics.enable.jvm=true
 
 ### OSE Platform Standards
 
-- **[Java Concurrency Standards](../../../programming-languages/java/ex-soen-prla-ja__concurrency-standards.md)** - Java baseline concurrency requirements
+- **[Java Concurrency Standards](../../../../programming-languages/java/ex-soen-prla-ja__concurrency-standards.md)** - Java baseline concurrency requirements
 - **[Spring Error Handling Standards](./ex-soen-plwe-to-jvsp__error-handling-standards.md)** - Async exception handling
 - **[Spring API Standards](#)** - Async REST API patterns (this file references the API standards file to be created)
 
@@ -637,10 +637,10 @@ management.metrics.enable.jvm=true
 For learning Spring Framework fundamentals and concepts referenced in these standards, see:
 
 - **[Spring Framework Learning Path](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring)** - Complete Spring learning journey
-- **[Spring By Example](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example)** - Annotated Spring code examples
-  - **[Async Examples](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/async)** - @Async, @EnableAsync, ExecutorService configuration
-  - **[Virtual Thread Examples](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/virtual-threads)** - Spring Boot 3.2+ virtual thread integration
-- **[Spring In Practice](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-practice)** - Concurrency patterns and thread pool sizing
+- **[Spring By Example](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example.md)** - Annotated Spring code examples
+  - **[Async Examples](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/async.md)** - @Async, @EnableAsync, ExecutorService configuration
+  - **[Virtual Thread Examples](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/virtual-threads.md)** - Spring Boot 3.2+ virtual thread integration
+- **[Spring In Practice](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-practice.md)** - Concurrency patterns and thread pool sizing
 
 **Note**: These standards assume you've learned Spring basics from ayokoding-web. We don't re-explain fundamental concepts here.
 
@@ -682,15 +682,15 @@ Before deploying Spring-based concurrent financial services, verify:
 
 **OSE Explanation Foundation**:
 
-- [Java Concurrency](../../programming-languages/java/ex-soen-prla-ja__concurrency-standards.md) - Java threading baseline
+- [Java Concurrency](../../../programming-languages/java/ex-soen-prla-ja__concurrency-standards.md) - Java threading baseline
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Async patterns
 - [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Concurrency standards
 - [Spring Framework Performance](./ex-soen-plwe-to-jvsp__performance.md) - Thread pool tuning
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring By Example - Concurrency](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/concurrency) - Code examples
-- [Spring In-the-Field - Async Processing](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/concurrency) - Production async
+- [Spring By Example - Concurrency](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/concurrency.md) - Code examples
+- [Spring In-the-Field - Async Processing](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/concurrency.md) - Production async
 
 **Spring Boot Extension**:
 

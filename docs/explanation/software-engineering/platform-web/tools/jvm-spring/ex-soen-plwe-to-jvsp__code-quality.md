@@ -21,7 +21,7 @@ updated: 2026-02-06
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Spring Framework fundamentals from [AyoKoding Spring Framework Learning Path](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/).
+**REQUIRED**: You MUST understand Spring Framework fundamentals from [AyoKoding Spring Framework Learning Path](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/).
 
 **This document is OSE Platform-specific**, not a Spring Framework tutorial.
 
@@ -517,14 +517,14 @@ mvn clean verify
 
 **AyoKoding Spring Framework**:
 
-- [Spring Framework By Example - Testing](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/testing) - Unit and integration test examples
-- [Spring Framework In-the-Field - Code Quality](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/code-quality) - Production quality practices
+- [Spring Framework By Example - Testing](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/testing.md) - Unit and integration test examples
+- [Spring Framework In-the-Field - Code Quality](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/code-quality.md) - Production quality practices
 
 **OSE Explanation**:
 
 - [Spring Framework Testing](./ex-soen-plwe-to-jvsp__testing.md) - Testing strategies
 - [Spring Framework Build Configuration](./ex-soen-plwe-to-jvsp__build-configuration.md) - Maven plugin setup
-- [Java Code Quality](../../programming-languages/java/ex-soen-prla-ja__code-quality.md) - Java baseline quality standards
+- [Java Code Quality](../../../programming-languages/java/ex-soen-prla-ja__code-quality.md) - Java baseline quality standards
 
 ## Software Engineering Principles
 
@@ -550,7 +550,7 @@ mvn clean verify
 
 **OSE Platform Standards**:
 
-- [Java Code Quality](../../programming-languages/java/ex-soen-prla-ja__code-quality.md) - Java baseline
+- [Java Code Quality](../../../programming-languages/java/ex-soen-prla-ja__code-quality.md) - Java baseline
 - [Spring Framework Build Configuration](./ex-soen-plwe-to-jvsp__build-configuration.md) - Maven plugins
 - [Spring Framework Testing](./ex-soen-plwe-to-jvsp__testing.md) - Testing strategies
 
@@ -563,15 +563,15 @@ mvn clean verify
 
 **OSE Explanation Foundation**:
 
-- [Java Code Quality](../../programming-languages/java/ex-soen-prla-ja__code-quality.md) - Java quality baseline
+- [Java Code Quality](../../../programming-languages/java/ex-soen-prla-ja__code-quality.md) - Java quality baseline
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Quality patterns
 - [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Quality standards
 - [Spring Framework Testing](./ex-soen-plwe-to-jvsp__testing.md) - Test quality
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring By Example - Code Quality](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/code-quality) - Code examples
-- [Spring In-the-Field - Quality Practices](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/code-quality) - Production quality
+- [Spring By Example - Code Quality](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/code-quality.md) - Code examples
+- [Spring In-the-Field - Quality Practices](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/code-quality.md) - Production quality
 
 **Spring Boot Extension**:
 

@@ -67,9 +67,10 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 
 ## Directory Structure
 
-Conventions are organized into 5 semantic categories:
+Conventions are organized into 6 semantic categories:
 
 - **[formatting/](#formatting-8-conventions)** - Markdown formatting, syntax, visual elements (8 conventions)
+- **[linking/](#linking-1-convention)** - Cross-reference and internal linking standards (1 convention)
 - **[writing/](#writing-5-conventions)** - Content quality, validation, writing standards (5 conventions)
 - **[structure/](#structure-4-conventions)** - Documentation organization, file naming, plans (4 conventions)
 - **[tutorials/](#tutorials-7-conventions)** - Tutorial creation and structure conventions (7 conventions)
@@ -89,6 +90,12 @@ Standards for markdown formatting, syntax, and visual elements.
 - [Mathematical Notation](./formatting/mathematical-notation.md) - Standards for LaTeX notation for mathematical equations and formulas. Defines inline (`$...$`) vs display (`$$...$$`) delimiters, forbidden contexts (code blocks, Mermaid), Obsidian/GitHub dual compatibility
 - [Nested Code Fences](./formatting/nested-code-fences.md) - Standards for properly nesting code fences when documenting markdown structure within markdown content. Defines fence depth rules (outer = 4 backticks, inner = 3 backticks), orphaned fence detection, and validation checklist
 - [Timestamp Format](./formatting/timestamp.md) - Standard timestamp format using UTC+7 (Indonesian WIB Time)
+
+## Linking (1 convention)
+
+Standards for cross-referencing and internal linking between repository content.
+
+- [Internal AyoKoding Reference Links](./linking/internal-ayokoding-references.md) - Standards for linking from docs/ to apps/ayokoding-web/ content using relative paths instead of public web URLs. Ensures links work during local development, testing, and remain portable across environments. Defines path calculation method, common patterns, and enforcement mechanisms for repository-internal references
 
 ## Writing (5 conventions)
 
@@ -138,4 +145,4 @@ Hugo site-specific content conventions.
 
 ---
 
-**Last Updated**: 2026-01-30
+**Last Updated**: 2026-02-07

@@ -1136,15 +1136,15 @@ class MigrationConfiguration {
 
 **OSE Explanation Foundation**:
 
-- [Java Configuration](../../programming-languages/java/ex-soen-prla-ja__build-configuration.md) - Java baseline configuration
+- [Java Configuration](../../../programming-languages/java/ex-soen-prla-ja__build-configuration.md) - Java baseline configuration
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Configuration patterns
 - [Spring Framework Dependency Injection](./ex-soen-plwe-to-jvsp__dependency-injection.md) - Bean wiring
 - [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Configuration standards
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring By Example - Configuration](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/configuration) - Code examples
-- [Spring In-the-Field - Environment Setup](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/environment-setup) - Production config
+- [Spring By Example - Configuration](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/configuration.md) - Code examples
+- [Spring In-the-Field - Environment Setup](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/environment-setup.md) - Production config
 
 **Spring Boot Extension**:
 

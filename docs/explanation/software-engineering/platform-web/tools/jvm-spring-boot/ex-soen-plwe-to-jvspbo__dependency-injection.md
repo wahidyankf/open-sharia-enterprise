@@ -1303,13 +1303,13 @@ public class OseApplicationConfig {
 **OSE Explanation Foundation**:
 
 - [Spring Framework Dependency Injection](../jvm-spring/ex-soen-plwe-to-jvsp__dependency-injection.md) - Manual Spring DI
-- [Java Dependency Management](../../programming-languages/java/ex-soen-prla-ja__framework-integration.md) - Java baseline DI
+- [Java Dependency Management](../../../programming-languages/java/ex-soen-prla-ja__framework-integration.md) - Java baseline DI
 - [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - DI patterns
 - [Spring Boot Configuration](./ex-soen-plwe-to-jvspbo__configuration.md) - Bean configuration
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring Boot By Example - Dependency Injection](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/dependency-injection) - Code examples
-- [Spring Boot In-the-Field - DI Strategies](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/dependency-injection) - Production patterns
+- [Spring Boot By Example - Dependency Injection](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/dependency-injection.md) - Code examples
+- [Spring Boot In-the-Field - DI Strategies](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/dependency-injection.md) - Production patterns
 
 **Last Updated**: 2026-01-26

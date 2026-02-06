@@ -1013,15 +1013,15 @@ public class DonationService {
 
 **OSE Explanation Foundation**:
 
-- [Java Dependency Management](../../programming-languages/java/ex-soen-prla-ja__framework-integration.md) - Java baseline DI
+- [Java Dependency Management](../../../programming-languages/java/ex-soen-prla-ja__framework-integration.md) - Java baseline DI
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - DI patterns
 - [Spring Framework Configuration](./ex-soen-plwe-to-jvsp__configuration.md) - Bean configuration
 - [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - DI best practices
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring By Example - Dependency Injection](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/dependency-injection) - Code examples
-- [Spring In-the-Field - DI Strategies](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/dependency-injection) - Production patterns
+- [Spring By Example - Dependency Injection](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/dependency-injection.md) - Code examples
+- [Spring In-the-Field - DI Strategies](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/dependency-injection.md) - Production patterns
 
 **Spring Boot Extension**:
 

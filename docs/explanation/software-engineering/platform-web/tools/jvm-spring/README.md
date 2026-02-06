@@ -36,16 +36,16 @@ This documentation covers Spring Framework 6.x (latest stable) with Java 17+ and
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Spring Framework fundamentals from the [AyoKoding Spring Framework Learning Path](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/).
+**REQUIRED**: You MUST understand Spring Framework fundamentals from the [AyoKoding Spring Framework Learning Path](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/).
 
 **This documentation is OSE Platform-specific explanation**, not Spring Framework tutorials. We assume you have completed the learning content.
 
 **Before Reading These Docs**:
 
-- Complete [Spring Framework Initial Setup](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/initial-setup) - Environment and tooling setup
-- Understand [Spring Framework Overview](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/overview) - Core concepts (IoC, DI, AOP)
-- Work through [Spring Framework By Example](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/) (75+ annotated examples) - Hands-on code learning
-- Reference [Spring Framework In-the-Field](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/) (30 production guides) - Production patterns
+- Complete [Spring Framework Initial Setup](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/initial-setup.md) - Environment and tooling setup
+- Understand [Spring Framework Overview](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/overview.md) - Core concepts (IoC, DI, AOP)
+- Work through [Spring Framework By Example](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/) (75+ annotated examples) - Hands-on code learning
+- Reference [Spring Framework In-the-Field](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/) (30 production guides) - Production patterns
 
 **Separation of Concerns**: See [Programming Language Documentation Separation Convention](../../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation between learning (ayokoding-web) and standards (this documentation).
 
@@ -67,7 +67,7 @@ All Spring Framework applications MUST follow the patterns and practices documen
 
 **For Agents**: Reference this documentation when building Spring applications.
 
-**Language Standards**: Also follow [Java](../../../programming-languages/java/README.md) language standards. Kotlin language standards documentation is planned for future addition.
+**Language Standards**: Also follow [Java](../../../../programming-languages/java/README.md) language standards. Kotlin language standards documentation is planned for future addition.
 
 ### Quick Standards Reference
 
@@ -1516,9 +1516,9 @@ public class GlobalExceptionHandler {
 
 ### Language Standards
 
-- **[Java](../../../programming-languages/java/README.md)** - Core Java language documentation
-- **[Java Idioms](../../../programming-languages/java/README.md)** - Modern Java patterns
-- **[Java Best Practices](../../../programming-languages/java/README.md)** - Java coding standards
+- **[Java](../../../../programming-languages/java/README.md)** - Core Java language documentation
+- **[Java Idioms](../../../../programming-languages/java/README.md)** - Modern Java patterns
+- **[Java Best Practices](../../../../programming-languages/java/README.md)** - Java coding standards
 
 ### Framework Documentation
 
@@ -1733,7 +1733,7 @@ tasks.test {
 ### Platform Documentation
 
 - **[Libraries and Frameworks Index](../README.md)** - Parent frameworks documentation
-- **[Java Programming Language](../../../programming-languages/java/README.md)** - Java idioms and standards
+- **[Java Programming Language](../../../../programming-languages/java/README.md)** - Java idioms and standards
 - **[Software Design Index](../../README.md)** - Software documentation root
 
 ---

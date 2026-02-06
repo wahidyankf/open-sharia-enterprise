@@ -1850,9 +1850,9 @@ Production patterns using Spring Framework idioms:
 
 ### Language Standards
 
-- **[Java](../../../programming-languages/java/README.md)** - Java language documentation
-- **[Java Idioms](../../../programming-languages/java/README.md)** - Java patterns
-- **[Kotlin](../../programming-languages/java/README.md)** - Kotlin language documentation
+- **[Java](../../../../programming-languages/java/README.md)** - Java language documentation
+- **[Java Idioms](../../../../programming-languages/java/README.md)** - Java patterns
+- **[Kotlin](../../../programming-languages/java/README.md)** - Kotlin language documentation
 
 ### Development Practices
 
@@ -1870,17 +1870,17 @@ Production patterns using Spring Framework idioms:
 
 **OSE Explanation Foundation**:
 
-- [Java Idioms](../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline patterns
+- [Java Idioms](../../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline patterns
 - [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Production standards
 - [Spring Framework Configuration](./ex-soen-plwe-to-jvsp__configuration.md) - Configuration patterns
 - [Spring Framework Dependency Injection](./ex-soen-plwe-to-jvsp__dependency-injection.md) - DI deep dive
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring By Example - Core Patterns](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/core-patterns) - Code examples
-- [Spring By Example - DI Patterns](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/dependency-injection) - Injection examples
-- [Spring In-the-Field - Application Setup](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/application-setup) - Real-world patterns
-- [Spring In-the-Field - Configuration Management](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/configuration) - Production config
+- [Spring By Example - Core Patterns](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/core-patterns.md) - Code examples
+- [Spring By Example - DI Patterns](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/dependency-injection.md) - Injection examples
+- [Spring In-the-Field - Application Setup](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/application-setup.md) - Real-world patterns
+- [Spring In-the-Field - Configuration Management](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/configuration.md) - Production config
 
 **Spring Boot Extension**:
 

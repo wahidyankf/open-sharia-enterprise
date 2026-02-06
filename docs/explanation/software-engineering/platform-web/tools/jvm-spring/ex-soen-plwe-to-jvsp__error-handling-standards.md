@@ -30,7 +30,7 @@ updated: 2026-02-06
 
 **OSE-specific prescriptive standards** for error handling in Spring-based Shariah-compliant financial applications. This document defines **mandatory requirements** using RFC 2119 keywords (MUST, SHOULD, MAY).
 
-**Prerequisites**: Understanding of Spring Framework fundamentals from [AyoKoding Spring Framework](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring) and Java error handling from [Java Error Handling Standards](../../../programming-languages/java/ex-soen-prla-ja__error-handling-standards.md).
+**Prerequisites**: Understanding of Spring Framework fundamentals from [AyoKoding Spring Framework](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring) and Java error handling from [Java Error Handling Standards](../../../../programming-languages/java/ex-soen-prla-ja__error-handling-standards.md).
 
 ## Purpose
 
@@ -657,7 +657,7 @@ public class FinancialErrorAuditAspect {
 
 ### OSE Platform Standards
 
-- **[Java Error Handling Standards](../../../programming-languages/java/ex-soen-prla-ja__error-handling-standards.md)** - Java baseline error handling requirements
+- **[Java Error Handling Standards](../../../../programming-languages/java/ex-soen-prla-ja__error-handling-standards.md)** - Java baseline error handling requirements
 - **[Spring API Standards](#)** - REST API error response conventions (this file references the API standards file to be created)
 - **[Spring DDD Standards](#)** - Domain exception hierarchy patterns (this file references the DDD standards file to be created)
 
@@ -673,10 +673,10 @@ public class FinancialErrorAuditAspect {
 For learning Spring Framework fundamentals and concepts referenced in these standards, see:
 
 - **[Spring Framework Learning Path](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring)** - Complete Spring learning journey
-- **[Spring By Example](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example)** - Annotated Spring code examples
-  - **[Error Handling Examples](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/error-handling)** - @ControllerAdvice, @ExceptionHandler, @ResponseStatus
-  - **[Transaction Examples](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/transactions)** - @Transactional configuration
-- **[Spring In Practice](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-practice)** - Error handling patterns and transaction management
+- **[Spring By Example](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example.md)** - Annotated Spring code examples
+  - **[Error Handling Examples](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/error-handling.md)** - @ControllerAdvice, @ExceptionHandler, @ResponseStatus
+  - **[Transaction Examples](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/transactions.md)** - @Transactional configuration
+- **[Spring In Practice](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-practice.md)** - Error handling patterns and transaction management
 
 **Note**: These standards assume you've learned Spring basics from ayokoding-web. We don't re-explain fundamental concepts here.
 
@@ -718,15 +718,15 @@ Before deploying Spring-based financial services, verify:
 
 **OSE Explanation Foundation**:
 
-- [Java Error Handling](../../programming-languages/java/ex-soen-prla-ja__error-handling-standards.md) - Java exception baseline
+- [Java Error Handling](../../../programming-languages/java/ex-soen-prla-ja__error-handling-standards.md) - Java exception baseline
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Error patterns
 - [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Error standards
 - [Spring Framework REST APIs](./ex-soen-plwe-to-jvsp__rest-apis.md) - API error responses
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring By Example - Error Handling](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/error-handling) - Code examples
-- [Spring In-the-Field - Exception Management](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/error-handling) - Production patterns
+- [Spring By Example - Error Handling](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/error-handling.md) - Code examples
+- [Spring In-the-Field - Exception Management](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/error-handling.md) - Production patterns
 
 **Spring Boot Extension**:
 

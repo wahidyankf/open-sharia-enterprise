@@ -32,11 +32,11 @@ related:
 
 **REQUIRED**: You MUST understand blocking I/O and thread-per-request models before learning reactive programming. Review [Spring Boot REST APIs](ex-soen-plwe-to-jvspbo__rest-apis.md) for blocking model baseline.
 
-**STRONGLY RECOMMENDED**: Complete [AyoKoding Spring Boot Learning Path](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot) and [Reactive Programming module](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/reactive) for practical reactive experience.
+**STRONGLY RECOMMENDED**: Complete [AyoKoding Spring Boot Learning Path](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot) and [Reactive Programming module](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/reactive.md) for practical reactive experience.
 
 **This document is OSE Platform-specific**, not a Spring Boot WebFlux tutorial. We define WHEN and HOW to use WebFlux in THIS platform, not WHAT WebFlux is.
 
-**See**: [Programming Language Documentation Separation Convention](../../../../../../../governance/conventions/structure/programming-language-docs-separation.md)
+**See**: [Programming Language Documentation Separation Convention](../../../../../../governance/conventions/structure/programming-language-docs-separation.md)
 
 ## Purpose
 
@@ -899,14 +899,14 @@ These reactive programming standards enforce the five software engineering princ
 **OSE Explanation Foundation**:
 
 - [Spring Framework Concurrency](../jvm-spring/ex-soen-plwe-to-jvsp__concurrency-standards.md) - Async patterns
-- [Java Concurrency](../../programming-languages/java/ex-soen-prla-ja__concurrency-standards.md) - Java threading baseline
+- [Java Concurrency](../../../programming-languages/java/ex-soen-prla-ja__concurrency-standards.md) - Java threading baseline
 - [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Reactive patterns
 - [Spring Boot Performance](./ex-soen-plwe-to-jvspbo__performance.md) - Reactive performance
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring Boot By Example - WebFlux](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/webflux) - Code examples
-- [Spring Boot In-the-Field - Reactive Systems](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/webflux) - Production reactive
+- [Spring Boot By Example - WebFlux](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/webflux.md) - Code examples
+- [Spring Boot In-the-Field - Reactive Systems](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/webflux.md) - Production reactive
 
 ---
 

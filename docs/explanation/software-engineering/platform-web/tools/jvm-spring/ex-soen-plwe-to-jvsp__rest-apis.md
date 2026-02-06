@@ -565,15 +565,15 @@ public class ZakatCalculatorController {
 
 **OSE Explanation Foundation**:
 
-- [Java API Design](../../programming-languages/java/ex-soen-prla-ja__api-standards.md) - Java API baseline
+- [Java API Design](../../../programming-languages/java/ex-soen-prla-ja__api-standards.md) - Java API baseline
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - REST patterns
 - [Spring Framework Web MVC](./ex-soen-plwe-to-jvsp__web-mvc.md) - MVC foundation
 - [Spring Framework Security](./ex-soen-plwe-to-jvsp__security.md) - API security
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring By Example - REST APIs](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/rest-apis) - Code examples
-- [Spring In-the-Field - API Development](https://ayokoding.com/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/rest-apis) - Production APIs
+- [Spring By Example - REST APIs](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/rest-apis.md) - Code examples
+- [Spring In-the-Field - API Development](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/rest-apis.md) - Production APIs
 
 **Spring Boot Extension**:
 
