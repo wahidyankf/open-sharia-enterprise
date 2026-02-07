@@ -48,8 +48,8 @@ open-sharia-enterprise/
 │   ├── backlog/             # Future plans
 │   └── done/                # Completed plans
 ├── .claude/                 # Claude Code configuration
-│   ├── agents/              # 45 specialized AI agents
-│   └── skills/              # 23 skill packages
+│   ├── agents/              # 55 specialized AI agents
+│   └── skills/              # 28 skill packages
 ├── .husky/                  # Git hooks
 ├── nx.json                  # Nx workspace config
 └── package.json             # Volta pinning + npm workspaces

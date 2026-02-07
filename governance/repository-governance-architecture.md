@@ -96,7 +96,7 @@ graph TD
 
 **Purpose**: Foundational purpose establishing WHY the project exists and WHAT change we seek.
 
-**Key Document**: [Vision - Open Sharia Enterprise](./vision/open-sharia-enterprise.md) (will be at `/governance/vision/` after move)
+**Key Document**: [Vision - Open Sharia Enterprise](./vision/open-sharia-enterprise.md)
 
 **Core Vision**:
 
@@ -122,9 +122,9 @@ graph TD
 
 **Purpose**: Foundational values that serve the vision and govern all conventions and development practices.
 
-**Key Document**: [Core Principles Index](./principles/README.md) (will be at `/governance/principles/` after move)
+**Key Document**: [Core Principles Index](./principles/README.md)
 
-**Ten Principles**:
+**Eleven Principles**:
 
 **General Principles:**
 
@@ -158,7 +158,7 @@ Development: Hugo Development Convention (semantic HTML, ARIA labels)
 
 **Purpose**: Documentation standards that implement core principles. Defines WHAT rules we follow for writing, organizing, and formatting documentation.
 
-**Key Document**: [Conventions Index](./conventions/README.md) (will be at `/governance/conventions/` after move)
+**Key Document**: [Conventions Index](./conventions/README.md)
 
 **Scope**: Documentation rules for:
 
@@ -198,7 +198,7 @@ Agent: docs__file-manager (enforces naming when renaming files)
 
 **Purpose**: Software practices that implement core principles. Defines HOW we develop, test, and deploy software.
 
-**Key Document**: [Development Index](./development/README.md) (will be at `/governance/development/` after move)
+**Key Document**: [Development Index](./development/README.md)
 
 **Scope**: Software practices for:
 
@@ -288,7 +288,7 @@ Workflow: Maker-Checker-Fixer (Layer 5)
 
 **Purpose**: Orchestrated multi-step processes that compose AI agents to achieve specific goals with clear termination criteria.
 
-**Key Document**: [Workflows Index](./workflows/README.md) (will be at `/governance/workflows/` after move)
+**Key Document**: [Workflows Index](./workflows/README.md)
 
 **Workflow Families**:
 

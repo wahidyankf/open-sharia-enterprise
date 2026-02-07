@@ -1,6 +1,6 @@
 # Claude Code Skills
 
-This directory contains 26 skill packages that provide progressive knowledge delivery to agents. Skills bundle domain-specific conventions, standards, and best practices.
+This directory contains 28 skill packages that provide progressive knowledge delivery to agents. Skills bundle domain-specific conventions, standards, and best practices.
 
 ## Skill Organization
 
@@ -10,8 +10,10 @@ This directory contains 26 skill packages that provide progressive knowledge del
 - **docs-applying-diataxis-framework** - Four-category documentation organization (Tutorials, How-To, Reference, Explanation)
 - **docs-creating-accessible-diagrams** - Accessible Mermaid diagrams with color-blind friendly palette
 - **docs-creating-by-example-tutorials** - By-example tutorial creation methodology
+- **docs-creating-in-the-field-tutorials** - In-the-field tutorial creation methodology
 - **docs-validating-factual-accuracy** - Factual verification methodology with web research
 - **docs-validating-links** - Link validity checking and fixing procedures
+- **docs-validating-software-engineering-separation** - Programming language docs separation validation
 
 ### 📋 README Skills
 
@@ -49,158 +51,86 @@ This directory contains 26 skill packages that provide progressive knowledge del
 - **swe-programming-python** - Python coding standards quick reference
 - **swe-programming-typescript** - TypeScript coding standards quick reference
 
-### 🌐 Application-Specific Skills
+### 🌐 Hugo Site Development Skills
 
-- **apps-ayokoding-web-developing-content** - AyoKoding bilingual content standards
-- **apps-ose-platform-web-developing-content** - OSE Platform content standards
+- **apps-ayokoding-web-developing-content** - AyoKoding content development standards
+- **apps-ose-platform-web-developing-content** - OSE Platform content development standards
 
-## Skill Format (SKILL.md)
+## Skill Structure
 
-Skills use markdown with YAML frontmatter:
+Each skill package follows this directory structure:
 
-```yaml
----
-description: Brief description of what this skill provides (progressive disclosure metadata)
----
-
-# Skill Name
-
-## Purpose
-Brief overview of skill purpose and when to use it
-
-## Core Content
-Detailed guidance, standards, examples
-
-## References
-Links to related conventions, principles, other skills
+```
+skill-name/
+├── SKILL.md           # Primary content (injected when invoked)
+├── reference.md       # Extended reference (optional)
+├── examples.md        # Usage examples (optional)
+└── checklists.md      # Quick checklists (optional)
 ```
 
-**Progressive Disclosure**: Skills provide ~100 token metadata (frontmatter + Purpose) for quick context, then detailed guidance <5k tokens for comprehensive understanding.
+## Inline vs Fork Skills
 
-## Skill Modes: Inline vs Fork
+Skills operate in two modes:
 
-Skills operate in two distinct modes:
+**Inline Skills** (default):
 
-### Inline Skills (Knowledge Delivery)
+- Inject knowledge into current conversation
+- Progressive disclosure (name/description → full content on-demand)
+- Enable knowledge composition (multiple skills work together)
 
-**Default behavior** when `context` field is omitted or set to `inline`:
+**Fork Skills** (`context: fork`):
 
-- **Progressive disclosure** - Name/description at startup, full content on-demand
-- **Knowledge injection** - Add standards and guidance to current conversation
-- **Convention packaging** - Bundle governance knowledge for efficient consumption
-- **Composition** - Multiple skills work together seamlessly
-- **Universal compatibility** - Work in both main conversation and subagent contexts
+- Delegate tasks to agents in isolated subagent contexts
+- Act as lightweight orchestrators
+- Return summarized results to main conversation
 
-**Example use cases**: Style guides, coding conventions, domain knowledge, quality standards
-
-**REPOSITORY STANDARD**: All skills in `.claude/skills/` MUST use inline context. See [Skill Context Architecture](../../governance/development/agents/skill-context-architecture.md) for rationale.
-
-### Fork Skills (Task Delegation)
-
-**Delegation behavior** when `context: fork` is set with `agent` field:
-
-- **Spawn isolated subagent contexts** - Create separate execution environments
-- **Delegate specialized tasks** - Agent field specifies which agent type to use
-- **Lightweight orchestration** - Skills invoke agents for focused work
-- **Return results** - Subagent output returns to main conversation
-- **Main conversation only** - Subagents cannot spawn other subagents (architectural constraint)
-
-**Configuration syntax**:
-
-```yaml
----
-name: deep-research
-context: fork
-agent: Explore # Built-in or custom agent
----
-Research $ARGUMENTS thoroughly...
-```
-
-**Example use cases**: Deep research, focused analysis, specialized exploration
-
-**Key difference**: Inline skills inject knowledge (work everywhere), fork skills delegate tasks (main conversation only).
-
-**Important**: Fork skills CANNOT be placed in `.claude/skills/` directory. Place them in project-specific directories and document as "main conversation only". See [Skill Context Architecture](../../governance/development/agents/skill-context-architecture.md).
-
-## Skills vs Conventions
-
-**Skills** (`.claude/skills/`):
-
-- Delivery infrastructure serving agents
-- Progressive knowledge format (inline) or task delegation (fork)
-- Optimized for agent consumption
-- References conventions as source of truth
-- Service relationship with agents (not governance)
-
-**Conventions** (`governance/conventions/`):
-
-- Permanent governance rules (Layer 2)
-- Comprehensive reference documentation
-- Human and agent readable
-- Single source of truth
-- Govern agents and practices
-
-Skills package conventions for efficient agent access and can orchestrate agents for specialized tasks, but don't govern them.
+See `repo-applying-maker-checker-fixer` skill for complete workflow patterns.
 
 ## Dual-Mode Operation
 
-**Format Compatibility**: Skills use identical format for both Claude Code and OpenCode (SKILL.md with frontmatter).
-
 **Source of Truth**: This directory (`.claude/skills/`) is the PRIMARY source.
-**Sync Target**: Changes are copied to `.opencode/skill/` (SECONDARY) via automation.
-
-**Directory Structure**:
-
-- `.claude/skills/{skill-name}/SKILL.md` (source)
-- `.opencode/skill/{skill-name}/SKILL.md` (synced output)
+**Sync Target**: Changes are synced to `.opencode/skill/` (SECONDARY) via automation.
 
 **Making Changes**:
 
 1. Edit skills in `.claude/skills/` directory
-2. Run: `npm run sync:claude-to-opencode` (powered by `rhino-cli` for fast syncing)
-3. Both systems stay synchronized (maintains folder structure)
+2. Run: `npm run sync:claude-to-opencode` (powered by `rhino-cli`)
+3. Both systems stay synchronized
 
-**Implementation**: Sync powered by `rhino-cli sync-agents` (~35ms total, 25-60x faster than bash)
+**Implementation**: Sync powered by `rhino-cli sync-skills` (~15ms for all skills)
 
 **See**: [CLAUDE.md](../../CLAUDE.md) for complete guidance, [apps/rhino-cli/README.md](../../apps/rhino-cli/README.md) for rhino-cli details
 
-## Best Practices
+## Skills vs Agents
 
-1. **Progressive Disclosure** - Keep metadata section brief (~100 tokens), detailed content <5k tokens
-2. **References One Level Deep** - Link to conventions, don't create deep skill chains
-3. **Zero-Context Execution** - Bundle all necessary knowledge for standalone agent use
-4. **Trusted Sources Only** - Only use skills from trusted repositories (security policy)
-5. **Examples Over Theory** - Provide concrete examples and checklists
+**Skills** are reusable knowledge packages that **serve agents** but don't govern them:
 
-## Usage in Agents
+- Deliver domain-specific knowledge on-demand
+- Bundle conventions, patterns, and standards
+- Support both inline (knowledge injection) and fork (task delegation) modes
+- Service relationship, NOT governance layer
 
-Agents reference skills in frontmatter (OpenCode format) or through natural invocation (Claude Code):
+**Agents** are autonomous executors that **use skills** as knowledge resources:
 
-**OpenCode Example**:
+- Execute specific tasks (make, check, fix, deploy)
+- Consume skills for domain expertise
+- Follow conventions and practices (L2/L3 governance)
+- Action-oriented, task-focused
 
-```yaml
-permission:
-  skill:
-    docs-applying-content-quality: allow
-    docs-creating-accessible-diagrams: allow
-```
+**See**: [governance/repository-governance-architecture.md](../../governance/repository-governance-architecture.md) for complete architecture
 
-**Claude Code**: Skills are auto-loaded based on agent description and context.
-
-## Governance Alignment
+## Governance Standards
 
 All skills follow governance principles:
 
-- **Documentation First** - Skills document conventions comprehensively
-- **Explicit Over Implicit** - Clear guidance, no assumptions
-- **Simplicity Over Complexity** - Single-purpose skills
-- **Accessibility First** - Accessible content standards
+- **Documentation First** - Comprehensive guidance in SKILL.md
+- **Progressive Disclosure** - Name/description → full content on-demand
+- **Simplicity Over Complexity** - Single-purpose skills, clear scope
+- **Explicit Over Implicit** - Clear when/how to use each skill
 
-**See**: [governance/principles/README.md](./README.md)
+**See**: [governance/principles/README.md](../../governance/principles/README.md)
 
 ---
 
-**Total Skills**: 26
-**Format**: Folder structure with SKILL.md and YAML frontmatter
-**Token Target**: Metadata ~100 tokens, Full content <5k tokens
-**Last Updated**: 2026-02-01
+**Total Skills**: 28
+**Last Updated**: 2026-02-07
