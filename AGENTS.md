@@ -40,14 +40,14 @@ This repository maintains **dual compatibility** with both Claude Code and OpenC
 
 ## Agent Organization
 
-**50 specialized agents** organized into **7 families**:
+**55 specialized agents** organized into **7 families**:
 
-1. **Documentation** (8 agents): `docs-maker`, `docs-checker`, `docs-fixer`, `docs-tutorial-maker`, `docs-tutorial-checker`, `docs-tutorial-fixer`, `docs-link-general-checker`, `docs-file-manager`
+1. **Documentation** (10 agents): `docs-maker`, `docs-checker`, `docs-fixer`, `docs-tutorial-maker`, `docs-tutorial-checker`, `docs-tutorial-fixer`, `docs-link-general-checker`, `docs-file-manager`, `docs-software-engineering-separation-checker`, `docs-software-engineering-separation-fixer`
 2. **README** (3 agents): `readme-maker`, `readme-checker`, `readme-fixer`
 3. **Project Planning** (5 agents): `plan-maker`, `plan-checker`, `plan-executor`, `plan-execution-checker`, `plan-fixer`
 4. **Hugo Content - ayokoding-web** (17 agents): Bilingual content creators, validators, deployers
 5. **Hugo Content - ose-platform-web** (4 agents): Landing page content creators, validators, deployers
-6. **Meta/Specialized** (3 agents): `agent-maker`, `swe-hugo-developer`, `social-linkedin-post-maker`
+6. **Software Engineering & Specialized** (8 agents): `agent-maker`, `swe-elixir-developer`, `swe-golang-developer`, `swe-hugo-developer`, `swe-java-developer`, `swe-python-developer`, `swe-typescript-developer`, `social-linkedin-post-maker`
 7. **Repository Governance** (6 agents): `repo-governance-maker`, `repo-governance-checker`, `repo-governance-fixer`, `repo-workflow-maker`, `repo-workflow-checker`, `repo-workflow-fixer`
 
 **Full agent catalog**: See [`.opencode/agent/README.md`](./.opencode/agent/README.md)
@@ -91,7 +91,7 @@ Three-stage quality workflow:
 
 ## Skills Integration
 
-**26 skill packages** serve agents through two modes:
+**28 skill packages** serve agents through two modes:
 
 **Inline Skills** (default) - Knowledge injection:
 
@@ -145,6 +145,6 @@ All agents follow 10 foundational principles:
 
 ---
 
-**Total Agents**: 50
-**Total Skills**: 26
-**Last Updated**: 2026-01-16
+**Total Agents**: 55
+**Total Skills**: 28
+**Last Updated**: 2026-02-07
