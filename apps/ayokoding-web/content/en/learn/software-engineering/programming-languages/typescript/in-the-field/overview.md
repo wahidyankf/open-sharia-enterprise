@@ -40,7 +40,7 @@ TypeScript builds on JavaScript's standard library while adding type safety. The
 
 ## Guide Organization
 
-The 33 guides are organized into 7 categories:
+The 30 guides are organized into 7 categories:
 
 ### 1. Foundation (5 guides)
 
@@ -70,27 +70,24 @@ Authentication, authorization, and security practices:
 - [Security Practices](/en/learn/software-engineering/programming-languages/typescript/in-the-field/security-practices) - Input validation, OWASP, XSS/CSRF
 - [Configuration](/en/learn/software-engineering/programming-languages/typescript/in-the-field/configuration) - hardcoded → dotenv → config services
 
-### 4. Data Management (5 guides)
+### 4. Data Management (4 guides)
 
 Database and state management:
 
 - [Sql Database](/en/learn/software-engineering/programming-languages/typescript/in-the-field/sql-database) - raw queries → TypeORM/Prisma
 - [Nosql Databases](/en/learn/software-engineering/programming-languages/typescript/in-the-field/nosql-databases) - MongoDB native → Mongoose
 - [Caching](/en/learn/software-engineering/programming-languages/typescript/in-the-field/caching) - Map → node-cache → Redis
-- [State Management](/en/learn/software-engineering/programming-languages/typescript/in-the-field/state-management) - plain objects → Redux/MobX/Zustand
 - [Dependency Injection](/en/learn/software-engineering/programming-languages/typescript/in-the-field/dependency-injection) - manual → InversifyJS/TSyringe
 
-### 5. Integration (5 guides)
+### 5. Integration (3 guides)
 
 API and service integration:
 
 - [Rest Api](/en/learn/software-engineering/programming-languages/typescript/in-the-field/rest-api) - http → Express/Fastify/Nest.js
-- [Graphql](/en/learn/software-engineering/programming-languages/typescript/in-the-field/graphql) - GraphQL.js → Apollo Server
 - [Messaging](/en/learn/software-engineering/programming-languages/typescript/in-the-field/messaging) - EventEmitter → Bull/Kafka
 - [Json And Api Integration](/en/learn/software-engineering/programming-languages/typescript/in-the-field/json-and-api-integration) - JSON parsing, HTTP clients
-- [Web Services](/en/learn/software-engineering/programming-languages/typescript/in-the-field/web-services) - Building production APIs
 
-### 6. Advanced Patterns (5 guides)
+### 6. Advanced Patterns (6 guides)
 
 Advanced programming patterns and performance:
 
@@ -99,16 +96,16 @@ Advanced programming patterns and performance:
 - [Performance](/en/learn/software-engineering/programming-languages/typescript/in-the-field/performance) - Profiling, V8 optimization, memory
 - [Resilience Patterns](/en/learn/software-engineering/programming-languages/typescript/in-the-field/resilience-patterns) - Retry, circuit breaker, fallback
 - [Domain Driven Design](/en/learn/software-engineering/programming-languages/typescript/in-the-field/domain-driven-design) - DDD tactical patterns
+- [Finite State Machines](/en/learn/software-engineering/programming-languages/typescript/in-the-field/finite-state-machines) - State pattern, XState
 
-### 7. DevOps (5 guides)
+### 7. DevOps (4 guides)
 
-Deployment, monitoring, and cloud patterns:
+Deployment, automation, and cloud patterns:
 
 - [Docker And Kubernetes](/en/learn/software-engineering/programming-languages/typescript/in-the-field/docker-and-kubernetes) - Container deployment
 - [Ci Cd](/en/learn/software-engineering/programming-languages/typescript/in-the-field/ci-cd) - GitHub Actions/GitLab CI
 - [Cloud Native Patterns](/en/learn/software-engineering/programming-languages/typescript/in-the-field/cloud-native-patterns) - 12-factor app, microservices
 - [Cli App](/en/learn/software-engineering/programming-languages/typescript/in-the-field/cli-app) - Commander.js, Oclif
-- [Monitoring](/en/learn/software-engineering/programming-languages/typescript/in-the-field/monitoring) - console → Prometheus/Grafana/OpenTelemetry
 
 ## Progressive Learning Path
 
