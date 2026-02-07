@@ -73,8 +73,8 @@ Conventions are organized into 6 semantic categories:
 - **[linking/](#linking-1-convention)** - Cross-reference and internal linking standards (1 convention)
 - **[writing/](#writing-5-conventions)** - Content quality, validation, writing standards (5 conventions)
 - **[structure/](#structure-4-conventions)** - Documentation organization, file naming, plans (4 conventions)
-- **[tutorials/](#tutorials-7-conventions)** - Tutorial creation and structure conventions (7 conventions)
-- **[hugo/](#hugo-3-conventions)** - Hugo site content conventions (3 conventions)
+- **[tutorials/](#tutorials-7-conventions)** - Tutorial creation and structure conventions (8 conventions)
+- **[hugo/](#hugo-3-conventions)** - Hugo site content conventions (4 conventions)
 
 ---
 
@@ -116,7 +116,7 @@ Documentation organization frameworks, file naming, and project planning structu
 - [Plans Organization](./structure/plans.md) - Standards for organizing project planning documents in plans/ folder including structure (ideas.md, backlog/, in-progress/, done/), naming patterns (YYYY-MM-DD\_\_identifier/), lifecycle stages, and project identifiers. Defines how plans move from ideas - backlog - in-progress - done
 - [Programming Language Documentation Separation](./structure/programming-language-docs-separation.md) - Establishes clear separation between repository-specific programming language style guides (docs/explanation/) and educational programming language content (ayokoding-web). Defines scope boundaries, prerequisite knowledge requirements, cross-referencing patterns, and DRY principle application. Applies to all programming languages (Java, Python, Golang, TypeScript, Elixir, Kotlin, Dart, Rust, Clojure, F#, C#)
 
-## Tutorials (7 conventions)
+## Tutorials (8 conventions)
 
 Tutorial creation, structure, naming, and content standards applying to **all tutorial content** (docs/, ayokoding-web, ose-platform-web, anywhere). These conventions **build upon and extend** the writing conventions above.
 
@@ -128,13 +128,14 @@ Tutorial creation, structure, naming, and content standards applying to **all tu
 - [Tutorial Convention](./tutorials/general.md) - **Universal** standards for creating learning-oriented tutorials with narrative flow, progressive scaffolding, and hands-on elements. Covers all 7 tutorial types that combine into Full Set Tutorial Package. Applies to all tutorial content (docs/, ayokoding-web, ose-platform-web, anywhere)
 - [Tutorial Naming](./tutorials/naming.md) - **Universal** Full Set Tutorial Package definition (5 mandatory components) and tutorial type standards (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook, By Example). Replaces old "Full Set" concept (5 sequential levels) with new architecture emphasizing component completeness. Applies to all tutorial content across the repository
 
-## Hugo (3 conventions)
+## Hugo (4 conventions)
 
 Hugo site-specific content conventions.
 
 - [Hugo Content - ayokoding](./hugo/ayokoding.md) - Site-specific conventions for ayokoding-web (Hextra theme). Covers Hextra shortcodes, bilingual requirements, navigation patterns, weight field ordering, overview/ikhtisar file requirements, index file content separation, and optional Diataxis structure. Use with shared convention
 - [Hugo Content - OSE Platform](./hugo/ose-platform.md) - Site-specific conventions for ose-platform-web (PaperMod theme). Covers PaperMod features, English-only requirements, simple update patterns, cover image standards, and flat content structure. Use with shared convention
 - [Hugo Content - Shared](./hugo/shared.md) - Common Hugo content conventions applying to all Hugo sites in this repository. Covers inherited conventions (Mathematical Notation, Color Accessibility, Diagrams, Emoji, Timestamp, Tutorial standards), adapted conventions (Indentation, Linking, File Naming, Frontmatter, Date Format), and Hugo-specific basics (Archetypes, Shortcodes, Taxonomy, Asset Organization). Foundation for all Hugo content work
+- [Indonesian Content Policy - ayokoding-web](./hugo/indonesian-content-policy.md) - Policy defining when and how to create Indonesian content in ayokoding-web. Establishes English-first policy for technical tutorials, defines Indonesian content categories (unique content, strategic translations, discouraged mirrors), provides decision tree for language selection, and specifies agent behavior for content creation
 
 ## Related Documentation
 

@@ -1093,7 +1093,7 @@ chmod +x build.sh
   "outputDirectory": "apps/ayokoding-web/public",
   "framework": "hugo",
   "env": {
-    "HUGO_VERSION": "0.139.4"
+    "HUGO_VERSION": "0.152.2"
   },
   "headers": [
     {
@@ -1276,7 +1276,7 @@ Following these best practices ensures maintainable, performant, and accessible 
 # Check your version
 hugo version
 
-# Should show: hugo v0.139.4+extended
+# Should show: hugo v0.152.2+extended
 ```
 
 **Why:** Hugo extended includes SCSS/SASS support, essential for modern theme development.

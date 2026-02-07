@@ -73,7 +73,7 @@ graph TD
 #### Layer 1: Principles (WHY - Values)
 
 - **[Core Principles](./principles/README.md)** - Foundational values that govern all lower layers
-  - 10 principles across 3 categories (General, Content, Software Engineering)
+  - 11 principles across 3 categories (General, Content, Software Engineering)
   - Each principle traces back to vision with "Vision Supported" section
   - Examples: Simplicity Over Complexity, Accessibility First, Documentation First, Automation Over Manual
 
@@ -96,7 +96,7 @@ graph TD
 #### Layer 5: Workflows (WHEN - Multi-Step Processes)
 
 - **[Workflows](./workflows/README.md)** - Orchestrated multi-step processes composing AI agents
-  - 13 workflows across 5 categories (ayokoding-web, docs, meta, plan, wow)
+  - 8 workflows across 4 categories (ayokoding-web, docs, plan, repository)
   - Define sequences (sequential/parallel/conditional), state management, termination criteria
   - Examples: Maker-Checker-Fixer, Plan-Execute-Validate
   - Orchestrate agents from Layer 4

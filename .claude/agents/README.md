@@ -1,6 +1,6 @@
 # Claude Code Agents
 
-This directory contains 50 specialized AI agents for the open-sharia-enterprise project. These agents are organized by role and follow the Maker-Checker-Fixer pattern where applicable.
+This directory contains 55 specialized AI agents for the open-sharia-enterprise project. These agents are organized by role and follow the Maker-Checker-Fixer pattern where applicable.
 
 ## Agent Organization
 
@@ -11,6 +11,7 @@ This directory contains 50 specialized AI agents for the open-sharia-enterprise 
 - **readme-maker** - README file writer
 - **apps-ayokoding-web-general-maker** - General content for AyoKoding
 - **apps-ayokoding-web-by-example-maker** - By-example tutorials
+- **apps-ayokoding-web-in-the-field-maker** - In-the-field tutorials for AyoKoding
 - **apps-ayokoding-web-structure-maker** - Site structure creation
 - **apps-ayokoding-web-navigation-maker** - Navigation generation
 - **apps-ayokoding-web-title-maker** - Title generation from filenames
@@ -26,9 +27,11 @@ This directory contains 50 specialized AI agents for the open-sharia-enterprise 
 - **docs-checker** - Factual accuracy validation
 - **docs-tutorial-checker** - Tutorial quality validation
 - **docs-link-general-checker** - Link validity checking
+- **docs-software-engineering-separation-checker** - Programming language docs separation validation
 - **readme-checker** - README quality validation
 - **apps-ayokoding-web-general-checker** - General content validation
 - **apps-ayokoding-web-by-example-checker** - By-example validation
+- **apps-ayokoding-web-in-the-field-checker** - In-the-field content validation
 - **apps-ayokoding-web-facts-checker** - Factual accuracy for AyoKoding
 - **apps-ayokoding-web-link-checker** - Link validation for AyoKoding
 - **apps-ayokoding-web-structure-checker** - Site structure validation
@@ -42,9 +45,11 @@ This directory contains 50 specialized AI agents for the open-sharia-enterprise 
 
 - **docs-fixer** - Apply validated documentation fixes
 - **docs-tutorial-fixer** - Apply tutorial fixes
+- **docs-software-engineering-separation-fixer** - Fix programming language docs separation issues
 - **readme-fixer** - Apply README fixes
 - **apps-ayokoding-web-general-fixer** - Apply general content fixes
 - **apps-ayokoding-web-by-example-fixer** - Apply by-example fixes
+- **apps-ayokoding-web-in-the-field-fixer** - Fix in-the-field content issues
 - **apps-ayokoding-web-facts-fixer** - Apply factual corrections
 - **apps-ayokoding-web-link-fixer** - Fix broken links
 - **apps-ayokoding-web-structure-fixer** - Fix structure issues
@@ -115,15 +120,9 @@ Three-stage quality workflow:
 
 ## Skills Integration
 
-Agents leverage 23 skills from `.claude/skills/` for progressive knowledge delivery:
+Agents leverage 28 skills from `.claude/skills/` for progressive knowledge delivery. Skills are NOT agents - they provide reusable knowledge and execution services to agents.
 
-- **docs-applying-content-quality** - Content quality standards
-- **docs-applying-diataxis-framework** - Documentation organization
-- **docs-creating-accessible-diagrams** - Accessible Mermaid diagrams
-- **repo-applying-maker-checker-fixer** - Quality workflow pattern
-- **repo-assessing-criticality-confidence** - Criticality assessment
-
-**See**: [.claude/skills/README.md](./README.md) for complete skills catalog
+**See**: [.claude/skills/README.md](../skills/README.md) for complete skills catalog
 
 ## Governance Standards
 
@@ -134,9 +133,9 @@ All agents follow governance principles:
 - **Simplicity Over Complexity** - Single-purpose agents, minimal abstraction
 - **Accessibility First** - WCAG AA compliance in all outputs
 
-**See**: [governance/principles/README.md](./README.md)
+**See**: [governance/principles/README.md](../../governance/principles/README.md)
 
 ---
 
-**Total Agents**: 45
-**Last Updated**: 2026-01-16
+**Total Agents**: 55
+**Last Updated**: 2026-02-07
