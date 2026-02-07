@@ -1,5 +1,5 @@
 ---
-title: "Spring JDBC in Production"
+title: "Spring Jdbc"
 date: 2026-02-06T00:00:00+07:00
 draft: false
 weight: 10000020

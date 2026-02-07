@@ -16,4 +16,3 @@ layout: list
   - [Beginner](/en/learn/software-engineering/programming-languages/python/by-example/beginner)
   - [Intermediate](/en/learn/software-engineering/programming-languages/python/by-example/intermediate)
   - [Advanced](/en/learn/software-engineering/programming-languages/python/by-example/advanced)
-- **In the Field** (Production implementation guides - coming soon)

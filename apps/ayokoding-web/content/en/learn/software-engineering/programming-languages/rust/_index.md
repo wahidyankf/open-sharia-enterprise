@@ -16,4 +16,3 @@ layout: list
   - [Beginner](/en/learn/software-engineering/programming-languages/rust/by-example/beginner)
   - [Intermediate](/en/learn/software-engineering/programming-languages/rust/by-example/intermediate)
   - [Advanced](/en/learn/software-engineering/programming-languages/rust/by-example/advanced)
-- **In the Field** (Production implementation guides - coming soon)

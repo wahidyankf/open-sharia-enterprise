@@ -1,5 +1,5 @@
 ---
-title: "OTP Behaviors"
+title: "Otp Behaviors"
 date: 2026-02-05T00:00:00+07:00
 draft: false
 weight: 1000007
