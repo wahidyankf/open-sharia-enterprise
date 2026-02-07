@@ -68,10 +68,10 @@ OSE Platform Elixir applications MUST use the following framework stack:
 
 **You MUST understand Elixir fundamentals before using these standards:**
 
-- **[Elixir Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir.md)** - Complete 0-95% language coverage
-- **[Elixir By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/by-example.md)** - 75-85 annotated code examples (beginner → advanced)
-- **[Elixir In the Field](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/in-the-field.md)** - 36 production guides (OTP-first, Phoenix, Ecto, testing, deployment)
-- **[Elixir Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/release-highlights.md)** - 6 major releases (1.12 baseline → 1.17 latest)
+- **[Elixir Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/)** - Complete 0-95% language coverage
+- **[Elixir By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/by-example/)** - 75-85 annotated code examples (beginner → advanced)
+- **[Elixir In the Field](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/in-the-field/)** - 36 production guides (OTP-first, Phoenix, Ecto, testing, deployment)
+- **[Elixir Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/release-highlights/)** - 6 major releases (1.12 baseline → 1.17 latest)
 
 **What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply Elixir knowledge in THIS codebase.
 
