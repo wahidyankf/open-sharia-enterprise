@@ -1,5 +1,5 @@
 ---
-title: "Elixir 1.17"
+title: "Elixir 1 17"
 date: 2026-02-05T00:00:00+07:00
 draft: false
 weight: 1000001

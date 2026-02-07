@@ -9,5 +9,9 @@ tags: ["elixir", "release-notes", "migrasi"]
 ---
 
 - [Ikhtisar](/id/belajar/software-engineering/programming-languages/elixir/release-highlights/ikhtisar)
-- [Elixir 1.13](/id/belajar/software-engineering/programming-languages/elixir/release-highlights/elixir-1-13)
-- [Elixir 1.16](/id/belajar/software-engineering/programming-languages/elixir/release-highlights/elixir-1-16)
+- [Elixir 1 17](/id/belajar/software-engineering/programming-languages/elixir/release-highlights/elixir-1-17)
+- [Elixir 1 16](/id/belajar/software-engineering/programming-languages/elixir/release-highlights/elixir-1-16)
+- [Elixir 1 15](/id/belajar/software-engineering/programming-languages/elixir/release-highlights/elixir-1-15)
+- [Elixir 1 14](/id/belajar/software-engineering/programming-languages/elixir/release-highlights/elixir-1-14)
+- [Elixir 1 13](/id/belajar/software-engineering/programming-languages/elixir/release-highlights/elixir-1-13)
+- [Elixir 1 12](/id/belajar/software-engineering/programming-languages/elixir/release-highlights/elixir-1-12)

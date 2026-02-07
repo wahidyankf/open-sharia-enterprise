@@ -1,5 +1,5 @@
 ---
-title: "GraphQL dengan Absinthe"
+title: "GraphQL Absinthe"
 date: 2026-02-05T00:00:00+07:00
 draft: false
 weight: 1000020

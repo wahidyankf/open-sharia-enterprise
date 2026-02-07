@@ -11,6 +11,7 @@ weight: 102
   - [Python](/en/learn/software-engineering/programming-languages/python)
   - [Java](/en/learn/software-engineering/programming-languages/java)
   - [Kotlin](/en/learn/software-engineering/programming-languages/kotlin)
+  - [TypeScript](/en/learn/software-engineering/programming-languages/typescript)
   - [Golang](/en/learn/software-engineering/programming-languages/golang)
   - [Rust](/en/learn/software-engineering/programming-languages/rust)
   - [Elixir](/en/learn/software-engineering/programming-languages/elixir)

@@ -1,5 +1,5 @@
 ---
-title: "Elixir 1.12 (Dasar)"
+title: "Elixir 1 12"
 date: 2025-02-05T00:00:00+07:00
 draft: false
 description: "Skrip Mix install, Config.Reader, dasar untuk persyaratan versi minimum OSE Platform"

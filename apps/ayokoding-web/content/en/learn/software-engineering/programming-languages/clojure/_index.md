@@ -15,4 +15,3 @@ layout: list
   - [Beginner](/en/learn/software-engineering/programming-languages/clojure/by-example/beginner)
   - [Intermediate](/en/learn/software-engineering/programming-languages/clojure/by-example/intermediate)
   - [Advanced](/en/learn/software-engineering/programming-languages/clojure/by-example/advanced)
-- **In the Field** (Production implementation guides - coming soon)

@@ -9,5 +9,9 @@ tags: ["elixir", "release-notes", "migration"]
 ---
 
 - [Overview](/en/learn/software-engineering/programming-languages/elixir/release-highlights/overview)
-- [Elixir 1.13](/en/learn/software-engineering/programming-languages/elixir/release-highlights/elixir-1-13)
-- [Elixir 1.16](/en/learn/software-engineering/programming-languages/elixir/release-highlights/elixir-1-16)
+- [Elixir 1 17](/en/learn/software-engineering/programming-languages/elixir/release-highlights/elixir-1-17)
+- [Elixir 1 16](/en/learn/software-engineering/programming-languages/elixir/release-highlights/elixir-1-16)
+- [Elixir 1 15](/en/learn/software-engineering/programming-languages/elixir/release-highlights/elixir-1-15)
+- [Elixir 1 14](/en/learn/software-engineering/programming-languages/elixir/release-highlights/elixir-1-14)
+- [Elixir 1 13](/en/learn/software-engineering/programming-languages/elixir/release-highlights/elixir-1-13)
+- [Elixir 1 12](/en/learn/software-engineering/programming-languages/elixir/release-highlights/elixir-1-12)

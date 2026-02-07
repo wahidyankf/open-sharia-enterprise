@@ -1,5 +1,5 @@
 ---
-title: "Elixir 1.12 (Baseline)"
+title: "Elixir 1 12"
 date: 2025-02-05T00:00:00+07:00
 draft: false
 description: "Scripted Mix install, Config.Reader, baseline for OSE Platform minimum version requirements"

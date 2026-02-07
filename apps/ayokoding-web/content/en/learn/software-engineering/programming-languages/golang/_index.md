@@ -17,6 +17,7 @@ layout: list
   - [Intermediate](/en/learn/software-engineering/programming-languages/golang/by-example/intermediate)
   - [Advanced](/en/learn/software-engineering/programming-languages/golang/by-example/advanced)
 - [In the Field](/en/learn/software-engineering/programming-languages/golang/in-the-field)
+  - [Overview](/en/learn/software-engineering/programming-languages/golang/in-the-field/overview)
   - [Best Practices](/en/learn/software-engineering/programming-languages/golang/in-the-field/best-practices)
   - [Anti Patterns](/en/learn/software-engineering/programming-languages/golang/in-the-field/anti-patterns)
   - [Type System](/en/learn/software-engineering/programming-languages/golang/in-the-field/type-system)
