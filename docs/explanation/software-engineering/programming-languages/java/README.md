@@ -64,10 +64,10 @@ OSE Platform Java applications MUST use the following framework stack:
 
 **You MUST understand Java fundamentals before using these standards:**
 
-- **[Java Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md)** - Complete 0-95% language coverage
-- **[Java By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example.md)** - 75-85 annotated code examples (beginner → advanced)
-- **[Java In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-practice.md)** - Production patterns and design approaches
-- **[Java Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/release-highlights.md)** - Java 17, 21, 25 LTS features
+- **[Java Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/)** - Complete 0-95% language coverage
+- **[Java By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/)** - 75-85 annotated code examples (beginner → advanced)
+- **[Java In the Field](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-the-field/)** - Production patterns and design approaches
+- **[Java Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/release-highlights/)** - Java 17, 21, 25 LTS features
 
 **What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply Java knowledge in THIS codebase.
 
@@ -115,7 +115,7 @@ OSE Platform follows a three-tier Java versioning strategy:
 - Primitive types in patterns (when finalized)
 - Module import declarations (simplified module system)
 
-**See**: [Java Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/release-highlights.md) for detailed LTS feature documentation (Java 17, 21, 25)
+**See**: [Java Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/release-highlights/) for detailed LTS feature documentation (Java 17, 21, 25)
 
 ## OSE Platform Coding Standards (Authoritative)
 
