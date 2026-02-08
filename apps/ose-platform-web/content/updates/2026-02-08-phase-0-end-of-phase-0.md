@@ -27,26 +27,44 @@ The foundation is ready for Phase 1. We have:
 
 Phase 1 is different. It's about solidifying infrastructure and gaining development experience with a real product in production. The Organic Lever productivity tracker will exercise the systems we built in Phase 0 while serving an immediate practical purpose. Once infrastructure is solid, revenue will fund Phase 2 expansion and contribute to Phase 3's certification budget (compliance, regulatory, security certifications across multiple jurisdictions), Insha Allah.
 
-```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#000','lineColor':'#029E73','edgeLabelBackground':'#ffffff'}}}%%
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
-%% Phase 0 Timeline - Three distinct periods
-
-graph LR
-    W18["<b>Weeks 1-8</b><br/>Foundation Establishment<br/>━━━━━━━━━━━━━━<br/>Repository infrastructure<br/>Nx monorepo + Volta<br/>Diátaxis framework<br/>Dual websites<br/>Agent system 20→45<br/>Skills 0→23<br/>3→7 languages<br/>Six-layer governance<br/>437 commits"]:::blue
-
-    W910["<b>Weeks 9-10</b><br/>Infrastructure Maturity<br/>━━━━━━━━━━━━━━<br/>C4 model adoption<br/>RHINO CLI 60x faster<br/>50 agents, 27 skills<br/>345k lines standards"]:::orange
-
-    W1112["<b>Weeks 11-12</b><br/>The Final Sprint<br/>━━━━━━━━━━━━━━<br/>Playwright E2E 85+ examples<br/>9 languages production-ready<br/>56 agents, 33 skills<br/>100% annotation compliance<br/>431 commits"]:::teal
-
-    W18 ==> W910
-    W910 ==> W1112
-
-    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:4px
-    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:4px
-    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:4px
-
-    linkStyle default stroke:#029E73,stroke-width:3px
+```
+        ┌─────────────────────────────────┐
+        │        WEEKS 1-8                │
+        │   Foundation Establishment      │
+        ├─────────────────────────────────┤
+        │ • Repository infrastructure     │
+        │ • Nx monorepo + Volta           │
+        │ • Diátaxis framework            │
+        │ • Dual websites                 │
+        │ • Agent system 20→45            │
+        │ • Skills 0→23                   │
+        │ • 3→7 languages                 │
+        │ • Six-layer governance          │
+        │ • 437 commits                   │
+        └────────────────┬────────────────┘
+                         │
+                         ▼
+        ┌─────────────────────────────────┐
+        │        WEEKS 9-10               │
+        │   Infrastructure Maturity       │
+        ├─────────────────────────────────┤
+        │ • C4 model adoption             │
+        │ • RHINO CLI 60x faster          │
+        │ • 50 agents, 27 skills          │
+        │ • 345k lines standards          │
+        └────────────────┬────────────────┘
+                         │
+                         ▼
+        ┌─────────────────────────────────┐
+        │        WEEKS 11-12              │
+        │      The Final Sprint           │
+        ├─────────────────────────────────┤
+        │ • Playwright E2E 85+ examples   │
+        │ • 9 languages production-ready  │
+        │ • 56 agents, 33 skills          │
+        │ • 100% annotation compliance    │
+        │ • 431 commits                   │
+        └─────────────────────────────────┘
 ```
 
 ## Weeks 1-8: Foundation Establishment
@@ -69,36 +87,47 @@ Educational content expanded—three new programming languages (Elixir, Kotlin, 
 
 Week 8 marked the shift from exploration to production-ready systems. The six-layer governance architecture was established—Vision → Principles → Conventions → Development → AI Agents → Workflows—where each rule traces back to foundational values, preventing contradictions and governance drift.
 
-```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#000','lineColor':'#0173B2','secondaryColor':'#DE8F05','tertiaryColor':'#029E73','edgeLabelBackground':'#ffffff','fontFamily':'Arial','fontSize':'14px'}}}%%
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
-%% Six-Layer Governance Architecture - Traceability hierarchy
-
-graph TB
-    L0["<b>Layer 0: Vision</b><br/>WHY we exist<br/>Democratize Shariah enterprise"]:::blue
-    L1["<b>Layer 1: Principles</b><br/>WHY we value approaches<br/>10 core principles"]:::blue
-    L2["<b>Layer 2: Conventions</b><br/>WHAT rules apply<br/>26 documentation standards"]:::orange
-    L3["<b>Layer 3: Development</b><br/>HOW we build<br/>15 software practices"]:::orange
-    L4["<b>Layer 4: AI Agents</b><br/>WHO enforces<br/>56 specialized agents"]:::teal
-    L5["<b>Layer 5: Workflows</b><br/>WHEN we execute<br/>Orchestrated processes"]:::teal
-
-    L0 ==> L1
-    L1 ==> L2
-    L2 ==> L3
-    L3 ==> L4
-    L4 ==> L5
-
-    Skills["<b>Skills Infrastructure</b><br/>33 reusable knowledge packages<br/>Service relationship (not governance)"]:::purple
-
-    Skills -.-> L4
-
-    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:4px
-    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:4px
-    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:4px
-    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:4px
-
-    linkStyle default stroke:#0173B2,stroke-width:3px
-    linkStyle 5 stroke:#CC78BC,stroke-width:2px,stroke-dasharray:5
+```
+                    ┌──────────────────────────────────┐
+                    │   Layer 0: Vision                │
+                    │   WHY we exist                   │
+                    │   Democratize Shariah enterprise │
+                    └────────────────┬─────────────────┘
+                                     │
+                                     ▼
+                    ┌──────────────────────────────────┐
+                    │   Layer 1: Principles            │
+                    │   WHY we value approaches        │
+                    │   10 core principles             │
+                    └────────────────┬─────────────────┘
+                                     │
+                                     ▼
+                    ┌──────────────────────────────────┐
+                    │   Layer 2: Conventions           │
+                    │   WHAT rules apply               │
+                    │   26 documentation standards     │
+                    └────────────────┬─────────────────┘
+                                     │
+                                     ▼
+                    ┌──────────────────────────────────┐
+                    │   Layer 3: Development           │
+                    │   HOW we build                   │
+                    │   15 software practices          │
+                    └────────────────┬─────────────────┘
+                                     │
+                                     ▼
+┌──────────────────────┐  ┌──────────────────────────────────┐
+│ Skills Infrastructure│  │   Layer 4: AI Agents             │
+│ 33 reusable packages │~~│   WHO enforces                   │
+│ (Service relation)   │  │   56 specialized agents          │
+└──────────────────────┘  └────────────────┬─────────────────┘
+                                           │
+                                           ▼
+                          ┌──────────────────────────────────┐
+                          │   Layer 5: Workflows             │
+                          │   WHEN we execute                │
+                          │   Orchestrated processes         │
+                          └──────────────────────────────────┘
 ```
 
 The AI agent system reached 45 specialized agents with scope-prefixed naming (`docs-*`, `apps-ayokoding-web-*`, `apps-ose-platform-web-*`, `readme-*`, `plan-*`) following consistent patterns. We implemented 23 `Skills` as delivery infrastructure—knowledge packages that agents load on-demand across six domains: documentation, workflow/patterns, project planning, application development, AI agent development, and README writing.
@@ -151,28 +180,48 @@ TypeScript coverage reached parity with Java and Golang—fundamentals, advanced
 
 We added two new languages: C# with .NET fundamentals and F# with functional programming patterns. Phoenix LiveView received framework-specific content for real-time web applications. Every language follows the same pedagogical approach—heavily annotated by-example tutorials, production-focused in-the-field guides, accessible diagrams, consistent quality standards.
 
-```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#000','lineColor':'#029E73','edgeLabelBackground':'#ffffff'}}}%%
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73
-%% Programming Language Coverage Expansion
-
-graph LR
-    W5["<b>Week 5</b><br/>3 Languages<br/>Elixir, Kotlin, Rust"]:::orange
-    W8["<b>Week 8</b><br/>7 Languages<br/>+ Java, Python<br/>+ Golang, Clojure"]:::orange
-    W12["<b>Week 12</b><br/>9 Languages<br/>+ TypeScript<br/>+ C#, F#"]:::teal
-
-    W5 ==> W8
-    W8 ==> W12
-
-    Quality["<b>Production Quality Standard</b><br/>1.0-2.25 annotation density<br/>By-example + In-the-field tutorials<br/>Accessible diagrams<br/>Bilingual navigation"]:::blue
-
-    W12 ==> Quality
-
-    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:4px
-    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:4px
-    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:4px
-
-    linkStyle default stroke:#029E73,stroke-width:3px
+```
+            ┌───────────────────────────┐
+            │       WEEK 5              │
+            │     3 Languages           │
+            ├───────────────────────────┤
+            │ • Elixir                  │
+            │ • Kotlin                  │
+            │ • Rust                    │
+            └─────────────┬─────────────┘
+                          │
+                          ▼
+            ┌───────────────────────────┐
+            │       WEEK 8              │
+            │     7 Languages           │
+            ├───────────────────────────┤
+            │ + Java                    │
+            │ + Python                  │
+            │ + Golang                  │
+            │ + Clojure                 │
+            └─────────────┬─────────────┘
+                          │
+                          ▼
+            ┌───────────────────────────┐
+            │       WEEK 12             │
+            │     9 Languages           │
+            ├───────────────────────────┤
+            │ + TypeScript              │
+            │ + C#                      │
+            │ + F#                      │
+            └─────────────┬─────────────┘
+                          │
+                          ▼
+            ┌───────────────────────────┐
+            │  PRODUCTION QUALITY       │
+            │      STANDARD             │
+            ├───────────────────────────┤
+            │ • 1.0-2.25 annotation     │
+            │ • By-example tutorials    │
+            │ • In-the-field guides     │
+            │ • Accessible diagrams     │
+            │ • Bilingual navigation    │
+            └───────────────────────────┘
 ```
 
 ### Agent System Maturity
@@ -183,38 +232,27 @@ Both extensions followed the same pattern: create `Skills` from style guide docu
 
 The full agent system now comprises 56 specialized agents organized into clear families: content creation (15 agents), validation (16 agents), fixing (14 agents), development (7 agents), operations (4 agents). Every agent follows `maker-checker-fixer` workflow patterns with confidence assessment and human oversight.
 
-```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#000','lineColor':'#DE8F05'}}}%%
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
-%% AI Agent System Growth - Progression shown through node sequence
-
-graph TD
-    W1["<b>Week 1</b><br/>━━━━━━━━━━━━━━<br/>20 Agents<br/>0 Skills<br/>Experimental"]:::orange
-    W8["<b>Week 8</b><br/>━━━━━━━━━━━━━━<br/>45 Agents<br/>23 Skills<br/>Specialized"]:::orange
-    W10["<b>Week 10</b><br/>━━━━━━━━━━━━━━<br/>50 Agents<br/>27 Skills<br/>Performance focus"]:::teal
-    W12["<b>Week 12</b><br/>━━━━━━━━━━━━━━<br/>56 Agents<br/>33 Skills<br/>Production ready"]:::teal
-
-    W1 ==> W8
-    W8 ==> W10
-    W10 ==> W12
-
-    Families["<b>Agent Organization</b><br/>Content Creation: 15<br/>Validation: 16<br/>Fixing: 14<br/>Development: 7<br/>Operations: 4"]:::blue
-
-    Pattern["<b>Maker-Checker-Fixer</b><br/>Confidence Assessment<br/>HIGH/MEDIUM/FALSE_POSITIVE<br/>Human Oversight"]:::purple
-
-    W12 ==> Families
-    W12 ==> Pattern
-
-    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:4px
-    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:4px
-    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:4px
-    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:4px
-
-    linkStyle 0 stroke:#DE8F05,stroke-width:4px
-    linkStyle 1 stroke:#DE8F05,stroke-width:4px
-    linkStyle 2 stroke:#DE8F05,stroke-width:4px
-    linkStyle 3 stroke:#0173B2,stroke-width:4px
-    linkStyle 4 stroke:#0173B2,stroke-width:4px
+```
+        ┌──────────────┐         ┌──────────────┐         ┌──────────────┐         ┌──────────────┐
+        │   WEEK 1     │         │   WEEK 8     │         │   WEEK 10    │         │   WEEK 12    │
+        ├──────────────┤  ═════> ├──────────────┤  ═════> ├──────────────┤  ═════> ├──────────────┤
+        │ 20 Agents    │         │ 45 Agents    │         │ 50 Agents    │         │ 56 Agents    │
+        │  0 Skills    │         │ 23 Skills    │         │ 27 Skills    │         │ 33 Skills    │
+        │ Experimental │         │ Specialized  │         │ Performance  │         │ Production   │
+        └──────────────┘         └──────────────┘         └──────────────┘         └──────┬───────┘
+                                                                                           │
+                                        ┌──────────────────────────────────────────────────┴──────┐
+                                        │                                                          │
+                                        ▼                                                          ▼
+                        ┌───────────────────────────┐                           ┌──────────────────────────┐
+                        │  AGENT ORGANIZATION       │                           │  MAKER-CHECKER-FIXER     │
+                        ├───────────────────────────┤                           ├──────────────────────────┤
+                        │ • Content Creation: 15    │                           │ • Confidence Assessment  │
+                        │ • Validation: 16          │                           │ • HIGH/MEDIUM/FALSE_POS  │
+                        │ • Fixing: 14              │                           │ • Human Oversight        │
+                        │ • Development: 7          │                           │                          │
+                        │ • Operations: 4           │                           │                          │
+                        └───────────────────────────┘                           └──────────────────────────┘
 ```
 
 ### Pedagogical Frameworks Formalized
@@ -263,45 +301,64 @@ We resolved 161 broken links through validation, fixed inconsistent naming acros
 
 **Architecture**: Monolith ("until it hurts")—single deployable service appropriate for individual user scale. Simpler development, faster iteration, avoid premature optimization. We'll break it apart when scaling demands, not before.
 
-```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#000','lineColor':'#0173B2','edgeLabelBackground':'#ffffff'}}}%%
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
-%% Phase 1 Organic Lever Tech Stack
-
-graph TB
-    Local["<b>Local Client (Priority 1)</b><br/>Flutter + Dart Desktop<br/>Windows, macOS, Linux"]:::purple
-    Web["<b>Web Frontend (Priority 2)</b><br/>Next.js + TypeScript initially<br/>Flutter possible for web"]:::purple
-    Mobile["<b>Mobile Apps (Priority 3-4)</b><br/>Flutter + Dart<br/>Android before iOS"]:::purple
-
-    Backend["<b>Backend Monolith</b><br/>Java + Spring Boot<br/>Single deployable service"]:::blue
-
-    NATS["<b>Messaging (Potential)</b><br/>NATS<br/>Event-driven architecture"]:::brown
-
-    K8s["<b>Kubernetes Infrastructure</b><br/>Container orchestration<br/>Auto-scaling, health checks<br/>Rolling updates"]:::teal
-
-    CICD["<b>Production CI/CD</b><br/>Automated testing<br/>Build/release automation<br/>Deployment pipelines"]:::orange
-
-    DB[("<b>Database</b><br/>PostgreSQL")]:::brown
-
-    Local ==> Backend
-    Web ==> Backend
-    Mobile ==> Backend
-    Backend ==> DB
-    Backend -.-> NATS
-    Backend ==> K8s
-    K8s ==> CICD
-
-    Strategic["<b>Strategic Value</b><br/>Knowledge base fundamentals<br/>Revenue generation<br/>Deployment practice<br/>Security practice<br/>Tech stack validation<br/>Open source decision"]:::teal
-
-    K8s ==> Strategic
-
-    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:4px
-    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:4px
-    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:4px
-    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:4px
-    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:4px
-
-    linkStyle default stroke:#0173B2,stroke-width:3px
+```
+                    ┌────────────────────────────────┐
+                    │   LOCAL CLIENT (Priority 1)   │
+                    │   Flutter + Dart Desktop       │
+                    │   Windows, macOS, Linux        │
+                    └───────────────┬────────────────┘
+                                    │
+                    ┌───────────────┴────────────────┐
+                    │   WEB FRONTEND (Priority 2)   │
+                    │   Next.js + TypeScript         │
+                    │   Flutter possible for web     │
+                    └───────────────┬────────────────┘
+                                    │
+                    ┌───────────────┴────────────────┐
+                    │   MOBILE APPS (Priority 3-4)  │
+                    │   Flutter + Dart               │
+                    │   Android before iOS           │
+                    └───────────────┬────────────────┘
+                                    │
+                                    ▼
+                    ┌────────────────────────────────┐
+                    │   BACKEND MONOLITH             │
+                    │   Java + Spring Boot           │
+                    │   Single deployable service    │
+                    └──┬─────────────────┬───────────┘
+                       │                 │
+                       ▼                 └~~> ┌───────────────────────┐
+              ┌───────────────┐               │ MESSAGING (Potential) │
+              │   DATABASE    │               │ NATS                  │
+              │   PostgreSQL  │               │ Event-driven arch     │
+              └───────────────┘               └───────────────────────┘
+                       │
+                       ▼
+          ┌────────────────────────────────┐
+          │   KUBERNETES INFRASTRUCTURE    │
+          │   Container orchestration      │
+          │   Auto-scaling, health checks  │
+          │   Rolling updates              │
+          └────────────┬───────────────────┘
+                       │
+                       ▼
+          ┌────────────────────────────────┐
+          │   PRODUCTION CI/CD             │
+          │   Automated testing            │
+          │   Build/release automation     │
+          │   Deployment pipelines         │
+          └────────────┬───────────────────┘
+                       │
+                       ▼
+          ┌────────────────────────────────┐
+          │   STRATEGIC VALUE              │
+          │   • Knowledge base practice    │
+          │   • Revenue generation         │
+          │   • Deployment practice        │
+          │   • Security practice          │
+          │   • Tech stack validation      │
+          │   • Open source decision       │
+          └────────────────────────────────┘
 ```
 
 **Infrastructure**:
