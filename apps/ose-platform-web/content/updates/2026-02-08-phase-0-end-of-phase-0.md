@@ -88,7 +88,7 @@ graph TB
     L3 ==> L4
     L4 ==> L5
 
-    Skills["<b>Skills Infrastructure</b><br/>33 reusable knowledge packages<br/>Service relationship #40;not governance#41;"]:::purple
+    Skills["<b>Skills Infrastructure</b><br/>33 reusable knowledge packages<br/>Service relationship (not governance)"]:::purple
 
     Skills -.-> L4
 
@@ -269,13 +269,13 @@ We resolved 161 broken links through validation, fixed inconsistent naming acros
 %% Phase 1 Organic Lever Tech Stack
 
 graph TB
-    Local["<b>Local Client #40;Priority 1#41;</b><br/>Flutter + Dart Desktop<br/>Windows, macOS, Linux"]:::purple
-    Web["<b>Web Frontend #40;Priority 2#41;</b><br/>Next.js + TypeScript initially<br/>Flutter possible for web"]:::purple
-    Mobile["<b>Mobile Apps #40;Priority 3-4#41;</b><br/>Flutter + Dart<br/>Android before iOS"]:::purple
+    Local["<b>Local Client (Priority 1)</b><br/>Flutter + Dart Desktop<br/>Windows, macOS, Linux"]:::purple
+    Web["<b>Web Frontend (Priority 2)</b><br/>Next.js + TypeScript initially<br/>Flutter possible for web"]:::purple
+    Mobile["<b>Mobile Apps (Priority 3-4)</b><br/>Flutter + Dart<br/>Android before iOS"]:::purple
 
     Backend["<b>Backend Monolith</b><br/>Java + Spring Boot<br/>Single deployable service"]:::blue
 
-    NATS["<b>Messaging #40;Potential#41;</b><br/>NATS<br/>Event-driven architecture"]:::brown
+    NATS["<b>Messaging (Potential)</b><br/>NATS<br/>Event-driven architecture"]:::brown
 
     K8s["<b>Kubernetes Infrastructure</b><br/>Container orchestration<br/>Auto-scaling, health checks<br/>Rolling updates"]:::teal
 
