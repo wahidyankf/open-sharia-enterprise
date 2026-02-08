@@ -4,7 +4,7 @@
 
 ## Overview
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This companion document respects:
 
@@ -19,7 +19,7 @@ This document outlines best practices for developing Hugo sites in the `apps/ayo
 
 ## Purpose
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This companion document respects:
 
@@ -338,7 +338,7 @@ Following these best practices ensures:
 
 Hugo sites built following these practices are maintainable, performant, accessible, and production-ready.
 
-## Principles Applied
+## Principles Implemented/Respected
 
 - **Accessibility First**: Image processing, semantic HTML, WCAG compliance
 - **Explicit Over Implicit**: Clear configuration, validated parameters

@@ -17,7 +17,7 @@ updated: 2025-12-07
 
 Standards for developing the non-content aspects of Hugo websites in this repository. This convention covers theme customization, layout development, asset management, configuration, and build processes for **ayokoding-web** (Hextra theme) and **ose-platform-web** (PaperMod theme).
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This practice respects the following core principles:
 

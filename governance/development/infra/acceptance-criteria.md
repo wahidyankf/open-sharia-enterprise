@@ -16,7 +16,7 @@ updated: 2026-02-02
 
 This convention defines how to write testable acceptance criteria using **Gherkin format** for plans, specifications, and requirements documentation.
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This practice respects the following core principles:
 

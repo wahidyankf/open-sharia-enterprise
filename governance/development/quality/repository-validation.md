@@ -18,7 +18,7 @@ updated: 2025-12-14
 
 This document defines the standard validation methods and patterns used by repository validation agents (wow**rules-checker, wow**rules-fixer, and related tools) to ensure consistency across the codebase. Following these patterns prevents false positives, improves accuracy, and maintains reliable automated checks.
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This practice respects the following core principles:
 

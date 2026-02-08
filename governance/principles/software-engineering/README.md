@@ -21,7 +21,7 @@ These principles define **WHY we value specific approaches to software developme
 - How-to implement features (that's a guide)
 - Technical tool configurations (that's a development practice)
 
-## Principles
+## Principles Implemented/Respected
 
 - [Automation Over Manual](./automation-over-manual.md) - Automate repetitive tasks to ensure consistency and reduce human error
 - [Explicit Over Implicit](./explicit-over-implicit.md) - Choose explicit composition and configuration over magic, convenience, and hidden behavior
@@ -35,12 +35,11 @@ Each principle is demonstrated across the platform's technology stack:
 
 ### Java Examples
 
-- **[Java Idioms](../../../docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__idioms.md)** - Records (Immutability), Pattern Matching (Explicit), Try-with-resources (Automation)
-- **[Java Functional Programming](../../../docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__functional-programming.md)** - Pure Functions, Immutability, Functional Core architecture
-- **[Java Type Safety](../../../docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__type-safety.md)** - Explicit nullable types, Static analysis (Automation)
-- **[Java Concurrency](../../../docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__concurrency-and-parallelism.md)** - Immutability for thread-safety, Virtual threads
-- **[Java Domain-Driven Design](../../../docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__domain-driven-design.md)** - Value Objects (Immutability), Domain Services (Pure Functions)
-- **[Java Best Practices](../../../docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__best-practices.md)** - Build automation, Reproducible development
+- **[Java Coding Standards](../../../docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__coding-standards.md)** - Records (Immutability), Pattern Matching (Explicit), Try-with-resources (Automation)
+- **[Java Concurrency Standards](../../../docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__concurrency-standards.md)** - Immutability for thread-safety, Virtual threads
+- **[Java DDD Standards](../../../docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__ddd-standards.md)** - Value Objects (Immutability), Domain Services (Pure Functions)
+- **[Java Testing Standards](../../../docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__testing-standards.md)** - Automation, Reproducible tests
+- **[Java Build Configuration](../../../docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__build-configuration.md)** - Build automation, Reproducible development
 
 ### Principle-Specific Examples
 

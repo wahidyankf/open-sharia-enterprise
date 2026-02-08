@@ -21,7 +21,7 @@ These principles define **WHY we value specific approaches to content creation**
 - How-to instructions for writing (that's a guide)
 - Technical documentation standards (that's a convention)
 
-## Principles
+## Principles Implemented/Respected
 
 - [Accessibility First](./accessibility-first.md) - Design for universal access from the start (WCAG compliance, color-blind friendly palettes, alt text, screen reader support)
 - [Documentation First](./documentation-first.md) - Documentation is mandatory, not optional. Every system, convention, feature, and decision must be documented

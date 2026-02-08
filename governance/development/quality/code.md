@@ -16,7 +16,7 @@ subcategory: development
 
 This document explains the automated code quality tools and git hooks used in this repository to maintain consistent code formatting and commit message standards.
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This practice respects the following core principles:
 

@@ -4,7 +4,7 @@
 
 ## Overview
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This companion document respects:
 
@@ -19,7 +19,7 @@ Understanding common mistakes in Hugo site development helps teams build more ma
 
 ## Purpose
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This companion document respects:
 
@@ -362,7 +362,7 @@ Avoiding these anti-patterns ensures:
 
 When developing Hugo sites, ask: **Am I adding performance or complexity?** If complexity, refactor to follow Hugo development best practices.
 
-## Principles Applied
+## Principles Implemented/Respected
 
 - **Accessibility First**: Image optimization, lazy loading
 - **Explicit Over Implicit**: Clear URLs, validated parameters

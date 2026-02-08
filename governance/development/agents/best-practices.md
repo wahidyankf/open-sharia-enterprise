@@ -4,7 +4,7 @@
 
 ## Overview
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This companion document respects:
 
@@ -19,7 +19,7 @@ This document outlines best practices for developing AI agents in the `.claude/a
 
 ## Purpose
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This companion document respects:
 
@@ -321,7 +321,7 @@ Following these best practices ensures:
 
 Agents built following these practices are maintainable, secure, and effective at automating repository tasks.
 
-## Principles Applied
+## Principles Implemented/Respected
 
 - **Automation Over Manual**: Agents automate repetitive tasks
 - **Explicit Over Implicit**: Clear permissions and behavior

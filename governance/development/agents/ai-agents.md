@@ -71,7 +71,7 @@ This repository maintains **dual compatibility** with both Claude Code and OpenC
 
 **See**: [CLAUDE.md](../../../CLAUDE.md) for Claude Code documentation, [AGENTS.md](../../../AGENTS.md) for OpenCode documentation.
 
-## Principles Respected
+## Principles Implemented/Respected
 
 **REQUIRED SECTION**: All development practice documents MUST include this section to ensure traceability from practices back to foundational values.
 

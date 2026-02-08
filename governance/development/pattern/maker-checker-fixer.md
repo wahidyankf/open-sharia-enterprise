@@ -18,7 +18,7 @@ updated: 2025-12-24
 
 This document defines the **maker-checker-fixer pattern**, a three-stage content quality workflow used across multiple agent families in this repository. The pattern ensures high-quality content through systematic creation, validation, and remediation cycles.
 
-## Principles Respected
+## Principles Implemented/Respected
 
 **REQUIRED SECTION**: All development practice documents MUST include this section to ensure traceability from practices back to foundational values.
 

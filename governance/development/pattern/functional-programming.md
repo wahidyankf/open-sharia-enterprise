@@ -17,7 +17,7 @@ updated: 2025-12-28
 
 Guidelines for applying functional programming principles in TypeScript/JavaScript code. This practice defines HOW to write functional code that implements the principles of immutability and pure functions.
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This practice respects the following core principles:
 

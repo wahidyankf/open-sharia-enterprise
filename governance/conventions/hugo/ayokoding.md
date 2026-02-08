@@ -2094,9 +2094,9 @@ static/
 
 **Related AI Agents**:
 
-- [ayokoding-web-general-maker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/apps-ayokoding-web-general-maker.md) - Creates general ayokoding-web content
-- [ayokoding-web-by-example-maker](../../../.opencode/agent/apps-ayokoding-web-by-example-maker.md) - Creates by-example tutorials
-- [ayokoding-web-general-checker](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/apps-ayokoding-web-general-checker.md) - Validates general ayokoding-web content
-- [ayokoding-web-by-example-checker](../../../.opencode/agent/apps-ayokoding-web-by-example-checker.md) - Validates by-example tutorials
-- [ayokoding-web-link-checker](../../../.opencode/agent/apps-ayokoding-web-link-checker.md) - Validates links in ayokoding-web
-- [ayokoding-web-deployer](../../../.opencode/agent/apps-ayokoding-web-deployer.md) - Deploys ayokoding-web to production
+- [ayokoding-web-general-maker](../../../.claude/agents/apps-ayokoding-web-general-maker.md) - Creates general ayokoding-web content
+- [ayokoding-web-by-example-maker](../../../.claude/agents/apps-ayokoding-web-by-example-maker.md) - Creates by-example tutorials
+- [ayokoding-web-general-checker](../../../.claude/agents/apps-ayokoding-web-general-checker.md) - Validates general ayokoding-web content
+- [ayokoding-web-by-example-checker](../../../.claude/agents/apps-ayokoding-web-by-example-checker.md) - Validates by-example tutorials
+- [ayokoding-web-link-checker](../../../.claude/agents/apps-ayokoding-web-link-checker.md) - Validates links in ayokoding-web
+- [ayokoding-web-deployer](../../../.claude/agents/apps-ayokoding-web-deployer.md) - Deploys ayokoding-web to production

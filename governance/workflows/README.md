@@ -211,7 +211,7 @@ Track workflow performance:
 - **Step duration** - Time spent in each step (if measured)
 - **Human intervention** - How often checkpoints pause workflows
 
-## Principles Respected
+## Principles Implemented/Respected
 
 All workflows must respect core principles:
 

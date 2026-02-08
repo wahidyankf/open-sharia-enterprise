@@ -780,7 +780,7 @@ Workflows naturally consume more tokens than single agent invocations because th
 
 **This is expected and acceptable.** The reliable compaction mechanism handles context management. Focus on correct, thorough workflow execution quality, not token usage.
 
-## Principles Respected
+## Principles Implemented/Respected
 
 **REQUIRED SECTION**: All workflow documents MUST include this section to ensure traceability from workflow patterns back to foundational values.
 

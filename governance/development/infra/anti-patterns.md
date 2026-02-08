@@ -4,7 +4,7 @@
 
 ## Overview
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This companion document respects:
 
@@ -19,7 +19,7 @@ Understanding common mistakes in development infrastructure management helps tea
 
 ## Purpose
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This companion document respects:
 
@@ -384,7 +384,7 @@ Avoiding these anti-patterns ensures:
 
 When managing infrastructure, ask: **Am I adding clarity or clutter?** If clutter, refactor to follow infrastructure development best practices.
 
-## Principles Applied
+## Principles Implemented/Respected
 
 - **Explicit Over Implicit**: Clear file locations, documented purposes
 - **Automation Over Manual**: Progressive writing, automated tracking

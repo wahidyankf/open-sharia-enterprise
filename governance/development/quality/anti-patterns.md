@@ -4,7 +4,7 @@
 
 ## Overview
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This companion document respects:
 
@@ -19,7 +19,7 @@ Understanding common mistakes in quality development helps teams build more reli
 
 ## Purpose
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This companion document respects:
 
@@ -417,7 +417,7 @@ Avoiding these anti-patterns ensures:
 
 When implementing quality processes, ask: **Am I adding automation or friction?** If friction, refactor to follow quality development best practices.
 
-## Principles Applied
+## Principles Implemented/Respected
 
 - **Automation Over Manual**: Git hooks, CI gates, automated validation
 - **Documentation First**: Preserve content, document validation rules

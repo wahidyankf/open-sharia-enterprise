@@ -17,7 +17,7 @@ updated: 2025-12-14
 
 This convention defines the principles and processes for preserving knowledge when condensing files and extracting duplications. It ensures zero content loss when reducing file sizes or eliminating duplication across the repository.
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This practice respects the following core principles:
 

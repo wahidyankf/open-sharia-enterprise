@@ -17,7 +17,7 @@ updated: 2025-12-15
 
 This document defines the universal confidence level system used by all fixer agents (wow**rules-fixer, ayokoding-web-general-fixer, ayokoding-web-by-example-fixer, ayokoding-web-facts-fixer, ayokoding-web-structure-fixer, docs**tutorial-fixer, ose-platform-web-content-fixer, readme**fixer, docs**fixer, plan\_\_fixer) to assess findings from checker agents and determine which fixes can be applied automatically versus which require manual review.
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This practice respects the following core principles:
 
@@ -881,14 +881,14 @@ FAIL: All agent files - Frontmatter comment detection
 
 ### Fixer Agents Using This Convention
 
-- [repo-governance-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/repo-governance-fixer.md) - Repository structural consistency fixer
-- [ayokoding-web-general-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ayokoding-web-general-fixer.md) - ayokoding-web general Hugo content fixer
-- [ayokoding-web-by-example-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ayokoding-web-by-example-fixer.md) - ayokoding-web by-example tutorial fixer
-- [ayokoding-web-facts-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ayokoding-web-facts-fixer.md) - ayokoding-web factual accuracy fixer
-- [ayokoding-web-structure-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ayokoding-web-structure-fixer.md) - ayokoding-web structure fixer
-- [docs__tutorial-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/docs__tutorial-fixer.md) - Tutorial quality fixer
-- [ose-platform-web-content-fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/ose-platform-web-content-fixer.md) - ose-platform-web Hugo content fixer
-- [readme__fixer.md](https://github.com/wahidyankf/open-sharia-enterprise/blob/main/.opencode/agent/readme__fixer.md) - README quality fixer
+- [repo-governance-fixer.md](../../../.claude/agents/repo-governance-fixer.md) - Repository structural consistency fixer
+- [ayokoding-web-general-fixer.md](../../../.claude/agents/ayokoding-web-general-fixer.md) - ayokoding-web general Hugo content fixer
+- [ayokoding-web-by-example-fixer.md](../../../.claude/agents/ayokoding-web-by-example-fixer.md) - ayokoding-web by-example tutorial fixer
+- [ayokoding-web-facts-fixer.md](../../../.claude/agents/ayokoding-web-facts-fixer.md) - ayokoding-web factual accuracy fixer
+- [ayokoding-web-structure-fixer.md](../../../.claude/agents/ayokoding-web-structure-fixer.md) - ayokoding-web structure fixer
+- [docs__tutorial-fixer.md](../../../.claude/agents/docs__tutorial-fixer.md) - Tutorial quality fixer
+- [ose-platform-web-content-fixer.md](../../../.claude/agents/ose-platform-web-content-fixer.md) - ose-platform-web Hugo content fixer
+- [readme__fixer.md](../../../.claude/agents/readme__fixer.md) - README quality fixer
 
 ### Related Conventions
 

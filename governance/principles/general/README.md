@@ -21,7 +21,7 @@ These principles define **WHY we value fundamental approaches** that transcend s
 - Specific implementation rules (that's a convention)
 - How-to solve particular problems (that's a guide)
 
-## Principles
+## Principles Implemented/Respected
 
 - [Deliberate Problem-Solving](./deliberate-problem-solving.md) - Think before coding - surface assumptions, tradeoffs, and confusion rather than hiding them
 - [Simplicity Over Complexity](./simplicity-over-complexity.md) - Favor minimum viable abstraction and avoid over-engineering. Start simple and add complexity only when proven necessary

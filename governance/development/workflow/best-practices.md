@@ -4,7 +4,7 @@
 
 ## Overview
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This companion document respects:
 
@@ -19,7 +19,7 @@ This document outlines best practices for development workflows, including Trunk
 
 ## Purpose
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This companion document respects:
 
@@ -780,7 +780,7 @@ Following these best practices ensures:
 
 Workflows built following these practices are efficient, predictable, and high-quality.
 
-## Principles Applied
+## Principles Implemented/Respected
 
 - **Simplicity Over Complexity**: Single branch, small commits, clear workflow
 - **Automation Over Manual**: CI enforcement, automated testing

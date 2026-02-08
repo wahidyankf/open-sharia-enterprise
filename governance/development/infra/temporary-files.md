@@ -16,7 +16,7 @@ updated: 2025-12-26
 
 Guidelines for AI agents when creating temporary uncommitted files and folders in the open-sharia-enterprise repository.
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This practice respects the following core principles:
 
