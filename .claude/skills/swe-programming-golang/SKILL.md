@@ -13,6 +13,23 @@ Progressive disclosure of Go coding standards for agents writing Go code.
 
 **Usage**: Auto-loaded for agents when writing Go code. Provides quick reference to idioms, best practices, and antipatterns.
 
+## Prerequisite Knowledge
+
+**IMPORTANT**: This skill provides **OSE Platform-specific style guides**, not educational tutorials.
+
+**You MUST understand Go fundamentals before using these standards.** Complete the AyoKoding Go learning path first:
+
+1. **[Go Learning Path](../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/)** - Initial setup, language overview, quick start guide (0-95% language coverage)
+2. **[Go By Example](../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/by-example/)** - 75+ heavily annotated code examples (beginner to advanced patterns)
+3. **[Go In the Field](../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/in-the-field/)** - 37+ production implementation guides (standard library first, framework integration)
+4. **[Go Release Highlights](../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/release-highlights/)** - Go 1.18-1.25 features (generics, fuzzing, PGO, iterators, Green Tea GC)
+
+**What this skill covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply Go knowledge in THIS codebase.
+
+**What this skill does NOT cover**: Go syntax, language fundamentals, generic patterns (those are in ayokoding-web).
+
+**See**: [Programming Language Documentation Separation](../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+
 ## Quick Standards Reference
 
 ### Naming Conventions
@@ -181,11 +198,26 @@ defer cancel()
 
 ## Comprehensive Documentation
 
-For detailed guidance, refer to:
+**Authoritative Index**: [docs/explanation/software-engineering/programming-languages/golang/README.md](../../../docs/explanation/software-engineering/programming-languages/golang/README.md)
 
-- **[Idioms](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__idioms.md)** - Go-specific patterns
-- **[Best Practices](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__best-practices.md)** - Clean code standards
-- **[Anti-Patterns](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__anti-patterns.md)** - Common mistakes
+### Mandatory Standards (All Go Code MUST Follow)
+
+1. **[Coding Standards](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__coding-standards.md)** - Naming conventions, package organization, Effective Go idioms
+2. **[Testing Standards](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__testing-standards.md)** - Table-driven tests, testify, gomock, TestContainers, Godog
+3. **[Code Quality Standards](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__code-quality-standards.md)** - golangci-lint, gofmt, staticcheck, go vet
+4. **[Build Configuration](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__build-configuration.md)** - go.mod structure, Makefile patterns, CI/CD integration
+
+### Context-Specific Standards (Apply When Relevant)
+
+1. **[Error Handling Standards](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__error-handling-standards.md)** - Error wrapping, sentinel errors, custom error types
+2. **[Concurrency Standards](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__concurrency-standards.md)** - Goroutines, channels, context, race detection
+3. **[Type Safety Standards](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__type-safety-standards.md)** - Generics, type parameters, constraints, type assertions
+4. **[Performance Standards](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__performance-standards.md)** - Profiling with pprof, benchmarking, memory optimization
+5. **[Security Standards](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__security-standards.md)** - Input validation, injection prevention, crypto practices
+6. **[API Standards](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__api-standards.md)** - REST conventions, HTTP routing, middleware patterns
+7. **[DDD Standards](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__ddd-standards.md)** - Domain-Driven Design tactical patterns without classes
+8. **[Dependency Standards](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__dependency-standards.md)** - Go modules, version selection, replace directives
+9. **[Design Patterns](../../../docs/explanation/software-engineering/programming-languages/golang/ex-soen-prla-go__design-patterns.md)** - Common Go patterns (functional options, interface design)
 
 ## Related Skills
 
