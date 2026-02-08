@@ -1,499 +1,325 @@
 ---
 title: Domain-Driven Design (DDD)
-description: Comprehensive documentation on Domain-Driven Design patterns, principles, and practices for building complex business software systems
+description: OSE Platform Authoritative DDD Standards for Islamic Finance Business Systems
 category: explanation
 subcategory: architecture
 tags:
   - ddd
   - domain-driven-design
-  - architecture
-  - bounded-context
+  - bounded-contexts
   - aggregates
-  - ubiquitous-language
-  - strategic-design
-  - tactical-design
-  - index
+  - standards
 principles:
   - explicit-over-implicit
-  - simplicity-over-complexity
-  - documentation-first
+  - immutability
+  - pure-functions
 created: 2026-01-25
-updated: 2026-01-25
+updated: 2026-02-09
 ---
 
-# Domain-Driven Design (DDD) Documentation
+# Domain-Driven Design (DDD)
 
-Comprehensive documentation on Domain-Driven Design patterns, principles, and practices for building complex business software systems. This documentation emphasizes both strategic patterns (Bounded Contexts, Context Mapping) and tactical patterns (Aggregates, Value Objects, Entities), with examples drawn from generic business domains including finance, e-commerce, and regulatory compliance.
+**This is THE authoritative reference** for Domain-Driven Design standards in OSE Platform.
 
-## What is Domain-Driven Design?
+All DDD implementations in OSE Platform MUST comply with the standards documented here. These standards are mandatory, not optional. Non-compliance blocks code review and merge approval.
 
-Domain-Driven Design (DDD) is a software development approach that places the business domain at the center of software design. Introduced by Eric Evans in 2003, DDD provides strategic and tactical patterns for managing complexity in large-scale software systems.
+## DDD Pattern Requirements
 
-**Key Principles:**
+OSE Platform Islamic finance systems MUST use the following DDD patterns:
 
-- **Ubiquitous Language**: Shared vocabulary between developers and domain experts
-- **Bounded Contexts**: Clear boundaries around cohesive domain models
-- **Strategic Design**: Understanding the business landscape before implementation
-- **Tactical Patterns**: Building blocks for expressing domain logic (Aggregates, Entities, Value Objects)
-- **Continuous Learning**: Iterative refinement through collaboration with domain experts
+**Strategic Patterns:**
 
-**When to Use DDD:**
+- **Bounded Contexts** - MUST align with Nx app boundaries
+- **Context Mapping** - MUST document relationships between contexts
+- **Ubiquitous Language** - MUST use domain expert terminology
 
-- Complex business logic with numerous rules and invariants
-- Access to domain experts for collaboration
-- Long-lived systems expected to evolve over years
-- High cost of defects or regulatory compliance requirements
+**Tactical Patterns:**
 
-See [Introduction and Philosophy](./ex-soen-ar-dodrdedd__01-introduction-and-philosophy.md) for a comprehensive overview.
+- **Aggregates** - MUST enforce business invariants (Zakat rules, contract validity)
+- **Value Objects** - MUST use for domain primitives (Money, FiscalDate, InterestRate)
+- **Domain Events** - MUST capture business occurrences (ZakatCalculated, DonationReceived)
+- **Repositories** - MUST abstract persistence for aggregates
+
+**Integration Requirements:**
+
+- MUST align bounded contexts with C4 containers
+- MUST use FSM for entity lifecycles when applicable
+- MUST use immutable value objects (Java records, TypeScript readonly)
+
+## Prerequisite Knowledge
+
+**REQUIRED**: This documentation assumes you have completed the AyoKoding Domain-Driven Design learning path. These are **OSE Platform-specific DDD standards**, not educational tutorials.
+
+**You MUST understand DDD fundamentals before using these standards:**
+
+- **[Domain-Driven Design Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/)** - Educational foundation for DDD concepts
+- **[Domain-Driven Design Overview](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/overview.md)** - Core DDD principles (Ubiquitous Language, Bounded Contexts, Strategic/Tactical patterns)
+- **[Domain-Driven Design By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/by-example/)** - Practical DDD implementation examples
+
+**What this documentation covers**: OSE Platform-specific DDD patterns, Islamic finance domain modeling, aggregate boundaries, bounded context mapping in OSE Platform, integration with C4 and FSM, repository-specific tactical patterns.
+
+**What this documentation does NOT cover**: DDD fundamentals, basic aggregate/entity/value object concepts, generic strategic design (those are in ayokoding-web).
+
+**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
+
+## Software Engineering Principles
+
+DDD in OSE Platform enforces three foundational software engineering principles:
+
+1. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - MUST make domain concepts explicit through Ubiquitous Language, bounded context boundaries must be explicit in code structure, business rules must be explicit in domain logic not hidden in infrastructure
+
+2. **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - MUST use immutable value objects (Java records, TypeScript readonly), domain events must be immutable, aggregate state changes must create new instances in functional approaches
+
+3. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - MUST implement domain logic as pure functions, validation rules must be pure and deterministic, business calculations must have no side effects
+
+## OSE Platform DDD Standards (Authoritative)
+
+**MUST follow these mandatory standards for all DDD implementations in OSE Platform:**
+
+1. **[Bounded Context Standards](./ex-soen-ar-dodrdedd__bounded-context-standards.md)** - Nx app alignment, context mapping, ubiquitous language
+2. **[Aggregate Standards](./ex-soen-ar-dodrdedd__aggregate-standards.md)** - Consistency boundaries, transaction rules, Islamic finance invariants
+3. **[Value Object Standards](./ex-soen-ar-dodrdedd__value-object-standards.md)** - Immutable primitives (Money, FiscalDate, Rate), validation rules
+4. **[Domain Event Standards](./ex-soen-ar-dodrdedd__domain-event-standards.md)** - Event naming, immutability, publishing patterns
+5. **[Entity Standards](./ex-soen-ar-dodrdedd__entity-standards.md)** - Identity management, lifecycle tracking
+
+## Bounded Context Organization
+
+### REQUIRED: One Bounded Context = One Nx App
+
+**REQUIRED**: OSE Platform MUST organize bounded contexts as Nx apps.
+
+```
+apps/
+├── zakat-context/          # Zakat calculation bounded context
+│   ├── domain/             # Domain layer (aggregates, value objects)
+│   ├── application/        # Application services
+│   └── infrastructure/     # Persistence, messaging
+├── donation-context/       # Donation management bounded context
+│   ├── domain/
+│   ├── application/
+│   └── infrastructure/
+└── beneficiary-context/    # Beneficiary registry bounded context
+    ├── domain/
+    ├── application/
+    └── infrastructure/
+```
+
+**See**: [Bounded Context Standards](./ex-soen-ar-dodrdedd__bounded-context-standards.md)
+
+## Aggregate Design for Islamic Finance
+
+### REQUIRED: Aggregates Enforce Business Invariants
+
+**REQUIRED**: Aggregates MUST enforce Islamic finance business rules.
+
+**Examples**:
+
+**Zakat Assessment Aggregate**:
+
+- MUST enforce minimum Nisab threshold (87.48g gold equivalent)
+- MUST calculate 2.5% of qualifying wealth
+- MUST verify Haul (lunar year holding period)
+
+**Contract Aggregate (Murabaha)**:
+
+- MUST enforce profit disclosure
+- MUST validate asset ownership transfer
+- MUST ensure Shariah compliance verification
+
+**Donation Campaign Aggregate**:
+
+- MUST enforce funding goal
+- MUST validate Shariah-compliant causes
+- MUST track distribution to eligible beneficiaries
+
+**See**: [Aggregate Standards](./ex-soen-ar-dodrdedd__aggregate-standards.md)
+
+## Value Object Requirements
+
+### REQUIRED: Use Immutable Value Objects
+
+**REQUIRED**: All domain primitives MUST be value objects.
+
+**OSE Platform Value Objects**:
+
+- `Money` - Amount + Currency (e.g., "100.00 USD", "500.00 SAR")
+- `FiscalDate` - Islamic calendar date for Zakat calculations
+- `NisabThreshold` - Minimum wealth threshold for Zakat obligation
+- `Rate` - Interest rate or profit margin (Murabaha)
+- `ZakatPercentage` - Fixed 2.5% for most Zakat calculations
+
+**Implementation**:
+
+- **Java**: Use `record` (Java 17+)
+- **TypeScript**: Use `readonly` properties
+- **Go**: Use immutable structs
+
+**See**: [Value Object Standards](./ex-soen-ar-dodrdedd__value-object-standards.md)
+
+## Domain Event Requirements
+
+### REQUIRED: Capture Business Occurrences
+
+**REQUIRED**: All significant business occurrences MUST emit domain events.
+
+**OSE Platform Domain Events**:
+
+- `ZakatCalculated` - Zakat obligation calculated
+- `DonationReceived` - Donation accepted
+- `CampaignFunded` - Campaign reaches funding goal
+- `BeneficiaryVerified` - Beneficiary eligibility confirmed
+- `ContractApproved` - Shariah board approves contract
+
+**Event Naming Convention**:
+
+- Format: `[Entity][PastTenseVerb]` (e.g., `AssessmentCreated`, `PaymentProcessed`)
+- MUST be past tense (represents something that happened)
+- MUST be immutable (never modified after creation)
+
+**See**: [Domain Event Standards](./ex-soen-ar-dodrdedd__domain-event-standards.md)
+
+## Integration with OSE Platform Architecture
+
+### C4 Container Alignment
+
+**REQUIRED**: Bounded contexts MUST align with C4 containers.
+
+- One bounded context = One C4 container
+- Context boundaries = Container boundaries
+- Context mapping patterns visualized in C4 diagrams
+
+**See**: [C4 Bounded Context Visualization](../c4-architecture-model/ex-soen-ar-c4armo__bounded-context-visualization.md)
+
+### FSM Integration
+
+**OPTIONAL**: Entity lifecycles MAY use FSM when state transitions have business meaning.
+
+**Examples**:
+
+- Zakat Assessment: `DRAFT` → `CALCULATED` → `PAID`
+- Campaign: `PLANNING` → `ACTIVE` → `FUNDED` → `COMPLETED`
+- Contract: `NEGOTIATION` → `APPROVED` → `ACTIVE` → `SETTLED`
+
+**See**: [FSM Standards](../finite-state-machine-fsm/README.md)
 
 ## Documentation Structure
 
-This documentation is organized into strategic design (understanding the business), tactical design (implementing the model), and advanced topics.
-
-### Foundation
-
-- **[01. Introduction and Philosophy](./ex-soen-ar-dodrdedd__01-introduction-and-philosophy.md)** - Overview, history, when to use DDD, decision matrix
-- **[02. Ubiquitous Language](./ex-soen-ar-dodrdedd__02-ubiquitous-language.md)** - Creating shared vocabulary with domain experts
-- **[README (this file)]** - Navigation and learning paths
-
-### Strategic Design
-
-Strategic patterns focus on understanding the business domain and defining boundaries:
-
-- **[03. Bounded Contexts](./ex-soen-ar-dodrdedd__03-bounded-contexts.md)** - Defining clear boundaries around domain models
-- **[04. Context Mapping](./ex-soen-ar-dodrdedd__04-context-mapping.md)** - 9 patterns for integrating bounded contexts
-- **[05. Subdomains](./ex-soen-ar-dodrdedd__05-subdomains.md)** - Core, Supporting, and Generic subdomains
-- **[06. Strategic Design Process](./ex-soen-ar-dodrdedd__06-strategic-design-process.md)** - Event Storming and Bounded Context Canvas workshops
-
-### Tactical Design
-
-Tactical patterns are building blocks for implementing domain models:
-
-- **[07. Entities](./ex-soen-ar-dodrdedd__07-entities.md)** - Objects with identity and lifecycle
-- **[08. Value Objects](./ex-soen-ar-dodrdedd__08-value-objects.md)** - Immutable objects with structural equality
-- **[09. Aggregates](./ex-soen-ar-dodrdedd__09-aggregates.md)** - Consistency boundaries and transactional units ⭐ **Most Important**
-- **[10. Repositories](./ex-soen-ar-dodrdedd__10-repositories.md)** - Persistence abstraction for aggregates
-- **[11. Domain Services](./ex-soen-ar-dodrdedd__11-domain-services.md)** - Stateless operations on domain objects
-- **[12. Domain Events](./ex-soen-ar-dodrdedd__12-domain-events.md)** - Capturing business occurrences
-- **[13. Factories](./ex-soen-ar-dodrdedd__13-factories.md)** - Complex object construction
-
-### Advanced Topics
-
-Integration with programming paradigms and architectures:
-
-- **[14. DDD and Functional Programming](./ex-soen-ar-dodrdedd__14-ddd-and-functional-programming.md)** - Adapting DDD to FP paradigm
-- **[15. Layered Architecture](./ex-soen-ar-dodrdedd__15-layered-architecture.md)** - Domain layer in broader architecture
-- **[16. Decision Trees and Best Practices](./ex-soen-ar-dodrdedd__16-decision-trees-and-best-practices.md)** - Practical guidance and common pitfalls
-- **[17. DDD and C4 Integration](./ex-soen-ar-dodrdedd__17-ddd-and-c4-integration.md)** - Mapping DDD to C4 architecture diagrams
-- **[18. FAQ](./ex-soen-ar-dodrdedd__18-faq.md)** - Common questions and misconceptions
-
-## Learning Paths
-
-Choose a learning path based on your goals and available time.
-
-### 5-Minute Quick Start: Is DDD Right for My Domain?
-
-**Goal**: Determine if DDD is appropriate for your project.
-
-**Path**:
-
-1. Read [Introduction and Philosophy - Decision Matrix](./ex-soen-ar-dodrdedd__01-introduction-and-philosophy.md#decision-matrix) (3 minutes)
-2. Review [When to Use DDD](./ex-soen-ar-dodrdedd__01-introduction-and-philosophy.md#when-to-use-domain-driven-design) (2 minutes)
-
-**Outcome**: Clear yes/no decision on adopting DDD with quantitative scoring.
-
-### 30-Minute Practical: Design Your First Bounded Context
-
-**Goal**: Understand strategic design and model one bounded context.
-
-**Path**:
-
-1. **Strategic Foundation** (10 minutes)
-   - [Ubiquitous Language](./ex-soen-ar-dodrdedd__02-ubiquitous-language.md) - Create shared vocabulary (5 min)
-   - [Bounded Contexts](./ex-soen-ar-dodrdedd__03-bounded-contexts.md#defining-bounded-contexts) - Define boundaries (5 min)
-
-2. **Tactical Basics** (15 minutes)
-   - [Aggregates](./ex-soen-ar-dodrdedd__09-aggregates.md#what-is-an-aggregate) - Understand consistency boundaries (7 min)
-   - [Value Objects](./ex-soen-ar-dodrdedd__08-value-objects.md#what-is-a-value-object) - Immutable domain primitives (5 min)
-   - [Entities](./ex-soen-ar-dodrdedd__07-entities.md#what-is-an-entity) - Identity and lifecycle (3 min)
-
-3. **Apply** (5 minutes)
-   - Use Bounded Context Canvas approach
-   - Design one bounded context for your domain
-
-**Outcome**: Documented bounded context with key aggregates and value objects identified.
-
-### 2-Hour Deep Dive: Master Strategic and Tactical Design
-
-**Goal**: Comprehensive understanding of DDD strategic and tactical patterns.
-
-**Strategic Design** (60 minutes):
-
-1. [Introduction and Philosophy](./ex-soen-ar-dodrdedd__01-introduction-and-philosophy.md) (15 min)
-2. [Ubiquitous Language](./ex-soen-ar-dodrdedd__02-ubiquitous-language.md) (10 min)
-3. [Bounded Contexts](./ex-soen-ar-dodrdedd__03-bounded-contexts.md) (15 min)
-4. [Context Mapping](./ex-soen-ar-dodrdedd__04-context-mapping.md) - 9 integration patterns (15 min)
-5. [Subdomains](./ex-soen-ar-dodrdedd__05-subdomains.md) - Core, Supporting, Generic (5 min)
-
-**Tactical Design** (45 minutes):
-
-1. [Aggregates](./ex-soen-ar-dodrdedd__09-aggregates.md) - Most important tactical pattern (15 min)
-2. [Value Objects](./ex-soen-ar-dodrdedd__08-value-objects.md) (10 min)
-3. [Entities](./ex-soen-ar-dodrdedd__07-entities.md) (7 min)
-4. [Domain Events](./ex-soen-ar-dodrdedd__12-domain-events.md) (8 min)
-5. [Repositories](./ex-soen-ar-dodrdedd__10-repositories.md) (5 min)
-
-**Decision Making** (15 minutes):
-
-1. [Decision Trees and Best Practices](./ex-soen-ar-dodrdedd__16-decision-trees-and-best-practices.md) (10 min)
-2. [FAQ](./ex-soen-ar-dodrdedd__18-faq.md) (5 min)
-
-**Outcome**: Full understanding of strategic landscape and tactical implementation patterns.
-
-### By Paradigm: Object-Oriented vs. Functional Programming
-
-**For OOP Developers**:
-
-Traditional DDD path with class-based examples:
-
-1. [Introduction and Philosophy](./ex-soen-ar-dodrdedd__01-introduction-and-philosophy.md)
-2. [Entities](./ex-soen-ar-dodrdedd__07-entities.md) - Focus on OOP sections
-3. [Value Objects](./ex-soen-ar-dodrdedd__08-value-objects.md) - Focus on OOP sections
-4. [Aggregates](./ex-soen-ar-dodrdedd__09-aggregates.md) - Class-based aggregate roots
-5. [Domain Services](./ex-soen-ar-dodrdedd__11-domain-services.md) - Stateless classes
-6. [Layered Architecture](./ex-soen-ar-dodrdedd__15-layered-architecture.md) - Traditional 4-layer
-
-**For FP Developers**:
-
-Adapted DDD for functional programming:
-
-1. [Introduction and Philosophy](./ex-soen-ar-dodrdedd__01-introduction-and-philosophy.md)
-2. [DDD and Functional Programming](./ex-soen-ar-dodrdedd__14-ddd-and-functional-programming.md) ⭐ **Start Here**
-3. [Value Objects](./ex-soen-ar-dodrdedd__08-value-objects.md) - Focus on FP sections (immutable records)
-4. [Entities](./ex-soen-ar-dodrdedd__07-entities.md) - Focus on FP sections (identity-based equality)
-5. [Aggregates](./ex-soen-ar-dodrdedd__09-aggregates.md) - Pure functions for validation
-6. [Domain Events](./ex-soen-ar-dodrdedd__12-domain-events.md) - Event-driven FP
-7. [Repositories](./ex-soen-ar-dodrdedd__10-repositories.md) - Pure data access interfaces
-
-**Key Differences**:
-
-- **OOP**: Encapsulation, state management via classes, method-based behavior
-- **FP**: Immutability, pure functions, separated data and behavior, railway-oriented programming
-
-### By Architecture: Microservices vs. Monolith
-
-**For Microservices Architecture**:
-
-DDD strategic patterns align naturally with microservices:
-
-1. [Bounded Contexts](./ex-soen-ar-dodrdedd__03-bounded-contexts.md) - Each microservice is a bounded context
-2. [Context Mapping](./ex-soen-ar-dodrdedd__04-context-mapping.md) - API integration patterns
-3. [Subdomains](./ex-soen-ar-dodrdedd__05-subdomains.md) - Service decomposition strategy
-4. [Domain Events](./ex-soen-ar-dodrdedd__12-domain-events.md) - Event-driven inter-service communication
-5. [DDD and C4 Integration](./ex-soen-ar-dodrdedd__17-ddd-and-c4-integration.md) - C4 Container = Bounded Context
-
-**For Monolithic Architecture**:
-
-DDD provides modular organization within a single deployment:
-
-1. [Bounded Contexts](./ex-soen-ar-dodrdedd__03-bounded-contexts.md) - Logical modules within monolith
-2. [Layered Architecture](./ex-soen-ar-dodrdedd__15-layered-architecture.md) - Traditional 4-layer structure
-3. [Aggregates](./ex-soen-ar-dodrdedd__09-aggregates.md) - Transactional consistency within database
-4. [Context Mapping](./ex-soen-ar-dodrdedd__04-context-mapping.md) - Module integration via Shared Kernel
-5. [Subdomains](./ex-soen-ar-dodrdedd__05-subdomains.md) - Investment prioritization for future extraction
-
-**Migration Path**: Start with monolith organized by bounded contexts, extract to microservices when needed.
-
-### By Role: Architects, Developers, Domain Experts
-
-**For Software Architects**:
-
-Focus on strategic design and system-level patterns:
-
-1. [Introduction and Philosophy](./ex-soen-ar-dodrdedd__01-introduction-and-philosophy.md) - Decision matrix for DDD adoption
-2. [Bounded Contexts](./ex-soen-ar-dodrdedd__03-bounded-contexts.md) - System decomposition
-3. [Context Mapping](./ex-soen-ar-dodrdedd__04-context-mapping.md) - 9 integration patterns
-4. [Subdomains](./ex-soen-ar-dodrdedd__05-subdomains.md) - Core vs. Supporting vs. Generic
-5. [Strategic Design Process](./ex-soen-ar-dodrdedd__06-strategic-design-process.md) - Event Storming facilitation
-6. [DDD and C4 Integration](./ex-soen-ar-dodrdedd__17-ddd-and-c4-integration.md) - Architecture visualization
-7. [Layered Architecture](./ex-soen-ar-dodrdedd__15-layered-architecture.md) - Hexagonal Architecture variant
-
-**For Developers**:
-
-Focus on tactical patterns and implementation:
-
-1. [Introduction and Philosophy](./ex-soen-ar-dodrdedd__01-introduction-and-philosophy.md) - Core concepts
-2. [Ubiquitous Language](./ex-soen-ar-dodrdedd__02-ubiquitous-language.md) - Naming conventions
-3. [Aggregates](./ex-soen-ar-dodrdedd__09-aggregates.md) ⭐ **Most Critical** - Transactional boundaries
-4. [Value Objects](./ex-soen-ar-dodrdedd__08-value-objects.md) - Immutable domain primitives
-5. [Entities](./ex-soen-ar-dodrdedd__07-entities.md) - Identity and lifecycle
-6. [Domain Events](./ex-soen-ar-dodrdedd__12-domain-events.md) - Event publishing
-7. [Repositories](./ex-soen-ar-dodrdedd__10-repositories.md) - Persistence abstraction
-8. [Domain Services](./ex-soen-ar-dodrdedd__11-domain-services.md) - Stateless operations
-9. [Factories](./ex-soen-ar-dodrdedd__13-factories.md) - Complex construction
-10. [Decision Trees and Best Practices](./ex-soen-ar-dodrdedd__16-decision-trees-and-best-practices.md) - Practical guidance
-11. [DDD and Functional Programming](./ex-soen-ar-dodrdedd__14-ddd-and-functional-programming.md) - If using FP
-
-**For Domain Experts**:
-
-Focus on collaboration and model validation:
-
-1. [Introduction and Philosophy - Core Philosophy](./ex-soen-ar-dodrdedd__01-introduction-and-philosophy.md#core-philosophy) - What is domain modeling?
-2. [Ubiquitous Language](./ex-soen-ar-dodrdedd__02-ubiquitous-language.md) - Creating shared vocabulary
-3. [Strategic Design Process](./ex-soen-ar-dodrdedd__06-strategic-design-process.md) - Event Storming workshop participation
-4. [Bounded Contexts](./ex-soen-ar-dodrdedd__03-bounded-contexts.md#identifying-bounded-contexts) - Recognizing domain boundaries
-5. [Subdomains](./ex-soen-ar-dodrdedd__05-subdomains.md) - Core vs. Supporting business capabilities
-6. [Domain Events](./ex-soen-ar-dodrdedd__12-domain-events.md) - Capturing business occurrences
-7. Create Ubiquitous Language glossary to document domain terms
-
-**Key Insight**: Domain experts don't need to understand code, but should validate that the model accurately represents business reality.
-
-## Domain Examples Throughout Documentation
-
-Examples focus on **finance and business systems**:
-
-### Core Domain: Tax Calculation
-
-Tax calculation requires precise calculations based on regulatory requirements:
-
-- **Aggregates**: `TaxAssessment` with income threshold validation
-- **Value Objects**: `TaxRate`, `IncomeThreshold`, `FiscalDate`, `Money`
-- **Domain Events**: `TaxCalculated`, `ThresholdMet`, `AssessmentCreated`
-- **Business Rules**: Minimum income threshold, fiscal year calculations, income type classifications
-
-### Supporting Domain: Product Certification
-
-Product verification for regulatory compliance:
-
-- **Aggregates**: `Product` with certification status
-- **Value Objects**: `Certification`, `CertificationAuthority`, `ExpiryDate`
-- **Domain Events**: `ProductCertified`, `CertificationExpired`, `CertificationRevoked`
-- **Business Rules**: Authority validation, expiry tracking, supply chain verification
-
-### Supporting Domain: Financial Accounting
-
-Transaction management with regulatory compliance:
-
-- **Aggregates**: `FinancialAccount`, `LoanAgreement`
-- **Value Objects**: `Money`, `InterestRate`, `ContractTerms`
-- **Domain Events**: `TransactionApplied`, `ComplianceViolationDetected`, `ContractApproved`
-- **Business Rules**: Compliance detection, interest calculations, contract validity
-
-### Integration Example: Bounded Context Map
-
-```mermaid
-graph TD
-    TC[Tax Calculation<br/>Core Domain]
-    IM[Inventory Management<br/>Supporting]
-    FA[Financial<br/>Accounting<br/>Supporting]
-    PAY[Payment Processing<br/>Generic]
-
-    TC -->|"Shared Kernel:<br/>Money, FiscalDate"| IM
-    TC -->|"Customer/Supplier"| FA
-    IM -->|"Conformist"| PAY
-    FA -->|"Partnership"| PAY
-
-    style TC fill:#0173B2,stroke:#000,color:#FFFFFF
-    style IM fill:#029E73,stroke:#000,color:#FFFFFF
-    style FA fill:#029E73,stroke:#000,color:#FFFFFF
-    style PAY fill:#808080,stroke:#000,color:#000000
+### Quick Reference
+
+**Mandatory Standards (All DDD practitioners MUST follow)**:
+
+1. [Bounded Context Standards](./ex-soen-ar-dodrdedd__bounded-context-standards.md) - Nx app alignment, context mapping
+2. [Aggregate Standards](./ex-soen-ar-dodrdedd__aggregate-standards.md) - Consistency boundaries, invariants
+3. [Value Object Standards](./ex-soen-ar-dodrdedd__value-object-standards.md) - Immutable primitives
+
+**Context-Specific Standards (Apply when relevant)**:
+
+- **Event-Driven Systems**: [Domain Event Standards](./ex-soen-ar-dodrdedd__domain-event-standards.md) - Event publishing patterns
+- **Entity Management**: [Entity Standards](./ex-soen-ar-dodrdedd__entity-standards.md) - Identity and lifecycle
+
+## Validation and Compliance
+
+DDD implementations MUST pass the following validation checks:
+
+1. **Bounded Context Check**: Each Nx app represents exactly one bounded context
+2. **Aggregate Check**: All business invariants enforced in aggregate roots
+3. **Value Object Check**: All domain primitives are immutable value objects
+4. **Domain Event Check**: All significant business occurrences emit events
+5. **Ubiquitous Language Check**: Code matches domain expert terminology
+
+**Validation Tools**:
+
+- Code review by domain experts
+- Aggregate boundary analysis
+- Event storming session validation
+
+## Example: Zakat Calculation Bounded Context
+
+### Aggregate: ZakatAssessment
+
+```java
+// Java implementation (Spring Boot)
+public record ZakatAssessment(
+    AssessmentId id,
+    UserId userId,
+    FiscalDate calculationDate,
+    Money totalWealth,
+    Money nisabThreshold,
+    ZakatAmount zakatDue,
+    AssessmentStatus status
+) {
+    // Business invariant: Zakat is 2.5% of wealth exceeding Nisab
+    public ZakatAssessment calculate() {
+        if (totalWealth.isLessThan(nisabThreshold)) {
+            return new ZakatAssessment(id, userId, calculationDate,
+                totalWealth, nisabThreshold, Money.zero(),
+                AssessmentStatus.BELOW_NISAB);
+        }
+
+        Money zakatAmount = totalWealth.multiply(0.025);
+        return new ZakatAssessment(id, userId, calculationDate,
+            totalWealth, nisabThreshold, zakatAmount,
+            AssessmentStatus.CALCULATED);
+    }
+}
 ```
 
-These examples demonstrate:
+### Value Objects
 
-- **Complex business rules** requiring domain expert collaboration (tax specialists, accountants)
-- **High cost of defects** (regulatory compliance consequences)
-- **Regulatory requirements** (certification and compliance standards)
-- **Long-term evolution** (adapting to changing regulations and business rules)
+```java
+// Money value object
+public record Money(BigDecimal amount, Currency currency) {
+    public Money {
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Amount cannot be negative");
+        }
+    }
 
-## Relationship to Other Documentation
+    public Money multiply(double factor) {
+        return new Money(amount.multiply(BigDecimal.valueOf(factor)), currency);
+    }
 
-DDD concepts integrate with other architectural approaches in this repository:
+    public boolean isLessThan(Money other) {
+        assertSameCurrency(other);
+        return amount.compareTo(other.amount) < 0;
+    }
 
-### C4 Architecture Model
+    public static Money zero() {
+        return new Money(BigDecimal.ZERO, Currency.getInstance("USD"));
+    }
+}
+```
 
-**[C4 Architecture Model Documentation](../c4-architecture-model/README.md)**
+### Domain Event
 
-- **C4 System Context** ↔ **DDD Context Maps** - External system integration
-- **C4 Containers** ↔ **DDD Bounded Contexts** - Deployment units
-- **C4 Components** ↔ **DDD Aggregates** - Internal structure
-- **C4 Dynamic Diagrams** ↔ **DDD Domain Events** - Behavior over time
+```java
+// ZakatCalculated event
+public record ZakatCalculated(
+    AssessmentId assessmentId,
+    UserId userId,
+    Money zakatAmount,
+    Instant occurredAt
+) implements DomainEvent {
+    // Immutable event - no setters
+}
+```
 
-See [DDD and C4 Integration](./ex-soen-ar-dodrdedd__17-ddd-and-c4-integration.md) for detailed mapping.
+## Related Documentation
 
-### Functional Programming Principles
+- **[C4 Architecture Model](../c4-architecture-model/README.md)** - Visualizing bounded contexts
+- **[FSM Standards](../finite-state-machine-fsm/README.md)** - Entity lifecycle state machines
+- **[Java DDD Standards](../../programming-languages/java/ex-soen-prla-ja__ddd-standards.md)** - Java-specific tactical patterns
 
-**[Functional Programming Principles](../../../../../governance/development/pattern/functional-programming.md)**
+## Principles Implemented/Respected
 
-- **Immutability** aligns with Value Objects and Entity snapshots
-- **Pure Functions** express domain logic without side effects
-- **Railway-Oriented Programming** handles validation and errors
-- **Separated I/O** isolates domain logic from infrastructure
+This documentation implements/respects the following core principles:
 
-See [DDD and Functional Programming](./ex-soen-ar-dodrdedd__14-ddd-and-functional-programming.md) for FP-adapted patterns.
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**: By requiring Ubiquitous Language in code and explicit bounded context boundaries, domain concepts become visible rather than hidden in technical abstractions.
 
-### Software Engineering Principles
+- **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)**: By mandating immutable value objects and domain events, entire categories of bugs related to shared mutable state are eliminated.
 
-**[Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md)**
+- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)**: By requiring domain logic to be pure functions without side effects, business rules become testable, composable, and maintainable.
 
-DDD patterns naturally align with core software engineering principles. This matrix shows which principles each DDD pattern embodies:
+---
 
-| DDD Pattern              | Immutability | Pure Functions | Explicit   | Automation | Reproducibility |
-| ------------------------ | ------------ | -------------- | ---------- | ---------- | --------------- |
-| **Value Objects**        | ✅ PRIMARY   | ✅             | ✅         |            |                 |
-| **Domain Events**        | ✅ PRIMARY   |                | ✅         |            |                 |
-| **Aggregates**           | ✅           | ✅             | ✅ PRIMARY |            | ✅              |
-| **Ubiquitous Language**  |              |                | ✅ PRIMARY |            |                 |
-| **Bounded Contexts**     |              |                | ✅ PRIMARY |            | ✅              |
-| **Domain Services**      |              | ✅ PRIMARY     |            |            |                 |
-| **Event Storming**       |              |                |            | ✅ PRIMARY |                 |
-| **FP Integration**       | ✅           | ✅             | ✅         | ✅         | ✅              |
-| **Layered Architecture** |              | ✅ PRIMARY     | ✅         |            |                 |
-| **Context Mapping**      |              |                | ✅         |            |                 |
-| **Entities**             |              | ✅             | ✅         |            |                 |
-| **Repositories**         |              | ✅             | ✅         |            |                 |
-| **Factories**            |              | ✅             | ✅         |            |                 |
-
-**Legend**:
-
-- ✅ PRIMARY - Core principle that defines the pattern
-- ✅ - Principle demonstrated by the pattern
-- (empty) - Principle not directly applicable
-
-**Principle Descriptions**:
-
-- **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Value Objects and Domain Events are immutable by definition, eliminating entire bug categories
-- **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Domain Services, validation methods, and FP integration favor pure functions
-- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Ubiquitous Language, Aggregates, and Bounded Contexts make domain concepts explicit
-- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Event Storming automates domain discovery through structured workshops
-- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Clear boundaries and patterns enable consistent, reproducible implementations
-
-See individual pattern documentation for detailed principle applications and examples.
-
-### Repository Governance
-
-**[Repository Governance Architecture](../../../../../governance/repository-governance-architecture.md)**
-
-- **Layer 0: Vision** - DDD supports building enterprise business systems
-- **Layer 1: Principles** - Simplicity, explicitness, automation align with DDD philosophy
-- **Layer 2: Conventions** - Documentation standards, diagram colors, file naming
-- **Layer 3: Development** - FP patterns, implementation workflow integrate with DDD
-
-### Nx Monorepo Architecture
-
-**[Monorepo Structure](../../../../reference/re__monorepo-structure.md)**
-
-- **`apps/`** - Each app can be one or more bounded contexts
-- **`libs/`** - Shared kernel components, domain primitives, infrastructure
-- **Nx Project Graph** visualizes bounded context dependencies
-- **Build caching** optimizes development workflow
-
-## Templates and Tools
-
-## Common Questions
-
-### Should I start with strategic or tactical patterns?
-
-**Always start with strategic design.** Understanding bounded contexts and subdomain boundaries prevents premature optimization and over-engineering. Tactical patterns (Aggregates, Value Objects) are only effective when applied within well-defined strategic boundaries.
-
-### Can I use DDD with functional programming?
-
-**Yes.** While Eric Evans' original book used OOP (Java), DDD principles translate naturally to FP. Immutability, pure functions, and explicit data flow align well with DDD goals. See [DDD and Functional Programming](./ex-soen-ar-dodrdedd__14-ddd-and-functional-programming.md).
-
-### Is DDD only for microservices?
-
-**No.** DDD works with both monolithic and microservice architectures. Bounded contexts provide modular organization regardless of deployment strategy. Start with a modular monolith and extract microservices when scaling demands it.
-
-### Do I need to use all DDD patterns?
-
-**No.** Apply patterns selectively based on complexity. Lightweight DDD (Ubiquitous Language + Bounded Contexts) may suffice for moderate complexity. Reserve full tactical patterns for complex business logic with high defect costs.
-
-### How does DDD relate to CQRS and Event Sourcing?
-
-DDD complements but doesn't require CQRS (Command Query Responsibility Segregation) or Event Sourcing:
-
-- **CQRS**: Separate read and write models, useful when read/write optimization needs differ
-- **Event Sourcing**: Store domain events as source of truth, useful for audit trails and temporal queries
-- **DDD + CQRS + Event Sourcing**: Powerful combination for complex domains, but high complexity cost
-
-Start with traditional DDD, add CQRS/Event Sourcing only when specific needs justify the complexity.
-
-### More Questions
-
-See [FAQ](./ex-soen-ar-dodrdedd__18-faq.md) for comprehensive Q&A covering common misconceptions and advanced topics.
-
-## Getting Started Checklist
-
-Ready to apply DDD to your project? Follow this checklist:
-
-**Strategic Design:**
-
-- [ ] Conduct Event Storming workshop with domain experts
-- [ ] Identify bounded contexts using [identification techniques](./ex-soen-ar-dodrdedd__03-bounded-contexts.md#identifying-bounded-contexts)
-- [ ] Create Ubiquitous Language glossary for domain terminology
-- [ ] Map context relationships using [Context Mapping patterns](./ex-soen-ar-dodrdedd__04-context-mapping.md)
-- [ ] Classify subdomains (Core, Supporting, Generic) using [Subdomains guide](./ex-soen-ar-dodrdedd__05-subdomains.md)
-- [ ] Document each bounded context using Bounded Context Canvas approach
-
-**Tactical Design (per Bounded Context):**
-
-- [ ] Identify aggregates using [decision trees](./ex-soen-ar-dodrdedd__16-decision-trees-and-best-practices.md#aggregate-boundary-decision-tree)
-- [ ] Design aggregate roots with invariant protection
-- [ ] Extract value objects for domain primitives (Money, Date, Rate, etc.)
-- [ ] Define domain events for business occurrences
-- [ ] Create repository interfaces for aggregate persistence
-- [ ] Implement domain services for operations spanning multiple aggregates
-
-**Validation:**
-
-- [ ] Review model with domain experts using Ubiquitous Language
-- [ ] Verify aggregate boundaries maintain consistency
-- [ ] Test business rules and invariants
-- [ ] Document architectural decisions
-- [ ] Create C4 diagrams mapping to bounded contexts (see [DDD and C4 Integration](./ex-soen-ar-dodrdedd__17-ddd-and-c4-integration.md))
-
-## Further Learning Resources
-
-### Books
-
-- **Eric Evans, "Domain-Driven Design: Tackling Complexity in the Heart of Software" (2003)** - The foundational text
-- **Vaughn Vernon, "Implementing Domain-Driven Design" (2013)** - Practical implementation guidance
-- **Vaughn Vernon, "Domain-Driven Design Distilled" (2016)** - Concise overview
-- **Scott Wlaschin, "Domain Modeling Made Functional" (2018)** - FP perspective with F# examples
-
-### Online Resources
-
-- [Martin Fowler - Bounded Context](https://martinfowler.com/bliki/BoundedContext.html)
-- [DDD Community Resources](https://github.com/ddd-crew) - Templates, workshops, canvases
-- [Virtual Domain-Driven Design Community](https://virtualddd.com/) - Meetups and recordings
-- [Domain-Driven Design Europe](https://dddeurope.com/) - Annual conference
-
-### Related Open Compliance Enterprise Documentation
-
-- [C4 Architecture Model](../c4-architecture-model/README.md) - Visual architecture documentation
-- [Functional Programming Principles](../../../../../governance/development/pattern/functional-programming.md) - FP alignment with DDD
-- [Repository Governance Architecture](../../../../../governance/repository-governance-architecture.md) - Six-layer hierarchy
-- [Monorepo Structure](../../../../reference/re__monorepo-structure.md) - Nx workspace organization
-
-## Contributing
-
-This documentation evolves as we apply DDD to the Open Compliance Enterprise platform. Contributions welcome:
-
-- **Examples**: Additional finance and business domain examples
-- **Clarifications**: Improved explanations of complex concepts
-- **Diagrams**: Enhanced Mermaid diagrams using WCAG AA-compliant colors
-- **Cross-references**: Links to related governance and development docs
-
-See [Repository Governance Architecture](../../../../../governance/repository-governance-architecture.md) for contribution guidelines.
-
-## Document Metadata
-
-- **Category**: Explanation
-- **Subcategory**: Architecture
-- **Tags**: Domain-Driven Design, DDD, Strategic Design, Tactical Design, Bounded Contexts, Aggregates, Value Objects, Entities, Domain Events, Finance, Business Systems
-- **Last Updated**: 2026-01-20
-- **Status**: Active
-- **Related Documentation**:
-  - [C4 Architecture Model](../c4-architecture-model/README.md)
-  - [Functional Programming Principles](../../../../../governance/development/pattern/functional-programming.md)
-  - [Repository Governance Architecture](../../../../../governance/repository-governance-architecture.md)
+**Last Updated**: 2026-02-09
