@@ -18,46 +18,43 @@ The architecture has evolved from four layers to a comprehensive six-layer gover
 
 Layer 0 is Vision—the foundational WHY we exist (democratize Shariah-compliant enterprise). Layer 1 is Principles—the ten core values that guide every decision we make. Layer 2 is Conventions—the 24 documentation standards and rules that ensure consistency. Layer 3 is Development—the 15 software practices that govern how we write code. Layer 4 is AI Agents—the 45 specialized agents that enforce rules at scale. Layer 5 is Workflows—the multi-step processes that coordinate `agents`.
 
-```
-                   ┌──────────────────────────────────────┐
-                   │   Layer 0: Vision                    │
-                   │   Democratize Shariah-compliant      │
-                   │   enterprise                         │
-                   └────────────────┬─────────────────────┘
-                                    │ guides
-                                    ▼
-                   ┌──────────────────────────────────────┐
-                   │   Layer 1: Principles                │
-                   │   10 core values                     │
-                   └────────────────┬─────────────────────┘
-                                    │ governs
-                                    ▼
-                   ┌──────────────────────────────────────┐
-                   │   Layer 2: Conventions               │
-                   │   24 documentation standards         │
-                   └────────────────┬─────────────────────┘
-                                    │ defines
-                                    ▼
-                   ┌──────────────────────────────────────┐
-                   │   Layer 3: Development               │
-                   │   15 software practices              │
-                   └────────────────┬─────────────────────┘
-                                    │ enables
-                                    ▼
-                   ┌──────────────────────────────────────┐
-                   │   Layer 4: AI Agents                 │
-                   │   45 specialized agents              │
-                   └────────────┬────────────┬────────────┘
-                                │            │
-                         coordinates         └─loads─>
-                                │                     │
-                                ▼                     ▼
-              ┌─────────────────────────┐  ┌──────────────────────┐
-              │ Layer 5: Workflows      │  │ Skills: Delivery     │
-              │ Multi-step processes    │  │ Infrastructure       │
-              └─────────────────────────┘  │ 23 knowledge packages│
-                                           └──────────────────────┘
-```
+**Six-Layer Governance Architecture:**
+
+**Layer 0: Vision**
+
+- Democratize Shariah-compliant enterprise
+- WHY we exist
+
+**Layer 1: Principles** (guided by Vision)
+
+- 10 core values
+- WHY we value approaches
+
+**Layer 2: Conventions** (governed by Principles)
+
+- 24 documentation standards
+- WHAT rules apply
+
+**Layer 3: Development** (defined by Conventions)
+
+- 15 software practices
+- HOW we build
+
+**Layer 4: AI Agents** (enabled by Development)
+
+- 45 specialized agents
+- WHO enforces
+- Coordinates Layer 5 and loads Skills
+
+**Layer 5: Workflows** (coordinated by Layer 4)
+
+- Multi-step processes
+- WHEN we execute
+
+**Skills: Delivery Infrastructure** (loaded by Layer 4)
+
+- 23 knowledge packages
+- Service relationship (not governance layer)
 
 What makes this architecture powerful is complete traceability. Every rule, every convention, every practice traces back to principles it serves, and every principle traces back to vision it fulfills. This prevents contradictory rules, orphaned policies, and governance drift. When we need to understand why a convention exists or decide how to handle a new situation, traceability chain provides the answer.
 
