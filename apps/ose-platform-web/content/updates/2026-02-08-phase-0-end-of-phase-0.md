@@ -4,13 +4,13 @@ date: 2026-02-08T20:09:53+07:00
 draft: false
 tags: ["milestone", "infrastructure", "phase-0", "phase-1-ready", "completion"]
 categories: ["updates"]
-summary: "1,200+ commits completing Phase 0: Playwright E2E infrastructure, 9 programming languages at production quality, 56 specialized agents with 33 skills, content standardization achieving 100% compliance. Foundation complete—Phase 1 (Organic Lever) starts next week."
+summary: "1,200+ commits completing Phase 0: Playwright E2E infrastructure, 9 programming languages at production quality, 56 specialized agents with 33 skills, content standardization achieving 100% compliance. Foundation complete—Phase 1 (Organic Lever) starts next week, Insha Allah."
 showtoc: true
 ---
 
 Phase 0 is complete. After twelve weeks of systematic foundation building—1,200+ commits establishing infrastructure, governance architecture, content quality, and operational systems—we've built a foundation strong enough for Phase 1. It's not perfect, but it's solid enough to support what comes next.
 
-Phase 1 begins next week.
+Phase 1 begins next week, Insha Allah.
 
 ## Why This Milestone Matters
 
@@ -20,12 +20,12 @@ The foundation is ready for Phase 1. We have:
 
 - **Repository Infrastructure**: Nx monorepo, Volta version management, automated quality gates
 - **Documentation Framework**: Diátaxis organization, six-layer governance, 26 standards
-- **AI Agents System**: 56 specialized agents, 33 reusable skills, maker-checker-fixer workflow
+- **AI Agents System**: 56 specialized agents, 33 reusable skills, `maker-checker-fixer` workflow
 - **Dual Websites**: [ayokoding.com](https://ayokoding.com) for education, [oseplatform.com](https://oseplatform.com) for platform updates
 - **Content**: Production-quality across 9 programming languages
 - **Practices**: Applied through twelve weeks of systematic work
 
-Phase 1 is different. It's about building a real product for real users that generates real revenue. The Organic Lever productivity tracker will exercise the systems we built in Phase 0 while serving an immediate practical purpose. Revenue will fund Phase 2 expansion and contribute to Phase 3's certification budget (compliance, regulatory, security certifications across multiple jurisdictions).
+Phase 1 is different. It's about solidifying infrastructure and gaining development experience with a real product in production. The Organic Lever productivity tracker will exercise the systems we built in Phase 0 while serving an immediate practical purpose. Once infrastructure is solid, revenue will fund Phase 2 expansion and contribute to Phase 3's certification budget (compliance, regulatory, security certifications across multiple jurisdictions), Insha Allah.
 
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#000','lineColor':'#029E73','edgeLabelBackground':'#ffffff'}}}%%
@@ -55,13 +55,13 @@ The first eight weeks focused on establishing the foundational infrastructure th
 
 ### Initial Infrastructure (Weeks 1-4)
 
-The first four weeks established basic repository infrastructure with 440+ commits of methodical foundation work. We set up the Nx monorepo architecture, established the Diátaxis documentation framework, and launched both websites—[oseplatform.com](https://oseplatform.com) for platform updates and [ayokoding.com](https://ayokoding.com) for educational content. The AI agent system began with 20 experimental agents exploring maker-checker-fixer patterns.
+The first four weeks established basic repository infrastructure with 440+ commits of methodical foundation work. We set up the Nx monorepo architecture, established the Diátaxis documentation framework, and launched both websites—[oseplatform.com](https://oseplatform.com) for platform updates and [ayokoding.com](https://ayokoding.com) for educational content. The AI agent system began with 20 experimental agents exploring `maker-checker-fixer` patterns.
 
 This period was about testing concepts and establishing patterns. We weren't building features—we were building the systems that would let us build features efficiently later. The dual website deployment established our commitment to building in public (platform updates) while sharing knowledge openly (educational content).
 
 ### Automation and Content Expansion (Week 5)
 
-Week 5 introduced ayokoding-cli, a Go-based tool for automated navigation generation across hundreds of content files. Repository cleanup removed demo applications, clarifying the boundary between production code and experimental work. The agent system grew to 37 specialized agents with new capabilities for navigation automation, structural validation, fact-checking, and social media content.
+Week 5 introduced `ayokoding-cli`, a Go-based tool for automated navigation generation across hundreds of content files. Repository cleanup removed demo applications, clarifying the boundary between production code and experimental work. The agent system grew to 37 specialized agents with new capabilities for navigation automation, structural validation, fact-checking, and social media content.
 
 Educational content expanded—three new programming languages (Elixir, Kotlin, Rust) joined the platform, along with security tutorials (Gobuster) and reference documentation for Golang, Java, and Python. We established six core principles that would guide all future decisions and formalized a four-layer architecture model (principles → conventions/development → agents) that later evolved into our six-layer governance hierarchy.
 
@@ -101,7 +101,7 @@ graph TB
     linkStyle 5 stroke:#CC78BC,stroke-width:2px,stroke-dasharray:5
 ```
 
-The AI agent system reached 45 specialized agents with scope-prefixed naming (`docs-*`, `apps-ayokoding-web-*`, `apps-ose-platform-web-*`, `readme-*`, `plan-*`) following consistent patterns. We implemented 23 Skills as delivery infrastructure—knowledge packages that agents load on-demand across six domains: documentation, workflow/patterns, project planning, application development, AI agent development, and README writing.
+The AI agent system reached 45 specialized agents with scope-prefixed naming (`docs-*`, `apps-ayokoding-web-*`, `apps-ose-platform-web-*`, `readme-*`, `plan-*`) following consistent patterns. We implemented 23 `Skills` as delivery infrastructure—knowledge packages that agents load on-demand across six domains: documentation, workflow/patterns, project planning, application development, AI agent development, and README writing.
 
 Content quality reached parity across seven programming languages (Golang, Java, Python, Kotlin, Rust, Elixir, Clojure). Every language achieved the same high standard: 40+ annotations per example, comprehensive "Why It Matters" sections, accessible diagrams, and production-ready code patterns. This standardization supported the annotation density improvements in Weeks 11-12.
 
@@ -121,9 +121,9 @@ Development infrastructure migrated to a home server devbox using Ansible and Cl
 
 Week 10 established authoritative coding standards infrastructure—343 files (345k lines) in docs/explanation/software-engineering/ became the single source of truth for all coding decisions. This covered architecture (C4, Domain-Driven Design), practices (Test-Driven Development, Behavior-Driven Development), five programming languages, and three frameworks. We extended governance with eight-category validation and created five Skills plus five developer agents that cite these standards rather than hallucinating patterns.
 
-The RHINO CLI (Repository Hygiene & INtegration Orchestrator) replaced fragile Bash scripts with Go automation, achieving 25-60x performance improvement: validation operations that took 3-5 seconds now complete in 49-121ms. Four commands—validate-claude (49ms, 11 rules), sync-agents (121ms), validate-sync, and validate-links—integrate into pre-commit hooks, catching issues instantly rather than during CI minutes later. This infrastructure enables quality at scale through immediate feedback.
+The `rhino-cli` (Repository Hygiene & INtegration Orchestrator) replaced fragile Bash scripts with Go automation, achieving 25-60x performance improvement: validation operations that took 3-5 seconds now complete in 49-121ms. Four commands—`validate-claude` (49ms, 11 rules), `sync-agents` (121ms), `validate-sync`, and `validate-links`—integrate into pre-commit hooks, catching issues instantly rather than during CI minutes later. This infrastructure enables quality at scale through immediate feedback.
 
-The agent system expanded to 50 specialized agents with 27 Skills. The complete ecosystem—345k lines of authoritative standards, Skills providing knowledge delivery, and agents implementing patterns—created a self-reinforcing quality system. AI agents reference verified patterns rather than relying on training data, ensuring consistency and preventing drift as the codebase grows.
+The agent system expanded to 50 specialized agents with 27 `Skills`. The complete ecosystem—345k lines of authoritative standards, `Skills` providing knowledge delivery, and agents implementing patterns—created a self-reinforcing quality system. AI agents reference verified patterns rather than relying on training data, ensuring consistency and preventing drift as the codebase grows.
 
 ## Weeks 11-12: The Final Sprint
 
@@ -139,7 +139,7 @@ We also extended the `swe-e2e-test-developer` agent with Playwright knowledge an
 
 ### Content Quality at Scale
 
-Nine sequential waves of annotation density improvements brought all by-example content to 100% compliance with our 1.0-2.25 comments-per-line standard. This wasn't mass automation—each wave targeted specific programming languages, checked against documentation sources using WebSearch/WebFetch tools, and improved annotation quality.
+Nine sequential waves of annotation density improvements brought all by-example content to 100% compliance with our 1.0-2.25 comments-per-line standard. This wasn't mass automation—each wave targeted specific programming languages, checked against documentation sources using `WebSearch`/`WebFetch` tools, and improved annotation quality.
 
 The waves progressed systematically: TypeScript → Java → Elixir → Golang releases documentation → Java Spring Framework → Java Spring Boot → C# and F# (new languages) → Phoenix LiveView → comprehensive Elixir Phases 4-15 expansion. By February 8, every language met the same pedagogical standard: heavily annotated examples, why-it-matters sections, accessible diagrams, production-ready code.
 
@@ -177,11 +177,11 @@ graph LR
 
 ### Agent System Maturity
 
-The developer agent system reached production maturity. We extended `swe-java-developer` with Spring Framework and Spring Boot skills—the agent now understands dependency injection patterns, MVC architecture, data access, auto-configuration, and production-ready features. We extended `swe-elixir-developer` with Phoenix Framework and LiveView skills—knowledge of routing, controllers, Ecto, real-time features, and deployment.
+The developer agent system reached production maturity. We extended `swe-java-developer` with Spring Framework and Spring Boot `Skills`—the agent now understands dependency injection patterns, MVC architecture, data access, auto-configuration, and production-ready features. We extended `swe-elixir-developer` with Phoenix Framework and LiveView `Skills`—knowledge of routing, controllers, Ecto, real-time features, and deployment.
 
-Both extensions followed the same pattern: create Skills from style guide documentation, integrate Skills into agent workflows, validate agent output meets production standards. The result is two developer agents capable of autonomous implementation following established patterns.
+Both extensions followed the same pattern: create `Skills` from style guide documentation, integrate `Skills` into agent workflows, validate agent output meets production standards. The result is two developer agents capable of autonomous implementation following established patterns.
 
-The full agent system now comprises 56 specialized agents organized into clear families: content creation (15 agents), validation (16 agents), fixing (14 agents), development (7 agents), operations (4 agents). Every agent follows maker-checker-fixer workflow patterns with confidence assessment and human oversight.
+The full agent system now comprises 56 specialized agents organized into clear families: content creation (15 agents), validation (16 agents), fixing (14 agents), development (7 agents), operations (4 agents). Every agent follows `maker-checker-fixer` workflow patterns with confidence assessment and human oversight.
 
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0173B2','primaryTextColor':'#fff','primaryBorderColor':'#000','lineColor':'#DE8F05'}}}%%
@@ -237,7 +237,7 @@ We resolved 161 broken links through validation, fixed inconsistent naming acros
 
 **Documentation Framework**: Diátaxis organization (tutorials, how-to, reference, explanation), six-layer governance hierarchy (vision → principles → conventions → development → agents → workflows), 26 documentation standards covering file naming, linking, indentation, emoji usage, diagrams, content quality. Every rule traces back to principles, every principle traces back to vision.
 
-**AI Agents System**: 56 specialized agents organized into five families, 33 reusable Skills providing knowledge delivery, maker-checker-fixer workflow with confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), UUID chain tracking for parallel execution, progressive report generation, dual-platform compatibility (Claude Code + OpenCode).
+**AI Agents System**: 56 specialized agents organized into five families, 33 reusable `Skills` providing knowledge delivery, `maker-checker-fixer` workflow with confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE), UUID chain tracking for parallel execution, progressive report generation, dual-platform compatibility (Claude Code + OpenCode).
 
 **Dual Websites**: [ayokoding.com](https://ayokoding.com) (bilingual educational platform with Hugo + Hextra theme, programming tutorials, AI guides, security content), [oseplatform.com](https://oseplatform.com) (platform marketing website with Hugo + PaperMod theme, project updates, announcements, landing page). Both deployed via Vercel with automated pipelines.
 
@@ -247,15 +247,19 @@ We resolved 161 broken links through validation, fixed inconsistent naming acros
 
 ## Phase 1 Preview: Organic Lever Begins
 
-**What**: Productivity tracking application for individual users—web application, Android app, iOS app. Personal productivity tracking, time management, goal setting, performance insights, prayer time integration, cross-platform sync.
+**What**: Productivity tracking application for individual users—local client (highest priority), web application, Android app, iOS app (depending on device availability). Client priority: local → web → Android → iOS. Personal productivity tracking, time management, goal setting, performance insights, prayer time integration, cross-platform sync.
 
-**Why**: This is our first real product with real users generating real revenue. It exercises the systems we built in Phase 0 (monorepo, agents, CI/CD, quality standards) while serving an immediate practical purpose. Revenue funds Phase 2 expansion and contributes to Phase 3 certification budget. Low-risk environment for practicing deployment, security, and full-stack architecture before SMB/enterprise scale.
+**Why**: Primary goal is solidifying infrastructure and gaining development experience—exercising the systems we built in Phase 0 (monorepo, agents, CI/CD, quality standards) in a real production environment. We're solving our own daily pain points around tracking and analyzing individual productivity, which provides a practical problem to work on. Revenue generation comes second, after infrastructure is solid, and will fund Phase 2 expansion and Phase 3 certification budget, Insha Allah. Low-risk environment for practicing deployment, security, and full-stack architecture before SMB/enterprise scale.
 
 **Tech Stack**:
 
 - **Backend**: Java + Spring Boot (testing acceptability for future financial applications in low-stakes environment)
-- **Web Frontend**: Next.js + TypeScript (modern, production-ready, well-documented)
-- **Mobile**: Flutter + Dart (single codebase for Android & iOS)
+- **Local Client** (highest priority): Flutter + Dart for desktop (Windows, macOS, Linux) or native desktop solution
+- **Web Frontend**: Next.js + TypeScript initially for app and landing page; Flutter + Dart for web is possible depending on Flutter desktop/mobile experience
+- **Mobile**: Flutter + Dart (Android before iOS; iOS depends on contributor device availability)
+- **Messaging** (potential): NATS (lightweight messaging system for event-driven architecture, being evaluated)
+
+**Client Priority**: Local → Web → Android → iOS
 
 **Architecture**: Monolith ("until it hurts")—single deployable service appropriate for individual user scale. Simpler development, faster iteration, avoid premature optimization. We'll break it apart when scaling demands, not before.
 
@@ -265,10 +269,13 @@ We resolved 161 broken links through validation, fixed inconsistent naming acros
 %% Phase 1 Organic Lever Tech Stack
 
 graph TB
-    Mobile["<b>Mobile Apps</b><br/>Flutter + Dart<br/>Android & iOS"]:::purple
-    Web["<b>Web Frontend</b><br/>Next.js + TypeScript<br/>Modern React"]:::purple
+    Local["<b>Local Client #40;Priority 1#41;</b><br/>Flutter + Dart Desktop<br/>Windows, macOS, Linux"]:::purple
+    Web["<b>Web Frontend #40;Priority 2#41;</b><br/>Next.js + TypeScript initially<br/>Flutter possible for web"]:::purple
+    Mobile["<b>Mobile Apps #40;Priority 3-4#41;</b><br/>Flutter + Dart<br/>Android before iOS"]:::purple
 
     Backend["<b>Backend Monolith</b><br/>Java + Spring Boot<br/>Single deployable service"]:::blue
+
+    NATS["<b>Messaging #40;Potential#41;</b><br/>NATS<br/>Event-driven architecture"]:::brown
 
     K8s["<b>Kubernetes Infrastructure</b><br/>Container orchestration<br/>Auto-scaling, health checks<br/>Rolling updates"]:::teal
 
@@ -276,13 +283,15 @@ graph TB
 
     DB[("<b>Database</b><br/>PostgreSQL")]:::brown
 
-    Mobile ==> Backend
+    Local ==> Backend
     Web ==> Backend
+    Mobile ==> Backend
     Backend ==> DB
+    Backend -.-> NATS
     Backend ==> K8s
     K8s ==> CICD
 
-    Strategic["<b>Strategic Value</b><br/>Knowledge base fundamentals<br/>Revenue generation<br/>Deployment practice<br/>Security practice<br/>Tech stack validation"]:::teal
+    Strategic["<b>Strategic Value</b><br/>Knowledge base fundamentals<br/>Revenue generation<br/>Deployment practice<br/>Security practice<br/>Tech stack validation<br/>Open source decision"]:::teal
 
     K8s ==> Strategic
 
@@ -297,74 +306,53 @@ graph TB
 
 **Infrastructure**:
 
-- **Kubernetes**: Learn container orchestration early in low-stakes environment. Master deployment, scaling, monitoring, and alerting before modular services in Phase 2. Even monoliths benefit from K8s auto-scaling, health checks, and rolling updates.
-- **Production CI/CD**: Automated testing and deployment pipelines, build/release automation for web + mobile, production deployment practices, rollback strategies. Foundation for Phase 2/3 multi-service deployments.
+- **Kubernetes**: Learn container orchestration early in low-stakes environment. Master deployment, scaling, monitoring, and alerting. Even monoliths benefit from K8s auto-scaling, health checks, and rolling updates. Phase 2+ architecture decisions will be based on Phase 1 learnings.
+- **Production CI/CD**: Automated testing and deployment pipelines, build/release automation for web + mobile, production deployment practices, rollback strategies. Foundation for whatever Phase 2+ requires, Insha Allah.
 
-**Strategic Value**:
+**Strategic Value** (Priority: Infrastructure/Experience First, Revenue Second):
 
-- **Knowledge Base Exploration**: Productivity tracking is "small-scale knowledge base" teaching fundamentals before enterprise ERP scale. Learn knowledge structuring, querying, retrieval at individual scale. Test patterns that will scale to Phase 3 ERP (core of enterprise, tightly related to knowledge base management).
-- **Revenue Generation**: Individual users fund Phase 2 expansion and Phase 3 certification budget.
-- **Deployment Practice**: Learn website + mobile app deployment (Google Play Store, Apple App Store) before SMB/enterprise complexity.
-- **Security Practice**: Learn and apply security measures in low-stakes environment.
-- **Architecture Validation**: Test web + mobile architecture before scaling to business applications.
-- **Tech Stack Evaluation**: Validate Java + Spring Boot acceptability for future financial applications.
-- **Open Source Decision**: Evaluate whether to open source infrastructure code or keep it private for security reasons. This decision will be made during Phase 1 based on security assessment and deployment patterns.
+- **Infrastructure Solidification**: Exercise Phase 0 systems (monorepo, agents, CI/CD, quality standards) in real production environment. Master deployment, scaling, monitoring, and operational practices with real users and real load.
+- **Development Experience**: Build full-stack application (local client, web, mobile) to validate tech stack choices and development workflows before SMB/enterprise scale.
+- **Deployment Practice**: Learn local client distribution, website deployment, and mobile app deployment (Google Play Store, Apple App Store if iOS device becomes available) before SMB/enterprise complexity.
+- **Security Practice**: Learn and apply security measures in low-stakes environment with real production data and real users.
+- **Architecture Validation**: Test local + web + mobile architecture before scaling to business applications. Validate patterns for Phase 2+.
+- **Tech Stack Evaluation**: Validate Java + Spring Boot, Flutter, Next.js acceptability for future financial applications.
+- **Knowledge Base Fundamentals**: Productivity tracking is essentially a small-scale knowledge base. Learn knowledge structuring, querying, retrieval at individual scale. Test patterns that will scale to Phase 3 ERP (core of enterprise, tightly related to knowledge base management), Insha Allah.
+- **Open Source Strategy**: Open source as much infrastructure as possible, but security and compliance are the top priorities. Infrastructure will remain private when security or compliance requirements dictate.
+- **Revenue Generation** (Secondary): Once infrastructure is solid, individual users fund Phase 2 expansion and Phase 3 certification budget, Insha Allah.
 
 ## Metrics That Matter
 
-**Commit Volume and Velocity**:
+**Week 0 → Week 12 (What We Built That Supports Phase 1)**:
 
-- **1,200+ commits total** across 12 weeks (437 in weeks 1-4, 431 in weeks 11-12, steady momentum throughout)
-- Sustained pace showing systematic progress throughout Phase 0
-
-**AI Agent Ecosystem Evolution**:
-
-- **20 → 56 agents** progression (Week 1: 20 experimental → Week 8: 45 specialized → Week 10: 50 → Week 12: 56 operational)
-- **0 → 33 reusable Skills** infrastructure providing knowledge delivery (Week 8: 23 → Week 10: 27 → Week 12: 33)
-- Maker-checker-fixer workflow with confidence assessment
-
-**Content and Language Coverage**:
-
-- **3 → 9 programming languages** at production quality (Week 5: 3 → Week 12: 9)
-- **100% annotation density compliance** across all by-example tutorials (1.0-2.25 ratio per example)
-- **85+ Playwright E2E examples** complete (by-example + in-the-field tutorials)
-- **TypeScript, Java, Elixir, Golang, Python, Kotlin, Rust, C#, F#** all production-ready
-
-**Infrastructure Performance**:
-
-- **RHINO CLI: 60x faster** validation (Week 10: 3-5s → 49ms for git hook operations)
-- **343 authoritative files** (345k lines) establishing coding standards (Week 10)
-- **161 broken links** identified and resolved through comprehensive validation
-- **2 live websites** deployed and maintained ([ayokoding.com](https://ayokoding.com), [oseplatform.com](https://oseplatform.com))
-
-**Governance and Architecture**:
-
-- **6-layer governance hierarchy** established with traceability (Week 8)
-- **26 documentation standards** covering all aspects of content quality
-- **Dual-platform support** (Claude Code + OpenCode) ensuring vendor independence
-- **C4 architecture model** exploration (Week 9) guiding Phase 1 development
+- **AI Development Infrastructure**: 0 → 56 specialized agents with 33 reusable `Skills` (will support Phase 1 development with `maker-checker-fixer` workflow)
+- **E2E Testing Infrastructure**: 0 → 85+ Playwright examples (will test web and mobile applications)
+- **Educational Platform**: 0 → 9 programming languages with production-quality content (TypeScript, Java, Elixir, Golang, Python, Kotlin, Rust, C#, F#)
+- **Live Platforms**: 0 → 2 websites deployed ([ayokoding.com](https://ayokoding.com) for education, [oseplatform.com](https://oseplatform.com) for platform updates)
+- **Governance Foundation**: No governance → 6-layer hierarchy with 26 documentation standards (quality foundation for all future work)
+- **Architecture Framework**: No framework → C4 model adopted (will guide Phase 1 system design)
 
 ## What's Actually Next
 
-**Week 13 (February 9-15)**: Initial exploration phase for Organic Lever.
+**Week 13 (February 9-15)**: Initial exploration phase for Organic Lever, Insha Allah.
 
 - Skeleton scaffolding (project structure, basic setup)
 - Architecture and system design (C4 model, component relationships)
 - Technology stack validation (confirming Java/Spring Boot, Next.js, Flutter choices)
 - Development environment exploration
 
-**Timeline**: No hard deadlines. Quality over speed. Build it right, test thoroughly, deploy confidently.
+**Timeline**: Target launch in 12 weeks (3 months), Insha Allah. But no hard deadlines—we'll be there when we're there. Quality over speed. Build it right, test thoroughly, deploy confidently.
 
-**Philosophy**: We spent twelve weeks building foundations in Phase 0 because rushing to production with weak foundations is expensive. The same philosophy continues in Phase 1—we'll take the time needed to build Organic Lever properly. This is a life-long project optimizing for quality over arbitrary deadlines.
+**Philosophy**: We spent twelve weeks building foundations in Phase 0 because rushing to production with weak foundations is expensive. The same philosophy continues in Phase 1—we'll take the time needed to build Organic Lever properly. The 12-week target guides our pace, but quality comes first. This is a life-long project optimizing for quality over arbitrary deadlines.
 
 ## Building in the Open
 
 Phase 0 complete. Foundation established, documentation in place, standards defined, systems operational. Twelve weeks of systematic work.
 
-Phase 1 begins next week. Real product, real users, real revenue. Applying what we built while funding future phases.
+Phase 1 begins next week, Insha Allah. Real product, real users, real revenue. Applying what we built while funding future phases.
 
 Every decision, every line of code, every commit visible on [GitHub](https://github.com/wahidyankf/open-sharia-enterprise). Regular updates published here on oseplatform.com every second Sunday. Educational content shared on [ayokoding.com](https://ayokoding.com). Building in public, learning shared.
 
-We publish platform updates every second Sunday of each month. Subscribe to our RSS feed or check back regularly to follow along as we begin Phase 1.
+We publish platform updates every second Sunday of each month. Subscribe to our RSS feed or check back regularly to follow along as we begin Phase 1, Insha Allah.
 
-Twelve weeks of Phase 0 complete. The real work begins next week.
+Twelve weeks of Phase 0 complete. The real work begins next week, Insha Allah.
