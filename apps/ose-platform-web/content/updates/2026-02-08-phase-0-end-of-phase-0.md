@@ -308,6 +308,7 @@ graph TB
 - **Security Practice**: Learn and apply security measures in low-stakes environment.
 - **Architecture Validation**: Test web + mobile architecture before scaling to business applications.
 - **Tech Stack Evaluation**: Validate Java + Spring Boot acceptability for future financial applications.
+- **Open Source Decision**: Evaluate whether to open source infrastructure code or keep it private for security reasons. This decision will be made during Phase 1 based on security assessment and deployment patterns.
 
 ## Metrics That Matter
 
