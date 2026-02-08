@@ -23,7 +23,7 @@ These conventions define **WHAT Hugo content rules apply** to our Hugo-based web
 - Tutorial content structure (that's tutorials/)
 - Non-Hugo documentation standards
 
-## Conventions
+## Conventions Implemented/Respected
 
 - [Hugo Content - ayokoding](./ayokoding.md) - Site-specific conventions for ayokoding-web (Hextra theme, bilingual, weight-based ordering)
 - [Hugo Content - OSE Platform](./ose-platform.md) - Site-specific conventions for ose-platform-web (PaperMod theme, English-only)

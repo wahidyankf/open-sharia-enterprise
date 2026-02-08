@@ -245,7 +245,7 @@ Execute fixer logic directly → fixes persist
 
 **Right**: Always run `git status` to see persisted changes
 
-## Principles Respected
+## Principles Implemented/Respected
 
 - PASS: **Explicit Over Implicit**: Clear description of execution mode behavior
 - PASS: **Simplicity Over Complexity**: Manual mode is simple and transparent

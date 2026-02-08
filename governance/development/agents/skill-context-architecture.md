@@ -17,7 +17,7 @@ updated: 2026-01-22
 
 This document defines the architectural constraint that all skills in `.claude/skills/` directory MUST use inline context mode (not `context: fork`) to ensure compatibility with both main conversation and subagent contexts.
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This convention respects the following core principles:
 

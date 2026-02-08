@@ -4,7 +4,7 @@
 
 ## Overview
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This companion document respects:
 
@@ -19,7 +19,7 @@ This document outlines best practices for applying the Maker-Checker-Fixer patte
 
 ## Purpose
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This companion document respects:
 
@@ -398,7 +398,7 @@ Following these best practices ensures:
 
 Patterns applied following these practices are maintainable, reliable, and continuously improving.
 
-## Principles Applied
+## Principles Implemented/Respected
 
 - **Immutability Over Mutability**: Immutable data structures, pure functions
 - **Pure Functions Over Side Effects**: Functional core, imperative shell

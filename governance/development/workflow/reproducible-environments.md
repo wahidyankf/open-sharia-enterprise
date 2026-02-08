@@ -18,7 +18,7 @@ updated: 2025-12-28
 
 Practices for creating consistent, reproducible development and build environments. This document defines HOW to implement reproducibility across runtime versions, dependencies, configuration, and infrastructure.
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This practice respects the following core principles:
 

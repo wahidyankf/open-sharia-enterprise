@@ -4,7 +4,7 @@
 
 ## Overview
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This companion document respects:
 
@@ -19,7 +19,7 @@ Understanding common mistakes in development workflows helps teams build more ef
 
 ## Purpose
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This companion document respects:
 
@@ -533,7 +533,7 @@ Avoiding these anti-patterns ensures:
 
 When implementing workflows, ask: **Am I adding collaboration or friction?** If friction, refactor to follow workflow development best practices.
 
-## Principles Applied
+## Principles Implemented/Respected
 
 - **Simplicity Over Complexity**: Single branch, small commits, simple workflow
 - **Automation Over Manual**: CI enforcement, automated testing

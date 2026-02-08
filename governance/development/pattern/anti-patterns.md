@@ -4,7 +4,7 @@
 
 ## Overview
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This companion document respects:
 
@@ -19,7 +19,7 @@ Understanding common mistakes in pattern application helps teams build more main
 
 ## Purpose
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This companion document respects:
 
@@ -438,7 +438,7 @@ Avoiding these anti-patterns ensures:
 
 When applying patterns, ask: **Am I adding clarity or complexity?** If complexity, refactor to follow pattern development best practices.
 
-## Principles Applied
+## Principles Implemented/Respected
 
 - **Immutability Over Mutability**: Avoid mutation, use immutable operations
 - **Pure Functions Over Side Effects**: Isolate side effects, pure core logic

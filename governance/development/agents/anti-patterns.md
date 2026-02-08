@@ -4,7 +4,7 @@
 
 ## Overview
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This companion document respects:
 
@@ -19,7 +19,7 @@ Understanding common mistakes in AI agent development helps teams build more mai
 
 ## Purpose
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This companion document respects:
 
@@ -401,7 +401,7 @@ Avoiding these anti-patterns ensures:
 
 When implementing agents, ask: **Am I adding clarity or complexity?** If complexity, refactor to follow agent development best practices.
 
-## Principles Applied
+## Principles Implemented/Respected
 
 - **Simplicity Over Complexity**: Focused, single-purpose agents
 - **Explicit Over Implicit**: Clear permissions and behavior

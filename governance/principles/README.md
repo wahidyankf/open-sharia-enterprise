@@ -328,7 +328,7 @@ Every new convention (documentation rule) or practice (software standard) must t
 **Template for new conventions/practices**:
 
 ```markdown
-## Principles Implemented
+## Principles Implemented/Respected
 
 This convention implements the following core principles:
 

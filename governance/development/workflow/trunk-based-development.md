@@ -27,7 +27,7 @@ updated: 2025-12-05
 
 This document defines the **Trunk Based Development (TBD)** workflow used in the open-sharia-enterprise project. TBD is a branching strategy where developers commit directly to a single branch (the trunk), enabling continuous integration, rapid feedback, and simplified collaboration.
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This practice respects the following core principles:
 

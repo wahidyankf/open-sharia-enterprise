@@ -37,7 +37,7 @@ Additionally, this workflow includes two cross-cutting practices:
 
 ## Why
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This workflow respects three core principles:
 

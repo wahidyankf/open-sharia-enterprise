@@ -356,7 +356,7 @@ This workflow is part of the **Tutorial Quality Family**:
 - **ayokoding-web-by-example-quality-gate**: Specialized for by-example tutorials
 - **ayokoding-web-in-the-field-quality-gate** (this workflow): Specialized for in-the-field production guides
 
-## Principles Respected
+## Principles Implemented/Respected
 
 - PASS: **Explicit Over Implicit**: All steps, decisions, and criteria are explicit
 - PASS: **Automation Over Manual**: Automated validation and fixing where safe

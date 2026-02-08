@@ -24,7 +24,7 @@ updated: 2025-11-29
 
 This document explains the commit message convention used in the open-sharia-enterprise project, why we use it, and how it's enforced. Understanding commit messages helps maintain a clean, navigable project history that benefits all contributors.
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This practice respects the following core principles:
 
@@ -115,7 +115,7 @@ Refs #456, #789
 
 ## Valid Commit Types
 
-The project uses the following types based on [Angular's commit convention](https://github.com/angular/angular/blob/main/CONTRIBUTING.md#type):
+The project uses the following types based on [Angular's commit convention](https://github.com/angular/angular/blob/main/CONTRIBUTING.md#type) (verified 2026-02-08):
 
 | Type       | Purpose                                     | Example                                                |
 | ---------- | ------------------------------------------- | ------------------------------------------------------ |
@@ -828,7 +828,7 @@ Closes #123
 ## External Resources
 
 - [Conventional Commits Specification](https://www.conventionalcommits.org/) - Official specification
-- [Angular Commit Guidelines](https://github.com/angular/angular/blob/main/CONTRIBUTING.md#type) - Inspiration for commit types
+- [Angular Commit Guidelines](https://github.com/angular/angular/blob/main/CONTRIBUTING.md#type) (verified 2026-02-08) - Inspiration for commit types
 - [Commitlint Documentation](https://commitlint.js.org/) - Tool documentation
 - [Semantic Versioning](https://semver.org/) - Version numbering standard
 

@@ -311,7 +311,7 @@ Track across executions:
 
 This workflow ensures documentation separation compliance through iterative validation and fixing, supporting the transition from duplicated content to a clean separation between educational (AyoKoding) and style guide (docs/explanation) content.
 
-## Principles Respected
+## Principles Implemented/Respected
 
 - PASS: **Explicit Over Implicit**: All steps, conditions, and termination criteria are explicit
 - PASS: **Automation Over Manual**: Fully automated validation and fixing without human intervention

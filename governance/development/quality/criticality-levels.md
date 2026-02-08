@@ -1210,7 +1210,7 @@ def parse_findings(audit_report):
 
 ---
 
-## Principles Respected
+## Principles Implemented/Respected
 
 This convention implements the following principles from [Core Principles Index](../../principles/README.md):
 
