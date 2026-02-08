@@ -321,44 +321,41 @@ We resolved 161 broken links through validation, fixed inconsistent naming acros
                     └───────────────┬────────────────┘
                                     │
                                     ▼
-                    ┌────────────────────────────────┐
-                    │   BACKEND MONOLITH             │
-                    │   Java + Spring Boot           │
-                    │   Single deployable service    │
-                    └──┬─────────────────┬───────────┘
-                       │                 │
-                       ▼                 └~~> ┌───────────────────────┐
-              ┌───────────────┐               │ MESSAGING (Potential) │
-              │   DATABASE    │               │ NATS                  │
-              │   PostgreSQL  │               │ Event-driven arch     │
-              └───────────────┘               └───────────────────────┘
-                       │
-                       ▼
-          ┌────────────────────────────────┐
-          │   KUBERNETES INFRASTRUCTURE    │
-          │   Container orchestration      │
-          │   Auto-scaling, health checks  │
-          │   Rolling updates              │
-          └────────────┬───────────────────┘
-                       │
-                       ▼
-          ┌────────────────────────────────┐
-          │   PRODUCTION CI/CD             │
-          │   Automated testing            │
-          │   Build/release automation     │
-          │   Deployment pipelines         │
-          └────────────┬───────────────────┘
-                       │
-                       ▼
-          ┌────────────────────────────────┐
-          │   STRATEGIC VALUE              │
-          │   • Knowledge base practice    │
-          │   • Revenue generation         │
-          │   • Deployment practice        │
-          │   • Security practice          │
-          │   • Tech stack validation      │
-          │   • Open source decision       │
-          └────────────────────────────────┘
+        ┌────────────────────────────────────────────────┐
+        │          BACKEND MONOLITH                      │
+        │          Java + Spring Boot                    │
+        │          Single deployable service             │
+        └──┬─────────────────┬───────────────────────┬───┘
+           │                 │                       │
+           │                 └~~>                    │
+           ▼              ┌───────────────────┐     ▼
+    ┌──────────┐          │ MESSAGING         │  ┌──────────────────────┐
+    │ DATABASE │          │ (Potential)       │  │ KUBERNETES           │
+    │PostgreSQL│          │ NATS              │  │ INFRASTRUCTURE       │
+    └──────────┘          │ Event-driven arch │  │ Container orch       │
+                          └───────────────────┘  │ Auto-scaling         │
+                                                 │ Health checks        │
+                                                 │ Rolling updates      │
+                                                 └──────────┬───────────┘
+                                                            │
+                                                            ▼
+                                         ┌──────────────────────────────┐
+                                         │ PRODUCTION CI/CD             │
+                                         │ Automated testing            │
+                                         │ Build/release automation     │
+                                         │ Deployment pipelines         │
+                                         └──────────────┬───────────────┘
+                                                        │
+                                                        ▼
+                                         ┌──────────────────────────────┐
+                                         │ STRATEGIC VALUE              │
+                                         │ • Knowledge base practice    │
+                                         │ • Revenue generation         │
+                                         │ • Deployment practice        │
+                                         │ • Security practice          │
+                                         │ • Tech stack validation      │
+                                         │ • Open source decision       │
+                                         └──────────────────────────────┘
 ```
 
 **Infrastructure**:
