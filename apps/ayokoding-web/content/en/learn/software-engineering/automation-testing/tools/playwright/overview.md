@@ -82,20 +82,42 @@ Unlike Selenium which requires browser drivers and explicit waits, Playwright au
 
 ## Prerequisites
 
-**Required**:
+**Before learning Playwright, you should understand TypeScript fundamentals:**
+
+Playwright is written in TypeScript and provides first-class TypeScript support. To effectively use Playwright, you need to understand core TypeScript concepts that Playwright builds upon.
+
+**Required Foundation**: [TypeScript Programming Language](/en/learn/software-engineering/programming-languages/typescript)
+
+## Foundation Concepts
+
+Understanding these TypeScript concepts is essential before using Playwright:
+
+**Core TypeScript Concepts:**
+
+- **[Type Annotations](/en/learn/software-engineering/programming-languages/typescript/overview#type-system-mastery)** - Type safety for test code and page objects
+- **[Async/Await](/en/learn/software-engineering/programming-languages/typescript/by-example/intermediate)** - Asynchronous operations in browser automation
+- **[Interfaces and Types](/en/learn/software-engineering/programming-languages/typescript/in-the-field/type-safety)** - Type-safe test fixtures and page object contracts
+- **[Generics](/en/learn/software-engineering/programming-languages/typescript/by-example/intermediate)** - Reusable test utilities and helpers
+- **[Union and Intersection Types](/en/learn/software-engineering/programming-languages/typescript/by-example/beginner)** - Flexible test data structures
+
+**Required Skills:**
 
 - Node.js 18+ installed
-- Basic JavaScript or TypeScript knowledge
+- TypeScript fundamentals (type annotations, interfaces, async/await)
 - Understanding of web fundamentals (HTML, CSS, DOM)
-- Familiarity with async/await syntax
+- Basic command-line proficiency
 
 **Recommended (helpful but not required)**:
 
 - Experience with testing frameworks (Jest, Mocha)
 - Understanding of CSS selectors
-- Basic command-line proficiency
+- Familiarity with page object pattern
 
-**No prior testing framework experience required** - Playwright is beginner-friendly with excellent documentation and error messages.
+**Playwright adds**: Auto-waiting, cross-browser support, trace viewer, and network interception on top of these TypeScript concepts.
+
+**Why This Matters**: Playwright's API is fully typed. Understanding TypeScript helps you write type-safe tests, leverage autocomplete, and catch errors at compile time.
+
+**If you're new to TypeScript**, start with [TypeScript Learning Path](/en/learn/software-engineering/programming-languages/typescript) to learn the foundational concepts, then return to Playwright to learn how to write reliable end-to-end tests.
 
 ## Key Features
 
