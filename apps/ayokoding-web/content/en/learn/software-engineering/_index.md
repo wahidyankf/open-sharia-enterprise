@@ -26,7 +26,6 @@ weight: 102
 - [Automation Testing](/en/learn/software-engineering/automation-testing)
   - [Overview](/en/learn/software-engineering/automation-testing/overview)
   - [Tools](/en/learn/software-engineering/automation-testing/tools)
-  - [Playwright](/en/learn/software-engineering/automation-testing/playwright)
 - [Automation Tools](/en/learn/software-engineering/automation-tools)
   - [Overview](/en/learn/software-engineering/automation-tools/overview)
   - [Claude Code](/en/learn/software-engineering/automation-tools/claude-code)

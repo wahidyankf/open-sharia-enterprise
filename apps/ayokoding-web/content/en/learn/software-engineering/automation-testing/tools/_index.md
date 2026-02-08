@@ -7,6 +7,7 @@ draft: false
 
 - [Overview](/en/learn/software-engineering/automation-testing/tools/overview)
 - [Playwright](/en/learn/software-engineering/automation-testing/tools/playwright)
+  - [In the Field](/en/learn/software-engineering/automation-testing/tools/playwright/in-the-field)
   - [Overview](/en/learn/software-engineering/automation-testing/tools/playwright/overview)
   - [Initial Setup](/en/learn/software-engineering/automation-testing/tools/playwright/initial-setup)
   - [Quick Start](/en/learn/software-engineering/automation-testing/tools/playwright/quick-start)
