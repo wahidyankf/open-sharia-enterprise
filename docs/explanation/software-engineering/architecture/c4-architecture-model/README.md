@@ -1,6 +1,6 @@
 ---
 title: "C4 Architecture Model"
-description: Comprehensive explanation of the C4 model for visualizing software architecture through hierarchical abstraction levels
+description: OSE Platform Authoritative C4 Diagram Standards for System Visualization
 category: explanation
 subcategory: architecture
 tags:
@@ -8,283 +8,264 @@ tags:
   - architecture
   - diagrams
   - visualization
-  - software
-  - documentation
-  - simon-brown
+  - standards
+principles:
+  - explicit-over-implicit
+  - reproducibility
+  - automation-over-manual
 created: 2026-01-18
-updated: 2026-01-19
+updated: 2026-02-09
 ---
 
 # C4 Architecture Model
 
-Comprehensive explanation of the C4 model for visualizing software architecture through hierarchical abstraction levels.
+**This is THE authoritative reference** for C4 architecture diagrams in OSE Platform.
 
-## Overview
+All C4 diagrams created for the OSE Platform MUST comply with the standards documented here. These standards are mandatory, not optional. Non-compliance blocks documentation review and merge approval.
 
-The **C4 model** is an easy-to-learn, developer-friendly approach to software architecture diagramming created by Simon Brown. It provides a systematic way to visualize software architecture at different levels of detail, making it accessible to both technical and non-technical audiences.
+## Tool and Notation Stack
 
-The name "C4" comes from the four hierarchical levels that form the core of the model:
+OSE Platform C4 diagrams MUST use the following tools and conventions:
 
-1. **Context** - How the system fits into the world
-2. **Container** - The high-level technical building blocks
-3. **Component** - The internal structure of containers
-4. **Code** - Implementation details and class structures
+**Primary Diagramming Tool:**
 
-Unlike heavyweight modeling approaches that can overwhelm developers, the C4 model focuses on simplicity and practicality while maintaining enough rigor to be useful for architecture documentation.
+- **Mermaid** (graph TB syntax, NOT experimental C4 plugin)
+- MUST be embedded in markdown files for version control
+- MUST support diagram-as-code for automation
 
-## History and Origins
+**Color Palette (REQUIRED):**
 
-Simon Brown created the C4 model between 2006 and 2011 based on his experiences teaching software architecture. The diagram types were formally named in 2010, and the "C4" name was adopted in 2011. The model evolved from UML (Unified Modeling Language) and the 4+1 architectural view model, but deliberately simplifies these concepts to make architecture more accessible to modern development teams.
+- **WCAG AA-compliant color-blind friendly palette**
+- Blue: `#0173B2`, Orange: `#DE8F05`, Teal: `#029E73`, Purple: `#CC78BC`
+- MUST meet accessibility standards for all visualizations
 
-## Purpose and Benefits
+**Diagram Types:**
 
-### Why C4 Model Exists
+- **System Context** (Level 1) - REQUIRED for all systems
+- **Container** (Level 2) - REQUIRED for systems with 2+ deployable units
+- **Component** (Level 3) - OPTIONAL, only for complex containers
+- **Code** (Level 4) - RARELY USED, prefer IDE-generated diagrams
 
-The C4 model addresses several common challenges in software architecture documentation:
+**Integration Requirements:**
 
-1. **Inconsistent Abstractions**: Teams often mix different levels of detail in single diagrams, creating confusion
-2. **Over-complex Notations**: Formal modeling languages like UML can be intimidating and incompatible with agile workflows
-3. **Missing Documentation**: Many teams skip architecture documentation entirely due to perceived complexity
-4. **Poor Communication**: Architecture diagrams fail to effectively communicate with diverse audiences
+- MUST align C4 containers with DDD bounded contexts
+- MUST show FSM states in component diagrams when applicable
+- MUST visualize Nx workspace structure at container level
 
-### Key Benefits
+## Prerequisite Knowledge
 
-**Developer-Friendly Approach:**
+**REQUIRED**: This documentation assumes you have completed the AyoKoding C4 Architecture Model learning path. These are **OSE Platform-specific C4 standards**, not educational tutorials.
 
-- Simple enough for any developer to understand and create
-- No extensive training required unlike UML or ArchiMate
-- Fits naturally into agile and continuous delivery workflows
-- Focuses on practical communication over formal correctness
+**You MUST understand C4 fundamentals before using these standards:**
 
-**Hierarchical Abstraction:**
+- **[C4 Architecture Model Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/c4-architecture-model/)** - Educational foundation for C4 visualization
+- **[C4 Architecture Model Overview](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/c4-architecture-model/overview.md)** - Core C4 concepts (Context, Container, Component, Code)
+- **[C4 Architecture Model By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/c4-architecture-model/by-example/)** - Practical C4 diagram examples
 
-- Different levels of zoom for different audiences
-- Executive stakeholders see context diagrams
-- Developers and architects see component and code diagrams
-- Each level provides appropriate detail without overwhelming
+**What this documentation covers**: OSE Platform-specific C4 patterns, Mermaid syntax conventions, color-blind friendly palettes, integration with DDD bounded contexts, repository diagram standards.
 
-**Notation Independence:**
+**What this documentation does NOT cover**: C4 fundamentals, basic diagram types, generic C4 notation (those are in ayokoding-web).
 
-- Not tied to specific diagramming tools or syntax
-- Works with any diagramming tool (draw.io, Mermaid, PlantUML, etc.)
-- Emphasizes clarity over strict notation rules
-- Teams can adapt visual conventions to their needs
-
-**Progressive Disclosure:**
-
-- Start with high-level context and drill down as needed
-- You don't need all four levels - use what adds value
-- Most teams find context and container diagrams sufficient
-- Component and code diagrams reserved for complex areas
+**See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
 ## Software Engineering Principles
 
-The C4 model naturally aligns with core software engineering principles:
+C4 Architecture diagrams in OSE Platform enforce three foundational software engineering principles:
 
-1. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - C4 enforces explicit labels on all elements and relationships, clear system boundaries, visible technology choices, and named communication protocols. Every diagram element must explicitly state what it is and how it interacts with others, eliminating hidden assumptions that plague architecture documentation.
+1. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - MUST make system boundaries explicit through clear diagram levels, label all relationships with protocols and data formats, show technology choices on all containers, and define explicit integration patterns between bounded contexts
 
-2. **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - C4 deliberately uses simple boxes and lines instead of complex UML notation, reducing cognitive load and making diagrams accessible to all stakeholders. The four-level hierarchy provides progressive disclosure—you only add complexity where it adds value, avoiding over-engineered documentation.
+2. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - MUST use diagram-as-code (Mermaid) for version control, standardized notation across all diagrams, WCAG-compliant color palette consistently, and automated diagram generation from architecture decision records
 
-3. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - C4 supports diagram-as-code approaches with Structurizr DSL, PlantUML, and Mermaid, enabling version-controlled architecture documentation that integrates with CI/CD pipelines. Automated diagram generation from code keeps documentation synchronized with implementation.
+3. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - MUST automate diagram generation from code when possible, validate diagram accessibility in CI/CD, use consistent Mermaid templates, and regenerate diagrams from architectural changes
 
-4. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - C4 provides standardized notation and consistent conventions across all diagram types, enabling teams to produce reproducible documentation. The same abstractions and notation rules apply regardless of tool or team member, ensuring consistent communication.
+## OSE Platform C4 Standards (Authoritative)
 
-5. **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - C4 can effectively model immutable architecture patterns like functional core/imperative shell, event sourcing, and CQRS. The model naturally represents data flow in systems that favor immutable data structures.
+**MUST follow these mandatory standards for all C4 diagrams in OSE Platform:**
 
-See [Best Practices](./ex-soen-ar-c4armo__14-best-practices.md) for detailed examples of how these principles apply to C4 diagrams.
+1. **[Diagram Standards](./ex-soen-ar-c4armo__diagram-standards.md)** - When to create diagrams, diagram levels (Context/Container/Component), OSE-specific patterns
+2. **[Notation Standards](./ex-soen-ar-c4armo__notation-standards.md)** - WCAG colors, Mermaid syntax, labeling conventions, accessibility requirements
+3. **[Bounded Context Visualization](./ex-soen-ar-c4armo__bounded-context-visualization.md)** - Mapping DDD bounded contexts to C4 containers, context mapping patterns
+4. **[Nx Workspace Visualization](./ex-soen-ar-c4armo__nx-workspace-visualization.md)** - Representing Nx apps and libs in C4 container diagrams
+5. **[Tooling Standards](./ex-soen-ar-c4armo__tooling-standards.md)** - Mermaid setup, diagram validation, accessibility testing
+
+## C4 Levels in OSE Platform
+
+### Level 1: System Context (REQUIRED)
+
+**REQUIRED**: All OSE Platform systems MUST have a System Context diagram.
+
+**Purpose**: Show how the system fits into the broader ecosystem.
+
+**MUST include**:
+
+- The system boundary (single box)
+- All external users/actors (people icons)
+- All external systems (boxes)
+- All relationships with protocols (arrows with labels)
+
+**Example**: Zakat Management System context showing donors, beneficiaries, payment gateway, and compliance reporting systems.
+
+**See**: [Diagram Standards](./ex-soen-ar-c4armo__diagram-standards.md#system-context-requirements)
+
+### Level 2: Container (REQUIRED for multi-container systems)
+
+**REQUIRED**: Systems with 2+ deployable units MUST have a Container diagram.
+
+**Purpose**: Show the high-level technical building blocks.
+
+**MUST include**:
+
+- All deployable units (apps, services, databases)
+- Technology stack for each container
+- Communication protocols between containers
+- Alignment with Nx workspace structure
+- Alignment with DDD bounded contexts
+
+**Example**: Zakat system showing zakat-calculation-service (Spring Boot), zakat-web-ui (Next.js), zakat-database (PostgreSQL), and message broker (RabbitMQ).
+
+**See**: [Diagram Standards](./ex-soen-ar-c4armo__diagram-standards.md#container-requirements)
+
+### Level 3: Component (OPTIONAL)
+
+**OPTIONAL**: Only create for complex containers with 6+ internal components.
+
+**Purpose**: Show internal structure of a single container.
+
+**MUST include**:
+
+- Major components/modules within the container
+- Component responsibilities
+- Internal communication patterns
+- Integration with FSM states when applicable
+
+**When to skip**: Simple containers with obvious structure, CRUD applications, thin API layers.
+
+**See**: [Diagram Standards](./ex-soen-ar-c4armo__diagram-standards.md#component-requirements)
+
+### Level 4: Code (RARELY USED)
+
+**RARELY USED**: Prefer IDE-generated diagrams or code documentation.
+
+**When to create**: Only when class relationships are architecturally significant (design patterns, framework extension points).
+
+**Prefer instead**: IntelliJ IDEA UML diagrams, JavaDoc class hierarchies, code comments.
+
+## Integration with OSE Platform Architecture
+
+### DDD Bounded Contexts
+
+**REQUIRED**: C4 Container diagrams MUST align with DDD bounded contexts.
+
+- One Container = One Bounded Context (for microservices)
+- Container boundaries = Bounded context boundaries
+- Context mapping patterns visualized as container relationships
+
+**See**: [Bounded Context Visualization](./ex-soen-ar-c4armo__bounded-context-visualization.md)
+
+### Nx Workspace Structure
+
+**REQUIRED**: C4 Container diagrams MUST reflect Nx workspace organization.
+
+- Each `apps/` entry = One Container
+- Shared `libs/` = Supporting components in Container diagrams
+- Nx project dependencies visualized as container relationships
+
+**See**: [Nx Workspace Visualization](./ex-soen-ar-c4armo__nx-workspace-visualization.md)
+
+### FSM States
+
+**OPTIONAL**: Component diagrams MAY show FSM states when state machines are architecturally significant.
+
+- Show state machine as a component
+- Label states and transitions
+- Indicate which aggregates use the FSM
 
 ## Documentation Structure
 
-This C4 model documentation is organized into multiple interconnected guides:
+### Quick Reference
 
-### Core Levels
+**Mandatory Standards (All architects/developers MUST follow)**:
 
-1. **[Level 1: System Context](./ex-soen-ar-c4armo__01-level-1-system-context.md)** - Shows how the software system fits into the world
-2. **[Level 2: Container](./ex-soen-ar-c4armo__02-level-2-container.md)** - Shows the high-level technical building blocks
-3. **[Level 3: Component](./ex-soen-ar-c4armo__03-level-3-component.md)** - Shows internal structure using object-oriented approaches
-4. **[Level 3: Component (Functional Programming)](./ex-soen-ar-c4armo__04-level-3-component-fp.md)** - Shows internal structure using functional programming approaches
-5. **[Level 4: Code](./ex-soen-ar-c4armo__05-level-4-code.md)** - Provides implementation details for object-oriented code
-6. **[Level 4: Code (Functional Programming)](./ex-soen-ar-c4armo__06-level-4-code-fp.md)** - Provides implementation details for functional code
+1. [Diagram Standards](./ex-soen-ar-c4armo__diagram-standards.md) - When to create diagrams, required levels
+2. [Notation Standards](./ex-soen-ar-c4armo__notation-standards.md) - WCAG colors, Mermaid syntax, labeling
+3. [Tooling Standards](./ex-soen-ar-c4armo__tooling-standards.md) - Mermaid setup, validation tools
 
-### Additional Perspectives
+**Context-Specific Standards (Apply when relevant)**:
 
-1. **[Supplementary Diagrams](./ex-soen-ar-c4armo__07-supplementary-diagrams.md)** - System Landscape, Dynamic, and Deployment diagrams
-2. **[Notation and Conventions](./ex-soen-ar-c4armo__08-notation-and-conventions.md)** - Labeling, color coding, and notation standards
-3. **[Best Practices](./ex-soen-ar-c4armo__09-best-practices.md)** - When to use C4, comparisons, common mistakes, and limitations
+- **DDD Integration**: [Bounded Context Visualization](./ex-soen-ar-c4armo__bounded-context-visualization.md) - Mapping bounded contexts to containers
+- **Nx Monorepo**: [Nx Workspace Visualization](./ex-soen-ar-c4armo__nx-workspace-visualization.md) - Representing Nx apps/libs
 
-### Cross-Cutting Concerns
+## Validation and Compliance
 
-1. **[Paradigm Considerations](./ex-soen-ar-c4armo__10-paradigm-considerations.md)** - How C4 applies to OOP vs FP and other paradigms
-2. **[Frequently Asked Questions](./ex-soen-ar-c4armo__11-faq.md)** - Common questions and answers about using C4
-3. **[Simple Application Examples](./ex-soen-ar-c4armo__12-simple-app-examples.md)** - When diagrams add value vs. overkill for straightforward systems
-4. **[Event-Driven Architectures](./ex-soen-ar-c4armo__13-event-driven-architectures.md)** - Applying C4 to event sourcing, CQRS, saga patterns, and event streaming
+C4 diagrams MUST pass the following validation checks:
 
-## Quick Start Guide
+1. **Accessibility Check**: WCAG AA color contrast verification
+2. **Notation Check**: Mermaid syntax validation
+3. **Label Check**: All relationships have descriptive labels with protocols
+4. **Boundary Check**: Clear system/container/component boundaries
+5. **Integration Check**: Alignment with DDD bounded contexts and Nx structure
 
-Choose your path based on available time and learning goals:
+**Validation Tools**:
 
-### 5-Minute Quick Start (Complete Beginner)
+- `npm run validate:diagrams` - Automated accessibility and syntax checking
+- Manual review by architecture team
 
-**Goal**: Understand if C4 is relevant for your project.
+## Example: Zakat Management System
 
-**Path**:
+### System Context
 
-1. Read **[README Overview](#overview)** - Understand the four levels
-2. Skim **[Best Practices: When to Use C4](./ex-soen-ar-c4armo__09-best-practices.md#when-to-use-the-c4-model)** - Identify if C4 fits your system
-3. Review **[Simple App Examples: Decision Matrix](./ex-soen-ar-c4armo__12-simple-app-examples.md#decision-matrix-when-to-create-diagrams)** - Check which diagrams you need
+```mermaid
+graph TD
+    ZMS["Zakat Management System"]:::blue
+    Donor["Donor<br/>(Person)"]:::orange
+    Beneficiary["Beneficiary<br/>(Person)"]:::orange
+    PayGW["Payment Gateway<br/>(External System)"]:::teal
+    CompRep["Compliance Reporting<br/>(External System)"]:::teal
 
-**Outcome**: Know whether C4 is appropriate for your system and which diagrams to create.
+    Donor -->|"Submits Zakat<br/>calculation<br/>[HTTPS/JSON]"| ZMS
+    ZMS -->|"Displays Zakat<br/>obligations<br/>[HTTPS/JSON]"| Donor
+    ZMS -->|"Processes<br/>payments<br/>[HTTPS/JSON]"| PayGW
+    ZMS -->|"Reports<br/>distributions<br/>[HTTPS/JSON]"| CompRep
+    ZMS -->|"Disburses funds<br/>[HTTPS/JSON]"| Beneficiary
 
-**Next Steps**:
+    classDef blue fill:#0173B2,stroke:#000,color:#FFF
+    classDef orange fill:#DE8F05,stroke:#000,color:#000
+    classDef teal fill:#029E73,stroke:#000,color:#FFF
+```
 
-- If C4 is relevant → Follow 30-Minute Learning Path
-- If your system is too simple → Consider [Simple App Examples](./ex-soen-ar-c4armo__12-simple-app-examples.md#when-not-to-create-diagrams)
-- If you need deeper understanding → Jump to 2-Hour Deep Dive
+### Container Diagram
 
-### 30-Minute Learning Path (Practical Introduction)
+```mermaid
+graph TD
+    Web["Zakat Web UI<br/>[Container: Next.js]<br/>User interface for<br/>Zakat calculations"]:::blue
+    API["Zakat API<br/>[Container: Spring Boot]<br/>Business logic and<br/>Zakat calculations"]:::blue
+    DB["Zakat Database<br/>[Container: PostgreSQL]<br/>Stores Zakat<br/>assessments"]:::teal
+    MQ["Message Broker<br/>[Container: RabbitMQ]<br/>Event distribution"]:::teal
 
-**Goal**: Create your first two C4 diagrams.
+    Web -->|"Makes API calls<br/>[HTTPS/REST]"| API
+    API -->|"Reads/writes<br/>[TCP/SQL]"| DB
+    API -->|"Publishes events<br/>[AMQP]"| MQ
 
-**Path**:
-
-1. **Understand the Basics**:
-   - Read **[Level 1: System Context](./ex-soen-ar-c4armo__01-level-1-system-context.md)** - Big picture view
-   - Read **[Level 2: Container](./ex-soen-ar-c4armo__02-level-2-container.md)** - Technical building blocks
-2. **Create Diagrams**:
-   - Sketch a **System Context diagram** for your system:
-     - One box for your system
-     - Boxes for users (people)
-     - Boxes for external systems
-     - Labeled relationships
-   - Sketch a **Container diagram**:
-     - Boxes for deployable units (apps, databases, services)
-     - Technology labels (e.g., "Container: Spring Boot")
-     - Communication protocols (HTTP/REST, SQL, etc.)
-3. **Review Conventions**:
-   - Skim **[Notation and Conventions](./ex-soen-ar-c4armo__08-notation-and-conventions.md)** - Standard practices
-
-**Outcome**: Rough Context and Container diagrams that communicate your architecture.
-
-**Next Steps**:
-
-- Refine diagrams based on team feedback
-- For complex containers → Read Level 3 (Component)
-- For comprehensive understanding → Follow 2-Hour Deep Dive
-
-### 2-Hour Deep Dive (Comprehensive Understanding)
-
-**Goal**: Master C4 model and create production-ready diagrams.
-
-**Path**:
-
-**Part 1: Core Concepts and Practices**
-
-1. **Foundation**:
-   - Read **[Level 1: System Context](./ex-soen-ar-c4armo__01-level-1-system-context.md)** - System boundaries
-   - Read **[Level 2: Container](./ex-soen-ar-c4armo__02-level-2-container.md)** - Deployment units
-   - Read **[Level 3: Component](./ex-soen-ar-c4armo__03-level-3-component.md)** - Internal structure
-2. **Best Practices**:
-   - Read **[Best Practices: When to Use C4](./ex-soen-ar-c4armo__09-best-practices.md#when-to-use-the-c4-model)** - Ideal use cases
-   - Read **[Best Practices: When C4 May Not Fit](./ex-soen-ar-c4armo__09-best-practices.md#when-c4-may-not-fit)** - Limitations
-   - Review **[Simple App Examples](./ex-soen-ar-c4armo__12-simple-app-examples.md)** - Real-world scenarios
-3. **Supplementary Diagrams**:
-   - Read **[Supplementary Diagrams](./ex-soen-ar-c4armo__07-supplementary-diagrams.md)** - Dynamic, Deployment, Landscape
-
-**Part 2: Implementation and Standards**
-
-1. **Notation Standards**:
-   - Read **[Notation and Conventions](./ex-soen-ar-c4armo__08-notation-and-conventions.md)** - Labeling, colors, shapes
-   - Review **[Repository Diagram Convention](../../../../../governance/conventions/formatting/diagrams.md)** - Accessibility requirements
-2. **Create Production Diagrams**:
-   - **Context Diagram**: Include all external systems and users
-   - **Container Diagram**: Show all deployable units with technology stacks
-   - **Component Diagram**: Detail one complex container
-3. **Review and Refine**:
-   - Check against **[Common Mistakes](./ex-soen-ar-c4armo__09-best-practices.md#common-mistakes-to-avoid)**
-   - Validate accessibility (WCAG-compliant colors)
-   - Get team feedback
-
-**Outcome**: Production-ready C4 diagrams following repository standards.
-
-**Next Steps**:
-
-- Integrate diagrams into architecture documentation
-- Schedule regular diagram reviews
-- Read paradigm-specific guides if applicable
-
-### Path for Specific Use Cases
-
-Choose documentation based on your system characteristics:
-
-#### By Architecture Style
-
-- **Object-Oriented Systems** (Java, C#, Python classes):
-  - Follow: [Level 1](./ex-soen-ar-c4armo__01-level-1-system-context.md) → [Level 2](./ex-soen-ar-c4armo__02-level-2-container.md) → [Level 3 OOP](./ex-soen-ar-c4armo__03-level-3-component.md) → [Level 4 OOP](./ex-soen-ar-c4armo__05-level-4-code.md)
-  - See: [Paradigm Considerations: OOP](./ex-soen-ar-c4armo__10-paradigm-considerations.md)
-- **Functional Programming Systems** (Elixir, Haskell, Scala):
-  - Follow: [Level 1](./ex-soen-ar-c4armo__01-level-1-system-context.md) → [Level 2](./ex-soen-ar-c4armo__02-level-2-container.md) → [Level 3 FP](./ex-soen-ar-c4armo__04-level-3-component-fp.md) → [Level 4 FP](./ex-soen-ar-c4armo__06-level-4-code-fp.md)
-  - See: [Paradigm Considerations: FP](./ex-soen-ar-c4armo__10-paradigm-considerations.md)
-- **Event-Driven / CQRS Systems**:
-  - Start with: [Supplementary Diagrams: Dynamic](./ex-soen-ar-c4armo__07-supplementary-diagrams.md#dynamic-diagram)
-  - Key focus: Message flows, event sourcing, saga patterns
-- **Microservices Architectures**:
-  - Start with: [Level 2 Container](./ex-soen-ar-c4armo__02-level-2-container.md) - Service boundaries critical
-  - See: [Simple App Examples: Small Microservices](./ex-soen-ar-c4armo__12-simple-app-examples.md#example-3-small-microservices-when-container-diagram-adds-value)
-
-#### By System Complexity
-
-- **Simple Systems** (1-5 deployable units, small team):
-  - Read: [Simple App Examples](./ex-soen-ar-c4armo__12-simple-app-examples.md) - Understand when diagrams add value
-  - Create: Context + Container only (skip Component and Code)
-  - Consider: README might be sufficient
-- **Medium Systems** (6-15 deployable units, medium team):
-  - Create: Context, Container, selective Component diagrams
-  - Focus: Integration points and complex containers
-- **Large Systems** (16+ deployable units, large team):
-  - Create: System Landscape, multiple Context diagrams (per domain)
-  - Focus: Bounded context boundaries, integration patterns
-  - See: [Best Practices: Scaling Considerations](./ex-soen-ar-c4armo__09-best-practices.md#when-to-use-the-c4-model)
-
-#### By Documentation Need
-
-- **Enterprise Architecture Overview**:
-  - Start: [Supplementary Diagrams: System Landscape](./ex-soen-ar-c4armo__07-supplementary-diagrams.md#system-landscape-diagram)
-  - Show: Multiple systems across organization
-- **Infrastructure Planning**:
-  - Focus: [Supplementary Diagrams: Deployment](./ex-soen-ar-c4armo__07-supplementary-diagrams.md#deployment-diagram)
-  - Show: Containers mapped to infrastructure, scaling strategies
-- **Workflow Documentation**:
-  - Use: [Supplementary Diagrams: Dynamic](./ex-soen-ar-c4armo__07-supplementary-diagrams.md#dynamic-diagram)
-  - Show: Time-ordered interactions, error handling paths
-- **Developer Onboarding**:
-  - Create: Context (system overview), Container (technical stack), Component (complex areas)
-  - Focus: Clear labels, technology indicators, communication patterns
-
-#### By Tool and Notation
-
-- **Mermaid Users**:
-  - See: [Best Practices: Standard Mermaid vs. Experimental C4 Syntax](./ex-soen-ar-c4armo__09-best-practices.md#standard-mermaid-vs-experimental-c4-syntax)
-  - Use: `graph TB` syntax with WCAG color palette
-  - Check: [Repository Diagram Convention](../../../../../governance/conventions/formatting/diagrams.md)
-- **Structurizr Users**:
-  - See: [Best Practices: Tooling Philosophy](./ex-soen-ar-c4armo__09-best-practices.md#tooling-philosophy-modeling-vs-diagramming)
-  - Benefit: Model-first approach, automatic layout
-- **draw.io / Lucidchart Users**:
-  - See: [Notation and Conventions](./ex-soen-ar-c4armo__08-notation-and-conventions.md)
-  - Use: C4 stencils or templates for consistency
+    classDef blue fill:#0173B2,stroke:#000,color:#FFF
+    classDef teal fill:#029E73,stroke:#000,color:#FFF
+```
 
 ## Related Documentation
 
-**Software Engineering Principles**:
+- **[DDD Standards](../domain-driven-design-ddd/README.md)** - Domain-Driven Design alignment
+- **[Diagram Convention](../../../../../governance/conventions/formatting/diagrams.md)** - Repository-wide diagram standards
+- **[Nx Workspace Structure](../../../../reference/re__monorepo-structure.md)** - Monorepo organization
 
-- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - C4's explicit labeling and visible relationships eliminate architecture ambiguity
-- **[Simplicity Over Complexity](../../../../../governance/principles/general/simplicity-over-complexity.md)** - Simple boxes and lines instead of complex UML notation
-- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Diagram-as-code with Structurizr DSL, PlantUML, and Mermaid
-- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Standardized notation ensures consistent documentation
-- **[Software Engineering Principles](../../../../../governance/principles/software-engineering/README.md)** - Comprehensive documentation of all principles
+## Principles Implemented/Respected
 
-**Repository Context**:
+This documentation implements/respects the following core principles:
 
-- **Repository Context**: [C4 Model in This Repository](./ex-soen-ar-c4armo__09-best-practices.md#c4-model-in-this-repository)
-- **Further Learning**: [External Resources](./ex-soen-ar-c4armo__11-faq.md#further-learning)
-- **Conventions**: [Diagram and Schema Convention](../../../../../governance/conventions/formatting/diagrams.md)
+- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**: By requiring explicit labels on all relationships, clear technology choices on containers, and visible integration patterns, C4 diagrams eliminate hidden assumptions in architecture documentation.
+
+- **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)**: By mandating diagram-as-code with Mermaid and standardized WCAG color palette, C4 diagrams can be consistently reproduced across teams and time periods.
+
+- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**: By using Mermaid syntax and automated validation tools, C4 diagram quality is enforced through CI/CD rather than manual review processes.
+
+---
+
+**Last Updated**: 2026-02-09
