@@ -18,31 +18,42 @@ The architecture has evolved from four layers to a comprehensive six-layer gover
 
 Layer 0 is Vision—the foundational WHY we exist (democratize Shariah-compliant enterprise). Layer 1 is Principles—the ten core values that guide every decision we make. Layer 2 is Conventions—the 24 documentation standards and rules that ensure consistency. Layer 3 is Development—the 15 software practices that govern how we write code. Layer 4 is AI Agents—the 45 specialized agents that enforce rules at scale. Layer 5 is Workflows—the multi-step processes that coordinate `agents`.
 
-```mermaid
-%% Color Palette: High saturation colors for visibility in light/dark modes
-%% Meets WCAG AA contrast standards
-
-flowchart TD
-    L0["<b>Layer 0: Vision</b><br/>Democratize Shariah-compliant enterprise"]:::brown
-    L1["<b>Layer 1: Principles</b><br/>10 core values"]:::blue
-    L2["<b>Layer 2: Conventions</b><br/>24 documentation standards"]:::blue
-    L3["<b>Layer 3: Development</b><br/>15 software practices"]:::blue
-    L4["<b>Layer 4: AI Agents</b><br/>45 specialized agents"]:::blue
-    L5["<b>Layer 5: Workflows</b><br/>Multi-step processes"]:::blue
-    S["<b>Skills: Delivery Infrastructure</b><br/>23 knowledge packages"]:::purple
-
-    L0 -->|"guides"| L1
-    L1 -->|"governs"| L2
-    L2 -->|"defines"| L3
-    L3 -->|"enables"| L4
-    L4 -->|"coordinates"| L5
-    L4 -.->|"loads"| S
-
-    classDef brown fill:#FF8C42,stroke:#000000,color:#000000,stroke-width:3px
-    classDef blue fill:#00BFFF,stroke:#000000,color:#000000,stroke-width:3px
-    classDef purple fill:#E066FF,stroke:#000000,color:#000000,stroke-width:3px,stroke-dasharray: 5 5
-
-    linkStyle default stroke:#666666,stroke-width:3px
+```
+                   ┌──────────────────────────────────────┐
+                   │   Layer 0: Vision                    │
+                   │   Democratize Shariah-compliant      │
+                   │   enterprise                         │
+                   └────────────────┬─────────────────────┘
+                                    │ guides
+                                    ▼
+                   ┌──────────────────────────────────────┐
+                   │   Layer 1: Principles                │
+                   │   10 core values                     │
+                   └────────────────┬─────────────────────┘
+                                    │ governs
+                                    ▼
+                   ┌──────────────────────────────────────┐
+                   │   Layer 2: Conventions               │
+                   │   24 documentation standards         │
+                   └────────────────┬─────────────────────┘
+                                    │ defines
+                                    ▼
+                   ┌──────────────────────────────────────┐
+                   │   Layer 3: Development               │
+                   │   15 software practices              │
+                   └────────────────┬─────────────────────┘
+                                    │ enables
+                                    ▼
+┌──────────────────────┐  ┌──────────────────────────────────────┐
+│ Skills: Delivery     │  │   Layer 4: AI Agents                 │
+│ Infrastructure       │~~│   45 specialized agents              │
+│ 23 knowledge packages│  └────────────────┬─────────────────────┘
+└──────────────────────┘                   │ coordinates
+      ▲                                    ▼
+      └────────────────loads────┌──────────────────────────────────────┐
+                                │   Layer 5: Workflows                 │
+                                │   Multi-step processes               │
+                                └──────────────────────────────────────┘
 ```
 
 What makes this architecture powerful is complete traceability. Every rule, every convention, every practice traces back to principles it serves, and every principle traces back to vision it fulfills. This prevents contradictory rules, orphaned policies, and governance drift. When we need to understand why a convention exists or decide how to handle a new situation, traceability chain provides the answer.
