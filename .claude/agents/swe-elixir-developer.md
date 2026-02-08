@@ -6,6 +6,8 @@ model: sonnet
 color: purple
 skills:
   - swe-programming-elixir
+  - swe-programming-elixir-phoenix
+  - swe-programming-elixir-phoenix-liveview
   - swe-developing-applications-common
   - docs-applying-content-quality
 ---
@@ -89,9 +91,9 @@ All Elixir code MUST follow the platform coding standards:
 **Coding Standards** (Authoritative):
 
 - [docs/explanation/software-engineering/programming-languages/elixir/README.md](../../docs/explanation/software-engineering/programming-languages/elixir/README.md)
-- [docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-el\_\_idioms.md](../../docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-el__idioms.md)
-- [docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-el\_\_best-practices.md](../../docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-el__best-practices.md)
-- [docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-el\_\_anti-patterns.md](../../docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-el__anti-patterns.md)
+- [docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-el\_\_coding-standards.md](../../docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-el__coding-standards.md)
+- [docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-el\_\_functional-programming-standards.md](../../docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-el__functional-programming-standards.md)
+- [docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-el\_\_code-quality-standards.md](../../docs/explanation/software-engineering/programming-languages/elixir/ex-soen-prla-el__code-quality-standards.md)
 
 **Development Practices**:
 
@@ -108,5 +110,7 @@ All Elixir code MUST follow the platform coding standards:
 **Skills**:
 
 - `swe-programming-elixir` - Elixir coding standards (auto-loaded)
+- `swe-programming-elixir-phoenix` - Phoenix Framework standards (auto-loaded)
+- `swe-programming-elixir-phoenix-liveview` - Phoenix LiveView standards (auto-loaded)
 - `swe-developing-applications-common` - Common development workflow (auto-loaded)
 - `docs-applying-content-quality` - Content quality standards
