@@ -112,37 +112,53 @@ Understanding where by-example fits in the tutorial ecosystem helps you choose t
 
 ## Structure of Each Example
 
-Every example follows this consistent format:
+Every example follows a **mandatory five-part format**:
 
 ````markdown
 ### Example N: Concept Name
 
-Brief explanation of the concept in 2-3 sentences. Explains **what** the concept is and **why** it matters.
+**Part 1: Brief Explanation** (2-3 sentences)
+Explains what the concept is, why it matters in test automation, and when to use it.
 
-[OPTIONAL: Mermaid diagram when concept relationships need visualization]
+**Part 2: Mermaid Diagram** (when appropriate)
+Visual representation of concept relationships - test flow, page object hierarchies, or fixture composition. Not every example needs a diagram; they're used strategically to enhance understanding.
 
-**Code**:
+**Part 3: Heavily Annotated Code**
 
 ```typescript
 import { test, expect } from "@playwright/test";
+// => Playwright test framework import
+// => test: test function, expect: assertion library
 
 test("example test", async ({ page }) => {
-  // Inline comment for each significant line
-  await page.goto("https://example.com"); // => Navigates to URL
+  // => test() creates new test case (async function)
+  // => { page }: built-in fixture (browser page instance)
 
-  const button = page.getByRole("button", { name: "Submit" }); // => Locates button
-  await button.click(); // => Clicks button, triggers action
+  await page.goto("https://example.com");
+  // => Navigates to URL (waits for page load automatically)
 
-  await expect(page.getByText("Success")).toBeVisible(); // => Asserts success message
+  const button = page.getByRole("button", { name: "Submit" });
+  // => Locates button by accessible role and text
+  // => Returns Locator object (not element itself)
+
+  await button.click();
+  // => Clicks button, triggers action
+  // => Auto-waits for button to be visible and enabled
+
+  await expect(page.getByText("Success")).toBeVisible();
+  // => Asserts success message is visible
+  // => Auto-waits up to 5 seconds before failing
 });
 ```
 
-**Key Takeaway**: 1-2 sentence summary highlighting the most important insight or pattern from this example.
+**Part 4: Key Takeaway** (1-2 sentences)
+Distills the core insight: the most important pattern, when to apply it in production, or common pitfalls to avoid.
+
+**Part 5: Why It Matters** (2-3 sentences, 50-100 words)
+Connects the concept to production relevance - why professionals care, how it compares to alternatives, and consequences for quality/performance/maintainability.
 ````
 
-The **brief explanation** provides context. The **code** is heavily annotated with inline comments and `// =>` output notation. The **key takeaway** distills the concept to its essence.
-
-Mermaid diagrams appear when **visual representation clarifies concept relationships** - showing test flow, page object hierarchies, or fixture composition. Not every example needs a diagram; they're used strategically to enhance understanding.
+Each example follows this structure consistently, maintaining annotation density of 1.0-2.25 comment lines per code line. The **brief explanation** provides context, the **code** is heavily annotated with inline comments and `// =>` output notation, the **key takeaway** distills the concept, and **why it matters** shows production relevance.
 
 ## Learning Strategies
 
