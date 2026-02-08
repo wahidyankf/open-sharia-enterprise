@@ -44,16 +44,19 @@ Layer 0 is Vision—the foundational WHY we exist (democratize Shariah-compliant
                    └────────────────┬─────────────────────┘
                                     │ enables
                                     ▼
-┌──────────────────────┐  ┌──────────────────────────────────────┐
-│ Skills: Delivery     │  │   Layer 4: AI Agents                 │
-│ Infrastructure       │~~│   45 specialized agents              │
-│ 23 knowledge packages│  └────────────────┬─────────────────────┘
-└──────────────────────┘                   │ coordinates
-      ▲                                    ▼
-      └────────────────loads────┌──────────────────────────────────────┐
-                                │   Layer 5: Workflows                 │
-                                │   Multi-step processes               │
-                                └──────────────────────────────────────┘
+                   ┌──────────────────────────────────────┐
+                   │   Layer 4: AI Agents                 │
+                   │   45 specialized agents              │
+                   └────────────┬────────────┬────────────┘
+                                │            │
+                         coordinates         └─loads─>
+                                │                     │
+                                ▼                     ▼
+              ┌─────────────────────────┐  ┌──────────────────────┐
+              │ Layer 5: Workflows      │  │ Skills: Delivery     │
+              │ Multi-step processes    │  │ Infrastructure       │
+              └─────────────────────────┘  │ 23 knowledge packages│
+                                           └──────────────────────┘
 ```
 
 What makes this architecture powerful is complete traceability. Every rule, every convention, every practice traces back to principles it serves, and every principle traces back to vision it fulfills. This prevents contradictory rules, orphaned policies, and governance drift. When we need to understand why a convention exists or decide how to handle a new situation, traceability chain provides the answer.
