@@ -48,8 +48,8 @@ open-sharia-enterprise/
 │   ├── backlog/             # Future plans
 │   └── done/                # Completed plans
 ├── .claude/                 # Claude Code configuration
-│   ├── agents/              # 55 specialized AI agents
-│   └── skills/              # 28 skill packages
+│   ├── agents/              # 56 specialized AI agents
+│   └── skills/              # 33 skill packages
 ├── .husky/                  # Git hooks
 ├── nx.json                  # Nx workspace config
 └── package.json             # Volta pinning + npm workspaces
@@ -257,7 +257,7 @@ Volta for Node.js/npm pinning, package-lock.json, .env.example
 
 **See**: [governance/development/workflow/reproducible-environments.md](./governance/development/workflow/reproducible-environments.md)
 
-## AI Agents (45 Specialized Agents)
+## AI Agents (56 Specialized Agents)
 
 **Content Creation**: docs-maker, docs-tutorial-maker, readme-maker, apps\_\_ayokoding-web\_\_general-maker, apps\_\_ayokoding-web\_\_by-example-maker, apps\_\_ose-platform-web\_\_content-maker
 
@@ -275,7 +275,7 @@ Volta for Node.js/npm pinning, package-lock.json, .env.example
 
 **Maker-Checker-Fixer Pattern**: Three-stage workflow with criticality levels (CRITICAL/HIGH/MEDIUM/LOW), confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE)
 
-**Skills Infrastructure**: Agents leverage 23 skills providing two modes:
+**Skills Infrastructure**: Agents leverage 33 skills providing two modes:
 
 - **Inline skills** (default) - Inject knowledge into current conversation
 - **Fork skills** (`context: fork`) - Delegate tasks to specialized agents in isolated contexts
@@ -335,10 +335,10 @@ Six-layer governance hierarchy:
 - **Layer 1: Principles** - WHY we value approaches (10 core principles)
 - **Layer 2: Conventions** - WHAT documentation rules (26 standards)
 - **Layer 3: Development** - HOW we develop (15 practices)
-- **Layer 4: AI Agents** - WHO enforces rules (45 specialized agents)
+- **Layer 4: AI Agents** - WHO enforces rules (56 specialized agents)
 - **Layer 5: Workflows** - WHEN we run processes (orchestrated sequences)
 
-**Skills**: Delivery infrastructure serving agents (23 skills, two modes):
+**Skills**: Delivery infrastructure serving agents (33 skills, two modes):
 
 - **Inline skills** - Knowledge injection into current conversation
 - **Fork skills** (`context: fork`) - Task delegation to agents in isolated contexts
@@ -421,7 +421,7 @@ Project planning in `plans/` folder:
 - **Conventions Index**: [governance/conventions/README.md](./governance/conventions/README.md) - 26 documentation standards
 - **Development Index**: [governance/development/README.md](./governance/development/README.md) - 15 software practices
 - **Principles Index**: [governance/principles/README.md](./governance/principles/README.md) - 10 foundational principles
-- **Agents Index**: [.claude/agents/README.md](./.claude/agents/README.md) - 45 specialized agents
+- **Agents Index**: [.claude/agents/README.md](./.claude/agents/README.md) - 56 specialized agents
 - **Workflows Index**: [governance/workflows/README.md](./governance/workflows/README.md) - Orchestrated processes
 - **Repository Architecture**: [governance/repository-governance-architecture.md](./governance/repository-governance-architecture.md) - Six-layer governance hierarchy
 
