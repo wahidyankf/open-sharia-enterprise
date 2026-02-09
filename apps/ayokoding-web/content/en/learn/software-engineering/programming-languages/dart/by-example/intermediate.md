@@ -133,7 +133,7 @@ void main() async {                     // => main can be async in Dart (unlike 
 
 **Key Takeaway**: Use `async`/`await` for sequential async operations with readable, synchronous-looking code. Use `then()` for functional-style chaining. Functions marked `async` always return `Future<T>`.
 
-**Why It Matters**: In Flutter, blocking the main isolate for even 16ms causes dropped frames (UI stutters below 60fps). Async operations enable smooth UI by offloading I/O to the event loop while keeping the UI thread responsive. In server applications (shelf, aqueduct), blocking isolates destroys throughput—async enables handling thousands of concurrent HTTP requests on a single isolate without thread-per-request overhead that cripples traditional server models.
+**Why It Matters**: In Flutter, blocking the main isolate causes dropped frames and UI stutters. Async operations enable smooth UI by offloading I/O to the event loop while keeping the UI thread responsive. In server applications, blocking isolates destroys throughput—async enables handling thousands of concurrent HTTP requests on a single isolate without thread-per-request overhead that cripples traditional server models.
 
 **Common Pitfalls**: Forgetting `await` returns `Future<T>`, not `T` (compile error caught). Unhandled Future errors fail silently (use `.catchError()` or try-catch with await). Awaiting in a loop executes sequentially (use `Future.wait()` for parallelism).
 
@@ -286,7 +286,7 @@ void main() async {                     // => Execute statement
 
 **Key Takeaway**: Use `Future.wait()` to run multiple Futures in parallel when operations don't depend on each other. Much faster than sequential `await`. By default, stops at first error (eagerError: true).
 
-**Why It Matters**: Microservice aggregation endpoints (fetching user data + posts + permissions simultaneously) benefit massively from parallel execution. Sequential fetching adds latency linearly (3 APIs × 500ms = 1500ms), while parallel execution caps latency at the slowest operation (max(500ms) = 500ms), cutting response times 60-70% in typical dashboards loading multiple data sources. Critical for mobile apps on slow networks where every millisecond of latency impacts user experience.
+**Why It Matters**: Microservice aggregation endpoints (fetching user data + posts + permissions simultaneously) benefit massively from parallel execution. Sequential fetching adds latency linearly (3 APIs × 500ms = 1500ms), while parallel execution caps latency at the slowest operation (max(500ms) = 500ms), significantly reducing response times in typical dashboards loading multiple data sources. Critical for mobile apps on slow networks where every millisecond of latency impacts user experience.
 
 **Common Pitfalls**: Sequential `await` in a loop doesn't parallelize (use `List.generate()` + `Future.wait()`). `Future.wait()` fails fast by default—use `eagerError: false` to collect partial results when some operations may fail. Forgetting to `await` the Future.wait() itself causes race conditions.
 
@@ -516,7 +516,7 @@ void main() async {                     // => Main function with async support
 
 **Key Takeaway**: Use `Future.timeout()` to prevent indefinite waits. Provide `onTimeout` callback for graceful degradation, or omit for exception-based handling. Different operations need different timeout durations.
 
-**Why It Matters**: Production systems fail catastrophically without timeouts—a single slow external dependency (database, API, file system) can cascade into system-wide failure as requests pile up waiting indefinitely, exhausting resources (isolates in Dart, threads in Java). The 2018 Cloudflare outage was triggered by unbounded regex operations with no timeout. Timeouts are circuit breakers that contain failure, preventing one slow operation from bringing down the entire system.
+**Why It Matters**: Production systems fail catastrophically without timeouts—a single slow external dependency (database, API, file system) can cascade into system-wide failure as requests pile up waiting indefinitely, exhausting resources. Timeouts are circuit breakers that contain failure, preventing one slow operation from bringing down the entire system.
 
 **Common Pitfalls**: Setting same timeout for all operations (different operations need different limits). Forgetting `onTimeout` causes TimeoutException in production. Timeout too short causes false positives (request succeeds but timeout triggered). Timeout too long defeats the purpose (system hangs before timeout).
 
@@ -677,7 +677,7 @@ void main() async {                     // => Execute statement
 
 **Key Takeaway**: Use `Completer` to manually control Future completion. Critical for bridging callback-based APIs to Future-based async/await code. Can only complete once (calling twice throws StateError).
 
-**Why It Matters**: Modern Dart uses async/await, but legacy code and platform APIs (iOS, Android via method channels) use callbacks. Completer bridges these worlds, enabling Future-based Flutter code to integrate with callback-based platform APIs. Without Completer, you'd be stuck with callback hell in Flutter plugins. Also critical for event-driven architectures where Future completion depends on external events (WebSocket messages, user input, system notifications).
+**Why It Matters**: Modern Dart uses async/await, but legacy code and platform APIs use callbacks. Completer bridges these worlds, enabling Future-based Flutter code to integrate with callback-based platform APIs. Without Completer, you'd be stuck with callback hell in Flutter plugins. Also critical for event-driven architectures where Future completion depends on external events (WebSocket messages, user input, system notifications).
 
 **Common Pitfalls**: Calling `complete()` twice throws StateError (check `isCompleted` first). Forgetting to call `complete()` causes Future to never resolve (memory leak). Completing with wrong type causes runtime error. Losing reference to Completer before completion creates orphaned Future.
 

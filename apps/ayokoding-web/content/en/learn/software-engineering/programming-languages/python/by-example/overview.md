@@ -3,7 +3,7 @@ title: "Overview"
 date: 2025-12-30T00:31:19+07:00
 draft: false
 weight: 10000000
-description: "Learn Python through 80 annotated code examples covering 95% of the language - ideal for experienced developers"
+description: "Learn Python through 80 annotated code examples covering essential concepts of the language - ideal for experienced developers"
 tags: ["python", "tutorial", "by-example", "examples", "code-first"]
 ---
 
@@ -39,11 +39,11 @@ Progress from fundamentals through production patterns to expert mastery. Each l
 
 ## Coverage Philosophy
 
-This tutorial provides **95% coverage of Python** through practical, annotated examples. The 95% figure represents the depth and breadth of concepts covered, not a time estimate—focus is on **outcomes and understanding**, not duration.
+This tutorial provides **comprehensive coverage of Python** through practical, annotated examples. This tutorial covers core language features comprehensively, not a time estimate—focus is on **outcomes and understanding**, not duration.
 
 ### What's Covered
 
-**Included (95%)**:
+**Core Topics Covered**:
 
 - Core syntax and semantics (variables, operators, control flow)
 - Built-in types and data structures (lists, dicts, sets, tuples)
@@ -71,15 +71,15 @@ This guide focuses on **learning-oriented examples**, not problem-solving recipe
 - **Deprecated features** - imp module, old-style classes
 - **Framework internals** - Django ORM source, Flask internals (covered at introductory level only)
 
-The 95% coverage goal maintains humility—no tutorial can cover everything. This guide teaches the **core concepts that unlock the remaining 5%** through your own exploration and project work.
+The comprehensive coverage goal maintains humility—no tutorial can cover everything. This guide teaches the **core concepts that continue learning beyond this tutorial** through your own exploration and project work.
 
 ## Tutorial Structure
 
 **80 examples across three levels**:
 
-- **Beginner** (Examples 1-27, 0-40% coverage): Python fundamentals - variables, types, control flow, functions, basic data structures, simple OOP
-- **Intermediate** (Examples 28-54, 40-75% coverage): Production patterns - modules, file I/O, exceptions, decorators, comprehensions, iterators, testing
-- **Advanced** (Examples 55-80, 75-95% coverage): Expert mastery - metaclasses, asyncio, context managers, generators, protocols, type hints, packaging, performance
+- **Beginner** (Examples 1-27, fundamental concepts): Python fundamentals - variables, types, control flow, functions, basic data structures, simple OOP
+- **Intermediate** (Examples 28-54, production patterns): Production patterns - modules, file I/O, exceptions, decorators, comprehensions, iterators, testing
+- **Advanced** (Examples 55-80): Advanced mastery: Expert mastery - metaclasses, asyncio, context managers, generators, protocols, type hints, packaging, performance
 
 Coverage percentages indicate **depth and breadth** of Python knowledge, not time investment.
 
@@ -309,9 +309,9 @@ By completing all 80 examples, you'll master:
 
 ## Navigation
 
-- **[Beginner](/en/learn/software-engineering/programming-languages/python/by-example/beginner)** - Examples 1-27 (0-40% coverage)
-- **[Intermediate](/en/learn/software-engineering/programming-languages/python/by-example/intermediate)** - Examples 28-54 (40-75% coverage)
-- **[Advanced](/en/learn/software-engineering/programming-languages/python/by-example/advanced)** - Examples 55-80 (75-95% coverage)
+- **[Beginner](/en/learn/software-engineering/programming-languages/python/by-example/beginner)** - Examples 1-27 (fundamental concepts)
+- **[Intermediate](/en/learn/software-engineering/programming-languages/python/by-example/intermediate)** - Examples 28-54 (production patterns)
+- **[Advanced](/en/learn/software-engineering/programming-languages/python/by-example/advanced)** - Examples 55-80 (advanced mastery)
 
 ---
 

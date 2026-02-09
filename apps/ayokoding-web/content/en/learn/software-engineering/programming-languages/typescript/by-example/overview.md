@@ -79,7 +79,7 @@ tags: ["typescript", "tutorial", "by-example", "examples", "code-first"]
 
 **Diagram Study**: Complex examples include Mermaid diagrams visualizing data flow, state transitions, or memory layout.
 
-**Production Context**: "Why It Matters" sections connect concepts to real-world usage in frameworks like React, Node.js, and Express.
+**Production Context**: "Why It Matters" sections connect concepts to real-world production usage across different frameworks and applications.
 
 ## Prerequisites
 

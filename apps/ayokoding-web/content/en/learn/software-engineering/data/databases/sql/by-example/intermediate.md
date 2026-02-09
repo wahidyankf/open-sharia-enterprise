@@ -2489,7 +2489,7 @@ ORDER BY price;                     -- => Sort in index
 
 **Key Takeaway**: Covering indexes include all columns used in query (WHERE, SELECT, ORDER BY). They eliminate table access, reducing I/O. Trade-off: larger index size. Use for frequently-run queries on specific column sets.
 
-**Why It Matters**: Covering indexes can provide 10x+ speedup for read-heavy queries by eliminating table lookups entirely. Dashboard queries, API endpoints, and reports that run thousands of times daily benefit enormously. The larger index size is a worthwhile trade-off for critical query paths.
+**Why It Matters**: Covering indexes can provide significant speedup for read-heavy queries by eliminating table lookups entirely. Dashboard queries, API endpoints, and reports that run frequently benefit substantially. The larger index size is a worthwhile trade-off for critical query paths.
 
 ---
 
@@ -2585,7 +2585,7 @@ WHERE customer_id IS NOT NULL;      -- => Exclude NULL values
 
 **Key Takeaway**: Partial indexes use WHERE clause to index subset of rows. They reduce index size and improve write performance. Use for queries that consistently filter on same condition (active records, recent data, specific categories).
 
-**Why It Matters**: If 99% of queries filter for "status = 'active'" and only 5% of rows are active, a full index wastes 95% of its space on rows you'll never query. Partial indexes are smaller, faster to maintain, and fit better in memory—providing better performance for less resource cost.
+**Why It Matters**: When most queries filter for specific values like "status = 'active'" and only a small percentage of rows match, a full index wastes space on rows rarely queried. Partial indexes are smaller, faster to maintain, and fit better in memory—providing better performance for less resource cost.
 
 ---
 
@@ -2732,7 +2732,7 @@ WHERE e.user_id IS NULL;            -- => Keep only non-matches
 
 ## Example 55: Transaction Performance
 
-Batch operations in transactions improve performance dramatically. Single transaction for multiple inserts is ~100x faster than individual commits.
+Batch operations in transactions improve performance dramatically. Single transaction for multiple inserts is significantly faster than individual commits.
 
 **Code**:
 
@@ -2778,7 +2778,7 @@ FROM (
 COMMIT;                             -- => Commit transaction (one COMMIT)
 -- => Single transaction: 1 BEGIN, 1000 inserts, 1 COMMIT
 -- => Single disk sync at commit
--- => FAST: ~10-50ms for 1000 rows (100x faster than individual inserts)
+-- => FAST: ~10-50ms for 1000 rows (much faster than individual inserts)
 -- => Atomicity: all 1000 rows or none (rollback on error)
 
 -- FAST: Multi-row INSERT (alternative syntax)

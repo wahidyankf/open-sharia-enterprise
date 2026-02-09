@@ -164,7 +164,7 @@ const data: JSONValue = {
 
 **Key Takeaway**: Recursive conditional types enable deep type transformations. TypeScript 4.1+ removed recursion depth limits. Use base cases to prevent infinite recursion.
 
-**Why It Matters**: Recursive types power deep object transformations in ORMs, GraphQL schema generators, and type-safe form libraries. React Hook Form uses recursive types for nested form validation. Prisma uses recursion for deep relation types. This pattern is essential for framework-level type utilities.
+**Why It Matters**: Recursive types power deep object transformations in ORMs, schema generators, and type-safe form libraries. Form libraries can use recursive types for nested validation. ORMs can use recursion for deep relation types. This pattern is essential for framework-level type utilities.
 
 ## Example 54: Template Literal Types - Advanced Patterns
 
@@ -239,7 +239,7 @@ type Params = ExtractParams<Route>; // => Type: "userId" | "postId"
 
 **Key Takeaway**: Template literal types enable type-level string operations. Combine with mapped types for automatic API surface generation. Use recursion for parameter extraction.
 
-**Why It Matters**: Template literals power type-safe routing in Next.js, tRPC endpoint typing, and CSS-in-JS libraries. Styled-components uses template literals for prop-based styling. Express type generators extract route parameters. This eliminates manual type definitions for string-based APIs.
+**Why It Matters**: Template literals power type-safe routing, endpoint typing, and CSS-in-JS libraries. Styling libraries can use template literals for prop-based styling. Type generators can extract route parameters. This eliminates manual type definitions for string-based APIs.
 
 ## Example 55: Variadic Tuple Types and Rest Elements
 
@@ -309,7 +309,7 @@ type FirstElement = Head<List>; // => Type: 1
 
 **Key Takeaway**: Variadic tuples enable type-safe function composition, partial application, and currying. Multiple rest elements allow complex tuple transformations.
 
-**Why It Matters**: Variadic tuples power functional programming libraries like fp-ts and Ramda typings. Redux Toolkit uses variadic tuples for action creator composition. Pipeline operators rely on variadic tuple inference. Essential for type-safe higher-order functions.
+**Why It Matters**: Variadic tuples power functional programming library typings. Action creator composition can use variadic tuples. Pipeline operators can rely on variadic tuple inference. Essential for type-safe higher-order functions.
 
 ## Example 56: Type Inference with Infer Keyword Mastery
 
@@ -636,7 +636,7 @@ declare module "express" {
 
 **Key Takeaway**: Interfaces merge automatically across declarations. Functions, classes, and enums can merge with namespaces. Module augmentation extends third-party types.
 
-**Why It Matters**: Declaration merging powers Express middleware typing (extending Request/Response), React component prop augmentation, and library plugin systems. jQuery uses namespace merging for plugins. Essential for extending external library types without forking.
+**Why It Matters**: Declaration merging powers middleware typing (extending Request/Response), component prop augmentation, and library plugin systems. Libraries can use namespace merging for plugins. Essential for extending external library types without forking.
 
 ## Example 60: Global Augmentation for Built-in Types
 
@@ -726,7 +726,7 @@ const fetchWithTimeout = fetch("https://api.example.com").timeout(5000); // => F
 
 **Key Takeaway**: Global augmentation extends built-in types like Array, String, Window, and NodeJS namespaces. Use `declare global` for global scope extensions. Avoid excessive global pollution.
 
-**Why It Matters**: Global augmentation enables type-safe environment variables (process.env), custom global objects (window extensions), and polyfill typing. Next.js uses global augmentation for NodeJS.ProcessEnv. Essential for typing runtime-modified globals.
+**Why It Matters**: Global augmentation enables type-safe environment variables (process.env), custom global objects (window extensions), and polyfill typing. Frameworks can use global augmentation for NodeJS.ProcessEnv. Essential for typing runtime-modified globals.
 
 ## Example 61: Abstract Classes and Advanced Patterns
 
@@ -862,7 +862,7 @@ console.log(ppProcessor.process(50)); // => "Processing PayPal payment: $50"
 
 **Key Takeaway**: Abstract classes provide partial implementation with enforced contracts. Use template method pattern for algorithm skeleton. Factory methods delegate object creation to subclasses.
 
-**Why It Matters**: Abstract classes power ORM base classes (TypeORM Repository), framework components (Angular Component base), and plugin architectures. React class components extend Component abstract base. Essential for framework-level extensibility patterns.
+**Why It Matters**: Abstract classes power ORM base classes, framework components, and plugin architectures. Class components can extend abstract bases. Essential for framework-level extensibility patterns.
 
 ## Example 62: Mixin Pattern for Multiple Inheritance
 
@@ -989,7 +989,7 @@ const json = doc.serialize(); // => {"title":"Report","content":"Lorem ipsum","c
 
 **Key Takeaway**: Mixins compose behavior without multiple inheritance. Use constructor types to extend base classes. Require interfaces for type-safe mixin constraints.
 
-**Why It Matters**: Mixins power Vue composition API (reusable composition functions), React Hooks (custom hooks as behavior mixins), and Angular service composition. Utility libraries use mixins for cross-cutting concerns (logging, serialization). Enables flexible behavior composition.
+**Why It Matters**: Mixins power composition APIs, reusable hooks, and service composition. Utility libraries can use mixins for cross-cutting concerns (logging, serialization). Enables flexible behavior composition.
 
 ## Example 63: Decorator Composition and Metadata
 
@@ -1127,7 +1127,7 @@ class ApiClient {
 
 **Key Takeaway**: Decorators add metadata and modify behavior declaratively. Compose multiple decorators for layered functionality. Use reflect-metadata for parameter validation.
 
-**Why It Matters**: Decorators power Angular dependency injection, NestJS route handlers, TypeORM entity definitions, and class-validator. Essential for framework-level declarative programming. Enables clean separation of concerns.
+**Why It Matters**: Decorators power dependency injection, route handlers, entity definitions, and validation. Essential for framework-level declarative programming. Enables clean separation of concerns.
 
 ## Example 64: Symbol Usage for Unique Properties
 
@@ -1251,7 +1251,7 @@ console.log(Object.keys(account)); // => [] (symbol property hidden)
 
 **Key Takeaway**: Symbols create unique property keys. Well-known symbols customize language behavior (Symbol.iterator, Symbol.toPrimitive). Use Symbol.for() for global shared symbols.
 
-**Why It Matters**: Symbols power custom iterators, JSON serialization control, and private-like properties before private fields. React uses symbols for element identification. RxJS uses symbols for observable interop. Essential for meta-programming and protocol implementation.
+**Why It Matters**: Symbols power custom iterators, JSON serialization control, and private-like properties before private fields. Frameworks can use symbols for element identification and observable interop. Essential for meta-programming and protocol implementation.
 
 ## Example 65: AsyncIterator and AsyncGenerator Types
 
@@ -1512,7 +1512,7 @@ obj2 = null as any; // => Remove strong reference, WeakMap allows GC
 
 **Key Takeaway**: WeakMaps and WeakSets hold weak references allowing garbage collection. Use WeakMaps for private data without preventing object cleanup. WeakSets track objects without memory leaks.
 
-**Why It Matters**: WeakMaps power private class data before private fields, DOM element metadata without memory leaks, and object memoization. React uses WeakMaps for fiber reconciliation. Essential for preventing memory leaks in long-running applications.
+**Why It Matters**: WeakMaps power private class data before private fields, DOM element metadata without memory leaks, and object memoization. Frameworks can use WeakMaps for reconciliation. Essential for preventing memory leaks in long-running applications.
 
 ## Example 67: Proxy Typing for Meta-Programming
 
@@ -1679,7 +1679,7 @@ console.log(arr[-2]); // => 4 (second to last)
 
 **Key Takeaway**: Proxies intercept object operations (get, set, has, etc.). Use ProxyHandler for typed handlers. Combine with Reflect API for proper forwarding.
 
-**Why It Matters**: Proxies power Vue 3 reactivity system, validation libraries, observable patterns, and metaprogramming frameworks. Immer uses proxies for immutable state updates. Essential for framework-level transparent interception.
+**Why It Matters**: Proxies power reactivity systems, validation libraries, observable patterns, and metaprogramming frameworks. State management can use proxies for immutable updates. Essential for framework-level transparent interception.
 
 ## Example 68: Reflect API for Meta-Programming
 
@@ -1807,7 +1807,7 @@ console.log("name" in loggedUser); // => "[User] HAS name" then true
 
 **Key Takeaway**: Reflect API provides methods for all interceptable operations. Use with Proxies for proper forwarding. Reflect.ownKeys includes both string and symbol keys.
 
-**Why It Matters**: Reflect API powers framework-level object manipulation, serialization libraries, and validation frameworks. TypeORM uses Reflect for metadata reflection. Essential for building robust Proxy handlers and metaprogramming utilities.
+**Why It Matters**: Reflect API powers framework-level object manipulation, serialization libraries, and validation frameworks. ORMs can use Reflect for metadata reflection. Essential for building robust Proxy handlers and metaprogramming utilities.
 
 ## Example 69: Assertion Functions for Type Narrowing
 
@@ -2167,7 +2167,7 @@ const dogToAnimal: Transformer<Dog, Animal> = animalToDog; // => Valid: wider in
 
 **Key Takeaway**: Use `out` for covariant parameters (output-only). Use `in` for contravariant parameters (input-only). No annotation means invariant (both input and output).
 
-**Why It Matters**: Variance annotations make type relationships explicit, catching incorrect assignments. React uses covariance for props (Producer-like). Event handlers use contravariance (Consumer-like). Essential for type-safe callback and container types.
+**Why It Matters**: Variance annotations make type relationships explicit, catching incorrect assignments. Components can use covariance for props (Producer-like). Event handlers use contravariance (Consumer-like). Essential for type-safe callback and container types.
 
 ## Example 72: Performance Optimization - Type Complexity
 
@@ -2276,9 +2276,9 @@ const config = {
 
 **Why It Matters**: Type complexity directly impacts IDE responsiveness and build times. Large projects with complex types can become unusable without optimization. Essential for maintaining developer productivity in enterprise codebases.
 
-## Example 73: React TypeScript Integration - Hooks and Components
+## Example 73: UI Framework TypeScript Integration - Hooks and Components
 
-Type React components, hooks, and props for type-safe UI development.
+Type UI components, hooks, and props for type-safe UI development.
 
 ```typescript
 import React, { useState, useEffect, useRef, useCallback, useMemo, useContext } from "react";
@@ -2500,7 +2500,7 @@ function UserList() {
 
 **Key Takeaway**: Use `React.FC<Props>` for function components with props. Type hooks explicitly when inference insufficient. Custom hooks use generics for reusability. Context requires explicit typing.
 
-**Why It Matters**: React TypeScript integration catches prop errors, hook dependency issues, and invalid state updates at compile time. Essential for large React applications with hundreds of components. Powers Next.js, Remix, and React Native type safety.
+**Why It Matters**: UI framework TypeScript integration catches prop errors, hook dependency issues, and invalid state updates at compile time. Essential for large applications with hundreds of components. Enables type-safe component development across different UI frameworks.
 
 ## Example 74: Node.js Type Patterns - Streams and Events
 
@@ -2669,7 +2669,7 @@ function handleError(error: unknown): void {
 
 **Key Takeaway**: Type Event Emitters with event map interfaces. Extend stream classes for custom streams. Use global augmentation for process.env typing. Create custom error classes for structured error handling.
 
-**Why It Matters**: Node.js type patterns prevent runtime errors in backend services. Typed streams enable safe data pipeline composition. Event emitter typing catches incorrect event names. Essential for building reliable Node.js microservices and APIs.
+**Why It Matters**: Node.js type patterns prevent runtime errors in backend services. Typed streams enable safe data pipeline composition. Event emitter typing catches incorrect event names. Essential for building reliable microservices and APIs.
 
 ## Example 75: Express Middleware Typing
 
@@ -2864,7 +2864,7 @@ app.delete("/users/:userId", requireRole("admin"), (req: TypedRequest<UserParams
 
 **Key Takeaway**: Use global augmentation to extend Express Request interface. Type route parameters, body, and query with generics. Create type-safe middleware factories. Use 4-parameter signature for error handlers.
 
-**Why It Matters**: Express typing prevents runtime errors from incorrect request property access. Type-safe middleware enables reusable authentication and validation. Essential for building production-grade APIs with Express, Fastify, or Koa.
+**Why It Matters**: Web framework typing prevents runtime errors from incorrect request property access. Type-safe middleware enables reusable authentication and validation. Essential for building production-grade APIs with web frameworks.
 
 ## Example 76: Testing Type Utilities with Conditional Types
 
@@ -3081,7 +3081,7 @@ import { formatDate } from "@utils/date"; // => Resolves to ./src/utils/date
 
 **Key Takeaway**: Enable `strict` for maximum type safety. Use `noUncheckedIndexedAccess` for safer indexed access. Configure `paths` for module aliases. Enable `skipLibCheck` for faster builds.
 
-**Why It Matters**: TSConfig directly impacts type safety and developer experience. Proper configuration catches more bugs at compile time. Path mapping eliminates relative import hell. Essential for professional TypeScript projects.
+**Why It Matters**: TSConfig directly impacts type safety and developer experience. Proper configuration catches more bugs at compile time. Path mapping simplifies import statements. Essential for professional TypeScript projects.
 
 ## Example 78: Module Resolution Strategies
 
@@ -3327,7 +3327,7 @@ function checkTypes(fileNames: string[], options: ts.CompilerOptions): void {
 
 **Key Takeaway**: Use Compiler API to parse, analyze, and transform TypeScript code. Create type checkers for custom linting. Build code generators and migration tools.
 
-**Why It Matters**: Compiler API powers ESLint TypeScript plugin, Prettier, ts-morph, and code generation tools. Essential for building custom linters, formatters, and code transformation tools.
+**Why It Matters**: Compiler API powers linting plugins, formatters, and code generation tools. Essential for building custom linters, formatters, and code transformation tools.
 
 ## Example 80-85: Final Advanced Patterns
 

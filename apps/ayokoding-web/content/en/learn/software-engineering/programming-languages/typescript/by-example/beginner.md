@@ -54,7 +54,7 @@ console.log(numbers[0]); // => Output: 1
 
 **Key Takeaway**: TypeScript adds type annotations (`: type`) to JavaScript variables. The compiler infers types when possible but allows explicit annotations for clarity or when inference isn't available.
 
-**Why It Matters**: Type annotations catch errors at compile time rather than runtime. Microsoft research shows that TypeScript detects 15% of bugs before code runs, preventing production crashes. Large codebases like Visual Studio Code (300K+ lines), Angular, and Slack's Electron app use TypeScript to maintain quality at scale. The compile-time checking means fewer runtime errors, better IDE autocomplete, and safer refactoring compared to JavaScript.
+**Why It Matters**: Type annotations catch errors at compile time rather than runtime. The compile-time checking means fewer runtime errors, better IDE autocomplete, and safer refactoring compared to JavaScript. This prevents production crashes and makes large codebases easier to maintain.
 
 ## Example 2: Functions and Parameter Types
 
@@ -110,7 +110,7 @@ console.log(createUser("Diana", "admin")); // => Output: Diana (admin)
 
 **Key Takeaway**: Use `: type` after parameters and before function body for return types. Optional parameters use `?:` syntax, and default parameters provide values when arguments are omitted.
 
-**Why It Matters**: Typed function signatures prevent entire categories of bugs common in JavaScript—calling functions with wrong argument counts, passing wrong types, or assuming return values that don't exist. In production React apps, typed props prevent passing invalid data to components. In Node.js APIs, typed request handlers catch invalid request parsing before deployment. TypeScript's function overloads enable defining multiple call signatures for flexible APIs while maintaining type safety.
+**Why It Matters**: Typed function signatures prevent entire categories of bugs common in JavaScript—calling functions with wrong argument counts, passing wrong types, or assuming return values that don't exist. Typed props prevent passing invalid data to components. Typed request handlers catch invalid request parsing before deployment. TypeScript's function overloads enable defining multiple call signatures for flexible APIs while maintaining type safety.
 
 ## Example 3: Interfaces for Object Shapes
 
@@ -191,7 +191,7 @@ console.log(calc.add(10, 5)); // => Output: 15
 
 **Key Takeaway**: Interfaces define object contracts with required properties, optional properties (using `?:`), and method signatures. Objects must match the interface structure to satisfy the type.
 
-**Why It Matters**: Interfaces enable structural typing—objects are validated by shape, not inheritance. This powers TypeScript's "duck typing" philosophy: if it walks like a User and talks like a User, it's a User. React's component props are interfaces defining expected data shapes. Express's Request/Response types are interfaces ensuring middleware receives correct objects. Large teams use interfaces as contracts between modules, catching integration bugs at compile time rather than production.
+**Why It Matters**: Interfaces enable structural typing—objects are validated by shape, not inheritance. This powers TypeScript's "duck typing" philosophy: if it walks like a User and talks like a User, it's a User. Component props can be interfaces defining expected data shapes. Request/Response types can be interfaces ensuring middleware receives correct objects. Teams use interfaces as contracts between modules, catching integration bugs at compile time rather than runtime.
 
 ## Example 4: Type Aliases and Union Types
 
@@ -251,7 +251,7 @@ console.log(orderStatus); // => Output: pending
 
 **Key Takeaway**: Type aliases (`type Name = ...`) create reusable type definitions. Union types (`A | B`) allow values to be one of several types. Use `typeof` checks to narrow union types to specific branches.
 
-**Why It Matters**: Union types enable flexible APIs while maintaining type safety. Redux actions use union types to represent different action shapes. API responses use `Success | Error` unions for result types. GraphQL code generators create union types for schema variations. This pattern eliminates defensive programming—instead of checking `if (response.error)` everywhere, TypeScript enforces handling all cases. The type system guides you through every code path, preventing forgotten edge cases that cause production bugs.
+**Why It Matters**: Union types enable flexible APIs while maintaining type safety. Actions can use union types to represent different shapes. API responses can use `Success | Error` unions for result types. Code generators can create union types for schema variations. This pattern eliminates defensive programming—instead of checking `if (response.error)` everywhere, TypeScript enforces handling all cases. The type system guides you through every code path, preventing forgotten edge cases that cause bugs.
 
 ## Example 5: Arrays and Tuples
 
@@ -314,7 +314,7 @@ console.log(products[0].name); // => Output: Laptop
 
 **Key Takeaway**: Arrays hold multiple values of one type (`type[]` or `Array<type>`). Tuples are fixed-length arrays with specific types per position (`[type1, type2]`), useful for multi-value returns.
 
-**Why It Matters**: Tuples solve JavaScript's multi-value return problem without creating wrapper objects. React hooks like `useState` return tuples: `[state, setState]`. Coordinate systems return `[x, y]` tuples. Database queries return `[error, result]` tuples. This pattern is more efficient than objects for simple multi-value returns and enables positional destructuring. Array typing prevents mixing incompatible types—no more `[1, "two", true]` causing runtime errors.
+**Why It Matters**: Tuples solve JavaScript's multi-value return problem without creating wrapper objects. Hooks can return tuples for state management. Coordinate systems return `[x, y]` tuples. Database queries can return `[error, result]` tuples. This pattern is more efficient than objects for simple multi-value returns and enables positional destructuring. Array typing prevents mixing incompatible types—no more `[1, "two", true]` causing runtime errors.
 
 ## Example 6: Enums for Named Constants
 
@@ -396,7 +396,7 @@ console.log(favorite); // => Output: BLUE
 
 **Key Takeaway**: Numeric enums auto-increment from 0 (or custom start). String enums require explicit values. Use enums to replace magic numbers/strings with named constants for better readability.
 
-**Why It Matters**: Enums prevent typos in string literals that cause runtime bugs. API status codes become `HttpStatus.OK` instead of `200`. Redux action types become `ActionType.FETCH_USER` instead of `"FETCH_USER"`. Database connection states become `ConnectionState.Connected` instead of magic numbers. The compiler catches invalid enum values at build time. However, string enums are often preferred over numeric enums in production because they're more debuggable—seeing `"ERROR"` in logs is clearer than `0`.
+**Why It Matters**: Enums prevent typos in string literals that cause runtime bugs. API status codes can become `HttpStatus.OK` instead of `200`. Action types can become `ActionType.FETCH_USER` instead of `"FETCH_USER"`. Connection states can become `ConnectionState.Connected` instead of magic numbers. The compiler catches invalid enum values at build time. String enums are often preferred over numeric enums because they're more debuggable—seeing `"ERROR"` in logs is clearer than `0`.
 
 ## Example 7: Type Assertions and Type Casting
 
@@ -462,7 +462,7 @@ console.log(point.x); // => Output: 10
 
 **Key Takeaway**: Type assertions (`as Type` or `<Type>`) tell TypeScript to treat a value as a specific type. Use `!` to assert non-null values. Use `as const` for readonly objects with literal types.
 
-**Why It Matters**: Type assertions are necessary when working with DOM APIs (TypeScript can't know `getElementById` returns HTMLInputElement), external libraries without types, or migrating JavaScript to TypeScript. However, they're dangerous—they bypass type checking and can cause runtime errors if wrong. Production code minimizes assertions through better typing (generics, type guards, proper interfaces). The non-null assertion `!` is particularly risky and should be avoided unless you're certain the value exists.
+**Why It Matters**: Type assertions are necessary when working with DOM APIs (TypeScript can't know `getElementById` returns HTMLInputElement), external libraries without types, or migrating JavaScript to TypeScript. However, they're dangerous—they bypass type checking and can cause runtime errors if wrong. Minimize assertions through better typing (generics, type guards, proper interfaces). The non-null assertion `!` is particularly risky and should be avoided unless you're certain the value exists.
 
 ## Example 8: Classes and Constructors
 
@@ -535,7 +535,7 @@ console.log(MathHelper.square(5)); // => Output: 25 (call via class name)
 
 **Key Takeaway**: Classes support typed properties, access modifiers (public, private, protected), and constructor parameter properties for concise initialization. Use `static` for class-level members shared across instances.
 
-**Why It Matters**: TypeScript's class system bridges object-oriented programming and JavaScript. Angular uses classes for components and services. NestJS uses classes with decorators for controllers and providers. The access modifiers enforce encapsulation—private properties can't leak outside the class, preventing accidental mutation. Constructor parameter properties reduce boilerplate compared to Java/C#. This makes TypeScript classes more productive while maintaining OOP principles.
+**Why It Matters**: TypeScript's class system bridges object-oriented programming and JavaScript. Frameworks can use classes for components and services. Classes work with decorators for controllers and providers. The access modifiers enforce encapsulation—private properties can't leak outside the class, preventing accidental mutation. Constructor parameter properties reduce boilerplate compared to traditional OOP languages. This makes TypeScript classes more productive while maintaining OOP principles.
 
 ## Example 9: Inheritance and Method Overriding
 
@@ -631,7 +631,7 @@ animals.forEach((animal) => {
 
 **Key Takeaway**: Use `extends` to inherit from a base class. Call `super()` in the constructor before accessing `this`. Override methods by redefining them in the subclass. Polymorphism allows treating subclasses as base class instances.
 
-**Why It Matters**: Inheritance enables code reuse and polymorphic designs. React class components extend `React.Component`. Express middleware classes extend base `Middleware`. Database ORM models extend `Model` base class. However, TypeScript and modern JavaScript increasingly favor composition over inheritance—interfaces and mixins provide more flexibility than deep inheritance hierarchies. Prefer shallow inheritance (1-2 levels) over deep chains that become brittle.
+**Why It Matters**: Inheritance enables code reuse and polymorphic designs. Class components can extend base components. Middleware classes can extend base middleware. ORM models can extend base model classes. However, TypeScript and modern JavaScript increasingly favor composition over inheritance—interfaces and mixins provide more flexibility than deep inheritance hierarchies. Prefer shallow inheritance (1-2 levels) over deep chains that become brittle.
 
 ## Example 10: Abstract Classes
 
@@ -811,7 +811,7 @@ function move2(animal: Bird | Fish): void {
 
 **Key Takeaway**: Literal types restrict variables to specific values. Type narrowing uses `typeof`, `instanceof`, and `in` checks to refine union types. TypeScript's control flow analysis automatically narrows types based on conditional checks.
 
-**Why It Matters**: Literal types create compile-time enums without runtime overhead. Redux action types use literal unions: `type Action = { type: "INCREMENT" } | { type: "DECREMENT" }`. HTTP methods use literals: `type Method = "GET" | "POST" | "PUT" | "DELETE"`. Type narrowing eliminates defensive programming—no need for runtime type checks when TypeScript proves types statically. This pattern is fundamental to discriminated unions in advanced TypeScript.
+**Why It Matters**: Literal types create compile-time enums without runtime overhead. Action types can use literal unions: `type Action = { type: "INCREMENT" } | { type: "DECREMENT" }`. HTTP methods use literals: `type Method = "GET" | "POST" | "PUT" | "DELETE"`. Type narrowing eliminates defensive programming—no need for runtime type checks when TypeScript proves types statically. This pattern is fundamental to discriminated unions in advanced TypeScript.
 
 ## Example 12: Intersection Types
 
@@ -907,7 +907,7 @@ console.log(user2.name); // => Output: Bob
 
 **Key Takeaway**: Intersection types (`A & B`) combine multiple types—the result must satisfy all types simultaneously. Use intersections to extend types with additional properties or combine mixins.
 
-**Why It Matters**: Intersection types enable mixin patterns without inheritance. React HOCs (Higher-Order Components) use intersections to add props: `type EnhancedProps = BaseProps & WithAuth`. Redux connected components combine `OwnProps & StateProps & DispatchProps`. Utility type composition uses intersections: `type ReadonlyPartial<T> = Readonly<T> & Partial<T>`. Unlike union types (which are "either/or"), intersections are "both/and", enabling flexible type composition.
+**Why It Matters**: Intersection types enable mixin patterns without inheritance. Higher-Order Components can use intersections to add props: `type EnhancedProps = BaseProps & WithAuth`. Connected components can combine `OwnProps & StateProps & DispatchProps`. Utility type composition uses intersections: `type ReadonlyPartial<T> = Readonly<T> & Partial<T>`. Unlike union types (which are "either/or"), intersections are "both/and", enabling flexible type composition.
 
 ## Example 13: Type Guards with User-Defined Functions
 
@@ -1580,7 +1580,7 @@ const scoresIndex: ScoresIndex = {
 
 **Key Takeaway**: `Record<K, V>` creates object types with specific key and value types. Use it for dictionaries, maps, and configuration objects. It's more concise than index signatures for specific key sets.
 
-**Why It Matters**: `Record` is the standard pattern for key-value data structures with type safety. Redux state often uses `Record<string, User>` for normalized entities. Configuration systems use `Record<Environment, Config>`. Translation files use `Record<string, string>` for i18n keys. The type ensures all expected keys exist (when using literal unions) or validates value types for dynamic keys.
+**Why It Matters**: `Record` is the standard pattern for key-value data structures with type safety. State management can use `Record<string, User>` for normalized entities. Configuration systems can use `Record<Environment, Config>`. Translation files can use `Record<string, string>` for i18n keys. The type ensures all expected keys exist (when using literal unions) or validates value types for dynamic keys.
 
 ## Example 20: Type Assertions vs Type Guards
 
@@ -1861,7 +1861,7 @@ type Example2 = number | never | boolean; // => Simplifies to number | boolean
 
 **Key Takeaway**: `never` represents impossible values—functions that never return (throw or infinite loop) or unreachable code. Use it in `default` cases for exhaustiveness checking in discriminated unions.
 
-**Why It Matters**: Exhaustiveness checking prevents bugs when adding variants to unions. If you add a new shape type but forget to handle it in `getArea`, the compiler errors immediately. This pattern is crucial for Redux reducers (handling all action types), API response handlers (handling all status codes), and state machines (handling all states). The `never` type makes impossible states unrepresentable, a core tenet of type-safe design.
+**Why It Matters**: Exhaustiveness checking prevents bugs when adding variants to unions. If you add a new shape type but forget to handle it in `getArea`, the compiler errors immediately. This pattern is crucial for action reducers (handling all action types), API response handlers (handling all status codes), and state machines (handling all states). The `never` type makes impossible states unrepresentable, a core tenet of type-safe design.
 
 ## Example 23: unknown Type (Type-Safe any)
 
@@ -2431,7 +2431,7 @@ const config: FlexibleConfig = {
 
 **Key Takeaway**: Index signatures enable dynamic property names with type constraints. Mapped types iterate over property keys to transform types. Use `in keyof` to iterate and `as` for key transformations.
 
-**Why It Matters**: Index signatures handle dynamic data structures (dictionaries, configuration objects, translation maps) while maintaining type safety. Mapped types power TypeScript's utility types (`Partial`, `Readonly`, `Pick`) and enable generic type transformations. This pattern is fundamental to React's generic component props and Redux's normalized state shapes.
+**Why It Matters**: Index signatures handle dynamic data structures (dictionaries, configuration objects, translation maps) while maintaining type safety. Mapped types power TypeScript's utility types (`Partial`, `Readonly`, `Pick`) and enable generic type transformations. This pattern is fundamental to generic component props and normalized state shapes.
 
 ## Example 28: Conditional Types
 
@@ -2519,7 +2519,7 @@ greet(...params); // => Output: Alice is 30
 
 **Key Takeaway**: Conditional types use `T extends U ? X : Y` syntax for type-level conditions. Use `infer` to extract types from complex structures. Conditional types distribute over union types automatically.
 
-**Why It Matters**: Conditional types power advanced type utilities (`ReturnType`, `Parameters`, `NonNullable`). They enable generic libraries to infer types from function signatures, Promise unwrapping, and discriminated union handling. React's prop inference uses conditional types. GraphQL code generators use them to transform schema types. This feature makes TypeScript Turing-complete at the type level.
+**Why It Matters**: Conditional types power advanced type utilities (`ReturnType`, `Parameters`, `NonNullable`). They enable generic libraries to infer types from function signatures, Promise unwrapping, and discriminated union handling. Prop inference can use conditional types. Code generators can use them to transform schema types. This feature makes TypeScript Turing-complete at the type level.
 
 ## Example 29: Recursive Types
 
@@ -2632,7 +2632,7 @@ console.log(partialConfig); // => Output: { database: { host: 'localhost' } }
 
 **Key Takeaway**: Recursive types reference themselves in their definition using type names. Use them for nested structures (trees, lists, JSON). Combine with conditional types for recursive transformations (DeepReadonly, DeepPartial).
 
-**Why It Matters**: Recursive types model real-world nested data—file systems, DOM trees, organizational charts, nested configuration. TypeScript's type system can express arbitrarily deep nesting while maintaining safety. GraphQL schema types use recursive structures. React component trees use recursive prop types. This pattern is essential for data structures where depth is unknown at compile time.
+**Why It Matters**: Recursive types model real-world nested data—file systems, DOM trees, organizational charts, nested configuration. TypeScript's type system can express arbitrarily deep nesting while maintaining safety. Schema types can use recursive structures. Component trees can use recursive prop types. This pattern is essential for data structures where depth is unknown at compile time.
 
 ## Example 30: Const Assertions
 

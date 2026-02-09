@@ -20,18 +20,18 @@ Multi-stage builds use multiple FROM instructions to create optimized production
 ```mermaid
 %% Multi-stage build flow
 graph TD
-    A["Builder Stage<br/>node:18-alpine"] --> B["Install all dependencies<br/>npm ci"]
-    B --> C["Copy source code"]
-    C --> D["Build production bundle<br/>npm run build"]
-    D --> E["Production Stage<br/>node:18-alpine"]
-    E --> F["Install prod dependencies<br/>npm ci --only=production"]
-    F --> G["Copy built artifacts<br/>COPY --from=builder"]
-    G --> H["Final Image<br/>120MB #40;73% smaller#41;"]
+ A["Builder Stage<br/>node:18-alpine"] --> B["Install all dependencies<br/>npm ci"]
+ B --> C["Copy source code"]
+ C --> D["Build production bundle<br/>npm run build"]
+ D --> E["Production Stage<br/>node:18-alpine"]
+ E --> F["Install prod dependencies<br/>npm ci --only=production"]
+ F --> G["Copy built artifacts<br/>COPY --from=builder"]
+ G --> H["Final Image<br/>120MB #40;73% smaller#41;"]
 
-    style A fill:#0173B2,color:#fff
-    style D fill:#DE8F05,color:#fff
-    style E fill:#0173B2,color:#fff
-    style H fill:#029E73,color:#fff
+ style A fill:#0173B2,color:#fff
+ style D fill:#DE8F05,color:#fff
+ style E fill:#0173B2,color:#fff
+ style H fill:#029E73,color:#fff
 ```
 
 ```dockerfile
@@ -50,7 +50,7 @@ RUN npm ci
 # => Installs all dependencies for building
 
 # Copy source code
-COPY . .
+COPY .
 
 # Build production bundle
 RUN npm run build
@@ -79,8 +79,8 @@ COPY --from=builder /app/dist ./dist
 
 # Non-root user for security
 RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001 && \
-    chown -R nodejs:nodejs /app
+ adduser -S nodejs -u 1001 && \
+ chown -R nodejs:nodejs /app
 # => Creates non-privileged user
 # => Changes ownership of /app
 
@@ -108,9 +108,9 @@ docker build -t my-app:multi-stage .
 
 # Compare with single-stage image size
 docker images my-app
-# => REPOSITORY   TAG           SIZE
-# => my-app       single-stage  450MB (includes source, devDependencies, build tools)
-# => my-app       multi-stage   120MB (only runtime + production bundle)
+# => REPOSITORY TAG SIZE
+# => my-app single-stage 450MB (includes source, devDependencies, build tools)
+# => my-app multi-stage 120MB (only runtime + production bundle)
 # => 73% size reduction!
 
 # Verify production image contents
@@ -132,7 +132,7 @@ docker run --rm my-app:multi-stage whoami
 
 **Key Takeaway**: Multi-stage builds dramatically reduce image size by excluding build tools and source code from final images. Use `COPY --from=<stage>` to transfer only necessary artifacts between stages. Always run production containers as non-root users.
 
-**Why It Matters**: Multi-stage builds solve the critical trade-off between developer convenience (full toolchains for building) and production efficiency (minimal runtime footprints). A single Dockerfile can reduce image sizes from 450MB to 120MB (73% reduction), directly cutting storage costs, deployment times, and attack surface. Running as non-root prevents privilege escalation attacks that could compromise the entire host system if a container is breached.
+**Why It Matters**: Multi-stage builds solve the critical trade-off between developer convenience (full toolchains for building) and production efficiency (minimal runtime footprints). A single Dockerfile can reduce image sizes from 450MB to 120MB ( Running as non-root prevents privilege escalation attacks that could compromise the entire host system if a container is breached.
 
 ---
 
@@ -159,15 +159,15 @@ RUN go mod download
 # => Downloads Go dependencies
 
 # Copy source code
-COPY . .
+COPY .
 
 # Build binary with version information
 RUN CGO_ENABLED=0 GOOS=linux go build \
-    -ldflags="-X main.Version=${VERSION} \
-              -X main.BuildDate=${BUILD_DATE} \
-              -X main.GitCommit=${GIT_COMMIT} \
-              -w -s" \
-    -o /app/server ./cmd/server
+ -ldflags="-X main.Version=${VERSION} \
+ -X main.BuildDate=${BUILD_DATE} \
+ -X main.GitCommit=${GIT_COMMIT} \
+ -w -s" \
+ -o /app/server ./cmd/server
 # => Compiles Go binary with embedded version metadata
 # => -ldflags=-w -s strips debug symbols (smaller binary)
 # => CGO_ENABLED=0 creates fully static binary
@@ -184,7 +184,7 @@ RUN apk --no-cache add ca-certificates
 
 # Create non-root user
 RUN addgroup -g 1001 app && \
-    adduser -D -u 1001 -G app app
+ adduser -D -u 1001 -G app app
 
 WORKDIR /app
 
@@ -204,8 +204,8 @@ ARG VERSION
 ARG BUILD_DATE
 ARG GIT_COMMIT
 LABEL version="${VERSION}" \
-      build_date="${BUILD_DATE}" \
-      git_commit="${GIT_COMMIT}"
+ build_date="${BUILD_DATE}" \
+ git_commit="${GIT_COMMIT}"
 # => Metadata queryable via docker inspect
 
 CMD ["./server"]
@@ -214,11 +214,11 @@ CMD ["./server"]
 ```bash
 # Build with version information
 docker build \
-  --build-arg VERSION=1.2.3 \
-  --build-arg BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
-  --build-arg GIT_COMMIT=$(git rev-parse --short HEAD) \
-  -t my-go-app:1.2.3 \
-  .
+ --build-arg VERSION=1.2.3 \
+ --build-arg BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
+ --build-arg GIT_COMMIT=$(git rev-parse --short HEAD) \
+ -t my-go-app:1.2.3 \
+ .
 # => Embeds version metadata in binary and image labels
 
 # Verify version embedded in binary
@@ -230,14 +230,14 @@ docker run --rm my-go-app:1.2.3 ./server --version
 # Check image labels
 docker inspect my-go-app:1.2.3 --format='{{json .Config.Labels}}' | jq
 # => {
-# =>   "version": "1.2.3",
-# =>   "build_date": "2025-12-29T10:50:00Z",
-# =>   "git_commit": "abc1234"
+# => "version": "1.2.3",
+# => "build_date": "2025-12-29T10:50:00Z",
+# => "git_commit": "abc1234"
 # => }
 
 # Compare image sizes
 docker images | grep my-go-app
-# => my-go-app   1.2.3   15MB (alpine + binary)
+# => my-go-app 1.2.3 15MB (alpine + binary)
 # => If built from golang base: ~350MB
 # => 96% size reduction!
 
@@ -262,20 +262,20 @@ Complex applications may need multiple languages or tools during build. Multi-st
 ```mermaid
 %% Polyglot multi-stage build
 graph TD
-    A["Frontend Builder<br/>node:18-alpine"] --> D["Production Stage<br/>nginx:alpine"]
-    B["Backend Builder<br/>golang:1.21-alpine"] --> D
-    C["Docs Builder<br/>python:3.11-slim"] --> D
-    A --> A1["npm run build<br/>React/Vue/Angular"]
-    B --> B1["go build<br/>API server binary"]
-    C --> C1["mkdocs build<br/>Static docs site"]
-    A1 --> D1["/usr/share/nginx/html/"]
-    B1 --> D2["/usr/local/bin/server"]
-    C1 --> D3["/usr/share/nginx/html/docs/"]
+ A["Frontend Builder<br/>node:18-alpine"] --> D["Production Stage<br/>nginx:alpine"]
+ B["Backend Builder<br/>golang:1.21-alpine"] --> D
+ C["Docs Builder<br/>python:3.11-slim"] --> D
+ A --> A1["npm run build<br/>React/Vue/Angular"]
+ B --> B1["go build<br/>API server binary"]
+ C --> C1["mkdocs build<br/>Static docs site"]
+ A1 --> D1["/usr/share/nginx/html/"]
+ B1 --> D2["/usr/local/bin/server"]
+ C1 --> D3["/usr/share/nginx/html/docs/"]
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#0173B2,color:#fff
-    style C fill:#0173B2,color:#fff
-    style D fill:#029E73,color:#fff
+ style A fill:#0173B2,color:#fff
+ style B fill:#0173B2,color:#fff
+ style C fill:#0173B2,color:#fff
+ style D fill:#029E73,color:#fff
 ```
 
 ```dockerfile
@@ -368,27 +368,27 @@ kill $BACKEND_PID $NGINX_PID
 ```nginx
 # File: nginx.conf
 server {
-    listen 80;
+ listen 80;
 
-    # Frontend SPA
-    location / {
-        root /usr/share/nginx/html;
-        try_files $uri $uri/ /index.html;
-    }
+ # Frontend SPA
+ location / {
+ root /usr/share/nginx/html;
+ try_files $uri $uri/ /index.html;
+ }
 
-    # API proxy to backend
-    location /api/ {
-        proxy_pass http://localhost:8080/;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-    }
+ # API proxy to backend
+ location /api/ {
+ proxy_pass http://localhost:8080/;
+ proxy_http_version 1.1;
+ proxy_set_header Host $host;
+ proxy_set_header X-Real-IP $remote_addr;
+ }
 
-    # API documentation
-    location /docs/ {
-        alias /usr/share/nginx/html/docs/;
-        try_files $uri $uri/ /docs/index.html;
-    }
+ # API documentation
+ location /docs/ {
+ alias /usr/share/nginx/html/docs/;
+ try_files $uri $uri/ /docs/index.html;
+ }
 }
 ```
 
@@ -402,8 +402,8 @@ docker build -t fullstack-app .
 
 # Check final image size
 docker images fullstack-app
-# => REPOSITORY       TAG      SIZE
-# => fullstack-app    latest   45MB
+# => REPOSITORY TAG SIZE
+# => fullstack-app latest 45MB
 # => Nginx base: 23MB, frontend assets: 15MB, backend binary: 7MB
 
 # Run full-stack container
@@ -414,13 +414,13 @@ docker run -d -p 8080:80 --name fullstack fullstack-app
 
 # Test all components
 curl http://localhost:8080/
-# => <!DOCTYPE html>...(frontend SPA)
+# => <!DOCTYPE html>..(frontend SPA)
 
 curl http://localhost:8080/api/health
 # => {"status":"ok","version":"1.0.0"} (backend API)
 
 curl http://localhost:8080/docs/
-# => <!DOCTYPE html>...(MkDocs documentation)
+# => <!DOCTYPE html>..(MkDocs documentation)
 
 # Verify no build tools in final image
 docker run --rm fullstack-app which node
@@ -447,16 +447,16 @@ Build-time secrets (API keys, credentials) needed during build should never be c
 
 ```mermaid
 graph TD
-    A["Host Secret File<br/>.npmrc"] --> B["--mount=type=secret"]
-    B --> C["Mounted in RUN"]
-    C --> D["Secret Available<br/>/run/secrets/npmrc"]
-    D --> E["npm ci executes"]
-    E --> F["RUN completes"]
-    F --> G["Secret Removed<br/>NOT in image layer"]
+ A["Host Secret File<br/>.npmrc"] --> B["--mount=type=secret"]
+ B --> C["Mounted in RUN"]
+ C --> D["Secret Available<br/>/run/secrets/npmrc"]
+ D --> E["npm ci executes"]
+ E --> F["RUN completes"]
+ F --> G["Secret Removed<br/>NOT in image layer"]
 
-    style A fill:#0173B2,color:#fff
-    style D fill:#DE8F05,color:#fff
-    style G fill:#029E73,color:#fff
+ style A fill:#0173B2,color:#fff
+ style D fill:#DE8F05,color:#fff
+ style G fill:#029E73,color:#fff
 ```
 
 ```dockerfile
@@ -474,17 +474,17 @@ COPY package*.json ./
 
 # Mount secret during npm install (doesn't persist in layer)
 RUN --mount=type=secret,id=npmrc,target=/root/.npmrc \
-    npm ci
+ npm ci
 # => Mounts secret file at /root/.npmrc during RUN only
 # => Secret is NOT stored in image layer
 # => Secret file is removed after RUN completes
 
-COPY . .
+COPY .
 
 # Build with API key from secret
 RUN --mount=type=secret,id=build_api_key \
-    export BUILD_API_KEY=$(cat /run/secrets/build_api_key) && \
-    npm run build
+ export BUILD_API_KEY=$(cat /run/secrets/build_api_key) && \
+ npm run build
 # => Reads secret from /run/secrets/<id>
 # => Secret available only during this RUN command
 
@@ -516,9 +516,9 @@ EOF
 
 # Build with secrets (BuildKit required)
 DOCKER_BUILDKIT=1 docker build \
-  --secret id=npmrc,src=.npmrc \
-  --secret id=build_api_key,src=build_api_key.txt \
-  -t secure-app .
+ --secret id=npmrc,src=.npmrc \
+ --secret id=build_api_key,src=build_api_key.txt \
+ -t secure-app .
 # => Mounts secrets during build without persisting in layers
 
 # Verify secrets are NOT in image layers
@@ -527,14 +527,14 @@ docker history secure-app --no-trunc | grep -i "secret\|npmrc\|api_key"
 
 # Alternative: Use environment secrets
 DOCKER_BUILDKIT=1 docker build \
-  --secret id=build_api_key,env=BUILD_API_KEY \
-  -t secure-app .
+ --secret id=build_api_key,env=BUILD_API_KEY \
+ -t secure-app .
 # => Reads secret from BUILD_API_KEY environment variable on host
 
 # Environment variable secret (cleaner for CI/CD)
 BUILD_API_KEY=secret-value DOCKER_BUILDKIT=1 docker build \
-  --secret id=build_api_key,env=BUILD_API_KEY \
-  -t secure-app .
+ --secret id=build_api_key,env=BUILD_API_KEY \
+ -t secure-app .
 
 # Inspect final image for leaked secrets (security check)
 docker save secure-app | tar -xOf - | grep -a "secret_token"
@@ -544,9 +544,9 @@ docker save secure-app | tar -xOf - | grep -a "secret_token"
 cat > Dockerfile.insecure << 'EOF'
 FROM node:18-alpine
 WORKDIR /app
-COPY .npmrc /root/.npmrc  # BAD! Secret persists in layer
+COPY .npmrc /root/.npmrc # BAD! Secret persists in layer
 RUN npm ci
-RUN rm /root/.npmrc  # Still in previous layer!
+RUN rm /root/.npmrc # Still in previous layer!
 EOF
 
 docker build -f Dockerfile.insecure -t insecure-app .
@@ -570,18 +570,18 @@ Optimize Docker Compose builds with caching strategies, parallel builds, and Bui
 ```mermaid
 %% Build caching flow
 graph TD
-    A["Local Build"] --> B{Cache Hit?}
-    B -->|Yes| C["Reuse Cached Layers<br/>2 seconds"]
-    B -->|No| D["Pull Cache from Registry"]
-    D --> E["Build with Remote Cache"]
-    E --> F["Push New Layers to Registry"]
-    F --> G["Final Image<br/>15 seconds vs 2m30s"]
-    C --> G
+ A["Local Build"] --> B{Cache Hit?}
+ B -->|Yes| C["Reuse Cached Layers<br/>2 seconds"]
+ B -->|No| D["Pull Cache from Registry"]
+ D --> E["Build with Remote Cache"]
+ E --> F["Push New Layers to Registry"]
+ F --> G["Final Image<br/>15 seconds vs 2m30s"]
+ C --> G
 
-    style A fill:#0173B2,color:#fff
-    style C fill:#029E73,color:#fff
-    style D fill:#DE8F05,color:#fff
-    style G fill:#029E73,color:#fff
+ style A fill:#0173B2,color:#fff
+ style C fill:#029E73,color:#fff
+ style D fill:#DE8F05,color:#fff
+ style G fill:#029E73,color:#fff
 ```
 
 ```yaml
@@ -590,34 +590,34 @@ graph TD
 version: "3.8"
 
 services:
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      cache_from:
-        - myregistry/frontend:latest
-        - myregistry/frontend:${GIT_BRANCH:-main}
-        # => Uses remote images as cache sources
-        # => Speeds up builds by reusing layers
-      args:
-        NODE_ENV: ${NODE_ENV:-production}
-      target: ${BUILD_TARGET:-production}
-      # => Allows switching between dev/prod stages
-    image: myregistry/frontend:${GIT_COMMIT:-latest}
-    # => Tags with git commit for traceability
+ frontend:
+ build:
+ context: ./frontend
+ dockerfile: Dockerfile
+ cache_from:
+ - myregistry/frontend:latest
+ - myregistry/frontend:${GIT_BRANCH:-main}
+ # => Uses remote images as cache sources
+ # => Speeds up builds by reusing layers
+ args:
+ NODE_ENV: ${NODE_ENV:-production}
+ target: ${BUILD_TARGET:-production}
+ # => Allows switching between dev/prod stages
+ image: myregistry/frontend:${GIT_COMMIT:-latest}
+ # => Tags with git commit for traceability
 
-  backend:
-    build:
-      context: ./backend
-      cache_from:
-        - myregistry/backend:latest
-      args:
-        GO_VERSION: 1.21
-    image: myregistry/backend:${GIT_COMMIT:-latest}
+ backend:
+ build:
+ context: ./backend
+ cache_from:
+ - myregistry/backend:latest
+ args:
+ GO_VERSION: 1.21
+ image: myregistry/backend:${GIT_COMMIT:-latest}
 
-  database:
-    image: postgres:15-alpine
-    # => No build needed - uses pre-built image
+ database:
+ image: postgres:15-alpine
+ # => No build needed - uses pre-built image
 ```
 
 ```bash
@@ -674,13 +674,13 @@ EOF
 
 # Measure build time
 time docker compose build frontend
-# => real    0m15.234s (with cache)
-# => real    2m30.123s (without cache)
+# => real 0m15.234s (with cache)
+# => real 2m30.123s (without cache)
 
 # Use BuildKit cache mounts for dependencies
 cat >> frontend/Dockerfile << 'EOF'
 RUN --mount=type=cache,target=/root/.npm \
-    npm ci
+ npm ci
 EOF
 # => Caches npm packages across builds
 # => Dramatically speeds up dependency installation
@@ -700,18 +700,18 @@ Health checks determine when services are ready to receive traffic. They enable 
 
 ```mermaid
 graph TD
-    A["Container Start"] --> B["Starting<br/>start_period grace"]
-    B --> C{Health Check}
-    C -->|Pass| D["Healthy<br/>Service Ready"]
-    C -->|Fail| E{Retries Left?}
-    E -->|Yes| F["Wait interval"]
-    F --> C
-    E -->|No| G["Unhealthy<br/>Restart Container"]
-    G --> A
+ A["Container Start"] --> B["Starting<br/>start_period grace"]
+ B --> C{Health Check}
+ C -->|Pass| D["Healthy<br/>Service Ready"]
+ C -->|Fail| E{Retries Left?}
+ E -->|Yes| F["Wait interval"]
+ F --> C
+ E -->|No| G["Unhealthy<br/>Restart Container"]
+ G --> A
 
-    style A fill:#0173B2,color:#fff
-    style D fill:#029E73,color:#fff
-    style G fill:#CC78BC,color:#fff
+ style A fill:#0173B2,color:#fff
+ style D fill:#029E73,color:#fff
+ style G fill:#CC78BC,color:#fff
 ```
 
 ```yaml
@@ -721,93 +721,93 @@ version: "3.8"
 # => Docker Compose file version
 
 services:
-  database:
-    image: postgres:15-alpine
-    # => PostgreSQL 15 on Alpine Linux base
-    environment:
-      POSTGRES_PASSWORD: secret
-      # => Database superuser password
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      # => Executes pg_isready command to check PostgreSQL status
-      # => Returns 0 if accepting connections, non-zero if not ready
-      interval: 10s
-      # => Run health check every 10 seconds
-      timeout: 5s
-      # => Mark check as failed if it takes longer than 5 seconds
-      retries: 5
-      # => Mark service unhealthy after 5 consecutive check failures
-      start_period: 30s
-      # => Grace period allowing database initialization before health checks count
-      # => Failed checks during this period don't count toward retries
+ database:
+ image: postgres:15-alpine
+ # => PostgreSQL 15 on Alpine Linux base
+ environment:
+ POSTGRES_PASSWORD: secret
+ # => Database superuser password
+ healthcheck:
+ test: ["CMD-SHELL", "pg_isready -U postgres"]
+ # => Executes pg_isready command to check PostgreSQL status
+ # => Returns 0 if accepting connections, non-zero if not ready
+ interval: 10s
+ # => Run health check every 10 seconds
+ timeout: 5s
+ # => Mark check as failed if it takes longer than 5 seconds
+ retries: 5
+ # => Mark service unhealthy after 5 consecutive check failures
+ start_period: 30s
+ # => Grace period allowing database initialization before health checks count
+ # => Failed checks during this period don't count toward retries
 
-  redis:
-    image: redis:7-alpine
-    # => Redis 7 key-value cache on Alpine
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      # => Executes redis-cli ping command
-      # => Returns PONG if Redis is responsive
-      interval: 5s
-      # => Check every 5 seconds (faster than database)
-      timeout: 3s
-      # => Redis should respond quickly
-      retries: 3
-      # => Mark unhealthy after 3 failures
-      start_period: 10s
-      # => Redis starts faster than PostgreSQL
+ redis:
+ image: redis:7-alpine
+ # => Redis 7 key-value cache on Alpine
+ healthcheck:
+ test: ["CMD", "redis-cli", "ping"]
+ # => Executes redis-cli ping command
+ # => Returns PONG if Redis is responsive
+ interval: 5s
+ # => Check every 5 seconds (faster than database)
+ timeout: 3s
+ # => Redis should respond quickly
+ retries: 3
+ # => Mark unhealthy after 3 failures
+ start_period: 10s
+ # => Redis starts faster than PostgreSQL
 
-  api:
-    build: ./api
-    # => Builds API service from ./api directory
-    depends_on:
-      database:
-        condition: service_healthy
-        # => API waits for database health check to pass
-        # => Prevents connection errors during startup
-      redis:
-        condition: service_healthy
-        # => API waits for Redis to be ready
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
-      # => HTTP GET request to application health endpoint
-      # => -f flag makes curl fail on HTTP errors (4xx, 5xx)
-      interval: 15s
-      # => Check every 15 seconds
-      timeout: 10s
-      # => Allow up to 10 seconds for health endpoint response
-      retries: 3
-      # => Mark unhealthy after 3 consecutive failures
-      start_period: 40s
-      # => API needs time to connect to database and initialize
-    environment:
-      DATABASE_URL: postgresql://postgres:secret@database:5432/mydb
-      # => Database connection string using service name "database"
-      REDIS_URL: redis://redis:6379
-      # => Redis connection using service name "redis"
+ api:
+ build: ./api
+ # => Builds API service from ./api directory
+ depends_on:
+ database:
+ condition: service_healthy
+ # => API waits for database health check to pass
+ # => Prevents connection errors during startup
+ redis:
+ condition: service_healthy
+ # => API waits for Redis to be ready
+ healthcheck:
+ test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+ # => HTTP GET request to application health endpoint
+ # => -f flag makes curl fail on HTTP errors (4xx, 5xx)
+ interval: 15s
+ # => Check every 15 seconds
+ timeout: 10s
+ # => Allow up to 10 seconds for health endpoint response
+ retries: 3
+ # => Mark unhealthy after 3 consecutive failures
+ start_period: 40s
+ # => API needs time to connect to database and initialize
+ environment:
+ DATABASE_URL: postgresql://postgres:secret@database:5432/mydb
+ # => Database connection string using service name "database"
+ REDIS_URL: redis://redis:6379
+ # => Redis connection using service name "redis"
 
-  web:
-    image: nginx:alpine
-    # => Nginx web server on Alpine
-    depends_on:
-      api:
-        condition: service_healthy
-        # => Nginx starts only after API is healthy
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
-      # => wget downloads health endpoint without saving (--spider)
-      # => --quiet suppresses output, --tries=1 attempts once
-      interval: 10s
-      # => Check every 10 seconds
-      timeout: 5s
-      # => Nginx should respond quickly
-      retries: 3
-      # => Unhealthy after 3 failures
-      start_period: 20s
-      # => Nginx startup time
-    ports:
-      - "8080:80"
-      # => Expose Nginx on host port 8080
+ web:
+ image: nginx:alpine
+ # => Nginx web server on Alpine
+ depends_on:
+ api:
+ condition: service_healthy
+ # => Nginx starts only after API is healthy
+ healthcheck:
+ test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+ # => wget downloads health endpoint without saving (--spider)
+ # => --quiet suppresses output, --tries=1 attempts once
+ interval: 10s
+ # => Check every 10 seconds
+ timeout: 5s
+ # => Nginx should respond quickly
+ retries: 3
+ # => Unhealthy after 3 failures
+ start_period: 20s
+ # => Nginx startup time
+ ports:
+ - "8080:80"
+ # => Expose Nginx on host port 8080
 ```
 
 ```javascript
@@ -863,36 +863,36 @@ docker compose up -d
 
 # Monitor health status in real-time
 watch -n 1 'docker compose ps'
-# => NAME      STATUS                    HEALTH
-# => database  Up 35 seconds             healthy (5/5)
-# => redis     Up 35 seconds             healthy (7/7)
-# => api       Up 10 seconds             starting (health: starting)
-# => web       Created                   (waiting for api)
+# => NAME STATUS HEALTH
+# => database Up 35 seconds healthy (5/5)
+# => redis Up 35 seconds healthy (7/7)
+# => api Up 10 seconds starting (health: starting)
+# => web Created (waiting for api)
 
 # Check health check logs
 docker inspect myproject-database-1 --format='{{json .State.Health}}' | jq
 # => {
-# =>   "Status": "healthy",
-# =>   "FailingStreak": 0,
-# =>   "Log": [
-# =>     {
-# =>       "Start": "2025-12-29T11:00:00Z",
-# =>       "End": "2025-12-29T11:00:00Z",
-# =>       "ExitCode": 0,
-# =>       "Output": "accepting connections\n"
-# =>     }
-# =>   ]
+# => "Status": "healthy",
+# => "FailingStreak": 0,
+# => "Log": [
+# => {
+# => "Start": "2025-12-29T11:00:00Z",
+# => "End": "2025-12-29T11:00:00Z",
+# => "ExitCode": 0,
+# => "Output": "accepting connections\n"
+# => }
+# => ]
 # => }
 
 # Test health endpoint manually
 curl http://localhost:8080/health
 # => {
-# =>   "status": "healthy",
-# =>   "timestamp": "2025-12-29T11:00:00Z",
-# =>   "dependencies": {
-# =>     "database": "up",
-# =>     "redis": "up"
-# =>   }
+# => "status": "healthy",
+# => "timestamp": "2025-12-29T11:00:00Z",
+# => "dependencies": {
+# => "database": "up",
+# => "redis": "up"
+# => }
 # => }
 
 # Simulate database failure
@@ -903,10 +903,10 @@ docker compose pause database
 sleep 30
 
 docker compose ps
-# => NAME      STATUS        HEALTH
-# => database  Up (Paused)   unhealthy
-# => api       Up            unhealthy (database check fails)
-# => web       Up            healthy (Nginx still serves)
+# => NAME STATUS HEALTH
+# => database Up (Paused) unhealthy
+# => api Up unhealthy (database check fails)
+# => web Up healthy (Nginx still serves)
 
 # Resume database
 docker compose unpause database
@@ -931,24 +931,24 @@ Combine health checks, restart policies, and dependencies for resilient multi-se
 
 ```mermaid
 graph TD
-    A["Database Starts"] --> B{Health Check}
-    B -->|Pass| C["Database Healthy"]
-    C --> D["Queue Starts"]
-    D --> E{Queue Health Check}
-    E -->|Pass| F["Queue Healthy"]
-    F --> G["Worker Starts"]
-    G --> H["All Services Running"]
+ A["Database Starts"] --> B{Health Check}
+ B -->|Pass| C["Database Healthy"]
+ C --> D["Queue Starts"]
+ D --> E{Queue Health Check}
+ E -->|Pass| F["Queue Healthy"]
+ F --> G["Worker Starts"]
+ G --> H["All Services Running"]
 
-    B -->|Fail| I["Restart Database<br/>restart: always"]
-    I --> A
-    E -->|Fail| J["Restart Queue<br/>restart: unless-stopped"]
-    J --> D
+ B -->|Fail| I["Restart Database<br/>restart: always"]
+ I --> A
+ E -->|Fail| J["Restart Queue<br/>restart: unless-stopped"]
+ J --> D
 
-    style C fill:#029E73,color:#fff
-    style F fill:#029E73,color:#fff
-    style H fill:#0173B2,color:#fff
-    style I fill:#CC78BC,color:#fff
-    style J fill:#CC78BC,color:#fff
+ style C fill:#029E73,color:#fff
+ style F fill:#029E73,color:#fff
+ style H fill:#0173B2,color:#fff
+ style I fill:#CC78BC,color:#fff
+ style J fill:#CC78BC,color:#fff
 ```
 
 ```yaml
@@ -957,73 +957,73 @@ graph TD
 version: "3.8"
 
 services:
-  database:
-    image: postgres:15-alpine
-    restart: always
-    # => Restarts on any failure or Docker restart
-    environment:
-      POSTGRES_PASSWORD: secret
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-    volumes:
-      - db-data:/var/lib/postgresql/data
-      # => Data persists across restarts
+ database:
+ image: postgres:15-alpine
+ restart: always
+ # => Restarts on any failure or Docker restart
+ environment:
+ POSTGRES_PASSWORD: secret
+ healthcheck:
+ test: ["CMD-SHELL", "pg_isready"]
+ interval: 10s
+ timeout: 5s
+ retries: 5
+ start_period: 30s
+ volumes:
+ - db-data:/var/lib/postgresql/data
+ # => Data persists across restarts
 
-  message-queue:
-    image: rabbitmq:3-management-alpine
-    restart: unless-stopped
-    # => Restarts on failure but not if manually stopped
-    healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "ping"]
-      interval: 15s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+ message-queue:
+ image: rabbitmq:3-management-alpine
+ restart: unless-stopped
+ # => Restarts on failure but not if manually stopped
+ healthcheck:
+ test: ["CMD", "rabbitmq-diagnostics", "ping"]
+ interval: 15s
+ timeout: 10s
+ retries: 3
+ start_period: 40s
 
-  worker:
-    build: ./worker
-    restart: on-failure:3
-    # => Restarts up to 3 times on failure
-    # => Gives up after 3 consecutive failures
-    depends_on:
-      database:
-        condition: service_healthy
-      message-queue:
-        condition: service_healthy
-    environment:
-      DATABASE_URL: postgresql://postgres:secret@database:5432/jobs
-      RABBITMQ_URL: amqp://guest:guest@message-queue:5672
-    healthcheck:
-      test: ["CMD", "pgrep", "-f", "worker"]
-      # => Checks if worker process is running
-      interval: 20s
-      timeout: 5s
-      retries: 2
-      start_period: 60s
+ worker:
+ build: ./worker
+ restart: on-failure:3
+ # => Restarts up to 3 times on failure
+ # => Gives up after 3 consecutive failures
+ depends_on:
+ database:
+ condition: service_healthy
+ message-queue:
+ condition: service_healthy
+ environment:
+ DATABASE_URL: postgresql://postgres:secret@database:5432/jobs
+ RABBITMQ_URL: amqp://guest:guest@message-queue:5672
+ healthcheck:
+ test: ["CMD", "pgrep", "-f", "worker"]
+ # => Checks if worker process is running
+ interval: 20s
+ timeout: 5s
+ retries: 2
+ start_period: 60s
 
-  api:
-    build: ./api
-    restart: unless-stopped
-    depends_on:
-      database:
-        condition: service_healthy
-      message-queue:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
-      interval: 15s
-      timeout: 5s
-      retries: 3
-      start_period: 30s
-    ports:
-      - "3000:3000"
+ api:
+ build: ./api
+ restart: unless-stopped
+ depends_on:
+ database:
+ condition: service_healthy
+ message-queue:
+ condition: service_healthy
+ healthcheck:
+ test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+ interval: 15s
+ timeout: 5s
+ retries: 3
+ start_period: 30s
+ ports:
+ - "3000:3000"
 
 volumes:
-  db-data:
+ db-data:
 ```
 
 ```bash
@@ -1106,15 +1106,15 @@ CPU limits prevent containers from monopolizing host CPU resources. They ensure 
 
 ```mermaid
 graph TD
-    A["Host CPU: 8 cores"] --> B["video-encoder<br/>Limit: 2.0 cores<br/>Reserved: 0.5 cores"]
-    A --> C["api<br/>Limit: 1.0 core<br/>Reserved: 0.25 cores"]
-    A --> D["database<br/>Limit: 4.0 cores<br/>Reserved: 1.0 core"]
-    A --> E["Remaining: 1.0 core<br/>Available for bursting"]
+ A["Host CPU: 8 cores"] --> B["video-encoder<br/>Limit: 2.0 cores<br/>Reserved: 0.5 cores"]
+ A --> C["api<br/>Limit: 1.0 core<br/>Reserved: 0.25 cores"]
+ A --> D["database<br/>Limit: 4.0 cores<br/>Reserved: 1.0 core"]
+ A --> E["Remaining: 1.0 core<br/>Available for bursting"]
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#fff
-    style C fill:#029E73,color:#fff
-    style D fill:#029E73,color:#fff
+ style A fill:#0173B2,color:#fff
+ style B fill:#DE8F05,color:#fff
+ style C fill:#029E73,color:#fff
+ style D fill:#029E73,color:#fff
 ```
 
 ```yaml
@@ -1123,84 +1123,84 @@ graph TD
 version: "3.8"
 
 services:
-  # CPU-intensive task (limited)
-  video-encoder:
-    image: my-encoder
-    deploy:
-      resources:
-        limits:
-          cpus: "2.0"
-          # => Maximum 2 CPU cores
-          # => Can burst to 2 cores max
-        reservations:
-          cpus: "0.5"
-          # => Guaranteed 0.5 CPU cores minimum
-          # => Scheduler ensures this baseline
-    command: encode --input video.mp4 --output compressed.mp4
+ # CPU-intensive task (limited)
+ video-encoder:
+ image: my-encoder
+ deploy:
+ resources:
+ limits:
+ cpus: "2.0"
+ # => Maximum 2 CPU cores
+ # => Can burst to 2 cores max
+ reservations:
+ cpus: "0.5"
+ # => Guaranteed 0.5 CPU cores minimum
+ # => Scheduler ensures this baseline
+ command: encode --input video.mp4 --output compressed.mp4
 
-  # Web API (moderate CPU)
-  api:
-    image: my-api
-    deploy:
-      resources:
-        limits:
-          cpus: "1.0"
-          # => Maximum 1 CPU core
-        reservations:
-          cpus: "0.25"
-          # => Guaranteed 0.25 CPU cores
-    ports:
-      - "3000:3000"
+ # Web API (moderate CPU)
+ api:
+ image: my-api
+ deploy:
+ resources:
+ limits:
+ cpus: "1.0"
+ # => Maximum 1 CPU core
+ reservations:
+ cpus: "0.25"
+ # => Guaranteed 0.25 CPU cores
+ ports:
+ - "3000:3000"
 
-  # Background worker (low priority)
-  worker:
-    image: my-worker
-    deploy:
-      resources:
-        limits:
-          cpus: "0.5"
-          # => Maximum 0.5 CPU cores (50% of 1 core)
-        reservations:
-          cpus: "0.1"
-          # => Guaranteed 0.1 CPU cores minimum
-    # CPU shares for relative priority
-    cpu_shares: 512
-    # => Default is 1024
-    # => Half the priority of default containers
+ # Background worker (low priority)
+ worker:
+ image: my-worker
+ deploy:
+ resources:
+ limits:
+ cpus: "0.5"
+ # => Maximum 0.5 CPU cores (50% of 1 core)
+ reservations:
+ cpus: "0.1"
+ # => Guaranteed 0.1 CPU cores minimum
+ # CPU shares for relative priority
+ cpu_shares: 512
+ # => Default is 1024
+ # => Half the priority of default containers
 ```
 
 ```bash
 # Run containers with CPU limits (requires Docker Swarm mode or docker run)
 docker run -d --name encoder \
-  --cpus="2.0" \
-  --cpu-shares=1024 \
-  my-encoder
+ --cpus="2.0" \
+ --cpu-shares=1024 \
+ my-encoder
 # => Limited to 2 CPU cores maximum
 # => --cpu-shares sets relative CPU priority
 
 # Check CPU usage in real-time
 docker stats encoder
-# => CONTAINER   CPU %    MEM USAGE / LIMIT
-# => encoder     200.00%  1.5GiB / 8GiB
+# => CONTAINER CPU % MEM USAGE / LIMIT
+# => encoder 200.00% 1.5GiB / 8GiB
 # => CPU % capped at 200% (2 cores)
 
 # Run CPU stress test inside container
 docker exec encoder sh -c 'for i in $(seq 1 8); do
-  sh -c "while true; do :; done" &
+ sh -c "while true; do :; done" &
 done'
 # => Spawns 8 infinite loops (tries to use all CPUs)
 
 docker stats encoder
-# => encoder     200.00%  (capped at 2 cores even with 8 busy loops)
+# => encoder 200.00% (capped at 2 cores even with 8 busy loops)
 
 # Without limits (comparison)
 docker run -d --name encoder-unlimited my-encoder
 docker exec encoder-unlimited sh -c 'for i in $(seq 1 8); do
-  sh -c "while true; do :; done" &
+ sh -c "while true; do :; done" &
 done'
 
 docker stats encoder-unlimited
-# => encoder-unlimited     800.00%  (uses all 8 cores)
+# => encoder-unlimited 800.00% (uses all 8 cores)
 
 # CPU shares test: Relative priority
 docker run -d --name high-priority --cpu-shares=2048 alpine sh -c 'while true; do :; done'
@@ -1208,8 +1208,8 @@ docker run -d --name low-priority --cpu-shares=512 alpine sh -c 'while true; do 
 # => high-priority gets 4x more CPU time than low-priority when both compete
 
 docker stats high-priority low-priority
-# => high-priority    400.00%  (4 cores)
-# => low-priority     100.00%  (1 core)
+# => high-priority 400.00% (4 cores)
+# => low-priority 100.00% (1 core)
 # => Ratio matches cpu-shares ratio (2048:512 = 4:1)
 
 # Inspect CPU settings
@@ -1225,7 +1225,7 @@ docker rm -f encoder encoder-unlimited high-priority low-priority
 
 **Key Takeaway**: Use `--cpus` to set hard CPU limits preventing resource monopolization. Use `--cpu-shares` for relative CPU priority when containers compete. Reservations guarantee minimum CPU allocation in Swarm mode. Monitor with `docker stats` to verify limits are effective.
 
-**Why It Matters**: Without CPU limits, a single misbehaving container can monopolize all CPU cores, creating "noisy neighbor" problems that starve other containers and degrade entire-system performance. CPU limits enable predictable multi-tenant deployments where dozens of services share hardware without interference. Shares-based priority ensures critical services get proportionally more CPU during contention, implementing quality-of-service guarantees essential for SLA compliance.
+**Why It Matters**: Without CPU limits, a single misbehaving container can monopolize all CPU cores, creating "noisy neighbor" problems that starve other containers and degrade entire-system performance. CPU limits enable predictable multi-tenant deployments where Shares-based priority ensures critical services get proportionally more CPU during contention, implementing quality-of-service guarantees essential for SLA compliance.
 
 ---
 
@@ -1237,16 +1237,16 @@ Memory limits prevent OOM (Out Of Memory) issues and ensure stable multi-contain
 
 ```mermaid
 graph TD
-    A["Container Memory Usage"] --> B{Below Limit?}
-    B -->|Yes| C["Continue Running"]
-    B -->|No| D["Memory Limit Reached"]
-    D --> E{OOM Killer}
-    E -->|Kill Container| F["Container Terminated<br/>Exit Code 137"]
-    E -->|Swap Available| G["Use Swap<br/>Performance Degraded"]
+ A["Container Memory Usage"] --> B{Below Limit?}
+ B -->|Yes| C["Continue Running"]
+ B -->|No| D["Memory Limit Reached"]
+ D --> E{OOM Killer}
+ E -->|Kill Container| F["Container Terminated<br/>Exit Code 137"]
+ E -->|Swap Available| G["Use Swap<br/>Performance Degraded"]
 
-    style C fill:#029E73,color:#fff
-    style D fill:#DE8F05,color:#fff
-    style F fill:#CC78BC,color:#fff
+ style C fill:#029E73,color:#fff
+ style D fill:#DE8F05,color:#fff
+ style F fill:#CC78BC,color:#fff
 ```
 
 ```yaml
@@ -1255,73 +1255,73 @@ graph TD
 version: "3.8"
 
 services:
-  database:
-    image: postgres:15-alpine
-    deploy:
-      resources:
-        limits:
-          memory: 2G
-          # => Hard limit: 2 gigabytes
-          # => Container killed if exceeds (OOM kill)
-        reservations:
-          memory: 1G
-          # => Guaranteed minimum: 1 gigabyte
-    environment:
-      POSTGRES_PASSWORD: secret
+ database:
+ image: postgres:15-alpine
+ deploy:
+ resources:
+ limits:
+ memory: 2G
+ # => Hard limit: 2 gigabytes
+ # => Container killed if exceeds (OOM kill)
+ reservations:
+ memory: 1G
+ # => Guaranteed minimum: 1 gigabyte
+ environment:
+ POSTGRES_PASSWORD: secret
 
-  redis:
-    image: redis:7-alpine
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-          # => 512 megabytes max
-    command: redis-server --maxmemory 400mb --maxmemory-policy allkeys-lru
-    # => Redis internal limit (400MB) below Docker limit (512MB)
-    # => LRU eviction when Redis reaches 400MB
+ redis:
+ image: redis:7-alpine
+ deploy:
+ resources:
+ limits:
+ memory: 512M
+ # => 512 megabytes max
+ command: redis-server --maxmemory 400mb --maxmemory-policy allkeys-lru
+ # => Redis internal limit (400MB) below Docker limit (512MB)
+ # => LRU eviction when Redis reaches 400MB
 
-  api:
-    image: my-api
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-        reservations:
-          memory: 256M
-    environment:
-      NODE_OPTIONS: "--max-old-space-size=896"
-      # => Node.js heap limit (896MB) below Docker limit (1GB)
-      # => Prevents Node from triggering OOM kill
+ api:
+ image: my-api
+ deploy:
+ resources:
+ limits:
+ memory: 1G
+ reservations:
+ memory: 256M
+ environment:
+ NODE_OPTIONS: "--max-old-space-size=896"
+ # => Node.js heap limit (896MB) below Docker limit (1GB)
+ # => Prevents Node from triggering OOM kill
 
-  worker:
-    image: my-worker
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-    # Memory swap disabled for predictable performance
-    mem_swappiness: 0
-    # => Prevents swapping (keeps everything in RAM)
+ worker:
+ image: my-worker
+ deploy:
+ resources:
+ limits:
+ memory: 512M
+ # Memory swap disabled for predictable performance
+ mem_swappiness: 0
+ # => Prevents swapping (keeps everything in RAM)
 ```
 
 ```bash
 # Run container with memory limit
 docker run -d --name mem-limited \
-  --memory="512m" \
-  --memory-reservation="256m" \
-  my-app
+ --memory="512m" \
+ --memory-reservation="256m" \
+ my-app
 # => Hard limit: 512MB (OOM kill if exceeded)
 # => Soft limit: 256MB (preferred maximum)
 
 # Monitor memory usage
 docker stats mem-limited
-# => CONTAINER     MEM USAGE / LIMIT
-# => mem-limited   312MiB / 512MiB
+# => CONTAINER MEM USAGE / LIMIT
+# => mem-limited 312MiB / 512MiB
 
 # Test OOM behavior (exceeds limit)
 docker exec mem-limited sh -c '
-  # Allocate 600MB (exceeds 512MB limit)
-  python3 -c "s = \" \" * (600 * 1024 * 1024); import time; time.sleep(60)"
+ # Allocate 600MB (exceeds 512MB limit)
+ python3 -c "s = \" \" * (600 * 1024 * 1024); import time; time.sleep(60)"
 '
 # => Container killed by OOM killer after a few seconds
 
@@ -1335,22 +1335,22 @@ docker inspect mem-limited --format='{{.State.OOMKilled}}'
 
 # Memory swap control
 docker run -d --name no-swap \
-  --memory="1g" \
-  --memory-swap="1g" \
-  my-app
+ --memory="1g" \
+ --memory-swap="1g" \
+ my-app
 # => memory-swap = memory means NO swap
 # => All memory must be RAM (no swapping to disk)
 
 docker run -d --name with-swap \
-  --memory="1g" \
-  --memory-swap="2g" \
-  my-app
+ --memory="1g" \
+ --memory-swap="2g" \
+ my-app
 # => Can use 1GB RAM + 1GB swap (2GB total virtual memory)
 
 # Memory reservation (soft limit)
 docker run -d --name soft-limit \
-  --memory-reservation="256m" \
-  my-app
+ --memory-reservation="256m" \
+ my-app
 # => No hard limit, but tries to stay under 256MB
 # => Can exceed 256MB if host has available memory
 # => Reclaimed to 256MB when host is under pressure
@@ -1387,79 +1387,79 @@ Production deployments need both CPU and memory limits for predictable performan
 version: "3.8"
 
 services:
-  database:
-    image: postgres:15-alpine
-    deploy:
-      resources:
-        limits:
-          cpus: "2.0"
-          memory: 4G
-        reservations:
-          cpus: "1.0"
-          memory: 2G
-    environment:
-      POSTGRES_PASSWORD: secret
-      # PostgreSQL configuration matching resource limits
-      POSTGRES_SHARED_BUFFERS: 1GB
-      # => 25% of memory reservation
-      POSTGRES_EFFECTIVE_CACHE_SIZE: 3GB
-      # => 75% of memory limit
-    volumes:
-      - db-data:/var/lib/postgresql/data
+ database:
+ image: postgres:15-alpine
+ deploy:
+ resources:
+ limits:
+ cpus: "2.0"
+ memory: 4G
+ reservations:
+ cpus: "1.0"
+ memory: 2G
+ environment:
+ POSTGRES_PASSWORD: secret
+ # PostgreSQL configuration matching resource limits
+ POSTGRES_SHARED_BUFFERS: 1GB
+ # => 25% of memory reservation
+ POSTGRES_EFFECTIVE_CACHE_SIZE: 3GB
+ # => 75% of memory limit
+ volumes:
+ - db-data:/var/lib/postgresql/data
 
-  redis:
-    image: redis:7-alpine
-    deploy:
-      resources:
-        limits:
-          cpus: "1.0"
-          memory: 1G
-        reservations:
-          cpus: "0.25"
-          memory: 512M
-    command: >
-      redis-server
-      --maxmemory 900mb
-      --maxmemory-policy allkeys-lru
-      --save ""
-    # => maxmemory 900MB (90% of limit for safety)
-    # => Disabled persistence (--save "") reduces I/O
+ redis:
+ image: redis:7-alpine
+ deploy:
+ resources:
+ limits:
+ cpus: "1.0"
+ memory: 1G
+ reservations:
+ cpus: "0.25"
+ memory: 512M
+ command: >
+ redis-server
+ --maxmemory 900mb
+ --maxmemory-policy allkeys-lru
+ --save ""
+ # => maxmemory 900MB (90% of limit for safety)
+ # => Disabled persistence (--save "") reduces I/O
 
-  api:
-    build: ./api
-    deploy:
-      resources:
-        limits:
-          cpus: "1.5"
-          memory: 2G
-        reservations:
-          cpus: "0.5"
-          memory: 512M
-      replicas: 3
-      # => 3 instances for load distribution
-    environment:
-      NODE_OPTIONS: "--max-old-space-size=1792"
-      # => Node heap: 1792MB (90% of 2GB limit)
-    ports:
-      - "3000-3002:3000"
+ api:
+ build: ./api
+ deploy:
+ resources:
+ limits:
+ cpus: "1.5"
+ memory: 2G
+ reservations:
+ cpus: "0.5"
+ memory: 512M
+ replicas: 3
+ # => 3 instances for load distribution
+ environment:
+ NODE_OPTIONS: "--max-old-space-size=1792"
+ # => Node heap: 1792MB (90% of 2GB limit)
+ ports:
+ - "3000-3002:3000"
 
-  worker:
-    build: ./worker
-    deploy:
-      resources:
-        limits:
-          cpus: "2.0"
-          memory: 1G
-        reservations:
-          cpus: "0.5"
-          memory: 256M
-      replicas: 2
-    environment:
-      MAX_JOBS: 4
-      # => Limit concurrent jobs to match CPU limit
+ worker:
+ build: ./worker
+ deploy:
+ resources:
+ limits:
+ cpus: "2.0"
+ memory: 1G
+ reservations:
+ cpus: "0.5"
+ memory: 256M
+ replicas: 2
+ environment:
+ MAX_JOBS: 4
+ # => Limit concurrent jobs to match CPU limit
 
 volumes:
-  db-data:
+ db-data:
 ```
 
 ```bash
@@ -1469,14 +1469,14 @@ docker stack deploy -c docker-compose.yml myapp
 
 # Monitor resource usage across all services
 docker stats $(docker ps --format '{{.Names}}')
-# => CONTAINER    CPU %   MEM USAGE / LIMIT
-# => db-1         45.2%   1.8GiB / 4GiB
-# => redis-1      12.3%   800MiB / 1GiB
-# => api-1        28.1%   1.2GiB / 2GiB
-# => api-2        31.4%   1.4GiB / 2GiB
-# => api-3        25.7%   1.1GiB / 2GiB
-# => worker-1     98.5%   700MiB / 1GiB
-# => worker-2     102.3%  750MiB / 1GiB
+# => CONTAINER CPU % MEM USAGE / LIMIT
+# => db-1 45.2% 1.8GiB / 4GiB
+# => redis-1 12.3% 800MiB / 1GiB
+# => api-1 28.1% 1.2GiB / 2GiB
+# => api-2 31.4% 1.4GiB / 2GiB
+# => api-3 25.7% 1.1GiB / 2GiB
+# => worker-1 98.5% 700MiB / 1GiB
+# => worker-2 102.3% 750MiB / 1GiB
 
 # Total resource allocation
 # => CPU: 2 + 1 + (1.5 * 3) + (2 * 2) = 11.5 cores reserved
@@ -1485,7 +1485,7 @@ docker stats $(docker ps --format '{{.Names}}')
 # Load test to verify limits
 # Install apache bench
 docker run --rm --network host jordi/ab \
-  -n 10000 -c 100 http://localhost:3000/api/test
+ -n 10000 -c 100 http://localhost:3000/api/test
 # => 10000 requests, 100 concurrent
 
 # During load test, verify API doesn't exceed limits
@@ -1502,14 +1502,14 @@ docker ps -a --filter name=api --format '{{.Names}}: {{.Status}}'
 # Verify resource reservations (Swarm mode)
 docker service inspect myapp_api --format='{{json .Spec.TaskTemplate.Resources}}' | jq
 # => {
-# =>   "Limits": {
-# =>     "NanoCPUs": 1500000000,
-# =>     "MemoryBytes": 2147483648
-# =>   },
-# =>   "Reservations": {
-# =>     "NanoCPUs": 500000000,
-# =>     "MemoryBytes": 536870912
-# =>   }
+# => "Limits": {
+# => "NanoCPUs": 1500000000,
+# => "MemoryBytes": 2147483648
+# => },
+# => "Reservations": {
+# => "NanoCPUs": 500000000,
+# => "MemoryBytes": 536870912
+# => }
 # => }
 ```
 
@@ -1528,20 +1528,20 @@ Docker supports multiple logging drivers for centralized log aggregation. Choose
 ```mermaid
 %% Logging drivers flow
 graph TD
-    A["Container App"] --> B["Docker Logging Driver"]
-    B --> C1["json-file<br/>Local disk"]
-    B --> C2["syslog<br/>Remote syslog server"]
-    B --> C3["fluentd<br/>Fluentd forwarder"]
-    B --> C4["gelf<br/>Graylog/ELK"]
-    C3 --> D["Elasticsearch"]
-    C4 --> D
-    D --> E["Kibana<br/>Visualization"]
+ A["Container App"] --> B["Docker Logging Driver"]
+ B --> C1["json-file<br/>Local disk"]
+ B --> C2["syslog<br/>Remote syslog server"]
+ B --> C3["fluentd<br/>Fluentd forwarder"]
+ B --> C4["gelf<br/>Graylog/ELK"]
+ C3 --> D["Elasticsearch"]
+ C4 --> D
+ D --> E["Kibana<br/>Visualization"]
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#fff
-    style C3 fill:#029E73,color:#fff
-    style C4 fill:#029E73,color:#fff
-    style E fill:#029E73,color:#fff
+ style A fill:#0173B2,color:#fff
+ style B fill:#DE8F05,color:#fff
+ style C3 fill:#029E73,color:#fff
+ style C4 fill:#029E73,color:#fff
+ style E fill:#029E73,color:#fff
 ```
 
 ```yaml
@@ -1550,109 +1550,109 @@ graph TD
 version: "3.8"
 
 services:
-  # Default JSON file logging (local)
-  app-default:
-    image: my-app
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        # => Rotate when log file reaches 10MB
-        max-file: "3"
-        # => Keep 3 rotated files
-        # => Total max: 30MB per container
-        labels: "service,environment"
-        # => Include service and environment labels in logs
+ # Default JSON file logging (local)
+ app-default:
+ image: my-app
+ logging:
+ driver: json-file
+ options:
+ max-size: "10m"
+ # => Rotate when log file reaches 10MB
+ max-file: "3"
+ # => Keep 3 rotated files
+ # => Total max: 30MB per container
+ labels: "service,environment"
+ # => Include service and environment labels in logs
 
-  # Syslog driver (centralized)
-  app-syslog:
-    image: my-app
-    logging:
-      driver: syslog
-      options:
-        syslog-address: "tcp://192.168.1.100:514"
-        # => Remote syslog server
-        syslog-format: "rfc5424"
-        # => RFC5424 format (structured)
-        tag: "{{.Name}}/{{.ID}}"
-        # => Log tag with container name and ID
+ # Syslog driver (centralized)
+ app-syslog:
+ image: my-app
+ logging:
+ driver: syslog
+ options:
+ syslog-address: "tcp://192.168.1.100:514"
+ # => Remote syslog server
+ syslog-format: "rfc5424"
+ # => RFC5424 format (structured)
+ tag: "{{.Name}}/{{.ID}}"
+ # => Log tag with container name and ID
 
-  # Fluentd driver (EFK stack)
-  app-fluentd:
-    image: my-app
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: "localhost:24224"
-        # => Fluentd forwarder address
-        fluentd-async: "true"
-        # => Non-blocking async mode
-        tag: "docker.{{.Name}}"
-        # => Tag for fluentd routing
-    depends_on:
-      - fluentd
+ # Fluentd driver (EFK stack)
+ app-fluentd:
+ image: my-app
+ logging:
+ driver: fluentd
+ options:
+ fluentd-address: "localhost:24224"
+ # => Fluentd forwarder address
+ fluentd-async: "true"
+ # => Non-blocking async mode
+ tag: "docker.{{.Name}}"
+ # => Tag for fluentd routing
+ depends_on:
+ - fluentd
 
-  # GELF driver (Graylog/ELK)
-  app-gelf:
-    image: my-app
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://graylog.example.com:12201"
-        # => Graylog server
-        tag: "{{.Name}}"
-        gelf-compression-type: "gzip"
-        # => Compress logs before sending
+ # GELF driver (Graylog/ELK)
+ app-gelf:
+ image: my-app
+ logging:
+ driver: gelf
+ options:
+ gelf-address: "udp://graylog.example.com:12201"
+ # => Graylog server
+ tag: "{{.Name}}"
+ gelf-compression-type: "gzip"
+ # => Compress logs before sending
 
-  # Splunk driver
-  app-splunk:
-    image: my-app
-    logging:
-      driver: splunk
-      options:
-        splunk-token: "B5A79AAD-D822-46CC-80D1-819F80D7BFB0"
-        splunk-url: "https://splunk.example.com:8088"
-        splunk-insecureskipverify: "false"
-        # => Verify SSL certificate
+ # Splunk driver
+ app-splunk:
+ image: my-app
+ logging:
+ driver: splunk
+ options:
+ splunk-token: "B5A79AAD-D822-46CC-80D1-819F80D7BFB0"
+ splunk-url: "https://splunk.example.com:8088"
+ splunk-insecureskipverify: "false"
+ # => Verify SSL certificate
 
-  # AWS CloudWatch driver
-  app-cloudwatch:
-    image: my-app
-    logging:
-      driver: awslogs
-      options:
-        awslogs-region: "us-east-1"
-        awslogs-group: "myapp"
-        awslogs-stream: "{{.Name}}"
-        awslogs-create-group: "true"
+ # AWS CloudWatch driver
+ app-cloudwatch:
+ image: my-app
+ logging:
+ driver: awslogs
+ options:
+ awslogs-region: "us-east-1"
+ awslogs-group: "myapp"
+ awslogs-stream: "{{.Name}}"
+ awslogs-create-group: "true"
 
-  # Fluentd service (for fluentd driver example)
-  fluentd:
-    image: fluent/fluentd:v1.16-1
-    ports:
-      - "24224:24224"
-    volumes:
-      - ./fluentd.conf:/fluentd/etc/fluent.conf
+ # Fluentd service (for fluentd driver example)
+ fluentd:
+ image: fluent/fluentd:v1.16-1
+ ports:
+ - "24224:24224"
+ volumes:
+ - ./fluentd.conf:/fluentd/etc/fluent.conf
 ```
 
 ```bash
 # File: fluentd.conf
 <source>
-  @type forward
-  port 24224
-  bind 0.0.0.0
+ @type forward
+ port 24224
+ bind 0.0.0.0
 </source>
 
 <match docker.**>
-  @type file
-  path /fluentd/log/docker
-  append true
-  <format>
-    @type json
-  </format>
-  <buffer>
-    flush_interval 10s
-  </buffer>
+ @type file
+ path /fluentd/log/docker
+ append true
+ <format>
+ @type json
+ </format>
+ <buffer>
+ flush_interval 10s
+ </buffer>
 </match>
 ```
 
@@ -1667,10 +1667,10 @@ docker logs app-default
 
 # Check log file size and rotation
 docker inspect app-default --format='{{.LogPath}}'
-# => /var/lib/docker/containers/.../...-json.log
+# => /var/lib/docker/containers/../..-json.log
 
 ls -lh $(docker inspect app-default --format='{{.LogPath}}')
-# => -rw-r----- 1 root root 8.5M Dec 29 11:00 ...-json.log
+# => -rw-r----- 1 root root 8.5M Dec 29 11:00 ..-json.log
 # => File rotates at 10MB
 
 # Syslog driver: docker logs doesn't work (logs sent remotely)
@@ -1696,11 +1696,11 @@ docker exec fluentd cat /fluentd/log/docker.log
 # Inspect logging configuration
 docker inspect app-default --format='{{json .HostConfig.LogConfig}}' | jq
 # => {
-# =>   "Type": "json-file",
-# =>   "Config": {
-# =>     "max-size": "10m",
-# =>     "max-file": "3"
-# =>   }
+# => "Type": "json-file",
+# => "Config": {
+# => "max-size": "10m",
+# => "max-file": "3"
+# => }
 # => }
 
 # Change logging driver for running container (requires restart)
@@ -1710,11 +1710,11 @@ docker update --log-driver=syslog app-default
 # Set default logging driver globally (daemon.json)
 cat > /etc/docker/daemon.json << 'EOF'
 {
-  "log-driver": "json-file",
-  "log-opts": {
-    "max-size": "10m",
-    "max-file": "3"
-  }
+ "log-driver": "json-file",
+ "log-opts": {
+ "max-size": "10m",
+ "max-file": "3"
+ }
 }
 EOF
 
@@ -1785,12 +1785,12 @@ app.get("/api/users/:id", async (req, res) => {
 
   logger.debug("Fetching user", { user_id: userId });
   // => {
-  // =>   "timestamp": "2025-12-29T11:10:00.123Z",
-  // =>   "level": "debug",
-  // =>   "message": "Fetching user",
-  // =>   "user_id": "12345",
-  // =>   "service": "api",
-  // =>   "environment": "production"
+  // => "timestamp": "2025-12-29T11:10:00.123Z",
+  // => "level": "debug",
+  // => "message": "Fetching user",
+  // => "user_id": "12345",
+  // => "service": "api",
+  // => "environment": "production"
   // => }
 
   try {
@@ -1809,14 +1809,14 @@ app.get("/api/users/:id", async (req, res) => {
       stack: error.stack,
     });
     // => {
-    // =>   "timestamp": "2025-12-29T11:10:00.500Z",
-    // =>   "level": "error",
-    // =>   "message": "Failed to fetch user",
-    // =>   "user_id": "12345",
-    // =>   "error": "Database connection timeout",
-    // =>   "stack": "Error: Database connection timeout\n    at ...",
-    // =>   "service": "api",
-    // =>   "container_id": "abc123def456"
+    // => "timestamp": "2025-12-29T11:10:00.500Z",
+    // => "level": "error",
+    // => "message": "Failed to fetch user",
+    // => "user_id": "12345",
+    // => "error": "Database connection timeout",
+    // => "stack": "Error: Database connection timeout\n at ..",
+    // => "service": "api",
+    // => "container_id": "abc123def456"
     // => }
 
     res.status(500).json({ error: "Internal server error" });
@@ -1834,20 +1834,20 @@ app.listen(3000, () => {
 version: "3.8"
 
 services:
-  api:
-    build: .
-    environment:
-      NODE_ENV: production
-      LOG_LEVEL: info
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-        labels: "service,environment"
-    labels:
-      service: "api"
-      environment: "production"
+ api:
+ build: .
+ environment:
+ NODE_ENV: production
+ LOG_LEVEL: info
+ logging:
+ driver: json-file
+ options:
+ max-size: "10m"
+ max-file: "3"
+ labels: "service,environment"
+ labels:
+ service: "api"
+ environment: "production"
 ```
 
 ```bash
@@ -1860,35 +1860,35 @@ docker logs api --tail 20
 # Filter logs with jq (extract specific fields)
 docker logs api --tail 100 2>&1 | grep '^{' | jq 'select(.level=="error")'
 # => {
-# =>   "timestamp": "2025-12-29T11:10:00.500Z",
-# =>   "level": "error",
-# =>   "message": "Failed to fetch user",
-# =>   "user_id": "12345",
-# =>   "error": "Database connection timeout"
+# => "timestamp": "2025-12-29T11:10:00.500Z",
+# => "level": "error",
+# => "message": "Failed to fetch user",
+# => "user_id": "12345",
+# => "error": "Database connection timeout"
 # => }
 
 # Extract all error messages from last 1000 lines
 docker logs api --tail 1000 2>&1 | \
-  grep '^{' | \
-  jq -r 'select(.level=="error") | "\(.timestamp) \(.message) [\(.error)]"'
+ grep '^{' | \
+ jq -r 'select(.level=="error") | "\(.timestamp) \(.message) [\(.error)]"'
 # => 2025-12-29T11:10:00.500Z Failed to fetch user [Database connection timeout]
 # => 2025-12-29T11:12:30.789Z Payment processing failed [Stripe API error]
 
 # Count log levels
 docker logs api --tail 1000 2>&1 | \
-  grep '^{' | \
-  jq -r '.level' | \
-  sort | uniq -c
-# =>  850 info
-# =>  120 debug
-# =>   25 warn
-# =>    5 error
+ grep '^{' | \
+ jq -r '.level' | \
+ sort | uniq -c
+# => 850 info
+# => 120 debug
+# => 25 warn
+# => 5 error
 
 # Find slowest API requests (using duration_ms field)
 docker logs api --tail 1000 2>&1 | \
-  grep '^{' | \
-  jq -r 'select(.duration_ms != null) | "\(.duration_ms) \(.method) \(.path)"' | \
-  sort -n | tail -10
+ grep '^{' | \
+ jq -r 'select(.duration_ms != null) | "\(.duration_ms) \(.method) \(.path)"' | \
+ sort -n | tail -10
 # => 1250 GET /api/reports/monthly
 # => 1450 POST /api/exports/csv
 # => 2100 GET /api/analytics/dashboard
@@ -1914,112 +1914,112 @@ The EFK (Elasticsearch, Fluentd, Kibana) stack provides centralized log aggregat
 version: "3.8"
 
 services:
-  # Application services using fluentd driver
-  api:
-    build: ./api
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: localhost:24224
-        tag: "docker.api"
-    depends_on:
-      - fluentd
+ # Application services using fluentd driver
+ api:
+ build: ./api
+ logging:
+ driver: fluentd
+ options:
+ fluentd-address: localhost:24224
+ tag: "docker.api"
+ depends_on:
+ - fluentd
 
-  web:
-    build: ./web
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: localhost:24224
-        tag: "docker.web"
-    depends_on:
-      - fluentd
+ web:
+ build: ./web
+ logging:
+ driver: fluentd
+ options:
+ fluentd-address: localhost:24224
+ tag: "docker.web"
+ depends_on:
+ - fluentd
 
-  # Fluentd log forwarder
-  fluentd:
-    image: fluent/fluentd:v1.16-debian-1
-    ports:
-      - "24224:24224"
-      - "24224:24224/udp"
-    volumes:
-      - ./fluentd/fluent.conf:/fluentd/etc/fluent.conf
-      - ./fluentd/plugins:/fluentd/plugins
-    environment:
-      FLUENT_ELASTICSEARCH_HOST: elasticsearch
-      FLUENT_ELASTICSEARCH_PORT: 9200
-    depends_on:
-      - elasticsearch
+ # Fluentd log forwarder
+ fluentd:
+ image: fluent/fluentd:v1.16-debian-1
+ ports:
+ - "24224:24224"
+ - "24224:24224/udp"
+ volumes:
+ - ./fluentd/fluent.conf:/fluentd/etc/fluent.conf
+ - ./fluentd/plugins:/fluentd/plugins
+ environment:
+ FLUENT_ELASTICSEARCH_HOST: elasticsearch
+ FLUENT_ELASTICSEARCH_PORT: 9200
+ depends_on:
+ - elasticsearch
 
-  # Elasticsearch for log storage
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      # => Heap size: 512MB
-    ports:
-      - "9200:9200"
-    volumes:
-      - es-data:/usr/share/elasticsearch/data
+ # Elasticsearch for log storage
+ elasticsearch:
+ image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+ environment:
+ - discovery.type=single-node
+ - xpack.security.enabled=false
+ - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+ # => Heap size: 512MB
+ ports:
+ - "9200:9200"
+ volumes:
+ - es-data:/usr/share/elasticsearch/data
 
-  # Kibana for log visualization
-  kibana:
-    image: docker.elastic.co/kibana/kibana:8.11.0
-    ports:
-      - "5601:5601"
-    environment:
-      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
-    depends_on:
-      - elasticsearch
+ # Kibana for log visualization
+ kibana:
+ image: docker.elastic.co/kibana/kibana:8.11.0
+ ports:
+ - "5601:5601"
+ environment:
+ ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+ depends_on:
+ - elasticsearch
 
 volumes:
-  es-data:
+ es-data:
 ```
 
 ```conf
 # File: fluentd/fluent.conf
 
 <source>
-  @type forward
-  port 24224
-  bind 0.0.0.0
+ @type forward
+ port 24224
+ bind 0.0.0.0
 </source>
 
 # Parse JSON logs
 <filter docker.**>
-  @type parser
-  key_name log
-  <parse>
-    @type json
-  </parse>
+ @type parser
+ key_name log
+ <parse>
+ @type json
+ </parse>
 </filter>
 
 # Add metadata
 <filter docker.**>
-  @type record_transformer
-  <record>
-    hostname "#{Socket.gethostname}"
-    fluentd_timestamp ${time}
-  </record>
+ @type record_transformer
+ <record>
+ hostname "#{Socket.gethostname}"
+ fluentd_timestamp ${time}
+ </record>
 </filter>
 
 # Send to Elasticsearch
 <match docker.**>
-  @type elasticsearch
-  host "#{ENV['FLUENT_ELASTICSEARCH_HOST']}"
-  port "#{ENV['FLUENT_ELASTICSEARCH_PORT']}"
-  logstash_format true
-  logstash_prefix docker
-  include_tag_key true
-  tag_key @log_name
-  <buffer>
-    @type file
-    path /fluentd/log/buffer
-    flush_interval 10s
-    retry_max_interval 30s
-    retry_forever true
-  </buffer>
+ @type elasticsearch
+ host "#{ENV['FLUENT_ELASTICSEARCH_HOST']}"
+ port "#{ENV['FLUENT_ELASTICSEARCH_PORT']}"
+ logstash_format true
+ logstash_prefix docker
+ include_tag_key true
+ tag_key @log_name
+ <buffer>
+ @type file
+ path /fluentd/log/buffer
+ flush_interval 10s
+ retry_max_interval 30s
+ retry_forever true
+ </buffer>
 </match>
 ```
 
@@ -2029,8 +2029,8 @@ docker compose up -d
 
 # Wait for Elasticsearch to be ready
 until curl -s http://localhost:9200/_cluster/health | grep -q '"status":"green\|yellow"'; do
-  echo "Waiting for Elasticsearch..."
-  sleep 5
+ echo "Waiting for Elasticsearch.."
+ sleep 5
 done
 
 # Generate some application logs
@@ -2040,41 +2040,41 @@ curl http://localhost:3000/api/test
 # Query Elasticsearch directly
 curl -X GET "localhost:9200/docker-*/_search?pretty" -H 'Content-Type: application/json' -d'
 {
-  "query": {
-    "match": {
-      "level": "error"
-    }
-  },
-  "size": 10,
-  "sort": [
-    { "@timestamp": "desc" }
-  ]
+ "query": {
+ "match": {
+ "level": "error"
+ }
+ },
+ "size": 10,
+ "sort": [
+ { "@timestamp": "desc" }
+ ]
 }'
 # => Returns last 10 error logs as JSON
 
 # Count logs by level
 curl -X GET "localhost:9200/docker-*/_search?pretty" -H 'Content-Type: application/json' -d'
 {
-  "size": 0,
-  "aggs": {
-    "levels": {
-      "terms": {
-        "field": "level.keyword"
-      }
-    }
-  }
+ "size": 0,
+ "aggs": {
+ "levels": {
+ "terms": {
+ "field": "level.keyword"
+ }
+ }
+ }
 }'
 # => {
-# =>   "aggregations": {
-# =>     "levels": {
-# =>       "buckets": [
-# =>         { "key": "info", "doc_count": 1250 },
-# =>         { "key": "debug", "doc_count": 340 },
-# =>         { "key": "error", "doc_count": 15 },
-# =>         { "key": "warn", "doc_count": 8 }
-# =>       ]
-# =>     }
-# =>   }
+# => "aggregations": {
+# => "levels": {
+# => "buckets": [
+# => { "key": "info", "doc_count": 1250 },
+# => { "key": "debug", "doc_count": 340 },
+# => { "key": "error", "doc_count": 15 },
+# => { "key": "warn", "doc_count": 8 }
+# => ]
+# => }
+# => }
 # => }
 
 # Access Kibana web UI
@@ -2096,10 +2096,10 @@ curl -X GET "localhost:9200/docker-*/_search?pretty" -H 'Content-Type: applicati
 # Backup Elasticsearch data
 docker exec elasticsearch curl -X PUT "localhost:9200/_snapshot/backup" -H 'Content-Type: application/json' -d'
 {
-  "type": "fs",
-  "settings": {
-    "location": "/usr/share/elasticsearch/backup"
-  }
+ "type": "fs",
+ "settings": {
+ "location": "/usr/share/elasticsearch/backup"
+ }
 }'
 # => Creates backup repository
 
@@ -2109,7 +2109,7 @@ docker exec elasticsearch curl -X PUT "localhost:9200/_snapshot/backup/snapshot_
 
 **Key Takeaway**: EFK stack provides production-grade log aggregation with powerful search and visualization. Fluentd collects logs from all containers, Elasticsearch stores and indexes them, Kibana provides real-time dashboards. Use index patterns and retention policies to manage log storage costs.
 
-**Why It Matters**: The EFK stack is the industry standard for centralized logging at scale, used by organizations managing thousands of containers across distributed infrastructure. Full-text search in Elasticsearch enables finding needles in haystacks—locating specific error patterns across billions of log lines in milliseconds. Real-time Kibana dashboards provide operational visibility into application health, error rates, and performance trends that would be impossible to extract from raw log files.
+**Why It Matters**: The EFK stack is the industry standard for centralized logging at scale, used by organizations managing Full-text search in Elasticsearch enables finding needles in haystacks—locating specific error patterns across billions of log lines in milliseconds. Real-time Kibana dashboards provide operational visibility into application health, error rates, and performance trends that would be impossible to extract from raw log files.
 
 ---
 
@@ -2121,20 +2121,20 @@ Custom bridge networks provide network isolation, automatic DNS resolution, and 
 
 ```mermaid
 graph TD
-    A["frontend-net<br/>172.20.0.0/16"] --> B["frontend<br/>172.20.0.2"]
-    A --> C["api<br/>172.20.0.3"]
+ A["frontend-net<br/>172.20.0.0/16"] --> B["frontend<br/>172.20.0.2"]
+ A --> C["api<br/>172.20.0.3"]
 
-    D["backend-net<br/>172.21.0.0/16"] --> C
-    D --> E["database<br/>172.21.0.2"]
+ D["backend-net<br/>172.21.0.0/16"] --> C
+ D --> E["database<br/>172.21.0.2"]
 
-    B -.->|Can access| C
-    B -.x->|Cannot access| E
-    C -.->|Can access| E
+ B -.->|Can access| C
+ B -.x->|Cannot access| E
+ C -.->|Can access| E
 
-    style A fill:#0173B2,color:#fff
-    style D fill:#0173B2,color:#fff
-    style C fill:#DE8F05,color:#fff
-    style E fill:#029E73,color:#fff
+ style A fill:#0173B2,color:#fff
+ style D fill:#0173B2,color:#fff
+ style C fill:#DE8F05,color:#fff
+ style E fill:#029E73,color:#fff
 ```
 
 ```yaml
@@ -2143,52 +2143,52 @@ graph TD
 version: "3.8"
 
 services:
-  frontend:
-    image: nginx:alpine
-    networks:
-      - frontend-net
-      # => Isolated network for frontend services
-    ports:
-      - "8080:80"
+ frontend:
+ image: nginx:alpine
+ networks:
+ - frontend-net
+ # => Isolated network for frontend services
+ ports:
+ - "8080:80"
 
-  api:
-    image: my-api
-    networks:
-      - frontend-net
-      - backend-net
-      # => Connects to both networks (bridge between frontend and backend)
-    environment:
-      DATABASE_URL: postgresql://postgres:secret@database:5432/mydb
-      # => Uses service name "database" for DNS resolution
+ api:
+ image: my-api
+ networks:
+ - frontend-net
+ - backend-net
+ # => Connects to both networks (bridge between frontend and backend)
+ environment:
+ DATABASE_URL: postgresql://postgres:secret@database:5432/mydb
+ # => Uses service name "database" for DNS resolution
 
-  database:
-    image: postgres:15-alpine
-    networks:
-      - backend-net
-      # => Only accessible from backend network (isolated from frontend)
-    environment:
-      POSTGRES_PASSWORD: secret
-    volumes:
-      - db-data:/var/lib/postgresql/data
+ database:
+ image: postgres:15-alpine
+ networks:
+ - backend-net
+ # => Only accessible from backend network (isolated from frontend)
+ environment:
+ POSTGRES_PASSWORD: secret
+ volumes:
+ - db-data:/var/lib/postgresql/data
 
 networks:
-  frontend-net:
-    driver: bridge
-    # => Custom bridge network with automatic DNS
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16
-          # => Custom subnet (avoids conflicts)
-  backend-net:
-    driver: bridge
-    internal: true
-    # => Internal-only network (no external access)
-    ipam:
-      config:
-        - subnet: 172.21.0.0/16
+ frontend-net:
+ driver: bridge
+ # => Custom bridge network with automatic DNS
+ ipam:
+ config:
+ - subnet: 172.20.0.0/16
+ # => Custom subnet (avoids conflicts)
+ backend-net:
+ driver: bridge
+ internal: true
+ # => Internal-only network (no external access)
+ ipam:
+ config:
+ - subnet: 172.21.0.0/16
 
 volumes:
-  db-data:
+ db-data:
 ```
 
 ```bash
@@ -2197,22 +2197,22 @@ docker compose up -d
 
 # List networks
 docker network ls
-# => NETWORK ID     NAME                    DRIVER    SCOPE
-# => abc123def456   myproject_frontend-net  bridge    local
-# => def456ghi789   myproject_backend-net   bridge    local
+# => NETWORK ID NAME DRIVER SCOPE
+# => abc123def456 myproject_frontend-net bridge local
+# => def456ghi789 myproject_backend-net bridge local
 
 # Inspect network
 docker network inspect myproject_frontend-net
 # => {
-# =>   "Name": "myproject_frontend-net",
-# =>   "Driver": "bridge",
-# =>   "IPAM": {
-# =>     "Config": [{ "Subnet": "172.20.0.0/16" }]
-# =>   },
-# =>   "Containers": {
-# =>     "abc123": { "Name": "frontend", "IPv4Address": "172.20.0.2/16" },
-# =>     "def456": { "Name": "api", "IPv4Address": "172.20.0.3/16" }
-# =>   }
+# => "Name": "myproject_frontend-net",
+# => "Driver": "bridge",
+# => "IPAM": {
+# => "Config": [{ "Subnet": "172.20.0.0/16" }]
+# => },
+# => "Containers": {
+# => "abc123": { "Name": "frontend", "IPv4Address": "172.20.0.2/16" },
+# => "def456": { "Name": "api", "IPv4Address": "172.20.0.3/16" }
+# => }
 # => }
 
 # Test DNS resolution (automatic service discovery)
@@ -2233,10 +2233,10 @@ docker exec api ping -c 1 database
 
 # Create standalone network manually
 docker network create \
-  --driver bridge \
-  --subnet 172.22.0.0/16 \
-  --gateway 172.22.0.1 \
-  custom-network
+ --driver bridge \
+ --subnet 172.22.0.0/16 \
+ --gateway 172.22.0.1 \
+ custom-network
 # => Network created with custom configuration
 
 # Connect running container to network
@@ -2249,10 +2249,10 @@ docker network disconnect custom-network frontend
 
 # Network aliases (multiple DNS names)
 docker run -d --name web \
-  --network frontend-net \
-  --network-alias webapp \
-  --network-alias www \
-  nginx:alpine
+ --network frontend-net \
+ --network-alias webapp \
+ --network-alias www \
+ nginx:alpine
 # => Container reachable via: web, webapp, www
 
 docker exec api ping -c 1 webapp
@@ -2265,9 +2265,7 @@ docker network prune
 
 **Key Takeaway**: Custom bridge networks provide automatic DNS resolution between containers, network isolation for security, and configurable subnets. Use internal networks for backend services that shouldn't have external access. Containers can connect to multiple networks to bridge network segments.
 
-**Why It Matters**: Custom bridge networks enable microservices architecture with enforced network segmentation - frontend services cannot directly access databases, preventing lateral movement in security breaches. Automatic DNS resolution eliminates hardcoded IP addresses that break when containers restart, enabling dynamic service discovery required for container orchestration. Companies using custom networks report 70% reduction in network-related security incidents by isolating sensitive data stores from public-facing services.
-
----
+**Why It Matters**: Custom bridge networks enable microservices architecture with enforced network segmentation - frontend services cannot directly access databases, preventing lateral movement in security breaches. Automatic DNS resolution eliminates hardcoded IP addresses that break when containers restart, enabling dynamic service discovery required for container orchestration. Companies using custom networks report ---
 
 ### Example 42: Network Troubleshooting Tools
 
@@ -2294,10 +2292,10 @@ nc -zv database 5432
 
 # DNS troubleshooting
 nslookup api
-# => Server:    127.0.0.11 (Docker embedded DNS)
-# => Address:   127.0.0.11#53
-# => Name:      api
-# => Address:   172.20.0.3
+# => Server: 127.0.0.11 (Docker embedded DNS)
+# => Address: 127.0.0.11#53
+# => Name: api
+# => Address: 172.20.0.3
 
 dig api
 # => Shows DNS query details and TTL
@@ -2305,9 +2303,9 @@ dig api
 # Check network interfaces
 ip addr show
 # => 1: lo: <LOOPBACK,UP,LOWER_UP>
-# =>    inet 127.0.0.1/8 scope host lo
+# => inet 127.0.0.1/8 scope host lo
 # => 2: eth0@if10: <BROADCAST,MULTICAST,UP,LOWER_UP>
-# =>    inet 172.20.0.2/16 brd 172.20.255.255 scope global eth0
+# => inet 172.20.0.2/16 brd 172.20.255.255 scope global eth0
 
 # Show routing table
 ip route show
@@ -2316,47 +2314,47 @@ ip route show
 
 # Check listening ports
 ss -tuln
-# => Netid  State   Local Address:Port
-# => tcp    LISTEN  0.0.0.0:80
-# => tcp    LISTEN  :::80
+# => Netid State Local Address:Port
+# => tcp LISTEN 0.0.0.0:80
+# => tcp LISTEN :::80
 
 # Network performance testing with iperf3
 # Terminal 1 (server):
 docker run --rm -it --name iperf-server --network frontend-net \
-  networkstatic/iperf3 -s
+ networkstatic/iperf3 -s
 # => Server listening on 5201
 
 # Terminal 2 (client):
 docker run --rm -it --network frontend-net \
-  networkstatic/iperf3 -c iperf-server
-# => [ ID] Interval       Transfer     Bandwidth
-# => [  5]  0.00-10.00 sec  10.0 GBytes  8.59 Gbits/sec
+ networkstatic/iperf3 -c iperf-server
+# => [ ID] Interval Transfer Bandwidth
+# => [ 5] 0.00-10.00 sec 10.0 GBytes 8.59 Gbits/sec
 
 # Packet capture with tcpdump
 docker run --rm --net=host \
-  --cap-add=NET_ADMIN \
-  nicolaka/netshoot \
-  tcpdump -i any port 80 -n
+ --cap-add=NET_ADMIN \
+ nicolaka/netshoot \
+ tcpdump -i any port 80 -n
 # => Captures HTTP traffic on all interfaces
 
 # All-in-one network troubleshooting container
 docker run --rm -it --network myproject_frontend-net \
-  nicolaka/netshoot
+ nicolaka/netshoot
 # Inside container (has all network tools):
 # curl, wget, dig, nslookup, ping, traceroute, netstat, ss, ip, iperf3, tcpdump, etc.
 
 # Check container network configuration from host
 docker inspect api --format='{{json .NetworkSettings.Networks}}' | jq
 # => {
-# =>   "frontend-net": {
-# =>     "IPAddress": "172.20.0.3",
-# =>     "Gateway": "172.20.0.1",
-# =>     "MacAddress": "02:42:ac:14:00:03"
-# =>   },
-# =>   "backend-net": {
-# =>     "IPAddress": "172.21.0.2",
-# =>     "Gateway": "172.21.0.1"
-# =>   }
+# => "frontend-net": {
+# => "IPAddress": "172.20.0.3",
+# => "Gateway": "172.20.0.1",
+# => "MacAddress": "02:42:ac:14:00:03"
+# => },
+# => "backend-net": {
+# => "IPAddress": "172.21.0.2",
+# => "Gateway": "172.21.0.1"
+# => }
 # => }
 
 # Test connectivity from host to container
@@ -2369,10 +2367,10 @@ curl http://localhost:3000/health
 
 # Network traffic inspection
 docker stats --no-stream --format "table {{.Container}}\t{{.NetIO}}"
-# => CONTAINER    NET I/O
-# => api          1.2MB / 850kB
-# => frontend     450kB / 120kB
-# => database     200kB / 180kB
+# => CONTAINER NET I/O
+# => api 1.2MB / 850kB
+# => frontend 450kB / 120kB
+# => database 200kB / 180kB
 
 # Logs for network-related errors
 docker logs api 2>&1 | grep -i "connection\|network\|timeout"
@@ -2381,7 +2379,7 @@ docker logs api 2>&1 | grep -i "connection\|network\|timeout"
 
 **Key Takeaway**: Use nicolaka/netshoot or alpine with installed tools for network troubleshooting. Key diagnostics: nslookup/dig for DNS, nc for port testing, curl for HTTP, tcpdump for packet capture, ip/ss for interface/socket inspection. Always check Docker network inspect for configuration issues.
 
-**Why It Matters**: Network issues account for 40% of production container failures, and effective troubleshooting reduces mean-time-to-resolution from hours to minutes. The nicolaka/netshoot container provides industry-standard network diagnostic tools in a single image, eliminating the need to install tools in production containers. Proper network diagnostics prevent extended outages - when services can't communicate, quick identification of DNS failures, firewall rules, or network segmentation issues enables rapid recovery instead of trial-and-error debugging.
+**Why It Matters**: Network issues account for 40% of production container failures, and effective troubleshooting reduces mean-time-to-resolution. The nicolaka/netshoot container provides industry-standard network diagnostic tools in a single image, eliminating the need to install tools in production containers. Proper network diagnostics prevent extended outages - when services can't communicate, quick identification of DNS failures, firewall rules, or network segmentation issues enables rapid recovery instead of trial-and-error debugging.
 
 ---
 
@@ -2393,19 +2391,19 @@ Init containers run before main application containers to perform setup tasks li
 
 ```mermaid
 graph TD
-    A["database starts"] --> B{Health Check}
-    B -->|Pass| C["Database Healthy"]
-    C --> D["db-migrate runs"]
-    D --> E["Migrations Complete<br/>Exit 0"]
-    E --> F["db-seed runs"]
-    F --> G["Seeding Complete<br/>Exit 0"]
-    G --> H["api starts"]
-    H --> I["Application Running"]
+ A["database starts"] --> B{Health Check}
+ B -->|Pass| C["Database Healthy"]
+ C --> D["db-migrate runs"]
+ D --> E["Migrations Complete<br/>Exit 0"]
+ E --> F["db-seed runs"]
+ F --> G["Seeding Complete<br/>Exit 0"]
+ G --> H["api starts"]
+ H --> I["Application Running"]
 
-    style C fill:#029E73,color:#fff
-    style E fill:#029E73,color:#fff
-    style G fill:#029E73,color:#fff
-    style I fill:#0173B2,color:#fff
+ style C fill:#029E73,color:#fff
+ style E fill:#029E73,color:#fff
+ style G fill:#029E73,color:#fff
+ style I fill:#0173B2,color:#fff
 ```
 
 ```yaml
@@ -2414,96 +2412,96 @@ graph TD
 version: "3.8"
 
 services:
-  # Database (must be ready before API)
-  database:
-    image: postgres:15-alpine
-    environment:
-      POSTGRES_PASSWORD: secret
-      POSTGRES_DB: myapp
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
-    volumes:
-      - db-data:/var/lib/postgresql/data
+ # Database (must be ready before API)
+ database:
+ image: postgres:15-alpine
+ environment:
+ POSTGRES_PASSWORD: secret
+ POSTGRES_DB: myapp
+ healthcheck:
+ test: ["CMD-SHELL", "pg_isready -U postgres"]
+ interval: 5s
+ timeout: 3s
+ retries: 10
+ volumes:
+ - db-data:/var/lib/postgresql/data
 
-  # Init container: Wait for database and run migrations
-  db-migrate:
-    image: my-api:latest
-    command: npm run migrate
-    # => Runs database migrations
-    depends_on:
-      database:
-        condition: service_healthy
-        # => Waits for database to be healthy
-    environment:
-      DATABASE_URL: postgresql://postgres:secret@database:5432/myapp
-    restart: "no"
-    # => Runs once, doesn't restart on failure
+ # Init container: Wait for database and run migrations
+ db-migrate:
+ image: my-api:latest
+ command: npm run migrate
+ # => Runs database migrations
+ depends_on:
+ database:
+ condition: service_healthy
+ # => Waits for database to be healthy
+ environment:
+ DATABASE_URL: postgresql://postgres:secret@database:5432/myapp
+ restart: "no"
+ # => Runs once, doesn't restart on failure
 
-  # Init container: Seed initial data
-  db-seed:
-    image: my-api:latest
-    command: npm run seed
-    # => Seeds initial data (admin user, default settings)
-    depends_on:
-      db-migrate:
-        condition: service_completed_successfully
-        # => Waits for migrations to complete successfully
-    environment:
-      DATABASE_URL: postgresql://postgres:secret@database:5432/myapp
-    restart: "no"
+ # Init container: Seed initial data
+ db-seed:
+ image: my-api:latest
+ command: npm run seed
+ # => Seeds initial data (admin user, default settings)
+ depends_on:
+ db-migrate:
+ condition: service_completed_successfully
+ # => Waits for migrations to complete successfully
+ environment:
+ DATABASE_URL: postgresql://postgres:secret@database:5432/myapp
+ restart: "no"
 
-  # Main application (starts after init containers)
-  api:
-    image: my-api:latest
-    depends_on:
-      database:
-        condition: service_healthy
-      db-migrate:
-        condition: service_completed_successfully
-      db-seed:
-        condition: service_completed_successfully
-        # => Starts only after all init tasks complete
-    environment:
-      DATABASE_URL: postgresql://postgres:secret@database:5432/myapp
-    ports:
-      - "3000:3000"
-    restart: unless-stopped
+ # Main application (starts after init containers)
+ api:
+ image: my-api:latest
+ depends_on:
+ database:
+ condition: service_healthy
+ db-migrate:
+ condition: service_completed_successfully
+ db-seed:
+ condition: service_completed_successfully
+ # => Starts only after all init tasks complete
+ environment:
+ DATABASE_URL: postgresql://postgres:secret@database:5432/myapp
+ ports:
+ - "3000:3000"
+ restart: unless-stopped
 
 volumes:
-  db-data:
+ db-data:
 ```
 
 ```bash
 # Start services (observe init container execution order)
 docker compose up -d
 # => [+] Running 4/4
-# => ⠿ Container database     Started (0.5s)
-# => ⠿ Container db-migrate   Started (10.2s)  ← Waits for database health
-# => ⠿ Container db-seed      Started (15.8s)  ← Waits for migration completion
-# => ⠿ Container api          Started (16.1s)  ← Starts after all init tasks
+# => ⠿ Container database Started (0.5s)
+# => ⠿ Container db-migrate Started (10.2s) ← Waits for database health
+# => ⠿ Container db-seed Started (15.8s) ← Waits for migration completion
+# => ⠿ Container api Started (16.1s) ← Starts after all init tasks
 
 # Check init container logs
 docker compose logs db-migrate
-# => Connecting to database...
-# => Running migration 001_create_users_table... OK
-# => Running migration 002_create_posts_table... OK
+# => Connecting to database..
+# => Running migration 001_create_users_table.. OK
+# => Running migration 002_create_posts_table.. OK
 # => Migrations completed successfully
 
 docker compose logs db-seed
-# => Seeding admin user...
-# => Seeding default settings...
+# => Seeding admin user..
+# => Seeding default settings..
 # => Seed completed successfully
 
 # Init container exits after completion
 docker compose ps
-# => NAME         STATUS                    PORTS
-# => database     Up (healthy)              5432/tcp
-# => db-migrate   Exited (0) 30 seconds ago
-# => db-seed      Exited (0) 25 seconds ago
-# => api          Up                        0.0.0.0:3000->3000/tcp
+# => NAME STATUS PORTS
+# => database Up (healthy) 5432/tcp
+# => db-migrate Exited (0) 30 seconds ago
+# => db-seed Exited (0) 25 seconds ago
+# => api Up 0.0.0.0:3000->3000/tcp
 
 # Restart scenario: Init containers DON'T run again
 docker compose restart api
@@ -2519,17 +2517,17 @@ cat > init.sh << 'EOF'
 #!/bin/sh
 set -e
 
-echo "Waiting for database..."
+echo "Waiting for database.."
 until nc -z database 5432; do
-  echo "Database not ready, retrying in 2s..."
-  sleep 2
+ echo "Database not ready, retrying in 2s.."
+ sleep 2
 done
 echo "Database ready!"
 
-echo "Running migrations..."
+echo "Running migrations.."
 npm run migrate
 
-echo "Seeding data..."
+echo "Seeding data.."
 npm run seed
 
 echo "Init completed successfully"
@@ -2539,14 +2537,14 @@ chmod +x init.sh
 
 # Use script in Compose
 cat >> docker-compose.yml << 'EOF'
-  init:
-    image: my-api:latest
-    command: ["/init.sh"]
-    volumes:
-      - ./init.sh:/init.sh:ro
-    depends_on:
-      - database
-    restart: "no"
+ init:
+ image: my-api:latest
+ command: ["/init.sh"]
+ volumes:
+ - ./init.sh:/init.sh:ro
+ depends_on:
+ - database
+ restart: "no"
 EOF
 
 # Multiple parallel init tasks
@@ -2554,45 +2552,43 @@ cat > docker-compose-parallel-init.yml << 'EOF'
 version: '3.8'
 
 services:
-  # Init task 1: Download config from S3
-  config-downloader:
-    image: amazon/aws-cli
-    command: s3 cp s3://my-bucket/config.json /config/
-    volumes:
-      - config-data:/config
-    restart: "no"
+ # Init task 1: Download config from S3
+ config-downloader:
+ image: amazon/aws-cli
+ command: s3 cp s3://my-bucket/config.json /config/
+ volumes:
+ - config-data:/config
+ restart: "no"
 
-  # Init task 2: Generate SSL certificates
-  cert-generator:
-    image: alpine/openssl
-    command: sh -c "openssl req -x509 -newkey rsa:4096 -keyout /certs/key.pem -out /certs/cert.pem -days 365 -nodes -subj '/CN=localhost'"
-    volumes:
-      - cert-data:/certs
-    restart: "no"
+ # Init task 2: Generate SSL certificates
+ cert-generator:
+ image: alpine/openssl
+ command: sh -c "openssl req -x509 -newkey rsa:4096 -keyout /certs/key.pem -out /certs/cert.pem -days 365 -nodes -subj '/CN=localhost'"
+ volumes:
+ - cert-data:/certs
+ restart: "no"
 
-  # Main app uses outputs from both init containers
-  app:
-    image: my-app
-    depends_on:
-      config-downloader:
-        condition: service_completed_successfully
-      cert-generator:
-        condition: service_completed_successfully
-    volumes:
-      - config-data:/app/config:ro
-      - cert-data:/app/certs:ro
+ # Main app uses outputs from both init containers
+ app:
+ image: my-app
+ depends_on:
+ config-downloader:
+ condition: service_completed_successfully
+ cert-generator:
+ condition: service_completed_successfully
+ volumes:
+ - config-data:/app/config:ro
+ - cert-data:/app/certs:ro
 
 volumes:
-  config-data:
-  cert-data:
+ config-data:
+ cert-data:
 EOF
 ```
 
 **Key Takeaway**: Init containers run one-time setup tasks before main application starts. Use `restart: "no"` to prevent init containers from restarting. Use `depends_on` with `service_completed_successfully` condition to coordinate execution order. Init containers are ideal for migrations, data seeding, configuration downloads, and waiting for dependencies.
 
-**Why It Matters**: Init containers implement the separation of concerns principle - setup logic stays separate from application logic, preventing contamination of application containers with one-time scripts. This pattern eliminates race conditions where applications start before databases finish initializing, preventing cascading deployment failures. Organizations using init containers report 85% reduction in deployment failures from timing issues - database migrations complete before applications attempt connections, ensuring clean rollouts every time.
-
----
+**Why It Matters**: Init containers implement the separation of concerns principle - setup logic stays separate from application logic, preventing contamination of application containers with one-time scripts. This pattern eliminates race conditions where applications start before databases finish initializing, preventing cascading deployment failures. Organizations using init containers report ---
 
 ### Example 44: Shared Volumes for Data Exchange
 
@@ -2604,63 +2600,63 @@ Share data between containers using volumes for loose coupling and data persiste
 version: "3.8"
 
 services:
-  # Producer: Generates data files
-  data-generator:
-    image: alpine
-    command: sh -c "while true; do date > /data/timestamp.txt; sleep 10; done"
-    # => Writes current timestamp to shared volume every 10 seconds
-    volumes:
-      - shared-data:/data
-      # => Mounts shared volume at /data
+ # Producer: Generates data files
+ data-generator:
+ image: alpine
+ command: sh -c "while true; do date > /data/timestamp.txt; sleep 10; done"
+ # => Writes current timestamp to shared volume every 10 seconds
+ volumes:
+ - shared-data:/data
+ # => Mounts shared volume at /data
 
-  # Consumer 1: Processes data files
-  processor:
-    image: alpine
-    command: sh -c "while true; do cat /data/timestamp.txt 2>/dev/null || echo 'No data yet'; sleep 5; done"
-    # => Reads timestamp from shared volume every 5 seconds
-    volumes:
-      - shared-data:/data:ro
-      # => Read-only mount (cannot modify shared data)
-    depends_on:
-      - data-generator
+ # Consumer 1: Processes data files
+ processor:
+ image: alpine
+ command: sh -c "while true; do cat /data/timestamp.txt 2>/dev/null || echo 'No data yet'; sleep 5; done"
+ # => Reads timestamp from shared volume every 5 seconds
+ volumes:
+ - shared-data:/data:ro
+ # => Read-only mount (cannot modify shared data)
+ depends_on:
+ - data-generator
 
-  # Consumer 2: Backs up data
-  backup:
-    image: alpine
-    command: sh -c "while true; do cp /data/timestamp.txt /backup/backup-$(date +%s).txt 2>/dev/null || true; sleep 30; done"
-    # => Creates backup every 30 seconds
-    volumes:
-      - shared-data:/data:ro
-      # => Read-only access to shared data
-      - backup-data:/backup
-      # => Separate volume for backups
+ # Consumer 2: Backs up data
+ backup:
+ image: alpine
+ command: sh -c "while true; do cp /data/timestamp.txt /backup/backup-$(date +%s).txt 2>/dev/null || true; sleep 30; done"
+ # => Creates backup every 30 seconds
+ volumes:
+ - shared-data:/data:ro
+ # => Read-only access to shared data
+ - backup-data:/backup
+ # => Separate volume for backups
 
-  # Multi-container write example (needs coordination)
-  writer1:
-    image: alpine
-    command: sh -c "while true; do echo 'Writer1: $(date)' >> /data/log.txt; sleep 5; done"
-    volumes:
-      - log-data:/data
+ # Multi-container write example (needs coordination)
+ writer1:
+ image: alpine
+ command: sh -c "while true; do echo 'Writer1: $(date)' >> /data/log.txt; sleep 5; done"
+ volumes:
+ - log-data:/data
 
-  writer2:
-    image: alpine
-    command: sh -c "while true; do echo 'Writer2: $(date)' >> /data/log.txt; sleep 7; done"
-    volumes:
-      - log-data:/data
-      # => Both writers append to same file (potential race condition)
+ writer2:
+ image: alpine
+ command: sh -c "while true; do echo 'Writer2: $(date)' >> /data/log.txt; sleep 7; done"
+ volumes:
+ - log-data:/data
+ # => Both writers append to same file (potential race condition)
 
-  # Reader: Monitors aggregated logs
-  log-reader:
-    image: alpine
-    command: sh -c "while true; do tail -f /data/log.txt 2>/dev/null || sleep 1; done"
-    volumes:
-      - log-data:/data:ro
+ # Reader: Monitors aggregated logs
+ log-reader:
+ image: alpine
+ command: sh -c "while true; do tail -f /data/log.txt 2>/dev/null || sleep 1; done"
+ volumes:
+ - log-data:/data:ro
 
 volumes:
-  shared-data:
-    # => Named volume managed by Docker
-  backup-data:
-  log-data:
+ shared-data:
+ # => Named volume managed by Docker
+ backup-data:
+ log-data:
 ```
 
 ```bash
@@ -2669,15 +2665,15 @@ docker compose up -d
 
 # Verify volume creation
 docker volume ls | grep shared
-# => local   myproject_shared-data
-# => local   myproject_backup-data
-# => local   myproject_log-data
+# => local myproject_shared-data
+# => local myproject_backup-data
+# => local myproject_log-data
 
 # Check shared data from host
 docker volume inspect myproject_shared-data
 # => {
-# =>   "Mountpoint": "/var/lib/docker/volumes/myproject_shared-data/_data",
-# =>   "Driver": "local"
+# => "Mountpoint": "/var/lib/docker/volumes/myproject_shared-data/_data",
+# => "Driver": "local"
 # => }
 
 # Read shared data from volume
@@ -2694,46 +2690,46 @@ docker compose logs -f log-reader
 
 # Backup volume data
 docker run --rm \
-  -v myproject_shared-data:/source:ro \
-  -v $(pwd)/backup:/backup \
-  alpine tar czf /backup/data-$(date +%Y%m%d).tar.gz -C /source .
+ -v myproject_shared-data:/source:ro \
+ -v $(pwd)/backup:/backup \
+ alpine tar czf /backup/data-$(date +%Y%m%d).tar.gz -C /source .
 # => Creates compressed backup of volume contents
 
 # Restore volume data
 docker run --rm \
-  -v myproject_shared-data:/target \
-  -v $(pwd)/backup:/backup \
-  alpine tar xzf /backup/data-20251229.tar.gz -C /target
+ -v myproject_shared-data:/target \
+ -v $(pwd)/backup:/backup \
+ alpine tar xzf /backup/data-20251229.tar.gz -C /target
 # => Restores data to volume
 
 # Inspect volume usage
 docker system df -v | grep myproject_shared-data
-# => myproject_shared-data   1        1        0B        0B
+# => myproject_shared-data 1 1 0B 0B
 
 # Volume with bind mount for development
 cat > docker-compose.dev.yml << 'EOF'
 version: '3.8'
 
 services:
-  app:
-    image: my-app
-    volumes:
-      - ./src:/app/src:cached
-      # => Bind mount source code for live reloading
-      # => :cached optimizes performance on macOS/Windows
-      - ./config:/app/config:ro
-      # => Read-only configuration
-      - node_modules:/app/node_modules
-      # => Named volume for dependencies (not bind mount)
+ app:
+ image: my-app
+ volumes:
+ - ./src:/app/src:cached
+ # => Bind mount source code for live reloading
+ # => :cached optimizes performance on macOS/Windows
+ - ./config:/app/config:ro
+ # => Read-only configuration
+ - node_modules:/app/node_modules
+ # => Named volume for dependencies (not bind mount)
 
 volumes:
-  node_modules:
+ node_modules:
 EOF
 
 # tmpfs volume (in-memory, not persisted)
 docker run --rm \
-  --tmpfs /tmp:size=100M,mode=1777 \
-  alpine sh -c "echo 'test' > /tmp/file.txt && cat /tmp/file.txt"
+ --tmpfs /tmp:size=100M,mode=1777 \
+ alpine sh -c "echo 'test' > /tmp/file.txt && cat /tmp/file.txt"
 # => Data stored in RAM, lost on container stop
 
 # Clean up unused volumes
@@ -2754,19 +2750,19 @@ Connect Docker Compose services to existing networks created outside Compose for
 ```bash
 # Create external network manually (outside Compose)
 docker network create \
-  --driver bridge \
-  --subnet 172.25.0.0/16 \
-  --gateway 172.25.0.1 \
-  --attachable \
-  external-network
+ --driver bridge \
+ --subnet 172.25.0.0/16 \
+ --gateway 172.25.0.1 \
+ --attachable \
+ external-network
 # => Network for cross-project communication
 # => --attachable allows containers to join dynamically
 
 # Create second external network (simulating different zones)
 docker network create \
-  --driver bridge \
-  --subnet 172.26.0.0/16 \
-  dmz-network
+ --driver bridge \
+ --subnet 172.26.0.0/16 \
+ dmz-network
 # => DMZ network for public-facing services
 ```
 
@@ -2776,35 +2772,35 @@ docker network create \
 version: "3.8"
 
 services:
-  database:
-    image: postgres:15-alpine
-    environment:
-      POSTGRES_PASSWORD: secret
-    networks:
-      - external-network
-      # => Connects to pre-existing network
-    volumes:
-      - db-data:/var/lib/postgresql/data
+ database:
+ image: postgres:15-alpine
+ environment:
+ POSTGRES_PASSWORD: secret
+ networks:
+ - external-network
+ # => Connects to pre-existing network
+ volumes:
+ - db-data:/var/lib/postgresql/data
 
-  api:
-    image: my-api
-    networks:
-      - external-network
-      # => Same external network as database
-      - dmz-network
-      # => Also connects to DMZ for public access
-    environment:
-      DATABASE_URL: postgresql://postgres:secret@database:5432/mydb
+ api:
+ image: my-api
+ networks:
+ - external-network
+ # => Same external network as database
+ - dmz-network
+ # => Also connects to DMZ for public access
+ environment:
+ DATABASE_URL: postgresql://postgres:secret@database:5432/mydb
 
 networks:
-  external-network:
-    external: true
-    # => Uses existing network (doesn't create new one)
-  dmz-network:
-    external: true
+ external-network:
+ external: true
+ # => Uses existing network (doesn't create new one)
+ dmz-network:
+ external: true
 
 volumes:
-  db-data:
+ db-data:
 ```
 
 ```yaml
@@ -2813,26 +2809,26 @@ volumes:
 version: "3.8"
 
 services:
-  web:
-    image: nginx:alpine
-    networks:
-      - dmz-network
-      # => Connects to same DMZ network
-    ports:
-      - "8080:80"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+ web:
+ image: nginx:alpine
+ networks:
+ - dmz-network
+ # => Connects to same DMZ network
+ ports:
+ - "8080:80"
+ volumes:
+ - ./nginx.conf:/etc/nginx/nginx.conf:ro
 
-  frontend-app:
-    image: my-frontend
-    networks:
-      - dmz-network
-      # => Can communicate with api from Project A
+ frontend-app:
+ image: my-frontend
+ networks:
+ - dmz-network
+ # => Can communicate with api from Project A
 
 networks:
-  dmz-network:
-    external: true
-    # => Reuses network created for Project A
+ dmz-network:
+ external: true
+ # => Reuses network created for Project A
 ```
 
 ```bash
@@ -2863,8 +2859,8 @@ docker network inspect dmz-network --format='{{range .Containers}}{{.Name}} {{.I
 
 # Connect standalone container to external network
 docker run -d --name redis \
-  --network external-network \
-  redis:7-alpine
+ --network external-network \
+ redis:7-alpine
 # => Redis joins external network, accessible from both projects
 
 # Network isolation verification
@@ -2874,9 +2870,9 @@ docker exec projecta-database-1 ping -c 1 projectb-web-1
 
 # Use external network for legacy system integration
 docker run -d --name legacy-service \
-  --network external-network \
-  --ip 172.25.0.100 \
-  my-legacy-app
+ --network external-network \
+ --ip 172.25.0.100 \
+ my-legacy-app
 # => Assigns specific IP for compatibility with hardcoded configurations
 
 # Disconnect project from external network
@@ -2916,7 +2912,7 @@ WORKDIR /app
 
 # Create non-root user and group
 RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001 -G nodejs
+ adduser -S nodejs -u 1001 -G nodejs
 # => Creates user "nodejs" with UID 1001, group GID 1001
 # => -S flag creates system user (no login shell)
 
@@ -2928,7 +2924,7 @@ RUN npm ci --only=production
 # => npm packages often need root during installation
 
 # Copy application code
-COPY --chown=nodejs:nodejs . .
+COPY --chown=nodejs:nodejs .
 # => Sets ownership to nodejs user immediately
 # => Prevents permission issues later
 
@@ -2938,7 +2934,7 @@ RUN chown -R nodejs:nodejs /app
 
 # Create writable directories for nodejs user
 RUN mkdir -p /app/logs /app/tmp && \
-    chown -R nodejs:nodejs /app/logs /app/tmp
+ chown -R nodejs:nodejs /app/logs /app/tmp
 # => Directories where application can write
 
 # Switch to non-root user
@@ -2957,33 +2953,33 @@ CMD ["node", "server.js"]
 version: "3.8"
 
 services:
-  app:
-    build: .
-    # Image built with USER nodejs directive
-    ports:
-      - "3000:3000"
-    volumes:
-      - logs:/app/logs
-      # => Volume for logs (writable by nodejs user)
+ app:
+ build: .
+ # Image built with USER nodejs directive
+ ports:
+ - "3000:3000"
+ volumes:
+ - logs:/app/logs
+ # => Volume for logs (writable by nodejs user)
 
-  # Alternative: Specify user in Compose (overrides Dockerfile USER)
-  api:
-    image: my-api
-    user: "1001:1001"
-    # => Runs as UID 1001, GID 1001
-    # => Overrides any USER directive in Dockerfile
-    volumes:
-      - api-data:/data
+ # Alternative: Specify user in Compose (overrides Dockerfile USER)
+ api:
+ image: my-api
+ user: "1001:1001"
+ # => Runs as UID 1001, GID 1001
+ # => Overrides any USER directive in Dockerfile
+ volumes:
+ - api-data:/data
 
-  # Run as arbitrary non-root user
-  worker:
-    image: my-worker
-    user: "65534:65534"
-    # => UID 65534 is "nobody" user (minimal privileges)
+ # Run as arbitrary non-root user
+ worker:
+ image: my-worker
+ user: "65534:65534"
+ # => UID 65534 is "nobody" user (minimal privileges)
 
 volumes:
-  logs:
-  api-data:
+ logs:
+ api-data:
 ```
 
 ```bash
@@ -3016,7 +3012,7 @@ docker run --rm --user root my-app:nonroot whoami
 # Check process owner on host
 docker run -d --name test-nonroot my-app:nonroot sleep 3600
 ps aux | grep "sleep 3600" | grep -v grep
-# => 1001     12345  0.0  0.0  1234  567  ?  Ss  12:05  0:00  sleep 3600
+# => 1001 12345 0.0 0.0 1234 567 ? Ss 12:05 0:00 sleep 3600
 # => Process runs as UID 1001 on host (not root!)
 
 # Security benefit: Attacker gains shell in container
@@ -3035,9 +3031,9 @@ apk add --no-cache curl
 
 # File ownership on volumes (host perspective)
 docker run --rm \
-  -v $(pwd)/test-data:/data \
-  my-app:nonroot \
-  sh -c "touch /data/file.txt"
+ -v $(pwd)/test-data:/data \
+ my-app:nonroot \
+ sh -c "touch /data/file.txt"
 
 ls -ln test-data/
 # => -rw-r--r-- 1 1001 1001 0 Dec 29 12:10 file.txt
@@ -3049,10 +3045,10 @@ sudo chown -R 1001:1001 test-data/
 
 # Option 2: Run container with host user
 docker run --rm \
-  --user "$(id -u):$(id -g)" \
-  -v $(pwd)/test-data:/data \
-  my-app:nonroot \
-  sh -c "touch /data/file2.txt"
+ --user "$(id -u):$(id -g)" \
+ -v $(pwd)/test-data:/data \
+ my-app:nonroot \
+ sh -c "touch /data/file2.txt"
 # => File owned by current host user
 
 ls -l test-data/file2.txt
@@ -3079,34 +3075,34 @@ version: "3.8"
 
 services:
   app:
-    image: my-app
-    env_file:
-      - .env
-      # => Loads variables from .env file
-      - .env.production
-      # => Overlays production-specific variables
-    environment:
-      NODE_ENV: ${NODE_ENV:-production}
-      # => Uses $NODE_ENV from .env, defaults to "production"
-      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}
-      # => Interpolates multiple variables
-      API_KEY_FILE: /run/secrets/api_key
-      # => Points to secret file (not plain env var)
-      LOG_LEVEL: ${LOG_LEVEL}
-      # => Required variable (fails if not set)
-      CACHE_TTL: ${CACHE_TTL:-3600}
-      # => Optional with default value
-    secrets:
-      - api_key
-      # => Mounts secret as file
-    ports:
-      - "${APP_PORT:-3000}:3000"
-      # => Configurable port from .env
+  image: my-app
+  env_file:
+    - .env
+    # => Loads variables from .env file
+    - .env.production
+  # => Overlays production-specific variables
+  environment:
+  NODE_ENV: ${NODE_ENV:-production}
+  # => Uses $NODE_ENV from .env, defaults to "production"
+  DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@database:5432/${DB_NAME}
+  # => Interpolates multiple variables
+  API_KEY_FILE: /run/secrets/api_key
+  # => Points to secret file (not plain env var)
+  LOG_LEVEL: ${LOG_LEVEL}
+  # => Required variable (fails if not set)
+  CACHE_TTL: ${CACHE_TTL:-3600}
+  # => Optional with default value
+  secrets:
+    - api_key
+  # => Mounts secret as file
+  ports:
+    - "${APP_PORT:-3000}:3000"
+  # => Configurable port from .env
 
 secrets:
   api_key:
-    file: ./secrets/api_key.txt
-    # => Reads secret from local file
+  file: ./secrets/api_key.txt
+  # => Reads secret from local file
 ```
 
 ```bash
@@ -3200,7 +3196,7 @@ docker compose --env-file .env.production up -d
 # 1. docker compose run -e VAR=value
 # 2. Shell environment variables (export VAR=value)
 # 3. Environment from Compose file (environment:)
-# 4. .env file
+# 4.env file
 # 5. Dockerfile ENV
 
 # Test precedence
@@ -3218,7 +3214,7 @@ docker compose exec app sh -c 'echo $NODE_ENV'
 
 **Key Takeaway**: Use .env files for non-sensitive configuration and Docker secrets for credentials. Never commit .env.production to version control. Provide .env.example templates for team onboarding. Use variable defaults (${VAR:-default}) for optional settings. Always prefer secret files over environment variables for sensitive data.
 
-**Why It Matters**: Environment variable mismanagement is a leading cause of security breaches - developers accidentally commit .env files with production credentials to public repositories, exposing databases and APIs. The .env/.env.production pattern separates configuration from code while preventing credential leakage through .gitignore. Secrets as files instead of environment variables prevent credential exposure through process listings and Docker inspect commands - attackers with read access to `/proc` can dump environment variables but not secret files mounted with restrictive permissions.
+**Why It Matters**: Environment variable mismanagement is a leading cause of security breaches - developers accidentally commit.env files with production credentials to public repositories, exposing databases and APIs. The.env/.env.production pattern separates configuration from code while preventing credential leakage through.gitignore. Secrets as files instead of environment variables prevent credential exposure through process listings and Docker inspect commands - attackers with read access to `/proc` can dump environment variables but not secret files mounted with restrictive permissions.
 
 ---
 
@@ -3232,85 +3228,85 @@ Profiles enable selective service activation for different scenarios (developmen
 version: "3.8"
 
 services:
-  # Core services (always run)
-  database:
-    image: postgres:15-alpine
-    environment:
-      POSTGRES_PASSWORD: secret
-    volumes:
-      - db-data:/var/lib/postgresql/data
+ # Core services (always run)
+ database:
+ image: postgres:15-alpine
+ environment:
+ POSTGRES_PASSWORD: secret
+ volumes:
+ - db-data:/var/lib/postgresql/data
 
-  api:
-    image: my-api
-    depends_on:
-      - database
-    environment:
-      DATABASE_URL: postgresql://postgres:secret@database:5432/mydb
-    ports:
-      - "3000:3000"
+ api:
+ image: my-api
+ depends_on:
+ - database
+ environment:
+ DATABASE_URL: postgresql://postgres:secret@database:5432/mydb
+ ports:
+ - "3000:3000"
 
-  # Development tools (only in dev profile)
-  pgadmin:
-    image: dpage/pgadmin4
-    profiles: ["dev", "debug"]
-    # => Only starts with: docker compose --profile dev up
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@example.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-    ports:
-      - "5050:80"
+ # Development tools (only in dev profile)
+ pgadmin:
+ image: dpage/pgadmin4
+ profiles: ["dev", "debug"]
+ # => Only starts with: docker compose --profile dev up
+ environment:
+ PGADMIN_DEFAULT_EMAIL: admin@example.com
+ PGADMIN_DEFAULT_PASSWORD: admin
+ ports:
+ - "5050:80"
 
-  # Debugging tools (debug profile)
-  debug-proxy:
-    image: nicolaka/netshoot
-    profiles: ["debug"]
-    # => Only with: docker compose --profile debug up
-    command: sleep infinity
-    network_mode: service:api
-    # => Shares network namespace with API for debugging
+ # Debugging tools (debug profile)
+ debug-proxy:
+ image: nicolaka/netshoot
+ profiles: ["debug"]
+ # => Only with: docker compose --profile debug up
+ command: sleep infinity
+ network_mode: service:api
+ # => Shares network namespace with API for debugging
 
-  # Testing tools (test profile)
-  test-runner:
-    image: my-api
-    profiles: ["test"]
-    # => Only with: docker compose --profile test up
-    command: npm test
-    depends_on:
-      - database
-    environment:
-      DATABASE_URL: postgresql://postgres:secret@database:5432/test_db
-      NODE_ENV: test
+ # Testing tools (test profile)
+ test-runner:
+ image: my-api
+ profiles: ["test"]
+ # => Only with: docker compose --profile test up
+ command: npm test
+ depends_on:
+ - database
+ environment:
+ DATABASE_URL: postgresql://postgres:secret@database:5432/test_db
+ NODE_ENV: test
 
-  # Performance testing (perf profile)
-  load-tester:
-    image: grafana/k6
-    profiles: ["perf"]
-    command: run /scripts/load-test.js
-    volumes:
-      - ./k6-scripts:/scripts
-    environment:
-      API_URL: http://api:3000
+ # Performance testing (perf profile)
+ load-tester:
+ image: grafana/k6
+ profiles: ["perf"]
+ command: run /scripts/load-test.js
+ volumes:
+ - ./k6-scripts:/scripts
+ environment:
+ API_URL: http://api:3000
 
-  # Monitoring (monitoring profile)
-  prometheus:
-    image: prom/prometheus
-    profiles: ["monitoring", "production"]
-    # => Multiple profiles
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+ # Monitoring (monitoring profile)
+ prometheus:
+ image: prom/prometheus
+ profiles: ["monitoring", "production"]
+ # => Multiple profiles
+ ports:
+ - "9090:9090"
+ volumes:
+ - ./prometheus.yml:/etc/prometheus/prometheus.yml
 
-  grafana:
-    image: grafana/grafana
-    profiles: ["monitoring", "production"]
-    ports:
-      - "3001:3000"
-    depends_on:
-      - prometheus
+ grafana:
+ image: grafana/grafana
+ profiles: ["monitoring", "production"]
+ ports:
+ - "3001:3000"
+ depends_on:
+ - prometheus
 
 volumes:
-  db-data:
+ db-data:
 ```
 
 ```bash
@@ -3369,20 +3365,20 @@ cat > docker-compose.override.yml << 'EOF'
 version: '3.8'
 
 services:
-  # Override for local development
-  api:
-    build: .
-    volumes:
-      - ./src:/app/src:cached
-    environment:
-      LOG_LEVEL: debug
+ # Override for local development
+ api:
+ build: .
+ volumes:
+ - ./src:/app/src:cached
+ environment:
+ LOG_LEVEL: debug
 
-  # Additional dev tool (no profile needed in override)
-  mailhog:
-    image: mailhog/mailhog
-    ports:
-      - "1025:1025"
-      - "8025:8025"
+ # Additional dev tool (no profile needed in override)
+ mailhog:
+ image: mailhog/mailhog
+ ports:
+ - "1025:1025"
+ - "8025:8025"
 EOF
 
 # docker compose automatically merges docker-compose.yml + docker-compose.override.yml
@@ -3394,11 +3390,11 @@ cat > docker-compose.prod.yml << 'EOF'
 version: '3.8'
 
 services:
-  api:
-    image: my-registry/my-api:v1.0.0
-    restart: always
-    deploy:
-      replicas: 3
+ api:
+ image: my-registry/my-api:v1.0.0
+ restart: always
+ deploy:
+ replicas: 3
 EOF
 
 # Use specific override file
@@ -3411,7 +3407,7 @@ docker compose --profile dev --profile monitoring down
 
 **Key Takeaway**: Profiles enable conditional service activation without maintaining separate Compose files. Use profiles for development tools, testing utilities, monitoring stack, and environment-specific services. Combine multiple profiles to compose custom environments. Profiles keep docker-compose.yml DRY while supporting diverse use cases.
 
-**Why It Matters**: Profiles eliminate the complexity of maintaining separate docker-compose.dev.yml, docker-compose.test.yml, and docker-compose.prod.yml files that drift apart over time and require manual synchronization. Development teams using profiles report 60% reduction in configuration management overhead - a single canonical Compose file supports all environments. Profiles enable fast context switching where developers toggle debugging tools on/off with single commands, accelerating troubleshooting from 30-minute tool setup to instant availability.
+**Why It Matters**: Profiles eliminate the complexity of maintaining separate docker-compose.dev.yml, docker-compose.test.yml, and docker-compose.prod.yml files that drift apart over time and require manual synchronization. Development teams using profiles report Profiles enable fast context switching where developers toggle debugging tools on/off with single commands, accelerating troubleshooting from 30-minute tool setup to instant availability.
 
 ---
 
@@ -3422,10 +3418,10 @@ Monitor container resource usage in real-time to identify performance bottleneck
 ```bash
 # Real-time resource monitoring (all containers)
 docker stats
-# => CONTAINER  CPU %  MEM USAGE / LIMIT    MEM %  NET I/O        BLOCK I/O
-# => api       45.2%  1.2GiB / 2GiB        60.0%  1.5MB / 900kB  12MB / 8MB
-# => db        12.3%  800MiB / 4GiB        20.0%  500kB / 450kB  100MB / 50MB
-# => web       5.1%   150MiB / 512MiB      29.3%  2MB / 1.5MB    5MB / 2MB
+# => CONTAINER CPU % MEM USAGE / LIMIT MEM % NET I/O BLOCK I/O
+# => api 45.2% 1.2GiB / 2GiB 60.0% 1.5MB / 900kB 12MB / 8MB
+# => db 12.3% 800MiB / 4GiB 20.0% 500kB / 450kB 100MB / 50MB
+# => web 5.1% 150MiB / 512MiB 29.3% 2MB / 1.5MB 5MB / 2MB
 # => Auto-refreshes every second
 
 # Monitor specific containers
@@ -3438,9 +3434,9 @@ docker stats --no-stream
 
 # Custom format output
 docker stats --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}"
-# => CONTAINER    CPU %    MEM USAGE / LIMIT
-# => api          45.2%    1.2GiB / 2GiB
-# => db           12.3%    800MiB / 4GiB
+# => CONTAINER CPU % MEM USAGE / LIMIT
+# => api 45.2% 1.2GiB / 2GiB
+# => db 12.3% 800MiB / 4GiB
 
 # Export stats to CSV
 docker stats --no-stream --format "{{.Container}},{{.CPUPerc}},{{.MemUsage}},{{.NetIO}}" > stats.csv
@@ -3451,9 +3447,9 @@ docker stats --no-stream --format "{{.Container}},{{.CPUPerc}},{{.MemUsage}},{{.
 cat > monitor.sh << 'EOF'
 #!/bin/bash
 while true; do
-  echo "=== $(date) ==="
-  docker stats --no-stream --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.MemPerc}}"
-  sleep 10
+ echo "=== $(date) ==="
+ docker stats --no-stream --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.MemPerc}}"
+ sleep 10
 done
 EOF
 chmod +x monitor.sh
@@ -3470,9 +3466,9 @@ docker exec api sh -c 'cat /sys/fs/cgroup/cpu/cpu.shares'
 
 # Process inspection inside container
 docker top api
-# => UID    PID     PPID    C    STIME   TTY   TIME       CMD
-# => 1001   12345   12320   0    12:00   ?     00:01:23   node server.js
-# => 1001   12346   12345   0    12:00   ?     00:00:15   node worker.js
+# => UID PID PPID C STIME TTY TIME CMD
+# => 1001 12345 12320 0 12:00 ? 00:01:23 node server.js
+# => 1001 12346 12345 0 12:00 ? 00:00:15 node worker.js
 
 docker top api -o pid,user,%cpu,%mem,cmd
 # => Custom format showing CPU/memory per process
@@ -3509,13 +3505,13 @@ docker stats --no-stream --format "{{.Container}} {{.BlockIO}}"
 
 # cAdvisor for advanced monitoring
 docker run -d \
-  --name=cadvisor \
-  --volume=/:/rootfs:ro \
-  --volume=/var/run:/var/run:ro \
-  --volume=/sys:/sys:ro \
-  --volume=/var/lib/docker/:/var/lib/docker:ro \
-  --publish=8080:8080 \
-  gcr.io/cadvisor/cadvisor:latest
+ --name=cadvisor \
+ --volume=/:/rootfs:ro \
+ --volume=/var/run:/var/run:ro \
+ --volume=/sys:/sys:ro \
+ --volume=/var/lib/docker/:/var/lib/docker:ro \
+ --publish=8080:8080 \
+ gcr.io/cadvisor/cadvisor:latest
 # => Web UI at http://localhost:8080
 # => Detailed metrics per container
 
@@ -3529,14 +3525,14 @@ cat > alert.sh << 'EOF'
 THRESHOLD=80
 
 while true; do
-  docker stats --no-stream --format "{{.Container}} {{.CPUPerc}}" | while read container cpu; do
-    cpu_int=${cpu%.*}  # Remove decimal
-    if [ $cpu_int -gt $THRESHOLD ]; then
-      echo "ALERT: $container using $cpu CPU (threshold: ${THRESHOLD}%)"
-      # Send alert (email, Slack, etc.)
-    fi
-  done
-  sleep 30
+ docker stats --no-stream --format "{{.Container}} {{.CPUPerc}}" | while read container cpu; do
+ cpu_int=${cpu%.*} # Remove decimal
+ if [ $cpu_int -gt $THRESHOLD ]; then
+ echo "ALERT: $container using $cpu CPU (threshold: ${THRESHOLD}%)"
+ # Send alert (email, )
+ fi
+ done
+ sleep 30
 done
 EOF
 chmod +x alert.sh
@@ -3545,9 +3541,7 @@ chmod +x alert.sh
 
 **Key Takeaway**: Use `docker stats` for real-time resource monitoring. Monitor CPU, memory, network I/O, and block I/O. Export stats to CSV for trend analysis. Use cAdvisor for advanced metrics and historical data. Set up alerts for resource threshold violations. Identify resource-heavy containers early to prevent performance degradation.
 
-**Why It Matters**: Real-time resource monitoring enables proactive capacity planning - teams identify memory leaks and CPU spikes before they cause outages. Organizations using continuous monitoring report 75% reduction in resource-related incidents through early detection. cAdvisor integration with Prometheus provides historical metrics that reveal usage patterns - for example, identifying that API containers consume 3x more memory during batch processing jobs, enabling targeted resource allocation that prevents OOM kills during peak loads.
-
----
+**Why It Matters**: Real-time resource monitoring enables proactive capacity planning - teams identify memory leaks and CPU spikes before they cause outages. ---
 
 ### Example 50: Docker System Prune and Cleanup
 
@@ -3556,12 +3550,12 @@ Regularly clean up unused Docker resources to reclaim disk space and maintain sy
 ```bash
 # Check disk usage (comprehensive overview)
 docker system df
-# => TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE
-# => Images          25        5         8.5GB     6.2GB (73%)
-# => Containers      30        8         2.1GB     1.8GB (86%)
-# => Local Volumes   15        6         15GB      10GB (67%)
-# => Build Cache     0         0         0B        0B
-# => Total:          25.6GB reclaimable
+# => TYPE TOTAL ACTIVE SIZE RECLAIMABLE
+# => Images 25 5 8.5GB 6.2GB (73%)
+# => Containers 30 8 2.1GB 1.8GB (86%)
+# => Local Volumes 15 6 15GB 10GB (67%)
+# => Build Cache 0 0 0B 0B
+# => Total: 25.6GB reclaimable
 
 # Detailed view
 docker system df -v
@@ -3581,7 +3575,7 @@ docker container prune -f
 # Remove dangling images (untagged)
 docker image prune
 # => Deleted Images:
-# => untagged: sha256:abc123...
+# => untagged: sha256:abc123..
 # => Total reclaimed space: 2.5GB
 
 # Remove unused images (not just dangling)
@@ -3608,11 +3602,11 @@ docker network prune
 # Nuclear option: Remove everything unused
 docker system prune -a --volumes
 # => WARNING! This will remove:
-# =>   - all stopped containers
-# =>   - all networks not used by at least one container
-# =>   - all volumes not used by at least one container
-# =>   - all images without at least one container associated to them
-# =>   - all build cache
+# => - all stopped containers
+# => - all networks not used by at least one container
+# => - all volumes not used by at least one container
+# => - all images without at least one container associated to them
+# => - all build cache
 # => Total reclaimed space: 20.5GB
 
 # Filter by time (remove resources older than 24 hours)
@@ -3680,14 +3674,14 @@ watch -n 60 'docker system df'
 
 # Identify large images
 docker images --format "{{.Repository}}:{{.Tag}}\t{{.Size}}" | sort -k2 -hr | head -10
-# => my-app:latest       1.2GB
-# => postgres:15         380MB
+# => my-app:latest 1.2GB
+# => postgres:15 380MB
 # => Shows top 10 largest images
 
 # Identify large volumes
 docker volume ls --format "{{.Name}}" | while read vol; do
-  size=$(docker run --rm -v $vol:/data alpine du -sh /data 2>/dev/null | cut -f1)
-  echo "$vol $size"
+ size=$(docker run --rm -v $vol:/data alpine du -sh /data 2>/dev/null | cut -f1)
+ echo "$vol $size"
 done | sort -k2 -hr
 # => db-data 15GB
 # => logs 5GB
@@ -3709,8 +3703,8 @@ docker volume prune --filter label!=environment=production
 
 # Emergency disk space recovery
 df -h /var/lib/docker
-# => Filesystem      Size  Used Avail Use% Mounted on
-# => /dev/sda1       100G   95G  2.5G  98% /
+# => Filesystem Size Used Avail Use% Mounted on
+# => /dev/sda1 100G 95G 2.5G 98% /
 
 docker system prune -a -f --volumes
 # => Reclaims maximum disk space immediately
@@ -3720,13 +3714,13 @@ docker builder prune --all -f
 
 # Verify space reclaimed
 df -h /var/lib/docker
-# => /dev/sda1       100G   70G   27G  73% /
+# => /dev/sda1 100G 70G 27G 73% /
 # => Freed 25GB
 ```
 
 **Key Takeaway**: Regular cleanup prevents disk exhaustion. Use `docker system prune` for comprehensive cleanup, with filters for safety. Automate cleanup with cron jobs using time-based filters. Always preserve production data with label filters. Monitor disk usage with `docker system df` to catch space issues early.
 
-**Why It Matters**: Uncontrolled Docker resource accumulation causes production outages - disk exhaustion prevents container starts, log writes, and database commits. Organizations without cleanup automation report average disk usage growth of 10GB/week from dangling images and stopped containers. Automated cleanup with conservative filters (30-day retention) balances space reclamation with rollback safety - you can revert to previous image versions within retention window. Emergency cleanup procedures saved companies from multi-hour outages where disk-full prevented even diagnostic commands from running.
+**Why It Matters**: Uncontrolled Docker resource accumulation causes production outages - disk exhaustion prevents container starts, log writes, and database commits. Automated cleanup with conservative filters (30-day retention) balances space reclamation with rollback safety - you can revert to previous image versions within retention window. Emergency cleanup procedures saved companies from multi-hour outages where disk-full prevented even diagnostic commands from running.
 
 ---
 
@@ -3792,9 +3786,9 @@ docker events --until '2025-12-29T13:00:00'
 
 # Combine filters
 docker events \
-  --filter 'type=container' \
-  --filter 'event=die' \
-  --filter 'label=environment=production'
+ --filter 'type=container' \
+ --filter 'event=die' \
+ --filter 'label=environment=production'
 # => Production container crashes only
 
 # Format output
@@ -3804,42 +3798,42 @@ docker events --format '{{.Time}} {{.Type}} {{.Action}} {{.Actor.Attributes.name
 
 docker events --format 'json' | jq '.'
 # => {
-# =>   "status": "start",
-# =>   "id": "abc123def456",
-# =>   "from": "nginx:alpine",
-# =>   "Type": "container",
-# =>   "Action": "start",
-# =>   "Actor": {
-# =>     "ID": "abc123def456",
-# =>     "Attributes": {
-# =>       "image": "nginx:alpine",
-# =>       "name": "web"
-# =>     }
-# =>   },
-# =>   "time": 1735449000
+# => "status": "start",
+# => "id": "abc123def456",
+# => "from": "nginx:alpine",
+# => "Type": "container",
+# => "Action": "start",
+# => "Actor": {
+# => "ID": "abc123def456",
+# => "Attributes": {
+# => "image": "nginx:alpine",
+# => "name": "web"
+# => }
+# => },
+# => "time": 1735449000
 # => }
 
 # Real-time monitoring script
 cat > event-monitor.sh << 'EOF'
 #!/bin/bash
 
-echo "Monitoring container events..."
+echo "Monitoring container events.."
 docker events --filter 'type=container' --format '{{.Time}} {{.Action}} {{.Actor.Attributes.name}}' | while read line; do
-  action=$(echo $line | awk '{print $2}')
-  container=$(echo $line | awk '{print $3}')
+ action=$(echo $line | awk '{print $2}')
+ container=$(echo $line | awk '{print $3}')
 
-  case $action in
-    die)
-      echo "ALERT: Container $container died!"
-      # Send alert (email, Slack, PagerDuty)
-      ;;
-    health_status:\ unhealthy)
-      echo "WARNING: Container $container is unhealthy!"
-      ;;
-    oom)
-      echo "CRITICAL: Container $container killed by OOM!"
-      ;;
-  esac
+ case $action in
+ die)
+ echo "ALERT: Container $container died!"
+ # Send alert (email, Slack, PagerDuty)
+ ;;
+ health_status:\ unhealthy)
+ echo "WARNING: Container $container is unhealthy!"
+ ;;
+ oom)
+ echo "CRITICAL: Container $container killed by OOM!"
+ ;;
+ esac
 done
 EOF
 
@@ -3849,61 +3843,61 @@ chmod +x event-monitor.sh
 
 # Log events to file
 docker events \
-  --filter 'type=container' \
-  --format '{{.Time}} {{.Action}} {{.Actor.Attributes.name}}' \
-  >> /var/log/docker-events.log &
+ --filter 'type=container' \
+ --format '{{.Time}} {{.Action}} {{.Actor.Attributes.name}}' \
+ >> /var/log/docker-events.log &
 
 # Audit trail (track all Docker operations)
 docker events \
-  --format '{{.Time}} {{.Type}} {{.Action}} {{.Actor.Attributes}}' \
-  | tee -a /var/log/docker-audit.log
+ --format '{{.Time}} {{.Type}} {{.Action}} {{.Actor.Attributes}}' \
+ | tee -a /var/log/docker-audit.log
 
 # Detect container restarts
 docker events \
-  --filter 'type=container' \
-  --filter 'event=restart' \
-  --format '{{.Time}} Container {{.Actor.Attributes.name}} restarted' | \
+ --filter 'type=container' \
+ --filter 'event=restart' \
+ --format '{{.Time}} Container {{.Actor.Attributes.name}} restarted' | \
 while read line; do
-  echo "$line" | mail -s "Container Restart Alert" admin@example.com
+ echo "$line" | mail -s "Container Restart Alert" admin@example.com
 done
 
 # Network troubleshooting with events
 docker events \
-  --filter 'type=network' \
-  --format '{{.Time}} {{.Action}} network={{.Actor.Attributes.name}} container={{.Actor.Attributes.container}}'
+ --filter 'type=network' \
+ --format '{{.Time}} {{.Action}} network={{.Actor.Attributes.name}} container={{.Actor.Attributes.container}}'
 # => 2025-12-29T12:30:01 connect network=frontend-net container=abc123def456
 # => 2025-12-29T12:30:15 disconnect network=frontend-net container=abc123def456
 
 # Volume lifecycle tracking
 docker events \
-  --filter 'type=volume' \
-  --format '{{.Time}} {{.Action}} volume={{.Actor.Attributes.name}}'
+ --filter 'type=volume' \
+ --format '{{.Time}} {{.Action}} volume={{.Actor.Attributes.name}}'
 # => 2025-12-29T12:25:00 create volume=myproject_db-data
 # => 2025-12-29T12:30:00 mount volume=myproject_db-data
 # => 2025-12-29T12:35:00 unmount volume=myproject_db-data
 
 # Image pull tracking
 docker events \
-  --filter 'type=image' \
-  --filter 'event=pull' \
-  --format '{{.Time}} Pulled image {{.Actor.Attributes.name}}'
+ --filter 'type=image' \
+ --filter 'event=pull' \
+ --format '{{.Time}} Pulled image {{.Actor.Attributes.name}}'
 # => 2025-12-29T12:20:00 Pulled image nginx:alpine
 
 # Export events to monitoring system
 docker events --format 'json' | while read event; do
-  curl -X POST http://monitoring.example.com/events \
-    -H "Content-Type: application/json" \
-    -d "$event"
+ curl -X POST http://monitoring.example.com/events \
+ -H "Content-Type: application/json" \
+ -d "$event"
 done
 # => Streams events to external monitoring system
 
 # Historical analysis (last 24 hours)
 docker events \
-  --since '24h' \
-  --filter 'type=container' \
-  --filter 'event=die' \
-  --format '{{.Actor.Attributes.name}}' | \
-  sort | uniq -c | sort -rn
+ --since '24h' \
+ --filter 'type=container' \
+ --filter 'event=die' \
+ --format '{{.Actor.Attributes.name}}' | \
+ sort | uniq -c | sort -rn
 # => 15 worker
 # => 8 api
 # => 3 frontend
@@ -3928,67 +3922,67 @@ Docker Compose watch enables automatic service updates when code changes, accele
 version: "3.8"
 
 services:
-  frontend:
-    build:
-      context: ./frontend
-      target: development
-      # => Development stage with hot reloading
-    develop:
-      watch:
-        - action: sync
-          path: ./frontend/src
-          target: /app/src
-          # => Syncs src/ changes to container without rebuild
-        - action: rebuild
-          path: ./frontend/package.json
-          # => Rebuilds image when package.json changes
-    environment:
-      NODE_ENV: development
-    ports:
-      - "3000:3000"
-    volumes:
-      - /app/node_modules
-      # => Anonymous volume prevents overwriting node_modules
+ frontend:
+ build:
+ context: ./frontend
+ target: development
+ # => Development stage with hot reloading
+ develop:
+ watch:
+ - action: sync
+ path: ./frontend/src
+ target: /app/src
+ # => Syncs src/ changes to container without rebuild
+ - action: rebuild
+ path: ./frontend/package.json
+ # => Rebuilds image when package.json changes
+ environment:
+ NODE_ENV: development
+ ports:
+ - "3000:3000"
+ volumes:
+ - /app/node_modules
+ # => Anonymous volume prevents overwriting node_modules
 
-  api:
-    build:
-      context: ./api
-      target: development
-    develop:
-      watch:
-        - action: sync
-          path: ./api/src
-          target: /app/src
-          ignore:
-            - node_modules/
-            - dist/
-          # => Excludes paths from sync
-        - action: sync+restart
-          path: ./api/config
-          target: /app/config
-          # => Syncs and restarts service
-        - action: rebuild
-          path: ./api/package.json
-    command: npm run dev
-    # => Development server with auto-reload
-    environment:
-      NODE_ENV: development
-      DATABASE_URL: postgresql://postgres:secret@database:5432/dev_db
-    ports:
-      - "4000:4000"
+ api:
+ build:
+ context: ./api
+ target: development
+ develop:
+ watch:
+ - action: sync
+ path: ./api/src
+ target: /app/src
+ ignore:
+ - node_modules/
+ - dist/
+ # => Excludes paths from sync
+ - action: sync+restart
+ path: ./api/config
+ target: /app/config
+ # => Syncs and restarts service
+ - action: rebuild
+ path: ./api/package.json
+ command: npm run dev
+ # => Development server with auto-reload
+ environment:
+ NODE_ENV: development
+ DATABASE_URL: postgresql://postgres:secret@database:5432/dev_db
+ ports:
+ - "4000:4000"
 
-  database:
-    image: postgres:15-alpine
-    environment:
-      POSTGRES_PASSWORD: secret
-      POSTGRES_DB: dev_db
-    volumes:
-      - db-data:/var/lib/postgresql/data
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
-      # => Initialization script
+ database:
+ image: postgres:15-alpine
+ environment:
+ POSTGRES_PASSWORD: secret
+ POSTGRES_DB: dev_db
+ volumes:
+ - db-data:/var/lib/postgresql/data
+ - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+ # => Initialization script
 
 volumes:
-  db-data:
+ db-data:
 ```
 
 ```dockerfile
@@ -4003,7 +3997,7 @@ COPY package*.json ./
 RUN npm install
 # => Includes devDependencies for hot reloading
 
-COPY . .
+COPY .
 
 EXPOSE 3000
 
@@ -4018,7 +4012,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci --only=production
 
-COPY . .
+COPY .
 RUN npm run build
 
 EXPOSE 3000
@@ -4030,29 +4024,29 @@ CMD ["npm", "start"]
 # Start services with watch mode
 docker compose watch
 # => [+] Running 3/3
-# => ⠿ Container frontend   Started
-# => ⠿ Container api        Started
-# => ⠿ Container database   Started
-# => Watching for file changes...
+# => ⠿ Container frontend Started
+# => ⠿ Container api Started
+# => ⠿ Container database Started
+# => Watching for file changes..
 
 # Make code change in frontend/src/App.js
 echo "console.log('Updated!');" >> frontend/src/App.js
 # => docker compose watch detects change
-# => [frontend] Syncing files to container...
+# => [frontend] Syncing files to container..
 # => [frontend] 1 file updated
 # => No rebuild needed (sync action)
 
 # Change package.json (add dependency)
-echo '  "new-package": "^1.0.0"' >> frontend/package.json
-# => [frontend] Rebuilding image...
-# => [frontend] Building frontend...
+echo ' "new-package": "^1.0.0"' >> frontend/package.json
+# => [frontend] Rebuilding image..
+# => [frontend] Building frontend..
 # => [frontend] Container restarted with new image
 # => Full rebuild triggered
 
 # Change API config file
 echo "LOG_LEVEL=debug" >> api/config/.env
-# => [api] Syncing config to container...
-# => [api] Restarting service...
+# => [api] Syncing config to container..
+# => [api] Restarting service..
 # => Sync + restart (no rebuild)
 
 # Watch mode with specific services
@@ -4065,21 +4059,21 @@ cat > docker-compose.dev.yml << 'EOF'
 version: '3.8'
 
 services:
-  frontend:
-    build:
-      context: ./frontend
-      target: development
-    volumes:
-      - ./frontend/src:/app/src:cached
-      # => Bind mount for live reloading
-      - /app/node_modules
-      # => Preserve node_modules
-    environment:
-      CHOKIDAR_USEPOLLING: "true"
-      # => Polling for file changes (cross-platform)
-    ports:
-      - "3000:3000"
-    command: npm run dev
+ frontend:
+ build:
+ context: ./frontend
+ target: development
+ volumes:
+ - ./frontend/src:/app/src:cached
+ # => Bind mount for live reloading
+ - /app/node_modules
+ # => Preserve node_modules
+ environment:
+ CHOKIDAR_USEPOLLING: "true"
+ # => Polling for file changes (cross-platform)
+ ports:
+ - "3000:3000"
+ command: npm run dev
 EOF
 
 docker compose -f docker-compose.yml -f docker-compose.dev.yml up
@@ -4091,17 +4085,17 @@ docker compose -f docker-compose.yml -f docker-compose.dev.yml up
 
 # Ignore patterns
 cat >> docker-compose.yml << 'EOF'
-  frontend:
-    develop:
-      watch:
-        - action: sync
-          path: ./frontend/src
-          target: /app/src
-          ignore:
-            - "**/*.test.js"
-            - "**/__tests__/**"
-            - "*.md"
-          # => Ignores test files and markdown
+ frontend:
+ develop:
+ watch:
+ - action: sync
+ path: ./frontend/src
+ target: /app/src
+ ignore:
+ - "**/*.test.js"
+ - "**/__tests__/**"
+ - "*.md"
+ # => Ignores test files and markdown
 EOF
 
 # Performance: Choose appropriate action
@@ -4129,9 +4123,7 @@ docker compose down
 
 **Key Takeaway**: Docker Compose watch enables fast development iteration with automatic syncing and smart rebuild decisions. Use `sync` for code changes, `sync+restart` for config changes, `rebuild` for dependency changes. Multi-stage Dockerfiles with development targets optimize for both dev speed and production efficiency. Watch mode eliminates manual rebuild/restart cycles.
 
-**Why It Matters**: Docker Compose watch reduces development iteration time from 30-60 seconds (manual rebuild/restart) to 1-2 seconds (automatic sync), improving developer productivity by 90% during active coding. The intelligent action system prevents unnecessary rebuilds - changing a single JavaScript file triggers sync instead of full image rebuild, saving 45-second build cycles. This developer experience improvement translates directly to faster feature delivery - teams using watch mode ship features 20% faster due to reduced friction in development workflow.
-
----
+**Why It Matters**: Docker Compose watch reduces development iteration time from 30-60 seconds (manual rebuild/restart) to 1-2 seconds (automatic sync), improving developer productivity by 90% during active coding. The intelligent action system prevents unnecessary rebuilds - changing a single JavaScript file triggers sync instead of full image rebuild, saving 45-second build cycles. This developer experience improvement translates directly to faster feature delivery - teams using watch mode ship features ---
 
 ### Example 53: Blue-Green Deployment with Docker Compose
 
@@ -4144,21 +4136,21 @@ version: "3.8"
 
 services:
   api-blue:
-    image: my-api:${VERSION:-latest}
-    container_name: api-blue
-    environment:
-      NODE_ENV: production
-      COLOR: blue
-      # => Identifies deployment color
-    labels:
-      deployment: blue
-    networks:
-      - app-network
-    restart: unless-stopped
+  image: my-api:${VERSION:-latest}
+  container_name: api-blue
+  environment:
+  NODE_ENV: production
+  COLOR: blue
+  # => Identifies deployment color
+  labels:
+  deployment: blue
+  networks:
+    - app-network
+  restart: unless-stopped
 
 networks:
   app-network:
-    external: true
+  external: true
 ```
 
 ```yaml
@@ -4168,20 +4160,20 @@ version: "3.8"
 
 services:
   api-green:
-    image: my-api:${VERSION:-latest}
-    container_name: api-green
-    environment:
-      NODE_ENV: production
-      COLOR: green
-    labels:
-      deployment: green
-    networks:
-      - app-network
-    restart: unless-stopped
+  image: my-api:${VERSION:-latest}
+  container_name: api-green
+  environment:
+  NODE_ENV: production
+  COLOR: green
+  labels:
+  deployment: green
+  networks:
+    - app-network
+  restart: unless-stopped
 
 networks:
   app-network:
-    external: true
+  external: true
 ```
 
 ```yaml
@@ -4191,49 +4183,49 @@ version: "3.8"
 
 services:
   router:
-    image: nginx:alpine
-    container_name: router
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      # => Dynamic upstream configuration
-    networks:
-      - app-network
-    restart: unless-stopped
+  image: nginx:alpine
+  container_name: router
+  ports:
+    - "80:80"
+  volumes:
+    - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  # => Dynamic upstream configuration
+  networks:
+    - app-network
+  restart: unless-stopped
 
 networks:
   app-network:
-    external: true
+  external: true
 ```
 
 ```nginx
 # File: nginx.conf (initial config - points to blue)
 
 events {
-    worker_connections 1024;
+ worker_connections 1024;
 }
 
 http {
-    upstream backend {
-        server api-blue:3000;
-        # => Traffic goes to blue deployment initially
-    }
+ upstream backend {
+ server api-blue:3000;
+ # => Traffic goes to blue deployment initially
+ }
 
-    server {
-        listen 80;
+ server {
+ listen 80;
 
-        location / {
-            proxy_pass http://backend;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-        }
+ location / {
+ proxy_pass http://backend;
+ proxy_set_header Host $host;
+ proxy_set_header X-Real-IP $remote_addr;
+ }
 
-        location /health {
-            proxy_pass http://backend/health;
-            access_log off;
-        }
-    }
+ location /health {
+ proxy_pass http://backend/health;
+ access_log off;
+ }
+ }
 }
 ```
 
@@ -4266,30 +4258,30 @@ docker exec router curl -s http://api-green:3000/health
 
 # Smoke test green deployment
 docker run --rm --network app-network curlimages/curl \
-  curl -s http://api-green:3000/health | jq .
+ curl -s http://api-green:3000/health | jq .
 # => Run comprehensive tests against green
 
 # Switch traffic to green (instant cutover)
 cat > nginx.conf << 'EOF'
 events {
-    worker_connections 1024;
+ worker_connections 1024;
 }
 
 http {
-    upstream backend {
-        server api-green:3000;
-        # => Traffic now goes to green
-    }
+ upstream backend {
+ server api-green:3000;
+ # => Traffic now goes to green
+ }
 
-    server {
-        listen 80;
+ server {
+ listen 80;
 
-        location / {
-            proxy_pass http://backend;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-        }
-    }
+ location / {
+ proxy_pass http://backend;
+ proxy_set_header Host $host;
+ proxy_set_header X-Real-IP $remote_addr;
+ }
+ }
 }
 EOF
 
@@ -4308,21 +4300,21 @@ docker logs -f api-green
 # Rollback to blue if issues detected
 cat > nginx.conf << 'EOF'
 events {
-    worker_connections 1024;
+ worker_connections 1024;
 }
 
 http {
-    upstream backend {
-        server api-blue:3000;
-    }
+ upstream backend {
+ server api-blue:3000;
+ }
 
-    server {
-        listen 80;
-        location / {
-            proxy_pass http://backend;
-            proxy_set_header Host $host;
-        }
-    }
+ server {
+ listen 80;
+ location / {
+ proxy_pass http://backend;
+ proxy_set_header Host $host;
+ }
+ }
 }
 EOF
 
@@ -4339,7 +4331,7 @@ export VERSION=v3.0.0
 docker compose -f docker-compose.blue.yml up -d
 
 # Test, then switch traffic back to blue
-# Repeat cycle...
+# Repeat cycle..
 
 # Automated blue-green deployment script
 cat > deploy.sh << 'EOF'
@@ -4351,15 +4343,15 @@ ACTIVE_COLOR=$(docker exec router cat /etc/nginx/nginx.conf | grep "server api-"
 NEW_COLOR=$([ "$ACTIVE_COLOR" = "blue" ] && echo "green" || echo "blue")
 
 echo "Current active: $ACTIVE_COLOR"
-echo "Deploying v$VERSION to $NEW_COLOR..."
+echo "Deploying v$VERSION to $NEW_COLOR.."
 
 # Deploy new version to inactive color
 VERSION=$VERSION docker compose -f docker-compose.$NEW_COLOR.yml up -d
 
 # Wait for health check
-echo "Waiting for $NEW_COLOR to be healthy..."
+echo "Waiting for $NEW_COLOR to be healthy.."
 until docker exec router curl -sf http://api-$NEW_COLOR:3000/health > /dev/null; do
-  sleep 2
+ sleep 2
 done
 
 echo "$NEW_COLOR is healthy!"
@@ -4383,22 +4375,22 @@ chmod +x deploy.sh
 # Advanced: Weighted traffic split (canary deployment)
 cat > nginx-canary.conf << 'EOF'
 events {
-    worker_connections 1024;
+ worker_connections 1024;
 }
 
 http {
-    upstream backend {
-        server api-blue:3000 weight=90;
-        server api-green:3000 weight=10;
-        # => 90% traffic to blue, 10% to green (canary)
-    }
+ upstream backend {
+ server api-blue:3000 weight=90;
+ server api-green:3000 weight=10;
+ # => 90% traffic to blue, 10% to green (canary)
+ }
 
-    server {
-        listen 80;
-        location / {
-            proxy_pass http://backend;
-        }
-    }
+ server {
+ listen 80;
+ location / {
+ proxy_pass http://backend;
+ }
+ }
 }
 EOF
 
@@ -4429,82 +4421,82 @@ Canary deployment gradually shifts traffic to new version, enabling early detect
 version: "3.8"
 
 services:
-  # Stable version (v1.0.0)
-  api-stable:
-    image: my-api:v1.0.0
-    deploy:
-      replicas: 9
-      # => 9 stable instances
-    labels:
-      version: stable
-    environment:
-      VERSION: v1.0.0
-    networks:
-      - app-network
+ # Stable version (v1.0.0)
+ api-stable:
+ image: my-api:v1.0.0
+ deploy:
+ replicas: 9
+ # => 9 stable instances
+ labels:
+ version: stable
+ environment:
+ VERSION: v1.0.0
+ networks:
+ - app-network
 
-  # Canary version (v2.0.0)
-  api-canary:
-    image: my-api:v2.0.0
-    deploy:
-      replicas: 1
-      # => 1 canary instance (10% traffic)
-    labels:
-      version: canary
-    environment:
-      VERSION: v2.0.0
-    networks:
-      - app-network
+ # Canary version (v2.0.0)
+ api-canary:
+ image: my-api:v2.0.0
+ deploy:
+ replicas: 1
+ # => 1 canary instance (10% traffic)
+ labels:
+ version: canary
+ environment:
+ VERSION: v2.0.0
+ networks:
+ - app-network
 
-  # Load balancer (nginx or traefik)
-  load-balancer:
-    image: nginx:alpine
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-    networks:
-      - app-network
-    depends_on:
-      - api-stable
-      - api-canary
+ # Load balancer (nginx or traefik)
+ load-balancer:
+ image: nginx:alpine
+ ports:
+ - "80:80"
+ volumes:
+ - ./nginx.conf:/etc/nginx/nginx.conf:ro
+ networks:
+ - app-network
+ depends_on:
+ - api-stable
+ - api-canary
 
 networks:
-  app-network:
+ app-network:
 ```
 
 ```nginx
 # File: nginx.conf (round-robin load balancing)
 
 events {
-    worker_connections 1024;
+ worker_connections 1024;
 }
 
 http {
-    upstream backend {
-        # 9 stable instances
-        server api-stable:3000 max_fails=3 fail_timeout=30s;
+ upstream backend {
+ # 9 stable instances
+ server api-stable:3000 max_fails=3 fail_timeout=30s;
 
-        # 1 canary instance (10% traffic)
-        server api-canary:3000 max_fails=1 fail_timeout=10s;
-        # => Lower max_fails for canary (fail fast)
-    }
+ # 1 canary instance (10% traffic)
+ server api-canary:3000 max_fails=1 fail_timeout=10s;
+ # => Lower max_fails for canary (fail fast)
+ }
 
-    server {
-        listen 80;
+ server {
+ listen 80;
 
-        location / {
-            proxy_pass http://backend;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Version $upstream_addr;
-            # => Track which version served request
-        }
+ location / {
+ proxy_pass http://backend;
+ proxy_set_header Host $host;
+ proxy_set_header X-Real-IP $remote_addr;
+ proxy_set_header X-Version $upstream_addr;
+ # => Track which version served request
+ }
 
-        location /health {
-            access_log off;
-            return 200 "OK\n";
-        }
-    }
+ location /health {
+ access_log off;
+ return 200 "OK\n";
+ }
+ }
 }
 ```
 
@@ -4518,9 +4510,9 @@ docker logs -f api-canary 2>&1 | grep -i error
 # => Watch for errors in canary
 
 # Simulate traffic
-for i in {1..100}; do
-  curl -s http://localhost/ -w "\n"
-  sleep 0.1
+for i in {1.100}; do
+ curl -s http://localhost/ -w "\n"
+ sleep 0.1
 done
 # => ~10 requests hit canary, ~90 hit stable
 
@@ -4566,12 +4558,12 @@ echo "Stable error rate: $STABLE_ERROR_RATE"
 echo "Canary error rate: $CANARY_ERROR_RATE"
 
 if [ $CANARY_ERROR_RATE -gt $CANARY_ERROR_THRESHOLD ]; then
-  echo "ALERT: Canary error rate exceeded threshold!"
-  echo "Rolling back..."
-  docker compose up -d --scale api-stable=10 --scale api-canary=0
-  exit 1
+ echo "ALERT: Canary error rate exceeded threshold!"
+ echo "Rolling back.."
+ docker compose up -d --scale api-stable=10 --scale api-canary=0
+ exit 1
 else
-  echo "Canary is healthy, continuing rollout..."
+ echo "Canary is healthy, continuing rollout.."
 fi
 EOF
 
@@ -4586,25 +4578,25 @@ STABLE_VERSION=v1.0.0
 CANARY_VERSION=v2.0.0
 
 # Stage 1: 10% canary
-echo "Stage 1: Deploying 10% canary..."
+echo "Stage 1: Deploying 10% canary.."
 docker compose up -d --scale api-stable=9 --scale api-canary=1
-sleep 300  # Monitor for 5 minutes
+sleep 300 # Monitor for 5 minutes
 ./canary-analysis.sh || exit 1
 
 # Stage 2: 25% canary
-echo "Stage 2: Increasing to 25% canary..."
+echo "Stage 2: Increasing to 25% canary.."
 docker compose up -d --scale api-stable=6 --scale api-canary=2
 sleep 300
 ./canary-analysis.sh || exit 1
 
 # Stage 3: 50% canary
-echo "Stage 3: Increasing to 50% canary..."
+echo "Stage 3: Increasing to 50% canary.."
 docker compose up -d --scale api-stable=4 --scale api-canary=4
-sleep 600  # Longer monitoring at 50%
+sleep 600 # Longer monitoring at 50%
 ./canary-analysis.sh || exit 1
 
 # Stage 4: 100% canary
-echo "Stage 4: Full rollout..."
+echo "Stage 4: Full rollout.."
 docker compose up -d --scale api-stable=0 --scale api-canary=10
 echo "Canary deployment complete!"
 EOF
@@ -4620,17 +4612,17 @@ cat > metrics-canary.sh << 'EOF'
 #!/bin/bash
 
 # Query Prometheus for error rates
-STABLE_ERRORS=$(curl -s 'http://prometheus:9090/api/v1/query?query=rate(http_requests_total{version="stable",status=~"5.."}[5m])' | jq -r '.data.result[0].value[1]')
+STABLE_ERRORS=$(curl -s 'http://prometheus:9090/api/v1/query?query=rate(http_requests_total{version="stable",status=~"5."}[5m])' | jq -r '.data.result[0].value[1]')
 
-CANARY_ERRORS=$(curl -s 'http://prometheus:9090/api/v1/query?query=rate(http_requests_total{version="canary",status=~"5.."}[5m])' | jq -r '.data.result[0].value[1]')
+CANARY_ERRORS=$(curl -s 'http://prometheus:9090/api/v1/query?query=rate(http_requests_total{version="canary",status=~"5."}[5m])' | jq -r '.data.result[0].value[1]')
 
 # Compare error rates
 if [ $(echo "$CANARY_ERRORS > $STABLE_ERRORS * 1.5" | bc) -eq 1 ]; then
-  echo "ALERT: Canary error rate 50% higher than stable!"
-  echo "Automatic rollback initiated..."
-  docker compose up -d --scale api-stable=10 --scale api-canary=0
+ echo "ALERT: Canary error rate 50% higher than stable!"
+ echo "Automatic rollback initiated.."
+ docker compose up -d --scale api-stable=10 --scale api-canary=0
 else
-  echo "Canary metrics within acceptable range"
+ echo "Canary metrics within acceptable range"
 fi
 EOF
 
@@ -4638,23 +4630,23 @@ EOF
 # (Route specific users to canary based on headers)
 cat > nginx-feature-flag.conf << 'EOF'
 events {
-    worker_connections 1024;
+ worker_connections 1024;
 }
 
 http {
-    map $http_x_canary_user $backend_pool {
-        "true"  api-canary:3000;
-        default api-stable:3000;
-    }
+ map $http_x_canary_user $backend_pool {
+ "true" api-canary:3000;
+ default api-stable:3000;
+ }
 
-    server {
-        listen 80;
+ server {
+ listen 80;
 
-        location / {
-            proxy_pass http://$backend_pool;
-            # => Route based on X-Canary-User header
-        }
-    }
+ location / {
+ proxy_pass http://$backend_pool;
+ # => Route based on X-Canary-User header
+ }
+ }
 }
 EOF
 

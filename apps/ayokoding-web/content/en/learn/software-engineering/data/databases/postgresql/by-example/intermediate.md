@@ -865,7 +865,7 @@ SELECT * FROM products
 WHERE category = 'Electronics';
 -- => Filters rows where category equals 'Electronics'
 -- => With index, uses Index Scan (O(log N) lookup then fetch rows)
--- => Execution time ~1-5ms on 10000 rows (50-100x faster)
+-- => Execution time ~1-5ms on 10000 rows (significantly faster)
 -- => Query plan shows "Index Scan using idx_products_category"
 
 -- Index helps with sorting
@@ -898,7 +898,7 @@ LIMIT 10;
 -- => Top 10 rows only
 -- => Index Scan reads first 10 entries from index (already sorted)
 -- => No full table scan, no sort operation needed
--- => Execution time ~1-2ms (100x faster, avoids sorting all rows)
+-- => Execution time ~1-2ms (much faster, avoids sorting all rows)
 
 -- List all indexes on table
 SELECT indexname, indexdef
@@ -1107,7 +1107,7 @@ SELECT * FROM orders
 WHERE customer_id = 42 AND status = 'pending';
 -- => Filters on both indexed columns in order
 -- => Index Scan: navigates to customer_id=42, then finds status='pending'
--- => Execution time ~1-5ms (100x faster, O(log N) lookup)
+-- => Execution time ~1-5ms (much faster, O(log N) lookup)
 
 -- Query using only first column (uses index)
 EXPLAIN ANALYZE
@@ -1163,7 +1163,7 @@ WHERE customer_id = 42
 
 **Key Takeaway**: Multi-column indexes speed up queries filtering on multiple columns - order matters (leftmost columns required). Query `WHERE customer_id = X AND status = Y` uses index on (customer_id, status), but `WHERE status = Y` alone doesn't. Create separate indexes for different query patterns.
 
-**Why It Matters**: Multi-column index column order determines query optimization effectiveness, with leftmost column selectivity being critical - an index on (customer_id, status) cannot be used for queries filtering only on status, requiring duplicate indexes that increase storage and write overhead. PostgreSQL's B-tree multi-column indexes enable covering index optimizations where all query columns exist in the index, eliminating table lookups and achieving 10-100x speedups on analytical queries.
+**Why It Matters**: Multi-column index column order determines query optimization effectiveness, with leftmost column selectivity being critical - an index on (customer_id, status) cannot be used for queries filtering only on status, requiring duplicate indexes that increase storage and write overhead. PostgreSQL's B-tree multi-column indexes enable covering index optimizations where all query columns exist in the index, eliminating table lookups and achieving significant speedups on analytical queries.
 
 ---
 
@@ -1951,7 +1951,7 @@ FROM events;
 
 **Key Takeaway**: JSONB operators enable powerful queries - `@>` for containment, `?` for key existence, `||` for merging. Use `jsonb_set()` to update nested values, `-` to remove keys, and GIN indexes on JSONB columns for fast queries.
 
-**Why It Matters**: JSONB containment operators (@>) enable efficient querying of semi-structured data without schema migrations, making PostgreSQL suitable for applications like Slack where message metadata varies across message types without requiring ALTER TABLE operations. The `||` merge operator and `jsonb_set()` function enable partial updates of nested JSON without reading and rewriting entire documents, reducing write amplification by 80-95% compared to full document replacement.
+**Why It Matters**: JSONB containment operators (@>) enable efficient querying of semi-structured data without schema migrations, making PostgreSQL suitable for applications where message metadata varies across message types without requiring ALTER TABLE operations. The `||` merge operator and `jsonb_set()` function enable partial updates of nested JSON without reading and rewriting entire documents, significantly reducing write amplification compared to full document replacement.
 
 ---
 
@@ -3651,7 +3651,7 @@ COPY products (id, name, category, price) FROM stdin WITH (FORMAT csv);
 -- => COPY completes, data loaded into products table
 SELECT * FROM products;
 -- => Returns 3 rows: Laptop ($999.99), Mouse ($29.99), Desk ($299.99)
--- => COPY is 10-100x faster than equivalent INSERT statements
+-- => COPY is significantly faster than equivalent INSERT statements
 
 -- COPY from file (requires server filesystem access)
 -- Note: This requires a CSV file on the PostgreSQL server filesystem

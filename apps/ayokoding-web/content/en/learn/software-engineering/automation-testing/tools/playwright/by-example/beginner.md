@@ -209,7 +209,7 @@ test("locating by role", async ({ page }) => {
 
 **Key Takeaway**: `getByRole` returns a Locator (query, not element). Use roles (`link`, `button`, `heading`) and accessible names to create maintainable selectors that match user perception.
 
-**Why It Matters**: Role-based selectors enforce accessibility best practices—if your test can't find an element by role, screen readers can't either. This locator strategy survives CSS refactoring (changing class names, restructuring HTML) because it targets semantic meaning, not implementation details. Teams report 80% reduction in selector maintenance when switching from CSS/XPath to role-based locators.
+**Why It Matters**: Role-based selectors enforce accessibility best practices—if your test can't find an element by role, screen readers can't either. This locator strategy survives CSS refactoring (changing class names, restructuring HTML) because it targets semantic meaning, not implementation details. Role-based locators significantly reduce selector maintenance compared to CSS/XPath selectors.
 
 ---
 
@@ -316,7 +316,7 @@ test("text input", async ({ page }) => {
 
 **Key Takeaway**: Use `fill()` for fast value setting (no keyboard events), `type()` for realistic character-by-character typing, and `press()` for special keys. Playwright auto-clears inputs before filling.
 
-**Why It Matters**: The distinction between `fill()` and `type()` enables both fast test execution and realistic interaction simulation. `fill()` bypasses keyboard events for speed (10x faster), while `type()` fires every keydown/keypress/keyup event, essential for testing autocomplete, input validation, or character limits. The cross-platform key combo normalization (Ctrl vs Command) means tests run on any developer machine or CI environment without platform-specific conditionals.
+**Why It Matters**: The distinction between `fill()` and `type()` enables both fast test execution and realistic interaction simulation. `fill()` bypasses keyboard events for speed (significantly faster), while `type()` fires every keydown/keypress/keyup event, essential for testing autocomplete, input validation, or character limits. The cross-platform key combo normalization (Ctrl vs Command) means tests run on any developer machine or CI environment without platform-specific conditionals.
 
 ---
 
@@ -542,7 +542,7 @@ test("manual browser selection", async () => {
 
 **Key Takeaway**: Configure browsers in `playwright.config.ts` for automatic parallel testing, or use manual launch for browser-specific testing. Playwright normalizes behavior across browsers for consistent tests.
 
-**Why It Matters**: Cross-browser testing catches rendering inconsistencies and JavaScript engine differences that only appear in specific browsers—Safari's WebKit engine handles certain CSS and JavaScript features differently than Chrome or Firefox. Playwright's browser abstraction means tests written once run across all browsers without modification, while still allowing browser-specific tests when needed. This enables teams to guarantee consistent user experience across 98% of global browser market share.
+**Why It Matters**: Cross-browser testing catches rendering inconsistencies and JavaScript engine differences that only appear in specific browsers—Safari's WebKit engine handles certain CSS and JavaScript features differently than Chrome or Firefox. Playwright's browser abstraction means tests written once run across all browsers without modification, while still allowing browser-specific tests when needed. This enables teams to guarantee consistent user experience across major browsers globally.
 
 ---
 
@@ -596,7 +596,7 @@ test("css selectors", async ({ page }) => {
 
 **Key Takeaway**: CSS selectors are powerful but fragile—they couple tests to HTML implementation. Prefer `getByRole`, `getByText`, `getByLabel` for maintainable tests that survive refactoring.
 
-**Why It Matters**: CSS selectors break during refactoring—when developers rename classes, restructure HTML, or change element types. Role-based locators survive these changes because they target semantic meaning (what users perceive) not implementation details (how it's coded). Teams migrating from Selenium often report 50-70% of CSS selectors breaking after major UI refactors, while role-based selectors remain stable.
+**Why It Matters**: CSS selectors break during refactoring—when developers rename classes, restructure HTML, or change element types. Role-based locators survive these changes because they target semantic meaning (what users perceive) not implementation details (how it's coded). CSS selectors tend to break more frequently after major UI refactors, while role-based locectors remain more stable.
 
 ---
 
@@ -1660,7 +1660,7 @@ test("auto-wait behavior", async ({ page }) => {
 
 **Key Takeaway**: Actions (click, fill, etc.) auto-wait for actionability. Assertions (expect) auto-retry. State checks (isVisible, isEnabled) return immediately. Configure timeouts per-action or globally.
 
-**Why It Matters**: Auto-waiting is Playwright's killer feature—it eliminates 90% of manual waits, making tests faster and more reliable. Understanding the distinction between auto-waiting actions, auto-retrying assertions, and immediate state checks prevents writing unnecessary waits. The 100ms polling interval is optimized for balancing responsiveness and CPU usage—tests respond quickly when conditions are met but don't hammer the browser. Timeout configuration enables adapting to slow CI environments or known slow operations without adding fixed delays.
+**Why It Matters**: Auto-waiting is Playwright's killer feature—it eliminates most manual waits, making tests faster and more reliable. Understanding the distinction between auto-waiting actions, auto-retrying assertions, and immediate state checks prevents writing unnecessary waits. The 100ms polling interval is optimized for balancing responsiveness and CPU usage—tests respond quickly when conditions are met but don't hammer the browser. Timeout configuration enables adapting to slow CI environments or known slow operations without adding fixed delays.
 
 ---
 

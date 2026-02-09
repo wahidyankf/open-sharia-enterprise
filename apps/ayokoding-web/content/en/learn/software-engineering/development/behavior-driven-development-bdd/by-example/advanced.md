@@ -53,7 +53,7 @@ Feature: Order Fulfillment Across Microservices
     And the inventory should decrease to 3 units for "Laptop Pro"
     # => And: Assertion on Inventory service state
     # => Verify: inventory_db.products['Laptop Pro'].stock = 3
-    And payment of $2000 should be processed via "TEST_MERCHANT_123"
+    And payment of substantial amounts should be processed via "TEST_MERCHANT_123"
     # => And: Assertion on Payment service transaction
     # => Verify: payment_transactions.last.amount == 2000
     And notification email should be sent to "alice@example.com"
@@ -1325,18 +1325,18 @@ Feature: Automated Trading Strategy
 
   Trading Rule: Buy signal triggers purchase
     # => Custom keyword: "Trading Rule" (replaces "Scenario")
-    Market Condition: Stock "AAPL" price is $150
+    Market Condition: Stock "AAPL" price is substantial amounts
     # => Custom keyword: "Market Condition" (replaces "Given")
     # => Domain term: market state precondition
     And Order book has 1000 shares available
     # => Standard keyword: still uses "And"
-    Execute Strategy: Buy 100 shares when price drops below $145
+    Execute Strategy: Buy 100 shares when price drops below substantial amounts
     # => Custom keyword: "Execute Strategy" (replaces "When")
     # => Domain term: trading action
     Verify Position: Portfolio should contain 100 shares of "AAPL"
     # => Custom keyword: "Verify Position" (replaces "Then")
     # => Domain term: trading outcome
-    And Account balance should decrease by $14,500
+    And Account balance should decrease by substantial amounts
     # => Standard keyword: financial assertion
     Verify Compliance: Trade should comply with SEC regulations
     # => Custom keyword: "Verify Compliance" (trading-specific)
@@ -2139,7 +2139,7 @@ Feature: Legacy System Migration - Payment Processing
     Given legacy payment service is active
     # => Given: legacy system configured
     # => State: feature flag legacy_payment = true
-    When customer submits payment of $100 with card "4111111111111111"
+    When customer submits payment of substantial amounts with card "4111111111111111"
     # => When: payment action (same interface for legacy and modern)
     Then payment should be processed successfully
     # => Then: behavioral assertion (same for both systems)
@@ -2155,7 +2155,7 @@ Feature: Legacy System Migration - Payment Processing
     Given modern payment service is active
     # => Given: modern system configured
     # => State: feature flag legacy_payment = false
-    When customer submits payment of $100 with card "4111111111111111"
+    When customer submits payment of substantial amounts with card "4111111111111111"
     # => When: same payment action (interface compatibility)
     Then payment should be processed successfully
     # => Then: same behavioral assertion (behavioral parity)
@@ -2171,7 +2171,7 @@ Feature: Legacy System Migration - Payment Processing
     Given both legacy and modern payment services are active
     # => Given: parallel execution mode
     # => State: shadow_mode = true
-    When customer submits payment of $150 with card "4111111111111111"
+    When customer submits payment of substantial amounts with card "4111111111111111"
     # => When: payment triggers both systems
     Then both systems should process payment successfully
     # => Then: both implementations succeed
@@ -2394,7 +2394,7 @@ Feature: A/B Testing - Checkout Flow Variants
     Given user "alice@example.com" is assigned to control group
     # => Given: A/B test assignment (50% traffic)
     # => State: ab_test_variant = 'control'
-    And cart contains 3 items totaling $150
+    And cart contains 3 items totaling substantial amounts
     # => And: precondition for checkout
     When user initiates checkout
     # => When: checkout action
@@ -2419,7 +2419,7 @@ Feature: A/B Testing - Checkout Flow Variants
     Given user "bob@example.com" is assigned to treatment group
     # => Given: A/B test assignment (50% traffic)
     # => State: ab_test_variant = 'treatment'
-    And cart contains 3 items totaling $150
+    And cart contains 3 items totaling substantial amounts
     # => And: same precondition (fair comparison)
     When user initiates checkout
     # => When: same checkout action
@@ -3707,7 +3707,7 @@ Scenario: User does stuff
 Scenario: Customer completes checkout with valid payment card
   # => Improvement: specific, descriptive scenario name
   # => Format: Actor + Action + Context
-  Given customer has 3 items in shopping cart totaling $150
+  Given customer has 3 items in shopping cart totaling substantial amounts
   # => Improvement: concrete state with specific values
   # => Rule: avoid "the", use domain terms ("customer" not "user")
   And customer provides shipping address in United States
@@ -3768,7 +3768,7 @@ Scenario: Order works
     `,
     coachingNotes: [
       "Problem: Vague language lacks testable specifics",
-      "Solution: Use concrete values (3 items, $150 total)",
+      "Solution: Use concrete values (3 items, substantial amounts total)",
       "Benefit: Scenarios become living documentation",
     ],
     refactoringChallenge: "Add specific quantities, prices, and verifiable outcomes",
@@ -3922,8 +3922,8 @@ function calculateBDDROI(before: BDDMetrics, after: BDDMetrics): number {
   // => Function: calculate ROI of BDD adoption
 
   // Cost savings from defect reduction
-  const productionDefectCost = 10000; // => Cost: $10k per production defect
-  const preProductionDefectCost = 1000; // => Cost: $1k per pre-prod defect
+  const productionDefectCost = 10000; // => Cost: substantial amountsk per production defect
+  const preProductionDefectCost = 1000; // => Cost: substantial amountsk per pre-prod defect
 
   const beforeDefectCost =
     before.defectMetrics.productionDefects * productionDefectCost +
@@ -3939,12 +3939,12 @@ function calculateBDDROI(before: BDDMetrics, after: BDDMetrics): number {
   // => Calculate: cost reduction from fewer production defects
 
   // Cost savings from reduced rework
-  const reworkCost = 5000; // => Cost: $5k per rework incident
+  const reworkCost = 5000; // => Cost: substantial amountsk per rework incident
   const reworkSavings = (before.velocityMetrics.reworkRate - after.velocityMetrics.reworkRate) * reworkCost;
   // => Calculate: savings from less rework
 
   // Cost savings from reduced clarification time
-  const developerHourlyRate = 100; // => Cost: $100/hour developer time
+  const developerHourlyRate = 100; // => Cost: substantial amounts/hour developer time
   const clarificationSavings =
     (before.collaborationMetrics.clarificationTime - after.collaborationMetrics.clarificationTime) *
     developerHourlyRate;
@@ -3955,12 +3955,12 @@ function calculateBDDROI(before: BDDMetrics, after: BDDMetrics): number {
   // => Calculate: total cost savings
 
   // Investment cost (tooling, training, coaching)
-  const bddInvestment = 50000; // => Investment: $50k (tools, training, coaching)
+  const bddInvestment = 50000; // => Investment: substantial amountsk (tools, training, coaching)
 
   // ROI calculation
   const roi = ((totalSavings - bddInvestment) / bddInvestment) * 100;
   // => Calculate: (Savings - Investment) / Investment * 100
-  // => Example: ($150k - $50k) / $50k = 200% ROI
+  // => Example: (substantial amountsk - substantial amountsk) / substantial amountsk = 200% ROI
 
   console.log("BDD ROI Analysis:");
   console.log(`Defect cost savings: $${defectSavings}`);
@@ -4115,9 +4115,9 @@ When("{int} users in each group add products to cart", async (userCount: number)
 Then("treatment group average cart value should be at least {int}% higher", async (minImprovement: number) => {
   // => Step: verify hypothesis success criteria
   const controlAvg = experimentResults.control.average_cart_value;
-  // => Get: control group average ($80 example)
+  // => Get: control group average (substantial amounts example)
   const treatmentAvg = experimentResults.treatment.average_cart_value;
-  // => Get: treatment group average ($100 example)
+  // => Get: treatment group average (substantial amounts example)
 
   const improvement = (treatmentAvg - controlAvg) / controlAvg;
   // => Calculate: % improvement (0.25 = 25%)
@@ -4440,32 +4440,32 @@ const metricsComparison = {
   },
   calculated_roi: {
     cost_before: {
-      production_defects: 12 * 10000, // => $120k/month
-      rework: 0.35 * 50 * 100 * 160, // => $280k/month (rework)
-      total_cost_per_month: 400000, // => $400k/month
+      production_defects: 12 * 10000, // => substantial amountsk/month
+      rework: 0.35 * 50 * 100 * 160, // => substantial amountsk/month (rework)
+      total_cost_per_month: 400000, // => substantial amountsk/month
     },
     cost_after: {
-      production_defects: 2.4 * 10000, // => $24k/month (80% reduction)
-      rework: 0.08 * 50 * 100 * 160, // => $64k/month (77% reduction)
-      total_cost_per_month: 88000, // => $88k/month
+      production_defects: 2.4 * 10000, // => substantial amountsk/month (80% reduction)
+      rework: 0.08 * 50 * 100 * 160, // => substantial amountsk/month (77% reduction)
+      total_cost_per_month: 88000, // => substantial amountsk/month
     },
-    monthly_savings: 312000, // => $312k/month saved
-    annual_savings: 3744000, // => $3.7M/year saved
+    monthly_savings: 312000, // => substantial amountsk/month saved
+    annual_savings: 3744000, // => substantial amounts.7M/year saved
     bdd_investment: {
-      tooling: 50000, // => $50k/year (Cucumber Pro, etc.)
-      training: 100000, // => $100k (coaching, workshops)
-      ongoing_maintenance: 50000, // => $50k/year (governance)
-      total_annual_investment: 200000, // => $200k/year
+      tooling: 50000, // => substantial amountsk/year (Cucumber Pro, etc.)
+      training: 100000, // => substantial amountsk (coaching, workshops)
+      ongoing_maintenance: 50000, // => substantial amountsk/year (governance)
+      total_annual_investment: 200000, // => substantial amountsk/year
     },
-    net_annual_benefit: 3544000, // => $3.5M/year net
+    net_annual_benefit: 3544000, // => substantial amounts.5M/year net
     roi_percentage: 1772, // => 1772% ROI
   },
 };
 
 console.log("E-Commerce Platform BDD Transformation");
-console.log("Annual Savings: $3.7M");
-console.log("Annual Investment: $200k");
-console.log("Net Benefit: $3.5M");
+console.log("Annual Savings: substantial amounts.7M");
+console.log("Annual Investment: substantial amountsk");
+console.log("Net Benefit: substantial amounts.5M");
 console.log("ROI: 1772%");
 console.log("\nKey Success Factors:");
 console.log("- Executive sponsorship (CEO mandated BDD)");

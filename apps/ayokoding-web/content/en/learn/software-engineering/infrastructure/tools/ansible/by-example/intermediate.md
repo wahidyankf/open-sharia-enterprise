@@ -21,16 +21,16 @@ Roles organize playbooks into reusable components with standardized directory st
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    A["Role<br/>webserver"] --> B["tasks/main.yml<br/>Task definitions"]
-    A --> C["handlers/main.yml<br/>Service handlers"]
-    A --> D["templates/<br/>Jinja2 templates"]
-    A --> E["files/<br/>Static files"]
+ A["Role<br/>webserver"] --> B["tasks/main.yml<br/>Task definitions"]
+ A --> C["handlers/main.yml<br/>Service handlers"]
+ A --> D["templates/<br/>Jinja2 templates"]
+ A --> E["files/<br/>Static files"]
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#fff
-    style C fill:#029E73,color:#fff
-    style D fill:#CC78BC,color:#fff
-    style E fill:#CA9161,color:#fff
+ style A fill:#0173B2,color:#fff
+ style B fill:#DE8F05,color:#fff
+ style C fill:#029E73,color:#fff
+ style D fill:#CC78BC,color:#fff
+ style E fill:#CA9161,color:#fff
 ```
 
 **Variable Hierarchy:**
@@ -38,12 +38,12 @@ graph TD
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    A["Role<br/>webserver"] --> F["vars/main.yml<br/>Role variables"]
-    A --> G["defaults/main.yml<br/>Default variables"]
+ A["Role<br/>webserver"] --> F["vars/main.yml<br/>Role variables"]
+ A --> G["defaults/main.yml<br/>Default variables"]
 
-    style A fill:#0173B2,color:#fff
-    style F fill:#029E73,color:#fff
-    style G fill:#DE8F05,color:#fff
+ style A fill:#0173B2,color:#fff
+ style F fill:#029E73,color:#fff
+ style G fill:#DE8F05,color:#fff
 ```
 
 **Role Metadata:**
@@ -51,10 +51,10 @@ graph TD
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    A["Role<br/>webserver"] --> H["meta/main.yml<br/>Dependencies"]
+ A["Role<br/>webserver"] --> H["meta/main.yml<br/>Dependencies"]
 
-    style A fill:#0173B2,color:#fff
-    style H fill:#CC78BC,color:#fff
+ style A fill:#0173B2,color:#fff
+ style H fill:#CC78BC,color:#fff
 ```
 
 **Code**:
@@ -121,63 +121,63 @@ config_file: /etc/nginx/sites-available/default # => Config file path
 # => Auto-loaded when role referenced in playbook
 
 - name: Install web server # => Step 1: Package installation
-  # => Task name visible in playbook execution output
-  ansible.builtin.package: # => OS-agnostic package module
-    # => Abstracts apt/yum/dnf/pacman differences
-    name: "{{ nginx_package }}" # => Uses var from vars/main.yml
-    # => Resolves to "nginx"
-    # => Variable interpolation with Jinja2 {{ }}
-    state: present # => Ensure package installed
-    # => Idempotent: safe to run multiple times
-  # => changed: [host] if package newly installed
-  # => ok: [host] if package already present
+ # => Task name visible in playbook execution output
+ ansible.builtin.package: # => OS-agnostic package module
+ # => Abstracts apt/yum/dnf/pacman differences
+ name: "{{ nginx_package }}" # => Uses var from vars/main.yml
+ # => Resolves to "nginx"
+ # => Variable interpolation with Jinja2 {{ }}
+ state: present # => Ensure package installed
+ # => Idempotent: safe to run multiple times
+ # => changed: [host] if package newly installed
+ # => ok: [host] if package already present
 
 - name: Create document root # => Step 2: Directory setup
-  # => Ensures web content directory exists
-  ansible.builtin.file: # => File/directory management module
-    # => Handles files, directories, symlinks
-    path: "{{ document_root }}" # => Uses var from defaults/main.yml
-    # => Resolves to "/var/www/html"
-    # => Overridable via play or inventory vars
-    state: directory # => Ensure path is a directory
-    # => Creates if missing, verifies if exists
-    mode: "0755" # => rwxr-xr-x permissions
-    # => Owner read/write/execute, others read/execute
-    # => Octal notation requires quotes in YAML
-  # => changed: [host] if directory created
-  # => ok: [host] if directory exists with correct mode
+ # => Ensures web content directory exists
+ ansible.builtin.file: # => File/directory management module
+ # => Handles files, directories, symlinks
+ path: "{{ document_root }}" # => Uses var from defaults/main.yml
+ # => Resolves to "/var/www/html"
+ # => Overridable via play or inventory vars
+ state: directory # => Ensure path is a directory
+ # => Creates if missing, verifies if exists
+ mode: "0755" # => rwxr-xr-x permissions
+ # => Owner read/write/execute, others read/execute
+ # => Octal notation requires quotes in YAML
+ # => changed: [host] if directory created
+ # => ok: [host] if directory exists with correct mode
 
 - name: Deploy configuration # => Step 3: Config file from template
-  # => Renders Jinja2 template with role variables
-  ansible.builtin.template: # => Jinja2 template rendering
-    # => Processes {{ variables }}, {% logic %}
-    src: nginx.conf.j2 # => Template from templates/ directory
-    # => Relative path: roles/webserver/templates/nginx.conf.j2
-    # => Ansible searches role's templates/ folder
-    dest: "{{ config_file }}" # => Destination path
-    # => Resolves to "/etc/nginx/sites-available/default"
-    # => Target location for rendered config
-    mode: "0644" # => rw-r--r-- permissions
-    # => Owner read/write, others read-only
-  notify: restart nginx # => Trigger handler if config changes
-  # => Handler queued for execution at play end
-  # => Only executes if this task reports "changed"
-  # => changed: [host] if template content differs from destination
-  # => ok: [host] if template content matches destination
+ # => Renders Jinja2 template with role variables
+ ansible.builtin.template: # => Jinja2 template rendering
+ # => Processes {{ variables }}, {% logic %}
+ src: nginx.conf.j2 # => Template from templates/ directory
+ # => Relative path: roles/webserver/templates/nginx.conf.j2
+ # => Ansible searches role's templates/ folder
+ dest: "{{ config_file }}" # => Destination path
+ # => Resolves to "/etc/nginx/sites-available/default"
+ # => Target location for rendered config
+ mode: "0644" # => rw-r--r-- permissions
+ # => Owner read/write, others read-only
+ notify: restart nginx # => Trigger handler if config changes
+ # => Handler queued for execution at play end
+ # => Only executes if this task reports "changed"
+ # => changed: [host] if template content differs from destination
+ # => ok: [host] if template content matches destination
 
 - name: Ensure service is running # => Step 4: Service state management
-  # => Guarantees nginx active and boot-enabled
-  ansible.builtin.service: # => systemd/init service module
-    # => Abstracts systemd/SysV/upstart/OpenRC
-    name: "{{ nginx_service }}" # => Service name
-    # => Resolves to "nginx"
-    # => systemd unit name
-    state: started # => Ensure service running
-    # => Starts if stopped, no-op if already running
-    enabled: true # => Enable on boot (systemctl enable)
-    # => Creates systemd symlink for auto-start
-  # => changed: [host] if service stopped or disabled
-  # => ok: [host] if service already running and enabled
+ # => Guarantees nginx active and boot-enabled
+ ansible.builtin.service: # => systemd/init service module
+ # => Abstracts systemd/SysV/upstart/OpenRC
+ name: "{{ nginx_service }}" # => Service name
+ # => Resolves to "nginx"
+ # => systemd unit name
+ state: started # => Ensure service running
+ # => Starts if stopped, no-op if already running
+ enabled: true # => Enable on boot (systemctl enable)
+ # => Creates systemd symlink for auto-start
+ # => changed: [host] if service stopped or disabled
+ # => ok: [host] if service already running and enabled
 ```
 
 **`roles/webserver/handlers/main.yml`**:
@@ -189,13 +189,13 @@ config_file: /etc/nginx/sites-available/default # => Config file path
 # => Execute at play end only if notified
 
 - name: restart nginx # => Handler name (must match notify value)
-  ansible.builtin.service: # => Service control module
-    name: "{{ nginx_service }}" # => Service to restart
-    # => Resolves to "nginx"
-    state: restarted # => Stop then start service
-  # => Executes only if notified by task changes
-  # => Runs once per play even if notified multiple times
-  # => Output: changed: [host] (nginx.service restarted)
+ ansible.builtin.service: # => Service control module
+ name: "{{ nginx_service }}" # => Service to restart
+ # => Resolves to "nginx"
+ state: restarted # => Stop then start service
+ # => Executes only if notified by task changes
+ # => Runs once per play even if notified multiple times
+ # => Output: changed: [host] (nginx.service restarted)
 ```
 
 **`roles/webserver/templates/nginx.conf.j2`**:
@@ -206,20 +206,20 @@ config_file: /etc/nginx/sites-available/default # => Config file path
 # => Rendered by ansible.builtin.template module
 
 server { # => Virtual host block
-    listen {{ http_port }}; # => Listen port from defaults/main.yml
-    # => Renders to: listen 80;
-    # => Binds to all interfaces on port 80
+ listen {{ http_port }}; # => Listen port from defaults/main.yml
+ # => Renders to: listen 80;
+ # => Binds to all interfaces on port 80
 
-    server_name {{ server_name }}; # => Host header matching
-    # => Renders to: server_name localhost;
-    # => Matches requests with Host: localhost
+ server_name {{ server_name }}; # => Host header matching
+ # => Renders to: server_name localhost;
+ # => Matches requests with Host: localhost
 
-    root {{ document_root }}; # => Document root from defaults
-    # => Renders to: root /var/www/html;
-    # => Base path for static file serving
+ root {{ document_root }}; # => Document root from defaults
+ # => Renders to: root /var/www/html;
+ # => Base path for static file serving
 
-    index index.html; # => Default index file
-    # => Serve index.html when directory requested
+ index index.html; # => Default index file
+ # => Serve index.html when directory requested
 }
 ```
 
@@ -231,23 +231,23 @@ server { # => Virtual host block
 # => Playbook that applies webserver role to target hosts
 
 - name: Deploy Web Server # => Play name
-  hosts: webservers # => Target host group from inventory
-  # => Executes on all hosts in webservers group
-  become: true # => Escalate privileges (sudo/root)
-  # => Required for package installation and service management
+ hosts: webservers # => Target host group from inventory
+ # => Executes on all hosts in webservers group
+ become: true # => Escalate privileges (sudo/root)
+ # => Required for package installation and service management
 
-  roles: # => Roles to apply to hosts
-    - webserver # => Apply webserver role
-  # => Automatically includes:
-  # =>   - roles/webserver/tasks/main.yml (tasks)
-  # =>   - roles/webserver/handlers/main.yml (handlers)
-  # =>   - roles/webserver/defaults/main.yml (default vars)
-  # =>   - roles/webserver/vars/main.yml (role vars)
-  # =>   - roles/webserver/templates/* (templates)
-  # => Execution order:
-  # =>   1. Load variables (defaults, vars)
-  # =>   2. Execute tasks sequentially
-  # =>   3. Run notified handlers at play end
+ roles: # => Roles to apply to hosts
+ - webserver # => Apply webserver role
+ # => Automatically includes:
+ # => - roles/webserver/tasks/main.yml (tasks)
+ # => - roles/webserver/handlers/main.yml (handlers)
+ # => - roles/webserver/defaults/main.yml (default vars)
+ # => - roles/webserver/vars/main.yml (role vars)
+ # => - roles/webserver/templates/* (templates)
+ # => Execution order:
+ # => 1. Load variables (defaults, vars)
+ # => 2. Execute tasks sequentially
+ # => 3. Run notified handlers at play end
 ```
 
 **Run**: `ansible-playbook webserver_playbook.yml`
@@ -310,51 +310,51 @@ config_dir: /etc/myapp # => Application config directory
 # => Demonstrates variable precedence hierarchy
 
 - name: Role Variable Precedence # => Play name
-  hosts: localhost # => Execute on localhost
-  gather_facts: false # => Skip fact gathering for speed
+ hosts: localhost # => Execute on localhost
+ gather_facts: false # => Skip fact gathering for speed
 
-  # Play vars (precedence: 15)
-  # => Variables defined at play level
-  vars:
-    app_port: 9090 # => Override default 8080
-    # => Precedence: 15 (higher than defaults: 2)
-    # => Overrides roles/app/defaults/main.yml
-    # => Does NOT override roles/app/vars/main.yml (precedence 18)
-    app_env: staging # => Override default development
-    # => Precedence: 15
+ # Play vars (precedence: 15)
+ # => Variables defined at play level
+ vars:
+ app_port: 9090 # => Override default 8080
+ # => Precedence: 15 (higher than defaults: 2)
+ # => Overrides roles/app/defaults/main.yml
+ # => Does NOT override roles/app/vars/main.yml (precedence 18)
+ app_env: staging # => Override default development
+ # => Precedence: 15
 
-  roles:
-    - role: app # => Apply app role
-      # Role parameters (precedence: 17)
-      # => Variables passed directly to role
-      vars:
-        debug_enabled: true # => Override default false
-        # => Precedence: 17 (higher than play vars: 15)
-        # => Overrides roles/app/defaults/main.yml
-        # => Does NOT override roles/app/vars/main.yml (precedence 18)
+ roles:
+ - role: app # => Apply app role
+ # Role parameters (precedence: 17)
+ # => Variables passed directly to role
+ vars:
+ debug_enabled: true # => Override default false
+ # => Precedence: 17 (higher than play vars: 15)
+ # => Overrides roles/app/defaults/main.yml
+ # => Does NOT override roles/app/vars/main.yml (precedence 18)
 
-  # => Variable resolution order for this play:
-  # => 1. app_name: MyApplication (vars/main.yml - precedence 18)
-  # => 2. config_dir: /etc/myapp (vars/main.yml - precedence 18)
-  # => 3. debug_enabled: true (role params - precedence 17)
-  # => 4. app_port: 9090 (play vars - precedence 15)
-  # => 5. app_env: staging (play vars - precedence 15)
+ # => Variable resolution order for this play:
+ # => 1. app_name: MyApplication (vars/main.yml - precedence 18)
+ # => 2. config_dir: /etc/myapp (vars/main.yml - precedence 18)
+ # => 3. debug_enabled: true (role params - precedence 17)
+ # => 4. app_port: 9090 (play vars - precedence 15)
+ # => 5. app_env: staging (play vars - precedence 15)
 
-  tasks:
-    - name: Display final configuration # => Show merged values
-      ansible.builtin.debug: # => Print message module
-        msg: | # => Multi-line message
-          App: {{ app_name }}
-          Port: {{ app_port }}
-          Environment: {{ app_env }}
-          Debug: {{ debug_enabled }}
-          Config Dir: {{ config_dir }}
-      # => Output:
-      # => App: MyApplication (from vars - precedence 18)
-      # => Port: 9090 (from play vars - precedence 15)
-      # => Environment: staging (from play vars - precedence 15)
-      # => Debug: true (from role params - precedence 17)
-      # => Config Dir: /etc/myapp (from vars - precedence 18)
+ tasks:
+ - name: Display final configuration # => Show merged values
+ ansible.builtin.debug: # => Print message module
+ msg: | # => Multi-line message
+ App: {{ app_name }}
+ Port: {{ app_port }}
+ Environment: {{ app_env }}
+ Debug: {{ debug_enabled }}
+ Config Dir: {{ config_dir }}
+ # => Output:
+ # => App: MyApplication (from vars - precedence 18)
+ # => Port: 9090 (from play vars - precedence 15)
+ # => Environment: staging (from play vars - precedence 15)
+ # => Debug: true (from role params - precedence 17)
+ # => Config Dir: /etc/myapp (from vars - precedence 18)
 ```
 
 **Run with extra-vars (precedence: 22 - highest)**:
@@ -384,17 +384,17 @@ Roles can depend on other roles using `meta/main.yml`. Dependencies install auto
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    A["Database Role<br/>Applied"] --> B["Check Dependencies<br/>meta/main.yml"]
-    B --> C["Execute Common<br/>Role First"]
-    B --> D["Execute Firewall<br/>Role Second"]
-    C --> E["Database Tasks<br/>Execute Last"]
-    D --> E
+ A["Database Role<br/>Applied"] --> B["Check Dependencies<br/>meta/main.yml"]
+ B --> C["Execute Common<br/>Role First"]
+ B --> D["Execute Firewall<br/>Role Second"]
+ C --> E["Database Tasks<br/>Execute Last"]
+ D --> E
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#fff
-    style C fill:#029E73,color:#fff
-    style D fill:#029E73,color:#fff
-    style E fill:#CC78BC,color:#fff
+ style A fill:#0173B2,color:#fff
+ style B fill:#DE8F05,color:#fff
+ style C fill:#029E73,color:#fff
+ style D fill:#029E73,color:#fff
+ style E fill:#CC78BC,color:#fff
 ```
 
 **Code**:
@@ -408,32 +408,32 @@ graph TD
 # => Dependencies execute BEFORE current role
 
 dependencies: # => List of required roles
-  # => Dependencies execute before current role's tasks
-  # => Ensures prerequisites satisfied before main role
-  - role: common # => First dependency
-    # => Always executes before firewall and database
-    # => Execution order: 1st
-    # => Provides baseline system configuration
-    vars: # => Pass variables to dependency
-      # => Override dependency's default values
-      ntp_server: time.example.com # => Override default NTP server
-      # => Custom NTP server for time synchronization
-    # => dependency-specific variable override
-    # => Scoped to common role only
+ # => Dependencies execute before current role's tasks
+ # => Ensures prerequisites satisfied before main role
+ - role: common # => First dependency
+ # => Always executes before firewall and database
+ # => Execution order: 1st
+ # => Provides baseline system configuration
+ vars: # => Pass variables to dependency
+ # => Override dependency's default values
+ ntp_server: time.example.com # => Override default NTP server
+ # => Custom NTP server for time synchronization
+ # => dependency-specific variable override
+ # => Scoped to common role only
 
-  - role: firewall # => Second dependency
-    # => Executes after common, before database
-    # => Execution order: 2nd
-    # => Configures network access rules
-    vars: # => Configure firewall for database
-      # => Database-specific firewall configuration
-      allowed_ports: # => Ports to open
-        # => YAML list of ports to allow through firewall
-        - 5432 # => PostgreSQL default port
-        # => TCP port for database connections
-    # => Firewall configured before database installation
-    # => Ensures connectivity ready when service starts
-    # => Prevents connection failures after database starts
+ - role: firewall # => Second dependency
+ # => Executes after common, before database
+ # => Execution order: 2nd
+ # => Configures network access rules
+ vars: # => Configure firewall for database
+ # => Database-specific firewall configuration
+ allowed_ports: # => Ports to open
+ # => YAML list of ports to allow through firewall
+ - 5432 # => PostgreSQL default port
+ # => TCP port for database connections
+ # => Firewall configured before database installation
+ # => Ensures connectivity ready when service starts
+ # => Prevents connection failures after database starts
 ```
 
 **`roles/common/tasks/main.yml`**:
@@ -446,43 +446,43 @@ dependencies: # => List of required roles
 # => Shared foundation for all dependent roles
 
 - name: Update package cache # => Refresh package metadata
-  # => Ensures latest package versions available
-  ansible.builtin.apt: # => Debian/Ubuntu package manager
-    # => APT module provides cache management
-    # => Debian-specific (yum/dnf for RHEL)
-    update_cache: true # => Run apt-get update
-    # => Refreshes package index from repositories
-    # => Downloads latest package metadata
-    cache_valid_time: 3600 # => Skip if updated within 1 hour
-    # => Prevents redundant updates (performance optimization)
-    # => 3600 seconds = 1 hour cache validity
-  when: ansible_os_family == "Debian" # => Only on Debian-based systems
-  # => Conditional ensures APT only runs on Debian/Ubuntu
-  # => ansible_os_family fact populated by setup module
-  # => changed: [host] if cache refreshed
-  # => ok: [host] if cache fresh (within 3600 seconds)
+ # => Ensures latest package versions available
+ ansible.builtin.apt: # => Debian/Ubuntu package manager
+ # => APT module provides cache management
+ # => Debian-specific (yum/dnf for RHEL)
+ update_cache: true # => Run apt-get update
+ # => Refreshes package index from repositories
+ # => Downloads latest package metadata
+ cache_valid_time: 3600 # => Skip if updated within 1 hour
+ # => Prevents redundant updates (performance optimization)
+ # => 3600 seconds = 1 hour cache validity
+ when: ansible_os_family == "Debian" # => Only on Debian-based systems
+ # => Conditional ensures APT only runs on Debian/Ubuntu
+ # => ansible_os_family fact populated by setup module
+ # => changed: [host] if cache refreshed
+ # => ok: [host] if cache fresh (within 3600 seconds)
 
 - name: Install common packages # => Base utility installation
-  # => Installs baseline tools for all systems
-  ansible.builtin.package: # => OS-agnostic package module
-    # => Cross-platform package installation
-    # => Automatically selects apt/yum/dnf/pacman
-    name: # => Package list (YAML array)
-      # => Multiple packages installed in single transaction
-      # => Efficient bulk installation
-      - curl # => HTTP client utility
-      # => Required for downloading files
-      # => Used by many deployment scripts
-      - vim # => Text editor
-      # => Standard editor for configuration files
-      # => Essential for server administration
-      - git # => Version control system
-      # => Essential for deployment workflows
-      # => Clone repositories, manage configs
-    state: present # => Ensure all packages installed
-    # => Idempotent: installs only if missing
-  # => changed: [host] if any package newly installed
-  # => ok: [host] if all packages already present
+ # => Installs baseline tools for all systems
+ ansible.builtin.package: # => OS-agnostic package module
+ # => Cross-platform package installation
+ # => Automatically selects apt/yum/dnf/pacman
+ name: # => Package list (YAML array)
+ # => Multiple packages installed in single transaction
+ # => Efficient bulk installation
+ - curl # => HTTP client utility
+ # => Required for downloading files
+ # => Used by many deployment scripts
+ - vim # => Text editor
+ # => Standard editor for configuration files
+ # => Essential for server administration
+ - git # => Version control system
+ # => Essential for deployment workflows
+ # => Clone repositories, manage configs
+ state: present # => Ensure all packages installed
+ # => Idempotent: installs only if missing
+ # => changed: [host] if any package newly installed
+ # => ok: [host] if all packages already present
 ```
 
 **`roles/firewall/tasks/main.yml`**:
@@ -495,51 +495,51 @@ dependencies: # => List of required roles
 # => Security layer for network access
 
 - name: Install UFW # => Install firewall package
-  ansible.builtin.package: # => Package module
-    name: ufw # => Uncomplicated Firewall
-    # => Frontend for iptables
-    state: present # => Ensure installed
-  when: ansible_os_family == "Debian" # => Debian/Ubuntu only
-  # => UFW is Debian-specific tool
-  # => changed: [host] if UFW newly installed
-  # => ok: [host] if UFW already present
+ ansible.builtin.package: # => Package module
+ name: ufw # => Uncomplicated Firewall
+ # => Frontend for iptables
+ state: present # => Ensure installed
+ when: ansible_os_family == "Debian" # => Debian/Ubuntu only
+ # => UFW is Debian-specific tool
+ # => changed: [host] if UFW newly installed
+ # => ok: [host] if UFW already present
 
 - name: Allow SSH # => Critical: Prevent lockout
-  # => First rule to configure (safety measure)
-  community.general.ufw: # => UFW management module
-    # => From community.general collection
-    rule: allow # => Allow connection
-    # => Permits inbound traffic on specified port
-    port: "22" # => SSH port
-    # => String format required by UFW module
-    # => Standard SSH port (default)
-    proto: tcp # => TCP protocol
-    # => SSH uses TCP (not UDP)
-  # => MUST execute before enabling firewall
-  # => Prevents SSH lockout on remote systems
-  # => changed: [host] if rule added
-  # => ok: [host] if rule exists
+ # => First rule to configure (safety measure)
+ community.general.ufw: # => UFW management module
+ # => From community.general collection
+ rule: allow # => Allow connection
+ # => Permits inbound traffic on specified port
+ port: "22" # => SSH port
+ # => String format required by UFW module
+ # => Standard SSH port (default)
+ proto: tcp # => TCP protocol
+ # => SSH uses TCP (not UDP)
+ # => MUST execute before enabling firewall
+ # => Prevents SSH lockout on remote systems
+ # => changed: [host] if rule added
+ # => ok: [host] if rule exists
 
 - name: Allow application ports # => Open ports from dependency vars
-  community.general.ufw: # => UFW module
-    rule: allow # => Allow incoming connections
-    port: "{{ item }}" # => Port from loop iteration
-    # => First iteration: 5432 (PostgreSQL)
-    # => Variable substitution
-    proto: tcp # => TCP protocol
-  loop: "{{ allowed_ports }}" # => Variable from database role
-  # => allowed_ports from database/meta/main.yml
-  # => Iterates: [5432]
-  # => changed: [host] if rule added
-  # => ok: [host] if rule exists
+ community.general.ufw: # => UFW module
+ rule: allow # => Allow incoming connections
+ port: "{{ item }}" # => Port from loop iteration
+ # => First iteration: 5432 (PostgreSQL)
+ # => Variable substitution
+ proto: tcp # => TCP protocol
+ loop: "{{ allowed_ports }}" # => Variable from database role
+ # => allowed_ports from database/meta/main.yml
+ # => Iterates: [5432]
+ # => changed: [host] if rule added
+ # => ok: [host] if rule exists
 
 - name: Enable UFW # => Activate firewall
-  community.general.ufw: # => UFW module
-    state: enabled # => Enable and start firewall
-    # => Activates configured rules
-  # => Activates all configured rules
-  # => changed: [host] if UFW disabled
-  # => ok: [host] if UFW already enabled
+ community.general.ufw: # => UFW module
+ state: enabled # => Enable and start firewall
+ # => Activates configured rules
+ # => Activates all configured rules
+ # => changed: [host] if UFW disabled
+ # => ok: [host] if UFW already enabled
 ```
 
 **`roles/database/tasks/main.yml`**:
@@ -551,25 +551,25 @@ dependencies: # => List of required roles
 # => Dependencies guarantee system ready
 
 - name: Install PostgreSQL # => Database package installation
-  ansible.builtin.package: # => Package module
-    name: postgresql # => PostgreSQL database
-    # => Relational database system
-    state: present # => Ensure installed
-  # => Executes after common role installed base packages
-  # => Executes after firewall role opened port 5432
-  # => changed: [host] if PostgreSQL newly installed
-  # => ok: [host] if PostgreSQL already present
+ ansible.builtin.package: # => Package module
+ name: postgresql # => PostgreSQL database
+ # => Relational database system
+ state: present # => Ensure installed
+ # => Executes after common role installed base packages
+ # => Executes after firewall role opened port 5432
+ # => changed: [host] if PostgreSQL newly installed
+ # => ok: [host] if PostgreSQL already present
 
 - name: Ensure PostgreSQL is running # => Service management
-  ansible.builtin.service: # => Service module
-    name: postgresql # => PostgreSQL service name
-    state: started # => Ensure service running
-    # => Starts if stopped
-    enabled: true # => Enable on boot
-    # => Creates systemctl symlink
-  # => Service starts with port 5432 open (firewall dependency)
-  # => changed: [host] if service stopped or disabled
-  # => ok: [host] if service already running and enabled
+ ansible.builtin.service: # => Service module
+ name: postgresql # => PostgreSQL service name
+ state: started # => Ensure service running
+ # => Starts if stopped
+ enabled: true # => Enable on boot
+ # => Creates systemctl symlink
+ # => Service starts with port 5432 open (firewall dependency)
+ # => changed: [host] if service stopped or disabled
+ # => ok: [host] if service already running and enabled
 ```
 
 **Playbook**:
@@ -580,28 +580,26 @@ dependencies: # => List of required roles
 # => Deploy database with automatic dependency resolution
 
 - name: Deploy Database Server # => Play name
-  hosts: dbservers # => Target database servers from inventory
-  become: true # => Escalate privileges (required for package/service)
+ hosts: dbservers # => Target database servers from inventory
+ become: true # => Escalate privileges (required for package/service)
 
-  roles:
-    - database # => Apply database role
-  # => Automatic dependency resolution from database/meta/main.yml
-  # => Execution order (automatic):
-  # =>   1. common role (dependency #1)
-  # =>   2. firewall role (dependency #2)
-  # =>   3. database role (primary role)
-  # => No need to explicitly list common and firewall roles
-  # => Dependencies resolved and executed automatically
-  # => Dependencies execute first automatically
+ roles:
+ - database # => Apply database role
+ # => Automatic dependency resolution from database/meta/main.yml
+ # => Execution order (automatic):
+ # => 1. common role (dependency #1)
+ # => 2. firewall role (dependency #2)
+ # => 3. database role (primary role)
+ # => No need to explicitly list common and firewall roles
+ # => Dependencies resolved and executed automatically
+ # => Dependencies execute first automatically
 ```
 
 **Run**: `ansible-playbook database_playbook.yml`
 
 **Key Takeaway**: Role dependencies in `meta/main.yml` ensure prerequisite roles execute first. Dependencies run once even if multiple roles depend on the same role (unless `allow_duplicates: true`). Pass variables to dependencies using `vars:` parameter. This pattern enables composable, layered automation.
 
-**Why It Matters**: Role dependencies automate prerequisite installation in layered architectures. Database roles depend on security hardening, monitoring, and backup roles—dependencies ensure the correct execution order without manual orchestration. The `allow_duplicates` setting prevents redundant execution when multiple roles share common dependencies, reducing playbook runtime by 30-50% in complex deployments.
-
----
+**Why It Matters**: Role dependencies automate prerequisite installation in layered architectures. Database roles depend on security hardening, monitoring, and backup roles—dependencies ensure the correct execution order without manual orchestration. The `allow_duplicates` setting prevents redundant execution when multiple roles share common dependencies, ---
 
 ### Example 31: Ansible Galaxy - Using Community Roles
 
@@ -637,37 +635,37 @@ ansible-galaxy install -r requirements.yml
 # => Public role repository maintained by community
 
 - name: geerlingguy.nginx # => Galaxy role (namespace.name format)
-  # => Author: geerlingguy, Role: nginx
-  version: 2.8.0 # => Pin to version 2.8.0
-  # => Optional: Omit for latest version
-  # => Best practice: Always pin versions for reproducibility
-  # => Prevents unexpected updates breaking playbooks
+ # => Author: geerlingguy, Role: nginx
+ version: 2.8.0 # => Pin to version 2.8.0
+ # => Optional: Omit for latest version
+ # => Best practice: Always pin versions for reproducibility
+ # => Prevents unexpected updates breaking playbooks
 
 - name: geerlingguy.postgresql # => PostgreSQL database role
-  # => Popular role for PostgreSQL installation
-  version: 3.4.1 # => Pin to version 3.4.1
-  # => Prevents breaking changes from auto-updates
-  # => Specific version ensures consistency across teams
+ # => Popular role for PostgreSQL installation
+ version: 3.4.1 # => Pin to version 3.4.1
+ # => Prevents breaking changes from auto-updates
+ # => Specific version ensures consistency across teams
 
 # Git repository roles
 # => Roles from custom Git repositories
 # => Use for internal/private roles not on Galaxy
 - src: https://github.com/example/ansible-role-custom.git # => Git URL
-  # => HTTPS URL for Git repository
-  name: custom_role # => Local role name (how to reference in playbook)
-  # => Name required for Git sources (no namespace inference)
-  # => Used in playbook: roles: [custom_role]
-  version: main # => Git branch or tag
-  # => Default: main/master branch
-  # => Can use tags: v1.0.0 or commit SHA
-  # => Commit SHA provides immutable reference
+ # => HTTPS URL for Git repository
+ name: custom_role # => Local role name (how to reference in playbook)
+ # => Name required for Git sources (no namespace inference)
+ # => Used in playbook: roles: [custom_role]
+ version: main # => Git branch or tag
+ # => Default: main/master branch
+ # => Can use tags: v1.0.0 or commit SHA
+ # => Commit SHA provides immutable reference
 
 # Local roles path override
 # => Roles from local filesystem (development/testing)
-- src: ../local-roles/internal-role # => Relative or absolute path
-  name: internal_role # => Local role name
-  # => Useful for internal/proprietary roles
-  # => No version control (uses current filesystem state)
+- src: ./local-roles/internal-role # => Relative or absolute path
+ name: internal_role # => Local role name
+ # => Useful for internal/proprietary roles
+ # => No version control (uses current filesystem state)
 ```
 
 **Playbook using Galaxy role**:
@@ -677,54 +675,54 @@ ansible-galaxy install -r requirements.yml
 # galaxy_roles.yml
 # => Playbook demonstrating Galaxy role integration
 - name: Use Galaxy Roles # => Play name
-  # => Describes playbook purpose
-  hosts: webservers # => Target host group
-  # => Executes on all hosts in webservers inventory group
-  become: true # => Escalate privileges
-  # => Required for package installation and service management
-  # => Uses sudo/su based on target system
+ # => Describes playbook purpose
+ hosts: webservers # => Target host group
+ # => Executes on all hosts in webservers inventory group
+ become: true # => Escalate privileges
+ # => Required for package installation and service management
+ # => Uses sudo/su based on target system
 
-  roles: # => Roles to apply
-    # => Executes role tasks in order
-    - role: geerlingguy.nginx # => Galaxy role reference
-      # => Format: namespace.rolename
-      # => geerlingguy = Galaxy namespace (author)
-      # => nginx = role name (web server)
-      # => Must be installed via ansible-galaxy first
-      vars: # => Pass configuration to role
-        # => Override role default variables
-        # => Role-specific configuration
-        nginx_vhosts: # => Virtual hosts configuration
-          # => Variable name expected by geerlingguy.nginx role
-          # => Check role documentation for required/optional vars
-          # => List of virtual host definitions
-          - listen: "80" # => HTTP port
-            # => Virtual host listens on port 80
-            # => Standard HTTP port (unencrypted)
-            server_name: "example.com" # => Domain name
-            # => Matches HTTP Host header
-            # => Used for name-based virtual hosting
-            root: "/var/www/html" # => Document root
-            # => Path to serve static files from
-            # => Base directory for web content
-      # => Role executes its tasks with these variables
-      # => Configures nginx with virtual host
-      # => Installs package, writes config, starts service
+ roles: # => Roles to apply
+ # => Executes role tasks in order
+ - role: geerlingguy.nginx # => Galaxy role reference
+ # => Format: namespace.rolename
+ # => geerlingguy = Galaxy namespace (author)
+ # => nginx = role name (web server)
+ # => Must be installed via ansible-galaxy first
+ vars: # => Pass configuration to role
+ # => Override role default variables
+ # => Role-specific configuration
+ nginx_vhosts: # => Virtual hosts configuration
+ # => Variable name expected by geerlingguy.nginx role
+ # => Check role documentation for required/optional vars
+ # => List of virtual host definitions
+ - listen: "80" # => HTTP port
+ # => Virtual host listens on port 80
+ # => Standard HTTP port (unencrypted)
+ server_name: "example.com" # => Domain name
+ # => Matches HTTP Host header
+ # => Used for name-based virtual hosting
+ root: "/var/www/html" # => Document root
+ # => Path to serve static files from
+ # => Base directory for web content
+ # => Role executes its tasks with these variables
+ # => Configures nginx with virtual host
+ # => Installs package, writes config, starts service
 
-  tasks: # => Additional tasks after role execution
-    # => Runs after all roles complete
-    - name: Verify nginx is running # => Post-role validation
-      # => Confirms role successfully configured service
-      ansible.builtin.service: # => Service module
-        # => Query/manage system services
-        name: nginx # => Service name
-        # => systemd unit name
-        state: started # => Ensure running
-        # => Verify service is active
-      # => Validates role successfully started service
-      # => ok: [host] if nginx running (expected)
-      # => changed: [host] if nginx stopped (unexpected)
-      # => Failure indicates role configuration error
+ tasks: # => Additional tasks after role execution
+ # => Runs after all roles complete
+ - name: Verify nginx is running # => Post-role validation
+ # => Confirms role successfully configured service
+ ansible.builtin.service: # => Service module
+ # => Query/manage system services
+ name: nginx # => Service name
+ # => systemd unit name
+ state: started # => Ensure running
+ # => Verify service is active
+ # => Validates role successfully started service
+ # => ok: [host] if nginx running (expected)
+ # => changed: [host] if nginx stopped (unexpected)
+ # => Failure indicates role configuration error
 ```
 
 **List installed roles**:
@@ -776,36 +774,36 @@ ansible-galaxy init --init-path roles/ myapp
 # => meta/main.yml describes role for Galaxy publication
 
 galaxy_info: # => Galaxy-specific metadata
-  author: Your Name # => Role author/maintainer
-  # => Displayed on Galaxy role page
+ author: Your Name # => Role author/maintainer
+ # => Displayed on Galaxy role page
 
-  description: Deploys and configures MyApp # => Short description
-  # => Appears in Galaxy search results
-  # => Keep concise (1-2 sentences)
+ description: Deploys and configures MyApp # => Short description
+ # => Appears in Galaxy search results
+ # => Keep concise (1-2 sentences)
 
-  license: MIT # => Role license
-  # => Common: MIT, Apache-2.0, GPL-3.0, BSD-3-Clause
+ license: MIT # => Role license
+ # => Common: MIT, Apache-2.0, GPL-3.0, BSD-3-Clause
 
-  min_ansible_version: 2.14 # => Minimum Ansible version
-  # => Prevents role execution on incompatible versions
-  # => Galaxy validates this during import
+ min_ansible_version: 2.14 # => Minimum Ansible version
+ # => Prevents role execution on incompatible versions
+ # => Galaxy validates this during import
 
-  platforms: # => Supported OS platforms
-    # => Tested and supported distributions
-    - name: Ubuntu # => Distribution name
-      versions: # => Supported versions
-        - focal # => Ubuntu 20.04 LTS
-        - jammy # => Ubuntu 22.04 LTS
-    - name: Debian # => Distribution name
-      versions: # => Supported versions
-        - bullseye # => Debian 11
-        - bookworm # => Debian 12
+ platforms: # => Supported OS platforms
+ # => Tested and supported distributions
+ - name: Ubuntu # => Distribution name
+ versions: # => Supported versions
+ - focal # => Ubuntu 20.04 LTS
+ - jammy # => Ubuntu 22.04 LTS
+ - name: Debian # => Distribution name
+ versions: # => Supported versions
+ - bullseye # => Debian 11
+ - bookworm # => Debian 12
 
-  galaxy_tags: # => Galaxy search/filter tags
-    # => Help users discover role (max 20 tags)
-    - web # => Tag for web-related roles
-    - application # => General application deployment
-    - deployment # => Deployment automation
+ galaxy_tags: # => Galaxy search/filter tags
+ # => Help users discover role (max 20 tags)
+ - web # => Tag for web-related roles
+ - application # => General application deployment
+ - deployment # => Deployment automation
 
 dependencies: [] # => Role dependencies
 # => Empty list: no dependencies
@@ -846,11 +844,11 @@ None.
 
 ```yaml
 - hosts: appservers
-  roles:
-    - role: myapp
-      vars:
-        myapp_version: "2.0.0"
-        myapp_port: 9090
+ roles:
+ - role: myapp
+ vars:
+ myapp_version: "2.0.0"
+ myapp_port: 9090
 ```
 
 ## License
@@ -881,50 +879,50 @@ myapp_config_file: /etc/myapp/config.yml
 ---
 # Main tasks
 - name: Include OS-specific variables
-  ansible.builtin.include_vars: "{{ ansible_os_family }}.yml"
-  # => Loads vars/Debian.yml or vars/RedHat.yml based on OS
+ ansible.builtin.include_vars: "{{ ansible_os_family }}.yml"
+ # => Loads vars/Debian.yml or vars/RedHat.yml based on OS
 
 - name: Create application user
-  ansible.builtin.user:
-    name: "{{ myapp_user }}"
-    group: "{{ myapp_group }}"
-    system: true
-    create_home: false
-  # => Creates system user for application
+ ansible.builtin.user:
+ name: "{{ myapp_user }}"
+ group: "{{ myapp_group }}"
+ system: true
+ create_home: false
+ # => Creates system user for application
 
 - name: Create installation directory
-  ansible.builtin.file:
-    path: "{{ myapp_install_dir }}"
-    state: directory
-    owner: "{{ myapp_user }}"
-    group: "{{ myapp_group }}"
-    mode: "0755"
-  # => Creates app installation directory
+ ansible.builtin.file:
+ path: "{{ myapp_install_dir }}"
+ state: directory
+ owner: "{{ myapp_user }}"
+ group: "{{ myapp_group }}"
+ mode: "0755"
+ # => Creates app installation directory
 
 - name: Deploy application
-  ansible.builtin.get_url:
-    url: "https://releases.example.com/myapp-{{ myapp_version }}.tar.gz"
-    dest: "/tmp/myapp-{{ myapp_version }}.tar.gz"
-  # => Downloads application release
+ ansible.builtin.get_url:
+ url: "https://releases.example.com/myapp-{{ myapp_version }}.tar.gz"
+ dest: "/tmp/myapp-{{ myapp_version }}.tar.gz"
+ # => Downloads application release
 
 - name: Extract application
-  ansible.builtin.unarchive:
-    src: "/tmp/myapp-{{ myapp_version }}.tar.gz"
-    dest: "{{ myapp_install_dir }}"
-    remote_src: true
-    owner: "{{ myapp_user }}"
-    group: "{{ myapp_group }}"
-  # => Extracts to installation directory
+ ansible.builtin.unarchive:
+ src: "/tmp/myapp-{{ myapp_version }}.tar.gz"
+ dest: "{{ myapp_install_dir }}"
+ remote_src: true
+ owner: "{{ myapp_user }}"
+ group: "{{ myapp_group }}"
+ # => Extracts to installation directory
 
 - name: Deploy configuration
-  ansible.builtin.template:
-    src: config.yml.j2
-    dest: "{{ myapp_config_file }}"
-    owner: "{{ myapp_user }}"
-    group: "{{ myapp_group }}"
-    mode: "0640"
-  notify: restart myapp
-  # => Renders configuration template
+ ansible.builtin.template:
+ src: config.yml.j2
+ dest: "{{ myapp_config_file }}"
+ owner: "{{ myapp_user }}"
+ group: "{{ myapp_group }}"
+ mode: "0640"
+ notify: restart myapp
+ # => Renders configuration template
 ```
 
 **Test role locally**:
@@ -933,9 +931,9 @@ myapp_config_file: /etc/myapp/config.yml
 ---
 # tests/test.yml
 - hosts: localhost
-  become: true
-  roles:
-    - myapp
+ become: true
+ roles:
+ - myapp
 ```
 
 **Run test**: `ansible-playbook tests/test.yml`
@@ -958,100 +956,100 @@ Dynamic role inclusion enables conditional role application and runtime role sel
 # => Demonstrates dynamic vs static role inclusion
 
 - name: Dynamic Role Inclusion # => Play name
-  hosts: localhost # => Execute on localhost
-  gather_facts: true # => Gather facts (needed for group_names)
+ hosts: localhost # => Execute on localhost
+ gather_facts: true # => Gather facts (needed for group_names)
 
-  vars: # => Variables for dynamic role selection
-    server_type: webserver # => Dynamic role selector
-    # => Value determines which role to include
-    # => Could be: webserver, appserver, database
-    enable_monitoring: true # => Conditional flag
-    # => Controls whether monitoring role included
+ vars: # => Variables for dynamic role selection
+ server_type: webserver # => Dynamic role selector
+ # => Value determines which role to include
+ # => Could be: webserver, appserver, database
+ enable_monitoring: true # => Conditional flag
+ # => Controls whether monitoring role included
 
-  tasks:
-    # Static import (parse-time)
-    # => import_role processes at playbook parse time
+ tasks:
+ # Static import (parse-time)
+ # => import_role processes at playbook parse time
 
-    - name: Import role statically # => Static role import
-      ansible.builtin.import_role: # => Parse-time inclusion
-        name: common # => Role name (fixed, not variable)
-      # => Always imported during playbook parsing
-      # => Tasks added to play even if skipped by conditionals
-      # => Supports --tags and --skip-tags
-      # => Best for: Roles that should always be parsed
+ - name: Import role statically # => Static role import
+ ansible.builtin.import_role: # => Parse-time inclusion
+ name: common # => Role name (fixed, not variable)
+ # => Always imported during playbook parsing
+ # => Tasks added to play even if skipped by conditionals
+ # => Supports --tags and --skip-tags
+ # => Best for: Roles that should always be parsed
 
-    # Dynamic include (runtime)
-    # => include_role processes during playbook execution
-    - name: Include role dynamically # => Runtime role inclusion
-      ansible.builtin.include_role: # => Runtime inclusion
-        name: "{{ server_type }}" # => Role name from variable
-        # => Resolves to "webserver" at runtime
-        # => Variable interpolation possible
-      # => Role loaded only when task executes
-      # => Allows conditional role selection
-      # => Does NOT support --tags on role tasks
+ # Dynamic include (runtime)
+ # => include_role processes during playbook execution
+ - name: Include role dynamically # => Runtime role inclusion
+ ansible.builtin.include_role: # => Runtime inclusion
+ name: "{{ server_type }}" # => Role name from variable
+ # => Resolves to "webserver" at runtime
+ # => Variable interpolation possible
+ # => Role loaded only when task executes
+ # => Allows conditional role selection
+ # => Does NOT support --tags on role tasks
 
-    # Conditional role inclusion
-    # => Include role only if condition met
-    - name: Include monitoring role if enabled # => Conditional inclusion
-      ansible.builtin.include_role: # => Runtime inclusion
-        name: monitoring # => Monitoring role
-      when: enable_monitoring # => Condition: only if true
-      # => Evaluates: enable_monitoring is true
-      # => Role included: monitoring tasks execute
-      # => If false: entire role skipped
-      # => Efficient: Role not loaded if skipped
+ # Conditional role inclusion
+ # => Include role only if condition met
+ - name: Include monitoring role if enabled # => Conditional inclusion
+ ansible.builtin.include_role: # => Runtime inclusion
+ name: monitoring # => Monitoring role
+ when: enable_monitoring # => Condition: only if true
+ # => Evaluates: enable_monitoring is true
+ # => Role included: monitoring tasks execute
+ # => If false: entire role skipped
+ # => Efficient: Role not loaded if skipped
 
-    # Include specific tasks from role
-    # => Load subset of role tasks
-    - name: Include specific role tasks # => Partial role inclusion
-      ansible.builtin.include_role: # => Runtime inclusion
-        name: webserver # => Role name
-        tasks_from: install # => Specific task file
-        # => tasks_from: Load tasks/install.yml instead of tasks/main.yml
-      # => Executes: roles/webserver/tasks/install.yml only
-      # => Useful for: Large roles with logical task separation
-      # => Example: Install vs configure vs upgrade tasks
+ # Include specific tasks from role
+ # => Load subset of role tasks
+ - name: Include specific role tasks # => Partial role inclusion
+ ansible.builtin.include_role: # => Runtime inclusion
+ name: webserver # => Role name
+ tasks_from: install # => Specific task file
+ # => tasks_from: Load tasks/install.yml instead of tasks/main.yml
+ # => Executes: roles/webserver/tasks/install.yml only
+ # => Useful for: Large roles with logical task separation
+ # => Example: Install vs configure vs upgrade tasks
 
-    # Apply role to subset of hosts
-    # => Host-specific role application
-    - name: Include role for specific hosts # => Host-filtered inclusion
-      ansible.builtin.include_role: # => Runtime inclusion
-        name: database # => Database role
-      when: "'dbservers' in group_names" # => Condition: host in group
-      # => group_names: List of groups this host belongs to
-      # => Evaluates true only on hosts in dbservers group
-      # => Role applies selectively based on host membership
-      # => Efficient: No role processing on non-db hosts
+ # Apply role to subset of hosts
+ # => Host-specific role application
+ - name: Include role for specific hosts # => Host-filtered inclusion
+ ansible.builtin.include_role: # => Runtime inclusion
+ name: database # => Database role
+ when: "'dbservers' in group_names" # => Condition: host in group
+ # => group_names: List of groups this host belongs to
+ # => Evaluates true only on hosts in dbservers group
+ # => Role applies selectively based on host membership
+ # => Efficient: No role processing on non-db hosts
 
-    # Include role with custom variables
-    # => Override role defaults per inclusion
-    - name: Include role with vars # => Parameterized role inclusion
-      ansible.builtin.include_role: # => Runtime inclusion
-        name: application # => Application role
-      vars: # => Variables scoped to this inclusion
-        app_version: "2.0.0" # => Override default version
-        # => Overrides defaults/main.yml value
-        app_port: 9090 # => Override default port
-        # => Variables scoped to this role execution only
-      # => Different inclusions can have different values
-      # => Useful for: Multi-instance deployments
+ # Include role with custom variables
+ # => Override role defaults per inclusion
+ - name: Include role with vars # => Parameterized role inclusion
+ ansible.builtin.include_role: # => Runtime inclusion
+ name: application # => Application role
+ vars: # => Variables scoped to this inclusion
+ app_version: "2.0.0" # => Override default version
+ # => Overrides defaults/main.yml value
+ app_port: 9090 # => Override default port
+ # => Variables scoped to this role execution only
+ # => Different inclusions can have different values
+ # => Useful for: Multi-instance deployments
 
-    # Loop over roles
-    # => Apply multiple roles iteratively
-    - name: Include multiple roles dynamically # => Loop-based inclusion
-      ansible.builtin.include_role: # => Runtime inclusion
-        name: "{{ item }}" # => Role name from loop iteration
-        # => First iteration: logging
-        # => Second iteration: metrics
-        # => Third iteration: tracing
-      loop: # => List of role names
-        - logging # => Observability role 1
-        - metrics # => Observability role 2
-        - tracing # => Observability role 3
-      # => Executes each role sequentially
-      # => Equivalent to three separate include_role tasks
-      # => Useful for: Applying related role suites
+ # Loop over roles
+ # => Apply multiple roles iteratively
+ - name: Include multiple roles dynamically # => Loop-based inclusion
+ ansible.builtin.include_role: # => Runtime inclusion
+ name: "{{ item }}" # => Role name from loop iteration
+ # => First iteration: logging
+ # => Second iteration: metrics
+ # => Third iteration: tracing
+ loop: # => List of role names
+ - logging # => Observability role 1
+ - metrics # => Observability role 2
+ - tracing # => Observability role 3
+ # => Executes each role sequentially
+ # => Equivalent to three separate include_role tasks
+ # => Useful for: Applying related role suites
 ```
 
 **Run**: `ansible-playbook dynamic_roles.yml`
@@ -1071,18 +1069,18 @@ Handlers execute once at the end of a play, triggered by task changes. Prevent r
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    A["Task 1<br/>Change Config"] -->|notify| B["Handler Queue"]
-    C["Task 2<br/>Change Template"] -->|notify| B
-    D["Task 3<br/>No Change"] -.->|skip| B
-    B --> E["Play End"]
-    E --> F["Execute Handler Once"]
+ A["Task 1<br/>Change Config"] -->|notify| B["Handler Queue"]
+ C["Task 2<br/>Change Template"] -->|notify| B
+ D["Task 3<br/>No Change"] -.->|skip| B
+ B --> E["Play End"]
+ E --> F["Execute Handler Once"]
 
-    style A fill:#0173B2,color:#fff
-    style C fill:#0173B2,color:#fff
-    style D fill:#CA9161,color:#fff
-    style B fill:#DE8F05,color:#fff
-    style E fill:#029E73,color:#fff
-    style F fill:#CC78BC,color:#fff
+ style A fill:#0173B2,color:#fff
+ style C fill:#0173B2,color:#fff
+ style D fill:#CA9161,color:#fff
+ style B fill:#DE8F05,color:#fff
+ style E fill:#029E73,color:#fff
+ style F fill:#CC78BC,color:#fff
 ```
 
 **Code**:
@@ -1093,70 +1091,70 @@ graph TD
 # => Demonstrates handler event-driven execution
 
 - name: Handler Basics # => Play name
-  hosts: localhost # => Execute on localhost
-  become: true # => Escalate privileges (required for nginx)
-  gather_facts: false # => Skip fact gathering for speed
+ hosts: localhost # => Execute on localhost
+ become: true # => Escalate privileges (required for nginx)
+ gather_facts: false # => Skip fact gathering for speed
 
-  handlers: # => Handler definitions section
-    # Handlers execute at play end, only if notified
+ handlers: # => Handler definitions section
+ # Handlers execute at play end, only if notified
 
-    - name: restart nginx # => Handler name (must match notify value)
-      # => Event-driven task triggered by notify
-      ansible.builtin.service: # => Service management module
-        name: nginx # => Service to restart
-        state: restarted # => Stop then start service
-      # => Executes ONLY if notified by task change
-      # => Executes ONLY ONCE per play (deduplicated)
-      # => Runs after ALL tasks complete
+ - name: restart nginx # => Handler name (must match notify value)
+ # => Event-driven task triggered by notify
+ ansible.builtin.service: # => Service management module
+ name: nginx # => Service to restart
+ state: restarted # => Stop then start service
+ # => Executes ONLY if notified by task change
+ # => Executes ONLY ONCE per play (deduplicated)
+ # => Runs after ALL tasks complete
 
-  tasks: # => Task definitions section
-    # Task 1: Notify handler on change
+ tasks: # => Task definitions section
+ # Task 1: Notify handler on change
 
-    - name: Update nginx configuration # => Config file update
-      ansible.builtin.copy: # => File copy module
-        dest: /etc/nginx/nginx.conf # => Destination path
-        content: | # => File content (multi-line)
-          events {}
-          http {
-            server {
-              listen 8080;
-            }
-          }
-        # => Content: Minimal nginx config
-      notify: restart nginx # => Notify handler if content changes
-      # => Triggers "restart nginx" handler
-      # => changed: [localhost] → handler queued
-      # => ok: [localhost] → handler not queued
+ - name: Update nginx configuration # => Config file update
+ ansible.builtin.copy: # => File copy module
+ dest: /etc/nginx/nginx.conf # => Destination path
+ content: | # => File content (multi-line)
+ events {}
+ http {
+ server {
+ listen 8080;
+ }
+ }
+ # => Content: Minimal nginx config
+ notify: restart nginx # => Notify handler if content changes
+ # => Triggers "restart nginx" handler
+ # => changed: [localhost] → handler queued
+ # => ok: [localhost] → handler not queued
 
-    # Task 2: Notify same handler (deduplication test)
-    - name: Update site configuration # => Site-specific config
-      ansible.builtin.copy: # => File copy module
-        dest: /etc/nginx/sites-available/default # => Site config file
-        content: | # => File content
-          server {
-            listen 80;
-            root /var/www/html;
-          }
-        # => Content: Virtual host configuration
-      notify: restart nginx # => Notify same handler
-      # => Even if BOTH tasks change, handler runs ONCE
-      # => Prevents redundant restarts (efficiency)
+ # Task 2: Notify same handler (deduplication test)
+ - name: Update site configuration # => Site-specific config
+ ansible.builtin.copy: # => File copy module
+ dest: /etc/nginx/sites-available/default # => Site config file
+ content: | # => File content
+ server {
+ listen 80;
+ root /var/www/html;
+ }
+ # => Content: Virtual host configuration
+ notify: restart nginx # => Notify same handler
+ # => Even if BOTH tasks change, handler runs ONCE
+ # => Prevents redundant restarts (efficiency)
 
-    # Task 3: No notification (baseline task)
-    - name: Create web root # => Directory creation
-      ansible.builtin.file: # => File module
-        path: /var/www/html # => Directory path
-        state: directory # => Ensure directory exists
-        mode: "0755" # => rwxr-xr-x permissions
-      # => No notify: handler not affected by this task
-      # => changed: [localhost] if directory created
-      # => ok: [localhost] if directory exists
+ # Task 3: No notification (baseline task)
+ - name: Create web root # => Directory creation
+ ansible.builtin.file: # => File module
+ path: /var/www/html # => Directory path
+ state: directory # => Ensure directory exists
+ mode: "0755" # => rwxr-xr-x permissions
+ # => No notify: handler not affected by this task
+ # => changed: [localhost] if directory created
+ # => ok: [localhost] if directory exists
 
-  # Execution Order:
-  # => 1. All tasks execute sequentially
-  # => 2. Handler notifications queued during task execution
-  # => 3. After last task: handlers execute (deduplicated)
-  # => 4. "restart nginx" runs once if notified by any task
+ # Execution Order:
+ # => 1. All tasks execute sequentially
+ # => 2. Handler notifications queued during task execution
+ # => 3. After last task: handlers execute (deduplicated)
+ # => 4. "restart nginx" runs once if notified by any task
 ```
 
 **Run**: `ansible-playbook handlers_basic.yml --ask-become-pass`
@@ -1179,92 +1177,92 @@ Multiple handlers can be triggered by a single task. Handlers execute in definit
 # => Demonstrates multiple handler notification patterns
 
 - name: Handler Notification Patterns # => Play name
-  hosts: localhost # => Execute on localhost
-  become: true # => Escalate privileges (for service management)
-  gather_facts: false # => Skip fact gathering
+ hosts: localhost # => Execute on localhost
+ become: true # => Escalate privileges (for service management)
+ gather_facts: false # => Skip fact gathering
 
-  handlers: # => Handler definitions
-    # Handlers execute in THIS order (definition order)
-    # NOT in notification order
+ handlers: # => Handler definitions
+ # Handlers execute in THIS order (definition order)
+ # NOT in notification order
 
-    - name: restart nginx # => Handler 1 (definition order)
-      ansible.builtin.service: # => Service module
-        name: nginx # => Service name
-        state: restarted # => Full restart (stop + start)
-      # => Execution order: 1st (if queued)
-      # => Downtime: ~1-2 seconds during restart
+ - name: restart nginx # => Handler 1 (definition order)
+ ansible.builtin.service: # => Service module
+ name: nginx # => Service name
+ state: restarted # => Full restart (stop + start)
+ # => Execution order: 1st (if queued)
+ # => Downtime: ~1-2 seconds during restart
 
-    - name: reload nginx # => Handler 2 (definition order)
-      ansible.builtin.service: # => Service module
-        name: nginx # => Service name
-        state: reloaded # => Graceful reload (no downtime)
-      # => Execution order: 2nd (if queued)
-      # => Reloads config without dropping connections
+ - name: reload nginx # => Handler 2 (definition order)
+ ansible.builtin.service: # => Service module
+ name: nginx # => Service name
+ state: reloaded # => Graceful reload (no downtime)
+ # => Execution order: 2nd (if queued)
+ # => Reloads config without dropping connections
 
-    - name: restart php-fpm # => Handler 3 (definition order)
-      ansible.builtin.service: # => Service module
-        name: php-fpm # => PHP FastCGI Process Manager
-        state: restarted # => Full restart
-      # => Execution order: 3rd (if queued)
-      # => Required when PHP config changes
+ - name: restart php-fpm # => Handler 3 (definition order)
+ ansible.builtin.service: # => Service module
+ name: php-fpm # => PHP FastCGI Process Manager
+ state: restarted # => Full restart
+ # => Execution order: 3rd (if queued)
+ # => Required when PHP config changes
 
-    - name: clear cache # => Handler 4 (definition order)
-      ansible.builtin.file: # => File module
-        path: /var/cache/app # => Cache directory
-        state: absent # => Remove directory
-      # => Execution order: 4th (if queued)
-      # => Clears application cache
+ - name: clear cache # => Handler 4 (definition order)
+ ansible.builtin.file: # => File module
+ path: /var/cache/app # => Cache directory
+ state: absent # => Remove directory
+ # => Execution order: 4th (if queued)
+ # => Clears application cache
 
-  tasks:
-    # Single notification pattern
-    # => Task notifies one handler
+ tasks:
+ # Single notification pattern
+ # => Task notifies one handler
 
-    - name: Update nginx config # => Config file update
-      ansible.builtin.copy: # => File copy module
-        dest: /etc/nginx/nginx.conf # => Destination path
-        content: "events {}\nhttp {}\n" # => Minimal config
-      notify: restart nginx # => Single handler notification
-      # => Syntax: notify: handler_name
-      # => Queues "restart nginx" if task reports changed
-      # => No queue if task reports ok (unchanged)
+ - name: Update nginx config # => Config file update
+ ansible.builtin.copy: # => File copy module
+ dest: /etc/nginx/nginx.conf # => Destination path
+ content: "events {}\nhttp {}\n" # => Minimal config
+ notify: restart nginx # => Single handler notification
+ # => Syntax: notify: handler_name
+ # => Queues "restart nginx" if task reports changed
+ # => No queue if task reports ok (unchanged)
 
-    # Multiple notifications pattern
-    # => Task notifies multiple handlers
-    - name: Update PHP config # => PHP configuration change
-      ansible.builtin.copy: # => File copy module
-        dest: /etc/php/php.ini # => PHP config file
-        content: | # => Multi-line content
-          [PHP]
-          memory_limit = 256M
-      notify: # => List of handlers to notify
-        - restart php-fpm # => Handler 1 notification
-        # => Queues restart php-fpm
-        - clear cache # => Handler 2 notification
-        # => Queues clear cache
-      # => Both handlers queued if task changes
-      # => Execution: restart php-fpm (3rd), then clear cache (4th)
-      # => Order determined by handler definition, not notify order
+ # Multiple notifications pattern
+ # => Task notifies multiple handlers
+ - name: Update PHP config # => PHP configuration change
+ ansible.builtin.copy: # => File copy module
+ dest: /etc/php/php.ini # => PHP config file
+ content: | # => Multi-line content
+ [PHP]
+ memory_limit = 256M
+ notify: # => List of handlers to notify
+ - restart php-fpm # => Handler 1 notification
+ # => Queues restart php-fpm
+ - clear cache # => Handler 2 notification
+ # => Queues clear cache
+ # => Both handlers queued if task changes
+ # => Execution: restart php-fpm (3rd), then clear cache (4th)
+ # => Order determined by handler definition, not notify order
 
-    # Notification with list syntax (alternative)
-    # => Another example of multi-handler notification
-    - name: Update application code # => Application file update
-      ansible.builtin.copy: # => File copy module
-        dest: /var/www/app/index.php # => PHP application file
-        content: "<?php phpinfo(); ?>" # => PHP code
-      notify: # => Handler list
-        - reload nginx # => Graceful reload (no downtime)
-        # => Reload instead of restart (better for production)
-        - clear cache # => Clear cache after code update
-      # => Queues reload nginx and clear cache
-      # => Execution: reload nginx (2nd), then clear cache (4th)
+ # Notification with list syntax (alternative)
+ # => Another example of multi-handler notification
+ - name: Update application code # => Application file update
+ ansible.builtin.copy: # => File copy module
+ dest: /var/www/app/index.php # => PHP application file
+ content: "<?php phpinfo(); ?>" # => PHP code
+ notify: # => Handler list
+ - reload nginx # => Graceful reload (no downtime)
+ # => Reload instead of restart (better for production)
+ - clear cache # => Clear cache after code update
+ # => Queues reload nginx and clear cache
+ # => Execution: reload nginx (2nd), then clear cache (4th)
 
-  # Handler execution order (after all tasks complete):
-  # => Handlers execute in DEFINITION order, NOT notification order
-  # => Order:
-  # =>   1. restart nginx (if queued by task 1)
-  # =>   2. reload nginx (if queued by task 3)
-  # =>   3. restart php-fpm (if queued by task 2)
-  # =>   4. clear cache (if queued by task 2 or 3)
+ # Handler execution order (after all tasks complete):
+ # => Handlers execute in DEFINITION order, NOT notification order
+ # => Order:
+ # => 1. restart nginx (if queued by task 1)
+ # => 2. reload nginx (if queued by task 3)
+ # => 3. restart php-fpm (if queued by task 2)
+ # => 4. clear cache (if queued by task 2 or 3)
 ```
 
 **Run**: `ansible-playbook handler_patterns.yml --ask-become-pass`
@@ -1287,97 +1285,97 @@ Force handler execution mid-play with `meta: flush_handlers`. Use `listen` to gr
 # => Demonstrates flush_handlers and listen patterns
 
 - name: Flush Handlers and Listen # => Play name
-  hosts: localhost # => Execute on localhost
-  become: true # => Escalate privileges
-  gather_facts: false # => Skip fact gathering
+ hosts: localhost # => Execute on localhost
+ become: true # => Escalate privileges
+ gather_facts: false # => Skip fact gathering
 
-  handlers: # => Handler definitions with listen topics
-    # listen keyword enables topic-based handler grouping
-    # Multiple handlers can listen to same topic
+ handlers: # => Handler definitions with listen topics
+ # listen keyword enables topic-based handler grouping
+ # Multiple handlers can listen to same topic
 
-    - name: restart nginx service # => Handler 1
-      ansible.builtin.service: # => Service module
-        name: nginx # => Nginx service
-        state: restarted # => Full restart
-      listen: restart web services # => Topic this handler listens to
-      # => Triggered when notify: restart web services
-      # => Multiple handlers can share same topic
-      # => Decouples tasks from handler implementation
+ - name: restart nginx service # => Handler 1
+ ansible.builtin.service: # => Service module
+ name: nginx # => Nginx service
+ state: restarted # => Full restart
+ listen: restart web services # => Topic this handler listens to
+ # => Triggered when notify: restart web services
+ # => Multiple handlers can share same topic
+ # => Decouples tasks from handler implementation
 
-    - name: restart apache service # => Handler 2
-      ansible.builtin.service: # => Service module
-        name: apache2 # => Apache service
-        state: restarted # => Full restart
-      listen: restart web services # => Same topic as handler 1
-      # => BOTH nginx and apache restart when topic notified
-      # => Topic pattern: One notification triggers multiple handlers
-      # => Execution: Both handlers run (definition order)
+ - name: restart apache service # => Handler 2
+ ansible.builtin.service: # => Service module
+ name: apache2 # => Apache service
+ state: restarted # => Full restart
+ listen: restart web services # => Same topic as handler 1
+ # => BOTH nginx and apache restart when topic notified
+ # => Topic pattern: One notification triggers multiple handlers
+ # => Execution: Both handlers run (definition order)
 
-    - name: reload configuration # => Handler 3
-      ansible.builtin.command: # => Command module
-        cmd: /usr/local/bin/reload-config.sh # => Custom reload script
-      listen: restart web services # => Same topic again
-      # => Three handlers listening to one topic
-      # => All three execute when "restart web services" notified
-      # => Useful for: Cascading service operations
+ - name: reload configuration # => Handler 3
+ ansible.builtin.command: # => Command module
+ cmd: /usr/local/bin/reload-config.sh # => Custom reload script
+ listen: restart web services # => Same topic again
+ # => Three handlers listening to one topic
+ # => All three execute when "restart web services" notified
+ # => Useful for: Cascading service operations
 
-  tasks:
-    # Task 1: Notify topic (not specific handler)
-    # => Demonstrates topic-based notification
+ tasks:
+ # Task 1: Notify topic (not specific handler)
+ # => Demonstrates topic-based notification
 
-    - name: Update shared configuration # => Config update
-      ansible.builtin.copy: # => File copy module
-        dest: /etc/shared/config.conf # => Shared config file
-        content: "setting=value\n" # => Config content
-      notify: restart web services # => Notify TOPIC, not handler name
-      # => Queues ALL handlers listening to this topic
-      # => Queued: restart nginx, restart apache, reload configuration
-      # => Handlers won't execute yet (wait for play end)
+ - name: Update shared configuration # => Config update
+ ansible.builtin.copy: # => File copy module
+ dest: /etc/shared/config.conf # => Shared config file
+ content: "setting=value\n" # => Config content
+ notify: restart web services # => Notify TOPIC, not handler name
+ # => Queues ALL handlers listening to this topic
+ # => Queued: restart nginx, restart apache, reload configuration
+ # => Handlers won't execute yet (wait for play end)
 
-    # Task 2: Force immediate handler execution
-    # => Demonstrates meta: flush_handlers
-    - name: Flush handlers immediately # => Force handler execution
-      ansible.builtin.meta: flush_handlers # => Meta module
-      # => Executes ALL queued handlers IMMEDIATELY
-      # => Execution order (from handlers section):
-      # =>   1. restart nginx service
-      # =>   2. restart apache service
-      # =>   3. reload configuration
-      # => Handlers run NOW, not at play end
-      # => Clears handler queue
+ # Task 2: Force immediate handler execution
+ # => Demonstrates meta: flush_handlers
+ - name: Flush handlers immediately # => Force handler execution
+ ansible.builtin.meta: flush_handlers # => Meta module
+ # => Executes ALL queued handlers IMMEDIATELY
+ # => Execution order (from handlers section):
+ # => 1. restart nginx service
+ # => 2. restart apache service
+ # => 3. reload configuration
+ # => Handlers run NOW, not at play end
+ # => Clears handler queue
 
-    # Task 3: Run after handlers
-    # => Demonstrates dependency on flushed handlers
-    - name: Verify services are running # => Post-handler verification
-      ansible.builtin.service: # => Service module
-        name: nginx # => Check nginx status
-        state: started # => Ensure running
-      # => Runs AFTER handlers flushed
-      # => nginx already restarted by handler 1
-      # => Verification task depends on handler completion
-      # => Without flush: would run BEFORE handlers
+ # Task 3: Run after handlers
+ # => Demonstrates dependency on flushed handlers
+ - name: Verify services are running # => Post-handler verification
+ ansible.builtin.service: # => Service module
+ name: nginx # => Check nginx status
+ state: started # => Ensure running
+ # => Runs AFTER handlers flushed
+ # => nginx already restarted by handler 1
+ # => Verification task depends on handler completion
+ # => Without flush: would run BEFORE handlers
 
-    # Task 4: Notify again after flush
-    # => Demonstrates handlers can execute multiple times
-    - name: Update another config # => Second config update
-      ansible.builtin.copy: # => File copy module
-        dest: /etc/shared/other.conf # => Different config file
-        content: "other=value\n" # => Different content
-      notify: restart web services # => Notify same topic again
-      # => Queues handlers AGAIN (after first flush)
-      # => Handlers can execute multiple times per play
-      # => Second queue: restart nginx, restart apache, reload config
+ # Task 4: Notify again after flush
+ # => Demonstrates handlers can execute multiple times
+ - name: Update another config # => Second config update
+ ansible.builtin.copy: # => File copy module
+ dest: /etc/shared/other.conf # => Different config file
+ content: "other=value\n" # => Different content
+ notify: restart web services # => Notify same topic again
+ # => Queues handlers AGAIN (after first flush)
+ # => Handlers can execute multiple times per play
+ # => Second queue: restart nginx, restart apache, reload config
 
-  # Execution timeline:
-  # => 1. Task 1: Update config → queue handlers
-  # => 2. Task 2: flush_handlers → execute handlers (1st time)
-  # => 3. Task 3: Verify services → nginx already restarted
-  # => 4. Task 4: Update another config → queue handlers again
-  # => 5. Play end → execute handlers (2nd time)
+ # Execution timeline:
+ # => 1. Task 1: Update config → queue handlers
+ # => 2. Task 2: flush_handlers → execute handlers (1st time)
+ # => 3. Task 3: Verify services → nginx already restarted
+ # => 4. Task 4: Update another config → queue handlers again
+ # => 5. Play end → execute handlers (2nd time)
 
-  # Final handlers execute here at play end
-  # => restart web services handlers run SECOND time
-  # => Only if task 4 changed (notified after flush)
+ # Final handlers execute here at play end
+ # => restart web services handlers run SECOND time
+ # => Only if task 4 changed (notified after flush)
 ```
 
 **Run**: `ansible-playbook flush_handlers.yml --ask-become-pass`
@@ -1400,112 +1398,112 @@ Handlers support conditionals and error handling like regular tasks. Control han
 # => Demonstrates handler conditionals and error handling
 
 - name: Handler Conditionals and Error Handling # => Play name
-  hosts: localhost # => Execute on localhost
-  become: true # => Escalate privileges
-  gather_facts: true # => Gather facts (needed for OS detection)
+ hosts: localhost # => Execute on localhost
+ become: true # => Escalate privileges
+ gather_facts: true # => Gather facts (needed for OS detection)
 
-  vars: # => Play-level variables
-    production_mode: true # => Environment flag
-    # => Controls production-specific handlers
-    enable_service_restart: true # => Service restart toggle
-    # => Allows disabling restarts in maintenance mode
+ vars: # => Play-level variables
+ production_mode: true # => Environment flag
+ # => Controls production-specific handlers
+ enable_service_restart: true # => Service restart toggle
+ # => Allows disabling restarts in maintenance mode
 
-  handlers: # => Handler definitions with conditionals
-    # Pattern 1: Simple conditional handler
-    # => Handler executes only if condition true
+ handlers: # => Handler definitions with conditionals
+ # Pattern 1: Simple conditional handler
+ # => Handler executes only if condition true
 
-    - name: restart nginx # => Conditional service restart
-      ansible.builtin.service: # => Service module
-        name: nginx # => Service name
-        state: restarted # => Restart action
-      when: enable_service_restart # => Condition: variable must be true
-      # => Handler runs only if enable_service_restart is true
-      # => If false: handler queued but skipped
-      # => Useful for: Maintenance windows (disable restarts)
+ - name: restart nginx # => Conditional service restart
+ ansible.builtin.service: # => Service module
+ name: nginx # => Service name
+ state: restarted # => Restart action
+ when: enable_service_restart # => Condition: variable must be true
+ # => Handler runs only if enable_service_restart is true
+ # => If false: handler queued but skipped
+ # => Useful for: Maintenance windows (disable restarts)
 
-    # Pattern 2: OS-specific conditional handler
-    # => Handler adapts to operating system
-    - name: restart web server # => OS-adaptive restart
-      ansible.builtin.service: # => Service module
-        name: "{{ 'apache2' if ansible_os_family == 'Debian' else 'httpd' }}" # => Dynamic service name
-        # => Debian/Ubuntu: apache2
-        # => RedHat/CentOS: httpd
-        state: restarted # => Restart action
-      when: ansible_os_family in ['Debian', 'RedHat'] # => OS family filter
-      # => Executes only on Debian or RedHat systems
-      # => Skipped on: FreeBSD, Windows, etc.
-      # => Pattern: Cross-platform playbooks
+ # Pattern 2: OS-specific conditional handler
+ # => Handler adapts to operating system
+ - name: restart web server # => OS-adaptive restart
+ ansible.builtin.service: # => Service module
+ name: "{{ 'apache2' if ansible_os_family == 'Debian' else 'httpd' }}" # => Dynamic service name
+ # => Debian/Ubuntu: apache2
+ # => RedHat/CentOS: httpd
+ state: restarted # => Restart action
+ when: ansible_os_family in ['Debian', 'RedHat'] # => OS family filter
+ # => Executes only on Debian or RedHat systems
+ # => Skipped on: FreeBSD, Windows, etc.
+ # => Pattern: Cross-platform playbooks
 
-    # Pattern 3: Error-tolerant handler
-    # => Handler that never fails playbook
-    - name: reload application # => Graceful application reload
-      ansible.builtin.command: # => Command module
-        cmd: /usr/local/bin/app reload # => Custom reload command
-      register: reload_result # => Capture result for inspection
-      # => Stores: rc (return code), stdout, stderr
-      failed_when: false # => Never mark as failed
-      # => Always reports: ok (even if command returns non-zero)
-      # => Prevents handler failure from stopping playbook
-      # => Useful for: Optional operations
+ # Pattern 3: Error-tolerant handler
+ # => Handler that never fails playbook
+ - name: reload application # => Graceful application reload
+ ansible.builtin.command: # => Command module
+ cmd: /usr/local/bin/app reload # => Custom reload command
+ register: reload_result # => Capture result for inspection
+ # => Stores: rc (return code), stdout, stderr
+ failed_when: false # => Never mark as failed
+ # => Always reports: ok (even if command returns non-zero)
+ # => Prevents handler failure from stopping playbook
+ # => Useful for: Optional operations
 
-    # Pattern 4: Chained conditional handler
-    # => Handler depends on previous handler result
-    - name: report reload failure # => Conditional failure reporting
-      ansible.builtin.debug: # => Debug message module
-        msg: "WARNING: Application reload failed" # => Warning message
-      when: reload_result is defined and reload_result.rc != 0 # => Multi-condition
-      # => Condition 1: reload_result exists (previous handler ran)
-      # => Condition 2: Return code != 0 (command failed)
-      # => Executes only if previous handler registered failure
-      # => Pattern: Error reporting without failing playbook
+ # Pattern 4: Chained conditional handler
+ # => Handler depends on previous handler result
+ - name: report reload failure # => Conditional failure reporting
+ ansible.builtin.debug: # => Debug message module
+ msg: "WARNING: Application reload failed" # => Warning message
+ when: reload_result is defined and reload_result.rc != 0 # => Multi-condition
+ # => Condition 1: reload_result exists (previous handler ran)
+ # => Condition 2: Return code != 0 (command failed)
+ # => Executes only if previous handler registered failure
+ # => Pattern: Error reporting without failing playbook
 
-    # Pattern 5: Environment-specific handler
-    # => Handler runs only in specific environments
-    - name: send notification # => Production notification
-      ansible.builtin.uri: # => HTTP request module
-        url: https://hooks.slack.com/services/YOUR/WEBHOOK/URL # => Slack webhook
-        method: POST # => HTTP POST
-        body_format: json # => JSON payload
-        body: # => Request body
-          text: "Configuration updated on {{ inventory_hostname }}" # => Message
-          # => inventory_hostname: Current host name
-      when: production_mode # => Condition: production only
-      # => Executes only if production_mode is true
-      # => Skipped in: development, staging environments
-      # => Prevents notification spam in non-prod
+ # Pattern 5: Environment-specific handler
+ # => Handler runs only in specific environments
+ - name: send notification # => Production notification
+ ansible.builtin.uri: # => HTTP request module
+ url: https://hooks.slack.com/services/YOUR/WEBHOOK/URL # => Slack webhook
+ method: POST # => HTTP POST
+ body_format: json # => JSON payload
+ body: # => Request body
+ text: "Configuration updated on {{ inventory_hostname }}" # => Message
+ # => inventory_hostname: Current host name
+ when: production_mode # => Condition: production only
+ # => Executes only if production_mode is true
+ # => Skipped in: development, staging environments
+ # => Prevents notification spam in non-prod
 
-  tasks:
-    # Task 1: Notify all handlers
-    # => Demonstrates multiple handler notifications
+ tasks:
+ # Task 1: Notify all handlers
+ # => Demonstrates multiple handler notifications
 
-    - name: Update configuration # => Config file update
-      ansible.builtin.copy: # => File copy module
-        dest: /etc/app/config.yml # => Application config
-        content: | # => YAML content
-          port: 8080
-          debug: false
-      notify: # => Notify multiple handlers
-        - restart nginx # => Handler 1: Conditional restart
-        - reload application # => Handler 2: Error-tolerant reload
-        - report reload failure # => Handler 3: Chained conditional
-        - send notification # => Handler 4: Production-only
-      # => All handlers queued if task changes
-      # => Handler conditions evaluated at execution time
-      # => Execution order: Definition order (handlers section)
+ - name: Update configuration # => Config file update
+ ansible.builtin.copy: # => File copy module
+ dest: /etc/app/config.yml # => Application config
+ content: | # => YAML content
+ port: 8080
+ debug: false
+ notify: # => Notify multiple handlers
+ - restart nginx # => Handler 1: Conditional restart
+ - reload application # => Handler 2: Error-tolerant reload
+ - report reload failure # => Handler 3: Chained conditional
+ - send notification # => Handler 4: Production-only
+ # => All handlers queued if task changes
+ # => Handler conditions evaluated at execution time
+ # => Execution order: Definition order (handlers section)
 
-    # Task 2: Demonstrate conditional skip
-    # => Task-level variable overrides play variable
-    - name: Update non-critical config # => Non-critical update
-      ansible.builtin.copy: # => File copy module
-        dest: /tmp/test.conf # => Temporary file
-        content: "test=value\n" # => Test content
-      notify: restart nginx # => Notify restart handler
-      vars: # => Task-level variables
-        enable_service_restart: false # => Override play variable
-        # => Task-level: false (overrides play-level: true)
-      # => Handler queued but skipped when executed
-      # => when: enable_service_restart evaluates to false
-      # => Pattern: Selective handler disabling per task
+ # Task 2: Demonstrate conditional skip
+ # => Task-level variable overrides play variable
+ - name: Update non-critical config # => Non-critical update
+ ansible.builtin.copy: # => File copy module
+ dest: /tmp/test.conf # => Temporary file
+ content: "test=value\n" # => Test content
+ notify: restart nginx # => Notify restart handler
+ vars: # => Task-level variables
+ enable_service_restart: false # => Override play variable
+ # => Task-level: false (overrides play-level: true)
+ # => Handler queued but skipped when executed
+ # => when: enable_service_restart evaluates to false
+ # => Pattern: Selective handler disabling per task
 ```
 
 **Run**: `ansible-playbook handler_conditionals.yml --ask-become-pass`
@@ -1525,16 +1523,16 @@ Jinja2 templates combine static text with dynamic variables. The `template` modu
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    A["Template<br/>app_config.yml.j2"] --> B["Jinja2 Variables<br/>app_name, version"]
-    B --> C["Jinja2 Engine<br/>Render"]
-    C --> D["Rendered File<br/>app_config.yml"]
-    D --> E["Copy to Target<br/>/etc/app/config.yml"]
+ A["Template<br/>app_config.yml.j2"] --> B["Jinja2 Variables<br/>app_name, version"]
+ B --> C["Jinja2 Engine<br/>Render"]
+ C --> D["Rendered File<br/>app_config.yml"]
+ D --> E["Copy to Target<br/>/etc/app/config.yml"]
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#fff
-    style C fill:#029E73,color:#fff
-    style D fill:#CC78BC,color:#fff
-    style E fill:#CA9161,color:#fff
+ style A fill:#0173B2,color:#fff
+ style B fill:#DE8F05,color:#fff
+ style C fill:#029E73,color:#fff
+ style D fill:#CC78BC,color:#fff
+ style E fill:#CA9161,color:#fff
 ```
 
 **Code**:
@@ -1552,43 +1550,43 @@ graph TD
 # => Renders to: 2024-01-15T10:30:00Z
 
 application:
-  name: {{ app_name }}                   # => Variable substitution
-  # => {{ variable }}: Jinja2 expression delimiter
-  # => Renders to: MyApplication
-  version: {{ app_version }}
-  # => Renders to: 2.1.0
-  environment: {{ app_environment }}
-  # => Renders to: production
+ name: {{ app_name }} # => Variable substitution
+ # => {{ variable }}: Jinja2 expression delimiter
+ # => Renders to: MyApplication
+ version: {{ app_version }}
+ # => Renders to: 2.1.0
+ environment: {{ app_environment }}
+ # => Renders to: production
 
 server:
-  host: {{ server_host }}
-  # => Renders to: 0.0.0.0 (bind all interfaces)
-  port: {{ server_port }}
-  # => Renders to: 8080
-  workers: {{ worker_count }}
-  # => Renders to: 4
+ host: {{ server_host }}
+ # => Renders to: 0.0.0.0 (bind all interfaces)
+ port: {{ server_port }}
+ # => Renders to: 8080
+ workers: {{ worker_count }}
+ # => Renders to: 4
 
 database:
-  host: {{ db_host }}
-  # => Renders to: db.example.com
-  port: {{ db_port }}
-  # => Renders to: 5432 (PostgreSQL default)
-  name: {{ db_name }}
-  # => Renders to: appdb
-  user: {{ db_user }}
-  # => Renders to: appuser
-  # Password managed by Ansible Vault
-  # => Sensitive data not in template (separate vault file)
+ host: {{ db_host }}
+ # => Renders to: db.example.com
+ port: {{ db_port }}
+ # => Renders to: 5432 (PostgreSQL default)
+ name: {{ db_name }}
+ # => Renders to: appdb
+ user: {{ db_user }}
+ # => Renders to: appuser
+ # Password managed by Ansible Vault
+ # => Sensitive data not in template (separate vault file)
 
 logging:
-  level: {{ log_level | upper }}         # => Filter: convert to uppercase
-  # => | upper: Jinja2 filter (string transformation)
-  # => log_level is "info"
-  # => Renders to: INFO (uppercase)
-  file: {{ log_file | default('/var/log/app.log') }}  # => Default value filter
-  # => | default('value'): Provides fallback if variable undefined
-  # => log_file not defined in playbook
-  # => Renders to: /var/log/app.log (default value)
+ level: {{ log_level | upper }} # => Filter: convert to uppercase
+ # => | upper: Jinja2 filter (string transformation)
+ # => log_level is "info"
+ # => Renders to: INFO (uppercase)
+ file: {{ log_file | default('/var/log/app.log') }} # => Default value filter
+ # => | default('value'): Provides fallback if variable undefined
+ # => log_file not defined in playbook
+ # => Renders to: /var/log/app.log (default value)
 ```
 
 **Playbook**:
@@ -1599,56 +1597,56 @@ logging:
 # => Demonstrates basic Jinja2 template usage
 
 - name: Jinja2 Template Basics # => Play name
-  hosts: localhost # => Execute on localhost
-  gather_facts: true # => Required for ansible_date_time variable
+ hosts: localhost # => Execute on localhost
+ gather_facts: true # => Required for ansible_date_time variable
 
-  vars: # => Variables for template substitution
-    app_name: MyApplication # => Application name
-    # => Used in template: {{ app_name }}
-    app_version: "2.1.0" # => Version string
-    # => Quoted to preserve as string (not float)
-    app_environment: production # => Environment identifier
-    server_host: 0.0.0.0 # => Listen on all interfaces
-    server_port: 8080 # => HTTP port
-    worker_count: 4 # => Worker processes
-    db_host: db.example.com # => Database hostname
-    db_port: 5432 # => PostgreSQL default port
-    db_name: appdb # => Database name
-    db_user: appuser # => Database username
-    log_level: info # => Logging level (lowercase)
-    # => Template will uppercase: INFO
-    # log_file not defined
-    # => Template will use default: /var/log/app.log
+ vars: # => Variables for template substitution
+ app_name: MyApplication # => Application name
+ # => Used in template: {{ app_name }}
+ app_version: "2.1.0" # => Version string
+ # => Quoted to preserve as string (not float)
+ app_environment: production # => Environment identifier
+ server_host: 0.0.0.0 # => Listen on all interfaces
+ server_port: 8080 # => HTTP port
+ worker_count: 4 # => Worker processes
+ db_host: db.example.com # => Database hostname
+ db_port: 5432 # => PostgreSQL default port
+ db_name: appdb # => Database name
+ db_user: appuser # => Database username
+ log_level: info # => Logging level (lowercase)
+ # => Template will uppercase: INFO
+ # log_file not defined
+ # => Template will use default: /var/log/app.log
 
-  tasks:
-    - name: Render application configuration # => Template rendering
-      ansible.builtin.template: # => Template module
-        src: app_config.yml.j2 # => Template source file
-        # => Path relative to playbook or templates/ directory
-        # => Searches: playbook dir, playbook/templates/
-        dest: /tmp/app_config.yml # => Destination on managed host
-        # => Fully rendered file copied here
-        mode: "0644" # => rw-r--r-- permissions
-        # => Owner read/write, group/others read
-      # => Process:
-      # =>   1. Load template from control node
-      # =>   2. Render with Jinja2 engine (variable substitution)
-      # =>   3. Copy rendered content to managed host
-      # => changed: [localhost] if destination content differs
-      # => ok: [localhost] if destination content identical
+ tasks:
+ - name: Render application configuration # => Template rendering
+ ansible.builtin.template: # => Template module
+ src: app_config.yml.j2 # => Template source file
+ # => Path relative to playbook or templates/ directory
+ # => Searches: playbook dir, playbook/templates/
+ dest: /tmp/app_config.yml # => Destination on managed host
+ # => Fully rendered file copied here
+ mode: "0644" # => rw-r--r-- permissions
+ # => Owner read/write, group/others read
+ # => Process:
+ # => 1. Load template from control node
+ # => 2. Render with Jinja2 engine (variable substitution)
+ # => 3. Copy rendered content to managed host
+ # => changed: [localhost] if destination content differs
+ # => ok: [localhost] if destination content identical
 
-    - name: Display rendered configuration # => Read rendered file
-      ansible.builtin.command: # => Command module
-        cmd: cat /tmp/app_config.yml # => Display file contents
-      register: config_content # => Store output
-      # => config_content.stdout: File contents
-      # => config_content.rc: Return code (0 = success)
+ - name: Display rendered configuration # => Read rendered file
+ ansible.builtin.command: # => Command module
+ cmd: cat /tmp/app_config.yml # => Display file contents
+ register: config_content # => Store output
+ # => config_content.stdout: File contents
+ # => config_content.rc: Return code (0 = success)
 
-    - name: Show configuration # => Display captured output
-      ansible.builtin.debug: # => Debug module
-        msg: "{{ config_content.stdout }}" # => Message from registered var
-      # => Shows fully rendered configuration file
-      # => Output: Multi-line YAML configuration
+ - name: Show configuration # => Display captured output
+ ansible.builtin.debug: # => Debug module
+ msg: "{{ config_content.stdout }}" # => Message from registered var
+ # => Shows fully rendered configuration file
+ # => Output: Multi-line YAML configuration
 ```
 
 **Run**: `ansible-playbook template_basics.yml`
@@ -1693,19 +1691,19 @@ Jinja2 supports control structures: conditionals (`{% if %}`), loops (`{% for %}
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    A["Template Logic"] --> B["Conditionals<br/>{% if %}"]
-    A --> C["Loops<br/>{% for %}"]
-    B --> D["Include/Exclude<br/>Sections"]
-    C --> E["Repeat Sections<br/>Multiple Times"]
-    D --> F["Final Config"]
-    E --> F
+ A["Template Logic"] --> B["Conditionals<br/>{% if %}"]
+ A --> C["Loops<br/>{% for %}"]
+ B --> D["Include/Exclude<br/>Sections"]
+ C --> E["Repeat Sections<br/>Multiple Times"]
+ D --> F["Final Config"]
+ E --> F
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#fff
-    style C fill:#029E73,color:#fff
-    style D fill:#CC78BC,color:#fff
-    style E fill:#CC78BC,color:#fff
-    style F fill:#CA9161,color:#fff
+ style A fill:#0173B2,color:#fff
+ style B fill:#DE8F05,color:#fff
+ style C fill:#029E73,color:#fff
+ style D fill:#CC78BC,color:#fff
+ style E fill:#CC78BC,color:#fff
+ style F fill:#CA9161,color:#fff
 ```
 
 **Code**:
@@ -1717,90 +1715,90 @@ graph TD
 # => Jinja2 template with conditionals and loops
 
 server {
-    listen {{ http_port }};
-    # => Variable substitution: http_port is 80
-    # => Renders to: listen 80;
-    server_name {{ server_name }};
-    # => Variable substitution: server_name is www.example.com
-    # => Renders to: server_name www.example.com;
+ listen {{ http_port }};
+ # => Variable substitution: http_port is 80
+ # => Renders to: listen 80;
+ server_name {{ server_name }};
+ # => Variable substitution: server_name is www.example.com
+ # => Renders to: server_name www.example.com;
 
-    {% if enable_ssl %}
-    # => Conditional block: {% if condition %}
-    # => Evaluates: enable_ssl is true
-    # => Block INCLUDED in output
-    # SSL Configuration
-    listen {{ https_port }} ssl;
-    # => Renders to: listen 443 ssl;
-    ssl_certificate {{ ssl_cert_path }};
-    # => Renders to: ssl_certificate /etc/ssl/certs/example.com.crt;
-    ssl_certificate_key {{ ssl_key_path }};
-    # => Renders to: ssl_certificate_key /etc/ssl/private/example.com.key;
-    ssl_protocols TLSv1.2 TLSv1.3;
-    {% endif %}
-    # => End conditional block
-    # => If enable_ssl was false, entire block omitted
+ {% if enable_ssl %}
+ # => Conditional block: {% if condition %}
+ # => Evaluates: enable_ssl is true
+ # => Block INCLUDED in output
+ # SSL Configuration
+ listen {{ https_port }} ssl;
+ # => Renders to: listen 443 ssl;
+ ssl_certificate {{ ssl_cert_path }};
+ # => Renders to: ssl_certificate /etc/ssl/certs/example.com.crt;
+ ssl_certificate_key {{ ssl_key_path }};
+ # => Renders to: ssl_certificate_key /etc/ssl/private/example.com.key;
+ ssl_protocols TLSv1.2 TLSv1.3;
+ {% endif %}
+ # => End conditional block
+ # => If enable_ssl was false, entire block omitted
 
-    root {{ document_root }};
-    # => Renders to: root /var/www/example.com;
-    index index.html index.php;
+ root {{ document_root }};
+ # => Renders to: root /var/www/example.com;
+ index index.html index.php;
 
-    # Custom locations
-    {% for location in custom_locations %}
-    # => Loop: {% for item in list %}
-    # => Iterates over custom_locations list (3 items)
-    # => Loop iteration 1: path=/api, type=proxy, backend=http://localhost:3000
-    # => Loop iteration 2: path=/admin, type=proxy, backend=http://localhost:4000
-    # => Loop iteration 3: path=/static, type=static, root=/var/www/static
-    location {{ location.path }} {
-        # => Iteration 1: location /api {
-        # => Iteration 2: location /admin {
-        # => Iteration 3: location /static {
-        {% if location.type == 'proxy' %}
-        # => Nested conditional within loop
-        # => Iteration 1: type is 'proxy' → condition true
-        # => Iteration 2: type is 'proxy' → condition true
-        # => Iteration 3: type is 'static' → condition false (skip to elif)
-        proxy_pass {{ location.backend }};
-        # => Iteration 1: proxy_pass http://localhost:3000;
-        # => Iteration 2: proxy_pass http://localhost:4000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        {% elif location.type == 'static' %}
-        # => Alternative condition: elif
-        # => Iteration 3: type is 'static' → condition true
-        alias {{ location.root }};
-        # => Iteration 3: alias /var/www/static;
-        {% endif %}
-    }
-    {% endfor %}
-    # => End loop
-    # => Result: 3 location blocks generated
+ # Custom locations
+ {% for location in custom_locations %}
+ # => Loop: {% for item in list %}
+ # => Iterates over custom_locations list (3 items)
+ # => Loop iteration 1: path=/api, type=proxy, backend=http://localhost:3000
+ # => Loop iteration 2: path=/admin, type=proxy, backend=http://localhost:4000
+ # => Loop iteration 3: path=/static, type=static, root=/var/www/static
+ location {{ location.path }} {
+ # => Iteration 1: location /api {
+ # => Iteration 2: location /admin {
+ # => Iteration 3: location /static {
+ {% if location.type == 'proxy' %}
+ # => Nested conditional within loop
+ # => Iteration 1: type is 'proxy' → condition true
+ # => Iteration 2: type is 'proxy' → condition true
+ # => Iteration 3: type is 'static' → condition false (skip to elif)
+ proxy_pass {{ location.backend }};
+ # => Iteration 1: proxy_pass http://localhost:3000;
+ # => Iteration 2: proxy_pass http://localhost:4000;
+ proxy_set_header Host $host;
+ proxy_set_header X-Real-IP $remote_addr;
+ {% elif location.type == 'static' %}
+ # => Alternative condition: elif
+ # => Iteration 3: type is 'static' → condition true
+ alias {{ location.root }};
+ # => Iteration 3: alias /var/www/static;
+ {% endif %}
+ }
+ {% endfor %}
+ # => End loop
+ # => Result: 3 location blocks generated
 
-    # Default location
-    location / {
-        try_files $uri $uri/ =404;
-    }
+ # Default location
+ location / {
+ try_files $uri $uri/ =404;
+ }
 
-    # PHP processing (conditional)
-    {% if enable_php %}
-    # => Conditional: enable_php is true
-    # => Block INCLUDED
-    location ~ \.php$ {
-        fastcgi_pass unix:/var/run/php/php{{ php_version }}-fpm.sock;
-        # => Variable in path: php_version is "8.1"
-        # => Renders to: /var/run/php/php8.1-fpm.sock
-        fastcgi_index index.php;
-        include fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-    }
-    {% endif %}
-    # => If enable_php was false, PHP block omitted
+ # PHP processing (conditional)
+ {% if enable_php %}
+ # => Conditional: enable_php is true
+ # => Block INCLUDED
+ location ~ \.php$ {
+ fastcgi_pass unix:/var/run/php/php{{ php_version }}-fpm.sock;
+ # => Variable in path: php_version is "8.1"
+ # => Renders to: /var/run/php/php8.1-fpm.sock
+ fastcgi_index index.php;
+ include fastcgi_params;
+ fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+ }
+ {% endif %}
+ # => If enable_php was false, PHP block omitted
 
-    # Access log
-    access_log /var/log/nginx/{{ site_name }}_access.log;
-    # => Renders to: /var/log/nginx/example.com_access.log
-    error_log /var/log/nginx/{{ site_name }}_error.log;
-    # => Renders to: /var/log/nginx/example.com_error.log
+ # Access log
+ access_log /var/log/nginx/{{ site_name }}_access.log;
+ # => Renders to: /var/log/nginx/example.com_access.log
+ error_log /var/log/nginx/{{ site_name }}_error.log;
+ # => Renders to: /var/log/nginx/example.com_error.log
 }
 ```
 
@@ -1810,48 +1808,48 @@ server {
 ---
 # template_conditionals.yml
 - name: Jinja2 Conditionals and Loops
-  hosts: localhost
-  gather_facts: false
+ hosts: localhost
+ gather_facts: false
 
-  vars:
-    site_name: example.com
-    server_name: www.example.com
-    http_port: 80
-    https_port: 443
-    enable_ssl: true
-    ssl_cert_path: /etc/ssl/certs/example.com.crt
-    ssl_key_path: /etc/ssl/private/example.com.key
-    document_root: /var/www/example.com
-    enable_php: true
-    php_version: "8.1"
+ vars:
+ site_name: example.com
+ server_name: www.example.com
+ http_port: 80
+ https_port: 443
+ enable_ssl: true
+ ssl_cert_path: /etc/ssl/certs/example.com.crt
+ ssl_key_path: /etc/ssl/private/example.com.key
+ document_root: /var/www/example.com
+ enable_php: true
+ php_version: "8.1"
 
-    custom_locations:
-      - path: /api
-        type: proxy
-        backend: http://localhost:3000
-      - path: /admin
-        type: proxy
-        backend: http://localhost:4000
-      - path: /static
-        type: static
-        root: /var/www/static
+ custom_locations:
+ - path: /api
+ type: proxy
+ backend: http://localhost:3000
+ - path: /admin
+ type: proxy
+ backend: http://localhost:4000
+ - path: /static
+ type: static
+ root: /var/www/static
 
-  tasks:
-    - name: Render nginx site configuration
-      ansible.builtin.template:
-        src: nginx_site.conf.j2
-        dest: /tmp/example.com.conf
-        mode: "0644"
-      # => Renders template with conditionals and loops
+ tasks:
+ - name: Render nginx site configuration
+ ansible.builtin.template:
+ src: nginx_site.conf.j2
+ dest: /tmp/example.com.conf
+ mode: "0644"
+ # => Renders template with conditionals and loops
 
-    - name: Display configuration
-      ansible.builtin.command:
-        cmd: cat /tmp/example.com.conf
-      register: nginx_config
+ - name: Display configuration
+ ansible.builtin.command:
+ cmd: cat /tmp/example.com.conf
+ register: nginx_config
 
-    - name: Show nginx config
-      ansible.builtin.debug:
-        msg: "{{ nginx_config.stdout }}"
+ - name: Show nginx config
+ ansible.builtin.debug:
+ msg: "{{ nginx_config.stdout }}"
 ```
 
 **Run**: `ansible-playbook template_conditionals.yml`
@@ -1877,16 +1875,16 @@ Jinja2 filters transform data (string manipulation, list operations, math). Test
 # String filters
 # => Filters transform data: {{ variable | filter }}
 
-app_name_upper: {{ app_name | upper }}                    # => Convert to uppercase
+app_name_upper: {{ app_name | upper }} # => Convert to uppercase
 # => app_name is "My Application"
 # => | upper: UPPERCASE filter
 # => Renders to: MY APPLICATION
 
-app_name_lower: {{ app_name | lower }}                    # => Convert to lowercase
+app_name_lower: {{ app_name | lower }} # => Convert to lowercase
 # => | lower: lowercase filter
 # => Renders to: my application
 
-app_slug: {{ app_name | lower | replace(' ', '-') }}     # => Chain filters
+app_slug: {{ app_name | lower | replace(' ', '-') }} # => Chain filters
 # => Filter chain: lower THEN replace
 # => Step 1: lower → "my application"
 # => Step 2: replace(' ', '-') → "my-application"
@@ -1895,45 +1893,45 @@ app_slug: {{ app_name | lower | replace(' ', '-') }}     # => Chain filters
 # Default values
 # => default() filter provides fallback for undefined variables
 
-optional_value: {{ optional_var | default('fallback') }}  # => Use default if undefined
+optional_value: {{ optional_var | default('fallback') }} # => Use default if undefined
 # => optional_var is undefined
 # => | default('fallback'): Returns 'fallback' when undefined
 # => Renders to: fallback
 
-database_port: {{ db_port | default(5432) }}              # => Default for number
+database_port: {{ db_port | default(5432) }} # => Default for number
 # => db_port is undefined
 # => Renders to: 5432 (PostgreSQL default)
 
 # List filters
 # => Filters for list operations
 
-total_hosts: {{ groups['webservers'] | length }}          # => Count list items
+total_hosts: {{ groups['webservers'] | length }} # => Count list items
 # => groups['webservers']: Host group list
 # => | length: Count filter
 # => Returns number of hosts in webservers group
 
-first_host: {{ groups['webservers'] | first }}            # => First item
+first_host: {{ groups['webservers'] | first }} # => First item
 # => | first: Extract first element
 # => Returns first host in webservers group
 
-last_host: {{ groups['webservers'] | last }}              # => Last item
+last_host: {{ groups['webservers'] | last }} # => Last item
 # => | last: Extract last element
 
-sorted_hosts: {{ groups['webservers'] | sort }}           # => Sort list
+sorted_hosts: {{ groups['webservers'] | sort }} # => Sort list
 # => | sort: Alphabetical sort filter
 # => Returns sorted host list
 
 # Dictionary filters
 # => Format conversion filters
 
-all_vars: {{ hostvars[inventory_hostname] | to_nice_json }}  # => Pretty JSON
+all_vars: {{ hostvars[inventory_hostname] | to_nice_json }} # => Pretty JSON
 # => hostvars[inventory_hostname]: All variables for current host
 # => | to_nice_json: Format as indented JSON
-# => Renders to: { "var1": "value1", ... } (formatted)
+# => Renders to: { "var1": "value1".. } (formatted)
 
-compact_vars: {{ hostvars[inventory_hostname] | to_json }}   # => Compact JSON
+compact_vars: {{ hostvars[inventory_hostname] | to_json }} # => Compact JSON
 # => | to_json: Format as compact JSON (no indentation)
-# => Renders to: {"var1":"value1",...} (compressed)
+# => Renders to: {"var1":"value1"..} (compressed)
 
 yaml_vars: {{ hostvars[inventory_hostname] | to_nice_yaml }} # => YAML format
 # => | to_nice_yaml: Format as YAML
@@ -1942,13 +1940,13 @@ yaml_vars: {{ hostvars[inventory_hostname] | to_nice_yaml }} # => YAML format
 # Math filters
 # => Arithmetic operations in templates
 
-double_port: {{ server_port | int * 2 }}                  # => Integer math
+double_port: {{ server_port | int * 2 }} # => Integer math
 # => server_port is 8080
 # => | int: Convert to integer (type safety)
 # => * 2: Multiply by 2
 # => Renders to: 16160
 
-memory_gb: {{ (total_memory_mb | int / 1024) | round(2) }}  # => Division and rounding
+memory_gb: {{ (total_memory_mb | int / 1024) | round(2) }} # => Division and rounding
 # => total_memory_mb is 8192
 # => | int: Convert to integer
 # => / 1024: Convert MB to GB (8.0)
@@ -1958,12 +1956,12 @@ memory_gb: {{ (total_memory_mb | int / 1024) | round(2) }}  # => Division and ro
 # Type conversion
 # => Explicit type conversion filters
 
-port_string: "{{ server_port | string }}"                 # => Convert to string
+port_string: "{{ server_port | string }}" # => Convert to string
 # => server_port is 8080 (integer)
 # => | string: Convert to string type
 # => Renders to: "8080" (string)
 
-bool_value: {{ "yes" | bool }}                            # => String to boolean
+bool_value: {{ "yes" | bool }} # => String to boolean
 # => "yes" string
 # => | bool: Convert to boolean (true)
 # => Renders to: true
@@ -2018,12 +2016,12 @@ version_meets_requirement: true
 # List operations
 # => Advanced list filters
 
-unique_list: {{ duplicate_list | unique }}                # => Remove duplicates
+unique_list: {{ duplicate_list | unique }} # => Remove duplicates
 # => duplicate_list is [1, 2, 2, 3, 3, 3]
 # => | unique: Remove duplicate values
 # => Renders to: [1, 2, 3]
 
-joined_string: {{ string_list | join(', ') }}            # => Join with separator
+joined_string: {{ string_list | join(', ') }} # => Join with separator
 # => string_list is ["apple", "banana", "cherry"]
 # => | join(', '): Join with comma-space separator
 # => Renders to: apple, banana, cherry
@@ -2035,34 +2033,34 @@ joined_string: {{ string_list | join(', ') }}            # => Join with separato
 ---
 # template_filters.yml
 - name: Jinja2 Filters and Tests
-  hosts: localhost
-  gather_facts: false
+ hosts: localhost
+ gather_facts: false
 
-  vars:
-    app_name: "My Application"
-    app_version: "2.5.0"
-    server_port: 8080
-    total_memory_mb: 8192
-    worker_list: [1, 2, 3, 4]
-    duplicate_list: [1, 2, 2, 3, 3, 3]
-    string_list: ["apple", "banana", "cherry"]
-    # optional_var intentionally not defined
+ vars:
+ app_name: "My Application"
+ app_version: "2.5.0"
+ server_port: 8080
+ total_memory_mb: 8192
+ worker_list: [1, 2, 3, 4]
+ duplicate_list: [1, 2, 2, 3, 3, 3]
+ string_list: ["apple", "banana", "cherry"]
+ # optional_var intentionally not defined
 
-  tasks:
-    - name: Render configuration with filters
-      ansible.builtin.template:
-        src: advanced_config.yml.j2
-        dest: /tmp/advanced_config.yml
-        mode: "0644"
+ tasks:
+ - name: Render configuration with filters
+ ansible.builtin.template:
+ src: advanced_config.yml.j2
+ dest: /tmp/advanced_config.yml
+ mode: "0644"
 
-    - name: Display rendered configuration
-      ansible.builtin.command:
-        cmd: cat /tmp/advanced_config.yml
-      register: config
+ - name: Display rendered configuration
+ ansible.builtin.command:
+ cmd: cat /tmp/advanced_config.yml
+ register: config
 
-    - name: Show configuration
-      ansible.builtin.debug:
-        msg: "{{ config.stdout }}"
+ - name: Show configuration
+ ansible.builtin.debug:
+ msg: "{{ config.stdout }}"
 ```
 
 **Run**: `ansible-playbook template_filters.yml`
@@ -2102,7 +2100,7 @@ Jinja2 whitespace control prevents unwanted blank lines and indentation in gener
 
 # Without whitespace control (creates blank lines)
 {% for item in items %}
-# => {% ... %}: Standard block delimiter
+# => {% .. %}: Standard block delimiter
 # => Newline AFTER {% for %} preserved
 {{ item }}
 # => Variable output
@@ -2110,13 +2108,13 @@ Jinja2 whitespace control prevents unwanted blank lines and indentation in gener
 {% endfor %}
 # => Newline AFTER {% endfor %} preserved
 # => Output:
-# =>   [newline]
-# =>   item1
-# =>   [newline]
-# =>   item2
-# =>   [newline]
-# =>   item3
-# =>   [newline]
+# => [newline]
+# => item1
+# => [newline]
+# => item2
+# => [newline]
+# => item3
+# => [newline]
 # => Problem: Excessive blank lines
 
 # With whitespace control (removes blank lines)
@@ -2128,9 +2126,9 @@ Jinja2 whitespace control prevents unwanted blank lines and indentation in gener
 {% endfor -%}
 # => -%}: Trim newline AFTER endfor
 # => Output:
-# =>   item1
-# =>   item2
-# =>   item3
+# => item1
+# => item2
+# => item3
 # => Clean: No blank lines between items
 
 # Trim left whitespace
@@ -2164,31 +2162,31 @@ servers:
 {%- for server in server_list %}
 # => {%-: Trim newline before for loop
 # => Prevents blank line between "servers:" and first item
-  - name: {{ server.name }}
-    # => server.name renders inline
-    ip: {{ server.ip }}
-    # => server.ip renders inline
+ - name: {{ server.name }}
+ # => server.name renders inline
+ ip: {{ server.ip }}
+ # => server.ip renders inline
 {%- endfor %}
 # => {%-: Trim newline before endfor
 # => Prevents blank line after last item
 # => Output:
-# =>   servers:
-# =>   - name: web1
-# =>     ip: 192.168.1.10
-# =>   - name: web2
-# =>     ip: 192.168.1.11
+# => servers:
+# => - name: web1
+# => ip: 192.168.1.10
+# => - name: web2
+# => ip: 192.168.1.11
 # => No blank lines in list
 
 # Example: conditional with clean formatting
 database:
-  host: {{ db_host }}
-  # => Renders: host: localhost
-  port: {{ db_port }}
-  # => Renders: port: 5432
+ host: {{ db_host }}
+ # => Renders: host: localhost
+ port: {{ db_port }}
+ # => Renders: port: 5432
 {%- if db_ssl_enabled %}
 # => {%-: Trim blank line if ssl enabled
-  ssl: true
-  # => Conditional SSL setting
+ ssl: true
+ # => Conditional SSL setting
 {%- endif %}
 # => {%-: Trim blank line after endif
 # => If db_ssl_enabled false: No blank line in output
@@ -2201,46 +2199,46 @@ database:
 ---
 # template_whitespace.yml
 - name: Template Whitespace Control
-  hosts: localhost
-  gather_facts: false
+ hosts: localhost
+ gather_facts: false
 
-  vars:
-    items: [item1, item2, item3]
-    condition: true
-    server_list:
-      - name: web1
-        ip: 192.168.1.10
-      - name: web2
-        ip: 192.168.1.11
-    db_host: localhost
-    db_port: 5432
-    db_ssl_enabled: true
+ vars:
+ items: [item1, item2, item3]
+ condition: true
+ server_list:
+ - name: web1
+ ip: 192.168.1.10
+ - name: web2
+ ip: 192.168.1.11
+ db_host: localhost
+ db_port: 5432
+ db_ssl_enabled: true
 
-  tasks:
-    - name: Render template with whitespace control
-      ansible.builtin.template:
-        src: whitespace_example.j2
-        dest: /tmp/whitespace_demo.txt
-        mode: "0644"
-      # => Renders clean output without extra blank lines
+ tasks:
+ - name: Render template with whitespace control
+ ansible.builtin.template:
+ src: whitespace_example.j2
+ dest: /tmp/whitespace_demo.txt
+ mode: "0644"
+ # => Renders clean output without extra blank lines
 
-    - name: Display rendered file
-      ansible.builtin.command:
-        cmd: cat /tmp/whitespace_demo.txt
-      register: output
+ - name: Display rendered file
+ ansible.builtin.command:
+ cmd: cat /tmp/whitespace_demo.txt
+ register: output
 
-    - name: Show output
-      ansible.builtin.debug:
-        msg: "{{ output.stdout }}"
+ - name: Show output
+ ansible.builtin.debug:
+ msg: "{{ output.stdout }}"
 ```
 
 **Whitespace control syntax**:
 
-- `{%- ... %}` → Trim whitespace before block
-- `{% ... -%}` → Trim whitespace after block
-- `{%- ... -%}` → Trim whitespace on both sides
-- `{{- ... }}` → Trim before variable
-- `{{ ... -}}` → Trim after variable
+- `{%- .. %}` → Trim whitespace before block
+- `{% .. -%}` → Trim whitespace after block
+- `{%- .. -%}` → Trim whitespace on both sides
+- `{{- .. }}` → Trim before variable
+- `{{ .. -}}` → Trim after variable
 
 **Run**: `ansible-playbook template_whitespace.yml`
 
@@ -2264,11 +2262,11 @@ Jinja2 macros define reusable template fragments. Template inheritance enables b
 {# Macro: Generate server block #}
 {% macro server_block(name, host, port) -%}
 server {
-    listen {{ port }};
-    server_name {{ name }};
-    location / {
-        proxy_pass http://{{ host }}:{{ port }};
-    }
+ listen {{ port }};
+ server_name {{ name }};
+ location / {
+ proxy_pass http://{{ host }}:{{ port }};
+ }
 }
 {%- endmacro %}
 
@@ -2280,12 +2278,12 @@ server {
 {# Macro: Generate logging configuration #}
 {% macro logging_config(level, file) -%}
 logging:
-  level: {{ level | upper }}
-  handlers:
-    file:
-      filename: {{ file }}
-      maxBytes: 10485760
-      backupCount: 5
+ level: {{ level | upper }}
+ handlers:
+ file:
+ filename: {{ file }}
+ maxBytes: 10485760
+ backupCount: 5
 {%- endmacro %}
 ```
 
@@ -2316,9 +2314,9 @@ logging:
 **`templates/app.conf.j2`** (child template):
 
 ```jinja2
-{% extends "base.conf.j2" %}                              {# Inherit from base #}
+{% extends "base.conf.j2" %} {# Inherit from base #}
 
-{% import "macros.j2" as macros %}                        {# Import macros #}
+{% import "macros.j2" as macros %} {# Import macros #}
 
 {% block header %}
 # Application Configuration
@@ -2328,22 +2326,22 @@ logging:
 
 {% block application %}
 application:
-  name: {{ app_name }}
-  port: {{ app_port }}
+ name: {{ app_name }}
+ port: {{ app_port }}
 
-  # Use macro for server blocks
-  {% for server in app_servers %}
-  {{ macros.server_block(server.name, server.host, server.port) }}
-  {% endfor %}
+ # Use macro for server blocks
+ {% for server in app_servers %}
+ {{ macros.server_block(server.name, server.host, server.port) }}
+ {% endfor %}
 {% endblock %}
 
 {% block database %}
 database:
-  # Use macro for connection string
-  url: {{ macros.db_connection('postgresql', db_host, db_port, db_name, db_user) }}
+ # Use macro for connection string
+ url: {{ macros.db_connection('postgresql', db_host, db_port, db_name, db_user) }}
 
-  # Use macro for logging
-  {{ macros.logging_config('info', '/var/log/app.log') }}
+ # Use macro for logging
+ {{ macros.logging_config('info', '/var/log/app.log') }}
 {% endblock %}
 
 {% block footer %}
@@ -2357,42 +2355,42 @@ database:
 ---
 # template_macros.yml
 - name: Template Macros and Inheritance
-  hosts: localhost
-  gather_facts: true
+ hosts: localhost
+ gather_facts: true
 
-  vars:
-    environment: production
-    app_name: MyApp
-    app_version: "3.0.0"
-    app_port: 8080
-    app_servers:
-      - name: api.example.com
-        host: localhost
-        port: 3000
-      - name: web.example.com
-        host: localhost
-        port: 4000
-    db_host: db.example.com
-    db_port: 5432
-    db_name: appdb
-    db_user: appuser
+ vars:
+ environment: production
+ app_name: MyApp
+ app_version: "3.0.0"
+ app_port: 8080
+ app_servers:
+ - name: api.example.com
+ host: localhost
+ port: 3000
+ - name: web.example.com
+ host: localhost
+ port: 4000
+ db_host: db.example.com
+ db_port: 5432
+ db_name: appdb
+ db_user: appuser
 
-  tasks:
-    - name: Render configuration with macros and inheritance
-      ansible.builtin.template:
-        src: app.conf.j2 # => Child template
-        dest: /tmp/app.conf
-        mode: "0644"
-      # => Extends base template and imports macros
+ tasks:
+ - name: Render configuration with macros and inheritance
+ ansible.builtin.template:
+ src: app.conf.j2 # => Child template
+ dest: /tmp/app.conf
+ mode: "0644"
+ # => Extends base template and imports macros
 
-    - name: Display rendered configuration
-      ansible.builtin.command:
-        cmd: cat /tmp/app.conf
-      register: config
+ - name: Display rendered configuration
+ ansible.builtin.command:
+ cmd: cat /tmp/app.conf
+ register: config
 
-    - name: Show configuration
-      ansible.builtin.debug:
-        msg: "{{ config.stdout }}"
+ - name: Show configuration
+ ansible.builtin.debug:
+ msg: "{{ config.stdout }}"
 ```
 
 **Run**: `ansible-playbook template_macros.yml`
@@ -2412,22 +2410,22 @@ Ansible Vault encrypts sensitive data (passwords, API keys, certificates) in ver
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    A["Plaintext secrets.yml"] --> B["ansible-vault encrypt"]
-    B --> C["Encrypted secrets.yml<br/>AES256"]
-    C --> D["Commit to Git<br/>#40;Safe#41;"]
-    C --> E["Playbook Execution"]
-    E --> F["vault-password-file"]
-    F --> G["Decrypt Secrets<br/>Runtime Only"]
-    G --> H["Use in Tasks"]
+ A["Plaintext secrets.yml"] --> B["ansible-vault encrypt"]
+ B --> C["Encrypted secrets.yml<br/>AES256"]
+ C --> D["Commit to Git<br/>#40;Safe#41;"]
+ C --> E["Playbook Execution"]
+ E --> F["vault-password-file"]
+ F --> G["Decrypt Secrets<br/>Runtime Only"]
+ G --> H["Use in Tasks"]
 
-    style A fill:#DE8F05,color:#fff
-    style B fill:#0173B2,color:#fff
-    style C fill:#029E73,color:#fff
-    style D fill:#029E73,color:#fff
-    style E fill:#CC78BC,color:#fff
-    style F fill:#CA9161,color:#fff
-    style G fill:#DE8F05,color:#fff
-    style H fill:#029E73,color:#fff
+ style A fill:#DE8F05,color:#fff
+ style B fill:#0173B2,color:#fff
+ style C fill:#029E73,color:#fff
+ style D fill:#029E73,color:#fff
+ style E fill:#CC78BC,color:#fff
+ style F fill:#CA9161,color:#fff
+ style G fill:#DE8F05,color:#fff
+ style H fill:#029E73,color:#fff
 ```
 
 **Code**:
@@ -2441,10 +2439,10 @@ ansible-vault create secrets.yml
 # => create: Create new encrypted file
 # => secrets.yml: Filename for encrypted content
 # => Process:
-# =>   1. Prompts for vault password (entered twice)
-# =>   2. Opens editor (EDITOR env var, default: vi)
-# =>   3. Encrypts content with AES256
-# =>   4. Saves encrypted file
+# => 1. Prompts for vault password (entered twice)
+# => 2. Opens editor (EDITOR env var, default: vi)
+# => 3. Encrypts content with AES256
+# => 4. Saves encrypted file
 # => Output: New vault password, Confirm new vault password
 
 # Enter vault password, then edit content in editor:
@@ -2490,12 +2488,12 @@ ansible-vault view secrets.yml
 ansible-vault edit secrets.yml
 # => ansible-vault edit: Modify encrypted file
 # => Process:
-# =>   1. Prompts for vault password
-# =>   2. Decrypts file to temp location
-# =>   3. Opens editor with decrypted content
-# =>   4. Saves changes
-# =>   5. Re-encrypts file with same password
-# =>   6. Deletes temp file
+# => 1. Prompts for vault password
+# => 2. Decrypts file to temp location
+# => 3. Opens editor with decrypted content
+# => 4. Saves changes
+# => 5. Re-encrypts file with same password
+# => 6. Deletes temp file
 # => Maintains encryption throughout edit cycle
 ```
 
@@ -2505,34 +2503,34 @@ ansible-vault edit secrets.yml
 ---
 # vault_basic.yml
 - name: Use Ansible Vault
-  hosts: localhost
-  gather_facts: false
+ hosts: localhost
+ gather_facts: false
 
-  vars_files:
-    - secrets.yml # => Load encrypted variables file
-  # => Variables decrypted automatically during playbook execution
+ vars_files:
+ - secrets.yml # => Load encrypted variables file
+ # => Variables decrypted automatically during playbook execution
 
-  vars:
-    db_host: localhost # => Non-sensitive variables in playbook
-    db_port: 5432
-    db_name: appdb
-    db_user: appuser
-    # db_password loaded from secrets.yml (encrypted)
+ vars:
+ db_host: localhost # => Non-sensitive variables in playbook
+ db_port: 5432
+ db_name: appdb
+ db_user: appuser
+ # db_password loaded from secrets.yml (encrypted)
 
-  tasks:
-    - name: Display database connection info (password masked)
-      ansible.builtin.debug:
-        msg: |
-          Host: {{ db_host }}:{{ db_port }}
-          Database: {{ db_name }}
-          User: {{ db_user }}
-      # => Shows non-sensitive info only
+ tasks:
+ - name: Display database connection info (password masked)
+ ansible.builtin.debug:
+ msg: |
+ Host: {{ db_host }}:{{ db_port }}
+ Database: {{ db_name }}
+ User: {{ db_user }}
+ # => Shows non-sensitive info only
 
-    - name: Use password in connection (example)
-      ansible.builtin.debug:
-        msg: "Connecting with password {{ db_password }}"
-      no_log: true # => Prevent password from appearing in logs
-      # => Task executes but output suppressed
+ - name: Use password in connection (example)
+ ansible.builtin.debug:
+ msg: "Connecting with password {{ db_password }}"
+ no_log: true # => Prevent password from appearing in logs
+ # => Task executes but output suppressed
 ```
 
 **Run with vault password**:
@@ -2562,7 +2560,7 @@ ansible-vault decrypt secrets.yml
 ansible-vault rekey secrets.yml
 
 # Show encrypted file content
-cat secrets.yml  # => Shows encrypted blob (safe to commit)
+cat secrets.yml # => Shows encrypted blob (safe to commit)
 ```
 
 **Key Takeaway**: Ansible Vault encrypts sensitive variables in YAML files—safe to commit to version control. Use `--ask-vault-pass` or password files for decryption. Always use `no_log: true` on tasks displaying sensitive data to prevent password leaks in logs. Vault files remain YAML-parseable but content is AES256-encrypted.
@@ -2584,8 +2582,8 @@ Vault IDs enable multiple vault passwords in one playbook—separate credentials
 ansible-vault create --vault-id prod@prompt prod_secrets.yml
 # => ansible-vault create: Create new encrypted file
 # => --vault-id prod@prompt: Vault ID label and password source
-# =>   prod: Vault ID label (tags this file as 'prod')
-# =>   @prompt: Password source (interactive prompt)
+# => prod: Vault ID label (tags this file as 'prod')
+# => @prompt: Password source (interactive prompt)
 # => prod_secrets.yml: Filename for production secrets
 # => Process: Prompt for 'prod' password → create encrypted file
 # => File header includes vault ID: $ANSIBLE_VAULT;1.2;AES256;prod
@@ -2593,14 +2591,14 @@ ansible-vault create --vault-id prod@prompt prod_secrets.yml
 # Staging secrets with 'staging' vault ID
 ansible-vault create --vault-id staging@prompt staging_secrets.yml
 # => --vault-id staging@prompt: Different vault ID
-# =>   staging: Separate password from 'prod'
+# => staging: Separate password from 'prod'
 # => Allows different teams to manage different environments
 # => Password isolation: Staging team can't decrypt prod secrets
 
 # Database secrets with 'database' vault ID
 ansible-vault create --vault-id database@prompt db_secrets.yml
 # => --vault-id database@prompt: Database-specific vault
-# =>   database: Security domain separation
+# => database: Security domain separation
 # => Enables DBA team to manage DB secrets independently
 # => Application team has no access to DB credentials
 ```
@@ -2637,21 +2635,21 @@ db_replication_key: ReplKey456
 ---
 # vault_ids.yml
 - name: Multiple Vault IDs
-  hosts: localhost
-  gather_facts: false
+ hosts: localhost
+ gather_facts: false
 
-  vars_files:
-    - prod_secrets.yml # => Requires 'prod' vault password
-    - staging_secrets.yml # => Requires 'staging' vault password
-    - db_secrets.yml # => Requires 'database' vault password
+ vars_files:
+ - prod_secrets.yml # => Requires 'prod' vault password
+ - staging_secrets.yml # => Requires 'staging' vault password
+ - db_secrets.yml # => Requires 'database' vault password
 
-  tasks:
-    - name: Display environment configuration
-      ansible.builtin.debug:
-        msg: |
-          Prod API: {{ api_endpoint }} (from prod_secrets.yml)
-          DB Password: {{ db_master_password }} (from db_secrets.yml)
-      no_log: true
+ tasks:
+ - name: Display environment configuration
+ ansible.builtin.debug:
+ msg: |
+ Prod API: {{ api_endpoint }} (from prod_secrets.yml)
+ DB Password: {{ db_master_password }} (from db_secrets.yml)
+ no_log: true
 ```
 
 **Create password files**:
@@ -2675,37 +2673,37 @@ chmod 600 ~/.vault_pass_database
 ```bash
 # Prompt for each vault password interactively
 ansible-playbook vault_ids.yml \
-  --vault-id prod@prompt \
-  # => Prompts for 'prod' vault password
-  # => Used to decrypt prod_secrets.yml
-  --vault-id staging@prompt \
-  # => Prompts for 'staging' vault password
-  # => Used to decrypt staging_secrets.yml
-  --vault-id database@prompt
-  # => Prompts for 'database' vault password
-  # => Used to decrypt db_secrets.yml
+ --vault-id prod@prompt \
+ # => Prompts for 'prod' vault password
+ # => Used to decrypt prod_secrets.yml
+ --vault-id staging@prompt \
+ # => Prompts for 'staging' vault password
+ # => Used to decrypt staging_secrets.yml
+ --vault-id database@prompt
+ # => Prompts for 'database' vault password
+ # => Used to decrypt db_secrets.yml
 # => Playbook execution waits for all passwords before proceeding
 # => Each vault file decrypted with its corresponding password
 
 # Use password files (automated/CI environments)
 ansible-playbook vault_ids.yml \
-  --vault-id prod@~/.vault_pass_prod \
-  # => Reads prod password from file ~/.vault_pass_prod
-  # => No interactive prompt (headless execution)
-  --vault-id staging@~/.vault_pass_staging \
-  # => Reads staging password from file
-  --vault-id database@~/.vault_pass_database
-  # => Reads database password from file
+ --vault-id prod@~/.vault_pass_prod \
+ # => Reads prod password from file ~/.vault_pass_prod
+ # => No interactive prompt (headless execution)
+ --vault-id staging@~/.vault_pass_staging \
+ # => Reads staging password from file
+ --vault-id database@~/.vault_pass_database
+ # => Reads database password from file
 # => Fully automated execution (CI/CD pipelines)
 # => All password files must exist with 600 permissions
 
 # Mix prompt and file (hybrid approach)
 ansible-playbook vault_ids.yml \
-  --vault-id prod@prompt \
-  # => Interactive prompt for production (security sensitive)
-  # => Requires human operator for prod deployments
-  --vault-id staging@~/.vault_pass_staging
-  # => Automated for staging (less sensitive)
+ --vault-id prod@prompt \
+ # => Interactive prompt for production (security sensitive)
+ # => Requires human operator for prod deployments
+ --vault-id staging@~/.vault_pass_staging
+ # => Automated for staging (less sensitive)
 # => Pattern: Interactive prod, automated staging
 # => Ensures prod deployments have human oversight
 ```
@@ -2738,9 +2736,9 @@ ansible-vault encrypt_string 'SuperSecretPassword123' --name 'db_password'
 
 # Output:
 # db_password: !vault |
-#           $ANSIBLE_VAULT;1.1;AES256
-#           66386439653264336462626566653063336164663966303231363934653561363964363833313662
-#           ...encrypted content...
+# $ANSIBLE_VAULT;1.1;AES256
+# 66386439653264336462626566653063336164663966303231363934653561363964363833313662
+# ..encrypted content..
 ```
 
 **`vars.yml`** (mixed encrypted and plaintext):
@@ -2766,7 +2764,7 @@ db_password: !vault |
 api_key: !vault |
   $ANSIBLE_VAULT;1.1;AES256
   39653561363964363833313662626566653063336164663966303231363934653561363964363833
-  ...encrypted content...
+  ..encrypted content..
 ```
 
 **Playbook**:
@@ -2775,26 +2773,26 @@ api_key: !vault |
 ---
 # inline_vault.yml
 - name: Inline Encrypted Variables
-  hosts: localhost
-  gather_facts: false
+ hosts: localhost
+ gather_facts: false
 
-  vars_files:
-    - vars.yml # => Mixed plaintext and encrypted vars
+ vars_files:
+ - vars.yml # => Mixed plaintext and encrypted vars
 
-  tasks:
-    - name: Display configuration
-      ansible.builtin.debug:
-        msg: |
-          Host: {{ db_host }}:{{ db_port }}
-          Database: {{ db_name }}
-          User: {{ db_user }}
-      # => Shows plaintext variables
+ tasks:
+ - name: Display configuration
+ ansible.builtin.debug:
+ msg: |
+ Host: {{ db_host }}:{{ db_port }}
+ Database: {{ db_name }}
+ User: {{ db_user }}
+ # => Shows plaintext variables
 
-    - name: Use encrypted password
-      ansible.builtin.debug:
-        msg: "Password is {{ db_password | length }} characters"
-      no_log: true # => Don't log actual password
-      # => Uses decrypted password in task
+ - name: Use encrypted password
+ ansible.builtin.debug:
+ msg: "Password is {{ db_password | length }} characters"
+ no_log: true # => Don't log actual password
+ # => Uses decrypted password in task
 ```
 
 **Create inline encrypted variable**:
@@ -2802,11 +2800,11 @@ api_key: !vault |
 ```bash
 # Encrypt string and copy to clipboard
 ansible-vault encrypt_string 'MySecret123' --name 'secret_var' \
-  --vault-id prod@~/.vault_pass_prod
+ --vault-id prod@~/.vault_pass_prod
 
 # Encrypt from stdin (for long values)
 echo -n 'LongSecretValue' | \
-  ansible-vault encrypt_string --stdin-name 'long_secret'
+ ansible-vault encrypt_string --stdin-name 'long_secret'
 ```
 
 **Run**: `ansible-playbook inline_vault.yml --ask-vault-pass`
@@ -2827,21 +2825,21 @@ Production-ready vault usage patterns: password management, file organization, a
 
 ```
 inventory/
-  production/
-    group_vars/
-      all/
-        vars.yml                         # => Non-sensitive variables
-        vault.yml                        # => Encrypted sensitive variables
-      webservers/
-        vars.yml
-        vault.yml
-      databases/
-        vars.yml
-        vault.yml
+ production/
+ group_vars/
+ all/
+ vars.yml # => Non-sensitive variables
+ vault.yml # => Encrypted sensitive variables
+ webservers/
+ vars.yml
+ vault.yml
+ databases/
+ vars.yml
+ vault.yml
 
-.vault_pass_prod                         # => Production vault password file
-.vault_pass_staging                      # => Staging vault password file
-.gitignore                               # => Exclude password files from git
+.vault_pass_prod # => Production vault password file
+.vault_pass_staging # => Staging vault password file
+.gitignore # => Exclude password files from git
 ```
 
 **`.gitignore`**:
@@ -2877,7 +2875,7 @@ vault_db_password: SuperSecret123
 vault_api_key: sk-1234567890
 vault_ssl_key: |
   -----BEGIN PRIVATE KEY-----
-  MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC...
+  MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC..
   -----END PRIVATE KEY-----
 ```
 
@@ -2916,7 +2914,7 @@ vault_password_file = .vault_pass_prod
 vault_encrypt_identity_list = default
 
 # Log encryption
-no_log = True                            # => Global no_log for sensitive tasks
+no_log = True # => Global no_log for sensitive tasks
 ```
 
 **Playbook with vault best practices**:
@@ -2925,24 +2923,24 @@ no_log = True                            # => Global no_log for sensitive tasks
 ---
 # vault_best_practices.yml
 - name: Vault Best Practices
-  hosts: localhost
-  gather_facts: false
+ hosts: localhost
+ gather_facts: false
 
-  # Load variables (vars.yml + vault.yml automatically loaded from group_vars)
+ # Load variables (vars.yml + vault.yml automatically loaded from group_vars)
 
-  tasks:
-    - name: Use sensitive variable
-      ansible.builtin.debug:
-        msg: "Connecting to database"
-      no_log: true # => Always use no_log with sensitive data
-      # => Task uses db_password from vault.yml indirectly
+ tasks:
+ - name: Use sensitive variable
+ ansible.builtin.debug:
+ msg: "Connecting to database"
+ no_log: true # => Always use no_log with sensitive data
+ # => Task uses db_password from vault.yml indirectly
 
-    - name: Deploy configuration with secrets
-      ansible.builtin.template:
-        src: app_config.j2
-        dest: /tmp/app_config.yml
-        mode: "0600" # => Restrictive permissions for config with secrets
-      no_log: true # => Don't log file content
+ - name: Deploy configuration with secrets
+ ansible.builtin.template:
+ src: app_config.j2
+ dest: /tmp/app_config.yml
+ mode: "0600" # => Restrictive permissions for config with secrets
+ no_log: true # => Don't log file content
 ```
 
 **Vault rotation procedure**:
@@ -2953,8 +2951,8 @@ echo "new-production-password" > .vault_pass_prod_new
 
 # 2. Rekey all vault files
 find inventory/ -name 'vault.yml' -exec \
-  ansible-vault rekey --vault-password-file .vault_pass_prod \
-  --new-vault-password-file .vault_pass_prod_new {} \;
+ ansible-vault rekey --vault-password-file .vault_pass_prod \
+ --new-vault-password-file .vault_pass_prod_new {} \;
 
 # 3. Replace old password file
 mv .vault_pass_prod_new .vault_pass_prod
@@ -2979,18 +2977,18 @@ Control task success/failure criteria and changed status reporting with `failed_
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    A["Task Execution"] --> B{failed_when<br/>Condition?}
-    B -->|True| C["Report: Failed"]
-    B -->|False| D{changed_when<br/>Condition?}
-    D -->|True| E["Report: Changed"]
-    D -->|False| F["Report: OK"]
+ A["Task Execution"] --> B{failed_when<br/>Condition?}
+ B -->|True| C["Report: Failed"]
+ B -->|False| D{changed_when<br/>Condition?}
+ D -->|True| E["Report: Changed"]
+ D -->|False| F["Report: OK"]
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#fff
-    style C fill:#CA9161,color:#fff
-    style D fill:#DE8F05,color:#fff
-    style E fill:#CC78BC,color:#fff
-    style F fill:#029E73,color:#fff
+ style A fill:#0173B2,color:#fff
+ style B fill:#DE8F05,color:#fff
+ style C fill:#CA9161,color:#fff
+ style D fill:#DE8F05,color:#fff
+ style E fill:#CC78BC,color:#fff
+ style F fill:#029E73,color:#fff
 ```
 
 **Code**:
@@ -2999,104 +2997,104 @@ graph TD
 ---
 # failed_changed_when.yml
 - name: Failed When and Changed When
-  hosts: localhost
-  gather_facts: false
+ hosts: localhost
+ gather_facts: false
 
-  tasks:
-    # Pattern 1: Default command behavior
-    # => Commands always report changed (even if idempotent)
+ tasks:
+ # Pattern 1: Default command behavior
+ # => Commands always report changed (even if idempotent)
 
-    - name: Run command (always changed) # => Default behavior demo
-      ansible.builtin.command: # => Command module
-        cmd: echo "test" # => Simple echo command
-        # => Actually idempotent (no system changes)
-      register: result # => Capture result for inspection
-      # => result.changed: True (command module default)
-      # => changed: [localhost] (even though no actual change)
-      # => Problem: Misleading change reporting
+ - name: Run command (always changed) # => Default behavior demo
+ ansible.builtin.command: # => Command module
+ cmd: echo "test" # => Simple echo command
+ # => Actually idempotent (no system changes)
+ register: result # => Capture result for inspection
+ # => result.changed: True (command module default)
+ # => changed: [localhost] (even though no actual change)
+ # => Problem: Misleading change reporting
 
-    - name: Check default status # => Verify default behavior
-      ansible.builtin.debug: # => Debug module
-        msg: "Task changed: {{ result.changed }}" # => Display changed status
-      # => Output: Task changed: True
-      # => Shows command module always reports changed
+ - name: Check default status # => Verify default behavior
+ ansible.builtin.debug: # => Debug module
+ msg: "Task changed: {{ result.changed }}" # => Display changed status
+ # => Output: Task changed: True
+ # => Shows command module always reports changed
 
-    # Pattern 2: Override changed status
-    # => Force task to never report changed
-    - name: Command with changed_when never # => Suppress changed status
-      ansible.builtin.command: # => Command module
-        cmd: uptime # => System uptime command
-        # => Read-only operation (no system changes)
-      changed_when: false # => Force changed status to false
-      # => changed_when: false: Always report ok (never changed)
-      # => Useful for: Read-only commands, checks, queries
-      # => ok: [localhost] (forced to not changed)
-      # => Accurate reporting: uptime is truly read-only
+ # Pattern 2: Override changed status
+ # => Force task to never report changed
+ - name: Command with changed_when never # => Suppress changed status
+ ansible.builtin.command: # => Command module
+ cmd: uptime # => System uptime command
+ # => Read-only operation (no system changes)
+ changed_when: false # => Force changed status to false
+ # => changed_when: false: Always report ok (never changed)
+ # => Useful for: Read-only commands, checks, queries
+ # => ok: [localhost] (forced to not changed)
+ # => Accurate reporting: uptime is truly read-only
 
-    # Pattern 3: Conditional changed and failure status
-    # => Control both changed and failed based on output
-    - name: Command with conditional changed # => Conditional status reporting
-      ansible.builtin.command: # => Command module
-        cmd: grep "pattern" /tmp/file.txt # => Search for pattern in file
-        # => Return codes:
-        # =>   rc=0: Pattern found
-        # =>   rc=1: Pattern not found (NOT an error)
-        # =>   rc=2+: Error (file missing, permission denied, etc.)
-      register: grep_result # => Capture result
-      changed_when: grep_result.rc == 0 # => Changed only if pattern found
-      # => Logic: Finding pattern is a "change" in state knowledge
-      # => grep_result.rc == 0: Pattern found → changed
-      # => grep_result.rc != 0: Pattern not found → ok
-      failed_when: grep_result.rc not in [0, 1] # => Fail on actual errors
-      # => rc in [0, 1]: Normal grep behavior (success)
-      # => rc not in [0, 1]: Error condition (file missing, etc.)
-      # => Prevents failure on legitimate "not found" result
-      # => ok: [localhost] if pattern not found (rc=1)
-      # => changed: [localhost] if pattern found (rc=0)
-      # => failed: [localhost] if error (rc=2+)
-      # => failed: [localhost] if error (rc=2)
+ # Pattern 3: Conditional changed and failure status
+ # => Control both changed and failed based on output
+ - name: Command with conditional changed # => Conditional status reporting
+ ansible.builtin.command: # => Command module
+ cmd: grep "pattern" /tmp/file.txt # => Search for pattern in file
+ # => Return codes:
+ # => rc=0: Pattern found
+ # => rc=1: Pattern not found (NOT an error)
+ # => rc=2+: Error (file missing, permission denied, etc.)
+ register: grep_result # => Capture result
+ changed_when: grep_result.rc == 0 # => Changed only if pattern found
+ # => Logic: Finding pattern is a "change" in state knowledge
+ # => grep_result.rc == 0: Pattern found → changed
+ # => grep_result.rc != 0: Pattern not found → ok
+ failed_when: grep_result.rc not in [0, 1] # => Fail on actual errors
+ # => rc in [0, 1]: Normal grep behavior (success)
+ # => rc not in [0, 1]: Error condition (file missing, etc.)
+ # => Prevents failure on legitimate "not found" result
+ # => ok: [localhost] if pattern not found (rc=1)
+ # => changed: [localhost] if pattern found (rc=0)
+ # => failed: [localhost] if error (rc=2+)
+ # => failed: [localhost] if error (rc=2)
 
-    # Complex failed_when condition
-    - name: Check application status
-      ansible.builtin.shell:
-        cmd: |
-          curl -s http://localhost:8080/health || echo "DOWN"
-      register: health_check
-      changed_when: false # => Health check never changes system
-      failed_when: >
-        health_check.rc != 0 or
-        'DOWN' in health_check.stdout or
-        'error' in health_check.stdout | lower
-      # => Fail if curl fails OR output contains "DOWN" or "error"
+ # Complex failed_when condition
+ - name: Check application status
+ ansible.builtin.shell:
+ cmd: |
+ curl -s http://localhost:8080/health || echo "DOWN"
+ register: health_check
+ changed_when: false # => Health check never changes system
+ failed_when: >
+ health_check.rc != 0 or
+ 'DOWN' in health_check.stdout or
+ 'error' in health_check.stdout | lower
+ # => Fail if curl fails OR output contains "DOWN" or "error"
 
-    # Never fail (always succeed)
-    - name: Task that always succeeds
-      ansible.builtin.command:
-        cmd: /usr/local/bin/optional-script.sh
-      register: optional_result
-      failed_when: false # => Never fail regardless of return code
-      changed_when: optional_result.rc == 0 # => Changed only if successful
-      # => ok: [localhost] even if script returns non-zero
+ # Never fail (always succeed)
+ - name: Task that always succeeds
+ ansible.builtin.command:
+ cmd: /usr/local/bin/optional-script.sh
+ register: optional_result
+ failed_when: false # => Never fail regardless of return code
+ changed_when: optional_result.rc == 0 # => Changed only if successful
+ # => ok: [localhost] even if script returns non-zero
 
-    # Validate output content
-    - name: Validate configuration file
-      ansible.builtin.command:
-        cmd: cat /etc/app/config.yml
-      register: config_content
-      changed_when: false
-      failed_when: "'debug: true' in config_content.stdout"
-      # => Fail if debug mode enabled in config (safety check)
+ # Validate output content
+ - name: Validate configuration file
+ ansible.builtin.command:
+ cmd: cat /etc/app/config.yml
+ register: config_content
+ changed_when: false
+ failed_when: "'debug: true' in config_content.stdout"
+ # => Fail if debug mode enabled in config (safety check)
 
-    # Multiple failure conditions
-    - name: Check disk space
-      ansible.builtin.shell:
-        cmd: df -h / | awk 'NR==2 {print $5}' | sed 's/%//'
-      register: disk_usage
-      changed_when: false
-      failed_when:
-        - disk_usage.stdout | int > 90 # => Fail if > 90% used
-        - disk_usage.rc != 0 # => Also fail if command errors
-      # => Combines multiple failure conditions with implicit AND
+ # Multiple failure conditions
+ - name: Check disk space
+ ansible.builtin.shell:
+ cmd: df -h / | awk 'NR==2 {print $5}' | sed 's/%//'
+ register: disk_usage
+ changed_when: false
+ failed_when:
+ - disk_usage.stdout | int > 90 # => Fail if > 90% used
+ - disk_usage.rc != 0 # => Also fail if command errors
+ # => Combines multiple failure conditions with implicit AND
 ```
 
 **Run**: `ansible-playbook failed_changed_when.yml`
@@ -3117,102 +3115,102 @@ Handle task failures gracefully with `ignore_errors`, conditional error handling
 ---
 # error_handling.yml
 - name: Ignore Errors and Error Recovery
-  hosts: localhost
-  gather_facts: false
+ hosts: localhost
+ gather_facts: false
 
-  tasks:
-    # Pattern 1: Ignore errors (continue playbook)
-    # => Allow task failure without stopping playbook
+ tasks:
+ # Pattern 1: Ignore errors (continue playbook)
+ # => Allow task failure without stopping playbook
 
-    - name: Optional task that might fail # => Non-critical operation
-      ansible.builtin.command: # => Command module
-        cmd: /usr/local/bin/optional-tool --check # => Optional tool check
-        # => Tool might not be installed (acceptable failure)
-      ignore_errors: true # => Continue playbook even if task fails
-      # => ignore_errors: true: Suppress failure
-      # => Task marked failed but playbook continues
-      # => Useful for: Optional operations, best-effort tasks
-      register: optional_result # => Capture result for inspection
-      # => optional_result.failed: True if task failed
-      # => optional_result.rc: Return code
-      # => failed: [localhost] (task fails but playbook continues)
+ - name: Optional task that might fail # => Non-critical operation
+ ansible.builtin.command: # => Command module
+ cmd: /usr/local/bin/optional-tool --check # => Optional tool check
+ # => Tool might not be installed (acceptable failure)
+ ignore_errors: true # => Continue playbook even if task fails
+ # => ignore_errors: true: Suppress failure
+ # => Task marked failed but playbook continues
+ # => Useful for: Optional operations, best-effort tasks
+ register: optional_result # => Capture result for inspection
+ # => optional_result.failed: True if task failed
+ # => optional_result.rc: Return code
+ # => failed: [localhost] (task fails but playbook continues)
 
-    - name: Check if optional task succeeded # => Inspect optional task result
-      ansible.builtin.debug: # => Debug module
-        msg: "Optional tool {{ 'succeeded' if optional_result.rc == 0 else 'failed' }}" # => Conditional message
-        # => Ternary expression: success (rc=0) or failure (rc!=0)
-      # => Shows task result without stopping playbook
-      # => Pattern: Error tolerance with post-check
+ - name: Check if optional task succeeded # => Inspect optional task result
+ ansible.builtin.debug: # => Debug module
+ msg: "Optional tool {{ 'succeeded' if optional_result.rc == 0 else 'failed' }}" # => Conditional message
+ # => Ternary expression: success (rc=0) or failure (rc!=0)
+ # => Shows task result without stopping playbook
+ # => Pattern: Error tolerance with post-check
 
-    # Conditional error ignore
-    - name: Task with conditional error handling
-      ansible.builtin.command:
-        cmd: test -f /tmp/important_file.txt
-      register: file_check
-      failed_when: false # => Never fail (alternative to ignore_errors)
-      # => ok: [localhost] regardless of file existence
+ # Conditional error ignore
+ - name: Task with conditional error handling
+ ansible.builtin.command:
+ cmd: test -f /tmp/important_file.txt
+ register: file_check
+ failed_when: false # => Never fail (alternative to ignore_errors)
+ # => ok: [localhost] regardless of file existence
 
-    - name: Create file if missing
-      ansible.builtin.file:
-        path: /tmp/important_file.txt
-        state: touch
-      when: file_check.rc != 0 # => Create only if previous check failed
-      # => Recovery action based on check result
+ - name: Create file if missing
+ ansible.builtin.file:
+ path: /tmp/important_file.txt
+ state: touch
+ when: file_check.rc != 0 # => Create only if previous check failed
+ # => Recovery action based on check result
 
-    # Error recovery pattern
-    - name: Try primary service
-      ansible.builtin.uri:
-        url: https://primary.example.com/api
-        method: GET
-      register: primary_result
-      ignore_errors: true
-      # => Try primary endpoint, don't fail if unreachable
+ # Error recovery pattern
+ - name: Try primary service
+ ansible.builtin.uri:
+ url: https://primary.example.com/api
+ method: GET
+ register: primary_result
+ ignore_errors: true
+ # => Try primary endpoint, don't fail if unreachable
 
-    - name: Fallback to secondary service
-      ansible.builtin.uri:
-        url: https://secondary.example.com/api
-        method: GET
-      when: primary_result is failed # => Execute only if primary failed
-      register: secondary_result
-      # => Fallback to backup service
+ - name: Fallback to secondary service
+ ansible.builtin.uri:
+ url: https://secondary.example.com/api
+ method: GET
+ when: primary_result is failed # => Execute only if primary failed
+ register: secondary_result
+ # => Fallback to backup service
 
-    - name: Fallback to tertiary service
-      ansible.builtin.uri:
-        url: https://tertiary.example.com/api
-        method: GET
-      when:
-        - primary_result is failed # => Primary failed
-        - secondary_result is failed # => Secondary also failed
-      # => Last resort fallback
+ - name: Fallback to tertiary service
+ ansible.builtin.uri:
+ url: https://tertiary.example.com/api
+ method: GET
+ when:
+ - primary_result is failed # => Primary failed
+ - secondary_result is failed # => Secondary also failed
+ # => Last resort fallback
 
-    # Fail playbook after recovery attempts
-    - name: Fail if all services unavailable
-      ansible.builtin.fail:
-        msg: "All API endpoints are unavailable"
-      when:
-        - primary_result is failed
-        - secondary_result is failed
-        - tertiary_result is failed
-      # => Explicit failure after exhausting recovery options
+ # Fail playbook after recovery attempts
+ - name: Fail if all services unavailable
+ ansible.builtin.fail:
+ msg: "All API endpoints are unavailable"
+ when:
+ - primary_result is failed
+ - secondary_result is failed
+ - tertiary_result is failed
+ # => Explicit failure after exhausting recovery options
 
-    # Retry pattern with ignore_errors
-    - name: Attempt flaky operation
-      ansible.builtin.command:
-        cmd: /usr/local/bin/flaky-script.sh
-      register: flaky_result
-      ignore_errors: true
-      # => First attempt (might fail)
+ # Retry pattern with ignore_errors
+ - name: Attempt flaky operation
+ ansible.builtin.command:
+ cmd: /usr/local/bin/flaky-script.sh
+ register: flaky_result
+ ignore_errors: true
+ # => First attempt (might fail)
 
-    - name: Retry flaky operation
-      ansible.builtin.command:
-        cmd: /usr/local/bin/flaky-script.sh
-      when: flaky_result is failed # => Retry if first attempt failed
-      register: retry_result
-      # => Second attempt
+ - name: Retry flaky operation
+ ansible.builtin.command:
+ cmd: /usr/local/bin/flaky-script.sh
+ when: flaky_result is failed # => Retry if first attempt failed
+ register: retry_result
+ # => Second attempt
 
-    - name: Final status
-      ansible.builtin.debug:
-        msg: "Operation {{ 'succeeded' if (flaky_result is success or retry_result is success) else 'failed after retry' }}"
+ - name: Final status
+ ansible.builtin.debug:
+ msg: "Operation {{ 'succeeded' if (flaky_result is success or retry_result is success) else 'failed after retry' }}"
 ```
 
 **Run**: `ansible-playbook error_handling.yml`
@@ -3230,21 +3228,21 @@ Blocks group tasks with unified error handling. `rescue` executes on failure, `a
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    A["Block Section"] --> B{Success?}
-    B -->|Success| C["Always Section"]
-    B -->|Failure| D["Rescue Section"]
-    D --> E{Rescue Success?}
-    E -->|Success| C
-    E -->|Failure| F["Playbook Fails"]
-    C --> G["Continue Playbook"]
+ A["Block Section"] --> B{Success?}
+ B -->|Success| C["Always Section"]
+ B -->|Failure| D["Rescue Section"]
+ D --> E{Rescue Success?}
+ E -->|Success| C
+ E -->|Failure| F["Playbook Fails"]
+ C --> G["Continue Playbook"]
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#fff
-    style D fill:#CC78BC,color:#fff
-    style C fill:#029E73,color:#fff
-    style E fill:#DE8F05,color:#fff
-    style F fill:#CA9161,color:#fff
-    style G fill:#029E73,color:#fff
+ style A fill:#0173B2,color:#fff
+ style B fill:#DE8F05,color:#fff
+ style D fill:#CC78BC,color:#fff
+ style C fill:#029E73,color:#fff
+ style E fill:#DE8F05,color:#fff
+ style F fill:#CA9161,color:#fff
+ style G fill:#029E73,color:#fff
 ```
 
 **Code**:
@@ -3253,145 +3251,145 @@ graph TD
 ---
 # block_rescue_always.yml
 - name: Block, Rescue, and Always
-  hosts: localhost
-  gather_facts: false
+ hosts: localhost
+ gather_facts: false
 
-  tasks:
-    # Pattern: Block with rescue and always sections
-    # => Try-catch-finally pattern for task groups
+ tasks:
+ # Pattern: Block with rescue and always sections
+ # => Try-catch-finally pattern for task groups
 
-    - name: Block example with error handling # => Grouped error handling
-      block: # => Try section (main execution path)
-        # Tasks in block execute sequentially
-        # First failure stops block, triggers rescue
+ - name: Block example with error handling # => Grouped error handling
+ block: # => Try section (main execution path)
+ # Tasks in block execute sequentially
+ # First failure stops block, triggers rescue
 
-        - name: Task that might fail # => Intentional failure for demo
-          ansible.builtin.command: # => Command module
-            cmd: /usr/bin/false # => Always fails (exit code 1)
-          # => failed: [localhost] (triggers rescue section)
-          # => Stops block execution immediately
-          # => Does NOT fail playbook (rescue handles it)
+ - name: Task that might fail # => Intentional failure for demo
+ ansible.builtin.command: # => Command module
+ cmd: /usr/bin/false # => Always fails (exit code 1)
+ # => failed: [localhost] (triggers rescue section)
+ # => Stops block execution immediately
+ # => Does NOT fail playbook (rescue handles it)
 
-        - name: This task won't execute # => Unreachable task
-          ansible.builtin.debug: # => Debug module
-            msg: "Skipped due to previous failure"
-          # => Skipped: Previous task failed, block execution stopped
-          # => Never executed when block fails
+ - name: This task won't execute # => Unreachable task
+ ansible.builtin.debug: # => Debug module
+ msg: "Skipped due to previous failure"
+ # => Skipped: Previous task failed, block execution stopped
+ # => Never executed when block fails
 
-      rescue: # => Catch section (error handling)
-        # Executes only if ANY task in block fails
-        # Rescue tasks execute sequentially
+ rescue: # => Catch section (error handling)
+ # Executes only if ANY task in block fails
+ # Rescue tasks execute sequentially
 
-        - name: Handle failure # => Error handler
-          ansible.builtin.debug: # => Debug module
-            msg: "Block failed, executing rescue tasks"
-          # => Executes when any block task fails
-          # => Recovery logic starts here
+ - name: Handle failure # => Error handler
+ ansible.builtin.debug: # => Debug module
+ msg: "Block failed, executing rescue tasks"
+ # => Executes when any block task fails
+ # => Recovery logic starts here
 
-        - name: Recovery action # => Remediation step
-          ansible.builtin.file: # => File module
-            path: /tmp/error_recovery.log # => Error log file
-            state: touch # => Create file
-          # => Create error log for audit trail
-          # => Recovery completed successfully
+ - name: Recovery action # => Remediation step
+ ansible.builtin.file: # => File module
+ path: /tmp/error_recovery.log # => Error log file
+ state: touch # => Create file
+ # => Create error log for audit trail
+ # => Recovery completed successfully
 
-      always: # => Finally section (cleanup)
-        # Executes ALWAYS: success or failure
-        # Runs after block OR rescue completes
+ always: # => Finally section (cleanup)
+ # Executes ALWAYS: success or failure
+ # Runs after block OR rescue completes
 
-        - name: Cleanup (always executes) # => Guaranteed cleanup
-          ansible.builtin.debug: # => Debug module
-            msg: "Cleanup executing regardless of success/failure"
-          # => Always executes, even if rescue fails
-          # => Guaranteed execution for cleanup operations
-          # => Similar to finally in try-catch-finally
+ - name: Cleanup (always executes) # => Guaranteed cleanup
+ ansible.builtin.debug: # => Debug module
+ msg: "Cleanup executing regardless of success/failure"
+ # => Always executes, even if rescue fails
+ # => Guaranteed execution for cleanup operations
+ # => Similar to finally in try-catch-finally
 
-    # Practical example: Database backup with rollback
-    - name: Database operation with rollback
-      block:
-        - name: Create backup snapshot
-          ansible.builtin.command:
-            cmd: pg_dump appdb > /tmp/backup.sql
-          # => Backup before risky operation
+ # Practical example: Database backup with rollback
+ - name: Database operation with rollback
+ block:
+ - name: Create backup snapshot
+ ansible.builtin.command:
+ cmd: pg_dump appdb > /tmp/backup.sql
+ # => Backup before risky operation
 
-        - name: Run database migration
-          ansible.builtin.command:
-            cmd: /usr/local/bin/migrate-database.sh
-          register: migration_result
-          # => Risky operation that might fail
+ - name: Run database migration
+ ansible.builtin.command:
+ cmd: /usr/local/bin/migrate-database.sh
+ register: migration_result
+ # => Risky operation that might fail
 
-        - name: Verify migration
-          ansible.builtin.command:
-            cmd: /usr/local/bin/verify-migration.sh
-          # => Validation step
+ - name: Verify migration
+ ansible.builtin.command:
+ cmd: /usr/local/bin/verify-migration.sh
+ # => Validation step
 
-      rescue:
-        - name: Restore from backup
-          ansible.builtin.command:
-            cmd: psql appdb < /tmp/backup.sql
-          # => Rollback on failure
+ rescue:
+ - name: Restore from backup
+ ansible.builtin.command:
+ cmd: psql appdb < /tmp/backup.sql
+ # => Rollback on failure
 
-        - name: Notify failure
-          ansible.builtin.debug:
-            msg: "Migration failed, database restored from backup"
+ - name: Notify failure
+ ansible.builtin.debug:
+ msg: "Migration failed, database restored from backup"
 
-      always:
-        - name: Remove backup file
-          ansible.builtin.file:
-            path: /tmp/backup.sql
-            state: absent
-          # => Cleanup backup regardless of outcome
+ always:
+ - name: Remove backup file
+ ansible.builtin.file:
+ path: /tmp/backup.sql
+ state: absent
+ # => Cleanup backup regardless of outcome
 
-    # Nested blocks
-    - name: Nested block example
-      block:
-        - name: Outer block task
-          ansible.builtin.debug:
-            msg: "Outer block executing"
+ # Nested blocks
+ - name: Nested block example
+ block:
+ - name: Outer block task
+ ansible.builtin.debug:
+ msg: "Outer block executing"
 
-        - name: Nested block with own error handling
-          block:
-            - name: Inner task
-              ansible.builtin.command:
-                cmd: /usr/bin/false
-              # => Fails, triggers inner rescue
+ - name: Nested block with own error handling
+ block:
+ - name: Inner task
+ ansible.builtin.command:
+ cmd: /usr/bin/false
+ # => Fails, triggers inner rescue
 
-          rescue:
-            - name: Inner rescue
-              ansible.builtin.debug:
-                msg: "Inner rescue executing"
-              # => Handles inner block failure
+ rescue:
+ - name: Inner rescue
+ ansible.builtin.debug:
+ msg: "Inner rescue executing"
+ # => Handles inner block failure
 
-          # Note: Inner block failure does NOT trigger outer rescue
-          # because inner rescue handled it successfully
+ # Note: Inner block failure does NOT trigger outer rescue
+ # because inner rescue handled it successfully
 
-      rescue:
-        - name: Outer rescue (won't execute)
-          ansible.builtin.debug:
-            msg: "Outer rescue (not reached)"
+ rescue:
+ - name: Outer rescue (won't execute)
+ ansible.builtin.debug:
+ msg: "Outer rescue (not reached)"
 
-      always:
-        - name: Outer always
-          ansible.builtin.debug:
-            msg: "Outer always executing"
-          # => Executes regardless of nested block outcome
+ always:
+ - name: Outer always
+ ansible.builtin.debug:
+ msg: "Outer always executing"
+ # => Executes regardless of nested block outcome
 
-    # Block with variables and conditions
-    - name: Conditional block execution
-      block:
-        - name: Production-only task 1
-          ansible.builtin.debug:
-            msg: "Production task executing"
+ # Block with variables and conditions
+ - name: Conditional block execution
+ block:
+ - name: Production-only task 1
+ ansible.builtin.debug:
+ msg: "Production task executing"
 
-        - name: Production-only task 2
-          ansible.builtin.debug:
-            msg: "Another production task"
+ - name: Production-only task 2
+ ansible.builtin.debug:
+ msg: "Another production task"
 
-      when: environment == "production" # => Entire block conditional
-      # => All block tasks skip if condition false
+ when: environment == "production" # => Entire block conditional
+ # => All block tasks skip if condition false
 
-      vars:
-        environment: staging # => Block-scoped variable
+ vars:
+ environment: staging # => Block-scoped variable
 ```
 
 **Run**: `ansible-playbook block_rescue_always.yml`
@@ -3412,162 +3410,162 @@ Use assertions to validate prerequisites, enforce invariants, and implement safe
 ---
 # assertions.yml
 - name: Assertions and Validations
-  hosts: localhost
-  gather_facts: true
+ hosts: localhost
+ gather_facts: true
 
-  vars:
-    required_memory_mb: 2048
-    required_disk_gb: 20
-    allowed_environments: [development, staging, production]
-    current_environment: production
+ vars:
+ required_memory_mb: 2048
+ required_disk_gb: 20
+ allowed_environments: [development, staging, production]
+ current_environment: production
 
-  tasks:
-    # Pattern 1: Simple assertion (single condition)
-    # => Validate prerequisite before proceeding
+ tasks:
+ # Pattern 1: Simple assertion (single condition)
+ # => Validate prerequisite before proceeding
 
-    - name: Assert Ansible version # => Version requirement check
-      ansible.builtin.assert: # => Assertion module
-        that: # => Condition list (all must be true)
-          - ansible_version.full is version('2.14', '>=') # => Version test
-          # => ansible_version.full: Current Ansible version fact
-          # => is version('2.14', '>='): Test if >= 2.14
-          # => Condition: Current version must be 2.14 or higher
-        fail_msg: "Ansible 2.14+ required, found {{ ansible_version.full }}" # => Failure message
-        # => Displayed if assertion fails
-        # => Includes current version for debugging
-        success_msg: "Ansible version check passed" # => Success message
-        # => Displayed if assertion passes
-      # => If condition false: Playbook fails with fail_msg
-      # => If condition true: Playbook continues with success_msg
-      # => Use case: Enforce minimum tool versions
+ - name: Assert Ansible version # => Version requirement check
+ ansible.builtin.assert: # => Assertion module
+ that: # => Condition list (all must be true)
+ - ansible_version.full is version('2.14', '>=') # => Version test
+ # => ansible_version.full: Current Ansible version fact
+ # => is version('2.14', '>='): Test if >= 2.14
+ # => Condition: Current version must be 2.14 or higher
+ fail_msg: "Ansible 2.14+ required, found {{ ansible_version.full }}" # => Failure message
+ # => Displayed if assertion fails
+ # => Includes current version for debugging
+ success_msg: "Ansible version check passed" # => Success message
+ # => Displayed if assertion passes
+ # => If condition false: Playbook fails with fail_msg
+ # => If condition true: Playbook continues with success_msg
+ # => Use case: Enforce minimum tool versions
 
-    # Pattern 2: Multiple conditions (all must be true)
-    # => Comprehensive system validation
-    - name: Assert system requirements # => Hardware prerequisite check
-      ansible.builtin.assert: # => Assertion module
-        that: # => Multiple conditions (AND logic)
-          - ansible_memtotal_mb >= required_memory_mb # => Memory check
-          # => ansible_memtotal_mb: Total system memory fact
-          # => required_memory_mb: 2048 (defined in vars)
-          # => Condition: System has 2GB+ RAM
-          - ansible_mounts | selectattr('mount', 'equalto', '/') | map(attribute='size_available') | first | int > required_disk_gb * 1024 * 1024 * 1024 # => Disk check
-          # => ansible_mounts: List of mounted filesystems
-          # => selectattr('mount', 'equalto', '/'): Filter for root mount
-          # => map(attribute='size_available'): Extract available space
-          # => | first: Get first result
-          # => | int: Convert to integer
-          # => > required_disk_gb * 1024^3: Compare with 20GB in bytes
-          - ansible_processor_vcpus >= 2 # => CPU check
-          # => ansible_processor_vcpus: vCPU count fact
-          # => Condition: System has 2+ CPUs
-        fail_msg: | # => Multi-line failure message
-          System requirements not met:
-          - Memory: {{ ansible_memtotal_mb }}MB (required: {{ required_memory_mb }}MB)
-          - CPUs: {{ ansible_processor_vcpus }} (required: 2+)
-        # => Shows actual vs required values for troubleshooting
-        success_msg: "System requirements validated" # => Success message
-      # => All conditions must pass for success
-      # => Any failure: Playbook stops with diagnostic info
-      # => Validates hardware before expensive deployment
+ # Pattern 2: Multiple conditions (all must be true)
+ # => Comprehensive system validation
+ - name: Assert system requirements # => Hardware prerequisite check
+ ansible.builtin.assert: # => Assertion module
+ that: # => Multiple conditions (AND logic)
+ - ansible_memtotal_mb >= required_memory_mb # => Memory check
+ # => ansible_memtotal_mb: Total system memory fact
+ # => required_memory_mb: 2048 (defined in vars)
+ # => Condition: System has 2GB+ RAM
+ - ansible_mounts | selectattr('mount', 'equalto', '/') | map(attribute='size_available') | first | int > required_disk_gb * 1024 * 1024 * 1024 # => Disk check
+ # => ansible_mounts: List of mounted filesystems
+ # => selectattr('mount', 'equalto', '/'): Filter for root mount
+ # => map(attribute='size_available'): Extract available space
+ # => | first: Get first result
+ # => | int: Convert to integer
+ # => > required_disk_gb * 1024^3: Compare with 20GB in bytes
+ - ansible_processor_vcpus >= 2 # => CPU check
+ # => ansible_processor_vcpus: vCPU count fact
+ # => Condition: System has 2+ CPUs
+ fail_msg: | # => Multi-line failure message
+ System requirements not met:
+ - Memory: {{ ansible_memtotal_mb }}MB (required: {{ required_memory_mb }}MB)
+ - CPUs: {{ ansible_processor_vcpus }} (required: 2+)
+ # => Shows actual vs required values for troubleshooting
+ success_msg: "System requirements validated" # => Success message
+ # => All conditions must pass for success
+ # => Any failure: Playbook stops with diagnostic info
+ # => Validates hardware before expensive deployment
 
-    # Pattern 3: Whitelist validation
-    # => Ensure value is in allowed set
-    - name: Assert valid environment # => Environment validation
-      ansible.builtin.assert: # => Assertion module
-        that: # => Condition list
-          - current_environment in allowed_environments # => Whitelist check
-          # => current_environment: production (from vars)
-          # => allowed_environments: [development, staging, production]
-          # => in operator: Membership test
-          # => Condition: Value must be in whitelist
-        fail_msg: "Invalid environment: {{ current_environment }}" # => Rejection message
-        # => Displays invalid environment value
-      # => Prevents typos: "prod" vs "production"
-      # => Prevents deployment to unknown environments
-      # => Security: Rejects unauthorized deployment targets
+ # Pattern 3: Whitelist validation
+ # => Ensure value is in allowed set
+ - name: Assert valid environment # => Environment validation
+ ansible.builtin.assert: # => Assertion module
+ that: # => Condition list
+ - current_environment in allowed_environments # => Whitelist check
+ # => current_environment: production (from vars)
+ # => allowed_environments: [development, staging, production]
+ # => in operator: Membership test
+ # => Condition: Value must be in whitelist
+ fail_msg: "Invalid environment: {{ current_environment }}" # => Rejection message
+ # => Displays invalid environment value
+ # => Prevents typos: "prod" vs "production"
+ # => Prevents deployment to unknown environments
+ # => Security: Rejects unauthorized deployment targets
 
-    # Validate file exists before operation
-    - name: Check if configuration exists
-      ansible.builtin.stat:
-        path: /etc/app/config.yml
-      register: config_file
+ # Validate file exists before operation
+ - name: Check if configuration exists
+ ansible.builtin.stat:
+ path: /etc/app/config.yml
+ register: config_file
 
-    - name: Assert configuration file exists
-      ansible.builtin.assert:
-        that:
-          - config_file.stat.exists
-          - config_file.stat.size > 0
-        fail_msg: "Configuration file missing or empty"
-      # => Fails early if config missing (before app deployment)
+ - name: Assert configuration file exists
+ ansible.builtin.assert:
+ that:
+ - config_file.stat.exists
+ - config_file.stat.size > 0
+ fail_msg: "Configuration file missing or empty"
+ # => Fails early if config missing (before app deployment)
 
-    # Validate service state
-    - name: Check current service status
-      ansible.builtin.systemd:
-        name: nginx
-      register: nginx_status
-      check_mode: true # => Read-only check
+ # Validate service state
+ - name: Check current service status
+ ansible.builtin.systemd:
+ name: nginx
+ register: nginx_status
+ check_mode: true # => Read-only check
 
-    - name: Assert service requirements
-      ansible.builtin.assert:
-        that:
-          - nginx_status.status.LoadState == "loaded"
-          - nginx_status.status.SubState == "running"
-        fail_msg: "Nginx not running properly"
-      # => Validates service state before dependent operations
+ - name: Assert service requirements
+ ansible.builtin.assert:
+ that:
+ - nginx_status.status.LoadState == "loaded"
+ - nginx_status.status.SubState == "running"
+ fail_msg: "Nginx not running properly"
+ # => Validates service state before dependent operations
 
-    # Validate database connection
-    - name: Test database connectivity
-      ansible.builtin.command:
-        cmd: pg_isready -h localhost -p 5432
-      register: db_check
-      failed_when: false
-      changed_when: false
+ # Validate database connection
+ - name: Test database connectivity
+ ansible.builtin.command:
+ cmd: pg_isready -h localhost -p 5432
+ register: db_check
+ failed_when: false
+ changed_when: false
 
-    - name: Assert database accessible
-      ansible.builtin.assert:
-        that:
-          - db_check.rc == 0
-        fail_msg: "Database not accessible on localhost:5432"
-      # => Validates connectivity before schema migrations
+ - name: Assert database accessible
+ ansible.builtin.assert:
+ that:
+ - db_check.rc == 0
+ fail_msg: "Database not accessible on localhost:5432"
+ # => Validates connectivity before schema migrations
 
-    # Validate variable types and format
-    - name: Assert variable types
-      ansible.builtin.assert:
-        that:
-          - app_port is defined
-          - app_port is number
-          - app_port >= 1024
-          - app_port <= 65535
-          - app_name is string
-          - app_name | length > 0
-        fail_msg: "Invalid variable types or values"
-      vars:
-        app_port: 8080
-        app_name: "MyApp"
-      # => Validates variable schemas before usage
+ # Validate variable types and format
+ - name: Assert variable types
+ ansible.builtin.assert:
+ that:
+ - app_port is defined
+ - app_port is number
+ - app_port >= 1024
+ - app_port <= 65535
+ - app_name is string
+ - app_name | length > 0
+ fail_msg: "Invalid variable types or values"
+ vars:
+ app_port: 8080
+ app_name: "MyApp"
+ # => Validates variable schemas before usage
 
-    # Conditional assertions (only in production)
-    - name: Production-specific checks
-      ansible.builtin.assert:
-        that:
-          - ssl_enabled == true
-          - debug_mode == false
-          - monitoring_enabled == true
-        fail_msg: "Production safety checks failed"
-      when: current_environment == "production"
-      vars:
-        ssl_enabled: true
-        debug_mode: false
-        monitoring_enabled: true
-      # => Enforces production safety requirements
+ # Conditional assertions (only in production)
+ - name: Production-specific checks
+ ansible.builtin.assert:
+ that:
+ - ssl_enabled == true
+ - debug_mode == false
+ - monitoring_enabled == true
+ fail_msg: "Production safety checks failed"
+ when: current_environment == "production"
+ vars:
+ ssl_enabled: true
+ debug_mode: false
+ monitoring_enabled: true
+ # => Enforces production safety requirements
 
-    # Assert with quiet mode
-    - name: Silent validation
-      ansible.builtin.assert:
-        that:
-          - ansible_distribution in ['Ubuntu', 'Debian', 'RedHat', 'CentOS']
-        quiet: true # => Only show output on failure
-      # => Reduces output noise for successful validations
+ # Assert with quiet mode
+ - name: Silent validation
+ ansible.builtin.assert:
+ that:
+ - ansible_distribution in ['Ubuntu', 'Debian', 'RedHat', 'CentOS']
+ quiet: true # => Only show output on failure
+ # => Reduces output noise for successful validations
 ```
 
 **Run**: `ansible-playbook assertions.yml`
@@ -3587,25 +3585,25 @@ Tags enable selective task execution without modifying playbooks. Run subsets of
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    A["Playbook with Tags"] --> B["Task 1: install"]
-    A --> C["Task 2: configure"]
-    A --> D["Task 3: always"]
-    A --> E["Task 4: never"]
+ A["Playbook with Tags"] --> B["Task 1: install"]
+ A --> C["Task 2: configure"]
+ A --> D["Task 3: always"]
+ A --> E["Task 4: never"]
 
-    F["--tags install"] --> G["Execute Task 1 Only"]
-    H["--tags configure"] --> I["Execute Task 2 Only"]
-    J["No Tags"] --> K["Execute All Except never"]
-    L["--tags never"] --> M["Execute Task 4 Only"]
+ F["--tags install"] --> G["Execute Task 1 Only"]
+ H["--tags configure"] --> I["Execute Task 2 Only"]
+ J["No Tags"] --> K["Execute All Except never"]
+ L["--tags never"] --> M["Execute Task 4 Only"]
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#fff
-    style C fill:#029E73,color:#fff
-    style D fill:#CC78BC,color:#fff
-    style E fill:#CA9161,color:#fff
-    style G fill:#DE8F05,color:#fff
-    style I fill:#029E73,color:#fff
-    style K fill:#CC78BC,color:#fff
-    style M fill:#CA9161,color:#fff
+ style A fill:#0173B2,color:#fff
+ style B fill:#DE8F05,color:#fff
+ style C fill:#029E73,color:#fff
+ style D fill:#CC78BC,color:#fff
+ style E fill:#CA9161,color:#fff
+ style G fill:#DE8F05,color:#fff
+ style I fill:#029E73,color:#fff
+ style K fill:#CC78BC,color:#fff
+ style M fill:#CA9161,color:#fff
 ```
 
 **Code**:
@@ -3614,100 +3612,100 @@ graph TD
 ---
 # task_tags.yml
 - name: Task Tagging Basics
-  hosts: localhost
-  gather_facts: false
+ hosts: localhost
+ gather_facts: false
 
-  tasks:
-    # Pattern 1: Single tag assignment
-    # => Basic task tagging
+ tasks:
+ # Pattern 1: Single tag assignment
+ # => Basic task tagging
 
-    - name: Install packages # => Installation task
-      ansible.builtin.package: # => Package module
-        name: nginx # => Package to install
-        state: present # => Ensure installed
-      tags: install # => Single tag assignment
-      # => tags: tagname (string format for single tag)
-      # => Run with: ansible-playbook playbook.yml --tags install
-      # => Only this task (and always-tagged tasks) execute
-      # => Skipped without --tags install
+ - name: Install packages # => Installation task
+ ansible.builtin.package: # => Package module
+ name: nginx # => Package to install
+ state: present # => Ensure installed
+ tags: install # => Single tag assignment
+ # => tags: tagname (string format for single tag)
+ # => Run with: ansible-playbook playbook.yml --tags install
+ # => Only this task (and always-tagged tasks) execute
+ # => Skipped without --tags install
 
-    # Pattern 2: Multiple tags on single task
-    # => Task belongs to multiple logical groups
-    - name: Configure nginx # => Configuration task
-      ansible.builtin.template: # => Template module
-        src: nginx.conf.j2 # => Template source
-        dest: /etc/nginx/nginx.conf # => Destination
-      tags: # => Multiple tags (list format)
-        - configure # => Configuration tag
-        - nginx # => Service-specific tag
-      # => Task has TWO tags: configure AND nginx
-      # => Run with: ansible-playbook playbook.yml --tags configure
-      # => Also runs with: ansible-playbook playbook.yml --tags nginx
-      # => Either tag triggers execution
+ # Pattern 2: Multiple tags on single task
+ # => Task belongs to multiple logical groups
+ - name: Configure nginx # => Configuration task
+ ansible.builtin.template: # => Template module
+ src: nginx.conf.j2 # => Template source
+ dest: /etc/nginx/nginx.conf # => Destination
+ tags: # => Multiple tags (list format)
+ - configure # => Configuration tag
+ - nginx # => Service-specific tag
+ # => Task has TWO tags: configure AND nginx
+ # => Run with: ansible-playbook playbook.yml --tags configure
+ # => Also runs with: ansible-playbook playbook.yml --tags nginx
+ # => Either tag triggers execution
 
-    # Pattern 3: Tagged task with handler notification
-    # => Tags affect task execution, handlers execute if notified
-    - name: Deploy application # => Deployment task
-      ansible.builtin.copy: # => Copy module
-        src: app.tar.gz # => Source archive
-        dest: /opt/app/ # => Deployment destination
-      tags: deploy # => Deployment tag
-      notify: restart app # => Handler notification
-      # => Task runs only with --tags deploy
-      # => If task changes, handler queued (even in tagged run)
-      # => Handler executes at play end
+ # Pattern 3: Tagged task with handler notification
+ # => Tags affect task execution, handlers execute if notified
+ - name: Deploy application # => Deployment task
+ ansible.builtin.copy: # => Copy module
+ src: app.tar.gz # => Source archive
+ dest: /opt/app/ # => Deployment destination
+ tags: deploy # => Deployment tag
+ notify: restart app # => Handler notification
+ # => Task runs only with --tags deploy
+ # => If task changes, handler queued (even in tagged run)
+ # => Handler executes at play end
 
-    # Pattern 4: Special tag "always"
-    # => Task ALWAYS executes (except with --skip-tags always)
-    - name: Verify system requirements # => Pre-flight check
-      ansible.builtin.assert: # => Assertion module
-        that: # => Condition list
-          - ansible_memtotal_mb >= 1024 # => Memory requirement
-      tags: always # => Special tag: always
-      # => always tag: Task runs in ALL tag scenarios
-      # => Runs with: No tags, --tags install, --tags configure, etc.
-      # => Skipped ONLY with: --skip-tags always
-      # => Use for: Pre-checks, validations, safety checks
+ # Pattern 4: Special tag "always"
+ # => Task ALWAYS executes (except with --skip-tags always)
+ - name: Verify system requirements # => Pre-flight check
+ ansible.builtin.assert: # => Assertion module
+ that: # => Condition list
+ - ansible_memtotal_mb >= 1024 # => Memory requirement
+ tags: always # => Special tag: always
+ # => always tag: Task runs in ALL tag scenarios
+ # => Runs with: No tags, --tags install, --tags configure, etc.
+ # => Skipped ONLY with: --skip-tags always
+ # => Use for: Pre-checks, validations, safety checks
 
-    # Pattern 5: Special tag "never"
-    # => Task NEVER executes (except with explicit --tags never)
-    - name: Dangerous operation # => High-risk task
-      ansible.builtin.command: # => Command module
-        cmd: rm -rf /tmp/cache/* # => Destructive operation
-      tags: never # => Special tag: never
-      # => never tag: Task skipped by default
-      # => Skipped with: No tags, --tags install, etc.
-      # => Runs ONLY with: --tags never (explicit)
-      # => Use for: Destructive ops, manual-only tasks
+ # Pattern 5: Special tag "never"
+ # => Task NEVER executes (except with explicit --tags never)
+ - name: Dangerous operation # => High-risk task
+ ansible.builtin.command: # => Command module
+ cmd: rm -rf /tmp/cache/* # => Destructive operation
+ tags: never # => Special tag: never
+ # => never tag: Task skipped by default
+ # => Skipped with: No tags, --tags install, etc.
+ # => Runs ONLY with: --tags never (explicit)
+ # => Use for: Destructive ops, manual-only tasks
 
-    # Pattern 6: Untagged task
-    # => Task runs in default (no-tags) execution
-    - name: Create log directory # => Utility task
-      ansible.builtin.file: # => File module
-        path: /var/log/app # => Log directory path
-        state: directory # => Ensure directory exists
-      # => No tags assigned (untagged)
-      # => Runs when: No --tags specified
-      # => Skipped when: --tags specified (unless always-tagged)
-      # => Default behavior: Execute untagged + always-tagged
+ # Pattern 6: Untagged task
+ # => Task runs in default (no-tags) execution
+ - name: Create log directory # => Utility task
+ ansible.builtin.file: # => File module
+ path: /var/log/app # => Log directory path
+ state: directory # => Ensure directory exists
+ # => No tags assigned (untagged)
+ # => Runs when: No --tags specified
+ # => Skipped when: --tags specified (unless always-tagged)
+ # => Default behavior: Execute untagged + always-tagged
 
-    # Multiple roles of same tag
-    - name: Update configuration
-      ansible.builtin.template:
-        src: app.conf.j2
-        dest: /etc/app/config.conf
-      tags:
-        - configure
-        - update
-      # => Runs with either --tags configure OR --tags update
+ # Multiple roles of same tag
+ - name: Update configuration
+ ansible.builtin.template:
+ src: app.conf.j2
+ dest: /etc/app/config.conf
+ tags:
+ - configure
+ - update
+ # => Runs with either --tags configure OR --tags update
 
-  handlers:
-    - name: restart app
-      ansible.builtin.service:
-        name: app
-        state: restarted
-      tags: always # => Handler inherits tags from notifying task
-      # => Executes if notifying task runs and changes
+ handlers:
+ - name: restart app
+ ansible.builtin.service:
+ name: app
+ state: restarted
+ tags: always # => Handler inherits tags from notifying task
+ # => Executes if notifying task runs and changes
 ```
 
 **Run with tags**:
@@ -3737,7 +3735,7 @@ ansible-playbook task_tags.yml --tags configure --skip-tags never
 
 **Key Takeaway**: Tags enable surgical playbook execution without code changes. Use `always` tag for tasks that must run every time (validations, checks). Use `never` tag for dangerous operations requiring explicit opt-in. Tasks can have multiple tags for flexible grouping. Handlers inherit tags from notifying tasks. Tags are a runtime feature—playbook code remains unchanged.
 
-**Why It Matters**: Tags enable selective playbook execution for faster iteration and targeted operations. Deploy only database changes with `--tags database`, skip slow integration tests with `--skip-tags tests`. Production hotfixes run tagged tasks to patch vulnerabilities in minutes without full infrastructure reconfiguration. This pattern reduces deployment time from 30 minutes to 2 minutes for focused changes.
+**Why It Matters**: Tags enable selective playbook execution for faster iteration and targeted operations. Deploy only database changes with `--tags database`, skip slow integration tests with `--skip-tags tests`. Production hotfixes run tagged tasks to patch vulnerabilities in minutes without full infrastructure reconfiguration. This pattern reduces deployment time for focused changes.
 
 ---
 
@@ -3753,22 +3751,22 @@ Apply tags to entire plays or roles for coarse-grained control. Tags cascade to 
 ---
 # Webserver role tasks
 - name: Install web server
-  ansible.builtin.package:
-    name: nginx
-    state: present
-  tags: install # => Task-level tag
+ ansible.builtin.package:
+ name: nginx
+ state: present
+ tags: install # => Task-level tag
 
 - name: Configure web server
-  ansible.builtin.template:
-    src: nginx.conf.j2
-    dest: /etc/nginx/nginx.conf
-  tags: configure
+ ansible.builtin.template:
+ src: nginx.conf.j2
+ dest: /etc/nginx/nginx.conf
+ tags: configure
 
 - name: Start web server
-  ansible.builtin.service:
-    name: nginx
-    state: started
-  tags: service
+ ansible.builtin.service:
+ name: nginx
+ state: started
+ tags: service
 ```
 
 **Playbook with role and play tags**:
@@ -3782,105 +3780,105 @@ Apply tags to entire plays or roles for coarse-grained control. Tags cascade to 
 # => All tasks in play inherit play tags
 
 - name: Setup Phase # => Play name
-  hosts: localhost # => Target hosts
-  gather_facts: true # => Gather facts
-  tags: setup # => Play-level tag
-  # => tags: setup (at play level)
-  # => Applies to ALL tasks/roles in this play
-  # => Inheritance: Every task gets 'setup' tag automatically
+ hosts: localhost # => Target hosts
+ gather_facts: true # => Gather facts
+ tags: setup # => Play-level tag
+ # => tags: setup (at play level)
+ # => Applies to ALL tasks/roles in this play
+ # => Inheritance: Every task gets 'setup' tag automatically
 
-  tasks:
-    - name: Update package cache # => APT cache refresh
-      ansible.builtin.apt: # => APT module (Debian/Ubuntu)
-        update_cache: true # => Run apt-get update
-      when: ansible_os_family == "Debian" # => Conditional execution
-      # => Tags for this task: ['setup'] (inherited from play)
-      # => Run with: --tags setup
-      # => No additional task-level tags
+ tasks:
+ - name: Update package cache # => APT cache refresh
+ ansible.builtin.apt: # => APT module (Debian/Ubuntu)
+ update_cache: true # => Run apt-get update
+ when: ansible_os_family == "Debian" # => Conditional execution
+ # => Tags for this task: ['setup'] (inherited from play)
+ # => Run with: --tags setup
+ # => No additional task-level tags
 
-    - name: Install common packages # => Package installation
-      ansible.builtin.package: # => Package module
-        name: # => Package list
-          - curl # => HTTP client
-          - vim # => Text editor
-        state: present # => Ensure installed
-      # => Tags for this task: ['setup'] (inherited from play)
-      # => Also runs with: --tags setup
-      # => All tasks in 'Setup Phase' play share 'setup' tag
+ - name: Install common packages # => Package installation
+ ansible.builtin.package: # => Package module
+ name: # => Package list
+ - curl # => HTTP client
+ - vim # => Text editor
+ state: present # => Ensure installed
+ # => Tags for this task: ['setup'] (inherited from play)
+ # => Also runs with: --tags setup
+ # => All tasks in 'Setup Phase' play share 'setup' tag
 
 # Play 2: Role with tags
 # => Demonstrates role-level tagging
 - name: Deploy Web Server # => Play name
-  hosts: localhost # => Target hosts
-  become: true # => Escalate privileges
-  tags: webserver # => Play-level tag
-  # => tags: webserver (at play level)
-  # => All tasks/roles in this play inherit 'webserver'
+ hosts: localhost # => Target hosts
+ become: true # => Escalate privileges
+ tags: webserver # => Play-level tag
+ # => tags: webserver (at play level)
+ # => All tasks/roles in this play inherit 'webserver'
 
-  roles:
-    - role: webserver # => Apply webserver role
-      tags: web # => Role-level tag (in addition to play tag)
-      # => Role-level tags add to play-level tags
-      # => Tasks in webserver role have TWO tag sources:
-      # =>   1. 'webserver' (inherited from play)
-      # =>   2. 'web' (applied at role level)
-      # => Effective tags for role tasks:
-      # =>   - Task with tags: install → ['webserver', 'web', 'install']
-      # =>   - Task with tags: configure → ['webserver', 'web', 'configure']
-      # =>   - Task with tags: service → ['webserver', 'web', 'service']
-      # => Run entire role: --tags webserver OR --tags web
-      # => Run specific task: --tags install (gets all 3 tags)
-  # => Can run with --tags webserver OR --tags web
+ roles:
+ - role: webserver # => Apply webserver role
+ tags: web # => Role-level tag (in addition to play tag)
+ # => Role-level tags add to play-level tags
+ # => Tasks in webserver role have TWO tag sources:
+ # => 1. 'webserver' (inherited from play)
+ # => 2. 'web' (applied at role level)
+ # => Effective tags for role tasks:
+ # => - Task with tags: install → ['webserver', 'web', 'install']
+ # => - Task with tags: configure → ['webserver', 'web', 'configure']
+ # => - Task with tags: service → ['webserver', 'web', 'service']
+ # => Run entire role: --tags webserver OR --tags web
+ # => Run specific task: --tags install (gets all 3 tags)
+ # => Can run with --tags webserver OR --tags web
 
 # Play 3: Multiple roles with different tags
 - name: Deploy Application Stack
-  hosts: localhost
-  become: true
+ hosts: localhost
+ become: true
 
-  roles:
-    - role: database
-      tags: database # => Only database role
+ roles:
+ - role: database
+ tags: database # => Only database role
 
-    - role: cache
-      tags: cache # => Only cache role
+ - role: cache
+ tags: cache # => Only cache role
 
-    - role: application
-      tags:
-        - app # => Multiple role tags
-        - deploy
+ - role: application
+ tags:
+ - app # => Multiple role tags
+ - deploy
 
 # Play 4: Mixed tagged and untagged tasks
 - name: Configuration Phase
-  hosts: localhost
-  tags: config
+ hosts: localhost
+ tags: config
 
-  tasks:
-    - name: Tagged task within tagged play
-      ansible.builtin.debug:
-        msg: "Has both 'config' (play) and 'important' (task) tags"
-      tags: important
-      # => Has tags: config, important
+ tasks:
+ - name: Tagged task within tagged play
+ ansible.builtin.debug:
+ msg: "Has both 'config' (play) and 'important' (task) tags"
+ tags: important
+ # => Has tags: config, important
 
-    - name: Untagged task in tagged play
-      ansible.builtin.debug:
-        msg: "Only has 'config' tag from play"
-      # => Has tags: config
+ - name: Untagged task in tagged play
+ ansible.builtin.debug:
+ msg: "Only has 'config' tag from play"
+ # => Has tags: config
 
 # Play 5: Tag inheritance demonstration
 - name: Tag Inheritance
-  hosts: localhost
-  tags:
-    - phase1
-    - initialization
+ hosts: localhost
+ tags:
+ - phase1
+ - initialization
 
-  tasks:
-    - name: Task with additional tags
-      ansible.builtin.debug:
-        msg: "Multiple inherited and task tags"
-      tags:
-        - step1
-        - critical
-      # => Has tags: phase1, initialization, step1, critical
+ tasks:
+ - name: Task with additional tags
+ ansible.builtin.debug:
+ msg: "Multiple inherited and task tags"
+ tags:
+ - step1
+ - critical
+ # => Has tags: phase1, initialization, step1, critical
 ```
 
 **Run with various tag combinations**:
@@ -3929,177 +3927,177 @@ Design playbooks with tag-based workflows for common operational scenarios: depl
 ---
 # tag_workflows.yml
 - name: Application Deployment Workflow
-  hosts: localhost
-  become: true
-  gather_facts: true
+ hosts: localhost
+ become: true
+ gather_facts: true
 
-  vars:
-    app_version: "2.1.0"
-    app_user: appuser
+ vars:
+ app_version: "2.1.0"
+ app_user: appuser
 
-  tasks:
-    # Pre-deployment checks (always run)
-    - name: Verify system requirements
-      ansible.builtin.assert:
-        that:
-          - ansible_memtotal_mb >= 2048
-          - ansible_mounts | selectattr('mount', 'equalto', '/') | map(attribute='size_available') | first | int > 10000000000
-      tags: always
-      # => Runs with any tag combination
+ tasks:
+ # Pre-deployment checks (always run)
+ - name: Verify system requirements
+ ansible.builtin.assert:
+ that:
+ - ansible_memtotal_mb >= 2048
+ - ansible_mounts | selectattr('mount', 'equalto', '/') | map(attribute='size_available') | first | int > 10000000000
+ tags: always
+ # => Runs with any tag combination
 
-    # Backup phase
-    - name: Create backup directory
-      ansible.builtin.file:
-        path: /backup/{{ ansible_date_time.date }}
-        state: directory
-      tags:
-        - backup
-        - rollback # => Also needed for rollback
+ # Backup phase
+ - name: Create backup directory
+ ansible.builtin.file:
+ path: /backup/{{ ansible_date_time.date }}
+ state: directory
+ tags:
+ - backup
+ - rollback # => Also needed for rollback
 
-    - name: Backup application
-      ansible.builtin.command:
-        cmd: tar czf /backup/{{ ansible_date_time.date }}/app-backup.tar.gz /opt/app
-      tags:
-        - backup
-        - rollback
-      # => ansible-playbook playbook.yml --tags backup
+ - name: Backup application
+ ansible.builtin.command:
+ cmd: tar czf /backup/{{ ansible_date_time.date }}/app-backup.tar.gz /opt/app
+ tags:
+ - backup
+ - rollback
+ # => ansible-playbook playbook.yml --tags backup
 
-    # Deployment phase
-    - name: Stop application
-      ansible.builtin.service:
-        name: app
-        state: stopped
-      tags: deploy
-      # => ansible-playbook playbook.yml --tags deploy
+ # Deployment phase
+ - name: Stop application
+ ansible.builtin.service:
+ name: app
+ state: stopped
+ tags: deploy
+ # => ansible-playbook playbook.yml --tags deploy
 
-    - name: Deploy new version
-      ansible.builtin.unarchive:
-        src: /tmp/app-{{ app_version }}.tar.gz
-        dest: /opt/app
-        owner: "{{ app_user }}"
-      tags: deploy
+ - name: Deploy new version
+ ansible.builtin.unarchive:
+ src: /tmp/app-{{ app_version }}.tar.gz
+ dest: /opt/app
+ owner: "{{ app_user }}"
+ tags: deploy
 
-    - name: Update configuration
-      ansible.builtin.template:
-        src: app.conf.j2
-        dest: /etc/app/config.conf
-      tags:
-        - deploy
-        - config # => Can update config independently
+ - name: Update configuration
+ ansible.builtin.template:
+ src: app.conf.j2
+ dest: /etc/app/config.conf
+ tags:
+ - deploy
+ - config # => Can update config independently
 
-    - name: Run database migrations
-      ansible.builtin.command:
-        cmd: /opt/app/bin/migrate
-      tags:
-        - deploy
-        - migration
-      # => ansible-playbook playbook.yml --tags migration (run migrations only)
+ - name: Run database migrations
+ ansible.builtin.command:
+ cmd: /opt/app/bin/migrate
+ tags:
+ - deploy
+ - migration
+ # => ansible-playbook playbook.yml --tags migration (run migrations only)
 
-    - name: Start application
-      ansible.builtin.service:
-        name: app
-        state: started
-      tags:
-        - deploy
-        - restart # => Quick restart without full deploy
-      # => ansible-playbook playbook.yml --tags restart
+ - name: Start application
+ ansible.builtin.service:
+ name: app
+ state: started
+ tags:
+ - deploy
+ - restart # => Quick restart without full deploy
+ # => ansible-playbook playbook.yml --tags restart
 
-    # Health check phase
-    - name: Wait for application startup
-      ansible.builtin.wait_for:
-        host: localhost
-        port: 8080
-        delay: 5
-        timeout: 60
-      tags:
-        - deploy
-        - health_check
-        - verify
-      # => ansible-playbook playbook.yml --tags health_check
+ # Health check phase
+ - name: Wait for application startup
+ ansible.builtin.wait_for:
+ host: localhost
+ port: 8080
+ delay: 5
+ timeout: 60
+ tags:
+ - deploy
+ - health_check
+ - verify
+ # => ansible-playbook playbook.yml --tags health_check
 
-    - name: Verify application health
-      ansible.builtin.uri:
-        url: http://localhost:8080/health
-        return_content: true
-      register: health_response
-      tags:
-        - deploy
-        - health_check
-        - verify
+ - name: Verify application health
+ ansible.builtin.uri:
+ url: http://localhost:8080/health
+ return_content: true
+ register: health_response
+ tags:
+ - deploy
+ - health_check
+ - verify
 
-    - name: Assert healthy status
-      ansible.builtin.assert:
-        that:
-          - health_response.status == 200
-          - "'healthy' in health_response.content"
-      tags:
-        - deploy
-        - health_check
-        - verify
+ - name: Assert healthy status
+ ansible.builtin.assert:
+ that:
+ - health_response.status == 200
+ - "'healthy' in health_response.content"
+ tags:
+ - deploy
+ - health_check
+ - verify
 
-    # Rollback phase (never runs unless explicitly tagged)
-    - name: Stop application (rollback)
-      ansible.builtin.service:
-        name: app
-        state: stopped
-      tags:
-        - rollback
-        - never # => Requires --tags rollback
+ # Rollback phase (never runs unless explicitly tagged)
+ - name: Stop application (rollback)
+ ansible.builtin.service:
+ name: app
+ state: stopped
+ tags:
+ - rollback
+ - never # => Requires --tags rollback
 
-    - name: Restore from backup
-      ansible.builtin.unarchive:
-        src: /backup/{{ ansible_date_time.date }}/app-backup.tar.gz
-        dest: /
-        remote_src: true
-      tags:
-        - rollback
-        - never
+ - name: Restore from backup
+ ansible.builtin.unarchive:
+ src: /backup/{{ ansible_date_time.date }}/app-backup.tar.gz
+ dest: /
+ remote_src: true
+ tags:
+ - rollback
+ - never
 
-    - name: Start application (rollback)
-      ansible.builtin.service:
-        name: app
-        state: started
-      tags:
-        - rollback
-        - never
+ - name: Start application (rollback)
+ ansible.builtin.service:
+ name: app
+ state: started
+ tags:
+ - rollback
+ - never
 
-    # Maintenance mode
-    - name: Enable maintenance page
-      ansible.builtin.copy:
-        src: maintenance.html
-        dest: /var/www/html/index.html
-      tags:
-        - maintenance
-        - never
-      # => ansible-playbook playbook.yml --tags maintenance
+ # Maintenance mode
+ - name: Enable maintenance page
+ ansible.builtin.copy:
+ src: maintenance.html
+ dest: /var/www/html/index.html
+ tags:
+ - maintenance
+ - never
+ # => ansible-playbook playbook.yml --tags maintenance
 
-    - name: Disable maintenance page
-      ansible.builtin.file:
-        path: /var/www/html/index.html
-        state: absent
-      tags:
-        - unmaintenance
-        - never
+ - name: Disable maintenance page
+ ansible.builtin.file:
+ path: /var/www/html/index.html
+ state: absent
+ tags:
+ - unmaintenance
+ - never
 
-    # Cleanup phase
-    - name: Remove old backups
-      ansible.builtin.find:
-        paths: /backup
-        age: 7d
-        file_type: directory
-      register: old_backups
-      tags:
-        - cleanup
-        - never
+ # Cleanup phase
+ - name: Remove old backups
+ ansible.builtin.find:
+ paths: /backup
+ age: 7d
+ file_type: directory
+ register: old_backups
+ tags:
+ - cleanup
+ - never
 
-    - name: Delete old backups
-      ansible.builtin.file:
-        path: "{{ item.path }}"
-        state: absent
-      loop: "{{ old_backups.files }}"
-      tags:
-        - cleanup
-        - never
+ - name: Delete old backups
+ ansible.builtin.file:
+ path: "{{ item.path }}"
+ state: absent
+ loop: "{{ old_backups.files }}"
+ tags:
+ - cleanup
+ - never
 ```
 
 **Workflow execution scenarios**:
@@ -4149,145 +4147,145 @@ Delegate tasks to different hosts or execute once across group. Control task exe
 ---
 # delegation.yml
 - name: Task Delegation and Run Once
-  hosts: webservers # => Target host group
-  gather_facts: true
+ hosts: webservers # => Target host group
+ gather_facts: true
 
-  tasks:
-    # Pattern 1: Regular task (default behavior)
-    # => Task executes on target hosts (webservers)
+ tasks:
+ # Pattern 1: Regular task (default behavior)
+ # => Task executes on target hosts (webservers)
 
-    - name: Install nginx on webservers # => Standard task execution
-      ansible.builtin.package: # => Package module
-        name: nginx # => Package name
-        state: present # => Ensure installed
-      # => Execution: Runs on ALL hosts in webservers group
-      # => If webservers = [web1, web2, web3]:
-      # =>   - Executes on web1
-      # =>   - Executes on web2
-      # =>   - Executes on web3
-      # => Default behavior: Task runs on play's target hosts
+ - name: Install nginx on webservers # => Standard task execution
+ ansible.builtin.package: # => Package module
+ name: nginx # => Package name
+ state: present # => Ensure installed
+ # => Execution: Runs on ALL hosts in webservers group
+ # => If webservers = [web1, web2, web3]:
+ # => - Executes on web1
+ # => - Executes on web2
+ # => - Executes on web3
+ # => Default behavior: Task runs on play's target hosts
 
-    # Pattern 2: Delegate to specific host
-    # => Task executes on different host than play target
-    - name: Update load balancer configuration # => Cross-host operation
-      ansible.builtin.template: # => Template module
-        src: backend.conf.j2 # => Template source
-        dest: /etc/haproxy/backends.conf # => Destination path
-      delegate_to: loadbalancer.example.com # => Execution delegation
-      # => delegate_to: Execute on this host instead of play target
-      # => Task runs on: loadbalancer.example.com
-      # => Context: Still has webserver's variables/facts
-      # => Loop behavior: Executes on loadbalancer ONCE PER webserver
-      # =>   - web1 triggers update on loadbalancer
-      # =>   - web2 triggers update on loadbalancer (overwrites)
-      # =>   - web3 triggers update on loadbalancer (overwrites)
-      # => Use with run_once to prevent overwrites
+ # Pattern 2: Delegate to specific host
+ # => Task executes on different host than play target
+ - name: Update load balancer configuration # => Cross-host operation
+ ansible.builtin.template: # => Template module
+ src: backend.conf.j2 # => Template source
+ dest: /etc/haproxy/backends.conf # => Destination path
+ delegate_to: loadbalancer.example.com # => Execution delegation
+ # => delegate_to: Execute on this host instead of play target
+ # => Task runs on: loadbalancer.example.com
+ # => Context: Still has webserver's variables/facts
+ # => Loop behavior: Executes on loadbalancer ONCE PER webserver
+ # => - web1 triggers update on loadbalancer
+ # => - web2 triggers update on loadbalancer (overwrites)
+ # => - web3 triggers update on loadbalancer (overwrites)
+ # => Use with run_once to prevent overwrites
 
-    # Pattern 3: Delegate to localhost (control node)
-    # => Task executes on Ansible control machine
-    - name: Generate report on control node # => Local file creation
-      ansible.builtin.copy: # => Copy module
-        dest: /tmp/webserver_report.txt # => Destination on control node
-        content: | # => Multi-line content
-          Webserver: {{ inventory_hostname }}
-          IP: {{ ansible_default_ipv4.address }}
-          Memory: {{ ansible_memtotal_mb }}MB
-      delegate_to: localhost # => Execute on control machine
-      # => Task runs on: Control node (Ansible machine)
-      # => Has access to: Current webserver's facts/variables
-      # => Loop behavior: Creates file ONCE PER webserver
-      # =>   - web1 creates /tmp/webserver_report.txt (overwrites)
-      # =>   - web2 creates /tmp/webserver_report.txt (overwrites)
-      # =>   - web3 creates /tmp/webserver_report.txt (overwrites)
-      # => Final file contains only web3 data (last iteration)
+ # Pattern 3: Delegate to localhost (control node)
+ # => Task executes on Ansible control machine
+ - name: Generate report on control node # => Local file creation
+ ansible.builtin.copy: # => Copy module
+ dest: /tmp/webserver_report.txt # => Destination on control node
+ content: | # => Multi-line content
+ Webserver: {{ inventory_hostname }}
+ IP: {{ ansible_default_ipv4.address }}
+ Memory: {{ ansible_memtotal_mb }}MB
+ delegate_to: localhost # => Execute on control machine
+ # => Task runs on: Control node (Ansible machine)
+ # => Has access to: Current webserver's facts/variables
+ # => Loop behavior: Creates file ONCE PER webserver
+ # => - web1 creates /tmp/webserver_report.txt (overwrites)
+ # => - web2 creates /tmp/webserver_report.txt (overwrites)
+ # => - web3 creates /tmp/webserver_report.txt (overwrites)
+ # => Final file contains only web3 data (last iteration)
 
-    # Pattern 4: Run once across all hosts
-    # => Task executes on first host only, skips rest
-    - name: Database migration (run once) # => Singleton operation
-      ansible.builtin.command: # => Command module
-        cmd: /usr/local/bin/migrate-database.sh # => Migration script
-      run_once: true # => Execute on first host only
-      # => run_once: true: Prevents duplicate execution
-      # => Execution: Runs on web1 (first host in group)
-      # => Skipped: web2, web3, ... (all other hosts)
-      # => Use case: Database migrations, one-time setup tasks
-      # => Rationale: Migration should run exactly once, not per server
+ # Pattern 4: Run once across all hosts
+ # => Task executes on first host only, skips rest
+ - name: Database migration (run once) # => Singleton operation
+ ansible.builtin.command: # => Command module
+ cmd: /usr/local/bin/migrate-database.sh # => Migration script
+ run_once: true # => Execute on first host only
+ # => run_once: true: Prevents duplicate execution
+ # => Execution: Runs on web1 (first host in group)
+ # => Skipped: web2, web3.. (all other hosts)
+ # => Use case: Database migrations, one-time setup tasks
+ # => Rationale: Migration should run exactly once, not per server
 
-    # Pattern 5: Run once with delegation (combined)
-    # => Task executes once on delegated host
-    - name: Notify external service (run once) # => External API call
-      ansible.builtin.uri: # => HTTP module
-        url: https://api.example.com/deployment # => API endpoint
-        method: POST # => HTTP method
-        body_format: json # => JSON payload
-        body: # => Request body
-          event: deployment_started # => Event type
-          timestamp: "{{ ansible_date_time.iso8601 }}" # => Timestamp
-      run_once: true # => Execute once (not per host)
-      delegate_to: localhost # => Execute on control node
-      # => Combination:
-      # =>   run_once: Execute once only (not 3 times for 3 webservers)
-      # =>   delegate_to: Execute on control node
-      # => Result: Single API call from control machine
-      # => No duplicate notifications regardless of webserver count
-      # => Use case: Slack notifications, monitoring alerts
+ # Pattern 5: Run once with delegation (combined)
+ # => Task executes once on delegated host
+ - name: Notify external service (run once) # => External API call
+ ansible.builtin.uri: # => HTTP module
+ url: https://api.example.com/deployment # => API endpoint
+ method: POST # => HTTP method
+ body_format: json # => JSON payload
+ body: # => Request body
+ event: deployment_started # => Event type
+ timestamp: "{{ ansible_date_time.iso8601 }}" # => Timestamp
+ run_once: true # => Execute once (not per host)
+ delegate_to: localhost # => Execute on control node
+ # => Combination:
+ # => run_once: Execute once only (not 3 times for 3 webservers)
+ # => delegate_to: Execute on control node
+ # => Result: Single API call from control machine
+ # => No duplicate notifications regardless of webserver count
+ # => Use case: Slack notifications, monitoring alerts
 
-    # Pattern 6: Local action (shorthand for delegate_to: localhost)
-    # => Syntactic sugar for common delegation pattern
-    - name: Create local backup directory # => Local directory creation
-      ansible.builtin.file: # => File module
-        path: /tmp/backups/{{ inventory_hostname }} # => Directory path
-        state: directory
-      delegate_to: localhost
-      # => Creates directory on control node for each webserver
+ # Pattern 6: Local action (shorthand for delegate_to: localhost)
+ # => Syntactic sugar for common delegation pattern
+ - name: Create local backup directory # => Local directory creation
+ ansible.builtin.file: # => File module
+ path: /tmp/backups/{{ inventory_hostname }} # => Directory path
+ state: directory
+ delegate_to: localhost
+ # => Creates directory on control node for each webserver
 
-    # Delegate facts gathering
-    - name: Gather facts from database server
-      ansible.builtin.setup:
-      delegate_to: db.example.com
-      delegate_facts: true # => Store facts under db.example.com, not webserver
-      # => Collects db.example.com facts accessible via hostvars['db.example.com']
+ # Delegate facts gathering
+ - name: Gather facts from database server
+ ansible.builtin.setup:
+ delegate_to: db.example.com
+ delegate_facts: true # => Store facts under db.example.com, not webserver
+ # => Collects db.example.com facts accessible via hostvars['db.example.com']
 
-    # Use delegated facts
-    - name: Configure database connection
-      ansible.builtin.template:
-        src: db_config.j2
-        dest: /etc/app/database.conf
-        content: |
-          host={{ hostvars['db.example.com'].ansible_default_ipv4.address }}
-          port=5432
-      # => Uses database server IP from delegated facts
+ # Use delegated facts
+ - name: Configure database connection
+ ansible.builtin.template:
+ src: db_config.j2
+ dest: /etc/app/database.conf
+ content: |
+ host={{ hostvars['db.example.com'].ansible_default_ipv4.address }}
+ port=5432
+ # => Uses database server IP from delegated facts
 
-    # Delegate with connection override
-    - name: Execute on remote via specific connection
-      ansible.builtin.command:
-        cmd: kubectl get pods
-      delegate_to: k8s-master.example.com
-      vars:
-        ansible_connection: ssh
-        ansible_user: k8s-admin
-      # => Overrides connection parameters for delegation
+ # Delegate with connection override
+ - name: Execute on remote via specific connection
+ ansible.builtin.command:
+ cmd: kubectl get pods
+ delegate_to: k8s-master.example.com
+ vars:
+ ansible_connection: ssh
+ ansible_user: k8s-admin
+ # => Overrides connection parameters for delegation
 
-    # Run once with conditional
-    - name: Conditional run-once task
-      ansible.builtin.debug:
-        msg: "First production webserver: {{ inventory_hostname }}"
-      run_once: true
-      when: "'production' in group_names"
-      # => Runs once on first host matching condition
+ # Run once with conditional
+ - name: Conditional run-once task
+ ansible.builtin.debug:
+ msg: "First production webserver: {{ inventory_hostname }}"
+ run_once: true
+ when: "'production' in group_names"
+ # => Runs once on first host matching condition
 
-    # Delegate to inventory group member
-    - name: Update monitoring server
-      ansible.builtin.uri:
-        url: http://{{ item }}/api/register
-        method: POST
-        body_format: json
-        body:
-          hostname: "{{ inventory_hostname }}"
-          ip: "{{ ansible_default_ipv4.address }}"
-      delegate_to: "{{ item }}"
-      loop: "{{ groups['monitoring'] }}" # => Delegate to each monitoring server
-      # => Registers this webserver with all monitoring servers
+ # Delegate to inventory group member
+ - name: Update monitoring server
+ ansible.builtin.uri:
+ url: http://{{ item }}/api/register
+ method: POST
+ body_format: json
+ body:
+ hostname: "{{ inventory_hostname }}"
+ ip: "{{ ansible_default_ipv4.address }}"
+ delegate_to: "{{ item }}"
+ loop: "{{ groups['monitoring'] }}" # => Delegate to each monitoring server
+ # => Registers this webserver with all monitoring servers
 ```
 
 **Practical scenarios**:
@@ -4296,27 +4294,27 @@ Delegate tasks to different hosts or execute once across group. Control task exe
 ---
 # Rolling deployment with load balancer
 - hosts: webservers
-  serial: 1 # => One host at a time
+ serial: 1 # => One host at a time
 
-  tasks:
-    # Remove from load balancer
-    - name: Disable server in load balancer
-      ansible.builtin.command:
-        cmd: /usr/local/bin/lb-disable {{ inventory_hostname }}
-      delegate_to: loadbalancer.example.com
-      # => Runs on LB for current webserver
+ tasks:
+ # Remove from load balancer
+ - name: Disable server in load balancer
+ ansible.builtin.command:
+ cmd: /usr/local/bin/lb-disable {{ inventory_hostname }}
+ delegate_to: loadbalancer.example.com
+ # => Runs on LB for current webserver
 
-    # Update application
-    - name: Deploy new version
-      ansible.builtin.copy:
-        src: /tmp/app.tar.gz
-        dest: /opt/app/
+ # Update application
+ - name: Deploy new version
+ ansible.builtin.copy:
+ src: /tmp/app.tar.gz
+ dest: /opt/app/
 
-    # Add back to load balancer
-    - name: Enable server in load balancer
-      ansible.builtin.command:
-        cmd: /usr/local/bin/lb-enable {{ inventory_hostname }}
-      delegate_to: loadbalancer.example.com
+ # Add back to load balancer
+ - name: Enable server in load balancer
+ ansible.builtin.command:
+ cmd: /usr/local/bin/lb-enable {{ inventory_hostname }}
+ delegate_to: loadbalancer.example.com
 ```
 
 **Run**: `ansible-playbook -i inventory delegation.yml`

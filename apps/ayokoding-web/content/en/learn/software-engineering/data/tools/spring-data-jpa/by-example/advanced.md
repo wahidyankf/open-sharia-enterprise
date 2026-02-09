@@ -1070,7 +1070,7 @@ public class ProductCriteriaRepository {
 
 **Key Takeaway**: Criteria API provides programmatic query building: EntityManager → CriteriaBuilder → CriteriaQuery → Root → Predicates → TypedQuery → Results.
 
-**Why It Matters**: CriteriaBuilder provides low-level query construction for advanced SQL features like CASE WHEN, COALESCE, and aggregate functions unavailable in derived query methods. The programmatic query building enables full JPA Criteria API power for complex reporting queries requiring grouped aggregations and subquery EXISTS checks. However, Criteria API verbosity (5-10x more code than JPQL) makes it unsuitable for simple queries - reserve for dynamic queries where Specifications lack needed SQL features, using @Query for static complex queries.
+**Why It Matters**: CriteriaBuilder provides low-level query construction for advanced SQL features like CASE WHEN, COALESCE, and aggregate functions unavailable in derived query methods. The programmatic query building enables full JPA Criteria API power for complex reporting queries requiring grouped aggregations and subquery EXISTS checks. However, Criteria API verbosity (significantly more code than JPQL) makes it unsuitable for simple queries - reserve for dynamic queries where Specifications lack needed SQL features, using @Query for static complex queries.
 
 ### Example 70: Criteria API with Joins and Path Expressions
 
@@ -3131,7 +3131,7 @@ public class ProductService {
 
 **Key Takeaway**: Use interface projections to fetch only required fields. Closed projections (getters only) are most efficient. Open projections with `@Value` require full entity load.
 
-**Why It Matters**: Query hints like HINT_FETCH_SIZE and HINT_READ_ONLY provide low-level JDBC and Hibernate tuning for specific performance scenarios, enabling 10-100x throughput improvements for batch processing. The hint mechanism accesses database-specific optimizations (Oracle hints, PostgreSQL work_mem) while maintaining JPA abstraction, balancing portability and performance. However, hints are often database-vendor-specific and require deep SQL knowledge to use correctly - improper hints (too-large fetch size) can cause OutOfMemoryError, making hints advanced optimization requiring profiling.
+**Why It Matters**: Query hints like HINT_FETCH_SIZE and HINT_READ_ONLY provide low-level JDBC and Hibernate tuning for specific performance scenarios, enabling significant throughput improvements for batch processing. The hint mechanism accesses database-specific optimizations (Oracle hints, PostgreSQL work_mem) while maintaining JPA abstraction, balancing portability and performance. However, hints are often database-vendor-specific and require deep SQL knowledge to use correctly - improper hints (too-large fetch size) can cause OutOfMemoryError, making hints advanced optimization requiring profiling.
 
 ### Example 84: DTO Projections with Constructor Expressions
 
@@ -3473,4 +3473,4 @@ public class OrderService {
 
 **Key Takeaway**: Use `JOIN FETCH` for eager loading related entities in single query. Apply `@BatchSize` to reduce N+1 queries for lazy associations. Use `@QueryHints` with `readOnly=true` for read-only queries to skip dirty checking.
 
-**Why It Matters**: The N+1 query problem degrades performance exponentially - loading 100 orders with eager customer access executes 101 queries (1 + 100), taking 5-10 seconds versus 50ms with JOIN FETCH. @BatchSize reduces this to 1 + (N/batchSize) queries, providing 10x improvement for lazy-loaded associations while maintaining lazy loading benefits. Read-only query hints eliminate dirty checking overhead, improving read throughput by 20-30% in reporting-heavy applications - GitHub uses batch fetching extensively to serve repository data with sub-100ms response times despite billions of relationships.
+**Why It Matters**: The N+1 query problem degrades performance exponentially - loading 100 orders with eager customer access executes 101 queries (1 + 100), taking seconds versus milliseconds with JOIN FETCH. @BatchSize reduces this to 1 + (N/batchSize) queries, providing substantial improvement for lazy-loaded associations while maintaining lazy loading benefits. Read-only query hints eliminate dirty checking overhead, significantly improving read throughput in reporting-heavy applications.

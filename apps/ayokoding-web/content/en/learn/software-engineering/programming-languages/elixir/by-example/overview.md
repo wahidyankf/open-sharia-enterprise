@@ -3,11 +3,11 @@ title: "Overview"
 date: 2025-12-23T00:00:00+07:00
 draft: false
 weight: 10000000
-description: "Learn Elixir through 75-90 annotated code examples covering 95% of the language - ideal for experienced developers switching from other languages"
+description: "Learn Elixir through 75-90 annotated code examples covering essential concepts of the language - ideal for experienced developers switching from other languages"
 tags: ["elixir", "tutorial", "by-example", "examples", "code-first"]
 ---
 
-**Want to quickly pick up Elixir through working examples?** This by-example guide teaches 95% of Elixir through 75-90 annotated code examples organized by complexity level.
+**Want to quickly pick up Elixir through working examples?** This by-example guide teaches essential concepts of Elixir through 75-90 annotated code examples organized by complexity level.
 
 ## What Is By-Example Learning?
 
@@ -39,7 +39,7 @@ Progress from fundamentals through practical patterns to advanced OTP and metapr
 
 ## Coverage Philosophy
 
-This by-example guide provides **95% coverage of Elixir** through practical, annotated examples. The 95% figure represents the depth and breadth of concepts covered, not a time estimate—focus is on **outcomes and understanding**, not duration.
+This by-example guide provides **comprehensive coverage of Elixir** through practical, annotated examples. This tutorial covers core language features comprehensively, not a time estimate—focus is on **outcomes and understanding**, not duration.
 
 ### What's Covered
 
@@ -62,7 +62,7 @@ This guide focuses on **learning-oriented examples**, not problem-solving recipe
 
 - **Deep framework knowledge** - Phoenix, Ecto, LiveView covered at introductory level only
 
-The 95% coverage goal maintains humility—no tutorial can cover everything. This guide teaches the **core concepts that unlock the remaining 5%** through your own exploration and project work.
+The comprehensive coverage goal maintains humility—no tutorial can cover everything. This guide teaches the **core concepts that continue learning beyond this tutorial** through your own exploration and project work.
 
 ## How to Use This Guide
 
@@ -78,16 +78,16 @@ The 95% coverage goal maintains humility—no tutorial can cover everything. Thi
 
 Understanding where by-example fits in the tutorial ecosystem helps you choose the right learning path:
 
-| Tutorial Type    | Coverage                   | Approach                       | Target Audience         | When to Use                                          |
-| ---------------- | -------------------------- | ------------------------------ | ----------------------- | ---------------------------------------------------- |
-| **By Example**   | 95% through 75-90 examples | Code-first, annotated examples | Experienced developers  | Quick language pickup, reference, language switching |
-| **Quick Start**  | 5-30% touchpoints          | Hands-on project               | Newcomers to Elixir     | First taste, decide if worth learning                |
-| **Beginner**     | 0-60% comprehensive        | Narrative, explanatory         | Complete beginners      | Deep understanding, first programming language       |
-| **Intermediate** | 60-85%                     | Practical applications         | Past basics             | Production patterns, frameworks                      |
-| **Advanced**     | 85-95%                     | Complex systems                | Experienced Elixir devs | BEAM internals, distributed systems                  |
-| **Cookbook**     | Problem-specific           | Recipe-based                   | All levels              | Solve specific problems                              |
+| Tutorial Type    | Coverage                             | Approach                       | Target Audience         | When to Use                                          |
+| ---------------- | ------------------------------------ | ------------------------------ | ----------------------- | ---------------------------------------------------- |
+| **By Example**   | Comprehensive through 75-90 examples | Code-first, annotated examples | Experienced developers  | Quick language pickup, reference, language switching |
+| **Quick Start**  | 5-30% touchpoints                    | Hands-on project               | Newcomers to Elixir     | First taste, decide if worth learning                |
+| **Beginner**     | 0-60% comprehensive                  | Narrative, explanatory         | Complete beginners      | Deep understanding, first programming language       |
+| **Intermediate** | 60-85%                               | Practical applications         | Past basics             | Production patterns, frameworks                      |
+| **Advanced**     | advanced topics                      | Complex systems                | Experienced Elixir devs | BEAM internals, distributed systems                  |
+| **Cookbook**     | Problem-specific                     | Recipe-based                   | All levels              | Solve specific problems                              |
 
-**By Example vs. Quick Start**: By Example provides 95% coverage through examples vs. Quick Start's 5-30% through a single project. By Example is code-first reference; Quick Start is hands-on introduction.
+**By Example vs. Quick Start**: By Example provides comprehensive coverage through examples vs. Quick Start's 5-30% through a single project. By Example is code-first reference; Quick Start is hands-on introduction.
 
 **By Example vs. Beginner Tutorial**: By Example is code-first for experienced developers; Beginner Tutorial is narrative-first for complete beginners. By Example shows patterns; Beginner Tutorial explains concepts.
 

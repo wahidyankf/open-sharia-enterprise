@@ -328,7 +328,7 @@ Console.WriteLine(result);// => Output: Data
 
 **Key Takeaway**: Async/await enables non-blocking asynchronous operations. `async` keyword enables `await`, and `await` pauses execution without blocking threads.
 
-**Why It Matters**: Async/await dramatically improves scalability for I/O-bound operations. Web servers handle thousands of concurrent requests on a single thread pool instead of dedicating one thread per request. ASP.NET Core applications achieve 10-20x higher throughput by using async controllers that release threads during database/API calls.
+**Why It Matters**: Async/await dramatically improves scalability for I/O-bound operations. Web servers handle thousands of concurrent requests on a single thread pool instead of dedicating one thread per request. Applications achieve higher throughput by using async controllers that release threads during database/API calls.
 
 ## Example 35: Task.WhenAll - Parallel Async Operations
 
@@ -405,7 +405,7 @@ Console.WriteLine(string.Join(", ", results));
 
 **Key Takeaway**: `Task.WhenAll` runs tasks concurrently and waits for all to complete. Total time equals the longest task, not the sum of all tasks.
 
-**Why It Matters**: Parallel async operations dramatically reduce I/O-bound operation times. Dashboard pages fetch data from multiple APIs concurrently (users, orders, analytics) in 500ms instead of 1500ms sequentially. E-commerce sites load product details, reviews, and recommendations in parallel, improving page load times by 60-70%.
+**Why It Matters**: Parallel async operations dramatically reduce I/O-bound operation times. Dashboard pages fetch data from multiple APIs concurrently (users, orders, analytics) in 500ms instead of 1500ms sequentially. E-commerce sites load product details, reviews, and recommendations in parallel, improving page load times significantly.
 
 ## Example 36: Task.WhenAny - Race Conditions
 
@@ -531,7 +531,7 @@ JSON serialization converts objects to JSON strings and vice versa using `System
 
 ```csharp
 // Example 38: JSON Serialization
-using System.Text.Json; // => Modern JSON library (not Newtonsoft.Json)
+using System.Text.Json; // => Modern JSON library
 
 class Person              // => Simple data class
 {
@@ -586,7 +586,7 @@ Console.WriteLine($"{deserializedPerson?.Name}, {deserializedPerson?.Age}");
 
 **Key Takeaway**: `System.Text.Json` provides high-performance JSON serialization. Use `JsonSerializer.Serialize` for objects→JSON and `JsonSerializer.Deserialize<T>` for JSON→objects.
 
-**Why It Matters**: JSON is the dominant data interchange format for web APIs and configuration files. `System.Text.Json` is 2-5x faster than Newtonsoft.Json and is the standard library in modern .NET. RESTful APIs serialize response objects to JSON automatically in ASP.NET Core, and configuration systems load `appsettings.json` using the same serializer.
+**Why It Matters**: JSON is the dominant data interchange format for web APIs and configuration files. `System.Text.Json` is the standard library in modern .NET. RESTful APIs serialize response objects to JSON automatically, and configuration systems load `appsettings.json` using the same serializer.
 
 ## Example 39: HTTP Client - Making API Requests
 
@@ -675,7 +675,7 @@ postResponse.EnsureSuccessStatusCode();
 
 **Key Takeaway**: `HttpClient` provides async HTTP operations. Use `GetAsync` for GET requests and `PostAsync` with `StringContent` for POST with JSON bodies.
 
-**Why It Matters**: HTTP clients are essential for microservice communication and third-party API integration. Reusing `HttpClient` instances is critical - creating new instances per request exhausts socket connections under high load. ASP.NET Core's `IHttpClientFactory` manages client lifetimes and handles transient faults with Polly integration.
+**Why It Matters**: HTTP clients are essential for microservice communication and third-party API integration. Reusing `HttpClient` instances is critical - creating new instances per request exhausts socket connections under high load. The `IHttpClientFactory` pattern manages client lifetimes and handles transient faults.
 
 ## Example 40: LINQ GroupBy - Grouping Data
 
@@ -2141,7 +2141,7 @@ Minimal APIs provide lightweight HTTP endpoints with minimal ceremony.
 
 ```csharp
 // Example 56: ASP.NET Core Minimal API (Conceptual)
-// Real code uses Microsoft.AspNetCore.Builder
+// Real code uses ASP.NET Core builder APIs
 
 // Simulated minimal API structure
 class WebApp
@@ -2203,7 +2203,7 @@ Entity Framework Core is an ORM that maps C# classes to database tables.
 
 ```csharp
 // Example 57: Entity Framework Core (Conceptual)
-// Real code uses Microsoft.EntityFrameworkCore
+// Real code uses Entity Framework Core
 
 class Product             // => Entity class
 {

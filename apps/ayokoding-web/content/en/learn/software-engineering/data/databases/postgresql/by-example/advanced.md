@@ -1134,7 +1134,7 @@ WHERE customer_id = 5000
 -- => Index Scan using idx_orders_composite
 -- => All filters pushed to index
 -- => No heap filters (optimal)
--- => 5-10x faster than single-column index
+-- => significantly faster than single-column index
 
 EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON)
 SELECT * FROM orders WHERE customer_id = 5000;
@@ -3868,7 +3868,7 @@ SELECT
 FROM pg_stat_database
 WHERE datname = 'example_80';
 -- => Cache hit ratio (0.0 to 1.0)
--- => > 0.99 is good (99% of reads from cache)
+-- => > 0.99 indicates high cache hit rate
 -- => < 0.90 indicates insufficient memory
 
 SELECT
@@ -3982,7 +3982,7 @@ SELECT pg_stat_reset();
 -- => Use cautiously (loses historical performance data)
 ```
 
-**Key Takeaway**: Monitor pg_stat_user_tables for table access patterns, pg_stat_user_indexes for index usage, pg_stat_activity for active queries. Cache hit ratio should exceed 99%. Identify unused indexes (idx_scan = 0) for removal.
+**Key Takeaway**: Monitor pg_stat_user_tables for table access patterns, pg_stat_user_indexes for index usage, pg_stat_activity for active queries. Maintain high cache hit ratio for optimal performance. Identify unused indexes (idx_scan = 0) for removal.
 
 **Why It Matters**: Performance monitoring identifies problems before they cause outages - slow queries detected early via pg_stat_statements can be optimized before they degrade production. Unused indexes waste disk space and slow down writes - dropping them improves INSERT/UPDATE performance. Cache hit ratio below 90% indicates memory shortage - adding RAM improves query performance by reducing disk I/O. Lock contention detected via pg_stat_activity reveals application-level transaction issues (holding locks too long).
 
@@ -4837,6 +4837,6 @@ SHOW all;
 
 **Key Takeaway**: Tune shared_buffers (25% RAM), effective_cache_size (50-75% RAM), and work_mem (256MB for sorts). Set random_page_cost=1.1 for SSDs. Enable parallel workers for large queries. Adjust synchronous_commit based on durability requirements.
 
-**Why It Matters**: Default PostgreSQL settings are conservative (designed for 1GB servers) - production servers with 64GB RAM running default shared_buffers=128MB waste 99% of available memory. Work_mem=4MB causes disk spills during sorts - increasing to 256MB eliminates spills, reducing query time from minutes to seconds. SSD-optimized settings (random_page_cost=1.1) dramatically change planner behavior - queries using sequential scans on HDD-tuned databases switch to index scans on SSDs, improving performance 10-100x. Synchronous_commit=off improves write-heavy applications by 5-10x but trades durability for throughput.
+**Why It Matters**: Default PostgreSQL settings are conservative (designed for 1GB servers) - production servers with 64GB RAM running default shared_buffers=128MB waste most available memory. Work_mem=4MB causes disk spills during sorts - increasing to 256MB eliminates spills, significantly reducing query time. SSD-optimized settings (random_page_cost=1.1) dramatically change planner behavior - queries using sequential scans on HDD-tuned databases switch to index scans on SSDs, significantly improving performance. Synchronous_commit=off substantially improves write-heavy application performance but trades durability for throughput.
 
 ---

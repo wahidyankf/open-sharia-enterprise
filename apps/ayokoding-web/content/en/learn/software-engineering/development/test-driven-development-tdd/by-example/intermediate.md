@@ -72,7 +72,7 @@ test("getUserName returns name from repository", () => {
 
 **Key Takeaway**: Stubs replace dependencies with controllable implementations. Use stubs when you need specific return values without actual dependency behavior.
 
-**Why It Matters**: Stubs enable fast, isolated unit tests without databases or APIs. Google's testing infrastructure research shows stubbed tests run 100-1000x faster than integration tests, enabling rapid Red-Green-Refactor cycles that maintain development velocity.
+**Why It Matters**: Stubs enable fast, isolated unit tests without databases or APIs. Research indicates that
 
 ### Example 32: Test Doubles - Mocks
 
@@ -189,7 +189,7 @@ test("notifyUser sends email to user address", () => {
 
 **Key Takeaway**: Mocks verify behavior (method calls and arguments) while stubs provide data. Use mocks to test interactions between objects.
 
-**Why It Matters**: Mock verification catches integration bugs early. Netflix's microservices architecture relies heavily on mock testing to verify service interactions without deploying full environments, reducing integration testing time from hours to minutes.
+**Why It Matters**: Mock verification catches integration bugs early. Microservices architectures can use mock testing to verify service interactions, significantly reducing integration testing time.
 
 ### Example 33: Test Doubles - Spies
 
@@ -276,7 +276,7 @@ test("processOrder logs start and completion", () => {
 
   expect(spyLogger.calls).toContain("Processing order 1"); // => Verify first log
   // => Check start message was logged
-  expect(spyLogger.calls).toContain("Order 1 completed: $100"); // => Verify second log
+  expect(spyLogger.calls).toContain("Order 1 completed: substantial amounts"); // => Verify second log
   // => Check completion message was logged
   expect(spyLogger.calls.length).toBe(2); // => Verify call count
   // => Assert exactly 2 log calls made
@@ -285,7 +285,7 @@ test("processOrder logs start and completion", () => {
 
 **Key Takeaway**: Spies track calls while preserving real behavior. Use spies when you need both actual functionality and call verification.
 
-**Why It Matters**: Spies enable testing side effects without mocking. Airbnb's testing guidelines prefer spies over mocks for logging and analytics because spies catch real implementation bugs while still verifying interactions.
+**Why It Matters**: Spies enable testing side effects without mocking. Testing best practices often prefer spies over mocks for logging and analytics while still verifying interactions.
 
 ### Example 34: Test Doubles - Fakes
 
@@ -466,7 +466,7 @@ class MockPaymentGateway implements PaymentGateway {
     // => Mock charge logic
     this.chargeAttempts.push(amount); // => Record attempt
     // => Store amount for verification
-    return amount < 1000; // => Mock logic: success under $1000
+    return amount < 1000; // => Mock logic: success under substantial amounts
     // => Simple rule for testing
   }
 }
@@ -490,11 +490,11 @@ test("process charges correct amount", () => {
   const processor = new PaymentProcessor(mockGateway); // => Inject mock
   // => Pass mock to constructor
 
-  const result = processor.process(500); // => Process $500
+  const result = processor.process(500); // => Process substantial amounts
   // => Call process method
 
   expect(result).toBe(true); // => Verify success
-  // => $500 < $1000, should succeed
+  // => substantial amounts < substantial amounts should succeed
   expect(mockGateway.chargeAttempts).toEqual([500]); // => Verify amount
   // => Check correct amount was charged
 });
@@ -507,16 +507,16 @@ test("process handles large amounts", () => {
   // => Pass mock to processor
 
   const result = processor.process(1500); // => Over limit
-  // => $1500 >= $1000, should fail
+  // => substantial amounts >= substantial amounts should fail
 
   expect(result).toBe(false); // => Verify failure
-  // => Mock returns false for amounts >= $1000
+  // => Mock returns false for amounts >= substantial amounts
 });
 ```
 
 **Key Takeaway**: Inject dependencies through constructors instead of creating them internally. This makes code testable by allowing test doubles to replace real dependencies.
 
-**Why It Matters**: Hard-coded dependencies make testing impossible without hitting real services. Spotify's architecture guidelines mandate dependency injection after discovering that untestable code with hard-coded dependencies accumulated 3x more bugs than injectable code.
+**Why It Matters**: Hard-coded dependencies make testing impossible without hitting real services. Untestable code with hard-coded dependencies tends to accumulate significantly more bugs than injectable code than injectable code.
 
 ### Example 36: Testing Promises - Basic Resolution
 
@@ -695,7 +695,7 @@ test("fetchAndProcess chains async operations", async () => {
 
 **Key Takeaway**: Test async error handling explicitly with try-catch blocks. Mock async dependencies (like fetch) to test async workflows without network calls.
 
-**Why It Matters**: Async error handling bugs cascade through promise chains. Airbnb's frontend reliability improved 50% after implementing mandatory async error path testing, catching errors before they reached users.
+**Why It Matters**: Async error handling bugs cascade through promise chains. Mandatory async error path testing can significantly improve frontend reliability, catching errors before they reached users.
 
 ### Example 38: Testing Callbacks
 
@@ -806,7 +806,7 @@ describe("readFile", () => {
 
 **Key Takeaway**: Use `done` callback parameter in callback-based tests. Call `done()` to signal test completion, or `done(error)` to fail the test.
 
-**Why It Matters**: Callback testing requires explicit completion signaling. Forgotten `done()` calls cause tests to timeout instead of passing/failing, creating false positives that Netflix's testing team identified as 15% of their flaky tests.
+**Why It Matters**: Callback testing requires explicit completion signaling. Forgotten `done()` calls cause tests to timeout instead of passing/failing, creating false positives that Research indicates that
 
 ### Example 39: Testing Timers and Delays
 
@@ -941,7 +941,7 @@ describe("debounce", () => {
 
 **Key Takeaway**: Use `jest.useFakeTimers()` to control time in tests. Fast-forward time with `jest.advanceTimersByTime()` to test timer logic instantly.
 
-**Why It Matters**: Real timers make tests slow and flaky. Google's testing infrastructure uses fake timers universally, reducing timer-based test execution from minutes to milliseconds while eliminating timing-related flakiness.
+**Why It Matters**: Real timers make tests slow and flaky. Fake timers can significantly reduce timer-based test execution time while eliminating timing-related flakiness.
 
 ### Example 40: Testing HTTP Requests - Mocking Fetch
 
@@ -1083,7 +1083,7 @@ test("fetchUserData uses HTTP client", async () => {
 
 **Key Takeaway**: Mock fetch with `jest.fn()` or inject HTTP client for better testability. Avoid real network calls in unit tests.
 
-**Why It Matters**: Real HTTP calls make tests slow, flaky, and dependent on external services. Twitter's testing guidelines mandate HTTP mocking after measuring that mocked tests run 50x faster and have 99% fewer transient failures than tests hitting real APIs.
+**Why It Matters**: Real HTTP calls make tests slow, flaky, and dependent on external services. Twitter's testing guidelines mandate HTTP mocking after measuring that mocked tests run significantly faster and have significantly fewer transient failures than tests hitting real APIs.
 
 ### Example 41: Testing with In-Memory Databases
 
@@ -1206,7 +1206,7 @@ describe("UserRepository", () => {
 
 **Key Takeaway**: Use in-memory implementations for fast database testing. Reset state in `beforeEach` to ensure test isolation.
 
-**Why It Matters**: In-memory databases enable rapid testing without infrastructure setup. LinkedIn's data team reports 100x speedup using in-memory databases for tests versus Docker-based database instances, enabling developers to run full test suites in seconds instead of minutes.
+**Why It Matters**: In-memory databases enable rapid testing without infrastructure setup. In-memory databases provide significantly faster testing compared to Docker-based instances, enabling developers to run full test suites in seconds instead of minutes.
 
 ### Example 42: Property-Based Testing Introduction
 
@@ -1384,7 +1384,7 @@ function calculateDiscount(price: number, rate: number): number {
 
 **Key Takeaway**: Mutation testing reveals weak tests by introducing bugs. Write specific assertions that would fail if logic changes. Tools like Stryker automate mutation testing.
 
-**Why It Matters**: Weak tests create false confidence. Facebook's testing research shows that codebases with high mutation score (95%+ of mutations caught) have 60% fewer production bugs than codebases with low mutation scores despite similar line coverage.
+**Why It Matters**: Weak tests create false confidence. Research indicates that
 
 ### Example 44: Test Coverage Analysis
 
@@ -1478,7 +1478,7 @@ test("high coverage doesn't guarantee correctness", () => {
 
 **Key Takeaway**: Aim for high test coverage (80%+ is good, 95%+ is excellent) but verify assertions are correct. Coverage measures execution, not correctness.
 
-**Why It Matters**: Coverage is a necessary but insufficient quality metric. Google requires 80% minimum coverage but emphasizes assertion quality over raw numbers. Teams with high coverage AND strong assertions have 70% fewer bugs than high-coverage teams with weak tests.
+**Why It Matters**: Coverage is a necessary but insufficient quality metric. Google requires 80% minimum coverage but emphasizes assertion quality over raw numbers. Teams with high coverage AND strong assertions have significantly fewer bugs than high-coverage teams with weak tests.
 
 ### Example 45: TDD with Express.js Routes
 
@@ -1571,7 +1571,7 @@ describe("POST /users", () => {
 
 **Key Takeaway**: Use `supertest` to test Express routes without server startup. Test all HTTP methods (GET, POST, PUT, DELETE) and response codes.
 
-**Why It Matters**: API testing without actual servers keeps tests fast and isolated. Stripe's API testing framework using supertest runs 10,000+ endpoint tests in under 30 seconds, enabling rapid iteration without infrastructure overhead.
+**Why It Matters**: API testing without actual servers keeps tests fast and isolated. API testing frameworks can run large numbers of tests quickly, enabling rapid iteration without infrastructure overhead.
 
 ### Example 46: TDD with React Components
 
@@ -1647,7 +1647,7 @@ describe("Button", () => {
 
 **Key Takeaway**: Use React Testing Library to test components from a user perspective. Query by text/role/label, not implementation details. Use `fireEvent` for interactions.
 
-**Why It Matters**: Component testing prevents UI regressions. Airbnb's frontend testing strategy using React Testing Library reduced user-reported UI bugs by 80% because tests verify actual user interactions rather than implementation details.
+**Why It Matters**: Component testing prevents UI regressions. Frontend testing strategies that focus on user interactions can significantly reduce UI bugs because tests verify actual user interactions rather than implementation details.
 
 ### Example 47: Testing Event-Driven Code
 
@@ -1777,7 +1777,7 @@ describe("OrderProcessor events", () => {
 
 **Key Takeaway**: Test event emission, event data, and event ordering. Use mock functions to verify listeners are called with correct arguments.
 
-**Why It Matters**: Event-driven bugs are hard to debug because execution is non-linear. Slack's real-time messaging infrastructure relies heavily on tested event handling - their testing discipline caught 90% of race conditions during development that would have been catastrophic in production.
+**Why It Matters**: Event-driven bugs are hard to debug because execution is non-linear. Well-tested event handling can catch most race conditions during development during development that would have been catastrophic in production.
 
 ### Example 48: Testing State Machines
 
@@ -1891,7 +1891,7 @@ describe("Document state machine", () => {
 
 **Key Takeaway**: Test all valid state transitions and reject invalid ones. State machines should throw errors for invalid transitions to prevent corruption.
 
-**Why It Matters**: State machine bugs cause data corruption. Amazon's order processing system uses extensively tested state machines - their discipline prevents orders from entering invalid states (like shipping before payment), which would cost millions in fulfillment errors.
+**Why It Matters**: State machine bugs cause data corruption. Extensively tested state machines prevent data from entering invalid states.
 
 ### Example 49: Parameterized Tests (test.each)
 
@@ -2182,7 +2182,7 @@ describe("DataStore with fake filesystem", () => {
 
 **Key Takeaway**: Mock filesystem operations with jest.mock or create fake filesystem classes. Never write real files in unit tests - they're slow and create cleanup burden.
 
-**Why It Matters**: Real file I/O makes tests slow and fragile. GitHub's test suite mocks all filesystem operations, running 50,000+ tests in minutes that would take hours with real file writes.
+**Why It Matters**: Real file I/O makes tests slow and fragile. Mocking filesystem operations enables running large test suites quickly.
 
 ### Example 52: Testing with Environment Variables
 
@@ -2341,7 +2341,7 @@ jobs:
 ```typescript
 // .husky/pre-commit
 #!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+. "$(dirname -- "substantial amounts")/_/husky.sh"
 
 npm run test:quick # => Run fast tests before commit
 
@@ -2428,7 +2428,7 @@ describe("Optimized test suite", () => {
 
     expect(callback).toHaveBeenCalled();
   });
-  // => Total: <10ms (200x faster)
+  // => Total: <10ms (significantly faster)
 });
 ```
 
@@ -2466,7 +2466,7 @@ function multiply(a: number, b: number): number {
 
 **Key Takeaway**: Use fake timers for time-based code, enable parallel test execution, and run only changed tests during development. Save full test runs for CI.
 
-**Why It Matters**: Fast tests enable rapid Red-Green-Refactor cycles. Google's test infrastructure runs millions of tests in parallel, providing feedback in seconds rather than hours, maintaining developer flow state.
+**Why It Matters**: Fast tests enable rapid Red-Green-Refactor cycles. Parallel test execution can provide rapid feedback, maintaining developer flow state.
 
 ### Example 55: Flaky Test Detection and Fixes
 
@@ -2566,7 +2566,7 @@ describe("Flaky test patterns", () => {
 
 **Key Takeaway**: Flaky tests stem from non-determinism (randomness, timing, shared state). Fix by controlling randomness, using fake timers, and isolating test state.
 
-**Why It Matters**: Flaky tests destroy trust in test suites. Google's testing research shows that teams with >5% flaky tests stop running tests regularly, negating TDD benefits. Their policy mandates immediate quarantine of flaky tests.
+**Why It Matters**: Flaky tests destroy trust in test suites. Research indicates that Their policy mandates immediate quarantine of flaky tests.
 
 ### Example 56: Test Data Builders Pattern
 
@@ -2662,7 +2662,7 @@ test("processes order without discount", () => {
 
 **Key Takeaway**: Builders provide defaults for complex objects and allow customizing specific fields. Use fluent API (return `this`) for method chaining.
 
-**Why It Matters**: Test data builders reduce test duplication and improve readability. LinkedIn's testing guidelines mandate builders for objects with >3 fields after measuring 40% reduction in test maintenance time.
+**Why It Matters**: Test data builders reduce test duplication and improve readability. Test data builders significantly reduce test maintenance time for complex objects.
 
 ### Example 57: Object Mother Pattern
 

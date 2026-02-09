@@ -374,7 +374,7 @@ public class OrderService {
 
 **Key Takeaway**: JOIN FETCH prevents N+1 query problems by eagerly loading relationships in a single query, critical for performance when traversing entity associations.
 
-**Why It Matters**: JOIN FETCH solves N+1 query problems by eagerly loading relationships in single SQL statement with LEFT OUTER JOIN, transforming 101 queries (1 parent + 100 children) into 1 query that executes 50-100x faster. However, JOIN FETCH creates Cartesian products with multiple collections, potentially loading duplicate parent data and consuming excess memory. Production applications combine JOIN FETCH with DISTINCT and batch size limits to balance performance and memory, achieving 90% reduction in lazy loading exceptions while preventing OutOfMemoryError on large datasets.
+**Why It Matters**: JOIN FETCH solves N+1 query problems by eagerly loading relationships in single SQL statement with LEFT OUTER JOIN, transforming many queries into one that executes dramatically faster. However, JOIN FETCH creates Cartesian products with multiple collections, potentially loading duplicate parent data and consuming excess memory. Production applications combine JOIN FETCH with DISTINCT and batch size limits to balance performance and memory, significantly reducing lazy loading exceptions while preventing OutOfMemoryError on large datasets.
 
 ### Example 36: Subqueries in JPQL
 
@@ -426,7 +426,7 @@ public class ProductService {
 
 **Key Takeaway**: Subqueries enable complex filtering based on aggregations or correlated conditions, essential for business logic like "find products priced above category average."
 
-**Why It Matters**: JPQL subqueries enable complex business logic like 'products priced above category average' in single database round-trip, eliminating application-side processing that requires loading entire datasets into memory. Correlated subqueries execute once per outer row and can degrade to O(N²) complexity on large tables, requiring careful WHERE clause optimization and indexes. Enterprise reporting systems using subqueries correctly report 80% reduction in data transfer overhead, while poorly optimized subqueries cause 10-100x performance degradation requiring query plan analysis.
+**Why It Matters**: JPQL subqueries enable complex business logic like 'products priced above category average' in single database round-trip, eliminating application-side processing that requires loading entire datasets into memory. Correlated subqueries execute once per outer row and can degrade to O(N²) complexity on large tables, requiring careful WHERE clause optimization and indexes. Enterprise reporting systems using subqueries correctly achieve significant reductions in data transfer overhead, while poorly optimized subqueries cause substantial performance degradation requiring query plan analysis.
 
 ### Example 37: Named Queries
 
@@ -2199,7 +2199,7 @@ public class BusinessService {
 
 **Key Takeaway**: Rollback rules control which exceptions trigger transaction rollback - checked exceptions require explicit configuration, while runtime exceptions rollback by default.
 
-**Why It Matters**: Transaction isolation levels balance consistency vs performance, preventing dirty reads, non-repeatable reads, and phantom reads based on business requirements. READ_COMMITTED (default) prevents reading uncommitted data while allowing concurrent modifications, suitable for 80% of applications. However, financial transactions requiring repeatable reads need SERIALIZABLE isolation despite 10-100x throughput reduction, while read-heavy analytics benefit from READ_UNCOMMITTED accepting stale data for 5-10x performance gain.
+**Why It Matters**: Transaction isolation levels balance consistency vs performance, preventing dirty reads, non-repeatable reads, and phantom reads based on business requirements. READ_COMMITTED (default) prevents reading uncommitted data while allowing concurrent modifications, suitable for most applications. However, financial transactions requiring repeatable reads need SERIALIZABLE isolation despite substantial throughput reduction, while read-heavy analytics benefit from READ_UNCOMMITTED accepting stale data for significant performance gain.
 
 ### Example 54: Read-Only Transactions
 
@@ -2629,7 +2629,7 @@ public class ProductService {
 
 **Key Takeaway**: Optimistic locking with @Version prevents lost updates in concurrent environments by detecting version mismatches at commit time, essential for web applications with long-running transactions.
 
-**Why It Matters**: Pessimistic WRITE locks prevent concurrent modifications by acquiring exclusive database locks (SELECT FOR UPDATE), guaranteeing conflict-free updates for critical operations like inventory management. The pattern eliminates optimistic lock exceptions in high-conflict scenarios (>20% concurrent edits) where retries degrade user experience. However, pessimistic locks reduce throughput by 80-95% compared to optimistic locking and cause deadlocks when lock acquisition order isn't consistent across transactions, requiring careful database deadlock detection.
+**Why It Matters**: Pessimistic WRITE locks prevent concurrent modifications by acquiring exclusive database locks (SELECT FOR UPDATE), guaranteeing conflict-free updates for critical operations like inventory management. The pattern eliminates optimistic lock exceptions in high-conflict scenarios where retries degrade user experience. However, pessimistic locks substantially reduce throughput compared to optimistic locking and cause deadlocks when lock acquisition order isn't consistent across transactions, requiring careful database deadlock detection.
 
 ### Example 58: Pessimistic Locking (PESSIMISTIC_READ)
 

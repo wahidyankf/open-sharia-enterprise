@@ -51,7 +51,7 @@ test("submits contact form with multiple fields", async ({ page }) => {
 
 **Key Takeaway**: Use getByLabel for accessible form field selection. Test complete submission workflows, not individual fields in isolation.
 
-**Why It Matters**: Multi-field forms are the primary user interaction pattern in web applications. Microsoft's accessibility research shows label-based selectors reduce test brittleness by 60% compared to CSS selectors, as labels remain stable while implementation details change. Testing complete workflows catches integration bugs that field-level tests miss.
+**Why It Matters**: Multi-field forms are the primary user interaction pattern in web applications. Label-based selectors reduce test brittleness compared to CSS selectors, as labels remain stable while implementation details change. Testing complete workflows catches integration bugs that field-level tests miss.
 
 ### Example 32: Form Validation - Client-Side Errors
 
@@ -89,7 +89,7 @@ test("displays validation error for invalid email", async ({ page }) => {
 
 **Key Takeaway**: Test validation errors appear before form submission reaches server. Verify specific error messages, not just presence of errors.
 
-**Why It Matters**: Client-side validation provides immediate user feedback and reduces server load. Google's UX research indicates immediate validation feedback improves form completion rates by 25%. Testing validation messages ensures accessibility compliance—screen reader users depend on clear error text to fix input mistakes.
+**Why It Matters**: Client-side validation provides immediate user feedback and reduces server load. Immediate validation feedback improves form completion rates. Testing validation messages ensures accessibility compliance—screen reader users depend on clear error text to fix input mistakes.
 
 ### Example 33: Dynamic Forms - Conditional Fields
 
@@ -131,7 +131,7 @@ test("shows additional field when 'Other' selected", async ({ page }) => {
 
 **Key Takeaway**: Use toBeVisible/toBeHidden for conditional field testing. Test both appearance and disappearance of dynamic elements.
 
-**Why It Matters**: Dynamic forms reduce cognitive load by showing only relevant fields. Amazon's checkout optimization research found conditional fields reduce form abandonment by 15% but increase UI complexity. Testing visibility state changes ensures JavaScript logic works correctly—broken conditional logic frustrates users who can't access needed fields or are confused by irrelevant ones.
+**Why It Matters**: Dynamic forms reduce cognitive load by showing only relevant fields. Conditional fields can reduce form abandonment but increase UI complexity. Testing visibility state changes ensures JavaScript logic works correctly—broken conditional logic frustrates users who can't access needed fields or are confused by irrelevant ones.
 
 ### Example 34: Date Pickers - Calendar Widget
 
@@ -182,7 +182,7 @@ test("selects date from calendar widget", async ({ page }) => {
 
 **Key Takeaway**: Use getByRole for calendar navigation and date selection. Validate date values in input fields, not just widget interactions.
 
-**Why It Matters**: Date pickers are notoriously complex UI components with accessibility challenges. Booking.com's UX studies show calendar widgets increase date entry errors by 40% compared to simple text inputs if implemented poorly. Testing date picker interactions ensures keyboard navigation, screen reader compatibility, and correct value population—critical for booking systems where date errors cause revenue loss.
+**Why It Matters**: Date pickers are notoriously complex UI components with accessibility challenges. Calendar widgets can increase date entry errors compared to simple text inputs if implemented poorly. Testing date picker interactions ensures keyboard navigation, screen reader compatibility, and correct value population—critical for booking systems where date errors cause revenue loss.
 
 ### Example 35: Multi-Select - Checkbox Groups
 
@@ -237,7 +237,7 @@ test("selects multiple interests from checkbox group", async ({ page }) => {
 
 **Key Takeaway**: Use check() and uncheck() methods instead of click() for checkbox state management. Assert checked state explicitly with toBeChecked.
 
-**Why It Matters**: Checkbox groups allow users to select multiple options simultaneously, common in preference settings and filter interfaces. Dropbox's UI research found checkbox state confusion causes 30% of user support tickets—users don't understand whether checkboxes are selected. Testing explicit checked states ensures visual feedback matches data state, preventing silent data loss when forms submit with unexpected values.
+**Why It Matters**: Checkbox groups allow users to select multiple options simultaneously, common in preference settings and filter interfaces. Checkbox state confusion causes many user support tickets—users don't understand whether checkboxes are selected. Testing explicit checked states ensures visual feedback matches data state, preventing silent data loss when forms submit with unexpected values.
 
 ### Example 36: Autocomplete - Search Suggestions
 
@@ -285,7 +285,7 @@ test("selects item from autocomplete suggestions", async ({ page }) => {
 
 **Key Takeaway**: Wait for suggestions to load before interacting. Use role="option" to select autocomplete items accessibly.
 
-**Why It Matters**: Autocomplete reduces typing effort and guides users toward valid options. GitHub's search interface research shows autocomplete improves query accuracy by 50% but adds timing complexity. Testing autocomplete requires waiting for asynchronous suggestion loading—race conditions between typing and suggestions appearing cause flaky tests that mask real bugs in debounce logic or API response handling.
+**Why It Matters**: Autocomplete reduces typing effort and guides users toward valid options. Autocomplete improves query accuracy but adds timing complexity. Testing autocomplete requires waiting for asynchronous suggestion loading—race conditions between typing and suggestions appearing cause flaky tests that mask real bugs in debounce logic or API response handling.
 
 ### Example 37: Rich Text Editor - WYSIWYG Input
 
@@ -344,7 +344,7 @@ test("formats text in rich text editor", async ({ page }) => {
 
 **Key Takeaway**: Use locator('[contenteditable="true"]') to target rich text editors. Validate HTML structure, not just visible text.
 
-**Why It Matters**: WYSIWYG editors are critical for content management systems but notoriously difficult to test. Medium's editor team found 70% of content corruption bugs originate from incorrect HTML structure generation. Testing HTML output ensures formatting buttons create correct markup—visual appearance may match while underlying HTML is malformed, causing rendering issues or data loss when content is saved.
+**Why It Matters**: WYSIWYG editors are critical for content management systems but notoriously difficult to test. Many content corruption bugs originate from incorrect HTML structure generation. Testing HTML output ensures formatting buttons create correct markup—visual appearance may match while underlying HTML is malformed, causing rendering issues or data loss when content is saved.
 
 ### Example 38: Drag-and-Drop - Reordering Items
 
@@ -386,7 +386,7 @@ test("reorders items via drag and drop", async ({ page }) => {
 
 **Key Takeaway**: Use dragTo() method for drag-and-drop operations. Verify element order after drag completes, not during drag.
 
-**Why It Matters**: Drag-and-drop provides intuitive reordering but requires complex mouse event sequences. Trello's interaction research shows drag-and-drop reduces task organization time by 40% compared to modal-based reordering, but implementation is error-prone. Testing drag-and-drop validates mouse event handling, visual feedback during drag, and data persistence after drop—critical for kanban boards, file uploads, and priority management interfaces.
+**Why It Matters**: Drag-and-drop provides intuitive reordering but requires complex mouse event sequences. Drag-and-drop reduces task organization time compared to modal-based reordering, but implementation is error-prone. Testing drag-and-drop validates mouse event handling, visual feedback during drag, and data persistence after drop—critical for kanban boards, file uploads, and priority management interfaces.
 
 ### Example 39: Range Slider - Numeric Input
 
@@ -406,14 +406,14 @@ test("adjusts price range with sliders", async ({ page }) => {
   // => Locates maximum price slider
 
   await minPriceSlider.fill("50");
-  // => Sets minimum price to $50
+  // => Sets minimum price to substantial amounts
   // => fill() works with range inputs
 
   await maxPriceSlider.fill("200");
-  // => Sets maximum price to $200
+  // => Sets maximum price to substantial amounts
   // => Programmatic value setting
 
-  await expect(page.getByText("$50 - $200")).toBeVisible();
+  await expect(page.getByText("substantial amounts - substantial amounts")).toBeVisible();
   // => Asserts price range display updated
   // => UI reflects slider values
 
@@ -435,7 +435,7 @@ test("adjusts price range with sliders", async ({ page }) => {
 
 **Key Takeaway**: Use fill() to set range input values programmatically. Validate both slider state and corresponding UI display updates.
 
-**Why It Matters**: Range sliders provide visual feedback for numeric input but synchronization between slider position and value display is error-prone. Amazon's filter research shows 25% of price filter bugs involve slider-value mismatches. Testing slider values ensures accessibility (keyboard users can set values), business logic validation (min < max), and UI synchronization—critical for e-commerce filters where incorrect ranges hide products users want to see.
+**Why It Matters**: Range sliders provide visual feedback for numeric input but synchronization between slider position and value display is error-prone. Many price filter bugs involve slider-value mismatches. Testing slider values ensures accessibility (keyboard users can set values), business logic validation (min < max), and UI synchronization—critical for e-commerce filters where incorrect ranges hide products users want to see.
 
 ### Example 40: Form Submission - Success and Error Handling
 
@@ -516,7 +516,7 @@ test("handles server error during submission", async ({ page }) => {
 
 **Key Takeaway**: Use waitForResponse to validate server communication. Test both success and error paths for complete form coverage.
 
-**Why It Matters**: Forms bridge UI and backend systems—testing only UI interactions misses critical failure modes. Stripe's payment form research found 60% of form bugs occur in success/error handling, not input validation. Testing response handling ensures users receive appropriate feedback, data submits correctly, and errors are actionable. Network failures, server errors, and validation errors each require different user feedback patterns.
+**Why It Matters**: Forms bridge UI and backend systems—testing only UI interactions misses critical failure modes. Many form bugs occur in success/error handling, not input validation. Testing response handling ensures users receive appropriate feedback, data submits correctly, and errors are actionable. Network failures, server errors, and validation errors each require different user feedback patterns.
 
 ## Advanced Assertions (Examples 41-50)
 
@@ -569,7 +569,7 @@ test("validates URL changes during multi-step flow", async ({ page }) => {
 
 **Key Takeaway**: Use toHaveURL with strings for exact matches, regex for patterns. Parse URLs with URL API for query parameter validation.
 
-**Why It Matters**: URL structure affects SEO, deep linking, and browser history. Google's web vitals research shows 40% of users bookmark or share product URLs—incorrect URLs break navigation. Testing URL assertions validates routing logic, ensures query parameters persist correctly, and confirms single-page apps update browser history. URLs are the contract between frontend and backend routing systems.
+**Why It Matters**: URL structure affects SEO, deep linking, and browser history. Many users bookmark or share product URLs—incorrect URLs break navigation. Testing URL assertions validates routing logic, ensures query parameters persist correctly, and confirms single-page apps update browser history. URLs are the contract between frontend and backend routing systems.
 
 ### Example 42: Attribute Assertions - Element Properties
 
@@ -624,7 +624,7 @@ test("validates element attributes", async ({ page }) => {
 
 **Key Takeaway**: Use toHaveAttribute to validate both data attributes and ARIA properties. Test attribute changes for interactive components.
 
-**Why It Matters**: HTML attributes control accessibility, behavior, and testing stability. WebAIM's accessibility audit found 60% of ARIA attribute errors involve incorrect state management. Testing attributes validates screen reader compatibility (aria-label, aria-expanded), component state (data-testid), and dynamic behavior (attribute changes on interaction). Data attributes provide stable selectors immune to text or style changes.
+**Why It Matters**: HTML attributes control accessibility, behavior, and testing stability. Many ARIA attribute errors involve incorrect state management. Testing attributes validates screen reader compatibility (aria-label, aria-expanded), component state (data-testid), and dynamic behavior (attribute changes on interaction). Data attributes provide stable selectors immune to text or style changes.
 
 ### Example 43: Element Count - Collection Assertions
 
@@ -671,7 +671,7 @@ test("validates search result count", async ({ page }) => {
 
 **Key Takeaway**: Use toHaveCount to assert exact element counts. Test count changes when filters or pagination change state.
 
-**Why It Matters**: Element counts validate that filtering, pagination, and search work correctly. Amazon's search infrastructure team found count discrepancies are the #1 indicator of broken filtering logic. Testing counts ensures all matching items render, pagination displays correct totals, and filter combinations don't unexpectedly exclude results. Count mismatches signal data fetching bugs, race conditions, or incorrect query logic.
+**Why It Matters**: Element counts validate that filtering, pagination, and search work correctly. Count discrepancies are a key indicator of broken filtering logic. Testing counts ensures all matching items render, pagination displays correct totals, and filter combinations don't unexpectedly exclude results. Count mismatches signal data fetching bugs, race conditions, or incorrect query logic.
 
 ### Example 44: Screenshot Comparison - Visual Regression
 
@@ -714,7 +714,7 @@ test("detects visual changes in button styling", async ({ page }) => {
 
 **Key Takeaway**: Use toHaveScreenshot for visual regression testing. Set maxDiffPixels threshold to tolerate minor rendering differences.
 
-**Why It Matters**: Visual bugs slip past traditional assertions but frustrate users immediately. Spotify's frontend team found 35% of production bugs are visual regressions undetected by functional tests. Screenshot comparison catches CSS changes, layout shifts, font rendering issues, and theme problems. Anti-aliasing and font rendering vary across systems—maxDiffPixels threshold prevents flaky tests from rendering variations while catching real visual bugs.
+**Why It Matters**: Visual bugs slip past traditional assertions but frustrate users immediately. Many production bugs are visual regressions undetected by functional tests. Screenshot comparison catches CSS changes, layout shifts, font rendering issues, and theme problems. Anti-aliasing and font rendering vary across systems—maxDiffPixels threshold prevents flaky tests from rendering variations while catching real visual bugs.
 
 ### Example 45: Accessibility Assertions - Axe Integration
 
@@ -756,7 +756,7 @@ test("checks for accessibility violations", async ({ page }) => {
 
 **Key Takeaway**: Use AxeBuilder for automated accessibility testing. Scan full pages and specific components after dynamic changes.
 
-**Why It Matters**: Accessibility compliance is legal requirement in many jurisdictions and moral imperative for inclusive design. Microsoft's accessibility research shows automated testing catches 40% of WCAG violations—remaining 60% require manual testing, but 40% is significant. Axe-core detects missing labels, poor color contrast, invalid ARIA, keyboard traps, and heading structure issues. Testing accessibility programmatically prevents lawsuits and ensures disabled users can complete critical workflows.
+**Why It Matters**: Accessibility compliance is legal requirement in many jurisdictions and moral imperative for inclusive design. Automated testing catches a significant portion of WCAG violations—remaining 60% require manual testing, but 40% is significant. Axe-core detects missing labels, poor color contrast, invalid ARIA, keyboard traps, and heading structure issues. Testing accessibility programmatically prevents lawsuits and ensures disabled users can complete critical workflows.
 
 ### Example 46: Network Response Assertions - API Validation
 
@@ -810,7 +810,7 @@ test("validates API response data structure", async ({ page }) => {
 
 **Key Takeaway**: Use waitForResponse to capture and validate API responses. Verify both HTTP status and response body structure.
 
-**Why It Matters**: Frontend tests often miss API contract violations until production. Netflix's API testing research shows 50% of production errors involve API response structure changes breaking frontend code. Testing response structure validates that backend sends expected data format, handles pagination correctly, and includes required fields. API contract tests prevent silent data loss when optional fields become required or data types change.
+**Why It Matters**: Frontend tests often miss API contract violations until production. Many production errors involve API response structure changes breaking frontend code. Testing response structure validates that backend sends expected data format, handles pagination correctly, and includes required fields. API contract tests prevent silent data loss when optional fields become required or data types change.
 
 ### Example 47: Custom Matchers - Domain-Specific Assertions
 
@@ -835,7 +835,9 @@ expect.extend({
 
     return {
       message: () =>
-        pass ? `Expected price to be invalid, but got ${text}` : `Expected valid price (e.g., $19.99), but got ${text}`,
+        pass
+          ? `Expected price to be invalid, but got ${text}`
+          : `Expected valid price (e.g., substantial amounts.99), but got ${text}`,
       // => Error message for assertion failure
       pass,
       // => Pass/fail status
@@ -867,7 +869,7 @@ test("validates product prices with custom matcher", async ({ page }) => {
 
 **Key Takeaway**: Use expect.extend to create custom matchers for domain-specific patterns. Custom matchers improve test readability and reduce duplication.
 
-**Why It Matters**: Generic assertions don't express domain concepts clearly. Shopify's test suite analysis found custom matchers reduced test maintenance by 30% by centralizing validation logic. Custom matchers like toHaveValidPrice, toBeWithinDateRange, or toMatchPhoneFormat make tests self-documenting and easier to maintain. Domain logic changes once in the matcher instead of across dozens of tests.
+**Why It Matters**: Generic assertions don't express domain concepts clearly. Custom matchers can reduce test maintenance by centralizing validation logic. Custom matchers like toHaveValidPrice, toBeWithinDateRange, or toMatchPhoneFormat make tests self-documenting and easier to maintain. Domain logic changes once in the matcher instead of across dozens of tests.
 
 ### Example 48: Soft Assertions - Continue After Failures
 
@@ -906,7 +908,7 @@ test("validates all form fields with soft assertions", async ({ page }) => {
 
 **Key Takeaway**: Use expect.soft() to continue test execution after assertion failures. Soft assertions collect all failures for comprehensive validation.
 
-**Why It Matters**: Hard assertions stop at first failure, hiding subsequent issues. Microsoft's test optimization research shows soft assertions reduce debugging time by 40% by revealing all problems simultaneously. Soft assertions are ideal for validating multiple fields, checking responsive layouts across breakpoints, or auditing pages for compliance violations. Seeing all failures at once prevents fix-test-fix-test cycles that waste developer time.
+**Why It Matters**: Hard assertions stop at first failure, hiding subsequent issues. Soft assertions can reduce debugging time by revealing all problems simultaneously. Soft assertions are ideal for validating multiple fields, checking responsive layouts across breakpoints, or auditing pages for compliance violations. Seeing all failures at once prevents fix-test-fix-test cycles that waste developer time.
 
 ### Example 49: Polling Assertions - Wait for Conditions
 
@@ -962,7 +964,7 @@ test("waits for real-time update to appear", async ({ page }) => {
 
 **Key Takeaway**: Use timeout option for built-in assertions waiting for async updates. Use expect.poll() for custom polling logic.
 
-**Why It Matters**: Modern web apps update asynchronously via WebSockets, polling, or real-time APIs. Slack's real-time messaging tests show 80% of test flakiness comes from incorrect wait strategies. Polling assertions provide explicit wait conditions for dynamic content. Default timeouts (30 seconds) work for most cases, but configurable intervals optimize test speed—short intervals for fast updates, longer intervals for slow polling endpoints.
+**Why It Matters**: Modern web apps update asynchronously via WebSockets, polling, or real-time APIs. Much test flakiness comes from incorrect wait strategies. Polling assertions provide explicit wait conditions for dynamic content. Default timeouts (30 seconds) work for most cases, but configurable intervals optimize test speed—short intervals for fast updates, longer intervals for slow polling endpoints.
 
 ### Example 50: Negative Assertions - Verify Absence
 
@@ -1003,7 +1005,7 @@ test("verifies admin panel hidden from regular users", async ({ page }) => {
 
 **Key Takeaway**: Use not.toBeVisible to assert elements hidden, toHaveCount(0) to assert elements absent from DOM. Choose assertion based on whether elements should exist but be hidden.
 
-**Why It Matters**: Security bugs often involve showing restricted content to unauthorized users. Facebook's security team found 25% of access control bugs are UI-level leaks where API correctly restricts access but UI shows restricted options. Testing absence validates that admin features, premium content, or sensitive data don't appear to unauthorized users. Differentiating "not visible" (exists but hidden) from "not present" (doesn't exist) matters for performance and security.
+**Why It Matters**: Security bugs often involve showing restricted content to unauthorized users. Many access control bugs are UI-level leaks where API correctly restricts access but UI shows restricted options. Testing absence validates that admin features, premium content, or sensitive data don't appear to unauthorized users. Differentiating "not visible" (exists but hidden) from "not present" (doesn't exist) matters for performance and security.
 
 ## API Testing (Examples 51-55)
 
@@ -1066,7 +1068,7 @@ test("sends POST request to create user", async ({ request }) => {
 
 **Key Takeaway**: Use request fixture for API testing without browser overhead. Validate both response status and body structure.
 
-**Why It Matters**: API testing is 10-100x faster than UI testing for backend logic validation. Google's test pyramid research recommends 70% unit tests, 20% API tests, 10% UI tests for optimal speed and coverage. Testing APIs directly validates business logic, data persistence, and error handling without browser rendering overhead. API tests run in milliseconds vs. seconds for UI tests, enabling rapid TDD cycles.
+**Why It Matters**: API testing is significantly faster than UI testing for backend logic validation. Test pyramid recommends more unit tests than API tests, and more API tests than UI tests for optimal speed and coverage. Testing APIs directly validates business logic, data persistence, and error handling without browser rendering overhead. API tests run in milliseconds vs. seconds for UI tests, enabling rapid TDD cycles.
 
 ### Example 52: API Authentication - Bearer Token and Cookies
 
@@ -1131,7 +1133,7 @@ test("authenticates with session cookies", async ({ request, context }) => {
 
 **Key Takeaway**: Use headers option for bearer token auth, request context automatically handles cookies. Store tokens for reuse across requests.
 
-**Why It Matters**: Authentication testing validates security controls and session management. Auth0's security research shows 45% of authentication bugs involve token handling errors—expired tokens, missing refresh, or token leakage. Testing authentication flows ensures protected endpoints reject unauthenticated requests, tokens work across requests, and session cookies persist correctly. API-level auth tests run faster than UI login flows while providing better security validation.
+**Why It Matters**: Authentication testing validates security controls and session management. Many authentication bugs involve token handling errors—expired tokens, missing refresh, or token leakage. Testing authentication flows ensures protected endpoints reject unauthenticated requests, tokens work across requests, and session cookies persist correctly. API-level auth tests run faster than UI login flows while providing better security validation.
 
 ### Example 53: API Mocking - Stubbing External Services
 
@@ -1200,7 +1202,7 @@ test("mocks API to simulate error response", async ({ page }) => {
 
 **Key Takeaway**: Use page.route to intercept and mock API requests. Mock slow responses, errors, and edge cases impossible to reliably trigger with real API.
 
-**Why It Matters**: Real APIs are unreliable test dependencies—external services fail, rate limits trigger, or test data changes. Stripe's frontend testing shows mocked API tests are 50x faster and 10x more reliable than tests hitting real APIs. Mocking enables testing error states (500 errors, timeouts), loading states (slow responses), and edge cases (empty results, pagination boundaries) that are difficult or impossible to reproduce consistently with real backend services.
+**Why It Matters**: Real APIs are unreliable test dependencies—external services fail, rate limits trigger, or test data changes. Mocked API tests are significantly faster and more reliable than tests hitting real APIs. Mocking enables testing error states (500 errors, timeouts), loading states (slow responses), and edge cases (empty results, pagination boundaries) that are difficult or impossible to reproduce consistently with real backend services.
 
 ### Example 54: API Test Fixtures - Reusable Setup
 
@@ -1278,7 +1280,7 @@ test("creates new order with auth fixture", async ({ authenticatedRequest }) => 
 
 **Key Takeaway**: Extend base test with API fixtures for reusable authentication. Fixtures handle setup and cleanup automatically.
 
-**Why It Matters**: API test duplication wastes time and makes tests fragile. Cypress's fixture research shows 40% of API test code is duplicated authentication setup. Fixtures centralize authentication, eliminate token management boilerplate, and ensure consistent cleanup. When auth logic changes, update the fixture once instead of dozens of tests. Fixtures also enable testing with different user roles by creating multiple authenticated request fixtures.
+**Why It Matters**: API test duplication wastes time and makes tests fragile. Much API test code involves duplicated authentication setup. Fixtures centralize authentication, eliminate token management boilerplate, and ensure consistent cleanup. When auth logic changes, update the fixture once instead of dozens of tests. Fixtures also enable testing with different user roles by creating multiple authenticated request fixtures.
 
 ### Example 55: Combined UI and API Testing - Hybrid Validation
 
@@ -1335,7 +1337,7 @@ test("validates UI form submission creates API resource", async ({ page, request
 
 **Key Takeaway**: Combine UI interactions with API validation for end-to-end testing. Verify both user experience and data persistence.
 
-**Why It Matters**: UI tests alone miss data corruption bugs; API tests alone miss user experience issues. Shopify's e-commerce testing shows hybrid tests catch 30% more bugs than separate UI or API tests. Hybrid testing validates complete workflows: UI submits correctly, API processes correctly, data persists correctly, and subsequent API reads return correct data. This approach catches integration bugs where UI and backend disagree on data format or validation rules.
+**Why It Matters**: UI tests alone miss data corruption bugs; API tests alone miss user experience issues. Hybrid tests can catch more bugs than separate UI or API tests. Hybrid testing validates complete workflows: UI submits correctly, API processes correctly, data persists correctly, and subsequent API reads return correct data. This approach catches integration bugs where UI and backend disagree on data format or validation rules.
 
 ## Test Organization (Examples 56-60)
 
@@ -1433,7 +1435,7 @@ test("shows error for invalid credentials", async ({ page }) => {
 
 **Key Takeaway**: Page objects encapsulate locators and actions for specific pages. Tests use high-level methods instead of low-level locator calls.
 
-**Why It Matters**: Direct locator usage creates fragile tests—when UI changes, every test using that locator breaks. Martin Fowler's page object pattern research shows 60% reduction in test maintenance burden. Page objects provide single source of truth for locators—when "Username" label changes to "Email", update one getter instead of 50 tests. Page objects also improve readability—`loginPage.login(user, pass)` is clearer than three fill/click calls.
+**Why It Matters**: Direct locator usage creates fragile tests—when UI changes, every test using that locator breaks. Page object pattern significantly reduces test maintenance burden. Page objects provide single source of truth for locators—when "Username" label changes to "Email", update one getter instead of 50 tests. Page objects also improve readability—`loginPage.login(user, pass)` is clearer than three fill/click calls.
 
 ### Example 57: Test Fixtures - Custom Setup and Teardown
 
@@ -1507,7 +1509,7 @@ test("creates new project from dashboard", async ({ authenticatedPage }) => {
 
 **Key Takeaway**: Use fixtures for reusable setup and teardown. Fixtures provide clean state and reduce test duplication.
 
-**Why It Matters**: Test duplication wastes time and makes suites fragile. Playwright's fixture research shows fixtures reduce setup code by 70% while improving test isolation. Fixtures handle cleanup automatically—even if test fails, fixture teardown runs, preventing state leakage between tests. Fixtures also compose—`authenticatedPage` fixture can depend on `loginPage` fixture, building complex setup from simple building blocks.
+**Why It Matters**: Test duplication wastes time and makes suites fragile. Fixtures significantly reduce setup code while improving test isolation. Fixtures handle cleanup automatically—even if test fails, fixture teardown runs, preventing state leakage between tests. Fixtures also compose—`authenticatedPage` fixture can depend on `loginPage` fixture, building complex setup from simple building blocks.
 
 ### Example 58: Test Hooks - Setup and Teardown
 
@@ -1592,7 +1594,7 @@ test.describe("Shopping cart tests", () => {
 
 **Key Takeaway**: Use beforeEach/afterEach for per-test setup/cleanup, beforeAll/afterAll for suite-level setup/cleanup. Hooks ensure consistent test state.
 
-**Why It Matters**: Test isolation prevents flaky tests from state leakage. Google's test infrastructure research shows improper cleanup causes 50% of test flakiness. beforeEach ensures every test starts with clean state (cleared storage, logged out, fresh navigation). afterAll prevents test data accumulation—without cleanup, thousands of test runs create millions of test products. Hooks centralize lifecycle management instead of copy-pasting setup/cleanup in every test.
+**Why It Matters**: Test isolation prevents flaky tests from state leakage. Improper cleanup causes much test flakiness. beforeEach ensures every test starts with clean state (cleared storage, logged out, fresh navigation). afterAll prevents test data accumulation—without cleanup, thousands of test runs create millions of test products. Hooks centralize lifecycle management instead of copy-pasting setup/cleanup in every test.
 
 ### Example 59: Test Annotations - Metadata and Conditional Execution
 
@@ -1671,7 +1673,7 @@ test.describe("WebKit-specific tests", () => {
 
 **Key Takeaway**: Use test.slow() for known slow tests, test.skip() for conditional execution, and custom annotations for metadata. Annotations improve test reporting and filtering.
 
-**Why It Matters**: Test metadata enables intelligent test execution and better reporting. Microsoft's test optimization shows conditional skipping reduces CI time by 40% by running only relevant tests per environment. test.slow() prevents timeout failures for legitimate slow operations without inflating timeout for entire suite. Annotations document flaky tests, link to issues, and categorize tests for selective execution—run only "payment" tests for payment system changes.
+**Why It Matters**: Test metadata enables intelligent test execution and better reporting. Conditional skipping can significantly reduce CI time by running only relevant tests per environment. test.slow() prevents timeout failures for legitimate slow operations without inflating timeout for entire suite. Annotations document flaky tests, link to issues, and categorize tests for selective execution—run only "payment" tests for payment system changes.
 
 ### Example 60: Test Retries and Timeouts - Reliability Configuration
 
@@ -1745,4 +1747,4 @@ test("dynamic timeout based on environment", async ({ page }) => {
 
 **Key Takeaway**: Configure retries at suite level with test.describe.configure(), timeouts with test.setTimeout(). Balance reliability (retries) with fast failure detection.
 
-**Why It Matters**: Flaky tests erode confidence in test suites but retrying every test wastes CI time. Netflix's test reliability research shows 3 retries catch 95% of transient failures while limiting retries to flaky suites prevents masking real bugs. Timeout configuration prevents false failures for legitimate slow operations while keeping default timeouts short to catch infinite loops. Environment-specific timeouts account for CI performance variability—CI servers are 2-3x slower than developer machines.
+**Why It Matters**: Flaky tests erode confidence in test suites but retrying every test wastes CI time. Multiple retries catch most transient failures while limiting retries to flaky suites prevents masking real bugs. Timeout configuration prevents false failures for legitimate slow operations while keeping default timeouts short to catch infinite loops. Environment-specific timeouts account for CI performance variability—CI servers are noticeably slower than developer machines.

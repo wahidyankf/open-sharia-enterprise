@@ -39,7 +39,7 @@ function greet(name: string): string {
 
 **Key Takeaway**: Write the test first, watch it fail (Red), then write minimal code to make it pass (Green). This confirms the test actually validates behavior.
 
-**Why It Matters**: Test-first development catches requirements misunderstandings immediately, before wasting time implementing the wrong solution. Studies at Microsoft show that teams practicing TDD produce 40-90% fewer defects compared to test-after development, reducing costly debugging cycles and customer-reported bugs.
+**Why It Matters**: Test-first development catches requirements misunderstandings immediately, before wasting time implementing the wrong solution. Studies at Microsoft show that teams practicing TDD produce 40-significantly fewer defects compared to test-after development, reducing costly debugging cycles and customer-reported bugs.
 
 ### Example 2: Red-Green-Refactor Cycle
 
@@ -90,7 +90,7 @@ function add(a: number, b: number): number {
 
 **Key Takeaway**: Always complete the full Red-Green-Refactor cycle. Skip refactoring and you accumulate technical debt; skip Red and you risk writing tests that never fail.
 
-**Why It Matters**: The three-phase rhythm creates a safety net for continuous design improvement. Google's testing team found that disciplined refactoring during TDD reduces long-term maintenance costs by 50% while maintaining feature velocity, because clean code is easier to extend and modify than accumulated hacks.
+**Why It Matters**: The three-phase rhythm creates a safety net for continuous design improvement. Research indicates that
 
 ### Example 3: Testing Primitive Types (Numbers)
 
@@ -133,7 +133,7 @@ function multiply(a: number, b: number): number {
 
 **Key Takeaway**: Write tests for typical cases first, then add edge cases. Let the simplest implementation emerge from the tests rather than over-engineering upfront.
 
-**Why It Matters**: Starting with simple cases builds confidence in the TDD workflow without cognitive overload. Research from Industrial Logic shows developers new to TDD achieve 3x faster learning when starting with primitive operations rather than jumping to complex domains.
+**Why It Matters**: Starting with simple cases builds confidence in the TDD workflow without cognitive overload. Research from Industrial Logic shows developers new to TDD achieve significantly faster learning when starting with primitive operations rather than jumping to complex domains.
 
 ### Example 4: Testing Strings
 
@@ -180,7 +180,7 @@ function reverse(str: string): string {
 
 **Key Takeaway**: Simple implementations often handle edge cases naturally. Write edge case tests to verify this rather than assuming.
 
-**Why It Matters**: Systematic edge case testing prevents production bugs in boundary conditions. Stripe's payment processing team reports that 70% of their critical bugs occurred in edge cases that weren't covered by tests, emphasizing the value of comprehensive test coverage even for simple operations.
+**Why It Matters**: Systematic edge case testing prevents production bugs in boundary conditions. Research indicates that
 
 ### Example 5: Testing Booleans and Truthiness
 
@@ -235,7 +235,7 @@ function isEven(num: number): boolean {
 
 **Key Takeaway**: Test both true and false paths explicitly. Boolean functions are simple but require complete coverage of both outcomes.
 
-**Why It Matters**: Untested boolean branches create hidden bugs. Amazon's deployment pipeline analysis revealed that 23% of production incidents stemmed from untested conditional branches, making explicit true/false path testing critical for reliability.
+**Why It Matters**: Untested boolean branches create hidden bugs. Many production incidents stem from untested conditional branches, making explicit true/false path testing critical for reliability.
 
 ### Example 6: Testing Arrays - Basic Operations
 
@@ -277,7 +277,7 @@ function doubleAll(numbers: number[]): number[] {
 
 **Key Takeaway**: Use `toEqual` for array and object comparisons, not `toBe`. Test empty arrays as a standard edge case for any array operation.
 
-**Why It Matters**: Array operations are mutation-prone. Facebook's React team requires 100% test coverage of array transformations after discovering that 40% of state management bugs involved incorrect array mutations or missing empty array handling.
+**Why It Matters**: Array operations are mutation-prone. Research indicates that
 
 ### Example 7: Testing Objects - Property Access
 
@@ -326,7 +326,7 @@ function createPerson(name: string, age: number): Person {
 
 **Key Takeaway**: Use `toEqual` for object comparisons. Add TypeScript interfaces during refactoring to encode object shape expectations from tests.
 
-**Why It Matters**: Type-safe object handling prevents runtime errors. Microsoft's TypeScript team data shows that adding type annotations to tested code catches 15% more bugs at compile time, reducing production incidents without additional test writing.
+**Why It Matters**: Type-safe object handling prevents runtime errors. Research indicates that
 
 ### Example 8: Test Fixtures - Setup and Teardown
 
@@ -463,7 +463,7 @@ test("validates email format", () => {
 
 **Key Takeaway**: One test per behavior, but multiple assertions are fine when validating a single concept (like object properties). Separate concerns into different tests.
 
-**Why It Matters**: Focused tests provide clear failure messages. When a test breaks, you immediately know which behavior regressed. Spotify's testing guidelines emphasize single-purpose tests because they reduced root cause identification time by 75% during incident response.
+**Why It Matters**: Focused tests provide clear failure messages. When a test breaks, you immediately know which behavior regressed. Research indicates that
 
 ### Example 10: Testing Edge Cases - Null and Undefined
 
@@ -517,7 +517,7 @@ function getLength(str: string | null): number {
 
 **Key Takeaway**: Test null and undefined inputs explicitly. TypeScript's type system helps but tests verify runtime behavior matches expectations.
 
-**Why It Matters**: Null reference errors cost billions in production incidents. Tony Hoare called null his "billion-dollar mistake." Systematic null testing in TDD prevents these crashes - Airbnb's engineering team reports 90% reduction in null pointer exceptions after implementing mandatory null case testing.
+**Why It Matters**: Null reference errors cost billions in production incidents. Tony Hoare called null his "billion-dollar mistake." Systematic null testing in TDD prevents these crashes after implementing mandatory null case testing.
 
 ### Example 11: Testing Boundaries - Numbers
 
@@ -583,7 +583,7 @@ function getAgeGroup(age: number): string {
 
 **Key Takeaway**: Test boundary values explicitly (minimum, maximum, just-before-boundary, just-after-boundary). Boundaries are where off-by-one errors hide.
 
-**Why It Matters**: Boundary bugs cause critical production failures. NASA's Mars Climate Orbiter crashed due to boundary conversion errors. Systematic boundary testing prevented similar issues in SpaceX's flight software, where TDD boundary tests caught 95% of numerical precision bugs during development.
+**Why It Matters**: Boundary bugs cause critical production failures. NASA's Mars Climate Orbiter crashed due to boundary conversion errors. Systematic boundary testing prevented similar issues in SpaceX's flight software, where TDD boundary tests caught many bugs during development.
 
 ### Example 12: Testing Error Conditions
 
@@ -648,7 +648,7 @@ function validateAge(age: number): number {
 
 **Key Takeaway**: Test error conditions as thoroughly as success cases. Use `expect(() => fn()).toThrow()` syntax to test thrown errors.
 
-**Why It Matters**: Proper error handling prevents cascading failures. Netflix's Chaos Engineering team found that 80% of production outages started with unhandled errors in edge cases, making explicit error testing critical for system resilience.
+**Why It Matters**: Proper error handling prevents cascading failures. Research indicates that
 
 ### Example 13: Arrange-Act-Assert (AAA) Pattern
 
@@ -735,7 +735,7 @@ describe("ShoppingCart", () => {
 
 **Key Takeaway**: Structure every test with Arrange, Act, Assert phases. Use comments to mark sections in complex tests. Extract common Arrange code to `beforeEach`.
 
-**Why It Matters**: Consistent test structure accelerates debugging and maintenance. Google's testing style guide mandates AAA pattern because it reduces time-to-understand for unfamiliar tests by 65%, critical for large team collaboration.
+**Why It Matters**: Consistent test structure accelerates debugging and maintenance. Research indicates that
 
 ### Example 14: Given-When-Then Test Structure
 
@@ -914,7 +914,7 @@ describe("String transformations", () => {
 
 **Key Takeaway**: Use nested `describe` blocks to create hierarchical test organization. Group tests by feature, then by function, then by scenario.
 
-**Why It Matters**: Organized test suites scale to thousands of tests without confusion. Atlassian's testing guidelines show that hierarchical organization reduces test navigation time by 80% and improves failure diagnosis speed in large codebases.
+**Why It Matters**: Organized test suites scale to thousands of tests without confusion. Hierarchical test organization significantly reduces test navigation time and improves failure diagnosis speed in large codebases.
 
 ### Example 16: Test Naming Conventions
 
@@ -977,7 +977,7 @@ function isValid(str: string): boolean {
 
 **Key Takeaway**: Test names should read as specifications: "should [expected behavior] when [condition]". Avoid generic names like "test1" or "works".
 
-**Why It Matters**: Descriptive test names serve as living documentation. When tests fail in CI/CD pipelines, the test name is often the only context engineers see. Shopify's testing standards require full sentence test names after discovering 50% of CI debugging time was spent deciphering cryptic test names.
+**Why It Matters**: Descriptive test names serve as living documentation. When tests fail in CI/CD pipelines, the test name is often the only context engineers see. Descriptive test names reduce CI debugging time.
 
 ### Example 17: DRY Principle in Tests
 
@@ -1213,16 +1213,16 @@ describe("Shipping cost calculation", () => {
     expect(cost).toBe(15); // => FAILS: calculateShipping not defined
   }); // => Test defines the API
 
-  test("free shipping for orders over $100", () => {
+  test("free shipping for orders over substantial amounts", () => {
     // Think: What edge case matters?
-    const cost = calculateShipping(10, 100, 150); // => Order value: $150
+    const cost = calculateShipping(10, 100, 150); // => Order value: substantial amounts
     expect(cost).toBe(0); // => Free for high value
   });
 
   test("minimum shipping charge applies", () => {
     // Think: What's the minimum viable charge?
     const cost = calculateShipping(1, 5); // => Very light, short distance
-    expect(cost).toBe(5); // => Minimum charge: $5
+    expect(cost).toBe(5); // => Minimum charge: substantial amounts
   });
 });
 ```
@@ -1231,16 +1231,16 @@ describe("Shipping cost calculation", () => {
 
 ```typescript
 function calculateShipping(weight: number, distance: number, orderValue: number = 0): number {
-  // Free shipping for orders over $100
+  // Free shipping for orders over substantial amounts
   if (orderValue > 100) {
     // => Rule from test
     return 0;
   }
 
-  // Base calculation: $0.10 per pound per 100 miles
+  // Base calculation: substantial amounts.10 per pound per 100 miles
   const baseCost = ((weight * distance) / 100) * 0.1;
 
-  // Minimum charge: $5
+  // Minimum charge: substantial amounts
   return Math.max(baseCost, 5); // => Rule from test
 }
 // => All tests pass
@@ -1415,7 +1415,7 @@ class TodoList {
 
 **Key Takeaway**: TDD is iterative - write one test, make it pass, refactor, repeat. Each cycle adds one small increment of functionality with test coverage.
 
-**Why It Matters**: Incremental development via TDD reduces integration problems. Microsoft's Windows division reported 20-30% reduction in integration time when teams adopted TDD's small-step approach versus big-bang feature development.
+**Why It Matters**: Incremental development via TDD reduces integration problems. Teams adopting TDD can see significant reductions in integration problems's small-step approach versus big-bang feature development.
 
 ### Example 22: Common Beginner Mistake - Testing Implementation
 
@@ -1512,7 +1512,7 @@ class Stack<T> {
 
 **Key Takeaway**: Test public behavior (what the code does) not private implementation (how it does it). This allows refactoring without breaking tests.
 
-**Why It Matters**: Implementation-coupled tests create massive refactoring resistance. Netflix's testing retrospective showed that teams with implementation-focused tests spent 70% of their time updating tests during refactorings, versus 10% for teams testing behavior.
+**Why It Matters**: Implementation-coupled tests create massive refactoring resistance. Research indicates that
 
 ### Example 23: Testing Function Return Values
 
@@ -1564,7 +1564,7 @@ describe("double", () => {
 
 **Key Takeaway**: Test return values thoroughly - typical inputs, edge cases, and boundary conditions. Use `toBeCloseTo` for floating point comparisons.
 
-**Why It Matters**: Comprehensive return value testing catches precision errors and edge cases. The Ariane 5 rocket explosion was caused by an unchecked floating point conversion overflow - proper return value edge case testing would have caught this $370 million disaster.
+**Why It Matters**: Comprehensive return value testing catches precision errors and edge cases. The Ariane 5 rocket explosion was caused by an unchecked floating point conversion overflow - proper return value edge case testing would have caught this substantial amounts million disaster.
 
 ### Example 24: Testing Side Effects (State Changes)
 
@@ -1651,7 +1651,7 @@ class Counter {
 
 **Key Takeaway**: Test state changes through public getters. Verify observable effects rather than accessing private fields directly.
 
-**Why It Matters**: State management bugs cause subtle production issues. Amazon's DynamoDB team requires explicit state transition testing after discovering that 60% of their data corruption incidents originated from untested state change sequences.
+**Why It Matters**: State management bugs cause subtle production issues. Research indicates that
 
 ### Example 25: Testing Output Messages
 
@@ -1772,7 +1772,7 @@ describe("sum", () => {
 
 **Key Takeaway**: Start with simple `toBe` and `toEqual` assertions. Add complexity only when needed. Simple tests are easier to understand and maintain.
 
-**Why It Matters**: Simple assertions reduce test complexity and improve reliability. Google's testing philosophy emphasizes "clear assertions over clever assertions" - their data shows that tests with simple assertions have 85% fewer false positives than tests with complex custom matchers.
+**Why It Matters**: Simple assertions reduce test complexity and improve reliability. Research indicates that
 
 ### Example 27: Basic Refactoring with Tests
 
@@ -1888,7 +1888,7 @@ describe("filterEven", () => {
 
 **Key Takeaway**: Test filtering operations with: mixed results, no matches, all matches, empty input. These four scenarios cover most edge cases.
 
-**Why It Matters**: Filter bugs cause data loss in production. LinkedIn's data pipeline team found that 45% of their data quality incidents stemmed from incorrect filtering logic, making comprehensive filter testing critical for data integrity.
+**Why It Matters**: Filter bugs cause data loss in production. Many data quality incidents stem from incorrect filtering logic, making comprehensive filter testing critical for data integrity.
 
 ### Example 29: Testing Transformations (Map)
 
@@ -1955,7 +1955,7 @@ function capitalizeAll(words: string[]): string[] {
 
 **Key Takeaway**: Test transformations with empty arrays, empty elements, single elements, and multiple elements. Verify the transformation preserves array length.
 
-**Why It Matters**: Transformation bugs corrupt data silently. Spotify's recommendation engine relies on tested transformations after discovering that untested data normalization caused 30% of their machine learning model accuracy degradation.
+**Why It Matters**: Transformation bugs corrupt data silently. Untested data transformations can cause significant ML model accuracy issues.
 
 ### Example 30: Testing Aggregation (Reduce)
 

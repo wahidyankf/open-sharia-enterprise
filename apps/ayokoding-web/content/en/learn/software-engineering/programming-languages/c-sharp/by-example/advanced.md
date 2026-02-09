@@ -21,7 +21,7 @@ tags:
   ]
 ---
 
-This advanced tutorial covers C#'s expert-level features through 25 heavily annotated examples. Topics include high-performance types (ValueTask, Span&lt;T&gt;, Memory&lt;T&gt;), reflection and metaprogramming, advanced async patterns, concurrency primitives, unsafe code, performance profiling, and ASP.NET Core advanced features for production systems.
+This advanced tutorial covers C#'s expert-level features through 25 heavily annotated examples. Topics include high-performance types (ValueTask, Span&lt;T&gt;, Memory&lt;T&gt;), reflection and metaprogramming, advanced async patterns, concurrency primitives, unsafe code, performance profiling, and advanced .NET features for production systems.
 
 ## Example 61: ValueTask for High-Performance Async
 
@@ -107,7 +107,7 @@ Console.WriteLine(result2);
 
 **Key Takeaway**: Use ValueTask&lt;T&gt; for frequently-called async methods where most operations complete synchronously (cache hits, pooled connections). Use Task&lt;T&gt; for methods that always go async.
 
-**Why It Matters**: In high-throughput APIs processing thousands of requests per second, ValueTask eliminates millions of Task allocations when operations complete synchronously from cache or connection pools. This reduces GC pressure by 40-60% and improves p99 latency by 20-30%. Production impact: ASP.NET Core controllers using cached database connections see 50% reduction in Gen0 collections.
+**Why It Matters**: In high-throughput APIs processing thousands of requests per second, ValueTask eliminates millions of Task allocations when operations complete synchronously from cache or connection pools. This reduces GC pressure and improves latency. Controllers using cached database connections see significant reductions in Gen0 collections.
 
 ## Example 62: IAsyncEnumerable for Streaming Data
 
@@ -210,7 +210,7 @@ await foreach (var customer in StreamCustomersAsync())
 
 **Key Takeaway**: IAsyncEnumerable streams data incrementally with async/await support. Use yield return to produce items, await foreach to consume. Enables memory-efficient processing of large datasets.
 
-**Why It Matters**: Traditional approaches load entire datasets into memory (List&lt;T&gt;), which fails for large datasets (millions of rows) or infinite streams (real-time feeds). IAsyncEnumerable processes one item at a time, maintaining constant memory usage regardless of dataset size. Production systems use this to process multi-gigabyte database exports on machines with limited memory, reducing memory usage by 95% compared to buffering entire results.
+**Why It Matters**: Traditional approaches load entire datasets into memory (List&lt;T&gt;), which fails for large datasets (millions of rows) or infinite streams (real-time feeds). IAsyncEnumerable processes one item at a time, maintaining constant memory usage regardless of dataset size. Production systems use this to process multi-gigabyte database exports on machines with limited memory, dramatically reducing memory usage compared to buffering entire results.
 
 ## Example 63: Span&lt;T&gt; for Zero-Copy Memory Access
 
@@ -293,7 +293,7 @@ Console.WriteLine($"{y}-{m:D2}-{d:D2}");
 
 **Key Takeaway**: Span&lt;T&gt; provides zero-copy views over contiguous memory. Use for slicing, parsing, and buffer operations to eliminate allocations. Stack-only type (can't be stored in fields or used in async methods).
 
-**Why It Matters**: Traditional string parsing allocates substrings for each segment (year/month/day), creating garbage. High-throughput parsers (log processors, CSV readers) processing millions of lines per second generate gigabytes of garbage with traditional approaches, causing frequent GC pauses (50-100ms). Span&lt;T&gt; eliminates these allocations entirely, reducing GC pressure by 80-90% and improving p99 latency by 40-60% in parsing-heavy workloads.
+**Why It Matters**: Traditional string parsing allocates substrings for each segment (year/month/day), creating garbage. High-throughput parsers (log processors, CSV readers) processing millions of lines per second generate gigabytes of garbage with traditional approaches, causing frequent GC pauses. Span&lt;T&gt; eliminates these allocations entirely, dramatically reducing GC pressure and improving latency in parsing-heavy workloads.
 
 ## Example 64: Memory&lt;T&gt; for Async-Safe Memory Access
 
@@ -373,7 +373,7 @@ await ReadFromStreamAsync(stream);
 
 **Key Takeaway**: Memory&lt;T&gt; enables zero-copy memory access across async boundaries. Use when Span&lt;T&gt; won't compile (async methods, lambdas, fields). Convert to Span&lt;T&gt; in synchronous contexts for actual processing.
 
-**Why It Matters**: Modern .NET I/O APIs (Stream.ReadAsync, Socket.SendAsync) accept Memory&lt;T&gt; instead of byte[], enabling buffer reuse without allocation. In high-throughput network servers processing thousands of concurrent connections, reusing buffers eliminates millions of allocations per second. Combined with ArrayPool (Example 65), this reduces GC pressure by 95% and improves throughput by 2-3x in I/O-heavy workloads like web servers and proxy services.
+**Why It Matters**: Modern .NET I/O APIs (Stream.ReadAsync, Socket.SendAsync) accept Memory&lt;T&gt; instead of byte[], enabling buffer reuse without allocation. In high-throughput network servers processing thousands of concurrent connections, reusing buffers eliminates millions of allocations per second. Combined with ArrayPool (Example 65), this dramatically reduces GC pressure and improves throughput in I/O-heavy workloads like web servers and proxy services.
 
 ## Example 65: stackalloc and ArrayPool for Buffer Management
 
@@ -514,7 +514,7 @@ await ProcessLargeDataAsync(stream);
 
 **Key Takeaway**: Use stackalloc for small (&lt;1KB) known-size buffers. Use ArrayPool for large or variable-size buffers. Both eliminate heap allocations and GC pressure. Always return pooled arrays in finally blocks.
 
-**Why It Matters**: High-performance servers process thousands of requests concurrently, each needing temporary buffers for parsing, formatting, and I/O. Traditional heap allocation creates millions of short-lived objects (Gen0 garbage), triggering frequent GC pauses (20-50ms). ArrayPool + stackalloc eliminate 90-95% of these allocations, reducing GC pause time from 50-100ms to 5-10ms. This improves p99 latency by 80% and increases throughput by 2-3x in buffer-heavy workloads like JSON parsing and HTTP request handling.
+**Why It Matters**: High-performance servers process thousands of requests concurrently, each needing temporary buffers for parsing, formatting, and I/O. Traditional heap allocation creates millions of short-lived objects (Gen0 garbage), triggering frequent GC pauses. ArrayPool + stackalloc eliminate most of these allocations, significantly reducing GC pause time and improving latency and throughput in buffer-heavy workloads like JSON parsing and HTTP request handling.
 
 ## Example 66: Reflection Basics - Type Inspection
 
@@ -595,7 +595,7 @@ Console.WriteLine($"Name via reflection: {nameValue}");
 
 **Key Takeaway**: Reflection provides runtime type inspection and dynamic invocation. Use typeof() or GetType() to access Type metadata. Use PropertyInfo/MethodInfo for dynamic property access and method calls.
 
-**Why It Matters**: Reflection enables serialization libraries (JSON.NET, System.Text.Json), ORMs (Entity Framework), and dependency injection containers (ASP.NET Core DI) to work generically across all types without compile-time knowledge. This eliminates 90% of boilerplate code - one JSON serializer works for all types instead of writing custom serialization for each. Tradeoff: 10-100x slower than compiled code, so cache Type/PropertyInfo objects in hot paths.
+**Why It Matters**: Reflection enables serialization libraries, ORMs (Entity Framework), and dependency injection containers to work generically across all types without compile-time knowledge. This eliminates substantial boilerplate code - one JSON serializer works for all types instead of writing custom serialization for each. Tradeoff: significantly slower than compiled code, so cache Type/PropertyInfo objects in hot paths.
 
 ## Example 67: Custom Attributes and Attribute Reflection
 
@@ -683,7 +683,7 @@ Console.WriteLine($"Product2 valid: {Validate(product2)}");
 
 **Key Takeaway**: Custom attributes attach metadata to code elements. Use AttributeUsage to specify valid targets. Use GetCustomAttribute() to read attributes at runtime for validation, configuration, or framework behavior.
 
-**Why It Matters**: Attributes enable declarative programming - express intent through metadata rather than code. ASP.NET Core uses [Route], [HttpGet], [Authorize] attributes for routing and authentication. Entity Framework uses [Key], [Required], [MaxLength] for database schema. This reduces boilerplate by 70% compared to imperative configuration - one [Required] attribute replaces validation code in every method.
+**Why It Matters**: Attributes enable declarative programming - express intent through metadata rather than code. Web frameworks use [Route], [HttpGet], [Authorize] attributes for routing and authentication. ORMs use [Key], [Required], [MaxLength] for database schema. This reduces boilerplate compared to imperative configuration - one [Required] attribute replaces validation code in every method.
 
 ## Example 68: Expression Trees - Code as Data
 
@@ -772,7 +772,7 @@ if (selectorBody is MethodCallExpression methodCall)
 
 **Key Takeaway**: Expression trees represent code as data structures (Expression objects) instead of compiled IL. Use Expression&lt;Func&lt;T&gt;&gt; to capture lambdas as trees. Compile() converts to executable delegates. Analyze tree structure for translation (SQL, MongoDB queries).
 
-**Why It Matters**: Expression trees enable LINQ query providers to translate C# code to database queries. Entity Framework converts `db.Users.Where(u => u.Age > 25)` to SQL `WHERE Age > 25` by analyzing the expression tree, sending only the filter to the database instead of loading all rows. This reduces network traffic by 95% and database load by 90% for filtered queries - single-record queries over millions of rows complete in milliseconds instead of minutes.
+**Why It Matters**: Expression trees enable LINQ query providers to translate C# code to database queries. ORMs convert `db.Users.Where(u => u.Age > 25)` to SQL `WHERE Age > 25` by analyzing the expression tree, sending only the filter to the database instead of loading all rows. This dramatically reduces network traffic and database load for filtered queries - single-record queries over millions of rows complete in milliseconds instead of minutes.
 
 ## Example 69: Source Generators - Compile-Time Code Generation
 
@@ -848,7 +848,7 @@ class Person
 
 **Key Takeaway**: Source generators run during compilation to generate additional code. Use attributes to trigger generators. Generated code has zero runtime overhead (no reflection). Common uses: serialization, dependency injection, property change notification.
 
-**Why It Matters**: Traditional reflection-based serialization pays 10-100x performance penalty at runtime. Source generators move this cost to compile time, generating specialized code for each type. System.Text.Json with source generators achieves 5-10x faster serialization than reflection-based approaches while reducing code size by 30% (no reflection metadata). Production APIs using JSON source generators see 40% reduction in CPU usage and 60% reduction in GC pressure.
+**Why It Matters**: Traditional reflection-based serialization pays significant performance penalty at runtime. Source generators move this cost to compile time, generating specialized code for each type. System.Text.Json with source generators achieves faster serialization than reflection-based approaches while reducing code size (no reflection metadata). Production APIs using JSON source generators see substantial reductions in CPU usage and GC pressure.
 
 ## Example 70: Advanced Pattern Matching - List Patterns and Type Patterns
 
@@ -924,7 +924,7 @@ record Person(string Name, int Age);
 
 **Key Takeaway**: List patterns match array/list structure with [..] slice patterns. Type patterns combine type checks with property patterns. Use guards (when clauses) for additional conditions. Enables declarative validation and transformation logic.
 
-**Why It Matters**: Pattern matching eliminates verbose if/else chains and type casting. Traditional validation code requires 5-10 lines per case with explicit type checks and null checks. Pattern matching reduces this to single expressions, improving readability by 60% and reducing bugs from forgotten null checks by 40%. Production parsers use list patterns to validate message formats declaratively, catching invalid formats at compile time through exhaustiveness checking.
+**Why It Matters**: Pattern matching eliminates verbose if/else chains and type casting. Traditional validation code requires multiple lines per case with explicit type checks and null checks. Pattern matching reduces this to single expressions, improving readability and reducing bugs from forgotten null checks. Production parsers use list patterns to validate message formats declaratively, catching invalid formats at compile time through exhaustiveness checking.
 
 ## Example 71: Channels for Producer-Consumer Patterns
 
@@ -1018,7 +1018,7 @@ if (reader.TryRead(out var message))
 
 **Key Takeaway**: Channels provide async-safe producer-consumer queues with backpressure support. Use CreateBounded for capacity limits (prevents memory growth). Use CreateUnbounded for unlimited capacity. TryRead/TryWrite for synchronous operations, ReadAsync/WriteAsync for async.
 
-**Why It Matters**: Traditional BlockingCollection blocks threads, wasting thread pool resources. Channels integrate with async/await, enabling thousands of concurrent producers/consumers without thread exhaustion. Bounded channels provide automatic backpressure - fast producers wait for slow consumers instead of consuming unbounded memory. Production systems use channels for request queuing, event processing, and pipeline architectures, achieving 10x better throughput than BlockingCollection while using 90% fewer threads.
+**Why It Matters**: Traditional BlockingCollection blocks threads, wasting thread pool resources. Channels integrate with async/await, enabling thousands of concurrent producers/consumers without thread exhaustion. Bounded channels provide automatic backpressure - fast producers wait for slow consumers instead of consuming unbounded memory. Production systems use channels for request queuing, event processing, and pipeline architectures, achieving better throughput than BlockingCollection while using fewer threads.
 
 ## Example 72: SemaphoreSlim for Async Concurrency Control
 
@@ -1171,7 +1171,7 @@ else
 
 **Key Takeaway**: SemaphoreSlim limits concurrent operations via WaitAsync()/Release(). Use for rate limiting (max N concurrent API calls), connection pooling (max N connections), and resource protection. Always Release() in finally blocks. Supports timeouts via WaitAsync(TimeSpan).
 
-**Why It Matters**: Without concurrency limits, applications exhaust resources under load - 1000 concurrent database connections crash the database, unlimited API calls trigger rate limiting. SemaphoreSlim protects resources by queuing excess requests. Production systems use semaphores for database connection limiting (max 100 concurrent queries), external API rate limiting (5 calls/second), and file system access (max 10 concurrent file operations), preventing resource exhaustion and improving system stability by 90% under peak load.
+**Why It Matters**: Without concurrency limits, applications exhaust resources under load - too many concurrent database connections crash the database, unlimited API calls trigger rate limiting. SemaphoreSlim protects resources by queuing excess requests. Production systems use semaphores for database connection limiting, external API rate limiting, and file system access, preventing resource exhaustion and improving system stability under peak load.
 
 ## Example 73: Lock and Monitor for Thread Safety
 
@@ -1674,8 +1674,8 @@ public class CollectionBenchmarks
 // StringConcat          | 45.23 μs  | 0.234 μs | 0.219 μs | 125.00 | 500 KB
 // StringBuilderConcat   | 2.15 μs   | 0.012 μs | 0.011 μs | 1.25   | 5 KB
 // StringCreate          | 0.89 μs   | 0.008 μs | 0.007 μs | 0.25   | 1 KB
-                         // => string.Create is 50x faster than + operator
-                         // => StringBuilder is 20x faster
+                         // => string.Create is much faster than + operator
+                         // => StringBuilder is significantly faster
                          // => Allocation differences show GC impact
 
 [Benchmark]
@@ -1696,11 +1696,11 @@ public int ParameterizedBenchmark(int size)
 
 **Key Takeaway**: BenchmarkDotNet provides accurate performance measurement with warmup, iterations, and statistical analysis. Use [Benchmark] for methods to test. [MemoryDiagnoser] tracks allocations. [Arguments] tests different inputs. Reports include mean time, error, standard deviation, GC collections, and allocations.
 
-**Why It Matters**: Naive performance testing (Stopwatch) is unreliable due to JIT compilation, CPU throttling, and measurement noise. BenchmarkDotNet eliminates these issues through proper warmup, multiple iterations, and statistical analysis. Production teams use it to validate optimizations - proving StringBuilder is 20x faster than string concatenation for loops, Span&lt;T&gt; reduces allocations by 90%, and LINQ overhead matters in hot paths. Prevents premature optimization (measure first) and validates optimization impact (proof of improvement).
+**Why It Matters**: Naive performance testing (Stopwatch) is unreliable due to JIT compilation, CPU throttling, and measurement noise. BenchmarkDotNet eliminates these issues through proper warmup, multiple iterations, and statistical analysis. Production teams use it to validate optimizations - proving StringBuilder is much faster than string concatenation for loops, Span&lt;T&gt; dramatically reduces allocations, and LINQ overhead matters in hot paths. Prevents premature optimization (measure first) and validates optimization impact (proof of improvement).
 
 ## Example 77: Minimal APIs - Lightweight HTTP Endpoints
 
-Minimal APIs (ASP.NET Core 6+) define HTTP endpoints with minimal ceremony. No controllers required - lambdas map directly to routes for simpler APIs and microservices.
+Minimal APIs define HTTP endpoints with minimal ceremony. No controllers required - lambdas map directly to routes for simpler APIs and microservices.
 
 **Code**:
 
@@ -1797,11 +1797,11 @@ if (app.Environment.IsDevelopment())
 
 **Key Takeaway**: Minimal APIs define endpoints with MapGet/MapPost/MapPut/MapDelete. Route parameters bind from URL, query parameters from query string, complex types from JSON body. Returns are automatically serialized. MapGroup creates endpoint groups with shared configuration.
 
-**Why It Matters**: Traditional MVC controllers require boilerplate - separate controller classes, [ApiController] attributes, routing configuration. Minimal APIs reduce simple CRUD endpoint code by 60-70%, improving maintainability. Microservices and serverless functions benefit from minimal ceremony - single file defines entire API. Performance: 10-15% faster than MVC controllers due to reduced middleware pipeline. Production teams use minimal APIs for simple CRUD services, internal microservices, and webhook handlers.
+**Why It Matters**: Traditional MVC controllers require boilerplate - separate controller classes, [ApiController] attributes, routing configuration. Minimal APIs significantly reduce simple CRUD endpoint code, improving maintainability. Microservices and serverless functions benefit from minimal ceremony - single file defines entire API. Performance: faster than MVC controllers due to reduced middleware pipeline. Production teams use minimal APIs for simple CRUD services, internal microservices, and webhook handlers.
 
 ## Example 78: Middleware Pipeline - Request Processing
 
-Middleware processes HTTP requests in a pipeline, with each component choosing to handle the request or pass to next middleware. Foundation of ASP.NET Core request processing.
+Middleware processes HTTP requests in a pipeline, with each component choosing to handle the request or pass to next middleware. Foundation of modern .NET web request processing.
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
@@ -2048,7 +2048,7 @@ app.MapGet("/", () => "Use /health, /health/ready, /health/live for health check
 
 **Key Takeaway**: Health checks report service health via HTTP endpoints. AddHealthChecks() registers checks. MapHealthChecks() exposes endpoint. HealthCheckResult.Healthy/Unhealthy/Degraded for status. Custom checks implement IHealthCheck. Tags filter checks for different probes (liveness vs readiness).
 
-**Why It Matters**: Orchestrators (Kubernetes, Docker Swarm) use health checks for automated recovery - restarting unhealthy pods, removing from load balancer rotation. Load balancers route traffic only to healthy instances. Monitoring systems alert on degraded/unhealthy status. Production systems separate liveness (process alive) from readiness (dependencies healthy) - liveness restarts crashed pods, readiness prevents traffic to pods with failed database connections, improving availability from 95% to 99.9%+.
+**Why It Matters**: Orchestrators (Kubernetes, Docker Swarm) use health checks for automated recovery - restarting unhealthy pods, removing from load balancer rotation. Load balancers route traffic only to healthy instances. Monitoring systems alert on degraded/unhealthy status. Production systems separate liveness (process alive) from readiness (dependencies healthy) - liveness restarts crashed pods, readiness prevents traffic to pods with failed database connections, significantly improving availability.
 
 ## Example 80: OpenTelemetry - Distributed Tracing
 
@@ -2091,7 +2091,7 @@ builder.Services.AddOpenTelemetry()
             .AddService("MyService", serviceVersion: "1.0.0"))
                          // => Set service metadata
         .AddAspNetCoreInstrumentation()
-                         // => Auto-instrument ASP.NET Core requests
+                         // => Auto-instrument web requests
         .AddHttpClientInstrumentation()
                          // => Auto-instrument HttpClient calls
         .AddConsoleExporter());
@@ -2187,7 +2187,7 @@ app.MapGet("/", () => "Use /process or /chain to generate traces");
 // Activity.Duration:        50ms
 ```
 
-**Key Takeaway**: OpenTelemetry provides distributed tracing via Activity/Span. ActivitySource creates custom spans. Auto-instrumentation for ASP.NET Core and HttpClient. SetTag() adds attributes. AddEvent() adds timeline events. Trace context propagated across service boundaries via HTTP headers.
+**Key Takeaway**: OpenTelemetry provides distributed tracing via Activity/Span. ActivitySource creates custom spans. Auto-instrumentation for web applications and HttpClient. SetTag() adds attributes. AddEvent() adds timeline events. Trace context propagated across service boundaries via HTTP headers.
 
 **Why It Matters**: Microservices debugging requires tracing requests across 5-20 services. Traditional logs scatter across services, making correlation impossible. Distributed tracing links all spans for a request via shared trace ID, showing end-to-end flow and timing. Production teams identify bottlenecks (database query took 800ms of 1000ms total), failures (Service C returned 500), and cascading issues (slow Service A caused timeout in Service D). Observability systems (Jaeger, Zipkin, DataDog) visualize traces, reducing debugging time from hours to minutes.
 
@@ -2210,7 +2210,7 @@ builder.Services.AddOpenTelemetry()
         .AddMeter("MyApp.Metrics")
                          // => Add custom meter
         .AddAspNetCoreInstrumentation()
-                         // => Auto-collect ASP.NET Core metrics
+                         // => Auto-collect web application metrics
         .AddHttpClientInstrumentation()
                          // => Auto-collect HttpClient metrics
         .AddConsoleExporter());
@@ -2346,7 +2346,7 @@ app.MapGet("/", () => "Use /success, /error, /data/{id} to generate metrics");
 
 **Key Takeaway**: OpenTelemetry metrics track measurements over time. Counter for increasing values (request count). UpDownCounter for values that increase/decrease (active connections). Histogram for distributions (latency). ObservableGauge for callback-based measurements. Add dimensions for filtering (method, status, error type).
 
-**Why It Matters**: Metrics enable monitoring SLOs (99% requests < 200ms), alerting (error rate > 1% triggers page), and capacity planning (CPU usage trend). Dashboards visualize metrics (Grafana + Prometheus) showing request rate, error rate, latency percentiles (p50, p95, p99), and resource usage. Production teams define SLIs (Service Level Indicators) from metrics - 99.9% availability requires < 0.1% error rate, tracking via errors.total / requests.total. Metrics guide scaling decisions - queue.size > 1000 triggers auto-scaling, preventing overload.
+**Why It Matters**: Metrics enable monitoring SLOs, alerting, and capacity planning. Dashboards visualize metrics (Grafana + Prometheus) showing request rate, error rate, latency percentiles (p50, p95, p99), and resource usage. Production teams define SLIs (Service Level Indicators) from metrics for tracking availability and performance. Metrics guide scaling decisions - queue size thresholds trigger auto-scaling, preventing overload.
 
 ## Example 82: Custom with Expressions
 
@@ -2427,7 +2427,7 @@ Console.WriteLine($"Prod: {prodConfig}");
 
 **Key Takeaway**: with expressions create modified copies of records. Specify only changed properties. Original record unchanged (immutability). Supports nested with for nested records. Enables fluent APIs for configuration and data transformation.
 
-**Why It Matters**: Immutability prevents bugs from unexpected mutation - original data guaranteed unchanged after passing to methods. with expressions make immutable updates concise (1 line vs 5-10 for manual copying). Domain-driven design uses immutable aggregates - updating order status creates new Order with modified status, preserving history. Event sourcing and CQRS rely on immutability - events immutable, state changes create new versions. Production systems reduce state-related bugs by 40% through immutable domain models with with expressions.
+**Why It Matters**: Immutability prevents bugs from unexpected mutation - original data guaranteed unchanged after passing to methods. with expressions make immutable updates concise compared to manual copying. Domain-driven design uses immutable aggregates - updating order status creates new Order with modified status, preserving history. Event sourcing and CQRS rely on immutability - events immutable, state changes create new versions. Production systems reduce state-related bugs through immutable domain models with with expressions.
 
 ## Example 83: Discriminated Unions with Records
 
@@ -2560,7 +2560,7 @@ Console.WriteLine($"Parsed2: {GetValueOrDefault(parsed2, -1)}");
 
 **Key Takeaway**: Discriminated unions model mutually exclusive states via abstract record hierarchies. Pattern matching handles all cases (compiler-enforced exhaustiveness). Makes illegal states unrepresentable (payment can't be both Pending and Completed). Generic unions (Option&lt;T&gt;) for reusable patterns.
 
-**Why It Matters**: Traditional approaches model state with nullable fields and status enums, allowing invalid states (status=Completed but transactionId=null). Discriminated unions make invalid states impossible - Completed MUST have transactionId (constructor requires it). This eliminates 30-40% of validation code and prevents state-related bugs. Domain-driven design uses discriminated unions for aggregates - Order is either Draft, Submitted(orderId), or Shipped(trackingNumber), with type system preventing operations on wrong states (can't ship Draft order - compiler error).
+**Why It Matters**: Traditional approaches model state with nullable fields and status enums, allowing invalid states (status=Completed but transactionId=null). Discriminated unions make invalid states impossible - Completed MUST have transactionId (constructor requires it). This eliminates substantial validation code and prevents state-related bugs. Domain-driven design uses discriminated unions for aggregates - Order is either Draft, Submitted(orderId), or Shipped(trackingNumber), with type system preventing operations on wrong states (can't ship Draft order - compiler error).
 
 ## Example 84: SemaphoreSlim vs lock Performance
 
@@ -2716,7 +2716,7 @@ Console.WriteLine($"Hybrid: {sw3.ElapsedMilliseconds}ms, count: {hybridCounter.C
                          // => Balance of performance
 ```
 
-**Key Takeaway**: Use lock for sync-only code (3-4x faster). Use SemaphoreSlim when async/await required. Hybrid approach: lock for sync paths, SemaphoreSlim for async paths. lock blocks threads; SemaphoreSlim awaits without blocking.
+**Key Takeaway**: Use lock for sync-only code (faster for synchronous scenarios). Use SemaphoreSlim when async/await required. Hybrid approach: lock for sync paths, SemaphoreSlim for async paths. lock blocks threads; SemaphoreSlim awaits without blocking.
 
 **Why It Matters**: Choosing wrong primitive hurts performance - lock in async methods blocks threads (thread pool starvation under load), SemaphoreSlim in sync-only code adds 50-100ns overhead per operation. High-throughput systems (10k+ ops/sec) see 2-3x performance difference. Production rule: lock for CPU-bound critical sections, SemaphoreSlim for protecting async I/O operations (database connections, file access). Proper choice prevents thread pool exhaustion (ASP.NET Core defaults to 100 threads - lock in async code exhausts pool under 100 concurrent requests).
 
@@ -2857,7 +2857,7 @@ product.Quantity = 100;
 
 **Key Takeaway**: Source generators eliminate INotifyPropertyChanged boilerplate. Annotate partial class with [AutoNotify]. Define backing fields (\_name, \_age). Generator creates properties with change notification. Zero runtime cost - all code generated at compile time.
 
-**Why It Matters**: Traditional INotifyPropertyChanged requires 8-10 lines of boilerplate per property. 100-property view model = 800-1000 lines of repetitive code prone to copy-paste errors (raising wrong property name). Source generators reduce this to 1 line per property (backing field), improving maintainability by 90%. Production MAUI/WPF applications use generators for 1000+ properties across 50+ view models, eliminating 10,000+ lines of boilerplate while ensuring correct property names (compile-time verification) and optimal performance (equality checks prevent unnecessary notifications).
+**Why It Matters**: Traditional INotifyPropertyChanged requires multiple lines of boilerplate per property. Large view models with many properties result in substantial repetitive code prone to copy-paste errors (raising wrong property name). Source generators reduce this to 1 line per property (backing field), dramatically improving maintainability. Production MAUI/WPF applications use generators for many properties across multiple view models, eliminating substantial boilerplate while ensuring correct property names (compile-time verification) and optimal performance (equality checks prevent unnecessary notifications).
 
 ---
 
@@ -2899,7 +2899,7 @@ These 25 advanced examples (Examples 61-85) cover **75-95% of C#'s advanced feat
 - P/Invoke for native library calls
 - Memory management and fixed buffers
 
-**ASP.NET Core Advanced**:
+**.NET Web Advanced**:
 
 - Minimal APIs for lightweight endpoints
 - Middleware pipeline for request processing
