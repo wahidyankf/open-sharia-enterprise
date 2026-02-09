@@ -154,11 +154,12 @@ C4 Architecture diagrams in OSE Platform enforce three foundational software eng
 
 ### DDD Bounded Contexts
 
-**REQUIRED**: C4 Container diagrams MUST align with DDD bounded contexts.
+**SHOULD**: C4 Container diagrams SHOULD use bounded contexts as primary guide for container boundaries.
 
-- One Container = One Bounded Context (for microservices)
-- Container boundaries = Bounded context boundaries
+- Common pattern: One Container = One Bounded Context (starting point for microservices)
+- Container boundaries should align with bounded context boundaries
 - Context mapping patterns visualized as container relationships
+- Each container maintains single ubiquitous language
 
 **See**: [Bounded Context Visualization](./ex-soen-ar-c4armo__bounded-context-visualization.md)
 

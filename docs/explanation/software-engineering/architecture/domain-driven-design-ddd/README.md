@@ -84,9 +84,17 @@ DDD in OSE Platform enforces three foundational software engineering principles:
 
 ## Bounded Context Organization
 
-### REQUIRED: One Bounded Context = One Nx App
+### Bounded Context to Nx App Mapping
 
-**REQUIRED**: OSE Platform MUST organize bounded contexts as Nx apps.
+**SHOULD**: Use bounded contexts as the **primary guide** for Nx app boundaries.
+
+**Common Patterns**:
+
+1. **One Bounded Context → One Nx App** (Default starting point)
+2. **One Bounded Context → Multiple Nx Apps** (For scalability/team autonomy)
+3. **Multiple Small Bounded Contexts → One Nx App** (Early product, tight relation)
+
+**Critical Rule - PROHIBITED**: One Nx app spanning multiple bounded contexts **in its core domain model**. Each app's domain layer must maintain single ubiquitous language.
 
 ```
 apps/
@@ -104,7 +112,7 @@ apps/
     └── infrastructure/
 ```
 
-**See**: [Bounded Context Standards](./ex-soen-ar-dodrdedd__bounded-context-standards.md)
+**See**: [Bounded Context Standards](./ex-soen-ar-dodrdedd__bounded-context-standards.md) for detailed mapping strategies
 
 ## Aggregate Design for Islamic Finance
 

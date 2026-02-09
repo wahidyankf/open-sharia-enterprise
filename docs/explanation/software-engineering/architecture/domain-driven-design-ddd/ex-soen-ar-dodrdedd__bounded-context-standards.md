@@ -26,9 +26,15 @@ updated: 2026-02-09
 
 OSE Platform bounded context organization standards. MUST/SHOULD/MAY rules for context boundaries.
 
-## REQUIRED: One Bounded Context = One Nx App
+## Bounded Context to Nx App Mapping
 
-**REQUIRED**: Each bounded context MUST be organized as a separate Nx app under `apps/`.
+**RULE**: Use bounded contexts as the **primary guide** for Nx app boundaries, not a strict 1:1 requirement.
+
+### Valid Mappings
+
+**1. One Bounded Context → One Nx App** (Starting Point)
+
+**SHOULD**: Start with one bounded context per Nx app for clear business capabilities.
 
 ```
 apps/
@@ -38,7 +44,51 @@ apps/
 └── contract-context/       # Islamic contract management
 ```
 
-**PROHIBITED**: Multi-context apps. Each app = one bounded context only.
+**2. One Bounded Context → Multiple Nx Apps** (Scalability)
+
+**OPTIONAL**: Split large contexts into separate apps for scalability or team autonomy.
+
+```
+apps/
+├── billing-invoicing/      # Billing context: Invoicing service
+├── billing-payments/       # Billing context: Payments service
+└── billing-reporting/      # Billing context: Reporting service
+```
+
+**3. Multiple Bounded Contexts → One Nx App** (Early Stage)
+
+**OPTIONAL**: Implement multiple small, tightly related contexts in one app early in product lifecycle.
+
+```
+apps/
+├── finance-core/          # Contains: Zakat + Nisab + Hawl contexts
+```
+
+### Critical Rule
+
+**PROHIBITED**: One Nx app spanning multiple bounded contexts **in its core domain model**.
+
+**Bad** (mixed domain models):
+
+```typescript
+// apps/mixed-context/domain/
+├── zakat/              # Zakat bounded context
+│   └── ZakatCalculator.ts
+├── donation/           # Donation bounded context
+│   └── Campaign.ts     # Different ubiquitous language!
+```
+
+**Good** (separate or unified under one context):
+
+```typescript
+// apps/zakat-context/domain/
+└── zakat/
+    └── ZakatCalculator.ts
+
+// apps/donation-context/domain/
+└── donation/
+    └── Campaign.ts
+```
 
 ## Context Naming
 

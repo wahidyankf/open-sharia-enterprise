@@ -46,15 +46,25 @@ This document defines **authoritative standards** for visualizing DDD bounded co
 
 **Use when**: Documenting multiple bounded contexts and their relationships.
 
-### Container = Bounded Context
+### Container to Bounded Context Mapping
 
-**REQUIRED**: One Container = One Bounded Context (for microservices architecture).
+**SHOULD**: Use bounded contexts as the **primary guide** for C4 Container boundaries.
 
-- Container boundaries = Bounded context boundaries
-- Each container represents a cohesive domain model with ubiquitous language
-- Containers communicate via well-defined APIs (context mapping)
+**Common Patterns**:
 
-**Use when**: Documenting internal structure of a single system with multiple bounded contexts.
+1. **One Container = One Bounded Context** (Default visualization for microservices)
+2. **One Bounded Context = Multiple Containers** (Large context split for scalability)
+3. **Multiple Bounded Contexts = One Container** (Early stage, small contexts)
+
+**Critical Rule**: Each container's domain model must maintain single ubiquitous language. No container should mix multiple bounded contexts' domain models.
+
+**Container Boundaries**:
+
+- SHOULD align with bounded context boundaries
+- Each container represents cohesive domain model with consistent ubiquitous language
+- Containers communicate via well-defined APIs (context mapping patterns)
+
+**Use when**: Documenting internal structure of a single system with bounded contexts.
 
 ### Component = Aggregates and Domain Services
 
