@@ -359,7 +359,7 @@ test("UserService gets user orders via HTTP", async () => {
 
 **Key Takeaway**: Test microservices in isolation by mocking HTTP clients. Inject service URLs and HTTP clients as dependencies to enable independent testing.
 
-**Why It Matters**: Microservices with real service dependencies are slow and flaky. Service isolation enables fast unit testing - Netflix runs 50,000+ microservice tests in minutes using service virtualization instead of full environments.
+**Why It Matters**: Microservices with real service dependencies are slow and flaky. Service isolation enables fast unit testing - large-scale microservice architectures run many thousands of tests efficiently using service virtualization instead of full environments.
 
 ### Example 64: Contract Testing for Microservices
 
@@ -1817,7 +1817,7 @@ test("CD metrics meet industry benchmarks", () => {
 
 **Key Takeaway**: Continuous deployment requires comprehensive test automation at all levels (unit, integration, E2E). TDD builds this test coverage from the start.
 
-**Why It Matters**: Manual testing blocks frequent deployment. Amazon deploys every 11.6 seconds using automated testing - their TDD discipline enables 150+ million deployments per year with 99.99% success rate.
+**Why It Matters**: Manual testing blocks frequent deployment. High-frequency deployment systems achieve very rapid deployment cycles using automated testing - TDD discipline enables hundreds of thousands of safe deployments annually with high success rates.
 
 ### Example 82: Production Testing Patterns
 

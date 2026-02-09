@@ -6081,4 +6081,4 @@ Continue practicing by building real infrastructure, combining these patterns, a
 
 ---
 
-Congratulations! You've achieved 95% Terraform coverage through 84 self-contained, heavily annotated examples. Each example demonstrates production patterns used by companies at scale (Netflix, Uber, Stripe, Shopify, Airbnb, Pinterest, Datadog). Keep this tutorial as reference when building infrastructure—every pattern here solves real production problems.
+Congratulations! You've achieved 95% Terraform coverage through 84 self-contained, heavily annotated examples. Each example demonstrates production patterns used by large-scale systems worldwide. Keep this tutorial as reference when building infrastructure—every pattern here solves real production problems.

@@ -371,7 +371,7 @@ Feature: User Database Operations
 
 **Key Takeaway**: Database-level BDD tests verify data integrity and business rule enforcement by directly querying and asserting on database state, complementing API and UI tests.
 
-**Why It Matters**: Database tests catch data corruption, constraint violations, and migration issues that UI/API tests miss. Netflix uses database BDD scenarios to verify data consistency across microservices, catching 30% more bugs than API-only tests by validating actual persisted state vs in-memory representations.
+**Why It Matters**: Database tests catch data corruption, constraint violations, and migration issues that UI/API tests miss. Production systems use database BDD scenarios to verify data consistency across microservices, catching significantly more bugs than API-only tests by validating actual persisted state vs in-memory representations.
 
 ### Example 34: Cucumber-JVM (Java) - Cross-Platform BDD
 
@@ -596,7 +596,7 @@ public class RegistrationResult
 
 **Key Takeaway**: SpecFlow enables BDD in C#/.NET using same Gherkin syntax with C# step definitions, NUnit/MSTest assertions, and Visual Studio integration for .NET teams.
 
-**Why It Matters**: SpecFlow brings BDD benefits to .NET ecosystem with enterprise tooling integration (Visual Studio, Azure DevOps, Rider). Microsoft teams use SpecFlow for living documentation that executives can review while developers maintain automated tests behind the scenes.
+**Why It Matters**: SpecFlow brings BDD benefits to .NET ecosystem with enterprise tooling integration (Visual Studio, Azure DevOps, Rider). Enterprise development teams use SpecFlow for living documentation that executives can review while developers maintain automated tests behind the scenes.
 
 ### Example 36: Behave (Python) - Pythonic BDD
 
@@ -2475,7 +2475,7 @@ When("I tap the login button", async function () {
 
 **Key Takeaway**: Mobile BDD testing with Appium uses same Gherkin scenarios for iOS and Android, with platform-specific configuration in hooks and selector helpers to abstract platform differences from step definitions.
 
-**Why It Matters**: Mobile app testing requires device/simulator management, platform-specific selectors, and slower execution than web tests. BDD abstracts these complexities behind Gherkin scenarios, enabling product managers to define mobile behavior without understanding Appium/XCUITest/UiAutomator2 intricacies. Facebook uses Appium BDD to test React Native apps across 50+ device/OS combinations with shared scenarios.
+**Why It Matters**: Mobile app testing requires device/simulator management, platform-specific selectors, and slower execution than web tests. BDD abstracts these complexities behind Gherkin scenarios, enabling product managers to define mobile behavior without understanding Appium/XCUITest/UiAutomator2 intricacies. Production mobile applications use Appium BDD to test React Native apps across multiple device/OS combinations with shared scenarios.
 
 ### Example 47: GraphQL API Testing with BDD
 
@@ -3611,7 +3611,7 @@ Feature: API Performance
 
 **Key Takeaway**: Performance BDD testing measures response time and throughput with explicit thresholds in Gherkin scenarios, making performance requirements testable and visible to stakeholders.
 
-**Why It Matters**: Performance regressions often go unnoticed until production. BDD scenarios with performance thresholds catch slowdowns early, ensuring SLA compliance. Netflix uses performance BDD tests to verify API response times stay under 100ms at the 95th percentile, catching performance degradation before it affects user experience.
+**Why It Matters**: Performance regressions often go unnoticed until production. BDD scenarios with performance thresholds catch slowdowns early, ensuring SLA compliance. Production systems use performance BDD tests to verify API response times meet specified percentile targets, catching performance degradation before it affects user experience.
 
 ### Example 53: Security Testing - Authentication & Authorization
 
@@ -4051,7 +4051,7 @@ TEST_ENV=production npm test --tags "@production and not @write"
 
 **Key Takeaway**: Multi-environment BDD testing uses environment-specific configuration for URLs, timeouts, and retries, enabling same scenarios to run against dev, staging, and production with appropriate settings.
 
-**Why It Matters**: Environment parity bugs cause 25% of production incidents. Running BDD scenarios across environments catches configuration issues, network differences, and data-dependent bugs. Amazon runs smoke BDD tests in production every 15 minutes to verify service health without modifying data.
+**Why It Matters**: Environment parity bugs can cause significant production incidents. Running BDD scenarios across environments catches configuration issues, network differences, and data-dependent bugs. High-frequency deployment systems run smoke BDD tests in production regularly to verify service health without modifying data.
 
 ### Example 55: Test Reporting and Analytics
 
@@ -4897,7 +4897,7 @@ Feature: Integration Testing
 
 **Key Takeaway**: Integration BDD testing verifies multi-component interactions (API + DB + Cache), ensuring components work together correctly beyond unit-level isolation.
 
-**Why It Matters**: Integration bugs account for 35% of production defects according to Capers Jones research. Unit tests verify individual components, but integration tests catch contract mismatches, race conditions, and distributed system failures. Uber runs integration BDD tests covering 50+ microservice interactions to catch service mesh failures before production.
+**Why It Matters**: Integration bugs account for a significant portion of production defects according to software engineering research. Unit tests verify individual components, but integration tests catch contract mismatches, race conditions, and distributed system failures. Large-scale distributed systems run integration BDD tests covering multiple microservice interactions to catch service mesh failures before production.
 
 ### Example 58: Contract Testing Basics with Pact
 
@@ -5102,7 +5102,7 @@ npm run test:pact:provider
 
 **Key Takeaway**: Contract testing with Pact verifies API compatibility between consumers and providers through executable contracts, catching breaking changes before deployment without integration environment overhead.
 
-**Why It Matters**: Microservices break when APIs change incompatibly. Pact enables consumer-driven contracts where consumers define expectations and providers verify compliance, preventing breaking changes. Netflix uses Pact to test 1000+ microservice API interactions, reducing integration test infrastructure by 70% while catching breaking changes faster than traditional integration tests.
+**Why It Matters**: Microservices break when APIs change incompatibly. Pact enables consumer-driven contracts where consumers define expectations and providers verify compliance, preventing breaking changes. Production microservice architectures use Pact to test many microservice API interactions, significantly reducing integration test infrastructure while catching breaking changes faster than traditional integration tests.
 
 ---
 

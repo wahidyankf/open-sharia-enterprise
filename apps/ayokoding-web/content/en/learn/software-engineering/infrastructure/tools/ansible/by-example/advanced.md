@@ -1128,7 +1128,7 @@ Immutable infrastructure replaces servers rather than modifying them. Build new 
 
 **Key Takeaway**: Immutable infrastructure builds new images and replaces instances entirely. Eliminates configuration drift and enables reliable rollbacks.
 
-**Why It Matters**: Immutable infrastructure eliminates configuration drift—every deployment creates identical servers from golden images. Manual changes to servers are impossible (read-only root filesystems). Rollback becomes "deploy previous AMI" instead of "undo configuration changes." This pattern underpins modern cloud-native architectures at Google, Facebook, and ---
+**Why It Matters**: Immutable infrastructure eliminates configuration drift—every deployment creates identical servers from golden images. Manual changes to servers are impossible (read-only root filesystems). Rollback becomes "deploy previous AMI" instead of "undo configuration changes." This pattern underpins modern cloud-native architectures in production systems worldwide.
 
 ## Example 67: Zero-Downtime Deployment Pattern
 
