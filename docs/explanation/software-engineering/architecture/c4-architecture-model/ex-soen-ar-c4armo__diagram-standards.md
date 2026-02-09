@@ -272,11 +272,25 @@ Before committing a C4 diagram, verify:
 - [ ] **DDD alignment**: Containers align with bounded contexts
 - [ ] **Clear boundaries**: System/container/component boundaries are explicit
 
+## Color Consistency (CRITICAL)
+
+**REQUIRED**: All C4 diagrams MUST follow the consistent color mapping defined in [Notation Standards](./ex-soen-ar-c4armo__notation-standards.md).
+
+**Quick Reference**:
+
+- **Orange (#DE8F05)**: Person (users, actors)
+- **Blue (#0173B2)**: This System / Internal Containers / Core Components
+- **Teal (#029E73)**: External Systems / Databases / Infrastructure Components
+- **Purple (#CC78BC)**: Future/Planned elements (optional)
+
+This consistency ensures readers can instantly recognize element types by color across all C4 documentation.
+
 ## Related Standards
 
-- **[Notation Standards](./ex-soen-ar-c4armo__notation-standards.md)** - WCAG colors, Mermaid syntax, labeling conventions
+- **[Notation Standards](./ex-soen-ar-c4armo__notation-standards.md)** - WCAG colors, Mermaid syntax, labeling conventions, C4 element color mapping
 - **[Bounded Context Visualization](./ex-soen-ar-c4armo__bounded-context-visualization.md)** - Mapping DDD bounded contexts to C4 containers
 - **[Nx Workspace Visualization](./ex-soen-ar-c4armo__nx-workspace-visualization.md)** - Representing Nx apps and libs
+- **[Color Accessibility Convention](../../../../../governance/conventions/formatting/color-accessibility.md)** - Verified accessible color palette and WCAG compliance
 
 ## Principles Implemented
 
