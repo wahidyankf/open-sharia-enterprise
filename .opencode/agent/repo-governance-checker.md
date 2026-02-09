@@ -650,7 +650,7 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
 
 ### Step 8: Software Documentation Validation
 
-**Scope**: `docs/explanation/software-engineering/` (343 files, 345k lines)
+**Scope**: `docs/explanation/software-engineering/` (~260 files, 345k lines)
 
 **Purpose**: Validate comprehensive software design and coding standards documentation as authoritative reference.
 
@@ -1031,7 +1031,7 @@ Files in directory but not in README:
 
 #### Performance Optimization
 
-**Strategy for handling 343 files (345k lines)**:
+**Strategy for handling ~260 files (345k lines)**:
 
 1. **Cache Governance Files**:
    - Read principles list once
@@ -1053,7 +1053,7 @@ Files in directory but not in README:
    - Use Grep for cross-reference extraction (faster than reading all files)
    - Only deep-parse files when validation requires it
 
-**Estimated Duration**: ~35-40 seconds for Step 8 (343 files, 8 validation categories)
+**Estimated Duration**: ~35-40 seconds for Step 8 (~260 files, 8 validation categories)
 
 #### Summary Format
 

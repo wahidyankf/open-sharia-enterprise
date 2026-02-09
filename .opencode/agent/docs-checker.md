@@ -235,23 +235,12 @@ Per [Documentation First](../../governance/principles/content/documentation-firs
 3. **Update** continuously with progress indicator
 4. **Finalize** with completion status and summary statistics
 
-**UUID chain generation**: 6-char hex UUIDs for parallel execution. See convention for generation logic.
+**UUID chain generation and report initialization**: See `repo-generating-validation-reports` Skill for:
 
-**CRITICAL - Get actual values via Bash**:
-
-```bash
-# Generate 6-char UUID
-uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
-
-# Generate UTC+7 timestamp
-timestamp=$(TZ='Asia/Jakarta' date +"%Y-%m-%d--%H-%M")
-
-# Create filename
-filename="docs-${uuid}-${timestamp}-audit.md"
-```
-
-**WRONG**: `docs-abc123-2025-12-15--00-00-audit.md` (placeholder - never use!)
-**CORRECT**: `docs-a1b2c3-2025-12-15--10-23-audit.md` (actual values from bash)
+- 6-character UUID generation
+- Scope-based UUID chain logic (append if <30s, else new chain)
+- UTC+7 timestamp format
+- Report file initialization patterns
 
 ## Workflow Overview
 
