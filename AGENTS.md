@@ -10,13 +10,19 @@
 >
 > **See [CLAUDE.md](./CLAUDE.md) for primary documentation** (Claude Code configuration).
 
+**Problem**: Maintaining quality and consistency across 56 specialized agents, 33 skills, and extensive documentation is time-consuming and error-prone when done manually.
+
+**Solution**: This repository uses 56 specialized AI (Artificial Intelligence) agents that automate documentation creation, validation, content generation, and project planning—ensuring consistent quality, catching errors early, and freeing developers to focus on high-value work.
+
+---
+
 Instructions for AI agents working with this repository via OpenCode.
 
 ## Project Overview
 
 **open-sharia-enterprise** - Enterprise platform built with Node.js, using **Nx monorepo** structure.
 
-- **Node.js**: 24.11.1 (LTS, managed by Volta)
+- **Node.js**: 24.11.1 (LTS - Long-Term Support, managed by Volta)
 - **npm**: 11.6.3
 - **Monorepo**: Nx with `apps/` and `libs/` structure
 - **Git Workflow**: Trunk Based Development (all work on `main` branch)
@@ -40,7 +46,7 @@ This repository maintains **dual compatibility** with both Claude Code and OpenC
 
 ## Agent Organization
 
-**55 specialized agents** organized into **7 families**:
+**56 specialized agents** organized into **7 families**:
 
 1. **Documentation** (10 agents): `docs-maker`, `docs-checker`, `docs-fixer`, `docs-tutorial-maker`, `docs-tutorial-checker`, `docs-tutorial-fixer`, `docs-link-general-checker`, `docs-file-manager`, `docs-software-engineering-separation-checker`, `docs-software-engineering-separation-fixer`
 2. **README** (3 agents): `readme-maker`, `readme-checker`, `readme-fixer`
@@ -54,7 +60,7 @@ This repository maintains **dual compatibility** with both Claude Code and OpenC
 
 ## Agent Format (OpenCode)
 
-OpenCode agents use YAML frontmatter with boolean tool flags:
+OpenCode agents use YAML (YAML Ain't Markup Language) frontmatter with boolean tool flags:
 
 ```yaml
 ---
@@ -91,7 +97,7 @@ Three-stage quality workflow:
 
 ## Skills Integration
 
-**28 skill packages** serve agents through two modes:
+**33 skill packages** serve agents through two modes:
 
 **Inline Skills** (default) - Knowledge injection:
 
@@ -129,7 +135,7 @@ Three-stage quality workflow:
 All agents follow 10 foundational principles:
 
 1. **Documentation First** - Documentation is mandatory, not optional
-2. **Accessibility First** - WCAG AA compliance
+2. **Accessibility First** - WCAG AA (Web Content Accessibility Guidelines Level AA) compliance
 3. **Simplicity Over Complexity** - Minimum viable abstraction
 4. **Explicit Over Implicit** - Clear tool permissions
 5. **Automation Over Manual** - Automate repetitive tasks
@@ -145,6 +151,6 @@ All agents follow 10 foundational principles:
 
 ---
 
-**Total Agents**: 55
-**Total Skills**: 28
+**Total Agents**: 56
+**Total Skills**: 33
 **Last Updated**: 2026-02-07

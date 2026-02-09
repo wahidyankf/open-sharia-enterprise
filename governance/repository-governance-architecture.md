@@ -1,126 +1,165 @@
----
-title: Repository Architecture - Six-Layer Hierarchy
-description: Comprehensive explanation of the six-layer architecture governing repository organization, from vision to workflows
-category: explanation
-tags:
-  - architecture
-  - principles
-  - conventions
-  - development
-  - agents
-  - workflows
-  - governance
-created: 2025-12-24
-updated: 2026-01-17
+# Repository Governance Architecture
+
+**Document Type**: Explanation
+**Purpose**: Comprehensive architectural overview of the six-layer governance hierarchy governing the open-sharia-enterprise repository
+**Audience**: All contributors, AI agents, governance designers
+**Last Updated**: 2026-01-04
+
 ---
 
-# Repository Architecture: Six-Layer Hierarchy
+## Table of Contents
 
-This document explains the complete six-layer architecture that governs the open-sharia-enterprise repository. Each layer builds on the foundation of the layer above, creating a traceable hierarchy from foundational purpose to automated workflows.
+- [Repository Governance Architecture](#repository-governance-architecture)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Architectural Principles](#architectural-principles)
+  - [The Six Layers](#the-six-layers)
+    - [Quick Reference Table](#quick-reference-table)
+  - [Layer 0: Vision (WHY WE EXIST)](#layer-0-vision-why-we-exist)
+  - [Layer 1: Principles (WHY - Values)](#layer-1-principles-why---values)
+  - [Layer 2: Conventions (WHAT - Documentation Rules)](#layer-2-conventions-what---documentation-rules)
+  - [Layer 3: Development (HOW - Software Practices)](#layer-3-development-how---software-practices)
+  - [Layer 4: AI Agents (WHO - Executors)](#layer-4-ai-agents-who---executors)
+  - [Layer 5: Workflows (WHEN - Multi-Step Processes)](#layer-5-workflows-when---multi-step-processes)
+  - [Skills: Delivery Infrastructure (Not a Governance Layer)](#skills-delivery-infrastructure-not-a-governance-layer)
+  - [Complete Traceability Example](#complete-traceability-example)
+  - [Governance Relationships](#governance-relationships)
+  - [Best Practices](#best-practices)
+  - [Common Misconceptions](#common-misconceptions)
+  - [Future Evolution](#future-evolution)
+  - [Principles Implemented/Respected](#principles-implementedrespected)
+  - [Conventions Implemented/Respected](#conventions-implementedrespected)
 
-## Purpose
+---
 
-The six-layer architecture provides:
+## Overview
 
-1. **Clear governance** - Each layer governs the layer below
-2. **Complete traceability** - Every rule traces back to foundational vision and principles
-3. **Separation of concerns** - Vision, values, standards, practices, implementation, and orchestration are distinct
-4. **Systematic consistency** - Changes propagate through layers in a predictable way
+The **open-sharia-enterprise** repository employs a six-layer governance architecture that provides complete traceability from foundational vision to executable workflows. Each layer builds on the foundation above, creating a coherent system where every rule, practice, and automation can be traced back to core values.
+
+**Architectural Questions Answered**:
+
+- **Layer 0 (Vision)**: WHY does this project exist?
+- **Layer 1 (Principles)**: WHY do we value certain approaches?
+- **Layer 2 (Conventions)**: WHAT documentation rules must we follow?
+- **Layer 3 (Development)**: HOW do we develop software and automation?
+- **Layer 4 (AI Agents)**: WHO enforces rules and automates tasks?
+- **Layer 5 (Workflows)**: WHEN do we run which agents in what order?
+
+**Delivery Infrastructure** (Skills): HOW do we package and deliver knowledge to agents? (Service infrastructure, not governance)
+
+**Key Insight**: This architecture creates bidirectional traceability:
+
+- **Top-down**: Vision → Principles → Conventions/Development → Agents → Workflows
+- **Bottom-up**: Every workflow/agent/practice can be traced to principles and vision
+
+---
+
+## Architectural Principles
+
+This governance architecture itself follows core repository principles:
+
+**Simplicity Over Complexity**:
+
+- Flat layer hierarchy (no sub-layers)
+- Clear governance relationships (higher layers govern lower)
+- Single responsibility per layer
+
+**Explicit Over Implicit**:
+
+- Required traceability sections in each document
+- Explicit "Principles Implemented/Respected" declarations
+- Documented governance relationships
+
+**Documentation First**:
+
+- Each layer comprehensively documented
+- Relationships explicitly stated
+- Examples provided for traceability
+
+**Progressive Disclosure**:
+
+- Quick reference table for rapid orientation
+- Detailed layer descriptions for deep understanding
+- Complete examples for implementation guidance
+
+---
 
 ## The Six Layers
 
-```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161, Gray #808080
-graph TD
-    L0[Layer 0: Vision<br/>WHY WE EXIST]
-    L1[Layer 1: Principles<br/>WHY - Values]
-    L2[Layer 2: Conventions<br/>WHAT - Documentation Rules]
-    L3[Layer 3: Development<br/>HOW - Software Practices]
-    L4[Layer 4: AI Agents<br/>WHO - Atomic Executors<br/>.claude/agents/ PRIMARY<br/>.opencode/agent/ SYNCED]
-    L5[Layer 5: Workflows<br/>WHEN - Multi-Step Processes]
-
-    subgraph Orchestrators["AI Orchestrators (Dual-Mode)"]
-        CC[Claude Code]
-        OC[OpenCode]
-    end
-
-    subgraph Delivery["Delivery Infrastructure"]
-        CM[CLAUDE.md<br/>Claude Code context]
-        AM[AGENTS.md<br/>OpenCode context]
-        SK[Skills<br/>Knowledge inline, Delegation fork<br/>.claude/skills/ PRIMARY<br/>.opencode/skill/ SYNCED]
-        DR[Direct References<br/>Explicit links]
-    end
-
-    L0 -->|inspires| L1
-    L1 ==>|governs| L2
-    L1 ==>|governs| L3
-    L2 ==>|governs| L3
-    L2 ==>|governs| L4
-    L3 ==>|governs| L4
-    L4 -->|orchestrated by| L5
-
-    L2 -->|summarized in| CM
-    L2 -->|summarized in| AM
-    L2 -->|encoded in| SK
-    L3 -->|summarized in| CM
-    L3 -->|summarized in| AM
-    L3 -->|encoded in| SK
-    CM -->|loaded at startup| CC
-    AM -->|loaded at startup| OC
-    CC -->|spawns| L4
-    OC -->|spawns| L4
-    SK -->|on-demand via Skill tool| CC
-    SK -->|on-demand via skill tool| OC
-    SK -->|context: fork spawns| L4
-    DR -->|explicitly delivers to| L4
-
-    style L0 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:3px
-    style L1 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    style L2 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    style L3 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    style L4 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    style L5 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    style CC fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    style OC fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    style CM fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    style AM fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    style SK fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:3px
-    style DR fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
-
-    linkStyle 1,2,3,4,5 stroke:#DE8F05,stroke-width:2px
+```
+Layer 0: Vision       WHY WE EXIST       (foundational purpose)
+    ↓ inspires
+Layer 1: Principles   WHY - Values       (governs L2, L3)
+    ↓ governs
+Layer 2: Conventions  WHAT - Doc Rules   (governs L3, L4)
+    ↓ governs (with L2)
+Layer 3: Development  HOW - Practices    (governs L4)
+    ↓ governs (implemented by)
+Layer 4: AI Agents    WHO - Executors    (atomic tasks)
+    ↓ orchestrated by
+Layer 5: Workflows    WHEN - Orchestrate (multi-step processes)
 ```
 
-### Layer 0: Vision (WHY WE EXIST)
+**Skills Infrastructure** (Delivery):
 
-**Location**: `/governance/vision/`
+- Inline skills (default): Progressive knowledge injection
+- Fork skills (context: fork): Task delegation to isolated agents
+- Service relationship: Skills serve agents, don't govern them
 
-**Purpose**: Foundational purpose establishing WHY the project exists and WHAT change we seek.
+### Quick Reference Table
+
+| Layer | Location                | Purpose                       | Changes?        | Answers?                  |
+| ----- | ----------------------- | ----------------------------- | --------------- | ------------------------- |
+| **0** | governance/vision/      | WHY we exist                  | Extremely rare  | Why does project exist?   |
+| **1** | governance/principles/  | WHY we value approaches       | Rarely          | Why value this approach?  |
+| **2** | governance/conventions/ | WHAT documentation rules      | Occasionally    | What documentation rules? |
+| **3** | governance/development/ | HOW we develop software       | More frequently | How develop software?     |
+| **4** | .claude/agents/         | WHO enforces rules            | Often           | Who enforces rules?       |
+| **5** | governance/workflows/   | WHEN run agents in what order | As needed       | When run which agents?    |
+
+**Skills**: `.claude/skills/` - Delivery infrastructure serving agents (inline knowledge injection or fork-based delegation)
+
+---
+
+## Layer 0: Vision (WHY WE EXIST)
+
+**Purpose**: Foundational purpose - WHY the project exists and WHAT change we seek in the world.
+
+**Location**: `governance/vision/`
 
 **Key Document**: [Vision - Open Sharia Enterprise](./vision/open-sharia-enterprise.md)
 
 **Core Vision**:
 
-- **Democratize Shariah-compliant enterprise** - Making ethical Islamic business solutions accessible to everyone
-- **Problem**: Islamic finance locked in closed, expensive, proprietary systems
-- **Solution**: Open-source halal enterprise solutions that anyone can build, deploy, and benefit from
-- **Success metric**: When anyone globally can access, understand, and contribute to Islamic enterprise
+> Democratize Shariah-compliant enterprise systems by making Islamic finance and halal business solutions accessible to everyone through open-source tools and comprehensive education.
+
+**Vision Pillars**:
+
+1. **Accessibility**: Enterprise-grade tools available to all, regardless of budget
+2. **Education**: Comprehensive knowledge base for Islamic finance principles and implementation
+3. **Community**: Open-source ecosystem fostering collaboration and shared innovation
+4. **Compliance**: Accurate Shariah-compliant implementations verified by scholars
 
 **Characteristics**:
 
 - Immutable foundational purpose
-- Answers: "Why does this project exist?"
-- Changes extremely rarely (only if mission fundamentally shifts)
+- Changes extremely rarely (only if fundamental mission shifts)
 - All other layers serve this vision
+- Answers: "Why does this project exist?"
 
-**Example**:
+**Relationship to Other Layers**:
 
-> "We exist to democratize Islamic finance by providing open-source, accessible, and verifiable enterprise solutions that anyone can use, understand, and contribute to."
+- **Inspires** Layer 1 (Principles)
+- **NOT governance**: Does not directly govern conventions or development practices
+- **North Star**: Provides direction for all architectural decisions
 
-### Layer 1: Principles (WHY - Foundational Values)
+---
 
-**Location**: `/governance/principles/`
+## Layer 1: Principles (WHY - Values)
 
-**Purpose**: Foundational values that serve the vision and govern all conventions and development practices.
+**Purpose**: Foundational values that govern all conventions and development practices. Explains WHY we value certain approaches.
+
+**Location**: `governance/principles/`
 
 **Key Document**: [Core Principles Index](./principles/README.md)
 
@@ -128,11 +167,23 @@ graph TD
 
 **General Principles:**
 
-1. **Simplicity Over Complexity** - Minimum viable abstraction, avoid over-engineering
+1. **Deliberate Problem-Solving** - Think before coding, surface assumptions, ask questions rather than guessing
+2. **Simplicity Over Complexity** - Minimum viable abstraction, avoid over-engineering
 
-**Content Principles:** 2. **Accessibility First** - WCAG compliance, universal design from the start 3. **Documentation First** - Documentation is mandatory, not optional 4. **No Time Estimates** - Outcomes over duration, respect different paces 5. **Progressive Disclosure** - Layer complexity gradually
+**Content Principles:**
 
-**Software Engineering Principles:** 6. **Automation Over Manual** - Git hooks, AI agents for consistency 7. **Explicit Over Implicit** - Transparent configuration, no magic 8. **Immutability Over Mutability** - Prefer immutable data structures 9. **Pure Functions Over Side Effects** - Deterministic, composable functions 10. **Reproducibility First** - Eliminate "works on my machine" problems
+1. **Accessibility First** - WCAG compliance, universal design from the start
+2. **Documentation First** - Documentation is mandatory, not optional
+3. **No Time Estimates** - Outcomes over duration, respect different paces
+4. **Progressive Disclosure** - Layer complexity gradually
+
+**Software Engineering Principles:**
+
+1. **Automation Over Manual** - Git hooks, AI agents for consistency
+2. **Explicit Over Implicit** - Transparent configuration, no magic
+3. **Immutability Over Mutability** - Prefer immutable data structures
+4. **Pure Functions Over Side Effects** - Deterministic, composable functions
+5. **Reproducibility First** - Eliminate "works on my machine" problems
 
 **Characteristics**:
 
@@ -148,606 +199,613 @@ Vision: "Accessible to everyone"
     ↓ inspires
 Principle: Accessibility First
     ↓ governs
-Convention: Color Accessibility Convention (verified accessible palette)
-Development: Hugo Development Convention (semantic HTML, ARIA labels)
+Convention: Color Accessibility Convention
+Development: Hugo Development Convention (semantic HTML)
 ```
 
-### Layer 2: Conventions (WHAT - Documentation Rules)
+**Requirements**:
 
-**Location**: `/governance/conventions/`
+- Each principle MUST include "Vision Supported" section linking to Layer 0
+- Principles govern Layer 2 (Conventions) and Layer 3 (Development)
+- Changes require careful consideration of downstream impact
 
-**Purpose**: Documentation standards that implement core principles. Defines WHAT rules we follow for writing, organizing, and formatting documentation.
+---
+
+## Layer 2: Conventions (WHAT - Documentation Rules)
+
+**Purpose**: Documentation standards implementing core principles. Defines WHAT rules govern writing, organizing, and formatting documentation.
+
+**Location**: `governance/conventions/`
 
 **Key Document**: [Conventions Index](./conventions/README.md)
 
-**Scope**: Documentation rules for:
+**Scope**:
 
-- docs/ directory (all markdown files)
-- Hugo sites (ayokoding-web, ose-platform-web)
-- plans/ directory
-- README files across repository
+- **docs/** directory (all documentation)
+- **Hugo sites** (ayokoding-web, ose-platform-web)
+- **plans/** directory (project planning)
+- **README files** (repository root and project READMEs)
+
+**Convention Categories**:
+
+- **Structure**: File naming, Diátaxis framework, plans organization
+- **Formatting**: Linking, indentation, emoji usage, diagrams, color accessibility, mathematical notation
+- **Writing**: Content quality, README quality, factual validation
+- **Hugo-Specific**: Development patterns, content structure
 
 **Example Conventions**:
 
-- **File Naming Convention** - `[prefix]__[content-identifier].[extension]`
-- **Linking Convention** - GitHub-compatible relative paths with `.md`
-- **Color Accessibility Convention** - Verified color-blind friendly palette
-- **Content Quality Principles** - Active voice, proper heading hierarchy, alt text
-- **Diátaxis Framework** - Four documentation types (Tutorials, How-To, Reference, Explanation)
+- [File Naming Convention](./conventions/structure/file-naming.md)
+- [Linking Convention](./conventions/formatting/linking.md)
+- [Color Accessibility Convention](./conventions/formatting/color-accessibility.md)
+- [Content Quality Principles](./conventions/writing/quality.md)
 
-**Characteristics**:
+**Requirements**:
 
 - Each convention MUST include "Principles Implemented/Respected" section
-- Implemented by AI agents (Layer 4)
-- Changes more frequently than principles
-- Answers: "What documentation rules do we follow?"
+- Implemented by Layer 4 (AI Agents)
+- Changes impact both documentation and agent behavior
 
-**Example Traceability**:
+**Relationship to Other Layers**:
 
-```
-Principle: Explicit Over Implicit
-    ↓ governs
-Convention: File Naming Convention (explicit prefixes encode directory path)
-    ↓ governs
-Agent: docs__file-manager (enforces naming when renaming files)
-```
+- **Governed by** Layer 1 (Principles)
+- **Governs** Layer 3 (Development) and Layer 4 (AI Agents)
+- **Implemented by** Layer 4 (AI Agents)
 
-### Layer 3: Development (HOW - Software Practices)
+---
 
-**Location**: `/governance/development/`
+## Layer 3: Development (HOW - Software Practices)
 
-**Purpose**: Software practices that implement core principles. Defines HOW we develop, test, and deploy software.
+**Purpose**: Software practices implementing core principles. Defines HOW we develop, test, deploy software and automation.
+
+**Location**: `governance/development/`
 
 **Key Document**: [Development Index](./development/README.md)
 
-**Scope**: Software practices for:
+**Scope**:
 
-- Source code (JavaScript, TypeScript, future: Java, Kotlin, Python)
-- Hugo themes and layouts
-- Build systems and tooling
-- AI agents (`.claude/agents/` PRIMARY, `.opencode/agent/` SYNCED)
-- Git workflows
+- **Source code** (JavaScript, TypeScript, future: Java, Kotlin, Python)
+- **Hugo themes and layouts** (Go templates)
+- **Build systems** (Nx, npm, Volta)
+- **AI agents** (.claude/agents/)
+- **Git workflows** (commits, branches, hooks)
+
+**Practice Categories**:
+
+- **Patterns**: Maker-Checker-Fixer, functional programming
+- **Quality**: Code quality, criticality levels, fixer confidence, repository validation
+- **Workflows**: Trunk-based development, commit messages, implementation workflow, reproducible environments
+- **Infrastructure**: Temporary files, AI agents convention
+- **Hugo-Specific**: Development practices for Hugo sites
 
 **Example Practices**:
 
-- **Trunk Based Development** - Single main branch, small frequent commits
-- **Code Quality Convention** - Git hooks (Prettier, Commitlint, pre-push tests)
-- **AI Agents Convention** - Agent structure, frontmatter, tool permissions
-- **Maker-Checker-Fixer Pattern** - Three-stage workflow for quality
-- **Implementation Workflow** - Make it work, make it right, make it fast
+- [Trunk Based Development](./development/workflow/trunk-based-development.md)
+- [Code Quality Convention (Git Hooks)](./development/quality/code.md)
+- [AI Agents Convention](./development/agents/ai-agents.md)
+- [Maker-Checker-Fixer Pattern](./development/pattern/maker-checker-fixer.md)
 
-**Characteristics**:
+**Requirements**:
 
-- Each practice MUST include both "Principles Implemented/Respected" AND "Conventions Implemented/Respected" sections
-- Implemented by AI agents (Layer 4) and automation (git hooks, build tools)
+- Each practice MUST include BOTH "Principles Implemented/Respected" AND "Conventions Implemented/Respected" sections
+- Implemented by Layer 4 (AI Agents) and automation (git hooks)
 - Changes more frequently than conventions
-- Answers: "How do we develop software?"
+
+**Relationship to Other Layers**:
+
+- **Governed by** Layer 1 (Principles) and Layer 2 (Conventions)
+- **Governs** Layer 4 (AI Agents)
+- **Implemented by** Layer 4 (AI Agents) and automation
+
+---
+
+## Layer 4: AI Agents (WHO - Executors)
+
+**Purpose**: Automated implementers enforcing conventions and development practices. Answers WHO enforces rules and automates tasks.
+
+**Location**: `.claude/agents/`
+
+**Key Document**: [AGENTS.md](../AGENTS.md)
+
+**Agent Families by Color**:
+
+- 🔵 **Makers (Blue)** - Create and update content with dependencies
+- 🟢 **Checkers (Green)** - Validate quality and generate audit reports
+- 🟣 **Fixers (Purple)** - Apply validated fixes from audit reports
+- 🟡 **Special (Yellow)** - Unique responsibilities (e.g., repo-governance-maker uses bash for .opencode)
+- 🔴 **Executors (Red)** - Plan execution and monitoring
+- ⚫ **Navigation (Black)** - Structure management and file operations
+- ⚪ **Operations (White)** - Deployment and operational tasks
+
+**Agent Characteristics**:
+
+- **Atomic responsibility**: One clear purpose per agent
+- **Frontmatter**: name, description, tools, model, color, skills
+- **Enforce conventions**: Each agent enforces specific conventions/practices
+- **Tool permissions**: Carefully scoped (Read-only, Write, Edit, Bash, Web)
+
+**Example Agents**:
+
+- `docs-checker` - Validates factual accuracy using web verification
+- `docs-fixer` - Applies validated factual corrections
+- `readme-maker` - Creates/updates README files
+- `repo-governance-checker` - Validates repository-wide consistency
+
+**Requirements**:
+
+- Agent `name` field MUST match filename (without .md)
+- Agent MUST declare which conventions/practices it implements
+- Agent MUST use appropriate tools for task (principle: least privilege)
+- Agent color MUST use accessible palette
+
+**Relationship to Other Layers**:
+
+- **Governed by** Layer 2 (Conventions) and Layer 3 (Development)
+- **Orchestrated by** Layer 5 (Workflows)
+- **Served by** Skills (delivery infrastructure)
 
 **Example Traceability**:
 
 ```
-Principle: Automation Over Manual
-    ↓ governs
-Development: Code Quality Convention (automated git hooks)
-    ↓ governs
-Implementation: Husky + lint-staged (pre-commit formatting)
-```
-
-### Layer 4: AI Agents (WHO - Atomic Task Executors)
-
-**Location** (Dual-Mode):
-
-- `.claude/agents/` (PRIMARY - Claude Code format, source of truth)
-- `.opencode/agent/` (SYNCED - OpenCode format, auto-generated from `.claude/agents/`)
-
-**Purpose**: Automated implementers that enforce conventions and development practices. Each agent implements and validates specific rules from layers 2 and 3.
-
-**Dual-Mode Configuration**: This repository maintains compatibility with both Claude Code and OpenCode systems:
-
-- **Claude Code**: Uses `.claude/agents/` with array-based tool permissions (`tools: [Read, Write]`)
-- **OpenCode**: Uses `.opencode/agent/` with boolean-flag tool permissions (`tools: { read: true, write: true }`)
-- **Sync**: Run `npm run sync:claude-to-opencode` to regenerate `.opencode/` from `.claude/` (primary source)
-- **Skills**: Same format for both systems, synced from `.claude/skills/` to `.opencode/skill/`
-
-See [AI Agents Convention](./development/agents/ai-agents.md) for dual-mode format details.
-
-**Key Documents**:
-
-- [Claude Agents Index](../.claude/agents/README.md) (primary source)
-- [OpenCode Agents Index](../.opencode/agent/README.md) (auto-generated)
-
-**Agent Families**:
-
-- **Makers** - Create/update content (docs**maker, readme**maker, plan\_\_maker)
-- **Checkers** - Validate quality (docs**checker, wow**rules-checker, plan\_\_checker)
-- **Fixers** - Apply validated fixes (docs**fixer, wow**rules-fixer, plan\_\_fixer)
-- **Navigation** - Manage structure (ayokoding-web-navigation-maker, ayokoding-web-structure-maker)
-- **Operations** - Deploy and manage (ayokoding-web-deployer, docs\_\_file-manager)
-
-**Characteristics**:
-
-- Each agent enforces specific conventions or practices
-- Agents are atomic - one clear responsibility
-- Frontmatter includes: name, description, tools, model, color
-- Answers: "Who enforces the rules?"
-
-**Example Traceability**:
-
-```
-Convention: Color Accessibility Convention
+Convention: Color Accessibility
     ↓ implemented by
-Agent: docs__checker (validates diagram colors against palette)
+Agent: docs__checker (validates diagram colors)
 Agent: docs__fixer (applies color corrections)
-    ↓ orchestrated by
-Workflow: Maker-Checker-Fixer (Layer 5)
 ```
 
-### Layer 5: Workflows (WHEN - Multi-Step Processes)
+---
 
-**Location**: `/governance/workflows/`
+## Layer 5: Workflows (WHEN - Multi-Step Processes)
 
-**Purpose**: Orchestrated multi-step processes that compose AI agents to achieve specific goals with clear termination criteria.
+**Purpose**: Orchestrated multi-step processes composing AI agents. Answers WHEN to run which agents in what order.
+
+**Location**: `governance/workflows/`
 
 **Key Document**: [Workflows Index](./workflows/README.md)
 
 **Workflow Families**:
 
-- **Maker-Checker-Fixer** - Content quality (docs, readme, ayokoding, ose-platform)
-- **Check-Fix** - Iterative validation (ayokoding-check-fix, docs-check-fix)
-- **Plan-Execute-Validate** - Project planning workflow
+- **Maker-Checker-Fixer** - Three-stage content quality (create → validate → fix)
+- **Check-Fix** - Iterative validation (check → fix → re-check until clean)
+- **Plan-Execute-Validate** - Planning workflow (plan → execute → validate → iterate)
 
-**Characteristics**:
+**Workflow Characteristics**:
 
-- Define sequences (sequential/parallel/conditional)
-- Manage state between steps
-- Include human approval checkpoints
-- Have clear termination criteria (exit conditions)
-- Answers: "When do we run which agents in what order?"
+- **Sequences**: Define order (sequential, parallel, conditional)
+- **State management**: Pass data between steps
+- **Human approval**: Checkpoints for user review
+- **Termination criteria**: Clear completion conditions
 
 **Example Workflow**:
 
 ```
 Maker-Checker-Fixer Workflow:
-1. Maker creates content → output: draft files
-2. Checker validates → output: audit report
-3. User reviews audit → decision: approve/reject
-4. Fixer applies validated fixes → output: corrected files
-5. Terminate when: all HIGH/MEDIUM findings resolved
+1. Maker creates content → draft
+2. Checker validates → audit report in generated-reports/
+3. User reviews → approve/reject
+4. Fixer applies fixes → corrected content
+5. Terminate: all findings resolved
 ```
 
-## Delivery Infrastructure
+**Requirements**:
 
-In addition to the six governance layers, the repository uses **delivery infrastructure** to transport knowledge from Layers 2-3 to Layer 4 (Agents). These are NOT governance layers - they don't enforce rules, they deliver knowledge.
+- Each workflow MUST document agent sequence
+- Each workflow MUST define termination criteria
+- Human approval checkpoints MUST be explicit
 
-### Delivery Mechanisms (Dual-Mode)
+**Relationship to Other Layers**:
 
-| Mechanism             | Location                                                    | Purpose                            | Tool(s)                | When Loaded                | Behavior                         |
-| --------------------- | ----------------------------------------------------------- | ---------------------------------- | ---------------------- | -------------------------- | -------------------------------- |
-| **CLAUDE.md**         | Root                                                        | Comprehensive project instructions | Claude Code            | Always at startup          | Context injection                |
-| **AGENTS.md**         | Root                                                        | Comprehensive project instructions | OpenCode               | Always at startup          | Context injection                |
-| **Skills (inline)**   | `.claude/skills/` (primary)<br/>`.opencode/skill/` (synced) | Progressive knowledge packages     | Claude Code / OpenCode | On-demand (tool-specific)  | Inject into current conversation |
-| **Skills (fork)**     | `.claude/skills/` (primary)<br/>`.opencode/skill/` (synced) | Task delegation to agents          | Claude Code / OpenCode | On-demand (tool-specific)  | Spawn isolated agent context     |
-| **Direct References** | In agent prompts                                            | Links to convention docs           | Both systems           | When explicitly referenced | Explicit read                    |
+- **Orchestrates** Layer 4 (AI Agents)
+- **Implements** Layer 3 (Development patterns like Maker-Checker-Fixer)
+- **No governance authority**: Workflows don't govern agents, they compose them
 
-### Skills as Infrastructure
-
-**Skills** are model-invoked markdown knowledge packages that operate in two distinct modes:
-
-#### Inline Skills (Knowledge Delivery)
-
-**Default behavior** when `context` field is omitted or set to `inline`:
-
-- **Enable progressive disclosure** - Name/description at startup, full content on-demand
-- **Encode convention/development knowledge** - Packaged for efficient agent consumption
-- **Inject into current conversation** - Skills add knowledge to ongoing work
-- **Support knowledge composition** - Multiple Skills work together seamlessly
-
-**Example use cases**: Style guides, coding conventions, domain knowledge, reference material
-
-#### Fork Skills (Task Delegation)
-
-**Delegation behavior** when `context: fork` is set with `agent` field:
-
-- **Spawn isolated subagent contexts** - Skills create separate execution environments
-- **Delegate tasks to specialized agents** - Agent field specifies which agent type to use
-- **Act as lightweight orchestrators** - Skills can invoke agents for focused work
-- **Return summarized results** - Subagent output returns to main conversation
-
-**Example use cases**: Deep research, focused analysis, specialized exploration
-
-**Configuration syntax**:
-
-```yaml
----
-name: deep-research
-context: fork
-agent: Explore # Built-in or custom agent from .claude/agents/
----
-Research $ARGUMENTS thoroughly...
-```
-
-**All skills follow open standard** - agentskills.io format for portability
-
-#### Practical Examples from Repository
-
-**Inline skill example** - `applying-content-quality`:
-
-```yaml
----
-name: applying-content-quality
-description: Universal markdown content quality standards
----
-When creating or editing markdown content:
-  - Use active voice
-  - Maintain proper heading hierarchy
-  - Include alt text for images
-  - Ensure WCAG AA color contrast
-```
-
-This skill injects quality standards into current conversation without spawning agents.
-
-**Fork skill example** - Hypothetical `deep-codebase-research`:
-
-```yaml
----
-name: deep-codebase-research
-description: Comprehensive codebase analysis
-context: fork
-agent: Explore
 ---
 
-Research $ARGUMENTS across the codebase:
-1. Use Glob to find all relevant files
-2. Use Grep to search for patterns
-3. Read and analyze implementation details
-4. Return comprehensive findings with file references
-```
+## Skills: Delivery Infrastructure (Not a Governance Layer)
 
-This skill delegates research to the Explore agent in an isolated context.
+**CRITICAL**: Skills are **delivery infrastructure**, NOT a governance layer.
 
-**Key difference**: Inline skills add knowledge, fork skills delegate tasks.
+**Purpose**: Package and deliver knowledge/capabilities to agents in two distinct modes.
 
-**Key Documents**:
+**Location**: `.claude/skills/`
 
-- [Claude Skills Directory](../.claude/skills/README.md) (primary source)
-- [OpenCode Skills Directory](../.opencode/skill/README.md) (auto-generated)
+**Documentation**: See [AGENTS.md](../AGENTS.md) for skills documentation
 
-**23 Skills Available**: See Skills directories for complete catalog.
+**Two Delivery Modes**:
 
-**Skills Categories**:
+### Inline Skills (Knowledge Delivery)
 
-- **Content Creation**: applying-content-quality, creating-by-example-tutorials, developing-ayokoding-content, developing-ose-content, writing-readme-files
-- **Quality Assurance**: applying-maker-checker-fixer, assessing-criticality-confidence, validating-factual-accuracy, validating-links, generating-validation-reports
-- **Standards Application**: applying-diataxis-framework, creating-accessible-diagrams, writing-gherkin-criteria
-- **Process Execution**: creating-project-plans, defining-workflows, practicing-trunk-based-development, executing-checker-workflow, applying-fixer-workflow
-- **Technical Knowledge**: developing-agents, understanding-repository-architecture, documenting-references, selecting-models
-
-See [CLAUDE.md](../CLAUDE.md) for Claude Code details and [AGENTS.md](../AGENTS.md) for OpenCode details.
-
-### Why Infrastructure, Not a Layer?
-
-**Governance layers** have defining characteristics:
-
-- Enforce rules on the layer below
-- Create obligations and constraints
-- Answer "what must be done" at their level
-
-**Testing the governance relationship**:
-
-| Source                    | Target | Governance?                             | Evidence |
-| ------------------------- | ------ | --------------------------------------- | -------- |
-| Conventions → Development | Yes    | Conventions define HOW docs are written |
-| Conventions → Agents      | Yes    | Agents MUST follow doc standards        |
-| Development → Agents      | Yes    | Agents MUST follow coding patterns      |
-| Skills → Agents           | **No** | Skills SERVE agents with knowledge      |
-
-**Skills don't govern agents. Skills serve agents.**
-
-**Fork skills and task delegation**: While fork skills (`context: fork`) can spawn agents and delegate tasks, this remains a service relationship, not governance:
-
-- **Inline skills** deliver knowledge to current conversation (knowledge service)
-- **Fork skills** delegate tasks to specialized agents (execution service)
-- Neither mode enforces rules on agents or creates obligations
-- Fork skills act as lightweight orchestrators, not governors
-- Agents remain governed by Conventions (Layer 2) and Development (Layer 3)
-
-**Delivery infrastructure** has different characteristics:
-
-- Transports or delivers something
-- No governance relationship with consumers
-- Multiple alternatives can coexist (CLAUDE.md, AGENTS.md, Skills, Direct References)
-
-### Delivery vs Governance
+**Default behavior** - Progressive knowledge injection:
 
 ```
-Governance (enforces rules):
-  Conventions ──governs──> Agents (agents MUST follow)
-  Development ──governs──> Agents (agents MUST follow)
+Knowledge Flow (Inline):
+L2: Conventions ──┬── CLAUDE.md/AGENTS.md (startup) ──> Claude/OpenCode
+                  ├── Skills inline (on-demand) ────> Current conversation
+                  └── Direct refs (explicit) ───────> L4: Agents
 
-Delivery (serves knowledge, dual-mode):
-  CLAUDE.md ──loaded at startup──> Claude Code ──spawns──> Agents (isolated contexts)
-  AGENTS.md ──loaded at startup──> OpenCode ──spawns──> Agents (isolated contexts)
-  Skills (inline) ──delivers knowledge via tool──> Claude Code / OpenCode
-  Skills (fork) ──delegates via context: fork──> Agents (isolated contexts)
-  Direct References ──explicit links──> Agents
+L3: Development ──┬── CLAUDE.md/AGENTS.md (startup) ──> Claude/OpenCode
+                  ├── Skills inline (on-demand) ────> Current conversation
+                  └── Direct refs (explicit) ───────> L4: Agents
 ```
 
-## Complete Traceability Examples
+**Characteristics**:
 
-### Example 1: Color Accessibility
+- Progressive disclosure (name/description → full content on-demand)
+- Inject convention/development knowledge into current conversation
+- Enable knowledge composition (multiple skills work together)
+- Serve agents but don't govern them
 
-**Layer 0 - Vision**: Democratize Islamic enterprise → accessible to everyone
+### Fork Skills (Task Delegation)
 
-**Layer 1 - Principle**: [Accessibility First](./principles/content/accessibility-first.md)
-
-- Vision supported: Accessible tools enable global participation in Islamic finance
-- Key value: Design for universal access from the start
-
-**Layer 2 - Convention**: [Color Accessibility Convention](./conventions/formatting/color-accessibility.md)
-
-- Implements: Accessibility First principle
-- Rule: Use only verified color-blind friendly palette (Blue, Orange, Teal, Purple, Brown)
-- WCAG AA compliance required
-
-**Layer 3 - Development**: [AI Agents Convention](./development/agents/ai-agents.md)
-
-- Respects: Color Accessibility Convention
-- Practice: Agent color categorization uses accessible palette
-- Implementation: Frontmatter `color` field limited to accessible colors
-
-**Layer 4 - Agents**:
-
-- **docs\_\_checker**: Validates diagram colors against palette
-- **docs\_\_fixer**: Applies color corrections to non-compliant diagrams
-- **agent\_\_maker**: Validates new agents use accessible colors in frontmatter
-
-**Layer 5 - Workflow**: [Maker-Checker-Fixer](./workflows/meta/workflow-identifier.md)
-
-- Orchestrates: docs**maker → docs**checker → docs\_\_fixer
-- Ensures: All diagrams use accessible colors through automated validation and fixing
-
-### Example 2: Explicit Configuration
-
-**Layer 0 - Vision**: Transparent, verifiable Islamic enterprise
-
-**Layer 1 - Principle**: [Explicit Over Implicit](./principles/software-engineering/explicit-over-implicit.md)
-
-- Vision supported: Transparency enables verification of Shariah compliance
-- Key value: Code should be transparent and understandable
-
-**Layer 2 - Convention**: [File Naming Convention](./conventions/structure/file-naming.md)
-
-- Implements: Explicit Over Implicit principle
-- Rule: Prefix encodes directory path explicitly (`ex-co__` = explanation/governance/conventions/)
-
-**Layer 3 - Development**: [AI Agents Convention](./development/agents/ai-agents.md)
-
-- Respects: File Naming Convention
-- Practice: Agent files use kebab-case, explicit tool permissions in frontmatter
-- Implementation: No default tool access, all tools explicitly whitelisted
-
-**Layer 4 - Agents**:
-
-- **agent\_\_maker**: Validates new agents have explicit tools field
-- **wow\_\_rules-checker**: Audits agents for missing tool declarations
-- **docs\_\_file-manager**: Enforces naming convention when renaming files
-
-**Layer 5 - Workflow**: [Repo-Rules-Check-Fix](./workflows/repository/repository-rules-validation.md)
-
-- Orchestrates: wow**rules-checker → wow**rules-fixer
-- Ensures: All agents maintain explicit tool permissions
-
-### Example 3: Automation for Consistency
-
-**Layer 0 - Vision**: Reliable, trustworthy Islamic enterprise systems
-
-**Layer 1 - Principle**: [Automation Over Manual](./principles/software-engineering/automation-over-manual.md)
-
-- Vision supported: Automation ensures consistent Shariah compliance validation
-- Key value: Machines handle repetitive tasks, humans focus on creative work
-
-**Layer 2 - Convention**: [Content Quality Principles](./conventions/writing/quality.md)
-
-- Implements: Automation Over Manual principle
-- Rule: Automated validation of active voice, heading hierarchy, alt text
-
-**Layer 3 - Development**: [Code Quality Convention](./development/quality/code.md)
-
-- Respects: Content Quality Principles
-- Practice: Git hooks automate formatting and validation
-- Implementation: Husky + lint-staged + Prettier + Commitlint
-
-**Layer 4 - Agents**:
-
-- **docs\_\_checker**: Automated content quality validation
-- **ayokoding-web-general-checker**: Automated general Hugo content validation
-- **ayokoding-web-by-example-checker**: Automated by-example tutorial validation
-- **plan\_\_checker**: Automated plan completeness validation
-
-**Layer 5 - Workflow**: [Ayokoding-Check-Fix](./workflows/ayokoding-web/ayokoding-web-general-quality-gate.md)
-
-- Orchestrates: ayokoding-web-general-checker → ayokoding-web-general-fixer
-- Ensures: All Hugo content meets quality standards through automated iteration
-
-## ️ Using the Architecture
-
-### When Creating New Content
-
-**Question**: "Where does my new document go?"
-
-**Answer**: Determine the layer:
-
-- **Vision** - Only if changing fundamental project purpose (extremely rare)
-- **Principles** - If defining a foundational VALUE that governs decisions
-- **Conventions** - If defining WHAT documentation rules to follow
-- **Development** - If defining HOW to develop software
-- **Workflows** - If orchestrating multiple agents in a repeatable sequence
-
-**Process**:
-
-1. Identify the layer based on "what question does this answer?"
-2. Create document in appropriate directory
-3. Add traceability sections (Principles/Conventions Implemented/Respected)
-4. Update index files
-5. Use wow\_\_rules-maker to propagate changes
-
-### When Making Changes
-
-**Process**:
-
-1. **Start at the appropriate layer** - Don't modify Vision unless mission changes
-2. **Check dependencies** - What layers depend on this change?
-3. **Update traceability** - Ensure all references are updated
-4. **Propagate changes** - Use wow\_\_rules-maker to propagate to AGENTS.md, indices, agents
-5. **Validate** - Use wow\_\_rules-checker to verify consistency
-
-**Example**: Adding a new principle
-
-1. Create principle document in `/governance/principles/`
-2. Add "Vision Supported" section showing how it serves the vision
-3. Update `/governance/principles/README.md` index
-4. Use wow\_\_rules-maker to propagate to AGENTS.md
-5. Create conventions/practices that implement the principle
-6. Create/update agents to enforce the principle
-
-### When Troubleshooting
-
-**Question**: "Why do we have this rule?"
-
-**Answer**: Trace up the layers:
-
-1. **Start at the rule** - Find the convention or practice
-2. **Check traceability** - Read "Principles Implemented/Respected" section
-3. **Read the principle** - Understand the foundational value
-4. **Check vision alignment** - See "Vision Supported" section in principle
-5. **Understand the WHY** - Now you know why the rule exists
-
-**Example**: "Why do we use `ex-co__` prefixes in filenames?"
+**Delegation behavior** with `context: fork`:
 
 ```
-Rule: File Naming Convention (Layer 2)
-    ↓ implements
-Principle: Explicit Over Implicit (Layer 1)
-    ↓ serves
-Vision: Transparent, verifiable systems (Layer 0)
-
-Answer: Explicit prefixes make file locations transparent without
-opening files, supporting our vision of verifiable systems.
+Delegation Flow (Fork):
+Skills (context: fork) ──delegates to──> Isolated Agent Context
+                         ──returns──> Summarized Results
+                         ──to──> Main Conversation
 ```
 
-## Key Principles
+**Characteristics**:
 
-### Immutability Decreases Down the Layers
+- Spawn isolated subagent contexts for focused work
+- Delegate specialized tasks (research, analysis, exploration)
+- Act as lightweight orchestrators
+- Return results to main conversation
+- Still service relationship (not governance)
 
-- **Layer 0 (Vision)**: Nearly immutable - only changes if mission fundamentally shifts
-- **Layer 1 (Principles)**: Very stable - rarely change, require strong justification
-- **Layer 2 (Conventions)**: Moderately stable - change when documentation needs evolve
-- **Layer 3 (Development)**: Moderately stable - change when software practices evolve
-- **Layer 4 (Agents)**: Changes frequently - new agents added, existing agents updated
-- **Layer 5 (Workflows)**: Changes frequently - new workflows as needs emerge
+**33 Skills Available**:
 
-### Traceability is Mandatory
+- **docs-\*** - Documentation creation and quality (7 skills)
+- **readme-\*** - README file patterns (2 skills)
+- **repo-\*** - Repository-wide patterns (5 skills)
+- **swe-programming-\*** - Language/framework expertise (14 skills)
+- **apps-\*** - Application-specific patterns (5 skills)
 
-Every convention, practice, and agent MUST be traceable:
+**Why Skills Are NOT Layer 4.5**:
 
-- **Conventions** → MUST include "Principles Implemented/Respected" section
-- **Development practices** → MUST include both "Principles" AND "Conventions" sections
-- **Agents** → MUST reference which conventions/practices they enforce (in description or documentation)
-- **Workflows** → MUST reference which agents they orchestrate (in definition)
+| Aspect                | Governance Layers (L1-L5) | Skills (Delivery)              |
+| --------------------- | ------------------------- | ------------------------------ |
+| **Authority**         | Govern behavior (MUST)    | Serve agents (provide support) |
+| **Change Frequency**  | Stable, controlled        | Evolve with agent needs        |
+| **Traceability**      | Required sections         | Optional references            |
+| **Relationship**      | Hierarchical governance   | Service relationship           |
+| **Agent Compliance**  | Agents MUST follow        | Agents MAY use                 |
+| **Enforcement**       | Mandatory                 | Optional                       |
+| **Purpose**           | Define rules              | Deliver knowledge/tasks        |
+| **Delivery Modes**    | N/A                       | Inline or fork                 |
+| **Orchestration**     | N/A                       | Fork mode only                 |
+| **Context Isolation** | N/A                       | Fork creates isolated contexts |
 
-### Changes Propagate Down
+**Key insight**: Skills SERVE agents through two modes:
 
-When changing a layer, all lower layers may need updates:
+- **Inline skills** - Deliver knowledge from L2/L3 to current conversation
+- **Fork skills** - Delegate tasks to agents in isolated contexts
+- Neither mode governs agents (service relationship, not governance)
 
-- **Vision change** → May require principle, convention, practice, agent, workflow updates
-- **Principle change** → May require convention, practice, agent, workflow updates
-- **Convention change** → May require agent and workflow updates
-- **Practice change** → May require agent and workflow updates
-- **Agent change** → May require workflow updates
+**Governance test**:
 
-Use **wow\_\_rules-maker** to propagate changes systematically.
+- Conventions → Agents: Yes (agents MUST follow conventions)
+- Development → Agents: Yes (agents MUST follow practices)
+- Skills (inline) → Agents: **No** (inject knowledge, serve agents)
+- Skills (fork) → Agents: **No** (delegate tasks, serve agents)
 
-## Verification and Validation
+**Delivery Mechanisms Comparison**:
 
-### Layer Alignment Checks
+| Mechanism               | When Loaded              | Purpose                        | Authority |
+| ----------------------- | ------------------------ | ------------------------------ | --------- |
+| **CLAUDE.md/AGENTS.md** | Conversation startup     | Initial context and quick refs | None      |
+| **Inline skills**       | On-demand (progressive)  | Deep knowledge injection       | None      |
+| **Fork skills**         | On-demand (delegation)   | Task delegation to subagents   | None      |
+| **Direct references**   | Explicit document reads  | Authoritative source           | Full      |
+| **Conventions (L2)**    | Via any above mechanisms | Governance rules               | Full      |
+| **Development (L3)**    | Via any above mechanisms | Governance practices           | Full      |
 
-**wow\_\_rules-checker** validates:
+---
 
-1. All conventions reference principles
-2. All practices reference both principles and conventions
-3. All agents reference conventions/practices
-4. No circular dependencies between layers
-5. AGENTS.md consistent with convention/practice documents
+## Complete Traceability Example
 
-### Traceability Audits
+### Color Accessibility (Vision → Agents)
 
-Periodically verify:
+**L0 - Vision**: Democratize Islamic enterprise → accessible to everyone
 
-1. Every convention traces to at least one principle
-2. Every practice traces to principles AND conventions
-3. Every agent enforces specific conventions/practices
-4. Every workflow orchestrates appropriate agents
-5. All "Vision Supported" sections accurately describe alignment
+**L1 - Principle**: [Accessibility First](./principles/content/accessibility-first.md)
+
+- **Vision supported**: Accessible tools enable global participation in Shariah-compliant business
+- **Key value**: Universal access from the start, not as an afterthought
+
+**L2 - Convention**: [Color Accessibility Convention](./conventions/formatting/color-accessibility.md)
+
+- **Implements**: Accessibility First principle
+- **Rule**: Use verified color-blind friendly palette
+- **WCAG AA compliance required**
+
+**L3 - Development**: [AI Agents Convention](./development/agents/ai-agents.md)
+
+- **Respects**: Color Accessibility Convention
+- **Practice**: Agent colors use accessible palette
+- **Implementation**: Frontmatter `color` field limited to verified palette
+
+**L4 - Agents**:
+
+- `docs-checker` - Validates diagram colors in documentation
+- `docs-fixer` - Applies color corrections to diagrams
+- `agent-maker` - Validates agent frontmatter colors
+
+**L5 - Workflow**: Maker-Checker-Fixer
+
+- Orchestrates: maker → checker → fixer
+- Ensures: All diagrams use accessible colors before publication
+
+**Skills (Delivery)**:
+
+- `docs-creating-accessible-diagrams` (inline) - Delivers Mermaid diagram patterns with WCAG colors
+- Service relationship: Helps agents understand color conventions
+
+**Complete Chain**:
+
+```
+Vision (Democratize access)
+    ↓ inspires
+Principle (Accessibility First)
+    ↓ governs
+Convention (Color Accessibility)
+    ↓ governs
+Development (AI Agents Convention)
+    ↓ governs
+Agents (docs-checker, docs-fixer, agent-maker)
+    ↓ orchestrated by
+Workflow (Maker-Checker-Fixer)
+    ↓ served by
+Skills (docs-creating-accessible-diagrams - inline knowledge delivery)
+```
+
+---
+
+## Governance Relationships
+
+### Hierarchical Governance
+
+**Governance flows downward**:
+
+```
+Layer 0 (Vision)
+    ↓ inspires (not governs)
+Layer 1 (Principles)
+    ↓ governs
+Layer 2 (Conventions) + Layer 3 (Development)
+    ↓ governs
+Layer 4 (AI Agents)
+    ↓ orchestrated by (not governed by)
+Layer 5 (Workflows)
+```
+
+**Skills (Infrastructure)**:
+
+```
+Skills ──serves──> Agents (inline knowledge or fork delegation)
+Skills ──does NOT govern──> Agents
+```
+
+### Cross-Layer Relationships
+
+**Layer 1 → Layer 2 & Layer 3**:
+
+- Principles govern BOTH conventions and development
+- Both layers must trace back to principles
+
+**Layer 2 ↔ Layer 3**:
+
+- Conventions govern development practices
+- Development practices implement conventions
+- Bidirectional relationship (development respects conventions)
+
+**Layer 3 → Layer 4**:
+
+- Development practices govern agent implementation
+- Agents must follow development conventions
+
+**Layer 5 → Layer 4**:
+
+- Workflows orchestrate agents (composition, not governance)
+- Workflows don't create new rules for agents
+
+**Skills ↔ Agents**:
+
+- Skills serve agents (service relationship)
+- Skills deliver knowledge (inline mode) or delegate tasks (fork mode)
+- Skills don't govern agents
+
+### Traceability Requirements
+
+**Layer 0 (Vision)**:
+
+- No required traceability (foundational)
+
+**Layer 1 (Principles)**:
+
+- MUST include "Vision Supported" section
+
+**Layer 2 (Conventions)**:
+
+- MUST include "Principles Implemented/Respected" section
+
+**Layer 3 (Development)**:
+
+- MUST include "Principles Implemented/Respected" section
+- MUST include "Conventions Implemented/Respected" section
+
+**Layer 4 (Agents)**:
+
+- Frontmatter SHOULD reference relevant skills
+- Description SHOULD mention enforced conventions/practices
+
+**Layer 5 (Workflows)**:
+
+- SHOULD document which agents are orchestrated
+- SHOULD reference development patterns implemented
+
+**Skills (Infrastructure)**:
+
+- MAY reference conventions/development practices
+- MAY reference related skills
+- Optional (service infrastructure, not governance)
+
+---
+
+## Best Practices
+
+### When Creating New Conventions
+
+1. **Check principles first** - Which principle does this implement?
+2. **Add traceability section** - "Principles Implemented/Respected"
+3. **Document in Conventions Index** - Add to `conventions/README.md`
+4. **Consider agent impact** - Which agents need to enforce this?
+5. **Consider Skills delivery** - Should this be packaged as a Skill for agents?
+
+### When Creating New Development Practices
+
+1. **Check both principles AND conventions** - What do you implement/respect?
+2. **Add both traceability sections** - Principles AND Conventions
+3. **Document in Development Index** - Add to `development/README.md`
+4. **Consider automation** - Git hooks? AI agents?
+5. **Consider Skills delivery** - Should this be packaged as a Skill for agents?
+
+### When Creating New Agents
+
+1. **Identify governing layers** - Which conventions/practices does this enforce?
+2. **Define atomic responsibility** - One clear purpose
+3. **Choose tools carefully** - Match to task (Read-only, Write, Edit, Bash, Web)
+4. **Document in Agents Index** - Add to `.claude/agents/README.md`
+5. **Reference relevant Skills** - Which Skills will help this agent?
+
+### When Creating Workflows
+
+1. **Identify agent sequence** - What agents needed, in what order?
+2. **Define termination criteria** - When does workflow complete?
+3. **Add approval checkpoints** - Where does user review?
+4. **Document state management** - How does state flow between steps?
+
+### When Creating Skills
+
+1. **Identify service need** - What knowledge/task do agents need repeatedly?
+2. **Choose delivery mode** - Inline (knowledge) or fork (delegation)?
+3. **Package clearly** - SKILL.md with purpose, patterns, examples
+4. **Reference in agents** - Update agent frontmatter with new skill
+5. **Avoid governance claims** - Skills serve, don't govern
+
+---
+
+## Common Misconceptions
+
+### Misconception 1: "Skills are Layer 4.5"
+
+❌ **Wrong**: Skills are not a layer between Development and Agents.
+
+✅ **Correct**: Skills are delivery infrastructure (like CLAUDE.md), not governance layer. They serve agents through inline knowledge delivery or fork-based task delegation.
+
+### Misconception 2: "Agents can ignore conventions if skilled"
+
+❌ **Wrong**: Skills provide knowledge but don't override governance.
+
+✅ **Correct**: Agents MUST follow conventions. Skills help agents understand conventions better and provide implementation patterns.
+
+### Misconception 3: "Workflows replace agents"
+
+❌ **Wrong**: Workflows don't replace agents, they orchestrate them.
+
+✅ **Correct**: Workflows compose multiple agents into multi-step processes. Agents remain atomic, workflows handle sequencing.
+
+### Misconception 4: "Principles can conflict"
+
+❌ **Wrong**: Principles sometimes contradict each other.
+
+✅ **Correct**: Principles complement each other. Apparent conflicts require nuanced application, not choosing one over another.
+
+### Misconception 5: "Layer 2 and Layer 3 are the same"
+
+❌ **Wrong**: Conventions and Development practices are interchangeable.
+
+✅ **Correct**:
+
+- **Layer 2 (Conventions)**: WHAT documentation rules (scope: docs/, plans/, Hugo sites)
+- **Layer 3 (Development)**: HOW software practices (scope: source code, builds, git, agents)
+- Layer 3 practices must respect Layer 2 conventions
+
+---
+
+## Future Evolution
+
+### Potential Layer Additions
+
+As the repository grows, additional layers might be considered:
+
+**Layer 6 (WHEN - Scheduled Automation)**:
+
+- Potential future layer for cron jobs, CI/CD pipelines
+- Currently: Workflows are manually triggered
+- Future: Scheduled, event-driven, or CI/CD-triggered workflows
+
+**Not planned**: Additional intermediate layers between existing layers (maintains simplicity)
+
+### Skill Evolution
+
+**Current State**: 33 skills serving 56 agents
+
+**Growth Patterns**:
+
+- **Programming language skills** - Additional language/framework skills as project expands
+- **Domain-specific skills** - Business logic patterns (e.g., Islamic finance calculations)
+- **Workflow automation skills** - Complex orchestration patterns
+- **Fork skill patterns** - More sophisticated delegation strategies
+
+**Principles guiding skill growth**:
+
+- **Simplicity Over Complexity**: Don't create skills for one-off patterns
+- **Progressive Disclosure**: Skills enable on-demand deep dives
+- **Automation Over Manual**: Skills reduce agent duplication
+
+### Convention/Development Growth
+
+**As project matures**:
+
+- **New languages**: Java, Kotlin, Python development conventions
+- **New domains**: Islamic finance-specific patterns and rules
+- **Enhanced validation**: More sophisticated checker/fixer agents
+- **Performance conventions**: Optimization and scalability standards
+
+**Stability expectations**:
+
+- Layer 1 (Principles): Very stable, rare changes
+- Layer 2 (Conventions): Occasional additions, rare removals
+- Layer 3 (Development): More frequent additions as tech stack grows
+- Layer 4 (Agents): Regular additions for new validation/automation needs
+- Layer 5 (Workflows): New workflows as processes mature
+- Skills: Most frequent additions to serve growing agent needs
+
+---
 
 ## Principles Implemented/Respected
 
-**REQUIRED SECTION**: All explanation documents providing architectural guidance must include this section.
+**From [Core Principles](./principles/README.md)**:
 
-This architecture document implements/respects the following principles:
-
-- **[Explicit Over Implicit](./principles/software-engineering/explicit-over-implicit.md)**: The six-layer architecture explicitly defines the governance hierarchy, making relationships between vision, principles, conventions, practices, agents, and workflows transparent and traceable.
-
-- **[Simplicity Over Complexity](./principles/general/simplicity-over-complexity.md)**: The linear hierarchy (0→1→2→3→4→5) provides a simple mental model. Each layer has a clear purpose, avoiding complex cross-dependencies or matrix structures.
-
-- **[Progressive Disclosure](./principles/content/progressive-disclosure.md)**: The architecture layers complexity - beginners understand vision and principles, intermediate users work with conventions/practices, advanced users create agents and workflows.
-
-## Related Documentation
-
-**Layer 0**:
-
-- [Vision - Open Sharia Enterprise](./vision/open-sharia-enterprise.md)
-
-**Layer 1**:
-
-- [Core Principles Index](./principles/README.md)
-- Individual principles in `/governance/principles/`
-
-**Layer 2**:
-
-- [Conventions Index](./conventions/README.md)
-- 24 convention documents in `/governance/conventions/`
-
-**Layer 3**:
-
-- [Development Index](./development/README.md)
-- 15 practice documents in `/governance/development/`
-
-**Layer 4** (Dual-Mode):
-
-- [Claude Agents Index](../.claude/agents/README.md) (primary source)
-- [OpenCode Agents Index](../.opencode/agent/README.md) (auto-generated)
-- Agent files in `.claude/agents/` (Claude Code format, primary)
-- Agent files in `.opencode/agent/` (OpenCode format, synced)
-
-**Layer 5**:
-
-- [Workflows Index](./workflows/README.md)
-- [Workflow Pattern Convention](./workflows/meta/workflow-identifier.md)
-
-**Delivery Infrastructure** (Dual-Mode):
-
-- [Claude Skills Directory](../.claude/skills/README.md) - 23 knowledge packages (primary)
-- [OpenCode Skills Directory](../.opencode/skill/README.md) - 23 knowledge packages (synced)
-- [How to Create a Skill](../docs/how-to/hoto__create-new-skill.md) - Step-by-step guide
-- [CLAUDE.md](../CLAUDE.md) - Claude Code comprehensive instructions
-- [AGENTS.md](../AGENTS.md) - OpenCode comprehensive instructions
-
-**Meta-Documentation**:
-
-- [Diátaxis Framework](./conventions/structure/diataxis-framework.md) - Four documentation types
-- [Convention Writing Convention](./conventions/writing/conventions.md) - How to write conventions
-- [AI Agents Convention](./development/agents/ai-agents.md) - How to create agents
+- **Simplicity Over Complexity** - Flat layer hierarchy, single responsibility per layer
+- **Explicit Over Implicit** - Required traceability sections, explicit governance relationships
+- **Documentation First** - Comprehensive documentation of all layers and relationships
+- **Progressive Disclosure** - Quick reference → detailed layers → complete examples
 
 ---
 
-**Last Updated**: 2026-01-17
+## Conventions Implemented/Respected
+
+**From [Conventions Index](./conventions/README.md)**:
+
+- **[Content Quality Principles](./conventions/writing/quality.md)** - Active voice, heading hierarchy, accessibility compliance
+- **[File Naming Convention](./conventions/structure/file-naming.md)** - Descriptive filenames, README.md for indices
+- **[Linking Convention](./conventions/formatting/linking.md)** - GitHub-compatible markdown links with .md extension
+
+---
+
+**Last Updated**: 2026-02-09 (Added Deliberate Problem-Solving principle to Layer 1 enumeration)
+**Maintained By**: Repository governance team
+**Review Cycle**: Quarterly (ensure layer descriptions remain accurate)
