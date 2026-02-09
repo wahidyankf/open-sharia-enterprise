@@ -60,25 +60,51 @@ classDef teal fill:#029E73,stroke:#000,color:#FFF
 classDef purple fill:#CC78BC,stroke:#000,color:#000
 ```
 
-### Color Usage Rules
+### C4 Element Type to Color Mapping (REQUIRED)
 
-**System Context Diagrams**:
+**CRITICAL**: Use this exact mapping for all C4 diagrams to ensure consistency across the platform.
 
-- **Blue**: The system being documented
-- **Orange**: External actors (people)
-- **Teal**: External systems
+| C4 Element Type            | Color  | Hex Code | Text Color | Usage Context                               |
+| -------------------------- | ------ | -------- | ---------- | ------------------------------------------- |
+| **Person** (External)      | Orange | #DE8F05  | Black #000 | Users, actors interacting with the system   |
+| **Software System** (This) | Blue   | #0173B2  | White #FFF | The system being documented (focus)         |
+| **Software System** (Ext)  | Teal   | #029E73  | White #FFF | External systems, third-party APIs          |
+| **Container** (Internal)   | Blue   | #0173B2  | White #FFF | Apps, services, web frontends (our system)  |
+| **Container** (Database)   | Teal   | #029E73  | White #FFF | Databases, message brokers, caches          |
+| **Component** (Core)       | Blue   | #0173B2  | White #FFF | Controllers, services, domain logic         |
+| **Component** (Infra)      | Teal   | #029E73  | White #FFF | Repositories, clients, infrastructure       |
+| **Future/Planned**         | Purple | #CC78BC  | Black #000 | Optional, experimental, not-yet-implemented |
 
-**Container Diagrams**:
+### Color Usage Rules by Diagram Level
 
-- **Blue**: Internal containers (apps, services)
-- **Teal**: Data stores (databases, caches, message brokers)
-- **Purple**: OPTIONAL, future/planned containers
+**System Context (Level 1)**:
 
-**Component Diagrams**:
+- **Orange**: All Person elements (donors, administrators, users)
+- **Blue**: The single Software System being documented
+- **Teal**: All External Software Systems (payment gateway, compliance system)
 
-- **Blue**: Core components (controllers, services)
-- **Teal**: Infrastructure components (repositories, clients)
-- **Purple**: OPTIONAL, experimental/future components
+**Container (Level 2)**:
+
+- **Blue**: All internal Containers (web apps, APIs, services)
+- **Teal**: All data stores and infrastructure (databases, message queues, caches)
+- **Purple**: OPTIONAL - Future/planned containers not yet implemented
+
+**Component (Level 3)**:
+
+- **Blue**: Core business Components (controllers, services, aggregates)
+- **Teal**: Infrastructure Components (repositories, API clients, adapters)
+- **Purple**: OPTIONAL - Experimental/future components
+
+### Consistency Principle
+
+**CRITICAL**: The same element type MUST always use the same color across all diagrams.
+
+- ✅ Person → Always Orange
+- ✅ This System/Internal Containers/Core Components → Always Blue
+- ✅ External Systems/Databases/Infrastructure → Always Teal
+- ✅ Future/Planned → Always Purple
+
+This ensures readers can instantly recognize element types by color across all C4 documentation.
 
 ### Prohibited Colors
 
