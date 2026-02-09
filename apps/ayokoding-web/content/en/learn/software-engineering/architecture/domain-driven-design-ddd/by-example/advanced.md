@@ -382,7 +382,7 @@ class BankAccount {
 
 **Key Takeaway**: Event Store persists complete event history for aggregates. State is rebuilt by replaying events. Optimistic concurrency prevents conflicts using version numbers.
 
-**Why It Matters**: Traditional databases store current state, losing audit trail and preventing time-travel queries. When building financial systems, regulators require complete audit trails showing every state change. Event Sourcing provides this automatically—every deposit, withdrawal, and balance change is an immutable event. Stripe processes billions in payments using Event Sourcing, enabling them to answer "what was account balance on June 15th?" by replaying events up to that date. This same pattern enabled them to fix accounting bugs retroactively by replaying corrected event handlers against historical events, something impossible with state-only storage.
+**Why It Matters**: Traditional databases store current state, losing audit trail and preventing time-travel queries. When building financial systems, regulators require complete audit trails showing every state change. Event Sourcing provides this automatically—every deposit, withdrawal, and balance change is an immutable event. Payment platforms use Event Sourcing to answer "what was account balance on specific date?" by replaying events up to that date. This same pattern enables fixing accounting bugs retroactively by replaying corrected event handlers against historical events, something impossible with state-only storage.
 
 ### Example 62: Event Sourcing Snapshots
 
@@ -668,7 +668,7 @@ class BankAccountWithSnapshots {
 
 **Key Takeaway**: Snapshots optimize event replay by storing periodic state checkpoints. Loading aggregates restores from latest snapshot then replays only subsequent events, reducing replay time from O(n) to O(events_since_snapshot).
 
-**Why It Matters**: Long-lived aggregates accumulate thousands of events, making full replay expensive. Amazon order aggregates can have 50+ events (OrderPlaced, PaymentAuthorized, ItemsPicked, Shipped, Delivered, Returned). Without snapshots, loading a 2-year-old order replays all 50+ events every time. With snapshots every 10 events, loading replays only last 10 events regardless of age. This reduced Amazon's order loading time from 200ms to 15ms, enabling real-time order status queries. Snapshot frequency balances storage cost (more snapshots = more storage) vs replay cost (fewer snapshots = more events to replay).
+**Why It Matters**: Long-lived aggregates accumulate thousands of events, making full replay expensive. E-commerce order aggregates can have many events (OrderPlaced, PaymentAuthorized, ItemsPicked, Shipped, Delivered, Returned). Without snapshots, loading an old order replays all events every time. With snapshots at regular intervals, loading replays only events since last snapshot regardless of age. This significantly reduces order loading time, enabling real-time order status queries. Snapshot frequency balances storage cost (more snapshots = more storage) vs replay cost (fewer snapshots = more events to replay).
 
 ### Example 63: Temporal Queries with Event Sourcing
 
@@ -1173,7 +1173,7 @@ class MultiCurrencyBankAccount {
 
 **Key Takeaway**: Event upcasting transforms old event versions to new schemas during deserialization, enabling schema evolution without migrating historical events. Immutable events preserved, transformations applied on read.
 
-**Why It Matters**: Event stores contain years of historical events using old schemas. Migrating millions of events is expensive and risky. Upcasting solves this by transforming on read—old events stay unchanged in storage, but appear as new schema to application code. When Uber added multi-currency support to their billing system, they didn't migrate 2 billion historical ride events. They upcast old USD-only events to multi-currency format during replay, adding default USD currency. This zero-downtime migration took weeks instead of months, with rollback as simple as removing upcaster code.
+**Why It Matters**: Event stores contain years of historical events using old schemas. Migrating millions of events is expensive and risky. Upcasting solves this by transforming on read—old events stay unchanged in storage, but appear as new schema to application code. When adding multi-currency support to a billing system, platforms don't migrate historical events. They upcast old single-currency events to multi-currency format during replay, adding default currency. This zero-downtime migration approach is much faster, with rollback as simple as removing upcaster code.
 
 ### Example 65: Event Sourcing Projections
 
@@ -1807,7 +1807,7 @@ class BankingApplicationService {
 
 **Key Takeaway**: CQRS separates write operations (commands → write model) from read operations (queries → read model). Commands change state via event store, queries retrieve optimized views via projections. Enables independent scaling and optimization of reads vs writes.
 
-**Why It Matters**: Traditional CRUD conflates reads and writes, forcing single model to serve both. This creates contention—writes need strong consistency and transactions, reads need denormalization and fast retrieval. CQRS solves this by splitting them. Amazon order system uses CQRS: order placement (command) writes to event store with strong consistency, order history (query) reads from denormalized Elasticsearch index optimized for search. This enabled independent scaling—during Black Friday sales, they scaled read replicas 10x while keeping write capacity constant, handling billions of order queries without impacting order placement throughput.
+**Why It Matters**: Traditional CRUD conflates reads and writes, forcing single model to serve both. This creates contention—writes need strong consistency and transactions, reads need denormalization and fast retrieval. CQRS solves this by splitting them. E-commerce order systems use CQRS: order placement (command) writes to event store with strong consistency, order history (query) reads from denormalized search index optimized for retrieval. This enables independent scaling—during peak sales, platforms can scale read replicas significantly while keeping write capacity constant, handling massive order queries without impacting order placement throughput.
 
 ### Example 67: CQRS with Eventual Consistency
 
@@ -2280,7 +2280,7 @@ class MultiReadModelProjection {
 
 **Key Takeaway**: CQRS enables multiple read models optimized for different query patterns (lists, details, search). Same events update all read models independently. Each optimized for specific use case without compromising others.
 
-**Why It Matters**: Trying to optimize single database model for all query patterns leads to complex schemas and slow queries. CQRS allows separate optimization—lightweight models for lists, denormalized models for search, detailed models for reports. Netflix uses this pattern: video metadata events update lightweight catalog read model for browsing, detailed analytics model for recommendations, and search model in Elasticsearch for discovery. Each optimized independently, enabling fast queries without conflicting requirements.
+**Why It Matters**: Trying to optimize single database model for all query patterns leads to complex schemas and slow queries. CQRS allows separate optimization—lightweight models for lists, denormalized models for search, detailed models for reports. Media platforms use this pattern: content metadata events update lightweight catalog read model for browsing, detailed analytics model for recommendations, and search model for discovery. Each optimized independently, enabling fast queries without conflicting requirements.
 
 ### Example 69: CQRS with Multiple Bounded Contexts
 
@@ -2574,7 +2574,7 @@ class IntegrationEventBus {
 
 **Key Takeaway**: CQRS coordinates across bounded contexts using integration events. One context's write model publishes events that update other contexts' read models. Each context maintains its own optimized view using its own ubiquitous language.
 
-**Why It Matters**: Bounded contexts need different views of shared concepts. Sales cares about orders (placement, fulfillment status), Billing cares about payment (amount due, payment method), Shipping cares about delivery (address, package size). Trying to share single Order model creates coupling. CQRS lets each context maintain read model optimized for its needs, synchronized via integration events. Uber uses this: Rides context publishes trip events, Billing subscribes to calculate fares, Driver Payouts subscribes to calculate earnings—same trip, three different read models, zero coupling.
+**Why It Matters**: Bounded contexts need different views of shared concepts. Sales cares about orders (placement, fulfillment status), Billing cares about payment (amount due, payment method), Shipping cares about delivery (address, package size). Trying to share single Order model creates coupling. CQRS lets each context maintain read model optimized for its needs, synchronized via integration events. Ride-sharing platforms use this: Rides context publishes trip events, Billing subscribes to calculate fares, Driver Payouts subscribes to calculate earnings—same trip, three different read models, zero coupling.
 
 ### Example 70: CQRS Performance Optimization with Caching
 
@@ -3024,7 +3024,7 @@ class SagaOrchestrator {
 
 **Key Takeaway**: Saga Orchestration uses central coordinator to manage distributed transaction steps. Each step has forward action (execute) and compensating action (compensate). On failure, orchestrator runs compensations in reverse order to rollback completed steps.
 
-**Why It Matters**: Distributed microservices can't use database transactions spanning multiple services. Sagas provide transaction-like behavior through compensating actions. When Amazon processes order, they reserve inventory → charge payment → schedule shipping. If shipping fails, saga compensates by refunding payment and releasing inventory, maintaining consistency without distributed transactions. Orchestration provides central visibility and control, making it easier to monitor and debug complex multi-service workflows compared to choreography.
+**Why It Matters**: Distributed microservices can't use database transactions spanning multiple services. Sagas provide transaction-like behavior through compensating actions. When e-commerce platforms process order, they reserve inventory → charge payment → schedule shipping. If shipping fails, saga compensates by refunding payment and releasing inventory, maintaining consistency without distributed transactions. Orchestration provides central visibility and control, making it easier to monitor and debug complex multi-service workflows compared to choreography.
 
 ### Example 72: Saga Choreography Pattern
 
@@ -3370,7 +3370,7 @@ class ShippingService {
 
 **Key Takeaway**: Saga Choreography achieves distributed transactions through event-driven service collaboration. No central orchestrator—each service publishes events and reacts to others' events. Compensation triggered by failure events flowing through system.
 
-**Why It Matters**: Choreography reduces coupling compared to orchestration—services don't know about each other, only events. Makes system more decentralized and resilient. Netflix uses choreography for video encoding pipeline: upload service publishes VideoUploaded event, encoding service reacts and publishes VideoEncoded event, CDN service reacts and publishes VideoDeployed event. No central orchestrator means no single point of failure. However, choreography harder to monitor and debug since workflow implicit in event handlers rather than explicit in orchestrator code.
+**Why It Matters**: Choreography reduces coupling compared to orchestration—services don't know about each other, only events. Makes system more decentralized and resilient. Media platforms use choreography for content processing pipelines: upload service publishes ContentUploaded event, encoding service reacts and publishes ContentEncoded event, distribution service reacts and publishes ContentDeployed event. No central orchestrator means no single point of failure. However, choreography harder to monitor and debug since workflow implicit in event handlers rather than explicit in orchestrator code.
 
 ### Example 73: Saga Failure Handling and Idempotency
 
@@ -3763,7 +3763,7 @@ class RecoverableOrderSaga {
 
 **Key Takeaway**: Saga resilience requires idempotency (prevent duplicate execution), retry logic (handle transient failures), and state persistence (enable recovery after crashes). Idempotency keys track processed operations, state stores enable resuming sagas.
 
-**Why It Matters**: Distributed systems experience transient failures (network timeouts, service restarts). Sagas must handle retries safely—executing payment twice charges customer twice. Idempotency keys prevent this by tracking completed operations. When Uber driver accepts ride, saga reserves driver → notifies rider → updates ETA. If notification service crashes, saga retries but skips already-completed driver reservation (idempotent), preventing double-booking. State persistence ensures long-running sagas survive service restarts, critical for operations spanning minutes or hours.
+**Why It Matters**: Distributed systems experience transient failures (network timeouts, service restarts). Sagas must handle retries safely—executing payment twice charges customer twice. Idempotency keys prevent this by tracking completed operations. When a ride-sharing platform processes ride acceptance, saga reserves driver → notifies rider → updates ETA. If notification service crashes, saga retries but skips already-completed driver reservation (idempotent), preventing double-booking. State persistence ensures long-running sagas survive service restarts, critical for operations spanning minutes or hours.
 
 ## Process Managers (Examples 74-76)
 
@@ -4139,7 +4139,7 @@ class ProcessManagerRepository {
 
 **Key Takeaway**: Process Managers maintain state across long-running workflows, handling complex branching logic and coordinating multiple services. Unlike sagas, they persist state and can handle arbitrary complexity including retries, timeouts, and conditional branching.
 
-**Why It Matters**: Real business processes have complex logic that simple sagas can't express. Amazon order fulfillment handles payment failures (retry 3 times), inventory issues (find alternate warehouse), delivery delays (notify customer). Process Manager tracks order state through all branches, maintaining context across days or weeks. When payment provider down, Process Manager retries every hour for 24 hours before canceling, something stateless saga can't do. State persistence enables resuming after crashes, critical for long-running operations.
+**Why It Matters**: Real business processes have complex logic that simple sagas can't express. E-commerce order fulfillment handles payment failures (retry multiple times), inventory issues (find alternate warehouse), delivery delays (notify customer). Process Manager tracks order state through all branches, maintaining context across days or weeks. When payment provider down, Process Manager retries periodically before canceling, something stateless saga can't do. State persistence enables resuming after crashes, critical for long-running operations.
 
 ### Example 75: Process Manager State Persistence
 
@@ -4364,7 +4364,7 @@ class PersistentOrderFulfillmentProcessManager extends OrderFulfillmentProcessMa
 
 **Key Takeaway**: Process Manager persistence enables recovery after service restarts. State stored with optimistic locking prevents concurrent modification. Load existing state or create new process on first event.
 
-**Why It Matters**: Long-running processes can't hold state in memory—services restart, scale up/down, crash. Persistent Process Managers survive these disruptions by storing state in database. Airbnb booking process spans days (request → host approval → payment → check-in), requiring persistent state. When booking service restarts mid-process, Process Manager loads state from database and continues without losing progress. Optimistic locking prevents two instances from corrupting state when processing same order concurrently.
+**Why It Matters**: Long-running processes can't hold state in memory—services restart, scale up/down, crash. Persistent Process Managers survive these disruptions by storing state in database. Marketplace booking processes span days (request → host approval → payment → check-in), requiring persistent state. When booking service restarts mid-process, Process Manager loads state from database and continues without losing progress. Optimistic locking prevents two instances from corrupting state when processing same order concurrently.
 
 ### Example 76: Process Manager Timeout Handling
 
@@ -4662,11 +4662,11 @@ namespace ExternalPaymentProvider {
   }
   // => Protects aggregate integrity
 
-  export class StripeAPI {
-    // => StripeAPI: domain model element
+  export class ExternalPaymentAPI {
+    // => ExternalPaymentAPI: domain model element
     async charge(request: PaymentRequest): Promise<{ charge_id: string }> {
       // => Operation: charge()
-      console.log(`[Stripe] Charging ${request.amount_cents} cents`);
+      console.log(`[ExternalPaymentAPI] Charging ${request.amount_cents} cents`);
       // => Outputs result
       return { charge_id: "ch_123" };
       // => Returns { charge_id: "ch_123" }
@@ -4679,10 +4679,10 @@ namespace ExternalPaymentProvider {
 
 namespace PaymentContext {
   // => Communicates domain intent
-  // Downstream - conforms to Stripe's model
+  // Downstream - conforms to external payment provider's model
   export class PaymentService {
     // => PaymentService: domain model element
-    constructor(private readonly stripeAPI: ExternalPaymentProvider.StripeAPI) {}
+    constructor(private readonly externalAPI: ExternalPaymentProvider.ExternalPaymentAPI) {}
     // => Initialize object with parameters
 
     async processPayment(
@@ -4698,7 +4698,7 @@ namespace PaymentContext {
       amountDollars: number,
       // => Delegates to domain service
     ): Promise<string> {
-      // => Adapt our model to Stripe's required format
+      // => Adapt our model to external provider's required format
       const request: ExternalPaymentProvider.PaymentRequest = {
         // => Create data structure
         card_number: cardNumber,
@@ -4714,7 +4714,7 @@ namespace PaymentContext {
       };
       // => Implements tactical pattern
 
-      const result = await this.stripeAPI.charge(request);
+      const result = await this.externalAPI.charge(request);
       // => Conform to external API structure
       console.log(`[Payment] Payment processed: ${result.charge_id}`);
       // => Outputs result
@@ -4831,12 +4831,12 @@ namespace OrderContext {
 
   console.log("\n=== Conformist Pattern ===");
   // => Outputs result
-  const stripeAPI = new ExternalPaymentProvider.StripeAPI();
-  // => Store value in stripeAPI
-  const paymentService = new PaymentContext.PaymentService(stripeAPI);
+  const externalAPI = new ExternalPaymentProvider.ExternalPaymentAPI();
+  // => Store value in externalAPI
+  const paymentService = new PaymentContext.PaymentService(externalAPI);
   // => Store value in paymentService
   await paymentService.processPayment("4111111111111111", 12, 2025, "123", 99.99);
-  // => Output: [Stripe] Charging 9999 cents
+  // => Output: [ExternalPaymentAPI] Charging 9999 cents
   // => Output: [Payment] Payment processed: ch_123
 
   console.log("\n=== Partnership Pattern ===");
@@ -4857,7 +4857,7 @@ namespace OrderContext {
 
 **Key Takeaway**: Context Maps formalize bounded context relationships using patterns: Customer-Supplier (downstream depends on upstream), Conformist (downstream conforms to upstream), Partnership (mutual dependency with coordination). Each pattern defines expectations for integration and evolution.
 
-**Why It Matters**: Understanding context relationships prevents integration chaos. When integrating with Stripe (Conformist), don't expect them to change API for you—conform to their model. When partnering with internal team (Partnership), coordinate breaking changes to avoid disruption. Google uses context mapping to manage hundreds of internal services—Payment context conforms to external banking APIs, while Search and Ads contexts maintain Partnership with coordinated schema evolution. Explicit mapping prevents assumptions about influence and coordination expectations.
+**Why It Matters**: Understanding context relationships prevents integration chaos. When integrating with external payment providers (Conformist), don't expect them to change API for you—conform to their model. When partnering with internal team (Partnership), coordinate breaking changes to avoid disruption. Large platforms use context mapping to manage hundreds of internal services—Payment context conforms to external banking APIs, while core business contexts maintain Partnership with coordinated schema evolution. Explicit mapping prevents assumptions about influence and coordination expectations.
 
 ### Example 78: Shared Kernel Pattern
 
@@ -5687,7 +5687,7 @@ class ContextCatalog {
 
 **Key Takeaway**: Large-scale DDD requires context catalog documenting all bounded contexts, their relationships, and ownership. Impact analysis reveals ripple effects of changes. Governance patterns prevent context sprawl and integration chaos.
 
-**Why It Matters**: Amazon has 1000+ bounded contexts powering their platform. Without catalog, teams don't know what contexts exist, who owns them, or how changes ripple through system. Context catalog provides discoverability and impact analysis—before changing Customer API, see which 50+ contexts depend on it and coordinate migration. Netflix uses automated catalog generation from service meshes to maintain real-time context map at scale, enabling safe evolution of their 700+ microservices architecture.
+**Why It Matters**: Large e-commerce platforms have many bounded contexts powering their platform. Without catalog, teams don't know what contexts exist, who owns them, or how changes ripple through system. Context catalog provides discoverability and impact analysis—before changing Customer API, see which contexts depend on it and coordinate migration. Large platforms use automated catalog generation from service meshes to maintain real-time context map at scale, enabling safe evolution of their microservices architecture.
 
 ## DDD in Microservices (Examples 81-85)
 
@@ -5913,7 +5913,7 @@ class APIGateway {
 
 **Key Takeaway**: Map each Bounded Context to independent microservice with private database and REST/event-based APIs. Services communicate via integration events or synchronous calls through API Gateway. Database per service ensures loose coupling.
 
-**Why It Matters**: Sharing databases between microservices creates tight coupling and prevents independent deployment. Each bounded context needs database isolation to evolve schema independently. Spotify organizes 600+ microservices aligned to bounded contexts—Playlist service owns playlist data, User service owns user data, no shared databases. This enables teams to deploy independently 100+ times per day without coordinating schema changes. Event-driven communication maintains eventual consistency across services while preserving autonomy.
+**Why It Matters**: Sharing databases between microservices creates tight coupling and prevents independent deployment. Each bounded context needs database isolation to evolve schema independently. Large platforms organize many microservices aligned to bounded contexts—each service owns its data with no shared databases. This enables teams to deploy independently without coordinating schema changes. Event-driven communication maintains eventual consistency across services while preserving autonomy.
 
 ### Example 82: Distributed Sagas in Microservices
 
@@ -6191,7 +6191,7 @@ interface InventoryMicroserviceExtended extends InventoryMicroservice {
 
 **Key Takeaway**: Distributed sagas coordinate transactions across microservices using saga coordinator that orchestrates steps and handles compensations. Each microservice provides both forward operations and compensating operations.
 
-**Why It Matters**: Microservices can't use ACID transactions spanning services. Distributed sagas provide eventual consistency through compensating transactions. Airbnb booking saga spans User, Listing, Payment, and Notification services—if payment fails, saga compensates by releasing listing hold and notifying user. Coordinator handles complexity of distributed rollback, preventing partial state (booked listing without payment). Critical for maintaining consistency in distributed architectures.
+**Why It Matters**: Microservices can't use ACID transactions spanning services. Distributed sagas provide eventual consistency through compensating transactions. Marketplace booking saga spans User, Listing, Payment, and Notification services—if payment fails, saga compensates by releasing listing hold and notifying user. Coordinator handles complexity of distributed rollback, preventing partial state (booked listing without payment). Critical for maintaining consistency in distributed architectures.
 
 ### Example 83: Event-Driven Microservices Architecture
 
