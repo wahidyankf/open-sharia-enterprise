@@ -1486,7 +1486,7 @@ orderService.placeOrder("P1", 5);
 
 **Key Takeaway**: Open Host Service provides a well-documented, stable public API that makes integration easy for multiple consumers. Internal domain model remains private; only DTOs and service interfaces are exposed. This pattern standardizes access and reduces integration complexity.
 
-**Why It Matters**: Open Host Service reduces integration fragmentation. AWS S3 provides an Open Host Service (RESTful API with SDKs in 12 languages), enabling millions of consumers to integrate uniformly. Before standardizing on Open Host pattern, early AWS services had 50+ different integration patterns, requiring custom code per service. Open Host Service with stable contracts reduced integration time from 2 weeks to 2 days and enabled self-service integration without AWS team involvement.
+**Why It Matters**: Open Host Service reduces integration fragmentation. Major cloud storage providers use Open Host Services (RESTful APIs with multi-language SDKs), enabling widespread integration with stable contracts. Before standardizing on Open Host pattern, many early cloud platforms had numerous different integration patterns, requiring custom code per service. Open Host Service with stable contracts significantly reduces integration time and enables self-service integration without direct platform team involvement.
 
 ### Example 40: Separate Ways Pattern
 
@@ -5669,7 +5669,7 @@ console.log(`Generated SQL: ${sqlQuery}`);
 
 **Key Takeaway**: Specifications can encapsulate both in-memory filtering logic and database query generation. Repository methods accept Specification parameters, delegating query construction to business-rule objects. This keeps repositories thin and business rules explicit.
 
-**Why It Matters**: Specifications with SQL generation enable query optimization while maintaining business rule centralization. LinkedIn's repository queries use Specifications that generate optimized SQL—preventing N+1 queries while keeping business logic (e.g., "active connections over 500") in domain layer, not SQL strings. This separation enables testing business rules without databases and migrating between SQL/NoSQL without rewriting business logic.
+**Why It Matters**: Specifications with SQL generation enable query optimization while maintaining business rule centralization. Professional networking platforms use Specifications that generate optimized SQL—preventing N+1 queries while keeping business logic (e.g., "active connections over threshold") in domain layer, not SQL strings. This separation enables testing business rules without databases and migrating between SQL/NoSQL without rewriting business logic.
 
 ### Example 58: Specification for Validation
 

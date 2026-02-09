@@ -3410,7 +3410,7 @@ Feature: PDF Document Generation
 
 **Key Takeaway**: PDF BDD testing uses pdf-parse library to extract text and metadata from generated PDFs, enabling verification of content, structure, and document properties.
 
-**Why It Matters**: PDF generation is common for invoices, reports, and official documents requiring precise content and formatting. BDD scenarios validate both content accuracy and PDF metadata compliance. Stripe uses PDF BDD tests to ensure invoice PDFs meet tax authority requirements across 40+ countries with different formatting regulations.
+**Why It Matters**: PDF generation is common for invoices, reports, and official documents requiring precise content and formatting. BDD scenarios validate both content accuracy and PDF metadata compliance. Payment processors use PDF BDD tests to ensure invoice PDFs meet tax authority requirements across multiple countries with different formatting regulations.
 
 ### Example 52: Performance Testing with BDD Scenarios
 
