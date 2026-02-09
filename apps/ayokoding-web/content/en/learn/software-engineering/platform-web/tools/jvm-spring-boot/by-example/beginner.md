@@ -176,7 +176,7 @@ sequenceDiagram
 
 **Key Takeaway**: `@SpringBootApplication` combines three annotations for convention-over-configuration, eliminating XML and boilerplate setup code.
 
-**Why It Matters**: Spring Boot's annotation-driven auto-configuration eliminates thousands of lines of XML configuration required in traditional Spring applications, reducing setup time from days to minutes and enabling teams to ship production-ready microservices with minimal boilerplate. Companies like Netflix and Uber adopted Spring Boot specifically for this rapid development cycle, allowing developers to focus on business logic instead of infrastructure wiring.
+**Why It Matters**: Spring Boot's annotation-driven auto-configuration eliminates thousands of lines of XML configuration required in traditional Spring applications, enabling teams to ship production-ready microservices with minimal boilerplate and allowing developers to focus on business logic instead of infrastructure wiring.
 
 ---
 
@@ -890,7 +890,7 @@ data class User(
 
 **Key Takeaway**: Spring Boot auto-configures Jackson for JSON conversion. `@RestController` methods return data objects that become JSON responses.
 
-**Why It Matters**: Spring Boot eliminates manual JSON serialization configuration that plagued traditional Spring MVC applications, automatically handling date formatting, null values, and nested objects through Jackson's production-tested defaults. This zero-configuration approach powers millions of REST APIs including LinkedIn's and Twitter's Spring-based microservices, reducing JSON-related production bugs by removing manual ObjectMapper configuration errors.
+**Why It Matters**: Spring Boot eliminates manual JSON serialization configuration that plagued traditional Spring MVC applications, automatically handling date formatting, null values, and nested objects through Jackson's production-tested defaults. This zero-configuration approach reduces JSON-related production bugs by removing manual ObjectMapper configuration errors.
 
 ---
 
@@ -1285,7 +1285,7 @@ class UserApiController {
 
 **Key Takeaway**: Use records for immutable DTOs. `ResponseEntity` controls HTTP status codes and headers. Return 201 Created for POST, 200 OK for GET, 204 No Content for DELETE.
 
-**Why It Matters**: Using immutable DTOs with Java records prevents accidental state mutation in multi-threaded REST APIs and enables compile-time guarantees about data contracts between client and server. Proper HTTP status codes (201 for creation, 204 for deletion) follow REST standards that enable effective client-side caching and error handling, reducing unnecessary network traffic by 30-40% in production APIs through appropriate cache directives.
+**Why It Matters**: Using immutable DTOs with Java records prevents accidental state mutation in multi-threaded REST APIs and enables compile-time guarantees about data contracts between client and server. Proper HTTP status codes (201 for creation, 204 for deletion) follow REST standards that enable effective client-side caching and error handling, significantly reducing unnecessary network traffic in production APIs through appropriate cache directives.
 
 ---
 
@@ -1706,7 +1706,7 @@ class BookController {
 
 **Key Takeaway**: Content negotiation allows clients to request different formats via `Accept` header. Use `produces` to specify supported media types.
 
-**Why It Matters**: Content negotiation enables single APIs to serve multiple client types—mobile apps requesting JSON, legacy systems requiring XML, and monitoring tools accepting Prometheus metrics—without duplicating controller code. Production APIs at Amazon and Google use content negotiation to version responses (application/vnd.api.v2+json) and support multiple serialization formats, reducing API proliferation where each format requires separate endpoints that increase maintenance burden and deployment complexity.
+**Why It Matters**: Content negotiation enables single APIs to serve multiple client types—mobile apps requesting JSON, legacy systems requiring XML, and monitoring tools accepting Prometheus metrics—without duplicating controller code. Production APIs use content negotiation to version responses (application/vnd.api.v2+json) and support multiple serialization formats, reducing API proliferation where each format requires separate endpoints that increase maintenance burden and deployment complexity.
 
 ---
 
@@ -2968,7 +2968,7 @@ graph TD
 
 **Key Takeaway**: Externalize configuration to `application.properties`. Use `@Value("${property:default}")` for injection with defaults. Never hardcode environment-specific values.
 
-**Why It Matters**: Centralized configuration in application.properties follows convention-over-configuration philosophy, reducing cognitive load where developers find all settings in one file instead of scattered across 20 XML files and Java classes. Spring Boot's property binding automatically converts strings to typed values (durations, data sizes, URLs) with validation, preventing runtime failures from configuration typos that traditional properties files defer to runtime, and enabling environment-specific overrides (application-prod.properties) without code changes for deployment-specific settings like database URLs.
+**Why It Matters**: Centralized configuration in application.properties follows convention-over-configuration philosophy, reducing cognitive load where developers find all settings in one file instead of scattered across many XML files and Java classes. Spring Boot's property binding automatically converts strings to typed values (durations, data sizes, URLs) with validation, preventing runtime failures from configuration typos that traditional properties files defer to runtime, and enabling environment-specific overrides (application-prod.properties) without code changes for deployment-specific settings like database URLs.
 
 ---
 
@@ -5079,7 +5079,7 @@ spring.servlet.multipart.max-request-size=10MB
 
 **Key Takeaway**: Use `MultipartFile` for uploads and `Resource` with `UrlResource` for downloads—configure max file size limits and always validate/sanitize filenames to prevent directory traversal attacks.
 
-**Why It Matters**: Streaming file uploads and downloads prevents out-of-memory errors when users upload multi-gigabyte files—buffering entire files in memory causes heap exhaustion under concurrent uploads. Production file services at Dropbox and AWS S3 use streaming APIs to handle petabytes of data with constant memory usage, while proper content-type headers and content-disposition enable in-browser preview versus download behavior, improving user experience without custom client-side code.
+**Why It Matters**: Streaming file uploads and downloads prevents out-of-memory errors when users upload large files—buffering entire files in memory causes heap exhaustion under concurrent uploads. Production file services use streaming APIs to handle large volumes of data with constant memory usage, while proper content-type headers and content-disposition enable in-browser preview versus download behavior, improving user experience without custom client-side code.
 
 ---
 
@@ -5395,7 +5395,7 @@ class LoggingController {
 
 **Key Takeaway**: Use SLF4J with Logback for flexible logging—configure different levels per package, use parameterized logging for performance, and set up rolling file appenders to prevent disk space exhaustion in production.
 
-**Why It Matters**: Structured logging with MDC (Mapped Diagnostic Context) enables distributed tracing across microservices by propagating correlation IDs through log statements, making it possible to trace a single user request across 10+ services in production. Log level configuration prevents disk space exhaustion from DEBUG logs in production (which can log 100MB/minute under load) while enabling runtime log level changes via actuator endpoints to troubleshoot production issues without redeployment, reducing incident resolution time from hours to minutes.
+**Why It Matters**: Structured logging with MDC (Mapped Diagnostic Context) enables distributed tracing across microservices by propagating correlation IDs through log statements, making it possible to trace a single user request across multiple services in production. Log level configuration prevents disk space exhaustion from excessive DEBUG logs in production while enabling runtime log level changes via actuator endpoints to troubleshoot production issues without redeployment, significantly reducing incident resolution time.
 
 ---
 

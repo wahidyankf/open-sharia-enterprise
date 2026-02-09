@@ -74,7 +74,7 @@ describe("legacyCalculate characterization", () => {
 
 **Key Takeaway**: Characterization tests capture current behavior (even if buggy) to create safety net before refactoring. Write tests that pass with existing code, then refactor with confidence.
 
-**Why It Matters**: Legacy code without tests is too risky to change. Michael Feathers' "Working Effectively with Legacy Code" shows characterization tests enable safe refactoring - Spotify documented 80% reduction in legacy code incidents after implementing characterization testing for critical systems.
+**Why It Matters**: Legacy code without tests is too risky to change. Michael Feathers' "Working Effectively with Legacy Code" shows characterization tests enable safe refactoring - Characterization testing can significantly reduce legacy code incidents for critical systems.
 
 ### Example 60: Approval Testing for Complex Outputs
 
@@ -161,7 +161,7 @@ describe("Report approval tests", () => {
 
 **Key Takeaway**: Approval testing captures complex outputs as baseline files. First run creates baseline, subsequent runs compare against it. Ideal for reports, generated code, or large data structures.
 
-**Why It Matters**: Manual verification of complex outputs is error-prone. Approval testing automates this - GitHub uses approval testing for generated API documentation, catching formatting regressions that manual reviews missed 60% of the time.
+**Why It Matters**: Manual verification of complex outputs is error-prone. Approval testing automates this - Approval testing can catch formatting regressions that manual reviews miss.
 
 ### Example 61: Working with Seams in Untestable Code
 
@@ -226,7 +226,7 @@ test("processOrder with test doubles", () => {
 
 **Key Takeaway**: Seams enable testing by providing injection points for test doubles. Constructor injection, method parameters, and callbacks are common seams.
 
-**Why It Matters**: Legacy code often has hard-coded dependencies making it untestable. Identifying seams enables gradual testability improvements without full rewrites - Amazon's retail platform used seam identification to introduce testing into decade-old codebases, enabling safe modernization.
+**Why It Matters**: Legacy code often has hard-coded dependencies making it untestable. Identifying seams enables gradual testability improvements without full rewrites - Enterprise platforms use seam identification to introduce testing into legacy codebases, enabling safe modernization.
 
 ### Example 62: Dependency Breaking Techniques
 
@@ -301,7 +301,7 @@ test("createUser calls all services", () => {
 
 **Key Takeaway**: Break hard dependencies by extracting interfaces and injecting through constructor. This creates seams for testing without changing core logic.
 
-**Why It Matters**: Hard dependencies block testing and refactoring. Dependency breaking enables incremental improvement - Twitter's backend team documented 10x faster test execution after breaking database dependencies using these techniques.
+**Why It Matters**: Hard dependencies block testing and refactoring. Dependency breaking enables incremental improvement - Twitter's backend team documented significantly faster test execution after breaking database dependencies using these techniques.
 
 ### Example 63: TDD for Microservices - Service Isolation
 
@@ -432,7 +432,7 @@ test("OrderService fulfills contract", async () => {
 
 **Key Takeaway**: Contract testing validates service integration expectations without running both services. Consumer defines expected contract, provider guarantees compliance.
 
-**Why It Matters**: Integration testing all microservice combinations is exponentially expensive. Contract testing catches integration bugs without full environments - Pact (contract testing tool) users report 90% fewer integration failures in production.
+**Why It Matters**: Integration testing all microservice combinations is exponentially expensive. Contract testing catches integration bugs without full environments - Pact (contract testing tool) users report significantly fewer integration failures in production.
 
 ### Example 65: Testing Distributed Systems - Eventual Consistency
 
@@ -486,7 +486,7 @@ test("replication happens eventually", async () => {
 
 **Key Takeaway**: Test eventual consistency with polling and timeouts. Don't assume immediate consistency in distributed systems - wait for conditions to be met.
 
-**Why It Matters**: Distributed systems have inherent delays. Tests assuming immediate consistency are flaky - Cassandra's test suite uses eventual consistency helpers, eliminating 95% of timing-related test failures.
+**Why It Matters**: Distributed systems have inherent delays. Tests assuming immediate consistency are flaky - Eventual consistency helpers can eliminate most timing-related test failures.
 
 ### Example 66: Testing Event Sourcing Systems
 
@@ -582,7 +582,7 @@ test("rebuilds state from event store", () => {
 
 **Key Takeaway**: Test event sourcing by applying events and verifying state. Use in-memory event stores for fast testing without infrastructure.
 
-**Why It Matters**: Event sourcing enables audit trails and temporal queries. TDD ensures correct event application - Axon Framework users report event sourcing tests catch 70% of bugs during development that would be catastrophic in production.
+**Why It Matters**: Event sourcing enables audit trails and temporal queries. TDD ensures correct event application - Event sourcing tests can catch many bugs during development that would be catastrophic in production.
 
 ### Example 67: Testing CQRS Patterns
 
@@ -654,7 +654,7 @@ describe("CQRS pattern", () => {
 
 **Key Takeaway**: Test commands and queries separately in CQRS. Commands modify state, queries read optimized views. Test synchronization between write and read models.
 
-**Why It Matters**: CQRS enables independent scaling of reads and writes. Separate testing prevents coupling - Microsoft's Azure services use CQRS extensively, with separate test suites reducing cross-concern bugs by 80%.
+**Why It Matters**: CQRS enables independent scaling of reads and writes. Separate testing prevents coupling - Enterprise services using CQRS can reduce cross-concern bugs with separate test suites.
 
 ### Example 68: TDD in Polyglot Environments
 
@@ -730,7 +730,7 @@ test("calculateDiscount applies correct rate", () => {
 
 **Key Takeaway**: TDD principles (Red-Green-Refactor, AAA pattern, single assertion) are universal. Adapt to language idioms while maintaining core discipline.
 
-**Why It Matters**: Polyglot teams risk inconsistent testing across languages. Universal TDD principles maintain quality - Google's polyglot codebase (C++, Java, Python, Go) uses language-specific tools but consistent TDD patterns, achieving 85%+ coverage across all languages.
+**Why It Matters**: Polyglot teams risk inconsistent testing across languages. Universal TDD principles maintain quality - Enterprise polyglot codebases use language-specific tools but consistent TDD patterns to achieve high coverage across all languages.
 
 ### Example 69: Performance-Sensitive TDD
 
@@ -890,7 +890,7 @@ describe("authMiddleware", () => {
 
 **Key Takeaway**: Test security requirements (authentication, authorization, validation) with same TDD rigor as functional features. Write failing security test, implement protection, verify it works.
 
-**Why It Matters**: Security bugs are often logic errors testable through TDD. GitHub's security team reports 90% of authentication bugs are preventable through tested security requirements rather than penetration testing.
+**Why It Matters**: Security bugs are often logic errors testable through TDD. Research indicates that
 
 ### Example 71: TDD Anti-Patterns - Testing Implementation Details
 
@@ -1143,7 +1143,7 @@ describe("Testing Guild Practices", () => {
 
 **Key Takeaway**: Scale TDD through documented standards, CI enforcement, shared utilities, and cross-team knowledge sharing. Consistency emerges from infrastructure and culture.
 
-**Why It Matters**: Inconsistent testing across teams creates quality gaps. Standardization scales quality - Google's Testing Blog documents how consistent testing practices across 40,000+ engineers maintain 85%+ coverage across millions of lines of code.
+**Why It Matters**: Inconsistent testing across teams creates quality gaps. Standardization scales quality - Consistent testing practices across large engineering organizations can maintain high coverage.
 
 ### Example 74: TDD Coaching and Mentoring
 
@@ -1295,10 +1295,10 @@ test("calculates TDD ROI", () => {
 function calculateTDDROI(before: TDDMetrics, after: TDDMetrics): number {
   const costReduction = before.maintenanceCost - after.maintenanceCost; // => 90 hours saved
   const hourlyRate = 75; // => Average developer hourly rate
-  const monthlySavings = costReduction * hourlyRate; // => $6,750 per month
+  const monthlySavings = costReduction * hourlyRate; // => substantial amounts per month
 
   const tddInvestment = 40; // => 40 hours TDD training cost
-  const investmentCost = tddInvestment * hourlyRate; // => $3,000 one-time
+  const investmentCost = tddInvestment * hourlyRate; // => substantial amounts one-time
 
   const paybackMonths = investmentCost / monthlySavings; // => 0.44 months (2 weeks)
   return paybackMonths; // => ROI achieved in < 1 month
@@ -1312,7 +1312,7 @@ test("TDD investment pays back quickly", () => {
 
 **Key Takeaway**: Measure TDD ROI through defect reduction, velocity increase, and maintenance cost savings. Track metrics before and after adoption to quantify value.
 
-**Why It Matters**: Teams need business justification for TDD investment. Data-driven ROI measurement enables informed decisions - Microsoft's research shows TDD reduces defect density by 40-90% with 15-35% initial time investment, paying back within months.
+**Why It Matters**: Teams need business justification for TDD investment. Data-driven ROI measurement enables informed decisions - Research indicates that
 
 ### Example 76: TDD in Regulated Industries
 
@@ -1475,7 +1475,7 @@ describe("GDPR Compliance", () => {
 
 **Key Takeaway**: Test compliance requirements (data deletion, access controls, encryption) with same rigor as features. Compliance tests document regulatory adherence.
 
-**Why It Matters**: Non-compliance penalties are severe (GDPR: up to 4% global revenue). Tested compliance prevents violations - Stripe's PCI DSS compliance testing caught 100% of data handling violations before production.
+**Why It Matters**: Non-compliance penalties are severe (GDPR: substantial penalties). Tested compliance prevents violations - Compliance testing can catch data handling violations before production.
 
 ### Example 78: TDD for Machine Learning Systems
 
@@ -1569,7 +1569,7 @@ describe("ML System Testing", () => {
 
 **Key Takeaway**: Test ML systems through interfaces, pipelines, and boundary cases. Don't test model internals, but test preprocessing, prediction API, and edge cases.
 
-**Why It Matters**: ML models are non-deterministic but pipelines are testable. Pipeline bugs cause model failures - Google's ML testing guidelines recommend 80% test coverage on data pipelines and model interfaces, preventing 90% of production ML failures.
+**Why It Matters**: ML models are non-deterministic but pipelines are testable. Pipeline bugs cause model failures - ML testing with high coverage on data pipelines and model interfaces can prevent most production failures.
 
 ### Example 79: Testing AI/ML Model Behavior
 
@@ -1722,7 +1722,7 @@ describe("Evolutionary Architecture Fitness Functions", () => {
 
 **Key Takeaway**: Evolutionary architecture uses fitness functions (automated tests) to verify architectural constraints. TDD fitness functions prevent architectural degradation.
 
-**Why It Matters**: Architecture erodes without automated checks. Fitness functions enable safe evolution - ThoughtWorks' evolutionary architecture practice uses automated fitness functions to maintain architectural integrity during rapid changes.
+**Why It Matters**: Architecture erodes without automated checks. Fitness functions enable safe evolution - Evolutionary architecture practices use automated fitness functions to maintain architectural integrity.
 
 ### Example 81: TDD in Continuous Deployment
 
@@ -1893,7 +1893,7 @@ describe("Canary Deployment", () => {
 
 **Key Takeaway**: Test production deployment patterns (canary, blue-green, feature flags) to verify gradual rollout and quick rollback capabilities.
 
-**Why It Matters**: Production has unique conditions impossible to replicate in staging. Canary testing enables safe production validation - Facebook's 1% canary rollout caught critical bugs that affected 0 users instead of 2 billion.
+**Why It Matters**: Production has unique conditions impossible to replicate in staging. Canary testing enables safe production validation - Canary rollouts can catch critical bugs affecting minimal users.
 
 ### Example 83: Testing with Feature Flags
 
@@ -2174,7 +2174,7 @@ describe("Quality Gates", () => {
 
 **Key Takeaway**: Revive abandoned test suites by removing dead tests, fixing flaky tests, and enforcing quality gates. Prevention through CI enforcement and team discipline.
 
-**Why It Matters**: Abandoned test suites provide false security. Active test maintenance preserves value - Shopify's test suite resurrection project removed 40% of tests (dead/flaky) while improving actual coverage from 60% to 85%, eliminating false confidence.
+**Why It Matters**: Abandoned test suites provide false security. Active test maintenance preserves value - Research indicates that
 
 ---
 

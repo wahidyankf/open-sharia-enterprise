@@ -3,7 +3,7 @@ title: "Overview"
 date: 2025-12-30T01:23:25+07:00
 draft: false
 weight: 10000000
-description: "Learn Rust through 85+ annotated code examples covering 95% of the language - ideal for experienced developers"
+description: "Learn Rust through 85+ annotated code examples covering essential concepts of the language - ideal for experienced developers"
 tags: ["rust", "tutorial", "by-example", "examples", "code-first"]
 ---
 
@@ -38,7 +38,7 @@ Progress from ownership fundamentals through production patterns to expert maste
 
 ## Coverage Philosophy
 
-This tutorial provides **95% coverage of Rust** through practical, annotated examples. The 95% figure represents the depth and breadth of concepts covered, not a time estimate—focus is on **outcomes and understanding**, not duration.
+This tutorial provides **comprehensive coverage of Rust** through practical, annotated examples. This tutorial covers core language features comprehensively, not a time estimate—focus is on **outcomes and understanding**, not duration.
 
 ### What's Covered
 
@@ -64,11 +64,11 @@ This guide focuses on **learning-oriented examples**, not problem-solving recipe
 - **Custom allocators and panic handlers** - Advanced runtime customization
 - **Advanced macro_rules edge cases** - Obscure macro patterns
 
-The 95% coverage goal maintains humility—no tutorial can cover everything. This guide teaches the **core concepts that unlock the remaining 5%** through your own exploration and project work.
+The comprehensive coverage goal maintains humility—no tutorial can cover everything. This guide teaches the **core concepts that continue learning beyond this tutorial** through your own exploration and project work.
 
 ## Tutorial Structure: 85 Examples Across 3 Levels
 
-### Beginner (Examples 1-28, 0-40% coverage)
+### Beginner (Examples 1-28, fundamental concepts)
 
 **Focus**: Rust fundamentals and the ownership model
 
@@ -76,7 +76,7 @@ Learn variables, functions, structs, enums, pattern matching, and Rust's unique 
 
 **Key topics**: Hello World, variables, types, functions, ownership, borrowing, slices, structs, enums, pattern matching, error handling (Result/Option), basic testing.
 
-### Intermediate (Examples 29-57, 40-75% coverage)
+### Intermediate (Examples 29-57, production patterns)
 
 **Focus**: Production patterns and idiomatic Rust
 
@@ -84,7 +84,7 @@ Master lifetimes, traits, generics, iterators, closures, smart pointers, and con
 
 **Key topics**: Lifetimes, trait definitions and implementations, generics, iterators, closures, Box/Rc/Arc, RefCell, threads, channels, Mutex, error handling patterns, common crates.
 
-### Advanced (Examples 58-85, 75-95% coverage)
+### Advanced (Examples 58-85): Advanced mastery
 
 **Focus**: Expert mastery and performance optimization
 

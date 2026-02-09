@@ -101,7 +101,7 @@ console.log(age); // => Output: 30
 
 **Key Takeaway**: Generic functions use angle brackets `<T>` to define type parameters. They preserve type information across function calls. Use `extends` to constrain generic types. Combine multiple type parameters for complex operations.
 
-**Why It Matters**: Generics eliminate code duplication while maintaining type safety. Array methods like `map<T>`, `filter<T>` are generic—they work with any type. Lodash/Ramda utilities use generics for type-preserving transformations. React's `useState<T>` infers state types from initial values. Generics are fundamental to type-safe libraries and frameworks.
+**Why It Matters**: Generics eliminate code duplication while maintaining type safety. Array methods like `map<T>`, `filter<T>` are generic—they work with any type. Utility libraries can use generics for type-preserving transformations. State management can infer types from initial values. Generics are fundamental to type-safe libraries and frameworks.
 
 ## Example 32: Generic Classes
 
@@ -212,7 +212,7 @@ console.log(stringStack.pop()); // => Output: b
 
 **Key Takeaway**: Generic classes use `<T>` after the class name to define type parameters. All methods and properties can use the type parameter. Instantiate with specific types or let TypeScript infer from constructor arguments.
 
-**Why It Matters**: Generic classes power data structures (Stack, Queue, LinkedList) that work with any type. React component classes use generics for props and state: `class Component<P, S>`. ORM models use generics for query builders. This pattern enables reusable, type-safe class libraries.
+**Why It Matters**: Generic classes power data structures (Stack, Queue, LinkedList) that work with any type. Component classes can use generics for props and state: `class Component<P, S>`. ORM models can use generics for query builders. This pattern enables reusable, type-safe class libraries.
 
 ## Example 33: Generic Interfaces
 
@@ -315,7 +315,7 @@ console.log(scores.alice); // => Output: 95
 
 **Key Takeaway**: Generic interfaces use `<T>` to parameterize contracts. They're used for API response shapes, data structures, and function signatures. Classes implementing generic interfaces must specify concrete types.
 
-**Why It Matters**: Generic interfaces define contracts for libraries and frameworks. Fetch API responses use `Response<T>`. Promise chains use `Promise<T>`. Redux actions use generic interfaces for type-safe action creators. This pattern enables building type-safe APIs where callers specify the data types they expect.
+**Why It Matters**: Generic interfaces define contracts for libraries and frameworks. API responses can use `Response<T>`. Promise chains use `Promise<T>`. Action creators can use generic interfaces for type safety. This pattern enables building type-safe APIs where callers specify the data types they expect.
 
 ## Example 34: Utility Type - Partial and Required
 
@@ -404,7 +404,7 @@ console.log(formUpdate); // => Output: { username: 'alice', email: 'alice@exampl
 
 **Key Takeaway**: `Partial<T>` makes all properties optional for update operations. `Required<T>` makes all properties required for validation. Combine them with other utility types for complex transformations.
 
-**Why It Matters**: `Partial<T>` eliminates boilerplate for update DTOs in REST APIs. Instead of defining separate `UserUpdate` interfaces, use `Partial<User>`. `Required<T>` enforces complete configuration objects after validation. Form libraries like React Hook Form use these patterns extensively.
+**Why It Matters**: `Partial<T>` eliminates boilerplate for update DTOs in REST APIs. Instead of defining separate `UserUpdate` interfaces, use `Partial<User>`. `Required<T>` enforces complete configuration objects after validation. Form libraries can use these patterns extensively.
 
 ## Example 35: Utility Type - Pick and Omit
 
@@ -492,7 +492,7 @@ console.log(publicUser); // => Output: { id: 1, name: 'Diana', email: 'diana@exa
 
 ## Example 36: Decorators (Experimental)
 
-Decorators add metadata and behavior to classes, methods, properties, and parameters. They're used heavily in frameworks like Angular and NestJS.
+Decorators add metadata and behavior to classes, methods, properties, and parameters. They're used in frameworks for dependency injection and routing.
 
 **Note**: Decorators require `"experimentalDecorators": true` in tsconfig.json.
 
@@ -618,7 +618,7 @@ console.log(account.password); // => Output: secure123
 
 **Key Takeaway**: Decorators use `@` syntax to modify classes, methods, properties, and parameters. Decorator factories accept parameters and return decorators. Enable with `experimentalDecorators` compiler option.
 
-**Why It Matters**: Decorators enable declarative programming patterns. Angular uses `@Component`, `@Injectable` for dependency injection. NestJS uses `@Controller`, `@Get` for routing. TypeORM uses `@Entity`, `@Column` for database mapping. Decorators move cross-cutting concerns (logging, validation, caching) out of business logic.
+**Why It Matters**: Decorators enable declarative programming patterns. Frameworks can use decorators for dependency injection, routing, and database mapping. Decorators move cross-cutting concerns (logging, validation, caching) out of business logic.
 
 ## Example 37: Async/Await and Promises
 
@@ -754,7 +754,7 @@ async function* generateNumbers(): AsyncGenerator<number> {
 
 **Key Takeaway**: Use `Promise<T>` for asynchronous values. `async` functions automatically return Promises. `await` unwraps Promises to their resolved types. Use `try/catch` for error handling. `Promise.all` infers tuple types from input promises.
 
-**Why It Matters**: Type-safe async code prevents bugs from incorrect return types and missing error handling. API clients use `Promise<Response<T>>` for typed responses. Database queries use `Promise<Model[]>` for result sets. React hooks like `useEffect` understand Promise return types. This pattern makes asynchronous TypeScript as safe as synchronous code.
+**Why It Matters**: Type-safe async code prevents bugs from incorrect return types and missing error handling. API clients can use `Promise<Response<T>>` for typed responses. Database queries can use `Promise<Model[]>` for result sets. Effects can understand Promise return types. This pattern makes asynchronous TypeScript as safe as synchronous code.
 
 ## Example 38: Modules and Namespaces
 
@@ -854,7 +854,7 @@ import { doSomething } from "legacy-lib"; // => TypeScript knows about it
 
 **Key Takeaway**: Use ES modules (`import`/`export`) for modern TypeScript. Default exports for single exports, named exports for multiple. Type-only imports (`import type`) optimize bundle size. Namespaces are legacy—prefer ES modules.
 
-**Why It Matters**: Module systems enable code organization and tree-shaking. ES modules integrate with bundlers (Webpack, Rollup, Vite). Type-only imports prevent runtime bloat from type definitions. Ambient modules (`declare module`) add types to JavaScript libraries without types. This pattern is essential for scalable TypeScript applications.
+**Why It Matters**: Module systems enable code organization and tree-shaking. ES modules integrate with bundlers. Type-only imports prevent runtime bloat from type definitions. Ambient modules (`declare module`) add types to JavaScript libraries without types. This pattern is essential for scalable TypeScript applications.
 
 ## Example 39: Conditional Types with Distributive Behavior
 
@@ -940,7 +940,7 @@ type ValidResponses = ApiResult<SuccessResponse | ErrorResponse>;
 
 **Key Takeaway**: Conditional types use `T extends U ? X : Y` syntax. They distribute over unions automatically. Use `infer` to extract types from complex structures. Combine with utility types for powerful transformations.
 
-**Why It Matters**: Conditional types enable advanced type-level programming. `ReturnType`, `Parameters`, and `Awaited` are built with conditional types. Framework authors use them for type inference (React's component prop types, Vue's computed types). This pattern makes TypeScript's type system Turing-complete.
+**Why It Matters**: Conditional types enable advanced type-level programming. `ReturnType`, `Parameters`, and `Awaited` are built with conditional types. Framework authors can use them for type inference. This pattern makes TypeScript's type system Turing-complete.
 
 ## Example 40: Mapped Types with Key Remapping
 
@@ -1137,7 +1137,7 @@ console.log(nums); // => Output: [42]
 
 **Key Takeaway**: Function overloads provide multiple type signatures for a single implementation. The implementation must handle all overload cases. TypeScript uses the most specific matching signature.
 
-**Why It Matters**: Overloading enables type-safe APIs with flexible call patterns. DOM APIs use overloads extensively (addEventListener has 3 signatures). Libraries like Lodash provide overloaded functions for different input types. This pattern maintains type safety while supporting diverse usage patterns.
+**Why It Matters**: Overloading enables type-safe APIs with flexible call patterns. DOM APIs use overloads extensively (addEventListener has 3 signatures). Utility libraries can provide overloaded functions for different input types. This pattern maintains type safety while supporting diverse usage patterns.
 
 ## Example 42: Abstract Classes and Interfaces Compared
 
@@ -1235,7 +1235,7 @@ duck.swim(); // => Output: Mallard is swimming
 
 **Key Takeaway**: Use interfaces for pure contracts supporting multiple inheritance. Use abstract classes for shared implementation code. A class can extend one abstract class but implement multiple interfaces.
 
-**Why It Matters**: Interfaces enable composition over inheritance. React components implement multiple interfaces (Props, State, LifecycleMethods). Abstract classes share code between subclasses while enforcing contracts. This pattern supports flexible, maintainable designs.
+**Why It Matters**: Interfaces enable composition over inheritance. Components can implement multiple interfaces (Props, State, LifecycleMethods). Abstract classes share code between subclasses while enforcing contracts. This pattern supports flexible, maintainable designs.
 
 ## Example 43: Module Augmentation
 
@@ -1320,7 +1320,7 @@ console.log(numbers.first()); // => Output: 1 (type-safe)
 
 **Key Takeaway**: Module augmentation extends existing types without modifying source code. Use `declare module` for external modules, `declare global` for global scope. Namespaces can be augmented by declaring them again.
 
-**Why It Matters**: Augmentation enables adding types to JavaScript libraries. Express middleware adds properties to Request. Mongoose adds methods to models. Testing frameworks augment global expect. This pattern maintains type safety when extending third-party code.
+**Why It Matters**: Augmentation enables adding types to JavaScript libraries. Middleware can add properties to Request. Libraries can add methods to models. Testing frameworks can augment global expect. This pattern maintains type safety when extending third-party code.
 
 ## Example 44: This Type and Polymorphic This
 
@@ -1418,7 +1418,7 @@ console.log(query); // => Output: age > 18 active = true ORDER BY name
 
 **Key Takeaway**: The `this` type refers to the actual instance type, enabling proper method chaining in inheritance hierarchies. Use explicit `this` parameters to enforce calling context.
 
-**Why It Matters**: Polymorphic `this` enables fluent APIs that work correctly with inheritance. jQuery-style chaining uses this pattern. ORM query builders return `this` for chaining. The pattern maintains type safety across subclass methods without manual type assertions.
+**Why It Matters**: Polymorphic `this` enables fluent APIs that work correctly with inheritance. Method chaining libraries use this pattern. ORM query builders can return `this` for chaining. The pattern maintains type safety across subclass methods without manual type assertions.
 
 ## Example 45: Branded Types (Nominal Typing)
 
@@ -1776,7 +1776,7 @@ type NumbersTail = Tail<Numbers>; // => Type: [2, 3, 4]
 
 **Key Takeaway**: Variadic tuple types use `...` to spread tuple elements. They enable type-safe tuple concatenation, prepend/append operations, and rest parameter typing.
 
-**Why It Matters**: Variadic tuples power advanced functional programming patterns. Currying functions maintain type safety. Pipe/compose utilities preserve tuple types. React's useState returns tuples that can be spread. This pattern enables building higher-order functions with full type inference.
+**Why It Matters**: Variadic tuples power advanced functional programming patterns. Currying functions maintain type safety. Pipe/compose utilities preserve tuple types. State management can return tuples that can be spread. This pattern enables building higher-order functions with full type inference.
 
 ## Example 49: String Manipulation Types
 
@@ -2016,7 +2016,7 @@ console.log(reducer(10, { type: "reset", value: 0 })); // => Output: 0
 
 **Key Takeaway**: Switch statements on discriminators narrow types automatically. Use `never` in default case for exhaustiveness checking. Multiple cases can share handlers with fallthrough.
 
-**Why It Matters**: Switch-based narrowing is cleaner than if-else chains for discriminated unions. Redux reducers use switch for action handling. State machines use switch for state transitions. The exhaustiveness check prevents forgetting new variants when unions grow.
+**Why It Matters**: Switch-based narrowing is cleaner than if-else chains for discriminated unions. Action reducers can use switch for action handling. State machines can use switch for state transitions. The exhaustiveness check prevents forgetting new variants when unions grow.
 
 ## Example 52-60: Remaining Examples
 

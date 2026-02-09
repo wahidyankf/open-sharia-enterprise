@@ -1751,7 +1751,7 @@ VACUUM;
 
 **Key Takeaway**: Wrap bulk operations in transactions for massive speedup. Multi-row INSERT faster than individual statements. Pragmas (synchronous, journal_mode) tune performance but risk data integrity - use carefully. Batch large updates/deletes. VACUUM after large deletes to reclaim space.
 
-**Why It Matters**: Data migrations, ETL pipelines, and bulk imports can take hours without batching. A single transaction for 100,000 rows is 100x faster than 100,000 individual commits. This knowledge transforms day-long imports into minute-long operations.
+**Why It Matters**: Data migrations, ETL pipelines, and bulk imports can take hours without batching. A single transaction for large numbers of rows is dramatically faster than individual commits. This knowledge significantly reduces bulk operation time.
 
 ---
 
@@ -3405,7 +3405,7 @@ SELECT
     db_size_mb                        -- => Current size
 FROM current_metrics;                 -- => Query CTE metrics
 -- => Returns health status with context metrics
--- => Production systems send alerts via webhook/email/Slack
+-- => Production systems send alerts via webhook/email/messaging platforms
 -- => Example: "ALERT: High query latency | avg_query_time=650 | active=8 | size=234"
 
 -- Automated maintenance recommendations

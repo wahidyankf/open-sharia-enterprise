@@ -273,7 +273,7 @@ fn broken_example() {
 
 **Key Takeaway**: Structs storing references require lifetime parameters to ensure the struct doesn't outlive the data it borrows, preventing dangling references in struct fields. The lifetime constraint is enforced at compile time with zero runtime cost.
 
-**Why It Matters**: Struct lifetime parameters prevent the self-referential struct bugs that cause memory corruption in C++ and are impossible to express safely without garbage collection in other languages. Cloudflare's edge computing platform uses lifetime-annotated structs to ensure request contexts never outlive the underlying buffers, catching bugs at compile time that would be production crashes in Node.js.
+**Why It Matters**: This concept is fundamental to understanding the language and helps build robust, maintainable code.
 
 ---
 
@@ -598,7 +598,7 @@ fn advanced_example() {              // => Demonstrate default chaining
 
 **Key Takeaway**: Default trait implementations reduce code duplication by providing common behavior that types can inherit or override, enabling flexible trait-based abstraction. Default methods can call other trait methods, creating composable behavior hierarchies.
 
-**Why It Matters**: Default implementations enable interface evolution without breaking existing code, solving the fragile base class problem that plagues object-oriented languages. Serde's serialization framework uses default trait methods to provide automatic serialization for 95% of types while allowing custom implementations for the remainder—flexibility impossible with traditional interface hierarchies.
+**Why It Matters**: This concept is fundamental to understanding the language and helps build robust, maintainable code.
 
 ---
 
@@ -2774,7 +2774,7 @@ fn main() {
 
 **Key Takeaway**: `Send` and `Sync` marker traits automatically enforced by the compiler prevent data races by ensuring only thread-safe types can cross thread boundaries (`Send`) or be shared concurrently (`Sync`). Most types derive these traits automatically based on their fields—compiler rejects thread operations on non-Send/non-Sync types at compile time, providing fearless concurrency.
 
-**Why It Matters**: Compile-time thread safety verification through Send/Sync traits eliminates entire classes of concurrency bugs that require expensive runtime race detection in C++ or defensive cloning in Java. Rust's async ecosystem leverages these traits to ensure futures are safely sent across threads, catching bugs at compile time that would be intermittent production failures in Go or JavaScript async runtimes.
+**Why It Matters**: This concept is fundamental to understanding the language and helps build robust, maintainable code.
 
 ---
 

@@ -126,7 +126,7 @@ console.log(light.getCurrentState()); // => Output: Off
 
 **Key Takeaway**: FSMs use type-safe state values and event handlers. State transitions are explicit (toggle flips state). Current state is always known and queryable.
 
-**Why It Matters**: Even simple on/off logic benefits from FSM modeling. When Tesla analyzed their door lock bugs, they found 15 edge cases where boolean flags (`locked`, `unlocking`, `child_safety_on`) created impossible combinations. Modeling as FSM (Locked, Unlocking, Unlocked states with lock/unlock events) eliminated 12 of these bugs immediately by making valid states explicit and invalid states impossible to represent.
+**Why It Matters**: Even simple on/off logic benefits from FSM modeling. Door lock systems experience edge cases where boolean flags (`locked`, `unlocking`, `child_safety_on`) create impossible combinations. Modeling as FSM (Locked, Unlocking, Unlocked states with lock/unlock events) eliminates these bugs by making valid states explicit and invalid states impossible to represent.
 
 ### Example 3: Three-State Traffic Light
 
@@ -366,7 +366,7 @@ console.log(player.getCurrentState()); // => Output: Stopped (no change)
 
 **Key Takeaway**: FSMs validate event/state combinations. Invalid combinations (like "pause when Stopped") are ignored, preventing impossible states. Each event/state pair has defined behavior.
 
-**Why It Matters**: Invalid state transitions corrupt application logic. When Spotify analyzed their playback bugs, they found 40% were caused by processing "pause" events while already stopped, leading to negative playback positions. FSM validation (ignore invalid events) eliminated these bugs. Explicit transition rules prevent the common anti-pattern of "if-statement soup" where every event handler checks 10+ conditions.
+**Why It Matters**: Invalid state transitions corrupt application logic. Playback systems experience bugs from processing "pause" events while already stopped, leading to negative playback positions. FSM validation (ignore invalid events) eliminates these bugs. Explicit transition rules prevent the common anti-pattern of "if-statement soup" where every event handler checks multiple conditions.
 
 ### Example 5: Self-Transition (Same State)
 
@@ -483,7 +483,7 @@ console.log(lock.getCurrentState()); // => Output: Locked
 
 **Key Takeaway**: Self-transitions keep state unchanged but can trigger actions (increment counter, log event). Useful for retry logic, counters, and auditing without state changes.
 
-**Why It Matters**: Self-transitions distinguish "no change" from "no transition." When AWS API Gateway implemented rate limiting, self-transitions on "request received" event (while in RateLimited state) incremented violation counters without changing state. This enabled progressive penalties (1st violation: warning, 3rd violation: temporary ban) while maintaining clear state model (Normal → RateLimited → Banned).
+**Why It Matters**: Self-transitions distinguish "no change" from "no transition." API Gateway rate limiting uses self-transitions on "request received" event (while in RateLimited state) to increment violation counters without changing state. This enables progressive penalties (initial violations: warning, repeated violations: temporary ban) while maintaining clear state model (Normal → RateLimited → Banned).
 
 ### Example 6: Multiple Transitions from Same State
 
@@ -702,7 +702,7 @@ console.log(order.getCurrentState()); // => Output: Shipped
 
 **Key Takeaway**: Transition tables centralize valid transitions, making FSM behavior explicit and verifiable. Invalid transitions throw errors instead of silently failing.
 
-**Why It Matters**: Silent failures hide bugs. When Shopify analyzed order fulfillment bugs, they found 25% were caused by processing "ship" events for already-shipped orders, creating duplicate shipments. Throwing errors on invalid transitions surfaced these bugs immediately in testing instead of production. Explicit validation transforms runtime bugs into compile-time or test-time errors.
+**Why It Matters**: Silent failures hide bugs. Order fulfillment systems experience bugs from processing "ship" events for already-shipped orders, creating duplicate shipments. Throwing errors on invalid transitions surfaces these bugs immediately in testing instead of production. Explicit validation transforms runtime bugs into compile-time or test-time errors.
 
 ### Example 8: Bi-Directional Transitions
 
@@ -1300,7 +1300,7 @@ order.getHistory().forEach((entry, i) => {
 
 **Key Takeaway**: Event history records all state transitions with timestamps and triggering events. Enables auditing, debugging, and replay. History is append-only log of state changes.
 
-**Why It Matters**: Audit trails are regulatory requirements for financial and healthcare systems. When PayPal implemented transaction FSMs with event history, they reduced fraud investigation time from 2 hours to 15 minutes because complete state transition history was available. Event replay (reprocess same events on fresh FSM) became critical debugging tool—50% of production bugs were diagnosed via local event replay from production logs.
+**Why It Matters**: Audit trails are regulatory requirements for financial and healthcare systems. Transaction FSMs with event history reduce fraud investigation time because complete state transition history is available. Event replay (reprocess same events on fresh FSM) becomes critical debugging tool—production bugs are diagnosed via local event replay from production logs.
 
 ### Example 13: Conditional Events (Event Guards)
 
@@ -1462,7 +1462,7 @@ console.log(inventory.getCurrentState()); // => Output: Available (50 > 20)
 
 **Key Takeaway**: Event guards (conditions) determine whether events are allowed. Guards check data beyond state (stock levels, permissions, quotas). Failed guards prevent transitions and may throw errors.
 
-**Why It Matters**: Guards enforce business rules. When Amazon implemented shopping cart FSMs, guards prevented "checkout" event unless cart total exceeded minimum (\$25 for free shipping). Guard-based validation reduced customer support contacts about failed checkouts by 80% because errors were clear ("Add \$10 more for checkout") instead of cryptic. Guards centralize validation logic that would otherwise scatter across UI components.
+**Why It Matters**: Guards enforce business rules. Shopping cart FSMs use guards to prevent "checkout" event unless cart total exceeds minimum thresholds. Guard-based validation reduces customer support contacts about failed checkouts because errors are clear ("Add more for checkout") instead of cryptic. Guards centralize validation logic that would otherwise scatter across UI components.
 
 ## Guards and Conditions (Examples 14-18)
 
@@ -1627,7 +1627,7 @@ console.log(doc.getCurrentState()); // => Output: Approved
 
 **Key Takeaway**: Permission guards enforce role-based access control. Events carry user information; guards validate user has required role for transition. Unauthorized transitions throw errors.
 
-**Why It Matters**: Permission guards centralize authorization logic. When GitHub implemented PR approval FSMs, permission guards (only maintainers can merge) prevented 95% of unauthorized merge attempts at state machine level instead of relying on UI button visibility. Defense-in-depth: UI hides buttons, but FSM guards prevent API abuse or UI bugs from bypassing security.
+**Why It Matters**: Permission guards centralize authorization logic. PR approval FSMs use permission guards (only maintainers can merge) to prevent unauthorized merge attempts at state machine level instead of relying on UI button visibility. Defense-in-depth: UI hides buttons, but FSM guards prevent API abuse or UI bugs from bypassing security.
 
 ### Example 15: Time-Based Guards
 
@@ -2018,7 +2018,7 @@ try {
 
 **Key Takeaway**: Data validation guards check input data meets requirements (range checks, format validation, business rules). Multiple guards may run sequentially; first failure rejects transition.
 
-**Why It Matters**: Validation guards prevent garbage-in-garbage-out. When Stripe analyzed payment failures, 30% were caused by processing invalid data that should have been rejected earlier. Moving validation into FSM guards (before Pending → Validated transition) reduced processing costs by 25% and improved error messages because validation failures happened synchronously (immediate user feedback) instead of asynchronously (delayed notification).
+**Why It Matters**: Validation guards prevent garbage-in-garbage-out. Payment systems experience failures from processing invalid data that should have been rejected earlier. Moving validation into FSM guards (before Pending → Validated transition) reduces processing costs and improves error messages because validation failures happen synchronously (immediate user feedback) instead of asynchronously (delayed notification).
 
 ### Example 18: Composite Guards (AND/OR Logic)
 
@@ -2528,7 +2528,7 @@ db.handleEvent("disconnect"); // => Connected → Disconnected
 
 **Key Takeaway**: Exit actions execute automatically when leaving state, before entering next state. Centralizes cleanup logic (close connections, release resources) that must happen for every transition out of that state.
 
-**Why It Matters**: Exit actions prevent resource leaks. When Slack analyzed memory leaks in their desktop app, they found WebSocket connections weren't closed when switching channels because each transition handler had to remember to call `closeSocket()`. Moving cleanup to exit actions (leave ChannelA state → close socket) guaranteed cleanup regardless of where you're going, reducing memory leaks by 90%.
+**Why It Matters**: Exit actions prevent resource leaks. Desktop apps experience memory leaks when WebSocket connections aren't closed when switching channels because each transition handler must remember to call cleanup methods. Moving cleanup to exit actions (leave ChannelA state → close socket) guarantees cleanup regardless of where you're going, reducing memory leaks significantly.
 
 ### Example 21: Entry and Exit Actions Together
 
@@ -2696,7 +2696,7 @@ request.handleEvent("response_ok"); // => Pending → Success
 
 **Key Takeaway**: Entry actions setup state resources (start timers, open connections); exit actions cleanup state resources (clear timers, close connections). Together they ensure complete state lifecycle management.
 
-**Why It Matters**: Lifecycle management prevents bugs and resource leaks. When Zoom analyzed connectivity issues, they found 40% were caused by connection timers not being cleared when state changed, leading to spurious timeout errors. Entry/exit action pattern (entry: start timer, exit: clear timer) guaranteed cleanup, reducing false timeout errors by 95%.
+**Why It Matters**: Lifecycle management prevents bugs and resource leaks. Video conferencing systems experience connectivity issues from connection timers not being cleared when state changed, leading to spurious timeout errors. Entry/exit action pattern (entry: start timer, exit: clear timer) guarantees cleanup, significantly reducing false timeout errors.
 
 ### Example 22: Entry/Exit Actions vs Transition Actions
 
@@ -3304,7 +3304,7 @@ cart.handleEvent("payment_success"); // => CheckingOut → OrderPlaced
 
 **Key Takeaway**: Transition actions execute logic specific to particular state transitions. First item (Empty → HasItems) triggers different action than additional items (HasItems → HasItems self-transition). Each transition has unique responsibilities.
 
-**Why It Matters**: Transition-specific logic captures business rules. When Amazon optimized checkout, they found transition actions (HasItems → CheckingOut) needed to validate inventory, calculate shipping, apply coupons—logic that only made sense during that specific transition, not as entry/exit actions. Proper transition action placement reduced checkout abandonment by 12% by moving slow operations to appropriate transitions.
+**Why It Matters**: Transition-specific logic captures business rules. Checkout systems use transition actions (HasItems → CheckingOut) to validate inventory, calculate shipping, apply coupons—logic that only makes sense during that specific transition, not as entry/exit actions. Proper transition action placement reduces checkout abandonment by moving slow operations to appropriate transitions.
 
 ### Example 25: Transition Actions with Side Effects
 
@@ -3546,7 +3546,7 @@ order.handleEvent("deliver"); // => Shipped → Delivered
 
 **Key Takeaway**: Transition actions orchestrate multiple external side effects (API calls, database updates, notifications) that must occur during specific state transitions. Each transition has checklist of operations to perform.
 
-**Why It Matters**: Explicit transition actions ensure side effects happen reliably. When Shopify analyzed failed orders, they found 15% had incomplete side effects (payment charged but no inventory reserved, or warehouse notified but no customer email). Consolidating side effects into transition actions with comprehensive error handling reduced incomplete orders by 90%. Transition actions become auditable checklist ensuring all required operations complete.
+**Why It Matters**: Explicit transition actions ensure side effects happen reliably. Order systems experience incomplete side effects (payment charged but no inventory reserved, or warehouse notified but no customer email). Consolidating side effects into transition actions with comprehensive error handling reduces incomplete orders significantly. Transition actions become auditable checklist ensuring all required operations complete.
 
 ### Example 26: Conditional Transition Actions
 
@@ -4116,7 +4116,7 @@ console.log(`Error: ${upload2.getError()}`); // => Output: Executable files not 
 
 **Key Takeaway**: Transition actions must handle errors gracefully. Try-catch blocks capture errors during transitions; error handlers move FSM to Failed state and cleanup resources. Distinguishes fatal errors (transition fails) from warnings (log but continue).
 
-**Why It Matters**: Robust error handling prevents stuck FSMs. When Dropbox analyzed file upload failures, they found 25% of failed uploads left FSMs in inconsistent states (partially uploaded files, orphaned database records, memory leaks). Adding error handlers to transition actions (catch errors → transition to Failed state → cleanup resources) reduced stuck uploads by 95%. Failed state is terminal, preventing retry loops and exposing errors to users/monitoring systems.
+**Why It Matters**: Robust error handling prevents stuck FSMs. File upload systems experience failures where uploads leave FSMs in inconsistent states (partially uploaded files, orphaned database records, memory leaks). Adding error handlers to transition actions (catch errors → transition to Failed state → cleanup resources) significantly reduces stuck uploads. Failed state is terminal, preventing retry loops and exposing errors to users/monitoring systems.
 
 ## Simple State Patterns (Examples 28-30)
 
@@ -4352,7 +4352,7 @@ connection.close(); // => Open → Closed
 
 **Key Takeaway**: State Pattern encapsulates state-specific behavior in separate classes. Context delegates operations to current state object. Adding new states requires creating new state class, not modifying existing code (Open/Closed Principle).
 
-**Why It Matters**: State Pattern reduces conditional complexity. When Microsoft Word analyzed their document editing code, they found 500+ if-statements checking document state (ReadOnly, Editing, Reviewing, etc.) scattered across 50 classes. Refactoring to State Pattern (one class per document state) reduced cyclomatic complexity from 80 to 5 per method, eliminated 40% of state-related bugs, and made adding new states (Collaborative mode) trivial.
+**Why It Matters**: State Pattern reduces conditional complexity. Document editing systems experience numerous if-statements checking document state (ReadOnly, Editing, Reviewing, etc.) scattered across many classes. Refactoring to State Pattern (one class per document state) reduces cyclomatic complexity significantly per method, eliminates state-related bugs, and makes adding new states (Collaborative mode) trivial.
 
 ### Example 29: Hierarchical State Machines (Nested States)
 
@@ -4716,7 +4716,7 @@ console.log(`Final: ${turnstile.getCurrentState()}`); // => Output: Locked
 
 **Key Takeaway**: Table-driven FSMs separate state logic (transition tables, action tables) from implementation (handleEvent method). Adding states/transitions requires only table updates, not code changes. Transition table defines valid transitions; action table defines operations to execute.
 
-**Why It Matters**: Table-driven FSMs enable non-programmers to configure state logic. When Twilio built their call routing system, transition tables allowed customer support to configure call flows (IVR menus, voicemail, transfers) without engineering involvement. Business users edited JSON configuration files defining transition tables; FSM engine executed flows. This reduced call flow deployment time from 2 weeks (engineering backlog) to 1 hour (self-service).
+**Why It Matters**: Table-driven FSMs enable non-programmers to configure state logic. Call routing systems use transition tables to allow customer support to configure call flows (IVR menus, voicemail, transfers) without engineering involvement. Business users edit JSON configuration files defining transition tables; FSM engine executes flows. This reduces call flow deployment time significantly.
 
 ---
 

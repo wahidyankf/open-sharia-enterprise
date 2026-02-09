@@ -61,7 +61,7 @@ public class HelloWorld {                          // => Public class, one per .
 
 **Key Takeaway**: Java code is organized into classes with filenames matching public class names. The `public static void main(String[] args)` method is the fixed entry point recognized by the JVM. Code compiles to platform-independent bytecode (`.class` files) executed by the platform-specific JVM, enabling "write once, run anywhere" portability.
 
-**Why It Matters**: The JVM architecture revolutionized software deployment by decoupling code from operating systems. Before Java, C/C++ programs required separate compilation for Windows, Linux, and macOS—often with platform-specific code branches. Java's bytecode layer lets enterprises ship one `.jar` file that runs identically across all platforms, eliminating costly multi-platform testing. This design enabled Java to dominate enterprise servers (Spring Boot, Tomcat), Android mobile apps (Dalvik/ART VMs execute Java bytecode), and big data systems (Hadoop, Spark, Kafka)—all sharing the same codebase across heterogeneous infrastructure.
+**Why It Matters**: The JVM architecture decouples code from operating systems through platform-independent bytecode. Before Java, C/C++ programs required separate compilation for Windows, Linux, and macOS—often with platform-specific code branches. Java's bytecode layer enables shipping one `.jar` file that runs identically across all platforms. This design allows the same codebase to run across heterogeneous infrastructure.
 
 ---
 
@@ -96,7 +96,7 @@ System.out.println(str);         // => Output: Hello
 
 **Key Takeaway**: Java has 8 primitive types (stored on stack, cannot be null) and reference types (stored on heap, can be null). Use `var` for type inference in local variables while maintaining static type safety—the compiler infers types at compile time, not runtime.
 
-**Why It Matters**: Java's explicit type system catches errors at compile time rather than runtime, preventing entire categories of bugs that plague dynamically typed languages like Python/JavaScript. The primitive/reference distinction optimizes memory layout—primitives avoid heap allocation overhead for simple values (ints, booleans), while reference types enable object sharing and polymorphism essential for OOP. This design lets the JVM optimize hot paths with primitive operations while maintaining object-oriented flexibility for complex data structures. Modern Java's `var` keyword (introduced in Java 10) reduces boilerplate without sacrificing type safety—unlike JavaScript/Python's dynamic typing, Java's `var` is resolved entirely at compile time, preserving performance and IDE support.
+**Why It Matters**: Java's explicit type system catches errors at compile time rather than runtime, preventing entire categories of bugs. The primitive/reference distinction optimizes memory layout—primitives avoid heap allocation overhead for simple values (ints, booleans), while reference types enable object sharing and polymorphism essential for OOP. This design lets the JVM optimize hot paths with primitive operations while maintaining object-oriented flexibility for complex data structures. Java's `var` keyword (introduced in Java 10) reduces boilerplate without sacrificing type safety—the compiler resolves types entirely at compile time, preserving performance and IDE support.
 
 ---
 
@@ -143,7 +143,7 @@ scanner.close();                 // => Release resources (closes System.in)
 
 **Key Takeaway**: Use `Scanner` for reading console input with type-safe parsing methods (`nextInt`, `nextDouble`, `nextLine`). Always call `scanner.nextLine()` after `nextInt()` or similar methods to consume leftover newlines that would otherwise interfere with subsequent `nextLine()` calls.
 
-**Why It Matters**: Scanner's tokenized parsing eliminates manual string-to-type conversion boilerplate common in languages like C (scanf) or Python (input() + int()). The delimiter-based approach (default: whitespace) enables easy parsing of structured data like CSV files or space-separated integers. However, the newline consumption quirk (nextInt doesn't consume trailing \n) is Java's most common beginner gotcha—responsible for thousands of StackOverflow questions. Production code often prefers BufferedReader for performance or Files.readAllLines() for modern file I/O, but Scanner remains the standard teaching tool and is still used in competitive programming and quick scripts.
+**Why It Matters**: Scanner's tokenized parsing eliminates manual string-to-type conversion boilerplate. The delimiter-based approach (default: whitespace) enables easy parsing of structured data like CSV files or space-separated integers. The newline consumption quirk (nextInt doesn't consume trailing \n) is a common beginner gotcha. Production code often prefers BufferedReader for performance or Files.readAllLines() for modern file I/O, but Scanner remains a standard teaching tool and is used in competitive programming and quick scripts.
 
 ---
 
@@ -203,7 +203,7 @@ System.out.println(numLetters);  // => Output: 6 (value returned by switch expre
 
 **Key Takeaway**: Use `if/else` for simple boolean conditions and modern switch expressions for multi-way branching based on discrete values. Switch expressions with arrow syntax (`->`) eliminate fall-through bugs and enable value-returning switches, making code safer and more concise than traditional switch statements.
 
-**Why It Matters**: Switch expressions (Java 14+) fix Java's most criticized control flow defect: the mandatory `break` keyword that caused decades of fall-through bugs where forgetting `break` executed unintended cases. The arrow syntax (`->`) provides implicit break behavior and enables switches as expressions that return values, eliminating temporary variables. This aligns Java with modern languages (Kotlin's `when`, Rust's `match`) while maintaining backward compatibility. Pattern matching in switch (Java 17+ preview, 21 stable) extends this further to type-safe object decomposition, finally bringing algebraic data type capabilities to Java's type system after 25 years.
+**Why It Matters**: Switch expressions (Java 14+) fix a criticized control flow issue: the mandatory `break` keyword that caused fall-through bugs where forgetting `break` executed unintended cases. The arrow syntax (`->`) provides implicit break behavior and enables switches as expressions that return values, eliminating temporary variables. This aligns Java with modern languages while maintaining backward compatibility. Pattern matching in switch (Java 17+ preview, 21 stable) extends this further to type-safe object decomposition, bringing algebraic data type capabilities to Java's type system.
 
 ---
 
@@ -254,7 +254,7 @@ System.out.println();            // => Newline
 
 **Key Takeaway**: Use `for` loops when you know the iteration count. The loop has three parts: initialization (`int i = 0`), condition (`i < 5`), and update (`i++`). All three parts are optional but the semicolons are required.
 
-**Why It Matters**: For loops are the most common iteration construct in Java, used billions of times daily in production code. The compact syntax (`for (init; condition; update)`) puts all loop control in one line, making iteration logic immediately visible—unlike while loops where initialization, condition, and update are scattered across multiple lines. Modern Java still uses traditional for loops for index-based operations (accessing arrays by position, generating sequences, timing operations), though enhanced for-loops and streams have replaced them for simple collection iteration.
+**Why It Matters**: For loops are a common iteration construct in Java. The compact syntax (`for (init; condition; update)`) puts all loop control in one line, making iteration logic immediately visible—unlike while loops where initialization, condition, and update are scattered across multiple lines. Traditional for loops remain useful for index-based operations (accessing arrays by position, generating sequences, timing operations), though enhanced for-loops and streams are often used for simple collection iteration.
 
 ---
 
@@ -370,7 +370,7 @@ System.out.println();            // => Newline
 
 **Key Takeaway**: Enhanced for loops (`for (element : collection)`) eliminate index management and off-by-one errors. Use when you need to access each element but don't need the index. Cannot modify array/collection elements (element variable is a copy).
 
-**Why It Matters**: Enhanced for loops (Java 5, 2004) eliminated the #1 cause of array iteration bugs—off-by-one errors from manual index arithmetic. Before: `for (int i = 0; i < array.length; i++)` where developers accidentally wrote `i <= array.length` (throws exception) or `array[i+1]` (index out of bounds). After: `for (Type elem : array)` where the iterator handles bounds automatically. The syntax also provides abstraction—works identically for arrays, Lists, Sets, and any Iterable, enabling generic code without knowing the collection type. Combined with streams (Java 8+), enhanced for loops remain the standard for simple iteration when you need each element.
+**Why It Matters**: Enhanced for loops (Java 5, 2004) eliminated a major cause of array iteration bugs—off-by-one errors from manual index arithmetic. The syntax `for (Type elem : array)` lets the iterator handle bounds automatically, avoiding common mistakes like `i <= array.length` (throws exception) or `array[i+1]` (index out of bounds). The syntax also provides abstraction—works identically for arrays, Lists, Sets, and any Iterable, enabling generic code without knowing the collection type. Combined with streams (Java 8+), enhanced for loops are commonly used for simple iteration.
 
 ---
 
@@ -417,7 +417,7 @@ int value = matrix[1][2];        // => Access row 1, column 2
 
 **Key Takeaway**: Arrays have fixed size set at creation and use zero-based indexing. Access length via `.length` property (not method). Arrays are mutable—you can change elements but not the size.
 
-**Why It Matters**: Arrays are Java's lowest-level data structure with O(1) random access and minimal overhead—just object header plus elements. This makes them critical for performance-sensitive code (games, financial systems, data processing). The fixed-size limitation is often acceptable for known-size data, and the direct memory layout enables JIT optimizations like loop unrolling and SIMD vectorization that collections can't match. However, for dynamic sizing, ArrayList (backed by resizable arrays) is preferred.
+**Why It Matters**: Arrays are Java's lowest-level data structure with O(1) random access and minimal overhead—just object header plus elements. This makes them useful for performance-sensitive code. The fixed-size limitation is often acceptable for known-size data, and the direct memory layout enables JIT optimizations like loop unrolling and SIMD vectorization that collections can't match. For dynamic sizing, ArrayList (backed by resizable arrays) is preferred.
 
 ---
 
@@ -464,7 +464,7 @@ boolean diff = Arrays.equals(a, c); // => false (different elements)
 
 **Key Takeaway**: Use `Arrays` utility class for common operations—sorting, copying, searching, filling, comparing. `Arrays.toString()` is essential for debugging (arrays don't have a useful default toString). Binary search requires sorted arrays.
 
-**Why It Matters**: The `Arrays` class (Java 1.2, 1998) standardized common array operations that previously required manual loops—eliminating bugs from hand-written binary search or mergesort implementations. Before Arrays.sort(), developers wrote error-prone sorting algorithms or copied C code. After: one line (`Arrays.sort()`) with battle-tested dual-pivot quicksort. Similarly, `Arrays.equals()` prevents the common mistake of using `==` (compares references, not contents). Modern Java developers rely on these utilities daily—they're fast, correct, and eliminate boilerplate.
+**Why It Matters**: The `Arrays` class (Java 1.2, 1998) standardized common array operations that previously required manual loops—eliminating bugs from hand-written binary search or mergesort implementations. `Arrays.sort()` provides a single-line operation with dual-pivot quicksort. `Arrays.equals()` prevents the common mistake of using `==` (compares references, not contents). These utilities are fast, correct, and eliminate boilerplate.
 
 ---
 
@@ -532,7 +532,7 @@ System.out.println(alice.name);  // => Output: Alice
 
 **Key Takeaway**: Classes define object templates with fields (state) and methods (behavior). Constructors initialize objects via `new` keyword. Each object has independent state—modifying one object doesn't affect others. Use `this` keyword to distinguish instance fields from parameters when names collide.
 
-**Why It Matters**: Java's "everything is an object" philosophy (except primitives) forced consistent OOP design where behavior and data are always bundled together, unlike C's struct + separate functions or JavaScript's prototype-based objects. This enabled large-scale code organization through encapsulation—private fields hide implementation details while public methods expose controlled interfaces. The constructor mechanism (inspired by C++) standardized object initialization, eliminating C's uninitialized struct memory bugs. Constructors must be explicitly called via `new`, preventing C++'s stack allocation confusion (automatic constructor calls), making object lifetime explicit and simplifying garbage collection.
+**Why It Matters**: Java's "everything is an object" philosophy (except primitives) encourages consistent OOP design where behavior and data are bundled together. This enables code organization through encapsulation—private fields hide implementation details while public methods expose controlled interfaces. The constructor mechanism standardized object initialization, preventing uninitialized memory bugs. Constructors must be explicitly called via `new`, making object lifetime explicit and simplifying garbage collection.
 
 ---
 
@@ -615,7 +615,7 @@ for (Animal a : animals) {       // => Iterate using Animal type (polymorphic it
 
 **Key Takeaway**: Inheritance (`extends`) creates is-a relationships where subclasses inherit superclass members. Override methods with `@Override` annotation to customize behavior. Polymorphism lets you reference subclass objects via superclass type—method calls dynamically dispatch to the actual object's overridden method at runtime.
 
-**Why It Matters**: Polymorphism is Java's mechanism for code reuse and extensibility without modifying existing code. Before polymorphism, adding new types (like a new Animal subclass) required modifying every function that processed animals (switch statements checking type). With polymorphism, new subclasses integrate seamlessly—existing code calling `animal.makeSound()` works with new types without changes (Open/Closed Principle). This enabled frameworks like Spring and Hibernate to operate on user-defined classes through interfaces, revolutionizing enterprise Java. However, overuse created "ClassExplosion" anti-pattern in early 2000s Java (deep inheritance hierarchies); modern Java favors composition (fields of interface types) over inheritance.
+**Why It Matters**: Polymorphism is Java's mechanism for code reuse and extensibility without modifying existing code. Before polymorphism, adding new types (like a new Animal subclass) required modifying every function that processed animals (switch statements checking type). With polymorphism, new subclasses integrate seamlessly—existing code calling `animal.makeSound()` works with new types without changes (Open/Closed Principle). This enables frameworks to operate on user-defined classes through interfaces. However, overuse can create deep inheritance hierarchies; modern Java favors composition (fields of interface types) over inheritance.
 
 ---
 
@@ -683,7 +683,7 @@ shape2.draw();                   // => Calls Square's draw()
 
 **Key Takeaway**: Interfaces define method contracts without implementation, forcing implementing classes to provide behavior. Classes can implement multiple interfaces (unlike single-class inheritance), enabling flexible type hierarchies. Use interfaces to define capabilities (Drawable, Runnable, Comparable) rather than concrete types.
 
-**Why It Matters**: Interfaces solve Java's single-inheritance limitation—while a class can only extend one superclass, it can implement unlimited interfaces, enabling role-based composition. This design pattern (interface segregation) prevents the brittle base class problem where changing a superclass breaks all subclasses. Modern Java frameworks depend entirely on interfaces: Spring's dependency injection wires interface types, JPA repositories extend interface hierarchies, and servlet containers call interface methods (Servlet, Filter, Listener). Java 8's default methods (interface methods with bodies) later enabled interface evolution without breaking implementations, crucial for adding stream operations to Collections framework after 15 years.
+**Why It Matters**: Interfaces solve Java's single-inheritance limitation—while a class can only extend one superclass, it can implement unlimited interfaces, enabling role-based composition. This design pattern (interface segregation) prevents the brittle base class problem where changing a superclass breaks all subclasses. Java frameworks commonly depend on interfaces for dependency injection, repository patterns, and container callbacks. Java 8's default methods (interface methods with bodies) enabled interface evolution without breaking implementations, which was important for adding stream operations to the Collections framework.
 
 ---
 
@@ -749,7 +749,7 @@ int index = names.indexOf("Dave");
 
 **Key Takeaway**: ArrayList provides dynamic arrays that grow automatically, avoiding fixed-size limitations of primitive arrays. Use `add()` to append, `get(index)` to access, `set(index, value)` to modify, and `remove()` to delete. ArrayList maintains insertion order and allows duplicates, making it ideal for ordered collections with unknown size.
 
-**Why It Matters**: ArrayList replaced manual array resizing logic (copying to larger arrays) that plagued pre-Collections Framework Java (before 1.2, 1998). The automatic doubling strategy (capacity doubles when full) provides amortized O(1) append performance, eliminating the O(n) cost of shifting elements in manual implementations. Generic types (`ArrayList<String>`) added in Java 5 (2004) eliminated dangerous ClassCastException runtime errors from pre-generics `ArrayList` storing Object types. Despite ArrayList's ubiquity, it's internally just a resizable `Object[]` array—understanding this reveals why random access is O(1) but insertion/deletion at arbitrary positions is O(n) due to element shifting.
+**Why It Matters**: ArrayList replaced manual array resizing logic (copying to larger arrays). The automatic doubling strategy (capacity doubles when full) provides amortized O(1) append performance, eliminating the O(n) cost of shifting elements in manual implementations. Generic types (`ArrayList<String>`) added in Java 5 (2004) eliminated ClassCastException runtime errors. ArrayList is internally a resizable `Object[]` array—understanding this reveals why random access is O(1) but insertion/deletion at arbitrary positions is O(n) due to element shifting.
 
 ---
 
@@ -828,7 +828,7 @@ for (Map.Entry<String, Integer> entry : ages.entrySet()) {
 
 **Key Takeaway**: HashMap provides O(1) average key-value lookup using hash codes. Keys must implement `hashCode()` and `equals()` properly. Use `put()` to insert/update, `get()` to retrieve, and `containsKey()` to check existence. HashMap does NOT maintain insertion order—use LinkedHashMap if order matters.
 
-**Why It Matters**: HashMap revolutionized associative data structures by providing near-constant-time lookup (vs O(log n) for TreeMap, O(n) for ArrayList search). The hash function distributes keys across buckets, enabling fast retrieval even with millions of entries—critical for caches, database indexes, and routing tables. Java 8's HashMap improvements (tree bins when buckets exceed 8 elements) reduce worst-case from O(n) to O(log n) for lookups from hash collisions, a vulnerability exploited in hash collision DoS attacks pre-Java 8. String keys are common (configuration maps, JSON parsing), and String's cached `hashCode()` (computed once, stored in field) makes string-keyed HashMaps especially fast.
+**Why It Matters**: HashMap provides near-constant-time lookup (vs O(log n) for TreeMap, O(n) for ArrayList search). The hash function distributes keys across buckets, enabling fast retrieval—useful for caches, database indexes, and routing tables. Java 8's HashMap improvements (tree bins when buckets exceed 8 elements) reduce worst-case from O(n) to O(log n) for lookups from hash collisions. String keys are common (configuration maps, JSON parsing), and String's cached `hashCode()` (computed once, stored in field) makes string-keyed HashMaps especially fast.
 
 ---
 
@@ -880,7 +880,7 @@ set1.addAll(set2);               // => Union: set1 is {1, 2, 3, 4, 5}
 
 **Key Takeaway**: HashSet guarantees uniqueness using `equals()` and `hashCode()` for element comparison. Add, remove, and contains operations are O(1) average case. HashSet does NOT maintain order—use LinkedHashSet for insertion order or TreeSet for sorted order.
 
-**Why It Matters**: HashSet implements mathematical set semantics (unique elements, set operations) with hash table performance, eliminating the O(n) duplicate-checking overhead of "contains before add" patterns with ArrayList. This makes HashSet essential for deduplication (removing duplicates from collections), membership testing (checking if element exists), and set algebra (union, intersection, difference). Internally, HashSet is just a HashMap with elements as keys and a dummy `PRESENT` constant as value—understanding this reveals why HashSet has same performance characteristics as HashMap and why element `hashCode()` quality directly impacts performance.
+**Why It Matters**: HashSet implements mathematical set semantics (unique elements, set operations) with hash table performance, eliminating the O(n) duplicate-checking overhead of "contains before add" patterns with ArrayList. This makes HashSet useful for deduplication (removing duplicates from collections), membership testing (checking if element exists), and set algebra (union, intersection, difference). Internally, HashSet is a HashMap with elements as keys and a dummy `PRESENT` constant as value—understanding this reveals why HashSet has same performance characteristics as HashMap and why element `hashCode()` quality directly impacts performance.
 
 ---
 
@@ -946,7 +946,7 @@ boolean valueEqual = s1.equals(s2);
 
 **Key Takeaway**: Use ternary operator (`condition ? true : false`) for simple inline conditionals, replacing verbose if/else. Logical operators `&&` and `||` short-circuit—right side only evaluated if necessary, preventing NullPointerExceptions. For objects, use `equals()` for value comparison, `==` for reference comparison.
 
-**Why It Matters**: Short-circuit evaluation prevents defensive null checks from becoming nested if pyramids—`if (obj != null && obj.method())` is cleaner than nested `if (obj != null) { if (obj.method()) {...} }`. The ternary operator enables functional-style expressions where every construct returns a value (common in modern Java streams), though overuse creates unreadable one-liners. The `==` vs `equals()` distinction trips up every Java beginner—`==` compares memory addresses for objects (reference equality), while `equals()` compares content (value equality). This design enables object identity checks (`list.remove(specific object reference)`) while requiring explicit value comparison, preventing C++'s operator overloading ambiguity.
+**Why It Matters**: Short-circuit evaluation prevents defensive null checks from becoming nested if pyramids—`if (obj != null && obj.method())` is cleaner than nested `if (obj != null) { if (obj.method()) {...} }`. The ternary operator enables functional-style expressions where every construct returns a value (common in modern Java streams), though overuse creates unreadable one-liners. The `==` vs `equals()` distinction is important—`==` compares memory addresses for objects (reference equality), while `equals()` compares content (value equality). This design enables object identity checks (`list.remove(specific object reference)`) while requiring explicit value comparison.
 
 ---
 
@@ -1020,7 +1020,7 @@ numbers.removeIf(num -> num % 2 == 0);
 
 **Key Takeaway**: Enhanced for-loops (`for (element : collection)`) provide clean iteration syntax for read-only traversal. To remove elements during iteration, use `Iterator.remove()` or `Collection.removeIf()`, NOT direct collection modification which throws ConcurrentModificationException. Use traditional for-loops when you need the index.
 
-**Why It Matters**: The enhanced for-loop (Java 5, 2004) eliminated index-out-of-bounds errors and verbose iterator boilerplate that plagued Java collections before. It works with any `Iterable` type (Lists, Sets, arrays), providing uniform syntax across data structures. However, the ConcurrentModificationException (thrown when modifying collection during iteration) is Java's fail-fast mechanism to prevent iterator invalidation bugs—understanding this prevents the common mistake of `list.remove(element)` inside `for (element : list)`. Modern Java's `removeIf()` method (Java 8) finally provided a safe removal API, using iterators internally to avoid the exception.
+**Why It Matters**: The enhanced for-loop (Java 5, 2004) eliminated index-out-of-bounds errors and verbose iterator boilerplate. It works with any `Iterable` type (Lists, Sets, arrays), providing uniform syntax across data structures. The ConcurrentModificationException (thrown when modifying collection during iteration) is Java's fail-fast mechanism to prevent iterator invalidation bugs—understanding this prevents the common mistake of `list.remove(element)` inside `for (element : list)`. Java 8's `removeIf()` method provided a safe removal API, using iterators internally to avoid the exception.
 
 ---
 
@@ -1124,7 +1124,7 @@ public static void printMessage(String msg) {
 
 **Key Takeaway**: Java is strictly pass-by-value—primitives copy values, objects copy reference values (not the objects themselves). Modifying object contents via reference affects the original, but reassigning the reference variable does not. Methods can return values via `return` keyword or be `void` for side-effects-only methods.
 
-**Why It Matters**: Pass-by-value semantics prevent the confusing aliasing bugs of C++'s pass-by-reference (where function parameters can unexpectedly modify caller variables). However, "pass-by-value for references" trips up beginners—object references are copied (so reassigning parameter doesn't affect caller), but the reference points to the same heap object (so modifying object contents affects caller). This design makes objects naturally shared (avoiding expensive deep copies) while preventing accidental parameter reassignment side effects. Understanding this distinction is crucial for debugging—`list.add()` modifies the shared List object, but `list = newList` only affects the local variable.
+**Why It Matters**: Pass-by-value semantics prevent confusing aliasing bugs. However, "pass-by-value for references" can be tricky—object references are copied (so reassigning parameter doesn't affect caller), but the reference points to the same heap object (so modifying object contents affects caller). This design makes objects naturally shared (avoiding expensive deep copies) while preventing accidental parameter reassignment side effects. Understanding this distinction is crucial for debugging—`list.add()` modifies the shared List object, but `list = newList` only affects the local variable.
 
 ---
 
@@ -1215,7 +1215,7 @@ try {
 
 **Key Takeaway**: Use try-catch blocks to handle exceptions gracefully. Catch specific exception types first, general types last. Use `finally` for cleanup code that must run regardless of exceptions. Use try-with-resources for automatic resource management of AutoCloseable objects like Scanner, streams, and database connections.
 
-**Why It Matters**: Checked exceptions (IOException, SQLException) force explicit error handling via try-catch or throws declarations, preventing silent failures in file I/O or database operations. This design choice (unique to Java among mainstream languages) sparked decades of debate—proponents praise compile-time error handling enforcement, critics cite exception-handling boilerplate and generic `throws Exception` anti-patterns. Try-with-resources (Java 7, 2011) finally solved the resource leak epidemic from forgotten `finally { stream.close(); }` blocks, automatically closing resources even when exceptions occur. Modern languages (Go, Rust) chose explicit error returns instead of exceptions, but Java's exception model remains dominant in enterprise systems where failure scenarios must be documented and handled.
+**Why It Matters**: Checked exceptions (IOException, SQLException) force explicit error handling via try-catch or throws declarations, preventing silent failures in file I/O or database operations. This design choice has sparked ongoing debate—proponents praise compile-time error handling enforcement, critics cite exception-handling boilerplate and generic `throws Exception` anti-patterns. Try-with-resources (Java 7, 2011) solved resource leak issues from forgotten `finally { stream.close(); }` blocks, automatically closing resources even when exceptions occur. Some modern languages chose explicit error returns instead of exceptions, but Java's exception model remains common in systems where failure scenarios must be documented and handled.
 
 ---
 
@@ -1451,7 +1451,7 @@ printList(nums);                 // => ? resolves to Integer at runtime
 
 **Key Takeaway**: Generics provide compile-time type safety for collections and methods, eliminating runtime ClassCastException errors. Use `<T>` for type parameters in generic classes/methods. Use bounded types (`<T extends Class>`) to restrict acceptable types. Use wildcards (`<?>`) for flexible method parameters accepting any generic type.
 
-**Why It Matters**: Pre-generics Java (before 1.5, 2004) required unsafe casts and stored everything as Object, causing thousands of production ClassCastException bugs when wrong types were retrieved. Generics enabled the Collections Framework to provide type-safe APIs without code duplication—one ArrayList implementation works for all types. The compiler uses type erasure (removing generic information at runtime) for backward compatibility with pre-generics bytecode, but this creates limitations: cannot create `new T[]` arrays, cannot use primitives as type parameters (`List<int>` illegal, must use `List<Integer>`), and cannot detect type at runtime (`list instanceof List<String>` illegal). Despite these quirks, generics are essential for modern Java—streams, Optional, CompletableFuture all depend on generics for type safety.
+**Why It Matters**: Pre-generics Java (before 1.5, 2004) required unsafe casts and stored everything as Object, causing ClassCastException bugs when wrong types were retrieved. Generics enabled the Collections Framework to provide type-safe APIs without code duplication—one ArrayList implementation works for all types. The compiler uses type erasure (removing generic information at runtime) for backward compatibility with pre-generics bytecode, but this creates limitations: cannot create `new T[]` arrays, cannot use primitives as type parameters (`List<int>` illegal, must use `List<Integer>`), and cannot detect type at runtime (`list instanceof List<String>` illegal). Despite these quirks, generics are important for modern Java—streams, Optional, CompletableFuture all depend on generics for type safety.
 
 ---
 
@@ -1602,7 +1602,7 @@ System.out.println(c.equals(d)); // => true (both hold value 128, value equality
 
 **Key Takeaway**: Wrapper classes (Integer, Double, Boolean) enable primitives to be used where objects are required (collections, generics). Autoboxing automatically converts primitives to wrappers and vice versa. Always use `equals()` for wrapper comparison, NOT `==` (except for cached values -128 to 127). Check for null before auto-unboxing to avoid NullPointerException.
 
-**Why It Matters**: Autoboxing (Java 5, 2004) eliminated the tedious `Integer.valueOf()` and `intValue()` boilerplate that made pre-generics collections painful (`list.add(new Integer(5))`). However, automatic conversion hides performance costs—each autoboxing allocates a heap object, making loops like `Integer sum = 0; for (...) sum += i;` allocate millions of temporary Integer objects. The -128 to 127 cache optimization (valueOf returns cached instances) prevents some allocations but creates the `==` comparison trap where `Integer a = 127; Integer b = 127; a == b` is true (cached) but `Integer c = 128; Integer d = 128; c == d` is false (different objects). This is Java's most counterintuitive behavior, fixed by always using `equals()` for object comparison.
+**Why It Matters**: Autoboxing (Java 5, 2004) eliminated the tedious `Integer.valueOf()` and `intValue()` boilerplate that made pre-generics collections painful (`list.add(new Integer(5))`). However, automatic conversion hides performance costs—each autoboxing allocates a heap object, making loops like `Integer sum = 0; for (...) sum += i;` allocate many temporary Integer objects. The -128 to 127 cache optimization (valueOf returns cached instances) prevents some allocations but creates the `==` comparison trap where `Integer a = 127; Integer b = 127; a == b` is true (cached) but `Integer c = 128; Integer d = 128; c == d` is false (different objects). This is counterintuitive behavior, fixed by always using `equals()` for object comparison.
 
 ---
 
@@ -1851,7 +1851,7 @@ java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
 
 **Key Takeaway**: Packages organize classes into namespaces using reverse domain notation (`com.company.project`). Import statements make classes accessible without fully qualified names. Use wildcard imports (`import java.util.*`) for multiple classes from same package. Resolve name collisions by using fully qualified names for conflicting classes.
 
-**Why It Matters**: Packages prevent the namespace pollution that plagued C/C++ where all names share a global namespace, causing conflicts when libraries define identically named classes. Java's package system enables modular development—teams can work on separate packages without coordination. The reverse domain name convention (`com.yourcompany.project`) guarantees globally unique package names, preventing conflicts when combining third-party libraries. However, wildcard imports (`import java.util.*`) are controversial—they hide which classes are used (reducing IDE navigation) but eliminate import list maintenance. Modern IDEs auto-optimize imports, making this debate moot. Java 9's module system (Project Jigsaw) added a layer above packages for stronger encapsulation and explicit dependencies, though adoption remains limited outside large frameworks.
+**Why It Matters**: Packages prevent namespace pollution where all names share a global namespace, causing conflicts when libraries define identically named classes. Java's package system enables modular development. The reverse domain name convention (`com.company.project`) helps create globally unique package names, preventing conflicts when combining third-party libraries. Wildcard imports (`import java.util.*`) are debated—they hide which classes are used (reducing IDE navigation) but eliminate import list maintenance. Modern IDEs auto-optimize imports. Java 9's module system (Project Jigsaw) added a layer above packages for stronger encapsulation and explicit dependencies.
 
 ---
 
@@ -2056,7 +2056,7 @@ try {
 
 **Key Takeaway**: Use java.nio.file (NIO.2) for modern file I/O—`Files.readString()` and `Files.writeString()` for simple text files, `Files.readAllLines()` for line-by-line processing. All file operations throw checked IOException requiring try-catch. Use `Paths.get()` to create Path objects representing file locations.
 
-**Why It Matters**: NIO.2 (Java 7, 2011) finally provided a modern file API after two decades of clunky java.io streams. The old approach required verbose FileInputStream/FileOutputStream/BufferedReader boilerplate with manual resource management (forgetting `close()` caused file descriptor leaks). NIO.2's utility methods (`Files.readString()`, added Java 11) reduce this to one-liners, while try-with-resources ensures automatic closing. Path abstraction works across filesystems (local disk, network shares, ZIP files) transparently. However, `readString()` and `readAllLines()` load entire files into memory—unsuitable for large files (gigabytes) where streaming with `Files.lines()` (returns Stream<String>) is necessary. The checked IOException enforcement is controversial but prevents silent file operation failures common in languages without checked exceptions.
+**Why It Matters**: NIO.2 (Java 7, 2011) provided a modern file API. The old approach required verbose FileInputStream/FileOutputStream/BufferedReader boilerplate with manual resource management (forgetting `close()` caused file descriptor leaks). NIO.2's utility methods (`Files.readString()`, added Java 11) reduce this to one-liners, while try-with-resources ensures automatic closing. Path abstraction works across filesystems (local disk, network shares, ZIP files) transparently. However, `readString()` and `readAllLines()` load entire files into memory—unsuitable for large files where streaming with `Files.lines()` (returns Stream<String>) is necessary. The checked IOException enforcement is debated but prevents silent file operation failures.
 
 ---
 

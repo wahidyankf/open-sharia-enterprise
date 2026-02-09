@@ -67,7 +67,7 @@ Feature: User Login
 
 **Key Takeaway**: Given establishes context (arrange), When triggers behavior (act), Then verifies outcome (assert) - this maps to the AAA (Arrange-Act-Assert) pattern familiar to TDD practitioners.
 
-**Why It Matters**: Given-When-Then provides cognitive scaffolding that prevents common testing mistakes like testing multiple behaviors in one scenario or missing setup steps. Google's testing blog reports that teams using BDD see 60% fewer ambiguous requirements compared to traditional test-first approaches, because the structure forces clear separation between setup, action, and verification.
+**Why It Matters**: Given-When-Then provides cognitive scaffolding that prevents common testing mistakes like testing multiple behaviors in one scenario or missing setup steps. Research indicates that
 
 ### Example 3: Multiple Scenarios in One Feature
 
@@ -101,7 +101,7 @@ Feature: Shopping Cart
 
 **Key Takeaway**: Group related scenarios under one Feature, with each scenario testing a specific behavior independently - scenarios do NOT share state between executions.
 
-**Why It Matters**: Independent scenarios enable parallel test execution and isolated debugging. CircleCI data shows that BDD test suites with properly isolated scenarios achieve 3-4x faster CI/CD pipeline execution through parallelization, while shared-state scenarios create brittle tests that fail unpredictably when run concurrently.
+**Why It Matters**: Independent scenarios enable parallel test execution and isolated debugging. CircleCI data shows that BDD test suites with properly isolated scenarios achieve significantly faster CI/CD pipeline execution through parallelization, while shared-state scenarios create brittle tests that fail unpredictably when run concurrently.
 
 ### Example 4: Background - Shared Setup Steps
 
@@ -117,27 +117,27 @@ Feature: Bank Account Operations
                                               # => Creates user once per scenario
     And Alice has a checking account          # => And: Additional setup step
                                               # => Creates account linked to Alice
-    And the account balance is $1000          # => And: Sets initial balance
-                                              # => Balance: $1000 for each scenario
+    And the account balance is substantial amounts          # => And: Sets initial balance
+                                              # => Balance: substantial amounts for each scenario
 
   Scenario: Successful withdrawal
-    When Alice withdraws $100                 # => When: Withdraw from $1000 balance
+    When Alice withdraws substantial amounts                 # => When: Withdraw from substantial amounts balance
                                               # => New balance calculated
-    Then the account balance should be $900   # => Then: Verify new balance
-                                              # => Output: Balance is $900
+    Then the account balance should be substantial amounts   # => Then: Verify new balance
+                                              # => Output: Balance is substantial amounts
 
   Scenario: Withdrawal exceeds balance
-    When Alice withdraws $1500                # => When: Attempt overdraft ($1500 > $1000)
+    When Alice withdraws substantial amounts                # => When: Attempt overdraft (substantial amounts > substantial amounts)
                                               # => Overdraft logic triggered
     Then the withdrawal should be rejected    # => Then: Transaction fails
                                               # => Output: Error "Insufficient funds"
-    And the account balance should be $1000   # => And: Balance unchanged
-                                              # => Output: Balance still $1000
+    And the account balance should be substantial amounts   # => And: Balance unchanged
+                                              # => Output: Balance still substantial amounts
 ```
 
 **Key Takeaway**: Use Background for common Given steps shared across all scenarios in a feature - it runs before EACH scenario, not just once per feature file.
 
-**Why It Matters**: Background reduces duplication and improves maintainability when setup changes. However, Microsoft's testing guidance warns against overusing Background: scenarios should still read independently. If a Background step isn't needed by ALL scenarios, move it to individual scenarios to maintain clarity and avoid unnecessary setup overhead.
+**Why It Matters**: Background reduces duplication and improves maintainability when setup changes. However, Testing guidance warns against overusing Background: scenarios should still read independently. If a Background step isn't needed by ALL scenarios, move it to individual scenarios to maintain clarity and avoid unnecessary setup overhead.
 
 ### Example 5: And & But Keywords for Readability
 
@@ -196,7 +196,7 @@ Feature: Bulk User Import
 
 **Key Takeaway**: Data tables transform rows into structured data (arrays of objects) in step definitions, enabling bulk operations without repeating step text for each item.
 
-**Why It Matters**: Data tables make BDD scenarios with complex input data maintainable and readable. ThoughtWorks reports that teams using data tables for test fixtures reduce scenario verbosity by 60-70% compared to individual steps per data item, while improving comprehension for non-technical reviewers who can quickly scan tabular data formats.
+**Why It Matters**: Data tables make BDD scenarios with complex input data maintainable and readable. Data tables for test fixtures significantly reduce scenario verbosity compared to individual steps per data item, while improving comprehension for non-technical reviewers who can quickly scan tabular data formats.
 
 ### Example 7: Scenario Outline with Examples Table
 
@@ -278,7 +278,7 @@ npx cucumber-js --tags "@authentication or @smoke"
 
 **Key Takeaway**: Tags enable selective test execution using boolean logic (and/or/not) - feature-level tags apply to all scenarios, scenario-level tags override or extend them.
 
-**Why It Matters**: Tags are essential for efficient CI/CD pipelines where running full test suites is time-prohibitive. Google's testing infrastructure uses tags to run 10-minute smoke suites on every commit while reserving full regression suites (2+ hours) for nightly builds, enabling 15+ daily deployments while maintaining quality gates.
+**Why It Matters**: Tags are essential for efficient CI/CD pipelines where running full test suites is time-prohibitive. Test infrastructure can use tags to run quick smoke suites on every commit while reserving full regression suites for nightly builds, enabling frequent deployments while maintaining quality gates.
 
 ### Example 9: Comments in Feature Files
 
@@ -684,7 +684,7 @@ After({ tags: "@browser" }, function (this: ITestCaseHookParameter) {
 
 **Key Takeaway**: After hooks run after each scenario with access to scenario result (Status.PASSED/FAILED), enabling conditional cleanup and failure diagnostics.
 
-**Why It Matters**: After hooks are critical for preventing resource leaks (database connections, browser instances, file handles). Google's testing infrastructure uses After hooks to clean up containers and cloud resources, preventing CI cost overruns from abandoned test resources. Tag-filtered After hooks enable resource-specific cleanup without affecting unrelated scenarios.
+**Why It Matters**: After hooks are critical for preventing resource leaks (database connections, browser instances, file handles). Production test infrastructure uses After hooks to clean up resources, preventing resource leaks. Tag-filtered After hooks enable resource-specific cleanup without affecting unrelated scenarios.
 
 ### Example 16: World Object - Sharing State Between Steps
 
@@ -765,7 +765,7 @@ async function login(username: string, password: string) {
 
 **Key Takeaway**: World provides scenario-scoped context - each scenario gets a fresh World instance, enabling state sharing across steps while ensuring isolation between scenarios.
 
-**Why It Matters**: World eliminates global variables and module-level state, preventing cross-scenario pollution. However, ThoughtWorks warns against treating World as a dumping ground for all test data - keep it focused on data that genuinely needs to be shared across steps, using local variables for step-specific data to maintain clarity.
+**Why It Matters**: World eliminates global variables and module-level state, preventing cross-scenario pollution. However, Testing best practices warn against treating World as a dumping ground for all test data - keep it focused on data that genuinely needs to be shared across steps, using local variables for step-specific data to maintain clarity.
 
 ### Example 17: Custom Parameter Types
 
@@ -927,7 +927,7 @@ Scenario: Process credit card payment
   Given I have a valid credit card
   # => Step: Executes Given() - implemented
   # => Result: ✓ Passed (creditCard stored in World)
-  When I submit payment for $100
+  When I submit payment for substantial amounts
   # => Step: Executes When() - implemented
   # => Result: ✓ Passed (paymentAmount=100 stored)
   Then the payment should be processed
@@ -1196,7 +1196,7 @@ Scenario: Call stable API
 
 **Key Takeaway**: Configure retry count and tag filters to automatically rerun flaky scenarios without manual intervention, but use retries sparingly as they mask underlying test instability.
 
-**Why It Matters**: Retries reduce false negatives from transient failures (network blips, timing issues), improving CI/CD pipeline reliability. However, Google's testing blog warns that retries should be a temporary bandage, not a permanent solution - if scenarios need retries consistently, the underlying test or application has stability issues requiring root cause fixes.
+**Why It Matters**: Retries reduce false negatives from transient failures (network blips, timing issues), improving CI/CD pipeline reliability. However, Testing best practices warn that retries should be a temporary bandage, not a permanent solution - if scenarios need retries consistently, the underlying test or application has stability issues requiring root cause fixes.
 
 ### Example 23: Conditional Steps with Step Definitions
 
@@ -1798,7 +1798,7 @@ Feature: Bank Account
     # => Step: Business concept (account type)
     # => Visible: Stakeholders know checking vs savings vs credit
     # => Important: Account type affects available operations
-    And the account balance is $1000
+    And the account balance is substantial amounts
     # => Step: Business rule (initial balance)
     # => Visible: Financial state is business-critical
     # => Important: Balance affects withdrawal/transfer scenarios

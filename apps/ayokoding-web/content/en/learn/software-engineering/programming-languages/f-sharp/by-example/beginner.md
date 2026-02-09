@@ -41,7 +41,7 @@ printfn "Hello, World!"  // => printfn prints to stdout with newline
 
 **Key Takeaway**: F# uses `printfn` for formatted output with automatic newline. The language emphasizes expressions over statements, and semicolons are optional.
 
-**Why It Matters**: F# Interactive (FSI) enables rapid prototyping and REPL-driven development similar to Python, but with .NET's type safety and performance. Financial institutions use FSI for testing trading algorithms interactively before deployment, reducing development cycle time from hours to minutes compared to compiled-only languages.
+**Why It Matters**: F# Interactive (FSI) enables rapid prototyping and REPL-driven development similar to Python, but with .NET's type safety and performance. Developers use FSI for testing algorithms interactively before deployment.
 
 ## Example 2: Immutable Values with let
 
@@ -80,7 +80,7 @@ printfn "%d" x           // => Outputs: 20
 
 **Key Takeaway**: Use `let` for immutable bindings (default in F#). Shadowing creates new bindings; it doesn't mutate existing values.
 
-**Why It Matters**: Immutability by default prevents 70% of concurrency bugs according to Microsoft research, as immutable data can be safely shared across threads without locks. F#'s compiler-enforced immutability makes concurrent code safer than C# or Java equivalents without sacrificing .NET interoperability.
+**Why It Matters**: Immutability by default prevents many concurrency bugs, as immutable data can be safely shared across threads without locks. F#'s compiler-enforced immutability makes concurrent code safer than C# or Java equivalents without sacrificing .NET interoperability.
 
 ## Example 3: Type Inference
 
@@ -107,7 +107,7 @@ printfn "%d %s %.2f %b" age name pi isValid
 
 **Key Takeaway**: F# infers types from literals and operations. Explicit type annotations are rarely needed for local bindings.
 
-**Why It Matters**: Type inference reduces code verbosity by 40-60% compared to Java or C# while maintaining compile-time safety, enabling developers to write concise yet statically-typed code. OCaml and Haskell pioneered this approach; F# brings it to .NET with full tooling support (IntelliSense, refactoring).
+**Why It Matters**: Type inference reduces code verbosity compared to Java or C# while maintaining compile-time safety, enabling developers to write concise yet statically-typed code. OCaml and Haskell pioneered this approach; F# brings it to .NET with full tooling support (IntelliSense, refactoring).
 
 ## Example 4: Basic Types
 
@@ -172,7 +172,7 @@ printfn "%s" message     // => Outputs: Hello, Bob!
 
 **Key Takeaway**: Functions are defined with `let name params = body`. No `return` keyword - last expression is the return value.
 
-**Why It Matters**: First-class functions enable functional programming patterns like map, filter, and reduce used in data processing pipelines. Companies like Jet.com process millions of e-commerce transactions daily using F# functions that compose cleanly without side effects, reducing debugging time by 50% compared to imperative C# equivalents.
+**Why It Matters**: First-class functions enable functional programming patterns like map, filter, and reduce used in data processing pipelines. F# functions compose cleanly without side effects, making code easier to debug compared to imperative equivalents.
 
 ## Example 6: Function Composition
 
@@ -257,7 +257,7 @@ printfn "%d" result      // => Outputs: 20
 
 **Key Takeaway**: `|>` passes the left value as the last parameter to the right function. Pipelines read top-to-bottom like Unix pipes.
 
-**Why It Matters**: Piping eliminates nested function calls and intermediate variables, making data transformations 30% more readable according to F# community surveys. Financial models processing time-series data use pipelines extensively: `data |> filter |> map |> aggregate` clearly shows transformation steps compared to nested imperative loops.
+**Why It Matters**: Piping eliminates nested function calls and intermediate variables, making data transformations more readable. Pipelines like `data |> filter |> map |> aggregate` clearly show transformation steps compared to nested imperative loops.
 
 ## Example 8: Pattern Matching Basics
 
@@ -301,7 +301,7 @@ printfn "%s %s %s" result1 result2 result3
 
 **Key Takeaway**: Use `match value with | pattern -> result` for branching. Patterns must be exhaustive - compiler enforces this.
 
-**Why It Matters**: Exhaustive pattern matching catches unhandled cases at compile time, preventing runtime errors. Microsoft's analysis shows F# code has 40% fewer bugs related to missing cases compared to equivalent C# if/else chains, as the compiler forces developers to handle all possibilities explicitly.
+**Why It Matters**: Exhaustive pattern matching catches unhandled cases at compile time, preventing runtime errors. The compiler forces developers to handle all possibilities explicitly, reducing bugs related to missing cases compared to if/else chains.
 
 ## Example 9: Lists
 
@@ -338,7 +338,7 @@ printfn "%A" tail        // => Outputs: [2; 3; 4; 5]
 
 **Key Takeaway**: Lists are immutable sequences. Use `::` to prepend, `List.head` for first element, `List.tail` for rest.
 
-**Why It Matters**: Immutable lists enable safe concurrent processing and structural sharing. When processing 10,000-element lists, F# shares unchanged portions across operations, using 90% less memory than copying entire arrays in imperative languages while maintaining O(1) prepend performance.
+**Why It Matters**: Immutable lists enable safe concurrent processing and structural sharing. F# shares unchanged portions across operations, using less memory than copying entire arrays in imperative languages while maintaining O(1) prepend performance.
 
 ## Example 10: Recursion
 
@@ -417,7 +417,7 @@ printfn "%A" squares    // => Outputs: [1; 4; 9; 16; 25]
 
 **Key Takeaway**: `List.map` transforms each element independently. Use lambda `fun x -> expression` for inline functions.
 
-**Why It Matters**: Mapping operations are automatically parallelizable and compose cleanly. F# can convert `List.map` operations to parallel LINQ when beneficial, processing large datasets 4-8x faster on multi-core systems without code changes.
+**Why It Matters**: Mapping operations are automatically parallelizable and compose cleanly. F# can convert `List.map` operations to parallel LINQ when beneficial, processing large datasets faster on multi-core systems without code changes.
 
 ## Example 12: List.filter - Selecting Elements
 
@@ -562,7 +562,7 @@ printfn "%s is %d" bob.Name bob.Age
 
 **Key Takeaway**: Records provide named fields with structural equality. Use `{ record with Field = value }` to create modified copies.
 
-**Why It Matters**: Records are immutable value types that prevent accidental sharing bugs. They generate automatic equality, comparison, and ToString implementations, reducing boilerplate by 80% compared to C# classes while ensuring thread safety through immutability.
+**Why It Matters**: Records are immutable value types that prevent accidental sharing bugs. They generate automatic equality, comparison, and ToString implementations, reducing boilerplate compared to C# classes while ensuring thread safety through immutability.
 
 ## Example 16: Discriminated Unions
 
@@ -666,7 +666,7 @@ printfn "%A" doubledNone // => Outputs: None
 
 **Key Takeaway**: Use `Option` instead of null. Pattern match on `Some`/`None` to handle both cases explicitly.
 
-**Why It Matters**: Option types eliminate null reference exceptions through compile-time safety. Tony Hoare called null his "billion-dollar mistake"; F#'s option type forces developers to handle missing values explicitly, reducing null-related production errors by 100% in codebases that ban nullable reference types.
+**Why It Matters**: Option types eliminate null reference exceptions through compile-time safety. Tony Hoare called null his "billion-dollar mistake"; F#'s option type forces developers to handle missing values explicitly, eliminating null-related production errors in codebases that ban nullable reference types.
 
 ## Example 18: Unit Type
 
@@ -837,7 +837,7 @@ printfn "%d" c2          // => Outputs: 2
 
 **Key Takeaway**: Use `mutable` sparingly. Prefer immutable values and functions for most code. Mutate only when performance requires it.
 
-**Why It Matters**: Mutable values enable optimization in tight loops (numerical computing, game engines) where allocation overhead matters. F# developers use mutable state in <5% of code, isolated to performance hotspots, while keeping business logic purely functional for testability and correctness.
+**Why It Matters**: Mutable values enable optimization in tight loops (numerical computing, game engines) where allocation overhead matters. F# developers use mutable state sparingly, isolated to performance hotspots, while keeping business logic purely functional for testability and correctness.
 
 ## Example 23: For Loops
 
@@ -961,7 +961,7 @@ printfn "%s" (describe -5)   // => Outputs: negative
 
 **Key Takeaway**: Use `when` clauses for conditional patterns. OR patterns (`|`) match multiple cases with the same handler.
 
-**Why It Matters**: Pattern matching with guards replaces complex if/else chains with declarative case handling. Parsers and compilers use pattern matching extensively to handle syntax variations, reducing bug density by 30% compared to equivalent switch statements in C-family languages.
+**Why It Matters**: Pattern matching with guards replaces complex if/else chains with declarative case handling. Parsers and compilers use pattern matching extensively to handle syntax variations, reducing bug density compared to equivalent switch statements in C-family languages.
 
 ## Example 27: Type Annotations
 
@@ -1089,7 +1089,7 @@ printfn "%A" doubled     // => Outputs: [2; 4; 6; 8; 10]
 
 **Key Takeaway**: Applying fewer arguments than a function takes creates a new function waiting for remaining arguments.
 
-**Why It Matters**: Partial application enables function specialization without wrapper functions. Configuration functions like `multiply taxRate amount` can be partially applied to `multiplyByTaxRate = multiply 0.08` and reused throughout a codebase, improving code reuse by 40%.
+**Why It Matters**: Partial application enables function specialization without wrapper functions. Configuration functions like `multiply taxRate amount` can be partially applied to `multiplyByTaxRate = multiply 0.08` and reused throughout a codebase, improving code reuse.
 
 ## Example 30: Currying and Higher-Order Functions
 

@@ -9,7 +9,7 @@ tags: ["kotlin", "tutorial", "by-example", "examples", "code-first", "jvm", "and
 
 🔴 **CRITICAL STATUS: COMPLETELY EMPTY** - This tutorial is currently under development with 0 out of 75-85 target examples. All three levels (beginner, intermediate, advanced) need to be created from scratch.
 
-**When complete**, this by-example guide will teach 95% of Kotlin through 75-85 annotated code examples organized by complexity level.
+**When complete**, this by-example guide will teach essential Kotlin concepts through 75-85 annotated code examples organized by complexity level.
 
 **Current Progress**:
 
@@ -48,7 +48,7 @@ Progress from fundamentals through production patterns to advanced features. Eac
 
 ## Coverage Philosophy
 
-This by-example guide provides **95% coverage of Kotlin** through practical, annotated examples. The 95% figure represents the depth and breadth of concepts covered, not a time estimate—focus is on **outcomes and understanding**, not duration.
+This by-example guide provides **comprehensive coverage of Kotlin** through practical, annotated examples. This tutorial covers core language features comprehensively, not a time estimate—focus is on **outcomes and understanding**, not duration.
 
 ### What's Covered
 
@@ -70,7 +70,7 @@ This guide focuses on **learning-oriented examples**, not problem-solving recipe
 
 - **Deep framework knowledge** - Ktor, Spring Boot covered at introductory level only
 
-The 95% coverage goal maintains humility—no tutorial can cover everything. This guide teaches the **core concepts that unlock the remaining 5%** through your own exploration and project work.
+The comprehensive coverage goal maintains humility—no tutorial can cover everything. This guide teaches the **core concepts that continue learning beyond this tutorial** through your own exploration and project work.
 
 ## How to Use This Guide
 
@@ -86,16 +86,16 @@ The 95% coverage goal maintains humility—no tutorial can cover everything. Thi
 
 Understanding where by-example fits in the tutorial ecosystem helps you choose the right learning path:
 
-| Tutorial Type    | Coverage                | Approach                       | Target Audience         | When to Use                                          |
-| ---------------- | ----------------------- | ------------------------------ | ----------------------- | ---------------------------------------------------- |
-| **By Example**   | 95% through 80 examples | Code-first, annotated examples | Experienced developers  | Quick language pickup, reference, language switching |
-| **Quick Start**  | 5-30% touchpoints       | Hands-on project               | Newcomers to Kotlin     | First taste, decide if worth learning                |
-| **Beginner**     | 0-60% comprehensive     | Narrative, explanatory         | Complete beginners      | Deep understanding, first programming language       |
-| **Intermediate** | 60-85%                  | Practical applications         | Past basics             | Production patterns, frameworks                      |
-| **Advanced**     | 85-95%                  | Complex systems                | Experienced Kotlin devs | Coroutines internals, multiplatform                  |
-| **Cookbook**     | Problem-oriented        | Recipe, solution-focused       | All levels              | Specific problems, common tasks                      |
+| Tutorial Type    | Coverage                          | Approach                       | Target Audience         | When to Use                                          |
+| ---------------- | --------------------------------- | ------------------------------ | ----------------------- | ---------------------------------------------------- |
+| **By Example**   | Comprehensive through 80 examples | Code-first, annotated examples | Experienced developers  | Quick language pickup, reference, language switching |
+| **Quick Start**  | 5-30% touchpoints                 | Hands-on project               | Newcomers to Kotlin     | First taste, decide if worth learning                |
+| **Beginner**     | 0-60% comprehensive               | Narrative, explanatory         | Complete beginners      | Deep understanding, first programming language       |
+| **Intermediate** | 60-85%                            | Practical applications         | Past basics             | Production patterns, frameworks                      |
+| **Advanced**     | advanced topics                   | Complex systems                | Experienced Kotlin devs | Coroutines internals, multiplatform                  |
+| **Cookbook**     | Problem-oriented                  | Recipe, solution-focused       | All levels              | Specific problems, common tasks                      |
 
-**By Example vs. Quick Start**: By Example provides 95% coverage through examples vs. Quick Start's 5-30% through a single project. By Example is code-first reference; Quick Start is hands-on introduction.
+**By Example vs. Quick Start**: By Example provides comprehensive coverage through examples vs. Quick Start's 5-30% through a single project. By Example is code-first reference; Quick Start is hands-on introduction.
 
 **By Example vs. Beginner Tutorial**: By Example is code-first for experienced developers; Beginner Tutorial is narrative-first for complete beginners. By Example shows patterns; Beginner Tutorial explains concepts.
 
@@ -228,9 +228,9 @@ val value = result ?: 0          // => value is 0 (Elvis operator provides defau
 
 **80 examples across three levels**:
 
-- **Beginner** (1-27): 27 examples covering 0-40% of language features
-- **Intermediate** (28-54): 27 examples covering 40-75% of language features
-- **Advanced** (55-80): 26 examples covering 75-95% of language features
+- **Beginner** (1-27): 27 examples covering fundamental language features
+- **Intermediate** (28-54): 27 examples covering production patterns
+- **Advanced** (55-80): 26 examples covering advanced language features
 
 Each level builds on previous knowledge while remaining self-contained and runnable.
 

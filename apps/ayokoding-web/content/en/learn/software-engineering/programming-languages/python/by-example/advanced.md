@@ -263,7 +263,7 @@ print(acc.balance)                            # => Access balance attribute
 
 **Key Takeaway**: Descriptors enable reusable attribute validation and transformation logic.
 
-**Why It Matters**: Descriptors enable reusable attribute validation and transformation logic that works across multiple classes, reducing code duplication in large codebases. The protocol underlies properties, methods, and classmethods in Python, making it fundamental to understanding Python's attribute access model. Mastering descriptors is essential for framework development and building elegant APIs with computed or validated attributes.
+**Why It Matters**: This concept is fundamental to understanding the language and helps build robust, maintainable code.
 
 ## Example 58: Property as Descriptor
 
@@ -597,7 +597,7 @@ asyncio.run(main())                           # => Bootstrap async execution
 
 **Key Takeaway**: Async context managers enable safe async resource management with **aenter** and **aexit**.
 
-**Why It Matters**: Async context managers enable safe resource management in asyncio applications where setup and cleanup operations require I/O, like database connections and network sockets. The **aenter** and **aexit** protocol parallels synchronous context managers but supports await for asynchronous operations. Mastering async context managers is essential for preventing resource leaks in production asyncio applications.
+**Why It Matters**: This concept is fundamental to understanding the language and helps build robust, maintainable code.
 
 ## Example 62: Protocol (Structural Subtyping)
 
@@ -831,7 +831,7 @@ stats.print_stats(10)                         # => Print top 10 slowest function
 
 **Key Takeaway**: cProfile reveals performance hotspots showing call counts and time per function.
 
-**Why It Matters**: Profiling identifies performance bottlenecks through measurement rather than intuition, preventing premature optimization and guiding optimization efforts to code that matters. The cProfile module provides low-overhead profiling suitable for production systems to diagnose performance issues in real workloads. Understanding profiling is essential for optimization work where data-driven decisions prevent wasted effort on code that doesn't impact performance.
+**Why It Matters**: This concept is fundamental to understanding the language and helps build robust, maintainable code.
 
 ## Example 65: Memory Profiling
 
@@ -869,7 +869,7 @@ def process_large_data():                     # => Define function to profile
 
 **Key Takeaway**: memory_profiler shows line-by-line memory usage revealing allocation hotspots.
 
-**Why It Matters**: Memory profiling identifies memory leaks and allocation hotspots that cause production systems to crash or experience degraded performance over time. The line-by-line output pinpoints exactly where memory is allocated, enabling targeted optimization. Mastering memory profiling is critical for long-running applications and systems processing large datasets where memory efficiency impacts scalability.
+**Why It Matters**: This concept is fundamental to understanding the language and helps build robust, maintainable code.
 
 ## Example 66: Threading for I/O-Bound Tasks
 
@@ -1024,7 +1024,7 @@ with ThreadPoolExecutor(max_workers=3) as executor:  # => Create thread pool wit
 
 **Key Takeaway**: ThreadPoolExecutor manages thread lifecycle with automatic pooling and cleanup.
 
-**Why It Matters**: ThreadPoolExecutor simplifies thread management with automatic pooling and cleanup, preventing thread leaks and resource exhaustion from manual thread creation. The Future-based API enables flexible result collection with as_completed() and exception handling. Understanding executor patterns is essential for production I/O-bound applications where manual thread management is error-prone.
+**Why It Matters**: This concept is fundamental to understanding the language and helps build robust, maintainable code.
 
 ## Example 68: Multiprocessing for CPU-Bound Tasks
 
@@ -1275,7 +1275,7 @@ asyncio.run(main())                           # => Bootstrap async execution
 
 **Key Takeaway**: ContextVar provides task-local storage preserving isolation across concurrent async tasks.
 
-**Why It Matters**: ContextVar provides task-local storage for asyncio applications, preserving isolation across concurrent tasks similar to thread-local storage but compatible with cooperative multitasking. The pattern is essential for request context in web frameworks where multiple requests are handled concurrently on the same thread. Mastering ContextVar is critical for building production asyncio applications that need per-request state like authentication tokens and request IDs.
+**Why It Matters**: This concept is fundamental to understanding the language and helps build robust, maintainable code.
 
 ## Example 71: Advanced Decorators - Class Decorators
 
@@ -1493,7 +1493,7 @@ safe_list = ast.literal_eval("[1, 2, 3]")    # => Output: [1, 2, 3]
 
 **Key Takeaway**: eval/exec enable dynamic code execution but require careful security considerations.
 
-**Why It Matters**: Dynamic code execution with eval/exec enables runtime code generation and scripting capabilities, but introduces severe security risks if used with untrusted input. The compile() function enables reusing compiled code for performance when executing the same code repeatedly. These tools should be avoided in production unless absolutely necessary, and ast.literal_eval provides safe literal evaluation when dynamic data parsing is needed.
+**Why It Matters**: This concept is fundamental to understanding the language and helps build robust, maintainable code.
 
 ## Example 74: AST Module for Code Analysis
 

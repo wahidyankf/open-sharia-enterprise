@@ -358,7 +358,7 @@ class TransferController(
 
 **Key Takeaway**: `@Transactional` ensures all-or-nothing execution—either all database changes commit or all rollback on exception.
 
-**Why It Matters**: Spring's declarative transaction management prevents data corruption from partial failures—without @Transactional, a bank transfer could debit one account but crash before crediting another, creating phantom money. Production systems at PayPal and Stripe rely on transaction boundaries to ensure ACID guarantees, automatically rolling back all database changes when exceptions occur, eliminating manual rollback code that developers forget 40% of the time in non-transactional systems, causing financial discrepancies.
+**Why It Matters**: Spring's declarative transaction management prevents data corruption from partial failures—without @Transactional, a bank transfer could debit one account but crash before crediting another, creating phantom money. Production financial systems rely on transaction boundaries to ensure ACID guarantees, automatically rolling back all database changes when exceptions occur, eliminating error-prone manual rollback code that causes financial discrepancies in non-transactional systems.
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
@@ -941,7 +941,7 @@ class StreamingImportService(
 
 **Key Takeaway**: Batch operations reduce database round-trips—use `saveAll()` for small batches, manual flushing for large datasets.
 
-**Why It Matters**: Batch operations reduce database roundtrips from 1000 INSERTs to 20 batched INSERTs (50 per batch), decreasing import time from 10 minutes to 30 seconds—critical for ETL jobs processing millions of records. Production data pipelines at Airbnb and Uber use batch updates with manual flush/clear to import terabytes of data nightly without exhausting memory, while JPQL bulk updates execute single SQL statements that modify millions of rows without loading entities into memory.
+**Why It Matters**: Batch operations reduce database roundtrips significantly (for example, from 1000 individual INSERTs to 20 batched operations with 50 items per batch)—critical for ETL jobs processing large datasets. Production data pipelines use batch updates with manual flush/clear to import large volumes of data without exhausting memory, while JPQL bulk updates execute single SQL statements that modify many rows without loading entities into memory.
 
 ---
 
@@ -3115,7 +3115,7 @@ class SessionService(
 
 **Key Takeaway**: Redis provides distributed caching across multiple application instances—configure TTL for automatic expiration.
 
-**Why It Matters**: Redis distributed caching enables horizontal scaling where all application instances share cache entries, unlike in-memory caches where each instance maintains separate caches causing inconsistent reads. Production systems at Twitter and Instagram use Redis to cache session data across 100+ application instances, achieving sub-millisecond cache response times at 100,000+ requests/second, with Redis persistence options (RDB snapshots, AOF logs) preventing cache warm-up delays after crashes that would overwhelm databases with cold cache load.
+**Why It Matters**: Redis distributed caching enables horizontal scaling where all application instances share cache entries, unlike in-memory caches where each instance maintains separate caches causing inconsistent reads. Production systems use Redis to cache session data across many application instances, achieving sub-millisecond cache response times at high request volumes, with Redis persistence options (RDB snapshots, AOF logs) preventing cache warm-up delays after crashes that would overwhelm databases with cold cache load.
 
 ---
 
@@ -4387,7 +4387,7 @@ sequenceDiagram
 
 **Key Takeaway**: WebSocket enables real-time bidirectional communication—use `@MessageMapping` for client messages, `@SendTo` for broadcast to all subscribers, and `@SendToUser` for user-specific messages.
 
-**Why It Matters**: Spring's declarative transaction management prevents data corruption from partial failures—without @Transactional, a bank transfer could debit one account but crash before crediting another, creating phantom money. Production systems at PayPal and Stripe rely on transaction boundaries to ensure ACID guarantees, automatically rolling back all database changes when exceptions occur, eliminating manual rollback code that developers forget 40% of the time in non-transactional systems, causing financial discrepancies.
+**Why It Matters**: Spring's declarative transaction management prevents data corruption from partial failures—without @Transactional, a bank transfer could debit one account but crash before crediting another, creating phantom money. Production financial systems rely on transaction boundaries to ensure ACID guarantees, automatically rolling back all database changes when exceptions occur, eliminating error-prone manual rollback code that causes financial discrepancies in non-transactional systems.
 
 ---
 
@@ -4947,7 +4947,7 @@ data class ProfileUpdate(val email: String, val phone: String)
 
 **Key Takeaway**: Custom argument resolvers eliminate repetitive parameter extraction—implement `HandlerMethodArgumentResolver` to automatically inject domain objects from headers, cookies, or custom authentication mechanisms.
 
-**Why It Matters**: Batch operations reduce database roundtrips from 1000 INSERTs to 20 batched INSERTs (50 per batch), decreasing import time from 10 minutes to 30 seconds—critical for ETL jobs processing millions of records. Production data pipelines at Airbnb and Uber use batch updates with manual flush/clear to import terabytes of data nightly without exhausting memory, while JPQL bulk updates execute single SQL statements that modify millions of rows without loading entities into memory.
+**Why It Matters**: Batch operations reduce database roundtrips significantly (for example, from 1000 individual INSERTs to 20 batched operations with 50 items per batch)—critical for ETL jobs processing large datasets. Production data pipelines use batch updates with manual flush/clear to import large volumes of data without exhausting memory, while JPQL bulk updates execute single SQL statements that modify many rows without loading entities into memory.
 
 ---
 

@@ -290,7 +290,7 @@ pub extern "C" fn rust_greeting(name: *const i8) -> *mut i8 {
 
 **Key Takeaway**: FFI through `extern` blocks enables interoperability with C libraries by declaring external function signatures, with `unsafe` required for calls since the compiler can't verify foreign code safety.
 
-**Why It Matters**: Safe FFI boundaries with explicit unsafe calls prevent the memory corruption common when interfacing with C libraries, enabling gradual migration from C/C++ codebases. Firefox's Stylo replaced C++ layout code with Rust incrementally through FFI, catching bugs at the Rust/C++ boundary that would be undefined behavior in pure C++ rewrites—enabling safe refactoring of legacy codebases.
+**Why It Matters**: This concept is fundamental to understanding the language and helps build robust, maintainable code.
 
 ---
 
@@ -1029,7 +1029,7 @@ async fn handle_async_result() {
 
 **Key Takeaway**: Async/await syntax enables writing asynchronous code with synchronous structure, with `async fn` returning futures and `.await` yielding to the runtime until futures complete.
 
-**Why It Matters**: Async/await compiles to state machines without allocation overhead, enabling millions of concurrent tasks on a single thread impossible with OS threads. Discord handles millions of concurrent WebSocket connections using async Rust with memory usage of 120KB per million connections—three orders of magnitude more efficient than thread-per-connection models in Java or Go.
+**Why It Matters**: This concept is fundamental to understanding the language and helps build robust, maintainable code.
 
 ---
 
@@ -4440,7 +4440,7 @@ fn main() {
 
 **Key Takeaway**: Cargo features enable compile-time conditional compilation and optional dependencies, allowing libraries to provide flexible configurations and reduce binary size by excluding unused functionality.
 
-**Why It Matters**: Cargo features enable conditional compilation for platform-specific code and optional dependencies without preprocessor macros, providing type-safe feature management. Embedded Rust projects use features to compile different code paths for different targets (ARM Cortex-M vs RISC-V) while maintaining single codebase—avoiding the #ifdef soup that makes C embedded codebases unmaintainable across platforms.
+**Why It Matters**: This concept is fundamental to understanding the language and helps build robust, maintainable code.
 
 ---
 
@@ -4630,7 +4630,7 @@ criterion_main!(benches);            // => Macro generates main function
 
 **Key Takeaway**: Use Criterion for statistically rigorous benchmarks with warmup and measurement phases, and flamegraph or perf for profiling to identify performance bottlenecks, always profiling release builds (`--release`).
 
-**Why It Matters**: Statistical benchmarking with Criterion prevents measurement noise and regression detection failures common with manual timing, while profiling tools identify hotspots that intuition often misses. Production optimizations guided by flamegraphs reveal that 80% of runtime is often in unexpected places—making profiling essential for avoiding premature optimization while ensuring optimization efforts target actual bottlenecks rather than guesses.
+**Why It Matters**: This concept is fundamental to understanding the language and helps build robust, maintainable code.
 
 ---
 

@@ -314,7 +314,7 @@ flowchart LR
 
 **Key Takeaway**: WebClient enables reactive programming with non-blocking I/O—threads are released during HTTP calls and notified via callbacks, allowing higher concurrency than RestTemplate's blocking model.
 
-**Why It Matters**: WebClient's non-blocking reactive model enables a single application instance to handle 10,000 concurrent external API calls with 10-20 threads, compared to RestTemplate requiring 10,000 threads for the same concurrency—preventing thread pool exhaustion that causes cascading failures. Production microservices at Netflix use reactive clients to call hundreds of downstream services concurrently, maintaining sub-100ms latency even when orchestrating responses from 20+ services per request through reactive composition.
+**Why It Matters**: WebClient's non-blocking reactive model enables a single application instance to handle many concurrent external API calls with minimal threads, compared to RestTemplate requiring one thread per concurrent request—preventing thread pool exhaustion that causes cascading failures. Production microservices use reactive clients to call many downstream services concurrently, maintaining low latency even when orchestrating responses from multiple services per request through reactive composition.
 
 ### Example 43: Feign Clients - Declarative REST Clients
 
@@ -594,7 +594,7 @@ flowchart TD
 
 **Key Takeaway**: Eureka enables service discovery—microservices register with Eureka Server and discover other services by name instead of hardcoded URLs, enabling dynamic scaling and failover.
 
-**Why It Matters**: Service discovery eliminates hardcoded service URLs, enabling dynamic scaling where new instances register automatically and failed instances deregister, allowing load balancers to route traffic only to healthy instances. Production Kubernetes deployments use service discovery (Kubernetes Service + CoreDNS) for container orchestration where pods scale from 3 to 100 instances during traffic spikes, with DNS updates propagating in seconds versus hours for manual load balancer configuration changes.
+**Why It Matters**: Service discovery eliminates hardcoded service URLs, enabling dynamic scaling where new instances register automatically and failed instances deregister, allowing load balancers to route traffic only to healthy instances. Production Kubernetes deployments use service discovery (Kubernetes Service + CoreDNS) for container orchestration where pods scale dynamically during traffic spikes, with DNS updates propagating quickly compared to manual load balancer configuration changes.
 
 ### Example 45: Spring Boot Actuator - Health & Metrics
 
@@ -919,7 +919,7 @@ sequenceDiagram
 
 **Key Takeaway**: Micrometer provides vendor-neutral instrumentation—use `Counter`, `Gauge`, and `Timer` to track business metrics and export to monitoring systems like Prometheus without vendor lock-in.
 
-**Why It Matters**: Business metrics (orders placed, payment failures, cart abandonment rate) complement infrastructure metrics (CPU, memory) to enable product-driven alerting where engineering teams get paged when business KPIs degrade even if infrastructure appears healthy. Production monitoring dashboards at Shopify and Stripe display business metrics alongside technical metrics, revealing revenue-impacting issues (payment gateway failures spike failed payment attempts) before customer support tickets arrive, reducing mean time to detection from hours to minutes.
+**Why It Matters**: Business metrics (orders placed, payment failures, cart abandonment rate) complement infrastructure metrics (CPU, memory) to enable product-driven alerting where engineering teams get paged when business KPIs degrade even if infrastructure appears healthy. Production monitoring dashboards display business metrics alongside technical metrics, revealing revenue-impacting issues (payment gateway failures spike failed payment attempts) before customer support tickets arrive, significantly reducing mean time to detection.
 
 ### Example 47: Distributed Tracing - Micrometer Tracing
 
@@ -1235,7 +1235,7 @@ class OrderLoggingController {
 
 **Key Takeaway**: Structured logging with MDC enables correlation—use Logstash encoder for JSON output and MDC for request-scoped context like trace IDs, making logs searchable in centralized logging systems.
 
-**Why It Matters**: Structured logging with JSON format and MDC (Mapped Diagnostic Context) enables centralized log aggregation (ELK stack, Datadog) where engineers query logs by trace ID to reconstruct request flows across microservices. Production systems use MDC to propagate correlation IDs, user IDs, and tenant IDs through all log statements, enabling queries like "show all logs for user 12345 in the last hour" that would be impossible with unstructured text logs, reducing incident investigation time from hours (grep logs across 50 servers) to minutes (single query).
+**Why It Matters**: Structured logging with JSON format and MDC (Mapped Diagnostic Context) enables centralized log aggregation (ELK stack, Datadog) where engineers query logs by trace ID to reconstruct request flows across microservices. Production systems use MDC to propagate correlation IDs, user IDs, and tenant IDs through all log statements, enabling queries like "show all logs for user 12345 in the last hour" that would be impossible with unstructured text logs, significantly reducing incident investigation time.
 
 ### Example 49: Circuit Breaker - Resilience4j
 
@@ -3840,7 +3840,7 @@ class HelloController {  // => Simple endpoint demonstrating native image functi
 
 **Key Takeaway**: GraalVM native images provide instant startup (~50ms vs ~2s) and minimal memory footprint (~20MB vs ~200MB)—ideal for serverless, containers, and microservices, but with longer build times and reflection/proxy limitations.
 
-**Why It Matters**: GraalVM native images compile Spring Boot applications to native executables with instant startup (50ms vs 2000ms JVM) and minimal memory footprint (20MB vs 200MB), enabling serverless deployments where cold start time directly impacts user experience. Production serverless functions (AWS Lambda, Google Cloud Functions) use native images to achieve sub-100ms cold starts that feel instant to users, while Kubernetes deployments benefit from 10x faster pod startup during autoscaling events, reducing time to handle traffic spikes from minutes (waiting for JVM warmup) to seconds.
+**Why It Matters**: GraalVM native images compile Spring Boot applications to native executables with instant startup and minimal memory footprint, enabling serverless deployments where cold start time directly impacts user experience. Production serverless functions use native images to achieve very fast cold starts that feel instant to users, while Kubernetes deployments benefit from significantly faster pod startup during autoscaling events, reducing time to handle traffic spikes dramatically compared to traditional JVM warmup.
 
 ---
 
@@ -5542,7 +5542,7 @@ services:
 
 **Key Takeaway**: Comprehensive observability requires metrics (Prometheus), traces (Zipkin), and logs (Loki)—use Micrometer for metrics, automatic span propagation for distributed tracing, and structured logging with MDC for trace correlation.
 
-**Why It Matters**: Comprehensive observability requires metrics (what is slow), traces (where is the slowness), and logs (why it is slow)—metrics identify 95th percentile latency increasing from 100ms to 500ms, traces pinpoint the Database Service contributing 400ms, logs reveal the slow query. Production teams use observability to detect issues before customers complain (alerting on metric thresholds) and diagnose root causes in minutes (tracing + structured log queries) instead of hours of manual log analysis, reducing MTTR and improving SLA compliance.
+**Why It Matters**: Comprehensive observability requires metrics (what is slow), traces (where is the slowness), and logs (why it is slow)—metrics identify latency degradation, traces pinpoint which services contribute to slowness, logs reveal the root cause. Production teams use observability to detect issues before customers complain (alerting on metric thresholds) and diagnose root causes quickly (tracing + structured log queries) instead of manual log analysis, reducing MTTR and improving SLA compliance.
 
 ---
 

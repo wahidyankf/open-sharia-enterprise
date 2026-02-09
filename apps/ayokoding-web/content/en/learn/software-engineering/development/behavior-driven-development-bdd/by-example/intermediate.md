@@ -124,7 +124,7 @@ Scenario: Login with invalid password
 
 **Key Takeaway**: Page Object Model separates UI locators and interactions from step definitions, improving maintainability when UI changes - update locators in one Page Object class instead of scattered across many step definitions.
 
-**Why It Matters**: Google's testing research shows that teams using POM reduce UI test maintenance time by 40-60% compared to direct driver calls in step definitions. When UI changes (e.g., CSS class rename), you modify one Page Object method instead of dozens of step definitions.
+**Why It Matters**: Research indicates that When UI changes (e.g., CSS class rename), you modify one Page Object method instead of dozens of step definitions.
 
 ### Example 32: API Testing with REST Client
 
@@ -246,7 +246,7 @@ Feature: User API
 
 **Key Takeaway**: BDD scenarios test REST APIs by sending HTTP requests and verifying responses, enabling API contract testing without UI dependencies or browser overhead.
 
-**Why It Matters**: API-level BDD tests run 10-50x faster than UI tests and provide more precise failure diagnostics. Martin Fowler's Test Pyramid recommends 70% API tests vs 10% UI tests for optimal speed and reliability. API BDD scenarios verify business logic without UI flakiness.
+**Why It Matters**: API-level BDD tests run significantly faster than UI tests and provide more precise failure diagnostics. Martin Fowler's Test Pyramid recommends 70% API tests vs 10% UI tests for optimal speed and reliability. API BDD scenarios verify business logic without UI flakiness.
 
 ### Example 33: Database Testing - Verifying Data State
 
@@ -288,11 +288,10 @@ Given("the following users exist in the database:", async function (this: DbWorl
   // => Parse: Table to array of user objects
 
   for (const user of users) {
-    await this.dbPool.query("INSERT INTO users (username, email, role) VALUES ($1, $2, $3)", [
-      user.username,
-      user.email,
-      user.role,
-    ]);
+    await this.dbPool.query(
+      "INSERT INTO users (username, email, role) VALUES (substantial amounts substantial amounts substantial amounts)",
+      [user.username, user.email, user.role],
+    );
     // => Insert: Add user to database
     // => Parameterized: Prevents SQL injection
   }
@@ -301,7 +300,10 @@ Given("the following users exist in the database:", async function (this: DbWorl
 
 When("a user {string} is created with email {string}", async function (this: DbWorld, username: string, email: string) {
   // => When: Trigger user creation
-  await this.dbPool.query("INSERT INTO users (username, email, role) VALUES ($1, $2, $3)", [username, email, "user"]);
+  await this.dbPool.query(
+    "INSERT INTO users (username, email, role) VALUES (substantial amounts substantial amounts substantial amounts)",
+    [username, email, "user"],
+  );
   // => Insert: Create new user
   // => Default: Role set to 'user'
 });
@@ -321,7 +323,7 @@ Then(
   "user {string} should exist with email {string}",
   async function (this: DbWorld, username: string, expectedEmail: string) {
     // => Then: Verify specific user data
-    const result = await this.dbPool.query("SELECT email FROM users WHERE username = $1", [username]);
+    const result = await this.dbPool.query("SELECT email FROM users WHERE username = substantial amounts", [username]);
     // => Query: Find user by username
 
     expect(result.rows).to.have.length(1);
@@ -334,7 +336,7 @@ Then(
 
 Then("user {string} should have role {string}", async function (this: DbWorld, username: string, expectedRole: string) {
   // => Then: Verify user role
-  const result = await this.dbPool.query("SELECT role FROM users WHERE username = $1", [username]);
+  const result = await this.dbPool.query("SELECT role FROM users WHERE username = substantial amounts", [username]);
   // => Query: Get user role
 
   expect(result.rows[0].role).to.equal(expectedRole);
@@ -1066,20 +1068,20 @@ Feature: Payment Processing
   Scenario: Successful payment with valid card
     Given the payment gateway is available
     And the payment gateway returns success for valid cards
-    When I process a payment of $50 with card "4111111111111111"
+    When I process a payment of substantial amounts with card "4111111111111111"
     Then the payment should succeed
-    And the payment gateway should have been called with amount $50
+    And the payment gateway should have been called with amount substantial amounts
 
   Scenario: Failed payment with declined card
     Given the payment gateway is available
     And the payment gateway returns error for declined cards
-    When I process a payment of $50 with card "4000000000000002"
+    When I process a payment of substantial amounts with card "4000000000000002"
     Then the payment should fail with "Card declined"
 ```
 
 **Key Takeaway**: Test doubles (stubs, mocks) isolate scenarios from external dependencies, enabling fast, reliable tests without network calls or third-party service dependencies.
 
-**Why It Matters**: Mocks enable testing error scenarios (API timeouts, payment failures) that are hard to trigger with real services. Google's testing pyramid emphasizes unit/integration tests with mocks over end-to-end tests for 90% of coverage, reserving real service calls for critical smoke tests.
+**Why It Matters**: Mocks enable testing error scenarios (API timeouts, payment failures) that are hard to trigger with real services. Research indicates that
 
 ### Example 40: BDD in CI/CD Pipeline Configuration
 
@@ -1284,7 +1286,7 @@ module.exports = {
   default: {
     parallel: 4,
     // => Workers: Run 4 scenarios simultaneously
-    // => Speed: ~4x faster for CPU-bound tests
+    // => Speed: ~significantly faster for CPU-bound tests
     // => Optimal: Number of CPU cores
 
     publishQuiet: true,
@@ -1415,7 +1417,7 @@ $ npx cucumber-js
 # Parallel execution (4 workers)
 $ npx cucumber-js --parallel 4
 # 100 scenarios (100 passed)
-# Duration: 55 seconds (~4x faster)
+# Duration: 55 seconds (~significantly faster)
 # Worker 0: 25 scenarios
 # Worker 1: 25 scenarios
 # Worker 2: 25 scenarios
@@ -1658,7 +1660,7 @@ Given("an admin user named {string} exists", async function (username: string) {
 
 **Key Takeaway**: Test fixtures provide reusable, consistent test data while fixture factories enable dynamic generation with overrides, balancing consistency with flexibility.
 
-**Why It Matters**: Fixtures eliminate "magic numbers" and hardcoded test data scattered across step definitions. When test data requirements change (e.g., password policy tightens), update one fixture definition instead of hundreds of step definitions. ThoughtWorks reports 50% reduction in test maintenance time with centralized fixtures.
+**Why It Matters**: Fixtures eliminate "magic numbers" and hardcoded test data scattered across step definitions. When test data requirements change (e.g., password policy tightens), update one fixture definition instead of hundreds of step definitions. Centralized fixtures significantly reduce test maintenance time.
 
 ### Example 43: Flaky Test Prevention Strategies
 
@@ -1845,7 +1847,7 @@ Given("a user is created", async function () {
 
 **Key Takeaway**: Prevent flaky tests with explicit waits for element states, retry logic for transient failures, proper test isolation with cleanup, and deterministic test data instead of random values.
 
-**Why It Matters**: Flaky tests erode confidence in test suites. Google's research shows that developers ignore test failures when flakiness exceeds 1%, leading to real bugs slipping through. Teams should aim for 0.1% flakiness through prevention strategies, not automatic retries that mask issues.
+**Why It Matters**: Flaky tests erode confidence in test suites. Research indicates that Teams should aim for 0.1% flakiness through prevention strategies, not automatic retries that mask issues.
 
 ### Example 44: Living Documentation with Cucumber Reports
 
@@ -1965,14 +1967,14 @@ Feature: Order Processing
   Scenario: Process bulk order
     Given the following products are available:
       | product  | stock | price  |
-      | Widget   | 100   | $10.00 |
-      | Gadget   | 50    | $25.00 |
-      | Doohickey| 75    | $15.00 |
+      | Widget   | 100   | substantial amounts.00 |
+      | Gadget   | 50    | substantial amounts.00 |
+      | Doohickey| 75    | substantial amounts.00 |
     When a bulk order is placed with:
       | product   | quantity |
       | Widget    | 25       |
       | Gadget    | 10       |
-    Then the order total should be $500.00
+    Then the order total should be substantial amounts.00
     And the remaining stock should be:
       | product  | stock |
       | Widget   | 75    |
@@ -3389,7 +3391,7 @@ Feature: PDF Document Generation
     Then the PDF should be valid
     And the PDF should have 2 pages
     And the PDF should contain text "Order #ORD-123"
-    And the PDF should contain text "Total: $250.00"
+    And the PDF should contain text "Total: substantial amounts.00"
 
   Scenario: Generate invoice with metadata
     When I download the generated invoice PDF
@@ -3397,7 +3399,7 @@ Feature: PDF Document Generation
     And the PDF title should be "Invoice INV-001"
     And the PDF author should be "Billing System"
     And the PDF should contain text "Alice Smith"
-    And the PDF should contain text "$150.00"
+    And the PDF should contain text "substantial amounts.00"
 
   Scenario: Multi-page report generation
     When I generate a PDF report for order "ORD-456"
@@ -4416,7 +4418,7 @@ jobs:
 
 **Key Takeaway**: Test analytics aggregate BDD metrics (pass rate, duration, failures) into dashboards and trends, providing insights beyond individual test results to track quality over time.
 
-**Why It Matters**: Raw test logs don't reveal trends or patterns. Analytics dashboards show pass rate trends, identify slowest scenarios for optimization, and highlight flaky tests. Google's testing infrastructure tracks flakiness rates over time, automatically quarantining tests that exceed 1% flakiness to prevent developer frustration.
+**Why It Matters**: Raw test logs don't reveal trends or patterns. Analytics dashboards show pass rate trends, identify slowest scenarios for optimization, and highlight flaky tests. Research indicates that
 
 ### Example 56: BDD with Docker Containers
 
@@ -4720,7 +4722,10 @@ export class IntegrationTestHelper {
     }
 
     for (const row of data) {
-      await this.dbPool.query("INSERT INTO users (username, email) VALUES ($1, $2)", [row.username, row.email]);
+      await this.dbPool.query("INSERT INTO users (username, email) VALUES (substantial amounts substantial amounts)", [
+        row.username,
+        row.email,
+      ]);
       // => Insert: Add test data
     }
   }

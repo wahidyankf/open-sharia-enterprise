@@ -146,7 +146,7 @@ console.log(conn.getCurrentState()); // => Output: Disconnected
 
 **Key Takeaway**: Parent transitions (disconnect) apply to all substates by checking state prefix. This eliminates duplicating disconnect logic for Idle and Active substates.
 
-**Why It Matters**: Without parent transitions, you'd write disconnect logic twice (once for Idle, once for Active). At scale, this becomes unmaintainable - if you have 10 substates, you'd duplicate the transition 10 times. When Amazon redesigned their shopping cart FSM, parent-level "logout" transitions eliminated 127 duplicate logout handlers across cart substates (browsing, adding items, applying coupons, etc.).
+**Why It Matters**: Without parent transitions, you'd write disconnect logic multiple times (once per substate). At scale, this becomes unmaintainable - with many substates, you'd duplicate the transition many times. Shopping cart FSMs use parent-level "logout" transitions to eliminate duplicate logout handlers across cart substates (browsing, adding items, applying coupons, etc.).
 
 ### Example 33: Entry/Exit Actions in Hierarchical States
 
@@ -425,7 +425,7 @@ console.log(app.getCurrentState()); // => Output: Offline
 
 **Key Takeaway**: Multi-level hierarchies enable fine-grained state organization. Parent transitions at any level apply to all descendant substates, regardless of depth.
 
-**Why It Matters**: Deep hierarchies model complex domains without explosion of duplicate transitions. Netflix's video player FSM uses 4-level hierarchy (Device → Network → Playback → Quality). A single "logout" transition at Device level handles logout from 30+ descendant states (combinations of network conditions, playback states, quality settings). Without hierarchy, they'd need 30 duplicate logout handlers.
+**Why It Matters**: Deep hierarchies model complex domains without explosion of duplicate transitions. Video player FSMs use multi-level hierarchy (Device → Network → Playback → Quality). A single "logout" transition at Device level handles logout from many descendant states (combinations of network conditions, playback states, quality settings). Without hierarchy, duplicate logout handlers would be needed for each state.
 
 ### Example 35: Default Substate Entry
 
@@ -787,7 +787,7 @@ console.log(device.getCurrentState()); // => Output: { power: 'Off', display: 'H
 
 **Key Takeaway**: Cross-region synchronization enforces dependencies between orthogonal regions. Power state changes force display state changes to maintain consistency.
 
-**Why It Matters**: Cross-region coordination prevents invalid combinations. A device can't show display while powered off. Tesla's vehicle FSM uses cross-region sync: when Drive region enters "Park" state, it forces Safety region to "Doors Unlocked" state. This prevents the invalid combination "Park + Doors Locked" which would trap passengers.
+**Why It Matters**: Cross-region coordination prevents invalid combinations. A device can't show display while powered off. Vehicle FSMs use cross-region sync: when Drive region enters "Park" state, it forces Safety region to "Doors Unlocked" state. This prevents the invalid combination "Park + Doors Locked" which would trap passengers.
 
 ### Example 39: Join Synchronization in Composite States
 
@@ -918,7 +918,7 @@ console.log(app.getCurrentState()); // => Output for verification
 
 **Key Takeaway**: Join synchronization waits for multiple regions to reach required states before transitioning to a combined state. If any region exits its required state, the join breaks.
 
-**Why It Matters**: Join synchronization models AND conditions in parallel workflows. Uber Eats requires three parallel processes to complete before "Order Ready" state: (1) Restaurant prepares food, (2) Driver arrives at restaurant, (3) Payment authorized. If any process fails, order isn't ready. Join states prevent premature transitions when only some conditions are met.
+**Why It Matters**: Join synchronization models AND conditions in parallel workflows. Food delivery systems require multiple parallel processes to complete before "Order Ready" state: (1) Restaurant prepares food, (2) Driver arrives at restaurant, (3) Payment authorized. If any process fails, order isn't ready. Join states prevent premature transitions when only some conditions are met.
 
 ### Example 40: Fork Synchronization - Splitting into Parallel Regions
 
@@ -1070,7 +1070,7 @@ console.log(processor.getCurrentState()); // => Output for verification
 
 **Key Takeaway**: Fork transitions split a single state into multiple concurrent regions. Join transitions merge regions back into a single state when all regions reach terminal states.
 
-**Why It Matters**: Fork-join models MapReduce and parallel processing patterns. When Google processes a search query, they fork into 100+ parallel regions (each searching a data shard), then join results when all regions complete. Without fork-join FSM, coordinating parallel work and merging results becomes error-prone - missing a completion signal means join never triggers.
+**Why It Matters**: Fork-join models MapReduce and parallel processing patterns. Search query processing forks into many parallel regions (each searching a data shard), then joins results when all regions complete. Without fork-join FSM, coordinating parallel work and merging results becomes error-prone - missing a completion signal means join never triggers.
 
 ## Parallel States (Examples 41-44)
 
@@ -1457,7 +1457,7 @@ console.log(configSystem.getCurrentState()); // => Output for verification
 
 **Key Takeaway**: Parallel regions can be dynamically activated/deactivated based on configuration or feature flags. Null state indicates inactive region.
 
-**Why It Matters**: Conditional activation enables feature flags and A/B testing. Facebook's FSM conditionally activates parallel regions for experimental features - 10% of users get "Stories" region activated, 90% keep it null. This prevents loading unused code and simplifies state management for users without the feature.
+**Why It Matters**: Conditional activation enables feature flags and A/B testing. FSMs conditionally activate parallel regions for experimental features - some users get experimental regions activated, others keep it null. This prevents loading unused code and simplifies state management for users without the feature.
 
 ### Example 44: Error Handling Across Parallel Regions
 
@@ -1583,7 +1583,7 @@ console.log(resilientSys.getCurrentState()); // => Output for verification
 
 **Key Takeaway**: Error handling across parallel regions can be isolated (error stays in one region) or propagating (error triggers transitions in other regions). Design choice depends on failure semantics.
 
-**Why It Matters**: Error propagation strategy impacts system resilience. AWS Lambda's FSM isolates errors - if one function instance errors, it doesn't affect parallel instances. But circuit breakers use propagating errors - if Worker region exceeds error threshold, it forces CircuitBreaker region to "Open" state, stopping all traffic. Choose isolation for independent failures, propagation for cascading protection.
+**Why It Matters**: Error propagation strategy impacts system resilience. Serverless FSMs isolate errors - if one function instance errors, it doesn't affect parallel instances. But circuit breakers use propagating errors - if Worker region exceeds error threshold, it forces CircuitBreaker region to "Open" state, stopping all traffic. Choose isolation for independent failures, propagation for cascading protection.
 
 ## History States (Examples 45-48)
 
@@ -2418,7 +2418,7 @@ traffic.next(); // => Yellow handles: Yellow → Red
 
 **Key Takeaway**: State Pattern encapsulates state-specific behavior in separate classes. Each state knows its own transitions, eliminating large conditional blocks in a single class.
 
-**Why It Matters**: State Pattern makes complex FSMs maintainable. Without it, a 20-state FSM becomes a 500-line switch statement with nested conditions - adding a new state requires modifying the monolithic switch. With State Pattern, adding a new state is just creating a new class implementing the State interface. Airbnb's booking FSM uses State Pattern for 15 booking states (searching, selecting, confirming, paying, etc.) - each state is a 50-line class instead of 750-line switch.
+**Why It Matters**: State Pattern makes complex FSMs maintainable. Without it, a multi-state FSM becomes a large switch statement with nested conditions - adding a new state requires modifying the monolithic switch. With State Pattern, adding a new state is just creating a new class implementing the State interface. Booking FSMs use State Pattern for multiple booking states (searching, selecting, confirming, paying, etc.) - each state is a small class instead of a large switch statement.
 
 ### Example 50: State Pattern with Entry/Exit Actions
 
@@ -3188,7 +3188,7 @@ console.log(`Attempts: ${conn.getAttempts()}`); // => Output: Attempts: 0
 
 **Key Takeaway**: Context object stores shared data (attempts counter) that states read and modify. States make decisions based on accumulated context data, enabling stateful behavior beyond simple state transitions.
 
-**Why It Matters**: Context data enables retry logic, rate limiting, and circuit breakers. Without context, states are stateless - you can't track "failed 3 times" because counter isn't shared. AWS SDK uses context-based retry: after 3 failed attempts (tracked in context), FSM transitions to Backoff state with exponential delay. Context data makes FSMs adapt to history, not just current state.
+**Why It Matters**: Context data enables retry logic, rate limiting, and circuit breakers. Without context, states are stateless - you can't track "failed multiple times" because counter isn't shared. SDK retry logic uses context-based retry: after multiple failed attempts (tracked in context), FSM transitions to Backoff state with exponential delay. Context data makes FSMs adapt to history, not just current state.
 
 ### Example 53: State Pattern with Strategy
 
@@ -3676,7 +3676,7 @@ console.log(`Final state: ${order.getCurrentState()}`); // => Output: Final stat
 
 **Key Takeaway**: Production order FSMs handle happy path (Draft → Delivered) and cancellation path (cancel from Submitted/Confirmed/Processing). Invalid transitions throw errors, ensuring order integrity.
 
-**Why It Matters**: Order FSMs prevent invalid operations like shipping an unconfirmed order or delivering before shipping. When Amazon redesigned their order system with FSMs, they eliminated 3,200 "order in impossible state" bugs (like "cancelled but also shipped"). FSMs make order lifecycle auditable - every state transition is logged, satisfying financial compliance requirements.
+**Why It Matters**: Order FSMs prevent invalid operations like shipping an unconfirmed order or delivering before shipping. Order systems with FSMs eliminate "order in impossible state" bugs (like "cancelled but also shipped"). FSMs make order lifecycle auditable - every state transition is logged, satisfying financial compliance requirements.
 
 ### Example 55: Order Processing with Inventory Checks
 
@@ -4272,7 +4272,7 @@ console.log(`Final state: ${saga.getCurrentState()}`); // => Output: Final state
 
 **Key Takeaway**: Saga pattern tracks compensating actions for each successful step. If any step fails, FSM executes compensations in reverse order (LIFO), undoing previous steps.
 
-**Why It Matters**: Compensation enables distributed transaction rollback. Microservices can't use database transactions - order service reserves inventory, payment service charges card, shipping service creates shipment. If shipping fails, you must compensate: refund payment, release inventory. Uber Eats uses order sagas: if restaurant rejects order after payment, saga compensates by refunding customer and releasing driver assignment. Without compensation, partial failures leave system in inconsistent state.
+**Why It Matters**: Compensation enables distributed transaction rollback. Microservices can't use database transactions - order service reserves inventory, payment service charges card, shipping service creates shipment. If shipping fails, you must compensate: refund payment, release inventory. Order sagas use compensation: if restaurant rejects order after payment, saga compensates by refunding customer and releasing driver assignment. Without compensation, partial failures leave system in inconsistent state.
 
 ### Example 58: Authentication Flow FSM - Login/Logout
 
@@ -4555,7 +4555,7 @@ setTimeout(() => {
 
 **Key Takeaway**: Authentication FSMs handle login flow, token refresh lifecycle, and logout. Automatic token refresh prevents session expiration, transitioning between LoggedIn and RefreshingToken states transparently.
 
-**Why It Matters**: Auth FSMs prevent authentication bugs. Without FSM, apps often fail to refresh tokens (causing unexpected logouts) or refresh during logout (wasting API calls). Google's OAuth FSM auto-refreshes tokens 5 minutes before expiration, transitioning to RefreshingToken state. If refresh fails (revoked token), FSM transitions to LoggedOut and redirects to login, preventing API errors from expired tokens.
+**Why It Matters**: Auth FSMs prevent authentication bugs. Without FSM, apps often fail to refresh tokens (causing unexpected logouts) or refresh during logout (wasting API calls). OAuth FSMs auto-refresh tokens before expiration, transitioning to RefreshingToken state. If refresh fails (revoked token), FSM transitions to LoggedOut and redirects to login, preventing API errors from expired tokens.
 
 ### Example 59: Multi-Factor Authentication Flow
 
@@ -4766,7 +4766,7 @@ console.log(`State: ${mfa2.getCurrentState()}`); // => Output: State: LoggedOut
 
 **Key Takeaway**: MFA FSMs add intermediate verification states (PasswordVerified → AwaitingMFA) before full authentication. Failed attempts are tracked, triggering lockout after threshold.
 
-**Why It Matters**: MFA FSMs enforce security policies. Without state tracking, apps might allow unlimited MFA attempts (brute force attack) or grant access after password verification alone (bypassing MFA). AWS IAM uses MFA FSMs: after 3 failed MFA attempts, account transitions to "Locked" state requiring admin intervention. FSM ensures MFA can't be bypassed by refreshing page or using multiple devices.
+**Why It Matters**: MFA FSMs enforce security policies. Without state tracking, apps might allow unlimited MFA attempts (brute force attack) or grant access after password verification alone (bypassing MFA). IAM systems use MFA FSMs: after multiple failed MFA attempts, account transitions to "Locked" state requiring admin intervention. FSM ensures MFA can't be bypassed by refreshing page or using multiple devices.
 
 ### Example 60: Session Timeout and Re-authentication
 
@@ -5005,4 +5005,4 @@ setTimeout(() => {
 
 **Key Takeaway**: Session FSMs track user activity, transitioning between Active (engaged) and Idle (no activity) states. Sensitive operations require re-authentication, transitioning to RequiresReauth state regardless of session activity.
 
-**Why It Matters**: Session FSMs balance security and UX. Banking apps transition to Idle after 5 minutes inactivity, limiting access to viewing balance (read-only). Attempting a transfer (sensitive op) from Idle state requires re-authentication. This prevents unauthorized transfers if user leaves device unlocked. GitHub uses session FSMs: after 2 hours idle, session transitions to RequiresReauth - viewing repos is allowed (read), but pushing code (write) requires re-authentication.
+**Why It Matters**: Session FSMs balance security and UX. Banking apps transition to Idle after inactivity, limiting access to viewing balance (read-only). Attempting a transfer (sensitive op) from Idle state requires re-authentication. This prevents unauthorized transfers if user leaves device unlocked. Code hosting systems use session FSMs: after extended idle time, session transitions to RequiresReauth - viewing repos is allowed (read), but pushing code (write) requires re-authentication.

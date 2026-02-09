@@ -1214,7 +1214,7 @@ System.out.println(finalPrice);                                                 
 
 **Key Takeaway**: Money value objects encapsulate amount and currency together, ensuring arithmetic operations maintain currency consistency and precision. Always create new Money instances rather than mutating existing ones.
 
-**Why It Matters**: Floating-point arithmetic and currency mixing cause financial errors. When PayPal analyzed payment discrepancies, they found $30M annual losses from rounding errors (using `double` instead of `BigDecimal`) and currency conversion bugs (adding USD to EUR without conversion). Money value object with BigDecimal and currency validation eliminated both error classes. Value objects make domain concepts like money first-class types with built-in validation and correct arithmetic.
+**Why It Matters**: Floating-point arithmetic and currency mixing cause financial errors. Payment systems experience losses from rounding errors (using `double` instead of `BigDecimal`) and currency conversion bugs (adding USD to EUR without conversion). Money value object with BigDecimal and currency validation eliminates both error classes. Value objects make domain concepts like money first-class types with built-in validation and correct arithmetic.
 
 ### Example 11: Date Range Value Object
 
@@ -1437,7 +1437,7 @@ User user = new User("U123", validEmail);         // => Create user with valid e
 
 **Key Takeaway**: Value objects enforce domain-specific validation rules at creation time, making invalid states unrepresentable. Email value object ensures only valid emails exist in the system.
 
-**Why It Matters**: String-based email storage allows invalid emails to proliferate. When MailChimp analyzed failed email sends, 18% of failures were due to malformed email addresses stored as strings (missing @, multiple @, whitespace). Creating Email value object with validation eliminated storage of invalid emails entirely—if an Email object exists, it's valid. Value objects turn runtime validation into compile-time guarantees (if you have an Email, it must be valid).
+**Why It Matters**: String-based email storage allows invalid emails to proliferate. Email systems experience failures due to malformed email addresses stored as strings (missing @, multiple @, whitespace). Creating Email value object with validation eliminates storage of invalid emails entirely—if an Email object exists, it's valid. Value objects turn runtime validation into compile-time guarantees (if you have an Email, it must be valid).
 
 ### Example 13: Quantity Value Object with Units
 
@@ -1731,7 +1731,7 @@ order.submit(); // => Submit order
 
 **Key Takeaway**: Aggregates group related entities under an Aggregate Root. External code accesses the aggregate only through the root, which enforces invariants and controls modifications. Internal entities (OrderLine) are modified through root methods only.
 
-**Why It Matters**: Direct access to aggregate internals violates invariants. When eBay's order system allowed direct OrderLine modifications (bypassing Order), line changes didn't recalculate order totals or validate status constraints, causing 12% of orders to have incorrect totals. Enforcing aggregate boundaries (all modifications through Order root) eliminated these consistency bugs. Aggregates are the consistency boundary—everything inside must be consistent, enforced by the root.
+**Why It Matters**: Direct access to aggregate internals violates invariants. Order systems that allow direct OrderLine modifications (bypassing Order) experience issues where line changes don't recalculate order totals or validate status constraints, causing orders to have incorrect totals. Enforcing aggregate boundaries (all modifications through Order root) eliminates these consistency bugs. Aggregates are the consistency boundary—everything inside must be consistent, enforced by the root.
 
 (Continuing in next message due to length...)
 
@@ -2587,7 +2587,7 @@ class OrderApplicationService {
 
 **Key Takeaway**: Repository interfaces in domain layer define what persistence operations exist. Infrastructure layer provides implementations using specific databases. This enables testing with in-memory repositories and database technology changes without touching domain logic.
 
-**Why It Matters**: Coupling domain logic to database details makes code untestable and inflexible. When Spotify migrated from PostgreSQL to Cassandra for their playlist system, repository pattern enabled zero domain logic changes—only repository implementations changed. Tests using in-memory repositories continued working throughout migration. Repository abstraction is critical for database independence and testability.
+**Why It Matters**: Coupling domain logic to database details makes code untestable and inflexible. Repository pattern enables database technology changes without modifying domain logic—only repository implementations need updating. Tests using in-memory repositories continue working throughout migrations. Repository abstraction is critical for database independence and testability.
 
 ### Example 20: Repository for Aggregate Reconstruction
 
@@ -2801,7 +2801,7 @@ public class PostgresOrderRepository implements OrderRepository {
 
 **Key Takeaway**: Repositories reconstruct complete aggregates including all child entities and value objects. Use factory methods for reconstruction to ensure aggregates are always in valid states with invariants satisfied.
 
-**Why It Matters**: Incomplete aggregate reconstruction causes bugs. When Amazon's order system reconstructed Order without OrderLines, business logic failed (order total calculations crashed with null pointer exceptions). Proper aggregate reconstruction ensures loaded entities are complete and valid, just like newly created ones. Repositories are the gateway between domain model and persistence—incomplete reconstruction breaks domain invariants.
+**Why It Matters**: Incomplete aggregate reconstruction causes bugs. Order systems that reconstruct Order without OrderLines experience business logic failures (order total calculations crash with null pointer exceptions). Proper aggregate reconstruction ensures loaded entities are complete and valid, just like newly created ones. Repositories are the gateway between domain model and persistence—incomplete reconstruction breaks domain invariants.
 
 (File getting long - continuing in next message with Examples 21-30...)
 
@@ -3129,7 +3129,7 @@ public class ProductServiceTest {
 
 **Key Takeaway**: In-memory repositories enable fast, isolated unit tests without database setup. They implement the same interface as production repositories, making tests use real domain logic.
 
-**Why It Matters**: Tests depending on databases are slow and fragile. When Google measured their test suite performance, database-dependent tests took 45 minutes vs 30 seconds for in-memory repository tests—90x slower. In-memory repositories enable TDD (test-driven development) with instant feedback. Repository pattern makes testing fast by allowing in-memory implementations during tests and database implementations in production.
+**Why It Matters**: Tests depending on databases are slow and fragile. Database-dependent tests run significantly slower than in-memory repository tests. In-memory repositories enable TDD (test-driven development) with instant feedback. Repository pattern makes testing fast by allowing in-memory implementations during tests and database implementations in production.
 
 ### Example 23: Repository and Unit of Work Pattern
 
@@ -3283,7 +3283,7 @@ class OrderApplicationService {
 
 **Key Takeaway**: Unit of Work pattern tracks aggregate changes and commits them in a single transaction. This enables transactional consistency across multiple aggregate saves while keeping repositories simple.
 
-**Why It Matters**: Managing transactions manually in every service method leads to errors and inconsistency. When Netflix analyzed transaction bugs, they found 20% of services had incorrect transaction boundaries (some commits too early, some too late, some missing rollback). Unit of Work pattern centralizes transaction management, ensuring all changes commit together or roll back together. This pattern is essential for maintaining consistency in complex business operations.
+**Why It Matters**: Managing transactions manually in every service method leads to errors and inconsistency. Services experience incorrect transaction boundaries (commits too early, commits too late, missing rollback). Unit of Work pattern centralizes transaction management, ensuring all changes commit together or roll back together. This pattern is essential for maintaining consistency in complex business operations.
 
 ## Domain Events (Examples 24-27)
 

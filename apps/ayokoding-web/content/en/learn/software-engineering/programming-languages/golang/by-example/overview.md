@@ -3,11 +3,11 @@ title: "Overview"
 date: 2025-12-25T08:49:14+07:00
 draft: false
 weight: 10000000
-description: "Learn Go through 85+ annotated code examples covering 95% of the language - ideal for experienced developers switching from other languages"
+description: "Learn Go through 85+ annotated code examples covering essential concepts of the language - ideal for experienced developers switching from other languages"
 tags: ["golang", "go", "tutorial", "by-example", "examples", "code-first"]
 ---
 
-**Want to quickly master Go through working examples?** This by-example guide teaches 95% of Go through 85+ annotated code examples organized by complexity level.
+**Want to quickly master Go through working examples?** This by-example guide teaches essential concepts of Go through 85+ annotated code examples organized by complexity level.
 
 ## What Is By-Example Learning?
 
@@ -29,9 +29,9 @@ The Go by-example tutorial guides you through 75-90 examples organized into thre
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 graph TD
-    A["Beginner (Examples 1-30)<br/>0-40% Coverage<br/>Fundamentals"]
-    B["Intermediate (Examples 31-60)<br/>40-75% Coverage<br/>Production Ready"]
-    C["Advanced (Examples 61-90)<br/>75-95% Coverage<br/>Expert Mastery"]
+    A["Beginner (Examples 1-30)<br/>Fundamentals<br/>Fundamentals"]
+    B["Intermediate (Examples 31-60)<br/>Production Patterns<br/>Production Ready"]
+    C["Advanced (Examples 61-90)<br/>Advanced Mastery<br/>Expert Mastery"]
 
     A -->|Master foundations| B
     B -->|Advanced patterns| C
@@ -43,7 +43,7 @@ graph TD
 
 ## Coverage Philosophy
 
-This by-example guide provides **95% coverage of Go** through practical, annotated examples. The 95% figure represents the depth and breadth of concepts covered, not a time estimate—focus is on **outcomes and understanding**, not duration.
+This by-example guide provides **comprehensive coverage of Go** through practical, annotated examples. This tutorial covers core language features comprehensively, not a time estimate—focus is on **outcomes and understanding**, not duration.
 
 ### What's Covered
 
@@ -71,7 +71,7 @@ This guide focuses on **learning-oriented examples**, not problem-solving recipe
 - **Go internals** - Scheduler algorithms, garbage collector internals, memory layout
 - **Ecosystem tools** - Profiling tools beyond `pprof`, code generation tools, specialized libraries
 
-The 95% coverage goal maintains humility—no tutorial can cover everything. This guide teaches the **core concepts that unlock the remaining 5%** through your own exploration and project work.
+The comprehensive coverage goal maintains humility—no tutorial can cover everything. This guide teaches the **core concepts that continue learning beyond this tutorial** through your own exploration and project work.
 
 ## How to Use This Guide
 
@@ -100,17 +100,17 @@ This structure minimizes context switching - explanation, visual aid, runnable c
 
 This by-example tutorial complements other learning approaches. Choose based on your situation:
 
-| Tutorial Type        | Coverage | Best For                          | Learning Style                       |
-| -------------------- | -------- | --------------------------------- | ------------------------------------ |
-| **Quick Start**      | 5-30%    | Getting something working quickly | Hands-on with guided structure       |
-| **Beginner**         | 0-60%    | Learning from scratch             | Narrative explanations with examples |
-| **This: By Example** | 95%      | Rapid depth for experienced devs  | Code-first, minimal explanation      |
-| **Cookbook**         | Parallel | Solving specific problems         | Problem-solution recipes             |
-| **Advanced**         | 85-95%   | Expert mastery                    | Deep dives and edge cases            |
+| Tutorial Type        | Coverage        | Best For                          | Learning Style                       |
+| -------------------- | --------------- | --------------------------------- | ------------------------------------ |
+| **Quick Start**      | 5-30%           | Getting something working quickly | Hands-on with guided structure       |
+| **Beginner**         | 0-60%           | Learning from scratch             | Narrative explanations with examples |
+| **This: By Example** | Comprehensive   | Rapid depth for experienced devs  | Code-first, minimal explanation      |
+| **Cookbook**         | Parallel        | Solving specific problems         | Problem-solution recipes             |
+| **Advanced**         | advanced topics | Expert mastery                    | Deep dives and edge cases            |
 
 By-example is ideal if you have programming experience in other languages. It accelerates learning by leveraging your existing knowledge - you focus on "how Go does this" rather than learning programming concepts from scratch.
 
-The 95% coverage represents depth and breadth of topics you'll encounter in production Go code. It explicitly acknowledges that no tutorial covers everything, but these examples provide the foundation to understand the remaining 5% through official documentation, source code, and community resources.
+The comprehensive coverage represents depth and breadth of topics you'll encounter in production Go code. It explicitly acknowledges that no tutorial covers everything, but these examples provide the foundation for continued learning through official documentation, source code, and community resources.
 
 ## Prerequisites
 

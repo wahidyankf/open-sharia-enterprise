@@ -40,7 +40,7 @@ jobs:
 
 **Key Takeaway**: GitHub Actions runs Claude CLI like any bash command. Use secrets for API keys, output to files, parse with jq.
 
-**Why It Matters**: CI/CD integration catches issues before code review. Automated Claude analysis scales team quality - every push gets analyzed consistently. Exit codes (exit 1) fail builds on critical issues, preventing bad code from merging. Teams report 50% reduction in code review time when Claude pre-screens for common issues.
+**Why It Matters**: CI/CD integration catches issues before code review. Automated Claude analysis scales team quality - every push gets analyzed consistently. Exit codes (exit 1) fail builds on critical issues, preventing bad code from merging.
 
 ### Example 32: Matrix Strategy with Claude - Testing Across Node Versions
 
@@ -74,7 +74,7 @@ jobs:
 
 **Key Takeaway**: Matrix builds parallelize Claude operations. Each matrix cell runs independent Claude command with different context.
 
-**Why It Matters**: Parallel execution speeds up CI/CD - 3 Node versions tested simultaneously vs sequentially saves 60% time. Claude customizes output per matrix cell (Node 18 vs 20 vs 22 compatibility tests). This enables comprehensive testing without manual effort. Teams use matrix builds to test across platforms, languages, frameworks simultaneously.
+**Why It Matters**: Parallel execution speeds up CI/CD - testing 3 Node versions simultaneously vs sequentially saves significant time. Claude customizes output per matrix cell (Node 18 vs 20 vs 22 compatibility tests). This enables comprehensive testing without manual effort. Use matrix builds to test across platforms, languages, frameworks simultaneously.
 
 ### Example 33: Artifact Generation in CI/CD
 
@@ -118,7 +118,7 @@ jobs:
 
 **Key Takeaway**: Generate artifacts with Claude, upload with actions/upload-artifact, download in dependent jobs.
 
-**Why It Matters**: Artifact workflow separates generation from deployment. Documentation generated once, used in multiple downstream jobs (deploy to site, create GitHub release, send to stakeholders). This avoids regenerating expensive Claude analysis. Teams report 40% faster pipelines when Claude artifacts are cached and reused vs regenerating per job.
+**Why It Matters**: Artifact workflow separates generation from deployment. Documentation generated once, used in multiple downstream jobs (deploy to site, create GitHub release, send to stakeholders). This avoids regenerating expensive Claude analysis.
 
 ### Example 34: Secret Management for Claude API Keys
 
@@ -156,7 +156,7 @@ jobs:
 
 **Key Takeaway**: Store API keys in GitHub Secrets, never in code. Use environment protection for production access. Set budget limits.
 
-**Why It Matters**: Exposed API keys enable unauthorized usage, costing money and risking data leaks. GitHub Secrets encrypt keys and mask them in logs. Environment protection requires manual approval for production runs. Budget limits prevent runaway costs if workflow loops infinitely. Teams use secret scanning to detect accidentally committed keys.
+**Why It Matters**: Exposed API keys enable unauthorized usage, costing money and risking data leaks. GitHub Secrets encrypt keys and mask them in logs. Environment protection requires manual approval for production runs. Budget limits prevent runaway costs if workflow loops infinitely. Use secret scanning to detect accidentally committed keys.
 
 ### Example 35: Conditional Workflow Execution
 
@@ -201,7 +201,7 @@ jobs:
 
 **Key Takeaway**: Use `paths`, `if` conditions, and git diff to run Claude only when relevant. Analyze only changed files, not entire codebase.
 
-**Why It Matters**: Unconditional analysis wastes CI/CD time and API costs. Path filters skip irrelevant changes (README edits don't need code analysis). Draft PR skip prevents spending on work-in-progress. Analyzing only changed files (not entire codebase) reduces analysis time by 80-95% for typical PRs. Teams use conditional execution to balance thorough analysis with fast feedback.
+**Why It Matters**: Unconditional analysis wastes CI/CD time and API costs. Path filters skip irrelevant changes (README edits don't need code analysis). Draft PR skip prevents spending on work-in-progress. Analyzing only changed files (not entire codebase) significantly reduces analysis time for typical PRs. Use conditional execution to balance thorough analysis with fast feedback.
 
 ## Advanced CI/CD Patterns (Examples 36-40)
 
@@ -262,7 +262,7 @@ jobs:
 
 **Key Takeaway**: Chain jobs with `needs:` dependency. Each stage gates the next - Claude runs only if tests pass, deploy only if Claude approves.
 
-**Why It Matters**: Multi-stage pipelines provide progressive quality gates. Fast checks (lint) fail quickly. Expensive operations (Claude analysis) run only on validated code. This optimizes CI/CD time - failed lints don't waste Claude API calls. Deploy gating on Claude approval prevents deploying code with detected issues. Teams report 30% faster average pipeline time with proper stage ordering.
+**Why It Matters**: Multi-stage pipelines provide progressive quality gates. Fast checks (lint) fail quickly. Expensive operations (Claude analysis) run only on validated code. This optimizes CI/CD time - failed lints don't waste Claude API calls. Deploy gating on Claude approval prevents deploying code with detected issues.
 
 ### Example 37: PR Comment Generation with Claude
 
@@ -310,7 +310,7 @@ jobs:
 
 **Key Takeaway**: Use `actions/github-script` to post Claude analysis as PR comments. Requires `pull-requests: write` permission.
 
-**Why It Matters**: PR comments provide contextual feedback where developers work. Instead of checking separate logs, developers see Claude reviews inline. This increases engagement - 70% more issues addressed when feedback appears in PR vs separate reports. Teams use this for automated code review, security scanning, style enforcement.
+**Why It Matters**: PR comments provide contextual feedback where developers work. Instead of checking separate logs, developers see Claude reviews inline. This increases engagement with issues when feedback appears in PR vs separate reports. Use this for automated code review, security scanning, style enforcement.
 
 ### Example 38: Release Notes Automation
 
@@ -366,7 +366,7 @@ jobs:
 
 **Key Takeaway**: Extract commits between tags, pass to Claude for formatting, create GitHub release with generated notes.
 
-**Why It Matters**: Manual release notes are time-consuming and inconsistent. Claude categorizes commits (features vs fixes), writes user-friendly descriptions, and formats professionally. This saves 2-3 hours per release for active projects. Automated notes never miss commits or misrepresent changes. Teams report 90% improvement in release note quality when Claude generates them from commit history.
+**Why It Matters**: Manual release notes are time-consuming and inconsistent. Claude categorizes commits (features vs fixes), writes user-friendly descriptions, and formats professionally. Automated notes never miss commits or misrepresent changes.
 
 ### Example 39: Deployment Approval Gates with Claude Risk Assessment
 
@@ -427,7 +427,7 @@ jobs:
 
 **Key Takeaway**: Claude assesses deployment risk, outputs risk level, GitHub environment protection requires approval for high-risk changes.
 
-**Why It Matters**: Automated risk assessment prevents dangerous deployments without slowing down safe ones. Low-risk changes (docs, typos) deploy immediately. High-risk changes (database migrations, API changes) require human approval. This balances speed with safety. Teams report 40% fewer production incidents when Claude risk assessment gates deployments.
+**Why It Matters**: Automated risk assessment prevents dangerous deployments without slowing down safe ones. Low-risk changes (docs, typos) deploy immediately. High-risk changes (database migrations, API changes) require human approval. This balances speed with safety.
 
 ### Example 40: Automated Rollback with Claude Failure Detection
 
@@ -498,7 +498,7 @@ jobs:
 
 **Key Takeaway**: Deploy → monitor logs → Claude analyzes health → auto-rollback on detected issues. Reduces incident response time.
 
-**Why It Matters**: Manual health monitoring delays incident detection by minutes to hours. Claude analyzes logs immediately post-deployment, detecting errors, performance degradation, or anomalies. Automatic rollback restores service within 2-3 minutes vs 15-30 minutes for manual detection and response. Teams report 70% reduction in incident impact when Claude monitors deployments.
+**Why It Matters**: Manual health monitoring delays incident detection. Claude analyzes logs immediately post-deployment, detecting errors, performance degradation, or anomalies. Automatic rollback restores service quickly vs manual detection and response.
 
 ## Multi-Language Subprocess Integration (Examples 41-45)
 
@@ -549,7 +549,7 @@ python analyze.py src/main.py   # => Runs Claude analysis
 
 **Key Takeaway**: Use `subprocess.run()` with `capture_output=True`, parse stdout as JSON, handle timeouts and errors.
 
-**Why It Matters**: Python integration enables Claude in data pipelines, automated scripts, CI/CD Python tools. Common pattern: data analysis scripts use Claude to generate insights, validate data quality, or explain anomalies. Teams integrate Claude into pytest for dynamic test generation based on data characteristics.
+**Why It Matters**: Python integration enables Claude in data pipelines, automated scripts, CI/CD Python tools. Common pattern: data analysis scripts use Claude to generate insights, validate data quality, or explain anomalies. Integrate Claude into pytest for dynamic test generation based on data characteristics.
 
 ### Example 42: Node.js Child Process with Claude
 
@@ -601,7 +601,7 @@ node generate-docs.js           # => Calls Claude via exec
 
 **Key Takeaway**: Use `child_process.exec()` with promisify for async/await, set timeouts, handle stdout/stderr separately.
 
-**Why It Matters**: Node.js integration enables Claude in build scripts (Webpack, Vite, Rollup), npm scripts, serverless functions. Example: build process uses Claude to optimize bundle size by identifying unused code. Teams use Claude in Next.js build to generate SEO metadata or pre-render content.
+**Why It Matters**: Node.js integration enables Claude in build scripts (Webpack, Vite, Rollup), npm scripts, serverless functions. Example: build process uses Claude to optimize bundle size by identifying unused code. Use Claude in Next.js build to generate SEO metadata or pre-render content.
 
 ### Example 43: Java ProcessBuilder with Claude
 
@@ -686,7 +686,7 @@ java ClaudeAnalyzer             # => Run Claude analysis
 
 **Key Takeaway**: Use `ProcessBuilder` with timeout, read stdout line-by-line, handle exit codes, parse JSON with Gson/Jackson.
 
-**Why It Matters**: Java integration enables Claude in Maven/Gradle builds, Spring Boot applications, enterprise tools. Example: Maven plugin uses Claude to generate boilerplate code during build. Teams integrate Claude into IntelliJ IDEA plugins or Jenkins pipelines for automated code review.
+**Why It Matters**: Java integration enables Claude in Maven/Gradle builds, Spring Boot applications, enterprise tools. Example: Maven plugin uses Claude to generate boilerplate code during build. Integrate Claude into IntelliJ IDEA plugins or Jenkins pipelines for automated code review.
 
 ### Example 44: Go exec.Command with Claude
 
@@ -767,7 +767,7 @@ go run analyze.go               # => Runs Claude analysis from Go
 
 **Key Takeaway**: Use `exec.CommandContext()` with timeout, capture stdout/stderr with bytes.Buffer, unmarshal JSON output.
 
-**Why It Matters**: Go integration enables Claude in CLI tools (cobra/urfave/cli), backend services, Kubernetes operators. Example: CLI tool uses Claude to explain Kubernetes YAML or generate Helm charts. Teams integrate Claude into CI/CD tools written in Go (Drone, Argo) for custom quality gates.
+**Why It Matters**: Go integration enables Claude in CLI tools (cobra/urfave/cli), backend services, Kubernetes operators. Example: CLI tool uses Claude to explain Kubernetes YAML or generate Helm charts. Integrate Claude into CI/CD tools written in Go (Drone, Argo) for custom quality gates.
 
 ### Example 45: Advanced Piping - Multi-Stage Claude Processing
 
@@ -812,7 +812,7 @@ jq '.risks[]' validation.json
 
 **Key Takeaway**: Pipe Claude output to jq for filtering, pipe filtered results to next Claude command. Each stage refines previous output.
 
-**Why It Matters**: Multi-stage piping enables complex analysis impossible in single pass. Example: extract → filter → analyze → plan → validate creates comprehensive refactoring roadmaps. Each stage specializes - first extracts raw data, second filters relevant subset, third generates recommendations, fourth validates feasibility. Teams build custom analysis pipelines combining Claude (semantic understanding) with jq (data manipulation).
+**Why It Matters**: Multi-stage piping enables complex analysis impossible in single pass. Example: extract → filter → analyze → plan → validate creates comprehensive refactoring roadmaps. Each stage specializes - first extracts raw data, second filters relevant subset, third generates recommendations, fourth validates feasibility. Build custom analysis pipelines combining Claude (semantic understanding) with jq (data manipulation).
 
 ### Example 46: Async/Await Migration from Callbacks
 
@@ -875,7 +875,7 @@ You: Convert src/services/legacy.ts from callbacks to async/await
 
 **Key Takeaway**: Claude converts callback-based code to async/await, eliminating callback hell and improving readability with modern syntax.
 
-**Why It Matters**: Callback-to-async migration is tedious and error-prone - easy to miss error handling or introduce race conditions. AI migration preserves error handling semantics while modernizing syntax. Teams report 85% time savings on legacy code modernization with AI async refactoring.
+**Why It Matters**: Callback-to-async migration is tedious and error-prone - easy to miss error handling or introduce race conditions. AI migration preserves error handling semantics while modernizing syntax.
 
 ### Example 47: Error Handling Pattern Standardization
 
@@ -903,7 +903,7 @@ You: Standardize all error handling in src/api/ to use our custom ApiError class
 
 **Key Takeaway**: Claude identifies error handling inconsistencies and refactors to standard pattern, ensuring uniform error responses across API.
 
-**Why It Matters**: Inconsistent error handling causes poor client experience - different error formats per endpoint. Standardization improves API usability and debugging. Teams report 70% reduction in client-side error handling bugs after AI error standardization. This makes APIs more developer-friendly.
+**Why It Matters**: Inconsistent error handling causes poor client experience - different error formats per endpoint. Standardization improves API usability and debugging. This makes APIs more developer-friendly.
 
 ### Example 48: Configuration Extraction and Environment Variables
 

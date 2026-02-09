@@ -54,7 +54,7 @@ printfn "%s" result      // => Outputs: Result
 
 **Key Takeaway**: Async workflows use `async { ... }` with `let!`/`do!` for awaiting. `Async.RunSynchronously` executes the workflow.
 
-**Why It Matters**: Async workflows enable efficient I/O operations without blocking threads. Financial trading systems use async to handle thousands of concurrent market data connections on a single thread pool, reducing server costs by 60% compared to thread-per-connection models.
+**Why It Matters**: Async workflows enable efficient I/O operations without blocking threads. Async workflows can handle thousands of concurrent connections on a single thread pool, improving server efficiency compared to thread-per-connection models.
 
 ## Example 32: Async Parallel Execution
 
@@ -114,7 +114,7 @@ printfn "%A" allResults  // => Outputs: [|"Task 1"; "Task 2"; "Task 3"|]
 
 **Key Takeaway**: `Async.Parallel` executes async computations concurrently. Total time equals longest task, not sum of all tasks.
 
-**Why It Matters**: Parallel async operations dramatically improve I/O-bound performance. Web scrapers fetch multiple pages concurrently, reducing total scraping time from hours (sequential) to minutes (parallel) while respecting server rate limits through semaphore controls.
+**Why It Matters**: Parallel async operations dramatically improve I/O-bound performance. Web scrapers fetch multiple pages concurrently, improving performance significantly while respecting server rate limits through semaphore controls.
 
 ## Example 33: Task Expressions (F# 6.0+)
 
@@ -162,7 +162,7 @@ printfn "%d" composedResult
 
 **Key Takeaway**: Use `task { ... }` for .NET Task interop. It's faster than `async { ... }` for Task-based APIs.
 
-**Why It Matters**: Task expressions eliminate async-to-task conversion overhead, improving performance by 20-30% when calling .NET libraries. ASP.NET Core applications benefit from direct task composition without allocation costs of Async.Start/AwaitTask conversions.
+**Why It Matters**: Task expressions eliminate async-to-task conversion overhead, improving performance when calling .NET libraries. ASP.NET Core applications benefit from direct task composition without allocation costs of Async.Start/AwaitTask conversions.
 
 ## Example 34: Computation Expressions Basics - Maybe Builder
 
@@ -227,7 +227,7 @@ printfn "%A" failedComputation
 
 **Key Takeaway**: Computation expressions provide custom control flow. `let!` unwraps values, `return` wraps results. Builders define semantics.
 
-**Why It Matters**: Computation expressions eliminate nested match statements for Option/Result handling. Railway-oriented programming uses builders to chain operations that may fail, reducing error-handling boilerplate by 70% compared to imperative try/catch chains.
+**Why It Matters**: Computation expressions eliminate nested match statements for Option/Result handling. Railway-oriented programming uses builders to chain operations that may fail, reducing error-handling boilerplate compared to imperative try/catch chains.
 
 ## Example 35: Sequence Expressions
 
@@ -629,7 +629,7 @@ printfn "Double distance: %.1f m" doubleDistance
 
 **Key Takeaway**: Units of measure prevent dimension errors. Define with `[<Measure>] type`, annotate with `<unit>`. Generic units use `'u`.
 
-**Why It Matters**: Units of measure caught NASA's $125 million Mars Climate Orbiter failure (pound-force vs. newtons). Physics simulations and engineering calculations use units to eliminate conversion errors, with compiler rejecting invalid operations like adding meters to kilograms.
+**Why It Matters**: Units of measure can prevent unit conversion errors like the Mars Climate Orbiter failure (pound-force vs. newtons). Physics simulations and engineering calculations use units to eliminate conversion errors, with compiler rejecting invalid operations like adding meters to kilograms.
 
 ## Example 41: Active Patterns - Single-Case
 
@@ -990,7 +990,7 @@ printfn "%s" stringConcat// => Outputs: hello world
 
 **Key Takeaway**: Generic functions use type parameters `'a`, `'b`. Use `inline` for operator-generic functions requiring static resolution.
 
-**Why It Matters**: Generics eliminate code duplication across types. Data structure libraries implement generic `List.map`, `List.filter` once for all types instead of separate `mapInt`, `mapString` functions, reducing codebase size by 50-70% while maintaining type safety.
+**Why It Matters**: Generics eliminate code duplication across types. Data structure libraries implement generic `List.map`, `List.filter` once for all types instead of separate `mapInt`, `mapString` functions, reducing codebase size while maintaining type safety.
 
 ## Example 46: Function Recursion Patterns
 

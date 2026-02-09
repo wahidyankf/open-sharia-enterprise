@@ -314,7 +314,7 @@ console.log(`Audit trail: ${JSON.stringify(workflow.getContext().history)}`); //
 
 Workflow engines need conditional branching based on runtime data (order value, user role, region). FSMs handle this through guard conditions on transitions.
 
-**Why It Matters**: At Amazon, the order fulfillment workflow FSM processes 1.6M orders/hour during peak with conditional branching based on order value, destination, Prime membership, and inventory availability. Orders over \$500 require fraud review (adds 2-4 hours), international shipments require customs clearance (adds 24-48 hours), and Prime orders get priority routing. Without FSM's guard conditions, implementing 47 branching rules would create unmaintainable if-else chains.
+**Why It Matters**: Order fulfillment workflow FSMs process high volumes with conditional branching based on order value, destination, membership tier, and inventory availability. High-value orders require fraud review, international shipments require customs clearance, and premium orders get priority routing. Without FSM's guard conditions, implementing many branching rules would create unmaintainable if-else chains.
 
 ```typescript
 // Workflow engine with guard conditions for conditional branching
@@ -702,7 +702,7 @@ console.log(payment.getState()); // => Output: Pending
 
 Long-running workflows need timeout handling (user didn't complete checkout, approval didn't happen in SLA). FSMs track timing for automatic state transitions.
 
-**Why It Matters**: At Airbnb, booking workflows FSM use timeout-based state transitions to auto-cancel reservations after 10 minutes of inactivity in the Pending state. This releases \$450M+ in held inventory daily (600K pending bookings × average \$750/booking). Without timeout handling, pending bookings would block inventory indefinitely, reducing availability by 15-20% and costing \$2.8M daily in lost bookings.
+**Why It Matters**: Booking workflows FSM use timeout-based state transitions to auto-cancel reservations after inactivity in the Pending state. This releases held inventory daily. Without timeout handling, pending bookings would block inventory indefinitely, reducing availability and causing revenue loss.
 
 ```typescript
 // Workflow with timeout-based state transitions
@@ -869,7 +869,7 @@ setTimeout(() => {
 
 Workflows often depend on external services (payment gateway, shipping API). FSMs handle async responses and service failures gracefully.
 
-**Why It Matters**: At Uber, ride workflows FSM coordinate with 12+ external services (maps API, driver location, payment processing, fraud detection, pricing engine, ETA calculator). The FSM handles async responses with 95th percentile latency: maps 200ms, payment 400ms, pricing 150ms. When external services fail (2-3% of requests), the FSM automatically retries with exponential backoff (max 3 retries) or transitions to fallback states. Without FSM coordination, handling concurrent service calls would require 50% more code.
+**Why It Matters**: Ride workflows FSM coordinate with many external services (maps API, driver location, payment processing, fraud detection, pricing engine, ETA calculator). The FSM handles async responses with varying latency. When external services fail, the FSM automatically retries with exponential backoff or transitions to fallback states. Without FSM coordination, handling concurrent service calls would require significantly more code.
 
 ```typescript
 // Workflow coordinating external service calls
@@ -1259,7 +1259,7 @@ report.transition("publish"); // => Uses report-specific publish logic
 
 Transition logic in switch statements can be optimized using lookup tables (Map/object), reducing cyclomatic complexity.
 
-**Why It Matters**: At Netflix, video playback FSM originally used 800-line switch statements with cyclomatic complexity of 42 (unmaintainable). By converting to transition tables, they reduced complexity to 8 and improved transition lookup from O(n) to O(1). Transition latency dropped from 12ms to <1ms, critical for 60fps playback where 16ms frame budget requires fast state changes.
+**Why It Matters**: Video playback FSMs using large switch statements have high cyclomatic complexity (unmaintainable). By converting to transition tables, complexity reduces significantly and transition lookup improves from O(n) to O(1). Transition latency drops significantly, critical for high frame rate playback where tight frame budgets require fast state changes.
 
 ```typescript
 // Optimized FSM using transition table (Map) instead of switch
@@ -2417,7 +2417,7 @@ simulateConcurrentClaim(); // => Method invocation
 
 Active-active distributed FSMs replicate state across multiple regions for low-latency access, requiring conflict resolution.
 
-**Why It Matters**: At Amazon DynamoDB, table FSMs use active-active replication across 3+ AWS regions with eventual consistency. A table update in us-east-1 replicates to eu-west-1 and ap-southeast-1 within 300-500ms (p99). Concurrent updates to the same table in different regions use last-write-wins conflict resolution based on timestamps. Active-active enables 99.99% availability: if us-east-1 fails, eu-west-1 continues serving requests with <100ms latency increase.
+**Why It Matters**: Database table FSMs use active-active replication across multiple regions with eventual consistency. A table update in one region replicates to other regions with low latency. Concurrent updates to the same table in different regions use last-write-wins conflict resolution based on timestamps. Active-active enables high availability: if one region fails, another continues serving requests with minimal latency increase.
 
 ```typescript
 // FSM with active-active state replication
@@ -2841,7 +2841,7 @@ console.log(`Designer 2 total: ${designer2.getEditCount()}`); // => 3
 
 Choreography sagas coordinate distributed transactions through event-driven FSMs without central orchestrator.
 
-**Why It Matters**: At Uber Eats, order fulfillment sagas use choreography to coordinate 4 services (Order, Payment, Restaurant, Delivery) processing 25M orders/day. Each service's FSM listens for events and publishes responses: Order→OrderPlaced, Payment→PaymentProcessed, Restaurant→FoodPrepared, Delivery→DriverAssigned. When Payment fails, it publishes PaymentFailed event triggering compensating transactions in all downstream services. Choreography enables 40% higher throughput than orchestration (no central bottleneck) but requires careful event ordering.
+**Why It Matters**: Order fulfillment sagas use choreography to coordinate multiple services (Order, Payment, Restaurant, Delivery) processing high volumes. Each service's FSM listens for events and publishes responses: Order→OrderPlaced, Payment→PaymentProcessed, Restaurant→FoodPrepared, Delivery→DriverAssigned. When Payment fails, it publishes PaymentFailed event triggering compensating transactions in all downstream services. Choreography enables higher throughput than orchestration (no central bottleneck) but requires careful event ordering.
 
 ```typescript
 // Saga choreography: Event-driven coordination without orchestrator
@@ -3109,7 +3109,7 @@ if (event === "PaymentProcessed") {
 
 Orchestration sagas use central orchestrator FSM to coordinate distributed transaction steps and compensations.
 
-**Why It Matters**: At Netflix, content publishing sagas use orchestration to coordinate 7 services (Encode, QA, Metadata, CDN, Search, Recommendations, Analytics) for each new title release. The orchestrator FSM explicitly calls each service in order, tracks progress, and executes compensations on failures. With 500+ title releases daily, orchestration provides clear visibility (single FSM shows full saga state) and simplified error handling compared to choreography's distributed event chains.
+**Why It Matters**: Content publishing sagas use orchestration to coordinate multiple services (Encode, QA, Metadata, CDN, Search, Recommendations, Analytics) for each new title release. The orchestrator FSM explicitly calls each service in order, tracks progress, and executes compensations on failures. With high release volumes, orchestration provides clear visibility (single FSM shows full saga state) and simplified error handling compared to choreography's distributed event chains.
 
 ```typescript
 // Saga orchestration: Central FSM coordinates all services
@@ -3630,7 +3630,7 @@ runIdempotentSaga(); // => Method invocation
 
 Blue-green deployments use FSM to manage traffic cutover between old (blue) and new (green) versions with instant rollback.
 
-**Why It Matters**: At Amazon, service deployments use blue-green FSM to safely release 50K+ microservice updates daily. The FSM manages: Blue→Active (100% traffic), Green→Standby (0% traffic), validate Green health, cutover Green→Active (100%), Blue→Standby (rollback-ready). Validation phase runs 50-100 health checks (latency, error rate, memory) over 5 minutes before cutover. Instant rollback capability (toggle Active back to Blue) reduces failed deployment impact from 30+ minutes (rolling deploy) to <30 seconds.
+**Why It Matters**: Service deployments use blue-green FSM to safely release microservice updates at scale. The FSM manages: Blue→Active (full traffic), Green→Standby (no traffic), validate Green health, cutover Green→Active (full traffic), Blue→Standby (rollback-ready). Validation phase runs many health checks (latency, error rate, memory) before cutover. Instant rollback capability (toggle Active back to Blue) significantly reduces failed deployment impact compared to rolling deployments.
 
 ```typescript
 // Blue-green deployment FSM with health validation and instant rollback
@@ -4364,7 +4364,7 @@ console.log(featureFlag.isEnabled("user-123")); // => false (killed)
 
 Circuit breakers use FSM to prevent cascading failures by transitioning between Closed (healthy) → Open (failing) → Half-Open (testing) states.
 
-**Why It Matters**: At Netflix, circuit breaker FSMs protect 500+ microservices from cascading failures. When a service's error rate exceeds 50% over 10s window, circuit opens (blocks requests for 30s), preventing thread pool exhaustion in upstream services. After 30s timeout, circuit enters Half-Open (allows 10 test requests). If test requests succeed (error rate <20%), circuit closes (full traffic resumes). If tests fail, circuit re-opens (30s more). Circuit breakers prevented 40+ major outages by isolating failing services before they cascade.
+**Why It Matters**: Circuit breaker FSMs protect microservice architectures from cascading failures. When a service's error rate exceeds threshold over time window, circuit opens (blocks requests temporarily), preventing thread pool exhaustion in upstream services. After timeout, circuit enters Half-Open (allows test requests). If test requests succeed (error rate below threshold), circuit closes (full traffic resumes). If tests fail, circuit re-opens. Circuit breakers prevent major outages by isolating failing services before they cascade.
 
 ```typescript
 // Circuit breaker FSM: Closed → Open → Half-Open
@@ -4918,7 +4918,7 @@ console.log(fsm2.getState()); // => Output: Rejected
 
 FSMs in event-driven architectures consume events from streams (Kafka) and publish state changes back to streams.
 
-**Why It Matters**: At Uber, trip FSMs consume events from Kafka topics (driver location updates, passenger requests, payment confirmations) at 3M events/second peak. Each trip FSM subscribes to relevant partitions, processes events to update state (Requested → Matched → PickupEnRoute → InProgress → Completed), and publishes state changes back to Kafka for downstream consumers (billing, analytics, notifications). Event streaming enables FSM scalability: 1M concurrent trips run on 500 nodes, each processing 6K events/second.
+**Why It Matters**: Trip FSMs consume events from Kafka topics (driver location updates, passenger requests, payment confirmations) at high volumes. Each trip FSM subscribes to relevant partitions, processes events to update state (Requested → Matched → PickupEnRoute → InProgress → Completed), and publishes state changes back to Kafka for downstream consumers (billing, analytics, notifications). Event streaming enables FSM scalability: many concurrent trips run across distributed nodes, each processing events efficiently.
 
 ```typescript
 // FSM consuming events from Kafka stream (simulated)

@@ -29,7 +29,7 @@ docker ps -a
 
 **Key Takeaway**: The `docker run` command combines image pulling, container creation, and execution into one operation. Containers automatically exit when their main process completes.
 
-**Why It Matters**: Docker's pull-create-run workflow eliminates the "works on my machine" problem that plagues traditional deployments. Netflix runs millions of containers daily using this exact pattern, enabling rapid deployments without environment configuration drift. Container isolation ensures your application dependencies don't conflict with the host system or other containers.
+**Why It Matters**: Docker's pull-create-run workflow eliminates the "works on my machine" problem that plagues traditional deployments. Container isolation ensures your application dependencies don't conflict with the host system or other containers.
 
 ---
 
@@ -57,9 +57,7 @@ exit
 
 **Key Takeaway**: Use `-it` flags for interactive containers requiring shell access. Exiting the shell stops the container because the main process (bash) terminates.
 
-**Why It Matters**: Interactive containers provide on-demand debugging environments identical to production without installing dependencies on your local machine. Developers at Spotify use interactive containers to troubleshoot production issues by running exact replicas of production environments locally. This eliminates environment setup time from hours to seconds.
-
----
+**Why It Matters**: Interactive containers provide on-demand debugging environments identical to production without installing dependencies on your local machine. ---
 
 ### Example 3: Simple Dockerfile
 
@@ -147,9 +145,7 @@ curl http://localhost:3000
 
 **Key Takeaway**: Dockerfiles build images layer by layer. Use specific base images (like alpine variants) to minimize image size, and leverage EXPOSE for documentation while using `-p` flag for actual port publishing.
 
-**Why It Matters**: Layered images enable Docker's caching system to rebuild only changed layers, reducing build times from minutes to seconds when iterating on code. Alpine Linux base images shrink image sizes from gigabytes to megabytes, accelerating deployments and reducing storage costs. PayPal uses Alpine-based images to deploy thousands of microservices with faster pull times and lower bandwidth consumption.
-
----
+**Why It Matters**: Layered images enable Docker's caching system to rebuild only changed layers, reducing build times when iterating on code. Alpine Linux base images shrink image sizes from gigabytes to megabytes, accelerating deployments and reducing storage costs. ---
 
 ### Example 4: Installing Dependencies in Dockerfile
 
@@ -159,19 +155,19 @@ Proper dependency installation leverages Docker's layer caching mechanism. By co
 
 ```mermaid
 graph TD
-    A["FROM node:18-alpine"] --> B["WORKDIR /app"]
-    B --> C["COPY package*.json ./"]
-    C --> D["RUN npm ci"]
-    D --> E["COPY . ."]
-    E --> F["CMD node app.js"]
+ A["FROM node:18-alpine"] --> B["WORKDIR /app"]
+ B --> C["COPY package*.json ./"]
+ C --> D["RUN npm ci"]
+ D --> E["COPY ."]
+ E --> F["CMD node app.js"]
 
-    C -.->|Cached if package.json unchanged| D
-    D -.->|Reuses cached layer| E
+ C -.->|Cached if package.json unchanged| D
+ D -.->|Reuses cached layer| E
 
-    style A fill:#0173B2,color:#fff
-    style C fill:#DE8F05,color:#fff
-    style D fill:#DE8F05,color:#fff
-    style F fill:#029E73,color:#fff
+ style A fill:#0173B2,color:#fff
+ style C fill:#DE8F05,color:#fff
+ style D fill:#DE8F05,color:#fff
+ style F fill:#029E73,color:#fff
 ```
 
 ```dockerfile
@@ -197,7 +193,7 @@ RUN npm ci --only=production
 # => Creates node_modules/ directory layer
 
 # Copy source code (changes frequently)
-COPY . .
+COPY .
 # => Copies all files from build context to /app/
 # => Separate layer allows rebuilding without reinstalling dependencies
 # => Source changes don't invalidate dependency cache
@@ -275,7 +271,7 @@ docker build -t my-express-app .
 # => Step 2 (WORKDIR): Uses cached layer
 # => Step 3 (COPY package*.json): Uses cached layer (files unchanged)
 # => Step 4 (RUN npm ci): Uses cached node_modules/ layer (HUGE time save!)
-# => Step 5 (COPY . .): Rebuilds (app.js changed)
+# => Step 5 (COPY .): Rebuilds (app.js changed)
 # => Steps 6-7 (EXPOSE, CMD): Rebuilds (lightweight metadata)
 # => Build time: ~2 seconds (only copying source, no npm install!)
 # => Cache efficiency: 93% time reduction (35s → 2s)
@@ -283,9 +279,7 @@ docker build -t my-express-app .
 
 **Key Takeaway**: Copy dependency manifests before source code to leverage Docker's layer caching. This dramatically speeds up builds when only source code changes, as dependencies aren't reinstalled.
 
-**Why It Matters**: Proper layer ordering transforms CI/CD pipeline performance by caching dependency installations that rarely change. Teams at Airbnb reduced build times from 10 minutes to under 30 seconds using this pattern, enabling dozens of deployments daily instead of a few per week. Cache efficiency directly impacts developer productivity and deployment frequency in modern DevOps workflows.
-
----
+**Why It Matters**: Proper layer ordering transforms CI/CD pipeline performance by caching dependency installations that rarely change. ---
 
 ### Example 5: ARG for Build-Time Variables
 
@@ -316,16 +310,16 @@ COPY package*.json ./
 
 # Conditional dependency installation based on build arg
 RUN if [ "$NODE_ENV" = "development" ]; then \
-      npm ci; \
-    else \
-      npm ci --only=production; \
-    fi
+ npm ci; \
+ else \
+ npm ci --only=production; \
+ fi
 # => Shell if-else statement for conditional installation
 # => development: Installs all deps (devDependencies + dependencies)
 # => production: Installs only dependencies (smaller image)
 # => npm ci uses package-lock.json for reproducibility
 
-COPY . .
+COPY .
 # => Copies application source code
 
 # Convert ARG to ENV for runtime access
@@ -380,17 +374,17 @@ ENV instructions set environment variables that persist in the container at runt
 
 ```mermaid
 graph TD
-    A["Dockerfile ENV"] --> B["Build Time"]
-    B --> C["Image Layer"]
-    C --> D["Container Runtime"]
-    D --> E["Application Reads ENV"]
+ A["Dockerfile ENV"] --> B["Build Time"]
+ B --> C["Image Layer"]
+ C --> D["Container Runtime"]
+ D --> E["Application Reads ENV"]
 
-    B -.->|Available during RUN| F["npm ci uses NODE_ENV"]
-    D -.->|Available in container| G["process.env.PORT"]
+ B -.->|Available during RUN| F["npm ci uses NODE_ENV"]
+ D -.->|Available in container| G["process.env.PORT"]
 
-    style A fill:#0173B2,color:#fff
-    style C fill:#DE8F05,color:#fff
-    style E fill:#029E73,color:#fff
+ style A fill:#0173B2,color:#fff
+ style C fill:#DE8F05,color:#fff
+ style E fill:#029E73,color:#fff
 ```
 
 ```dockerfile
@@ -423,7 +417,7 @@ RUN npm ci --only=production
 # => Skips devDependencies automatically
 # => --only=production explicit for clarity
 
-COPY . .
+COPY .
 # => Copies application source code
 
 EXPOSE $PORT
@@ -561,16 +555,16 @@ app = Flask(__name__)
 @app.route('/')
 # => Decorates function to handle GET requests to root path
 def hello():
-    # => Route handler function
-    return 'Flask app in Docker!'
-    # => Returns plain text response
+ # => Route handler function
+ return 'Flask app in Docker!'
+ # => Returns plain text response
 
 if __name__ == '__main__':
-    # => Runs only when script executed directly (not imported)
-    app.run(host='0.0.0.0', port=5000)
-    # => Starts Flask development server
-    # => host='0.0.0.0' binds to all interfaces (required for Docker)
-    # => port=5000 listens on port 5000
+ # => Runs only when script executed directly (not imported)
+ app.run(host='0.0.0.0', port=5000)
+ # => Starts Flask development server
+ # => host='0.0.0.0' binds to all interfaces (required for Docker)
+ # => port=5000 listens on port 5000
 ```
 
 ```txt
@@ -594,10 +588,10 @@ docker images --filter "label=version=1.0.0"
 
 # Use labels in container orchestration
 docker run -d \
-  --label environment=production \
-  --label team=backend \
-  -p 5000:5000 \
-  my-flask-app:1.0.0
+ --label environment=production \
+ --label team=backend \
+ -p 5000:5000 \
+ my-flask-app:1.0.0
 # => Adds runtime labels to container (separate from image labels)
 ```
 
@@ -666,20 +660,20 @@ Understanding container states and lifecycle commands is fundamental for debuggi
 ```mermaid
 %% Container lifecycle state transitions
 stateDiagram-v2
-    [*] --> Created: docker create
-    Created --> Running: docker start
-    Running --> Paused: docker pause
-    Paused --> Running: docker unpause
-    Running --> Stopped: docker stop
-    Stopped --> Running: docker start
-    Created --> [*]: docker rm
-    Stopped --> [*]: docker rm
-    Running --> [*]: docker rm -f
+ [*] --> Created: docker create
+ Created --> Running: docker start
+ Running --> Paused: docker pause
+ Paused --> Running: docker unpause
+ Running --> Stopped: docker stop
+ Stopped --> Running: docker start
+ Created --> [*]: docker rm
+ Stopped --> [*]: docker rm
+ Running --> [*]: docker rm -f
 
-    style Created fill:#0173B2,color:#fff
-    style Running fill:#029E73,color:#fff
-    style Paused fill:#DE8F05,color:#fff
-    style Stopped fill:#CC78BC,color:#fff
+ style Created fill:#0173B2,color:#fff
+ style Running fill:#029E73,color:#fff
+ style Paused fill:#DE8F05,color:#fff
+ style Stopped fill:#CC78BC,color:#fff
 ```
 
 ```bash
@@ -695,8 +689,8 @@ docker create --name my-nginx -p 8080:80 nginx:alpine
 docker ps -a
 # => -a flag shows containers in all states (Created, Running, Exited)
 # => Without -a, only Running containers shown
-# => CONTAINER ID   IMAGE         STATUS    PORTS                  NAMES
-# => def456ghi789   nginx:alpine  Created   0.0.0.0:8080->80/tcp   my-nginx
+# => CONTAINER ID IMAGE STATUS PORTS NAMES
+# => def456ghi789 nginx:alpine Created 0.0.0.0:8080->80/tcp my-nginx
 
 # Start created container
 docker start my-nginx
@@ -708,8 +702,8 @@ docker start my-nginx
 # Check running containers only
 docker ps
 # => Shows only Running containers (default behavior)
-# => CONTAINER ID   IMAGE         STATUS        PORTS                  NAMES
-# => def456ghi789   nginx:alpine  Up 5 seconds  0.0.0.0:8080->80/tcp   my-nginx
+# => CONTAINER ID IMAGE STATUS PORTS NAMES
+# => def456ghi789 nginx:alpine Up 5 seconds 0.0.0.0:8080->80/tcp my-nginx
 
 # Pause running container (freezes all processes)
 docker pause my-nginx
@@ -824,7 +818,7 @@ docker stats --no-stream web-app
 
 **Key Takeaway**: Use `docker logs` for troubleshooting application issues. Use `docker inspect` to understand container configuration and networking. Use `docker stats` to monitor resource usage in real-time.
 
-**Why It Matters**: Real-time log access via `docker logs` eliminates the need to SSH into production servers, reducing security risks and speeding up incident response. Container inspection reveals networking and configuration issues instantly, cutting debugging time from hours to minutes. Resource monitoring with `docker stats` identifies memory leaks and CPU bottlenecks before they cause outages in production systems.
+**Why It Matters**: Real-time log access via `docker logs` eliminates the need to SSH into production servers, reducing security risks and speeding up incident response. Container inspection reveals networking and configuration issues instantly, cutting debugging time. Resource monitoring with `docker stats` identifies memory leaks and CPU bottlenecks before they cause outages in production systems.
 
 ---
 
@@ -896,12 +890,12 @@ Port mapping exposes container services to the host network. Docker supports TCP
 ```mermaid
 %% Port mapping flow
 graph TD
-    A["Host<br/>localhost:8080"] --> B["Docker Bridge<br/>172.17.0.1"]
-    B --> C["Container<br/>172.17.0.2:80"]
+ A["Host<br/>localhost:8080"] --> B["Docker Bridge<br/>172.17.0.1"]
+ B --> C["Container<br/>172.17.0.2:80"]
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#fff
-    style C fill:#029E73,color:#fff
+ style A fill:#0173B2,color:#fff
+ style B fill:#DE8F05,color:#fff
+ style C fill:#029E73,color:#fff
 ```
 
 ```bash
@@ -933,9 +927,9 @@ docker port web3
 
 # Map multiple ports
 docker run -d --name app \
-  -p 8080:80 \
-  -p 8443:443 \
-  nginx:alpine
+ -p 8080:80 \
+ -p 8443:443 \
+ nginx:alpine
 # => Multiple -p flags map different ports
 # => HTTP traffic on host:8080 → container:80
 # => HTTPS traffic on host:8443 → container:443
@@ -948,9 +942,9 @@ docker run -d --name dns-server -p 53:53/udp my-dns-image
 
 # Map both TCP and UDP for same port
 docker run -d --name multi-protocol \
-  -p 8080:8080/tcp \
-  -p 8080:8080/udp \
-  my-app
+ -p 8080:8080/tcp \
+ -p 8080:8080/udp \
+ my-app
 # => Same port number (8080) mapped for both protocols
 # => Separate -p flags for each protocol
 # => Common for services using both (like DNS)
@@ -976,12 +970,12 @@ docker inspect --format='{{range $p, $conf := .NetworkSettings.Ports}}{{$p}} -> 
 curl http://localhost:8080
 # => Sends HTTP GET request to mapped port on localhost
 # => Routes through Docker bridge network to container:80
-# => Output: <!DOCTYPE html>... (nginx welcome page)
+# => Output: <!DOCTYPE html>.. (nginx welcome page)
 
 # View network connections
 netstat -tlnp | grep 8080
 # => Shows listening TCP ports with process info
-# => Output: tcp6    0    0 :::8080    :::*    LISTEN    1234/docker-proxy
+# => Output: tcp6 0 0 :::8080 :::* LISTEN 1234/docker-proxy
 # => docker-proxy process handles port forwarding
 # => Listens on all interfaces (:::8080 for IPv6)
 ```
@@ -999,14 +993,14 @@ Named volumes provide persistent storage managed by Docker. Data survives contai
 ```mermaid
 %% Volume architecture
 graph TD
-    A["Container 1<br/>/app/data"] --> B["Named Volume<br/>my-data"]
-    C["Container 2<br/>/backup/data"] --> B
-    B --> D["Host Filesystem<br/>/var/lib/docker/volumes/my-data"]
+ A["Container 1<br/>/app/data"] --> B["Named Volume<br/>my-data"]
+ C["Container 2<br/>/backup/data"] --> B
+ B --> D["Host Filesystem<br/>/var/lib/docker/volumes/my-data"]
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#fff
-    style C fill:#0173B2,color:#fff
-    style D fill:#029E73,color:#fff
+ style A fill:#0173B2,color:#fff
+ style B fill:#DE8F05,color:#fff
+ style C fill:#0173B2,color:#fff
+ style D fill:#029E73,color:#fff
 ```
 
 ```bash
@@ -1021,28 +1015,28 @@ docker volume create my-data
 docker volume ls
 # => Shows all Docker volumes on system
 # => Output format:
-# => DRIVER    VOLUME NAME
-# => local     my-data
+# => DRIVER VOLUME NAME
+# => local my-data
 
 # Inspect volume details
 docker volume inspect my-data
 # => Returns JSON metadata about volume
 # => Output:
 # => [
-# =>   {
-# =>     "CreatedAt": "2025-12-29T10:30:00Z",
-# =>     "Driver": "local",
-# =>     "Mountpoint": "/var/lib/docker/volumes/my-data/_data",
-# =>     "Name": "my-data",
-# =>     "Scope": "local"
-# =>   }
+# => {
+# => "CreatedAt": "2025-12-29T10:30:00Z",
+# => "Driver": "local",
+# => "Mountpoint": "/var/lib/docker/volumes/my-data/_data",
+# => "Name": "my-data",
+# => "Scope": "local"
+# => }
 # => ]
 
 # Run container with named volume
 docker run -d --name db \
-  -v my-data:/var/lib/postgresql/data \
-  -e POSTGRES_PASSWORD=secret \
-  postgres:15-alpine
+ -v my-data:/var/lib/postgresql/data \
+ -e POSTGRES_PASSWORD=secret \
+ postgres:15-alpine
 # => -v my-data:/var/lib/postgresql/data mounts named volume
 # => Volume path on left (my-data), container path on right (/var/lib/postgresql/data)
 # => Database files persist in volume (survives container removal)
@@ -1060,31 +1054,31 @@ docker rm db
 
 # Create new container with same volume
 docker run -d --name db2 \
-  -v my-data:/var/lib/postgresql/data \
-  -e POSTGRES_PASSWORD=secret \
-  postgres:15-alpine
+ -v my-data:/var/lib/postgresql/data \
+ -e POSTGRES_PASSWORD=secret \
+ postgres:15-alpine
 # => Uses existing volume with data intact
 
 # Verify data persisted
 docker exec -it db2 psql -U postgres -c "\l"
-# => Output includes: testdb | postgres | UTF8 | ...
+# => Output includes: testdb | postgres | UTF8 | ..
 # => Database from previous container still exists!
 
 # Create volume with auto-creation (no explicit volume create)
 docker run -d --name app \
-  -v app-logs:/var/log/app \
-  my-app-image
+ -v app-logs:/var/log/app \
+ my-app-image
 # => Docker creates app-logs volume automatically if it doesn't exist
 
 # Share volume between containers
 docker run -d --name writer \
-  -v shared:/data \
-  alpine sh -c 'while true; do date >> /data/log.txt; sleep 5; done'
+ -v shared:/data \
+ alpine sh -c 'while true; do date >> /data/log.txt; sleep 5; done'
 # => Writes timestamps to /data/log.txt in volume
 
 docker run -d --name reader \
-  -v shared:/input:ro \
-  alpine sh -c 'while true; do tail -1 /input/log.txt; sleep 5; done'
+ -v shared:/input:ro \
+ alpine sh -c 'while true; do tail -1 /input/log.txt; sleep 5; done'
 # => Reads from same volume (read-only mount with :ro)
 
 # Check reader output
@@ -1115,13 +1109,13 @@ Bind mounts map host directories into containers, enabling live code reloading d
 
 ```mermaid
 graph TD
-    A["Host Directory<br/>~/myapp"] <--> B["Container Path<br/>/app"]
-    A --> C["server.js<br/>message.txt<br/>package.json"]
-    B --> D["Live Updates<br/>File changes sync instantly"]
+ A["Host Directory<br/>~/myapp"] <--> B["Container Path<br/>/app"]
+ A --> C["server.js<br/>message.txt<br/>package.json"]
+ B --> D["Live Updates<br/>File changes sync instantly"]
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#029E73,color:#fff
-    style D fill:#DE8F05,color:#fff
+ style A fill:#0173B2,color:#fff
+ style B fill:#029E73,color:#fff
+ style D fill:#DE8F05,color:#fff
 ```
 
 ```bash
@@ -1138,14 +1132,14 @@ const http = require('http');
 const fs = require('fs');
 
 const server = http.createServer((req, res) => {
-  // Read message from file (can be updated on host)
-  const message = fs.readFileSync('/app/message.txt', 'utf8');
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end(message);
+ // Read message from file (can be updated on host)
+ const message = fs.readFileSync('/app/message.txt', 'utf8');
+ res.writeHead(200, { 'Content-Type': 'text/plain' });
+ res.end(message);
 });
 
 server.listen(3000, () => {
-  console.log('Server listening on port 3000');
+ console.log('Server listening on port 3000');
 });
 EOF
 # => Creates server.js file using heredoc (<<'EOF') syntax
@@ -1161,9 +1155,9 @@ echo "Hello from bind mount!" > message.txt
 
 cat > package.json << 'EOF'
 {
-  "name": "bind-mount-demo",
-  "version": "1.0.0",
-  "main": "server.js"
+ "name": "bind-mount-demo",
+ "version": "1.0.0",
+ "main": "server.js"
 }
 EOF
 # => Creates minimal package.json for Node.js application
@@ -1172,11 +1166,11 @@ EOF
 
 # Run container with bind mount (absolute path required)
 docker run -d --name dev-app \
-  -v "$(pwd)":/app \
-  -w /app \
-  -p 3000:3000 \
-  node:18-alpine \
-  node server.js
+ -v "$(pwd)":/app \
+ -w /app \
+ -p 3000:3000 \
+ node:18-alpine \
+ node server.js
 # => -v "$(pwd)":/app mounts current host directory to /app in container
 # => $(pwd) command substitution expands to absolute path (e.g., /home/user/myapp)
 # => Bind mounts require absolute paths (relative paths fail)
@@ -1209,11 +1203,11 @@ curl http://localhost:3000
 
 # Bind mount with read-only access
 docker run -d --name readonly-app \
-  -v "$(pwd)":/app:ro \
-  -w /app \
-  -p 3001:3000 \
-  node:18-alpine \
-  node server.js
+ -v "$(pwd)":/app:ro \
+ -w /app \
+ -p 3001:3000 \
+ node:18-alpine \
+ node server.js
 # => :ro suffix makes bind mount read-only (prevents writes)
 # => Container can read files but cannot create, modify, or delete
 # => Protects host filesystem from container modifications
@@ -1229,12 +1223,12 @@ docker exec readonly-app sh -c 'echo "test" > /app/test.txt'
 
 # Bind mount with specific user permissions
 docker run -d --name owned-app \
-  -v "$(pwd)":/app \
-  -w /app \
-  -u $(id -u):$(id -g) \
-  -p 3002:3000 \
-  node:18-alpine \
-  node server.js
+ -v "$(pwd)":/app \
+ -w /app \
+ -u $(id -u):$(id -g) \
+ -p 3002:3000 \
+ node:18-alpine \
+ node server.js
 # => -u $(id -u):$(id -g) runs container as current host user
 # => $(id -u) expands to current user ID (e.g., 1000)
 # => $(id -g) expands to current group ID (e.g., 1000)
@@ -1264,10 +1258,10 @@ tmpfs mounts store data in host memory (RAM) without writing to disk. Ideal for 
 ```bash
 # Run container with tmpfs mount
 docker run -d --name temp-app \
-  --tmpfs /tmp:rw,size=100m,mode=1777 \
-  -p 3000:3000 \
-  node:18-alpine \
-  sh -c 'while true; do echo "Data: $(date)" > /tmp/cache.txt; sleep 2; done'
+ --tmpfs /tmp:rw,size=100m,mode=1777 \
+ -p 3000:3000 \
+ node:18-alpine \
+ sh -c 'while true; do echo "Data: $(date)" > /tmp/cache.txt; sleep 2; done'
 # => Creates tmpfs mount at /tmp with 100MB limit
 # => rw: read-write access
 # => size=100m: maximum size 100 megabytes
@@ -1275,8 +1269,8 @@ docker run -d --name temp-app \
 
 # Verify tmpfs mount inside container
 docker exec temp-app df -h /tmp
-# => Filesystem      Size  Used  Avail  Use%  Mounted on
-# => tmpfs           100M  4.0K  100M    1%   /tmp
+# => Filesystem Size Used Avail Use% Mounted on
+# => tmpfs 100M 4.0K 100M 1% /tmp
 # => Shows tmpfs mount with 100MB size limit
 
 # Write data to tmpfs
@@ -1286,7 +1280,7 @@ docker exec temp-app sh -c 'dd if=/dev/zero of=/tmp/testfile bs=1M count=10'
 # => Writes 10MB to tmpfs (stored in RAM, not disk)
 
 docker exec temp-app du -sh /tmp/testfile
-# => 10.0M   /tmp/testfile
+# => 10.0M /tmp/testfile
 
 # Verify data exists in memory
 docker exec temp-app cat /tmp/cache.txt
@@ -1304,8 +1298,8 @@ docker exec temp-app ls /tmp/
 
 # Use case: Sensitive credential caching
 docker run -d --name secure-app \
-  --tmpfs /run/secrets:rw,size=10m,mode=0700 \
-  alpine sh -c 'echo "secret-token" > /run/secrets/token; while true; do sleep 3600; done'
+ --tmpfs /run/secrets:rw,size=10m,mode=0700 \
+ alpine sh -c 'echo "secret-token" > /run/secrets/token; while true; do sleep 3600; done'
 # => Stores secrets in memory only
 # => mode=0700: only owner can read/write (more restrictive)
 
@@ -1315,18 +1309,18 @@ docker exec secure-app cat /run/secrets/token
 
 # Multiple tmpfs mounts
 docker run -d --name multi-tmp \
-  --tmpfs /tmp:size=100m \
-  --tmpfs /var/cache:size=50m \
-  --tmpfs /var/log:size=50m \
-  alpine sleep 3600
+ --tmpfs /tmp:size=100m \
+ --tmpfs /var/cache:size=50m \
+ --tmpfs /var/log:size=50m \
+ alpine sleep 3600
 # => Multiple tmpfs mounts in single container
 # => Different size limits for different purposes
 
 # Verify all tmpfs mounts
 docker exec multi-tmp df -h
-# => tmpfs     100M     0   100M   0%  /tmp
-# => tmpfs      50M     0    50M   0%  /var/cache
-# => tmpfs      50M     0    50M   0%  /var/log
+# => tmpfs 100M 0 100M 0% /tmp
+# => tmpfs 50M 0 50M 0% /var/cache
+# => tmpfs 50M 0 50M 0% /var/log
 ```
 
 **Key Takeaway**: Use tmpfs for temporary data that doesn't need persistence (caches, temporary processing, secrets). Data is fast (RAM-based) but lost when container stops. Never use tmpfs for data that must survive container restarts.
@@ -1342,69 +1336,69 @@ Docker's default bridge network enables container-to-container communication. Co
 ```mermaid
 %% Bridge network topology
 graph TD
-    A["Host<br/>eth0: 192.168.1.10"] --> B["Docker Bridge<br/>docker0: 172.17.0.1"]
-    B --> C["Container 1<br/>web: 172.17.0.2"]
-    B --> D["Container 2<br/>api: 172.17.0.3"]
-    B --> E["Container 3<br/>db: 172.17.0.4"]
-    C -.->|"DNS: api"| D
-    D -.->|"DNS: db"| E
+ A["Host<br/>eth0: 192.168.1.10"] --> B["Docker Bridge<br/>docker0: 172.17.0.1"]
+ B --> C["Container 1<br/>web: 172.17.0.2"]
+ B --> D["Container 2<br/>api: 172.17.0.3"]
+ B --> E["Container 3<br/>db: 172.17.0.4"]
+ C -.->|"DNS: api"| D
+ D -.->|"DNS: db"| E
 
-    style A fill:#0173B2,color:#fff
-    style B fill:#DE8F05,color:#fff
-    style C fill:#029E73,color:#fff
-    style D fill:#029E73,color:#fff
-    style E fill:#029E73,color:#fff
+ style A fill:#0173B2,color:#fff
+ style B fill:#DE8F05,color:#fff
+ style C fill:#029E73,color:#fff
+ style D fill:#029E73,color:#fff
+ style E fill:#029E73,color:#fff
 ```
 
 ```bash
 # Create custom bridge network
 docker network create my-bridge
-# => Network ID: abc123def456789...
+# => Network ID: abc123def456789..
 # => Creates isolated bridge network
 
 # List networks
 docker network ls
-# => NETWORK ID     NAME         DRIVER    SCOPE
-# => abc123def456   my-bridge    bridge    local
-# => def456ghi789   bridge       bridge    local (default)
-# => ghi789jkl012   host         host      local
-# => jkl012mno345   none         null      local
+# => NETWORK ID NAME DRIVER SCOPE
+# => abc123def456 my-bridge bridge local
+# => def456ghi789 bridge bridge local (default)
+# => ghi789jkl012 host host local
+# => jkl012mno345 none null local
 
 # Inspect network details
 docker network inspect my-bridge
 # => [
-# =>   {
-# =>     "Name": "my-bridge",
-# =>     "Driver": "bridge",
-# =>     "Subnet": "172.18.0.0/16",
-# =>     "Gateway": "172.18.0.1",
-# =>     "Containers": {}
-# =>   }
+# => {
+# => "Name": "my-bridge",
+# => "Driver": "bridge",
+# => "Subnet": "172.18.0.0/16",
+# => "Gateway": "172.18.0.1",
+# => "Containers": {}
+# => }
 # => ]
 
 # Run database on custom bridge
 docker run -d --name postgres-db \
-  --network my-bridge \
-  -e POSTGRES_PASSWORD=secret \
-  postgres:15-alpine
+ --network my-bridge \
+ -e POSTGRES_PASSWORD=secret \
+ postgres:15-alpine
 # => Container gets IP on my-bridge network
 # => Accessible by name "postgres-db" within network
 
 # Run API server on same network
 docker run -d --name api-server \
-  --network my-bridge \
-  -p 8080:8080 \
-  -e DB_HOST=postgres-db \
-  -e DB_PASSWORD=secret \
-  my-api-image
+ --network my-bridge \
+ -p 8080:8080 \
+ -e DB_HOST=postgres-db \
+ -e DB_PASSWORD=secret \
+ my-api-image
 # => Can connect to database using hostname "postgres-db"
 # => Docker's built-in DNS resolves container names
 
 # Test DNS resolution from api-server
 docker exec api-server nslookup postgres-db
-# => Server:    127.0.0.11 (Docker's embedded DNS server)
-# => Name:      postgres-db
-# => Address:   172.18.0.2 (container IP on my-bridge)
+# => Server: 127.0.0.11 (Docker's embedded DNS server)
+# => Name: postgres-db
+# => Address: 172.18.0.2 (container IP on my-bridge)
 
 # Test connectivity between containers
 docker exec api-server ping -c 2 postgres-db
@@ -1439,7 +1433,7 @@ docker network rm my-bridge
 
 **Key Takeaway**: Always create custom bridge networks for multi-container applications. Custom bridges provide automatic DNS resolution by container name, better isolation, and easier configuration than the default bridge.
 
-**Why It Matters**: Custom bridge networks enable service discovery without hardcoded IP addresses, allowing containers to communicate using stable DNS names even as underlying IPs change during scaling or restarts. This is foundational for microservices architectures where dozens of services must discover each other dynamically. Compared to the default bridge requiring legacy container linking, custom networks provide modern, maintainable service communication patterns.
+**Why It Matters**: Custom bridge networks enable service discovery without hardcoded IP addresses, allowing containers to communicate using stable DNS names even as underlying IPs change during scaling or restarts. This is foundational for microservices architectures where Compared to the default bridge requiring legacy container linking, custom networks provide modern, maintainable service communication patterns.
 
 ---
 
@@ -1457,11 +1451,11 @@ docker network create app-network
 
 # Start PostgreSQL database
 docker run -d --name database \
-  --network app-network \
-  -e POSTGRES_USER=appuser \
-  -e POSTGRES_PASSWORD=apppass \
-  -e POSTGRES_DB=appdb \
-  postgres:15-alpine
+ --network app-network \
+ -e POSTGRES_USER=appuser \
+ -e POSTGRES_PASSWORD=apppass \
+ -e POSTGRES_DB=appdb \
+ postgres:15-alpine
 # => Starts PostgreSQL 15 database container
 # => --network app-network connects to custom network
 # => Container name "database" becomes DNS hostname
@@ -1476,12 +1470,12 @@ const { Pool } = require('pg');
 // => Imports PostgreSQL client Pool from pg library
 
 const pool = new Pool({
-  // => Creates connection pool for PostgreSQL
-  host: 'database',              // => Container name as hostname (Docker DNS)
-  user: 'appuser',              // => Database username
-  password: 'apppass',          // => Database password
-  database: 'appdb',            // => Database name
-  port: 5432,                   // => PostgreSQL default port
+ // => Creates connection pool for PostgreSQL
+ host: 'database', // => Container name as hostname (Docker DNS)
+ user: 'appuser', // => Database username
+ password: 'apppass', // => Database password
+ database: 'appdb', // => Database name
+ port: 5432, // => PostgreSQL default port
 });
 // => pool manages reusable database connections
 
@@ -1489,27 +1483,27 @@ const app = express();
 // => Creates Express application instance
 
 app.get('/api/status', async (req, res) => {
-  // => Defines async route handler for GET /api/status
-  try {
-    const result = await pool.query('SELECT NOW()');
-    // => Executes SQL query to get current database timestamp
-    // => result.rows is array of row objects
-    res.json({
-      status: 'ok',
-      database_time: result.rows[0].now,
-      // => Sends JSON response with database time
-    });
-  } catch (err) {
-    // => Catches database connection or query errors
-    res.status(500).json({ error: err.message });
-    // => Sends HTTP 500 with error message
-  }
+ // => Defines async route handler for GET /api/status
+ try {
+ const result = await pool.query('SELECT NOW()');
+ // => Executes SQL query to get current database timestamp
+ // => result.rows is array of row objects
+ res.json({
+ status: 'ok',
+ database_time: result.rows[0].now,
+ // => Sends JSON response with database time
+ });
+ } catch (err) {
+ // => Catches database connection or query errors
+ res.status(500).json({ error: err.message });
+ // => Sends HTTP 500 with error message
+ }
 });
 
 app.listen(3000, () => {
-  // => Starts server on port 3000
-  console.log('Backend API listening on port 3000');
-  // => Output: Backend API listening on port 3000
+ // => Starts server on port 3000
+ console.log('Backend API listening on port 3000');
+ // => Output: Backend API listening on port 3000
 });
 EOF
 # => Backend connects to database using "database" hostname
@@ -1527,8 +1521,8 @@ EOF
 # => Tags image as my-backend
 
 docker run -d --name backend \
-  --network app-network \
-  my-backend
+ --network app-network \
+ my-backend
 # => Starts backend container on app-network
 # => Backend can resolve "database" hostname via Docker DNS
 # => Not exposing port to host (internal communication only)
@@ -1542,30 +1536,30 @@ docker exec backend wget -qO- http://localhost:3000/api/status
 # Start Nginx frontend
 cat > nginx.conf << 'EOF'
 server {
-    # => Nginx server block configuration
-    listen 80;
-    # => Listens on port 80 (HTTP)
-    location /api/ {
-        # => Proxy all requests starting with /api/
-        proxy_pass http://backend:3000/api/;
-        # => Forwards to backend container on port 3000
-        # => Uses container name "backend" (Docker DNS resolves to IP)
-    }
-    location / {
-        # => Handles all other requests (root path)
-        return 200 'Frontend served by Nginx\n';
-        # => Returns HTTP 200 with plain text response
-        add_header Content-Type text/plain;
-        # => Sets response content type header
-    }
+ # => Nginx server block configuration
+ listen 80;
+ # => Listens on port 80 (HTTP)
+ location /api/ {
+ # => Proxy all requests starting with /api/
+ proxy_pass http://backend:3000/api/;
+ # => Forwards to backend container on port 3000
+ # => Uses container name "backend" (Docker DNS resolves to IP)
+ }
+ location / {
+ # => Handles all other requests (root path)
+ return 200 'Frontend served by Nginx\n';
+ # => Returns HTTP 200 with plain text response
+ add_header Content-Type text/plain;
+ # => Sets response content type header
+ }
 }
 EOF
 
 docker run -d --name frontend \
-  --network app-network \
-  -p 8080:80 \
-  -v "$(pwd)/nginx.conf:/etc/nginx/conf.d/default.conf:ro" \
-  nginx:alpine
+ --network app-network \
+ -p 8080:80 \
+ -v "$(pwd)/nginx.conf:/etc/nginx/conf.d/default.conf:ro" \
+ nginx:alpine
 # => Starts Nginx frontend container on app-network
 # => -p 8080:80 exposes frontend to host on port 8080
 # => Bind-mounts custom nginx.conf (read-only)
@@ -1582,17 +1576,17 @@ docker exec frontend nslookup backend
 # => Runs nslookup command inside frontend container
 # => Queries Docker's embedded DNS server (127.0.0.11)
 # => Output shows:
-# => Server:    127.0.0.11 (Docker DNS)
-# => Name:      backend
-# => Address:   172.19.0.3 (backend container's IP on app-network)
+# => Server: 127.0.0.11 (Docker DNS)
+# => Name: backend
+# => Address: 172.19.0.3 (backend container's IP on app-network)
 
 docker exec backend nslookup database
 # => Queries DNS from backend container perspective
 # => Docker DNS resolves "database" hostname
 # => Output shows:
-# => Server:    127.0.0.11
-# => Name:      database
-# => Address:   172.19.0.2 (database container's IP)
+# => Server: 127.0.0.11
+# => Name: database
+# => Address: 172.19.0.2 (database container's IP)
 
 # Check network connectivity between containers
 docker exec frontend ping -c 1 backend
@@ -1645,13 +1639,13 @@ EOF
 
 # Start database with env file
 docker run -d --name db \
-  --env-file database.env \
-  --network app-net \
-  postgres:15-alpine
+ --env-file database.env \
+ --network app-net \
+ postgres:15-alpine
 # => --env-file loads all KEY=value pairs from database.env
 # => Reads file from host filesystem
 # => Sets each variable as environment variable in container
-# => Equivalent to multiple -e POSTGRES_USER=myuser -e POSTGRES_PASSWORD=... flags
+# => Equivalent to multiple -e POSTGRES_USER=myuser -e POSTGRES_PASSWORD=.. flags
 # => Cleaner syntax for managing many variables
 
 # Verify environment variables loaded
@@ -1667,10 +1661,10 @@ docker exec db printenv | grep POSTGRES
 
 # Start application with env file
 docker run -d --name app \
-  --env-file app.env \
-  --network app-net \
-  -p 3000:3000 \
-  my-app-image
+ --env-file app.env \
+ --network app-net \
+ -p 3000:3000 \
+ my-app-image
 # => Loads all variables from app.env into container environment
 # => Application reads NODE_ENV, LOG_LEVEL, API_KEY, DATABASE_URL via process.env
 # => Connects to database using DATABASE_URL (uses "db" hostname)
@@ -1678,12 +1672,12 @@ docker run -d --name app \
 
 # Override specific variables while using env file
 docker run -d --name app-dev \
-  --env-file app.env \
-  -e NODE_ENV=development \
-  -e LOG_LEVEL=debug \
-  --network app-net \
-  -p 3001:3000 \
-  my-app-image
+ --env-file app.env \
+ -e NODE_ENV=development \
+ -e LOG_LEVEL=debug \
+ --network app-net \
+ -p 3001:3000 \
+ my-app-image
 # => First loads app.env (production config)
 # => Then -e NODE_ENV=development overrides NODE_ENV value
 # => Then -e LOG_LEVEL=debug overrides LOG_LEVEL value
@@ -1692,9 +1686,9 @@ docker run -d --name app-dev \
 
 # Use multiple env files
 docker run -d --name app-multi \
-  --env-file common.env \
-  --env-file production.env \
-  my-app-image
+ --env-file common.env \
+ --env-file production.env \
+ my-app-image
 # => Multiple --env-file flags load variables from each file
 # => Files processed in order: common.env first, then production.env
 # => Later files override earlier ones if keys conflict
@@ -1742,9 +1736,7 @@ docker inspect app --format='{{range .Config.Env}}{{println .}}{{end}}'
 
 **Key Takeaway**: Use `--env-file` for configuration management and keep actual `.env` files out of version control. Provide `.env.example` templates for documentation. Override variables with `-e` when needed, as it takes precedence over `--env-file`.
 
-**Why It Matters**: Environment files separate secrets from source code, preventing accidental credential commits that expose API keys and database passwords in version control history. This separation enables the same codebase to run across development, staging, and production with environment-specific configurations. Teams at GitHub use environment files extensively to manage thousands of service configurations without hardcoding credentials in application code.
-
----
+**Why It Matters**: Environment files separate secrets from source code, preventing accidental credential commits that expose API keys and database passwords in version control history. This separation enables the same codebase to run across development, staging, and production with environment-specific configurations. ---
 
 ### Example 19: Docker Compose Basics
 
@@ -1758,121 +1750,121 @@ version: "3.8"
 # => Specifies feature set available in this compose file
 
 services:
-  # Database service
-  db:
-    # => Service name "db" becomes DNS hostname for other services
-    image: postgres:15-alpine
-    # => Uses official PostgreSQL 15 image from Docker Hub
-    # => alpine variant for smaller size (~80MB vs ~300MB)
-    container_name: my-postgres
-    # => Custom container name instead of generated name
-    # => Default would be: <project>_db_1
-    # => Enables predictable container naming
-    environment:
-      # => Environment variables section
-      POSTGRES_USER: appuser
-      # => PostgreSQL username (appuser)
-      POSTGRES_PASSWORD: apppass
-      # => PostgreSQL password (apppass)
-      POSTGRES_DB: appdb
-      # => Initial database name (appdb)
-      # => All three variables configure PostgreSQL on first start
-    volumes:
-      - db-data:/var/lib/postgresql/data
-      # => Mounts named volume "db-data" to PostgreSQL data directory
-      # => Data persists across container restarts and removals
-      # => Volume defined in volumes section below
-    networks:
-      - backend
-      # => Connects db service to backend network
-      # => Isolates database from frontend network
-    restart: unless-stopped
-    # => Restart policy: always restart unless explicitly stopped by user
-    # => Options: no, always, on-failure, unless-stopped
+ # Database service
+ db:
+ # => Service name "db" becomes DNS hostname for other services
+ image: postgres:15-alpine
+ # => Uses official PostgreSQL 15 image from Docker Hub
+ # => alpine variant for smaller size (~80MB vs ~300MB)
+ container_name: my-postgres
+ # => Custom container name instead of generated name
+ # => Default would be: <project>_db_1
+ # => Enables predictable container naming
+ environment:
+ # => Environment variables section
+ POSTGRES_USER: appuser
+ # => PostgreSQL username (appuser)
+ POSTGRES_PASSWORD: apppass
+ # => PostgreSQL password (apppass)
+ POSTGRES_DB: appdb
+ # => Initial database name (appdb)
+ # => All three variables configure PostgreSQL on first start
+ volumes:
+ - db-data:/var/lib/postgresql/data
+ # => Mounts named volume "db-data" to PostgreSQL data directory
+ # => Data persists across container restarts and removals
+ # => Volume defined in volumes section below
+ networks:
+ - backend
+ # => Connects db service to backend network
+ # => Isolates database from frontend network
+ restart: unless-stopped
+ # => Restart policy: always restart unless explicitly stopped by user
+ # => Options: no, always, on-failure, unless-stopped
 
-  # Backend API service
-  api:
-    # => Service name "api" becomes DNS hostname
-    build:
-      # => Build configuration instead of using pre-built image
-      context: ./api
-      # => Build context directory (where source files are)
-      dockerfile: Dockerfile
-      # => Dockerfile path relative to context (./api/Dockerfile)
-      # => Compose builds image automatically on first up/build command
-    container_name: my-api
-    # => Custom container name: my-api
-    environment:
-      # => Environment variables for API configuration
-      DATABASE_URL: postgresql://appuser:apppass@db:5432/appdb
-      # => Connection string uses "db" hostname (DNS resolves to db service IP)
-      # => Format: postgresql://user:pass@host:port/database
-    depends_on:
-      - db
-      # => Ensures db service starts before api service
-      # => NOTE: Only checks container started, NOT that PostgreSQL ready
-      # => Application should implement retry logic for db connection
-    networks:
-      - backend
-      # => Connects to backend network (can access db service)
-      - frontend
-      # => Also connects to frontend network (can be accessed by web service)
-      # => Bridges between frontend and backend layers
-    restart: unless-stopped
-    # => Restart policy matches db service
+ # Backend API service
+ api:
+ # => Service name "api" becomes DNS hostname
+ build:
+ # => Build configuration instead of using pre-built image
+ context: ./api
+ # => Build context directory (where source files are)
+ dockerfile: Dockerfile
+ # => Dockerfile path relative to context (./api/Dockerfile)
+ # => Compose builds image automatically on first up/build command
+ container_name: my-api
+ # => Custom container name: my-api
+ environment:
+ # => Environment variables for API configuration
+ DATABASE_URL: postgresql://appuser:apppass@db:5432/appdb
+ # => Connection string uses "db" hostname (DNS resolves to db service IP)
+ # => Format: postgresql://user:pass@host:port/database
+ depends_on:
+ - db
+ # => Ensures db service starts before api service
+ # => NOTE: Only checks container started, NOT that PostgreSQL ready
+ # => Application should implement retry logic for db connection
+ networks:
+ - backend
+ # => Connects to backend network (can access db service)
+ - frontend
+ # => Also connects to frontend network (can be accessed by web service)
+ # => Bridges between frontend and backend layers
+ restart: unless-stopped
+ # => Restart policy matches db service
 
-  # Web frontend service
-  web:
-    # => Service name "web" for frontend
-    image: nginx:alpine
-    # => Uses official Nginx alpine image (pre-built, no build needed)
-    # => Nginx serves static files and proxies API requests
-    container_name: my-web
-    # => Custom container name: my-web
-    ports:
-      - "8080:80"
-      # => Publishes host port 8080 to container port 80
-      # => Format: "host:container" or "host:container/protocol"
-      # => Accessible from outside Docker at http://localhost:8080
-    volumes:
-      - ./web/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      # => Bind-mounts custom nginx configuration file
-      # => :ro suffix makes mount read-only
-      - ./web/html:/usr/share/nginx/html:ro
-      # => Bind-mounts static HTML/CSS/JS files
-      # => Read-only prevents container from modifying source files
-    depends_on:
-      - api
-      # => Ensures api service starts before web service
-      # => Web service likely proxies requests to api service
-    networks:
-      - frontend
-      # => Connects only to frontend network
-      # => Cannot directly access db service (network isolation)
-      # => Must go through api service for database operations
-    restart: unless-stopped
-    # => Consistent restart policy across all services
+ # Web frontend service
+ web:
+ # => Service name "web" for frontend
+ image: nginx:alpine
+ # => Uses official Nginx alpine image (pre-built, no build needed)
+ # => Nginx serves static files and proxies API requests
+ container_name: my-web
+ # => Custom container name: my-web
+ ports:
+ - "8080:80"
+ # => Publishes host port 8080 to container port 80
+ # => Format: "host:container" or "host:container/protocol"
+ # => Accessible from outside Docker at http://localhost:8080
+ volumes:
+ - ./web/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+ # => Bind-mounts custom nginx configuration file
+ # => :ro suffix makes mount read-only
+ - ./web/html:/usr/share/nginx/html:ro
+ # => Bind-mounts static HTML/CSS/JS files
+ # => Read-only prevents container from modifying source files
+ depends_on:
+ - api
+ # => Ensures api service starts before web service
+ # => Web service likely proxies requests to api service
+ networks:
+ - frontend
+ # => Connects only to frontend network
+ # => Cannot directly access db service (network isolation)
+ # => Must go through api service for database operations
+ restart: unless-stopped
+ # => Consistent restart policy across all services
 
 networks:
-  # => Networks section defines custom networks
-  frontend:
-    # => Frontend network for public-facing services
-    driver: bridge
-    # => Bridge driver creates isolated network
-    # => Services can communicate via service names (DNS)
-  backend:
-    # => Backend network for internal services
-    driver: bridge
-    # => Isolates backend services from frontend
-    # => Only api service bridges both networks
+ # => Networks section defines custom networks
+ frontend:
+ # => Frontend network for public-facing services
+ driver: bridge
+ # => Bridge driver creates isolated network
+ # => Services can communicate via service names (DNS)
+ backend:
+ # => Backend network for internal services
+ driver: bridge
+ # => Isolates backend services from frontend
+ # => Only api service bridges both networks
 
 volumes:
-  # => Volumes section defines named volumes
-  db-data:
-    # => Named volume "db-data" for PostgreSQL persistence
-    # => Docker manages volume lifecycle
-    # => Data survives docker-compose down (unless -v flag used)
-    # => Persists database data across container recreations
+ # => Volumes section defines named volumes
+ db-data:
+ # => Named volume "db-data" for PostgreSQL persistence
+ # => Docker manages volume lifecycle
+ # => Data survives docker-compose down (unless -v flag used)
+ # => Persists database data across container recreations
 ```
 
 ```bash
@@ -1885,10 +1877,10 @@ docker compose up -d
 
 # View running services
 docker compose ps
-# => NAME          IMAGE              STATUS        PORTS
-# => my-postgres   postgres:15-alpine Up 30 seconds
-# => my-api        project_api        Up 25 seconds
-# => my-web        nginx:alpine       Up 20 seconds 0.0.0.0:8080->80/tcp
+# => NAME IMAGE STATUS PORTS
+# => my-postgres postgres:15-alpine Up 30 seconds
+# => my-api project_api Up 25 seconds
+# => my-web nginx:alpine Up 20 seconds 0.0.0.0:8080->80/tcp
 
 # View logs from all services
 docker compose logs
@@ -1944,9 +1936,7 @@ docker compose config
 
 **Key Takeaway**: Docker Compose simplifies multi-container applications with declarative YAML configuration. Use `depends_on` for startup order, separate networks for layer isolation, and named volumes for data persistence. Always use `-d` flag for production deployments.
 
-**Why It Matters**: Docker Compose transforms complex multi-container orchestration from dozens of shell commands into a single declarative YAML file, reducing deployment complexity and human error. Declarative configuration enables version-controlled infrastructure where entire application stacks can be recreated identically across environments. Companies like Lyft use Compose for local development environments that mirror production architecture, catching integration issues before deployment.
-
----
+## **Why It Matters**: Docker Compose transforms complex multi-container orchestration from dozens of shell commands into a single declarative YAML file, reducing deployment complexity and human error. Declarative configuration enables version-controlled infrastructure where entire application stacks can be recreated identically across environments. Companies like
 
 ### Example 20: Docker Compose with Build Context
 
@@ -1959,65 +1949,65 @@ version: "3.8"
 # => Compose file format version
 
 services:
-  app:
-    # => Production service configuration
-    build:
-      # => Build configuration section
-      context: .
-      # => Build context is current directory (where docker-compose.yml is)
-      # => All files in this directory available to COPY/ADD in Dockerfile
-      # => .dockerignore filters what's sent to build context
-      dockerfile: Dockerfile.prod
-      # => Uses Dockerfile.prod instead of default "Dockerfile"
-      # => Allows multiple Dockerfiles for different environments
-      args:
-        # => Build arguments section (ARG in Dockerfile)
-        - NODE_VERSION=18
-        # => Passes NODE_VERSION=18 to Dockerfile ARG
-        - BUILD_DATE=2025-12-29
-        # => Passes BUILD_DATE to Dockerfile
-        # => Args only available during build, not at runtime
-      target: production
-      # => Builds only up to "production" stage in multi-stage Dockerfile
-      # => Skips development/test stages
-    image: my-app:latest
-    # => Tags built image as my-app:latest
-    # => Stores image for reuse (docker-compose up won't rebuild unless changed)
-    ports:
-      - "3000:3000"
-      # => Maps host:3000 to container:3000
-    environment:
-      # => Runtime environment variables
-      NODE_ENV: production
-      # => Sets NODE_ENV for running application
+ app:
+ # => Production service configuration
+ build:
+ # => Build configuration section
+ context: .
+ # => Build context is current directory (where docker-compose.yml is)
+ # => All files in this directory available to COPY/ADD in Dockerfile
+ # => .dockerignore filters what's sent to build context
+ dockerfile: Dockerfile.prod
+ # => Uses Dockerfile.prod instead of default "Dockerfile"
+ # => Allows multiple Dockerfiles for different environments
+ args:
+ # => Build arguments section (ARG in Dockerfile)
+ - NODE_VERSION=18
+ # => Passes NODE_VERSION=18 to Dockerfile ARG
+ - BUILD_DATE=2025-12-29
+ # => Passes BUILD_DATE to Dockerfile
+ # => Args only available during build, not at runtime
+ target: production
+ # => Builds only up to "production" stage in multi-stage Dockerfile
+ # => Skips development/test stages
+ image: my-app:latest
+ # => Tags built image as my-app:latest
+ # => Stores image for reuse (docker-compose up won't rebuild unless changed)
+ ports:
+ - "3000:3000"
+ # => Maps host:3000 to container:3000
+ environment:
+ # => Runtime environment variables
+ NODE_ENV: production
+ # => Sets NODE_ENV for running application
 
-  dev-app:
-    # => Development service configuration
-    build:
-      context: .
-      # => Same build context as production
-      dockerfile: Dockerfile.prod
-      # => Same Dockerfile but different target
-      args:
-        NODE_VERSION: 18
-        # => Same Node version for consistency
-      target: development
-      # => Builds development stage from same Dockerfile
-      # => May include dev dependencies, debugging tools
-    image: my-app:dev
-    # => Different image tag for development variant
-    # => Prevents overwriting production image
-    volumes:
-      - .:/app
-      # => Bind mount current directory to /app
-      # => Enables live code reloading without rebuilding
-      # => Changes on host immediately visible in container
-    ports:
-      - "3001:3000"
-      # => Different host port (3001) to run alongside production
-    environment:
-      NODE_ENV: development
-      # => Sets development mode for application
+ dev-app:
+ # => Development service configuration
+ build:
+ context: .
+ # => Same build context as production
+ dockerfile: Dockerfile.prod
+ # => Same Dockerfile but different target
+ args:
+ NODE_VERSION: 18
+ # => Same Node version for consistency
+ target: development
+ # => Builds development stage from same Dockerfile
+ # => May include dev dependencies, debugging tools
+ image: my-app:dev
+ # => Different image tag for development variant
+ # => Prevents overwriting production image
+ volumes:
+ - .:/app
+ # => Bind mount current directory to /app
+ # => Enables live code reloading without rebuilding
+ # => Changes on host immediately visible in container
+ ports:
+ - "3001:3000"
+ # => Different host port (3001) to run alongside production
+ environment:
+ NODE_ENV: development
+ # => Sets development mode for application
 ```
 
 ```dockerfile
@@ -2038,7 +2028,7 @@ FROM base as development
 # => Inherits from base stage
 RUN npm install
 # => Installs all dependencies (including devDependencies)
-COPY . .
+COPY .
 EXPOSE 3000
 CMD ["npm", "run", "dev"]
 # => Development command with hot reloading
@@ -2048,7 +2038,7 @@ FROM base as production
 # => Inherits from base stage (NOT development)
 RUN npm ci --only=production
 # => Installs only production dependencies
-COPY . .
+COPY .
 RUN npm run build
 # => Builds optimized production bundle
 EXPOSE 3000
@@ -2122,58 +2112,58 @@ version: "3.8"
 # => Compose file format version
 
 services:
-  app:
-    # => Application service definition
-    image: my-app:latest
-    # => Uses pre-built image
-    environment:
-      # => Environment variables section
-      # Method 1: Inline key-value pairs
-      NODE_ENV: production
-      # => Hard-coded value: production
-      LOG_LEVEL: info
-      # => Hard-coded value: info
-      # Method 2: Value from .env file or host environment
-      DATABASE_URL:
-      # => Empty value means read from .env file or host environment
-      # => Compose looks for DATABASE_URL in .env, .env.local, or shell
-      # Method 3: Default value with substitution
-      API_TIMEOUT: ${API_TIMEOUT:-5000}
-      # => ${VAR:-default} syntax: uses VAR if set, otherwise 5000
-      # => Reads API_TIMEOUT from environment, defaults to 5000
-      PORT: ${PORT:-3000}
-      # => Reads PORT from environment, defaults to 3000
-      # => Allows environment-specific port configuration
-    env_file:
-      # => Load variables from external files
-      - .env
-      # => Loads .env first (base configuration)
-      - .env.local
-      # => Loads .env.local second (overrides .env)
-      # => Later files override earlier files for same keys
-    ports:
-      - "${PORT:-3000}:3000"
-      # => Port mapping uses variable substitution
-      # => Host port from $PORT or 3000, container port 3000
-      # => Enables dynamic port assignment
+ app:
+ # => Application service definition
+ image: my-app:latest
+ # => Uses pre-built image
+ environment:
+ # => Environment variables section
+ # Method 1: Inline key-value pairs
+ NODE_ENV: production
+ # => Hard-coded value: production
+ LOG_LEVEL: info
+ # => Hard-coded value: info
+ # Method 2: Value from .env file or host environment
+ DATABASE_URL:
+ # => Empty value means read from .env file or host environment
+ # => Compose looks for DATABASE_URL in .env.env.local, or shell
+ # Method 3: Default value with substitution
+ API_TIMEOUT: ${API_TIMEOUT:-5000}
+ # => ${VAR:-default} syntax: uses VAR if set, otherwise 5000
+ # => Reads API_TIMEOUT from environment, defaults to 5000
+ PORT: ${PORT:-3000}
+ # => Reads PORT from environment, defaults to 3000
+ # => Allows environment-specific port configuration
+ env_file:
+ # => Load variables from external files
+ - .env
+ # => Loads .env first (base configuration)
+ - .env.local
+ # => Loads .env.local second (overrides .env)
+ # => Later files override earlier files for same keys
+ ports:
+ - "${PORT:-3000}:3000"
+ # => Port mapping uses variable substitution
+ # => Host port from $PORT or 3000, container port 3000
+ # => Enables dynamic port assignment
 
-  db:
-    # => Database service definition
-    image: postgres:15-alpine
-    # => PostgreSQL 15 Alpine image
-    environment:
-      # => Database environment variables
-      POSTGRES_USER: ${DB_USER}
-      # => Required: reads DB_USER from environment
-      # => No default, will fail if DB_USER not set
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      # => Required: reads DB_PASSWORD from environment
-      POSTGRES_DB: ${DB_NAME:-myapp}
-      # => Reads DB_NAME from environment, defaults to "myapp"
-    env_file:
-      - database.env
-      # => Additional database-specific variables from file
-      # => Can contain connection pool settings, timeouts, etc.
+ db:
+ # => Database service definition
+ image: postgres:15-alpine
+ # => PostgreSQL 15 Alpine image
+ environment:
+ # => Database environment variables
+ POSTGRES_USER: ${DB_USER}
+ # => Required: reads DB_USER from environment
+ # => No default, will fail if DB_USER not set
+ POSTGRES_PASSWORD: ${DB_PASSWORD}
+ # => Required: reads DB_PASSWORD from environment
+ POSTGRES_DB: ${DB_NAME:-myapp}
+ # => Reads DB_NAME from environment, defaults to "myapp"
+ env_file:
+ - database.env
+ # => Additional database-specific variables from file
+ # => Can contain connection pool settings, timeouts, etc.
 ```
 
 ```bash
@@ -2222,15 +2212,15 @@ docker compose config
 
 # Example output of docker compose config:
 # => services:
-# =>   app:
-# =>     environment:
-# =>       NODE_ENV: production
-# =>       LOG_LEVEL: debug (from .env.local)
-# =>       DATABASE_URL: postgresql://user:pass@db:5432/myapp
-# =>       API_TIMEOUT: 10000
-# =>       PORT: 8081
-# =>     ports:
-# =>       - "8081:3000"
+# => app:
+# => environment:
+# => NODE_ENV: production
+# => LOG_LEVEL: debug (from .env.local)
+# => DATABASE_URL: postgresql://user:pass@db:5432/myapp
+# => API_TIMEOUT: 10000
+# => PORT: 8081
+# => ports:
+# => - "8081:3000"
 
 # Test with missing required variable
 unset DB_PASSWORD
@@ -2255,69 +2245,69 @@ Docker Compose manages both named volumes and bind mounts. Named volumes provide
 version: "3.8"
 
 services:
-  # Database with named volume
-  db:
-    image: postgres:15-alpine
-    volumes:
-      - db-data:/var/lib/postgresql/data
-      # => Named volume (defined in volumes section)
-      # => Managed by Docker, persists across recreations
-    environment:
-      POSTGRES_PASSWORD: secret
+ # Database with named volume
+ db:
+ image: postgres:15-alpine
+ volumes:
+ - db-data:/var/lib/postgresql/data
+ # => Named volume (defined in volumes section)
+ # => Managed by Docker, persists across recreations
+ environment:
+ POSTGRES_PASSWORD: secret
 
-  # Application with multiple volume types
-  app:
-    build: .
-    volumes:
-      # Bind mount for source code (development)
-      - ./src:/app/src:ro
-      # => Host ./src directory mounted as read-only
-      # => Changes on host immediately visible in container
+ # Application with multiple volume types
+ app:
+ build: .
+ volumes:
+ # Bind mount for source code (development)
+ - ./src:/app/src:ro
+ # => Host ./src directory mounted as read-only
+ # => Changes on host immediately visible in container
 
-      # Bind mount for configuration
-      - ./config/app.conf:/etc/app/app.conf:ro
-      # => Single file bind mount
+ # Bind mount for configuration
+ - ./config/app.conf:/etc/app/app.conf:ro
+ # => Single file bind mount
 
-      # Named volume for generated assets
-      - app-cache:/app/.cache
-      # => Persists compiled assets across rebuilds
+ # Named volume for generated assets
+ - app-cache:/app/.cache
+ # => Persists compiled assets across rebuilds
 
-      # Tmpfs for temporary processing
-      - type: tmpfs
-        target: /tmp
-        tmpfs:
-          size: 100M
-      # => RAM-based temporary storage
-    depends_on:
-      - db
+ # Tmpfs for temporary processing
+ - type: tmpfs
+ target: /tmp
+ tmpfs:
+ size: 100M
+ # => RAM-based temporary storage
+ depends_on:
+ - db
 
-  # Nginx with bind mount for static content
-  web:
-    image: nginx:alpine
-    volumes:
-      - ./web/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      # => Nginx configuration
-      - ./web/html:/usr/share/nginx/html:ro
-      # => Static HTML files
-      - web-logs:/var/log/nginx
-      # => Named volume for log persistence
-    ports:
-      - "8080:80"
+ # Nginx with bind mount for static content
+ web:
+ image: nginx:alpine
+ volumes:
+ - ./web/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+ # => Nginx configuration
+ - ./web/html:/usr/share/nginx/html:ro
+ # => Static HTML files
+ - web-logs:/var/log/nginx
+ # => Named volume for log persistence
+ ports:
+ - "8080:80"
 
 # Named volumes definition
 volumes:
-  db-data:
-    driver: local
-    # => Default driver (stores on host filesystem)
-  app-cache:
-    driver: local
-  web-logs:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /var/log/myapp/web
-      # => Custom mount options (advanced)
+ db-data:
+ driver: local
+ # => Default driver (stores on host filesystem)
+ app-cache:
+ driver: local
+ web-logs:
+ driver: local
+ driver_opts:
+ type: none
+ o: bind
+ device: /var/log/myapp/web
+ # => Custom mount options (advanced)
 ```
 
 ```bash
@@ -2328,24 +2318,24 @@ docker compose up -d
 
 # List volumes created by Compose
 docker volume ls --filter label=com.docker.compose.project=myproject
-# => DRIVER    VOLUME NAME
-# => local     myproject_db-data
-# => local     myproject_app-cache
-# => local     myproject_web-logs
+# => DRIVER VOLUME NAME
+# => local myproject_db-data
+# => local myproject_app-cache
+# => local myproject_web-logs
 
 # Inspect named volume
 docker volume inspect myproject_db-data
 # => [
-# =>   {
-# =>     "Name": "myproject_db-data",
-# =>     "Driver": "local",
-# =>     "Mountpoint": "/var/lib/docker/volumes/myproject_db-data/_data",
-# =>     "Labels": {
-# =>       "com.docker.compose.project": "myproject",
-# =>       "com.docker.compose.version": "2.20.0",
-# =>       "com.docker.compose.volume": "db-data"
-# =>     }
-# =>   }
+# => {
+# => "Name": "myproject_db-data",
+# => "Driver": "local",
+# => "Mountpoint": "/var/lib/docker/volumes/myproject_db-data/_data",
+# => "Labels": {
+# => "com.docker.compose.project": "myproject",
+# => "com.docker.compose.version": "2.20.0",
+# => "com.docker.compose.volume": "db-data"
+# => }
+# => }
 # => ]
 
 # Write data to database (persists in named volume)
@@ -2373,16 +2363,16 @@ docker compose exec web cat /usr/share/nginx/html/index.html
 
 # Backup named volume
 docker run --rm \
-  -v myproject_db-data:/data \
-  -v $(pwd):/backup \
-  alpine tar czf /backup/db-backup.tar.gz /data
+ -v myproject_db-data:/data \
+ -v $(pwd):/backup \
+ alpine tar czf /backup/db-backup.tar.gz /data
 # => Creates tar archive of volume contents
 
 # Restore named volume
 docker run --rm \
-  -v myproject_db-data:/data \
-  -v $(pwd):/backup \
-  alpine tar xzf /backup/db-backup.tar.gz -C /
+ -v myproject_db-data:/data \
+ -v $(pwd):/backup \
+ alpine tar xzf /backup/db-backup.tar.gz -C /
 # => Extracts tar archive to volume
 
 # Remove volumes with containers
@@ -2407,82 +2397,82 @@ The `depends_on` directive controls service startup order but does NOT wait for 
 version: "3.8"
 
 services:
-  # Database service
-  db:
-    image: postgres:15-alpine
-    environment:
-      POSTGRES_USER: appuser
-      POSTGRES_PASSWORD: apppass
-      POSTGRES_DB: appdb
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U appuser"]
-      # => Checks if PostgreSQL accepts connections
-      interval: 5s
-      # => Run check every 5 seconds
-      timeout: 3s
-      # => Fail check if it takes longer than 3 seconds
-      retries: 3
-      # => Mark unhealthy after 3 consecutive failures
-      start_period: 10s
-      # => Grace period before checking (allows startup time)
+ # Database service
+ db:
+ image: postgres:15-alpine
+ environment:
+ POSTGRES_USER: appuser
+ POSTGRES_PASSWORD: apppass
+ POSTGRES_DB: appdb
+ healthcheck:
+ test: ["CMD-SHELL", "pg_isready -U appuser"]
+ # => Checks if PostgreSQL accepts connections
+ interval: 5s
+ # => Run check every 5 seconds
+ timeout: 3s
+ # => Fail check if it takes longer than 3 seconds
+ retries: 3
+ # => Mark unhealthy after 3 consecutive failures
+ start_period: 10s
+ # => Grace period before checking (allows startup time)
 
-  # Redis cache
-  cache:
-    image: redis:7-alpine
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      # => Checks if Redis responds to PING
-      interval: 5s
-      timeout: 3s
-      retries: 3
-      start_period: 5s
+ # Redis cache
+ cache:
+ image: redis:7-alpine
+ healthcheck:
+ test: ["CMD", "redis-cli", "ping"]
+ # => Checks if Redis responds to PING
+ interval: 5s
+ timeout: 3s
+ retries: 3
+ start_period: 5s
 
-  # API service (basic depends_on)
-  api-basic:
-    build: ./api
-    depends_on:
-      - db
-      - cache
-      # => Starts db and cache BEFORE api-basic
-      # => Does NOT wait for db/cache to be ready
-      # => API may crash if it connects before db is ready
-    environment:
-      DATABASE_URL: postgresql://appuser:apppass@db:5432/appdb
-      REDIS_URL: redis://cache:6379
+ # API service (basic depends_on)
+ api-basic:
+ build: ./api
+ depends_on:
+ - db
+ - cache
+ # => Starts db and cache BEFORE api-basic
+ # => Does NOT wait for db/cache to be ready
+ # => API may crash if it connects before db is ready
+ environment:
+ DATABASE_URL: postgresql://appuser:apppass@db:5432/appdb
+ REDIS_URL: redis://cache:6379
 
-  # API service (depends_on with health checks)
-  api-healthy:
-    build: ./api
-    depends_on:
-      db:
-        condition: service_healthy
-        # => Waits for db health check to pass
-      cache:
-        condition: service_healthy
-        # => Waits for cache health check to pass
-    environment:
-      DATABASE_URL: postgresql://appuser:apppass@db:5432/appdb
-      REDIS_URL: redis://cache:6379
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
-      # => Checks API /health endpoint
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 30s
-      # => Longer start_period for API initialization
+ # API service (depends_on with health checks)
+ api-healthy:
+ build: ./api
+ depends_on:
+ db:
+ condition: service_healthy
+ # => Waits for db health check to pass
+ cache:
+ condition: service_healthy
+ # => Waits for cache health check to pass
+ environment:
+ DATABASE_URL: postgresql://appuser:apppass@db:5432/appdb
+ REDIS_URL: redis://cache:6379
+ healthcheck:
+ test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+ # => Checks API /health endpoint
+ interval: 10s
+ timeout: 5s
+ retries: 3
+ start_period: 30s
+ # => Longer start_period for API initialization
 
-  # Web frontend (depends on healthy API)
-  web:
-    image: nginx:alpine
-    depends_on:
-      api-healthy:
-        condition: service_healthy
-        # => Waits for API to be healthy before starting
-    ports:
-      - "8080:80"
-    volumes:
-      - ./web/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+ # Web frontend (depends on healthy API)
+ web:
+ image: nginx:alpine
+ depends_on:
+ api-healthy:
+ condition: service_healthy
+ # => Waits for API to be healthy before starting
+ ports:
+ - "8080:80"
+ volumes:
+ - ./web/nginx.conf:/etc/nginx/conf.d/default.conf:ro
 ```
 
 ```bash
@@ -2496,36 +2486,36 @@ docker compose up -d
 
 # Monitor service health status
 docker compose ps
-# => NAME      STATUS                    HEALTH
-# => db        Up 30 seconds             healthy
-# => cache     Up 30 seconds             healthy
-# => api-basic Up 25 seconds             (no health check)
-# => api-healthy Up 20 seconds           starting (health: starting)
-# => web       Created                   (waiting for api-healthy)
+# => NAME STATUS HEALTH
+# => db Up 30 seconds healthy
+# => cache Up 30 seconds healthy
+# => api-basic Up 25 seconds (no health check)
+# => api-healthy Up 20 seconds starting (health: starting)
+# => web Created (waiting for api-healthy)
 
 # Wait a bit for health checks
 sleep 30
 docker compose ps
-# => NAME      STATUS                    HEALTH
-# => db        Up 1 minute               healthy
-# => cache     Up 1 minute               healthy
-# => api-basic Up 55 seconds             (no health check)
-# => api-healthy Up 50 seconds           healthy
-# => web       Up 20 seconds             (no health check)
+# => NAME STATUS HEALTH
+# => db Up 1 minute healthy
+# => cache Up 1 minute healthy
+# => api-basic Up 55 seconds (no health check)
+# => api-healthy Up 50 seconds healthy
+# => web Up 20 seconds (no health check)
 
 # View health check logs
 docker inspect myproject-db-1 --format='{{json .State.Health}}' | jq
 # => {
-# =>   "Status": "healthy",
-# =>   "FailingStreak": 0,
-# =>   "Log": [
-# =>     {
-# =>       "Start": "2025-12-29T10:50:00Z",
-# =>       "End": "2025-12-29T10:50:00Z",
-# =>       "ExitCode": 0,
-# =>       "Output": "accepting connections"
-# =>     }
-# =>   ]
+# => "Status": "healthy",
+# => "FailingStreak": 0,
+# => "Log": [
+# => {
+# => "Start": "2025-12-29T10:50:00Z",
+# => "End": "2025-12-29T10:50:00Z",
+# => "ExitCode": 0,
+# => "Output": "accepting connections"
+# => }
+# => ]
 # => }
 
 # Test difference between basic and healthy depends_on
@@ -2557,76 +2547,76 @@ Docker Compose creates isolated networks for services. Multiple networks enable 
 version: "3.8"
 
 services:
-  # Public-facing web server (frontend network only)
-  web:
-    image: nginx:alpine
-    networks:
-      - frontend
-      # => Only connected to frontend network
-      # => Cannot directly access database
-    ports:
-      - "8080:80"
+ # Public-facing web server (frontend network only)
+ web:
+ image: nginx:alpine
+ networks:
+ - frontend
+ # => Only connected to frontend network
+ # => Cannot directly access database
+ ports:
+ - "8080:80"
 
-  # API application (both networks)
-  api:
-    build: ./api
-    networks:
-      - frontend
-      # => Can communicate with web
-      - backend
-      # => Can communicate with database
-    environment:
-      DATABASE_URL: postgresql://user:pass@db:5432/mydb
+ # API application (both networks)
+ api:
+ build: ./api
+ networks:
+ - frontend
+ # => Can communicate with web
+ - backend
+ # => Can communicate with database
+ environment:
+ DATABASE_URL: postgresql://user:pass@db:5432/mydb
 
-  # Database (backend network only)
-  db:
-    image: postgres:15-alpine
-    networks:
-      - backend
-      # => Only connected to backend network
-      # => Not accessible from web (network isolation)
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
-      POSTGRES_DB: mydb
+ # Database (backend network only)
+ db:
+ image: postgres:15-alpine
+ networks:
+ - backend
+ # => Only connected to backend network
+ # => Not accessible from web (network isolation)
+ environment:
+ POSTGRES_USER: user
+ POSTGRES_PASSWORD: pass
+ POSTGRES_DB: mydb
 
-  # Admin tool (backend network only)
-  admin:
-    image: dpage/pgadmin4
-    networks:
-      - backend
-      # => Can access database directly
-    ports:
-      - "5050:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@example.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+ # Admin tool (backend network only)
+ admin:
+ image: dpage/pgadmin4
+ networks:
+ - backend
+ # => Can access database directly
+ ports:
+ - "5050:80"
+ environment:
+ PGADMIN_DEFAULT_EMAIL: admin@example.com
+ PGADMIN_DEFAULT_PASSWORD: admin
 
 networks:
-  frontend:
-    driver: bridge
-    # => Network for public-facing services
-  backend:
-    driver: bridge
-    # => Network for backend services
-    internal: true
-    # => Internal-only network (no external internet access)
+ frontend:
+ driver: bridge
+ # => Network for public-facing services
+ backend:
+ driver: bridge
+ # => Network for backend services
+ internal: true
+ # => Internal-only network (no external internet access)
 ```
 
 ```mermaid
 %% Network segmentation topology
 graph TD
-    A["Internet"] --> B["Host Port 8080"]
-    B --> C["web<br/>frontend network"]
-    C --> D["api<br/>frontend + backend"]
-    D --> E["db<br/>backend network"]
-    F["admin<br/>backend network"] --> E
+ A["Internet"] --> B["Host Port 8080"]
+ B --> C["web<br/>frontend network"]
+ C --> D["api<br/>frontend + backend"]
+ D --> E["db<br/>backend network"]
+ F["admin<br/>backend network"] --> E
 
-    style A fill:#0173B2,color:#fff
-    style C fill:#029E73,color:#fff
-    style D fill:#DE8F05,color:#fff
-    style E fill:#CC78BC,color:#fff
-    style F fill:#CC78BC,color:#fff
+ style A fill:#0173B2,color:#fff
+ style C fill:#029E73,color:#fff
+ style D fill:#DE8F05,color:#fff
+ style E fill:#CC78BC,color:#fff
+ style F fill:#CC78BC,color:#fff
 ```
 
 ```bash
@@ -2636,9 +2626,9 @@ docker compose up -d
 
 # List networks
 docker network ls --filter label=com.docker.compose.project=myproject
-# => NETWORK ID     NAME                  DRIVER    SCOPE
-# => abc123def456   myproject_frontend    bridge    local
-# => def456ghi789   myproject_backend     bridge    local
+# => NETWORK ID NAME DRIVER SCOPE
+# => abc123def456 myproject_frontend bridge local
+# => def456ghi789 myproject_backend bridge local
 
 # Verify web cannot access db directly (different networks)
 docker compose exec web ping -c 1 db
@@ -2676,15 +2666,15 @@ docker network create shared-network
 
 # Use external network in compose file
 cat >> docker-compose.yml << 'EOF'
-  external-service:
-    image: my-service
-    networks:
-      - shared-network
+ external-service:
+ image: my-service
+ networks:
+ - shared-network
 
 networks:
-  shared-network:
-    external: true
-    # => References existing network (doesn't create new one)
+ shared-network:
+ external: true
+ # => References existing network (doesn't create new one)
 EOF
 
 docker compose up -d external-service
@@ -2707,54 +2697,54 @@ Restart policies control container behavior after crashes or host reboots. Choos
 version: "3.8"
 
 services:
-  # Critical service: always restart
-  database:
-    image: postgres:15-alpine
-    restart: always
-    # => Restarts container on any exit (success or failure)
-    # => Restarts after Docker daemon restarts
-    # => Restarts after host reboot (if Docker starts at boot)
-    environment:
-      POSTGRES_PASSWORD: secret
+ # Critical service: always restart
+ database:
+ image: postgres:15-alpine
+ restart: always
+ # => Restarts container on any exit (success or failure)
+ # => Restarts after Docker daemon restarts
+ # => Restarts after host reboot (if Docker starts at boot)
+ environment:
+ POSTGRES_PASSWORD: secret
 
-  # Production app: restart unless explicitly stopped
-  app:
-    build: .
-    restart: unless-stopped
-    # => Restarts on failure and after Docker daemon restart
-    # => Does NOT restart if manually stopped with docker stop
-    # => Prevents unwanted restarts during maintenance
-    depends_on:
-      - database
+ # Production app: restart unless explicitly stopped
+ app:
+ build: .
+ restart: unless-stopped
+ # => Restarts on failure and after Docker daemon restart
+ # => Does NOT restart if manually stopped with docker stop
+ # => Prevents unwanted restarts during maintenance
+ depends_on:
+ - database
 
-  # Background job: restart on failure only
-  worker:
-    build: ./worker
-    restart: on-failure:5
-    # => Restarts only if container exits with non-zero code
-    # => Maximum 5 restart attempts
-    # => Stops trying after 5 consecutive failures
-    environment:
-      MAX_RETRIES: 3
+ # Background job: restart on failure only
+ worker:
+ build: ./worker
+ restart: on-failure:5
+ # => Restarts only if container exits with non-zero code
+ # => Maximum 5 restart attempts
+ # => Stops trying after 5 consecutive failures
+ environment:
+ MAX_RETRIES: 3
 
-  # Development service: no restart
-  dev-tools:
-    image: alpine
-    restart: "no"
-    # => Never restarts automatically
-    # => Must be quoted ("no") to avoid YAML boolean conversion
-    command: sh -c "echo 'Dev tools ready' && sleep 3600"
+ # Development service: no restart
+ dev-tools:
+ image: alpine
+ restart: "no"
+ # => Never restarts automatically
+ # => Must be quoted ("no") to avoid YAML boolean conversion
+ command: sh -c "echo 'Dev tools ready' && sleep 3600"
 
-  # One-time task: no restart
-  migration:
-    build: ./migrations
-    restart: "no"
-    # => Runs once and exits
-    # => Does not restart on completion
-    command: npm run migrate
-    depends_on:
-      database:
-        condition: service_healthy
+ # One-time task: no restart
+ migration:
+ build: ./migrations
+ restart: "no"
+ # => Runs once and exits
+ # => Does not restart on completion
+ command: npm run migrate
+ depends_on:
+ database:
+ condition: service_healthy
 ```
 
 ```bash
@@ -2839,83 +2829,83 @@ Profiles enable selective service activation, useful for development, testing, a
 version: "3.8"
 
 services:
-  # Core services (no profile - always start)
-  db:
-    image: postgres:15-alpine
-    environment:
-      POSTGRES_PASSWORD: secret
+ # Core services (no profile - always start)
+ db:
+ image: postgres:15-alpine
+ environment:
+ POSTGRES_PASSWORD: secret
 
-  app:
-    build: .
-    depends_on:
-      - db
-    ports:
-      - "3000:3000"
+ app:
+ build: .
+ depends_on:
+ - db
+ ports:
+ - "3000:3000"
 
-  # Development tools (dev profile)
-  dev-tools:
-    image: alpine
-    profiles:
-      - dev
-      # => Only starts when 'dev' profile is active
-    command: sh -c "echo 'Dev tools running' && tail -f /dev/null"
+ # Development tools (dev profile)
+ dev-tools:
+ image: alpine
+ profiles:
+ - dev
+ # => Only starts when 'dev' profile is active
+ command: sh -c "echo 'Dev tools running' && tail -f /dev/null"
 
-  debugger:
-    image: node:18-alpine
-    profiles:
-      - dev
-      - debug
-      # => Starts with either 'dev' or 'debug' profile
-    command: sh -c "npm install -g node-inspect && tail -f /dev/null"
+ debugger:
+ image: node:18-alpine
+ profiles:
+ - dev
+ - debug
+ # => Starts with either 'dev' or 'debug' profile
+ command: sh -c "npm install -g node-inspect && tail -f /dev/null"
 
-  # Testing services (test profile)
-  test-db:
-    image: postgres:15-alpine
-    profiles:
-      - test
-      # => Separate database for testing
-    environment:
-      POSTGRES_PASSWORD: testpass
+ # Testing services (test profile)
+ test-db:
+ image: postgres:15-alpine
+ profiles:
+ - test
+ # => Separate database for testing
+ environment:
+ POSTGRES_PASSWORD: testpass
 
-  test-runner:
-    build:
-      context: .
-      target: test
-      # => Builds test stage from Dockerfile
-    profiles:
-      - test
-    command: npm test
-    depends_on:
-      - test-db
+ test-runner:
+ build:
+ context: .
+ target: test
+ # => Builds test stage from Dockerfile
+ profiles:
+ - test
+ command: npm test
+ depends_on:
+ - test-db
 
-  # Monitoring (monitoring profile)
-  prometheus:
-    image: prom/prometheus
-    profiles:
-      - monitoring
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+ # Monitoring (monitoring profile)
+ prometheus:
+ image: prom/prometheus
+ profiles:
+ - monitoring
+ ports:
+ - "9090:9090"
+ volumes:
+ - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
 
-  grafana:
-    image: grafana/grafana
-    profiles:
-      - monitoring
-    ports:
-      - "3001:3000"
-    depends_on:
-      - prometheus
+ grafana:
+ image: grafana/grafana
+ profiles:
+ - monitoring
+ ports:
+ - "3001:3000"
+ depends_on:
+ - prometheus
 
-  # Documentation server (docs profile)
-  docs:
-    image: nginx:alpine
-    profiles:
-      - docs
-    ports:
-      - "8080:80"
-    volumes:
-      - ./docs:/usr/share/nginx/html:ro
+ # Documentation server (docs profile)
+ docs:
+ image: nginx:alpine
+ profiles:
+ - docs
+ ports:
+ - "8080:80"
+ volumes:
+ - ./docs:/usr/share/nginx/html:ro
 ```
 
 ```bash
@@ -2926,16 +2916,16 @@ docker compose up -d
 
 # List services (including inactive profiles)
 docker compose ps -a
-# => NAME            STATUS        PROFILES
-# => db              Up            -
-# => app             Up            -
-# => dev-tools       Created       dev
-# => debugger        Created       debug,dev
-# => test-db         Created       test
-# => test-runner     Created       test
-# => prometheus      Created       monitoring
-# => grafana         Created       monitoring
-# => docs            Created       docs
+# => NAME STATUS PROFILES
+# => db Up -
+# => app Up -
+# => dev-tools Created dev
+# => debugger Created debug,dev
+# => test-db Created test
+# => test-runner Created test
+# => prometheus Created monitoring
+# => grafana Created monitoring
+# => docs Created docs
 
 # Start with development profile
 docker compose --profile dev up -d
@@ -2998,17 +2988,17 @@ Override files customize compose configuration for different environments withou
 version: "3.8"
 
 services:
-  app:
-    build: .
-    ports:
-      - "3000:3000"
-    environment:
-      NODE_ENV: production
+ app:
+ build: .
+ ports:
+ - "3000:3000"
+ environment:
+ NODE_ENV: production
 
-  db:
-    image: postgres:15-alpine
-    environment:
-      POSTGRES_PASSWORD: secret
+ db:
+ image: postgres:15-alpine
+ environment:
+ POSTGRES_PASSWORD: secret
 ```
 
 ```yaml
@@ -3017,25 +3007,25 @@ services:
 version: "3.8"
 
 services:
-  app:
-    # Override build target for development
-    build:
-      context: .
-      target: development
-    # Add bind mount for live reload
-    volumes:
-      - ./src:/app/src
-    # Override environment
-    environment:
-      NODE_ENV: development
-      DEBUG: "app:*"
-    # Add command override
-    command: npm run dev
+ app:
+ # Override build target for development
+ build:
+ context: .
+ target: development
+ # Add bind mount for live reload
+ volumes:
+ - ./src:/app/src
+ # Override environment
+ environment:
+ NODE_ENV: development
+ DEBUG: "app:*"
+ # Add command override
+ command: npm run dev
 
-  # Add development-only service
-  debug-tools:
-    image: alpine
-    command: tail -f /dev/null
+ # Add development-only service
+ debug-tools:
+ image: alpine
+ command: tail -f /dev/null
 ```
 
 ```yaml
@@ -3044,27 +3034,27 @@ services:
 version: "3.8"
 
 services:
-  app:
-    build:
-      target: test
-    environment:
-      NODE_ENV: test
-      DATABASE_URL: postgresql://test:test@test-db:5432/testdb
-    command: npm test
+ app:
+ build:
+ target: test
+ environment:
+ NODE_ENV: test
+ DATABASE_URL: postgresql://test:test@test-db:5432/testdb
+ command: npm test
 
-  db:
-    environment:
-      POSTGRES_USER: test
-      POSTGRES_PASSWORD: test
-      POSTGRES_DB: testdb
+ db:
+ environment:
+ POSTGRES_USER: test
+ POSTGRES_PASSWORD: test
+ POSTGRES_DB: testdb
 
-  # Test-specific service
-  test-db:
-    image: postgres:15-alpine
-    environment:
-      POSTGRES_USER: test
-      POSTGRES_PASSWORD: test
-      POSTGRES_DB: testdb
+ # Test-specific service
+ test-db:
+ image: postgres:15-alpine
+ environment:
+ POSTGRES_USER: test
+ POSTGRES_PASSWORD: test
+ POSTGRES_DB: testdb
 ```
 
 ```yaml
@@ -3073,35 +3063,35 @@ services:
 version: "3.8"
 
 services:
-  app:
-    restart: unless-stopped
-    environment:
-      NODE_ENV: production
-    # Production logging driver
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
+ app:
+ restart: unless-stopped
+ environment:
+ NODE_ENV: production
+ # Production logging driver
+ logging:
+ driver: "json-file"
+ options:
+ max-size: "10m"
+ max-file: "3"
 
-  db:
-    restart: always
-    # Production volume
-    volumes:
-      - db-prod-data:/var/lib/postgresql/data
-    # Resource limits
-    deploy:
-      resources:
-        limits:
-          cpus: "2"
-          memory: 2G
-        reservations:
-          cpus: "1"
-          memory: 1G
+ db:
+ restart: always
+ # Production volume
+ volumes:
+ - db-prod-data:/var/lib/postgresql/data
+ # Resource limits
+ deploy:
+ resources:
+ limits:
+ cpus: "2"
+ memory: 2G
+ reservations:
+ cpus: "1"
+ memory: 1G
 
 volumes:
-  db-prod-data:
-    driver: local
+ db-prod-data:
+ driver: local
 ```
 
 ```bash
@@ -3128,10 +3118,10 @@ docker compose -f docker-compose.yml up -d
 
 # Multiple override files (merge in order)
 docker compose \
-  -f docker-compose.yml \
-  -f docker-compose.common.yml \
-  -f docker-compose.prod.yml \
-  up -d
+ -f docker-compose.yml \
+ -f docker-compose.common.yml \
+ -f docker-compose.prod.yml \
+ up -d
 # => Files merged left-to-right (later files override earlier)
 # => Allows layered configuration (base -> common -> prod)
 
@@ -3142,14 +3132,14 @@ docker compose -f docker-compose.yml -f docker-compose.prod.yml config
 
 # Example merged output:
 # => services:
-# =>   app:
-# =>     build:
-# =>       context: .
-# =>     environment:
-# =>       NODE_ENV: production (from prod override)
-# =>     restart: unless-stopped (from prod override)
-# =>     ports:
-# =>       - "3000:3000" (from base)
+# => app:
+# => build:
+# => context: .
+# => environment:
+# => NODE_ENV: production (from prod override)
+# => restart: unless-stopped (from prod override)
+# => ports:
+# => - "3000:3000" (from base)
 
 # Environment-specific script
 cat > start-prod.sh << 'EOF'

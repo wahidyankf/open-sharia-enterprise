@@ -363,7 +363,7 @@ public class UserListService {
 
 **Key Takeaway**: `findAll()` returns `List<Entity>`, never null. Safe to call `.size()` and `.forEach()` without null checks.
 
-**Why It Matters**: Guaranteed non-null List returns eliminate defensive null checks throughout the codebase, reducing cyclomatic complexity by 20-30% in service layers. This contract consistency means developers can safely call stream(), forEach(), and size() without guard clauses, preventing NullPointerException runtime crashes that plague legacy JDBC code. The empty list semantics align with functional programming patterns, enabling clean composition with Java Streams API used in modern reactive applications.
+**Why It Matters**: Guaranteed non-null List returns eliminate defensive null checks throughout the codebase, reducing complexity in service layers. This contract consistency means developers can safely call stream(), forEach(), and size() without guard clauses, preventing NullPointerException runtime crashes that plague legacy JDBC code. The empty list semantics align with functional programming patterns, enabling clean composition with Java Streams API used in modern reactive applications.
 
 ### Example 5: Delete Operations
 
@@ -1042,7 +1042,7 @@ public class ProductQueryService {
 
 **Key Takeaway**: Comparison keywords (`LessThan`, `GreaterThan`, `Between`) map to SQL operators. `Between` is inclusive on both ends.
 
-**Why It Matters**: Comparison operators in method names generate indexed WHERE clauses that execute 100-1000x faster than full table scans, critical for filtering millions of records in production databases. The Between keyword translates to SQL BETWEEN which databases optimize with range scans, outperforming separate GreaterThanEqual + LessThanEqual conditions by 20-30% through query plan optimization. E-commerce platforms using price range queries (findByPriceBetween) report sub-100ms response times on catalogs with 10M+ products, versus 5-10 second queries without proper indexing.
+**Why It Matters**: Comparison operators in method names generate indexed WHERE clauses that execute dramatically faster than full table scans, critical for filtering millions of records in production databases. The Between keyword translates to SQL BETWEEN which databases optimize with range scans, outperforming separate GreaterThanEqual + LessThanEqual conditions through query plan optimization. Systems using price range queries (findByPriceBetween) achieve sub-100ms response times on large catalogs with proper indexing.
 
 ---
 
@@ -1898,7 +1898,7 @@ public class DepartmentService {
 
 **Key Takeaway**: `@OneToMany` on parent, `@ManyToOne` on child. Always use `mappedBy` to indicate which side owns the relationship. Helper methods maintain bidirectional consistency.
 
-**Why It Matters**: Proper temporal type mapping prevents timezone-related bugs that cause 20-30% of date/time incidents in distributed systems, ensuring LocalDate stores dates without time components and Instant stores UTC timestamps correctly. The @Temporal annotation (JPA 2.x) and Java 8+ types (LocalDate, LocalDateTime) prevent data loss where storing dates in VARCHAR columns causes unparseable date formats and query performance degradation. Financial applications using correct temporal types report 90% reduction in regulatory compliance issues related to transaction timestamp accuracy.
+**Why It Matters**: Proper temporal type mapping prevents timezone-related bugs in distributed systems, ensuring LocalDate stores dates without time components and Instant stores UTC timestamps correctly. The @Temporal annotation (JPA 2.x) and Java 8+ types (LocalDate, LocalDateTime) prevent data loss where storing dates in VARCHAR columns causes unparseable date formats and query performance degradation. Financial applications using correct temporal types significantly reduce regulatory compliance issues related to transaction timestamp accuracy.
 
 ### Example 18: Querying Through Relationships
 

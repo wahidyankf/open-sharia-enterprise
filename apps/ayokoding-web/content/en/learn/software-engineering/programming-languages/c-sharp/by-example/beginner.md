@@ -77,7 +77,7 @@ Console.WriteLine(name);     // => Outputs: Alice
 
 **Key Takeaway**: Use `var` for local variables when type is clear from initializer. Variables are mutable by default - reassignment is allowed.
 
-**Why It Matters**: Mutability by default provides flexibility but introduces risks - 30% of bugs in C# codebases relate to unexpected state changes according to Microsoft's internal research. Understanding mutation patterns is critical for writing maintainable C# code, especially in multi-threaded applications.
+**Why It Matters**: Mutability by default provides flexibility but introduces risks related to unexpected state changes. Understanding mutation patterns is critical for writing maintainable C# code, especially in multi-threaded applications.
 
 ## Example 3: Explicit Type Declarations
 
@@ -108,7 +108,7 @@ Console.WriteLine($"{age} {name} {pi:F2} {isValid}");
 
 **Key Takeaway**: Explicit types document intent and improve readability at API boundaries. Use format specifiers in string interpolation for controlled output.
 
-**Why It Matters**: Type declarations at public API boundaries prevent unintended type changes and improve IntelliSense documentation. String interpolation with format specifiers replaces verbose `String.Format` calls, improving code readability by 40% while maintaining type safety and performance.
+**Why It Matters**: Type declarations at public API boundaries prevent unintended type changes and improve IntelliSense documentation. String interpolation with format specifiers replaces verbose `String.Format` calls, improving code readability while maintaining type safety and performance.
 
 ## Example 4: Nullable Reference Types
 
@@ -147,7 +147,7 @@ Console.WriteLine(age);      // => Outputs: 25
 
 **Key Takeaway**: Use `?` suffix for nullable types. Check `HasValue` before accessing `.Value`. Use `??` for default values.
 
-**Why It Matters**: Nullable reference types eliminate null reference exceptions - Tony Hoare's "billion-dollar mistake". Codebases that enable nullable reference types see 80% reduction in null-related production errors according to Microsoft's C# team analysis, making systems more reliable without runtime overhead.
+**Why It Matters**: Nullable reference types eliminate null reference exceptions - Tony Hoare's "billion-dollar mistake". Codebases that enable nullable reference types see significant reductions in null-related production errors, making systems more reliable without runtime overhead.
 
 ## Example 5: Control Flow - If Statements
 
@@ -251,7 +251,7 @@ Console.WriteLine(category);     // => Outputs: Small
 
 **Key Takeaway**: Switch expressions return values and support pattern matching. Use relational patterns (`>`, `<`, `>=`) and logical patterns (`and`, `or`).
 
-**Why It Matters**: Switch expressions bring functional programming patterns to C#, eliminating temporary variables and improving readability. Microsoft's Roslyn compiler uses switch expressions extensively, reducing code complexity by 25% compared to equivalent if/else chains while maintaining compile-time exhaustiveness checking.
+**Why It Matters**: Switch expressions bring functional programming patterns to C#, eliminating temporary variables and improving readability. They reduce code complexity compared to equivalent if/else chains while maintaining compile-time exhaustiveness checking.
 
 ## Example 7: Loops - For Loop
 
@@ -393,7 +393,7 @@ Console.WriteLine($"{result}, {sum}, {squared}");
 
 **Key Takeaway**: Lambdas use `param => expression` or `param => { statements }` syntax. Declare with `Func<>` delegate types.
 
-**Why It Matters**: Lambdas enable functional programming patterns in C# - LINQ queries, event handlers, and callbacks all use lambda syntax extensively. Modern C# codebases use lambdas in 60-80% of LINQ operations, replacing verbose anonymous method syntax from C# 2.0.
+**Why It Matters**: Lambdas enable functional programming patterns in C# - LINQ queries, event handlers, and callbacks all use lambda syntax extensively. Modern C# codebases use lambdas extensively in LINQ operations, replacing verbose anonymous method syntax from C# 2.0.
 
 ## Example 11: Classes and Objects
 
@@ -447,7 +447,7 @@ Console.WriteLine($"{bob.Name} is {bob.Age}");
 
 **Key Takeaway**: Classes use `class Name { members }` syntax. Create instances with `new`. Fields are mutable by default.
 
-**Why It Matters**: Classes are reference types - multiple variables can reference the same object, enabling shared mutable state. This power comes with responsibility - 40% of C# bugs relate to unexpected object mutations. Understanding reference semantics is critical for writing correct multi-threaded code.
+**Why It Matters**: Classes are reference types - multiple variables can reference the same object, enabling shared mutable state. This power comes with responsibility - many C# bugs relate to unexpected object mutations. Understanding reference semantics is critical for writing correct multi-threaded code.
 
 ## Example 12: Properties with Get/Set
 
@@ -557,7 +557,7 @@ Console.WriteLine($"{alice.Name}, {alice.Age}, {alice.Email}");
 
 **Key Takeaway**: Auto-properties use `{ get; set; }` syntax. Make setters private for immutability. Use in constructors for initialization.
 
-**Why It Matters**: Auto-properties reduce boilerplate by 70% compared to manual properties with backing fields. Private setters enable immutability patterns without readonly fields, supporting scenarios where initialization must occur in constructors rather than field initializers.
+**Why It Matters**: Auto-properties significantly reduce boilerplate compared to manual properties with backing fields. Private setters enable immutability patterns without readonly fields, supporting scenarios where initialization must occur in constructors rather than field initializers.
 
 ## Example 14: Constructors
 
@@ -646,7 +646,7 @@ Console.WriteLine(string.Join(", ", names));
 
 **Key Takeaway**: `List<T>` provides dynamic sizing. Access elements with `[index]`. Initialize with `{ }` syntax. Mutable by default.
 
-**Why It Matters**: List<T> is the default collection choice for 80% of scenarios - it provides O(1) indexed access, O(1) amortized append, and full LINQ support. Understanding List vs Array vs IEnumerable tradeoffs is fundamental to C# performance optimization.
+**Why It Matters**: List<T> is the default collection choice for most scenarios - it provides O(1) indexed access, O(1) amortized append, and full LINQ support. Understanding List vs Array vs IEnumerable tradeoffs is fundamental to C# performance optimization.
 
 ## Example 16: Collections - Dictionary<TKey, TValue>
 
@@ -925,7 +925,7 @@ Console.WriteLine(string.Join(", ", byAge.Select(p => p.Name)));
 
 **Key Takeaway**: `OrderBy` sorts ascending, `OrderByDescending` descending. Key selector lambda chooses sort property.
 
-**Why It Matters**: LINQ ordering uses stable sort algorithms - equal elements maintain original order. Combined with ThenBy for multi-level sorting, this enables complex sorting without manual comparers, improving code clarity by 60%.
+**Why It Matters**: LINQ ordering uses stable sort algorithms - equal elements maintain original order. Combined with ThenBy for multi-level sorting, this enables complex sorting without manual comparers, improving code clarity.
 
 ## Example 21: Exception Handling - Try-Catch
 
@@ -1117,7 +1117,7 @@ Console.WriteLine(precision);// => Outputs: Pi: 3.14
 
 **Key Takeaway**: Use `$"..."` for string interpolation. Embed expressions with `{expression}`. Format with `{value:format}` specifiers.
 
-**Why It Matters**: String interpolation improves readability by 50% compared to String.Format - expressions appear inline rather than separated as arguments. Compiler generates efficient code equivalent to String.Format, with no performance penalty.
+**Why It Matters**: String interpolation improves readability compared to String.Format - expressions appear inline rather than separated as arguments. Compiler generates efficient code equivalent to String.Format, with no performance penalty.
 
 ## Example 25: Value Types vs Reference Types
 
@@ -1188,7 +1188,7 @@ Console.WriteLine($"s1.X={s1.X}, s2.X={s2.X}");
 
 **Key Takeaway**: Value types (structs, primitives) copy by value. Reference types (classes) copy by reference. Modifying references affects all variables referencing same object.
 
-**Why It Matters**: Reference vs value semantics affects 60% of C# memory bugs. Classes share state (reference types), enabling aliasing bugs where unexpected modifications occur. Structs provide value semantics but have boxing overhead when converted to interfaces or object.
+**Why It Matters**: Reference vs value semantics affects many C# memory bugs. Classes share state (reference types), enabling aliasing bugs where unexpected modifications occur. Structs provide value semantics but have boxing overhead when converted to interfaces or object.
 
 ## Example 26: Null Conditional Operator (?.)
 
@@ -1239,7 +1239,7 @@ Console.WriteLine(nameLength ?? 0);
 
 **Key Takeaway**: Use `?.` for safe member access on nullable references. Returns null if reference is null, preventing exceptions. Chain multiple `?.` operators.
 
-**Why It Matters**: Null conditional operators eliminate 70% of defensive null checks, improving code readability. Combined with nullable reference types (C# 8.0+), they enable null-safe code without verbose if-checks at every member access.
+**Why It Matters**: Null conditional operators eliminate many defensive null checks, improving code readability. Combined with nullable reference types (C# 8.0+), they enable null-safe code without verbose if-checks at every member access.
 
 ## Example 27: Null Coalescing Operator (??)
 
@@ -1296,7 +1296,7 @@ Console.WriteLine(value);    // => Outputs: Initialized
 
 **Key Takeaway**: Use `??` to provide defaults for null values. Use `??=` for null-conditional assignment. Both operators short-circuit evaluation.
 
-**Why It Matters**: Null coalescing eliminates ternary operators for null checks (`name != null ? name : "Unknown"`), improving readability by 40%. Assignment form (`??=`) enables lazy initialization patterns without temporary variables.
+**Why It Matters**: Null coalescing eliminates ternary operators for null checks (`name != null ? name : "Unknown"`), improving readability. Assignment form (`??=`) enables lazy initialization patterns without temporary variables.
 
 ## Example 28: Collection Expressions (C# 12.0+)
 
@@ -1338,7 +1338,7 @@ Console.WriteLine(string.Join(", ", combined));
 
 **Key Takeaway**: Collection expressions use `[elements]` syntax. Spread operator `..` expands collections inline. Works with arrays, lists, and other collection types.
 
-**Why It Matters**: Collection expressions reduce initialization boilerplate by 50% and provide consistent syntax across collection types. Spread operator eliminates manual concatenation loops, improving readability while maintaining performance (compiler optimizes to efficient array operations).
+**Why It Matters**: Collection expressions reduce initialization boilerplate and provide consistent syntax across collection types. Spread operator eliminates manual concatenation loops, improving readability while maintaining performance (compiler optimizes to efficient array operations).
 
 ## Example 29: Primary Constructors (C# 12.0+)
 
@@ -1401,7 +1401,7 @@ Console.WriteLine(bob.Department);
 
 **Key Takeaway**: Primary constructors use `class Name(params)` syntax. Parameters available throughout class. Reduces property initialization boilerplate.
 
-**Why It Matters**: Primary constructors eliminate 60% of repetitive constructor code (parameter-to-field assignments). They encourage immutability patterns by defaulting to readonly properties, improving code safety without sacrificing readability.
+**Why It Matters**: Primary constructors eliminate repetitive constructor code (parameter-to-field assignments). They encourage immutability patterns by defaulting to readonly properties, improving code safety without sacrificing readability.
 
 ## Example 30: Record Types
 
@@ -1455,7 +1455,7 @@ Console.WriteLine($"{name}, {age}");
 
 **Key Takeaway**: Records use `record Name(params)` syntax. Provide value equality, immutability, and with-expressions for copying. Ideal for data transfer objects.
 
-**Why It Matters**: Records eliminate 80% of boilerplate for data classes - no manual Equals, GetHashCode, ToString, or copy methods needed. Value equality makes records ideal for DTOs, API models, and domain entities, enabling easier testing (deep equality) and functional programming patterns (immutability).
+**Why It Matters**: Records eliminate substantial boilerplate for data classes - no manual Equals, GetHashCode, ToString, or copy methods needed. Value equality makes records ideal for DTOs, API models, and domain entities, enabling easier testing (deep equality) and functional programming patterns (immutability).
 
 ---
 

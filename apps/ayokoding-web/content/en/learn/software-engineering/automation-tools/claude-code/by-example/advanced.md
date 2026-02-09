@@ -41,7 +41,7 @@ claude --agents '{
 
 **Key Takeaway**: Define custom agents with `--agents` JSON containing description, prompt, tools array, and model. Agents specialize for specific tasks.
 
-**Why It Matters**: Custom agents enable task specialization - reviewer focuses on code quality, debugger handles errors. Tool restriction (reviewer can't run Bash) prevents inappropriate actions. Model selection balances cost vs capability. Teams define organization-wide agents for consistent code review, security scanning, documentation generation. This codifies best practices into reusable agent definitions.
+**Why It Matters**: Custom agents enable task specialization - reviewer focuses on code quality, debugger handles errors. Tool restriction (reviewer can't run Bash) prevents inappropriate actions. Model selection balances cost vs capability. Define organization-wide agents for consistent code review, security scanning, documentation generation. This codifies best practices into reusable agent definitions.
 
 ### Example 62: Subagent Delegation Patterns
 
@@ -80,7 +80,7 @@ Claude: [Consolidates reports from both agents]
 
 **Key Takeaway**: Main session spawns specialized subagents for focused tasks. Each works independently with constrained tools, returns results to main session.
 
-**Why It Matters**: Delegation enables parallel expertise - security and performance analyzed simultaneously. Subagent isolation prevents cross-contamination (security agent doesn't modify code). Results aggregation provides comprehensive analysis. Teams use delegation for multi-faceted code reviews where different experts (security, performance, accessibility) evaluate independently.
+**Why It Matters**: Delegation enables parallel expertise - security and performance analyzed simultaneously. Subagent isolation prevents cross-contamination (security agent doesn't modify code). Results aggregation provides comprehensive analysis. Use delegation for multi-faceted code reviews where different experts (security, performance, accessibility) evaluate independently.
 
 ### Example 63: MCP Server Integration (--mcp-config)
 
@@ -124,7 +124,7 @@ claude --mcp-config ./mcp-config.json \
 
 **Key Takeaway**: MCP servers extend Claude with custom tools (APIs, databases, services). Configure with --mcp-config JSON file.
 
-**Why It Matters**: MCP unlocks domain-specific integrations - GitHub for issue tracking, databases for data analysis, internal APIs for company systems. This transforms Claude from general assistant to domain expert with access to proprietary tools. Teams build MCP servers for Jira, Slack, monitoring systems, enabling Claude to operate across entire development ecosystem.
+**Why It Matters**: MCP unlocks domain-specific integrations - GitHub for issue tracking, databases for data analysis, internal APIs. This transforms Claude from general assistant to domain expert with access to proprietary tools. Build MCP servers for Jira, Slack, monitoring systems, enabling Claude to operate across the entire development ecosystem.
 
 ### Example 64: System Prompt Customization (--system-prompt, --append-system-prompt)
 
@@ -165,7 +165,7 @@ claude --append-system-prompt-file ./project-prompt.txt \
 
 **Key Takeaway**: Use `--system-prompt` for complete control, `--append-system-prompt` to add requirements. Load from file for version-controlled team conventions.
 
-**Why It Matters**: Custom prompts enforce team standards automatically. New developers get consistent code generation following project conventions. This eliminates "style doesn't match existing code" review comments. Teams version-control prompt files - updating team standards means updating one file, not retraining developers.
+**Why It Matters**: Custom prompts enforce team standards automatically. New developers get consistent code generation following project conventions. This eliminates "style doesn't match existing code" review comments. Version-control prompt files - updating team standards means updating one file, not retraining developers.
 
 ### Example 65: Tool Restriction and Permission Control
 
@@ -207,7 +207,7 @@ claude --tools "" \
 
 **Key Takeaway**: Use `--tools` to restrict available tools, `--allowedTools` for specific permissions, `--disallowedTools` to block dangerous operations.
 
-**Why It Matters**: Tool restriction prevents automation accidents - read-only analysis can't modify code. Permission policies enforce least-privilege principle. Example: CI/CD analysis uses --tools "Read,Grep,Glob" preventing accidental commits. Teams define permission profiles (read-only, read-write-no-bash, full-access) for different automation contexts.
+**Why It Matters**: Tool restriction prevents automation accidents - read-only analysis can't modify code. Permission policies enforce least-privilege principle. Example: CI/CD analysis uses --tools "Read,Grep,Glob" preventing accidental commits. Define permission profiles (read-only, read-write-no-bash, full-access) for different automation contexts.
 
 ## Production Orchestration Patterns (Examples 66-70)
 
@@ -250,7 +250,7 @@ cat final-roadmap.md
 
 **Key Takeaway**: Chain multiple Claude invocations, each specialized for one stage. Use `claude -c -p` to maintain context across calls.
 
-**Why It Matters**: Complex problems require multi-step analysis - architecture → plan → risks → prioritization. Each agent specializes (analyzer finds patterns, planner creates steps, assessor evaluates risks, prioritizer balances tradeoffs). Sequential processing enables depth impossible in single pass. Teams use multi-agent workflows for migration planning, refactoring roadmaps, technical debt remediation.
+**Why It Matters**: Complex problems require multi-step analysis - architecture → plan → risks → prioritization. Each agent specializes (analyzer finds patterns, planner creates steps, assessor evaluates risks, prioritizer balances tradeoffs). Sequential processing enables depth impossible in single pass. Use multi-agent workflows for migration planning, refactoring roadmaps, technical debt remediation.
 
 ### Example 67: Session Forking for Parallel Experiments
 
@@ -294,7 +294,7 @@ claude -r "auth-analysis-main" \
 
 **Key Takeaway**: Use `--fork-session` with `-r` to branch from existing session. Each fork experiments independently, original preserved.
 
-**Why It Matters**: Forking enables A/B/C testing of solutions. Explore JWT vs session vs OAuth from same analysis baseline. Compare approaches without losing original context. This accelerates decision-making - see all options before committing. Teams fork sessions for architecture decisions, technology evaluations, migration strategies.
+**Why It Matters**: Forking enables A/B/C testing of solutions. Explore JWT vs session vs OAuth from same analysis baseline. Compare approaches without losing original context. This accelerates decision-making - see all options before committing. Fork sessions for architecture decisions, technology evaluations, migration strategies.
 
 ### Example 68: Production Monitoring with Claude
 
@@ -344,7 +344,7 @@ done
 
 **Key Takeaway**: Continuously monitor logs/metrics with Claude in loop. Claude detects anomalies, classifies severity, triggers alerts for non-healthy states.
 
-**Why It Matters**: Claude understands semantic patterns traditional monitoring misses - "increasing latency" + "database timeout errors" = database connectivity issue. Intelligent alerting reduces noise (only alert on real problems, not threshold crossings). Root cause correlation across multiple signals (logs + metrics) identifies issues faster. Teams use Claude monitoring to supplement Datadog/Prometheus with semantic anomaly detection.
+**Why It Matters**: Claude understands semantic patterns traditional monitoring misses - "increasing latency" + "database timeout errors" = database connectivity issue. Intelligent alerting reduces noise (only alert on real problems, not threshold crossings). Root cause correlation across multiple signals (logs + metrics) identifies issues faster. Use Claude monitoring to supplement Datadog/Prometheus with semantic anomaly detection.
 
 ### Example 69: Error Recovery Patterns in Automation
 
@@ -400,7 +400,7 @@ fi
 
 **Key Takeaway**: Wrap Claude calls in retry logic with exponential backoff. Implement timeouts and fallback strategies for automation resilience.
 
-**Why It Matters**: Network failures, API rate limits, service outages happen in production. Retry logic with backoff handles transient failures gracefully. Timeouts prevent hanging pipelines. Fallback strategies (cached results, degraded functionality) maintain availability when Claude is down. Teams use error recovery in CI/CD to prevent single Claude failure from blocking deployments.
+**Why It Matters**: Network failures, API rate limits, service outages happen in production. Retry logic with backoff handles transient failures gracefully. Timeouts prevent hanging pipelines. Fallback strategies (cached results, degraded functionality) maintain availability when Claude is down. Use error recovery in CI/CD to prevent single Claude failure from blocking deployments.
 
 ### Example 70: Advanced Configuration Management for Production
 
@@ -457,7 +457,7 @@ claude --model "$MODEL" \
 
 **Key Takeaway**: Define environment-specific configuration profiles in JSON. Load dynamically based on environment variable.
 
-**Why It Matters**: Different environments have different requirements. Development prioritizes speed and flexibility (haiku model, write access). Staging balances thoroughness and safety (sonnet, read-only). Production maximizes safety and quality (sonnet, strictest permissions, highest budget). Configuration as code enables consistent Claude behavior across environments. Teams version-control configs, review changes like code, deploy configuration updates through CI/CD.
+**Why It Matters**: Different environments have different requirements. Development prioritizes speed and flexibility (haiku model, write access). Staging balances thoroughness and safety (sonnet, read-only). Production maximizes safety and quality (sonnet, strictest permissions, highest budget). Configuration as code enables consistent Claude behavior across environments. Version-control configs, review changes like code, deploy configuration updates through CI/CD.
 
 ### Example 71: Docker Optimization for Multi-Stage Builds
 
@@ -536,7 +536,7 @@ You: Optimize the Dockerfile for production using multi-stage builds
 
 **Key Takeaway**: Claude generates multi-stage Dockerfiles separating build and runtime. Uses Alpine Linux base and production-only dependencies for minimal images.
 
-**Why It Matters**: Large Docker images slow deployments and increase storage costs. Multi-stage builds reduce image size 70-90% while maintaining functionality. AI Dockerfile optimization applies best practices (Alpine, non-root user, minimal layers). Teams report 60% faster deployment with optimized images.
+**Why It Matters**: Large Docker images slow deployments and increase storage costs. Multi-stage builds significantly reduce image size while maintaining functionality. AI Dockerfile optimization applies best practices (Alpine, non-root user, minimal layers).
 
 ### Example 72: Kubernetes Manifest Generation
 
@@ -598,7 +598,7 @@ You: Generate Kubernetes manifests for deploying this Node.js API with 3 replica
 
 **Key Takeaway**: Claude generates complete Kubernetes deployment with health checks, resource limits, autoscaling, and configuration management from application analysis.
 
-**Why It Matters**: Kubernetes manifests are complex and error-prone. Missing health checks cause deployment failures. AI generation includes production best practices (liveness/readiness probes, resource limits, autoscaling). Teams report 70% faster Kubernetes setup with AI-generated manifests.
+**Why It Matters**: Kubernetes manifests are complex and error-prone. Missing health checks cause deployment failures. AI generation includes production best practices (liveness/readiness probes, resource limits, autoscaling).
 
 ### Example 73: CI/CD Pipeline Optimization
 
@@ -670,7 +670,7 @@ You: Analyze .github/workflows/ci.yml and suggest optimizations to reduce build 
 
 **Key Takeaway**: Claude optimizes CI/CD by parallelizing jobs, adding caching, conditional execution, and using faster runners. Reduces build time 50-70%.
 
-**Why It Matters**: Slow CI pipelines reduce developer productivity - waiting 10 minutes per commit kills flow. Pipeline optimization requires understanding job dependencies and GitHub Actions features. AI analysis identifies parallelization opportunities humans miss. Teams report 60% faster feedback loops with optimized pipelines.
+**Why It Matters**: Slow CI pipelines reduce developer productivity - waiting per commit kills flow. Pipeline optimization requires understanding job dependencies and GitHub Actions features. AI analysis identifies parallelization opportunities humans miss.
 
 ### Example 74: Infrastructure as Code with Terraform
 
@@ -722,7 +722,7 @@ You: Generate Terraform config for AWS infrastructure: VPC with public/private s
 
 **Key Takeaway**: Claude generates modular Terraform with security best practices: encryption, multi-AZ, backup retention, private subnets for databases.
 
-**Why It Matters**: Infrastructure as Code is verbose and error-prone. Security misconfigurations (public databases, no encryption) cause breaches. AI Terraform generation includes security defaults and high availability. Teams report 50% faster infrastructure setup with 80% fewer security misconfigurations using AI-generated Terraform.
+**Why It Matters**: Infrastructure as Code is verbose and error-prone. Security misconfigurations (public databases, no encryption) cause breaches. AI Terraform generation includes security defaults and high availability, reducing security misconfigurations.
 
 ### Example 75: Advanced Testing - Property-Based Testing
 
@@ -790,7 +790,7 @@ You: Generate property-based tests for the sortArray function using fast-check
 
 **Key Takeaway**: Claude generates property-based tests verifying invariants (idempotence, length preservation, ordering) across 100+ random inputs automatically.
 
-**Why It Matters**: Example-based tests miss edge cases. Property tests verify invariants hold for ALL inputs. AI property test generation identifies testable properties humans overlook. Teams report 40% more bugs caught in development with property testing. This is especially valuable for algorithms and data transformations.
+**Why It Matters**: Example-based tests miss edge cases. Property tests verify invariants hold for all inputs. AI property test generation identifies testable properties humans overlook. This is especially valuable for algorithms and data transformations.
 
 ## Advanced Collaboration and Configuration (Examples 76-80)
 
@@ -845,7 +845,7 @@ You: Create a custom agent for API development that knows our conventions
 
 **Key Takeaway**: Custom agents encode project-specific conventions, architectural patterns, and workflow steps. Agents enforce consistency automatically.
 
-**Why It Matters**: Project conventions live in developer's heads or outdated wikis. Custom agents codify conventions as executable knowledge. New developers leverage agent to follow patterns correctly from day one. Teams report 50% reduction in code review feedback about conventions with custom agents.
+**Why It Matters**: Project conventions live in developer's heads or outdated wikis. Custom agents codify conventions as executable knowledge. New developers leverage agent to follow patterns correctly from day one.
 
 ### Example 77: Code Metrics and Quality Gates
 
@@ -888,7 +888,7 @@ You: Analyze code metrics for this pull request and check if it meets quality ga
 
 **Key Takeaway**: Claude runs automated quality checks (complexity, coverage, duplication, types) and enforces thresholds before allowing merge.
 
-**Why It Matters**: Quality metrics without enforcement degrade over time. Manual metric checking is inconsistent. Automated quality gates prevent technical debt accumulation. Teams report 40% better long-term code quality with automated gates. This shifts quality from code review afterthought to pre-merge requirement.
+**Why It Matters**: Quality metrics without enforcement degrade over time. Manual metric checking is inconsistent. Automated quality gates prevent technical debt accumulation. This shifts quality from code review afterthought to pre-merge requirement.
 
 ### Example 78: Security Audit Automation
 
@@ -961,7 +961,7 @@ You: Run a security audit on the codebase
 
 **Key Takeaway**: Claude automates security scanning for common vulnerabilities (SQL injection, XSS, secrets, dependencies) using pattern matching and audit tools.
 
-**Why It Matters**: Security vulnerabilities cause data breaches and compliance failures. Manual security reviews are inconsistent and time-consuming. Automated scanning catches 80% of common vulnerabilities before code review. Teams report 70% reduction in security incidents with automated pre-commit scanning.
+**Why It Matters**: Security vulnerabilities cause data breaches and compliance failures. Manual security reviews are inconsistent and time-consuming. Automated scanning catches common vulnerabilities before code review.
 
 ### Example 79: Compliance Checking - Licensing and Standards
 
@@ -1001,7 +1001,7 @@ You: Check all npm dependencies for license compliance. Flag any GPL or AGPL lic
 
 **Key Takeaway**: Claude scans dependency licenses, identifies incompatible licenses (GPL/AGPL), and suggests MIT/Apache alternatives to maintain compliance.
 
-**Why It Matters**: License violations cause legal liability and forced open-sourcing. Manual license auditing is impractical for hundreds of dependencies. AI license checking prevents compliance issues before they reach production. Teams report 100% reduction in license violation incidents with automated checks.
+**Why It Matters**: License violations cause legal liability and forced open-sourcing. Manual license auditing is impractical for hundreds of dependencies. AI license checking prevents compliance issues before they reach production.
 
 ### Example 80: Team Collaboration Patterns - Shared Context Documents
 
@@ -1067,7 +1067,7 @@ You: Generate an Architecture Decision Record for our choice of PostgreSQL over 
 
 **Key Takeaway**: Claude generates structured Architecture Decision Records documenting technical choices, context, consequences, and alternatives for team reference.
 
-**Why It Matters**: Technical decisions fade from team memory without documentation. ADRs provide historical context for "why did we choose this?" questions. AI-generated ADRs maintain consistent format and completeness. Teams report 60% faster onboarding when architecture decisions are documented in ADRs.
+**Why It Matters**: Technical decisions fade from team memory without documentation. ADRs provide historical context for "why did we choose this?" questions. AI-generated ADRs maintain consistent format and completeness.
 
 ## Production Optimization and Monitoring (Examples 81-85)
 
@@ -1133,7 +1133,7 @@ You: Analyze the Node.js profiling data and identify performance bottlenecks
 
 **Key Takeaway**: Claude analyzes Node.js profiling data to identify CPU bottlenecks (JSON parsing, bcrypt, N+1 queries) and proposes specific optimizations.
 
-**Why It Matters**: Performance bottlenecks are invisible without profiling. Manual profiling analysis requires expertise to interpret sampling data. AI analysis identifies root causes and suggests fixes automatically. Teams report 50% improvement in API response times after applying AI-identified optimizations.
+**Why It Matters**: Performance bottlenecks are invisible without profiling. Manual profiling analysis requires expertise to interpret sampling data. AI analysis identifies root causes and suggests fixes automatically.
 
 ### Example 82: API Versioning Strategies for Microservices
 
@@ -1205,7 +1205,7 @@ You: Design an API versioning strategy for our microservices that supports gradu
 
 **Key Takeaway**: Claude designs API versioning strategy balancing discoverability, caching, and migration complexity. Generates routing middleware and deprecation headers.
 
-**Why It Matters**: API versioning is critical for zero-downtime migrations but has many implementation approaches. Poor versioning causes client breakages or maintenance burden. AI versioning design applies industry best practices with generated code. Teams report 80% smoother API migrations with structured versioning.
+**Why It Matters**: API versioning is critical for zero-downtime migrations but has many implementation approaches. Poor versioning causes client breakages or maintenance burden. AI versioning design applies industry best practices with generated code.
 
 ### Example 83: Custom Linting Rules Generation
 
