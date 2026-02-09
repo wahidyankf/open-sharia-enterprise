@@ -1109,7 +1109,7 @@ const updatedAddr = new Address(
 
 **Key Takeaway**: Value Objects are immutable, compared by attributes (not identity), and interchangeable when equal. To "modify" a value object, create a new instance with different values.
 
-**Why It Matters**: Mutable value objects cause aliasing bugs where changing one reference affects others unexpectedly. When Airbnb's booking system used mutable Address objects, changing a guest's address also changed the host's address (both shared same object reference). Making Address a value object (immutable, compared by value) eliminated aliasing bugs entirely. Value objects enable safe sharing, caching, and reasoning about equality without worrying about unintended side effects.
+**Why It Matters**: Mutable value objects cause aliasing bugs where changing one reference affects others unexpectedly. In production booking systems using mutable Address objects, changing one user's address could unintentionally change another user's address when both shared the same object reference. Making Address a value object (immutable, compared by value) eliminates aliasing bugs entirely. Value objects enable safe sharing, caching, and reasoning about equality without worrying about unintended side effects.
 
 ### Example 10: Money Value Object
 

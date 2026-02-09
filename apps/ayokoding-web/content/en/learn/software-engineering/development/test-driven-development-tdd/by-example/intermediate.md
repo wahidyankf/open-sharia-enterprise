@@ -591,7 +591,7 @@ describe("fetchUser", () => {
 
 **Key Takeaway**: Mark test functions `async` to use `await`. Test both promise resolution (success) and rejection (failure) paths.
 
-**Why It Matters**: Untested promise rejections cause unhandled errors in production. Node.js processes crash on unhandled promise rejections by default - Uber's incident reports show 35% of their service outages stemmed from untested async error paths.
+**Why It Matters**: Untested promise rejections cause unhandled errors in production. Node.js processes crash on unhandled promise rejections by default - production incident analysis shows that a significant portion of service outages stem from untested async error paths.
 
 ### Example 37: Testing Async/Await Patterns
 
@@ -1478,7 +1478,7 @@ test("high coverage doesn't guarantee correctness", () => {
 
 **Key Takeaway**: Aim for high test coverage (80%+ is good, 95%+ is excellent) but verify assertions are correct. Coverage measures execution, not correctness.
 
-**Why It Matters**: Coverage is a necessary but insufficient quality metric. Google requires 80% minimum coverage but emphasizes assertion quality over raw numbers. Teams with high coverage AND strong assertions have significantly fewer bugs than high-coverage teams with weak tests.
+**Why It Matters**: Coverage is a necessary but insufficient quality metric. Industry best practices recommend high coverage thresholds but emphasize assertion quality over raw numbers. Teams with high coverage AND strong assertions have significantly fewer bugs than high-coverage teams with weak tests.
 
 ### Example 45: TDD with Express.js Routes
 

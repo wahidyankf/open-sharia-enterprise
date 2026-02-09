@@ -39,7 +39,7 @@ function greet(name: string): string {
 
 **Key Takeaway**: Write the test first, watch it fail (Red), then write minimal code to make it pass (Green). This confirms the test actually validates behavior.
 
-**Why It Matters**: Test-first development catches requirements misunderstandings immediately, before wasting time implementing the wrong solution. Studies at Microsoft show that teams practicing TDD produce 40-significantly fewer defects compared to test-after development, reducing costly debugging cycles and customer-reported bugs.
+**Why It Matters**: Test-first development catches requirements misunderstandings immediately, before wasting time implementing the wrong solution. Industry research shows that teams practicing TDD produce significantly fewer defects compared to test-after development, reducing costly debugging cycles and customer-reported bugs.
 
 ### Example 2: Red-Green-Refactor Cycle
 
@@ -396,7 +396,7 @@ describe("Rectangle calculations", () => {
 
 **Key Takeaway**: Extract common setup to `beforeEach` when multiple tests need the same initial state. Each test gets a fresh fixture to avoid test interdependence.
 
-**Why It Matters**: Test fixtures reduce duplication and improve maintainability. Kent Beck's research on test patterns shows that proper fixture use reduces test suite maintenance time by 60% as codebases grow, because setup changes need updating in only one place.
+**Why It Matters**: Test fixtures reduce duplication and improve maintainability. Research on test patterns shows that proper fixture use significantly reduces test suite maintenance time as codebases grow, because setup changes need updating in only one place.
 
 ### Example 9: Single Responsibility Principle in Tests
 
@@ -583,7 +583,7 @@ function getAgeGroup(age: number): string {
 
 **Key Takeaway**: Test boundary values explicitly (minimum, maximum, just-before-boundary, just-after-boundary). Boundaries are where off-by-one errors hide.
 
-**Why It Matters**: Boundary bugs cause critical production failures. NASA's Mars Climate Orbiter crashed due to boundary conversion errors. Systematic boundary testing prevented similar issues in SpaceX's flight software, where TDD boundary tests caught many bugs during development.
+**Why It Matters**: Boundary bugs cause critical production failures. Historical aerospace incidents have been traced to boundary conversion errors. Systematic boundary testing in flight software development, where TDD boundary tests help catch many bugs during development cycles.
 
 ### Example 12: Testing Error Conditions
 
@@ -835,7 +835,7 @@ describe("Authentication", () => {
 
 **Key Takeaway**: Given-When-Then structure reads like behavior specification. Use it when tests describe user stories or business rules. AAA and Given-When-Then are equivalent, choose based on team preference.
 
-**Why It Matters**: Given-When-Then bridges technical tests and business requirements. Dan North's BDD research shows teams using Given-When-Then reduce requirement misunderstandings by 40% because tests read as executable specifications that stakeholders can review.
+**Why It Matters**: Given-When-Then bridges technical tests and business requirements. Research in Behavior-Driven Development shows teams using Given-When-Then significantly reduce requirement misunderstandings because tests read as executable specifications that stakeholders can review.
 
 ### Example 15: Test Organization - Describe Blocks
 

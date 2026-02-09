@@ -15,7 +15,7 @@ This advanced-level tutorial explores expert FSM patterns through 25 annotated c
 
 Complex approval workflows require coordinating multiple approval stages with parallel and sequential dependencies. FSMs provide clear state transitions and rollback paths.
 
-**Why It Matters**: At Meta, the content moderation workflow FSM handles 50M+ approval requests daily across 15 approval stages (automated checks, human review, appeals, escalations). The FSM tracks each content piece through Draft → AutoCheck → HumanReview → Escalation → Published/Rejected states, with 8-second average processing time per stage. Without FSM's structured state management, coordinating parallel review queues and handling rollbacks would require 3x more code.
+**Why It Matters**: In large-scale content moderation systems, workflow FSMs handle many millions of approval requests daily across multiple approval stages (automated checks, human review, appeals, escalations). The FSM tracks each content piece through Draft → AutoCheck → HumanReview → Escalation → Published/Rejected states with rapid processing times. Without FSM's structured state management, coordinating parallel review queues and handling rollbacks would require significantly more code.
 
 ```mermaid
 stateDiagram-v2
