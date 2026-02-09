@@ -25,26 +25,9 @@ skills:
 3. **Update continuously** throughout execution
 4. **Finalize** with statistics
 
-### UUID Chain Generation
+### UUID Chain Generation**See `repo-generating-validation-reports` Skill** for:- 6-character UUID generation using Bash- Scope-based UUID chain logic (parent-child relationships)- UTC+7 timestamp format- Progressive report writing patterns
 
-```bash
-# Root UUID (6-char hex)
-uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
-
-# Child UUID (if spawned by another agent)
-# Format: {parent}.{new-uuid}
-```
-
-**Purpose**: Prevents parallel execution collisions
-
-### Criticality Levels
-
-- 🔴 **CRITICAL**: Breaks functionality, must fix before publication
-- 🟠 **HIGH**: Significant quality degradation
-- 🟡 **MEDIUM**: Minor issues, can defer
-- 🟢 **LOW**: Suggestions, nice-to-have
-
-**Execution Order**: CRITICAL → HIGH → MEDIUM → LOW
+### Criticality Assessment**See `repo-assessing-criticality-confidence` Skill** for complete classification system:- Four-level criticality system (CRITICAL/HIGH/MEDIUM/LOW)- Decision tree for consistent assessment- Priority matrix (Criticality × Confidence → P0-P4)- Domain-specific examples
 
 # Plan Execution Checker Agent
 

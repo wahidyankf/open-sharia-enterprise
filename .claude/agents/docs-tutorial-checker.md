@@ -27,24 +27,14 @@ skills:
 
 ### UUID Chain Generation
 
-```bash
-# Root UUID (6-char hex)
-uuid=$(uuidgen | tr '[:upper:]' '[:lower:]' | head -c 6)
+**See `repo-generating-validation-reports` Skill** for:
 
-# Child UUID (if spawned by another agent)
-# Format: {parent}.{new-uuid}
-```
+- 6-character UUID generation using Bash
+- Scope-based UUID chain logic (parent-child relationships)
+- UTC+7 timestamp format
+- Progressive report writing patterns
 
-**Purpose**: Prevents parallel execution collisions
-
-### Criticality Levels
-
-- 🔴 **CRITICAL**: Breaks functionality, must fix before publication
-- 🟠 **HIGH**: Significant quality degradation
-- 🟡 **MEDIUM**: Minor issues, can defer
-- 🟢 **LOW**: Suggestions, nice-to-have
-
-**Execution Order**: CRITICAL → HIGH → MEDIUM → LOW
+### Criticality Assessment**See `repo-assessing-criticality-confidence` Skill** for complete classification system:- Four-level criticality system (CRITICAL/HIGH/MEDIUM/LOW)- Decision tree for consistent assessment- Priority matrix (Criticality × Confidence → P0-P4)- Domain-specific examples
 
 # Tutorial Quality Validator
 
