@@ -2945,7 +2945,7 @@ const targetCustomers = await customerRepo.findAll(combinedSpec);
 
 **Key Takeaway**: Specifications encapsulate query logic as reusable, composable objects. They make complex queries testable and keep query logic in the domain layer.
 
-**Why It Matters**: Query logic scattered across services creates duplication and inconsistencies. When Salesforce analyzed their customer segmentation queries, they found 45 different implementations of "high-value customer" logic with different thresholds. Specification pattern centralized this logic, making it consistent and reusable across all services. Specifications turn queries into first-class domain concepts that can be tested, composed, and versioned.
+**Why It Matters**: Query logic scattered across services creates duplication and inconsistencies. Enterprise CRM systems often discover numerous different implementations of "high-value customer" logic with different thresholds when analyzing their customer segmentation queries. Specification pattern centralizes this logic, making it consistent and reusable across all services. Specifications turn queries into first-class domain concepts that can be tested, composed, and versioned.
 
 ### Example 22: In-Memory Repository for Testing
 
@@ -3578,7 +3578,7 @@ public class OrderEventHandler {
 
 **Key Takeaway**: Domain events enable aggregates to communicate without direct references. Payment aggregate doesn't know about Order aggregate, but Order reacts to Payment events. This maintains loose coupling while coordinating business processes.
 
-**Why It Matters**: Direct aggregate references create tight coupling and circular dependencies. When Shopify's Payment aggregate referenced Order aggregate directly, they couldn't deploy Payment and Order services independently (circular deployment dependency). Domain events broke the coupling—Payment publishes events, Order subscribes. This enabled independent deployment, scaling, and evolution of each aggregate.
+**Why It Matters**: Direct aggregate references create tight coupling and circular dependencies. When e-commerce platforms implement Payment aggregates that reference Order aggregates directly, they can't deploy Payment and Order services independently (circular deployment dependency). Domain events break the coupling—Payment publishes events, Order subscribes. This enables independent deployment, scaling, and evolution of each aggregate.
 
 ### Example 26: Event Sourcing Basics
 
