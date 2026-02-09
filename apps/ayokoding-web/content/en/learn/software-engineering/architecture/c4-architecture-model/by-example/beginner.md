@@ -41,7 +41,7 @@ graph TD
 
 **Key Takeaway**: C4 Model provides four zoom levels for architecture documentation, enabling stakeholders at different technical levels to understand system design. Start with Context for high-level overview, drill down to Code for implementation details.
 
-**Why It Matters**: Architecture diagrams often fail because they mix abstraction levels, showing both high-level system relationships and low-level class details in one view. C4 Model solves this by separating concerns—executives view Context diagrams, developers view Component diagrams, and each diagram remains focused and comprehensible. Teams using C4 Model report 40% faster onboarding for new developers because architecture documentation matches their mental model progression from "big picture" to implementation specifics.
+**Why It Matters**: Architecture diagrams often fail because they mix abstraction levels, showing both high-level system relationships and low-level class details in one view. C4 Model solves this by separating concerns—executives view Context diagrams, developers view Component diagrams, and each diagram remains focused and comprehensible. Hierarchical documentation matches how people naturally learn systems, starting with broad context before drilling into implementation details.
 
 ### Example 2: System Context - Single System
 
@@ -76,7 +76,7 @@ graph TD
 
 **Key Takeaway**: Place your system in the center (highlighted in distinctive color), surround it with users and external systems, and label relationships with clear action descriptions. Keep it simple—internal structure belongs in Container diagrams.
 
-**Why It Matters**: Context diagrams prevent the common failure mode where architects create overly detailed diagrams that overwhelm stakeholders. By showing only external relationships, Context diagrams answer the critical question "What business value does this system provide?" in 30 seconds or less. Amazon's leadership principle "Start with the customer" aligns perfectly with Context diagrams—they force architects to articulate value before diving into technical complexity.
+**Why It Matters**: Context diagrams prevent the common failure mode where architects create overly detailed diagrams that overwhelm stakeholders. By showing only external relationships, Context diagrams answer the critical question "What business value does this system provide?" This high-level view forces architects to articulate value and external dependencies before diving into technical complexity, making it easier to communicate with non-technical stakeholders.
 
 ### Example 3: Notation Basics
 
@@ -108,7 +108,7 @@ graph TD
 
 **Key Takeaway**: Use consistent colors and labeling format. Purple for people, blue for your system, teal for external systems. Include type, name, and brief description in each box.
 
-**Why It Matters**: Inconsistent notation is the #1 reason architecture diagrams fail to communicate. When Netflix documented their microservices architecture, they standardized on C4 notation across 500+ teams, reducing onboarding time from 2 weeks to 3 days. Consistent colors mean developers can scan any diagram and immediately identify users, systems, and dependencies without reading labels—critical when reviewing 50+ diagrams during incident response.
+**Why It Matters**: Inconsistent notation is a primary reason architecture diagrams fail to communicate. Standardizing on C4 notation across teams reduces cognitive load and accelerates onboarding. Consistent colors allow developers to scan diagrams and immediately identify users, systems, and dependencies without reading labels—critical when reviewing multiple diagrams during incident response or system design reviews.
 
 ## System Context Diagrams - Basic (Examples 4-8)
 
@@ -144,7 +144,7 @@ graph TD
 
 **Key Takeaway**: Represent each significant user type separately with clear labels describing their primary actions. Group all people in the same color (purple) to distinguish them from systems.
 
-**Why It Matters**: User segmentation in architecture diagrams drives better design decisions. When Spotify documented their platform, separating "Free User," "Premium User," and "Artist" actors revealed that 80% of system complexity served only artists (20% of users). This insight led to microservices separation where the artist portal became an independent system, reducing coupling and enabling faster iteration for the majority use case.
+**Why It Matters**: User segmentation in architecture diagrams drives better design decisions. Explicitly showing different user types reveals which features serve which audiences and where system complexity concentrates. This visibility can inform architectural decisions about service boundaries, enabling teams to optimize for the most common use cases while maintaining clear boundaries for specialized functionality.
 
 ### Example 5: System Context with Authentication
 
@@ -178,7 +178,7 @@ graph TD
 
 **Key Takeaway**: Use numbered steps (1, 2, 3...) to show temporal sequence when order matters. Represent authentication systems as external dependencies to highlight trust boundaries.
 
-**Why It Matters**: Security architectures fail when authentication boundaries are unclear. When GitHub migrated to OAuth2, their Context diagrams showing authentication flow helped identify that 40% of internal services were still doing direct credential validation instead of token validation. Fixing this centralized security and eliminated 12 critical vulnerabilities where credential databases were exposed to unencrypted network access.
+**Why It Matters**: Security architectures fail when authentication boundaries are unclear. Context diagrams showing authentication flow help identify services that should delegate to central authentication rather than managing credentials directly. This visibility drives centralized security patterns and reduces the risk of credential exposure through direct database access or inconsistent validation logic.
 
 ### Example 6: System Context with Database
 
@@ -215,7 +215,7 @@ graph TD
 
 **Key Takeaway**: Show databases at Context level when they're shared across multiple systems or managed by external teams. Use orange to distinguish data stores from application systems.
 
-**Why It Matters**: Shared databases create tight coupling and coordination overhead that Context diagrams must make visible. When Uber decomposed their monolithic database, Context diagrams showing 47 systems depending on one database drove the decision to create domain-specific databases. This reduced cross-team dependencies from 47×46 potential interactions to ~8 per team, accelerating deployment velocity from monthly to daily.
+**Why It Matters**: Shared databases create tight coupling and coordination overhead that Context diagrams must make visible. When multiple systems depend on a single database, it becomes a critical integration point requiring careful governance. Making this dependency explicit in diagrams helps teams assess whether database decomposition would reduce coupling and enable more independent development and deployment cycles.
 
 ### Example 7: System Context with Message Queue
 
@@ -250,7 +250,7 @@ graph TD
 
 **Key Takeaway**: Show message queues as separate systems when they're central to system integration. Use event names on arrows to clarify what data flows through the queue.
 
-**Why It Matters**: Event-driven architectures hide complexity that Context diagrams must expose. When Amazon migrated from synchronous APIs to SNS/SQS, their Context diagrams revealed 200+ event types flowing through queues. This visibility led to schema governance (centralized event catalog) and prevented the common failure mode where teams create duplicate events with subtle differences, breaking loose coupling guarantees.
+**Why It Matters**: Event-driven architectures hide complexity that Context diagrams must expose. As event-driven systems grow, the number and variety of event types can proliferate unchecked. Visualizing event flows in Context diagrams reveals this complexity and drives the need for schema governance through centralized event catalogs, preventing duplicate or inconsistent event definitions that break loose coupling guarantees.
 
 ### Example 8: System Context with External APIs
 
@@ -289,7 +289,7 @@ graph TD
 
 **Key Takeaway**: Represent each significant external API as a separate system. Use teal color to distinguish external dependencies from systems you control.
 
-**Why It Matters**: External dependencies are failure points and cost centers that executives must understand. When Stripe analyzed their Context diagrams, they discovered 23 external API dependencies for their core payment flow, each with 99.9% SLA. This meant expected availability was 0.999^23 = 97.7% (not the 99.9% they promised customers). Visibility drove investment in retry logic, circuit breakers, and fallback mechanisms that restored their SLA to 99.95% despite external dependencies.
+**Why It Matters**: External dependencies are failure points and cost centers that executives must understand. Each external API dependency adds compounded availability risk—multiple dependencies with individual SLAs multiply together, potentially reducing overall system availability below expected levels. Visibility of external dependencies in Context diagrams drives investment in resilience patterns like retry logic, circuit breakers, and fallback mechanisms to maintain acceptable service levels.
 
 ## System Context Diagrams - With External Systems (Examples 9-12)
 
@@ -337,7 +337,7 @@ graph TD
 
 **Key Takeaway**: Use layered layout (top to bottom or left to right) to show architectural tiers. Group systems by role (clients, gateways, backends) for visual clarity.
 
-**Why It Matters**: API Gateway patterns prevent direct client-to-backend coupling but add a critical dependency point. When Netflix built their API gateway (Zuul), Context diagrams showing 200+ backend services routed through one gateway led to investment in redundancy, caching, and graceful degradation. Without this visibility, a single gateway failure would have taken down all 200 services—instead, circuit breakers and fallback routes maintained 95% functionality during gateway outages.
+**Why It Matters**: API Gateway patterns prevent direct client-to-backend coupling but introduce a critical single point of failure. Context diagrams showing many backend services routed through one gateway reveal this concentration of risk and drive investment in redundancy, caching, and graceful degradation strategies. Without resilience patterns, gateway failures can cascade to all dependent services; with proper circuit breakers and fallback routes, systems can maintain partial functionality during outages.
 
 ### Example 10: Cross-Organization Integration
 
@@ -376,7 +376,7 @@ graph TD
 
 **Key Takeaway**: Use teal for all systems outside your direct control, whether external companies or other departments. Add ownership labels (Partner A, Finance Dept) to clarify governance.
 
-**Why It Matters**: Cross-organizational dependencies have different SLAs, governance, and change management than systems you control. When Airbnb documented their booking flow, Context diagrams revealed 15 external partner APIs (airlines, car rentals, local experiences) each with different uptime guarantees. This drove development of a "graceful degradation matrix" where the system remained functional even if 8 of 15 partners were down, by prioritizing core experiences over peripheral features.
+**Why It Matters**: Cross-organizational dependencies have different SLAs, governance, and change management than systems you control. Context diagrams showing external partner integrations help teams plan for graceful degradation strategies. By understanding which dependencies are critical versus optional, systems can maintain core functionality even when external services are unavailable, prioritizing essential features over peripheral ones during partner outages.
 
 ### Example 11: Real-Time Data Feeds
 
@@ -415,7 +415,7 @@ graph TD
 
 **Key Takeaway**: Specify protocols (WebSocket, SSE, HTTP) when they reveal architectural constraints. Show data flow direction (push vs pull) with arrow direction.
 
-**Why It Matters**: Real-time systems have fundamentally different availability and latency requirements than batch systems. When Robinhood's trading platform experienced outages during high volatility, their Context diagrams helped identify that they treated real-time market feeds and batch risk calculations with the same infrastructure. Separating these (dedicated WebSocket cluster for feeds, separate batch cluster for risk) improved availability from 95% to 99.9% during peak trading hours.
+**Why It Matters**: Real-time systems have fundamentally different availability and latency requirements than batch systems. Context diagrams help identify when real-time feeds and batch processing are incorrectly sharing infrastructure. Separating these workloads—dedicated infrastructure for low-latency streaming versus batch computation clusters—improves overall system availability during peak load by preventing resource contention between fundamentally different processing patterns.
 
 ### Example 12: Compliance and Audit
 
@@ -459,7 +459,7 @@ graph TD
 
 **Key Takeaway**: Show audit and compliance systems explicitly. Use separate actors (Customer vs Auditor) to reveal different access patterns and governance requirements.
 
-**Why It Matters**: Compliance failures often stem from invisible audit flows. When HSBC paid $1.9B in fines for money laundering, their architecture diagrams revealed that audit logs were stored in the same database as transactional data, allowing unauthorized modifications. Context diagrams showing audit logs as separate, immutable systems drive better compliance architecture. Banks that separate audit systems from operational systems reduce regulatory fines by 80% (per Deloitte's 2023 financial services compliance report).
+**Why It Matters**: Compliance failures often stem from invisible audit flows. Context diagrams explicitly showing audit and compliance systems help ensure proper separation of concerns. Audit logs stored separately from operational data with immutability guarantees prevent tampering and meet regulatory requirements. Separating audit systems from operational systems in architecture diagrams drives better compliance design and makes governance requirements visible to all stakeholders.
 
 ## Container Diagrams - Basic Web Apps (Examples 13-17)
 
@@ -497,7 +497,7 @@ graph TD
 
 **Key Takeaway**: Label each container with [Container: Type], technology stack, and brief description. Show protocols on arrows. Use orange for databases to distinguish them from application containers.
 
-**Why It Matters**: Container diagrams reveal deployment and scaling strategies. When Twitter experienced the "fail whale," their Container diagrams showed a monolithic Rails application serving both web and API traffic. Splitting into separate containers (Web Server, API Server, Background Jobs) allowed independent scaling of bottleneck components, reducing outages from daily to quarterly. Container-level visibility drives infrastructure decisions—where to add caching, which components to containerize first, what needs CDN support.
+**Why It Matters**: Container diagrams reveal deployment and scaling strategies. Visualizing deployment units helps identify opportunities to split monolithic applications into independently scalable components. Separating concerns like web serving, API handling, and background job processing enables targeted scaling of bottleneck components. Container-level visibility drives infrastructure decisions—where to add caching, which components to containerize first, and what needs CDN support.
 
 ### Example 14: Web App with File Storage
 
@@ -536,7 +536,7 @@ graph TD
 
 **Key Takeaway**: Show blob/object storage as separate container from database. Use direct connections (WebApp to BlobStorage) when appropriate to reveal optimization patterns like pre-signed URLs.
 
-**Why It Matters**: File storage architecture affects costs and performance dramatically. When Dropbox moved from S3 to custom storage, their Container diagrams helped calculate that 90% of API server CPU was spent proxying file downloads. Implementing pre-signed URLs (direct client-to-storage downloads) reduced API server infrastructure costs by 60% and improved download speeds by 3x. Container diagrams showing file flow paths drive these optimization decisions.
+**Why It Matters**: File storage architecture affects costs and performance dramatically. Container diagrams showing file flows help identify inefficient patterns like API servers proxying large file downloads. Implementing direct client-to-storage access patterns (like pre-signed URLs) reduces API server CPU load and improves download performance by eliminating unnecessary intermediaries. Visualizing file flow paths in Container diagrams drives these architectural optimization decisions.
 
 ### Example 15: Web App with Background Jobs
 
@@ -579,7 +579,7 @@ graph TD
 
 **Key Takeaway**: Show background job processing as separate container. Include job queue as intermediary. Label async flows clearly (enqueue vs fetch).
 
-**Why It Matters**: Synchronous long-running tasks destroy user experience. When Stripe analyzed their payment processing, Container diagrams revealed that fraud checks (taking 2-5 seconds) were blocking payment confirmations. Moving fraud checks to background workers reduced API response time from 5 seconds to 200ms (25x faster) while actually improving fraud detection accuracy because workers could perform more thorough checks without timeout pressure.
+**Why It Matters**: Synchronous long-running tasks destroy user experience. Container diagrams revealing time-intensive operations blocking API responses drive architectural decisions to move these tasks to background workers. Asynchronous processing reduces user-facing response times while often improving job quality since workers can perform thorough processing without timeout constraints. Visualizing the separation between synchronous and asynchronous workloads helps teams optimize for both responsiveness and thoroughness.
 
 ### Example 16: Web App with Caching
 
@@ -620,7 +620,7 @@ graph TD
 
 **Key Takeaway**: Use numbered steps to show cache access patterns. Use dotted lines for conditional flows (cache miss). Position cache visually between API and database to show its role in data flow.
 
-**Why It Matters**: Caching strategy affects cost and performance at scale. When Reddit analyzed their Container diagrams, they discovered 85% of database queries were for data that changed only daily (subreddit lists, user karma). Adding Redis cache with 24-hour TTL reduced database load from 50,000 QPS to 8,000 QPS, deferring a $500K database upgrade by 18 months. Container diagrams showing cache position and flow drive these cost-saving optimization decisions.
+**Why It Matters**: Caching strategy affects cost and performance at scale. Container diagrams showing data access patterns help identify queries for infrequently changing data that could benefit from caching. Implementing appropriate cache layers with TTLs matching data change frequency can dramatically reduce database load, potentially deferring expensive infrastructure upgrades. Visualizing cache position and data flow in Container diagrams drives these cost-saving optimization decisions.
 
 ### Example 17: Web App with CDN
 
@@ -658,7 +658,7 @@ graph TD
 
 **Key Takeaway**: Show CDN as external system (teal) even though it's part of your infrastructure. Use path patterns (/assets/_, /api/_) to clarify routing logic.
 
-**Why It Matters**: CDN economics dramatically affect infrastructure costs. When Shopify analyzed their Container diagrams during Black Friday, they found 95% of traffic hit API servers unnecessarily because product images weren't CDN-cached. Proper CDN configuration (shown in Container diagrams via routing patterns) reduced API server load from 500K RPS to 25K RPS, allowing them to handle 10x traffic spike with no infrastructure changes. Container diagrams showing CDN routing drive performance optimization decisions.
+**Why It Matters**: CDN architecture dramatically affects infrastructure costs and performance. Container diagrams showing routing patterns help identify static assets unnecessarily hitting origin servers. Proper CDN configuration with appropriate cache headers can reduce origin server load significantly, allowing systems to handle traffic spikes without infrastructure scaling. Visualizing CDN routing and cache patterns in Container diagrams drives performance optimization decisions and reveals opportunities to offload traffic to edge networks.
 
 ## Container Diagrams - With Databases (Examples 18-22)
 
@@ -704,7 +704,7 @@ graph TD
 
 **Key Takeaway**: Use different colors for primary (orange) and replicas (brown) to distinguish roles. Show replication with dotted lines. Label read vs write flows explicitly.
 
-**Why It Matters**: Read scaling is the #1 database bottleneck. When Instagram's user feed queries overwhelmed their database, Container diagrams showing read/write patterns revealed that 95% of queries were reads (feed loading, profile views) but only 5% were writes (posting, liking). Adding 5 read replicas and routing reads appropriately reduced query latency from 800ms to 50ms (16x faster) with no application code changes—purely infrastructure optimization visible in Container diagrams.
+**Why It Matters**: Read scaling is a common database bottleneck. Container diagrams showing read/write patterns help identify workloads dominated by read queries. Adding read replicas and routing read traffic appropriately can dramatically reduce query latency with minimal application code changes—purely infrastructure optimization. Visualizing database access patterns in Container diagrams drives decisions about when replica scaling provides the most value versus other optimization strategies.
 
 ### Example 19: Web App with Database Sharding
 
@@ -750,7 +750,7 @@ graph TD
 
 **Key Takeaway**: Show shard router as separate container. Label each shard with its partition range. Use consistent color for shards to show they're equivalent.
 
-**Why It Matters**: Sharding enables growth beyond single-database limits but adds operational complexity. When Discord scaled from 1M to 100M users, Container diagrams showing sharding strategy helped them plan migration. Their 8-shard architecture (each handling 12.5M users) meant 8 database backups, 8 migration paths, 8 failure modes. Container visibility drove investment in automation (shard provisioning, rebalancing) that reduced operational overhead from "8x complexity" to "1.2x complexity" via tooling.
+**Why It Matters**: Sharding enables growth beyond single-database limits but adds operational complexity. Container diagrams showing sharding architecture reveal the multiplication of operational concerns—each shard requires backups, migrations, monitoring, and failure handling. This visibility drives investment in automation for shard provisioning, rebalancing, and management. Without proper tooling, operational overhead grows linearly with shard count; with automation, complexity increase becomes sub-linear even as data scales horizontally.
 
 ### Example 20: Web App with Separate Read/Write Databases (CQRS)
 
@@ -801,7 +801,7 @@ graph TD
 
 **Key Takeaway**: Show write and read paths as completely separate flows. Use different colors for write database (orange) and read database (brown). Include event bus to show synchronization mechanism.
 
-**Why It Matters**: CQRS handles extreme read/write ratio imbalances. When Twitter analyzed their Container diagrams, they found 99.5% of requests were reads (timeline loads) but only 0.5% were writes (new tweets). Building separate read infrastructure (denormalized, heavily cached, geographically distributed) reduced timeline load latency from 400ms to 20ms while keeping write latency stable at 50ms. Container diagrams showing CQRS architecture drive this optimization decision by making read/write ratios visible.
+**Why It Matters**: CQRS handles extreme read/write ratio imbalances. Container diagrams quantifying read versus write traffic help identify when separate optimization paths make sense. Building separate read infrastructure (denormalized, heavily cached, geographically distributed) can dramatically improve query latency while maintaining write consistency guarantees. CQRS architecture in Container diagrams makes read/write ratios and optimization opportunities visible, helping teams decide when the complexity tradeoff is justified.
 
 ### Example 21: Multi-Tenant Web App with Database Isolation
 
@@ -852,7 +852,7 @@ graph TD
 
 **Key Takeaway**: Show each tenant database separately when using database-per-tenant architecture. Use tenant ID labels on connections to show routing logic.
 
-**Why It Matters**: Tenant isolation strategy affects compliance, costs, and blast radius. When Slack analyzed their Container diagrams, they found that enterprise customers required data residency (EU data in EU, US data in US) but free teams didn't. Hybrid architecture (database-per-tenant for enterprise, shared database for free users) reduced database costs by 70% while maintaining enterprise compliance. Container diagrams showing tenant architecture drive these business-critical decisions.
+**Why It Matters**: Tenant isolation strategy affects compliance, costs, and blast radius. Container diagrams help teams evaluate different multi-tenancy approaches based on customer requirements. Hybrid architectures (database-per-tenant for compliance-sensitive customers, shared database for standard tiers) can optimize costs while meeting diverse regulatory needs. Visualizing tenant architecture in Container diagrams helps teams make business-critical tradeoffs between isolation guarantees, operational complexity, and infrastructure costs.
 
 ### Example 22: Web App with Time-Series Database
 
@@ -894,7 +894,7 @@ graph TD
 
 **Key Takeaway**: Show time-series databases separately from transactional databases. Use different colors (brown for time-series) to distinguish. Note specialized protocols (InfluxDB line protocol, InfluxQL).
 
-**Why It Matters**: Time-series data volume overwhelms general-purpose databases. When Datadog analyzed their Container diagrams, they calculated storing metrics in PostgreSQL would require 500TB storage vs 50TB in InfluxDB (10x savings via compression). Container diagrams showing database specialization drive technology selection—use relational databases for transactions, time-series databases for metrics/logs/events, graph databases for relationships.
+**Why It Matters**: Time-series data volume overwhelms general-purpose databases. Container diagrams showing specialized database types help teams recognize when purpose-built storage provides significant advantages. Time-series databases offer superior compression and query performance for metrics and logs compared to relational databases. Visualizing database specialization drives technology selection—relational for transactions, time-series for metrics/logs/events, graph for relationships—matching storage technology to data access patterns.
 
 ## Component Diagrams - Basic (Examples 23-27)
 
@@ -950,7 +950,7 @@ graph TD
 
 **Key Takeaway**: Use color coding to show layers. Orange for controllers, teal for services, purple for repositories. Show dependencies with "Uses" relationships.
 
-**Why It Matters**: Component organization affects testability and maintenance. When Airbnb refactored their monolith, Component diagrams revealed 200 controllers calling database repositories directly (bypassing service layer), making it impossible to enforce business rules consistently. Enforcing layered architecture (controllers → services → repositories) reduced duplicate logic from 40% to 5%, cut bugs by 60%, and enabled service extraction for microservices migration.
+**Why It Matters**: Component organization affects testability and maintenance. Component diagrams revealing architectural violations—such as controllers bypassing service layers to call repositories directly—help teams identify where business logic duplication and inconsistent rule enforcement occur. Enforcing proper layered architecture (controllers → services → repositories) reduces duplicate logic, improves testability through clear boundaries, and enables easier service extraction when migrating to microservices.
 
 ### Example 24: Web Application Components (Frontend)
 
@@ -1006,7 +1006,7 @@ graph TD
 
 **Key Takeaway**: Show frontend structure with modules (feature areas), shared services (API client), and state management (stores). Use color to distinguish layers.
 
-**Why It Matters**: Frontend component organization affects bundle size and initial load time. When Walmart analyzed their React app, Component diagrams revealed 15 feature modules all bundled together (4MB initial JavaScript load). Implementing code splitting (lazy load modules on route change) reduced initial bundle from 4MB to 800KB (5x smaller), improving time-to-interactive from 8 seconds to 1.5 seconds on 3G connections.
+**Why It Matters**: Frontend component organization affects bundle size and initial load time. Component diagrams showing feature module boundaries help identify opportunities for code splitting. Implementing lazy loading—where modules load on demand rather than upfront—can dramatically reduce initial bundle size and improve time-to-interactive, especially on slower network connections. Visualizing module dependencies drives decisions about what to load immediately versus defer until needed.
 
 ### Example 25: Background Worker Components
 
@@ -1061,7 +1061,7 @@ graph TD
 
 **Key Takeaway**: Show job routing (dispatcher), job handlers (one per job type), and shared services (logging, monitoring). Use consistent color for handlers to show they're equivalent.
 
-**Why It Matters**: Worker component organization affects fault isolation and scalability. When Etsy's background workers experienced cascading failures (one slow job blocking all others), Component diagrams showing shared job dispatcher led to separate worker pools per job type (email workers, image workers, report workers). This isolated failures—when report generation got slow during Black Friday, email notifications still sent instantly.
+**Why It Matters**: Worker component organization affects fault isolation and scalability. Component diagrams showing shared job dispatchers help identify single points of failure where one slow job type can block all others. Separating into dedicated worker pools per job type (email, image processing, report generation) isolates failures and enables independent scaling. This architectural separation ensures critical fast jobs continue processing even when resource-intensive jobs slow down under load.
 
 ### Example 26: Microservice Internal Components
 
@@ -1109,7 +1109,7 @@ graph TD
 
 **Key Takeaway**: Show entry points (API, event handlers), business logic, repository, and external integrations (event publisher, service clients). Use colors to distinguish layers.
 
-**Why It Matters**: Microservice component organization affects maintainability and testability. When Uber analyzed their 1000+ microservices, Component diagrams revealed 40% had business logic scattered across API handlers (not shared, duplicated). Refactoring to hexagonal architecture (business logic at center, infrastructure at edges) reduced code duplication from 40% to 5% and improved test coverage from 60% to 85% because business logic could be tested without HTTP/database dependencies.
+**Why It Matters**: Microservice component organization affects maintainability and testability. Component diagrams revealing business logic scattered across API handlers help identify duplication and testing challenges. Refactoring to hexagonal architecture (business logic at center, infrastructure at edges) consolidates logic, reduces duplication, and improves test coverage by isolating business rules from HTTP and database dependencies. This separation makes business logic independently testable without infrastructure concerns.
 
 ### Example 27: Plugin Architecture Components
 
@@ -1165,7 +1165,7 @@ graph TD
 
 **Key Takeaway**: Show core (orange), plugins (teal), and interface (purple). Use dotted lines for interface implementation. Label registry and loader to show plugin management.
 
-**Why It Matters**: Plugin architectures enable ecosystem growth but add complexity. When WordPress analyzed their Component diagrams, they found 60,000+ plugins all implementing the same interface (hooks and filters). Clear interface definition and registry pattern enabled this ecosystem while preventing plugin conflicts. Container diagrams showing plugin architecture drive extensibility decisions—where to allow plugins (payment gateways, shipping providers), where to lock down (core checkout logic).
+**Why It Matters**: Plugin architectures enable ecosystem growth but add complexity. Component diagrams showing plugin interfaces and registry patterns help teams design extensibility points that enable third-party contributions while maintaining system stability. Clear interface definitions prevent plugin conflicts and ensure consistent behavior. Visualizing plugin architecture drives extensibility decisions—identifying where to allow plugins (payment gateways, shipping providers) versus where to maintain strict control (core business logic).
 
 ## Integration Basics (Examples 28-30)
 
@@ -1207,7 +1207,7 @@ graph TD
 
 **Key Takeaway**: Show REST integration with HTTP methods (GET, POST), URLs, and protocol (HTTPS). Use API Gateway to abstract backend complexity from clients.
 
-**Why It Matters**: API Gateway patterns reduce client-server coupling. When Netflix migrated from monolith to microservices, their Container diagrams showed 50+ backend services. Without API Gateway, mobile clients would need to know 50 service endpoints. With API Gateway, clients call one endpoint; gateway handles routing, retry, circuit breaking. This reduced mobile app complexity and enabled backend changes without mobile app updates.
+**Why It Matters**: API Gateway patterns reduce client-server coupling. Container diagrams showing many backend services reveal the complexity clients would face without an aggregation layer. API Gateway provides a single endpoint for clients, handling routing, retry, and circuit breaking centrally. This reduces mobile app complexity and enables backend service changes without requiring client updates, maintaining a stable contract while allowing backend evolution.
 
 ### Example 29: GraphQL Integration
 
@@ -1249,7 +1249,7 @@ graph TD
 
 **Key Takeaway**: Show GraphQL server as aggregation layer between client and REST services. Label with "Single endpoint POST /graphql" to highlight GraphQL's unified interface.
 
-**Why It Matters**: GraphQL solves over-fetching and under-fetching problems. When Facebook (GraphQL creators) analyzed their mobile app, Container diagrams showed mobile clients making 10-15 REST calls to render one news feed. GraphQL reduced this to 1 query fetching exactly needed data, cutting mobile data usage by 40% and improving load time from 5 seconds to 1.5 seconds on 3G networks.
+**Why It Matters**: GraphQL solves over-fetching and under-fetching problems. Container diagrams showing multiple REST calls to render single views reveal opportunities for query aggregation. GraphQL enables clients to request exactly the data they need in one query, reducing network round trips and data transfer. This is particularly valuable for mobile clients on constrained networks, where minimizing requests and payload size directly improves user experience.
 
 ### Example 30: Event-Driven Integration
 
@@ -1289,7 +1289,7 @@ graph TD
 
 **Key Takeaway**: Show publisher publishing to event bus, subscribers subscribing to event bus. Label events with schema names (order.created). Use arrows to show data flow direction.
 
-**Why It Matters**: Event-driven architectures prevent cascade failures. When Amazon analyzed their order processing, Container diagrams showed OrderService calling 12 downstream services synchronously (email, inventory, analytics, fraud, recommendations, etc.). If any service was slow, orders failed. Switching to event-driven (OrderService publishes event, services subscribe) reduced order failure rate from 2% to 0.1% because downstream service failures no longer blocked order creation.
+**Why It Matters**: Event-driven architectures prevent cascade failures. Container diagrams showing synchronous calls to many downstream services reveal tight coupling and fragility—any slow or failing service can block critical operations. Switching to event-driven patterns (publish events, services subscribe) decouples operations, allowing core workflows to complete successfully even when downstream services are unavailable. This temporal decoupling significantly improves system resilience and reduces failure propagation.
 
 ---
 
