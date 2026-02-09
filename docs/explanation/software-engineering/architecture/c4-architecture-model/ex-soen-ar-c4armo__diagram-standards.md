@@ -192,11 +192,12 @@ All Container diagrams MUST include:
 
 ### Alignment with DDD Bounded Contexts
 
-**REQUIRED**: Container diagrams MUST align with DDD bounded contexts.
+**SHOULD**: Container diagrams SHOULD use bounded contexts as primary guide for container boundaries.
 
-- One Container = One Bounded Context (for microservices)
-- Container boundaries = Bounded context boundaries
+- Common pattern: One Container = One Bounded Context (starting point for microservices)
+- Container boundaries should align with bounded context boundaries
 - Context mapping patterns visualized as container relationships
+- Each container maintains single ubiquitous language
 
 **Example Container Diagram**:
 

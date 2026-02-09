@@ -45,8 +45,12 @@ This document establishes the separation between:
 
 **Location**: [docs/explanation/software-engineering/development/](./development/README.md)
 
+**Prerequisite Knowledge**: All development practice documentation assumes completion of corresponding AyoKoding learning paths. These are OSE Platform-specific standards, not educational tutorials.
+
 - **[Test-Driven Development](./development/test-driven-development-tdd/README.md)** - TDD methodology
+  - **Prerequisite**: [AyoKoding Test-Driven Development](../../../apps/ayokoding-web/content/en/learn/software-engineering/development/test-driven-development-tdd/)
 - **[Behavior-Driven Development](./development/behavior-driven-development-bdd/README.md)** - BDD with Gherkin
+  - **Prerequisite**: [AyoKoding Behavior-Driven Development](../../../apps/ayokoding-web/content/en/learn/software-engineering/development/behavior-driven-development-bdd/)
 
 ### Language-Specific Coding Standards
 
