@@ -204,6 +204,31 @@
 - /api/v1/hello endpoint returns correct response
 - Health check endpoints work correctly
 
+### 9. Docker Compose Integration
+
+**Location**: `infra/local/organic-lever/`
+
+**Files**:
+
+- `docker-compose.yml` - Service orchestration configuration
+- `.env.example` - Environment variables template
+- `README.md` - Docker operations guide
+- `.gitignore` - Protects sensitive configuration
+
+**Features**:
+
+- Reproducible local development environment
+- Containerized service deployment
+- Health checks and auto-restart
+- Network isolation
+- Production-ready JVM configuration
+
+**Integration Points**:
+
+- Mounts JAR from `apps/organic-lever-be/target/`
+- Exposes service on port 8100
+- References app README for Docker usage
+
 ## Success Criteria
 
 - [ ] Application starts successfully in dev mode on port 8100 using `nx run organic-lever-be:serve`
@@ -217,6 +242,10 @@
 - [ ] Application startup time is less than 10 seconds
 - [ ] All acceptance criteria from user stories are met
 - [ ] API endpoint documentation is clear and accurate
+- [ ] Docker Compose successfully starts the service
+- [ ] Service is accessible via Docker on port 8100
+- [ ] Docker health checks pass
+- [ ] App README links to Docker Compose setup
 
 ## Validation Checklist
 
@@ -283,6 +312,22 @@
 - [ ] Clean separation of concerns (controller, dto, service)
 - [ ] Consistent naming conventions
 - [ ] No code smells or anti-patterns
+
+### Docker Compose Validation
+
+- [ ] docker-compose.yml is valid YAML
+- [ ] Service builds and starts successfully
+- [ ] JAR file path is correct (../../apps/organic-lever-be/target/)
+- [ ] Port 8100 is properly exposed
+- [ ] Health check endpoint is correctly configured
+- [ ] Environment variables are properly set
+- [ ] Service auto-restarts on failure
+- [ ] Network isolation works correctly
+- [ ] .env.example documents all variables
+- [ ] Docker README is comprehensive
+- [ ] Service accessible at http://localhost:8100
+- [ ] docker-compose logs show no errors
+- [ ] docker-compose ps shows healthy status
 
 ## Risks and Mitigations
 
@@ -389,6 +434,45 @@ mvn spring-boot:run -Dspring-boot.run.profiles=prod
 # Expected: Application starts with production logging (JSON format)
 # Expected: Logs are in JSON format
 # Expected: Still accessible on port 8100
+```
+
+### 7. Docker Compose Test
+
+```bash
+# Stop any running instances first
+# Build the application if not already built
+cd apps/organic-lever-be
+mvn clean package -DskipTests
+
+# Go to Docker Compose directory
+cd ../../infra/local/organic-lever
+
+# Start services
+docker-compose up -d
+# Expected: Container starts successfully
+
+# Check service status
+docker-compose ps
+# Expected: organic-lever-be status is "healthy"
+
+# View logs
+docker-compose logs organic-lever-be
+# Expected: No errors, shows "Tomcat started on port(s): 8100"
+
+# Test endpoints
+curl -X GET http://localhost:8100/api/v1/hello
+# Expected: {"message":"world"}
+
+curl -X GET http://localhost:8100/actuator/health
+# Expected: {"status":"UP",...}
+
+# Check health status
+docker-compose ps
+# Expected: Status shows "healthy"
+
+# Stop services
+docker-compose down
+# Expected: Clean shutdown
 ```
 
 ## Continuous Integration (Future)

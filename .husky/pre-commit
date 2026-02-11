@@ -10,16 +10,41 @@ else
   echo "⏭️  Skipping config validation (no .claude/ or .opencode/ changes in staged files)"
 fi
 
-# 2. Run ayokoding-web pre-commit scripts if affected (titles update + nav regen)
+# 2. Validate docker-compose.yml files (if affected)
+if git diff --cached --name-only | grep -qE 'docker-compose\.ya?ml$'; then
+  echo "🔍 Validating docker-compose.yml files..."
+
+  # Find all staged docker-compose files
+  for compose_file in $(git diff --cached --name-only | grep -E 'docker-compose\.ya?ml$'); do
+    if [ -f "$compose_file" ]; then
+      echo "  Checking $compose_file..."
+
+      # Validate YAML syntax and docker-compose config
+      if ! docker-compose -f "$compose_file" config > /dev/null 2>&1; then
+        echo "❌ Docker Compose validation failed for $compose_file"
+        echo "   Run: docker-compose -f $compose_file config"
+        exit 1
+      fi
+
+      echo "  ✅ $compose_file is valid"
+    fi
+  done
+
+  echo "✅ All docker-compose files validated"
+else
+  echo "⏭️  Skipping docker-compose validation (no docker-compose.yml changes in staged files)"
+fi
+
+# 3. Run ayokoding-web pre-commit scripts if affected (titles update + nav regen)
 nx affected -t run-pre-commit --skip-nx-cache 2>/dev/null || echo "⚠️  Skipping run-pre-commit (not affected or binary missing)"
 
-# 3. Stage any changes made by the scripts
+# 4. Stage any changes made by the scripts
 git add apps/ayokoding-web/content/ 2>/dev/null || true
 
-# 4. Run lint-staged for formatting
+# 5. Run lint-staged for formatting
 npx lint-staged
 
-# 5. Validate and auto-fix docs file naming conventions (if docs/ affected)
+# 6. Validate and auto-fix docs file naming conventions (if docs/ affected)
 if git diff --cached --name-only | grep -qE '^docs/'; then
   echo "🔍 Validating and fixing documentation file naming..."
   CGO_ENABLED=0 go run -C apps/rhino-cli main.go validate-docs-naming --staged-only --fix --apply || exit 1
@@ -30,8 +55,8 @@ else
   echo "⏭️  Skipping docs naming validation (no docs/ changes in staged files)"
 fi
 
-# 6. Validate markdown links in staged files
+# 7. Validate markdown links in staged files
 CGO_ENABLED=0 go run -C apps/rhino-cli main.go validate-links --staged-only || exit 1
 
-# 7. Validate all markdown files
+# 8. Validate all markdown files
 npm run lint:md || exit 1
