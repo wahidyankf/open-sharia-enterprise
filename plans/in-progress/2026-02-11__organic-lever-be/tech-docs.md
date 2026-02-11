@@ -802,3 +802,110 @@ mvnw.cmd
 .DS_Store
 Thumbs.db
 ```
+
+## Docker Compose Integration
+
+### Overview
+
+The organic-lever-be service includes Docker Compose configuration for reproducible local development. This ensures all developers work in identical environments.
+
+**Location**: `infra/local/organic-lever/`
+
+### Configuration
+
+The Docker Compose setup provides:
+
+- **Containerized Environment**: Eclipse Temurin 25 JRE Alpine
+- **Volume Mounting**: JAR file from build output
+- **Port Mapping**: Service accessible on port 8100
+- **Health Checks**: Automatic monitoring via actuator
+- **Environment Configuration**: Profile selection (dev/prod)
+- **Auto-Restart**: Service resilience
+
+### Usage
+
+The application README should include a "Docker Development" section:
+
+````markdown
+## Docker Development
+
+For reproducible local development using Docker:
+
+### Prerequisites
+
+- Docker 20.10+
+- Docker Compose 2.0+
+
+### Quick Start
+
+1. **Build the application**:
+   ```bash
+   mvn clean package -DskipTests
+   # or
+   nx run organic-lever-be:build
+   ```
+
+2. **Start with Docker Compose**:
+   ```bash
+   cd ../../infra/local/organic-lever
+   docker-compose up -d
+   ```
+
+3. **Verify service**:
+   ```bash
+   curl http://localhost:8100/api/v1/hello
+   # Expected: {"message":"world"}
+   ```
+
+4. **View logs**:
+   ```bash
+   docker-compose logs -f organic-lever-be
+   ```
+
+5. **Stop services**:
+   ```bash
+   docker-compose down
+   ```
+
+### Configuration
+
+Copy `.env.example` to `.env` to customize:
+
+```bash
+cd ../../infra/local/organic-lever
+cp .env.example .env
+nano .env  # Edit as needed
+```
+
+For detailed Docker operations, see [Infrastructure Documentation](../../infra/local/organic-lever/README.md).
+````
+
+### Integration with Application README
+
+The `apps/organic-lever-be/README.md` should include:
+
+1. **Development Modes Section**:
+   - Local development (Maven/Nx)
+   - Docker development (Docker Compose)
+
+2. **Prerequisites Section**:
+   - Add Docker and Docker Compose to prerequisites
+   - Mark as optional for non-Docker development
+
+3. **Quick Reference Table**:
+
+```markdown
+| Method | Command | Port |
+|--------|---------|------|
+| Maven Direct | `mvn spring-boot:run` | 8100 |
+| Nx | `nx run organic-lever-be:serve` | 8100 |
+| Docker Compose | See [Docker Docs](../../infra/local/organic-lever/README.md) | 8100 |
+```
+
+### Benefits
+
+- **Consistency**: All developers use identical environment
+- **Isolation**: No conflicts with other local services
+- **Production Parity**: Closer to production deployment
+- **Easy Onboarding**: New developers get started faster
+- **Clean Setup**: No need to install Java/Maven locally (optional)
