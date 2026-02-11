@@ -14,7 +14,10 @@ out/
 .nx/
 
 # Environment variables
-.env*
+.env
+.env.local
+.env.*.local
+!.env.example
 
 # IDE and editor
 .vscode/
