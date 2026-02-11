@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  organic-lever-be:
+    image: eclipse-temurin:25-jre-alpine
+    container_name: organic-lever-be
+    working_dir: /app
+    volumes:
+      - ../../apps/organic-lever-be/target/organic-lever-be-1.0.0.jar:/app/app.jar:ro
+    ports:
+      - "8100:8100"
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
+      - SERVER_PORT=8100
+      - JAVA_OPTS=${JAVA_OPTS:--Xms256m -Xmx512m -XX:+UseZGC}
+    command: >
+      sh -c "java $$JAVA_OPTS -jar app.jar"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8100/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - organic-lever-network
+
+networks:
+  organic-lever-network:
+    driver: bridge
+    name: organic-lever-network
+
+# Future services can be added here:
+# organic-lever-fe:
+#   image: nginx:alpine
+#   container_name: organic-lever-fe
+#   ports:
+#     - "3100:80"
+#   networks:
+#     - organic-lever-network
+#
+# organic-lever-db:
+#   image: postgres:16-alpine
+#   container_name: organic-lever-db
+#   environment:
+#     - POSTGRES_DB=organic_lever
+#     - POSTGRES_USER=${DB_USER:-organic_lever}
+#     - POSTGRES_PASSWORD=${DB_PASSWORD:-changeme}
+#   volumes:
+#     - organic-lever-db-data:/var/lib/postgresql/data
+#   ports:
+#     - "5432:5432"
+#   networks:
+#     - organic-lever-network
+#
+# volumes:
+#   organic-lever-db-data:
