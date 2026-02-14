@@ -20,9 +20,9 @@ if git diff --cached --name-only | grep -qE 'docker-compose\.ya?ml$'; then
       echo "  Checking $compose_file..."
 
       # Validate YAML syntax and docker-compose config
-      if ! docker-compose -f "$compose_file" config > /dev/null 2>&1; then
+      if ! docker compose -f "$compose_file" config > /dev/null 2>&1; then
         echo "❌ Docker Compose validation failed for $compose_file"
-        echo "   Run: docker-compose -f $compose_file config"
+        echo "   Run: docker compose -f $compose_file config"
         exit 1
       fi
 
