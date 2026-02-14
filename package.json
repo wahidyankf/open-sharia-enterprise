@@ -21,6 +21,7 @@
     "graph": "nx graph",
     "nx": "nx",
     "prepare": "husky",
+    "organic-lever:dev": "cd infra/local/organic-lever && docker compose up",
     "sync:claude-to-opencode": "nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli sync-agents",
     "sync:agents": "nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli sync-agents --agents-only",
     "sync:skills": "nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli sync-agents --skills-only",
