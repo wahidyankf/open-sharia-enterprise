@@ -12,7 +12,7 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.opencode</groupId>
+    <groupId>com.organiclever</groupId>
     <artifactId>organic-lever-be</artifactId>
     <version>1.0.0</version>
     <name>organic-lever-be</name>
