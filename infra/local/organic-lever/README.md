@@ -18,9 +18,34 @@ This infrastructure setup provides containerized deployment for all Organic Leve
 
 ## Quick Start
 
-### 1. Build the Application
+### Recommended: Using npm Scripts
 
-Before running docker-compose, build the Spring Boot application:
+The easiest way to start the development environment:
+
+```bash
+# From repository root
+npm run organic-lever:dev
+
+# Or to restart (clean state)
+npm run organic-lever:dev:restart
+```
+
+This automatically:
+
+- Starts Docker Compose with the correct configuration
+- Mounts source code for auto-reload
+- Enables Spring Boot DevTools
+- Shows logs in the terminal
+
+### Alternative: Direct Docker Compose
+
+If you prefer manual control or need specific docker-compose options:
+
+#### 1. Build the Application (Optional - only for production mode)
+
+For development mode with auto-reload, **you don't need to build**. The container will compile on-the-fly.
+
+For production mode testing:
 
 ```bash
 # From repository root
@@ -33,27 +58,27 @@ nx run organic-lever-be:build
 
 This creates `apps/organic-lever-be/target/organic-lever-be-1.0.0.jar`
 
-### 2. Configure Environment
+#### 2. Configure Environment (Optional)
 
 ```bash
-# From infra/organic-lever directory
+# From infra/local/organic-lever directory
 cp .env.example .env
 
 # Edit .env with your configuration (optional, defaults work)
 nano .env
 ```
 
-### 3. Start Services
+#### 3. Start Services
 
 ```bash
-# Start all services
-docker-compose up -d
+# Development mode (auto-reload enabled)
+docker compose up
 
-# Start specific service
-docker-compose up -d organic-lever-be
+# Or detached mode
+docker compose up -d
 
-# Start with logs visible
-docker-compose up
+# To restart
+docker compose down && docker compose up
 ```
 
 ### 4. Verify Services
@@ -155,16 +180,22 @@ The infrastructure supports **Docker-based development with auto-reload** using 
 
 ### Starting Development Mode
 
-Simply run `docker-compose up` (without specifying the file):
+**Recommended: Use npm script** (from repository root):
 
 ```bash
-docker-compose up
+npm run organic-lever:dev
+```
+
+**Alternative: Direct docker compose**:
+
+```bash
+cd infra/local/organic-lever
+docker compose up
 ```
 
 **What happens**:
 
-- Docker Compose automatically merges `docker-compose.yml` + `docker-compose.override.yml`
-- Uses JDK image (not JRE) to enable Maven compilation
+- Uses JDK image to enable Maven compilation
 - Mounts source code from `apps/organic-lever-be/` (read-write)
 - Runs `mvn spring-boot:run` with DevTools enabled
 - DevTools watches for file changes and triggers fast restarts (1-2 seconds)
@@ -180,14 +211,14 @@ docker-compose up
 
 ```bash
 # Terminal 1: Start dev environment
-docker-compose up
+npm run organic-lever:dev
 
 # Terminal 2: Test endpoint
 curl http://localhost:8100/api/v1/hello
-# Output: {"message":"world"}
+# Output: {"message":"world!"}
 
 # Edit apps/organic-lever-be/src/main/java/com/opencode/organiclever/controller/HelloController.java
-# Change "world" to "auto-reload works!"
+# Change "world!" to "auto-reload works!"
 # Save file
 
 # Watch Terminal 1 for:
@@ -211,55 +242,6 @@ curl http://localhost:8100/api/v1/hello
 - DevTools uses intelligent classloader reload
 - Only reloads changed classes
 - No dependency download needed (cached in Docker volume)
-
-### Development Mode vs Production Mode
-
-**Development Mode** (`docker-compose up`):
-
-- Uses `docker-compose.override.yml` automatically
-- JDK image (~300MB)
-- Source code mounted (read-write)
-- Maven runs application
-- Auto-reload enabled (1-2 second restarts)
-- Full debug logging
-- Health details exposed
-
-**Production Mode** (`docker-compose -f docker-compose.yml up`):
-
-- Uses only `docker-compose.yml` (no override)
-- JRE image (~80MB, smaller)
-- Pre-built JAR mounted (read-only)
-- Direct Java execution
-- No auto-reload (manual rebuild required)
-- INFO logging only
-- Health details hidden
-
-### Switching Between Modes
-
-**Switch to production mode**:
-
-```bash
-# Stop dev mode
-docker-compose down
-
-# Build JAR
-cd ../../apps/organic-lever-be
-mvn clean package -DskipTests
-
-# Start production mode (explicit file)
-cd ../../infra/local/organic-lever
-docker-compose -f docker-compose.yml up
-```
-
-**Switch to development mode**:
-
-```bash
-# Stop prod mode
-docker-compose down
-
-# Start dev mode (auto-merges override file)
-docker-compose up
-```
 
 ### Alternative: Local Maven Development
 
@@ -285,16 +267,25 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 - Requires Java 25 and Maven installed locally
 - Not containerized (environment differences possible)
 
-## Development vs Production
+## Development Options
 
-### Development Mode
+This setup is **local development only**. For development, you have three options:
 
-For development, you have three options:
-
-1. **Docker with auto-reload** (recommended, containerized):
+1. **npm scripts** (easiest, recommended):
 
 ```bash
-docker-compose up
+# From repository root
+npm run organic-lever:dev
+
+# Restart with clean state
+npm run organic-lever:dev:restart
+```
+
+1. **Docker Compose** (direct control):
+
+```bash
+cd infra/local/organic-lever
+docker compose up
 ```
 
 1. **Local Maven** (fastest, requires local Java 25):
@@ -305,23 +296,15 @@ nx serve organic-lever-be
 cd apps/organic-lever-be && mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-1. **Custom dev profile** via environment variables:
+### Environment Configuration
+
+You can customize settings via `.env` file:
 
 ```bash
-# In .env file
+# In infra/local/organic-lever/.env
 SPRING_PROFILES_ACTIVE=dev
+MAVEN_OPTS=-Xmx512m
 ```
-
-### Production Mode
-
-For production deployment:
-
-1. Build JAR first
-2. Use explicit file flag: `docker-compose -f docker-compose.yml up`
-3. Configure proper resource limits
-4. Use external database instead of embedded
-5. Configure proper logging aggregation
-6. Set up monitoring and alerting
 
 ## Adding New Services
 
