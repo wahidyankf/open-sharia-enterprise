@@ -736,7 +736,6 @@ graph TB
         MERGE[Merge to main]
         ENV_BRANCH[Environment Branch]
         VERCEL[Vercel Build & Deploy]
-        K8S_DEPLOY[K8s Deploy - Planned]
     end
 
     COMMIT --> PRE_COMMIT
