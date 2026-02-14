@@ -58,5 +58,8 @@
     "*.md": "prettier --write",
     "*.{yml,yaml}": "prettier --write",
     "*.{css,scss}": "prettier --write"
+  },
+  "overrides": {
+    "markdown-it": "14.1.1"
   }
 }
