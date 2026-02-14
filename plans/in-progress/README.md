@@ -4,7 +4,7 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
-- **[2026-02-11__organic-lever-be](./2026-02-11__organic-lever-be/)** - Initialize Spring Boot backend service with `/api/v1/hello` endpoint on port 8100
+None currently.
 
 ## Instructions
 

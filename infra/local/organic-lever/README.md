@@ -162,9 +162,9 @@ For development, you might want to:
 SPRING_PROFILES_ACTIVE=dev
 ```
 
-2. Mount source code for hot reload (requires additional setup)
+1. Mount source code for hot reload (requires additional setup)
 
-3. Use local services instead of containers:
+1. Use local services instead of containers:
 
 ```bash
 # Run directly with Maven
@@ -200,9 +200,9 @@ new-service:
     - organic-lever-network
 ```
 
-2. **Update .env.example** with new environment variables
+1. **Update .env.example** with new environment variables
 
-3. **Update this README** with service documentation
+1. **Update this README** with service documentation
 
 ## Network Configuration
 
@@ -316,10 +316,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1.0'
+          cpus: "1.0"
           memory: 1024M
         reservations:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 512M
 ```
 
@@ -344,8 +344,6 @@ Planned additions to this infrastructure:
 
 ## Related Documentation
 
-- [Organic Lever Backend Plan](../../plans/in-progress/2026-02-11__organic-lever-be/)
-- [Organic Lever Backend README](../../apps/organic-lever-be/README.md) (once implemented)
 - [Docker Documentation](https://docs.docker.com/)
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
 
