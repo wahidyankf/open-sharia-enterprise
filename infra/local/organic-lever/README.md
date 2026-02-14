@@ -41,22 +41,22 @@ This automatically:
 
 If you prefer manual control or need specific docker-compose options:
 
-#### 1. Build the Application (Optional - only for production mode)
+#### 1. Build the Docker Image (First-time only)
 
-For development mode with auto-reload, **you don't need to build**. The container will compile on-the-fly.
-
-For production mode testing:
+The development environment uses a custom Docker image with Maven pre-installed. Build it once:
 
 ```bash
-# From repository root
-cd apps/organic-lever-be
-mvn clean package -DskipTests
-
-# Or using Nx
-nx run organic-lever-be:build
+# From infra/local/organic-lever directory
+docker compose build
 ```
 
-This creates `apps/organic-lever-be/target/organic-lever-be-1.0.0.jar`
+This creates a custom development image (~666MB) that includes:
+
+- Eclipse Temurin JDK 25 (Alpine)
+- Maven 3.9.11 (pre-installed, not installed at runtime)
+- Optimized for fast startup
+
+**Note**: You only need to build once. The image persists and Maven won't be reinstalled on subsequent starts.
 
 #### 2. Configure Environment (Optional)
 
@@ -100,8 +100,9 @@ curl http://localhost:8100/actuator/info
 ### organic-lever-be
 
 **Port**: 8100
-**Image**: eclipse-temurin:25-jre-alpine
-**Profile**: prod (default)
+**Image**: Custom dev image (built from `Dockerfile.dev`)
+**Base**: eclipse-temurin:25-jdk-alpine + Maven 3.9.11
+**Profile**: dev (development mode with auto-reload)
 
 **Endpoints**:
 
@@ -195,10 +196,12 @@ docker compose up
 
 **What happens**:
 
-- Uses JDK image to enable Maven compilation
+- Uses custom dev image with Maven pre-installed (no runtime installation)
 - Mounts source code from `apps/organic-lever-be/` (read-write)
 - Runs `mvn spring-boot:run` with DevTools enabled
 - DevTools watches for file changes and triggers fast restarts (1-2 seconds)
+- First startup: ~2-3 minutes (Maven downloads dependencies)
+- Subsequent restarts: 1-2 seconds (intelligent classloader reload)
 
 ### Auto-Reload Workflow
 
@@ -217,7 +220,7 @@ npm run organic-lever:dev
 curl http://localhost:8100/api/v1/hello
 # Output: {"message":"world!"}
 
-# Edit apps/organic-lever-be/src/main/java/com/opencode/organiclever/controller/HelloController.java
+# Edit apps/organic-lever-be/src/main/java/com/organiclever/be/controller/HelloController.java
 # Change "world!" to "auto-reload works!"
 # Save file
 
@@ -266,6 +269,36 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 
 - Requires Java 25 and Maven installed locally
 - Not containerized (environment differences possible)
+
+### Custom Development Image
+
+The development environment uses a custom Docker image built from `Dockerfile.dev`:
+
+**Why custom image?**
+
+- ✅ **Faster startup**: Maven is pre-installed during build, not at runtime
+- ✅ **Consistent environment**: Same Maven version for all developers
+- ✅ **Isolated**: Maven installation contained to this service only
+- ✅ **Build once, use many**: Image persists across container restarts
+
+**Building the image** (first-time only):
+
+```bash
+# From infra/local/organic-lever
+docker compose build
+```
+
+**What's included:**
+
+- Eclipse Temurin JDK 25 (Alpine Linux)
+- Maven 3.9.11 (pre-installed via apk)
+- Total size: ~666MB
+
+**Rebuilding** (only needed if Dockerfile.dev changes):
+
+```bash
+docker compose build --no-cache
+```
 
 ## Development Options
 
