@@ -4,7 +4,7 @@ Organic Lever Platform Backend - Spring Boot REST API
 
 ## Overview
 
-- **Framework**: Spring Boot 4.0.1
+- **Framework**: Spring Boot 4.0.2
 - **Language**: Java 25
 - **Build Tool**: Maven
 - **Port**: 8100
@@ -18,14 +18,24 @@ Organic Lever Platform Backend - Spring Boot REST API
 
 ## Development Modes
 
-### Option 1: Docker Compose with Auto-Reload (Recommended)
+### Option 1: npm Scripts (Easiest - Recommended)
 
-Docker-based development with Spring Boot DevTools auto-reload:
+Use the convenient npm scripts from the repository root:
 
 ```bash
-cd infra/local/organic-lever
-docker-compose up
+# Start development environment
+npm run organic-lever:dev
+
+# Restart (clean restart with fresh state)
+npm run organic-lever:dev:restart
 ```
+
+**Benefits**:
+
+- ✅ Single command from anywhere in the repository
+- ✅ No need to navigate to infra directory
+- ✅ Consistent with other project scripts
+- ✅ Auto-reload enabled (1-2 second restarts)
 
 **Auto-reload workflow**:
 
@@ -37,14 +47,22 @@ docker-compose up
 **First startup**: Takes 2-3 minutes for Maven to download dependencies
 **Subsequent restarts**: 1-2 seconds via DevTools intelligent classloader
 
+### Option 2: Docker Compose (Direct Control)
+
+If you prefer direct Docker Compose control:
+
+```bash
+cd infra/local/organic-lever
+docker compose up
+```
+
 **What's happening**:
 
-- Uses `docker-compose.override.yml` for development config
 - Mounts source code into container (read-write)
 - Runs `mvn spring-boot:run` with DevTools enabled
 - DevTools watches for file changes and triggers fast restarts
 
-### Option 2: Local Maven (Fastest)
+### Option 3: Local Maven (Fastest)
 
 Run directly on host machine (0.5-1 second restarts):
 
@@ -64,8 +82,7 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ### Step 1: Start application
 
 ```bash
-cd infra/local/organic-lever
-docker-compose up
+npm run organic-lever:dev
 ```
 
 Wait for: `Started OrganicLeverApplication in X seconds`
