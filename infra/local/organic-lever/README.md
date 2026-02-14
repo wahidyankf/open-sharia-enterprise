@@ -149,38 +149,179 @@ cd ../../infra/organic-lever
 docker-compose restart organic-lever-be
 ```
 
+## Development with Auto-Reload
+
+The infrastructure supports **Docker-based development with auto-reload** using Spring Boot DevTools. This enables code changes to be reflected automatically without manual rebuild cycles.
+
+### Starting Development Mode
+
+Simply run `docker-compose up` (without specifying the file):
+
+```bash
+docker-compose up
+```
+
+**What happens**:
+
+- Docker Compose automatically merges `docker-compose.yml` + `docker-compose.override.yml`
+- Uses JDK image (not JRE) to enable Maven compilation
+- Mounts source code from `apps/organic-lever-be/` (read-write)
+- Runs `mvn spring-boot:run` with DevTools enabled
+- DevTools watches for file changes and triggers fast restarts (1-2 seconds)
+
+### Auto-Reload Workflow
+
+1. **Edit code**: Make changes to any file in `apps/organic-lever-be/src/`
+2. **Save file**: Press Ctrl+S (or Cmd+S on Mac)
+3. **Wait**: Watch Docker logs for restart message (~1-2 seconds)
+4. **Test**: Changes are live immediately
+
+**Example**:
+
+```bash
+# Terminal 1: Start dev environment
+docker-compose up
+
+# Terminal 2: Test endpoint
+curl http://localhost:8100/api/v1/hello
+# Output: {"message":"world"}
+
+# Edit apps/organic-lever-be/src/main/java/com/opencode/organiclever/controller/HelloController.java
+# Change "world" to "auto-reload works!"
+# Save file
+
+# Watch Terminal 1 for:
+# "Restarting due to 1 class path change"
+
+# Test again (within 2 seconds)
+curl http://localhost:8100/api/v1/hello
+# Output: {"message":"auto-reload works!"}
+```
+
+### First Startup vs Subsequent Restarts
+
+**First startup**: 2-3 minutes
+
+- Maven downloads ~100MB of dependencies
+- Builds application
+- Starts Spring Boot
+
+**Subsequent restarts**: 1-2 seconds
+
+- DevTools uses intelligent classloader reload
+- Only reloads changed classes
+- No dependency download needed (cached in Docker volume)
+
+### Development Mode vs Production Mode
+
+**Development Mode** (`docker-compose up`):
+
+- Uses `docker-compose.override.yml` automatically
+- JDK image (~300MB)
+- Source code mounted (read-write)
+- Maven runs application
+- Auto-reload enabled (1-2 second restarts)
+- Full debug logging
+- Health details exposed
+
+**Production Mode** (`docker-compose -f docker-compose.yml up`):
+
+- Uses only `docker-compose.yml` (no override)
+- JRE image (~80MB, smaller)
+- Pre-built JAR mounted (read-only)
+- Direct Java execution
+- No auto-reload (manual rebuild required)
+- INFO logging only
+- Health details hidden
+
+### Switching Between Modes
+
+**Switch to production mode**:
+
+```bash
+# Stop dev mode
+docker-compose down
+
+# Build JAR
+cd ../../apps/organic-lever-be
+mvn clean package -DskipTests
+
+# Start production mode (explicit file)
+cd ../../infra/local/organic-lever
+docker-compose -f docker-compose.yml up
+```
+
+**Switch to development mode**:
+
+```bash
+# Stop prod mode
+docker-compose down
+
+# Start dev mode (auto-merges override file)
+docker-compose up
+```
+
+### Alternative: Local Maven Development
+
+For even faster development (0.5-1 second restarts), run directly on host:
+
+```bash
+# From repository root
+nx serve organic-lever-be
+
+# Or from app directory
+cd apps/organic-lever-be
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
+```
+
+**Benefits**:
+
+- Faster restarts (no Docker overhead)
+- Direct IDE integration
+- Easier debugging
+
+**Tradeoffs**:
+
+- Requires Java 25 and Maven installed locally
+- Not containerized (environment differences possible)
+
 ## Development vs Production
 
 ### Development Mode
 
-For development, you might want to:
+For development, you have three options:
 
-1. Use dev profile for better logging:
+1. **Docker with auto-reload** (recommended, containerized):
+
+```bash
+docker-compose up
+```
+
+1. **Local Maven** (fastest, requires local Java 25):
+
+```bash
+nx serve organic-lever-be
+# or
+cd apps/organic-lever-be && mvn spring-boot:run -Dspring-boot.run.profiles=dev
+```
+
+1. **Custom dev profile** via environment variables:
 
 ```bash
 # In .env file
 SPRING_PROFILES_ACTIVE=dev
 ```
 
-1. Mount source code for hot reload (requires additional setup)
-
-1. Use local services instead of containers:
-
-```bash
-# Run directly with Maven
-cd apps/organic-lever-be
-mvn spring-boot:run
-```
-
 ### Production Mode
 
 For production deployment:
 
-1. Use prod profile (default)
-2. Configure proper resource limits
-3. Use external database instead of embedded
-4. Configure proper logging aggregation
-5. Set up monitoring and alerting
+1. Build JAR first
+2. Use explicit file flag: `docker-compose -f docker-compose.yml up`
+3. Configure proper resource limits
+4. Use external database instead of embedded
+5. Configure proper logging aggregation
+6. Set up monitoring and alerting
 
 ## Adding New Services
 

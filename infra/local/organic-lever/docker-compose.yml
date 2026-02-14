@@ -1,26 +1,36 @@
-version: '3.8'
+# Local Development Environment for Organic Lever Backend
+# This setup provides Docker-based development with auto-reload via Spring Boot DevTools
 
 services:
   organic-lever-be:
-    image: eclipse-temurin:25-jre-alpine
+    image: eclipse-temurin:25-jdk-alpine
     container_name: organic-lever-be
-    working_dir: /app
+    working_dir: /workspace
+
+    # Mount full source code for development
     volumes:
-      - ../../apps/organic-lever-be/target/organic-lever-be-1.0.0.jar:/app/app.jar:ro
+      - ../../../apps/organic-lever-be:/workspace:rw
+
     ports:
       - "8100:8100"
+
     environment:
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-prod}
+      - SPRING_PROFILES_ACTIVE=dev
       - SERVER_PORT=8100
-      - JAVA_OPTS=${JAVA_OPTS:--Xms256m -Xmx512m -XX:+UseZGC}
+      - MAVEN_OPTS=${MAVEN_OPTS:--Xmx512m}
+
+    # Install Maven and run with DevTools for auto-reload
     command: >
-      sh -c "java $$JAVA_OPTS -jar app.jar"
+      sh -c "apk add --no-cache maven &&
+             mvn org.springframework.boot:spring-boot-maven-plugin:run -Dspring-boot.run.profiles=dev"
+
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8100/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
+      start_period: 60s # Extended for Maven dependency download on first run
+
     restart: unless-stopped
     networks:
       - organic-lever-network
