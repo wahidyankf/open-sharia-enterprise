@@ -1,4 +1,4 @@
-package com.opencode.organiclever.controller;
+package com.organiclever.be.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

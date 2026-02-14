@@ -97,7 +97,7 @@ Expected: `{"message":"world"}`
 
 ### Step 3: Modify code
 
-Edit `apps/organic-lever-be/src/main/java/com/opencode/organiclever/controller/HelloController.java`:
+Edit `apps/organic-lever-be/src/main/java/com/organiclever/be/controller/HelloController.java`:
 
 ```java
 return Map.of("message", "auto-reload works!");
@@ -185,7 +185,7 @@ nx lint organic-lever-be
 
 - **File**: `application-dev.yml`
 - **DevTools**: Enabled (auto-reload)
-- **Logging**: DEBUG level for `com.opencode.organiclever`
+- **Logging**: DEBUG level for `com.organiclever.be`
 - **Health**: Full details exposed
 
 ### prod (Production)
@@ -301,7 +301,7 @@ docker-compose -f docker-compose.yml up
 
 ```
 apps/organic-lever-be/
-├── src/main/java/com/opencode/organiclever/
+├── src/main/java/com/organiclever/be/
 │   ├── OrganicLeverApplication.java      # Main entry point
 │   └── controller/
 │       └── HelloController.java           # REST endpoints
