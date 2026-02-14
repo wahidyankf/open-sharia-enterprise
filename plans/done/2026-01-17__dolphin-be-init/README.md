@@ -1,6 +1,6 @@
 # Dolphin Backend Initialization
 
-> **Historical Note**: This plan was executed for the initial `dolphin-be` application, which was later renamed to `orca-grid-be` and repurposed from a Learning Management System to a Knowledge Management System.
+> **Historical Note**: This plan was executed for the initial `dolphin-be` application, which was later renamed to `orca-grid-be` and repurposed from a Learning Management System to a Knowledge Management System. The application was removed on 2026-02-14 as it was no longer needed.
 
 **Status**: Completed
 **Completion Date**: 2026-01-17
