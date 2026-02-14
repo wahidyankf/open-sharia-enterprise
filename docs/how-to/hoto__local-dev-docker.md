@@ -311,11 +311,11 @@ jdbc:postgresql://organic-lever-db:5432/organic_lever
 
 Services expose ports to the host:
 
-| Service | Internal Port | Host Port | Purpose |
-|---------|--------------|-----------|---------|
-| organic-lever-be | 8100 | 8100 | Backend API |
-| (future) organic-lever-fe | 80 | 3100 | Frontend |
-| (future) organic-lever-db | 5432 | 5432 | Database |
+| Service                   | Internal Port | Host Port | Purpose     |
+| ------------------------- | ------------- | --------- | ----------- |
+| organic-lever-be          | 8100          | 8100      | Backend API |
+| (future) organic-lever-fe | 80            | 3100      | Frontend    |
+| (future) organic-lever-db | 5432          | 5432      | Database    |
 
 ## Health Checks
 
@@ -482,10 +482,10 @@ volumes:
 deploy:
   resources:
     limits:
-      cpus: '1.0'
+      cpus: "1.0"
       memory: 1024M
     reservations:
-      cpus: '0.5'
+      cpus: "0.5"
       memory: 512M
 ```
 
@@ -540,7 +540,7 @@ Docker Compose can be used in CI/CD pipelines:
 - [Organic Lever Infrastructure README](../../infra/local/organic-lever/README.md)
 - [Docker Documentation](https://docs.docker.com/)
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
-- [Reproducible Environments Convention](../explanation/software-engineering/ex-soen__reproducible-environments.md)
+- [Reproducible Environments Convention](../../governance/development/workflow/reproducible-environments.md)
 
 ## Support
 
