@@ -1,9 +1,0 @@
-logging:
-  level:
-    com.opencode.orcagrid: INFO
-    org.springframework.web: WARN
-
-management:
-  endpoint:
-    health:
-      show-details: never

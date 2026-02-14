@@ -1,4 +1,0 @@
-logging:
-  level:
-    com.opencode.orcagrid: DEBUG
-    org.springframework.web: INFO
