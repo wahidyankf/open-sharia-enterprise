@@ -3,7 +3,9 @@
 
 services:
   organic-lever-be:
-    image: eclipse-temurin:25-jdk-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
     container_name: organic-lever-be
     working_dir: /workspace
 
@@ -19,10 +21,9 @@ services:
       - SERVER_PORT=8100
       - MAVEN_OPTS=${MAVEN_OPTS:--Xmx512m}
 
-    # Install Maven and run with DevTools for auto-reload
-    command: >
-      sh -c "apk add --no-cache maven &&
-             mvn org.springframework.boot:spring-boot-maven-plugin:run -Dspring-boot.run.profiles=dev"
+    # Run Spring Boot with DevTools for auto-reload
+    # Maven is pre-installed in the custom dev image (see Dockerfile.dev)
+    command: mvn spring-boot:run -Dspring-boot.run.profiles=dev
 
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8100/actuator/health"]

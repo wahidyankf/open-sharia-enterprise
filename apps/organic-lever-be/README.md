@@ -53,14 +53,21 @@ If you prefer direct Docker Compose control:
 
 ```bash
 cd infra/local/organic-lever
+
+# First-time only: Build the custom dev image
+docker compose build
+
+# Start development environment
 docker compose up
 ```
 
 **What's happening**:
 
+- Uses custom Docker image with Maven pre-installed (see `Dockerfile.dev`)
 - Mounts source code into container (read-write)
 - Runs `mvn spring-boot:run` with DevTools enabled
 - DevTools watches for file changes and triggers fast restarts
+- **Note**: Maven is NOT installed at runtime, saving 10-20 seconds on each startup
 
 ### Option 3: Local Maven (Fastest)
 
@@ -296,6 +303,36 @@ nx build organic-lever-be
 cd infra/local/organic-lever
 docker-compose -f docker-compose.yml up
 ```
+
+## Docker Development Image
+
+The Docker-based development environment uses a custom image built from `infra/local/organic-lever/Dockerfile.dev`:
+
+**Key Features**:
+
+- ✅ **Pre-installed Maven**: Maven 3.9.11 installed during image build, not at runtime
+- ✅ **Faster startup**: Saves 10-20 seconds on each `docker compose up`
+- ✅ **Consistent environment**: Same tooling for all developers
+- ✅ **Isolated**: Maven installation contained to organic-lever-be service only
+
+**Building the image** (first-time only):
+
+```bash
+cd infra/local/organic-lever
+docker compose build
+```
+
+**Image details**:
+
+- Base: eclipse-temurin:25-jdk-alpine
+- Maven: 3.9.11 (pre-installed via Alpine package manager)
+- Size: ~666MB
+- Build time: ~60-90 seconds
+
+**When to rebuild**:
+
+- Only if `Dockerfile.dev` changes
+- Otherwise, the image persists and is reused automatically
 
 ## Architecture
 
