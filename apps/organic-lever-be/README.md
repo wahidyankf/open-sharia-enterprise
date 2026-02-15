@@ -52,7 +52,7 @@ npm run organic-lever:dev:restart
 If you prefer direct Docker Compose control:
 
 ```bash
-cd infra/local/organic-lever
+cd infra/dev/organic-lever
 
 # First-time only: Build the custom dev image
 docker compose build
@@ -146,7 +146,7 @@ Output: `target/organic-lever-be-1.0.0.jar`
 ### Step 2: Run with production config
 
 ```bash
-cd infra/local/organic-lever
+cd infra/dev/organic-lever
 docker-compose -f docker-compose.yml up
 ```
 
@@ -191,14 +191,27 @@ nx lint organic-lever-be
 ### dev (Development)
 
 - **File**: `application-dev.yml`
+- **Location**: Local machine
+- **Deployment**: Docker Compose
 - **DevTools**: Enabled (auto-reload)
-- **Logging**: DEBUG level for `com.organiclever.be`
+- **Logging**: DEBUG level
 - **Health**: Full details exposed
+
+### staging (Staging Environment)
+
+- **File**: `application-staging.yml`
+- **Location**: Kubernetes cluster
+- **Deployment**: Kubernetes
+- **DevTools**: Excluded
+- **Logging**: INFO level
+- **Health**: Details when authorized
 
 ### prod (Production)
 
 - **File**: `application-prod.yml`
-- **DevTools**: Excluded from JAR
+- **Location**: Kubernetes cluster
+- **Deployment**: Kubernetes
+- **DevTools**: Excluded
 - **Logging**: INFO level
 - **Health**: Details hidden
 
@@ -277,7 +290,7 @@ mvn clean install
 
 ```bash
 # Start dev environment
-cd infra/local/organic-lever
+cd infra/dev/organic-lever
 docker-compose up
 
 # Edit code in apps/organic-lever-be/src/
@@ -300,13 +313,13 @@ mvn test
 
 ```bash
 nx build organic-lever-be
-cd infra/local/organic-lever
+cd infra/dev/organic-lever
 docker-compose -f docker-compose.yml up
 ```
 
 ## Docker Development Image
 
-The Docker-based development environment uses a custom image built from `infra/local/organic-lever/Dockerfile.dev`:
+The Docker-based development environment uses a custom image built from `infra/dev/organic-lever/Dockerfile.dev`:
 
 **Key Features**:
 
@@ -318,7 +331,7 @@ The Docker-based development environment uses a custom image built from `infra/l
 **Building the image** (first-time only):
 
 ```bash
-cd infra/local/organic-lever
+cd infra/dev/organic-lever
 docker compose build
 ```
 
