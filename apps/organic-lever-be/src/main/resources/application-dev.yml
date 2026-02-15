@@ -14,7 +14,7 @@ spring:
 logging:
   level:
     root: INFO
-    com.organiclever.be: DEBUG
+    "[com.organiclever.be]": DEBUG
   pattern:
     console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
 
