@@ -3,12 +3,13 @@ spring:
     name: organic-lever-be
   profiles:
     active: dev
+  web:
+    error:
+      include-message: always
+      include-binding-errors: always
 
 server:
   port: 8100
-  error:
-    include-message: always
-    include-binding-errors: always
 
 management:
   endpoints:
