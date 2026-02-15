@@ -57,7 +57,7 @@ Each service ecosystem has its own Docker Compose setup:
 
 ```bash
 # Example: Organic Lever services
-cd infra/local/organic-lever
+cd infra/dev/organic-lever
 ```
 
 ### 3. Configure Environment (Optional)
@@ -83,7 +83,7 @@ mvn clean package -DskipTests
 nx run organic-lever-be:build
 
 # Return to Docker Compose directory
-cd ../../infra/local/organic-lever
+cd ../../infra/dev/organic-lever
 ```
 
 ### 5. Start Services
@@ -122,7 +122,7 @@ docker-compose down -v
 
 ## Available Service Ecosystems
 
-### Organic Lever (`infra/local/organic-lever/`)
+### Organic Lever (`infra/dev/organic-lever/`)
 
 **Services**:
 
@@ -131,11 +131,11 @@ docker-compose down -v
 **Quick Start**:
 
 ```bash
-cd infra/local/organic-lever
+cd infra/dev/organic-lever
 docker-compose up -d
 ```
 
-**Documentation**: [Organic Lever Infrastructure README](../../infra/local/organic-lever/README.md)
+**Documentation**: [Organic Lever Infrastructure README](../../infra/dev/organic-lever/README.md)
 
 ### Future Ecosystems
 
@@ -174,7 +174,7 @@ cd ../../apps/organic-lever-be
 mvn clean package -DskipTests
 
 # 2. Restart the service
-cd ../../infra/local/organic-lever
+cd ../../infra/dev/organic-lever
 docker-compose restart organic-lever-be
 ```
 
@@ -212,7 +212,7 @@ docker system prune
 nx run organic-lever-be:build
 
 # 2. Start services
-cd infra/local/organic-lever
+cd infra/dev/organic-lever
 docker-compose up -d
 
 # 3. Make changes to code
@@ -234,7 +234,7 @@ cd apps/organic-lever-be
 mvn spring-boot:run
 
 # Run dependent services in Docker
-cd ../../infra/local/organic-lever
+cd ../../infra/dev/organic-lever
 # Comment out the service you're developing
 # Keep database, cache, etc. in Docker
 docker-compose up -d
@@ -246,7 +246,7 @@ docker-compose up -d
 
 ```bash
 # Run all services in Docker
-cd infra/local/organic-lever
+cd infra/dev/organic-lever
 docker-compose up -d
 
 # Test inter-service communication
@@ -292,6 +292,16 @@ Services support multiple profiles:
 # Set in .env file
 SPRING_PROFILES_ACTIVE=dev
 ```
+
+## Environment Architecture
+
+The platform uses a 3-environment architecture:
+
+- **dev**: Local Docker Compose development (this guide)
+- **staging**: Kubernetes pre-production testing
+- **prod**: Kubernetes production deployment
+
+For local development, always use the `dev` profile (default). The `staging` and `prod` profiles are designed for Kubernetes deployments with different observability and security configurations.
 
 ## Networking
 
@@ -537,7 +547,7 @@ Docker Compose can be used in CI/CD pipelines:
 
 ## Related Documentation
 
-- [Organic Lever Infrastructure README](../../infra/local/organic-lever/README.md)
+- [Organic Lever Infrastructure README](../../infra/dev/organic-lever/README.md)
 - [Docker Documentation](https://docs.docker.com/)
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
 - [Reproducible Environments Convention](../../governance/development/workflow/reproducible-environments.md)
@@ -546,7 +556,7 @@ Docker Compose can be used in CI/CD pipelines:
 
 For issues or questions:
 
-1. Check service-specific README in `infra/local/[service]/`
+1. Check service-specific README in `infra/dev/[service]/`
 2. Review troubleshooting section above
 3. Check Docker logs: `docker-compose logs`
 4. Consult main repository documentation

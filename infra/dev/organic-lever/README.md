@@ -46,7 +46,7 @@ If you prefer manual control or need specific docker-compose options:
 The development environment uses a custom Docker image with Maven pre-installed. Build it once:
 
 ```bash
-# From infra/local/organic-lever directory
+# From infra/dev/organic-lever directory
 docker compose build
 ```
 
@@ -61,7 +61,7 @@ This creates a custom development image (~666MB) that includes:
 #### 2. Configure Environment (Optional)
 
 ```bash
-# From infra/local/organic-lever directory
+# From infra/dev/organic-lever directory
 cp .env.example .env
 
 # Edit .env with your configuration (optional, defaults work)
@@ -190,7 +190,7 @@ npm run organic-lever:dev
 **Alternative: Direct docker compose**:
 
 ```bash
-cd infra/local/organic-lever
+cd infra/dev/organic-lever
 docker compose up
 ```
 
@@ -284,7 +284,7 @@ The development environment uses a custom Docker image built from `Dockerfile.de
 **Building the image** (first-time only):
 
 ```bash
-# From infra/local/organic-lever
+# From infra/dev/organic-lever
 docker compose build
 ```
 
@@ -299,6 +299,45 @@ docker compose build
 ```bash
 docker compose build --no-cache
 ```
+
+## Environment Architecture
+
+This project uses a 3-environment architecture:
+
+### Dev (Local Development)
+
+- **Profile**: `dev`
+- **Location**: Local machine (this directory)
+- **Deployment**: Docker Compose
+- **Purpose**: Local development with auto-reload
+- **DevTools**: Enabled
+- **Logging**: DEBUG level
+- **Health**: Full details exposed
+- **Start**: `npm run organic-lever:dev`
+
+### Staging (Pre-Production)
+
+- **Profile**: `staging`
+- **Location**: Kubernetes cluster
+- **Deployment**: Kubernetes
+- **Purpose**: Pre-production testing and validation
+- **DevTools**: Disabled
+- **Logging**: INFO level
+- **Health**: Details when authorized
+- **Configuration**: See `infra/k8s/organic-lever/staging/`
+
+### Production
+
+- **Profile**: `prod`
+- **Location**: Kubernetes cluster
+- **Deployment**: Kubernetes
+- **Purpose**: Production deployment
+- **DevTools**: Disabled
+- **Logging**: INFO level
+- **Health**: No details exposed
+- **Configuration**: See `infra/k8s/organic-lever/production/`
+
+**Deployment Flow**: dev (local) → staging (K8s) → prod (K8s)
 
 ## Development Options
 
@@ -317,7 +356,7 @@ npm run organic-lever:dev:restart
 1. **Docker Compose** (direct control):
 
 ```bash
-cd infra/local/organic-lever
+cd infra/dev/organic-lever
 docker compose up
 ```
 
@@ -334,7 +373,7 @@ cd apps/organic-lever-be && mvn spring-boot:run -Dspring-boot.run.profiles=dev
 You can customize settings via `.env` file:
 
 ```bash
-# In infra/local/organic-lever/.env
+# In infra/dev/organic-lever/.env
 SPRING_PROFILES_ACTIVE=dev
 MAVEN_OPTS=-Xmx512m
 ```
