@@ -11,7 +11,7 @@ tags:
   - development
   - workflows
 created: 2026-01-04
-updated: 2026-01-04
+updated: 2026-02-16
 ---
 
 # Rules - Repository Governance
@@ -80,7 +80,7 @@ graph TD
 #### Layer 2: Conventions (WHAT - Documentation Rules)
 
 - **[Conventions](./conventions/README.md)** - Documentation writing and organization standards
-  - 24 conventions across 6 categories (formatting, content, tutorial, hugo, meta, project)
+  - 30 conventions across 6 categories (formatting, content, tutorial, hugo, meta, project)
   - Implements principles in concrete documentation rules
   - Each convention includes "Principles Implemented/Respected" section
   - Enforced by AI agents (docs**checker, docs**maker, etc.)
@@ -88,7 +88,7 @@ graph TD
 #### Layer 3: Development (HOW - Software Practices)
 
 - **[Development](./development/README.md)** - Software development practices and workflows
-  - 15 practices across 6 categories (workflow, quality, pattern, agents, infra, hugo)
+  - 29 practices across 6 categories (workflow, quality, pattern, agents, infra, hugo)
   - Implements principles in concrete software standards
   - Each practice includes "Principles Implemented/Respected" AND "Conventions Implemented/Respected" sections
   - Enforced by AI agents and automation (git hooks, build tools)
@@ -96,7 +96,7 @@ graph TD
 #### Layer 5: Workflows (WHEN - Multi-Step Processes)
 
 - **[Workflows](./workflows/README.md)** - Orchestrated multi-step processes composing AI agents
-  - 8 workflows across 4 categories (ayokoding-web, docs, plan, repository)
+  - 10 workflows across 4 categories (ayokoding-web, docs, plan, repository)
   - Define sequences (sequential/parallel/conditional), state management, termination criteria
   - Examples: Maker-Checker-Fixer, Plan-Execute-Validate
   - Orchestrate agents from Layer 4
@@ -204,4 +204,4 @@ When changing a layer, all lower layers may need updates. Use `repo-governance-m
 
 ---
 
-**Last Updated**: 2026-01-04
+**Last Updated**: 2026-02-16
