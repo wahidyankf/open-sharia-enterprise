@@ -412,6 +412,15 @@ Tests cover:
 - `GET /api/v1/hello` — status 200, `{"message":"world!"}`, JSON content-type
 - `GET /actuator/health` — status 200, `{"status":"UP"}`
 
+The [`organiclever-app-web-e2e`](../organiclever-app-web-e2e/) project provides browser-based
+Playwright tests for the Flutter web UI — it also requires this backend to be running:
+
+```bash
+# Start backend (any method above), then start Flutter web app and run browser tests:
+nx dev organiclever-app
+nx e2e organiclever-app-web-e2e
+```
+
 ## Next Steps
 
 - Add database integration (PostgreSQL)

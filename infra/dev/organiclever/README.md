@@ -6,8 +6,10 @@ Docker Compose configuration for OrganicLever services ecosystem.
 
 This infrastructure setup provides containerized deployment for all OrganicLever services, including:
 
-- **organiclever-be** - Spring Boot backend service (port 8100)
-- Future services: frontend, database, etc.
+- **organiclever-be** - Spring Boot backend service (port 8100, runs in Docker Compose)
+- **organiclever-app** - Flutter web application (port 3100, runs via `nx dev organiclever-app`)
+- **organiclever-be-e2e** - Playwright API E2E tests (requires organiclever-be)
+- **organiclever-app-web-e2e** - Playwright browser E2E tests (requires organiclever-be + organiclever-app)
 
 ## Prerequisites
 
