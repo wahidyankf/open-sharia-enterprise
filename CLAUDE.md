@@ -20,8 +20,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `ayokoding-web` - Hugo static site (Hextra theme, bilingual)
   - `ayokoding-cli` - Go CLI tool for content automation
   - `rhino-cli` - Go CLI tool for repository management (Repository Hygiene & INtegration Orchestrator)
-  - `organic-lever-app` - Flutter mobile and web application
-  - `organic-lever-be` - Spring Boot REST API backend
+  - `organiclever-app` - Flutter mobile and web application
+  - `organiclever-be` - Spring Boot REST API backend
 
 ## Project Structure
 
@@ -32,8 +32,8 @@ open-sharia-enterprise/
 │   ├── ayokoding-web/       # AyoKoding website (bilingual)
 │   ├── ayokoding-cli/       # Content automation CLI
 │   ├── rhino-cli/          # Repository management CLI
-│   ├── organic-lever-app/  # Flutter mobile & web app
-│   └── organic-lever-be/   # Spring Boot REST API
+│   ├── organiclever-app/  # Flutter mobile & web app
+│   └── organiclever-be/   # Spring Boot REST API
 ├── apps-labs/                # Experimental apps (NOT in Nx)
 ├── libs/                     # Reusable libraries (Nx, flat structure)
 ├── docs/                     # Documentation (Diátaxis framework)

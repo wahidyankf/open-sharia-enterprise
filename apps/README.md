@@ -14,8 +14,8 @@ Apps follow the naming pattern: **`[domain]-[type]`**
 - `ayokoding-web` - AyoKoding educational platform ([ayokoding.com](https://ayokoding.com)) - Hugo static site
 - `ayokoding-cli` - AyoKoding CLI tool for navigation generation - Go application
 - `rhino-cli` - Repository management CLI tools - Go application
-- `organic_lever_app` - Organic Lever mobile and web client - Flutter application (port 3100)
-- `organic-lever-be` - Organic Lever backend API - Spring Boot application (port 8100)
+- `organiclever_app` - OrganicLever mobile and web client - Flutter application (port 3100)
+- `organiclever-be` - OrganicLever backend API - Spring Boot application (port 8100)
 
 ## Application Characteristics
 
@@ -70,7 +70,7 @@ apps/rhino-cli/
 ### Flutter Application (Current)
 
 ```
-apps/organic_lever_app/
+apps/organiclever_app/
 ├── lib/                     # Dart source code
 │   ├── config/              # Environment configuration
 │   ├── models/              # Data models
@@ -93,7 +93,7 @@ apps/organic_lever_app/
 ### Spring Boot Application (Current)
 
 ```
-apps/organic-lever-be/
+apps/organiclever-be/
 ├── src/main/java/           # Java source code
 │   └── com/organiclever/be/
 │       ├── OrganicLeverApplication.java
@@ -201,7 +201,7 @@ Currently:
 
 - **Hugo** (static sites) - ose-platform-web, ayokoding-web
 - **Go** (CLI tools) - ayokoding-cli, rhino-cli
-- **Flutter/Dart** (mobile & web) - organic_lever_app
-- **Java/Spring Boot** (backend API) - organic-lever-be
+- **Flutter/Dart** (mobile & web) - organiclever_app
+- **Java/Spring Boot** (backend API) - organiclever-be
 
 Future: TypeScript/Next.js, Kotlin, Python apps (each language will have language-specific structure and tooling)

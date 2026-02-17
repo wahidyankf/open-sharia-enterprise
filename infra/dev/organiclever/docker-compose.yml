@@ -1,0 +1,68 @@
+# Local Development Environment for OrganicLever Backend
+# This setup provides Docker-based development with auto-reload via Spring Boot DevTools
+
+services:
+  organiclever-be:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: organiclever-be
+    working_dir: /workspace
+
+    # Mount full source code for development
+    volumes:
+      - ../../../apps/organiclever-be:/workspace:rw
+
+    ports:
+      - "8100:8100"
+
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - SERVER_PORT=8100
+      - MAVEN_OPTS=${MAVEN_OPTS:--Xmx512m}
+
+    # Run Spring Boot with DevTools for auto-reload
+    # Maven is pre-installed in the custom dev image (see Dockerfile.dev)
+    command: mvn spring-boot:run -Dspring-boot.run.profiles=dev
+
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8100/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s # Extended for Maven dependency download on first run
+
+    restart: unless-stopped
+    networks:
+      - organiclever-network
+
+networks:
+  organiclever-network:
+    driver: bridge
+    name: organiclever-network
+
+# Future services can be added here:
+# organiclever-fe:
+#   image: nginx:alpine
+#   container_name: organiclever-fe
+#   ports:
+#     - "3100:80"
+#   networks:
+#     - organiclever-network
+#
+# organiclever-db:
+#   image: postgres:16-alpine
+#   container_name: organiclever-db
+#   environment:
+#     - POSTGRES_DB=organiclever
+#     - POSTGRES_USER=${DB_USER:-organiclever}
+#     - POSTGRES_PASSWORD=${DB_PASSWORD:-changeme}
+#   volumes:
+#     - organiclever-db-data:/var/lib/postgresql/data
+#   ports:
+#     - "5432:5432"
+#   networks:
+#     - organiclever-network
+#
+# volumes:
+#   organiclever-db-data:

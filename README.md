@@ -19,7 +19,7 @@ Building repository infrastructure, governance, and launching initial websites:
 - 🛠️ **CLI tools**: [ayokoding-cli](./apps/ayokoding-cli/) and [rhino-cli](./apps/rhino-cli/)
 - 📚 **Infrastructure**: AI agents, documentation framework, governance, planning systems
 
-**Next Phase: Phase 1 (Organic Lever)** - Individual productivity tracker to test deployment and knowledge base patterns before SMB/enterprise.
+**Next Phase: Phase 1 (OrganicLever)** - Individual productivity tracker to test deployment and knowledge base patterns before SMB/enterprise.
 
 **What to Expect:**
 
@@ -34,7 +34,7 @@ Building repository infrastructure, governance, and launching initial websites:
 
 **The Opportunity**: Islamic enterprise (finance, commerce, cooperatives, and beyond) represents a multi-trillion dollar global market, creating massive demand for Sharia-compliant business systems. While purpose-built platforms exist, they're typically proprietary, expensive, and limited to specific domains. Many organizations struggle with legacy systems retrofitted for Sharia compliance. The gap? Accessible, open-source solutions with built-in compliance and radical transparency—serving the entire spectrum of Islamic business needs.
 
-**Our Solution**: We're building a global open-source platform with Sharia-compliance at its core—following a progressive complexity approach from individual users (Phase 1: Organic Lever productivity tracker) to SMB (Phase 2) to enterprise (Phase 3: full ERP and domain expansion). Each phase generates revenue to fund the next, with Phase 1/2 success funding Phase 3's significant certification budget. We're making trustworthy, transparent business systems accessible to any organization worldwide—regardless of size, region, or industry.
+**Our Solution**: We're building a global open-source platform with Sharia-compliance at its core—following a progressive complexity approach from individual users (Phase 1: OrganicLever productivity tracker) to SMB (Phase 2) to enterprise (Phase 3: full ERP and domain expansion). Each phase generates revenue to fund the next, with Phase 1/2 success funding Phase 3's significant certification budget. We're making trustworthy, transparent business systems accessible to any organization worldwide—regardless of size, region, or industry.
 
 **What We Believe:**
 
@@ -55,7 +55,7 @@ This project follows a **progressive complexity approach** - starting simple, te
 
 **Current Phase: Phase 0 (Repository Setup & Knowledge Base)** - Establishing repository infrastructure, governance, and launching initial static websites (ayokoding.com, oseplatform.com).
 
-**Next Phase: Phase 1 (Organic Lever - Productivity Tracker)** - Individual productivity application to test deployment, security, and knowledge base patterns at small scale before SMB/enterprise.
+**Next Phase: Phase 1 (OrganicLever - Productivity Tracker)** - Individual productivity application to test deployment, security, and knowledge base patterns at small scale before SMB/enterprise.
 
 For the complete roadmap including all phases, tech stack, and strategic approach, see **[ROADMAP.md](./ROADMAP.md)**.
 
@@ -69,7 +69,7 @@ For the complete roadmap including all phases, tech stack, and strategic approac
 - Hugo (Extended) - Static sites (ayokoding-web, ose-platform-web)
 - Golang - CLI tools ([ayokoding-cli](./apps/ayokoding-cli/), [rhino-cli](./apps/rhino-cli/)) and future security infrastructure
 
-**Phase 1 (Planned - Organic Lever):**
+**Phase 1 (Planned - OrganicLever):**
 
 - Backend: Java + Spring Boot
 - Frontend: Next.js + TypeScript
@@ -117,7 +117,7 @@ open-sharia-enterprise/
 
 This project uses **Nx** to manage applications and libraries:
 
-- **`apps/`** - Deployable applications (current: [`ose-platform-web`](./apps/ose-platform-web/), [`ayokoding-web`](./apps/ayokoding-web/), [`ayokoding-cli`](./apps/ayokoding-cli/), [`rhino-cli`](./apps/rhino-cli/), [`organic-lever-app`](./apps/organic_lever_app/), [`organic-lever-be`](./apps/organic-lever-be/))
+- **`apps/`** - Deployable applications (current: [`ose-platform-web`](./apps/ose-platform-web/), [`ayokoding-web`](./apps/ayokoding-web/), [`ayokoding-cli`](./apps/ayokoding-cli/), [`rhino-cli`](./apps/rhino-cli/), [`organiclever-app`](./apps/organiclever-app/), [`organiclever-be`](./apps/organiclever-be/))
 - **`libs/`** - Reusable libraries with language prefixes (`ts-*`, future: `java-*`, `py-*`) - currently empty
 - **`apps-labs/`** - Experimental apps and POCs (framework evaluation, language exploration) - currently empty
 

@@ -33,7 +33,7 @@ Docker Compose configurations are organized by deployment target:
 ```
 infra/
 ├── local/                    # Local development environments
-│   ├── organic-lever/       # Organic Lever services ecosystem
+│   ├── organiclever/       # OrganicLever services ecosystem
 │   │   ├── docker-compose.yml
 │   │   ├── .env.example
 │   │   └── README.md
@@ -56,8 +56,8 @@ cd open-sharia-enterprise
 Each service ecosystem has its own Docker Compose setup:
 
 ```bash
-# Example: Organic Lever services
-cd infra/dev/organic-lever
+# Example: OrganicLever services
+cd infra/dev/organiclever
 ```
 
 ### 3. Configure Environment (Optional)
@@ -76,14 +76,14 @@ Some services require building before containerization:
 
 ```bash
 # Example: Spring Boot application
-cd ../../../apps/organic-lever-be
+cd ../../../apps/organiclever-be
 mvn clean package -DskipTests
 
 # Or using Nx
-nx run organic-lever-be:build
+nx run organiclever-be:build
 
 # Return to Docker Compose directory
-cd ../../infra/dev/organic-lever
+cd ../../infra/dev/organiclever
 ```
 
 ### 5. Start Services
@@ -102,7 +102,7 @@ docker-compose ps
 ### 6. Verify Services
 
 ```bash
-# Example: Test organic-lever-be
+# Example: Test organiclever-be
 curl http://localhost:8100/api/v1/hello
 # Expected: {"message":"world"}
 
@@ -122,20 +122,20 @@ docker-compose down -v
 
 ## Available Service Ecosystems
 
-### Organic Lever (`infra/dev/organic-lever/`)
+### OrganicLever (`infra/dev/organiclever/`)
 
 **Services**:
 
-- `organic-lever-be` - Spring Boot backend (port 8100)
+- `organiclever-be` - Spring Boot backend (port 8100)
 
 **Quick Start**:
 
 ```bash
-cd infra/dev/organic-lever
+cd infra/dev/organiclever
 docker-compose up -d
 ```
 
-**Documentation**: [Organic Lever Infrastructure README](../../infra/dev/organic-lever/README.md)
+**Documentation**: [OrganicLever Infrastructure README](../../infra/dev/organiclever/README.md)
 
 ### Future Ecosystems
 
@@ -150,10 +150,10 @@ Additional service ecosystems will be added as the platform grows.
 docker-compose logs -f
 
 # Specific service
-docker-compose logs -f organic-lever-be
+docker-compose logs -f organiclever-be
 
 # Last 100 lines
-docker-compose logs --tail=100 organic-lever-be
+docker-compose logs --tail=100 organiclever-be
 ```
 
 ### Restart Services
@@ -163,19 +163,19 @@ docker-compose logs --tail=100 organic-lever-be
 docker-compose restart
 
 # Restart specific service
-docker-compose restart organic-lever-be
+docker-compose restart organiclever-be
 ```
 
 ### Rebuild After Code Changes
 
 ```bash
 # 1. Rebuild the application
-cd ../../apps/organic-lever-be
+cd ../../apps/organiclever-be
 mvn clean package -DskipTests
 
 # 2. Restart the service
-cd ../../infra/dev/organic-lever
-docker-compose restart organic-lever-be
+cd ../../infra/dev/organiclever
+docker-compose restart organiclever-be
 ```
 
 ### Check Resource Usage
@@ -209,16 +209,16 @@ docker system prune
 
 ```bash
 # 1. Build application (one time or after changes)
-nx run organic-lever-be:build
+nx run organiclever-be:build
 
 # 2. Start services
-cd infra/dev/organic-lever
+cd infra/dev/organiclever
 docker-compose up -d
 
 # 3. Make changes to code
 # 4. Rebuild and restart
-nx run organic-lever-be:build
-docker-compose restart organic-lever-be
+nx run organiclever-be:build
+docker-compose restart organiclever-be
 
 # 5. Test changes
 curl http://localhost:8100/api/v1/hello
@@ -230,11 +230,11 @@ curl http://localhost:8100/api/v1/hello
 
 ```bash
 # Run service directly for faster iteration
-cd apps/organic-lever-be
+cd apps/organiclever-be
 mvn spring-boot:run
 
 # Run dependent services in Docker
-cd ../../infra/dev/organic-lever
+cd ../../infra/dev/organiclever
 # Comment out the service you're developing
 # Keep database, cache, etc. in Docker
 docker-compose up -d
@@ -246,7 +246,7 @@ docker-compose up -d
 
 ```bash
 # Run all services in Docker
-cd infra/dev/organic-lever
+cd infra/dev/organiclever
 docker-compose up -d
 
 # Test inter-service communication
@@ -277,7 +277,7 @@ SPRING_PROFILES_ACTIVE=dev  # or prod
 JAVA_OPTS=-Xms512m -Xmx1024m -XX:+UseZGC
 
 # Database (future)
-DB_HOST=organic-lever-db
+DB_HOST=organiclever-db
 DB_PORT=5432
 ```
 
@@ -311,21 +311,21 @@ Services in the same Docker Compose network can communicate by service name:
 
 ```bash
 # Example: Frontend calling backend
-http://organic-lever-be:8100/api/v1/hello
+http://organiclever-be:8100/api/v1/hello
 
 # Example: Backend connecting to database
-jdbc:postgresql://organic-lever-db:5432/organic_lever
+jdbc:postgresql://organiclever-db:5432/organiclever
 ```
 
 ### Port Mapping
 
 Services expose ports to the host:
 
-| Service                   | Internal Port | Host Port | Purpose     |
-| ------------------------- | ------------- | --------- | ----------- |
-| organic-lever-be          | 8100          | 8100      | Backend API |
-| (future) organic-lever-fe | 80            | 3100      | Frontend    |
-| (future) organic-lever-db | 5432          | 5432      | Database    |
+| Service                  | Internal Port | Host Port | Purpose     |
+| ------------------------ | ------------- | --------- | ----------- |
+| organiclever-be          | 8100          | 8100      | Backend API |
+| (future) organiclever-fe | 80            | 3100      | Frontend    |
+| (future) organiclever-db | 5432          | 5432      | Database    |
 
 ## Health Checks
 
@@ -357,7 +357,7 @@ docker-compose logs service-name
 lsof -i :8100
 
 # Verify application was built
-ls -lh ../../apps/organic-lever-be/target/*.jar
+ls -lh ../../apps/organiclever-be/target/*.jar
 ```
 
 ### Port Already in Use
@@ -389,10 +389,10 @@ JAVA_OPTS=-Xms256m -Xmx512m -XX:+UseZGC
 docker-compose ps
 
 # Check if service is healthy
-docker inspect organic-lever-be | grep -A 10 Health
+docker inspect organiclever-be | grep -A 10 Health
 
 # Test from inside container
-docker exec organic-lever-be wget -O- http://localhost:8100/actuator/health
+docker exec organiclever-be wget -O- http://localhost:8100/actuator/health
 ```
 
 ### Build Failed
@@ -433,7 +433,7 @@ cp .env.example .env
 
 ```yaml
 volumes:
-  - ../../apps/organic-lever-be/target/app.jar:/app/app.jar:ro
+  - ../../apps/organiclever-be/target/app.jar:/app/app.jar:ro
 ```
 
 ### 4. Include Health Checks
@@ -450,17 +450,17 @@ healthcheck:
 
 ```yaml
 networks:
-  organic-lever-network:
+  organiclever-network:
     driver: bridge
-    name: organic-lever-network
+    name: organiclever-network
 ```
 
 ### 6. Document Port Assignments
 
 Maintain a central registry of ports to avoid conflicts:
 
-- 8100: organic-lever-be
-- 3100: organic-lever-fe (future)
+- 8100: organiclever-be
+- 3100: organiclever-fe (future)
 - 5432: PostgreSQL databases
 
 ## Performance Tips
@@ -539,7 +539,7 @@ Docker Compose can be used in CI/CD pipelines:
   run: docker-compose up -d
 
 - name: Run tests
-  run: docker-compose exec organic-lever-be mvn test
+  run: docker-compose exec organiclever-be mvn test
 
 - name: Stop services
   run: docker-compose down
@@ -547,7 +547,7 @@ Docker Compose can be used in CI/CD pipelines:
 
 ## Related Documentation
 
-- [Organic Lever Infrastructure README](../../infra/dev/organic-lever/README.md)
+- [OrganicLever Infrastructure README](../../infra/dev/organiclever/README.md)
 - [Docker Documentation](https://docs.docker.com/)
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
 - [Reproducible Environments Convention](../../governance/development/workflow/reproducible-environments.md)
