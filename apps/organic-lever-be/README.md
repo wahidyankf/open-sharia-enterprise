@@ -9,6 +9,10 @@ Organic Lever Platform Backend - Spring Boot REST API
 - **Build Tool**: Maven
 - **Port**: 8100
 - **API Base**: `/api/v1`
+- **Client Apps**:
+  - [`organic-lever-app`](../organic_lever_app/) - Flutter mobile and web application (port 3100)
+
+**CORS Configuration**: The backend includes CORS configuration to allow Flutter web app on `http://localhost:*` (see `config/CorsConfig.java`).
 
 ## Prerequisites
 
@@ -353,6 +357,8 @@ docker compose build
 apps/organic-lever-be/
 ├── src/main/java/com/organiclever/be/
 │   ├── OrganicLeverApplication.java      # Main entry point
+│   ├── config/
+│   │   └── CorsConfig.java                # CORS configuration for Flutter web
 │   └── controller/
 │       └── HelloController.java           # REST endpoints
 ├── src/main/resources/
@@ -363,6 +369,34 @@ apps/organic-lever-be/
     └── OrganicLeverApplicationTests.java  # Integration tests
 ```
 
+## Testing with Flutter Client
+
+### 1. Start Backend
+
+```bash
+# From repository root
+npm run organic-lever:dev
+```
+
+Wait for: `Started OrganicLeverApplication`
+
+### 2. Start Flutter App
+
+```bash
+# From repository root
+nx dev organic-lever-app
+```
+
+Open browser at `http://localhost:3100`
+
+### 3. Test Integration
+
+1. Click "Fetch Hello" button in Flutter app
+2. Should display: ✅ Green checkmark + "world!" message
+3. Check browser console for no CORS errors
+
+**Note**: CORS is configured in `config/CorsConfig.java` to allow `http://localhost:*` for development.
+
 ## Next Steps
 
 - Add database integration (PostgreSQL)
@@ -370,3 +404,4 @@ apps/organic-lever-be/
 - Add API documentation (Swagger/OpenAPI)
 - Add integration tests
 - Add CI/CD pipeline
+- Expand Flutter app with more features

@@ -14,6 +14,8 @@ Apps follow the naming pattern: **`[domain]-[type]`**
 - `ayokoding-web` - AyoKoding educational platform ([ayokoding.com](https://ayokoding.com)) - Hugo static site
 - `ayokoding-cli` - AyoKoding CLI tool for navigation generation - Go application
 - `rhino-cli` - Repository management CLI tools - Go application
+- `organic_lever_app` - Organic Lever mobile and web client - Flutter application (port 3100)
+- `organic-lever-be` - Organic Lever backend API - Spring Boot application (port 8100)
 
 ## Application Characteristics
 
@@ -65,9 +67,52 @@ apps/rhino-cli/
 └── README.md                # App documentation
 ```
 
+### Flutter Application (Current)
+
+```
+apps/organic_lever_app/
+├── lib/                     # Dart source code
+│   ├── config/              # Environment configuration
+│   ├── models/              # Data models
+│   ├── providers/           # State management
+│   ├── services/            # API clients
+│   ├── screens/             # UI screens
+│   └── main.dart            # Entry point
+├── test/                    # Test files
+│   ├── unit/                # Unit tests
+│   └── widget/              # Widget tests
+├── android/                 # Android platform
+├── ios/                     # iOS platform
+├── web/                     # Web platform
+├── linux/                   # Linux platform
+├── pubspec.yaml             # Dependencies
+├── project.json             # Nx configuration
+└── README.md                # App documentation
+```
+
+### Spring Boot Application (Current)
+
+```
+apps/organic-lever-be/
+├── src/main/java/           # Java source code
+│   └── com/organiclever/be/
+│       ├── OrganicLeverApplication.java
+│       ├── config/          # Configuration classes
+│       └── controller/      # REST controllers
+├── src/main/resources/      # Application config
+│   ├── application.yml
+│   ├── application-dev.yml
+│   └── application-staging.yml
+├── src/test/java/           # Test files
+├── target/                  # Build output (gitignored)
+├── pom.xml                  # Maven configuration
+├── project.json             # Nx configuration
+└── README.md                # App documentation
+```
+
 ### Future App Types
 
-TypeScript/Next.js, Java, Kotlin, Python apps will have language-specific structures and tooling.
+TypeScript/Next.js, Kotlin, Python apps will have language-specific structures and tooling.
 
 ## Nx Configuration (project.json)
 
@@ -152,6 +197,11 @@ nx clean ose-platform-web
 
 ## Language Support
 
-Currently: **Hugo** (static sites) and **Go** (CLI tools)
+Currently:
 
-Future: TypeScript/Next.js, Java, Kotlin, Python apps (each language will have language-specific structure and tooling)
+- **Hugo** (static sites) - ose-platform-web, ayokoding-web
+- **Go** (CLI tools) - ayokoding-cli, rhino-cli
+- **Flutter/Dart** (mobile & web) - organic_lever_app
+- **Java/Spring Boot** (backend API) - organic-lever-be
+
+Future: TypeScript/Next.js, Kotlin, Python apps (each language will have language-specific structure and tooling)
