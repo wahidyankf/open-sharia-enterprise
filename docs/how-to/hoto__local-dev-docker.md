@@ -112,13 +112,22 @@ curl http://localhost:8100/actuator/health
 
 ### 6a. Run E2E Tests (Optional)
 
-With the backend running, execute the full Playwright E2E suite from the repository root:
+With the backend running, execute the API-level Playwright E2E suite from the repository root:
 
 ```bash
 nx e2e organiclever-be-e2e
 ```
 
 See [`apps/organiclever-be-e2e/`](../../apps/organiclever-be-e2e/README.md) for setup and options.
+
+For browser-based E2E tests against the Flutter web app, also start `organiclever-app` and then run:
+
+```bash
+nx dev organiclever-app   # separate terminal — starts Flutter web on port 3100
+nx e2e organiclever-app-web-e2e
+```
+
+See [`apps/organiclever-app-web-e2e/`](../../apps/organiclever-app-web-e2e/README.md) for setup and options.
 
 ### 7. Stop Services
 
@@ -331,11 +340,11 @@ jdbc:postgresql://organiclever-db:5432/organiclever
 
 Services expose ports to the host:
 
-| Service                  | Internal Port | Host Port | Purpose     |
-| ------------------------ | ------------- | --------- | ----------- |
-| organiclever-be          | 8100          | 8100      | Backend API |
-| (future) organiclever-fe | 80            | 3100      | Frontend    |
-| (future) organiclever-db | 5432          | 5432      | Database    |
+| Service                  | Internal Port | Host Port | Purpose            |
+| ------------------------ | ------------- | --------- | ------------------ |
+| organiclever-be          | 8100          | 8100      | Backend API        |
+| organiclever-app         | 3100          | 3100      | Flutter web client |
+| (future) organiclever-db | 5432          | 5432      | Database           |
 
 ## Health Checks
 
@@ -470,7 +479,7 @@ networks:
 Maintain a central registry of ports to avoid conflicts:
 
 - 8100: organiclever-be (also used by organiclever-be-e2e as `BASE_URL`)
-- 3100: organiclever-fe (future)
+- 3100: organiclever-app Flutter web (also used by organiclever-app-web-e2e as `BASE_URL`)
 - 5432: PostgreSQL databases
 
 ## Performance Tips
