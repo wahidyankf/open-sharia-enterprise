@@ -1,0 +1,37 @@
+{
+  "name": "organiclever-be",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/organiclever-be/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mvn clean package -DskipTests",
+        "cwd": "apps/organiclever-be"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mvn test",
+        "cwd": "apps/organiclever-be"
+      }
+    },
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mvn spring-boot:run -Dspring-boot.run.profiles=dev",
+        "cwd": "apps/organiclever-be"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mvn checkstyle:check",
+        "cwd": "apps/organiclever-be"
+      }
+    }
+  },
+  "tags": []
+}

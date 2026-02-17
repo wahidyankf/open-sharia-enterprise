@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: organiclever-be
+  profiles:
+    active: dev
+  web:
+    error:
+      include-message: always
+      include-binding-errors: always
+
+server:
+  port: 8100
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+  info:
+    env:
+      enabled: true

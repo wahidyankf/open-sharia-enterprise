@@ -20,7 +20,7 @@ Islamic finance is a multi-trillion dollar industry growing at double-digit rate
 
 Our mission is to democratize access to **trustworthy**, Sharia-compliant enterprise technology for organizations of all sizes, regardless of region or industry.
 
-We're building an open-source platform with Sharia-compliance at its core—following a progressive complexity approach from individual users (Phase 1: Organic Lever productivity tracker) to SMB (Phase 2) to enterprise (Phase 3: full ERP and global expansion). Each phase generates revenue to fund the next, ensuring sustainable growth.
+We're building an open-source platform with Sharia-compliance at its core—following a progressive complexity approach from individual users (Phase 1: OrganicLever productivity tracker) to SMB (Phase 2) to enterprise (Phase 3: full ERP and global expansion). Each phase generates revenue to fund the next, ensuring sustainable growth.
 
 ## Why Open Source Matters
 
@@ -94,7 +94,7 @@ Establishing repository infrastructure and launching initial websites:
 - 🔐 **Golang Foundation** - Golang will be used extensively on the information security side
 - 📊 **Strategic Value** - Early online presence, audience building, deployment validation
 
-### Phase 1: Organic Lever - Productivity Tracker (Individual Users)
+### Phase 1: OrganicLever - Productivity Tracker (Individual Users)
 
 First application release to test infrastructure at small scale:
 
@@ -128,7 +128,7 @@ Full enterprise capabilities with maximum scale:
 - 💰 **Financial Sustainability** - Phase 3 requires significant certifications; Phase 1/2 revenue funds this
 - 📚 **Knowledge Base Learning** - Test patterns at small scale before enterprise ERP
 - 🔄 **Learn and Iterate** - Feedback from retail informs SMB; SMB learnings inform enterprise
-- 🎯 **Minimum Risk** - Organic Lever tests infrastructure without enterprise stakes
+- 🎯 **Minimum Risk** - OrganicLever tests infrastructure without enterprise stakes
 - 🛡️ **Security by Design** - Practice security early in low-stakes environment
 - ⚖️ **Proven Foundation** - Each phase proves architecture works before adding complexity
 
@@ -153,7 +153,7 @@ Establishing foundational infrastructure and launching initial websites:
 - 🌐 ayokoding.com - Educational platform (live)
 - 🏢 oseplatform.com - Marketing website (this site, live)
 - 🔧 ayokoding-cli & rhino-cli - Golang CLI tools (Golang foundation for security)
-- 📋 Building online presence before Phase 1 product launch (Organic Lever)
+- 📋 Building online presence before Phase 1 product launch (OrganicLever)
 
 **Not Yet Available:**
 
