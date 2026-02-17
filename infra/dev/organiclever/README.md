@@ -540,7 +540,9 @@ Planned additions to this infrastructure:
 
 ## Running E2E Tests
 
-Once the backend is running via Docker Compose, you can run the Playwright E2E test suite against it:
+### API E2E Tests
+
+Once the backend is running via Docker Compose, run the API-level Playwright test suite:
 
 ```bash
 # From repository root
@@ -553,11 +555,30 @@ Tests target `http://localhost:8100` by default. Override with `BASE_URL` for ot
 BASE_URL=http://staging.example.com nx e2e organiclever-be-e2e
 ```
 
-See [`apps/organiclever-be-e2e/`](../../../apps/organiclever-be-e2e/README.md) for full E2E test documentation.
+See [`apps/organiclever-be-e2e/`](../../../apps/organiclever-be-e2e/README.md) for full documentation.
+
+### Browser E2E Tests
+
+`organiclever-app-web-e2e` also runs against this environment. It requires **both** the backend
+(port 8100, started via Docker Compose above) **and** the Flutter web app (port 3100):
+
+```bash
+# Terminal 1 — backend via Docker Compose (above)
+npm run organiclever:dev
+
+# Terminal 2 — Flutter web app
+nx dev organiclever-app
+
+# Terminal 3 — browser E2E tests
+nx e2e organiclever-app-web-e2e
+```
+
+See [`apps/organiclever-app-web-e2e/`](../../../apps/organiclever-app-web-e2e/README.md) for full documentation.
 
 ## Related Documentation
 
 - [organiclever-be-e2e](../../../apps/organiclever-be-e2e/README.md)
+- [organiclever-app-web-e2e](../../../apps/organiclever-app-web-e2e/README.md)
 - [Docker Documentation](https://docs.docker.com/)
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
 

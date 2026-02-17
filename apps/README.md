@@ -17,6 +17,7 @@ Apps follow the naming pattern: **`[domain]-[type]`**
 - `organiclever-app` - OrganicLever mobile and web client - Flutter application (port 3100)
 - `organiclever-be` - OrganicLever backend API - Spring Boot application (port 8100)
 - `organiclever-be-e2e` - E2E tests for organiclever-be REST API - Playwright (API testing)
+- `organiclever-app-web-e2e` - Browser E2E tests for organiclever-app Flutter web - Playwright (browser testing)
 
 ## Application Characteristics
 
@@ -130,6 +131,25 @@ apps/organiclever-be-e2e/
 └── README.md                    # App documentation
 ```
 
+### Playwright Browser E2E Test App (Current)
+
+```
+apps/organiclever-app-web-e2e/
+├── playwright.config.ts         # Playwright config (baseURL, Chromium project, reporters)
+├── package.json                 # Pinned @playwright/test dependency
+├── tsconfig.json                # TypeScript config (extends workspace base)
+├── project.json                 # Nx configuration
+├── tests/
+│   ├── e2e/
+│   │   └── home/
+│   │       └── home.spec.ts     # Tests for HomeScreen (initial state + fetch interaction)
+│   ├── pages/
+│   │   └── HomePage.ts          # Page Object for HomeScreen
+│   └── utils/
+│       └── page-helpers.ts      # Shared page utilities
+└── README.md                    # App documentation
+```
+
 ### Future App Types
 
 TypeScript/Next.js, Kotlin, Python apps will have language-specific structures and tooling.
@@ -214,8 +234,11 @@ nx run rhino-cli
 # Clean build artifacts
 nx clean ose-platform-web
 
-# Run E2E tests (backend must be running first)
+# Run API E2E tests (backend must be running first)
 nx e2e organiclever-be-e2e
+
+# Run browser E2E tests (both organiclever-be and organiclever-app must be running)
+nx e2e organiclever-app-web-e2e
 ```
 
 ## Language Support
@@ -226,6 +249,6 @@ Currently:
 - **Go** (CLI tools) - ayokoding-cli, rhino-cli
 - **Flutter/Dart** (mobile & web) - organiclever-app
 - **Java/Spring Boot** (backend API) - organiclever-be
-- **TypeScript/Playwright** (E2E testing) - organiclever-be-e2e
+- **TypeScript/Playwright** (E2E testing) - organiclever-be-e2e, organiclever-app-web-e2e
 
 Future: TypeScript/Next.js, Kotlin, Python apps (each language will have language-specific structure and tooling)
