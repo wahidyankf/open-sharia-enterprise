@@ -22,6 +22,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `rhino-cli` - Go CLI tool for repository management (Repository Hygiene & INtegration Orchestrator)
   - `organiclever-app` - Flutter mobile and web application
   - `organiclever-be` - Spring Boot REST API backend
+  - `organiclever-be-e2e` - Playwright E2E tests for organiclever-be REST API
 
 ## Project Structure
 
@@ -33,7 +34,8 @@ open-sharia-enterprise/
 │   ├── ayokoding-cli/       # Content automation CLI
 │   ├── rhino-cli/          # Repository management CLI
 │   ├── organiclever-app/  # Flutter mobile & web app
-│   └── organiclever-be/   # Spring Boot REST API
+│   ├── organiclever-be/   # Spring Boot REST API
+│   └── organiclever-be-e2e/ # Playwright E2E tests for backend
 ├── apps-labs/                # Experimental apps (NOT in Nx)
 ├── libs/                     # Reusable libraries (Nx, flat structure)
 ├── docs/                     # Documentation (Diátaxis framework)

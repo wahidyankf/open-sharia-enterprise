@@ -10,7 +10,7 @@ OrganicLever Platform Backend - Spring Boot REST API
 - **Port**: 8100
 - **API Base**: `/api/v1`
 - **Client Apps**:
-  - [`organiclever-app`](../organiclever_app/) - Flutter mobile and web application (port 3100)
+  - [`organiclever-app`](../organiclever-app/) - Flutter mobile and web application (port 3100)
 
 **CORS Configuration**: The backend includes CORS configuration to allow Flutter web app on `http://localhost:*` (see `config/CorsConfig.java`).
 
@@ -396,6 +396,21 @@ Open browser at `http://localhost:3100`
 3. Check browser console for no CORS errors
 
 **Note**: CORS is configured in `config/CorsConfig.java` to allow `http://localhost:*` for development.
+
+## E2E Testing
+
+The [`organiclever-be-e2e`](../organiclever-be-e2e/) project provides Playwright-based E2E tests
+for this API. Run them after starting the backend:
+
+```bash
+# Start backend (any method above), then:
+nx e2e organiclever-be-e2e
+```
+
+Tests cover:
+
+- `GET /api/v1/hello` — status 200, `{"message":"world!"}`, JSON content-type
+- `GET /actuator/health` — status 200, `{"status":"UP"}`
 
 ## Next Steps
 
