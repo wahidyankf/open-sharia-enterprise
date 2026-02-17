@@ -1,0 +1,54 @@
+{
+  "name": "organic-lever-app",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/organic_lever_app/lib",
+  "projectType": "application",
+  "targets": {
+    "install": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "export PATH=\"$PATH:$HOME/flutter/bin\" && flutter pub get",
+        "cwd": "apps/organic_lever_app"
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "export PATH=\"$PATH:$HOME/flutter/bin\" && flutter run -d web-server --web-port=3100 --dart-define=API_BASE_URL=http://localhost:8100/api/v1",
+        "cwd": "apps/organic_lever_app"
+      },
+      "dependsOn": ["install"]
+    },
+    "build:web": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "export PATH=\"$PATH:$HOME/flutter/bin\" && flutter build web --dart-define=API_BASE_URL=https://api.organiclever.com/api/v1",
+        "cwd": "apps/organic_lever_app"
+      },
+      "outputs": ["{projectRoot}/build/web"]
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "export PATH=\"$PATH:$HOME/flutter/bin\" && flutter test",
+        "cwd": "apps/organic_lever_app"
+      },
+      "dependsOn": ["install"]
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "export PATH=\"$PATH:$HOME/flutter/bin\" && flutter test",
+        "cwd": "apps/organic_lever_app"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "export PATH=\"$PATH:$HOME/flutter/bin\" && flutter analyze",
+        "cwd": "apps/organic_lever_app"
+      }
+    }
+  },
+  "tags": ["type:app", "platform:flutter", "domain:organic-lever"]
+}
