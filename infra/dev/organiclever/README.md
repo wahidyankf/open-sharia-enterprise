@@ -538,8 +538,26 @@ Planned additions to this infrastructure:
 - **Monitoring**: Prometheus + Grafana
 - **Log Aggregation**: ELK stack or similar
 
+## Running E2E Tests
+
+Once the backend is running via Docker Compose, you can run the Playwright E2E test suite against it:
+
+```bash
+# From repository root
+nx e2e organiclever-be-e2e
+```
+
+Tests target `http://localhost:8100` by default. Override with `BASE_URL` for other environments:
+
+```bash
+BASE_URL=http://staging.example.com nx e2e organiclever-be-e2e
+```
+
+See [`apps/organiclever-be-e2e/`](../../../apps/organiclever-be-e2e/) for full E2E test documentation.
+
 ## Related Documentation
 
+- [organiclever-be-e2e](../../../apps/organiclever-be-e2e/README.md)
 - [Docker Documentation](https://docs.docker.com/)
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
 

@@ -110,6 +110,16 @@ curl http://localhost:8100/actuator/health
 # Expected: {"status":"UP"}
 ```
 
+### 6a. Run E2E Tests (Optional)
+
+With the backend running, execute the full Playwright E2E suite from the repository root:
+
+```bash
+nx e2e organiclever-be-e2e
+```
+
+See [`apps/organiclever-be-e2e/`](../../apps/organiclever-be-e2e/README.md) for setup and options.
+
 ### 7. Stop Services
 
 ```bash
@@ -459,7 +469,7 @@ networks:
 
 Maintain a central registry of ports to avoid conflicts:
 
-- 8100: organiclever-be
+- 8100: organiclever-be (also used by organiclever-be-e2e as `BASE_URL`)
 - 3100: organiclever-fe (future)
 - 5432: PostgreSQL databases
 

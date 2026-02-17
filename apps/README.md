@@ -16,6 +16,7 @@ Apps follow the naming pattern: **`[domain]-[type]`**
 - `rhino-cli` - Repository management CLI tools - Go application
 - `organiclever_app` - OrganicLever mobile and web client - Flutter application (port 3100)
 - `organiclever-be` - OrganicLever backend API - Spring Boot application (port 8100)
+- `organiclever-be-e2e` - E2E tests for organiclever-be REST API - Playwright (API testing)
 
 ## Application Characteristics
 
@@ -110,6 +111,25 @@ apps/organiclever-be/
 └── README.md                # App documentation
 ```
 
+### Playwright E2E Test App (Current)
+
+```
+apps/organiclever-be-e2e/
+├── playwright.config.ts         # Playwright configuration (baseURL, reporters)
+├── package.json                 # Pinned @playwright/test dependency
+├── tsconfig.json                # TypeScript config (extends workspace base)
+├── project.json                 # Nx configuration
+├── tests/
+│   ├── e2e/
+│   │   ├── hello/
+│   │   │   └── hello.spec.ts    # Tests for GET /api/v1/hello
+│   │   └── actuator/
+│   │       └── health.spec.ts   # Tests for GET /actuator/health
+│   └── utils/
+│       └── api-helpers.ts       # Shared request utilities
+└── README.md                    # App documentation
+```
+
 ### Future App Types
 
 TypeScript/Next.js, Kotlin, Python apps will have language-specific structures and tooling.
@@ -193,6 +213,9 @@ nx run rhino-cli
 
 # Clean build artifacts
 nx clean ose-platform-web
+
+# Run E2E tests (backend must be running first)
+nx e2e organiclever-be-e2e
 ```
 
 ## Language Support
@@ -203,5 +226,6 @@ Currently:
 - **Go** (CLI tools) - ayokoding-cli, rhino-cli
 - **Flutter/Dart** (mobile & web) - organiclever_app
 - **Java/Spring Boot** (backend API) - organiclever-be
+- **TypeScript/Playwright** (E2E testing) - organiclever-be-e2e
 
 Future: TypeScript/Next.js, Kotlin, Python apps (each language will have language-specific structure and tooling)
