@@ -553,7 +553,7 @@ Tests target `http://localhost:8100` by default. Override with `BASE_URL` for ot
 BASE_URL=http://staging.example.com nx e2e organiclever-be-e2e
 ```
 
-See [`apps/organiclever-be-e2e/`](../../../apps/organiclever-be-e2e/) for full E2E test documentation.
+See [`apps/organiclever-be-e2e/`](../../../apps/organiclever-be-e2e/README.md) for full E2E test documentation.
 
 ## Related Documentation
 

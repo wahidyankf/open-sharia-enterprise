@@ -82,5 +82,5 @@ apps/organiclever-be-e2e/
 
 ## Related
 
-- [organiclever-be](../organiclever-be) — The backend being tested
-- [Playwright docs](../../docs/explanation/software-engineering/automation-testing/tools/playwright/) — Playwright standards for this project
+- [organiclever-be](../organiclever-be/README.md) — The backend being tested
+- [Playwright docs](../../docs/explanation/software-engineering/automation-testing/tools/playwright/README.md) — Playwright standards for this project

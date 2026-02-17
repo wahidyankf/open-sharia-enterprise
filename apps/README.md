@@ -14,7 +14,7 @@ Apps follow the naming pattern: **`[domain]-[type]`**
 - `ayokoding-web` - AyoKoding educational platform ([ayokoding.com](https://ayokoding.com)) - Hugo static site
 - `ayokoding-cli` - AyoKoding CLI tool for navigation generation - Go application
 - `rhino-cli` - Repository management CLI tools - Go application
-- `organiclever_app` - OrganicLever mobile and web client - Flutter application (port 3100)
+- `organiclever-app` - OrganicLever mobile and web client - Flutter application (port 3100)
 - `organiclever-be` - OrganicLever backend API - Spring Boot application (port 8100)
 - `organiclever-be-e2e` - E2E tests for organiclever-be REST API - Playwright (API testing)
 
@@ -71,7 +71,7 @@ apps/rhino-cli/
 ### Flutter Application (Current)
 
 ```
-apps/organiclever_app/
+apps/organiclever-app/
 ├── lib/                     # Dart source code
 │   ├── config/              # Environment configuration
 │   ├── models/              # Data models
@@ -224,7 +224,7 @@ Currently:
 
 - **Hugo** (static sites) - ose-platform-web, ayokoding-web
 - **Go** (CLI tools) - ayokoding-cli, rhino-cli
-- **Flutter/Dart** (mobile & web) - organiclever_app
+- **Flutter/Dart** (mobile & web) - organiclever-app
 - **Java/Spring Boot** (backend API) - organiclever-be
 - **TypeScript/Playwright** (E2E testing) - organiclever-be-e2e
 
