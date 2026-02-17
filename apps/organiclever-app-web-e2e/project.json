@@ -1,0 +1,37 @@
+{
+  "name": "organiclever-app-web-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/organiclever-app-web-e2e/tests",
+  "targets": {
+    "install": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm install",
+        "cwd": "apps/organiclever-app-web-e2e"
+      }
+    },
+    "e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx playwright test",
+        "cwd": "apps/organiclever-app-web-e2e"
+      }
+    },
+    "e2e:ui": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx playwright test --ui",
+        "cwd": "apps/organiclever-app-web-e2e"
+      }
+    },
+    "e2e:report": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx playwright show-report",
+        "cwd": "apps/organiclever-app-web-e2e"
+      }
+    }
+  },
+  "tags": ["type:e2e", "platform:playwright", "domain:organiclever"]
+}
