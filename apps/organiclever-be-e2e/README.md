@@ -83,4 +83,5 @@ apps/organiclever-be-e2e/
 ## Related
 
 - [organiclever-be](../organiclever-be/README.md) — The backend being tested
+- [organiclever-app-web-e2e](../organiclever-app-web-e2e/README.md) — Browser-based E2E counterpart (tests the Flutter web UI)
 - [Playwright docs](../../docs/explanation/software-engineering/automation-testing/tools/playwright/README.md) — Playwright standards for this project
