@@ -23,6 +23,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `organiclever-app` - Flutter mobile and web application
   - `organiclever-be` - Spring Boot REST API backend
   - `organiclever-be-e2e` - Playwright E2E tests for organiclever-be REST API
+  - `organiclever-app-web-e2e` - Playwright browser E2E tests for organiclever-app Flutter web
 
 ## Project Structure
 
@@ -35,7 +36,8 @@ open-sharia-enterprise/
 │   ├── rhino-cli/          # Repository management CLI
 │   ├── organiclever-app/  # Flutter mobile & web app
 │   ├── organiclever-be/   # Spring Boot REST API
-│   └── organiclever-be-e2e/ # Playwright E2E tests for backend
+│   ├── organiclever-be-e2e/ # Playwright E2E tests for backend
+│   └── organiclever-app-web-e2e/ # Playwright browser E2E tests for Flutter web
 ├── apps-labs/                # Experimental apps (NOT in Nx)
 ├── libs/                     # Reusable libraries (Nx, flat structure)
 ├── docs/                     # Documentation (Diátaxis framework)
