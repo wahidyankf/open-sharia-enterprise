@@ -1,4 +1,4 @@
-# Development Docker Image for Organic Lever Backend
+# Development Docker Image for OrganicLever Backend
 # This image extends the base JDK image with Maven pre-installed
 # to avoid reinstalling Maven on every container restart.
 

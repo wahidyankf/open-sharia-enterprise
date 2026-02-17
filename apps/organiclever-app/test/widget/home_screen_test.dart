@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:organic_lever_app/providers/hello_provider.dart';
-import 'package:organic_lever_app/screens/home_screen.dart';
+import 'package:organiclever_app/providers/hello_provider.dart';
+import 'package:organiclever_app/screens/home_screen.dart';
 
 void main() {
   testWidgets('HomeScreen displays Fetch Hello button initially',
@@ -30,7 +30,7 @@ void main() {
       ),
     );
 
-    expect(find.text('Organic Lever'), findsOneWidget);
+    expect(find.text('OrganicLever'), findsOneWidget);
     expect(find.byType(AppBar), findsOneWidget);
   });
 }

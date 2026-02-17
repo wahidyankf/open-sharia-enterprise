@@ -9,7 +9,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Organic Lever'),
+        title: const Text('OrganicLever'),
         centerTitle: true,
       ),
       body: Center(

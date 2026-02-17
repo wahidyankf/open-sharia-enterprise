@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => HelloProvider()),
       ],
       child: MaterialApp(
-        title: 'Organic Lever',
+        title: 'OrganicLever',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),

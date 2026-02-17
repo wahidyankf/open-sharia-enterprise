@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:organic_lever_app/models/hello_response.dart';
+import 'package:organiclever_app/models/hello_response.dart';
 
 void main() {
   group('HelloResponse', () {
