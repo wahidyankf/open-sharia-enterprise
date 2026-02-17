@@ -143,9 +143,15 @@ docker-compose down -v
 
 ### OrganicLever (`infra/dev/organiclever/`)
 
-**Services**:
+**Services (Docker Compose)**:
 
 - `organiclever-be` - Spring Boot backend (port 8100)
+
+**Related Apps (run separately)**:
+
+- `organiclever-app` - Flutter web client (port 3100) — `nx dev organiclever-app`
+- `organiclever-be-e2e` - Playwright API E2E tests — `nx e2e organiclever-be-e2e`
+- `organiclever-app-web-e2e` - Playwright browser E2E tests — `nx e2e organiclever-app-web-e2e`
 
 **Quick Start**:
 
