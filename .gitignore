@@ -49,6 +49,10 @@ coverage/
 .nyc_output/
 jest.config.js.bak
 
+# Playwright output
+playwright-report/
+test-results/
+
 # Runtime data
 pids/
 *.pid
