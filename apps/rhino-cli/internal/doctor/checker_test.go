@@ -132,6 +132,48 @@ func TestParseMavenVersion(t *testing.T) {
 	}
 }
 
+func TestParseGitVersion(t *testing.T) {
+	tests := []struct {
+		name   string
+		stdout string
+		want   string
+	}{
+		{
+			name:   "standard git output",
+			stdout: "git version 2.47.2",
+			want:   "2.47.2",
+		},
+		{
+			name:   "windows suffix",
+			stdout: "git version 2.47.2.windows.1",
+			want:   "2.47.2.windows.1",
+		},
+		{
+			name:   "trailing newline",
+			stdout: "git version 2.47.2\n",
+			want:   "2.47.2",
+		},
+		{
+			name:   "empty stdout",
+			stdout: "",
+			want:   "",
+		},
+		{
+			name:   "no git version line",
+			stdout: "some other output",
+			want:   "",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := parseGitVersion(tt.stdout)
+			if got != tt.want {
+				t.Errorf("parseGitVersion(%q) = %q, want %q", tt.stdout, got, tt.want)
+			}
+		})
+	}
+}
+
 func TestParseGoVersion(t *testing.T) {
 	tests := []struct {
 		name   string
@@ -440,6 +482,32 @@ func TestReadGoVersion(t *testing.T) {
 	})
 }
 
+func TestRunOneDef_Git_Found(t *testing.T) {
+	runner := makeFakeRunner(map[string]fakeRunnerConfig{
+		"git": {stdout: "git version 2.47.2\n", exitCode: 0},
+	})
+	def := findDef(t, buildToolDefs(t.TempDir()), "git")
+	check := runOneDef(runner, def)
+	if check.Status != StatusOK {
+		t.Errorf("expected StatusOK, got %q", check.Status)
+	}
+	if check.InstalledVersion != "2.47.2" {
+		t.Errorf("expected installed version %q, got %q", "2.47.2", check.InstalledVersion)
+	}
+	if check.Name != "git" {
+		t.Errorf("expected name %q, got %q", "git", check.Name)
+	}
+}
+
+func TestRunOneDef_Git_Missing(t *testing.T) {
+	runner := makeFakeRunner(map[string]fakeRunnerConfig{})
+	def := findDef(t, buildToolDefs(t.TempDir()), "git")
+	check := runOneDef(runner, def)
+	if check.Status != StatusMissing {
+		t.Errorf("expected StatusMissing, got %q", check.Status)
+	}
+}
+
 // findDef locates a toolDef by name; fails the test if not found.
 func findDef(t *testing.T, defs []toolDef, name string) toolDef {
 	t.Helper()
@@ -648,6 +716,7 @@ func TestCheckAll_WithFakeRunner(t *testing.T) {
 	tmpDir := setupCheckAllRepo(t)
 
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{
+		"git":   {stdout: "git version 2.47.2\n", exitCode: 0},
 		"volta": {stdout: "2.0.2\n", exitCode: 0},
 		"node":  {stdout: "v24.11.1\n", exitCode: 0},
 		"npm":   {stdout: "11.6.3\n", exitCode: 0},
@@ -661,8 +730,8 @@ func TestCheckAll_WithFakeRunner(t *testing.T) {
 		t.Fatalf("CheckAll returned error: %v", err)
 	}
 
-	if result.OKCount != 6 {
-		t.Errorf("expected OKCount == 6, got %d", result.OKCount)
+	if result.OKCount != 7 {
+		t.Errorf("expected OKCount == 7, got %d", result.OKCount)
 	}
 	if result.WarnCount != 0 {
 		t.Errorf("expected WarnCount == 0, got %d", result.WarnCount)
@@ -670,8 +739,8 @@ func TestCheckAll_WithFakeRunner(t *testing.T) {
 	if result.MissingCount != 0 {
 		t.Errorf("expected MissingCount == 0, got %d", result.MissingCount)
 	}
-	if len(result.Checks) != 6 {
-		t.Errorf("expected 6 checks, got %d", len(result.Checks))
+	if len(result.Checks) != 7 {
+		t.Errorf("expected 7 checks, got %d", len(result.Checks))
 	}
 }
 
@@ -686,8 +755,8 @@ func TestCheckAll_WithMissingTools(t *testing.T) {
 		t.Fatalf("CheckAll returned error: %v", err)
 	}
 
-	if result.MissingCount != 6 {
-		t.Errorf("expected MissingCount == 6, got %d", result.MissingCount)
+	if result.MissingCount != 7 {
+		t.Errorf("expected MissingCount == 7, got %d", result.MissingCount)
 	}
 	if result.OKCount != 0 {
 		t.Errorf("expected OKCount == 0, got %d", result.OKCount)

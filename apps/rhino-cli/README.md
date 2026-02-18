@@ -408,7 +408,7 @@ rhino-cli doctor --quiet
 
 **What it does:**
 
-- Checks 6 development tools: volta, node, npm, java, maven, golang
+- Checks 7 development tools: git, volta, node, npm, java, maven, golang
 - Reads required versions dynamically from existing config files
 - Reports each tool as: ✓ ok, ⚠ warning (wrong version), or ✗ missing (not in PATH)
 - Only exits non-zero when a tool is missing; version warnings are advisory
@@ -418,6 +418,7 @@ rhino-cli doctor --quiet
 
 | Tool   | Binary  | Required Version Source                           | Comparison |
 | ------ | ------- | ------------------------------------------------- | ---------- |
+| git    | `git`   | (no config file — any version OK)                 | any        |
 | volta  | `volta` | (no config file — any version OK)                 | any        |
 | node   | `node`  | `package.json` → `volta.node`                     | exact      |
 | npm    | `npm`   | `package.json` → `volta.npm`                      | exact      |
@@ -442,14 +443,15 @@ rhino-cli doctor --quiet
 Doctor Report
 =============
 
+✓ git        v2.47.2        (no version requirement)
 ✓ volta      v2.0.2         (no version requirement)
 ✓ node       v24.11.1       (required: 24.11.1)
 ✓ npm        v11.6.3        (required: 11.6.3)
 ✓ java       v25            (required: 25)
 ✓ maven      v3.9.9         (no version requirement)
-✗ golang     not found      (required: 1.24.2)
+✗ golang     not found      (required: ≥1.24.2)
 
-Summary: 5/6 tools OK, 0 warning, 1 missing
+Summary: 6/7 tools OK, 0 warning, 1 missing
 ```
 
 **Example output (JSON):**

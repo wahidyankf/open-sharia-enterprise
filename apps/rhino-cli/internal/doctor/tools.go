@@ -35,6 +35,15 @@ func buildToolDefs(repoRoot string) []toolDef {
 
 	return []toolDef{
 		{
+			name:     "git",
+			binary:   "git",
+			source:   "(no config file)",
+			args:     []string{"--version"},
+			parseVer: parseGitVersion,
+			compare:  compareExact,
+			readReq:  noReq,
+		},
+		{
 			name:     "volta",
 			binary:   "volta",
 			source:   "(no config file)",
