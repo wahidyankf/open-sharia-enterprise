@@ -95,122 +95,37 @@ func TestParseJavaVersion(t *testing.T) {
 	}
 }
 
-func TestParseMavenVersion(t *testing.T) {
+func TestParseLineWord(t *testing.T) {
 	tests := []struct {
-		name   string
-		stdout string
-		want   string
+		name        string
+		output      string
+		linePrefix  string
+		wordIdx     int
+		tokenPrefix string
+		want        string
 	}{
-		{
-			name:   "standard maven output",
-			stdout: "Apache Maven 3.9.9 (8e8579a9e76f7d015ee5ec7bfcdc97d260186937)\nMaven home: /usr/share/maven",
-			want:   "3.9.9",
-		},
-		{
-			name:   "leading whitespace",
-			stdout: "  Apache Maven 3.8.6\n",
-			want:   "3.8.6",
-		},
-		{
-			name:   "empty stdout",
-			stdout: "",
-			want:   "",
-		},
-		{
-			name:   "no maven line",
-			stdout: "some other output\nno version here",
-			want:   "",
-		},
+		// git --version cases
+		{name: "git standard", output: "git version 2.47.2", linePrefix: "git version ", wordIdx: 2, tokenPrefix: "", want: "2.47.2"},
+		{name: "git windows suffix", output: "git version 2.47.2.windows.1", linePrefix: "git version ", wordIdx: 2, tokenPrefix: "", want: "2.47.2.windows.1"},
+		{name: "git trailing newline", output: "git version 2.47.2\n", linePrefix: "git version ", wordIdx: 2, tokenPrefix: "", want: "2.47.2"},
+		// mvn --version cases
+		{name: "maven standard", output: "Apache Maven 3.9.9 (8e8579a9e76f7d015ee5ec7bfcdc97d260186937)\nMaven home: /usr/share/maven", linePrefix: "Apache Maven ", wordIdx: 2, tokenPrefix: "", want: "3.9.9"},
+		{name: "maven leading whitespace", output: "  Apache Maven 3.8.6\n", linePrefix: "Apache Maven ", wordIdx: 2, tokenPrefix: "", want: "3.8.6"},
+		// go version cases
+		{name: "go linux", output: "go version go1.24.2 linux/amd64", linePrefix: "go version ", wordIdx: 2, tokenPrefix: "go", want: "1.24.2"},
+		{name: "go darwin", output: "go version go1.23.0 darwin/arm64", linePrefix: "go version ", wordIdx: 2, tokenPrefix: "go", want: "1.23.0"},
+		{name: "go windows", output: "go version go1.22.1 windows/amd64", linePrefix: "go version ", wordIdx: 2, tokenPrefix: "go", want: "1.22.1"},
+		// edge cases
+		{name: "empty output", output: "", linePrefix: "git version ", wordIdx: 2, tokenPrefix: "", want: ""},
+		{name: "no matching line", output: "some other output", linePrefix: "git version ", wordIdx: 2, tokenPrefix: "", want: ""},
+		{name: "word index out of bounds", output: "git version", linePrefix: "git version ", wordIdx: 5, tokenPrefix: "", want: ""},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := parseMavenVersion(tt.stdout)
+			got := parseLineWord(tt.output, tt.linePrefix, tt.wordIdx, tt.tokenPrefix)
 			if got != tt.want {
-				t.Errorf("parseMavenVersion(%q) = %q, want %q", tt.stdout, got, tt.want)
-			}
-		})
-	}
-}
-
-func TestParseGitVersion(t *testing.T) {
-	tests := []struct {
-		name   string
-		stdout string
-		want   string
-	}{
-		{
-			name:   "standard git output",
-			stdout: "git version 2.47.2",
-			want:   "2.47.2",
-		},
-		{
-			name:   "windows suffix",
-			stdout: "git version 2.47.2.windows.1",
-			want:   "2.47.2.windows.1",
-		},
-		{
-			name:   "trailing newline",
-			stdout: "git version 2.47.2\n",
-			want:   "2.47.2",
-		},
-		{
-			name:   "empty stdout",
-			stdout: "",
-			want:   "",
-		},
-		{
-			name:   "no git version line",
-			stdout: "some other output",
-			want:   "",
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := parseGitVersion(tt.stdout)
-			if got != tt.want {
-				t.Errorf("parseGitVersion(%q) = %q, want %q", tt.stdout, got, tt.want)
-			}
-		})
-	}
-}
-
-func TestParseGoVersion(t *testing.T) {
-	tests := []struct {
-		name   string
-		stdout string
-		want   string
-	}{
-		{
-			name:   "standard go version output linux",
-			stdout: "go version go1.24.2 linux/amd64",
-			want:   "1.24.2",
-		},
-		{
-			name:   "darwin output",
-			stdout: "go version go1.23.0 darwin/arm64",
-			want:   "1.23.0",
-		},
-		{
-			name:   "windows output",
-			stdout: "go version go1.22.1 windows/amd64",
-			want:   "1.22.1",
-		},
-		{
-			name:   "empty stdout",
-			stdout: "",
-			want:   "",
-		},
-		{
-			name:   "no go version line",
-			stdout: "some other output",
-			want:   "",
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := parseGoVersion(tt.stdout)
-			if got != tt.want {
-				t.Errorf("parseGoVersion(%q) = %q, want %q", tt.stdout, got, tt.want)
+				t.Errorf("parseLineWord(%q, %q, %d, %q) = %q, want %q",
+					tt.output, tt.linePrefix, tt.wordIdx, tt.tokenPrefix, got, tt.want)
 			}
 		})
 	}
