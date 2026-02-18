@@ -21,6 +21,7 @@
     "graph": "nx graph",
     "nx": "nx",
     "prepare": "husky",
+    "postinstall": "npm run doctor",
     "organiclever:dev": "cd infra/dev/organiclever && docker compose up",
     "organiclever:dev:restart": "cd infra/dev/organiclever && docker compose down && docker compose up",
     "organiclever:clean": "sudo chown -R $USER:$USER apps/organiclever-be/target && rm -rf apps/organiclever-be/target",
@@ -31,7 +32,8 @@
     "validate:sync": "nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli validate-sync",
     "validate:claude": "nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli validate-claude",
     "validate:opencode": "npm run validate:sync",
-    "validate:config": "npm run validate:claude && npm run sync:claude-to-opencode && npm run validate:opencode"
+    "validate:config": "npm run validate:claude && npm run sync:claude-to-opencode && npm run validate:opencode",
+    "doctor": "nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli doctor"
   },
   "keywords": [],
   "author": "",
