@@ -66,7 +66,7 @@ open-sharia-enterprise/
 ## Common Development Commands
 
 ```bash
-# Install dependencies
+# Install dependencies (automatically runs doctor to verify tool versions)
 npm install
 
 # Build/test/lint all projects
@@ -91,6 +91,9 @@ npm run lint:md          # Lint all markdown files
 npm run lint:md:fix      # Auto-fix markdown violations
 npm run format:md        # Format markdown with Prettier
 npm run format:md:check  # Check markdown formatting
+
+# Verify local development environment
+npm run doctor           # Check all required tools (volta, node, npm, java, maven, golang)
 ```
 
 ## Markdown Quality
