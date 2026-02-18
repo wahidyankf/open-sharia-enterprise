@@ -440,11 +440,24 @@ func TestReadGoVersion(t *testing.T) {
 	})
 }
 
-func TestCheckVolta_Found(t *testing.T) {
+// findDef locates a toolDef by name; fails the test if not found.
+func findDef(t *testing.T, defs []toolDef, name string) toolDef {
+	t.Helper()
+	for _, d := range defs {
+		if d.name == name {
+			return d
+		}
+	}
+	t.Fatalf("no toolDef with name %q", name)
+	return toolDef{}
+}
+
+func TestRunOneDef_Volta_Found(t *testing.T) {
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{
 		"volta": {stdout: "2.0.2\n", exitCode: 0},
 	})
-	check := checkVolta(runner)
+	def := findDef(t, buildToolDefs(t.TempDir()), "volta")
+	check := runOneDef(runner, def)
 	if check.Status != StatusOK {
 		t.Errorf("expected StatusOK, got %q", check.Status)
 	}
@@ -456,19 +469,21 @@ func TestCheckVolta_Found(t *testing.T) {
 	}
 }
 
-func TestCheckVolta_Missing(t *testing.T) {
+func TestRunOneDef_Volta_Missing(t *testing.T) {
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{})
-	check := checkVolta(runner)
+	def := findDef(t, buildToolDefs(t.TempDir()), "volta")
+	check := runOneDef(runner, def)
 	if check.Status != StatusMissing {
 		t.Errorf("expected StatusMissing, got %q", check.Status)
 	}
 }
 
-func TestCheckNode_Match(t *testing.T) {
+func TestRunOneDef_Node_Match(t *testing.T) {
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{
 		"node": {stdout: "v24.11.1\n", exitCode: 0},
 	})
-	check := checkNode(runner, "24.11.1")
+	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "node")
+	check := runOneDef(runner, def)
 	if check.Status != StatusOK {
 		t.Errorf("expected StatusOK, got %q (note: %q)", check.Status, check.Note)
 	}
@@ -477,30 +492,33 @@ func TestCheckNode_Match(t *testing.T) {
 	}
 }
 
-func TestCheckNode_Mismatch(t *testing.T) {
+func TestRunOneDef_Node_Mismatch(t *testing.T) {
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{
 		"node": {stdout: "v20.0.0\n", exitCode: 0},
 	})
-	check := checkNode(runner, "24.11.1")
+	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "node")
+	check := runOneDef(runner, def)
 	if check.Status != StatusWarning {
 		t.Errorf("expected StatusWarning, got %q", check.Status)
 	}
 }
 
-func TestCheckNode_Missing(t *testing.T) {
+func TestRunOneDef_Node_Missing(t *testing.T) {
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{})
-	check := checkNode(runner, "24.11.1")
+	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "node")
+	check := runOneDef(runner, def)
 	if check.Status != StatusMissing {
 		t.Errorf("expected StatusMissing, got %q", check.Status)
 	}
 }
 
-func TestCheckJava_Match(t *testing.T) {
+func TestRunOneDef_Java_Match(t *testing.T) {
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{
-		// java -version writes to stderr
+		// java -version writes to stderr; useStderr=true in the def routes it correctly
 		"java": {stderr: `openjdk version "25" 2025-09-16`, exitCode: 0},
 	})
-	check := checkJava(runner, "25")
+	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "java")
+	check := runOneDef(runner, def)
 	if check.Status != StatusOK {
 		t.Errorf("expected StatusOK, got %q (note: %q)", check.Status, check.Note)
 	}
@@ -509,29 +527,32 @@ func TestCheckJava_Match(t *testing.T) {
 	}
 }
 
-func TestCheckJava_Mismatch(t *testing.T) {
+func TestRunOneDef_Java_Mismatch(t *testing.T) {
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{
 		"java": {stderr: `openjdk version "21.0.1" 2023-10-17`, exitCode: 0},
 	})
-	check := checkJava(runner, "25")
+	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "java")
+	check := runOneDef(runner, def)
 	if check.Status != StatusWarning {
 		t.Errorf("expected StatusWarning, got %q", check.Status)
 	}
 }
 
-func TestCheckJava_Missing(t *testing.T) {
+func TestRunOneDef_Java_Missing(t *testing.T) {
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{})
-	check := checkJava(runner, "25")
+	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "java")
+	check := runOneDef(runner, def)
 	if check.Status != StatusMissing {
 		t.Errorf("expected StatusMissing, got %q", check.Status)
 	}
 }
 
-func TestCheckMaven_Found(t *testing.T) {
+func TestRunOneDef_Maven_Found(t *testing.T) {
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{
 		"mvn": {stdout: "Apache Maven 3.9.9 (8e8579a9e76f7d015ee5ec7bfcdc97d260186937)\nMaven home: /usr/share/maven\n", exitCode: 0},
 	})
-	check := checkMaven(runner)
+	def := findDef(t, buildToolDefs(t.TempDir()), "maven")
+	check := runOneDef(runner, def)
 	if check.Status != StatusOK {
 		t.Errorf("expected StatusOK, got %q (note: %q)", check.Status, check.Note)
 	}
@@ -540,19 +561,21 @@ func TestCheckMaven_Found(t *testing.T) {
 	}
 }
 
-func TestCheckMaven_Missing(t *testing.T) {
+func TestRunOneDef_Maven_Missing(t *testing.T) {
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{})
-	check := checkMaven(runner)
+	def := findDef(t, buildToolDefs(t.TempDir()), "maven")
+	check := runOneDef(runner, def)
 	if check.Status != StatusMissing {
 		t.Errorf("expected StatusMissing, got %q", check.Status)
 	}
 }
 
-func TestCheckGo_Match(t *testing.T) {
+func TestRunOneDef_Go_Match(t *testing.T) {
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{
 		"go": {stdout: "go version go1.24.2 linux/amd64\n", exitCode: 0},
 	})
-	check := checkGo(runner, "1.24.2")
+	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "golang")
+	check := runOneDef(runner, def)
 	if check.Status != StatusOK {
 		t.Errorf("expected StatusOK, got %q (note: %q)", check.Status, check.Note)
 	}
@@ -564,23 +587,24 @@ func TestCheckGo_Match(t *testing.T) {
 	}
 }
 
-func TestCheckGo_NewerVersion(t *testing.T) {
+func TestRunOneDef_Go_NewerVersion(t *testing.T) {
 	// Go is backward compatible: newer installed version satisfies an older requirement
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{
 		"go": {stdout: "go version go1.26.0 linux/amd64\n", exitCode: 0},
 	})
-	check := checkGo(runner, "1.24.2")
+	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "golang")
+	check := runOneDef(runner, def)
 	if check.Status != StatusOK {
 		t.Errorf("expected StatusOK for 1.26.0 >= 1.24.2, got %q (note: %q)", check.Status, check.Note)
 	}
 }
 
-func TestCheckGo_Mismatch(t *testing.T) {
-	// Older version → warning (version too old)
+func TestRunOneDef_Go_Mismatch(t *testing.T) {
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{
 		"go": {stdout: "go version go1.23.0 linux/amd64\n", exitCode: 0},
 	})
-	check := checkGo(runner, "1.24.2")
+	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "golang")
+	check := runOneDef(runner, def)
 	if check.Status != StatusWarning {
 		t.Errorf("expected StatusWarning for 1.23.0 < 1.24.2, got %q", check.Status)
 	}
@@ -589,9 +613,10 @@ func TestCheckGo_Mismatch(t *testing.T) {
 	}
 }
 
-func TestCheckGo_Missing(t *testing.T) {
+func TestRunOneDef_Go_Missing(t *testing.T) {
 	runner := makeFakeRunner(map[string]fakeRunnerConfig{})
-	check := checkGo(runner, "1.24.2")
+	def := findDef(t, buildToolDefs(setupCheckAllRepo(t)), "golang")
+	check := runOneDef(runner, def)
 	if check.Status != StatusMissing {
 		t.Errorf("expected StatusMissing, got %q", check.Status)
 	}
