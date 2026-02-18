@@ -423,7 +423,7 @@ rhino-cli doctor --quiet
 | npm    | `npm`   | `package.json` → `volta.npm`                      | exact      |
 | java   | `java`  | `apps/organiclever-be/pom.xml` → `<java.version>` | major only |
 | maven  | `mvn`   | (no config file — any version OK)                 | any        |
-| golang | `go`    | `apps/rhino-cli/go.mod` → `go` directive          | exact      |
+| golang | `go`    | `apps/rhino-cli/go.mod` → `go` directive          | ≥ (GTE)    |
 
 **Flags:**
 
@@ -506,7 +506,8 @@ apps/rhino-cli/
 ├── internal/
 │   ├── doctor/               # Development environment checks
 │   │   ├── types.go          # ToolStatus, ToolCheck, DoctorResult, CommandRunner types
-│   │   ├── checker.go        # Config readers, version parsers, 6 tool checkers, CheckAll
+│   │   ├── tools.go          # Tool definitions list — add new tools here
+│   │   ├── checker.go        # Config readers, version parsers, comparators, runOneDef, CheckAll
 │   │   ├── checker_test.go   # Unit tests for all parsers, comparisons, and checkers
 │   │   ├── reporter.go       # Output formatting (text, JSON, markdown)
 │   │   ├── reporter_test.go  # Reporter tests
