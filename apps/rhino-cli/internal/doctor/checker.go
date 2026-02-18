@@ -90,6 +90,23 @@ func normalizeSimpleVersion(s string) string {
 	return strings.TrimPrefix(s, "v")
 }
 
+// parseLineWord returns the wordIdx-th space-separated token from the first
+// line that starts with linePrefix (after trimming whitespace). If tokenPrefix
+// is non-empty, it is stripped from the matched token. Returns "" when no
+// matching line exists or the line has fewer tokens than wordIdx+1.
+func parseLineWord(output, linePrefix string, wordIdx int, tokenPrefix string) string {
+	for _, line := range strings.Split(output, "\n") {
+		trimmed := strings.TrimSpace(line)
+		if strings.HasPrefix(trimmed, linePrefix) {
+			parts := strings.Fields(trimmed)
+			if wordIdx < len(parts) {
+				return strings.TrimPrefix(parts[wordIdx], tokenPrefix)
+			}
+		}
+	}
+	return ""
+}
+
 // parseJavaVersion extracts the Java major version from java -version stderr output.
 // Handles both old-style ("1.8.0_292") and new-style ("21.0.1" or "25") versioning.
 func parseJavaVersion(stderr string) string {
@@ -107,50 +124,6 @@ func parseJavaVersion(stderr string) string {
 					}
 					return parts[0]
 				}
-			}
-		}
-	}
-	return ""
-}
-
-// parseMavenVersion extracts the Maven version from mvn --version stdout output.
-func parseMavenVersion(stdout string) string {
-	for _, line := range strings.Split(stdout, "\n") {
-		trimmed := strings.TrimSpace(line)
-		if strings.HasPrefix(trimmed, "Apache Maven ") {
-			parts := strings.Fields(trimmed)
-			for i, part := range parts {
-				if part == "Maven" && i+1 < len(parts) {
-					return parts[i+1]
-				}
-			}
-		}
-	}
-	return ""
-}
-
-// parseGitVersion extracts the Git version from git --version stdout output.
-func parseGitVersion(stdout string) string {
-	for _, line := range strings.Split(stdout, "\n") {
-		trimmed := strings.TrimSpace(line)
-		if strings.HasPrefix(trimmed, "git version ") {
-			parts := strings.Fields(trimmed)
-			if len(parts) >= 3 {
-				return parts[2]
-			}
-		}
-	}
-	return ""
-}
-
-// parseGoVersion extracts the Go version from go version stdout output.
-func parseGoVersion(stdout string) string {
-	for _, line := range strings.Split(stdout, "\n") {
-		trimmed := strings.TrimSpace(line)
-		if strings.HasPrefix(trimmed, "go version go") {
-			parts := strings.Fields(trimmed)
-			if len(parts) >= 3 {
-				return strings.TrimPrefix(parts[2], "go")
 			}
 		}
 	}
