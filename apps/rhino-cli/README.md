@@ -11,6 +11,9 @@ A Go-based CLI tool that provides utilities for repository management and automa
 ## Quick Start
 
 ```bash
+# Check all required development tools are installed
+rhino-cli doctor
+
 # Validate Claude Code format
 rhino-cli validate-claude
 
@@ -375,6 +378,103 @@ Duration: 49ms
 Status: ✓ VALIDATION PASSED
 ```
 
+### doctor
+
+Check that all required development tools are installed with the correct versions.
+Reads version requirements from existing repository config files so it stays in sync automatically.
+
+```bash
+# Runs automatically after every npm install (postinstall hook)
+npm install
+
+# Or run manually from repo root
+npm run doctor
+
+# Or directly after building
+rhino-cli doctor
+
+# Output as JSON
+rhino-cli doctor -o json
+
+# Output as markdown report
+rhino-cli doctor -o markdown
+
+# Verbose output (includes duration)
+rhino-cli doctor --verbose
+
+# Quiet mode (suppresses header)
+rhino-cli doctor --quiet
+```
+
+**What it does:**
+
+- Checks 6 development tools: volta, node, npm, java, maven, golang
+- Reads required versions dynamically from existing config files
+- Reports each tool as: ✓ ok, ⚠ warning (wrong version), or ✗ missing (not in PATH)
+- Only exits non-zero when a tool is missing; version warnings are advisory
+- Supports multiple output formats (text, json, markdown)
+
+**Tools checked:**
+
+| Tool   | Binary  | Required Version Source                           | Comparison |
+| ------ | ------- | ------------------------------------------------- | ---------- |
+| volta  | `volta` | (no config file — any version OK)                 | any        |
+| node   | `node`  | `package.json` → `volta.node`                     | exact      |
+| npm    | `npm`   | `package.json` → `volta.npm`                      | exact      |
+| java   | `java`  | `apps/organiclever-be/pom.xml` → `<java.version>` | major only |
+| maven  | `mvn`   | (no config file — any version OK)                 | any        |
+| golang | `go`    | `apps/rhino-cli/go.mod` → `go` directive          | exact      |
+
+**Flags:**
+
+- `-o, --output` - Output format: text, json, markdown (default: text)
+- `-v, --verbose` - Show duration after summary
+- `-q, --quiet` - Suppress the "Doctor Report" header
+
+**Exit codes:**
+
+- `0` - All tools found (warnings about wrong versions are advisory, not failures)
+- `1` - One or more tools not found in PATH
+
+**Example output (text):**
+
+```
+Doctor Report
+=============
+
+✓ volta      v2.0.2         (no version requirement)
+✓ node       v24.11.1       (required: 24.11.1)
+✓ npm        v11.6.3        (required: 11.6.3)
+✓ java       v25            (required: 25)
+✓ maven      v3.9.9         (no version requirement)
+✗ golang     not found      (required: 1.24.2)
+
+Summary: 5/6 tools OK, 0 warning, 1 missing
+```
+
+**Example output (JSON):**
+
+```json
+{
+  "status": "missing",
+  "timestamp": "2026-02-19T10:00:00+07:00",
+  "ok_count": 5,
+  "warn_count": 0,
+  "missing_count": 1,
+  "duration_ms": 312,
+  "tools": [
+    {
+      "name": "volta",
+      "binary": "volta",
+      "status": "ok",
+      "installed_version": "2.0.2",
+      "source": "(no config file)",
+      "note": "no version requirement"
+    }
+  ]
+}
+```
+
 ## Help Commands
 
 ```bash
@@ -396,12 +496,21 @@ apps/rhino-cli/
 ├── cmd/
 │   ├── root.go               # Cobra root command, global flags
 │   ├── root_test.go          # Tests for root command
+│   ├── doctor.go             # Doctor command
+│   ├── doctor_test.go        # Doctor command integration tests
 │   ├── validate_links.go     # Link validation command
 │   ├── validate_links_test.go # Integration tests
 │   ├── sync_agents.go        # Agent/skill sync command
 │   ├── validate_sync.go      # Sync validation command
 │   └── validate_claude.go    # Claude Code format validation command
 ├── internal/
+│   ├── doctor/               # Development environment checks
+│   │   ├── types.go          # ToolStatus, ToolCheck, DoctorResult, CommandRunner types
+│   │   ├── checker.go        # Config readers, version parsers, 6 tool checkers, CheckAll
+│   │   ├── checker_test.go   # Unit tests for all parsers, comparisons, and checkers
+│   │   ├── reporter.go       # Output formatting (text, JSON, markdown)
+│   │   ├── reporter_test.go  # Reporter tests
+│   │   └── testdata/         # Test fixtures (package.json, pom.xml, go.mod)
 │   ├── links/                # Link validation logic
 │   │   ├── types.go          # Core type definitions
 │   │   ├── scanner.go        # Link extraction from markdown
@@ -460,7 +569,8 @@ go test ./... -v
 
 **Test Coverage:**
 
-- `cmd`: Root command tests, validate-links integration tests
+- `cmd`: Root command tests, validate-links integration tests, doctor integration tests
+- `internal/doctor`: 95%+ coverage (checker, reporter — all pure functions tested with fake runner)
 - `internal/links`: 85%+ coverage (scanner, validator, categorizer, reporter)
 - `internal/sync`: 85%+ coverage (converter, copier, validator, reporter)
 - `internal/claude`: 92.6% coverage (validator, agent_validator, skill_validator)
@@ -501,6 +611,19 @@ nx install rhino-cli
 The project includes comprehensive unit tests:
 
 ### Test Suite
+
+**Doctor Tests (`cmd/doctor_test.go`, `internal/doctor/`):**
+
+- Command initialization (Use, Short)
+- Text output contains "Doctor Report" and all 6 tool names
+- JSON output is valid with correct structure and "tools" array
+- Markdown output contains `| Tool |` table
+- Missing git root returns error mentioning "git"
+- All version parsers (Java, Maven, Go) with multiple real-world patterns
+- All comparison helpers (exact, major) with match/mismatch/empty cases
+- All 6 individual checkers with fake runner (found/mismatch/missing)
+- `CheckAll` orchestration with all-OK and all-missing runner
+- Config file readers (package.json, pom.xml, go.mod) with valid/invalid/missing inputs
 
 **Root Command Tests (`cmd/root_test.go`):**
 
@@ -576,6 +699,16 @@ rhino-cli say
 ```
 
 ## Version History
+
+### v0.5.0 (2026-02-19)
+
+- Added `doctor` command for development environment verification
+- Checks 6 tools: volta, node, npm, java, maven, golang
+- Reads required versions from package.json, pom.xml, and go.mod dynamically
+- Injectable `CommandRunner` for hermetic unit testing (no subprocess spawning)
+- Three output formats: text, JSON, markdown
+- Distinguishes missing tools (exit 1) from version warnings (advisory only)
+- 95%+ test coverage with 55+ tests across checker and reporter packages
 
 ### v0.4.0 (2026-01-22)
 
