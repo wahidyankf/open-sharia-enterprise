@@ -16,6 +16,7 @@ Reads version requirements from existing repository config files and checks each
 tool against those requirements.
 
 Tools checked:
+  git      — any version (no config file)
   volta    — any version (no config file)
   node     — from package.json → volta.node
   npm      — from package.json → volta.npm

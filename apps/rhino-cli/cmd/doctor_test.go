@@ -92,8 +92,8 @@ func TestDoctorCommand_TextOutput(t *testing.T) {
 		t.Error("expected output to contain 'Doctor Report'")
 	}
 
-	// All 6 tool names should appear in the output
-	for _, toolName := range []string{"volta", "node", "npm", "java", "maven", "golang"} {
+	// All 7 tool names should appear in the output
+	for _, toolName := range []string{"git", "volta", "node", "npm", "java", "maven", "golang"} {
 		if !strings.Contains(outputStr, toolName) {
 			t.Errorf("expected output to contain tool name %q", toolName)
 		}
@@ -131,8 +131,8 @@ func TestDoctorCommand_JSONOutput(t *testing.T) {
 	tools, ok := parsed["tools"].([]interface{})
 	if !ok {
 		t.Error("expected 'tools' to be an array")
-	} else if len(tools) != 6 {
-		t.Errorf("expected 6 tools in JSON output, got %d", len(tools))
+	} else if len(tools) != 7 {
+		t.Errorf("expected 7 tools in JSON output, got %d", len(tools))
 	}
 }
 

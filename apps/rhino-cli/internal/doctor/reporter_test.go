@@ -27,6 +27,7 @@ func buildResult(checks []ToolCheck) *DoctorResult {
 }
 
 var allOKChecks = []ToolCheck{
+	{Name: "git", Binary: "git", Status: StatusOK, InstalledVersion: "2.47.2", Source: "(no config file)", Note: "no version requirement"},
 	{Name: "volta", Binary: "volta", Status: StatusOK, InstalledVersion: "2.0.2", Source: "(no config file)", Note: "no version requirement"},
 	{Name: "node", Binary: "node", Status: StatusOK, InstalledVersion: "24.11.1", RequiredVersion: "24.11.1", Source: "package.json → volta.node", Note: "required: 24.11.1"},
 	{Name: "npm", Binary: "npm", Status: StatusOK, InstalledVersion: "11.6.3", RequiredVersion: "11.6.3", Source: "package.json → volta.npm", Note: "required: 11.6.3"},
@@ -47,10 +48,10 @@ func TestFormatText_AllOK(t *testing.T) {
 	}
 	// All checks should show ✓
 	count := strings.Count(out, "✓")
-	if count != 6 {
-		t.Errorf("expected 6 ✓ symbols, got %d", count)
+	if count != 7 {
+		t.Errorf("expected 7 ✓ symbols, got %d", count)
 	}
-	if !strings.Contains(out, "Summary: 6/6 tools OK, 0 warning, 0 missing") {
+	if !strings.Contains(out, "Summary: 7/7 tools OK, 0 warning, 0 missing") {
 		t.Errorf("expected summary line, got: %q", out)
 	}
 }
@@ -125,8 +126,8 @@ func TestFormatJSON_AllOK(t *testing.T) {
 	if parsed.Status != "ok" {
 		t.Errorf("expected status %q, got %q", "ok", parsed.Status)
 	}
-	if parsed.OKCount != 6 {
-		t.Errorf("expected ok_count == 6, got %d", parsed.OKCount)
+	if parsed.OKCount != 7 {
+		t.Errorf("expected ok_count == 7, got %d", parsed.OKCount)
 	}
 	if parsed.WarnCount != 0 {
 		t.Errorf("expected warn_count == 0, got %d", parsed.WarnCount)
@@ -134,8 +135,8 @@ func TestFormatJSON_AllOK(t *testing.T) {
 	if parsed.MissingCount != 0 {
 		t.Errorf("expected missing_count == 0, got %d", parsed.MissingCount)
 	}
-	if len(parsed.Tools) != 6 {
-		t.Errorf("expected 6 tools, got %d", len(parsed.Tools))
+	if len(parsed.Tools) != 7 {
+		t.Errorf("expected 7 tools, got %d", len(parsed.Tools))
 	}
 }
 
@@ -189,7 +190,7 @@ func TestFormatMarkdown(t *testing.T) {
 		t.Error("expected '### Tools' section")
 	}
 	// All tool names should appear
-	for _, name := range []string{"volta", "node", "npm", "java", "maven", "golang"} {
+	for _, name := range []string{"git", "volta", "node", "npm", "java", "maven", "golang"} {
 		if !strings.Contains(out, name) {
 			t.Errorf("expected tool name %q in markdown output", name)
 		}

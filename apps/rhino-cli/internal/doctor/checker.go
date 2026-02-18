@@ -129,6 +129,20 @@ func parseMavenVersion(stdout string) string {
 	return ""
 }
 
+// parseGitVersion extracts the Git version from git --version stdout output.
+func parseGitVersion(stdout string) string {
+	for _, line := range strings.Split(stdout, "\n") {
+		trimmed := strings.TrimSpace(line)
+		if strings.HasPrefix(trimmed, "git version ") {
+			parts := strings.Fields(trimmed)
+			if len(parts) >= 3 {
+				return parts[2]
+			}
+		}
+	}
+	return ""
+}
+
 // parseGoVersion extracts the Go version from go version stdout output.
 func parseGoVersion(stdout string) string {
 	for _, line := range strings.Split(stdout, "\n") {
