@@ -90,8 +90,11 @@ Skill content`
 		t.Fatalf("Failed to create claude skill: %v", err)
 	}
 
-	// Create corresponding synced skill in .opencode/
-	if err := os.WriteFile(filepath.Join(opencodeSkillDir, "test-skill.md"), []byte(skillContent), 0644); err != nil {
+	// Create corresponding synced skill in .opencode/ (directory structure: {name}/SKILL.md)
+	if err := os.MkdirAll(filepath.Join(opencodeSkillDir, "test-skill"), 0755); err != nil {
+		t.Fatalf("Failed to create opencode skill dir: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(opencodeSkillDir, "test-skill", "SKILL.md"), []byte(skillContent), 0644); err != nil {
 		t.Fatalf("Failed to create opencode skill: %v", err)
 	}
 

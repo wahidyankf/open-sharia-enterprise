@@ -110,12 +110,18 @@ func TestValidateSkillCount(t *testing.T) {
 		t.Fatalf("Failed to create skill2 SKILL.md: %v", err)
 	}
 
-	// Create corresponding files in OpenCode
-	if err := os.WriteFile(filepath.Join(opencodeSkillDir, "skill-1.md"), []byte("skill1"), 0644); err != nil {
-		t.Fatalf("Failed to create opencode skill-1.md: %v", err)
+	// Create corresponding files in OpenCode (directory structure: {name}/SKILL.md)
+	if err := os.MkdirAll(filepath.Join(opencodeSkillDir, "skill-1"), 0755); err != nil {
+		t.Fatalf("Failed to create opencode skill-1 dir: %v", err)
 	}
-	if err := os.WriteFile(filepath.Join(opencodeSkillDir, "skill-2.md"), []byte("skill2"), 0644); err != nil {
-		t.Fatalf("Failed to create opencode skill-2.md: %v", err)
+	if err := os.WriteFile(filepath.Join(opencodeSkillDir, "skill-1", "SKILL.md"), []byte("skill1"), 0644); err != nil {
+		t.Fatalf("Failed to create opencode skill-1/SKILL.md: %v", err)
+	}
+	if err := os.MkdirAll(filepath.Join(opencodeSkillDir, "skill-2"), 0755); err != nil {
+		t.Fatalf("Failed to create opencode skill-2 dir: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(opencodeSkillDir, "skill-2", "SKILL.md"), []byte("skill2"), 0644); err != nil {
+		t.Fatalf("Failed to create opencode skill-2/SKILL.md: %v", err)
 	}
 
 	check := validateSkillCount(tmpDir)
