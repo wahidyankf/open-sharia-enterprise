@@ -132,11 +132,11 @@ func TestSyncAgentsCommand_AllValid(t *testing.T) {
 	if _, err := os.Stat(filepath.Join(opencodeAgentDir, "test-agent-2.md")); os.IsNotExist(err) {
 		t.Error("Expected test-agent-2.md to be created in .opencode/agent/")
 	}
-	if _, err := os.Stat(filepath.Join(opencodeSkillDir, "test-skill-1.md")); os.IsNotExist(err) {
-		t.Error("Expected test-skill-1.md to be created in .opencode/skill/")
+	if _, err := os.Stat(filepath.Join(opencodeSkillDir, "test-skill-1", "SKILL.md")); os.IsNotExist(err) {
+		t.Error("Expected test-skill-1/SKILL.md to be created in .opencode/skill/")
 	}
-	if _, err := os.Stat(filepath.Join(opencodeSkillDir, "test-skill-2.md")); os.IsNotExist(err) {
-		t.Error("Expected test-skill-2.md to be created in .opencode/skill/")
+	if _, err := os.Stat(filepath.Join(opencodeSkillDir, "test-skill-2", "SKILL.md")); os.IsNotExist(err) {
+		t.Error("Expected test-skill-2/SKILL.md to be created in .opencode/skill/")
 	}
 }
 
@@ -376,8 +376,8 @@ func TestSyncAgentsCommand_SkillsOnly(t *testing.T) {
 	if _, err := os.Stat(filepath.Join(opencodeAgentDir, "test-agent.md")); !os.IsNotExist(err) {
 		t.Error("Expected test-agent.md to NOT be created in skills-only mode")
 	}
-	if _, err := os.Stat(filepath.Join(opencodeSkillDir, "test-skill.md")); os.IsNotExist(err) {
-		t.Error("Expected test-skill.md to be created")
+	if _, err := os.Stat(filepath.Join(opencodeSkillDir, "test-skill", "SKILL.md")); os.IsNotExist(err) {
+		t.Error("Expected test-skill/SKILL.md to be created")
 	}
 }
 

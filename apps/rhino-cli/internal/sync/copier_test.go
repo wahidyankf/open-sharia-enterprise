@@ -111,10 +111,10 @@ func TestCopyAllSkills(t *testing.T) {
 		t.Errorf("Expected 0 failed files, got %v", failedFiles)
 	}
 
-	// Verify output files exist
+	// Verify output files exist (directory structure: {name}/SKILL.md)
 	opencodeSkillDir := filepath.Join(tmpDir, ".opencode", "skill")
-	skill1Output := filepath.Join(opencodeSkillDir, "skill-1.md")
-	skill2Output := filepath.Join(opencodeSkillDir, "skill-2.md")
+	skill1Output := filepath.Join(opencodeSkillDir, "skill-1", "SKILL.md")
+	skill2Output := filepath.Join(opencodeSkillDir, "skill-2", "SKILL.md")
 
 	content1, err := os.ReadFile(skill1Output)
 	if err != nil {
