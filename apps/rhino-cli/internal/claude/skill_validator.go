@@ -1,7 +1,6 @@
 package claude
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -13,75 +12,7 @@ import (
 
 // validateSkillYAMLFormatting checks YAML has proper formatting
 func validateSkillYAMLFormatting(skillName string, content []byte) sync.ValidationCheck {
-	// Extract raw frontmatter
-	lines := bytes.Split(content, []byte("\n"))
-
-	if len(lines) < 3 {
-		return sync.ValidationCheck{
-			Name:    fmt.Sprintf("Skill: %s - YAML Formatting", skillName),
-			Status:  "passed",
-			Message: "File too short to check formatting",
-		}
-	}
-
-	// Find frontmatter boundaries
-	if !bytes.Equal(bytes.TrimSpace(lines[0]), []byte("---")) {
-		return sync.ValidationCheck{
-			Name:    fmt.Sprintf("Skill: %s - YAML Formatting", skillName),
-			Status:  "failed",
-			Message: "Frontmatter does not start with ---",
-		}
-	}
-
-	endIndex := -1
-	for i := 1; i < len(lines); i++ {
-		if bytes.Equal(bytes.TrimSpace(lines[i]), []byte("---")) {
-			endIndex = i
-			break
-		}
-	}
-
-	if endIndex == -1 {
-		return sync.ValidationCheck{
-			Name:    fmt.Sprintf("Skill: %s - YAML Formatting", skillName),
-			Status:  "failed",
-			Message: "Frontmatter closing --- not found",
-		}
-	}
-
-	// Check for missing spaces after colons
-	var issues []string
-	for i := 1; i < endIndex; i++ {
-		line := lines[i]
-		trimmed := bytes.TrimSpace(line)
-
-		if len(trimmed) == 0 || bytes.HasPrefix(trimmed, []byte("-")) || bytes.HasPrefix(trimmed, []byte("#")) {
-			continue
-		}
-
-		if bytes.Contains(trimmed, []byte(":")) {
-			parts := bytes.SplitN(trimmed, []byte(":"), 2)
-			if len(parts) == 2 && len(parts[1]) > 0 && parts[1][0] != ' ' {
-				issues = append(issues, fmt.Sprintf("Line %d: '%s' (missing space after colon)", i+1, string(trimmed)))
-			}
-		}
-	}
-
-	if len(issues) > 0 {
-		return sync.ValidationCheck{
-			Name:     fmt.Sprintf("Skill: %s - YAML Formatting", skillName),
-			Status:   "failed",
-			Expected: "Space after colon in YAML key-value pairs (e.g., 'name: value')",
-			Actual:   fmt.Sprintf("Found %d formatting issues", len(issues)),
-			Message:  fmt.Sprintf("YAML formatting errors:\n  %s", strings.Join(issues, "\n  ")),
-		}
-	}
-
-	return sync.ValidationCheck{
-		Name:    fmt.Sprintf("Skill: %s - YAML Formatting", skillName),
-		Status:  "passed",
-		Message: "YAML formatting correct (spaces after colons)",
-	}
+	return validateYAMLFormattingRaw(fmt.Sprintf("Skill: %s - YAML Formatting", skillName), content)
 }
 
 // validateSkill performs all 7 validation rules for a single skill

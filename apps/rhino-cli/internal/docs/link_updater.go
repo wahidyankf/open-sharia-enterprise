@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/fileutil"
 )
 
 var (
@@ -43,43 +45,7 @@ func FindLinksToUpdate(renames []RenameOperation, repoRoot string) ([]LinkUpdate
 
 // getMarkdownFilesToScan returns all markdown files that might contain links.
 func getMarkdownFilesToScan(repoRoot string) ([]string, error) {
-	directories := []string{
-		"docs",
-		"governance",
-		".claude",
-	}
-
-	var files []string
-
-	// Walk each directory recursively
-	for _, dir := range directories {
-		dirPath := filepath.Join(repoRoot, dir)
-		if _, err := os.Stat(dirPath); os.IsNotExist(err) {
-			continue
-		}
-
-		err := filepath.Walk(dirPath, func(path string, info os.FileInfo, err error) error {
-			if err != nil {
-				return nil
-			}
-			if !info.IsDir() && strings.HasSuffix(path, ".md") {
-				files = append(files, path)
-			}
-			return nil
-		})
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	// Add root-level .md files
-	rootMatches, err := filepath.Glob(filepath.Join(repoRoot, "*.md"))
-	if err != nil {
-		return nil, err
-	}
-	files = append(files, rootMatches...)
-
-	return files, nil
+	return fileutil.WalkMarkdownDirs(repoRoot, []string{"docs", "governance", ".claude"})
 }
 
 // scanFileForLinks scans a single file for links that need updating.
