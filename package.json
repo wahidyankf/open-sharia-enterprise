@@ -63,6 +63,7 @@
     "*.{css,scss}": "prettier --write"
   },
   "overrides": {
-    "markdown-it": "14.1.1"
+    "markdown-it": "14.1.1",
+    "minimatch": ">=10.2.1"
   }
 }
