@@ -3,10 +3,11 @@ package links
 import (
 	"bufio"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/fileutil"
 )
 
 var (
@@ -67,17 +68,13 @@ func filterSkipPaths(files []string, repoRoot string, skipPaths []string) []stri
 
 // getStagedMarkdownFiles returns staged markdown files from git.
 func getStagedMarkdownFiles(repoRoot string) ([]string, error) {
-	cmd := exec.Command("git", "diff", "--cached", "--name-only", "--diff-filter=ACM")
-	cmd.Dir = repoRoot
-	output, err := cmd.Output()
+	lines, err := fileutil.GetStagedFiles(repoRoot)
 	if err != nil {
 		return nil, err
 	}
-
 	var files []string
-	lines := strings.Split(strings.TrimSpace(string(output)), "\n")
 	for _, line := range lines {
-		if line != "" && strings.HasSuffix(line, ".md") {
+		if strings.HasSuffix(line, ".md") {
 			files = append(files, filepath.Join(repoRoot, line))
 		}
 	}
@@ -86,45 +83,7 @@ func getStagedMarkdownFiles(repoRoot string) ([]string, error) {
 
 // getAllMarkdownFiles returns all markdown files in core directories.
 func getAllMarkdownFiles(repoRoot string) ([]string, error) {
-	directories := []string{
-		"governance",
-		"docs",
-		".claude",
-	}
-
-	var files []string
-
-	// Walk each directory recursively
-	for _, dir := range directories {
-		dirPath := filepath.Join(repoRoot, dir)
-
-		// Check if directory exists
-		if _, err := os.Stat(dirPath); os.IsNotExist(err) {
-			continue // Skip non-existent directories
-		}
-
-		err := filepath.Walk(dirPath, func(path string, info os.FileInfo, err error) error {
-			if err != nil {
-				return nil // Skip errors
-			}
-			if !info.IsDir() && strings.HasSuffix(path, ".md") {
-				files = append(files, path)
-			}
-			return nil
-		})
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	// Add root-level .md files
-	rootMatches, err := filepath.Glob(filepath.Join(repoRoot, "*.md"))
-	if err != nil {
-		return nil, err
-	}
-	files = append(files, rootMatches...)
-
-	return files, nil
+	return fileutil.WalkMarkdownDirs(repoRoot, []string{"governance", "docs", ".claude"})
 }
 
 // ExtractLinks extracts markdown links from a file with line numbers.

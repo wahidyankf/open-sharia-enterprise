@@ -2,9 +2,10 @@ package docs
 
 import (
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/fileutil"
 )
 
 // GetDocsFiles returns a list of files in docs/ to validate based on options.
@@ -17,19 +18,12 @@ func GetDocsFiles(opts ValidationOptions) ([]string, error) {
 
 // getStagedDocsFiles returns staged files in docs/ from git.
 func getStagedDocsFiles(repoRoot string) ([]string, error) {
-	cmd := exec.Command("git", "diff", "--cached", "--name-only", "--diff-filter=ACM")
-	cmd.Dir = repoRoot
-	output, err := cmd.Output()
+	lines, err := fileutil.GetStagedFiles(repoRoot)
 	if err != nil {
 		return nil, err
 	}
-
 	var files []string
-	lines := strings.Split(strings.TrimSpace(string(output)), "\n")
 	for _, line := range lines {
-		if line == "" {
-			continue
-		}
 		// Only include files in docs/ directory
 		if !strings.HasPrefix(line, "docs/") {
 			continue
