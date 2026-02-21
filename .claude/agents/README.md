@@ -1,6 +1,6 @@
 # Claude Code Agents
 
-This directory contains 56 specialized AI agents for the open-sharia-enterprise project. These agents are organized by role and follow the Maker-Checker-Fixer pattern where applicable.
+This directory contains 57 specialized AI agents for the open-sharia-enterprise project. These agents are organized by role and follow the Maker-Checker-Fixer pattern where applicable.
 
 ## Agent Organization
 
@@ -63,6 +63,7 @@ This directory contains 56 specialized AI agents for the open-sharia-enterprise 
 - **docs-file-manager** - File organization and management
 - **apps-ayokoding-web-deployer** - AyoKoding deployment
 - **apps-ose-platform-web-deployer** - OSE Platform deployment
+- **apps-organiclever-web-deployer** - organiclever-web deployment
 - **plan-executor** - Execute project plans
 
 ### 💻 Development
@@ -138,5 +139,5 @@ All agents follow governance principles:
 
 ---
 
-**Total Agents**: 55
-**Last Updated**: 2026-02-07
+**Total Agents**: 57
+**Last Updated**: 2026-02-22
