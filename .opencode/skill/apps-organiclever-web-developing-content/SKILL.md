@@ -245,7 +245,7 @@ Vercel automatically:
 
 ## Comparison with Other Apps
 
-| Aspect              | organiclever-web         | organiclever-app                  | ayokoding-web                   | ose-platform-web        |
+| Aspect              | organiclever-web         | organiclever-app                  | ayokoding-web                   | oseplatform-web         |
 | ------------------- | ------------------------ | --------------------------------- | ------------------------------- | ----------------------- |
 | **Framework**       | Next.js 14 (App Router)  | Flutter (web + mobile)            | Hugo (Hextra theme)             | Hugo (PaperMod theme)   |
 | **Language**        | TypeScript / React 18    | Dart                              | Markdown / Go templates         | Markdown / Go templates |
@@ -253,7 +253,7 @@ Vercel automatically:
 | **Auth**            | Cookie-based sessions    | TBD                               | None                            | None                    |
 | **Data**            | JSON files + API routes  | REST API (organiclever-be)        | Markdown content files          | Markdown content files  |
 | **Build**           | Next.js (Vercel)         | Flutter (app stores + web)        | Hugo SSG (Vercel)               | Hugo SSG (Vercel)       |
-| **Prod Branch**     | prod-organiclever-web    | N/A (app stores)                  | prod-ayokoding-web              | prod-ose-platform-web   |
+| **Prod Branch**     | prod-organiclever-web    | N/A (app stores)                  | prod-ayokoding-web              | prod-oseplatform-web    |
 | **Languages**       | English                  | English                           | Bilingual (Indonesian/English)  | English only            |
 | **Content Types**   | Landing + promo pages    | Productivity app UI               | Tutorials, essays, videos       | Updates, about page     |
 | **Complexity**      | Static + light auth      | Full cross-platform app           | Complex bilingual documentation | Simple landing page     |

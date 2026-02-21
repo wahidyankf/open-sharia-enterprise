@@ -12,7 +12,7 @@ This Skill provides comprehensive guidance for applying **universal content qual
 **When to use this Skill:**
 
 - Creating or editing markdown content in docs/
-- Writing content for Hugo sites (ayokoding-web, ose-platform-web)
+- Writing content for Hugo sites (ayokoding-web, oseplatform-web)
 - Creating planning documents in plans/
 - Writing repository root files (README.md, CONTRIBUTING.md, etc.)
 - Ensuring accessibility compliance (WCAG AA)

@@ -228,7 +228,7 @@ function renderCheckout() {
 This repository has **environment-specific branches** for deployment:
 
 - `prod-ayokoding-web` - Production deployment for ayokoding.com
-- `prod-ose-platform-web` - Production deployment for oseplatform.com
+- `prod-oseplatform-web` - Production deployment for oseplatform.com
 
 ### Critical Rules
 
@@ -257,7 +257,7 @@ Developer commits to main → CI/CD tests → CI/CD deploys to environment branc
 **Examples**:
 
 - `prod-ayokoding-web`
-- `prod-ose-platform-web`
+- `prod-oseplatform-web`
 
 **Rationale**: Clear, explicit, unambiguous naming prevents accidental commits.
 

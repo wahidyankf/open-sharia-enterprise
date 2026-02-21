@@ -54,7 +54,7 @@ This directory contains 28 skill packages that provide progressive knowledge del
 ### 🌐 Hugo Site Development Skills
 
 - **apps-ayokoding-web-developing-content** - AyoKoding content development standards
-- **apps-ose-platform-web-developing-content** - OSE Platform content development standards
+- **apps-oseplatform-web-developing-content** - OSE Platform content development standards
 
 ## Skill Structure
 

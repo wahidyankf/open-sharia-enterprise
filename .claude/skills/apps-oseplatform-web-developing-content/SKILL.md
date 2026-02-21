@@ -1,27 +1,27 @@
 ---
-name: apps-ose-platform-web-developing-content
-description: Guide for creating content on ose-platform-web Hugo site using PaperMod theme. Covers English-only landing page structure, update posts with date-prefixed filenames, PaperMod frontmatter (cover images, table of contents, author field), simple flat organization, and ose-platform-web specific conventions. Essential for ose-platform-web content creation tasks
+name: apps-oseplatform-web-developing-content
+description: Guide for creating content on oseplatform-web Hugo site using PaperMod theme. Covers English-only landing page structure, update posts with date-prefixed filenames, PaperMod frontmatter (cover images, table of contents, author field), simple flat organization, and oseplatform-web specific conventions. Essential for oseplatform-web content creation tasks
 ---
 
 # Hugo OSE Platform Development Skill
 
 ## Purpose
 
-This Skill provides guidance for creating and managing content on the **ose-platform-web** Hugo site, which uses the PaperMod theme and serves as an English-only project landing page.
+This Skill provides guidance for creating and managing content on the **oseplatform-web** Hugo site, which uses the PaperMod theme and serves as an English-only project landing page.
 
 **When to use this Skill:**
 
-- Creating platform updates on ose-platform-web
+- Creating platform updates on oseplatform-web
 - Writing about page content
 - Managing landing page structure
 - Configuring PaperMod frontmatter
-- Understanding ose-platform-web specific patterns
+- Understanding oseplatform-web specific patterns
 
 ## Core Concepts
 
 ### Site Overview
 
-**ose-platform-web** (`apps/ose-platform-web/`):
+**oseplatform-web** (`apps/oseplatform-web/`):
 
 - **Site**: oseplatform.com
 - **Theme**: PaperMod v7.0+ (compatible with v8.0)
@@ -41,12 +41,12 @@ This Skill provides guidance for creating and managing content on the **ose-plat
 **Contrast with ayokoding-web**:
 
 - ayokoding-web: Bilingual (`/en/`, `/id/`) with complex structure
-- ose-platform-web: English-only with flat structure
+- oseplatform-web: English-only with flat structure
 
 ## Content Structure
 
 ```
-apps/ose-platform-web/content/
+apps/oseplatform-web/content/
 ├── updates/                               # Platform updates
 │   ├── _index.md
 │   ├── 2025-12-07-initial-release.md    # Date-prefixed
@@ -169,7 +169,7 @@ author: "OSE Platform Team"
 author: ["John Doe", "Jane Smith"]
 ```
 
-**Contrast with ayokoding-web**: ayokoding-web restricts `author` field to rants/celoteh only. ose-platform-web has no such restriction.
+**Contrast with ayokoding-web**: ayokoding-web restricts `author` field to rants/celoteh only. oseplatform-web has no such restriction.
 
 ## Content Types
 
@@ -232,11 +232,11 @@ Check out our [getting started guide]({{< ref "/updates/getting-started" >}})
 **Contrast with ayokoding-web**:
 
 - ayokoding-web: MUST use absolute paths with language prefix (`/en/`, `/id/`)
-- ose-platform-web: Absolute paths without language prefix (English-only)
+- oseplatform-web: Absolute paths without language prefix (English-only)
 
 ## Asset Organization
 
-**Location**: `apps/ose-platform-web/static/`
+**Location**: `apps/oseplatform-web/static/`
 
 **Structure**:
 
@@ -323,7 +323,7 @@ params:
 
 ## Comparison with ayokoding-web
 
-| Aspect               | ose-platform-web                 | ayokoding-web                                     |
+| Aspect               | oseplatform-web                  | ayokoding-web                                     |
 | -------------------- | -------------------------------- | ------------------------------------------------- |
 | **Theme**            | PaperMod                         | Hextra                                            |
 | **Languages**        | English only                     | Bilingual (Indonesian/English)                    |
@@ -340,7 +340,7 @@ params:
 | **Target Audience**  | Enterprise users                 | Indonesian developers (bilingual)                 |
 | **Tutorial Content** | No                               | Yes (detailed programming tutorials)              |
 
-**Key Takeaway**: ose-platform-web is MUCH simpler than ayokoding-web.
+**Key Takeaway**: oseplatform-web is MUCH simpler than ayokoding-web.
 
 ## Common Patterns
 
@@ -393,7 +393,7 @@ Before publishing:
 
 ### ❌ Mistake 1: Using language prefixes
 
-**Wrong**: `/en/updates/post` (ose-platform-web is English-only)
+**Wrong**: `/en/updates/post` (oseplatform-web is English-only)
 
 **Right**: `/updates/post`
 
@@ -444,7 +444,7 @@ cover:
 
 ## Reference Documentation
 
-**Primary Convention**: [Hugo Content Convention - ose-platform-web](../../../governance/conventions/hugo/ose-platform.md)
+**Primary Convention**: [Hugo Content Convention - oseplatform-web](../../../governance/conventions/hugo/ose-platform.md)
 
 **Related Conventions**:
 
@@ -458,9 +458,9 @@ cover:
 
 **Related Agents**:
 
-- `apps__ose-platform-web__content-maker` - Creates ose-platform-web content
-- `apps__ose-platform-web__content-checker` - Validates ose-platform-web content
-- `apps__ose-platform-web__deployer` - Deploys ose-platform-web
+- `apps__oseplatform-web__content-maker` - Creates oseplatform-web content
+- `apps__oseplatform-web__content-checker` - Validates oseplatform-web content
+- `apps__oseplatform-web__deployer` - Deploys oseplatform-web
 
 **External Resources**:
 
@@ -469,15 +469,15 @@ cover:
 
 ---
 
-This Skill packages essential ose-platform-web development knowledge for creating simple, effective landing page content. For comprehensive details, consult the primary convention document.
+This Skill packages essential oseplatform-web development knowledge for creating simple, effective landing page content. For comprehensive details, consult the primary convention document.
 
 ## Deployment Workflow
 
-Deploy ose-platform-web to production using Vercel integration.
+Deploy oseplatform-web to production using Vercel integration.
 
 ### Production Branch
 
-**Branch**: `prod-ose-platform-web`  
+**Branch**: `prod-oseplatform-web`  
 **Purpose**: Deployment-only branch that Vercel monitors  
 **Build System**: Vercel (Hugo SSG with PaperMod theme)
 
@@ -504,14 +504,14 @@ fi
 
 ```bash
 # Deploy to production
-git push origin main:prod-ose-platform-web --force
+git push origin main:prod-oseplatform-web --force
 ```
 
 **Step 3: Vercel Auto-Build**
 
 Vercel automatically:
 
-- Detects push to prod-ose-platform-web branch
+- Detects push to prod-oseplatform-web branch
 - Pulls latest content
 - Builds Hugo site with PaperMod theme
 - Deploys to production URL
@@ -520,7 +520,7 @@ Vercel automatically:
 
 **Safe for deployment branches**:
 
-- prod-ose-platform-web is deployment-only (no direct commits)
+- prod-oseplatform-web is deployment-only (no direct commits)
 - Always want exact copy of main branch
 - Trunk-based development: main is source of truth
 
@@ -536,7 +536,7 @@ Vercel automatically:
 
 ## References
 
-**Primary Convention**: [Hugo Content Convention - ose-platform-web](../../../governance/conventions/hugo/ose-platform.md)
+**Primary Convention**: [Hugo Content Convention - oseplatform-web](../../../governance/conventions/hugo/ose-platform.md)
 
 **Related Conventions**:
 

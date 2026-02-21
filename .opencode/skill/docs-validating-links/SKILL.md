@@ -43,7 +43,7 @@ Use this Skill when:
 **What to validate**:
 
 - Internal markdown links (docs/, governance/, plans/)
-- Hugo content links (apps/ayokoding-web/, apps/ose-platform-web/)
+- Hugo content links (apps/ayokoding-web/, apps/oseplatform-web/)
 - External URLs (HTTP/HTTPS)
 - Image links (relative paths)
 - Anchor links (same-page headings)
@@ -67,7 +67,7 @@ Use this Skill when:
 ❌ FAIL: [[file-naming]] ← Obsidian wiki link (not GitHub-compatible)
 ❌ FAIL: [file-naming.md](../meta/file-naming.md) ← Using filename as link text
 
-**Hugo content files** (apps/ayokoding-web/content/, apps/ose-platform-web/content/):
+**Hugo content files** (apps/ayokoding-web/content/, apps/oseplatform-web/content/):
 
 ✅ PASS: [Learn AI](/learn/ai)
 ✅ PASS: [Chat with PDF Tutorial](/learn/ai/chat-with-pdf)
