@@ -15,7 +15,7 @@ This directory contains 57 specialized AI agents for the open-sharia-enterprise 
 - **apps-ayokoding-web-structure-maker** - Site structure creation
 - **apps-ayokoding-web-navigation-maker** - Navigation generation
 - **apps-ayokoding-web-title-maker** - Title generation from filenames
-- **apps-ose-platform-web-content-maker** - OSE Platform content
+- **apps-oseplatform-web-content-maker** - OSE Platform content
 - **plan-maker** - Project plan creation
 - **repo-governance-maker** - Governance document creation
 - **repo-workflow-maker** - Workflow documentation
@@ -35,7 +35,7 @@ This directory contains 57 specialized AI agents for the open-sharia-enterprise 
 - **apps-ayokoding-web-facts-checker** - Factual accuracy for AyoKoding
 - **apps-ayokoding-web-link-checker** - Link validation for AyoKoding
 - **apps-ayokoding-web-structure-checker** - Site structure validation
-- **apps-ose-platform-web-content-checker** - OSE content validation
+- **apps-oseplatform-web-content-checker** - OSE content validation
 - **plan-checker** - Project plan validation
 - **plan-execution-checker** - Plan execution validation
 - **repo-governance-checker** - Governance compliance validation
@@ -53,7 +53,7 @@ This directory contains 57 specialized AI agents for the open-sharia-enterprise 
 - **apps-ayokoding-web-facts-fixer** - Apply factual corrections
 - **apps-ayokoding-web-link-fixer** - Fix broken links
 - **apps-ayokoding-web-structure-fixer** - Fix structure issues
-- **apps-ose-platform-web-content-fixer** - Fix OSE content issues
+- **apps-oseplatform-web-content-fixer** - Fix OSE content issues
 - **plan-fixer** - Apply plan fixes
 - **repo-governance-fixer** - Fix governance compliance issues
 - **repo-workflow-fixer** - Fix workflow documentation
@@ -62,7 +62,7 @@ This directory contains 57 specialized AI agents for the open-sharia-enterprise 
 
 - **docs-file-manager** - File organization and management
 - **apps-ayokoding-web-deployer** - AyoKoding deployment
-- **apps-ose-platform-web-deployer** - OSE Platform deployment
+- **apps-oseplatform-web-deployer** - OSE Platform deployment
 - **apps-organiclever-web-deployer** - organiclever-web deployment
 - **plan-executor** - Execute project plans
 
