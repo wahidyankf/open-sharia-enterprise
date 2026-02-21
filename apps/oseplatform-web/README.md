@@ -12,7 +12,7 @@ Official website for the **Open Sharia Enterprise** platform - an open-source Sh
 
 - **Production**: <https://oseplatform.com> (under construction)
 - **Main Project**: [Open Sharia Enterprise on GitHub](https://github.com/wahidyankf/open-sharia-enterprise) - The full platform repository
-- **This Site**: Part of the OSE monorepo under `apps/ose-platform-web/`
+- **This Site**: Part of the OSE monorepo under `apps/oseplatform-web/`
 
 ## 🛠️ Tech Stack
 
@@ -35,7 +35,7 @@ Start the development server:
 
 ```bash
 # From repository root
-nx dev ose-platform-web
+nx dev oseplatform-web
 
 # Or from this directory
 hugo server --buildDrafts --buildFuture
@@ -49,7 +49,7 @@ Build the site for production:
 
 ```bash
 # From repository root
-nx build ose-platform-web
+nx build oseplatform-web
 
 # Or from this directory
 ./build.sh
@@ -63,7 +63,7 @@ Remove generated files:
 
 ```bash
 # From repository root
-nx clean ose-platform-web
+nx clean oseplatform-web
 
 # Or from this directory
 rm -rf public resources
@@ -72,7 +72,7 @@ rm -rf public resources
 ## 📂 Project Structure
 
 ```
-ose-platform-web/
+oseplatform-web/
 ├── archetypes/          # Content templates
 ├── assets/              # Source assets (SCSS, JS, images)
 ├── content/             # Markdown content

@@ -1,21 +1,21 @@
 {
-  "name": "ose-platform-web",
+  "name": "oseplatform-web",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/ose-platform-web",
+  "sourceRoot": "apps/oseplatform-web",
   "projectType": "application",
   "targets": {
     "dev": {
       "executor": "nx:run-commands",
       "options": {
         "command": "hugo server --buildDrafts --buildFuture",
-        "cwd": "apps/ose-platform-web"
+        "cwd": "apps/oseplatform-web"
       }
     },
     "build": {
       "executor": "nx:run-commands",
       "options": {
         "command": "bash build.sh",
-        "cwd": "apps/ose-platform-web"
+        "cwd": "apps/oseplatform-web"
       },
       "outputs": ["{projectRoot}/public"]
     },
@@ -23,7 +23,7 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "rm -rf public resources",
-        "cwd": "apps/ose-platform-web"
+        "cwd": "apps/oseplatform-web"
       }
     }
   },

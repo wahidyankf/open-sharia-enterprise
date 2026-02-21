@@ -100,7 +100,7 @@ params:
 
   # Edit post button
   # editPost:
-  #   URL: "https://github.com/wahidyankf/open-sharia-enterprise/tree/main/apps/ose-platform-web/content"
+  #   URL: "https://github.com/wahidyankf/open-sharia-enterprise/tree/main/apps/oseplatform-web/content"
   #   Text: "Suggest Changes"
   #   appendFilePath: true
 
