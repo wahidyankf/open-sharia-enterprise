@@ -199,7 +199,7 @@ Common scopes for execution tracking:
 | readme\_\_checker        | `readme`           | `.execution-chain-readme`           |
 | plan\_\_checker          | `plan`             | `.execution-chain-plan`             |
 | ayokoding-web-\*         | `ayokoding-[lang]` | `.execution-chain-ayokoding-[lang]` |
-| ose-platform-web-\*      | `ose-platform`     | `.execution-chain-ose-platform`     |
+| oseplatform-web-\*       | `ose-platform`     | `.execution-chain-ose-platform`     |
 
 ### Tool Requirements
 

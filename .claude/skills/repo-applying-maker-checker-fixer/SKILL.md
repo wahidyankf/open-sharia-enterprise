@@ -652,7 +652,7 @@ Seven agent families implement this pattern:
 1. **repo-governance-\*** - Repository-wide consistency
 2. **apps-ayokoding-web-\*** - Hugo content (ayokoding-web)
 3. **docs-tutorial-\*** - Tutorial quality
-4. **apps-ose-platform-web-content-\*** - Hugo content (ose-platform-web)
+4. **apps-oseplatform-web-content-\*** - Hugo content (oseplatform-web)
 5. **readme-\*** - README quality
 6. **docs-\*** - Documentation factual accuracy
 7. **plan-\*** - Plan completeness and structure

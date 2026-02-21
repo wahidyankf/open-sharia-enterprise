@@ -117,7 +117,7 @@ Development: Hugo Development Convention (semantic HTML)
 **Scope**:
 
 - docs/ directory (all markdown)
-- Hugo sites (ayokoding-web, ose-platform-web)
+- Hugo sites (ayokoding-web, oseplatform-web)
 - plans/ directory
 - README files
 

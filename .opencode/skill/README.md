@@ -79,7 +79,7 @@ Skills are synced from `.claude/skills/` maintaining folder structure. For compl
 - **Planning Skills** (2): plan-creating-project-plans, plan-writing-gherkin-criteria
 - **Agent Development Skills** (3): agent-developing-agents, agent-documenting-references, agent-selecting-models
 - **Repository Pattern Skills** (7): repo-applying-maker-checker-fixer, repo-applying-fixer-workflow, repo-assessing-criticality-confidence, repo-defining-workflows, repo-executing-checker-workflow, repo-generating-validation-reports, repo-practicing-trunk-based-development, repo-understanding-repository-architecture
-- **Application-Specific Skills** (2): apps-ayokoding-web-developing-content, apps-ose-platform-web-developing-content
+- **Application-Specific Skills** (2): apps-ayokoding-web-developing-content, apps-oseplatform-web-developing-content
 - **Frontend Skills** (1): frontend-design
 
 ---
