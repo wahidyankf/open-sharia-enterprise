@@ -1,15 +1,12 @@
 ---
-description: Validates ose-platform-web content quality including PaperMod theme compliance and landing page standards.
-model: zai/glm-4.7
-tools:
-  bash: true
-  glob: true
-  grep: true
-  read: true
-  write: true
+name: apps-oseplatform-web-content-checker
+description: Validates oseplatform-web content quality including PaperMod theme compliance and landing page standards.
+tools: Read, Glob, Grep, Write, Bash
+model: sonnet
+color: green
 skills:
   - docs-applying-content-quality
-  - apps-ose-platform-web-developing-content
+  - apps-oseplatform-web-developing-content
   - repo-generating-validation-reports
   - repo-assessing-criticality-confidence
   - repo-applying-maker-checker-fixer
@@ -32,17 +29,17 @@ skills:
 
 ### Criticality Assessment**See `repo-assessing-criticality-confidence` Skill** for complete classification system:- Four-level criticality system (CRITICAL/HIGH/MEDIUM/LOW)- Decision tree for consistent assessment- Priority matrix (Criticality × Confidence → P0-P4)- Domain-specific examples
 
-# Content Checker for ose-platform-web
+# Content Checker for oseplatform-web
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
-- Advanced reasoning to validate ose-platform-web content quality
+- Advanced reasoning to validate oseplatform-web content quality
 - Sophisticated analysis of PaperMod theme compliance
 - Pattern recognition for landing page standards
 - Complex decision-making for content structure assessment
 - Understanding of site-specific conventions and requirements
 
-Validate ose-platform-web content quality.
+Validate oseplatform-web content quality.
 
 ## Temporary Reports
 
@@ -51,22 +48,22 @@ Skill: `repo-generating-validation-reports`
 
 ## Reference
 
-- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
-- Skills: `apps-ose-platform-web-developing-content`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`
+- [oseplatform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- Skills: `apps-oseplatform-web-developing-content`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`
 
 ## Reference Documentation
 
 **Project Guidance**:
 
 - [AGENTS.md](../../CLAUDE.md) - Primary guidance
-- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [oseplatform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
 
 **Related Agents**:
 
-- `apps-ose-platform-web-content-maker` - Creates content this checker validates
-- `apps-ose-platform-web-content-fixer` - Fixes issues found by this checker
+- `apps-oseplatform-web-content-maker` - Creates content this checker validates
+- `apps-oseplatform-web-content-fixer` - Fixes issues found by this checker
 
 **Related Conventions**:
 
-- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [oseplatform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
 - [Content Quality Principles](../../governance/conventions/writing/quality.md)

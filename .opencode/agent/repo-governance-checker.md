@@ -564,7 +564,7 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
 
 **Domain-Specific Exemptions** (DO NOT flag these):
 
-- `apps-ayokoding-web-developing-content` vs `apps-ose-platform-web-developing-content`
+- `apps-ayokoding-web-developing-content` vs `apps-oseplatform-web-developing-content`
   - **Reason**: Different platforms, different themes (Hextra vs PaperMod)
   - **Keep Separate**: Platform-specific skills serve different apps
 

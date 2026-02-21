@@ -1,12 +1,12 @@
 ---
-description: Deploys ose-platform-web to production environment branch (prod-ose-platform-web) after validation. Vercel listens to production branch for automatic builds.
-model: zai/glm-4.5-air
-tools:
-  bash: true
-  grep: true
+name: apps-oseplatform-web-deployer
+description: Deploys oseplatform-web to production environment branch (prod-oseplatform-web) after validation. Vercel listens to production branch for automatic builds.
+tools: Bash, Grep
+model: haiku
+color: purple
 skills:
   - repo-practicing-trunk-based-development
-  - apps-ose-platform-web-developing-content
+  - apps-oseplatform-web-developing-content
 ---
 
 ## Agent Metadata
@@ -15,7 +15,7 @@ skills:
 - **Created**: 2025-12-20
 - **Last Updated**: 2026-01-05
 
-# Deployer for ose-platform-web
+# Deployer for oseplatform-web
 
 **Model Selection Justification**: This agent uses `model: haiku` because it performs straightforward deployment tasks:
 
@@ -25,17 +25,17 @@ skills:
 - No build required (Vercel handles builds automatically)
 - No complex reasoning or content generation required
 
-Deploy ose-platform-web to production by force pushing main branch to prod-ose-platform-web.
+Deploy oseplatform-web to production by force pushing main branch to prod-oseplatform-web.
 
 ## Core Responsibility
 
-Deploy ose-platform-web to production environment:
+Deploy oseplatform-web to production environment:
 
 1. **Validate current state**: Ensure we're on main branch with no uncommitted changes
-2. **Force push to production**: Push main branch to prod-ose-platform-web
+2. **Force push to production**: Push main branch to prod-oseplatform-web
 3. **Trigger Vercel build**: Vercel automatically detects changes and builds
 
-**Build Process**: Vercel listens to prod-ose-platform-web branch and automatically builds the Hugo site (PaperMod theme) on push. No local build needed.
+**Build Process**: Vercel listens to prod-oseplatform-web branch and automatically builds the Hugo site (PaperMod theme) on push. No local build needed.
 
 ## Deployment Workflow
 
@@ -64,16 +64,16 @@ fi
 ### Step 3: Force Push to Production
 
 ```bash
-# Force push main to prod-ose-platform-web
-git push origin main:prod-ose-platform-web --force
+# Force push main to prod-oseplatform-web
+git push origin main:prod-oseplatform-web --force
 
 echo "✅ Deployed successfully!"
-echo "Vercel will automatically build from prod-ose-platform-web branch"
+echo "Vercel will automatically build from prod-oseplatform-web branch"
 ```
 
 ## Vercel Integration
 
-**Production Branch**: `prod-ose-platform-web`  
+**Production Branch**: `prod-oseplatform-web`  
 **Build Trigger**: Automatic on push  
 **Build System**: Vercel (Hugo SSG with PaperMod theme)  
 **No Local Build**: Vercel handles all build operations
@@ -88,7 +88,7 @@ echo "Vercel will automatically build from prod-ose-platform-web branch"
 - ✅ No uncommitted changes
 - ✅ Latest changes from remote
 
-**Why Force Push**: Safe because prod-ose-platform-web is deployment-only. We always want exact copy of main.
+**Why Force Push**: Safe because prod-oseplatform-web is deployment-only. We always want exact copy of main.
 
 ## When to Use This Agent
 
@@ -109,14 +109,14 @@ echo "Vercel will automatically build from prod-ose-platform-web branch"
 **Project Guidance**:
 
 - [AGENTS.md](../../CLAUDE.md) - Primary guidance
-- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [oseplatform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
 - [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md)
 
 **Related Agents**:
 
-- `apps-ose-platform-web-content-checker` - Validates content before deployment
+- `apps-oseplatform-web-content-checker` - Validates content before deployment
 
 **Related Conventions**:
 
-- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [oseplatform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
 - [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md)

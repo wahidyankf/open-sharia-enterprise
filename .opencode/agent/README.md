@@ -92,17 +92,17 @@
 - **apps-ayokoding-web-title-maker** - Generates appropriate titles based on content type and level
 - **apps-ayokoding-web-deployer** - Deploys to production branch (prod-ayokoding-web)
 
-### ose-platform-web Family (4 agents)
+### oseplatform-web Family (4 agents)
 
 **Maker-Checker-Fixer Pattern**:
 
-- **apps-ose-platform-web-content-maker** - Creates landing page content (PaperMod theme, English-only)
-- **apps-ose-platform-web-content-checker** - Validates PaperMod theme compliance
-- **apps-ose-platform-web-content-fixer** - Applies validated fixes
+- **apps-oseplatform-web-content-maker** - Creates landing page content (PaperMod theme, English-only)
+- **apps-oseplatform-web-content-checker** - Validates PaperMod theme compliance
+- **apps-oseplatform-web-content-fixer** - Applies validated fixes
 
 **Deployment**:
 
-- **apps-ose-platform-web-deployer** - Deploys to production branch (prod-ose-platform-web)
+- **apps-oseplatform-web-deployer** - Deploys to production branch (prod-oseplatform-web)
 
 ### Repository Governance Family (6 agents)
 
@@ -225,10 +225,10 @@ All agents leverage Skills from `.opencode/skills/` for:
 ## Reference Documentation
 
 - **Project Instructions**: [AGENTS.md](../../AGENTS.md) (condensed) or [AGENTS.md](../../../CLAUDE.md) (comprehensive)
-- **AI Agents Convention**: [governance/development/agents/ex-ru-de-ag\_\_ai-agents.md](../../../governance/development/agents/ai-agents.md)
-- **Maker-Checker-Fixer Pattern**: [governance/development/pattern/ex-ru-de-pa\_\_maker-checker-fixer.md](../../../governance/development/pattern/maker-checker-fixer.md)
+- **AI Agents Convention**: [governance/development/agents/ex-ru-de-ag\_\_ai-agents.md](../../governance/development/agents/ai-agents.md)
+- **Maker-Checker-Fixer Pattern**: [governance/development/pattern/ex-ru-de-pa\_\_maker-checker-fixer.md](../../governance/development/pattern/maker-checker-fixer.md)
 - **Skills Catalog**: [.opencode/skills/README.md](../../.opencode/skills/README.md)
-- **Workflows**: [governance/workflows/README.md](../../../governance/workflows/README.md)
+- **Workflows**: [governance/workflows/README.md](../../governance/workflows/README.md)
 
 ## Maintenance
 

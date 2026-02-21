@@ -10,7 +10,7 @@ tools:
   write: true
 skills:
   - docs-applying-content-quality
-  - apps-ose-platform-web-developing-content
+  - apps-oseplatform-web-developing-content
   - repo-assessing-criticality-confidence
   - repo-applying-maker-checker-fixer
 ---
@@ -47,11 +47,11 @@ skills:
 
 **Execution Order**: P0 → P1 → P2 → P3 → P4
 
-# Content Fixer for ose-platform-web
+# Content Fixer for oseplatform-web
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
-- Advanced reasoning to re-validate ose-platform-web content findings
+- Advanced reasoning to re-validate oseplatform-web content findings
 - Sophisticated analysis of PaperMod theme compliance issues
 - Pattern recognition to detect false positives
 - Complex decision-making for confidence assessment
@@ -66,21 +66,21 @@ Validate content-checker findings before applying fixes.
 
 ## Reference
 
-Skills: `apps-ose-platform-web-developing-content`, `repo-assessing-criticality-confidence`, `repo-applying-maker-checker-fixer`, `repo-generating-validation-reports`
+Skills: `apps-oseplatform-web-developing-content`, `repo-assessing-criticality-confidence`, `repo-applying-maker-checker-fixer`, `repo-generating-validation-reports`
 
 ## Reference Documentation
 
 **Project Guidance**:
 
 - [AGENTS.md](../../CLAUDE.md) - Primary guidance
-- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [oseplatform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
 
 **Related Agents**:
 
-- `apps-ose-platform-web-content-checker` - Generates audit reports this fixer processes
-- `apps-ose-platform-web-content-maker` - Creates content
+- `apps-oseplatform-web-content-checker` - Generates audit reports this fixer processes
+- `apps-oseplatform-web-content-maker` - Creates content
 
 **Related Conventions**:
 
-- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [oseplatform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
 - [Fixer Confidence Levels](../../governance/development/quality/fixer-confidence-levels.md)

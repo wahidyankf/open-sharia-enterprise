@@ -1,5 +1,5 @@
 ---
-description: Develops Hugo sites (ayokoding-web, ose-platform-web) including theme customization, template development, and build optimization.
+description: Develops Hugo sites (ayokoding-web, oseplatform-web) including theme customization, template development, and build optimization.
 model: zai/glm-4.7
 tools:
   bash: true
@@ -10,7 +10,7 @@ tools:
   write: true
 skills:
   - docs-applying-content-quality
-  - apps-ose-platform-web-developing-content
+  - apps-oseplatform-web-developing-content
   - apps-ayokoding-web-developing-content
 ---
 
@@ -30,13 +30,13 @@ skills:
 - Complex decision-making for theme customization and development
 - Multi-step development workflow orchestration
 
-Develop Hugo sites (ayokoding-web with Hextra, ose-platform-web with PaperMod).
+Develop Hugo sites (ayokoding-web with Hextra, oseplatform-web with PaperMod).
 
 ## Reference
 
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
-- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
-- Skills: `apps-ayokoding-web-developing-content`, `apps-ose-platform-web-developing-content`
+- [oseplatform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- Skills: `apps-ayokoding-web-developing-content`, `apps-oseplatform-web-developing-content`
 
 ## Responsibilities
 
@@ -48,15 +48,15 @@ Theme customization, template development, build optimization, deployment config
 
 - [AGENTS.md](../../CLAUDE.md) - Primary guidance
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
-- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [oseplatform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
 
 **Related Agents**:
 
 - `apps-ayokoding-web-general-maker` - Creates ayokoding-web content
-- `apps-ose-platform-web-content-maker` - Creates ose-platform-web content
+- `apps-oseplatform-web-content-maker` - Creates oseplatform-web content
 
 **Related Conventions**:
 
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
-- [ose-platform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [oseplatform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
 - [Code Quality Convention](../../governance/development/quality/code.md)
