@@ -268,7 +268,7 @@ Volta for Node.js/npm pinning, package-lock.json, .env.example
 
 **See**: [governance/development/workflow/reproducible-environments.md](./governance/development/workflow/reproducible-environments.md)
 
-## AI Agents (56 Specialized Agents)
+## AI Agents (57 Specialized Agents)
 
 **Content Creation**: docs-maker, docs-tutorial-maker, readme-maker, apps\_\_ayokoding-web\_\_general-maker, apps\_\_ayokoding-web\_\_by-example-maker, apps\_\_ose-platform-web\_\_content-maker
 
@@ -280,7 +280,7 @@ Volta for Node.js/npm pinning, package-lock.json, .env.example
 
 **Development**: swe\_\_hugo\_\_developer
 
-**Operations**: docs-file-manager, apps\_\_ayokoding-web\_\_deployer, apps\_\_ose-platform-web\_\_deployer
+**Operations**: docs-file-manager, apps\_\_ayokoding-web\_\_deployer, apps\_\_ose-platform-web\_\_deployer, apps-organiclever-web-deployer
 
 **Meta**: agent-maker, wow\_\_rules-maker, wow\_\_rules-checker, wow\_\_rules-fixer
 
@@ -346,7 +346,7 @@ Six-layer governance hierarchy:
 - **Layer 1: Principles** - WHY we value approaches (10 core principles)
 - **Layer 2: Conventions** - WHAT documentation rules (26 standards)
 - **Layer 3: Development** - HOW we develop (15 practices)
-- **Layer 4: AI Agents** - WHO enforces rules (56 specialized agents)
+- **Layer 4: AI Agents** - WHO enforces rules (57 specialized agents)
 - **Layer 5: Workflows** - WHEN we run processes (orchestrated sequences)
 
 **Skills**: Delivery infrastructure serving agents (33 skills, two modes):
