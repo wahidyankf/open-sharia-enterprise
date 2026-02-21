@@ -1,13 +1,13 @@
 ---
 name: apps-organiclever-web-developing-content
-description: Comprehensive guide for developing organiclever-web Next.js 14 application. Covers App Router structure, React 18, TailwindCSS, Radix UI/shadcn-ui, cookie-based auth, JSON data files, and Vercel deployment. Essential for development tasks on organiclever-web.
+description: Comprehensive guide for developing organiclever-web, the landing and promotional website at www.organiclever.com. Covers Next.js 14 App Router, React 18, TailwindCSS, Radix UI/shadcn-ui, cookie-based auth, JSON data files, and Vercel deployment. Essential for development tasks on organiclever-web.
 ---
 
 # organiclever-web Development Skill
 
 ## Purpose
 
-This Skill provides guidance for developing and managing the **organiclever-web** Next.js 14 application — an organizational management web frontend with cookie-based authentication and Radix UI components.
+This Skill provides guidance for developing and managing the **organiclever-web** Next.js 14 application — the landing and promotional website at www.organiclever.com, featuring cookie-based authentication and Radix UI components.
 
 **When to use this Skill:**
 
@@ -28,6 +28,8 @@ This Skill provides guidance for developing and managing the **organiclever-web*
 - **Styling**: TailwindCSS + Radix UI / shadcn-ui components
 - **Auth**: Cookie-based authentication
 - **Data**: JSON data files in `src/data/`
+- **URL**: https://www.organiclever.com/
+- **Role**: Landing and promotional page
 - **Deployment**: Vercel (`prod-organiclever-web` branch)
 
 ### Tech Stack Details
@@ -171,7 +173,7 @@ export default function LoginForm() {
 
 ### Production Branch
 
-**Branch**: `prod-organiclever-web`  
+**Branch**: `prod-organiclever-web` → [https://www.organiclever.com/](https://www.organiclever.com/)  
 **Purpose**: Deployment-only branch that Vercel monitors  
 **Build System**: Vercel (Next.js auto-detected, no `builds` array needed)  
 **Security Headers**: Configured in `vercel.json`
@@ -231,7 +233,7 @@ Vercel automatically:
 - Detects push to prod-organiclever-web branch
 - Pulls latest code
 - Builds Next.js 14 application
-- Deploys to production URL
+- Deploys to https://www.organiclever.com/
 
 ### Why Force Push
 
@@ -243,19 +245,20 @@ Vercel automatically:
 
 ## Comparison with Other Apps
 
-| Aspect              | organiclever-web         | ayokoding-web                   | ose-platform-web        |
-| ------------------- | ------------------------ | ------------------------------- | ----------------------- |
-| **Framework**       | Next.js 14 (App Router)  | Hugo (Hextra theme)             | Hugo (PaperMod theme)   |
-| **Language**        | TypeScript / React 18    | Markdown / Go templates         | Markdown / Go templates |
-| **Styling**         | TailwindCSS + Radix UI   | Hextra built-in                 | PaperMod built-in       |
-| **Auth**            | Cookie-based sessions    | None                            | None                    |
-| **Data**            | JSON files + API routes  | Markdown content files          | Markdown content files  |
-| **Build**           | Next.js (Vercel)         | Hugo SSG (Vercel)               | Hugo SSG (Vercel)       |
-| **Prod Branch**     | prod-organiclever-web    | prod-ayokoding-web              | prod-ose-platform-web   |
-| **Languages**       | English                  | Bilingual (Indonesian/English)  | English only            |
-| **Content Types**   | App pages + API routes   | Tutorials, essays, videos       | Updates, about page     |
-| **Complexity**      | Interactive SPA patterns | Complex bilingual documentation | Simple landing page     |
-| **Primary Purpose** | Org management app       | Educational platform            | Project landing page    |
+| Aspect              | organiclever-web         | organiclever-app                  | ayokoding-web                   | ose-platform-web        |
+| ------------------- | ------------------------ | --------------------------------- | ------------------------------- | ----------------------- |
+| **Framework**       | Next.js 14 (App Router)  | Flutter (web + mobile)            | Hugo (Hextra theme)             | Hugo (PaperMod theme)   |
+| **Language**        | TypeScript / React 18    | Dart                              | Markdown / Go templates         | Markdown / Go templates |
+| **Styling**         | TailwindCSS + Radix UI   | Flutter Material / custom widgets | Hextra built-in                 | PaperMod built-in       |
+| **Auth**            | Cookie-based sessions    | TBD                               | None                            | None                    |
+| **Data**            | JSON files + API routes  | REST API (organiclever-be)        | Markdown content files          | Markdown content files  |
+| **Build**           | Next.js (Vercel)         | Flutter (app stores + web)        | Hugo SSG (Vercel)               | Hugo SSG (Vercel)       |
+| **Prod Branch**     | prod-organiclever-web    | N/A (app stores)                  | prod-ayokoding-web              | prod-ose-platform-web   |
+| **Languages**       | English                  | English                           | Bilingual (Indonesian/English)  | English only            |
+| **Content Types**   | Landing + promo pages    | Productivity app UI               | Tutorials, essays, videos       | Updates, about page     |
+| **Complexity**      | Static + light auth      | Full cross-platform app           | Complex bilingual documentation | Simple landing page     |
+| **Prod URL**        | www.organiclever.com     | app.organiclever.com + app stores | ayokoding.com                   | oseplatform.com         |
+| **Primary Purpose** | Landing/promotional page | Main productivity app             | Educational platform            | Project landing page    |
 
 ## Development Commands
 
@@ -388,4 +391,4 @@ export default function Counter() {
 
 ---
 
-This Skill packages essential organiclever-web development knowledge for building and deploying the organizational management web application.
+This Skill packages essential organiclever-web development knowledge for building and deploying the OrganicLever landing and promotional website at www.organiclever.com.
