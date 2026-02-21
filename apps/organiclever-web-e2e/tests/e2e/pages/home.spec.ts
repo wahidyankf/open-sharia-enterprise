@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { TEST_CONFIG } from "../test-config";
+import { TEST_CONFIG } from "../../utils/test-config";
 
 test.describe("Home Page", () => {
   test.beforeEach(async ({ page }) => {
