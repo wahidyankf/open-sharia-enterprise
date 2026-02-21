@@ -1,48 +1,95 @@
-# Organic Lever
+# organiclever-web
 
-This is a [Next.js](https://nextjs.org) project for Organic Lever, a tool designed to boost software team productivity.
+Landing and promotional website for [OrganicLever](https://www.organiclever.com/) — an individual productivity tracker with Sharia-compliant features.
 
-## Getting Started
+**URL**: https://www.organiclever.com/
 
-First, run the development server:
+## Purpose
 
-`npm run dev`
+This app serves as the public-facing landing page for OrganicLever. It introduces the product, communicates its value proposition, and provides entry points for download and sign-up.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Distinct role from `organiclever-app`**:
 
-## Features
+| App                | Purpose                                        | URL                          |
+| ------------------ | ---------------------------------------------- | ---------------------------- |
+| `organiclever-web` | Landing and promotional website (this app)     | www.organiclever.com         |
+| `organiclever-app` | Main Flutter application (web + Android + iOS) | app.organiclever.com, stores |
 
-- Authentication system with login and logout functionality
-- Dashboard for authenticated users
-- Home page with hero section and team information
-- About page
+## Tech Stack
+
+| Layer      | Technology               |
+| ---------- | ------------------------ |
+| Framework  | Next.js 14 (App Router)  |
+| UI Runtime | React 18                 |
+| Styling    | TailwindCSS              |
+| Components | Radix UI / shadcn-ui     |
+| Auth       | Cookie-based sessions    |
+| Data       | JSON files (`src/data/`) |
+| Deployment | Vercel (auto-detected)   |
+| Port (dev) | 3000                     |
+
+## Development Commands
+
+```bash
+# Start development server (http://localhost:3000)
+nx dev organiclever-web
+
+# Build for production (local verification)
+nx build organiclever-web
+
+# Run E2E tests (app must be running first)
+nx e2e organiclever-web-e2e
+
+# Type checking
+npx tsc --noEmit --project apps/organiclever-web/tsconfig.json
+```
 
 ## Project Structure
 
-- `src/app`: Contains the main application code
-  - `api`: API routes for authentication
-  - `contexts`: React contexts, including AuthContext
-  - `login`: Login page component
-  - `dashboard`: Dashboard page component
-- `tests`: Contains Playwright tests for the application
-
-## Authentication
-
-The project uses a simple authentication system with email and password. User data is currently stored in `src/data/users.json`.
-
-## Testing
-
-To run the tests:
-
-`npm run test`
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+apps/organiclever-web/
+├── src/
+│   ├── app/                    # Next.js App Router pages
+│   │   ├── dashboard/          # Dashboard route
+│   │   ├── login/              # Login route
+│   │   ├── api/                # API route handlers
+│   │   ├── contexts/           # App-level context providers
+│   │   ├── fonts/              # Font assets
+│   │   ├── layout.tsx          # Root layout
+│   │   └── page.tsx            # Root page (landing)
+│   ├── components/             # Reusable React components
+│   │   └── ui/                 # shadcn-ui component library
+│   ├── contexts/               # Shared React contexts
+│   ├── data/                   # JSON data files
+│   └── lib/                    # Utility functions and helpers
+├── public/                     # Static assets
+├── components.json             # shadcn-ui configuration
+├── next.config.mjs             # Next.js configuration
+├── tailwind.config.ts          # TailwindCSS configuration
+├── tsconfig.json               # TypeScript configuration
+├── vercel.json                 # Vercel deployment configuration
+└── project.json                # Nx project configuration
+```
 
 ## Deployment
 
-This project is currently under development. Deployment instructions will be added in the future.
+**Branch**: `prod-organiclever-web` → [https://www.organiclever.com/](https://www.organiclever.com/)
+
+Vercel monitors `prod-organiclever-web` and auto-builds on every push. Never commit directly to this branch — it is deployment-only. To deploy:
+
+```bash
+# From main branch with clean working tree
+git push origin main:prod-organiclever-web --force
+```
+
+Use the `apps-organiclever-web-deployer` agent for guided deployment.
+
+## E2E Tests
+
+E2E tests live in [`apps/organiclever-web-e2e/`](../organiclever-web-e2e/). See that directory's README for details.
+
+## Related
+
+- **Skill**: `apps-organiclever-web-developing-content` — full development reference
+- **Agent**: `apps-organiclever-web-deployer` — deploys to production
+- **Agent**: `swe-e2e-test-developer` — E2E testing with Playwright
