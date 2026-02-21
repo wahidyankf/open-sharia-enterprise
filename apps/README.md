@@ -14,7 +14,9 @@ Apps follow the naming pattern: **`[domain]-[type]`**
 - `ayokoding-web` - AyoKoding educational platform ([ayokoding.com](https://ayokoding.com)) - Hugo static site
 - `ayokoding-cli` - AyoKoding CLI tool for navigation generation - Go application
 - `rhino-cli` - Repository management CLI tools - Go application
-- `organiclever-app` - OrganicLever mobile and web client - Flutter application (port 3100)
+- `organiclever-web` - OrganicLever landing website (www.organiclever.com) - Next.js app (port 3000)
+- `organiclever-web-e2e` - E2E tests for organiclever-web - Playwright (browser testing)
+- `organiclever-app` - OrganicLever main application (app.organiclever.com, Android, iOS) - Flutter application (port 3100)
 - `organiclever-be` - OrganicLever backend API - Spring Boot application (port 8100)
 - `organiclever-be-e2e` - E2E tests for organiclever-be REST API - Playwright (API testing)
 - `organiclever-app-web-e2e` - Browser E2E tests for organiclever-app Flutter web - Playwright (browser testing)
@@ -150,9 +152,35 @@ apps/organiclever-app-web-e2e/
 └── README.md                    # App documentation
 ```
 
+### Next.js Application (Current)
+
+```
+apps/organiclever-web/
+├── src/
+│   ├── app/                    # Next.js App Router pages
+│   │   ├── dashboard/          # Dashboard route
+│   │   ├── login/              # Login route
+│   │   ├── api/                # API route handlers
+│   │   ├── layout.tsx          # Root layout
+│   │   └── page.tsx            # Root page
+│   ├── components/             # Reusable React components
+│   │   └── ui/                 # shadcn-ui component library
+│   ├── contexts/               # Shared React contexts
+│   ├── data/                   # JSON data files
+│   └── lib/                    # Utility functions and helpers
+├── public/                     # Static assets
+├── components.json             # shadcn-ui configuration
+├── next.config.mjs             # Next.js configuration
+├── tailwind.config.ts          # TailwindCSS configuration
+├── tsconfig.json               # TypeScript configuration
+├── vercel.json                 # Vercel deployment configuration
+├── project.json                # Nx project configuration
+└── README.md                   # App documentation
+```
+
 ### Future App Types
 
-TypeScript/Next.js, Kotlin, Python apps will have language-specific structures and tooling.
+Kotlin, Python apps will have language-specific structures and tooling.
 
 ## Nx Configuration (project.json)
 
@@ -222,17 +250,24 @@ Use Nx commands to run apps:
 nx dev ose-platform-web
 nx dev ayokoding-web
 
+# Development mode (Next.js)
+nx dev organiclever-web
+
 # Build for production
 nx build ose-platform-web
 nx build ayokoding-web
 nx build ayokoding-cli
 nx build rhino-cli
+nx build organiclever-web
 
 # Run CLI applications
 nx run rhino-cli
 
 # Clean build artifacts
 nx clean ose-platform-web
+
+# Run E2E tests for organiclever-web (organiclever-web must be running first)
+nx e2e organiclever-web-e2e
 
 # Run API E2E tests (backend must be running first)
 nx e2e organiclever-be-e2e
@@ -241,14 +276,33 @@ nx e2e organiclever-be-e2e
 nx e2e organiclever-app-web-e2e
 ```
 
+## Deployment Branches
+
+Vercel-deployed apps use dedicated production branches (deployment-only — never commit directly):
+
+| Branch                  | Production URL                                        | App              |
+| ----------------------- | ----------------------------------------------------- | ---------------- |
+| `prod-ayokoding-web`    | [ayokoding.com](https://ayokoding.com)                | ayokoding-web    |
+| `prod-ose-platform-web` | [oseplatform.com](https://oseplatform.com)            | ose-platform-web |
+| `prod-organiclever-web` | [www.organiclever.com](https://www.organiclever.com/) | organiclever-web |
+
+Deploy by force-pushing `main` to the production branch:
+
+```bash
+git push origin main:prod-organiclever-web --force
+```
+
+Use the corresponding deployer agent (e.g. `apps-organiclever-web-deployer`) for guided deployment.
+
 ## Language Support
 
 Currently:
 
 - **Hugo** (static sites) - ose-platform-web, ayokoding-web
 - **Go** (CLI tools) - ayokoding-cli, rhino-cli
+- **TypeScript/Next.js** (landing website) - organiclever-web
 - **Flutter/Dart** (mobile & web) - organiclever-app
 - **Java/Spring Boot** (backend API) - organiclever-be
-- **TypeScript/Playwright** (E2E testing) - organiclever-be-e2e, organiclever-app-web-e2e
+- **TypeScript/Playwright** (E2E testing) - organiclever-be-e2e, organiclever-app-web-e2e, organiclever-web-e2e
 
-Future: TypeScript/Next.js, Kotlin, Python apps (each language will have language-specific structure and tooling)
+Future: Kotlin, Python apps (each language will have language-specific structure and tooling)
