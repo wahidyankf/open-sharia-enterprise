@@ -10,7 +10,7 @@ Apps follow the naming pattern: **`[domain]-[type]`**
 
 ### Current Apps
 
-- `ose-platform-web` - OSE Platform website ([oseplatform.com](https://oseplatform.com)) - Hugo static site
+- `oseplatform-web` - OSE Platform website ([oseplatform.com](https://oseplatform.com)) - Hugo static site
 - `ayokoding-web` - AyoKoding educational platform ([ayokoding.com](https://ayokoding.com)) - Hugo static site
 - `ayokoding-cli` - AyoKoding CLI tool for navigation generation - Go application
 - `rhino-cli` - Repository management CLI tools - Go application
@@ -34,7 +34,7 @@ Apps follow the naming pattern: **`[domain]-[type]`**
 ### Hugo Static Site (Current)
 
 ```
-apps/ose-platform-web/
+apps/oseplatform-web/
 ├── content/                 # Markdown content files
 ├── layouts/                 # Hugo templates
 ├── static/                  # Static assets (images, CSS, JS)
@@ -186,26 +186,26 @@ Kotlin, Python apps will have language-specific structures and tooling.
 
 Each app must have a `project.json` file with Nx configuration.
 
-**Hugo App Example** (`ose-platform-web`):
+**Hugo App Example** (`oseplatform-web`):
 
 ```json
 {
-  "name": "ose-platform-web",
-  "sourceRoot": "apps/ose-platform-web",
+  "name": "oseplatform-web",
+  "sourceRoot": "apps/oseplatform-web",
   "projectType": "application",
   "targets": {
     "dev": {
       "executor": "nx:run-commands",
       "options": {
         "command": "hugo server --buildDrafts --buildFuture",
-        "cwd": "apps/ose-platform-web"
+        "cwd": "apps/oseplatform-web"
       }
     },
     "build": {
       "executor": "nx:run-commands",
       "options": {
         "command": "bash build.sh",
-        "cwd": "apps/ose-platform-web"
+        "cwd": "apps/oseplatform-web"
       },
       "outputs": ["{projectRoot}/public"]
     },
@@ -213,7 +213,7 @@ Each app must have a `project.json` file with Nx configuration.
       "executor": "nx:run-commands",
       "options": {
         "command": "rm -rf public resources",
-        "cwd": "apps/ose-platform-web"
+        "cwd": "apps/oseplatform-web"
       }
     }
   },
@@ -247,14 +247,14 @@ Use Nx commands to run apps:
 
 ```bash
 # Development mode (Hugo sites)
-nx dev ose-platform-web
+nx dev oseplatform-web
 nx dev ayokoding-web
 
 # Development mode (Next.js)
 nx dev organiclever-web
 
 # Build for production
-nx build ose-platform-web
+nx build oseplatform-web
 nx build ayokoding-web
 nx build ayokoding-cli
 nx build rhino-cli
@@ -264,7 +264,7 @@ nx build organiclever-web
 nx run rhino-cli
 
 # Clean build artifacts
-nx clean ose-platform-web
+nx clean oseplatform-web
 
 # Run E2E tests for organiclever-web (organiclever-web must be running first)
 nx e2e organiclever-web-e2e
@@ -283,7 +283,7 @@ Vercel-deployed apps use dedicated production branches (deployment-only — neve
 | Branch                  | Production URL                                        | App              |
 | ----------------------- | ----------------------------------------------------- | ---------------- |
 | `prod-ayokoding-web`    | [ayokoding.com](https://ayokoding.com)                | ayokoding-web    |
-| `prod-ose-platform-web` | [oseplatform.com](https://oseplatform.com)            | ose-platform-web |
+| `prod-oseplatform-web`  | [oseplatform.com](https://oseplatform.com)            | oseplatform-web  |
 | `prod-organiclever-web` | [www.organiclever.com](https://www.organiclever.com/) | organiclever-web |
 
 Deploy by force-pushing `main` to the production branch:
@@ -298,7 +298,7 @@ Use the corresponding deployer agent (e.g. `apps-organiclever-web-deployer`) for
 
 Currently:
 
-- **Hugo** (static sites) - ose-platform-web, ayokoding-web
+- **Hugo** (static sites) - oseplatform-web, ayokoding-web
 - **Go** (CLI tools) - ayokoding-cli, rhino-cli
 - **TypeScript/Next.js** (landing website) - organiclever-web
 - **Flutter/Dart** (mobile & web) - organiclever-app
