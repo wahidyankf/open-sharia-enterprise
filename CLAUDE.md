@@ -20,7 +20,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `ayokoding-web` - Hugo static site (Hextra theme, bilingual)
   - `ayokoding-cli` - Go CLI tool for content automation
   - `rhino-cli` - Go CLI tool for repository management (Repository Hygiene & INtegration Orchestrator)
-  - `organiclever-app` - Flutter mobile and web application
+  - `organiclever-web` - Next.js 14 landing and promotional website (www.organiclever.com)
+  - `organiclever-web-e2e` - Playwright E2E tests for organiclever-web
+  - `organiclever-app` - Flutter main application (app.organiclever.com, Android, iOS)
   - `organiclever-be` - Spring Boot REST API backend
   - `organiclever-be-e2e` - Playwright E2E tests for organiclever-be REST API
   - `organiclever-app-web-e2e` - Playwright browser E2E tests for organiclever-app Flutter web
@@ -34,6 +36,8 @@ open-sharia-enterprise/
 │   ├── ayokoding-web/       # AyoKoding website (bilingual)
 │   ├── ayokoding-cli/       # Content automation CLI
 │   ├── rhino-cli/          # Repository management CLI
+│   ├── organiclever-web/     # OrganicLever landing website (Next.js)
+│   ├── organiclever-web-e2e/ # Playwright E2E tests for organiclever-web
 │   ├── organiclever-app/  # Flutter mobile & web app
 │   ├── organiclever-be/   # Spring Boot REST API
 │   ├── organiclever-be-e2e/ # Playwright E2E tests for backend
@@ -142,7 +146,10 @@ nx graph                # Visualize dependencies
 **Trunk Based Development** - All development on `main` branch:
 
 - **Default branch**: `main`
-- **Environment branches**: `prod-ayokoding-web`, `prod-ose-platform-web` (deployment only, never commit directly)
+- **Environment branches** (Vercel deployment only — never commit directly):
+  - `prod-ayokoding-web` → [ayokoding.com](https://ayokoding.com)
+  - `prod-ose-platform-web` → [oseplatform.com](https://oseplatform.com)
+  - `prod-organiclever-web` → [www.organiclever.com](https://www.organiclever.com/)
 - **Commit format**: Conventional Commits `<type>(<scope>): <description>`
   - Types: feat, fix, docs, style, refactor, perf, test, chore, ci, revert
   - Scope optional but recommended
@@ -362,6 +369,7 @@ Six-layer governance hierarchy:
 ### ose-platform-web
 
 - **URL**: <https://oseplatform.com>
+- **Production branch**: `prod-ose-platform-web` → oseplatform.com
 - **Theme**: PaperMod
 - **Hugo**: 0.155.2 Extended
 - **Deployment**: Vercel
@@ -377,6 +385,7 @@ nx build ose-platform-web  # Production build
 ### ayokoding-web
 
 - **URL**: <https://ayokoding.com>
+- **Production branch**: `prod-ayokoding-web` → ayokoding.com
 - **Theme**: Hextra (documentation)
 - **Hugo**: 0.155.2 Extended
 - **Languages**: Indonesian (primary), English
@@ -394,6 +403,25 @@ nx run-pre-commit ayokoding-web  # Update titles + navigation
 **Pre-commit automation**: When content changes, automatically rebuilds CLI, updates titles from filenames, regenerates navigation
 
 **See**: [apps/ayokoding-cli/README.md](./apps/ayokoding-cli/README.md), [governance/conventions/hugo/](./governance/conventions/hugo/)
+
+### organiclever-web
+
+- **URL**: <https://www.organiclever.com/>
+- **Production branch**: `prod-organiclever-web` → www.organiclever.com
+- **Framework**: Next.js 14 (App Router)
+- **Deployment**: Vercel
+- **Content**: Landing and promotional website for OrganicLever
+- **E2E tests**: `organiclever-web-e2e`
+
+**Commands**:
+
+```bash
+nx dev organiclever-web     # Development server (localhost:3000)
+nx build organiclever-web   # Production build
+nx e2e organiclever-web-e2e # Run E2E tests
+```
+
+**See**: [apps/organiclever-web/README.md](./apps/organiclever-web/README.md), [.claude/skills/apps-organiclever-web-developing-content/SKILL.md](./.claude/skills/apps-organiclever-web-developing-content/SKILL.md)
 
 ## Temporary Files for AI Agents
 

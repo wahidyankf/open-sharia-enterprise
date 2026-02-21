@@ -6,6 +6,7 @@
 
 - **OSE Platform** ([oseplatform.com](https://oseplatform.com)) - Main platform website (under construction)
 - **AyoKoding** ([ayokoding.com](https://ayokoding.com)) - Shares the technological research and domain knowledge we develop for this project. What we learn while building Open Sharia Enterprise becomes accessible to the wider community through educational content
+- **OrganicLever** ([organiclever.com](https://www.organiclever.com/)) - Landing and promotional website (Phase 1, in development)
 
 ## 🚧 Project Status
 
@@ -72,8 +73,8 @@ For the complete roadmap including all phases, tech stack, and strategic approac
 **Phase 1 (Planned - OrganicLever):**
 
 - Backend: Java + Spring Boot
-- Frontend: Next.js + TypeScript
-- Mobile: Flutter + Dart
+- Frontend (landing): Next.js + TypeScript → www.organiclever.com
+- Frontend (app): Flutter + Dart → app.organiclever.com, Android, iOS
 - Infrastructure: Kubernetes
 
 See **[ROADMAP.md](./ROADMAP.md)** for complete tech stack evolution across all phases.
@@ -117,7 +118,7 @@ open-sharia-enterprise/
 
 This project uses **Nx** to manage applications and libraries:
 
-- **`apps/`** - Deployable applications (current: [`ose-platform-web`](./apps/ose-platform-web/), [`ayokoding-web`](./apps/ayokoding-web/), [`ayokoding-cli`](./apps/ayokoding-cli/), [`rhino-cli`](./apps/rhino-cli/), [`organiclever-app`](./apps/organiclever-app/), [`organiclever-be`](./apps/organiclever-be/), [`organiclever-be-e2e`](./apps/organiclever-be-e2e/), [`organiclever-app-web-e2e`](./apps/organiclever-app-web-e2e/))
+- **`apps/`** - Deployable applications (current: [`ose-platform-web`](./apps/ose-platform-web/), [`ayokoding-web`](./apps/ayokoding-web/), [`ayokoding-cli`](./apps/ayokoding-cli/), [`rhino-cli`](./apps/rhino-cli/), [`organiclever-web`](./apps/organiclever-web/), [`organiclever-web-e2e`](./apps/organiclever-web-e2e/), [`organiclever-app`](./apps/organiclever-app/), [`organiclever-be`](./apps/organiclever-be/), [`organiclever-be-e2e`](./apps/organiclever-be-e2e/), [`organiclever-app-web-e2e`](./apps/organiclever-app-web-e2e/))
 - **`libs/`** - Reusable libraries with language prefixes (`ts-*`, future: `java-*`, `py-*`) - currently empty
 - **`apps-labs/`** - Experimental apps and POCs (framework evaluation, language exploration) - currently empty
 
