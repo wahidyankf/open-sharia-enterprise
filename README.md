@@ -12,15 +12,16 @@
 
 > ⚠️ **PRE-ALPHA** - This project is in early development and **NOT ready for production use**. Core architecture and patterns are still being established. APIs and implementations may change significantly. **Contributions and pull requests are not being accepted** at this time.
 
-**Current Phase: Phase 0 (Repository Setup & Knowledge Base)**
+**Current Phase: Phase 1 (OrganicLever - Productivity Tracker)**
 
-Building repository infrastructure, governance, and launching initial websites:
+Building OrganicLever, a full-stack individual productivity tracker:
 
-- 🌐 **Live sites**: [ayokoding.com](https://ayokoding.com) (educational) and [oseplatform.com](https://oseplatform.com) (marketing)
-- 🛠️ **CLI tools**: [ayokoding-cli](./apps/ayokoding-cli/) and [rhino-cli](./apps/rhino-cli/)
-- 📚 **Infrastructure**: AI agents, documentation framework, governance, planning systems
+- 🌐 **Landing site**: [organiclever.com](https://www.organiclever.com/) ([organiclever-web](./apps/organiclever-web/)) - Next.js promotional website
+- 📱 **Mobile & web app**: Flutter application — web, Android, iOS ([organiclever-app](./apps/organiclever-app/))
+- ☕ **Backend API**: Spring Boot REST API ([organiclever-be](./apps/organiclever-be/))
+- ✅ **Phase 0 complete**: [ayokoding.com](https://ayokoding.com), [oseplatform.com](https://oseplatform.com), AI agents, governance, CLI tools
 
-**Next Phase: Phase 1 (OrganicLever)** - Individual productivity tracker to test deployment and knowledge base patterns before SMB/enterprise.
+**Next Phase: Phase 2 (SMB Application)** - Small and medium business application building on OrganicLever's foundation.
 
 **What to Expect:**
 
@@ -54,9 +55,9 @@ For complete principles, see [governance/principles/](./governance/principles/RE
 
 This project follows a **progressive complexity approach** - starting simple, testing thoroughly, and scaling up systematically from individual users to SMB to enterprise.
 
-**Current Phase: Phase 0 (Repository Setup & Knowledge Base)** - Establishing repository infrastructure, governance, and launching initial static websites (ayokoding.com, oseplatform.com).
+**Current Phase: Phase 1 (OrganicLever - Productivity Tracker)** - Building a full-stack individual productivity tracker with landing website, mobile app, and backend API.
 
-**Next Phase: Phase 1 (OrganicLever - Productivity Tracker)** - Individual productivity application to test deployment, security, and knowledge base patterns at small scale before SMB/enterprise.
+**Next Phase: Phase 2 (SMB Application)** - Small and medium business application building on OrganicLever's foundation.
 
 For the complete roadmap including all phases, tech stack, and strategic approach, see **[ROADMAP.md](./ROADMAP.md)**.
 
@@ -64,13 +65,13 @@ For the complete roadmap including all phases, tech stack, and strategic approac
 
 **Guiding Principle**: Technologies that keep you free - open formats, portable data, no vendor lock-in.
 
-**Current Phase 0:**
+**Phase 0 (Complete):**
 
 - Node.js 24.11.1 & npm 11.6.3 (via Volta) - Tooling and development infrastructure
 - Hugo (Extended) - Static sites (ayokoding-web, ose-platform-web)
 - Golang - CLI tools ([ayokoding-cli](./apps/ayokoding-cli/), [rhino-cli](./apps/rhino-cli/)) and future security infrastructure
 
-**Phase 1 (Planned - OrganicLever):**
+**Current Phase 1 (OrganicLever):**
 
 - Backend: Java + Spring Boot
 - Frontend (landing): Next.js + TypeScript → www.organiclever.com
