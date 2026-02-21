@@ -1,0 +1,41 @@
+[
+  {
+    "id": 1,
+    "name": "Alice Johnson",
+    "role": "Senior Software Engineers",
+    "email": "alice@example.com",
+    "github": "alicejohnson"
+  },
+  {
+    "id": 2,
+    "name": "Bob Smith",
+    "role": "Product Manager",
+    "github": "bobsmith"
+  },
+  {
+    "id": 3,
+    "name": "Charlie Davis",
+    "role": "UX Designer",
+    "email": "charlie@example.com",
+    "github": "charliedavis"
+  },
+  {
+    "id": 4,
+    "name": "Diana Miller",
+    "role": "Backend Developer",
+    "github": "dianamiller"
+  },
+  {
+    "id": 5,
+    "name": "Ethan Brown",
+    "role": "Frontend Developer",
+    "email": "ethan@example.com",
+    "github": "ethanbrown"
+  },
+  {
+    "id": 6,
+    "name": "Fiona Taylor",
+    "role": "QA Engineer",
+    "github": "fionataylor"
+  }
+]
