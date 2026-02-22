@@ -12,7 +12,7 @@ tags:
   - accessibility
   - color-blindness
 created: 2025-11-24
-updated: 2025-12-31
+updated: 2026-02-22
 ---
 
 # Diagram and Schema Convention
@@ -1023,6 +1023,7 @@ Before committing documentation with diagrams:
 - [ ] **Parentheses and brackets escaped in node text** (use HTML entities: `#40;` `#41;` `#91;` `#93;`)
 - [ ] **No literal quotes inside node text** (remove quotes or use descriptive text like "string value")
 - [ ] **No style commands in sequence diagrams** (use `box` syntax or switch to flowchart)
+- [ ] **No `\n` in edge labels** (use single-line text; `\n` works in node labels but renders literally in edge labels `-->|"text"|`)
 - [ ] Mermaid diagrams tested in GitHub preview or Obsidian
 - [ ] ASCII art (if used) verified in monospace font
 - [ ] Format choice is intentional (not mixing Mermaid and ASCII unnecessarily)
@@ -1344,6 +1345,8 @@ stateDiagram-v2
 - Also required in **edge labels** (`-->|text|` syntax)
 - NOT needed in regular text, comments, or code blocks
 
+> **Note on `\n` in labels**: `\n` creates line breaks in node labels (`["line1\nline2"]`) but renders as literal text in edge labels (`-->|"line1\nline2"|`). Always use single-line text for edge labels.
+
 **Example: Complex node text with multiple escapes:**
 
 ```mermaid
@@ -1436,6 +1439,41 @@ sequenceDiagram
 
 - Python intermediate Example 33 (async/await): Changed `participant Main as "main()"` to `participant Main`
 - Elixir advanced Example 62 (GenServer): Changed `participant Client as "Client Process"` to `participant Client`
+
+### Error 8: `\n` Escape Sequences Do Not Create Line Breaks in Edge Labels
+
+**CRITICAL**: The `\n` escape sequence behaves differently in node labels versus edge labels. In node labels it creates line breaks, but in edge labels it renders as the literal characters `\n`.
+
+**Context**:
+
+- **Node labels** (`["text\nmore text"]`): Mermaid interprets `\n` as a line break — this works correctly.
+- **Edge labels** (`-->|"Revenue\n& Learnings"|`): Mermaid does NOT interpret `\n` — the literal characters `\n` appear as visible text in the rendered diagram.
+
+**Problem Example (FAIL: BROKEN)**:
+
+```mermaid
+graph LR
+    A[Phase 1] -->|"Revenue\n& Learnings"| B[Phase 2]
+    B -->|"Revenue\n& Certifications"| C[Phase 3]
+```
+
+This renders the arrow labels as `Revenue\n& Learnings` and `Revenue\n& Certifications` with the literal `\n` characters visible.
+
+**Solution (PASS: WORKING)**:
+
+Keep edge labels on a single line — they do not support line breaks:
+
+```mermaid
+graph LR
+    A[Phase 1] -->|"Revenue & Learnings"| B[Phase 2]
+    B -->|"Revenue & Certifications"| C[Phase 3]
+```
+
+**Rule**: Never use `\n` in edge labels. Keep edge label text short and single-line. If an edge label is too long, shorten it rather than trying to wrap it.
+
+**Affected syntax**: Edge labels only (`-->|"text"|` syntax). Node labels (`["text\nmore text"]`) continue to support `\n` for line breaks correctly.
+
+**Real-World Context**: Discovered when labeling phase-to-phase arrows in a roadmap diagram on `apps/oseplatform-web/content/about.md`. The labels `"Revenue\n& Learnings"` and `"Revenue\n& Certifications"` rendered with literal `\n` characters visible in the diagram.
 
 ## Diagram Size and Splitting
 
