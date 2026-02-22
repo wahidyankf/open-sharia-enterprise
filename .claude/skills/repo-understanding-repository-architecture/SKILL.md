@@ -76,7 +76,7 @@ Layer 5: Workflows    WHEN - Orchestrate (multi-step processes)
 
 **Key Document**: [Core Principles Index](../README.md)
 
-**Eleven Principles** (abbreviated):
+**Principles** (abbreviated):
 
 1. Deliberate Problem-Solving
 2. Simplicity Over Complexity

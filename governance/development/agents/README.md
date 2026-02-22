@@ -1,6 +1,6 @@
 # AI Agents Development
 
-Standards and conventions for creating and managing AI agents in the `.opencode/agent/` directory.
+Standards and conventions for creating and managing AI agents in the `.claude/agents/` directory (source of truth), synced to `.opencode/agent/`.
 
 ## Purpose
 
@@ -25,6 +25,7 @@ These standards define **HOW to develop AI agents**, covering agent file structu
 ## Documents
 
 - [AI Agents Convention](./ai-agents.md) - Complete standards for creating and managing AI agents including naming, file structure, frontmatter requirements, tool access patterns, and model selection
+- [Skill Context Architecture](./skill-context-architecture.md) - Architectural constraint requiring all repository skills to use inline context for universal subagent compatibility
 
 ## Related Documentation
 

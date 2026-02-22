@@ -23,11 +23,17 @@ updated: 2026-01-20
 
 **Curated Language Guidance**: We provide language-specific documentation that captures idioms, best practices, and antipatterns for each language in the platform. Learn how to write code that feels native to the language, not awkwardly translated from another one.
 
-This directory contains comprehensive documentation on programming languages used throughout the platform. Each language has three core documents:
+This directory contains comprehensive documentation on programming languages used throughout the platform. Languages use one of two documentation patterns:
+
+**Three-Document Pattern** (TypeScript, Python, Dart):
 
 1. **Idioms** - Language-specific patterns, conventions, and idiomatic code styles
 2. **Best Practices** - Proven approaches for writing clean, maintainable code
 3. **Antipatterns** - Common mistakes and pitfalls to avoid
+
+**Domain-Specific Standards Pattern** (Java, Go, Elixir):
+
+Multiple domain-focused standards files covering specific areas (testing, security, concurrency, etc.) as separate documents rather than three consolidated files. See each language's README for their specific document structure.
 
 ## Quick Decision: Which Language for My Task?
 
@@ -85,14 +91,27 @@ All code written in the languages documented here MUST follow the standards, pat
 
 ### Language Coverage
 
-Each language directory contains:
+Each language directory contains a README.md (language overview and version info) plus either:
+
+**Three-Document Pattern** (TypeScript, Python, Dart):
 
 ```
 [language-name]/
-├── README.md                           # Language overview and version info
-├── ex-soen-prla-[la]__idioms.md    # Language-specific idioms
+├── README.md                                  # Language overview and version info
+├── ex-soen-prla-[la]__idioms.md          # Language-specific idioms
 ├── ex-soen-prla-[la]__best-practices.md  # Best practices
 └── ex-soen-prla-[la]__antipatterns.md    # Common antipatterns
+```
+
+**Domain-Specific Standards Pattern** (Java, Go, Elixir):
+
+```
+[language-name]/
+├── README.md                                       # Language overview and version info
+├── ex-soen-prla-[la]__coding-standards.md     # General coding standards
+├── ex-soen-prla-[la]__testing-standards.md    # Testing standards
+├── ex-soen-prla-[la]__security-standards.md   # Security standards
+└── ex-soen-prla-[la]__[domain]-standards.md   # Additional domain-specific files
 ```
 
 ### Document Categories

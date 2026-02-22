@@ -2,6 +2,7 @@
 title: "Workflows"
 description: Orchestrated multi-step processes that compose AI agents for systematic content creation, validation, and remediation
 category: explanation
+subcategory: workflows
 tags:
   - index
   - workflows
@@ -94,7 +95,7 @@ All _-quality-gate workflows follow the [_-check-fix Workflow Pattern](./meta/wo
 Workflows for creating and validating documentation:
 
 - **docs**: Project documentation (tutorials, how-to, reference, explanation)
-- **readme**: README.md quality and engagement
+- **readme**: README.md quality and engagement (planned - no workflow file yet)
 - **plan**: Project planning documents
 
 ### Hugo Content Workflows
@@ -102,9 +103,9 @@ Workflows for creating and validating documentation:
 Workflows for Hugo website content:
 
 - **ayokoding-web**: ayokoding-web content creation and validation
-- **ayokoding-facts**: Factual accuracy validation for ayokoding-web
-- **ayokoding-structure**: Navigation structure and weight management
-- **oseplatform-web-content**: oseplatform-web content
+- **ayokoding-facts**: Factual accuracy validation for ayokoding-web (planned - no workflow file yet)
+- **ayokoding-structure**: Navigation structure and weight management (planned - no workflow file yet)
+- **oseplatform-web-content**: oseplatform-web content (planned - no workflow file yet)
 
 ### Repository Governance Workflows
 

@@ -1,20 +1,19 @@
+---
 title: Go Concurrency and Parallelism
 description: Comprehensive guide to concurrent programming with goroutines, channels, and the sync package
 category: explanation
-subcategory: prog-lang-golang
+subcategory: prog-lang
 tags:
-
-- golang
-- concurrency
-- parallelism
-- goroutines
-- channels
-- sync
-- context
-  principles:
-- immutability
-- explicit-over-implicit
-
+  - golang
+  - concurrency
+  - parallelism
+  - goroutines
+  - channels
+  - sync
+  - context
+principles:
+  - immutability
+  - explicit-over-implicit
 ---
 
 # Go Concurrency and Parallelism

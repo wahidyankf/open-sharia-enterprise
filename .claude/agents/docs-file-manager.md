@@ -16,6 +16,7 @@ skills:
 - **Role**: Updater (yellow)
 - **Created**: 2025-11-30
 - **Last Updated**: 2026-01-03
+- **Size Tier**: Tier 2 (standard agent with complex decision logic — cascading directory operations, multi-step link tracking, deletion safety analysis)
 
 # Documentation File Manager Agent
 
@@ -523,9 +524,9 @@ Next steps:
 4. Commit changes: git commit -m "refactor(docs): reorganize documentation structure"
 ```
 
-### Before Large Reorganizations: Consider repo-rules-checker
+### Before Large Reorganizations: Consider repo-governance-checker
 
-For large reorganizations, consider running `repo-rules-checker` before and after:
+For large reorganizations, consider running `repo-governance-checker` before and after:
 
 - Before: Check current state compliance
 - After: Verify no new inconsistencies introduced

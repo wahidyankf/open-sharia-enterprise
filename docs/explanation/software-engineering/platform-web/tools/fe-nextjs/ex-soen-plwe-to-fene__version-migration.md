@@ -2,6 +2,7 @@
 title: Next.js Version Migration
 description: Comprehensive guide to migrating Next.js applications from Pages Router to App Router, upgrading Next.js versions (13→14→15), React migrations, breaking changes, and migration strategies
 category: explanation
+subcategory: platform-web
 tags:
   - nextjs
   - migration

@@ -26,5 +26,4 @@ Standards for linking between AyoKoding educational content and OSE Platform doc
 
 ---
 
-**Total Conventions**: 1
 **Last Updated**: 2026-02-07

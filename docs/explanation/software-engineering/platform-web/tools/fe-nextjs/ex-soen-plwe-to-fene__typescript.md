@@ -2,6 +2,7 @@
 title: Next.js TypeScript
 description: Comprehensive guide to TypeScript integration in Next.js with type-safe patterns, configuration, and best practices
 category: explanation
+subcategory: platform-web
 tags:
   - nextjs
   - typescript

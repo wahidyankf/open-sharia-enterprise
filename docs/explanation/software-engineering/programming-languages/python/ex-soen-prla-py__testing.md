@@ -1,3 +1,26 @@
+---
+title: Python Testing
+description: Testing standards and practices for Python code including testing pyramid, pytest patterns, unit tests, integration tests, and E2E testing strategies
+category: explanation
+subcategory: prog-lang
+tags:
+  - python
+  - testing
+  - pytest
+  - unit-tests
+  - integration-tests
+  - e2e
+  - tdd
+principles:
+  - automation-over-manual
+  - explicit-over-implicit
+  - reproducibility
+created: 2026-02-22
+updated: 2026-02-22
+---
+
+# Python Testing
+
 ## Python Testing Pyramid
 
 ```mermaid

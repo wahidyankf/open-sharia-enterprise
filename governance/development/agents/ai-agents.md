@@ -753,7 +753,7 @@ Agents are categorized by their **primary role** which aligns with naming suffix
 **Edge Case Notes:**
 
 - **\*Yellow with Write**: Some Yellow fixer agents (e.g., readme-fixer, repo-governance-fixer) may have Write tool for audit report generation. Documented exception.
-- **\*Purple Bash-only**: Deployers (ayokoding-web-deployer, oseplatform-web-deployer) only need Bash for git/deployment orchestration. Purple without Write/Edit is valid for Bash-only orchestrators.
+- **\*Purple Bash-only**: Deployers (apps-ayokoding-web-deployer, apps-oseplatform-web-deployer, apps-organiclever-web-deployer) only need Bash for git/deployment orchestration. Purple without Write/Edit is valid for Bash-only orchestrators.
 - **\*\*Green with Write + Edit**: Link checker agents (docs-link-general-checker, apps-ayokoding-web-link-checker) also have Edit and Write tools for cache file management, but their primary role is validation (checker). Color is green to reflect primary role. See "Link Checker Agents Note" below.
 
 **Color Accessibility Note**: All four colors (blue, green, yellow, purple) are from the verified accessible palette defined in [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - the master reference for all color usage in this repository. These colors meet WCAG AA standards for both light and dark modes and work for all types of color blindness (protanopia, deuteranopia, and tritanopia). See the accessibility section below for details on how agents are identified beyond color. All color-related work must reference the Color Accessibility Convention as the authoritative source.
@@ -847,7 +847,7 @@ Start: What is the agent's primary capability?
   - Execute deployment orchestration (purple's "executes plans/orchestrates tasks")
   - Don't create or edit files, only run git/deployment commands
   - Edge case: purple without Write/Edit tools (Bash-only orchestration)
-  - Examples: ayokoding-web-deployer, oseplatform-web-deployer
+  - Examples: apps-ayokoding-web-deployer, apps-oseplatform-web-deployer, apps-organiclever-web-deployer
 - **Updaters with Write tool**: Investigate actual usage
   - Yellow (Updaters) should have Edit but NOT Write
   - If Write is needed for creating new convention files → keep yellow, document exception
@@ -1255,8 +1255,9 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 
 **Examples**:
 
-- ayokoding-web-deployer (deployment automation)
-- oseplatform-web-deployer (deployment automation)
+- apps-ayokoding-web-deployer (deployment automation)
+- apps-oseplatform-web-deployer (deployment automation)
+- apps-organiclever-web-deployer (deployment automation)
 
 **When to use this tier**:
 
@@ -1284,6 +1285,7 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 - docs-maker (documentation creation)
 - docs-checker (factual verification)
 - docs-tutorial-checker (tutorial quality validation)
+- docs-file-manager (file organization, prefix calculation, link updates)
 - agent-maker (agent creation automation)
 - apps-ayokoding-web-general-maker (general Hugo content creation)
 - apps-ayokoding-web-by-example-maker (by-example tutorial creation)
@@ -1318,7 +1320,6 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 - plan-checker (pre-implementation validation)
 - repo-governance-maker (cascading updates across files)
 - repo-governance-checker (comprehensive consistency validation)
-- docs-file-manager (prefix calculation, link updates, git operations)
 - swe-hugo-developer (theme development, asset pipeline, configuration)
 - docs-link-general-checker (external/internal link validation with caching)
 
@@ -1334,11 +1335,11 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 
 Quick categorization for existing agents:
 
-| Tier                 | Agents                                                                                                                                                                                                                                                                                                                                      |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Tier 1: Simple**   | ayokoding-web-deployer, oseplatform-web-deployer                                                                                                                                                                                                                                                                                            |
-| **Tier 2: Standard** | docs-maker, docs-tutorial-maker, docs-checker, docs-tutorial-checker, readme-maker, readme-checker, agent-maker, apps-ayokoding-web-general-maker, apps-ayokoding-web-by-example-maker, apps-ayokoding-web-general-checker, apps-ayokoding-web-by-example-checker, apps-oseplatform-web-content-maker, apps-oseplatform-web-content-checker |
-| **Tier 3: Complex**  | plan-maker, plan-executor, plan-checker, plan-execution-checker, repo-governance-maker, repo-governance-checker, docs-file-manager, swe-hugo-developer, docs-link-general-checker                                                                                                                                                           |
+| Tier                 | Agents                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Tier 1: Simple**   | apps-ayokoding-web-deployer, apps-oseplatform-web-deployer, apps-organiclever-web-deployer, social-linkedin-post-maker, apps-ayokoding-web-navigation-maker, apps-ayokoding-web-title-maker, apps-ayokoding-web-structure-fixer, apps-ayokoding-web-facts-fixer, apps-ayokoding-web-link-fixer, apps-oseplatform-web-content-fixer, repo-workflow-maker, repo-workflow-checker, repo-workflow-fixer                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| **Tier 2: Standard** | docs-maker, docs-tutorial-maker, docs-checker, docs-tutorial-checker, docs-file-manager, docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-maker, readme-checker, readme-fixer, agent-maker, plan-fixer, apps-ayokoding-web-general-maker, apps-ayokoding-web-general-checker, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-maker, apps-ayokoding-web-by-example-checker, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-in-the-field-maker, apps-ayokoding-web-in-the-field-checker, apps-ayokoding-web-in-the-field-fixer, apps-ayokoding-web-link-checker, apps-ayokoding-web-structure-maker, apps-ayokoding-web-structure-checker, apps-ayokoding-web-facts-checker, apps-oseplatform-web-content-maker, apps-oseplatform-web-content-checker, swe-python-developer, swe-typescript-developer, swe-elixir-developer, swe-java-developer, swe-golang-developer, swe-e2e-test-developer, swe-hugo-developer |
+| **Tier 3: Complex**  | plan-maker, plan-executor, plan-checker, plan-execution-checker, repo-governance-maker, repo-governance-checker, repo-governance-fixer, docs-link-general-checker, docs-software-engineering-separation-checker                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 
 ### When to Condense or Split Agents
 

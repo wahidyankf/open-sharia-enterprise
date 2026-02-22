@@ -787,50 +787,50 @@ def calculate_zakat_v2(wealth: int, nisab: int) -> int:
 
 ## Documentation Structure
 
-This documentation comprises 20 core documentation files organized into foundation, patterns, practices, and advanced topics:
+This documentation comprises core documentation files organized into foundation, patterns, practices, and advanced topics:
 
 ### Core Documentation
 
 **Foundation** (6 files):
 
-- `README.md` (this file) - Overview and learning paths
-- `ex-soen-prla-py__best-practices.md` - PEP 8, PEP 20, modern patterns
-- `ex-soen-prla-py__idioms.md` - Pythonic patterns and EAFP
-- `ex-soen-prla-py__type-safety.md` - Type hints, mypy, Pydantic
-- `ex-soen-prla-py__error-handling.md` - Exceptions and context managers
-- `ex-soen-prla-py__testing.md` - Testing pyramid, coverage strategy, and test patterns
+- [README.md](./README.md) (this file) - Overview and learning paths
+- [Best Practices](./ex-soen-prla-py__best-practices.md) - PEP 8, PEP 20, modern patterns
+- [Idioms](./ex-soen-prla-py__idioms.md) - Pythonic patterns and EAFP
+- [Type Safety](./ex-soen-prla-py__type-safety.md) - Type hints, mypy, Pydantic
+- [Error Handling](./ex-soen-prla-py__error-handling.md) - Exceptions and context managers
+- [Testing](./ex-soen-prla-py__testing.md) - Testing pyramid, coverage strategy, and test patterns
 
 **Core Patterns** (6 files):
 
-- `ex-soen-prla-py__functional-programming.md` - Pure functions, itertools, functools
-- `ex-soen-prla-py__classes-and-protocols.md` - Classes, protocols, dataclasses, Pydantic
-- `ex-soen-prla-py__domain-driven-design.md` - DDD with Python patterns
-- `ex-soen-prla-py__concurrency-and-parallelism.md` - asyncio, threading, multiprocessing, GIL
-- `ex-soen-prla-py__modules-and-dependencies.md` - pip, Poetry, pyproject.toml
-- `ex-soen-prla-py__anti-patterns.md` - Common mistakes to avoid
+- [Functional Programming](./ex-soen-prla-py__functional-programming.md) - Pure functions, itertools, functools
+- [Classes and Protocols](./ex-soen-prla-py__classes-and-protocols.md) - Classes, protocols, dataclasses, Pydantic
+- [Domain-Driven Design](./ex-soen-prla-py__domain-driven-design.md) - DDD with Python patterns
+- [Concurrency and Parallelism](./ex-soen-prla-py__concurrency-and-parallelism.md) - asyncio, threading, multiprocessing, GIL
+- [Modules and Dependencies](./ex-soen-prla-py__modules-and-dependencies.md) - pip, Poetry, pyproject.toml
+- [Anti-Patterns](./ex-soen-prla-py__anti-patterns.md) - Common mistakes to avoid
 
 **Development Practices** (6 files):
 
-- `ex-soen-prla-py__test-driven-development.md` - pytest, unittest, hypothesis
-- `ex-soen-prla-py__behaviour-driven-development.md` - behave, pytest-bdd, Gherkin
-- `ex-soen-prla-py__linting-and-formatting.md` - Ruff, Black, mypy, pylint
-- `ex-soen-prla-py__security.md` - Injection prevention, auth, secrets management
-- `ex-soen-prla-py__performance.md` - Profiling, optimization, Cython, PyPy
-- `ex-soen-prla-py__memory-management.md` - Reference counting, garbage collection
+- [Test-Driven Development](./ex-soen-prla-py__test-driven-development.md) - pytest, unittest, hypothesis
+- [Behaviour-Driven Development](./ex-soen-prla-py__behaviour-driven-development.md) - behave, pytest-bdd, Gherkin
+- [Linting and Formatting](./ex-soen-prla-py__linting-and-formatting.md) - Ruff, Black, mypy, pylint
+- [Security](./ex-soen-prla-py__security.md) - Injection prevention, auth, secrets management
+- [Performance](./ex-soen-prla-py__performance.md) - Profiling, optimization, Cython, PyPy
+- [Memory Management](./ex-soen-prla-py__memory-management.md) - Reference counting, garbage collection
 
 **Advanced Topics** (2 files):
 
-- `ex-soen-prla-py__web-services.md` - FastAPI, Django, Flask, httpx
-- `ex-soen-prla-py__finite-state-machine.md` - FSM patterns with transitions library
+- [Web Services](./ex-soen-prla-py__web-services.md) - FastAPI, Django, Flask, httpx
+- [Finite State Machine](./ex-soen-prla-py__finite-state-machine.md) - FSM patterns with transitions library
 
 **Version Documentation** (6 files):
 
-- `ex-soen-prla-py__release-3.11.md` - Baseline Python 3.11 features
-- `ex-soen-prla-py__release-3.12.md` - Stable Python 3.12 features
-- `ex-soen-prla-py__release-3.14.md` - Python 3.14 features
-- `ex-soen-prla-py__release-3.15.md` - Python 3.15 features
-- `ex-soen-prla-py__release-3.16.md` - Python 3.16 features
-- `ex-soen-prla-py__release-3.17.md` - Python 3.17 features
+- [Python 3.11 Release](./ex-soen-prla-py__release-3.11.md) - Baseline Python 3.11 features
+- [Python 3.12 Release](./ex-soen-prla-py__release-3.12.md) - Stable Python 3.12 features
+- [Python 3.14 Release](./ex-soen-prla-py__release-3.14.md) - Python 3.14 features
+- [Python 3.15 Release](./ex-soen-prla-py__release-3.15.md) - Python 3.15 features
+- [Python 3.16 Release](./ex-soen-prla-py__release-3.16.md) - Python 3.16 features
+- [Python 3.17 Release](./ex-soen-prla-py__release-3.17.md) - Python 3.17 features
 
 ### Beginner Path
 
@@ -1389,7 +1389,7 @@ strict = true
 
 **Last Updated**: 2026-01-24
 **Python Versions**: 3.11+ (baseline), 3.12+ (stable maintenance), 3.14.2 (latest stable)
-**Total Documentation Files**: 20 core files + 6 version files = 26 files
+**Documentation**: Core files and version-specific files organized by category
 **Maintainers**: OSE Platform Documentation Team
 
 ## Python Ecosystem
