@@ -1,28 +1,7 @@
-{{- /* Mermaid diagrams support - conditionally loaded only when page contains mermaid code blocks */ -}}
+{{- /* Mermaid support - loaded only on pages with mermaid diagrams */ -}}
 {{- if .Store.Get "hasMermaid" -}}
 <script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-  
-  // Detect dark mode from PaperMod theme
-  const theme = document.body.classList.contains('dark') ? 'dark' : 'default';
-  
-  mermaid.initialize({
-    startOnLoad: true,
-    theme: theme
-  });
-  
-  // Re-render diagrams when theme toggles
-  const themeToggle = document.getElementById('theme-toggle');
-  if (themeToggle) {
-    themeToggle.addEventListener('click', () => {
-      setTimeout(() => {
-        const newTheme = document.body.classList.contains('dark') ? 'dark' : 'default';
-        mermaid.initialize({ theme: newTheme });
-        document.querySelectorAll('.mermaid').forEach((element) => {
-          mermaid.run({ nodes: [element] });
-        });
-      }, 100);
-    });
-  }
+  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+  mermaid.initialize({ startOnLoad: true, theme: "default" });
 </script>
 {{- end -}}
