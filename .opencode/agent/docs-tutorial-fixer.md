@@ -17,7 +17,7 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Implementor (purple)
+- **Role**: Updater (yellow)
 - **Created**: 2025-12-14
 - **Last Updated**: 2026-02-06
 
@@ -374,7 +374,7 @@ Always provide:
 
 **Project Guidance:**
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance for all agents working on this project
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance for all agents working on this project
 
 **Agent Conventions:**
 

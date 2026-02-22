@@ -11,7 +11,7 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Updater (yellow)
+- **Role**: Implementor (purple)
 - **Created**: 2025-12-20
 - **Last Updated**: 2026-01-05
 
@@ -108,7 +108,7 @@ echo "Vercel will automatically build from prod-oseplatform-web branch"
 
 **Project Guidance**:
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [oseplatform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
 - [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md)
 

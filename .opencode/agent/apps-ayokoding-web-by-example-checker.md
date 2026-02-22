@@ -38,7 +38,7 @@ You are a By Example tutorial quality validator specializing in annotation densi
 
 ## Temporary Report Files
 
-This agent writes validation findings to `generated-reports/` using the pattern `ayokoding-by-example-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`.
+This agent writes validation findings to `generated-reports/` using the pattern `ayokoding-web-by-example__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`.
 
 The `repo-generating-validation-reports` Skill provides UUID generation, timestamp formatting, progressive writing methodology, and report structure templates.
 
@@ -224,7 +224,7 @@ Update status, add summary, prioritize findings.
 
 **Project Guidance:**
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md) - Complete standards
 - [By Example Content Standard](../../governance/conventions/tutorials/programming-language-content.md) - Annotation requirements
 

@@ -256,7 +256,6 @@ The agent should reference `[skill-name]` Skill instead of embedding this conten
 
 - [AI Agents Convention](../../governance/development/agents/ai-agents.md) - Agent-Skill separation patterns
 - [Temporary Files Convention](../../governance/development/infra/temporary-files.md) - Report generation standards
-- [Skills Directory](./README.md) - Complete Skills catalog
 
 ## Validation Process
 
@@ -265,6 +264,49 @@ The agent should reference `[skill-name]` Skill instead of embedding this conten
 See `repo-generating-validation-reports` Skill for UUID chain, timestamp, progressive writing.
 
 ### Step 1: Core Repository Validation
+
+#### Known False Positive Skip List
+
+**Before beginning validation, load the skip list**:
+
+```bash
+SKIP_LIST_FILE="generated-reports/.known-false-positives.md"
+if [ -f "$SKIP_LIST_FILE" ]; then
+    echo "Loading known false positives skip list from $SKIP_LIST_FILE"
+    # Read contents — checker will reference this during all validation steps
+fi
+```
+
+**Before reporting any finding**, check if it matches an entry in the skip list using the stable key format:
+`[category] | [file] | [brief-description]`
+
+**If matched**:
+
+- Log as `[PREVIOUSLY ACCEPTED FALSE_POSITIVE — skipped]` in the informational section
+- Do **NOT** count in the findings total
+- Do **NOT** include in the findings report
+
+This prevents the same accepted FALSE_POSITIVE findings from being re-flagged on every workflow iteration.
+
+**Informational log format** (written to report, not counted as finding):
+
+```markdown
+### [INFO] Previously Accepted FALSE_POSITIVE — Skipped
+
+**Key**: [category] | [file] | [brief-description]
+**Skipped**: Finding matches entry in generated-reports/.known-false-positives.md
+**Originally Accepted**: [date from skip list]
+```
+
+#### Re-validation Mode (Scoped Scan)
+
+When a UUID chain exists from a previous iteration (re-validation mode, identified by multi-part UUID chain like `abc123_def456`), focus expensive validation on recently changed files:
+
+1. Check for `## Changed Files (for Scoped Re-validation)` section in the latest fix report
+2. **If found**: Run Steps 1-7 normally on ALL files, but run Step 8 (software docs 340+ files) **only on changed files** from the fix report
+3. **If not found**: Run full scan as normal
+
+This prevents scanning all 340+ software documentation files when only 3-4 agent files were changed by the fixer.
 
 Validate file naming, linking, emoji usage, convention compliance per existing logic.
 
@@ -1116,7 +1158,7 @@ Update report status to "Complete", add summary statistics by category:
 
 **Project Guidance**:
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [Repository Governance Architecture](../../governance/repository-governance-architecture.md)
 - [AI Agents Convention](../../governance/development/agents/ai-agents.md)
 

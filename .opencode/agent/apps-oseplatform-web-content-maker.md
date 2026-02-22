@@ -43,7 +43,7 @@ Create landing page content for oseplatform-web (PaperMod theme, English-only).
 
 **Project Guidance**:
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [oseplatform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
 
 **Related Agents**:

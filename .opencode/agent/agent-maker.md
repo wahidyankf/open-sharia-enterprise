@@ -50,7 +50,7 @@ Create new AI agent files following AI Agents Convention.
 
 **Project Guidance**:
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [AI Agents Convention](../../governance/development/agents/ai-agents.md)
 
 **Related Agents**:

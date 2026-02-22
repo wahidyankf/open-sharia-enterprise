@@ -16,7 +16,7 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Writer (blue)
+- **Role**: Implementor (purple)
 - **Created**: 2025-12-28
 - **Last Updated**: 2026-01-03
 
@@ -120,7 +120,7 @@ After ALL implementation phases complete:
 
 **Project Guidance:**
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [Plans Organization Convention](../../governance/conventions/structure/plans.md) - Plan structure
 - [Trunk Based Development Convention](../../governance/development/workflow/trunk-based-development.md) - Git workflow
 

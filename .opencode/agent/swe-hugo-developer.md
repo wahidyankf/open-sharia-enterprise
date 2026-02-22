@@ -16,7 +16,7 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Writer (blue)
+- **Role**: Implementor (purple)
 - **Created**: 2025-12-20
 - **Last Updated**: 2026-01-03
 
@@ -46,7 +46,7 @@ Theme customization, template development, build optimization, deployment config
 
 **Project Guidance**:
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 - [oseplatform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
 

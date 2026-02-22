@@ -253,7 +253,6 @@ The agent should reference `[skill-name]` Skill instead of embedding this conten
 
 - [AI Agents Convention](../../governance/development/agents/ai-agents.md) - Agent-Skill separation patterns
 - [Temporary Files Convention](../../governance/development/infra/temporary-files.md) - Report generation standards
-- [Skills Directory](../skills/README.md) - Complete Skills catalog
 
 ## Validation Process
 

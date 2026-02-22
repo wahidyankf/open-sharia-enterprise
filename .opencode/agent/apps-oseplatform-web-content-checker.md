@@ -21,16 +21,23 @@ skills:
 - **Created**: 2025-12-20
 - **Last Updated**: 2026-01-03
 
-### Progressive Report Writing (MANDATORY)
+### UUID Chain Generation
 
-1. **Initialize**: `generated-reports/{agent}__{uuid}__{YYYY-MM-DD--HH-MM}__audit.md`
-2. **Write findings IMMEDIATELY** (not buffered)
-3. **Update continuously** throughout execution
-4. **Finalize** with statistics
+**See `repo-generating-validation-reports` Skill** for:
 
-### UUID Chain Generation**See `repo-generating-validation-reports` Skill** for:- 6-character UUID generation using Bash- Scope-based UUID chain logic (parent-child relationships)- UTC+7 timestamp format- Progressive report writing patterns
+- 6-character UUID generation using Bash
+- Scope-based UUID chain logic (parent-child relationships)
+- UTC+7 timestamp format
+- Progressive report writing patterns
 
-### Criticality Assessment**See `repo-assessing-criticality-confidence` Skill** for complete classification system:- Four-level criticality system (CRITICAL/HIGH/MEDIUM/LOW)- Decision tree for consistent assessment- Priority matrix (Criticality × Confidence → P0-P4)- Domain-specific examples
+### Criticality Assessment
+
+**See `repo-assessing-criticality-confidence` Skill** for complete classification system:
+
+- Four-level criticality system (CRITICAL/HIGH/MEDIUM/LOW)
+- Decision tree for consistent assessment
+- Priority matrix (Criticality × Confidence → P0-P4)
+- Domain-specific examples
 
 # Content Checker for oseplatform-web
 
@@ -46,7 +53,7 @@ Validate oseplatform-web content quality.
 
 ## Temporary Reports
 
-Pattern: `ose-platform-content-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`
+Pattern: `oseplatform-web-content__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 Skill: `repo-generating-validation-reports`
 
 ## Reference
@@ -58,7 +65,7 @@ Skill: `repo-generating-validation-reports`
 
 **Project Guidance**:
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [oseplatform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
 
 **Related Agents**:
