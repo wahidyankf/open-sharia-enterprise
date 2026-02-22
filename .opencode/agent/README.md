@@ -16,11 +16,11 @@
 
 ## Agent Families
 
-### Documentation Family (10 agents)
+### Documentation Family
 
 **Maker-Checker-Fixer Pattern**:
 
-- **docs-maker** - Creates documentation following Di\u00e1taxis framework and content quality standards
+- **docs-maker** - Creates documentation following Diátaxis framework and content quality standards
 - **docs-checker** - Validates factual correctness using web verification (criticality assessment)
 - **docs-fixer** - Applies validated fixes from checker reports (confidence assessment)
 
@@ -40,7 +40,7 @@
 - **docs-software-engineering-separation-checker** - Validates software engineering doc separation between language-agnostic and language-specific content
 - **docs-software-engineering-separation-fixer** - Applies validated fixes to software engineering doc separation issues
 
-### README Family (3 agents)
+### README Family
 
 **Maker-Checker-Fixer Pattern**:
 
@@ -48,7 +48,7 @@
 - **readme-checker** - Validates README quality standards
 - **readme-fixer** - Applies validated fixes to READMEs
 
-### Project Planning Family (5 agents)
+### Project Planning Family
 
 **Planning Workflow**:
 
@@ -61,7 +61,7 @@
 - **plan-executor** - Executes delivery checklists systematically (implementor, not maker)
 - **plan-execution-checker** - Final validation of completed plan implementation
 
-### ayokoding-web Family (19 agents)
+### ayokoding-web Family
 
 **General Content** (Maker-Checker-Fixer):
 
@@ -103,7 +103,7 @@
 - **apps-ayokoding-web-in-the-field-checker** - Validates in-the-field tutorial quality
 - **apps-ayokoding-web-in-the-field-fixer** - Applies validated fixes to in-the-field tutorials
 
-### oseplatform-web Family (4 agents)
+### oseplatform-web Family
 
 **Maker-Checker-Fixer Pattern**:
 
@@ -115,7 +115,7 @@
 
 - **apps-oseplatform-web-deployer** - Deploys to production branch (prod-oseplatform-web)
 
-### Repository Governance Family (6 agents)
+### Repository Governance Family
 
 **Rules Management** (Maker-Checker-Fixer):
 
@@ -129,7 +129,7 @@
 - **repo-workflow-checker** - Validates workflow pattern compliance
 - **repo-workflow-fixer** - Applies validated workflow fixes
 
-### Meta/Specialized Family (3 agents)
+### Meta/Specialized Family
 
 - **agent-maker** - Creates new AI agent files following AI Agents Convention
 - **swe-hugo-developer** - Develops Hugo sites (theme customization, template development)
@@ -194,33 +194,33 @@ opencode agent list
 
 ### Maker Agents (Blue)
 
-**Purpose**: Create content following specific conventions  
-**Tools**: read, write, edit, glob, grep, bash (+ domain-specific)  
+**Purpose**: Create content following specific conventions
+**Tools**: read, write, edit, glob, grep, bash (+ domain-specific)
 **Output**: Content files
 
 ### Checker Agents (Green)
 
-**Purpose**: Validate content quality and consistency  
-**Tools**: read, glob, grep, write, bash, webfetch, websearch  
-**Output**: Progressive audit reports to `generated-reports/`  
+**Purpose**: Validate content quality and consistency
+**Tools**: read, glob, grep, write, bash, webfetch, websearch
+**Output**: Progressive audit reports to `generated-reports/`
 **Format**: `{agent-family}__{uuid}__{YYYY-MM-DD--HH-MM}__audit.md`
 
 ### Fixer Agents (Purple)
 
-**Purpose**: Apply validated fixes from checker reports  
-**Tools**: read, glob, grep, write, bash, edit  
+**Purpose**: Apply validated fixes from checker reports
+**Tools**: read, glob, grep, write, bash, edit
 **Process**: Re-validate → Assess confidence → Apply HIGH confidence fixes → Skip MEDIUM
 
 ### Implementor Agents (Purple)
 
-**Purpose**: Execute and orchestrate complex workflows  
-**Tools**: Full tool access or bash-only  
+**Purpose**: Execute and orchestrate complex workflows
+**Tools**: Full tool access or bash-only
 **Examples**: plan-executor, deployers
 
 ### Hybrid Agents (Purple)
 
-**Purpose**: Combine validation + state management  
-**Tools**: Standard + write (for cache only)  
+**Purpose**: Combine validation + state management
+**Tools**: Standard + write (for cache only)
 **Examples**: docs-link-general-checker, apps-ayokoding-web-link-checker
 
 ## Skills Integration
@@ -246,7 +246,7 @@ All agents leverage Skills from `.opencode/skill/` for:
 **Validation**:
 
 - `python scripts/validate-opencode-agents.py` - Verify OpenCode agents correctness
-- All 57 agents must pass validation
+- All agents must pass validation
 
 **Convention Updates**:
 

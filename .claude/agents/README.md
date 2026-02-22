@@ -1,6 +1,6 @@
 # Claude Code Agents
 
-This directory contains 57 specialized AI agents for the open-sharia-enterprise project. These agents are organized by role and follow the Maker-Checker-Fixer pattern where applicable.
+This directory contains specialized AI agents for the open-sharia-enterprise project. These agents are organized by role and follow the Maker-Checker-Fixer pattern where applicable.
 
 ## Agent Organization
 
@@ -122,7 +122,7 @@ Three-stage quality workflow:
 
 ## Skills Integration
 
-Agents leverage 34 skills from `.claude/skills/` for progressive knowledge delivery. Skills are NOT agents - they provide reusable knowledge and execution services to agents.
+Agents leverage skills from `.claude/skills/` for progressive knowledge delivery. Skills are NOT agents - they provide reusable knowledge and execution services to agents.
 
 **See**: [.claude/skills/README.md](../skills/README.md) for complete skills catalog
 

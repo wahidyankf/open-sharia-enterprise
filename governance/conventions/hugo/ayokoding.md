@@ -58,9 +58,9 @@ This convention defines content creation standards specific to the ayokoding-web
 
 Read the shared conventions first, as they cover:
 
-- Inherited conventions (8 standards from docs/)
-- Adapted conventions (5 Hugo-specific modifications)
-- Hugo-specific conventions (6 basic concepts)
+- Inherited conventions from docs/
+- Adapted conventions (Hugo-specific modifications)
+- Hugo-specific conventions (basic concepts)
 
 This document covers **ayokoding-web specific patterns only**.
 

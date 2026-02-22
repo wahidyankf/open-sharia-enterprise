@@ -19,10 +19,11 @@ Content quality standards, validation methodology, and writing guidelines for do
 
 This directory contains universal standards for writing documentation content that apply to ALL repository markdown contexts (docs/, Hugo sites, plans/, root files). These are the foundational writing conventions that all other content builds upon.
 
-## Documents (5 conventions)
+## Documents
 
 - [Content Quality Principles](./quality.md) - Universal markdown content quality standards. Covers writing style and tone (active voice, professional, concise), heading hierarchy (single H1, proper nesting), accessibility (alt text, semantic HTML, color contrast, screen readers), and formatting
 - [Conventions](./conventions.md) - **Meta-convention** defining how to write and organize convention documents. Covers document structure, scope boundaries, quality checklist, when to create new vs update existing, length guidelines, and integration with agents. Essential reading for creating or updating conventions
+- [Dynamic Collection References](./dynamic-collection-references.md) - Standards for referencing dynamic collections (agents, principles, conventions, practices, skills) without hardcoding counts. Prevents documentation drift by requiring count-free references with links to authoritative index documents
 - [Factual Validation](./factual-validation.md) - Universal methodology for validating factual correctness across all repository content using web verification (WebSearch + WebFetch). Defines core validation methodology, web verification workflow, confidence classification (Verified, Unverified, Error, Outdated)
 - [OSS Documentation](./oss-documentation.md) - Standards for repository documentation files (README, CONTRIBUTING, ADRs, security) following open source best practices
 - [README Quality](./readme-quality.md) - Quality standards for README.md files ensuring engagement, accessibility, and scannability. Defines problem-solution hooks, jargon elimination, acronym context requirements, benefits-focused language, navigation structure, and paragraph length limits

@@ -1359,7 +1359,7 @@ Existing agents using different terminology should migrate to this convention.
 
 ### Phase 3: Checker Agent Families (Week 2-3)
 
-**Severity-Based Family** (6 agents):
+**Severity-Based Family**:
 
 - apps-ayokoding-web-general-checker
 - apps-ayokoding-web-structure-checker
@@ -1368,7 +1368,7 @@ Existing agents using different terminology should migrate to this convention.
 - apps-oseplatform-web-content-checker
 - repo-workflow-checker
 
-**Dual-Label Family** (7 agents - preserve existing labels + add criticality):
+**Dual-Label Family** (preserve existing labels + add criticality):
 
 - docs-checker ([Verified]/[Error]/[Outdated] + CRITICAL/HIGH/MEDIUM/LOW)
 - docs-tutorial-checker
@@ -1378,7 +1378,7 @@ Existing agents using different terminology should migrate to this convention.
 - docs-link-general-checker ([OK]/[BROKEN]/[REDIRECT] + CRITICAL/HIGH/MEDIUM/LOW)
 - repo-governance-checker
 
-**Plan/Priority Family** (3 agents):
+**Plan/Priority Family**:
 
 - plan-checker
 - plan-execution-checker
@@ -1386,7 +1386,7 @@ Existing agents using different terminology should migrate to this convention.
 
 ### Phase 4: Fixer Agents (Week 3)
 
-Update all 14 fixer agents to use priority-based execution:
+Update all fixer agents to use priority-based execution:
 
 - repo-governance-fixer (pilot)
 - apps-ayokoding-web-general-fixer
@@ -1405,8 +1405,8 @@ Update all 14 fixer agents to use priority-based execution:
 
 ### Phase 5: Validation (Week 4)
 
-1. Run full repository audit with all 16 checkers
-2. Test all 14 fixers on new report formats
+1. Run full repository audit with all checkers
+2. Test all fixers on new report formats
 3. Verify priority-based execution works correctly
 4. Confirm backward compatibility with old reports
 

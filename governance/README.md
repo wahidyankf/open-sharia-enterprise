@@ -73,14 +73,14 @@ graph TD
 #### Layer 1: Principles (WHY - Values)
 
 - **[Core Principles](./principles/README.md)** - Foundational values that govern all lower layers
-  - 11 principles across 3 categories (General, Content, Software Engineering)
+  - Principles across 3 categories (General, Content, Software Engineering)
   - Each principle traces back to vision with "Vision Supported" section
   - Examples: Simplicity Over Complexity, Accessibility First, Documentation First, Automation Over Manual
 
 #### Layer 2: Conventions (WHAT - Documentation Rules)
 
 - **[Conventions](./conventions/README.md)** - Documentation writing and organization standards
-  - 30 conventions across 6 categories (formatting, linking, writing, structure, tutorials, hugo)
+  - Conventions across 6 categories (formatting, linking, writing, structure, tutorials, hugo)
   - Implements principles in concrete documentation rules
   - Each convention includes "Principles Implemented/Respected" section
   - Enforced by AI agents (docs-checker, docs-maker, etc.)
@@ -88,7 +88,7 @@ graph TD
 #### Layer 3: Development (HOW - Software Practices)
 
 - **[Development](./development/README.md)** - Software development practices and workflows
-  - 17 primary practices across 6 categories (workflow, quality, pattern, agents, infra, hugo)
+  - Practices across 6 categories (workflow, quality, pattern, agents, infra, hugo)
   - Implements principles in concrete software standards
   - Each practice includes "Principles Implemented/Respected" AND "Conventions Implemented/Respected" sections
   - Enforced by AI agents and automation (git hooks, build tools)
@@ -96,7 +96,7 @@ graph TD
 #### Layer 5: Workflows (WHEN - Multi-Step Processes)
 
 - **[Workflows](./workflows/README.md)** - Orchestrated multi-step processes composing AI agents
-  - 8 workflows across 4 categories (ayokoding-web, docs, plan, repository)
+  - Workflows across categories (ayokoding-web, docs, plan, repository)
   - Define sequences (sequential/parallel/conditional), state management, termination criteria
   - Examples: Maker-Checker-Fixer, Plan-Execute-Validate
   - Orchestrate agents from Layer 4

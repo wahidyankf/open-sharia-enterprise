@@ -356,7 +356,7 @@ Prioritize principles in order of importance:
 5. **Progressive Disclosure** - Support all skill levels
 6. **No Time Estimates** - Focus on outcomes
 
-> **Note**: This priority ordering applies when principles appear to conflict. All 11 principles apply in normal circumstances - this list guides conflict resolution, not principle selection.
+> **Note**: This priority ordering applies when principles appear to conflict. All principles apply in normal circumstances - this list guides conflict resolution, not principle selection.
 
 ### When Adding New Conventions or Practices
 

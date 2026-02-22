@@ -56,9 +56,9 @@ This convention establishes shared standards that apply to **all Hugo sites** in
 
 This shared document contains conventions that apply to **both sites**:
 
-1. **Inherited Conventions** (8) - Standards from `docs/` that apply to Hugo content
-2. **Adapted Conventions** (5) - Standards modified for Hugo's requirements
-3. **Hugo-Specific Conventions** (7) - Basic Hugo concepts that apply to both sites
+1. **Inherited Conventions** - Standards from `docs/` that apply to Hugo content
+2. **Adapted Conventions** - Standards modified for Hugo's requirements
+3. **Hugo-Specific Conventions** - Basic Hugo concepts that apply to both sites
 
 **Site-specific patterns** (themes, configurations, workflows) are documented in separate files:
 
@@ -73,9 +73,9 @@ graph TD
     A --> C[ayokoding-web<br/>Site-Specific]
     A --> D[oseplatform-web<br/>Site-Specific]
 
-    B --> B1[Inherited<br/>8 standards]
-    B --> B2[Adapted<br/>5 standards]
-    B --> B3[Hugo-Specific<br/>7 concepts]
+    B --> B1[Inherited<br/>Standards]
+    B --> B2[Adapted<br/>Standards]
+    B --> B3[Hugo-Specific<br/>Concepts]
 
     C --> C1[Hextra Theme]
     C --> C2[Bilingual Educational]

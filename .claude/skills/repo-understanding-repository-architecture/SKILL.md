@@ -382,9 +382,9 @@ Skills (context: fork) ──delegates to──> Isolated Agent Context
 ## References
 
 - **[Repository Architecture](../../../governance/repository-governance-architecture.md)** - Complete architectural documentation with all traceability examples
-- **[Core Principles Index](../README.md)** - All 10 foundational principles
-- **[Conventions Index](../README.md)** - All 24 documentation conventions
-- **[Development Index](../README.md)** - All 15 development practices
+- **[Core Principles Index](../README.md)** - Foundational principles
+- **[Conventions Index](../README.md)** - Documentation conventions
+- **[Development Index](../README.md)** - Development practices
 - **[Agents Index](../README.md)** - All AI agents and responsibilities
 - **[Workflows Index](../README.md)** - All orchestrated processes
 

@@ -60,8 +60,8 @@ open-sharia-enterprise/
 │   ├── backlog/             # Future plans
 │   └── done/                # Completed plans
 ├── .claude/                 # Claude Code configuration
-│   ├── agents/              # 57 specialized AI agents
-│   └── skills/              # 34 skill packages
+│   ├── agents/              # specialized AI agents
+│   └── skills/              # skill packages
 ├── .husky/                  # Git hooks
 ├── nx.json                  # Nx workspace config
 └── package.json             # Volta pinning + npm workspaces
@@ -202,7 +202,7 @@ Husky + lint-staged enforce quality:
 
 ## Core Principles
 
-All work follows 11 foundational principles from `governance/principles/`:
+All work follows foundational principles from `governance/principles/`:
 
 - **Documentation First**: Documentation is mandatory, not optional
 - **Accessibility First**: WCAG AA compliance, color-blind friendly
@@ -255,6 +255,12 @@ Active voice, single H1, proper heading nesting, alt text for images, WCAG AA co
 
 **See**: [governance/conventions/writing/quality.md](./governance/conventions/writing/quality.md)
 
+### Dynamic Collection References
+
+Never hardcode counts of dynamic collections (agents, skills, conventions, practices, principles, workflows) in documentation. Reference the collection by name and link.
+
+**See**: [governance/conventions/writing/dynamic-collection-references.md](./governance/conventions/writing/dynamic-collection-references.md)
+
 ## Development Practices
 
 ### Functional Programming
@@ -275,7 +281,7 @@ Volta for Node.js/npm pinning, package-lock.json, .env.example
 
 **See**: [governance/development/workflow/reproducible-environments.md](./governance/development/workflow/reproducible-environments.md)
 
-## AI Agents (57 Specialized Agents)
+## AI Agents
 
 **Content Creation**: docs-maker, docs-tutorial-maker, readme-maker, apps-ayokoding-web-general-maker, apps-ayokoding-web-by-example-maker, apps-ayokoding-web-in-the-field-maker, apps-ayokoding-web-structure-maker, apps-ayokoding-web-navigation-maker, apps-ayokoding-web-title-maker, apps-oseplatform-web-content-maker
 
@@ -293,7 +299,7 @@ Volta for Node.js/npm pinning, package-lock.json, .env.example
 
 **Maker-Checker-Fixer Pattern**: Three-stage workflow with criticality levels (CRITICAL/HIGH/MEDIUM/LOW), confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE)
 
-**Skills Infrastructure**: Agents leverage 34 skills providing two modes:
+**Skills Infrastructure**: Agents leverage skills providing two modes:
 
 - **Inline skills** (default) - Inject knowledge into current conversation
 - **Fork skills** (`context: fork`) - Delegate tasks to specialized agents in isolated contexts
@@ -350,13 +356,13 @@ This repository maintains **dual compatibility** with both Claude Code and OpenC
 Six-layer governance hierarchy:
 
 - **Layer 0: Vision** - WHY we exist (democratize Shariah-compliant enterprise)
-- **Layer 1: Principles** - WHY we value approaches (11 core principles)
-- **Layer 2: Conventions** - WHAT documentation rules (30 standards)
-- **Layer 3: Development** - HOW we develop (17 practices)
-- **Layer 4: AI Agents** - WHO enforces rules (57 specialized agents)
+- **Layer 1: Principles** - WHY we value approaches
+- **Layer 2: Conventions** - WHAT documentation rules
+- **Layer 3: Development** - HOW we develop
+- **Layer 4: AI Agents** - WHO enforces rules
 - **Layer 5: Workflows** - WHEN we run processes (orchestrated sequences)
 
-**Skills**: Delivery infrastructure serving agents (34 skills, two modes):
+**Skills**: Delivery infrastructure serving agents, two modes:
 
 - **Inline skills** - Knowledge injection into current conversation
 - **Fork skills** (`context: fork`) - Task delegation to agents in isolated contexts
@@ -457,10 +463,10 @@ Project planning in `plans/` folder:
 
 ## Related Documentation
 
-- **Conventions Index**: [governance/conventions/README.md](./governance/conventions/README.md) - 30 documentation standards
-- **Development Index**: [governance/development/README.md](./governance/development/README.md) - 17 software practices
-- **Principles Index**: [governance/principles/README.md](./governance/principles/README.md) - 11 foundational principles
-- **Agents Index**: [.claude/agents/README.md](./.claude/agents/README.md) - 57 specialized agents
+- **Conventions Index**: [governance/conventions/README.md](./governance/conventions/README.md) - Documentation writing and organization standards
+- **Development Index**: [governance/development/README.md](./governance/development/README.md) - Software development practices and workflows
+- **Principles Index**: [governance/principles/README.md](./governance/principles/README.md) - Foundational values governing all layers
+- **Agents Index**: [.claude/agents/README.md](./.claude/agents/README.md) - Specialized agents organized by role
 - **Workflows Index**: [governance/workflows/README.md](./governance/workflows/README.md) - Orchestrated processes
 - **Repository Architecture**: [governance/repository-governance-architecture.md](./governance/repository-governance-architecture.md) - Six-layer governance hierarchy
 
