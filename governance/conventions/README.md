@@ -12,7 +12,7 @@ updated: 2026-01-30
 
 # Conventions
 
-Documentation conventions and standards for the open-sharia-enterprise project. These documents define how documentation should be organized, named, written, and formatted. Contains conventions across 6 categories covering all aspects of documentation.
+Documentation conventions and standards for the open-sharia-enterprise project. These documents define how documentation should be organized, named, written, and formatted.
 
 **Governance**: All conventions in this directory serve the [Vision](../vision/open-sharia-enterprise.md) (Layer 0) and implement the [Core Principles](../principles/README.md) (Layer 1) as part of the six-layer architecture. Each convention MUST include a "Principles Implemented/Respected" section that explicitly traces back to foundational principles. See [Repository Governance Architecture](../repository-governance-architecture.md) for complete governance model and [Convention Writing Convention](./writing/conventions.md) for structure requirements.
 
@@ -69,16 +69,16 @@ Documentation conventions and standards for the open-sharia-enterprise project. 
 
 Conventions are organized into 6 semantic categories:
 
-- **[formatting/](#formatting-8-conventions)** - Markdown formatting, syntax, visual elements (8 conventions)
-- **[linking/](#linking-1-convention)** - Cross-reference and internal linking standards (1 convention)
-- **[writing/](#writing-5-conventions)** - Content quality, validation, writing standards (5 conventions)
-- **[structure/](#structure-4-conventions)** - Documentation organization, file naming, plans (4 conventions)
-- **[tutorials/](#tutorials-8-conventions)** - Tutorial creation and structure conventions (8 conventions)
-- **[hugo/](#hugo-4-conventions)** - Hugo site content conventions (4 conventions)
+- **[formatting/](#formatting)** - Markdown formatting, syntax, visual elements
+- **[linking/](#linking)** - Cross-reference and internal linking standards
+- **[writing/](#writing)** - Content quality, validation, writing standards
+- **[structure/](#structure)** - Documentation organization, file naming, plans
+- **[tutorials/](#tutorials)** - Tutorial creation and structure conventions
+- **[hugo/](#hugo)** - Hugo site content conventions
 
 ---
 
-## Formatting (8 conventions)
+## Formatting
 
 Standards for markdown formatting, syntax, and visual elements.
 
@@ -91,23 +91,24 @@ Standards for markdown formatting, syntax, and visual elements.
 - [Nested Code Fences](./formatting/nested-code-fences.md) - Standards for properly nesting code fences when documenting markdown structure within markdown content. Defines fence depth rules (outer = 4 backticks, inner = 3 backticks), orphaned fence detection, and validation checklist
 - [Timestamp Format](./formatting/timestamp.md) - Standard timestamp format using UTC+7 (Indonesian WIB Time)
 
-## Linking (1 convention)
+## Linking
 
 Standards for cross-referencing and internal linking between repository content.
 
 - [Internal AyoKoding Reference Links](./linking/internal-ayokoding-references.md) - Standards for linking from docs/ to apps/ayokoding-web/ content using relative paths instead of public web URLs. Ensures links work during local development, testing, and remain portable across environments. Defines path calculation method, common patterns, and enforcement mechanisms for repository-internal references
 
-## Writing (5 conventions)
+## Writing
 
 Content quality standards, validation methodology, and writing guidelines.
 
 - [Content Quality Principles](./writing/quality.md) - Universal markdown content quality standards applicable to ALL repository markdown contexts (docs/, Hugo sites, plans/, root files). Covers writing style and tone (active voice, professional, concise), heading hierarchy (single H1, proper nesting), accessibility (alt text, semantic HTML, color contrast, screen readers), and formatting
 - [Conventions](./writing/conventions.md) - **Meta-convention** defining how to write and organize convention documents. Covers document structure, scope boundaries, quality checklist, when to create new vs update existing, length guidelines, and integration with agents. Essential reading for creating or updating conventions
+- [Dynamic Collection References](./writing/dynamic-collection-references.md) - Standards for referencing dynamic collections (agents, principles, conventions, practices, skills) without hardcoding counts. Prevents documentation drift by requiring count-free references with links to authoritative index documents. **Agents**: repo-governance-checker, repo-governance-fixer
 - [Factual Validation](./writing/factual-validation.md) - Universal methodology for validating factual correctness across all repository content using web verification (WebSearch + WebFetch). Defines core validation methodology (command syntax, features, versions, code examples, external refs, mathematical notation, diagram colors), web verification workflow, confidence classification (Verified, Unverified, Error, Outdated)
 - [OSS Documentation](./writing/oss-documentation.md) - Standards for repository documentation files (README, CONTRIBUTING, ADRs, security) following open source best practices
 - [README Quality](./writing/readme-quality.md) - Quality standards for README.md files ensuring engagement, accessibility, and scannability. Defines problem-solution hooks, jargon elimination (plain language over corporate speak), acronym context requirements, benefits-focused language, navigation structure, and paragraph length limits. **Agents**: readme-maker, readme-checker
 
-## Structure (4 conventions)
+## Structure
 
 Documentation organization frameworks, file naming, and project planning structure.
 
@@ -116,7 +117,7 @@ Documentation organization frameworks, file naming, and project planning structu
 - [Plans Organization](./structure/plans.md) - Standards for organizing project planning documents in plans/ folder including structure (ideas.md, backlog/, in-progress/, done/), naming patterns (YYYY-MM-DD\_\_identifier/), lifecycle stages, and project identifiers. Defines how plans move from ideas - backlog - in-progress - done
 - [Programming Language Documentation Separation](./structure/programming-language-docs-separation.md) - Establishes clear separation between repository-specific programming language style guides (docs/explanation/) and educational programming language content (ayokoding-web). Defines scope boundaries, prerequisite knowledge requirements, cross-referencing patterns, and DRY principle application. Applies to all programming languages (Java, Python, Golang, TypeScript, Elixir, Kotlin, Dart, Rust, Clojure, F#, C#)
 
-## Tutorials (8 conventions)
+## Tutorials
 
 Tutorial creation, structure, naming, and content standards applying to **all tutorial content** (docs/, ayokoding-web, oseplatform-web, anywhere). These conventions **build upon and extend** the writing conventions above.
 
@@ -129,7 +130,7 @@ Tutorial creation, structure, naming, and content standards applying to **all tu
 - [Tutorial Naming](./tutorials/naming.md) - **Universal** Full Set Tutorial Package definition (5 mandatory components) and tutorial type standards (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook, By Example). Replaces old "Full Set" concept (5 sequential levels) with new architecture emphasizing component completeness. Applies to all tutorial content across the repository
 - [In-the-Field Tutorial Convention](./tutorials/in-the-field.md) - **Universal** standards for production-ready implementation guides that build on by-example and by-concept foundations by introducing frameworks, libraries, and enterprise patterns used in real-world systems. Targets developers ready to apply concepts in production environments. Applies to all in-the-field tutorial content across the repository
 
-## Hugo (4 conventions)
+## Hugo
 
 Hugo site-specific content conventions.
 

@@ -10,9 +10,9 @@
 >
 > **See [CLAUDE.md](./CLAUDE.md) for primary documentation** (Claude Code configuration).
 
-**Problem**: Maintaining quality and consistency across 57 specialized agents, 34 skills, and extensive documentation is time-consuming and error-prone when done manually.
+**Problem**: Maintaining quality and consistency across many specialized agents, skills, and extensive documentation is time-consuming and error-prone when done manually.
 
-**Solution**: This repository uses 57 specialized AI (Artificial Intelligence) agents that automate documentation creation, validation, content generation, and project planning—ensuring consistent quality, catching errors early, and freeing developers to focus on high-value work.
+**Solution**: This repository uses specialized AI (Artificial Intelligence) agents that automate documentation creation, validation, content generation, and project planning—ensuring consistent quality, catching errors early, and freeing developers to focus on high-value work.
 
 ---
 
@@ -46,15 +46,15 @@ This repository maintains **dual compatibility** with both Claude Code and OpenC
 
 ## Agent Organization
 
-**57 specialized agents** organized into **7 families**:
+Specialized agents organized into families:
 
-1. **Documentation** (10 agents): `docs-maker`, `docs-checker`, `docs-fixer`, `docs-tutorial-maker`, `docs-tutorial-checker`, `docs-tutorial-fixer`, `docs-link-general-checker`, `docs-file-manager`, `docs-software-engineering-separation-checker`, `docs-software-engineering-separation-fixer`
-2. **README** (3 agents): `readme-maker`, `readme-checker`, `readme-fixer`
-3. **Project Planning** (5 agents): `plan-maker`, `plan-checker`, `plan-executor`, `plan-execution-checker`, `plan-fixer`
-4. **Hugo Content - ayokoding-web** (19 agents): Bilingual content creators, validators, deployers (includes in-the-field agents: `apps-ayokoding-web-in-the-field-maker`, `apps-ayokoding-web-in-the-field-checker`, `apps-ayokoding-web-in-the-field-fixer`)
-5. **Hugo Content - oseplatform-web** (4 agents): Landing page content creators, validators, deployers
-6. **Software Engineering & Specialized** (10 agents): `agent-maker`, `swe-e2e-test-developer`, `swe-elixir-developer`, `swe-golang-developer`, `swe-hugo-developer`, `swe-java-developer`, `swe-python-developer`, `swe-typescript-developer`, `social-linkedin-post-maker`, `apps-organiclever-web-deployer`
-7. **Repository Governance** (6 agents): `repo-governance-maker`, `repo-governance-checker`, `repo-governance-fixer`, `repo-workflow-maker`, `repo-workflow-checker`, `repo-workflow-fixer`
+1. **Documentation**: `docs-maker`, `docs-checker`, `docs-fixer`, `docs-tutorial-maker`, `docs-tutorial-checker`, `docs-tutorial-fixer`, `docs-link-general-checker`, `docs-file-manager`, `docs-software-engineering-separation-checker`, `docs-software-engineering-separation-fixer`
+2. **README**: `readme-maker`, `readme-checker`, `readme-fixer`
+3. **Project Planning**: `plan-maker`, `plan-checker`, `plan-executor`, `plan-execution-checker`, `plan-fixer`
+4. **Hugo Content - ayokoding-web**: Bilingual content creators, validators, deployers (includes in-the-field agents: `apps-ayokoding-web-in-the-field-maker`, `apps-ayokoding-web-in-the-field-checker`, `apps-ayokoding-web-in-the-field-fixer`)
+5. **Hugo Content - oseplatform-web**: Landing page content creators, validators, deployers
+6. **Software Engineering & Specialized**: `agent-maker`, `swe-e2e-test-developer`, `swe-elixir-developer`, `swe-golang-developer`, `swe-hugo-developer`, `swe-java-developer`, `swe-python-developer`, `swe-typescript-developer`, `social-linkedin-post-maker`, `apps-organiclever-web-deployer`
+7. **Repository Governance**: `repo-governance-maker`, `repo-governance-checker`, `repo-governance-fixer`, `repo-workflow-maker`, `repo-workflow-checker`, `repo-workflow-fixer`
 
 **Full agent catalog**: See [`.opencode/agent/README.md`](./.opencode/agent/README.md)
 
@@ -97,7 +97,7 @@ Three-stage quality workflow:
 
 ## Skills Integration
 
-**34 skill packages** serve agents through two modes:
+**Skill packages** serve agents through two modes:
 
 **Inline Skills** (default) - Knowledge injection:
 
@@ -132,7 +132,7 @@ Three-stage quality workflow:
 
 ## Governance Alignment
 
-All agents follow 11 foundational principles:
+All agents follow foundational principles:
 
 1. **Documentation First** - Documentation is mandatory, not optional
 2. **Accessibility First** - WCAG AA (Web Content Accessibility Guidelines Level AA) compliance
@@ -151,6 +151,4 @@ All agents follow 11 foundational principles:
 
 ---
 
-**Total Agents**: 57
-**Total Skills**: 34
 **Last Updated**: 2026-02-22

@@ -19,7 +19,7 @@ Documentation organization frameworks, file naming, and project planning structu
 
 This directory contains standards for how documentation is organized, named, and structured across the repository. These conventions establish the foundational frameworks that govern documentation architecture.
 
-## Documents (3 conventions)
+## Documents
 
 - [Diataxis Framework](./diataxis-framework.md) - Understanding the four-category documentation organization framework we use (Tutorials, How-To, Reference, Explanation). Foundational framework for all documentation structure
 - [File Naming Convention](./file-naming.md) - Systematic approach to naming files with hierarchical prefixes encoding directory structure. Applies to docs/, governance/, and plans/ directories

@@ -1,6 +1,6 @@
 # Claude Code Skills
 
-This directory contains 34 skill packages that provide progressive knowledge delivery to agents. Skills bundle domain-specific conventions, standards, and best practices.
+This directory contains skill packages that provide progressive knowledge delivery to agents. Skills bundle domain-specific conventions, standards, and best practices.
 
 ## Skill Organization
 

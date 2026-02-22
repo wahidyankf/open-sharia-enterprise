@@ -398,7 +398,7 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
 
 **Performance Notes**:
 
-- Pairwise comparison: 57 × 56 / 2 = 1596 agent pairs
+- Pairwise comparison: N × (N-1) / 2 agent pairs (where N is the current agent count)
 - Use content signatures for efficient matching
 - Progressive writing for each finding
 - Focus on high-confidence duplications (>20 lines)
@@ -1100,9 +1100,9 @@ Update report status to "Complete", add summary statistics by category:
 
 **Performance Considerations**:
 
-- Agent-Skill comparison: 57 agents × 34 Skills = ~1,938 comparisons
-- Agent-to-Agent comparison: 57 × 56 / 2 = ~1,596 pairwise comparisons
-- Skill-to-Skill comparison: 34 × 33 / 2 = ~561 pairwise comparisons
+- Agent-Skill comparison: O(agents × skills) pairwise comparisons
+- Agent-to-Agent comparison: O(agents²/2) pairwise comparisons
+- Skill-to-Skill comparison: O(skills²/2) pairwise comparisons
 - Use efficient text matching (not character-by-character)
 - Progressive writing prevents memory issues during long analysis
 

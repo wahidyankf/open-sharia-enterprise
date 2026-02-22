@@ -163,27 +163,27 @@ Layer 5: Workflows    WHEN - Orchestrate (multi-step processes)
 
 **Key Document**: [Core Principles Index](./principles/README.md)
 
-**Eleven Principles**:
+**Principles**:
 
 **General Principles:**
 
-1. **Deliberate Problem-Solving** - Think before coding, surface assumptions, ask questions rather than guessing
-2. **Simplicity Over Complexity** - Minimum viable abstraction, avoid over-engineering
+- **Deliberate Problem-Solving** - Think before coding, surface assumptions, ask questions rather than guessing
+- **Simplicity Over Complexity** - Minimum viable abstraction, avoid over-engineering
 
 **Content Principles:**
 
-1. **Accessibility First** - WCAG compliance, universal design from the start
-2. **Documentation First** - Documentation is mandatory, not optional
-3. **No Time Estimates** - Outcomes over duration, respect different paces
-4. **Progressive Disclosure** - Layer complexity gradually
+- **Accessibility First** - WCAG compliance, universal design from the start
+- **Documentation First** - Documentation is mandatory, not optional
+- **No Time Estimates** - Outcomes over duration, respect different paces
+- **Progressive Disclosure** - Layer complexity gradually
 
 **Software Engineering Principles:**
 
-1. **Automation Over Manual** - Git hooks, AI agents for consistency
-2. **Explicit Over Implicit** - Transparent configuration, no magic
-3. **Immutability Over Mutability** - Prefer immutable data structures
-4. **Pure Functions Over Side Effects** - Deterministic, composable functions
-5. **Reproducibility First** - Eliminate "works on my machine" problems
+- **Automation Over Manual** - Git hooks, AI agents for consistency
+- **Explicit Over Implicit** - Transparent configuration, no magic
+- **Immutability Over Mutability** - Prefer immutable data structures
+- **Pure Functions Over Side Effects** - Deterministic, composable functions
+- **Reproducibility First** - Eliminate "works on my machine" problems
 
 **Characteristics**:
 
@@ -454,16 +454,16 @@ Skills (context: fork) ──delegates to──> Isolated Agent Context
 - Return results to main conversation
 - Still service relationship (not governance)
 
-**34 Skills Available**:
+**Skills Available**:
 
-- **docs-\*** - Documentation creation and quality (8 skills)
-- **readme-\*** - README file patterns (1 skill)
-- **repo-\*** - Repository-wide patterns (6 skills)
-- **swe-programming-\*** - Language/framework expertise (9 skills)
-- **swe-developing-\*** - Application development patterns (2 skills)
-- **apps-\*** - Application-specific patterns (3 skills)
-- **agent-\*** - Agent development and selection (3 skills)
-- **plan-\*** - Project planning patterns (2 skills)
+- **docs-\*** - Documentation creation and quality
+- **readme-\*** - README file patterns
+- **repo-\*** - Repository-wide patterns
+- **swe-programming-\*** - Language/framework expertise
+- **swe-developing-\*** - Application development patterns
+- **apps-\*** - Application-specific patterns
+- **agent-\*** - Agent development and selection
+- **plan-\*** - Project planning patterns
 
 **Why Skills Are NOT Layer 4.5**:
 
@@ -752,8 +752,6 @@ As the repository grows, additional layers might be considered:
 **Not planned**: Additional intermediate layers between existing layers (maintains simplicity)
 
 ### Skill Evolution
-
-**Current State**: 34 skills serving 57 agents
 
 **Growth Patterns**:
 

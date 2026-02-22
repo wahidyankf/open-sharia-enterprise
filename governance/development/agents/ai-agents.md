@@ -1697,7 +1697,7 @@ Agent contains:
 **Maintainability**:
 
 - Update standard once inSkill/Convention, all agents benefit
-- No hunting for outdated duplicates across 45 agents
+- No hunting for outdated duplicates across all agents
 - Single source of truth for each standard
 
 **Clarity**:
@@ -2386,7 +2386,7 @@ When simplifying an agent:
 
 **Project Achievement** (2026-01-03):
 
-- 45 agents simplified
+- All agents simplified
 - 82.7% average reduction (4x better than target)
 - 28,439 lines eliminated
 - 100% tier compliance (all in Simple tier)
@@ -2447,12 +2447,12 @@ This repository maintains **dual compatibility** with both Claude Code (`.claude
 ```
 .
 ├── .claude/                 # Claude Code configuration (PRIMARY - Source of Truth)
-│   ├── agents/             # 57 agents in Claude Code format
-│   ├── skills/             # 34 skills
+│   ├── agents/             # agents in Claude Code format
+│   ├── skills/             # skills
 │   └── settings.local.json # MCP servers configuration
 └── .opencode/              # OpenCode configuration (SECONDARY - Auto-generated)
-    ├── agent/              # 57 agents in OpenCode format (synced from .claude/)
-    ├── skill/              # 34 skills (direct copy from .claude/)
+    ├── agent/              # agents in OpenCode format (synced from .claude/)
+    ├── skill/              # skills (direct copy from .claude/)
     └── opencode.json       # OpenCode configuration
 ```
 
@@ -2555,8 +2555,8 @@ Skills are **directly copied** from `.claude/skills/` to `.opencode/skill/` (no 
 
 ### Migration History
 
-- **2026-01-12**: Initial OpenCode migration (45 agents)
-- **2026-01-16**: Dual-mode setup established, `.claude/` created as source of truth (46 agents)
+- **2026-01-12**: Initial OpenCode migration
+- **2026-01-16**: Dual-mode setup established, `.claude/` created as source of truth
 
 ### Best Practices
 
