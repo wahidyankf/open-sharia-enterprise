@@ -14,12 +14,10 @@ Week 2 of Phase 1. Still laying the foundation — but this week we went wider a
 
 **Week 0014 Progress:**
 
-- OrganicLever: 6 app placeholders in Nx monorepo (organiclever-web, organiclever-web-e2e, organiclever-be, organiclever-be-e2e, organiclever-app, organiclever-app-web-e2e)
-- organiclever-web: OrganicLever landing page (organiclever.com, Next.js 14) integrated into Nx monorepo with Vercel deployment
-- Rhino-CLI doctor command: verifies all required dev tools (git, volta, node, npm, java, maven, golang) are installed with correct versions — added git check, refactored parser architecture
-- OSEPlatform web: added Mermaid diagrams to update posts + accessible roadmap
-- App naming standardized: oseplatform-web, organiclever (removed hyphens)
-- New convention: dynamic-collection-references (no hardcoded counts in docs)
+- OrganicLever: 6 app placeholders scaffolded in Nx monorepo — landing page (organiclever.com, Next.js 14), Spring Boot backend, Flutter app, and all 3 E2E test suites — all Vercel-ready
+- Rhino-CLI `doctor` command: checks that all required dev tools (git, volta, node, npm, java, maven, golang) are installed with correct versions
+- OSEPlatform web: added Mermaid diagrams to update posts and an accessible visual roadmap
+- Repository housekeeping: standardized app naming, enforced no-hardcoded-counts convention in docs
 
 **Focus Areas (Weeks 13-14):**
 
