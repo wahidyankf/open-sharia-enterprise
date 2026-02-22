@@ -84,6 +84,25 @@ We document our journey and share knowledge through [**AyoKoding**](https://ayok
 
 Our progressive complexity approach - start simple, test thoroughly, scale systematically:
 
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
+%% All colors are color-blind friendly and meet WCAG AA contrast standards
+graph LR
+    P0["Phase 0\nRepository Setup\n& Knowledge Base"]:::blue
+    P1["Phase 1\nOrganicLever\nIndividual Users"]:::orange
+    P2["Phase 2\nSMB Application\nSmall & Medium Business"]:::teal
+    P3["Phase 3\nEnterprise Application\nLarge Organizations"]:::purple
+
+    P0 -->|"Foundation"| P1
+    P1 -->|"Revenue & Learnings"| P2
+    P2 -->|"Revenue & Certifications"| P3
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 ### Phase 0: Repository Setup & Knowledge Base (Current)
 
 Establishing repository infrastructure and launching initial websites:
