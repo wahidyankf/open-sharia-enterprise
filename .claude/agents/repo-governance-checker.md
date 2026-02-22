@@ -789,7 +789,7 @@ Expected: Should include explicit-over-implicit given document focuses on securi
 
 1. **Pattern Validation**:
    - **Stack Language**: `ex-soen-prla-[abbrev]__[topic].md`
-     - Abbreviations: `ja` (Java), `ts` (TypeScript), `go` (Go), `py` (Python), `ex` (Elixir)
+     - Abbreviations: `ja` (Java), `ty` (TypeScript), `go` (Go), `py` (Python), `ex` (Elixir)
    - **Stack Libraries**: `ex-soen-plwe-[framework-abbrev]__[topic].md`
      - Examples: `jvsp` (JVM Spring Boot), `expr` (Elixir Phoenix), `tsre` (TS React)
    - **Architecture**: `ex-soen-arch-[pattern]__[topic].md`
@@ -1014,8 +1014,8 @@ classDef orangeBox fill:#DE8F05,stroke:#DE8F05,color:#fff
 
 **Evidence**:
 Files in directory but not in README:
-- ex-soen-prla-ts__type-narrowing.md
-- ex-soen-prla-ts__advanced-types.md
+- ex-soen-prla-ty__type-narrowing.md
+- ex-soen-prla-ty__advanced-types.md
 
 **Recommendation**: Add missing files to README index with brief descriptions
 ````
