@@ -73,14 +73,14 @@ graph TD
 #### Layer 1: Principles (WHY - Values)
 
 - **[Core Principles](./principles/README.md)** - Foundational values that govern all lower layers
-  - Principles across 3 categories (General, Content, Software Engineering)
+  - Principles organized across categories (General, Content, Software Engineering)
   - Each principle traces back to vision with "Vision Supported" section
   - Examples: Deliberate Problem-Solving, Simplicity Over Complexity, Accessibility First, Documentation First, Automation Over Manual
 
 #### Layer 2: Conventions (WHAT - Documentation Rules)
 
 - **[Conventions](./conventions/README.md)** - Documentation writing and organization standards
-  - Conventions across 6 categories (formatting, linking, writing, structure, tutorials, hugo)
+  - Conventions organized across categories (formatting, linking, writing, structure, tutorials, hugo)
   - Implements principles in concrete documentation rules
   - Each convention includes "Principles Implemented/Respected" section
   - Enforced by AI agents (docs-checker, docs-maker, etc.)
@@ -88,7 +88,7 @@ graph TD
 #### Layer 3: Development (HOW - Software Practices)
 
 - **[Development](./development/README.md)** - Software development practices and workflows
-  - Practices across 6 categories (workflow, quality, pattern, agents, infra, hugo)
+  - Practices organized across categories (workflow, quality, pattern, agents, infra, hugo)
   - Implements principles in concrete software standards
   - Each practice includes "Principles Implemented/Respected" AND "Conventions Implemented/Respected" sections
   - Enforced by AI agents and automation (git hooks, build tools)

@@ -119,7 +119,7 @@ Three-stage quality workflow:
 - **Agent Development**: `agent-developing-agents`, `agent-selecting-models`, `agent-documenting-references`
 - **Repository Patterns**: `repo-applying-maker-checker-fixer`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`, `repo-understanding-repository-architecture`
 - **Development Workflow**: `repo-practicing-trunk-based-development`, `swe-developing-applications-common`
-- **Programming Languages**: `swe-programming-elixir`, `swe-programming-elixir-phoenix`, `swe-programming-java`, `swe-programming-jvm-spring`, `swe-programming-jvm-spring-boot`, `swe-programming-python`, `swe-programming-typescript`, `swe-programming-elixir-phoenix-liveview`, `swe-programming-golang` (9 skills)
+- **Programming Languages**: `swe-programming-elixir`, `swe-programming-elixir-phoenix`, `swe-programming-java`, `swe-programming-jvm-spring`, `swe-programming-jvm-spring-boot`, `swe-programming-python`, `swe-programming-typescript`, `swe-programming-elixir-phoenix-liveview`, `swe-programming-golang`
 - **Application-Specific**: `apps-ayokoding-web-developing-content`, `apps-oseplatform-web-developing-content`, `apps-organiclever-web-developing-content`
 
 **Service Relationship**: Skills serve agents with knowledge and execution but don't govern them (service infrastructure, not governance layer).

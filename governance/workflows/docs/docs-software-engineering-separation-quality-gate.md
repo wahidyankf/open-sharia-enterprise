@@ -319,3 +319,9 @@ This workflow ensures documentation separation compliance through iterative vali
 - PASS: **Accessibility First**: Generates human-readable audit reports
 - PASS: **Progressive Disclosure**: Can run with different scopes and iteration limits
 - PASS: **No Time Estimates**: Focus on quality outcomes, not duration
+
+## Conventions Implemented/Respected
+
+- **[File Naming Convention](../../conventions/structure/file-naming.md)**: Workflow file follows plain name convention for workflows
+- **[Linking Convention](../../conventions/formatting/linking.md)**: All cross-references use GitHub-compatible markdown with `.md` extensions
+- **[Content Quality Principles](../../conventions/writing/quality.md)**: Active voice, proper heading hierarchy, single H1

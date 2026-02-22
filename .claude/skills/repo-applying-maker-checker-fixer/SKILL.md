@@ -796,7 +796,7 @@ EOF
 
 ### 2. Scoped Re-validation (Changed Files Only)
 
-**Problem**: Full-repo scan on every iteration re-validates all 340+ software docs even when fixer only changed 3-4 agent files.
+**Problem**: Full-repo scan on every iteration re-validates all ~265 software documentation files even when fixer only changed 3-4 agent files.
 
 **Solution**: Fixer captures changed files after applying fixes:
 

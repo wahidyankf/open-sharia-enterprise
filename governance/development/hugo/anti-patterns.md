@@ -346,3 +346,9 @@ When developing Hugo sites, ask: **Am I adding performance or complexity?** If c
 - **Explicit Over Implicit**: Clear URLs, validated parameters
 - **Simplicity Over Complexity**: Direct HTML for one-offs, minimal shortcodes
 - **Automation Over Manual**: Asset processing, fingerprinting, optimization
+
+## Conventions Implemented/Respected
+
+- **[Color Accessibility Convention](../../conventions/formatting/color-accessibility.md)**: WCAG AA color compliance in Hugo themes
+- **[Content Quality Principles](../../conventions/writing/quality.md)**: Clear, actionable documentation structure
+- **[Linking Convention](../../conventions/formatting/linking.md)**: GitHub-compatible markdown links with correct paths

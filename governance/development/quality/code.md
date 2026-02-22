@@ -177,7 +177,7 @@ Validates `.claude/` and `.opencode/` consistency before commit:
 $ git commit -m "feat: add new feature"
 🔍 Validating .claude/ and .opencode/ configuration...
 Validation Complete (513 checks passed)
-Sync Complete (45 agents, 21 skills)
+Sync Complete (57 agents, 34 skills)
 Validation Complete (68 checks passed)
 ✅ Configuration validation passed
  Preparing lint-staged...

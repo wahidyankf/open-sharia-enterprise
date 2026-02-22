@@ -322,3 +322,9 @@ Hugo sites built following these practices are maintainable, performant, accessi
 - **Explicit Over Implicit**: Clear configuration, validated parameters
 - **Reproducibility First**: Environment-specific builds, resource caching
 - **Automation Over Manual**: Asset processing, fingerprinting, optimization
+
+## Conventions Implemented/Respected
+
+- **[Color Accessibility Convention](../../conventions/formatting/color-accessibility.md)**: WCAG AA color compliance in Hugo themes
+- **[Content Quality Principles](../../conventions/writing/quality.md)**: Active voice, clear headings in documentation
+- **[File Naming Convention](../../conventions/structure/file-naming.md)**: Hugo content files follow naming conventions

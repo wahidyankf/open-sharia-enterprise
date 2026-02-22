@@ -383,3 +383,9 @@ Quality development following these practices is automated, systematic, and main
 - **Documentation First**: Preserve content, document validation rules
 - **Explicit Over Implicit**: Clear criticality levels, confidence assessment
 - **Simplicity Over Complexity**: Incremental quality, affected tests only
+
+## Conventions Implemented/Respected
+
+- **[Content Quality Principles](../../conventions/writing/quality.md)**: Active voice, clear documentation of quality practices
+- **[File Naming Convention](../../conventions/structure/file-naming.md)**: Quality documents and reports follow standardized naming
+- **[Dynamic Collection References Convention](../../conventions/writing/dynamic-collection-references.md)**: Avoid hardcoded counts in quality reports

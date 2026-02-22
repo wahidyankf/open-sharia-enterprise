@@ -401,3 +401,9 @@ When implementing quality processes, ask: **Am I adding automation or friction?*
 - **Documentation First**: Preserve content, document validation rules
 - **Explicit Over Implicit**: Clear criticality, documented rationale
 - **Simplicity Over Complexity**: Incremental quality, affected tests only
+
+## Conventions Implemented/Respected
+
+- **[Content Quality Principles](../../conventions/writing/quality.md)**: Active voice, clear problem/solution format in documentation
+- **[File Naming Convention](../../conventions/structure/file-naming.md)**: Quality documents follow standardized kebab-case naming
+- **[Linking Convention](../../conventions/formatting/linking.md)**: GitHub-compatible links to related quality documentation

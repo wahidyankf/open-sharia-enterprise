@@ -94,7 +94,7 @@ Run repository-wide consistency check to identify all issues.
 - **Args**: `scope: all, EXECUTION_SCOPE: repo-rules`
 - **Output**: `{audit-report-1}` - Initial audit report in `generated-reports/` (4-part format: `repo-rules__{uuid-chain}__{timestamp}__audit.md`)
 
-**UUID Chain Tracking**: Checker generates 6-char UUID and writes to `generated-reports/.execution-chain-repo-rules` before spawning any child agents. See [Temporary Files Convention](../../development/infra/temporary-files.md#uuid-chain-generation) for details.
+**UUID Chain Tracking**: Checker generates 6-char UUID and writes to `generated-reports/.execution-chain-repo-rules` before spawning any child agents. See [Temporary Files Convention](../../development/infra/temporary-files.md#uuid-generation) for details.
 
 **Success criteria**: Checker completes and generates audit report.
 
@@ -359,3 +359,9 @@ This workflow ensures repository consistency through iterative validation and fi
 - PASS: **Accessibility First**: Generates human-readable audit reports
 - PASS: **Progressive Disclosure**: Can run with different iteration limits
 - PASS: **No Time Estimates**: Focus on quality outcomes, not duration
+
+## Conventions Implemented/Respected
+
+- **[File Naming Convention](../../conventions/structure/file-naming.md)**: Workflow file follows plain name convention for workflows
+- **[Linking Convention](../../conventions/formatting/linking.md)**: All cross-references use GitHub-compatible markdown with `.md` extensions
+- **[Content Quality Principles](../../conventions/writing/quality.md)**: Active voice, proper heading hierarchy, single H1

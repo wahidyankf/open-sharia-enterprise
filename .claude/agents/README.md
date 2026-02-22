@@ -83,16 +83,22 @@ Agents use YAML frontmatter with the following structure:
 ```yaml
 ---
 name: agent-name
-description: Brief description of agent purpose and when to use it
-model: sonnet # Optional: sonnet, opus, haiku (omit to inherit)
-tools: Read, Write, Edit, Glob, Grep, Bash, TodoWrite, WebFetch, WebSearch
+description: Expert in X specializing in Y. Use when Z.
+tools: Read, Glob, Grep
+model: inherit
+color: blue
+skills: []
 ---
 ```
 
 **Name**: Required field - unique identifier using lowercase letters and hyphens
 **Description**: Required field - when Claude should delegate to this agent
-**Tools**: Comma-separated string with capitalized tool names
-**Model**: Optional field - omit to inherit from parent context
+**Tools**: Comma-separated string with capitalized tool names (only tools the agent needs)
+**Model**: Required field - use `inherit` (default), `haiku`, `sonnet`, or `opus`
+**Color**: Required field - `blue` (makers), `green` (checkers), `yellow` (updaters), `purple` (implementors)
+**Skills**: Required field - list of Skill names (empty array `[]` if no Skills used)
+
+Note: Frontmatter MUST NOT contain YAML inline comments (# symbols). Put explanations in the document body.
 
 ## Maker-Checker-Fixer Pattern
 
@@ -100,7 +106,7 @@ Three-stage quality workflow:
 
 1. **Maker** (🟦 Blue) - Creates content
 2. **Checker** (🟩 Green) - Validates content, generates audit reports
-3. **Fixer** (🟨 Yellow) - Applies validated fixes
+3. **Updater** (🟨 Yellow) - Applies validated fixes (agents in this role are named "fixer" in the family convention)
 
 **Criticality Levels**: CRITICAL, HIGH, MEDIUM, LOW
 **Confidence Levels**: HIGH, MEDIUM, FALSE_POSITIVE

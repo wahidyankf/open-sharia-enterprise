@@ -723,7 +723,7 @@ Without explicit mechanisms to track accepted decisions, checker-fixer workflows
 
 ### 2. Scoped Re-validation (Changed Files Only)
 
-**Problem**: Full-repo scan on every iteration re-validates all 340+ software documentation files even when the fixer only changed 3-4 agent files.
+**Problem**: Full-repo scan on every iteration re-validates all ~265 software documentation files even when the fixer only changed 3-4 agent files.
 
 **Solution**: Fixer captures `git diff --name-only HEAD` after applying fixes and includes the list in the fix report under `## Changed Files (for Scoped Re-validation)`. Checker in re-validation mode (identified by multi-part UUID chain like `abc123_def456`) focuses Step 8 validation only on the listed changed files.
 

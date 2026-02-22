@@ -422,3 +422,9 @@ When applying patterns, ask: **Am I adding clarity or complexity?** If complexit
 - **Pure Functions Over Side Effects**: Isolate side effects, pure core logic
 - **Simplicity Over Complexity**: Single responsibility, small functions
 - **Automation Over Manual**: Systematic workflows, confidence-based fixing
+
+## Conventions Implemented/Respected
+
+- **[Content Quality Principles](../../conventions/writing/quality.md)**: Active voice, clear problem/solution format in documentation
+- **[File Naming Convention](../../conventions/structure/file-naming.md)**: Pattern documents follow kebab-case naming
+- **[Linking Convention](../../conventions/formatting/linking.md)**: GitHub-compatible links to related pattern documentation
