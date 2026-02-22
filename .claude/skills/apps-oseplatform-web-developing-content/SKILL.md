@@ -458,9 +458,9 @@ cover:
 
 **Related Agents**:
 
-- `apps__oseplatform-web__content-maker` - Creates oseplatform-web content
-- `apps__oseplatform-web__content-checker` - Validates oseplatform-web content
-- `apps__oseplatform-web__deployer` - Deploys oseplatform-web
+- `apps-oseplatform-web-content-maker` - Creates oseplatform-web content
+- `apps-oseplatform-web-content-checker` - Validates oseplatform-web content
+- `apps-oseplatform-web-deployer` - Deploys oseplatform-web
 
 **External Resources**:
 
@@ -545,5 +545,5 @@ Vercel automatically:
 
 **Related Skills**:
 
-- `apps__ayokoding-web__developing-content` - Comparison with ayokoding-web patterns
-- `docs__creating-accessible-diagrams` - Accessible diagrams for technical content
+- `apps-ayokoding-web-developing-content` - Comparison with ayokoding-web patterns
+- `docs-creating-accessible-diagrams` - Accessible diagrams for technical content

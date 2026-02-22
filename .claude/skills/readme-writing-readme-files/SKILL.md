@@ -232,7 +232,7 @@ License type with link to LICENSE file
 
 **Related Skills**:
 
-- `docs__applying-content-quality` - Universal content quality standards
+- `docs-applying-content-quality` - Universal content quality standards
 
 ---
 

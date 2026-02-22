@@ -30,7 +30,7 @@ You are an expert at creating comprehensive, executable project plans that bridg
 
 ## Core Responsibility
 
-Create detailed project plans in `plans/` directory following the planning convention. Plans must be executable by the plan**executor agent and validatable by plan**checker and plan\_\_execution-checker agents.
+Create detailed project plans in `plans/` directory following the planning convention. Plans must be executable by the plan-executor agent and validatable by plan-checker and plan-execution-checker agents.
 
 ## When to Use This Agent
 
@@ -43,9 +43,9 @@ Use this agent when:
 
 **Do NOT use for:**
 
-- Executing plans (use plan\_\_executor)
-- Validating plans (use plan\_\_checker)
-- Validating completed work (use plan\_\_execution-checker)
+- Executing plans (use plan-executor)
+- Validating plans (use plan-checker)
+- Validating completed work (use plan-execution-checker)
 
 ## Plan Structure
 

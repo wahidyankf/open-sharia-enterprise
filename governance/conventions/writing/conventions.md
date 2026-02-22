@@ -544,16 +544,16 @@ Conventions are most effective when enforced or assisted by agents:
 
 ### Agents That Create Conventions
 
-- **docs\_\_maker** - Creates convention documents following this meta-convention
-- **wow\_\_rules-maker** - Propagates convention changes across repository
+- **docs-maker** - Creates convention documents following this meta-convention
+- **repo-governance-maker** - Propagates convention changes across repository
 
 ### Agents That Use Conventions
 
-- **docs\_\_checker** - Validates documentation follows conventions
+- **docs-checker** - Validates documentation follows conventions
 - **docs-link-general-checker** - Enforces linking convention
-- **ayokoding-web-general-checker** - Validates general Hugo content conventions
-- **ayokoding-web-by-example-checker** - Validates by-example tutorial conventions
-- **wow\_\_rules-checker** - Audits convention compliance
+- **apps-ayokoding-web-general-checker** - Validates general Hugo content conventions
+- **apps-ayokoding-web-by-example-checker** - Validates by-example tutorial conventions
+- **repo-governance-checker** - Audits convention compliance
 
 ### Agent Integration Checklist
 
@@ -587,7 +587,7 @@ When creating a convention:
 
 **Agents:**
 
-- `docs__maker` - Creates convention documents following this structure
+- `docs-maker` - Creates convention documents following this structure
 - `repo-governance-maker` - Propagates convention changes
 - `repo-governance-checker` - Validates convention compliance
 

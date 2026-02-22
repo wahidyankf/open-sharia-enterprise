@@ -76,7 +76,7 @@ PASS: **Explicit (Correct)**:
 
 ```yaml
 ---
-name: docs__checker
+name: docs-checker
 tools: Read, Glob, Grep
 ---
 ```
@@ -87,7 +87,7 @@ FAIL: **Implicit (Avoid)**:
 
 ```yaml
 ---
-name: docs__checker
+name: docs-checker
 tools: all
 ---
 ```
@@ -279,7 +279,7 @@ pages/
 
 ```yaml
 ---
-name: docs__maker
+name: docs-maker
 description: Expert documentation writer
 tools: Read, Write, Edit, Glob, Grep
 model: inherit

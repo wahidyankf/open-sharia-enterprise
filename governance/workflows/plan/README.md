@@ -24,8 +24,8 @@ These workflows define **WHEN and HOW to validate and execute plans**, orchestra
 
 ## Workflows
 
-- [Plan Execution](./plan-execution.md) - Execute plan tasks systematically with validation and completion tracking using plan**executor and plan**execution-checker
-- [Plan Quality Gate](../docs/quality-gate.md) - Validate plan completeness and accuracy, apply fixes iteratively until ZERO findings using plan**checker and plan**fixer
+- [Plan Execution](./plan-execution.md) - Execute plan tasks systematically with validation and completion tracking using plan-executor and plan-execution-checker
+- [Plan Quality Gate](../docs/quality-gate.md) - Validate plan completeness and accuracy, apply fixes iteratively until ZERO findings using plan-checker and plan-fixer
 
 ## Related Documentation
 

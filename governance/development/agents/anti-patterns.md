@@ -4,31 +4,9 @@
 
 ## Overview
 
-## Principles Implemented/Respected
-
-This companion document respects:
-
-- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Provides practical examples of simple vs complex approaches
-- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Makes patterns and anti-patterns explicit through clear examples
-
-## Conventions Implemented/Respected
-
-This companion document supports the conventions in this directory by providing practical examples and guidance.
-
 Understanding common mistakes in AI agent development helps teams build more maintainable, secure, and effective automation. These anti-patterns cause complexity, security risks, and maintenance burden.
 
 ## Purpose
-
-## Principles Implemented/Respected
-
-This companion document respects:
-
-- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Provides practical examples of simple vs complex approaches
-- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Makes patterns and anti-patterns explicit through clear examples
-
-## Conventions Implemented/Respected
-
-This companion document supports the conventions in this directory by providing practical examples and guidance.
 
 This document provides:
 
@@ -36,6 +14,17 @@ This document provides:
 - Examples of problematic implementations
 - Solutions and corrections for each anti-pattern
 - Security and maintenance considerations
+
+## Principles Implemented/Respected
+
+This companion document respects:
+
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Provides practical examples of simple vs complex approaches
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Makes patterns and anti-patterns explicit through clear examples
+
+## Conventions Implemented/Respected
+
+This companion document supports the conventions in this directory by providing practical examples and guidance.
 
 ## Common Anti-Patterns
 
@@ -67,7 +56,7 @@ description: Creates documentation content
 tools: [Read, Write, Glob]
 ---
 ---
-name: apps__deployer
+name: apps-deployer
 description: Deploys applications to production
 tools: [Bash, Grep]
 ---
@@ -351,7 +340,7 @@ tool.md
 
 ```
 docs-tutorial-checker.md
-apps__ayokoding-web__deployer.md
+apps-ayokoding-web-deployer.md
 plan-execution-checker.md
 readme-maker.md
 ```
@@ -400,10 +389,3 @@ Avoiding these anti-patterns ensures:
 - Discoverable agent library
 
 When implementing agents, ask: **Am I adding clarity or complexity?** If complexity, refactor to follow agent development best practices.
-
-## Principles Implemented/Respected
-
-- **Simplicity Over Complexity**: Focused, single-purpose agents
-- **Explicit Over Implicit**: Clear permissions and behavior
-- **Security First**: Minimum necessary permissions
-- **Testability**: Comprehensive testing before deployment

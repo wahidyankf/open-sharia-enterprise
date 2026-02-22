@@ -223,14 +223,14 @@ Steps execute one after another. Later steps can reference outputs from earlier 
 ```markdown
 ### 1. Build Project (Sequential)
 
-**Agent**: `swe__hugo__developer`
+**Agent**: `swe-hugo-developer`
 
 - **Args**: `action: build, project: ayokoding-web`
 - **Output**: `{build-artifacts}`
 
 ### 2. Run Tests (Sequential)
 
-**Agent**: `plan__execution-checker`
+**Agent**: `plan-execution-checker`
 
 - **Args**: `target: {step1.outputs.build-artifacts}`
 - **Depends on**: Step 1 completion
@@ -245,17 +245,17 @@ Steps execute simultaneously for efficiency.
 
 Run all validators concurrently:
 
-**Agent**: `docs__checker`
+**Agent**: `docs-checker`
 
 - **Args**: `scope: all`
 - **Output**: `{docs-report}`
 
-**Agent**: `docs__tutorial-checker`
+**Agent**: `docs-tutorial-checker`
 
 - **Args**: `scope: all`
 - **Output**: `{tutorial-report}`
 
-**Agent**: `docs__link-general-checker`
+**Agent**: `docs-link-general-checker`
 
 - **Args**: `scope: all`
 - **Output**: `{links-report}`
@@ -270,7 +270,7 @@ Steps execute only if conditions are met.
 ```markdown
 ### 3. Apply Fixes (Conditional)
 
-**Agent**: `docs__fixer`
+**Agent**: `docs-fixer`
 
 - **Args**: `report: {step1.outputs.docs-report}`
 - **Condition**: `{step2.user-approved} == true`
@@ -313,7 +313,7 @@ inputs:
 ```
 
 ```markdown
-**Agent**: `docs__checker`
+**Agent**: `docs-checker`
 
 - **Args**: `scope: {input.scope}`
 ```
@@ -451,8 +451,8 @@ A specialized workflow pattern that achieves **perfect quality state** by fixing
 
 **When to use**:
 
-- Repository-wide validation (wow**rules**quality-gate)
-- Content quality assurance (plan\_\_quality-gate, ayokoding-web-content-quality-gate)
+- Repository-wide validation (repository-rules-validation)
+- Content quality assurance (plan-quality-gate, ayokoding-web-content-quality-gate)
 - Pre-release quality gates
 - Periodic health checks
 

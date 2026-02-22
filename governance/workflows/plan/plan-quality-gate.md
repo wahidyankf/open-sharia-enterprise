@@ -53,8 +53,8 @@ User: "Run plan quality gate workflow for plans/backlog/my-plan/ in manual mode"
 
 The AI will:
 
-1. Execute plan\_\_checker logic directly (read, validate, write audit)
-2. Execute plan\_\_fixer logic directly (read audit, apply fixes, write fix report)
+1. Execute plan-checker logic directly (read, validate, write audit)
+2. Execute plan-fixer logic directly (read audit, apply fixes, write fix report)
 3. Iterate until zero findings achieved
 4. Show git status with modified files
 5. Wait for user commit approval
@@ -74,7 +74,7 @@ The AI will:
 
 Run plan validation to identify completeness and accuracy issues.
 
-**Agent**: `plan__checker`
+**Agent**: `plan-checker`
 
 - **Args**: `scope: {input.scope}`
 - **Output**: `{audit-report-1}` - Initial audit report in `generated-reports/`
@@ -104,7 +104,7 @@ Analyze audit report to determine if fixes are needed.
 
 Apply all validated fixes from the audit report.
 
-**Agent**: `plan__fixer`
+**Agent**: `plan-fixer`
 
 - **Args**: `report: {step1.outputs.audit-report-1}, approved: all`
 - **Output**: `{fixes-applied}`
@@ -125,7 +125,7 @@ Apply all validated fixes from the audit report.
 
 Run checker again to verify fixes resolved issues and no new issues introduced.
 
-**Agent**: `plan__checker`
+**Agent**: `plan-checker`
 
 - **Args**: `scope: {input.scope}`
 - **Output**: `{audit-report-N}` - Verification audit report
@@ -187,8 +187,8 @@ User: "Run plan quality gate workflow for all plans in manual mode"
 
 The AI will execute the workflow directly:
 
-- Validate all plan files (plan\_\_checker logic)
-- Apply all fixes (plan\_\_fixer logic)
+- Validate all plan files (plan-checker logic)
+- Apply all fixes (plan-fixer logic)
 - Iterate until zero findings achieved
 
 ### Validate Specific Plan Folder
@@ -267,7 +267,7 @@ Result: SUCCESS (3 iterations)
 
 ## Plan-Specific Validation
 
-The plan\_\_checker validates:
+The plan-checker validates:
 
 - **Completeness**: All required sections present (requirements, deliverables, checklists)
 - **Technical Accuracy**: Commands, versions, tool names verified via web search

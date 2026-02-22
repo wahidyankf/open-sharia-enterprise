@@ -256,9 +256,9 @@ Use this agent when:
 
 **Do NOT use for:**
 
-- Validating README quality (use readme\_\_checker)
-- Fixing README issues (use readme\_\_fixer)
-- Creating non-README documentation (use docs\_\_maker)
+- Validating README quality (use readme-checker)
+- Fixing README issues (use readme-fixer)
+- Creating non-README documentation (use docs-maker)
 
 ## Reference Documentation
 

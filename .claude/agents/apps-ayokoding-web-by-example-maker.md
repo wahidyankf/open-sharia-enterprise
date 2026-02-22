@@ -52,8 +52,8 @@ Use this agent when:
 **Do NOT use for:**
 
 - By Concept tutorials (different structure)
-- Validation (use apps**ayokoding-web**by-example-checker)
-- Fixing issues (use apps**ayokoding-web**by-example-fixer)
+- Validation (use apps-ayokoding-web-by-example-checker)
+- Fixing issues (use apps-ayokoding-web-by-example-fixer)
 
 ## By Example Requirements
 

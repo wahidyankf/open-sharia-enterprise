@@ -68,22 +68,23 @@ Links to conventions, related skills
 
 **Service relationship**: Skills serve agents but don't govern them (delivery infrastructure, not governance layer).
 
-## All 26 Skills
+## All 34 Skills
 
 Skills are synced from `.claude/skills/` maintaining folder structure. For complete documentation, see [.claude/skills/README.md](../../.claude/skills/README.md).
 
 ### Skill Categories
 
-- **Documentation Skills** (6): docs-applying-content-quality, docs-applying-diataxis-framework, docs-creating-accessible-diagrams, docs-creating-by-example-tutorials, docs-validating-factual-accuracy, docs-validating-links
+- **Documentation Skills** (8): docs-applying-content-quality, docs-applying-diataxis-framework, docs-creating-accessible-diagrams, docs-creating-by-example-tutorials, docs-creating-in-the-field-tutorials, docs-validating-factual-accuracy, docs-validating-links, docs-validating-software-engineering-separation
 - **README Skills** (1): readme-writing-readme-files
 - **Planning Skills** (2): plan-creating-project-plans, plan-writing-gherkin-criteria
 - **Agent Development Skills** (3): agent-developing-agents, agent-documenting-references, agent-selecting-models
-- **Repository Pattern Skills** (7): repo-applying-maker-checker-fixer, repo-applying-fixer-workflow, repo-assessing-criticality-confidence, repo-defining-workflows, repo-executing-checker-workflow, repo-generating-validation-reports, repo-practicing-trunk-based-development, repo-understanding-repository-architecture
-- **Application-Specific Skills** (2): apps-ayokoding-web-developing-content, apps-oseplatform-web-developing-content
-- **Frontend Skills** (1): frontend-design
+- **Repository Pattern Skills** (6): repo-applying-maker-checker-fixer, repo-assessing-criticality-confidence, repo-defining-workflows, repo-generating-validation-reports, repo-practicing-trunk-based-development, repo-understanding-repository-architecture
+- **Development Workflow Skills** (2): swe-developing-applications-common, swe-developing-e2e-test-with-playwright
+- **Programming Language Skills** (9): swe-programming-elixir, swe-programming-elixir-phoenix, swe-programming-elixir-phoenix-liveview, swe-programming-golang, swe-programming-java, swe-programming-jvm-spring, swe-programming-jvm-spring-boot, swe-programming-python, swe-programming-typescript
+- **Application-Specific Skills** (3): apps-ayokoding-web-developing-content, apps-organiclever-web-developing-content, apps-oseplatform-web-developing-content
 
 ---
 
-**Total Skills**: 26
+**Total Skills**: 34
 **Format**: Folder structure with SKILL.md inside each folder
-**Last Updated**: 2026-02-01
+**Last Updated**: 2026-02-22

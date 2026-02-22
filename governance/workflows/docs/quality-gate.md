@@ -1,5 +1,5 @@
 ---
-name: docs__quality-gate
+name: docs-quality-gate
 goal: Validate all docs/ content quality (factual accuracy, pedagogical structure, link validity), apply fixes iteratively until zero findings achieved
 termination: Zero findings across all validators (runs indefinitely until achieved unless max-iterations provided)
 inputs:
@@ -81,8 +81,8 @@ User: "Run documentation quality gate workflow for docs/tutorials/ in manual mod
 
 The AI will:
 
-1. Execute docs\_\_checker, docs\_\_tutorial-checker, and docs\_\_link-general-checker logic directly in parallel (validate, write audits)
-2. Execute docs\_\_fixer and docs\_\_tutorial-fixer logic directly in sequence (read audits, apply fixes, write fix reports)
+1. Execute docs-checker, docs-tutorial-checker, and docs-link-general-checker logic directly in parallel (validate, write audits)
+2. Execute docs-fixer and docs-tutorial-fixer logic directly in sequence (read audits, apply fixes, write fix reports)
 3. Iterate until zero findings achieved across all three validators
 4. Show git status with modified files
 5. Wait for user commit approval
@@ -96,9 +96,9 @@ The AI will:
 graph TB
     Start([Start Workflow]) --> Step1[Step 1: Parallel Validation]
 
-    Step1 --> Check1[docs__checker<br/>Factual Accuracy]
-    Step1 --> Check2[docs__tutorial-checker<br/>Pedagogy]
-    Step1 --> Check3[docs__link-general-checker<br/>Links]
+    Step1 --> Check1[docs-checker<br/>Factual Accuracy]
+    Step1 --> Check2[docs-tutorial-checker<br/>Pedagogy]
+    Step1 --> Check3[docs-link-general-checker<br/>Links]
 
     Check1 --> Step2{Step 2: Aggregate<br/>Findings}
     Check2 --> Step2
@@ -128,17 +128,17 @@ graph TB
 
 Run all documentation validators concurrently to identify all issues across different quality dimensions.
 
-**Agent 1a**: `docs__checker`
+**Agent 1a**: `docs-checker`
 
 - **Args**: `scope: {input.scope}, EXECUTION_SCOPE: docs`
 - **Output**: `{docs-report-N}` - Factual accuracy, technical correctness, contradictions
 
-**Agent 1b**: `docs__tutorial-checker`
+**Agent 1b**: `docs-tutorial-checker`
 
 - **Args**: `scope: {input.scope}, EXECUTION_SCOPE: docs`
 - **Output**: `{tutorial-report-N}` - Pedagogical structure, narrative flow, visual completeness
 
-**Agent 1c**: `docs__link-general-checker`
+**Agent 1c**: `docs-link-general-checker`
 
 - **Args**: `scope: {input.scope}, EXECUTION_SCOPE: docs`
 - **Output**: `{links-report-N}` - Internal/external link validation, cache management
@@ -194,7 +194,7 @@ Analyze all audit reports to determine if fixes are needed.
 
 Fix factual errors, outdated information, technical inaccuracies, and contradictions.
 
-**Agent**: `docs__fixer`
+**Agent**: `docs-fixer`
 
 - **Args**: `report: {step1.outputs.docs-report-N}, approved: all, mode: {input.mode}`
 - **Output**: `{factual-fixes-applied}` - Fix report with same UUID chain as source audit
@@ -221,7 +221,7 @@ Fix factual errors, outdated information, technical inaccuracies, and contradict
 
 Fix pedagogical issues, tutorial structure problems, narrative flow issues, and visual completeness gaps.
 
-**Agent**: `docs__tutorial-fixer`
+**Agent**: `docs-tutorial-fixer`
 
 - **Args**: `report: {step1.outputs.tutorial-report-N}, approved: all, mode: {input.mode}`
 - **Output**: `{tutorial-fixes-applied}` - Fix report with same UUID chain as source audit
@@ -325,7 +325,7 @@ User: "Run documentation quality gate workflow in normal mode"
 The AI will execute the workflow directly:
 
 - Validate all docs/ content in parallel (factual, pedagogical, links)
-- Fix CRITICAL/HIGH findings (docs**fixer, docs**tutorial-fixer logic)
+- Fix CRITICAL/HIGH findings (docs-fixer, docs-tutorial-fixer logic)
 - Iterate until zero CRITICAL/HIGH findings achieved
 - Report MEDIUM/LOW findings without fixing them
 
@@ -455,7 +455,7 @@ Result: SUCCESS (3 iterations)
 
 ## Validation Dimensions
 
-**Factual Accuracy** (docs\_\_checker):
+**Factual Accuracy** (docs-checker):
 
 - Technical correctness using web verification
 - Command syntax and flags validation
@@ -466,7 +466,7 @@ Result: SUCCESS (3 iterations)
 - Mathematical notation validation
 - Diagram color accessibility (color-blind palette)
 
-**Pedagogical Quality** (docs\_\_tutorial-checker):
+**Pedagogical Quality** (docs-tutorial-checker):
 
 - Tutorial structure and type compliance
 - Narrative flow and story arc
@@ -478,7 +478,7 @@ Result: SUCCESS (3 iterations)
 - Color-blind friendly diagrams
 - LaTeX delimiter correctness
 
-**Link Validity** (docs\_\_link-general-checker):
+**Link Validity** (docs-link-general-checker):
 
 - External URL accessibility (HTTP status codes)
 - Internal file reference validity
@@ -556,7 +556,7 @@ Result: SUCCESS (3 iterations)
 
 This workflow can be composed with:
 
-- **Repository Rules Validation** (`repository__rules-validation`) - Validate after docs changes affect repository consistency
+- **Repository Rules Validation** (`repository-rules-validation`) - Validate after docs changes affect repository consistency
 - Deployment workflows - Validate before deploying documentation sites
 - Content creation workflows - Validate after bulk documentation creation
 - Migration workflows - Ensure quality during documentation restructuring
@@ -585,7 +585,7 @@ Track across executions:
 
 **Concurrency**: Currently validates in parallel (up to max-concurrency) and fixes sequentially. The `max-concurrency` parameter controls parallel checker execution.
 
-**Best Practice**: Run link-checker separately first (`docs__link-general-checker` agent) to fix broken links before running full quality gate. This prevents workflow from blocking on unfixable link issues.
+**Best Practice**: Run link-checker separately first (`docs-link-general-checker` agent) to fix broken links before running full quality gate. This prevents workflow from blocking on unfixable link issues.
 
 This workflow ensures comprehensive documentation quality through multi-dimensional validation, iterative fixing, and mode-based progressive improvement.
 

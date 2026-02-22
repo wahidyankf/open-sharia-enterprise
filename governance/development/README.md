@@ -133,6 +133,15 @@ Development practices in this directory fall into several categories:
 
 - [Hugo Development Convention](./hugo/development.md) - Standards for developing Hugo sites (layouts, themes, assets, configuration) for ayokoding-web and oseplatform-web. Covers theme development, asset pipeline, i18n/l10n, performance optimization, and SEO best practices
 
+## 📚 Companion Documents
+
+Each primary practice document in this directory has companion files providing practical guidance:
+
+- **anti-patterns.md** - Common mistakes to avoid (with examples and corrections)
+- **best-practices.md** - Recommended patterns and techniques
+
+These companion files exist in each subdirectory: `workflow/`, `quality/`, `pattern/`, `agents/`, `infra/`, and `hugo/`.
+
 ## 🔗 Related Documentation
 
 - [Repository Governance Architecture](../repository-governance-architecture.md) - Complete six-layer architecture (Layer 3: Development)

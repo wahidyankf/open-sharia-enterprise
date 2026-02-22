@@ -239,9 +239,9 @@ After implementation steps, add validation:
 
 **Related Skills**:
 
-- `plan__writing-gherkin-criteria` - Detailed Gherkin guidance
-- `wow__practicing-trunk-based-development` - Git workflow
-- `docs__applying-content-quality` - Universal content standards
+- `plan-writing-gherkin-criteria` - Detailed Gherkin guidance
+- `repo-practicing-trunk-based-development` - Git workflow
+- `docs-applying-content-quality` - Universal content standards
 
 ---
 

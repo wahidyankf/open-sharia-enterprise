@@ -122,7 +122,7 @@ Three-stage quality workflow:
 
 ## Skills Integration
 
-Agents leverage 28 skills from `.claude/skills/` for progressive knowledge delivery. Skills are NOT agents - they provide reusable knowledge and execution services to agents.
+Agents leverage 34 skills from `.claude/skills/` for progressive knowledge delivery. Skills are NOT agents - they provide reusable knowledge and execution services to agents.
 
 **See**: [.claude/skills/README.md](../skills/README.md) for complete skills catalog
 

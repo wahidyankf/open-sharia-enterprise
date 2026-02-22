@@ -138,9 +138,9 @@ graph TB
 - Focus on educational value and code quality
 - Don't worry about perfect compliance (checker will catch issues)
 
-**Option B: AI-assisted creation** (docs\_\_tutorial-maker or future by-example-maker)
+**Option B: AI-assisted creation** (docs-tutorial-maker or future by-example-maker)
 
-- Use docs\_\_tutorial-maker with by-example specifications
+- Use docs-tutorial-maker with by-example specifications
 - Generate initial examples based on language/framework
 - Human review and refinement
 
@@ -683,9 +683,9 @@ User: "Run ayokoding-web by-example quality gate workflow for golang/tutorials/b
 **AI orchestrates all phases**:
 
 1. **Create content** (if needed): User writes examples or uses maker agent
-2. **Validate**: Execute apps**ayokoding-web**by-example-checker logic directly
+2. **Validate**: Execute apps-ayokoding-web-by-example-checker logic directly
 3. **Review**: User reads audit report from generated-reports/
-4. **Fix**: Execute apps**ayokoding-web**by-example-fixer logic directly
+4. **Fix**: Execute apps-ayokoding-web-by-example-fixer logic directly
 5. **Re-validate**: Execute checker logic again
 6. **Iterate**: Repeat validation-fixing until clean or max-iterations
 

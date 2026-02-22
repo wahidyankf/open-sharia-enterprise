@@ -47,7 +47,7 @@ This convention applies to:
   - **docs/** (`docs/tutorials/software-engineering/programming-languages/[language]/`)
   - **Any other location** where programming language tutorials exist
 - Includes: tutorials (foundational, by-concept, by-example, cookbook), how-to guides, best practices, anti-patterns
-- Enforced by: `ayokoding-web-general-checker`, `ayokoding-web-by-example-checker`, `ayokoding-web-general-maker`, `ayokoding-web-by-example-maker`, `ayokoding-web-facts-checker` agents
+- Enforced by: `apps-ayokoding-web-general-checker`, `apps-ayokoding-web-by-example-checker`, `apps-ayokoding-web-general-maker`, `apps-ayokoding-web-by-example-maker`, `apps-ayokoding-web-facts-checker` agents
 
 **Implementation Notes**: While the Full Set Tutorial Package architecture applies universally, Hugo-specific implementation details (frontmatter, weight values, navigation) are covered in [Hugo conventions](../hugo/)
 
@@ -675,7 +675,7 @@ From benchmark analysis:
 
 Content creators MUST:
 
-1. **Use ayokoding-web-general-maker or ayokoding-web-by-example-maker agent** for initial content creation
+1. **Use apps-ayokoding-web-general-maker or apps-ayokoding-web-by-example-maker agent** for initial content creation
 2. **Follow this standard exactly** (don't improvise structure)
 3. **Test all code examples** (ensure they run)
 4. **Verify factual accuracy** (check documentation, official sources)
@@ -685,9 +685,9 @@ Content creators MUST:
 
 Content MUST pass:
 
-1. **ayokoding-web-general-checker** or **ayokoding-web-by-example-checker** validation (Hugo conventions, quality principles)
-2. **ayokoding-web-facts-checker** verification (factual correctness)
-3. **ayokoding-web-link-checker** validation (all links work)
+1. **apps-ayokoding-web-general-checker** or **apps-ayokoding-web-by-example-checker** validation (Hugo conventions, quality principles)
+2. **apps-ayokoding-web-facts-checker** verification (factual correctness)
+3. **apps-ayokoding-web-link-checker** validation (all links work)
 4. **Manual review** (pedagogical effectiveness, clarity)
 
 ### Post-Publishing

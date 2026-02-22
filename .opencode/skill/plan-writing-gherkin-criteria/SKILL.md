@@ -551,9 +551,9 @@ Scenario: Preview shows latest changes
 
 **Related Agents**:
 
-- `plan__maker` - Creates plans with Gherkin acceptance criteria
-- `plan__checker` - Validates acceptance criteria format
-- `plan__execution-checker` - Verifies acceptance criteria are met
+- `plan-maker` - Creates plans with Gherkin acceptance criteria
+- `plan-checker` - Validates acceptance criteria format
+- `plan-execution-checker` - Verifies acceptance criteria are met
 
 **External Resources**:
 
@@ -575,5 +575,5 @@ This Skill packages essential Gherkin acceptance criteria knowledge for writing 
 
 **Related Skills**:
 
-- `wow__practicing-trunk-based-development` - Git workflow for implementing features
-- `wow__applying-maker-checker-fixer` - Validation workflow that uses acceptance criteria
+- `repo-practicing-trunk-based-development` - Git workflow for implementing features
+- `repo-applying-maker-checker-fixer` - Validation workflow that uses acceptance criteria

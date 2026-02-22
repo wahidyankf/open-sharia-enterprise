@@ -258,8 +258,8 @@ Before publishing workflow:
 
 **Related Skills**:
 
-- `wow__applying-maker-checker-fixer` - MCF workflow pattern
-- `plan__writing-gherkin-criteria` - Success criteria format
+- `repo-applying-maker-checker-fixer` - MCF workflow pattern
+- `plan-writing-gherkin-criteria` - Success criteria format
 
 ---
 

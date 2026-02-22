@@ -118,7 +118,7 @@ Sections prioritize:
 - Platform-specific advanced features
 - Deprecated features
 
-**Coverage verification**: The ayokoding-web-general-checker agent validates coverage against comprehensive checklists for each language/framework.
+**Coverage verification**: The apps-ayokoding-web-general-checker agent validates coverage against comprehensive checklists for each language/framework.
 
 ### 3. Section Count: 40-60 Total
 
@@ -639,7 +639,7 @@ Before publishing by-concept content, verify:
 
 ### Automated Validation
 
-The **ayokoding-web-general-checker** agent validates:
+The **apps-ayokoding-web-general-checker** agent validates:
 
 - **Coverage percentage**: 95% target achieved
 - **Section count**: 40-60 total (beginner: 15-25, intermediate: 12-20, advanced: 10-20)
@@ -659,10 +659,10 @@ The **ayokoding-web-general-checker** agent validates:
 
 The **by-concept-quality-gate** workflow orchestrates:
 
-1. **ayokoding-web-general-maker**: Creates/updates sections
-2. **ayokoding-web-general-checker**: Validates against standards
+1. **apps-ayokoding-web-general-maker**: Creates/updates sections
+2. **apps-ayokoding-web-general-checker**: Validates against standards
 3. **User review**: Reviews audit report
-4. **ayokoding-web-general-fixer**: Applies validated fixes
+4. **apps-ayokoding-web-general-fixer**: Applies validated fixes
 
 ## Relationship to Other Tutorial Types
 
@@ -750,7 +750,7 @@ This convention reflects standards that should be achieved by by-concept tutoria
 
 This convention implements and respects:
 
-- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Automated validation via ayokoding-web-general-checker agent
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Automated validation via apps-ayokoding-web-general-checker agent
 - **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: Content organized in complexity levels (beginner/intermediate/advanced)
 - **[No Time Estimates](../../principles/content/no-time-estimates.md)**: Uses coverage percentages instead of time-based estimates
 - **[Accessibility First](../../principles/content/accessibility-first.md)**: Color-blind friendly diagrams and accessible formatting
@@ -784,7 +784,7 @@ This convention implements and respects:
 - **Hugo-specific implementation** - Covered in [Hugo conventions](../hugo/)
 - **Hugo implementation** - Hextra specifics in [ayokoding-web convention](../hugo/ayokoding.md)
 - **Code quality** - Source code standards in development conventions
-- **Tutorial validation** - Covered by ayokoding-web-general-checker agent
+- **Tutorial validation** - Covered by apps-ayokoding-web-general-checker agent
 
 ## Related Documentation
 

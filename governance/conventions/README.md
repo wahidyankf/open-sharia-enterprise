@@ -12,7 +12,7 @@ updated: 2026-01-30
 
 # Conventions
 
-Documentation conventions and standards for the open-sharia-enterprise project. These documents define how documentation should be organized, named, written, and formatted. Contains conventions across 5 categories covering all aspects of documentation.
+Documentation conventions and standards for the open-sharia-enterprise project. These documents define how documentation should be organized, named, written, and formatted. Contains conventions across 6 categories covering all aspects of documentation.
 
 **Governance**: All conventions in this directory serve the [Vision](../vision/open-sharia-enterprise.md) (Layer 0) and implement the [Core Principles](../principles/README.md) (Layer 1) as part of the six-layer architecture. Each convention MUST include a "Principles Implemented/Respected" section that explicitly traces back to foundational principles. See [Repository Governance Architecture](../repository-governance-architecture.md) for complete governance model and [Convention Writing Convention](./writing/conventions.md) for structure requirements.
 
@@ -73,8 +73,8 @@ Conventions are organized into 6 semantic categories:
 - **[linking/](#linking-1-convention)** - Cross-reference and internal linking standards (1 convention)
 - **[writing/](#writing-5-conventions)** - Content quality, validation, writing standards (5 conventions)
 - **[structure/](#structure-4-conventions)** - Documentation organization, file naming, plans (4 conventions)
-- **[tutorials/](#tutorials-7-conventions)** - Tutorial creation and structure conventions (8 conventions)
-- **[hugo/](#hugo-3-conventions)** - Hugo site content conventions (4 conventions)
+- **[tutorials/](#tutorials-8-conventions)** - Tutorial creation and structure conventions (8 conventions)
+- **[hugo/](#hugo-4-conventions)** - Hugo site content conventions (4 conventions)
 
 ---
 
@@ -127,6 +127,7 @@ Tutorial creation, structure, naming, and content standards applying to **all tu
 - [Programming Language Tutorial Structure](./tutorials/programming-language-structure.md) - **Universal** directory structure for Full Set Tutorial Package with 5 mandatory components: foundational tutorials (initial-setup, quick-start), by-example track (Component 3 - PRIORITY: code-first with 75-85 examples, 95% coverage, "move fast"), by-concept track (Component 4: narrative-driven, 95% coverage, "learn deep"), and cookbook (Component 5: practical recipes in tutorials/cookbook/). Defines navigation pattern (by-example first), weight values, and creation order. All 5 components required for complete language content. Applies to all programming language tutorials across the repository
 - [Tutorial Convention](./tutorials/general.md) - **Universal** standards for creating learning-oriented tutorials with narrative flow, progressive scaffolding, and hands-on elements. Covers all 7 tutorial types that combine into Full Set Tutorial Package. Applies to all tutorial content (docs/, ayokoding-web, oseplatform-web, anywhere)
 - [Tutorial Naming](./tutorials/naming.md) - **Universal** Full Set Tutorial Package definition (5 mandatory components) and tutorial type standards (Initial Setup, Quick Start, Beginner, Intermediate, Advanced, Cookbook, By Example). Replaces old "Full Set" concept (5 sequential levels) with new architecture emphasizing component completeness. Applies to all tutorial content across the repository
+- [In-the-Field Tutorial Convention](./tutorials/in-the-field.md) - **Universal** standards for production-ready implementation guides that build on by-example and by-concept foundations by introducing frameworks, libraries, and enterprise patterns used in real-world systems. Targets developers ready to apply concepts in production environments. Applies to all in-the-field tutorial content across the repository
 
 ## Hugo (4 conventions)
 

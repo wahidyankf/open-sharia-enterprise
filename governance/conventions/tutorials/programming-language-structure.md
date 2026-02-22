@@ -49,9 +49,9 @@ This convention ensures:
 
 **Enforced by:**
 
-- `ayokoding-web-general-checker` (validates by-concept structure)
-- `ayokoding-web-by-example-checker` (validates by-example structure)
-- `ayokoding-web-structure-checker` (validates directory organization)
+- `apps-ayokoding-web-general-checker` (validates by-concept structure)
+- `apps-ayokoding-web-by-example-checker` (validates by-example structure)
+- `apps-ayokoding-web-structure-checker` (validates directory organization)
 - `docs-tutorial-checker` (validates docs/ tutorial quality)
 
 **Implementation Notes**: The Full Set Tutorial Package structure is universal. Hugo-specific implementation details (weight values, frontmatter, navigation) are covered in [Hugo conventions](../hugo/)
@@ -554,7 +554,7 @@ weight: 100002
 
 ### Automated Validation
 
-**ayokoding-web-general-checker** validates:
+**apps-ayokoding-web-general-checker** validates:
 
 - PASS: By-concept directory structure exists
 - PASS: All mandatory files present (\_index.md, overview.md, beginner/intermediate/advanced.md)
@@ -563,7 +563,7 @@ weight: 100002
 - PASS: Frontmatter completeness
 - PASS: No H1 headings in content
 
-**ayokoding-web-by-example-checker** validates:
+**apps-ayokoding-web-by-example-checker** validates:
 
 - PASS: By-example directory structure (when exists)
 - PASS: 75-90 examples across three files
@@ -572,7 +572,7 @@ weight: 100002
 - PASS: Educational comment standards
 - PASS: Coverage progression
 
-**ayokoding-web-structure-checker** validates:
+**apps-ayokoding-web-structure-checker** validates:
 
 - PASS: Navigation ordering (by-concept/by-example first, then setup/quick-start)
 - PASS: 2-layer navigation depth with complete coverage
@@ -776,7 +776,7 @@ Follow [By Example Tutorial Convention](./by-example.md) to create 75-90 annotat
 
 **Step 6: Validate**
 
-Run `ayokoding-web-by-example-checker` to verify structure and content quality.
+Run `apps-ayokoding-web-by-example-checker` to verify structure and content quality.
 
 ## Related Conventions
 

@@ -15,7 +15,7 @@ updated: 2025-12-15
 
 # Fixer Confidence Levels Convention
 
-This document defines the universal confidence level system used by all fixer agents (wow**rules-fixer, ayokoding-web-general-fixer, ayokoding-web-by-example-fixer, ayokoding-web-facts-fixer, ayokoding-web-structure-fixer, docs**tutorial-fixer, oseplatform-web-content-fixer, readme**fixer, docs**fixer, plan\_\_fixer) to assess findings from checker agents and determine which fixes can be applied automatically versus which require manual review.
+This document defines the universal confidence level system used by all fixer agents (repo-governance-fixer, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-facts-fixer, apps-ayokoding-web-structure-fixer, docs-tutorial-fixer, apps-oseplatform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer) to assess findings from checker agents and determine which fixes can be applied automatically versus which require manual review.
 
 ## Principles Implemented/Respected
 
@@ -110,16 +110,20 @@ Confidence levels serve multiple critical purposes:
 
 All fixer agents implement this confidence level system:
 
-- **wow\_\_rules-fixer** - Repository-wide structural consistency fixes
-- **ayokoding-web-general-fixer** - ayokoding-web general Hugo content fixes
-- **ayokoding-web-by-example-fixer** - ayokoding-web by-example tutorial fixes
-- **ayokoding-web-facts-fixer** - ayokoding-web factual accuracy fixes
-- **ayokoding-web-structure-fixer** - ayokoding-web structure fixes
-- **docs\_\_tutorial-fixer** - Tutorial quality fixes
-- **oseplatform-web-content-fixer** - oseplatform-web Hugo content fixes
-- **readme\_\_fixer** - README quality fixes
-- **docs\_\_fixer** - Documentation factual accuracy fixes
-- **plan\_\_fixer** - Plan structural and format fixes
+- **repo-governance-fixer** - Repository-wide structural consistency fixes
+- **apps-ayokoding-web-general-fixer** - ayokoding-web general Hugo content fixes
+- **apps-ayokoding-web-by-example-fixer** - ayokoding-web by-example tutorial fixes
+- **apps-ayokoding-web-facts-fixer** - ayokoding-web factual accuracy fixes
+- **apps-ayokoding-web-structure-fixer** - ayokoding-web structure fixes
+- **apps-ayokoding-web-in-the-field-fixer** - ayokoding-web in-the-field tutorial fixes
+- **apps-ayokoding-web-link-fixer** - ayokoding-web link validation fixes
+- **docs-tutorial-fixer** - Tutorial quality fixes
+- **apps-oseplatform-web-content-fixer** - oseplatform-web Hugo content fixes
+- **readme-fixer** - README quality fixes
+- **docs-fixer** - Documentation factual accuracy fixes
+- **plan-fixer** - Plan structural and format fixes
+- **docs-software-engineering-separation-fixer** - Software engineering documentation separation fixes
+- **repo-workflow-fixer** - Repository workflow structural consistency fixes
 
 ### Universal Application
 
@@ -149,42 +153,42 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 
 **Examples Across Domains:**
 
-**wow\_\_rules-fixer:**
+**repo-governance-fixer:**
 
 - Missing `subcategory` field verified by re-reading frontmatter
 - Broken internal link verified by checking file doesn't exist at target path
 - Wrong field value verified by comparing actual vs expected value
 - File naming convention violation verified by prefix analysis
 
-**ayokoding-web-general-fixer:**
+**apps-ayokoding-web-general-fixer:**
 
 - Missing `draft: false` field verified by re-reading frontmatter
 - Wrong date format verified by regex pattern match (missing UTC+7 timezone)
 - Weight field error verified for \_index.md (should be 1, found 10)
 - Relative link in navigation content verified (should use absolute with language prefix)
 
-**docs\_\_tutorial-fixer:**
+**docs-tutorial-fixer:**
 
 - Missing required section verified by section heading search (Introduction, Prerequisites)
 - Incorrect LaTeX delimiter verified by pattern match (single `$` on own line for display math)
 - Wrong tutorial type naming verified against convention patterns
 - Time estimate violation verified by keyword search (forbidden in tutorials)
 
-**oseplatform-web-content-fixer:**
+**apps-oseplatform-web-content-fixer:**
 
 - Missing required frontmatter field verified (title, date, draft)
 - Wrong date format verified by regex (missing timezone)
 - Missing cover.alt verified when cover.image exists
 - Multiple H1 headings verified by counting (should be only 1)
 
-**readme\_\_fixer:**
+**readme-fixer:**
 
 - Paragraph exceeding 5 lines verified by objective line count
 - Acronym without context verified by context search (missing expansion/explanation)
 - Broken internal link verified by file existence check
 - Format errors verified by structural analysis (heading hierarchy violations)
 
-**docs\_\_fixer:**
+**docs-fixer:**
 
 - Broken command syntax verified by WebFetch of official documentation
 - Incorrect version number verified by checking package registry (npm, PyPI)
@@ -192,7 +196,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - LaTeX delimiter error verified by pattern match (single `$` on own line for display math)
 - Diagram color accessibility violation verified against accessible palette
 
-**plan\_\_fixer:**
+**plan-fixer:**
 
 - Missing required section verified by heading search (Introduction, Requirements, Technical Documentation)
 - Broken internal link to codebase file verified by file existence check
@@ -217,20 +221,20 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 
 **Examples Across Domains:**
 
-**wow\_\_rules-fixer:**
+**repo-governance-fixer:**
 
 - Content duplication between AGENTS.md and convention file (context differs, may be intentional)
 - Link target unclear (file missing, but can't determine correct target automatically)
 - Field value could be valid in specific context (non-standard but potentially intentional)
 
-**ayokoding-web-general-fixer:**
+**apps-ayokoding-web-general-fixer:**
 
 - Description length borderline (145 chars vs 150-160 optimal - functional but could improve)
 - Line length slightly over 100 characters (breaking might harm readability)
 - Alt text could be more descriptive but not completely missing
 - Content structure acceptable but could be improved
 
-**docs\_\_tutorial-fixer:**
+**docs-tutorial-fixer:**
 
 - Narrative flow issues (too list-heavy, needs better storytelling)
 - Diagram placement suggestions (section would benefit from visual aid)
@@ -238,14 +242,14 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Content balance assessments (theory vs practice ratio)
 - Example quality assessments (examples work but could be better)
 
-**oseplatform-web-content-fixer:**
+**apps-oseplatform-web-content-fixer:**
 
 - Summary length is short but functional (85 chars vs 150-160 optimal)
 - Image alt text vague but not missing ("screenshot" - need image context to improve)
 - Line length exceeds limit but breaking would harm readability
 - Broken link with unclear correct target (file missing, multiple possibilities)
 
-**readme\_\_fixer:**
+**readme-fixer:**
 
 - Engagement quality ("opening paragraph not engaging enough" - subjective tone judgment)
 - Tone improvements ("sounds too corporate" - style preference)
@@ -253,7 +257,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Word choice preferences ("utilize" vs "use" when both are clear)
 - Section length borderline (25 lines - depends on README philosophy)
 
-**docs\_\_fixer:**
+**docs-fixer:**
 
 - Contradiction that may be context-dependent (HTTP for local, HTTPS for production)
 - Outdated information where "outdated" is subjective or requires judgment
@@ -261,7 +265,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Narrative flow issues or writing style critiques (subjective quality)
 - Terminology inconsistency where both terms are technically correct
 
-**plan\_\_fixer:**
+**plan-fixer:**
 
 - Scope decisions ("plan scope too broad" - requires business judgment)
 - Technology choices ("should use PostgreSQL instead of MongoDB" - architectural expertise)
@@ -285,38 +289,38 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 
 **Examples Across Domains:**
 
-**wow\_\_rules-fixer:**
+**repo-governance-fixer:**
 
 - Checker flagged markdown headings as YAML comments (searched entire file instead of just frontmatter)
 - Checker reported missing field that actually exists (case sensitivity issue)
 - Checker misinterpreted file content (wrong pattern match)
 
-**ayokoding-web-general-fixer:**
+**apps-ayokoding-web-general-fixer:**
 
 - Checker flagged overview.md in English folder but file is correct (checker confused /en/ with /id/)
 - Checker flagged missing ikhtisar.md in blogging content (learning-only rule applied to wrong directory)
 - Checker misidentified language path when validating filenames
 
-**docs\_\_tutorial-fixer:**
+**docs-tutorial-fixer:**
 
 - Checker reported missing Introduction section but section exists (titled "Introduction to Topic")
 - Checker reported missing diagram but diagram exists (different Mermaid syntax or placement)
 - Checker misinterpreted tutorial type (tutorial follows convention correctly)
 
-**oseplatform-web-content-fixer:**
+**apps-oseplatform-web-content-fixer:**
 
 - Checker flagged Hugo shortcode link as broken (doesn't recognize `{{< ref >}}` syntax)
 - Checker applied post validation rules to static page (about.md doesn't need date field)
 - Checker counted code block as prose paragraph (wrong content type detection)
 
-**readme\_\_fixer:**
+**readme-fixer:**
 
 - Checker flagged valid acronym expansion as missing (expansion exists nearby)
 - Checker counted lines incorrectly (markdown formatting issues)
 - Checker misinterpreted valid plain language as jargon (context-appropriate technical term)
 - Checker flagged code block as long paragraph (wrong content detection)
 
-**docs\_\_fixer:**
+**docs-fixer:**
 
 - Checker flagged correct LaTeX as incorrect (misunderstood syntax)
 - Checker reported missing field that actually exists in frontmatter
@@ -324,7 +328,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Checker misinterpreted accessible diagram colors as inaccessible
 - Checker reported contradiction but statements apply to different contexts
 
-**plan\_\_fixer:**
+**plan-fixer:**
 
 - Checker reported missing section that actually exists (different heading variation)
 - Checker flagged technology as "deprecated" but it's still maintained (outdated info)
@@ -467,34 +471,34 @@ These criteria apply across ALL fixer agents:
 
 Each fixer agent has domain-specific validation checks:
 
-**wow\_\_rules-fixer:**
+**repo-governance-fixer:**
 
 - Frontmatter field validation for agent files
 - File naming convention compliance
 - Structural consistency across repository
 
-**ayokoding-web-general-fixer:**
+**apps-ayokoding-web-general-fixer:**
 
 - Hugo frontmatter for Hextra theme
 - Bilingual content validation (en/id)
 - Learning content specific rules (overview/ikhtisar, weight ordering)
 - Navigation link format (absolute paths with language prefix)
 
-**docs\_\_tutorial-fixer:**
+**docs-tutorial-fixer:**
 
 - Tutorial-specific structure (Introduction, Prerequisites, Learning Objectives)
 - LaTeX notation compliance
 - Tutorial naming patterns by type
 - No time estimates rule
 
-**oseplatform-web-content-fixer:**
+**apps-oseplatform-web-content-fixer:**
 
 - Hugo frontmatter for PaperMod theme
 - English-only content validation
 - Cover image alt text requirements
 - Heading hierarchy (single H1 rule)
 
-**readme\_\_fixer:**
+**readme-fixer:**
 
 - README-specific quality standards
 - Paragraph length limits (≤5 lines)
@@ -882,13 +886,19 @@ FAIL: All agent files - Frontmatter comment detection
 ### Fixer Agents Using This Convention
 
 - [repo-governance-fixer.md](../../../.claude/agents/repo-governance-fixer.md) - Repository structural consistency fixer
-- [ayokoding-web-general-fixer.md](../../../.claude/agents/ayokoding-web-general-fixer.md) - ayokoding-web general Hugo content fixer
-- [ayokoding-web-by-example-fixer.md](../../../.claude/agents/ayokoding-web-by-example-fixer.md) - ayokoding-web by-example tutorial fixer
-- [ayokoding-web-facts-fixer.md](../../../.claude/agents/ayokoding-web-facts-fixer.md) - ayokoding-web factual accuracy fixer
-- [ayokoding-web-structure-fixer.md](../../../.claude/agents/ayokoding-web-structure-fixer.md) - ayokoding-web structure fixer
-- [docs__tutorial-fixer.md](../../../.claude/agents/docs__tutorial-fixer.md) - Tutorial quality fixer
-- [oseplatform-web-content-fixer.md](../../../.claude/agents/oseplatform-web-content-fixer.md) - oseplatform-web Hugo content fixer
-- [readme__fixer.md](../../../.claude/agents/readme__fixer.md) - README quality fixer
+- [apps-ayokoding-web-general-fixer.md](../../../.claude/agents/apps-ayokoding-web-general-fixer.md) - ayokoding-web general Hugo content fixer
+- [apps-ayokoding-web-by-example-fixer.md](../../../.claude/agents/apps-ayokoding-web-by-example-fixer.md) - ayokoding-web by-example tutorial fixer
+- [apps-ayokoding-web-facts-fixer.md](../../../.claude/agents/apps-ayokoding-web-facts-fixer.md) - ayokoding-web factual accuracy fixer
+- [apps-ayokoding-web-structure-fixer.md](../../../.claude/agents/apps-ayokoding-web-structure-fixer.md) - ayokoding-web structure fixer
+- [docs-tutorial-fixer.md](../../../.claude/agents/docs-tutorial-fixer.md) - Tutorial quality fixer
+- [apps-oseplatform-web-content-fixer.md](../../../.claude/agents/apps-oseplatform-web-content-fixer.md) - oseplatform-web Hugo content fixer
+- [readme-fixer.md](../../../.claude/agents/readme-fixer.md) - README quality fixer
+- [plan-fixer.md](../../../.claude/agents/plan-fixer.md) - Plan structural and format fixer
+- [docs-fixer.md](../../../.claude/agents/docs-fixer.md) - Documentation factual accuracy fixer
+- [apps-ayokoding-web-in-the-field-fixer.md](../../../.claude/agents/apps-ayokoding-web-in-the-field-fixer.md) - ayokoding-web in-the-field tutorial fixer
+- [apps-ayokoding-web-link-fixer.md](../../../.claude/agents/apps-ayokoding-web-link-fixer.md) - ayokoding-web link validation fixer
+- [docs-software-engineering-separation-fixer.md](../../../.claude/agents/docs-software-engineering-separation-fixer.md) - Software engineering documentation separation fixer
+- [repo-workflow-fixer.md](../../../.claude/agents/repo-workflow-fixer.md) - Repository workflow structural consistency fixer
 
 ### Related Conventions
 

@@ -53,7 +53,7 @@ skills:
 - Complex decision-making for fix priority and confidence
 - Deep understanding of repository architecture
 
-Apply validated fixes from wow\_\_rules-checker audit reports.
+Apply validated fixes from repo-governance-checker audit reports.
 
 ## Core Responsibilities
 
@@ -575,7 +575,7 @@ See [Java Official Documentation](https://docs.oracle.com/en/java/javase/17/) fo
 
 ## Mode Parameter Handling
 
-See wow\_\_applying-maker-checker-fixer Skill for mode-based filtering:
+See repo-applying-maker-checker-fixer Skill for mode-based filtering:
 
 - **lax**: Fix CRITICAL only
 - **normal**: Fix CRITICAL + HIGH (default)
@@ -597,7 +597,7 @@ See wow\_\_applying-maker-checker-fixer Skill for mode-based filtering:
 
 ## Confidence Assessment
 
-See wow\_\_assessing-criticality-confidence Skill for confidence levels:
+See repo-assessing-criticality-confidence Skill for confidence levels:
 
 - **HIGH**: Certain the fix is correct, safe to apply
 - **MEDIUM**: Likely correct but uncertain, skip for safety
@@ -605,7 +605,7 @@ See wow\_\_assessing-criticality-confidence Skill for confidence levels:
 
 ## Fix Report Generation
 
-See wow\_\_generating-validation-reports Skill for report structure.
+See repo-generating-validation-reports Skill for report structure.
 
 **Report includes**:
 
@@ -631,7 +631,7 @@ See wow\_\_generating-validation-reports Skill for report structure.
 
 ## Process Summary
 
-1. Read audit report from wow\_\_rules-checker
+1. Read audit report from repo-governance-checker
 2. For each finding:
    - Re-validate issue exists
    - Assess confidence
@@ -639,7 +639,7 @@ See wow\_\_generating-validation-reports Skill for report structure.
    - Use bash tools for .opencode files
    - Write results progressively
 3. Generate fix report
-4. Recommend re-running wow\_\_rules-checker to verify
+4. Recommend re-running repo-governance-checker to verify
 
 **Focus on safety**: Better to skip uncertain fixes than break working agents.
 

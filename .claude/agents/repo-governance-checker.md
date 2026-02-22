@@ -33,7 +33,7 @@ Validate repository-wide consistency across all repository layers.
 
 ## Temporary Reports
 
-Pattern: `repo-rules-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`
+Pattern: `repo-rules__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 Skill: `repo-generating-validation-reports` (progressive streaming)
 
 ## Validation Scope
@@ -395,14 +395,14 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
 
 **Performance Notes**:
 
-- Pairwise comparison: 45 × 44 / 2 = 990 agent pairs
+- Pairwise comparison: 57 × 56 / 2 = 1596 agent pairs
 - Use content signatures for efficient matching
 - Progressive writing for each finding
 - Focus on high-confidence duplications (>20 lines)
 
 ### Step 3: Agent-Skill Duplication Detection
 
-**For each agent in `.opencode/agent/`**:
+**For each agent in `.claude/agents/`**:
 
 1. Read agent content
 2. Extract content blocks (paragraphs, code blocks, lists)
@@ -1097,9 +1097,9 @@ Update report status to "Complete", add summary statistics by category:
 
 **Performance Considerations**:
 
-- Agent-Skill comparison: 45 agents × 21 Skills = ~945 comparisons
-- Agent-to-Agent comparison: 45 × 44 / 2 = ~990 pairwise comparisons
-- Skill-to-Skill comparison: 21 × 20 / 2 = ~210 pairwise comparisons
+- Agent-Skill comparison: 57 agents × 34 Skills = ~1,938 comparisons
+- Agent-to-Agent comparison: 57 × 56 / 2 = ~1,596 pairwise comparisons
+- Skill-to-Skill comparison: 34 × 33 / 2 = ~561 pairwise comparisons
 - Use efficient text matching (not character-by-character)
 - Progressive writing prevents memory issues during long analysis
 

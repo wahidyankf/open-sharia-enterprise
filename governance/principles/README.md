@@ -183,7 +183,7 @@ Automate repetitive tasks to ensure consistency and reduce human error. Humans s
 **Key applications**:
 
 - Git hooks (pre-commit, commit-msg)
-- AI agents (docs\_\_checker, plan-validator)
+- AI agents (docs-checker, plan-checker)
 - Prettier (code formatting)
 - Commitlint (message validation)
 - Link verification cache
@@ -281,9 +281,9 @@ When documenting a new convention or practice, ALWAYS reference which principles
 
 **Implementation**: Multiple agents enforce this
 
-- **agent\_\_maker**: Validates new agents have explicit `tools` field in frontmatter
-- **wow\_\_rules-checker**: Audits agents for missing or incomplete tool declarations
-- **wow\_\_rules-fixer**: Can add missing frontmatter fields
+- **agent-maker**: Validates new agents have explicit `tools` field in frontmatter
+- **repo-governance-checker**: Audits agents for missing or incomplete tool declarations
+- **repo-governance-fixer**: Can add missing frontmatter fields
 
 **Result**: All agent files contain explicit tool lists:
 
@@ -307,7 +307,7 @@ tools: Read, Glob, Grep
 
 - **Husky + lint-staged**: Pre-commit hook formats code automatically
 - **Commitlint**: Commit-msg hook validates message format
-- **Various checker agents**: Automated quality validation (docs**checker, wow**rules-checker, etc.)
+- **Various checker agents**: Automated quality validation (docs-checker, repo-governance-checker, etc.)
 
 **Result**: Code quality maintained automatically without manual intervention
 
@@ -356,20 +356,22 @@ Prioritize principles in order of importance:
 5. **Progressive Disclosure** - Support all skill levels
 6. **No Time Estimates** - Focus on outcomes
 
+> **Note**: This priority ordering applies when principles appear to conflict. All 11 principles apply in normal circumstances - this list guides conflict resolution, not principle selection.
+
 ### When Adding New Conventions or Practices
 
 After creating a new convention or practice document:
 
-1. **Use docs\_\_maker** to create the convention/practice document with principles section
-2. **Use wow\_\_rules-maker** to make the change effective across repository:
+1. **Use docs-maker** to create the convention/practice document with principles section
+2. **Use repo-governance-maker** to make the change effective across repository:
    - Update AGENTS.md with brief summary
    - Update relevant README files (conventions/development index)
    - Update agents that should enforce the new rule
    - Add validation checks to appropriate checker agents
-3. **Use wow\_\_rules-checker** to validate consistency after changes
-4. **Use wow\_\_rules-fixer** if issues found (after user review)
+3. **Use repo-governance-checker** to validate consistency after changes
+4. **Use repo-governance-fixer** if issues found (after user review)
 
-**Workflow**: docs**maker (create) → wow**rules-maker (propagate) → wow**rules-checker (validate) → wow**rules-fixer (fix if needed)
+**Workflow**: docs-maker (create) → repo-governance-maker (propagate) → repo-governance-checker (validate) → repo-governance-fixer (fix if needed)
 
 ### When Reviewing Changes
 
