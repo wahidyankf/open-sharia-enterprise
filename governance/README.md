@@ -2,6 +2,7 @@
 title: "Rules - Repository Governance"
 description: All governance layers (Vision, Principles, Conventions, Development, Workflows) for open-sharia-enterprise
 category: explanation
+subcategory: governance
 tags:
   - index
   - rules

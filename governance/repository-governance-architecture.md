@@ -327,7 +327,7 @@ Development: Hugo Development Convention (semantic HTML)
 
 - 🟦 **Writers (Blue)** - Create new content from scratch (has Write tool)
 - 🟩 **Checkers (Green)** - Validate and generate audit reports (has Write, Bash; no Edit)
-- 🟨 **Updaters (Yellow)** - Modify and propagate existing content (has Edit, usually not Write)
+- 🟨 **Updaters (Yellow)** - Modify and propagate existing content (has Edit + Write for fix reports)
 - 🟪 **Implementors (Purple)** - Execute plans with full tool access (has Write, Edit, Bash)
 
 **Agent Characteristics**:
@@ -347,7 +347,7 @@ Development: Hugo Development Convention (semantic HTML)
 **Requirements**:
 
 - Agent `name` field MUST match filename (without .md)
-- Agent MUST declare which conventions/practices it implements
+- Agent description SHOULD mention enforced conventions/practices (via description field or Reference Documentation section)
 - Agent MUST use appropriate tools for task (principle: least privilege)
 - Agent color MUST use accessible palette
 

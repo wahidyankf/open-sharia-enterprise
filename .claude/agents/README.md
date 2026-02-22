@@ -41,7 +41,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **repo-governance-checker** - Governance compliance validation
 - **repo-workflow-checker** - Workflow documentation validation
 
-### 🟨 Fixing (Fixers)
+### 🟨 Updating (Updaters/Fixers)
 
 - **docs-fixer** - Apply validated documentation fixes
 - **docs-tutorial-fixer** - Apply tutorial fixes

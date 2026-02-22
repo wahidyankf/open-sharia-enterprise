@@ -2,7 +2,7 @@
 title: Go Design Patterns
 description: Authoritative design pattern standards for Go development in OSE Platform covering functional programming, finite state machines, interfaces, and composition
 category: explanation
-subcategory: prog-lang-golang
+subcategory: prog-lang
 tags:
   - golang
   - design-patterns
@@ -2896,7 +2896,7 @@ Go uses interfaces and composition instead of class-based inheritance. This sect
 
 **Philosophy**: "Composition over inheritance", "Accept interfaces, return structs"
 
-#### Interface Implementation Flow
+### Interface Implementation Flow
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC

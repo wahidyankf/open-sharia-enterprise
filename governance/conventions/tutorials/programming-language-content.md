@@ -49,7 +49,7 @@ This convention applies to:
 - Includes: tutorials (foundational, by-concept, by-example, cookbook), how-to guides, best practices, anti-patterns
 - Enforced by: `apps-ayokoding-web-general-checker`, `apps-ayokoding-web-by-example-checker`, `apps-ayokoding-web-general-maker`, `apps-ayokoding-web-by-example-maker`, `apps-ayokoding-web-facts-checker` agents
 
-**Implementation Notes**: While the Full Set Tutorial Package architecture applies universally, Hugo-specific implementation details (frontmatter, weight values, navigation) are covered in [Hugo conventions](../hugo/)
+**Implementation Notes**: While the Full Set Tutorial Package architecture applies universally, Hugo-specific implementation details (frontmatter, weight values, navigation) are covered in [Hugo conventions](../hugo/README.md)
 
 ## Universal Directory Structure
 

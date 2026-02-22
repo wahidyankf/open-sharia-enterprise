@@ -1,3 +1,28 @@
+---
+title: TypeScript Testing
+description: Testing standards and practices for TypeScript code including testing strategy, Jest/Vitest unit tests, integration tests, E2E testing with Playwright, and type testing
+category: explanation
+subcategory: prog-lang
+tags:
+  - typescript
+  - testing
+  - jest
+  - vitest
+  - playwright
+  - unit-tests
+  - integration-tests
+  - type-testing
+  - tdd
+principles:
+  - automation-over-manual
+  - explicit-over-implicit
+  - reproducibility
+created: 2026-02-22
+updated: 2026-02-22
+---
+
+# TypeScript Testing
+
 ## Testing Strategy
 
 ```mermaid

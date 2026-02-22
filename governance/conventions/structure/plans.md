@@ -31,7 +31,7 @@ This convention implements the following core principles:
 
 - **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Flat structure with three clear states (backlog, in-progress, done). No complex nested hierarchies or status tracking systems.
 
-- \*\*[Explicit Over Implicit](../../principles/software-engineering/[identifier]`) making chronological order explicit. File location indicates status - no hidden metadata or databases.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: The `YYYY-MM-DD__[project-identifier]/` date-prefix naming convention makes chronological order explicit. File location (backlog/, in-progress/, done/) indicates status - no hidden metadata or databases required.
 
 ## Purpose
 

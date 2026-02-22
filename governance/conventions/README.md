@@ -2,6 +2,7 @@
 title: "Conventions"
 description: Documentation conventions and standards for open-sharia-enterprise
 category: explanation
+subcategory: conventions
 tags:
   - index
   - conventions

@@ -88,7 +88,7 @@ Three-stage quality workflow:
 
 1. **Maker** - Creates content (tools: read, write, edit, glob, grep)
 2. **Checker** - Validates content, generates audit reports (tools: read, glob, grep, write for reports)
-3. **Fixer** - Applies validated fixes (tools: read, edit, glob, grep)
+3. **Fixer** - Applies validated fixes (tools: read, edit, write, glob, grep)
 
 **Criticality Levels**: CRITICAL, HIGH, MEDIUM, LOW
 **Confidence Levels**: HIGH, MEDIUM, FALSE_POSITIVE

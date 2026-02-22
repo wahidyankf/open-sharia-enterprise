@@ -54,7 +54,7 @@ This convention ensures:
 - `apps-ayokoding-web-structure-checker` (validates directory organization)
 - `docs-tutorial-checker` (validates docs/ tutorial quality)
 
-**Implementation Notes**: The Full Set Tutorial Package structure is universal. Hugo-specific implementation details (weight values, frontmatter, navigation) are covered in [Hugo conventions](../hugo/)
+**Implementation Notes**: The Full Set Tutorial Package structure is universal. Hugo-specific implementation details (weight values, frontmatter, navigation) are covered in [Hugo conventions](../hugo/README.md)
 
 ## Directory Structure Pattern
 

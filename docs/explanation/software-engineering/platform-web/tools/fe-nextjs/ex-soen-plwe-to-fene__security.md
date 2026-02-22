@@ -2,6 +2,7 @@
 title: Next.js Security
 description: Comprehensive guide to securing Next.js applications with CSRF protection, XSS prevention, input validation, authentication, and OWASP Top 10 defenses
 category: explanation
+subcategory: platform-web
 tags:
   - nextjs
   - security

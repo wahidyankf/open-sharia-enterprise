@@ -196,11 +196,12 @@ timeline
 
 ### Testing & Quality
 
-| Document                                                                         | Description      | Lines | Topics                           |
-| -------------------------------------------------------------------------------- | ---------------- | ----- | -------------------------------- |
-| [Test-Driven Development](ex-soen-prla-ty__test-driven-development.md)           | TDD practices    | 1,800 | Jest, Vitest, Property testing   |
-| [Behaviour-Driven Development](ex-soen-prla-ty__behaviour-driven-development.md) | BDD with Gherkin | 1,500 | Cucumber, Playwright, E2E        |
-| [Linting & Formatting](ex-soen-prla-ty__linting-and-formatting.md)               | Code quality     | 1,400 | ESLint 9.x/10.x, Prettier, Hooks |
+| Document                                                                         | Description         | Lines | Topics                               |
+| -------------------------------------------------------------------------------- | ------------------- | ----- | ------------------------------------ |
+| [Testing](ex-soen-prla-ty__testing.md)                                           | Testing foundations | N/A   | Testing pyramid, test types, tooling |
+| [Test-Driven Development](ex-soen-prla-ty__test-driven-development.md)           | TDD practices       | 1,800 | Jest, Vitest, Property testing       |
+| [Behaviour-Driven Development](ex-soen-prla-ty__behaviour-driven-development.md) | BDD with Gherkin    | 1,500 | Cucumber, Playwright, E2E            |
+| [Linting & Formatting](ex-soen-prla-ty__linting-and-formatting.md)               | Code quality        | 1,400 | ESLint 9.x/10.x, Prettier, Hooks     |
 
 ### Version-Specific Documentation
 
@@ -1511,7 +1512,7 @@ async function processDonation(data: DonationInput): Promise<Result<Donation, Er
 
 **Last Updated**: 2026-01-24
 **TypeScript Version**: 5.0+ (baseline), 5.4+ (milestone), 5.6+ (stable), 5.9.3+ (latest stable)
-**Total Documentation Files**: 19 core files + 7 version files = 26 files
+**Documentation**: Core files and version-specific files organized by category
 **Maintainers**: OSE Documentation Team
 
 ## TypeScript Type System

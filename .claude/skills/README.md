@@ -100,10 +100,8 @@ See `repo-applying-maker-checker-fixer` skill for complete workflow patterns.
 **Making Changes**:
 
 1. Edit skills in `.claude/skills/` directory
-2. Run: `npm run sync:claude-to-opencode` (powered by `rhino-cli`)
+2. Run: `npm run sync:claude-to-opencode` (calls `rhino-cli sync-skills` internally, ~15ms for all skills)
 3. Both systems stay synchronized
-
-**Implementation**: Sync powered by `rhino-cli sync-skills` (~15ms for all skills)
 
 **See**: [CLAUDE.md](../../CLAUDE.md) for complete guidance, [apps/rhino-cli/README.md](../../apps/rhino-cli/README.md) for rhino-cli details
 

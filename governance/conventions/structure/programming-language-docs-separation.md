@@ -808,7 +808,7 @@ Before publishing programming language documentation:
 **Platform Documentation**:
 
 - [Software Design Index](../../../docs/explanation/software-engineering/README.md) - Parent documentation for programming language style guides
-- [ayokoding-web Hugo Site](../../../apps/ayokoding-web/) - Educational programming content platform
+- [ayokoding-web Hugo Site](../../../apps/ayokoding-web/README.md) - Educational programming content platform
 
 **Repository Architecture**:
 
