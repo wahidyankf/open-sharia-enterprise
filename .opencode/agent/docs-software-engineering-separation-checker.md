@@ -128,6 +128,8 @@ Your primary job is to **validate prerequisite knowledge relationships** between
 
 ### Step 0: Initialize Report
 
+Use `repo-generating-validation-reports` Skill for UUID generation, UTC+7 timestamp, and report creation.
+
 **Setup**:
 
 1. Create UUID chain using standard pattern
@@ -135,7 +137,7 @@ Your primary job is to **validate prerequisite knowledge relationships** between
 3. Write frontmatter with metadata
 4. Write introduction explaining validation scope
 
-**Report naming**: `docs-software-engineering-separation-checker__{uuid-chain}__{timestamp}__audit.md`
+**Report naming**: `docs-software-engineering-separation__{uuid-chain}__{timestamp}__audit.md`
 
 ### Step 1: Validate Software Design Reference
 
@@ -324,7 +326,7 @@ done
 
 ```bash
 # Initialize report file
-Write: generated-reports/docs-software-engineering-separation-checker__uuid__timestamp__audit.md
+Write: generated-reports/docs-software-engineering-separation__uuid__timestamp__audit.md
 Content: [YAML frontmatter + introduction]
 ```
 

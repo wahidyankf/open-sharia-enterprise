@@ -264,7 +264,7 @@ Use this agent when:
 
 **Project Guidance:**
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance for all agents
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance for all agents
 - [README Quality Convention](../../governance/conventions/writing/readme-quality.md) - Complete README standards
 - [Content Quality Principles](../../governance/conventions/writing/quality.md) - General content quality
 - [Documentation First](../../governance/principles/content/documentation-first.md) - Documentation requirements

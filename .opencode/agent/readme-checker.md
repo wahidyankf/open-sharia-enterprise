@@ -37,7 +37,7 @@ You are a README quality validator specializing in ensuring README.md files are 
 
 ## Temporary Report Files
 
-This agent writes validation findings to `generated-reports/` using the pattern `readme-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`.
+This agent writes validation findings to `generated-reports/` using the pattern `readme__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`.
 
 The `repo-generating-validation-reports` Skill provides:
 
@@ -46,7 +46,7 @@ The `repo-generating-validation-reports` Skill provides:
 - Progressive writing methodology (initialize early, write findings immediately)
 - Report file structure and naming patterns
 
-**Example Filename**: `readme-a1b2c3-2025-12-20--14-30-audit.md`
+**Example Filename**: `readme__a1b2c3__2025-12-20--14-30__audit.md`
 
 ## Reference Documentation
 
@@ -136,7 +136,7 @@ Use `repo-generating-validation-reports` Skill for:
 
 1. UUID generation and chain determination
 2. UTC+7 timestamp generation
-3. Report file creation at `generated-reports/readme-{uuid-chain}-{timestamp}-audit.md`
+3. Report file creation at `generated-reports/readme__{uuid-chain}__{timestamp}__audit.md`
 4. Initial header with "In Progress" status
 5. Progressive writing setup
 
@@ -261,7 +261,7 @@ Use this agent when:
 
 **Project Guidance:**
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [README Quality Convention](../../governance/conventions/writing/readme-quality.md) - Complete README standards
 - [Content Quality Principles](../../governance/conventions/writing/quality.md) - General quality standards
 

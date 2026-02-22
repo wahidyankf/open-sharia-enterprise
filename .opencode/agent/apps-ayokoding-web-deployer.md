@@ -11,7 +11,7 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Updater (yellow)
+- **Role**: Implementor (purple)
 - **Created**: 2025-12-20
 - **Last Updated**: 2026-01-05
 
@@ -136,7 +136,7 @@ git pull origin main
 
 **Project Guidance**:
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 - [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md)
 

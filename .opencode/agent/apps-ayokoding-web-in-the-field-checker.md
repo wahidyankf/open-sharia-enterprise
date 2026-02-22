@@ -38,7 +38,7 @@ You are an In-the-Field tutorial quality validator specializing in production co
 
 ## Temporary Report Files
 
-This agent writes validation findings to `generated-reports/` using the pattern `ayokoding-in-the-field-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`.
+This agent writes validation findings to `generated-reports/` using the pattern `ayokoding-web-in-the-field__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`.
 
 The `repo-generating-validation-reports` Skill provides UUID generation, timestamp formatting, progressive writing methodology, and report structure templates.
 

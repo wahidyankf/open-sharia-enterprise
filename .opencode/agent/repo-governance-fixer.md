@@ -3,6 +3,7 @@ description: Applies validated fixes from repository rules audit reports includi
 model: zai/glm-4.7
 tools:
   bash: true
+  edit: true
   glob: true
   grep: true
   read: true
@@ -16,7 +17,7 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Implementor (purple)
+- **Role**: Updater (yellow)
 - **Created**: 2025-12-01
 - **Last Updated**: 2026-01-04
 
@@ -33,18 +34,7 @@ skills:
 
 ### Priority Matrix (Criticality × Confidence)
 
-| Criticality | Confidence | Priority | Action               |
-| ----------- | ---------- | -------- | -------------------- |
-| CRITICAL    | HIGH       | **P0**   | Auto-fix immediately |
-| HIGH        | HIGH       | **P1**   | Auto-fix             |
-| CRITICAL    | MEDIUM     | **P1**   | Urgent manual review |
-| MEDIUM      | HIGH       | **P2**   | Approved auto-fix    |
-| HIGH        | MEDIUM     | **P2**   | Manual review        |
-| LOW         | HIGH       | **P3**   | Suggestions          |
-| MEDIUM      | MEDIUM     | **P3**   | Suggestions          |
-| LOW         | MEDIUM     | **P4**   | Optional             |
-
-**Execution Order**: P0 → P1 → P2 → P3 → P4
+See `repo-assessing-criticality-confidence` Skill for complete priority matrix and execution order (P0 → P1 → P2 → P3 → P4).
 
 # Repository Governance Fixer Agent
 
@@ -85,6 +75,49 @@ Fix repository-wide consistency issues including:
 **Why**: Enables autonomous agent operation without user approval prompts.
 
 See [AI Agents Convention - Writing to .opencode Folders](../../governance/development/agents/ai-agents.md#writing-to-claude-folders).
+
+### Post-Fix Verification (Mandatory)
+
+**MANDATORY**: After every `sed` or bash edit, verify the change was applied:
+
+```bash
+# After every sed edit, verify immediately:
+sed -i 's/old-pattern/new-pattern/' file.md
+grep -q "new-pattern" file.md || echo "WARNING: sed pattern did not match — fix NOT applied to file.md"
+```
+
+**Failure handling**: If the grep check fails:
+
+- Log the fix as **FAILED (not applied)** in the fix report
+- Do NOT log it as "fixed"
+- Continue to next finding
+
+**Why**: `sed -i` exits with code 0 even when the pattern doesn't match. Without verification, failures are silently logged as success — this caused garbled headings in previous iterations.
+
+### Python for Multi-Line Agent File Edits
+
+**MANDATORY**: When editing `.claude/agents/` files that require multi-line reformatting (e.g., splitting concatenated heading content, restructuring bullet lists), use Python — NOT sed.
+
+`sed` is line-oriented. Multi-line patterns silently fail (exit 0, no match), producing garbled output (heading text concatenated with bullet content).
+
+**Pattern for multi-line agent file edits**:
+
+```bash
+python3 -c "
+with open('.claude/agents/agent-name.md', 'r') as f:
+    content = f.read()
+
+# Safe, explicit transformation
+content = content.replace('old-heading-text\nconcatenated-content', 'new-heading-text\ncorrect-content')
+
+with open('.claude/agents/agent-name.md', 'w') as f:
+    f.write(content)
+"
+# Always verify after Python edit
+grep -q "new-heading-text" .claude/agents/agent-name.md || echo "WARNING: Python edit did not match"
+```
+
+**Use sed only for**: Simple single-line pattern replacements where the pattern is guaranteed to exist on a single line.
 
 ## Agent-Skill Duplication Fixes
 
@@ -576,6 +609,63 @@ See [Java Official Documentation](https://docs.oracle.com/en/java/javase/17/) fo
 
 **Never use Write tool** for existing files (use Edit instead)
 
+## FALSE_POSITIVE Carry-Forward (Persistent Memory)
+
+At the end of every fix report, add an `## Accepted FALSE_POSITIVE Findings` section listing each skipped finding by stable key.
+
+**Additionally**, append each FALSE_POSITIVE to `generated-reports/.known-false-positives.md`:
+
+```bash
+# Append to known false positives (create if doesn't exist)
+cat >> generated-reports/.known-false-positives.md << 'EOF'
+## FALSE_POSITIVE: [category] | [file] | [brief-description]
+
+**Accepted**: [YYYY-MM-DD--HH-MM]
+**Category**: [Agent-to-Agent Duplication / Agent-Skill Duplication / Rules Governance / etc.]
+**File**: [path/to/file.md]
+**Finding**: [Brief description matching checker's finding text]
+**Reason**: [Why this was accepted as false positive]
+
+---
+EOF
+```
+
+**Stable key format**: `[category] | [file] | [brief-description]`
+
+The checker uses this key to match and skip previously accepted FALSE_POSITIVE findings, preventing the same entries from being re-flagged on every iteration.
+
+**Fix report section to append**:
+
+```markdown
+## Accepted FALSE_POSITIVE Findings
+
+[N] findings accepted as FALSE_POSITIVE and written to generated-reports/.known-false-positives.md:
+
+1. **[category] | [file] | [brief-description]** — [reason]
+```
+
+## Scoped Re-validation After Fixes
+
+After applying fixes, capture and report the changed files for the next checker run:
+
+```bash
+# After all fixes applied, get list of changed files
+git diff --name-only HEAD
+```
+
+Include this list in the fix report under `## Changed Files (for Scoped Re-validation)`:
+
+```markdown
+## Changed Files (for Scoped Re-validation)
+
+The following files were modified. Pass this list to the next checker run to enable scoped re-validation:
+
+- .claude/agents/agent-name.md
+- governance/conventions/writing/quality.md
+```
+
+When requesting re-validation, specify these files. The checker will focus its expensive Step 8 validation (340+ software documentation files) only on changed files, instead of scanning the entire corpus.
+
 ## Mode Parameter Handling
 
 See repo-applying-maker-checker-fixer Skill for mode-based filtering:
@@ -650,7 +740,7 @@ See repo-generating-validation-reports Skill for report structure.
 
 **Project Guidance**:
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [Repository Governance Architecture](../../governance/repository-governance-architecture.md)
 
 **Related Agents**:

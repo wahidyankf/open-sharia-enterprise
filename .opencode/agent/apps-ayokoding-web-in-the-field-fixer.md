@@ -18,7 +18,7 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Implementor (yellow)
+- **Role**: Updater (yellow)
 - **Created**: 2026-02-06
 - **Last Updated**: 2026-02-06
 
@@ -32,21 +32,6 @@ skills:
    - **HIGH**: Issue confirmed, fix unambiguous → Auto-apply
    - **MEDIUM**: Issue exists but fix uncertain → Skip, manual review
    - **FALSE_POSITIVE**: Issue doesn't exist → Skip, report to checker
-
-### Priority Matrix (Criticality × Confidence)
-
-| Criticality | Confidence | Priority | Action               |
-| ----------- | ---------- | -------- | -------------------- |
-| CRITICAL    | HIGH       | **P0**   | Auto-fix immediately |
-| HIGH        | HIGH       | **P1**   | Auto-fix             |
-| CRITICAL    | MEDIUM     | **P1**   | Urgent manual review |
-| MEDIUM      | HIGH       | **P2**   | Approved auto-fix    |
-| HIGH        | MEDIUM     | **P2**   | Manual review        |
-| LOW         | HIGH       | **P3**   | Suggestions          |
-| MEDIUM      | MEDIUM     | **P3**   | Suggestions          |
-| LOW         | MEDIUM     | **P4**   | Optional             |
-
-**Execution Order**: P0 → P1 → P2 → P3 → P4
 
 # In-the-Field Tutorial Fixer for ayokoding-web
 

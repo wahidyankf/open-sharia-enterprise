@@ -35,7 +35,7 @@ Validate general ayokoding-web content quality.
 
 ## Temporary Reports
 
-Pattern: `ayokoding-general-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`
+Pattern: `ayokoding-web-general__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 Skill: `repo-generating-validation-reports`
 
 ## Validation Scope
@@ -59,7 +59,7 @@ Skill: `repo-generating-validation-reports`
 
 **Project Guidance**:
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 
 **Related Agents**:
