@@ -40,8 +40,8 @@ params:
   author: Open Sharia Enterprise
 
   # Theme customization
-  defaultTheme: auto # dark, light, auto
-  disableThemeToggle: false
+  defaultTheme: light
+  disableThemeToggle: true
 
   ShowReadingTime: true
   ShowShareButtons: false
