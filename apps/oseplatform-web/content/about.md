@@ -2,7 +2,7 @@
 title: "About OSE Platform"
 url: "/about/"
 summary: "Learn about the Open Sharia Enterprise Platform - an open-source Sharia-compliant enterprise solutions platform"
-date: 2025-12-14T19:29:14+07:00
+date: 2026-02-22T00:00:00+07:00
 showtoc: true
 ---
 
@@ -69,14 +69,12 @@ We document our journey and share knowledge through [**AyoKoding**](https://ayok
 
 ### Current Status
 
-**Phase 0: Repository Setup & Knowledge Base** - Establishing foundations and launching initial websites:
+**Phase 1: OrganicLever** - Building the first product application:
 
-- Repository infrastructure (development tooling, documentation, AI agents, governance)
-- **ayokoding.com** - Educational platform sharing our research and learning
-- **oseplatform.com** - Platform marketing website (this site!)
-- **ayokoding-cli** & **rhino-cli** - Golang CLI tools for automation and repository management
-- Golang foundation for information security infrastructure
-- Building online presence before Phase 1 product launch
+- **organiclever.com** - Next.js 14 landing and promotional website (live)
+- **OrganicLever App** - Flutter mobile & web app (Android, iOS, web) in active development
+- **OrganicLever API** - Spring Boot REST API backend in active development
+- Phase 0 foundations complete: ayokoding.com, oseplatform.com, ayokoding-cli, rhino-cli
 
 ⚠️ **Pre-Alpha** - Not yet production ready. No stable APIs, no security hardening, not accepting contributions yet.
 
@@ -85,27 +83,27 @@ We document our journey and share knowledge through [**AyoKoding**](https://ayok
 Our progressive complexity approach - start simple, test thoroughly, scale systematically:
 
 ```mermaid
-%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC
-%% All colors are color-blind friendly and meet WCAG AA contrast standards
-graph LR
-    P0["Phase 0: Setup & Knowledge Base"]:::blue
-    P1["Phase 1: OrganicLever"]:::orange
-    P2["Phase 2: SMB Application"]:::teal
-    P3["Phase 3: Enterprise Application"]:::purple
+%% Color Palette: Gray #808080 (done), Orange #DE8F05 (current), Teal #029E73, Purple #CC78BC
+%% Phase 0: Done | Phase 1: Current | Phase 2-3: Future
+graph TD
+    P0["Phase 0: Setup & Knowledge Base"]:::done
+    P1["Phase 1: OrganicLever"]:::current
+    P2["Phase 2: SMB Application"]:::future1
+    P3["Phase 3: Enterprise Application"]:::future2
 
     P0 -->|"Foundation"| P1
     P1 -->|"Revenue & Learnings"| P2
     P2 -->|"Revenue & Certifications"| P3
 
-    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
-    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef done fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef current fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:4px
+    classDef future1 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef future2 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
-### Phase 0: Repository Setup & Knowledge Base (Current)
+### Phase 0: Repository Setup & Knowledge Base (Done)
 
-Establishing repository infrastructure and launching initial websites:
+Established repository infrastructure and launched initial websites:
 
 - 🛠️ **Repository Infrastructure** - Development tooling, documentation, AI agents, governance, planning systems
 - 🌐 **Website Launches** - ayokoding.com (educational) and oseplatform.com (marketing)
@@ -113,13 +111,13 @@ Establishing repository infrastructure and launching initial websites:
 - 🔐 **Golang Foundation** - Golang will be used extensively on the information security side
 - 📊 **Strategic Value** - Early online presence, audience building, deployment validation
 
-### Phase 1: OrganicLever - Productivity Tracker (Individual Users)
+### Phase 1: OrganicLever - Productivity Tracker (Current)
 
-First application release to test infrastructure at small scale:
+Building the first product application to test infrastructure at small scale:
 
-- 📱 **Product** - organiclever.com (web) + Android + iOS apps
-- ⚡ **Tech Stack** - Java + Spring Boot, Next.js + TypeScript, Flutter + Dart, Kubernetes
-- 📚 **Learning Focus** - Small-scale knowledge base patterns, deployment mastery, security practice
+- 📱 **Product** - organiclever.com (web) + Android + iOS apps — in active development
+- ⚡ **Tech Stack** - Java + Spring Boot (API), Next.js + TypeScript (web), Flutter + Dart (mobile & web)
+- 📚 **Learning Focus** - Small-scale product patterns, deployment mastery, security practice
 - 💰 **Revenue Generation** - Fund Phase 2 expansion and Phase 3 certification costs
 
 ### Phase 2: SMB Application (Small & Medium Business)
@@ -164,26 +162,33 @@ Full enterprise capabilities with maximum scale:
 
 ⚠️ **PRE-ALPHA** - This project is in early development and **NOT ready for production use**.
 
-**Current Phase: Phase 0 (Repository Setup & Knowledge Base)**
+**Current Phase: Phase 1 (OrganicLever - Productivity Tracker)**
 
-Establishing foundational infrastructure and launching initial websites:
+Building the first product application:
 
-- 🔨 Repository infrastructure (tooling, documentation, AI agents, governance)
-- 🌐 ayokoding.com - Educational platform (live)
-- 🏢 oseplatform.com - Marketing website (this site, live)
-- 🔧 ayokoding-cli & rhino-cli - Golang CLI tools (Golang foundation for security)
-- 📋 Building online presence before Phase 1 product launch (OrganicLever)
+- ✅ ayokoding.com - Educational platform (live)
+- ✅ oseplatform.com - Marketing website (this site, live)
+- ✅ ayokoding-cli & rhino-cli - Golang CLI tools (live)
+- 🚧 organiclever.com - Landing website (live, app in development)
+- 🚧 OrganicLever App - Flutter mobile & web app (in development)
+- 🚧 OrganicLever API - Spring Boot REST API (in development)
 
 **Not Yet Available:**
 
-- ❌ No production code
 - ❌ No stable APIs
 - ❌ No security hardening
 - ❌ Not accepting public contributions
 
 ## Technology
 
-The tech stack for the main enterprise platform is currently being evaluated. Technology selection will follow our open-source and vendor-neutrality principles.
+Our tech stack reflects the progressive complexity approach — chosen for proven reliability, open-source availability, and suitability at each phase:
+
+- **Backend API** - Java + Spring Boot (REST API, enterprise-grade, battle-tested)
+- **Web Frontend** - Next.js 14 + TypeScript (React, App Router, modern full-stack)
+- **Mobile & Web App** - Flutter + Dart (Android, iOS, and web from a single codebase)
+- **Educational Sites** - Hugo static sites (ayokoding.com, oseplatform.com)
+- **CLI Tools** - Go (ayokoding-cli, rhino-cli — automation and repository management)
+- **Future additions** - Elixir (middleware), Kotlin (JVM alternative) under evaluation for Phase 2
 
 ## License
 
@@ -191,7 +196,7 @@ This project is licensed under the **MIT License** - giving you complete freedom
 
 ## Get Involved
 
-While we're not accepting contributions during the pre-alpha phase, you can stay connected and support the project:
+While we're not yet accepting public contributions (pre-alpha), you can stay connected and support the project:
 
 ### Follow the Project
 
