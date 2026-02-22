@@ -60,9 +60,10 @@ We're building OSE Platform **in the open from day one**, with transparency and 
 
 ### Learning in Public
 
-We document our journey and share knowledge through [**AyoKoding**](https://ayokoding.com), our bilingual educational platform. This "learning in public" approach:
+We share our OSE Platform journey through [**monthly updates**](/updates/) published every 2nd Sunday of the month. Technical insights and lessons learned are documented on [**AyoKoding**](https://ayokoding.com), our bilingual educational platform. This "learning in public" approach:
 
-- **Shares technical insights** - Tutorials, guides, and lessons learned
+- **Monthly platform updates** - Progress, decisions, and direction posted every 2nd Sunday at [oseplatform.com/updates](/updates/)
+- **Shares technical insights** - Tutorials, guides, and lessons learned on AyoKoding
 - **Builds community expertise** - Help others learn from our experiences
 - **Demonstrates transparency** - Show how decisions are made
 - **Accelerates ecosystem growth** - Enable others to build on our foundation
@@ -215,6 +216,6 @@ While we're not yet accepting public contributions (pre-alpha), you can stay con
 ## Key Resources
 
 - **Main Repository**: [github.com/wahidyankf/open-sharia-enterprise](https://github.com/wahidyankf/open-sharia-enterprise)
-- **Project Updates**: [oseplatform.com/updates](/updates/)
+- **Project Updates**: [oseplatform.com/updates](/updates/) - monthly, every 2nd Sunday
 - **Educational Platform**: [ayokoding.com](https://ayokoding.com)
 - **License**: MIT - complete freedom to use, modify, and distribute
