@@ -300,10 +300,10 @@ This prevents the same accepted FALSE_POSITIVE findings from being re-flagged on
 When a UUID chain exists from a previous iteration (re-validation mode, identified by multi-part UUID chain like `abc123_def456`), focus expensive validation on recently changed files:
 
 1. Check for `## Changed Files (for Scoped Re-validation)` section in the latest fix report
-2. **If found**: Run Steps 1-7 normally on ALL files, but run Step 8 (software docs 340+ files) **only on changed files** from the fix report
+2. **If found**: Run Steps 1-7 normally on ALL files, but run Step 8 (software docs ~265 files) **only on changed files** from the fix report
 3. **If not found**: Run full scan as normal
 
-This prevents scanning all 340+ software documentation files when only 3-4 agent files were changed by the fixer.
+This prevents scanning all ~265 software documentation files when only 3-4 agent files were changed by the fixer.
 
 Validate file naming, linking, emoji usage, convention compliance per existing logic.
 
@@ -689,7 +689,7 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
 
 ### Step 8: Software Documentation Validation
 
-**Scope**: `docs/explanation/software-engineering/` (~260 files, 345k lines)
+**Scope**: `docs/explanation/software-engineering/` (~265 files, ~345k lines)
 
 **Purpose**: Validate comprehensive software design and coding standards documentation as authoritative reference.
 
@@ -700,10 +700,10 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
 1. **Extract Principle References**:
    - Read frontmatter `principles:` field from each software doc
    - Identify documents that should cite specific principles:
-     - Security docs → security-by-design
+     - Security docs → explicit-over-implicit, automation-over-manual
      - Architecture docs → simplicity-over-complexity, explicit-over-implicit
      - Development practice docs → automation-over-manual
-     - Testing docs → quality-first
+     - Testing docs → automation-over-manual, reproducibility
 
 2. **Assess Appropriateness**:
    - Check if document topic aligns with cited principles
@@ -712,7 +712,7 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
 
 3. **Criticality Levels**:
    - **CRITICAL**: Broken principle reference (file doesn't exist)
-   - **HIGH**: Missing critical principle (security doc without security-by-design)
+   - **HIGH**: Missing critical principle (security doc without explicit-over-implicit or automation-over-manual)
    - **MEDIUM**: Missing recommended principle (could strengthen doc)
    - **LOW**: Enhancement suggestion only
 
@@ -725,7 +725,7 @@ Validate file naming, linking, emoji usage, convention compliance per existing l
 **File**: docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja\_\_security.md
 **Criticality**: HIGH
 
-**Issue**: Security documentation missing security-by-design principle reference
+**Issue**: Security documentation missing explicit-over-implicit principle reference
 
 **Evidence**:
 Current frontmatter:
@@ -733,14 +733,11 @@ Current frontmatter:
 ```yaml
 principles:
   - automation-over-manual
-  - explicit-over-implicit
 ```
-````
 
-Expected: Should include security-by-design given document focuses on security practices
+Expected: Should include explicit-over-implicit given document focuses on security practices
 
-**Recommendation**: Add security-by-design to principles frontmatter
-
+**Recommendation**: Add explicit-over-implicit to principles frontmatter
 ````
 
 #### 8.2 Cross-Reference Completeness
@@ -773,17 +770,18 @@ Expected: Should include security-by-design given document focuses on security p
 ### Finding: Cross-Reference Completeness
 
 **Category**: Cross-Reference
-**Files**: docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__functional-programming.md → governance/development/pattern/functional-programming.md
+**Files**: docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja\_\_functional-programming.md → governance/development/pattern/functional-programming.md
 **Criticality**: HIGH
 
 **Issue**: One-way cross-reference (should be bidirectional)
 
 **Evidence**:
+
 - Java doc references governance FP document ✓
 - Governance FP document doesn't list Java in language support ✗
 
 **Recommendation**: Add Java to "Language-Specific Implementations" section in governance/development/pattern/functional-programming.md
-````
+```
 
 #### 8.3 File Naming Convention Adherence
 
@@ -1070,7 +1068,7 @@ Files in directory but not in README:
 
 #### Performance Optimization
 
-**Strategy for handling ~260 files (345k lines)**:
+**Strategy for handling ~265 files (~345k lines)**:
 
 1. **Cache Governance Files**:
    - Read principles list once
@@ -1092,7 +1090,7 @@ Files in directory but not in README:
    - Use Grep for cross-reference extraction (faster than reading all files)
    - Only deep-parse files when validation requires it
 
-**Estimated Duration**: ~35-40 seconds for Step 8 (~260 files, 8 validation categories)
+**Estimated Duration**: ~35-40 seconds for Step 8 (~265 files, 8 validation categories)
 
 #### Summary Format
 
@@ -1101,8 +1099,8 @@ Files in directory but not in README:
 ```markdown
 ## Step 8 Summary: Software Documentation Validation
 
-**Files Analyzed**: 343
-**Lines Analyzed**: ~345,000
+**Files Analyzed**: [actual count from scan]
+**Lines Analyzed**: ~345,000 (approximate)
 
 **Findings by Category**:
 

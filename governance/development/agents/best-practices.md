@@ -305,3 +305,9 @@ Agents built following these practices are maintainable, secure, and effective a
 - **Explicit Over Implicit**: Clear permissions and behavior
 - **Security First**: Minimum necessary permissions
 - **Simplicity Over Complexity**: Single responsibility, focused agents
+
+## Conventions Implemented/Respected
+
+- **[File Naming Convention](../../conventions/structure/file-naming.md)**: Agent files follow kebab-case naming
+- **[Content Quality Principles](../../conventions/writing/quality.md)**: Active voice, clear headings
+- **[Dynamic Collection References Convention](../../conventions/writing/dynamic-collection-references.md)**: Avoid hardcoded counts in agent descriptions

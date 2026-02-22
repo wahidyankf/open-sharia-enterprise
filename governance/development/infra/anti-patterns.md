@@ -367,3 +367,9 @@ When managing infrastructure, ask: **Am I adding clarity or clutter?** If clutte
 - **Explicit Over Implicit**: Clear file locations, documented purposes
 - **Automation Over Manual**: Progressive writing, automated tracking
 - **Simplicity Over Complexity**: Designated directories, simple naming
+
+## Conventions Implemented/Respected
+
+- **[File Naming Convention](../../conventions/structure/file-naming.md)**: Report files and temporary files follow standardized naming patterns
+- **[Content Quality Principles](../../conventions/writing/quality.md)**: Clear, structured documentation of anti-patterns and solutions
+- **[Linking Convention](../../conventions/formatting/linking.md)**: GitHub-compatible links to related documentation

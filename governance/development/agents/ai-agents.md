@@ -158,7 +158,7 @@ skills: []
 
 **Field Order**: Fields MUST appear in this exact order (name, description, tools, model, color, skills) for consistency and grep-ability across all agents.
 
-**NO Comments in Frontmatter**: Agent frontmatter MUST NOT contain inline comments (# symbols in YAML). Research shows OpenCodehas frontmatter parsing issues (GitHub issue #6377), and best practice for configuration files is to keep YAML clean without inline comments. Put explanations in the document body below the frontmatter code block, not as inline comments.
+**NO Comments in Frontmatter**: Agent frontmatter MUST NOT contain inline comments (# symbols in YAML). Research shows OpenCode has frontmatter parsing issues (GitHub issue #6377), and best practice for configuration files is to keep YAML clean without inline comments. Put explanations in the document body below the frontmatter code block, not as inline comments.
 
 **Field Definitions:**
 
@@ -196,7 +196,7 @@ skills: []
    - List of Skill names the agent references (from `.claude/skills/` (primary) or `.opencode/skill/` (secondary))
    - Can be empty array `[]` if agent doesn't use Skills - Skills auto-load when agent is invoked (if task matches Skill description)
    - Enables composability and explicit knowledge dependencies
-   - Example: `skills: [color-accessibility-diagrams, maker-checker-fixer-pattern]`
+   - Example: `skills: [docs-creating-accessible-diagrams, repo-applying-maker-checker-fixer]`
    - See "Agent Skills References" section below for complete details
 
 ### Optional Frontmatter Fields
@@ -259,7 +259,7 @@ The `skills` field (already defined as field 6 in Required Frontmatter above) ha
 - **Values**: Skill names matching folder names in `.opencode/skill/`
 - **Auto-loading**: Skills load when agent invoked AND task matches Skill description
 - **Validation**: Referenced Skills must exist in `.claude/skills/` (primary) or `.opencode/skill/` (secondary) directory
-- **Example**: `skills: [color-accessibility-diagrams, maker-checker-fixer-pattern]`
+- **Example**: `skills: [docs-creating-accessible-diagrams, repo-applying-maker-checker-fixer]`
 
 #### When to Reference Skills vs. Inline Knowledge
 
@@ -290,8 +290,8 @@ tools: Read, Write, Edit, Glob, Grep
 model: inherit
 color: blue
 skills:
-  - color-accessibility-diagrams
-  - maker-checker-fixer-pattern
+  - docs-creating-accessible-diagrams
+  - repo-applying-maker-checker-fixer
 ---
 ```
 
@@ -320,9 +320,9 @@ tools: Read, Write, Edit, Glob, Grep
 model: sonnet
 color: blue
 skills:
-  - hugo-ayokoding-development
-  - color-accessibility-diagrams
-  - factual-validation-methodology
+  - apps-ayokoding-web-developing-content
+  - docs-creating-accessible-diagrams
+  - docs-validating-factual-accuracy
 ---
 ```
 
@@ -396,8 +396,8 @@ tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
 skills:
-  - maker-checker-fixer-pattern
-  - criticality-confidence-system
+  - repo-applying-maker-checker-fixer
+  - repo-assessing-criticality-confidence
 ---
 ```
 
@@ -406,7 +406,7 @@ skills:
 ```markdown
 ## Reference Documentation
 
-**Skills**: This agent uses `maker-checker-fixer-pattern` and `criticality-confidence-system`Skills for validation workflows.
+**Skills**: This agent uses `repo-applying-maker-checker-fixer` and `repo-assessing-criticality-confidence` Skills for validation workflows.
 
 **Conventions:**
 
@@ -1566,7 +1566,7 @@ FAIL: Bad: "The content is validated by the agent"
 ```markdown
 ## Factual Validation
 
-**See `docs-validating-factual-accuracy`Skill for complete methodology** covering:
+**See `docs-validating-factual-accuracy` Skill for complete methodology** covering:
 
 - Verification workflow (claim identification → source determination → verification)
 - Source prioritization (official docs → GitHub → registries → standards)
@@ -1633,7 +1633,7 @@ description: Brief description
 tools: Read, Write, Edit
 model: inherit
 color: blue
-skills: [applying-content-quality, creating-accessible-diagrams]
+skills: [docs-applying-content-quality, docs-creating-accessible-diagrams]
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---
@@ -1655,16 +1655,16 @@ skills: [skill-one, skill-two, skill-three]
 
 Based on agent simplification audit findings:
 
-| Pattern                                                                   | Instead Use                               | Typical Reduction |
-| ------------------------------------------------------------------------- | ----------------------------------------- | ----------------- |
-| Content quality standards (active voice, headings, accessibility)         | `docs-applying-content-quality` Skill     | ~50-100 lines     |
-| Diagram color palette (Blue #0173B2, Orange #DE8F05...)                   | `docs-creating-accessible-diagrams` Skill | ~60-70 lines      |
-| Report generation mechanics (UUID, progressive writing, filename pattern) | Temporary Files Convention                | ~200 lines        |
-| Validation methodology (source prioritization, confidence levels)         | `docs-validating-factual-accuracy` Skill  | ~150 lines        |
-| Confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE criteria)               | Fixer Confidence Levels Convention        | ~200 lines        |
-| Criticality levels (CRITICAL/HIGH/MEDIUM/LOW definitions)                 | `assessing-criticality-confidence` Skill  | ~100 lines        |
-| Mathematical notation rules (LaTeX delimiters, display math)              | Mathematical Notation Convention          | ~30 lines         |
-| Maker-checker-fixer workflow (three-stage pattern)                        | `applying-maker-checker-fixer` Skill      | ~50 lines         |
+| Pattern                                                                   | Instead Use                                   | Typical Reduction |
+| ------------------------------------------------------------------------- | --------------------------------------------- | ----------------- |
+| Content quality standards (active voice, headings, accessibility)         | `docs-applying-content-quality` Skill         | ~50-100 lines     |
+| Diagram color palette (Blue #0173B2, Orange #DE8F05...)                   | `docs-creating-accessible-diagrams` Skill     | ~60-70 lines      |
+| Report generation mechanics (UUID, progressive writing, filename pattern) | Temporary Files Convention                    | ~200 lines        |
+| Validation methodology (source prioritization, confidence levels)         | `docs-validating-factual-accuracy` Skill      | ~150 lines        |
+| Confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE criteria)               | Fixer Confidence Levels Convention            | ~200 lines        |
+| Criticality levels (CRITICAL/HIGH/MEDIUM/LOW definitions)                 | `repo-assessing-criticality-confidence` Skill | ~100 lines        |
+| Mathematical notation rules (LaTeX delimiters, display math)              | Mathematical Notation Convention              | ~30 lines         |
+| Maker-checker-fixer workflow (three-stage pattern)                        | `repo-applying-maker-checker-fixer` Skill     | ~50 lines         |
 
 ### Example: Before and After Simplification
 
@@ -1713,7 +1713,7 @@ Agent contains:
 
 **Quality**:
 
--Skills professionally maintained with examples
+- Skills professionally maintained with examples
 
 - Conventions peer-reviewed and validated
 - Agents remain focused on core responsibility
@@ -2230,20 +2230,20 @@ Is this knowledge...
 ```markdown
 ---
 skills:
-  - generating-validation-reports
-  - assessing-criticality-confidence
-  - applying-content-quality
+  - repo-generating-validation-reports
+  - repo-assessing-criticality-confidence
+  - docs-applying-content-quality
 ---
 
 # docs-checker Agent
 
 ## Report Generation
 
-See `generating-validation-reports`Skill for UUID chains, timestamps, progressive writing.
+See `repo-generating-validation-reports` Skill for UUID chains, timestamps, progressive writing.
 
 ## Criticality Assessment
 
-See `assessing-criticality-confidence`Skill for level definitions.
+See `repo-assessing-criticality-confidence` Skill for level definitions.
 
 ## Validation Workflow
 
@@ -2293,7 +2293,7 @@ skills:
 
 ## Hugo Patterns
 
-See `apps-ayokoding-web-developing-content`Skill for weight system, bilingual strategy.
+See `apps-ayokoding-web-developing-content` Skill for weight system, bilingual strategy.
 
 ## Example Structure
 
@@ -2319,7 +2319,7 @@ A: YES (8+ agents create diagrams)
 Q: Reusable domain expertise?
 A: YES (color accessibility is universal)
 
-Decision: Extract to `docs-creating-accessible-diagrams`Skill
+Decision: Extract to `docs-creating-accessible-diagrams` Skill
 ```
 
 **Scenario 2**: Adding custom validation logic for plan structure
@@ -2347,7 +2347,7 @@ A: YES (all 15 fixer agents use mode parameter)
 Q: Reusable domain expertise?
 A: YES (mode handling is standardized)
 
-Decision: Extract to `applying-maker-checker-fixer` Skill
+Decision: Extract to `repo-applying-maker-checker-fixer` Skill
 ```
 
 ### Benefits of Agent-Skill Separation
@@ -2390,7 +2390,7 @@ When simplifying an agent:
 - 82.7% average reduction (4x better than target)
 - 28,439 lines eliminated
 - 100% tier compliance (all in Simple tier)
-- 18 Skills created/used
+- Skills created/used to eliminate duplication (at the time: 18; see [Skills README](../../../.claude/skills/README.md) for current catalog)
 
 ### Ongoing Vigilance
 
@@ -2404,19 +2404,19 @@ When simplifying an agent:
 
 ### Related Skills
 
-**Current Skills** (18 total):
+**Current Skills** (see [Skills README](../../../.claude/skills/README.md) for complete catalog):
 
-- `generating-validation-reports` - Report generation, UUID chains, timestamps
-- `assessing-criticality-confidence` - Criticality levels, confidence assessment
-- `applying-maker-checker-fixer` - Three-stage workflow, mode handling
+- `repo-generating-validation-reports` - Report generation, UUID chains, timestamps
+- `repo-assessing-criticality-confidence` - Criticality levels, confidence assessment
+- `repo-applying-maker-checker-fixer` - Three-stage workflow, mode handling
 - `apps-ayokoding-web-developing-content` - Hugo Hextra patterns, bilingual content
 - `apps-oseplatform-web-developing-content` - Hugo PaperMod patterns
 - `docs-creating-by-example-tutorials` - Annotation standards, five-part structure
 - `docs-creating-accessible-diagrams` - Color palettes, accessibility
 - `docs-applying-content-quality` - Markdown quality standards
 - `docs-validating-factual-accuracy` - Verification methodology
-- `validating-links` - Link validation, caching
-- Plus 8 more in Content Creation, Standards Application, Process Execution categories
+- `docs-validating-links` - Link validation, caching
+- Plus more in Content Creation, Standards Application, Process Execution categories
 
 See [Skills README](../../../.claude/skills/README.md) for complete catalog.
 
@@ -2515,7 +2515,7 @@ model: inherit         # inherits from parent
 
 #### Skills Format
 
-**Identical for both systems** -Skills use the same SKILL.md format:
+**Identical for both systems** - Skills use the same SKILL.md format:
 
 ```yaml
 ---
@@ -2535,7 +2535,7 @@ Skills are **directly copied** from `.claude/skills/` to `.opencode/skill/` (no 
 
 - `npm run sync:claude-to-opencode` - Full sync (agents + skills)
 - `npm run sync:agents` - Agents only
-- `npm run sync:skills` -Skills only (direct copy)
+- `npm run sync:skills` - Skills only (direct copy)
 - `npm run validate:sync` - Verify semantic equivalence
 
 **Conversion Logic**:
@@ -2550,7 +2550,7 @@ Skills are **directly copied** from `.claude/skills/` to `.opencode/skill/` (no 
 - **[AGENTS.md](../../../AGENTS.md)** (SECONDARY) - OpenCode configuration with auto-generated warning
 - **[.claude/agents/README.md](../../../.claude/agents/README.md)** (PRIMARY) - Agent catalog
 - **[.opencode/agent/README.md](../../../.opencode/agent/README.md)** (SECONDARY) - OpenCode agent catalog with warning
-- **[.claude/skills/README.md](../../../.claude/skills/README.md)** (PRIMARY) -Skills catalog
+- **[.claude/skills/README.md](../../../.claude/skills/README.md)** (PRIMARY) - Skills catalog
 - **[.opencode/skill/README.md](../../../.opencode/skill/README.md)** (SECONDARY) - OpenCode skills catalog with warning
 
 ### Migration History

@@ -517,3 +517,9 @@ When implementing workflows, ask: **Am I adding collaboration or friction?** If 
 - **Automation Over Manual**: CI enforcement, automated testing
 - **Reproducibility First**: Pinned dependencies, environment config
 - **Explicit Over Implicit**: Clear commit messages, documented workflow
+
+## Conventions Implemented/Respected
+
+- **[Content Quality Principles](../../conventions/writing/quality.md)**: Active voice, clear problem/solution format in documentation
+- **[File Naming Convention](../../conventions/structure/file-naming.md)**: Workflow documents follow standardized kebab-case naming
+- **[Linking Convention](../../conventions/formatting/linking.md)**: GitHub-compatible links to related workflow documentation

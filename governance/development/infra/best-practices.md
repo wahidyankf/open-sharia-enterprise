@@ -366,3 +366,9 @@ Infrastructure built following these practices is organized, traceable, testable
 - **Explicit Over Implicit**: Clear file organization, standardized naming
 - **Automation Over Manual**: Progressive report writing, automated tracking
 - **Simplicity Over Complexity**: Two directories for all temporary files
+
+## Conventions Implemented/Respected
+
+- **[File Naming Convention](../../conventions/structure/file-naming.md)**: Report files follow standardized naming with UUID chains and timestamps
+- **[Content Quality Principles](../../conventions/writing/quality.md)**: Clear, structured documentation of infrastructure practices
+- **[Dynamic Collection References Convention](../../conventions/writing/dynamic-collection-references.md)**: Avoid hardcoded counts in report descriptions

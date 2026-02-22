@@ -363,6 +363,12 @@ This workflow is part of the **Tutorial Quality Family**:
 - PASS: **Quality Over Speed**: Iterative refinement until excellent
 - PASS: **Convention Over Configuration**: Standardized in-the-field validation criteria
 
+## Conventions Implemented/Respected
+
+- **[File Naming Convention](../../conventions/structure/file-naming.md)**: Workflow file follows plain name convention for workflows
+- **[Linking Convention](../../conventions/formatting/linking.md)**: All cross-references use GitHub-compatible markdown with `.md` extensions
+- **[Content Quality Principles](../../conventions/writing/quality.md)**: Active voice, proper heading hierarchy, single H1
+
 ## Related Documentation
 
 - **[In-the-Field Tutorial Convention](../../conventions/tutorials/in-the-field.md)**: Quality standards
