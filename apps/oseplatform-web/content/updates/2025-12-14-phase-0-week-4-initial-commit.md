@@ -48,6 +48,24 @@ The agents fall into clear categories. Content creation agents help draft docume
 
 The pattern we're developing is the maker-checker-fixer workflow. When we need new documentation, a maker agent creates the initial draft. A checker agent then validates it and generates an audit report identifying issues. A human reviews that report and decides which fixes to apply. Finally, a fixer agent applies only the approved changes, with confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) indicating how certain we are about each fix.
 
+```mermaid
+%% Color Palette: Blue #0173B2 (maker), Orange #DE8F05 (checker), Teal #029E73 (human review), Purple #CC78BC (fixer)
+graph TD
+    M["Maker: Create draft"]:::maker
+    C["Checker: Validate and audit"]:::checker
+    H["Human: Review and approve"]:::human
+    F["Fixer: Apply corrections"]:::fixer
+
+    M -->|"Draft"| C
+    C -->|"Audit report"| H
+    H -->|"Approved fixes"| F
+
+    classDef maker fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef checker fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef human fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef fixer fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 This three-stage workflow with human review in the middle is crucial. We're not trying to fully automate content creation—we're using AI to handle routine work while preserving human judgment for decisions that matter. The agents catch formatting inconsistencies, broken links, and accessibility issues. Humans make choices about tone, messaging, and content strategy.
 
 Seven agent families are emerging with this pattern: repository rules, ayokoding content, documentation tutorials, ose-platform-web content, README files, general documentation, and project plans. Each family has its own maker, checker, and fixer agents calibrated for its specific domain.

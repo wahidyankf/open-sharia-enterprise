@@ -18,6 +18,33 @@ The architecture has evolved from four layers to a comprehensive six-layer gover
 
 Layer 0 is Vision—the foundational WHY we exist (democratize Shariah-compliant enterprise). Layer 1 is Principles—the ten core values that guide every decision we make. Layer 2 is Conventions—the 24 documentation standards and rules that ensure consistency. Layer 3 is Development—the 15 software practices that govern how we write code. Layer 4 is AI Agents—the 45 specialized agents that enforce rules at scale. Layer 5 is Workflows—the multi-step processes that coordinate `agents`.
 
+```mermaid
+%% Color Palette: Gray #808080 (vision/skills), Blue #0173B2 (principles), Orange #DE8F05 (conventions), Teal #029E73 (development), Purple #CC78BC (agents), Brown #CA9161 (workflows)
+graph TD
+    L0["Layer 0: Vision - WHY we exist"]:::vision
+    L1["Layer 1: Principles - WHY we value approaches"]:::principles
+    L2["Layer 2: Conventions - WHAT rules apply"]:::conventions
+    L3["Layer 3: Development - HOW we build"]:::development
+    L4["Layer 4: AI Agents - WHO enforces"]:::agents
+    L5["Layer 5: Workflows - WHEN we execute"]:::workflows
+    SK["Skills: Delivery Infrastructure"]:::skills
+
+    L0 --> L1
+    L1 --> L2
+    L2 --> L3
+    L3 --> L4
+    L4 --> L5
+    L4 -.->|"loads"| SK
+
+    classDef vision fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef principles fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef conventions fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef development fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef agents fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef workflows fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef skills fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 **Six-Layer Governance Architecture:**
 
 **Layer 0: Vision**
