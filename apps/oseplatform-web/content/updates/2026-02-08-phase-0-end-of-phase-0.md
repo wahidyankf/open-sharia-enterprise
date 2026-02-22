@@ -29,6 +29,20 @@ Phase 1 is different. It's about solidifying infrastructure and gaining developm
 
 **Phase 0 Timeline:**
 
+```mermaid
+%% Color Palette: Blue #0173B2 (weeks 1-8), Teal #029E73 (weeks 9-10), Orange #DE8F05 (weeks 11-12)
+graph LR
+    W18["Weeks 1-8: Foundation - 437 commits"]:::w18
+    W910["Weeks 9-10: Infrastructure Maturity"]:::w910
+    W1112["Weeks 11-12: Final Sprint - 431 commits"]:::w1112
+
+    W18 --> W910 --> W1112
+
+    classDef w18 fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef w910 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef w1112 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
 **Weeks 1-8: Foundation Establishment**
 
 - Repository infrastructure
@@ -77,6 +91,33 @@ Educational content expanded—three new programming languages (Elixir, Kotlin, 
 Week 8 marked the shift from exploration to production-ready systems. The six-layer governance architecture was established—Vision → Principles → Conventions → Development → AI Agents → Workflows—where each rule traces back to foundational values, preventing contradictions and governance drift.
 
 **Six-Layer Governance Architecture:**
+
+```mermaid
+%% Color Palette: Gray #808080 (vision/skills), Blue #0173B2 (principles), Orange #DE8F05 (conventions), Teal #029E73 (development), Purple #CC78BC (agents), Brown #CA9161 (workflows)
+graph TD
+    L0["Layer 0: Vision - WHY we exist"]:::vision
+    L1["Layer 1: Principles - WHY we value approaches"]:::principles
+    L2["Layer 2: Conventions - WHAT rules apply"]:::conventions
+    L3["Layer 3: Development - HOW we build"]:::development
+    L4["Layer 4: AI Agents - WHO enforces"]:::agents
+    L5["Layer 5: Workflows - WHEN we execute"]:::workflows
+    SK["Skills: Delivery Infrastructure"]:::skills
+
+    L0 --> L1
+    L1 --> L2
+    L2 --> L3
+    L3 --> L4
+    L4 --> L5
+    L4 -.->|"loads"| SK
+
+    classDef vision fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef principles fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef conventions fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef development fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef agents fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef workflows fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef skills fill:#808080,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 **Layer 0: Vision**
 
@@ -288,6 +329,25 @@ We resolved 161 broken links through validation, fixed inconsistent naming acros
 **Architecture**: Monolith ("until it hurts")—single deployable service appropriate for individual user scale. Simpler development, faster iteration, avoid premature optimization. We'll break it apart when scaling demands, not before.
 
 **Phase 1 Tech Stack Architecture:**
+
+```mermaid
+%% Color Palette: Blue #0173B2 (clients), Orange #DE8F05 (backend), Teal #029E73 (data)
+graph TD
+    LC["Local: Flutter Desktop"]:::client
+    WF["Web: Next.js"]:::client
+    MA["Mobile: Flutter"]:::client
+    BE["Monolith: Spring Boot"]:::backend
+    DB["Database: PostgreSQL"]:::data
+
+    LC -->|"API"| BE
+    WF -->|"API"| BE
+    MA -->|"API"| BE
+    BE --> DB
+
+    classDef client fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef backend fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:4px
+    classDef data fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
 
 **Client Applications:**
 
