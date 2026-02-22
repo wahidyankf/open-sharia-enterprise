@@ -13,18 +13,12 @@ related:
 last_updated: 2026-01-25
 ---
 
-# Spring Boot Version Migration
-
-## Spring Boot 2.x to 3.x Migration
-
 ### Major Changes
 
 1. **Java 17 Minimum** - Spring Boot 3 requires Java 17+
 2. **Jakarta EE** - javax.\* → jakarta.\* package migration
 3. **Spring Framework 6** - Core framework upgrade
 4. **Native Compilation** - GraalVM support improved
-
-### Migration Steps
 
 #### 1. Update Java Version
 
@@ -50,9 +44,6 @@ plugins {
 # Automated replacement (Linux/Mac)
 find src/main -type f -name "*.java" -exec sed -i 's/javax\./jakarta./g' {} +
 
-# Manual replacements needed:
-# javax.persistence.* → jakarta.persistence.*
-# javax.validation.* → jakarta.validation.*
 # javax.servlet.* → jakarta.servlet.*
 ```
 
@@ -81,7 +72,6 @@ dependencies {
 #### 5. Configuration Property Changes
 
 ```yaml
-# application.yml changes
 
 # Before (2.x)
 spring:
@@ -152,11 +142,6 @@ public class SecurityConfig {
 - [Java Version Migration](../../../programming-languages/java/ex-soen-prla-ja__framework-integration.md) - Java version updates
 - [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Modern patterns
 - [Spring Boot Best Practices](./ex-soen-plwe-to-jvspbo__best-practices.md) - Migration standards
-
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring Boot By Example - Migration](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/migration.md) - Code examples
-- [Spring Boot In-the-Field - Version Upgrades](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/migration.md) - Production migration
 
 ---
 

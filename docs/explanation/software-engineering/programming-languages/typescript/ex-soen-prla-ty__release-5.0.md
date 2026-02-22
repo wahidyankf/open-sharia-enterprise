@@ -11,7 +11,7 @@ tags:
   - type-parameters
   - migration
 related:
-  - ./ex-soen-prla-ts__best-practices.md
+  - ./ex-soen-prla-ty__best-practices.md
   - ./README.md
 principles:
   - explicit-over-implicit

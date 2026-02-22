@@ -24,8 +24,6 @@ created: 2026-01-25
 updated: 2026-01-26
 ---
 
-# Spring Boot Observability
-
 ## 📋 Quick Reference
 
 - [Overview](#overview)
@@ -891,8 +889,6 @@ public class ZakatCalculationService {
 }
 ```
 
-## Alerting and Dashboards
-
 ### Prometheus Alert Rules
 
 ```yaml
@@ -968,8 +964,6 @@ groups:
 }
 ```
 
-## Production Monitoring
-
 ### Observability Best Practices
 
 1. **Always log with context**: Include user ID, request ID, trace ID
@@ -1016,8 +1010,6 @@ management.tracing.sampling.probability=0.1  // ✅ Sufficient for analysis
 - [ ] Log aggregation configured (ELK, Loki, or equivalent)
 - [ ] Trace storage configured (Zipkin, Jaeger, or equivalent)
 - [ ] On-call runbooks created
-
-## OSE Platform Observability Examples
 
 ### Complete Zakat Service with Observability
 
@@ -1126,8 +1118,5 @@ public class ZakatCalculationService {
 - [Spring Boot Performance](./ex-soen-plwe-to-jvspbo__performance.md) - Performance metrics
 
 **Hands-on Learning (AyoKoding)**:
-
-- [Spring Boot By Example - Observability](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/observability.md) - Code examples
-- [Spring Boot In-the-Field - Monitoring](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/observability.md) - Production monitoring
 
 **Last Updated**: 2026-01-26

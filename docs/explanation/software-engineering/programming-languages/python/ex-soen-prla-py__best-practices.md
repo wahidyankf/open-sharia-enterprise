@@ -26,8 +26,6 @@ principles:
 last_updated: 2026-01-24
 ---
 
-# Python Best Practices
-
 ## Quick Reference
 
 **Software Engineering Principles**:
@@ -161,10 +159,6 @@ class ZakatCalculator:
         # 2500.0  # Looks right visually - but no regression tests!
         return wealth * 0.025
 
-# Problems with manual testing:
-# 1. Human error - typos, wrong values
-# 2. No regression detection when code changes
-# 3. No documentation of test cases
 # 4. Time-consuming and error-prone
 ```
 
@@ -346,8 +340,6 @@ def correct_zakat_transaction(original: ZakatTransaction, corrected_amount: Deci
         payer_id=original.payer_id, wealth_amount=original.wealth_amount, zakat_amount=corrected_amount
     )
 
-
-# Attempting to modify raises FrozenInstanceError
 # transaction.zakat_amount = Decimal("500")  # ERROR: dataclass is frozen
 ```
 
@@ -562,14 +554,6 @@ decimal  # Could be any version!
 pydantic>=2.0  # Could be 2.0.0 or 2.10.6
 pytest  # Latest version changes over time
 
-# No virtual environment
-# No Docker container
-# No version locking
-
-# Result:
-# - Different developers get different versions
-# - CI/CD produces different builds at different times
-# - Behavior changes unpredictably
 # - "Works on my machine" syndrome
 ```
 
@@ -709,7 +693,7 @@ total_zakat = calculate_wealth_zakat(gold_holdings, gold_nisab) + calculate_weal
 ### Import Organization
 
 ```python
-# GOOD: PEP 8 import order (use isort for automatic sorting)
+
 # 1. Standard library imports
 import sys
 from datetime import date, datetime
@@ -983,12 +967,10 @@ class ZakatCalculator(FinancialCalculatorABC):  # BAD: Forced to inherit
 
 **Why this matters**: Protocols enable structural subtyping (duck typing with type checking). Classes satisfy protocols without explicit inheritance. Looser coupling, stronger typing.
 
-## Code Organization
-
 ### Module Structure
 
 ```python
-# GOOD: Well-organized module structure
+
 # File: ose_platform/domain/zakat/calculator.py
 
 """Zakat calculation services for wealth-based obligations.
@@ -1036,8 +1018,6 @@ class GoldZakatCalculator:
             return gold_value * ZAKAT_RATE
         return Decimal("0")
 
-
-# BAD: Disorganized module
 # File: calc.py
 
 def calc_zakat(amt):  # BAD: Unclear function name, no docstring
@@ -1094,7 +1074,6 @@ graph TD
 ### Dependency Direction
 
 ```python
-# GOOD: Dependencies point inward (infrastructure → application → domain)
 
 # domain/zakat/models.py (no external dependencies)
 from dataclasses import dataclass
@@ -1141,8 +1120,6 @@ async def calculate_zakat(payer_id: str, wealth: Decimal):
     obligation = service.calculate_obligation(payer_id, wealth)
     return {"zakat_amount": str(obligation.zakat_amount)}
 
-
-# BAD: Domain depends on infrastructure
 # domain/zakat/models.py
 from infrastructure.database import db  # BAD: Domain depends on infrastructure
 
@@ -1153,8 +1130,6 @@ class ZakatObligation:
 ```
 
 **Why this matters**: Inward dependency direction (infrastructure → application → domain) keeps domain pure. Domain models contain business logic without technical concerns. Easier testing and portability.
-
-## Error Handling Patterns
 
 ### Explicit Exception Handling
 
@@ -1291,8 +1266,6 @@ async def calculate_zakat(payer_id: str, wealth_amount: float):  # BAD: No valid
 
 **Why this matters**: Validate at boundaries (API, database, external services). Internal code trusts validated data. Pydantic centralizes validation. Reduces defensive programming clutter.
 
-## Testing Practices
-
 ### Test Pyramid Strategy
 
 ```mermaid
@@ -1332,7 +1305,7 @@ graph TB
 ### Test Organization
 
 ```python
-# GOOD: Organized test structure with clear naming
+
 # tests/domain/zakat/test_calculator.py
 
 import pytest
@@ -1396,8 +1369,6 @@ def test2():  # BAD: Non-descriptive
 
 **Why this matters**: Organized test classes group related tests. Fixtures reduce duplication. Descriptive names document intent. Parameterized tests cover multiple cases concisely.
 
-## Documentation Standards
-
 ### Docstring Format
 
 ```python
@@ -1460,8 +1431,6 @@ def calc_murabaha(c, r, d=None):  # BAD: No docstring, unclear parameters
 ```
 
 **Why this matters**: Complete docstrings document parameters, returns, exceptions, and usage. Examples demonstrate correct usage. Docstrings enable auto-generated documentation (Sphinx, MkDocs).
-
-## Security Practices
 
 ### Input Validation
 
@@ -1528,8 +1497,6 @@ class Settings(BaseSettings):
 
 # Usage
 settings = Settings()
-# Secrets loaded from environment, never hardcoded
-
 
 # BAD: Hardcoded secrets
 DATABASE_URL = "postgresql://user:password@localhost/db"  # BAD: Hardcoded credentials
@@ -1537,8 +1504,6 @@ API_KEY = "sk-1234567890abcdef"  # BAD: Exposed secret
 ```
 
 **Why this matters**: Environment variables separate configuration from code. Never commit secrets to version control. Use `.env` files (excluded from git) for local development. Production uses secret managers (AWS Secrets Manager, HashiCorp Vault).
-
-## Anti-Patterns
 
 ### Avoid Mutable Default Arguments
 
@@ -1563,11 +1528,6 @@ def process_donations(donations: List[Decimal] = []) -> Decimal:  # BAD: Mutable
     donations.append(Decimal("10.00"))  # BAD: Modifies shared default
     return sum(donations)
 
-
-# Demonstrates problem:
-# >>> process_donations()
-# Decimal('10.00')
-# >>> process_donations()  # BAD: Retains previous call's data
 # Decimal('20.00')
 ```
 
@@ -1869,7 +1829,7 @@ class ZakatPayment:
     amount: Decimal
 
 
-payment_repo = Repository[ZakatPayment](ZakatPayment)
+payment_repo = RepositoryZakatPayment
 payment = ZakatPayment("PAY-001", Decimal("2500"))
 payment_repo.save("PAY-001", payment)
 found = payment_repo.find_by_id("PAY-001")  # Type: ZakatPayment | None
@@ -1961,10 +1921,6 @@ nisab = NisabAmount(Decimal("5000"))
 rate = ZakatRate(Decimal("0.025"))
 
 zakat = calculate_zakat(wealth, nisab, rate)  # OK
-
-# Type error: cannot pass wealth as nisab
-# zakat = calculate_zakat(nisab, wealth, rate)  # mypy error!
-
 
 # FAIL: Plain Decimal loses semantic information
 def calculate_zakat_bad(wealth: Decimal, nisab: Decimal, rate: Decimal) -> Decimal:
@@ -2081,10 +2037,6 @@ for wealth in wealth_list:
     if wealth > nisab:
         zakat_amounts.append(wealth * Decimal("0.025"))
 
-
-# Benchmark results (10,000 items):
-# List comprehension: ~3.2ms
-# Explicit loop: ~4.8ms
 # Speedup: 1.5x faster
 ```
 
@@ -2104,10 +2056,6 @@ def calculate_total_zakat_stream(wealth_stream: list[Decimal]) -> Decimal:
     )
     return sum(zakat_gen)
 
-
-# Memory: O(1) - only one item in memory at a time
-
-
 # FAIL: List comprehension (memory hungry for large datasets)
 def calculate_total_zakat_list(wealth_stream: list[Decimal]) -> Decimal:
     """Calculate total Zakat using list (O(n) memory)."""
@@ -2118,12 +2066,6 @@ def calculate_total_zakat_list(wealth_stream: list[Decimal]) -> Decimal:
     ]
     return sum(zakat_list)
 
-
-# Memory: O(n) - entire list stored in memory
-
-# Benchmark (1,000,000 items):
-# Generator: ~150ms, 8MB memory
-# List: ~180ms, 76MB memory
 # Memory savings: 9.5x less memory
 ```
 
@@ -2155,9 +2097,6 @@ nisab_2024_mecca = get_nisab_threshold(2024, "mecca")  # ~500ms
 
 # Second call: Cache hit, instant return
 nisab_2024_mecca = get_nisab_threshold(2024, "mecca")  # ~0.01ms
-
-# Speedup: 50,000x faster for cached values
-
 
 # FAIL: No caching, repeated expensive calculations
 def get_nisab_threshold_no_cache(year: int, region: str) -> Decimal:
@@ -2201,10 +2140,6 @@ def create_murabaha_contracts(requests: list[MurabahaRequest]) -> list[Contract]
         contracts.append(Contract(req.customer_id, total, req.months))
     return contracts
 
-
-# Benchmark (10,000 contracts with 36 unique combinations):
-# With cache: ~15ms (cache hit rate: 99.64%)
-# Without cache: ~850ms
 # Speedup: 56x faster
 ```
 
@@ -2258,8 +2193,6 @@ total_usd = donation_usd.add(zakat_usd)  # Money(Decimal('2600.00'), 'USD')
 
 # Prevents errors
 donation_sar = Money(Decimal("375.00"), "SAR")
-# total = donation_usd.add(donation_sar)  # ValueError: Cannot add USD and SAR!
-
 
 # FAIL: Plain Decimal loses currency information
 def add_money_bad(amt1: Decimal, amt2: Decimal) -> Decimal:
@@ -2521,8 +2454,6 @@ async def process_donation_payment(
 ```
 
 **Why DDD matters**: Islamic finance involves complex business rules (Shariah compliance, nisab thresholds, profit-sharing ratios). DDD patterns (Value Objects, Entities, Aggregates, Repositories) model these concepts explicitly in code. Money value object prevents currency mixing errors. DonationCampaign aggregate enforces goal-tracking invariants. Repository abstracts persistence for testability.
-
-## References
 
 ### Official Documentation
 

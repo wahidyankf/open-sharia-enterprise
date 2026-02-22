@@ -44,8 +44,6 @@ This document establishes Spring Framework best practices for building maintaina
 - [Performance Optimization](#performance-optimization)
 - [Resource Management](#resource-management)
 
-## Project Structure
-
 ### Layered Architecture
 
 Organize Spring projects following clean architecture principles with clear layer boundaries.
@@ -303,8 +301,6 @@ class TransactionConfig {
 }
 ```
 
-## Configuration Management
-
 ### Externalized Configuration
 
 Use properties files and environment variables for configuration management.
@@ -447,8 +443,6 @@ data class ZakatConfigurationProperties(
   )
 }
 ```
-
-## Constructor Injection (Preferred)
 
 ### Why Constructor Injection
 
@@ -625,8 +619,6 @@ public class ZakatCalculationService {
 }
 ```
 
-## Bean Naming Conventions
-
 ### Consistent Naming
 
 Use consistent, descriptive bean names that reflect their purpose.
@@ -677,8 +669,6 @@ class GoldPriceApiClient {
   // Implementation
 }
 ```
-
-## Transaction Management
 
 ### Declarative Transactions
 
@@ -857,8 +847,6 @@ class DonationService(
   )
 }
 ```
-
-## Exception Handling
 
 ### Controller Advice for Global Exception Handling
 
@@ -1049,8 +1037,6 @@ data class ErrorResponse(
   val validationErrors: List<String> = emptyList()
 )
 ```
-
-## Testing Strategies
 
 ### Unit Testing (Without Spring Context)
 
@@ -1333,8 +1319,6 @@ class MurabahaContractService(
 }
 ```
 
-## Performance Optimization
-
 ### Connection Pooling
 
 **Java Example** (HikariCP Configuration):
@@ -1519,8 +1503,6 @@ class NisabService(
 }
 ```
 
-## Resource Management
-
 ### Proper Resource Cleanup
 
 **Java Example**:
@@ -1591,8 +1573,6 @@ class DonationReportGenerator(
 }
 ```
 
-## Related Documentation
-
 ### Core Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
@@ -1600,10 +1580,6 @@ class DonationReportGenerator(
 - **[Anti-Patterns](ex-soen-plwe-to-jvsp__anti-patterns.md)** - Common mistakes
 - **[Configuration](ex-soen-plwe-to-jvsp__configuration.md)** - Configuration approaches
 - **[Testing](ex-soen-plwe-to-jvsp__testing.md)** - Testing strategies
-
-### Language Standards
-
-- **[Java Best Practices](../../../../programming-languages/java/README.md)** - Java coding standards
 
 ### Development Practices
 
@@ -1618,12 +1594,6 @@ class DonationReportGenerator(
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Core Spring patterns
 - [Spring Framework Anti-Patterns](./ex-soen-plwe-to-jvsp__anti-patterns.md) - Common mistakes to avoid
 - [Spring Framework Testing](./ex-soen-plwe-to-jvsp__testing.md) - Testing strategies
-
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring By Example - Best Practices](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/best-practices.md) - Code examples
-- [Spring In-the-Field - Production Setup](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/production-setup.md) - Real-world patterns
-- [Spring In-the-Field - Performance Tuning](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/performance.md) - Production optimization
 
 **Spring Boot Extension**:
 

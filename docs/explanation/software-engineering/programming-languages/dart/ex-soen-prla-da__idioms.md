@@ -25,10 +25,6 @@ principles:
 last_updated: 2026-01-29
 ---
 
-# Dart Idioms
-
-## Quick Reference
-
 ### Core Dart Idioms
 
 **Syntactic Patterns**:
@@ -127,8 +123,6 @@ This guide covers **Dart 3.0+ idioms**, emphasizing null safety, modern syntax, 
 ### Target Audience
 
 This document targets developers building Dart applications for the Open Sharia Enterprise platform, particularly those working on cross-platform mobile apps (Flutter), server-side services, and financial domain logic.
-
-## Core Dart Idioms
 
 ### 1. Cascade Notation
 
@@ -1849,7 +1843,7 @@ class PaymentSchedule {
   PaymentSchedule(this._payments);
 
   // Index access
-  Payment operator [](int index) => _payments[index];
+  Payment operator  => _payments[index];
 
   // Index assignment
   void operator []=(int index, Payment payment) {

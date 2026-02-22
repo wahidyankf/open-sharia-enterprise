@@ -10,8 +10,8 @@ tags:
   - xstate
   - state-management
 related:
-  - ./ex-soen-prla-ts__best-practices.md
-  - ./ex-soen-prla-ts__type-safety.md
+  - ./ex-soen-prla-ty__best-practices.md
+  - ./ex-soen-prla-ty__type-safety.md
 principles:
   - explicit-over-implicit
 last_updated: 2025-01-23

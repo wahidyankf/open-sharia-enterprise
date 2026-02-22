@@ -66,9 +66,6 @@ payer_id = "PAYER-123"
 wealth = Decimal("100000")
 nisab = Decimal("85000")
 
-# Python 3.11: SyntaxError (nested quotes)
-# message = f"Payer {payer_id} has wealth {"above" if wealth >= nisab else "below"} nisab"
-
 # Python 3.12: Works! No more quote limitations
 message = f'Payer {payer_id} has wealth {"above" if wealth >= nisab else "below"} nisab'
 print(message)  # Payer PAYER-123 has wealth above nisab
@@ -250,11 +247,6 @@ class ZakatRecord(FinancialRecord):
         """Get Zakat amount."""
         return Decimal("2500")
 
-
-# Type error: Incompatible return type
-# class InvalidRecord(FinancialRecord):
-#     @override
-#     def get_amount(self) -> str:  # Type checker error: str not compatible with Decimal
 #         return "2500"
 ```
 
@@ -283,7 +275,6 @@ zakat_amounts = [
 ]
 elapsed = time.time() - start
 
-# Python 3.11: ~0.82 seconds
 # Python 3.12: ~0.68 seconds (17% faster due to PEP 709)
 print(f"Processed {len(zakat_amounts)} items in {elapsed:.2f}s")
 ```
@@ -308,7 +299,6 @@ payer_wealth = {
 }
 elapsed = time.time() - start
 
-# Python 3.11: ~0.35 seconds
 # Python 3.12: ~0.28 seconds (20% faster)
 print(f"Created {len(payer_wealth)} mappings in {elapsed:.2f}s")
 ```
@@ -333,15 +323,6 @@ def calculate_zakat(wealth: Decimal, nisab: Decimal) -> Decimal:
         return wealth * Decimal("0.025")
     return Decimal("0")
 
-
-# Typo in parameter name
-# result = calculate_zakat(welth=Decimal("100000"), nisab=Decimal("85000"))
-
-# Python 3.11 error:
-# TypeError: calculate_zakat() got an unexpected keyword argument 'welth'
-
-# Python 3.12 error (with suggestion):
-# TypeError: calculate_zakat() got an unexpected keyword argument 'welth'.
 # Did you mean 'wealth'?
 ```
 
@@ -365,12 +346,6 @@ def process_donation(amount_str: str) -> Decimal:
     except InvalidOperation as e:
         raise ValueError(f"Invalid amount format: {amount_str}") from e
 
-
-# Trigger error
-# process_donation("invalid")
-
-# Python 3.12: Clearer exception chaining display
-# Shows both the original InvalidOperation and the re-raised ValueError
 # with clear "The above exception was the direct cause..." message
 ```
 
@@ -383,9 +358,6 @@ Python 3.12 introduces experimental per-interpreter GIL.
 ### Subinterpreters Concept
 
 ```python
-# EXPERIMENTAL: Per-interpreter GIL (Python 3.12+)
-# Each subinterpreter has its own GIL
-# Enables true parallelism without free-threaded mode
 
 # Note: API unstable, use cautiously
 
@@ -410,7 +382,6 @@ result = calculate_zakat(Decimal("100000"))
 
 interpreters.run_string(interp, code)
 
-# Each subinterpreter has separate GIL
 # Enables true parallel execution
 ```
 
@@ -452,7 +423,6 @@ result = calculate_zakat(
     wealth_amount=Decimal("100000"), nisab_threshold=Decimal("85000")
 )
 
-# Type error: Invalid parameter
 # calculate_zakat(invalid_param=Decimal("1000"))  # mypy error
 ```
 
@@ -463,13 +433,6 @@ result = calculate_zakat(
 ```python
 # GOOD: Generic type parameter syntax (Python 3.12+)
 from decimal import Decimal
-
-
-# OLD syntax (Python <3.12):
-# from typing import TypeVar, Generic
-# T = TypeVar("T")
-# class Container(Generic[T]):
-#     ...
 
 # NEW syntax (Python 3.12+):
 class Container[T]:
@@ -489,7 +452,7 @@ amount = amount_container.get()  # Type: Decimal
 
 
 # Generic function syntax
-def calculate[T: Decimal](value: T, rate: Decimal) -> T:
+def calculateT: Decimal -> T:
     """Generic calculation preserving type."""
     return value * rate  # type: ignore
 
@@ -673,7 +636,6 @@ payer_data = [(f"PAYER-{i:06d}", Decimal(str(i * 1000))) for i in range(100000)]
 results, elapsed = process_zakat_batch(payer_data)
 print(f"Processed {len(results)} payers in {elapsed:.3f}s")
 
-# Python 3.11: ~0.45 seconds
 # Python 3.12: ~0.36 seconds (20% faster)
 ```
 
@@ -686,44 +648,14 @@ Migration guide for upgrading to Python 3.12.
 ### Breaking Changes
 
 ```python
-# MINIMAL BREAKING CHANGES in Python 3.12
 
-# CHANGE 1: Some deprecated features removed
-# Review deprecation warnings in 3.11 before upgrading
-
-# CHANGE 2: Minor behavior changes in edge cases
 # Run test suite to catch any issues
 ```
 
 ### Migration Checklist
 
 ```python
-# MIGRATION CHECKLIST for Python 3.11 → 3.12:
 
-# 1. Update Python version
-#    - Install Python 3.12
-#    - Update virtual environments
-
-# 2. Run test suite
-#    - pytest tests/
-#    - Fix any failures
-
-# 3. Optional: Adopt new features
-#    - Use @override decorator for class hierarchies
-#    - Simplify f-strings (remove quote workarounds)
-#    - Add TypedDict **kwargs type hints
-#    - Use new generic syntax (PEP 695)
-
-# 4. Update dependencies
-#    - Ensure all dependencies support Python 3.12
-#    - Check for deprecation warnings
-
-# 5. Update CI/CD
-#    - Add Python 3.12 to test matrix
-#    - Update Docker images
-
-# 6. Performance testing
-#    - Benchmark critical paths
 #    - Verify expected comprehension speedups
 ```
 
@@ -743,9 +675,6 @@ else:
         """No-op decorator for Python <3.12."""
         return func
 
-# Use @override consistently across versions
-
-
 # Check for type parameter syntax support
 if sys.version_info >= (3, 12):
     # Use new generic syntax
@@ -762,8 +691,6 @@ else:
 ```
 
 **Why this matters**: Smooth migration path. Minimal breaking changes. Backward compatibility maintained.
-
-## References
 
 ### Official Documentation
 

@@ -26,13 +26,11 @@ related:
   - ./ex-soen-plwe-to-jvspbo__data-access.md
 ---
 
-# Spring Boot WebFlux and Reactive Programming
-
 ## Prerequisite Knowledge
 
 **REQUIRED**: You MUST understand blocking I/O and thread-per-request models before learning reactive programming. Review [Spring Boot REST APIs](ex-soen-plwe-to-jvspbo__rest-apis.md) for blocking model baseline.
 
-**STRONGLY RECOMMENDED**: Complete [AyoKoding Spring Boot Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot.md) and [Reactive Programming module](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/reactive.md) for practical reactive experience.
+**STRONGLY RECOMMENDED**: Complete AyoKoding Spring Boot Learning Path and Reactive Programming module for practical reactive experience.
 
 **This document is OSE Platform-specific**, not a Spring Boot WebFlux tutorial. We define WHEN and HOW to use WebFlux in THIS platform, not WHAT WebFlux is.
 
@@ -55,8 +53,6 @@ This document defines **reactive programming standards** for Spring Boot applica
 - [Testing Reactive Applications](#testing-reactive-applications)
 - [Performance Trade-offs](#performance-trade-offs-thread-efficiency-vs-complexity)
 - [Reactive Database Access (R2DBC)](#reactive-database-access-r2dbc)
-
-## When to Use Spring WebFlux vs Spring Web MVC
 
 ### Decision Matrix
 
@@ -137,8 +133,6 @@ class WaqfStreamController(
 2. Technical design review approval
 3. Team training plan for reactive programming
 4. Monitoring strategy for reactive metrics
-
-## Reactive Programming Patterns (Mono, Flux, Project Reactor)
 
 ### Mono (0 or 1 Element)
 
@@ -376,8 +370,6 @@ fun streamDonations(): Flux<Donation> {
 }
 ```
 
-## Non-Blocking I/O for High-Concurrency Scenarios
-
 ### Thread Model Comparison
 
 **Spring Web MVC (Blocking)**:
@@ -495,8 +487,6 @@ class BadCreditCheckClient(
     }
 }
 ```
-
-## Testing Reactive Applications
 
 ### Unit Testing with StepVerifier
 
@@ -671,8 +661,6 @@ class ReactiveMurabahaControllerTest {
 }
 ```
 
-## Performance Trade-offs (Thread Efficiency vs Complexity)
-
 ### Benchmarks (OSE Platform)
 
 **Scenario**: 5000 concurrent requests, each making 3 external API calls (credit check, KYC, risk assessment)
@@ -763,8 +751,6 @@ fun calculate(request: CreateZakatRequest, userId: String): Mono<ZakatCalculatio
     }.map { ZakatCalculationMapper.toResponse(it) }
 }
 ```
-
-## Reactive Database Access (R2DBC)
 
 ### R2DBC Configuration
 
@@ -871,7 +857,7 @@ These reactive programming standards enforce the five software engineering princ
    - Reactive WebFlux only when justified (high-concurrency, many I/O operations)
    - Avoid reactive for CPU-bound or simple CRUD operations
 
-3. **[Performance](../../../../../../governance/principles/software-engineering/performance.md)**
+3. **[Pure Functions Over Side Effects](../../../../../../governance/principles/software-engineering/pure-functions.md)**
    - Non-blocking I/O maximizes thread efficiency (8 threads handle 10,000 concurrent requests)
    - Backpressure prevents memory exhaustion
    - Parallel API calls reduce latency
@@ -902,11 +888,6 @@ These reactive programming standards enforce the five software engineering princ
 - [Java Concurrency](../../../programming-languages/java/ex-soen-prla-ja__concurrency-standards.md) - Java threading baseline
 - [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Reactive patterns
 - [Spring Boot Performance](./ex-soen-plwe-to-jvspbo__performance.md) - Reactive performance
-
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring Boot By Example - WebFlux](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/webflux.md) - Code examples
-- [Spring Boot In-the-Field - Reactive Systems](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/webflux.md) - Production reactive
 
 ---
 

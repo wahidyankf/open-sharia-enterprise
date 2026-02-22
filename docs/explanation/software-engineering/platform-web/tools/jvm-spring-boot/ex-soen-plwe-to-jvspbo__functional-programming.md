@@ -26,8 +26,6 @@ related:
   - ./ex-soen-plwe-jvspbo__data-access.md
 ---
 
-# Spring Boot Functional Programming
-
 ## 📋 Quick Reference
 
 - [Immutable Data Structures](#immutable-data-structures) - Records, immutable collections, value objects
@@ -53,8 +51,6 @@ Functional programming in Spring Boot emphasizes immutability, pure functions, a
 - **Predictability**: Same inputs always produce same outputs
 - **Parallelism**: Immutability enables safe concurrent execution
 - **Maintainability**: Clear separation between logic and side effects
-
-## Immutable Data Structures
 
 ### Java Records (DTOs)
 
@@ -237,8 +233,6 @@ public record Money(BigDecimal amount, String currency) {
     }
 }
 ```
-
-## Pure Functions
 
 ### Characteristics of Pure Functions
 
@@ -521,8 +515,6 @@ public class ZakatCalculationService {
 }
 ```
 
-## Stream API
-
 ### Filter-Map-Reduce Pattern
 
 ```java
@@ -672,8 +664,6 @@ public class ZakatCalculationBatchService {
 - Operations with side effects
 - Ordered stream operations
 
-## Optional Usage
-
 ### Null Safety
 
 ```java
@@ -780,8 +770,6 @@ public class MurabahaContractService {
     }
 }
 ```
-
-## Error Handling
 
 ### Either / Result Pattern
 
@@ -977,8 +965,6 @@ public class MurabahaApplicationService {
     }
 }
 ```
-
-## OSE Platform Examples
 
 ### Zakat Calculation (Pure Functions)
 
@@ -1255,8 +1241,6 @@ public class WaqfDonationService {
 }
 ```
 
-## Functional Programming Checklist
-
 ### Immutability
 
 - [ ] DTOs use Java records (immutable by default)
@@ -1348,8 +1332,3 @@ public class WaqfDonationService {
 - [Java Functional Programming](../../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java FP baseline
 - [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - FP patterns
 - [Spring Boot WebFlux Reactive](./ex-soen-plwe-to-jvspbo__webflux-reactive.md) - Reactive FP
-
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring Boot By Example - Functional Programming](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/functional-programming.md) - Code examples
-- [Spring Boot In-the-Field - FP Patterns](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/functional-programming.md) - Production FP

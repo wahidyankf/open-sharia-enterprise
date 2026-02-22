@@ -33,8 +33,6 @@ This document defines **authoritative code quality standards** for Spring Framew
 
 **Scope**: Static analysis tools, formatting rules, architectural constraints for Spring applications
 
-## Spotless Code Formatting
-
 ### Standard 1: Google Java Format (MANDATORY)
 
 All Spring Framework code MUST use Google Java Format enforced by Spotless Maven Plugin.
@@ -102,8 +100,6 @@ public class ZakatApplicationConfig {
 **Rationale**: Consistent formatting eliminates style debates and ensures readability.
 
 **CI/CD**: Spotless check runs in `validate` phase. Build fails if code is not formatted.
-
-## Error Prone Static Analysis
 
 ### Standard 2: Error Prone Compile-Time Checks (MANDATORY)
 
@@ -183,8 +179,6 @@ public class ZakatRepository {
 ```
 
 **Rationale**: Compile-time bug detection prevents runtime failures in production.
-
-## NullAway Null Safety
 
 ### Standard 3: NullAway for Null Safety (MANDATORY)
 
@@ -272,8 +266,6 @@ public ZakatCalculationResponse calculate(CreateZakatCalculationRequest request)
 ```
 
 **Rationale**: Prevents `NullPointerException` at compile time, not runtime.
-
-## ArchUnit for Layer Boundaries
 
 ### Standard 4: Enforce Spring Layer Architecture (MANDATORY)
 
@@ -384,8 +376,6 @@ class ArchitectureTest {
 
 **Rationale**: Prevents architectural violations that lead to coupling and testing difficulties.
 
-## Checkstyle (Optional but Recommended)
-
 ### Standard 5: Checkstyle for Style Enforcement (GUIDANCE)
 
 Spring Framework projects SHOULD use Checkstyle for additional style checks.
@@ -421,8 +411,6 @@ Spring Framework projects SHOULD use Checkstyle for additional style checks.
 - Cyclomatic complexity limits
 
 **Rationale**: Additional style enforcement beyond Spotless formatting.
-
-## JaCoCo Code Coverage
 
 ### Standard 6: Minimum 80% Coverage for Domain Logic (MANDATORY)
 
@@ -482,8 +470,6 @@ Spring Framework projects MUST achieve 80% code coverage for domain and applicat
 
 **Rationale**: High coverage for business-critical logic ensures correctness.
 
-## Enforcement
-
 ### Automated
 
 **Tool**: Maven plugins in CI/CD pipeline
@@ -493,11 +479,7 @@ Spring Framework projects MUST achieve 80% code coverage for domain and applicat
 **CI/CD Pipeline**:
 
 ```bash
-# Build fails if:
-# - Spotless check fails (code not formatted)
-# - Error Prone detects bugs
-# - NullAway detects null safety violations
-# - ArchUnit tests fail (architecture violated)
+
 # - JaCoCo coverage below 80%
 
 mvn clean verify
@@ -515,11 +497,6 @@ mvn clean verify
 
 ## Learning Resources
 
-**AyoKoding Spring Framework**:
-
-- [Spring Framework By Example - Testing](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/testing.md) - Unit and integration test examples
-- [Spring Framework In-the-Field - Code Quality](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/code-quality.md) - Production quality practices
-
 **OSE Explanation**:
 
 - [Spring Framework Testing](./ex-soen-plwe-to-jvsp__testing.md) - Testing strategies
@@ -528,19 +505,19 @@ mvn clean verify
 
 ## Software Engineering Principles
 
-**[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**:
+**[Automation Over Manual](../../../../../../governance/principles/software-engineering/automation-over-manual.md)**:
 
 - Spotless automates code formatting (no manual style enforcement)
 - Error Prone automates bug detection at compile time
 - JaCoCo automates coverage measurement
 
-**[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**:
+**[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**:
 
 - NullAway makes null safety explicit via annotations
 - ArchUnit makes architectural constraints explicit via tests
 - Error Prone makes anti-patterns explicit via compiler errors
 
-**[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)**:
+**[Reproducibility First](../../../../../../governance/principles/software-engineering/reproducibility.md)**:
 
 - Consistent formatting via Spotless ensures reproducible code style
 - ArchUnit tests ensure reproducible architecture
@@ -567,11 +544,6 @@ mvn clean verify
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Quality patterns
 - [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Quality standards
 - [Spring Framework Testing](./ex-soen-plwe-to-jvsp__testing.md) - Test quality
-
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring By Example - Code Quality](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/code-quality.md) - Code examples
-- [Spring In-the-Field - Quality Practices](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/code-quality.md) - Production quality
 
 **Spring Boot Extension**:
 

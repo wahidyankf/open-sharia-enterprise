@@ -47,8 +47,6 @@ This documentation covers idiomatic Spring Framework usage for enterprise applic
 - [Conditional Configuration](#conditional-configuration)
 - [Profile-Based Configuration](#profile-based-configuration)
 
-## IoC Container and ApplicationContext
-
 ### ApplicationContext Types
 
 Spring provides several ApplicationContext implementations for different configuration approaches.
@@ -213,8 +211,6 @@ class WebConfig : WebMvcConfigurer {
 }
 ```
 
-## Bean Definitions
-
 ### @Configuration and @Bean
 
 **Java Example** (Zakat Calculator):
@@ -352,8 +348,6 @@ class MurabahaConfiguration {
   ): AssetValueValidator = MinimumAssetValueValidator(minValue)
 }
 ```
-
-## Component Scanning
 
 ### @Component, @Service, @Repository
 
@@ -604,8 +598,6 @@ class ApplicationConfig {
   // Configuration beans
 }
 ```
-
-## Dependency Injection Patterns
 
 ### Constructor Injection (Preferred)
 
@@ -882,8 +874,6 @@ class DonationReportsRepository(
 }
 ```
 
-## Bean Lifecycle
-
 ### @PostConstruct and @PreDestroy
 
 **Java Example** (Connection Pool Initialization):
@@ -1105,8 +1095,6 @@ class ZakatCalculationCache(
 }
 ```
 
-## Bean Scopes
-
 ### Singleton (Default)
 
 **Java Example**:
@@ -1324,8 +1312,6 @@ class DonationController(
 }
 ```
 
-## Property Resolution
-
 ### @Value Annotation
 
 **Java Example**:
@@ -1518,8 +1504,6 @@ class DynamicConfiguration(
 }
 ```
 
-## Resource Loading
-
 ### ResourceLoader Interface
 
 **Java Example**:
@@ -1596,8 +1580,6 @@ class ZakatReportTemplateService(
   }
 }
 ```
-
-## Conditional Configuration
 
 ### @Conditional Annotation
 
@@ -1685,8 +1667,6 @@ class DatabaseConfiguration {
   }
 }
 ```
-
-## Profile-Based Configuration
 
 ### @Profile Annotation
 
@@ -1817,25 +1797,13 @@ fun main() {
 }
 ```
 
-## See in Practice
-
 ### AyoKoding Spring By-Example Resources
 
 Hands-on examples demonstrating Spring Framework idioms:
 
-- **[Spring IoC Container Examples](/software-engineering/platform-web/java-spring/by-example/)** - Bean definitions, DI patterns
-- **[Spring Configuration Examples](/software-engineering/platform-web/java-spring/by-example/)** - Java config, profiles, properties
-- **[Spring Bean Lifecycle Examples](/software-engineering/platform-web/java-spring/by-example/)** - Initialization, destruction, scopes
-
 ### AyoKoding Spring In-The-Field Guides
 
 Production patterns using Spring Framework idioms:
-
-- **[Spring Application Architecture](/software-engineering/platform-web/java-spring/in-the-field/)** - Structuring Spring applications
-- **[Spring Configuration Management](/software-engineering/platform-web/java-spring/in-the-field/)** - Environment-specific config
-- **[Spring Dependency Injection Strategies](/software-engineering/platform-web/java-spring/in-the-field/)** - Constructor vs setter injection
-
-## Related Documentation
 
 ### Core Spring Framework Documentation
 
@@ -1850,8 +1818,6 @@ Production patterns using Spring Framework idioms:
 
 ### Language Standards
 
-- **[Java](../../../../programming-languages/java/README.md)** - Java language documentation
-- **[Java Idioms](../../../../programming-languages/java/README.md)** - Java patterns
 - **[Kotlin](../../../programming-languages/java/README.md)** - Kotlin language documentation
 
 ### Development Practices
@@ -1861,10 +1827,10 @@ Production patterns using Spring Framework idioms:
 
 ### OSE Platform Principles
 
-- **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Configuration clarity
-- **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Spring IoC automation
-- **[Immutability](../../../../../governance/principles/software-engineering/immutability.md)** - Immutable bean properties
-- **[Pure Functions](../../../../../governance/principles/software-engineering/pure-functions.md)** - Functional bean patterns
+- **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Configuration clarity
+- **[Automation Over Manual](../../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Spring IoC automation
+- **[Immutability](../../../../../../governance/principles/software-engineering/immutability.md)** - Immutable bean properties
+- **[Pure Functions](../../../../../../governance/principles/software-engineering/pure-functions.md)** - Functional bean patterns
 
 ## See Also
 
@@ -1877,9 +1843,6 @@ Production patterns using Spring Framework idioms:
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring By Example - Core Patterns](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/core-patterns.md) - Code examples
-- [Spring By Example - DI Patterns](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/dependency-injection.md) - Injection examples
-- [Spring In-the-Field - Application Setup](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/application-setup.md) - Real-world patterns
 - [Spring In-the-Field - Configuration Management](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/configuration.md) - Production config
 
 **Spring Boot Extension**:

@@ -22,10 +22,6 @@ principles:
 last_updated: 2026-01-25
 ---
 
-# Phoenix Anti-Patterns
-
-## Quick Reference
-
 ### Context Anti-Patterns
 
 - [Fat Contexts](#1-fat-contexts) - Contexts doing too much
@@ -64,8 +60,6 @@ last_updated: 2026-01-25
 This document identifies common anti-patterns in Phoenix applications that lead to maintainability issues, performance problems, or security vulnerabilities. Each anti-pattern includes a FAIL example showing the problem and a PASS example demonstrating the idiomatic Phoenix approach.
 
 These examples use Phoenix 1.7+ with Elixir 1.14+ and focus on Islamic financial domains including Zakat calculation, Murabaha contracts, and donation management.
-
-## 1. Fat Contexts
 
 ### ❌ FAIL - Fat Context
 
@@ -255,8 +249,6 @@ defmodule OsePlatform.Notifications do
   end
 end
 ```
-
-## 2. Anemic Contexts
 
 ### ❌ FAIL - Anemic Context (CRUD Only)
 
@@ -470,8 +462,6 @@ defmodule OsePlatformWeb.ZakatController do
 end
 ```
 
-## 3. Cross-Context Database Access
-
 ### ❌ FAIL - Bypassing Context APIs
 
 **Problem**: Directly accessing another context's database tables breaks encapsulation.
@@ -577,8 +567,6 @@ defmodule OsePlatform.Zakat do
   end
 end
 ```
-
-## 4. God Schemas
 
 ### ❌ FAIL - God Schema
 
@@ -765,8 +753,6 @@ defmodule OsePlatform.Payments.Transaction do
 end
 ```
 
-## 5. Large LiveView Modules
-
 ### ❌ FAIL - Monolithic LiveView
 
 **Problem**: Single LiveView file handling multiple concerns and state.
@@ -936,8 +922,6 @@ defmodule OsePlatformWeb.ZakatLive.Components.CalculationList do
 end
 ```
 
-## 6. Overusing Assigns
-
 ### ❌ FAIL - Too Many Assigns
 
 **Problem**: Storing too much state in LiveView assigns causes performance issues.
@@ -1039,8 +1023,6 @@ defmodule OsePlatformWeb.MurabahaLive.ContractForm do
   end
 end
 ```
-
-## 7. Missing Loading States
 
 ### ❌ FAIL - No Loading Indicators
 
@@ -1156,8 +1138,6 @@ defmodule OsePlatformWeb.ZakatLive.Calculate do
   end
 end
 ```
-
-## 8. Direct Database Access in LiveView
 
 ### ❌ FAIL - Ecto Queries in LiveView
 
@@ -1276,8 +1256,6 @@ defmodule OsePlatform.Donations do
 end
 ```
 
-## 9. N+1 Query Problem
-
 ### ❌ FAIL - Missing Preloads
 
 **Problem**: Loading associations in a loop causes N+1 queries.
@@ -1372,8 +1350,6 @@ defmodule OsePlatform.Murabaha do
 end
 ```
 
-## 10. Ecto in Controllers
-
 ### ❌ FAIL - Direct Ecto in Controller
 
 **Problem**: Controllers directly using Ecto instead of contexts.
@@ -1460,8 +1436,6 @@ defmodule OsePlatformWeb.ZakatController do
   end
 end
 ```
-
-## 11. Missing Changesets
 
 ### ❌ FAIL - No Changeset Validation
 
@@ -1568,8 +1542,6 @@ defmodule OsePlatform.Donations.Donation do
   end
 end
 ```
-
-## 12. Overusing Bang Functions
 
 ### ❌ FAIL - Bang Functions Everywhere
 
@@ -1684,8 +1656,6 @@ defmodule OsePlatform.Zakat do
 end
 ```
 
-## 13. Missing Channel Authentication
-
 ### ❌ FAIL - Unauthenticated Channel
 
 **Problem**: Channels that don't authenticate users are security risks.
@@ -1794,8 +1764,6 @@ defmodule OsePlatformWeb.UserSocket do
 end
 ```
 
-## 14. Heavy Processing in Channel Handlers
-
 ### ❌ FAIL - Blocking Channel Handler
 
 **Problem**: Long-running operations block the channel process.
@@ -1861,13 +1829,8 @@ defmodule OsePlatformWeb.ReportChannel do
   end
 end
 
-# Client-side handling
-# socket.on("report_ready", (payload) => {
-#   // Update UI when report is ready
 # })
 ```
-
-## 15. Not Leveraging PubSub
 
 ### ❌ FAIL - Direct Process Messaging
 
@@ -1977,8 +1940,6 @@ defmodule OsePlatformWeb.DonationLive.Index do
 end
 ```
 
-## 16. Testing Implementation Details
-
 ### ❌ FAIL - Brittle Tests
 
 **Problem**: Tests coupled to implementation details break on refactoring.
@@ -2067,8 +2028,6 @@ defmodule OsePlatform.ZakatTest do
 end
 ```
 
-## 17. Missing Async Tests
-
 ### ❌ FAIL - Synchronous Tests
 
 **Problem**: All tests run synchronously, making test suite slow.
@@ -2108,8 +2067,6 @@ defmodule OsePlatform.EmailTest do
   end
 end
 ```
-
-## 18. Ignoring SQL Sandbox
 
 ### ❌ FAIL - Shared Database State
 
@@ -2204,7 +2161,6 @@ end
 - **[Contexts](ex-soen-plwe-to-elph__contexts.md)** - Context design patterns
 - **[LiveView](ex-soen-plwe-to-elph__liveview.md)** - LiveView best practices
 - **[Testing](ex-soen-plwe-to-elph__testing.md)** - Testing strategies
-- **[Elixir Anti-Patterns](../../../programming-languages/elixir/ex-soen-prla-el__anti-patterns.md)** - Elixir language anti-patterns
 
 ---
 

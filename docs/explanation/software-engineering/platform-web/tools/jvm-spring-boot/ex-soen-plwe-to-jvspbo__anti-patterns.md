@@ -15,10 +15,6 @@ related:
 last_updated: 2026-01-25
 ---
 
-# Spring Boot Anti-Patterns
-
-## Quick Reference
-
 ### Dependency Injection Anti-Patterns
 
 - [Field Injection](#1-field-injection) - Using @Autowired on fields
@@ -51,8 +47,6 @@ last_updated: 2026-01-25
 ## Overview
 
 This document identifies common anti-patterns in Spring Boot applications that lead to maintainability issues, performance problems, or security vulnerabilities. Each anti-pattern includes a FAIL example showing the problem and a PASS example demonstrating the correct approach.
-
-## 1. Field Injection
 
 ### ❌ FAIL - Field Injection
 
@@ -127,8 +121,6 @@ class ZakatCalculationServiceTest {
     }
 }
 ```
-
-## 2. Circular Dependencies
 
 ### ❌ FAIL - Circular Dependency
 
@@ -217,8 +209,6 @@ public class DonationEventHandler {
     }
 }
 ```
-
-## 3. God Services
 
 ### ❌ FAIL - God Service
 
@@ -313,8 +303,6 @@ public class ReceiptService {
     }
 }
 ```
-
-## 4. Exposing JPA Entities in REST APIs
 
 ### ❌ FAIL - Returning Entities
 
@@ -437,8 +425,6 @@ public class ZakatCalculationService {
 }
 ```
 
-## 5. N+1 Query Problem
-
 ### ❌ FAIL - Missing JOIN FETCH
 
 ```java
@@ -508,8 +494,6 @@ public class MurabahaContractService {
     }
 }
 ```
-
-## 6. Overusing @Transactional
 
 ### ❌ FAIL - @Transactional Everywhere
 
@@ -593,8 +577,6 @@ public class ZakatCalculationController {
 }
 ```
 
-## 7. Hardcoded Configuration Values
-
 ### ❌ FAIL - Hardcoded Values
 
 ```java
@@ -677,8 +659,6 @@ ose:
       timeout-ms: 30000
 ```
 
-## 8. Missing Configuration Validation
-
 ### ❌ FAIL - No Validation
 
 ```java
@@ -715,8 +695,6 @@ public class ZakatProperties {
     // Validation ensures application won't start with invalid config
 }
 ```
-
-## 9. Profile Misuse
 
 ### ❌ FAIL - Profiles for Features
 
@@ -806,8 +784,6 @@ public class ZakatCalculationService {
 }
 ```
 
-## 10. Missing Global Exception Handling
-
 ### ❌ FAIL - No Exception Handler
 
 ```java
@@ -878,8 +854,6 @@ public class GlobalExceptionHandler {
   "path": "/api/v1/zakat/zakat-123"
 }
 ```
-
-## 11. Ignoring HTTP Semantics
 
 ### ❌ FAIL - Wrong HTTP Methods and Status Codes
 
@@ -965,8 +939,6 @@ public class ZakatCalculationController {
 }
 ```
 
-## 12. Missing Request Validation
-
 ### ❌ FAIL - No Validation
 
 ```java
@@ -1021,8 +993,6 @@ public class ZakatCalculationController {
     }
 }
 ```
-
-## 13. Overusing @SpringBootTest
 
 ### ❌ FAIL - Everything is @SpringBootTest
 
@@ -1141,7 +1111,6 @@ class ZakatCalculationIntegrationTest {
 
 - **[Spring Boot Idioms](ex-soen-plwe-to-jvspbo__idioms.md)** - Correct patterns
 - **[Spring Boot Best Practices](ex-soen-plwe-to-jvspbo__best-practices.md)** - Production standards
-- **[Java Anti-Patterns](../../../../programming-languages/java/README.md)** - Java mistakes
 - **[Testing](ex-soen-plwe-to-jvspbo__testing.md)** - Testing strategies
 
 ## See Also
@@ -1152,11 +1121,6 @@ class ZakatCalculationIntegrationTest {
 - [Java Anti-Patterns](../../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline anti-patterns
 - [Spring Boot Best Practices](./ex-soen-plwe-to-jvspbo__best-practices.md) - Recommended practices
 - [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Correct patterns
-
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring Boot By Example - Common Mistakes](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/common-mistakes.md) - Code examples
-- [Spring Boot In-the-Field - Troubleshooting](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/troubleshooting.md) - Debugging patterns
 
 ---
 

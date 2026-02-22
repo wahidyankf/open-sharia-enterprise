@@ -19,10 +19,6 @@ principles:
 last_updated: 2026-01-25
 ---
 
-# Spring Boot Idioms
-
-## Quick Reference
-
 ### Core Spring Boot Patterns
 
 **Auto-Configuration**:
@@ -74,8 +70,6 @@ This guide focuses on **Spring Boot 3.x idioms** with Java 17+, incorporating ex
 ### Target Audience
 
 This document targets developers building Spring Boot applications in the open-sharia-enterprise platform, particularly those working on financial services and domain-driven design implementations.
-
-## Core Spring Boot Idioms
 
 ### 1. Auto-Configuration: Embrace Convention Over Configuration
 
@@ -1638,7 +1632,6 @@ public class ThirdRunner implements ApplicationRunner {
 - **[Spring Boot Anti-Patterns](ex-soen-plwe-to-jvspbo__anti-patterns.md)** - Common mistakes
 - **[Configuration](ex-soen-plwe-to-jvspbo__configuration.md)** - Configuration management
 - **[Dependency Injection](ex-soen-plwe-to-jvspbo__dependency-injection.md)** - DI patterns
-- **[Java Idioms](../../../../programming-languages/java/README.md)** - Modern Java patterns
 - **[Functional Programming](ex-soen-plwe-to-jvspbo__functional-programming.md)** - FP with Spring Boot
 
 ## See Also
@@ -1649,13 +1642,6 @@ public class ThirdRunner implements ApplicationRunner {
 - [Java Best Practices](../../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline standards
 - [Spring Boot Configuration](./ex-soen-plwe-to-jvspbo__configuration.md) - Type-safe configuration patterns
 - [Spring Boot Dependency Injection](./ex-soen-plwe-to-jvspbo__dependency-injection.md) - DI best practices
-
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring Boot By Example - Core Patterns](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/core-patterns.md) - Code examples
-- [Spring Boot By Example - Auto-Configuration](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/auto-configuration.md) - Custom auto-config examples
-- [Spring Boot In-the-Field - Production Setup](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/production-setup.md) - Real-world patterns
-- [Spring Boot In-the-Field - Event-Driven Architecture](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/event-driven.md) - Domain events in production
 
 ---
 

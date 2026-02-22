@@ -24,8 +24,6 @@ principles:
 last_updated: 2026-01-23
 ---
 
-# OTP Application Patterns
-
 ## Overview
 
 Applications are the fundamental unit of code organization in Elixir/OTP. An application groups related modules, provides configuration, manages dependencies, and typically starts a supervision tree for runtime processes.
@@ -48,8 +46,6 @@ Applications are the fundamental unit of code organization in Elixir/OTP. An app
 - [GenStage and Flow](#genstage-and-flow)
 - [Broadway](#broadway)
 - [Financial Domain Examples](#financial-domain-examples)
-
-## Application Structure
 
 ### Basic Application
 
@@ -229,8 +225,6 @@ financial/
 ├── priv/
 └── mix.exs
 ```
-
-## Starting Applications
 
 ### Application Startup Sequence
 
@@ -459,10 +453,6 @@ def application do
   ]
 end
 
-# Application starts in dependency order
-# 1. :logger
-# 2. :runtime_tools
-# 3. :crypto
 # 4. :financial (this app)
 ```
 
@@ -517,8 +507,6 @@ flowchart TD
     style Note1 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
     style Note2 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
-
-## Umbrella Projects
 
 ### Structure
 
@@ -781,8 +769,6 @@ defmodule FinancialWeb.CampaignController do
 end
 ```
 
-## GenStage and Flow
-
 ### GenStage Producer-Consumer
 
 ```elixir
@@ -894,8 +880,6 @@ defmodule Financial.DonationAnalyzer do
   end
 end
 ```
-
-## Broadway
 
 ### Basic Broadway Pipeline
 
@@ -1068,8 +1052,6 @@ defmodule Financial.PaymentProcessor do
   defp send_failure_notifications(payments), do: :ok
 end
 ```
-
-## Financial Domain Examples
 
 ### Complete Financial Platform Application
 
@@ -1312,8 +1294,6 @@ defmodule Financial.EventProcessor do
 end
 ```
 
-## Best Practices
-
 ### 1. Start Critical Services First
 
 ```elixir
@@ -1368,8 +1348,6 @@ end
 {:oban, "~> 2.15"}
 ```
 
-## Performance Considerations
-
 ### Start Time Optimization
 
 ```elixir
@@ -1413,8 +1391,6 @@ Broadway.start_link(__MODULE__,
 )
 ```
 
-## Common Patterns
-
 ### Application with Feature Flags
 
 ```elixir
@@ -1454,8 +1430,6 @@ defmodule Financial.Application do
 end
 ```
 
-## Resources
-
 ### Official Documentation
 
 - [Application Behavior](https://hexdocs.pm/elixir/Application.html)
@@ -1469,7 +1443,6 @@ end
 - [Back to Elixir README](README.md)
 - [GenServer Patterns](ex-soen-prla-el__otp-genserver.md)
 - [Supervisor Patterns](ex-soen-prla-el__otp-supervisor.md)
-- [Concurrency and Parallelism](ex-soen-prla-el__concurrency-and-parallelism.md)
 
 ---
 

@@ -1903,7 +1903,6 @@ public class SecretsConfig {
 ### Never Commit Secrets
 
 ```gitignore
-# .gitignore
 
 # Environment files
 .env
@@ -2436,7 +2435,6 @@ Production deployment security checklist for Spring Boot applications.
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring Boot By Example - Security](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/security.md) - Code examples
 - [Spring Boot In-the-Field - Authentication](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/security.md) - Production security
 
 ---

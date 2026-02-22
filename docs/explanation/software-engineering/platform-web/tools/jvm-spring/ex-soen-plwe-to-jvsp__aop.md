@@ -40,8 +40,6 @@ Aspect-Oriented Programming (AOP) modularizes cross-cutting concerns such as log
 - [Performance Monitoring](#performance-monitoring)
 - [AOP Limitations](#aop-limitations)
 
-## AOP Concepts
-
 ### Core Terminology
 
 - **Aspect**: Modular cross-cutting concern (e.g., logging aspect, transaction aspect)
@@ -71,8 +69,6 @@ class AopConfiguration {
   // AOP enabled
 }
 ```
-
-## @Aspect Annotation
 
 ### Basic Aspect
 
@@ -144,8 +140,6 @@ class LoggingAspect {
 }
 ```
 
-## Pointcut Expressions
-
 ### Execution Pointcuts
 
 **Java Example**:
@@ -211,8 +205,6 @@ class PointcutExamples {
   }
 }
 ```
-
-## Advice Types
 
 ### @Before Advice
 
@@ -412,8 +404,6 @@ public class MetricsAspect {
 }
 ```
 
-## AOP Limitations
-
 ### Self-Invocation Problem
 
 **Problem**: AOP proxies don't intercept self-invocation.
@@ -448,8 +438,6 @@ Spring AOP only supports method execution join points. Cannot intercept field ac
 - CGLIB proxies: Cannot proxy final classes or methods
 - Performance overhead of proxy creation
 
-## Related Documentation
-
 ### Core Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
@@ -464,11 +452,6 @@ Spring AOP only supports method execution join points. Cannot intercept field ac
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Spring patterns
 - [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - AOP best practices
 - [Spring Framework Security](./ex-soen-plwe-to-jvsp__security.md) - Security aspects
-
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring By Example - AOP](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/aop.md) - Code examples
-- [Spring In-the-Field - Cross-Cutting Concerns](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/aop.md) - Production aspects
 
 **Spring Boot Extension**:
 

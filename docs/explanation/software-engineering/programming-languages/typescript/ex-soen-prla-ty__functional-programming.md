@@ -10,8 +10,8 @@ tags:
   - immutability
   - composition
 related:
-  - ./ex-soen-prla-ts__best-practices.md
-  - ./ex-soen-prla-ts__idioms.md
+  - ./ex-soen-prla-ty__best-practices.md
+  - ./ex-soen-prla-ty__idioms.md
   - ../../../../../governance/development/pattern/functional-programming.md
 principles:
   - immutability

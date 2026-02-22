@@ -42,8 +42,6 @@ Go is a statically typed language with a strong emphasis on type safety. The typ
 - [Error Handling](./ex-soen-prla-go__error-handling-standards.md)
 - [Best Practices](./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices)
 
-## Type System Fundamentals
-
 ### Type Hierarchy in Go
 
 ```mermaid
@@ -146,8 +144,6 @@ func CalculateTotal(items []Item) float64 {
     return total
 }
 ```
-
-## Basic Types
 
 ### Numeric Types
 
@@ -290,8 +286,6 @@ func main() {
     fmt.Printf("Bytes: %d, Runes: %d\n", len(bytes), len(runes))
 }
 ```
-
-## Composite Types
 
 ### Array Types
 
@@ -514,8 +508,6 @@ func main() {
 }
 ```
 
-## Type Declarations
-
 ### Named Types
 
 Create new types with specific names:
@@ -613,8 +605,6 @@ func main() {
     // raw.ToFahrenheit()  // raw.ToFahrenheit undefined
 }
 ```
-
-## Interface Types
 
 ### Interface Basics
 
@@ -813,8 +803,6 @@ func main() {
 }
 ```
 
-## Type Assertions
-
 ### Type Assertion Flow
 
 ```mermaid
@@ -962,8 +950,6 @@ func main() {
     s = i.(string)  // Now safe if i != nil
 }
 ```
-
-## Type Switches
 
 ### Type Switch Pattern Matching
 
@@ -1121,8 +1107,6 @@ func main() {
 }
 ```
 
-## Type Conversions
-
 ### Explicit Conversions
 
 Convert between compatible types:
@@ -1250,8 +1234,6 @@ func main() {
 }
 ```
 
-## Generics (Go 1.18+)
-
 ### Generic Functions
 
 Functions with type parameters:
@@ -1265,12 +1247,12 @@ import (
 )
 
 // Generic function with type parameter
-func Print[T any](value T) {
+func PrintT any {
     fmt.Println(value)
 }
 
 // Generic function with ordered constraint
-func Max[T constraints.Ordered](a, b T) T {
+func MaxT constraints.Ordered T {
     if a > b {
         return a
     }
@@ -1284,8 +1266,8 @@ func main() {
     Print(3.14)       // T = float64
 
     // Explicit type argument
-    Print[int](42)
-    Print[string]("hello")
+    Printint
+    Printstring
 
     // Using constrained generic
     fmt.Println(Max(10, 20))      // 20
@@ -1373,7 +1355,7 @@ package main
 import "fmt"
 
 // Function with two type parameters
-func Map[T any, U any](slice []T, f func(T) U) []U {
+func MapT any, U any U) []U {
     result := make([]U, len(slice))
     for i, v := range slice {
         result[i] = f(v)
@@ -1392,7 +1374,7 @@ func (p Pair[T, U]) String() string {
 }
 
 // Generic function operating on Pair
-func Swap[T, U any](p Pair[T, U]) Pair[U, T] {
+func SwapT, U any Pair[U, T] {
     return Pair[U, T]{
         First:  p.Second,
         Second: p.First,
@@ -1417,8 +1399,6 @@ func main() {
 }
 ```
 
-## Type Constraints
-
 ### Built-in Constraints
 
 Go 1.18+ provides predeclared constraints:
@@ -1429,12 +1409,12 @@ package main
 import "fmt"
 
 // any: allows any type (alias for interface{})
-func PrintAny[T any](v T) {
+func PrintAnyT any {
     fmt.Println(v)
 }
 
 // comparable: allows types that support == and !=
-func Contains[T comparable](slice []T, value T) bool {
+func ContainsT comparable bool {
     for _, v := range slice {
         if v == value {
             return true
@@ -1474,7 +1454,7 @@ type Stringer interface {
     String() string
 }
 
-func PrintString[T Stringer](v T) {
+func PrintStringT Stringer {
     fmt.Println(v.String())
 }
 
@@ -1493,7 +1473,7 @@ type Number interface {
     constraints.Integer | constraints.Float
 }
 
-func Sum[T Number](numbers []T) T {
+func SumT Number T {
     var sum T
     for _, n := range numbers {
         sum += n
@@ -1527,7 +1507,7 @@ type StringOrInt interface {
     string | int
 }
 
-func Double[T StringOrInt](v T) T {
+func DoubleT StringOrInt T {
     switch any(v).(type) {
     case string:
         s := any(v).(string)
@@ -1544,7 +1524,7 @@ type SignedInteger interface {
     ~int | ~int8 | ~int16 | ~int32 | ~int64
 }
 
-func Abs[T SignedInteger](v T) T {
+func AbsT SignedInteger T {
     if v < 0 {
         return -v
     }
@@ -1584,7 +1564,7 @@ type Shaped interface {
     Area() float64
 }
 
-func TotalArea[T Shaped](shapes []T) float64 {
+func TotalAreaT Shaped float64 {
     var total float64
     for _, s := range shapes {
         total += s.Area()
@@ -1614,7 +1594,7 @@ type Measurable interface {
     Perimeter() float64
 }
 
-func PrintMeasurements[T Measurable](m T) {
+func PrintMeasurementsT Measurable {
     fmt.Printf("Area: %.2f, Perimeter: %.2f\n", m.Area(), m.Perimeter())
 }
 
@@ -1644,8 +1624,6 @@ func main() {
 }
 ```
 
-## Type Parameters
-
 ### Type Parameter Lists
 
 Syntax for declaring type parameters:
@@ -1656,17 +1634,17 @@ package main
 import "golang.org/x/exp/constraints"
 
 // Single type parameter
-func Identity[T any](v T) T {
+func IdentityT any T {
     return v
 }
 
 // Multiple type parameters
-func Pair[T, U any](first T, second U) (T, U) {
+func PairT, U any (T, U) {
     return first, second
 }
 
 // Type parameters with constraints
-func Max[T constraints.Ordered](a, b T) T {
+func MaxT constraints.Ordered T {
     if a > b {
         return a
     }
@@ -1674,7 +1652,7 @@ func Max[T constraints.Ordered](a, b T) T {
 }
 
 // Mixing constrained and unconstrained parameters
-func ConvertSlice[T any, U any](slice []T, convert func(T) U) []U {
+func ConvertSliceT any, U any U) []U {
     result := make([]U, len(slice))
     for i, v := range slice {
         result[i] = convert(v)
@@ -1693,7 +1671,7 @@ package main
 import "fmt"
 
 // Type parameter scoped to function
-func Swap[T any](a, b T) (T, T) {
+func SwapT any (T, T) {
     return b, a
 }
 
@@ -1712,7 +1690,7 @@ func (b *Box[T]) Set(v T) {
 }
 
 // Method with additional type parameter
-func (b *Box[T]) Transform[U any](f func(T) U) Box[U] {
+func (b *Box[T]) TransformU any U) Box[U] {
     return Box[U]{value: f(b.value)}
 }
 
@@ -1746,14 +1724,14 @@ import (
     "golang.org/x/exp/constraints"
 )
 
-func Min[T constraints.Ordered](a, b T) T {
+func MinT constraints.Ordered T {
     if a < b {
         return a
     }
     return b
 }
 
-func Map[T, U any](slice []T, f func(T) U) []U {
+func MapT, U any U) []U {
     result := make([]U, len(slice))
     for i, v := range slice {
         result[i] = f(v)
@@ -1768,7 +1746,7 @@ func main() {
     fmt.Println(Min("abc", "xyz"))  // T inferred as string
 
     // Can specify explicitly if needed
-    fmt.Println(Min[int](10, 20))
+    fmt.Println(Minint)
 
     // Inference with multiple type parameters
     nums := []int{1, 2, 3}
@@ -1778,8 +1756,6 @@ func main() {
     fmt.Println(strs)  // [n1 n2 n3]
 }
 ```
-
-## Type Inference
 
 ### Function Argument Inference
 
@@ -1793,7 +1769,7 @@ import (
     "golang.org/x/exp/constraints"
 )
 
-func Add[T constraints.Integer](a, b T) T {
+func AddT constraints.Integer T {
     return a + b
 }
 
@@ -1847,7 +1823,7 @@ package main
 
 import "fmt"
 
-func Keys[K comparable, V any](m map[K]V) []K {
+func KeysK comparable, V any []K {
     keys := make([]K, 0, len(m))
     for k := range m {
         keys = append(keys, k)
@@ -1867,8 +1843,6 @@ func main() {
     fmt.Println(ids)
 }
 ```
-
-## Zero Values
 
 ### Zero Value Behavior
 
@@ -1981,7 +1955,7 @@ func Zero[T any]() T {
 }
 
 // Check if value equals zero
-func IsZero[T comparable](v T) bool {
+func IsZeroT comparable bool {
     return v == Zero[T]()
 }
 
@@ -2005,8 +1979,6 @@ func main() {
 }
 ```
 
-## Type Safety Patterns
-
 ### Option Type Pattern
 
 Type-safe optional values:
@@ -2021,7 +1993,7 @@ type Option[T any] struct {
     value *T
 }
 
-func Some[T any](v T) Option[T] {
+func SomeT any Option[T] {
     return Option[T]{value: &v}
 }
 
@@ -2051,7 +2023,7 @@ func (o Option[T]) UnwrapOr(defaultValue T) T {
     return *o.value
 }
 
-func (o Option[T]) Map[U any](f func(T) U) Option[U] {
+func (o Option[T]) MapU any U) Option[U] {
     if o.value == nil {
         return None[U]()
     }
@@ -2092,11 +2064,11 @@ type Result[T any] struct {
     err   error
 }
 
-func Ok[T any](v T) Result[T] {
+func OkT any Result[T] {
     return Result[T]{value: v}
 }
 
-func Err[T any](err error) Result[T] {
+func ErrT any Result[T] {
     return Result[T]{err: err}
 }
 
@@ -2119,9 +2091,9 @@ func (r Result[T]) UnwrapOr(defaultValue T) T {
     return r.value
 }
 
-func (r Result[T]) Map[U any](f func(T) U) Result[U] {
+func (r Result[T]) MapU any U) Result[U] {
     if r.err != nil {
-        return Err[U](r.err)
+        return ErrU
     }
     return Ok(f(r.value))
 }
@@ -2129,7 +2101,7 @@ func (r Result[T]) Map[U any](f func(T) U) Result[U] {
 // Example usage
 func Divide(a, b int) Result[float64] {
     if b == 0 {
-        return Err[float64](fmt.Errorf("division by zero"))
+        return Errfloat64)
     }
     return Ok(float64(a) / float64(b))
 }
@@ -2293,8 +2265,6 @@ func main() {
     // proc.Start(5678)  // Won't compile: Start() not available on Stopped (already started)
 }
 ```
-
-## Type Safety Best Practices
 
 ### Use Named Types for Domain Concepts
 
@@ -2483,7 +2453,7 @@ func (s *Stack[T]) Pop() (T, bool) {
 }
 
 // Good: generic algorithm
-func Filter[T any](slice []T, predicate func(T) bool) []T {
+func FilterT any bool) []T {
     result := make([]T, 0, len(slice))
     for _, v := range slice {
         if predicate(v) {
@@ -2494,7 +2464,7 @@ func Filter[T any](slice []T, predicate func(T) bool) []T {
 }
 
 // Better: use constraints
-func Add[T constraints.Integer | constraints.Float](a, b T) T {
+func AddT constraints.Integer | constraints.Float T {
     return a + b
 }
 
@@ -2567,8 +2537,6 @@ func main() {
     fmt.Println(err)  // email must contain @
 }
 ```
-
-## Common Type Safety Pitfalls
 
 ### Pitfall: Nil Interface Values
 

@@ -20,7 +20,7 @@ updated: 2026-02-03
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Java fundamentals from [AyoKoding Java Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md) before using these standards.
+**REQUIRED**: You MUST understand Java fundamentals from [AyoKoding Java Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/_index.md) before using these standards.
 
 **This document is OSE Platform-specific**, not a Java tutorial. We define HOW to apply Java in THIS codebase, not WHAT Java is.
 

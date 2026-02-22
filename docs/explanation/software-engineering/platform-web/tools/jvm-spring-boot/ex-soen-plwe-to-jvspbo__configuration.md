@@ -25,8 +25,6 @@ related:
   - ./ex-soen-plwe-jvspbo__performance.md
 ---
 
-# Spring Boot Configuration
-
 ## 📋 Quick Reference
 
 - [Application Properties Structure](#application-properties-structure) - Main configuration files
@@ -198,8 +196,6 @@ logging:
     org.hibernate.SQL: DEBUG
 ```
 
-## Profile-Based Configuration
-
 ### Development Profile
 
 ```yaml
@@ -311,8 +307,6 @@ ose:
       from-email: noreply@oseplatform.com
 ```
 
-## Environment Variables
-
 ### Local Development (.env)
 
 ```bash
@@ -385,8 +379,6 @@ Failed to bind properties under 'ose.payment.gateway' to PaymentGatewayPropertie
 Reason: Field error in object 'ose.payment.gateway' on field 'apiUrl':
 rejected value [invalid-url]; API URL must be valid
 ```
-
-## Secrets Management
 
 ### HashiCorp Vault Integration
 
@@ -558,8 +550,6 @@ private String databaseUrl;  // Fetched from AWS Secrets Manager
 @Value("${jwt-secret}")
 private String jwtSecret;
 ```
-
-## Feature Flags
 
 ### Using Spring Profiles for Feature Flags
 
@@ -745,8 +735,6 @@ ose:
 # Gradually increase: 0 → 10 → 25 → 50 → 100
 ```
 
-## Configuration Testing
-
 ### Testing with Different Profiles
 
 ```java
@@ -886,8 +874,6 @@ class ConfigurationValidationTest {
     }
 }
 ```
-
-## OSE Platform Examples
 
 ### Zakat Calculation Configuration
 
@@ -1192,8 +1178,6 @@ ose:
         - finance@oseplatform.com
 ```
 
-## Configuration Checklist
-
 ### Externalization
 
 - [ ] All environment-specific values externalized (no hardcoded URLs, credentials)
@@ -1283,8 +1267,3 @@ ose:
 - [Java Configuration](../../../programming-languages/java/ex-soen-prla-ja__build-configuration.md) - Java baseline configuration
 - [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Configuration patterns
 - [Spring Boot Best Practices](./ex-soen-plwe-to-jvspbo__best-practices.md) - Config standards
-
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring Boot By Example - Configuration](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/configuration.md) - Code examples
-- [Spring Boot In-the-Field - Environment Setup](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/configuration.md) - Production config

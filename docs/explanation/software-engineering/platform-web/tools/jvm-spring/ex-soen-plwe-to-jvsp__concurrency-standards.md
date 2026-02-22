@@ -20,7 +20,7 @@ updated: 2026-02-06
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Spring Framework fundamentals from [AyoKoding Spring Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring.md) before using these standards.
+**REQUIRED**: You MUST understand Spring Framework fundamentals from AyoKoding Spring Learning Path before using these standards.
 
 **This document is OSE Platform-specific**, not a Spring tutorial. We define HOW to apply Spring in THIS codebase, not WHAT Spring is.
 
@@ -30,7 +30,7 @@ updated: 2026-02-06
 
 **OSE-specific prescriptive standards** for concurrency in Spring-based Shariah-compliant financial applications. This document defines **mandatory requirements** using RFC 2119 keywords (MUST, SHOULD, MAY).
 
-**Prerequisites**: Understanding of Spring Framework fundamentals from [AyoKoding Spring Framework](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring.md) and Java concurrency from [Java Concurrency Standards](../../../../programming-languages/java/ex-soen-prla-ja__concurrency-standards.md).
+**Prerequisites**: Understanding of Spring Framework fundamentals from AyoKoding Spring Framework and Java concurrency from Java Concurrency Standards.
 
 ## Purpose
 
@@ -41,8 +41,6 @@ Concurrency in Spring-based OSE Platform services extends Java concurrency stand
 - **Thread Pool Sizing**: Separate pools for reactive and blocking operations
 - **Thread Safety in Singleton Beans**: Ensuring Spring singleton beans are thread-safe
 - **Structured Concurrency Patterns**: Hierarchical task management for financial operations
-
-## Virtual Threads with Spring Boot
 
 ### Spring Boot 3.2+ Virtual Thread Configuration
 
@@ -136,8 +134,6 @@ public class CustomAsyncExceptionHandler implements AsyncUncaughtExceptionHandle
   }
 }
 ```
-
-## @Async Method Standards
 
 ### I/O-Bound Async Operations
 
@@ -312,8 +308,6 @@ public class MurabahaContractActivationService {
 - Use `CompletableFuture.allOf` for parallel execution
 - Specify executor explicitly (avoid default ForkJoinPool)
 
-## Thread Safety in Singleton Beans
-
 ### Thread-Safe Singleton Service Beans
 
 **REQUIRED**: All Spring singleton beans MUST be thread-safe.
@@ -438,8 +432,6 @@ public class NisabService {
 }
 ```
 
-## Structured Concurrency with Spring
-
 ### Hierarchical Task Management
 
 **REQUIRED**: Use Java 21 StructuredTaskScope for related concurrent operations.
@@ -504,8 +496,6 @@ public class DonationProcessingService {
 - Wait for all subtasks with `join()`
 - Propagate failures with `throwIfFailed()`
 
-## Thread Pool Configuration Standards
-
 ### ThreadPoolTaskExecutor Configuration
 
 **REQUIRED**: Configure thread pools based on workload characteristics.
@@ -556,8 +546,6 @@ public class ExecutorConfiguration {
 - Set descriptive thread name prefixes
 - Configure graceful shutdown (`waitForTasksToCompleteOnShutdown`)
 - Set rejection policy (`CallerRunsPolicy` for backpressure)
-
-## Concurrency Monitoring with Spring Boot Actuator
 
 ### Metrics Configuration
 
@@ -618,11 +606,8 @@ management.metrics.enable.executor=true
 management.metrics.enable.jvm=true
 ```
 
-## Related Documentation
-
 ### OSE Platform Standards
 
-- **[Java Concurrency Standards](../../../../programming-languages/java/ex-soen-prla-ja__concurrency-standards.md)** - Java baseline concurrency requirements
 - **[Spring Error Handling Standards](./ex-soen-plwe-to-jvsp__error-handling-standards.md)** - Async exception handling
 - **[Spring API Standards](./ex-soen-plwe-to-jvsp__api-standards.md)** - Async REST API patterns (this file references the API standards file to be created)
 
@@ -636,11 +621,7 @@ management.metrics.enable.jvm=true
 
 For learning Spring Framework fundamentals and concepts referenced in these standards, see:
 
-- **[Spring Framework Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring.md)** - Complete Spring learning journey
-- **[Spring By Example](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example.md)** - Annotated Spring code examples
-  - **[Async Examples](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/async.md)** - @Async, @EnableAsync, ExecutorService configuration
-  - **[Virtual Thread Examples](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/virtual-threads.md)** - Spring Boot 3.2+ virtual thread integration
-- **[Spring In Practice](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-practice.md)** - Concurrency patterns and thread pool sizing
+- **[Spring By Example](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/_index.md)** - Annotated Spring code examples
 
 **Note**: These standards assume you've learned Spring basics from ayokoding-web. We don't re-explain fundamental concepts here.
 
@@ -648,17 +629,17 @@ For learning Spring Framework fundamentals and concepts referenced in these stan
 
 These standards enforce the five software engineering principles:
 
-1. **[Immutability](../../../../../governance/principles/software-engineering/immutability.md)**
+1. **[Immutability](../../../../../../governance/principles/software-engineering/immutability.md)**
    - Singleton beans use only immutable dependencies (final fields)
    - Stateless methods prevent concurrent modification issues
    - Immutable cache entries ensure thread safety
 
-2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+2. **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
    - `@Async("ioTaskExecutor")` explicitly specifies executor
    - Thread pool configuration makes sizing and policies explicit
    - Virtual thread naming makes operations traceable
 
-3. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**
+3. **[Automation Over Manual](../../../../../../governance/principles/software-engineering/automation-over-manual.md)**
    - Spring Boot auto-configures virtual threads with property flag
    - @Async automatically handles thread management
    - Structured concurrency automatically cancels subtasks on failure
@@ -686,11 +667,6 @@ Before deploying Spring-based concurrent financial services, verify:
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Async patterns
 - [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Concurrency standards
 - [Spring Framework Performance](./ex-soen-plwe-to-jvsp__performance.md) - Thread pool tuning
-
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring By Example - Concurrency](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/concurrency.md) - Code examples
-- [Spring In-the-Field - Async Processing](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/concurrency.md) - Production async
 
 **Spring Boot Extension**:
 

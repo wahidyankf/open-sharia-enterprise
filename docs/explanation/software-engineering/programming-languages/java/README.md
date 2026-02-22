@@ -115,7 +115,7 @@ OSE Platform follows a three-tier Java versioning strategy:
 - Primitive types in patterns (when finalized)
 - Module import declarations (simplified module system)
 
-**See**: [Java Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/release-highlights/) for detailed LTS feature documentation (Java 17, 21, 25)
+**See**: [Java Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/release-highlights/) for detailed LTS feature documentation (Java 17, 21, 25). Version-specific documentation (platform migration guidance) planned for in-directory files.
 
 ## OSE Platform Coding Standards (Authoritative)
 

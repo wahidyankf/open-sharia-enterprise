@@ -10,8 +10,8 @@ tags:
   - v8
   - memory-leaks
 related:
-  - ./ex-soen-prla-ts__performance.md
-  - ./ex-soen-prla-ts__best-practices.md
+  - ./ex-soen-prla-ty__performance.md
+  - ./ex-soen-prla-ty__best-practices.md
 principles:
   - automation-over-manual
 last_updated: 2025-01-23

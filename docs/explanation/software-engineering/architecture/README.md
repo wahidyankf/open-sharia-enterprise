@@ -39,32 +39,22 @@ Clear architecture documentation delivers tangible benefits:
 
 ## Quick Decision: Which Documentation Do I Need?
 
-| Your Situation                                       | Start With                                                                                                             |
-| ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| Need to explain system to stakeholders               | [C4 System Context](./c4-architecture-model/README.md)                                                                 |
-| Building complex business rules system               | [DDD Introduction](./domain-driven-design-ddd/README.md)                                                               |
-| Aligning multiple teams on integration               | [DDD Context Mapping](./domain-driven-design-ddd/ex-soen-ar-dodrdedd__04-context-mapping.md)                           |
-| Creating architecture diagrams from scratch          | [C4 Architecture Model](./c4-architecture-model/README.md)                                                             |
-| Modeling domain logic with functional programming    | [DDD and Functional Programming](./domain-driven-design-ddd/ex-soen-ar-dodrdedd__14-ddd-and-functional-programming.md) |
-| Combining strategic design with visual communication | [DDD and C4 Integration](./domain-driven-design-ddd/ex-soen-ar-dodrdedd__17-ddd-and-c4-integration.md)                 |
+| Your Situation                                       | Start With                                                 |
+| ---------------------------------------------------- | ---------------------------------------------------------- |
+| Need to explain system to stakeholders               | [C4 System Context](./c4-architecture-model/README.md)     |
+| Building complex business rules system               | [DDD Introduction](./domain-driven-design-ddd/README.md)   |
+| Aligning multiple teams on integration               | DDD Context Mapping                                        |
+| Creating architecture diagrams from scratch          | [C4 Architecture Model](./c4-architecture-model/README.md) |
+| Modeling domain logic with functional programming    | DDD and Functional Programming                             |
+| Combining strategic design with visual communication | DDD and C4 Integration                                     |
 
 ---
-
-## Documentation Structure
 
 ### 🎨 [C4 Architecture Model](./c4-architecture-model/README.md)
 
 **Visualizing software architecture through hierarchical abstraction levels**
 
 The C4 model provides a systematic way to create architecture diagrams at four levels of detail (Context, Container, Component, Code). Created by Simon Brown, it offers a developer-friendly alternative to heavyweight modeling approaches.
-
-**Key Documentation:**
-
-- [Level 1: System Context](./c4-architecture-model/ex-soen-ar-c4armo__01-level-1-system-context.md) - System boundaries and external dependencies
-- [Level 2: Container](./c4-architecture-model/ex-soen-ar-c4armo__02-level-2-container.md) - High-level technical building blocks
-- [Level 3: Component](./c4-architecture-model/ex-soen-ar-c4armo__03-level-3-component.md) - Internal structure of containers
-- [Supplementary Diagrams](./c4-architecture-model/ex-soen-ar-c4armo__07-supplementary-diagrams.md) - Dynamic, Deployment, and System Landscape
-- [Best Practices](./c4-architecture-model/ex-soen-ar-c4armo__09-best-practices.md) - When to use C4, common mistakes, and limitations
 
 **Use C4 when you need to:**
 
@@ -80,15 +70,6 @@ The C4 model provides a systematic way to create architecture diagrams at four l
 Domain-Driven Design places the business domain at the center of software design. Introduced by Eric Evans in 2003, DDD helps teams manage complexity in large-scale systems.
 
 DDD provides two complementary pattern sets: strategic design for understanding the business and tactical patterns for implementing the domain model.
-
-**Key Documentation:**
-
-- [Introduction and Philosophy](./domain-driven-design-ddd/ex-soen-ar-dodrdedd__01-introduction-and-philosophy.md) - Overview and decision matrix
-- [Ubiquitous Language](./domain-driven-design-ddd/ex-soen-ar-dodrdedd__02-ubiquitous-language.md) - Shared vocabulary with domain experts
-- [Bounded Contexts](./domain-driven-design-ddd/ex-soen-ar-dodrdedd__03-bounded-contexts.md) - Clear boundaries around domain models
-- [Context Mapping](./domain-driven-design-ddd/ex-soen-ar-dodrdedd__04-context-mapping.md) - Integration patterns between contexts
-- [Aggregates](./domain-driven-design-ddd/ex-soen-ar-dodrdedd__09-aggregates.md) - Consistency boundaries in the domain model
-- [DDD and C4 Integration](./domain-driven-design-ddd/ex-soen-ar-dodrdedd__17-ddd-and-c4-integration.md) - Combining both approaches
 
 **Use DDD when you have:**
 
@@ -120,31 +101,17 @@ C4 and DDD complement each other throughout the design process:
 5. Create **Component diagrams** (C4) showing aggregates and their relationships
 6. Document **runtime behavior** with Dynamic diagrams (C4) and Domain Events (DDD)
 
-See [DDD and C4 Integration](./domain-driven-design-ddd/ex-soen-ar-dodrdedd__17-ddd-and-c4-integration.md) for comprehensive examples and guidance.
+See DDD and C4 Integration for comprehensive examples and guidance.
 
 ---
 
-## Learning Paths
-
 ### For Architects and Technical Leads
 
-1. **Understand visualization approaches** - Read [C4 System Context](./c4-architecture-model/ex-soen-ar-c4armo__01-level-1-system-context.md)
-2. **Master strategic design** - Read [DDD Bounded Contexts](./domain-driven-design-ddd/ex-soen-ar-dodrdedd__03-bounded-contexts.md) and [Context Mapping](./domain-driven-design-ddd/ex-soen-ar-dodrdedd__04-context-mapping.md)
-3. **Learn integration** - Read [DDD and C4 Integration](./domain-driven-design-ddd/ex-soen-ar-dodrdedd__17-ddd-and-c4-integration.md)
-4. **Apply to projects** - Apply C4 and DDD patterns to your architecture
+1. **Apply to projects** - Apply C4 and DDD patterns to your architecture
 
 ### For Developers
 
 1. **Quick visualization start** - Follow [C4 5-Minute Quick Start](./c4-architecture-model/README.md#-5-minute-quick-start-why-c4-matters)
-2. **Understand tactical patterns** - Read [DDD Aggregates](./domain-driven-design-ddd/ex-soen-ar-dodrdedd__09-aggregates.md) and [Value Objects](./domain-driven-design-ddd/ex-soen-ar-dodrdedd__08-value-objects.md)
-3. **Functional programming focus** - Read [DDD and Functional Programming](./domain-driven-design-ddd/ex-soen-ar-dodrdedd__14-ddd-and-functional-programming.md)
-4. **Decision frameworks** - Use [DDD Decision Trees](./domain-driven-design-ddd/ex-soen-ar-dodrdedd__16-decision-trees-and-best-practices.md)
-
-### For Domain Experts and Product Owners
-
-1. **Understand collaboration approaches** - Read [DDD Ubiquitous Language](./domain-driven-design-ddd/ex-soen-ar-dodrdedd__02-ubiquitous-language.md)
-2. **Learn workshop techniques** - Read [Strategic Design Process](./domain-driven-design-ddd/ex-soen-ar-dodrdedd__06-strategic-design-process.md)
-3. **Visualize system context** - Read [C4 System Context](./c4-architecture-model/ex-soen-ar-c4armo__01-level-1-system-context.md)
 
 ## Related Documentation
 

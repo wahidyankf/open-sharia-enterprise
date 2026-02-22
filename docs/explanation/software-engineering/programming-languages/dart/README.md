@@ -63,9 +63,8 @@ Dart's design principles guide development:
 
 **You MUST understand Dart fundamentals before using these standards:**
 
-- **[Dart Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/dart.md)** - Complete 0-95% language coverage
-- **[Dart By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/dart/by-example.md)** - 75-85 annotated code examples (beginner → advanced)
-- **[Dart In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/dart/in-practice.md)** - Production patterns and design approaches
+- **[Dart Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/dart/_index.md)** - Complete 0-95% language coverage
+- **[Dart By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/dart/by-example/_index.md)** - 75-85 annotated code examples (beginner → advanced)
 
 **What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply Dart knowledge in THIS codebase.
 
@@ -168,8 +167,6 @@ timeline
 - Leveraging extension types for performance
 - Using latest JavaScript interop features
 - Requiring newest tooling improvements
-
-## Dart in the Platform
 
 ### Primary Use Cases
 
@@ -515,8 +512,6 @@ class InvalidPaymentException implements Exception {
 }
 ```
 
-## Dart Philosophy
-
 ### Null Safety
 
 Dart's sound null safety system eliminates null reference errors:
@@ -624,8 +619,6 @@ void main() {
   print(zakatAmounts);  // [125.0, 250.0, 375.0]
 }
 ```
-
-## Documentation Structure
 
 ### [Dart Idioms](./ex-soen-prla-da__idioms.md)
 
@@ -873,8 +866,6 @@ Upgrading Dart versions and migrating to null safety.
 - Migration tools (dart migrate)
 - Testing after migration
 
-## Learning Paths
-
 ### 1. Start with Basics
 
 **For Beginners**:
@@ -908,8 +899,6 @@ Upgrading Dart versions and migrating to null safety.
 **For Backend Development**:
 
 - [Server-Side Dart](./ex-soen-prla-da__server-side.md) - Building APIs
-
-## Tools and Ecosystem
 
 ### Development Tools
 
@@ -972,11 +961,8 @@ dev_dependencies:
 **Lock File**:
 
 ```yaml
-# pubspec.lock (committed to version control)
 # Ensures reproducible builds
 ```
-
-## Resources and References
 
 ### Official Documentation
 
@@ -996,8 +982,6 @@ dev_dependencies:
 - [DartPad](https://dartpad.dev/) - Online Dart playground
 - [Dart Codelabs](https://dart.dev/codelabs)
 - [Flutter Codelabs](https://docs.flutter.dev/codelabs)
-
-## Related Documentation
 
 ### Core Dart Documentation
 

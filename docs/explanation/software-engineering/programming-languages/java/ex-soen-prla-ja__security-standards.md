@@ -20,7 +20,7 @@ updated: 2026-02-03
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Java fundamentals from [AyoKoding Java Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md) before using these standards.
+**REQUIRED**: You MUST understand Java fundamentals from [AyoKoding Java Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/_index.md) before using these standards.
 
 **This document is OSE Platform-specific**, not a Java tutorial. We define HOW to apply Java in THIS codebase, not WHAT Java is.
 
@@ -30,7 +30,7 @@ updated: 2026-02-03
 
 **OSE-specific prescriptive standards** for security in Shariah-compliant financial applications. This document defines **mandatory requirements** using RFC 2119 keywords (MUST, SHOULD, MAY).
 
-**Prerequisites**: Understanding of Java security fundamentals from [AyoKoding Java Security](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md).
+**Prerequisites**: Understanding of Java security fundamentals from [AyoKoding Java Security](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/_index.md).
 
 ## Purpose
 
@@ -40,8 +40,6 @@ Security in OSE Platform protects critical assets:
 - **Regulatory Compliance**: Meet GDPR, PCI-DSS requirements for audit trails and data privacy
 - **Trust Preservation**: Maintain stakeholder confidence through robust security measures
 - **Financial Integrity**: Prevent fraud, tampering, and unauthorized access to Zakat calculations and donations
-
-## Authentication and Authorization
 
 ### OAuth2 and JWT Requirements
 
@@ -163,8 +161,6 @@ public class PaymentGatewayConfig {
 - Have monitoring for expiration
 - Be revoked immediately on compromise
 
-## Sensitive Data Protection
-
 ### PII Encryption Requirements
 
 **REQUIRED**: All PII MUST be encrypted at rest using AES-256-GCM.
@@ -268,8 +264,6 @@ public class SanitizedLogger {
 
 **PROHIBITED**: Logging full account numbers, passwords, API keys, JWT tokens, credit card numbers, or any PII.
 
-## Input Validation and Injection Prevention
-
 ### SQL Injection Prevention
 
 **REQUIRED**: All database queries MUST use parameterized statements.
@@ -343,8 +337,6 @@ public record DonationRequest(
 - Whitelist allowed characters (not blacklist)
 - Sanitize HTML inputs to prevent XSS
 - Fail fast with descriptive error messages
-
-## Audit Logging Requirements
 
 ### Financial Audit Trail
 
@@ -436,8 +428,6 @@ public class AuditLogger {
 - Configuration changes
 - Data exports
 
-## Dependency Security
-
 ### Vulnerability Scanning
 
 **REQUIRED**: All dependencies MUST be scanned for vulnerabilities in CI/CD.
@@ -484,8 +474,6 @@ public class AuditLogger {
 **PROHIBITED**: Custom cryptography implementations (use vetted libraries only).
 
 **PROHIBITED**: Unmaintained or abandoned libraries (last release > 2 years ago).
-
-## API Security
 
 ### Rate Limiting
 
@@ -588,8 +576,6 @@ public class CorsConfig implements WebMvcConfigurer {
 
 **REQUIRED**: Critical and high vulnerabilities MUST be remediated within 30 days.
 
-## Related Documentation
-
 ### OSE Platform Standards
 
 - [Error Handling Standards](./ex-soen-prla-ja__error-handling-standards.md) - Secure error messages
@@ -600,11 +586,11 @@ public class CorsConfig implements WebMvcConfigurer {
 
 For learning Java fundamentals and concepts referenced in these standards, see:
 
-- **[Java Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md)** - Complete Java learning journey
-- **[Java By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example.md)** - 157+ annotated code examples
+- **[Java Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/_index.md)** - Complete Java learning journey
+- **[Java By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/_index.md)** - 157+ annotated code examples
   - **[Advanced Examples](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/advanced.md)** - OAuth2, JWT, encryption, input validation, SQL injection prevention
-- **[Java In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-practice.md)** - Security patterns and best practices
-- **[Java Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/release-highlights.md)** - Java 17, 21, and 25 LTS features (including security enhancements)
+- **[Java In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-the-field/_index.md)** - Security patterns and best practices
+- **[Java Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/release-highlights/_index.md)** - Java 17, 21, and 25 LTS features (including security enhancements)
 
 **Note**: These standards assume you've learned Java basics from ayokoding-web. We don't re-explain fundamental concepts here.
 

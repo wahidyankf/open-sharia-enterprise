@@ -40,8 +40,6 @@ Spring Web MVC provides Model-View-Controller architecture for building web appl
 - [Interceptors](#interceptors)
 - [CORS Configuration](#cors-configuration)
 
-## DispatcherServlet and Request Lifecycle
-
 ### Request Processing Flow
 
 ```mermaid
@@ -128,8 +126,6 @@ class WebConfig : WebMvcConfigurer {
   }
 }
 ```
-
-## @Controller and @RestController
 
 ### @Controller for HTML Views
 
@@ -243,8 +239,6 @@ class DonationController(private val service: DonationService) {
 }
 ```
 
-## Request Mapping
-
 ### HTTP Method Mapping
 
 **Java Example** (Murabaha Contract API):
@@ -318,8 +312,6 @@ public class ZakatCalculationController {
 }
 ```
 
-## Handler Methods
-
 ### Method Arguments
 
 **Java Example**:
@@ -387,8 +379,6 @@ public class ZakatController {
   }
 }
 ```
-
-## Data Binding and Validation
 
 ### Bean Validation
 
@@ -459,8 +449,6 @@ class DonationController(private val service: DonationService) {
   }
 }
 ```
-
-## Exception Handling
 
 ### @ControllerAdvice
 
@@ -553,8 +541,6 @@ class GlobalExceptionHandler {
 }
 ```
 
-## Interceptors
-
 ### HandlerInterceptor
 
 **Java Example** (Logging Interceptor):
@@ -638,8 +624,6 @@ class WebConfig : WebMvcConfigurer {
 }
 ```
 
-## Related Documentation
-
 ### Core Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
@@ -654,11 +638,6 @@ class WebConfig : WebMvcConfigurer {
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - MVC patterns
 - [Spring Framework REST APIs](./ex-soen-plwe-to-jvsp__rest-apis.md) - RESTful services
 - [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Web standards
-
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring By Example - Web MVC](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/web-mvc.md) - Code examples
-- [Spring In-the-Field - Web Applications](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/web-mvc.md) - Production patterns
 
 **Spring Boot Extension**:
 

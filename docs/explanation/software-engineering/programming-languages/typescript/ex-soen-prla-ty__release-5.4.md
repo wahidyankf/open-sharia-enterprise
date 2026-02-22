@@ -12,8 +12,8 @@ tags:
   - control-flow
   - migration
 related:
-  - ./ex-soen-prla-ts__best-practices.md
-  - ./ex-soen-prla-ts__release-5.0.md
+  - ./ex-soen-prla-ty__best-practices.md
+  - ./ex-soen-prla-ty__release-5.0.md
   - ./README.md
 principles:
   - explicit-over-implicit

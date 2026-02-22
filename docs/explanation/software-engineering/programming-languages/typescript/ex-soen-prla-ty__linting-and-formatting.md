@@ -11,8 +11,8 @@ tags:
   - formatting
   - linting
 related:
-  - ./ex-soen-prla-ts__best-practices.md
-  - ./ex-soen-prla-ts__test-driven-development.md
+  - ./ex-soen-prla-ty__best-practices.md
+  - ./ex-soen-prla-ty__test-driven-development.md
 principles:
   - automation-over-manual
   - explicit-over-implicit

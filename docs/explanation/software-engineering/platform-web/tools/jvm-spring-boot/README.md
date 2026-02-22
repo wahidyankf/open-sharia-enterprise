@@ -76,7 +76,7 @@ All Spring Boot applications MUST follow the patterns and practices documented h
 
 **For Agents**: Reference this documentation when building Spring Boot applications.
 
-**Language Standards**: Also follow [Java](../../../../programming-languages/java/README.md) language standards.
+**Language Standards**: Also follow Java language standards.
 
 ### Quick Standards Reference
 
@@ -188,8 +188,6 @@ timeline
 - Enhanced native compilation
 - Deeper integration with modern Java features (pattern matching, virtual threads)
 - Potential breaking changes in core APIs
-
-## Documentation Structure
 
 ### [Spring Boot Idioms](ex-soen-plwe-to-jvspbo__idioms.md)
 
@@ -483,8 +481,6 @@ Comprehensive guide to upgrading Spring Boot versions.
 - Third-party library compatibility
 - Step-by-step migration checklist
 
-## Key Capabilities
-
 ### REST API Development
 
 Spring Boot excels at building RESTful web services:
@@ -556,8 +552,6 @@ Production monitoring and diagnostics:
 ❌ You need millions of concurrent connections - consider Elixir/Phoenix
 ❌ You're building CLI tools - use Go or native compilation
 ❌ Memory footprint is critical - consider Micronaut or Quarkus with native compilation
-
-## Architecture Integration
 
 ### Domain-Driven Design
 
@@ -794,8 +788,6 @@ public class DonationReportService {
 }
 ```
 
-## Development Workflow
-
 ### Project Setup
 
 **Create new Spring Boot application in Nx workspace:**
@@ -1027,8 +1019,6 @@ class ZakatCalculationControllerTest {
 }
 ```
 
-## Learning Path
-
 ### 1. Start with Idioms
 
 Read [Spring Boot Idioms](ex-soen-plwe-to-jvspbo__idioms.md) to understand framework patterns:
@@ -1065,10 +1055,7 @@ Read [Spring Boot Anti-Patterns](ex-soen-plwe-to-jvspbo__anti-patterns.md) to pr
 Read complementary documentation:
 
 - [Domain-Driven Design](ex-soen-plwe-to-jvspbo__domain-driven-design.md)
-- [Java DDD Patterns](../../../../programming-languages/java/ex-soen-prla-ja__ddd-standards.md)
 - [Functional Programming](ex-soen-plwe-to-jvspbo__functional-programming.md)
-
-## Code Examples from Platform
 
 ### Complete REST Controller
 
@@ -1321,16 +1308,6 @@ public class GlobalExceptionHandler {
 }
 ```
 
-## Integration with Other Documentation
-
-### Java Language Standards
-
-- **[Java](../../../../programming-languages/java/README.md)** - Core Java language documentation
-- **[Java Idioms](../../../../programming-languages/java/README.md)** - Modern Java patterns
-- **[Java Best Practices](../../../../programming-languages/java/README.md)** - Java coding standards
-- **[Java Security](../../../../programming-languages/java/ex-soen-prla-ja__security-standards.md)** - Secure Java coding
-- **[Java Performance](../../../../programming-languages/java/ex-soen-prla-ja__performance-standards.md)** - JVM tuning
-
 ### Architecture Patterns
 
 - **[Domain-Driven Design](../../../architecture/domain-driven-design-ddd/README.md)** - DDD tactical patterns
@@ -1347,8 +1324,6 @@ public class GlobalExceptionHandler {
 - **[Code Quality Standards](../../../../../../governance/development/quality/code.md)** - Quality requirements
 - **[Implementation Workflow](../../../../../../governance/development/workflow/implementation.md)** - Development process
 - **[Commit Messages](../../../../../../governance/development/workflow/commit-messages.md)** - Conventional Commits
-
-## Spring Boot Ecosystem
 
 ### Core Spring Projects
 
@@ -1405,8 +1380,6 @@ public class GlobalExceptionHandler {
 - Spring Security Test - Security testing
 - TestContainers - Docker-based integration testing
 - REST Assured - REST API testing
-
-## Tools and Development Environment
 
 ### Build Tools
 
@@ -1580,8 +1553,6 @@ RUN ./gradlew build --no-daemon
 CMD ["./gradlew", "bootRun", "--no-daemon"]
 ```
 
-## Resources and References
-
 ### Official Documentation
 
 - [Spring Boot Reference](https://docs.spring.io/spring-boot/docs/current/reference/html/)
@@ -1599,8 +1570,6 @@ CMD ["./gradlew", "bootRun", "--no-daemon"]
 
 - [Spring Boot 3.0 Migration Guide](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Migration-Guide)
 - [Jakarta EE Migration](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Migration-Guide#jakarta-ee)
-
-## Related Documentation
 
 ### Core Spring Boot Documentation
 
@@ -1631,7 +1600,6 @@ CMD ["./gradlew", "bootRun", "--no-daemon"]
 ### Platform Documentation
 
 - **[Libraries and Frameworks Index](../README.md)** - Parent frameworks documentation
-- **[Java Programming Language](../../../../programming-languages/java/README.md)** - Java idioms and standards
 - **[Software Design Index](../../README.md)** - Software documentation root
 - **[Monorepo Structure](../../../../../reference/re__monorepo-structure.md)** - Nx workspace organization
 

@@ -42,8 +42,6 @@ Observability enables understanding system behavior through metrics, logging, an
 - [APM Integration](#apm-integration)
 - [Health Indicators](#health-indicators)
 
-## Micrometer Integration
-
 ### Registry Configuration
 
 **Java Example** (Multi-Registry Setup):
@@ -384,8 +382,6 @@ public class DonationAnalyticsService {
 }
 ```
 
-## Custom Metrics
-
 ### Business Metrics for Domain Events
 
 **Java Example** (Zakat Calculation Metrics):
@@ -614,8 +610,6 @@ public class DonationTrackingMetricsService {
   }
 }
 ```
-
-## Distributed Tracing with Spring Cloud Sleuth
 
 ### Enable Distributed Tracing
 
@@ -887,8 +881,6 @@ public class DonationBaggageService {
   }
 }
 ```
-
-## Logging Best Practices
 
 ### Structured Logging with Logback
 
@@ -1189,8 +1181,6 @@ class DonationEventListener {
 }
 ```
 
-## APM Integration
-
 ### Datadog APM
 
 **Configuration** (application.yml):
@@ -1321,8 +1311,6 @@ class DatabaseHealthIndicator(
 }
 ```
 
-## Mapping to OSE Platform Principles
-
 ### Automation Over Manual
 
 **Applied in Observability**:
@@ -1341,21 +1329,10 @@ class DatabaseHealthIndicator(
 - ✅ Explicit correlation IDs in logs
 - ✅ Explicit structured logging fields
 
-## Related Documentation
-
 ### Core Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
 - **[Performance](ex-soen-plwe-to-jvsp__performance.md)** - Optimization techniques
-
-### Spring Boot Observability
-
-- **[Spring Boot Actuator](../../jvm-spring-boot/ex-soen-plwe-to-jvspbo__observability.md)** - Actuator endpoints, health, metrics
-
-### AyoKoding Learning Resources
-
-- **[Spring Observability By Example](/software-engineering/platform-web/java-spring/by-example/)** - Hands-on monitoring examples
-- **[Spring Observability In The Field](/software-engineering/platform-web/java-spring/in-the-field/)** - Production monitoring patterns
 
 ## See Also
 
@@ -1365,11 +1342,6 @@ class DatabaseHealthIndicator(
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Observability patterns
 - [Spring Framework Performance](./ex-soen-plwe-to-jvsp__performance.md) - Performance metrics
 - [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Monitoring standards
-
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring By Example - Observability](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/observability.md) - Code examples
-- [Spring In-the-Field - Monitoring](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/observability.md) - Production monitoring
 
 **Spring Boot Extension**:
 

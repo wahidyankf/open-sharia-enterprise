@@ -31,8 +31,6 @@ This document defines **authoritative build configuration standards** for Spring
 
 **Scope**: Maven multi-module structure, Spring Framework dependencies, Spring-specific plugins, WAR packaging for servlet containers
 
-## Maven POM Structure for Spring Framework Projects
-
 ### Standard 1: Parent POM Structure (MANDATORY)
 
 Spring Framework projects MUST use parent-child POM pattern with Spring dependency management.
@@ -282,8 +280,6 @@ Child modules MUST inherit from parent and declare dependencies WITHOUT versions
 
 **Rationale**: Version-free dependencies prevent conflicts and ensure parent controls versions.
 
-## Spring Framework Dependency Management
-
 ### Standard 3: Spring BOM Usage (MANDATORY)
 
 MUST use `spring-framework-bom` for version management, NOT individual module versions.
@@ -369,8 +365,6 @@ Spring Framework 6+ requires Jakarta EE 10+. MUST use `jakarta.*` packages, NOT 
 ```
 
 **Why Prohibited**: Spring Framework 6 requires Jakarta EE 10+. `javax.*` packages are incompatible.
-
-## Spring-Specific Plugin Configuration
 
 ### Standard 5: Maven WAR Plugin (MANDATORY for Web Apps)
 
@@ -465,8 +459,6 @@ Integration tests MUST use Spring TestContext Framework with Maven Surefire/Fail
 
 **Rationale**: Separates unit tests (fast) from integration tests (slower, require Spring context).
 
-## Multi-Module Project Structure
-
 ### Standard 7: Domain-Driven Module Organization (GUIDANCE)
 
 Spring Framework projects SHOULD organize modules by bounded context and layer.
@@ -546,8 +538,6 @@ api → application → domain ← infrastructure
 
 **Rationale**: Layered architecture with explicit dependencies prevents circular dependencies and enforces clean architecture.
 
-## Enforcement
-
 ### Automated
 
 **Tool**: Maven Enforcer Plugin
@@ -602,11 +592,6 @@ api → application → domain ← infrastructure
 
 ## Learning Resources
 
-**AyoKoding Spring Framework**:
-
-- [Spring Framework By Example - Maven Setup](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/maven-configuration.md) - Maven configuration examples
-- [Spring Framework In-the-Field - Multi-Module Projects](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/multi-module-maven.md) - Production multi-module patterns
-
 **OSE Explanation**:
 
 - [Spring Framework Configuration](./ex-soen-plwe-to-jvsp__configuration.md) - Spring Java config and XML setup
@@ -615,19 +600,19 @@ api → application → domain ← infrastructure
 
 ## Software Engineering Principles
 
-**[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)**:
+**[Reproducibility First](../../../../../../governance/principles/software-engineering/reproducibility.md)**:
 
 - Maven BOM ensures consistent Spring versions across modules
 - Maven Wrapper (`mvnw`) ensures reproducible builds across environments
 - Version pinning in parent POM prevents dependency drift
 
-**[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**:
+**[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**:
 
 - Explicit dependency declarations in child POMs
 - Explicit Spring version via BOM, not transitive dependencies
 - Explicit Jakarta EE version requirements
 
-**[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**:
+**[Automation Over Manual](../../../../../../governance/principles/software-engineering/automation-over-manual.md)**:
 
 - Maven Enforcer Plugin automates version validation
 - Spotless automates code formatting
@@ -639,7 +624,6 @@ api → application → domain ← infrastructure
 
 - [Java Build Configuration](../../../programming-languages/java/ex-soen-prla-ja__build-configuration.md) - Java Maven baseline
 - [Spring Framework Code Quality](./ex-soen-plwe-to-jvsp__code-quality.md) - Spotless, Error Prone, NullAway
-- [Spring Boot Build Configuration](../jvm-spring-boot/ex-soen-plwe-to-jvspbo__build-configuration.md) - Spring Boot Maven patterns
 
 **Spring Framework Documentation**:
 
@@ -655,11 +639,6 @@ api → application → domain ← infrastructure
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Build patterns
 - [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Build standards
 - [Spring Framework Deployment](./ex-soen-plwe-to-jvsp__deployment.md) - Packaging
-
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring By Example - Build Setup](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/build-setup.md) - Code examples
-- [Spring In-the-Field - CI/CD](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/build.md) - Production builds
 
 **Spring Boot Extension**:
 

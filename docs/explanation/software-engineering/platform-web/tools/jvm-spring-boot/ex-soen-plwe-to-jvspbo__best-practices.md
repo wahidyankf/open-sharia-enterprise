@@ -21,10 +21,6 @@ principles:
 last_updated: 2026-01-25
 ---
 
-# Spring Boot Best Practices
-
-## Quick Reference
-
 ### Project Organization
 
 - [Project Structure](#project-structure) - Package organization and layering
@@ -69,8 +65,6 @@ last_updated: 2026-01-25
 ## Overview
 
 This document provides proven best practices for building production-ready Spring Boot applications in the open-sharia-enterprise platform. These practices emphasize maintainability, testability, security, and operational excellence.
-
-## Project Structure
 
 ### Package Organization
 
@@ -142,8 +136,6 @@ src/main/resources/
 └── templates/                  # Templates (if using server-side rendering)
 ```
 
-## Dependency Management
-
 ### Use Spring Boot Starters
 
 **PASS**:
@@ -211,8 +203,6 @@ flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
 ```
-
-## Configuration Management
 
 ### Externalize Configuration
 
@@ -333,8 +323,6 @@ logging:
     com.oseplatform: INFO
 ```
 
-## Dependency Injection
-
 ### Always Use Constructor Injection
 
 **PASS**:
@@ -390,8 +378,6 @@ public class ZakatCalculationService {
 ```
 
 **Note**: Constructor injection without Lombok is more explicit and preferred for critical services.
-
-## Naming Conventions
 
 ### Class Names
 
@@ -451,8 +437,6 @@ public interface ZakatCalculationRepository extends JpaRepository<ZakatCalculati
     boolean existsByUserIdAndCalculationDateBetween(String userId, LocalDate start, LocalDate end);
 }
 ```
-
-## Error Handling
 
 ### Use @ControllerAdvice for Global Exception Handling
 
@@ -587,8 +571,6 @@ public class ZakatValidationException extends OseBusinessException {
 }
 ```
 
-## Logging
-
 ### Use SLF4J with Logback
 
 **PASS**:
@@ -661,8 +643,6 @@ public class ZakatCalculationService {
     </springProfile>
 </configuration>
 ```
-
-## Data Access Patterns
 
 ### Repository Best Practices
 
@@ -747,8 +727,6 @@ public interface ZakatCalculationRepository extends JpaRepository<ZakatCalculati
 }
 ```
 
-## Transaction Management
-
 ### Use @Transactional Appropriately
 
 **PASS**:
@@ -796,8 +774,6 @@ public class ZakatCalculationService {
 - Keep transactions short-lived
 - Avoid long-running operations in transactions
 - Let unchecked exceptions trigger rollback (default behavior)
-
-## Database Migrations
 
 ### Use Flyway for Schema Management
 
@@ -850,8 +826,6 @@ spring:
 - Include rollback scripts for complex changes
 - Test migrations on staging before production
 - Keep migrations idempotent where possible
-
-## REST API Design
 
 ### Follow RESTful Conventions
 
@@ -973,8 +947,6 @@ public ResponseEntity<ZakatCalculation> getById(@PathVariable String id) {
 }
 ```
 
-## Request Validation
-
 ### Use Bean Validation
 
 **PASS**:
@@ -1036,8 +1008,6 @@ public class IslamicDateValidator implements ConstraintValidator<ValidIslamicDat
 }
 ```
 
-## Security Configuration
-
 ### Use Spring Security with OAuth2/JWT
 
 **PASS**:
@@ -1083,8 +1053,6 @@ public class SecurityConfig {
     }
 }
 ```
-
-## Testing Strategy
 
 ### Unit Tests - No Spring Context
 
@@ -1232,8 +1200,6 @@ class ZakatCalculationControllerTest {
 }
 ```
 
-## Observability
-
 ### Enable Spring Boot Actuator
 
 ```yaml
@@ -1287,8 +1253,6 @@ public class PaymentGatewayHealthIndicator implements HealthIndicator {
     }
 }
 ```
-
-## Performance Optimization
 
 ### Connection Pooling
 
@@ -1346,7 +1310,6 @@ public class NisabRateService {
 - **[Data Access](ex-soen-plwe-to-jvspbo__data-access.md)** - Spring Data JPA
 - **[Security](ex-soen-plwe-to-jvspbo__security.md)** - Spring Security
 - **[Testing](ex-soen-plwe-to-jvspbo__testing.md)** - Testing strategies
-- **[Java Best Practices](../../../../programming-languages/java/README.md)** - Java standards
 
 ## See Also
 
@@ -1356,11 +1319,6 @@ public class NisabRateService {
 - [Java Best Practices](../../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline standards
 - [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Boot patterns
 - [Spring Boot Anti-Patterns](./ex-soen-plwe-to-jvspbo__anti-patterns.md) - Common mistakes
-
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring Boot By Example - Best Practices](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/best-practices.md) - Code examples
-- [Spring Boot In-the-Field - Production Setup](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/production-setup.md) - Real-world patterns
 
 ---
 

@@ -38,8 +38,6 @@ This document covers deployment strategies for Spring applications, including WA
 - [Environment-Specific Configuration](#environment-specific-configuration)
 - [Production Best Practices](#production-best-practices)
 
-## WAR vs JAR Deployment
-
 ### WAR Deployment (Traditional)
 
 **Build Configuration** (Gradle):
@@ -118,8 +116,6 @@ public class ZakatApplication {
 }
 ```
 
-## Servlet Containers
-
 ### Apache Tomcat
 
 **Tomcat Configuration** (server.xml):
@@ -161,8 +157,6 @@ public class JettyConfiguration {
 }
 ```
 
-## Standalone Applications
-
 ### Embedded Tomcat
 
 **Java Example**:
@@ -181,8 +175,6 @@ public class StandaloneZakatApplication {
   }
 }
 ```
-
-## Docker Deployment
 
 ### Dockerfile
 
@@ -247,8 +239,6 @@ services:
 volumes:
   postgres-data:
 ```
-
-## Environment-Specific Configuration
 
 ### Profile-Based Configuration
 
@@ -320,8 +310,6 @@ public class DataSourceConfig {
   }
 }
 ```
-
-## Production Best Practices
 
 ### Security Hardening
 
@@ -475,8 +463,6 @@ public class MetricsController {
 record DonationMetrics(double totalDonations, double avgProcessingTime, double maxProcessingTime) {}
 ```
 
-## Related Documentation
-
 ### Core Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
@@ -491,11 +477,6 @@ record DonationMetrics(double totalDonations, double avgProcessingTime, double m
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Deployment patterns
 - [Spring Framework Configuration](./ex-soen-plwe-to-jvsp__configuration.md) - Environment configuration
 - [Spring Framework Performance](./ex-soen-plwe-to-jvsp__performance.md) - Production tuning
-
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring By Example - Deployment](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/deployment.md) - Code examples
-- [Spring In-the-Field - Production Deployment](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/deployment.md) - Real-world deployment
 
 **Spring Boot Extension**:
 

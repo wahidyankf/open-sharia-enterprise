@@ -26,8 +26,6 @@ created: 2026-01-25
 updated: 2026-01-26
 ---
 
-# Spring Boot Domain-Driven Design
-
 ## 📋 Quick Reference
 
 - [Overview](#overview)
@@ -1486,8 +1484,6 @@ public class MurabahaApplication {
 }
 ```
 
-## DDD Best Practices
-
 ### 1. Always Access Aggregates Through Repository
 
 ```java
@@ -1625,8 +1621,6 @@ Before deploying:
 - [ ] Application services coordinate but don't contain business logic
 - [ ] Bounded contexts clearly defined with explicit boundaries
 - [ ] Ubiquitous language used consistently in code and documentation
-
-## OSE Platform DDD Examples
 
 ### Complete Zakat Context
 
@@ -1829,8 +1823,5 @@ public class MurabahaApplicationService {
 - [Spring Boot Data Access](./ex-soen-plwe-to-jvspbo__data-access.md) - Repository implementation
 
 **Hands-on Learning (AyoKoding)**:
-
-- [Spring Boot By Example - Domain-Driven Design](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/ddd.md) - Code examples
-- [Spring Boot In-the-Field - DDD Architecture](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/ddd.md) - Production DDD
 
 **Last Updated**: 2026-01-26

@@ -27,8 +27,6 @@ related:
   - ./ex-soen-plwe-jvspbo__configuration.md
 ---
 
-# Spring Boot Performance
-
 ## 📋 Quick Reference
 
 - [JVM Performance Tuning](#jvm-performance-tuning) - Heap sizing, GC selection, JVM flags
@@ -109,8 +107,6 @@ graph TD
 4. **Verify**: Measure again to confirm improvement
 5. **Document**: Record what worked for future reference
 
-## JVM Performance Tuning
-
 ### Heap Sizing
 
 **Problem**: Default heap size may not match application needs.
@@ -118,8 +114,6 @@ graph TD
 **Solution**: Configure heap size based on actual memory usage and GC patterns.
 
 ```properties
-# application.properties - JVM heap configuration
-# Set via JAVA_TOOL_OPTIONS or command line
 
 # Initial heap size (start with 25% of max heap)
 -Xms2g
@@ -206,7 +200,6 @@ spec:
 ### JVM Flags for Production
 
 ```properties
-# application.properties - Production JVM flags
 
 # GC Logging (essential for troubleshooting)
 -Xlog:gc*:file=/var/log/gc.log:time,uptime,level,tags:filecount=5,filesize=10M
@@ -225,8 +218,6 @@ spec:
 -XX:+UseContainerSupport
 -XX:MaxRAMPercentage=75.0
 ```
-
-## Application Profiling
 
 ### Java Flight Recorder (JFR)
 
@@ -322,8 +313,6 @@ public class ZakatCalculationService {
     }
 }
 ```
-
-## Caching Strategies
 
 ### Caffeine (Local Cache)
 
@@ -557,8 +546,6 @@ public class NisabUpdatedEventListener {
 }
 ```
 
-## Async Processing
-
 ### @Async Configuration
 
 ```java
@@ -763,12 +750,9 @@ public class WaqfDonationService {
 }
 ```
 
-## Database Performance
-
 ### HikariCP Connection Pooling
 
 ```properties
-# application.properties - HikariCP configuration
 
 # Pool sizing (connections = ((core_count * 2) + effective_spindle_count))
 spring.datasource.hikari.maximum-pool-size=20
@@ -1015,8 +999,6 @@ public interface ZakatCalculationRepository extends JpaRepository<ZakatCalculati
 }
 ```
 
-## HTTP Performance
-
 ### Response Compression
 
 ```properties
@@ -1126,8 +1108,6 @@ public class RestTemplateConfig {
     }
 }
 ```
-
-## OSE Platform Examples
 
 ### Zakat Calculation with Caching
 
@@ -1397,8 +1377,6 @@ public class WaqfDonationBatchService {
 }
 ```
 
-## Performance Checklist
-
 ### JVM Configuration
 
 - [ ] Heap size configured based on actual memory usage (`-Xms`, `-Xmx`)
@@ -1508,8 +1486,3 @@ public class WaqfDonationBatchService {
 - [Java Performance](../../../programming-languages/java/ex-soen-prla-ja__performance-standards.md) - Java JVM tuning
 - [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Performance patterns
 - [Spring Boot Data Access](./ex-soen-plwe-to-jvspbo__data-access.md) - Query optimization
-
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring Boot By Example - Performance](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/performance.md) - Code examples
-- [Spring Boot In-the-Field - Optimization](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/performance.md) - Production tuning

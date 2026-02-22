@@ -25,13 +25,11 @@ related:
   - ../jvm-spring/ex-soen-plwe-to-jvsp__deployment.md
 ---
 
-# Spring Boot Deployment
-
 ## Prerequisite Knowledge
 
 **REQUIRED**: You MUST understand [Spring Framework Deployment](../jvm-spring/ex-soen-plwe-to-jvsp__deployment.md) before reading this document. This covers Spring Boot-specific deployment features built on top of Spring Framework.
 
-**STRONGLY RECOMMENDED**: Complete [AyoKoding Spring Boot Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot.md) for practical deployment experience.
+**STRONGLY RECOMMENDED**: Complete AyoKoding Spring Boot Learning Path for practical deployment experience.
 
 **This document is OSE Platform-specific**, not a Spring Boot tutorial. We define HOW to deploy Spring Boot in THIS platform, not WHAT Spring Boot deployment is.
 
@@ -57,8 +55,6 @@ This document defines **deployment standards** for Spring Boot applications in t
 - [Health Probes](#health-probes-liveness-readiness-startup)
 - [Environment-Specific Configuration](#environment-specific-configuration)
 - [Spring Boot vs Spring Framework Deployment](#spring-boot-vs-spring-framework-deployment)
-
-## JAR vs WAR Packaging
 
 ### Executable JAR (Recommended)
 
@@ -160,8 +156,6 @@ fun main(args: Array<String>) {
 - ✅ Shared hosting environment
 
 **OSE Platform Standard**: **Executable JAR with embedded server** for all new applications.
-
-## Embedded Servers (Tomcat, Jetty, Undertow)
 
 ### Tomcat (Default)
 
@@ -312,8 +306,6 @@ Spring-Boot-Lib: BOOT-INF/lib/
 - **Standard JAR format**: Works with standard Java tools
 - **Fast startup**: Optimized class loading
 - **Reproducible**: Exact dependency versions included
-
-## Docker Deployment
 
 ### Basic Dockerfile
 
@@ -546,8 +538,6 @@ ENTRYPOINT ["./app"]
 - ❌ Maximum throughput required (JVM JIT better for sustained load)
 
 **OSE Platform Standard**: **JVM JAR** (default), **Native Image** for specific use cases (serverless, aggressive scaling).
-
-## Kubernetes Deployment Strategies
 
 ### Deployment Manifest
 
@@ -826,8 +816,6 @@ class NisabApiHealthIndicator(
 - ✅ Set `initialDelaySeconds` > application startup time
 - ✅ Use `failureThreshold` to tolerate transient failures
 
-## Environment-Specific Configuration
-
 ### Profile-Based Configuration
 
 **✅ Correct - Profile Structure**:
@@ -954,8 +942,6 @@ env:
         key: database.password
 ```
 
-## Spring Boot vs Spring Framework Deployment
-
 ### Key Differences
 
 | Aspect                 | Spring Framework                       | Spring Boot                      |
@@ -1077,11 +1063,6 @@ These deployment standards enforce the five software engineering principles:
 - [Java Deployment](../../../programming-languages/java/ex-soen-prla-ja__build-configuration.md) - Java packaging baseline
 - [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Deployment patterns
 - [Spring Boot Configuration](./ex-soen-plwe-to-jvspbo__configuration.md) - Environment configuration
-
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring Boot By Example - Deployment](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/deployment.md) - Code examples
-- [Spring Boot In-the-Field - Production Deployment](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/deployment.md) - Real-world deployment
 
 ---
 

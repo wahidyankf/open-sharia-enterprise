@@ -19,7 +19,7 @@ updated: 2026-02-03
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Java fundamentals from [AyoKoding Java Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md) before using these standards.
+**REQUIRED**: You MUST understand Java fundamentals from [AyoKoding Java Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/_index.md) before using these standards.
 
 **This document is OSE Platform-specific**, not a Java tutorial. We define HOW to apply Java in THIS codebase, not WHAT Java is.
 
@@ -29,7 +29,7 @@ updated: 2026-02-03
 
 **OSE-specific prescriptive standards** for performance in Shariah-compliant financial applications. This document defines **mandatory requirements** using RFC 2119 keywords (MUST, SHOULD, MAY).
 
-**Prerequisites**: Understanding of Java performance fundamentals from [AyoKoding Java Performance](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md).
+**Prerequisites**: Understanding of Java performance fundamentals from [AyoKoding Java Performance](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/_index.md).
 
 ## Purpose
 
@@ -40,8 +40,6 @@ Performance in OSE Platform is critical for:
 - **Resource Efficiency**: Reduce infrastructure costs through optimized resource utilization
 - **Scalability**: Handle growth from hundreds to millions of users without re-architecture
 - **User Experience**: Fast responses improve user satisfaction and conversion rates
-
-## Service Level Objectives (SLOs)
 
 ### Latency Requirements
 
@@ -78,8 +76,6 @@ public Result<DonationReceipt, DonationError> processDonation(
 | API gateway         | 5000 req/s     | 20000 req/s       | All incoming requests      |
 
 **REQUIRED**: Load tests MUST verify throughput requirements under sustained load.
-
-## JVM Configuration Standards
 
 ### Heap Size Configuration
 
@@ -164,8 +160,6 @@ java \
 - Be retained for minimum 7 days
 - Be monitored for pause time violations
 
-## Caching Standards
-
 ### Redis Configuration
 
 **REQUIRED**: All caching MUST use Redis with explicit TTL and eviction policies.
@@ -244,8 +238,6 @@ public void processTransaction(AccountId accountId, Transaction txn) {
 - Use cache-aside pattern (not write-through)
 
 **PROHIBITED**: Caching financial data without explicit invalidation strategy.
-
-## Database Query Optimization
 
 ### N+1 Query Prevention
 
@@ -328,8 +320,6 @@ public Page<Donation> getDonations(
 
 **PROHIBITED**: Offset-based pagination for large datasets (inconsistent results, poor performance).
 
-## Profiling Requirements
-
 ### Production Profiling
 
 **REQUIRED**: All production services MUST enable async-profiler integration.
@@ -397,8 +387,6 @@ public class ZakatCalculationBenchmark {
 - Compare against baseline (fail on >10% regression)
 - Cover critical financial operations (Zakat calculation, transaction processing)
 
-## Monitoring Requirements
-
 ### Application Performance Monitoring (APM)
 
 **REQUIRED**: All production services MUST integrate APM tooling.
@@ -436,8 +424,6 @@ management:
 - Heap usage > 80%
 - Database query time > 500ms
 
-## Related Documentation
-
 ### OSE Platform Standards
 
 - [Concurrency Standards](./ex-soen-prla-ja__concurrency-standards.md) - Thread pool sizing, parallel processing
@@ -448,11 +434,11 @@ management:
 
 For learning Java fundamentals and concepts referenced in these standards, see:
 
-- **[Java Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md)** - Complete Java learning journey
-- **[Java By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example.md)** - 157+ annotated code examples
+- **[Java Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/_index.md)** - Complete Java learning journey
+- **[Java By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/_index.md)** - 157+ annotated code examples
   - **[Advanced Examples](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/advanced.md)** - JVM tuning, garbage collection, profiling, optimization techniques
-- **[Java In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-practice.md)** - Performance optimization patterns and JVM tuning practices
-- **[Java Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/release-highlights.md)** - Java 17, 21, and 25 LTS features (including performance improvements)
+- **[Java In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-the-field/_index.md)** - Performance optimization patterns and JVM tuning practices
+- **[Java Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/release-highlights/_index.md)** - Java 17, 21, and 25 LTS features (including performance improvements)
 
 **Note**: These standards assume you've learned Java basics from ayokoding-web. We don't re-explain fundamental concepts here.
 

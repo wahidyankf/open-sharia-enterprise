@@ -42,8 +42,6 @@ This document identifies problematic patterns in Spring Framework development an
 - [Overusing XML Configuration](#overusing-xml-configuration)
 - [Missing Exception Handling](#missing-exception-handling)
 
-## Field Injection Anti-Pattern
-
 ### ❌ Problem: Field Injection
 
 Field injection makes dependencies implicit, hinders testability, and prevents immutability.
@@ -146,8 +144,6 @@ class ZakatCalculationService(
 }
 ```
 
-## Circular Dependencies
-
 ### ❌ Problem: Circular Bean Dependencies
 
 Two or more beans depending on each other creates circular dependencies, causing initialization failures.
@@ -187,8 +183,6 @@ public class DonationService {
 ```
 
 ### ✅ Solution: Refactor to Remove Circular Dependencies
-
-**Option 1: Extract Common Logic to Shared Service**
 
 **Java Example**:
 
@@ -281,8 +275,6 @@ class DonationService(
 }
 ```
 
-**Option 2: Use Events (Domain Events Pattern)**
-
 **Java Example**:
 
 ```java
@@ -353,8 +345,6 @@ class DonationService {
   }
 }
 ```
-
-## God Beans (Overly Complex Services)
 
 ### ❌ Problem: Service with Too Many Responsibilities
 
@@ -608,8 +598,6 @@ class ZakatReportService(
 }
 ```
 
-## Inappropriate Bean Scopes
-
 ### ❌ Problem: Singleton Beans with Mutable State
 
 Singleton beans (default scope) should be stateless. Storing mutable state causes threading issues.
@@ -640,8 +628,6 @@ public class DonationProcessingService {
 
 ### ✅ Solution: Stateless Singleton or Appropriate Scope
 
-**Option 1: Stateless Singleton (Preferred)**
-
 **Java Example**:
 
 ```java
@@ -666,8 +652,6 @@ public class DonationProcessingService {
   }
 }
 ```
-
-**Option 2: Request-Scoped Bean for Request-Specific State**
 
 **Java Example**:
 
@@ -713,8 +697,6 @@ public class DonationProcessingService {
   }
 }
 ```
-
-## Transaction Management Mistakes
 
 ### ❌ Problem: Missing @Transactional on Write Operations
 
@@ -867,8 +849,6 @@ class ZakatCalculationPersistence {
 }
 ```
 
-## Configuration Anti-Patterns
-
 ### ❌ Problem: Hardcoded Configuration Values
 
 Hardcoding configuration in code makes it impossible to change without recompilation.
@@ -928,8 +908,6 @@ db.username=ose_user
 db.password=${DB_PASSWORD:changeme}
 db.pool.max-size=20
 ```
-
-## Resource Leak Patterns
 
 ### ❌ Problem: Not Closing Resources
 
@@ -1017,8 +995,6 @@ class DonationReportService(
 }
 ```
 
-## Threading Issues in Singleton Beans
-
 ### ❌ Problem: Sharing Mutable State
 
 Singleton beans sharing mutable state across threads cause race conditions.
@@ -1092,8 +1068,6 @@ public class ZakatCalculationService {
 }
 ```
 
-## Overusing XML Configuration
-
 ### ❌ Problem: XML Configuration Over Java Config
 
 XML configuration is verbose, not type-safe, and harder to maintain than Java configuration.
@@ -1157,8 +1131,6 @@ public class ApplicationConfig {
 }
 ```
 
-## Missing Exception Handling
-
 ### ❌ Problem: Catching Generic Exception
 
 Catching generic `Exception` hides specific errors and makes debugging difficult.
@@ -1210,8 +1182,6 @@ public class MurabahaContractService {
 }
 ```
 
-## Related Documentation
-
 ### Core Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
@@ -1232,11 +1202,6 @@ public class MurabahaContractService {
 - [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Recommended practices
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Correct patterns
 - [Spring Framework Dependency Injection](./ex-soen-plwe-to-jvsp__dependency-injection.md) - Proper DI usage
-
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring By Example - Common Mistakes](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/common-mistakes.md) - Code examples
-- [Spring In-the-Field - Debugging Issues](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/debugging.md) - Troubleshooting patterns
 
 **Spring Boot Extension**:
 

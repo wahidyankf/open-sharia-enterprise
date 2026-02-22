@@ -156,6 +156,9 @@ OSE Platform follows a three-tier Elixir versioning strategy:
 **Context-Specific Standards (Apply when relevant)**:
 
 - **Security**: [Security Standards](./ex-soen-prla-el__security-standards.md) - Input validation, Phoenix security for user-facing apps
+- **OTP Application**: [OTP Application](./ex-soen-prla-el__otp-application.md) - OTP application structure and supervision trees
+- **OTP GenServer**: [OTP GenServer](./ex-soen-prla-el__otp-genserver.md) - GenServer behavior and stateful process patterns
+- **OTP Supervisor**: [OTP Supervisor](./ex-soen-prla-el__otp-supervisor.md) - Supervisor strategies and fault tolerance
 - **Concurrency**: [Concurrency Standards](./ex-soen-prla-el__concurrency-standards.md) - Processes, GenServer for concurrent code
 - **Domain Modeling**: [DDD Standards](./ex-soen-prla-el__ddd-standards.md) - Aggregates, bounded contexts for business domains
 - **Error Handling**: [Error Handling Standards](./ex-soen-prla-el__error-handling-standards.md) - Supervision trees for resilience

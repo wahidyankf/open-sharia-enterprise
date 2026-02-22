@@ -463,8 +463,6 @@ public class ZakatCalculationResponse {
 }
 ```
 
-## API Versioning
-
 ### URI Versioning
 
 **Java Example**:
@@ -503,8 +501,6 @@ public class DonationController {
   }
 }
 ```
-
-## Islamic Finance API Examples
 
 ### Zakat Calculator API
 
@@ -553,8 +549,6 @@ public class ZakatCalculatorController {
 }
 ```
 
-## Related Documentation
-
 ### Core Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
@@ -572,7 +566,6 @@ public class ZakatCalculatorController {
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring By Example - REST APIs](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/rest-apis.md) - Code examples
 - [Spring In-the-Field - API Development](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/rest-apis.md) - Production APIs
 
 **Spring Boot Extension**:

@@ -20,7 +20,7 @@ updated: 2026-02-06
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Spring Framework fundamentals from [AyoKoding Spring Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring.md) before using these standards.
+**REQUIRED**: You MUST understand Spring Framework fundamentals from AyoKoding Spring Learning Path before using these standards.
 
 **This document is OSE Platform-specific**, not a Spring tutorial. We define HOW to apply Spring in THIS codebase, not WHAT Spring is.
 
@@ -30,7 +30,7 @@ updated: 2026-02-06
 
 **OSE-specific prescriptive standards** for REST API design in Spring-based Shariah-compliant financial applications. This document defines **mandatory requirements** using RFC 2119 keywords (MUST, SHOULD, MAY).
 
-**Prerequisites**: Understanding of Spring Framework fundamentals from [AyoKoding Spring Framework](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring.md) and HTTP/REST API principles.
+**Prerequisites**: Understanding of Spring Framework fundamentals from AyoKoding Spring Framework and HTTP/REST API principles.
 
 ## Purpose
 
@@ -42,8 +42,6 @@ REST API design in Spring-based OSE Platform services enables:
 - **HATEOAS**: Hypermedia links for API discoverability
 - **Pagination/Filtering**: Efficient data retrieval for large datasets
 - **API Versioning**: Backward compatibility for evolving APIs
-
-## REST API Design with Spring MVC
 
 ### @RestController Standards
 
@@ -138,8 +136,6 @@ public class ZakatController {
 - Inject services via constructor injection
 - Return `ResponseEntity<T>` for explicit HTTP status control
 - Log all operations for audit trails
-
-## HTTP Method Conventions
 
 ### Standard HTTP Method Mapping
 
@@ -250,8 +246,6 @@ public class DonationController {
 - **PATCH**: Partial resource update (200 OK)
 - **DELETE**: Delete resources (204 No Content)
 
-## HTTP Status Code Standards
-
 ### Standard Status Code Usage
 
 **REQUIRED**: Use appropriate HTTP status codes for all responses.
@@ -322,8 +316,6 @@ public class AccountController {
 - **409 Conflict**: Business rule violations (insufficient funds, duplicate transactions)
 - **500 Internal Server Error**: Unexpected server errors
 
-## Content Negotiation
-
 ### JSON and XML Support
 
 **REQUIRED**: Support JSON content negotiation. XML is optional.
@@ -381,8 +373,6 @@ public class MurabahaContractController {
 - Default to JSON (`application/json`)
 - Use `produces` and `consumes` annotations explicitly
 - Support XML only if client requirements demand it
-
-## Request Validation with Bean Validation
 
 ### Validation Annotations
 
@@ -484,8 +474,6 @@ public record ProcessZakatPaymentRequest(
 ) {}
 ```
 
-## HATEOAS Principles with Spring
-
 ### Hypermedia Links
 
 **RECOMMENDED**: Implement HATEOAS for API discoverability.
@@ -545,8 +533,6 @@ public class DonationController {
 //   }
 // }
 ```
-
-## Pagination, Filtering, and Sorting
 
 ### Pagination Standards
 
@@ -678,8 +664,6 @@ public class ZakatCalculationController {
 }
 ```
 
-## API Versioning
-
 ### URI Versioning
 
 **REQUIRED**: Use URI-based API versioning.
@@ -706,8 +690,6 @@ public class DonationControllerV2 {
 - Maintain backward compatibility within major version
 - Document breaking changes in release notes
 
-## Related Documentation
-
 ### OSE Platform Standards
 
 - **[Spring Error Handling Standards](./ex-soen-plwe-to-jvsp__error-handling-standards.md)** - Error response format
@@ -723,12 +705,7 @@ public class DonationControllerV2 {
 
 For learning Spring Framework fundamentals and concepts referenced in these standards, see:
 
-- **[Spring Framework Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring.md)** - Complete Spring learning journey
-- **[Spring By Example](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example.md)** - Annotated Spring code examples
-  - **[REST API Examples](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/rest-api.md)** - @RestController, @RequestMapping, ResponseEntity
-  - **[Validation Examples](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/validation.md)** - Bean Validation annotations
-  - **[HATEOAS Examples](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/hateoas.md)** - Hypermedia links
-- **[Spring In Practice](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-practice.md)** - API design patterns and best practices
+- **[Spring By Example](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/_index.md)** - Annotated Spring code examples
 
 **Note**: These standards assume you've learned Spring basics from ayokoding-web. We don't re-explain fundamental concepts here.
 
@@ -736,17 +713,17 @@ For learning Spring Framework fundamentals and concepts referenced in these stan
 
 These standards enforce the five software engineering principles:
 
-1. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+1. **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
    - HTTP status codes explicitly communicate operation results
    - `@Valid` explicitly triggers validation
    - `ResponseEntity<T>` makes HTTP response structure explicit
 
-2. **[Simplicity Over Complexity](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+2. **[Simplicity Over Complexity](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
    - Standard HTTP methods reduce cognitive load
    - Consistent pagination parameters (`page`, `size`, `sort`)
    - URI-based versioning is simpler than header-based
 
-3. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**
+3. **[Automation Over Manual](../../../../../../governance/principles/software-engineering/automation-over-manual.md)**
    - Bean Validation automatically validates requests
    - `@ControllerAdvice` automatically handles errors
    - Spring Data pagination automatically generates metadata
@@ -774,11 +751,6 @@ Before deploying Spring REST APIs, verify:
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - API patterns
 - [Spring Framework REST APIs](./ex-soen-plwe-to-jvsp__rest-apis.md) - REST implementation
 - [Spring Framework Security](./ex-soen-plwe-to-jvsp__security.md) - API security
-
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring By Example - API Design](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/api-design.md) - Code examples
-- [Spring In-the-Field - REST APIs](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/api-standards.md) - Production APIs
 
 **Spring Boot Extension**:
 

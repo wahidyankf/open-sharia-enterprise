@@ -19,7 +19,7 @@ updated: 2026-02-03
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Java fundamentals from [AyoKoding Java Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md) before using these standards.
+**REQUIRED**: You MUST understand Java fundamentals from [AyoKoding Java Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/_index.md) before using these standards.
 
 **This document is OSE Platform-specific**, not a Java tutorial. We define HOW to apply Java in THIS codebase, not WHAT Java is.
 
@@ -29,7 +29,7 @@ updated: 2026-02-03
 
 **OSE-specific prescriptive standards** for concurrency in Shariah-compliant financial applications. This document defines **mandatory requirements** using RFC 2119 keywords (MUST, SHOULD, MAY).
 
-**Prerequisites**: Understanding of Java concurrency fundamentals from [AyoKoding Java Concurrency](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md).
+**Prerequisites**: Understanding of Java concurrency fundamentals from [AyoKoding Java Concurrency](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/_index.md).
 
 ## Purpose
 
@@ -40,8 +40,6 @@ Concurrency in OSE Platform enables critical capabilities for financial operatio
 - **Resource Utilization**: Maximize CPU usage for batch processing (donation processing, end-of-year Zakat calculations)
 - **Scalability**: Support growth from hundreds to millions of concurrent users
 - **Data Integrity**: Ensure thread-safe financial calculations and atomic transactions
-
-## Virtual Threads Standards
 
 ### Virtual Thread Requirements
 
@@ -133,8 +131,6 @@ public DonationProcessingResult processDonationWithValidation(Donation donation)
 - Cancel remaining tasks on first failure (financial integrity)
 
 **PROHIBITED**: Using ExecutorService directly for related tasks (use StructuredTaskScope instead).
-
-## Thread Safety Standards
 
 ### Immutability Requirements
 
@@ -245,8 +241,6 @@ private final CopyOnWriteArrayList<ObserverSubscriber> subscribers =
 
 **PROHIBITED**: Using synchronized wrappers (`Collections.synchronizedMap`) for high-concurrency scenarios.
 
-## Parallel Processing Standards
-
 ### Parallel Streams Requirements
 
 **REQUIRED**: Use parallel streams for CPU-bound batch operations.
@@ -321,8 +315,6 @@ public List<ZakatResult> calculateZakatBatch(List<Account> accounts) {
 - Set explicit thread names for observability
 
 **PROHIBITED**: Using common ForkJoinPool for both I/O and CPU-bound work (contention).
-
-## Concurrency Testing Requirements
 
 ### Race Condition Detection
 
@@ -406,8 +398,6 @@ void concurrentBalanceOperationsShouldMaintainInvariants(
 }
 ```
 
-## Performance Requirements
-
 ### Thread Pool Sizing
 
 **REQUIRED**: Thread pool sizing MUST match workload characteristics.
@@ -463,8 +453,6 @@ public void monitorConcurrency() {
 - Thread pool saturation
 - Deadlock detection
 
-## Related Documentation
-
 ### OSE Platform Standards
 
 - [Error Handling Standards](./ex-soen-prla-ja__error-handling-standards.md) - Concurrent error propagation
@@ -475,11 +463,11 @@ public void monitorConcurrency() {
 
 For learning Java fundamentals and concepts referenced in these standards, see:
 
-- **[Java Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md)** - Complete Java learning journey
-- **[Java By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example.md)** - 157+ annotated code examples
+- **[Java Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/_index.md)** - Complete Java learning journey
+- **[Java By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/_index.md)** - 157+ annotated code examples
   - **[Advanced Examples](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/advanced.md)** - Virtual threads, structured concurrency, parallel streams, CompletableFuture
-- **[Java In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-practice.md)** - Concurrency patterns and thread safety practices
-- **[Java Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/release-highlights.md)** - Java 17, 21 (virtual threads), and 25 LTS features
+- **[Java In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-the-field/_index.md)** - Concurrency patterns and thread safety practices
+- **[Java Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/release-highlights/_index.md)** - Java 17, 21 (virtual threads), and 25 LTS features
 
 **Note**: These standards assume you've learned Java basics from ayokoding-web. We don't re-explain fundamental concepts here.
 

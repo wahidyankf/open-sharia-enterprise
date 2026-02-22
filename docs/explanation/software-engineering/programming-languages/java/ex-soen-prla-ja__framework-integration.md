@@ -19,13 +19,11 @@ updated: 2026-02-03
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Java fundamentals from [AyoKoding Java Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md) before using these standards.
+**REQUIRED**: You MUST understand Java fundamentals from [AyoKoding Java Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/_index.md) before using these standards.
 
 **This document is OSE Platform-specific**, not a Java tutorial. We define HOW to apply Java in THIS codebase, not WHAT Java is.
 
 **See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md)
-
-# Java Framework Integration
 
 ## Purpose
 
@@ -330,11 +328,11 @@ See [Java Code Quality](./ex-soen-prla-ja__code-quality.md) for ArchUnit configu
 
 For learning Java fundamentals and concepts referenced in these standards, see:
 
-- **[Java Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md)** - Complete Java learning journey
-- **[Java By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example.md)** - 157+ annotated code examples
+- **[Java Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/_index.md)** - Complete Java learning journey
+- **[Java By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/_index.md)** - 157+ annotated code examples
   - **[Advanced Examples](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/advanced.md)** - Spring Boot, dependency injection, web services
-- **[Java In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-practice.md)** - Framework integration patterns and architectural design
-- **[Java Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/release-highlights.md)** - Java 17, 21, and 25 LTS features
+- **[Java In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-the-field/_index.md)** - Framework integration patterns and architectural design
+- **[Java Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/release-highlights/_index.md)** - Java 17, 21, and 25 LTS features
 
 **Note**: These standards assume you've learned Java basics from ayokoding-web. We don't re-explain fundamental concepts here.
 

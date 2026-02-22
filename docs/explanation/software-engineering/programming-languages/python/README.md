@@ -62,9 +62,8 @@ The [Zen of Python (PEP 20)](https://peps.python.org/pep-0020/) guides Python de
 
 **You MUST understand Python fundamentals before using these standards:**
 
-- **[Python Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/python.md)** - Complete 0-95% language coverage
-- **[Python By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/python/by-example.md)** - 75-85 annotated code examples (beginner → advanced)
-- **[Python In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/python/in-practice.md)** - Production patterns and design approaches
+- **[Python Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/python/_index.md)** - Complete 0-95% language coverage
+- **[Python By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/python/by-example/_index.md)** - 75-85 annotated code examples (beginner → advanced)
 
 **What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply Python knowledge in THIS codebase.
 
@@ -160,8 +159,6 @@ timeline
 - Benefiting from improved REPL for interactive development
 - Adopting latest type system improvements (TypedDict read-only, TypeIs)
 - Building greenfield projects embracing cutting-edge features
-
-## Python in the Platform
 
 ### Primary Use Cases
 
@@ -790,17 +787,18 @@ def calculate_zakat_v2(wealth: int, nisab: int) -> int:
 
 ## Documentation Structure
 
-This documentation comprises 23 core documentation files organized into foundation, patterns, practices, and advanced topics:
+This documentation comprises 20 core documentation files organized into foundation, patterns, practices, and advanced topics:
 
 ### Core Documentation
 
-**Foundation** (5 files):
+**Foundation** (6 files):
 
 - `README.md` (this file) - Overview and learning paths
 - `ex-soen-prla-py__best-practices.md` - PEP 8, PEP 20, modern patterns
 - `ex-soen-prla-py__idioms.md` - Pythonic patterns and EAFP
 - `ex-soen-prla-py__type-safety.md` - Type hints, mypy, Pydantic
 - `ex-soen-prla-py__error-handling.md` - Exceptions and context managers
+- `ex-soen-prla-py__testing.md` - Testing pyramid, coverage strategy, and test patterns
 
 **Core Patterns** (6 files):
 
@@ -820,18 +818,19 @@ This documentation comprises 23 core documentation files organized into foundati
 - `ex-soen-prla-py__performance.md` - Profiling, optimization, Cython, PyPy
 - `ex-soen-prla-py__memory-management.md` - Reference counting, garbage collection
 
-**Advanced Topics** (3 files):
+**Advanced Topics** (2 files):
 
 - `ex-soen-prla-py__web-services.md` - FastAPI, Django, Flask, httpx
 - `ex-soen-prla-py__finite-state-machine.md` - FSM patterns with transitions library
-- `ex-soen-prla-py__release-3.14.md` - Latest Python 3.14 features
 
-**Version Documentation** (2 files):
+**Version Documentation** (6 files):
 
 - `ex-soen-prla-py__release-3.11.md` - Baseline Python 3.11 features
 - `ex-soen-prla-py__release-3.12.md` - Stable Python 3.12 features
-
-## Learning Paths
+- `ex-soen-prla-py__release-3.14.md` - Python 3.14 features
+- `ex-soen-prla-py__release-3.15.md` - Python 3.15 features
+- `ex-soen-prla-py__release-3.16.md` - Python 3.16 features
+- `ex-soen-prla-py__release-3.17.md` - Python 3.17 features
 
 ### Beginner Path
 
@@ -876,6 +875,7 @@ Understand Python evolution and feature adoption:
 1. **Baseline Features**: `ex-soen-prla-py__release-3.11.md` - Python 3.11 improvements
 2. **Stable Features**: `ex-soen-prla-py__release-3.12.md` - Python 3.12 enhancements
 3. **Latest Features**: `ex-soen-prla-py__release-3.14.md` - Python 3.14 innovations
+4. **Upcoming Features**: `ex-soen-prla-py__release-3.15.md`, `ex-soen-prla-py__release-3.16.md`, `ex-soen-prla-py__release-3.17.md` - Future Python releases
 
 **Stay Current**: Version documentation explains when and why to adopt new features. Baseline features (3.11) provide performance improvements. Stable features (3.12) enhance developer experience. Latest features (3.14) unlock new capabilities like free-threaded mode.
 
@@ -1030,8 +1030,6 @@ print(f"Financing: ${contract.financing_amount}")  # Output: Financing: $180000.
 ```
 
 **Why this matters**: Pydantic's `computed_field` provides automatic property calculation. Field constraints (`gt=0`, `ge=0`, `le=1`) enforce business rules at the type level. Explicit profit disclosure aligns with Sharia principles.
-
-## Tools and Ecosystem
 
 ### Essential Tools
 
@@ -1314,8 +1312,6 @@ strict = true
 
 **See**: [Reproducibility First principle](../../../../../governance/principles/software-engineering/reproducibility.md)
 
-## Resources and References
-
 ### Official Python Documentation
 
 - [Python Documentation](https://docs.python.org/3/) - Official comprehensive guide
@@ -1393,7 +1389,7 @@ strict = true
 
 **Last Updated**: 2026-01-24
 **Python Versions**: 3.11+ (baseline), 3.12+ (stable maintenance), 3.14.2 (latest stable)
-**Total Documentation Files**: 23 core files + 3 version files = 26 files
+**Total Documentation Files**: 20 core files + 6 version files = 26 files
 **Maintainers**: OSE Platform Documentation Team
 
 ## Python Ecosystem

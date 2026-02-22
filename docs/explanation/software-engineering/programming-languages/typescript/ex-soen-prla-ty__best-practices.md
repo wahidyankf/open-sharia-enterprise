@@ -12,9 +12,9 @@ tags:
   - clean-code
   - type-safety
 related:
-  - ./ex-soen-prla-ts__idioms.md
-  - ./ex-soen-prla-ts__anti-patterns.md
-  - ./ex-soen-prla-ts__type-safety.md
+  - ./ex-soen-prla-ty__idioms.md
+  - ./ex-soen-prla-ty__anti-patterns.md
+  - ./ex-soen-prla-ty__type-safety.md
   - ../../../reference/re__monorepo-structure.md
   - ../../../../../governance/development/quality/code.md
 principles:
