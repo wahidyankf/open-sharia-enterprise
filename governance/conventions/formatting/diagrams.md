@@ -1023,7 +1023,7 @@ Before committing documentation with diagrams:
 - [ ] **Parentheses and brackets escaped in node text** (use HTML entities: `#40;` `#41;` `#91;` `#93;`)
 - [ ] **No literal quotes inside node text** (remove quotes or use descriptive text like "string value")
 - [ ] **No style commands in sequence diagrams** (use `box` syntax or switch to flowchart)
-- [ ] **No `\n` in edge labels** (use single-line text; `\n` works in node labels but renders literally in edge labels `-->|"text"|`)
+- [ ] **No `\n` in any label** (use single-line text; `\n` renders as literal characters in both node labels `["text"]` and edge labels `-->|"text"|` in Hugo-rendered Mermaid)
 - [ ] Mermaid diagrams tested in GitHub preview or Obsidian
 - [ ] ASCII art (if used) verified in monospace font
 - [ ] Format choice is intentional (not mixing Mermaid and ASCII unnecessarily)
@@ -1345,7 +1345,7 @@ stateDiagram-v2
 - Also required in **edge labels** (`-->|text|` syntax)
 - NOT needed in regular text, comments, or code blocks
 
-> **Note on `\n` in labels**: `\n` creates line breaks in node labels (`["line1\nline2"]`) but renders as literal text in edge labels (`-->|"line1\nline2"|`). Always use single-line text for edge labels.
+> **Note on `\n` in labels**: `\n` renders as literal text in **both** node labels (`["line1\nline2"]`) and edge labels (`-->|"line1\nline2"|`) in Hugo-rendered Mermaid. Always use single-line text for all labels.
 
 **Example: Complex node text with multiple escapes:**
 
@@ -1440,40 +1440,40 @@ sequenceDiagram
 - Python intermediate Example 33 (async/await): Changed `participant Main as "main()"` to `participant Main`
 - Elixir advanced Example 62 (GenServer): Changed `participant Client as "Client Process"` to `participant Client`
 
-### Error 8: `\n` Escape Sequences Do Not Create Line Breaks in Edge Labels
+### Error 8: `\n` Escape Sequences Do Not Create Line Breaks in Hugo Mermaid Rendering
 
-**CRITICAL**: The `\n` escape sequence behaves differently in node labels versus edge labels. In node labels it creates line breaks, but in edge labels it renders as the literal characters `\n`.
+**CRITICAL**: The `\n` escape sequence does not create line breaks in Mermaid diagrams rendered via Hugo's code block render hook. It renders as the literal characters `\n` in both node labels and edge labels.
+
+**Root Cause**: Hugo's `render-codeblock-mermaid.html` render hook pipes the diagram source through `htmlEscape`, which passes `\n` through unchanged (backslash is not an HTML special character). Mermaid ESM loaded from CDN then receives the literal string `\n` and does not interpret it as a line break in this rendering context.
 
 **Context**:
 
-- **Node labels** (`["text\nmore text"]`): Mermaid interprets `\n` as a line break — this works correctly.
-- **Edge labels** (`-->|"Revenue\n& Learnings"|`): Mermaid does NOT interpret `\n` — the literal characters `\n` appear as visible text in the rendered diagram.
+- **Node labels** (`["text\nmore text"]`): `\n` renders as literal `\n` characters — does NOT create a line break.
+- **Edge labels** (`-->|"Revenue\n& Learnings"|`): `\n` renders as literal `\n` characters — does NOT create a line break.
 
 **Problem Example (FAIL: BROKEN)**:
 
 ```mermaid
 graph LR
-    A[Phase 1] -->|"Revenue\n& Learnings"| B[Phase 2]
-    B -->|"Revenue\n& Certifications"| C[Phase 3]
+    P0["Phase 0\nRepository Setup\n& Knowledge Base"]:::blue
+    P1["Phase 1"] -->|"Revenue\n& Learnings"| P2["Phase 2"]
 ```
 
-This renders the arrow labels as `Revenue\n& Learnings` and `Revenue\n& Certifications` with the literal `\n` characters visible.
+This renders node labels as `Phase 0\nRepository Setup\n& Knowledge Base` and edge labels as `Revenue\n& Learnings` with literal `\n` characters visible.
 
 **Solution (PASS: WORKING)**:
 
-Keep edge labels on a single line — they do not support line breaks:
+Keep all labels single-line. Shorten or rephrase to fit:
 
 ```mermaid
 graph LR
-    A[Phase 1] -->|"Revenue & Learnings"| B[Phase 2]
-    B -->|"Revenue & Certifications"| C[Phase 3]
+    P0["Phase 0: Setup & Knowledge Base"]:::blue
+    P1["Phase 1"] -->|"Revenue & Learnings"| P2["Phase 2"]
 ```
 
-**Rule**: Never use `\n` in edge labels. Keep edge label text short and single-line. If an edge label is too long, shorten it rather than trying to wrap it.
+**Rule**: Never use `\n` in any Mermaid label (node or edge) in Hugo-rendered diagrams. Always use single-line text. If a label is too long, shorten it.
 
-**Affected syntax**: Edge labels only (`-->|"text"|` syntax). Node labels (`["text\nmore text"]`) continue to support `\n` for line breaks correctly.
-
-**Real-World Context**: Discovered when labeling phase-to-phase arrows in a roadmap diagram on `apps/oseplatform-web/content/about.md`. The labels `"Revenue\n& Learnings"` and `"Revenue\n& Certifications"` rendered with literal `\n` characters visible in the diagram.
+**Real-World Context**: Discovered when building a roadmap diagram on `apps/oseplatform-web/content/about.md`. Both node labels (`"Phase 3\nEnterprise Application\nLarge Organizations"`) and edge labels (`"Revenue\n& Learnings"`) rendered with literal `\n` characters visible.
 
 ## Diagram Size and Splitting
 
