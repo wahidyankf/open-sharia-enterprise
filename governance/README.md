@@ -47,6 +47,7 @@ graph TD
  L0 -->|inspires| L1
  L1 -->|governs| L2
  L1 -->|governs| L3
+ L2 -->|governs| L3
  L2 -->|governs| L4
  L3 -->|governs| L4
  L4 -->|orchestrated by| L5
