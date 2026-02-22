@@ -138,5 +138,4 @@ All skills follow governance principles:
 
 ---
 
-**Total Skills**: 34
 **Last Updated**: 2026-02-22

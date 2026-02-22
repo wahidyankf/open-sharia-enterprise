@@ -145,5 +145,4 @@ All agents follow governance principles:
 
 ---
 
-**Total Agents**: 57
 **Last Updated**: 2026-02-22
