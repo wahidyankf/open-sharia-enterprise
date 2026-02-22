@@ -16,7 +16,7 @@
 
 ## Agent Families
 
-### Documentation Family (8 agents)
+### Documentation Family (10 agents)
 
 **Maker-Checker-Fixer Pattern**:
 
@@ -34,6 +34,11 @@
 
 - **docs-link-general-checker** - Validates links (hybrid: validator + cache manager for external links)
 - **docs-file-manager** - Manages files/directories in docs/ while preserving conventions
+
+**Software Engineering Separation** (Checker-Fixer):
+
+- **docs-software-engineering-separation-checker** - Validates software engineering doc separation between language-agnostic and language-specific content
+- **docs-software-engineering-separation-fixer** - Applies validated fixes to software engineering doc separation issues
 
 ### README Family (3 agents)
 
@@ -56,7 +61,7 @@
 - **plan-executor** - Executes delivery checklists systematically (implementor, not maker)
 - **plan-execution-checker** - Final validation of completed plan implementation
 
-### ayokoding-web Family (17 agents)
+### ayokoding-web Family (19 agents)
 
 **General Content** (Maker-Checker-Fixer):
 
@@ -91,6 +96,12 @@
 - **apps-ayokoding-web-navigation-maker** - Updates prev/next navigation links in frontmatter
 - **apps-ayokoding-web-title-maker** - Generates appropriate titles based on content type and level
 - **apps-ayokoding-web-deployer** - Deploys to production branch (prod-ayokoding-web)
+
+**In-the-Field Content** (Maker-Checker-Fixer):
+
+- **apps-ayokoding-web-in-the-field-maker** - Creates in-the-field tutorials from real-world experiences
+- **apps-ayokoding-web-in-the-field-checker** - Validates in-the-field tutorial quality
+- **apps-ayokoding-web-in-the-field-fixer** - Applies validated fixes to in-the-field tutorials
 
 ### oseplatform-web Family (4 agents)
 
@@ -214,7 +225,7 @@ opencode agent list
 
 ## Skills Integration
 
-All agents leverage Skills from `.opencode/skills/` for:
+All agents leverage Skills from `.opencode/skill/` for:
 
 - **Workflow patterns**: Maker-checker-fixer, criticality-confidence assessment
 - **Content standards**: Quality principles, accessibility, factual validation
@@ -224,10 +235,10 @@ All agents leverage Skills from `.opencode/skills/` for:
 
 ## Reference Documentation
 
-- **Project Instructions**: [AGENTS.md](../../AGENTS.md) (condensed) or [AGENTS.md](../../../CLAUDE.md) (comprehensive)
-- **AI Agents Convention**: [governance/development/agents/ex-ru-de-ag\_\_ai-agents.md](../../governance/development/agents/ai-agents.md)
-- **Maker-Checker-Fixer Pattern**: [governance/development/pattern/ex-ru-de-pa\_\_maker-checker-fixer.md](../../governance/development/pattern/maker-checker-fixer.md)
-- **Skills Catalog**: [.opencode/skills/README.md](../../.opencode/skills/README.md)
+- **Project Instructions**: [AGENTS.md](../../AGENTS.md) (condensed) or [CLAUDE.md](../../CLAUDE.md) (comprehensive)
+- **AI Agents Convention**: [governance/development/agents/ai-agents.md](../../governance/development/agents/ai-agents.md)
+- **Maker-Checker-Fixer Pattern**: [governance/development/pattern/maker-checker-fixer.md](../../governance/development/pattern/maker-checker-fixer.md)
+- **Skills Catalog**: [.opencode/skill/README.md](../../.opencode/skill/README.md)
 - **Workflows**: [governance/workflows/README.md](../../governance/workflows/README.md)
 
 ## Maintenance
@@ -235,7 +246,7 @@ All agents leverage Skills from `.opencode/skills/` for:
 **Validation**:
 
 - `python scripts/validate-opencode-agents.py` - Verify OpenCode agents correctness
-- All 45 agents must pass validation
+- All 57 agents must pass validation
 
 **Convention Updates**:
 

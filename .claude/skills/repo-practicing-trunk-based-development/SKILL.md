@@ -539,8 +539,8 @@ Before pushing to `main`:
 
 **Related Skills**:
 
-- `plan__writing-gherkin-criteria` - Writing testable acceptance criteria for TBD workflow
-- `wow__understanding-repository-architecture` - Understanding repository structure and principles
+- `plan-writing-gherkin-criteria` - Writing testable acceptance criteria for TBD workflow
+- `repo-understanding-repository-architecture` - Understanding repository structure and principles
 
 ---
 

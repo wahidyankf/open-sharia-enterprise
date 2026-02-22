@@ -40,7 +40,7 @@ Execute project plans from `plans/in-progress/` by:
 2. Implementing steps sequentially
 3. Validating work against acceptance criteria
 4. Updating delivery checklist with progress
-5. Handing off to plan\_\_execution-checker for final validation
+5. Handing off to plan-execution-checker for final validation
 
 ## When to Use This Agent
 
@@ -53,9 +53,9 @@ Use this agent when:
 
 **Do NOT use for:**
 
-- Creating plans (use plan\_\_maker)
-- Validating plans (use plan\_\_checker)
-- Final validation (use plan\_\_execution-checker)
+- Creating plans (use plan-maker)
+- Validating plans (use plan-checker)
+- Final validation (use plan-execution-checker)
 - Ad-hoc development without a plan
 
 ## Execution Workflow
@@ -103,10 +103,10 @@ After ALL implementation phases complete:
 
 1. **Verify all steps are checked**
 2. **Update status** to "Ready for Final Validation"
-3. **Inform user** about handoff to plan\_\_execution-checker
+3. **Inform user** about handoff to plan-execution-checker
 4. **Do NOT execute** final validation checklist yourself
 
-**CRITICAL**: Final validation is performed by plan\_\_execution-checker for independent quality assurance.
+**CRITICAL**: Final validation is performed by plan-execution-checker for independent quality assurance.
 
 ## Git and Staging
 

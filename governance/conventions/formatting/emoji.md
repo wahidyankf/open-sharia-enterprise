@@ -177,7 +177,7 @@ Use for AI agent categorization in `.opencode/agent/README.md`:
 PASS: **Good - Color + Text + Shape:**
 
 ```markdown
-### 🟦 `docs__maker.md`
+### 🟦 `docs-maker.md`
 
 Expert documentation writer specializing in Obsidian-optimized markdown.
 ```
@@ -186,7 +186,7 @@ Expert documentation writer specializing in Obsidian-optimized markdown.
 
 - Color: Blue square (accessible color from verified palette)
 - Shape: Square emoji (distinguishable shape)
-- Text: "docs\_\_maker.md" (primary identifier)
+- Text: "docs-maker.md" (primary identifier)
 - Description: "Expert documentation writer..." (semantic meaning)
 
 FAIL: **Bad - Color only:**

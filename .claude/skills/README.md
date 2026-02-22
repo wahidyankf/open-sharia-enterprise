@@ -1,6 +1,6 @@
 # Claude Code Skills
 
-This directory contains 28 skill packages that provide progressive knowledge delivery to agents. Skills bundle domain-specific conventions, standards, and best practices.
+This directory contains 34 skill packages that provide progressive knowledge delivery to agents. Skills bundle domain-specific conventions, standards, and best practices.
 
 ## Skill Organization
 
@@ -42,18 +42,24 @@ This directory contains 28 skill packages that provide progressive knowledge del
 ### 💻 Development Workflow Skills
 
 - **swe-developing-applications-common** - Common development workflow patterns shared across all language developers
+- **swe-developing-e2e-test-with-playwright** - End-to-end testing with Playwright methodology and standards
 
 ### 🔤 Programming Language Skills
 
 - **swe-programming-elixir** - Elixir coding standards quick reference
+- **swe-programming-elixir-phoenix** - Phoenix web framework development standards
+- **swe-programming-elixir-phoenix-liveview** - Phoenix LiveView real-time UI standards
 - **swe-programming-golang** - Go coding standards quick reference
 - **swe-programming-java** - Java coding standards quick reference
+- **swe-programming-jvm-spring** - Spring Framework core concepts and patterns
+- **swe-programming-jvm-spring-boot** - Spring Boot application development standards
 - **swe-programming-python** - Python coding standards quick reference
 - **swe-programming-typescript** - TypeScript coding standards quick reference
 
 ### 🌐 Hugo Site Development Skills
 
 - **apps-ayokoding-web-developing-content** - AyoKoding content development standards
+- **apps-organiclever-web-developing-content** - OrganicLever web content development standards
 - **apps-oseplatform-web-developing-content** - OSE Platform content development standards
 
 ## Skill Structure
@@ -132,5 +138,5 @@ All skills follow governance principles:
 
 ---
 
-**Total Skills**: 28
-**Last Updated**: 2026-02-07
+**Total Skills**: 34
+**Last Updated**: 2026-02-22

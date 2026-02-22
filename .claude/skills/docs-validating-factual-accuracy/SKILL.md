@@ -402,8 +402,8 @@ Both dimensions provide complementary information.
 
 Three agents implement this methodology:
 
-- **docs\_\_checker** - Validates documentation factual accuracy
-- **docs\_\_tutorial-checker** - Validates tutorial factual accuracy
+- **docs-checker** - Validates documentation factual accuracy
+- **docs-tutorial-checker** - Validates tutorial factual accuracy
 - **apps\_\_ayokoding-web\_\_facts-checker** - Validates ayokoding-web factual accuracy
 
 All use same validation workflow and confidence classification.
@@ -495,9 +495,9 @@ Step 3: Compare and classify
 
 **Related Agents**:
 
-- `docs__checker` - Documentation factual validation
-- `docs__tutorial-checker` - Tutorial factual validation
-- `apps__ayokoding-web__facts-checker` - ayokoding-web factual validation
+- `docs-checker` - Documentation factual validation
+- `docs-tutorial-checker` - Tutorial factual validation
+- `apps-ayokoding-web-facts-checker` - ayokoding-web factual validation
 
 ---
 
@@ -515,4 +515,4 @@ This Skill packages critical factual validation methodology for maintaining accu
 
 **Related Skills**:
 
-- `wow__assessing-criticality-confidence` - Understanding dual-label system and priority matrix
+- `repo-assessing-criticality-confidence` - Understanding dual-label system and priority matrix

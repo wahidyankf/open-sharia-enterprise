@@ -28,7 +28,7 @@ outputs:
   - name: final-report
     type: file
     pattern: generated-reports/plan-execution__*__validation.md
-    description: Final validation report from plan__execution-checker
+    description: Final validation report from plan-execution-checker
 ---
 
 # Plan Execution Workflow
@@ -57,8 +57,8 @@ User: "Execute plan plans/in-progress/2025-01-15__new-feature/plan.md in manual 
 
 The AI will:
 
-1. Execute plan\_\_executor logic directly (read plan, implement requirements, update checklist)
-2. Execute plan\_\_execution-checker logic directly (validate implementation, write audit)
+1. Execute plan-executor logic directly (read plan, implement requirements, update checklist)
+2. Execute plan-execution-checker logic directly (validate implementation, write audit)
 3. Iterate execution and validation until zero findings achieved
 4. Move plan folder to plans/done/ using git mv
 5. Show git status with modified files
@@ -70,9 +70,9 @@ The AI will:
 
 ### 1. Initial Execution (Sequential)
 
-Execute the project plan using the plan\_\_executor agent.
+Execute the project plan using the plan-executor agent.
 
-**Agent**: `plan__executor`
+**Agent**: `plan-executor`
 
 - **Args**: `plan: {input.plan-path}`
 - **Output**: `{execution-started}` - Implementation begins, delivery checklist items progressively updated
@@ -91,7 +91,7 @@ Execute the project plan using the plan\_\_executor agent.
 
 Validate the implementation against plan requirements.
 
-**Agent**: `plan__execution-checker`
+**Agent**: `plan-execution-checker`
 
 - **Args**: `plan: {input.plan-path}`
 - **Output**: `{audit-report-1}` - Initial validation report in `generated-reports/`
@@ -129,7 +129,7 @@ Analyze validation report to determine if further execution is needed.
 
 Address findings and continue implementation.
 
-**Agent**: `plan__executor`
+**Agent**: `plan-executor`
 
 - **Args**: `plan: {input.plan-path}, focus: {findings-from-latest-report}`
 - **Output**: `{additional-work-completed}` - More checklist items completed, findings addressed
@@ -151,7 +151,7 @@ Address findings and continue implementation.
 
 Run validation again to verify findings resolved and no new issues introduced.
 
-**Agent**: `plan__execution-checker`
+**Agent**: `plan-execution-checker`
 
 - **Args**: `plan: {input.plan-path}`
 - **Output**: `{audit-report-N}` - Verification validation report
@@ -225,8 +225,8 @@ User: "Execute plan plans/in-progress/2025-01-15__new-feature/plan.md in manual 
 
 The AI will execute the workflow directly (default max 10 iterations):
 
-- Implement plan requirements (plan\_\_executor logic)
-- Validate implementation (plan\_\_execution-checker logic)
+- Implement plan requirements (plan-executor logic)
+- Validate implementation (plan-execution-checker logic)
 - Iterate until zero findings and all deliverables complete
 - Move plan folder to plans/done/ on success
 
@@ -310,7 +310,7 @@ Result: SUCCESS (3 iterations) → Plan moved to plans/done/
 
 ## Plan-Specific Validation
 
-The plan\_\_execution-checker validates:
+The plan-execution-checker validates:
 
 - **Requirements Coverage**: All requirements from plan implemented
 - **Deliverables Completeness**: All deliverables created and meet quality standards
@@ -323,17 +323,17 @@ The plan\_\_execution-checker validates:
 
 This workflow can be composed with:
 
-- **plan\_\_quality-gate**: Validate plan quality before executing (recommended pre-step)
+- **plan-quality-gate**: Validate plan quality before executing (recommended pre-step)
 - Content creation workflows: Execute content-focused plans
 - Release workflows: Execute release plans with deployment
-- **wow**rules**quality-gate**: Validate repository consistency after plan execution
+- **repository-rules-validation**: Validate repository consistency after plan execution
 
 **Recommended Workflow Sequence**:
 
 ```
-1. plan__quality-gate → Validate plan completeness and accuracy
+1. plan-quality-gate → Validate plan completeness and accuracy
 2. plan-execution → Execute validated plan
-3. repository__rules-validation → Ensure repository consistency
+3. repository-rules-validation → Ensure repository consistency
 ```
 
 ## Success Metrics
@@ -348,7 +348,7 @@ Track across executions:
 
 ## Notes
 
-- **Semi-automated**: plan\_\_executor may request user input for critical decisions, but execution continues autonomously
+- **Semi-automated**: plan-executor may request user input for critical decisions, but execution continues autonomously
 - **Idempotent**: Safe to re-run on partially completed plans, won't duplicate work
 - **Progressive**: Each iteration builds on previous work, continuously updating checklists
 - **Observable**: Generates validation reports for every validation cycle
@@ -358,7 +358,7 @@ Track across executions:
 
 **Key Differences from plan-quality-gate**:
 
-1. **Execution-focused**: Uses plan\_\_executor (implements code) instead of plan-fixer (fixes plan documents)
+1. **Execution-focused**: Uses plan-executor (implements code) instead of plan-fixer (fixes plan documents)
 2. **End-to-end**: Covers full plan lifecycle from execution through validation to archival
 3. **Progressive delivery**: Continuously updates checklist items throughout execution
 4. **Archival automation**: Moves completed plans to plans/done/ automatically

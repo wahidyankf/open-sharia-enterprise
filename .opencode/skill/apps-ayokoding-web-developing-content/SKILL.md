@@ -433,8 +433,8 @@ Vercel automatically:
 
 **Related Skills**:
 
-- `docs__creating-by-example-tutorials` - Detailed by-example tutorial guidance
-- `docs__creating-accessible-diagrams` - Accessible diagram creation for tutorials
+- `docs-creating-by-example-tutorials` - Detailed by-example tutorial guidance
+- `docs-creating-accessible-diagrams` - Accessible diagram creation for tutorials
 
 ---
 

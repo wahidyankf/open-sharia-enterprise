@@ -42,7 +42,7 @@ This convention implements the following core principles:
 - **Tutorial content structure** - Covered in [Tutorials Convention](./general.md)
 - **General file naming** - Non-tutorial files covered in [File Naming Convention](../structure/file-naming.md)
 - **Hugo-specific implementation** - Frontmatter, weights, navigation covered in [Hugo conventions](../hugo/)
-- **Tutorial validation** - Covered by docs\_\_tutorial-checker agent
+- **Tutorial validation** - Covered by docs-tutorial-checker agent
 
 **Note**: These naming standards apply universally to all tutorial content regardless of location. Hugo-specific details (numeric prefixes like `00-`, weight values) are implementation details covered in site-specific conventions
 

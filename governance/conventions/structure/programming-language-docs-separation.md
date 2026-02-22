@@ -824,19 +824,19 @@ Before publishing programming language documentation:
 **Makers**:
 
 - `docs-maker` - Creates style guide content in docs/explanation/ following this convention
-- `apps__ayokoding-web__general-maker` - Creates educational content in ayokoding-web following this convention
-- `apps__ayokoding-web__by-example-maker` - Creates by-example tutorials following separation rules
+- `apps-ayokoding-web-general-maker` - Creates educational content in ayokoding-web following this convention
+- `apps-ayokoding-web-by-example-maker` - Creates by-example tutorials following separation rules
 
 **Checkers**:
 
 - `docs-checker` - Validates style guides follow this convention (prerequisite statements, no duplication)
-- `apps__ayokoding-web__general-checker` - Validates educational content scope (no OSE Platform-specific content)
-- `apps__ayokoding-web__facts-checker` - Validates factual correctness of educational content
+- `apps-ayokoding-web-general-checker` - Validates educational content scope (no OSE Platform-specific content)
+- `apps-ayokoding-web-facts-checker` - Validates factual correctness of educational content
 
 **Fixers**:
 
 - `docs-fixer` - Fixes style guide violations (adds missing prerequisite statements, removes duplicated content)
-- `apps__ayokoding-web__general-fixer` - Fixes educational content violations (removes OSE Platform-specific content)
+- `apps-ayokoding-web-general-fixer` - Fixes educational content violations (removes OSE Platform-specific content)
 
 ---
 

@@ -169,7 +169,7 @@ The explanation directory has special subdirectories:
 
 **Related Skills**:
 
-- `docs__applying-content-quality` - Universal markdown quality standards
+- `docs-applying-content-quality` - Universal markdown quality standards
 
 ---
 

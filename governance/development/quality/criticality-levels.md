@@ -2,7 +2,7 @@
 
 **Purpose**: Define universal issue severity classification system for all checker agents in the repository.
 
-**Scope**: All 14+ checker agents and 11 fixer agents must use this standardized criticality system.
+**Scope**: All 16 checker agents and 14 fixer agents must use this standardized criticality system.
 
 **Status**: Active (standardizes existing inconsistent terminology)
 
@@ -17,12 +17,12 @@ This convention establishes a universal **four-level criticality system** (CRITI
 **Problem**: Seven different severity classification systems existed across checker agents, causing confusion and inconsistency:
 
 - `repo-governance-checker`: Critical/Important/Minor
-- `ayokoding-web-general-checker`: Must Fix/Warnings/Suggestions
-- `readme__checker`: High/Medium/Low Priority
-- `docs__checker`: [Verified]/[Error]/[Outdated] (verification-based, NOT severity)
+- `apps-ayokoding-web-general-checker`: Must Fix/Warnings/Suggestions
+- `readme-checker`: High/Medium/Low Priority
+- `docs-checker`: [Verified]/[Error]/[Outdated] (verification-based, NOT severity)
 - `docs-link-general-checker`: [OK]/[BROKEN]/[REDIRECT] (status-based, NOT severity)
-- `ayokoding-web-structure-checker`: CRITICAL/IMPORTANT/Warnings
-- `plan__checker`: Critical/Warnings/Recommendations
+- `apps-ayokoding-web-structure-checker`: CRITICAL/IMPORTANT/Warnings
+- `plan-checker`: Critical/Warnings/Recommendations
 
 **Solution**: Universal 4-level system that works orthogonally with existing confidence levels.
 
@@ -531,11 +531,11 @@ Run `{agent-family}-fixer` on this audit report:
 
 **Five agents require both verification/status AND criticality labels**:
 
-- `docs__checker` - Verification labels ([Verified], [Error], [Outdated], [Unverified])
-- `docs__tutorial-checker` - Verification labels
-- `apps__ayokoding-web__facts-checker` - Verification labels
+- `docs-checker` - Verification labels ([Verified], [Error], [Outdated], [Unverified])
+- `docs-tutorial-checker` - Verification labels
+- `apps-ayokoding-web-facts-checker` - Verification labels
 - `docs-link-general-checker` - Status labels ([OK], [BROKEN], [REDIRECT])
-- `apps__ayokoding-web__link-checker` - Status labels
+- `apps-ayokoding-web-link-checker` - Status labels
 
 **Format for dual-label findings**:
 
@@ -556,7 +556,7 @@ Run `{agent-family}-fixer` on this audit report:
 **Confidence**: HIGH
 ```
 
-**Example from docs\_\_checker**:
+**Example from docs-checker**:
 
 ```markdown
 ### 1. [Error] - Command Syntax Incorrect in Installation Guide
@@ -614,7 +614,7 @@ Update link to current documentation URL or find alternative resource
 
 ## Domain-Specific Examples
 
-### Repository Governance (wow\_\_rules-checker)
+### Repository Governance (repo-governance-checker)
 
 **CRITICAL**:
 
@@ -696,7 +696,7 @@ Update link to current documentation URL or find alternative resource
 - Consider adding tags
 - Potential cross-reference
 
-### Documentation (docs**checker, docs**tutorial-checker, docs-link-general-checker)
+### Documentation (docs-checker, docs-tutorial-checker, docs-link-general-checker)
 
 **CRITICAL**:
 
@@ -726,7 +726,7 @@ Update link to current documentation URL or find alternative resource
 - Potential cross-linking opportunity
 - Alternative phrasing suggestion
 
-### Plans (plan**checker, plan**execution-checker)
+### Plans (plan-checker, plan-execution-checker)
 
 **CRITICAL**:
 
@@ -752,7 +752,7 @@ Update link to current documentation URL or find alternative resource
 - Consider alternative approach
 - Potential refinement
 
-### README (readme\_\_checker)
+### README (readme-checker)
 
 **CRITICAL**:
 
@@ -779,7 +779,7 @@ Update link to current documentation URL or find alternative resource
 - Consider adding badges
 - Potential rewording for clarity
 
-### Workflows (wow\_\_workflow-checker)
+### Workflows (repo-workflow-checker)
 
 **CRITICAL**:
 
@@ -805,7 +805,7 @@ Update link to current documentation URL or find alternative resource
 - Consider alternative agent selection
 - Potential optimization
 
-### By-Example Tutorials (ayokoding-web-by-example-checker)
+### By-Example Tutorials (apps-ayokoding-web-by-example-checker)
 
 **CRITICAL**:
 
@@ -1072,7 +1072,7 @@ def determine_priority(criticality, confidence):
 
 **Source Audit**: repo-rules**a1b2c3**2025-12-27--10-30\_\_audit.md
 **Fix Date**: 2025-12-27T11:15:00+07:00
-**Fixer Version**: wow\_\_rules-fixer v2.0
+**Fixer Version**: repo-governance-fixer v2.0
 
 ---
 
@@ -1359,48 +1359,54 @@ Existing agents using different terminology should migrate to this convention.
 
 ### Phase 3: Checker Agent Families (Week 2-3)
 
-**Severity-Based Family** (5 agents):
+**Severity-Based Family** (6 agents):
 
-- apps**ayokoding-web**general-checker
-- apps**ayokoding-web**structure-checker
-- apps**ayokoding-web**by-example-checker
-- apps**oseplatform-web**content-checker
-- wow\_\_workflow-checker
+- apps-ayokoding-web-general-checker
+- apps-ayokoding-web-structure-checker
+- apps-ayokoding-web-by-example-checker
+- apps-ayokoding-web-in-the-field-checker
+- apps-oseplatform-web-content-checker
+- repo-workflow-checker
 
-**Dual-Label Family** (5 agents - preserve existing labels + add criticality):
+**Dual-Label Family** (7 agents - preserve existing labels + add criticality):
 
-- docs\_\_checker ([Verified]/[Error]/[Outdated] + CRITICAL/HIGH/MEDIUM/LOW)
-- docs\_\_tutorial-checker
-- apps**ayokoding-web**facts-checker
+- docs-checker ([Verified]/[Error]/[Outdated] + CRITICAL/HIGH/MEDIUM/LOW)
+- docs-tutorial-checker
+- docs-software-engineering-separation-checker
+- apps-ayokoding-web-facts-checker
+- apps-ayokoding-web-link-checker
 - docs-link-general-checker ([OK]/[BROKEN]/[REDIRECT] + CRITICAL/HIGH/MEDIUM/LOW)
-- apps**ayokoding-web**link-checker
+- repo-governance-checker
 
 **Plan/Priority Family** (3 agents):
 
-- plan\_\_checker
-- plan\_\_execution-checker
-- readme\_\_checker
+- plan-checker
+- plan-execution-checker
+- readme-checker
 
 ### Phase 4: Fixer Agents (Week 3)
 
-Update all 11 fixer agents to use priority-based execution:
+Update all 14 fixer agents to use priority-based execution:
 
-- wow\_\_rules-fixer (pilot)
-- apps**ayokoding-web**general-fixer
-- apps**ayokoding-web**by-example-fixer
-- apps**ayokoding-web**facts-fixer
-- apps**ayokoding-web**structure-fixer
-- docs\_\_tutorial-fixer
-- apps**oseplatform-web**content-fixer
-- readme\_\_fixer
-- docs\_\_fixer
-- plan\_\_fixer
-- wow\_\_workflow-fixer
+- repo-governance-fixer (pilot)
+- apps-ayokoding-web-general-fixer
+- apps-ayokoding-web-by-example-fixer
+- apps-ayokoding-web-facts-fixer
+- apps-ayokoding-web-in-the-field-fixer
+- apps-ayokoding-web-link-fixer
+- apps-ayokoding-web-structure-fixer
+- docs-tutorial-fixer
+- docs-software-engineering-separation-fixer
+- apps-oseplatform-web-content-fixer
+- readme-fixer
+- docs-fixer
+- plan-fixer
+- repo-workflow-fixer
 
 ### Phase 5: Validation (Week 4)
 
-1. Run full repository audit with all 14 checkers
-2. Test all 11 fixers on new report formats
+1. Run full repository audit with all 16 checkers
+2. Test all 14 fixers on new report formats
 3. Verify priority-based execution works correctly
 4. Confirm backward compatibility with old reports
 

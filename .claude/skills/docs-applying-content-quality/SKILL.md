@@ -208,9 +208,9 @@ npm install
 
 **Related Skills**:
 
-- `docs__creating-accessible-diagrams` - Accessible Mermaid diagrams with WCAG colors
-- `readme__writing-readme-files` - README-specific quality standards
-- `docs__applying-diataxis-framework` - Documentation organization framework
+- `docs-creating-accessible-diagrams` - Accessible Mermaid diagrams with WCAG colors
+- `readme-writing-readme-files` - README-specific quality standards
+- `docs-applying-diataxis-framework` - Documentation organization framework
 
 ---
 

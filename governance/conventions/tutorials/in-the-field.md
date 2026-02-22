@@ -128,7 +128,7 @@ In-the-field prioritizes:
 - Comprehensive language coverage (by-example achieves 95%)
 - Sequential skill building (by-example/by-concept handle this)
 
-**Coverage verification**: The ayokoding-web-general-checker agent validates production scenario completeness.
+**Coverage verification**: The apps-ayokoding-web-general-checker agent validates production scenario completeness.
 
 ### 3. Topic Count: 20-40 Production Guides
 
@@ -2232,7 +2232,7 @@ Before publishing in-the-field content, verify:
 
 ### Automated Validation
 
-The **ayokoding-web-general-checker** agent validates:
+The **apps-ayokoding-web-general-checker** agent validates:
 
 - **Production topic coverage**: 20-40 guides
 - **Standard library first**: Built-in examples precede frameworks
@@ -2248,10 +2248,10 @@ The **ayokoding-web-general-checker** agent validates:
 
 The **in-the-field-quality-gate** workflow orchestrates:
 
-1. **ayokoding-web-general-maker**: Creates/updates production guides
-2. **ayokoding-web-general-checker**: Validates against standards
+1. **apps-ayokoding-web-general-maker**: Creates/updates production guides
+2. **apps-ayokoding-web-general-checker**: Validates against standards
 3. **User review**: Reviews audit report
-4. **ayokoding-web-general-fixer**: Applies validated fixes
+4. **apps-ayokoding-web-general-fixer**: Applies validated fixes
 
 ## Relationship to Other Tutorial Types
 
@@ -2428,7 +2428,7 @@ This convention implements and respects:
 - **Tutorial naming** - Covered in [Tutorial Naming Convention](./naming.md)
 - **Hugo-specific implementation** - Frontmatter, weights, navigation covered in [Hugo conventions](../hugo/)
 - **Code quality** - Source code standards in development conventions
-- **Tutorial validation** - Covered by ayokoding-web-general-checker agent
+- **Tutorial validation** - Covered by apps-ayokoding-web-general-checker agent
 
 ## Related Documentation
 

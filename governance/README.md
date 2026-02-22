@@ -56,7 +56,7 @@ graph TD
  style L2 fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
  style L3 fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
  style L4 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
- style L5 fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+ style L5 fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
 ```
 
 ## 📋 Contents
@@ -80,15 +80,15 @@ graph TD
 #### Layer 2: Conventions (WHAT - Documentation Rules)
 
 - **[Conventions](./conventions/README.md)** - Documentation writing and organization standards
-  - 30 conventions across 6 categories (formatting, content, tutorial, hugo, meta, project)
+  - 30 conventions across 6 categories (formatting, linking, writing, structure, tutorials, hugo)
   - Implements principles in concrete documentation rules
   - Each convention includes "Principles Implemented/Respected" section
-  - Enforced by AI agents (docs**checker, docs**maker, etc.)
+  - Enforced by AI agents (docs-checker, docs-maker, etc.)
 
 #### Layer 3: Development (HOW - Software Practices)
 
 - **[Development](./development/README.md)** - Software development practices and workflows
-  - 29 practices across 6 categories (workflow, quality, pattern, agents, infra, hugo)
+  - 17 primary practices across 6 categories (workflow, quality, pattern, agents, infra, hugo)
   - Implements principles in concrete software standards
   - Each practice includes "Principles Implemented/Respected" AND "Conventions Implemented/Respected" sections
   - Enforced by AI agents and automation (git hooks, build tools)
@@ -96,7 +96,7 @@ graph TD
 #### Layer 5: Workflows (WHEN - Multi-Step Processes)
 
 - **[Workflows](./workflows/README.md)** - Orchestrated multi-step processes composing AI agents
-  - 10 workflows across 4 categories (ayokoding-web, docs, plan, repository)
+  - 8 workflows across 4 categories (ayokoding-web, docs, plan, repository)
   - Define sequences (sequential/parallel/conditional), state management, termination criteria
   - Examples: Maker-Checker-Fixer, Plan-Execute-Validate
   - Orchestrate agents from Layer 4
@@ -121,7 +121,7 @@ Principle: Accessibility First (Layer 1)
 Convention: Color Accessibility (Layer 2) - verified accessible palette
 Development: Hugo Development (Layer 3) - semantic HTML, ARIA labels
     ↓ implemented by
-Agents: docs__checker, docs__fixer (Layer 4) - validate/fix colors
+Agents: docs-checker, docs-fixer (Layer 4) - validate/fix colors
     ↓ orchestrated by
 Workflow: Maker-Checker-Fixer (Layer 5) - automated quality gate
 ```
@@ -204,4 +204,4 @@ When changing a layer, all lower layers may need updates. Use `repo-governance-m
 
 ---
 
-**Last Updated**: 2026-02-16
+**Last Updated**: 2026-02-22

@@ -309,31 +309,31 @@ graph TD
 
 #### Agent Color Assignment
 
-| Emoji | Color  | Hex Code | Role                                                                   | Examples                                                                                            |
-| ----- | ------ | -------- | ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| 🟦    | Blue   | #0173B2  | **Writers/Creators** - Agents that create or write new content         | docs**maker, docs**tutorial-maker, agent**maker, plan**maker                                        |
-| 🟩    | Green  | #029E73  | **Checkers/Validators** - Agents that validate or check consistency    | docs**checker, docs-link-general-checker, docs**tutorial-checker, plan**checker, wow**rules-checker |
-| 🟨    | Yellow | #F1C40F  | **Updaters/Modifiers** - Agents that update or modify existing content | docs**file-manager, wow**rules-maker                                                                |
-| 🟪    | Purple | #CC78BC  | **Implementors/Executors** - Agents that execute or implement plans    | plan**executor, plan**execution-checker                                                             |
+| Emoji | Color  | Hex Code | Role                                                                   | Examples                                                                                              |
+| ----- | ------ | -------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| 🟦    | Blue   | #0173B2  | **Writers/Creators** - Agents that create or write new content         | docs-maker, docs-tutorial-maker, agent-maker, plan-maker                                              |
+| 🟩    | Green  | #029E73  | **Checkers/Validators** - Agents that validate or check consistency    | docs-checker, docs-link-general-checker, docs-tutorial-checker, plan-checker, repo-governance-checker |
+| 🟨    | Yellow | #F1C40F  | **Updaters/Modifiers** - Agents that update or modify existing content | docs-file-manager, repo-governance-maker                                                              |
+| 🟪    | Purple | #CC78BC  | **Implementors/Executors** - Agents that execute or implement plans    | plan-executor, plan-execution-checker                                                                 |
 
 #### Implementation in `.opencode/agent/README.md`
 
 **Best Practice Example**:
 
 ```markdown
-### 🟦 docs\_\_maker.md
+### 🟦 docs-maker.md
 
 Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework. Use when creating, editing, or organizing project documentation.
 
-### 🟩 docs\_\_checker.md
+### 🟩 docs-checker.md
 
 Expert documentation validator focusing on factual correctness and consistency. Use when verifying documentation accuracy and detecting contradictions.
 
-### 🟨 docs\_\_file-manager.md
+### 🟨 docs-file-manager.md
 
 Expert at managing files and directories in docs/ (rename, move, delete). Use when reorganizing documentation structure while maintaining conventions.
 
-### 🟪 plan\_\_executor.md
+### 🟪 plan-executor.md
 
 Expert at systematically implementing project plans. Use when executing delivery checklists and implementation steps.
 ```
@@ -344,7 +344,7 @@ Expert at systematically implementing project plans. Use when executing delivery
 
 1. **Color** (🟦 blue emoji) - Supplementary visual marker
 2. **Shape** (square emoji vs. other shapes) - Visual differentiation
-3. **Text label** (agent name like "docs\_\_maker") - Primary identifier
+3. **Text label** (agent name like "docs-maker") - Primary identifier
 4. **Context** (placement in README, description) - Semantic meaning
 
 **Users with color blindness can identify agents by**: - Agent name (primary identifier) - File name (secondary identifier) - Role suffix (writer, checker, updater, implementor) - Description text - Position in document

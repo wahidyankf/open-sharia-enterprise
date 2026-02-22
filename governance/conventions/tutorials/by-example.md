@@ -118,7 +118,7 @@ Examples prioritize:
 - Platform-specific advanced features
 - Deprecated features
 
-**Coverage verification**: The ayokoding-web-by-example-checker agent validates coverage against comprehensive checklists for each language/framework.
+**Coverage verification**: The apps-ayokoding-web-by-example-checker agent validates coverage against comprehensive checklists for each language/framework.
 
 ### 3. Example Count: 75-85 Total
 
@@ -420,7 +420,7 @@ The Java by-example tutorial demonstrates this principle for programming languag
 
 ### Validation Criteria
 
-The ayokoding-web-by-example-checker validates:
+The apps-ayokoding-web-by-example-checker validates:
 
 - **Beginner dependency count**: 0 external dependencies/abstractions (CRITICAL)
 - **Intermediate dependency justification**: Each external dependency has explicit "Why Not Core Features" explanation (HIGH)
@@ -1310,7 +1310,7 @@ Before publishing by-example content, verify:
 
 ### Automated Validation
 
-The **ayokoding-web-by-example-checker** agent validates:
+The **apps-ayokoding-web-by-example-checker** agent validates:
 
 - **Coverage percentage**: 95% target achieved
 - **Example count**: 75-85 total (beginner: 27-30, intermediate: 20-30, advanced: 25-28)
@@ -1336,10 +1336,10 @@ The **ayokoding-web-by-example-checker** agent validates:
 
 The **by-example-quality-gate** workflow orchestrates:
 
-1. **ayokoding-web-by-example-maker**: Creates/updates examples
-2. **ayokoding-web-by-example-checker**: Validates against standards
+1. **apps-ayokoding-web-by-example-maker**: Creates/updates examples
+2. **apps-ayokoding-web-by-example-checker**: Validates against standards
 3. **User review**: Reviews audit report
-4. **ayokoding-web-by-example-fixer**: Applies validated fixes
+4. **apps-ayokoding-web-by-example-fixer**: Applies validated fixes
 
 ## Relationship to Other Tutorial Types
 
@@ -1419,7 +1419,7 @@ This convention reflects standards validated by **7 production languages** (75-8
 
 This convention implements and respects:
 
-- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Automated validation via ayokoding-web-by-example-checker agent
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Automated validation via apps-ayokoding-web-by-example-checker agent
 - **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: Content organized in complexity levels (beginner/intermediate/advanced)
 - **[No Time Estimates](../../principles/content/no-time-estimates.md)**: Uses coverage percentages instead of time-based estimates
 - **[Accessibility First](../../principles/content/accessibility-first.md)**: Color-blind friendly diagrams and accessible formatting
@@ -1452,7 +1452,7 @@ This convention implements and respects:
 - **Tutorial naming** - Covered in [Tutorial Naming Convention](./naming.md)
 - **Hugo-specific implementation** - Frontmatter, weights, navigation covered in [Hugo conventions](../hugo/)
 - **Code quality** - Source code standards in development conventions
-- **Tutorial validation** - Covered by apps**ayokoding-web**by-example-checker agent
+- **Tutorial validation** - Covered by apps-ayokoding-web-by-example-checker agent
 
 ## Related Documentation
 

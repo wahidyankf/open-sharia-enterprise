@@ -382,9 +382,9 @@ Always provide:
 
 **Related Agents:**
 
-- [docs\_\_tutorial-checker.md](./docs-tutorial-checker.md) - Generates audit reports that this agent processes
-- [docs\_\_tutorial-maker.md](./docs-tutorial-maker.md) - Creates tutorials (different purpose)
-- [wow\_\_rules-fixer.md](./repo-governance-fixer.md) - Similar fixer pattern for repository rules
+- [docs-tutorial-checker.md](./docs-tutorial-checker.md) - Generates audit reports that this agent processes
+- [docs-tutorial-maker.md](./docs-tutorial-maker.md) - Creates tutorials (different purpose)
+- [repo-governance-fixer.md](./repo-governance-fixer.md) - Similar fixer pattern for repository rules
 
 **Related Conventions:**
 

@@ -562,8 +562,8 @@ This project uses Nx to manage applications and libraries:
 
 **When Updating README**:
 
-1. Use `readme__maker` agent to help write new sections
-2. Use `readme__checker` agent to validate changes
+1. Use `readme-maker` agent to help write new sections
+2. Use `readme-checker` agent to validate changes
 3. Run through quality checklist before committing
 4. Get feedback from non-technical reviewers if making major changes
 

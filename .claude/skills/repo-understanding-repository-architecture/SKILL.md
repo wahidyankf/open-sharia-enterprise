@@ -76,18 +76,19 @@ Layer 5: Workflows    WHEN - Orchestrate (multi-step processes)
 
 **Key Document**: [Core Principles Index](../README.md)
 
-**Ten Principles** (abbreviated):
+**Eleven Principles** (abbreviated):
 
-1. Simplicity Over Complexity
-2. Accessibility First
-3. Documentation First
-4. No Time Estimates
-5. Progressive Disclosure
-6. Automation Over Manual
-7. Explicit Over Implicit
-8. Immutability Over Mutability
-9. Pure Functions Over Side Effects
-10. Reproducibility First
+1. Deliberate Problem-Solving
+2. Simplicity Over Complexity
+3. Accessibility First
+4. Documentation First
+5. No Time Estimates
+6. Progressive Disclosure
+7. Automation Over Manual
+8. Explicit Over Implicit
+9. Immutability Over Mutability
+10. Pure Functions Over Side Effects
+11. Reproducibility First
 
 **Requirements**:
 
@@ -192,8 +193,8 @@ Development: Hugo Development Convention (semantic HTML)
 ```
 Convention: Color Accessibility
     ↓ implemented by
-Agent: docs__checker (validates colors)
-Agent: docs__fixer (applies corrections)
+Agent: docs-checker (validates colors)
+Agent: docs-fixer (applies corrections)
 ```
 
 ## Layer 5: Workflows (WHEN - Multi-Step Processes)
@@ -253,9 +254,9 @@ Maker-Checker-Fixer Workflow:
 
 **L4 - Agents**:
 
-- docs\_\_checker - Validates diagram colors
-- docs\_\_fixer - Applies color corrections
-- agent\_\_maker - Validates agent frontmatter colors
+- docs-checker - Validates diagram colors
+- docs-fixer - Applies color corrections
+- agent-maker - Validates agent frontmatter colors
 
 **L5 - Workflow**: Maker-Checker-Fixer
 

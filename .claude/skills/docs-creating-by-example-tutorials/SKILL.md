@@ -270,7 +270,7 @@ By-example tutorials are split into three difficulty levels:
 
 **CRITICAL**: All Mermaid diagrams MUST use accessible color palette
 
-Use the **docs\_\_creating-accessible-diagrams** Skill for complete color guidance.
+Use the **docs-creating-accessible-diagrams** Skill for complete color guidance.
 
 **Verified Accessible Palette**:
 
@@ -495,8 +495,8 @@ int x = 10;  // This line declares a variable named x and assigns it the integer
 
 **Related Skills**:
 
-- `apps__ayokoding-web__developing-content` - ayokoding-web specific patterns for hosting tutorials
-- `docs__creating-accessible-diagrams` - Accessible diagram creation for complex examples
+- `apps-ayokoding-web-developing-content` - ayokoding-web specific patterns for hosting tutorials
+- `docs-creating-accessible-diagrams` - Accessible diagram creation for complex examples
 
 ---
 

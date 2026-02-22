@@ -853,10 +853,10 @@ stateDiagram-v2
 
 ```mermaid
 graph TD
-    A[OpenCode- Main Agent] --> B[docs__maker.md]
+    A[OpenCode- Main Agent] --> B[docs-maker.md]
     A --> C[repo-governance-checker.md]
     A --> D[repo-governance-maker.md]
-    A --> E[plan__maker.md]
+    A --> E[plan-maker.md]
 
     B --> F[Documentation]
     C --> G[Validation]
@@ -871,10 +871,10 @@ graph TD
 ## Agent Architecture
 
 OpenCode(Main Agent)
-├── docs**maker.md (Documentation)
-├── wow**rules-checker.md (Validation)
-├── wow**rules-maker.md (Propagation)
-└── plan**maker.md (Planning)
+├── docs-maker.md (Documentation)
+├── repo-governance-checker.md (Validation)
+├── repo-governance-maker.md (Propagation)
+└── plan-maker.md (Planning)
 ```
 
 ## Mixing Formats

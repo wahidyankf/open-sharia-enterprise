@@ -503,7 +503,7 @@ file, err := os.Open(filepath)
 
 ### Quality Validation
 
-**Automated checks** (by ayokoding-web-general-checker):
+**Automated checks** (by apps-ayokoding-web-general-checker):
 
 - ✅ Recipe has all required sections
 - ✅ Code is properly annotated (0.5-1.5 ratio)
@@ -525,7 +525,7 @@ file, err := os.Open(filepath)
 
 This convention implements and respects:
 
-- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Automated validation via ayokoding-web-general-checker agent
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Automated validation via apps-ayokoding-web-general-checker agent
 - **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: Recipes organized by problem complexity within categories
 - **[No Time Estimates](../../principles/content/no-time-estimates.md)**: Focus on problem solved, not time to implement
 - **[Accessibility First](../../principles/content/accessibility-first.md)**: Color-blind friendly diagrams and accessible formatting

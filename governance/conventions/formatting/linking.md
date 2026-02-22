@@ -40,7 +40,7 @@ This convention establishes the standard linking format for all markdown files i
 
 ### What This Convention Does NOT Cover
 
-- **Link validation** - Covered by docs\_\_link-general-checker and ayokoding-web-link-checker agents
+- **Link validation** - Covered by docs-link-general-checker and apps-ayokoding-web-link-checker agents
 - **Link text quality** - Descriptive link text is covered in [Content Quality Principles](../writing/quality.md)
 - **Hugo site URLs** - Hugo-specific linking covered in Hugo content conventions
 - **Anchor links** - Deep linking to specific sections (implementation detail)
@@ -491,7 +491,7 @@ We renamed "link-convention" to "linking-convention" for clarity
 
 ### Validation
 
-The [docs\_\_checker agent](../../.opencode/agent/docs\_\_checker.md) validates this two-tier formatting requirement:
+The [docs-checker agent](../../.opencode/agent/docs-checker.md) validates this two-tier formatting requirement:
 
 - **First mention without link** → CRITICAL issue (breaks navigation)
 - **Subsequent mention without inline code** → HIGH issue (convention violation)

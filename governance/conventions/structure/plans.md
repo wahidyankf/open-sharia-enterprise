@@ -19,7 +19,7 @@ updated: 2025-12-05
   This convention is referenced by:
   1. plans/README.md (brief landing page with link to this convention)
   2. AGENTS.md (summary with link to this convention)
-  3. .opencode/agent/plan__maker.md (reference to this convention)
+  3. .claude/agents/plan-maker.md (reference to this convention)
   When updating, ensure all references remain accurate.
 -->
 
@@ -49,9 +49,9 @@ This convention establishes the organizational structure for project planning do
 
 ### What This Convention Does NOT Cover
 
-- **Plan content format** - How to write plans (covered by plan\_\_checker agent)
+- **Plan content format** - How to write plans (covered by plan-checker agent)
 - **Project management methodology** - This is file organization, not PM process
-- **Task tracking** - Covered by plan\_\_executor agent
+- **Task tracking** - Covered by plan-executor agent
 - **Deployment scheduling** - Covered in deployment conventions
 
 ## Overview
@@ -320,7 +320,7 @@ For complete diagram standards, see [Diagram and Schema Convention](../formattin
 
 **Development Guides**:
 
-- [AI Agents Convention](../../development/agents/ai-agents.md) - Standards for AI agents (including plan**maker and plan**executor)
+- [AI Agents Convention](../../development/agents/ai-agents.md) - Standards for AI agents (including plan-maker and plan-executor)
 
 ## Best Practices
 

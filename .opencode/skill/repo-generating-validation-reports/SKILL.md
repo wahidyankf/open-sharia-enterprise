@@ -191,15 +191,15 @@ Final Step: Finalize Report
 
 Common scopes for execution tracking:
 
-| Agent Family             | Scope              | Tracking File                       |
-| ------------------------ | ------------------ | ----------------------------------- |
-| wow\_\_rules-checker     | `repo-rules`       | `.execution-chain-repo-rules`       |
-| docs\_\_checker          | `docs`             | `.execution-chain-docs`             |
-| docs\_\_tutorial-checker | `docs-tutorial`    | `.execution-chain-docs-tutorial`    |
-| readme\_\_checker        | `readme`           | `.execution-chain-readme`           |
-| plan\_\_checker          | `plan`             | `.execution-chain-plan`             |
-| ayokoding-web-\*         | `ayokoding-[lang]` | `.execution-chain-ayokoding-[lang]` |
-| oseplatform-web-\*       | `ose-platform`     | `.execution-chain-ose-platform`     |
+| Agent Family            | Scope              | Tracking File                       |
+| ----------------------- | ------------------ | ----------------------------------- |
+| repo-governance-checker | `repo-rules`       | `.execution-chain-repo-rules`       |
+| docs-checker            | `docs`             | `.execution-chain-docs`             |
+| docs-tutorial-checker   | `docs-tutorial`    | `.execution-chain-docs-tutorial`    |
+| readme-checker          | `readme`           | `.execution-chain-readme`           |
+| plan-checker            | `plan`             | `.execution-chain-plan`             |
+| ayokoding-web-\*        | `ayokoding-[lang]` | `.execution-chain-ayokoding-[lang]` |
+| oseplatform-web-\*      | `ose-platform`     | `.execution-chain-ose-platform`     |
 
 ### Tool Requirements
 
@@ -214,7 +214,7 @@ Agents using this Skill MUST have:
 ---
 name: example-checker
 tools: [Read, Glob, Grep, Write, Bash]
-skills: [wow__generating-validation-reports]
+skills: [repo-generating-validation-reports]
 ---
 ```
 
@@ -260,10 +260,10 @@ REPORT_FILE="generated-reports/docs__${UUID_CHAIN}__${TIMESTAMP}__audit.md"
 
 # Initialize report (progressive writing starts here)
 cat > "$REPORT_FILE" << 'REPORT_HEADER'
-# Validation Report: docs__checker
+# Validation Report: docs-checker
 
 **Status**: In Progress
-**Agent**: docs__checker
+**Agent**: docs-checker
 **Scope**: Documentation validation
 **Timestamp**: [timestamp]
 **UUID Chain**: [uuid-chain]
@@ -305,9 +305,9 @@ REPORT_HEADER
 
 Works alongside:
 
-- `wow__assessing-criticality-confidence` - Categorize findings by severity
-- `wow__applying-maker-checker-fixer` - Fixer agents read these reports
-- Domain Skills (`apps__ayokoding-web__developing-content`, etc.) - Provide validation criteria
+- `repo-assessing-criticality-confidence` - Categorize findings by severity
+- `repo-applying-maker-checker-fixer` - Fixer agents read these reports
+- Domain Skills (`apps-ayokoding-web-developing-content`, etc.) - Provide validation criteria
 
 ## Benefits
 

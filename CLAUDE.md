@@ -60,8 +60,8 @@ open-sharia-enterprise/
 │   ├── backlog/             # Future plans
 │   └── done/                # Completed plans
 ├── .claude/                 # Claude Code configuration
-│   ├── agents/              # 56 specialized AI agents
-│   └── skills/              # 33 skill packages
+│   ├── agents/              # 57 specialized AI agents
+│   └── skills/              # 34 skill packages
 ├── .husky/                  # Git hooks
 ├── nx.json                  # Nx workspace config
 └── package.json             # Volta pinning + npm workspaces
@@ -202,7 +202,7 @@ Husky + lint-staged enforce quality:
 
 ## Core Principles
 
-All work follows 10 foundational principles from `governance/principles/`:
+All work follows 11 foundational principles from `governance/principles/`:
 
 - **Documentation First**: Documentation is mandatory, not optional
 - **Accessibility First**: WCAG AA compliance, color-blind friendly
@@ -277,23 +277,23 @@ Volta for Node.js/npm pinning, package-lock.json, .env.example
 
 ## AI Agents (57 Specialized Agents)
 
-**Content Creation**: docs-maker, docs-tutorial-maker, readme-maker, apps\_\_ayokoding-web\_\_general-maker, apps\_\_ayokoding-web\_\_by-example-maker, apps\_\_oseplatform-web\_\_content-maker
+**Content Creation**: docs-maker, docs-tutorial-maker, readme-maker, apps-ayokoding-web-general-maker, apps-ayokoding-web-by-example-maker, apps-ayokoding-web-in-the-field-maker, apps-ayokoding-web-structure-maker, apps-ayokoding-web-navigation-maker, apps-ayokoding-web-title-maker, apps-oseplatform-web-content-maker
 
-**Validation**: docs-checker, readme-checker, apps\_\_ayokoding-web\_\_general-checker, apps\_\_ayokoding-web\_\_facts-checker, apps\_\_oseplatform-web\_\_content-checker
+**Validation**: docs-checker, docs-tutorial-checker, docs-link-general-checker, docs-software-engineering-separation-checker, readme-checker, apps-ayokoding-web-general-checker, apps-ayokoding-web-by-example-checker, apps-ayokoding-web-in-the-field-checker, apps-ayokoding-web-facts-checker, apps-ayokoding-web-link-checker, apps-ayokoding-web-structure-checker, apps-oseplatform-web-content-checker
 
-**Fixing**: docs-fixer, readme-fixer, apps\_\_ayokoding-web\_\_general-fixer, apps\_\_ayokoding-web\_\_facts-fixer, apps\_\_oseplatform-web\_\_content-fixer
+**Fixing**: docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-fixer, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-in-the-field-fixer, apps-ayokoding-web-facts-fixer, apps-ayokoding-web-link-fixer, apps-ayokoding-web-structure-fixer, apps-oseplatform-web-content-fixer
 
-**Planning**: plan-maker, plan-checker, plan-executor, plan-execution-checker
+**Planning**: plan-maker, plan-checker, plan-executor, plan-execution-checker, plan-fixer
 
-**Development**: swe\_\_hugo\_\_developer
+**Development**: swe-hugo-developer, swe-elixir-developer, swe-golang-developer, swe-java-developer, swe-python-developer, swe-typescript-developer, swe-e2e-test-developer
 
-**Operations**: docs-file-manager, apps\_\_ayokoding-web\_\_deployer, apps\_\_oseplatform-web\_\_deployer, apps-organiclever-web-deployer
+**Operations**: docs-file-manager, apps-ayokoding-web-deployer, apps-oseplatform-web-deployer, apps-organiclever-web-deployer
 
-**Meta**: agent-maker, wow\_\_rules-maker, wow\_\_rules-checker, wow\_\_rules-fixer
+**Meta**: agent-maker, repo-governance-maker, repo-governance-checker, repo-governance-fixer, repo-workflow-maker, repo-workflow-checker, repo-workflow-fixer, social-linkedin-post-maker
 
 **Maker-Checker-Fixer Pattern**: Three-stage workflow with criticality levels (CRITICAL/HIGH/MEDIUM/LOW), confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE)
 
-**Skills Infrastructure**: Agents leverage 33 skills providing two modes:
+**Skills Infrastructure**: Agents leverage 34 skills providing two modes:
 
 - **Inline skills** (default) - Inject knowledge into current conversation
 - **Fork skills** (`context: fork`) - Delegate tasks to specialized agents in isolated contexts
@@ -350,13 +350,13 @@ This repository maintains **dual compatibility** with both Claude Code and OpenC
 Six-layer governance hierarchy:
 
 - **Layer 0: Vision** - WHY we exist (democratize Shariah-compliant enterprise)
-- **Layer 1: Principles** - WHY we value approaches (10 core principles)
-- **Layer 2: Conventions** - WHAT documentation rules (26 standards)
-- **Layer 3: Development** - HOW we develop (15 practices)
+- **Layer 1: Principles** - WHY we value approaches (11 core principles)
+- **Layer 2: Conventions** - WHAT documentation rules (30 standards)
+- **Layer 3: Development** - HOW we develop (17 practices)
 - **Layer 4: AI Agents** - WHO enforces rules (57 specialized agents)
 - **Layer 5: Workflows** - WHEN we run processes (orchestrated sequences)
 
-**Skills**: Delivery infrastructure serving agents (33 skills, two modes):
+**Skills**: Delivery infrastructure serving agents (34 skills, two modes):
 
 - **Inline skills** - Knowledge injection into current conversation
 - **Fork skills** (`context: fork`) - Task delegation to agents in isolated contexts
@@ -457,10 +457,10 @@ Project planning in `plans/` folder:
 
 ## Related Documentation
 
-- **Conventions Index**: [governance/conventions/README.md](./governance/conventions/README.md) - 26 documentation standards
-- **Development Index**: [governance/development/README.md](./governance/development/README.md) - 15 software practices
-- **Principles Index**: [governance/principles/README.md](./governance/principles/README.md) - 10 foundational principles
-- **Agents Index**: [.claude/agents/README.md](./.claude/agents/README.md) - 56 specialized agents
+- **Conventions Index**: [governance/conventions/README.md](./governance/conventions/README.md) - 30 documentation standards
+- **Development Index**: [governance/development/README.md](./governance/development/README.md) - 17 software practices
+- **Principles Index**: [governance/principles/README.md](./governance/principles/README.md) - 11 foundational principles
+- **Agents Index**: [.claude/agents/README.md](./.claude/agents/README.md) - 57 specialized agents
 - **Workflows Index**: [governance/workflows/README.md](./governance/workflows/README.md) - Orchestrated processes
 - **Repository Architecture**: [governance/repository-governance-architecture.md](./governance/repository-governance-architecture.md) - Six-layer governance hierarchy
 

@@ -1,5 +1,5 @@
 ---
-name: repository__rules-validation
+name: repository-rules-validation
 goal: Validate repository consistency across all layers, apply fixes iteratively until zero findings achieved
 termination: Zero findings remain after validation (runs indefinitely until achieved unless max-iterations provided)
 inputs:

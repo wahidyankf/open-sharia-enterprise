@@ -88,7 +88,7 @@ This practice respects the following core principles:
   - Apply the senior engineer test (question complexity proactively)
   - Prefer boring solutions (battle-tested patterns over clever code)
 
-- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Agents transform manual processes into automated workflows. Instead of manually validating 200+ markdown files, `repo__rules-checker` automates validation. Agents transform manual processes into repeatable, consistent automated workflows.
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Agents transform manual processes into automated workflows. Instead of manually validating 200+ markdown files, `repo-governance-checker` automates validation. Agents transform manual processes into repeatable, consistent automated workflows.
 
 ## Token Budget Philosophy
 
@@ -193,12 +193,11 @@ skills: []
    - See "Agent Color Categorization" below for assignment guidelines
 
 6. **`skills`** (required)
-   - List of Skill names the agent references (from `.claude/skills/` (primary) or `.opencode/skill/` (secondary))
-   - Can be empty array `[]` if agent doesn't use Skills
-   - Skills auto-load when agent is invoked (if task matches Skill description)
+   - List ofSkill names the agent references (from `.claude/skills/` (primary) or `.opencode/skill/` (secondary))
+   - Can be empty array `[]` if agent doesn't useSkills -Skills auto-load when agent is invoked (if task matchesSkill description)
    - Enables composability and explicit knowledge dependencies
    - Example: `skills: [color-accessibility-diagrams, maker-checker-fixer-pattern]`
-   - See "Agent Skills References" section below for complete details
+   - See "AgentSkills References" section below for complete details
 
 ### Optional Frontmatter Fields
 
@@ -240,15 +239,15 @@ updated: 2025-12-03
 ---
 ```
 
-### Agent Skills References
+### AgentSkills References
 
 **REQUIRED FIELD**: All agents MUST include a `skills:` frontmatter field for composability and consistency.
 
-**Purpose:** The `skills:` field declares which Skills (knowledge packages in `.claude/skills/` (primary) or `.opencode/skill/` (secondary)) the agent leverages. This enables:
+**Purpose:** The `skills:` field declares whichSkills (knowledge packages in `.claude/skills/` (primary) or `.opencode/skill/` (secondary)) the agent leverages. This enables:
 
 - **Composability**: Explicit declarations of knowledge dependencies
 - **Consistency**: All agents follow same structure (no special cases)
-- **Discoverability**: Easy to see which agents use which Skills
+- **Discoverability**: Easy to see which agents use whichSkills
 - **Validation**: Checkers can enforce field presence and validate references
 
 #### Skills Field Format
@@ -257,14 +256,14 @@ The `skills` field (already defined as field 6 in Required Frontmatter above) ha
 
 - **Format**: YAML array of strings
 - **Required**: Yes (can be empty `[]`)
-- **Values**: Skill names matching folder names in `.opencode/skill/`
-- **Auto-loading**: Skills load when agent invoked AND task matches Skill description
-- **Validation**: Referenced Skills must exist in `.claude/skills/` (primary) or `.opencode/skill/` (secondary) directory
+- **Values**:Skill names matching folder names in `.opencode/skill/`
+- **Auto-loading**:Skills load when agent invoked AND task matchesSkill description
+- **Validation**: ReferencedSkills must exist in `.claude/skills/` (primary) or `.opencode/skill/` (secondary) directory
 - **Example**: `skills: [color-accessibility-diagrams, maker-checker-fixer-pattern]`
 
-#### When to Reference Skills vs. Inline Knowledge
+#### When to ReferenceSkills vs. Inline Knowledge
 
-**Use Skills references when:**
+**UseSkills references when:**
 
 - PASS: Knowledge is specialized and deep (e.g., accessible color palettes, Gherkin syntax)
 - PASS: Knowledge is shared across multiple agents (e.g., Maker-Checker-Fixer pattern)
@@ -281,11 +280,11 @@ The `skills` field (already defined as field 6 in Required Frontmatter above) ha
 
 #### Skills Field Examples
 
-**Agent using Skills:**
+**Agent usingSkills:**
 
 ```yaml
 ---
-name: docs__maker
+name: docs-maker
 description: Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework.
 tools: Read, Write, Edit, Glob, Grep
 model: inherit
@@ -296,7 +295,7 @@ skills:
 ---
 ```
 
-**Agent not using Skills:**
+**Agent not usingSkills:**
 
 ```yaml
 ---
@@ -311,11 +310,11 @@ skills: []
 
 #### Skills Composition Pattern
 
-Agents can reference multiple Skills that work together:
+Agents can reference multipleSkills that work together:
 
 ```yaml
 ---
-name: apps__ayokoding-web__general-maker
+name: apps-ayokoding-web-general-maker
 description: Expert at creating general Hugo content for ayokoding-web (Hextra theme).
 tools: Read, Write, Edit, Glob, Grep
 model: sonnet
@@ -327,24 +326,24 @@ skills:
 ---
 ```
 
-When this agent is invoked, all three Skills auto-load if the task description matches their triggers. Skills compose seamlessly to provide comprehensive knowledge.
+When this agent is invoked, all threeSkills auto-load if the task description matches their triggers.Skills compose seamlessly to provide comprehensive knowledge.
 
-#### Best Practices for Skills References
+#### Best Practices forSkills References
 
-1. **Minimal set**: Reference only Skills the agent actually uses
-2. **Relevant Skills**: Skills should align with agent's domain
-3. **Order by importance**: List most critical Skills first
-4. **Keep updated**: Add/remove Skills as agent evolves
-5. **Validate references**: Ensure referenced Skills exist in `.opencode/skill/`
+1. **Minimal set**: Reference onlySkills the agent actually uses
+2. **RelevantSkills**:Skills should align with agent's domain
+3. **Order by importance**: List most criticalSkills first
+4. **Keep updated**: Add/removeSkills as agent evolves
+5. **Validate references**: Ensure referencedSkills exist in `.opencode/skill/`
 
 #### Skills Documentation: Frontmatter Only (DRY Principle)
 
-**CRITICAL**: Skills MUST only be declared in frontmatter. Do NOT create documentation sections listing skills in the agent body.
+**CRITICAL**:Skills MUST only be declared in frontmatter. Do NOT create documentation sections listing skills in the agent body.
 
 **Why Frontmatter Only:**
 
 - ✅ **Single source of truth**: Frontmatter is canonical and machine-readable
-- ✅ **Eliminates duplication**: Each Skill already has its own description in SKILL.md
+- ✅ **Eliminates duplication**: EachSkill already has its own description in SKILL.md
 - ✅ **Reduces maintenance**: No risk of frontmatter and body getting out of sync
 - ✅ **Keeps agents lean**: Avoids unnecessary documentation bulk
 - ✅ **Follows DRY**: Don't Repeat Yourself - reference, don't restate
@@ -354,7 +353,7 @@ When this agent is invoked, all three Skills auto-load if the task description m
 ```markdown
 ## Knowledge Dependencies (Skills)
 
-This agent leverages Skills from `.claude/skills/`:
+This agent leveragesSkills from `.claude/skills/`:
 
 1. **`skill-name`** - what it does
 2. **`other-skill`** - what it does
@@ -373,16 +372,16 @@ skills:
 **Contextual Inline References** (allowed when adding context):
 
 ```markdown
-**See `repo-generating-validation-reports` Skill** for UUID chain generation and progressive writing methodology.
+**See `repo-generating-validation-reports`Skill** for UUID chain generation and progressive writing methodology.
 ```
 
-This is acceptable because it provides contextual guidance pointing to specific Skill knowledge at relevant points in the agent documentation.
+This is acceptable because it provides contextual guidance pointing to specificSkill knowledge at relevant points in the agent documentation.
 
 **Summary**: Declare skills in frontmatter, optionally reference them inline for context, but NEVER create a dedicated section listing skills with descriptions.
 
 #### Skills vs. Direct Convention References
 
-Agents can use both Skills AND direct links to convention documents:
+Agents can use bothSkills AND direct links to convention documents:
 
 - **Skills**: For progressive disclosure and shared knowledge (auto-loaded)
 - **Direct links**: For specific, targeted guidance (always in Reference Documentation section)
@@ -391,7 +390,7 @@ Agents can use both Skills AND direct links to convention documents:
 
 ```yaml
 ---
-name: docs__checker
+name: docs-checker
 description: Validates documentation quality and factual correctness.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
@@ -407,7 +406,7 @@ skills:
 ```markdown
 ## Reference Documentation
 
-**Skills**: This agent uses `maker-checker-fixer-pattern` and `criticality-confidence-system` Skills for validation workflows.
+**Skills**: This agent uses `maker-checker-fixer-pattern` and `criticality-confidence-system`Skills for validation workflows.
 
 **Conventions:**
 
@@ -417,7 +416,7 @@ skills:
 
 This pattern provides both auto-loaded knowledge (Skills) and explicit references for specific requirements.
 
-See [Skills README](../../../.claude/skills/README.md) for complete details on Skills creation, structure, and usage patterns.
+See [Skills README](../../../.claude/skills/README.md) for complete details onSkills creation, structure, and usage patterns.
 
 ### Document Structure
 
@@ -465,21 +464,21 @@ Agent files follow kebab-case naming with **optional scope prefixes** for app-sp
 
 Where:
 
-- `scope` (optional): `apps__[app-name]__`, `libs__[lib-name]__`, or `apps-labs__[app-name]__`
+- `scope` (optional): `apps-[app-name]-`, `libs-[lib-name]-`, or `apps-labs-[app-name]-`
 - `agent-name`: descriptive kebab-case identifier
 
 ```
 PASS: Good - General agents (no scope prefix):
-- docs__maker.md
+- docs-maker.md
 - repo-governance-checker.md
-- plan__executor.md
-- readme__maker.md
+- plan-executor.md
+- readme-maker.md
 
 PASS: Good - App-scoped agents:
-- apps__ayokoding-web__general-maker.md
-- apps__ayokoding-web__by-example-checker.md
-- apps__oseplatform-web__content-maker.md
-- apps__oseplatform-web__deployer.md
+- apps-ayokoding-web-general-maker.md
+- apps-ayokoding-web-by-example-checker.md
+- apps-oseplatform-web-content-maker.md
+- apps-oseplatform-web-deployer.md
 
 PASS: Good - Lib-scoped agents (future):
 - libs__ts-auth__validator.md
@@ -493,39 +492,39 @@ FAIL: Bad:
 - doc_writer.md (snake_case)
 - documentation-writer-agent.md (redundant suffix)
 - ayokoding-general-maker.md (missing scope delimiter)
-- apps_ayokoding-web_general-maker.md (wrong delimiter - use double underscore)
+- apps_ayokoding-web_general-maker.md (wrong delimiter - use hyphens)
 ```
 
 ### Scope Prefix Guidelines
 
 **When to use scope prefixes:**
 
-1. **`apps__[app-name]__`** - Agent works ONLY with a specific app
+1. **`apps-[app-name]-`** - Agent works ONLY with a specific app
    - Content creation for Hugo sites (ayokoding-web, oseplatform-web)
    - App-specific validation, deployment, structure management
-   - Examples: `apps__ayokoding-web__general-maker`, `apps__oseplatform-web__deployer`
+   - Examples: `apps-ayokoding-web-general-maker`, `apps-oseplatform-web-deployer`
 
-2. **`libs__[lib-name]__`** - Agent works ONLY with a specific library
+2. **`libs-[lib-name]-`** - Agent works ONLY with a specific library
    - Future use when monorepo has libraries with specific agents
    - Library-specific validation, testing, documentation
-   - Examples: `libs__ts-auth__validator`, `libs__ts-payment__checker`
+   - Examples: `libs-ts-auth-validator`, `libs-ts-payment-checker`
 
-3. **`apps-labs__[app-name]__`** - Agent works with experimental apps
+3. **`apps-labs-[app-name]-`** - Agent works with experimental apps
    - Future use for prototype-specific agents
    - Experimental validation, testing workflows
-   - Examples: `apps-labs__prototype-x__tester`
+   - Examples: `apps-labs-prototype-x-tester`
 
 **When NOT to use scope prefixes:**
 
-- **General-purpose agents**: Work across entire repository (docs**maker, wow**rules-checker, plan\_\_executor)
-- **Cross-cutting agents**: Apply to multiple apps/libs (readme**maker, agent**maker, wow\_\_workflow-maker)
-- **Meta-agents**: Manage repository structure (docs**file-manager, wow**rules-maker)
+- **General-purpose agents**: Work across entire repository (docs-maker, repo-governance-checker, plan-executor)
+- **Cross-cutting agents**: Apply to multiple apps/libs (readme-maker, agent-maker, repo-workflow-maker)
+- **Meta-agents**: Manage repository structure (docs-file-manager, repo-governance-maker)
 
 **Scope naming rules:**
 
 - App/lib names must match directory names exactly (e.g., `ayokoding-web` matches `apps/ayokoding-web/`)
 - Use kebab-case throughout (no camelCase, PascalCase, or snake_case)
-- Double underscore `__` separates scope from agent name (NOT single underscore `_`)
+- Hyphens `-` separate all parts of the agent name (consistent kebab-case throughout)
 - Agent name after scope uses standard kebab-case patterns
 
 ### Naming Guidelines
@@ -535,7 +534,7 @@ FAIL: Bad:
 3. **Be action-oriented** - Use verbs when appropriate (`maker`, `checker`, `validator`, `fixer`, `deployer`)
 4. **Avoid redundancy** - Don't add `-agent` suffix (implied by location)
 5. **Match frontmatter** - `name` field must match filename exactly (including scope prefix)
-6. **Use scope when appropriate** - Add `apps__[app-name]__` prefix for app-specific agents
+6. **Use scope when appropriate** - Add `apps-[app-name]-` prefix for app-specific agents
 
 ### Agent Name vs Description
 
@@ -545,14 +544,14 @@ FAIL: Bad:
 Example - General agent:
 
 ```yaml
-name: docs__maker # Short, kebab-case, no scope (general-purpose)
+name: docs-maker # Short, kebab-case, no scope (general-purpose)
 description: Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework. Use when creating, editing, or organizing project documentation. # Detailed usage guidance
 ```
 
 Example - App-scoped agent:
 
 ```yaml
-name: apps__ayokoding-web__general-maker # Includes scope prefix
+name: apps-ayokoding-web-general-maker # Includes scope prefix
 description: Expert at creating general Hugo content for ayokoding-web (Hextra theme) following Hugo Content Convention and Content Quality Principles. # Detailed usage guidance
 ```
 
@@ -560,12 +559,12 @@ description: Expert at creating general Hugo content for ayokoding-web (Hextra t
 
 Tool permissions follow the **principle of least privilege**: agents should only have access to tools they actually need.
 
-| Pattern           | Tools                               | Use For                                       | Example              | Rationale                                                          |
-| ----------------- | ----------------------------------- | --------------------------------------------- | -------------------- | ------------------------------------------------------------------ |
-| **Read-Only**     | Read, Glob, Grep                    | Analysis without reports                      | (none currently)     | Pure read operations without file output                           |
-| **Checker**       | Read, Glob, Grep, Write, Bash       | Validation with audit report generation       | wow\_\_rules-checker | Needs Write for reports in generated-reports/, Bash for timestamps |
-| **Documentation** | Read, Write, Edit, Glob, Grep       | Creating/editing docs, managing doc structure | doc-writer           | Needs file creation/editing but no shell access                    |
-| **Development**   | Read, Write, Edit, Glob, Grep, Bash | Code generation, tests, builds, deployment    | test-runner          | Requires command execution (powerful, only when necessary)         |
+| Pattern           | Tools                               | Use For                                       | Example                 | Rationale                                                          |
+| ----------------- | ----------------------------------- | --------------------------------------------- | ----------------------- | ------------------------------------------------------------------ |
+| **Read-Only**     | Read, Glob, Grep                    | Analysis without reports                      | (none currently)        | Pure read operations without file output                           |
+| **Checker**       | Read, Glob, Grep, Write, Bash       | Validation with audit report generation       | repo-governance-checker | Needs Write for reports in generated-reports/, Bash for timestamps |
+| **Documentation** | Read, Write, Edit, Glob, Grep       | Creating/editing docs, managing doc structure | doc-writer              | Needs file creation/editing but no shell access                    |
+| **Development**   | Read, Write, Edit, Glob, Grep, Bash | Code generation, tests, builds, deployment    | test-runner             | Requires command execution (powerful, only when necessary)         |
 
 ### Report-Generating Agents: Mandatory Tool Requirements
 
@@ -583,7 +582,7 @@ Tool permissions follow the **principle of least privilege**: agents should only
 
 **Applies to these agent types**:
 
-- All `*-checker` agents (wow**rules-checker, docs**checker, plan**checker, plan**execution-checker, etc.)
+- All `*-checker` agents (repo-governance-checker, docs-checker, plan-checker, plan-execution-checker, etc.)
 - `repo-governance-fixer` (generates fix reports)
 - Any agent creating validation, audit, or verification reports
 
@@ -591,18 +590,18 @@ Tool permissions follow the **principle of least privilege**: agents should only
 
 ALL checker agents MUST write their validation/audit reports to `generated-reports/` directory. This is a hard requirement with NO EXCEPTIONS. The following checker agents are subject to this rule:
 
-1. wow\_\_rules-checker
-2. ayokoding-web-general-checker
-3. ayokoding-web-by-example-checker
-4. ayokoding-web-facts-checker
-5. ayokoding-web-link-checker
-6. ayokoding-web-structure-checker
-7. oseplatform-web-content-checker
-8. docs\_\_checker
-9. docs\_\_tutorial-checker
-10. readme\_\_checker
-11. plan\_\_checker
-12. plan\_\_execution-checker
+1. repo-governance-checker
+2. apps-ayokoding-web-general-checker
+3. apps-ayokoding-web-by-example-checker
+4. apps-ayokoding-web-facts-checker
+5. apps-ayokoding-web-link-checker
+6. apps-ayokoding-web-structure-checker
+7. apps-oseplatform-web-content-checker
+8. docs-checker
+9. docs-tutorial-checker
+10. readme-checker
+11. plan-checker
+12. plan-execution-checker
 
 **NO conversation-only output**: Checker agents MUST NOT output validation results in conversation only. All validation findings MUST be written to audit report files following the 4-part pattern `{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`. The UUID chain enables parallel execution without file collisions.
 
@@ -679,7 +678,7 @@ awk 'pattern { insert_text } { print }' .claude/agents/README.md > temp && mv te
 
 **Agents affected**:
 
-- `agent__maker` - Creates new agents, already complies
+- `agent-maker` - Creates new agents, already complies
 - `repo-governance-maker` - Updates agents, already complies
 
 **Verification**: Check that agents writing to `.opencode/` use only Bash tool (not Write/Edit).
@@ -744,16 +743,16 @@ color: blue
 
 Agents are categorized by their **primary role** which aligns with naming suffixes and tool permissions:
 
-| Color         | Role             | Purpose                               | Tool Pattern                            | Agents                                                                                     |
-| ------------- | ---------------- | ------------------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------ |
-| 🟦 **Blue**   | **Writers**      | Create new content from scratch       | Has `Write` tool                        | docs**maker<br>plan**maker<br>docs\_\_tutorial-maker                                       |
-| 🟩 **Green**  | **Checkers**     | Validate and generate reports         | Has `Write`, `Bash` (no `Edit`)         | wow**rules-checker<br>plan**checker<br>docs\_\_checker                                     |
-| 🟨 **Yellow** | **Updaters**     | Modify and propagate existing content | Has `Edit` (usually not `Write`)\*      | wow**rules-maker\*<br>docs**file-manager                                                   |
-| 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash` (or Bash)\* | plan\_\_executor<br>docs-link-general-checker<br>ayokoding-web-link-checker<br>deployers\* |
+| Color         | Role             | Purpose                               | Tool Pattern                            | Agents                                                                                       |
+| ------------- | ---------------- | ------------------------------------- | --------------------------------------- | -------------------------------------------------------------------------------------------- |
+| 🟦 **Blue**   | **Writers**      | Create new content from scratch       | Has `Write` tool                        | docs-maker<br>plan-maker<br>docs-tutorial-maker                                              |
+| 🟩 **Green**  | **Checkers**     | Validate and generate reports         | Has `Write`, `Bash` (no `Edit`)         | repo-governance-checker<br>plan-checker<br>docs-checker                                      |
+| 🟨 **Yellow** | **Updaters**     | Modify and propagate existing content | Has `Edit` (usually not `Write`)\*      | repo-governance-maker\*<br>docs-file-manager                                                 |
+| 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash` (or Bash)\* | plan-executor<br>docs-link-general-checker<br>apps-ayokoding-web-link-checker<br>deployers\* |
 
 **Edge Case Notes:**
 
-- **\*Yellow with Write**: wow\_\_rules-maker needs Write tool to create new convention files (not just edit existing). Documented exception.
+- **\*Yellow with Write**: repo-governance-maker needs Write tool to create new convention files (not just edit existing). Documented exception.
 - **\*Purple Bash-only**: Deployers (ayokoding-web-deployer, oseplatform-web-deployer) only need Bash for git/deployment orchestration. Purple without Write/Edit is valid for Bash-only orchestrators.
 
 **Color Accessibility Note**: All four colors (blue, green, yellow, purple) are from the verified accessible palette defined in [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - the master reference for all color usage in this repository. These colors meet WCAG AA standards for both light and dark modes and work for all types of color blindness (protanopia, deuteranopia, and tritanopia). See the accessibility section below for details on how agents are identified beyond color. All color-related work must reference the Color Accessibility Convention as the authoritative source.
@@ -775,7 +774,7 @@ This role-based categorization was chosen because it:
 **Hybrid Link Checkers:**
 
 - **docs-link-general-checker** - Validates documentation links + manages external-links-status.yaml cache
-- **ayokoding-web-link-checker** - Validates Hugo content links + manages ayokoding-links-status.yaml cache
+- **apps-ayokoding-web-link-checker** - Validates Hugo content links + manages ayokoding-links-status.yaml cache
 
 **Why hybrid status?**
 
@@ -793,7 +792,7 @@ This role-based categorization was chosen because it:
 
 **Cache files are NOT temporary:**
 
-- Location: `docs/metadata/` (docs-link-general-checker) and `apps/ayokoding-web/` (ayokoding-web-link-checker)
+- Location: `docs/metadata/` (docs-link-general-checker) and `apps/ayokoding-web/` (apps-ayokoding-web-link-checker)
 - Purpose: Long-term link status tracking (6-month expiry), shared across team
 - Committed to git: Yes (operational metadata)
 - Updated every run: Yes (including lastFullScan timestamp)
@@ -819,18 +818,18 @@ Start: What is the agent's primary capability?
     │       - Has `Write`, `Bash` (no Edit)
     │       - Write needed for audit reports in generated-reports/
     │       - Bash needed for UTC+7 timestamps
-    │       - Examples: repo-governance-checker, plan__checker, docs__checker
+    │       - Examples: repo-governance-checker, plan-checker, docs-checker
     │       - EXCEPTION: Link checkers use purple (see Hybrid Agents above)
     │
     ├─ Modifies/updates existing content only
     │   └─> color: yellow (Updater)
     │       - Has `Edit` but NOT `Write`
-    │       - Examples: repo-governance-maker, docs__file-manager
+    │       - Examples: repo-governance-maker, docs-file-manager
     │
     └─ Executes plans/orchestrates tasks
         └─> color: purple (Implementor)
             - Has Write, Edit, AND Bash
-            - Examples: plan__executor
+            - Examples: plan-executor
             - INCLUDES: Hybrid link checkers (validation + state management)
 ```
 
@@ -843,7 +842,7 @@ Start: What is the agent's primary capability?
   - Write tool needed for cache file updates (external-links-status.yaml)
   - Edit tool needed for fixing broken links in content
   - Bash tool needed for UTC+7 timestamps
-  - Examples: docs-link-general-checker, ayokoding-web-link-checker
+  - Examples: docs-link-general-checker, apps-ayokoding-web-link-checker
 - **Deployers with Bash only**: Use `purple` (Implementor)
   - Execute deployment orchestration (purple's "executes plans/orchestrates tasks")
   - Don't create or edit files, only run git/deployment commands
@@ -853,7 +852,7 @@ Start: What is the agent's primary capability?
   - Yellow (Updaters) should have Edit but NOT Write
   - If Write is needed for creating new convention files → keep yellow, document exception
   - If Write can be removed → remove Write to match yellow categorization
-  - Example: wow\_\_rules-maker (creates new conventions, keeps Write + Edit)
+  - Example: repo-governance-maker (creates new conventions, keeps Write + Edit)
 - **Agent doesn't fit any category**: Consider if it should be split or if a new category is needed
 - **Unsure**: Default to the most restrictive category based on tools, or omit the color field
 
@@ -869,7 +868,7 @@ Agents are identified through FIVE independent methods:
 
 | Identification Method | Example                          | Purpose                                   |
 | --------------------- | -------------------------------- | ----------------------------------------- |
-| **Agent Name**        | "docs\_\_maker"                  | Primary text-based identifier             |
+| **Agent Name**        | "docs-maker"                     | Primary text-based identifier             |
 | **Role Suffix**       | "-maker" (writer)                | Indicates category through naming pattern |
 | **Emoji Shape**       | 🟦 (square)                      | Shape differentiation (not color)         |
 | **Description**       | "Expert documentation writer..." | Semantic purpose statement                |
@@ -912,11 +911,11 @@ All agent colors are from the verified accessible palette:
 
 #### Agent Identification Example
 
-**Example agent: `docs__maker`**
+**Example agent: `docs-maker`**
 
 ```yaml
 ---
-name: docs__maker
+name: docs-maker
 description: Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework. Use when creating, editing, or organizing project documentation.
 tools: Read, Write, Edit, Glob, Grep
 model: inherit
@@ -926,7 +925,7 @@ color: blue
 
 **How users identify this agent (without seeing color):**
 
-1. **Name**: "docs\_\_maker" (text identifier)
+1. **Name**: "docs-maker" (text identifier)
 2. **Suffix**: "-maker" implies writer/creator role
 3. **Description**: "Expert documentation writer" (semantic identifier)
 4. **Emoji**: 🟦 appears as a square (shape), regardless of color perception
@@ -1000,8 +999,8 @@ color: yellow
 
 ```yaml
 ---
-name: plan__executor
-description: Expert at systematically implementing project plans by following delivery checklists. Reads plans from plans/ directory, executes implementation steps, runs validation, and updates checklist progress with detailed notes. Use when executing a plan created by the plan__maker agent.
+name: plan-executor
+description: Expert at systematically implementing project plans by following delivery checklists. Reads plans from plans/ directory, executes implementation steps, runs validation, and updates checklist progress with detailed notes. Use when executing a plan created by the plan-maker agent.
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 color: purple
@@ -1184,7 +1183,7 @@ Task(plan-fixer, "apply fixes from audit report")
 
 ```
 User: "Apply plan fixes in manual mode"
-→ Execute plan__fixer logic directly
+→ Execute plan-fixer logic directly
 → Edit tool modifies real plan files
 → Write tool creates real fix report
 → git status shows modified files
@@ -1282,13 +1281,13 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 
 **Examples**:
 
-- docs\_\_maker (documentation creation)
-- docs\_\_checker (factual verification)
-- docs\_\_tutorial-checker (tutorial quality validation)
-- agent\_\_maker (agent creation automation)
-- ayokoding-web-general-maker (general Hugo content creation)
-- ayokoding-web-by-example-maker (by-example tutorial creation)
-- oseplatform-web-content-maker (Hugo content creation)
+- docs-maker (documentation creation)
+- docs-checker (factual verification)
+- docs-tutorial-checker (tutorial quality validation)
+- agent-maker (agent creation automation)
+- apps-ayokoding-web-general-maker (general Hugo content creation)
+- apps-ayokoding-web-by-example-maker (by-example tutorial creation)
+- apps-oseplatform-web-content-maker (Hugo content creation)
 
 **When to use this tier**:
 
@@ -1314,13 +1313,13 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 
 **Examples**:
 
-- plan\_\_maker (comprehensive project planning)
-- plan\_\_executor (multi-phase implementation)
-- plan\_\_checker (pre-implementation validation)
-- wow\_\_rules-maker (cascading updates across files)
-- wow\_\_rules-checker (comprehensive consistency validation)
-- docs\_\_file-manager (prefix calculation, link updates, git operations)
-- swe**hugo**developer (theme development, asset pipeline, configuration)
+- plan-maker (comprehensive project planning)
+- plan-executor (multi-phase implementation)
+- plan-checker (pre-implementation validation)
+- repo-governance-maker (cascading updates across files)
+- repo-governance-checker (comprehensive consistency validation)
+- docs-file-manager (prefix calculation, link updates, git operations)
+- swe-hugo-developer (theme development, asset pipeline, configuration)
 - docs-link-general-checker (external/internal link validation with caching)
 
 **When to use this tier**:
@@ -1335,11 +1334,11 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 
 Quick categorization for existing agents:
 
-| Tier                 | Agents                                                                                                                                                                                                                                                                                                                 |
-| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Tier 1: Simple**   | ayokoding-web-deployer, oseplatform-web-deployer                                                                                                                                                                                                                                                                       |
-| **Tier 2: Standard** | docs**maker, docs**tutorial-maker, docs**checker, docs**tutorial-checker, readme**maker, readme**checker, agent\_\_maker, ayokoding-web-general-maker, ayokoding-web-by-example-maker, ayokoding-web-general-checker, ayokoding-web-by-example-checker, oseplatform-web-content-maker, oseplatform-web-content-checker |
-| **Tier 3: Complex**  | plan**maker, plan**executor, plan**checker, plan**execution-checker, wow**rules-maker, wow**rules-checker, docs**file-manager, swe**hugo\_\_developer, docs-link-general-checker                                                                                                                                       |
+| Tier                 | Agents                                                                                                                                                                                                                                                                                                                                      |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Tier 1: Simple**   | ayokoding-web-deployer, oseplatform-web-deployer                                                                                                                                                                                                                                                                                            |
+| **Tier 2: Standard** | docs-maker, docs-tutorial-maker, docs-checker, docs-tutorial-checker, readme-maker, readme-checker, agent-maker, apps-ayokoding-web-general-maker, apps-ayokoding-web-by-example-maker, apps-ayokoding-web-general-checker, apps-ayokoding-web-by-example-checker, apps-oseplatform-web-content-maker, apps-oseplatform-web-content-checker |
+| **Tier 3: Complex**  | plan-maker, plan-executor, plan-checker, plan-execution-checker, repo-governance-maker, repo-governance-checker, docs-file-manager, swe-hugo-developer, docs-link-general-checker                                                                                                                                                           |
 
 ### When to Condense or Split Agents
 
@@ -1380,14 +1379,14 @@ Quick categorization for existing agents:
 
 ### Size Checking Process
 
-**For agent\_\_maker**:
+**For agent-maker**:
 
 1. After creating agent file, count lines and characters
 2. Compare to tier limits based on agent type
 3. Warn if approaching warning threshold
 4. Suggest condensation if near limit
 
-**For wow\_\_rules-maker**:
+**For repo-governance-maker**:
 
 1. When updating agents, check file size before/after
 2. If agent crosses warning threshold, notify user
@@ -1432,7 +1431,7 @@ Quick categorization for existing agents:
 
 This section defines how to properly separate reusable knowledge (Skills) from agent-specific instructions (Agent files), ensuring maintainability, reducing duplication, and enabling effective knowledge delivery.
 
-**Validated through**: Agent Skills Simplification pilot (2026-01-03) - docs family achieved 49.2% size reduction while maintaining 100% functionality.
+**Validated through**: AgentSkills Simplification pilot (2026-01-03) - docs family achieved 49.2% size reduction while maintaining 100% functionality.
 
 ### Knowledge Classification Decision Tree
 
@@ -1441,10 +1440,10 @@ When writing or updating an agent, use this decision tree to determine where con
 ```
 Is this content reusable across 3+ agents?
 │
-├─ YES → Move to Skill or Convention Document
+├─ YES → Move toSkill or Convention Document
 │   │
 │   ├─ Is it actionable "how-to" guidance?
-│   │   └─ YES → Create/update Skill in .opencode/skill/
+│   │   └─ YES → Create/updateSkill in .opencode/skill/
 │   │       Examples: applying-content-quality, creating-accessible-diagrams
 │   │
 │   └─ Is it technical specification or standard?
@@ -1462,7 +1461,7 @@ Is this content reusable across 3+ agents?
 
 Based on the pilot validation, use these proven patterns when simplifying agents:
 
-#### Pattern A: Reference Skill for Standards
+#### Pattern A: ReferenceSkill for Standards
 
 **Use when**: Content is a universal standard that doesn't change per-agent.
 
@@ -1486,7 +1485,7 @@ FAIL: Bad: "The content is validated by the agent"
 ```markdown
 ## Content Quality Standards
 
-**See `docs__applying-content-quality` Skill for complete standards** on:
+**See `docs-applying-content-quality`Skill for complete standards** on:
 
 - Active voice requirements
 - Heading hierarchy (single H1, proper nesting)
@@ -1494,7 +1493,7 @@ FAIL: Bad: "The content is validated by the agent"
 - Professional formatting
 ```
 
-**Impact**: ~50-100 lines removed per agent, zero loss of knowledge (accessible via Skill).
+**Impact**: ~50-100 lines removed per agent, zero loss of knowledge (accessible viaSkill).
 
 #### Pattern B: Convention Link for Detailed Rules
 
@@ -1534,7 +1533,7 @@ FAIL: Bad: "The content is validated by the agent"
 
 **Impact**: ~100-200 lines removed per agent, convention becomes single source of truth.
 
-#### Pattern C: Skill + Convention Hybrid
+#### Pattern C:Skill + Convention Hybrid
 
 **Use when**: Complex domain requires both actionable guidance (Skill) and specifications (convention).
 
@@ -1567,7 +1566,7 @@ FAIL: Bad: "The content is validated by the agent"
 ```markdown
 ## Factual Validation
 
-**See `docs__validating-factual-accuracy` Skill for complete methodology** covering:
+**See `docs-validating-factual-accuracy`Skill for complete methodology** covering:
 
 - Verification workflow (claim identification → source determination → verification)
 - Source prioritization (official docs → GitHub → registries → standards)
@@ -1593,30 +1592,30 @@ FAIL: Bad: "The content is validated by the agent"
 
 **Examples of task-specific content**:
 
-- `docs__maker`: File naming logic for Diátaxis categories
-- `docs__checker`: What specific validations to perform
-- `docs__fixer`: How to assess confidence levels for doc fixes
-- `plan__executor`: Sequential implementation workflow
+- `docs-maker`: File naming logic for Diátaxis categories
+- `docs-checker`: What specific validations to perform
+- `docs-fixer`: How to assess confidence levels for doc fixes
+- `plan-executor`: Sequential implementation workflow
 
-**Rationale**: Agents remain self-contained for their specific task while delegating reusable knowledge to Skills/Conventions.
+**Rationale**: Agents remain self-contained for their specific task while delegating reusable knowledge toSkills/Conventions.
 
 ### Guidelines for Future Agent Creation
 
 When creating new agents:
 
 1. **Start lean**: Write minimum viable agent with task-specific instructions only
-2. **Reference early**: Link to Skills/Conventions instead of duplicating
-3. **Quick reference OK**: Brief 1-3 line summaries with Skill/Convention links acceptable
+2. **Reference early**: Link toSkills/Conventions instead of duplicating
+3. **Quick reference OK**: Brief 1-3 line summaries withSkill/Convention links acceptable
 4. **Scan for duplication**: Before finalizing, check if content exists in other agents (use Grep)
-5. **3+ agent rule**: If same content appears in 3+ agents, extract to Skill/Convention
+5. **3+ agent rule**: If same content appears in 3+ agents, extract toSkill/Convention
 
 ### Validation Checklist
 
 Before committing agent changes:
 
-- [ ] No content duplicates Skills (check `.claude/skills/` (primary) or `.opencode/skill/` (secondary) catalog)
+- [ ] No content duplicatesSkills (check `.claude/skills/` (primary) or `.opencode/skill/` (secondary) catalog)
 - [ ] No content duplicates Conventions (check `governance/conventions/`)
-- [ ] All Skills referenced exist in `.opencode/skill/`
+- [ ] AllSkills referenced exist in `.opencode/skill/`
 - [ ] All Convention links point to valid files
 - [ ] Task-specific instructions retained (agent is self-contained for its job)
 - [ ] Agent within tier limits (Simple <800, Standard <1,200, Complex <1,800)
@@ -1640,13 +1639,13 @@ updated: YYYY-MM-DD
 ---
 ```
 
-**Empty Skills**: If agent doesn't use any Skills yet, use empty list:
+**EmptySkills**: If agent doesn't use anySkills yet, use empty list:
 
 ```yaml
 skills: []
 ```
 
-**Multiple Skills**: List all Skills the agent references:
+**MultipleSkills**: List allSkills the agent references:
 
 ```yaml
 skills: [skill-one, skill-two, skill-three]
@@ -1656,20 +1655,20 @@ skills: [skill-one, skill-two, skill-three]
 
 Based on agent simplification audit findings:
 
-| Pattern                                                                   | Instead Use                                | Typical Reduction |
-| ------------------------------------------------------------------------- | ------------------------------------------ | ----------------- |
-| Content quality standards (active voice, headings, accessibility)         | `docs__applying-content-quality` Skill     | ~50-100 lines     |
-| Diagram color palette (Blue #0173B2, Orange #DE8F05...)                   | `docs__creating-accessible-diagrams` Skill | ~60-70 lines      |
-| Report generation mechanics (UUID, progressive writing, filename pattern) | Temporary Files Convention                 | ~200 lines        |
-| Validation methodology (source prioritization, confidence levels)         | `docs__validating-factual-accuracy` Skill  | ~150 lines        |
-| Confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE criteria)               | Fixer Confidence Levels Convention         | ~200 lines        |
-| Criticality levels (CRITICAL/HIGH/MEDIUM/LOW definitions)                 | `assessing-criticality-confidence` Skill   | ~100 lines        |
-| Mathematical notation rules (LaTeX delimiters, display math)              | Mathematical Notation Convention           | ~30 lines         |
-| Maker-checker-fixer workflow (three-stage pattern)                        | `applying-maker-checker-fixer` Skill       | ~50 lines         |
+| Pattern                                                                   | Instead Use                              | Typical Reduction |
+| ------------------------------------------------------------------------- | ---------------------------------------- | ----------------- |
+| Content quality standards (active voice, headings, accessibility)         | `docs-applying-content-quality`Skill     | ~50-100 lines     |
+| Diagram color palette (Blue #0173B2, Orange #DE8F05...)                   | `docs-creating-accessible-diagrams`Skill | ~60-70 lines      |
+| Report generation mechanics (UUID, progressive writing, filename pattern) | Temporary Files Convention               | ~200 lines        |
+| Validation methodology (source prioritization, confidence levels)         | `docs-validating-factual-accuracy`Skill  | ~150 lines        |
+| Confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE criteria)               | Fixer Confidence Levels Convention       | ~200 lines        |
+| Criticality levels (CRITICAL/HIGH/MEDIUM/LOW definitions)                 | `assessing-criticality-confidence`Skill  | ~100 lines        |
+| Mathematical notation rules (LaTeX delimiters, display math)              | Mathematical Notation Convention         | ~30 lines         |
+| Maker-checker-fixer workflow (three-stage pattern)                        | `applying-maker-checker-fixer`Skill      | ~50 lines         |
 
 ### Example: Before and After Simplification
 
-**Before (docs\_\_checker - 1,318 lines)**:
+**Before (docs-checker - 1,318 lines)**:
 
 Agent contained full text of:
 
@@ -1681,12 +1680,12 @@ Agent contained full text of:
 - Mathematical notation validation rules (30 lines)
 - Various validation examples (300+ lines)
 
-**After (docs\_\_checker - 515 lines, 60.9% reduction)**:
+**After (docs-checker - 515 lines, 60.9% reduction)**:
 
 Agent contains:
 
 - Task-specific validation workflow (what to check)
-- Brief Skill references with context
+- BriefSkill references with context
 - Links to Conventions for specifications
 - Domain-specific examples (concise)
 - All task-specific decision logic
@@ -1697,25 +1696,25 @@ Agent contains:
 
 **Maintainability**:
 
-- Update standard once in Skill/Convention, all agents benefit
+- Update standard once inSkill/Convention, all agents benefit
 - No hunting for outdated duplicates across 45 agents
 - Single source of truth for each standard
 
 **Clarity**:
 
-- Agents focus on task-specific instructions
-- Skills provide reusable knowledge on-demand
+- Agents focus on task-specific instructions -Skills provide reusable knowledge on-demand
 - Conventions document authoritative specifications
 
 **Efficiency**:
 
 - Smaller agent files (30-60% reduction typical)
 - Faster agent loading and processing
-- Progressive knowledge delivery (scan agent → dive into Skill as needed)
+- Progressive knowledge delivery (scan agent → dive intoSkill as needed)
 
 **Quality**:
 
-- Skills professionally maintained with examples
+-Skills professionally maintained with examples
+
 - Conventions peer-reviewed and validated
 - Agents remain focused on core responsibility
 
@@ -1805,7 +1804,7 @@ If information cannot be verified: (1) State the limitation explicitly, (2) Prov
 ### Agent-Specific Requirements
 
 - **Documentation agents (doc-writer)**: Verify code examples, file paths, project structure claims, convention references, external library docs
-- **Validation agents (wow\_\_rules-checker)**: Read all files before validating, provide specific line numbers, verify links and frontmatter
+- **Validation agents (repo-governance-checker)**: Read all files before validating, provide specific line numbers, verify links and frontmatter
 - **Development agents**: Read test files, verify command outputs, check error messages, confirm tool availability
 
 ### Verification Checklist for Agents
@@ -1852,7 +1851,7 @@ Before submitting a new agent, verify:
 - [ ] `tools` explicitly lists required tools only (least privilege)
 - [ ] `model` set to `inherit` (or justified if specific)
 - [ ] `color` assigned based on agent role (blue/green/yellow/purple) - required
-- [ ] `skills` field present (can be empty `[]` or list actual Skills) - required
+- [ ] `skills` field present (can be empty `[]` or list actualSkills) - required
 
 #### Document Structure
 
@@ -1994,13 +1993,13 @@ Your primary job is to [clear, specific purpose statement].
 
 **Agent Responsibilities:**
 
-1. **wow\_\_rules-maker:**
+1. **repo-governance-maker:**
    - MUST check AGENTS.md size when adding rules
    - Warn user if file exceeds 35,000 characters
    - Suggest condensation strategies (move details to convention docs)
    - Add only 2-5 line summaries to AGENTS.md, link to detailed docs
 
-2. **docs\_\_maker and related content agents:**
+2. **docs-maker and related content agents:**
    - MUST NOT add verbose content to AGENTS.md
    - When adding conventions, create detailed doc first, then brief AGENTS.md summary
    - Maximum AGENTS.md section length: 3-5 lines + link
@@ -2015,21 +2014,21 @@ Your primary job is to [clear, specific purpose statement].
 ```
 Startup: AGENTS.md ──loaded──> Orchestrator (main conversation)
 Runtime: Orchestrator ──spawns──> Agents (isolated contexts)
-         Skills ──delivers via skills: field──> Agents
+        Skills ──delivers via skills: field──> Agents
          Conventions ──explicit references──> Agents
 ```
 
 **Critical Understanding:**
 
 1. **Agents have isolated contexts** - They do NOT inherit AGENTS.md
-2. **Skills deliver explicitly** - Only Skills listed in agent's `skills:` field are available
+2. **Skills deliver explicitly** - OnlySkills listed in agent's `skills:` field are available
 3. **References are explicit** - Agents link to specific conventions they need
 4. **Orchestrator has AGENTS.md** - Main conversation loads AGENTS.md, not agents
 
 **Rules:**
 
 1. **Don't duplicate** - Agents should reference conventions, not repeat content
-2. **Do specialize** - Agents add domain expertise through Skills and explicit knowledge
+2. **Do specialize** - Agents add domain expertise throughSkills and explicit knowledge
 3. **Follow conventions** - All agents must comply with this convention
 4. **Declare skills explicitly** - Every agent must have non-empty `skills:` field
 
@@ -2117,13 +2116,13 @@ Before committing a new agent:
 2. **Use the agent creation checklist** - Verify all items
 3. **Test the agent** - Invoke it and verify behavior
 4. **Review existing agents** - Ensure consistency
-5. **Run wow\_\_rules-checker** - Validate compliance
+5. **Run repo-governance-checker** - Validate compliance
 
 ## Agent-Skill Separation
 
-**Purpose**: Eliminate duplication between agents by extracting reusable knowledge into Skills. Agents remain focused on task-specific workflows while Skills provide shared domain expertise.
+**Purpose**: Eliminate duplication between agents by extracting reusable knowledge intoSkills. Agents remain focused on task-specific workflows whileSkills provide shared domain expertise.
 
-### When to Use Skills vs. Agent Content
+### When to UseSkills vs. Agent Content
 
 Use this decision tree to determine where knowledge belongs:
 
@@ -2131,25 +2130,25 @@ Use this decision tree to determine where knowledge belongs:
 Is this knowledge...
 
 └─ Used by 3+ agents?
-   ├─ YES → Extract to Skill
+   ├─ YES → Extract toSkill
    └─ NO → Keep in agent
 
 └─ Reusable domain expertise? (color palettes, validation standards, report formats)
-   ├─ YES → Create/extend Skill
+   ├─ YES → Create/extendSkill
    └─ NO → Keep in agent
 
 └─ Agent-specific workflow? (task sequence, unique logic, custom decisions)
    ├─ YES → Keep in agent
-   └─ NO → Consider Skill
+   └─ NO → ConsiderSkill
 
 └─ Convention details? (standards, rules, formats)
-   ├─ YES → Link to convention document, optionally reference Skill
+   ├─ YES → Link to convention document, optionally referenceSkill
    └─ NO → Evaluate based on above criteria
 ```
 
-### What Belongs in Skills
+### What Belongs inSkills
 
-**Extract to Skills** (reusable knowledge):
+**Extract toSkills** (reusable knowledge):
 
 1. **Validation Standards**
    - UUID chain generation logic
@@ -2207,7 +2206,7 @@ Is this knowledge...
 **Before Simplification** (800+ lines):
 
 ```markdown
-# docs\_\_checker Agent
+# docs-checker Agent
 
 ## UUID Generation
 
@@ -2236,15 +2235,15 @@ skills:
   - applying-content-quality
 ---
 
-# docs\_\_checker Agent
+# docs-checker Agent
 
 ## Report Generation
 
-See `generating-validation-reports` Skill for UUID chains, timestamps, progressive writing.
+See `generating-validation-reports`Skill for UUID chains, timestamps, progressive writing.
 
 ## Criticality Assessment
 
-See `assessing-criticality-confidence` Skill for level definitions.
+See `assessing-criticality-confidence`Skill for level definitions.
 
 ## Validation Workflow
 
@@ -2258,7 +2257,7 @@ See `assessing-criticality-confidence` Skill for level definitions.
 **Before Simplification** (1,100+ lines):
 
 ```markdown
-# apps**ayokoding-web**by-example-maker
+# apps-ayokoding-web-by-example-maker
 
 ## Hugo Weight System
 
@@ -2286,26 +2285,26 @@ See `assessing-criticality-confidence` Skill for level definitions.
 ```markdown
 ---
 skills:
-  - developing-ayokoding-content
-  - creating-by-example-tutorials
+  - apps-ayokoding-web-developing-content
+  - docs-creating-by-example-tutorials
 ---
 
-# apps**ayokoding-web**by-example-maker
+# apps-ayokoding-web-by-example-maker
 
 ## Hugo Patterns
 
-See `apps__ayokoding-web__developing-content` Skill for weight system, bilingual strategy.
+See `apps-ayokoding-web-developing-content`Skill for weight system, bilingual strategy.
 
 ## Example Structure
 
-See `docs__creating-by-example-tutorials` Skill for five-part format, annotation density.
+See `docs-creating-by-example-tutorials`Skill for five-part format, annotation density.
 
 ## Creation Workflow
 
 [500 lines of task-specific content creation - RETAINED]
 ```
 
-**Result**: 600 lines removed (55%), all patterns available via Skills.
+**Result**: 600 lines removed (55%), all patterns available viaSkills.
 
 ### Decision Tree Examples
 
@@ -2320,7 +2319,7 @@ A: YES (8+ agents create diagrams)
 Q: Reusable domain expertise?
 A: YES (color accessibility is universal)
 
-Decision: Extract to `docs__creating-accessible-diagrams` Skill
+Decision: Extract to `docs-creating-accessible-diagrams`Skill
 ```
 
 **Scenario 2**: Adding custom validation logic for plan structure
@@ -2329,12 +2328,12 @@ Decision: Extract to `docs__creating-accessible-diagrams` Skill
 Knowledge: Plan must have README.md, requirements.md, delivery.md
 
 Q: Used by 3+ agents?
-A: NO (only plan__checker validates plan structure)
+A: NO (only plan-checker validates plan structure)
 
 Q: Agent-specific workflow?
 A: YES (unique to plan validation)
 
-Decision: Keep in plan__checker agent
+Decision: Keep in plan-checker agent
 ```
 
 **Scenario 3**: Adding mode parameter handling to fixer agents
@@ -2348,29 +2347,29 @@ A: YES (all 15 fixer agents use mode parameter)
 Q: Reusable domain expertise?
 A: YES (mode handling is standardized)
 
-Decision: Extract to `applying-maker-checker-fixer` Skill
+Decision: Extract to `applying-maker-checker-fixer`Skill
 ```
 
 ### Benefits of Agent-Skill Separation
 
-1. **Single Source of Truth**: Update Skill once, all agents benefit
+1. **Single Source of Truth**: UpdateSkill once, all agents benefit
 2. **Reduced Duplication**: Eliminate 50-90% of duplicated content
-3. **Easier Maintenance**: Convention changes require updating Skill only
-4. **Better Scalability**: New agents reference existing Skills
+3. **Easier Maintenance**: Convention changes require updatingSkill only
+4. **Better Scalability**: New agents reference existingSkills
 5. **Clearer Agents**: Agents focus on task workflows, not standards
-6. **Progressive Disclosure**: Skills load on-demand, reducing context bloat
+6. **Progressive Disclosure**:Skills load on-demand, reducing context bloat
 
 ### Implementation Pattern
 
 When simplifying an agent:
 
 1. **Identify duplication**: Look for content appearing in 3+ agents
-2. **Check existing Skills**: Does a Skill already cover this?
-   - YES → Reference the Skill
-   - NO → Consider creating new Skill
-3. **Extract to Skill**: Create/extend Skill with reusable knowledge
-4. **Update agent**: Replace duplicated content with Skill reference
-5. **Add frontmatter**: Include Skill in `skills:` field
+2. **Check existingSkills**: Does aSkill already cover this?
+   - YES → Reference theSkill
+   - NO → Consider creating newSkill
+3. **Extract toSkill**: Create/extendSkill with reusable knowledge
+4. **Update agent**: Replace duplicated content withSkill reference
+5. **Add frontmatter**: IncludeSkill in `skills:` field
 6. **Verify size**: Confirm agent is within tier limits
 7. **Test functionality**: Ensure agent still works correctly
 
@@ -2382,7 +2381,7 @@ When simplifying an agent:
 
 - All agents within tier limits (Simple <800, Standard <1,200, Complex <1,800)
 - Zero functionality regressions
-- All Skills referenced exist
+- AllSkills referenced exist
 - All convention links valid
 
 **Project Achievement** (2026-01-03):
@@ -2391,31 +2390,31 @@ When simplifying an agent:
 - 82.7% average reduction (4x better than target)
 - 28,439 lines eliminated
 - 100% tier compliance (all in Simple tier)
-- 18 Skills created/used
+- 18Skills created/used
 
 ### Ongoing Vigilance
 
 **Prevent duplication creep**:
 
-1. **New agent creation**: Reference Skills instead of duplicating
-2. **Agent updates**: Extract new duplication to Skills
-3. **Periodic audits**: Run wow\_\_rules-checker for duplication detection
-4. **Code reviews**: Check for embedded Skill knowledge
+1. **New agent creation**: ReferenceSkills instead of duplicating
+2. **Agent updates**: Extract new duplication toSkills
+3. **Periodic audits**: Run repo-governance-checker for duplication detection
+4. **Code reviews**: Check for embeddedSkill knowledge
 5. **Documentation**: Keep AI Agents Convention updated with examples
 
-### Related Skills
+### RelatedSkills
 
-**Current Skills** (18 total):
+**CurrentSkills** (18 total):
 
 - `generating-validation-reports` - Report generation, UUID chains, timestamps
 - `assessing-criticality-confidence` - Criticality levels, confidence assessment
 - `applying-maker-checker-fixer` - Three-stage workflow, mode handling
-- `apps__ayokoding-web__developing-content` - Hugo Hextra patterns, bilingual content
-- `apps__oseplatform-web__developing-content` - Hugo PaperMod patterns
-- `docs__creating-by-example-tutorials` - Annotation standards, five-part structure
-- `docs__creating-accessible-diagrams` - Color palettes, accessibility
-- `docs__applying-content-quality` - Markdown quality standards
-- `docs__validating-factual-accuracy` - Verification methodology
+- `apps-ayokoding-web-developing-content` - Hugo Hextra patterns, bilingual content
+- `apps-oseplatform-web-developing-content` - Hugo PaperMod patterns
+- `docs-creating-by-example-tutorials` - Annotation standards, five-part structure
+- `docs-creating-accessible-diagrams` - Color palettes, accessibility
+- `docs-applying-content-quality` - Markdown quality standards
+- `docs-validating-factual-accuracy` - Verification methodology
 - `validating-links` - Link validation, caching
 - Plus 8 more in Content Creation, Standards Application, Process Execution categories
 
@@ -2448,12 +2447,12 @@ This repository maintains **dual compatibility** with both Claude Code (`.claude
 ```
 .
 ├── .claude/                 # Claude Code configuration (PRIMARY - Source of Truth)
-│   ├── agents/             # 46 agents in Claude Code format
-│   ├── skills/             # 23 skills
+│   ├── agents/             # 57 agents in Claude Code format
+│   ├── skills/             # 34 skills
 │   └── settings.local.json # MCP servers configuration
 └── .opencode/              # OpenCode configuration (SECONDARY - Auto-generated)
-    ├── agent/              # 46 agents in OpenCode format (synced from .claude/)
-    ├── skill/              # 23 skills (direct copy from .claude/)
+    ├── agent/              # 57 agents in OpenCode format (synced from .claude/)
+    ├── skill/              # 34 skills (direct copy from .claude/)
     └── opencode.json       # OpenCode configuration
 ```
 
@@ -2516,13 +2515,13 @@ model: inherit         # inherits from parent
 
 #### Skills Format
 
-**Identical for both systems** - Skills use the same SKILL.md format:
+**Identical for both systems** -Skills use the same SKILL.md format:
 
 ```yaml
 ---
 description: Brief description
 ---
-# Skill Name
+#Skill Name
 Content...
 ```
 
@@ -2536,7 +2535,7 @@ Skills are **directly copied** from `.claude/skills/` to `.opencode/skill/` (no 
 
 - `npm run sync:claude-to-opencode` - Full sync (agents + skills)
 - `npm run sync:agents` - Agents only
-- `npm run sync:skills` - Skills only (direct copy)
+- `npm run sync:skills` -Skills only (direct copy)
 - `npm run validate:sync` - Verify semantic equivalence
 
 **Conversion Logic**:
@@ -2551,7 +2550,7 @@ Skills are **directly copied** from `.claude/skills/` to `.opencode/skill/` (no 
 - **[AGENTS.md](../../../AGENTS.md)** (SECONDARY) - OpenCode configuration with auto-generated warning
 - **[.claude/agents/README.md](../../../.claude/agents/README.md)** (PRIMARY) - Agent catalog
 - **[.opencode/agent/README.md](../../../.opencode/agent/README.md)** (SECONDARY) - OpenCode agent catalog with warning
-- **[.claude/skills/README.md](../../../.claude/skills/README.md)** (PRIMARY) - Skills catalog
+- **[.claude/skills/README.md](../../../.claude/skills/README.md)** (PRIMARY) -Skills catalog
 - **[.opencode/skill/README.md](../../../.opencode/skill/README.md)** (SECONDARY) - OpenCode skills catalog with warning
 
 ### Migration History
@@ -2575,7 +2574,7 @@ Skills are **directly copied** from `.claude/skills/` to `.opencode/skill/` (no 
 **Problem**: Conversion errors during sync
 **Solution**: Check agent frontmatter format in `.claude/agents/`, fix YAML syntax, re-sync
 
-**Problem**: Skills missing in one directory
+**Problem**:Skills missing in one directory
 **Solution**: Verify skills exist in `.claude/skills/`, run `npm run sync:skills`
 
 ---

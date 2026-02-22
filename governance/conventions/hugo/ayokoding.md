@@ -1193,8 +1193,8 @@ title: Business # WRONG! Too generic (missing context)
 
 **Agent Responsibilities**:
 
-- `ayokoding-web-structure-maker` agent proactively modifies weights following this system when making intentional structural changes
-- `ayokoding-web-structure-checker` agent validates compliance with this system for ALL `_index.md` files
+- `apps-ayokoding-web-structure-maker` agent proactively modifies weights following this system when making intentional structural changes
+- `apps-ayokoding-web-structure-checker` agent validates compliance with this system for ALL `_index.md` files
 - Violations are flagged as CRITICAL errors in audit reports
 
 #### Cookbook Location (Updated 2026-01-30)
@@ -1342,7 +1342,7 @@ Selamat datang di jalur pembelajaran Golang kami! Kurikulum komprehensif ini mem
 
 ### Optional Topic-Level Diátaxis Structure
 
-**Status**: OPTIONAL pattern (not required, not validated by ayokoding-web-general-checker)
+**Status**: OPTIONAL pattern (not required, not validated by apps-ayokoding-web-general-checker)
 
 Topics in ayokoding-web MAY optionally organize content using Diátaxis framework at the topic level.
 
@@ -1748,8 +1748,8 @@ Prior to 2025-12-21, the CLI tool generated relative paths (`swe/programming-lan
 
 **Automated Validation**:
 
-- `ayokoding-web-link-checker` agent validates link format and targets
-- `ayokoding-web-structure-checker` agent validates navigation structure
+- `apps-ayokoding-web-link-checker` agent validates link format and targets
+- `apps-ayokoding-web-structure-checker` agent validates navigation structure
 
 ### Common Mistakes
 
@@ -2094,9 +2094,9 @@ static/
 
 **Related AI Agents**:
 
-- [ayokoding-web-general-maker](../../../.claude/agents/apps-ayokoding-web-general-maker.md) - Creates general ayokoding-web content
-- [ayokoding-web-by-example-maker](../../../.claude/agents/apps-ayokoding-web-by-example-maker.md) - Creates by-example tutorials
-- [ayokoding-web-general-checker](../../../.claude/agents/apps-ayokoding-web-general-checker.md) - Validates general ayokoding-web content
-- [ayokoding-web-by-example-checker](../../../.claude/agents/apps-ayokoding-web-by-example-checker.md) - Validates by-example tutorials
-- [ayokoding-web-link-checker](../../../.claude/agents/apps-ayokoding-web-link-checker.md) - Validates links in ayokoding-web
+- [apps-ayokoding-web-general-maker](../../../.claude/agents/apps-ayokoding-web-general-maker.md) - Creates general ayokoding-web content
+- [apps-ayokoding-web-by-example-maker](../../../.claude/agents/apps-ayokoding-web-by-example-maker.md) - Creates by-example tutorials
+- [apps-ayokoding-web-general-checker](../../../.claude/agents/apps-ayokoding-web-general-checker.md) - Validates general ayokoding-web content
+- [apps-ayokoding-web-by-example-checker](../../../.claude/agents/apps-ayokoding-web-by-example-checker.md) - Validates by-example tutorials
+- [apps-ayokoding-web-link-checker](../../../.claude/agents/apps-ayokoding-web-link-checker.md) - Validates links in ayokoding-web
 - [ayokoding-web-deployer](../../../.claude/agents/apps-ayokoding-web-deployer.md) - Deploys ayokoding-web to production

@@ -349,8 +349,8 @@ Development: Hugo Development Convention (semantic HTML)
 ```
 Convention: Color Accessibility
     ↓ implemented by
-Agent: docs__checker (validates diagram colors)
-Agent: docs__fixer (applies color corrections)
+Agent: docs-checker (validates diagram colors)
+Agent: docs-fixer (applies color corrections)
 ```
 
 ---
@@ -454,13 +454,16 @@ Skills (context: fork) ──delegates to──> Isolated Agent Context
 - Return results to main conversation
 - Still service relationship (not governance)
 
-**33 Skills Available**:
+**34 Skills Available**:
 
-- **docs-\*** - Documentation creation and quality (7 skills)
-- **readme-\*** - README file patterns (2 skills)
-- **repo-\*** - Repository-wide patterns (5 skills)
-- **swe-programming-\*** - Language/framework expertise (14 skills)
-- **apps-\*** - Application-specific patterns (5 skills)
+- **docs-\*** - Documentation creation and quality (8 skills)
+- **readme-\*** - README file patterns (1 skill)
+- **repo-\*** - Repository-wide patterns (6 skills)
+- **swe-programming-\*** - Language/framework expertise (9 skills)
+- **swe-developing-\*** - Application development patterns (2 skills)
+- **apps-\*** - Application-specific patterns (3 skills)
+- **agent-\*** - Agent development and selection (3 skills)
+- **plan-\*** - Project planning patterns (2 skills)
 
 **Why Skills Are NOT Layer 4.5**:
 
@@ -750,7 +753,7 @@ As the repository grows, additional layers might be considered:
 
 ### Skill Evolution
 
-**Current State**: 33 skills serving 56 agents
+**Current State**: 34 skills serving 57 agents
 
 **Growth Patterns**:
 

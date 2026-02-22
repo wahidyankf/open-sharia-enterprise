@@ -211,12 +211,12 @@ Per [Documentation First](../../governance/principles/content/documentation-firs
 - Focus: Link validity (URLs work, internal refs exist)
 - Does NOT check: Content accuracy or factual correctness
 
-**wow\_\_rules-checker:**
+**repo-governance-checker:**
 
 - Focus: Convention compliance (naming, structure, frontmatter)
 - Does NOT check: Technical accuracy of content claims
 
-**docs\_\_checker (this agent):**
+**docs-checker (this agent):**
 
 - Focus: Factual correctness and content accuracy
 - Checks: Technical claims, command syntax, contradictions, examples
@@ -344,7 +344,7 @@ Per [Documentation First](../../governance/principles/content/documentation-firs
 # Documentation Validation Report
 
 **Date**: YYYY-MM-DD
-**Validator**: docs\_\_checker
+**Validator**: docs-checker
 **Scope**: [files/directories checked]
 
 ## Summary
@@ -496,8 +496,8 @@ Some sites block automation:
 
 ### Out of Scope
 
-- Link validity (use docs\_\_link-general-checker)
-- Convention compliance (use wow\_\_rules-checker)
+- Link validity (use docs-link-general-checker)
+- Convention compliance (use repo-governance-checker)
 - Writing style or tone
 - Grammar/spelling (unless affects meaning)
 - Documentation completeness (missing topics)
@@ -513,7 +513,7 @@ Some sites block automation:
 
 ## When to Use This Agent
 
-**Use docs\_\_checker when:**
+**Use docs-checker when:**
 
 - Validating technical documentation before release
 - Checking docs after dependency updates
@@ -525,10 +525,10 @@ Some sites block automation:
 
 **Don't use for:**
 
-- Link checking (use docs\_\_link-general-checker)
-- File naming/structure (use wow\_\_rules-checker)
-- Writing new docs (use docs\_\_maker)
-- Editing existing docs (use docs\_\_maker)
+- Link checking (use docs-link-general-checker)
+- File naming/structure (use repo-governance-checker)
+- Writing new docs (use docs-maker)
+- Editing existing docs (use docs-maker)
 
 ## Reference Documentation
 

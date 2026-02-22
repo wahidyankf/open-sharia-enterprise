@@ -216,11 +216,11 @@ Fixer agents MUST process findings in strict priority order:
 
 **Five agents require BOTH verification/status AND criticality**:
 
-- `docs__checker` - [Verified]/[Error]/[Outdated]/[Unverified] + criticality
-- `docs__tutorial-checker` - Verification labels + criticality
-- `apps__ayokoding-web__facts-checker` - Verification labels + criticality
+- `docs-checker` - [Verified]/[Error]/[Outdated]/[Unverified] + criticality
+- `docs-tutorial-checker` - Verification labels + criticality
+- `apps-ayokoding-web-facts-checker` - Verification labels + criticality
 - `docs-link-general-checker` - [OK]/[BROKEN]/[REDIRECT] + criticality
-- `apps__ayokoding-web__link-checker` - Status labels + criticality
+- `apps-ayokoding-web-link-checker` - Status labels + criticality
 
 **Format**:
 
@@ -398,7 +398,7 @@ for finding in low_priority:
 
 ## Domain-Specific Examples
 
-### Repository Governance (wow__rules-checker)
+### Repository Governance (repo-governance-checker)
 
 **CRITICAL**:
 - Missing `subcategory` field in convention (breaks organization)
@@ -437,7 +437,7 @@ for finding in low_priority:
 - Suggest adding optional tags
 - Consider alternative structure
 
-### Documentation (docs__checker)
+### Documentation (docs-checker)
 
 **CRITICAL**:
 - [Error] Command syntax incorrect (verified via WebSearch)
@@ -761,8 +761,8 @@ Add "Domain-Specific Confidence Examples" section:
 
 **Related Skills**:
 
-- `wow__applying-maker-checker-fixer` - Understanding three-stage workflow
-- `docs__validating-factual-accuracy` - Verification label system
+- `repo-applying-maker-checker-fixer` - Understanding three-stage workflow
+- `docs-validating-factual-accuracy` - Verification label system
 
 **Related Agents**:
 

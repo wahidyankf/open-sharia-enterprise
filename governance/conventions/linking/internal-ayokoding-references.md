@@ -312,7 +312,7 @@ find docs/ -name "*.md" -exec markdown-link-check {} \;
 
 ### Agent Validation
 
-The [docs\_\_checker agent](../../../.opencode/agent/docs__checker.md) should validate:
+The [docs-checker agent](../../../.claude/agents/docs-checker.md) should validate:
 
 - **CRITICAL:** docs/ files containing `https://ayokoding.com/` URLs
 - **HIGH:** Relative paths with incorrect depth (path doesn't resolve)
@@ -374,8 +374,8 @@ If AyoKoding content structure changes (directory reorganization):
 
 **Agents:**
 
-- `docs__checker` - Validates docs/ links follow this convention
-- `docs__fixer` - Applies corrections to convert public URLs to relative paths
+- `docs-checker` - Validates docs/ links follow this convention
+- `docs-fixer` - Applies corrections to convert public URLs to relative paths
 
 ---
 
