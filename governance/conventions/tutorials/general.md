@@ -362,20 +362,20 @@ Complete guide to building Retrieval-Augmented Generation systems.
 
 - [Link to Part 1](./tu__rag-basics.md)
 - Build your first RAG system
-- Estimated time: 30 minutes
+- Coverage: 0-40% of RAG concepts
 
 **Part 2: Advanced RAG** (Intermediate)
 
 - [Link to Part 2](./tu__rag-advanced.md)
 - Hybrid search, reranking, and optimization
-- Estimated time: 45 minutes
+- Coverage: 40-75% of RAG concepts
 - Prerequisites: Part 1
 
 **Part 3: Production RAG** (Advanced)
 
 - [Link to Part 3](./tu__rag-production.md)
 - Deploy RAG to production with monitoring
-- Estimated time: 1 hour
+- Coverage: 75-100% of RAG concepts
 - Prerequisites: Parts 1 & 2
 ```
 
@@ -1498,7 +1498,7 @@ One might consider using this approach. [impersonal]
 
 ### Exemplary Tutorial: Quick Start Structure
 
-See existing tutorials as examples: - [Accounting](../../../tutorials/business-and-finance/tu-bufi__accounting.md) - [Corporate Finance](../../../tutorials/business-and-finance/tu-bufi__corporate-finance.md)
+See existing tutorials in `docs/tutorials/` as examples once created. Future tutorials should exemplify:
 
 **These exemplify**: - Clear structure with all required sections - Progressive scaffolding from simple to complex - Visual completeness with diagrams and formulas - Hands-on practice exercises and challenges - Narrative flow with teacher voice - Real-world relevance throughout
 
@@ -1723,5 +1723,5 @@ This tutorial convention builds upon and references:
 
 ---
 
-**Last Updated**: 2025-12-03
+**Last Updated**: 2026-01-01
 ```

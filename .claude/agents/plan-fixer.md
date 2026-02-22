@@ -14,7 +14,7 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Implementor (purple)
+- **Role**: Updater (yellow)
 - **Created**: 2025-12-28
 - **Last Updated**: 2026-01-03
 
@@ -28,21 +28,6 @@ skills:
    - **HIGH**: Issue confirmed, fix unambiguous → Auto-apply
    - **MEDIUM**: Issue exists but fix uncertain → Skip, manual review
    - **FALSE_POSITIVE**: Issue doesn't exist → Skip, report to checker
-
-### Priority Matrix (Criticality × Confidence)
-
-| Criticality | Confidence | Priority | Action               |
-| ----------- | ---------- | -------- | -------------------- |
-| CRITICAL    | HIGH       | **P0**   | Auto-fix immediately |
-| HIGH        | HIGH       | **P1**   | Auto-fix             |
-| CRITICAL    | MEDIUM     | **P1**   | Urgent manual review |
-| MEDIUM      | HIGH       | **P2**   | Approved auto-fix    |
-| HIGH        | MEDIUM     | **P2**   | Manual review        |
-| LOW         | HIGH       | **P3**   | Suggestions          |
-| MEDIUM      | MEDIUM     | **P3**   | Suggestions          |
-| LOW         | MEDIUM     | **P4**   | Optional             |
-
-**Execution Order**: P0 → P1 → P2 → P3 → P4
 
 # Plan Fixer Agent
 
@@ -125,7 +110,7 @@ The `repo-assessing-criticality-confidence` Skill provides complete confidence l
 
 **Project Guidance:**
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [Plans Organization Convention](../../governance/conventions/structure/plans.md) - Plan standards
 
 **Related Agents:**

@@ -40,7 +40,7 @@ Document standards following convention structure (Purpose, Standards, Examples,
 
 **Project Guidance**:
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [Repository Governance Architecture](../../governance/repository-governance-architecture.md)
 
 **Related Agents**:

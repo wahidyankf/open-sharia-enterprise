@@ -10,7 +10,7 @@ tags:
   - development
   - standards
 created: 2025-11-23
-updated: 2026-01-29
+updated: 2026-02-22
 ---
 
 # AI Agents Convention
@@ -193,11 +193,11 @@ skills: []
    - See "Agent Color Categorization" below for assignment guidelines
 
 6. **`skills`** (required)
-   - List ofSkill names the agent references (from `.claude/skills/` (primary) or `.opencode/skill/` (secondary))
-   - Can be empty array `[]` if agent doesn't useSkills -Skills auto-load when agent is invoked (if task matchesSkill description)
+   - List of Skill names the agent references (from `.claude/skills/` (primary) or `.opencode/skill/` (secondary))
+   - Can be empty array `[]` if agent doesn't use Skills - Skills auto-load when agent is invoked (if task matches Skill description)
    - Enables composability and explicit knowledge dependencies
    - Example: `skills: [color-accessibility-diagrams, maker-checker-fixer-pattern]`
-   - See "AgentSkills References" section below for complete details
+   - See "Agent Skills References" section below for complete details
 
 ### Optional Frontmatter Fields
 
@@ -239,15 +239,15 @@ updated: 2025-12-03
 ---
 ```
 
-### AgentSkills References
+### Agent Skills References
 
 **REQUIRED FIELD**: All agents MUST include a `skills:` frontmatter field for composability and consistency.
 
-**Purpose:** The `skills:` field declares whichSkills (knowledge packages in `.claude/skills/` (primary) or `.opencode/skill/` (secondary)) the agent leverages. This enables:
+**Purpose:** The `skills:` field declares which Skills (knowledge packages in `.claude/skills/` (primary) or `.opencode/skill/` (secondary)) the agent leverages. This enables:
 
 - **Composability**: Explicit declarations of knowledge dependencies
 - **Consistency**: All agents follow same structure (no special cases)
-- **Discoverability**: Easy to see which agents use whichSkills
+- **Discoverability**: Easy to see which agents use which Skills
 - **Validation**: Checkers can enforce field presence and validate references
 
 #### Skills Field Format
@@ -256,14 +256,14 @@ The `skills` field (already defined as field 6 in Required Frontmatter above) ha
 
 - **Format**: YAML array of strings
 - **Required**: Yes (can be empty `[]`)
-- **Values**:Skill names matching folder names in `.opencode/skill/`
-- **Auto-loading**:Skills load when agent invoked AND task matchesSkill description
-- **Validation**: ReferencedSkills must exist in `.claude/skills/` (primary) or `.opencode/skill/` (secondary) directory
+- **Values**: Skill names matching folder names in `.opencode/skill/`
+- **Auto-loading**: Skills load when agent invoked AND task matches Skill description
+- **Validation**: Referenced Skills must exist in `.claude/skills/` (primary) or `.opencode/skill/` (secondary) directory
 - **Example**: `skills: [color-accessibility-diagrams, maker-checker-fixer-pattern]`
 
-#### When to ReferenceSkills vs. Inline Knowledge
+#### When to Reference Skills vs. Inline Knowledge
 
-**UseSkills references when:**
+**Use Skills references when:**
 
 - PASS: Knowledge is specialized and deep (e.g., accessible color palettes, Gherkin syntax)
 - PASS: Knowledge is shared across multiple agents (e.g., Maker-Checker-Fixer pattern)
@@ -280,7 +280,7 @@ The `skills` field (already defined as field 6 in Required Frontmatter above) ha
 
 #### Skills Field Examples
 
-**Agent usingSkills:**
+**Agent using Skills:**
 
 ```yaml
 ---
@@ -295,11 +295,11 @@ skills:
 ---
 ```
 
-**Agent not usingSkills:**
+**Agent not using Skills:**
 
 ```yaml
 ---
-name: simple__helper
+name: simple-helper
 description: Simple helper agent for basic tasks.
 tools: Read
 model: haiku
@@ -310,7 +310,7 @@ skills: []
 
 #### Skills Composition Pattern
 
-Agents can reference multipleSkills that work together:
+Agents can reference multiple Skills that work together:
 
 ```yaml
 ---
@@ -326,24 +326,24 @@ skills:
 ---
 ```
 
-When this agent is invoked, all threeSkills auto-load if the task description matches their triggers.Skills compose seamlessly to provide comprehensive knowledge.
+When this agent is invoked, all three Skills auto-load if the task description matches their triggers. Skills compose seamlessly to provide comprehensive knowledge.
 
-#### Best Practices forSkills References
+#### Best Practices for Skills References
 
-1. **Minimal set**: Reference onlySkills the agent actually uses
-2. **RelevantSkills**:Skills should align with agent's domain
-3. **Order by importance**: List most criticalSkills first
-4. **Keep updated**: Add/removeSkills as agent evolves
-5. **Validate references**: Ensure referencedSkills exist in `.opencode/skill/`
+1. **Minimal set**: Reference only Skills the agent actually uses
+2. **Relevant Skills**: Skills should align with agent's domain
+3. **Order by importance**: List most critical Skills first
+4. **Keep updated**: Add/remove Skills as agent evolves
+5. **Validate references**: Ensure referenced Skills exist in `.opencode/skill/`
 
 #### Skills Documentation: Frontmatter Only (DRY Principle)
 
-**CRITICAL**:Skills MUST only be declared in frontmatter. Do NOT create documentation sections listing skills in the agent body.
+**CRITICAL**: Skills MUST only be declared in frontmatter. Do NOT create documentation sections listing skills in the agent body.
 
 **Why Frontmatter Only:**
 
 - ✅ **Single source of truth**: Frontmatter is canonical and machine-readable
-- ✅ **Eliminates duplication**: EachSkill already has its own description in SKILL.md
+- ✅ **Eliminates duplication**: Each Skill already has its own description in SKILL.md
 - ✅ **Reduces maintenance**: No risk of frontmatter and body getting out of sync
 - ✅ **Keeps agents lean**: Avoids unnecessary documentation bulk
 - ✅ **Follows DRY**: Don't Repeat Yourself - reference, don't restate
@@ -353,7 +353,7 @@ When this agent is invoked, all threeSkills auto-load if the task description ma
 ```markdown
 ## Knowledge Dependencies (Skills)
 
-This agent leveragesSkills from `.claude/skills/`:
+This agent leverages Skills from `.claude/skills/`:
 
 1. **`skill-name`** - what it does
 2. **`other-skill`** - what it does
@@ -372,16 +372,16 @@ skills:
 **Contextual Inline References** (allowed when adding context):
 
 ```markdown
-**See `repo-generating-validation-reports`Skill** for UUID chain generation and progressive writing methodology.
+**See `repo-generating-validation-reports` Skill** for UUID chain generation and progressive writing methodology.
 ```
 
-This is acceptable because it provides contextual guidance pointing to specificSkill knowledge at relevant points in the agent documentation.
+This is acceptable because it provides contextual guidance pointing to specific Skill knowledge at relevant points in the agent documentation.
 
 **Summary**: Declare skills in frontmatter, optionally reference them inline for context, but NEVER create a dedicated section listing skills with descriptions.
 
 #### Skills vs. Direct Convention References
 
-Agents can use bothSkills AND direct links to convention documents:
+Agents can use both Skills AND direct links to convention documents:
 
 - **Skills**: For progressive disclosure and shared knowledge (auto-loaded)
 - **Direct links**: For specific, targeted guidance (always in Reference Documentation section)
@@ -416,7 +416,7 @@ skills:
 
 This pattern provides both auto-loaded knowledge (Skills) and explicit references for specific requirements.
 
-See [Skills README](../../../.claude/skills/README.md) for complete details onSkills creation, structure, and usage patterns.
+See [Skills README](../../../.claude/skills/README.md) for complete details on Skills creation, structure, and usage patterns.
 
 ### Document Structure
 
@@ -743,17 +743,18 @@ color: blue
 
 Agents are categorized by their **primary role** which aligns with naming suffixes and tool permissions:
 
-| Color         | Role             | Purpose                               | Tool Pattern                            | Agents                                                                                       |
-| ------------- | ---------------- | ------------------------------------- | --------------------------------------- | -------------------------------------------------------------------------------------------- |
-| 🟦 **Blue**   | **Writers**      | Create new content from scratch       | Has `Write` tool                        | docs-maker<br>plan-maker<br>docs-tutorial-maker                                              |
-| 🟩 **Green**  | **Checkers**     | Validate and generate reports         | Has `Write`, `Bash` (no `Edit`)         | repo-governance-checker<br>plan-checker<br>docs-checker                                      |
-| 🟨 **Yellow** | **Updaters**     | Modify and propagate existing content | Has `Edit` (usually not `Write`)\*      | repo-governance-maker\*<br>docs-file-manager                                                 |
-| 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash` (or Bash)\* | plan-executor<br>docs-link-general-checker<br>apps-ayokoding-web-link-checker<br>deployers\* |
+| Color         | Role             | Purpose                               | Tool Pattern                            | Agents                                                                                                                          |
+| ------------- | ---------------- | ------------------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| 🟦 **Blue**   | **Writers**      | Create new content from scratch       | Has `Write` tool                        | docs-maker<br>plan-maker<br>docs-tutorial-maker<br>repo-governance-maker                                                        |
+| 🟩 **Green**  | **Checkers**     | Validate and generate reports         | Has `Write`, `Bash` (no `Edit`)\*\*     | repo-governance-checker<br>plan-checker<br>docs-checker<br>docs-link-general-checker\*\*<br>apps-ayokoding-web-link-checker\*\* |
+| 🟨 **Yellow** | **Updaters**     | Modify and propagate existing content | Has `Edit` (usually not `Write`)        | docs-file-manager<br>readme-fixer<br>repo-governance-fixer                                                                      |
+| 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash` (or Bash)\* | plan-executor<br>deployers\*                                                                                                    |
 
 **Edge Case Notes:**
 
-- **\*Yellow with Write**: repo-governance-maker needs Write tool to create new convention files (not just edit existing). Documented exception.
+- **\*Yellow with Write**: Some Yellow fixer agents (e.g., readme-fixer, repo-governance-fixer) may have Write tool for audit report generation. Documented exception.
 - **\*Purple Bash-only**: Deployers (ayokoding-web-deployer, oseplatform-web-deployer) only need Bash for git/deployment orchestration. Purple without Write/Edit is valid for Bash-only orchestrators.
+- **\*\*Green with Write + Edit**: Link checker agents (docs-link-general-checker, apps-ayokoding-web-link-checker) also have Edit and Write tools for cache file management, but their primary role is validation (checker). Color is green to reflect primary role. See "Link Checker Agents Note" below.
 
 **Color Accessibility Note**: All four colors (blue, green, yellow, purple) are from the verified accessible palette defined in [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - the master reference for all color usage in this repository. These colors meet WCAG AA standards for both light and dark modes and work for all types of color blindness (protanopia, deuteranopia, and tritanopia). See the accessibility section below for details on how agents are identified beyond color. All color-related work must reference the Color Accessibility Convention as the authoritative source.
 
@@ -767,28 +768,28 @@ This role-based categorization was chosen because it:
 4. **Extensible** - New agents naturally fit into one of the four role categories
 5. **Semantic consistency** - Colored square emojis (🟦🟩🟨🟪) have no pre-existing meaning in Unicode, allowing flexible assignment
 
-### Hybrid Agents Exception
+### Link Checker Agents Note
 
-**DOCUMENTED EXCEPTION**: Link checker agents are hybrid agents that combine validation (green) with state management (purple). This is an explicit exception to the standard color-to-role mapping.
+**NOTE**: Link checker agents are checker agents (`color: green`) that also manage persistent cache files. This is documented here to clarify their tool permissions.
 
-**Hybrid Link Checkers:**
+**Link Checker Agents:**
 
 - **docs-link-general-checker** - Validates documentation links + manages external-links-status.yaml cache
 - **apps-ayokoding-web-link-checker** - Validates Hugo content links + manages ayokoding-links-status.yaml cache
 
-**Why hybrid status?**
+**Why green (not purple)?**
 
 1. **Primary role**: Link validation (checker behavior) with audit report generation
-2. **State management**: Maintain persistent cache files tracking external link health over time
-3. **Tool requirements**: Write tool needed ONLY for cache file management (not general content modification)
-4. **Color assignment**: `purple` reflects the hybrid nature (validation + state management)
+2. **Color follows primary role**: The `-checker` suffix and validation-first behavior make green the correct color
+3. **State management is secondary**: Cache file management supports the validation role, not the reverse
+4. **Consistency**: Agent `Role` declarations and naming suffix both say "Checker (green)"
 
-**Rationale for Write tool access:**
+**Why they have Write + Edit tools (beyond standard green pattern):**
 
 - Cache files (`external-links-status.yaml`, `ayokoding-links-status.yaml`) are operational metadata, NOT temporary reports
 - Cache management is essential functionality, NOT general file writing capability
 - Write tool is scoped specifically to designated cache file paths (explicit over implicit)
-- This exception respects the Explicit Over Implicit principle by documenting the hybrid role
+- This exception respects the Explicit Over Implicit principle by documenting the extended tool access
 
 **Cache files are NOT temporary:**
 
@@ -797,7 +798,7 @@ This role-based categorization was chosen because it:
 - Committed to git: Yes (operational metadata)
 - Updated every run: Yes (including lastFullScan timestamp)
 
-This hybrid status is intentionally documented here to maintain transparency and prevent confusion about tool permission patterns.
+This is intentionally documented here to maintain transparency and prevent confusion about tool permission patterns.
 
 ### Assigning Colors to New Agents
 
@@ -819,18 +820,17 @@ Start: What is the agent's primary capability?
     │       - Write needed for audit reports in generated-reports/
     │       - Bash needed for UTC+7 timestamps
     │       - Examples: repo-governance-checker, plan-checker, docs-checker
-    │       - EXCEPTION: Link checkers use purple (see Hybrid Agents above)
+    │       - EXCEPTION: Link checkers also have Edit tool for cache management (see "Link Checker Agents Note" below)
     │
     ├─ Modifies/updates existing content only
     │   └─> color: yellow (Updater)
     │       - Has `Edit` but NOT `Write`
-    │       - Examples: repo-governance-maker, docs-file-manager
+    │       - Examples: docs-file-manager, readme-fixer, repo-governance-fixer
     │
     └─ Executes plans/orchestrates tasks
         └─> color: purple (Implementor)
             - Has Write, Edit, AND Bash
             - Examples: plan-executor
-            - INCLUDES: Hybrid link checkers (validation + state management)
 ```
 
 **Edge Cases:**
@@ -838,9 +838,9 @@ Start: What is the agent's primary capability?
 - **Agent has both Write and Edit**: Choose based on primary purpose
   - If mainly creates new content → `blue` (Writer)
   - If mainly executes plans/tasks → `purple` (Implementor)
-- **Link-checkers with Write, Edit, Bash**: Use `purple` (Implementor)
-  - Write tool needed for cache file updates (external-links-status.yaml)
-  - Edit tool needed for fixing broken links in content
+- **Link-checkers with Write, Edit, Bash**: Use `green` (Checker)
+  - Write tool needed for audit reports in generated-reports/
+  - Edit tool needed for cache file management (external-links-status.yaml updates)
   - Bash tool needed for UTC+7 timestamps
   - Examples: docs-link-general-checker, apps-ayokoding-web-link-checker
 - **Deployers with Bash only**: Use `purple` (Implementor)
@@ -852,7 +852,7 @@ Start: What is the agent's primary capability?
   - Yellow (Updaters) should have Edit but NOT Write
   - If Write is needed for creating new convention files → keep yellow, document exception
   - If Write can be removed → remove Write to match yellow categorization
-  - Example: repo-governance-maker (creates new conventions, keeps Write + Edit)
+  - Example: readme-fixer, repo-governance-fixer (fixer agents that generate audit reports, keep Write for report writing)
 - **Agent doesn't fit any category**: Consider if it should be split or if a new category is needed
 - **Unsure**: Default to the most restrictive category based on tools, or omit the color field
 
@@ -987,9 +987,9 @@ color: green
 
 ```yaml
 ---
-name: repo-governance-maker
-description: Propagates rule and convention changes across AGENTS.md, convention docs, agents, and indices. Use when adding/modifying rules, conventions, or standards that affect multiple files.
-tools: Read, Edit, Glob, Grep
+name: readme-fixer
+description: Applies validated fixes from readme-checker audit reports. Re-validates README findings before applying changes. Use after reviewing readme-checker output.
+tools: Read, Edit, Glob, Grep, Write, Bash
 model: sonnet
 color: yellow
 ---
@@ -1431,7 +1431,7 @@ Quick categorization for existing agents:
 
 This section defines how to properly separate reusable knowledge (Skills) from agent-specific instructions (Agent files), ensuring maintainability, reducing duplication, and enabling effective knowledge delivery.
 
-**Validated through**: AgentSkills Simplification pilot (2026-01-03) - docs family achieved 49.2% size reduction while maintaining 100% functionality.
+**Validated through**: Agent Skills Simplification pilot (2026-01-03) - docs family achieved 49.2% size reduction while maintaining 100% functionality.
 
 ### Knowledge Classification Decision Tree
 
@@ -1440,10 +1440,10 @@ When writing or updating an agent, use this decision tree to determine where con
 ```
 Is this content reusable across 3+ agents?
 │
-├─ YES → Move toSkill or Convention Document
+├─ YES → Move to Skill or Convention Document
 │   │
 │   ├─ Is it actionable "how-to" guidance?
-│   │   └─ YES → Create/updateSkill in .opencode/skill/
+│   │   └─ YES → Create/update Skill in .opencode/skill/
 │   │       Examples: applying-content-quality, creating-accessible-diagrams
 │   │
 │   └─ Is it technical specification or standard?
@@ -1461,7 +1461,7 @@ Is this content reusable across 3+ agents?
 
 Based on the pilot validation, use these proven patterns when simplifying agents:
 
-#### Pattern A: ReferenceSkill for Standards
+#### Pattern A: Reference Skill for Standards
 
 **Use when**: Content is a universal standard that doesn't change per-agent.
 
@@ -1485,7 +1485,7 @@ FAIL: Bad: "The content is validated by the agent"
 ```markdown
 ## Content Quality Standards
 
-**See `docs-applying-content-quality`Skill for complete standards** on:
+**See `docs-applying-content-quality` Skill for complete standards** on:
 
 - Active voice requirements
 - Heading hierarchy (single H1, proper nesting)
@@ -1493,7 +1493,7 @@ FAIL: Bad: "The content is validated by the agent"
 - Professional formatting
 ```
 
-**Impact**: ~50-100 lines removed per agent, zero loss of knowledge (accessible viaSkill).
+**Impact**: ~50-100 lines removed per agent, zero loss of knowledge (accessible via Skill).
 
 #### Pattern B: Convention Link for Detailed Rules
 
@@ -1597,25 +1597,25 @@ FAIL: Bad: "The content is validated by the agent"
 - `docs-fixer`: How to assess confidence levels for doc fixes
 - `plan-executor`: Sequential implementation workflow
 
-**Rationale**: Agents remain self-contained for their specific task while delegating reusable knowledge toSkills/Conventions.
+**Rationale**: Agents remain self-contained for their specific task while delegating reusable knowledge to Skills/Conventions.
 
 ### Guidelines for Future Agent Creation
 
 When creating new agents:
 
 1. **Start lean**: Write minimum viable agent with task-specific instructions only
-2. **Reference early**: Link toSkills/Conventions instead of duplicating
-3. **Quick reference OK**: Brief 1-3 line summaries withSkill/Convention links acceptable
+2. **Reference early**: Link to Skills/Conventions instead of duplicating
+3. **Quick reference OK**: Brief 1-3 line summaries with Skill/Convention links acceptable
 4. **Scan for duplication**: Before finalizing, check if content exists in other agents (use Grep)
-5. **3+ agent rule**: If same content appears in 3+ agents, extract toSkill/Convention
+5. **3+ agent rule**: If same content appears in 3+ agents, extract to Skill/Convention
 
 ### Validation Checklist
 
 Before committing agent changes:
 
-- [ ] No content duplicatesSkills (check `.claude/skills/` (primary) or `.opencode/skill/` (secondary) catalog)
+- [ ] No content duplicates Skills (check `.claude/skills/` (primary) or `.opencode/skill/` (secondary) catalog)
 - [ ] No content duplicates Conventions (check `governance/conventions/`)
-- [ ] AllSkills referenced exist in `.opencode/skill/`
+- [ ] All Skills referenced exist in `.opencode/skill/`
 - [ ] All Convention links point to valid files
 - [ ] Task-specific instructions retained (agent is self-contained for its job)
 - [ ] Agent within tier limits (Simple <800, Standard <1,200, Complex <1,800)
@@ -1639,13 +1639,13 @@ updated: YYYY-MM-DD
 ---
 ```
 
-**EmptySkills**: If agent doesn't use anySkills yet, use empty list:
+**Empty Skills**: If agent doesn't use any Skills yet, use empty list:
 
 ```yaml
 skills: []
 ```
 
-**MultipleSkills**: List allSkills the agent references:
+**Multiple Skills**: List all Skills the agent references:
 
 ```yaml
 skills: [skill-one, skill-two, skill-three]
@@ -1655,16 +1655,16 @@ skills: [skill-one, skill-two, skill-three]
 
 Based on agent simplification audit findings:
 
-| Pattern                                                                   | Instead Use                              | Typical Reduction |
-| ------------------------------------------------------------------------- | ---------------------------------------- | ----------------- |
-| Content quality standards (active voice, headings, accessibility)         | `docs-applying-content-quality`Skill     | ~50-100 lines     |
-| Diagram color palette (Blue #0173B2, Orange #DE8F05...)                   | `docs-creating-accessible-diagrams`Skill | ~60-70 lines      |
-| Report generation mechanics (UUID, progressive writing, filename pattern) | Temporary Files Convention               | ~200 lines        |
-| Validation methodology (source prioritization, confidence levels)         | `docs-validating-factual-accuracy`Skill  | ~150 lines        |
-| Confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE criteria)               | Fixer Confidence Levels Convention       | ~200 lines        |
-| Criticality levels (CRITICAL/HIGH/MEDIUM/LOW definitions)                 | `assessing-criticality-confidence`Skill  | ~100 lines        |
-| Mathematical notation rules (LaTeX delimiters, display math)              | Mathematical Notation Convention         | ~30 lines         |
-| Maker-checker-fixer workflow (three-stage pattern)                        | `applying-maker-checker-fixer`Skill      | ~50 lines         |
+| Pattern                                                                   | Instead Use                               | Typical Reduction |
+| ------------------------------------------------------------------------- | ----------------------------------------- | ----------------- |
+| Content quality standards (active voice, headings, accessibility)         | `docs-applying-content-quality` Skill     | ~50-100 lines     |
+| Diagram color palette (Blue #0173B2, Orange #DE8F05...)                   | `docs-creating-accessible-diagrams` Skill | ~60-70 lines      |
+| Report generation mechanics (UUID, progressive writing, filename pattern) | Temporary Files Convention                | ~200 lines        |
+| Validation methodology (source prioritization, confidence levels)         | `docs-validating-factual-accuracy` Skill  | ~150 lines        |
+| Confidence assessment (HIGH/MEDIUM/FALSE_POSITIVE criteria)               | Fixer Confidence Levels Convention        | ~200 lines        |
+| Criticality levels (CRITICAL/HIGH/MEDIUM/LOW definitions)                 | `assessing-criticality-confidence` Skill  | ~100 lines        |
+| Mathematical notation rules (LaTeX delimiters, display math)              | Mathematical Notation Convention          | ~30 lines         |
+| Maker-checker-fixer workflow (three-stage pattern)                        | `applying-maker-checker-fixer` Skill      | ~50 lines         |
 
 ### Example: Before and After Simplification
 
@@ -1685,7 +1685,7 @@ Agent contained full text of:
 Agent contains:
 
 - Task-specific validation workflow (what to check)
-- BriefSkill references with context
+- Brief Skill references with context
 - Links to Conventions for specifications
 - Domain-specific examples (concise)
 - All task-specific decision logic
@@ -1696,20 +1696,20 @@ Agent contains:
 
 **Maintainability**:
 
-- Update standard once inSkill/Convention, all agents benefit
+- Update standard once in Skill/Convention, all agents benefit
 - No hunting for outdated duplicates across all agents
 - Single source of truth for each standard
 
 **Clarity**:
 
-- Agents focus on task-specific instructions -Skills provide reusable knowledge on-demand
+- Agents focus on task-specific instructions - Skills provide reusable knowledge on-demand
 - Conventions document authoritative specifications
 
 **Efficiency**:
 
 - Smaller agent files (30-60% reduction typical)
 - Faster agent loading and processing
-- Progressive knowledge delivery (scan agent → dive intoSkill as needed)
+- Progressive knowledge delivery (scan agent → dive into Skill as needed)
 
 **Quality**:
 
@@ -1851,7 +1851,7 @@ Before submitting a new agent, verify:
 - [ ] `tools` explicitly lists required tools only (least privilege)
 - [ ] `model` set to `inherit` (or justified if specific)
 - [ ] `color` assigned based on agent role (blue/green/yellow/purple) - required
-- [ ] `skills` field present (can be empty `[]` or list actualSkills) - required
+- [ ] `skills` field present (can be empty `[]` or list actual Skills) - required
 
 #### Document Structure
 
@@ -2028,7 +2028,7 @@ Runtime: Orchestrator ──spawns──> Agents (isolated contexts)
 **Rules:**
 
 1. **Don't duplicate** - Agents should reference conventions, not repeat content
-2. **Do specialize** - Agents add domain expertise throughSkills and explicit knowledge
+2. **Do specialize** - Agents add domain expertise through Skills and explicit knowledge
 3. **Follow conventions** - All agents must comply with this convention
 4. **Declare skills explicitly** - Every agent must have non-empty `skills:` field
 
@@ -2120,9 +2120,9 @@ Before committing a new agent:
 
 ## Agent-Skill Separation
 
-**Purpose**: Eliminate duplication between agents by extracting reusable knowledge intoSkills. Agents remain focused on task-specific workflows whileSkills provide shared domain expertise.
+**Purpose**: Eliminate duplication between agents by extracting reusable knowledge into Skills. Agents remain focused on task-specific workflows while Skills provide shared domain expertise.
 
-### When to UseSkills vs. Agent Content
+### When to Use Skills vs. Agent Content
 
 Use this decision tree to determine where knowledge belongs:
 
@@ -2130,25 +2130,25 @@ Use this decision tree to determine where knowledge belongs:
 Is this knowledge...
 
 └─ Used by 3+ agents?
-   ├─ YES → Extract toSkill
+   ├─ YES → Extract to Skill
    └─ NO → Keep in agent
 
 └─ Reusable domain expertise? (color palettes, validation standards, report formats)
-   ├─ YES → Create/extendSkill
+   ├─ YES → Create/extend Skill
    └─ NO → Keep in agent
 
 └─ Agent-specific workflow? (task sequence, unique logic, custom decisions)
    ├─ YES → Keep in agent
-   └─ NO → ConsiderSkill
+   └─ NO → Consider Skill
 
 └─ Convention details? (standards, rules, formats)
-   ├─ YES → Link to convention document, optionally referenceSkill
+   ├─ YES → Link to convention document, optionally reference Skill
    └─ NO → Evaluate based on above criteria
 ```
 
-### What Belongs inSkills
+### What Belongs in Skills
 
-**Extract toSkills** (reusable knowledge):
+**Extract to Skills** (reusable knowledge):
 
 1. **Validation Standards**
    - UUID chain generation logic
@@ -2297,14 +2297,14 @@ See `apps-ayokoding-web-developing-content`Skill for weight system, bilingual st
 
 ## Example Structure
 
-See `docs-creating-by-example-tutorials`Skill for five-part format, annotation density.
+See `docs-creating-by-example-tutorials` Skill for five-part format, annotation density.
 
 ## Creation Workflow
 
 [500 lines of task-specific content creation - RETAINED]
 ```
 
-**Result**: 600 lines removed (55%), all patterns available viaSkills.
+**Result**: 600 lines removed (55%), all patterns available via Skills.
 
 ### Decision Tree Examples
 
@@ -2347,29 +2347,29 @@ A: YES (all 15 fixer agents use mode parameter)
 Q: Reusable domain expertise?
 A: YES (mode handling is standardized)
 
-Decision: Extract to `applying-maker-checker-fixer`Skill
+Decision: Extract to `applying-maker-checker-fixer` Skill
 ```
 
 ### Benefits of Agent-Skill Separation
 
-1. **Single Source of Truth**: UpdateSkill once, all agents benefit
+1. **Single Source of Truth**: Update Skill once, all agents benefit
 2. **Reduced Duplication**: Eliminate 50-90% of duplicated content
-3. **Easier Maintenance**: Convention changes require updatingSkill only
-4. **Better Scalability**: New agents reference existingSkills
+3. **Easier Maintenance**: Convention changes require updating Skill only
+4. **Better Scalability**: New agents reference existing Skills
 5. **Clearer Agents**: Agents focus on task workflows, not standards
-6. **Progressive Disclosure**:Skills load on-demand, reducing context bloat
+6. **Progressive Disclosure**: Skills load on-demand, reducing context bloat
 
 ### Implementation Pattern
 
 When simplifying an agent:
 
 1. **Identify duplication**: Look for content appearing in 3+ agents
-2. **Check existingSkills**: Does aSkill already cover this?
-   - YES → Reference theSkill
-   - NO → Consider creating newSkill
-3. **Extract toSkill**: Create/extendSkill with reusable knowledge
-4. **Update agent**: Replace duplicated content withSkill reference
-5. **Add frontmatter**: IncludeSkill in `skills:` field
+2. **Check existing Skills**: Does a Skill already cover this?
+   - YES → Reference the Skill
+   - NO → Consider creating new Skill
+3. **Extract to Skill**: Create/extend Skill with reusable knowledge
+4. **Update agent**: Replace duplicated content with Skill reference
+5. **Add frontmatter**: Include Skill in `skills:` field
 6. **Verify size**: Confirm agent is within tier limits
 7. **Test functionality**: Ensure agent still works correctly
 
@@ -2381,7 +2381,7 @@ When simplifying an agent:
 
 - All agents within tier limits (Simple <800, Standard <1,200, Complex <1,800)
 - Zero functionality regressions
-- AllSkills referenced exist
+- All Skills referenced exist
 - All convention links valid
 
 **Project Achievement** (2026-01-03):
@@ -2390,21 +2390,21 @@ When simplifying an agent:
 - 82.7% average reduction (4x better than target)
 - 28,439 lines eliminated
 - 100% tier compliance (all in Simple tier)
-- 18Skills created/used
+- 18 Skills created/used
 
 ### Ongoing Vigilance
 
 **Prevent duplication creep**:
 
-1. **New agent creation**: ReferenceSkills instead of duplicating
-2. **Agent updates**: Extract new duplication toSkills
+1. **New agent creation**: Reference Skills instead of duplicating
+2. **Agent updates**: Extract new duplication to Skills
 3. **Periodic audits**: Run repo-governance-checker for duplication detection
-4. **Code reviews**: Check for embeddedSkill knowledge
+4. **Code reviews**: Check for embedded Skill knowledge
 5. **Documentation**: Keep AI Agents Convention updated with examples
 
-### RelatedSkills
+### Related Skills
 
-**CurrentSkills** (18 total):
+**Current Skills** (18 total):
 
 - `generating-validation-reports` - Report generation, UUID chains, timestamps
 - `assessing-criticality-confidence` - Criticality levels, confidence assessment
@@ -2432,7 +2432,7 @@ See [Skills README](../../../.claude/skills/README.md) for complete catalog.
 
 ---
 
-**Last Updated**: 2026-01-29
+**Last Updated**: 2026-02-22
 
 ---
 

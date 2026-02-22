@@ -16,13 +16,13 @@ Standards for linking between AyoKoding educational content and OSE Platform doc
 
 - [File Naming Convention](../structure/file-naming.md) - Correct file names enable accurate linking
 - [Diátaxis Framework](../structure/diataxis-framework.md) - Documentation organization affects link paths
-- [Hugo Linking Conventions](../hugo/) - Hugo-specific linking patterns
+- [Hugo Linking Conventions](../hugo/README.md) - Hugo-specific linking patterns
 
 ## Principles Implemented/Respected
 
-- **Simplicity Over Complexity** - Direct markdown links, no complex indirection
-- **Explicit Over Implicit** - Links are explicit paths, not computed references
-- **Documentation First** - Clear linking standards prevent broken references
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Direct markdown links, no complex indirection
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Links are explicit paths, not computed references
+- **[Documentation First](../../principles/content/documentation-first.md)**: Clear linking standards prevent broken references
 
 ---
 

@@ -152,7 +152,7 @@ This documentation is the **authoritative reference for {LANGUAGE} coding standa
 - Framework choices and rationale (why we chose X)
 - Architecture patterns specific to OSE Platform
 - Anti-patterns to avoid in OSE Platform context
-- Alignment with [Software Engineering Principles](../../principles/software-engineering/)
+- Alignment with [Software Engineering Principles](../../principles/software-engineering/README.md)
 
 **This is NOT a {LANGUAGE} tutorial** - see ayokoding-web for comprehensive language education.
 ```
@@ -321,7 +321,7 @@ This convention applies to **ALL** programming languages in the repository:
 
 ## Alignment with Software Engineering Principles
 
-Programming language style guides in `docs/explanation/` MUST align with five software engineering principles from [governance/principles/software-engineering/](../../principles/software-engineering/):
+Programming language style guides in `docs/explanation/` MUST align with five software engineering principles from [governance/principles/software-engineering/](../../principles/software-engineering/README.md):
 
 ### 1. Automation Over Manual
 
@@ -759,7 +759,7 @@ Before publishing programming language documentation:
 - [ ] README.md includes explicit prerequisite statement linking to ayokoding-web
 - [ ] Content focuses on OSE Platform-specific conventions, not language fundamentals
 - [ ] No duplication of educational content from ayokoding-web
-- [ ] Alignment section links to [Software Engineering Principles](../../principles/software-engineering/)
+- [ ] Alignment section links to [Software Engineering Principles](../../principles/software-engineering/README.md)
 - [ ] Cross-references to ayokoding-web for language learning
 - [ ] Clear scope: "This is NOT a tutorial, see ayokoding-web"
 

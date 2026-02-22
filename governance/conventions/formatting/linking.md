@@ -366,7 +366,7 @@ When creating documentation, verify links by:
 
 ---
 
-**Last Updated**: 2025-11-27
+**Last Updated**: 2025-12-28
 
 ## When to Link Rule References
 
@@ -491,7 +491,7 @@ We renamed "link-convention" to "linking-convention" for clarity
 
 ### Validation
 
-The [docs-checker agent](../../.opencode/agent/docs-checker.md) validates this two-tier formatting requirement:
+The [docs-checker agent](../../../.opencode/agent/docs-checker.md) validates this two-tier formatting requirement:
 
 - **First mention without link** → CRITICAL issue (breaks navigation)
 - **Subsequent mention without inline code** → HIGH issue (convention violation)

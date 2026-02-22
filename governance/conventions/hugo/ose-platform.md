@@ -94,7 +94,7 @@ apps/oseplatform-web/content/
 
 **Official Documentation**: [PaperMod Site](https://adityatelange.github.io/hugo-PaperMod/)
 **GitHub**: [adityatelange/hugo-PaperMod](https://github.com/adityatelange/hugo-PaperMod)
-**Last Updated**: 2025-10-26 | **GitHub Stars**: 12,755
+**Last Updated**: 2025-12-13 | **GitHub Stars**: 12,755
 **Theme Version Compatibility**: Targets v7.0+, compatible with v8.0
 
 **Description**: Fast, clean, responsive Hugo theme based on hugo-paper, focused on simplicity with useful features.

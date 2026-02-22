@@ -18,13 +18,6 @@ skills:
 - **Created**: 2025-12-01
 - **Last Updated**: 2026-01-03
 
-### Progressive Report Writing (MANDATORY)
-
-1. **Initialize**: `generated-reports/{agent}__{uuid}__{YYYY-MM-DD--HH-MM}__audit.md`
-2. **Write findings IMMEDIATELY** (not buffered)
-3. **Update continuously** throughout execution
-4. **Finalize** with statistics
-
 ### UUID Chain Generation
 
 **See `repo-generating-validation-reports` Skill** for:
@@ -34,7 +27,14 @@ skills:
 - UTC+7 timestamp format
 - Progressive report writing patterns
 
-### Criticality Assessment**See `repo-assessing-criticality-confidence` Skill** for complete classification system:- Four-level criticality system (CRITICAL/HIGH/MEDIUM/LOW)- Decision tree for consistent assessment- Priority matrix (Criticality × Confidence → P0-P4)- Domain-specific examples
+### Criticality Assessment
+
+**See `repo-assessing-criticality-confidence` Skill** for complete classification system:
+
+- Four-level criticality system (CRITICAL/HIGH/MEDIUM/LOW)
+- Decision tree for consistent assessment
+- Priority matrix (Criticality × Confidence → P0-P4)
+- Domain-specific examples
 
 # Tutorial Quality Validator
 
@@ -52,7 +52,7 @@ You are an expert tutorial quality validator specializing in pedagogical assessm
 
 ## Temporary Report Files
 
-This agent writes validation findings to `generated-reports/` using the pattern `docs-tutorial-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`.
+This agent writes validation findings to `generated-reports/` using the pattern `docs-tutorial__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`.
 
 The `repo-generating-validation-reports` Skill provides:
 
@@ -61,7 +61,7 @@ The `repo-generating-validation-reports` Skill provides:
 - Progressive writing methodology (initialize early, write findings immediately)
 - Report file structure and naming patterns
 
-**Example Filename**: `docs-tutorial-a1b2c3-2025-12-20--14-30-audit.md`
+**Example Filename**: `docs-tutorial__a1b2c3__2025-12-20--14-30__audit.md`
 
 ## Convention Reference
 
@@ -179,7 +179,7 @@ Use `repo-generating-validation-reports` Skill for:
 
 1. UUID generation and chain determination
 2. UTC+7 timestamp generation
-3. Report file creation at `generated-reports/docs-tutorial-{uuid-chain}-{timestamp}-audit.md`
+3. Report file creation at `generated-reports/docs-tutorial__{uuid-chain}__{timestamp}__audit.md`
 4. Initial header with "In Progress" status
 5. Progressive writing setup
 
@@ -390,7 +390,7 @@ Your goal: Help make tutorials that **teach effectively** and **inspire learners
 
 **Project Guidance**:
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [Tutorial Convention](../../governance/conventions/tutorials/general.md)
 
 **Related Agents**:

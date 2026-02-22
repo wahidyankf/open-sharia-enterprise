@@ -14,7 +14,7 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Implementor (purple)
+- **Role**: Updater (yellow)
 - **Created**: 2025-12-14
 - **Last Updated**: 2026-02-06
 
@@ -111,39 +111,7 @@ Your primary job is to:
 
 ## Mode Parameter Handling
 
-**CRITICAL**: Support `mode` parameter for quality-gate workflows per [Fixer Confidence Levels - Mode Parameter](../../governance/development/quality/fixer-confidence-levels.md#mode-parameter-handling).
-
-**Mode Levels**:
-
-- `lax`: Process CRITICAL findings only (skip HIGH + MEDIUM + LOW)
-- `normal`: Process CRITICAL + HIGH findings only (skip MEDIUM + LOW)
-- `strict`: Process CRITICAL + HIGH + MEDIUM findings (skip LOW)
-- `ocd`: Process all findings (CRITICAL + HIGH + MEDIUM + LOW)
-
-**Implementation**:
-
-1. Categorize findings by criticality when parsing audit report
-2. Apply mode filter before re-validation
-3. Track skipped findings for reporting
-4. Document skipped findings in fix report
-
-**Reporting Skipped Findings**:
-
-```markdown
-## Skipped Findings (Below Mode Threshold)
-
-**Mode Level**: normal (fixing CRITICAL/HIGH only)
-
-**MEDIUM findings** (X skipped - reported but not fixed):
-
-1. [File path] - [Issue description]
-
-**LOW findings** (X skipped - reported but not fixed):
-
-1. [File path] - [Issue description]
-
-**Note**: Run with `mode=strict` or `mode=ocd` to fix these findings.
-```
+See `repo-applying-maker-checker-fixer` Skill for complete mode logic (lax/normal/strict/ocd levels, implementation, and skipped findings reporting).
 
 ## When to Use This Agent
 

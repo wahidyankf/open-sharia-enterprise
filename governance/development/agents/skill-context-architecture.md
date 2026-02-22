@@ -1,6 +1,6 @@
 ---
 title: "Skill Context Architecture"
-description: Architectural constraint requiring all repository skills to use inline context for subagent compatibility
+description: Architectural guidance on skill context modes in `.claude/skills/`. Inline skills work universally; fork skills work from main conversation only.
 category: explanation
 subcategory: development
 tags:
@@ -10,12 +10,12 @@ tags:
   - constraints
   - subagents
 created: 2026-01-22
-updated: 2026-01-22
+updated: 2026-02-22
 ---
 
 # Skill Context Architecture
 
-This document defines the architectural constraint that all skills in `.claude/skills/` directory MUST use inline context mode (not `context: fork`) to ensure compatibility with both main conversation and subagent contexts.
+This document defines the architectural constraint governing skill context modes in `.claude/skills/`. Inline skills work universally; fork skills work from main conversation only. Both modes are supported in `.claude/skills/`.
 
 ## Principles Implemented/Respected
 
@@ -74,9 +74,12 @@ If `.claude/skills/` contains fork skills:
 
 ## The Repository Standard
 
-### All .claude/skills/ Must Be Inline
+### Skill Context Modes in .claude/skills/
 
-**Standard**: All skills in `.claude/skills/` directory MUST use inline context mode (or omit `context` field, defaulting to inline).
+**Standard**: Skills in `.claude/skills/` support two context modes:
+
+- **Inline skills** (default): Omit `context` field or set `context: inline`. Work in BOTH main conversation AND subagent contexts.
+- **Fork skills** (`context: fork`): Work from MAIN CONVERSATION ONLY (subagents cannot spawn subagents).
 
 **Rationale**:
 
@@ -106,22 +109,21 @@ description: Knowledge about X for agents
 
 **Tool usage**: Skills can use `Read`, `Grep`, `Glob` to reference convention documents but should not modify files.
 
-## Fork Skills: Use Outside .claude/skills/
+## Fork Skills: Main Conversation Only
 
 ### When You Need Fork Behavior
 
-If you genuinely need task delegation with subagent spawning:
+**Option 1: Create fork skills in .claude/skills/ (recommended)**
 
-**Option 1: Create project-specific fork skills**
-
-Place fork skills in a different directory (NOT `.claude/skills/`):
+Fork skills in `.claude/skills/` work from main conversation:
 
 ```
 .claude/
-├─ skills/              # ✅ All inline (universal compatibility)
-└─ fork-skills/         # ✅ Fork skills (main conversation only)
-   └─ deep-research/
-      └─ SKILL.md      # context: fork, agent: Explore
+└─ skills/
+   ├─ inline-skill/     # ✅ Inline skill (universal compatibility)
+   │  └─ SKILL.md      # context: inline (default)
+   └─ fork-skill/       # ✅ Fork skill (main conversation only)
+      └─ SKILL.md      # context: fork
 ```
 
 **Characteristics**:
@@ -161,7 +163,7 @@ Valid use cases for fork skills (in project-specific directories):
 
 When creating or reviewing skills in `.claude/skills/`:
 
-- [ ] `context` field is omitted OR set to `inline`
+- [ ] `context` field is omitted (inline default), `inline`, or `fork` (main conversation only)
 - [ ] No `agent` field (only valid with `context: fork`)
 - [ ] Skill provides knowledge, not task delegation
 - [ ] Description focuses on knowledge domain, not agent spawning
@@ -169,7 +171,7 @@ When creating or reviewing skills in `.claude/skills/`:
 
 ### Common Mistakes
 
-#### ❌ Mistake 1: Fork skill in .claude/skills/
+#### ❌ Mistake 1: Fork skill with agent field in .claude/skills/
 
 **Wrong**:
 
@@ -184,7 +186,7 @@ agent: Explore
 
 **Problem**: Breaks when subagents try to use this skill.
 
-**Right**: Move to `.claude/fork-skills/` or use different approach.
+**Right**: Keep in `.claude/skills/` but document as main-conversation-only, or use a workflow approach.
 
 #### ❌ Mistake 2: Inline skill trying to spawn agents
 
@@ -304,17 +306,17 @@ Exit code 0 (no matches) = compliant, >0 = violations found.
 
 ## Summary
 
-**The Rule**: All skills in `.claude/skills/` MUST use inline context mode.
+**The Rule**: Skills in `.claude/skills/` support both inline and fork modes.
 
 **The Reason**: Subagents cannot spawn other subagents (architectural constraint).
 
 **The Impact**: Universal skill compatibility across main conversation and subagent contexts.
 
-**The Alternative**: Place fork skills in project-specific directories outside `.claude/skills/`, documented as "main conversation only".
+**Key distinction**: When writing skills for agents that may run as subagents, use inline mode for guaranteed compatibility.
 
 This architectural decision ensures skills work predictably everywhere, enabling confident skill composition and subagent usage throughout the repository.
 
 ---
 
-**Last Updated**: 2026-01-22
+**Last Updated**: 2026-02-22
 **Status**: Active Standard

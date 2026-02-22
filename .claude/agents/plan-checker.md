@@ -35,7 +35,7 @@ You are a project plan quality validator ensuring plans are complete, clear, and
 
 ## Temporary Report Files
 
-This agent writes validation findings to `generated-reports/` using the pattern `plan-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`.
+This agent writes validation findings to `generated-reports/` using the pattern `plan__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`.
 
 The `repo-generating-validation-reports` Skill provides UUID generation, timestamp formatting, progressive writing methodology, and report structure templates.
 
@@ -142,7 +142,7 @@ Update status to "Complete", add summary statistics and prioritized recommendati
 
 **Project Guidance:**
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [Plans Organization Convention](../../governance/conventions/structure/plans.md) - Plan standards
 - [Trunk Based Development Convention](../../governance/development/workflow/trunk-based-development.md) - Git workflow standards
 

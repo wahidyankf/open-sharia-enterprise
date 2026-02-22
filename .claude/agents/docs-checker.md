@@ -221,7 +221,7 @@ Per [Documentation First](../../governance/principles/content/documentation-firs
 
 **MANDATORY**: Write findings PROGRESSIVELY to `generated-reports/` per [Temporary Files Convention](../../governance/development/infra/temporary-files.md).
 
-**Report pattern**: `generated-reports/docs-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`
+**Report pattern**: `generated-reports/docs__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 
 **Progressive writing workflow:**
 
@@ -251,12 +251,14 @@ Per [Documentation First](../../governance/principles/content/documentation-firs
 
 ### Step 0: Initialize Report File
 
+Use `repo-generating-validation-reports` Skill for UUID generation, UTC+7 timestamp, and progressive report creation.
+
 **CRITICAL FIRST STEP - Before any validation:**
 
 1. Generate 6-char UUID using Bash
 2. Determine UUID chain (check `.execution-chain-docs`, append if <30s old, else new)
 3. Generate UTC+7 timestamp using Bash
-4. Create report file at `generated-reports/docs-{uuid-chain}-{timestamp}-audit.md`
+4. Create report file at `generated-reports/docs__{uuid-chain}__{timestamp}__audit.md`
 5. Write initial header with scope, status ("In Progress"), progress tracker
 6. File is now readable and updated progressively
 

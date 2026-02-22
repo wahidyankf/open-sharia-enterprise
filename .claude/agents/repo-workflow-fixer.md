@@ -13,7 +13,7 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Implementor (purple)
+- **Role**: Updater (yellow)
 - **Created**: 2025-12-28
 - **Last Updated**: 2026-01-03
 
@@ -30,18 +30,7 @@ skills:
 
 ### Priority Matrix (Criticality × Confidence)
 
-| Criticality | Confidence | Priority | Action               |
-| ----------- | ---------- | -------- | -------------------- |
-| CRITICAL    | HIGH       | **P0**   | Auto-fix immediately |
-| HIGH        | HIGH       | **P1**   | Auto-fix             |
-| CRITICAL    | MEDIUM     | **P1**   | Urgent manual review |
-| MEDIUM      | HIGH       | **P2**   | Approved auto-fix    |
-| HIGH        | MEDIUM     | **P2**   | Manual review        |
-| LOW         | HIGH       | **P3**   | Suggestions          |
-| MEDIUM      | MEDIUM     | **P3**   | Suggestions          |
-| LOW         | MEDIUM     | **P4**   | Optional             |
-
-**Execution Order**: P0 → P1 → P2 → P3 → P4
+See `repo-assessing-criticality-confidence` Skill for complete priority matrix and execution order (P0 → P1 → P2 → P3 → P4).
 
 # Workflow Fixer Agent
 
@@ -68,7 +57,7 @@ Skills: `docs-applying-diataxis-framework`, `repo-assessing-criticality-confiden
 
 **Project Guidance**:
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [Workflow Pattern Convention](../../governance/workflows/meta/workflow-identifier.md)
 
 **Related Agents**:

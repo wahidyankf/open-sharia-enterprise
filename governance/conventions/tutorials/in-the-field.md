@@ -9,11 +9,11 @@ tags:
   - in-the-field
   - education
   - production-ready
-date: 2026-02-04T00:00:00+07:00
-lastmod: 2026-02-04
-draft: false
-weight: 2400
+created: 2026-02-04
+updated: 2026-02-04
 ---
+
+# In-the-Field Tutorial Convention
 
 ## Purpose
 
@@ -2153,7 +2153,6 @@ This Java example follows universal principles while adapting to language-specif
 ---
 title: "Guide Title"
 date: YYYY-MM-DDTHH:MM:SS+07:00
-draft: false
 description: "Brief description of production topic covered"
 weight: 10000XXX
 tags: ["language-tag", "topic-tag", "framework-tag", "pattern-tag"]
@@ -2394,7 +2393,6 @@ This convention reflects standards validated by production in-the-field content 
 
 This convention implements and respects:
 
-- **[Core Features First](../../principles/content/core-features-first.md)**: Standard library first, then frameworks - teach primitives before abstractions, enabling informed framework selection
 - **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: Content progresses from standard library to production frameworks, assumes by-example/by-concept foundation
 - **[No Time Estimates](../../principles/content/no-time-estimates.md)**: Describes what will be accomplished, not duration
 - **[Accessibility First](../../principles/content/accessibility-first.md)**: Color-blind friendly diagrams and accessible formatting
@@ -2438,7 +2436,7 @@ This convention implements and respects:
 - [Content Quality Principles](../writing/quality.md): General content quality standards
 - [Diagrams Convention](../formatting/diagrams.md): Mermaid diagram standards
 - [Color Accessibility Convention](../formatting/color-accessibility.md): Color-blind friendly palette
-- [Core Features First Principle](../../principles/content/core-features-first.md): Foundation for standard library first approach
+- [Core Features First Principle](./by-example.md): Foundation for standard library first approach
 
 ## Related Agents
 

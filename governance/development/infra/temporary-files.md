@@ -65,10 +65,14 @@ All checker agents in the following families MUST write audit reports to `genera
 6. **apps-ayokoding-web-structure-checker** - Content structure validation (ayokoding-web)
 7. **apps-oseplatform-web-content-checker** - Hugo content validation (oseplatform-web)
 8. **docs-checker** - Documentation factual accuracy validation
-9. **docs-tutorial-checker** - Tutorial quality validation
-10. **readme-checker** - README quality validation
-11. **plan-checker** - Plan readiness validation
-12. **plan-execution-checker** - Implementation validation
+9. **docs-link-general-checker** - External and internal link validation
+10. **docs-tutorial-checker** - Tutorial quality validation
+11. **readme-checker** - README quality validation
+12. **plan-checker** - Plan readiness validation
+13. **plan-execution-checker** - Implementation validation
+14. **apps-ayokoding-web-in-the-field-checker** - In-the-field content validation (ayokoding-web)
+15. **docs-software-engineering-separation-checker** - Software engineering docs separation validation
+16. **repo-workflow-checker** - Workflow documentation quality validation
 
 **NO EXCEPTIONS**: Checker agents MUST NOT output results in conversation only. All validation findings MUST be written to audit report files.
 
@@ -160,6 +164,7 @@ To enable accurate parent-child hierarchy tracking across concurrent workflow ru
 | docs-tutorial-checker     | `docs-tutorial` | `.execution-chain-docs-tutorial` |
 | readme-checker            | `readme`        | `.execution-chain-readme`        |
 | plan-checker              | `plan`          | `.execution-chain-plan`          |
+| docs-link-general-checker | `docs-link`     | `.execution-chain-docs-link`     |
 | ayokoding-web-\* (golang) | `golang`        | `.execution-chain-golang`        |
 | ayokoding-web-\* (elixir) | `elixir`        | `.execution-chain-elixir`        |
 | oseplatform-web-\*        | `ose-platform`  | `.execution-chain-ose-platform`  |
@@ -198,11 +203,11 @@ if [ -f "$CHAIN_FILE" ]; then
   CURRENT_TIME=$(date +%s)
   TIME_DIFF=$((CURRENT_TIME - PARENT_TIME))
 
-  if [ $TIME_DIFF -lt 30 ]; then
+  if [ $TIME_DIFF -lt 300 ]; then
     # Recent parent, append to chain
     UUID_CHAIN="${PARENT_CHAIN}_${MY_UUID}"
   else
-    # Stale parent (>30 seconds), treat as root
+    # Stale parent (>300 seconds / 5 minutes), treat as root
     UUID_CHAIN="${MY_UUID}"
   fi
 else
@@ -296,8 +301,6 @@ fi
 - Execution verification reports (plan-execution-checker)
 - Todo lists and progress tracking
 
-**Note**: `docs-link-general-checker` does NOT create report files (outputs in conversation only)
-
 ### Progressive Writing Requirement for Checker Agents
 
 **CRITICAL BEHAVIORAL REQUIREMENT**: All \*-checker agents MUST write their validation reports PROGRESSIVELY (continuously updating files during execution), NOT buffering findings in memory to write once at the end.
@@ -383,7 +386,7 @@ This agent writes findings PROGRESSIVELY to ensure survival through context comp
 4. **Finalize** with completion status and summary statistics
 5. **Never** buffer findings in memory - write immediately after each validation
 
-Report file: generated-reports/{agent-family}__{YYYY-MM-DD--HH-MM}__audit.md
+Report file: generated-reports/{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md
 
 This progressive approach ensures findings persist even if context is compacted during long audits.
 ```
@@ -400,10 +403,14 @@ ALL \*-checker agents must implement progressive writing:
 6. apps-ayokoding-web-structure-checker
 7. apps-oseplatform-web-content-checker
 8. docs-checker
-9. docs-tutorial-checker
-10. readme-checker
-11. plan-checker
-12. plan-execution-checker
+9. docs-link-general-checker
+10. docs-tutorial-checker
+11. readme-checker
+12. plan-checker
+13. plan-execution-checker
+14. apps-ayokoding-web-in-the-field-checker
+15. docs-software-engineering-separation-checker
+16. repo-workflow-checker
 
 **Validation**: See repo-governance-checker agent for validation rules that verify progressive writing compliance across all checker agents.
 
@@ -423,7 +430,7 @@ ALL \*-checker agents must implement progressive writing:
 **Separator Rules**:
 
 - Double underscore (`__`) separates the 4 major components
-- Dot (`.`) separates UUIDs within the uuid-chain
+- Underscore (`_`) separates UUIDs within the uuid-chain
 - Double dash (`--`) separates date from time within timestamp
 - Single dash (`-`) separates components within date (YYYY-MM-DD) and time (HH-MM)
 - NO "report" keyword in filename (redundant - location in `generated-reports/` makes purpose clear)
@@ -453,7 +460,7 @@ generated-reports/plan-execution__d4e5f6__2025-12-15--14-00__validation.md
 **Pattern Rules**:
 
 - Use double underscore (`__`) to separate the 4 components (agent-family, uuid-chain, timestamp, suffix)
-- Use dot (`.`) to separate UUIDs within the uuid-chain
+- Use underscore (`_`) to separate UUIDs within the uuid-chain
 - Use double dash (`--`) to separate date from time in timestamp
 - UUID MUST be 6 lowercase hex characters (generated via `uuidgen | head -c 6`)
 - Timestamp MUST be UTC+7 (YYYY-MM-DD--HH-MM format)
@@ -485,7 +492,8 @@ filename="repo-rules__${uuid}__${timestamp}__audit.md"
 #### Repository Audit Reports
 
 **Agent**: repo-governance-checker
-**Pattern**: `repo-rules**{uuid-chain}**{YYYY-MM-DD--HH-MM}**audit.md`**Example**:`repo-rules**a1b2c3**2025-12-14--20-45\_\_audit.md`
+**Pattern**: `repo-rules__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
+**Example**: `repo-rules__a1b2c3__2025-12-14--20-45__audit.md`
 
 **Content**: Comprehensive consistency audit covering:
 
@@ -496,13 +504,25 @@ filename="repo-rules__${uuid}__${timestamp}__audit.md"
 - Frontmatter consistency
 - File naming compliance
 
-**Timestamp**: Audit start time in UTC+7 (YYYY-MM-DD-HH-MM format)
+**Timestamp**: Audit start time in UTC+7 (YYYY-MM-DD--HH-MM format)
+
+**Retention**: Keep for historical tracking and comparison. Review/archive older reports periodically.
+
+#### Link Validation Reports
+
+**Agent**: docs-link-general-checker
+**Pattern**: `docs-link__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
+**Example**: `docs-link__a1b2c3__2025-12-14--20-45__audit.md`
+
+**Content**: External and internal link validation results, broken links, redirect chains, cache maintenance summary (pruned links, usedIn updates)
+
+**Timestamp**: Audit start time in UTC+7 (YYYY-MM-DD--HH-MM format)
 
 **Retention**: Keep for historical tracking and comparison. Review/archive older reports periodically.
 
 #### Fixer Reports (Universal Pattern)
 
-**Agents**: All fixer agents (repo-governance-fixer, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-facts-fixer, apps-ayokoding-web-structure-fixer, docs-tutorial-fixer, apps-oseplatform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer)
+**Agents**: All fixer agents (repo-governance-fixer, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-facts-fixer, apps-ayokoding-web-in-the-field-fixer, apps-ayokoding-web-link-fixer, apps-ayokoding-web-structure-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, apps-oseplatform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer, repo-workflow-fixer)
 
 **Pattern**: `{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__fix.md`
 
@@ -584,14 +604,18 @@ All fixer reports include these sections:
 
 #### Content Validation Reports
 
-**Agents**: apps-ayokoding-web-general-checker, apps-ayokoding-web-by-example-checker, apps-oseplatform-web-content-checker
+**Agents**: apps-ayokoding-web-general-checker, apps-ayokoding-web-by-example-checker, apps-ayokoding-web-facts-checker, apps-ayokoding-web-in-the-field-checker, apps-ayokoding-web-link-checker, apps-ayokoding-web-structure-checker, apps-oseplatform-web-content-checker
 **Pattern**: `{site}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 
 **Examples**:
 
-- `apps-ayokoding-web-general__a1b2c3__2025-12-14--15-30__audit.md`
-- `apps-ayokoding-web-by-example__d4e5f6__2025-12-14--15-45__audit.md`
-- `apps-oseplatform-web-content__g7h8i9__2025-12-14--16-00__audit.md`
+- `ayokoding-web-general__a1b2c3__2025-12-14--15-30__audit.md`
+- `ayokoding-web-by-example__d4e5f6__2025-12-14--15-45__audit.md`
+- `ayokoding-web-facts__a1b2c3__2025-12-14--15-50__audit.md`
+- `ayokoding-web-in-the-field__d4e5f6__2025-12-14--15-55__audit.md`
+- `ayokoding-web-link__g7h8i9__2025-12-14--16-00__audit.md`
+- `ayokoding-web-structure__a1b2c3__2025-12-14--16-05__audit.md`
+- `oseplatform-web-content__g7h8i9__2025-12-14--16-10__audit.md`
 
 **Content**: Hugo content validation results (frontmatter, structure, quality)
 
@@ -670,7 +694,7 @@ Do NOT use these directories for:
 Agents that create validation/audit reports (docs-checker, plan-checker, repo-governance-checker, etc.) should:
 
 1. Use `generated-reports/` directory
-2. Follow naming pattern: `YYYY-MM-DD__[report-type].md`
+2. Follow naming pattern: `{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__{type}.md`
 3. Include timestamp in filename for traceability
 4. Use descriptive report type in filename
 5. **MUST have both Write and Bash tools** in their frontmatter
@@ -701,7 +725,7 @@ color: green
 ```markdown
 When generating a validation report:
 
-- Path: `generated-reports/2025-12-01__docs-validation.md`
+- Path: `generated-reports/docs__a1b2c3__2025-12-01--14-30__validation.md`
 - Include: Timestamp, agent name, summary, detailed findings
 ```
 
@@ -745,7 +769,6 @@ The rule includes "unless specified otherwise by other governance/conventions":
 **Example exceptions**:
 
 - **Operational metadata files** - Use `docs/metadata/` instead (e.g., `external-links-status.yaml` is committed to git, not temporary)
-- **docs-link-general-checker agent** - Outputs results in conversation only (no report files created)
 - Agent-specific conventions may override this rule
 - Task-specific requirements may specify different locations
 - User instructions may explicitly request different locations
