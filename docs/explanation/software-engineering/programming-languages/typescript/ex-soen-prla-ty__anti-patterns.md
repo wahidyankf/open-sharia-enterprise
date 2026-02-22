@@ -9,9 +9,9 @@ tags:
   - code-smell
   - best-practices
 related:
-  - ./ex-soen-prla-ts__best-practices.md
-  - ./ex-soen-prla-ts__type-safety.md
-  - ./ex-soen-prla-ts__error-handling.md
+  - ./ex-soen-prla-ty__best-practices.md
+  - ./ex-soen-prla-ty__type-safety.md
+  - ./ex-soen-prla-ty__error-handling.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity

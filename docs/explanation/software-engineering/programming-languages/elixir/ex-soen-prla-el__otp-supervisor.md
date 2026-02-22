@@ -23,8 +23,6 @@ principles:
 last_updated: 2026-01-23
 ---
 
-# OTP Supervisor Patterns
-
 ## Overview
 
 Supervisors are processes that monitor other processes (called child processes) and restart them when they crash. Supervisors form supervision trees that provide fault tolerance and self-healing capabilities to applications.
@@ -47,8 +45,6 @@ Supervisors are processes that monitor other processes (called child processes) 
 - [Restart Strategies](#restart-strategies)
 - [Monitoring and Debugging](#monitoring-and-debugging)
 - [Financial Domain Examples](#financial-domain-examples)
-
-## Supervision Strategies
 
 ### one_for_one
 
@@ -211,18 +207,7 @@ sequenceDiagram
 ### Strategy Comparison
 
 ```elixir
-# Scenario: 4 workers (A, B, C, D), Worker C crashes
 
-# one_for_one:
-# Before: [A, B, C, D]
-# After:  [A, B, C', D]  (only C restarted)
-
-# one_for_all:
-# Before: [A, B, C, D]
-# After:  [A', B', C', D']  (all restarted)
-
-# rest_for_one:
-# Before: [A, B, C, D]
 # After:  [A, B, C', D']  (C and everything after)
 ```
 
@@ -266,8 +251,6 @@ graph TD
     style C3 fill:#DE8F05,stroke:#8A5903,color:#FFF
     style D3 fill:#DE8F05,stroke:#8A5903,color:#FFF
 ```
-
-## Supervision Tree Design
 
 ### Basic Tree
 
@@ -441,8 +424,6 @@ defmodule PaymentProcessorSupervisor do
 end
 ```
 
-## Dynamic Supervisors
-
 ### Starting Children Dynamically
 
 ```elixir
@@ -545,8 +526,6 @@ defmodule Financial.DonationPartitionSupervisor do
   end
 end
 ```
-
-## Restart Strategies
 
 ### Restart Options
 
@@ -716,18 +695,11 @@ stateDiagram-v2
     style Crashed fill:#CC78BC,stroke:#8E5484,color:#FFF
 ```
 
-## Monitoring and Debugging
-
 ### Introspection
 
 ```elixir
 # List all children
 Supervisor.which_children(Financial.Supervisor)
-# => [
-#   {CampaignSupervisor, #PID<0.123.0>, :supervisor, [Financial.CampaignSupervisor]},
-#   {PaymentSupervisor, #PID<0.124.0>, :supervisor, [Financial.PaymentSupervisor]},
-#   ...
-# ]
 
 # Count children
 Supervisor.count_children(Financial.Supervisor)
@@ -782,8 +754,6 @@ end
 # Start observer GUI
 :observer.start()
 
-# Navigate to Applications tab to see supervision tree
-# Navigate to Processes tab to see all processes
 # Click on supervisor to see restart statistics
 ```
 
@@ -843,8 +813,6 @@ graph TD
     style Investigate fill:#DE8F05,stroke:#8A5903,color:#FFF
     style Intervene fill:#CC78BC,stroke:#8E5484,color:#FFF
 ```
-
-## Financial Domain Examples
 
 ### Payment Processing Supervision Tree
 
@@ -1205,8 +1173,6 @@ defmodule DonationReceiver do
 end
 ```
 
-## Best Practices
-
 ### 1. Keep Supervision Trees Shallow
 
 ```elixir
@@ -1306,8 +1272,6 @@ def terminate(_reason, state) do
 end
 ```
 
-## Performance Considerations
-
 ### Start Order
 
 ```elixir
@@ -1330,8 +1294,6 @@ Supervisor.init(children,
   max_seconds: 60     # Time window
 )
 ```
-
-## Common Patterns
 
 ### Two-Phase Startup
 
@@ -1365,8 +1327,6 @@ defmodule CircuitBreakerSupervisor do
 end
 ```
 
-## Resources
-
 ### Official Documentation
 
 - [Supervisor Behavior](https://hexdocs.pm/elixir/Supervisor.html)
@@ -1378,7 +1338,6 @@ end
 - [Back to Elixir README](README.md)
 - [GenServer Patterns](ex-soen-prla-el__otp-genserver.md)
 - [Application Patterns](ex-soen-prla-el__otp-application.md)
-- [Error Handling](ex-soen-prla-el__error-handling.md)
 
 ---
 

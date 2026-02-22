@@ -11,10 +11,10 @@ tags:
   - type-guards
   - typescript-5.0
 related:
-  - ./ex-soen-prla-ts__idioms.md
-  - ./ex-soen-prla-ts__interfaces-and-types.md
-  - ./ex-soen-prla-ts__best-practices.md
-  - ./ex-soen-prla-ts__anti-patterns.md
+  - ./ex-soen-prla-ty__idioms.md
+  - ./ex-soen-prla-ty__interfaces-and-types.md
+  - ./ex-soen-prla-ty__best-practices.md
+  - ./ex-soen-prla-ty__anti-patterns.md
   - ../../../../../governance/principles/software-engineering/explicit-over-implicit.md
 principles:
   - explicit-over-implicit

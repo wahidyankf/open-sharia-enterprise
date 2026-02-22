@@ -1842,11 +1842,6 @@ Production guidelines for Spring Data JPA.
 - [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - Repository patterns
 - [Spring Boot Performance](./ex-soen-plwe-to-jvspbo__performance.md) - Query optimization
 
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring Boot By Example - Data Access](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/data-access.md) - Code examples
-- [Spring Boot In-the-Field - Database Integration](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/data-access.md) - Production patterns
-
 ---
 
 **Last Updated**: 2026-01-26

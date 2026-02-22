@@ -26,8 +26,6 @@ created: 2026-01-25
 updated: 2026-01-26
 ---
 
-# Spring Boot Testing
-
 ## 📋 Quick Reference
 
 - [Overview](#overview)
@@ -1182,8 +1180,6 @@ class MurabahaApplicationWorkflowTest {
 }
 ```
 
-## Test Configuration
-
 ### Test Properties
 
 Create `src/test/resources/application-test.properties`:
@@ -1269,8 +1265,6 @@ void example() {
 }
 ```
 
-## Advanced Testing Techniques
-
 ### Parameterized Tests
 
 Test multiple scenarios with different inputs:
@@ -1349,8 +1343,6 @@ class NotificationServiceTest {
     }
 }
 ```
-
-## Testing Best Practices
 
 ### Test Naming Convention
 
@@ -1450,8 +1442,6 @@ Before deploying:
 - [ ] Security tests verify authentication and authorization
 - [ ] Performance tests validate acceptable response times
 - [ ] Test coverage meets team standards (>80% for critical code)
-
-## OSE Platform Testing Examples
 
 ### Complete Zakat Calculation Test Suite
 
@@ -1672,8 +1662,5 @@ class CompleteWaqfTest {
 - [Spring Boot Best Practices](./ex-soen-plwe-to-jvspbo__best-practices.md) - Test standards
 
 **Hands-on Learning (AyoKoding)**:
-
-- [Spring Boot By Example - Testing](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/testing.md) - Code examples
-- [Spring Boot In-the-Field - Test Strategies](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/testing.md) - Production testing
 
 **Last Updated**: 2026-01-26

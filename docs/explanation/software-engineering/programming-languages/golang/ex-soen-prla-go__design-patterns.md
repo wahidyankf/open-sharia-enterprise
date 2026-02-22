@@ -35,7 +35,7 @@ last_updated: 2026-02-04
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You **MUST** understand Go fundamentals from [AyoKoding Go Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang.md) before using these standards.
+**REQUIRED**: You **MUST** understand Go fundamentals from [AyoKoding Go Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/_index.md) before using these standards.
 
 **This document is OSE Platform-specific**, not a Go tutorial. It assumes proficiency in:
 
@@ -64,8 +64,6 @@ This document defines **authoritative design pattern standards** for Go developm
 
 ---
 
-# Part 1: Functional Programming Patterns
-
 ## Overview
 
 Functional Programming (FP) is a programming paradigm that treats computation as the evaluation of mathematical functions and avoids changing state and mutable data. While Go is primarily an imperative language with object-oriented features, it supports several functional programming concepts through first-class functions, closures, and higher-order functions.
@@ -88,8 +86,6 @@ Go's approach to functional programming is pragmatic rather than pure. It provid
 - No pattern matching (use type switches instead)
 - Limited type inference compared to pure FP languages
 - Imperative style often more idiomatic
-
-## Functional Programming Fundamentals
 
 ### Pure Functions
 
@@ -328,7 +324,7 @@ Higher-order functions take functions as arguments or return functions as result
 
 ```go
 // Map: transform each element
-func Map[T, U any](slice []T, fn func(T) U) []U {
+func MapT, U any U) []U {
   result := make([]U, len(slice))
   for i, v := range slice {
     result[i] = fn(v)
@@ -355,7 +351,7 @@ func Example() {
 
 ```go
 // Filter: keep elements that match predicate
-func Filter[T any](slice []T, predicate func(T) bool) []T {
+func FilterT any bool) []T {
   result := make([]T, 0)
   for _, v := range slice {
     if predicate(v) {
@@ -384,7 +380,7 @@ func Example() {
 
 ```go
 // Reduce: accumulate values into single result
-func Reduce[T, U any](slice []T, initial U, fn func(U, T) U) U {
+func ReduceT, U any U) U {
   result := initial
   for _, v := range slice {
     result = fn(result, v)
@@ -471,7 +467,7 @@ graph LR
 
 ```go
 // Compose two functions: f(g(x))
-func Compose[A, B, C any](f func(B) C, g func(A) B) func(A) C {
+func ComposeA, B, C any C, g func(A) B) func(A) C {
   return func(x A) C {
     return f(g(x))
   }
@@ -496,7 +492,7 @@ type Pipeline[T any] struct {
   value T
 }
 
-func Pipe[T any](value T) Pipeline[T] {
+func PipeT any Pipeline[T] {
   return Pipeline[T]{value: value}
 }
 
@@ -556,7 +552,7 @@ type Middleware func(Handler) Handler
 // Compose middlewares
 func ChainMiddleware(h Handler, middlewares ...Middleware) Handler {
   for i := len(middlewares) - 1; i >= 0; i-- {
-    h = middlewares[i](h)
+    h = middlewaresi
   }
   return h
 }
@@ -704,8 +700,6 @@ func WithTimeout(timeout time.Duration) Option {
 }
 ```
 
-## Currying and Partial Application
-
 ### Currying
 
 Currying transforms a function with multiple arguments into a chain of functions with single arguments.
@@ -763,7 +757,7 @@ func Example() {
 }
 
 // Generic partial application
-func Partial2[A, B, R any](fn func(A, B) R, a A) func(B) R {
+func Partial2A, B, R any R, a A) func(B) R {
   return func(b B) R {
     return fn(a, b)
   }
@@ -817,7 +811,7 @@ type Option[T any] struct {
 }
 
 // Some creates an Option with a value
-func Some[T any](value T) Option[T] {
+func SomeT any Option[T] {
   return Option[T]{value: &value}
 }
 
@@ -896,12 +890,12 @@ type Result[T any] struct {
 }
 
 // Ok creates a successful Result
-func Ok[T any](value T) Result[T] {
+func OkT any Result[T] {
   return Result[T]{value: &value, err: nil}
 }
 
 // Err creates a failed Result
-func Err[T any](err error) Result[T] {
+func ErrT any Result[T] {
   return Result[T]{value: nil, err: err}
 }
 
@@ -934,7 +928,7 @@ func (r Result[T]) UnwrapOr(defaultValue T) T {
 // Map applies a function if Result is Ok
 func (r Result[T]) Map(fn func(T) T) Result[T] {
   if r.IsErr() {
-    return Err[T](r.err)
+    return ErrT
   }
   return Ok(fn(*r.value))
 }
@@ -944,14 +938,14 @@ func (r Result[T]) MapErr(fn func(error) error) Result[T] {
   if r.IsOk() {
     return r
   }
-  return Err[T](fn(r.err))
+  return ErrT)
 }
 
 // Example usage
 func ParseInt(s string) Result[int] {
   value, err := strconv.Atoi(s)
   if err != nil {
-    return Err[int](err)
+    return Errint
   }
   return Ok(value)
 }
@@ -975,8 +969,6 @@ func Example() {
   }
 }
 ```
-
-## Recursion
 
 ### Basic Recursion
 
@@ -1083,7 +1075,7 @@ type Lazy[T any] struct {
   cached *T
 }
 
-func NewLazy[T any](fn func() T) *Lazy[T] {
+func NewLazyT any T) *Lazy[T] {
   return &Lazy[T]{thunk: fn}
 }
 
@@ -1130,7 +1122,7 @@ func Integers() iter.Seq[int] {
 }
 
 // Take first n elements
-func Take[T any](seq iter.Seq[T], n int) iter.Seq[T] {
+func TakeT any iter.Seq[T] {
   return func(yield func(T) bool) {
     count := 0
     for v := range seq {
@@ -1168,7 +1160,7 @@ func Integers() <-chan int {
 }
 
 // Take first n elements
-func Take[T any](ch <-chan T, n int) <-chan T {
+func TakeT any <-chan T {
   out := make(chan T)
   go func() {
     defer close(out)
@@ -1195,7 +1187,7 @@ Generics (Go 1.18+) enable type-safe functional programming patterns.
 
 ```go
 // Map with generics
-func Map[T, U any](slice []T, fn func(T) U) []U {
+func MapT, U any U) []U {
   result := make([]U, len(slice))
   for i, v := range slice {
     result[i] = fn(v)
@@ -1204,7 +1196,7 @@ func Map[T, U any](slice []T, fn func(T) U) []U {
 }
 
 // Filter with generics
-func Filter[T any](slice []T, predicate func(T) bool) []T {
+func FilterT any bool) []T {
   result := make([]T, 0)
   for _, v := range slice {
     if predicate(v) {
@@ -1215,7 +1207,7 @@ func Filter[T any](slice []T, predicate func(T) bool) []T {
 }
 
 // Reduce with generics
-func Reduce[T, U any](slice []T, initial U, fn func(U, T) U) U {
+func ReduceT, U any U) U {
   result := initial
   for _, v := range slice {
     result = fn(result, v)
@@ -1251,11 +1243,11 @@ type Functor[T any] struct {
   value T
 }
 
-func NewFunctor[T any](value T) Functor[T] {
+func NewFunctorT any Functor[T] {
   return Functor[T]{value: value}
 }
 
-func (f Functor[T]) Map[U any](fn func(T) U) Functor[U] {
+func (f Functor[T]) MapU any U) Functor[U] {
   return Functor[U]{value: fn(f.value)}
 }
 
@@ -1272,8 +1264,6 @@ func Example() {
   fmt.Println(result.Value()) // "Result: 13"
 }
 ```
-
-## Best Practices
 
 ### When to Use Functional Programming
 
@@ -1353,8 +1343,6 @@ func ProcessImperative(numbers []int) int {
 5. **Consider performance**: Profile before optimizing, but be aware FP has overhead
 6. **Test pure functions**: Pure functions are easy to test - take advantage
 7. **Embrace Go idioms**: Don't force FP patterns that fight Go's design
-
-## Common Pitfalls
 
 ### Over-Engineering with FP
 
@@ -1448,8 +1436,6 @@ func SumIterative(nums []int) int {
 
 ---
 
-# Part 2: Finite State Machine Patterns
-
 ## Overview
 
 Finite State Machines (FSMs) are fundamental design patterns for managing complex state transitions in enterprise software. In Go, FSMs leverage the language's unique strengths - type safety through interfaces, explicit error handling, and goroutine-safe concurrency - to build robust, maintainable state management systems for financial and business-critical applications.
@@ -1489,8 +1475,6 @@ Financial applications involve complex workflows with strict state transition ru
 - **Channel-based actor model**: Natural fit for event-driven state machines
 - **Zero-cost interfaces**: No virtual table overhead
 - **Composition over inheritance**: State embedding without deep hierarchies
-
-## FSM Fundamentals
 
 ### Core Components
 
@@ -1547,8 +1531,6 @@ FSMs enforce invariants through:
 2. **Guard conditions**: Check preconditions before transition
 3. **Exit actions**: Clean up resources when leaving state
 
-## Type-Based FSM Pattern
-
 ### Overview
 
 Type-based FSMs use Go's type alias + const pattern to create enum-like states with transition logic in methods. This is the simplest approach for straightforward workflows.
@@ -1559,8 +1541,6 @@ Type-based FSMs use Go's type alias + const pattern to create enum-like states w
 - **Type-safe**: States are distinct types
 - **Centralized transitions**: Logic in one place
 - **Go idiom**: Natural fit for Go's type system
-
-### Example: Donation Payment Processing FSM
 
 #### Payment State Transition Diagram
 
@@ -1771,8 +1751,6 @@ func (p *DonationPayment) Cancel(reason string) error {
 - ❌ Complex state-specific logic
 - ❌ States need different data fields
 - ❌ Need polymorphic behavior per state
-
-## State Interface Pattern
 
 ### Overview
 
@@ -2128,8 +2106,6 @@ func (d *DefaultedState) ValidateInvariants(loan *QardHasan) error {
 - ❌ Simple FSMs (use type-based pattern)
 - ❌ Hundreds of states (consider table-driven approach)
 
-## Type Switch Pattern
-
 ### Overview
 
 The Type Switch Pattern uses Go's type switch with interfaces to achieve exhaustive-like matching similar to sealed classes in modern languages. This pattern leverages Go 1.18+ features for cleaner state handling.
@@ -2399,8 +2375,6 @@ func (c *Contract) Archive() error {
 
 - ❌ Simple FSMs (use type-based pattern)
 - ❌ Need strict exhaustiveness checking (Go doesn't provide this)
-
-## Concurrency-Safe FSMs
 
 ### Concurrency Patterns for FSMs
 
@@ -2748,8 +2722,6 @@ func (ap *ActorPayment) Stop() {
 - ✅ Backpressure handling
 - ✅ Integration with other actors
 
-## Testing State Machines
-
 ### Unit Testing Individual Transitions
 
 ```go
@@ -2911,8 +2883,6 @@ func TestSafePayment_ConcurrentTransitions(t *testing.T) {
 
 ---
 
-# Part 3: Interfaces and Composition Patterns
-
 ## Overview
 
 Go uses interfaces and composition instead of class-based inheritance. This section covers interface design, struct embedding, and composition patterns that enable polymorphism without traditional OOP inheritance.
@@ -2925,10 +2895,6 @@ Go uses interfaces and composition instead of class-based inheritance. This sect
 - **Duck typing**: "If it walks like a duck and quacks like a duck, it's a duck"
 
 **Philosophy**: "Composition over inheritance", "Accept interfaces, return structs"
-
-## Interfaces Fundamentals
-
-### What is an Interface?
 
 #### Interface Implementation Flow
 
@@ -3030,8 +2996,6 @@ type RedisStorage struct{}
 // All implement Storage interface
 ```
 
-## Interface Design
-
 ### Keep Interfaces Small
 
 Go philosophy: "The bigger the interface, the weaker the abstraction"
@@ -3125,8 +3089,6 @@ func NewDatabase() Database {
 - Returning structs: Callers know exactly what they get
 - Exceptions: Factory pattern, when hiding implementation is intentional
 
-### Single-Method Interfaces
-
 #### Interface Composition Pattern
 
 ```mermaid
@@ -3182,10 +3144,6 @@ type ReadWriteCloser interface {
   Closer
 }
 ```
-
-## Struct Embedding
-
-### What is Embedding?
 
 #### Struct Embedding Promotion
 
@@ -3350,8 +3308,6 @@ func main() {
 
 **Resolution**: Use explicit field names to avoid ambiguity
 
-## Composition Patterns
-
 ### Decorator Pattern
 
 ```go
@@ -3489,8 +3445,6 @@ func main() {
 }
 ```
 
-## Interface vs Concrete Types
-
 ### When to Use Interfaces
 
 ```go
@@ -3560,8 +3514,6 @@ func (s *UserService) GetUser(id string) (*User, error) {
 
 **Rule**: Define interfaces when you need them, not "just in case"
 
-## Empty Interface
-
 ### interface{} (any in Go 1.18+)
 
 Empty interface can hold any value:
@@ -3607,13 +3559,11 @@ func process(data any) {
 }
 
 // Better: Use generics (Go 1.18+)
-func process[T any](data T) {
+func processT any {
   // Type is known at compile time
   fmt.Printf("%v\n", data)
 }
 ```
-
-## Type Assertions
 
 ### Syntax
 
@@ -3665,8 +3615,6 @@ func processValue(v interface{}) {
 
 // Better: Use type switch (see next section)
 ```
-
-## Type Switches
 
 ### Syntax
 
@@ -3746,8 +3694,6 @@ func processShape(s Shape) {
   fmt.Printf("Area: %.2f\n", s.Area())
 }
 ```
-
-## Common Interfaces
 
 ### io.Reader and io.Writer
 
@@ -3860,8 +3806,6 @@ func main() {
   // Sorted by age: Bob (25), Alice (30), Charlie (35)
 }
 ```
-
-## Interface Best Practices
 
 ### 1. Keep Interfaces Small
 
@@ -3984,7 +3928,7 @@ type ReadCloser interface {
 
 **Cross-Language Comparisons:**
 
-- [Java Finite State Machines](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/advanced.md) - Comparison with Java approach
+- [Java Finite State Machines](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/advanced.md) - Comparison with Java approach
 
 **Governance Principles:**
 

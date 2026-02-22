@@ -20,7 +20,7 @@ updated: 2026-02-06
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Spring Framework fundamentals from [AyoKoding Spring Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring.md) before using these standards.
+**REQUIRED**: You MUST understand Spring Framework fundamentals from AyoKoding Spring Learning Path before using these standards.
 
 **This document is OSE Platform-specific**, not a Spring tutorial. We define HOW to apply Spring in THIS codebase, not WHAT Spring is.
 
@@ -30,7 +30,7 @@ updated: 2026-02-06
 
 **OSE-specific prescriptive standards** for error handling in Spring-based Shariah-compliant financial applications. This document defines **mandatory requirements** using RFC 2119 keywords (MUST, SHOULD, MAY).
 
-**Prerequisites**: Understanding of Spring Framework fundamentals from [AyoKoding Spring Framework](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring.md) and Java error handling from [Java Error Handling Standards](../../../../programming-languages/java/ex-soen-prla-ja__error-handling-standards.md).
+**Prerequisites**: Understanding of Spring Framework fundamentals from AyoKoding Spring Framework and Java error handling from Java Error Handling Standards.
 
 ## Purpose
 
@@ -41,8 +41,6 @@ Error handling in Spring-based OSE Platform services extends Java error handling
 - **Global Exception Handling**: Centralized error handling across REST APIs
 - **Domain vs Infrastructure Separation**: Clear exception boundaries in Spring components
 - **Financial Transaction Atomicity**: Ensuring Zakat, donations, and Murabaha operations are atomic
-
-## Spring Exception Hierarchy Standards
 
 ### Custom Exception Hierarchy with Spring Annotations
 
@@ -112,8 +110,6 @@ public sealed class ZakatInfrastructureException extends OseFinancialException
 ```
 
 **REQUIRED**: Domain exceptions MUST NOT leak infrastructure details (no SQL queries, stack traces, file paths in messages).
-
-## Global Exception Handling with @ControllerAdvice
 
 ### Centralized Exception Handler
 
@@ -255,8 +251,6 @@ public record ErrorResponse(
 ) {}
 ```
 
-## Transaction Rollback Standards
-
 ### @Transactional Configuration for Financial Operations
 
 **REQUIRED**: All financial operations MUST use `@Transactional` with explicit rollback rules.
@@ -358,8 +352,6 @@ public List<ZakatTransaction> getZakatHistory(String accountId) {
 ```
 
 **PROHIBITED**: Using `@Transactional` without explicit `rollbackFor` for financial operations (defaults only rollback on `RuntimeException`).
-
-## Atomicity for Financial Transactions
 
 ### Multi-Step Financial Operations
 
@@ -509,8 +501,6 @@ public class MurabahaContractService {
 - Log compensating transaction failures
 - Alert operations team if compensation fails
 
-## Validation Error Handling
-
 ### Bean Validation Integration
 
 **REQUIRED**: Use Bean Validation annotations with `@Valid` for request validation.
@@ -595,8 +585,6 @@ public record ValidationErrorResponse(
 // }
 ```
 
-## Audit Trail Integration
-
 ### Error Logging with Spring AOP
 
 **REQUIRED**: Use Spring AOP for automatic error audit logging.
@@ -653,11 +641,8 @@ public class FinancialErrorAuditAspect {
 }
 ```
 
-## Related Documentation
-
 ### OSE Platform Standards
 
-- **[Java Error Handling Standards](../../../../programming-languages/java/ex-soen-prla-ja__error-handling-standards.md)** - Java baseline error handling requirements
 - **[Spring API Standards](./ex-soen-plwe-to-jvsp__api-standards.md)** - REST API error response conventions (this file references the API standards file to be created)
 - **[Spring DDD Standards](./ex-soen-plwe-to-jvsp__ddd-standards.md)** - Domain exception hierarchy patterns (this file references the DDD standards file to be created)
 
@@ -672,11 +657,7 @@ public class FinancialErrorAuditAspect {
 
 For learning Spring Framework fundamentals and concepts referenced in these standards, see:
 
-- **[Spring Framework Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring.md)** - Complete Spring learning journey
-- **[Spring By Example](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example.md)** - Annotated Spring code examples
-  - **[Error Handling Examples](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/error-handling.md)** - @ControllerAdvice, @ExceptionHandler, @ResponseStatus
-  - **[Transaction Examples](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/transactions.md)** - @Transactional configuration
-- **[Spring In Practice](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-practice.md)** - Error handling patterns and transaction management
+- **[Spring By Example](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/_index.md)** - Annotated Spring code examples
 
 **Note**: These standards assume you've learned Spring basics from ayokoding-web. We don't re-explain fundamental concepts here.
 
@@ -684,17 +665,17 @@ For learning Spring Framework fundamentals and concepts referenced in these stan
 
 These standards enforce the five software engineering principles:
 
-1. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+1. **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
    - `@Transactional(rollbackFor = Exception.class)` makes rollback rules explicit
    - `@ResponseStatus` explicitly maps exceptions to HTTP status codes
    - ErrorResponse with correlation IDs makes error tracking explicit
 
-2. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**
+2. **[Automation Over Manual](../../../../../../governance/principles/software-engineering/automation-over-manual.md)**
    - `@ControllerAdvice` automatically handles exceptions across all controllers
    - Spring AOP automatically logs errors without manual try-catch blocks
    - Bean Validation automatically validates requests before method execution
 
-3. **[Reproducibility](../../../../../governance/principles/software-engineering/reproducibility.md)**
+3. **[Reproducibility](../../../../../../governance/principles/software-engineering/reproducibility.md)**
    - Transaction isolation levels guarantee consistent error behavior
    - Correlation IDs enable error reproduction from logs
    - Atomic transactions ensure consistent state on rollback
@@ -722,11 +703,6 @@ Before deploying Spring-based financial services, verify:
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Error patterns
 - [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Error standards
 - [Spring Framework REST APIs](./ex-soen-plwe-to-jvsp__rest-apis.md) - API error responses
-
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring By Example - Error Handling](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/error-handling.md) - Code examples
-- [Spring In-the-Field - Exception Management](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/error-handling.md) - Production patterns
 
 **Spring Boot Extension**:
 

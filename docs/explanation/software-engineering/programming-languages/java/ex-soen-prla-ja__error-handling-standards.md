@@ -18,7 +18,7 @@ updated: 2026-02-03
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Java fundamentals from [AyoKoding Java Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md) before using these standards.
+**REQUIRED**: You MUST understand Java fundamentals from [AyoKoding Java Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/_index.md) before using these standards.
 
 **This document is OSE Platform-specific**, not a Java tutorial. We define HOW to apply Java in THIS codebase, not WHAT Java is.
 
@@ -28,7 +28,7 @@ updated: 2026-02-03
 
 **OSE-specific prescriptive standards** for error handling in Shariah-compliant financial applications. This document defines **mandatory requirements** using RFC 2119 keywords (MUST, SHOULD, MAY).
 
-**Prerequisites**: Understanding of Java exception handling fundamentals from [AyoKoding Java Error Handling](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md).
+**Prerequisites**: Understanding of Java exception handling fundamentals from [AyoKoding Java Error Handling](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/_index.md).
 
 ## Purpose
 
@@ -38,8 +38,6 @@ Error handling in OSE Platform serves critical functions beyond typical applicat
 - **Audit Compliance**: Complete error trails for regulatory review
 - **Shariah Compliance**: Ensuring Zakat calculations, Murabaha contracts, and donation processing are atomic and correct
 - **System Reliability**: Preventing cascading failures in critical financial operations
-
-## Exception Hierarchy Standards
 
 ### Custom Exception Requirements
 
@@ -87,8 +85,6 @@ public sealed class OseFinancialException extends Exception
 - Programming errors (invalid Zakat rate constant, null pointer violations)
 - Configuration errors (missing required properties)
 - System-level failures that cannot be recovered (database connection pool exhausted)
-
-## Transaction Atomicity Requirements
 
 ### Financial Transaction Error Handling
 
@@ -154,8 +150,6 @@ private Result<ZakatTransaction, ZakatError> executeAtomicTransfer(
 
 **RECOMMENDED**: Implement idempotency tokens to prevent duplicate transactions after rollback.
 
-## Audit Trail Requirements
-
 ### Error Logging Standards
 
 **REQUIRED**: All errors in financial operations MUST be logged with:
@@ -190,8 +184,6 @@ public void logFinancialError(FinancialOperation operation, Throwable error) {
 - Accessible for audit queries with sub-second response time
 
 **PROHIBITED**: Logging sensitive data in error messages (see [Security Standards](#security-standards)).
-
-## Retry and Resilience Standards
 
 ### Retry Policies for External Services
 
@@ -249,8 +241,6 @@ public Result<PaymentConfirmation, PaymentError> callPaymentGateway(Payment paym
 - Alert operations team when circuit opens
 
 **RECOMMENDED**: Configure separate circuit breakers per external dependency (payment gateway, regulatory reporting, notification service).
-
-## Functional Error Handling
 
 ### Result Type Requirements
 
@@ -310,8 +300,6 @@ public Either<List<ValidationError>, ValidatedZakatPayment> validateZakatPayment
 
 **PROHIBITED**: Throwing exceptions for validation failures (use Either/Result instead).
 
-## Security Standards
-
 ### Error Message Sanitization
 
 **CRITICAL**: Error messages exposed to clients MUST NOT contain:
@@ -362,8 +350,6 @@ public ErrorResponse toErrorResponse(Throwable error) {
 
 **PROHIBITED**: Returning stack traces in API responses (security vulnerability).
 
-## Testing Requirements
-
 ### Error Scenario Coverage
 
 **REQUIRED**: Unit tests MUST cover:
@@ -407,8 +393,6 @@ void zakatShouldBeTwoPointFivePercent(
 }
 ```
 
-## Related Documentation
-
 ### OSE Platform Standards
 
 - [API Standards](./ex-soen-prla-ja__api-standards.md) - REST API error responses
@@ -419,12 +403,12 @@ void zakatShouldBeTwoPointFivePercent(
 
 For learning Java fundamentals and concepts referenced in these standards, see:
 
-- **[Java Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md)** - Complete Java learning journey
-- **[Java By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example.md)** - 157+ annotated code examples
+- **[Java Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/_index.md)** - Complete Java learning journey
+- **[Java By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/_index.md)** - 157+ annotated code examples
   - **[Intermediate Examples](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/intermediate.md)** - Exception handling, try-catch-finally, custom exceptions
   - **[Advanced Examples](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/advanced.md)** - Result types, functional error handling, resilience patterns
-- **[Java In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-practice.md)** - Error handling patterns and best practices
-- **[Java Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/release-highlights.md)** - Java 17, 21, and 25 LTS features
+- **[Java In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-the-field/_index.md)** - Error handling patterns and best practices
+- **[Java Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/release-highlights/_index.md)** - Java 17, 21, and 25 LTS features
 
 **Note**: These standards assume you've learned Java basics from ayokoding-web. We don't re-explain fundamental concepts here.
 

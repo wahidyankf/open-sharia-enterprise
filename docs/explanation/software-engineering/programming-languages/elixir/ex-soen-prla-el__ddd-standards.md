@@ -1693,11 +1693,9 @@ end
 
 ## 📚 Related Topics
 
-- [Protocols and Behaviours](ex-soen-prla-el__protocols-and-behaviours.md) - Polymorphism in DDD
+- [Protocols and Behaviours](ex-soen-prla-el__protocols-behaviours-standards.md) - Polymorphism in DDD
 - [Functional Programming](ex-soen-prla-el__functional-programming-standards.md) - FP approach to DDD
-- [Web Services](ex-soen-prla-el__web-services.md) - Phoenix contexts for DDD
-- [Dependencies](ex-soen-prla-el__modules-and-dependencies.md) - Umbrella apps for bounded contexts
-- [Testing](ex-soen-prla-el__test-driven-development.md) - Testing DDD applications
+- [Testing](ex-soen-prla-el__testing-standards.md) - Testing DDD applications
 
 ## 📖 Sources
 

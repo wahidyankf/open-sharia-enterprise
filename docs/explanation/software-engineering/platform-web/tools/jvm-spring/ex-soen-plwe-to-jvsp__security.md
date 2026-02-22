@@ -44,8 +44,6 @@ Spring Security provides comprehensive security services for Java applications, 
 - [CORS Configuration](#cors-configuration)
 - [Session Management](#session-management)
 
-## Spring Security Architecture
-
 ### Enable Security
 
 **Java Example**:
@@ -94,8 +92,6 @@ class SecurityConfig {
   }
 }
 ```
-
-## Authentication
 
 ### UserDetailsService
 
@@ -190,8 +186,6 @@ public class DonorAuthenticationProvider implements AuthenticationProvider {
 }
 ```
 
-## Authorization
-
 ### URL-Based Authorization
 
 **Java Example**:
@@ -257,8 +251,6 @@ class SecurityConfig {
   }
 }
 ```
-
-## Security Filter Chain
 
 ### Custom Security Filter
 
@@ -418,8 +410,6 @@ class MultiAuthSecurityConfig {
   }
 }
 ```
-
-## Method Security
 
 ### Enable Method Security
 
@@ -749,8 +739,6 @@ class ZakatSecurityService {
   }
 }
 ```
-
-## OAuth2 and JWT
 
 ### OAuth2 Resource Server Configuration
 
@@ -1175,8 +1163,6 @@ class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OA
 }
 ```
 
-## Password Encoding
-
 ### Encoder Selection and Configuration
 
 **Java Example** (Multi-Strategy Password Encoding):
@@ -1374,8 +1360,6 @@ public class Pbkdf2PasswordEncodingConfig {
 }
 ```
 
-## CSRF Protection
-
 ### Token-Based CSRF
 
 **Java Example** (Form-Based Web Application):
@@ -1529,8 +1513,6 @@ public class RestApiSecurityConfig {
   }
 }
 ```
-
-## CORS Configuration
 
 ### Global CORS Configuration
 
@@ -1695,8 +1677,6 @@ public class ZakatController {
   }
 }
 ```
-
-## Session Management
 
 ### Stateful Session Configuration
 
@@ -1909,8 +1889,6 @@ class DonationControllerSecurityTest {
 }
 ```
 
-## Mapping to OSE Platform Principles
-
 ### Explicit Over Implicit
 
 **Applied in Security**:
@@ -1930,22 +1908,11 @@ class DonationControllerSecurityTest {
 - ✅ CSRF protection for stateful applications
 - ✅ Session fixation protection
 
-## Related Documentation
-
 ### Core Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
 - **[Web MVC](ex-soen-plwe-to-jvsp__web-mvc.md)** - Web layer
 - **[REST APIs](ex-soen-plwe-to-jvsp__rest-apis.md)** - RESTful services
-
-### Spring Boot Security
-
-- **[Spring Boot Security](../../jvm-spring-boot/ex-soen-plwe-to-jvspbo__security.md)** - Auto-configuration, Actuator security
-
-### AyoKoding Learning Resources
-
-- **[Spring Security By Example](/software-engineering/platform-web/java-spring/by-example/)** - Hands-on security examples
-- **[Spring Security In The Field](/software-engineering/platform-web/java-spring/in-the-field/)** - Production security patterns
 
 ## See Also
 
@@ -1955,11 +1922,6 @@ class DonationControllerSecurityTest {
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Security patterns
 - [Spring Framework REST APIs](./ex-soen-plwe-to-jvsp__rest-apis.md) - Securing APIs
 - [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Security standards
-
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring By Example - Security](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/security.md) - Code examples
-- [Spring In-the-Field - Authentication](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/security.md) - Production security
 
 **Spring Boot Extension**:
 

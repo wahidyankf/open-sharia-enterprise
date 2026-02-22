@@ -13,9 +13,9 @@ tags:
   - domain-events
   - repositories
 related:
-  - ./ex-soen-prla-ts__best-practices.md
-  - ./ex-soen-prla-ts__type-safety.md
-  - ./ex-soen-prla-ts__functional-programming.md
+  - ./ex-soen-prla-ty__best-practices.md
+  - ./ex-soen-prla-ty__type-safety.md
+  - ./ex-soen-prla-ty__functional-programming.md
   - ../../../../../governance/development/pattern/functional-programming.md
 principles:
   - explicit-over-implicit

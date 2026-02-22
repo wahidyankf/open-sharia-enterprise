@@ -47,7 +47,29 @@ Comprehensive documentation on software development practices:
 
 Language-specific idioms, best practices, and antipatterns:
 
+- **[Dart](./programming-languages/dart/README.md)** - Dart development for Flutter mobile and web applications
+- **[Elixir](./programming-languages/elixir/README.md)** - Elixir development with Phoenix framework and functional programming patterns
+- **[Go](./programming-languages/golang/README.md)** - Go development for CLI tools and infrastructure services
 - **[Java](./programming-languages/java/README.md)** - Modern Java development (Java 17+) with records, pattern matching, and virtual threads
+- **[Python](./programming-languages/python/README.md)** - Python development for data processing and AI/ML integration
+- **[TypeScript](./programming-languages/typescript/README.md)** - TypeScript development for frontend applications and Node.js services
+
+### 🌐 [Platform and Web Frameworks](./platform-web/README.md)
+
+Platform-specific documentation for web frameworks used in the enterprise platform:
+
+- **[Elixir Phoenix](./platform-web/tools/elixir-phoenix/README.md)** - Phoenix web framework for Elixir backend services
+- **[Next.js (Frontend)](./platform-web/tools/fe-nextjs/README.md)** - Next.js React framework for frontend applications
+- **[React (Frontend)](./platform-web/tools/fe-react/README.md)** - React library patterns and best practices
+- **[Spring Framework](./platform-web/tools/jvm-spring/README.md)** - Spring framework for JVM-based services
+- **[Spring Boot](./platform-web/tools/jvm-spring-boot/README.md)** - Spring Boot for opinionated JVM application development
+
+### 🤖 [Automation Testing](./automation-testing/README.md)
+
+End-to-end testing frameworks and browser automation tools:
+
+- **[Automation Testing](./automation-testing/README.md)** - E2E testing frameworks and browser automation
+  - **[Playwright](./automation-testing/tools/playwright/README.md)** - Cross-browser E2E testing for web applications
 
 ### 📚 Cross-References
 
@@ -148,7 +170,7 @@ C4 and DDD complement each other throughout the design process:
 5. Create **Component diagrams** (C4) showing aggregates and their relationships
 6. Document **runtime behavior** with Dynamic diagrams (C4) and Domain Events (DDD)
 
-See [DDD and C4 Integration](./architecture/domain-driven-design-ddd/ex-soen-ar-dodrdedd__17-ddd-and-c4-integration.md) for comprehensive examples.
+See [DDD and C4 Integration](./architecture/domain-driven-design-ddd/README.md) for comprehensive examples.
 
 ## Design in This Repository
 
@@ -178,23 +200,23 @@ The open-sharia-enterprise project applies both C4 and DDD principles:
 
 ### For Architects and Technical Leads
 
-1. **Understand visualization approaches** - Read [C4 System Context](./architecture/c4-architecture-model/ex-soen-ar-c4armo__01-level-1-system-context.md)
-2. **Master strategic design** - Read [DDD Bounded Contexts](./architecture/domain-driven-design-ddd/ex-soen-ar-dodrdedd__03-bounded-contexts.md) and [Context Mapping](./architecture/domain-driven-design-ddd/ex-soen-ar-dodrdedd__04-context-mapping.md)
-3. **Learn integration** - Read [DDD and C4 Integration](./architecture/domain-driven-design-ddd/ex-soen-ar-dodrdedd__17-ddd-and-c4-integration.md)
+1. **Understand visualization approaches** - Read [C4 System Context](./architecture/c4-architecture-model/README.md)
+2. **Master strategic design** - Read [DDD Bounded Contexts](./architecture/domain-driven-design-ddd/ex-soen-ar-dodrdedd__bounded-context-standards.md) and [Context Mapping](./architecture/domain-driven-design-ddd/README.md)
+3. **Learn integration** - Read [DDD and C4 Integration](./architecture/domain-driven-design-ddd/README.md)
 4. **Apply to projects** - Apply C4 and DDD patterns to your architecture
 
 ### For Developers
 
 1. **Quick visualization start** - Follow [C4 5-Minute Quick Start](./architecture/c4-architecture-model/README.md#-5-minute-quick-start-why-c4-matters)
-2. **Understand tactical patterns** - Read [DDD Aggregates](./architecture/domain-driven-design-ddd/ex-soen-ar-dodrdedd__09-aggregates.md) and [Value Objects](./architecture/domain-driven-design-ddd/ex-soen-ar-dodrdedd__08-value-objects.md)
-3. **Functional programming focus** - Read [DDD and Functional Programming](./architecture/domain-driven-design-ddd/ex-soen-ar-dodrdedd__14-ddd-and-functional-programming.md)
-4. **Decision frameworks** - Use [DDD Decision Trees](./architecture/domain-driven-design-ddd/ex-soen-ar-dodrdedd__16-decision-trees-and-best-practices.md)
+2. **Understand tactical patterns** - Read [DDD Aggregates](./architecture/domain-driven-design-ddd/ex-soen-ar-dodrdedd__aggregate-standards.md) and [Value Objects](./architecture/domain-driven-design-ddd/ex-soen-ar-dodrdedd__value-object-standards.md)
+3. **Functional programming focus** - Read [DDD and Functional Programming](./architecture/domain-driven-design-ddd/README.md)
+4. **Decision frameworks** - Use [DDD Decision Trees](./architecture/domain-driven-design-ddd/README.md)
 
 ### For Domain Experts and Product Owners
 
-1. **Understand collaboration approaches** - Read [DDD Ubiquitous Language](./architecture/domain-driven-design-ddd/ex-soen-ar-dodrdedd__02-ubiquitous-language.md)
-2. **Learn workshop techniques** - Read [Strategic Design Process](./architecture/domain-driven-design-ddd/ex-soen-ar-dodrdedd__06-strategic-design-process.md)
-3. **Visualize system context** - Read [C4 System Context](./architecture/c4-architecture-model/ex-soen-ar-c4armo__01-level-1-system-context.md)
+1. **Understand collaboration approaches** - Read [DDD Ubiquitous Language](./architecture/domain-driven-design-ddd/README.md)
+2. **Learn workshop techniques** - Read [Strategic Design Process](./architecture/domain-driven-design-ddd/README.md)
+3. **Visualize system context** - Read [C4 System Context](./architecture/c4-architecture-model/README.md)
 
 ## Related Documentation
 

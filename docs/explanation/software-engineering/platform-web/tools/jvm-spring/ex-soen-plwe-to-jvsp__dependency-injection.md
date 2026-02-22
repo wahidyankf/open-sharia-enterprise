@@ -44,8 +44,6 @@ Dependency Injection (DI) is Spring Framework's core capability, implementing In
 - [BeanPostProcessor](#beanpostprocessor)
 - [Circular Dependency Resolution](#circular-dependency-resolution)
 
-## ApplicationContext Types
-
 ### AnnotationConfigApplicationContext
 
 Used for Java-based configuration without XML.
@@ -380,8 +378,6 @@ class ZakatCalculationService {
 }
 ```
 
-## @Autowired Annotation
-
 ### @Autowired on Constructor
 
 **Java Example**:
@@ -466,8 +462,6 @@ class DonationNotificationService {
     "Thank you for your donation of ${donation.amount}"
 }
 ```
-
-## @Qualifier and @Primary
 
 ### @Qualifier for Disambiguating Beans
 
@@ -617,8 +611,6 @@ class DonationService(
 )
 ```
 
-## Bean Scopes
-
 ### Singleton (Default)
 
 One instance per Spring container.
@@ -749,8 +741,6 @@ public class DonationSessionContext {
 }
 ```
 
-## Lazy Initialization
-
 ### @Lazy Annotation
 
 **Java Example**:
@@ -802,8 +792,6 @@ class MurabahaContractService(
   @Lazy private val expensiveResource: ExpensiveResource  // Lazy injection
 )
 ```
-
-## Bean Lifecycle
 
 ### Initialization Callbacks
 
@@ -890,8 +878,6 @@ public class ZakatCalculationCache {
 }
 ```
 
-## BeanPostProcessor
-
 ### Custom BeanPostProcessor
 
 **Java Example**:
@@ -935,8 +921,6 @@ class LoggingBeanPostProcessor : BeanPostProcessor {
   }
 }
 ```
-
-## Circular Dependency Resolution
 
 ### Problem: Circular Dependencies
 
@@ -1000,8 +984,6 @@ public class DonationService {
 }
 ```
 
-## Related Documentation
-
 ### Core Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
@@ -1020,7 +1002,6 @@ public class DonationService {
 
 **Hands-on Learning (AyoKoding)**:
 
-- [Spring By Example - Dependency Injection](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/dependency-injection.md) - Code examples
 - [Spring In-the-Field - DI Strategies](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/dependency-injection.md) - Production patterns
 
 **Spring Boot Extension**:

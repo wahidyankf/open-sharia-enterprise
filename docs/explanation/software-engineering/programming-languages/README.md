@@ -83,8 +83,6 @@ All code written in the languages documented here MUST follow the standards, pat
 
 <!-- TODO: Software Design Reference - Create governance documentation for software design principles -->
 
-## Documentation Structure
-
 ### Language Coverage
 
 Each language directory contains:
@@ -124,7 +122,43 @@ Each language directory contains:
 - Maintainability issues
 - Anti-idiomatic code patterns
 
-## Languages Documented
+### 🎯 [Dart](./dart/README.md)
+
+**Dart development for Flutter mobile and web applications**
+
+Dart is used for building cross-platform mobile and web applications with the Flutter framework. The platform uses Dart for the organiclever-app Flutter application targeting Android, iOS, and web.
+
+**Use Dart when you need:**
+
+- Cross-platform mobile applications (Android, iOS)
+- Flutter web applications
+- Reactive UI with widget-based architecture
+
+### 💜 [Elixir](./elixir/README.md)
+
+**Elixir development with Phoenix framework and functional programming patterns**
+
+Elixir is used for building highly concurrent, fault-tolerant backend services. The platform leverages Elixir's functional programming model and the Phoenix framework for real-time features via Phoenix LiveView.
+
+**Use Elixir when you need:**
+
+- High-concurrency distributed systems
+- Real-time features (WebSockets, LiveView)
+- Fault-tolerant actor model architecture
+- Functional programming with pattern matching
+
+### 🐹 [Go](./golang/README.md)
+
+**Go development for CLI tools and infrastructure services**
+
+Go is used for CLI tools and infrastructure services in the repository. The platform uses Go for rhino-cli (repository management) and ayokoding-cli (content automation).
+
+**Use Go when you need:**
+
+- CLI tools and command-line applications
+- High-performance infrastructure services
+- Static binaries with minimal dependencies
+- Concurrent systems with goroutines
 
 ### ☕ [Java](./java/README.md)
 
@@ -135,9 +169,9 @@ Java is a primary language for backend services, particularly for domain-driven 
 **Key Documentation:**
 
 - [Java OSE Standards](./java/README.md) - Authoritative coding standards for OSE Platform
-- [Java Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md) - Complete Java tutorials and examples
-- [Java By Example](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example.md) - 157+ annotated code examples
-- [Java In Practice](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-practice.md) - Best practices, anti-patterns, TDD, BDD, DDD
+- [Java Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/_index.md) - Complete Java tutorials and examples
+- [Java By Example](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/_index.md) - 157+ annotated code examples
+- [Java In Practice](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-the-field/_index.md) - Best practices, anti-patterns, TDD, BDD, DDD
 
 **Use Java when you need:**
 
@@ -147,7 +181,31 @@ Java is a primary language for backend services, particularly for domain-driven 
 - Complex domain models (DDD tactical patterns)
 - Mature tooling and ecosystem
 
-## How Languages Fit into the Platform
+### 🐍 [Python](./python/README.md)
+
+**Python development for data processing and AI/ML integration**
+
+Python is planned for data processing pipelines and AI/ML integration in the platform. Python's extensive data science ecosystem and readability make it ideal for analytical workloads.
+
+**Use Python when you need:**
+
+- Data processing and analytics pipelines
+- AI/ML model training and inference
+- Scientific computing and data visualization
+- Scripting and automation workflows
+
+### 💙 [TypeScript](./typescript/README.md)
+
+**TypeScript development for frontend applications and Node.js services**
+
+TypeScript is used for frontend web applications (Next.js) and planned for Node.js services. TypeScript's type system brings safety to JavaScript ecosystem development.
+
+**Use TypeScript when you need:**
+
+- Frontend web applications (React, Next.js)
+- Node.js backend services
+- Type-safe JavaScript ecosystem development
+- Full-stack web development
 
 ### Language Selection Criteria
 
@@ -178,20 +236,20 @@ Languages in this documentation are chosen based on:
 
 | Language       | Primary Use Cases                               | Status                               |
 | -------------- | ----------------------------------------------- | ------------------------------------ |
-| **Java** ☕    | Backend services, domain models, business logic | ✅ Active - In production            |
-| **TypeScript** | Frontend applications, Node.js services         | 📋 Planned - Documentation ready     |
+| **Dart**       | Flutter mobile and web applications             | ✅ Active - organiclever-app         |
+| **Elixir**     | Phoenix backend, real-time features             | ✅ Active - Phoenix services         |
 | **Go**         | CLI tools, infrastructure services              | ✅ Active - rhino-cli, ayokoding-cli |
+| **Java** ☕    | Backend services, domain models, business logic | ✅ Active - In production            |
 | **Python**     | Data processing, AI/ML integration              | 📋 Planned - Future integration      |
+| **TypeScript** | Frontend applications, Node.js services         | ✅ Active - organiclever-web         |
 
 **Legend**: ✅ Active (in use) | 📋 Planned (documentation ready, not yet implemented)
 
-## Learning Paths
-
 ### For Backend Developers
 
-1. **Learn Java fundamentals** - [AyoKoding Java By Example](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example.md)
+1. **Learn Java fundamentals** - [AyoKoding Java By Example](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/_index.md)
 2. **Apply OSE standards** - [Java Coding Standards](./java/README.md)
-3. **Study best practices** - [Java In Practice](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-practice.md)
+3. **Study best practices** - [Java In Practice](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-the-field/_index.md)
 4. **Integrate with DDD** - [DDD Standards](./java/ex-soen-prla-ja__ddd-standards.md)
 
 ### For Full-Stack Developers
@@ -246,8 +304,6 @@ All language documentation follows the repository's core principles:
 - Validate inputs at system boundaries
 - Apply principle of least privilege
 
-## Contributing Language Documentation
-
 ### Adding a New Language
 
 To document a new language:
@@ -255,9 +311,9 @@ To document a new language:
 1. Create directory: `docs/explanation/software-engineering/programming-languages/[language-name]/`
 2. Create README.md with language overview
 3. Create three core documents:
-   - `ex-soen-prlag-[abbr]__idioms.md`
-   - `ex-soen-prlag-[abbr]__best-practices.md`
-   - `ex-soen-prlag-[abbr]__antipatterns.md`
+   - `ex-soen-prla-[abbr]__idioms.md`
+   - `ex-soen-prla-[abbr]__best-practices.md`
+   - `ex-soen-prla-[abbr]__antipatterns.md`
 4. Update this README.md with language section
 5. Cross-reference with relevant documentation
 

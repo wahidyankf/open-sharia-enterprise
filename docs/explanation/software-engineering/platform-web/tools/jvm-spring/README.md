@@ -67,7 +67,7 @@ All Spring Framework applications MUST follow the patterns and practices documen
 
 **For Agents**: Reference this documentation when building Spring applications.
 
-**Language Standards**: Also follow [Java](../../../../programming-languages/java/README.md) language standards. Kotlin language standards documentation is planned for future addition.
+**Language Standards**: Also follow Java language standards. Kotlin language standards documentation is planned for future addition.
 
 ### Quick Standards Reference
 
@@ -181,8 +181,6 @@ timeline
 - Deeper integration with modern Java features (pattern matching, virtual threads, structured concurrency)
 - Potential breaking changes in core APIs
 - Continued Kotlin evolution
-
-## Documentation Structure
 
 ### [Spring Framework Idioms](ex-soen-plwe-to-jvsp__idioms.md)
 
@@ -485,8 +483,6 @@ Comprehensive guide to upgrading Spring Framework versions.
 - Third-party library compatibility
 - Migration checklist
 
-## Key Capabilities
-
 ### Dependency Injection (IoC Container)
 
 Spring Framework's core capability is managing object lifecycles and dependencies:
@@ -561,8 +557,6 @@ Comprehensive testing infrastructure:
 ✅ You want embedded server support (Tomcat, Jetty, Undertow)
 
 **Spring Boot builds on Spring Framework** - Spring Boot provides auto-configuration and opinionated defaults on top of Spring Framework's core capabilities.
-
-## Architecture Integration
 
 ### Domain-Driven Design
 
@@ -932,8 +926,6 @@ public class DonationReportService {
 }
 ```
 
-## Development Workflow
-
 ### Project Setup
 
 **Java Configuration Approach** (Recommended):
@@ -1187,8 +1179,6 @@ class ZakatCalculationControllerTest {
 }
 ```
 
-## Learning Path
-
 ### 1. Start with IoC and Dependency Injection
 
 Read [Spring Framework Idioms](ex-soen-plwe-to-jvsp__idioms.md) and [Dependency Injection](ex-soen-plwe-to-jvsp__dependency-injection.md) to understand core concepts:
@@ -1253,8 +1243,6 @@ After mastering Spring Framework, progress to [Spring Boot](../jvm-spring-boot/R
 - Opinionated defaults
 - Embedded servers
 - Production-ready features (Actuator)
-
-## Code Examples from Platform
 
 ### Complete Spring MVC Controller
 
@@ -1512,14 +1500,6 @@ public class GlobalExceptionHandler {
 }
 ```
 
-## Integration with Other Documentation
-
-### Language Standards
-
-- **[Java](../../../../programming-languages/java/README.md)** - Core Java language documentation
-- **[Java Idioms](../../../../programming-languages/java/README.md)** - Modern Java patterns
-- **[Java Best Practices](../../../../programming-languages/java/README.md)** - Java coding standards
-
 ### Framework Documentation
 
 - **[Spring Boot](../jvm-spring-boot/README.md)** - Spring Boot framework (builds on Spring Framework)
@@ -1532,8 +1512,6 @@ public class GlobalExceptionHandler {
 
 - **[Test-Driven Development](../../../development/test-driven-development-tdd/README.md)** - TDD with Spring
 - **[Functional Programming](../../../../../../governance/development/pattern/functional-programming.md)** - FP principles
-
-## Spring Framework Ecosystem
 
 ### Core Spring Modules
 
@@ -1568,8 +1546,6 @@ public class GlobalExceptionHandler {
 - Spring Test - Integration testing support
 - Spring Test Context - Test context framework
 - Spring Mock Objects - Mock implementations
-
-## Tools and Development Environment
 
 ### Build Tools
 
@@ -1679,8 +1655,6 @@ tasks.test {
 
 - Spring Tools (STS) plugin
 
-## Resources and References
-
 ### Official Documentation
 
 - [Spring Framework Reference](https://docs.spring.io/spring-framework/reference/)
@@ -1696,8 +1670,6 @@ tasks.test {
 
 - [Spring Framework 6.0 Migration](https://github.com/spring-projects/spring-framework/wiki/Upgrading-to-Spring-Framework-6.x)
 - [Jakarta EE Migration](https://github.com/spring-projects/spring-framework/wiki/Upgrading-to-Spring-Framework-6.x#jakarta-ee)
-
-## Related Documentation
 
 ### Core Spring Framework Documentation
 
@@ -1733,7 +1705,6 @@ tasks.test {
 ### Platform Documentation
 
 - **[Libraries and Frameworks Index](../README.md)** - Parent frameworks documentation
-- **[Java Programming Language](../../../../programming-languages/java/README.md)** - Java idioms and standards
 - **[Software Design Index](../../README.md)** - Software documentation root
 
 ---

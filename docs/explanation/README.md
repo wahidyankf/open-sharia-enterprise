@@ -7,7 +7,7 @@ tags:
   - explanation
   - concepts
 created: 2025-11-22
-updated: 2026-01-20
+updated: 2026-02-01
 ---
 
 # Explanation
@@ -44,7 +44,7 @@ This directory contains conceptual documentation across multiple areas:
 
 The repository follows a **six-layer governance architecture** (Vision → Principles → Conventions → Development → Agents → Workflows) where each layer builds on the foundation above.
 
-**See [Rules](./README.md)** for governance overview with architecture diagram, layer descriptions, and decision trees.
+**See [Rules](../../governance/README.md)** for governance overview with architecture diagram, layer descriptions, and decision trees.
 
 **See [Repository Governance Architecture](../../governance/repository-governance-architecture.md)** for comprehensive explanation with traceability examples, usage guidance, and verification methods.
 
@@ -54,11 +54,12 @@ The repository follows a **six-layer governance architecture** (Vision → Princ
 
 ### Repository Governance
 
-- **[Rules](./README.md)** - All governance layers (Vision, Principles, Conventions, Development, Workflows)
+- **[Rules](../../governance/README.md)** - All governance layers (Vision, Principles, Conventions, Development, Workflows)
 - **[Repository Governance Architecture](../../governance/repository-governance-architecture.md)** - Comprehensive architecture deep-dive
 
-### Software Design
+### Software Engineering
 
+- **[Software Engineering](./software-engineering/README.md)** - Complete index of programming languages, frameworks, architecture patterns, and development practices
 - **[C4 Architecture Model](./software-engineering/architecture/c4-architecture-model/README.md)** - Visualizing software architecture through hierarchical abstraction levels
 - **[Domain-Driven Design (DDD)](./software-engineering/architecture/domain-driven-design-ddd/README.md)** - Strategic and tactical patterns for modeling complex business domains
 

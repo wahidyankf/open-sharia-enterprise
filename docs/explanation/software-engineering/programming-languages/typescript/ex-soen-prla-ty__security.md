@@ -16,9 +16,9 @@ tags:
   - oauth2
   - data-encryption
 related:
-  - ./ex-soen-prla-ts__web-services.md
-  - ./ex-soen-prla-ts__best-practices.md
-  - ./ex-soen-prla-ts__type-safety.md
+  - ./ex-soen-prla-ty__web-services.md
+  - ./ex-soen-prla-ty__best-practices.md
+  - ./ex-soen-prla-ty__type-safety.md
 principles:
   - explicit-over-implicit
 last_updated: 2026-01-24

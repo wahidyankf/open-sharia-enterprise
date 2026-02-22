@@ -11,7 +11,7 @@ tags:
   - pnpm
   - bun
 related:
-  - ./ex-soen-prla-ts__best-practices.md
+  - ./ex-soen-prla-ty__best-practices.md
   - ../../../../../governance/principles/software-engineering/reproducibility.md
 principles:
   - reproducibility

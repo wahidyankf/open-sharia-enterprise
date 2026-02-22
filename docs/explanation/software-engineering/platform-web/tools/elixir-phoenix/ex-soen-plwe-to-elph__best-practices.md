@@ -21,10 +21,6 @@ principles:
 last_updated: 2026-01-25
 ---
 
-# Phoenix Best Practices
-
-## Quick Reference
-
 ### Project Organization
 
 - [Project Structure](#project-structure) - Directory and module organization
@@ -77,8 +73,6 @@ last_updated: 2026-01-25
 ## Overview
 
 This document provides proven best practices for building production-ready Phoenix applications in the open-sharia-enterprise platform. These practices emphasize maintainability, testability, security, and operational excellence.
-
-## Project Structure
 
 ### Recommended Directory Organization
 
@@ -135,8 +129,6 @@ test/
     ├── channel_case.ex
     └── data_case.ex
 ```
-
-## Context Design
 
 ### Keep Contexts Cohesive
 
@@ -216,8 +208,6 @@ defmodule OsePlatform.Zakat do
 end
 ```
 
-## Dependency Management
-
 ### Use Specific Versions
 
 **PASS - mix.exs**:
@@ -274,8 +264,6 @@ defp ecto_deps do
 end
 ```
 
-## Naming Conventions
-
 ### Module Names
 
 - **Contexts**: `OsePlatform.Zakat`, `OsePlatform.Donations`
@@ -311,8 +299,6 @@ defmodule OsePlatform.Zakat do
   def change_calculation(calculation, attrs \\ %{})
 end
 ```
-
-## Documentation
 
 ### Module Documentation
 
@@ -355,8 +341,6 @@ defmodule OsePlatform.Zakat do
 end
 ```
 
-## Type Specifications
-
 ### Add Typespecs to Public Functions
 
 ```elixir
@@ -385,8 +369,6 @@ defmodule OsePlatform.Zakat do
   def list_user_calculations(user_id)
 end
 ```
-
-## Schema Design
 
 ### Use Binary IDs
 
@@ -438,8 +420,6 @@ schema "payments" do
   # ... fields
 end
 ```
-
-## Changeset Validation
 
 ### Comprehensive Validation
 
@@ -510,8 +490,6 @@ defmodule OsePlatform.Zakat.Calculation do
   end
 end
 ```
-
-## Query Optimization
 
 ### Avoid N+1 Queries
 
@@ -587,8 +565,6 @@ def list_calculation_summaries(user_id) do
 end
 ```
 
-## Migrations
-
 ### Always Reversible
 
 **PASS**:
@@ -644,8 +620,6 @@ defmodule OsePlatform.Repo.Migrations.MigrateOldZakatData do
   end
 end
 ```
-
-## REST API Design
 
 ### Follow RESTful Conventions
 
@@ -711,8 +685,6 @@ defmodule OsePlatformWeb.ZakatController do
 end
 ```
 
-## JSON API Standards
-
 ### JSON View
 
 ```elixir
@@ -742,8 +714,6 @@ defmodule OsePlatformWeb.ZakatJSON do
   end
 end
 ```
-
-## Error Handling
 
 ### Fallback Controller
 
@@ -792,8 +762,6 @@ defmodule OsePlatformWeb.ErrorJSON do
 end
 ```
 
-## Channel Design
-
 ### Authentication on Join
 
 ```elixir
@@ -823,8 +791,6 @@ defmodule OsePlatformWeb.DonationChannel do
   end
 end
 ```
-
-## LiveView Optimization
 
 ### Reduce Assigns
 
@@ -862,8 +828,6 @@ def mount(_params, _session, socket) do
 end
 ```
 
-## Configuration
-
 ### Runtime Configuration
 
 **config/runtime.exs**:
@@ -897,8 +861,6 @@ if config_env() == :prod do
 end
 ```
 
-## Logging
-
 ### Structured Logging
 
 ```elixir
@@ -927,8 +889,6 @@ def create_calculation(attrs) do
 end
 ```
 
-## Monitoring
-
 ### Telemetry Events
 
 ```elixir
@@ -955,8 +915,6 @@ defmodule OsePlatform.Telemetry do
   end
 end
 ```
-
-## Testing Strategy
 
 ### Test Organization
 
@@ -1014,8 +972,6 @@ defmodule OsePlatform.ZakatTest do
 end
 ```
 
-## Performance
-
 ### Connection Pooling
 
 **config/prod.exs**:
@@ -1043,7 +999,6 @@ end
 
 - **[Phoenix Idioms](ex-soen-plwe-to-elph__idioms.md)** - Framework patterns
 - **[Phoenix Anti-Patterns](ex-soen-plwe-to-elph__anti-patterns.md)** - Common mistakes
-- **[Elixir Best Practices](../../../programming-languages/elixir/ex-soen-prla-el__best-practices.md)** - Language standards
 - **[Data Access](ex-soen-plwe-to-elph__data-access.md)** - Ecto patterns
 - **[Security](ex-soen-plwe-to-elph__security.md)** - Security practices
 

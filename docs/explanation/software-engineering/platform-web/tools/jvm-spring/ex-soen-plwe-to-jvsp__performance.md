@@ -38,8 +38,6 @@ This document covers performance optimization techniques for Spring applications
 - [Transaction Optimization](#transaction-optimization)
 - [Query Optimization](#query-optimization)
 
-## Bean Initialization Optimization
-
 ### Lazy Initialization
 
 **Java Example**:
@@ -78,8 +76,6 @@ class PerformanceConfig {
 }
 ```
 
-## Connection Pooling Configuration
-
 ### HikariCP Optimization
 
 **Java Example**:
@@ -115,8 +111,6 @@ public class DataSourceConfig {
   }
 }
 ```
-
-## Caching with Spring Cache
 
 ### Enable Caching
 
@@ -238,8 +232,6 @@ class NisabService(private val goldPriceService: GoldPriceService) {
 }
 ```
 
-## Async Execution
-
 ### Enable Async
 
 **Java Example**:
@@ -353,8 +345,6 @@ public class VirtualThreadAsyncConfig implements AsyncConfigurer {
 }
 ```
 
-## Transaction Optimization
-
 ### Read-Only Transactions
 
 **Java Example**:
@@ -411,8 +401,6 @@ public class JdbcDonationRepository {
   }
 }
 ```
-
-## Query Optimization
 
 ### Efficient Queries
 
@@ -499,10 +487,6 @@ public class DonationQueryService {
   }
 }
 ```
-
-## Related Documentation
-
-## Virtual Threads Optimization (Java 21+)
 
 ### Enable Virtual Threads
 
@@ -705,8 +689,6 @@ public class VirtualThreadMonitoringService {
 }
 ```
 
-## Connection Pool Tuning
-
 ### HikariCP Pool Sizing Formulas
 
 **Optimal Pool Size Calculation**:
@@ -878,8 +860,6 @@ public class ConnectionPoolMonitoringService {
   }
 }
 ```
-
-## Cache Strategy Selection
 
 ### Caffeine vs Redis Decision Matrix
 
@@ -1072,8 +1052,6 @@ public class RedisCacheConfig {
 }
 ```
 
-## JPA N+1 Query Detection and Resolution
-
 ### Detecting N+1 Queries
 
 **Java Example** (N+1 Problem):
@@ -1264,8 +1242,6 @@ public class QueryPerformanceMonitoringService {
 }
 ```
 
-## Mapping to OSE Platform Principles
-
 ### Automation Over Manual
 
 **Applied in Performance**:
@@ -1298,11 +1274,6 @@ public class QueryPerformanceMonitoringService {
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Performance patterns
 - [Spring Framework Data Access](./ex-soen-plwe-to-jvsp__data-access.md) - Query optimization
 - [Spring Framework Observability](./ex-soen-plwe-to-jvsp__observability.md) - Performance monitoring
-
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring By Example - Performance](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/performance.md) - Code examples
-- [Spring In-the-Field - Optimization](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/performance.md) - Production tuning
 
 **Spring Boot Extension**:
 

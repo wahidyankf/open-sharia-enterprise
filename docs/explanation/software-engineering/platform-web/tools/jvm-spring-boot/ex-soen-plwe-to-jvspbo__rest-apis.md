@@ -1638,11 +1638,6 @@ Production guidelines for REST API design.
 - [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - REST patterns
 - [Spring Boot Security](./ex-soen-plwe-to-jvspbo__security.md) - API security
 
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring Boot By Example - REST APIs](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/rest-apis.md) - Code examples
-- [Spring Boot In-the-Field - API Development](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/rest-apis.md) - Production APIs
-
 ---
 
 **Last Updated**: 2026-01-26

@@ -25,7 +25,7 @@ updated: 2026-02-05
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Elixir fundamentals from [AyoKoding Elixir Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir.md) before using these standards.
+**REQUIRED**: You MUST understand Elixir fundamentals from [AyoKoding Elixir Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/_index.md) before using these standards.
 
 **This document is OSE Platform-specific**, not an Elixir tutorial. We define HOW to apply Elixir in THIS codebase, not WHAT Elixir is.
 
@@ -35,7 +35,7 @@ updated: 2026-02-05
 
 **OSE-specific prescriptive standards** for error handling in Elixir-based Shariah-compliant financial services. This document defines **mandatory requirements** using RFC 2119 keywords (MUST, SHOULD, MAY).
 
-**Prerequisites**: Understanding of Elixir error handling fundamentals from [AyoKoding Elixir Error Handling](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir.md).
+**Prerequisites**: Understanding of Elixir error handling fundamentals from [AyoKoding Elixir Error Handling](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/_index.md).
 
 ## Purpose
 
@@ -45,8 +45,6 @@ Error handling in OSE Platform Elixir services serves critical functions:
 - **Audit Compliance**: Complete error trails for regulatory review
 - **Shariah Compliance**: Ensuring Zakat calculations, Murabaha contracts, and donation processing are atomic and correct
 - **System Reliability**: Automatic recovery from failures through supervision
-
-## "Let It Crash" Philosophy Requirements
 
 ### Core Requirements
 
@@ -124,8 +122,6 @@ defmodule FinancialDomain.Donations.Processor do
   end
 end
 ```
-
-## Supervision Tree Requirements
 
 ### Mandatory Supervision
 
@@ -213,8 +209,6 @@ FinancialDomain.Application.Supervisor (Root)
 - Prevent cascading failures (one domain crashing doesn't affect others)
 - Enable targeted restarts (restart only affected subsystem)
 
-## Tagged Tuple Convention
-
 ### Return Value Standards
 
 **REQUIRED**: All public functions that can fail MUST return tagged tuples:
@@ -290,8 +284,6 @@ end
 - Raise on ANY error (not return errors)
 - Be used sparingly (only when caller expects success)
 
-## with Construct Requirements
-
 ### Pipeline Error Handling
 
 **REQUIRED**: Use `with` construct for operations with multiple failure points:
@@ -349,8 +341,6 @@ end
 - Pattern match on specific error types
 - Provide helpful error messages for business errors
 - Short-circuit on first error (no partial execution)
-
-## try/rescue Usage Standards
 
 ### When to Use try/rescue
 
@@ -418,8 +408,6 @@ def process_donation(donation) do
   end
 end
 ```
-
-## Transaction Atomicity Requirements
 
 ### Financial Transaction Error Handling
 
@@ -513,8 +501,6 @@ end
 - Be stored with transaction results
 - Have reasonable TTL (7-30 days)
 
-## Circuit Breaker Requirements
-
 ### External Service Protection
 
 **REQUIRED**: All external service integrations (payment gateways, regulatory APIs) MUST implement circuit breaker pattern.
@@ -585,8 +571,6 @@ end
 - Reset timeout (default: 60 seconds)
 - Half-open test behavior (allow one request to test recovery)
 
-## Retry Policy Standards
-
 ### Retry Requirements
 
 **REQUIRED**: Idempotent operations (queries, reads) MUST implement retry with exponential backoff:
@@ -642,8 +626,6 @@ end
 
 **PROHIBITED**: Retrying non-idempotent operations (debits, credits) without idempotency keys.
 
-## Audit Trail Requirements
-
 ### Error Logging Standards
 
 **REQUIRED**: All financial operation errors MUST be logged with:
@@ -689,8 +671,6 @@ end
 - Be stored in append-only audit database
 - Retain for minimum 7 years (regulatory compliance)
 - Exclude PII in error messages (account numbers, emails, names)
-
-## Security Standards
 
 ### Error Message Sanitization
 
@@ -738,8 +718,6 @@ end
 
 - **Client**: Error code + generic message + correlation ID
 - **Internal logs**: Full details (account IDs, amounts, stack traces)
-
-## Testing Requirements
 
 ### Error Scenario Coverage
 
@@ -831,8 +809,6 @@ defmodule FinancialDomain.Zakat.CalculatorTest do
 end
 ```
 
-## Related Documentation
-
 ### OSE Platform Standards
 
 - [Concurrency Standards](./ex-soen-prla-el__concurrency-standards.md) - Process-based concurrency and message passing
@@ -843,11 +819,11 @@ end
 
 For learning Elixir fundamentals and concepts referenced in these standards, see:
 
-- **[Elixir Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir.md)** - Complete Elixir learning journey
-- **[Elixir By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/by-example.md)** - Annotated code examples
+- **[Elixir Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/_index.md)** - Complete Elixir learning journey
+- **[Elixir By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/by-example/_index.md)** - Annotated code examples
   - **[Intermediate Examples](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/by-example/intermediate.md)** - Error handling, pattern matching, with construct
   - **[Advanced Examples](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/by-example/advanced.md)** - Supervision trees, GenServer, OTP patterns
-- **[Elixir In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/in-practice.md)** - Error handling patterns and best practices
+- **[Elixir In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/in-the-field/_index.md)** - Error handling patterns and best practices
 
 **Note**: These standards assume you've learned Elixir basics from ayokoding-web. We don't re-explain fundamental concepts here.
 

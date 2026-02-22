@@ -10,9 +10,9 @@ tags:
   - profiling
   - benchmarking
 related:
-  - ./ex-soen-prla-ts__best-practices.md
-  - ./ex-soen-prla-ts__memory-management.md
-  - ./ex-soen-prla-ts__concurrency-and-parallelism.md
+  - ./ex-soen-prla-ty__best-practices.md
+  - ./ex-soen-prla-ty__memory-management.md
+  - ./ex-soen-prla-ty__concurrency-and-parallelism.md
 principles:
   - automation-over-manual
 last_updated: 2025-01-23

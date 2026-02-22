@@ -12,8 +12,8 @@ tags:
   - unit-testing
   - integration-testing
 related:
-  - ./ex-soen-prla-ts__best-practices.md
-  - ./ex-soen-prla-ts__behaviour-driven-development.md
+  - ./ex-soen-prla-ty__best-practices.md
+  - ./ex-soen-prla-ty__behaviour-driven-development.md
 principles:
   - automation-over-manual
   - explicit-over-implicit

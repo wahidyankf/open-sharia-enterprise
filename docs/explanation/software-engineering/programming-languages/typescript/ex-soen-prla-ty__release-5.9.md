@@ -11,8 +11,8 @@ tags:
   - type-checking
   - migration
 related:
-  - ./ex-soen-prla-ts__best-practices.md
-  - ./ex-soen-prla-ts__release-5.6.md
+  - ./ex-soen-prla-ty__best-practices.md
+  - ./ex-soen-prla-ty__release-5.6.md
   - ./README.md
 principles:
   - explicit-over-implicit

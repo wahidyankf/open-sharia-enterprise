@@ -21,10 +21,6 @@ principles:
 last_updated: 2026-01-25
 ---
 
-# Phoenix Idioms
-
-## Quick Reference
-
 ### Core Phoenix Patterns
 
 **Context Organization**:
@@ -75,8 +71,6 @@ This guide focuses on **Phoenix 1.7+ idioms** with Elixir 1.14+, incorporating e
 ### Target Audience
 
 This document targets developers building Phoenix applications in the open-sharia-enterprise platform, particularly those working on real-time financial services and domain-driven design implementations.
-
-## Core Phoenix Idioms
 
 ### 1. Contexts as API Boundaries
 
@@ -1125,8 +1119,6 @@ end
 - **[Contexts](ex-soen-plwe-to-elph__contexts.md)** - Context design patterns
 - **[LiveView](ex-soen-plwe-to-elph__liveview.md)** - LiveView patterns
 - **[Channels](ex-soen-plwe-to-elph__channels.md)** - Real-time communication
-- **[Elixir Idioms](../../../programming-languages/elixir/ex-soen-prla-el__idioms.md)** - Elixir patterns
-- **[Functional Programming](../../../programming-languages/elixir/ex-soen-prla-el__functional-programming.md)** - FP patterns in Elixir
 
 ---
 

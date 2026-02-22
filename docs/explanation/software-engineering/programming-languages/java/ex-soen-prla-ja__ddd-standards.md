@@ -20,7 +20,7 @@ updated: 2026-02-03
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Java fundamentals from [AyoKoding Java Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md) before using these standards.
+**REQUIRED**: You MUST understand Java fundamentals from [AyoKoding Java Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/_index.md) before using these standards.
 
 **This document is OSE Platform-specific**, not a Java tutorial. We define HOW to apply Java in THIS codebase, not WHAT Java is.
 
@@ -30,7 +30,7 @@ updated: 2026-02-03
 
 **OSE-specific prescriptive standards** for Domain-Driven Design in Shariah-compliant financial applications. This document defines **mandatory requirements** using RFC 2119 keywords (MUST, SHOULD, MAY).
 
-**Prerequisites**: Understanding of DDD fundamentals from [AyoKoding Java DDD](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md).
+**Prerequisites**: Understanding of DDD fundamentals from [AyoKoding Java DDD](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/_index.md).
 
 ## Purpose
 
@@ -41,8 +41,6 @@ Domain-Driven Design in OSE Platform ensures:
 - **Clear Audit Trails**: Domain events capture all state changes
 - **Ubiquitous Language**: Shared vocabulary between developers and domain experts
 - **Bounded Contexts**: Clear boundaries between financial domains
-
-## Bounded Context Organization
 
 ### Domain Boundaries
 
@@ -78,8 +76,6 @@ ose-platform/
 - Define explicit context maps (upstream/downstream relationships)
 
 **PROHIBITED**: Cross-context direct database access (violates encapsulation).
-
-## Aggregate Design Standards
 
 ### Aggregate Root Requirements
 
@@ -258,8 +254,6 @@ public record Money(BigDecimal value, String currencyCode) {
 - **ZakatRate**: Immutable rate (2.5%)
 - **EmailAddress**: Validated email format
 
-## Domain Event Standards
-
 ### Event Definition
 
 **REQUIRED**: All state changes MUST publish domain events.
@@ -363,8 +357,6 @@ public class ZakatAccount {
 - Apply events instead of mutating state directly
 - Version events for backward compatibility
 
-## Repository Standards
-
 ### Repository Interface
 
 **REQUIRED**: Repositories MUST define domain-focused interfaces.
@@ -435,8 +427,6 @@ public class JpaDonationRepository implements DonationRepository {
 - Use optimistic locking (`@Version` annotation)
 - Handle database-specific concerns in infrastructure layer
 
-## CQRS Standards
-
 ### Command-Query Separation
 
 **REQUIRED**: Financial operations MUST separate commands (writes) from queries (reads).
@@ -498,8 +488,6 @@ public class DonationSummaryQueryHandler {
 - Update read models via domain event handlers
 
 **RECOMMENDED**: Use Axon Framework for CQRS implementation.
-
-## Testing Standards
 
 ### Aggregate Testing
 
@@ -569,8 +557,6 @@ class DonationTest {
 - Domain event publication
 - Edge cases and error conditions
 
-## Related Documentation
-
 ### OSE Platform Standards
 
 - [Error Handling Standards](./ex-soen-prla-ja__error-handling-standards.md) - Domain exception handling
@@ -581,12 +567,12 @@ class DonationTest {
 
 For learning Java fundamentals and concepts referenced in these standards, see:
 
-- **[Java Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md)** - Complete Java learning journey
-- **[Java By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example.md)** - 157+ annotated code examples
+- **[Java Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/_index.md)** - Complete Java learning journey
+- **[Java By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/_index.md)** - 157+ annotated code examples
   - **[Advanced Examples](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/advanced.md)** - DDD aggregates, value objects, domain events, repositories, CQRS
-- **[Java In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-practice.md)** - Domain-Driven Design patterns and tactical patterns
-  - **[Domain-Driven Design In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-practice/domain-driven-design.md)** - Bounded contexts, ubiquitous language, event sourcing
-- **[Java Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/release-highlights.md)** - Java 17, 21, and 25 LTS features (including records for value objects)
+- **[Java In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-the-field/_index.md)** - Domain-Driven Design patterns and tactical patterns
+  - **[Domain-Driven Design In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-the-field/domain-driven-design.md)** - Bounded contexts, ubiquitous language, event sourcing
+- **[Java Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/release-highlights/_index.md)** - Java 17, 21, and 25 LTS features (including records for value objects)
 
 **Note**: These standards assume you've learned Java basics from ayokoding-web. We don't re-explain fundamental concepts here.
 

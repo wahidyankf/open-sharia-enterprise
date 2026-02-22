@@ -24,8 +24,6 @@ created: 2026-01-25
 updated: 2026-01-26
 ---
 
-# Spring Boot Dependency Injection
-
 ## 📋 Quick Reference
 
 - [Overview](#overview)
@@ -1133,8 +1131,6 @@ class ZakatCalculationIntegrationTest {
 }
 ```
 
-## OSE Platform DI Examples
-
 ### Zakat Calculation Service
 
 ```java
@@ -1308,8 +1304,5 @@ public class OseApplicationConfig {
 - [Spring Boot Configuration](./ex-soen-plwe-to-jvspbo__configuration.md) - Bean configuration
 
 **Hands-on Learning (AyoKoding)**:
-
-- [Spring Boot By Example - Dependency Injection](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/dependency-injection.md) - Code examples
-- [Spring Boot In-the-Field - DI Strategies](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/dependency-injection.md) - Production patterns
 
 **Last Updated**: 2026-01-26

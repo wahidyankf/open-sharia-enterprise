@@ -22,7 +22,7 @@ updated: 2026-02-06
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Spring Framework fundamentals from [AyoKoding Spring Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring.md) before using these standards.
+**REQUIRED**: You MUST understand Spring Framework fundamentals from AyoKoding Spring Learning Path before using these standards.
 
 **This document is OSE Platform-specific**, not a Spring tutorial. We define HOW to apply Spring in THIS codebase, not WHAT Spring is.
 
@@ -32,7 +32,7 @@ updated: 2026-02-06
 
 **OSE-specific prescriptive standards** for Domain-Driven Design in Spring-based Shariah-compliant financial applications. This document defines **mandatory requirements** using RFC 2119 keywords (MUST, SHOULD, MAY).
 
-**Prerequisites**: Understanding of Spring Framework fundamentals from [AyoKoding Spring Framework](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring.md) and Domain-Driven Design concepts.
+**Prerequisites**: Understanding of Spring Framework fundamentals from AyoKoding Spring Framework and Domain-Driven Design concepts.
 
 ## Purpose
 
@@ -44,8 +44,6 @@ Domain-Driven Design in Spring-based OSE Platform services enables:
 - **Value Objects**: Immutable domain primitives as records
 - **Bounded Context Organization**: Modular Spring applications by domain
 - **Entity Lifecycle**: Spring IoC management of domain entities
-
-## Aggregate Pattern with Spring
 
 ### Aggregate Root Definition
 
@@ -312,8 +310,6 @@ public class PaymentService {
 }
 ```
 
-## Repository Pattern with Spring Data
-
 ### Spring Data JPA Repository
 
 **REQUIRED**: One repository per aggregate root.
@@ -429,8 +425,6 @@ public class ZakatCalculationRepository {
 - Define `RowMapper` for result mapping
 - Use parameterized queries (prevent SQL injection)
 - Handle `EmptyResultDataAccessException` for optional results
-
-## Domain Events with ApplicationEventPublisher
 
 ### Publishing Domain Events
 
@@ -572,8 +566,6 @@ public class DonationEventListener {
 - Use `@Async @EventListener` for asynchronous handling
 - Use `@TransactionalEventListener` for transactional handling
 - Handle exceptions gracefully (don't propagate to publisher)
-
-## Value Objects as Records
 
 ### Value Object Definition
 
@@ -726,8 +718,6 @@ public class Account {
 }
 ```
 
-## Bounded Context Organization with Spring Modules
-
 ### Module Structure
 
 **REQUIRED**: Organize Spring applications by bounded context.
@@ -771,8 +761,6 @@ com.oseplatform.donation/
 - Separate domain, application, infrastructure, presentation layers
 - Avoid cross-context dependencies (use events for communication)
 
-## Related Documentation
-
 ### OSE Platform Standards
 
 - **[Spring Error Handling Standards](./ex-soen-plwe-to-jvsp__error-handling-standards.md)** - Domain exception hierarchy
@@ -789,12 +777,7 @@ com.oseplatform.donation/
 
 For learning Spring Framework fundamentals and concepts referenced in these standards, see:
 
-- **[Spring Framework Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring.md)** - Complete Spring learning journey
-- **[Spring By Example](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example.md)** - Annotated Spring code examples
-  - **[DDD Examples](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/ddd.md)** - Aggregates, repositories, domain events
-  - **[JPA Examples](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/jpa.md)** - @Entity, @Embeddable, relationships
-  - **[Event Examples](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/events.md)** - ApplicationEventPublisher, @EventListener
-- **[Spring In Practice](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-practice.md)** - DDD patterns and aggregate design
+- **[Spring By Example](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/_index.md)** - Annotated Spring code examples
 
 **Note**: These standards assume you've learned Spring basics from ayokoding-web. We don't re-explain fundamental concepts here.
 
@@ -802,17 +785,17 @@ For learning Spring Framework fundamentals and concepts referenced in these stan
 
 These standards enforce the five software engineering principles:
 
-1. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+1. **[Explicit Over Implicit](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
    - Aggregate roots make consistency boundaries explicit
    - Domain events make side effects explicit
    - Repository interfaces make data access explicit
 
-2. **[Immutability](../../../../../governance/principles/software-engineering/immutability.md)**
+2. **[Immutability](../../../../../../governance/principles/software-engineering/immutability.md)**
    - Value objects are immutable records
    - Domain events are immutable records
    - Business methods return new instances (not mutate state)
 
-3. **[Simplicity Over Complexity](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
+3. **[Simplicity Over Complexity](../../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**
    - One repository per aggregate (not per entity)
    - Factory methods for creation (not complex constructors)
    - Package-by-feature simplifies navigation
@@ -840,11 +823,6 @@ Before deploying Spring DDD applications, verify:
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - DDD patterns
 - [Spring Framework Data Access](./ex-soen-plwe-to-jvsp__data-access.md) - Repository implementation
 - [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - DDD standards
-
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring By Example - Domain-Driven Design](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/ddd.md) - Code examples
-- [Spring In-the-Field - DDD Architecture](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/ddd.md) - Production DDD
 
 **Spring Boot Extension**:
 

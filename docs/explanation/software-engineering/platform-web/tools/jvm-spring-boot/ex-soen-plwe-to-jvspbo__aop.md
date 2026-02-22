@@ -24,13 +24,11 @@ related:
   - ../jvm-spring/ex-soen-plwe-to-jvsp__aop.md
 ---
 
-# Spring Boot AOP
-
 ## Prerequisite Knowledge
 
 **REQUIRED**: You MUST understand [Spring Framework AOP](../jvm-spring/ex-soen-plwe-to-jvsp__aop.md) before reading this document. This covers Spring Boot-specific AOP features and auto-configuration.
 
-**STRONGLY RECOMMENDED**: Complete [AyoKoding Spring Boot Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot.md) for practical AOP experience.
+**STRONGLY RECOMMENDED**: Complete AyoKoding Spring Boot Learning Path for practical AOP experience.
 
 **This document is OSE Platform-specific**, not a Spring Boot tutorial. We define HOW to apply AOP in THIS platform, not WHAT AOP is.
 
@@ -53,8 +51,6 @@ This document defines **AOP standards** for Spring Boot applications in the OSE 
 - [Transaction Management](#transaction-management-with-transactional)
 - [Custom Aspects for Domain Events](#custom-aspects-for-domain-events)
 - [Performance Overhead Considerations](#performance-overhead-considerations)
-
-## AOP Auto-Configuration in Spring Boot
 
 ### Enable AOP Auto-Configuration
 
@@ -91,8 +87,6 @@ class AopConfiguration
 @EnableAspectJAutoProxy
 class UnnecessaryAopConfig
 ```
-
-## Cross-Cutting Concerns (Logging, Auditing, Performance)
 
 ### Logging Aspect for Controllers and Services
 
@@ -249,8 +243,6 @@ class PerformanceMonitoringAspect {
 }
 ```
 
-## Pointcut Expressions for Spring Boot Controllers/Services
-
 ### Controller-Specific Pointcuts
 
 **✅ Correct - REST Controller Pointcuts**:
@@ -340,8 +332,6 @@ class RepositoryAspects {
     }
 }
 ```
-
-## Boot-Specific AOP Patterns
 
 ### Actuator Metrics Integration
 
@@ -699,8 +689,6 @@ class ZakatEventListener {
 }
 ```
 
-## Performance Overhead Considerations
-
 ### AOP Performance Impact
 
 **Benchmarks** (OSE Platform, 10,000 method calls):
@@ -864,11 +852,6 @@ These AOP standards enforce the five software engineering principles:
 - [Java Patterns](../../../programming-languages/java/ex-soen-prla-ja__coding-standards.md) - Java baseline patterns
 - [Spring Boot Idioms](./ex-soen-plwe-to-jvspbo__idioms.md) - AOP patterns
 - [Spring Boot Security](./ex-soen-plwe-to-jvspbo__security.md) - Security aspects
-
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring Boot By Example - AOP](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/aop.md) - Code examples
-- [Spring Boot In-the-Field - Cross-Cutting Concerns](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/in-the-field/aop.md) - Production aspects
 
 ---
 

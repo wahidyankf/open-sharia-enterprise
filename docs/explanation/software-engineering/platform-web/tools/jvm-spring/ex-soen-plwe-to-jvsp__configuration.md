@@ -43,8 +43,6 @@ Spring Framework provides multiple configuration approaches for defining beans a
 - [XML Configuration (Legacy)](#xml-configuration-legacy)
 - [Mixed Configuration Strategies](#mixed-configuration-strategies)
 
-## Java-Based Configuration
-
 ### @Configuration Classes
 
 Java configuration uses `@Configuration` classes with `@Bean` methods to define beans.
@@ -214,8 +212,6 @@ fun main() {
 }
 ```
 
-## Component Scanning
-
 ### @ComponentScan Configuration
 
 **Java Example** (Murabaha Application):
@@ -299,8 +295,6 @@ class ApplicationConfig {
   // Scanning based on marker classes (type-safe)
 }
 ```
-
-## Bean Definition with @Bean
 
 ### Simple Bean Definition
 
@@ -448,8 +442,6 @@ class ZakatCalculationCache(private val cacheManager: CacheManager) {
 }
 ```
 
-## Profile-Based Configuration
-
 ### @Profile Annotation
 
 **Java Example** (Environment-Specific Configuration):
@@ -595,8 +587,6 @@ val context = AnnotationConfigApplicationContext().apply {
 context.environment.setActiveProfiles("prod", "aws")
 ```
 
-## Property Sources
-
 ### @PropertySource Annotation
 
 **Java Example**:
@@ -681,8 +671,6 @@ notification.sms.enabled=false
 notification.email.smtp-host=smtp.gmail.com
 notification.email.from=noreply@oseplatform.com
 ```
-
-## Environment Abstraction
 
 ### Using Environment Interface
 
@@ -778,8 +766,6 @@ class DynamicConfiguration(private val environment: Environment) {
   }
 }
 ```
-
-## Conditional Configuration
 
 ### @Conditional Annotation
 
@@ -890,8 +876,6 @@ class DatabaseConfiguration {
 }
 ```
 
-## Configuration Import
-
 ### @Import Annotation
 
 **Java Example**:
@@ -969,8 +953,6 @@ class WebConfig : WebMvcConfigurer {
 }
 ```
 
-## XML Configuration (Legacy)
-
 ### Basic XML Configuration
 
 **applicationContext.xml**:
@@ -1032,8 +1014,6 @@ public class ZakatApplication {
   }
 }
 ```
-
-## Mixed Configuration Strategies
 
 ### Combining Java Config and Component Scanning
 
@@ -1119,8 +1099,6 @@ class MigrationConfiguration {
 }
 ```
 
-## Related Documentation
-
 ### Core Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
@@ -1140,11 +1118,6 @@ class MigrationConfiguration {
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Configuration patterns
 - [Spring Framework Dependency Injection](./ex-soen-plwe-to-jvsp__dependency-injection.md) - Bean wiring
 - [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Configuration standards
-
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring By Example - Configuration](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/configuration.md) - Code examples
-- [Spring In-the-Field - Environment Setup](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/environment-setup.md) - Production config
 
 **Spring Boot Extension**:
 

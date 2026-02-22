@@ -22,8 +22,6 @@ principles:
 last_updated: 2026-01-23
 ---
 
-# OTP GenServer Patterns
-
 ## Overview
 
 GenServer is a behavior module for implementing the server side of a client-server relationship. It provides a standard set of interface functions and manages state, synchronous and asynchronous calls, and process lifecycle.
@@ -46,8 +44,6 @@ GenServer is a behavior module for implementing the server side of a client-serv
 - [Lifecycle Hooks](#lifecycle-hooks)
 - [Testing GenServers](#testing-genservers)
 - [Financial Domain Examples](#financial-domain-examples)
-
-## GenServer Fundamentals
 
 ### Basic Structure
 
@@ -426,8 +422,6 @@ defmodule ZakatCalculator do
 end
 ```
 
-## Synchronous vs Asynchronous
-
 ### call vs cast
 
 The following diagram shows the difference between synchronous call and asynchronous cast:
@@ -544,8 +538,6 @@ defmodule CampaignManager do
   end
 end
 ```
-
-## Lifecycle Hooks
 
 ### init/1 - Initialization
 
@@ -768,8 +760,6 @@ defmodule CampaignMonitor do
 end
 ```
 
-## Testing GenServers
-
 ### Basic Testing
 
 ```elixir
@@ -912,8 +902,6 @@ defmodule DonationProcessorTest do
   end
 end
 ```
-
-## Financial Domain Examples
 
 ### Zakat Calculator GenServer
 
@@ -1189,8 +1177,6 @@ defmodule Financial.DonationProcessorServer do
 end
 ```
 
-## Best Practices
-
 ### 1. Always Use @impl
 
 ```elixir
@@ -1280,8 +1266,6 @@ def terminate(_reason, state) do
 end
 ```
 
-## Performance Considerations
-
 ### Batch Operations
 
 ```elixir
@@ -1313,8 +1297,6 @@ def handle_cast({:log, entry}, state) do
 end
 ```
 
-## Common Patterns
-
 ### Request-Reply with Timeout
 
 ```elixir
@@ -1343,8 +1325,6 @@ def handle_continue(:load_data, state) do
 end
 ```
 
-## Resources
-
 ### Official Documentation
 
 - [GenServer Behavior](https://hexdocs.pm/elixir/GenServer.html)
@@ -1355,7 +1335,6 @@ end
 - [Back to Elixir README](README.md)
 - [Supervisor Patterns](ex-soen-prla-el__otp-supervisor.md)
 - [Application Patterns](ex-soen-prla-el__otp-application.md)
-- [Concurrency and Parallelism](ex-soen-prla-el__concurrency-and-parallelism.md)
 
 ---
 

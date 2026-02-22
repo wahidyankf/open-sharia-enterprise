@@ -204,12 +204,15 @@ timeline
 
 ### Version-Specific Documentation
 
-| Version                                           | Description       | Key Features                       |
-| ------------------------------------------------- | ----------------- | ---------------------------------- |
-| [TypeScript 5.0](ex-soen-prla-ty__release-5.0.md) | Baseline version  | Decorators, const type parameters  |
-| [TypeScript 5.4](ex-soen-prla-ty__release-5.4.md) | Milestone version | NoInfer utility, Closure narrowing |
-| [TypeScript 5.6](ex-soen-prla-ty__release-5.6.md) | Stable version    | Iterator helpers, Strict checks    |
-| [TypeScript 5.9](ex-soen-prla-ty__release-5.9.md) | Latest version    | Path rewriting, Relative checks    |
+| Version                                           | Description       | Key Features                           |
+| ------------------------------------------------- | ----------------- | -------------------------------------- |
+| [TypeScript 5.0](ex-soen-prla-ty__release-5.0.md) | Baseline version  | Decorators, const type parameters      |
+| [TypeScript 5.1](ex-soen-prla-ty__release-5.1.md) | Incremental       | JSDoc improvements, type narrowing     |
+| [TypeScript 5.2](ex-soen-prla-ty__release-5.2.md) | Incremental       | Using declarations, decorator metadata |
+| [TypeScript 5.4](ex-soen-prla-ty__release-5.4.md) | Milestone version | NoInfer utility, Closure narrowing     |
+| [TypeScript 5.6](ex-soen-prla-ty__release-5.6.md) | Stable version    | Iterator helpers, Strict checks        |
+| [TypeScript 5.8](ex-soen-prla-ty__release-5.8.md) | Incremental       | Granular checks, require() imports     |
+| [TypeScript 5.9](ex-soen-prla-ty__release-5.9.md) | Latest version    | Path rewriting, Relative checks        |
 
 ## TypeScript in the Platform
 
@@ -1508,7 +1511,7 @@ async function processDonation(data: DonationInput): Promise<Result<Donation, Er
 
 **Last Updated**: 2026-01-24
 **TypeScript Version**: 5.0+ (baseline), 5.4+ (milestone), 5.6+ (stable), 5.9.3+ (latest stable)
-**Total Documentation Files**: 23 core files + 4 version files = 27 files
+**Total Documentation Files**: 19 core files + 7 version files = 26 files
 **Maintainers**: OSE Documentation Team
 
 ## TypeScript Type System

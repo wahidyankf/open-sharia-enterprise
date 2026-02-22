@@ -14,10 +14,10 @@ tags:
   - rest-api
   - graphql
 related:
-  - ./ex-soen-prla-ts__best-practices.md
-  - ./ex-soen-prla-ts__error-handling.md
-  - ./ex-soen-prla-ts__security.md
-  - ./ex-soen-prla-ts__domain-driven-design.md
+  - ./ex-soen-prla-ty__best-practices.md
+  - ./ex-soen-prla-ty__error-handling.md
+  - ./ex-soen-prla-ty__security.md
+  - ./ex-soen-prla-ty__domain-driven-design.md
 principles:
   - explicit-over-implicit
   - automation-over-manual

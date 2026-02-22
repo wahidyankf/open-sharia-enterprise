@@ -20,7 +20,7 @@ updated: 2026-02-03
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Java fundamentals from [AyoKoding Java Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md) before using these standards.
+**REQUIRED**: You MUST understand Java fundamentals from [AyoKoding Java Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/_index.md) before using these standards.
 
 **This document is OSE Platform-specific**, not a Java tutorial. We define HOW to apply Java in THIS codebase, not WHAT Java is.
 
@@ -30,7 +30,7 @@ updated: 2026-02-03
 
 **OSE-specific prescriptive standards** for API design in Shariah-compliant financial applications. This document defines **mandatory requirements** using RFC 2119 keywords (MUST, SHOULD, MAY).
 
-**Prerequisites**: Understanding of REST, GraphQL, and gRPC fundamentals from [AyoKoding Java Web Services](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md).
+**Prerequisites**: Understanding of REST, GraphQL, and gRPC fundamentals from [AyoKoding Java Web Services](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/_index.md).
 
 ## Purpose
 
@@ -41,8 +41,6 @@ API standards in OSE Platform ensure:
 - **Interoperability**: Seamless integration between microservices
 - **Versioning**: Backward-compatible evolution
 - **Security**: Consistent authentication and authorization
-
-## REST API Design Standards
 
 ### URL Structure
 
@@ -201,8 +199,6 @@ public record FieldError(
 
 **PROHIBITED**: Exposing stack traces, SQL queries, or PII in error responses.
 
-## API Versioning Standards
-
 ### URL Versioning
 
 **REQUIRED**: All APIs MUST include version in URL path.
@@ -274,8 +270,6 @@ public ResponseEntity<DonationResponse> getLegacyDonations() {
 - Provide migration path to new version
 - Log usage for monitoring adoption
 
-## Pagination Standards
-
 ### Cursor-Based Pagination
 
 **REQUIRED**: All list endpoints MUST implement cursor-based pagination.
@@ -333,8 +327,6 @@ public PaginatedResponse<Donation> getDonations(
 
 **PROHIBITED**: Offset-based pagination for large datasets (inconsistent results).
 
-## Idempotency Standards
-
 ### Idempotency Keys
 
 **REQUIRED**: All state-changing financial operations MUST support idempotency keys.
@@ -369,8 +361,6 @@ public ResponseEntity<ZakatPaymentResponse> processZakatPayment(
 - Store key with request/response for 24 hours
 - Return cached response for duplicate keys
 - Return 409 Conflict if key exists with different request body
-
-## GraphQL Standards
 
 ### Schema Design
 
@@ -458,8 +448,6 @@ public CompletableFuture<Donor> donor(
 }
 ```
 
-## gRPC Standards
-
 ### Service Definition
 
 **REQUIRED**: gRPC services MUST define clear, versioned proto files.
@@ -510,8 +498,6 @@ message Money {
 - Version package names (`.v1`, `.v2`)
 - Use appropriate RPC types (unary, server streaming, client streaming, bidirectional)
 - Define reusable message types for domain concepts
-
-## API Documentation Standards
 
 ### OpenAPI Requirements
 
@@ -564,8 +550,6 @@ public class OpenApiConfig {
 - Example requests and responses
 - Error codes and descriptions
 
-## Related Documentation
-
 ### OSE Platform Standards
 
 - [Security Standards](./ex-soen-prla-ja__security-standards.md) - API authentication and authorization
@@ -576,11 +560,11 @@ public class OpenApiConfig {
 
 For learning Java fundamentals and concepts referenced in these standards, see:
 
-- **[Java Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java.md)** - Complete Java learning journey
-- **[Java By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example.md)** - 157+ annotated code examples
+- **[Java Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/_index.md)** - Complete Java learning journey
+- **[Java By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/_index.md)** - 157+ annotated code examples
   - **[Advanced Examples](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/advanced.md)** - REST APIs, GraphQL, gRPC, API versioning, pagination, error handling
-- **[Java In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-practice.md)** - API design patterns and best practices
-- **[Java Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/release-highlights.md)** - Java 17, 21, and 25 LTS features
+- **[Java In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/in-the-field/_index.md)** - API design patterns and best practices
+- **[Java Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/release-highlights/_index.md)** - Java 17, 21, and 25 LTS features
 
 **Note**: These standards assume you've learned Java basics from ayokoding-web. We don't re-explain fundamental concepts here.
 

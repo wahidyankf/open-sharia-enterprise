@@ -40,8 +40,6 @@ Spring Framework provides comprehensive data access abstraction through JdbcTemp
 - [Connection Pooling](#connection-pooling)
 - [Multiple DataSources](#multiple-datasources)
 
-## JdbcTemplate
-
 ### Basic CRUD Operations
 
 **Java Example** (Zakat Calculation Repository):
@@ -263,8 +261,6 @@ class JdbcDonationRepository(
   }
 }
 ```
-
-## Transaction Management
 
 ### @Transactional Annotation
 
@@ -492,8 +488,6 @@ public class JdbcMurabahaContractRepository implements MurabahaContractRepositor
 }
 ```
 
-## Connection Pooling
-
 ### HikariCP Configuration
 
 **Java Example**:
@@ -619,8 +613,6 @@ public class MultiDataSourceConfig {
 }
 ```
 
-## Related Documentation
-
 ### Core Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
@@ -635,11 +627,6 @@ public class MultiDataSourceConfig {
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Data access patterns
 - [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Repository standards
 - [Spring Framework Performance](./ex-soen-plwe-to-jvsp__performance.md) - Query optimization
-
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring By Example - Data Access](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/data-access.md) - Code examples
-- [Spring In-the-Field - Database Integration](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/data-access.md) - Production patterns
 
 **Spring Boot Extension**:
 

@@ -27,11 +27,9 @@ created: 2026-02-05
 updated: 2026-02-05
 ---
 
-# Elixir Testing Standards
-
 ## 📚 Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Elixir fundamentals from [AyoKoding Elixir Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir.md) before using these standards.
+**REQUIRED**: You MUST understand Elixir fundamentals from [AyoKoding Elixir Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/_index.md) before using these standards.
 
 **This document is OSE Platform-specific**, not an Elixir tutorial. It assumes:
 
@@ -63,8 +61,6 @@ These testing standards directly support OSE Platform's [Software Engineering Pr
 All testing practices in this document MUST align with these foundational principles.
 
 ---
-
-## Part 1: Unit Testing with ExUnit
 
 ### 📋 Overview
 
@@ -241,8 +237,6 @@ end
 
 ---
 
-## Part 2: Doctests
-
 ### Purpose
 
 Doctests MUST be included for all public functions to serve as executable documentation.
@@ -332,8 +326,6 @@ Error cases:
 ```
 
 ---
-
-## Part 3: Property-Based Testing
 
 ### When to Use
 
@@ -427,8 +419,6 @@ end
 
 ---
 
-## Part 4: Test-Driven Development (TDD)
-
 ### 🔄 TDD Cycle
 
 **MUST** follow Red-Green-Refactor cycle.
@@ -492,7 +482,6 @@ defmodule FinancialPlatform.ZakatCalculatorTest do
   end
 end
 
-# Run test - should fail (RED)
 # ** (UndefinedFunctionError) function ZakatCalculator.calculate/2 is undefined
 ```
 
@@ -518,8 +507,6 @@ defmodule FinancialPlatform.ZakatCalculator do
   end
 end
 
-# Run test - should pass (GREEN)
-# Finished in 0.1 seconds
 # 2 tests, 0 failures
 ```
 
@@ -560,8 +547,6 @@ defmodule FinancialPlatform.ZakatCalculator do
   end
 end
 
-# Run tests - still pass (REFACTOR)
-# Finished in 0.1 seconds
 # 2 tests, 0 failures
 ```
 
@@ -580,7 +565,6 @@ end
 # Define mock in test_helper.exs
 Mox.defmock(FinancialPlatform.PaymentGatewayMock, for: FinancialPlatform.PaymentGateway)
 
-# Configure implementation
 # config/test.exs
 config :financial_platform, :payment_gateway, FinancialPlatform.PaymentGatewayMock
 ```
@@ -615,8 +599,6 @@ end
 - ❌ Global mutable state
 
 ---
-
-## Part 5: Behaviour-Driven Development (BDD)
 
 ### Purpose
 
@@ -800,8 +782,6 @@ Scenario: Create donation
 
 ---
 
-## Test Organization
-
 ### Directory Structure
 
 ```
@@ -852,8 +832,6 @@ mix test --exclude slow
 ```
 
 ---
-
-## Quality Checklist
 
 ### Test Quality (MUST)
 
@@ -910,9 +888,9 @@ Testing standards are enforced through:
 
 For learning Elixir fundamentals and concepts referenced in these standards, see:
 
-- **[Elixir Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir.md)** - Complete Elixir learning journey
-- **[Elixir By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/by-example.md)** - Annotated code examples
-- **[Elixir In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/in-practice.md)** - TDD and BDD practices
+- **[Elixir Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/_index.md)** - Complete Elixir learning journey
+- **[Elixir By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/by-example/_index.md)** - Annotated code examples
+- **[Elixir In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/in-the-field/_index.md)** - TDD and BDD practices
 
 **Note**: These standards assume you've learned Elixir basics from ayokoding-web. We don't re-explain fundamental concepts here.
 

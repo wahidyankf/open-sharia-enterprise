@@ -23,11 +23,9 @@ principles:
 last_updated: 2026-02-05
 ---
 
-# Elixir Performance Standards
-
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Elixir fundamentals from [AyoKoding Elixir Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir.md) before using these standards.
+**REQUIRED**: You MUST understand Elixir fundamentals from [AyoKoding Elixir Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/_index.md) before using these standards.
 
 **This document is OSE Platform-specific**, not an Elixir tutorial. We define HOW to apply Elixir in THIS codebase, not WHAT Elixir is.
 
@@ -44,10 +42,6 @@ This document defines **authoritative performance standards** for Elixir develop
 **Compliance**: Code reviews MUST verify adherence to these standards for performance-critical paths.
 
 ---
-
-# Part 1: Performance Fundamentals
-
-## BEAM VM Performance Characteristics
 
 ### Understanding BEAM Strengths
 
@@ -137,8 +131,6 @@ end
 
 ---
 
-# Part 2: Profiling Requirements
-
 ## Observer
 
 **REQUIRED**: All developers MUST use Observer for real-time system monitoring.
@@ -147,27 +139,18 @@ end
 # Start Observer in IEx
 :observer.start()
 
-# REQUIRED: Monitor these tabs during development
-# 1. System: CPU, memory, process count
-# 2. Load Charts: System load trends
-# 3. Memory Allocators: Detailed memory breakdown
-# 4. Processes: Sort by reductions, memory, message queue length
-# 5. Applications: Per-app resource usage
 # 6. ETS: ETS table sizes and memory usage
 ```
 
 **REQUIRED**: Production systems MUST enable remote Observer connection.
 
 ```elixir
-# config/prod.exs
+
 # REQUIRED: Enable distributed Erlang for remote Observer
 config :my_app, MyApp.Endpoint,
   http: [port: 4000],
   server: true
 
-# Connect from local machine:
-# iex --name debug@127.0.0.1 --cookie secret
-# Node.connect(:"prod@production-server.com")
 # :observer.start()
 ```
 
@@ -195,10 +178,6 @@ defmodule Profiling do
   end
 end
 
-# REQUIRED: Analyze output for hot spots
-# Look for:
-# - High ACC (accumulated time) = total time spent
-# - High OWN = time in function itself (not children)
 # - High CNT = call count (potential optimization target)
 ```
 
@@ -260,7 +239,6 @@ defmodule MoneyBenchmarks do
   end
 end
 
-# REQUIRED: Run benchmarks before and after optimization
 # mix run -e "MoneyBenchmarks.run()"
 ```
 
@@ -276,8 +254,6 @@ diff baseline.txt optimized.txt
 ```
 
 ---
-
-# Part 3: Common Optimizations
 
 ## Tail Call Optimization
 
@@ -389,8 +365,6 @@ defmodule CampaignCache do
   end
 end
 
-# REQUIRED: Benchmark confirms 1000x speedup vs database
-# ETS lookup:      ~1 μs (1 microsecond)
 # Database query:  ~1 ms (1000 microseconds)
 ```
 
@@ -480,8 +454,6 @@ end
 - **Database operations**: `max_concurrency: pool_size * 0.8` (respect connection pool)
 
 ---
-
-# Part 4: Database Performance
 
 ## Query Optimization (N+1 Prevention)
 
@@ -620,8 +592,6 @@ end
 
 ---
 
-# Part 5: Concurrency Patterns
-
 ## Task.async_stream (Bounded Concurrency)
 
 **REQUIRED**: Batch processing MUST use `Task.async_stream` with explicit concurrency limits.
@@ -736,8 +706,6 @@ end
 
 ---
 
-# Part 6: Phoenix Performance
-
 ## LiveView Optimization
 
 **REQUIRED**: LiveView MUST minimize data sent over websockets.
@@ -810,8 +778,6 @@ end
 
 ---
 
-# Part 7: Performance Anti-patterns
-
 ## Anti-pattern 1: N+1 Queries
 
 ```elixir
@@ -857,8 +823,6 @@ Task.async_stream(donations, &process_donation/1, max_concurrency: 50)
 
 ---
 
-# Part 8: Performance Testing
-
 ## Load Testing
 
 **REQUIRED**: Production deployments MUST pass load tests verifying SLO targets.
@@ -902,8 +866,6 @@ end
 ```
 
 ---
-
-# Part 9: Monitoring Requirements
 
 ## Telemetry Integration
 
@@ -967,8 +929,6 @@ end
 
 ---
 
-## Related Documentation
-
 ### OSE Platform Standards
 
 - [Concurrency and Parallelism](./ex-soen-prla-el__concurrency-standards.md) - Concurrency patterns, OTP, supervision trees
@@ -979,9 +939,9 @@ end
 
 For learning Elixir fundamentals and concepts referenced in these standards, see:
 
-- **[Elixir Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir.md)** - Complete Elixir learning journey
-- **[Elixir By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/by-example.md)** - Annotated code examples
-- **[Elixir In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/in-practice.md)** - Performance optimization patterns
+- **[Elixir Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/_index.md)** - Complete Elixir learning journey
+- **[Elixir By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/by-example/_index.md)** - Annotated code examples
+- **[Elixir In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/elixir/in-the-field/_index.md)** - Performance optimization patterns
 
 **Note**: These standards assume you've learned Elixir basics from ayokoding-web. We don't re-explain fundamental concepts here.
 

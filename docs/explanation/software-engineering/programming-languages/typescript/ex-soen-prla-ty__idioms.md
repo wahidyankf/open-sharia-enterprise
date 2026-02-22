@@ -12,10 +12,10 @@ tags:
   - typescript-5.0
   - type-safety
 related:
-  - ./ex-soen-prla-ts__best-practices.md
-  - ./ex-soen-prla-ts__type-safety.md
-  - ./ex-soen-prla-ts__interfaces-and-types.md
-  - ./ex-soen-prla-ts__anti-patterns.md
+  - ./ex-soen-prla-ty__best-practices.md
+  - ./ex-soen-prla-ty__type-safety.md
+  - ./ex-soen-prla-ty__interfaces-and-types.md
+  - ./ex-soen-prla-ty__anti-patterns.md
   - ../../../../../governance/development/pattern/functional-programming.md
 principles:
   - explicit-over-implicit

@@ -10,8 +10,8 @@ tags:
   - concurrency
   - web-workers
 related:
-  - ./ex-soen-prla-ts__best-practices.md
-  - ./ex-soen-prla-ts__error-handling.md
+  - ./ex-soen-prla-ty__best-practices.md
+  - ./ex-soen-prla-ty__error-handling.md
 principles:
   - automation-over-manual
 last_updated: 2025-01-23

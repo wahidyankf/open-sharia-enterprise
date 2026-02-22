@@ -39,8 +39,6 @@ This document provides guidance for migrating Spring Framework applications from
 - [API Changes](#api-changes)
 - [Third-Party Compatibility](#third-party-compatibility)
 
-## Spring 5.x to 6.x Migration
-
 ### Major Changes Overview
 
 Spring Framework 6.0 introduces significant changes:
@@ -51,8 +49,6 @@ Spring Framework 6.0 introduces significant changes:
 - **Observability**: Enhanced monitoring with Micrometer Observation API
 - **HTTP interfaces**: New declarative HTTP client feature
 - **Virtual threads**: Support for Java 21 virtual threads
-
-## Jakarta EE Migration
 
 ### Package Namespace Changes
 
@@ -102,8 +98,6 @@ Run migration:
 ./gradlew rewriteRun
 ```
 
-## Java Version Requirements
-
 ### Minimum Java 17
 
 Spring Framework 6.x requires Java 17 as the minimum version.
@@ -152,8 +146,6 @@ public class AsyncConfig implements AsyncConfigurer {
   }
 }
 ```
-
-## Breaking Changes
 
 ### 1. HttpMethod Enum Changes
 
@@ -228,8 +220,6 @@ public void method() {
 }
 ```
 
-## Configuration Updates
-
 ### Application Context Configuration
 
 **Spring 5.x**:
@@ -289,8 +279,6 @@ public class SecurityConfig {
   }
 }
 ```
-
-## API Changes
 
 ### 1. RestTemplate vs WebClient
 
@@ -363,8 +351,6 @@ public class HttpClientConfig {
 }
 ```
 
-## Third-Party Compatibility
-
 ### Library Version Updates
 
 **Spring 5.x Compatible Versions**:
@@ -421,8 +407,6 @@ Complete checklist for Spring 5.x to 6.x migration:
 - [ ] Update CI/CD pipelines for Java 17+
 - [ ] Review and update Docker base images for Java 17+
 - [ ] Update production deployment configurations
-
-## Islamic Finance Application Example
 
 ### Zakat Service Migration
 
@@ -536,8 +520,6 @@ class ZakatServiceTest {
 }
 ```
 
-## Related Documentation
-
 ### Core Spring Framework Documentation
 
 - **[Spring Framework README](./README.md)** - Framework overview
@@ -558,11 +540,6 @@ class ZakatServiceTest {
 - [Spring Framework Idioms](./ex-soen-plwe-to-jvsp__idioms.md) - Modern patterns
 - [Spring Framework Best Practices](./ex-soen-plwe-to-jvsp__best-practices.md) - Migration standards
 - [Spring Framework Configuration](./ex-soen-plwe-to-jvsp__configuration.md) - Config updates
-
-**Hands-on Learning (AyoKoding)**:
-
-- [Spring By Example - Migration](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/migration.md) - Code examples
-- [Spring In-the-Field - Version Upgrades](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/migration.md) - Production migration
 
 **Spring Boot Extension**:
 
