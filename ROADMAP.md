@@ -66,7 +66,7 @@ graph TB
 **Website Launches:**
 
 - 🌐 [**ayokoding.com**](https://ayokoding.com) ([`apps/ayokoding-web/`](./apps/ayokoding-web/)) - Bilingual educational platform (Indonesian/English) using Hugo + Hextra theme. Programming tutorials, AI guides, security content
-- 🏢 [**oseplatform.com**](https://oseplatform.com) ([`apps/ose-platform-web/`](./apps/ose-platform-web/)) - Platform marketing website using Hugo + PaperMod theme. Project updates, announcements, landing page
+- 🏢 [**oseplatform.com**](https://oseplatform.com) ([`apps/oseplatform-web/`](./apps/oseplatform-web/)) - Platform marketing website using Hugo + PaperMod theme. Project updates, announcements, landing page
 
 **CLI Tools:**
 

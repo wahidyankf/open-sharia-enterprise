@@ -17,7 +17,7 @@ Standards for creating learning-oriented tutorial content. These conventions ans
 
 ## Purpose
 
-This directory contains standards for tutorial creation, structure, naming, and content that apply to **all tutorial content** across the repository (docs/, ayokoding-web, ose-platform-web, anywhere). These conventions **build upon and extend** the universal [writing conventions](../writing/README.md).
+This directory contains standards for tutorial creation, structure, naming, and content that apply to **all tutorial content** across the repository (docs/, ayokoding-web, oseplatform-web, anywhere). These conventions **build upon and extend** the universal [writing conventions](../writing/README.md).
 
 ## Documents (7 conventions)
 

@@ -2407,7 +2407,7 @@ This convention implements and respects:
 
 - **docs/tutorials/** - Production implementation guides in docs
 - **apps/ayokoding-web/content/** - Programming language in-the-field guides (Java, Golang, Python, etc.)
-- **apps/ose-platform-web/content/** - Platform in-the-field guides
+- **apps/oseplatform-web/content/** - Platform in-the-field guides
 - **Any other location** - In-the-field tutorials regardless of directory
 
 **Implementation Notes**: While these standards apply universally, Hugo-specific details (frontmatter, weights, navigation) are covered in [Hugo conventions](../hugo/)

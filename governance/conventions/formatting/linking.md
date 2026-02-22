@@ -307,7 +307,7 @@ Final path: ../../tutorials/README.md
 
 ## Hugo Content Linking
 
-**Important**: This convention applies to documentation in the `docs/` directory. Hugo content in `apps/ayokoding-web/` and `apps/ose-platform-web/` uses different linking rules:
+**Important**: This convention applies to documentation in the `docs/` directory. Hugo content in `apps/ayokoding-web/` and `apps/oseplatform-web/` uses different linking rules:
 
 - **Hugo internal links** use absolute paths starting with `/` (e.g., `/learn/ai/chat-with-pdf`)
 - **Hugo links omit** the `.md` extension

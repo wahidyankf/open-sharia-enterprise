@@ -41,7 +41,7 @@ This document defines **authoritative standards** for visualizing Nx monorepo st
 
 ```
 apps/
-├── ose-platform-web/        # Hugo static site
+├── oseplatform-web/        # Hugo static site
 ├── ayokoding-web/          # Hugo static site
 ├── ayokoding-cli/          # Go CLI tool
 └── rhino-cli/              # Go CLI tool

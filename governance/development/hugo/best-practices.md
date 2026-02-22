@@ -15,7 +15,7 @@ This companion document respects:
 
 This companion document supports the conventions in this directory by providing practical examples and guidance.
 
-This document outlines best practices for developing Hugo sites in the `apps/ayokoding-web/` and `apps/ose-platform-web/` projects. Following these practices ensures maintainable, performant, and accessible Hugo implementations.
+This document outlines best practices for developing Hugo sites in the `apps/ayokoding-web/` and `apps/oseplatform-web/` projects. Following these practices ensures maintainable, performant, and accessible Hugo implementations.
 
 ## Purpose
 

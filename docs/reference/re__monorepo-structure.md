@@ -69,14 +69,14 @@ Flat structure - all apps at the same level, no subdirectories.
 
 **Current Apps**:
 
-- `ose-platform-web` - OSE Platform website (Hugo static site)
+- `oseplatform-web` - OSE Platform website (Hugo static site)
 - `ayokoding-web` - AyoKoding educational platform (Hugo static site)
 - `ayokoding-cli` - AyoKoding CLI tool (Go application)
 
 ### App Structure (Hugo Static Site)
 
 ```
-apps/ose-platform-web/
+apps/oseplatform-web/
 ├── content/                   # Markdown content files
 ├── layouts/                   # Hugo templates
 ├── static/                    # Static assets (images, CSS, JS)
@@ -276,26 +276,26 @@ The repository contains two distinct project structures with different purposes 
 
 Location: `apps/[app-name]/project.json` or `libs/[lib-name]/project.json`
 
-**Hugo App Example** (`ose-platform-web`):
+**Hugo App Example** (`oseplatform-web`):
 
 ```json
 {
-  "name": "ose-platform-web",
-  "sourceRoot": "apps/ose-platform-web",
+  "name": "oseplatform-web",
+  "sourceRoot": "apps/oseplatform-web",
   "projectType": "application",
   "targets": {
     "dev": {
       "executor": "nx:run-commands",
       "options": {
         "command": "hugo server --buildDrafts --buildFuture",
-        "cwd": "apps/ose-platform-web"
+        "cwd": "apps/oseplatform-web"
       }
     },
     "build": {
       "executor": "nx:run-commands",
       "options": {
         "command": "bash build.sh",
-        "cwd": "apps/ose-platform-web"
+        "cwd": "apps/oseplatform-web"
       },
       "outputs": ["{projectRoot}/public"]
     },
@@ -303,7 +303,7 @@ Location: `apps/[app-name]/project.json` or `libs/[lib-name]/project.json`
       "executor": "nx:run-commands",
       "options": {
         "command": "rm -rf public resources",
-        "cwd": "apps/ose-platform-web"
+        "cwd": "apps/oseplatform-web"
       }
     }
   },
@@ -408,7 +408,7 @@ Location: `apps/[app-name]/project.json` or `libs/[lib-name]/project.json`
 **Hugo Apps** do not require `package.json` as they use Hugo's native configuration:
 
 ```yaml
-# apps/ose-platform-web/hugo.yaml
+# apps/oseplatform-web/hugo.yaml
 baseURL: https://oseplatform.com/
 languageCode: en-us
 title: Open Sharia Enterprise Platform
@@ -495,7 +495,7 @@ import { formatDate } from "@open-sharia-enterprise/ts-utils";
 nx graph
 
 # View specific project dependencies
-nx graph --focus=ose-platform-web
+nx graph --focus=oseplatform-web
 
 # View affected projects
 nx affected:graph

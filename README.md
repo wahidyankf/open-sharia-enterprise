@@ -68,7 +68,7 @@ For the complete roadmap including all phases, tech stack, and strategic approac
 **Phase 0 (Complete):**
 
 - Node.js 24.11.1 & npm 11.6.3 (via Volta) - Tooling and development infrastructure
-- Hugo (Extended) - Static sites (ayokoding-web, ose-platform-web)
+- Hugo (Extended) - Static sites (ayokoding-web, oseplatform-web)
 - Golang - CLI tools ([ayokoding-cli](./apps/ayokoding-cli/), [rhino-cli](./apps/rhino-cli/)) and future security infrastructure
 
 **Current Phase 1 (OrganicLever):**
@@ -119,7 +119,7 @@ open-sharia-enterprise/
 
 This project uses **Nx** to manage applications and libraries:
 
-- **`apps/`** - Deployable applications (current: [`ose-platform-web`](./apps/ose-platform-web/), [`ayokoding-web`](./apps/ayokoding-web/), [`ayokoding-cli`](./apps/ayokoding-cli/), [`rhino-cli`](./apps/rhino-cli/), [`organiclever-web`](./apps/organiclever-web/), [`organiclever-web-e2e`](./apps/organiclever-web-e2e/), [`organiclever-app`](./apps/organiclever-app/), [`organiclever-be`](./apps/organiclever-be/), [`organiclever-be-e2e`](./apps/organiclever-be-e2e/), [`organiclever-app-web-e2e`](./apps/organiclever-app-web-e2e/))
+- **`apps/`** - Deployable applications (current: [`oseplatform-web`](./apps/oseplatform-web/), [`ayokoding-web`](./apps/ayokoding-web/), [`ayokoding-cli`](./apps/ayokoding-cli/), [`rhino-cli`](./apps/rhino-cli/), [`organiclever-web`](./apps/organiclever-web/), [`organiclever-web-e2e`](./apps/organiclever-web-e2e/), [`organiclever-app`](./apps/organiclever-app/), [`organiclever-be`](./apps/organiclever-be/), [`organiclever-be-e2e`](./apps/organiclever-be-e2e/), [`organiclever-app-web-e2e`](./apps/organiclever-app-web-e2e/))
 - **`libs/`** - Reusable libraries with language prefixes (`ts-*`, future: `java-*`, `py-*`) - currently empty
 - **`apps-labs/`** - Experimental apps and POCs (framework evaluation, language exploration) - currently empty
 

@@ -295,7 +295,7 @@ This section covers common patterns...
 
 **Issue**: Even though these H1s are semantically different from the title, ayokoding-web prohibits ALL H1s. If content needs multiple main sections, split into separate pages.
 
-**Note**: This stricter rule applies ONLY to ayokoding-web. ose-platform-web follows the shared convention (allows H1s that differ from title).
+**Note**: This stricter rule applies ONLY to ayokoding-web. oseplatform-web follows the shared convention (allows H1s that differ from title).
 
 ### Bilingual Content Organization
 

@@ -52,7 +52,7 @@ This repository maintains **dual compatibility** with both Claude Code and OpenC
 2. **README** (3 agents): `readme-maker`, `readme-checker`, `readme-fixer`
 3. **Project Planning** (5 agents): `plan-maker`, `plan-checker`, `plan-executor`, `plan-execution-checker`, `plan-fixer`
 4. **Hugo Content - ayokoding-web** (17 agents): Bilingual content creators, validators, deployers
-5. **Hugo Content - ose-platform-web** (4 agents): Landing page content creators, validators, deployers
+5. **Hugo Content - oseplatform-web** (4 agents): Landing page content creators, validators, deployers
 6. **Software Engineering & Specialized** (8 agents): `agent-maker`, `swe-elixir-developer`, `swe-golang-developer`, `swe-hugo-developer`, `swe-java-developer`, `swe-python-developer`, `swe-typescript-developer`, `social-linkedin-post-maker`
 7. **Repository Governance** (6 agents): `repo-governance-maker`, `repo-governance-checker`, `repo-governance-fixer`, `repo-workflow-maker`, `repo-workflow-checker`, `repo-workflow-fixer`
 
@@ -118,7 +118,7 @@ Three-stage quality workflow:
 - **Planning**: `plan-creating-project-plans`, `plan-writing-gherkin-criteria`
 - **Agent Development**: `agent-developing-agents`, `agent-selecting-models`, `agent-documenting-references`
 - **Repository Patterns**: `repo-applying-maker-checker-fixer`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`
-- **Application-Specific**: `apps-ayokoding-web-developing-content`, `apps-ose-platform-web-developing-content`
+- **Application-Specific**: `apps-ayokoding-web-developing-content`, `apps-oseplatform-web-developing-content`
 
 **Service Relationship**: Skills serve agents with knowledge and execution but don't govern them (service infrastructure, not governance layer).
 

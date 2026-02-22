@@ -155,9 +155,9 @@ As the project evolves, additional types may include:
 
 ## Relationship to Platform
 
-### Integration with ose-platform-web
+### Integration with oseplatform-web
 
-LinkedIn posts complement the **ose-platform-web** marketing site:
+LinkedIn posts complement the **oseplatform-web** marketing site:
 
 - **Website**: Long-form content, comprehensive documentation, product information
 - **LinkedIn**: Bite-sized updates, community engagement, professional networking
@@ -182,7 +182,7 @@ LinkedIn serves as the primary professional social channel:
 Posts reference platform documentation:
 
 - **[Content Guidelines](../governance/conventions/writing/quality.md)** - Content quality standards
-- **[OSE Platform Web](../apps/ose-platform-web/README.md)** - Main website documentation
+- **[OSE Platform Web](../apps/oseplatform-web/README.md)** - Main website documentation
 
 ## Best Practices
 
@@ -270,7 +270,7 @@ Potential improvements to the social media workflow:
 
 ## Related Documentation
 
-- **[OSE Platform Web](../apps/ose-platform-web/README.md)** - Main marketing website
+- **[OSE Platform Web](../apps/oseplatform-web/README.md)** - Main marketing website
 - **[Content Quality Standards](../governance/conventions/writing/quality.md)** - Writing guidelines
 - **[Emoji Usage](../governance/conventions/formatting/emoji.md)** - Emoji in content
 - **[Repository Architecture](../governance/repository-governance-architecture.md)** - Overall project structure

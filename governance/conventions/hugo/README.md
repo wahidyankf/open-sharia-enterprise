@@ -1,6 +1,6 @@
 # Hugo Content Conventions
 
-Hugo site-specific content conventions for ayokoding-web and ose-platform-web.
+Hugo site-specific content conventions for ayokoding-web and oseplatform-web.
 
 ## Purpose
 
@@ -26,7 +26,7 @@ These conventions define **WHAT Hugo content rules apply** to our Hugo-based web
 ## Conventions Implemented/Respected
 
 - [Hugo Content - ayokoding](./ayokoding.md) - Site-specific conventions for ayokoding-web (Hextra theme, bilingual, weight-based ordering)
-- [Hugo Content - OSE Platform](./ose-platform.md) - Site-specific conventions for ose-platform-web (PaperMod theme, English-only)
+- [Hugo Content - OSE Platform](./ose-platform.md) - Site-specific conventions for oseplatform-web (PaperMod theme, English-only)
 - [Hugo Content - Shared](./shared.md) - Common Hugo content conventions applying to all Hugo sites in this repository
 - [Indonesian Content Policy - ayokoding-web](./indonesian-content-policy.md) - Policy defining when and how to create Indonesian content in ayokoding-web. Establishes English-first policy for technical tutorials, defines Indonesian content categories (unique content, strategic translations, discouraged mirrors), and provides decision tree for language selection
 

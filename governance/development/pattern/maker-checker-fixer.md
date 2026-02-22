@@ -80,7 +80,7 @@ This pattern is used across **seven agent families**:
 1. **repo-rules-\*** - Repository-wide consistency
 2. **ayokoding-web-\*** - Hugo content for ayokoding-web
 3. **docs-tutorial-\*** - Tutorial quality validation
-4. **ose-platform-web-content-\*** - Hugo content for ose-platform-web
+4. **oseplatform-web-content-\*** - Hugo content for oseplatform-web
 5. **readme-\*** - README quality standards
 6. **docs-\*** - Documentation factual accuracy
 7. **plan-\*** - Plan completeness and structure
@@ -110,7 +110,7 @@ This pattern is used across **seven agent families**:
 | ayokoding-web-general-maker    | General Hugo learning content, blog posts          | Navigation files, overview pages, indices         | Write, Edit           |
 | ayokoding-web-by-example-maker | By-example tutorials with annotated code           | 75-90 examples, diagrams, educational annotations | Write, Edit           |
 | docs\_\_tutorial-maker         | Tutorial content with narrative flow               | Learning objectives, diagrams, code examples      | Write, Edit           |
-| ose-platform-web-content-maker | Platform update posts, about pages                 | Navigation, asset references                      | Write, Edit           |
+| oseplatform-web-content-maker  | Platform update posts, about pages                 | Navigation, asset references                      | Write, Edit           |
 | readme\_\_maker                | README sections with engaging content              | Links to detailed docs, cross-references          | Write, Edit           |
 
 **Note**: `repo-governance-maker` is a special case that uses bash commands (cat, sed, awk) instead of Edit/Write tools for file operations.
@@ -169,7 +169,7 @@ Maker Agent (ayokoding-web-general-maker):
 | ayokoding-web-general-checker    | General Hugo content (frontmatter, links)       | `ayokoding-web__{timestamp}__audit.md`                          |
 | ayokoding-web-by-example-checker | By-example tutorials (coverage, annotations)    | `ayokoding-web-by-example__{uuid-chain}__{timestamp}__audit.md` |
 | docs\_\_tutorial-checker         | Tutorial pedagogy, narrative flow, visual aids  | `docs-tutorial__{timestamp}__audit.md`                          |
-| ose-platform-web-content-checker | Platform content (structure, formatting, links) | `ose-platform-web__{timestamp}__audit.md`                       |
+| oseplatform-web-content-checker  | Platform content (structure, formatting, links) | `oseplatform-web__{timestamp}__audit.md`                        |
 | readme\_\_checker                | README engagement, accessibility, jargon        | `readme__{timestamp}__audit.md`                                 |
 
 **Key Responsibilities**:
@@ -446,25 +446,25 @@ See [AI Agents Convention - Agent Color Categorization](../agents/ai-agents.md#a
 
 **Note**: Tutorial fixes are typically manual (narrative quality requires human judgment)
 
-### 4. ose-platform-web-content-\* (Hugo Content for ose-platform-web)
+### 4. oseplatform-web-content-\* (Hugo Content for oseplatform-web)
 
-**Domain**: Hugo content for ose-platform-web (PaperMod theme) - platform updates, about pages
+**Domain**: Hugo content for oseplatform-web (PaperMod theme) - platform updates, about pages
 
 **Agents**:
 
-- **ose-platform-web-content-maker** (🟦 Maker) - Creates platform content (updates, about)
-- **ose-platform-web-content-checker** (🟩 Checker) - Validates content structure, formatting
+- **oseplatform-web-content-maker** (🟦 Maker) - Creates platform content (updates, about)
+- **oseplatform-web-content-checker** (🟩 Checker) - Validates content structure, formatting
 
 **Use Case**: Creating and validating professional English content for platform landing page
 
 **Example**:
 
 ```
-1. ose-platform-web-content-maker: Create beta release announcement post
-2. ose-platform-web-content-checker: Validate frontmatter, links, cover images
+1. oseplatform-web-content-maker: Create beta release announcement post
+2. oseplatform-web-content-checker: Validate frontmatter, links, cover images
 ```
 
-**Future**: ose-platform-web-content-fixer (🟨 Fixer)
+**Future**: oseplatform-web-content-fixer (🟨 Fixer)
 
 ### 5. readme-\* (README Quality)
 
@@ -699,7 +699,7 @@ The maker-checker-fixer pattern integrates with repository conventions:
 - [Content Quality Principles](../../conventions/writing/quality.md) - Universal content standards
 - [Hugo Content Convention - Shared](../../conventions/hugo/shared.md) - Hugo content standards
 - [Hugo Content Convention - ayokoding](../../conventions/hugo/ayokoding.md) - ayokoding-web specifics
-- [Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md) - ose-platform-web specifics
+- [Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md) - oseplatform-web specifics
 - [Tutorial Convention](../../conventions/tutorials/general.md) - Tutorial quality standards
 - [README Quality Convention](../../conventions/writing/readme-quality.md) - README standards
 

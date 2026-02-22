@@ -395,7 +395,7 @@ Where:
 - `ex-co__color-accessibility.md`
 - `ex-co__hugo-content-shared.md` (shared Hugo conventions)
 - `ex-co__hugo-content-ayokoding.md` (ayokoding-web specific)
-- `ex-co__hugo-content-ose-platform.md` (ose-platform-web specific)
+- `ex-co__hugo-content-ose-platform.md` (oseplatform-web specific)
 - `ex-co__convention-writing.md` (this file)
 
 **Title vs Filename:**

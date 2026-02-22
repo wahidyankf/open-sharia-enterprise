@@ -485,14 +485,14 @@ deploy-production:
 npm run build
 
 # Upload to S3
-aws s3 sync dist/ s3://ose-platform-web \
+aws s3 sync dist/ s3://oseplatform-web \
   --delete \
   --cache-control "public, max-age=31536000" \
   --exclude "index.html" \
   --exclude "*.map"
 
 # Upload index.html without cache
-aws s3 cp dist/index.html s3://ose-platform-web/index.html \
+aws s3 cp dist/index.html s3://oseplatform-web/index.html \
   --cache-control "no-cache, no-store, must-revalidate" \
   --metadata-directive REPLACE
 
@@ -510,7 +510,7 @@ aws cloudfront create-invalidation \
     "WebsiteBucket": {
       "Type": "AWS::S3::Bucket",
       "Properties": {
-        "BucketName": "ose-platform-web",
+        "BucketName": "oseplatform-web",
         "WebsiteConfiguration": {
           "IndexDocument": "index.html",
           "ErrorDocument": "index.html"
@@ -523,7 +523,7 @@ aws cloudfront create-invalidation \
         "DistributionConfig": {
           "Origins": [
             {
-              "DomainName": "ose-platform-web.s3-website-us-east-1.amazonaws.com",
+              "DomainName": "oseplatform-web.s3-website-us-east-1.amazonaws.com",
               "Id": "S3Origin",
               "CustomOriginConfig": {
                 "HTTPPort": 80,
@@ -604,21 +604,21 @@ volumes:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ose-platform-web
+  name: oseplatform-web
   namespace: production
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: ose-platform-web
+      app: oseplatform-web
   template:
     metadata:
       labels:
-        app: ose-platform-web
+        app: oseplatform-web
     spec:
       containers:
         - name: web
-          image: ose-platform-web:latest
+          image: oseplatform-web:latest
           ports:
             - containerPort: 80
           env:
@@ -651,12 +651,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: ose-platform-web
+  name: oseplatform-web
   namespace: production
 spec:
   type: LoadBalancer
   selector:
-    app: ose-platform-web
+    app: oseplatform-web
   ports:
     - protocol: TCP
       port: 80
@@ -679,7 +679,7 @@ data:
 replicaCount: 3
 
 image:
-  repository: ose-platform-web
+  repository: oseplatform-web
   tag: latest
   pullPolicy: Always
 
