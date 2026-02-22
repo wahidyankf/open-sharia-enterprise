@@ -766,7 +766,7 @@ Add "Domain-Specific Confidence Examples" section:
 
 **Related Agents**:
 
-All 14 checker agents and 11 fixer agents use this system.
+All checker agents and fixer agents use this system. See [`.claude/agents/README.md`](../../../.claude/agents/README.md) for the complete catalog.
 
 ---
 

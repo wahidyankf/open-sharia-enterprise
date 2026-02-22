@@ -74,7 +74,7 @@ Fix repository-wide consistency issues including:
 
 **Why**: Enables autonomous agent operation without user approval prompts.
 
-See [AI Agents Convention - Writing to .opencode Folders](../../governance/development/agents/ai-agents.md#writing-to-claude-folders).
+See [AI Agents Convention - Writing to .opencode Folders](../../governance/development/agents/ai-agents.md#writing-to-opencode-folders).
 
 ### Post-Fix Verification (Mandatory)
 
@@ -236,7 +236,7 @@ grep -q "new-heading-text" .claude/agents/agent-name.md || echo "WARNING: Python
 
 ## Software Documentation Fixes
 
-**Scope**: Fixes for findings in `docs/explanation/software-engineering/` (343 files, 345k lines)
+**Scope**: Fixes for findings in `docs/explanation/software-engineering/` (~265 files, ~345k lines)
 
 ### Fix Patterns by Category
 
@@ -303,7 +303,7 @@ Add "See Also" or "Related Documentation" section if missing, then add reference
 ```markdown
 ## See Also
 
-- [Java Functional Programming](../../../docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__functional-programming.md)
+- [Java Coding Standards](../../../docs/explanation/software-engineering/programming-languages/java/ex-soen-prla-ja__coding-standards.md)
 ```
 
 **Tool**: Edit
@@ -664,7 +664,7 @@ The following files were modified. Pass this list to the next checker run to ena
 - governance/conventions/writing/quality.md
 ```
 
-When requesting re-validation, specify these files. The checker will focus its expensive Step 8 validation (340+ software documentation files) only on changed files, instead of scanning the entire corpus.
+When requesting re-validation, specify these files. The checker will focus its expensive Step 8 validation (~265 software documentation files) only on changed files, instead of scanning the entire corpus.
 
 ## Mode Parameter Handling
 
