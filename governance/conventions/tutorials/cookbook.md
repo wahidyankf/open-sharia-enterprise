@@ -537,7 +537,7 @@ This convention implements and respects:
 
 - **docs/tutorials/** - Programming language cookbooks in docs
 - **apps/ayokoding-web/content/** - Programming language cookbooks (Java, Golang, Python, etc.)
-- **apps/ose-platform-web/content/** - Platform cookbooks using recipe approach
+- **apps/oseplatform-web/content/** - Platform cookbooks using recipe approach
 - **Any other location** - Cookbook tutorials regardless of directory
 
 **Implementation Notes**: While these standards apply universally, Hugo-specific details (frontmatter, weights, navigation) are covered in [Hugo conventions](../hugo/)

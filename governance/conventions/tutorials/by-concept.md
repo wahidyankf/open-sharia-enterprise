@@ -762,7 +762,7 @@ This convention implements and respects:
 
 - **docs/tutorials/** - Programming language tutorials in docs
 - **apps/ayokoding-web/content/** - Programming language tutorials (Java, Golang, Python, etc.)
-- **apps/ose-platform-web/content/** - Platform tutorials using by-concept approach
+- **apps/oseplatform-web/content/** - Platform tutorials using by-concept approach
 - **Any other location** - By-concept tutorials regardless of directory
 
 **Implementation Notes**: While these standards apply universally, Hugo-specific details (frontmatter, weights, navigation) are covered in [Hugo conventions](../hugo/)

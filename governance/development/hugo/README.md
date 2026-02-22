@@ -1,6 +1,6 @@
 # Hugo Development
 
-Standards for developing Hugo sites (layouts, themes, assets, configuration) for ayokoding-web and ose-platform-web.
+Standards for developing Hugo sites (layouts, themes, assets, configuration) for ayokoding-web and oseplatform-web.
 
 ## Purpose
 

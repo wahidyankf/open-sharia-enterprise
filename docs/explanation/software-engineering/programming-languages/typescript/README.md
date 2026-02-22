@@ -52,9 +52,9 @@ TypeScript is the primary language for OSE Platform development. It provides sta
 
 **You MUST understand TypeScript fundamentals before using these standards:**
 
-- **[TypeScript Learning Path](../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/typescript.md)** - Complete 0-95% language coverage
-- **[TypeScript By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/typescript/by-example.md)** - 75-85 annotated code examples (beginner → advanced)
-- **[TypeScript In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/typescript/in-practice.md)** - Production patterns and design approaches
+- **[TypeScript Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/typescript/_index.md)** - Complete 0-95% language coverage
+- **[TypeScript By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/typescript/by-example/_index.md)** - 75-85 annotated code examples (beginner → advanced)
+- **[TypeScript In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/typescript/in-the-field/_index.md)** - Production patterns and design approaches
 
 **What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply TypeScript knowledge in THIS codebase.
 
@@ -681,7 +681,7 @@ export class CampaignController {
 
 ```
 apps/
-├── ose-platform-web/         # Hugo static site (TypeScript for build scripts)
+├── oseplatform-web/         # Hugo static site (TypeScript for build scripts)
 ├── ayokoding-web/            # Hugo static site (TypeScript for build scripts)
 ├── ayokoding-cli/            # Go CLI tool
 └── rhino-cli/               # Go CLI tool

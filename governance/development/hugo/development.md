@@ -1,6 +1,6 @@
 ---
 title: "Hugo Development Convention"
-description: Standards for developing Hugo sites (layouts, themes, assets, configuration) for ayokoding-web and ose-platform-web
+description: Standards for developing Hugo sites (layouts, themes, assets, configuration) for ayokoding-web and oseplatform-web
 category: explanation
 subcategory: development
 tags:
@@ -15,7 +15,7 @@ updated: 2025-12-07
 
 # Hugo Development Convention
 
-Standards for developing the non-content aspects of Hugo websites in this repository. This convention covers theme customization, layout development, asset management, configuration, and build processes for **ayokoding-web** (Hextra theme) and **ose-platform-web** (PaperMod theme).
+Standards for developing the non-content aspects of Hugo websites in this repository. This convention covers theme customization, layout development, asset management, configuration, and build processes for **ayokoding-web** (Hextra theme) and **oseplatform-web** (PaperMod theme).
 
 ## Principles Implemented/Respected
 
@@ -35,7 +35,7 @@ This practice implements/respects the following conventions:
 
 - **[Hugo Content Convention - ayokoding](../../conventions/hugo/ayokoding.md)**: ayokoding-web theme customizations implement Hextra-specific conventions (language switching, overview/ikhtisar links, level-based weights).
 
-- **[Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md)**: ose-platform-web theme customizations implement PaperMod-specific conventions (cover images, summary handling, English-only structure).
+- **[Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md)**: oseplatform-web theme customizations implement PaperMod-specific conventions (cover images, summary handling, English-only structure).
 
 - **[Color Accessibility Convention](../../conventions/formatting/color-accessibility.md)**: Theme CSS and components use verified accessible color palette (#0173B2, #DE8F05, #029E73, #CC78BC) meeting WCAG AA standards.
 
@@ -60,7 +60,7 @@ This convention defines standards for:
 **This Convention Applies To:**
 
 - `apps/ayokoding-web/` - Educational platform (Hextra theme)
-- `apps/ose-platform-web/` - Project landing page (PaperMod theme v7.0+)
+- `apps/oseplatform-web/` - Project landing page (PaperMod theme v7.0+)
 
 **Files In Scope:**
 
@@ -86,7 +86,7 @@ This convention builds upon and references:
 
 - [Hugo Content Convention - Shared](../../conventions/hugo/shared.md) - Shared content standards (complementary)
 - [Hugo Content Convention - ayokoding](../../conventions/hugo/ayokoding.md) - ayokoding-web content standards
-- [Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md) - ose-platform-web content standards
+- [Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md) - oseplatform-web content standards
 - [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - Accessible color palette for themes
 - [Diagram Convention](../../conventions/formatting/diagrams.md) - Mermaid diagrams in documentation (includes Mermaid comment syntax)
 - [Content Quality Principles](../../conventions/writing/quality.md) - Universal markdown standards
@@ -175,7 +175,7 @@ params:
     displayToggle: true
 ```
 
-### ose-platform-web (PaperMod Theme v7.0+) Specifics
+### oseplatform-web (PaperMod Theme v7.0+) Specifics
 
 **Theme Repository:** `adityatelange/hugo-PaperMod`
 
@@ -1151,18 +1151,18 @@ chmod +x build.sh
 4. Deploy: Synchronize `prod-ayokoding-web` branch with `main`
 5. Push `prod-ayokoding-web` to trigger Vercel deployment
 
-**ose-platform-web:**
+**oseplatform-web:**
 
 1. Make changes in `main` branch
 2. Test locally: `hugo server`
 3. Commit and push to `main`
-4. Deploy: Synchronize `prod-ose-platform-web` branch with `main`
-5. Push `prod-ose-platform-web` to trigger Vercel deployment
+4. Deploy: Synchronize `prod-oseplatform-web` branch with `main`
+5. Push `prod-oseplatform-web` to trigger Vercel deployment
 
 **Use Deployment Agents:**
 
 - `ayokoding-web-deployer` - Automates ayokoding-web deployment
-- `ose-platform-web-deployer` - Automates ose-platform-web deployment
+- `oseplatform-web-deployer` - Automates oseplatform-web deployment
 
 ## Testing and Validation
 
@@ -2190,7 +2190,7 @@ Wrong:   {{% shortcode %}}  <!-- Only for shortcodes that return markdown -->
 
 - [Hugo Content Convention - Shared](../../conventions/hugo/shared.md) - Shared content standards
 - [Hugo Content Convention - ayokoding](../../conventions/hugo/ayokoding.md) - ayokoding-web content standards
-- [Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md) - ose-platform-web content standards
+- [Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md) - oseplatform-web content standards
 - [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - Accessible colors
 - [Content Quality Principles](../../conventions/writing/quality.md) - Universal standards
 

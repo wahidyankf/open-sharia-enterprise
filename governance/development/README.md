@@ -131,7 +131,7 @@ Development practices in this directory fall into several categories:
 
 ### Hugo Development Documentation
 
-- [Hugo Development Convention](./hugo/development.md) - Standards for developing Hugo sites (layouts, themes, assets, configuration) for ayokoding-web and ose-platform-web. Covers theme development, asset pipeline, i18n/l10n, performance optimization, and SEO best practices
+- [Hugo Development Convention](./hugo/development.md) - Standards for developing Hugo sites (layouts, themes, assets, configuration) for ayokoding-web and oseplatform-web. Covers theme development, asset pipeline, i18n/l10n, performance optimization, and SEO best practices
 
 ## 🔗 Related Documentation
 

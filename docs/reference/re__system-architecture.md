@@ -61,7 +61,7 @@ graph TB
 **Key Relationships:**
 
 - **Developers & Authors**: Interact with GitHub (source of truth) to build applications and create content
-- **Learners**: Access educational content via Vercel-hosted Hugo sites (ayokoding-web, ose-platform-web)
+- **Learners**: Access educational content via Vercel-hosted Hugo sites (ayokoding-web, oseplatform-web)
 - **GitHub**: Central hub for CI/CD automation and quality gates
 - **Vercel**: Automated deployment platform for static Hugo sites
 
@@ -71,15 +71,15 @@ The platform consists of 4 applications across 2 technology stacks:
 
 ### Frontend Applications (Hugo Static Sites)
 
-#### ose-platform-web
+#### oseplatform-web
 
 - **Purpose**: Marketing and documentation website for OSE Platform
 - **URL**: <https://oseplatform.com>
 - **Technology**: Hugo 0.152.2 Extended + PaperMod theme
-- **Deployment**: Vercel (via `prod-ose-platform-web` branch)
-- **Build Command**: `nx build ose-platform-web`
-- **Dev Command**: `nx dev ose-platform-web`
-- **Location**: `apps/ose-platform-web/`
+- **Deployment**: Vercel (via `prod-oseplatform-web` branch)
+- **Build Command**: `nx build oseplatform-web`
+- **Dev Command**: `nx dev oseplatform-web`
+- **Location**: `apps/oseplatform-web/`
 
 #### ayokoding-web
 
@@ -125,7 +125,7 @@ Shows the high-level technical building blocks (containers) of the system. In C4
 ```mermaid
 graph TB
     subgraph "Marketing & Education Sites"
-        OSE[ose-platform-web<br/>Hugo Static Site]
+        OSE[oseplatform-web<br/>Hugo Static Site]
         AYO[ayokoding-web<br/>Hugo Static Site]
     end
 
@@ -164,7 +164,7 @@ graph TB
 
 Marketing & Education Sites:
 
-- ose-platform-web: Fully independent static site
+- oseplatform-web: Fully independent static site
 - ayokoding-web: Fully independent static site (with CLI automation)
 
 CLI Tools:
@@ -202,7 +202,7 @@ sequenceDiagram
 
 Shows the internal components within each container. Components are groupings of related functionality behind a well-defined interface.
 
-#### ose-platform-web Components (Hugo Static Site)
+#### oseplatform-web Components (Hugo Static Site)
 
 ```mermaid
 graph TB
@@ -357,7 +357,7 @@ graph TB
 - **Automation Module**: Extensible module system for automation workflows
 - **Config Loader**: Load butler-specific configuration
 
-#### ose-platform-web Components (Hugo Static Site)
+#### oseplatform-web Components (Hugo Static Site)
 
 ```mermaid
 graph TB
@@ -630,7 +630,7 @@ sequenceDiagram
 graph TB
     subgraph "Source Control"
         MAIN[main branch<br/>Trunk-Based Dev]
-        PROD_OSE[prod-ose-platform-web<br/>Deploy Only]
+        PROD_OSE[prod-oseplatform-web<br/>Deploy Only]
         PROD_AYO[prod-ayokoding-web<br/>Deploy Only]
     end
 
@@ -675,7 +675,7 @@ graph TB
 
 #### Vercel Deployment
 
-**Hugo Static Sites** (ose-platform-web, ayokoding-web):
+**Hugo Static Sites** (oseplatform-web, ayokoding-web):
 
 - **Build Framework**: `@vercel/static-build`
 - **Build Script**: `build.sh` in each app directory
@@ -697,7 +697,7 @@ graph TB
 #### Environment Branches
 
 - **Purpose**: Deployment triggers only
-- **Branches**: `prod-ose-platform-web`, `prod-ayokoding-web`
+- **Branches**: `prod-oseplatform-web`, `prod-ayokoding-web`
 - **Policy**: NEVER commit directly to these branches
 - **Workflow**: Merge from `main` when ready to deploy
 
@@ -1027,9 +1027,9 @@ graph TB
 **Static Sites** (Hugo):
 
 - **Hugo**: 0.152.2 Extended
-- **Themes**: PaperMod (ose-platform-web), Hextra (ayokoding-web)
+- **Themes**: PaperMod (oseplatform-web), Hextra (ayokoding-web)
 - **Deployment**: Vercel
-- **Applications**: ose-platform-web, ayokoding-web
+- **Applications**: oseplatform-web, ayokoding-web
 
 ### CLI Tools
 

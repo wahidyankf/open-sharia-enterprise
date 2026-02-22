@@ -777,7 +777,7 @@ Recommendation: Clarify which context applies or use HTTPS everywhere
 
 **Agent:** `ayokoding-web-facts-checker`, `ayokoding-web-facts-fixer`
 
-### Hugo Platform Content (ose-platform-web)
+### Hugo Platform Content (oseplatform-web)
 
 **Validation Focus:**
 

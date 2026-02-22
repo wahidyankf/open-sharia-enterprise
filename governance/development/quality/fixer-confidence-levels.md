@@ -15,7 +15,7 @@ updated: 2025-12-15
 
 # Fixer Confidence Levels Convention
 
-This document defines the universal confidence level system used by all fixer agents (wow**rules-fixer, ayokoding-web-general-fixer, ayokoding-web-by-example-fixer, ayokoding-web-facts-fixer, ayokoding-web-structure-fixer, docs**tutorial-fixer, ose-platform-web-content-fixer, readme**fixer, docs**fixer, plan\_\_fixer) to assess findings from checker agents and determine which fixes can be applied automatically versus which require manual review.
+This document defines the universal confidence level system used by all fixer agents (wow**rules-fixer, ayokoding-web-general-fixer, ayokoding-web-by-example-fixer, ayokoding-web-facts-fixer, ayokoding-web-structure-fixer, docs**tutorial-fixer, oseplatform-web-content-fixer, readme**fixer, docs**fixer, plan\_\_fixer) to assess findings from checker agents and determine which fixes can be applied automatically versus which require manual review.
 
 ## Principles Implemented/Respected
 
@@ -116,7 +116,7 @@ All fixer agents implement this confidence level system:
 - **ayokoding-web-facts-fixer** - ayokoding-web factual accuracy fixes
 - **ayokoding-web-structure-fixer** - ayokoding-web structure fixes
 - **docs\_\_tutorial-fixer** - Tutorial quality fixes
-- **ose-platform-web-content-fixer** - ose-platform-web Hugo content fixes
+- **oseplatform-web-content-fixer** - oseplatform-web Hugo content fixes
 - **readme\_\_fixer** - README quality fixes
 - **docs\_\_fixer** - Documentation factual accuracy fixes
 - **plan\_\_fixer** - Plan structural and format fixes
@@ -170,7 +170,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Wrong tutorial type naming verified against convention patterns
 - Time estimate violation verified by keyword search (forbidden in tutorials)
 
-**ose-platform-web-content-fixer:**
+**oseplatform-web-content-fixer:**
 
 - Missing required frontmatter field verified (title, date, draft)
 - Wrong date format verified by regex (missing timezone)
@@ -238,7 +238,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Content balance assessments (theory vs practice ratio)
 - Example quality assessments (examples work but could be better)
 
-**ose-platform-web-content-fixer:**
+**oseplatform-web-content-fixer:**
 
 - Summary length is short but functional (85 chars vs 150-160 optimal)
 - Image alt text vague but not missing ("screenshot" - need image context to improve)
@@ -303,7 +303,7 @@ The three confidence levels (HIGH, MEDIUM, FALSE_POSITIVE) are universal. Each a
 - Checker reported missing diagram but diagram exists (different Mermaid syntax or placement)
 - Checker misinterpreted tutorial type (tutorial follows convention correctly)
 
-**ose-platform-web-content-fixer:**
+**oseplatform-web-content-fixer:**
 
 - Checker flagged Hugo shortcode link as broken (doesn't recognize `{{< ref >}}` syntax)
 - Checker applied post validation rules to static page (about.md doesn't need date field)
@@ -487,7 +487,7 @@ Each fixer agent has domain-specific validation checks:
 - Tutorial naming patterns by type
 - No time estimates rule
 
-**ose-platform-web-content-fixer:**
+**oseplatform-web-content-fixer:**
 
 - Hugo frontmatter for PaperMod theme
 - English-only content validation
@@ -887,7 +887,7 @@ FAIL: All agent files - Frontmatter comment detection
 - [ayokoding-web-facts-fixer.md](../../../.claude/agents/ayokoding-web-facts-fixer.md) - ayokoding-web factual accuracy fixer
 - [ayokoding-web-structure-fixer.md](../../../.claude/agents/ayokoding-web-structure-fixer.md) - ayokoding-web structure fixer
 - [docs__tutorial-fixer.md](../../../.claude/agents/docs__tutorial-fixer.md) - Tutorial quality fixer
-- [ose-platform-web-content-fixer.md](../../../.claude/agents/ose-platform-web-content-fixer.md) - ose-platform-web Hugo content fixer
+- [oseplatform-web-content-fixer.md](../../../.claude/agents/oseplatform-web-content-fixer.md) - oseplatform-web Hugo content fixer
 - [readme__fixer.md](../../../.claude/agents/readme__fixer.md) - README quality fixer
 
 ### Related Conventions
@@ -904,7 +904,7 @@ FAIL: All agent files - Frontmatter comment detection
 - [README Quality Convention](../../conventions/writing/readme-quality.md)
 - [Hugo Content Convention - Shared](../../conventions/hugo/shared.md) - Shared Hugo content standards
 - [Hugo Content Convention - ayokoding](../../conventions/hugo/ayokoding.md) - ayokoding-web specific standards
-- [Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md) - ose-platform-web specific standards
+- [Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md) - oseplatform-web specific standards
 
 **Infrastructure:**
 - [Temporary Files Convention](../infra/temporary-files.md) - Where to store fix reports (`generated-reports/`)
@@ -933,7 +933,7 @@ When this convention is updated:
 
 ### Version History
 
-- **2025-12-14** - Initial convention established based on 5 fixer agents (repo-rules, ayokoding-web, docs-tutorial, ose-platform-web-content, readme)
+- **2025-12-14** - Initial convention established based on 5 fixer agents (repo-rules, ayokoding-web, docs-tutorial, oseplatform-web-content, readme)
 
 ---
 

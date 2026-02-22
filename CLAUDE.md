@@ -16,7 +16,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **npm**: 11.6.3
 - **Monorepo**: Nx workspace
 - **Current Apps**:
-  - `ose-platform-web` - Hugo static site (PaperMod theme)
+  - `oseplatform-web` - Hugo static site (PaperMod theme)
   - `ayokoding-web` - Hugo static site (Hextra theme, bilingual)
   - `ayokoding-cli` - Go CLI tool for content automation
   - `rhino-cli` - Go CLI tool for repository management (Repository Hygiene & INtegration Orchestrator)
@@ -32,7 +32,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```
 open-sharia-enterprise/
 ├── apps/                     # Deployable applications (Nx)
-│   ├── ose-platform-web/    # OSE Platform website
+│   ├── oseplatform-web/    # OSE Platform website
 │   ├── ayokoding-web/       # AyoKoding website (bilingual)
 │   ├── ayokoding-cli/       # Content automation CLI
 │   ├── rhino-cli/          # Repository management CLI
@@ -148,7 +148,7 @@ nx graph                # Visualize dependencies
 - **Default branch**: `main`
 - **Environment branches** (Vercel deployment only — never commit directly):
   - `prod-ayokoding-web` → [ayokoding.com](https://ayokoding.com)
-  - `prod-ose-platform-web` → [oseplatform.com](https://oseplatform.com)
+  - `prod-oseplatform-web` → [oseplatform.com](https://oseplatform.com)
   - `prod-organiclever-web` → [www.organiclever.com](https://www.organiclever.com/)
 - **Commit format**: Conventional Commits `<type>(<scope>): <description>`
   - Types: feat, fix, docs, style, refactor, perf, test, chore, ci, revert
@@ -277,17 +277,17 @@ Volta for Node.js/npm pinning, package-lock.json, .env.example
 
 ## AI Agents (57 Specialized Agents)
 
-**Content Creation**: docs-maker, docs-tutorial-maker, readme-maker, apps\_\_ayokoding-web\_\_general-maker, apps\_\_ayokoding-web\_\_by-example-maker, apps\_\_ose-platform-web\_\_content-maker
+**Content Creation**: docs-maker, docs-tutorial-maker, readme-maker, apps\_\_ayokoding-web\_\_general-maker, apps\_\_ayokoding-web\_\_by-example-maker, apps\_\_oseplatform-web\_\_content-maker
 
-**Validation**: docs-checker, readme-checker, apps\_\_ayokoding-web\_\_general-checker, apps\_\_ayokoding-web\_\_facts-checker, apps\_\_ose-platform-web\_\_content-checker
+**Validation**: docs-checker, readme-checker, apps\_\_ayokoding-web\_\_general-checker, apps\_\_ayokoding-web\_\_facts-checker, apps\_\_oseplatform-web\_\_content-checker
 
-**Fixing**: docs-fixer, readme-fixer, apps\_\_ayokoding-web\_\_general-fixer, apps\_\_ayokoding-web\_\_facts-fixer, apps\_\_ose-platform-web\_\_content-fixer
+**Fixing**: docs-fixer, readme-fixer, apps\_\_ayokoding-web\_\_general-fixer, apps\_\_ayokoding-web\_\_facts-fixer, apps\_\_oseplatform-web\_\_content-fixer
 
 **Planning**: plan-maker, plan-checker, plan-executor, plan-execution-checker
 
 **Development**: swe\_\_hugo\_\_developer
 
-**Operations**: docs-file-manager, apps\_\_ayokoding-web\_\_deployer, apps\_\_ose-platform-web\_\_deployer, apps-organiclever-web-deployer
+**Operations**: docs-file-manager, apps\_\_ayokoding-web\_\_deployer, apps\_\_oseplatform-web\_\_deployer, apps-organiclever-web-deployer
 
 **Meta**: agent-maker, wow\_\_rules-maker, wow\_\_rules-checker, wow\_\_rules-fixer
 
@@ -366,10 +366,10 @@ Six-layer governance hierarchy:
 
 ## Hugo Sites
 
-### ose-platform-web
+### oseplatform-web
 
 - **URL**: <https://oseplatform.com>
-- **Production branch**: `prod-ose-platform-web` → oseplatform.com
+- **Production branch**: `prod-oseplatform-web` → oseplatform.com
 - **Theme**: PaperMod
 - **Hugo**: 0.155.2 Extended
 - **Deployment**: Vercel
@@ -378,8 +378,8 @@ Six-layer governance hierarchy:
 **Commands**:
 
 ```bash
-nx dev ose-platform-web    # Development server
-nx build ose-platform-web  # Production build
+nx dev oseplatform-web    # Development server
+nx build oseplatform-web  # Production build
 ```
 
 ### ayokoding-web

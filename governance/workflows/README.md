@@ -89,7 +89,7 @@ Workflows for Hugo website content:
 - **ayokoding-web**: ayokoding-web content creation and validation
 - **ayokoding-facts**: Factual accuracy validation for ayokoding-web
 - **ayokoding-structure**: Navigation structure and weight management
-- **ose-platform-web-content**: ose-platform-web content
+- **oseplatform-web-content**: oseplatform-web content
 
 ### Repository Governance Workflows
 

@@ -81,7 +81,7 @@ See [Fixer Confidence Levels Convention](./fixer-confidence-levels.md) for compl
 - Agent `name` field doesn't match filename (breaks agent discovery)
 - Broken internal link to non-existent file in documentation
 
-**Hugo Content (ayokoding-web/ose-platform-web)**:
+**Hugo Content (ayokoding-web/oseplatform-web)**:
 
 - Missing required `title` field (Hugo build fails)
 - Invalid frontmatter syntax (YAML parsing error)
@@ -670,7 +670,7 @@ Update link to current documentation URL or find alternative resource
 - Potential cross-linking opportunity
 - Suggest mentioning alternative approach
 
-### Hugo Content - ose-platform-web (content-checker)
+### Hugo Content - oseplatform-web (content-checker)
 
 **CRITICAL**:
 
@@ -1364,7 +1364,7 @@ Existing agents using different terminology should migrate to this convention.
 - apps**ayokoding-web**general-checker
 - apps**ayokoding-web**structure-checker
 - apps**ayokoding-web**by-example-checker
-- apps**ose-platform-web**content-checker
+- apps**oseplatform-web**content-checker
 - wow\_\_workflow-checker
 
 **Dual-Label Family** (5 agents - preserve existing labels + add criticality):
@@ -1391,7 +1391,7 @@ Update all 11 fixer agents to use priority-based execution:
 - apps**ayokoding-web**facts-fixer
 - apps**ayokoding-web**structure-fixer
 - docs\_\_tutorial-fixer
-- apps**ose-platform-web**content-fixer
+- apps**oseplatform-web**content-fixer
 - readme\_\_fixer
 - docs\_\_fixer
 - plan\_\_fixer

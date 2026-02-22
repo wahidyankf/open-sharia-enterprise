@@ -63,7 +63,7 @@ All checker agents in the following families MUST write audit reports to `genera
 4. **ayokoding-web-facts-checker** - Educational content factual accuracy validation
 5. **ayokoding-web-link-checker** - Link validation (ayokoding-web)
 6. **ayokoding-web-structure-checker** - Content structure validation (ayokoding-web)
-7. **ose-platform-web-content-checker** - Hugo content validation (ose-platform-web)
+7. **oseplatform-web-content-checker** - Hugo content validation (oseplatform-web)
 8. **docs\_\_checker** - Documentation factual accuracy validation
 9. **docs\_\_tutorial-checker** - Tutorial quality validation
 10. **readme\_\_checker** - README quality validation
@@ -118,7 +118,7 @@ All checker agents MUST follow the universal naming pattern:
 generated-reports/repo-rules__a1b2c3__2025-12-14--20-45__audit.md
 generated-reports/ayokoding-web-general__d4e5f6__2025-12-14--15-30__audit.md
 generated-reports/ayokoding-web-by-example__a1b2c3_d4e5f6__2025-12-14--15-45__audit.md
-generated-reports/ose-platform-web-content__g7h8i9__2025-12-14--16-00__audit.md
+generated-reports/oseplatform-web-content__g7h8i9__2025-12-14--16-00__audit.md
 generated-reports/docs__a1b2c3_d4e5f6_g7h8i9__2025-12-15--10-00__audit.md
 generated-reports/plan__b2c3d4__2025-12-15--11-30__validation.md
 generated-reports/plan-execution__c3d4e5__2025-12-15--14-00__validation.md
@@ -162,7 +162,7 @@ To enable accurate parent-child hierarchy tracking across concurrent workflow ru
 | plan\_\_checker           | `plan`          | `.execution-chain-plan`          |
 | ayokoding-web-\* (golang) | `golang`        | `.execution-chain-golang`        |
 | ayokoding-web-\* (elixir) | `elixir`        | `.execution-chain-elixir`        |
-| ose-platform-web-\*       | `ose-platform`  | `.execution-chain-ose-platform`  |
+| oseplatform-web-\*        | `ose-platform`  | `.execution-chain-ose-platform`  |
 
 **Tracking File Format**: `{unix-timestamp} {uuid-chain}`
 
@@ -398,7 +398,7 @@ ALL \*-checker agents must implement progressive writing:
 4. ayokoding-web-facts-checker
 5. ayokoding-web-link-checker
 6. ayokoding-web-structure-checker
-7. ose-platform-web-content-checker
+7. oseplatform-web-content-checker
 8. docs\_\_checker
 9. docs\_\_tutorial-checker
 10. readme\_\_checker
@@ -444,7 +444,7 @@ generated-reports/repo-rules__a1b2c3__2025-12-14--20-45__audit.md
 generated-reports/repo-rules__a1b2c3__2025-12-14--20-45__fix.md
 generated-reports/ayokoding-web__d4e5f6__2025-12-14--15-30__audit.md
 generated-reports/ayokoding-web__a1b2c3_d4e5f6__2025-12-14--15-30__audit.md
-generated-reports/ose-platform-web-content__g7h8i9__2025-12-14--15-30__audit.md
+generated-reports/oseplatform-web-content__g7h8i9__2025-12-14--15-30__audit.md
 generated-reports/docs__b2c3d4__2025-12-15--10-00__validation.md
 generated-reports/plan__c3d4e5__2025-12-15--11-30__validation.md
 generated-reports/plan-execution__d4e5f6__2025-12-15--14-00__validation.md
@@ -458,7 +458,7 @@ generated-reports/plan-execution__d4e5f6__2025-12-15--14-00__validation.md
 - UUID MUST be 6 lowercase hex characters (generated via `uuidgen | head -c 6`)
 - Timestamp MUST be UTC+7 (YYYY-MM-DD--HH-MM format)
 - Zero-pad all timestamp components (01 not 1, 09 not 9)
-- Agent family is lowercase with single dashes (multi-word: `ose-platform-web-content`, `plan-execution`)
+- Agent family is lowercase with single dashes (multi-word: `oseplatform-web-content`, `plan-execution`)
 - Suffix is lowercase, no plurals (`audit` not `audits`)
 
 **CRITICAL - UUID and Timestamp Generation:**
@@ -502,7 +502,7 @@ filename="repo-rules__${uuid}__${timestamp}__audit.md"
 
 #### Fixer Reports (Universal Pattern)
 
-**Agents**: All fixer agents (wow**rules-fixer, ayokoding-web-general-fixer, ayokoding-web-by-example-fixer, ayokoding-web-facts-fixer, ayokoding-web-structure-fixer, docs**tutorial-fixer, ose-platform-web-content-fixer, readme**fixer, docs**fixer, plan\_\_fixer)
+**Agents**: All fixer agents (wow**rules-fixer, ayokoding-web-general-fixer, ayokoding-web-by-example-fixer, ayokoding-web-facts-fixer, ayokoding-web-structure-fixer, docs**tutorial-fixer, oseplatform-web-content-fixer, readme**fixer, docs**fixer, plan\_\_fixer)
 
 **Pattern**: `{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__fix.md`
 
@@ -516,15 +516,15 @@ filename="repo-rules__${uuid}__${timestamp}__audit.md"
 
 **Report Pairing Examples**:
 
-| Agent Family             | Audit Report                                                    | Fix Report                                                    |
-| ------------------------ | --------------------------------------------------------------- | ------------------------------------------------------------- |
-| repo-rules               | `repo-rules__a1b2c3__2025-12-14--20-45__audit.md`               | `repo-rules__a1b2c3__2025-12-14--20-45__fix.md`               |
-| ayokoding-web            | `ayokoding-web__d4e5f6__2025-12-14--15-30__audit.md`            | `ayokoding-web__d4e5f6__2025-12-14--15-30__fix.md`            |
-| ose-platform-web-content | `ose-platform-web-content__g7h8i9__2025-12-14--16-00__audit.md` | `ose-platform-web-content__g7h8i9__2025-12-14--16-00__fix.md` |
-| docs-tutorial            | `docs-tutorial__a1b2c3_d4e5f6__2025-12-14--10-15__audit.md`     | `docs-tutorial__a1b2c3_d4e5f6__2025-12-14--10-15__fix.md`     |
-| readme                   | `readme__b2c3d4__2025-12-14--09-45__audit.md`                   | `readme__b2c3d4__2025-12-14--09-45__fix.md`                   |
-| docs                     | `docs__c3d4e5__2025-12-15--10-00__validation.md`                | `docs__c3d4e5__2025-12-15--10-00__fix.md`                     |
-| plan                     | `plan__d4e5f6__2025-12-15--11-30__validation.md`                | `plan__d4e5f6__2025-12-15--11-30__fix.md`                     |
+| Agent Family            | Audit Report                                                   | Fix Report                                                   |
+| ----------------------- | -------------------------------------------------------------- | ------------------------------------------------------------ |
+| repo-rules              | `repo-rules__a1b2c3__2025-12-14--20-45__audit.md`              | `repo-rules__a1b2c3__2025-12-14--20-45__fix.md`              |
+| ayokoding-web           | `ayokoding-web__d4e5f6__2025-12-14--15-30__audit.md`           | `ayokoding-web__d4e5f6__2025-12-14--15-30__fix.md`           |
+| oseplatform-web-content | `oseplatform-web-content__g7h8i9__2025-12-14--16-00__audit.md` | `oseplatform-web-content__g7h8i9__2025-12-14--16-00__fix.md` |
+| docs-tutorial           | `docs-tutorial__a1b2c3_d4e5f6__2025-12-14--10-15__audit.md`    | `docs-tutorial__a1b2c3_d4e5f6__2025-12-14--10-15__fix.md`    |
+| readme                  | `readme__b2c3d4__2025-12-14--09-45__audit.md`                  | `readme__b2c3d4__2025-12-14--09-45__fix.md`                  |
+| docs                    | `docs__c3d4e5__2025-12-15--10-00__validation.md`               | `docs__c3d4e5__2025-12-15--10-00__fix.md`                    |
+| plan                    | `plan__d4e5f6__2025-12-15--11-30__validation.md`               | `plan__d4e5f6__2025-12-15--11-30__fix.md`                    |
 
 **Why Same UUID and Timestamp?**
 
@@ -584,14 +584,14 @@ All fixer reports include these sections:
 
 #### Content Validation Reports
 
-**Agents**: ayokoding-web-general-checker, ayokoding-web-by-example-checker, ose-platform-web-content-checker
+**Agents**: ayokoding-web-general-checker, ayokoding-web-by-example-checker, oseplatform-web-content-checker
 **Pattern**: `{site}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 
 **Examples**:
 
 - `ayokoding-web-general__a1b2c3__2025-12-14--15-30__audit.md`
 - `ayokoding-web-by-example__d4e5f6__2025-12-14--15-45__audit.md`
-- `ose-platform-web-content__g7h8i9__2025-12-14--16-00__audit.md`
+- `oseplatform-web-content__g7h8i9__2025-12-14--16-00__audit.md`
 
 **Content**: Hugo content validation results (frontmatter, structure, quality)
 

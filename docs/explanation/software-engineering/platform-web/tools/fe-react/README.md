@@ -907,16 +907,16 @@ export const useZakatCalculation = () => {
 
 ```bash
 # Generate React application with Nx
-nx generate @nx/react:application ose-platform-web-app
+nx generate @nx/react:application oseplatform-web-app
 
 # Or use Vite directly
-npm create vite@latest ose-platform-web-app -- --template react-ts
+npm create vite@latest oseplatform-web-app -- --template react-ts
 
 # Install dependencies
 npm install
 
 # Start development server
-nx serve ose-platform-web-app
+nx serve oseplatform-web-app
 
 # Or with Vite
 npm run dev
@@ -925,7 +925,7 @@ npm run dev
 **Project Structure**:
 
 ```
-apps/ose-platform-web-app/
+apps/oseplatform-web-app/
 ├── src/
 │   ├── features/          # Feature modules
 │   ├── shared/            # Shared code

@@ -478,8 +478,8 @@ PASS: Good - General agents (no scope prefix):
 PASS: Good - App-scoped agents:
 - apps__ayokoding-web__general-maker.md
 - apps__ayokoding-web__by-example-checker.md
-- apps__ose-platform-web__content-maker.md
-- apps__ose-platform-web__deployer.md
+- apps__oseplatform-web__content-maker.md
+- apps__oseplatform-web__deployer.md
 
 PASS: Good - Lib-scoped agents (future):
 - libs__ts-auth__validator.md
@@ -501,9 +501,9 @@ FAIL: Bad:
 **When to use scope prefixes:**
 
 1. **`apps__[app-name]__`** - Agent works ONLY with a specific app
-   - Content creation for Hugo sites (ayokoding-web, ose-platform-web)
+   - Content creation for Hugo sites (ayokoding-web, oseplatform-web)
    - App-specific validation, deployment, structure management
-   - Examples: `apps__ayokoding-web__general-maker`, `apps__ose-platform-web__deployer`
+   - Examples: `apps__ayokoding-web__general-maker`, `apps__oseplatform-web__deployer`
 
 2. **`libs__[lib-name]__`** - Agent works ONLY with a specific library
    - Future use when monorepo has libraries with specific agents
@@ -597,7 +597,7 @@ ALL checker agents MUST write their validation/audit reports to `generated-repor
 4. ayokoding-web-facts-checker
 5. ayokoding-web-link-checker
 6. ayokoding-web-structure-checker
-7. ose-platform-web-content-checker
+7. oseplatform-web-content-checker
 8. docs\_\_checker
 9. docs\_\_tutorial-checker
 10. readme\_\_checker
@@ -754,7 +754,7 @@ Agents are categorized by their **primary role** which aligns with naming suffix
 **Edge Case Notes:**
 
 - **\*Yellow with Write**: wow\_\_rules-maker needs Write tool to create new convention files (not just edit existing). Documented exception.
-- **\*Purple Bash-only**: Deployers (ayokoding-web-deployer, ose-platform-web-deployer) only need Bash for git/deployment orchestration. Purple without Write/Edit is valid for Bash-only orchestrators.
+- **\*Purple Bash-only**: Deployers (ayokoding-web-deployer, oseplatform-web-deployer) only need Bash for git/deployment orchestration. Purple without Write/Edit is valid for Bash-only orchestrators.
 
 **Color Accessibility Note**: All four colors (blue, green, yellow, purple) are from the verified accessible palette defined in [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - the master reference for all color usage in this repository. These colors meet WCAG AA standards for both light and dark modes and work for all types of color blindness (protanopia, deuteranopia, and tritanopia). See the accessibility section below for details on how agents are identified beyond color. All color-related work must reference the Color Accessibility Convention as the authoritative source.
 
@@ -848,7 +848,7 @@ Start: What is the agent's primary capability?
   - Execute deployment orchestration (purple's "executes plans/orchestrates tasks")
   - Don't create or edit files, only run git/deployment commands
   - Edge case: purple without Write/Edit tools (Bash-only orchestration)
-  - Examples: ayokoding-web-deployer, ose-platform-web-deployer
+  - Examples: ayokoding-web-deployer, oseplatform-web-deployer
 - **Updaters with Write tool**: Investigate actual usage
   - Yellow (Updaters) should have Edit but NOT Write
   - If Write is needed for creating new convention files → keep yellow, document exception
@@ -1257,7 +1257,7 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 **Examples**:
 
 - ayokoding-web-deployer (deployment automation)
-- ose-platform-web-deployer (deployment automation)
+- oseplatform-web-deployer (deployment automation)
 
 **When to use this tier**:
 
@@ -1288,7 +1288,7 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 - agent\_\_maker (agent creation automation)
 - ayokoding-web-general-maker (general Hugo content creation)
 - ayokoding-web-by-example-maker (by-example tutorial creation)
-- ose-platform-web-content-maker (Hugo content creation)
+- oseplatform-web-content-maker (Hugo content creation)
 
 **When to use this tier**:
 
@@ -1335,11 +1335,11 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 
 Quick categorization for existing agents:
 
-| Tier                 | Agents                                                                                                                                                                                                                                                                                                                   |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Tier 1: Simple**   | ayokoding-web-deployer, ose-platform-web-deployer                                                                                                                                                                                                                                                                        |
-| **Tier 2: Standard** | docs**maker, docs**tutorial-maker, docs**checker, docs**tutorial-checker, readme**maker, readme**checker, agent\_\_maker, ayokoding-web-general-maker, ayokoding-web-by-example-maker, ayokoding-web-general-checker, ayokoding-web-by-example-checker, ose-platform-web-content-maker, ose-platform-web-content-checker |
-| **Tier 3: Complex**  | plan**maker, plan**executor, plan**checker, plan**execution-checker, wow**rules-maker, wow**rules-checker, docs**file-manager, swe**hugo\_\_developer, docs-link-general-checker                                                                                                                                         |
+| Tier                 | Agents                                                                                                                                                                                                                                                                                                                 |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Tier 1: Simple**   | ayokoding-web-deployer, oseplatform-web-deployer                                                                                                                                                                                                                                                                       |
+| **Tier 2: Standard** | docs**maker, docs**tutorial-maker, docs**checker, docs**tutorial-checker, readme**maker, readme**checker, agent\_\_maker, ayokoding-web-general-maker, ayokoding-web-by-example-maker, ayokoding-web-general-checker, ayokoding-web-by-example-checker, oseplatform-web-content-maker, oseplatform-web-content-checker |
+| **Tier 3: Complex**  | plan**maker, plan**executor, plan**checker, plan**execution-checker, wow**rules-maker, wow**rules-checker, docs**file-manager, swe**hugo\_\_developer, docs-link-general-checker                                                                                                                                       |
 
 ### When to Condense or Split Agents
 
@@ -2411,7 +2411,7 @@ When simplifying an agent:
 - `assessing-criticality-confidence` - Criticality levels, confidence assessment
 - `applying-maker-checker-fixer` - Three-stage workflow, mode handling
 - `apps__ayokoding-web__developing-content` - Hugo Hextra patterns, bilingual content
-- `apps__ose-platform-web__developing-content` - Hugo PaperMod patterns
+- `apps__oseplatform-web__developing-content` - Hugo PaperMod patterns
 - `docs__creating-by-example-tutorials` - Annotation standards, five-part structure
 - `docs__creating-accessible-diagrams` - Color palettes, accessibility
 - `docs__applying-content-quality` - Markdown quality standards
