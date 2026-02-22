@@ -1,9 +1,23 @@
+---
+title: "Repository Governance Architecture"
+description: Six-layer governance hierarchy defining how repository rules, conventions, and practices are organized
+category: explanation
+subcategory: architecture
+tags:
+  - architecture
+  - governance
+  - six-layer
+  - structure
+created: 2026-02-09
+updated: 2026-02-22
+---
+
 # Repository Governance Architecture
 
 **Document Type**: Explanation
 **Purpose**: Comprehensive architectural overview of the six-layer governance hierarchy governing the open-sharia-enterprise repository
 **Audience**: All contributors, AI agents, governance designers
-**Last Updated**: 2026-01-04
+**Last Updated**: 2026-02-22
 
 ---
 
@@ -226,12 +240,14 @@ Development: Hugo Development Convention (semantic HTML)
 - **plans/** directory (project planning)
 - **README files** (repository root and project READMEs)
 
-**Convention Categories**:
+**Convention Categories** (among others):
 
-- **Structure**: File naming, Diátaxis framework, plans organization
-- **Formatting**: Linking, indentation, emoji usage, diagrams, color accessibility, mathematical notation
-- **Writing**: Content quality, README quality, factual validation
-- **Hugo-Specific**: Development patterns, content structure
+- **Structure**: File naming, Diátaxis framework, plans organization, programming language docs separation
+- **Formatting**: Linking, indentation, emoji usage, diagrams, color accessibility, mathematical notation, timestamp, nested code fences
+- **Writing**: Content quality, README quality, factual validation, conventions writing, dynamic collection references, OSS documentation
+- **Linking**: Internal AyoKoding references and cross-repository linking patterns
+- **Hugo-Specific**: AyoKoding content, OSE Platform content, shared patterns, Indonesian content policy
+- **Tutorials**: Tutorial types, naming, programming language content and structure
 
 **Example Conventions**:
 
@@ -309,13 +325,10 @@ Development: Hugo Development Convention (semantic HTML)
 
 **Agent Families by Color**:
 
-- 🔵 **Makers (Blue)** - Create and update content with dependencies
-- 🟢 **Checkers (Green)** - Validate quality and generate audit reports
-- 🟣 **Fixers (Purple)** - Apply validated fixes from audit reports
-- 🟡 **Special (Yellow)** - Unique responsibilities (e.g., repo-governance-maker uses bash for .opencode)
-- 🔴 **Executors (Red)** - Plan execution and monitoring
-- ⚫ **Navigation (Black)** - Structure management and file operations
-- ⚪ **Operations (White)** - Deployment and operational tasks
+- 🟦 **Writers (Blue)** - Create new content from scratch (has Write tool)
+- 🟩 **Checkers (Green)** - Validate and generate audit reports (has Write, Bash; no Edit)
+- 🟨 **Updaters (Yellow)** - Modify and propagate existing content (has Edit, usually not Write)
+- 🟪 **Implementors (Purple)** - Execute plans with full tool access (has Write, Edit, Bash)
 
 **Agent Characteristics**:
 
@@ -807,6 +820,6 @@ As the repository grows, additional layers might be considered:
 
 ---
 
-**Last Updated**: 2026-02-09 (Added Deliberate Problem-Solving principle to Layer 1 enumeration)
+**Last Updated**: 2026-02-22 (Updated to reflect 4-color scheme and agent role descriptions)
 **Maintained By**: Repository governance team
 **Review Cycle**: Quarterly (ensure layer descriptions remain accurate)

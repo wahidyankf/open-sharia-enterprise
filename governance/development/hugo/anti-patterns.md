@@ -4,31 +4,9 @@
 
 ## Overview
 
-## Principles Implemented/Respected
-
-This companion document respects:
-
-- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Provides practical examples of simple vs complex approaches
-- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Makes patterns and anti-patterns explicit through clear examples
-
-## Conventions Implemented/Respected
-
-This companion document supports the conventions in this directory by providing practical examples and guidance.
-
 Understanding common mistakes in Hugo site development helps teams build more maintainable, performant, and reliable sites. These anti-patterns cause complexity, performance issues, and maintenance burden.
 
 ## Purpose
-
-## Principles Implemented/Respected
-
-This companion document respects:
-
-- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Provides practical examples of simple vs complex approaches
-- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Makes patterns and anti-patterns explicit through clear examples
-
-## Conventions Implemented/Respected
-
-This companion document supports the conventions in this directory by providing practical examples and guidance.
 
 This document provides:
 

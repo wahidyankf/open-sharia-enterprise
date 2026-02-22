@@ -4,31 +4,9 @@
 
 ## Overview
 
-## Principles Implemented/Respected
-
-This companion document respects:
-
-- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Provides practical examples of simple vs complex approaches
-- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Makes patterns and anti-patterns explicit through clear examples
-
-## Conventions Implemented/Respected
-
-This companion document supports the conventions in this directory by providing practical examples and guidance.
-
 Understanding common mistakes in development infrastructure management helps teams build more organized, traceable, and maintainable systems. These anti-patterns cause clutter, traceability issues, and operational problems.
 
 ## Purpose
-
-## Principles Implemented/Respected
-
-This companion document respects:
-
-- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Provides practical examples of simple vs complex approaches
-- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Makes patterns and anti-patterns explicit through clear examples
-
-## Conventions Implemented/Respected
-
-This companion document supports the conventions in this directory by providing practical examples and guidance.
 
 This document provides:
 

@@ -1373,7 +1373,7 @@ Renders as: "HashMap<K, V> / O(1) lookup / Values: [1, 2, 3] / Dict: {a: 1}"
 
 ---
 
-**Last Updated**: 2025-12-31
+**Last Updated**: 2026-02-22
 
 ### Error 7: Sequence Diagram Participant Syntax with "as" Keyword
 

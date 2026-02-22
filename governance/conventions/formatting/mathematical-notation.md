@@ -993,4 +993,4 @@ LaTeX math has good accessibility:
 
 ---
 
-**Last Updated**: 2025-12-02
+**Last Updated**: 2025-12-09

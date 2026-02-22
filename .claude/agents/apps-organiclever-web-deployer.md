@@ -11,7 +11,7 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Updater (yellow)
+- **Role**: Implementor (purple)
 - **Created**: 2026-02-22
 - **Last Updated**: 2026-02-22
 

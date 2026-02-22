@@ -365,16 +365,20 @@ category: explanation
    - Explanations, tutorials, how-tos, reference
    - Conventions, development docs
 
-2. **All README files** - `**/README.md`
+2. **Governance documentation** - `governance/**/*.md`
+   - Principles, conventions, development practices
+   - Workflows, architecture documentation
+
+3. **All README files** - `**/README.md`
    - Root README.md
    - Index files in any directory (human-oriented overviews)
    - Including `.opencode/agent/README.md` (agent index for humans)
 
-3. **Planning documents** - `plans/**/*.md`
+4. **Planning documents** - `plans/**/*.md`
    - Project plans, requirements, technical docs
    - Human-readable working documents
 
-4. **Agent configuration files** - AGENTS.md, .opencode/agent/\*.md
+5. **Agent configuration files** - AGENTS.md, .opencode/agent/\*.md
    - AGENTS.md - Human-readable navigation document (~1,000 lines) for developers
    - .opencode/agent/\*.md - Agent definitions read by developers to understand agent behavior
    - Emojis enhance scannability for:

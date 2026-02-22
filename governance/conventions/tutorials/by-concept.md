@@ -9,11 +9,11 @@ tags:
   - by-concept
   - education
   - narrative-driven
-date: 2026-01-30T00:00:00+07:00
-lastmod: 2026-01-30
-draft: false
-weight: 2200
+created: 2026-01-30
+updated: 2026-01-30
 ---
+
+# By-Concept Tutorial Convention
 
 ## Purpose
 
@@ -580,7 +580,6 @@ content/
 ---
 title: "Beginner" | "Intermediate" | "Advanced"
 date: YYYY-MM-DDTHH:MM:SS+07:00
-draft: false
 weight: 10000000 | 10000001 | 10000002
 description: "Comprehensive {Language} tutorial covering {coverage}% with hands-on exercises"
 tags: ["language-tag", "tutorial", "by-concept", "level-tag", "topic-tags"]

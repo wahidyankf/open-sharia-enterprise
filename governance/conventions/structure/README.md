@@ -8,7 +8,7 @@ tags:
   - structure
   - organization
 created: 2026-01-30
-updated: 2026-01-30
+updated: 2026-02-22
 ---
 
 # Structure Conventions
@@ -24,6 +24,7 @@ This directory contains standards for how documentation is organized, named, and
 - [Diataxis Framework](./diataxis-framework.md) - Understanding the four-category documentation organization framework we use (Tutorials, How-To, Reference, Explanation). Foundational framework for all documentation structure
 - [File Naming Convention](./file-naming.md) - Systematic approach to naming files with hierarchical prefixes encoding directory structure. Applies to docs/, governance/, and plans/ directories
 - [Plans Organization](./plans.md) - Standards for organizing project planning documents in plans/ folder including structure (ideas.md, backlog/, in-progress/, done/), naming patterns (YYYY-MM-DD\_\_identifier/), lifecycle stages, and project identifiers
+- [Programming Language Documentation Separation](./programming-language-docs-separation.md) - Establishes clear separation between repository-specific programming language style guides (docs/explanation/) and educational content (ayokoding-web). Defines scope boundaries, prerequisite requirements, cross-referencing patterns, and DRY principle application
 
 ## Key Concepts
 
@@ -57,6 +58,16 @@ ideas.md → backlog/ → in-progress/ → done/
 - [Tutorials Conventions](../tutorials/README.md) - Tutorial creation standards
 - [Repository Governance Architecture](../../repository-governance-architecture.md) - Six-layer governance model
 
+## Principles Implemented/Respected
+
+This set of conventions implements/respects the following core principles:
+
+- **[Documentation First](../../principles/content/documentation-first.md)**: The Diataxis Framework establishes a systematic four-category documentation structure, making documentation a primary deliverable rather than an afterthought. Plans Organization convention ensures planning work is documented in structured, discoverable locations.
+
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: File Naming Convention encodes directory structure directly into filenames through hierarchical prefixes, making file location and category explicit without requiring navigation. Plans naming patterns (`YYYY-MM-DD__identifier/`) make lifecycle stage and date explicit in folder names.
+
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: The four Diataxis categories provide a complete, minimal taxonomy that covers all documentation types without overlap or excessive granularity. File naming uses a simple, consistent prefix pattern rather than complex metadata systems.
+
 ---
 
-**Last Updated**: 2026-01-30
+**Last Updated**: 2026-02-22

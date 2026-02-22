@@ -32,7 +32,7 @@ Validate workflow documentation quality.
 
 ## Temporary Reports
 
-Pattern: `workflow-{uuid-chain}-{YYYY-MM-DD--HH-MM}-audit.md`
+Pattern: `repo-workflow__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 Skill: `repo-generating-validation-reports`
 
 ## Reference
@@ -44,7 +44,7 @@ Skill: `repo-generating-validation-reports`
 
 **Project Guidance**:
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [Workflow Pattern Convention](../../governance/workflows/meta/workflow-identifier.md)
 
 **Related Agents**:

@@ -9,7 +9,7 @@ tags:
   - organization
   - documentation
 created: 2025-11-19
-updated: 2026-01-01
+updated: 2026-01-25
 ---
 
 # Documentation File Naming Convention
@@ -144,7 +144,7 @@ This apparent inconsistency is intentional and follows standard documentation co
 | `docs/`          | `do`   | `quality-gate.md`                |
 | `meta/`          | `me`   | `workflow-pattern.md`            |
 | `plan/`          | `pl`   | `execution.md`                   |
-| `wow/`           | `wo`   | `repository-rules-validation.md` |
+| `repository/`    | `re`   | `repository-rules-validation.md` |
 
 ### Principles Subdirectories (`governance/principles/`)
 
@@ -166,7 +166,7 @@ Use a systematic encoding rule based on directory characteristics:
 **For Subdirectories:**
 
 1. **Hyphenated compounds** - Concatenate first 2 letters of each word WITHOUT dash (`ayokoding-web` → `aywe`, `software-engineering` → `se`)
-2. **Single words** - First 2 characters (`formatting` → `fo`, `content` → `co`, `meta` → `me`, `workflow` → `wo`, `agents` → `ag`, `quality` → `qu`, `pattern` → `pa`, `hugo` → `hu`, `infra` → `in`, `docs` → `do`, `plan` → `pl`, `wow` → `wo`, `general` → `ge`, `tutorial` → `tu`, `project` → `pr`)
+2. **Single words** - First 2 characters (`formatting` → `fo`, `content` → `co`, `meta` → `me`, `workflow` → `wo`, `agents` → `ag`, `quality` → `qu`, `pattern` → `pa`, `hugo` → `hu`, `infra` → `in`, `docs` → `do`, `plan` → `pl`, `repository` → `re`, `general` → `ge`, `tutorial` → `tu`, `project` → `pr`)
 
 **Key Rule**: For hyphenated directory names, take first 2 letters of EACH word and concatenate them WITHOUT inserting a dash. The dash in the directory name does NOT appear in the abbreviation.
 
@@ -252,7 +252,7 @@ hoto__release-process-2025-11.md
 ```yaml
 ---
 created: 2025-11-19
-updated: 2026-01-01
+updated: 2026-01-25
 ---
 ```
 
@@ -431,7 +431,7 @@ general-quality-gate.md
 | explanation/governance/workflows/docs                  | `quality-gate.md`                |
 | explanation/governance/workflows/meta                  | `workflow-pattern.md`            |
 | explanation/governance/workflows/plan                  | `execution.md`                   |
-| explanation/governance/workflows/wow                   | `repository-rules-validation.md` |
+| explanation/governance/workflows/repository            | `repository-rules-validation.md` |
 | explanation/governance/principles/general              | `simplicity-over-complexity.md`  |
 | explanation/governance/principles/content              | `accessibility-first.md`         |
 | explanation/governance/principles/software-engineering | `explicit-over-implicit.md`      |
@@ -490,6 +490,42 @@ Renamed software documentation directories for semantic clarity:
 
 - `prla` = `pr` (prog) + `la` (lang) - hyphenated compound rule
 - `plwe` = `pl` (platform) + `we` (web) - hyphenated compound rule
+
+### Programming Language Abbreviations
+
+Files in `docs/explanation/software-engineering/programming-languages/` use a 2-character language code in their prefix (`ex-soen-prla-[lang]__[topic].md`). The language codes follow the first-2-characters rule:
+
+| Language    | Code | Rationale                                                            |
+| ----------- | ---- | -------------------------------------------------------------------- |
+| Dart        | `da` | First 2 characters of "dart"                                         |
+| Elixir      | `el` | First 2 characters of "elixir"                                       |
+| Go (Golang) | `go` | First 2 characters of "golang"                                       |
+| Java        | `ja` | First 2 characters of "java"                                         |
+| Python      | `py` | First 2 characters of "python"                                       |
+| TypeScript  | `ty` | First 2 characters of "type" (from "TypeScript")                     |
+| Kotlin      | `ko` | First 2 characters of "kotlin"                                       |
+| Rust        | `ru` | First 2 characters of "rust"                                         |
+| Clojure     | `cl` | First 2 characters of "clojure"                                      |
+| F#          | `fs` | Common file extension abbreviation (`fs`), consistent with ecosystem |
+| C#          | `cs` | Common file extension abbreviation (`cs`), consistent with ecosystem |
+
+**Note on TypeScript**: Uses `ty` (not `ts`) to apply the first-2-characters-of-word rule consistently ("Type-Script" → `ty`). Using `ts` would conflict with the TypeScript file extension convention.
+
+**Example files**:
+
+- `ex-soen-prla-da__idioms.md` - Dart idioms
+- `ex-soen-prla-el__best-practices.md` - Elixir best practices
+- `ex-soen-prla-go__antipatterns.md` - Go antipatterns
+- `ex-soen-prla-ja__idioms.md` - Java idioms
+- `ex-soen-prla-py__best-practices.md` - Python best practices
+- `ex-soen-prla-ty__antipatterns.md` - TypeScript antipatterns
+
+**Topic Naming Flexibility**: Topic names in the content identifier are flexible. Two naming patterns are both acceptable within this repository:
+
+- **Without `-standards` suffix** (Python, TypeScript, Dart): `idioms`, `best-practices`, `testing`, `anti-patterns` — topic names stand alone
+- **With `-standards` suffix** (Java, Elixir, Go): `coding-standards`, `testing-standards`, `error-handling-standards` — topic names emphasize these are OSE Platform style guides
+
+Both patterns are internally consistent within each language group and acceptable. When adding files to an existing language directory, follow the pattern already established for that language.
 
 ## Related Documentation
 

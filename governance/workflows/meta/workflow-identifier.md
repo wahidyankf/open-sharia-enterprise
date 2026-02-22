@@ -196,21 +196,24 @@ values: [lax, normal, strict, ocd]  # This is OK - arrays are fine without quote
 
 ## File Naming Convention
 
-All workflow files follow the pattern:
+All workflow files follow the plain-name pattern (no prefix), organized by subdirectory:
 
 ```
-ex-wf__[workflow-identifier].md
+[workflow-identifier].md
 ```
 
-- **Prefix**: `ex-wf__` (explanation/workflows)
+- **No prefix**: Workflow files use plain descriptive names
+- **Subdirectory**: Location in `governance/workflows/[category]/` encodes the context
 - **Identifier**: Lowercase, hyphen-separated
 - **Extension**: `.md`
 
 **Examples**:
 
-- `ex-wf__content-validation.md`
-- `ex-wf__deployment-pipeline.md`
-- `ex-wf__full-repository-check.md`
+- `repository-rules-validation.md` (in `governance/workflows/repository/`)
+- `plan-quality-gate.md` (in `governance/workflows/plan/`)
+- `quality-gate.md` (in `governance/workflows/docs/`)
+
+**Note**: The `ex-wf__` prefix was used before the 3-phase reorganization (completed 2026-01-01). New workflow files use plain names in their respective subdirectories. See [File Naming Convention](../../conventions/structure/file-naming.md) Migration History for details.
 
 ## Execution Modes
 
@@ -367,7 +370,7 @@ Workflows must be validated before execution:
 - PASS: **Input/output types**: Valid type declarations
 - PASS: **Step dependencies**: No circular dependencies
 - PASS: **State references**: All references resolve
-- PASS: **File naming**: Follows `ex-wf__*` pattern
+- PASS: **File naming**: Plain name in correct subdirectory of `governance/workflows/`
 
 Validation performed by `workflow-validator` (future agent).
 
@@ -423,7 +426,7 @@ Workflows can compose with other workflows:
 ```markdown
 ### 2. Run Validation Workflow (Nested)
 
-**Workflow**: `ex-wf__full-docs-validation`
+**Workflow**: `docs/quality-gate`
 
 - **Args**: `scope: {input.scope}`
 - **Output**: `{validation-status}`
@@ -711,7 +714,7 @@ User: "Run content validation workflow for [scope] in [mode] mode"
 
 ```
 
-The AI (OpenCodeor OpenCode) will execute workflow logic directly using Read/Write/Edit tools.
+The AI (Claude Code or OpenCode) will execute workflow logic directly using Read/Write/Edit tools.
 
 ## Steps
 
@@ -792,6 +795,16 @@ This convention respects:
 - PASS: **Progressive Disclosure**: Simple workflows stay simple, complex is possible
 - PASS: **Accessibility First**: Human-readable format, clear documentation
 - PASS: **No Time Estimates**: Focus on what/how, not duration
+
+## Conventions Implemented/Respected
+
+**REQUIRED SECTION**: All development practice documents MUST include this section to ensure traceability from practices back to conventions.
+
+This convention implements/respects:
+
+- **[File Naming Convention](../../conventions/structure/file-naming.md)**: Workflow files follow plain name pattern (no prefix) in `governance/workflows/` subdirectories, as defined by the file naming convention
+- **[AI Agents Convention](../../development/agents/ai-agents.md)**: Workflows orchestrate agents defined and governed by the AI Agents Convention; agent names referenced in workflow files must match agent names in `.claude/agents/`
+- **[Linking Convention](../../conventions/formatting/linking.md)**: All workflow cross-references use GitHub-compatible markdown links with `.md` extension and relative paths
 
 ## Related Documentation
 

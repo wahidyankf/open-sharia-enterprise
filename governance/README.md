@@ -11,7 +11,7 @@ tags:
   - development
   - workflows
 created: 2026-01-04
-updated: 2026-02-16
+updated: 2026-02-22
 ---
 
 # Rules - Repository Governance
@@ -75,7 +75,7 @@ graph TD
 - **[Core Principles](./principles/README.md)** - Foundational values that govern all lower layers
   - Principles across 3 categories (General, Content, Software Engineering)
   - Each principle traces back to vision with "Vision Supported" section
-  - Examples: Simplicity Over Complexity, Accessibility First, Documentation First, Automation Over Manual
+  - Examples: Deliberate Problem-Solving, Simplicity Over Complexity, Accessibility First, Documentation First, Automation Over Manual
 
 #### Layer 2: Conventions (WHAT - Documentation Rules)
 
@@ -93,10 +93,18 @@ graph TD
   - Each practice includes "Principles Implemented/Respected" AND "Conventions Implemented/Respected" sections
   - Enforced by AI agents and automation (git hooks, build tools)
 
+#### Layer 4: AI Agents (WHO - Atomic Executors)
+
+- **[AI Agents](../.claude/agents/README.md)** - Specialized automated agents enforcing conventions and development practices
+  - Organized by role (Makers, Checkers, Fixers, Operations, Development)
+  - Single-purpose agents with explicit tool permissions
+  - Each agent enforces specific conventions and development practices
+  - Orchestrated by Layer 5 workflows
+
 #### Layer 5: Workflows (WHEN - Multi-Step Processes)
 
 - **[Workflows](./workflows/README.md)** - Orchestrated multi-step processes composing AI agents
-  - Workflows across categories (ayokoding-web, docs, plan, repository)
+  - Workflows across categories (ayokoding-web, docs, meta, plan, repository)
   - Define sequences (sequential/parallel/conditional), state management, termination criteria
   - Examples: Maker-Checker-Fixer, Plan-Execute-Validate
   - Orchestrate agents from Layer 4
@@ -189,6 +197,7 @@ Is it about WHY the project exists?
 - **Layer 1 (Principles)**: Very stable - rarely change, require strong justification
 - **Layer 2 (Conventions)**: Moderately stable - change when documentation needs evolve
 - **Layer 3 (Development)**: Moderately stable - change when software practices evolve
+- **Layer 4 (AI Agents)**: Changes often - new agents added as needs emerge, existing agents updated as conventions evolve
 - **Layer 5 (Workflows)**: Changes frequently - new workflows as needs emerge
 
 ### Traceability is Mandatory

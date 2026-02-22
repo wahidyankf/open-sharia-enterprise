@@ -238,7 +238,7 @@ Code: language-specific
 
 ### Emoji Usage
 
-Allowed: `docs/`, README files, `plans/`, CLAUDE.md, `.claude/agents/`
+Allowed: `docs/`, README files, `plans/`, `governance/`, CLAUDE.md, `AGENTS.md`, `.claude/agents/`, `.opencode/agent/`
 Forbidden: config files (`*.json`, `*.yaml`, `*.toml`), source code
 
 **See**: [governance/conventions/formatting/emoji.md](./governance/conventions/formatting/emoji.md)
@@ -302,7 +302,7 @@ Volta for Node.js/npm pinning, package-lock.json, .env.example
 **Skills Infrastructure**: Agents leverage skills providing two modes:
 
 - **Inline skills** (default) - Inject knowledge into current conversation
-- **Fork skills** (`context: fork`) - Delegate tasks to specialized agents in isolated contexts
+- **Fork skills** (`context: fork`) - Skills that trigger subagent spawning, delegating tasks to isolated agent contexts and returning summarized results
 
 Skills serve agents with knowledge and execution services but don't govern them (service relationship, not governance).
 

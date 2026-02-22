@@ -705,6 +705,57 @@ The maker-checker-fixer pattern integrates with repository conventions:
 
 **Key Point**: The pattern is a **workflow framework**. The conventions define **what** to validate/enforce.
 
+## Preventing Iteration Loops
+
+Without explicit mechanisms to track accepted decisions, checker-fixer workflows can enter infinite or very long iteration loops. This section defines the three structural safeguards that prevent runaway iterations.
+
+### 1. FALSE_POSITIVE Persistence (`.known-false-positives.md`)
+
+**Problem**: Checker re-flags the same accepted FALSE_POSITIVE findings on every iteration because it has no memory of previous decisions.
+
+**Solution**: Fixer writes all accepted FALSE_POSITIVE findings to `generated-reports/.known-false-positives.md`. Checker reads this file at the start of every run and skips any matching entries.
+
+**Key format**: `[category] | [file] | [brief-description]` — stable across runs.
+
+**Checker behavior**: When a finding matches the skip list, log as `[PREVIOUSLY ACCEPTED FALSE_POSITIVE — skipped]` in the informational section. Do NOT count in findings total.
+
+**Fixer behavior**: At end of every fix report, append each FALSE_POSITIVE to `.known-false-positives.md` and include an `## Accepted FALSE_POSITIVE Findings` section in the fix report.
+
+### 2. Scoped Re-validation (Changed Files Only)
+
+**Problem**: Full-repo scan on every iteration re-validates all 340+ software documentation files even when the fixer only changed 3-4 agent files.
+
+**Solution**: Fixer captures `git diff --name-only HEAD` after applying fixes and includes the list in the fix report under `## Changed Files (for Scoped Re-validation)`. Checker in re-validation mode (identified by multi-part UUID chain like `abc123_def456`) focuses Step 8 validation only on the listed changed files.
+
+**Result**: Subsequent iterations are 10-50x faster, reducing unnecessary work on unchanged content.
+
+### 3. Self-Verification After Bash Edits
+
+**Problem**: Fixer logs "fixed" after a `sed -i` command even when the pattern didn't match (`sed` exits 0 regardless). This causes garbled file content and infinite loops (checker re-flags, fixer "fixes" again with no effect).
+
+**Solution**: After every bash or sed edit, immediately verify with grep:
+
+```bash
+sed -i 's/old-pattern/new-pattern/' file.md
+grep -q "new-pattern" file.md || echo "WARNING: sed pattern did not match — fix NOT applied"
+```
+
+If verification fails, log the fix as FAILED (not applied). Do NOT log as "fixed".
+
+**For multi-line reformatting**: Use Python, not sed. `sed` is line-oriented and silently fails on multi-line patterns. Python's string replacement is explicit and predictable.
+
+### 4. Escalation After 2+ Iteration Disagreements
+
+**Problem**: Checker and fixer disagree on the same finding for 2 or more iterations (checker flags, fixer marks FALSE_POSITIVE, checker re-flags after accepting the FALSE_POSITIVE was wrong).
+
+**Solution**: If the `.known-false-positives.md` skip list is loaded but checker still flags the same item (meaning the skip key didn't match), this indicates the skip key format is inconsistent. Escalate to maker for governance decision:
+
+1. Fixer marks the finding as `ESCALATED` in the fix report (not FALSE_POSITIVE, not applied)
+2. Fixer notifies user: "This finding has been re-flagged after a FALSE_POSITIVE acceptance. Manual review required."
+3. Maker updates the relevant convention or agent to resolve the root ambiguity
+
+**Goal**: The workflow should converge in 1-3 iterations. If it hasn't converged after 5 iterations, stop and escalate to maker.
+
 ## Related Documentation
 
 **Pattern Implementation**:

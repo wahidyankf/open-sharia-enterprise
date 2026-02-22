@@ -3,7 +3,7 @@ name: docs-file-manager
 description: Expert at managing files and directories in docs/ directory. Use for renaming, moving, or deleting files/directories while maintaining conventions, updating prefixes, fixing links, and preserving git history.
 tools: Read, Edit, Glob, Grep, Bash
 model: sonnet
-color: purple
+color: yellow
 skills:
   - repo-practicing-trunk-based-development
   - docs-validating-links

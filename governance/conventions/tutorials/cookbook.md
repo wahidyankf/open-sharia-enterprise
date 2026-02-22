@@ -10,11 +10,11 @@ tags:
   - education
   - problem-solving
   - recipes
-date: 2026-01-30T00:00:00+07:00
-lastmod: 2026-01-30
-draft: false
-weight: 2400
+created: 2026-01-30
+updated: 2026-01-30
 ---
+
+# Cookbook Tutorial Convention
 
 ## Purpose
 

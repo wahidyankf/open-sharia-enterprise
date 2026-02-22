@@ -1,3 +1,16 @@
+---
+title: "Workflows"
+description: Orchestrated multi-step processes that compose AI agents for systematic content creation, validation, and remediation
+category: explanation
+tags:
+  - index
+  - workflows
+  - orchestration
+  - agents
+created: 2026-01-04
+updated: 2026-02-22
+---
+
 # Workflows Index
 
 **Purpose**: Orchestrated multi-step processes that compose AI agents to achieve specific goals with clear termination criteria.
@@ -181,7 +194,7 @@ To create a new workflow:
 
 1. **Identify need**: 2 or more agents in sequence, or repeated process, or complex orchestration
 2. **Design structure**: Define inputs, steps, outputs, goals, termination criteria
-3. **Write workflow file**: Use `ex-wf__[name].md` naming pattern
+3. **Write workflow file**: Use plain descriptive name in the appropriate subdirectory of `governance/workflows/[category]/`
 4. **Document thoroughly**: Purpose, when to use, example usage, related workflows
 5. **Validate**: Check frontmatter schema, agent references, dependencies
 6. **Test manually**: Run workflow steps to verify correctness
@@ -198,7 +211,7 @@ All workflows should be validated for:
 - ✅ **Type correctness** - Inputs/outputs use valid types
 - ✅ **Dependency acyclicity** - No circular step dependencies
 - ✅ **Reference resolution** - All `{stepN.outputs}` references resolve
-- ✅ **File naming** - Follows `ex-wf__*` pattern
+- ✅ **File naming** - Plain name in correct subdirectory of `governance/workflows/`
 - ✅ **Documentation quality** - Clear purpose, examples, termination criteria
 
 Future: `workflow-validator` agent will automate this validation.

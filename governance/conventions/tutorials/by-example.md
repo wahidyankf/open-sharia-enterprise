@@ -9,11 +9,11 @@ tags:
   - by-example
   - education
   - code-first
-date: 2025-12-25T00:00:00+07:00
-lastmod: 2026-01-03
-draft: false
-weight: 2300
+created: 2025-12-25
+updated: 2026-01-03
 ---
+
+# By-Example Tutorial Convention
 
 ## Purpose
 
@@ -1229,7 +1229,6 @@ content/
 ---
 title: "Overview"
 date: YYYY-MM-DDTHH:MM:SS+07:00
-draft: false
 weight: 10000000
 description: "Learn {Language/Framework} through {N}+ annotated code examples covering 95% of the language - ideal for experienced developers"
 tags: ["language-tag", "tutorial", "by-example", "examples", "code-first"]
@@ -1242,7 +1241,6 @@ tags: ["language-tag", "tutorial", "by-example", "examples", "code-first"]
 ---
 title: "Beginner" | "Intermediate" | "Advanced"
 date: YYYY-MM-DDTHH:MM:SS+07:00
-draft: false
 weight: 10000001 | 10000002 | 10000003
 description: "Examples {range}: {Topic summary} ({coverage}% coverage)"
 tags: ["language-tag", "tutorial", "by-example", "level-tag", "topic-tags"]

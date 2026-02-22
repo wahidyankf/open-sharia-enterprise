@@ -112,13 +112,15 @@ Three-stage quality workflow:
 - Return summarized results to main conversation
 - Act as lightweight orchestrators
 
-**Categories**:
+**Categories** (representative examples — see full catalog below):
 
-- **Documentation**: `docs-applying-content-quality`, `docs-applying-diataxis-framework`, `docs-creating-accessible-diagrams`
+- **Documentation**: `docs-applying-content-quality`, `docs-applying-diataxis-framework`, `docs-creating-accessible-diagrams`, `docs-creating-by-example-tutorials`, `docs-creating-in-the-field-tutorials`
 - **Planning**: `plan-creating-project-plans`, `plan-writing-gherkin-criteria`
 - **Agent Development**: `agent-developing-agents`, `agent-selecting-models`, `agent-documenting-references`
-- **Repository Patterns**: `repo-applying-maker-checker-fixer`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`
-- **Application-Specific**: `apps-ayokoding-web-developing-content`, `apps-oseplatform-web-developing-content`
+- **Repository Patterns**: `repo-applying-maker-checker-fixer`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`, `repo-understanding-repository-architecture`
+- **Development Workflow**: `repo-practicing-trunk-based-development`, `swe-developing-applications-common`
+- **Programming Languages**: `swe-programming-elixir`, `swe-programming-elixir-phoenix`, `swe-programming-java`, `swe-programming-jvm-spring`, `swe-programming-jvm-spring-boot`, `swe-programming-python`, `swe-programming-typescript`, `swe-programming-elixir-phoenix-liveview`, `swe-programming-golang` (9 skills)
+- **Application-Specific**: `apps-ayokoding-web-developing-content`, `apps-oseplatform-web-developing-content`, `apps-organiclever-web-developing-content`
 
 **Service Relationship**: Skills serve agents with knowledge and execution but don't govern them (service infrastructure, not governance layer).
 

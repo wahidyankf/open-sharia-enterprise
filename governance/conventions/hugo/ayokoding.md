@@ -159,7 +159,7 @@ System.out.println(result);      // => Output: 10-transformed
 
 **Official Documentation**: [Hextra Docs](https://imfing.github.io/hextra/docs/)
 **GitHub**: [imfing/hextra](https://github.com/imfing/hextra)
-**Last Updated**: 2025-09-06 | **GitHub Stars**: 1,789
+**Last Updated**: 2026-01-02 | **GitHub Stars**: 1,789
 
 **Description**: Modern, fast, batteries-included Hugo theme built with Tailwind CSS for documentation, blogs, and static websites.
 

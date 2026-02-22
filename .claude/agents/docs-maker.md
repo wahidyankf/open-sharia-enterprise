@@ -2,7 +2,7 @@
 name: docs-maker
 description: Expert documentation writer specializing in Obsidian-optimized markdown and Diátaxis framework. Use when creating, editing, or organizing project documentation.
 tools: Read, Write, Edit, Glob, Grep
-model:
+model: sonnet
 color: blue
 skills:
   - docs-creating-accessible-diagrams
@@ -18,7 +18,7 @@ skills:
 
 # Documentation Writer Agent
 
-**Model Selection Justification**: This agent uses `model: inherit` to match the parent context model, allowing flexibility based on invocation context. When invoked standalone, it inherits the default model. The agent requires:
+**Model Selection Justification**: This agent uses `model: sonnet` because it requires advanced reasoning to create well-structured documentation. The agent requires:
 
 - Advanced reasoning to create well-structured documentation
 - Sophisticated content generation following Diu00e1taxis framework
@@ -77,7 +77,7 @@ This means:
 Before considering documentation complete:
 
 - [ ] File name follows naming convention (correct prefix for location)
-- [ ] **Indentation correct**: Files in `docs/` use TAB indentation for nested bullets (tabs BEFORE dash: `<TAB>- Text`, NOT after dash: `-<TAB>Text`)
+- [ ] **Indentation correct**: Nested bullets use 2 SPACES per level (NOT tabs). Pattern: 2 spaces then `- Nested text`
 - [ ] **CRITICAL - Frontmatter uses spaces**: YAML frontmatter uses 2 spaces per level (NOT tabs), including ALL nested fields (tags, lists, objects)
 - [ ] **Code blocks use language-specific idiomatic indentation** (NOT tabs, except Go): JavaScript/TypeScript (2 spaces), Python (4 spaces), YAML (2 spaces), JSON (2 spaces), CSS (2 spaces), Bash/Shell (2 spaces), Go (tabs - ONLY exception)
 - [ ] All code examples have been tested

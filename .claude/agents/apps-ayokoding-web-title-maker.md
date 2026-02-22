@@ -41,7 +41,7 @@ Create titles following conventions for tutorial types and levels.
 
 **Project Guidance**:
 
-- [AGENTS.md](../../CLAUDE.md) - Primary guidance
+- [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [Tutorial Naming Convention](../../governance/conventions/tutorials/naming.md)
 
 **Related Agents**:

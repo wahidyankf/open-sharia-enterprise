@@ -593,4 +593,4 @@ When creating a convention:
 
 ---
 
-**Last Updated**: 2025-12-07
+**Last Updated**: 2025-12-24

@@ -1,8 +1,23 @@
+---
+title: "Criticality Levels Convention"
+description: Universal criticality level system for categorizing validation findings across all checker and fixer agents
+category: explanation
+subcategory: development
+tags:
+  - criticality
+  - validation
+  - checker-agents
+  - fixer-agents
+  - quality-assurance
+created: 2025-12-27
+updated: 2025-12-27
+---
+
 # Criticality Levels Convention
 
 **Purpose**: Define universal issue severity classification system for all checker agents in the repository.
 
-**Scope**: All 16 checker agents and 14 fixer agents must use this standardized criticality system.
+**Scope**: All checker agents and fixer agents must use this standardized criticality system. See [AI Agents Index](./../../../.claude/agents/README.md) for the complete list.
 
 **Status**: Active (standardizes existing inconsistent terminology)
 

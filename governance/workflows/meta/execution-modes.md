@@ -1,9 +1,18 @@
-# Workflow Execution Mode Convention
+---
+title: "Workflow Execution Mode Convention"
+description: Defines the manual orchestration execution mode for workflows, explaining why Task tool is avoided and how to execute workflows with persistent file changes
+category: explanation
+subcategory: workflows
+tags:
+  - workflows
+  - execution-mode
+  - orchestration
+  - conventions
+created: 2026-01-05
+updated: 2026-01-13
+---
 
-**Category**: Workflow Patterns
-**Status**: Active
-**Created**: 2026-01-05
-**Updated**: 2026-01-13
+# Workflow Execution Mode Convention
 
 ## Overview
 
@@ -177,6 +186,9 @@ The AI will execute the workflow steps directly with full file persistence.
 
 ```
 
+```
+````
+
 ## Future Considerations
 
 ### Potential Automation
@@ -218,6 +230,7 @@ In the future, a workflow runner could be developed to automate workflow executi
 ### FAIL: Pitfall 1: Using Task tool for workflows requiring persistence
 
 **Wrong**:
+
 ```
 
 Task(plan-checker) → isolated context → audit report doesn't persist
@@ -226,6 +239,7 @@ Task(plan-fixer) → isolated context → fixes don't persist
 ```
 
 **Right**:
+
 ```
 
 Execute checker logic directly → audit report persists
@@ -268,5 +282,3 @@ Execute fixer logic directly → fixes persist
 ---
 
 **Last Updated**: 2026-01-13
-```
-````
