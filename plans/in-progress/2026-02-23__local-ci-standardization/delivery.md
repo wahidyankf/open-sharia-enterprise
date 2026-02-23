@@ -1,5 +1,18 @@
 # Delivery
 
+## Commit Strategy
+
+Commit after each phase using
+[Conventional Commits](../../../governance/development/workflow/commit-messages.md) format.
+One commit per phase keeps the history readable and makes individual phases easy to revert.
+
+All commits go directly to `main` (Trunk Based Development — no feature branches needed for
+this configuration-only change).
+
+See [README.md](./README.md) for suggested commit messages per phase.
+
+---
+
 ## Implementation Order
 
 Changes are ordered from highest impact to lowest. Complete each phase before the next.
@@ -32,8 +45,9 @@ These two apps are **excluded from the pre-push hook and PR merge gate** until f
 
 - [ ] **2.1** `oseplatform-web/project.json`: Add `test:quick` (runs `bash build.sh` with outputs)
 - [ ] **2.2** `oseplatform-web/project.json`: Fix `clean` to include `.hugo_build.lock`
-- [ ] **2.3** `organiclever-web/package.json`: Add vitest devDependencies — `vitest`,
-      `@vitejs/plugin-react`, `jsdom`, `@testing-library/react`, `vite-tsconfig-paths`
+- [ ] **2.3** `organiclever-web/package.json`: Add vitest devDependencies via
+      `npm install --save-dev vitest @vitejs/plugin-react jsdom @testing-library/react vite-tsconfig-paths`
+      (run from `apps/organiclever-web`)
 - [ ] **2.4** Create `apps/organiclever-web/vitest.workspace.ts` with `unit` and `integration`
       named projects (see tech-docs.md for full content)
 - [ ] **2.5** `organiclever-web/project.json`: Update `lint` to `npx oxlint@latest .` (replaces
@@ -44,9 +58,18 @@ These two apps are **excluded from the pre-push hook and PR merge gate** until f
 - [ ] **2.9** `organiclever-web/project.json`: Add `test:integration`
       (`npx vitest run --project integration`)
 
-**Verify**: `nx run oseplatform-web:test:quick`, `nx run organiclever-web:test:quick`,
-`nx run organiclever-web:test:unit`, `nx run organiclever-web:test:integration`, and
-`nx run organiclever-web:lint` all return exit code 0.
+**Verify**:
+
+- `nx run oseplatform-web:test:quick`, `nx run organiclever-web:test:quick`,
+  `nx run organiclever-web:typecheck`, `nx run organiclever-web:test:unit`,
+  `nx run organiclever-web:test:integration`, and
+  `nx run organiclever-web:lint` all return exit code 0.
+- The `clean` fix for oseplatform-web includes `.hugo_build.lock`:
+
+  ```bash
+  grep -F ".hugo_build.lock" apps/oseplatform-web/project.json
+  # Expected: one match
+  ```
 
 ---
 
@@ -71,7 +94,8 @@ Multiple renames and additions — apply all together.
 - [ ] **4.1** `organiclever-be/project.json`: Rename `serve` → `dev` (same command)
 - [ ] **4.2** `organiclever-be/project.json`: Rename `test` → `test:unit` (same command)
 - [ ] **4.3** `organiclever-be/project.json`: Add `test:quick` (`mvn test`)
-- [ ] **4.4** `organiclever-be/project.json`: Add `start` (`java -jar target/organiclever-be-1.0.0.jar`)
+- [ ] **4.4** `organiclever-be/project.json`: Add `start` using glob pattern
+      (`sh -c 'java -jar target/organiclever-be-*.jar'`) — see tech-docs.md for full JSON
 - [ ] **4.5** `organiclever-be/project.json`: Add `outputs: ["{projectRoot}/target"]` to `build`
 
 **Verify**:
@@ -79,7 +103,12 @@ Multiple renames and additions — apply all together.
 - `nx run organiclever-be:dev` — starts Spring Boot dev server
 - `nx run organiclever-be:test:quick` — runs Maven tests
 - `nx run organiclever-be:test:unit` — runs Maven tests (same result)
-- The old `serve` and `test` targets no longer exist in `project.json`
+- The old `serve` and `test` targets no longer exist in `project.json`:
+
+  ```bash
+  grep -E '"serve"\s*:|"test"\s*:' apps/organiclever-be/project.json
+  # Expected: no matches
+  ```
 
 ---
 
@@ -96,8 +125,19 @@ Multiple renames and additions — apply all together.
 - `nx run organiclever-app:test:unit` — runs Flutter tests (install runs first)
 - `nx run organiclever-app:test:quick` — runs Flutter tests (install runs first)
 - `nx run organiclever-app:typecheck` — runs `flutter analyze`
-- The old `test` target no longer exists
-- The `lint` target no longer exists in `organiclever-app/project.json`
+- The old `test` target no longer exists in `organiclever-app/project.json`:
+
+  ```bash
+  grep -E '"test"\s*:' apps/organiclever-app/project.json
+  # Expected: no match — bare "test" target renamed to "test:unit"
+  ```
+
+- The `lint` target no longer exists in `organiclever-app/project.json`:
+
+  ```bash
+  grep '"lint"' apps/organiclever-app/project.json
+  # Expected: no match (lint removed per Flutter exception in nx-targets.md)
+  ```
 
 ---
 
@@ -117,10 +157,20 @@ tech-docs.md to replace each project.json entirely.
 **Verify**:
 
 - `nx run organiclever-web-e2e:lint` — exits 0
+- `nx run organiclever-be-e2e:lint` — exits 0
+- `nx run organiclever-app-web-e2e:lint` — exits 0
 - `nx run organiclever-web-e2e:test:quick` — exits 0
 - `nx run organiclever-be-e2e:test:quick` — exits 0
 - `nx run organiclever-app-web-e2e:test:quick` — exits 0
-- Grep confirms `"e2e"` as a top-level target key is gone from all 3 project.json files
+- The old `e2e`, `e2e:ui`, and `e2e:report` targets no longer exist in any of the 3 project.json files:
+
+  ```bash
+  grep -E '"e2e"\s*:|"e2e:ui"\s*:|"e2e:report"\s*:' \
+    apps/organiclever-web-e2e/project.json \
+    apps/organiclever-be-e2e/project.json \
+    apps/organiclever-app-web-e2e/project.json
+  # Expected: no matches — all three old targets renamed
+  ```
 
 ---
 
@@ -140,9 +190,9 @@ Update the hook after all project.json targets are in place so the three gates h
 
 ## Final Validation
 
-- [ ] **V1** `nx affected -t test:quick --all` — all 10 apps produce a result
-- [ ] **V2** `nx affected -t lint --all` — 9 apps produce a result (Flutter skipped by design — no `lint` target)
-- [ ] **V3** `nx affected -t typecheck --all` — all statically typed apps produce a result
+- [ ] **V1** `nx run-many -t test:quick` — all 10 apps produce a result
+- [ ] **V2** `nx run-many -t lint` — 9 apps produce a result (Flutter skipped by design — no `lint` target)
+- [ ] **V3** `nx run-many -t typecheck` — all statically typed apps produce a result
 - [ ] **V4** Verify no non-standard target names remain:
 
   ```bash
@@ -157,15 +207,17 @@ Update the hook after all project.json targets are in place so the three gates h
 - [ ] **V5** Verify E2E projects have canonical names:
 
   ```bash
-  grep '"test:e2e"' apps/organiclever-web-e2e/project.json apps/organiclever-be-e2e/project.json apps/organiclever-app-web-e2e/project.json
-  # Expected: 3 matches (one per file)
+  grep '"test:e2e' apps/organiclever-web-e2e/project.json apps/organiclever-be-e2e/project.json apps/organiclever-app-web-e2e/project.json
+  # Expected: 9 matches (3 per file: test:e2e, test:e2e:ui, test:e2e:report)
   ```
 
-- [ ] **V6** Verify `nx.json` has no `"test"` in targetDefaults:
+- [ ] **V6** Verify `nx.json` has no legacy entries:
 
   ```bash
-  grep '"test"' nx.json
-  # Expected: no match (no "test" targetDefault, no "tasksRunnerOptions")
+  grep -E '"test"\s*:' nx.json
+  # Expected: no match — bare "test" targetDefault removed
+  grep '"tasksRunnerOptions"' nx.json
+  # Expected: no match — legacy tasksRunnerOptions block removed
   ```
 
 - [ ] **V7** Verify pre-push hook runs all three gates:
@@ -180,8 +232,8 @@ Update the hook after all project.json targets are in place so the three gates h
   ```bash
   nx run organiclever-web:test:unit        # exits 0
   nx run organiclever-web:test:integration # exits 0
-  grep '"name"' apps/organiclever-web/vitest.workspace.ts
-  # Expected: shows "unit" and "integration"
+  grep 'name:' apps/organiclever-web/vitest.workspace.ts
+  # Expected: shows lines containing name: "unit" and name: "integration"
   ```
 
 - [ ] **V9** Verify package.json scripts reference canonical target name:
@@ -189,6 +241,13 @@ Update the hook after all project.json targets are in place so the three gates h
   ```bash
   grep "test:quick" package.json
   # Expected: both "test" and "affected:test" scripts show test:quick
+  ```
+
+- [ ] **V10** Verify Spring Boot build declares outputs (step 4.5):
+
+  ```bash
+  grep '"outputs"' apps/organiclever-be/project.json
+  # Expected: "{projectRoot}/target"
   ```
 
 ---

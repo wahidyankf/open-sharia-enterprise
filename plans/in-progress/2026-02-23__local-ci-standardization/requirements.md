@@ -1,5 +1,20 @@
 # Requirements
 
+## User Stories
+
+**As a developer pushing code**, I want `typecheck`, `lint`, and `test:quick` to run automatically
+on every `git push` so that quality gates are enforced consistently and no project is silently
+excluded from the pre-push hook.
+
+**As a developer running `nx affected -t test:quick`**, I want all 10 apps to participate so that
+no project is unprotected and every affected app is validated before push.
+
+**As a developer running `nx affected -t lint`**, I want 9 of 10 apps to participate (Flutter
+excluded by design) so that static analysis runs across the full codebase without duplicating
+`flutter analyze` for the one project where `typecheck` already covers it.
+
+---
+
 ## Objectives
 
 1. Every app exposes the mandatory targets required by its project type (per the Nx Target Standards)
@@ -114,7 +129,7 @@ in devDependencies; `tsconfig.json` exists at project root.
 **Required changes**:
 
 - Update `lint`: replace `next lint` with `npx oxlint@latest .` — standardizes on oxlint across
-  all TypeScript projects; `next lint` is also deprecated in Next.js 16
+  all TypeScript projects for consistent, faster lint
 - Add `typecheck`: runs `tsc --noEmit` from `{projectRoot}`
 - Add `test:quick`: runs `npx vitest run --project unit` — unit tests as pre-push fast gate
 - Add `test:unit`: runs `npx vitest run --project unit` — same as `test:quick`; no meaningful
@@ -148,8 +163,9 @@ in devDependencies; `tsconfig.json` exists at project root.
 - Rename `test` → `test:unit` (same command: `mvn test`)
 - Add `test:quick`: runs `mvn test` — same as `test:unit` (no unit/integration test separation
   exists yet; the plan notes separation as a future improvement)
-- Add `start`: runs `java -jar target/organiclever-be-1.0.0.jar` for production mode
+- Add `start`: runs JAR from `target/` for production mode (see tech-docs.md for glob pattern)
 - Add `outputs: ["{projectRoot}/target"]` to `build`
+- Retain existing `lint: mvn checkstyle:check` target — it is already compliant with the standard
 
 ---
 
@@ -170,6 +186,10 @@ to run. The existing `test` target correctly depends on `install`, but `test:qui
 The pre-push hook runs `typecheck` → `lint` sequentially — keeping both would run `flutter analyze`
 twice per push with zero additional coverage. `lint` is therefore **removed**; `typecheck` is the
 sole static-analysis gate. Nx silently skips Flutter for `nx affected -t lint`.
+
+Per the [Dart/Flutter exception in nx-targets.md](../../../governance/development/infra/nx-targets.md):
+`flutter analyze` combines type checking and linting, so only `typecheck` is declared. This is the
+documented exception for Flutter projects, not an ad-hoc decision.
 
 **Required changes**:
 
@@ -243,13 +263,26 @@ projects missing the target.
 
 ---
 
+## Non-Functional Requirements
+
+- **Speed**: `test:quick` must complete fast enough for use in the pre-push hook. Go tests,
+  Hugo builds, and oxlint all complete within seconds. Maven tests and Flutter tests are slower
+  but acceptable at the pre-push gate. See caching rules in
+  [nx-targets.md](../../../governance/development/infra/nx-targets.md) — `test:quick` has
+  `cache: true` so repeated runs hit the Nx cache.
+- **No behavioral changes**: Only target names, additions, and removals where a target is provably
+  redundant. All existing commands remain unchanged.
+- **Backward compatibility**: No changes to test frameworks, build outputs, or runtime behavior.
+
+---
+
 ## Acceptance Criteria
 
 ### Scenario 1: All projects participate in pre-push quality gate
 
 ```gherkin
 Given all 10 project.json files have been updated
-When I run: nx affected -t test:quick --all
+When I run: nx run-many -t test:quick
 Then every project returns a result (pass or fail)
 And no project is silently skipped
 ```
@@ -258,7 +291,7 @@ And no project is silently skipped
 
 ```gherkin
 Given all project.json files have been updated
-When I run: nx affected -t lint --all
+When I run: nx run-many -t lint
 Then 9 of 10 apps return a result (pass or fail)
 And organiclever-app (Flutter) is silently skipped by Nx — no "lint" target by design
 And organiclever-app static analysis is covered by "typecheck" (flutter analyze)
@@ -273,17 +306,18 @@ And I run: nx run organiclever-be-e2e:test:e2e
 And I run: nx run organiclever-app-web-e2e:test:e2e
 Then each command invokes the correct playwright test runner
 And the old "e2e" target name no longer exists in any project.json
+And the old "e2e:ui" target name no longer exists in any project.json
+And the old "e2e:report" target name no longer exists in any project.json
 ```
 
 ### Scenario 4: Non-standard target names are eliminated
 
 ```gherkin
 Given all project.json files have been updated
-When I grep for "serve" as a target key in apps/organiclever-be/project.json
-Then no result is found
-When I grep for '"test"' as a top-level target key in organiclever-be and organiclever-app
-Then no result is found
-And the targets "dev", "test:unit", "test:quick" exist in their place
+When the project.json files are inspected
+Then "serve" does not appear as a target key in apps/organiclever-be/project.json
+And "test" does not appear as a top-level target key in organiclever-be or organiclever-app
+And "dev", "test:unit", and "test:quick" targets exist in their place
 ```
 
 ### Scenario 5: nx.json targetDefaults match the standard
@@ -329,16 +363,28 @@ And failure of any gate blocks the push
 And projects without a "typecheck" target are silently skipped by Nx
 ```
 
-### Scenario 9: organiclever-web vitest unit and integration targets work
+### Scenario 9a: organiclever-web test:quick runs vitest unit project
 
 ```gherkin
 Given organiclever-web/vitest.workspace.ts exists with "unit" and "integration" named projects
 And organiclever-web/package.json has vitest devDependencies installed
 When I run: nx run organiclever-web:test:quick
 Then vitest executes with --project unit and exits 0 (passWithNoTests: true)
+```
+
+### Scenario 9b: organiclever-web test:unit produces same result as test:quick
+
+```gherkin
+Given organiclever-web/vitest.workspace.ts has a "unit" named project
 When I run: nx run organiclever-web:test:unit
-Then vitest executes with --project unit (same as test:quick)
+Then vitest executes with --project unit and exits 0 (passWithNoTests: true)
+And test:quick and test:unit produce identical results
+```
+
+### Scenario 9c: organiclever-web test:integration runs vitest integration project
+
+```gherkin
+Given organiclever-web/vitest.workspace.ts has an "integration" named project
 When I run: nx run organiclever-web:test:integration
 Then vitest executes with --project integration and exits 0 (passWithNoTests: true)
-And test:quick and test:unit produce identical results
 ```
