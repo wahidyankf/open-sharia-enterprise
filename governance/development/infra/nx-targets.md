@@ -19,18 +19,22 @@ Defines the standard Nx targets that apps and libs expose, what each target must
 
 ## Execution Model
 
-### Quality Gates (test:quick enforcement)
+### Quality Gates (pre-push enforcement)
 
-`test:quick` runs at two mandatory checkpoints — locally before push and remotely before merge.
+`typecheck`, `lint`, and `test:quick` run at two mandatory checkpoints — locally before push and
+remotely before merge.
 
 ```mermaid
 flowchart TD
-    A[Developer pushes code] --> B["Pre-push hook<br/>nx affected -t test:quick<br/>nx affected -t lint"]
-    B --> C["test:quick<br/>per affected project"]
-    B --> D["lint<br/>per affected project"]
-    C --> E{Pass?}
-    E -- No --> F[Push blocked]
-    E -- Yes --> G[Push succeeds]
+    A[Developer pushes code] --> B[Pre-push hook]
+    B --> C["typecheck<br/>nx affected -t typecheck"]
+    B --> D["lint<br/>nx affected -t lint"]
+    B --> E["test:quick<br/>nx affected -t test:quick"]
+    C --> F{All pass?}
+    D --> F
+    E --> F
+    F -- No --> G[Push blocked]
+    F -- Yes --> H[Push succeeds]
 
     P[PR opened / updated] --> Q["GitHub Actions CI<br/>nx affected -t test:quick"]
     Q --> R{Pass?}
@@ -41,8 +45,10 @@ flowchart TD
     style B fill:#DE8F05,color:#fff
     style C fill:#029E73,color:#fff
     style D fill:#029E73,color:#fff
-    style F fill:#CC78BC,color:#fff
-    style G fill:#029E73,color:#fff
+    style E fill:#029E73,color:#fff
+    style F fill:#DE8F05,color:#fff
+    style G fill:#CC78BC,color:#fff
+    style H fill:#029E73,color:#fff
     style P fill:#0173B2,color:#fff
     style Q fill:#DE8F05,color:#fff
     style S fill:#CC78BC,color:#fff
@@ -118,12 +124,13 @@ Use these canonical names. Aliases (`serve`, `start:dev`, `unit-test`) are anti-
 
 Every project in `apps/` and `libs/` must expose:
 
-| Target       | Requirement                                                                                                                                  |
-| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `test:quick` | Complete in a few minutes (not tens of minutes); enforced by the pre-push hook and as a required GitHub Actions status check before PR merge |
-| `lint`       | Exit non-zero on violations                                                                                                                  |
+| Target       | Requirement                                                                                                                                                               |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `test:quick` | Complete in a few minutes (not tens of minutes); enforced by the pre-push hook and as a required GitHub Actions status check before PR merge                              |
+| `lint`       | Exit non-zero on violations; enforced by the pre-push hook                                                                                                                |
+| `typecheck`  | Required for statically typed projects (TypeScript, Python/mypy, Dart/Flutter); enforced by the pre-push hook; skipped by Nx for projects that do not declare this target |
 
-**`test:quick` composition** — each project decides which fast checks form its gate. The target runs its checks directly (calling the underlying tools, not other Nx targets) to avoid double execution when `lint` or `typecheck` are also run standalone. Common compositions:
+**`test:quick` composition** — each project decides which fast checks form its gate. The target runs its checks directly (calling the underlying tools, not other Nx targets) to avoid double execution when `lint` or `typecheck` are also run standalone by the pre-push hook. Common compositions:
 
 | Project type       | Typical `test:quick` composition                                              |
 | ------------------ | ----------------------------------------------------------------------------- |
@@ -301,7 +308,7 @@ Example override for a Hugo site:
 
 - **Non-standard target names**: `serve` instead of `dev`/`start`, `unit-test` instead of `test:unit`, `integration-test` instead of `test:integration`, `check` instead of `lint` or `typecheck`, bare `test` or `test:full` instead of a specific `test:*` variant
 - **Missing `test:quick`**: Omitting the pre-push gate target silently excludes the project from `nx affected -t test:quick` — this breaks the workspace-wide hook
-- **Missing `lint`**: Projects without `lint` cannot participate in workspace-wide lint runs
+- **Missing `lint`**: Projects without `lint` cannot participate in workspace-wide lint runs or the pre-push hook lint gate
 - **Heavy `test:quick`**: Including slow integration tests or E2E in `test:quick` defeats its purpose — keep the total to a few minutes, not tens of minutes
 - **Mixing concerns in `test:unit`**: `test:unit` must not spin up databases, external APIs, or network services — those belong in `test:integration`
 - **Enabling cache on `test:integration`**: Setting `cache: true` for integration tests risks serving stale results when external service state changes but source files have not
@@ -313,9 +320,9 @@ Example override for a Hugo site:
 
 ## Principles Traceability
 
-| Decision                                            | Principle                                                                                 |
-| --------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| Consistent target names across all projects         | [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) |
-| `test:quick` enforced at pre-push and PR merge gate | [Automation Over Manual](../../principles/software-engineering/automation-over-manual.md) |
-| Minimum required targets per project type           | [Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)      |
-| `outputs` required for cacheable targets            | [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) |
+| Decision                                                                              | Principle                                                                                 |
+| ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Consistent target names across all projects                                           | [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) |
+| `typecheck`, `lint`, `test:quick` enforced at pre-push; `test:quick` at PR merge gate | [Automation Over Manual](../../principles/software-engineering/automation-over-manual.md) |
+| Minimum required targets per project type                                             | [Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)      |
+| `outputs` required for cacheable targets                                              | [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) |
