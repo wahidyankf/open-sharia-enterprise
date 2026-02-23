@@ -27,11 +27,21 @@ These two apps are **excluded from the pre-push hook and PR merge gate** until f
 
 - [ ] **2.1** `oseplatform-web/project.json`: Add `test:quick` (runs `bash build.sh` with outputs)
 - [ ] **2.2** `oseplatform-web/project.json`: Fix `clean` to include `.hugo_build.lock`
-- [ ] **2.3** `organiclever-web/project.json`: Add `typecheck` (runs `tsc --noEmit`)
-- [ ] **2.4** `organiclever-web/project.json`: Add `test:quick` (runs `tsc --noEmit`)
+- [ ] **2.3** `organiclever-web/package.json`: Add vitest devDependencies — `vitest`,
+      `@vitejs/plugin-react`, `jsdom`, `@testing-library/react`, `vite-tsconfig-paths`
+- [ ] **2.4** Create `apps/organiclever-web/vitest.workspace.ts` with `unit` and `integration`
+      named projects (see tech-docs.md for full content)
+- [ ] **2.5** `organiclever-web/project.json`: Update `lint` to `npx oxlint@latest .` (replaces
+      `next lint`)
+- [ ] **2.6** `organiclever-web/project.json`: Add `typecheck` (runs `tsc --noEmit`)
+- [ ] **2.7** `organiclever-web/project.json`: Add `test:quick` (`npx vitest run --project unit`)
+- [ ] **2.8** `organiclever-web/project.json`: Add `test:unit` (`npx vitest run --project unit`)
+- [ ] **2.9** `organiclever-web/project.json`: Add `test:integration`
+      (`npx vitest run --project integration`)
 
-**Verify**: `nx run oseplatform-web:test:quick` and `nx run organiclever-web:test:quick` both
-return exit code 0.
+**Verify**: `nx run oseplatform-web:test:quick`, `nx run organiclever-web:test:quick`,
+`nx run organiclever-web:test:unit`, `nx run organiclever-web:test:integration`, and
+`nx run organiclever-web:lint` all return exit code 0.
 
 ---
 
@@ -39,8 +49,8 @@ return exit code 0.
 
 These four apps cannot participate in `nx affected -t lint` until fixed.
 
-- [ ] **3.1** `ayokoding-cli/project.json`: Add `lint` (`go vet ./...`)
-- [ ] **3.2** `rhino-cli/project.json`: Add `lint` (`CGO_ENABLED=0 go vet ./...`)
+- [ ] **3.1** `ayokoding-cli/project.json`: Add `lint` (`golangci-lint run ./...`)
+- [ ] **3.2** `rhino-cli/project.json`: Add `lint` (`CGO_ENABLED=0 golangci-lint run ./...`)
 - [ ] **3.3** `ayokoding-web/project.json`: Add `lint` (`markdownlint-cli2 "content/**/*.md"`)
 - [ ] **3.4** `oseplatform-web/project.json`: Add `lint` (`markdownlint-cli2 "content/**/*.md"`)
 
@@ -91,8 +101,8 @@ tech-docs.md to replace each project.json entirely.
 - [ ] **6.1** `organiclever-web-e2e/project.json`: Rename `e2e` → `test:e2e`
 - [ ] **6.2** `organiclever-web-e2e/project.json`: Rename `e2e:ui` → `test:e2e:ui`
 - [ ] **6.3** `organiclever-web-e2e/project.json`: Rename `e2e:report` → `test:e2e:report`
-- [ ] **6.4** `organiclever-web-e2e/project.json`: Add `lint` (`tsc --noEmit`)
-- [ ] **6.5** `organiclever-web-e2e/project.json`: Add `test:quick` (`tsc --noEmit`)
+- [ ] **6.4** `organiclever-web-e2e/project.json`: Add `lint` (`npx oxlint@latest .`)
+- [ ] **6.5** `organiclever-web-e2e/project.json`: Add `test:quick` (`npx oxlint@latest .`)
 - [ ] **6.6** `organiclever-be-e2e/project.json`: Same 5 changes
 - [ ] **6.7** `organiclever-app-web-e2e/project.json`: Same 5 changes
 
@@ -156,6 +166,15 @@ Update the hook after all project.json targets are in place so the three gates h
   # Expected: typecheck, lint, and test:quick all present
   ```
 
+- [ ] **V8** Verify organiclever-web vitest workspace is in place:
+
+  ```bash
+  nx run organiclever-web:test:unit        # exits 0
+  nx run organiclever-web:test:integration # exits 0
+  grep '"name"' apps/organiclever-web/vitest.workspace.ts
+  # Expected: shows "unit" and "integration"
+  ```
+
 ---
 
 ## Post-Completion
@@ -169,9 +188,6 @@ files when all checklist items and acceptance criteria are verified.
 
 These improvements are noted but not part of this plan:
 
-- Add unit tests to `organiclever-web` (Next.js) and update `test:quick` to include them
 - Separate Maven Surefire (unit) from Failsafe (integration) in `organiclever-be` to give
   `test:quick` a genuine subset scope
-- Add `golangci-lint` to Go CLIs for richer static analysis beyond `go vet`
-- Add ESLint to Playwright E2E projects and replace `tsc --noEmit` lint with ESLint
 - Add `test:unit` to Hugo sites if a content validation test suite is introduced
