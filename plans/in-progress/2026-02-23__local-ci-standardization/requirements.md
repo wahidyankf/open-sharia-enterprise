@@ -5,10 +5,12 @@
 1. Every app exposes the mandatory targets required by its project type (per the Nx Target Standards)
 2. Non-standard target names are replaced with canonical names
 3. `nx.json` `targetDefaults` reflects canonical targets and correct caching rules
-4. `nx affected -t test:quick` and `nx affected -t lint` cover ALL 10 apps
+4. `nx affected -t test:quick` covers ALL 10 apps; `nx affected -t lint` covers 9 apps
+   (Flutter is excluded — `typecheck` runs `flutter analyze` which already covers static analysis)
 5. `nx affected -t test:e2e` covers all 3 Playwright `*-e2e` projects
 6. `.husky/pre-push` runs `typecheck`, `lint`, and `test:quick` for all affected projects
-7. No existing functionality is changed — only target names and additions
+7. No existing functionality is changed — only target names, additions, or removals where a
+   target is provably redundant (Flutter `lint` = `typecheck` = same command)
 
 ---
 
@@ -149,16 +151,17 @@ in devDependencies; `tsconfig.json` exists at project root.
 **Broken**: `test:quick` lacks `dependsOn: ["install"]` — Flutter tests require `flutter pub get`
 to run. The existing `test` target correctly depends on `install`, but `test:quick` does not.
 
-**Flutter typecheck note**: In Flutter/Dart, `flutter analyze` is the type analysis tool — it
-serves the role of both linter and type checker. The `typecheck` target uses the same command as
-`lint`. This is correct: the governance standard requires typecheck for Dart/Flutter, and
-`flutter analyze` is Dart's type checker even though it also catches style issues.
+**Flutter lint note**: `flutter analyze` combines type checking and linting into a single pass.
+The pre-push hook runs `typecheck` → `lint` sequentially — keeping both would run `flutter analyze`
+twice per push with zero additional coverage. `lint` is therefore **removed**; `typecheck` is the
+sole static-analysis gate. Nx silently skips Flutter for `nx affected -t lint`.
 
 **Required changes**:
 
 - Rename `test` → `test:unit` (same command + same `dependsOn: ["install"]`)
-- Add `typecheck`: runs `flutter analyze` (same command as `lint`, different declared intent)
+- Add `typecheck`: runs `flutter analyze`
 - Update `test:quick`: add `dependsOn: ["install"]`
+- Remove `lint`: redundant with `typecheck` (same `flutter analyze` command)
 
 ---
 
@@ -236,13 +239,14 @@ Then every project returns a result (pass or fail)
 And no project is silently skipped
 ```
 
-### Scenario 2: All projects participate in workspace-wide lint
+### Scenario 2: All projects (except Flutter) participate in workspace-wide lint
 
 ```gherkin
-Given all 10 project.json files have been updated
+Given all project.json files have been updated
 When I run: nx affected -t lint --all
-Then every project returns a result (pass or fail)
-And no project is silently skipped
+Then 9 of 10 apps return a result (pass or fail)
+And organiclever-app (Flutter) is silently skipped by Nx — no "lint" target by design
+And organiclever-app static analysis is covered by "typecheck" (flutter analyze)
 ```
 
 ### Scenario 3: E2E projects are discoverable via canonical target name
