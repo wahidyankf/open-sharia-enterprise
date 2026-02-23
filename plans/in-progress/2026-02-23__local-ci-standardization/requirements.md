@@ -33,6 +33,21 @@
 
 ---
 
+### package.json — Workspace Scripts
+
+**Current state**:
+
+- `"test": "nx run-many -t test"` — references non-standard `test` target; becomes a silent no-op
+  once `test` is removed from all project.json files
+- `"affected:test": "nx affected -t test"` — same issue
+
+**Required state**:
+
+- `"test": "nx run-many -t test:quick"` — matches canonical target name
+- `"affected:test": "nx affected -t test:quick"` — matches canonical target name
+
+---
+
 ### ayokoding-cli — Go CLI
 
 **Current state**: `build`, `test:quick`, `run`, `install`
