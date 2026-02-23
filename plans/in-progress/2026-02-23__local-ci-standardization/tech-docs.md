@@ -65,7 +65,7 @@ Target `targetDefaults`:
 
 Remove `tasksRunnerOptions` entirely:
 
-```json
+```jsonc
 // DELETE this entire block from nx.json:
 "tasksRunnerOptions": {
   "default": {
@@ -287,7 +287,12 @@ Full updated file:
 
 **Add `test:quick`, add `lint`, fix `clean`:**
 
-Full updated file:
+> **Note for executor**: This full file shows the final state after all phases are applied.
+> Apply changes incrementally per phase: `test:quick` and `clean` fix in Phase 2,
+> `lint` in Phase 3. Do NOT apply the full file in Phase 2 — that would include the
+> Phase 3 `lint` change ahead of schedule.
+
+Full updated file (reference — final state after all phases):
 
 ```json
 {
@@ -346,7 +351,7 @@ Full updated file:
 
 **devDependencies to add** (`apps/organiclever-web/package.json`):
 
-```
+```text
 vitest @vitejs/plugin-react jsdom @testing-library/react vite-tsconfig-paths
 ```
 
@@ -375,6 +380,7 @@ export default defineWorkspace([
     test: {
       name: "integration",
       include: ["**/*.integration.{test,spec}.{ts,tsx}"],
+      exclude: ["node_modules"],
       environment: "jsdom",
       passWithNoTests: true,
     },
@@ -487,7 +493,7 @@ Full updated file:
     "start": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "java -jar target/organiclever-be-1.0.0.jar",
+        "command": "sh -c 'java -jar target/organiclever-be-*.jar'",
         "cwd": "apps/organiclever-be"
       }
     },
@@ -522,8 +528,9 @@ Full updated file:
 - `test:quick` and `test:unit` run the same `mvn test` command. This is acceptable: no
   unit/integration test separation exists yet. When Maven Failsafe is configured to separate unit
   (`Surefire`) and integration tests (`Failsafe`), update `test:quick` to run only Surefire tests.
-- The JAR filename `organiclever-be-1.0.0.jar` is derived from `pom.xml`
-  (`artifactId=organiclever-be`, `version=1.0.0`). Verify if the version changes before committing.
+- The `start` target uses a glob pattern (`target/organiclever-be-*.jar`) rather than a hardcoded
+  filename. This avoids silent breakage if `version` in `pom.xml` ever changes. Wrap in
+  `sh -c '...'` because glob expansion requires a shell.
 
 ---
 
@@ -818,8 +825,9 @@ the current directory) and requires no devDependency installation.
   lint across all TypeScript projects
 - **Playwright E2E projects**: replaces `tsc --noEmit` used as a lint proxy; `test:quick` for
   E2E projects mirrors `lint` (both oxlint) since no unit tests exist
-- **`organiclever-web`**: `tsc --noEmit` remains in `typecheck`; `test:quick` now runs
-  `vitest run --project unit` (see vitest section below)
+- **All TypeScript projects**: `tsc --noEmit` or equivalent remains in `typecheck`; `test:quick`
+  runs unit tests (not `typecheck` or `lint`); static analysis runs via `typecheck` and `lint`
+  as separate gates
 
 `npx oxlint@latest` always resolves the latest published version. Pin `npx oxlint@x.y.z` in
 `test:quick` only if version stability is required in CI (not needed for local pre-push).
@@ -897,6 +905,7 @@ Target:
 
 ```sh
 #!/usr/bin/env sh
+set -e
 
 # Run affected quality gates: type checking, linting, and fast tests
 npx nx affected -t typecheck

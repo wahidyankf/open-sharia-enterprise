@@ -1,4 +1,4 @@
-# Nx Targets Standardization
+# Local CI Standardization: Nx Targets
 
 **Status**: In Progress
 **Date**: 2026-02-23
@@ -12,7 +12,7 @@ convention. The convention defines canonical target names, mandatory targets per
 caching rules. All project.json files were written before the standard was finalized — they use
 non-standard names and are missing required targets.
 
-**Scope**: `nx.json` + `package.json` (workspace root) + 10 `project.json` files in `apps/`
+**Scope**: `nx.json` + `package.json` (workspace root) + 10 `project.json` files in `apps/` + `.husky/pre-push` + `apps/organiclever-web/package.json` + `apps/organiclever-web/vitest.workspace.ts` (new file)
 
 **No documentation changes needed**: READMEs were already updated by `repo-governance-maker` in a
 prior session to reference canonical target names. Only `project.json`, `nx.json`, and
@@ -52,9 +52,42 @@ prior session to reference canonical target names. Only `project.json`, `nx.json
 All three Playwright E2E projects use **`e2e`** instead of **`test:e2e`** — their existing tests
 cannot be invoked via the workspace-level `nx affected -t test:e2e` cron pattern.
 
+## Git Workflow
+
+This plan uses **Trunk Based Development** — all changes commit directly to `main`.
+
+Commit after each phase using [Conventional Commits](../../../governance/development/workflow/commit-messages.md)
+format. Suggested messages per phase:
+
+- Phase 1: `chore(infra): update nx.json targetDefaults and package.json test scripts`
+- Phase 2: `chore(infra): add test:quick and vitest to oseplatform-web and organiclever-web`
+- Phase 3: `chore(infra): add lint target to Hugo sites and Go CLIs`
+- Phase 4: `chore(infra): standardize Spring Boot nx targets`
+- Phase 5: `chore(infra): standardize Flutter nx targets`
+- Phase 6: `chore(infra): standardize Playwright E2E nx targets`
+- Phase 7: `chore(infra): update pre-push hook with typecheck and lint gates`
+
+Small, focused commits make it easy to revert individual phases if issues arise.
+
+## Prerequisites
+
+Before executing Phase 3 (Go CLI lint), ensure the following tools are installed:
+
+- **golangci-lint**: `curl -sSfL https://golangci-lint.run/install.sh | sh -s -- -b $(go env GOPATH)/bin`
+  (or `brew install golangci-lint`)
+- **Flutter SDK**: required for Phase 5 Flutter standardization
+- **Java 25** and **Maven**: required for Phase 4 Spring Boot standardization
+- **Go 1.21+**: required for Phase 3 Go CLI lint verification
+- **Node.js 24.11.1**: pinned by Volta; required for Phase 2 and Phase 6 vitest and oxlint targets
+
+All tools except `golangci-lint` are required by the existing codebase and should already be present.
+
 ## Non-Goals
 
 - Changing test frameworks or build tools
 - Adding test coverage where none exists today
 - Changing the logic of any existing command (only renaming and adding targets)
 - Updating README or documentation files (already done)
+- Removing ESLint devDependencies from `organiclever-web` (`eslint`, `eslint-config-next`) after
+  replacing `next lint` with oxlint — ESLint cleanup is a separate concern and should not block
+  CI standardization
