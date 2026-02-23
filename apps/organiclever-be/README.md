@@ -79,7 +79,7 @@ Run directly on host machine (0.5-1 second restarts):
 
 ```bash
 # From repository root
-nx serve organiclever-be
+nx dev organiclever-be
 
 # Or from app directory
 cd apps/organiclever-be
@@ -168,15 +168,20 @@ docker-compose -f docker-compose.yml up
 # Build JAR
 nx build organiclever-be
 
-# Run tests
-nx test organiclever-be
+# Run fast quality gate (pre-push standard)
+nx run organiclever-be:test:quick
+
+# Run unit tests
+nx run organiclever-be:test:unit
 
 # Start dev server (local Maven)
-nx serve organiclever-be
+nx dev organiclever-be
 
 # Lint code
 nx lint organiclever-be
 ```
+
+**See**: [Nx Target Standards](../../governance/development/infra/nx-targets.md) for canonical target names. Use `dev` (not `serve`) for the development server.
 
 ## Available Endpoints
 
@@ -305,10 +310,13 @@ docker-compose up
 ### 2. Running Tests
 
 ```bash
-# From repository root
-nx test organiclever-be
+# From repository root (fast quality gate)
+nx run organiclever-be:test:quick
 
-# Or from app directory
+# Run unit tests
+nx run organiclever-be:test:unit
+
+# Or from app directory (Maven directly)
 cd apps/organiclever-be
 mvn test
 ```
@@ -404,7 +412,7 @@ for this API. Run them after starting the backend:
 
 ```bash
 # Start backend (any method above), then:
-nx e2e organiclever-be-e2e
+nx run organiclever-be-e2e:test:e2e
 ```
 
 Tests cover:
@@ -418,7 +426,7 @@ Playwright tests for the Flutter web UI — it also requires this backend to be 
 ```bash
 # Start backend (any method above), then start Flutter web app and run browser tests:
 nx dev organiclever-app
-nx e2e organiclever-app-web-e2e
+nx run organiclever-app-web-e2e:test:e2e
 ```
 
 ## Next Steps

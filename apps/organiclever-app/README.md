@@ -60,11 +60,11 @@ nx install organiclever-app
 # Run development server (web on port 3100)
 nx dev organiclever-app
 
-# Run tests
-nx test organiclever-app
+# Run fast quality gate (pre-push standard)
+nx run organiclever-app:test:quick
 
-# Quick test (for pre-push hook)
-nx test:quick organiclever-app
+# Run unit tests
+nx run organiclever-app:test:unit
 
 # Lint code
 nx lint organiclever-app
@@ -154,7 +154,11 @@ Three-tier testing strategy:
 **Run tests**:
 
 ```bash
-nx test organiclever-app
+# Fast quality gate (pre-push standard)
+nx run organiclever-app:test:quick
+
+# Isolated unit tests
+nx run organiclever-app:test:unit
 ```
 
 ## Nx Integration
@@ -215,7 +219,7 @@ npm run organiclever:dev
 nx dev organiclever-app
 
 # Run browser E2E tests
-nx e2e organiclever-app-web-e2e
+nx run organiclever-app-web-e2e:test:e2e
 ```
 
 Tests cover:

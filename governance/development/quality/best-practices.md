@@ -162,31 +162,34 @@ rm old-doc-1.md old-doc-2.md old-doc-3.md
 - Enables future reference
 - Respects Documentation First principle
 
-### Practice 5: Run Affected Tests Only in Pre-Push
+### Practice 5: Run Affected Tests Only in Pre-Push Using Canonical Target Names
 
-**Principle**: Use Nx affected tests for fast feedback.
+**Principle**: Use `test:quick` via Nx affected detection for fast, consistent feedback.
 
 **Good Example:**
 
 ```bash
 # .husky/pre-push
-nx affected:test --base=origin/main
-# Only tests affected by changes
+nx affected -t test:quick
+# Only affected projects, using the canonical fast quality gate target
 ```
 
 **Bad Example:**
 
 ```bash
 # .husky/pre-push
-nx test  # Runs ALL tests (slow!)
+nx test  # Non-standard target name; runs ALL tests (slow!)
 ```
 
 **Rationale:**
 
-- Fast feedback (seconds vs minutes)
-- Runs only relevant tests
+- Fast feedback (seconds to a few minutes)
+- `test:quick` is the canonical pre-push gate — every project must expose it
+- Using `nx affected -t` ensures consistent behaviour across all project types
 - Reduces friction for developers
 - Maintains quality gate
+
+**See**: [Nx Target Standards](../infra/nx-targets.md) for `test:quick` composition rules per project type.
 
 ### Practice 6: Use Standardized Validation Patterns
 
@@ -324,17 +327,17 @@ Check alt text.
 
 ### Practice 10: Fail Build on Quality Violations in CI
 
-**Principle**: Pre-push hooks block local push, CI blocks merge.
+**Principle**: Pre-push hooks block local push, CI blocks merge. Use canonical target names for consistency.
 
 **Good Example:**
 
 ```yaml
 # .github/workflows/ci.yml
 - name: Lint
-  run: npm run lint -- --max-warnings=0
+  run: nx affected -t lint
 
-- name: Test
-  run: nx affected:test --base=origin/main
+- name: Quick Tests (required status check before PR merge)
+  run: nx affected -t test:quick
 ```
 
 **Bad Example:**
@@ -347,10 +350,13 @@ Check alt text.
 
 **Rationale:**
 
-- Quality gate enforcement
+- Quality gate enforcement using canonical `test:quick` target
+- `test:quick` is the required GitHub Actions status check before PR merge
 - No bad code in main branch
 - Team accountability
 - Maintains codebase health
+
+**See**: [Nx Target Standards](../infra/nx-targets.md) for the full execution model and CI integration rules.
 
 ## Related Documentation
 
@@ -358,6 +364,7 @@ Check alt text.
 - [Criticality Levels Convention](./criticality-levels.md) - Issue categorization
 - [Fixer Confidence Levels Convention](./fixer-confidence-levels.md) - Confidence assessment
 - [Repository Validation Methodology](./repository-validation.md) - Validation patterns
+- [Nx Target Standards](../infra/nx-targets.md) - Canonical target names and CI execution model
 - [Anti-Patterns](./anti-patterns.md) - Common mistakes to avoid
 
 ## Summary

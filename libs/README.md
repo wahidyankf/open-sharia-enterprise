@@ -162,12 +162,20 @@ Use Nx commands to work with libraries:
 # Build a library
 nx build ts-library-name
 
-# Test a library
-nx test ts-library-name
+# Run fast quality gate (pre-push standard)
+nx run ts-library-name:test:quick
+
+# Run isolated unit tests
+nx run ts-library-name:test:unit
+
+# Lint a library
+nx lint ts-library-name
 
 # Build all libraries
 nx run-many -t build
 ```
+
+**See**: [Nx Target Standards](../governance/development/infra/nx-targets.md) for canonical target names and mandatory targets per project type.
 
 ## Future Language Support
 

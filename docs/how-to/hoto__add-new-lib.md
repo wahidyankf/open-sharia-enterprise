@@ -224,13 +224,13 @@ const result = functionName("example");
 
 nx build ts-[name]
 
-# Run tests
+# Run fast quality gate (pre-push standard)
 
-nx test ts-[name]
+nx run ts-[name]:test:quick
 
-# Watch mode (for development)
+# Run isolated unit tests
 
-nx test ts-[name] --watch
+nx run ts-[name]:test:unit
 \`\`\`
 
 ## Dependencies
@@ -260,8 +260,11 @@ npm install
 # Build library
 nx build ts-[name]
 
-# Run tests
-nx test ts-[name]
+# Run fast quality gate (pre-push standard)
+nx run ts-[name]:test:quick
+
+# Run isolated unit tests
+nx run ts-[name]:test:unit
 
 # View dependency graph
 nx graph
@@ -293,7 +296,8 @@ export default function Component() {
 - [ ] `package.json` created with library metadata
 - [ ] `README.md` created with API documentation
 - [ ] `nx build ts-[name]` builds successfully
-- [ ] `nx test ts-[name]` runs tests successfully
+- [ ] `nx run ts-[name]:test:quick` passes (fast quality gate)
+- [ ] `nx run ts-[name]:test:unit` runs tests successfully
 - [ ] Build creates `dist/` directory with compiled JS
 - [ ] Library can be imported using `@open-sharia-enterprise/ts-[name]`
 

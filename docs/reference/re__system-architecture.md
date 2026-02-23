@@ -873,7 +873,7 @@ graph TB
 
 **Build Optimization:**
 
-- **Affected Builds**: `nx affected:build` only builds changed projects
+- **Affected Builds**: `nx affected -t build` only builds changed projects
 - **Dependency Graph**: Automatically builds dependencies first
 - **Parallel Execution**: Runs independent tasks concurrently
 

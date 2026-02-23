@@ -75,17 +75,23 @@ npm install
 
 # Build/test/lint all projects
 npm run build
-npm run test
 npm run lint
 
 # Specific project operations
 nx build [project-name]
-nx test [project-name]
+nx run [project-name]:test:quick
+nx lint [project-name]
 nx dev [project-name]
 
-# Affected projects only
-nx affected:build
-nx affected:test
+# Affected projects only (canonical target names)
+nx affected -t build
+nx affected -t test:quick
+nx affected -t lint
+
+# Deeper test targets (run on-demand or via CI)
+nx run [project-name]:test:unit
+nx run [project-name]:test:integration
+nx run [project-name]:test:e2e
 
 # Dependency graph
 nx graph
@@ -99,6 +105,8 @@ npm run format:md:check  # Check markdown formatting
 # Verify local development environment
 npm run doctor           # Check all required tools (volta, node, npm, java, maven, golang)
 ```
+
+**See**: [governance/development/infra/nx-targets.md](./governance/development/infra/nx-targets.md) for canonical target names, mandatory targets per project type, and caching rules.
 
 ## Markdown Quality
 
@@ -133,13 +141,14 @@ This project uses **Nx** to manage applications and libraries:
 **Nx Commands**:
 
 ```bash
-nx dev [app-name]       # Start development server
-nx build [app-name]     # Build specific project
-nx affected:build       # Build only affected projects
-nx graph                # Visualize dependencies
+nx dev [app-name]            # Start development server
+nx build [app-name]          # Build specific project
+nx affected -t build         # Build only affected projects
+nx affected -t test:quick    # Run pre-push quality gate for affected projects
+nx graph                     # Visualize dependencies
 ```
 
-**See**: [docs/reference/re\_\_monorepo-structure.md](./docs/reference/re__monorepo-structure.md), [docs/how-to/hoto\_\_add-new-app.md](./docs/how-to/hoto__add-new-app.md)
+**See**: [docs/reference/re\_\_monorepo-structure.md](./docs/reference/re__monorepo-structure.md), [docs/how-to/hoto\_\_add-new-app.md](./docs/how-to/hoto__add-new-app.md), [governance/development/infra/nx-targets.md](./governance/development/infra/nx-targets.md)
 
 ## Git Workflow
 
@@ -422,9 +431,10 @@ nx run-pre-commit ayokoding-web  # Update titles + navigation
 **Commands**:
 
 ```bash
-nx dev organiclever-web     # Development server (localhost:3000)
-nx build organiclever-web   # Production build
-nx e2e organiclever-web-e2e # Run E2E tests
+nx dev organiclever-web                    # Development server (localhost:3000)
+nx build organiclever-web                  # Production build
+nx run organiclever-web-e2e:test:e2e       # Run E2E tests headlessly
+nx run organiclever-web-e2e:test:e2e:ui   # Run E2E tests with Playwright UI
 ```
 
 **See**: [apps/organiclever-web/README.md](./apps/organiclever-web/README.md), [.claude/skills/apps-organiclever-web-developing-content/SKILL.md](./.claude/skills/apps-organiclever-web-developing-content/SKILL.md)

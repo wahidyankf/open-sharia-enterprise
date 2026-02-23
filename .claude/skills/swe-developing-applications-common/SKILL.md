@@ -63,26 +63,30 @@ This platform uses **Nx** for monorepo management with clear separation of conce
 
 ### Common Nx Commands
 
+All target names follow [Nx Target Standards](../../governance/development/infra/nx-targets.md). Use canonical names: `dev` (not `serve`), `test:quick` (not `test`), `start` (not `serve` for production).
+
 **Development**:
 
 ```bash
-nx dev [project-name]       # Start development server
-nx serve [project-name]     # Alternative to dev
+nx dev [project-name]       # Start development server (use 'dev', not 'serve')
+nx start [project-name]     # Start production server (use 'start', not 'serve')
 ```
 
 **Building**:
 
 ```bash
 nx build [project-name]     # Build specific project
-nx affected:build          # Build only affected projects
+nx affected -t build        # Build only affected projects
 ```
 
 **Testing**:
 
 ```bash
-nx test [project-name]      # Test specific project
-nx affected:test           # Test only affected projects
-nx test:quick              # Quick test suite (pre-push)
+nx run [project-name]:test:quick        # Fast pre-push quality gate (mandatory for all projects)
+nx run [project-name]:test:unit         # Isolated unit tests
+nx run [project-name]:test:integration  # Tests requiring external services
+nx run [project-name]:test:e2e          # End-to-end tests (run via scheduled cron, not pre-push)
+nx affected -t test:quick               # Run quality gate for affected projects
 ```
 
 **Analysis**:
@@ -213,8 +217,7 @@ When code files are modified, **Husky + lint-staged** automatically run:
 1. **Format with Prettier**: Automatically formats staged files
 2. **Lint markdown**: Validates markdown files with markdownlint
 3. **Validate links**: Checks markdown links aren't broken
-4. **Run affected tests**: Executes `test:quick` for changed projects
-5. **Auto-stage changes**: Automatically stages formatting fixes
+4. **Auto-stage changes**: Automatically stages formatting fixes
 
 **Commit-msg Hook**:
 
@@ -223,8 +226,10 @@ When code files are modified, **Husky + lint-staged** automatically run:
 
 **Pre-push Hook**:
 
-- **Run affected tests**: Executes full test suite for affected projects
+- **Run `test:quick` for affected projects**: Executes the fast quality gate (`nx affected -t test:quick`) — this is the canonical pre-push check. Every project must expose a `test:quick` target.
 - **Markdown linting**: Final markdown quality check
+
+> **Note**: `test:e2e` does NOT run in the pre-push hook. It runs on a scheduled GitHub Actions cron job (4 times per day) targeting each `*-e2e` project. See [Nx Target Standards](../../governance/development/infra/nx-targets.md) for the full execution model.
 
 ### Trust the Automation
 
@@ -330,6 +335,7 @@ docs/explanation/software-engineering/programming-languages/[language]/README.md
 **Architecture Conventions**:
 
 - [Monorepo Structure Reference](../../docs/reference/re__monorepo-structure.md) - Nx workspace organization
+- [Nx Target Standards](../../governance/development/infra/nx-targets.md) - Canonical target names, mandatory targets per project type, caching rules
 - [Functional Programming](../../governance/development/pattern/functional-programming.md) - FP principles across languages
 
 ## Related Skills

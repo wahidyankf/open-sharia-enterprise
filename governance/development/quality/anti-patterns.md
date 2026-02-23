@@ -162,13 +162,13 @@ rm deprecated-guide.md
 
 ### Anti-Pattern 5: Running All Tests in Pre-Push
 
-**Problem**: Pre-push hook runs entire test suite (slow).
+**Problem**: Pre-push hook runs the entire test suite or uses non-standard target names (slow, and breaks workspace-level automation).
 
 **Bad Example:**
 
 ```bash
 # .husky/pre-push
-nx test  # Runs ALL tests (5+ minutes!)
+nx test  # Runs ALL tests (5+ minutes!) with non-standard target name
 # Developers skip hook due to slowness
 ```
 
@@ -176,16 +176,19 @@ nx test  # Runs ALL tests (5+ minutes!)
 
 ```bash
 # .husky/pre-push
-nx affected:test --base=origin/main
-# Only affected tests (30 seconds)
+nx affected -t test:quick
+# Only affected projects, fast quality gate target (seconds to a few minutes)
 ```
 
 **Rationale:**
 
 - Fast feedback encourages usage
-- Runs only relevant tests
+- Runs only relevant projects (Nx affected detection)
+- `test:quick` is the canonical pre-push gate — every project must expose it
 - Prevents hook bypass
 - Maintains quality gate
+
+**See**: [Nx Target Standards](../infra/nx-targets.md) for `test:quick` composition rules per project type.
 
 ### Anti-Pattern 6: Ad-Hoc Validation Logic
 
@@ -258,7 +261,7 @@ fix_p2_normal()        # MEDIUM + HIGH confidence
 
 ### Anti-Pattern 8: No Quality Gates in CI
 
-**Problem**: CI passes even with quality violations.
+**Problem**: CI passes even with quality violations, or uses non-standard target names that bypass workspace-level automation.
 
 **Bad Example:**
 
@@ -276,18 +279,21 @@ fix_p2_normal()        # MEDIUM + HIGH confidence
 ```yaml
 # .github/workflows/ci.yml
 - name: Lint
-  run: npm run lint -- --max-warnings=0
+  run: nx affected -t lint
 
-- name: Test
-  run: nx affected:test --base=origin/main
+- name: Quick Tests (required status check before PR merge)
+  run: nx affected -t test:quick
 ```
 
 **Rationale:**
 
 - Quality gate enforcement
+- `test:quick` is the required GitHub Actions status check before PR merge
 - Prevents bad code merging
 - Team accountability
 - Maintains codebase health
+
+**See**: [Nx Target Standards](../infra/nx-targets.md) for the full execution model and CI integration rules.
 
 ### Anti-Pattern 9: Undocumented Validation Rules
 
@@ -376,6 +382,7 @@ git add .           # Stages unintended changes!
 - [Criticality Levels Convention](./criticality-levels.md) - Issue categorization
 - [Fixer Confidence Levels Convention](./fixer-confidence-levels.md) - Confidence assessment
 - [Repository Validation Methodology](./repository-validation.md) - Validation patterns
+- [Nx Target Standards](../infra/nx-targets.md) - Canonical target names and CI execution model
 - [Best Practices](./best-practices.md) - Recommended patterns
 
 ## Conclusion

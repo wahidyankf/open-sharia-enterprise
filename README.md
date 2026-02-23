@@ -126,10 +126,11 @@ This project uses **Nx** to manage applications and libraries:
 **Quick Commands**:
 
 ```bash
-nx dev [app-name]       # Start development server
-nx build [app-name]     # Build specific project
-nx affected:build       # Build only affected projects
-nx graph                # Visualize dependencies
+nx dev [app-name]            # Start development server
+nx build [app-name]          # Build specific project
+nx affected -t build         # Build only affected projects
+nx affected -t test:quick    # Run fast quality gate for affected projects
+nx graph                     # Visualize dependencies
 ```
 
 **Learn More**:

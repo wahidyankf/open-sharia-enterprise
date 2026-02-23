@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run BDD scenarios
-        run: nx affected:test --configuration=bdd
+        run: nx affected -t test:integration # BDD/integration tests use test:integration target
 
       - name: Generate Cucumber report
         run: npm run cucumber:report

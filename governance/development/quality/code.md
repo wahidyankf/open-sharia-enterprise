@@ -433,6 +433,7 @@ git commit -m "fix: correct validation logic"
 
 - [Commit Message Convention](../workflow/commit-messages.md) - Detailed commit message rules
 - [Trunk Based Development](../workflow/trunk-based-development.md) - Git workflow and branching strategy
+- [Nx Target Standards](../infra/nx-targets.md) - Canonical target names, `test:quick` composition rules, and caching configuration that the pre-push hook depends on
 
 ## References
 
