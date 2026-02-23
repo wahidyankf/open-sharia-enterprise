@@ -1,0 +1,302 @@
+# Requirements
+
+## Objectives
+
+1. Every app exposes the mandatory targets required by its project type (per the Nx Target Standards)
+2. Non-standard target names are replaced with canonical names
+3. `nx.json` `targetDefaults` reflects canonical targets and correct caching rules
+4. `nx affected -t test:quick` and `nx affected -t lint` cover ALL 10 apps
+5. `nx affected -t test:e2e` covers all 3 Playwright `*-e2e` projects
+6. `.husky/pre-push` runs `typecheck`, `lint`, and `test:quick` for all affected projects
+7. No existing functionality is changed — only target names and additions
+
+---
+
+## Gap Analysis by Project
+
+### nx.json — Workspace Defaults
+
+**Current state**:
+
+- `targetDefaults` contains `build`, `test` (non-standard), `lint`
+- `tasksRunnerOptions.cacheableOperations` contains `build`, `test`, `lint` — legacy, redundant
+- Missing: `typecheck`, `test:quick`, `test:unit`, `test:integration`, `test:e2e`
+
+**Required state**:
+
+- `targetDefaults` matches the standard (see tech-docs.md for full JSON)
+- `tasksRunnerOptions` block removed entirely — `cache: true/false` in `targetDefaults` is the
+  modern equivalent and makes `cacheableOperations` redundant
+- Non-standard `test` entry removed from `targetDefaults`
+
+---
+
+### ayokoding-cli — Go CLI
+
+**Current state**: `build`, `test:quick`, `run`, `install`
+
+**Missing**: `lint`
+
+**Required addition**:
+
+- `lint`: runs `go vet ./...` — Go's built-in static analysis tool
+
+---
+
+### rhino-cli — Go CLI
+
+**Current state**: `build`, `test:quick`, `run`, `install`
+
+**Missing**: `lint`
+
+**Required addition**:
+
+- `lint`: runs `CGO_ENABLED=0 go vet ./...` — same CGO flags as `test:quick` for consistency
+
+---
+
+### ayokoding-web — Hugo Site
+
+**Current state**: `dev`, `build`, `clean`, `test:quick`, `run-pre-commit`
+
+**Missing**: `lint`
+
+**Required addition**:
+
+- `lint`: runs `markdownlint-cli2 "content/**/*.md"` — markdown linting on the content directory
+  (matches the workspace-level `npm run lint:md` tool already in use)
+
+---
+
+### oseplatform-web — Hugo Site
+
+**Current state**: `dev`, `build`, `clean` (incomplete)
+
+**Missing**: `test:quick`, `lint`
+
+**Broken**: `clean` removes `public resources` but not `.hugo_build.lock`
+
+**Required additions**:
+
+- `test:quick`: runs `bash build.sh` with `outputs: ["{projectRoot}/public"]` — same as `build`
+  (Hugo sites smoke-test by building; no unit tests)
+- `lint`: runs `markdownlint-cli2 "content/**/*.md"`
+- Fix `clean`: add `.hugo_build.lock` to the removal command
+
+---
+
+### organiclever-web — Next.js App
+
+**Current state**: `dev`, `build`, `start`, `lint`
+
+**Missing**: `test:quick`, `typecheck`
+
+**Context**: No unit tests exist today. `test:quick` = typecheck only until tests are added.
+TypeScript is in devDependencies; `tsconfig.json` exists at project root.
+
+**Required additions**:
+
+- `typecheck`: runs `tsc --noEmit` from `{projectRoot}`
+- `test:quick`: runs `tsc --noEmit` from `{projectRoot}` (lint is run separately per the standard;
+  no unit tests to include yet)
+
+---
+
+### organiclever-be — Spring Boot App
+
+**Current state**: `build`, `test` (non-standard), `serve` (non-standard), `lint`
+
+**Non-standard names**:
+
+- `serve` must be renamed to `dev` — matches canonical name for dev server
+- `test` must be renamed to `test:unit` — matches canonical name for isolated unit tests
+
+**Missing**: `test:quick`, `start`, `outputs` on `build`
+
+**Build outputs**: Spring Boot outputs to `target/` per the standard. Actual JAR:
+`target/organiclever-be-1.0.0.jar` (from pom.xml: `artifactId=organiclever-be`, `version=1.0.0`).
+
+**Required changes**:
+
+- Rename `serve` → `dev` (same command: `mvn spring-boot:run -Dspring-boot.run.profiles=dev`)
+- Rename `test` → `test:unit` (same command: `mvn test`)
+- Add `test:quick`: runs `mvn test` — same as `test:unit` (no unit/integration test separation
+  exists yet; the plan notes separation as a future improvement)
+- Add `start`: runs `java -jar target/organiclever-be-1.0.0.jar` for production mode
+- Add `outputs: ["{projectRoot}/target"]` to `build`
+
+---
+
+### organiclever-app — Flutter App
+
+**Current state**: `install`, `dev`, `build:web`, `test` (non-standard), `test:quick`, `lint`
+
+**Non-standard name**:
+
+- `test` must be renamed to `test:unit` — preserves the existing command and `dependsOn: ["install"]`
+
+**Missing**: `typecheck`
+
+**Broken**: `test:quick` lacks `dependsOn: ["install"]` — Flutter tests require `flutter pub get`
+to run. The existing `test` target correctly depends on `install`, but `test:quick` does not.
+
+**Flutter typecheck note**: In Flutter/Dart, `flutter analyze` is the type analysis tool — it
+serves the role of both linter and type checker. The `typecheck` target uses the same command as
+`lint`. This is correct: the governance standard requires typecheck for Dart/Flutter, and
+`flutter analyze` is Dart's type checker even though it also catches style issues.
+
+**Required changes**:
+
+- Rename `test` → `test:unit` (same command + same `dependsOn: ["install"]`)
+- Add `typecheck`: runs `flutter analyze` (same command as `lint`, different declared intent)
+- Update `test:quick`: add `dependsOn: ["install"]`
+
+---
+
+### organiclever-web-e2e — Playwright E2E
+
+**Current state**: `install`, `e2e`, `e2e:ui`, `e2e:report`
+
+**Non-standard names** (all three must be renamed):
+
+- `e2e` → `test:e2e`
+- `e2e:ui` → `test:e2e:ui`
+- `e2e:report` → `test:e2e:report`
+
+**Missing**: `lint`, `test:quick`
+
+**Lint tool**: The project has `tsconfig.json` and `@playwright/test` as the only devDependency.
+`tsc --noEmit` provides TypeScript type checking as the lint mechanism.
+
+**Required changes**:
+
+- Rename all three `e2e*` targets to `test:e2e*`
+- Add `lint`: runs `tsc --noEmit` from `apps/organiclever-web-e2e`
+- Add `test:quick`: runs `tsc --noEmit` (per the standard: Playwright `*-e2e` test:quick = run
+  linter directly; no unit tests to add)
+
+---
+
+### organiclever-be-e2e — Playwright E2E
+
+**Same gaps as `organiclever-web-e2e`**. Identical fixes apply, with `cwd` changed to
+`apps/organiclever-be-e2e`.
+
+---
+
+### organiclever-app-web-e2e — Playwright E2E
+
+**Same gaps as `organiclever-web-e2e`**. Identical fixes apply, with `cwd` changed to
+`apps/organiclever-app-web-e2e`.
+
+---
+
+### .husky/pre-push — Pre-push Hook
+
+**Current state**: Only runs `nx affected -t test:quick`
+
+**Bug**: The governance doc diagram showed `lint` in the pre-push hook, but the actual hook script
+never ran it — lint ran but never blocked the push (the `D` node had no outgoing arrow to `E{Pass?}`
+in the original Mermaid diagram).
+
+**Required changes**:
+
+- Add `nx affected -t typecheck` before `test:quick`
+- Add `nx affected -t lint` before `test:quick`
+- Run all three sequentially: `typecheck` → `lint` → `test:quick`
+
+**Ordering rationale**: Static analysis first (typecheck, lint — fastest, no side effects), then
+`test:quick` (executes code). If typecheck or lint fail, the developer gets faster feedback
+without waiting for tests.
+
+**Nx behavior**: Projects without a `typecheck` target are silently skipped — `nx affected -t
+typecheck` only runs for projects that declare the target. Same for `lint`. This means the hook
+is safe even before all project.json files have been updated — it simply has no effect for
+projects missing the target.
+
+---
+
+## Acceptance Criteria
+
+### Scenario 1: All projects participate in pre-push quality gate
+
+```gherkin
+Given all 10 project.json files have been updated
+When I run: nx affected -t test:quick --all
+Then every project returns a result (pass or fail)
+And no project is silently skipped
+```
+
+### Scenario 2: All projects participate in workspace-wide lint
+
+```gherkin
+Given all 10 project.json files have been updated
+When I run: nx affected -t lint --all
+Then every project returns a result (pass or fail)
+And no project is silently skipped
+```
+
+### Scenario 3: E2E projects are discoverable via canonical target name
+
+```gherkin
+Given organiclever-web-e2e, organiclever-be-e2e, and organiclever-app-web-e2e are updated
+When I run: nx run organiclever-web-e2e:test:e2e
+And I run: nx run organiclever-be-e2e:test:e2e
+And I run: nx run organiclever-app-web-e2e:test:e2e
+Then each command invokes the correct playwright test runner
+And the old "e2e" target name no longer exists in any project.json
+```
+
+### Scenario 4: Non-standard target names are eliminated
+
+```gherkin
+Given all project.json files have been updated
+When I grep for "serve" as a target key in apps/organiclever-be/project.json
+Then no result is found
+When I grep for '"test"' as a top-level target key in organiclever-be and organiclever-app
+Then no result is found
+And the targets "dev", "test:unit", "test:quick" exist in their place
+```
+
+### Scenario 5: nx.json targetDefaults match the standard
+
+```gherkin
+Given nx.json has been updated
+When I inspect targetDefaults
+Then "test:quick" has cache: true
+And "test:unit" has cache: true
+And "test:integration" has cache: false
+And "test:e2e" has cache: false
+And "typecheck" has cache: true
+And "test" does not appear as a targetDefault key
+```
+
+### Scenario 6: Spring Boot build declares outputs
+
+```gherkin
+Given organiclever-be/project.json has been updated
+When I run: nx build organiclever-be
+Then Nx records "{projectRoot}/target" as the output
+And subsequent runs with no source changes get a cache hit
+```
+
+### Scenario 7: Flutter test:quick installs dependencies before running
+
+```gherkin
+Given organiclever-app/project.json has been updated
+When I run: nx run organiclever-app:test:quick
+Then the "install" target runs first (via dependsOn)
+And then "flutter test" executes
+```
+
+### Scenario 8: Pre-push hook runs all three quality gates
+
+```gherkin
+Given .husky/pre-push has been updated
+When I run: git push origin main
+Then "nx affected -t typecheck" runs first
+And "nx affected -t lint" runs second
+And "nx affected -t test:quick" runs third
+And failure of any gate blocks the push
+And projects without a "typecheck" target are silently skipped by Nx
+```
