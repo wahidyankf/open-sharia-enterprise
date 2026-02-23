@@ -73,7 +73,7 @@ flowchart TD
 
 - **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Every project declares its capabilities through explicit targets. No implicit build or test mechanisms — if a project supports unit tests, it declares `test:unit`; if it has integration tests, it declares `test:integration`; if it has a dev server, it declares `dev`. The composition of `test:quick` is explicit in each project's `project.json`.
 
-- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Targets integrate with Nx affected computation, caching, and the pre-push hook. Consistent naming allows workspace-level automation (`nx affected -t test:quick`) to work across all project types without special cases.
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Targets integrate with Nx affected computation, caching, the pre-push hook, and the PR merge gate. Consistent naming allows workspace-level automation (`nx affected -t test:quick`) to work across all project types without special cases.
 
 - **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Each project exposes only the targets it actually needs. A Go CLI does not need `dev` or `start`. The full testing spectrum is composed from `test:quick`, `test:unit`, `test:integration`, and `test:e2e` — no aggregate wrapper target needed.
 
@@ -87,22 +87,22 @@ flowchart TD
 
 Use these canonical names. Aliases (`serve`, `start:dev`, `unit-test`) are anti-patterns.
 
-| Target             | Purpose                                                     | When Required                     |
-| ------------------ | ----------------------------------------------------------- | --------------------------------- |
-| `build`            | Produce deployable or runnable artifacts                    | Compiled and bundled projects     |
-| `typecheck`        | Verify type correctness without producing artifacts         | Statically typed languages        |
-| `lint`             | Static analysis and code style checks                       | All projects                      |
-| `test:quick`       | Fast quality gate for pre-push; composed of fast checks     | All projects                      |
-| `test:unit`        | Isolated unit tests with no external dependencies           | Projects with unit tests          |
-| `test:integration` | Tests that require external services (DB, APIs, filesystem) | Projects with integration tests   |
-| `test:e2e`         | Run E2E tests headlessly against a running app              | E2E test projects (`*-e2e`)       |
-| `test:e2e:ui`      | Run E2E tests with interactive Playwright UI                | E2E test projects                 |
-| `test:e2e:report`  | Open the last E2E HTML report                               | E2E test projects                 |
-| `dev`              | Start local development server with hot-reload              | Apps with dev servers             |
-| `start`            | Start server in production mode                             | Apps with production server mode  |
-| `run`              | Execute the compiled artifact                               | CLI applications                  |
-| `install`          | Install project-local dependencies                          | E2E suites, Flutter, Go CLIs      |
-| `clean`            | Remove build artifacts and caches                           | Projects with large build outputs |
+| Target             | Purpose                                                              | When Required                     |
+| ------------------ | -------------------------------------------------------------------- | --------------------------------- |
+| `build`            | Produce deployable or runnable artifacts                             | Compiled and bundled projects     |
+| `typecheck`        | Verify type correctness without producing artifacts                  | Statically typed languages        |
+| `lint`             | Static analysis and code style checks                                | All projects                      |
+| `test:quick`       | Fast quality gate for pre-push and PR merge; composed of fast checks | All projects                      |
+| `test:unit`        | Isolated unit tests with no external dependencies                    | Projects with unit tests          |
+| `test:integration` | Tests that require external services (DB, APIs, filesystem)          | Projects with integration tests   |
+| `test:e2e`         | Run E2E tests headlessly against a running app                       | E2E test projects (`*-e2e`)       |
+| `test:e2e:ui`      | Run E2E tests with interactive Playwright UI                         | E2E test projects                 |
+| `test:e2e:report`  | Open the last E2E HTML report                                        | E2E test projects                 |
+| `dev`              | Start local development server with hot-reload                       | Apps with dev servers             |
+| `start`            | Start server in production mode                                      | Apps with production server mode  |
+| `run`              | Execute the application directly                                     | CLI applications                  |
+| `install`          | Install project-local dependencies                                   | E2E suites, Flutter, Go CLIs      |
+| `clean`            | Remove build artifacts and caches                                    | Projects with large build outputs |
 
 ### Naming Rules
 
@@ -125,14 +125,14 @@ Every project in `apps/` and `libs/` must expose:
 
 **`test:quick` composition** — each project decides which fast checks form its gate. The target runs its checks directly (calling the underlying tools, not other Nx targets) to avoid double execution when `lint` or `typecheck` are also run standalone. Common compositions:
 
-| Project type       | Typical `test:quick` composition                              |
-| ------------------ | ------------------------------------------------------------- |
-| TypeScript app     | typecheck + unit tests (lint is mandatory but run separately) |
-| Go app             | `build` (compilation is the type check; fast enough for Go)   |
-| Java/Spring Boot   | unit tests (Maven compile + Surefire unit subset)             |
-| Python app         | typecheck (mypy) + unit tests                                 |
-| Hugo site          | `build` (smoke test; interpreted, no unit tests)              |
-| Playwright `*-e2e` | nothing beyond what lint covers — delegate to `lint` only     |
+| Project type       | Typical `test:quick` composition                                              |
+| ------------------ | ----------------------------------------------------------------------------- |
+| TypeScript app     | typecheck + unit tests (lint is mandatory but run separately)                 |
+| Go app             | `go test ./...` (compiles and runs unit tests in one pass; Go is fast enough) |
+| Java/Spring Boot   | unit tests (Maven compile + Surefire unit subset)                             |
+| Python app         | typecheck (mypy) + unit tests                                                 |
+| Hugo site          | `build` (smoke test; interpreted, no unit tests)                              |
+| Playwright `*-e2e` | run the linter directly (no unit tests to add beyond linting)                 |
 
 The rule: include only checks that complete fast. If `test:unit` is slow for a project, exclude it from `test:quick` and run it separately. **The target must always exist** — even if it only runs the type checker — so the pre-push hook covers every project.
 
@@ -192,10 +192,10 @@ Spring Boot, Python apps, TypeScript apps that test against DB/APIs:
 
 Go CLIs and similar tools:
 
-| Target    | Requirement                                            |
-| --------- | ------------------------------------------------------ |
-| `run`     | Execute the application (`go run ./...` or equivalent) |
-| `install` | Sync dependencies (`go mod tidy` or equivalent)        |
+| Target    | Requirement                                              |
+| --------- | -------------------------------------------------------- |
+| `run`     | Execute the application (`go run main.go` or equivalent) |
+| `install` | Sync dependencies (`go mod tidy` or equivalent)          |
 
 ### E2E Test Projects
 
@@ -313,9 +313,9 @@ Example override for a Hugo site:
 
 ## Principles Traceability
 
-| Decision                                    | Principle                                                                                 |
-| ------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| Consistent target names across all projects | [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) |
-| `test:quick` integrated with pre-push hook  | [Automation Over Manual](../../principles/software-engineering/automation-over-manual.md) |
-| Minimum required targets per project type   | [Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)      |
-| `outputs` required for cacheable targets    | [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) |
+| Decision                                            | Principle                                                                                 |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Consistent target names across all projects         | [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) |
+| `test:quick` enforced at pre-push and PR merge gate | [Automation Over Manual](../../principles/software-engineering/automation-over-manual.md) |
+| Minimum required targets per project type           | [Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)      |
+| `outputs` required for cacheable targets            | [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) |
