@@ -126,6 +126,7 @@ Development practices in this directory fall into several categories:
 
 ### Infrastructure Documentation
 
+- [Nx Target Standards](./infra/nx-targets.md) - Standard Nx targets that apps and libs must expose, canonical target names, caching rules, and build output conventions
 - [Temporary Files Convention](./infra/temporary-files.md) - Guidelines for AI agents creating temporary uncommitted files and folders
 - [Acceptance Criteria Convention](./infra/acceptance-criteria.md) - Writing testable acceptance criteria using Gherkin format for clarity and automation. Covers Gherkin syntax and common patterns
 
