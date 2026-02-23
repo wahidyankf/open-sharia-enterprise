@@ -127,19 +127,26 @@ Every project in `apps/` and `libs/` must expose:
 | Target       | Requirement                                                                                                                                                               |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `test:quick` | Complete in a few minutes (not tens of minutes); enforced by the pre-push hook and as a required GitHub Actions status check before PR merge                              |
-| `lint`       | Exit non-zero on violations; enforced by the pre-push hook                                                                                                                |
+| `lint`       | Exit non-zero on violations; enforced by the pre-push hook; **exception: Dart/Flutter omits this target** (see note below)                                                |
 | `typecheck`  | Required for statically typed projects (TypeScript, Python/mypy, Dart/Flutter); enforced by the pre-push hook; skipped by Nx for projects that do not declare this target |
+
+**Dart/Flutter exception — `lint` intentionally omitted**: `flutter analyze` combines type
+checking and linting into a single pass. The pre-push hook runs `typecheck` → `lint`
+sequentially — declaring both with the same `flutter analyze` command would execute it twice per
+push with zero additional coverage. Flutter projects declare only `typecheck`; Nx silently skips
+them for `nx affected -t lint`.
 
 **`test:quick` composition** — each project decides which fast checks form its gate. The target runs its checks directly (calling the underlying tools, not other Nx targets) to avoid double execution when `lint` or `typecheck` are also run standalone by the pre-push hook. Common compositions:
 
-| Project type       | Typical `test:quick` composition                                              |
-| ------------------ | ----------------------------------------------------------------------------- |
-| TypeScript app     | typecheck + unit tests (lint is mandatory but run separately)                 |
-| Go app             | `go test ./...` (compiles and runs unit tests in one pass; Go is fast enough) |
-| Java/Spring Boot   | unit tests (Maven compile + Surefire unit subset)                             |
-| Python app         | typecheck (mypy) + unit tests                                                 |
-| Hugo site          | `build` (smoke test; interpreted, no unit tests)                              |
-| Playwright `*-e2e` | run the linter directly (no unit tests to add beyond linting)                 |
+| Project type       | Typical `test:quick` composition                                                |
+| ------------------ | ------------------------------------------------------------------------------- |
+| TypeScript app     | unit tests via vitest (typecheck and lint run separately in pre-push)           |
+| Go app             | `go test ./...` (compiles and runs unit tests in one pass; Go is fast enough)   |
+| Java/Spring Boot   | unit tests (Maven compile + Surefire unit subset)                               |
+| Python app         | typecheck (mypy) + unit tests                                                   |
+| Hugo site          | `build` (smoke test; interpreted, no unit tests)                                |
+| Flutter/Dart       | unit tests (`flutter test`); `flutter analyze` runs via `typecheck`, not `lint` |
+| Playwright `*-e2e` | run the linter directly (no unit tests to add beyond linting)                   |
 
 The rule: include only checks that complete fast. If `test:unit` is slow for a project, exclude it from `test:quick` and run it separately. **The target must always exist** — even if it only runs the type checker — so the pre-push hook covers every project.
 
