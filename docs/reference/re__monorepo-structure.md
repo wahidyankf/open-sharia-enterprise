@@ -196,7 +196,7 @@ The repository contains two distinct project structures with different purposes 
 - Workspace path mappings (`@open-sharia-enterprise/*`)
 - Cross-project dependencies supported
 - Unified testing and linting commands
-- Affected detection (`nx affected:build`)
+- Affected detection (`nx affected -t build`, `nx affected -t test:quick`)
 - Dependency graph visualization (`nx graph`)
 
 **When to use**:
@@ -327,17 +327,39 @@ Location: `apps/[app-name]/project.json` or `libs/[lib-name]/project.json`
       },
       "outputs": ["{projectRoot}/dist"]
     },
-    "test": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit -p libs/ts-utils/tsconfig.json",
+        "cwd": "."
+      }
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit -p libs/ts-utils/tsconfig.json && node --import tsx --test libs/ts-utils/src/**/*.test.ts",
+        "cwd": "."
+      }
+    },
+    "test:unit": {
       "executor": "nx:run-commands",
       "options": {
         "command": "node --import tsx --test libs/ts-utils/src/**/*.test.ts",
         "cwd": "."
-      },
-      "dependsOn": ["build"]
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'Linting not configured yet'",
+        "cwd": "."
+      }
     }
   }
 }
 ```
+
+**Target names follow [Nx Target Standards](../../governance/development/infra/nx-targets.md)**: Use `test:quick` for the mandatory pre-push gate, `test:unit` for isolated unit tests. Avoid generic `test` targets.
 
 **Fields**:
 
@@ -541,6 +563,7 @@ All build outputs are gitignored.
 
 ## Related Documentation
 
+- [Nx Target Standards](../../governance/development/infra/nx-targets.md) - Canonical target names, mandatory targets per project type, caching rules, and build output conventions
 - [How to Add New App](../how-to/hoto__add-new-app.md)
 - [How to Add New Library](../how-to/hoto__add-new-lib.md)
 - [How to Run Nx Commands](../how-to/hoto__run-nx-commands.md)

@@ -22,7 +22,7 @@ cd infra/dev/organiclever && docker compose up -d
 **Alternative — local Maven** (requires Maven installed):
 
 ```bash
-nx serve organiclever-be
+nx dev organiclever-be
 ```
 
 See [organiclever-be README](../organiclever-be/README.md) for full startup options.
@@ -39,15 +39,17 @@ cd apps/organiclever-be-e2e && npx playwright install --with-deps && cd ../..
 ## Running Tests
 
 ```bash
-# Run all E2E tests
-nx e2e organiclever-be-e2e
+# Run all E2E tests headlessly
+nx run organiclever-be-e2e:test:e2e
 
-# Run with interactive UI
-nx e2e:ui organiclever-be-e2e
+# Run with interactive Playwright UI
+nx run organiclever-be-e2e:test:e2e:ui
 
 # View HTML report from last run
-nx e2e:report organiclever-be-e2e
+nx run organiclever-be-e2e:test:e2e:report
 ```
+
+**See**: [Nx Target Standards](../../governance/development/infra/nx-targets.md) for canonical E2E target names. `test:e2e` runs on a scheduled cron (4x/day via GitHub Actions), not on pre-push.
 
 ## Environment Variables
 
@@ -59,7 +61,7 @@ nx e2e:report organiclever-be-e2e
 Override the base URL to test against a different environment:
 
 ```bash
-BASE_URL=http://staging.example.com nx e2e organiclever-be-e2e
+BASE_URL=http://staging.example.com nx run organiclever-be-e2e:test:e2e
 ```
 
 ## Project Structure

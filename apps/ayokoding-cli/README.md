@@ -343,8 +343,8 @@ The CLI is integrated into the Nx workspace:
 # Build via Nx
 nx build ayokoding-cli
 
-# Run unit tests via Nx
-nx test:quick ayokoding-cli
+# Run fast quality gate via Nx
+nx run ayokoding-cli:test:quick
 
 # Run via Nx
 nx run ayokoding-cli
@@ -367,6 +367,6 @@ Navigation regeneration performance comparison:
 
 ## References
 
-- [ayokoding-web-navigation-maker Agent](../../.claude/agents/ayokoding-web-navigation-maker.md)
+- [ayokoding-web-navigation-maker Agent](../../.claude/agents/apps-ayokoding-web-navigation-maker.md)
 - [Hugo Content Convention - ayokoding-web](../../governance/conventions/hugo/ayokoding.md)
 - [AI Agents Convention](../../governance/development/agents/ai-agents.md)

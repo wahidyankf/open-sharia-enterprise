@@ -254,7 +254,7 @@ For even faster development (0.5-1 second restarts), run directly on host:
 
 ```bash
 # From repository root
-nx serve organiclever-be
+nx dev organiclever-be
 
 # Or from app directory
 cd apps/organiclever-be
@@ -365,7 +365,7 @@ docker compose up
 1. **Local Maven** (fastest, requires local Java 25):
 
 ```bash
-nx serve organiclever-be
+nx dev organiclever-be
 # or
 cd apps/organiclever-be && mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
@@ -548,13 +548,13 @@ Once the backend is running via Docker Compose, run the API-level Playwright tes
 
 ```bash
 # From repository root
-nx e2e organiclever-be-e2e
+nx run organiclever-be-e2e:test:e2e
 ```
 
 Tests target `http://localhost:8100` by default. Override with `BASE_URL` for other environments:
 
 ```bash
-BASE_URL=http://staging.example.com nx e2e organiclever-be-e2e
+BASE_URL=http://staging.example.com nx run organiclever-be-e2e:test:e2e  # test against custom env
 ```
 
 See [`apps/organiclever-be-e2e/`](../../../apps/organiclever-be-e2e/README.md) for full documentation.
@@ -572,7 +572,7 @@ npm run organiclever:dev
 nx dev organiclever-app
 
 # Terminal 3 — browser E2E tests
-nx e2e organiclever-app-web-e2e
+nx run organiclever-app-web-e2e:test:e2e
 ```
 
 See [`apps/organiclever-app-web-e2e/`](../../../apps/organiclever-app-web-e2e/README.md) for full documentation.

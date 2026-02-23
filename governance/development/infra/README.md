@@ -14,6 +14,7 @@ These standards define **HOW to manage development infrastructure**, including w
 - Build artifact management
 - Acceptance criteria standards
 - Development infrastructure patterns
+- Nx target naming standards and caching rules
 
 **❌ Does NOT Belong:**
 
@@ -38,9 +39,11 @@ These standards define **HOW to manage development infrastructure**, including w
 
 This set of development practices implements/respects the following core principles:
 
-- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Temporary Files Convention defines explicit locations for agent-generated files, making it clear where temporary artifacts should be stored.
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Temporary Files Convention defines explicit locations for agent-generated files, making it clear where temporary artifacts should be stored. Nx Target Standards require every project to declare its capabilities through explicit, consistently named targets.
 
-- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Gherkin acceptance criteria enable automated testing and validation, ensuring requirements are met through executable specifications.
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Gherkin acceptance criteria enable automated testing and validation, ensuring requirements are met through executable specifications. Consistent target naming (e.g., `test:quick`) enables workspace-level automation across all project types without special cases.
+
+- **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Nx Target Standards define a minimal required target set per project type — each project exposes only the targets it needs, no more.
 
 ## Conventions Implemented/Respected
 
@@ -48,8 +51,8 @@ This set of development practices respects the following conventions:
 
 - **[Plans Organization Convention](../../conventions/structure/plans.md)**: Acceptance criteria format aligns with Gherkin standard used for project planning and requirement specification.
 
-- **[File Naming Convention](../../conventions/structure/file-naming.md)**: Temporary files follow naming patterns with UUID chains and timestamps for traceability and collision prevention.
+- **[File Naming Convention](../../conventions/structure/file-naming.md)**: Temporary files follow naming patterns with UUID chains and timestamps for traceability and collision prevention. Nx target names follow the kebab-case + colon-variant pattern defined in the Nx Target Standards.
 
 ---
 
-**Last Updated**: 2026-01-01
+**Last Updated**: 2026-02-23

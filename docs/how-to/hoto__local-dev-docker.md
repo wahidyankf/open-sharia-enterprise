@@ -115,7 +115,7 @@ curl http://localhost:8100/actuator/health
 With the backend running, execute the API-level Playwright E2E suite from the repository root:
 
 ```bash
-nx e2e organiclever-be-e2e
+nx run organiclever-be-e2e:test:e2e
 ```
 
 See [`apps/organiclever-be-e2e/`](../../apps/organiclever-be-e2e/README.md) for setup and options.
@@ -124,7 +124,7 @@ For browser-based E2E tests against the Flutter web app, also start `organicleve
 
 ```bash
 nx dev organiclever-app   # separate terminal — starts Flutter web on port 3100
-nx e2e organiclever-app-web-e2e
+nx run organiclever-app-web-e2e:test:e2e
 ```
 
 See [`apps/organiclever-app-web-e2e/`](../../apps/organiclever-app-web-e2e/README.md) for setup and options.
@@ -150,8 +150,8 @@ docker-compose down -v
 **Related Apps (run separately)**:
 
 - `organiclever-app` - Flutter web client (port 3100) — `nx dev organiclever-app`
-- `organiclever-be-e2e` - Playwright API E2E tests — `nx e2e organiclever-be-e2e`
-- `organiclever-app-web-e2e` - Playwright browser E2E tests — `nx e2e organiclever-app-web-e2e`
+- `organiclever-be-e2e` - Playwright API E2E tests — `nx run organiclever-be-e2e:test:e2e`
+- `organiclever-app-web-e2e` - Playwright browser E2E tests — `nx run organiclever-app-web-e2e:test:e2e`
 
 **Quick Start**:
 

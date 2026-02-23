@@ -17,14 +17,19 @@ This guide covers common Nx workflows and commands for working with the monorepo
 
 ## Basic Project Commands
 
+> **Standard target names**: All target names follow [Nx Target Standards](../../governance/development/infra/nx-targets.md). Use `test:quick` for the pre-push gate, `test:unit` for isolated unit tests, `dev` for development servers, `start` for production server mode. Avoid `nx test`, `nx serve`, and other non-standard names.
+
 ### Run a Single Project
 
 ```bash
 # Build a specific project
 nx build [project-name]
 
-# Test a specific project
-nx test [project-name]
+# Run the fast pre-push quality gate
+nx run [project-name]:test:quick
+
+# Run isolated unit tests
+nx run [project-name]:test:unit
 
 # Lint a specific project
 nx lint [project-name]
@@ -32,15 +37,16 @@ nx lint [project-name]
 # Start development server for an app
 nx dev [app-name]
 
-# Serve production build
-nx serve [app-name]
+# Start production server for an app
+nx start [app-name]
 ```
 
 **Examples**:
 
 ```bash
-nx build ts-utils           # Build library
-nx test ts-utils            # Test library
+nx build ts-utils                    # Build library
+nx run ts-utils:test:quick           # Fast quality gate (pre-push)
+nx run ts-utils:test:unit            # Isolated unit tests
 nx dev customer-portal               # Start Next.js dev server
 nx build customer-portal             # Build Next.js app
 ```
@@ -51,21 +57,20 @@ nx build customer-portal             # Build Next.js app
 # Build all projects
 nx run-many -t build
 
-# Test all projects
-nx run-many -t test
+# Run fast quality gate across all projects
+nx run-many -t test:quick
 
 # Lint all projects
 nx run-many -t lint
 
 # Run multiple targets
-nx run-many -t build test lint
+nx run-many -t build lint
 ```
 
 **Using npm scripts**:
 
 ```bash
 npm run build    # Same as: nx run-many -t build
-npm test         # Same as: nx run-many -t test
 npm run lint     # Same as: nx run-many -t lint
 ```
 
@@ -75,8 +80,8 @@ npm run lint     # Same as: nx run-many -t lint
 # Build specific projects
 nx run-many -t build -p ts-utils ts-components
 
-# Test specific projects
-nx run-many -t test -p ts-utils customer-portal
+# Run test:quick for specific projects
+nx run-many -t test:quick -p ts-utils customer-portal
 ```
 
 ## Affected Commands
@@ -87,21 +92,25 @@ Affected commands only run tasks for projects that changed since the last commit
 
 ```bash
 # Build affected projects (since main branch)
-nx affected:build
+nx affected -t build
 
-# Build affected projects (since specific commit)
-nx affected:build --base=abc123
+# Run fast quality gate for affected projects (pre-push standard)
+nx affected -t test:quick
 
-# Build affected projects (custom base)
-nx affected:build --base=origin/main
+# Lint affected projects
+nx affected -t lint
+
+# Specify a different base
+nx affected -t build --base=abc123
+nx affected -t test:quick --base=origin/main
 ```
 
 **Using npm scripts**:
 
 ```bash
-npm run affected:build    # Same as: nx affected:build
-npm run affected:test     # Same as: nx affected:test
-npm run affected:lint     # Same as: nx affected:lint
+npm run affected:build         # Same as: nx affected -t build
+npm run affected:test:quick    # Same as: nx affected -t test:quick
+npm run affected:lint          # Same as: nx affected -t lint
 ```
 
 ### Affected Graph
@@ -118,8 +127,9 @@ nx affected:graph --base=origin/main
 
 ```bash
 # In CI pipeline (GitHub Actions example)
-nx affected:build --base=origin/main --head=HEAD
-nx affected:test --base=origin/main --head=HEAD
+nx affected -t build --base=origin/main --head=HEAD
+nx affected -t test:quick --base=origin/main --head=HEAD
+nx affected -t lint --base=origin/main --head=HEAD
 ```
 
 ## Dependency Graph
@@ -193,7 +203,7 @@ nx reset
 nx build ts-utils --skip-nx-cache
 
 # Skip cache for affected
-nx affected:build --skip-nx-cache
+nx affected -t build --skip-nx-cache
 ```
 
 ## Workspace Commands
@@ -247,7 +257,7 @@ nx dev customer-portal
 # 3. Make changes to app or libs
 
 # 4. Test changes
-nx test ts-utils
+nx run ts-utils:test:quick
 nx build customer-portal
 
 # 5. View affected projects
@@ -257,24 +267,24 @@ nx affected:graph
 ### Testing Workflow
 
 ```bash
-# 1. Run tests for changed projects
-nx affected:test
+# 1. Run fast quality gate for changed projects (pre-push standard)
+nx affected -t test:quick
 
-# 2. Run tests for specific project
-nx test ts-utils
+# 2. Run test:quick for a specific project
+nx run ts-utils:test:quick
 
-# 3. Run all tests
-nx run-many -t test
+# 3. Run isolated unit tests for a specific project
+nx run ts-utils:test:unit
 
-# 4. Run tests in watch mode (if configured)
-nx test ts-utils --watch
+# 4. Run all test:quick targets
+nx run-many -t test:quick
 ```
 
 ### Build Workflow
 
 ```bash
 # 1. Build affected projects
-nx affected:build
+nx affected -t build
 
 # 2. Build specific project and its dependencies
 nx build customer-portal
@@ -295,13 +305,13 @@ ls apps/customer-portal/.next
 nx affected:graph
 
 # 2. Build affected
-nx affected:build
+nx affected -t build
 
-# 3. Test affected
-nx affected:test
+# 3. Run fast quality gate for affected (same as pre-push hook)
+nx affected -t test:quick
 
 # 4. Lint affected
-nx affected:lint
+nx affected -t lint
 
 # 5. If all pass, commit changes
 git add .
@@ -334,14 +344,16 @@ jobs:
     run: npm ci
 
    - name: Build affected
-    run: nx affected:build --base=origin/main --head=HEAD
+    run: nx affected -t build --base=origin/main --head=HEAD
 
-   - name: Test affected
-    run: nx affected:test --base=origin/main --head=HEAD
+   - name: Quick Tests (required status check before PR merge)
+    run: nx affected -t test:quick --base=origin/main --head=HEAD
 
    - name: Lint affected
-    run: nx affected:lint --base=origin/main --head=HEAD
+    run: nx affected -t lint --base=origin/main --head=HEAD
 ```
+
+> **Note**: `test:quick` is the required GitHub Actions status check before PR merge. E2E tests (`test:e2e`) run separately on a scheduled cron job, not on every PR. See [Nx Target Standards](../../governance/development/infra/nx-targets.md) for the full execution model.
 
 ### Optimize CI with Caching
 
@@ -366,7 +378,10 @@ Instead of rebuilding everything:
 nx run-many -t build
 
 # ✅ Fast: Build only affected
-nx affected:build
+nx affected -t build
+
+# ✅ Fast quality gate (pre-push and CI)
+nx affected -t test:quick
 ```
 
 ### Use Parallel Execution
@@ -381,9 +396,6 @@ nx run-many -t build --parallel=3
 ### Use Watch Mode for Development
 
 ```bash
-# Watch mode for tests (if supported)
-nx test ts-utils --watch
-
 # Watch mode for builds (if configured)
 nx build ts-utils --watch
 ```
@@ -433,7 +445,7 @@ git status
 git add .
 
 # Use specific base
-nx affected:build --base=origin/main
+nx affected -t build --base=origin/main
 
 # View affected graph to debug
 nx affected:graph
@@ -473,6 +485,7 @@ nx graph --file=graph.json | jq '.dependencies'
 
 ## Related Documentation
 
+- [Nx Target Standards](../../governance/development/infra/nx-targets.md) - Canonical target names, mandatory targets per project type, caching rules, and execution model
 - [Add New App](./hoto__add-new-app.md)
 - [Add New Library](./hoto__add-new-lib.md)
 - [Monorepo Structure Reference](../reference/re__monorepo-structure.md)

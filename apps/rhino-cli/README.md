@@ -592,8 +592,8 @@ The CLI is integrated into the Nx workspace:
 # Build via Nx
 nx build rhino-cli
 
-# Run unit tests via Nx
-nx test:quick rhino-cli
+# Run fast quality gate via Nx
+nx run rhino-cli:test:quick
 
 # Run via Nx
 nx run rhino-cli

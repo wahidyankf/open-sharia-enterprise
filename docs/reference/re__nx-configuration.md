@@ -32,6 +32,8 @@ Complete reference for Nx workspace configuration files, options, and settings.
 
 ### Complete Example
 
+> **Note**: `targetDefaults` uses the canonical target names defined in [Nx Target Standards](../../governance/development/infra/nx-targets.md). The standard targets are `test:quick`, `test:unit`, `test:integration`, and `test:e2e` — not a generic `test` target. See the governance document for caching rules and mandatory targets per project type.
+
 ```json
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
@@ -42,7 +44,7 @@ Complete reference for Nx workspace configuration files, options, and settings.
     "default": {
       "runner": "nx/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["build", "test", "lint"]
+        "cacheableOperations": ["build", "typecheck", "lint", "test:quick", "test:unit"]
       }
     }
   },
@@ -52,12 +54,23 @@ Complete reference for Nx workspace configuration files, options, and settings.
       "outputs": ["{projectRoot}/dist"],
       "cache": true
     },
-    "test": {
-      "dependsOn": ["build"],
+    "typecheck": {
       "cache": true
     },
     "lint": {
       "cache": true
+    },
+    "test:quick": {
+      "cache": true
+    },
+    "test:unit": {
+      "cache": true
+    },
+    "test:integration": {
+      "cache": false
+    },
+    "test:e2e": {
+      "cache": false
     }
   },
   "namedInputs": {
@@ -151,16 +164,29 @@ Default configuration for targets across all projects.
       "outputs": ["{projectRoot}/dist"],
       "cache": true
     },
-    "test": {
-      "dependsOn": ["build"],
+    "typecheck": {
       "cache": true
     },
     "lint": {
       "cache": true
+    },
+    "test:quick": {
+      "cache": true
+    },
+    "test:unit": {
+      "cache": true
+    },
+    "test:integration": {
+      "cache": false
+    },
+    "test:e2e": {
+      "cache": false
     }
   }
 }
 ```
+
+**Standard target names**: Use `test:quick`, `test:unit`, `test:integration`, `test:e2e` — not a generic `test` target. See [Nx Target Standards](../../governance/development/infra/nx-targets.md) for the complete target naming standard.
 
 **Dependency Patterns**:
 
@@ -268,13 +294,26 @@ Per-project:
       },
       "outputs": ["{projectRoot}/dist"]
     },
-    "test": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit -p libs/ts-utils/tsconfig.json",
+        "cwd": "."
+      }
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit -p libs/ts-utils/tsconfig.json && node --import tsx --test libs/ts-utils/src/**/*.test.ts",
+        "cwd": "."
+      }
+    },
+    "test:unit": {
       "executor": "nx:run-commands",
       "options": {
         "command": "node --import tsx --test libs/ts-utils/src/**/*.test.ts",
         "cwd": "."
-      },
-      "dependsOn": ["build"]
+      }
     },
     "lint": {
       "executor": "nx:run-commands",
@@ -286,6 +325,8 @@ Per-project:
   }
 }
 ```
+
+**Target names follow [Nx Target Standards](../../governance/development/infra/nx-targets.md)**: `test:quick` is the mandatory pre-push gate; `test:unit` runs isolated unit tests. Avoid generic `test` targets.
 
 ### Field Reference
 
@@ -537,16 +578,17 @@ Nx wrapper scripts.
 {
   "scripts": {
     "build": "nx run-many -t build",
-    "test": "nx run-many -t test",
     "lint": "nx run-many -t lint",
     "affected:build": "nx affected -t build",
-    "affected:test": "nx affected -t test",
+    "affected:test:quick": "nx affected -t test:quick",
     "affected:lint": "nx affected -t lint",
     "graph": "nx graph",
     "nx": "nx"
   }
 }
 ```
+
+**Note**: Use `test:quick` (not `test`) as the standard pre-push quality gate target. See [Nx Target Standards](../../governance/development/infra/nx-targets.md) for canonical target names.
 
 #### `volta`
 
@@ -638,6 +680,7 @@ NX_DAEMON=false nx build oseplatform-web
 
 ## Related Documentation
 
+- [Nx Target Standards](../../governance/development/infra/nx-targets.md) - Canonical target names, mandatory targets per project type, caching rules, and build output conventions
 - [How to Add New App](../how-to/hoto__add-new-app.md)
 - [How to Add New Library](../how-to/hoto__add-new-lib.md)
 - [How to Run Nx Commands](../how-to/hoto__run-nx-commands.md)

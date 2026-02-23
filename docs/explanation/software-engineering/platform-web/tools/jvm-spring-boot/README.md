@@ -820,8 +820,8 @@ unzip payment-service.zip -d apps/payment-service
 # Using Maven
 ./mvnw spring-boot:run
 
-# Using Nx (future)
-nx serve payment-service
+# Using Nx (use 'dev' target, not 'serve')
+nx dev payment-service
 ```
 
 ### Configuration

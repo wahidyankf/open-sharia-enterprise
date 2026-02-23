@@ -915,8 +915,8 @@ npm create vite@latest oseplatform-web-app -- --template react-ts
 # Install dependencies
 npm install
 
-# Start development server
-nx serve oseplatform-web-app
+# Start development server (use 'dev' target, not 'serve')
+nx dev oseplatform-web-app
 
 # Or with Vite
 npm run dev

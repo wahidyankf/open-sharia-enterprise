@@ -218,9 +218,13 @@ nx dev [app-name]
 
 nx build [app-name]
 
-# Run tests
+# Run fast quality gate (pre-push standard)
 
-nx test [app-name]
+nx run [app-name]:test:quick
+
+# Run isolated unit tests
+
+nx run [app-name]:test:unit
 \`\`\`
 
 ## Dependencies

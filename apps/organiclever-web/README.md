@@ -38,7 +38,7 @@ nx dev organiclever-web
 nx build organiclever-web
 
 # Run E2E tests (app must be running first)
-nx e2e organiclever-web-e2e
+nx run organiclever-web-e2e:test:e2e
 
 # Type checking
 npx tsc --noEmit --project apps/organiclever-web/tsconfig.json

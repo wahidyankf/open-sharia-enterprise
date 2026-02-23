@@ -267,13 +267,13 @@ nx run rhino-cli
 nx clean oseplatform-web
 
 # Run E2E tests for organiclever-web (organiclever-web must be running first)
-nx e2e organiclever-web-e2e
+nx run organiclever-web-e2e:test:e2e
 
 # Run API E2E tests (backend must be running first)
-nx e2e organiclever-be-e2e
+nx run organiclever-be-e2e:test:e2e
 
 # Run browser E2E tests (both organiclever-be and organiclever-app must be running)
-nx e2e organiclever-app-web-e2e
+nx run organiclever-app-web-e2e:test:e2e
 ```
 
 ## Deployment Branches

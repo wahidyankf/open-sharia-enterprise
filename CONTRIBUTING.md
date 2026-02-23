@@ -155,16 +155,16 @@ For complete details, see [Trunk Based Development Convention](./governance/deve
    - Add tests for new functionality
    - Update documentation if needed
 
-3. **Run affected tests**:
+3. **Run the fast quality gate for affected projects**:
 
    ```bash
-   npm run affected:test
+   nx affected -t test:quick
    ```
 
 4. **Run affected build**:
 
    ```bash
-   npm run affected:build
+   nx affected -t build
    ```
 
 5. **Format code** (automatic on commit):
@@ -246,23 +246,25 @@ git commit -m "feat: add agent, update docs, fix dates"  # Too many changes in o
 
 ### Running Tests
 
-**All tests**:
+**Fast quality gate for affected projects** (recommended for pre-push):
 
 ```bash
-npm test
+nx affected -t test:quick
 ```
 
-**Specific project**:
+**Specific project quality gate**:
 
 ```bash
-nx test [project-name]
+nx run [project-name]:test:quick
 ```
 
-**Affected projects only** (recommended):
+**Isolated unit tests for a specific project**:
 
 ```bash
-npm run affected:test
+nx run [project-name]:test:unit
 ```
+
+**See**: [Nx Target Standards](./governance/development/infra/nx-targets.md) for canonical target names, test composition rules, and the full execution model.
 
 ### Test Requirements
 
@@ -392,13 +394,13 @@ npm install
 npm run build
 
 # Build affected projects
-npm run affected:build
+nx affected -t build
 
-# Test all projects
-npm test
+# Run fast quality gate for affected projects (pre-push standard)
+nx affected -t test:quick
 
-# Test affected projects
-npm run affected:test
+# Run unit tests for a specific project
+nx run [project-name]:test:unit
 
 # Lint all projects
 npm run lint
@@ -409,9 +411,11 @@ npm run graph
 # Build specific project
 nx build [project-name]
 
-# Test specific project
-nx test [project-name]
+# Start development server for an app
+nx dev [app-name]
 ```
+
+**See**: [Nx Target Standards](./governance/development/infra/nx-targets.md) for all canonical target names.
 
 ---
 

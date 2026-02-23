@@ -38,28 +38,30 @@ cd apps/organiclever-app-web-e2e && npx playwright install --with-deps && cd ../
 
 ```bash
 # Run all tests (headless Chromium)
-nx e2e organiclever-app-web-e2e
+nx run organiclever-app-web-e2e:test:e2e
 
 # Open Playwright UI (interactive mode)
-nx e2e:ui organiclever-app-web-e2e
+nx run organiclever-app-web-e2e:test:e2e:ui
 
 # View HTML report from last run
-nx e2e:report organiclever-app-web-e2e
+nx run organiclever-app-web-e2e:test:e2e:report
 ```
+
+**See**: [Nx Target Standards](../../governance/development/infra/nx-targets.md) for canonical E2E target names. `test:e2e` runs on a scheduled cron (4x/day via GitHub Actions), not on pre-push.
 
 ### Targeting Other Environments
 
 Use the `BASE_URL` environment variable to point tests at a different host:
 
 ```bash
-BASE_URL=http://staging.example.com nx e2e organiclever-app-web-e2e
+BASE_URL=http://staging.example.com nx run organiclever-app-web-e2e:test:e2e
 ```
 
 ## Project Structure
 
 ```
 apps/organiclever-app-web-e2e/
-├── project.json             # Nx configuration (install, e2e, e2e:ui, e2e:report targets)
+├── project.json             # Nx configuration (install, test:e2e, test:e2e:ui, test:e2e:report targets)
 ├── package.json             # Pinned @playwright/test@1.50.1 dependency
 ├── tsconfig.json            # TypeScript config (extends workspace base)
 ├── playwright.config.ts     # Playwright config (baseURL, Chromium project, reporters)

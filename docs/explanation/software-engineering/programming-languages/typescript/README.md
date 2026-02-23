@@ -726,21 +726,26 @@ class ZakatCalculator {
 # Build specific library
 nx build ts-zakat-calculator
 
-# Test specific library
-nx test ts-zakat-calculator
+# Run fast quality gate (pre-push standard)
+nx run ts-zakat-calculator:test:quick
+
+# Run isolated unit tests
+nx run ts-zakat-calculator:test:unit
 
 # Lint specific library
 nx lint ts-zakat-calculator
 
 # Build only affected projects (after git changes)
-nx affected:build
+nx affected -t build
 
-# Test only affected projects
-nx affected:test
+# Run quality gate for affected projects
+nx affected -t test:quick
 
 # Visualize dependency graph
 nx graph
 ```
+
+**See**: [Nx Target Standards](../../../../../governance/development/infra/nx-targets.md) for canonical target names.
 
 ## Reproducible TypeScript Development
 
