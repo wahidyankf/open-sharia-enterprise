@@ -228,21 +228,24 @@ $ git commit -m "added new feature"
 1. You run `git push`
 2. Pre-push hook triggers
 3. Nx detects affected projects since last push
-4. `test:quick` target runs for each affected project
-5. Push proceeds if all tests pass
+4. `typecheck` runs for each affected project that declares it
+5. `lint` runs for each affected project
+6. `test:quick` runs for each affected project
+7. Push proceeds if all three gates pass
 
 **What It Validates**:
 
-**Tests:**
-
-- Runs unit tests for all projects affected by changes
-- Uses Nx affected detection to test only changed code
-- Ensures broken code doesn't reach the remote repository
+- **Type correctness** (`typecheck`): Catches type errors in TypeScript, Dart/Flutter, and other
+  statically typed projects. Projects without a `typecheck` target are silently skipped by Nx.
+- **Code quality** (`lint`): Static analysis across all projects.
+- **Fast quality gate** (`test:quick`): Unit tests, build smoke tests, or other fast checks
+  defined per project. Also enforced remotely as a required GitHub Actions status check before PR
+  merge.
 
 **What Happens on Failure**:
 
 - Push is blocked
-- Error message shows which tests failed
+- Error message shows which target and project failed
 - Fix the issue and try again
 
 **Example**:
@@ -250,12 +253,26 @@ $ git commit -m "added new feature"
 ```bash
 $ git push origin main
 
+> nx affected -t typecheck
+
+ Running target typecheck for affected projects...
+   organiclever-web
+   organiclever-app
+ All checks passed
+
+> nx affected -t lint
+
+ Running target lint for affected projects...
+   organiclever-web
+   organiclever-app
+ All checks passed
+
 > nx affected -t test:quick
 
  Running target test:quick for affected projects...
-   rhino-cli
-   ayokoding-cli
- All tests passed
+   organiclever-web
+   organiclever-app
+ All checks passed
 
 Enumerating objects: 5, done.
 [main abc1234] Successfully pushed
@@ -264,9 +281,9 @@ Enumerating objects: 5, done.
 **Benefits**:
 
 - Prevents broken code from reaching remote repository
-- Only tests affected projects (faster than testing everything)
-- Catches issues before CI/CD pipeline runs
-- Maintains repository quality for all team members
+- Only runs checks on affected projects (faster than checking everything)
+- Catches type errors, lint violations, and test failures before CI/CD
+- Nx caching means repeated checks on unchanged code are near-instant
 
 ## Bypassing Hooks (Not Recommended)
 
