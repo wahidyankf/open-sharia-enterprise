@@ -83,6 +83,8 @@ Multiple renames and additions — apply all together.
 - [ ] **5.1** `organiclever-app/project.json`: Rename `test` → `test:unit` (keep `dependsOn: ["install"]`)
 - [ ] **5.2** `organiclever-app/project.json`: Add `typecheck` (`flutter analyze`)
 - [ ] **5.3** `organiclever-app/project.json`: Add `dependsOn: ["install"]` to `test:quick`
+- [ ] **5.4** `organiclever-app/project.json`: Remove `lint` — redundant with `typecheck` (same
+      `flutter analyze` command; running both doubles execution per push with zero additional coverage)
 
 **Verify**:
 
@@ -90,6 +92,7 @@ Multiple renames and additions — apply all together.
 - `nx run organiclever-app:test:quick` — runs Flutter tests (install runs first)
 - `nx run organiclever-app:typecheck` — runs `flutter analyze`
 - The old `test` target no longer exists
+- The `lint` target no longer exists in `organiclever-app/project.json`
 
 ---
 
@@ -133,7 +136,7 @@ Update the hook after all project.json targets are in place so the three gates h
 ## Final Validation
 
 - [ ] **V1** `nx affected -t test:quick --all` — all 10 apps produce a result
-- [ ] **V2** `nx affected -t lint --all` — all 10 apps produce a result
+- [ ] **V2** `nx affected -t lint --all` — 9 apps produce a result (Flutter skipped by design — no `lint` target)
 - [ ] **V3** `nx affected -t typecheck --all` — all statically typed apps produce a result
 - [ ] **V4** Verify no non-standard target names remain:
 

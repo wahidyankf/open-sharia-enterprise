@@ -529,7 +529,7 @@ Full updated file:
 
 ## apps/organiclever-app/project.json
 
-**Rename `test`→`test:unit`, add `typecheck`, update `test:quick` with `dependsOn`:**
+**Rename `test`→`test:unit`, add `typecheck`, remove `lint`, update `test:quick` with `dependsOn`:**
 
 Full updated file:
 
@@ -585,25 +585,18 @@ Full updated file:
         "cwd": "apps/organiclever-app"
       },
       "dependsOn": ["install"]
-    },
-    "lint": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "export PATH=\"$PATH:$HOME/flutter/bin\" && flutter analyze",
-        "cwd": "apps/organiclever-app"
-      }
     }
   },
   "tags": ["type:app", "platform:flutter", "domain:organiclever"]
 }
 ```
 
-**Flutter typecheck note**: `flutter analyze` is Dart's type analysis tool. It combines type
-checking and linting into a single step (unlike TypeScript's `tsc --noEmit` + `oxlint`). Having
-both `typecheck` and `lint` run `flutter analyze` is intentional: they declare different
-_purposes_ to Nx, enabling separate caching and invocation, even though the underlying tool is the
-same. `test:quick` runs unit tests only (since `flutter analyze` = lint, and lint is run
-separately per the standard — no need to double-execute it in `test:quick`).
+**Flutter lint note**: `flutter analyze` combines type checking and linting into a single pass.
+Declaring both `typecheck` and `lint` with the same command would run `flutter analyze` twice per
+push (the pre-push hook runs `typecheck` → `lint` → `test:quick` sequentially). `lint` is
+therefore **removed**; `typecheck` is the sole static-analysis gate. Nx silently skips Flutter
+when running `nx affected -t lint`. `test:quick` runs unit tests only — `flutter analyze` runs
+once via `typecheck`.
 
 ---
 
