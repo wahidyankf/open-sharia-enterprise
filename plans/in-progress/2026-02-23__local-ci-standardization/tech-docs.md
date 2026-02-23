@@ -845,12 +845,38 @@ No Maven Failsafe / test tagging exists to separate unit from integration tests.
 for both is correct today. When tests grow, configure Surefire for unit tests only in `test:quick`
 and add Failsafe for integration tests in `test:integration`.
 
-### Flutter typecheck = lint: intentional duplication
+### Flutter lint removed: typecheck covers static analysis
 
-Dart's analyzer (`flutter analyze`) is both a type checker and a linter — it cannot be split.
-Declaring both `typecheck` and `lint` with the same command satisfies the governance standard
-("Run the type checker without emitting artifacts" for statically typed projects) while maintaining
-semantic clarity about each target's purpose. Both results are cached independently by Nx.
+`flutter analyze` combines type checking and linting into a single pass — it cannot produce
+separate type-only or lint-only output. Declaring both `typecheck` and `lint` with the same command
+would run `flutter analyze` twice per push (the pre-push hook runs `typecheck` → `lint` →
+`test:quick` sequentially), with zero additional coverage. `lint` is therefore removed from
+`organiclever-app`; `typecheck` is the sole static-analysis gate. Nx silently skips Flutter for
+`nx affected -t lint`. This is documented as an explicit exception in the Nx Target Standards.
+
+---
+
+## package.json (workspace root)
+
+**Update `test` and `affected:test` scripts** to reference the canonical target name:
+
+Current:
+
+```json
+"test": "nx run-many -t test",
+"affected:test": "nx affected -t test",
+```
+
+Target:
+
+```json
+"test": "nx run-many -t test:quick",
+"affected:test": "nx affected -t test:quick",
+```
+
+These two npm script aliases wrap Nx commands. After `test` is removed from all project.json files
+they become silent no-ops. Updating them to `test:quick` keeps `npm test` useful as a shortcut for
+running the pre-push fast-test gate across all projects.
 
 ---
 

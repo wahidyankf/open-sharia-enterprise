@@ -12,11 +12,11 @@ convention. The convention defines canonical target names, mandatory targets per
 caching rules. All project.json files were written before the standard was finalized — they use
 non-standard names and are missing required targets.
 
-**Scope**: `nx.json` + 10 `project.json` files in `apps/`
+**Scope**: `nx.json` + `package.json` (workspace root) + 10 `project.json` files in `apps/`
 
 **No documentation changes needed**: READMEs were already updated by `repo-governance-maker` in a
-prior session to reference canonical target names. Only `project.json` and `nx.json` files require
-changes.
+prior session to reference canonical target names. Only `project.json`, `nx.json`, and
+`package.json` files require changes.
 
 ## Files
 
@@ -26,20 +26,21 @@ changes.
 
 ## Gap Summary
 
-| App                        | Type        | Existing Targets                                               | Missing / Non-Standard                                                                                                                                       |
-| -------------------------- | ----------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `nx.json`                  | workspace   | `build`, `test` ⚠️, `lint` (targetDefaults)                    | Remove legacy `tasksRunnerOptions`; missing `test:quick`, `test:unit`, `typecheck`, `test:integration`, `test:e2e` defaults; has non-standard `test` default |
-| `ayokoding-cli`            | Go CLI      | `build`, `test:quick`, `run`, `install`                        | Missing `lint`                                                                                                                                               |
-| `rhino-cli`                | Go CLI      | `build`, `test:quick`, `run`, `install`                        | Missing `lint`                                                                                                                                               |
-| `ayokoding-web`            | Hugo site   | `dev`, `build`, `clean`, `test:quick`, `run-pre-commit`        | Missing `lint`                                                                                                                                               |
-| `oseplatform-web`          | Hugo site   | `dev`, `build`, `clean` ⚠️                                     | Missing `test:quick`, `lint`; `clean` incomplete                                                                                                             |
-| `organiclever-web`         | Next.js     | `dev`, `build`, `start`, `lint` ⚠️                             | `lint`→oxlint (replaces `next lint`); missing `test:quick`, `typecheck`, `test:unit`, `test:integration`; add vitest + devDeps                               |
-| `organiclever-be`          | Spring Boot | `build`, `serve` ⚠️, `test` ⚠️, `lint`                         | `serve`→`dev`, `test`→`test:unit`; missing `test:quick`, `start`, `outputs` on `build`                                                                       |
-| `organiclever-app`         | Flutter     | `install`, `dev`, `build:web`, `test` ⚠️, `test:quick`, `lint` | `test`→`test:unit`; missing `typecheck`, `dependsOn` on `test:quick`                                                                                         |
-| `organiclever-web-e2e`     | Playwright  | `install`, `e2e` ⚠️, `e2e:ui` ⚠️, `e2e:report` ⚠️              | `e2e`→`test:e2e`, `e2e:ui`→`test:e2e:ui`, `e2e:report`→`test:e2e:report`; missing `lint`, `test:quick`                                                       |
-| `organiclever-be-e2e`      | Playwright  | `install`, `e2e` ⚠️, `e2e:ui` ⚠️, `e2e:report` ⚠️              | Same as `organiclever-web-e2e`                                                                                                                               |
-| `organiclever-app-web-e2e` | Playwright  | `install`, `e2e` ⚠️, `e2e:ui` ⚠️, `e2e:report` ⚠️              | Same as `organiclever-web-e2e`                                                                                                                               |
-| `.husky/pre-push`          | hook        | `nx affected -t test:quick` only                               | Add `nx affected -t typecheck` and `nx affected -t lint`; fixes diagram bug (lint shown but never blocked push)                                              |
+| App                        | Type        | Existing Targets                                                  | Missing / Non-Standard                                                                                                                                       |
+| -------------------------- | ----------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `nx.json`                  | workspace   | `build`, `test` ⚠️, `lint` (targetDefaults)                       | Remove legacy `tasksRunnerOptions`; missing `test:quick`, `test:unit`, `typecheck`, `test:integration`, `test:e2e` defaults; has non-standard `test` default |
+| `package.json`             | workspace   | `"test"` ⚠️ → `nx run-many -t test`, `"affected:test"` ⚠️         | Both scripts reference non-standard `test`; update to `test:quick`                                                                                           |
+| `ayokoding-cli`            | Go CLI      | `build`, `test:quick`, `run`, `install`                           | Missing `lint`                                                                                                                                               |
+| `rhino-cli`                | Go CLI      | `build`, `test:quick`, `run`, `install`                           | Missing `lint`                                                                                                                                               |
+| `ayokoding-web`            | Hugo site   | `dev`, `build`, `clean`, `test:quick`, `run-pre-commit`           | Missing `lint`                                                                                                                                               |
+| `oseplatform-web`          | Hugo site   | `dev`, `build`, `clean` ⚠️                                        | Missing `test:quick`, `lint`; `clean` incomplete                                                                                                             |
+| `organiclever-web`         | Next.js     | `dev`, `build`, `start`, `lint` ⚠️                                | `lint`→oxlint (replaces `next lint`); missing `test:quick`, `typecheck`, `test:unit`, `test:integration`; add vitest + devDeps                               |
+| `organiclever-be`          | Spring Boot | `build`, `serve` ⚠️, `test` ⚠️, `lint`                            | `serve`→`dev`, `test`→`test:unit`; missing `test:quick`, `start`, `outputs` on `build`                                                                       |
+| `organiclever-app`         | Flutter     | `install`, `dev`, `build:web`, `test` ⚠️, `test:quick`, `lint` ⚠️ | `test`→`test:unit`; `lint` removed (redundant with `typecheck`); missing `typecheck`, `dependsOn` on `test:quick`                                            |
+| `organiclever-web-e2e`     | Playwright  | `install`, `e2e` ⚠️, `e2e:ui` ⚠️, `e2e:report` ⚠️                 | `e2e`→`test:e2e`, `e2e:ui`→`test:e2e:ui`, `e2e:report`→`test:e2e:report`; missing `lint`, `test:quick`                                                       |
+| `organiclever-be-e2e`      | Playwright  | `install`, `e2e` ⚠️, `e2e:ui` ⚠️, `e2e:report` ⚠️                 | Same as `organiclever-web-e2e`                                                                                                                               |
+| `organiclever-app-web-e2e` | Playwright  | `install`, `e2e` ⚠️, `e2e:ui` ⚠️, `e2e:report` ⚠️                 | Same as `organiclever-web-e2e`                                                                                                                               |
+| `.husky/pre-push`          | hook        | `nx affected -t test:quick` only                                  | Add `nx affected -t typecheck` and `nx affected -t lint`; fixes diagram bug (lint shown but never blocked push)                                              |
 
 ## Critical Finding
 

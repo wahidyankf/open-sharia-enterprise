@@ -15,9 +15,14 @@ caching behavior.
       `test:integration`, `test:e2e`; remove non-standard `test` entry
 - [ ] **1.2** Remove `tasksRunnerOptions` block from `nx.json` entirely — redundant legacy
       config; caching is fully handled by `cache: true/false` in `targetDefaults`
+- [ ] **1.3** `package.json`: Update `"test"` script from `nx run-many -t test` →
+      `nx run-many -t test:quick`
+- [ ] **1.4** `package.json`: Update `"affected:test"` script from `nx affected -t test` →
+      `nx affected -t test:quick`
 
 **Verify**: `cat nx.json` — confirm `targetDefaults` has the 7 canonical targets; `test` and
-`tasksRunnerOptions` are gone.
+`tasksRunnerOptions` are gone. `grep "affected:test\|\"test\"" package.json` — confirm both
+reference `test:quick`, not bare `test`.
 
 ---
 
@@ -141,11 +146,12 @@ Update the hook after all project.json targets are in place so the three gates h
 - [ ] **V4** Verify no non-standard target names remain:
 
   ```bash
-  grep -r '"serve"\|"test"' apps/*/project.json
-  # Expected: no matches for "serve" or bare "test" as target keys
+  grep -rE '"serve"\s*:|"test"\s*:' apps/*/project.json
+  # Expected: no matches — "test:quick" / "test:unit" etc. do NOT match this pattern;
+  # only bare "test": or "serve": would match
 
-  grep -r '"e2e"' apps/*/project.json
-  # Expected: only appears inside strings (command values), not as target keys
+  grep -rE '"e2e"\s*:' apps/*/project.json
+  # Expected: no matches — "test:e2e": does NOT match; only bare "e2e": would match
   ```
 
 - [ ] **V5** Verify E2E projects have canonical names:
@@ -176,6 +182,13 @@ Update the hook after all project.json targets are in place so the three gates h
   nx run organiclever-web:test:integration # exits 0
   grep '"name"' apps/organiclever-web/vitest.workspace.ts
   # Expected: shows "unit" and "integration"
+  ```
+
+- [ ] **V9** Verify package.json scripts reference canonical target name:
+
+  ```bash
+  grep "test:quick" package.json
+  # Expected: both "test" and "affected:test" scripts show test:quick
   ```
 
 ---
