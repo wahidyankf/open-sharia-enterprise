@@ -87,7 +87,7 @@ Remove `tasksRunnerOptions` entirely:
 "lint": {
   "executor": "nx:run-commands",
   "options": {
-    "command": "go vet ./...",
+    "command": "golangci-lint run ./...",
     "cwd": "apps/ayokoding-cli"
   }
 }
@@ -133,7 +133,7 @@ Full updated file:
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "go vet ./...",
+        "command": "golangci-lint run ./...",
         "cwd": "apps/ayokoding-cli"
       }
     }
@@ -151,7 +151,7 @@ Full updated file:
 "lint": {
   "executor": "nx:run-commands",
   "options": {
-    "command": "CGO_ENABLED=0 go vet ./...",
+    "command": "CGO_ENABLED=0 golangci-lint run ./...",
     "cwd": "apps/rhino-cli"
   }
 }
@@ -197,7 +197,7 @@ Full updated file:
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "CGO_ENABLED=0 go vet ./...",
+        "command": "CGO_ENABLED=0 golangci-lint run ./...",
         "cwd": "apps/rhino-cli"
       }
     }
@@ -342,9 +342,47 @@ Full updated file:
 
 ## apps/organiclever-web/project.json
 
-**Add `typecheck` and `test:quick`:**
+**Add `typecheck`, `test:quick`, `test:unit`, `test:integration`, vitest config; update `lint`:**
 
-Full updated file:
+**devDependencies to add** (`apps/organiclever-web/package.json`):
+
+```
+vitest @vitejs/plugin-react jsdom @testing-library/react vite-tsconfig-paths
+```
+
+**New file** `apps/organiclever-web/vitest.workspace.ts`:
+
+```typescript
+import { defineWorkspace } from "vitest/config";
+import react from "@vitejs/plugin-react";
+import tsconfigPaths from "vite-tsconfig-paths";
+
+const sharedPlugins = [react(), tsconfigPaths()];
+
+export default defineWorkspace([
+  {
+    plugins: sharedPlugins,
+    test: {
+      name: "unit",
+      include: ["**/*.unit.{test,spec}.{ts,tsx}", "**/__tests__/**/*.{ts,tsx}"],
+      exclude: ["**/*.integration.{test,spec}.{ts,tsx}", "node_modules"],
+      environment: "jsdom",
+      passWithNoTests: true,
+    },
+  },
+  {
+    plugins: sharedPlugins,
+    test: {
+      name: "integration",
+      include: ["**/*.integration.{test,spec}.{ts,tsx}"],
+      environment: "jsdom",
+      passWithNoTests: true,
+    },
+  },
+]);
+```
+
+Full updated `project.json`:
 
 ```json
 {
@@ -385,14 +423,28 @@ Full updated file:
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsc --noEmit",
+        "command": "npx vitest run --project unit",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx vitest run --project unit",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx vitest run --project integration",
         "cwd": "{projectRoot}"
       }
     },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "next lint",
+        "command": "npx oxlint@latest .",
         "cwd": "{projectRoot}"
       }
     }
@@ -400,9 +452,6 @@ Full updated file:
   "tags": ["type:app", "platform:nextjs", "domain:organiclever"]
 }
 ```
-
-**Note**: `test:quick` runs `tsc --noEmit` only because no unit tests exist. When unit tests are
-added (Jest or Vitest), update `test:quick` to also run the test suite.
 
 ---
 
@@ -550,7 +599,7 @@ Full updated file:
 ```
 
 **Flutter typecheck note**: `flutter analyze` is Dart's type analysis tool. It combines type
-checking and linting into a single step (unlike TypeScript's `tsc --noEmit` + `eslint`). Having
+checking and linting into a single step (unlike TypeScript's `tsc --noEmit` + `oxlint`). Having
 both `typecheck` and `lint` run `flutter analyze` is intentional: they declare different
 _purposes_ to Nx, enabling separate caching and invocation, even though the underlying tool is the
 same. `test:quick` runs unit tests only (since `flutter analyze` = lint, and lint is run
@@ -581,14 +630,14 @@ Full updated file:
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsc --noEmit",
+        "command": "npx oxlint@latest .",
         "cwd": "apps/organiclever-web-e2e"
       }
     },
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsc --noEmit",
+        "command": "npx oxlint@latest .",
         "cwd": "apps/organiclever-web-e2e"
       }
     },
@@ -643,14 +692,14 @@ Full updated file:
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsc --noEmit",
+        "command": "npx oxlint@latest .",
         "cwd": "apps/organiclever-be-e2e"
       }
     },
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsc --noEmit",
+        "command": "npx oxlint@latest .",
         "cwd": "apps/organiclever-be-e2e"
       }
     },
@@ -705,14 +754,14 @@ Full updated file:
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsc --noEmit",
+        "command": "npx oxlint@latest .",
         "cwd": "apps/organiclever-app-web-e2e"
       }
     },
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsc --noEmit",
+        "command": "npx oxlint@latest .",
         "cwd": "apps/organiclever-app-web-e2e"
       }
     },
@@ -746,12 +795,19 @@ Full updated file:
 
 ## Design Decisions
 
-### Why `go vet` for Go lint?
+### Why `golangci-lint` for Go lint?
 
-`go vet` is the standard Go static analysis tool — it detects suspicious constructs, incorrect
-format strings, and other common errors. It ships with the Go toolchain (no extra install). More
-powerful linters (e.g., `golangci-lint`) can be added later as a lint enhancement; the standard
-requires at least a `lint` target that exits non-zero on violations.
+`golangci-lint` is the standard multi-linter runner for Go — it runs `go vet`, `staticcheck`,
+`errcheck`, and dozens of other linters in parallel. It is significantly faster than running
+linters individually and produces richer diagnostics. Install:
+
+```sh
+curl -sSfL https://golangci-lint.run/install.sh | sh -s -- -b $(go env GOPATH)/bin
+```
+
+Or with Homebrew: `brew install golangci-lint`. Both CLIs run with no config file (zero-config
+defaults are sufficient for the standard `lint` gate). `CGO_ENABLED=0` is set for `rhino-cli`
+to match the environment used by `test:quick` and `build`.
 
 ### Why `markdownlint-cli2` for Hugo site lint?
 
@@ -759,18 +815,36 @@ Hugo sites contain markdown content — the "code" that `lint` is responsible fo
 workspace already uses `markdownlint-cli2` (v0.20.0) for `npm run lint:md`. Using the same tool
 per-project makes the lint target consistent with the workspace-level lint command.
 
-### Why `tsc --noEmit` for Playwright E2E lint?
+### Why `npx oxlint@latest` for TypeScript lint?
 
-The E2E projects are TypeScript-only with no ESLint configuration. TypeScript type checking
-(`tsc --noEmit`) is the most lightweight lint available without adding a new devDependency. If
-ESLint is added to the E2E projects later, update `lint` to run ESLint and keep `test:quick` as
-the linter invocation.
+`oxlint` is a high-performance TypeScript/JavaScript linter built on the Oxc compiler — 50–100×
+faster than ESLint. It runs zero-config (`npx oxlint@latest .` finds all `.ts`/`.js` files in
+the current directory) and requires no devDependency installation.
 
-### Why `test:quick` = `tsc --noEmit` for organiclever-web?
+- **`organiclever-web`**: replaces `next lint` (ESLint-backed) with oxlint for consistent, faster
+  lint across all TypeScript projects
+- **Playwright E2E projects**: replaces `tsc --noEmit` used as a lint proxy; `test:quick` for
+  E2E projects mirrors `lint` (both oxlint) since no unit tests exist
+- **`organiclever-web`**: `tsc --noEmit` remains in `typecheck`; `test:quick` now runs
+  `vitest run --project unit` (see vitest section below)
 
-No unit tests exist. Per the standard: "The target must always exist — even if it only runs the
-type checker." TypeScript type checking is fast (seconds) and catches real errors. When unit tests
-(Jest/Vitest) are added, update `test:quick` to include them alongside `tsc --noEmit`.
+`npx oxlint@latest` always resolves the latest published version. Pin `npx oxlint@x.y.z` in
+`test:quick` only if version stability is required in CI (not needed for local pre-push).
+
+### Why vitest for organiclever-web unit and integration tests?
+
+`vitest` is the standard test runner for TypeScript/JavaScript in this workspace. It is built on
+Vite, shares the same transform pipeline as Next.js, and runs 2–10× faster than Jest.
+
+`vitest.workspace.ts` separates tests by file naming convention:
+
+- `*.unit.{test,spec}.{ts,tsx}` / `__tests__/` → `unit` project
+- `*.integration.{test,spec}.{ts,tsx}` → `integration` project
+
+`test:quick` = `test:unit` = `vitest run --project unit` — same pattern as `organiclever-be`
+where `test:quick` = `test:unit` = `mvn test`. `passWithNoTests: true` ensures targets exit 0
+before any test files are written — the target infrastructure is in place and passes before tests
+are added.
 
 ### Why `test:quick` and `test:unit` both run `mvn test` in organiclever-be?
 

@@ -39,7 +39,7 @@
 
 **Required addition**:
 
-- `lint`: runs `go vet ./...` — Go's built-in static analysis tool
+- `lint`: runs `golangci-lint run ./...` — fast multi-linter runner for Go
 
 ---
 
@@ -51,7 +51,7 @@
 
 **Required addition**:
 
-- `lint`: runs `CGO_ENABLED=0 go vet ./...` — same CGO flags as `test:quick` for consistency
+- `lint`: runs `CGO_ENABLED=0 golangci-lint run ./...` — same CGO flags as `test:quick` for consistency
 
 ---
 
@@ -89,16 +89,25 @@
 
 **Current state**: `dev`, `build`, `start`, `lint`
 
-**Missing**: `test:quick`, `typecheck`
+**Missing**: `test:quick`, `typecheck`, `test:unit`, `test:integration`
 
-**Context**: No unit tests exist today. `test:quick` = typecheck only until tests are added.
-TypeScript is in devDependencies; `tsconfig.json` exists at project root.
+**Context**: Vitest is added as the test framework for unit and integration tests. TypeScript is
+in devDependencies; `tsconfig.json` exists at project root.
 
-**Required additions**:
+**Required changes**:
 
-- `typecheck`: runs `tsc --noEmit` from `{projectRoot}`
-- `test:quick`: runs `tsc --noEmit` from `{projectRoot}` (lint is run separately per the standard;
-  no unit tests to include yet)
+- Update `lint`: replace `next lint` with `npx oxlint@latest .` — standardizes on oxlint across
+  all TypeScript projects; `next lint` is also deprecated in Next.js 16
+- Add `typecheck`: runs `tsc --noEmit` from `{projectRoot}`
+- Add `test:quick`: runs `npx vitest run --project unit` — unit tests as pre-push fast gate
+- Add `test:unit`: runs `npx vitest run --project unit` — same as `test:quick`; no meaningful
+  subset split until test suite grows
+- Add `test:integration`: runs `npx vitest run --project integration` — separate slow path
+- Create `apps/organiclever-web/vitest.workspace.ts`: configures `unit` project (files matching
+  `*.unit.{test,spec}.{ts,tsx}` and `__tests__/`) and `integration` project (files matching
+  `*.integration.{test,spec}.{ts,tsx}`); both with `passWithNoTests: true`
+- Add devDependencies to `apps/organiclever-web/package.json`: `vitest`,
+  `@vitejs/plugin-react`, `jsdom`, `@testing-library/react`, `vite-tsconfig-paths`
 
 ---
 
@@ -165,15 +174,15 @@ serves the role of both linter and type checker. The `typecheck` target uses the
 
 **Missing**: `lint`, `test:quick`
 
-**Lint tool**: The project has `tsconfig.json` and `@playwright/test` as the only devDependency.
-`tsc --noEmit` provides TypeScript type checking as the lint mechanism.
+**Lint tool**: `npx oxlint@latest .` — zero-config, 50–100× faster than ESLint, no
+devDependency install required.
 
 **Required changes**:
 
 - Rename all three `e2e*` targets to `test:e2e*`
-- Add `lint`: runs `tsc --noEmit` from `apps/organiclever-web-e2e`
-- Add `test:quick`: runs `tsc --noEmit` (per the standard: Playwright `*-e2e` test:quick = run
-  linter directly; no unit tests to add)
+- Add `lint`: runs `npx oxlint@latest .` from `apps/organiclever-web-e2e`
+- Add `test:quick`: runs `npx oxlint@latest .` (per the standard: Playwright `*-e2e` test:quick =
+  run linter directly; no unit tests to add)
 
 ---
 
@@ -299,4 +308,18 @@ And "nx affected -t lint" runs second
 And "nx affected -t test:quick" runs third
 And failure of any gate blocks the push
 And projects without a "typecheck" target are silently skipped by Nx
+```
+
+### Scenario 9: organiclever-web vitest unit and integration targets work
+
+```gherkin
+Given organiclever-web/vitest.workspace.ts exists with "unit" and "integration" named projects
+And organiclever-web/package.json has vitest devDependencies installed
+When I run: nx run organiclever-web:test:quick
+Then vitest executes with --project unit and exits 0 (passWithNoTests: true)
+When I run: nx run organiclever-web:test:unit
+Then vitest executes with --project unit (same as test:quick)
+When I run: nx run organiclever-web:test:integration
+Then vitest executes with --project integration and exits 0 (passWithNoTests: true)
+And test:quick and test:unit produce identical results
 ```
