@@ -31,6 +31,13 @@
         "command": "go mod tidy",
         "cwd": "apps/ayokoding-cli"
       }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "golangci-lint run ./...",
+        "cwd": "apps/ayokoding-cli"
+      }
     }
   }
 }
