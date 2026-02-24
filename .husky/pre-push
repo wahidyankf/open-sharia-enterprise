@@ -1,4 +1,7 @@
 #!/usr/bin/env sh
+set -e
 
-# Run affected tests
+# Run affected quality gates: type checking, linting, and fast tests
+npx nx affected -t typecheck
+npx nx affected -t lint
 npx nx affected -t test:quick
