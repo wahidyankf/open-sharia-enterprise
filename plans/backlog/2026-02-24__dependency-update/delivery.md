@@ -34,7 +34,8 @@ Produce a comprehensive audit report before touching any file.
 Low-risk. Affects root workspace and all NPM-based projects.
 
 - [ ] Update Volta Node.js pin: `24.11.1` → `24.13.1` in root `package.json`
-- [ ] Update Volta npm pin to match (`npm --version` on Node 24.13.1)
+- [ ] Update Volta npm pin: run `volta pin npm@latest` in the repo root, then verify the updated
+      version appears in `package.json` under `"volta": { "npm": "..." }`
 - [ ] Run `npm update` in root workspace to apply all safe patch/minor bumps
 - [ ] Verify `package-lock.json` is updated (no merge conflicts, lockfileVersion unchanged)
 - [ ] Update `@playwright/test` to `^1.58.2` across `organiclever-web-e2e`,
@@ -90,7 +91,9 @@ Low-risk. Single-line version bump; all dependencies managed by BOM.
       `4.0.3`
 - [ ] Run `mvn dependency:resolve` to pull updated BOM — verify no conflicts
 - [ ] Run `mvn verify` — all tests pass
-- [ ] Run `mvn spring-boot:run` and confirm actuator health endpoint responds
+- [ ] Smoke-test actuator: `mvn spring-boot:run &` then
+      `sleep 20 && curl -sf http://localhost:8080/actuator/health && kill %1`
+      — verify HTTP 200 response before killing the process
 - [ ] Commit: `chore(deps): bump spring boot from 4.0.2 to 4.0.3`
 
 ### Phase 6: Flutter / Dart Package Updates
@@ -106,6 +109,7 @@ Medium-risk. Resolve any pub constraint conflicts manually.
 - [ ] Run `flutter analyze` — no new errors
 - [ ] Run `flutter test` — all unit tests pass
 - [ ] Run `flutter build web` — successful web build
+- [ ] Run `flutter build apk` — Android APK builds (validates pub deps don't break Android)
 - [ ] Commit: `chore(deps): upgrade flutter pub packages`
 
 ---
@@ -178,7 +182,8 @@ High-risk. Two discrete sub-phases — commit after each major.
 High-risk. TailwindCSS v4 replaces `tailwind.config.js` with CSS-first configuration.
 
 - [ ] Read [TailwindCSS v4 upgrade guide](https://tailwindcss.com/docs/upgrade-guide)
-- [ ] Run official upgrade codemod: `npx @tailwindcss/upgrade@4`
+- [ ] Run official upgrade tool (verify exact command at <https://tailwindcss.com/docs/upgrade-guide>
+      before running — currently documented as `npx @tailwindcss/upgrade`)
 - [ ] Review generated diff — assess scope of configuration migration
 - [ ] If migration is feasible (< 1 day of work): complete the migration
   - [ ] Update `tailwindcss`, `postcss`, `tailwind-merge`, `tailwindcss-animate` versions

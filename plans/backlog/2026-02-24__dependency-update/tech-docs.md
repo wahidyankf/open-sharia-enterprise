@@ -108,7 +108,7 @@ release** as of 2026-02-25. Classification:
 
 ### NPM — Patch and Minor Updates
 
-Run `npm outdated` first to identify exact installed vs available versions. Apply updates in two
+Run `npm outdated` first to identify exact installed vs available versions. Apply updates in three
 passes:
 
 1. **Pass 1 — patch/minor (safe)**: `npm update` in root. Verify `package-lock.json` is
@@ -215,7 +215,7 @@ No code changes are expected for a patch bump 4.0.2 → 4.0.3.
 
 **Upgrade order:**
 
-1. Update Kotlin Gradle plugin: `2.2.20` → `2.3.0` (stable, May 2025). Test build.
+1. Update Kotlin Gradle plugin: `2.2.20` → `2.3.0` (stable, December 2025). Test build.
 2. Update AGP: `8.11.1` → `9.0.1`. Apply deprecation-warning fixes first if AGP 8 prints any.
 3. Update Gradle wrapper to `9.3.1` (matches AGP 9 requirements).
 4. Fix any API removals flagged by the Android build system.
@@ -268,12 +268,12 @@ Run these at the start of Phase 1 to produce the baseline audit report.
 # NPM workspace
 npm outdated
 
-# Go modules (per module root)
-go list -u -m all        # in apps/ayokoding-cli/
-go list -u -m all        # in apps/rhino-cli/
-hugo mod get -u --dry-run # not supported — use hugo mod graph instead
+# Go modules (CLI apps only)
+go list -u -m all        # run in apps/ayokoding-cli/
+go list -u -m all        # run in apps/rhino-cli/
 
-# Hugo themes
+# Hugo sites — inspect current module versions with hugo mod graph
+# (Note: hugo mod get -u --dry-run is not a supported Hugo CLI flag)
 cd apps/ayokoding-web && hugo mod graph
 cd apps/oseplatform-web && hugo mod graph
 
