@@ -22,7 +22,7 @@ func ExtractFrontmatter(filePath string) (*Frontmatter, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to open file: %w", err)
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	scanner := bufio.NewScanner(file)
 	var lines []string
