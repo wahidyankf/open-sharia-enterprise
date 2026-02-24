@@ -3,35 +3,34 @@
   "affected": {
     "defaultBase": "main"
   },
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx/tasks-runners/default",
-      "options": {
-        "cacheableOperations": ["build", "test", "lint"]
-      }
-    }
-  },
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["{projectRoot}/dist"],
       "cache": true
     },
-    "test": {
-      "dependsOn": ["build"],
+    "typecheck": {
       "cache": true
     },
     "lint": {
       "cache": true
+    },
+    "test:quick": {
+      "cache": true
+    },
+    "test:unit": {
+      "cache": true
+    },
+    "test:integration": {
+      "cache": false
+    },
+    "test:e2e": {
+      "cache": false
     }
   },
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
-    "production": [
-      "default",
-      "!{projectRoot}/**/*.spec.ts",
-      "!{projectRoot}/**/*.test.ts"
-    ],
+    "production": ["default", "!{projectRoot}/**/*.spec.ts", "!{projectRoot}/**/*.test.ts"],
     "sharedGlobals": ["{workspaceRoot}/tsconfig.base.json"]
   },
   "generators": {},
