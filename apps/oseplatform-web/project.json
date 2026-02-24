@@ -22,8 +22,22 @@
     "clean": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "rm -rf public resources",
+        "command": "rm -rf public resources .hugo_build.lock",
         "cwd": "apps/oseplatform-web"
+      }
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash build.sh",
+        "cwd": "apps/oseplatform-web"
+      },
+      "outputs": ["{projectRoot}/public"]
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "markdownlint-cli2 \"apps/oseplatform-web/content/**/*.md\""
       }
     }
   },

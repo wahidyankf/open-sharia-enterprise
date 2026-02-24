@@ -43,6 +43,12 @@
         "cwd": "apps/ayokoding-web"
       },
       "outputs": ["{projectRoot}/public"]
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "markdownlint-cli2 \"apps/ayokoding-web/content/**/*.md\""
+      }
     }
   }
 }
