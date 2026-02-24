@@ -1,8 +1,6 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "affected": {
-    "defaultBase": "origin/main"
-  },
+  "defaultBase": "origin/main",
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],
