@@ -10,6 +10,7 @@
     "apps/*/public/**",
     "apps-labs/**",
     "generated-reports/**",
+    "**/.dart_tool/**",
     ".vscode/**",
     ".idea/**"
   ],
