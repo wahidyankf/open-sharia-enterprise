@@ -4,9 +4,7 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
-- [2026-02-23\_\_local-ci-standardization](./2026-02-23__local-ci-standardization/) — Bring all
-  10 apps and `nx.json` into compliance with Nx Target Standards (canonical names, mandatory
-  targets, caching rules)
+None.
 
 ## Instructions
 
