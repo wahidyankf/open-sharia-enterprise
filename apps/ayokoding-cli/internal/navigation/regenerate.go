@@ -33,7 +33,7 @@ func RegenerateNavigation(contentDir string) (*RegenerateResult, error) {
 	contentRoot := findContentRoot(contentDir)
 
 	// Find all _index.md files within contentDir (not the root)
-	indexFiles, err := findIndexFilesInDir(contentDir)
+	indexFiles, err := findIndexFiles(contentDir)
 	if err != nil {
 		return nil, fmt.Errorf("failed to find index files: %w", err)
 	}
@@ -96,25 +96,6 @@ func findIndexFiles(contentDir string) ([]string, error) {
 				return nil // Skip root language index
 			}
 
-			indexFiles = append(indexFiles, path)
-		}
-
-		return nil
-	})
-
-	return indexFiles, err
-}
-
-// findIndexFilesInDir finds all _index.md files within a specific directory
-func findIndexFilesInDir(startDir string) ([]string, error) {
-	var indexFiles []string
-
-	err := filepath.Walk(startDir, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-
-		if !info.IsDir() && info.Name() == "_index.md" {
 			indexFiles = append(indexFiles, path)
 		}
 

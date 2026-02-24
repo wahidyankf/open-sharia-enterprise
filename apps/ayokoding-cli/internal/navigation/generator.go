@@ -15,7 +15,7 @@ func GenerateMarkdown(items []Item, currentLayer int) string {
 
 	for _, item := range items {
 		// Generate the navigation link
-		sb.WriteString(fmt.Sprintf("%s- [%s](%s)\n", indentation, item.Title, item.Path))
+		_, _ = fmt.Fprintf(&sb, "%s- [%s](%s)\n", indentation, item.Title, item.Path)
 
 		// If this item has children, recursively generate their navigation
 		if item.IsDir && len(item.Children) > 0 {
