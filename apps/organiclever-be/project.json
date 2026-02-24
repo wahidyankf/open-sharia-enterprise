@@ -9,19 +9,34 @@
       "options": {
         "command": "mvn clean package -DskipTests",
         "cwd": "apps/organiclever-be"
+      },
+      "outputs": ["{projectRoot}/target"]
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mvn spring-boot:run -Dspring-boot.run.profiles=dev",
+        "cwd": "apps/organiclever-be"
       }
     },
-    "test": {
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "sh -c 'java -jar target/organiclever-be-*.jar'",
+        "cwd": "apps/organiclever-be"
+      }
+    },
+    "test:quick": {
       "executor": "nx:run-commands",
       "options": {
         "command": "mvn test",
         "cwd": "apps/organiclever-be"
       }
     },
-    "serve": {
+    "test:unit": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "mvn spring-boot:run -Dspring-boot.run.profiles=dev",
+        "command": "mvn test",
         "cwd": "apps/organiclever-be"
       }
     },
