@@ -457,7 +457,7 @@ Task dependencies.
 
 ```json
 {
-  "serve": {
+  "dev": {
     "dependsOn": ["build"]
   }
 }

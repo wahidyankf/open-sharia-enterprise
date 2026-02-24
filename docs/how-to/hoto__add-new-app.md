@@ -135,7 +135,7 @@ Create `apps/[app-name]/project.json`:
       },
       "outputs": ["{projectRoot}/dist"]
     },
-    "serve": {
+    "start": {
       "executor": "nx:run-commands",
       "options": {
         "command": "node dist/index.js",

@@ -37,11 +37,23 @@ nx dev organiclever-web
 # Build for production (local verification)
 nx build organiclever-web
 
+# Type checking
+nx run organiclever-web:typecheck
+
+# Lint (oxlint)
+nx run organiclever-web:lint
+
+# Run unit tests (pre-push gate)
+nx run organiclever-web:test:quick
+
+# Run unit tests explicitly
+nx run organiclever-web:test:unit
+
+# Run integration tests
+nx run organiclever-web:test:integration
+
 # Run E2E tests (app must be running first)
 nx run organiclever-web-e2e:test:e2e
-
-# Type checking
-npx tsc --noEmit --project apps/organiclever-web/tsconfig.json
 ```
 
 ## Project Structure
@@ -68,6 +80,7 @@ apps/organiclever-web/
 ├── tailwind.config.ts          # TailwindCSS configuration
 ├── tsconfig.json               # TypeScript configuration
 ├── vercel.json                 # Vercel deployment configuration
+├── vitest.config.ts            # Vitest workspace config (unit + integration projects)
 └── project.json                # Nx project configuration
 ```
 

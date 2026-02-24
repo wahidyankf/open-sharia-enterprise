@@ -60,14 +60,14 @@ nx install organiclever-app
 # Run development server (web on port 3100)
 nx dev organiclever-app
 
+# Type check and lint (flutter analyze — combined pass)
+nx run organiclever-app:typecheck
+
 # Run fast quality gate (pre-push standard)
 nx run organiclever-app:test:quick
 
 # Run unit tests
 nx run organiclever-app:test:unit
-
-# Lint code
-nx lint organiclever-app
 
 # Build for web (production)
 nx build:web organiclever-app
