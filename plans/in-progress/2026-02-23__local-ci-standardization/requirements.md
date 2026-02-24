@@ -135,9 +135,9 @@ in devDependencies; `tsconfig.json` exists at project root.
 - Add `test:unit`: runs `npx vitest run --project unit` — same as `test:quick`; no meaningful
   subset split until test suite grows
 - Add `test:integration`: runs `npx vitest run --project integration` — separate slow path
-- Create `apps/organiclever-web/vitest.workspace.ts`: configures `unit` project (files matching
+- Create `apps/organiclever-web/vitest.config.ts`: configures `unit` project (files matching
   `*.unit.{test,spec}.{ts,tsx}` and `__tests__/`) and `integration` project (files matching
-  `*.integration.{test,spec}.{ts,tsx}`); both with `passWithNoTests: true`
+  `*.integration.{test,spec}.{ts,tsx}`); `passWithNoTests: true` set at root level (vitest 4 requirement)
 - Add devDependencies to `apps/organiclever-web/package.json`: `vitest`,
   `@vitejs/plugin-react`, `jsdom`, `@testing-library/react`, `vite-tsconfig-paths`
 
@@ -366,7 +366,7 @@ And projects without a "typecheck" target are silently skipped by Nx
 ### Scenario 9a: organiclever-web test:quick runs vitest unit project
 
 ```gherkin
-Given organiclever-web/vitest.workspace.ts exists with "unit" and "integration" named projects
+Given organiclever-web/vitest.config.ts exists with "unit" and "integration" named projects
 And organiclever-web/package.json has vitest devDependencies installed
 When I run: nx run organiclever-web:test:quick
 Then vitest executes with --project unit and exits 0 (passWithNoTests: true)
@@ -375,7 +375,7 @@ Then vitest executes with --project unit and exits 0 (passWithNoTests: true)
 ### Scenario 9b: organiclever-web test:unit produces same result as test:quick
 
 ```gherkin
-Given organiclever-web/vitest.workspace.ts has a "unit" named project
+Given organiclever-web/vitest.config.ts has a "unit" named project
 When I run: nx run organiclever-web:test:unit
 Then vitest executes with --project unit and exits 0 (passWithNoTests: true)
 And test:quick and test:unit produce identical results
@@ -384,7 +384,7 @@ And test:quick and test:unit produce identical results
 ### Scenario 9c: organiclever-web test:integration runs vitest integration project
 
 ```gherkin
-Given organiclever-web/vitest.workspace.ts has an "integration" named project
+Given organiclever-web/vitest.config.ts has an "integration" named project
 When I run: nx run organiclever-web:test:integration
 Then vitest executes with --project integration and exits 0 (passWithNoTests: true)
 ```

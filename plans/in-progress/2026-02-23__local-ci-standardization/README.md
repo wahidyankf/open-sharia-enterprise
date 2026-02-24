@@ -12,7 +12,7 @@ convention. The convention defines canonical target names, mandatory targets per
 caching rules. All project.json files were written before the standard was finalized — they use
 non-standard names and are missing required targets.
 
-**Scope**: `nx.json` + `package.json` (workspace root) + 10 `project.json` files in `apps/` + `.husky/pre-push` + `apps/organiclever-web/package.json` + `apps/organiclever-web/vitest.workspace.ts` (new file)
+**Scope**: `nx.json` + `package.json` (workspace root) + 10 `project.json` files in `apps/` + `.husky/pre-push` + `apps/organiclever-web/package.json` + `apps/organiclever-web/vitest.config.ts` (new file)
 
 **No documentation changes needed**: READMEs were already updated by `repo-governance-maker` in a
 prior session to reference canonical target names. Only `project.json`, `nx.json`, and
