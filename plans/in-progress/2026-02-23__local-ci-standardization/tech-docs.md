@@ -211,12 +211,15 @@ Full updated file:
 
 **Add `lint` target** (after `test:quick`):
 
+> **Note**: Run from workspace root (no `cwd`) so `markdownlint-cli2` picks up the workspace root
+> `.markdownlint-cli2.jsonc` config (which disables MD013 and other project-specific rules).
+> The glob path must therefore include the `apps/ayokoding-web/` prefix.
+
 ```json
 "lint": {
   "executor": "nx:run-commands",
   "options": {
-    "command": "markdownlint-cli2 \"content/**/*.md\"",
-    "cwd": "apps/ayokoding-web"
+    "command": "markdownlint-cli2 \"apps/ayokoding-web/content/**/*.md\""
   }
 }
 ```
@@ -273,8 +276,7 @@ Full updated file:
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "markdownlint-cli2 \"content/**/*.md\"",
-        "cwd": "apps/ayokoding-web"
+        "command": "markdownlint-cli2 \"apps/ayokoding-web/content/**/*.md\""
       }
     }
   }
@@ -334,8 +336,7 @@ Full updated file (reference — final state after all phases):
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "markdownlint-cli2 \"content/**/*.md\"",
-        "cwd": "apps/oseplatform-web"
+        "command": "markdownlint-cli2 \"apps/oseplatform-web/content/**/*.md\""
       }
     }
   },
@@ -355,37 +356,45 @@ Full updated file (reference — final state after all phases):
 vitest @vitejs/plugin-react jsdom @testing-library/react vite-tsconfig-paths
 ```
 
-**New file** `apps/organiclever-web/vitest.workspace.ts`:
+**New file** `apps/organiclever-web/vitest.config.ts`:
+
+> **Note**: vitest 4.x deprecated the separate `vitest.workspace.ts` file. Use `vitest.config.ts`
+> with the `projects` option instead. `passWithNoTests` must be set at the root level (not inside
+> each project config) in vitest 4.
 
 ```typescript
-import { defineWorkspace } from "vitest/config";
+import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 const sharedPlugins = [react(), tsconfigPaths()];
 
-export default defineWorkspace([
-  {
-    plugins: sharedPlugins,
-    test: {
-      name: "unit",
-      include: ["**/*.unit.{test,spec}.{ts,tsx}", "**/__tests__/**/*.{ts,tsx}"],
-      exclude: ["**/*.integration.{test,spec}.{ts,tsx}", "node_modules"],
-      environment: "jsdom",
-      passWithNoTests: true,
-    },
+export default defineConfig({
+  plugins: sharedPlugins,
+  test: {
+    passWithNoTests: true,
+    projects: [
+      {
+        plugins: sharedPlugins,
+        test: {
+          name: "unit",
+          include: ["**/*.unit.{test,spec}.{ts,tsx}", "**/__tests__/**/*.{ts,tsx}"],
+          exclude: ["**/*.integration.{test,spec}.{ts,tsx}", "node_modules"],
+          environment: "jsdom",
+        },
+      },
+      {
+        plugins: sharedPlugins,
+        test: {
+          name: "integration",
+          include: ["**/*.integration.{test,spec}.{ts,tsx}"],
+          exclude: ["node_modules"],
+          environment: "jsdom",
+        },
+      },
+    ],
   },
-  {
-    plugins: sharedPlugins,
-    test: {
-      name: "integration",
-      include: ["**/*.integration.{test,spec}.{ts,tsx}"],
-      exclude: ["node_modules"],
-      environment: "jsdom",
-      passWithNoTests: true,
-    },
-  },
-]);
+});
 ```
 
 Full updated `project.json`:
@@ -837,7 +846,8 @@ the current directory) and requires no devDependency installation.
 `vitest` is the standard test runner for TypeScript/JavaScript in this workspace. It is built on
 Vite, shares the same transform pipeline as Next.js, and runs 2–10× faster than Jest.
 
-`vitest.workspace.ts` separates tests by file naming convention:
+`vitest.config.ts` (vitest 4 — uses `projects` option; `vitest.workspace.ts` is deprecated)
+separates tests by file naming convention:
 
 - `*.unit.{test,spec}.{ts,tsx}` / `__tests__/` → `unit` project
 - `*.integration.{test,spec}.{ts,tsx}` → `integration` project
