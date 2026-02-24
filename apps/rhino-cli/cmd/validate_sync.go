@@ -60,7 +60,7 @@ func runValidateSync(cmd *cobra.Command, args []string) error {
 
 	// Format and print output
 	formattedOutput := sync.FormatValidationResult(result, output, verbose, quiet)
-	fmt.Fprint(cmd.OutOrStdout(), formattedOutput)
+	_, _ = fmt.Fprint(cmd.OutOrStdout(), formattedOutput)
 
 	// Return error if validation failed
 	if result.FailedChecks > 0 {

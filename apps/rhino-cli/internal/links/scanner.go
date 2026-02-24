@@ -92,7 +92,7 @@ func ExtractLinks(filePath string) ([]LinkInfo, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	var links []LinkInfo
 	scanner := bufio.NewScanner(file)

@@ -14,7 +14,7 @@ func TestValidateLinksCommand(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()
@@ -98,7 +98,7 @@ func TestValidateLinksCommand_NoProblems(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()
@@ -168,7 +168,7 @@ func TestValidateLinksCommand_JSONOutput(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()

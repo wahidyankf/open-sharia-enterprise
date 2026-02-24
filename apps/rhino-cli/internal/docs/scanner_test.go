@@ -3,6 +3,7 @@ package docs
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -62,7 +63,7 @@ func TestGetAllDocsFiles(t *testing.T) {
 			t.Errorf("Failed to get relative path for %s: %v", f, err)
 			continue
 		}
-		if filepath.Dir(rel) == "." || !filepath.HasPrefix(rel, "docs") {
+		if filepath.Dir(rel) == "." || !strings.HasPrefix(rel, "docs/") {
 			t.Errorf("File %s is not under docs/", f)
 		}
 	}

@@ -152,7 +152,9 @@ func TestFormatJSON_Mixed(t *testing.T) {
 		}
 
 		var parsed JSONOutput
-		json.Unmarshal([]byte(out), &parsed)
+		if err := json.Unmarshal([]byte(out), &parsed); err != nil {
+			t.Fatalf("failed to unmarshal JSON: %v", err)
+		}
 		if parsed.Status != "warning" {
 			t.Errorf("expected status %q, got %q", "warning", parsed.Status)
 		}
@@ -169,7 +171,9 @@ func TestFormatJSON_Mixed(t *testing.T) {
 		}
 
 		var parsed JSONOutput
-		json.Unmarshal([]byte(out), &parsed)
+		if err := json.Unmarshal([]byte(out), &parsed); err != nil {
+			t.Fatalf("failed to unmarshal JSON: %v", err)
+		}
 		if parsed.Status != "missing" {
 			t.Errorf("expected status %q, got %q", "missing", parsed.Status)
 		}

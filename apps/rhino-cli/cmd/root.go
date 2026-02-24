@@ -27,13 +27,13 @@ var rootCmd = &cobra.Command{
 		if sayMsg != "" {
 			if verbose && !quiet {
 				timestamp := time.Now().Format("2006-01-02 15:04:05")
-				fmt.Fprintf(cmd.OutOrStdout(), "[%s] INFO: Executing say command\n", timestamp)
-				fmt.Fprintf(cmd.OutOrStdout(), "[%s] INFO: Message: %s\n", timestamp, sayMsg)
+				_, _ = fmt.Fprintf(cmd.OutOrStdout(), "[%s] INFO: Executing say command\n", timestamp)
+				_, _ = fmt.Fprintf(cmd.OutOrStdout(), "[%s] INFO: Message: %s\n", timestamp, sayMsg)
 			}
-			fmt.Fprintln(cmd.OutOrStdout(), sayMsg)
+			_, _ = fmt.Fprintln(cmd.OutOrStdout(), sayMsg)
 			return
 		}
-		cmd.Help()
+		_ = cmd.Help()
 	},
 }
 

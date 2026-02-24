@@ -54,7 +54,7 @@ func scanFileForLinks(filePath string, filenameMap map[string]string, repoRoot s
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	relPath, err := filepath.Rel(repoRoot, filePath)
 	if err != nil {
@@ -197,7 +197,7 @@ func applyUpdatesToFile(relPath string, updates []LinkUpdate, repoRoot string) e
 		// the exact link text that was found
 		oldPattern := "](" + u.OldLink + ")"
 		newPattern := "](" + u.NewLink + ")"
-		newContent = strings.Replace(newContent, oldPattern, newPattern, -1)
+		newContent = strings.ReplaceAll(newContent, oldPattern, newPattern)
 	}
 
 	// Write the file back

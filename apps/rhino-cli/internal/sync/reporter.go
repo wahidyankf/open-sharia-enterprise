@@ -28,25 +28,25 @@ func formatSyncResultText(result *SyncResult, verbose bool, quiet bool) string {
 	}
 
 	// Summary
-	sb.WriteString(fmt.Sprintf("Agents: %d converted", result.AgentsConverted))
+	_, _ = fmt.Fprintf(&sb, "Agents: %d converted", result.AgentsConverted)
 	if result.AgentsFailed > 0 {
-		sb.WriteString(fmt.Sprintf(", %d failed", result.AgentsFailed))
+		_, _ = fmt.Fprintf(&sb, ", %d failed", result.AgentsFailed)
 	}
 	sb.WriteString("\n")
 
-	sb.WriteString(fmt.Sprintf("Skills: %d copied", result.SkillsCopied))
+	_, _ = fmt.Fprintf(&sb, "Skills: %d copied", result.SkillsCopied)
 	if result.SkillsFailed > 0 {
-		sb.WriteString(fmt.Sprintf(", %d failed", result.SkillsFailed))
+		_, _ = fmt.Fprintf(&sb, ", %d failed", result.SkillsFailed)
 	}
 	sb.WriteString("\n")
 
-	sb.WriteString(fmt.Sprintf("Duration: %v\n", result.Duration))
+	_, _ = fmt.Fprintf(&sb, "Duration: %v\n", result.Duration)
 
 	// Failed files
 	if len(result.FailedFiles) > 0 {
 		sb.WriteString("\nFailed Files:\n")
 		for _, file := range result.FailedFiles {
-			sb.WriteString(fmt.Sprintf("  - %s\n", file))
+			_, _ = fmt.Fprintf(&sb, "  - %s\n", file)
 		}
 	}
 
@@ -78,20 +78,20 @@ func formatSyncResultMarkdown(result *SyncResult, verbose bool) string {
 	sb.WriteString("# Sync Results\n\n")
 
 	sb.WriteString("## Summary\n\n")
-	sb.WriteString(fmt.Sprintf("- **Agents Converted**: %d\n", result.AgentsConverted))
+	_, _ = fmt.Fprintf(&sb, "- **Agents Converted**: %d\n", result.AgentsConverted)
 	if result.AgentsFailed > 0 {
-		sb.WriteString(fmt.Sprintf("- **Agents Failed**: %d\n", result.AgentsFailed))
+		_, _ = fmt.Fprintf(&sb, "- **Agents Failed**: %d\n", result.AgentsFailed)
 	}
-	sb.WriteString(fmt.Sprintf("- **Skills Copied**: %d\n", result.SkillsCopied))
+	_, _ = fmt.Fprintf(&sb, "- **Skills Copied**: %d\n", result.SkillsCopied)
 	if result.SkillsFailed > 0 {
-		sb.WriteString(fmt.Sprintf("- **Skills Failed**: %d\n", result.SkillsFailed))
+		_, _ = fmt.Fprintf(&sb, "- **Skills Failed**: %d\n", result.SkillsFailed)
 	}
-	sb.WriteString(fmt.Sprintf("- **Duration**: %v\n\n", result.Duration))
+	_, _ = fmt.Fprintf(&sb, "- **Duration**: %v\n\n", result.Duration)
 
 	if len(result.FailedFiles) > 0 {
 		sb.WriteString("## Failed Files\n\n")
 		for _, file := range result.FailedFiles {
-			sb.WriteString(fmt.Sprintf("- `%s`\n", file))
+			_, _ = fmt.Fprintf(&sb, "- `%s`\n", file)
 		}
 		sb.WriteString("\n")
 	}
@@ -127,25 +127,25 @@ func formatValidationResultText(result *ValidationResult, verbose bool, quiet bo
 	}
 
 	// Summary
-	sb.WriteString(fmt.Sprintf("Total Checks: %d\n", result.TotalChecks))
-	sb.WriteString(fmt.Sprintf("Passed: %d\n", result.PassedChecks))
-	sb.WriteString(fmt.Sprintf("Failed: %d\n", result.FailedChecks))
-	sb.WriteString(fmt.Sprintf("Duration: %v\n", result.Duration))
+	_, _ = fmt.Fprintf(&sb, "Total Checks: %d\n", result.TotalChecks)
+	_, _ = fmt.Fprintf(&sb, "Passed: %d\n", result.PassedChecks)
+	_, _ = fmt.Fprintf(&sb, "Failed: %d\n", result.FailedChecks)
+	_, _ = fmt.Fprintf(&sb, "Duration: %v\n", result.Duration)
 
 	// Show failed checks
 	if result.FailedChecks > 0 {
 		sb.WriteString("\nFailed Checks:\n")
 		for _, check := range result.Checks {
 			if check.Status == "failed" {
-				sb.WriteString(fmt.Sprintf("\n  ❌ %s\n", check.Name))
+				_, _ = fmt.Fprintf(&sb, "\n  ❌ %s\n", check.Name)
 				if check.Expected != "" {
-					sb.WriteString(fmt.Sprintf("     Expected: %s\n", check.Expected))
+					_, _ = fmt.Fprintf(&sb, "     Expected: %s\n", check.Expected)
 				}
 				if check.Actual != "" {
-					sb.WriteString(fmt.Sprintf("     Actual: %s\n", check.Actual))
+					_, _ = fmt.Fprintf(&sb, "     Actual: %s\n", check.Actual)
 				}
 				if check.Message != "" {
-					sb.WriteString(fmt.Sprintf("     Message: %s\n", check.Message))
+					_, _ = fmt.Fprintf(&sb, "     Message: %s\n", check.Message)
 				}
 			}
 		}
@@ -156,12 +156,12 @@ func formatValidationResultText(result *ValidationResult, verbose bool, quiet bo
 		sb.WriteString("\nAll Checks:\n")
 		for _, check := range result.Checks {
 			if check.Status == "passed" {
-				sb.WriteString(fmt.Sprintf("  ✓ %s\n", check.Name))
+				_, _ = fmt.Fprintf(&sb, "  ✓ %s\n", check.Name)
 			} else {
-				sb.WriteString(fmt.Sprintf("  ❌ %s\n", check.Name))
+				_, _ = fmt.Fprintf(&sb, "  ❌ %s\n", check.Name)
 			}
 			if verbose && check.Message != "" {
-				sb.WriteString(fmt.Sprintf("     %s\n", check.Message))
+				_, _ = fmt.Fprintf(&sb, "     %s\n", check.Message)
 			}
 		}
 	}
@@ -194,24 +194,24 @@ func formatValidationResultMarkdown(result *ValidationResult, verbose bool) stri
 	sb.WriteString("# Validation Results\n\n")
 
 	sb.WriteString("## Summary\n\n")
-	sb.WriteString(fmt.Sprintf("- **Total Checks**: %d\n", result.TotalChecks))
-	sb.WriteString(fmt.Sprintf("- **Passed**: %d\n", result.PassedChecks))
-	sb.WriteString(fmt.Sprintf("- **Failed**: %d\n", result.FailedChecks))
-	sb.WriteString(fmt.Sprintf("- **Duration**: %v\n\n", result.Duration))
+	_, _ = fmt.Fprintf(&sb, "- **Total Checks**: %d\n", result.TotalChecks)
+	_, _ = fmt.Fprintf(&sb, "- **Passed**: %d\n", result.PassedChecks)
+	_, _ = fmt.Fprintf(&sb, "- **Failed**: %d\n", result.FailedChecks)
+	_, _ = fmt.Fprintf(&sb, "- **Duration**: %v\n\n", result.Duration)
 
 	if result.FailedChecks > 0 {
 		sb.WriteString("## Failed Checks\n\n")
 		for _, check := range result.Checks {
 			if check.Status == "failed" {
-				sb.WriteString(fmt.Sprintf("### ❌ %s\n\n", check.Name))
+				_, _ = fmt.Fprintf(&sb, "### ❌ %s\n\n", check.Name)
 				if check.Expected != "" {
-					sb.WriteString(fmt.Sprintf("- **Expected**: %s\n", check.Expected))
+					_, _ = fmt.Fprintf(&sb, "- **Expected**: %s\n", check.Expected)
 				}
 				if check.Actual != "" {
-					sb.WriteString(fmt.Sprintf("- **Actual**: %s\n", check.Actual))
+					_, _ = fmt.Fprintf(&sb, "- **Actual**: %s\n", check.Actual)
 				}
 				if check.Message != "" {
-					sb.WriteString(fmt.Sprintf("- **Message**: %s\n", check.Message))
+					_, _ = fmt.Fprintf(&sb, "- **Message**: %s\n", check.Message)
 				}
 				sb.WriteString("\n")
 			}
@@ -222,12 +222,12 @@ func formatValidationResultMarkdown(result *ValidationResult, verbose bool) stri
 		sb.WriteString("## All Checks\n\n")
 		for _, check := range result.Checks {
 			if check.Status == "passed" {
-				sb.WriteString(fmt.Sprintf("- ✓ %s", check.Name))
+				_, _ = fmt.Fprintf(&sb, "- ✓ %s", check.Name)
 			} else {
-				sb.WriteString(fmt.Sprintf("- ❌ %s", check.Name))
+				_, _ = fmt.Fprintf(&sb, "- ❌ %s", check.Name)
 			}
 			if check.Message != "" {
-				sb.WriteString(fmt.Sprintf(" - %s", check.Message))
+				_, _ = fmt.Fprintf(&sb, " - %s", check.Message)
 			}
 			sb.WriteString("\n")
 		}

@@ -108,12 +108,12 @@ func runValidateLinks(cmd *cobra.Command, args []string) error {
 	}
 
 	// Write output
-	fmt.Fprint(cmd.OutOrStdout(), formattedOutput)
+	_, _ = fmt.Fprint(cmd.OutOrStdout(), formattedOutput)
 
 	// Return error if broken links found (Cobra will set exit code 1)
 	if len(result.BrokenLinks) > 0 {
 		if !quiet && output == "text" {
-			fmt.Fprintf(cmd.OutOrStderr(), "\n❌ Found %d broken links\n", len(result.BrokenLinks))
+			_, _ = fmt.Fprintf(cmd.OutOrStderr(), "\n❌ Found %d broken links\n", len(result.BrokenLinks))
 		}
 		// Return error to signal failure (Cobra will set exit code 1)
 		// Using os.Exit() directly would bypass deferred functions and tests

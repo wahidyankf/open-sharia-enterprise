@@ -15,7 +15,7 @@ func TestValidateDocsNamingCommand_ValidFiles(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()
@@ -92,7 +92,7 @@ func TestValidateDocsNamingCommand_InvalidFiles(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()
@@ -153,7 +153,7 @@ func TestValidateDocsNamingCommand_WrongPrefix(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()
@@ -211,7 +211,7 @@ func TestValidateDocsNamingCommand_JSONOutput(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()
@@ -275,7 +275,7 @@ func TestValidateDocsNamingCommand_MarkdownOutput(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()
