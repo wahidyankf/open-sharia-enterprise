@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "vmware.vscode-spring-boot",
+    "vmware.vscode-boot-dev-pack",
+    "vscjava.vscode-spring-initializr",
+    "vscjava.vscode-spring-boot-dashboard",
+    "esbenp.prettier-vscode",
+    "nrwl.angular-console",
+    "golang.go",
+    "anthropic.claude-code"
+  ]
+}

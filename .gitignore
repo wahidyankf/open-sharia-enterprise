@@ -20,7 +20,7 @@ out/
 !.env.example
 
 # IDE and editor
-.vscode/
+# .vscode/
 .idea/
 *.swp
 *.swo
