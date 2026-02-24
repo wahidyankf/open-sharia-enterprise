@@ -11,6 +11,17 @@
    is regenerated and committed alongside the dependency manifest changes.
 6. **Traceability** — Each ecosystem's update is its own commit so the change history is auditable.
 
+## Non-Functional Requirements
+
+- **Security gate**: `npm audit` must report zero critical or high severity CVEs after Phase 2
+  completes. Any critical CVE that cannot be resolved by the planned updates blocks the release
+  of that ecosystem's changes.
+- **Build reproducibility**: All lock files (`package-lock.json`, `go.sum` ×4, `pubspec.lock`)
+  must be committed in the same commit as their manifest changes. No manifest change is
+  committed without its corresponding lock file.
+- **Zero regression**: No test that passes before any phase may fail after that phase's changes
+  are applied. Each phase independently validates its own scope before the next begins.
+
 ## User Stories
 
 ### US-1: NPM Workspace
@@ -130,7 +141,9 @@ And the actuator endpoints respond correctly on `mvn spring-boot:run`
 Given the Gradle wrapper and AGP audit identifies newer stable releases
 When the Gradle wrapper URL and AGP / Kotlin plugin versions are updated
 Then `./gradlew assembleDebug` succeeds inside apps/organiclever-app/android/
-And no deprecated Gradle API warnings are present that were not present before the update
+And the build completes without compilation errors
+And any newly introduced deprecation warnings originate from AGP or Gradle framework APIs
+And no new deprecation warnings originate from project-owned source files
 ```
 
 ### AC-8: No Regression in CI Gate
@@ -149,4 +162,13 @@ Given dependency manifests have been updated in any ecosystem
 When the changes are committed
 Then the corresponding lock files are committed in the same commit
 And no lock file is left in a dirty or partially updated state
+```
+
+### AC-10: NPM Security Gate
+
+```gherkin
+Given Phase 2 (NPM package updates) has been committed
+When `npm audit` is run in the root workspace
+Then the output reports zero critical severity CVEs
+And the output reports zero high severity CVEs
 ```
