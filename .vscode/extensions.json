@@ -1,12 +1,19 @@
 {
   "recommendations": [
-    "vmware.vscode-spring-boot",
-    "vmware.vscode-boot-dev-pack",
-    "vscjava.vscode-spring-initializr",
-    "vscjava.vscode-spring-boot-dashboard",
+    "alexkrechik.cucumberautocomplete",
+    "anthropic.claude-code",
+    "cucumberopen.cucumber-official",
+    "dart-code.dart-code",
+    "dart-code.flutter",
+    "edonet.vscode-command-runner",
     "esbenp.prettier-vscode",
-    "nrwl.angular-console",
+    "github.vscode-github-actions",
+    "github.vscode-pull-request-github",
     "golang.go",
-    "anthropic.claude-code"
+    "nrwl.angular-console",
+    "vmware.vscode-boot-dev-pack",
+    "vmware.vscode-spring-boot",
+    "vscjava.vscode-spring-boot-dashboard",
+    "vscjava.vscode-spring-initializr"
   ]
 }

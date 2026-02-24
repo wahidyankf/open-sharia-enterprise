@@ -19,6 +19,9 @@ package-lock.json
 # Generated reports
 generated-reports/
 
+# Flutter generated files
+**/.dart_tool/
+
 # IDE
 .vscode/
 .idea/
