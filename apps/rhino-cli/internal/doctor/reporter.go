@@ -52,15 +52,15 @@ func FormatText(result *DoctorResult, verbose, quiet bool) string {
 	for _, check := range result.Checks {
 		sym := symbolFor(check.Status)
 		ver := displayVersion(check)
-		sb.WriteString(fmt.Sprintf("%s %-10s %-14s (%s)\n", sym, check.Name, ver, check.Note))
+		_, _ = fmt.Fprintf(&sb, "%s %-10s %-14s (%s)\n", sym, check.Name, ver, check.Note)
 	}
 
 	total := result.OKCount + result.WarnCount + result.MissingCount
-	sb.WriteString(fmt.Sprintf("\nSummary: %d/%d tools OK, %d warning, %d missing\n",
-		result.OKCount, total, result.WarnCount, result.MissingCount))
+	_, _ = fmt.Fprintf(&sb, "\nSummary: %d/%d tools OK, %d warning, %d missing\n",
+		result.OKCount, total, result.WarnCount, result.MissingCount)
 
 	if verbose {
-		sb.WriteString(fmt.Sprintf("Duration: %v\n", result.Duration.Round(time.Millisecond)))
+		_, _ = fmt.Fprintf(&sb, "Duration: %v\n", result.Duration.Round(time.Millisecond))
 	}
 
 	return sb.String()
@@ -125,16 +125,16 @@ func FormatMarkdown(result *DoctorResult) string {
 	var sb strings.Builder
 
 	sb.WriteString("## Doctor Report\n\n")
-	sb.WriteString(fmt.Sprintf("**Generated**: %s\n\n", time.Now().Format(time.RFC3339)))
+	_, _ = fmt.Fprintf(&sb, "**Generated**: %s\n\n", time.Now().Format(time.RFC3339))
 
 	total := result.OKCount + result.WarnCount + result.MissingCount
 	sb.WriteString("### Summary\n\n")
 	sb.WriteString("| Metric | Value |\n")
 	sb.WriteString("|--------|-------|\n")
-	sb.WriteString(fmt.Sprintf("| OK | %d |\n", result.OKCount))
-	sb.WriteString(fmt.Sprintf("| Warning | %d |\n", result.WarnCount))
-	sb.WriteString(fmt.Sprintf("| Missing | %d |\n", result.MissingCount))
-	sb.WriteString(fmt.Sprintf("| Total | %d |\n", total))
+	_, _ = fmt.Fprintf(&sb, "| OK | %d |\n", result.OKCount)
+	_, _ = fmt.Fprintf(&sb, "| Warning | %d |\n", result.WarnCount)
+	_, _ = fmt.Fprintf(&sb, "| Missing | %d |\n", result.MissingCount)
+	_, _ = fmt.Fprintf(&sb, "| Total | %d |\n", total)
 	sb.WriteString("\n")
 
 	sb.WriteString("### Tools\n\n")
@@ -144,8 +144,8 @@ func FormatMarkdown(result *DoctorResult) string {
 	for _, check := range result.Checks {
 		sym := symbolFor(check.Status)
 		ver := displayVersion(check)
-		sb.WriteString(fmt.Sprintf("| %s | %s %s | %s | %s | %s |\n",
-			check.Name, sym, string(check.Status), ver, check.RequiredVersion, check.Note))
+		_, _ = fmt.Fprintf(&sb, "| %s | %s %s | %s | %s | %s |\n",
+			check.Name, sym, string(check.Status), ver, check.RequiredVersion, check.Note)
 	}
 
 	return sb.String()

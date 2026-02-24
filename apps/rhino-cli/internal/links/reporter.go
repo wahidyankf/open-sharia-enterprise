@@ -22,7 +22,7 @@ func FormatText(result *ValidationResult, verbose, quiet bool) string {
 
 	// Generate broken links report
 	output.WriteString("# Broken Links Report\n\n")
-	output.WriteString(fmt.Sprintf("**Total broken links**: %d\n", len(result.BrokenLinks)))
+	_, _ = fmt.Fprintf(&output, "**Total broken links**: %d\n", len(result.BrokenLinks))
 
 	// Category order for report (matches Python version)
 	categoryOrder := []string{
@@ -40,7 +40,7 @@ func FormatText(result *ValidationResult, verbose, quiet bool) string {
 			continue
 		}
 
-		output.WriteString(fmt.Sprintf("\n## %s (%d links)\n", category, len(links)))
+		_, _ = fmt.Fprintf(&output, "\n## %s (%d links)\n", category, len(links))
 
 		// Group by file
 		byFile := make(map[string][]BrokenLink)
@@ -56,7 +56,7 @@ func FormatText(result *ValidationResult, verbose, quiet bool) string {
 		sort.Strings(files)
 
 		for _, file := range files {
-			output.WriteString(fmt.Sprintf("\n### %s\n\n", file))
+			_, _ = fmt.Fprintf(&output, "\n### %s\n\n", file)
 
 			// Sort links by line number
 			fileLinks := byFile[file]
@@ -65,7 +65,7 @@ func FormatText(result *ValidationResult, verbose, quiet bool) string {
 			})
 
 			for _, link := range fileLinks {
-				output.WriteString(fmt.Sprintf("- Line %d: `%s`\n", link.LineNumber, link.LinkText))
+				_, _ = fmt.Fprintf(&output, "- Line %d: `%s`\n", link.LineNumber, link.LinkText)
 			}
 		}
 	}

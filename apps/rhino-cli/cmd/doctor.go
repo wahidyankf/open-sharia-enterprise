@@ -71,7 +71,7 @@ func runDoctor(cmd *cobra.Command, args []string) error {
 		formattedOutput = doctor.FormatText(result, verbose, quiet)
 	}
 
-	fmt.Fprint(cmd.OutOrStdout(), formattedOutput)
+	_, _ = fmt.Fprint(cmd.OutOrStdout(), formattedOutput)
 
 	// Only missing tools cause non-zero exit; version warnings are advisory
 	if result.MissingCount > 0 {

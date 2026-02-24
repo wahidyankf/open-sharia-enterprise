@@ -261,7 +261,9 @@ func TestReadNodeVersion(t *testing.T) {
 	t.Run("valid package.json", func(t *testing.T) {
 		tmpDir := t.TempDir()
 		path := filepath.Join(tmpDir, "package.json")
-		os.WriteFile(path, []byte(`{"volta":{"node":"24.11.1","npm":"11.6.3"}}`), 0644)
+		if err := os.WriteFile(path, []byte(`{"volta":{"node":"24.11.1","npm":"11.6.3"}}`), 0644); err != nil {
+			t.Fatalf("failed to write test file: %v", err)
+		}
 
 		got, err := readNodeVersion(path)
 		if err != nil {
@@ -275,7 +277,9 @@ func TestReadNodeVersion(t *testing.T) {
 	t.Run("missing volta key returns empty", func(t *testing.T) {
 		tmpDir := t.TempDir()
 		path := filepath.Join(tmpDir, "package.json")
-		os.WriteFile(path, []byte(`{"name":"foo"}`), 0644)
+		if err := os.WriteFile(path, []byte(`{"name":"foo"}`), 0644); err != nil {
+			t.Fatalf("failed to write test file: %v", err)
+		}
 
 		got, err := readNodeVersion(path)
 		if err != nil {
@@ -288,7 +292,9 @@ func TestReadNodeVersion(t *testing.T) {
 
 	t.Run("malformed JSON returns error", func(t *testing.T) {
 		path := filepath.Join(t.TempDir(), "package.json")
-		os.WriteFile(path, []byte(`{not valid json`), 0644)
+		if err := os.WriteFile(path, []byte(`{not valid json`), 0644); err != nil {
+			t.Fatalf("failed to write test file: %v", err)
+		}
 
 		_, err := readNodeVersion(path)
 		if err == nil {
@@ -308,7 +314,9 @@ func TestReadNpmVersion(t *testing.T) {
 	t.Run("valid package.json", func(t *testing.T) {
 		tmpDir := t.TempDir()
 		path := filepath.Join(tmpDir, "package.json")
-		os.WriteFile(path, []byte(`{"volta":{"node":"24.11.1","npm":"11.6.3"}}`), 0644)
+		if err := os.WriteFile(path, []byte(`{"volta":{"node":"24.11.1","npm":"11.6.3"}}`), 0644); err != nil {
+			t.Fatalf("failed to write test file: %v", err)
+		}
 
 		got, err := readNpmVersion(path)
 		if err != nil {
@@ -321,7 +329,9 @@ func TestReadNpmVersion(t *testing.T) {
 
 	t.Run("malformed JSON returns error", func(t *testing.T) {
 		path := filepath.Join(t.TempDir(), "package.json")
-		os.WriteFile(path, []byte(`{not valid`), 0644)
+		if err := os.WriteFile(path, []byte(`{not valid`), 0644); err != nil {
+			t.Fatalf("failed to write test file: %v", err)
+		}
 
 		_, err := readNpmVersion(path)
 		if err == nil {
@@ -334,7 +344,9 @@ func TestReadJavaVersion(t *testing.T) {
 	t.Run("valid pom.xml", func(t *testing.T) {
 		tmpDir := t.TempDir()
 		path := filepath.Join(tmpDir, "pom.xml")
-		os.WriteFile(path, []byte(`<project><properties><java.version>25</java.version></properties></project>`), 0644)
+		if err := os.WriteFile(path, []byte(`<project><properties><java.version>25</java.version></properties></project>`), 0644); err != nil {
+			t.Fatalf("failed to write test file: %v", err)
+		}
 
 		got, err := readJavaVersion(path)
 		if err != nil {
@@ -347,7 +359,9 @@ func TestReadJavaVersion(t *testing.T) {
 
 	t.Run("malformed XML returns error", func(t *testing.T) {
 		path := filepath.Join(t.TempDir(), "pom.xml")
-		os.WriteFile(path, []byte(`<project><not_closed>`), 0644)
+		if err := os.WriteFile(path, []byte(`<project><not_closed>`), 0644); err != nil {
+			t.Fatalf("failed to write test file: %v", err)
+		}
 
 		_, err := readJavaVersion(path)
 		if err == nil {
@@ -367,7 +381,9 @@ func TestReadGoVersion(t *testing.T) {
 	t.Run("valid go.mod", func(t *testing.T) {
 		tmpDir := t.TempDir()
 		path := filepath.Join(tmpDir, "go.mod")
-		os.WriteFile(path, []byte("module foo\n\ngo 1.24.2\n"), 0644)
+		if err := os.WriteFile(path, []byte("module foo\n\ngo 1.24.2\n"), 0644); err != nil {
+			t.Fatalf("failed to write test file: %v", err)
+		}
 
 		got, err := readGoVersion(path)
 		if err != nil {
@@ -381,7 +397,9 @@ func TestReadGoVersion(t *testing.T) {
 	t.Run("missing go directive returns error", func(t *testing.T) {
 		tmpDir := t.TempDir()
 		path := filepath.Join(tmpDir, "go.mod")
-		os.WriteFile(path, []byte("module foo\n\nrequire github.com/some/dep v1.0.0\n"), 0644)
+		if err := os.WriteFile(path, []byte("module foo\n\nrequire github.com/some/dep v1.0.0\n"), 0644); err != nil {
+			t.Fatalf("failed to write test file: %v", err)
+		}
 
 		_, err := readGoVersion(path)
 		if err == nil {
@@ -617,12 +635,18 @@ func setupCheckAllRepo(t *testing.T) string {
 		t.Fatalf("failed to create dirs: %v", err)
 	}
 
-	os.WriteFile(filepath.Join(tmpDir, "package.json"),
-		[]byte(`{"volta":{"node":"24.11.1","npm":"11.6.3"}}`), 0644)
-	os.WriteFile(filepath.Join(tmpDir, "apps", "organiclever-be", "pom.xml"),
-		[]byte(`<project><properties><java.version>25</java.version></properties></project>`), 0644)
-	os.WriteFile(filepath.Join(tmpDir, "apps", "rhino-cli", "go.mod"),
-		[]byte("module foo\n\ngo 1.24.2\n"), 0644)
+	if err := os.WriteFile(filepath.Join(tmpDir, "package.json"),
+		[]byte(`{"volta":{"node":"24.11.1","npm":"11.6.3"}}`), 0644); err != nil {
+		t.Fatalf("failed to write test file: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(tmpDir, "apps", "organiclever-be", "pom.xml"),
+		[]byte(`<project><properties><java.version>25</java.version></properties></project>`), 0644); err != nil {
+		t.Fatalf("failed to write test file: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(tmpDir, "apps", "rhino-cli", "go.mod"),
+		[]byte("module foo\n\ngo 1.24.2\n"), 0644); err != nil {
+		t.Fatalf("failed to write test file: %v", err)
+	}
 
 	return tmpDir
 }

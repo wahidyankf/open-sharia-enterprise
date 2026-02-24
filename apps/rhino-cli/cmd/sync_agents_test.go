@@ -51,7 +51,7 @@ func TestSyncAgentsCommand_AllValid(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()
@@ -146,7 +146,7 @@ func TestSyncAgentsCommand_DryRun(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()
@@ -219,7 +219,7 @@ func TestSyncAgentsCommand_AgentsOnly(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()
@@ -303,7 +303,7 @@ func TestSyncAgentsCommand_SkillsOnly(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()
@@ -387,7 +387,7 @@ func TestSyncAgentsCommand_ConflictingFlags(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()
@@ -432,7 +432,7 @@ func TestSyncAgentsCommand_JSONOutput(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()

@@ -14,7 +14,7 @@ func TestValidateClaudeCommand_AllValid(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()
@@ -81,7 +81,7 @@ func TestValidateClaudeCommand_InvalidAgent_MissingName(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()
@@ -148,7 +148,7 @@ func TestValidateClaudeCommand_InvalidSkill_MissingName(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()
@@ -216,7 +216,7 @@ func TestValidateClaudeCommand_AgentsOnly(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()
@@ -282,7 +282,7 @@ func TestValidateClaudeCommand_SkillsOnly(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()
@@ -348,7 +348,7 @@ func TestValidateClaudeCommand_ConflictingFlags(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()
@@ -392,7 +392,7 @@ func TestValidateClaudeCommand_JSONOutput(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()
@@ -463,7 +463,7 @@ func TestValidateClaudeCommand_InvalidYAMLFormatting(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()
@@ -531,7 +531,7 @@ func TestValidateClaudeCommand_VerboseOutput(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()

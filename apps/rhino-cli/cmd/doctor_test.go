@@ -54,7 +54,7 @@ func setupDoctorTestRepo(t *testing.T) (string, func()) {
 	}
 
 	cleanup := func() {
-		os.Chdir(originalWd)
+		_ = os.Chdir(originalWd)
 	}
 	return tmpDir, cleanup
 }
@@ -83,7 +83,7 @@ func TestDoctorCommand_TextOutput(t *testing.T) {
 
 	// Run the command — may return an error if some tools are not installed,
 	// but we only check output structure.
-	cmd.RunE(cmd, []string{})
+	_ = cmd.RunE(cmd, []string{})
 
 	outputStr := buf.String()
 	t.Logf("doctor text output:\n%s", outputStr)
@@ -113,7 +113,7 @@ func TestDoctorCommand_JSONOutput(t *testing.T) {
 	verbose = false
 	quiet = false
 
-	cmd.RunE(cmd, []string{})
+	_ = cmd.RunE(cmd, []string{})
 
 	jsonStr := buf.String()
 	t.Logf("doctor JSON output:\n%s", jsonStr)
@@ -149,7 +149,7 @@ func TestDoctorCommand_MarkdownOutput(t *testing.T) {
 	verbose = false
 	quiet = false
 
-	cmd.RunE(cmd, []string{})
+	_ = cmd.RunE(cmd, []string{})
 
 	mdStr := buf.String()
 	t.Logf("doctor markdown output:\n%s", mdStr)
@@ -164,7 +164,7 @@ func TestDoctorCommand_MissingGitRoot(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Use a temp dir with no .git anywhere up the tree
 	tmpDir := t.TempDir()

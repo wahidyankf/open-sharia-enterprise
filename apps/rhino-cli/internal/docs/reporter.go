@@ -17,7 +17,7 @@ func FormatText(result *ValidationResult, verbose, quiet bool) string {
 		if !quiet {
 			output.WriteString("✓ All documentation files follow naming conventions!\n")
 			if verbose {
-				output.WriteString(fmt.Sprintf("  Scanned %d files in %v\n", result.TotalFiles, result.ScanDuration.Round(time.Millisecond)))
+				_, _ = fmt.Fprintf(&output, "  Scanned %d files in %v\n", result.TotalFiles, result.ScanDuration.Round(time.Millisecond))
 			}
 		}
 		return output.String()
@@ -25,9 +25,9 @@ func FormatText(result *ValidationResult, verbose, quiet bool) string {
 
 	// Generate violations report
 	output.WriteString("# Documentation Naming Violations Report\n\n")
-	output.WriteString(fmt.Sprintf("**Total violations**: %d\n", result.ViolationCount))
-	output.WriteString(fmt.Sprintf("**Files scanned**: %d\n", result.TotalFiles))
-	output.WriteString(fmt.Sprintf("**Valid files**: %d\n", result.ValidFiles))
+	_, _ = fmt.Fprintf(&output, "**Total violations**: %d\n", result.ViolationCount)
+	_, _ = fmt.Fprintf(&output, "**Files scanned**: %d\n", result.TotalFiles)
+	_, _ = fmt.Fprintf(&output, "**Valid files**: %d\n", result.ValidFiles)
 
 	// Violation type order for report
 	typeOrder := []ViolationType{
@@ -50,7 +50,7 @@ func FormatText(result *ValidationResult, verbose, quiet bool) string {
 			continue
 		}
 
-		output.WriteString(fmt.Sprintf("\n## %s (%d violations)\n", typeDescriptions[violationType], len(violations)))
+		_, _ = fmt.Fprintf(&output, "\n## %s (%d violations)\n", typeDescriptions[violationType], len(violations))
 
 		// Group by directory
 		byDir := make(map[string][]NamingViolation)
@@ -67,7 +67,7 @@ func FormatText(result *ValidationResult, verbose, quiet bool) string {
 		sort.Strings(dirs)
 
 		for _, dir := range dirs {
-			output.WriteString(fmt.Sprintf("\n### %s\n\n", dir))
+			_, _ = fmt.Fprintf(&output, "\n### %s\n\n", dir)
 
 			dirViolations := byDir[dir]
 			sort.Slice(dirViolations, func(i, j int) bool {
@@ -75,7 +75,7 @@ func FormatText(result *ValidationResult, verbose, quiet bool) string {
 			})
 
 			for _, v := range dirViolations {
-				output.WriteString(fmt.Sprintf("- `%s`: %s\n", v.FileName, v.Message))
+				_, _ = fmt.Fprintf(&output, "- `%s`: %s\n", v.FileName, v.Message)
 			}
 		}
 	}
@@ -158,16 +158,16 @@ func FormatMarkdown(result *ValidationResult) string {
 	var output strings.Builder
 
 	output.WriteString("# Documentation Naming Validation Report\n\n")
-	output.WriteString(fmt.Sprintf("**Generated**: %s\n\n", time.Now().Format(time.RFC3339)))
+	_, _ = fmt.Fprintf(&output, "**Generated**: %s\n\n", time.Now().Format(time.RFC3339))
 
 	// Summary table
 	output.WriteString("## Summary\n\n")
 	output.WriteString("| Metric | Value |\n")
 	output.WriteString("|--------|-------|\n")
-	output.WriteString(fmt.Sprintf("| Total Files | %d |\n", result.TotalFiles))
-	output.WriteString(fmt.Sprintf("| Valid Files | %d |\n", result.ValidFiles))
-	output.WriteString(fmt.Sprintf("| Violations | %d |\n", result.ViolationCount))
-	output.WriteString(fmt.Sprintf("| Duration | %v |\n", result.ScanDuration.Round(time.Millisecond)))
+	_, _ = fmt.Fprintf(&output, "| Total Files | %d |\n", result.TotalFiles)
+	_, _ = fmt.Fprintf(&output, "| Valid Files | %d |\n", result.ValidFiles)
+	_, _ = fmt.Fprintf(&output, "| Violations | %d |\n", result.ViolationCount)
+	_, _ = fmt.Fprintf(&output, "| Duration | %v |\n", result.ScanDuration.Round(time.Millisecond))
 
 	if len(result.Violations) == 0 {
 		output.WriteString("\n✅ **All files follow naming conventions!**\n")
@@ -197,7 +197,7 @@ func FormatMarkdown(result *ValidationResult) string {
 			continue
 		}
 
-		output.WriteString(fmt.Sprintf("### %s (%d)\n\n", typeDescriptions[violationType], len(violations)))
+		_, _ = fmt.Fprintf(&output, "### %s (%d)\n\n", typeDescriptions[violationType], len(violations))
 		output.WriteString("| File | Expected | Actual | Message |\n")
 		output.WriteString("|------|----------|--------|--------|\n")
 
@@ -213,8 +213,8 @@ func FormatMarkdown(result *ValidationResult) string {
 			if actual == "" {
 				actual = "(none)"
 			}
-			output.WriteString(fmt.Sprintf("| `%s` | `%s` | `%s` | %s |\n",
-				v.FilePath, v.ExpectedPrefix, actual, v.Message))
+			_, _ = fmt.Fprintf(&output, "| `%s` | `%s` | `%s` | %s |\n",
+				v.FilePath, v.ExpectedPrefix, actual, v.Message)
 		}
 		output.WriteString("\n")
 	}
@@ -234,7 +234,7 @@ func FormatFixPlan(result *FixResult) string {
 	}
 
 	// Files to rename
-	output.WriteString(fmt.Sprintf("## Files to Rename (%d)\n\n", len(result.RenameOperations)))
+	_, _ = fmt.Fprintf(&output, "## Files to Rename (%d)\n\n", len(result.RenameOperations))
 	output.WriteString("| Current Name | New Name | Directory |\n")
 	output.WriteString("|--------------|----------|----------|\n")
 
@@ -247,12 +247,12 @@ func FormatFixPlan(result *FixResult) string {
 
 	for _, op := range ops {
 		dir := getDir(op.OldPath)
-		output.WriteString(fmt.Sprintf("| `%s` | `%s` | %s |\n", op.OldName, op.NewName, dir))
+		_, _ = fmt.Fprintf(&output, "| `%s` | `%s` | %s |\n", op.OldName, op.NewName, dir)
 	}
 
 	// Links to update
 	if len(result.LinkUpdates) > 0 {
-		output.WriteString(fmt.Sprintf("\n## Links to Update (%d)\n\n", len(result.LinkUpdates)))
+		_, _ = fmt.Fprintf(&output, "\n## Links to Update (%d)\n\n", len(result.LinkUpdates))
 		output.WriteString("| File | Line | Current Link | New Link |\n")
 		output.WriteString("|------|------|--------------|----------|\n")
 
@@ -267,8 +267,8 @@ func FormatFixPlan(result *FixResult) string {
 		})
 
 		for _, u := range updates {
-			output.WriteString(fmt.Sprintf("| %s | %d | `%s` | `%s` |\n",
-				u.FilePath, u.LineNumber, u.OldLink, u.NewLink))
+			_, _ = fmt.Fprintf(&output, "| %s | %d | `%s` | `%s` |\n",
+				u.FilePath, u.LineNumber, u.OldLink, u.NewLink)
 		}
 	}
 
@@ -286,17 +286,17 @@ func FormatFixResult(result *FixResult) string {
 
 	// Summary
 	if result.RenamesApplied > 0 {
-		output.WriteString(fmt.Sprintf("✓ Renamed %d files\n", result.RenamesApplied))
+		_, _ = fmt.Fprintf(&output, "✓ Renamed %d files\n", result.RenamesApplied)
 	}
 	if result.LinksUpdated > 0 {
-		output.WriteString(fmt.Sprintf("✓ Updated %d links\n", result.LinksUpdated))
+		_, _ = fmt.Fprintf(&output, "✓ Updated %d links\n", result.LinksUpdated)
 	}
 
 	// Errors
 	if len(result.Errors) > 0 {
-		output.WriteString(fmt.Sprintf("\n## Errors (%d)\n\n", len(result.Errors)))
+		_, _ = fmt.Fprintf(&output, "\n## Errors (%d)\n\n", len(result.Errors))
 		for _, err := range result.Errors {
-			output.WriteString(fmt.Sprintf("- %s\n", err))
+			_, _ = fmt.Fprintf(&output, "- %s\n", err)
 		}
 	}
 
@@ -304,7 +304,7 @@ func FormatFixResult(result *FixResult) string {
 	if result.RenamesApplied > 0 {
 		output.WriteString("\n## Renamed Files\n\n")
 		for _, op := range result.RenameOperations {
-			output.WriteString(fmt.Sprintf("- `%s` → `%s`\n", op.OldPath, op.NewPath))
+			_, _ = fmt.Fprintf(&output, "- `%s` → `%s`\n", op.OldPath, op.NewPath)
 		}
 	}
 
@@ -350,22 +350,12 @@ func FormatFixJSON(result *FixResult) (string, error) {
 
 	ops := make([]JSONRenameOp, len(result.RenameOperations))
 	for i, op := range result.RenameOperations {
-		ops[i] = JSONRenameOp{
-			OldPath: op.OldPath,
-			NewPath: op.NewPath,
-			OldName: op.OldName,
-			NewName: op.NewName,
-		}
+		ops[i] = JSONRenameOp(op)
 	}
 
 	updates := make([]JSONLinkUpdate, len(result.LinkUpdates))
 	for i, u := range result.LinkUpdates {
-		updates[i] = JSONLinkUpdate{
-			FilePath:   u.FilePath,
-			LineNumber: u.LineNumber,
-			OldLink:    u.OldLink,
-			NewLink:    u.NewLink,
-		}
+		updates[i] = JSONLinkUpdate(u)
 	}
 
 	output := FixJSONOutput{

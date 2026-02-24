@@ -122,12 +122,12 @@ func runValidationMode(cmd *cobra.Command, result *docs.ValidationResult) error 
 	}
 
 	// Write output
-	fmt.Fprint(cmd.OutOrStdout(), formattedOutput)
+	_, _ = fmt.Fprint(cmd.OutOrStdout(), formattedOutput)
 
 	// Return error if violations found (Cobra will set exit code 1)
 	if len(result.Violations) > 0 {
 		if !quiet && output == "text" {
-			fmt.Fprintf(cmd.OutOrStderr(), "\n❌ Found %d naming violations\n", len(result.Violations))
+			_, _ = fmt.Fprintf(cmd.OutOrStderr(), "\n❌ Found %d naming violations\n", len(result.Violations))
 		}
 		return fmt.Errorf("found %d naming violations", len(result.Violations))
 	}
@@ -168,7 +168,7 @@ func runFixMode(cmd *cobra.Command, validationResult *docs.ValidationResult, rep
 	}
 
 	// Write output
-	fmt.Fprint(cmd.OutOrStdout(), formattedOutput)
+	_, _ = fmt.Fprint(cmd.OutOrStdout(), formattedOutput)
 
 	// Return error if there were errors during apply
 	if !fixResult.DryRun && len(fixResult.Errors) > 0 {

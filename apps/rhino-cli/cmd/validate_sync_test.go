@@ -14,7 +14,7 @@ func TestValidateSyncCommand_InSync(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()
@@ -133,7 +133,7 @@ func TestValidateSyncCommand_OutOfSync_AgentCount(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()
@@ -231,7 +231,7 @@ func TestValidateSyncCommand_OutOfSync_SkillContent(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()
@@ -313,7 +313,7 @@ func TestValidateSyncCommand_OutOfSync_AgentDescription(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()
@@ -398,7 +398,7 @@ func TestValidateSyncCommand_JSONOutput(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()
@@ -499,7 +499,7 @@ func TestValidateSyncCommand_VerboseOutput(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()
@@ -592,7 +592,7 @@ func TestValidateSyncCommand_EmptyDirectories(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get working directory: %v", err)
 	}
-	defer os.Chdir(originalWd)
+	defer func() { _ = os.Chdir(originalWd) }()
 
 	// Create temporary test repository
 	tmpDir := t.TempDir()
