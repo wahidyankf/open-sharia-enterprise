@@ -27,7 +27,14 @@
       },
       "outputs": ["{projectRoot}/build/web"]
     },
-    "test": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "export PATH=\"$PATH:$HOME/flutter/bin\" && flutter analyze",
+        "cwd": "apps/organiclever-app"
+      }
+    },
+    "test:unit": {
       "executor": "nx:run-commands",
       "options": {
         "command": "export PATH=\"$PATH:$HOME/flutter/bin\" && flutter test",
@@ -40,14 +47,8 @@
       "options": {
         "command": "export PATH=\"$PATH:$HOME/flutter/bin\" && flutter test",
         "cwd": "apps/organiclever-app"
-      }
-    },
-    "lint": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "export PATH=\"$PATH:$HOME/flutter/bin\" && flutter analyze",
-        "cwd": "apps/organiclever-app"
-      }
+      },
+      "dependsOn": ["install"]
     }
   },
   "tags": ["type:app", "platform:flutter", "domain:organiclever"]
