@@ -45,6 +45,12 @@ nx run organiclever-app-web-e2e:test:e2e:ui
 
 # View HTML report from last run
 nx run organiclever-app-web-e2e:test:e2e:report
+
+# Lint TypeScript source files (oxlint)
+nx run organiclever-app-web-e2e:lint
+
+# Pre-push quality gate (same as lint for E2E projects)
+nx run organiclever-app-web-e2e:test:quick
 ```
 
 **See**: [Nx Target Standards](../../governance/development/infra/nx-targets.md) for canonical E2E target names. `test:e2e` runs on a scheduled cron (4x/day via GitHub Actions), not on pre-push.

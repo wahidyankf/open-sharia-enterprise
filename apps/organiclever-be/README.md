@@ -168,14 +168,17 @@ docker-compose -f docker-compose.yml up
 # Build JAR
 nx build organiclever-be
 
+# Start development server (Maven spring-boot:run)
+nx dev organiclever-be
+
+# Start production server (runs built JAR)
+nx run organiclever-be:start
+
 # Run fast quality gate (pre-push standard)
 nx run organiclever-be:test:quick
 
 # Run unit tests
 nx run organiclever-be:test:unit
-
-# Start dev server (local Maven)
-nx dev organiclever-be
 
 # Lint code
 nx lint organiclever-be
