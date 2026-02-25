@@ -5,8 +5,8 @@
 ## Overview
 
 Audit and update all dependencies across every ecosystem in the open-sharia-enterprise monorepo.
-The repository spans six package managers and runtimes (NPM, Go, Flutter/Dart, Maven, Gradle,
-Hugo). Each has drifted independently and requires a structured, ecosystem-aware upgrade process
+The repository spans five package managers and runtimes (NPM, Go, Flutter/Dart, Maven, Hugo).
+Each has drifted independently and requires a structured, ecosystem-aware upgrade process
 that preserves correctness and does not break running applications.
 
 **Git Workflow**: Work on `main` branch (Trunk Based Development)
@@ -21,7 +21,7 @@ that preserves correctness and does not break running applications.
 
 ## Goals
 
-- Establish a verified snapshot of current dependency versions across all six ecosystems
+- Establish a verified snapshot of current dependency versions across all five ecosystems
 - Update all dependencies to the latest stable releases appropriate for this project
 - Normalize inconsistencies (e.g., Go toolchain version mismatch across go.mod files)
 - Ensure all lock files are regenerated and consistent after updates
@@ -30,14 +30,13 @@ that preserves correctness and does not break running applications.
 
 ## Ecosystems in Scope
 
-| Ecosystem        | Apps / Files                                                     | Package Manager       |
-| ---------------- | ---------------------------------------------------------------- | --------------------- |
-| Node.js / NPM    | root workspace, `organiclever-web`, all `*-e2e` apps             | npm                   |
-| Go modules       | `ayokoding-cli`, `rhino-cli`, `ayokoding-web`, `oseplatform-web` | go mod                |
-| Flutter / Dart   | `organiclever-app`                                               | pub / flutter pub     |
-| Java / Maven     | `organiclever-be`                                                | Maven                 |
-| Android / Gradle | `organiclever-app/android/`                                      | Gradle wrapper + AGP  |
-| Hugo themes      | `ayokoding-web` (Hextra), `oseplatform-web` (PaperMod)           | go mod (Hugo modules) |
+| Ecosystem      | Apps / Files                                                     | Package Manager       |
+| -------------- | ---------------------------------------------------------------- | --------------------- |
+| Node.js / NPM  | root workspace, `organiclever-web`, all `*-e2e` apps             | npm                   |
+| Go modules     | `ayokoding-cli`, `rhino-cli`, `ayokoding-web`, `oseplatform-web` | go mod                |
+| Flutter / Dart | `organiclever-app`                                               | pub / flutter pub     |
+| Java / Maven   | `organiclever-be`                                                | Maven                 |
+| Hugo themes    | `ayokoding-web` (Hextra), `oseplatform-web` (PaperMod)           | go mod (Hugo modules) |
 
 ## Out of Scope
 
