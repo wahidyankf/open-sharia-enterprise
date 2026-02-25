@@ -22,6 +22,10 @@ generated-reports/
 # Flutter generated files
 **/.dart_tool/
 
+# Playwright generated test reports and results
+apps/*/playwright-report/
+apps/*/test-results/
+
 # IDE
 .vscode/
 .idea/

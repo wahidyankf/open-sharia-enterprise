@@ -12,7 +12,9 @@
     "generated-reports/**",
     "**/.dart_tool/**",
     ".vscode/**",
-    ".idea/**"
+    ".idea/**",
+    "apps/*/playwright-report/**",
+    "apps/*/test-results/**"
   ],
 
   // Repository-specific markdown linting rules
