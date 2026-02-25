@@ -386,7 +386,7 @@ Six-layer governance hierarchy:
 - **URL**: <https://oseplatform.com>
 - **Production branch**: `prod-oseplatform-web` → oseplatform.com
 - **Theme**: PaperMod
-- **Hugo**: 0.155.2 Extended
+- **Hugo**: 0.156.0 Extended
 - **Deployment**: Vercel
 - **Content**: Marketing site for platform
 
@@ -402,7 +402,7 @@ nx build oseplatform-web  # Production build
 - **URL**: <https://ayokoding.com>
 - **Production branch**: `prod-ayokoding-web` → ayokoding.com
 - **Theme**: Hextra (documentation)
-- **Hugo**: 0.155.2 Extended
+- **Hugo**: 0.156.0 Extended
 - **Languages**: Indonesian (primary), English
 - **Deployment**: Vercel
 - **Content**: Educational platform (programming, AI, security)
