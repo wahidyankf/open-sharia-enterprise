@@ -5,9 +5,10 @@
 ## Approach
 
 Updates are grouped into nine phases ordered by risk (lowest first). Each phase produces one or
-more commits. High-risk major upgrades (Next.js, AGP/Gradle, TailwindCSS) are isolated in their
-own phases with explicit go/no-go decision gates so they can be deferred without blocking safe
-updates.
+more commits. High-risk major upgrades (Next.js, TailwindCSS) are isolated in their own phases
+with explicit go/no-go decision gates so they can be deferred without blocking safe updates.
+AGP 9 and Gradle 9 are pre-decided as **DEFERRED** — Flutter officially blocks AGP 9 upgrades
+until issue #181383 is resolved; Phase 7 executes only the Kotlin minor update.
 
 ## Implementation Phases
 
@@ -27,7 +28,8 @@ Produce a comprehensive audit report before touching any file.
 - [ ] Review report; make go/no-go decision for each major upgrade
   - [ ] Decision: Next.js 14 → 15 → 16 (document decision and rationale)
   - [ ] Decision: TailwindCSS v3 → v4 (document decision and rationale)
-  - [ ] Decision: AGP 8 → 9 + Gradle 8 → 9 (document decision and rationale)
+  - ~~Decision: AGP 8 → 9 + Gradle 8 → 9~~ — **pre-decided DEFERRED** (Flutter blocks AGP 9;
+    see Phase 7 and `tech-docs.md` Android/Gradle section)
 
 ### Phase 2: Node.js Volta Pin + NPM Patch/Minor Updates
 
@@ -114,36 +116,38 @@ Medium-risk. Resolve any pub constraint conflicts manually.
 
 ---
 
-> **Decision Gate**: Phases 7 and 8 are high-risk major upgrades. Review the audit report and
-> the go/no-go decisions captured in Phase 1 before proceeding. Either phase may be deferred to
-> a separate plan if the risk is deemed too high for the current project phase.
+> **Decision Gate**: Phase 7 (AGP/Gradle) is pre-decided: AGP 9 and Gradle 9 are **DEFERRED**
+> due to Flutter's official incompatibility block. Only the Kotlin minor update is executed.
+> Phase 8 (Next.js) remains high-risk — review the audit report and Phase 8b decision criteria
+> (React 19 / Radix UI compatibility) before proceeding. Phase 8 may be deferred to a separate
+> plan if the ecosystem is not yet ready.
 
 ---
 
-### Phase 7: Android / Gradle Major Upgrade (AGP 8 → 9, Gradle 8 → 9)
+### Phase 7: Android / Gradle — Kotlin Minor Update (AGP/Gradle DEFERRED)
 
-High-risk. Follow the prescribed order strictly.
+> 🚫 **AGP 8 → 9 and Gradle 8 → 9 upgrades are DEFERRED** for this plan.
+>
+> The Flutter team officially advises against upgrading Flutter apps to AGP 9 at this time.
+> Flutter apps using plugins are incompatible with AGP 9.0.0 (issue #181383). The Flutter team
+> has paused AGP 9 support pending a backwards-compatibility audit.
+>
+> Reference: <https://docs.flutter.dev/release/breaking-changes/migrate-to-agp-9>
+> Issue tracker: <https://github.com/flutter/flutter/issues/181383>
+>
+> **Gradle 9.3.1** is also deferred — it is only required for AGP 9; AGP 8.x runs on Gradle 8.x.
+>
+> When Flutter resolves issue #181383 and publishes its AGP 9 migration guide, create a new
+> plan `android-gradle-agp9-upgrade` to execute the full major upgrade.
 
-- [ ] Read AGP 9.0 release notes in full:
-      <https://developer.android.com/build/releases/agp-9-0-0-release-notes>
-- [ ] Read Kotlin blog update guide for AGP 9:
-      <https://blog.jetbrains.com/kotlin/2026/01/update-your-projects-for-agp9/>
-- [ ] **Step 7a**: Update Kotlin Gradle plugin `2.2.20` → `2.3.0` in
+**What is executed in this phase** — Kotlin minor update only:
+
+- [ ] Update Kotlin Gradle plugin `2.2.20` → `2.3.0` in
       `apps/organiclever-app/android/settings.gradle.kts`
-  - Run `./gradlew assembleDebug` — verify clean build
-  - If deprecation warnings appear, fix before moving to 7b
-- [ ] **Step 7b**: Update AGP `8.11.1` → `9.0.1` in
-      `apps/organiclever-app/android/settings.gradle.kts`
-  - Run `./gradlew assembleDebug` — observe and document any build failures
-  - Fix all compilation errors from removed AGP APIs
-  - Re-run until green
-- [ ] **Step 7c**: Update Gradle wrapper `8.14` → `9.3.1`
-  - Edit `apps/organiclever-app/android/gradle/wrapper/gradle-wrapper.properties`
-  - Run `./gradlew assembleDebug` — verify with new Gradle version
-  - Fix any Gradle API removals
-- [ ] Run `flutter build apk` — successful APK build
-- [ ] Run `nx run organiclever-app-web-e2e:test:e2e` — e2e tests pass (where applicable)
-- [ ] Commit: `chore(deps): upgrade android gradle plugin to 9.0.1 and gradle wrapper to 9.3.1`
+- [ ] Run `./gradlew assembleDebug` in `apps/organiclever-app/android/` — verify clean build
+- [ ] If deprecation warnings appear, fix them (Kotlin 2.3 improved deprecation diagnostics)
+- [ ] Run `flutter build apk` — APK builds successfully with updated Kotlin plugin
+- [ ] Commit: `chore(deps): upgrade kotlin gradle plugin from 2.2.20 to 2.3.0`
 
 ### Phase 8: Next.js Major Upgrade (14 → 15 → 16)
 
@@ -164,10 +168,25 @@ High-risk. Two discrete sub-phases — commit after each major.
 
 #### Phase 8b: Next.js 15 → 16
 
+> ⚠️ **Known React 19 / Radix UI incompatibilities (as of 2026-02-25)**. Before proceeding,
+> check whether these issues have been resolved upstream:
+>
+> - `@radix-ui/react-icons`: peer dependency declared as `react@^18`; causes install conflicts
+>   under React 19.
+> - `@radix-ui` Primitives: `useComposedRefs` has a known infinite loop regression with React 19
+>   strict mode.
+> - `Slot` TypeScript component: breaking type changes under React 19's narrowing.
+>
+> If any of these remain unresolved when you reach this step, freeze at Next.js 15.x and defer
+> Phase 8b to a follow-up plan `nextjs-16-react-19-upgrade`.
+
 - [ ] Read Next.js 16 upgrade guide
 - [ ] Assess whether Next.js 16 requires React 19
-  - [ ] If React 19 required: verify `@radix-ui/*` packages are compatible with React 19
-  - [ ] If incompatible: freeze at Next.js 15.x and defer 16 to a follow-up plan
+  - [ ] If React 19 required: verify all `@radix-ui/*` packages (icons, primitives, shadcn
+        components) are fully compatible with React 19 — check the changelog for each installed
+        package and confirm the known issues above are resolved
+  - [ ] If any Radix UI issue is unresolved: stop here; freeze at Next.js 15.x and defer 16
+        to a follow-up plan
 - [ ] Run official codemod if available: `npx @next/codemod@16 upgrade`
 - [ ] Update `next` and `eslint-config-next` to `16.x`
 - [ ] Update `react` and `react-dom` to React 19 if required
@@ -179,7 +198,9 @@ High-risk. Two discrete sub-phases — commit after each major.
 
 ### Phase 9: TailwindCSS v4 Evaluation
 
-High-risk. TailwindCSS v4 replaces `tailwind.config.js` with CSS-first configuration.
+Medium-risk. TailwindCSS v4 replaces `tailwind.config.js` with CSS-first configuration.
+shadcn-ui now officially supports Tailwind v4 and provides a migration guide, reducing risk
+compared to earlier assessments.
 
 - [ ] Read [TailwindCSS v4 upgrade guide](https://tailwindcss.com/docs/upgrade-guide)
 - [ ] Run official upgrade tool (verify exact command at <https://tailwindcss.com/docs/upgrade-guide>
