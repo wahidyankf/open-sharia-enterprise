@@ -137,7 +137,7 @@ passes:
 
 **Decision gate**: If Next.js 16 requires React 19 and the Radix UI issues above are not resolved
 upstream, freeze Next.js at 15.x until the ecosystem catches up. Check the status of Radix UI's
-React 19 compatibility before starting Phase 8b.
+React 19 compatibility before starting Phase 7b.
 
 ### Go — Module Normalization + Updates
 
