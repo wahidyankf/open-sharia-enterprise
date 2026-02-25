@@ -40,15 +40,15 @@
   "license": "MIT",
   "type": "commonjs",
   "volta": {
-    "node": "24.11.1",
-    "npm": "11.6.3"
+    "node": "24.13.1",
+    "npm": "11.10.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.6",
-    "markdownlint-cli2": "^0.20.0",
+    "markdownlint-cli2": "^0.21.0",
     "nx": "22.5.2",
     "prettier": "^3.6.2",
     "tsx": "^4.20.6"
@@ -65,5 +65,8 @@
   "overrides": {
     "markdown-it": "14.1.1",
     "minimatch": ">=10.2.1"
+  },
+  "dependencies": {
+    "tailwindcss": "^4.2.1"
   }
 }
