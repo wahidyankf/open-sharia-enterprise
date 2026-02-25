@@ -39,7 +39,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ email, setEmail, password, setPas
             type="email"
             placeholder="Email"
             id="email"
-            className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
+            className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-hidden focus:ring-1 focus:ring-primary"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -51,7 +51,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ email, setEmail, password, setPas
             type="password"
             placeholder="Password"
             id="password"
-            className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
+            className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-hidden focus:ring-1 focus:ring-primary"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
