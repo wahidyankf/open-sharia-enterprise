@@ -7,7 +7,7 @@
     "test:report": "playwright show-report"
   },
   "devDependencies": {
-    "@playwright/test": "^1.55.1"
+    "@playwright/test": "^1.58.2"
   },
   "volta": {
     "extends": "../../package.json"
