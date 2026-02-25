@@ -53,7 +53,7 @@ Next.js provides multiple **rendering strategies** to optimize performance based
 - **Streaming support** - Progressive rendering with Suspense boundaries
 - **Hybrid rendering** - Mix static and dynamic content in one route
 
-This guide covers Next.js 14+ rendering strategies for enterprise applications.
+This guide covers Next.js 16+ rendering strategies for enterprise applications.
 
 ## Rendering Strategy Decision Tree
 

@@ -22,8 +22,8 @@ Instructions for AI agents working with this repository via OpenCode.
 
 **open-sharia-enterprise** - Enterprise platform built with Node.js, using **Nx monorepo** structure.
 
-- **Node.js**: 24.11.1 (LTS - Long-Term Support, managed by Volta)
-- **npm**: 11.6.3
+- **Node.js**: 24.13.1 (LTS - Long-Term Support, managed by Volta)
+- **npm**: 11.10.1
 - **Monorepo**: Nx with `apps/` and `libs/` structure
 - **Git Workflow**: Trunk Based Development (all work on `main` branch)
 

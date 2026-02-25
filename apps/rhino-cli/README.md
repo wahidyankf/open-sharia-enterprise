@@ -445,8 +445,8 @@ Doctor Report
 
 ✓ git        v2.47.2        (no version requirement)
 ✓ volta      v2.0.2         (no version requirement)
-✓ node       v24.11.1       (required: 24.11.1)
-✓ npm        v11.6.3        (required: 11.6.3)
+✓ node       v24.13.1       (required: 24.13.1)
+✓ npm        v11.10.1        (required: 11.10.1)
 ✓ java       v25            (required: 25)
 ✓ maven      v3.9.9         (no version requirement)
 ✗ golang     not found      (required: ≥1.24.2)

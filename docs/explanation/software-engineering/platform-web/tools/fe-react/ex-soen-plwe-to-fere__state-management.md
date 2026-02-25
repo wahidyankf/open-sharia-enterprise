@@ -37,7 +37,7 @@ State management is central to React applications. This guide covers patterns fo
 
 **Target Audience**: Developers building React applications needing to manage complex state across components, particularly Islamic finance platforms with multi-step forms, real-time calculations, and data synchronization.
 
-**React Version**: React 18.2+ with TypeScript 5+
+**React Version**: React 19.0 with TypeScript 5+
 
 ## State Categories
 

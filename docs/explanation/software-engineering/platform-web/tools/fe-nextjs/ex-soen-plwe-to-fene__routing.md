@@ -54,7 +54,7 @@ Next.js routing is built on **file-system based routing** where the folder struc
 - **Prefetching** for instant navigation
 - **Soft navigation** preserving client state
 
-This guide covers Next.js 14+ routing patterns for enterprise applications.
+This guide covers Next.js 16+ routing patterns for enterprise applications.
 
 ## File-System Routing
 

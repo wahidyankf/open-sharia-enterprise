@@ -34,7 +34,7 @@ Testing is essential for maintaining React application quality. This guide cover
 
 **Target Audience**: Developers building production React applications needing comprehensive test coverage, particularly for Islamic finance platforms with complex business rules.
 
-**React Version**: React 18.2+ with TypeScript 5+
+**React Version**: React 19.0 with TypeScript 5+
 **Testing Stack**: React Testing Library, Jest, Vitest
 
 ## Testing Philosophy

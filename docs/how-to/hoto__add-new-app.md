@@ -52,7 +52,7 @@ npx create-next-app@latest . --typescript --tailwind --eslint --app --no-src-dir
 
 This creates:
 
-- `app/` - Next.js 14+ app directory
+- `app/` - Next.js 16+ app directory
 - `public/` - Static assets
 - `next.config.js` - Next.js configuration
 - `tailwind.config.ts` - Tailwind CSS configuration

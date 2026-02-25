@@ -34,7 +34,7 @@ Security is critical for React applications handling sensitive data. This guide 
 
 **Target Audience**: Developers building secure React applications, particularly Islamic finance platforms handling financial transactions and personal data.
 
-**React Version**: React 18.2+ with TypeScript 5+
+**React Version**: React 19.0 with TypeScript 5+
 
 ## XSS Prevention
 

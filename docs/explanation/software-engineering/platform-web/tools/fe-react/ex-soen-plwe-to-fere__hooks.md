@@ -38,7 +38,7 @@ React Hooks enable functional components to use state and lifecycle features. Th
 
 **Target Audience**: Developers building React applications with functional components, particularly for Islamic finance platforms requiring complex data management and side effects.
 
-**React Version**: React 18.2+ with TypeScript 5+
+**React Version**: React 19.0 with TypeScript 5+
 
 ## useState
 

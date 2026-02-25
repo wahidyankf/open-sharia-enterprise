@@ -252,7 +252,7 @@ graph TD
 
 **Version Management (REQUIRED)**:
 
-- MUST use `go.mod` with `go 1.25.6` directive to pin Go version
+- MUST use `go.mod` with `go 1.26.0` directive to pin Go version
 - SHOULD use MISE/asdf with `.tool-versions` OR SDKMAN with `.sdkmanrc` for local version management
 - MUST NOT rely on system-installed Go without version verification
 

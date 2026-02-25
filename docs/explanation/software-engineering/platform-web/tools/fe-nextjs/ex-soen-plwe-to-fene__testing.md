@@ -43,7 +43,7 @@ updated: 2026-01-26
 
 ## Overview
 
-**Testing Next.js applications** requires understanding the different rendering strategies (Server Components, Client Components, Server Actions) and choosing appropriate testing approaches for each. This guide covers modern testing patterns for Next.js 14+ with the App Router.
+**Testing Next.js applications** requires understanding the different rendering strategies (Server Components, Client Components, Server Actions) and choosing appropriate testing approaches for each. This guide covers modern testing patterns for Next.js 16+ with the App Router.
 
 **Testing Philosophy**:
 
@@ -53,7 +53,7 @@ updated: 2026-01-26
 - **E2E for critical flows** - User journeys through the app
 - **Mock external dependencies** - Databases, APIs, third-party services
 
-This guide covers Next.js 14+ testing strategies for enterprise applications.
+This guide covers Next.js 16+ testing strategies for enterprise applications.
 
 ## Test Setup
 

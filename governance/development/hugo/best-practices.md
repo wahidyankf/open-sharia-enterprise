@@ -27,7 +27,7 @@ Provide actionable guidance for:
 ```bash
 # Verify extended version
 hugo version
-# Output: hugo v0.152.2+extended linux/amd64
+# Output: hugo v0.156.0+extended linux/amd64
 ```
 
 **Bad Example:**
@@ -35,7 +35,7 @@ hugo version
 ```bash
 # Using standard version (no SCSS support)
 hugo version
-# Output: hugo v0.152.2 linux/amd64  # Missing "+extended"
+# Output: hugo v0.156.0 linux/amd64  # Missing "+extended"
 ```
 
 **Rationale:**

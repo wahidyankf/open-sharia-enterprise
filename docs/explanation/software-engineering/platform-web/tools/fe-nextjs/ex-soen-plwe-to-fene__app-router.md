@@ -55,7 +55,7 @@ The **Next.js App Router** is a file-system based routing architecture introduce
 - **Automatic code splitting** - Per-route bundles
 - **Streaming support** - Progressive rendering with Suspense
 
-This guide covers Next.js 14+ App Router patterns for enterprise financial applications.
+This guide covers Next.js 16+ App Router patterns for enterprise financial applications.
 
 ## File-System Routing
 

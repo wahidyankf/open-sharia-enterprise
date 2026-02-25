@@ -67,7 +67,7 @@ For the complete roadmap including all phases, tech stack, and strategic approac
 
 **Phase 0 (Complete):**
 
-- Node.js 24.11.1 & npm 11.6.3 (via Volta) - Tooling and development infrastructure
+- Node.js 24.13.1 & npm 11.10.1 (via Volta) - Tooling and development infrastructure
 - Hugo (Extended) - Static sites (ayokoding-web, oseplatform-web)
 - Golang - CLI tools ([ayokoding-cli](./apps/ayokoding-cli/), [rhino-cli](./apps/rhino-cli/)) and future security infrastructure
 
@@ -84,7 +84,7 @@ See **[ROADMAP.md](./ROADMAP.md)** for complete tech stack evolution across all 
 
 ### 📋 Prerequisites
 
-- **Node.js** 24.11.1 LTS & **npm** 11.6.3 (managed via [Volta](https://docs.volta.sh/guide/getting-started))
+- **Node.js** 24.13.1 LTS & **npm** 11.10.1 (managed via [Volta](https://docs.volta.sh/guide/getting-started))
 
 ### 📥 Installation
 

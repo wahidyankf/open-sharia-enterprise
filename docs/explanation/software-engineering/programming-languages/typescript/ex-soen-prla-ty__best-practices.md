@@ -428,15 +428,15 @@ class ZakatCalculator {
   "name": "ose-zakat-service",
   "version": "1.0.0",
   "volta": {
-    "node": "24.11.1",
-    "npm": "11.6.3"
+    "node": "24.13.1",
+    "npm": "11.10.1"
   },
   "dependencies": {
     "typescript": "5.9.3",
     "decimal.js": "10.4.3"
   },
   "devDependencies": {
-    "@types/node": "24.11.1",
+    "@types/node": "24.13.1",
     "vitest": "4.0.18"
   }
 }
@@ -462,7 +462,7 @@ class ZakatCalculator {
 }
 
 // Dockerfile - Reproducible build environment
-FROM node:24.11.1-alpine
+FROM node:24.13.1-alpine
 
 WORKDIR /app
 
@@ -967,8 +967,8 @@ Pin Node.js and npm versions using Volta.
 ```json
 {
   "volta": {
-    "node": "24.11.1",
-    "npm": "11.6.3"
+    "node": "24.13.1",
+    "npm": "11.10.1"
   }
 }
 ```
@@ -976,7 +976,7 @@ Pin Node.js and npm versions using Volta.
 **Alternative**: Use `.nvmrc` for nvm users:
 
 ```
-24.11.1
+24.13.1
 ```
 
 ### Dependency Version Management
@@ -990,7 +990,7 @@ Lock dependencies with `package-lock.json` (npm), `pnpm-lock.yaml` (pnpm), or `b
     "express": "5.2.1"
   },
   "devDependencies": {
-    "@types/node": "24.11.1",
+    "@types/node": "24.13.1",
     "vitest": "4.0.18"
   }
 }
@@ -1035,8 +1035,8 @@ echo "Setup complete!"
 
 Before following these best practices, ensure you have:
 
-- Node.js 24.11.1+ (LTS)
-- npm 11.6.3+ or pnpm 10.28.1+ or bun 1.3.6+
+- Node.js 24.13.1+ (LTS)
+- npm 11.10.1+ or pnpm 10.28.1+ or bun 1.3.6+
 - TypeScript 5.0+ (5.9.3 recommended)
 - ESLint 9.39.2+ (10.0.0 in beta/rc)
 - Prettier 3.8.1+

@@ -12,15 +12,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Tech Stack
 
-- **Node.js**: 24.11.1 (LTS, managed by Volta)
-- **npm**: 11.6.3
+- **Node.js**: 24.13.1 (LTS, managed by Volta)
+- **npm**: 11.10.1
 - **Monorepo**: Nx workspace
 - **Current Apps**:
   - `oseplatform-web` - Hugo static site (PaperMod theme)
   - `ayokoding-web` - Hugo static site (Hextra theme, bilingual)
   - `ayokoding-cli` - Go CLI tool for content automation
   - `rhino-cli` - Go CLI tool for repository management (Repository Hygiene & INtegration Orchestrator)
-  - `organiclever-web` - Next.js 14 landing and promotional website (www.organiclever.com)
+  - `organiclever-web` - Next.js 16 landing and promotional website (www.organiclever.com)
   - `organiclever-web-e2e` - Playwright E2E tests for organiclever-web
   - `organiclever-app` - Flutter main application (app.organiclever.com, Android, iOS)
   - `organiclever-be` - Spring Boot REST API backend
@@ -423,7 +423,7 @@ nx run-pre-commit ayokoding-web  # Update titles + navigation
 
 - **URL**: <https://www.organiclever.com/>
 - **Production branch**: `prod-organiclever-web` → www.organiclever.com
-- **Framework**: Next.js 14 (App Router)
+- **Framework**: Next.js 16 (App Router)
 - **Deployment**: Vercel
 - **Content**: Landing and promotional website for OrganicLever
 - **E2E tests**: `organiclever-web-e2e`

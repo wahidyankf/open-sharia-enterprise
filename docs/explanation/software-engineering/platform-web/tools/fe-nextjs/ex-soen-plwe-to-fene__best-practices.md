@@ -45,7 +45,7 @@ last_updated: 2026-01-26
 
 Next.js best practices provide proven approaches for building production-ready full-stack applications. These standards ensure optimal performance, maintainability, and user experience across the open-sharia-enterprise platform.
 
-This guide focuses on **Next.js 14+ best practices** with App Router, Server Components, and TypeScript.
+This guide focuses on **Next.js 16+ best practices** with App Router, Server Components, and TypeScript.
 
 ## Project Structure
 

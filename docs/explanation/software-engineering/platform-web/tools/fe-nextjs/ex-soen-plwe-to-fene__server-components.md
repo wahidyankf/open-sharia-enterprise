@@ -54,7 +54,7 @@ updated: 2026-01-26
 - **Enhanced security** - Sensitive logic stays on server
 - **Better SEO** - Pre-rendered HTML for search engines
 
-This guide covers Server Components patterns for Next.js 14+ with enterprise financial applications.
+This guide covers Server Components patterns for Next.js 16+ with enterprise financial applications.
 
 ## Server Components Fundamentals
 

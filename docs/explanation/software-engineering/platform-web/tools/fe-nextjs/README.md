@@ -30,7 +30,7 @@ updated: 2026-01-26
 
 Next.js is a React meta-framework that provides a production-ready foundation for building modern web applications. It combines React's component model with server-side rendering, static site generation, API routes, and optimized performance features out of the box.
 
-This documentation covers Next.js 14+ with the App Router, TypeScript 5+, and React Server Components, focusing on full-stack application development for enterprise-grade financial systems.
+This documentation covers Next.js 16+ with the App Router, TypeScript 5+, and React Server Components, focusing on full-stack application development for enterprise-grade financial systems.
 
 ## Framework Standards
 
@@ -124,17 +124,17 @@ timeline
     2021-06 : Next.js 11 : Webpack 5 default : Script Optimization
     2022-10 : Next.js 13 : App Router (beta) : Turbopack (alpha) : React Server Components
     2023-05 : Next.js 13.4 : App Router stable : Server Actions (alpha)
-    2024-05 : Next.js 14 : Turbopack improvements : Server Actions stable : Partial Prerendering (preview)
+    2024-05 : Next.js 16 : Turbopack improvements : Server Actions stable : Partial Prerendering (preview)
     2024-10 : Next.js 15 : React 19 support : Async Request APIs : Enhanced caching
     2025-Q2 : Next.js 15.1+ : Turbopack stable : PPR stable : Performance improvements
-    2026-Q1 : Next.js 16 (Planned) : Next generation features
+    2026-02 : Next.js 16 : React 19 support : Major framework upgrade
 ```
 
-**Platform Strategy**: Next.js 14+ (current) → Next.js 15 → Next.js 16 (future)
+**Platform Strategy**: Next.js 16 (current)
 
-### Current Version: Next.js 14+
+### Current Version: Next.js 16
 
-**Platform Standard**: Next.js 14 is the target version for all Next.js projects.
+**Platform Standard**: Next.js 16 is the target version for all Next.js projects.
 
 **Rationale**:
 
@@ -157,11 +157,12 @@ timeline
 - Route Groups - Organize without affecting URL
 - TypeScript Plugin - Better type checking and autocomplete
 
-### Future: Next.js 15+
+### Next.js 15 (Adopted via Next.js 16 Migration)
 
 **Released**: October 2024
 
-**Major Changes**:
+The platform migrated directly to Next.js 16 in 2026-02, incorporating all Next.js 15
+features in a single upgrade step. Next.js 15 features are therefore fully available:
 
 - React 19 support
 - Async Request APIs (`cookies()`, `headers()`, `params`, `searchParams`)
@@ -170,16 +171,6 @@ timeline
 - Partial Prerendering (stable)
 - Improved error handling
 - Better instrumentation
-
-**Migration Path**:
-
-Projects will migrate to Next.js 15 when:
-
-- React 19 is adopted platform-wide
-- Async request APIs migration is validated
-- Turbopack demonstrates stability improvements
-- Critical dependencies support Next.js 15
-- Migration guide is validated
 
 ## Documentation Structure
 
@@ -673,7 +664,7 @@ Excellent development workflow:
 - **ESLint Integration** - Opinionated linting rules
 - **Fast Refresh** - Instant updates without losing state
 - **Error Overlay** - Clear error messages in development
-- **Turbopack** - Fast development builds (Next.js 14+)
+- **Turbopack** - Fast development builds (Next.js 16+)
 - **Vercel Deployment** - One-click deployment
 
 ## Use Cases
@@ -1423,7 +1414,7 @@ export const config = {
 
 Next.js includes all build tooling:
 
-- Turbopack (Next.js 14+) for development
+- Turbopack (Next.js 16+) for development
 - Webpack for production builds
 - SWC for fast compilation
 - Built-in code splitting
@@ -1479,8 +1470,8 @@ Extensions:
 ```json
 {
   "volta": {
-    "node": "24.11.1",
-    "npm": "11.6.3"
+    "node": "24.13.1",
+    "npm": "11.10.1"
   },
   "engines": {
     "node": ">=20.0.0",
@@ -1582,6 +1573,6 @@ CMD ["node", "server.js"]
 
 ---
 
-**Last Updated**: 2026-01-26
-**Next.js Version**: 14+ (React 18+, TypeScript 5+, targeting Next.js 15)
+**Last Updated**: 2026-02-25
+**Next.js Version**: 16 (React 19+, TypeScript 5+)
 **Maintainers**: Platform Documentation Team

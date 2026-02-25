@@ -35,7 +35,7 @@ Domain-Driven Design (DDD) helps organize React applications around business dom
 
 **Target Audience**: Developers building complex React applications with multiple business domains, particularly Islamic finance platforms with distinct domains like Zakat, Donations, Murabaha, and Waqf.
 
-**React Version**: React 18.2+ with TypeScript 5+
+**React Version**: React 19.0 with TypeScript 5+
 
 ## Feature-Based Organization
 

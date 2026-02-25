@@ -36,7 +36,7 @@ Functional programming principles align naturally with React's component model. 
 
 **Target Audience**: Developers building React applications with functional programming principles, particularly for Islamic finance platforms requiring predictable, testable code.
 
-**React Version**: React 18.2+ with TypeScript 5+
+**React Version**: React 19.0 with TypeScript 5+
 
 ## Pure Components
 

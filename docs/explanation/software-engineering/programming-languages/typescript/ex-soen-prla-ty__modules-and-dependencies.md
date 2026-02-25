@@ -187,15 +187,15 @@ graph TD
 {
   "name": "ose-platform",
   "volta": {
-    "node": "24.11.1",
-    "npm": "11.6.3"
+    "node": "24.13.1",
+    "npm": "11.10.1"
   },
   "dependencies": {
     "typescript": "5.9.3",
     "express": "5.2.1"
   },
   "devDependencies": {
-    "@types/node": "24.11.1",
+    "@types/node": "24.13.1",
     "vitest": "4.0.18"
   }
 }

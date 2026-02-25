@@ -26,7 +26,7 @@ Migrating Next.js applications requires careful planning whether upgrading versi
 
 - [Pages Router to App Router](#-pages-router-to-app-router) - Complete migration guide
 - [Next.js 13 to 14](#-nextjs-13-to-14) - Version upgrade guide
-- [Next.js 14 to 15](#-nextjs-14-to-15) - Latest version migration
+- [Next.js 16 to 15](#-nextjs-14-to-15) - Latest version migration
 - [React 18 to 19](#-react-18-to-19) - React version upgrade
 - [Breaking Changes](#-breaking-changes) - Version-specific breaking changes
 - [Codemods](#-codemods) - Automated migration tools
@@ -423,7 +423,7 @@ export default function AboutPage() {
 
 ## ⬆️ Next.js 13 to 14
 
-Next.js 14 introduced performance improvements and stability enhancements.
+Next.js 16 introduced performance improvements and stability enhancements.
 
 ### Breaking Changes (Next.js 13→14)
 
@@ -489,7 +489,7 @@ npm run build
 npm run start
 ```
 
-### New Features in Next.js 14
+### New Features in Next.js 16
 
 **Turbopack (Beta)**:
 
@@ -516,15 +516,15 @@ const config: NextConfig = {
 "use server";
 
 export async function calculateZakat(formData: FormData) {
-  // Server Action is now stable in Next.js 14
+  // Server Action is now stable in Next.js 16
 }
 ```
 
-## ⬆️ Next.js 14 to 15
+## ⬆️ Next.js 16 to 15
 
 Next.js 15 brings React 19 support and enhanced stability.
 
-### Breaking Changes (Next.js 14→15)
+### Breaking Changes (Next.js 16→15)
 
 **1. React 19 Required**
 
@@ -546,7 +546,7 @@ npm install react@rc react-dom@rc
 - **After**: `fetch` NOT cached by default (opt-in caching)
 
 ```typescript
-// Next.js 14 (cached by default)
+// Next.js 16 (cached by default)
 const data = await fetch("https://api.example.com/data");
 
 // Next.js 15 (NOT cached by default)
@@ -570,7 +570,7 @@ export async function GET() {
 }
 ```
 
-### Migration Steps (Next.js 14→15)
+### Migration Steps (Next.js 16→15)
 
 #### Step 1: Update Node.js
 
@@ -592,7 +592,7 @@ npm install next@15 react@rc react-dom@rc
 Add explicit caching where needed:
 
 ```typescript
-// Before (Next.js 14 - cached by default)
+// Before (Next.js 16 - cached by default)
 const data = await fetch("https://api.example.com/data");
 
 // After (Next.js 15 - explicit caching)

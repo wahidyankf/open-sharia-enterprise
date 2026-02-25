@@ -37,7 +37,7 @@ Component architecture is the foundation of scalable React applications. This gu
 
 **Target Audience**: Developers building production React applications, particularly for Islamic finance platforms requiring complex business logic, domain separation, and long-term maintainability.
 
-**React Version**: React 18.2+ with TypeScript 5+
+**React Version**: React 19.0 with TypeScript 5+
 
 ## Component Types
 

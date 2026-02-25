@@ -58,7 +58,7 @@ updated: 2026-01-26
 - **Cache strategically** - Leverage Next.js caching layers
 - **Monitor continuously** - Track performance in production
 
-This guide covers Next.js 14+ performance optimization for enterprise applications.
+This guide covers Next.js 16+ performance optimization for enterprise applications.
 
 ## Image Optimization
 

@@ -30,7 +30,7 @@ updated: 2026-01-25
 
 React is a declarative, component-based library for building user interfaces. It enables creating interactive, performant web applications through composable components, unidirectional data flow, and a virtual DOM. Combined with TypeScript, React provides type-safe UI development with excellent tooling and developer experience.
 
-This documentation covers React 18+ with TypeScript 5+, focusing on functional components, hooks, and modern React patterns for building enterprise-grade financial applications.
+This documentation covers React 19+ with TypeScript 5+, focusing on functional components, hooks, and modern React patterns for building enterprise-grade financial applications.
 
 ## Framework Standards
 
@@ -128,11 +128,11 @@ timeline
     2026-Q1 : React 20 (Planned) : Next generation features
 ```
 
-**Platform Strategy**: React 18.2+ (current) → React 19.x → React 20 (future)
+**Platform Strategy**: React 19.0 (current) → React 20 (future)
 
-### Current Version: React 18.2+
+### Current Version: React 19.0
 
-**Platform Standard**: React 18.2 is the target version for all React projects.
+**Platform Standard**: React 19 is the target version for all React projects.
 
 **Rationale**:
 
@@ -152,11 +152,13 @@ timeline
 - useDeferredValue for non-urgent updates
 - useTransition for UI transitions
 
-### Future: React 19+
+### React 19 (Adopted via Next.js 16 Migration)
 
 **Released**: December 2024
 
-**Major Changes**:
+The platform adopted React 19 as part of the Next.js 16 upgrade in 2026-02.
+
+**Key Features Now Available**:
 
 - React Compiler - automatic memoization (no manual useMemo/useCallback)
 - React Server Components stable
@@ -165,15 +167,6 @@ timeline
 - useOptimistic for optimistic updates
 - use hook for reading context and promises
 - ref as prop (no forwardRef needed)
-
-**Migration Path**:
-
-Projects will migrate to React 19 when:
-
-- React Compiler provides proven performance benefits
-- Critical libraries support React 19
-- Server Components pattern is adopted
-- Migration guide is validated
 
 ## Documentation Structure
 
@@ -1661,8 +1654,8 @@ npm install -D eslint-plugin-jsx-a11y
 ```json
 {
   "volta": {
-    "node": "24.11.1",
-    "npm": "11.6.3"
+    "node": "24.13.1",
+    "npm": "11.10.1"
   }
 }
 ```

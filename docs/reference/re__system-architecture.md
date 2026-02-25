@@ -75,7 +75,7 @@ The platform consists of 4 applications across 2 technology stacks:
 
 - **Purpose**: Marketing and documentation website for OSE Platform
 - **URL**: <https://oseplatform.com>
-- **Technology**: Hugo 0.152.2 Extended + PaperMod theme
+- **Technology**: Hugo 0.156.0 Extended + PaperMod theme
 - **Deployment**: Vercel (via `prod-oseplatform-web` branch)
 - **Build Command**: `nx build oseplatform-web`
 - **Dev Command**: `nx dev oseplatform-web`
@@ -85,7 +85,7 @@ The platform consists of 4 applications across 2 technology stacks:
 
 - **Purpose**: Educational platform for programming, AI, and security
 - **URL**: <https://ayokoding.com>
-- **Technology**: Hugo 0.152.2 Extended + Hextra theme
+- **Technology**: Hugo 0.156.0 Extended + Hextra theme
 - **Languages**: Bilingual (Indonesian primary, English)
 - **Deployment**: Vercel (via `prod-ayokoding-web` branch)
 - **Build Command**: `nx build ayokoding-web`
@@ -223,7 +223,7 @@ graph TB
         STATIC_OSE[Static Files<br/>Processed assets]
     end
 
-    HUGO_OSE[Hugo Build Engine<br/>v0.152.2 Extended]
+    HUGO_OSE[Hugo Build Engine<br/>v0.156.0 Extended]
 
     MD_CONTENT --> HUGO_OSE
     FRONTMATTER_OSE --> HUGO_OSE
@@ -378,7 +378,7 @@ graph TB
         STATIC_OSE[Static Files<br/>Processed assets]
     end
 
-    HUGO_OSE[Hugo Build Engine<br/>v0.152.2 Extended]
+    HUGO_OSE[Hugo Build Engine<br/>v0.156.0 Extended]
 
     MD_CONTENT --> HUGO_OSE
     FRONTMATTER_OSE --> HUGO_OSE
@@ -425,7 +425,7 @@ graph TB
         SEARCH_INDEX[Search Index<br/>Client-side search]
     end
 
-    HUGO_AYO[Hugo Build Engine<br/>v0.152.2 Extended]
+    HUGO_AYO[Hugo Build Engine<br/>v0.156.0 Extended]
     AYOCLI_PROC[ayokoding-cli<br/>Pre-build processing]
 
     AYOCLI_PROC --> FRONTMATTER_AYO
@@ -636,7 +636,7 @@ graph TB
 
     subgraph "Build System"
         NX_BUILD[Nx Build System<br/>Affected Detection]
-        HUGO_BUILD[Hugo Build<br/>v0.152.2 Extended]
+        HUGO_BUILD[Hugo Build<br/>v0.156.0 Extended]
         GO_BUILD[Go Build<br/>CLI Tools]
     end
 
@@ -680,7 +680,7 @@ graph TB
 - **Build Framework**: `@vercel/static-build`
 - **Build Script**: `build.sh` in each app directory
 - **Output Directory**: `public/`
-- **Hugo Version**: 0.152.2 (configured via environment variable)
+- **Hugo Version**: 0.156.0 (configured via environment variable)
 
 **Security Headers (All Vercel Sites):**
 
@@ -1026,7 +1026,7 @@ graph TB
 
 **Static Sites** (Hugo):
 
-- **Hugo**: 0.152.2 Extended
+- **Hugo**: 0.156.0 Extended
 - **Themes**: PaperMod (oseplatform-web), Hextra (ayokoding-web)
 - **Deployment**: Vercel
 - **Applications**: oseplatform-web, ayokoding-web
@@ -1041,8 +1041,8 @@ graph TB
 ### Infrastructure
 
 - **Monorepo**: Nx workspace
-- **Node.js**: 24.11.1 LTS (Volta-managed)
-- **Package Manager**: npm 11.6.3
+- **Node.js**: 24.13.1 LTS (Volta-managed)
+- **Package Manager**: npm 11.10.1
 - **Git Workflow**: Trunk-Based Development
 - **CI**: GitHub Actions
 - **CD**: Vercel (Hugo sites)

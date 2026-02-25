@@ -19,8 +19,8 @@ This app serves as the public-facing landing page for OrganicLever. It introduce
 
 | Layer      | Technology               |
 | ---------- | ------------------------ |
-| Framework  | Next.js 14 (App Router)  |
-| UI Runtime | React 18                 |
+| Framework  | Next.js 16 (App Router)  |
+| UI Runtime | React 19                 |
 | Styling    | TailwindCSS              |
 | Components | Radix UI / shadcn-ui     |
 | Auth       | Cookie-based sessions    |
@@ -77,7 +77,7 @@ apps/organiclever-web/
 ├── public/                     # Static assets
 ├── components.json             # shadcn-ui configuration
 ├── next.config.mjs             # Next.js configuration
-├── tailwind.config.ts          # TailwindCSS configuration
+├── postcss.config.mjs          # PostCSS + TailwindCSS v4 configuration
 ├── tsconfig.json               # TypeScript configuration
 ├── vercel.json                 # Vercel deployment configuration
 ├── vitest.config.ts            # Vitest workspace config (unit + integration projects)

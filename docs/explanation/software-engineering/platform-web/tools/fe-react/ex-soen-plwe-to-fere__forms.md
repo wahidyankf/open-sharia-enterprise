@@ -34,7 +34,7 @@ Forms are central to web applications. This guide covers controlled components, 
 
 **Target Audience**: Developers building React applications with complex forms, particularly Islamic finance platforms requiring multi-step forms, validation, and data submission.
 
-**React Version**: React 18.2+ with TypeScript 5+
+**React Version**: React 19.0 with TypeScript 5+
 
 ## Controlled Components
 

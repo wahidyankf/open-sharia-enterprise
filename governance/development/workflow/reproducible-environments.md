@@ -68,8 +68,8 @@ Reproducible environments require:
 {
   "name": "open-sharia-enterprise",
   "volta": {
-    "node": "24.11.1",
-    "npm": "11.6.3"
+    "node": "24.13.1",
+    "npm": "11.10.1"
   }
 }
 ```
@@ -78,10 +78,10 @@ Reproducible environments require:
 
 ```bash
 cd open-sharia-enterprise
-# Volta automatically activates Node.js 24.11.1 and npm 11.6.3
+# Volta automatically activates Node.js 24.13.1 and npm 11.10.1
 
-node --version  # v24.11.1 (same for everyone)
-npm --version   # 11.6.3 (same for everyone)
+node --version  # v24.13.1 (same for everyone)
+npm --version   # 11.10.1 (same for everyone)
 ```
 
 ### Installation
@@ -119,8 +119,8 @@ jobs:
       - uses: volta-cli/action@v4
 
       # Volta uses versions from package.json
-      - run: node --version # v24.11.1
-      - run: npm --version # 11.6.3
+      - run: node --version # v24.13.1
+      - run: npm --version # 11.10.1
 
       # Install dependencies
       - run: npm ci
@@ -371,7 +371,7 @@ docker-compose up
 
 ```dockerfile
 # Use specific version
-FROM node:24.11.1-alpine
+FROM node:24.13.1-alpine
 
 WORKDIR /app
 
@@ -393,7 +393,7 @@ CMD ["npm", "run", "dev"]
 
 **Why this works**:
 
-- Exact Node.js version (24.11.1)
+- Exact Node.js version (24.13.1)
 - npm ci installs from lockfile (deterministic)
 - Same environment for all developers
 - Works identically on macOS, Linux, Windows
@@ -435,7 +435,7 @@ CMD ["npm", "run", "dev"]
    npm ci
    ```
 
-   Volta automatically uses Node.js 24.11.1 and npm 11.6.3 (pinned in package.json).
+   Volta automatically uses Node.js 24.13.1 and npm 11.10.1 (pinned in package.json).
 
 3. **Configure Environment**:
 
@@ -722,8 +722,8 @@ verify();
 2. **Pin versions** (project maintainer):
 
    ```bash
-   volta pin node@24.11.1
-   volta pin npm@11.6.3
+   volta pin node@24.13.1
+   volta pin npm@11.10.1
    ```
 
    This updates package.json with volta field.
@@ -755,7 +755,7 @@ verify();
 2. **Create Dockerfile.dev**:
 
    ```dockerfile
-   FROM node:24.11.1-alpine
+   FROM node:24.13.1-alpine
    # ... configuration
    ```
 

@@ -36,7 +36,7 @@ TypeScript provides static type checking for React applications, catching errors
 
 **Target Audience**: Developers building type-safe React applications, particularly for Islamic finance platforms requiring robust data validation and domain modeling.
 
-**React Version**: React 18.2+ with TypeScript 5+
+**React Version**: React 19.0 with TypeScript 5+
 
 ## Component Props
 

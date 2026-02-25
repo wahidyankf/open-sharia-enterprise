@@ -61,7 +61,7 @@ Next.js provides multiple data fetching strategies optimized for different use c
 - **Route Handlers** - API endpoints for client-side fetching
 - **Client Components** - browser-based data fetching when needed
 
-This guide covers Next.js 14+ data fetching patterns for enterprise applications.
+This guide covers Next.js 16+ data fetching patterns for enterprise applications.
 
 ## Async Server Components
 

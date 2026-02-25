@@ -63,7 +63,7 @@ last_updated: 2026-01-25
 
 React anti-patterns are common mistakes that lead to bugs, performance issues, maintainability problems, or type safety concerns. Understanding these patterns helps avoid technical debt and build robust applications.
 
-This guide identifies **React 18+ anti-patterns** with TypeScript 5+, showing both the problematic code and the correct solution.
+This guide identifies **React 19+ anti-patterns** with TypeScript 5+, showing both the problematic code and the correct solution.
 
 ## State Management Anti-Patterns
 

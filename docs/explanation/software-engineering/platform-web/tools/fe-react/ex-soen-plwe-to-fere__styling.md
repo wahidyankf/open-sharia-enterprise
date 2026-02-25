@@ -33,7 +33,7 @@ React supports multiple styling approaches. This guide covers CSS Modules, Tailw
 
 **Target Audience**: Developers building styled React applications, particularly Islamic finance platforms requiring consistent design systems and responsive layouts.
 
-**React Version**: React 18.2+ with TypeScript 5+
+**React Version**: React 19.0 with TypeScript 5+
 
 ## CSS Modules
 

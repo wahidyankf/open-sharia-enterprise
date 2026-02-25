@@ -36,8 +36,8 @@ Open Sharia Enterprise is an enterprise platform built with Node.js and organize
 
 This project uses **Volta** to manage Node.js and npm versions automatically:
 
-- **Node.js**: 24.11.1 (LTS)
-- **npm**: 11.6.3
+- **Node.js**: 24.13.1 (LTS)
+- **npm**: 11.10.1
 
 **Important**: You don't need to install these versions manually if you have Volta installed. Volta will automatically use the correct versions specified in `package.json`.
 
@@ -71,7 +71,7 @@ After installation, restart your terminal and Volta will automatically manage No
    npm install
    ```
 
-   Volta will automatically use Node.js 24.11.1 and npm 11.6.3 as specified in `package.json`.
+   Volta will automatically use Node.js 24.13.1 and npm 11.10.1 as specified in `package.json`.
 
 3. **Verify installation**:
 
@@ -87,7 +87,7 @@ After installation, restart your terminal and Volta will automatically manage No
 **Solution**: Make sure Volta is installed and your terminal is restarted.
 
 **Issue**: Wrong Node.js version
-**Solution**: Run `volta install node@24.11.1` to ensure Volta has the correct version.
+**Solution**: Run `volta install node@24.13.1` to ensure Volta has the correct version.
 
 **Issue**: `npm install` fails
 **Solution**: Clear npm cache with `npm cache clean --force` and try again.

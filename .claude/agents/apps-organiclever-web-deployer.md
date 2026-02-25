@@ -35,7 +35,7 @@ Deploy organiclever-web to production environment:
 2. **Force push to production**: Push main branch to prod-organiclever-web
 3. **Trigger Vercel build**: Vercel automatically detects changes and builds
 
-**Build Process**: Vercel listens to prod-organiclever-web branch and automatically builds the Next.js 14 site on push. No local build needed.
+**Build Process**: Vercel listens to prod-organiclever-web branch and automatically builds the Next.js 16 site on push. No local build needed.
 
 ## Deployment Workflow
 
@@ -75,7 +75,7 @@ echo "Vercel will automatically build from prod-organiclever-web branch"
 
 **Production Branch**: `prod-organiclever-web`  
 **Build Trigger**: Automatic on push  
-**Build System**: Vercel (Next.js 14 App Router)  
+**Build System**: Vercel (Next.js 16 App Router)  
 **No Local Build**: Vercel handles all build operations
 
 **Trunk-Based Development**: Per `repo-practicing-trunk-based-development` Skill, all development happens on main. Production branch is deployment-only (no direct commits).

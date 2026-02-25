@@ -123,7 +123,7 @@ go mod init myapp
 ```go
 module github.com/username/project
 
-go 1.25
+go 1.26
 ```
 
 ### Module Path
@@ -242,7 +242,7 @@ go get github.com/unused/package@none
 ```go
 module github.com/username/project
 
-go 1.25  // Minimum Go version
+go 1.26  // Minimum Go version
 
 require (
  github.com/gin-gonic/gin v1.9.1  // Direct dependency
@@ -278,7 +278,7 @@ module github.com/username/project/v2
 
 ```go
 // Specifies minimum Go version
-go 1.25
+go 1.26
 
 // Toolchain directive (Go 1.21+)
 toolchain go1.25.6
@@ -586,7 +586,7 @@ git config --global url."git@gitlab.com:".insteadOf "https://gitlab.com/"
 ```go
 module github.com/mycompany/private-project
 
-go 1.25
+go 1.26
 
 require (
  github.com/mycompany/private-lib v1.2.3
@@ -717,7 +717,7 @@ go work sync
 ### go.work File
 
 ```go
-go 1.25
+go 1.26
 
 use (
  ./module1
