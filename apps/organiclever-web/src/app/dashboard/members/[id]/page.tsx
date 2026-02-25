@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, use } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../../contexts/auth-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -62,14 +62,15 @@ const MemberDetailContent = ({ member }: { member: Member }) => (
   </div>
 );
 
-export default function MemberDetailPage({ params }: { params: { id: string } }) {
+export default function MemberDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const { isAuthenticated, logout } = useAuth();
   const [member, setMember] = useState<Member | null>(null);
   const router = useRouter();
 
   const fetchMember = useCallback(async () => {
     try {
-      const response = await fetch(`/api/members/${params.id}`);
+      const response = await fetch(`/api/members/${id}`);
       if (!response.ok) {
         throw new Error("Failed to fetch member");
       }
@@ -79,7 +80,7 @@ export default function MemberDetailPage({ params }: { params: { id: string } })
       console.error("Error fetching member:", error);
       router.push("/dashboard/members");
     }
-  }, [params.id, router]);
+  }, [id, router]);
 
   useEffect(() => {
     if (!isAuthenticated) {

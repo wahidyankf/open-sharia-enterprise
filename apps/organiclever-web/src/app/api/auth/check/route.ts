@@ -8,7 +8,7 @@ const verifyToken = async (token: string) => {
 };
 
 export async function GET() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const authTokenCookie = cookieStore.get("auth_token");
 
   if (!authTokenCookie) {
