@@ -56,13 +56,7 @@ As a developer working on `organiclever-be`,
 I want the Spring Boot parent POM and all Maven dependencies updated
 so that the backend runs on the latest stable Spring Boot release and benefits from security fixes.
 
-### US-6: Android / Gradle
-
-As a developer building the Android target of `organiclever-app`,
-I want the Android Gradle Plugin, Kotlin plugin, and Gradle wrapper version updated
-so that the Android build toolchain is current and compatible with the latest Flutter SDK.
-
-### US-7: Audit Report
+### US-6: Audit Report
 
 As a maintainer of this repository,
 I want an audit report produced at the start of execution
@@ -75,7 +69,7 @@ so that I can make informed decisions about which updates to apply.
 
 ```gherkin
 Given the plan executor starts Phase 1
-When the audit commands have completed for all six ecosystems
+When the audit commands have completed for all five ecosystems
 Then a human-readable audit report exists in generated-reports/
 And the report lists current version and latest stable version for each dependency
 And the report classifies each update as patch, minor, or major
@@ -135,18 +129,7 @@ And all Spring Boot integration tests pass
 And the actuator endpoints respond correctly on `mvn spring-boot:run`
 ```
 
-### AC-7: Android / Gradle Updated
-
-```gherkin
-Given the Gradle wrapper and AGP audit identifies newer stable releases
-When the Gradle wrapper URL and AGP / Kotlin plugin versions are updated
-Then `./gradlew assembleDebug` succeeds inside apps/organiclever-app/android/
-And the build completes without compilation errors
-And any newly introduced deprecation warnings originate from AGP or Gradle framework APIs
-And no new deprecation warnings originate from project-owned source files
-```
-
-### AC-8: No Regression in CI Gate
+### AC-7: No Regression in CI Gate
 
 ```gherkin
 Given all per-ecosystem updates have been committed
@@ -155,7 +138,7 @@ Then all projects pass the pre-push quality gate
 And no new lint errors are introduced by the dependency updates
 ```
 
-### AC-9: Lock Files Committed
+### AC-8: Lock Files Committed
 
 ```gherkin
 Given dependency manifests have been updated in any ecosystem
@@ -164,7 +147,7 @@ Then the corresponding lock files are committed in the same commit
 And no lock file is left in a dirty or partially updated state
 ```
 
-### AC-10: NPM Security Gate
+### AC-9: NPM Security Gate
 
 ```gherkin
 Given Phase 2 (NPM package updates) has been committed
