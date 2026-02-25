@@ -33,7 +33,7 @@ Accessibility ensures applications are usable by everyone, including people with
 
 **Target Audience**: Developers building inclusive React applications, particularly Islamic finance platforms serving diverse global communities.
 
-**React Version**: React 18.2+ with TypeScript 5+
+**React Version**: React 19.0 with TypeScript 5+
 **Standard**: WCAG 2.1 Level AA
 
 ## Semantic HTML

@@ -16,8 +16,8 @@ Official website for the **Open Sharia Enterprise** platform - an open-source Sh
 
 ## 🛠️ Tech Stack
 
-- **Hugo**: v0.152.2 (Extended)
-- **Go**: 1.25
+- **Hugo**: v0.156.0 (Extended)
+- **Go**: 1.26
 - **Theme**: [PaperMod](https://github.com/adityatelange/hugo-PaperMod) - Fast, clean, responsive theme for landing pages and blogs
 - **Build System**: Nx monorepo
 
@@ -25,8 +25,8 @@ Official website for the **Open Sharia Enterprise** platform - an open-source Sh
 
 ### Prerequisites
 
-- Hugo Extended 0.152.2 or later
-- Go 1.25 or later
+- Hugo Extended 0.156.0 or later
+- Go 1.26 or later
 - Node.js (for Nx commands)
 
 ### Local Development

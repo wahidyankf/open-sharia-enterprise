@@ -302,8 +302,8 @@ Thank you for considering contributing to Open Sharia Enterprise! We appreciate 
 
 ### Prerequisites
 
-- Node.js 24.11.1 (managed by Volta)
-- npm 11.6.3 (managed by Volta)
+- Node.js 24.13.1 (managed by Volta)
+- npm 11.10.1 (managed by Volta)
 
 ### Installation
 

@@ -760,10 +760,10 @@ nx graph
 curl https://get.volta.sh | bash
 
 # Pin Node.js version for project
-volta pin node@24.11.1
+volta pin node@24.13.1
 
 # Pin npm version
-volta pin npm@11.6.3
+volta pin npm@11.10.1
 ```
 
 **package.json configuration** (automatically added by Volta):
@@ -771,8 +771,8 @@ volta pin npm@11.6.3
 ```json
 {
   "volta": {
-    "node": "24.11.1",
-    "npm": "11.6.3"
+    "node": "24.13.1",
+    "npm": "11.10.1"
   }
 }
 ```
@@ -833,7 +833,7 @@ git commit -m "feat: add new-package dependency"
 **Dockerfile for reproducible development**:
 
 ```dockerfile
-FROM node:24.11.1-alpine
+FROM node:24.13.1-alpine
 
 # Install system dependencies
 RUN apk add --no-cache git
@@ -919,7 +919,7 @@ set -e
 echo "🔧 Setting up OSE Platform development environment..."
 
 # Check Node.js version
-REQUIRED_NODE_VERSION="24.11.1"
+REQUIRED_NODE_VERSION="24.13.1"
 CURRENT_NODE_VERSION=$(node -v | cut -d'v' -f2)
 
 if [ "$CURRENT_NODE_VERSION" != "$REQUIRED_NODE_VERSION" ]; then
@@ -1014,7 +1014,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "24.11.1"
+          node-version: "24.13.1"
           cache: "npm"
 
       - name: Install dependencies
@@ -1454,8 +1454,8 @@ async function processDonation(data: DonationInput): Promise<Result<Donation, Er
 ### Core Tools (Latest Versions)
 
 - **TypeScript**: 5.9.3 (latest stable)
-- **Node.js**: 24.11.1 LTS (Volta managed)
-- **npm**: 11.6.3
+- **Node.js**: 24.13.1 LTS (Volta managed)
+- **npm**: 11.10.1
 
 ### Package Managers
 

@@ -332,8 +332,8 @@ Type system enforces completeness.
 ```markdown
 ## Prerequisites
 
-- Node.js 24.11.1 or higher (Volta managed)
-- npm 11.6.3 or higher (Volta managed)
+- Node.js 24.13.1 or higher (Volta managed)
+- npm 11.10.1 or higher (Volta managed)
 - Git 2.40 or higher
 
 These versions are pinned in `package.json` under the `volta` field.

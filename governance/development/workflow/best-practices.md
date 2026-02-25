@@ -208,8 +208,8 @@ git checkout -b feature/new-dashboard
 // package.json
 {
   "volta": {
-    "node": "24.11.1",
-    "npm": "11.6.3"
+    "node": "24.13.1",
+    "npm": "11.10.1"
   }
 }
 

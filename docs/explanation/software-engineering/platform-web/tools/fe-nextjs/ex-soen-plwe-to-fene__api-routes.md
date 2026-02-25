@@ -54,7 +54,7 @@ updated: 2026-01-26
 - **Streaming** - Support for large responses
 - **Type-safe** - Full TypeScript support
 
-This guide covers Next.js 14+ Route Handlers for enterprise applications.
+This guide covers Next.js 16+ Route Handlers for enterprise applications.
 
 ## HTTP Methods
 

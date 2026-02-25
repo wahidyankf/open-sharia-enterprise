@@ -32,7 +32,7 @@ React version migrations require understanding breaking changes and new features
 
 **Target Audience**: Developers maintaining React applications and planning version upgrades.
 
-**React Version**: React 18.2+ (targeting React 19)
+**React Version**: React 19.0 (current)
 
 ## React 17 to 18 Migration
 

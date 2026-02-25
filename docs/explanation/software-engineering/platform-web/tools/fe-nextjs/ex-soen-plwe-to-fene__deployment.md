@@ -52,7 +52,7 @@ updated: 2026-01-26
 - **Docker** - Containerized deployment
 - **Static export** - CDN-only hosting (limited features)
 
-This guide covers Next.js 14+ deployment patterns for enterprise applications.
+This guide covers Next.js 16+ deployment patterns for enterprise applications.
 
 ## Vercel Deployment
 

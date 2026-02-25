@@ -45,7 +45,7 @@ last_updated: 2026-01-26
 
 Next.js idioms are framework-specific patterns that leverage Next.js's capabilities for optimal performance, developer experience, and user experience. These patterns are established conventions within the Next.js community and should be followed for consistency across the platform.
 
-This guide focuses on **Next.js 14+ idioms** with the App Router, React Server Components, and TypeScript.
+This guide focuses on **Next.js 16+ idioms** with the App Router, React Server Components, and TypeScript.
 
 ## App Router Conventions
 

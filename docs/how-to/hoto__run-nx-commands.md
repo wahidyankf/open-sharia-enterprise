@@ -338,7 +338,7 @@ jobs:
    - name: Setup Node.js
     uses: actions/setup-node@v3
     with:
-     node-version: '24.11.1'
+     node-version: '24.13.1'
 
    - name: Install dependencies
     run: npm ci

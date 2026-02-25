@@ -213,8 +213,8 @@ package-lock.json  # NOT COMMITTED - WRONG!
 // package.json
 {
   "volta": {
-    "node": "24.11.1",
-    "npm": "11.6.3"
+    "node": "24.13.1",
+    "npm": "11.10.1"
   },
   "dependencies": {
     "react": "18.2.0"  // Exact version

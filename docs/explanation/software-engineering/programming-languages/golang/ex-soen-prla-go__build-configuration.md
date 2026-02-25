@@ -91,7 +91,7 @@ This document defines **authoritative build and configuration standards** for Go
 module github.com/open-sharia-enterprise/[project-name]
 
 // Go version - MUST specify exact version (major.minor.patch)
-go 1.25.0
+go 1.26.0
 
 // Direct dependencies - MUST specify exact versions
 require (
@@ -1110,7 +1110,7 @@ func main() {
 
 **Before committing**:
 
-- [ ] `go.mod` specifies exact Go version (e.g., `go 1.25.0`)
+- [ ] `go.mod` specifies exact Go version (e.g., `go 1.26.0`)
 - [ ] `go.mod` has exact dependency versions (no wildcards)
 - [ ] `go.sum` is committed to version control
 - [ ] `go mod verify` passes without errors

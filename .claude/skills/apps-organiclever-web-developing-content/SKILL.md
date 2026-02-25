@@ -1,13 +1,13 @@
 ---
 name: apps-organiclever-web-developing-content
-description: Comprehensive guide for developing organiclever-web, the landing and promotional website at www.organiclever.com. Covers Next.js 14 App Router, React 18, TailwindCSS, Radix UI/shadcn-ui, cookie-based auth, JSON data files, and Vercel deployment. Essential for development tasks on organiclever-web.
+description: Comprehensive guide for developing organiclever-web, the landing and promotional website at www.organiclever.com. Covers Next.js 16 App Router, React 19, TailwindCSS, Radix UI/shadcn-ui, cookie-based auth, JSON data files, and Vercel deployment. Essential for development tasks on organiclever-web.
 ---
 
 # organiclever-web Development Skill
 
 ## Purpose
 
-This Skill provides guidance for developing and managing the **organiclever-web** Next.js 14 application — the landing and promotional website at www.organiclever.com, featuring cookie-based authentication and Radix UI components.
+This Skill provides guidance for developing and managing the **organiclever-web** Next.js 16 application — the landing and promotional website at www.organiclever.com, featuring cookie-based authentication and Radix UI components.
 
 **When to use this Skill:**
 
@@ -23,8 +23,8 @@ This Skill provides guidance for developing and managing the **organiclever-web*
 
 **organiclever-web** (`apps/organiclever-web/`):
 
-- **Framework**: Next.js 14 with App Router
-- **React**: React 18
+- **Framework**: Next.js 16 with App Router
+- **React**: React 19
 - **Styling**: TailwindCSS + Radix UI / shadcn-ui components
 - **Auth**: Cookie-based authentication
 - **Data**: JSON data files in `src/data/`
@@ -36,8 +36,8 @@ This Skill provides guidance for developing and managing the **organiclever-web*
 
 | Layer      | Technology               |
 | ---------- | ------------------------ |
-| Framework  | Next.js 14 (App Router)  |
-| UI Runtime | React 18                 |
+| Framework  | Next.js 16 (App Router)  |
+| UI Runtime | React 19                 |
 | Styling    | TailwindCSS              |
 | Components | Radix UI / shadcn-ui     |
 | Auth       | Cookie-based sessions    |
@@ -232,7 +232,7 @@ Vercel automatically:
 
 - Detects push to prod-organiclever-web branch
 - Pulls latest code
-- Builds Next.js 14 application
+- Builds Next.js 16 application
 - Deploys to https://www.organiclever.com/
 
 ### Why Force Push
@@ -247,8 +247,8 @@ Vercel automatically:
 
 | Aspect              | organiclever-web         | organiclever-app                  | ayokoding-web                   | oseplatform-web         |
 | ------------------- | ------------------------ | --------------------------------- | ------------------------------- | ----------------------- |
-| **Framework**       | Next.js 14 (App Router)  | Flutter (web + mobile)            | Hugo (Hextra theme)             | Hugo (PaperMod theme)   |
-| **Language**        | TypeScript / React 18    | Dart                              | Markdown / Go templates         | Markdown / Go templates |
+| **Framework**       | Next.js 16 (App Router)  | Flutter (web + mobile)            | Hugo (Hextra theme)             | Hugo (PaperMod theme)   |
+| **Language**        | TypeScript / React 19    | Dart                              | Markdown / Go templates         | Markdown / Go templates |
 | **Styling**         | TailwindCSS + Radix UI   | Flutter Material / custom widgets | Hextra built-in                 | PaperMod built-in       |
 | **Auth**            | Cookie-based sessions    | TBD                               | None                            | None                    |
 | **Data**            | JSON files + API routes  | REST API (organiclever-be)        | Markdown content files          | Markdown content files  |

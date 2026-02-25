@@ -52,7 +52,7 @@ updated: 2026-01-26
 - **Environment-aware** - Different configs per environment
 - **Build-time optimization** - Configure for production
 
-This guide covers Next.js 14+ configuration for enterprise applications.
+This guide covers Next.js 16+ configuration for enterprise applications.
 
 ## next.config.ts Options
 
@@ -201,7 +201,7 @@ const nextConfig: NextConfig = {
     // Optimize package imports
     optimizePackageImports: ["@mui/material", "@mui/icons-material", "lodash"],
 
-    // Partial Prerendering (Next.js 14+)
+    // Partial Prerendering (Next.js 16+)
     // ppr: true,
   },
 };
@@ -546,13 +546,13 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   experimental: {
-    // Partial Prerendering (Next.js 14+)
+    // Partial Prerendering (Next.js 16+)
     ppr: true,
 
     // Optimize package imports
     optimizePackageImports: ["@mui/material", "@mui/icons-material", "lodash"],
 
-    // Server Actions (stable in Next.js 14)
+    // Server Actions (stable in Next.js 16)
     serverActions: {
       bodySizeLimit: "2mb",
       allowedOrigins: ["oseplatform.com"],

@@ -336,7 +336,7 @@ func TestCalculateZakat(t *testing.T) {
 // go.mod - Exact dependency versions
 module github.com/open-sharia-enterprise/zakat-service
 
-go 1.25.0
+go 1.26.0
 
 require (
  github.com/google/uuid v1.6.0

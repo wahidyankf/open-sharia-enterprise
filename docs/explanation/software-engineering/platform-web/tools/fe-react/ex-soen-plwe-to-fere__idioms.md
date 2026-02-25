@@ -64,7 +64,7 @@ last_updated: 2026-01-25
 
 React idioms are established patterns that leverage the framework's features to build components with minimal boilerplate while maintaining clarity and type safety. These patterns align with React's philosophy of declarative UI and unidirectional data flow.
 
-This guide focuses on **React 18+ idioms** with TypeScript 5+, incorporating examples from Islamic financial domains including Zakat calculation, Murabaha contracts, and donation management.
+This guide focuses on **React 19+ idioms** with TypeScript 5+, incorporating examples from Islamic financial domains including Zakat calculation, Murabaha contracts, and donation management.
 
 ### Why React Idioms Matter
 

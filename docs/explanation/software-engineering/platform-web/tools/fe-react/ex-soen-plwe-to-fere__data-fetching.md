@@ -36,7 +36,7 @@ Data fetching is essential for React applications. This guide covers fetch API, 
 
 **Target Audience**: Developers building data-driven React applications, particularly Islamic finance platforms with API integration and real-time data requirements.
 
-**React Version**: React 18.2+ with TypeScript 5+
+**React Version**: React 19.0 with TypeScript 5+
 
 ### Data Fetching Strategy Decision Tree
 

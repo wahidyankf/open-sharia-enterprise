@@ -54,7 +54,7 @@ updated: 2026-01-26
 - **Conditional routing** - Redirect or rewrite based on logic
 - **Zero cold starts** - Always ready
 
-This guide covers Next.js 14+ middleware patterns for enterprise applications.
+This guide covers Next.js 16+ middleware patterns for enterprise applications.
 
 ## Middleware Fundamentals
 

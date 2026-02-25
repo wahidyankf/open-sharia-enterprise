@@ -179,7 +179,7 @@ Phase 0 foundations are complete. We are now actively building OrganicLever, the
 Our tech stack reflects the progressive complexity approach — chosen for proven reliability, open-source availability, and suitability at each phase:
 
 - **Backend API** - Java + Spring Boot (REST API, enterprise-grade, battle-tested)
-- **Web Frontend** - Next.js 14 + TypeScript (React, App Router, modern full-stack)
+- **Web Frontend** - Next.js 16 + TypeScript (React, App Router, modern full-stack)
 - **Mobile & Web App** - Flutter + Dart (Android, iOS, and web from a single codebase)
 - **Educational Sites** - Hugo static sites (ayokoding.com, oseplatform.com)
 - **CLI Tools** - Go (ayokoding-cli, rhino-cli — automation and repository management)

@@ -100,8 +100,8 @@ PASS: **Reproducible (Our Approach)**:
 {
   "name": "open-sharia-enterprise",
   "volta": {
-    "node": "24.11.1",
-    "npm": "11.6.3"
+    "node": "24.13.1",
+    "npm": "11.10.1"
   }
 }
 ```
@@ -109,7 +109,7 @@ PASS: **Reproducible (Our Approach)**:
 **Why this works**:
 
 - Volta automatically uses specified versions when entering directory
-- All developers get Node.js 24.11.1 and npm 11.6.3
+- All developers get Node.js 24.13.1 and npm 11.10.1
 - CI/CD uses same versions
 - No manual version management needed
 
@@ -335,7 +335,7 @@ FAIL: **Problem**: Code works locally but fails in CI/production.
 
 ```bash
 # Developer's machine
-node --version  # v24.11.1 (local)
+node --version  # v24.13.1 (local)
 npm test        # PASS: All pass
 
 # CI server
@@ -429,8 +429,8 @@ PASS: **Solution**: Automate with scripts or containers.
 // package.json
 {
   "volta": {
-    "node": "24.11.1",
-    "npm": "11.6.3"
+    "node": "24.13.1",
+    "npm": "11.10.1"
   }
 }
 ```
@@ -465,8 +465,8 @@ git commit -m "chore: update lockfile"
 ```markdown
 ## Prerequisites
 
-- Node.js 24.11.1 (Volta managed)
-- npm 11.6.3 (Volta managed)
+- Node.js 24.13.1 (Volta managed)
+- npm 11.10.1 (Volta managed)
 - Docker 24.x (for local services)
 - PostgreSQL 16.x (Docker or local)
 ```
@@ -532,8 +532,8 @@ nx build my-app
 // package.json
 {
   "volta": {
-    "node": "24.11.1",
-    "npm": "11.6.3"
+    "node": "24.13.1",
+    "npm": "11.10.1"
   }
 }
 ```
@@ -556,8 +556,8 @@ package-lock.json
 
 The project uses **Volta** for Node.js and npm version management:
 
-- Node.js: 24.11.1 (LTS)
-- npm: 11.6.3
+- Node.js: 24.13.1 (LTS)
+- npm: 11.10.1
 
 These versions are pinned in package.json under the volta field.
 ```
