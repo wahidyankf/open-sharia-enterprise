@@ -4,11 +4,12 @@ import path from "path";
 
 const membersFilePath = path.join(process.cwd(), "src/data/members.json");
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const membersData = await fs.readFile(membersFilePath, "utf-8");
     const members: Member[] = JSON.parse(membersData);
-    const member = members.find((m) => m.id === parseInt(params.id));
+    const member = members.find((m) => m.id === parseInt(id));
 
     if (!member) {
       return NextResponse.json({ error: "Member not found" }, { status: 404 });
@@ -21,13 +22,14 @@ export async function GET(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const updatedMember = await request.json();
     const membersData = await fs.readFile(membersFilePath, "utf-8");
     const members: Member[] = JSON.parse(membersData);
 
-    const index = members.findIndex((m) => m.id === parseInt(params.id));
+    const index = members.findIndex((m) => m.id === parseInt(id));
     if (index === -1) {
       return NextResponse.json({ error: "Member not found" }, { status: 404 });
     }
@@ -49,12 +51,13 @@ interface Member {
   github: string;
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const membersData = await fs.readFile(membersFilePath, "utf-8");
     const members: Member[] = JSON.parse(membersData);
 
-    const index = members.findIndex((m: Member) => m.id === parseInt(params.id));
+    const index = members.findIndex((m: Member) => m.id === parseInt(id));
     if (index === -1) {
       return NextResponse.json({ error: "Member not found" }, { status: 404 });
     }
