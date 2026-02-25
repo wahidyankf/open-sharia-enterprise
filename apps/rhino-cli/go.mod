@@ -1,6 +1,6 @@
 module github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli
 
-go 1.24.2
+go 1.26
 
 require (
 	github.com/spf13/cobra v1.10.2
