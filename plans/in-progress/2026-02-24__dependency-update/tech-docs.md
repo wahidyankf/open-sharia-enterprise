@@ -92,16 +92,6 @@ release** as of 2026-02-25. Classification:
 | `spring-boot-starter-actuator` | via BOM | via BOM       | —    | Managed by Spring Boot BOM        |
 | `spring-boot-starter-test`     | via BOM | via BOM       | —    | Managed by Spring Boot BOM        |
 
-### Android / Gradle
-
-| Tool                        | Current  | Latest Stable           | Type  | Notes                                                          |
-| --------------------------- | -------- | ----------------------- | ----- | -------------------------------------------------------------- |
-| Gradle wrapper              | `8.14`   | `9.3.1`                 | **M** | **DEFERRED** — only needed for AGP 9; see below                |
-| Android Gradle Plugin (AGP) | `8.11.1` | `9.0.1`                 | **M** | **DEFERRED** — Flutter officially blocks AGP 9 (issue #181383) |
-| Kotlin Gradle plugin        | `2.2.20` | `2.3.0`                 | m     | Safe minor update; independent of AGP 9 block                  |
-| Java (JVM target)           | `17`     | `17`                    | ✓     | No change required                                             |
-| Flutter Gradle plugin       | `1.0.0`  | embedded in Flutter SDK | —     | Managed by Flutter toolchain                                   |
-
 ---
 
 ## Per-Ecosystem Update Strategy
@@ -211,33 +201,6 @@ mvn spring-boot:run   # Smoke test actuator endpoints
 
 No code changes are expected for a patch bump 4.0.2 → 4.0.3.
 
-### Android / Gradle (Kotlin Minor Update Only — AGP/Gradle Deferred)
-
-> 🚫 **AGP 9.0.1 and Gradle 9.3.1 upgrades are DEFERRED.** The Flutter team has published an
-> official advisory stating Flutter apps using plugins are currently incompatible with AGP 9.
-> See: <https://docs.flutter.dev/release/breaking-changes/migrate-to-agp-9>
->
-> Quote from official Flutter docs: _"Please **do not** update your Flutter app for Android to
-> AGP 9. Flutter apps using plugins are currently incompatible with AGP 9."_
->
-> The issue is tracked at <https://github.com/flutter/flutter/issues/181383>. The Flutter team
-> has paused AGP 9 support pending a backwards-compatibility audit of all first-party and
-> third-party plugins.
-
-**What is safe to do in this plan:**
-
-- **Kotlin Gradle plugin `2.2.20` → `2.3.0`**: This is an independent minor update that does
-  not require AGP 9. Kotlin 2.3.0 is compatible with AGP 8.x and provides improved Compose
-  compiler performance.
-
-**What to watch for before unblocking AGP 9:**
-
-- Monitor the Flutter issue tracker at <https://github.com/flutter/flutter/issues/181383>.
-- When Flutter closes the issue and publishes its AGP 9 migration guide, create a dedicated
-  follow-up plan `android-gradle-agp9-upgrade` with the full migration steps.
-- Gradle 9.3.1 upgrade is also deferred — it is required by AGP 9 but not independently needed
-  for AGP 8.x. Gradle 8.x satisfies all current AGP 8.11 requirements.
-
 ---
 
 ## Go Version Inconsistency
@@ -258,21 +221,18 @@ toolchain declaration, not the API surface, so no code changes are required.
 
 ## Risk Classification
 
-| Change                          | Risk        | Reason                                                                    |
-| ------------------------------- | ----------- | ------------------------------------------------------------------------- |
-| Node.js 24.11.1 → 24.13.1       | Low         | Patch update, no API changes                                              |
-| Spring Boot 4.0.2 → 4.0.3       | Low         | Patch update, BOM-managed                                                 |
-| Go directive 1.24.2/1.25 → 1.26 | Low         | Toolchain only, no API removal                                            |
-| Cobra already latest            | None        | No action needed                                                          |
-| Hextra v0.11.1 → v0.12.0        | Low         | Additive theme features                                                   |
-| PaperMod latest commit          | Low         | Additive theme updates                                                    |
-| Playwright 1.55.1 → 1.58.2      | Low         | Minor, backwards-compatible test API                                      |
-| Kotlin 2.2.20 → 2.3.0           | Medium      | Minor version, check deprecations                                         |
-| Flutter pub minor updates       | Medium      | Resolve constraint conflicts                                              |
-| TailwindCSS v3 → v4             | Medium      | Config rewrite; shadcn-ui now supports v4 with official migration tooling |
-| Next.js 14 → 15 → 16            | High        | Multiple breaking API changes; React 19 + Radix UI known issues           |
-| AGP 8.11.1 → 9.0.1              | **Blocked** | Flutter officially incompatible with AGP 9 (issue #181383); DEFERRED      |
-| Gradle 8.14 → 9.3.1             | **Blocked** | Required by AGP 9 only; deferred alongside AGP 9                          |
+| Change                          | Risk   | Reason                                                                    |
+| ------------------------------- | ------ | ------------------------------------------------------------------------- |
+| Node.js 24.11.1 → 24.13.1       | Low    | Patch update, no API changes                                              |
+| Spring Boot 4.0.2 → 4.0.3       | Low    | Patch update, BOM-managed                                                 |
+| Go directive 1.24.2/1.25 → 1.26 | Low    | Toolchain only, no API removal                                            |
+| Cobra already latest            | None   | No action needed                                                          |
+| Hextra v0.11.1 → v0.12.0        | Low    | Additive theme features                                                   |
+| PaperMod latest commit          | Low    | Additive theme updates                                                    |
+| Playwright 1.55.1 → 1.58.2      | Low    | Minor, backwards-compatible test API                                      |
+| Flutter pub minor updates       | Medium | Resolve constraint conflicts                                              |
+| TailwindCSS v3 → v4             | Medium | Config rewrite; shadcn-ui now supports v4 with official migration tooling |
+| Next.js 14 → 15 → 16            | High   | Multiple breaking API changes; React 19 + Radix UI known issues           |
 
 ---
 
@@ -301,7 +261,4 @@ cd apps/organiclever-be && mvn versions:display-dependency-updates
 cd apps/organiclever-be && mvn versions:display-parent-updates
 cd apps/organiclever-be && mvn versions:display-plugin-updates
 
-# Android (Gradle)
-cd apps/organiclever-app/android && ./gradlew dependencyUpdates  # requires com.github.ben-manes.versions plugin
-# Alternative: check release notes manually for AGP and Gradle wrapper
 ```
