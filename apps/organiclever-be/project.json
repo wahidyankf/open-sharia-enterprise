@@ -46,6 +46,13 @@
         "command": "mvn checkstyle:check",
         "cwd": "apps/organiclever-be"
       }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mvn compile -Pnullcheck",
+        "cwd": "apps/organiclever-be"
+      }
     }
   },
   "tags": []

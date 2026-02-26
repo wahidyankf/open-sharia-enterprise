@@ -45,6 +45,7 @@ last_updated: 2026-01-25
 - [REST API Design](#rest-api-design) - RESTful conventions
 - [Request Validation](#request-validation) - Input validation
 - [Response DTOs](#response-dtos) - Proper API responses
+- [Null Safety](#null-safety) - JSpecify + NullAway compile-time null checking
 
 ### Security
 
@@ -980,6 +981,63 @@ public class ZakatCalculationController {
     }
 }
 ```
+
+### Null Safety
+
+Use JSpecify annotations with NullAway to enforce null safety at compile time. The standard Spring
+Boot 4 approach is:
+
+1. Annotate every package with `@NullMarked` in `package-info.java` — this makes every unannotated
+   type non-null by default
+2. Mark only genuinely nullable values with `@Nullable`
+3. Run NullAway via `mvn compile -Pnullcheck` (or `nx typecheck <project>`) to catch violations
+   before tests run
+
+**`package-info.java` — apply `@NullMarked` to the whole package**:
+
+```java
+@NullMarked
+package com.organiclever.be.controller;
+
+import org.jspecify.annotations.NullMarked;
+```
+
+**Service method — use `@Nullable` only where a value can genuinely be absent**:
+
+```java
+import org.jspecify.annotations.Nullable;
+
+@Service
+public class UserService {
+
+    // Return type is non-null by default (@NullMarked on package)
+    public UserResponse findByIdOrThrow(String id) {
+        return repository.findById(id)
+            .map(UserMapper::toResponse)
+            .orElseThrow(() -> new UserNotFoundException(id));
+    }
+
+    // Explicitly nullable — caller must handle null
+    public @Nullable UserResponse findByEmail(String email) {
+        return repository.findByEmail(email)
+            .map(UserMapper::toResponse)
+            .orElse(null);
+    }
+}
+```
+
+**Run the null-safety check**:
+
+```bash
+# Via Nx (preferred — wired into pre-push hook)
+nx typecheck organiclever-be
+
+# Via Maven directly
+mvn compile -Pnullcheck
+```
+
+NullAway activates only in the `nullcheck` Maven profile so regular `build` and `test:quick` runs
+carry no Error Prone overhead.
 
 ### Custom Validators
 
