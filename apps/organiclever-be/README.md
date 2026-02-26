@@ -182,6 +182,9 @@ nx run organiclever-be:test:unit
 
 # Lint code
 nx lint organiclever-be
+
+# Null-safety check (JSpecify + NullAway — runs in pre-push hook)
+nx typecheck organiclever-be
 ```
 
 **See**: [Nx Target Standards](../../governance/development/infra/nx-targets.md) for canonical target names. Use `dev` (not `serve`) for the development server.

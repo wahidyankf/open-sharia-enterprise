@@ -124,11 +124,11 @@ Use these canonical names. Aliases (`serve`, `start:dev`, `unit-test`) are anti-
 
 Every project in `apps/` and `libs/` must expose:
 
-| Target       | Requirement                                                                                                                                                               |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `test:quick` | Complete in a few minutes (not tens of minutes); enforced by the pre-push hook and as a required GitHub Actions status check before PR merge                              |
-| `lint`       | Exit non-zero on violations; enforced by the pre-push hook; **exception: Dart/Flutter omits this target** (see note below)                                                |
-| `typecheck`  | Required for statically typed projects (TypeScript, Python/mypy, Dart/Flutter); enforced by the pre-push hook; skipped by Nx for projects that do not declare this target |
+| Target       | Requirement                                                                                                                                                                                              |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `test:quick` | Complete in a few minutes (not tens of minutes); enforced by the pre-push hook and as a required GitHub Actions status check before PR merge                                                             |
+| `lint`       | Exit non-zero on violations; enforced by the pre-push hook; **exception: Dart/Flutter omits this target** (see note below)                                                                               |
+| `typecheck`  | Required for statically typed projects (TypeScript, Python/mypy, Dart/Flutter, Java with JSpecify + NullAway); enforced by the pre-push hook; skipped by Nx for projects that do not declare this target |
 
 **Dart/Flutter exception — `lint` intentionally omitted**: `flutter analyze` combines type
 checking and linting into a single pass. The pre-push hook runs `typecheck` → `lint`
@@ -158,7 +158,7 @@ TypeScript, Python (with mypy), Dart/Flutter:
 | ----------- | -------------------------------------------------------------------------- |
 | `typecheck` | Run the type checker without emitting artifacts (`tsc --noEmit`, `mypy .`) |
 
-**Not required for dynamically typed languages** (plain JavaScript, Ruby) or languages where compilation already enforces types and `build` covers it (Go, Java).
+**Not required for dynamically typed languages** (plain JavaScript, Ruby) or languages where compilation already enforces types and `build` covers it (Go, plain Java). **Exception**: Java projects that use JSpecify + NullAway declare `typecheck` because NullAway runs as a separate Error Prone plugin pass (via a dedicated Maven profile) that is not part of the standard `build`.
 
 ### Compiled and Bundled Projects
 
@@ -320,7 +320,7 @@ Example override for a Hugo site:
 - **Mixing concerns in `test:unit`**: `test:unit` must not spin up databases, external APIs, or network services — those belong in `test:integration`
 - **Enabling cache on `test:integration`**: Setting `cache: true` for integration tests risks serving stale results when external service state changes but source files have not
 - **`build` on interpreted-language projects**: Adding a no-op `build` to Python or Ruby just to appear consistent — if there is no compile step, there is no `build` target
-- **`typecheck` on dynamically typed or compile-enforced languages**: Go and Java enforce types through `build`; adding a separate `typecheck` is redundant
+- **`typecheck` on compile-enforced languages without additional analysis**: Go and plain Java enforce types through `build`; a separate `typecheck` that only re-runs the compiler is redundant. **Exception**: Java with JSpecify + NullAway warrants `typecheck` because NullAway is a distinct null-safety pass not included in `build`
 - **Undeclared outputs**: Omitting `outputs` on `build` disables caching and forces full rebuilds on every run
 - **Apps-only targets on libs**: Libs do not expose `dev` or `start`; those are app-specific concepts
 - **Creating a `test:full` wrapper**: Adding a `test:full` that just chains other targets adds indirection without value — run `test:unit`, `test:integration`, and `test:e2e` directly or via CI matrix steps
