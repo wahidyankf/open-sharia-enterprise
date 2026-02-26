@@ -21,7 +21,7 @@ func WalkMarkdownDirs(repoRoot string, dirs []string) ([]string, error) {
 
 		err := filepath.Walk(dirPath, func(path string, info os.FileInfo, err error) error {
 			if err != nil {
-				return nil // Skip errors
+				return err
 			}
 			if !info.IsDir() && strings.HasSuffix(path, ".md") {
 				files = append(files, path)

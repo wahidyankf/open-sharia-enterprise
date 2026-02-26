@@ -46,7 +46,7 @@ func getAllDocsFiles(repoRoot string) ([]string, error) {
 	var files []string
 	err := filepath.Walk(docsDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
-			return nil // Skip errors
+			return err
 		}
 		if info.IsDir() {
 			return nil
