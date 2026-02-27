@@ -114,7 +114,7 @@ nx build:web organiclever-app
 If you need to run Flutter commands directly:
 
 ```bash
-cd apps/organiclever_app
+cd apps/organiclever-app
 
 # Install dependencies
 flutter pub get
