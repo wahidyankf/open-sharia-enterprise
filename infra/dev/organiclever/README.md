@@ -533,7 +533,7 @@ services:
 
 Planned additions to this infrastructure:
 
-- **Frontend Service**: React/Next.js application on port 3100
+- **Frontend Service**: `organiclever-web` Next.js application on port 3101
 - **Database**: PostgreSQL for data persistence
 - **Redis**: Caching layer
 - **Nginx**: Reverse proxy and load balancer

@@ -431,7 +431,7 @@ nx run-pre-commit ayokoding-web  # Update titles + navigation
 **Commands**:
 
 ```bash
-nx dev organiclever-web                    # Development server (localhost:3000)
+nx dev organiclever-web                    # Development server (localhost:3101)
 nx build organiclever-web                  # Production build
 nx run organiclever-web-e2e:test:e2e       # Run E2E tests headlessly
 nx run organiclever-web-e2e:test:e2e:ui   # Run E2E tests with Playwright UI
