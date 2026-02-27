@@ -116,8 +116,8 @@ echo "sdk.dir=$HOME/Android/Sdk" >> \
 Verify the file contains both entries:
 
 ```
-flutter.sdk=/home/wkf/flutter
-sdk.dir=/home/wkf/Android/Sdk
+flutter.sdk=~/flutter
+sdk.dir=~/Android/Sdk
 ```
 
 ### 8. Add SDK to shell configuration
