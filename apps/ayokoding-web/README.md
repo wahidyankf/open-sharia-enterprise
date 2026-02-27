@@ -58,7 +58,7 @@ cd apps/ayokoding-web
 # Start development server
 hugo server -D
 
-# Server runs at http://localhost:1313
+# Server runs at http://localhost:3100
 ```
 
 ### Building

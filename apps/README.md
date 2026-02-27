@@ -14,10 +14,10 @@ Apps follow the naming pattern: **`[domain]-[type]`**
 - `ayokoding-web` - AyoKoding educational platform ([ayokoding.com](https://ayokoding.com)) - Hugo static site
 - `ayokoding-cli` - AyoKoding CLI tool for navigation generation - Go application
 - `rhino-cli` - Repository management CLI tools - Go application
-- `organiclever-web` - OrganicLever landing website (www.organiclever.com) - Next.js app (port 3000)
+- `organiclever-web` - OrganicLever landing website (www.organiclever.com) - Next.js app (port 3200)
 - `organiclever-web-e2e` - E2E tests for organiclever-web - Playwright (browser testing)
-- `organiclever-app` - OrganicLever main application (app.organiclever.com, Android, iOS) - Flutter application (port 3100)
-- `organiclever-be` - OrganicLever backend API - Spring Boot application (port 8100)
+- `organiclever-app` - OrganicLever main application (app.organiclever.com, Android, iOS) - Flutter application (port 3201)
+- `organiclever-be` - OrganicLever backend API - Spring Boot application (port 8201)
 - `organiclever-be-e2e` - E2E tests for organiclever-be REST API - Playwright (API testing)
 - `organiclever-app-web-e2e` - Browser E2E tests for organiclever-app Flutter web - Playwright (browser testing)
 

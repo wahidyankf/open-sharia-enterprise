@@ -57,7 +57,7 @@ All commands should be run from the repository root using Nx:
 # Install dependencies
 nx install organiclever-app
 
-# Run development server (web on port 3100)
+# Run development server (web on port 3201)
 nx dev organiclever-app
 
 # Type check and lint (flutter analyze — combined pass)
@@ -83,11 +83,11 @@ cd apps/organiclever_app
 # Install dependencies
 flutter pub get
 
-# Run on web server (port 3100)
-flutter run -d web-server --web-port=3100 --dart-define=API_BASE_URL=http://localhost:8100/api/v1
+# Run on web server (port 3201)
+flutter run -d web-server --web-port=3201 --dart-define=API_BASE_URL=http://localhost:8201/api/v1
 
 # Run on Chrome (requires Chrome installation)
-flutter run -d chrome --dart-define=API_BASE_URL=http://localhost:8100/api/v1
+flutter run -d chrome --dart-define=API_BASE_URL=http://localhost:8201/api/v1
 
 # Run tests
 flutter test
@@ -114,7 +114,7 @@ The app uses `--dart-define` for environment-specific configuration:
 **Development** (default):
 
 ```bash
-API_BASE_URL=http://localhost:8100/api/v1
+API_BASE_URL=http://localhost:8201/api/v1
 ```
 
 **Production**:
@@ -131,7 +131,7 @@ The app connects to the organiclever-be Spring Boot backend:
 
 **Prerequisites**:
 
-1. Backend must be running on `http://localhost:8100`
+1. Backend must be running on `http://localhost:8201`
 2. CORS must be configured to allow the Flutter web origin
 
 **Starting the Backend**:
@@ -180,14 +180,14 @@ nx graph
 
 **Web** (Primary):
 
-- Development: `http://localhost:3100`
+- Development: `http://localhost:3201`
 - No browser installation required (uses web-server)
 - CORS configuration needed in backend
 
 **Android**:
 
 ```bash
-flutter run -d android --dart-define=API_BASE_URL=http://10.0.2.2:8100/api/v1
+flutter run -d android --dart-define=API_BASE_URL=http://10.0.2.2:8201/api/v1
 ```
 
 Note: Use `10.0.2.2` for Android emulator's localhost

@@ -1,3 +1,3 @@
 export const TEST_CONFIG = {
-  baseUrl: "http://localhost:3101",
+  baseUrl: "http://localhost:3200",
 };

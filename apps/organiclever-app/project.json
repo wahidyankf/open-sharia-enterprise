@@ -14,7 +14,7 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "export PATH=\"$PATH:$HOME/flutter/bin\" && flutter run -d web-server --web-port=3100 --dart-define=API_BASE_URL=http://localhost:8100/api/v1",
+        "command": "export PATH=\"$PATH:$HOME/flutter/bin\" && flutter run -d web-server --web-port=3201 --dart-define=API_BASE_URL=http://localhost:8201/api/v1",
         "cwd": "apps/organiclever-app"
       },
       "dependsOn": ["install"]

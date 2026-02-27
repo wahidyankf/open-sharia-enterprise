@@ -7,10 +7,10 @@ OrganicLever Platform Backend - Spring Boot REST API
 - **Framework**: Spring Boot 4.0.2
 - **Language**: Java 25
 - **Build Tool**: Maven
-- **Port**: 8100
+- **Port**: 8201
 - **API Base**: `/api/v1`
 - **Client Apps**:
-  - [`organiclever-app`](../organiclever-app/) - Flutter mobile and web application (port 3100)
+  - [`organiclever-app`](../organiclever-app/) - Flutter mobile and web application (port 3201)
 
 **CORS Configuration**: The backend includes CORS configuration to allow Flutter web app on `http://localhost:*` (see `config/CorsConfig.java`).
 
@@ -101,7 +101,7 @@ Wait for: `Started OrganicLeverApplication in X seconds`
 ### Step 2: Test baseline
 
 ```bash
-curl http://localhost:8100/api/v1/hello
+curl http://localhost:8201/api/v1/hello
 ```
 
 Expected: `{"message":"world"}`
@@ -127,7 +127,7 @@ Restarting due to 1 class path change
 Test again (within 2 seconds):
 
 ```bash
-curl http://localhost:8100/api/v1/hello
+curl http://localhost:8201/api/v1/hello
 ```
 
 Expected: `{"message":"auto-reload works!"}`
@@ -254,11 +254,11 @@ docker-compose logs -f organiclever-be
 docker-compose restart organiclever-be
 ```
 
-### Port 8100 already in use
+### Port 8201 already in use
 
 ```bash
 # Find process using port
-lsof -i :8100
+lsof -i :8201
 
 # Kill process
 kill -9 <PID>
@@ -401,7 +401,7 @@ Wait for: `Started OrganicLeverApplication`
 nx dev organiclever-app
 ```
 
-Open browser at `http://localhost:3100`
+Open browser at `http://localhost:3201`
 
 ### 3. Test Integration
 

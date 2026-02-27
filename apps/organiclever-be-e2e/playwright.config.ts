@@ -8,7 +8,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: [["html"], ["junit", { outputFile: "test-results/junit.xml" }]],
   use: {
-    baseURL: process.env.BASE_URL || "http://localhost:8100",
+    baseURL: process.env.BASE_URL || "http://localhost:8201",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
   },

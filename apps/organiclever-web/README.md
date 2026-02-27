@@ -26,12 +26,12 @@ This app serves as the public-facing landing page for OrganicLever. It introduce
 | Auth       | Cookie-based sessions    |
 | Data       | JSON files (`src/data/`) |
 | Deployment | Vercel (auto-detected)   |
-| Port (dev) | 3101                     |
+| Port (dev) | 3200                     |
 
 ## Development Commands
 
 ```bash
-# Start development server (http://localhost:3101)
+# Start development server (http://localhost:3200)
 nx dev organiclever-web
 
 # Build for production (local verification)
