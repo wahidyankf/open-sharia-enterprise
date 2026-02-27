@@ -49,6 +49,42 @@ test/
 3. **State Management**: Provider pattern with ChangeNotifier
 4. **No Shared Libraries**: Everything in app for now (YAGNI principle)
 
+## Prerequisites
+
+**For web development** (default): Only Flutter 3.41.1 is required — no Android SDK needed.
+
+**For Android builds**: The Android SDK must be installed separately. This machine runs
+ARM64 Linux, which requires a one-time setup:
+
+```bash
+# Quick reference — see full guide for details:
+# docs/how-to/hoto__setup-android-dev.md
+
+mkdir -p ~/Android/Sdk/cmdline-tools
+cd ~/Android/Sdk/cmdline-tools
+wget https://dl.google.com/android/repository/commandlinetools-linux-14742923_latest.zip -O cmdline-tools.zip
+unzip -q cmdline-tools.zip && mv cmdline-tools latest && rm cmdline-tools.zip
+
+printf 'y\ny\ny\ny\ny\ny\ny\ny\ny\ny\n' | ~/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --licenses
+~/Android/Sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-35" "platforms;android-36" "build-tools;35.0.0"
+
+# ARM64 Linux only: replace x86_64 adb with ARM64 binary from Ubuntu
+sudo apt-get install -y adb
+mv ~/Android/Sdk/platform-tools/adb ~/Android/Sdk/platform-tools/adb.x86_64
+ln -sf /usr/lib/android-sdk/platform-tools/adb ~/Android/Sdk/platform-tools/adb
+
+flutter config --android-sdk ~/Android/Sdk
+echo "sdk.dir=$HOME/Android/Sdk" >> android/local.properties
+```
+
+See the full guide: [docs/how-to/hoto\_\_setup-android-dev.md](../../docs/how-to/hoto__setup-android-dev.md)
+
+**Android build configuration** (already set in the repository):
+
+- **Gradle**: 9.1.0 (supports Java 25 — class file major version 69)
+- **AGP**: 9.0.1 (requires Gradle 9.1.0+)
+- **Kotlin**: Built-in AGP 9 default (no separate `kotlin-android` plugin)
+
 ## Development Commands
 
 All commands should be run from the repository root using Nx:
@@ -264,6 +300,18 @@ public class CorsConfig implements WebMvcConfigurer {
     }
 }
 ```
+
+### SDK Location Not Found
+
+**Symptom**: VS Code or Gradle shows "SDK location not found. Define a valid SDK location ... local.properties".
+
+**Fix**: `local.properties` is gitignored — each developer must set it locally:
+
+```bash
+echo "sdk.dir=$HOME/Android/Sdk" >> android/local.properties
+```
+
+See [Android Setup guide](../../docs/how-to/hoto__setup-android-dev.md) for full installation steps.
 
 ### Flutter Not Found
 
