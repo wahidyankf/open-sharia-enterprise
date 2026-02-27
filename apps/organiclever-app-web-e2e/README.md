@@ -5,7 +5,7 @@ Playwright browser-based E2E tests for the OrganicLever Flutter web application.
 ## Overview
 
 This project drives a real Chromium browser against the `organiclever-app` Flutter web app
-running on port 3100. It validates the HomeScreen UI — initial state and fetch interaction — by
+running on port 3201. It validates the HomeScreen UI — initial state and fetch interaction — by
 simulating real user actions.
 
 **Counterpart**: [`organiclever-be-e2e`](../organiclever-be-e2e/) tests the REST API directly
@@ -17,8 +17,8 @@ Both services must be running before executing tests:
 
 | Service            | Port | Command                    |
 | ------------------ | ---- | -------------------------- |
-| `organiclever-be`  | 8100 | `npm run organiclever:dev` |
-| `organiclever-app` | 3100 | `nx dev organiclever-app`  |
+| `organiclever-be`  | 8201 | `npm run organiclever:dev` |
+| `organiclever-app` | 3201 | `nx dev organiclever-app`  |
 
 ## Setup
 

@@ -9,7 +9,7 @@ spring:
       include-binding-errors: always
 
 server:
-  port: 8100
+  port: 8201
 
 management:
   endpoints:

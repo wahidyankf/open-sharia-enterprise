@@ -103,10 +103,10 @@ docker-compose ps
 
 ```bash
 # Example: Test organiclever-be
-curl http://localhost:8100/api/v1/hello
+curl http://localhost:8201/api/v1/hello
 # Expected: {"message":"world"}
 
-curl http://localhost:8100/actuator/health
+curl http://localhost:8201/actuator/health
 # Expected: {"status":"UP"}
 ```
 
@@ -123,7 +123,7 @@ See [`apps/organiclever-be-e2e/`](../../apps/organiclever-be-e2e/README.md) for 
 For browser-based E2E tests against the Flutter web app, also start `organiclever-app` and then run:
 
 ```bash
-nx dev organiclever-app   # separate terminal — starts Flutter web on port 3100
+nx dev organiclever-app   # separate terminal — starts Flutter web on port 3201
 nx run organiclever-app-web-e2e:test:e2e
 ```
 
@@ -145,11 +145,11 @@ docker-compose down -v
 
 **Services (Docker Compose)**:
 
-- `organiclever-be` - Spring Boot backend (port 8100)
+- `organiclever-be` - Spring Boot backend (port 8201)
 
 **Related Apps (run separately)**:
 
-- `organiclever-app` - Flutter web client (port 3100) — `nx dev organiclever-app`
+- `organiclever-app` - Flutter web client (port 3201) — `nx dev organiclever-app`
 - `organiclever-be-e2e` - Playwright API E2E tests — `nx run organiclever-be-e2e:test:e2e`
 - `organiclever-app-web-e2e` - Playwright browser E2E tests — `nx run organiclever-app-web-e2e:test:e2e`
 
@@ -246,7 +246,7 @@ nx run organiclever-be:build
 docker-compose restart organiclever-be
 
 # 5. Test changes
-curl http://localhost:8100/api/v1/hello
+curl http://localhost:8201/api/v1/hello
 ```
 
 ### Workflow 2: Hybrid Development
@@ -336,7 +336,7 @@ Services in the same Docker Compose network can communicate by service name:
 
 ```bash
 # Example: Frontend calling backend
-http://organiclever-be:8100/api/v1/hello
+http://organiclever-be:8201/api/v1/hello
 
 # Example: Backend connecting to database
 jdbc:postgresql://organiclever-db:5432/organiclever
@@ -348,8 +348,8 @@ Services expose ports to the host:
 
 | Service                  | Internal Port | Host Port | Purpose            |
 | ------------------------ | ------------- | --------- | ------------------ |
-| organiclever-be          | 8100          | 8100      | Backend API        |
-| organiclever-app         | 3100          | 3100      | Flutter web client |
+| organiclever-be          | 8201          | 8201      | Backend API        |
+| organiclever-app         | 3201          | 3201      | Flutter web client |
 | (future) organiclever-db | 5432          | 5432      | Database           |
 
 ## Health Checks
@@ -361,7 +361,7 @@ Services include health checks for monitoring:
 docker-compose ps
 
 # Check health via endpoint
-curl http://localhost:8100/actuator/health
+curl http://localhost:8201/actuator/health
 ```
 
 **Health check features**:
@@ -379,7 +379,7 @@ curl http://localhost:8100/actuator/health
 docker-compose logs service-name
 
 # Check if port is in use
-lsof -i :8100
+lsof -i :8201
 
 # Verify application was built
 ls -lh ../../apps/organiclever-be/target/*.jar
@@ -389,7 +389,7 @@ ls -lh ../../apps/organiclever-be/target/*.jar
 
 ```bash
 # Find what's using the port
-lsof -i :8100
+lsof -i :8201
 
 # Kill the process
 kill -9 <PID>
@@ -417,7 +417,7 @@ docker-compose ps
 docker inspect organiclever-be | grep -A 10 Health
 
 # Test from inside container
-docker exec organiclever-be wget -O- http://localhost:8100/actuator/health
+docker exec organiclever-be wget -O- http://localhost:8201/actuator/health
 ```
 
 ### Build Failed
@@ -465,7 +465,7 @@ volumes:
 
 ```yaml
 healthcheck:
-  test: ["CMD", "wget", "--spider", "http://localhost:8100/actuator/health"]
+  test: ["CMD", "wget", "--spider", "http://localhost:8201/actuator/health"]
   interval: 30s
   timeout: 10s
   retries: 3
@@ -484,8 +484,8 @@ networks:
 
 Maintain a central registry of ports to avoid conflicts:
 
-- 8100: organiclever-be (also used by organiclever-be-e2e as `BASE_URL`)
-- 3100: organiclever-app Flutter web (also used by organiclever-app-web-e2e as `BASE_URL`)
+- 8201: organiclever-be (also used by organiclever-be-e2e as `BASE_URL`)
+- 3201: organiclever-app Flutter web (also used by organiclever-app-web-e2e as `BASE_URL`)
 - 5432: PostgreSQL databases
 
 ## Performance Tips

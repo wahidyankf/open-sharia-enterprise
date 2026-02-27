@@ -6,7 +6,7 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "hugo server -D",
+        "command": "hugo server -D --port 3100",
         "cwd": "apps/ayokoding-web"
       }
     },

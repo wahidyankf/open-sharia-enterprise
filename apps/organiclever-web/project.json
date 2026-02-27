@@ -7,7 +7,7 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "next dev --port 3101",
+        "command": "next dev --port 3200",
         "cwd": "{projectRoot}"
       }
     },
@@ -22,7 +22,7 @@
     "start": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "next start --port 3101",
+        "command": "next start --port 3200",
         "cwd": "{projectRoot}"
       }
     },

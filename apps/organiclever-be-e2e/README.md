@@ -11,7 +11,7 @@ Tests use Playwright's `APIRequestContext` to validate HTTP endpoints — no bro
 
 ## Prerequisites
 
-The backend must be running on `http://localhost:8100` before executing tests.
+The backend must be running on `http://localhost:8201` before executing tests.
 
 **Recommended — Docker Compose** (no local Java/Maven required):
 
@@ -61,7 +61,7 @@ nx run organiclever-be-e2e:test:quick
 
 | Variable   | Default                 | Description      |
 | ---------- | ----------------------- | ---------------- |
-| `BASE_URL` | `http://localhost:8100` | Backend base URL |
+| `BASE_URL` | `http://localhost:8201` | Backend base URL |
 | `CI`       | unset                   | Enables CI mode  |
 
 Override the base URL to test against a different environment:

@@ -6,8 +6,8 @@ Docker Compose configuration for OrganicLever services ecosystem.
 
 This infrastructure setup provides Docker Compose configuration for the OrganicLever ecosystem. The full ecosystem includes:
 
-- **organiclever-be** - Spring Boot backend service (port 8100, runs in Docker Compose)
-- **organiclever-app** - Flutter web application (port 3100, runs via `nx dev organiclever-app`)
+- **organiclever-be** - Spring Boot backend service (port 8201, runs in Docker Compose)
+- **organiclever-app** - Flutter web application (port 3201, runs via `nx dev organiclever-app`)
 - **organiclever-be-e2e** - Playwright API E2E tests (requires organiclever-be)
 - **organiclever-app-web-e2e** - Playwright browser E2E tests (requires organiclever-be + organiclever-app)
 
@@ -87,21 +87,21 @@ docker compose down && docker compose up
 
 ```bash
 # Check service health
-curl http://localhost:8100/actuator/health
+curl http://localhost:8201/actuator/health
 
 # Test hello endpoint
-curl http://localhost:8100/api/v1/hello
+curl http://localhost:8201/api/v1/hello
 # Expected: {"message":"world"}
 
 # Check service info
-curl http://localhost:8100/actuator/info
+curl http://localhost:8201/actuator/info
 ```
 
 ## Service Details
 
 ### organiclever-be
 
-**Port**: 8100
+**Port**: 8201
 **Image**: Custom dev image (built from `Dockerfile.dev`)
 **Base**: eclipse-temurin:25-jdk-alpine + Maven 3.9.11
 **Profile**: dev (development mode with auto-reload)
@@ -219,7 +219,7 @@ docker compose up
 npm run organiclever:dev
 
 # Terminal 2: Test endpoint
-curl http://localhost:8100/api/v1/hello
+curl http://localhost:8201/api/v1/hello
 # Output: {"message":"world!"}
 
 # Edit apps/organiclever-be/src/main/java/com/organiclever/be/controller/HelloController.java
@@ -230,7 +230,7 @@ curl http://localhost:8100/api/v1/hello
 # "Restarting due to 1 class path change"
 
 # Test again (within 2 seconds)
-curl http://localhost:8100/api/v1/hello
+curl http://localhost:8201/api/v1/hello
 # Output: {"message":"auto-reload works!"}
 ```
 
@@ -416,7 +416,7 @@ All services communicate through the `organiclever-network` bridge network.
 
 The backend service includes health checks:
 
-- **Endpoint**: `http://localhost:8100/actuator/health`
+- **Endpoint**: `http://localhost:8201/actuator/health`
 - **Interval**: 30 seconds
 - **Timeout**: 10 seconds
 - **Retries**: 3
@@ -440,8 +440,8 @@ cd ../../apps/organiclever-be && mvn clean package -DskipTests
 ### Port already in use
 
 ```bash
-# Check what's using port 8100
-lsof -i :8100
+# Check what's using port 8201
+lsof -i :8201
 
 # Kill the process or change port in docker-compose.yml
 ```
@@ -456,7 +456,7 @@ docker-compose ps
 docker-compose logs organiclever-be
 
 # Test health endpoint manually
-docker exec organiclever-be wget -O- http://localhost:8100/actuator/health
+docker exec organiclever-be wget -O- http://localhost:8201/actuator/health
 ```
 
 ### Out of memory
@@ -533,7 +533,7 @@ services:
 
 Planned additions to this infrastructure:
 
-- **Frontend Service**: `organiclever-web` Next.js application on port 3101
+- **Frontend Service**: `organiclever-web` Next.js application on port 3200
 - **Database**: PostgreSQL for data persistence
 - **Redis**: Caching layer
 - **Nginx**: Reverse proxy and load balancer
@@ -551,7 +551,7 @@ Once the backend is running via Docker Compose, run the API-level Playwright tes
 nx run organiclever-be-e2e:test:e2e
 ```
 
-Tests target `http://localhost:8100` by default. Override with `BASE_URL` for other environments:
+Tests target `http://localhost:8201` by default. Override with `BASE_URL` for other environments:
 
 ```bash
 BASE_URL=http://staging.example.com nx run organiclever-be-e2e:test:e2e  # test against custom env
@@ -562,7 +562,7 @@ See [`apps/organiclever-be-e2e/`](../../../apps/organiclever-be-e2e/README.md) f
 ### Browser E2E Tests
 
 `organiclever-app-web-e2e` also runs against this environment. It requires **both** the backend
-(port 8100, started via Docker Compose above) **and** the Flutter web app (port 3100):
+(port 8201, started via Docker Compose above) **and** the Flutter web app (port 3201):
 
 ```bash
 # Terminal 1 — backend via Docker Compose (above)

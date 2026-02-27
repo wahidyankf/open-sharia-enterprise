@@ -41,7 +41,7 @@ nx dev oseplatform-web
 hugo server --buildDrafts --buildFuture
 ```
 
-The site will be available at `http://localhost:1313`
+The site will be available at `http://localhost:3000`
 
 ### Building
 
