@@ -279,8 +279,10 @@ Vercel automatically:
 
 ## Development Commands
 
+### Option 1: Nx (host, recommended for frontend-only work)
+
 ```bash
-# Start development server
+# Start development server (http://localhost:3200)
 nx dev organiclever-web
 
 # Build for production (local verification)
@@ -289,6 +291,25 @@ nx build organiclever-web
 # Type checking
 npx tsc --noEmit --project apps/organiclever-web/tsconfig.json
 ```
+
+### Option 2: Docker Compose (containerized, or running alongside the backend)
+
+Runs the app inside a Node.js 24 Alpine container. Useful when you need the backend alongside the
+frontend, or want an environment closer to CI.
+
+```bash
+# From repository root — starts both organiclever-web and organiclever-be
+npm run organiclever:dev
+
+# Or start the frontend container only
+docker compose -f infra/dev/organiclever/docker-compose.yml up organiclever-web
+```
+
+**First startup** (~2-4 min): installs npm dependencies inside the container.
+**Subsequent starts**: fast — `node_modules` is persisted in a named Docker volume.
+
+> `node_modules` is intentionally isolated from the host via a Docker named volume to prevent
+> Alpine Linux binary conflicts with macOS/Windows/Linux host binaries.
 
 ## Common Patterns
 
@@ -394,6 +415,12 @@ export default function Counter() {
 - [apps/organiclever-web/project.json](../../../apps/organiclever-web/project.json) - Nx project config
 - [apps/organiclever-web/next.config.mjs](../../../apps/organiclever-web/next.config.mjs) - Next.js config
 - [apps/organiclever-web/vercel.json](../../../apps/organiclever-web/vercel.json) - Vercel deployment config
+
+**Infrastructure**:
+
+- [infra/dev/organiclever/README.md](../../../infra/dev/organiclever/README.md) - Docker Compose setup for both services
+- [infra/dev/organiclever/docker-compose.yml](../../../infra/dev/organiclever/docker-compose.yml) - Service definitions
+- [infra/dev/organiclever/Dockerfile.web.dev](../../../infra/dev/organiclever/Dockerfile.web.dev) - Frontend container image
 
 **Related Skills**:
 
