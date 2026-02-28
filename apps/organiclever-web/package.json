@@ -7,7 +7,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "storybook": "storybook dev -p 6006 --no-open",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.2",
@@ -26,6 +28,9 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@storybook/nextjs-vite": "^10.2.13",
+    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/vite": "^4.2.1",
     "@testing-library/react": "^16.3.2",
     "@types/cookie": "^0.6.0",
     "@types/node": "^20",
@@ -35,10 +40,11 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "jsdom": "^28.1.0",
-    "@tailwindcss/postcss": "^4",
     "postcss": "^8",
+    "storybook": "^10.2.13",
     "tailwindcss": "^4",
     "typescript": "^5",
+    "vite": "^6.4.1",
     "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.0.18"
   }

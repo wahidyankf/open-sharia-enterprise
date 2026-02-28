@@ -60,6 +60,21 @@
         "command": "npx oxlint@latest .",
         "cwd": "{projectRoot}"
       }
+    },
+    "storybook": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run storybook",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "build-storybook": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run build-storybook",
+        "cwd": "{projectRoot}"
+      },
+      "outputs": ["{projectRoot}/storybook-static"]
     }
   },
   "tags": ["type:app", "platform:nextjs", "domain:organiclever"]
