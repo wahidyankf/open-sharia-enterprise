@@ -256,7 +256,7 @@ The `skills` field (already defined as field 6 in Required Frontmatter above) ha
 
 - **Format**: YAML array of strings
 - **Required**: Yes (can be empty `[]`)
-- **Values**: Skill names matching folder names in `.opencode/skill/`
+- **Values**: Skill names matching folder names in `.claude/skills/`
 - **Auto-loading**: Skills load when agent invoked AND task matches Skill description
 - **Validation**: Referenced Skills must exist in `.claude/skills/` (primary) or `.opencode/skill/` (secondary) directory
 - **Example**: `skills: [docs-creating-accessible-diagrams, repo-applying-maker-checker-fixer]`
@@ -334,7 +334,7 @@ When this agent is invoked, all three Skills auto-load if the task description m
 2. **Relevant Skills**: Skills should align with agent's domain
 3. **Order by importance**: List most critical Skills first
 4. **Keep updated**: Add/remove Skills as agent evolves
-5. **Validate references**: Ensure referenced Skills exist in `.opencode/skill/`
+5. **Validate references**: Ensure referenced Skills exist in `.claude/skills/` (primary source of truth)
 
 #### Skills Documentation: Frontmatter Only (DRY Principle)
 
@@ -1444,7 +1444,7 @@ Is this content reusable across 3+ agents?
 ├─ YES → Move to Skill or Convention Document
 │   │
 │   ├─ Is it actionable "how-to" guidance?
-│   │   └─ YES → Create/update Skill in .opencode/skill/
+│   │   └─ YES → Create/update Skill in .claude/skills/
 │   │       Examples: applying-content-quality, creating-accessible-diagrams
 │   │
 │   └─ Is it technical specification or standard?
@@ -1616,7 +1616,7 @@ Before committing agent changes:
 
 - [ ] No content duplicates Skills (check `.claude/skills/` (primary) or `.opencode/skill/` (secondary) catalog)
 - [ ] No content duplicates Conventions (check `governance/conventions/`)
-- [ ] All Skills referenced exist in `.opencode/skill/`
+- [ ] All Skills referenced exist in `.claude/skills/` (primary source of truth)
 - [ ] All Convention links point to valid files
 - [ ] Task-specific instructions retained (agent is self-contained for its job)
 - [ ] Agent within tier limits (Simple <800, Standard <1,200, Complex <1,800)
