@@ -34,7 +34,7 @@ test.describe("Dashboard Page", () => {
     });
 
     test("should display sidebar with Dashboard and Team navigation links", async ({ page }) => {
-      await expect(page.getByRole("link", { name: "Dashboard" })).toBeVisible();
+      await expect(page.getByRole("link", { name: "Dashboard" }).first()).toBeVisible();
       await expect(page.getByRole("link", { name: "Team" })).toBeVisible();
     });
   });

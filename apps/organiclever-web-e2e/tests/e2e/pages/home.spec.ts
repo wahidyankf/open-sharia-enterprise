@@ -33,6 +33,7 @@ test.describe("Home Page", () => {
 
     // Manually navigate to the home page
     await page.goto(TEST_CONFIG.baseUrl);
+    await page.waitForLoadState("networkidle");
 
     // Check if the logo and site name are visible
     await expect(page.getByRole("link", { name: "Organic Lever" })).toBeVisible();

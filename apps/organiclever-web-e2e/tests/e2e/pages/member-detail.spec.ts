@@ -13,7 +13,8 @@ test.describe("Member Detail Page", () => {
       await loginWithUI(page);
       // Navigate to members via page.goto (bounces through /login → /dashboard/members)
       await page.goto(`${TEST_CONFIG.baseUrl}/dashboard/members`);
-      await page.waitForLoadState("networkidle");
+      // Wait for the table to render before clicking (auth state may resolve async on webkit)
+      await expect(page.locator("tbody tr").first()).toBeVisible();
       // Click Alice Johnson's row for client-side navigation to member detail
       await page.locator("tbody tr").first().locator("td").first().click();
       await page.waitForURL(`${TEST_CONFIG.baseUrl}/dashboard/members/1`);
