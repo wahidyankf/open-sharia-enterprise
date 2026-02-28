@@ -12,7 +12,7 @@ test.describe("Members Page", () => {
     test.beforeEach(async ({ page }) => {
       await loginWithUI(page);
       await page.goto(`${TEST_CONFIG.baseUrl}/dashboard/members`);
-      await page.waitForLoadState("networkidle");
+      await expect(page.getByRole("heading", { name: "Members" })).toBeVisible();
     });
 
     test("should display 'Members' heading and search input when authenticated", async ({ page }) => {
