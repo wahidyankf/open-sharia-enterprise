@@ -74,7 +74,7 @@ Layer 5: Workflows    WHEN - Orchestrate (multi-step processes)
 
 **Location**: `governance/principles/`
 
-**Key Document**: [Core Principles Index](../README.md)
+**Key Document**: [Core Principles Index](../../../governance/principles/README.md)
 
 **Principles** (abbreviated):
 
@@ -113,7 +113,7 @@ Development: Hugo Development Convention (semantic HTML)
 
 **Location**: `governance/conventions/`
 
-**Key Document**: [Conventions Index](../README.md)
+**Key Document**: [Conventions Index](../../../governance/conventions/README.md)
 
 **Scope**:
 
@@ -142,7 +142,7 @@ Development: Hugo Development Convention (semantic HTML)
 
 **Location**: `governance/development/`
 
-**Key Document**: [Development Index](../README.md)
+**Key Document**: [Development Index](../../../governance/development/README.md)
 
 **Scope**:
 
@@ -172,7 +172,7 @@ Development: Hugo Development Convention (semantic HTML)
 
 **Location**: `.claude/agents/` (primary; `.opencode/agent/` is auto-generated secondary)
 
-**Key Document**: [Agents Index](../README.md)
+**Key Document**: [Agents Index](../../agents/README.md)
 
 **Agent Families**:
 
@@ -203,7 +203,7 @@ Agent: docs-fixer (applies corrections)
 
 **Location**: `governance/workflows/`
 
-**Key Document**: [Workflows Index](../README.md)
+**Key Document**: [Workflows Index](../../../governance/workflows/README.md)
 
 **Workflow Families**:
 
@@ -382,11 +382,11 @@ Skills (context: fork) ──delegates to──> Isolated Agent Context
 ## References
 
 - **[Repository Architecture](../../../governance/repository-governance-architecture.md)** - Complete architectural documentation with all traceability examples
-- **[Core Principles Index](../README.md)** - Foundational principles
-- **[Conventions Index](../README.md)** - Documentation conventions
-- **[Development Index](../README.md)** - Development practices
-- **[Agents Index](../README.md)** - All AI agents and responsibilities
-- **[Workflows Index](../README.md)** - All orchestrated processes
+- **[Core Principles Index](../../../governance/principles/README.md)** - Foundational principles
+- **[Conventions Index](../../../governance/conventions/README.md)** - Documentation conventions
+- **[Development Index](../../../governance/development/README.md)** - Development practices
+- **[Agents Index](../../agents/README.md)** - All AI agents and responsibilities
+- **[Workflows Index](../../../governance/workflows/README.md)** - All orchestrated processes
 
 ## Related Skills
 
