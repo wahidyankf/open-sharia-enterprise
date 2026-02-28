@@ -22,7 +22,7 @@ describe("Breadcrumb", () => {
   });
 
   it("returns null when pathname is null — regression for split-on-null crash", () => {
-    vi.mocked(usePathname).mockReturnValue(null);
+    vi.mocked(usePathname).mockReturnValue(null as unknown as string);
     const { container } = render(<Breadcrumb />);
     expect(container.firstChild).toBeNull();
   });

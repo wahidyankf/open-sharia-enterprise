@@ -58,8 +58,10 @@ apps/organiclever-web/
 │   │   ├── fonts/              # Font assets
 │   │   ├── layout.tsx          # Root layout
 │   │   └── page.tsx            # Root page
-│   ├── components/             # Reusable React components
-│   │   └── ui/                 # shadcn-ui component library
+│   ├── components/             # App-specific components (business logic, hardcoded content)
+│   │   ├── Navigation.tsx      # Sidebar nav with app routes and logout
+│   │   ├── Breadcrumb.tsx      # Pathname-aware breadcrumb
+│   │   └── ui/                 # Generic UI primitives (shadcn-ui, data-agnostic)
 │   ├── contexts/               # Shared React contexts
 │   ├── data/                   # JSON data files
 │   └── lib/                    # Utility functions and helpers
@@ -112,18 +114,33 @@ import settings from "@/data/settings.json";
 
 ## Component Architecture
 
-**shadcn-ui component library** (`src/components/ui/`):
+Components are split across two levels with a strict boundary.
 
-- Components generated via `shadcn-ui` CLI
+### `src/components/ui/` — Generic UI primitives
+
+- Generated and managed by the shadcn-ui CLI (`npx shadcn-ui add ...`)
 - Built on Radix UI primitives for accessibility
-- Styled with TailwindCSS utility classes
-- Fully customizable (source code owned by project)
+- Styled with TailwindCSS utility classes — fully customizable (source owned by project)
+- **Zero business logic** — no hardcoded routes, content, or app-specific data
+- Portable: could be dropped into any Next.js project unchanged
+- Examples: `Button`, `Card`, `Input`, `Dialog`, `Table`, `Label`, `Alert`
 
-**Shared components** (`src/components/`):
+### `src/components/` — App-specific components
 
-- Application-specific reusable components
-- Use shadcn-ui primitives as building blocks
-- Follow co-location principle
+- Compose `ui/` primitives with business logic and app content
+- May contain hardcoded routes, brand strings, or prop contracts tied to this app
+- Not portable — tightly coupled to organiclever-web's domain
+- Examples: `Navigation` (hardcodes `/dashboard` routes, "Organic Lever" brand, `logout` prop), `Breadcrumb` (reads live pathname)
+
+### Why keep them separate
+
+Do **not** move app-specific components into `ui/`. Three concrete reasons:
+
+1. **shadcn-ui CLI conflict** — `npx shadcn-ui add <component>` writes directly into `components/ui/`. App-specific files placed there risk being silently overwritten.
+2. **Abstraction clarity** — Developers expect `ui/` to contain drop-in, data-agnostic primitives. Finding opinionated, app-coupled components there breaks that contract and creates confusion.
+3. **Portability boundary** — `ui/` components can be extracted into a shared design system in the future. App-specific components cannot. Mixing them makes that extraction painful.
+
+**Decision rule:** if a component has hardcoded routes, brand content, or props tied to this app's domain → `src/components/`. If it is a generic, reusable primitive → `src/components/ui/`.
 
 ## Next.js App Router Conventions
 
