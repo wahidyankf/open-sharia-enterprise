@@ -67,7 +67,7 @@ docker compose up
 
 **What's happening**:
 
-- Uses custom Docker image with Maven pre-installed (see `Dockerfile.dev`)
+- Uses custom Docker image with Maven pre-installed (see `Dockerfile.be.dev`)
 - Mounts source code into container (read-write)
 - Runs `mvn spring-boot:run` with DevTools enabled
 - DevTools watches for file changes and triggers fast restarts
@@ -337,7 +337,7 @@ docker-compose -f docker-compose.yml up
 
 ## Docker Development Image
 
-The Docker-based development environment uses a custom image built from `infra/dev/organiclever/Dockerfile.dev`:
+The Docker-based development environment uses a custom image built from `infra/dev/organiclever/Dockerfile.be.dev`:
 
 **Key Features**:
 
@@ -362,7 +362,7 @@ docker compose build
 
 **When to rebuild**:
 
-- Only if `Dockerfile.dev` changes
+- Only if `Dockerfile.be.dev` changes
 - Otherwise, the image persists and is reused automatically
 
 ## Architecture

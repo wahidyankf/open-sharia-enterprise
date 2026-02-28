@@ -104,7 +104,7 @@ curl -s http://localhost:3200
 ### organiclever-be
 
 **Port**: 8201
-**Image**: Custom dev image (built from `Dockerfile.dev`)
+**Image**: Custom dev image (built from `Dockerfile.be.dev`)
 **Base**: eclipse-temurin:25-jdk-alpine + Maven 3.9.11
 **Profile**: dev (development mode with auto-reload)
 
@@ -293,7 +293,7 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 
 ### Custom Development Image
 
-The development environment uses a custom Docker image built from `Dockerfile.dev`:
+The development environment uses a custom Docker image built from `Dockerfile.be.dev`:
 
 **Why custom image?**
 
@@ -315,7 +315,7 @@ docker compose build
 - Maven 3.9.11 (pre-installed via apk)
 - Total size: ~666MB
 
-**Rebuilding** (only needed if Dockerfile.dev changes):
+**Rebuilding** (only needed if Dockerfile.be.dev changes):
 
 ```bash
 docker compose build --no-cache
