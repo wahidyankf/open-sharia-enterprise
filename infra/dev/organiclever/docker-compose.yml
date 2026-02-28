@@ -6,7 +6,7 @@ services:
   organiclever-be:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.be.dev
     container_name: organiclever-be
     working_dir: /workspace
 
@@ -23,7 +23,7 @@ services:
       - MAVEN_OPTS=${MAVEN_OPTS:--Xmx512m}
 
     # Run Spring Boot with DevTools for auto-reload
-    # Maven is pre-installed in the custom dev image (see Dockerfile.dev)
+    # Maven is pre-installed in the custom dev image (see Dockerfile.be.dev)
     command: mvn spring-boot:run -Dspring-boot.run.profiles=dev
 
     healthcheck:

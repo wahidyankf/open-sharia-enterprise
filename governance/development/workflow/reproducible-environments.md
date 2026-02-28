@@ -341,7 +341,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.be.dev
     volumes:
       - .:/app
       - /app/node_modules
@@ -367,7 +367,7 @@ docker-compose up
 
 ### Development Dockerfile
 
-**Dockerfile.dev**:
+**Dockerfile.be.dev**:
 
 ```dockerfile
 # Use specific version
@@ -752,7 +752,7 @@ verify();
        # ... configuration
    ```
 
-2. **Create Dockerfile.dev**:
+2. **Create Dockerfile.be.dev**:
 
    ```dockerfile
    FROM node:24.13.1-alpine
