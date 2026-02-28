@@ -7,8 +7,10 @@ Docker Compose configuration for OrganicLever services ecosystem.
 This infrastructure setup provides Docker Compose configuration for the OrganicLever ecosystem. The full ecosystem includes:
 
 - **organiclever-be** - Spring Boot backend service (port 8201, runs in Docker Compose)
+- **organiclever-web** - Next.js landing website (port 3200, runs in Docker Compose)
 - **organiclever-app** - Flutter web application (port 3201, runs via `nx dev organiclever-app`)
 - **organiclever-be-e2e** - Playwright API E2E tests (requires organiclever-be)
+- **organiclever-web-e2e** - Playwright browser E2E tests (requires organiclever-web)
 - **organiclever-app-web-e2e** - Playwright browser E2E tests (requires organiclever-be + organiclever-app)
 
 ## Prerequisites
@@ -34,9 +36,9 @@ npm run organiclever:dev:restart
 
 This automatically:
 
-- Starts Docker Compose with the correct configuration
-- Mounts source code for auto-reload
-- Enables Spring Boot DevTools
+- Starts **both** `organiclever-be` (port 8201) and `organiclever-web` (port 3200)
+- Mounts source code for hot-reload (backend: Spring Boot DevTools, frontend: Next.js dev server)
+- Installs frontend dependencies inside the container (isolated from host `node_modules`)
 - Shows logs in the terminal
 
 ### Alternative: Direct Docker Compose
@@ -86,15 +88,15 @@ docker compose down && docker compose up
 ### 4. Verify Services
 
 ```bash
-# Check service health
+# Check backend health
 curl http://localhost:8201/actuator/health
 
-# Test hello endpoint
+# Test backend hello endpoint
 curl http://localhost:8201/api/v1/hello
 # Expected: {"message":"world"}
 
-# Check service info
-curl http://localhost:8201/actuator/info
+# Check frontend (waits for Next.js dev server to compile)
+curl -s http://localhost:3200
 ```
 
 ## Service Details
@@ -116,6 +118,23 @@ curl http://localhost:8201/actuator/info
 
 - `SPRING_PROFILES_ACTIVE` - Spring profile (dev/prod), default: prod
 - `JAVA_OPTS` - JVM options, default: `-Xms256m -Xmx512m -XX:+UseZGC`
+
+### organiclever-web
+
+**Port**: 3200
+**Image**: Lightweight dev image (built from `Dockerfile.web.dev`)
+**Base**: node:24-alpine
+**Mode**: `next dev` by default (hot-reload); `next start` with `START_COMMAND=production` (CI)
+
+**Startup behaviour** (controlled by `START_COMMAND` env var):
+
+- `(default)` — `npm install && npm run dev` — hot-reload dev server for local development
+- `production` — `npm install --omit=dev && npm run start` — serves a pre-built `.next/` directory (CI only; host must run `nx build organiclever-web` first)
+
+**node_modules isolation**: A named Docker volume (`organiclever-web-node-modules`) shadows the host `node_modules`. This prevents platform binary conflicts between Alpine Linux (container) and macOS/Windows/Linux (host).
+
+**First startup**: ~2-4 minutes (cold `npm install`, Storybook devDeps are heavy)
+**Subsequent starts**: fast (named volume persists installed packages)
 
 ## Common Operations
 
@@ -414,13 +433,19 @@ All services communicate through the `organiclever-network` bridge network.
 
 ## Health Checks
 
-The backend service includes health checks:
+Both services include Docker health checks:
+
+**organiclever-be** — Spring Boot Actuator:
 
 - **Endpoint**: `http://localhost:8201/actuator/health`
-- **Interval**: 30 seconds
-- **Timeout**: 10 seconds
-- **Retries**: 3
-- **Start Period**: 40 seconds (allows startup time)
+- **Interval**: 30 seconds / **Timeout**: 10 seconds / **Retries**: 3
+- **Start Period**: 60 seconds
+
+**organiclever-web** — HTTP probe:
+
+- **Endpoint**: `http://localhost:3200`
+- **Interval**: 30 seconds / **Timeout**: 10 seconds / **Retries**: 3
+- **Start Period**: 120 seconds (allows for cold `npm install`)
 
 ## Troubleshooting
 
@@ -533,7 +558,6 @@ services:
 
 Planned additions to this infrastructure:
 
-- **Frontend Service**: `organiclever-web` Next.js application on port 3200
 - **Database**: PostgreSQL for data persistence
 - **Redis**: Caching layer
 - **Nginx**: Reverse proxy and load balancer
@@ -542,31 +566,49 @@ Planned additions to this infrastructure:
 
 ## Running E2E Tests
 
-### API E2E Tests
+### API E2E Tests (organiclever-be-e2e)
 
 Once the backend is running via Docker Compose, run the API-level Playwright test suite:
 
 ```bash
-# From repository root
+# Start backend only (avoids spinning up the frontend unnecessarily)
+docker compose up -d organiclever-be
+
+# Run tests
 nx run organiclever-be-e2e:test:e2e
 ```
 
 Tests target `http://localhost:8201` by default. Override with `BASE_URL` for other environments:
 
 ```bash
-BASE_URL=http://staging.example.com nx run organiclever-be-e2e:test:e2e  # test against custom env
+BASE_URL=http://staging.example.com nx run organiclever-be-e2e:test:e2e
 ```
 
 See [`apps/organiclever-be-e2e/`](../../../apps/organiclever-be-e2e/README.md) for full documentation.
 
-### Browser E2E Tests
+### Web E2E Tests (organiclever-web-e2e)
 
-`organiclever-app-web-e2e` also runs against this environment. It requires **both** the backend
-(port 8201, started via Docker Compose above) **and** the Flutter web app (port 3201):
+Once the frontend is running via Docker Compose, run the Playwright browser test suite:
 
 ```bash
-# Terminal 1 — backend via Docker Compose (above)
-npm run organiclever:dev
+# Start frontend only
+docker compose up -d organiclever-web
+
+# Run tests
+nx run organiclever-web-e2e:test:e2e
+```
+
+Tests target `http://localhost:3200` by default.
+
+See [`apps/organiclever-web-e2e/`](../../../apps/organiclever-web-e2e/) for full documentation.
+
+### Browser E2E Tests (organiclever-app-web-e2e)
+
+`organiclever-app-web-e2e` requires **both** the backend (port 8201) **and** the Flutter web app (port 3201):
+
+```bash
+# Terminal 1 — backend via Docker Compose
+docker compose up -d organiclever-be
 
 # Terminal 2 — Flutter web app
 nx dev organiclever-app
@@ -579,8 +621,10 @@ See [`apps/organiclever-app-web-e2e/`](../../../apps/organiclever-app-web-e2e/RE
 
 ## Related Documentation
 
-- [organiclever-be-e2e](../../../apps/organiclever-be-e2e/README.md)
-- [organiclever-app-web-e2e](../../../apps/organiclever-app-web-e2e/README.md)
+- [organiclever-be README](../../../apps/organiclever-be/README.md)
+- [organiclever-web README](../../../apps/organiclever-web/README.md)
+- [organiclever-be-e2e README](../../../apps/organiclever-be-e2e/README.md)
+- [organiclever-app-web-e2e README](../../../apps/organiclever-app-web-e2e/README.md)
 - [Docker Documentation](https://docs.docker.com/)
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
 
