@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 
 const Breadcrumb: React.FC = () => {
   const pathname = usePathname();
+  if (!pathname) return null;
   const pathSegments = pathname.split("/").filter((segment) => segment !== "");
 
   const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
