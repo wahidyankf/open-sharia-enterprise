@@ -28,7 +28,9 @@ This app serves as the public-facing landing page for OrganicLever. It introduce
 | Deployment | Vercel (auto-detected)   |
 | Port (dev) | 3200                     |
 
-## Development Commands
+## Development
+
+### Option 1: Nx (host, recommended for frontend-only work)
 
 ```bash
 # Start development server (http://localhost:3200)
@@ -55,6 +57,25 @@ nx run organiclever-web:test:integration
 # Run E2E tests (app must be running first)
 nx run organiclever-web-e2e:test:e2e
 ```
+
+### Option 2: Docker Compose (containerized, or running alongside the backend)
+
+Runs the app inside a Node.js 24 Alpine container. Useful when you need the backend alongside the
+frontend, or want an environment closer to CI.
+
+```bash
+# From repository root — starts both organiclever-web and organiclever-be
+npm run organiclever:dev
+
+# Or start the frontend container only
+docker compose -f infra/dev/organiclever/docker-compose.yml up organiclever-web
+```
+
+**First startup** (~2-4 min): installs npm dependencies inside the container.
+**Subsequent starts**: fast — `node_modules` is persisted in a named Docker volume.
+
+> `node_modules` is intentionally isolated from the host via a Docker named volume to prevent
+> Alpine Linux binary conflicts with macOS/Windows host binaries.
 
 ## Project Structure
 
