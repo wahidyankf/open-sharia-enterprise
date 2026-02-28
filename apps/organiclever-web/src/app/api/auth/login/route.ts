@@ -15,11 +15,15 @@ export async function POST(request: Request) {
     // Create a session token (in a real app, use a more secure method)
     const token = Buffer.from(email).toString("base64");
 
-    // Set the cookie
+    // Set the cookie.
+    // Use secure:true only when the request itself is HTTPS — next start sets
+    // NODE_ENV=production even on http://localhost, so checking NODE_ENV is not
+    // sufficient (WebKit refuses to send Secure cookies over plain HTTP).
+    const requestUrl = new URL(request.url);
     const cookie = serialize("auth_token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: requestUrl.protocol === "https:",
+      sameSite: "lax",
       maxAge: 3600, // 1 hour
       path: "/",
     });
