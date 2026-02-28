@@ -1,5 +1,6 @@
-# Local Development Environment for OrganicLever Backend
-# This setup provides Docker-based development with auto-reload via Spring Boot DevTools
+# Local Development Environment for OrganicLever
+# Backend: Spring Boot with auto-reload via Spring Boot DevTools
+# Frontend: Next.js dev server
 
 services:
   organiclever-be:
@@ -36,33 +37,42 @@ services:
     networks:
       - organiclever-network
 
+  organiclever-web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web.dev
+    container_name: organiclever-web
+    working_dir: /workspace
+
+    volumes:
+      - ../../../apps/organiclever-web:/workspace:rw
+      - organiclever-web-node-modules:/workspace/node_modules
+
+    ports:
+      - "3200:3200"
+
+    environment:
+      - NODE_ENV=development
+      - PORT=3200
+
+    # Install deps on start (handles dep changes), then launch Next.js dev server
+    command: sh -c "npm install && npm run dev"
+
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3200"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s # Extended for cold npm install (Storybook devDeps are heavy)
+
+    restart: unless-stopped
+    networks:
+      - organiclever-network
+
 networks:
   organiclever-network:
     driver: bridge
     name: organiclever-network
 
-# Future services can be added here:
-# organiclever-fe:
-#   image: nginx:alpine
-#   container_name: organiclever-fe
-#   ports:
-#     - "3201:80"
-#   networks:
-#     - organiclever-network
-#
-# organiclever-db:
-#   image: postgres:16-alpine
-#   container_name: organiclever-db
-#   environment:
-#     - POSTGRES_DB=organiclever
-#     - POSTGRES_USER=${DB_USER:-organiclever}
-#     - POSTGRES_PASSWORD=${DB_PASSWORD:-changeme}
-#   volumes:
-#     - organiclever-db-data:/var/lib/postgresql/data
-#   ports:
-#     - "5432:5432"
-#   networks:
-#     - organiclever-network
-#
-# volumes:
-#   organiclever-db-data:
+volumes:
+  organiclever-web-node-modules:
