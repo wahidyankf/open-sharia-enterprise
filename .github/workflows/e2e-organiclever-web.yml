@@ -18,6 +18,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Start early so npm install inside the container runs in parallel with host setup below
+      - name: Start web app
+        run: docker compose -f infra/dev/organiclever/docker-compose.yml up --build -d organiclever-web
+
       - name: Setup Volta
         uses: volta-cli/action@v4
 
@@ -27,26 +31,20 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Build web app
-        run: npx nx build organiclever-web
-
-      - name: Start web app
-        run: npx nx start organiclever-web &
-        env:
-          NEXT_TELEMETRY_DISABLED: "1"
-
-      - name: Wait for web app to be ready
+      - name: Wait for web app to be healthy
         run: |
-          echo "Waiting for web app to be ready on port 3200..."
-          for i in $(seq 1 12); do
-            if curl -sf http://localhost:3200 > /dev/null 2>&1; then
-              echo "Web app is ready"
+          echo "Waiting for web app to become healthy..."
+          for i in $(seq 1 36); do
+            STATUS=$(docker inspect --format='{{.State.Health.Status}}' organiclever-web 2>/dev/null || echo "unknown")
+            echo "[$i/36] Health: $STATUS"
+            if [ "$STATUS" = "healthy" ]; then
+              echo "Web app is healthy"
               exit 0
             fi
-            echo "[$i/12] Waiting..."
-            sleep 5
+            sleep 10
           done
-          echo "Web app did not start within 60 seconds"
+          echo "Web app did not become healthy within 6 minutes"
+          docker logs organiclever-web
           exit 1
 
       - name: Run E2E tests
@@ -59,3 +57,7 @@ jobs:
           name: playwright-report
           path: apps/organiclever-web-e2e/playwright-report/
           retention-days: 7
+
+      - name: Stop web app
+        if: always()
+        run: docker compose -f infra/dev/organiclever/docker-compose.yml down
