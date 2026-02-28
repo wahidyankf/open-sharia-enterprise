@@ -45,7 +45,7 @@ Layer 5: Workflows    WHEN - Orchestrate (multi-step processes)
 | **1** | governance/principles/  | WHY we value approaches       | Rarely          | Why value this approach?  |
 | **2** | governance/conventions/ | WHAT documentation rules      | Occasionally    | What documentation rules? |
 | **3** | governance/development/ | HOW we develop software       | More frequently | How develop software?     |
-| **4** | .opencode/agent/        | WHO enforces rules            | Often           | Who enforces rules?       |
+| **4** | .claude/agents/         | WHO enforces rules            | Often           | Who enforces rules?       |
 | **5** | governance/workflows/   | WHEN run agents in what order | As needed       | When run which agents?    |
 
 ## Layer 0: Vision (WHY WE EXIST)
@@ -149,7 +149,7 @@ Development: Hugo Development Convention (semantic HTML)
 - Source code (JS, TS, future: Java, Kotlin, Python)
 - Hugo themes and layouts
 - Build systems and tooling
-- AI agents (.opencode/agent/)
+- AI agents (.claude/agents/ primary, .opencode/agent/ auto-generated secondary)
 - Git workflows
 
 **Example Practices**:
@@ -170,7 +170,7 @@ Development: Hugo Development Convention (semantic HTML)
 
 **Purpose**: Automated implementers enforcing conventions and development practices.
 
-**Location**: `.opencode/agent/`
+**Location**: `.claude/agents/` (primary; `.opencode/agent/` is auto-generated secondary)
 
 **Key Document**: [Agents Index](../README.md)
 

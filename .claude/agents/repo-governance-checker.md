@@ -789,7 +789,7 @@ Expected: Should include explicit-over-implicit given document focuses on securi
 
 1. **Pattern Validation**:
    - **Stack Language**: `ex-soen-prla-[abbrev]__[topic].md`
-     - Abbreviations: `ja` (Java), `ty` (TypeScript), `go` (Go), `py` (Python), `ex` (Elixir)
+     - Abbreviations: `ja` (Java), `ty` (TypeScript), `go` (Go), `py` (Python), `el` (Elixir)
    - **Stack Libraries**: `ex-soen-plwe-[framework-abbrev]__[topic].md`
      - Examples: `jvsp` (JVM Spring Boot), `expr` (Elixir Phoenix), `tsre` (TS React)
    - **Architecture**: `ex-soen-arch-[pattern]__[topic].md`
