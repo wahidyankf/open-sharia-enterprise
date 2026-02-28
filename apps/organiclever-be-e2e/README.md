@@ -83,8 +83,6 @@ apps/organiclever-be-e2e/
 │   │   │   └── hello.spec.ts      # Tests for GET /api/v1/hello
 │   │   └── actuator/
 │   │       └── health.spec.ts     # Tests for GET /actuator/health
-│   └── utils/
-│       └── api-helpers.ts         # Shared request helpers
 └── test-results/              # JUnit XML output (git-ignored)
 ```
 
