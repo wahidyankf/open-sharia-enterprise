@@ -2,6 +2,8 @@
 
 ✨ An enterprise solutions platform for Sharia-compliant business systems.
 
+[![E2E - OrganicLever Backend](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-organiclever-be.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-organiclever-be.yml)
+
 🌐 **Live Sites**:
 
 - **OSE Platform** ([oseplatform.com](https://oseplatform.com)) - Main platform website (under construction)
