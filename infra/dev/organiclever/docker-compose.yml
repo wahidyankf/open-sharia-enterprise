@@ -60,13 +60,15 @@ services:
       - START_COMMAND=${START_COMMAND:-dev}
 
     # Install deps on start, then launch in the selected mode:
-    #   START_COMMAND=dev        → next dev  (default, hot-reload)
-    #   START_COMMAND=production → next build && next start (CI, pre-compiled)
+    #   (default)                → npm install + next dev (hot-reload, for local dev)
+    #   START_COMMAND=production → npm install --omit=dev + next start
+    #                              CI only: host runs nx build first; container just
+    #                              serves the pre-built .next/ from the bind mount.
+    #                              --omit=dev skips Storybook/vitest (saves ~5 min).
     command: >-
-      sh -c "npm install &&
-             if [ \"$$START_COMMAND\" = \"production\" ];
-             then npm run build && npm run start;
-             else npm run dev;
+      sh -c "if [ \"$$START_COMMAND\" = \"production\" ];
+             then npm install --omit=dev && npm run start;
+             else npm install && npm run dev;
              fi"
 
     healthcheck:
