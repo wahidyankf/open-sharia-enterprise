@@ -69,12 +69,19 @@ apps/organiclever-web/
 │   │   ├── fonts/              # Font assets
 │   │   ├── layout.tsx          # Root layout
 │   │   └── page.tsx            # Root page (landing)
-│   ├── components/             # Reusable React components
-│   │   └── ui/                 # shadcn-ui component library
+│   ├── components/             # App-specific components (business logic, hardcoded content)
+│   │   ├── Navigation.tsx      # Sidebar nav with app routes and logout
+│   │   ├── Breadcrumb.tsx      # Pathname-aware breadcrumb
+│   │   └── ui/                 # Generic UI primitives (shadcn-ui, data-agnostic)
+│   │       ├── button.tsx
+│   │       ├── card.tsx
+│   │       ├── dialog.tsx
+│   │       └── ...
 │   ├── contexts/               # Shared React contexts
 │   ├── data/                   # JSON data files
 │   └── lib/                    # Utility functions and helpers
 ├── public/                     # Static assets
+├── .storybook/                 # Storybook configuration
 ├── components.json             # shadcn-ui configuration
 ├── next.config.mjs             # Next.js configuration
 ├── postcss.config.mjs          # PostCSS + TailwindCSS v4 configuration
@@ -83,6 +90,33 @@ apps/organiclever-web/
 ├── vitest.config.ts            # Vitest workspace config (unit + integration projects)
 └── project.json                # Nx project configuration
 ```
+
+## Component Architecture
+
+Components are split across two levels with a strict boundary:
+
+### `src/components/ui/` — Generic UI primitives
+
+- Generated and managed by the shadcn-ui CLI (`npx shadcn-ui add ...`)
+- Built on Radix UI primitives, zero business logic
+- No hardcoded content, routes, or app-specific data
+- Portable — could be dropped into any project unchanged
+- Examples: `Button`, `Card`, `Input`, `Dialog`, `Table`
+
+### `src/components/` — App-specific components
+
+- Compose `ui/` primitives with business logic and app content
+- May have hardcoded routes, brand strings, or prop contracts tied to this app
+- Not portable — tightly coupled to organiclever-web's domain
+- Examples: `Navigation` (hardcodes `/dashboard` routes and "Organic Lever" brand), `Breadcrumb` (reads live pathname)
+
+**Why keep them separate:**
+
+1. **shadcn-ui CLI safety** — `npx shadcn-ui add <component>` writes directly into `ui/`. App-specific files placed there risk being overwritten without warning.
+2. **Abstraction clarity** — Developers expect `ui/` to contain drop-in primitives. Finding opinionated, app-coupled components there is confusing and breaks that contract.
+3. **Portability boundary** — `ui/` components can be extracted into a shared design system. App-specific components cannot. Mixing them makes future extraction painful.
+
+**Rule:** if a component has hardcoded routes, brand content, or props tied to this app's domain, it belongs in `src/components/`, not `src/components/ui/`.
 
 ## Deployment
 
