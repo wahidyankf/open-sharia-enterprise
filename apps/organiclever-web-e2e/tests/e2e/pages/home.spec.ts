@@ -79,4 +79,11 @@ test.describe("Home Page", () => {
     await expect(page.getByRole("heading", { name: "Work in Progress" })).toBeVisible();
     await expect(page.getByText("Organic Lever is currently under development.")).toBeVisible();
   });
+
+  test("should display the features section with four cards", async ({ page }) => {
+    await expect(page.getByRole("heading", { name: "Code Metrics" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Version Control Insights" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Sprint Performance" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Productivity Analytics" })).toBeVisible();
+  });
 });
