@@ -55,7 +55,7 @@ nx run organiclever-be-e2e:lint
 nx run organiclever-be-e2e:test:quick
 ```
 
-**See**: [Nx Target Standards](../../governance/development/infra/nx-targets.md) for canonical E2E target names. `test:e2e` runs on a scheduled cron (4x/day via GitHub Actions), not on pre-push.
+**See**: [Nx Target Standards](../../governance/development/infra/nx-targets.md) for canonical E2E target names. `test:e2e` runs on a scheduled cron (twice daily at 6 AM and 6 PM WIB via GitHub Actions), not on pre-push.
 
 ## Environment Variables
 

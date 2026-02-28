@@ -222,7 +222,7 @@ Playwright suites (`*-e2e`):
 | `test:e2e:ui`     | Run tests with Playwright UI |
 | `test:e2e:report` | Open the HTML test report    |
 
-**Execution strategy**: `test:e2e` is **not** part of the pre-push hook. It runs on a scheduled GitHub Actions cron job (4 times per day) targeting each `*-e2e` project individually. This keeps pre-push fast while ensuring continuous E2E coverage against deployed or locally running services.
+**Execution strategy**: `test:e2e` is **not** part of the pre-push hook. It runs on a scheduled GitHub Actions cron job (twice daily per workflow) targeting each `*-e2e` project individually. This keeps pre-push fast while ensuring continuous E2E coverage against deployed or locally running services.
 
 ### Hugo Sites
 
