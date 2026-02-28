@@ -24,9 +24,14 @@ jobs:
       - name: Create node_modules mount point
         run: mkdir -p apps/organiclever-web/node_modules
 
-      # Start early so npm install inside the container runs in parallel with host setup below
+      # START_COMMAND=production → next build && next start inside the container.
+      # Production build pre-compiles all pages so Playwright tests get fast
+      # responses and webkit timeouts are not triggered by lazy compilation.
+      # Start early so the build runs in parallel with host setup below.
       - name: Start web app
         run: docker compose -f infra/dev/organiclever/docker-compose.yml up --build -d organiclever-web
+        env:
+          START_COMMAND: production
 
       - name: Setup Volta
         uses: volta-cli/action@v4
@@ -37,19 +42,21 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Wait for web app to be healthy
+      # Curl-based readiness check (independent of healthcheck timing).
+      # Production build (npm install + next build + next start) takes 5-7 min
+      # in CI cold start, so allow up to 9 minutes (54 × 10 s).
+      - name: Wait for web app to be ready
         run: |
-          echo "Waiting for web app to become healthy..."
-          for i in $(seq 1 36); do
-            STATUS=$(docker inspect --format='{{.State.Health.Status}}' organiclever-web 2>/dev/null || echo "unknown")
-            echo "[$i/36] Health: $STATUS"
-            if [ "$STATUS" = "healthy" ]; then
-              echo "Web app is healthy"
+          echo "Waiting for web app to be ready on port 3200..."
+          for i in $(seq 1 54); do
+            if curl -sf http://localhost:3200 > /dev/null 2>&1; then
+              echo "Web app is ready"
               exit 0
             fi
+            echo "[$i/54] Waiting..."
             sleep 10
           done
-          echo "Web app did not become healthy within 6 minutes"
+          echo "Web app did not start within 9 minutes"
           docker logs organiclever-web
           exit 1
 
