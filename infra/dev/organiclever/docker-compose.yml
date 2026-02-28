@@ -54,9 +54,20 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=3200
+      # START_COMMAND controls startup behaviour (default: dev).
+      # Set START_COMMAND=production in the host environment to run a
+      # production build instead (used by CI to get pre-compiled pages).
+      - START_COMMAND=${START_COMMAND:-dev}
 
-    # Install deps on start (handles dep changes), then launch Next.js dev server
-    command: sh -c "npm install && npm run dev"
+    # Install deps on start, then launch in the selected mode:
+    #   START_COMMAND=dev        → next dev  (default, hot-reload)
+    #   START_COMMAND=production → next build && next start (CI, pre-compiled)
+    command: >-
+      sh -c "npm install &&
+             if [ \"$$START_COMMAND\" = \"production\" ];
+             then npm run build && npm run start;
+             else npm run dev;
+             fi"
 
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3200"]
