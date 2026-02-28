@@ -18,6 +18,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Pre-create with correct ownership so Docker does not create it as root
+      # (Docker creates the named-volume mount point directory as root if it is absent,
+      # which then blocks the host npm ci from writing into it)
+      - name: Create node_modules mount point
+        run: mkdir -p apps/organiclever-web/node_modules
+
       # Start early so npm install inside the container runs in parallel with host setup below
       - name: Start web app
         run: docker compose -f infra/dev/organiclever/docker-compose.yml up --build -d organiclever-web
