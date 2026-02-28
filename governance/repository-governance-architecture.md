@@ -321,7 +321,7 @@ Development: Hugo Development Convention (semantic HTML)
 
 **Location**: `.claude/agents/`
 
-**Key Document**: [AGENTS.md](../AGENTS.md)
+**Key Document**: [Agents Index](../.claude/agents/README.md)
 
 **Agent Families by Color**:
 
