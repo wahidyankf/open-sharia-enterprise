@@ -108,6 +108,9 @@ curl http://localhost:8201/api/v1/hello
 
 curl http://localhost:8201/actuator/health
 # Expected: {"status":"UP"}
+
+# Check frontend (waits for Next.js dev server to compile)
+curl -s http://localhost:3200
 ```
 
 ### 6a. Run E2E Tests (Optional)
@@ -119,6 +122,14 @@ nx run organiclever-be-e2e:test:e2e
 ```
 
 See [`apps/organiclever-be-e2e/`](../../apps/organiclever-be-e2e/README.md) for setup and options.
+
+With the frontend running, execute the web Playwright suite:
+
+```bash
+nx run organiclever-web-e2e:test:e2e
+```
+
+See [`apps/organiclever-web-e2e/`](../../apps/organiclever-web-e2e/README.md) for setup and options.
 
 For browser-based E2E tests against the Flutter web app, also start `organiclever-app` and then run:
 
@@ -146,11 +157,13 @@ docker-compose down -v
 **Services (Docker Compose)**:
 
 - `organiclever-be` - Spring Boot backend (port 8201)
+- `organiclever-web` - Next.js landing website (port 3200)
 
 **Related Apps (run separately)**:
 
 - `organiclever-app` - Flutter web client (port 3201) — `nx dev organiclever-app`
 - `organiclever-be-e2e` - Playwright API E2E tests — `nx run organiclever-be-e2e:test:e2e`
+- `organiclever-web-e2e` - Playwright browser E2E tests — `nx run organiclever-web-e2e:test:e2e`
 - `organiclever-app-web-e2e` - Playwright browser E2E tests — `nx run organiclever-app-web-e2e:test:e2e`
 
 **Quick Start**:
@@ -346,11 +359,12 @@ jdbc:postgresql://organiclever-db:5432/organiclever
 
 Services expose ports to the host:
 
-| Service                  | Internal Port | Host Port | Purpose            |
-| ------------------------ | ------------- | --------- | ------------------ |
-| organiclever-be          | 8201          | 8201      | Backend API        |
-| organiclever-app         | 3201          | 3201      | Flutter web client |
-| (future) organiclever-db | 5432          | 5432      | Database           |
+| Service                  | Internal Port | Host Port | Purpose                 |
+| ------------------------ | ------------- | --------- | ----------------------- |
+| organiclever-be          | 8201          | 8201      | Backend API             |
+| organiclever-web         | 3200          | 3200      | Next.js landing website |
+| organiclever-app         | 3201          | 3201      | Flutter web client      |
+| (future) organiclever-db | 5432          | 5432      | Database                |
 
 ## Health Checks
 
@@ -485,6 +499,7 @@ networks:
 Maintain a central registry of ports to avoid conflicts:
 
 - 8201: organiclever-be (also used by organiclever-be-e2e as `BASE_URL`)
+- 3200: organiclever-web (also used by organiclever-web-e2e as `BASE_URL`)
 - 3201: organiclever-app Flutter web (also used by organiclever-app-web-e2e as `BASE_URL`)
 - 5432: PostgreSQL databases
 
