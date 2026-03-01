@@ -54,5 +54,3 @@ Open source creates trust. Building in public enables collaboration. This approa
 There's no timeline. We'll get there when we get there. Thinking thoughtfully and strategically always pays off. Could you rush now, pay later? Build right, benefit forever.
 
 Read the full December update: <https://oseplatform.com/updates/2025-12-14-phase-0-progress-report/>
-
-hashtag#OpenSource hashtag#ShariaCompliance hashtag#EnterpriseArchitecture hashtag#BuildInPublic hashtag#IslamicFinance hashtag#SoftwareEngineering hashtag#AIAssisted

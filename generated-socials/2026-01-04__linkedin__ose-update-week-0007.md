@@ -43,7 +43,3 @@ Week 10: Start building actual use cases (hard deadline - AI tools are means to 
 - Learning Content: <https://www.ayokoding.com/>
 - Documentation: <https://github.com/wahidyankf/open-sharia-enterprise/tree/main/docs>
 - Apps: <https://github.com/wahidyankf/open-sharia-enterprise/tree/main/apps>
-
----
-
-# EnterpriseArchitecture #DocumentationFirst #OpenSource #SoftwareEngineering #TechLeadership #IslamicFinance #ShariahCompliant
