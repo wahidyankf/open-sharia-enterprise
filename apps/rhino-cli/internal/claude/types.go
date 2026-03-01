@@ -28,7 +28,7 @@ type ValidationError struct {
 	Actual    string
 }
 
-// Valid tools in Claude Code format
+// ValidTools lists all recognized tool names in Claude Code agent frontmatter.
 var ValidTools = map[string]bool{
 	"Read":      true,
 	"Write":     true,
@@ -41,7 +41,7 @@ var ValidTools = map[string]bool{
 	"WebSearch": true,
 }
 
-// Valid models in Claude Code format
+// ValidModels lists all recognized model values in Claude Code agent frontmatter.
 var ValidModels = map[string]bool{
 	"":       true, // Empty is valid (inherits)
 	"sonnet": true,
@@ -49,7 +49,7 @@ var ValidModels = map[string]bool{
 	"haiku":  true,
 }
 
-// Valid colors in Claude Code format
+// ValidColors lists all recognized color values in Claude Code agent frontmatter.
 var ValidColors = map[string]bool{
 	"blue":   true,
 	"green":  true,
@@ -61,7 +61,7 @@ var ValidColors = map[string]bool{
 // Lowercase letters, numbers, hyphens only, max 64 characters
 var ValidSkillNamePattern = regexp.MustCompile(`^[a-z0-9-]{1,64}$`)
 
-// Required field order for agent frontmatter
+// RequiredFieldOrder defines the mandatory ordering of fields in agent frontmatter.
 var RequiredFieldOrder = []string{
 	"name",
 	"description",
