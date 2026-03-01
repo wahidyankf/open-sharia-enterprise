@@ -1,3 +1,4 @@
+// Package navigation provides utilities for generating and managing navigation in ayokoding-web content.
 package navigation
 
 import (

@@ -13,7 +13,7 @@ var (
 	titlesLang     string
 	titlesDryRun   bool
 	titlesConfigEn string
-	titlesConfigId string
+	titlesConfigID string
 )
 
 var titlesUpdateCmd = &cobra.Command{
@@ -39,7 +39,7 @@ func init() {
 	titlesUpdateCmd.Flags().StringVar(&titlesLang, "lang", "both", "language to process (en/id/both)")
 	titlesUpdateCmd.Flags().BoolVar(&titlesDryRun, "dry-run", false, "preview changes without writing")
 	titlesUpdateCmd.Flags().StringVar(&titlesConfigEn, "config-en", "apps/ayokoding-cli/config/title-overrides-en.yaml", "path to English config")
-	titlesUpdateCmd.Flags().StringVar(&titlesConfigId, "config-id", "apps/ayokoding-cli/config/title-overrides-id.yaml", "path to Indonesian config")
+	titlesUpdateCmd.Flags().StringVar(&titlesConfigID, "config-id", "apps/ayokoding-cli/config/title-overrides-id.yaml", "path to Indonesian config")
 }
 
 func runTitlesUpdate(cmd *cobra.Command, args []string) error {
@@ -60,7 +60,7 @@ func runTitlesUpdate(cmd *cobra.Command, args []string) error {
 	startTime := time.Now()
 
 	// Process titles update
-	result, err := titles.UpdateTitles(titlesLang, titlesDryRun, titlesConfigEn, titlesConfigId)
+	result, err := titles.UpdateTitles(titlesLang, titlesDryRun, titlesConfigEn, titlesConfigID)
 	if err != nil {
 		return fmt.Errorf("title update failed: %w", err)
 	}
@@ -95,11 +95,11 @@ func outputTitlesText(result *titles.UpdateResult, elapsed time.Duration) error 
 		fmt.Println()
 	}
 
-	if result.IdResult != nil {
+	if result.IDResult != nil {
 		fmt.Println("Indonesian (id/):")
-		fmt.Printf("  Updated:   %d files\n", result.IdResult.UpdatedCount)
-		fmt.Printf("  Skipped:   %d files\n", result.IdResult.SkippedCount)
-		fmt.Printf("  Errors:    %d files\n", result.IdResult.ErrorCount)
+		fmt.Printf("  Updated:   %d files\n", result.IDResult.UpdatedCount)
+		fmt.Printf("  Skipped:   %d files\n", result.IDResult.SkippedCount)
+		fmt.Printf("  Errors:    %d files\n", result.IDResult.ErrorCount)
 		fmt.Println()
 	}
 
@@ -110,8 +110,8 @@ func outputTitlesText(result *titles.UpdateResult, elapsed time.Duration) error 
 	if result.EnResult != nil {
 		allErrors = append(allErrors, result.EnResult.Errors...)
 	}
-	if result.IdResult != nil {
-		allErrors = append(allErrors, result.IdResult.Errors...)
+	if result.IDResult != nil {
+		allErrors = append(allErrors, result.IDResult.Errors...)
 	}
 
 	if len(allErrors) > 0 {
@@ -149,11 +149,11 @@ func outputTitlesJSON(result *titles.UpdateResult, elapsed time.Duration) error 
 		}
 	}
 
-	if result.IdResult != nil {
+	if result.IDResult != nil {
 		jsonOutput["id"] = map[string]interface{}{
-			"updated": result.IdResult.UpdatedCount,
-			"skipped": result.IdResult.SkippedCount,
-			"errors":  result.IdResult.ErrorCount,
+			"updated": result.IDResult.UpdatedCount,
+			"skipped": result.IDResult.SkippedCount,
+			"errors":  result.IDResult.ErrorCount,
 		}
 	}
 
@@ -162,8 +162,8 @@ func outputTitlesJSON(result *titles.UpdateResult, elapsed time.Duration) error 
 	if result.EnResult != nil {
 		allErrors = append(allErrors, result.EnResult.Errors...)
 	}
-	if result.IdResult != nil {
-		allErrors = append(allErrors, result.IdResult.Errors...)
+	if result.IDResult != nil {
+		allErrors = append(allErrors, result.IDResult.Errors...)
 	}
 	jsonOutput["errors"] = allErrors
 
@@ -197,12 +197,12 @@ func outputTitlesMarkdown(result *titles.UpdateResult, elapsed time.Duration) er
 		fmt.Println()
 	}
 
-	if result.IdResult != nil {
+	if result.IDResult != nil {
 		fmt.Println("### Indonesian (id/)")
 		fmt.Println()
-		fmt.Printf("- Updated: %d files\n", result.IdResult.UpdatedCount)
-		fmt.Printf("- Skipped: %d files\n", result.IdResult.SkippedCount)
-		fmt.Printf("- Errors: %d files\n", result.IdResult.ErrorCount)
+		fmt.Printf("- Updated: %d files\n", result.IDResult.UpdatedCount)
+		fmt.Printf("- Skipped: %d files\n", result.IDResult.SkippedCount)
+		fmt.Printf("- Errors: %d files\n", result.IDResult.ErrorCount)
 		fmt.Println()
 	}
 
@@ -211,8 +211,8 @@ func outputTitlesMarkdown(result *titles.UpdateResult, elapsed time.Duration) er
 	if result.EnResult != nil {
 		allErrors = append(allErrors, result.EnResult.Errors...)
 	}
-	if result.IdResult != nil {
-		allErrors = append(allErrors, result.IdResult.Errors...)
+	if result.IDResult != nil {
+		allErrors = append(allErrors, result.IDResult.Errors...)
 	}
 
 	if len(allErrors) > 0 {

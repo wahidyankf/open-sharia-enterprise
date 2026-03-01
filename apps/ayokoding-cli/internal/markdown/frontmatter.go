@@ -1,3 +1,4 @@
+// Package markdown provides utilities for parsing and manipulating markdown files.
 package markdown
 
 import (

@@ -1,3 +1,4 @@
+// Package titles provides utilities for updating title frontmatter in ayokoding-web markdown files.
 package titles
 
 import (
@@ -21,11 +22,11 @@ type LangResult struct {
 // UpdateResult holds the combined result of title updates
 type UpdateResult struct {
 	EnResult *LangResult
-	IdResult *LangResult
+	IDResult *LangResult
 }
 
 // UpdateTitles updates titles in markdown files based on language selection
-func UpdateTitles(lang string, dryRun bool, configEnPath string, configIdPath string) (*UpdateResult, error) {
+func UpdateTitles(lang string, dryRun bool, configEnPath string, configIDPath string) (*UpdateResult, error) {
 	result := &UpdateResult{}
 
 	// Process English if requested
@@ -44,7 +45,7 @@ func UpdateTitles(lang string, dryRun bool, configEnPath string, configIdPath st
 
 	// Process Indonesian if requested
 	if lang == "id" || lang == "both" {
-		config, err := LoadConfig(configIdPath)
+		config, err := LoadConfig(configIDPath)
 		if err != nil {
 			return nil, fmt.Errorf("failed to load Indonesian config: %w", err)
 		}
@@ -53,7 +54,7 @@ func UpdateTitles(lang string, dryRun bool, configEnPath string, configIdPath st
 		if err != nil {
 			return nil, fmt.Errorf("failed to process Indonesian directory: %w", err)
 		}
-		result.IdResult = idResult
+		result.IDResult = idResult
 	}
 
 	return result, nil

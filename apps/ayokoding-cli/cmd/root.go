@@ -1,3 +1,4 @@
+// Package cmd implements the CLI commands for ayokoding-cli.
 package cmd
 
 import (
