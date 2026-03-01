@@ -2,7 +2,7 @@
   "name": "oseplatform-cli",
   "sourceRoot": "apps/oseplatform-cli",
   "projectType": "application",
-  "implicitDependencies": ["golang-commons"],
+  "implicitDependencies": ["golang-commons", "hugo-commons"],
   "targets": {
     "build": {
       "executor": "nx:run-commands",
