@@ -4,13 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
-)
 
-// JakartaTimestamp returns the current time formatted as ISO 8601 in the Asia/Jakarta timezone.
-func JakartaTimestamp() string {
-	loc, _ := time.LoadLocation("Asia/Jakarta")
-	return time.Now().In(loc).Format("2006-01-02T15:04:05-07:00")
-}
+	"github.com/wahidyankf/open-sharia-enterprise/libs/golang-commons/timeutil"
+)
 
 // OutputLinksText prints a human-readable link check report to stdout.
 // quiet suppresses all output; verbose appends a completion timestamp.
@@ -46,7 +42,7 @@ func OutputLinksText(result *CheckResult, elapsed time.Duration, quiet, verbose 
 	}
 
 	if verbose {
-		fmt.Printf("\nCompleted at: %s\n", JakartaTimestamp())
+		fmt.Printf("\nCompleted at: %s\n", timeutil.JakartaTimestamp())
 	}
 }
 
@@ -59,7 +55,7 @@ func OutputLinksJSON(result *CheckResult, elapsed time.Duration) error {
 
 	jsonOutput := map[string]any{
 		"status":       status,
-		"timestamp":    JakartaTimestamp(),
+		"timestamp":    timeutil.JakartaTimestamp(),
 		"duration_ms":  elapsed.Milliseconds(),
 		"checked":      result.CheckedCount,
 		"broken":       len(result.BrokenLinks),
@@ -85,7 +81,7 @@ func OutputLinksMarkdown(result *CheckResult, elapsed time.Duration) {
 
 	fmt.Println("# Link Check Report")
 	fmt.Println()
-	fmt.Printf("**Timestamp**: %s\n", JakartaTimestamp())
+	fmt.Printf("**Timestamp**: %s\n", timeutil.JakartaTimestamp())
 	fmt.Printf("**Duration**: %v\n", elapsed)
 	fmt.Printf("**Status**: %s\n", status)
 	fmt.Println()

@@ -2,44 +2,15 @@ package links
 
 import (
 	"encoding/json"
-	"io"
-	"os"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/wahidyankf/open-sharia-enterprise/libs/golang-commons/testutil"
 )
 
-// captureStdout redirects os.Stdout to a pipe and returns a function that
-// restores stdout and returns whatever was written.
-func captureStdout(t *testing.T) func() string {
-	t.Helper()
-	r, w, err := os.Pipe()
-	if err != nil {
-		t.Fatalf("os.Pipe: %v", err)
-	}
-	orig := os.Stdout
-	os.Stdout = w
-	t.Cleanup(func() { os.Stdout = orig })
-	return func() string {
-		_ = w.Close()
-		out, _ := io.ReadAll(r)
-		return string(out)
-	}
-}
-
-func TestJakartaTimestamp(t *testing.T) {
-	ts := JakartaTimestamp()
-	if ts == "" {
-		t.Fatal("expected non-empty timestamp")
-	}
-	// Asia/Jakarta is UTC+7, so the offset should be +07:00
-	if !strings.Contains(ts, "+07:00") {
-		t.Errorf("expected +07:00 offset in timestamp, got %q", ts)
-	}
-}
-
 func TestOutputLinksText_Quiet(t *testing.T) {
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	result := &CheckResult{
 		CheckedCount: 5,
 		BrokenLinks:  []BrokenLink{},
@@ -53,7 +24,7 @@ func TestOutputLinksText_Quiet(t *testing.T) {
 }
 
 func TestOutputLinksText_Normal(t *testing.T) {
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	result := &CheckResult{
 		CheckedCount: 3,
 		BrokenLinks:  []BrokenLink{},
@@ -70,7 +41,7 @@ func TestOutputLinksText_Normal(t *testing.T) {
 }
 
 func TestOutputLinksText_WithBrokenLinks(t *testing.T) {
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	result := &CheckResult{
 		CheckedCount: 2,
 		BrokenLinks: []BrokenLink{
@@ -89,7 +60,7 @@ func TestOutputLinksText_WithBrokenLinks(t *testing.T) {
 }
 
 func TestOutputLinksText_Verbose(t *testing.T) {
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	result := &CheckResult{
 		CheckedCount: 1,
 		BrokenLinks:  []BrokenLink{},
@@ -103,7 +74,7 @@ func TestOutputLinksText_Verbose(t *testing.T) {
 }
 
 func TestOutputLinksJSON_Success(t *testing.T) {
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	result := &CheckResult{
 		CheckedCount: 10,
 		BrokenLinks:  []BrokenLink{},
@@ -128,7 +99,7 @@ func TestOutputLinksJSON_Success(t *testing.T) {
 }
 
 func TestOutputLinksJSON_WithBroken(t *testing.T) {
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	result := &CheckResult{
 		CheckedCount: 3,
 		BrokenLinks: []BrokenLink{
@@ -151,7 +122,7 @@ func TestOutputLinksJSON_WithBroken(t *testing.T) {
 }
 
 func TestOutputLinksMarkdown_Pass(t *testing.T) {
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	result := &CheckResult{
 		CheckedCount: 5,
 		BrokenLinks:  []BrokenLink{},
@@ -168,7 +139,7 @@ func TestOutputLinksMarkdown_Pass(t *testing.T) {
 }
 
 func TestOutputLinksMarkdown_Fail(t *testing.T) {
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	result := &CheckResult{
 		CheckedCount: 2,
 		BrokenLinks: []BrokenLink{

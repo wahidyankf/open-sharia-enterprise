@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
+	"github.com/wahidyankf/open-sharia-enterprise/libs/golang-commons/timeutil"
 )
 
 func symbolFor(status ToolStatus) string {
@@ -105,7 +107,7 @@ func FormatJSON(result *DoctorResult) (string, error) {
 
 	out := JSONOutput{
 		Status:       overallStatus(result),
-		Timestamp:    time.Now().Format(time.RFC3339),
+		Timestamp:    timeutil.Timestamp(),
 		OKCount:      result.OKCount,
 		WarnCount:    result.WarnCount,
 		MissingCount: result.MissingCount,
@@ -125,7 +127,7 @@ func FormatMarkdown(result *DoctorResult) string {
 	var sb strings.Builder
 
 	sb.WriteString("## Doctor Report\n\n")
-	_, _ = fmt.Fprintf(&sb, "**Generated**: %s\n\n", time.Now().Format(time.RFC3339))
+	_, _ = fmt.Fprintf(&sb, "**Generated**: %s\n\n", timeutil.Timestamp())
 
 	total := result.OKCount + result.WarnCount + result.MissingCount
 	sb.WriteString("### Summary\n\n")

@@ -40,5 +40,6 @@
       }
     }
   },
-  "tags": ["type:app", "platform:golang", "domain:organiclever"]
+  "tags": ["type:app", "platform:golang", "domain:organiclever"],
+  "implicitDependencies": ["golang-commons"]
 }

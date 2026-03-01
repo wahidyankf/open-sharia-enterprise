@@ -25,5 +25,6 @@
       }
     }
   },
-  "tags": ["type:lib", "platform:golang"]
+  "tags": ["type:lib", "platform:golang"],
+  "implicitDependencies": ["golang-commons"]
 }
