@@ -121,7 +121,7 @@ open-sharia-enterprise/
 
 This project uses **Nx** to manage applications and libraries:
 
-- **`apps/`** - Deployable applications (current: [`oseplatform-web`](./apps/oseplatform-web/), [`ayokoding-web`](./apps/ayokoding-web/), [`ayokoding-cli`](./apps/ayokoding-cli/), [`rhino-cli`](./apps/rhino-cli/), [`jprojectvalidator-cli`](./apps/jprojectvalidator-cli/), [`organiclever-web`](./apps/organiclever-web/), [`organiclever-web-e2e`](./apps/organiclever-web-e2e/), [`organiclever-app`](./apps/organiclever-app/), [`organiclever-be`](./apps/organiclever-be/), [`organiclever-be-e2e`](./apps/organiclever-be-e2e/))
+- **`apps/`** - Deployable applications (current: [`oseplatform-web`](./apps/oseplatform-web/), [`ayokoding-web`](./apps/ayokoding-web/), [`ayokoding-cli`](./apps/ayokoding-cli/), [`rhino-cli`](./apps/rhino-cli/), [`javaproject-cli`](./apps/javaproject-cli/), [`organiclever-web`](./apps/organiclever-web/), [`organiclever-web-e2e`](./apps/organiclever-web-e2e/), [`organiclever-app`](./apps/organiclever-app/), [`organiclever-be`](./apps/organiclever-be/), [`organiclever-be-e2e`](./apps/organiclever-be-e2e/))
 - **`libs/`** - Reusable libraries with language prefixes (`ts-*`, future: `java-*`, `py-*`) - currently empty
 - **`apps-labs/`** - Experimental apps and POCs (framework evaluation, language exploration) - currently empty
 

@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/wahidyankf/open-sharia-enterprise/apps/jprojectvalidator-cli/internal/java"
+	"github.com/wahidyankf/open-sharia-enterprise/apps/javaproject-cli/internal/java"
 )
 
 func main() {
@@ -14,7 +14,7 @@ func main() {
 }
 
 func run() int {
-	fs := flag.NewFlagSet("jprojectvalidator-cli", flag.ContinueOnError)
+	fs := flag.NewFlagSet("javaproject-cli", flag.ContinueOnError)
 	annotation := fs.String("annotation", "NullMarked", "annotation name to require in package-info.java (without @)")
 	outputFmt := fs.String("o", "text", "output format: text, json, or markdown")
 	verbose := fs.Bool("v", false, "verbose output")
@@ -43,7 +43,7 @@ func run() int {
 
 	args := fs.Args()
 	if len(args) != 1 {
-		fmt.Fprintln(os.Stderr, "usage: jprojectvalidator-cli [flags] <source-root>")
+		fmt.Fprintln(os.Stderr, "usage: javaproject-cli [flags] <source-root>")
 		fs.PrintDefaults()
 		return 2
 	}

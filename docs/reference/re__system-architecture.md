@@ -118,6 +118,18 @@ The platform consists of 4 applications across 2 technology stacks:
 - **Location**: `apps/rhino-cli/`
 - **Status**: Active development
 
+#### javaproject-cli
+
+- **Purpose**: Java package null-safety annotation validation
+- **Language**: Go 1.26
+- **Build Command**: `nx build javaproject-cli`
+- **Location**: `apps/javaproject-cli/`
+- **Features**:
+  - Validates every Java package directory contains `package-info.java`
+  - Checks `package-info.java` has `@NullMarked` (configurable annotation)
+  - Text, JSON, and markdown output formats
+- **Usage**: Runs as first step of `organiclever-be`'s `typecheck` target
+
 ### C4 Level 2: Container Diagram
 
 Shows the high-level technical building blocks (containers) of the system. In C4 terminology, a "container" is a deployable/executable unit (web app, database, file system, etc.), not a Docker container.
@@ -132,6 +144,7 @@ graph TB
     subgraph "CLI Tools"
         AYOCLI[ayokoding-cli<br/>Go CLI]
         RHINO[rhino-cli<br/>Go CLI]
+        JPVAL[javaproject-cli<br/>Go CLI]
     end
 
     subgraph "Shared Infrastructure"
@@ -141,6 +154,7 @@ graph TB
 
     AYOCLI -->|Updates content| AYO
     RHINO -->|Repository automation| NX
+    JPVAL -->|Validates null-safety| NX
 
     NX -.->|Manages| OSE
     NX -.->|Manages| AYO
@@ -154,6 +168,7 @@ graph TB
     style AYO fill:#0077b6,stroke:#03045e,color:#ffffff
     style AYOCLI fill:#2a9d8f,stroke:#264653,color:#ffffff
     style RHINO fill:#2a9d8f,stroke:#264653,color:#ffffff
+    style JPVAL fill:#2a9d8f,stroke:#264653,color:#ffffff
     style NX fill:#6a4c93,stroke:#22223b,color:#ffffff
     style LIBS fill:#457b9d,stroke:#1d3557,color:#ffffff
 ```
@@ -1036,7 +1051,7 @@ graph TB
 - **Language**: Go 1.24+
 - **Build**: Native Go toolchain via Nx
 - **Distribution**: Local binaries
-- **Applications**: ayokoding-cli, rhino-cli
+- **Applications**: ayokoding-cli, rhino-cli, javaproject-cli
 
 ### Infrastructure
 

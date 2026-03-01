@@ -1,13 +1,13 @@
 {
-  "name": "jprojectvalidator-cli",
-  "sourceRoot": "apps/jprojectvalidator-cli",
+  "name": "javaproject-cli",
+  "sourceRoot": "apps/javaproject-cli",
   "projectType": "application",
   "targets": {
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "CGO_ENABLED=0 go build -o dist/jprojectvalidator-cli",
-        "cwd": "apps/jprojectvalidator-cli"
+        "command": "CGO_ENABLED=0 go build -o dist/javaproject-cli",
+        "cwd": "apps/javaproject-cli"
       },
       "outputs": ["{projectRoot}/dist"]
     },
@@ -15,28 +15,28 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "CGO_ENABLED=0 go test ./...",
-        "cwd": "apps/jprojectvalidator-cli"
+        "cwd": "apps/javaproject-cli"
       }
     },
     "run": {
       "executor": "nx:run-commands",
       "options": {
         "command": "go run main.go",
-        "cwd": "apps/jprojectvalidator-cli"
+        "cwd": "apps/javaproject-cli"
       }
     },
     "install": {
       "executor": "nx:run-commands",
       "options": {
         "command": "go mod tidy",
-        "cwd": "apps/jprojectvalidator-cli"
+        "cwd": "apps/javaproject-cli"
       }
     },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
         "command": "CGO_ENABLED=0 golangci-lint run ./...",
-        "cwd": "apps/jprojectvalidator-cli"
+        "cwd": "apps/javaproject-cli"
       }
     }
   },

@@ -1,4 +1,4 @@
-# jprojectvalidator-cli
+# javaproject-cli
 
 Standalone Go CLI tool that validates Java package null-safety annotations.
 
@@ -8,7 +8,7 @@ Checks that every Java package directory under a given source root contains a
 ## Usage
 
 ```sh
-jprojectvalidator-cli [flags] <source-root>
+javaproject-cli [flags] <source-root>
 ```
 
 ### Flags
@@ -32,16 +32,16 @@ jprojectvalidator-cli [flags] <source-root>
 
 ```sh
 # Validate from workspace root (Nx usage)
-./apps/jprojectvalidator-cli/dist/jprojectvalidator-cli apps/organiclever-be/src/main/java
+./apps/javaproject-cli/dist/javaproject-cli apps/organiclever-be/src/main/java
 
 # Use a different annotation
-jprojectvalidator-cli -annotation NonNullByDefault src/main/java
+javaproject-cli -annotation NonNullByDefault src/main/java
 
 # Output as JSON
-jprojectvalidator-cli -o json src/main/java
+javaproject-cli -o json src/main/java
 
 # Output as markdown report
-jprojectvalidator-cli -o markdown src/main/java
+javaproject-cli -o markdown src/main/java
 ```
 
 ## Violation types
@@ -55,13 +55,13 @@ jprojectvalidator-cli -o markdown src/main/java
 
 ```sh
 # Build
-nx build jprojectvalidator-cli
+nx build javaproject-cli
 
 # Test
-nx run jprojectvalidator-cli:test:quick
+nx run javaproject-cli:test:quick
 
 # Lint
-nx lint jprojectvalidator-cli
+nx lint javaproject-cli
 ```
 
 ## Why this exists
