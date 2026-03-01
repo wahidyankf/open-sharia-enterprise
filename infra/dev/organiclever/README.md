@@ -11,7 +11,6 @@ This infrastructure setup provides Docker Compose configuration for the OrganicL
 - **organiclever-app** - Flutter web application (port 3201, runs via `nx dev organiclever-app`)
 - **organiclever-be-e2e** - Playwright API E2E tests (requires organiclever-be)
 - **organiclever-web-e2e** - Playwright browser E2E tests (requires organiclever-web)
-- **organiclever-app-web-e2e** - Playwright browser E2E tests (requires organiclever-be + organiclever-app)
 
 ## Prerequisites
 
@@ -602,29 +601,11 @@ Tests target `http://localhost:3200` by default.
 
 See [`apps/organiclever-web-e2e/`](../../../apps/organiclever-web-e2e/) for full documentation.
 
-### Browser E2E Tests (organiclever-app-web-e2e)
-
-`organiclever-app-web-e2e` requires **both** the backend (port 8201) **and** the Flutter web app (port 3201):
-
-```bash
-# Terminal 1 — backend via Docker Compose
-docker compose up -d organiclever-be
-
-# Terminal 2 — Flutter web app
-nx dev organiclever-app
-
-# Terminal 3 — browser E2E tests
-nx run organiclever-app-web-e2e:test:e2e
-```
-
-See [`apps/organiclever-app-web-e2e/`](../../../apps/organiclever-app-web-e2e/README.md) for full documentation.
-
 ## Related Documentation
 
 - [organiclever-be README](../../../apps/organiclever-be/README.md)
 - [organiclever-web README](../../../apps/organiclever-web/README.md)
 - [organiclever-be-e2e README](../../../apps/organiclever-be-e2e/README.md)
-- [organiclever-app-web-e2e README](../../../apps/organiclever-app-web-e2e/README.md)
 - [Docker Documentation](https://docs.docker.com/)
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
 
