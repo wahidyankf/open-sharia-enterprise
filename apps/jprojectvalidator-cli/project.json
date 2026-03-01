@@ -1,0 +1,44 @@
+{
+  "name": "jprojectvalidator-cli",
+  "sourceRoot": "apps/jprojectvalidator-cli",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 go build -o dist/jprojectvalidator-cli",
+        "cwd": "apps/jprojectvalidator-cli"
+      },
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 go test ./...",
+        "cwd": "apps/jprojectvalidator-cli"
+      }
+    },
+    "run": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go run main.go",
+        "cwd": "apps/jprojectvalidator-cli"
+      }
+    },
+    "install": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go mod tidy",
+        "cwd": "apps/jprojectvalidator-cli"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 golangci-lint run ./...",
+        "cwd": "apps/jprojectvalidator-cli"
+      }
+    }
+  },
+  "tags": ["type:app", "platform:golang", "domain:organiclever"]
+}

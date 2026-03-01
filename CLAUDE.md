@@ -20,6 +20,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `ayokoding-web` - Hugo static site (Hextra theme, bilingual)
   - `ayokoding-cli` - Go CLI tool for content automation
   - `rhino-cli` - Go CLI tool for repository management (Repository Hygiene & INtegration Orchestrator)
+  - `jprojectvalidator-cli` - Go CLI tool for validating Java package null-safety annotations
   - `organiclever-web` - Next.js 16 landing and promotional website (www.organiclever.com)
   - `organiclever-web-e2e` - Playwright E2E tests for organiclever-web
   - `organiclever-app` - Flutter main application (app.organiclever.com, Android, iOS)
@@ -35,6 +36,7 @@ open-sharia-enterprise/
 │   ├── ayokoding-web/       # AyoKoding website (bilingual)
 │   ├── ayokoding-cli/       # Content automation CLI
 │   ├── rhino-cli/          # Repository management CLI
+│   ├── jprojectvalidator-cli/ # Java null-safety annotation validator
 │   ├── organiclever-web/     # OrganicLever landing website (Next.js)
 │   ├── organiclever-web-e2e/ # Playwright E2E tests for organiclever-web
 │   ├── organiclever-app/  # Flutter mobile & web app
