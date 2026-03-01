@@ -9,6 +9,7 @@ build/
 *.tsbuildinfo
 .next/
 out/
+cover.out
 
 # Nx cache
 .nx/
