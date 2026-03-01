@@ -329,6 +329,18 @@ go test ./... -v
 
 **Note**: Unit tests automatically run via pre-push git hook for affected projects (see [Code Quality Convention](../../governance/development/quality/code.md)).
 
+### Lint
+
+```bash
+# Run directly
+golangci-lint run ./...
+
+# Run via Nx
+nx lint ayokoding-cli
+```
+
+Linting uses the shared configuration at `.golangci.yml` in the repository root. golangci-lint discovers it automatically by walking up parent directories from the app's working directory.
+
 ### Run without building
 
 ```bash
@@ -354,6 +366,7 @@ nx run ayokoding-cli
 
 - `build` - Build the CLI binary to `dist/`
 - `test:quick` - Run unit tests (`go test ./...`)
+- `lint` - Static analysis via golangci-lint
 - `run` - Run the CLI directly (`go run main.go`)
 - `install` - Install Go dependencies (`go mod tidy`)
 
