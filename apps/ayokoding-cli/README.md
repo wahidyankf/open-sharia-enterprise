@@ -163,6 +163,66 @@ lowercase_words:
   - in
 ```
 
+### Link Validation
+
+#### Check Internal Links
+
+```bash
+# Check all internal links (default content directory)
+ayokoding-cli links check
+
+# Check specific content directory
+ayokoding-cli links check --content apps/ayokoding-web/content
+
+# JSON output for scripting or CI
+ayokoding-cli links check -o json
+
+# Quiet mode (errors/broken links only; no output on success)
+ayokoding-cli links check --quiet
+```
+
+**What it does:**
+
+- Walks all `.md` files in the content directory
+- Extracts every markdown link (`[text](target)`) from non-code-block lines
+- Skips external links (`http://`, `https://`, `mailto:`, `//`) — use the
+  `apps-ayokoding-web-link-checker` AI agent for those
+- Skips same-page anchors (`#section`)
+- Strips `#fragment` and `?query` from internal link targets before resolving
+- Resolves each internal link against the content directory:
+  - `/en/learn/overview` → `content/en/learn/overview.md` OR `content/en/learn/overview/_index.md`
+- Reports all broken links with source file, line number, link text, and target
+- **Exits with code 1** when broken links are found
+
+**Internal vs External links:**
+
+| Type                     | Example                  | Handled by                              |
+| ------------------------ | ------------------------ | --------------------------------------- |
+| Internal (Hugo absolute) | `/en/learn/swe/overview` | `ayokoding-cli links check`             |
+| External URL             | `https://example.com`    | `apps-ayokoding-web-link-checker` agent |
+| Same-page anchor         | `#section-name`          | Not validated                           |
+
+**Exit codes:**
+
+- `0` — All internal links resolve to real files
+- `1` — One or more broken internal links found
+
+**Flags:**
+
+- `--content` — Content directory path (default: `apps/ayokoding-web/content`)
+
+**Nx integration:**
+
+```bash
+# Run standalone (builds ayokoding-cli first automatically)
+nx run ayokoding-web:links:check
+
+# Runs automatically as part of test:quick
+nx run ayokoding-web:test:quick
+```
+
+**Performance:** ~100ms for 850+ files / 3000+ links
+
 ## Help Commands
 
 ```bash
@@ -185,14 +245,21 @@ apps/ayokoding-cli/
 ├── cmd/
 │   ├── root.go               # Cobra root command, global flags
 │   ├── nav.go                # Navigation command group
-│   └── nav_regen.go          # nav regen - regenerate navigation
+│   ├── nav_regen.go          # nav regen - regenerate navigation
+│   ├── titles.go             # Title management command group
+│   ├── titles_update.go      # titles update - update frontmatter titles
+│   ├── links.go              # Link management command group
+│   └── links_check.go        # links check - validate internal links
 ├── internal/
 │   ├── navigation/           # Navigation generation logic
 │   │   ├── scanner.go        # File structure scanner (3 layers) + absolute path builder
 │   │   ├── generator.go      # Markdown DFS tree generator + absolute path links
 │   │   └── regenerate.go     # Main orchestration logic
-│   └── markdown/             # Markdown utilities
-│       └── frontmatter.go    # YAML frontmatter extraction
+│   ├── markdown/             # Markdown utilities
+│   │   └── frontmatter.go    # YAML frontmatter extraction
+│   ├── titles/               # Title update logic
+│   └── links/                # Link validation logic
+│       └── checker.go        # Internal link checker (walk, extract, resolve)
 ├── dist/                     # Built binary (gitignored)
 ├── main.go                   # CLI entry point (Cobra execution)
 ├── go.mod                    # Go module definition (+ Cobra)
@@ -202,6 +269,14 @@ apps/ayokoding-cli/
 **Critical Bug Fix (2025-12-21)**: Prior to this date, `scanner.go`, `regenerate.go`, and `generator.go` generated relative paths for navigation links, causing broken links when navigating from certain page contexts. All three files were updated to generate absolute paths with language prefixes (`/en/learn/...`, `/id/belajar/...`) ensuring links work correctly from any page context in Hugo.
 
 ## Migration Notes
+
+### v0.3.0 → v0.4.0
+
+**New**: `links check` command for internal link validation.
+
+- No breaking changes
+- `nx run ayokoding-web:test:quick` now runs `links:check` before the Hugo build
+- Fix broken internal links to keep CI green: `nx run ayokoding-web:links:check`
 
 ### v0.2.0 → v0.3.0 (Breaking Change)
 
