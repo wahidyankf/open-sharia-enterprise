@@ -1012,4 +1012,4 @@ test("mobile touch interactions", async ({ page }) => {
 
 ---
 
-**Next steps**: Review [Visual Regression Testing](/en/learn/software-engineering/automation-testing/tools/playwright/in-the-field/visual-regression-testing) for cross-browser screenshot comparison, or explore [CI/CD Integration](/en/learn/software-engineering/automation-testing/tools/playwright/in-the-field/ci-cd-integration) for automated cross-browser testing pipelines.
+**Next steps**: Review [Visual Regression Testing](/en/learn/software-engineering/automation-testing/tools/playwright/in-the-field/visual-regression) for cross-browser screenshot comparison, or explore [CI/CD Integration](/en/learn/software-engineering/automation-testing/tools/playwright/in-the-field/ci-cd-integration) for automated cross-browser testing pipelines.

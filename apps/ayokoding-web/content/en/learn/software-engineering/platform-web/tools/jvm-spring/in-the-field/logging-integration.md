@@ -717,7 +717,7 @@ logger.error("Validation failed: amount={}", amount);  // Not an error
 ## See Also
 
 - [Performance Tuning](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/performance-tuning) - Async logging for high-throughput
-- [Monitoring and Observability](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/monitoring) - Metrics and tracing
-- [Security Best Practices](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/security) - Audit logging and compliance
-- [Spring Boot Actuator](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/actuator) - Log level management at runtime
-- [Distributed Tracing](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/distributed-tracing) - Request correlation across microservices
+- Monitoring and Observability - Metrics and tracing
+- Security Best Practices - Audit logging and compliance
+- Spring Boot Actuator - Log level management at runtime
+- Distributed Tracing - Request correlation across microservices

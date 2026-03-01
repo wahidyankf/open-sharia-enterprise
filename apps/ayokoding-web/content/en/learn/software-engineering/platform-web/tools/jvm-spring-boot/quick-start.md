@@ -9,7 +9,7 @@ tags: ["spring-boot", "java", "kotlin", "quick-start", "web-framework", "rest-ap
 
 **Want to quickly understand Spring Boot's core concepts?** This quick start guide provides a fast-paced tour through the fundamental concepts that make Spring Boot work. By the end, you'll understand the architecture, patterns, and tools needed to build production-ready applications.
 
-This tutorial provides 5-30% coverage - enough to understand Spring Boot's architecture and start building. For deeper learning, continue to [Beginner Tutorial](/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-concept/beginner) (0-60% coverage) or explore [By Example](/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example) for code-first learning.
+This tutorial provides 5-30% coverage - enough to understand Spring Boot's architecture and start building. For deeper learning, continue to [Beginner Tutorial](/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/beginner) (0-60% coverage) or explore [By Example](/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example) for code-first learning.
 
 ## Prerequisites
 
@@ -1750,7 +1750,7 @@ java -jar app.jar \
 
 **Ready for comprehensive Spring Boot mastery?**
 
-- [Beginner Tutorial](/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-concept/beginner) (0-60% coverage) - Deep dive with extensive practice on controllers, services, repositories, security, and advanced features
+- [Beginner Tutorial](/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/beginner) (0-60% coverage) - Deep dive with extensive practice on controllers, services, repositories, security, and advanced features
 
 **Prefer code-first learning?**
 

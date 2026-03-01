@@ -881,7 +881,7 @@ Should serve production build and show preview URL.
 
 **Want comprehensive React mastery?**
 
-- [Beginner Tutorial](/en/learn/software-engineering/platform-web/tools/fe-react/by-concept/beginner) (0-60% coverage) - Deep dive into React with extensive practice
+- [Beginner Tutorial](/en/learn/software-engineering/platform-web/tools/fe-react/by-example/beginner) (0-60% coverage) - Deep dive into React with extensive practice
 
 **Prefer code-first learning?**
 

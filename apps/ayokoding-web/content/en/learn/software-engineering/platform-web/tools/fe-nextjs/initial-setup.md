@@ -9,7 +9,7 @@ tags: ["nextjs", "typescript", "setup", "installation", "development-environment
 
 **Ready to set up Next.js?** This guide walks through installing Next.js with TypeScript, creating your first project, and understanding the development environment.
 
-**Prerequisites**: You should understand [React fundamentals](/en/learn/software-engineering/platform-web/fe-react) before starting with Next.js.
+**Prerequisites**: You should understand [React fundamentals](/en/learn/software-engineering/platform-web/tools/fe-react) before starting with Next.js.
 
 ## Prerequisites Check
 

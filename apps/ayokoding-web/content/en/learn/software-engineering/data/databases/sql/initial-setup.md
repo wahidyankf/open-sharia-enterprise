@@ -792,7 +792,7 @@ You now have SQLite installed and working. Here's what to learn next:
 For production databases with advanced features (JSONB, full-text search, replication), consider:
 
 - **[PostgreSQL](/en/learn/software-engineering/data/databases/postgresql)** - Advanced open-source database
-- **[MySQL](/en/learn/software-engineering/data/databases/mysql)** - Popular open-source database
+- **MySQL** - Popular open-source database
 
 ## Summary
 

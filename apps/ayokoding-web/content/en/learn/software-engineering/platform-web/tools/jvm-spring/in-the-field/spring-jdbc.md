@@ -603,4 +603,4 @@ public void saveBatch(List<ZakatTransaction> transactions) {
 - [Transaction Management](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/transaction-management) - @Transactional patterns
 - [Connection Pooling](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/connection-pooling) - HikariCP configuration
 - [Configuration](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/configuration) - DataSource bean setup
-- [Java JDBC](/en/learn/software-engineering/programming-languages/java/in-the-field/jdbc) - JDBC baseline patterns
+- Java JDBC - JDBC baseline patterns

@@ -295,7 +295,7 @@ cleaner.register(obj, () -> closeResource());
 
 ## Related Topics
 
-- [Java 17 LTS](/en/learn/software-engineering/programming-languages/java/release-highlights/java-17) - Previous LTS
+- [Java 17 LTS](/en/learn/software-engineering/programming-languages/java/release-highlights/java-17-lts) - Previous LTS
 - [Java 19](/en/learn/software-engineering/programming-languages/java/release-highlights/java-19) - Next release (Virtual Threads!)
 - [Pattern Matching](/en/learn/software-engineering/programming-languages/java/in-the-field/functional-programming) - In-the-field guide
 

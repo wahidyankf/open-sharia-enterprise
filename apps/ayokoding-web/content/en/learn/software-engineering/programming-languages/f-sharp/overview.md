@@ -162,8 +162,8 @@ graph TD
 
 - **[C#](/en/learn/software-engineering/programming-languages/c-sharp)** - Object-oriented sibling on .NET platform
 - **[Elixir](/en/learn/software-engineering/programming-languages/elixir)** - Functional language with similar immutability emphasis
-- **[Haskell](/en/learn/software-engineering/programming-languages/haskell)** - Pure functional language influencing F# design
-- **[OCaml](/en/learn/software-engineering/programming-languages/ocaml)** - ML-family language that F# derives from
+- **Haskell** - Pure functional language influencing F# design
+- **OCaml** - ML-family language that F# derives from
 
 ## External Resources
 

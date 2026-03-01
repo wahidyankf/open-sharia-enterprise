@@ -9,7 +9,7 @@ tags: ["shell", "bash", "linux", "quick-start", "beginner"]
 
 **Want to learn essential shell commands quickly?** This quick start touches 8-12 core shell concepts with one example each. By the end, you'll have practical touchpoints for the most important command-line operations.
 
-This tutorial provides 5-30% coverage - rapid exposure to core concepts. For comprehensive mastery, continue to [Beginner Tutorial](/en/learn/software-engineering/platform-linux/tools/shell/by-concept/beginner) (0-60% coverage) or explore [By-Example](/en/learn/software-engineering/platform-linux/tools/shell/by-example) for heavily annotated code.
+This tutorial provides 5-30% coverage - rapid exposure to core concepts. For comprehensive mastery, continue to [Beginner Tutorial](/en/learn/software-engineering/platform-linux/tools/shell/by-example/beginner) (0-60% coverage) or explore [By-Example](/en/learn/software-engineering/platform-linux/tools/shell/by-example) for heavily annotated code.
 
 ## Prerequisites
 
@@ -98,7 +98,7 @@ rmdir myproject
 
 **Key commands**: `mkdir`, `cd`, `echo >`, `cat`, `cp`, `mv`, `ls`, `rm`, `rmdir`
 
-**When to explore deeper**: [Beginner Tutorial - File Operations](/en/learn/software-engineering/platform-linux/tools/shell/by-concept/beginner#file-operations)
+**When to explore deeper**: [Beginner Tutorial - File Operations](/en/learn/software-engineering/platform-linux/tools/shell/by-example/beginner#file-operations)
 
 ## Concept 2: Text Processing - grep for Searching
 
@@ -128,7 +128,7 @@ grep -r "ERROR" /var/log/myapp/
 
 **Key options**: `-i` (case-insensitive), `-c` (count), `-n` (line numbers), `-r` (recursive)
 
-**When to explore deeper**: [Beginner Tutorial - Text Processing](/en/learn/software-engineering/platform-linux/tools/shell/by-concept/beginner#text-processing)
+**When to explore deeper**: [Beginner Tutorial - Text Processing](/en/learn/software-engineering/platform-linux/tools/shell/by-example/beginner#text-processing)
 
 ## Concept 3: Pipes and Redirection - Connect Commands
 
@@ -154,7 +154,7 @@ sort < unsorted.txt > sorted.txt
 
 **Key operators**: `>` (redirect output), `>>` (append), `|` (pipe), `<` (input), `2>` (stderr), `2>&1` (combine streams)
 
-**When to explore deeper**: [Beginner Tutorial - Pipes and Redirection](/en/learn/software-engineering/platform-linux/tools/shell/by-concept/beginner#pipes-redirection)
+**When to explore deeper**: [Beginner Tutorial - Pipes and Redirection](/en/learn/software-engineering/platform-linux/tools/shell/by-example/beginner#pipes-redirection)
 
 ## Concept 4: Process Management - Control Running Programs
 
@@ -187,7 +187,7 @@ htop  # If installed, more user-friendly than top
 
 **Key commands**: `ps`, `jobs`, `fg`, `bg`, `kill`, `top`, `htop`
 
-**When to explore deeper**: [Beginner Tutorial - Process Management](/en/learn/software-engineering/platform-linux/tools/shell/by-concept/beginner#process-management)
+**When to explore deeper**: [Beginner Tutorial - Process Management](/en/learn/software-engineering/platform-linux/tools/shell/by-example/beginner#process-management)
 
 ## Concept 5: File Permissions - Control Access
 
@@ -214,7 +214,7 @@ stat -c '%a %n' testfile.txt
 
 **Key commands**: `chmod` (change mode), `chown` (change owner), `stat` (file status)
 
-**When to explore deeper**: [Beginner Tutorial - Permissions](/en/learn/software-engineering/platform-linux/tools/shell/by-concept/beginner#permissions)
+**When to explore deeper**: [Beginner Tutorial - Permissions](/en/learn/software-engineering/platform-linux/tools/shell/by-example/beginner#permissions)
 
 ## Concept 6: Archives - Compress and Extract
 
@@ -244,7 +244,7 @@ unzip -l project.zip
 
 **Key commands**: `tar` (tape archive), `zip`, `unzip`, `gzip`, `gunzip`
 
-**When to explore deeper**: [Beginner Tutorial - Archives](/en/learn/software-engineering/platform-linux/tools/shell/by-concept/beginner#archives)
+**When to explore deeper**: [Beginner Tutorial - Archives](/en/learn/software-engineering/platform-linux/tools/shell/by-example/beginner#archives)
 
 ## Concept 7: Networking - Download and Connect
 
@@ -276,7 +276,7 @@ scp user@remote:/path/to/file.txt ./local/
 
 **Key commands**: `wget`, `curl`, `ping`, `ssh`, `scp`, `netstat`, `ss`
 
-**When to explore deeper**: [Beginner Tutorial - Networking](/en/learn/software-engineering/platform-linux/tools/shell/by-concept/beginner#networking)
+**When to explore deeper**: [Beginner Tutorial - Networking](/en/learn/software-engineering/platform-linux/tools/shell/by-example/beginner#networking)
 
 ## Concept 8: Variables and Environment - Configure Shell
 
@@ -310,7 +310,7 @@ source ~/.bashrc
 
 **Key concepts**: Variables (`VAR=value`), environment (`export`), `$VAR` expansion, `~/.bashrc` config
 
-**When to explore deeper**: [Beginner Tutorial - Variables and Environment](/en/learn/software-engineering/platform-linux/tools/shell/by-concept/beginner#variables-environment)
+**When to explore deeper**: [Beginner Tutorial - Variables and Environment](/en/learn/software-engineering/platform-linux/tools/shell/by-example/beginner#variables-environment)
 
 ## Concept 9: Scripting Basics - Automate Tasks
 
@@ -345,7 +345,7 @@ chmod +x backup.sh
 
 **Key elements**: Shebang (`#!/bin/bash`), variables, commands, functions
 
-**When to explore deeper**: [Beginner Tutorial - Shell Scripting](/en/learn/software-engineering/platform-linux/tools/shell/by-concept/beginner#shell-scripting)
+**When to explore deeper**: [Beginner Tutorial - Shell Scripting](/en/learn/software-engineering/platform-linux/tools/shell/by-example/beginner#shell-scripting)
 
 ## Concept 10: Find and Locate - Search Files Efficiently
 
@@ -374,7 +374,7 @@ locate myfile.txt
 
 **Key commands**: `find` (search filesystem), `locate` (search index), `updatedb` (update locate database)
 
-**When to explore deeper**: [Beginner Tutorial - Finding Files](/en/learn/software-engineering/platform-linux/tools/shell/by-concept/beginner#finding-files)
+**When to explore deeper**: [Beginner Tutorial - Finding Files](/en/learn/software-engineering/platform-linux/tools/shell/by-example/beginner#finding-files)
 
 ## Concept 11: Text Transformation - sed and awk
 
@@ -400,7 +400,7 @@ awk '/ERROR/ {print $1, $2}' app.log
 
 **Key commands**: `sed` (stream editor), `awk` (pattern processing), field separators, pattern matching
 
-**When to explore deeper**: [Beginner Tutorial - Advanced Text Processing](/en/learn/software-engineering/platform-linux/tools/shell/by-concept/beginner#advanced-text-processing)
+**When to explore deeper**: [Beginner Tutorial - Advanced Text Processing](/en/learn/software-engineering/platform-linux/tools/shell/by-example/beginner#advanced-text-processing)
 
 ## Concept 12: Command Combinations - Real-World Workflows
 
@@ -431,7 +431,7 @@ find . -name "*.js" -exec grep -l "function.*render" {} \;
 
 **Key concept**: Command chaining with pipes, redirects, and command substitution solves complex problems
 
-**When to explore deeper**: [Beginner Tutorial](/en/learn/software-engineering/platform-linux/tools/shell/by-concept/beginner) for comprehensive workflows
+**When to explore deeper**: [Beginner Tutorial](/en/learn/software-engineering/platform-linux/tools/shell/by-example/beginner) for comprehensive workflows
 
 ## Summary
 
@@ -476,7 +476,7 @@ find locate updatedb
 
 **Want comprehensive shell mastery?**
 
-- [Beginner Tutorial](/en/learn/software-engineering/platform-linux/tools/shell/by-concept/beginner) (0-60% coverage) - Deep dive into shell fundamentals with extensive practice
+- [Beginner Tutorial](/en/learn/software-engineering/platform-linux/tools/shell/by-example/beginner) (0-60% coverage) - Deep dive into shell fundamentals with extensive practice
 
 **Prefer code-first learning?**
 

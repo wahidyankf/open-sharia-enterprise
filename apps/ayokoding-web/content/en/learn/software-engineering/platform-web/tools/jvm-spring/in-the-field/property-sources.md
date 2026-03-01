@@ -668,4 +668,4 @@ public class AppProperties {
 - [Configuration](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/configuration) - Java config patterns
 - [Profiles](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/profiles) - Environment-specific config
 - [Bean Lifecycle](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/bean-lifecycle) - Property injection timing
-- [Spring Security](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/security) - Secret management
+- Spring Security - Secret management

@@ -826,4 +826,4 @@ public EntityModel<ZakatAccount> getAccount(@PathVariable String id) {
 - [Exception Handling](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/exception-handling) - @RestControllerAdvice for API errors
 - [Validation](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/validation) - Bean Validation for request objects
 - [Configuration](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/configuration) - WebMvcConfigurer for REST setup
-- [Java HTTP Clients](/en/learn/software-engineering/programming-languages/java/in-the-field/http-clients) - Consuming REST APIs
+- Java HTTP Clients - Consuming REST APIs

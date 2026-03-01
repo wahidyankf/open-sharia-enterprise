@@ -700,4 +700,4 @@ end
 - **Namespace configuration** - Use distinct keys for different config domains
 - **Test isolation** - Save/restore pattern for test configuration overrides
 
-**Next steps**: Explore [ETS patterns](/en/learn/software-engineering/programming-languages/elixir/in-the-field/ets-patterns) for dynamic data storage, or [performance optimization](/en/learn/software-engineering/programming-languages/elixir/in-the-field/performance-optimization) for comprehensive system tuning.
+**Next steps**: Explore [ETS patterns](/en/learn/software-engineering/programming-languages/elixir/in-the-field/ets-dets) for dynamic data storage, or [performance optimization](/en/learn/software-engineering/programming-languages/elixir/in-the-field/performance-optimization) for comprehensive system tuning.

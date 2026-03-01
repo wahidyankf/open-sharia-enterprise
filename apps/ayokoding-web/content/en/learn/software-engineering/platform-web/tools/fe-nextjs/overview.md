@@ -9,7 +9,7 @@ tags: ["nextjs", "react", "typescript", "ssr", "ssg", "fullstack", "web-developm
 
 **Want to understand Next.js + TypeScript?** This overview explains what Next.js is, why it exists, and when you should use it over plain React.
 
-**Critical prerequisite**: Next.js is built on React. You should understand React fundamentals before learning Next.js. See [React + TypeScript](/en/learn/software-engineering/platform-web/fe-react) first if you're new to React.
+**Critical prerequisite**: Next.js is built on React. You should understand React fundamentals before learning Next.js. See [React + TypeScript](/en/learn/software-engineering/platform-web/tools/fe-react) first if you're new to React.
 
 **Coverage note**: This overview provides context and big-picture understanding. For hands-on learning, continue to [Initial Setup](/en/learn/software-engineering/platform-web/tools/fe-nextjs/initial-setup).
 
@@ -557,7 +557,7 @@ Ready to build with Next.js?
 
 **Prerequisites**:
 
-- **React fundamentals** - Components, props, state, hooks ([React tutorial](/en/learn/software-engineering/platform-web/fe-react) if needed)
+- **React fundamentals** - Components, props, state, hooks ([React tutorial](/en/learn/software-engineering/platform-web/tools/fe-react) if needed)
 - **TypeScript** - Basic type annotations and interfaces
 - **JavaScript** - ES6+ syntax (async/await, destructuring, modules)
 - **Node.js** - For development tools (npm, build tools)

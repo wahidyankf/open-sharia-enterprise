@@ -813,4 +813,4 @@ private Long id;  // Only required for updates
 - [REST APIs](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/rest-apis) - Request body validation
 - [Exception Handling](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/exception-handling) - Validation exception formatting
 - [Configuration](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/configuration) - Validator bean setup
-- [Java Bean Validation](/en/learn/software-engineering/programming-languages/java/in-the-field/bean-validation) - Bean Validation fundamentals
+- Java Bean Validation - Bean Validation fundamentals

@@ -630,4 +630,4 @@ public class ZakatCalculator {
 - [Dependency Injection](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/dependency-injection) - IoC container patterns
 - [Configuration](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/configuration) - Bean definition patterns
 - [Component Scanning](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/component-scanning) - Auto-discovery
-- [Spring Threading](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/threading) - Thread safety in beans
+- Spring Threading - Thread safety in beans

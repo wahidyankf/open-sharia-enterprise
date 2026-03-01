@@ -9,7 +9,7 @@ tags: ["phoenix", "elixir", "web-framework", "liveview", "ecto", "real-time", "b
 
 **Ready to learn Phoenix Framework quickly?** This quick start tutorial provides a fast-paced tour through Phoenix's core concepts. By the end, you'll understand the fundamentals and be ready to build real web applications.
 
-This tutorial provides 5-30% coverage - touching all essential concepts without deep dives. For 0-5% coverage (installation only), see [Initial Setup](/en/learn/software-engineering/platform-web/tools/elixir-phoenix/initial-setup). For deep dives, continue to [Beginner Tutorial](/en/learn/software-engineering/platform-web/tools/elixir-phoenix/by-concept/beginner) (0-60% coverage).
+This tutorial provides 5-30% coverage - touching all essential concepts without deep dives. For 0-5% coverage (installation only), see [Initial Setup](/en/learn/software-engineering/platform-web/tools/elixir-phoenix/initial-setup). For deep dives, continue to [Beginner Tutorial](/en/learn/software-engineering/platform-web/tools/elixir-phoenix/by-example/beginner) (0-60% coverage).
 
 ## Prerequisites
 
@@ -1344,8 +1344,8 @@ fly ssh console
 
 **Ready for comprehensive Phoenix mastery?**
 
-- [Beginner Tutorial](/en/learn/software-engineering/platform-web/tools/elixir-phoenix/by-concept/beginner) (0-60% coverage) - Deep dive into Phoenix with extensive practice
-- [Intermediate Tutorial](/en/learn/software-engineering/platform-web/tools/elixir-phoenix/by-concept/intermediate) (60-85% coverage) - Advanced features, testing, deployment
+- [Beginner Tutorial](/en/learn/software-engineering/platform-web/tools/elixir-phoenix/by-example/beginner) (0-60% coverage) - Deep dive into Phoenix with extensive practice
+- [Intermediate Tutorial](/en/learn/software-engineering/platform-web/tools/elixir-phoenix/by-example/intermediate) (60-85% coverage) - Advanced features, testing, deployment
 
 **Prefer code-first learning?**
 
@@ -1357,7 +1357,7 @@ fly ssh console
 
 **Need to strengthen Elixir fundamentals?**
 
-- [Elixir Beginner Tutorial](/en/learn/software-engineering/programming-languages/elixir/by-concept/beginner) - Deep dive into Elixir language
+- [Elixir Beginner Tutorial](/en/learn/software-engineering/programming-languages/elixir/by-example/beginner) - Deep dive into Elixir language
 
 ## Practice Projects
 

@@ -87,7 +87,7 @@ tags: ["typescript", "tutorial", "by-example", "examples", "code-first"]
 
 - Proficiency in at least one programming language
 - Basic understanding of JavaScript
-- Node.js and TypeScript installed (see [Initial Setup](/en/learn/software-engineering/programming-languages/typescript/tutorials/initial-setup))
+- Node.js and TypeScript installed (see Initial Setup)
 
 **Helpful but not required**:
 

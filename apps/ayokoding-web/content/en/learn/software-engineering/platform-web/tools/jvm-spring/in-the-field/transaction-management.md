@@ -683,4 +683,4 @@ public void processPayment(Payment payment) throws PaymentException {
 - [Spring Data JPA](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/spring-data-jpa) - JPA transaction integration
 - [Connection Pooling](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/connection-pooling) - Connection management
 - [Configuration](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/configuration) - Transaction manager setup
-- [Java Concurrency](/en/learn/software-engineering/programming-languages/java/in-the-field/concurrency) - Thread safety patterns
+- [Java Concurrency](/en/learn/software-engineering/programming-languages/java/in-the-field/concurrency-and-parallelism) - Thread safety patterns

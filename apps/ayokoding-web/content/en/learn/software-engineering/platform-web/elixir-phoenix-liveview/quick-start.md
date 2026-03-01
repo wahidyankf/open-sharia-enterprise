@@ -17,7 +17,7 @@ Before starting this tutorial, you need:
 
 - Phoenix LiveView installed and configured (see [Initial Setup](/en/learn/software-engineering/platform-web/elixir-phoenix-liveview/initial-setup))
 - Elixir fundamentals (pattern matching, processes) - see [Elixir by Example](/en/learn/software-engineering/programming-languages/elixir/by-example)
-- Phoenix basics (routing, controllers) - see [Phoenix by Example](/en/learn/software-engineering/platform-web/elixir-phoenix/by-example)
+- Phoenix basics (routing, controllers) - see [Phoenix by Example](/en/learn/software-engineering/platform-web/tools/elixir-phoenix/by-example)
 - Basic understanding of WebSockets
 
 ## Learning Objectives

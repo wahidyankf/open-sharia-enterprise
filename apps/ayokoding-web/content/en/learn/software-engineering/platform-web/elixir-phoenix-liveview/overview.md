@@ -93,7 +93,7 @@ Unlike React or Vue which require client-side JavaScript and API coordination, L
 **Required**:
 
 - Elixir fundamentals (pattern matching, processes, OTP basics) - see [Elixir by Example](/en/learn/software-engineering/programming-languages/elixir/by-example)
-- Phoenix framework basics (routing, controllers, views) - see [Phoenix by Example](/en/learn/software-engineering/platform-web/elixir-phoenix/by-example)
+- Phoenix framework basics (routing, controllers, views) - see [Phoenix by Example](/en/learn/software-engineering/platform-web/tools/elixir-phoenix/by-example)
 - Understanding of web fundamentals (HTML, CSS, HTTP)
 - Basic understanding of WebSockets concept
 
@@ -196,7 +196,7 @@ Phoenix LiveView is **built on top of Phoenix framework**:
 - **Integrates with Ecto**: Use Ecto changesets for form validation
 - **Shares conventions**: Follows Phoenix conventions (templates, layouts)
 
-**You must understand Phoenix basics before learning LiveView**. See [Phoenix by Example](/en/learn/software-engineering/platform-web/elixir-phoenix/by-example) for Phoenix fundamentals.
+**You must understand Phoenix basics before learning LiveView**. See [Phoenix by Example](/en/learn/software-engineering/platform-web/tools/elixir-phoenix/by-example) for Phoenix fundamentals.
 
 ## Next Steps
 

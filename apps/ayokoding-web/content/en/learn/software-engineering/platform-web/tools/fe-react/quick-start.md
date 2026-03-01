@@ -9,7 +9,7 @@ tags: ["react", "typescript", "quick-start", "tutorial", "hooks", "components"]
 
 **Ready to learn React quickly?** This quick start tutorial provides a fast-paced tour through React's core concepts with TypeScript. By the end, you'll understand the fundamentals and be ready to build real applications.
 
-This tutorial provides 5-30% coverage - touching all essential concepts without deep dives. For 0-5% coverage (installation only), see [Initial Setup](/en/learn/software-engineering/platform-web/tools/fe-react/initial-setup). For deep dives, continue to [Beginner Tutorial](/en/learn/software-engineering/platform-web/tools/fe-react/by-concept/beginner) (0-60% coverage).
+This tutorial provides 5-30% coverage - touching all essential concepts without deep dives. For 0-5% coverage (installation only), see [Initial Setup](/en/learn/software-engineering/platform-web/tools/fe-react/initial-setup). For deep dives, continue to [Beginner Tutorial](/en/learn/software-engineering/platform-web/tools/fe-react/by-example/beginner) (0-60% coverage).
 
 ## Prerequisites
 
@@ -1140,7 +1140,7 @@ You've covered 5-30% of React. Continue your learning journey:
 ### Immediate Next Steps
 
 - **By-Concept Beginner Tutorial** - Dive deeper into fundamentals (0-60% coverage)
-  - [React Beginner Tutorial](/en/learn/software-engineering/platform-web/tools/fe-react/by-concept/beginner)
+  - [React Beginner Tutorial](/en/learn/software-engineering/platform-web/tools/fe-react/by-example/beginner)
 - **Styling** - Learn CSS-in-JS, Tailwind, or CSS Modules
 - **Testing** - Write tests with React Testing Library
 - **Performance** - Optimization with `useMemo`, `useCallback`, `React.memo`
@@ -1168,4 +1168,4 @@ You've covered 5-30% of React. Continue your learning journey:
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/)
 - [React TypeScript Cheatsheet](https://react-typescript-cheatsheet.netlify.app/)
 
-**Ready for deeper learning?** Continue to the [Beginner Tutorial](/en/learn/software-engineering/platform-web/tools/fe-react/by-concept/beginner) for comprehensive React mastery.
+**Ready for deeper learning?** Continue to the [Beginner Tutorial](/en/learn/software-engineering/platform-web/tools/fe-react/by-example/beginner) for comprehensive React mastery.

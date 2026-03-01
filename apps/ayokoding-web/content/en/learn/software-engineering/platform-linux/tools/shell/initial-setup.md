@@ -724,7 +724,7 @@ Type `ec` and press Tab. It should complete to `echo` (or show options if multip
 
 **Want comprehensive command mastery?**
 
-- [Beginner Tutorial](/en/learn/software-engineering/platform-linux/tools/shell/by-concept/beginner) (0-60% coverage) - Deep dive into shell fundamentals with extensive practice
+- [Beginner Tutorial](/en/learn/software-engineering/platform-linux/tools/shell/by-example/beginner) (0-60% coverage) - Deep dive into shell fundamentals with extensive practice
 
 **Prefer code-first learning?**
 

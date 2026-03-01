@@ -534,5 +534,5 @@ Java 21 LTS (2023) revolutionized Java concurrency and finalized key language fe
 
 **Next Steps:**
 
-- Review [Java 17 Highlights](/en/learn/software-engineering/programming-languages/java/release-highlights/java-17) for foundation features
-- Explore [Java 25 Highlights](/en/learn/software-engineering/programming-languages/java/release-highlights/java-25) for latest optimizations
+- Review [Java 17 Highlights](/en/learn/software-engineering/programming-languages/java/release-highlights/java-17-lts) for foundation features
+- Explore [Java 25 Highlights](/en/learn/software-engineering/programming-languages/java/release-highlights/java-25-lts) for latest optimizations
