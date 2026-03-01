@@ -29,9 +29,6 @@ rhino-cli validate-links
 # Validate only staged files (useful in git hooks)
 rhino-cli validate-links --staged-only
 
-# Validate all Java packages have @NullMarked package-info.java
-rhino-cli validate-java-null-safety apps/organiclever-be/src/main/java
-
 # Echo a message
 rhino-cli --say "hello world"
 
@@ -381,76 +378,6 @@ Duration: 49ms
 Status: ✓ VALIDATION PASSED
 ```
 
-### validate-java-null-safety
-
-Validate that every Java package directory contains a `package-info.java` with the required null
-safety annotation. Without `package-info.java` annotated with `@NullMarked`, NullAway silently
-skips that package — no error, no warning.
-
-```bash
-# Validate from workspace root (standard usage via Nx)
-rhino-cli validate-java-null-safety apps/organiclever-be/src/main/java
-
-# Use a different annotation
-rhino-cli validate-java-null-safety src/main/java --annotation NonNullByDefault
-
-# Output as JSON
-rhino-cli validate-java-null-safety apps/organiclever-be/src/main/java -o json
-
-# Output as markdown report
-rhino-cli validate-java-null-safety apps/organiclever-be/src/main/java -o markdown
-
-# Verbose mode
-rhino-cli validate-java-null-safety apps/organiclever-be/src/main/java -v
-```
-
-**What it does:**
-
-- Walks the source root recursively and collects every directory containing at least one `.java`
-  file (`package-info.java` counts)
-- For each package directory, checks that `package-info.java` exists and contains
-  `@<annotation>`
-- Reports two violation types:
-  - `missing_package_info` — directory has `.java` files but no `package-info.java`
-  - `missing_annotation` — `package-info.java` exists but does not contain `@<annotation>`
-- Exits non-zero when any violations are found
-
-**Flags:**
-
-- `<source-root>` - Positional argument: path to Java source root (resolved from CWD)
-- `--annotation` - Annotation name to require (default: `NullMarked`, checked as `@NullMarked`)
-- `-o, --output` - Output format: text, json, markdown (default: text)
-- `-v, --verbose` - Verbose output
-- `-q, --quiet` - Quiet mode
-
-**Exit codes:**
-
-- `0` - All packages valid
-- `1` - One or more violations
-
-**Example output (text):**
-
-```
-✓ com/organiclever/be       package-info.java present, @NullMarked found
-✓ com/organiclever/be/config    package-info.java present, @NullMarked found
-✓ com/organiclever/be/controller    package-info.java present, @NullMarked found
-
-0 violations found.
-```
-
-**Example output (JSON):**
-
-```json
-{
-  "status": "success",
-  "timestamp": "2026-03-01T10:00:00+07:00",
-  "total_packages": 3,
-  "valid_packages": 3,
-  "annotation": "NullMarked",
-  "violations": []
-}
-```
-
 ### doctor
 
 Check that all required development tools are installed with the correct versions.
@@ -788,16 +715,6 @@ rhino-cli say
 ```
 
 ## Version History
-
-### v0.6.0 (2026-03-01)
-
-- Added `validate-java-null-safety` command for Java package annotation enforcement
-- Walks Java source root and validates every package has `package-info.java` with `@NullMarked`
-- Two violation types: `missing_package_info` and `missing_annotation`
-- Configurable annotation via `--annotation` flag (default: `NullMarked`)
-- Integrated into `organiclever-be` `typecheck` target as first step before NullAway compile pass
-- Three output formats: text, JSON, markdown
-- Comprehensive test suite covering scanner, validator, reporter, and command integration
 
 ### v0.5.0 (2026-02-19)
 
