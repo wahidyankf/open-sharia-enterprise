@@ -1,17 +1,69 @@
 version: "2"
 
 linters:
-  default: standard
+  # Explicit list: replaces implicit "default: standard" (errcheck, govet, ineffassign, staticcheck, unused)
+  default: none
   enable:
-    # Nil-safety linters
-    - forcetypeassert # Forced type assertions that panic on wrong type
-    - nilerr # Returns nil when err != nil check passed
-    - nilnesserr # Returns different nil error after err != nil check
-    - nilnil # Simultaneous return of nil error and invalid value
+    # Standard set
+    - errcheck # unchecked errors in Go code
+    - govet # suspicious constructs (go vet)
+    - ineffassign # assignments to variables never used afterwards
+    - staticcheck # staticcheck rules (SA*, ST*, S*, QF*)
+    - unused # unused constants, variables, functions, and types
+    # Nil-safety
+    - forcetypeassert # forced type assertions that panic on wrong type
+    - nilerr # returns nil even if err != nil was checked
+    - nilnesserr # returns different nil error after err != nil check
+    - nilnil # simultaneous return of nil error and invalid value
+    # Exhaustiveness
+    - exhaustive # exhaustive enum switch statements
+
   settings:
+    errcheck:
+      check-type-assertions: false # covered by forcetypeassert linter
+      check-blank: false
+      disable-default-exclusions: false
+      exclude-functions: []
+
     govet:
+      disable-all: true # start from zero; list every active analyzer explicitly below
       enable:
-        - nilness # Reports nil pointer dereferences and redundant nil checks
+        - appends
+        - asmdecl
+        - assign
+        - atomic
+        - bools
+        - buildtag
+        - cgocall
+        - composites
+        - copylocks
+        - defers
+        - directive
+        - errorsas
+        - framepointer
+        - hostport
+        - httpresponse
+        - ifaceassert
+        - lostcancel
+        - nilfunc
+        - nilness # nil pointer dereferences and redundant nil checks (non-default)
+        - printf
+        - shift
+        - sigchanyzer
+        - slog
+        - stdmethods
+        - stdversion
+        - stringintconv
+        - structtag
+        - testinggoroutine
+        - tests
+        - timeformat
+        - unmarshal
+        - unreachable
+        - unsafeptr
+        - unusedresult
+        - waitgroup
+
     staticcheck:
       checks:
         - all # enable all SA* (correctness), ST* (style), S* (simplify), QF* (quickfix)
@@ -19,3 +71,15 @@ linters:
         - -ST1015 # skip: default case position in switch (purely cosmetic)
         - -ST1017 # skip: yoda conditions (rarely relevant in Go)
         - -ST1018 # skip: zero-width characters in strings (extremely niche)
+
+    exhaustive:
+      check:
+        - switch
+        - map
+      default-signifies-exhaustive: false
+      ignore-enum-members: ""
+      ignore-enum-types: ""
+      package-scope-only: false
+      explicit-exhaustive-switch: false
+      explicit-exhaustive-map: false
+      default-case-required: false
