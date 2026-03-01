@@ -14,17 +14,8 @@ linters:
         - nilness # Reports nil pointer dereferences and redundant nil checks
     staticcheck:
       checks:
-        - ST1000 # Package comments
-        - ST1001 # No dot imports
-        - ST1003 # Naming conventions (e.g. API not Api, URL not Url)
-        - ST1005 # Error strings not capitalized or punctuated
-        - ST1006 # No this/self/me receiver names
-        - ST1008 # Error value must be last return value
-        - ST1011 # Meaningful names for time.Duration variables
-        - ST1012 # Conventional error variable naming (ErrFoo / errFoo)
-        - ST1016 # Consistent receiver names within a type
-        - ST1019 # No duplicate imports
-        - ST1020 # Exported function doc must start with function name
-        - ST1021 # Exported type doc must start with type name
-        - ST1022 # Exported var/const doc must start with identifier name
-        - ST1023 # No redundant type in variable declaration
+        - all # enable all SA* (correctness), ST* (style), S* (simplify), QF* (quickfix)
+        - -ST1013 # skip: HTTP status code constants (too strict for test code)
+        - -ST1015 # skip: default case position in switch (purely cosmetic)
+        - -ST1017 # skip: yoda conditions (rarely relevant in Go)
+        - -ST1018 # skip: zero-width characters in strings (extremely niche)
