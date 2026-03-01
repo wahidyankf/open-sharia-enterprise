@@ -129,7 +129,26 @@ hugo new content/updates/YYYY-MM-DD-post-title.md
 
 ## 🚢 Deployment
 
-This site is deployed automatically via CI/CD when changes are pushed to the designated production branch.
+**Production Branch**: `prod-oseplatform-web`
+
+### Automated Deployment (Primary)
+
+Deployment is automated via the `deploy-oseplatform-web.yml` GitHub Actions workflow:
+
+- **Schedule**: Runs at **6 AM and 6 PM WIB** (UTC+7) every day
+- **Change detection**: Compares `HEAD` on `main` against `prod-oseplatform-web`, scoped to `apps/oseplatform-web/`. Skips build and deploy if nothing changed
+- **Build**: Runs `nx build oseplatform-web` (Hugo extended build with PaperMod theme)
+- **Deploy**: Force-pushes `main` to `prod-oseplatform-web`; Vercel detects the push and builds automatically
+
+**Manual trigger**: The workflow can also be triggered on-demand from the GitHub Actions UI. Set `force_deploy=true` to deploy even if no changes are detected.
+
+### Emergency / On-Demand Deployment
+
+For immediate deployments outside the scheduled window, use the `apps-oseplatform-web-deployer` AI agent or run directly:
+
+```bash
+git push --force origin HEAD:prod-oseplatform-web
+```
 
 ## 📜 License
 

@@ -1,0 +1,82 @@
+name: Deploy - AyoKoding Web
+
+on:
+  schedule:
+    - cron: "0 23 * * *" # 6 AM WIB (UTC+7)
+    - cron: "0 11 * * *" # 6 PM WIB (UTC+7)
+  workflow_dispatch:
+    inputs:
+      force_deploy:
+        description: "Deploy even if no changes detected"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  detect-changes:
+    name: Detect changes in ayokoding-web
+    runs-on: ubuntu-latest
+    outputs:
+      has_changes: ${{ steps.check.outputs.has_changes }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for changes vs production branch
+        id: check
+        run: |
+          git fetch origin prod-ayokoding-web 2>/dev/null || true
+          if git show-ref --verify --quiet refs/remotes/origin/prod-ayokoding-web; then
+            DIFF=$(git diff --name-only origin/prod-ayokoding-web HEAD -- apps/ayokoding-web/)
+            if [ -n "$DIFF" ]; then
+              echo "Changes detected:"
+              echo "$DIFF"
+              echo "has_changes=true" >> $GITHUB_OUTPUT
+            else
+              echo "No changes in apps/ayokoding-web/ since last deploy"
+              echo "has_changes=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "Production branch does not exist — deploying for the first time"
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+
+  build-and-deploy:
+    name: Build and deploy ayokoding-web
+    needs: detect-changes
+    if: needs.detect-changes.outputs.has_changes == 'true' || inputs.force_deploy == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Volta
+        uses: volta-cli/action@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.2"
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: "0.156.0"
+          extended: true
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build ayokoding-web
+        run: npx nx build ayokoding-web
+
+      - name: Deploy to production branch
+        run: git push --force origin HEAD:prod-ayokoding-web

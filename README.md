@@ -3,6 +3,8 @@
 ✨ An enterprise solutions platform for Sharia-compliant business systems.
 
 [![E2E - OrganicLever](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-organiclever.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-organiclever.yml)
+[![Deploy - AyoKoding Web](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/deploy-ayokoding-web.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/deploy-ayokoding-web.yml)
+[![Deploy - OSE Platform Web](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/deploy-oseplatform-web.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/deploy-oseplatform-web.yml)
 
 🌐 **Live Sites**:
 
