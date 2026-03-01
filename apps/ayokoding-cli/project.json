@@ -36,7 +36,7 @@
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "golangci-lint run ./...",
+        "command": "golangci-lint run --allow-parallel-runners ./...",
         "cwd": "apps/ayokoding-cli"
       }
     }
