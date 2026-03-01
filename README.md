@@ -14,7 +14,7 @@
 
 ## 🚧 Project Status
 
-> ⚠️ **PRE-ALPHA** - This project is in early development and **NOT ready for production use**. Core architecture and patterns are still being established. APIs and implementations may change significantly. **Contributions and pull requests are not being accepted** at this time.
+> ⚠️ **Phase 1 - In Development** - APIs and implementations may change significantly. **Contributions and pull requests are not being accepted** at this time.
 
 **Current Phase: Phase 1 (OrganicLever - Productivity Tracker)**
 
@@ -34,7 +34,7 @@ Building OrganicLever, a full-stack individual productivity tracker:
 - 🧪 Experimental implementations
 - ❌ Not accepting public contributions yet
 
-⚠️ **Do NOT use for production.** See **[ROADMAP.md](./ROADMAP.md)** for complete development phases and strategy.
+See **[ROADMAP.md](./ROADMAP.md)** for complete development phases and strategy.
 
 ## 🎯 Motivation
 

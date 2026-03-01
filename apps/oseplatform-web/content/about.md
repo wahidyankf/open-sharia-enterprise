@@ -150,8 +150,6 @@ Full enterprise capabilities with maximum scale:
 
 ## Project Status
 
-⚠️ **PRE-ALPHA** - This project is in early development and **NOT ready for production use**.
-
 **Current Phase: Phase 1 - OrganicLever (Productivity Tracker)**
 
 Phase 0 foundations are complete. We are now actively building OrganicLever, the first product application:
@@ -168,11 +166,10 @@ Phase 0 foundations are complete. We are now actively building OrganicLever, the
 - 🚧 OrganicLever App - Flutter mobile & web app (Android, iOS, web) in development
 - 🚧 OrganicLever API - Spring Boot REST API backend in development
 
-**Not Yet Available:**
+**Note:**
 
-- ❌ No stable APIs
-- ❌ No security hardening
-- ❌ Not accepting public contributions
+- 🔄 APIs and architecture are actively evolving
+- ❌ Not accepting public contributions yet
 
 ## Technology
 
@@ -191,7 +188,7 @@ This project is licensed under the **MIT License** - giving you complete freedom
 
 ## Get Involved
 
-While we're not yet accepting public contributions (pre-alpha), you can stay connected and support the project:
+While we're not yet accepting public contributions, you can stay connected and support the project:
 
 ### Follow the Project
 
