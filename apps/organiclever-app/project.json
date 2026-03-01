@@ -51,5 +51,6 @@
       "dependsOn": ["install"]
     }
   },
-  "tags": ["type:app", "platform:flutter", "domain:organiclever"]
+  "tags": ["type:app", "platform:flutter", "domain:organiclever"],
+  "implicitDependencies": ["organiclever-be"]
 }

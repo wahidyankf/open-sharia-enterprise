@@ -58,5 +58,6 @@
       }
     }
   },
-  "tags": []
+  "tags": [],
+  "implicitDependencies": ["rhino-cli"]
 }

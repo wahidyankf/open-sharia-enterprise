@@ -2,6 +2,7 @@
   "name": "ayokoding-web",
   "sourceRoot": "apps/ayokoding-web",
   "projectType": "application",
+  "implicitDependencies": ["ayokoding-cli"],
   "targets": {
     "dev": {
       "executor": "nx:run-commands",

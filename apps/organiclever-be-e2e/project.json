@@ -47,5 +47,6 @@
       }
     }
   },
-  "tags": ["type:e2e", "platform:playwright", "domain:organiclever"]
+  "tags": ["type:e2e", "platform:playwright", "domain:organiclever"],
+  "implicitDependencies": ["organiclever-be"]
 }
