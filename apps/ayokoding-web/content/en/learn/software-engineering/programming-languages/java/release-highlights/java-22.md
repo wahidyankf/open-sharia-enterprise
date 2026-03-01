@@ -384,7 +384,7 @@ Continued SIMD API refinement with minor improvements.
 
 ## Related Topics
 
-- [Java 21 LTS](/en/learn/software-engineering/programming-languages/java/release-highlights/java-21) - Previous LTS
+- [Java 21 LTS](/en/learn/software-engineering/programming-languages/java/release-highlights/java-21-lts) - Previous LTS
 - [Java 23](/en/learn/software-engineering/programming-languages/java/release-highlights/java-23) - Next release
 - [Foreign Function & Memory API](/en/learn/software-engineering/programming-languages/java/in-the-field/json-and-api-integration) - In-the-field guide
 

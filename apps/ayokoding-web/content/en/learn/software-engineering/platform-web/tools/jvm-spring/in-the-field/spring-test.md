@@ -770,8 +770,8 @@ public void test_shouldCallRepository() {
 
 ## See Also
 
-- [Test-Driven Development](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/tdd) - Red-Green-Refactor TDD workflow
-- [Behavior-Driven Development](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/bdd) - Cucumber and Gherkin for BDD
+- Test-Driven Development - Red-Green-Refactor TDD workflow
+- Behavior-Driven Development - Cucumber and Gherkin for BDD
 - [Transaction Management](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/transaction-management) - @Transactional for database transactions
 - [Dependency Injection](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/dependency-injection) - Spring DI and @Autowired
 - [Spring Data JPA](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/spring-data-jpa) - Repository pattern and JPA integration

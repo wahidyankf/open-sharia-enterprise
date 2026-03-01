@@ -723,4 +723,4 @@ public class AuthInterceptor implements HandlerInterceptor {
 - [Exception Handling](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/exception-handling) - @ExceptionHandler and @ControllerAdvice
 - [Validation](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/validation) - Bean Validation patterns
 - [Configuration](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/configuration) - WebMvcConfigurer setup
-- [Java Servlets](/en/learn/software-engineering/programming-languages/java/in-the-field/servlets) - Servlet API baseline
+- Java Servlets - Servlet API baseline

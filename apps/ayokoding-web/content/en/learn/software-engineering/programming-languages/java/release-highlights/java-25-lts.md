@@ -663,5 +663,5 @@ Java 25 LTS (2025) optimizes Java for enterprise with:
 
 **Next Steps:**
 
-- Review [Java 17 Highlights](/en/learn/software-engineering/programming-languages/java/release-highlights/java-17) for foundation
-- Explore [Java 21 Highlights](/en/learn/software-engineering/programming-languages/java/release-highlights/java-21) for virtual threads
+- Review [Java 17 Highlights](/en/learn/software-engineering/programming-languages/java/release-highlights/java-17-lts) for foundation
+- Explore [Java 21 Highlights](/en/learn/software-engineering/programming-languages/java/release-highlights/java-21-lts) for virtual threads

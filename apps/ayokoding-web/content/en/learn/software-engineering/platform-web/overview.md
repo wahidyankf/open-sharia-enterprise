@@ -37,7 +37,7 @@ Web platforms provide comprehensive frameworks for building modern web applicati
 
 ### JVM Spring Boot - Java & Kotlin Web Framework
 
-**[JVM Spring Boot](/en/learn/software-engineering/platform-web/jvm-spring-boot)** simplifies enterprise web development with Java and Kotlin:
+**[JVM Spring Boot](/en/learn/software-engineering/platform-web/tools/jvm-spring-boot)** simplifies enterprise web development with Java and Kotlin:
 
 - **Auto-Configuration** - Minimal setup with sensible defaults
 - **REST APIs** - Build RESTful web services with Spring MVC
@@ -50,7 +50,7 @@ Web platforms provide comprehensive frameworks for building modern web applicati
 
 ### Elixir Phoenix - Real-Time Web Framework
 
-**[Elixir Phoenix](/en/learn/software-engineering/platform-web/elixir-phoenix)** delivers high-performance concurrent web applications:
+**[Elixir Phoenix](/en/learn/software-engineering/platform-web/tools/elixir-phoenix)** delivers high-performance concurrent web applications:
 
 - **MVC Architecture** - Model-View-Controller pattern with functional programming
 - **LiveView** - Real-time server-rendered UI without JavaScript
@@ -131,8 +131,8 @@ Learn through practical, annotated code examples you can run immediately. The co
 
 Choose the platform matching your language and requirements:
 
-- **Java/Kotlin developers** → [JVM Spring Boot](/en/learn/software-engineering/platform-web/jvm-spring-boot)
-- **Elixir developers** → [Elixir Phoenix](/en/learn/software-engineering/platform-web/elixir-phoenix)
+- **Java/Kotlin developers** → [JVM Spring Boot](/en/learn/software-engineering/platform-web/tools/jvm-spring-boot)
+- **Elixir developers** → [Elixir Phoenix](/en/learn/software-engineering/platform-web/tools/elixir-phoenix)
 - **Need real-time features** → Phoenix with LiveView or Channels
 - **Enterprise applications** → Spring Boot with Spring ecosystem
 

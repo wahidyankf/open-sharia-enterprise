@@ -902,4 +902,4 @@ Now that you've built a working Spring Framework application, continue learning:
 - Testing strategies
 - Production configurations
 
-**[Spring Boot Tutorial](/en/learn/software-engineering/platform-web/jvm-spring-boot)** - After mastering Spring Framework fundamentals, learn how Spring Boot simplifies configuration and deployment
+**[Spring Boot Tutorial](/en/learn/software-engineering/platform-web/tools/jvm-spring-boot)** - After mastering Spring Framework fundamentals, learn how Spring Boot simplifies configuration and deployment

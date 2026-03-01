@@ -11,11 +11,11 @@ tags: ["typescript", "overview", "learning-path", "tutorial", "programming"]
 
 ## Where TypeScript Fits in Your Learning Journey
 
-**TypeScript is the #3 recommended language** in our pedagogical sequence. Best learned after [JavaScript](/en/learn/software-engineering/programming-languages/javascript), TypeScript adds static typing and modern tooling to JavaScript's flexibility.
+**TypeScript is the #3 recommended language** in our pedagogical sequence. Best learned after JavaScript, TypeScript adds static typing and modern tooling to JavaScript's flexibility.
 
 **Why TypeScript after JavaScript?** TypeScript is a superset of JavaScript - all JavaScript is valid TypeScript. Once you understand JavaScript fundamentals, TypeScript adds compile-time type checking, better IDE support, and safer refactoring. This progressive enhancement approach lets you adopt types gradually.
 
-**What's next?** After mastering TypeScript, you're ready for [React](/en/learn/software-engineering/programming-languages/react) (TypeScript frontend), [Node.js](/en/learn/software-engineering/programming-languages/nodejs) (TypeScript backend), or framework-specific development. See [Programming Languages Overview](/en/learn/software-engineering/programming-languages/overview) for the complete learning path.
+**What's next?** After mastering TypeScript, you're ready for React (TypeScript frontend), Node.js (TypeScript backend), or framework-specific development. See [Programming Languages Overview](/en/learn/software-engineering/programming-languages/overview) for the complete learning path.
 
 ## Getting Started
 

@@ -443,5 +443,5 @@ Java 17 LTS (2021) established modern Java foundations with:
 
 **Next Steps:**
 
-- Review [Java 21 Highlights](/en/learn/software-engineering/programming-languages/java/release-highlights/java-21) for virtual threads and sequenced collections
-- Explore [Java 25 Highlights](/en/learn/software-engineering/programming-languages/java/release-highlights/java-25) for performance optimizations
+- Review [Java 21 Highlights](/en/learn/software-engineering/programming-languages/java/release-highlights/java-21-lts) for virtual threads and sequenced collections
+- Explore [Java 25 Highlights](/en/learn/software-engineering/programming-languages/java/release-highlights/java-25-lts) for performance optimizations

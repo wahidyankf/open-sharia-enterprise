@@ -884,4 +884,4 @@ public Executor taskExecutor() {
 - [Messaging](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/messaging) - JMS for asynchronous messaging
 - [Events](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/events) - ApplicationEvent for async event handling
 - [Transaction Management](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/transaction-management) - @Transactional with @Async
-- [Reactive Programming](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/reactive-programming) - Project Reactor for reactive streams
+- Reactive Programming - Project Reactor for reactive streams

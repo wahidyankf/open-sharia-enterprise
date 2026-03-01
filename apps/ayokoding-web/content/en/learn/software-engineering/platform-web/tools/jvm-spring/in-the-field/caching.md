@@ -702,4 +702,4 @@ Cache selectively based on conditions:
 - [Spring Data JPA](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/spring-data-jpa) - JPA query caching
 - [Configuration](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/configuration) - Cache manager configuration
 - [Connection Pooling](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/connection-pooling) - Reduce database load
-- [Java Concurrency](/en/learn/software-engineering/programming-languages/java/in-the-field/concurrency) - Thread-safe caching
+- [Java Concurrency](/en/learn/software-engineering/programming-languages/java/in-the-field/concurrency-and-parallelism) - Thread-safe caching

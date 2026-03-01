@@ -18,7 +18,7 @@ Before adding LiveView, you need:
 - Phoenix framework installed and working (Phoenix 1.7+)
 - Elixir 1.14+ and Erlang/OTP 25+ installed
 - Existing Phoenix application (or create new one)
-- Basic Phoenix knowledge (routing, controllers, views) - see [Phoenix by Example](/en/learn/software-engineering/platform-web/elixir-phoenix/by-example)
+- Basic Phoenix knowledge (routing, controllers, views) - see [Phoenix by Example](/en/learn/software-engineering/platform-web/tools/elixir-phoenix/by-example)
 - Basic Elixir knowledge - see [Elixir by Example](/en/learn/software-engineering/programming-languages/elixir/by-example)
 
 **Important**: Phoenix LiveView requires Phoenix 1.5+. Phoenix 1.7+ includes LiveView by default in new projects.

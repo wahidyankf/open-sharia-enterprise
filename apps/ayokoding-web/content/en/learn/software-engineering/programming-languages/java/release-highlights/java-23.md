@@ -398,7 +398,7 @@ java --enable-preview --source 23 MyApp.java
 ## Related Topics
 
 - [Java 22](/en/learn/software-engineering/programming-languages/java/release-highlights/java-22) - Previous release
-- [Java 21 LTS](/en/learn/software-engineering/programming-languages/java/release-highlights/java-21) - Latest LTS
+- [Java 21 LTS](/en/learn/software-engineering/programming-languages/java/release-highlights/java-21-lts) - Latest LTS
 - [Performance Optimization](/en/learn/software-engineering/programming-languages/java/in-the-field/performance) - In-the-field guide
 
 ## References

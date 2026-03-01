@@ -384,8 +384,8 @@ java --illegal-access=warn -jar myapp.jar
 ## Related Topics
 
 - [Java 15](/en/learn/software-engineering/programming-languages/java/release-highlights/java-15) - Previous release
-- [Java 17 LTS](/en/learn/software-engineering/programming-languages/java/release-highlights/java-17) - Next release (LTS)
-- [Records](/en/learn/software-engineering/programming-languages/java/by-example/intermediate/records) - By-example tutorial
+- [Java 17 LTS](/en/learn/software-engineering/programming-languages/java/release-highlights/java-17-lts) - Next release (LTS)
+- Records - By-example tutorial
 - [Pattern Matching](/en/learn/software-engineering/programming-languages/java/in-the-field/functional-programming) - In-the-field guide
 
 ## References

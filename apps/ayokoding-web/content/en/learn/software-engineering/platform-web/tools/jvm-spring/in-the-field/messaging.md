@@ -819,4 +819,4 @@ public void handleHighPriority(ZakatNotification notification) {
 - [Events](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/events) - ApplicationEvent and @EventListener for in-process events
 - [Scheduling](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/scheduling) - @Scheduled for periodic tasks
 - [Transaction Management](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/transaction-management) - @Transactional for JMS-database coordination
-- [Spring Integration](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/spring-integration) - Advanced messaging patterns and EIP
+- Spring Integration - Advanced messaging patterns and EIP

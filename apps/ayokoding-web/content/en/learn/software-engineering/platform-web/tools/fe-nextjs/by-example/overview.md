@@ -9,7 +9,7 @@ tags: ["nextjs", "react", "typescript", "by-example", "code-first", "examples"]
 
 **Want to learn Next.js through code?** This by-example tutorial provides 75-90 heavily annotated examples covering 95% of Next.js + TypeScript. Master Next.js patterns, Server Components, Server Actions, and best practices through working code rather than lengthy explanations.
 
-**Critical prerequisite**: Next.js is built on React. This guide assumes you understand [React fundamentals](/en/learn/software-engineering/platform-web/fe-react). If you're new to React, complete the [React by-example tutorial](/en/learn/software-engineering/platform-web/tools/fe-react/by-example) first.
+**Critical prerequisite**: Next.js is built on React. This guide assumes you understand [React fundamentals](/en/learn/software-engineering/platform-web/tools/fe-react). If you're new to React, complete the [React by-example tutorial](/en/learn/software-engineering/platform-web/tools/fe-react/by-example) first.
 
 ## What Is By-Example Learning?
 
@@ -197,7 +197,7 @@ All examples follow a consistent five-part format:
 
 We exclude topics that belong in specialized tutorials:
 
-- **React Fundamentals**: JSX, components, props, state, hooks (see [React tutorial](/en/learn/software-engineering/platform-web/fe-react))
+- **React Fundamentals**: JSX, components, props, state, hooks (see [React tutorial](/en/learn/software-engineering/platform-web/tools/fe-react))
 - **Advanced TypeScript**: Deep TypeScript features unrelated to Next.js
 - **State Management Libraries**: Redux, Zustand (use React Context or Server State)
 - **Testing Deep Dives**: Advanced testing strategies (separate testing tutorial)
@@ -211,7 +211,7 @@ For these topics, see dedicated tutorials and framework documentation.
 
 ### Required
 
-- **React fundamentals**: Components, props, state, hooks, JSX ([React tutorial](/en/learn/software-engineering/platform-web/fe-react))
+- **React fundamentals**: Components, props, state, hooks, JSX ([React tutorial](/en/learn/software-engineering/platform-web/tools/fe-react))
 - **JavaScript fundamentals**: ES6+ syntax, async/await, destructuring
 - **TypeScript basics**: Basic types, interfaces, generics
 - **HTML/CSS**: Basic web fundamentals, DOM concepts

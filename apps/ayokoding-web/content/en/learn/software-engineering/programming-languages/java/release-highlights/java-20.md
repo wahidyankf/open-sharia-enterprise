@@ -340,7 +340,7 @@ java --enable-preview --add-modules jdk.incubator.concurrent --source 20 MyApp.j
 ## Related Topics
 
 - [Java 19](/en/learn/software-engineering/programming-languages/java/release-highlights/java-19) - Previous release (Virtual Threads debut)
-- [Java 21 LTS](/en/learn/software-engineering/programming-languages/java/release-highlights/java-21) - Next release (LTS with Virtual Threads standard)
+- [Java 21 LTS](/en/learn/software-engineering/programming-languages/java/release-highlights/java-21-lts) - Next release (LTS with Virtual Threads standard)
 - [Concurrency and Parallelism](/en/learn/software-engineering/programming-languages/java/in-the-field/concurrency-and-parallelism) - In-the-field guide
 
 ## References

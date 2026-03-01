@@ -664,4 +664,4 @@ spring:
 - [Spring Data JPA](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/spring-data-jpa) - JPA with connection pooling
 - [Transaction Management](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/transaction-management) - Transaction and connection interaction
 - [Configuration](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/configuration) - DataSource bean configuration
-- [Java JDBC](/en/learn/software-engineering/programming-languages/java/in-the-field/jdbc) - JDBC baseline patterns
+- Java JDBC - JDBC baseline patterns

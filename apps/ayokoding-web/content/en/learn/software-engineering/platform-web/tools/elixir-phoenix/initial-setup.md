@@ -722,7 +722,7 @@ Open browser to `http://localhost:4000` - should see Phoenix welcome page.
 
 **Want comprehensive Phoenix mastery?**
 
-- [Beginner Tutorial](/en/learn/software-engineering/platform-web/tools/elixir-phoenix/by-concept/beginner) (0-60% coverage) - Deep dive into Phoenix with extensive practice
+- [Beginner Tutorial](/en/learn/software-engineering/platform-web/tools/elixir-phoenix/by-example/beginner) (0-60% coverage) - Deep dive into Phoenix with extensive practice
 
 **Prefer code-first learning?**
 

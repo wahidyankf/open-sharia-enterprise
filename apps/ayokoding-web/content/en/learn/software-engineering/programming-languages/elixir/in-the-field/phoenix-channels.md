@@ -868,4 +868,4 @@ end
 
 **Real-time benefits**: Immediate updates to all connected clients, scalable WebSocket infrastructure
 
-**Next steps**: Explore [distributed Phoenix](/en/learn/software-engineering/programming-languages/elixir/in-the-field/distributed-phoenix) for multi-node real-time systems, or [performance optimization](/en/learn/software-engineering/programming-languages/elixir/in-the-field/performance-optimization) for channel scaling.
+**Next steps**: Explore distributed Phoenix for multi-node real-time systems, or [performance optimization](/en/learn/software-engineering/programming-languages/elixir/in-the-field/performance-optimization) for channel scaling.

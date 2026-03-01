@@ -852,7 +852,7 @@ management:
 
 ## See Also
 
-- [Spring Boot Actuator](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/actuator) - Monitoring and metrics
+- Spring Boot Actuator - Monitoring and metrics
 - [Caching Strategies](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/caching) - Redis, Caffeine integration
 - [Async Processing](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/async-processing) - @Async and CompletableFuture
 - [Database Connection Pooling](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/connection-pooling) - HikariCP optimization

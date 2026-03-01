@@ -495,7 +495,7 @@ mix test
 ## Related Topics
 
 - [Elixir 1.16](/en/learn/software-engineering/programming-languages/elixir/release-highlights/elixir-1-16) - Previous release
-- [OTP Fundamentals](/en/learn/software-engineering/programming-languages/elixir/tutorials/by-concept/otp-fundamentals) - Understanding OTP architecture
+- OTP Fundamentals - Understanding OTP architecture
 
 ## References
 

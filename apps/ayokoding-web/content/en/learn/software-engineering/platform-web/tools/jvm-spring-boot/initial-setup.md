@@ -762,7 +762,7 @@ Should return JSON with message and timestamp.
 
 **Want comprehensive Spring Boot mastery?**
 
-- [Beginner Tutorial](/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-concept/beginner) (0-60% coverage) - Deep dive into Spring Boot with extensive practice
+- [Beginner Tutorial](/en/learn/software-engineering/platform-web/tools/jvm-spring-boot/by-example/beginner) (0-60% coverage) - Deep dive into Spring Boot with extensive practice
 
 **Prefer code-first learning?**
 

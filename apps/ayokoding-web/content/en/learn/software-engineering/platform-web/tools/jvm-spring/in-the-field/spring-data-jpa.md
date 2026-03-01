@@ -693,4 +693,4 @@ Specification<ZakatAccount> spec = Specification
 - [Transaction Management](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/transaction-management) - @Transactional patterns
 - [Caching](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/caching) - Cache JPA queries
 - [Configuration](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/configuration) - DataSource bean setup
-- [Java JPA](/en/learn/software-engineering/programming-languages/java/in-the-field/jpa) - JPA baseline patterns
+- Java JPA - JPA baseline patterns

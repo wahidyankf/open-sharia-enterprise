@@ -842,4 +842,4 @@ public class AccountNotFoundException extends BusinessException {
 - [REST APIs](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/rest-apis) - REST API error responses
 - [Validation](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/validation) - Validation exception handling
 - [Configuration](/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/configuration) - Environment-specific error configuration
-- [Java Exception Handling](/en/learn/software-engineering/programming-languages/java/in-the-field/exceptions) - Exception handling patterns
+- Java Exception Handling - Exception handling patterns

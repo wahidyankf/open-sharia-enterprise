@@ -312,7 +312,7 @@ try (MemorySegment segment = MemorySegment.allocateNative(100)) {
 
 - [Java 14](/en/learn/software-engineering/programming-languages/java/release-highlights/java-14) - Previous release
 - [Java 16](/en/learn/software-engineering/programming-languages/java/release-highlights/java-16) - Next release
-- [Java 17 LTS](/en/learn/software-engineering/programming-languages/java/release-highlights/java-17) - Next LTS release
+- [Java 17 LTS](/en/learn/software-engineering/programming-languages/java/release-highlights/java-17-lts) - Next LTS release
 - [Garbage Collection](/en/learn/software-engineering/programming-languages/java/in-the-field/performance) - In-the-field guide
 
 ## References

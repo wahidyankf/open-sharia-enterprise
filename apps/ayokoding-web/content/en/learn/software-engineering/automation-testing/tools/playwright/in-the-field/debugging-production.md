@@ -1294,9 +1294,9 @@ npx playwright show-trace test-results/traces/test-name-trace.zip # => Verify tr
 
 **Related In-the-Field Guides**:
 
-- [Playwright CI Integration](/en/learn/software-engineering/automation-testing/tools/playwright/in-the-field/ci-integration) - Configure Playwright in GitHub Actions, GitLab CI, Jenkins
-- [Playwright Performance Testing](/en/learn/software-engineering/automation-testing/tools/playwright/in-the-field/performance) - Lighthouse integration, Core Web Vitals
-- [Playwright Authentication](/en/learn/software-engineering/automation-testing/tools/playwright/in-the-field/authentication) - JWT, OAuth2, session management in tests
+- [Playwright CI Integration](/en/learn/software-engineering/automation-testing/tools/playwright/in-the-field/ci-cd-integration) - Configure Playwright in GitHub Actions, GitLab CI, Jenkins
+- [Playwright Performance Testing](/en/learn/software-engineering/automation-testing/tools/playwright/in-the-field/performance-testing) - Lighthouse integration, Core Web Vitals
+- [Playwright Authentication](/en/learn/software-engineering/automation-testing/tools/playwright/in-the-field/authentication-flows) - JWT, OAuth2, session management in tests
 
 **References**:
 

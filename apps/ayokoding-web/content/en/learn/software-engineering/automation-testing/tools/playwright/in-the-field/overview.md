@@ -248,9 +248,9 @@ When introducing a framework:
 Jump into production implementation guides:
 
 - [Test Organization](/en/learn/software-engineering/automation-testing/tools/playwright/in-the-field/test-organization) - Page Object Model, fixtures, test structure
-- [CI/CD Integration](/en/learn/software-engineering/automation-testing/tools/playwright/in-the-field/ci-cd) - GitHub Actions, Docker, parallel execution
-- [Authentication Flows](/en/learn/software-engineering/automation-testing/tools/playwright/in-the-field/authentication) - Session management, JWT, OAuth2
+- [CI/CD Integration](/en/learn/software-engineering/automation-testing/tools/playwright/in-the-field/ci-cd-integration) - GitHub Actions, Docker, parallel execution
+- [Authentication Flows](/en/learn/software-engineering/automation-testing/tools/playwright/in-the-field/authentication-flows) - Session management, JWT, OAuth2
 - [Visual Regression](/en/learn/software-engineering/automation-testing/tools/playwright/in-the-field/visual-regression) - Screenshot comparison, Percy integration
-- [Performance Testing](/en/learn/software-engineering/automation-testing/tools/playwright/in-the-field/performance) - Load testing, resource monitoring
+- [Performance Testing](/en/learn/software-engineering/automation-testing/tools/playwright/in-the-field/performance-testing) - Load testing, resource monitoring
 
 Each guide provides production-ready code, enterprise patterns, and trade-off analysis. Start with Test Organization and CI/CD Integration as foundations, then explore topics relevant to your production needs.

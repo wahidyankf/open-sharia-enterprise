@@ -316,7 +316,7 @@ java --enable-preview --source 19 MyApp.java
 
 - [Java 18](/en/learn/software-engineering/programming-languages/java/release-highlights/java-18) - Previous release
 - [Java 20](/en/learn/software-engineering/programming-languages/java/release-highlights/java-20) - Next release
-- [Java 21 LTS](/en/learn/software-engineering/programming-languages/java/release-highlights/java-21) - Virtual Threads become standard
+- [Java 21 LTS](/en/learn/software-engineering/programming-languages/java/release-highlights/java-21-lts) - Virtual Threads become standard
 - [Concurrency and Parallelism](/en/learn/software-engineering/programming-languages/java/in-the-field/concurrency-and-parallelism) - In-the-field guide
 
 ## References
