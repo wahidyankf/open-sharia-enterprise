@@ -137,12 +137,17 @@ Contains reusable library packages.
 
 **Language Prefixes**:
 
-- `ts-` - TypeScript (current implementation)
+- `ts-` - TypeScript (future)
+- `go-` - Go (current — `golang-commons` uses full name for clarity)
 - `java-` - Java (future)
 - `kt-` - Kotlin (future)
 - `py-` - Python (future)
 
-**Examples**:
+**Current Libraries**:
+
+- `golang-commons` - Shared Go utilities (links checker + output functions)
+
+**Examples** (planned):
 
 - `ts-utils` - TypeScript utility functions
 - `ts-components` - Reusable React components
@@ -181,7 +186,7 @@ libs/ts-utils/
 
 ### Current Scope
 
-TypeScript libraries only. Future languages (Java, Kotlin, Python) not yet implemented.
+Go (`golang-commons`) and future TypeScript, Java, Kotlin, Python libraries.
 
 ## Experimental Projects vs Monorepo Projects
 

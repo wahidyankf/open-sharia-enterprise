@@ -2,6 +2,7 @@
   "name": "ayokoding-cli",
   "sourceRoot": "apps/ayokoding-cli",
   "projectType": "application",
+  "implicitDependencies": ["golang-commons"],
   "targets": {
     "build": {
       "executor": "nx:run-commands",

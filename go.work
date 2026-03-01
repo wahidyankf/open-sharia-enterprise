@@ -1,0 +1,9 @@
+go 1.26
+
+use (
+	./apps/ayokoding-cli
+	./apps/javaproject-cli
+	./apps/oseplatform-cli
+	./apps/rhino-cli
+	./libs/golang-commons
+)
