@@ -138,15 +138,15 @@ them for `nx affected -t lint`.
 
 **`test:quick` composition** — each project decides which fast checks form its gate. The target runs its checks directly (calling the underlying tools, not other Nx targets) to avoid double execution when `lint` or `typecheck` are also run standalone by the pre-push hook. Common compositions:
 
-| Project type       | Typical `test:quick` composition                                                |
-| ------------------ | ------------------------------------------------------------------------------- |
-| TypeScript app     | unit tests via vitest (typecheck and lint run separately in pre-push)           |
-| Go app             | `go test ./...` (compiles and runs unit tests in one pass; Go is fast enough)   |
-| Java/Spring Boot   | unit tests (Maven compile + Surefire unit subset)                               |
-| Python app         | typecheck (mypy) + unit tests                                                   |
-| Hugo site          | `build` (smoke test; interpreted, no unit tests)                                |
-| Flutter/Dart       | unit tests (`flutter test`); `flutter analyze` runs via `typecheck`, not `lint` |
-| Playwright `*-e2e` | run the linter directly (no unit tests to add beyond linting)                   |
+| Project type       | Typical `test:quick` composition                                                                                                                                                                                                                                                                        |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TypeScript app     | unit tests via vitest (typecheck and lint run separately in pre-push)                                                                                                                                                                                                                                   |
+| Go app             | `go test -coverprofile=cover.out ./... && go tool go-test-coverage` — compiles and runs unit tests, then enforces ≥80% total coverage. The `go-test-coverage` tool is declared via the Go 1.24+ `tool` directive in each module's `go.mod` and configured via `.testcoverage.yml` at each project root. |
+| Java/Spring Boot   | unit tests (Maven compile + Surefire unit subset)                                                                                                                                                                                                                                                       |
+| Python app         | typecheck (mypy) + unit tests                                                                                                                                                                                                                                                                           |
+| Hugo site          | `build` (smoke test; interpreted, no unit tests)                                                                                                                                                                                                                                                        |
+| Flutter/Dart       | unit tests (`flutter test`); `flutter analyze` runs via `typecheck`, not `lint`                                                                                                                                                                                                                         |
+| Playwright `*-e2e` | run the linter directly (no unit tests to add beyond linting)                                                                                                                                                                                                                                           |
 
 The rule: include only checks that complete fast. If `test:unit` is slow for a project, exclude it from `test:quick` and run it separately. **The target must always exist** — even if it only runs the type checker — so the pre-push hook covers every project.
 
