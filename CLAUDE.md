@@ -111,6 +111,11 @@ npm run doctor           # Check all required tools (volta, node, npm, java, mav
 
 **See**: [governance/development/infra/nx-targets.md](./governance/development/infra/nx-targets.md) for canonical target names, mandatory targets per project type, and caching rules.
 
+**Go projects**: All Go projects (`ayokoding-cli`, `javaproject-cli`, `oseplatform-cli`, `rhino-cli`,
+`libs/golang-commons`) enforce ≥80% test coverage via `go-test-coverage` (configured in
+`.testcoverage.yml` per project). Coverage is measured with `go test -coverprofile=cover.out ./...`
+and enforced by `go tool go-test-coverage` — both run as part of `test:quick`.
+
 ## Markdown Quality
 
 All markdown files are automatically linted and formatted:
