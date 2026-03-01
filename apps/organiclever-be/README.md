@@ -183,7 +183,7 @@ nx run organiclever-be:test:unit
 # Lint code
 nx lint organiclever-be
 
-# Null-safety check (JSpecify + NullAway — runs in pre-push hook)
+# Package annotation + null-safety check (JSpecify + NullAway — runs in pre-push hook)
 nx typecheck organiclever-be
 ```
 
