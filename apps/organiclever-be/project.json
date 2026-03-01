@@ -50,8 +50,11 @@
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "mvn compile -Pnullcheck",
-        "cwd": "apps/organiclever-be"
+        "commands": [
+          "nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli validate-java-null-safety apps/organiclever-be/src/main/java",
+          "cd apps/organiclever-be && mvn compile -Pnullcheck"
+        ],
+        "parallel": false
       }
     }
   },
