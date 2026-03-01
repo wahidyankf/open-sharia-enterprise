@@ -158,7 +158,7 @@ TypeScript, Python (with mypy), Dart/Flutter:
 | ----------- | -------------------------------------------------------------------------- |
 | `typecheck` | Run the type checker without emitting artifacts (`tsc --noEmit`, `mypy .`) |
 
-**Not required for dynamically typed languages** (plain JavaScript, Ruby) or languages where compilation already enforces types and `build` covers it (Go, plain Java). **Exception**: Java projects that use JSpecify + NullAway declare `typecheck` because NullAway runs as a separate Error Prone plugin pass (via a dedicated Maven profile) that is not part of the standard `build`. The `typecheck` target also runs `jprojectvalidator-cli` to enforce that every Java package has a `package-info.java` annotated with `@NullMarked` — packages without it are silently skipped by NullAway.
+**Not required for dynamically typed languages** (plain JavaScript, Ruby) or languages where compilation already enforces types and `build` covers it (Go, plain Java). **Exception**: Java projects that use JSpecify + NullAway declare `typecheck` because NullAway runs as a separate Error Prone plugin pass (via a dedicated Maven profile) that is not part of the standard `build`. The `typecheck` target also runs `javaproject-cli` to enforce that every Java package has a `package-info.java` annotated with `@NullMarked` — packages without it are silently skipped by NullAway.
 
 ### Compiled and Bundled Projects
 
