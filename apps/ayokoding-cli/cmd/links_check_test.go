@@ -21,7 +21,7 @@ func captureStdout(t *testing.T) func() string {
 	os.Stdout = w
 	t.Cleanup(func() { os.Stdout = orig })
 	return func() string {
-		w.Close()
+		_ = w.Close()
 		out, _ := io.ReadAll(r)
 		return string(out)
 	}
