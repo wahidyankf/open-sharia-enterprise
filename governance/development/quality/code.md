@@ -438,6 +438,58 @@ git commit -m "fix: correct validation logic"
 # Commit includes formatted version automatically
 ```
 
+## ayokoding-web Link Validation
+
+Internal links in ayokoding-web content must use Hugo absolute paths. These links are validated
+automatically on every `test:quick` run via `ayokoding-cli links check`.
+
+**Convention:**
+
+- Internal links must use absolute paths with a language prefix: `/en/...` or `/id/...`
+- No `.md` extension in link targets (Hugo resolves extensions automatically)
+- External links (`http://`, `https://`, `mailto:`) are NOT validated by this tool — use the
+  `apps-ayokoding-web-link-checker` AI agent for those
+- Same-page anchors (`#section`) are not validated
+
+**Examples:**
+
+```markdown
+<!-- Correct internal link -->
+
+[Overview](/en/learn/swe/overview)
+
+<!-- Correct — resolves to _index.md for section pages -->
+
+[Learn](/en/learn)
+
+<!-- Wrong — relative paths break in Hugo sidebar/menu contexts -->
+
+[Overview](../overview)
+
+<!-- Wrong — .md extension is not used in Hugo internal links -->
+
+[Overview](/en/learn/swe/overview.md)
+```
+
+**Validation runs automatically** as part of `test:quick` (pre-push hook and CI):
+
+```bash
+# Full quality gate including link check
+nx run ayokoding-web:test:quick
+
+# Link check only (standalone)
+nx run ayokoding-web:links:check
+```
+
+**When broken links are found:**
+
+1. The command exits with code 1 — CI fails
+2. Output table shows source file, line number, link text, and broken target
+3. Fix by correcting the target path in the source file
+4. Re-run `nx run ayokoding-web:links:check` to confirm
+
+**Dependency chain:** `ayokoding-cli:build` → `ayokoding-web:links:check` → `ayokoding-web:test:quick`
+
 ## Go CLI Linting
 
 Go CLI projects (`apps/rhino-cli`, `apps/ayokoding-cli`) use [golangci-lint](https://golangci-lint.run/) for static analysis.

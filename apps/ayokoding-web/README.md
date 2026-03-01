@@ -390,6 +390,43 @@ hugo --minify    # Build for production
 ./build.sh       # Custom build script
 ```
 
+## Link Validation
+
+Internal links in ayokoding-web use Hugo absolute paths (`/en/...`, `/id/...`) without the `.md`
+extension. These links are validated automatically as part of the standard quality gate.
+
+**Automated validation** runs as part of `test:quick`:
+
+```bash
+# Full quality gate (builds CLI, checks links, builds Hugo site)
+nx run ayokoding-web:test:quick
+```
+
+**Standalone check**:
+
+```bash
+# Build CLI first (or use cached build), then check links
+nx run ayokoding-web:links:check
+
+# Or run the binary directly (requires CLI already built)
+./apps/ayokoding-cli/dist/ayokoding-cli links check
+```
+
+**What gets validated:**
+
+| Type                   | Example                  | Validated                                               |
+| ---------------------- | ------------------------ | ------------------------------------------------------- |
+| Internal Hugo absolute | `/en/learn/swe/overview` | Yes — by `ayokoding-cli links check`                    |
+| External URL           | `https://example.com`    | Separately — by `apps-ayokoding-web-link-checker` agent |
+| Same-page anchor       | `#section-name`          | Not validated                                           |
+
+**If broken links are found:** The command exits with code 1 and prints a table listing the source
+file, line number, link text, and broken target. Fix the target paths in the source files and
+re-run to confirm.
+
+**Note:** External links are tracked separately by the `apps-ayokoding-web-link-checker` AI agent,
+which maintains a cache in `docs/metadata/external-links-status.yaml`.
+
 ## Contributing
 
 1. Fork the repository
