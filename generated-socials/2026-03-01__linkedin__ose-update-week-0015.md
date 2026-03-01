@@ -72,7 +72,7 @@ Every commit visible on GitHub. Updates every second Sunday.
 
 🔗 LINKS
 
-- Roadmap: https://github.com/wahidyankf/open-sharia-enterprise/blob/main/ROADMAP.md
-- Phase 0 Retrospective: https://www.oseplatform.com/updates/2026-02-08-phase-0-end-of-phase-0/
+- GitHub: https://github.com/wahidyankf/open-sharia-enterprise
+- Latest Monthly Update: https://www.oseplatform.com/updates/2026-02-08-phase-0-end-of-phase-0/
 - All Updates: https://www.oseplatform.com/updates/
 - Learning Content: https://www.ayokoding.com/
