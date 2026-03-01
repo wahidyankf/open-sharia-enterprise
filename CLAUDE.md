@@ -46,6 +46,7 @@ open-sharia-enterprise/
 │   └── organiclever-be-e2e/ # Playwright E2E tests for backend
 ├── apps-labs/                # Experimental apps (NOT in Nx)
 ├── libs/                     # Reusable libraries (Nx, flat structure)
+│   └── golang-commons/      # Shared Go utilities (links checker, output)
 ├── docs/                     # Documentation (Diátaxis framework)
 │   ├── tutorials/           # Learning-oriented
 │   ├── how-to/              # Problem-solving

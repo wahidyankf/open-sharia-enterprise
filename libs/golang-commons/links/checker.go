@@ -1,4 +1,4 @@
-// Package links provides utilities for validating internal links in ayokoding-web content.
+// Package links provides shared link-checking utilities for Hugo site CLIs.
 package links
 
 import (
@@ -152,7 +152,22 @@ func isInternalLink(target string) bool {
 	if strings.HasPrefix(target, "#") {
 		return false
 	}
+	// Skip links to static assets (files with extensions like .xml, .pdf, .json, etc.)
+	// Hugo-generated files (RSS feeds, sitemaps) are not markdown content pages
+	if hasFileExtension(target) {
+		return false
+	}
 	return true
+}
+
+// hasFileExtension reports whether the last path segment of target contains a dot,
+// indicating a link to a file (e.g. /updates/index.xml) rather than a Hugo page.
+func hasFileExtension(target string) bool {
+	last := target
+	if idx := strings.LastIndexByte(target, '/'); idx >= 0 {
+		last = target[idx+1:]
+	}
+	return strings.Contains(last, ".")
 }
 
 func stripFragmentAndQuery(target string) string {

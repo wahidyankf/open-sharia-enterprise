@@ -1,0 +1,29 @@
+{
+  "name": "golang-commons",
+  "sourceRoot": "libs/golang-commons",
+  "projectType": "library",
+  "targets": {
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 go test ./...",
+        "cwd": "libs/golang-commons"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 golangci-lint run ./...",
+        "cwd": "libs/golang-commons"
+      }
+    },
+    "install": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go mod tidy",
+        "cwd": "libs/golang-commons"
+      }
+    }
+  },
+  "tags": ["type:lib", "platform:golang"]
+}

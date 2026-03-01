@@ -10,10 +10,8 @@ The `libs/` directory contains **reusable library packages** that can be shared 
 
 ```
 libs/
-└── (future: ts-*, java-*, kt-*, py-*)
+└── golang-commons/    # Shared Go utilities (current)
 ```
-
-Currently empty - libraries will be added as needed.
 
 ## Naming Convention
 
@@ -23,7 +21,8 @@ This flat structure with language prefixes supports a **polyglot monorepo** wher
 
 ### Language Prefixes
 
-- **`ts-*`** - TypeScript libraries (current implementation)
+- **`ts-*`** - TypeScript libraries (future)
+- **`go-*`** - Go libraries (current implementation — `golang-commons` uses full name for clarity)
 - **`java-*`** - Java libraries (future)
 - **`kt-*`** - Kotlin libraries (future)
 - **`py-*`** - Python libraries (future)
@@ -37,6 +36,10 @@ This flat structure with language prefixes supports a **polyglot monorepo** wher
 - `ts-hooks` - Custom React hooks
 - `ts-api` - API client libraries
 
+**Go libraries** (current):
+
+- `golang-commons` - Shared Go utilities (links checker, output)
+
 **Future polyglot examples**:
 
 - `java-services` - Java backend services
@@ -48,7 +51,7 @@ This flat structure with language prefixes supports a **polyglot monorepo** wher
 
 ## Current Implementation
 
-**No libraries yet** - The `libs/` directory is currently empty. Libraries will be created as shared functionality is identified across applications. Future libraries may use TypeScript, Java, Kotlin, or Python depending on project needs.
+**`golang-commons`** - The first library in `libs/`. Provides shared Go utilities used by `ayokoding-cli` and `oseplatform-cli` (links checker, output formatting). Future libraries may use TypeScript, Java, Kotlin, or Python depending on project needs.
 
 ## Library Characteristics
 
@@ -79,6 +82,23 @@ libs/ts-[name]/
 ├── tsconfig.build.json      # Build-specific TS config
 └── README.md                # Library documentation
 ```
+
+## Required Files (Go Libraries)
+
+Each Go library requires:
+
+```
+libs/golang-commons/
+├── links/              # Sub-package: link checker + output
+│   ├── checker.go
+│   ├── checker_test.go
+│   └── output.go
+├── go.mod              # Go module definition
+├── project.json        # Nx project configuration
+└── README.md           # Library documentation
+```
+
+Go libraries are consumed via the Go workspace (`go.work`) at the repository root. No `replace` directives needed.
 
 ## Nx Configuration (project.json)
 
