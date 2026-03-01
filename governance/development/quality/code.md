@@ -438,6 +438,35 @@ git commit -m "fix: correct validation logic"
 # Commit includes formatted version automatically
 ```
 
+## Go CLI Linting
+
+Go CLI projects (`apps/rhino-cli`, `apps/ayokoding-cli`) use [golangci-lint](https://golangci-lint.run/) for static analysis.
+
+**Shared configuration**: A single `.golangci.yml` at the repository root serves all Go CLIs. golangci-lint discovers it automatically by walking up the directory tree from each app's working directory — no `--config` flag or per-project files are needed.
+
+**Active linter set** (from `.golangci.yml`):
+
+- **Standard**: `errcheck`, `govet`, `ineffassign`, `staticcheck`, `unused`
+- **Nil-safety**: `forcetypeassert`, `nilerr`, `nilnesserr`, `nilnil`
+- **Exhaustiveness**: `exhaustive` (switch statements and map literals)
+- **staticcheck checks**: `all` (SA\*, ST\*, S\*, QF\*) with 4 cosmetic ST checks excluded
+
+**Usage**:
+
+```bash
+# Run from app directory
+cd apps/rhino-cli && golangci-lint run ./...
+
+# Run via Nx
+nx lint rhino-cli
+nx lint ayokoding-cli
+
+# Verify which config file is resolved (verbose flag)
+golangci-lint run -v ./... 2>&1 | grep "Config"
+```
+
+**Convention**: All Go projects in this repository share the root `.golangci.yml`. Per-project override files should only be added if a specific project genuinely needs different rules — which should be rare given the CLIs have the same purpose and audience.
+
 ## Best Practices
 
 1. **Trust the Tools**: Let Prettier handle formatting - don't fight it

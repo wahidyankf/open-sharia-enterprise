@@ -651,6 +651,18 @@ go test ./... -v
 - `internal/sync`: 85%+ coverage (converter, copier, validator, reporter)
 - `internal/claude`: 92.6% coverage (validator, agent_validator, skill_validator)
 
+### Lint
+
+```bash
+# Run directly
+golangci-lint run ./...
+
+# Run via Nx
+nx lint rhino-cli
+```
+
+Linting uses the shared configuration at `.golangci.yml` in the repository root. golangci-lint discovers it automatically by walking up parent directories from the app's working directory.
+
 ### Run without building
 
 ```bash
@@ -679,6 +691,7 @@ nx install rhino-cli
 
 - `build` - Build the CLI binary to `dist/`
 - `test:quick` - Run unit tests (`go test ./...`)
+- `lint` - Static analysis via golangci-lint
 - `run` - Run the CLI directly (`go run main.go`)
 - `install` - Install Go dependencies (`go mod tidy`)
 
