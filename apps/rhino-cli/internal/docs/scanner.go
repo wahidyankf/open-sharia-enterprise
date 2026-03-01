@@ -18,20 +18,9 @@ func GetDocsFiles(opts ValidationOptions) ([]string, error) {
 
 // getStagedDocsFiles returns staged files in docs/ from git.
 func getStagedDocsFiles(repoRoot string) ([]string, error) {
-	lines, err := fileutil.GetStagedFiles(repoRoot)
-	if err != nil {
-		return nil, err
-	}
-	var files []string
-	for _, line := range lines {
-		// Only include files in docs/ directory
-		if !strings.HasPrefix(line, "docs/") {
-			continue
-		}
-		// Include all file types (not just .md) since naming applies to images too
-		files = append(files, filepath.Join(repoRoot, line))
-	}
-	return files, nil
+	return fileutil.GetStagedFilesFiltered(repoRoot, func(f string) bool {
+		return strings.HasPrefix(f, "docs/")
+	})
 }
 
 // getAllDocsFiles returns all files in docs/ directory.

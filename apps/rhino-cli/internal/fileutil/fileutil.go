@@ -43,6 +43,21 @@ func WalkMarkdownDirs(repoRoot string, dirs []string) ([]string, error) {
 	return files, nil
 }
 
+// GetStagedFilesFiltered returns staged files matching filter, with absolute paths.
+func GetStagedFilesFiltered(repoRoot string, filter func(string) bool) ([]string, error) {
+	lines, err := GetStagedFiles(repoRoot)
+	if err != nil {
+		return nil, err
+	}
+	var files []string
+	for _, line := range lines {
+		if filter(line) {
+			files = append(files, filepath.Join(repoRoot, line))
+		}
+	}
+	return files, nil
+}
+
 // GetStagedFiles returns all staged file paths (relative to repoRoot) from git.
 func GetStagedFiles(repoRoot string) ([]string, error) {
 	cmd := exec.Command("git", "diff", "--cached", "--name-only", "--diff-filter=ACM")

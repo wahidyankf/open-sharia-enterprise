@@ -58,20 +58,13 @@ func runDoctor(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("doctor check failed: %w", err)
 	}
 
-	var formattedOutput string
-	switch output {
-	case "json":
-		formattedOutput, err = doctor.FormatJSON(result)
-		if err != nil {
-			return fmt.Errorf("failed to format JSON: %w", err)
-		}
-	case "markdown":
-		formattedOutput = doctor.FormatMarkdown(result)
-	default: // "text"
-		formattedOutput = doctor.FormatText(result, verbose, quiet)
+	if err := writeFormatted(cmd, output, verbose, quiet, outputFuncs{
+		text:     func(v, q bool) string { return doctor.FormatText(result, v, q) },
+		json:     func() (string, error) { return doctor.FormatJSON(result) },
+		markdown: func() string { return doctor.FormatMarkdown(result) },
+	}); err != nil {
+		return err
 	}
-
-	_, _ = fmt.Fprint(cmd.OutOrStdout(), formattedOutput)
 
 	// Only missing tools cause non-zero exit; version warnings are advisory
 	if result.MissingCount > 0 {

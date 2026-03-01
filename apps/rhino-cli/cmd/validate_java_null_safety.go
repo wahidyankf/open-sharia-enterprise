@@ -74,21 +74,13 @@ func runValidateJavaNullSafety(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("validation failed: %w", err)
 	}
 
-	// Format output based on --output flag
-	var formattedOutput string
-	switch output {
-	case "json":
-		formattedOutput, err = java.FormatJSON(result)
-		if err != nil {
-			return fmt.Errorf("failed to format JSON: %w", err)
-		}
-	case "markdown":
-		formattedOutput = java.FormatMarkdown(result)
-	default: // "text"
-		formattedOutput = java.FormatText(result, verbose, quiet)
+	if err := writeFormatted(cmd, output, verbose, quiet, outputFuncs{
+		text:     func(v, q bool) string { return java.FormatText(result, v, q) },
+		json:     func() (string, error) { return java.FormatJSON(result) },
+		markdown: func() string { return java.FormatMarkdown(result) },
+	}); err != nil {
+		return err
 	}
-
-	_, _ = fmt.Fprint(cmd.OutOrStdout(), formattedOutput)
 
 	numViolations := result.TotalPackages - result.ValidPackages
 	if numViolations > 0 {

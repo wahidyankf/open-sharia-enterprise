@@ -8,6 +8,22 @@ import (
 	"time"
 )
 
+// violationTypeOrder defines the display order for violation types in reports.
+var violationTypeOrder = []ViolationType{
+	ViolationMissingSeparator,
+	ViolationWrongPrefix,
+	ViolationBadCase,
+	ViolationMissingPrefix,
+}
+
+// violationTypeDescriptions maps violation types to human-readable labels.
+var violationTypeDescriptions = map[ViolationType]string{
+	ViolationMissingSeparator: "Missing '__' separator",
+	ViolationWrongPrefix:      "Wrong prefix",
+	ViolationBadCase:          "Not kebab-case",
+	ViolationMissingPrefix:    "Missing required prefix",
+}
+
 // FormatText formats the validation result as human-readable text.
 func FormatText(result *ValidationResult, verbose, quiet bool) string {
 	var output strings.Builder
@@ -29,28 +45,13 @@ func FormatText(result *ValidationResult, verbose, quiet bool) string {
 	_, _ = fmt.Fprintf(&output, "**Files scanned**: %d\n", result.TotalFiles)
 	_, _ = fmt.Fprintf(&output, "**Valid files**: %d\n", result.ValidFiles)
 
-	// Violation type order for report
-	typeOrder := []ViolationType{
-		ViolationMissingSeparator,
-		ViolationWrongPrefix,
-		ViolationBadCase,
-		ViolationMissingPrefix,
-	}
-
-	typeDescriptions := map[ViolationType]string{
-		ViolationMissingSeparator: "Missing '__' separator",
-		ViolationWrongPrefix:      "Wrong prefix",
-		ViolationBadCase:          "Not kebab-case",
-		ViolationMissingPrefix:    "Missing required prefix",
-	}
-
-	for _, violationType := range typeOrder {
+	for _, violationType := range violationTypeOrder {
 		violations, exists := result.ViolationsByType[violationType]
 		if !exists || len(violations) == 0 {
 			continue
 		}
 
-		_, _ = fmt.Fprintf(&output, "\n## %s (%d violations)\n", typeDescriptions[violationType], len(violations))
+		_, _ = fmt.Fprintf(&output, "\n## %s (%d violations)\n", violationTypeDescriptions[violationType], len(violations))
 
 		// Group by directory
 		byDir := make(map[string][]NamingViolation)
@@ -176,28 +177,13 @@ func FormatMarkdown(result *ValidationResult) string {
 
 	output.WriteString("\n## Violations by Type\n\n")
 
-	// Violation type order
-	typeOrder := []ViolationType{
-		ViolationMissingSeparator,
-		ViolationWrongPrefix,
-		ViolationBadCase,
-		ViolationMissingPrefix,
-	}
-
-	typeDescriptions := map[ViolationType]string{
-		ViolationMissingSeparator: "Missing '__' separator",
-		ViolationWrongPrefix:      "Wrong prefix",
-		ViolationBadCase:          "Not kebab-case",
-		ViolationMissingPrefix:    "Missing required prefix",
-	}
-
-	for _, violationType := range typeOrder {
+	for _, violationType := range violationTypeOrder {
 		violations, exists := result.ViolationsByType[violationType]
 		if !exists || len(violations) == 0 {
 			continue
 		}
 
-		_, _ = fmt.Fprintf(&output, "### %s (%d)\n\n", typeDescriptions[violationType], len(violations))
+		_, _ = fmt.Fprintf(&output, "### %s (%d)\n\n", violationTypeDescriptions[violationType], len(violations))
 		output.WriteString("| File | Expected | Actual | Message |\n")
 		output.WriteString("|------|----------|--------|--------|\n")
 

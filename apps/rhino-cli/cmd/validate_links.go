@@ -2,8 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
 
 	"github.com/spf13/cobra"
 	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/links"
@@ -47,30 +45,6 @@ func init() {
 	validateLinksCmd.Flags().BoolVar(&validateLinksStagedOnly, "staged-only", false, "only validate staged files")
 }
 
-// findGitRoot finds the root directory of the git repository by walking up from the current directory.
-func findGitRoot() (string, error) {
-	dir, err := os.Getwd()
-	if err != nil {
-		return "", err
-	}
-
-	// Walk up the directory tree looking for .git
-	for {
-		gitDir := filepath.Join(dir, ".git")
-		if _, err := os.Stat(gitDir); err == nil {
-			return dir, nil
-		}
-
-		// Move up one directory
-		parent := filepath.Dir(dir)
-		if parent == dir {
-			// Reached root without finding .git
-			return "", fmt.Errorf(".git directory not found")
-		}
-		dir = parent
-	}
-}
-
 func runValidateLinks(cmd *cobra.Command, args []string) error {
 	// Find git repository root
 	repoRoot, err := findGitRoot()
@@ -93,22 +67,13 @@ func runValidateLinks(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("validation failed: %w", err)
 	}
 
-	// Format output based on --output flag
-	var formattedOutput string
-	switch output {
-	case "json":
-		formattedOutput, err = links.FormatJSON(result)
-		if err != nil {
-			return fmt.Errorf("failed to format JSON: %w", err)
-		}
-	case "markdown":
-		formattedOutput = links.FormatMarkdown(result)
-	default: // "text"
-		formattedOutput = links.FormatText(result, verbose, quiet)
+	if err := writeFormatted(cmd, output, verbose, quiet, outputFuncs{
+		text:     func(v, q bool) string { return links.FormatText(result, v, q) },
+		json:     func() (string, error) { return links.FormatJSON(result) },
+		markdown: func() string { return links.FormatMarkdown(result) },
+	}); err != nil {
+		return err
 	}
-
-	// Write output
-	_, _ = fmt.Fprint(cmd.OutOrStdout(), formattedOutput)
 
 	// Return error if broken links found (Cobra will set exit code 1)
 	if len(result.BrokenLinks) > 0 {

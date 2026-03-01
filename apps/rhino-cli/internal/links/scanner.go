@@ -68,17 +68,9 @@ func filterSkipPaths(files []string, repoRoot string, skipPaths []string) []stri
 
 // getStagedMarkdownFiles returns staged markdown files from git.
 func getStagedMarkdownFiles(repoRoot string) ([]string, error) {
-	lines, err := fileutil.GetStagedFiles(repoRoot)
-	if err != nil {
-		return nil, err
-	}
-	var files []string
-	for _, line := range lines {
-		if strings.HasSuffix(line, ".md") {
-			files = append(files, filepath.Join(repoRoot, line))
-		}
-	}
-	return files, nil
+	return fileutil.GetStagedFilesFiltered(repoRoot, func(f string) bool {
+		return strings.HasSuffix(f, ".md")
+	})
 }
 
 // getAllMarkdownFiles returns all markdown files in core directories.
