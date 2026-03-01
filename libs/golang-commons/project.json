@@ -13,7 +13,7 @@
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "CGO_ENABLED=0 golangci-lint run ./...",
+        "command": "CGO_ENABLED=0 golangci-lint run --allow-parallel-runners ./...",
         "cwd": "libs/golang-commons"
       }
     },
