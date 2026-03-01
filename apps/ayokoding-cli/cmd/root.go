@@ -23,7 +23,7 @@ var rootCmd = &cobra.Command{
 
 Provides fast navigation regeneration with support for multiple output formats
 and verbose logging.`,
-	Version: "0.3.0",
+	Version: "0.4.0",
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
