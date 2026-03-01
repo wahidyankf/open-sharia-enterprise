@@ -2,6 +2,7 @@
   "name": "rhino-cli",
   "sourceRoot": "apps/rhino-cli",
   "projectType": "application",
+  "implicitDependencies": ["golang-commons"],
   "targets": {
     "build": {
       "executor": "nx:run-commands",

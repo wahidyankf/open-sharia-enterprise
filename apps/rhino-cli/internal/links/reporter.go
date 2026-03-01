@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"sort"
 	"strings"
-	"time"
+
+	"github.com/wahidyankf/open-sharia-enterprise/libs/golang-commons/timeutil"
 )
 
 // FormatText formats the validation result as human-readable text.
@@ -116,7 +117,7 @@ func FormatJSON(result *ValidationResult) (string, error) {
 
 	output := JSONOutput{
 		Status:      status,
-		Timestamp:   time.Now().Format(time.RFC3339),
+		Timestamp:   timeutil.Timestamp(),
 		TotalFiles:  result.TotalFiles,
 		TotalLinks:  result.TotalLinks,
 		BrokenCount: len(result.BrokenLinks),

@@ -4,6 +4,7 @@ go 1.26
 
 require (
 	github.com/spf13/cobra v1.10.2
+	github.com/wahidyankf/open-sharia-enterprise/libs/golang-commons v0.0.0-00010101000000-000000000000
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -16,7 +17,6 @@ require (
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
-	github.com/kr/text v0.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/narqo/go-badge v0.0.0-20230821190521-c9a75c019a59 // indirect
@@ -29,3 +29,5 @@ require (
 )
 
 tool github.com/vladopajic/go-test-coverage/v2
+
+replace github.com/wahidyankf/open-sharia-enterprise/libs/golang-commons v0.0.0-00010101000000-000000000000 => ../../libs/golang-commons

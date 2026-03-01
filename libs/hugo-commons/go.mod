@@ -4,6 +4,8 @@ go 1.26
 
 tool github.com/vladopajic/go-test-coverage/v2
 
+require github.com/wahidyankf/open-sharia-enterprise/libs/golang-commons v0.0.0-00010101000000-000000000000
+
 require (
 	github.com/alexflint/go-arg v1.6.0 // indirect
 	github.com/alexflint/go-scalar v1.2.0 // indirect
@@ -12,7 +14,6 @@ require (
 	github.com/google/go-github/v56 v56.0.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
-	github.com/kr/text v0.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/narqo/go-badge v0.0.0-20230821190521-c9a75c019a59 // indirect
@@ -23,3 +24,5 @@ require (
 	golang.org/x/tools v0.26.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+replace github.com/wahidyankf/open-sharia-enterprise/libs/golang-commons v0.0.0-00010101000000-000000000000 => ../../libs/golang-commons

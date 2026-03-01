@@ -6,6 +6,8 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/wahidyankf/open-sharia-enterprise/libs/golang-commons/timeutil"
 )
 
 // violationTypeOrder defines the display order for violation types in reports.
@@ -138,7 +140,7 @@ func FormatJSON(result *ValidationResult) (string, error) {
 
 	output := JSONOutput{
 		Status:         status,
-		Timestamp:      time.Now().Format(time.RFC3339),
+		Timestamp:      timeutil.Timestamp(),
 		TotalFiles:     result.TotalFiles,
 		ValidFiles:     result.ValidFiles,
 		ViolationCount: result.ViolationCount,
@@ -159,7 +161,7 @@ func FormatMarkdown(result *ValidationResult) string {
 	var output strings.Builder
 
 	output.WriteString("# Documentation Naming Validation Report\n\n")
-	_, _ = fmt.Fprintf(&output, "**Generated**: %s\n\n", time.Now().Format(time.RFC3339))
+	_, _ = fmt.Fprintf(&output, "**Generated**: %s\n\n", timeutil.Timestamp())
 
 	// Summary table
 	output.WriteString("## Summary\n\n")
@@ -346,7 +348,7 @@ func FormatFixJSON(result *FixResult) (string, error) {
 
 	output := FixJSONOutput{
 		Status:           status,
-		Timestamp:        time.Now().Format(time.RFC3339),
+		Timestamp:        timeutil.Timestamp(),
 		DryRun:           result.DryRun,
 		RenameCount:      len(result.RenameOperations),
 		LinkUpdateCount:  len(result.LinkUpdates),
