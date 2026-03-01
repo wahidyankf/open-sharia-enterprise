@@ -93,7 +93,7 @@ The infrastructure is done. No more excuses. Time to build.
 
 Last week: E2E testing suite + governance hardening
 This week: CI standardization + dependency sweep + Go ecosystem (137 commits, 2 plans closed)
-Next week: Begin feature development, Insha Allah
+Next week: Gherkin integration in integration + E2E tests, more CI/CD improvements, Insha Allah
 
 Every commit visible on GitHub. Updates every second Sunday.
 
