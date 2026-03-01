@@ -323,6 +323,7 @@ func TestFix_DryRun(t *testing.T) {
 			},
 		},
 		ViolationsByType: map[ViolationType][]NamingViolation{
+			ViolationMissingSeparator: nil,
 			ViolationWrongPrefix: {
 				{
 					FilePath:       "docs/tutorials/wrong__getting-started.md",
@@ -332,6 +333,8 @@ func TestFix_DryRun(t *testing.T) {
 					ActualPrefix:   "wrong__",
 				},
 			},
+			ViolationBadCase:       nil,
+			ViolationMissingPrefix: nil,
 		},
 	}
 
@@ -418,6 +421,8 @@ func TestFix_OnlyNonFixableViolations(t *testing.T) {
 			},
 		},
 		ViolationsByType: map[ViolationType][]NamingViolation{
+			ViolationMissingSeparator: nil,
+			ViolationWrongPrefix:      nil,
 			ViolationBadCase: {
 				{
 					FilePath:       "docs/tutorials/tu__BadCase.md",
@@ -426,6 +431,7 @@ func TestFix_OnlyNonFixableViolations(t *testing.T) {
 					ExpectedPrefix: "tu__",
 				},
 			},
+			ViolationMissingPrefix: nil,
 		},
 	}
 

@@ -77,6 +77,7 @@ func TestFormatTextWithViolations(t *testing.T) {
 			ViolationBadCase: {
 				{FilePath: "docs/tutorials/tu__UPPERCASE.md", FileName: "tu__UPPERCASE.md", ViolationType: ViolationBadCase},
 			},
+			ViolationMissingPrefix: nil,
 		},
 		ScanDuration: 50 * time.Millisecond,
 	}
@@ -124,6 +125,9 @@ func TestFormatJSON(t *testing.T) {
 			ViolationMissingSeparator: {
 				{FilePath: "docs/tutorials/missing.md", FileName: "missing.md", ExpectedPrefix: "tu__", Message: "Missing separator"},
 			},
+			ViolationWrongPrefix:   nil,
+			ViolationBadCase:       nil,
+			ViolationMissingPrefix: nil,
 		},
 		ScanDuration: 25 * time.Millisecond,
 	}
@@ -198,6 +202,8 @@ func TestFormatMarkdown(t *testing.T) {
 			ViolationWrongPrefix: {
 				{FilePath: "docs/how-to/wrong.md", FileName: "wrong.md", ExpectedPrefix: "hoto__", ActualPrefix: "wrong__"},
 			},
+			ViolationBadCase:       nil,
+			ViolationMissingPrefix: nil,
 		},
 		ScanDuration: 100 * time.Millisecond,
 	}

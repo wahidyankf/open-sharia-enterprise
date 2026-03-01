@@ -67,6 +67,10 @@ func generateNewFilename(v NamingViolation) string {
 		nameWithoutExt := strings.TrimSuffix(filename, ext)
 		return expectedPrefix + nameWithoutExt + ext
 
+	case ViolationBadCase, ViolationMissingPrefix:
+		// Cannot be auto-fixed: requires human judgment to determine correct name
+		return ""
+
 	default:
 		return ""
 	}
