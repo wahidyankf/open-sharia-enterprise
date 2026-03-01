@@ -186,3 +186,105 @@ This is a [link](<../docs/README.md>) with angle brackets.
 		t.Errorf("Link URL = %q, want %q", links[0].URL, "../docs/README.md")
 	}
 }
+
+func TestGetMarkdownFiles_NonStaged(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	// Create .claude dir with a .md file
+	claudeDir := filepath.Join(tmpDir, ".claude")
+	if err := os.MkdirAll(claudeDir, 0755); err != nil {
+		t.Fatalf("failed to create .claude dir: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(claudeDir, "test.md"), []byte("# Test"), 0644); err != nil {
+		t.Fatalf("failed to create test.md: %v", err)
+	}
+
+	opts := ScanOptions{
+		RepoRoot:   tmpDir,
+		StagedOnly: false,
+		SkipPaths:  []string{},
+	}
+
+	files, err := GetMarkdownFiles(opts)
+	if err != nil {
+		t.Fatalf("GetMarkdownFiles() error: %v", err)
+	}
+
+	found := false
+	for _, f := range files {
+		if filepath.Base(f) == "test.md" {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Errorf("expected test.md in results, got %v", files)
+	}
+}
+
+func TestGetMarkdownFiles_WithSkipPaths(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	for _, dir := range []string{"docs", ".claude"} {
+		d := filepath.Join(tmpDir, dir)
+		if err := os.MkdirAll(d, 0755); err != nil {
+			t.Fatalf("failed to create dir: %v", err)
+		}
+		if err := os.WriteFile(filepath.Join(d, "file.md"), []byte("# Content"), 0644); err != nil {
+			t.Fatalf("failed to create file: %v", err)
+		}
+	}
+
+	opts := ScanOptions{
+		RepoRoot:   tmpDir,
+		StagedOnly: false,
+		SkipPaths:  []string{"docs"},
+	}
+
+	files, err := GetMarkdownFiles(opts)
+	if err != nil {
+		t.Fatalf("GetMarkdownFiles() error: %v", err)
+	}
+
+	for _, f := range files {
+		rel, _ := filepath.Rel(tmpDir, f)
+		if len(rel) > 4 && rel[:4] == "docs" {
+			t.Errorf("expected docs to be skipped, got %v in results", f)
+		}
+	}
+}
+
+func TestFilterSkipPaths_Empty(t *testing.T) {
+	files := []string{"/repo/docs/file.md", "/repo/governance/other.md"}
+	result := filterSkipPaths(files, "/repo", []string{})
+	if len(result) != len(files) {
+		t.Errorf("expected all files with empty skip paths, got %d files", len(result))
+	}
+}
+
+func TestFilterSkipPaths_WithSkipPath(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	docsDir := filepath.Join(tmpDir, "docs")
+	govDir := filepath.Join(tmpDir, "governance")
+	if err := os.MkdirAll(docsDir, 0755); err != nil {
+		t.Fatalf("failed to create docs: %v", err)
+	}
+	if err := os.MkdirAll(govDir, 0755); err != nil {
+		t.Fatalf("failed to create governance: %v", err)
+	}
+
+	files := []string{
+		filepath.Join(docsDir, "file.md"),
+		filepath.Join(govDir, "other.md"),
+		filepath.Join(docsDir, "nested", "deep.md"),
+	}
+	result := filterSkipPaths(files, tmpDir, []string{"governance"})
+
+	for _, f := range result {
+		rel, _ := filepath.Rel(tmpDir, f)
+		if len(rel) > 10 && rel[:10] == "governance" {
+			t.Errorf("expected governance files to be filtered out, got %v", result)
+		}
+	}
+}

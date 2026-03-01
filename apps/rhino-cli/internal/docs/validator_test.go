@@ -1,6 +1,8 @@
 package docs
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -135,5 +137,76 @@ func TestValidateFileNameWithNumbers(t *testing.T) {
 				t.Errorf("validateFileName(%q) found 0 violations, expected at least 1", tt.path)
 			}
 		})
+	}
+}
+
+func TestValidateAll_WithDocs(t *testing.T) {
+	tmpDir := t.TempDir()
+	docsDir := filepath.Join(tmpDir, "docs", "tutorials")
+	if err := os.MkdirAll(docsDir, 0755); err != nil {
+		t.Fatalf("failed to create docs dir: %v", err)
+	}
+
+	// Properly named file
+	if err := os.WriteFile(filepath.Join(docsDir, "tu__getting-started.md"), []byte("# Content"), 0644); err != nil {
+		t.Fatalf("failed to create file: %v", err)
+	}
+
+	opts := ValidationOptions{
+		RepoRoot:   tmpDir,
+		StagedOnly: false,
+	}
+
+	result, err := ValidateAll(opts)
+	if err != nil {
+		t.Fatalf("ValidateAll() error: %v", err)
+	}
+	if result.TotalFiles != 1 {
+		t.Errorf("expected 1 file, got %d", result.TotalFiles)
+	}
+	if result.ValidFiles != 1 {
+		t.Errorf("expected 1 valid file, got %d", result.ValidFiles)
+	}
+}
+
+func TestValidateAll_EmptyDocs(t *testing.T) {
+	tmpDir := t.TempDir()
+	opts := ValidationOptions{
+		RepoRoot:   tmpDir,
+		StagedOnly: false,
+	}
+
+	result, err := ValidateAll(opts)
+	if err != nil {
+		t.Fatalf("ValidateAll() error: %v", err)
+	}
+	if result.TotalFiles != 0 {
+		t.Errorf("expected 0 files for empty repo, got %d", result.TotalFiles)
+	}
+}
+
+func TestValidateAll_WithViolation(t *testing.T) {
+	tmpDir := t.TempDir()
+	docsDir := filepath.Join(tmpDir, "docs", "tutorials")
+	if err := os.MkdirAll(docsDir, 0755); err != nil {
+		t.Fatalf("failed to create docs dir: %v", err)
+	}
+
+	// Badly named file (missing __ separator)
+	if err := os.WriteFile(filepath.Join(docsDir, "bad-name.md"), []byte("# Content"), 0644); err != nil {
+		t.Fatalf("failed to create file: %v", err)
+	}
+
+	opts := ValidationOptions{
+		RepoRoot:   tmpDir,
+		StagedOnly: false,
+	}
+
+	result, err := ValidateAll(opts)
+	if err != nil {
+		t.Fatalf("ValidateAll() error: %v", err)
+	}
+	if result.ViolationCount == 0 {
+		t.Error("expected violations for badly named file")
 	}
 }

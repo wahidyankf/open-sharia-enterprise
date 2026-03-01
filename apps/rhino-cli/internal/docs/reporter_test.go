@@ -241,3 +241,147 @@ func TestFormatMarkdownNoViolations(t *testing.T) {
 		t.Error("FormatMarkdown() should contain success message")
 	}
 }
+
+func TestFormatFixPlan_NoOperations(t *testing.T) {
+	result := &FixResult{
+		RenameOperations: []RenameOperation{},
+		DryRun:           true,
+	}
+	out := FormatFixPlan(result)
+	if !strings.Contains(out, "No files need to be renamed") {
+		t.Errorf("expected no-op message, got %q", out)
+	}
+}
+
+func TestFormatFixPlan_WithOperations(t *testing.T) {
+	result := &FixResult{
+		RenameOperations: []RenameOperation{
+			{OldPath: "docs/foo.md", NewPath: "docs/tu__foo.md", OldName: "foo.md", NewName: "tu__foo.md"},
+		},
+		DryRun: true,
+	}
+	out := FormatFixPlan(result)
+	if !strings.Contains(out, "# Documentation Naming Fix Plan") {
+		t.Errorf("expected markdown header, got %q", out)
+	}
+	if !strings.Contains(out, "foo.md") {
+		t.Errorf("expected old name in output, got %q", out)
+	}
+}
+
+func TestFormatFixPlan_WithLinkUpdates(t *testing.T) {
+	result := &FixResult{
+		RenameOperations: []RenameOperation{
+			{OldPath: "docs/foo.md", NewPath: "docs/tu__foo.md", OldName: "foo.md", NewName: "tu__foo.md"},
+		},
+		LinkUpdates: []LinkUpdate{
+			{FilePath: "docs/other.md", LineNumber: 5, OldLink: "./foo.md", NewLink: "./tu__foo.md"},
+		},
+		DryRun: true,
+	}
+	out := FormatFixPlan(result)
+	if !strings.Contains(out, "## Links to Update") {
+		t.Errorf("expected links section, got %q", out)
+	}
+}
+
+func TestFormatFixResult_NoChanges(t *testing.T) {
+	result := &FixResult{
+		RenameOperations: []RenameOperation{},
+		DryRun:           false,
+	}
+	out := FormatFixResult(result)
+	if !strings.Contains(out, "# Documentation Naming Fix Results") {
+		t.Errorf("expected header, got %q", out)
+	}
+}
+
+func TestFormatFixResult_WithErrors(t *testing.T) {
+	result := &FixResult{
+		Errors: []string{"failed to rename: permission denied"},
+		DryRun: false,
+	}
+	out := FormatFixResult(result)
+	if !strings.Contains(out, "## Errors") {
+		t.Errorf("expected errors section, got %q", out)
+	}
+}
+
+func TestFormatFixResult_WithRenames(t *testing.T) {
+	result := &FixResult{
+		RenamesApplied: 2,
+		RenameOperations: []RenameOperation{
+			{OldPath: "docs/foo.md", NewPath: "docs/tu__foo.md", OldName: "foo.md", NewName: "tu__foo.md"},
+		},
+		LinksUpdated: 1,
+		DryRun:       false,
+	}
+	out := FormatFixResult(result)
+	if !strings.Contains(out, "Renamed 2 files") {
+		t.Errorf("expected rename count, got %q", out)
+	}
+	if !strings.Contains(out, "Updated 1 links") {
+		t.Errorf("expected links count, got %q", out)
+	}
+}
+
+func TestFormatFixJSON_Success(t *testing.T) {
+	result := &FixResult{
+		RenameOperations: []RenameOperation{
+			{OldPath: "docs/foo.md", NewPath: "docs/tu__foo.md", OldName: "foo.md", NewName: "tu__foo.md"},
+		},
+		DryRun: true,
+	}
+	out, err := FormatFixJSON(result)
+	if err != nil {
+		t.Fatalf("FormatFixJSON() error: %v", err)
+	}
+	var parsed map[string]any
+	if err := json.Unmarshal([]byte(out), &parsed); err != nil {
+		t.Fatalf("expected valid JSON, got %q: %v", out, err)
+	}
+	if parsed["status"] != "success" {
+		t.Errorf("expected status=success, got %v", parsed["status"])
+	}
+}
+
+func TestFormatFixJSON_Partial(t *testing.T) {
+	result := &FixResult{
+		Errors: []string{"an error occurred"},
+		DryRun: false,
+	}
+	out, err := FormatFixJSON(result)
+	if err != nil {
+		t.Fatalf("FormatFixJSON() error: %v", err)
+	}
+	var parsed map[string]any
+	if err := json.Unmarshal([]byte(out), &parsed); err != nil {
+		t.Fatalf("expected valid JSON, got %q: %v", out, err)
+	}
+	if parsed["status"] != "partial" {
+		t.Errorf("expected status=partial, got %v", parsed["status"])
+	}
+}
+
+func TestFormatFixJSON_WithLinkUpdates(t *testing.T) {
+	result := &FixResult{
+		RenameOperations: []RenameOperation{
+			{OldPath: "docs/foo.md", NewPath: "docs/tu__foo.md", OldName: "foo.md", NewName: "tu__foo.md"},
+		},
+		LinkUpdates: []LinkUpdate{
+			{FilePath: "docs/other.md", LineNumber: 5, OldLink: "./foo.md", NewLink: "./tu__foo.md"},
+		},
+		DryRun: true,
+	}
+	out, err := FormatFixJSON(result)
+	if err != nil {
+		t.Fatalf("FormatFixJSON() error: %v", err)
+	}
+	var parsed map[string]any
+	if err := json.Unmarshal([]byte(out), &parsed); err != nil {
+		t.Fatalf("expected valid JSON, got %q: %v", out, err)
+	}
+	if parsed["link_update_count"] != float64(1) {
+		t.Errorf("expected link_update_count=1, got %v", parsed["link_update_count"])
+	}
+}

@@ -115,3 +115,44 @@ func TestGetRelativePath(t *testing.T) {
 		})
 	}
 }
+
+func TestGetDocsFiles_NonStaged(t *testing.T) {
+	tmpDir := t.TempDir()
+	docsDir := filepath.Join(tmpDir, "docs")
+	if err := os.MkdirAll(docsDir, 0755); err != nil {
+		t.Fatalf("failed to create docs dir: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(docsDir, "file.md"), []byte("# Content"), 0644); err != nil {
+		t.Fatalf("failed to create file: %v", err)
+	}
+
+	opts := ValidationOptions{
+		RepoRoot:   tmpDir,
+		StagedOnly: false,
+	}
+
+	files, err := GetDocsFiles(opts)
+	if err != nil {
+		t.Fatalf("GetDocsFiles() error: %v", err)
+	}
+	if len(files) != 1 {
+		t.Errorf("expected 1 file, got %d: %v", len(files), files)
+	}
+}
+
+func TestGetDocsFiles_NonExistentDocsDir(t *testing.T) {
+	tmpDir := t.TempDir()
+	// No docs dir
+	opts := ValidationOptions{
+		RepoRoot:   tmpDir,
+		StagedOnly: false,
+	}
+
+	files, err := GetDocsFiles(opts)
+	if err != nil {
+		t.Fatalf("GetDocsFiles() should not error for non-existent docs dir: %v", err)
+	}
+	if len(files) != 0 {
+		t.Errorf("expected 0 files, got %v", files)
+	}
+}
