@@ -47,11 +47,9 @@
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "./build.sh",
-        "cwd": "apps/ayokoding-web"
+        "command": "./apps/ayokoding-cli/dist/ayokoding-cli links check"
       },
-      "outputs": ["{projectRoot}/public"],
-      "dependsOn": ["links:check"]
+      "dependsOn": [{ "projects": "ayokoding-cli", "target": "build" }]
     },
     "lint": {
       "executor": "nx:run-commands",
