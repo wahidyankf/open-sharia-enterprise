@@ -105,24 +105,13 @@ func runValidateDocsNaming(cmd *cobra.Command, args []string) error {
 }
 
 func runValidationMode(cmd *cobra.Command, result *docs.ValidationResult) error {
-	// Format output based on --output flag
-	var formattedOutput string
-	var err error
-
-	switch output {
-	case "json":
-		formattedOutput, err = docs.FormatJSON(result)
-		if err != nil {
-			return fmt.Errorf("failed to format JSON: %w", err)
-		}
-	case "markdown":
-		formattedOutput = docs.FormatMarkdown(result)
-	default: // "text"
-		formattedOutput = docs.FormatText(result, verbose, quiet)
+	if err := writeFormatted(cmd, output, verbose, quiet, outputFuncs{
+		text:     func(v, q bool) string { return docs.FormatText(result, v, q) },
+		json:     func() (string, error) { return docs.FormatJSON(result) },
+		markdown: func() string { return docs.FormatMarkdown(result) },
+	}); err != nil {
+		return err
 	}
-
-	// Write output
-	_, _ = fmt.Fprint(cmd.OutOrStdout(), formattedOutput)
 
 	// Return error if violations found (Cobra will set exit code 1)
 	if len(result.Violations) > 0 {
