@@ -66,7 +66,7 @@ Last week: E2E testing suite + governance hardening
 This week: CI standardization + dependency sweep + Go ecosystem (137 commits, 2 plans closed)
 Next week: Gherkin integration in integration + E2E tests, more CI/CD improvements (OrganicLever apps), Insha Allah
 
-Every commit visible on GitHub. Updates every second Sunday.
+Every commit is visible on GitHub. Monthly updates every second Sunday.
 
 ---
 
