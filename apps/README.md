@@ -15,6 +15,7 @@ Apps follow the naming pattern: **`[domain]-[type]`**
 - `ayokoding-cli` - AyoKoding CLI tool for navigation generation - Go application
 - `rhino-cli` - Repository management CLI tools - Go application
 - `javaproject-cli` - Java null-safety annotation validator - Go application
+- `oseplatform-cli` - OSE Platform CLI tool for link validation - Go application
 - `organiclever-web` - OrganicLever landing website (www.organiclever.com) - Next.js app (port 3200)
 - `organiclever-web-e2e` - E2E tests for organiclever-web - Playwright (browser testing)
 - `organiclever-app` - OrganicLever main application (app.organiclever.com, Android, iOS) - Flutter application (port 3201)
@@ -74,6 +75,17 @@ apps/rhino-cli/
 ```
 apps/javaproject-cli/
 ├── internal/                # Internal packages (java/)
+├── dist/                    # Build output (gitignored)
+├── main.go                  # Entry point
+├── go.mod                   # Go module definition
+├── project.json             # Nx project configuration
+└── README.md                # App documentation
+```
+
+```
+apps/oseplatform-cli/
+├── internal/                # Internal packages (links/)
+├── cmd/                     # CLI commands
 ├── dist/                    # Build output (gitignored)
 ├── main.go                  # Entry point
 ├── go.mod                   # Go module definition

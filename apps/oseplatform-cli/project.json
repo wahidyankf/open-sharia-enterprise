@@ -1,0 +1,44 @@
+{
+  "name": "oseplatform-cli",
+  "sourceRoot": "apps/oseplatform-cli",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 go build -o dist/oseplatform-cli",
+        "cwd": "apps/oseplatform-cli"
+      },
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 go test ./...",
+        "cwd": "apps/oseplatform-cli"
+      }
+    },
+    "run": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go run main.go",
+        "cwd": "apps/oseplatform-cli"
+      }
+    },
+    "install": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go mod tidy",
+        "cwd": "apps/oseplatform-cli"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 golangci-lint run ./...",
+        "cwd": "apps/oseplatform-cli"
+      }
+    }
+  },
+  "tags": ["type:app", "platform:golang", "domain:oseplatform"]
+}
