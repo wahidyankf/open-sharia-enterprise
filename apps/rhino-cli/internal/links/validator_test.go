@@ -208,3 +208,89 @@ This [link](./missing.md) is broken but should be skipped.
 		t.Errorf("ValidateFile() found %d broken links, want 0 (should skip skill files)", len(brokenLinks))
 	}
 }
+
+func TestValidateAll_EmptyDir(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	// Create .claude with no .md files
+	if err := os.MkdirAll(filepath.Join(tmpDir, ".claude"), 0755); err != nil {
+		t.Fatalf("failed to create dir: %v", err)
+	}
+
+	opts := ScanOptions{
+		RepoRoot:   tmpDir,
+		StagedOnly: false,
+	}
+
+	result, err := ValidateAll(opts)
+	if err != nil {
+		t.Fatalf("ValidateAll() error: %v", err)
+	}
+	if result.TotalFiles != 0 {
+		t.Errorf("expected 0 files, got %d", result.TotalFiles)
+	}
+}
+
+func TestValidateAll_WithValidLinks(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	docsDir := filepath.Join(tmpDir, "docs")
+	if err := os.MkdirAll(docsDir, 0755); err != nil {
+		t.Fatalf("failed to create docs dir: %v", err)
+	}
+
+	// Create target file
+	if err := os.WriteFile(filepath.Join(docsDir, "target.md"), []byte("# Target"), 0644); err != nil {
+		t.Fatalf("failed to create target: %v", err)
+	}
+
+	// Create source file with link to target
+	content := "[Target](./target.md)"
+	if err := os.WriteFile(filepath.Join(docsDir, "source.md"), []byte(content), 0644); err != nil {
+		t.Fatalf("failed to create source: %v", err)
+	}
+
+	opts := ScanOptions{
+		RepoRoot:   tmpDir,
+		StagedOnly: false,
+	}
+
+	result, err := ValidateAll(opts)
+	if err != nil {
+		t.Fatalf("ValidateAll() error: %v", err)
+	}
+	if len(result.BrokenLinks) > 0 {
+		t.Errorf("expected no broken links, got %v", result.BrokenLinks)
+	}
+	if result.TotalFiles != 2 {
+		t.Errorf("expected 2 files, got %d", result.TotalFiles)
+	}
+}
+
+func TestValidateAll_WithBrokenLinks(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	docsDir := filepath.Join(tmpDir, "docs")
+	if err := os.MkdirAll(docsDir, 0755); err != nil {
+		t.Fatalf("failed to create docs dir: %v", err)
+	}
+
+	// Create file with broken link
+	content := "[Missing](./does-not-exist.md)"
+	if err := os.WriteFile(filepath.Join(docsDir, "source.md"), []byte(content), 0644); err != nil {
+		t.Fatalf("failed to create source: %v", err)
+	}
+
+	opts := ScanOptions{
+		RepoRoot:   tmpDir,
+		StagedOnly: false,
+	}
+
+	result, err := ValidateAll(opts)
+	if err != nil {
+		t.Fatalf("ValidateAll() error: %v", err)
+	}
+	if len(result.BrokenLinks) != 1 {
+		t.Errorf("expected 1 broken link, got %d", len(result.BrokenLinks))
+	}
+}
