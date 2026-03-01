@@ -473,48 +473,34 @@ This Skill packages essential oseplatform-web development knowledge for creating
 
 ## Deployment Workflow
 
-Deploy oseplatform-web to production using Vercel integration.
+Deploy oseplatform-web to production using automated CI or the deployer agent.
 
 ### Production Branch
 
-**Branch**: `prod-oseplatform-web`  
-**Purpose**: Deployment-only branch that Vercel monitors  
+**Branch**: `prod-oseplatform-web`
+**Purpose**: Deployment-only branch that Vercel monitors
 **Build System**: Vercel (Hugo SSG with PaperMod theme)
 
-### Deployment Process
+### Automated Deployment (Primary)
 
-**Step 1: Validate Current State**
+The `deploy-oseplatform-web.yml` GitHub Actions workflow handles routine deployment:
 
-```bash
-# Ensure on main branch
-CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-if [ "$CURRENT_BRANCH" != "main" ]; then
-  echo "❌ Must be on main branch"
-  exit 1
-fi
+- **Schedule**: Runs at 6 AM and 6 PM WIB (UTC+7) every day
+- **Change detection**: Diffs `HEAD` vs `prod-oseplatform-web` scoped to `apps/oseplatform-web/` — skips build/deploy when nothing changed
+- **Build**: Runs `nx build oseplatform-web` (Hugo extended build with PaperMod theme)
+- **Deploy**: Force-pushes `main` to `prod-oseplatform-web`; Vercel auto-builds
 
-# Check for uncommitted changes
-if [ -n "$(git status --porcelain)" ]; then
-  echo "❌ Uncommitted changes detected"
-  exit 1
-fi
-```
+**Manual trigger**: From the GitHub Actions UI, trigger `deploy-oseplatform-web.yml` with `force_deploy=true` to deploy immediately regardless of changes.
 
-**Step 2: Force Push to Production**
+### Emergency / On-Demand Deployment
+
+For immediate deployment outside the scheduled window:
 
 ```bash
-# Deploy to production
 git push origin main:prod-oseplatform-web --force
 ```
 
-**Step 3: Vercel Auto-Build**
-
-Vercel automatically:
-
-- Detects push to prod-oseplatform-web branch
-- Pulls latest content
-- Builds Hugo site with PaperMod theme
-- Deploys to production URL
+Or use the `apps-oseplatform-web-deployer` agent for a guided deployment.
 
 ### Why Force Push
 
@@ -523,16 +509,6 @@ Vercel automatically:
 - prod-oseplatform-web is deployment-only (no direct commits)
 - Always want exact copy of main branch
 - Trunk-based development: main is source of truth
-
-### Deployment Safety
-
-**Pre-deployment checks**:
-
-- ✅ On main branch
-- ✅ No uncommitted changes
-- ✅ Latest from remote
-
-**No local build**: Vercel handles all build operations
 
 ## References
 

@@ -727,8 +727,10 @@ graph TB
 
 - **Purpose**: Deployment triggers only
 - **Branches**: `prod-oseplatform-web`, `prod-ayokoding-web`
-- **Policy**: NEVER commit directly to these branches
-- **Workflow**: Merge from `main` when ready to deploy
+- **Policy**: NEVER commit directly to these branches outside CI automation
+- **Workflow**: Automated by scheduled GitHub Actions workflows (`deploy-ayokoding-web.yml`,
+  `deploy-oseplatform-web.yml`) running at 6 AM and 6 PM WIB; or trigger manually from GitHub
+  Actions UI
 
 ## CI/CD Pipeline
 
@@ -891,6 +893,36 @@ graph TB
 4. Fail PR if broken links detected
 
 **Purpose**: Prevent merging PRs with broken markdown links
+
+#### Test and Deploy AyoKoding Web Workflow
+
+**File**: `.github/workflows/deploy-ayokoding-web.yml`
+
+**Trigger**: Scheduled (6 AM and 6 PM WIB daily) or manual `workflow_dispatch`
+
+**Steps:**
+
+1. Detect changes in `apps/ayokoding-web/` vs `prod-ayokoding-web` branch
+2. If changes exist (or `force_deploy=true`): setup Volta, Go 1.24.2, Hugo 0.156.0 extended
+3. Install dependencies and run `nx build ayokoding-web`
+4. Force-push `main` to `prod-ayokoding-web`; Vercel auto-builds
+
+**Purpose**: Automated scheduled deployments for ayokoding.com with change detection to avoid unnecessary builds
+
+#### Test and Deploy OSE Platform Web Workflow
+
+**File**: `.github/workflows/deploy-oseplatform-web.yml`
+
+**Trigger**: Scheduled (6 AM and 6 PM WIB daily) or manual `workflow_dispatch`
+
+**Steps:**
+
+1. Detect changes in `apps/oseplatform-web/` vs `prod-oseplatform-web` branch
+2. If changes exist (or `force_deploy=true`): setup Volta, Go 1.24.2, Hugo 0.156.0 extended
+3. Install dependencies and run `nx build oseplatform-web`
+4. Force-push `main` to `prod-oseplatform-web`; Vercel auto-builds
+
+**Purpose**: Automated scheduled deployments for oseplatform.com with change detection to avoid unnecessary builds
 
 ### Nx Build System
 

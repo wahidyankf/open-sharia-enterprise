@@ -1,4 +1,4 @@
-name: Deploy - OSE Platform Web
+name: Test and Deploy - OSE Platform Web
 
 on:
   schedule:

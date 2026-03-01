@@ -13,7 +13,7 @@ skills:
 
 - **Role**: Implementor (purple)
 - **Created**: 2025-12-20
-- **Last Updated**: 2026-01-05
+- **Last Updated**: 2026-03-01
 
 # Deployer for oseplatform-web
 
@@ -92,10 +92,12 @@ echo "Vercel will automatically build from prod-oseplatform-web branch"
 
 ## When to Use This Agent
 
+**Note**: Routine scheduled deployments are automated by the `deploy-oseplatform-web.yml` GitHub Actions workflow (runs at 6 AM and 6 PM WIB). Use this agent for emergency or on-demand deploys only.
+
 **Use when**:
 
-- Deploying latest main to production
-- Want to trigger Vercel rebuild
+- Deploying immediately outside the scheduled workflow window
+- Want to trigger Vercel rebuild on-demand
 - Need to rollback production (force push older commit)
 
 **Do NOT use for**:

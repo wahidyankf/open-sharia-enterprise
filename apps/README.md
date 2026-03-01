@@ -286,7 +286,12 @@ Vercel-deployed apps use dedicated production branches (deployment-only — neve
 | `prod-oseplatform-web`  | [oseplatform.com](https://oseplatform.com)            | oseplatform-web  |
 | `prod-organiclever-web` | [www.organiclever.com](https://www.organiclever.com/) | organiclever-web |
 
-Deploy by force-pushing `main` to the production branch:
+**ayokoding-web and oseplatform-web**: Deployed automatically by scheduled GitHub Actions
+workflows (`deploy-ayokoding-web.yml`, `deploy-oseplatform-web.yml`) running at 6 AM and 6 PM
+WIB. Each workflow detects changes scoped to the app directory before building and deploying.
+Trigger on-demand from the GitHub Actions UI (set `force_deploy=true` to skip change detection).
+
+**organiclever-web**: Deploy by force-pushing `main` to the production branch:
 
 ```bash
 git push origin main:prod-organiclever-web --force

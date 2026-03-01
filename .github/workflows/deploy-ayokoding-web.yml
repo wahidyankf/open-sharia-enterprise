@@ -1,4 +1,4 @@
-name: Deploy - AyoKoding Web
+name: Test and Deploy - AyoKoding Web
 
 on:
   schedule:
