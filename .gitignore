@@ -10,6 +10,7 @@ build/
 .next/
 out/
 cover.out
+/static/
 
 # Nx cache
 .nx/
