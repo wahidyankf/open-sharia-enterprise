@@ -1,3 +1,4 @@
+// Package fileutil provides shared file system utilities for rhino-cli internal packages.
 package fileutil
 
 import (

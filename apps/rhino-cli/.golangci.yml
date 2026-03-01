@@ -12,3 +12,7 @@ linters:
     govet:
       enable:
         - nilness # Reports nil pointer dereferences and redundant nil checks
+    staticcheck:
+      checks:
+        - ST1000 # Package comments
+        - ST1003 # Naming conventions (e.g. API not Api, URL not Url)

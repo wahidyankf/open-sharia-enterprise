@@ -1,3 +1,4 @@
+// Package sync provides validation and synchronisation between Claude Code and OpenCode agent configurations.
 package sync
 
 import (
