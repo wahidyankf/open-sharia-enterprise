@@ -17,7 +17,8 @@
         "command": "next build",
         "cwd": "{projectRoot}"
       },
-      "outputs": ["{projectRoot}/.next"]
+      "outputs": ["{projectRoot}/.next"],
+      "dependsOn": []
     },
     "start": {
       "executor": "nx:run-commands",
