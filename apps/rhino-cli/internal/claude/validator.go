@@ -1,3 +1,4 @@
+// Package claude provides validators for Claude Code agent and skill configuration files.
 package claude
 
 import (

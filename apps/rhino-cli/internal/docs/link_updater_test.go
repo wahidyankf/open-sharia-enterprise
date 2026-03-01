@@ -226,7 +226,7 @@ Also check [reference](../reference/old__api.md) for API docs.
 
 	// Verify that updates contain expected data
 	foundGettingStarted := false
-	foundApi := false
+	foundAPI := false
 	for _, u := range updates {
 		if strings.Contains(u.OldLink, "wrong__getting-started.md") {
 			foundGettingStarted = true
@@ -235,7 +235,7 @@ Also check [reference](../reference/old__api.md) for API docs.
 			}
 		}
 		if strings.Contains(u.OldLink, "old__api.md") {
-			foundApi = true
+			foundAPI = true
 			if !strings.Contains(u.NewLink, "re__api.md") {
 				t.Errorf("expected new link to contain 're__api.md', got %q", u.NewLink)
 			}
@@ -245,7 +245,7 @@ Also check [reference](../reference/old__api.md) for API docs.
 	if !foundGettingStarted {
 		t.Error("expected to find update for wrong__getting-started.md link")
 	}
-	if !foundApi {
+	if !foundAPI {
 		t.Error("expected to find update for old__api.md link")
 	}
 }
