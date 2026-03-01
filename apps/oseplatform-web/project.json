@@ -18,7 +18,8 @@
         "command": "bash build.sh",
         "cwd": "apps/oseplatform-web"
       },
-      "outputs": ["{projectRoot}/public"]
+      "outputs": ["{projectRoot}/public"],
+      "dependsOn": []
     },
     "clean": {
       "executor": "nx:run-commands",
