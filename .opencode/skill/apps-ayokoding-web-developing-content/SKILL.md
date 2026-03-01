@@ -359,7 +359,7 @@ title: "Software Engineering"
 
 ## Deployment Workflow
 
-Deploy ayokoding-web to production using Vercel integration.
+Deploy ayokoding-web to production using automated CI or the deployer agent.
 
 ### Production Branch
 
@@ -367,40 +367,26 @@ Deploy ayokoding-web to production using Vercel integration.
 **Purpose**: Deployment-only branch that Vercel monitors
 **Build System**: Vercel (Hugo SSG with Hextra theme)
 
-### Deployment Process
+### Automated Deployment (Primary)
 
-**Step 1: Validate Current State**
+The `deploy-ayokoding-web.yml` GitHub Actions workflow handles routine deployment:
 
-```bash
-# Ensure on main branch
-CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-if [ "$CURRENT_BRANCH" != "main" ]; then
-  echo "❌ Must be on main branch"
-  exit 1
-fi
+- **Schedule**: Runs at 6 AM and 6 PM WIB (UTC+7) every day
+- **Change detection**: Diffs `HEAD` vs `prod-ayokoding-web` scoped to `apps/ayokoding-web/` — skips build/deploy when nothing changed
+- **Build**: Runs `nx build ayokoding-web` (Hugo extended build)
+- **Deploy**: Force-pushes `main` to `prod-ayokoding-web`; Vercel auto-builds
 
-# Check for uncommitted changes
-if [ -n "$(git status --porcelain)" ]; then
-  echo "❌ Uncommitted changes detected"
-  exit 1
-fi
-```
+**Manual trigger**: From the GitHub Actions UI, trigger `deploy-ayokoding-web.yml` with `force_deploy=true` to deploy immediately regardless of changes.
 
-**Step 2: Force Push to Production**
+### Emergency / On-Demand Deployment
+
+For immediate deployment outside the scheduled window:
 
 ```bash
-# Deploy to production
 git push origin main:prod-ayokoding-web --force
 ```
 
-**Step 3: Vercel Auto-Build**
-
-Vercel automatically:
-
-- Detects push to prod-ayokoding-web branch
-- Pulls latest content
-- Builds Hugo site with Hextra theme
-- Deploys to production URL
+Or use the `apps-ayokoding-web-deployer` agent for a guided deployment.
 
 ### Why Force Push
 
@@ -409,16 +395,6 @@ Vercel automatically:
 - prod-ayokoding-web is deployment-only (no direct commits)
 - Always want exact copy of main branch
 - Trunk-based development: main is source of truth
-
-### Deployment Safety
-
-**Pre-deployment checks**:
-
-- ✅ On main branch
-- ✅ No uncommitted changes
-- ✅ Latest from remote
-
-**No local build**: Vercel handles all build operations
 
 ## References
 
