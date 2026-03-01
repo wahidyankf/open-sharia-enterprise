@@ -49,7 +49,3 @@ Complete C4 Container/Component diagrams for dolphin suite (LMS, middleware, IAM
 - Learning Content: https://www.ayokoding.com/
 - Documentation: https://github.com/wahidyankf/open-sharia-enterprise/tree/main/docs
 - Apps: https://github.com/wahidyankf/open-sharia-enterprise/tree/main/apps
-
----
-
-# EnterpriseArchitecture #AI #Governance #DocumentationFirst #OpenSource #SoftwareEngineering #TechLeadership #IslamicFinance #ShariahCompliant

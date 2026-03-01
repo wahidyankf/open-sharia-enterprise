@@ -67,7 +67,3 @@ The repository structure finally feels coherent. Six-layer architecture: Vision 
 - Learning Content: <https://www.ayokoding.com/>
 - Documentation: <https://github.com/wahidyankf/open-sharia-enterprise/tree/main/docs>
 - Apps: <https://github.com/wahidyankf/open-sharia-enterprise/tree/main/apps>
-
----
-
-# OpenSource #ShariaCompliance #BuildInPublic #SoftwareEngineering #IslamicFinance

@@ -51,7 +51,3 @@ Building in public. Every commit visible on GitHub. Updates every second Sunday.
 - Roadmap: https://github.com/wahidyankf/open-sharia-enterprise/blob/main/ROADMAP.md
 - All Updates: https://www.oseplatform.com/updates/
 - Learning Content: https://www.ayokoding.com/
-
----
-
-# EnterpriseArchitecture #AI #Governance #DocumentationFirst #OpenSource #SoftwareEngineering #TechLeadership #IslamicFinance #ShariahCompliant #Playwright
