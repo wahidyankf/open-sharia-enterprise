@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/oseplatform-web",
   "projectType": "application",
+  "implicitDependencies": ["oseplatform-cli"],
   "targets": {
     "dev": {
       "executor": "nx:run-commands",
@@ -26,13 +27,21 @@
         "cwd": "apps/oseplatform-web"
       }
     },
+    "links:check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "./apps/oseplatform-cli/dist/oseplatform-cli links check"
+      },
+      "dependsOn": [{ "projects": "oseplatform-cli", "target": "build" }]
+    },
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
         "command": "bash build.sh",
         "cwd": "apps/oseplatform-web"
       },
-      "outputs": ["{projectRoot}/public"]
+      "outputs": ["{projectRoot}/public"],
+      "dependsOn": ["links:check"]
     },
     "lint": {
       "executor": "nx:run-commands",

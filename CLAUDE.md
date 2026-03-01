@@ -21,6 +21,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `ayokoding-cli` - Go CLI tool for content automation
   - `rhino-cli` - Go CLI tool for repository management (Repository Hygiene & INtegration Orchestrator)
   - `javaproject-cli` - Go CLI tool for validating Java package null-safety annotations
+  - `oseplatform-cli` - Go CLI tool for OSE Platform site maintenance (link validation)
   - `organiclever-web` - Next.js 16 landing and promotional website (www.organiclever.com)
   - `organiclever-web-e2e` - Playwright E2E tests for organiclever-web
   - `organiclever-app` - Flutter main application (app.organiclever.com, Android, iOS)
@@ -37,6 +38,7 @@ open-sharia-enterprise/
 │   ├── ayokoding-cli/       # Content automation CLI
 │   ├── rhino-cli/          # Repository management CLI
 │   ├── javaproject-cli/       # Java null-safety annotation validator
+│   ├── oseplatform-cli/     # OSE Platform site CLI
 │   ├── organiclever-web/     # OrganicLever landing website (Next.js)
 │   ├── organiclever-web-e2e/ # Playwright E2E tests for organiclever-web
 │   ├── organiclever-app/  # Flutter mobile & web app

@@ -130,6 +130,17 @@ The platform consists of 4 applications across 2 technology stacks:
   - Text, JSON, and markdown output formats
 - **Usage**: Runs as first step of `organiclever-be`'s `typecheck` target
 
+#### oseplatform-cli
+
+- **Purpose**: OSE Platform site link validation
+- **Language**: Go 1.26
+- **Build Command**: `nx build oseplatform-cli`
+- **Location**: `apps/oseplatform-cli/`
+- **Features**:
+  - Validates all internal links in oseplatform-web content
+  - Text, JSON, and markdown output formats
+- **Usage**: Runs as first step of `oseplatform-web`'s `test:quick` target
+
 ### C4 Level 2: Container Diagram
 
 Shows the high-level technical building blocks (containers) of the system. In C4 terminology, a "container" is a deployable/executable unit (web app, database, file system, etc.), not a Docker container.
@@ -145,6 +156,7 @@ graph TB
         AYOCLI[ayokoding-cli<br/>Go CLI]
         RHINO[rhino-cli<br/>Go CLI]
         JPVAL[javaproject-cli<br/>Go CLI]
+        OSECLI[oseplatform-cli<br/>Go CLI]
     end
 
     subgraph "Shared Infrastructure"
@@ -155,6 +167,7 @@ graph TB
     AYOCLI -->|Updates content| AYO
     RHINO -->|Repository automation| NX
     JPVAL -->|Validates null-safety| NX
+    OSECLI -->|Validates links| OSE
 
     NX -.->|Manages| OSE
     NX -.->|Manages| AYO
@@ -169,6 +182,7 @@ graph TB
     style AYOCLI fill:#2a9d8f,stroke:#264653,color:#ffffff
     style RHINO fill:#2a9d8f,stroke:#264653,color:#ffffff
     style JPVAL fill:#2a9d8f,stroke:#264653,color:#ffffff
+    style OSECLI fill:#2a9d8f,stroke:#264653,color:#ffffff
     style NX fill:#6a4c93,stroke:#22223b,color:#ffffff
     style LIBS fill:#457b9d,stroke:#1d3557,color:#ffffff
 ```
@@ -1051,7 +1065,7 @@ graph TB
 - **Language**: Go 1.24+
 - **Build**: Native Go toolchain via Nx
 - **Distribution**: Local binaries
-- **Applications**: ayokoding-cli, rhino-cli, javaproject-cli
+- **Applications**: ayokoding-cli, rhino-cli, javaproject-cli, oseplatform-cli
 
 ### Infrastructure
 

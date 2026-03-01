@@ -73,6 +73,7 @@ graph TB
 - 🛠️ **ayokoding-cli** ([`apps/ayokoding-cli/`](./apps/ayokoding-cli/)) - Golang CLI for content automation (title updates, navigation generation)
 - 🦏 **rhino-cli** ([`apps/rhino-cli/`](./apps/rhino-cli/)) - Golang CLI for repository management (Repository Hygiene & INtegration Orchestrator)
 - ☕ **javaproject-cli** ([`apps/javaproject-cli/`](./apps/javaproject-cli/)) - Golang CLI for validating Java package null-safety annotations
+- 🏢 **oseplatform-cli** ([`apps/oseplatform-cli/`](./apps/oseplatform-cli/)) - Golang CLI for OSE Platform site validation (link checking)
 - 🔐 **Golang Foundation** - Golang will be used extensively on the information security side of the platform
 
 **Strategic Value:**

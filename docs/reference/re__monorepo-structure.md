@@ -74,6 +74,7 @@ Flat structure - all apps at the same level, no subdirectories.
 - `ayokoding-cli` - AyoKoding CLI tool (Go application)
 - `rhino-cli` - Repository management CLI (Go application)
 - `javaproject-cli` - Java package null-safety validator (Go CLI)
+- `oseplatform-cli` - OSE Platform site maintenance CLI (Go application)
 
 ### App Structure (Hugo Static Site)
 
