@@ -2,30 +2,13 @@ package cmd
 
 import (
 	"encoding/json"
-	"io"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
-)
 
-// captureStdout redirects os.Stdout to a pipe and returns a function that
-// restores stdout and returns whatever was written.
-func captureStdout(t *testing.T) func() string {
-	t.Helper()
-	r, w, err := os.Pipe()
-	if err != nil {
-		t.Fatalf("os.Pipe: %v", err)
-	}
-	orig := os.Stdout
-	os.Stdout = w
-	t.Cleanup(func() { os.Stdout = orig })
-	return func() string {
-		_ = w.Close()
-		out, _ := io.ReadAll(r)
-		return string(out)
-	}
-}
+	"github.com/wahidyankf/open-sharia-enterprise/libs/golang-commons/testutil"
+)
 
 func resetFlags() {
 	quiet = false
@@ -45,7 +28,7 @@ func TestRunLinksCheck_NoMarkdownFiles(t *testing.T) {
 	resetFlags()
 	linksContentDir = tmpDir
 
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := runLinksCheck(nil, nil)
 	read()
 	if err != nil {
@@ -68,7 +51,7 @@ func TestRunLinksCheck_ValidLinks(t *testing.T) {
 	resetFlags()
 	linksContentDir = tmpDir
 
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := runLinksCheck(nil, nil)
 	read()
 	if err != nil {
@@ -87,7 +70,7 @@ func TestRunLinksCheck_BrokenLinks(t *testing.T) {
 	resetFlags()
 	linksContentDir = tmpDir
 
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := runLinksCheck(nil, nil)
 	read()
 	if err == nil {
@@ -102,7 +85,7 @@ func TestRunLinksCheck_DirectoryNotExist(t *testing.T) {
 	resetFlags()
 	linksContentDir = "/tmp/nonexistent-dir-xyz-12345"
 
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := runLinksCheck(nil, nil)
 	read()
 	if err == nil {
@@ -116,7 +99,7 @@ func TestRunLinksCheck_JSONOutput(t *testing.T) {
 	linksContentDir = tmpDir
 	output = "json"
 
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := runLinksCheck(nil, nil)
 	out := read()
 	if err != nil {
@@ -137,7 +120,7 @@ func TestRunLinksCheck_MarkdownOutput(t *testing.T) {
 	linksContentDir = tmpDir
 	output = "markdown"
 
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := runLinksCheck(nil, nil)
 	out := read()
 	if err != nil {
@@ -154,7 +137,7 @@ func TestRunLinksCheck_QuietMode(t *testing.T) {
 	linksContentDir = tmpDir
 	quiet = true
 
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := runLinksCheck(nil, nil)
 	out := read()
 	if err != nil {

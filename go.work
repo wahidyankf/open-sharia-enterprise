@@ -6,4 +6,5 @@ use (
 	./apps/oseplatform-cli
 	./apps/rhino-cli
 	./libs/golang-commons
+	./libs/hugo-commons
 )

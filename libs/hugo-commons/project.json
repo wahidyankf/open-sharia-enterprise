@@ -1,0 +1,29 @@
+{
+  "name": "hugo-commons",
+  "sourceRoot": "libs/hugo-commons",
+  "projectType": "library",
+  "targets": {
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 go test -coverprofile=cover.out ./... && go tool go-test-coverage --config=.testcoverage.yml && rm -f cover.out",
+        "cwd": "libs/hugo-commons"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 golangci-lint run --allow-parallel-runners ./...",
+        "cwd": "libs/hugo-commons"
+      }
+    },
+    "install": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go mod tidy",
+        "cwd": "libs/hugo-commons"
+      }
+    }
+  },
+  "tags": ["type:lib", "platform:golang"]
+}
