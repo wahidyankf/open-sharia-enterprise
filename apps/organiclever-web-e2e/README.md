@@ -98,5 +98,4 @@ apps/organiclever-web-e2e/
 
 - [organiclever-web](../organiclever-web/README.md) — The frontend being tested
 - [organiclever-be-e2e](../organiclever-be-e2e/README.md) — API-level E2E counterpart (tests the Spring Boot backend)
-- [organiclever-app-web-e2e](../organiclever-app-web-e2e/README.md) — Browser-based E2E for the Flutter web UI
 - [Playwright docs](../../docs/explanation/software-engineering/automation-testing/tools/playwright/README.md) — Playwright standards for this project

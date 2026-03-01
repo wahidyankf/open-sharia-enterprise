@@ -100,7 +100,6 @@ graph TB
 - 🌐 [`organiclever-be`](./apps/organiclever-be/) - Spring Boot REST API backend (port 8201)
 - 📱 [`organiclever-app`](./apps/organiclever-app/) - Flutter mobile and web application (port 3201)
 - 🧪 [`organiclever-be-e2e`](./apps/organiclever-be-e2e/) - Playwright API E2E tests for the backend
-- 🧪 [`organiclever-app-web-e2e`](./apps/organiclever-app-web-e2e/) - Playwright browser E2E tests for the Flutter web UI
 
 **Tech Stack:**
 

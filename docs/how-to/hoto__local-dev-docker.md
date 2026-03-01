@@ -131,15 +131,6 @@ nx run organiclever-web-e2e:test:e2e
 
 See [`apps/organiclever-web-e2e/`](../../apps/organiclever-web-e2e/README.md) for setup and options.
 
-For browser-based E2E tests against the Flutter web app, also start `organiclever-app` and then run:
-
-```bash
-nx dev organiclever-app   # separate terminal — starts Flutter web on port 3201
-nx run organiclever-app-web-e2e:test:e2e
-```
-
-See [`apps/organiclever-app-web-e2e/`](../../apps/organiclever-app-web-e2e/README.md) for setup and options.
-
 ### 7. Stop Services
 
 ```bash
@@ -164,7 +155,6 @@ docker-compose down -v
 - `organiclever-app` - Flutter web client (port 3201) — `nx dev organiclever-app`
 - `organiclever-be-e2e` - Playwright API E2E tests — `nx run organiclever-be-e2e:test:e2e`
 - `organiclever-web-e2e` - Playwright browser E2E tests — `nx run organiclever-web-e2e:test:e2e`
-- `organiclever-app-web-e2e` - Playwright browser E2E tests — `nx run organiclever-app-web-e2e:test:e2e`
 
 **Quick Start**:
 
@@ -500,7 +490,7 @@ Maintain a central registry of ports to avoid conflicts:
 
 - 8201: organiclever-be (also used by organiclever-be-e2e as `BASE_URL`)
 - 3200: organiclever-web (also used by organiclever-web-e2e as `BASE_URL`)
-- 3201: organiclever-app Flutter web (also used by organiclever-app-web-e2e as `BASE_URL`)
+- 3201: organiclever-app Flutter web
 - 5432: PostgreSQL databases
 
 ## Performance Tips

@@ -242,27 +242,6 @@ Requires: clang++, cmake, ninja, pkg-config
 flutter run -d linux
 ```
 
-## E2E Testing
-
-The [`organiclever-app-web-e2e`](../organiclever-app-web-e2e/) project provides Playwright-based
-browser E2E tests for this Flutter web app. Run them after starting both services:
-
-```bash
-# Start backend
-npm run organiclever:dev
-
-# Start Flutter web app (separate terminal)
-nx dev organiclever-app
-
-# Run browser E2E tests
-nx run organiclever-app-web-e2e:test:e2e
-```
-
-Tests cover:
-
-- HomeScreen initial state — app title and "Fetch Hello" button visible
-- Fetch interaction — "API Response:" label and `world!` message displayed after clicking
-
 ## Future Scalability
 
 **When app grows beyond 10 screens**:
