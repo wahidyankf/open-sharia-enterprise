@@ -79,12 +79,12 @@ Experimental:
 - ✅ Go test coverage enforcement (≥80%, all 5 projects)
 - ✅ CI/CD pipeline hardening + scheduled deployments
 - ✅ Go tooling ecosystem (4 CLIs + 2 shared libs)
-- 🔄 Feature development: next
+- 🔄 Feature development: not yet
 
 ---
 
 Phase 1 Goal: Organic Lever (productivity tracker)
-Target: Local client → Web → Android
+Stack: Next.js (web — prototype fast) + Flutter (Android/iOS — optimized UX)
 Timeline: 12-16 weeks, Insha Allah
 
 The infrastructure is done. No more excuses. Time to build.
@@ -93,7 +93,7 @@ The infrastructure is done. No more excuses. Time to build.
 
 Last week: E2E testing suite + governance hardening
 This week: CI standardization + dependency sweep + Go ecosystem (137 commits, 2 plans closed)
-Next week: Gherkin integration in integration + E2E tests, more CI/CD improvements, Insha Allah
+Next week: Gherkin integration in integration + E2E tests, more CI/CD improvements (OrganicLever apps), Insha Allah
 
 Every commit visible on GitHub. Updates every second Sunday.
 
