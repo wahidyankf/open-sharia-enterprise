@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/wahidyankf/open-sharia-enterprise/apps/ayokoding-cli/internal/navigation"
+	"github.com/wahidyankf/open-sharia-enterprise/libs/golang-commons/testutil"
 )
 
 func makeIndexDir(t *testing.T) string {
@@ -26,7 +27,7 @@ func TestRunNavRegen_WithIndexFile(t *testing.T) {
 	resetFlags()
 	regenPath = tmpDir
 
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := runNavRegen(nil, nil)
 	read()
 	if err != nil {
@@ -38,7 +39,7 @@ func TestRunNavRegen_NonExistentDir(t *testing.T) {
 	resetFlags()
 	regenPath = "/tmp/nonexistent-nav-dir-xyz-99999"
 
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := runNavRegen(nil, nil)
 	read()
 	if err == nil {
@@ -52,7 +53,7 @@ func TestRunNavRegen_QuietMode(t *testing.T) {
 	regenPath = tmpDir
 	quiet = true
 
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := runNavRegen(nil, nil)
 	out := read()
 	if err != nil {
@@ -69,7 +70,7 @@ func TestRunNavRegen_JSONOutput(t *testing.T) {
 	regenPath = tmpDir
 	output = "json"
 
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := runNavRegen(nil, nil)
 	out := read()
 	if err != nil {
@@ -90,7 +91,7 @@ func TestRunNavRegen_MarkdownOutput(t *testing.T) {
 	regenPath = tmpDir
 	output = "markdown"
 
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := runNavRegen(nil, nil)
 	out := read()
 	if err != nil {
@@ -106,7 +107,7 @@ func TestRunNavRegen_PositionalArg(t *testing.T) {
 	resetFlags()
 	regenPath = ""
 
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := runNavRegen(nil, []string{tmpDir})
 	read()
 	if err != nil {
@@ -121,7 +122,7 @@ func TestOutputText_WithErrors(t *testing.T) {
 		ErrorCount:     1,
 		Errors:         []string{"some error occurred"},
 	}
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := outputText(result, time.Second)
 	out := read()
 	if err != nil {
@@ -143,7 +144,7 @@ func TestOutputText_Verbose(t *testing.T) {
 		Errors:         []string{},
 	}
 	verbose = true
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := outputText(result, time.Second)
 	out := read()
 	verbose = false
@@ -162,7 +163,7 @@ func TestOutputJSON_Success(t *testing.T) {
 		ErrorCount:     0,
 		Errors:         []string{},
 	}
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := outputJSON(result, 500*time.Millisecond)
 	out := read()
 	if err != nil {
@@ -184,7 +185,7 @@ func TestOutputMarkdown_Success(t *testing.T) {
 		ErrorCount:     0,
 		Errors:         []string{},
 	}
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := outputMarkdown(result, time.Second, "/some/path")
 	out := read()
 	if err != nil {
@@ -202,7 +203,7 @@ func TestOutputMarkdown_WithErrors(t *testing.T) {
 		ErrorCount:     1,
 		Errors:         []string{"nav error"},
 	}
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := outputMarkdown(result, time.Second, "/some/path")
 	out := read()
 	if err != nil {

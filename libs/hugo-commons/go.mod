@@ -1,13 +1,8 @@
-module github.com/wahidyankf/open-sharia-enterprise/apps/ayokoding-cli
+module github.com/wahidyankf/open-sharia-enterprise/libs/hugo-commons
 
 go 1.26
 
-require (
-	github.com/spf13/cobra v1.10.2
-	github.com/wahidyankf/open-sharia-enterprise/libs/golang-commons v0.0.0-00010101000000-000000000000
-	github.com/wahidyankf/open-sharia-enterprise/libs/hugo-commons v0.0.0-00010101000000-000000000000
-	gopkg.in/yaml.v3 v3.0.1
-)
+tool github.com/vladopajic/go-test-coverage/v2
 
 require (
 	github.com/alexflint/go-arg v1.6.0 // indirect
@@ -16,21 +11,15 @@ require (
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/google/go-github/v56 v56.0.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
-	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
+	github.com/kr/text v0.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/narqo/go-badge v0.0.0-20230821190521-c9a75c019a59 // indirect
 	github.com/rs/zerolog v1.34.0 // indirect
-	github.com/spf13/pflag v1.0.9 // indirect
 	github.com/vladopajic/go-test-coverage/v2 v2.18.3 // indirect
 	golang.org/x/image v0.18.0 // indirect
 	golang.org/x/sys v0.26.0 // indirect
 	golang.org/x/tools v0.26.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/wahidyankf/open-sharia-enterprise/libs/golang-commons v0.0.0-00010101000000-000000000000 => ../../libs/golang-commons
-
-replace github.com/wahidyankf/open-sharia-enterprise/libs/hugo-commons v0.0.0-00010101000000-000000000000 => ../../libs/hugo-commons
-
-tool github.com/vladopajic/go-test-coverage/v2

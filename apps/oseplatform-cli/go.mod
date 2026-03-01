@@ -5,6 +5,7 @@ go 1.26
 require (
 	github.com/spf13/cobra v1.10.2
 	github.com/wahidyankf/open-sharia-enterprise/libs/golang-commons v0.0.0-00010101000000-000000000000
+	github.com/wahidyankf/open-sharia-enterprise/libs/hugo-commons v0.0.0-00010101000000-000000000000
 )
 
 require (
@@ -29,5 +30,7 @@ require (
 )
 
 replace github.com/wahidyankf/open-sharia-enterprise/libs/golang-commons v0.0.0-00010101000000-000000000000 => ../../libs/golang-commons
+
+replace github.com/wahidyankf/open-sharia-enterprise/libs/hugo-commons v0.0.0-00010101000000-000000000000 => ../../libs/hugo-commons
 
 tool github.com/vladopajic/go-test-coverage/v2

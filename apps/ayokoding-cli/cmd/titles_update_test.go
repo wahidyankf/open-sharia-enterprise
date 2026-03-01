@@ -7,13 +7,14 @@ import (
 	"time"
 
 	"github.com/wahidyankf/open-sharia-enterprise/apps/ayokoding-cli/internal/titles"
+	"github.com/wahidyankf/open-sharia-enterprise/libs/golang-commons/testutil"
 )
 
 func TestRunTitlesUpdate_InvalidLang(t *testing.T) {
 	resetFlags()
 	titlesLang = "invalid"
 
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := runTitlesUpdate(nil, nil)
 	read()
 	if err == nil {
@@ -31,7 +32,7 @@ func TestRunTitlesUpdate_EnLangDirectoryMissing(t *testing.T) {
 	// The content directory (apps/ayokoding-web/content/en) won't exist relative to test runner
 	// LoadConfig returns empty config for nonexistent files, then processLanguageDirectory fails
 
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := runTitlesUpdate(nil, nil)
 	read()
 	// Expect an error because the content directory doesn't exist
@@ -45,7 +46,7 @@ func TestRunTitlesUpdate_QuietMode(t *testing.T) {
 	titlesLang = "invalid"
 	quiet = true
 
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := runTitlesUpdate(nil, nil)
 	read()
 	// Still returns error for invalid lang
@@ -70,7 +71,7 @@ func TestOutputTitlesText_BothResults(t *testing.T) {
 			Errors:       []string{"some id error"},
 		},
 	}
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := outputTitlesText(result, time.Second)
 	out := read()
 	if err != nil {
@@ -95,7 +96,7 @@ func TestOutputTitlesText_Quiet(t *testing.T) {
 		EnResult: &titles.LangResult{UpdatedCount: 1, Errors: []string{}},
 	}
 	quiet = true
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := outputTitlesText(result, time.Second)
 	out := read()
 	quiet = false
@@ -112,7 +113,7 @@ func TestOutputTitlesText_Verbose(t *testing.T) {
 		EnResult: &titles.LangResult{UpdatedCount: 0, Errors: []string{}},
 	}
 	verbose = true
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := outputTitlesText(result, time.Second)
 	out := read()
 	verbose = false
@@ -140,7 +141,7 @@ func TestOutputTitlesJSON_BothResults(t *testing.T) {
 			Errors:       []string{},
 		},
 	}
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := outputTitlesJSON(result, time.Second)
 	out := read()
 	if err != nil {
@@ -161,7 +162,7 @@ func TestOutputTitlesJSON_NilResults(t *testing.T) {
 		EnResult: nil,
 		IDResult: nil,
 	}
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := outputTitlesJSON(result, time.Second)
 	out := read()
 	if err != nil {
@@ -189,7 +190,7 @@ func TestOutputTitlesMarkdown_BothResults(t *testing.T) {
 			Errors:       []string{"markdown error"},
 		},
 	}
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := outputTitlesMarkdown(result, time.Second)
 	out := read()
 	if err != nil {
@@ -209,7 +210,7 @@ func TestOutputTitlesMarkdown_NilResults(t *testing.T) {
 		EnResult: nil,
 		IDResult: nil,
 	}
-	read := captureStdout(t)
+	read := testutil.CaptureStdout(t)
 	err := outputTitlesMarkdown(result, time.Second)
 	out := read()
 	if err != nil {
