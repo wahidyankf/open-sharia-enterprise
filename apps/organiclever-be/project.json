@@ -10,7 +10,8 @@
         "command": "mvn clean package -DskipTests",
         "cwd": "apps/organiclever-be"
       },
-      "outputs": ["{projectRoot}/target"]
+      "outputs": ["{projectRoot}/target"],
+      "dependsOn": []
     },
     "dev": {
       "executor": "nx:run-commands",

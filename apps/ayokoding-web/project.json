@@ -17,7 +17,8 @@
         "command": "./build.sh",
         "cwd": "apps/ayokoding-web"
       },
-      "outputs": ["{projectRoot}/public"]
+      "outputs": ["{projectRoot}/public"],
+      "dependsOn": []
     },
     "clean": {
       "executor": "nx:run-commands",
