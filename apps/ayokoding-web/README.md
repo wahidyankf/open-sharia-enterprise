@@ -311,44 +311,40 @@ The project uses a dedicated production branch for automatic deployment to ayoko
 
 **Production Branch**: `prod-ayokoding-web`
 
-**Workflow**:
+### Automated Deployment (Primary)
 
-1. **Make all changes in `main` branch first**
+Deployment is automated via the `deploy-ayokoding-web.yml` GitHub Actions workflow:
 
-   ```bash
-   git checkout main
-   # ... make your changes ...
-   git add .
-   git commit -m "feat(content): add new tutorial"
-   git push origin main
-   ```
+- **Schedule**: Runs at **6 AM and 6 PM WIB** (UTC+7) every day
+- **Change detection**: Compares `HEAD` on `main` against `prod-ayokoding-web`, scoped to `apps/ayokoding-web/`. Skips build and deploy if nothing changed
+- **Build**: Runs `nx build ayokoding-web` (Hugo extended build)
+- **Deploy**: Force-pushes `main` to `prod-ayokoding-web`; Vercel detects the push and builds automatically
 
-2. **When ready to deploy to production, pull changes to production branch**
+**Manual trigger**: The workflow can also be triggered on-demand from the GitHub Actions UI. Set `force_deploy=true` to deploy even if no changes are detected.
 
-   ```bash
-   git checkout prod-ayokoding-web
-   git pull origin main
-   git push origin prod-ayokoding-web
-   ```
+### Emergency / On-Demand Deployment
 
-3. **Automatic deployment triggers**
-   - Vercel automatically detects the push to `prod-ayokoding-web`
-   - Builds and deploys to ayokoding.com
+For immediate deployments outside the scheduled window, use the `apps-ayokoding-web-deployer` AI agent or run directly:
+
+```bash
+git push --force origin HEAD:prod-ayokoding-web
+```
 
 **Important Guidelines**:
 
 - ✅ **DO**: Always work in `main` branch for all development
-- ✅ **DO**: Pull from `main` to `prod-ayokoding-web` when ready to deploy
-- ✅ **DO**: Keep `prod-ayokoding-web` clean and synchronized with `main`
+- ✅ **DO**: Let the automated workflow handle routine deployments
+- ✅ **DO**: Keep `prod-ayokoding-web` synchronized with `main`
 - ❌ **DON'T**: Commit directly to `prod-ayokoding-web` branch
 - ❌ **DON'T**: Make changes in `prod-ayokoding-web` that don't exist in `main`
 - ❌ **DON'T**: Use `prod-ayokoding-web` for development or experimentation
 
 **Why This Approach?**
 
-- **Controlled deployments**: Only deploy when explicitly ready
+- **Automated deployments**: Content updates deploy automatically without manual intervention
+- **Change-gated**: Builds only run when `apps/ayokoding-web/` content has actually changed, keeping CI costs low
 - **Clean deployment trigger**: Vercel watches `prod-ayokoding-web` for production
-- **Compliant with Trunk Based Development**: Environment branches (production, staging) are acceptable in TBD - they serve deployment purposes, not feature isolation
+- **Compliant with Trunk Based Development**: Environment branches serve deployment purposes only, not feature isolation
 - **Simple rollback**: Revert `prod-ayokoding-web` to a previous commit if needed
 
 ### Vercel Configuration
