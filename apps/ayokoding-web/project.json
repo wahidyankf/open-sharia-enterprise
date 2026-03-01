@@ -36,13 +36,21 @@
         "parallel": false
       }
     },
+    "links:check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "./apps/ayokoding-cli/dist/ayokoding-cli links check"
+      },
+      "dependsOn": [{ "projects": "ayokoding-cli", "target": "build" }]
+    },
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
         "command": "./build.sh",
         "cwd": "apps/ayokoding-web"
       },
-      "outputs": ["{projectRoot}/public"]
+      "outputs": ["{projectRoot}/public"],
+      "dependsOn": ["links:check"]
     },
     "lint": {
       "executor": "nx:run-commands",
