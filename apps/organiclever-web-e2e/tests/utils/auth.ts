@@ -6,7 +6,9 @@ export async function loginWithUI(page: Page): Promise<void> {
   await page.fill('input[type="email"]', "user@example.com");
   await page.fill('input[type="password"]', "password123");
   await page.click('button[type="submit"]');
-  await page.waitForURL(`${TEST_CONFIG.baseUrl}/dashboard`);
+  // Use a regex and extended timeout: webkit in CI can be slow to complete
+  // the post-login redirect (React auth state update → router.push).
+  await page.waitForURL(/\/dashboard/, { timeout: 60000 });
 }
 
 export async function logoutViaAPI(page: Page): Promise<void> {
