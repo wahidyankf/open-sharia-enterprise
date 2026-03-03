@@ -35,11 +35,11 @@ const ORIGINAL_MEMBERS = [
 ];
 
 Before({ tags: "@member-editing" }, async () => {
-  await fs.writeFile(MEMBERS_PATH, JSON.stringify(ORIGINAL_MEMBERS, null, 2));
+  await fs.writeFile(MEMBERS_PATH, JSON.stringify(ORIGINAL_MEMBERS, null, 2) + "\n");
 });
 
 After({ tags: "@member-editing" }, async () => {
-  await fs.writeFile(MEMBERS_PATH, JSON.stringify(ORIGINAL_MEMBERS, null, 2));
+  await fs.writeFile(MEMBERS_PATH, JSON.stringify(ORIGINAL_MEMBERS, null, 2) + "\n");
 });
 
 When("the user opens the edit dialog for {string}", async ({ page }, name: string) => {

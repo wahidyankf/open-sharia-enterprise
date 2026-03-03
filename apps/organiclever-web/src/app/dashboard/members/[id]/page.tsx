@@ -64,7 +64,7 @@ const MemberDetailContent = ({ member }: { member: Member }) => (
 
 export default function MemberDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, setIntendedDestination } = useAuth();
   const [member, setMember] = useState<Member | null>(null);
   const router = useRouter();
 
@@ -84,10 +84,12 @@ export default function MemberDetailPage({ params }: { params: Promise<{ id: str
 
   useEffect(() => {
     if (!isAuthenticated) {
+      setIntendedDestination(`/dashboard/members/${id}`);
       router.push("/login");
     } else {
       fetchMember();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, router, fetchMember]);
 
   if (!isAuthenticated || !member) {

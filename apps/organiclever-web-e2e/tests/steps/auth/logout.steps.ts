@@ -5,6 +5,8 @@ const { When, Then } = createBdd();
 
 When("the user clicks the {string} button in the navigation sidebar", async ({ page }, name: string) => {
   await page.getByRole("button", { name }).click();
+  // Wait for the navigation to complete (logout is async: fetch → setIsAuthenticated → router.push)
+  await page.waitForURL(/\/login/);
 });
 
 Then("the authentication session should be ended", async ({ page }) => {
