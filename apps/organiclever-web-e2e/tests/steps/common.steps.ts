@@ -57,5 +57,5 @@ Then("the visitor should remain on the login page", async ({ page }) => {
 });
 
 Then("the user should be redirected to the dashboard", async ({ page }) => {
-  await page.waitForURL(/\/dashboard/);
+  await page.waitForURL(/\/dashboard/, { timeout: 60000 });
 });

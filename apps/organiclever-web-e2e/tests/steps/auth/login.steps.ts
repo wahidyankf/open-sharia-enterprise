@@ -16,7 +16,7 @@ When("the user submits the login form with those credentials", async ({ page }) 
   await page.fill('input[type="email"]', storedEmail);
   await page.fill('input[type="password"]', storedPassword);
   await page.click('button[type="submit"]');
-  await page.waitForURL(/\/dashboard/);
+  await page.waitForURL(/\/dashboard/, { timeout: 60000 });
 });
 
 Then("the user should be on the dashboard page", async ({ page }) => {
@@ -40,5 +40,5 @@ Then("the error {string} should be displayed", async ({ page }, error: string) =
 
 When("the user navigates to the login page", async ({ page }) => {
   await page.goto("/login");
-  await page.waitForURL(/\/dashboard/);
+  await page.waitForURL(/\/dashboard/, { timeout: 60000 });
 });

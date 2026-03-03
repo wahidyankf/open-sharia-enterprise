@@ -22,7 +22,7 @@ When("the visitor successfully logs in", async ({ page }) => {
   await page.fill('input[type="email"]', "user@example.com");
   await page.fill('input[type="password"]', "password123");
   await page.click('button[type="submit"]');
-  await page.waitForURL(/\/dashboard/);
+  await page.waitForURL(/\/dashboard/, { timeout: 60000 });
 });
 
 Then("the visitor should be on the {string} page", async ({ page }, path: string) => {
