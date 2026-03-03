@@ -7,16 +7,16 @@ Gherkin acceptance specifications for the
 
 These specs define the behavior of the OrganicLever REST API from the perspective of its consumers
 — what endpoints accept, what they return, and what business rules they enforce. Step definitions
-live in `apps/organiclever-be/src/test/java/`.
+live in `apps/organiclever-be-e2e/tests/steps/`.
 
 ## BDD Framework
 
-| Concern                   | Choice                                |
-| ------------------------- | ------------------------------------- |
-| Language                  | Java 25                               |
-| BDD framework             | Cucumber JVM 7+                       |
-| Test runner               | JUnit 5                               |
-| Step definitions location | `apps/organiclever-be/src/test/java/` |
+| Concern                   | Choice                                  |
+| ------------------------- | --------------------------------------- |
+| Language                  | TypeScript                              |
+| BDD framework             | playwright-bdd 8+                       |
+| Test runner               | Playwright (via bddgen)                 |
+| Step definitions location | `apps/organiclever-be-e2e/tests/steps/` |
 
 **See**: [BDD Standards](../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)
 for required framework setup and coverage rules.
@@ -37,15 +37,12 @@ specs/organiclever-be/
 
 ## Running Specs
 
-Once Cucumber JVM is configured in `apps/organiclever-be/`:
-
 ```bash
-# From repository root (via Nx)
-nx run organiclever-be:test:acceptance
+# Generate spec files from feature files, then run
+nx run organiclever-be-e2e:test:e2e
 
-# Directly via Maven
-cd apps/organiclever-be
-mvn test -Dcucumber.filter.tags="@acceptance"
+# Directly (from apps/organiclever-be-e2e/)
+npx bddgen && npx playwright test
 ```
 
 ## Adding a Feature File
@@ -55,11 +52,12 @@ mvn test -Dcucumber.filter.tags="@acceptance"
 3. Create the `.feature` file: `[domain-capability].feature`
 4. Write scenarios following
    [Gherkin Standards](../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/ex-soen-de-bedrdebd__gherkin-standards.md)
-5. Implement step definitions in `apps/organiclever-be/src/test/java/`
+5. Implement step definitions in `apps/organiclever-be-e2e/tests/steps/` following the TypeScript
+   step definition pattern.
 
 ## Related
 
 - **App**: [apps/organiclever-be/](../../apps/organiclever-be/README.md) — Spring Boot implementation
+- **E2E Test Suite**: [apps/organiclever-be-e2e/](../../apps/organiclever-be-e2e/README.md) — playwright-bdd test runner
 - **BDD Standards**: [behavior-driven-development-bdd/](../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)
-- **E2E Tests**: [apps/organiclever-be-e2e/](../../apps/organiclever-be-e2e/README.md) — Playwright
-  API tests
+- **playwright-bdd Integration**: [Playwright BDD Integration](../../docs/explanation/software-engineering/automation-testing/tools/playwright/ex-soen-aute-to-pl__bdd.md)

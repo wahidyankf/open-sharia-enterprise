@@ -114,9 +114,49 @@ export default defineConfig({
 });
 ```
 
+## BDD Configuration (playwright-bdd)
+
+When the E2E project is driven by Gherkin feature files, replace `testDir` with `defineBddConfig`:
+
+```typescript
+import { defineConfig } from "@playwright/test";
+import { defineBddConfig } from "playwright-bdd";
+
+const testDir = defineBddConfig({
+  featuresRoot: "../../specs/organiclever-be",
+  features: "../../specs/organiclever-be/**/*.feature",
+  steps: "./tests/steps/**/*.ts",
+});
+
+export default defineConfig({
+  testDir, // ← returned by defineBddConfig
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 2 : 0,
+  workers: process.env.CI ? 1 : undefined,
+  reporter: [["html"], ["junit", { outputFile: "test-results/junit.xml" }]],
+  use: {
+    baseURL: process.env.BASE_URL || "http://localhost:8201",
+    trace: "on-first-retry",
+    screenshot: "only-on-failure",
+  },
+  // No projects array needed for API-only suites
+});
+```
+
+**Key differences from standard config:**
+
+- `defineBddConfig()` returns the `testDir` value and registers BDD wiring
+- Feature files live in `specs/` at the monorepo root (path relative to project root)
+- No `projects` array required for API tests — the default single project suffices
+- Always run `npx bddgen` before `npx playwright test` to regenerate `.features-gen/`
+
+**See**: [BDD Integration](ex-soen-aute-to-pl__bdd.md) for full playwright-bdd standards.
+
 ## Related Documentation
 
 - [Playwright Framework Index](README.md)
+- [BDD Integration](ex-soen-aute-to-pl__bdd.md)
 - [Reproducibility](../../../../../../governance/principles/software-engineering/reproducibility.md)
 
 ---

@@ -27,9 +27,9 @@ Acceptance specs belong at the monorepo root rather than inside app directories 
 ## App Specs
 
 - **[organiclever-be/](./organiclever-be/README.md)** — Backend REST API specifications (Spring Boot,
-  Cucumber JVM)
+  playwright-bdd)
 - **[organiclever-web/](./organiclever-web/README.md)** — Web landing page specifications (Next.js,
-  Cucumber.js)
+  playwright-bdd)
 
 ## Standards
 

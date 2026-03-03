@@ -69,6 +69,7 @@ All Playwright tests MUST follow the patterns and practices documented here:
 3. **[Anti-Patterns](ex-soen-aute-to-pl__anti-patterns.md)** - Common mistakes
 4. **[Configuration](ex-soen-aute-to-pl__configuration.md)** - playwright.config.ts setup
 5. **[Page Objects](ex-soen-aute-to-pl__page-objects.md)** - Page Object Model patterns
+6. **[BDD Integration](ex-soen-aute-to-pl__bdd.md)** — playwright-bdd setup and Gherkin step definitions
 
 **For Agents**: Reference this documentation when writing Playwright tests.
 
@@ -140,6 +141,21 @@ Playwright usage in this platform follows the five software engineering principl
 - Screenshot and video recording
 
 ## Documentation Structure
+
+### [Playwright BDD Integration](ex-soen-aute-to-pl__bdd.md)
+
+Using playwright-bdd to drive Playwright tests from Gherkin feature files.
+
+**Covers**:
+
+- When to use playwright-bdd vs vanilla Playwright spec files
+- defineBddConfig setup (replaces testDir)
+- bddgen code generation step
+- createBdd() step definition patterns
+- Cucumber expressions vs regex for URL-path steps
+- Fixture parameter pattern (bddgen inspection requirement)
+- Module-level response-store for API test state
+- Nx project.json integration (bddgen && playwright test)
 
 ### [Playwright Idioms](ex-soen-aute-to-pl__idioms.md)
 
@@ -242,7 +258,7 @@ Playwright runs tests in parallel by default:
 
 **Consider alternatives when:**
 
-❌ Simple API testing (use Axios/Supertest instead)
+✅ BDD-driven acceptance tests (use playwright-bdd)
 ❌ Mobile native apps (use Appium instead)
 ❌ Load testing (use k6/Artillery instead)
 ❌ Unit testing (use Jest/Vitest instead)

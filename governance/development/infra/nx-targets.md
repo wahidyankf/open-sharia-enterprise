@@ -224,6 +224,11 @@ Playwright suites (`*-e2e`):
 
 **Execution strategy**: `test:e2e` is **not** part of the pre-push hook. It runs on a scheduled GitHub Actions cron job (twice daily per workflow) targeting each `*-e2e` project individually. This keeps pre-push fast while ensuring continuous E2E coverage against deployed or locally running services.
 
+**BDD suites**: When the E2E project uses playwright-bdd, `test:e2e` runs
+`npx bddgen && npx playwright test`. The `bddgen` step regenerates `.features-gen/`
+spec files from the Gherkin feature files before Playwright executes them.
+See `apps/organiclever-be-e2e/project.json` for the canonical example.
+
 ### Hugo Sites
 
 | Target  | Requirement                                            |
