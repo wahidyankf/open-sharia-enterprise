@@ -30,7 +30,8 @@
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "mvn test",
+        "commands": ["mvn test", "mvn test -Pintegration"],
+        "parallel": true,
         "cwd": "apps/organiclever-be"
       }
     },
@@ -38,6 +39,13 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "mvn test",
+        "cwd": "apps/organiclever-be"
+      }
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mvn test -Pintegration",
         "cwd": "apps/organiclever-be"
       }
     },

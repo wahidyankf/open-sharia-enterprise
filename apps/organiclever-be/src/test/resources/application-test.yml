@@ -1,0 +1,5 @@
+# Test profile: mirrors production actuator config (NOT dev which sets show-details: always)
+management:
+  endpoint:
+    health:
+      show-details: when-authorized
