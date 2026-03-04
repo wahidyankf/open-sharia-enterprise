@@ -2,6 +2,7 @@
   "name": "rhino-cli",
   "sourceRoot": "apps/rhino-cli",
   "projectType": "application",
+  "tags": ["type:app", "platform:cli", "lang:golang", "domain:tooling"],
   "implicitDependencies": ["golang-commons"],
   "targets": {
     "build": {

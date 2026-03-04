@@ -49,5 +49,5 @@
       }
     }
   },
-  "tags": ["type:app", "platform:hugo"]
+  "tags": ["type:app", "platform:hugo", "domain:oseplatform"]
 }

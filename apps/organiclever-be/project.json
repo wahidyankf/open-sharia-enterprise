@@ -67,6 +67,6 @@
       }
     }
   },
-  "tags": [],
+  "tags": ["type:app", "platform:spring-boot", "lang:java", "domain:organiclever"],
   "implicitDependencies": ["javaproject-cli"]
 }

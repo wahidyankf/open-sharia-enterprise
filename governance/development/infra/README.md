@@ -25,7 +25,7 @@ These standards define **HOW to manage development infrastructure**, including w
 ## Documents
 
 - [Acceptance Criteria Convention](./acceptance-criteria.md) - Writing testable acceptance criteria using Gherkin format for clarity and automation
-- [Nx Target Standards](./nx-targets.md) - Standard Nx targets that apps and libs must expose, canonical target names, caching rules, and build output conventions
+- [Nx Target Standards](./nx-targets.md) - Standard Nx targets that apps and libs must expose, canonical target names, caching rules, build output conventions, and the four-dimension tag scheme for `project.json`
 - [Temporary Files Convention](./temporary-files.md) - Guidelines for AI agents creating temporary uncommitted files and folders
 
 ## Related Documentation

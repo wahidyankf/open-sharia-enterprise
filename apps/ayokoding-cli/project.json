@@ -2,6 +2,7 @@
   "name": "ayokoding-cli",
   "sourceRoot": "apps/ayokoding-cli",
   "projectType": "application",
+  "tags": ["type:app", "platform:cli", "lang:golang", "domain:ayokoding"],
   "implicitDependencies": ["golang-commons", "hugo-commons"],
   "targets": {
     "build": {
