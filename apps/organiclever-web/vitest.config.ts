@@ -8,6 +8,27 @@ export default defineConfig({
   plugins: sharedPlugins,
   test: {
     passWithNoTests: true,
+    coverage: {
+      provider: "v8",
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: [
+        "src/components/ui/**",
+        "src/app/api/**",
+        "src/app/layout.tsx",
+        "src/app/metadata.ts",
+        "src/contexts/**",
+        "src/test/**",
+        "**/*.stories.*",
+        "**/*.{test,spec}.{ts,tsx}",
+      ],
+      thresholds: {
+        lines: 80,
+        functions: 80,
+        branches: 80,
+        statements: 80,
+      },
+      reporter: ["text", "json-summary"],
+    },
     projects: [
       {
         plugins: sharedPlugins,
