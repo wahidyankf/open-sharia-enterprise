@@ -53,10 +53,7 @@ func FormatJSON(result *CheckResult) (string, error) {
 
 	gaps := make([]JSONGap, 0, len(result.Gaps))
 	for _, g := range result.Gaps {
-		gaps = append(gaps, JSONGap{
-			SpecFile: g.SpecFile,
-			Stem:     g.Stem,
-		})
+		gaps = append(gaps, JSONGap(g))
 	}
 
 	out := JSONOutput{
