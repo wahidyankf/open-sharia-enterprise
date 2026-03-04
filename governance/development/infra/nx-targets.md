@@ -142,7 +142,7 @@ them for `nx affected -t lint`.
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | TypeScript app     | unit tests via vitest (typecheck and lint run separately in pre-push)                                                                                                                                                                                                                                   |
 | Go app             | `go test -coverprofile=cover.out ./... && go tool go-test-coverage` — compiles and runs unit tests, then enforces ≥80% total coverage. The `go-test-coverage` tool is declared via the Go 1.24+ `tool` directive in each module's `go.mod` and configured via `.testcoverage.yml` at each project root. |
-| Java/Spring Boot   | unit tests (Maven compile + Surefire unit subset)                                                                                                                                                                                                                                                       |
+| Java/Spring Boot   | unit tests (`mvn test`, includes `**/unit/**/*Test.java`) + integration tests (`mvn test -Pintegration`, includes `**/integration/**/*Test.java`) in parallel; the two Surefire include lists are mutually exclusive — neither profile runs the other tier's tests                                      |
 | Python app         | typecheck (mypy) + unit tests                                                                                                                                                                                                                                                                           |
 | Hugo site          | link check via the site's CLI tool (build runs separately via `nx build`)                                                                                                                                                                                                                               |
 | Flutter/Dart       | unit tests (`flutter test`); `flutter analyze` runs via `typecheck`, not `lint`                                                                                                                                                                                                                         |
@@ -228,6 +228,11 @@ Playwright suites (`*-e2e`):
 `npx bddgen && npx playwright test`. The `bddgen` step regenerates `.features-gen/`
 spec files from the Gherkin feature files before Playwright executes them.
 See `apps/organiclever-be-e2e/project.json` for the canonical example.
+
+**`test:integration` with Cucumber JVM**: `organiclever-be` also exposes `test:integration` which
+runs `mvn test -Pintegration`. This activates Cucumber JVM 7+ with MockMvc — the same Gherkin
+feature files from `specs/organiclever-be/` are executed via a full Spring context but without a
+running server. Unlike `test:e2e`, no live service is required.
 
 ### Hugo Sites
 

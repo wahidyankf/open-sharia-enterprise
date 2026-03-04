@@ -174,11 +174,14 @@ nx dev organiclever-be
 # Start production server (runs built JAR)
 nx run organiclever-be:start
 
-# Run fast quality gate (pre-push standard)
+# Run fast quality gate: unit + integration in parallel (no running service needed)
 nx run organiclever-be:test:quick
 
-# Run unit tests
+# Run unit tests only (JUnit 5, no Spring context)
 nx run organiclever-be:test:unit
+
+# Run integration tests only (Cucumber JVM + MockMvc, no running service needed)
+nx run organiclever-be:test:integration
 
 # Lint code
 nx lint organiclever-be
@@ -316,15 +319,14 @@ docker-compose up
 ### 2. Running Tests
 
 ```bash
-# From repository root (fast quality gate)
+# Fast quality gate: unit + integration in parallel (no running service needed)
 nx run organiclever-be:test:quick
 
-# Run unit tests
-nx run organiclever-be:test:unit
+# Unit tests only (JUnit 5, no Spring context)
+nx run organiclever-be:test:unit        # mvn test
 
-# Or from app directory (Maven directly)
-cd apps/organiclever-be
-mvn test
+# Integration tests only (Cucumber JVM + MockMvc)
+nx run organiclever-be:test:integration # mvn test -Pintegration
 ```
 
 ### 3. Production Build
@@ -372,15 +374,29 @@ apps/organiclever-be/
 ├── src/main/java/com/organiclever/be/
 │   ├── OrganicLeverApplication.java      # Main entry point
 │   ├── config/
-│   │   └── CorsConfig.java                # CORS configuration for Flutter web
+│   │   └── CorsConfig.java               # CORS configuration for Flutter web
 │   └── controller/
-│       └── HelloController.java           # REST endpoints
+│       └── HelloController.java          # REST endpoints
 ├── src/main/resources/
-│   ├── application.yml                    # Base config
-│   ├── application-dev.yml                # Dev config (DevTools)
-│   └── application-prod.yml               # Prod config
-└── src/test/java/
-    └── OrganicLeverApplicationTests.java  # Integration tests
+│   ├── application.yml                   # Base config
+│   ├── application-dev.yml               # Dev config (DevTools)
+│   └── application-prod.yml              # Prod config
+└── src/test/
+    ├── java/com/organiclever/be/
+    │   ├── integration/
+    │   │   ├── CucumberIntegrationTest.java       # @Suite runner
+    │   │   ├── CucumberSpringContextConfig.java   # Spring + MockMvc context config
+    │   │   ├── ResponseStore.java                 # Shared MvcResult state
+    │   │   ├── OrganicLeverApplicationTest.java   # Context-load test
+    │   │   └── steps/
+    │   │       ├── CommonSteps.java
+    │   │       ├── HelloSteps.java
+    │   │       └── HealthSteps.java
+    │   └── unit/
+    │       └── HelloControllerTest.java           # JUnit 5, no Spring context
+    └── resources/
+        ├── application-test.yml                   # Test profile (overrides dev show-details)
+        └── junit-platform.properties              # Cucumber config
 ```
 
 ## Testing with Flutter Client
@@ -411,7 +427,42 @@ Open browser at `http://localhost:3201`
 
 **Note**: CORS is configured in `config/CorsConfig.java` to allow `http://localhost:*` for development.
 
-## E2E Testing
+## Testing
+
+Three tiers of testing provide complete coverage:
+
+| Tier        | Tool                   | Surefire profile | Location                         | Command                                   | Requires running service? |
+| ----------- | ---------------------- | ---------------- | -------------------------------- | ----------------------------------------- | ------------------------- |
+| Unit        | JUnit 5                | (default)        | `src/test/java/.../unit/`        | `nx run organiclever-be:test:unit`        | No                        |
+| Integration | Cucumber JVM + MockMvc | `-Pintegration`  | `src/test/java/.../integration/` | `nx run organiclever-be:test:integration` | No                        |
+| E2E         | playwright-bdd         | —                | `apps/organiclever-be-e2e/`      | `nx run organiclever-be-e2e:test:e2e`     | Yes (port 8201)           |
+
+The two Maven profiles are mutually exclusive: `mvn test` includes only `**/unit/**/*Test.java`;
+`mvn test -Pintegration` includes only `**/integration/**/*Test.java`. `test:quick` runs both in
+parallel (MockMvc needs no real server, so there is no shared resource contention).
+
+Integration and E2E tests share the same Gherkin feature files from `specs/organiclever-be/`.
+
+### Unit Tests
+
+No Spring context. Tests individual classes in isolation (`mvn test`, default Surefire includes):
+
+```bash
+nx run organiclever-be:test:unit
+# or: cd apps/organiclever-be && mvn test
+```
+
+### Integration Tests (MockMvc)
+
+Full Spring context via `@SpringBootTest(webEnvironment = MOCK)` + MockMvc. No running service
+required — Cucumber JVM reads the same Gherkin feature files as the E2E suite (`mvn test -Pintegration`):
+
+```bash
+nx run organiclever-be:test:integration
+# or: cd apps/organiclever-be && mvn test -Pintegration
+```
+
+### E2E Testing
 
 The [`organiclever-be-e2e`](../organiclever-be-e2e/) project provides Playwright-based E2E tests
 for this API. Run them after starting the backend:

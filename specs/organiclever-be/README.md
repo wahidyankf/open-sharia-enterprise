@@ -6,17 +6,15 @@ Gherkin acceptance specifications for the
 ## What This Covers
 
 These specs define the behavior of the OrganicLever REST API from the perspective of its consumers
-— what endpoints accept, what they return, and what business rules they enforce. Step definitions
-live in `apps/organiclever-be-e2e/tests/steps/`.
+— what endpoints accept, what they return, and what business rules they enforce. The same Gherkin
+feature files are executed by two runners at different test tiers.
 
 ## BDD Framework
 
-| Concern                   | Choice                                  |
-| ------------------------- | --------------------------------------- |
-| Language                  | TypeScript                              |
-| BDD framework             | playwright-bdd 8+                       |
-| Test runner               | Playwright (via bddgen)                 |
-| Step definitions location | `apps/organiclever-be-e2e/tests/steps/` |
+| Tier                  | Language   | Framework         | Step definitions location                                   |
+| --------------------- | ---------- | ----------------- | ----------------------------------------------------------- |
+| E2E (real service)    | TypeScript | playwright-bdd 8+ | `apps/organiclever-be-e2e/tests/steps/`                     |
+| Integration (MockMvc) | Java       | Cucumber JVM 7+   | `apps/organiclever-be/src/test/java/.../integration/steps/` |
 
 **See**: [BDD Standards](../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)
 for required framework setup and coverage rules.
@@ -52,8 +50,9 @@ npx bddgen && npx playwright test
 3. Create the `.feature` file: `[domain-capability].feature`
 4. Write scenarios following
    [Gherkin Standards](../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/ex-soen-de-bedrdebd__gherkin-standards.md)
-5. Implement step definitions in `apps/organiclever-be-e2e/tests/steps/` following the TypeScript
-   step definition pattern.
+5. Implement step definitions in both runners:
+   - TypeScript: `apps/organiclever-be-e2e/tests/steps/` (E2E / playwright-bdd)
+   - Java: `apps/organiclever-be/src/test/java/.../integration/steps/` (MockMvc / Cucumber JVM)
 
 ## Related
 
