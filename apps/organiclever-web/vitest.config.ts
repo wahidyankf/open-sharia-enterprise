@@ -16,6 +16,7 @@ export default defineConfig({
           include: ["**/*.unit.{test,spec}.{ts,tsx}", "**/__tests__/**/*.{ts,tsx}"],
           exclude: ["**/*.integration.{test,spec}.{ts,tsx}", "node_modules"],
           environment: "jsdom",
+          setupFiles: ["./src/test/setup.ts"],
         },
       },
       {
@@ -25,6 +26,7 @@ export default defineConfig({
           include: ["**/*.integration.{test,spec}.{ts,tsx}"],
           exclude: ["node_modules"],
           environment: "jsdom",
+          setupFiles: ["./src/test/setup.ts"],
         },
       },
     ],
