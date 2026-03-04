@@ -2,6 +2,7 @@
   "name": "ayokoding-web",
   "sourceRoot": "apps/ayokoding-web",
   "projectType": "application",
+  "tags": ["type:app", "platform:hugo", "domain:ayokoding"],
   "implicitDependencies": ["ayokoding-cli"],
   "targets": {
     "dev": {

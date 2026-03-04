@@ -274,7 +274,7 @@ Per-project:
       }
     }
   },
-  "tags": ["type:app", "platform:hugo"]
+  "tags": ["type:app", "platform:hugo", "domain:oseplatform"]
 }
 ```
 
@@ -327,6 +327,23 @@ Per-project:
 ```
 
 **Target names follow [Nx Target Standards](../../governance/development/infra/nx-targets.md)**: `test:quick` is the mandatory pre-push gate; `test:unit` runs isolated unit tests. Avoid generic `test` targets.
+
+### Tag Convention
+
+All projects use a standard four-dimension tag scheme:
+
+| Dimension   | Values                                                | Required                 | Purpose                 |
+| ----------- | ----------------------------------------------------- | ------------------------ | ----------------------- |
+| `type:`     | `app`, `lib`, `e2e`                                   | Yes                      | Project kind            |
+| `platform:` | `hugo`, `cli`, `nextjs`, `spring-boot`, `playwright`  | For apps/e2e             | Framework/runtime       |
+| `lang:`     | `golang`, `ts`, `java`                                | Where source code exists | Primary language        |
+| `domain:`   | `ayokoding`, `oseplatform`, `organiclever`, `tooling` | Yes                      | Business/product domain |
+
+**Notes**:
+
+- Hugo sites omit `lang:` — no application source code, only templates and markdown
+- Go libs omit `platform:` — no framework, only `lang:golang`
+- Use `domain:tooling` for generic dev utilities not tied to a product domain
 
 ### Field Reference
 

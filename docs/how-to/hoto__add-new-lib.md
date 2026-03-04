@@ -100,6 +100,7 @@ Create `libs/ts-[name]/project.json`:
   "name": "ts-[name]",
   "sourceRoot": "libs/ts-[name]/src",
   "projectType": "library",
+  "tags": ["type:lib", "lang:ts"],
   "targets": {
     "build": {
       "executor": "nx:run-commands",
@@ -291,6 +292,7 @@ export default function Component() {
 - [ ] `src/lib/` contains implementation files
 - [ ] Test files created with `.test.ts` extension
 - [ ] `project.json` created with Nx configuration
+- [ ] `tags` field includes `type:lib`, `lang:` value (e.g., `lang:ts`, `lang:golang`)
 - [ ] All targets use `nx:run-commands` executor
 - [ ] `tsconfig.json` and `tsconfig.build.json` created
 - [ ] `package.json` created with library metadata
@@ -392,3 +394,4 @@ npm install -D tsx
 - [Add New App](./hoto__add-new-app.md)
 - [Run Nx Commands](./hoto__run-nx-commands.md)
 - [Monorepo Structure Reference](../reference/re__monorepo-structure.md)
+- [Nx Configuration Reference](../reference/re__nx-configuration.md) - Tag convention for `type:`, `lang:` values

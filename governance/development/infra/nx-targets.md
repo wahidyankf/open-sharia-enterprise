@@ -10,7 +10,7 @@ tags:
   - build
   - scripts
 created: 2026-02-23
-updated: 2026-02-23
+updated: 2026-03-04
 ---
 
 # Nx Target Standards
@@ -117,6 +117,74 @@ Use these canonical names. Aliases (`serve`, `start:dev`, `unit-test`) are anti-
 - Use `test:quick` for the fast pre-push gate; `test:unit` for isolated unit tests; `test:integration` for tests requiring external services; `test:e2e` for end-to-end tests — run targets individually rather than through an aggregate wrapper
 - Separate target variants with a colon (`build:web`, `test:e2e:ui`), not a hyphen or underscore
 - All target names use lowercase with hyphens for multi-word names (`run-pre-commit`)
+
+## Tag Convention
+
+Tags are the standard mechanism for attaching structured metadata to projects in `project.json`. Nx uses tags for boundary enforcement (`@nx/enforce-module-boundaries`), graph filtering (`nx graph --focus`), and `nx affected` scoping. Consistent tags across the workspace allow tooling to query by project kind, framework, language, or product domain without parsing project names.
+
+### Four-Dimension Scheme
+
+Every project declares tags along four dimensions. Each dimension uses a fixed prefix and a controlled vocabulary.
+
+| Dimension | Prefix      | Allowed Values                                        | Required                       | Purpose                                                       |
+| --------- | ----------- | ----------------------------------------------------- | ------------------------------ | ------------------------------------------------------------- |
+| Type      | `type:`     | `app`, `lib`, `e2e`                                   | Always                         | Distinguishes deployable apps, reusable libs, and test suites |
+| Platform  | `platform:` | `hugo`, `cli`, `nextjs`, `spring-boot`, `playwright`  | Apps and e2e projects          | Framework or runtime environment                              |
+| Language  | `lang:`     | `golang`, `ts`, `java`                                | Projects with application code | Primary language of source code                               |
+| Domain    | `domain:`   | `ayokoding`, `oseplatform`, `organiclever`, `tooling` | Always                         | Business or product domain                                    |
+
+### Special Rules
+
+**Hugo sites omit `lang:`**: Hugo sites consist of templates and markdown content; `go.mod` and `go.sum` present in a Hugo project are Hugo module dependency files, not application source code. No application code is written in Go, so `lang:` does not apply.
+
+**Go libs omit `platform:`**: A Go library has no framework or runtime boundary — only a primary language. Declare `type:lib` and `lang:golang`; omit `platform:`.
+
+**Use `domain:tooling` for general-purpose utilities**: Projects that are not tied to a specific product domain (e.g., `rhino-cli`, `javaproject-cli`) use `domain:tooling`. Use a product domain tag only when the project belongs exclusively to that product.
+
+### Current Project Tags
+
+| Project                | Tags                                                                       |
+| ---------------------- | -------------------------------------------------------------------------- |
+| `ayokoding-web`        | `["type:app", "platform:hugo", "domain:ayokoding"]`                        |
+| `ayokoding-cli`        | `["type:app", "platform:cli", "lang:golang", "domain:ayokoding"]`          |
+| `javaproject-cli`      | `["type:app", "platform:cli", "lang:golang", "domain:tooling"]`            |
+| `rhino-cli`            | `["type:app", "platform:cli", "lang:golang", "domain:tooling"]`            |
+| `organiclever-be`      | `["type:app", "platform:spring-boot", "lang:java", "domain:organiclever"]` |
+| `organiclever-be-e2e`  | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]`    |
+| `organiclever-web`     | `["type:app", "platform:nextjs", "lang:ts", "domain:organiclever"]`        |
+| `organiclever-web-e2e` | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]`    |
+| `oseplatform-cli`      | `["type:app", "platform:cli", "lang:golang", "domain:oseplatform"]`        |
+| `oseplatform-web`      | `["type:app", "platform:hugo", "domain:oseplatform"]`                      |
+| `hugo-commons`         | `["type:lib", "lang:golang"]`                                              |
+| `golang-commons`       | `["type:lib", "lang:golang"]`                                              |
+
+### Example: Complete Tag Declaration
+
+A Spring Boot app for the OrganicLever domain declares all four dimensions:
+
+```json
+{
+  "name": "organiclever-be",
+  "tags": ["type:app", "platform:spring-boot", "lang:java", "domain:organiclever"]
+}
+```
+
+A Go lib has no platform boundary and no domain, so it omits both:
+
+```json
+{
+  "name": "golang-commons",
+  "tags": ["type:lib", "lang:golang"]
+}
+```
+
+### Anti-Patterns
+
+- **Omitting required dimensions**: Every project must declare `type:` and `domain:`. Omitting them breaks graph queries and boundary rules that rely on these dimensions.
+- **Inventing non-standard values**: Adding values outside the controlled vocabulary (e.g., `platform:express`, `lang:javascript`, `domain:internal`) fragments the tag space. Add new values only by updating this convention.
+- **Using a non-prefixed format**: Tags must use the `dimension:value` prefix format (e.g., `type:app`). Bare tags such as `app` or `golang` are not queryable by dimension.
+- **Adding a `stack:` dimension**: The four-dimension scheme captures type, platform, language, and domain. A separate `stack:` field duplicates `platform:` and `lang:` without adding information. Use the defined dimensions instead.
+- **Tagging apps with `domain:tooling` when they belong to a product**: `domain:tooling` is for general-purpose dev utilities with no product affiliation. An app that serves a specific product must carry that product's domain tag.
 
 ## Mandatory Targets by Project Type
 
@@ -343,3 +411,4 @@ Example override for a Hugo site:
 | `typecheck`, `lint`, `test:quick` enforced at pre-push; `test:quick` at PR merge gate | [Automation Over Manual](../../principles/software-engineering/automation-over-manual.md) |
 | Minimum required targets per project type                                             | [Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)      |
 | `outputs` required for cacheable targets                                              | [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) |
+| Four-dimension tag scheme with controlled vocabulary declared in every `project.json` | [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) |

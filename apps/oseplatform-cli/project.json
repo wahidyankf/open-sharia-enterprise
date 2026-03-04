@@ -41,5 +41,5 @@
       }
     }
   },
-  "tags": ["type:app", "platform:golang", "domain:oseplatform"]
+  "tags": ["type:app", "platform:cli", "lang:golang", "domain:oseplatform"]
 }

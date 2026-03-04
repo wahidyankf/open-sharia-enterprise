@@ -84,6 +84,7 @@ Create `apps/[app-name]/project.json`:
   "name": "[app-name]",
   "sourceRoot": "apps/[app-name]",
   "projectType": "application",
+  "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:[domain]"],
   "targets": {
     "dev": {
       "executor": "nx:run-commands",
@@ -126,6 +127,7 @@ Create `apps/[app-name]/project.json`:
   "name": "[app-name]",
   "sourceRoot": "apps/[app-name]/src",
   "projectType": "application",
+  "tags": ["type:app", "platform:express", "lang:ts", "domain:[domain]"],
   "targets": {
     "build": {
       "executor": "nx:run-commands",
@@ -153,6 +155,8 @@ Create `apps/[app-name]/project.json`:
   }
 }
 ```
+
+**Tag values**: See [Tag Convention](../reference/re__nx-configuration.md#tag-convention) for valid `type:`, `platform:`, `lang:`, and `domain:` values.
 
 ### Step 5: Configure TypeScript
 
@@ -272,6 +276,7 @@ TypeScript path mappings are configured in `tsconfig.base.json`.
 - [ ] App directory created in `apps/`
 - [ ] App name follows `[domain]-[type]` convention
 - [ ] `project.json` created with Nx configuration
+- [ ] `tags` field includes `type:`, `platform:`, `lang:` (if applicable), and `domain:` values
 - [ ] All targets use `nx:run-commands` executor (no plugins)
 - [ ] `tsconfig.json` extends `../../tsconfig.base.json`
 - [ ] `package.json` created with app dependencies
