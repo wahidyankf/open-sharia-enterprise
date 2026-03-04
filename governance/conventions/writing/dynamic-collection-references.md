@@ -85,7 +85,7 @@ The six-layer architecture is frequently summarized in documentation. Layer desc
 ```markdown
 - **Layer 1: Principles** - WHY we value approaches (11 core principles)
 - **Layer 2: Conventions** - WHAT documentation rules (30 standards)
-- **Layer 3: Development** - HOW we develop (17 practices)
+- **Layer 3: Development** - HOW we develop (30 practices)
 - **Layer 4: AI Agents** - WHO enforces rules (57 specialized agents)
 ```
 

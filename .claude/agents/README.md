@@ -58,7 +58,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **repo-governance-fixer** - Fix governance compliance issues
 - **repo-workflow-fixer** - Fix workflow documentation
 
-### 🔧 Operations
+### 🟪 Operations
 
 - **docs-file-manager** - File organization and management
 - **apps-ayokoding-web-deployer** - AyoKoding deployment

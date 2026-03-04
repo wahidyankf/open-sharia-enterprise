@@ -255,7 +255,7 @@ Code: language-specific
 
 ### Emoji Usage
 
-Allowed: `docs/`, README files, `plans/`, `governance/`, CLAUDE.md, `AGENTS.md`, `.claude/agents/`, `.opencode/agent/`
+Allowed: `docs/`, README files, `plans/`, `governance/`, CLAUDE.md, `AGENTS.md`, `.claude/agents/`, `.opencode/agent/`, `.opencode/skill/`
 Forbidden: config files (`*.json`, `*.yaml`, `*.toml`), source code
 
 **See**: [governance/conventions/formatting/emoji.md](./governance/conventions/formatting/emoji.md)

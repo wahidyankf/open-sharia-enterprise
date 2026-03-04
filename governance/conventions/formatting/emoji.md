@@ -135,7 +135,7 @@ Use for enterprise and financial services content:
 
 ### Domain-Specific: AI Agents
 
-Use for AI agent categorization in `.opencode/agent/README.md`:
+Use for AI agent categorization in `.claude/agents/README.md` (primary) and `.opencode/agent/README.md` (secondary):
 
 | Emoji | Meaning                              | Usage                                                   |
 | ----- | ------------------------------------ | ------------------------------------------------------- |
@@ -144,7 +144,7 @@ Use for AI agent categorization in `.opencode/agent/README.md`:
 | 🟨    | **Updater/Modifier Agents (Yellow)** | Agents that update or modify existing content           |
 | 🟪    | **Implementor Agents (Purple)**      | Agents that execute or implement plans                  |
 
-**Note:** These colored square emojis are ONLY used in `.opencode/agent/README.md` to visually categorize agents by role. They match the `color` field in agent frontmatter. See [AI Agents Convention](../../development/agents/ai-agents.md) for complete details on agent color categorization.
+**Note:** These colored square emojis are used in both `.claude/agents/README.md` (primary) and `.opencode/agent/README.md` (secondary) to visually categorize agents by role. They match the `color` field in agent frontmatter. See [AI Agents Convention](../../development/agents/ai-agents.md) for complete details on agent color categorization.
 
 **Color Accessibility:** All four colors (blue, green, yellow, purple) are from the verified accessible palette and work for all types of color blindness (protanopia, deuteranopia, tritanopia). These emojis are SUPPLEMENTARY to text labels - agents are primarily identified by their name, role suffix, and description, not by color alone. See [Color Accessibility Convention](./color-accessibility.md) for complete details.
 
@@ -378,13 +378,19 @@ category: explanation
    - Project plans, requirements, technical docs
    - Human-readable working documents
 
-5. **Agent configuration files** - AGENTS.md, .opencode/agent/\*.md
+5. **Agent configuration files** - AGENTS.md, .claude/agents/\*.md, .opencode/agent/\*.md
    - AGENTS.md - Human-readable navigation document (~1,000 lines) for developers
-   - .opencode/agent/\*.md - Agent definitions read by developers to understand agent behavior
+   - .claude/agents/\*.md - Primary agent definitions (source of truth) read by developers to understand agent behavior
+   - .opencode/agent/\*.md - Secondary agent definitions (auto-generated from .claude/agents/) for OpenCode compatibility
    - Emojis enhance scannability for:
      - Criticality level definitions (CRITICAL, HIGH, MEDIUM, LOW)
      - Section headers (Purpose, Key Concepts, Reference)
      - Status indicators in examples (PASS: Correct, FAIL: Incorrect, Warning)
+
+6. **Root configuration and skill files** - CLAUDE.md, .opencode/skill/\*.md
+   - CLAUDE.md - Project guidance document for Claude Code sessions, human-readable
+   - .opencode/skill/\*.md - Skill files for OpenCode compatibility (synced from .claude/skills/)
+   - Emojis support scannability of guidance and knowledge content read by developers
 
 **FAIL: DO NOT use emojis in these files:**
 
@@ -418,8 +424,8 @@ category: explanation
 PASS: **Clear rule:**
 
 ```
-Emojis for humans: docs/, plans/, README.md files
-Emojis for agents: AGENTS.md, .opencode/agent/*.md
+Emojis for humans: docs/, governance/, plans/, README.md files, CLAUDE.md, .opencode/skill/*.md
+Emojis for agents: AGENTS.md, .claude/agents/*.md, .opencode/agent/*.md
 No emojis for machines: config files (*.json, *.yaml, *.toml)
 ```
 
@@ -664,7 +670,8 @@ When adding emojis to existing documentation:
 
 - Update convention documents in `governance/conventions/`
 - Update README.md files (root and `.opencode/agent/README.md`)
-- **Skip** AGENTS.md and agent prompt files (AI instructions)
+- Update AGENTS.md and agent files (`.claude/agents/*.md`, `.opencode/agent/*.md`) per Rule 7 item 5 (emojis enhance scannability for criticality definitions and section headers)
+- Update CLAUDE.md and `.opencode/skill/*.md` per Rule 7 item 6 (emojis support scannability of guidance and knowledge content)
 
 **Phase 2: Explanation Docs** (Next)
 
@@ -695,8 +702,9 @@ When reviewing emoji usage, verify:
 - [ ] No emojis in frontmatter or metadata
 - [ ] Emojis ARE used in AGENTS.md (human-readable navigation)
 - [ ] Emojis ARE used in agent files `.claude/agents/*.md` and `.opencode/agent/*.md` (including README.md)
+- [ ] Emojis ARE used in CLAUDE.md and `.opencode/skill/*.md` (root config and skill files)
 - [ ] Emojis ARE used in README.md files (human-oriented indices)
-- [ ] Emojis ARE used in docs/ and plans/ (human documentation)
+- [ ] Emojis ARE used in docs/, plans/, and governance/ (human documentation)
 - [ ] Headings still make sense without emoji (accessibility)
 - [ ] Emojis enhance scannability and engagement
 
