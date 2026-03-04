@@ -29,6 +29,9 @@ rhino-cli validate-links
 # Validate only staged files (useful in git hooks)
 rhino-cli validate-links --staged-only
 
+# Validate BDD spec coverage (all specs have matching test files)
+rhino-cli validate-spec-coverage specs/organiclever-web apps/organiclever-web
+
 # Echo a message
 rhino-cli --say "hello world"
 
@@ -378,6 +381,88 @@ Duration: 49ms
 Status: ✓ VALIDATION PASSED
 ```
 
+### validate-spec-coverage
+
+Validate that all BDD feature spec files have matching test implementations. Designed to enforce
+the spec-to-test direction for test suites that use explicit file loading (e.g. vitest-cucumber).
+
+```bash
+# Check organiclever-web spec coverage
+rhino-cli validate-spec-coverage specs/organiclever-web apps/organiclever-web
+
+# Output as JSON
+rhino-cli validate-spec-coverage specs/organiclever-web apps/organiclever-web -o json
+
+# Output as markdown
+rhino-cli validate-spec-coverage specs/organiclever-web apps/organiclever-web -o markdown
+
+# Quiet mode
+rhino-cli validate-spec-coverage specs/organiclever-web apps/organiclever-web -q
+```
+
+**What it does:**
+
+- Walks `<specs-dir>` recursively for `.feature` files
+- For each spec, checks if any file under `<app-dir>` has a base name starting with
+  `{stem}.` (e.g. `user-login.feature` → matches `user-login.integration.test.tsx`)
+- Reports each uncovered spec with a hint for the expected test file stem
+- Both paths are resolved relative to the git repository root
+
+**Why this command exists:**
+
+Three test suites consume the `specs/` directory:
+
+- **playwright-bdd** (E2E): auto-discovers all `.feature` files via glob → already enforced
+- **Cucumber JVM** (Spring Boot): auto-discovers via classpath → already enforced
+- **vitest-cucumber** (Next.js): uses explicit `loadFeature()` per file → **gap**: a new
+  `.feature` in `specs/` is silently ignored unless a matching integration test is created
+
+This command closes that gap for any app using explicit feature loading.
+
+**Arguments:**
+
+- `<specs-dir>` - Path to specs folder (relative to repo root, e.g. `specs/organiclever-web`)
+- `<app-dir>` - Path to app folder (relative to repo root, e.g. `apps/organiclever-web`)
+
+**Flags:**
+
+- `-o, --output` - Output format: text, json, markdown (default: text)
+- `-v, --verbose` - Verbose output with timestamps
+- `-q, --quiet` - Quiet mode (success is silent, only errors shown)
+
+**Exit codes:**
+
+- `0` - All specs have matching test files
+- `1` - One or more specs lack matching test files
+
+**Example output (success):**
+
+```
+✓ Spec coverage valid! 9 specs checked, all have matching test files.
+```
+
+**Example output (failure):**
+
+```
+✗ Spec coverage gaps found! 1 of 9 specs have no matching test file:
+
+  - specs/organiclever-web/auth/new-feature.feature
+    (expected test file with stem: new-feature)
+```
+
+**Example output (JSON):**
+
+```json
+{
+  "status": "success",
+  "timestamp": "2026-03-04T10:00:00+07:00",
+  "total_specs": 9,
+  "gap_count": 0,
+  "duration_ms": 12,
+  "gaps": []
+}
+```
+
 ### doctor
 
 Check that all required development tools are installed with the correct versions.
@@ -500,11 +585,12 @@ apps/rhino-cli/
 │   ├── root_test.go          # Tests for root command
 │   ├── doctor.go             # Doctor command
 │   ├── doctor_test.go        # Doctor command integration tests
-│   ├── validate_links.go     # Link validation command
-│   ├── validate_links_test.go # Integration tests
-│   ├── sync_agents.go        # Agent/skill sync command
-│   ├── validate_sync.go      # Sync validation command
-│   └── validate_claude.go    # Claude Code format validation command
+│   ├── validate_links.go          # Link validation command
+│   ├── validate_links_test.go     # Integration tests
+│   ├── sync_agents.go             # Agent/skill sync command
+│   ├── validate_sync.go           # Sync validation command
+│   ├── validate_claude.go         # Claude Code format validation command
+│   └── validate_spec_coverage.go  # BDD spec coverage validation command
 ├── internal/
 │   ├── doctor/               # Development environment checks
 │   │   ├── types.go          # ToolStatus, ToolCheck, DoctorResult, CommandRunner types
@@ -529,6 +615,12 @@ apps/rhino-cli/
 │   │   ├── validator.go      # Main validation orchestration
 │   │   ├── agent_validator.go # Agent validation (11 rules)
 │   │   └── skill_validator.go # Skill validation (3 rules)
+│   ├── speccoverage/         # BDD spec coverage validation
+│   │   ├── types.go          # ScanOptions, CoverageGap, CheckResult types
+│   │   ├── checker.go        # Walk specs dir, match against app dir
+│   │   ├── checker_test.go   # Unit tests (temp dir fixtures)
+│   │   ├── reporter.go       # Output formatting (text, JSON, markdown)
+│   │   └── reporter_test.go  # Reporter unit tests
 │   └── sync/                 # Agent/skill sync logic
 │       ├── types.go          # Data structures (ClaudeAgent, OpenCodeAgent, etc.)
 │       ├── types_test.go
@@ -577,6 +669,7 @@ go test ./... -v
 - `internal/links`: 85%+ coverage (scanner, validator, categorizer, reporter)
 - `internal/sync`: 85%+ coverage (converter, copier, validator, reporter)
 - `internal/claude`: 92.6% coverage (validator, agent_validator, skill_validator)
+- `internal/speccoverage`: ≥80% coverage (checker with temp dir fixtures, reporter for all formats)
 
 ### Lint
 
@@ -715,6 +808,19 @@ rhino-cli say
 ```
 
 ## Version History
+
+### v0.7.0 (2026-03-04)
+
+- Added `validate-spec-coverage` command for BDD spec-to-test coverage validation
+- Walks any `<specs-dir>` for `.feature` files and checks for matching test files under `<app-dir>`
+- Closes the vitest-cucumber gap: new specs silently ignored unless matched by an integration test
+- Integrated into `organiclever-web` `test:quick` target
+- Three output formats: text, JSON, markdown
+- ≥80% test coverage with temp dir fixtures
+
+### v0.6.0
+
+- Added `validate-docs-naming` command for documentation file naming conventions
 
 ### v0.5.0 (2026-02-19)
 
