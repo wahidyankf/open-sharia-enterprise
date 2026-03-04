@@ -73,7 +73,7 @@ graph TD
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Gray #808080
 graph TB
     A["E2E Tests<br/>Playwright, Full Flows<br/>Slow, Few"]:::orange
-    B["Integration Tests<br/>API + Database<br/>Medium Speed"]:::purple
+    B["Integration Tests<br/>Mocked I/O — MSW + in-memory<br/>Medium Speed"]:::purple
     C["Unit Tests<br/>Functions + Classes<br/>Fast, Many"]:::teal
 
     A --> B
@@ -451,45 +451,60 @@ describe("Donor", () => {
 
 ## Integration Testing
 
-### Database Integration
+**REQUIRED**: Integration tests MUST mock all external I/O. No real database, no real network.
+
+**See**: [Integration Testing Standards](../../development/test-driven-development-tdd/ex-soen-de-tedrdetd__integration-testing-standards.md) for full patterns.
+
+### In-Memory Repository Integration
+
+Use in-memory repository implementations — never a real database or ORM connection.
 
 ```typescript
-import { PrismaClient } from "@prisma/client";
-import { DonationRepository } from "./donation-repository";
+// In-memory repository (no Prisma, no real DB)
+class InMemoryDonationRepository implements DonationRepository {
+  private store = new Map<string, Donation>();
 
-describe("DonationRepository Integration", () => {
-  let prisma: PrismaClient;
-  let repository: DonationRepository;
+  async save(donation: Donation): Promise<void> {
+    this.store.set(donation.id, donation);
+  }
 
-  beforeAll(async () => {
-    prisma = new PrismaClient();
-    repository = new DonationRepository(prisma);
-  });
+  async findById(id: string): Promise<Donation | null> {
+    return this.store.get(id) ?? null;
+  }
 
-  afterAll(async () => {
-    await prisma.$disconnect();
-  });
+  async findByDonor(donorId: string): Promise<Donation[]> {
+    return Array.from(this.store.values()).filter((d) => d.donorId === donorId);
+  }
+}
 
-  beforeEach(async () => {
-    await prisma.donation.deleteMany({});
+describe("DonationService Integration", () => {
+  let repository: InMemoryDonationRepository;
+  let service: DonationService;
+
+  beforeEach(() => {
+    repository = new InMemoryDonationRepository(); // ✅ fresh in-memory state per test
+    service = new DonationService(repository);
   });
 
   it("saves and retrieves donation", async () => {
-    const donation = createTestDonation();
+    const donationId = await service.create({
+      donorId: "DNR-1234567890",
+      amount: 1000,
+      currency: "USD",
+      category: "zakat",
+    });
 
-    await repository.save(donation);
-    const retrieved = await repository.findById(donation.id);
+    const retrieved = await repository.findById(donationId);
 
     expect(retrieved).toBeDefined();
-    expect(retrieved!.id).toBe(donation.id);
-    expect(retrieved!.amount).toBe(donation.amount);
+    expect(retrieved!.amount).toBe(1000);
   });
 
   it("finds donations by donor", async () => {
     const donorId = "DNR-1234567890";
 
-    await repository.save(createTestDonation({ donorId }));
-    await repository.save(createTestDonation({ donorId }));
+    await service.create({ donorId, amount: 500, currency: "USD", category: "zakat" });
+    await service.create({ donorId, amount: 1000, currency: "USD", category: "sadaqah" });
 
     const donations = await repository.findByDonor(donorId);
 
@@ -498,69 +513,53 @@ describe("DonationRepository Integration", () => {
 });
 ```
 
-### API Integration Testing
+### API Route Integration Testing with MSW
 
-```typescript
-import request from "supertest";
-import { app } from "./app";
+For Next.js API routes or Express handlers, test them with the real handler code but mock
+all outbound HTTP using MSW. Never call a real external service.
 
-describe("Donation API", () => {
-  describe("POST /api/donations", () => {
-    it("creates donation with valid data", async () => {
-      const response = await request(app)
-        .post("/api/donations")
-        .send({
-          donorId: "DNR-1234567890",
-          amount: 1000,
-          currency: "USD",
-          category: "zakat",
-        })
-        .expect(201);
+````typescript
+import { setupServer } from "msw/node";
+import { http, HttpResponse } from "msw";
 
-      expect(response.body).toHaveProperty("donationId");
-      expect(response.body.amount).toBe(1000);
+// MSW server — intercepts all outbound HTTP from the handler under test
+const server = setupServer(
+  http.post("https://payment.gateway.com/charge", () =>
+    HttpResponse.json({ status: "approved", transactionId: "TXN-123" }),
+  ),
+);
+
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
+describe("Donation API route", () => {
+  it("creates donation with valid data", async () => {
+    const request = new Request("http://localhost/api/donations", {
+      method: "POST",
+      body: JSON.stringify({ donorId: "DNR-1234567890", amount: 1000, currency: "USD" }),
+      headers: { "Content-Type": "application/json" },
     });
 
-    it("rejects invalid data", async () => {
-      await request(app)
-        .post("/api/donations")
-        .send({
-          donorId: "INVALID",
-          amount: -100,
-          currency: "USD",
-          category: "zakat",
-        })
-        .expect(400);
-    });
+    const response = await POST(request); // ✅ real handler, MSW-mocked payment gateway
 
-    it("requires authentication", async () => {
-      await request(app)
-        .post("/api/donations")
-        .send({
-          donorId: "DNR-1234567890",
-          amount: 1000,
-          currency: "USD",
-          category: "zakat",
-        })
-        .expect(401);
-    });
+    expect(response.status).toBe(201);
+    const body = await response.json();
+    expect(body).toHaveProperty("donationId");
   });
 
-  describe("GET /api/donations/:id", () => {
-    it("returns existing donation", async () => {
-      const created = await createTestDonation();
-
-      const response = await request(app).get(`/api/donations/${created.id}`).expect(200);
-
-      expect(response.body.donationId).toBe(created.id);
+  it("rejects invalid data", async () => {
+    const request = new Request("http://localhost/api/donations", {
+      method: "POST",
+      body: JSON.stringify({ donorId: "INVALID", amount: -100 }),
+      headers: { "Content-Type": "application/json" },
     });
 
-    it("returns 404 for non-existent donation", async () => {
-      await request(app).get("/api/donations/DON-999").expect(404);
-    });
+    const response = await POST(request); // ✅ validation tested without real HTTP
+
+    expect(response.status).toBe(400);
   });
-});
-```
+})
 
 ## Property-Based Testing
 
@@ -626,7 +625,7 @@ describe("Money properties", () => {
     );
   });
 });
-```
+````
 
 ## Mocking Strategies
 

@@ -96,14 +96,24 @@ TDD standards in OSE Platform align with core software engineering principles:
 - REQUIRED: Use in-memory implementations over mocks when possible
 - REQUIRED: Verify interactions only when testing behavior, not implementation
 
-### 4. Integration Testing
+### 4. Three-Tier Testing Model
+
+**[Three-Tier Testing Model](./ex-soen-de-tedrdetd__three-tier-testing.md)**
+
+- REQUIRED: Unit and integration tests MUST mock all external I/O
+- REQUIRED: E2E tests MUST NOT mock anything
+- REQUIRED: Separate unit, integration, and E2E tests by directory
+
+### 5. Integration Testing
 
 **[Integration Testing Standards](./ex-soen-de-tedrdetd__integration-testing-standards.md)**
 
-- REQUIRED: Use test containers for database testing
+- REQUIRED: Use in-memory repository implementations (NOT Testcontainers)
+- REQUIRED: Use MSW (TypeScript) or WireMock (Java) for outbound HTTP
 - REQUIRED: Separate unit tests from integration tests
+- PROHIBITED: Real databases, real network calls in integration tests
 
-### 5. TDD with Domain-Driven Design
+### 6. TDD with Domain-Driven Design
 
 **[TDD with DDD Standards](./ex-soen-de-tedrdetd__tdd-with-ddd-standards.md)**
 
@@ -244,7 +254,8 @@ Before merging code, verify:
 - [ ] **Value objects immutable**: Tests verify immutability
 - [ ] **Domain events emitted**: Tests verify event emission on domain actions
 - [ ] **80% coverage minimum**: Critical business logic covered
-- [ ] **Integration tests for repositories**: Database interactions tested with test containers
+- [ ] **Integration tests mock external I/O**: In-memory repos and MSW/WireMock — no real DB, no real network
+- [ ] **E2E tests use no mocking**: All external dependencies are real
 - [ ] **No flaky tests**: All tests pass consistently
 
 ## Related Standards

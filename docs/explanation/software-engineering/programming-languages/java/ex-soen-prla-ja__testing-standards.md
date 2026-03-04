@@ -244,41 +244,180 @@ void shouldCallValidateBeforeSave() {
 
 **Rationale**: Behavior verification allows refactoring without breaking tests.
 
-## TestContainers
+## Integration Testing — In-Memory Repositories and WireMock
 
-**MUST** use TestContainers for integration tests requiring external dependencies (databases, message queues, external services).
+**REQUIRED**: Integration tests MUST mock all external I/O.
 
-### TestContainers Setup
+**PROHIBITED**: Testcontainers, real databases, real network calls in integration tests.
+Testcontainers belongs in E2E tests only.
 
-**Example**:
+**See**: [Three-Tier Testing Model](../../development/test-driven-development-tdd/ex-soen-de-tedrdetd__three-tier-testing.md) and
+[Integration Testing Standards](../../development/test-driven-development-tdd/ex-soen-de-tedrdetd__integration-testing-standards.md).
+
+### In-Memory Repository Implementations
+
+**REQUIRED**: Use in-memory repository implementations for integration tests.
+
+Implement the same repository interface as production, backed by an in-memory `Map` or `List`.
 
 ```java
-@Testcontainers
-class InvoiceRepositoryIntegrationTest {
-  @Container
-  private static PostgreSQLContainer<?> postgres =
-    new PostgreSQLContainer<>("postgres:15-alpine")
-      .withDatabaseName("testdb")
-      .withUsername("test")
-      .withPassword("test");
+// In-memory implementation for integration tests
+public class InMemoryInvoiceRepository implements InvoiceRepository {
+    private final Map<InvoiceId, Invoice> store = new HashMap<>();
 
-  @Test
-  void shouldPersistInvoice() {
-    // Test with real PostgreSQL container
-  }
+    @Override
+    public Optional<Invoice> findById(InvoiceId id) {
+        return Optional.ofNullable(store.get(id));
+    }
+
+    @Override
+    public List<Invoice> findAll() {
+        return new ArrayList<>(store.values());
+    }
+
+    @Override
+    public void save(Invoice invoice) {
+        store.put(invoice.getId(), invoice);
+    }
+
+    @Override
+    public void delete(InvoiceId id) {
+        store.remove(id);
+    }
+}
+
+// Integration test — wires real service with in-memory repo
+class InvoiceServiceIntegrationTest {
+    private InvoiceRepository repository;
+    private InvoiceService service;
+
+    @BeforeEach
+    void setUp() {
+        repository = new InMemoryInvoiceRepository(); // ✅ no real DB
+        service = new InvoiceService(repository);
+    }
+
+    @Test
+    void shouldPersistInvoiceAndRetrieveById() {
+        // Arrange
+        Invoice invoice = Invoice.create(InvoiceId.generate(), Money.usd(1000));
+
+        // Act
+        service.create(invoice);
+        Optional<Invoice> retrieved = repository.findById(invoice.getId());
+
+        // Assert
+        assertThat(retrieved).isPresent();
+        assertThat(retrieved.get().getAmount()).isEqualTo(Money.usd(1000));
+    }
 }
 ```
 
-**Benefits**:
+### MockMvc for API Layer Integration Tests
 
-- Real external dependencies (no mocking database behavior)
-- Isolated test environment
-- Reproducible across machines
+**REQUIRED**: Use MockMvc with `@MockBean` to test Spring controllers. MockMvc tests
+the full Spring request-response pipeline without starting a real HTTP server or touching a real DB.
 
-**Prohibited**:
+```java
+@SpringBootTest
+@AutoConfigureMockMvc
+class InvoiceControllerIntegrationTest {
 
-- ❌ H2 in-memory database for PostgreSQL-specific features
-- ❌ Mocking database repositories (use TestContainers instead)
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private InvoiceRepository invoiceRepository; // ✅ real DB replaced with mock
+
+    @Test
+    void shouldReturnInvoiceById() throws Exception {
+        Invoice invoice = Invoice.create(InvoiceId.of("INV-001"), Money.usd(1000));
+        when(invoiceRepository.findById(InvoiceId.of("INV-001")))
+            .thenReturn(Optional.of(invoice));
+
+        mockMvc.perform(get("/api/invoices/INV-001")
+                .header("Authorization", "Bearer test-token"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.amount").value(1000));
+    }
+
+    @Test
+    void shouldReturn404WhenInvoiceNotFound() throws Exception {
+        when(invoiceRepository.findById(any())).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/api/invoices/NONEXISTENT"))
+            .andExpect(status().isNotFound());
+    }
+}
+```
+
+### WireMock for Outbound HTTP
+
+**REQUIRED**: Use WireMock to stub outbound HTTP calls to external services in integration tests.
+
+```java
+@ExtendWith(WireMockExtension.class)
+class PaymentServiceIntegrationTest {
+
+    @RegisterExtension
+    static WireMockExtension wireMock = WireMockExtension.newInstance()
+        .options(wireMockConfig().dynamicPort())
+        .build();
+
+    private PaymentService service;
+
+    @BeforeEach
+    void setUp() {
+        service = new PaymentService(new HttpPaymentGatewayClient(wireMock.baseUrl()));
+    }
+
+    @Test
+    void shouldChargeSuccessfully() {
+        wireMock.stubFor(post(urlEqualTo("/charge"))
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody("{\"transactionId\": \"TXN-123\", \"status\": \"approved\"}")));
+
+        PaymentResult result = service.charge(Money.usd(500), "card-token");
+
+        assertThat(result.getTransactionId()).isEqualTo("TXN-123");
+        assertThat(result.getStatus()).isEqualTo("approved");
+        wireMock.verify(postRequestedFor(urlEqualTo("/charge")));
+        // ✅ WireMock intercepted — no real payment gateway
+    }
+}
+```
+
+## TestContainers (E2E Only)
+
+**REQUIRED**: Use Testcontainers in E2E tests that require a real database.
+
+**PROHIBITED**: Testcontainers in unit or integration tests.
+
+```java
+// ✅ Correct — Testcontainers in E2E test project (organiclever-be-e2e)
+@Testcontainers
+class InvoiceApiE2ETest {
+    @Container
+    static PostgreSQLContainer<?> postgres =
+        new PostgreSQLContainer<>("postgres:16-alpine")
+            .withDatabaseName("e2e_db")
+            .withUsername("test")
+            .withPassword("test");
+
+    @Test
+    void shouldPersistInvoiceEndToEnd() {
+        // Real HTTP → real Spring Boot → real PostgreSQL
+    }
+}
+```
+
+**Prohibited in integration tests**:
+
+- ❌ `@Testcontainers` annotation in `src/test/java` integration tests
+- ❌ `PostgreSQLContainer`, `MySQLContainer`, or any real DB container in integration tests
+- ❌ Real HTTP calls to external payment gateways, notification services, or external APIs
 
 ## BDD Process
 
@@ -336,7 +475,7 @@ public class TaxCalculationSteps {
 **When NOT to use BDD**:
 
 - Simple unit tests (use JUnit + AssertJ directly)
-- Technical integration tests (use TestContainers)
+- Technical integration tests (use MockMvc + WireMock + in-memory repos directly)
 
 ## Test Organization
 
@@ -349,18 +488,20 @@ public class TaxCalculationSteps {
 - **Run frequency**: Every commit
 - **Naming**: `[Class]Test.java`
 
-### Integration Tests (TestContainers)
+### Integration Tests (In-Memory + MockMvc + WireMock)
 
 - **Location**: `src/test/java` (separate package: `*.integration`)
-- **Dependencies**: External systems via TestContainers
+- **Dependencies**: In-memory repository implementations + WireMock for outbound HTTP
+- **External I/O**: NONE — all external dependencies mocked
 - **Run frequency**: Pre-push, CI/CD
 - **Naming**: `[Component]IntegrationTest.java`
 
-### E2E Tests (Cucumber BDD)
+### E2E Tests (Playwright + Testcontainers)
 
-- **Location**: Separate Maven module (`[project]-e2e`)
-- **Dependencies**: Full application deployment
-- **Run frequency**: CI/CD only
+- **Location**: Separate project (`[project]-e2e`)
+- **Dependencies**: Real deployed application + real database (Testcontainers)
+- **External I/O**: Real — no mocking
+- **Run frequency**: Scheduled CI/CD only
 - **Naming**: `*.feature` (Gherkin scenarios)
 
 ## Coverage Requirements
@@ -410,7 +551,9 @@ These standards enforce the five software engineering principles:
    - CI/CD pipeline runs all tests before merge approval
 
 2. **[Reproducibility](../../../../../governance/principles/software-engineering/reproducibility.md)**
-   - TestContainers spin up identical database instances for every test run
+   - In-memory repositories reset in `@BeforeEach` — identical state every test run
+   - WireMock stubs provide deterministic external service responses
+   - Testcontainers (E2E only) spin up identical database instances for real system tests
    - Tests isolated with `@BeforeEach` setup (no shared state between tests)
    - Cucumber BDD scenarios provide reproducible acceptance criteria
 

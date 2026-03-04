@@ -117,6 +117,20 @@ void shouldSaveDonation() {
 }
 ```
 
+## Mocking Boundary
+
+**REQUIRED**: Unit and integration tests MUST mock all external I/O.
+
+**REQUIRED**: E2E tests MUST NOT mock anything.
+
+| Tier        | External I/O | DB                      | Outbound HTTP  |
+| ----------- | ------------ | ----------------------- | -------------- |
+| Unit        | Mocked       | Mocked / in-memory impl | Mocked         |
+| Integration | Mocked       | In-memory impl          | MSW / WireMock |
+| E2E         | Real         | Real                    | Real           |
+
+**See**: [Three-Tier Testing Model](./ex-soen-de-tedrdetd__three-tier-testing.md) for full definitions and examples.
+
 ## OSE Platform Test Organization
 
 **REQUIRED Directory Structure:**
@@ -124,16 +138,16 @@ void shouldSaveDonation() {
 ```
 src/
   test/
-    unit/               # Fast unit tests
-    integration/        # Database, API integration
-    e2e/               # End-to-end workflows
+    unit/               # Fast isolated tests — all collaborators mocked
+    integration/        # Internal layers wired — external I/O mocked
+    e2e/               # Full system — no mocking
 ```
 
 **File Naming:**
 
-- Unit: `ZakatCalculatorTest.java`, `ZakatCalculator.spec.ts`
-- Integration: `DonationRepositoryIntegrationTest.java`
-- E2E: `DonationFlowE2ETest.java`
+- Unit: `ZakatCalculatorTest.java`, `ZakatCalculator.unit.test.ts`
+- Integration: `MemberListIntegrationTest.java`, `member-list.integration.test.tsx`
+- E2E: `*.feature` + step definitions (Gherkin-driven via Playwright / Cucumber)
 
 ---
 
