@@ -24,7 +24,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `oseplatform-cli` - Go CLI tool for OSE Platform site maintenance (link validation)
   - `organiclever-web` - Next.js 16 landing and promotional website (www.organiclever.com)
   - `organiclever-web-e2e` - Playwright E2E tests for organiclever-web
-  - `organiclever-app` - Flutter main application (app.organiclever.com, Android, iOS)
   - `organiclever-be` - Spring Boot REST API backend
   - `organiclever-be-e2e` - Playwright E2E tests for organiclever-be REST API
 
@@ -41,7 +40,6 @@ open-sharia-enterprise/
 │   ├── oseplatform-cli/     # OSE Platform site CLI
 │   ├── organiclever-web/     # OrganicLever landing website (Next.js)
 │   ├── organiclever-web-e2e/ # Playwright E2E tests for organiclever-web
-│   ├── organiclever-app/  # Flutter mobile & web app
 │   ├── organiclever-be/   # Spring Boot REST API
 │   └── organiclever-be-e2e/ # Playwright E2E tests for backend
 ├── apps-labs/                # Experimental apps (NOT in Nx)

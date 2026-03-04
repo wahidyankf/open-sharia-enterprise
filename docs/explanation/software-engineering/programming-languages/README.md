@@ -145,7 +145,7 @@ Each language directory contains a README.md (language overview and version info
 
 **Dart development for Flutter mobile and web applications**
 
-Dart is used for building cross-platform mobile and web applications with the Flutter framework. The platform uses Dart for the organiclever-app Flutter application targeting Android, iOS, and web.
+Dart is used for building cross-platform mobile and web applications with the Flutter framework.
 
 **Use Dart when you need:**
 
@@ -255,7 +255,7 @@ Languages in this documentation are chosen based on:
 
 | Language       | Primary Use Cases                               | Status                               |
 | -------------- | ----------------------------------------------- | ------------------------------------ |
-| **Dart**       | Flutter mobile and web applications             | ✅ Active - organiclever-app         |
+| **Dart**       | Flutter mobile and web applications             | 📋 Planned - Future integration      |
 | **Elixir**     | Phoenix backend, real-time features             | ✅ Active - Phoenix services         |
 | **Go**         | CLI tools, infrastructure services              | ✅ Active - rhino-cli, ayokoding-cli |
 | **Java** ☕    | Backend services, domain models, business logic | ✅ Active - In production            |

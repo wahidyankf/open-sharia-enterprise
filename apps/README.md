@@ -18,7 +18,6 @@ Apps follow the naming pattern: **`[domain]-[type]`**
 - `oseplatform-cli` - OSE Platform CLI tool for link validation - Go application
 - `organiclever-web` - OrganicLever landing website (www.organiclever.com) - Next.js app (port 3200)
 - `organiclever-web-e2e` - E2E tests for organiclever-web - Playwright (browser testing)
-- `organiclever-app` - OrganicLever main application (app.organiclever.com, Android, iOS) - Flutter application (port 3201)
 - `organiclever-be` - OrganicLever backend API - Spring Boot application (port 8201)
 - `organiclever-be-e2e` - E2E tests for organiclever-be REST API - Playwright (API testing)
 
@@ -90,29 +89,6 @@ apps/oseplatform-cli/
 ├── main.go                  # Entry point
 ├── go.mod                   # Go module definition
 ├── project.json             # Nx project configuration
-└── README.md                # App documentation
-```
-
-### Flutter Application (Current)
-
-```
-apps/organiclever-app/
-├── lib/                     # Dart source code
-│   ├── config/              # Environment configuration
-│   ├── models/              # Data models
-│   ├── providers/           # State management
-│   ├── services/            # API clients
-│   ├── screens/             # UI screens
-│   └── main.dart            # Entry point
-├── test/                    # Test files
-│   ├── unit/                # Unit tests
-│   └── widget/              # Widget tests
-├── android/                 # Android platform
-├── ios/                     # iOS platform
-├── web/                     # Web platform
-├── linux/                   # Linux platform
-├── pubspec.yaml             # Dependencies
-├── project.json             # Nx configuration
 └── README.md                # App documentation
 ```
 
@@ -306,7 +282,6 @@ Currently:
 - **Hugo** (static sites) - oseplatform-web, ayokoding-web
 - **Go** (CLI tools) - ayokoding-cli, rhino-cli
 - **TypeScript/Next.js** (landing website) - organiclever-web
-- **Flutter/Dart** (mobile & web) - organiclever-app
 - **Java/Spring Boot** (backend API) - organiclever-be
 - **TypeScript/Playwright** (E2E testing) - organiclever-be-e2e, organiclever-web-e2e
 

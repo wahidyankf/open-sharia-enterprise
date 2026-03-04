@@ -257,21 +257,18 @@ $ git push origin main
 
  Running target typecheck for affected projects...
    organiclever-web
-   organiclever-app
  All checks passed
 
 > nx affected -t lint
 
  Running target lint for affected projects...
    organiclever-web
-   organiclever-app
  All checks passed
 
 > nx affected -t test:quick
 
  Running target test:quick for affected projects...
    organiclever-web
-   organiclever-app
  All checks passed
 
 Enumerating objects: 5, done.

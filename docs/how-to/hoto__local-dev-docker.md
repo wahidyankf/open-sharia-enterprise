@@ -152,7 +152,6 @@ docker-compose down -v
 
 **Related Apps (run separately)**:
 
-- `organiclever-app` - Flutter web client (port 3201) — `nx dev organiclever-app`
 - `organiclever-be-e2e` - Playwright API E2E tests — `nx run organiclever-be-e2e:test:e2e`
 - `organiclever-web-e2e` - Playwright browser E2E tests — `nx run organiclever-web-e2e:test:e2e`
 
@@ -353,7 +352,6 @@ Services expose ports to the host:
 | ------------------------ | ------------- | --------- | ----------------------- |
 | organiclever-be          | 8201          | 8201      | Backend API             |
 | organiclever-web         | 3200          | 3200      | Next.js landing website |
-| organiclever-app         | 3201          | 3201      | Flutter web client      |
 | (future) organiclever-db | 5432          | 5432      | Database                |
 
 ## Health Checks
@@ -490,7 +488,6 @@ Maintain a central registry of ports to avoid conflicts:
 
 - 8201: organiclever-be (also used by organiclever-be-e2e as `BASE_URL`)
 - 3200: organiclever-web (also used by organiclever-web-e2e as `BASE_URL`)
-- 3201: organiclever-app Flutter web
 - 5432: PostgreSQL databases
 
 ## Performance Tips

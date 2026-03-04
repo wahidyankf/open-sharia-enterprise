@@ -9,10 +9,8 @@ OrganicLever Platform Backend - Spring Boot REST API
 - **Build Tool**: Maven
 - **Port**: 8201
 - **API Base**: `/api/v1`
-- **Client Apps**:
-  - [`organiclever-app`](../organiclever-app/) - Flutter mobile and web application (port 3201)
 
-**CORS Configuration**: The backend includes CORS configuration to allow Flutter web app on `http://localhost:*` (see `config/CorsConfig.java`).
+**CORS Configuration**: The backend includes CORS configuration to allow web apps on `http://localhost:*` (see `config/CorsConfig.java`).
 
 ## Prerequisites
 
@@ -399,34 +397,6 @@ apps/organiclever-be/
         └── junit-platform.properties              # Cucumber config
 ```
 
-## Testing with Flutter Client
-
-### 1. Start Backend
-
-```bash
-# From repository root
-npm run organiclever:dev
-```
-
-Wait for: `Started OrganicLeverApplication`
-
-### 2. Start Flutter App
-
-```bash
-# From repository root
-nx dev organiclever-app
-```
-
-Open browser at `http://localhost:3201`
-
-### 3. Test Integration
-
-1. Click "Fetch Hello" button in Flutter app
-2. Should display: ✅ Green checkmark + "world!" message
-3. Check browser console for no CORS errors
-
-**Note**: CORS is configured in `config/CorsConfig.java` to allow `http://localhost:*` for development.
-
 ## Testing
 
 Three tiers of testing provide complete coverage:
@@ -484,4 +454,3 @@ Tests cover:
 - Add API documentation (Swagger/OpenAPI)
 - Add integration tests
 - Add CI/CD pipeline
-- Expand Flutter app with more features

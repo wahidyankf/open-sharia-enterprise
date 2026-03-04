@@ -8,7 +8,6 @@ This infrastructure setup provides Docker Compose configuration for the OrganicL
 
 - **organiclever-be** - Spring Boot backend service (port 8201, runs in Docker Compose)
 - **organiclever-web** - Next.js landing website (port 3200, runs in Docker Compose)
-- **organiclever-app** - Flutter web application (port 3201, runs via `nx dev organiclever-app`)
 - **organiclever-be-e2e** - Playwright API E2E tests (requires organiclever-be)
 - **organiclever-web-e2e** - Playwright browser E2E tests (requires organiclever-web)
 

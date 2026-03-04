@@ -91,16 +91,12 @@ graph TB
 **Product Deliverables:**
 
 - 🌐 [**organiclever.com**](https://www.organiclever.com/) - Landing and promotional website (organiclever-web)
-- 📲 [**app.organiclever.com**](https://app.organiclever.com/) - Main web application (organiclever-app)
-- 📱 **Android App** — Mobile productivity tracker (organiclever-app)
-- 🍎 **iOS App** — Mobile productivity tracker (organiclever-app)
 
 **Repository Apps (In Development):**
 
 - 🌐 [`organiclever-web`](./apps/organiclever-web/) - Next.js landing/promotional website (www.organiclever.com)
 - 🧪 [`organiclever-web-e2e`](./apps/organiclever-web-e2e/) - Playwright E2E tests for organiclever-web
 - 🌐 [`organiclever-be`](./apps/organiclever-be/) - Spring Boot REST API backend (port 8201)
-- 📱 [`organiclever-app`](./apps/organiclever-app/) - Flutter mobile and web application (port 3201)
 - 🧪 [`organiclever-be-e2e`](./apps/organiclever-be-e2e/) - Playwright API E2E tests for the backend
 
 **Tech Stack:**
@@ -109,7 +105,6 @@ graph TB
   - **Strategic Choice**: Testing acceptability and preference of this widely-used financial industry stack
   - Evaluating suitability for future financial applications (Phase 2/3) in low-stakes environment
 - ⚛️ **Frontend (landing)**: Next.js + TypeScript → www.organiclever.com (`organiclever-web`)
-- 📱 **Frontend (app)**: Flutter + Dart → app.organiclever.com, Android, iOS (`organiclever-app`)
 
 **Architecture:**
 

@@ -8,13 +8,6 @@ Landing and promotional website for [OrganicLever](https://www.organiclever.com/
 
 This app serves as the public-facing landing page for OrganicLever. It introduces the product, communicates its value proposition, and provides entry points for download and sign-up.
 
-**Distinct role from `organiclever-app`**:
-
-| App                | Purpose                                        | URL                          |
-| ------------------ | ---------------------------------------------- | ---------------------------- |
-| `organiclever-web` | Landing and promotional website (this app)     | www.organiclever.com         |
-| `organiclever-app` | Main Flutter application (web + Android + iOS) | app.organiclever.com, stores |
-
 ## Tech Stack
 
 | Layer      | Technology               |
