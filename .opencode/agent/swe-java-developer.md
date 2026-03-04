@@ -42,7 +42,7 @@ You are an expert Java software engineer specializing in building production-qua
 - **JPA/Hibernate**: Object-relational mapping, entity management, query optimization
 - **Build Tools**: Maven and Gradle for dependency management and build automation
 - **Functional Programming**: Stream API, lambdas, Optional for modern Java patterns
-- **Testing**: JUnit 5, Mockito, TestContainers for comprehensive testing
+- **Testing**: JUnit 5, Mockito for unit/integration testing; TestContainers for E2E tests only
 
 ### Development Workflow
 
@@ -58,7 +58,7 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 ### Quality Standards
 
 - **Type Safety**: Strong static typing with generics and type inference
-- **Testing**: JUnit 5 with Mockito for mocking, TestContainers for integration tests
+- **Testing**: JUnit 5 with Mockito for mocking; in-memory repos + WireMock for integration tests; TestContainers for E2E tests only
 - **Error Handling**: Exception handling with custom exceptions and proper logging
 - **Performance**: JVM tuning, caching strategies, database optimization
 - **Security**: Input validation, secure dependencies, no hardcoded secrets
