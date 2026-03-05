@@ -139,7 +139,7 @@ Every project declares tags along four dimensions. Each dimension uses a fixed p
 
 **Go libs omit `platform:`**: A Go library has no framework or runtime boundary — only a primary language. Declare `type:lib` and `lang:golang`; omit `platform:`.
 
-**Use `domain:tooling` for general-purpose utilities**: Projects that are not tied to a specific product domain (e.g., `rhino-cli`, `javaproject-cli`) use `domain:tooling`. Use a product domain tag only when the project belongs exclusively to that product.
+**Use `domain:tooling` for general-purpose utilities**: Projects that are not tied to a specific product domain (e.g., `rhino-cli`) use `domain:tooling`. Use a product domain tag only when the project belongs exclusively to that product.
 
 ### Current Project Tags
 
@@ -147,7 +147,6 @@ Every project declares tags along four dimensions. Each dimension uses a fixed p
 | ---------------------- | -------------------------------------------------------------------------- |
 | `ayokoding-web`        | `["type:app", "platform:hugo", "domain:ayokoding"]`                        |
 | `ayokoding-cli`        | `["type:app", "platform:cli", "lang:golang", "domain:ayokoding"]`          |
-| `javaproject-cli`      | `["type:app", "platform:cli", "lang:golang", "domain:tooling"]`            |
 | `rhino-cli`            | `["type:app", "platform:cli", "lang:golang", "domain:tooling"]`            |
 | `organiclever-be`      | `["type:app", "platform:spring-boot", "lang:java", "domain:organiclever"]` |
 | `organiclever-be-e2e`  | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]`    |
@@ -226,7 +225,7 @@ TypeScript, Python (with mypy), Dart/Flutter:
 | ----------- | -------------------------------------------------------------------------- |
 | `typecheck` | Run the type checker without emitting artifacts (`tsc --noEmit`, `mypy .`) |
 
-**Not required for dynamically typed languages** (plain JavaScript, Ruby) or languages where compilation already enforces types and `build` covers it (Go, plain Java). **Exception**: Java projects that use JSpecify + NullAway declare `typecheck` because NullAway runs as a separate Error Prone plugin pass (via a dedicated Maven profile) that is not part of the standard `build`. The `typecheck` target also runs `javaproject-cli` to enforce that every Java package has a `package-info.java` annotated with `@NullMarked` — packages without it are silently skipped by NullAway.
+**Not required for dynamically typed languages** (plain JavaScript, Ruby) or languages where compilation already enforces types and `build` covers it (Go, plain Java). **Exception**: Java projects that use JSpecify + NullAway declare `typecheck` because NullAway runs as a separate Error Prone plugin pass (via a dedicated Maven profile) that is not part of the standard `build`. The `typecheck` target also runs `rhino-cli validate-java-annotations` to enforce that every Java package has a `package-info.java` annotated with `@NullMarked` — packages without it are silently skipped by NullAway.
 
 ### Compiled and Bundled Projects
 

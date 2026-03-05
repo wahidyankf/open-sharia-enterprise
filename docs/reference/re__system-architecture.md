@@ -118,18 +118,6 @@ The platform consists of 4 applications across 2 technology stacks:
 - **Location**: `apps/rhino-cli/`
 - **Status**: Active development
 
-#### javaproject-cli
-
-- **Purpose**: Java package null-safety annotation validation
-- **Language**: Go 1.26
-- **Build Command**: `nx build javaproject-cli`
-- **Location**: `apps/javaproject-cli/`
-- **Features**:
-  - Validates every Java package directory contains `package-info.java`
-  - Checks `package-info.java` has `@NullMarked` (configurable annotation)
-  - Text, JSON, and markdown output formats
-- **Usage**: Runs as first step of `organiclever-be`'s `typecheck` target
-
 #### oseplatform-cli
 
 - **Purpose**: OSE Platform site link validation
@@ -155,7 +143,6 @@ graph TB
     subgraph "CLI Tools"
         AYOCLI[ayokoding-cli<br/>Go CLI]
         RHINO[rhino-cli<br/>Go CLI]
-        JPVAL[javaproject-cli<br/>Go CLI]
         OSECLI[oseplatform-cli<br/>Go CLI]
     end
 
@@ -1097,7 +1084,7 @@ graph TB
 - **Language**: Go 1.24+
 - **Build**: Native Go toolchain via Nx
 - **Distribution**: Local binaries
-- **Applications**: ayokoding-cli, rhino-cli, javaproject-cli, oseplatform-cli
+- **Applications**: ayokoding-cli, rhino-cli, oseplatform-cli
 
 ### Infrastructure
 

@@ -13,8 +13,7 @@ Apps follow the naming pattern: **`[domain]-[type]`**
 - `oseplatform-web` - OSE Platform website ([oseplatform.com](https://oseplatform.com)) - Hugo static site
 - `ayokoding-web` - AyoKoding educational platform ([ayokoding.com](https://ayokoding.com)) - Hugo static site
 - `ayokoding-cli` - AyoKoding CLI tool for navigation generation - Go application
-- `rhino-cli` - Repository management CLI tools - Go application
-- `javaproject-cli` - Java null-safety annotation validator - Go application
+- `rhino-cli` - Repository management CLI tools (includes `validate-java-annotations`) - Go application
 - `oseplatform-cli` - OSE Platform CLI tool for link validation - Go application
 - `organiclever-web` - OrganicLever landing website (www.organiclever.com) - Next.js app (port 3200)
 - `organiclever-web-e2e` - E2E tests for organiclever-web - Playwright (browser testing)
@@ -64,16 +63,6 @@ apps/ayokoding-cli/
 apps/rhino-cli/
 ├── cmd/                     # CLI commands
 ├── internal/                # Internal packages
-├── dist/                    # Build output (gitignored)
-├── main.go                  # Entry point
-├── go.mod                   # Go module definition
-├── project.json             # Nx project configuration
-└── README.md                # App documentation
-```
-
-```
-apps/javaproject-cli/
-├── internal/                # Internal packages (java/)
 ├── dist/                    # Build output (gitignored)
 ├── main.go                  # Entry point
 ├── go.mod                   # Go module definition
