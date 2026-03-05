@@ -418,13 +418,13 @@ nx run organiclever-web-e2e:test:e2e:ui     # Playwright UI mode
 
 ## Coverage Requirements
 
-**REQUIRED**: ≥80% code coverage enforced via Vitest coverage.
+**REQUIRED**: ≥85% code coverage enforced via Vitest coverage.
 
 ```typescript
 // vitest.config.ts — coverage config
 coverage: {
   provider: "v8",
-  thresholds: { lines: 80, functions: 80, branches: 80, statements: 80 },
+  thresholds: { lines: 85, functions: 85, branches: 85, statements: 85 },
   exclude: ["**/*.integration.test.*", "**/*.e2e.test.*", "node_modules"],
 }
 ```

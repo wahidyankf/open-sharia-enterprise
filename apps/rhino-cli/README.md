@@ -693,7 +693,7 @@ go test ./... -v
 - `internal/links`: 85%+ coverage (scanner, validator, categorizer, reporter)
 - `internal/sync`: 85%+ coverage (converter, copier, validator, reporter)
 - `internal/claude`: 92.6% coverage (validator, agent_validator, skill_validator)
-- `internal/speccoverage`: ≥80% coverage (parser, checker with temp dir fixtures, reporter for all formats)
+- `internal/speccoverage`: ≥85% coverage (parser, checker with temp dir fixtures, reporter for all formats)
 
 ### Lint
 
@@ -853,7 +853,7 @@ rhino-cli say
 - Closes the vitest-cucumber gap: new specs silently ignored unless matched by an integration test
 - Integrated into `organiclever-web` `test:quick` target
 - Three output formats: text, JSON, markdown
-- ≥80% test coverage with temp dir fixtures
+- ≥85% test coverage with temp dir fixtures
 
 ### v0.6.0
 

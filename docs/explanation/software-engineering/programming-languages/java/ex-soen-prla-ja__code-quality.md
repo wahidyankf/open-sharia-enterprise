@@ -308,7 +308,7 @@ public class InvoiceService {
 
 ## JaCoCo Code Coverage
 
-**MUST** maintain ≥80% line coverage measured by JaCoCo.
+**MUST** maintain ≥85% line coverage measured by JaCoCo.
 
 ### JaCoCo Configuration
 
@@ -341,7 +341,7 @@ public class InvoiceService {
               <limit>
                 <counter>LINE</counter>
                 <value>COVEREDRATIO</value>
-                <minimum>0.80</minimum>
+                <minimum>0.85</minimum>
               </limit>
             </limits>
           </rule>
@@ -354,7 +354,7 @@ public class InvoiceService {
 
 ### Coverage Enforcement
 
-**Build fails** if coverage drops below 80%.
+**Build fails** if coverage drops below 85%.
 
 **Coverage reports**:
 
@@ -417,7 +417,7 @@ public class InvoiceService {
 | NullAway    | Compile    | Build fails | Null safety validation     |
 | Checkstyle  | Compile    | Warnings    | Style validation           |
 | SpotBugs    | CI/CD      | Build fails | Static bug detection       |
-| JaCoCo      | Test       | Build fails | Code coverage ≥80%         |
+| JaCoCo      | Test       | Build fails | Code coverage ≥85%         |
 | Pre-commit  | Git commit | Auto-fix    | Fast formatting feedback   |
 
 ## Learning Resources
@@ -448,7 +448,7 @@ These standards enforce the five software engineering principles:
    - Spotless auto-formats code on every compilation (no manual formatting)
    - Error Prone catches bugs at compile time (before code review)
    - NullAway prevents NullPointerException at compile time (not runtime)
-   - JaCoCo enforces ≥80% coverage automatically (build fails if not met)
+   - JaCoCo enforces ≥85% coverage automatically (build fails if not met)
    - Pre-commit hooks format code before commit (zero-friction quality)
 
 2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)**

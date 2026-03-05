@@ -233,7 +233,7 @@ apps/
 
 **REQUIRED Coverage Minimums:**
 
-- Unit tests: 80% code coverage
+- Unit tests: 85% code coverage
 - Integration tests: Critical paths covered
 - E2E tests: Happy paths + critical error scenarios
 
@@ -253,7 +253,7 @@ Before merging code, verify:
 - [ ] **Domain invariants tested**: Aggregate business rules verified
 - [ ] **Value objects immutable**: Tests verify immutability
 - [ ] **Domain events emitted**: Tests verify event emission on domain actions
-- [ ] **80% coverage minimum**: Critical business logic covered
+- [ ] **85% coverage minimum**: Critical business logic covered
 - [ ] **Integration tests mock external I/O**: In-memory repos and MSW/WireMock — no real DB, no real network
 - [ ] **E2E tests use no mocking**: All external dependencies are real
 - [ ] **No flaky tests**: All tests pass consistently

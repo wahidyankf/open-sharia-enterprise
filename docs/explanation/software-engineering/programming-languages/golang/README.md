@@ -273,7 +273,7 @@ graph TD
 - SHOULD use `staticcheck` for advanced static analysis (included in golangci-lint)
 - MUST use `go vet` for correctness checking (detects common mistakes)
 - SHOULD use `gosec` for security scanning (OWASP vulnerabilities)
-- MUST achieve >80% test coverage for domain logic (measured with `go test -cover`)
+- MUST achieve >85% test coverage for domain logic (measured with `go test -cover`)
 
 **Testing Automation (REQUIRED)**:
 
@@ -304,7 +304,7 @@ graph TD
 
 **Code Review Requirements**:
 
-- All Go code MUST pass automated checks (`golangci-lint`, `go test`, coverage >80% for domain logic)
+- All Go code MUST pass automated checks (`golangci-lint`, `go test`, coverage >85% for domain logic)
 - Code reviewers MUST verify compliance with standards in this index
 - Non-compliance with mandatory standards (Coding, Testing, Code Quality) blocks merge
 - Goroutine leaks and race conditions MUST be detected with `go test -race`

@@ -412,9 +412,9 @@ Spring Framework projects SHOULD use Checkstyle for additional style checks.
 
 **Rationale**: Additional style enforcement beyond Spotless formatting.
 
-### Standard 6: Minimum 80% Coverage for Domain Logic (MANDATORY)
+### Standard 6: Minimum 85% Coverage for Domain Logic (MANDATORY)
 
-Spring Framework projects MUST achieve 80% code coverage for domain and application layers.
+Spring Framework projects MUST achieve 85% code coverage for domain and application layers.
 
 #### Configuration (✅)
 
@@ -450,7 +450,7 @@ Spring Framework projects MUST achieve 80% code coverage for domain and applicat
               <limit>
                 <counter>LINE</counter>
                 <value>COVEREDRATIO</value>
-                <minimum>0.80</minimum>
+                <minimum>0.85</minimum>
               </limit>
             </limits>
           </rule>
@@ -480,7 +480,7 @@ Spring Framework projects MUST achieve 80% code coverage for domain and applicat
 
 ```bash
 
-# - JaCoCo coverage below 80%
+# - JaCoCo coverage below 85%
 
 mvn clean verify
 ```

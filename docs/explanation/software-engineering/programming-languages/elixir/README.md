@@ -260,7 +260,7 @@ graph TD
 - MUST use `mix format` for code formatting (enforced in pre-commit hooks)
 - MUST use Credo for code quality analysis (minimum score: 90%)
 - SHOULD use Dialyzer for static type analysis (with dialyxir for better output)
-- MUST achieve >80% test coverage for domain logic (measured with `mix test --cover`)
+- MUST achieve >85% test coverage for domain logic (measured with `mix test --cover`)
 - SHOULD use mix format check (`mix format --check-formatted`) in CI/CD
 
 **Testing Automation (REQUIRED)**:

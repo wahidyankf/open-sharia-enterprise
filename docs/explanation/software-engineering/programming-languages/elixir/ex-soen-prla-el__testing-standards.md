@@ -212,7 +212,7 @@ end
 
 ### Test Coverage
 
-**MUST** achieve >80% line coverage for domain logic.
+**MUST** achieve >85% line coverage for domain logic.
 
 **Coverage enforcement**: CI/CD pipeline SHOULD fail if coverage drops below threshold.
 
@@ -840,7 +840,7 @@ mix test --exclude slow
 - [ ] `async: true` used when tests are independent
 - [ ] Setup callbacks used for test initialization
 - [ ] ExUnit assertions used (not custom wrappers)
-- [ ] > 80% line coverage for domain logic
+- [ ] > 85% line coverage for domain logic
 
 ### Doctests (MUST for public functions)
 
@@ -878,7 +878,7 @@ mix test --exclude slow
 Testing standards are enforced through:
 
 - **Mix test** - Runs unit and integration tests
-- **Code coverage** - Measures >80% threshold
+- **Code coverage** - Measures >85% threshold
 - **Code reviews** - Human verification of test quality
 - **CI/CD pipeline** - Blocks merges if tests fail or coverage drops
 
