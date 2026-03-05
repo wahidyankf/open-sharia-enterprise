@@ -3,6 +3,7 @@ package sync
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -163,5 +164,81 @@ func TestCopyFile(t *testing.T) {
 
 	if string(destContent) != sourceContent {
 		t.Errorf("Content mismatch: got %s, want %s", string(destContent), sourceContent)
+	}
+}
+
+func TestCopyAllSkills_NoSkillsDir(t *testing.T) {
+	tmpDir := t.TempDir()
+	// No .claude/skills directory
+
+	_, _, _, err := CopyAllSkills(tmpDir, false)
+	if err == nil {
+		t.Error("expected error for missing skills directory")
+	}
+	if !strings.Contains(err.Error(), "skills directory not found") {
+		t.Errorf("expected 'skills directory not found' error, got: %v", err)
+	}
+}
+
+func TestCopyAllSkills_IndividualMdFiles(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	claudeSkillsDir := filepath.Join(tmpDir, ".claude", "skills")
+	if err := os.MkdirAll(claudeSkillsDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create an individual .md file in skills root (not README.md)
+	if err := os.WriteFile(filepath.Join(claudeSkillsDir, "my-skill.md"), []byte("# Skill"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	copied, failed, _, err := CopyAllSkills(tmpDir, false)
+	if err != nil {
+		t.Fatalf("CopyAllSkills() failed: %v", err)
+	}
+	if copied != 1 {
+		t.Errorf("expected 1 copied, got %d", copied)
+	}
+	if failed != 0 {
+		t.Errorf("expected 0 failed, got %d", failed)
+	}
+}
+
+func TestCopyAllSkills_DirWithoutSkillMd(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	claudeSkillsDir := filepath.Join(tmpDir, ".claude", "skills")
+	emptySkillDir := filepath.Join(claudeSkillsDir, "no-skill-file")
+	if err := os.MkdirAll(emptySkillDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	// No SKILL.md file — directory should be skipped
+
+	copied, failed, _, err := CopyAllSkills(tmpDir, false)
+	if err != nil {
+		t.Fatalf("CopyAllSkills() unexpected error: %v", err)
+	}
+	if copied != 0 {
+		t.Errorf("expected 0 copied for dir without SKILL.md, got %d", copied)
+	}
+	if failed != 0 {
+		t.Errorf("expected 0 failed, got %d", failed)
+	}
+}
+
+func TestCopySkill_SourceNotFound(t *testing.T) {
+	tmpDir := t.TempDir()
+	err := CopySkill(filepath.Join(tmpDir, "nonexistent.md"), filepath.Join(tmpDir, "dest.md"), false)
+	if err == nil {
+		t.Error("expected error for missing source file")
+	}
+}
+
+func TestCopyFile_SourceNotFound(t *testing.T) {
+	tmpDir := t.TempDir()
+	err := CopyFile(filepath.Join(tmpDir, "nonexistent.txt"), filepath.Join(tmpDir, "dest.txt"))
+	if err == nil {
+		t.Error("expected error for missing source file")
 	}
 }

@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"encoding/json"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -218,5 +220,64 @@ func TestOutputTitlesMarkdown_NilResults(t *testing.T) {
 	}
 	if !strings.Contains(out, "# Title Update Report") {
 		t.Errorf("expected markdown header even with nil results, got %q", out)
+	}
+}
+
+func makeTitlesContentDir(t *testing.T) (tmpDir string, restore func()) {
+	t.Helper()
+	originalDir, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	tmpDir = t.TempDir()
+	enDir := filepath.Join(tmpDir, "apps", "ayokoding-web", "content", "en")
+	if err := os.MkdirAll(enDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chdir(tmpDir); err != nil {
+		t.Fatal(err)
+	}
+	return tmpDir, func() { _ = os.Chdir(originalDir) }
+}
+
+func TestRunTitlesUpdate_DryRunMessage(t *testing.T) {
+	_, restore := makeTitlesContentDir(t)
+	defer restore()
+
+	resetFlags()
+	titlesLang = "en"
+	titlesDryRun = true
+
+	read := testutil.CaptureStdout(t)
+	err := runTitlesUpdate(nil, nil)
+	out := read()
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	if !strings.Contains(out, "DRY RUN") {
+		t.Errorf("expected DRY RUN message in output, got %q", out)
+	}
+}
+
+func TestRunTitlesUpdate_JSONOutputSuccess(t *testing.T) {
+	_, restore := makeTitlesContentDir(t)
+	defer restore()
+
+	resetFlags()
+	titlesLang = "en"
+	output = "json"
+
+	read := testutil.CaptureStdout(t)
+	err := runTitlesUpdate(nil, nil)
+	out := read()
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	var parsed map[string]any
+	if err := json.Unmarshal([]byte(out), &parsed); err != nil {
+		t.Errorf("expected valid JSON output, got %q: %v", out, err)
+	}
+	if parsed["status"] != "success" {
+		t.Errorf("expected status 'success', got %v", parsed["status"])
 	}
 }

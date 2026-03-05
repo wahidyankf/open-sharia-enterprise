@@ -729,3 +729,52 @@ func TestExtractAllStepTexts_SkipsNodeModules(t *testing.T) {
 		t.Error("src step should be found")
 	}
 }
+
+func TestUnescapeString(t *testing.T) {
+	tests := []struct {
+		input string
+		want  string
+	}{
+		{`hello`, "hello"},
+		{`it\'s`, "it's"},
+		{`say \"hi\"`, `say "hi"`},
+		{`back\\slash`, `back\slash`},
+		{`new\nline`, "new\nline"},
+		{`tab\there`, "tab\there"},
+		{`carriage\rreturn`, "carriage\rreturn"},
+		{`unknown\xescape`, `unknown\xescape`},
+		{``, ``},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			got := unescapeString(tt.input)
+			if got != tt.want {
+				t.Errorf("unescapeString(%q) = %q, want %q", tt.input, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestFindMatchingTestFile_SkipsSkipDirs(t *testing.T) {
+	tmpDir := t.TempDir()
+	appDir := filepath.Join(tmpDir, "app")
+
+	// Create a node_modules directory with a matching file inside — should be skipped
+	nodeModulesDir := filepath.Join(appDir, "node_modules")
+	if err := os.MkdirAll(nodeModulesDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	// A matching file inside node_modules — should NOT be found due to SkipDir
+	if err := os.WriteFile(filepath.Join(nodeModulesDir, "myspec.test.ts"), []byte(""), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	found, err := findMatchingTestFile(appDir, "myspec")
+	if err != nil {
+		t.Fatalf("findMatchingTestFile() error: %v", err)
+	}
+	if found != "" {
+		t.Errorf("expected no match (node_modules should be skipped), got %q", found)
+	}
+}

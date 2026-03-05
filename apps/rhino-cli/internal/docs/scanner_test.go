@@ -2,6 +2,7 @@ package docs
 
 import (
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -154,5 +155,56 @@ func TestGetDocsFiles_NonExistentDocsDir(t *testing.T) {
 	}
 	if len(files) != 0 {
 		t.Errorf("expected 0 files, got %v", files)
+	}
+}
+
+func TestGetDocsFiles_Staged(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	// Initialize git repo
+	if err := os.MkdirAll(filepath.Join(tmpDir, ".git"), 0755); err != nil {
+		t.Fatal(err)
+	}
+
+	// git init
+	gitInitCmds := [][]string{
+		{"git", "-C", tmpDir, "init", "-q"},
+		{"git", "-C", tmpDir, "config", "user.email", "test@test.com"},
+		{"git", "-C", tmpDir, "config", "user.name", "Test"},
+	}
+	for _, args := range gitInitCmds {
+		cmd := exec.Command(args[0], args[1:]...)
+		if err := cmd.Run(); err != nil {
+			t.Skipf("git not available or init failed: %v", err)
+		}
+	}
+
+	// Create a docs file and stage it
+	docsDir := filepath.Join(tmpDir, "docs")
+	if err := os.MkdirAll(docsDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	testFile := filepath.Join(docsDir, "tu__test.md")
+	if err := os.WriteFile(testFile, []byte("# Test"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Stage the file
+	addCmd := exec.Command("git", "-C", tmpDir, "add", "docs/tu__test.md")
+	if err := addCmd.Run(); err != nil {
+		t.Skipf("git add failed: %v", err)
+	}
+
+	opts := ValidationOptions{
+		RepoRoot:   tmpDir,
+		StagedOnly: true,
+	}
+
+	files, err := GetDocsFiles(opts)
+	if err != nil {
+		t.Fatalf("GetDocsFiles(staged=true) error: %v", err)
+	}
+	if len(files) != 1 {
+		t.Errorf("expected 1 staged docs file, got %d: %v", len(files), files)
 	}
 }

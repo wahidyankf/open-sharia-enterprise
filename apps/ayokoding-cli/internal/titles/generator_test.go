@@ -229,6 +229,17 @@ func TestGenerateTitle_EmptyConfig(t *testing.T) {
 	}
 }
 
+func TestGenerateTitle_EmptyAfterTrim(t *testing.T) {
+	// File "----.md": nameWithoutExt = "----" → after Trim("-_") = "" → fallback to filename
+	// Also: normalized splits into ["", ".md"] → empty word is skipped (covers word=="" branch)
+	config := &Config{Overrides: map[string]string{}, LowercaseWords: []string{}}
+	result := GenerateTitle("/path/to/----.md", config)
+	// Should not panic and produce some output (the filename fallback)
+	if result == "" {
+		t.Error("expected non-empty title even for edge-case filename")
+	}
+}
+
 func TestCapitalizeFirst(t *testing.T) {
 	tests := []struct {
 		input    string

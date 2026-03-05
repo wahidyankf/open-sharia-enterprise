@@ -504,3 +504,43 @@ func TestSyncAgentsCommand_JSONOutput(t *testing.T) {
 		t.Error("Expected JSON output to contain 'FailedFiles' field")
 	}
 }
+
+func TestSyncAgentsCommand_MarkdownOutput(t *testing.T) {
+	originalWd, _ := os.Getwd()
+	defer func() { _ = os.Chdir(originalWd) }()
+
+	tmpDir := t.TempDir()
+	if err := os.Chdir(tmpDir); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(tmpDir, ".git"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(tmpDir, ".claude", "agents"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(tmpDir, ".claude", "skills"), 0755); err != nil {
+		t.Fatal(err)
+	}
+
+	cmd := syncAgentsCmd
+	buf := new(bytes.Buffer)
+	cmd.SetOut(buf)
+	cmd.SetErr(buf)
+
+	syncDryRun = false
+	syncAgentsOnly = false
+	syncSkillsOnly = false
+	output = "markdown"
+	verbose = false
+	quiet = false
+
+	if err := cmd.RunE(cmd, []string{}); err != nil {
+		t.Logf("sync returned error (may be expected): %v", err)
+	}
+
+	got := buf.String()
+	if !strings.Contains(got, "#") {
+		t.Errorf("expected markdown output with headings, got: %s", got)
+	}
+}

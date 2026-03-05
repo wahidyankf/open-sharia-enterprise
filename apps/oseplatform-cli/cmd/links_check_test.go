@@ -2,12 +2,15 @@ package cmd
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/wahidyankf/open-sharia-enterprise/libs/golang-commons/testutil"
+	"github.com/wahidyankf/open-sharia-enterprise/libs/hugo-commons/links"
 )
 
 func resetFlags() {
@@ -140,5 +143,28 @@ func TestRunLinksCheck_QuietMode(t *testing.T) {
 	}
 	if out != "" {
 		t.Errorf("expected no stdout in quiet mode, got %q", out)
+	}
+}
+
+func TestRunLinksCheck_JSONOutputError(t *testing.T) {
+	tmpDir := t.TempDir()
+	linksContentDir = tmpDir
+	resetFlags()
+	output = "json"
+
+	// Inject a failing JSON output function to cover the if outputErr != nil path
+	outputLinksJSONFn = func(_ *links.CheckResult, _ time.Duration) error {
+		return fmt.Errorf("simulated json output error")
+	}
+	defer func() { outputLinksJSONFn = links.OutputLinksJSON }()
+
+	read := testutil.CaptureStdout(t)
+	err := runLinksCheck(nil, nil)
+	read()
+	if err == nil {
+		t.Error("expected error from JSON output failure")
+	}
+	if !strings.Contains(err.Error(), "simulated json output error") {
+		t.Errorf("expected simulated error in message, got %q", err.Error())
 	}
 }
