@@ -19,8 +19,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `oseplatform-web` - Hugo static site (PaperMod theme)
   - `ayokoding-web` - Hugo static site (Hextra theme, bilingual)
   - `ayokoding-cli` - Go CLI tool for content automation
-  - `rhino-cli` - Go CLI tool for repository management (Repository Hygiene & INtegration Orchestrator)
-  - `javaproject-cli` - Go CLI tool for validating Java package null-safety annotations
+  - `rhino-cli` - Go CLI tool for repository management (Repository Hygiene & INtegration Orchestrator; includes `validate-java-annotations`)
   - `oseplatform-cli` - Go CLI tool for OSE Platform site maintenance (link validation)
   - `organiclever-web` - Next.js 16 landing and promotional website (www.organiclever.com)
   - `organiclever-web-e2e` - Playwright E2E tests for organiclever-web
@@ -35,8 +34,7 @@ open-sharia-enterprise/
 │   ├── oseplatform-web/    # OSE Platform website
 │   ├── ayokoding-web/       # AyoKoding website (bilingual)
 │   ├── ayokoding-cli/       # Content automation CLI
-│   ├── rhino-cli/          # Repository management CLI
-│   ├── javaproject-cli/       # Java null-safety annotation validator
+│   ├── rhino-cli/          # Repository management CLI (validate-java-annotations)
 │   ├── oseplatform-cli/     # OSE Platform site CLI
 │   ├── organiclever-web/     # OrganicLever landing website (Next.js)
 │   ├── organiclever-web-e2e/ # Playwright E2E tests for organiclever-web
@@ -109,7 +107,7 @@ npm run doctor           # Check all required tools (volta, node, npm, java, mav
 
 **See**: [governance/development/infra/nx-targets.md](./governance/development/infra/nx-targets.md) for canonical target names, mandatory targets per project type, and caching rules.
 
-**Go projects**: All Go projects (`ayokoding-cli`, `javaproject-cli`, `oseplatform-cli`, `rhino-cli`,
+**Go projects**: All Go projects (`ayokoding-cli`, `oseplatform-cli`, `rhino-cli`,
 `libs/golang-commons`) enforce ≥85% test coverage via `go-test-coverage` (configured in
 `.testcoverage.yml` per project). Coverage is measured with `go test -coverprofile=cover.out ./...`
 and enforced by `go tool go-test-coverage` — both run as part of `test:quick`.

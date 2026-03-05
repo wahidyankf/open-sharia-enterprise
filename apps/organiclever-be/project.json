@@ -60,7 +60,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "nx run javaproject-cli:build --skip-nx-cache && ./apps/javaproject-cli/dist/javaproject-cli apps/organiclever-be/src/main/java",
+          "nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli validate-java-annotations apps/organiclever-be/src/main/java",
           "cd apps/organiclever-be && mvn compile -Pnullcheck"
         ],
         "parallel": false
@@ -68,5 +68,5 @@
     }
   },
   "tags": ["type:app", "platform:spring-boot", "lang:java", "domain:organiclever"],
-  "implicitDependencies": ["javaproject-cli"]
+  "implicitDependencies": ["rhino-cli"]
 }

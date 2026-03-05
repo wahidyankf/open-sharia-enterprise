@@ -4,7 +4,7 @@ Shared Go utilities for Open Sharia Enterprise CLI tools.
 
 ## Purpose
 
-Provides common packages used across multiple Go CLI applications (`ayokoding-cli`, `oseplatform-cli`, `rhino-cli`, `javaproject-cli`) and libraries (`hugo-commons`).
+Provides common packages used across multiple Go CLI applications (`ayokoding-cli`, `oseplatform-cli`, `rhino-cli`) and libraries (`hugo-commons`).
 
 ## Packages
 

@@ -32,6 +32,9 @@ rhino-cli validate-links --staged-only
 # Validate BDD spec coverage (all specs have matching test files)
 rhino-cli validate-spec-coverage specs/organiclever-web apps/organiclever-web
 
+# Validate Java packages have @NullMarked in package-info.java
+rhino-cli validate-java-annotations apps/organiclever-be/src/main/java
+
 # Echo a message
 rhino-cli --say "hello world"
 
@@ -485,6 +488,78 @@ Missing steps (2):
 }
 ```
 
+### validate-java-annotations
+
+Validate that all Java packages in a source tree have the required null-safety annotation in
+`package-info.java`. Used by `organiclever-be`'s `typecheck` target.
+
+```bash
+# Validate with default annotation (@NullMarked)
+rhino-cli validate-java-annotations apps/organiclever-be/src/main/java
+
+# Use a custom annotation
+rhino-cli validate-java-annotations apps/organiclever-be/src/main/java --annotation NonNull
+
+# Output as JSON
+rhino-cli validate-java-annotations apps/organiclever-be/src/main/java -o json
+
+# Output as markdown report
+rhino-cli validate-java-annotations apps/organiclever-be/src/main/java -o markdown
+
+# Quiet mode (suppress "0 violations found" on success)
+rhino-cli validate-java-annotations apps/organiclever-be/src/main/java -q
+```
+
+**What it does:**
+
+- Walks the source tree and finds every directory containing at least one `.java` file
+- For each package directory checks: (1) `package-info.java` exists, (2) it contains `@<annotation>`
+- Reports each violation with the failure reason
+- Supports multiple output formats (text, json, markdown)
+
+**Arguments:**
+
+- `<source-root>` - Path to the Java source root (e.g. `apps/organiclever-be/src/main/java`)
+
+**Flags:**
+
+- `--annotation` - Annotation name to require (default: `NullMarked`)
+- `-o, --output` - Output format: text, json, markdown (default: text)
+- `-v, --verbose` - Verbose output
+- `-q, --quiet` - Quiet mode (suppress "0 violations found" on success)
+
+**Exit codes:**
+
+- `0` - All packages valid
+- `1` - One or more violations found
+
+**Example output (text):**
+
+```
+✓ com/example package-info.java present, @NullMarked found
+✗ com/example/service package-info.java missing
+
+1 violation(s) found.
+```
+
+**Example output (JSON):**
+
+```json
+{
+  "status": "failure",
+  "timestamp": "2026-03-05T10:00:00+07:00",
+  "total_packages": 2,
+  "valid_packages": 1,
+  "annotation": "NullMarked",
+  "violations": [
+    {
+      "package_dir": "com/example/service",
+      "violation_type": "missing_package_info"
+    }
+  ]
+}
+```
+
 ### doctor
 
 Check that all required development tools are installed with the correct versions.
@@ -612,7 +687,8 @@ apps/rhino-cli/
 │   ├── sync_agents.go             # Agent/skill sync command
 │   ├── validate_sync.go           # Sync validation command
 │   ├── validate_claude.go         # Claude Code format validation command
-│   └── validate_spec_coverage.go  # BDD spec coverage validation command
+│   ├── validate_spec_coverage.go  # BDD spec coverage validation command
+│   └── validate_java_annotations.go # Java null-safety annotation validation command
 ├── internal/
 │   ├── doctor/               # Development environment checks
 │   │   ├── types.go          # ToolStatus, ToolCheck, DoctorResult, CommandRunner types
@@ -645,6 +721,14 @@ apps/rhino-cli/
 │   │   ├── checker_test.go   # Unit tests (temp dir fixtures)
 │   │   ├── reporter.go       # Output formatting (text, JSON, markdown)
 │   │   └── reporter_test.go  # Reporter unit tests
+│   ├── java/                 # Java null-safety annotation validation
+│   │   ├── types.go          # PackageEntry, ValidationResult, ValidationOptions
+│   │   ├── scanner.go        # Walk source tree, find Java package directories
+│   │   ├── scanner_test.go
+│   │   ├── validator.go      # Check package-info.java and annotation presence
+│   │   ├── validator_test.go
+│   │   ├── reporter.go       # Output formatting (text, JSON, markdown)
+│   │   └── reporter_test.go
 │   └── sync/                 # Agent/skill sync logic
 │       ├── types.go          # Data structures (ClaudeAgent, OpenCodeAgent, etc.)
 │       ├── types_test.go
@@ -694,6 +778,7 @@ go test ./... -v
 - `internal/sync`: 85%+ coverage (converter, copier, validator, reporter)
 - `internal/claude`: 92.6% coverage (validator, agent_validator, skill_validator)
 - `internal/speccoverage`: ≥85% coverage (parser, checker with temp dir fixtures, reporter for all formats)
+- `internal/java`: ≥85% coverage (scanner, validator, reporter — all pure functions tested with temp dir fixtures)
 
 ### Lint
 
@@ -832,6 +917,14 @@ rhino-cli say
 ```
 
 ## Version History
+
+### v0.9.0 (2026-03-05)
+
+- Absorbed `javaproject-cli` as `validate-java-annotations` subcommand
+- Validates Java packages have required null-safety annotation in `package-info.java`
+- Supports text, JSON, and markdown output formats; `--annotation` flag for custom annotations
+- Integrates into `organiclever-be` `typecheck` target (replaces standalone `javaproject-cli`)
+- `javaproject-cli` standalone project removed from workspace
 
 ### v0.8.0 (2026-03-04)
 
