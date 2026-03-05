@@ -945,7 +945,10 @@ The project uses two complementary test tiers:
 - **Integration tests** (`//go:build integration`, `go test -tags=integration -run TestIntegration ./cmd/...`):
   godog BDD tests that drive each command in-process via `cmd.RunE()` against controlled filesystem
   fixtures. One file per command in `apps/rhino-cli/cmd/`, 39 scenarios total across 9 suites.
-  Run via `nx run rhino-cli:test:integration` (cached).
+  Run via `nx run rhino-cli:test:integration` (cached). Integration tests are co-located with the
+  implementation in `cmd/` (not a separate folder): they are in `package cmd` to access unexported
+  flag variables (`output`, `quiet`, `verbose`) that each command sets before calling `RunE()`.
+  Exporting those variables or switching to subprocess testing would add unnecessary complexity.
 
 ### Test Suite
 
