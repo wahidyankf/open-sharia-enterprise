@@ -4,8 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/claude"
-	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/sync"
+	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/agents"
 )
 
 var (
@@ -78,7 +77,7 @@ func runValidateClaude(cmd *cobra.Command, args []string) error {
 	}
 
 	// Perform validation
-	result, err := claude.ValidateClaude(claude.ValidateClaudeOptions{
+	result, err := agents.ValidateClaude(agents.ValidateClaudeOptions{
 		RepoRoot:   repoRoot,
 		AgentsOnly: agentsOnly,
 		SkillsOnly: skillsOnly,
@@ -88,7 +87,7 @@ func runValidateClaude(cmd *cobra.Command, args []string) error {
 	}
 
 	// Format and print output
-	formattedOutput := sync.FormatValidationResult(result, output, verbose, quiet)
+	formattedOutput := agents.FormatValidationResult(result, output, verbose, quiet)
 	_, _ = fmt.Fprint(cmd.OutOrStdout(), formattedOutput)
 
 	// Return error if validation failed

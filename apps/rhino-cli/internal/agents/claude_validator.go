@@ -1,24 +1,14 @@
-// Package claude provides validators for Claude Code agent and skill configuration files.
-package claude
+package agents
 
 import (
 	"time"
-
-	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/sync"
 )
 
-// ValidateClaudeOptions configures validation behavior
-type ValidateClaudeOptions struct {
-	RepoRoot   string
-	AgentsOnly bool
-	SkillsOnly bool
-}
-
 // ValidateClaude validates .claude/ directory format
-func ValidateClaude(opts ValidateClaudeOptions) (*sync.ValidationResult, error) {
+func ValidateClaude(opts ValidateClaudeOptions) (*ValidationResult, error) {
 	startTime := time.Now()
-	result := &sync.ValidationResult{
-		Checks: []sync.ValidationCheck{},
+	result := &ValidationResult{
+		Checks: []ValidationCheck{},
 	}
 
 	var skillNames map[string]bool

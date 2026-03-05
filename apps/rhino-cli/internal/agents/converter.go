@@ -1,14 +1,14 @@
-package sync
+package agents
 
 import (
 	"bytes"
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"gopkg.in/yaml.v3"
-	"regexp"
 )
 
 // normalizeYAML fixes common YAML formatting issues in Claude agent files

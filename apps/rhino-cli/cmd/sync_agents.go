@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/sync"
+	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/agents"
 )
 
 var (
@@ -70,7 +70,7 @@ func runSyncAgents(cmd *cobra.Command, args []string) error {
 	}
 
 	// Build sync options from flags
-	opts := sync.SyncOptions{
+	opts := agents.SyncOptions{
 		RepoRoot:   repoRoot,
 		DryRun:     syncDryRun,
 		AgentsOnly: syncAgentsOnly,
@@ -80,13 +80,13 @@ func runSyncAgents(cmd *cobra.Command, args []string) error {
 	}
 
 	// Perform sync
-	result, err := sync.SyncAll(opts)
+	result, err := agents.SyncAll(opts)
 	if err != nil {
 		return fmt.Errorf("sync failed: %w", err)
 	}
 
 	// Format and print output
-	formattedOutput := sync.FormatSyncResult(result, output, verbose, quiet)
+	formattedOutput := agents.FormatSyncResult(result, output, verbose, quiet)
 	_, _ = fmt.Fprint(cmd.OutOrStdout(), formattedOutput)
 
 	// Return error if there were failures

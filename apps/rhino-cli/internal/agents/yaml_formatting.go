@@ -1,20 +1,18 @@
-package claude
+package agents
 
 import (
 	"bytes"
 	"fmt"
 	"strings"
-
-	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/sync"
 )
 
 // validateYAMLFormattingRaw checks YAML frontmatter formatting (space after colons).
 // checkName is the full ValidationCheck.Name, e.g. "Agent: foo.md - YAML Formatting".
-func validateYAMLFormattingRaw(checkName string, content []byte) sync.ValidationCheck {
+func validateYAMLFormattingRaw(checkName string, content []byte) ValidationCheck {
 	lines := bytes.Split(content, []byte("\n"))
 
 	if len(lines) < 3 {
-		return sync.ValidationCheck{
+		return ValidationCheck{
 			Name:    checkName,
 			Status:  "passed",
 			Message: "File too short to check formatting",
@@ -23,7 +21,7 @@ func validateYAMLFormattingRaw(checkName string, content []byte) sync.Validation
 
 	// Find frontmatter boundaries
 	if !bytes.Equal(bytes.TrimSpace(lines[0]), []byte("---")) {
-		return sync.ValidationCheck{
+		return ValidationCheck{
 			Name:    checkName,
 			Status:  "failed",
 			Message: "Frontmatter does not start with ---",
@@ -39,7 +37,7 @@ func validateYAMLFormattingRaw(checkName string, content []byte) sync.Validation
 	}
 
 	if endIndex == -1 {
-		return sync.ValidationCheck{
+		return ValidationCheck{
 			Name:    checkName,
 			Status:  "failed",
 			Message: "Frontmatter closing --- not found",
@@ -69,7 +67,7 @@ func validateYAMLFormattingRaw(checkName string, content []byte) sync.Validation
 	}
 
 	if len(issues) > 0 {
-		return sync.ValidationCheck{
+		return ValidationCheck{
 			Name:     checkName,
 			Status:   "failed",
 			Expected: "Space after colon in YAML key-value pairs (e.g., 'name: value')",
@@ -78,7 +76,7 @@ func validateYAMLFormattingRaw(checkName string, content []byte) sync.Validation
 		}
 	}
 
-	return sync.ValidationCheck{
+	return ValidationCheck{
 		Name:    checkName,
 		Status:  "passed",
 		Message: "YAML formatting correct (spaces after colons)",
