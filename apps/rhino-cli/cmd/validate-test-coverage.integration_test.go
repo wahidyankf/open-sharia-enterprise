@@ -17,9 +17,9 @@ import (
 	"github.com/cucumber/godog"
 )
 
-var specsCheckTestCoverageDir = func() string {
+var specsValidateTestCoverageDir = func() string {
 	_, f, _, _ := runtime.Caller(0)
-	return filepath.Join(filepath.Dir(f), "../../../specs/rhino-cli/check-test-coverage")
+	return filepath.Join(filepath.Dir(f), "../../../specs/rhino-cli/validate-test-coverage")
 }()
 
 // Scenario: A Go coverage file above the threshold reports success
@@ -29,7 +29,7 @@ var specsCheckTestCoverageDir = func() string {
 // Scenario: JSON output includes structured coverage metrics
 // Scenario: A non-existent coverage file reports an error
 
-type checkTestCoverageSteps struct {
+type validateTestCoverageSteps struct {
 	originalWd string
 	tmpDir     string
 	coverFile  string
@@ -37,9 +37,9 @@ type checkTestCoverageSteps struct {
 	cmdOutput  string
 }
 
-func (s *checkTestCoverageSteps) before(_ context.Context, _ *godog.Scenario) (context.Context, error) {
+func (s *validateTestCoverageSteps) before(_ context.Context, _ *godog.Scenario) (context.Context, error) {
 	s.originalWd, _ = os.Getwd()
-	s.tmpDir, _ = os.MkdirTemp("", "check-test-coverage-*")
+	s.tmpDir, _ = os.MkdirTemp("", "validate-test-coverage-*")
 	_ = os.MkdirAll(filepath.Join(s.tmpDir, ".git"), 0755)
 	verbose = false
 	quiet = false
@@ -48,7 +48,7 @@ func (s *checkTestCoverageSteps) before(_ context.Context, _ *godog.Scenario) (c
 	return context.Background(), nil
 }
 
-func (s *checkTestCoverageSteps) after(_ context.Context, _ *godog.Scenario, _ error) (context.Context, error) {
+func (s *validateTestCoverageSteps) after(_ context.Context, _ *godog.Scenario, _ error) (context.Context, error) {
 	_ = os.Chdir(s.originalWd)
 	_ = os.RemoveAll(s.tmpDir)
 	return context.Background(), nil
@@ -118,7 +118,7 @@ func lcovContent90() string {
 		"end_of_record\n"
 }
 
-func (s *checkTestCoverageSteps) aGoCoverageFileRecording90PercentLineCoverage() error {
+func (s *validateTestCoverageSteps) aGoCoverageFileRecording90PercentLineCoverage() error {
 	coverPath := filepath.Join(s.tmpDir, "cover.out")
 	if err := os.WriteFile(coverPath, []byte(goCoverContent90()), 0644); err != nil {
 		return err
@@ -127,7 +127,7 @@ func (s *checkTestCoverageSteps) aGoCoverageFileRecording90PercentLineCoverage()
 	return nil
 }
 
-func (s *checkTestCoverageSteps) aGoCoverageFileRecording70PercentLineCoverage() error {
+func (s *validateTestCoverageSteps) aGoCoverageFileRecording70PercentLineCoverage() error {
 	coverPath := filepath.Join(s.tmpDir, "cover.out")
 	if err := os.WriteFile(coverPath, []byte(goCoverContent70()), 0644); err != nil {
 		return err
@@ -136,7 +136,7 @@ func (s *checkTestCoverageSteps) aGoCoverageFileRecording70PercentLineCoverage()
 	return nil
 }
 
-func (s *checkTestCoverageSteps) aGoCoverageFileRecording85PercentLineCoverage() error {
+func (s *validateTestCoverageSteps) aGoCoverageFileRecording85PercentLineCoverage() error {
 	coverPath := filepath.Join(s.tmpDir, "cover.out")
 	if err := os.WriteFile(coverPath, []byte(goCoverContent85()), 0644); err != nil {
 		return err
@@ -145,7 +145,7 @@ func (s *checkTestCoverageSteps) aGoCoverageFileRecording85PercentLineCoverage()
 	return nil
 }
 
-func (s *checkTestCoverageSteps) anLCOVCoverageFileRecording90PercentLineCoverage() error {
+func (s *validateTestCoverageSteps) anLCOVCoverageFileRecording90PercentLineCoverage() error {
 	coverPath := filepath.Join(s.tmpDir, "lcov.info")
 	if err := os.WriteFile(coverPath, []byte(lcovContent90()), 0644); err != nil {
 		return err
@@ -154,66 +154,66 @@ func (s *checkTestCoverageSteps) anLCOVCoverageFileRecording90PercentLineCoverag
 	return nil
 }
 
-func (s *checkTestCoverageSteps) noCoverageFileExistsAtTheSpecifiedPath() error {
+func (s *validateTestCoverageSteps) noCoverageFileExistsAtTheSpecifiedPath() error {
 	s.coverFile = "nonexistent_cover.out"
 	return nil
 }
 
-func (s *checkTestCoverageSteps) theDeveloperRunsCheckTestCoverageWithAn85PercentThreshold() error {
+func (s *validateTestCoverageSteps) theDeveloperRunsValidateTestCoverageWithAn85PercentThreshold() error {
 	buf := new(bytes.Buffer)
-	checkTestCoverageCmd.SetOut(buf)
-	checkTestCoverageCmd.SetErr(buf)
-	s.cmdErr = checkTestCoverageCmd.RunE(checkTestCoverageCmd, []string{s.coverFile, "85"})
+	validateTestCoverageCmd.SetOut(buf)
+	validateTestCoverageCmd.SetErr(buf)
+	s.cmdErr = validateTestCoverageCmd.RunE(validateTestCoverageCmd, []string{s.coverFile, "85"})
 	s.cmdOutput = buf.String()
 	return nil
 }
 
-func (s *checkTestCoverageSteps) theDeveloperRunsCheckTestCoverageWithAn85PercentThresholdRequestingJSONOutput() error {
+func (s *validateTestCoverageSteps) theDeveloperRunsValidateTestCoverageWithAn85PercentThresholdRequestingJSONOutput() error {
 	output = "json"
 	buf := new(bytes.Buffer)
-	checkTestCoverageCmd.SetOut(buf)
-	checkTestCoverageCmd.SetErr(buf)
-	s.cmdErr = checkTestCoverageCmd.RunE(checkTestCoverageCmd, []string{s.coverFile, "85"})
+	validateTestCoverageCmd.SetOut(buf)
+	validateTestCoverageCmd.SetErr(buf)
+	s.cmdErr = validateTestCoverageCmd.RunE(validateTestCoverageCmd, []string{s.coverFile, "85"})
 	s.cmdOutput = buf.String()
 	return nil
 }
 
-func (s *checkTestCoverageSteps) theCommandExitsSuccessfully() error {
+func (s *validateTestCoverageSteps) theCommandExitsSuccessfully() error {
 	if s.cmdErr != nil {
 		return fmt.Errorf("expected command to succeed but got error: %v\nOutput: %s", s.cmdErr, s.cmdOutput)
 	}
 	return nil
 }
 
-func (s *checkTestCoverageSteps) theCommandExitsWithAFailureCode() error {
+func (s *validateTestCoverageSteps) theCommandExitsWithAFailureCode() error {
 	if s.cmdErr == nil {
 		return fmt.Errorf("expected command to fail but it succeeded\nOutput: %s", s.cmdOutput)
 	}
 	return nil
 }
 
-func (s *checkTestCoverageSteps) theOutputReportsTheMeasuredCoveragePercentage() error {
+func (s *validateTestCoverageSteps) theOutputReportsTheMeasuredCoveragePercentage() error {
 	if !strings.Contains(s.cmdOutput, "%") {
 		return fmt.Errorf("expected output to contain '%%' but got: %s", s.cmdOutput)
 	}
 	return nil
 }
 
-func (s *checkTestCoverageSteps) theOutputIndicatesTheCoveragePassesTheThreshold() error {
+func (s *validateTestCoverageSteps) theOutputIndicatesTheCoveragePassesTheThreshold() error {
 	if !strings.Contains(s.cmdOutput, "PASS") {
 		return fmt.Errorf("expected output to contain 'PASS' but got: %s", s.cmdOutput)
 	}
 	return nil
 }
 
-func (s *checkTestCoverageSteps) theOutputIndicatesTheCoverageFailsTheThreshold() error {
+func (s *validateTestCoverageSteps) theOutputIndicatesTheCoverageFailsTheThreshold() error {
 	if !strings.Contains(s.cmdOutput, "FAIL") {
 		return fmt.Errorf("expected output to contain 'FAIL' but got: %s", s.cmdOutput)
 	}
 	return nil
 }
 
-func (s *checkTestCoverageSteps) theOutputIsValidJSON() error {
+func (s *validateTestCoverageSteps) theOutputIsValidJSON() error {
 	var parsed map[string]any
 	if err := json.Unmarshal([]byte(s.cmdOutput), &parsed); err != nil {
 		return fmt.Errorf("output is not valid JSON: %v\nOutput: %s", err, s.cmdOutput)
@@ -221,7 +221,7 @@ func (s *checkTestCoverageSteps) theOutputIsValidJSON() error {
 	return nil
 }
 
-func (s *checkTestCoverageSteps) theJSONIncludesTheCoveragePercentageAndPassFailStatus() error {
+func (s *validateTestCoverageSteps) theJSONIncludesTheCoveragePercentageAndPassFailStatus() error {
 	var parsed map[string]any
 	if err := json.Unmarshal([]byte(s.cmdOutput), &parsed); err != nil {
 		return fmt.Errorf("output is not valid JSON: %v\nOutput: %s", err, s.cmdOutput)
@@ -235,7 +235,7 @@ func (s *checkTestCoverageSteps) theJSONIncludesTheCoveragePercentageAndPassFail
 	return nil
 }
 
-func (s *checkTestCoverageSteps) theOutputDescribesTheMissingFile() error {
+func (s *validateTestCoverageSteps) theOutputDescribesTheMissingFile() error {
 	combined := s.cmdOutput
 	if s.cmdErr != nil {
 		combined += s.cmdErr.Error()
@@ -250,9 +250,9 @@ func (s *checkTestCoverageSteps) theOutputDescribesTheMissingFile() error {
 	return nil
 }
 
-// InitializeCheckTestCoverageScenario registers all step definitions.
-func InitializeCheckTestCoverageScenario(sc *godog.ScenarioContext) {
-	s := &checkTestCoverageSteps{}
+// InitializeValidateTestCoverageScenario registers all step definitions.
+func InitializeValidateTestCoverageScenario(sc *godog.ScenarioContext) {
+	s := &validateTestCoverageSteps{}
 	sc.Before(s.before)
 	sc.After(s.after)
 
@@ -261,8 +261,8 @@ func InitializeCheckTestCoverageScenario(sc *godog.ScenarioContext) {
 	sc.Step(`^a Go coverage file recording 85% line coverage$`, s.aGoCoverageFileRecording85PercentLineCoverage)
 	sc.Step(`^an LCOV coverage file recording 90% line coverage$`, s.anLCOVCoverageFileRecording90PercentLineCoverage)
 	sc.Step(`^no coverage file exists at the specified path$`, s.noCoverageFileExistsAtTheSpecifiedPath)
-	sc.Step(`^the developer runs check-test-coverage with an 85% threshold$`, s.theDeveloperRunsCheckTestCoverageWithAn85PercentThreshold)
-	sc.Step(`^the developer runs check-test-coverage with an 85% threshold requesting JSON output$`, s.theDeveloperRunsCheckTestCoverageWithAn85PercentThresholdRequestingJSONOutput)
+	sc.Step(`^the developer runs validate-test-coverage with an 85% threshold$`, s.theDeveloperRunsValidateTestCoverageWithAn85PercentThreshold)
+	sc.Step(`^the developer runs validate-test-coverage with an 85% threshold requesting JSON output$`, s.theDeveloperRunsValidateTestCoverageWithAn85PercentThresholdRequestingJSONOutput)
 	sc.Step(`^the command exits successfully$`, s.theCommandExitsSuccessfully)
 	sc.Step(`^the command exits with a failure code$`, s.theCommandExitsWithAFailureCode)
 	sc.Step(`^the output reports the measured coverage percentage$`, s.theOutputReportsTheMeasuredCoveragePercentage)
@@ -273,12 +273,12 @@ func InitializeCheckTestCoverageScenario(sc *godog.ScenarioContext) {
 	sc.Step(`^the output describes the missing file$`, s.theOutputDescribesTheMissingFile)
 }
 
-func TestIntegrationCheckTestCoverage(t *testing.T) {
+func TestIntegrationValidateTestCoverage(t *testing.T) {
 	suite := godog.TestSuite{
-		ScenarioInitializer: InitializeCheckTestCoverageScenario,
+		ScenarioInitializer: InitializeValidateTestCoverageScenario,
 		Options: &godog.Options{
 			Format:   "pretty",
-			Paths:    []string{specsCheckTestCoverageDir},
+			Paths:    []string{specsValidateTestCoverageDir},
 			TestingT: t,
 		},
 	}
