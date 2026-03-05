@@ -17,13 +17,16 @@ import (
 
 var specsSyncAgentsDir = func() string {
 	_, f, _, _ := runtime.Caller(0)
-	return filepath.Join(filepath.Dir(f), "../../../specs/rhino-cli/claude")
+	return filepath.Join(filepath.Dir(f), "../../../specs/rhino-cli/agents")
 }()
 
 // Scenario: Syncing converts agents and skills to OpenCode format
 // Scenario: The --dry-run flag previews changes without modifying files
 // Scenario: The --agents-only flag syncs agents without touching skills
 // Scenario: Model names are correctly translated to OpenCode equivalents
+// Scenario: Directories that are in sync pass validation
+// Scenario: A description mismatch between directories fails validation
+// Scenario: A count mismatch between directories fails validation
 
 type syncAgentsSteps struct {
 	originalWd string

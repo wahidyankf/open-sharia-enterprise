@@ -19,7 +19,7 @@ the contract between the CLI implementation and its consumers.
 | `doctor/`        | `doctor`                                          |
 | `java/`          | `validate-java-annotations`                       |
 | `docs/`          | `validate-docs-links`, `validate-docs-naming`     |
-| `claude/`        | `validate-claude`, `validate-sync`, `sync-agents` |
+| `agents/`        | `validate-claude`, `validate-sync`, `sync-agents` |
 | `spec-coverage/` | `validate-spec-coverage`                          |
 
 ## Running the Tests
