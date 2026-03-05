@@ -43,7 +43,8 @@ The `test:integration` target is cached — it only re-runs when source files in
 ## Adding New Specs
 
 1. Create `specs/rhino-cli/<domain>/<command>.feature`
-2. Create `apps/rhino-cli/cmd/<command>.integration_test.go`:
+2. Create `apps/rhino-cli/cmd/<command>.integration_test.go` (co-located in `cmd/`, not a
+   separate folder — the file must be in `package cmd` to access unexported flag variables):
    - Add `//go:build integration` and `package cmd` at the top
    - Include `// Scenario: <title>` comments for every scenario
    - Register step definitions with `sc.Step(\`^pattern$\`, stepFunc)`

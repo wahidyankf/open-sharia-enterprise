@@ -376,6 +376,49 @@ Typical workflow when adding new content:
 - Manual corrections outside commit workflow
 - Testing changes in isolation
 
+## Testing
+
+Two test tiers cover different concerns:
+
+### Unit Tests
+
+```bash
+# Run unit tests (no build tag required)
+go test ./...
+
+# Via Nx (includes 85% line coverage check)
+nx run ayokoding-cli:test:quick
+```
+
+Unit tests cover isolated pure functions, algorithmic logic, and edge cases not
+reachable from integration tests. Coverage threshold: ≥85% line coverage.
+
+### Integration Tests
+
+```bash
+# Run all 13 BDD integration tests
+nx run ayokoding-cli:test:integration
+
+# Run a specific suite during development
+cd apps/ayokoding-cli
+go test -v -tags=integration -run TestIntegrationNavRegen ./cmd/...
+go test -v -tags=integration -run TestIntegrationTitlesUpdate ./cmd/...
+go test -v -tags=integration -run TestIntegrationLinksCheck ./cmd/...
+```
+
+Integration tests use [godog](https://github.com/cucumber/godog) to run Gherkin
+scenarios from `specs/ayokoding-cli/`. They are co-located in `cmd/` (same
+package) to access unexported flag variables. Three suites cover all 3 commands:
+
+| Test function                 | Feature file                                       | Scenarios |
+| ----------------------------- | -------------------------------------------------- | --------- |
+| `TestIntegrationNavRegen`     | `specs/ayokoding-cli/nav/nav-regen.feature`        | 5         |
+| `TestIntegrationTitlesUpdate` | `specs/ayokoding-cli/titles/titles-update.feature` | 4         |
+| `TestIntegrationLinksCheck`   | `specs/ayokoding-cli/links/links-check.feature`    | 4         |
+
+The `test:integration` target is cached — it only re-runs when `cmd/**/*.go` or
+`specs/ayokoding-cli/**/*.feature` files change.
+
 ## Development
 
 ### Build
@@ -383,26 +426,6 @@ Typical workflow when adding new content:
 ```bash
 go build -o dist/ayokoding-cli
 ```
-
-### Test
-
-```bash
-# Run all tests
-go test ./...
-
-# Run tests with coverage
-go test ./... -cover
-
-# Run tests with verbose output
-go test ./... -v
-```
-
-**Test Coverage:**
-
-- `internal/markdown`: 97.5% coverage
-- `internal/navigation`: 88.2% coverage
-
-**Note**: Unit tests automatically run via pre-push git hook for affected projects (see [Code Quality Convention](../../governance/development/quality/code.md)).
 
 ### Lint
 
@@ -441,6 +464,7 @@ nx run ayokoding-cli
 
 - `build` - Build the CLI binary to `dist/`
 - `test:quick` - Run unit tests (`go test ./...`)
+- `test:integration` - Run BDD integration tests (godog, 13 scenarios)
 - `lint` - Static analysis via golangci-lint
 - `run` - Run the CLI directly (`go run main.go`)
 - `install` - Install Go dependencies (`go mod tidy`)

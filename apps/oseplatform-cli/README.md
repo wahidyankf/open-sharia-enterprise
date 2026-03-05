@@ -57,6 +57,41 @@ oseplatform-cli links check -o markdown
 oseplatform-cli links check -v
 ```
 
+## Testing
+
+Two test tiers cover different concerns:
+
+### Unit Tests
+
+```sh
+# Via Nx (includes 85% line coverage check)
+nx run oseplatform-cli:test:quick
+```
+
+Coverage threshold: ≥85% line coverage.
+
+### Integration Tests
+
+```sh
+# Run all 4 BDD integration tests
+nx run oseplatform-cli:test:integration
+
+# Run the suite directly during development
+cd apps/oseplatform-cli
+go test -v -tags=integration -run TestIntegrationLinksCheck ./cmd/...
+```
+
+Integration tests use [godog](https://github.com/cucumber/godog) to run Gherkin
+scenarios from `specs/oseplatform-cli/`. They are co-located in `cmd/` (same
+package) to access unexported flag variables.
+
+| Test function               | Feature file                                      | Scenarios |
+| --------------------------- | ------------------------------------------------- | --------- |
+| `TestIntegrationLinksCheck` | `specs/oseplatform-cli/links/links-check.feature` | 4         |
+
+The `test:integration` target is cached — it only re-runs when `cmd/**/*.go` or
+`specs/oseplatform-cli/**/*.feature` files change.
+
 ## Development
 
 ```sh
@@ -65,6 +100,9 @@ nx build oseplatform-cli
 
 # Test
 nx run oseplatform-cli:test:quick
+
+# Integration tests
+nx run oseplatform-cli:test:integration
 
 # Lint
 nx lint oseplatform-cli

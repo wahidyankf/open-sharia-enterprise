@@ -272,7 +272,10 @@ Spring Boot, Python apps, TypeScript apps that test against DB/APIs, Go CLIs wit
 **Go CLIs** expose `test:integration` for godog BDD tests: each command has a
 `{stem}.integration_test.go` file with `//go:build integration` that drives the command in-process
 via `cmd.RunE()` against controlled filesystem fixtures. The `test:integration` Nx target uses
-`-tags=integration -run TestIntegration` to isolate these from unit tests.
+`-tags=integration -run TestIntegration` to isolate these from unit tests. Tests are co-located in
+the same `cmd/` package (not a separate folder) because they need direct access to unexported
+package-level flag variables (`output`, `quiet`, `verbose`) — the idiomatic Go pattern for this
+situation is `//go:build integration` in the same package.
 
 ### CLI Applications
 
