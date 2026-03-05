@@ -13,14 +13,14 @@ the contract between the CLI implementation and its consumers.
 
 ## Structure
 
-| Directory                 | Command(s)                                        |
-| ------------------------- | ------------------------------------------------- |
-| `validate-test-coverage/` | `validate-test-coverage`                          |
-| `doctor/`                 | `doctor`                                          |
-| `java/`                   | `validate-java-annotations`                       |
-| `docs/`                   | `validate-docs-links`, `validate-docs-naming`     |
-| `claude/`                 | `validate-claude`, `validate-sync`, `sync-agents` |
-| `spec-coverage/`          | `validate-spec-coverage`                          |
+| Directory        | Command(s)                                        |
+| ---------------- | ------------------------------------------------- |
+| `test-coverage/` | `validate-test-coverage`                          |
+| `doctor/`        | `doctor`                                          |
+| `java/`          | `validate-java-annotations`                       |
+| `docs/`          | `validate-docs-links`, `validate-docs-naming`     |
+| `claude/`        | `validate-claude`, `validate-sync`, `sync-agents` |
+| `spec-coverage/` | `validate-spec-coverage`                          |
 
 ## Running the Tests
 
