@@ -9,16 +9,17 @@
 
 ## Test Coverage
 
-All projects enforce ≥85% test coverage as part of `test:quick`.
+All projects enforce ≥85% test coverage as part of `test:quick`. Coverage is uploaded to [Codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise) on every push to `main`.
 
-| Project               | Coverage                                                                      |
-| --------------------- | ----------------------------------------------------------------------------- |
-| `rhino-cli`           | ![coverage](https://img.shields.io/badge/coverage-%E2%89%A585%25-brightgreen) |
-| `ayokoding-cli`       | ![coverage](https://img.shields.io/badge/coverage-%E2%89%A585%25-brightgreen) |
-| `oseplatform-cli`     | ![coverage](https://img.shields.io/badge/coverage-%E2%89%A585%25-brightgreen) |
-| `libs/golang-commons` | ![coverage](https://img.shields.io/badge/coverage-%E2%89%A585%25-brightgreen) |
-| `organiclever-be`     | ![coverage](https://img.shields.io/badge/coverage-%E2%89%A585%25-brightgreen) |
-| `organiclever-web`    | ![coverage](https://img.shields.io/badge/coverage-%E2%89%A585%25-brightgreen) |
+| Project               | Coverage                                                                                                                                                             |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `rhino-cli`           | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=rhino-cli)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)        |
+| `ayokoding-cli`       | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=ayokoding-cli)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)    |
+| `oseplatform-cli`     | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=oseplatform-cli)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)  |
+| `libs/golang-commons` | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=golang-commons)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)   |
+| `libs/hugo-commons`   | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=hugo-commons)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)     |
+| `organiclever-be`     | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=organiclever-be)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)  |
+| `organiclever-web`    | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=organiclever-web)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise) |
 
 🌐 **Live Sites**:
 

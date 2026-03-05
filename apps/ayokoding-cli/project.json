@@ -16,7 +16,7 @@
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "go test -coverprofile=cover.out ./... && go tool go-test-coverage --config=.testcoverage.yml && rm -f cover.out",
+        "command": "go test -coverprofile=cover.out ./... && go tool go-test-coverage --config=.testcoverage.yml",
         "cwd": "apps/ayokoding-cli"
       }
     },
