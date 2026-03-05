@@ -481,3 +481,143 @@ func TestValidateAllAgents_DirectoryNotFound(t *testing.T) {
 		t.Errorf("Expected failed status, got '%s'", checks[0].Status)
 	}
 }
+
+func TestValidateAgent_FileNotFound(t *testing.T) {
+	tmpDir := t.TempDir()
+	agentNames := make(map[string]bool)
+	skillNames := make(map[string]bool)
+
+	// Pass a path that does not exist
+	checks := validateAgent(
+		filepath.Join(tmpDir, "nonexistent.md"),
+		"nonexistent.md",
+		tmpDir,
+		agentNames,
+		skillNames,
+	)
+
+	if len(checks) != 1 {
+		t.Fatalf("expected 1 check for file-not-found, got %d", len(checks))
+	}
+	if checks[0].Status != "failed" {
+		t.Errorf("expected 'failed', got %q", checks[0].Status)
+	}
+}
+
+func TestValidateAgent_MissingRequiredFields_EarlyReturn(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	// Valid formatting + valid frontmatter but empty name → validateRequiredFields fails → early return
+	content := "---\nname: \ndescription: Test desc\ntools: Read\nmodel: sonnet\ncolor: blue\nskills:\n---\nBody\n"
+	agentPath := filepath.Join(tmpDir, "no-name.md")
+	if err := os.WriteFile(agentPath, []byte(content), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	agentNames := make(map[string]bool)
+	skillNames := make(map[string]bool)
+	checks := validateAgent(agentPath, "no-name.md", tmpDir, agentNames, skillNames)
+
+	foundFailed := false
+	for _, c := range checks {
+		if c.Status == "failed" {
+			foundFailed = true
+			break
+		}
+	}
+	if !foundFailed {
+		t.Error("expected at least one failed check for missing required fields")
+	}
+}
+
+func TestValidateAgent_GeneratedReportsPath(t *testing.T) {
+	tmpDir := t.TempDir()
+	// Create a "generated-reports" subdirectory to ensure path contains it
+	genDir := filepath.Join(tmpDir, "generated-reports")
+	if err := os.MkdirAll(genDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+
+	// Agent with Read, Write, Bash - all required for generated-reports
+	content := "---\nname: test-agent\ndescription: Test agent\ntools: Read, Write, Bash\nmodel: sonnet\ncolor: blue\nskills:\n---\nBody\n"
+	agentPath := filepath.Join(genDir, "test-agent.md")
+	if err := os.WriteFile(agentPath, []byte(content), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	agentNames := make(map[string]bool)
+	skillNames := make(map[string]bool)
+	checks := validateAgent(agentPath, "test-agent.md", tmpDir, agentNames, skillNames)
+
+	// Should include the generated-reports tools check
+	foundGenReports := false
+	for _, c := range checks {
+		if c.Status == "passed" && c.Name == "Agent: test-agent.md - Generated Reports Tools" {
+			foundGenReports = true
+			break
+		}
+	}
+	if !foundGenReports {
+		t.Error("expected Generated Reports Tools check to be included and pass")
+	}
+}
+
+func TestValidateRequiredFields_EmptyTools(t *testing.T) {
+	agent := ClaudeAgentFull{
+		Name:        "test",
+		Description: "desc",
+		Tools:       "", // empty tools
+		Model:       "sonnet",
+		Color:       "blue",
+	}
+	check := validateRequiredFields("test.md", agent)
+	if check.Status != "failed" {
+		t.Errorf("expected 'failed' for empty tools, got %q", check.Status)
+	}
+}
+
+func TestValidateTools_EmptyEntryInTools(t *testing.T) {
+	// "Read,,Write" → split gives ["Read", "", "Write"]; empty entry must be skipped
+	check := validateTools("test.md", "Read,,Write")
+	if check.Status != "passed" {
+		t.Errorf("expected 'passed' when empty entries are skipped, got %q: %s", check.Status, check.Message)
+	}
+}
+
+func TestValidateFieldOrder_TooManyFields(t *testing.T) {
+	// 7 fields → more than the 6 in RequiredFieldOrder
+	frontmatter := []byte("name: test\ndescription: desc\ntools: Read\nmodel: sonnet\ncolor: blue\nskills:\nextra: value\n")
+	check := validateFieldOrder("test.md", frontmatter)
+	if check.Status != "failed" {
+		t.Errorf("expected 'failed' for too many fields, got %q", check.Status)
+	}
+}
+
+func TestValidateFieldOrder_WrongOrder(t *testing.T) {
+	// description before name → wrong order
+	frontmatter := []byte("description: desc\nname: test\n")
+	check := validateFieldOrder("test.md", frontmatter)
+	if check.Status != "failed" {
+		t.Errorf("expected 'failed' for wrong field order, got %q", check.Status)
+	}
+}
+
+func TestValidateYAMLFormattingRaw_ShortContent(t *testing.T) {
+	// fewer than 3 lines → passes as "file too short"
+	check := validateYAMLFormattingRaw("test check", []byte("---"))
+	if check.Status != "passed" {
+		t.Errorf("expected 'passed' for short content, got %q", check.Status)
+	}
+	if check.Message != "File too short to check formatting" {
+		t.Errorf("expected short-content message, got %q", check.Message)
+	}
+}
+
+func TestValidateYAMLFormattingRaw_NoFrontmatterStart(t *testing.T) {
+	// First line is not "---"
+	content := []byte("name: test\n---\nBody content")
+	check := validateYAMLFormattingRaw("test check", content)
+	if check.Status != "failed" {
+		t.Errorf("expected 'failed' when no frontmatter start, got %q", check.Status)
+	}
+}

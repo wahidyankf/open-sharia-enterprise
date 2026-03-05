@@ -6,6 +6,108 @@ import (
 	"testing"
 )
 
+func TestUpdateTitles_EnLangSuccess(t *testing.T) {
+	originalDir, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chdir(originalDir) }()
+
+	tmpDir := t.TempDir()
+	enDir := filepath.Join(tmpDir, "apps", "ayokoding-web", "content", "en")
+	if err := os.MkdirAll(enDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chdir(tmpDir); err != nil {
+		t.Fatal(err)
+	}
+
+	result, err := UpdateTitles("en", false, "", "")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if result.EnResult == nil {
+		t.Error("expected EnResult to be set")
+	}
+	if result.IDResult != nil {
+		t.Error("expected IDResult to be nil for lang=en")
+	}
+}
+
+func TestUpdateTitles_IDLangSuccess(t *testing.T) {
+	originalDir, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chdir(originalDir) }()
+
+	tmpDir := t.TempDir()
+	idDir := filepath.Join(tmpDir, "apps", "ayokoding-web", "content", "id")
+	if err := os.MkdirAll(idDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chdir(tmpDir); err != nil {
+		t.Fatal(err)
+	}
+
+	result, err := UpdateTitles("id", false, "", "")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if result.IDResult == nil {
+		t.Error("expected IDResult to be set")
+	}
+	if result.EnResult != nil {
+		t.Error("expected EnResult to be nil for lang=id")
+	}
+}
+
+func TestUpdateTitles_EnConfigError(t *testing.T) {
+	originalDir, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chdir(originalDir) }()
+
+	tmpDir := t.TempDir()
+	if err := os.Chdir(tmpDir); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create a config file with invalid YAML (triggers LoadConfig error)
+	badConfig := filepath.Join(tmpDir, "bad-config.yaml")
+	if err := os.WriteFile(badConfig, []byte("this: is: invalid: yaml"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = UpdateTitles("en", false, badConfig, "")
+	if err == nil {
+		t.Error("expected error from bad config")
+	}
+}
+
+func TestProcessLanguageDirectory_WithMixedFiles(t *testing.T) {
+	config := &Config{Overrides: map[string]string{}, LowercaseWords: []string{}}
+	tmpDir := t.TempDir()
+
+	// Non-.md file (covers the non-.md early-return path)
+	if err := os.WriteFile(filepath.Join(tmpDir, "readme.txt"), []byte("text"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	// .md file without frontmatter (triggers processFile error path)
+	if err := os.WriteFile(filepath.Join(tmpDir, "no-frontmatter.md"), []byte("No frontmatter here"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	result, err := processLanguageDirectory(tmpDir, config, false)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if result.ErrorCount == 0 {
+		t.Error("expected ErrorCount > 0 for malformed .md file")
+	}
+}
+
 func TestUpdateTitleInFile(t *testing.T) {
 	tests := []struct {
 		name            string

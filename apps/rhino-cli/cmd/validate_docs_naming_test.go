@@ -329,3 +329,152 @@ func TestValidateDocsNamingCommand_MarkdownOutput(t *testing.T) {
 		t.Errorf("Expected markdown summary section, got: %s", result)
 	}
 }
+
+func makeDocsRepo(t *testing.T) (tmpDir string) {
+	t.Helper()
+	tmpDir = t.TempDir()
+	if err := os.MkdirAll(filepath.Join(tmpDir, ".git"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(tmpDir, "docs/tutorials"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	return
+}
+
+func TestValidateDocsNamingCommand_FixFlagDryRun(t *testing.T) {
+	originalWd, _ := os.Getwd()
+	defer func() { _ = os.Chdir(originalWd) }()
+
+	tmpDir := makeDocsRepo(t)
+	if err := os.Chdir(tmpDir); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create a file with wrong prefix (fixable)
+	if err := os.WriteFile(filepath.Join(tmpDir, "docs/tutorials/wrong__my-guide.md"), []byte("# test"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	cmd := validateDocsNamingCmd
+	buf := new(bytes.Buffer)
+	cmd.SetOut(buf)
+	cmd.SetErr(buf)
+
+	validateDocsNamingStagedOnly = false
+	validateDocsNamingFix = true
+	validateDocsNamingApply = false
+	validateDocsNamingNoLinks = false
+	output = "text"
+	verbose = false
+	quiet = false
+
+	err := cmd.RunE(cmd, []string{})
+	if err != nil {
+		t.Errorf("expected no error in fix dry-run mode, got: %v", err)
+	}
+
+	got := buf.String()
+	if !strings.Contains(got, "wrong__my-guide.md") && !strings.Contains(got, "tu__") {
+		t.Errorf("expected dry-run fix plan in output, got: %s", got)
+	}
+}
+
+func TestValidateDocsNamingCommand_FixApplyFlagNoFix_Error(t *testing.T) {
+	originalWd, _ := os.Getwd()
+	defer func() { _ = os.Chdir(originalWd) }()
+
+	tmpDir := makeDocsRepo(t)
+	if err := os.Chdir(tmpDir); err != nil {
+		t.Fatal(err)
+	}
+
+	cmd := validateDocsNamingCmd
+	buf := new(bytes.Buffer)
+	cmd.SetOut(buf)
+	cmd.SetErr(buf)
+
+	validateDocsNamingStagedOnly = false
+	validateDocsNamingFix = false
+	validateDocsNamingApply = true
+	output = "text"
+	verbose = false
+	quiet = false
+
+	err := cmd.RunE(cmd, []string{})
+	if err == nil {
+		t.Error("expected error when --apply used without --fix")
+	}
+}
+
+func TestValidateDocsNamingCommand_FixFlagDryRun_JSONOutput(t *testing.T) {
+	originalWd, _ := os.Getwd()
+	defer func() { _ = os.Chdir(originalWd) }()
+
+	tmpDir := makeDocsRepo(t)
+	if err := os.Chdir(tmpDir); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create a file with wrong prefix
+	if err := os.WriteFile(filepath.Join(tmpDir, "docs/tutorials/wrong__guide.md"), []byte("# test"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	cmd := validateDocsNamingCmd
+	buf := new(bytes.Buffer)
+	cmd.SetOut(buf)
+	cmd.SetErr(buf)
+
+	validateDocsNamingStagedOnly = false
+	validateDocsNamingFix = true
+	validateDocsNamingApply = false
+	validateDocsNamingNoLinks = false
+	output = "json"
+	verbose = false
+	quiet = false
+
+	err := cmd.RunE(cmd, []string{})
+	if err != nil {
+		t.Errorf("expected no error in fix dry-run JSON mode, got: %v", err)
+	}
+
+	got := buf.String()
+	var result map[string]interface{}
+	if err := json.Unmarshal([]byte(got), &result); err != nil {
+		t.Errorf("expected valid JSON, got: %s", got)
+	}
+}
+
+func TestValidateDocsNamingCommand_FixApply_NoViolations(t *testing.T) {
+	originalWd, _ := os.Getwd()
+	defer func() { _ = os.Chdir(originalWd) }()
+
+	tmpDir := makeDocsRepo(t)
+	if err := os.Chdir(tmpDir); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create a valid file (no violations)
+	if err := os.WriteFile(filepath.Join(tmpDir, "docs/tutorials/tu__valid-guide.md"), []byte("# test"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	cmd := validateDocsNamingCmd
+	buf := new(bytes.Buffer)
+	cmd.SetOut(buf)
+	cmd.SetErr(buf)
+
+	validateDocsNamingStagedOnly = false
+	validateDocsNamingFix = true
+	validateDocsNamingApply = true
+	validateDocsNamingNoLinks = true
+	output = "text"
+	verbose = false
+	quiet = false
+
+	err := cmd.RunE(cmd, []string{})
+	if err != nil {
+		t.Errorf("expected no error for valid files in apply mode, got: %v", err)
+	}
+}

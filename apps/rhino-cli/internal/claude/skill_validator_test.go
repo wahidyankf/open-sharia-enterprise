@@ -571,6 +571,62 @@ func TestValidateAllSkills_DirectoryNotFound(t *testing.T) {
 	}
 }
 
+func TestValidateSkill_TooShortForFormatCheck(t *testing.T) {
+	// Content is only "---\n" → 2 lines < 3 → formatting passes as "too short"
+	// but sync.ExtractFrontmatter fails (no closing ---)
+	tmpDir := t.TempDir()
+	skillDir := filepath.Join(tmpDir, "test-skill")
+	if err := os.MkdirAll(skillDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	content := []byte("---\n")
+	if err := os.WriteFile(filepath.Join(skillDir, "SKILL.md"), content, 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	checks := validateSkill(skillDir, "test-skill")
+
+	// SKILL.md exists check passes; then YAML syntax fails
+	foundFailed := false
+	for _, c := range checks {
+		if c.Status == "failed" {
+			foundFailed = true
+			break
+		}
+	}
+	if !foundFailed {
+		t.Error("expected at least one failed check for too-short content")
+	}
+}
+
+func TestValidateSkill_YAMLUnmarshalError(t *testing.T) {
+	// Valid ---, valid formatting, but name is a YAML mapping (can't unmarshal into string)
+	tmpDir := t.TempDir()
+	skillDir := filepath.Join(tmpDir, "test-skill")
+	if err := os.MkdirAll(skillDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+
+	// name field is a mapping → yaml.Unmarshal into ClaudeSkill.Name (string) errors
+	content := "---\nname:\n  key: value\ndescription: valid desc\n---\nBody\n"
+	if err := os.WriteFile(filepath.Join(skillDir, "SKILL.md"), []byte(content), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	checks := validateSkill(skillDir, "test-skill")
+
+	foundFailed := false
+	for _, c := range checks {
+		if c.Status == "failed" {
+			foundFailed = true
+			break
+		}
+	}
+	if !foundFailed {
+		t.Error("expected at least one failed check for YAML unmarshal error")
+	}
+}
+
 func TestValidateAllSkills_IgnoresFiles(t *testing.T) {
 	tmpDir := t.TempDir()
 	skillsDir := filepath.Join(tmpDir, ".claude", "skills")

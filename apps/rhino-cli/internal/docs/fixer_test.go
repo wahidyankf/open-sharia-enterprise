@@ -465,3 +465,194 @@ func searchString(s, substr string) bool {
 	}
 	return false
 }
+
+func TestApplyRenames_WithOsRename(t *testing.T) {
+	// Test ApplyRenames using os.Rename fallback (no git)
+	tempDir := t.TempDir()
+
+	docsDir := filepath.Join(tempDir, "docs", "tutorials")
+	if err := os.MkdirAll(docsDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create source file
+	oldPath := "docs/tutorials/wrong__guide.md"
+	newPath := "docs/tutorials/tu__guide.md"
+	if err := os.WriteFile(filepath.Join(tempDir, oldPath), []byte("# test"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	ops := []RenameOperation{
+		{OldPath: oldPath, NewPath: newPath, OldName: "wrong__guide.md", NewName: "tu__guide.md"},
+	}
+
+	applied, errs := ApplyRenames(ops, tempDir)
+
+	if len(errs) > 0 {
+		t.Errorf("expected no errors, got: %v", errs)
+	}
+	if applied != 1 {
+		t.Errorf("expected 1 rename applied, got %d", applied)
+	}
+
+	// Verify rename happened
+	if _, err := os.Stat(filepath.Join(tempDir, newPath)); os.IsNotExist(err) {
+		t.Error("expected new file to exist after rename")
+	}
+	if _, err := os.Stat(filepath.Join(tempDir, oldPath)); err == nil {
+		t.Error("expected old file to be gone after rename")
+	}
+}
+
+func TestApplyRenames_ErrorCase(t *testing.T) {
+	// Test ApplyRenames when file doesn't exist (should record error but continue)
+	tempDir := t.TempDir()
+
+	ops := []RenameOperation{
+		{OldPath: "docs/nonexistent.md", NewPath: "docs/tu__nonexistent.md"},
+	}
+
+	applied, errs := ApplyRenames(ops, tempDir)
+
+	if len(errs) == 0 {
+		t.Error("expected error for nonexistent file")
+	}
+	if applied != 0 {
+		t.Errorf("expected 0 applied for error case, got %d", applied)
+	}
+}
+
+func TestApplyRenames_MultipleOps(t *testing.T) {
+	tempDir := t.TempDir()
+	docsDir := filepath.Join(tempDir, "docs", "tutorials")
+	if err := os.MkdirAll(docsDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create two source files
+	for _, name := range []string{"wrong__a.md", "wrong__b.md"} {
+		if err := os.WriteFile(filepath.Join(docsDir, name), []byte("# test"), 0644); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	ops := []RenameOperation{
+		{OldPath: "docs/tutorials/wrong__a.md", NewPath: "docs/tutorials/tu__a.md"},
+		{OldPath: "docs/tutorials/wrong__b.md", NewPath: "docs/tutorials/tu__b.md"},
+	}
+
+	applied, errs := ApplyRenames(ops, tempDir)
+
+	if len(errs) > 0 {
+		t.Errorf("expected no errors, got: %v", errs)
+	}
+	if applied != 2 {
+		t.Errorf("expected 2 renames applied, got %d", applied)
+	}
+}
+
+func TestFix_Apply(t *testing.T) {
+	tempDir := t.TempDir()
+
+	docsDir := filepath.Join(tempDir, "docs", "tutorials")
+	if err := os.MkdirAll(docsDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create a file with wrong prefix
+	testFile := filepath.Join(docsDir, "wrong__getting-started.md")
+	if err := os.WriteFile(testFile, []byte("# Test\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	validationResult := &ValidationResult{
+		TotalFiles:     1,
+		ValidFiles:     0,
+		ViolationCount: 1,
+		Violations: []NamingViolation{
+			{
+				FilePath:       "docs/tutorials/wrong__getting-started.md",
+				FileName:       "wrong__getting-started.md",
+				ViolationType:  ViolationWrongPrefix,
+				ExpectedPrefix: "tu__",
+				ActualPrefix:   "wrong__",
+			},
+		},
+		ViolationsByType: map[ViolationType][]NamingViolation{},
+	}
+
+	opts := FixOptions{
+		RepoRoot:    tempDir,
+		DryRun:      false,
+		UpdateLinks: false, // skip link updates for simplicity
+		Verbose:     false,
+	}
+
+	result, err := Fix(validationResult, opts)
+	if err != nil {
+		t.Fatalf("Fix() error: %v", err)
+	}
+
+	if result.DryRun {
+		t.Error("expected DryRun = false")
+	}
+	if result.RenamesApplied != 1 {
+		t.Errorf("expected 1 rename applied, got %d", result.RenamesApplied)
+	}
+
+	// Old file should be gone
+	if _, err := os.Stat(testFile); err == nil {
+		t.Error("old file should have been renamed")
+	}
+	// New file should exist
+	newFile := filepath.Join(docsDir, "tu__getting-started.md")
+	if _, err := os.Stat(newFile); os.IsNotExist(err) {
+		t.Error("new file should exist after apply")
+	}
+}
+
+func TestFix_Apply_WithLinkUpdates(t *testing.T) {
+	tempDir := t.TempDir()
+
+	docsDir := filepath.Join(tempDir, "docs", "tutorials")
+	if err := os.MkdirAll(docsDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create file to rename
+	if err := os.WriteFile(filepath.Join(docsDir, "wrong__guide.md"), []byte("# Guide"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	validationResult := &ValidationResult{
+		TotalFiles:     1,
+		ValidFiles:     0,
+		ViolationCount: 1,
+		Violations: []NamingViolation{
+			{
+				FilePath:       "docs/tutorials/wrong__guide.md",
+				FileName:       "wrong__guide.md",
+				ViolationType:  ViolationWrongPrefix,
+				ExpectedPrefix: "tu__",
+				ActualPrefix:   "wrong__",
+			},
+		},
+		ViolationsByType: map[ViolationType][]NamingViolation{},
+	}
+
+	opts := FixOptions{
+		RepoRoot:    tempDir,
+		DryRun:      false,
+		UpdateLinks: true, // enable link update scanning
+		Verbose:     false,
+	}
+
+	result, err := Fix(validationResult, opts)
+	if err != nil {
+		t.Fatalf("Fix() error: %v", err)
+	}
+
+	if result.RenamesApplied != 1 {
+		t.Errorf("expected 1 rename applied, got %d", result.RenamesApplied)
+	}
+}

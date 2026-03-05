@@ -225,3 +225,76 @@ Link: [missing](./missing.md)
 		t.Error("Expected JSON output to contain 'broken_count' field")
 	}
 }
+
+func TestValidateLinksCommand_MarkdownOutput(t *testing.T) {
+	originalWd, _ := os.Getwd()
+	defer func() { _ = os.Chdir(originalWd) }()
+
+	tmpDir := t.TempDir()
+	if err := os.Chdir(tmpDir); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(tmpDir, ".git"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(tmpDir, "docs"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(tmpDir, "docs", "tu__test.md"), []byte("# Test\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	cmd := validateLinksCmd
+	buf := new(bytes.Buffer)
+	cmd.SetOut(buf)
+	cmd.SetErr(buf)
+
+	validateLinksStagedOnly = false
+	output = "markdown"
+	verbose = false
+	quiet = false
+
+	if err := cmd.RunE(cmd, []string{}); err != nil {
+		t.Errorf("expected no error for valid links, got: %v", err)
+	}
+
+	got := buf.String()
+	if !strings.Contains(got, "links") && !strings.Contains(got, "#") && !strings.Contains(got, "valid") {
+		t.Errorf("expected markdown output with link info, got: %s", got)
+	}
+}
+
+func TestValidateLinksCommand_QuietBrokenLinks(t *testing.T) {
+	originalWd, _ := os.Getwd()
+	defer func() { _ = os.Chdir(originalWd) }()
+
+	tmpDir := t.TempDir()
+	if err := os.Chdir(tmpDir); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(tmpDir, ".git"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(tmpDir, "docs"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	content := "# Test\n[broken](./missing-file.md)\n"
+	if err := os.WriteFile(filepath.Join(tmpDir, "docs", "tu__test.md"), []byte(content), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	cmd := validateLinksCmd
+	buf := new(bytes.Buffer)
+	cmd.SetOut(buf)
+	cmd.SetErr(buf)
+
+	validateLinksStagedOnly = false
+	output = "text"
+	verbose = false
+	quiet = true
+
+	err := cmd.RunE(cmd, []string{})
+	if err == nil {
+		t.Error("expected error for broken links in quiet mode")
+	}
+}

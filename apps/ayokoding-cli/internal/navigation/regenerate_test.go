@@ -196,6 +196,28 @@ title: Indonesian
 	}
 }
 
+func TestRegenerateNavigation_WithMalformedIndexFile(t *testing.T) {
+	tmpDir := t.TempDir()
+	contentDir := filepath.Join(tmpDir, "content")
+
+	// Create nested dir with a malformed _index.md (no frontmatter)
+	learnDir := filepath.Join(contentDir, "en", "learn")
+	if err := os.MkdirAll(learnDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(learnDir, "_index.md"), []byte("No frontmatter here"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	result, err := RegenerateNavigation(contentDir)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if result.ErrorCount == 0 {
+		t.Error("expected ErrorCount > 0 for malformed _index.md")
+	}
+}
+
 func TestFindIndexFiles(t *testing.T) {
 	tmpDir := t.TempDir()
 	contentDir := filepath.Join(tmpDir, "content")

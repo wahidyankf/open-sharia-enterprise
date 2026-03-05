@@ -2,6 +2,7 @@ package links
 
 import (
 	"os"
+	"os/exec"
 	"path/filepath"
 	"testing"
 )
@@ -30,6 +31,11 @@ func TestShouldSkipLink(t *testing.T) {
 		{"Example ./overview", "./overview", true},
 		{"Example by-concept", "by-concept/beginner/intro.md", true},
 		{"OpenCode reference", "../../.opencode/agents/test.md", true},
+
+		// Line 179: exact "path" match (not caught by placeholders which check "path.md")
+		{"Exact word path", "path", true},
+		// Line 184: relative path containing /images/ (not starting with /)
+		{"Relative images path", "docs/images/logo.png", true},
 
 		// Should NOT skip
 		{"Valid relative link", "../docs/README.md", false},
@@ -286,5 +292,47 @@ func TestFilterSkipPaths_WithSkipPath(t *testing.T) {
 		if len(rel) > 10 && rel[:10] == "governance" {
 			t.Errorf("expected governance files to be filtered out, got %v", result)
 		}
+	}
+}
+
+func TestGetMarkdownFiles_Staged(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	// Init git repo
+	initCmds := [][]string{
+		{"git", "-C", tmpDir, "init", "-q"},
+		{"git", "-C", tmpDir, "config", "user.email", "test@test.com"},
+		{"git", "-C", tmpDir, "config", "user.name", "Test"},
+	}
+	for _, args := range initCmds {
+		if err := exec.Command(args[0], args[1:]...).Run(); err != nil {
+			t.Skipf("git not available: %v", err)
+		}
+	}
+
+	// Create and stage a markdown file
+	docsDir := filepath.Join(tmpDir, "docs")
+	if err := os.MkdirAll(docsDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	mdFile := filepath.Join(docsDir, "tu__test.md")
+	if err := os.WriteFile(mdFile, []byte("# Test"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := exec.Command("git", "-C", tmpDir, "add", "docs/tu__test.md").Run(); err != nil {
+		t.Skipf("git add failed: %v", err)
+	}
+
+	opts := ScanOptions{
+		RepoRoot:   tmpDir,
+		StagedOnly: true,
+	}
+
+	files, err := GetMarkdownFiles(opts)
+	if err != nil {
+		t.Fatalf("GetMarkdownFiles(staged=true) error: %v", err)
+	}
+	if len(files) != 1 {
+		t.Errorf("expected 1 staged markdown file, got %d: %v", len(files), files)
 	}
 }

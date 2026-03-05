@@ -701,3 +701,37 @@ func TestCheckAll_WithMissingTools(t *testing.T) {
 		t.Errorf("expected OKCount == 0, got %d", result.OKCount)
 	}
 }
+
+func TestRealRunner_Success(t *testing.T) {
+	stdout, stderr, exitCode, err := realRunner("echo", "hello")
+	if err != nil {
+		t.Fatalf("realRunner(echo) unexpected error: %v", err)
+	}
+	if exitCode != 0 {
+		t.Errorf("expected exit code 0, got %d", exitCode)
+	}
+	if !strings.Contains(stdout, "hello") {
+		t.Errorf("expected 'hello' in stdout, got: %q", stdout)
+	}
+	_ = stderr
+}
+
+func TestRealRunner_NonZeroExit(t *testing.T) {
+	_, _, exitCode, err := realRunner("sh", "-c", "exit 1")
+	if err != nil {
+		t.Fatalf("realRunner should not return error for non-zero exit, got: %v", err)
+	}
+	if exitCode != 1 {
+		t.Errorf("expected exit code 1, got %d", exitCode)
+	}
+}
+
+func TestRealRunner_BinaryNotFound(t *testing.T) {
+	_, _, _, err := realRunner("__binary_that_does_not_exist_xyz__")
+	if err == nil {
+		t.Error("expected error for missing binary, got nil")
+	}
+	if !strings.Contains(err.Error(), "binary not found in PATH") {
+		t.Errorf("expected 'binary not found in PATH' in error, got: %v", err)
+	}
+}
