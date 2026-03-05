@@ -116,7 +116,7 @@ An implementation is complete when:
 - All FSM state transitions are implemented and validated
 - All CIA + non-repudiation principles are demonstrated
 - Database schema matches specification
-- Test coverage exceeds 80%
+- Test coverage exceeds 85%
 - Documentation is complete
 - Application runs without errors
 

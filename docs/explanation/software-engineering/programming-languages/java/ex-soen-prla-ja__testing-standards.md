@@ -506,7 +506,7 @@ public class TaxCalculationSteps {
 
 ## Coverage Requirements
 
-**MUST** maintain ≥80% line coverage measured by JaCoCo.
+**MUST** maintain ≥85% line coverage measured by JaCoCo.
 
 **Coverage enforcement**: CI/CD pipeline fails if coverage drops below threshold.
 
@@ -517,7 +517,7 @@ public class TaxCalculationSteps {
 Testing standards are enforced through:
 
 - **Maven Surefire/Failsafe** - Runs unit and integration tests
-- **JaCoCo** - Measures code coverage, enforces ≥80% threshold
+- **JaCoCo** - Measures code coverage, enforces ≥85% threshold
 - **Code reviews** - Human verification of test quality
 - **CI/CD pipeline** - Blocks merges if tests fail or coverage drops
 
@@ -547,7 +547,7 @@ These standards enforce the five software engineering principles:
 
 1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)**
    - Maven Surefire/Failsafe automatically run tests on every build
-   - JaCoCo enforces ≥80% coverage threshold (build fails if not met)
+   - JaCoCo enforces ≥85% coverage threshold (build fails if not met)
    - CI/CD pipeline runs all tests before merge approval
 
 2. **[Reproducibility](../../../../../governance/principles/software-engineering/reproducibility.md)**

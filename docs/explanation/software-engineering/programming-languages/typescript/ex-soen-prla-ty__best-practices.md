@@ -2300,7 +2300,7 @@ class DonationDistributionService {
 - [ ] Integration tests for critical paths
 - [ ] Tests have descriptive names
 - [ ] Edge cases covered
-- [ ] Code coverage ≥80%
+- [ ] Code coverage ≥85%
 
 ### Performance and Resources
 

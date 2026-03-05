@@ -102,7 +102,7 @@ defmodule FinancialDomain.MixProject do
       elixir: "~> 1.19",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      test_coverage: [tool: ExCoveralls, minimum_coverage: 80]
+      test_coverage: [tool: ExCoveralls, minimum_coverage: 85]
     ]
   end
 
@@ -1681,7 +1681,7 @@ These standards are enforced through:
 - **Credo** - Code quality analysis
 - **Dialyzer** - Static type checking
 - **ExUnit** - Automated testing
-- **ExCoveralls** - Test coverage enforcement (80% minimum)
+- **ExCoveralls** - Test coverage enforcement (85% minimum)
 - **Code reviews** - Human verification
 
 **Pre-commit checklist**:
@@ -1689,7 +1689,7 @@ These standards are enforced through:
 - [ ] Code formatted with `mix format`
 - [ ] Passes `mix credo --strict`
 - [ ] All tests pass (`mix test`)
-- [ ] Test coverage ≥80%
+- [ ] Test coverage ≥85%
 - [ ] Pattern matching used over conditionals
 - [ ] GenServer only for stateful processes
 - [ ] All errors handled explicitly

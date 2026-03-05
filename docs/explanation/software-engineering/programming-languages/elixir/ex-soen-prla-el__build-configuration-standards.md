@@ -1172,7 +1172,7 @@ jobs:
 - [ ] Pre-commit hooks format code automatically
 - [ ] CI/CD runs format check, Credo, Dialyzer, tests
 - [ ] Dependencies cached in CI using `mix.lock` hash
-- [ ] Test coverage measured and enforced (>80%)
+- [ ] Test coverage measured and enforced (>85%)
 - [ ] Quality gates prevent merging non-compliant code
 
 ## Related Documentation

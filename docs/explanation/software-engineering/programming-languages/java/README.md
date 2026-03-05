@@ -233,12 +233,12 @@ graph TD
 - MUST use Spotless Maven Plugin for code formatting (auto-format on build)
 - MUST use Error Prone for compile-time bug detection
 - SHOULD use NullAway for null safety enforcement
-- MUST use JaCoCo for code coverage measurement (minimum 80% for domain logic)
+- MUST use JaCoCo for code coverage measurement (minimum 85% for domain logic)
 - SHOULD use Checkstyle or PMD for style checking
 
 **Testing Automation (REQUIRED)**:
 
-- MUST write unit tests with JUnit 6 (target: >80% coverage for domain logic)
+- MUST write unit tests with JUnit 6 (target: >85% coverage for domain logic)
 - MUST use TestContainers for database integration tests (no mocked repositories)
 - SHOULD use Mockito sparingly (prefer real objects, use mocks for external dependencies)
 - SHOULD use property-based testing (jqwik) for complex domain logic

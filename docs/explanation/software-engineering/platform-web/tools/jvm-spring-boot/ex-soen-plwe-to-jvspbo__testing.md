@@ -1441,7 +1441,7 @@ Before deploying:
 - [ ] Exception handling tests verify error responses
 - [ ] Security tests verify authentication and authorization
 - [ ] Performance tests validate acceptable response times
-- [ ] Test coverage meets team standards (>80% for critical code)
+- [ ] Test coverage meets team standards (>85% for critical code)
 
 ### Complete Zakat Calculation Test Suite
 

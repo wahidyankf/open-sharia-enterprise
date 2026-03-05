@@ -1358,7 +1358,7 @@ void main() {
 
 **Test Coverage Goals**:
 
-- Unit tests: >80% code coverage
+- Unit tests: >85% code coverage
 - Critical business logic: 100% coverage
 - Integration tests for workflows
 - Widget tests for Flutter UI

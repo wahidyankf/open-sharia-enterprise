@@ -162,7 +162,7 @@ class ZakatCalculator:
 # 4. Time-consuming and error-prone
 ```
 
-**Islamic Finance Application**: Automated Zakat calculation verification ensures consistent nisab threshold checking across all transactions, preventing manual miscalculations that could lead to underpayment (haram). Every code commit triggers pytest with 80% coverage requirement.
+**Islamic Finance Application**: Automated Zakat calculation verification ensures consistent nisab threshold checking across all transactions, preventing manual miscalculations that could lead to underpayment (haram). Every code commit triggers pytest with 85% coverage requirement.
 
 **See Also**: [Python Linting and Formatting](./ex-soen-prla-py__linting-and-formatting.md)
 
@@ -2481,7 +2481,7 @@ Use this checklist to ensure your Python code follows best practices:
 
 - [ ] **Automation**: `pytest` runs on every commit
 - [ ] **Automation**: `ruff check` and `mypy` integrated in CI pipeline
-- [ ] **Automation**: Code coverage enforced (80% minimum with pytest-cov)
+- [ ] **Automation**: Code coverage enforced (85% minimum with pytest-cov)
 - [ ] **Explicit**: Type hints on all public functions
 - [ ] **Explicit**: Pydantic models for validation at boundaries
 - [ ] **Explicit**: No mutable default arguments (`None` used instead)
@@ -2655,7 +2655,7 @@ flowchart LR
     G -->|Yes| H[Coverage Check]
     G -->|No| I[Fix Issues]
 
-    H --> J{>80%?}
+    H --> J{>85%?}
     J -->|Yes| K[Build]
     J -->|No| I
 

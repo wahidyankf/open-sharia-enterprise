@@ -34,7 +34,7 @@ Test-Driven Development (TDD) follows Red-Green-Refactor cycle: write failing te
 - **Test First**: Write test before implementation
 - **Small Steps**: One test at a time
 - **Fast Feedback**: Tests run quickly
-- **High Coverage**: Aim for >80% code coverage
+- **High Coverage**: Aim for >85% code coverage
 
 ### TDD Red-Green-Refactor
 
