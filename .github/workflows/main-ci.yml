@@ -43,3 +43,62 @@ jobs:
 
       - name: test:quick (all projects)
         run: npx nx run-many -t test:quick --all
+
+      - name: Generate JaCoCo XML report (organiclever-be)
+        run: cd apps/organiclever-be && mvn jacoco:report -Pintegration
+
+      - name: Upload coverage — rhino-cli
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: apps/rhino-cli/cover.out
+          flags: rhino-cli
+          fail_ci_if_error: false
+
+      - name: Upload coverage — ayokoding-cli
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: apps/ayokoding-cli/cover.out
+          flags: ayokoding-cli
+          fail_ci_if_error: false
+
+      - name: Upload coverage — oseplatform-cli
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: apps/oseplatform-cli/cover.out
+          flags: oseplatform-cli
+          fail_ci_if_error: false
+
+      - name: Upload coverage — golang-commons
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: libs/golang-commons/cover.out
+          flags: golang-commons
+          fail_ci_if_error: false
+
+      - name: Upload coverage — hugo-commons
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: libs/hugo-commons/cover.out
+          flags: hugo-commons
+          fail_ci_if_error: false
+
+      - name: Upload coverage — organiclever-be
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: apps/organiclever-be/target/site/jacoco/jacoco.xml
+          flags: organiclever-be
+          fail_ci_if_error: false
+
+      - name: Upload coverage — organiclever-web
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: apps/organiclever-web/coverage/lcov.info
+          flags: organiclever-web
+          fail_ci_if_error: false

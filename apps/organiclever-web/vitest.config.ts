@@ -27,7 +27,7 @@ export default defineConfig({
         branches: 85,
         statements: 85,
       },
-      reporter: ["text", "json-summary"],
+      reporter: ["text", "json-summary", "lcov"],
     },
     projects: [
       {
