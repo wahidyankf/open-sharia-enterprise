@@ -11,6 +11,9 @@ A Go-based CLI tool that provides utilities for repository management and automa
 ## Quick Start
 
 ```bash
+# Check test coverage against a threshold (Codecov-compatible algorithm)
+rhino-cli check-coverage apps/rhino-cli/cover.out 85
+
 # Check all required development tools are installed
 rhino-cli doctor
 
@@ -92,6 +95,87 @@ rhino-cli --say "hello" -o json
 - `--no-color` - Disable colored output
 
 ## Commands
+
+### check-coverage
+
+Check test coverage against a minimum threshold using Codecov's exact line coverage algorithm.
+Supports both Go `cover.out` and LCOV formats; auto-detects from filename.
+
+```bash
+# Check Go cover.out (path relative to git root)
+rhino-cli check-coverage apps/rhino-cli/cover.out 85
+
+# Check LCOV coverage from Vitest
+rhino-cli check-coverage apps/organiclever-web/coverage/lcov.info 85
+
+# Output as JSON
+rhino-cli check-coverage apps/rhino-cli/cover.out 85 -o json
+
+# Output as markdown
+rhino-cli check-coverage apps/rhino-cli/cover.out 85 -o markdown
+
+# Quiet mode
+rhino-cli check-coverage apps/rhino-cli/cover.out 85 -q
+```
+
+**What it does:**
+
+- Auto-detects format: `.info` or filename containing `lcov` → LCOV; otherwise → Go cover.out
+- Implements Codecov's line coverage algorithm exactly:
+  - **Covered**: hit count > 0 AND all branches taken (or no branches)
+  - **Partial**: hit count > 0 but some branches not taken
+  - **Missed**: hit count = 0
+  - Coverage % = covered / (covered + partial + missed)
+  - Partial lines count as NOT covered (matching Codecov's badge calculation)
+- Go-specific filtering (matching Codecov's file fixes): excludes blank lines, comment-only
+  lines (`//`), and brace-only lines (`{` or `}`)
+- Supports multiple output formats (text, JSON, markdown)
+
+**Arguments:**
+
+- `<coverage-file>` - Path to coverage file relative to git root (e.g. `apps/rhino-cli/cover.out`)
+- `<threshold>` - Minimum coverage percentage (e.g. `85`)
+
+**Flags:**
+
+- `-o, --output` - Output format: text, json, markdown (default: text)
+- `-v, --verbose` - Verbose output with timestamps
+- `-q, --quiet` - Quiet mode (errors only)
+
+**Exit codes:**
+
+- `0` - Coverage meets or exceeds threshold
+- `1` - Coverage is below threshold
+
+**Example output (text):**
+
+```
+Line coverage: 86.08% (2411 covered, 141 partial, 249 missed, 2801 total)
+PASS: 86.08% >= 85% threshold
+```
+
+**Example output (JSON):**
+
+```json
+{
+  "status": "pass",
+  "timestamp": "2026-03-05T10:00:00+07:00",
+  "file": "apps/rhino-cli/cover.out",
+  "format": "go",
+  "covered": 2411,
+  "partial": 141,
+  "missed": 249,
+  "total": 2801,
+  "pct": 86.08,
+  "threshold": 85,
+  "passed": true
+}
+```
+
+**Replaces:**
+
+This command replaces the Python script `scripts/check-coverage.py`, eliminating the Python
+dependency and consolidating all tooling in rhino-cli.
 
 ### validate-links
 
@@ -688,7 +772,8 @@ apps/rhino-cli/
 │   ├── validate_sync.go           # Sync validation command
 │   ├── validate_claude.go         # Claude Code format validation command
 │   ├── validate_spec_coverage.go  # BDD spec coverage validation command
-│   └── validate_java_annotations.go # Java null-safety annotation validation command
+│   ├── validate_java_annotations.go # Java null-safety annotation validation command
+│   └── check_coverage.go          # Test coverage threshold enforcement command
 ├── internal/
 │   ├── doctor/               # Development environment checks
 │   │   ├── types.go          # ToolStatus, ToolCheck, DoctorResult, CommandRunner types
@@ -727,6 +812,15 @@ apps/rhino-cli/
 │   │   ├── scanner_test.go
 │   │   ├── validator.go      # Check package-info.java and annotation presence
 │   │   ├── validator_test.go
+│   │   ├── reporter.go       # Output formatting (text, JSON, markdown)
+│   │   └── reporter_test.go
+│   ├── coverage/             # Test coverage measurement (Go cover.out + LCOV)
+│   │   ├── types.go          # Format, Result types
+│   │   ├── detect.go         # Auto-detect format from filename/content
+│   │   ├── go_coverage.go    # Go cover.out parser + Codecov algorithm
+│   │   ├── go_coverage_test.go
+│   │   ├── lcov_coverage.go  # LCOV parser + Codecov algorithm
+│   │   ├── lcov_coverage_test.go
 │   │   ├── reporter.go       # Output formatting (text, JSON, markdown)
 │   │   └── reporter_test.go
 │   └── sync/                 # Agent/skill sync logic
@@ -779,6 +873,7 @@ go test ./... -v
 - `internal/claude`: 92.6% coverage (validator, agent_validator, skill_validator)
 - `internal/speccoverage`: ≥85% coverage (parser, checker with temp dir fixtures, reporter for all formats)
 - `internal/java`: ≥85% coverage (scanner, validator, reporter — all pure functions tested with temp dir fixtures)
+- `internal/coverage`: ≥85% coverage (detect, go_coverage, lcov_coverage, reporter — all pure functions with temp dir fixtures)
 
 ### Lint
 
@@ -917,6 +1012,16 @@ rhino-cli say
 ```
 
 ## Version History
+
+### v0.10.0 (2026-03-05)
+
+- Added `check-coverage` command for Codecov-compatible line coverage enforcement
+- Supports Go `cover.out` and LCOV formats with auto-detection from filename
+- Implements exact Codecov line coverage algorithm (covered/partial/missed classification)
+- Go-specific line filtering: excludes blank, comment-only, and brace-only lines
+- Three output formats: text, JSON, markdown
+- Replaces `scripts/check-coverage.py`, eliminating the Python dependency
+- Integrated into `test:quick` targets for all Go projects and `organiclever-web`
 
 ### v0.9.0 (2026-03-05)
 
