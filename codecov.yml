@@ -4,6 +4,13 @@ coverage:
       default:
         target: 85%
 
+# Exclude pure type-definition files — Go's coverage tool never
+# instruments them (no executable statements), so they don't appear
+# in cover.out. Without this, Codecov counts every line as uncovered
+# and reports ~7% lower than go-test-coverage's statement coverage.
+ignore:
+  - "**/types.go"
+
 flags:
   rhino-cli:
     paths:
