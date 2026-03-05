@@ -34,6 +34,16 @@
         "cwd": "apps/rhino-cli"
       }
     },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 go test -v -tags=integration -run TestIntegration -coverprofile=cover_spec.out ./cmd/...",
+        "cwd": "apps/rhino-cli"
+      },
+      "cache": true,
+      "inputs": ["{projectRoot}/cmd/**/*.go", "{workspaceRoot}/specs/rhino-cli/**/*.feature"],
+      "outputs": ["{projectRoot}/cover_spec.out"]
+    },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
