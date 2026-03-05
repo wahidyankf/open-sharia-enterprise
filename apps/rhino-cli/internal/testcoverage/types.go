@@ -1,5 +1,5 @@
-// Package coverage provides test coverage measurement using Codecov's line coverage algorithm.
-package coverage
+// Package testcoverage provides test coverage measurement using Codecov's line coverage algorithm.
+package testcoverage
 
 // Format represents the coverage file format.
 type Format string

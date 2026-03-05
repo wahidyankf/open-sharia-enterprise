@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/spf13/cobra"
-	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/coverage"
+	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/testcoverage"
 )
 
 var validateTestCoverageCmd = &cobra.Command{
@@ -59,21 +59,21 @@ func runValidateTestCoverage(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("invalid threshold %q: must be a number (e.g. 85)", args[1])
 	}
 
-	var result coverage.Result
-	switch coverage.DetectFormat(absPath) {
-	case coverage.FormatLCOV:
-		result, err = coverage.ComputeLCOVResult(absPath, threshold)
-	case coverage.FormatGo:
-		result, err = coverage.ComputeGoResult(absPath, threshold)
+	var result testcoverage.Result
+	switch testcoverage.DetectFormat(absPath) {
+	case testcoverage.FormatLCOV:
+		result, err = testcoverage.ComputeLCOVResult(absPath, threshold)
+	case testcoverage.FormatGo:
+		result, err = testcoverage.ComputeGoResult(absPath, threshold)
 	}
 	if err != nil {
 		return fmt.Errorf("coverage check failed: %w", err)
 	}
 
 	if err := writeFormatted(cmd, output, verbose, quiet, outputFuncs{
-		text:     func(v, q bool) string { return coverage.FormatText(result, v, q) },
-		json:     func() (string, error) { return coverage.FormatJSON(result) },
-		markdown: func() string { return coverage.FormatMarkdown(result) },
+		text:     func(v, q bool) string { return testcoverage.FormatText(result, v, q) },
+		json:     func() (string, error) { return testcoverage.FormatJSON(result) },
+		markdown: func() string { return testcoverage.FormatMarkdown(result) },
 	}); err != nil {
 		return err
 	}

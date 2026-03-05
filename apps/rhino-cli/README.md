@@ -841,7 +841,7 @@ apps/rhino-cli/
 │   │   ├── validator_test.go
 │   │   ├── reporter.go       # Output formatting (text, JSON, markdown)
 │   │   └── reporter_test.go
-│   ├── coverage/             # Test coverage measurement (Go cover.out + LCOV)
+│   ├── testcoverage/             # Test coverage measurement (Go cover.out + LCOV)
 │   │   ├── types.go          # Format, Result types
 │   │   ├── detect.go         # Auto-detect format from filename/content
 │   │   ├── go_coverage.go    # Go cover.out parser + Codecov algorithm
@@ -903,7 +903,7 @@ go test ./...
 - `internal/claude`: 92.6% coverage (validator, agent_validator, skill_validator)
 - `internal/speccoverage`: ≥85% coverage (parser, checker with temp dir fixtures, reporter for all formats)
 - `internal/java`: ≥85% coverage (scanner, validator, reporter — all pure functions tested with temp dir fixtures)
-- `internal/coverage`: ≥85% coverage (detect, go_coverage, lcov_coverage, reporter — all pure functions with temp dir fixtures)
+- `internal/testcoverage`: ≥85% coverage (detect, go_coverage, lcov_coverage, reporter — all pure functions with temp dir fixtures)
 
 ### Lint
 
