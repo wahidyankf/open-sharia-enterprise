@@ -20,7 +20,7 @@
       "cache": true
     },
     "test:integration": {
-      "cache": false
+      "cache": true
     },
     "test:e2e": {
       "cache": false
