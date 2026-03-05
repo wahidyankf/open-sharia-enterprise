@@ -1,4 +1,4 @@
-package claude
+package agents
 
 import (
 	"fmt"
@@ -6,23 +6,22 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/sync"
 	"gopkg.in/yaml.v3"
 )
 
 // validateSkillYAMLFormatting checks YAML has proper formatting
-func validateSkillYAMLFormatting(skillName string, content []byte) sync.ValidationCheck {
+func validateSkillYAMLFormatting(skillName string, content []byte) ValidationCheck {
 	return validateYAMLFormattingRaw(fmt.Sprintf("Skill: %s - YAML Formatting", skillName), content)
 }
 
 // validateSkill performs all 7 validation rules for a single skill
-func validateSkill(skillPath string, skillName string) []sync.ValidationCheck {
-	var checks []sync.ValidationCheck
+func validateSkill(skillPath string, skillName string) []ValidationCheck {
+	var checks []ValidationCheck
 
 	// Rule 1: SKILL.md file exists in subdirectory
 	skillFile := filepath.Join(skillPath, "SKILL.md")
 	if _, err := os.Stat(skillFile); os.IsNotExist(err) {
-		checks = append(checks, sync.ValidationCheck{
+		checks = append(checks, ValidationCheck{
 			Name:     fmt.Sprintf("Skill: %s - SKILL.md Exists", skillName),
 			Status:   "failed",
 			Expected: "SKILL.md file present",
@@ -31,7 +30,7 @@ func validateSkill(skillPath string, skillName string) []sync.ValidationCheck {
 		})
 		return checks
 	}
-	checks = append(checks, sync.ValidationCheck{
+	checks = append(checks, ValidationCheck{
 		Name:    fmt.Sprintf("Skill: %s - SKILL.md Exists", skillName),
 		Status:  "passed",
 		Message: "SKILL.md file exists",
@@ -40,7 +39,7 @@ func validateSkill(skillPath string, skillName string) []sync.ValidationCheck {
 	// Read SKILL.md file
 	content, err := os.ReadFile(skillFile)
 	if err != nil {
-		checks = append(checks, sync.ValidationCheck{
+		checks = append(checks, ValidationCheck{
 			Name:    fmt.Sprintf("Skill: %s - Read SKILL.md", skillName),
 			Status:  "failed",
 			Message: fmt.Sprintf("Failed to read SKILL.md: %v", err),
@@ -56,16 +55,16 @@ func validateSkill(skillPath string, skillName string) []sync.ValidationCheck {
 	}
 
 	// Rule 3: YAML syntax validity
-	frontmatter, _, err := sync.ExtractFrontmatter(content)
+	frontmatter, _, err := ExtractFrontmatter(content)
 	if err != nil {
-		checks = append(checks, sync.ValidationCheck{
+		checks = append(checks, ValidationCheck{
 			Name:    fmt.Sprintf("Skill: %s - YAML Syntax", skillName),
 			Status:  "failed",
 			Message: fmt.Sprintf("Invalid frontmatter: %v", err),
 		})
 		return checks
 	}
-	checks = append(checks, sync.ValidationCheck{
+	checks = append(checks, ValidationCheck{
 		Name:    fmt.Sprintf("Skill: %s - YAML Syntax", skillName),
 		Status:  "passed",
 		Message: "Valid YAML frontmatter",
@@ -74,7 +73,7 @@ func validateSkill(skillPath string, skillName string) []sync.ValidationCheck {
 	// Parse YAML into ClaudeSkill
 	var skill ClaudeSkill
 	if err := yaml.Unmarshal(frontmatter, &skill); err != nil {
-		checks = append(checks, sync.ValidationCheck{
+		checks = append(checks, ValidationCheck{
 			Name:    fmt.Sprintf("Skill: %s - YAML Parse", skillName),
 			Status:  "failed",
 			Message: fmt.Sprintf("Failed to parse YAML: %v", err),
@@ -84,7 +83,7 @@ func validateSkill(skillPath string, skillName string) []sync.ValidationCheck {
 
 	// Rule 2: Required frontmatter field: description
 	if skill.Description == "" {
-		checks = append(checks, sync.ValidationCheck{
+		checks = append(checks, ValidationCheck{
 			Name:     fmt.Sprintf("Skill: %s - Description Field Required", skillName),
 			Status:   "failed",
 			Expected: "description field present",
@@ -93,7 +92,7 @@ func validateSkill(skillPath string, skillName string) []sync.ValidationCheck {
 		})
 		return checks
 	}
-	checks = append(checks, sync.ValidationCheck{
+	checks = append(checks, ValidationCheck{
 		Name:    fmt.Sprintf("Skill: %s - Description Field Required", skillName),
 		Status:  "passed",
 		Message: "Required description field present",
@@ -101,7 +100,7 @@ func validateSkill(skillPath string, skillName string) []sync.ValidationCheck {
 
 	// Rule 4: Required frontmatter field: name
 	if skill.Name == "" {
-		checks = append(checks, sync.ValidationCheck{
+		checks = append(checks, ValidationCheck{
 			Name:     fmt.Sprintf("Skill: %s - Name Field Required", skillName),
 			Status:   "failed",
 			Expected: "name field present",
@@ -110,7 +109,7 @@ func validateSkill(skillPath string, skillName string) []sync.ValidationCheck {
 		})
 		return checks
 	}
-	checks = append(checks, sync.ValidationCheck{
+	checks = append(checks, ValidationCheck{
 		Name:    fmt.Sprintf("Skill: %s - Name Field Required", skillName),
 		Status:  "passed",
 		Message: "Required name field present",
@@ -118,7 +117,7 @@ func validateSkill(skillPath string, skillName string) []sync.ValidationCheck {
 
 	// Rule 5: Name format (lowercase, hyphens, max 64 chars)
 	if !ValidSkillNamePattern.MatchString(skill.Name) {
-		checks = append(checks, sync.ValidationCheck{
+		checks = append(checks, ValidationCheck{
 			Name:     fmt.Sprintf("Skill: %s - Name Format", skillName),
 			Status:   "failed",
 			Expected: "Lowercase letters/numbers/hyphens only, max 64 chars",
@@ -127,7 +126,7 @@ func validateSkill(skillPath string, skillName string) []sync.ValidationCheck {
 		})
 		return checks
 	}
-	checks = append(checks, sync.ValidationCheck{
+	checks = append(checks, ValidationCheck{
 		Name:    fmt.Sprintf("Skill: %s - Name Format", skillName),
 		Status:  "passed",
 		Message: "Name format valid",
@@ -135,7 +134,7 @@ func validateSkill(skillPath string, skillName string) []sync.ValidationCheck {
 
 	// Rule 6: Name matches directory name
 	if skill.Name != skillName {
-		checks = append(checks, sync.ValidationCheck{
+		checks = append(checks, ValidationCheck{
 			Name:     fmt.Sprintf("Skill: %s - Name Match", skillName),
 			Status:   "failed",
 			Expected: fmt.Sprintf("name field matches directory: %s", skillName),
@@ -144,7 +143,7 @@ func validateSkill(skillPath string, skillName string) []sync.ValidationCheck {
 		})
 		return checks
 	}
-	checks = append(checks, sync.ValidationCheck{
+	checks = append(checks, ValidationCheck{
 		Name:    fmt.Sprintf("Skill: %s - Name Match", skillName),
 		Status:  "passed",
 		Message: "Name matches directory name",
@@ -154,12 +153,12 @@ func validateSkill(skillPath string, skillName string) []sync.ValidationCheck {
 }
 
 // validateAllSkills validates all skills and returns skill names map
-func validateAllSkills(repoRoot string) ([]sync.ValidationCheck, map[string]bool) {
+func validateAllSkills(repoRoot string) ([]ValidationCheck, map[string]bool) {
 	skillsDir := filepath.Join(repoRoot, ".claude", "skills")
 
 	entries, err := os.ReadDir(skillsDir)
 	if err != nil {
-		return []sync.ValidationCheck{{
+		return []ValidationCheck{{
 			Name:    "Read Skills Directory",
 			Status:  "failed",
 			Message: fmt.Sprintf("Failed to read skills directory: %v", err),
@@ -167,7 +166,7 @@ func validateAllSkills(repoRoot string) ([]sync.ValidationCheck, map[string]bool
 	}
 
 	skillNames := make(map[string]bool)
-	var allChecks []sync.ValidationCheck
+	var allChecks []ValidationCheck
 
 	// Validate each skill
 	for _, entry := range entries {

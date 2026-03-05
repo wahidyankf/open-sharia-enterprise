@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/sync"
+	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/agents"
 )
 
 var validateSyncCmd = &cobra.Command{
@@ -53,13 +53,13 @@ func runValidateSync(cmd *cobra.Command, args []string) error {
 	}
 
 	// Perform validation
-	result, err := sync.ValidateSync(repoRoot)
+	result, err := agents.ValidateSync(repoRoot)
 	if err != nil {
 		return fmt.Errorf("validation failed: %w", err)
 	}
 
 	// Format and print output
-	formattedOutput := sync.FormatValidationResult(result, output, verbose, quiet)
+	formattedOutput := agents.FormatValidationResult(result, output, verbose, quiet)
 	_, _ = fmt.Fprint(cmd.OutOrStdout(), formattedOutput)
 
 	// Return error if validation failed

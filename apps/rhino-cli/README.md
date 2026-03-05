@@ -820,11 +820,6 @@ apps/rhino-cli/
 │   │   ├── links_reporter.go # Output formatting (links)
 │   │   ├── links_reporter_test.go
 │   │   └── testdata/         # Test fixtures
-│   ├── claude/               # Claude Code format validation
-│   │   ├── types.go          # Data structures (ClaudeAgentFull, ClaudeSkill, constants)
-│   │   ├── validator.go      # Main validation orchestration
-│   │   ├── agent_validator.go # Agent validation (11 rules)
-│   │   └── skill_validator.go # Skill validation (3 rules)
 │   ├── speccoverage/         # BDD spec coverage validation
 │   │   ├── types.go          # ScanOptions, CoverageGap, ScenarioGap, StepGap, CheckResult
 │   │   ├── parser.go         # Gherkin feature file parser (line-by-line, no external dep)
@@ -850,18 +845,26 @@ apps/rhino-cli/
 │   │   ├── lcov_coverage_test.go
 │   │   ├── reporter.go       # Output formatting (text, JSON, markdown)
 │   │   └── reporter_test.go
-│   └── sync/                 # Agent/skill sync logic
-│       ├── types.go          # Data structures (ClaudeAgent, OpenCodeAgent, etc.)
+│   └── agents/               # Agent configuration management (.claude/ ↔ .opencode/)
+│       ├── types.go          # All data structures (merged from former sync/ and claude/ packages)
 │       ├── types_test.go
+│       ├── sync.go           # Sync orchestration
+│       ├── sync_test.go
 │       ├── converter.go      # Claude → OpenCode conversion
 │       ├── converter_test.go
 │       ├── copier.go         # Skills copying
 │       ├── copier_test.go
-│       ├── validator.go      # Semantic validation
-│       ├── validator_test.go
-│       ├── reporter.go       # Output formatting
-│       ├── sync.go           # Orchestration
-│       └── testdata/         # Test fixtures
+│       ├── sync_validator.go      # Sync equivalence validation (.claude/ vs .opencode/)
+│       ├── sync_validator_test.go
+│       ├── reporter.go            # Output formatting (text, JSON, markdown)
+│       ├── reporter_test.go
+│       ├── claude_validator.go    # .claude/ format validation orchestration
+│       ├── claude_validator_test.go
+│       ├── agent_validator.go     # Agent validation rules (11 rules)
+│       ├── agent_validator_test.go
+│       ├── skill_validator.go     # Skill validation rules (7 rules)
+│       ├── skill_validator_test.go
+│       └── yaml_formatting.go     # YAML formatting validation helper
 ├── dist/                     # Built binary (gitignored)
 ├── main.go                   # CLI entry point
 ├── go.mod                    # Go module definition (includes gopkg.in/yaml.v3)
@@ -899,8 +902,7 @@ go test ./...
 - `cmd`: Root command tests, validate-docs-links integration tests, doctor integration tests
 - `internal/doctor`: 95%+ coverage (checker, reporter — all pure functions tested with fake runner)
 - `internal/docs`: 85%+ coverage (naming: scanner, validator, reporter, prefix_rules, fixer; links: links_scanner, links_validator, links_categorizer, links_reporter)
-- `internal/sync`: 85%+ coverage (converter, copier, validator, reporter)
-- `internal/claude`: 92.6% coverage (validator, agent_validator, skill_validator)
+- `internal/agents`: 85%+ coverage (converter, copier, sync_validator, reporter, claude_validator, agent_validator, skill_validator)
 - `internal/speccoverage`: ≥85% coverage (parser, checker with temp dir fixtures, reporter for all formats)
 - `internal/java`: ≥85% coverage (scanner, validator, reporter — all pure functions tested with temp dir fixtures)
 - `internal/testcoverage`: ≥85% coverage (detect, go_coverage, lcov_coverage, reporter — all pure functions with temp dir fixtures)

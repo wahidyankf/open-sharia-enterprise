@@ -1,4 +1,4 @@
-package claude
+package agents
 
 import (
 	"bytes"
@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/sync"
 	"gopkg.in/yaml.v3"
 )
 
@@ -18,13 +17,13 @@ func validateAgent(
 	repoRoot string,
 	agentNames map[string]bool,
 	skillNames map[string]bool,
-) []sync.ValidationCheck {
-	var checks []sync.ValidationCheck
+) []ValidationCheck {
+	var checks []ValidationCheck
 
 	// Read agent file
 	content, err := os.ReadFile(agentPath)
 	if err != nil {
-		checks = append(checks, sync.ValidationCheck{
+		checks = append(checks, ValidationCheck{
 			Name:    fmt.Sprintf("Agent: %s - Read File", filename),
 			Status:  "failed",
 			Message: fmt.Sprintf("Failed to read file: %v", err),
@@ -40,16 +39,16 @@ func validateAgent(
 	}
 
 	// Rule 1: YAML frontmatter syntax validity
-	frontmatter, _, err := sync.ExtractFrontmatter(content)
+	frontmatter, _, err := ExtractFrontmatter(content)
 	if err != nil {
-		checks = append(checks, sync.ValidationCheck{
+		checks = append(checks, ValidationCheck{
 			Name:    fmt.Sprintf("Agent: %s - YAML Syntax", filename),
 			Status:  "failed",
 			Message: fmt.Sprintf("Invalid frontmatter: %v", err),
 		})
 		return checks
 	}
-	checks = append(checks, sync.ValidationCheck{
+	checks = append(checks, ValidationCheck{
 		Name:    fmt.Sprintf("Agent: %s - YAML Syntax", filename),
 		Status:  "passed",
 		Message: "Valid YAML frontmatter",
@@ -58,7 +57,7 @@ func validateAgent(
 	// Parse YAML into ClaudeAgentFull
 	var agent ClaudeAgentFull
 	if err := yaml.Unmarshal(frontmatter, &agent); err != nil {
-		checks = append(checks, sync.ValidationCheck{
+		checks = append(checks, ValidationCheck{
 			Name:    fmt.Sprintf("Agent: %s - YAML Parse", filename),
 			Status:  "failed",
 			Message: fmt.Sprintf("Failed to parse YAML: %v", err),
@@ -118,7 +117,7 @@ func validateAgent(
 }
 
 // validateRequiredFields checks that all required fields are present
-func validateRequiredFields(filename string, agent ClaudeAgentFull) sync.ValidationCheck {
+func validateRequiredFields(filename string, agent ClaudeAgentFull) ValidationCheck {
 	missing := []string{}
 
 	if agent.Name == "" {
@@ -137,7 +136,7 @@ func validateRequiredFields(filename string, agent ClaudeAgentFull) sync.Validat
 	// skills can be empty (valid)
 
 	if len(missing) > 0 {
-		return sync.ValidationCheck{
+		return ValidationCheck{
 			Name:     fmt.Sprintf("Agent: %s - Required Fields", filename),
 			Status:   "failed",
 			Expected: "All required fields present",
@@ -146,7 +145,7 @@ func validateRequiredFields(filename string, agent ClaudeAgentFull) sync.Validat
 		}
 	}
 
-	return sync.ValidationCheck{
+	return ValidationCheck{
 		Name:    fmt.Sprintf("Agent: %s - Required Fields", filename),
 		Status:  "passed",
 		Message: "All required fields present",
@@ -154,11 +153,11 @@ func validateRequiredFields(filename string, agent ClaudeAgentFull) sync.Validat
 }
 
 // validateFieldOrder checks that fields are in the correct order
-func validateFieldOrder(filename string, frontmatter []byte) sync.ValidationCheck {
+func validateFieldOrder(filename string, frontmatter []byte) ValidationCheck {
 	// Parse as generic YAML to get field order
 	var data yaml.Node
 	if err := yaml.Unmarshal(frontmatter, &data); err != nil {
-		return sync.ValidationCheck{
+		return ValidationCheck{
 			Name:    fmt.Sprintf("Agent: %s - Field Order", filename),
 			Status:  "failed",
 			Message: fmt.Sprintf("Failed to parse YAML for order check: %v", err),
@@ -181,7 +180,7 @@ func validateFieldOrder(filename string, frontmatter []byte) sync.ValidationChec
 	// Check order against required order
 	expectedOrder := RequiredFieldOrder
 	if len(fieldNames) > len(expectedOrder) {
-		return sync.ValidationCheck{
+		return ValidationCheck{
 			Name:     fmt.Sprintf("Agent: %s - Field Order", filename),
 			Status:   "failed",
 			Expected: fmt.Sprintf("Fields: %v", expectedOrder),
@@ -192,7 +191,7 @@ func validateFieldOrder(filename string, frontmatter []byte) sync.ValidationChec
 
 	for i, field := range fieldNames {
 		if i >= len(expectedOrder) || field != expectedOrder[i] {
-			return sync.ValidationCheck{
+			return ValidationCheck{
 				Name:     fmt.Sprintf("Agent: %s - Field Order", filename),
 				Status:   "failed",
 				Expected: fmt.Sprintf("Order: %v", expectedOrder[:len(fieldNames)]),
@@ -202,7 +201,7 @@ func validateFieldOrder(filename string, frontmatter []byte) sync.ValidationChec
 		}
 	}
 
-	return sync.ValidationCheck{
+	return ValidationCheck{
 		Name:    fmt.Sprintf("Agent: %s - Field Order", filename),
 		Status:  "passed",
 		Message: "Field order correct",
@@ -210,7 +209,7 @@ func validateFieldOrder(filename string, frontmatter []byte) sync.ValidationChec
 }
 
 // validateTools checks that all tools are valid
-func validateTools(filename string, toolsStr string) sync.ValidationCheck {
+func validateTools(filename string, toolsStr string) ValidationCheck {
 	// Parse tools (comma-separated)
 	tools := strings.Split(toolsStr, ",")
 	invalid := []string{}
@@ -230,7 +229,7 @@ func validateTools(filename string, toolsStr string) sync.ValidationCheck {
 		for tool := range ValidTools {
 			validToolsList = append(validToolsList, tool)
 		}
-		return sync.ValidationCheck{
+		return ValidationCheck{
 			Name:     fmt.Sprintf("Agent: %s - Valid Tools", filename),
 			Status:   "failed",
 			Expected: fmt.Sprintf("Valid tools: %v", validToolsList),
@@ -239,7 +238,7 @@ func validateTools(filename string, toolsStr string) sync.ValidationCheck {
 		}
 	}
 
-	return sync.ValidationCheck{
+	return ValidationCheck{
 		Name:    fmt.Sprintf("Agent: %s - Valid Tools", filename),
 		Status:  "passed",
 		Message: "All tools valid",
@@ -247,10 +246,10 @@ func validateTools(filename string, toolsStr string) sync.ValidationCheck {
 }
 
 // validateModel checks that the model is valid
-func validateModel(filename string, model string) sync.ValidationCheck {
+func validateModel(filename string, model string) ValidationCheck {
 	if !ValidModels[model] {
 		validModels := []string{"(empty)", "sonnet", "opus", "haiku"}
-		return sync.ValidationCheck{
+		return ValidationCheck{
 			Name:     fmt.Sprintf("Agent: %s - Valid Model", filename),
 			Status:   "failed",
 			Expected: fmt.Sprintf("Valid models: %v", validModels),
@@ -259,7 +258,7 @@ func validateModel(filename string, model string) sync.ValidationCheck {
 		}
 	}
 
-	return sync.ValidationCheck{
+	return ValidationCheck{
 		Name:    fmt.Sprintf("Agent: %s - Valid Model", filename),
 		Status:  "passed",
 		Message: "Model valid",
@@ -267,10 +266,10 @@ func validateModel(filename string, model string) sync.ValidationCheck {
 }
 
 // validateColor checks that the color is valid
-func validateColor(filename string, color string) sync.ValidationCheck {
+func validateColor(filename string, color string) ValidationCheck {
 	if !ValidColors[color] {
 		validColors := []string{"blue", "green", "yellow", "purple"}
-		return sync.ValidationCheck{
+		return ValidationCheck{
 			Name:     fmt.Sprintf("Agent: %s - Valid Color", filename),
 			Status:   "failed",
 			Expected: fmt.Sprintf("Valid colors: %v", validColors),
@@ -279,7 +278,7 @@ func validateColor(filename string, color string) sync.ValidationCheck {
 		}
 	}
 
-	return sync.ValidationCheck{
+	return ValidationCheck{
 		Name:    fmt.Sprintf("Agent: %s - Valid Color", filename),
 		Status:  "passed",
 		Message: "Color valid",
@@ -287,10 +286,10 @@ func validateColor(filename string, color string) sync.ValidationCheck {
 }
 
 // validateFilename checks that filename matches name field
-func validateFilename(filename string, name string) sync.ValidationCheck {
+func validateFilename(filename string, name string) ValidationCheck {
 	expectedFilename := name + ".md"
 	if filename != expectedFilename {
-		return sync.ValidationCheck{
+		return ValidationCheck{
 			Name:     fmt.Sprintf("Agent: %s - Filename Match", filename),
 			Status:   "failed",
 			Expected: fmt.Sprintf("Filename: %s", expectedFilename),
@@ -299,7 +298,7 @@ func validateFilename(filename string, name string) sync.ValidationCheck {
 		}
 	}
 
-	return sync.ValidationCheck{
+	return ValidationCheck{
 		Name:    fmt.Sprintf("Agent: %s - Filename Match", filename),
 		Status:  "passed",
 		Message: "Filename matches name",
@@ -307,9 +306,9 @@ func validateFilename(filename string, name string) sync.ValidationCheck {
 }
 
 // validateUniqueness checks that agent name is unique
-func validateUniqueness(filename string, name string, agentNames map[string]bool) sync.ValidationCheck {
+func validateUniqueness(filename string, name string, agentNames map[string]bool) ValidationCheck {
 	if agentNames[name] {
-		return sync.ValidationCheck{
+		return ValidationCheck{
 			Name:     fmt.Sprintf("Agent: %s - Name Uniqueness", filename),
 			Status:   "failed",
 			Expected: "Unique agent name",
@@ -318,7 +317,7 @@ func validateUniqueness(filename string, name string, agentNames map[string]bool
 		}
 	}
 
-	return sync.ValidationCheck{
+	return ValidationCheck{
 		Name:    fmt.Sprintf("Agent: %s - Name Uniqueness", filename),
 		Status:  "passed",
 		Message: "Agent name unique",
@@ -326,7 +325,7 @@ func validateUniqueness(filename string, name string, agentNames map[string]bool
 }
 
 // validateSkillsExist checks that all referenced skills exist
-func validateSkillsExist(filename string, skills []string, skillNames map[string]bool) sync.ValidationCheck {
+func validateSkillsExist(filename string, skills []string, skillNames map[string]bool) ValidationCheck {
 	missing := []string{}
 
 	for _, skill := range skills {
@@ -336,7 +335,7 @@ func validateSkillsExist(filename string, skills []string, skillNames map[string
 	}
 
 	if len(missing) > 0 {
-		return sync.ValidationCheck{
+		return ValidationCheck{
 			Name:     fmt.Sprintf("Agent: %s - Skills Exist", filename),
 			Status:   "failed",
 			Expected: "All skills exist",
@@ -345,7 +344,7 @@ func validateSkillsExist(filename string, skills []string, skillNames map[string
 		}
 	}
 
-	return sync.ValidationCheck{
+	return ValidationCheck{
 		Name:    fmt.Sprintf("Agent: %s - Skills Exist", filename),
 		Status:  "passed",
 		Message: "All skills exist",
@@ -353,12 +352,12 @@ func validateSkillsExist(filename string, skills []string, skillNames map[string
 }
 
 // validateNoComments checks that frontmatter has no YAML comments
-func validateNoComments(filename string, frontmatter []byte) sync.ValidationCheck {
+func validateNoComments(filename string, frontmatter []byte) ValidationCheck {
 	lines := bytes.Split(frontmatter, []byte("\n"))
 	for _, line := range lines {
 		trimmed := bytes.TrimSpace(line)
 		if bytes.HasPrefix(trimmed, []byte("#")) {
-			return sync.ValidationCheck{
+			return ValidationCheck{
 				Name:     fmt.Sprintf("Agent: %s - No Comments", filename),
 				Status:   "failed",
 				Expected: "No YAML comments",
@@ -368,7 +367,7 @@ func validateNoComments(filename string, frontmatter []byte) sync.ValidationChec
 		}
 	}
 
-	return sync.ValidationCheck{
+	return ValidationCheck{
 		Name:    fmt.Sprintf("Agent: %s - No Comments", filename),
 		Status:  "passed",
 		Message: "No YAML comments",
@@ -377,12 +376,12 @@ func validateNoComments(filename string, frontmatter []byte) sync.ValidationChec
 
 // validateYAMLFormatting checks that YAML has proper formatting (space after colons)
 // This check runs BEFORE normalization to catch formatting issues
-func validateYAMLFormatting(filename string, content []byte) sync.ValidationCheck {
+func validateYAMLFormatting(filename string, content []byte) ValidationCheck {
 	return validateYAMLFormattingRaw(fmt.Sprintf("Agent: %s - YAML Formatting", filename), content)
 }
 
 // validateGeneratedReportsTools checks that generated-reports agents have Write AND Bash
-func validateGeneratedReportsTools(filename string, toolsStr string) sync.ValidationCheck {
+func validateGeneratedReportsTools(filename string, toolsStr string) ValidationCheck {
 	tools := strings.Split(toolsStr, ",")
 	hasWrite := false
 	hasBash := false
@@ -398,7 +397,7 @@ func validateGeneratedReportsTools(filename string, toolsStr string) sync.Valida
 	}
 
 	if !hasWrite || !hasBash {
-		return sync.ValidationCheck{
+		return ValidationCheck{
 			Name:     fmt.Sprintf("Agent: %s - Generated Reports Tools", filename),
 			Status:   "failed",
 			Expected: "Tools must include: Write, Bash",
@@ -407,7 +406,7 @@ func validateGeneratedReportsTools(filename string, toolsStr string) sync.Valida
 		}
 	}
 
-	return sync.ValidationCheck{
+	return ValidationCheck{
 		Name:    fmt.Sprintf("Agent: %s - Generated Reports Tools", filename),
 		Status:  "passed",
 		Message: "Has required Write and Bash tools",
@@ -415,12 +414,12 @@ func validateGeneratedReportsTools(filename string, toolsStr string) sync.Valida
 }
 
 // validateAllAgents validates all agents in parallel
-func validateAllAgents(repoRoot string, skillNames map[string]bool) []sync.ValidationCheck {
+func validateAllAgents(repoRoot string, skillNames map[string]bool) []ValidationCheck {
 	agentsDir := filepath.Join(repoRoot, ".claude", "agents")
 
 	entries, err := os.ReadDir(agentsDir)
 	if err != nil {
-		return []sync.ValidationCheck{{
+		return []ValidationCheck{{
 			Name:    "Read Agents Directory",
 			Status:  "failed",
 			Message: fmt.Sprintf("Failed to read agents directory: %v", err),
@@ -428,7 +427,7 @@ func validateAllAgents(repoRoot string, skillNames map[string]bool) []sync.Valid
 	}
 
 	agentNames := make(map[string]bool)
-	var allChecks []sync.ValidationCheck
+	var allChecks []ValidationCheck
 
 	// Validate each agent
 	for _, entry := range entries {

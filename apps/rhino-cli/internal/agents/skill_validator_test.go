@@ -1,4 +1,4 @@
-package claude
+package agents
 
 import (
 	"os"
@@ -573,7 +573,7 @@ func TestValidateAllSkills_DirectoryNotFound(t *testing.T) {
 
 func TestValidateSkill_TooShortForFormatCheck(t *testing.T) {
 	// Content is only "---\n" → 2 lines < 3 → formatting passes as "too short"
-	// but sync.ExtractFrontmatter fails (no closing ---)
+	// but ExtractFrontmatter fails (no closing ---)
 	tmpDir := t.TempDir()
 	skillDir := filepath.Join(tmpDir, "test-skill")
 	if err := os.MkdirAll(skillDir, 0755); err != nil {

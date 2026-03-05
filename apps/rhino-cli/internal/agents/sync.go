@@ -1,5 +1,6 @@
-// Package sync provides validation and synchronisation between Claude Code and OpenCode agent configurations.
-package sync
+// Package agents provides agent configuration management across Claude Code and OpenCode,
+// including format validation, sync orchestration, and conversion.
+package agents
 
 import (
 	"time"
