@@ -6,7 +6,7 @@
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "CGO_ENABLED=0 go test -coverprofile=cover.out ./... && python3 ../../scripts/check-line-coverage.py cover.out 85",
+        "command": "CGO_ENABLED=0 go test -coverprofile=cover.out ./... && python3 ../../scripts/check-coverage.py cover.out 85",
         "cwd": "libs/golang-commons"
       }
     },

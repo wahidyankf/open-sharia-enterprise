@@ -16,7 +16,7 @@
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "go test -coverprofile=cover.out ./... && python3 ../../scripts/check-line-coverage.py cover.out 85",
+        "command": "go test -coverprofile=cover.out ./... && python3 ../../scripts/check-coverage.py cover.out 85",
         "cwd": "apps/ayokoding-cli"
       }
     },

@@ -109,9 +109,13 @@ npm run doctor           # Check all required tools (volta, node, npm, java, mav
 
 **Go projects**: All Go projects (`ayokoding-cli`, `oseplatform-cli`, `rhino-cli`,
 `libs/golang-commons`, `libs/hugo-commons`) enforce ≥85% **line coverage** (matching Codecov's
-algorithm) via `scripts/check-line-coverage.py`. Coverage is measured with
+algorithm) via `scripts/check-coverage.py`. Coverage is measured with
 `go test -coverprofile=cover.out ./...` and enforced by
-`python3 ../../scripts/check-line-coverage.py cover.out 85` — both run as part of `test:quick`.
+`python3 ../../scripts/check-coverage.py cover.out 85` — both run as part of `test:quick`.
+
+**TypeScript projects**: `organiclever-web` additionally enforces ≥85% **line coverage** (matching
+Codecov's algorithm) via `scripts/check-coverage.py` applied to the LCOV output from Vitest:
+`python3 ../../scripts/check-coverage.py coverage/lcov.info 85` — run as part of `test:quick`.
 
 ## Markdown Quality
 
