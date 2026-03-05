@@ -21,3 +21,11 @@ Feature: Member Deletion
     And the user has clicked the delete button for "Bob Smith"
     When the user cancels the deletion
     Then "Bob Smith" should still appear in the member list
+
+  Scenario: A server error during deletion shows an error message
+    Given the member list page is displayed with all members
+    When the user clicks the delete button for the first member
+    And the user confirms the deletion
+    And the server returns an error
+    Then an error message should be displayed
+    And all members should still be visible in the list

@@ -1,6 +1,6 @@
 import React from "react";
 import { describeFeature, loadFeature } from "@amiceli/vitest-cucumber";
-import { render, screen, cleanup, waitFor, within } from "@testing-library/react/pure";
+import { render, screen, cleanup, waitFor, within, act } from "@testing-library/react/pure";
 import userEvent from "@testing-library/user-event";
 import { vi, expect } from "vitest";
 import { http, HttpResponse } from "msw";
@@ -108,6 +108,38 @@ describeFeature(feature, ({ Scenario, BeforeEachScenario, AfterEachScenario }) =
 
     Then('"Bob Smith" should still appear in the member list', () => {
       expect(screen.getByText("Bob Smith")).toBeTruthy();
+    });
+  });
+
+  Scenario("A server error during deletion shows an error message", ({ Given, When, Then, And }) => {
+    Given("the member list page is displayed with all members", async () => {
+      render(<MembersPage />);
+      await screen.findAllByRole("row");
+    });
+
+    When("the user clicks the delete button for the first member", async () => {
+      await openDeleteDialogFor("Alice Johnson");
+    });
+
+    And("the user confirms the deletion", async () => {
+      server.use(http.delete("/api/members/:id", () => new HttpResponse(null, { status: 500 })));
+      const user = userEvent.setup();
+      const dialog = screen.getByRole("alertdialog");
+      await user.click(within(dialog).getByRole("button", { name: /^delete$/i }));
+      await waitFor(() => expect(screen.queryByRole("alertdialog")).toBeNull());
+    });
+
+    And("the server returns an error", async () => {
+      // Flush the async DELETE response and React state update from handleDeleteMember
+      await act(async () => {});
+    });
+
+    Then("an error message should be displayed", () => {
+      expect(screen.getByRole("alert")).toBeTruthy();
+    });
+
+    And("all members should still be visible in the list", () => {
+      expect(screen.getAllByRole("row").length - 1).toBe(MOCK_MEMBERS.length);
     });
   });
 });

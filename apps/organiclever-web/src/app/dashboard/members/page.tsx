@@ -146,6 +146,7 @@ export default function MembersPage() {
   const [members, setMembers] = useState<Member[]>([]);
   const [editingMember, setEditingMember] = useState<Member | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -206,6 +207,7 @@ export default function MembersPage() {
   };
 
   const handleDeleteMember = async (id: number) => {
+    setDeleteError(null);
     try {
       const response = await fetch(`/api/members/${id}`, {
         method: "DELETE",
@@ -216,6 +218,7 @@ export default function MembersPage() {
       await fetchMembers();
     } catch (error) {
       console.error("Error deleting member:", error);
+      setDeleteError("Failed to delete member. Please try again.");
     }
   };
 
@@ -238,6 +241,11 @@ export default function MembersPage() {
               <h1 className="text-2xl font-semibold text-gray-900">Members</h1>
               <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
             </div>
+            {deleteError && (
+              <p role="alert" className="mb-4 text-sm text-red-600">
+                {deleteError}
+              </p>
+            )}
             <div className="bg-white shadow-md rounded-lg overflow-hidden">
               <MembersTable
                 members={filteredMembers}
