@@ -213,3 +213,48 @@ func TestCheckLinks_TargetMissingBothForms(t *testing.T) {
 		t.Errorf("Expected 1 broken (neither .md nor _index.md), got %d", len(result.BrokenLinks))
 	}
 }
+
+func TestCheckLinks_NonExistentDir(t *testing.T) {
+	_, err := CheckLinks("/tmp/definitely-does-not-exist-hugo-commons-xyz-12345")
+	if err == nil {
+		t.Error("Expected error for nonexistent directory, got nil")
+	}
+}
+
+func TestCheckLinks_QueryStringLink(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	createTestFile(t, filepath.Join(tmpDir, "some/page.md"), "# Page")
+	createTestFile(t, filepath.Join(tmpDir, "index.md"), "[Page](/some/page?lang=en)")
+
+	result, err := CheckLinks(tmpDir)
+	if err != nil {
+		t.Fatalf("CheckLinks failed: %v", err)
+	}
+
+	if len(result.BrokenLinks) != 0 {
+		t.Errorf("Expected 0 broken (query string stripped), got %d: %v", len(result.BrokenLinks), result.BrokenLinks)
+	}
+	if result.CheckedCount != 1 {
+		t.Errorf("Expected 1 checked, got %d", result.CheckedCount)
+	}
+}
+
+func TestCheckLinks_UnreadableFile(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	filePath := filepath.Join(tmpDir, "locked.md")
+	createTestFile(t, filePath, "[Link](/some/target)")
+	if err := os.Chmod(filePath, 0000); err != nil {
+		t.Skip("cannot set permissions on this platform")
+	}
+	defer func() { _ = os.Chmod(filePath, 0644) }()
+
+	result, err := CheckLinks(tmpDir)
+	if err != nil {
+		t.Fatalf("CheckLinks should not fail on unreadable file, got: %v", err)
+	}
+	if result.ErrorCount == 0 {
+		t.Error("Expected ErrorCount > 0 for unreadable file")
+	}
+}

@@ -138,6 +138,40 @@ func TestOutputLinksMarkdown_Pass(t *testing.T) {
 	}
 }
 
+func TestOutputLinksText_WithErrors(t *testing.T) {
+	read := testutil.CaptureStdout(t)
+	result := &CheckResult{
+		CheckedCount: 1,
+		BrokenLinks:  []BrokenLink{},
+		Errors:       []string{"walk error: permission denied"},
+	}
+	OutputLinksText(result, time.Second, false, false)
+	out := read()
+	if !strings.Contains(out, "Errors:") {
+		t.Errorf("expected 'Errors:' section in output, got %q", out)
+	}
+	if !strings.Contains(out, "permission denied") {
+		t.Errorf("expected error message in output, got %q", out)
+	}
+}
+
+func TestOutputLinksMarkdown_WithErrors(t *testing.T) {
+	read := testutil.CaptureStdout(t)
+	result := &CheckResult{
+		CheckedCount: 1,
+		BrokenLinks:  []BrokenLink{},
+		Errors:       []string{"error reading file: permission denied"},
+	}
+	OutputLinksMarkdown(result, time.Second)
+	out := read()
+	if !strings.Contains(out, "## Errors") {
+		t.Errorf("expected '## Errors' section in markdown, got %q", out)
+	}
+	if !strings.Contains(out, "permission denied") {
+		t.Errorf("expected error message in markdown, got %q", out)
+	}
+}
+
 func TestOutputLinksMarkdown_Fail(t *testing.T) {
 	read := testutil.CaptureStdout(t)
 	result := &CheckResult{
