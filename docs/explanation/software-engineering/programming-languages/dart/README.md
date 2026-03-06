@@ -29,7 +29,7 @@ updated: 2026-01-29
 
 # Dart Programming Language Documentation
 
-**Quick Reference**: [Overview](#overview) | [Prerequisite Knowledge](#prerequisite-knowledge) | [Software Engineering Principles](#software-engineering-principles) | [Version Strategy](#dart-version-strategy) | [Dart in the Platform](#dart-in-the-platform) | [Dart Philosophy](#dart-philosophy) | [Documentation Structure](#documentation-structure) | [Learning Paths](#learning-paths) | [Code Examples](#code-examples) | [Tools & Ecosystem](#tools-and-ecosystem) | [Resources](#resources-and-references)
+**Quick Reference**: [Overview](#overview) | [Prerequisite Knowledge](#prerequisite-knowledge) | [Software Engineering Principles](#software-engineering-principles) | [Version Strategy](#dart-version-strategy) | [Primary Use Cases](#primary-use-cases) | [Tools & Ecosystem](#package-ecosystem)
 
 ## Overview
 
@@ -78,34 +78,30 @@ Dart's design principles guide development:
 
 All Dart code MUST follow the standards documented here:
 
-1. **[Idioms](./ex-soen-prla-da__idioms.md)** - Dart-specific patterns and conventions
-2. **[Best Practices](./ex-soen-prla-da__best-practices.md)** - Clean code standards
-3. **[Anti-Patterns](./ex-soen-prla-da__anti-patterns.md)** - Common mistakes to avoid
+**Learning Dart for OSE Platform**: See the [Dart Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/dart/_index.md) on ayokoding-web for idioms, best practices, anti-patterns, and all language-specific patterns.
 
 **For Agents**: Reference this documentation when writing Dart code.
 
 ### Quick Standards Reference
 
-- **Naming Conventions**: See [Best Practices - Code Organization](./ex-soen-prla-da__best-practices.md#code-organization)
-- **Null Safety**: See [Null Safety](./ex-soen-prla-da__null-safety.md)
-- **Error Handling**: See [Error Handling](./ex-soen-prla-da__error-handling.md)
-- **Async Patterns**: See [Async Programming](./ex-soen-prla-da__async-programming.md)
-- **Testing Standards**: See [Testing](./ex-soen-prla-da__testing.md)
-- **Security Practices**: See [Security](./ex-soen-prla-da__security.md)
+- **Naming Conventions**: Follow [Effective Dart Style](https://dart.dev/guides/language/effective-dart/style) — lowerCamelCase for variables/methods, UpperCamelCase for classes
+- **Null Safety**: Use sound null safety (`dart 3.0+`); prefer non-nullable types by default
+- **Error Handling**: Use typed exceptions; avoid catching `Object` or `dynamic`
+- **Async Patterns**: Prefer `async`/`await` over raw `Future` chains
+- **Testing Standards**: Use `package:test`; follow Arrange-Act-Assert pattern
+- **Security Practices**: Validate all inputs; never log sensitive data
 
 **Related**: [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - Cross-language FP principles
 
 ## Software Engineering Principles
 
-Dart development in this platform follows the five software engineering principles from [governance/principles/software-engineering/](../../../../../governance/principles/software-engineering/README.md):
+Dart development in this platform follows the the software engineering principles from [governance/principles/software-engineering/](../../../../../governance/principles/software-engineering/README.md):
 
 1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Dart automates through dart test, dart format, dart analyze, and CI/CD pipelines
 2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Dart enforces through explicit imports, null safety annotations, clear type declarations, explicit async markers
 3. **[Immutability Over Mutability](../../../../../governance/principles/software-engineering/immutability.md)** - Dart encourages immutable patterns through final variables, const constructors, immutable collections, and freezed package
 4. **[Pure Functions Over Side Effects](../../../../../governance/principles/software-engineering/pure-functions.md)** - Dart supports through first-class functions, functional programming patterns, and pure function design
 5. **[Reproducibility First](../../../../../governance/principles/software-engineering/reproducibility.md)** - Dart enables through pubspec.lock, deterministic dependency resolution, and consistent build outputs
-
-**See Also**: [Functional Programming](./ex-soen-prla-da__functional-programming.md) for pure functions patterns, [Best Practices](./ex-soen-prla-da__best-practices.md) for explicit coding standards, [Null Safety](./ex-soen-prla-da__null-safety.md) for type-safe patterns.
 
 ## Dart Version Strategy
 
@@ -620,288 +616,6 @@ void main() {
 }
 ```
 
-### [Dart Idioms](./ex-soen-prla-da__idioms.md)
-
-Language-specific patterns for writing idiomatic Dart code.
-
-**Covers**:
-
-- Cascade notation (..)
-- Named constructors and factory constructors
-- Extension methods
-- Null safety patterns
-- Collection literals
-- String interpolation
-- Const constructors
-- Late initialization
-- Mixins and interfaces
-- Operator overloading
-
-### [Dart Best Practices](./ex-soen-prla-da__best-practices.md)
-
-Proven approaches for writing production-quality Dart applications.
-
-**Covers**:
-
-- Project structure and package organization
-- Naming conventions (lowerCamelCase, UpperCamelCase, snake_case)
-- Null safety best practices
-- Async programming patterns
-- Error handling strategies
-- Testing approaches (unit, widget, integration)
-- Performance optimization
-- Memory management
-- Code documentation (dartdoc)
-- Dependency management (pubspec.yaml)
-
-### [Dart Anti-Patterns](./ex-soen-prla-da__anti-patterns.md)
-
-Common mistakes and problematic patterns to avoid.
-
-**Covers**:
-
-- Null safety violations
-- Async anti-patterns (forgetting await, misusing Future.wait)
-- Mutable state issues
-- Memory leaks (unclosed streams, listeners)
-- Inappropriate use of dynamic
-- Breaking encapsulation
-- Testing anti-patterns
-- Performance pitfalls
-
-### Specialized Topics
-
-Deep-dive documentation on critical Dart areas:
-
-#### [Null Safety](./ex-soen-prla-da__null-safety.md)
-
-Comprehensive guide to Dart's sound null safety system.
-
-**Covers**:
-
-- Non-nullable by default
-- Nullable types with ?
-- Null-aware operators (??, ?., ?[])
-- Null assertion operator (!)
-- Late variables
-- Required named parameters
-- Definite assignment analysis
-- Migration strategies
-- Null safety in Flutter
-
-#### [Async Programming](./ex-soen-prla-da__async-programming.md)
-
-Comprehensive guide to asynchronous programming with Future and Stream.
-
-**Covers**:
-
-- Future basics and async/await
-- Error handling in async code
-- Stream fundamentals
-- Stream transformations
-- StreamController
-- Broadcast streams
-- Async\* and yield
-- Combining multiple futures
-- Timeout handling
-- Isolates for parallel processing
-
-#### [Collections](./ex-soen-prla-da__collections.md)
-
-Working with Dart's collection types.
-
-**Covers**:
-
-- List, Set, Map fundamentals
-- Collection literals
-- Spread operators
-- Collection if and for
-- Iterable operations (map, where, reduce, fold)
-- Lazy evaluation
-- Immutable collections
-- Custom collections
-- Performance considerations
-
-#### [Object-Oriented Programming](./ex-soen-prla-da__oop.md)
-
-OOP patterns and practices in Dart.
-
-**Covers**:
-
-- Classes and constructors
-- Named and factory constructors
-- Inheritance and abstract classes
-- Mixins for code reuse
-- Interfaces (implicit interfaces)
-- Class modifiers (sealed, final, base - Dart 3.0+)
-- Operator overloading
-- Generics and type parameters
-- Extension methods
-
-#### [Functional Programming](./ex-soen-prla-da__functional-programming.md)
-
-Functional programming patterns in Dart.
-
-**Covers**:
-
-- First-class functions
-- Higher-order functions
-- Pure functions and immutability
-- Function composition
-- Closures and lexical scope
-- Functional error handling
-- Immutable data structures
-- Pattern matching (Dart 3.0+)
-- Records (Dart 3.0+)
-
-#### [Error Handling](./ex-soen-prla-da__error-handling.md)
-
-Comprehensive error handling strategies.
-
-**Covers**:
-
-- Exception hierarchy
-- Try-catch-finally
-- Custom exceptions
-- Async error handling
-- Error propagation
-- Result types
-- Validation patterns
-- Logging and monitoring
-- Recovery strategies
-
-#### [Testing](./ex-soen-prla-da__testing.md)
-
-Testing strategies for Dart applications.
-
-**Covers**:
-
-- Unit testing with package:test
-- Widget testing (Flutter)
-- Integration testing
-- Test-driven development (TDD)
-- Mocking with package:mockito
-- Test coverage
-- Golden tests (Flutter)
-- Performance testing
-- Testing async code
-- CI/CD integration
-
-#### [Performance](./ex-soen-prla-da__performance.md)
-
-Optimization strategies for Dart applications.
-
-**Covers**:
-
-- Dart VM performance model
-- AOT vs JIT compilation
-- Memory management
-- Collection optimization
-- Async performance
-- Isolates for CPU-intensive tasks
-- Flutter performance optimization
-- Profiling tools
-- Benchmarking
-- Tree shaking (unused code elimination)
-
-#### [Security](./ex-soen-prla-da__security.md)
-
-Security best practices for Dart applications.
-
-**Covers**:
-
-- Input validation and sanitization
-- SQL injection prevention
-- Cross-site scripting (XSS) prevention
-- Authentication and authorization
-- Secure data storage
-- HTTPS and certificate pinning
-- Secrets management
-- Dependency security
-- Security testing
-- OWASP Mobile Top 10 (Flutter)
-
-#### [Flutter Integration](./ex-soen-prla-da__flutter.md)
-
-Dart patterns specific to Flutter development.
-
-**Covers**:
-
-- Widget lifecycle
-- State management patterns (Provider, Riverpod, Bloc)
-- BuildContext usage
-- Navigation and routing
-- Platform channels
-- Async UI patterns
-- Performance optimization
-- Testing Flutter apps
-- Platform-specific code
-
-#### [Server-Side Dart](./ex-soen-prla-da__server-side.md)
-
-Building server applications with Dart.
-
-**Covers**:
-
-- shelf package for HTTP servers
-- Routing and middleware
-- JSON serialization
-- Database integration
-- RESTful API design
-- WebSocket support
-- Authentication patterns
-- Logging and monitoring
-- Deployment strategies
-
-#### [Version Migration](./ex-soen-prla-da__version-migration.md)
-
-Upgrading Dart versions and migrating to null safety.
-
-**Covers**:
-
-- Dart 2.x to 3.0 migration
-- Null safety migration
-- Breaking changes
-- Dependency compatibility
-- Migration tools (dart migrate)
-- Testing after migration
-
-### 1. Start with Basics
-
-**For Beginners**:
-
-- [Dart Idioms](./ex-soen-prla-da__idioms.md) - Learn Dart-specific patterns
-- [Null Safety](./ex-soen-prla-da__null-safety.md) - Master null safety system
-- [Collections](./ex-soen-prla-da__collections.md) - Work with List, Set, Map
-
-### 2. Master Async Programming
-
-**For Intermediate Developers**:
-
-- [Async Programming](./ex-soen-prla-da__async-programming.md) - Future and Stream
-- [Error Handling](./ex-soen-prla-da__error-handling.md) - Robust error management
-- [Testing](./ex-soen-prla-da__testing.md) - Write reliable tests
-
-### 3. Advanced Patterns
-
-**For Advanced Developers**:
-
-- [Object-Oriented Programming](./ex-soen-prla-da__oop.md) - Advanced OOP
-- [Functional Programming](./ex-soen-prla-da__functional-programming.md) - FP patterns
-- [Performance](./ex-soen-prla-da__performance.md) - Optimization techniques
-
-### 4. Platform-Specific
-
-**For Flutter Development**:
-
-- [Flutter Integration](./ex-soen-prla-da__flutter.md) - Flutter-specific patterns
-
-**For Backend Development**:
-
-- [Server-Side Dart](./ex-soen-prla-da__server-side.md) - Building APIs
-
-### Development Tools
-
 **Dart SDK**:
 
 - `dart` - Dart VM and command-line interface
@@ -982,28 +696,6 @@ dev_dependencies:
 - [DartPad](https://dartpad.dev/) - Online Dart playground
 - [Dart Codelabs](https://dart.dev/codelabs)
 - [Flutter Codelabs](https://docs.flutter.dev/codelabs)
-
-### Core Dart Documentation
-
-- **[Dart Idioms](./ex-soen-prla-da__idioms.md)** - Language patterns
-- **[Dart Best Practices](./ex-soen-prla-da__best-practices.md)** - Coding standards
-- **[Dart Anti-Patterns](./ex-soen-prla-da__anti-patterns.md)** - Common mistakes
-
-### Language Features
-
-- **[Null Safety](./ex-soen-prla-da__null-safety.md)** - Sound null safety system
-- **[Async Programming](./ex-soen-prla-da__async-programming.md)** - Future and Stream
-- **[Collections](./ex-soen-prla-da__collections.md)** - List, Set, Map
-- **[OOP](./ex-soen-prla-da__oop.md)** - Object-oriented programming
-- **[Functional Programming](./ex-soen-prla-da__functional-programming.md)** - FP patterns
-
-### Application Development
-
-- **[Flutter Integration](./ex-soen-prla-da__flutter.md)** - Flutter-specific patterns
-- **[Server-Side Dart](./ex-soen-prla-da__server-side.md)** - Backend development
-- **[Testing](./ex-soen-prla-da__testing.md)** - Testing strategies
-- **[Performance](./ex-soen-prla-da__performance.md)** - Optimization
-- **[Security](./ex-soen-prla-da__security.md)** - Security best practices
 
 ### Platform Documentation
 
