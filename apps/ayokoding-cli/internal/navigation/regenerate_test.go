@@ -296,6 +296,16 @@ weight: 1
 	}
 }
 
+func TestFindContentRoot_NoContentAncestor(t *testing.T) {
+	// Use a temp directory that has no "content" ancestor directory.
+	// findContentRoot should return the original path when it reaches the filesystem root.
+	tmpDir := t.TempDir()
+	result := findContentRoot(tmpDir)
+	if result != tmpDir {
+		t.Errorf("expected original path %q when no 'content' ancestor found, got %q", tmpDir, result)
+	}
+}
+
 func TestProcessIndexFile_MalformedFrontmatter(t *testing.T) {
 	tmpDir := t.TempDir()
 
