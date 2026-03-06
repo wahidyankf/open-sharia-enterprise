@@ -277,6 +277,14 @@ the same `cmd/` package (not a separate folder) because they need direct access 
 package-level flag variables (`output`, `quiet`, `verbose`) — the idiomatic Go pattern for this
 situation is `//go:build integration` in the same package.
 
+**Go libs** (`hugo-commons`, `golang-commons`) also expose `test:integration` using the same Godog
+BDD pattern. Because libs have no CLI commands, integration tests call the public package API
+directly and use external test packages (`package foo_test`). They test complete library pipelines
+(e.g., `CheckLinks` → `OutputLinksText/JSON/Markdown`) and realistic consumer scenarios rather than
+isolated functions. Mock filesystem fixtures (tmpdir with controlled `.md` files) replace real Hugo
+sites; `testutil.CaptureStdout` captures stdout from output functions. Feature files live in
+`specs/{lib-name}/{package}/`.
+
 ### CLI Applications
 
 Go CLIs and similar tools:
