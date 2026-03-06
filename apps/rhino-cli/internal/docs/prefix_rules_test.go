@@ -89,6 +89,8 @@ func TestGenerateExpectedPrefix(t *testing.T) {
 		{"not in docs", "governance/foo.md", "", true},
 		{"docs root file", "docs/foo.md", "", true},
 		{"unknown root category", "docs/unknown/foo.md", "", true},
+		// 3+ parts but first part is not "docs" — covers prefix_rules.go:33
+		{"not in docs 3 parts", "governance/tutorials/file.md", "", true},
 	}
 
 	for _, tt := range tests {

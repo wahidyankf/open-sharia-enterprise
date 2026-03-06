@@ -910,3 +910,57 @@ func TestValidateSync_WithSkillContentMismatch(t *testing.T) {
 		t.Error("expected at least one failed check for skill content mismatch")
 	}
 }
+
+func TestValidateAgentFile_ClaudeYAMLUnmarshalError(t *testing.T) {
+	// Tests sync_validator.go:173-179 — yaml.Unmarshal(claudeFront, &claudeData) error
+	// Need Claude frontmatter that extracts OK but has YAML that fails to unmarshal
+	// into map[string]interface{} (e.g., {unclosed brace).
+	tmpDir := t.TempDir()
+
+	claudePath := filepath.Join(tmpDir, "agent.md")
+	opencodePath := filepath.Join(tmpDir, "opencode.md")
+
+	// Valid frontmatter markers but invalid YAML inside (unclosed flow mapping)
+	claudeContent := "---\n{unclosed brace\n---\n\nBody.\n"
+	if err := os.WriteFile(claudePath, []byte(claudeContent), 0644); err != nil {
+		t.Fatalf("failed to create claude agent: %v", err)
+	}
+	// OpenCode file doesn't matter since we fail before reading it
+	opencodeContent := "---\ndescription: test\nmodel: inherit\n---\n\nBody.\n"
+	if err := os.WriteFile(opencodePath, []byte(opencodeContent), 0644); err != nil {
+		t.Fatalf("failed to create opencode agent: %v", err)
+	}
+
+	check := validateAgentFile("agent.md", claudePath, opencodePath)
+	if check.Status != "failed" {
+		t.Errorf("expected 'failed' for Claude YAML unmarshal error, got %q: %s", check.Status, check.Message)
+	}
+}
+
+func TestValidateAgentFile_OpenCodeYAMLUnmarshalError(t *testing.T) {
+	// Tests sync_validator.go:182-188 — yaml.Unmarshal(opencodeFront, &opencodeAgent) error
+	// Need Claude frontmatter that extracts AND unmarshals OK, but OpenCode frontmatter
+	// that fails to unmarshal into OpenCodeAgent (tools must be map[string]bool,
+	// so providing "tools: just-a-string" will cause unmarshal failure).
+	tmpDir := t.TempDir()
+
+	claudePath := filepath.Join(tmpDir, "agent.md")
+	opencodePath := filepath.Join(tmpDir, "opencode.md")
+
+	// Valid Claude frontmatter
+	claudeContent := "---\nname: test\ndescription: Test\ntools:\n  - Read\nmodel: sonnet\n---\n\nBody.\n"
+	if err := os.WriteFile(claudePath, []byte(claudeContent), 0644); err != nil {
+		t.Fatalf("failed to create claude agent: %v", err)
+	}
+
+	// OpenCode frontmatter where tools is a plain string (incompatible with map[string]bool)
+	opencodeContent := "---\ndescription: Test\nmodel: inherit\ntools: read,write\n---\n\nBody.\n"
+	if err := os.WriteFile(opencodePath, []byte(opencodeContent), 0644); err != nil {
+		t.Fatalf("failed to create opencode agent: %v", err)
+	}
+
+	check := validateAgentFile("agent.md", claudePath, opencodePath)
+	if check.Status != "failed" {
+		t.Errorf("expected 'failed' for OpenCode YAML unmarshal error, got %q: %s", check.Status, check.Message)
+	}
+}

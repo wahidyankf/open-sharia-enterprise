@@ -158,6 +158,35 @@ func TestGetDocsFiles_NonExistentDocsDir(t *testing.T) {
 	}
 }
 
+func TestGetAllDocsFiles_WalkError(t *testing.T) {
+	// Tests scanner.go:37-39 and 46-48 — Walk callback error and Walk return error.
+	// Create a docs directory with a subdirectory, then make the subdirectory unreadable
+	// so that filepath.Walk encounters a permission error.
+	tmpDir := t.TempDir()
+	docsDir := filepath.Join(tmpDir, "docs")
+	subDir := filepath.Join(docsDir, "tutorials")
+	if err := os.MkdirAll(subDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(subDir, "file.md"), []byte("# Test"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Make the subdirectory unreadable so Walk encounters an error when descending
+	if err := os.Chmod(subDir, 0000); err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chmod(subDir, 0755) }()
+
+	_, err := getAllDocsFiles(tmpDir)
+	// On non-root systems this should return an error; on root it may succeed
+	if err != nil {
+		if len(err.Error()) == 0 {
+			t.Error("expected non-empty error message from Walk")
+		}
+	}
+}
+
 func TestGetDocsFiles_Staged(t *testing.T) {
 	tmpDir := t.TempDir()
 

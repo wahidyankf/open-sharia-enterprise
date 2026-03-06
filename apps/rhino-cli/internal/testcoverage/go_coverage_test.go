@@ -278,6 +278,35 @@ func TestComputeGoResult_PassFail(t *testing.T) {
 	}
 }
 
+func TestGetModuleNameFrom_NoModuleLine(t *testing.T) {
+	// go.mod exists but has no "module" line → returns ""  (line 30)
+	tmpDir := t.TempDir()
+	content := "go 1.21\n\nrequire (\n\tgithub.com/foo/bar v1.0.0\n)\n"
+	if err := os.WriteFile(filepath.Join(tmpDir, "go.mod"), []byte(content), 0644); err != nil {
+		t.Fatal(err)
+	}
+	name := getModuleNameFrom(tmpDir)
+	if name != "" {
+		t.Errorf("expected empty module name when no module directive, got %q", name)
+	}
+}
+
+func TestParseCoverOut_NonMatchingLine(t *testing.T) {
+	// A non-empty, non-mode line that does not match coverBlockRe is silently skipped (line 97)
+	tmpDir := t.TempDir()
+	content := "mode: set\nnot-a-valid-cover-line\ngithub.com/example/pkg:1.1,2.9 1 1\n"
+	path := writeTempCoverOut(t, tmpDir, content)
+
+	blocks, err := parseCoverOut(path)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	// Only the valid line should be parsed; the invalid line is skipped
+	if len(blocks) != 1 {
+		t.Errorf("expected 1 block (invalid line skipped), got %d", len(blocks))
+	}
+}
+
 func TestComputeGoResult_ProjectDirFromFilePath(t *testing.T) {
 	// Verify that source files are resolved relative to the cover.out's directory,
 	// not the process cwd. This mirrors the Python script's behaviour.

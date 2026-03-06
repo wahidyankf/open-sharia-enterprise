@@ -544,3 +544,132 @@ func TestSyncAgentsCommand_MarkdownOutput(t *testing.T) {
 		t.Errorf("expected markdown output with headings, got: %s", got)
 	}
 }
+
+func TestSyncAgentsCommand_MissingGitRoot(t *testing.T) {
+	originalWd, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chdir(originalWd) }()
+
+	// Use a temp dir with no .git directory — findGitRoot will fail
+	tmpDir := t.TempDir()
+	if err := os.Chdir(tmpDir); err != nil {
+		t.Fatal(err)
+	}
+
+	cmd := syncAgentsCmd
+	buf := new(bytes.Buffer)
+	cmd.SetOut(buf)
+	cmd.SetErr(buf)
+
+	syncDryRun = false
+	syncAgentsOnly = false
+	syncSkillsOnly = false
+	output = "text"
+	verbose = false
+	quiet = false
+
+	err = cmd.RunE(cmd, []string{})
+	if err == nil {
+		t.Error("expected error when no .git directory found")
+	}
+	if !strings.Contains(err.Error(), "git") {
+		t.Errorf("expected error mentioning 'git', got: %v", err)
+	}
+}
+
+func TestSyncAgentsCommand_SyncError(t *testing.T) {
+	// Test the path where SyncAll returns an error
+	// This happens when .claude/agents dir doesn't exist at all
+	// (not just empty, but missing the parent .claude directory)
+	originalWd, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chdir(originalWd) }()
+
+	tmpDir := t.TempDir()
+	if err := os.Chdir(tmpDir); err != nil {
+		t.Fatal(err)
+	}
+	// Create .git so findGitRoot succeeds
+	if err := os.MkdirAll(filepath.Join(tmpDir, ".git"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	// Create agents dir so ConvertAllAgents doesn't error
+	if err := os.MkdirAll(filepath.Join(tmpDir, ".claude", "agents"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	// Do NOT create .claude/skills — CopyAllSkills will return error
+
+	cmd := syncAgentsCmd
+	buf := new(bytes.Buffer)
+	cmd.SetOut(buf)
+	cmd.SetErr(buf)
+
+	syncDryRun = false
+	syncAgentsOnly = false
+	syncSkillsOnly = false
+	output = "text"
+	verbose = false
+	quiet = false
+
+	err = cmd.RunE(cmd, []string{})
+	if err == nil {
+		t.Error("expected error when skills directory is missing")
+	}
+	if !strings.Contains(err.Error(), "sync") {
+		t.Errorf("expected error mentioning 'sync', got: %v", err)
+	}
+}
+
+func TestSyncAgentsCommand_FailedFiles(t *testing.T) {
+	// Test the path where sync produces failed files (len(result.FailedFiles) > 0)
+	// We create an agent file that fails to convert and a valid skills dir
+	originalWd, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chdir(originalWd) }()
+
+	tmpDir := t.TempDir()
+	if err := os.Chdir(tmpDir); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(tmpDir, ".git"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	agentsDir := filepath.Join(tmpDir, ".claude", "agents")
+	skillsDir := filepath.Join(tmpDir, ".claude", "skills")
+	if err := os.MkdirAll(agentsDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(skillsDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	// Create an invalid agent (no frontmatter) → will fail to convert
+	if err := os.WriteFile(filepath.Join(agentsDir, "bad-agent.md"), []byte("no frontmatter here"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	cmd := syncAgentsCmd
+	buf := new(bytes.Buffer)
+	cmd.SetOut(buf)
+	cmd.SetErr(buf)
+
+	syncDryRun = false
+	syncAgentsOnly = false
+	syncSkillsOnly = false
+	output = "text"
+	verbose = false
+	quiet = false
+
+	err = cmd.RunE(cmd, []string{})
+	if err == nil {
+		t.Error("expected error when sync has failed files")
+	}
+	if !strings.Contains(err.Error(), "failures") {
+		t.Errorf("expected error mentioning failures, got: %v", err)
+	}
+}

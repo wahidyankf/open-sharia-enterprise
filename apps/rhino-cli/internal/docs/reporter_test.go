@@ -377,6 +377,143 @@ func TestFormatFixJSON_Partial(t *testing.T) {
 	}
 }
 
+func TestFormatText_MultipleViolationsInSameDir(t *testing.T) {
+	// Tests reporter.go:76 — sort comparator in FormatText (requires 2+ violations in same dir)
+	result := &ValidationResult{
+		TotalFiles:     5,
+		ValidFiles:     3,
+		ViolationCount: 2,
+		Violations: []NamingViolation{
+			{
+				FilePath:       "docs/tutorials/zzz__guide.md",
+				FileName:       "zzz__guide.md",
+				ViolationType:  ViolationWrongPrefix,
+				ExpectedPrefix: "tu__",
+				ActualPrefix:   "zzz__",
+				Message:        "Wrong prefix 'zzz__'",
+			},
+			{
+				FilePath:       "docs/tutorials/aaa__intro.md",
+				FileName:       "aaa__intro.md",
+				ViolationType:  ViolationWrongPrefix,
+				ExpectedPrefix: "tu__",
+				ActualPrefix:   "aaa__",
+				Message:        "Wrong prefix 'aaa__'",
+			},
+		},
+		ViolationsByType: map[ViolationType][]NamingViolation{
+			ViolationWrongPrefix: {
+				{FilePath: "docs/tutorials/zzz__guide.md", FileName: "zzz__guide.md", ViolationType: ViolationWrongPrefix, ActualPrefix: "zzz__"},
+				{FilePath: "docs/tutorials/aaa__intro.md", FileName: "aaa__intro.md", ViolationType: ViolationWrongPrefix, ActualPrefix: "aaa__"},
+			},
+		},
+	}
+
+	out := FormatText(result, false, false)
+	if !strings.Contains(out, "Wrong prefix") {
+		t.Errorf("expected violation section in output, got %q", out)
+	}
+}
+
+func TestFormatText_ViolationNoDir(t *testing.T) {
+	// Tests reporter.go:76 — getDir returning "." when FilePath has no "/"
+	result := &ValidationResult{
+		TotalFiles:     1,
+		ValidFiles:     0,
+		ViolationCount: 1,
+		Violations: []NamingViolation{
+			{
+				FilePath:       "file.md",
+				FileName:       "file.md",
+				ViolationType:  ViolationMissingSeparator,
+				ExpectedPrefix: "tu__",
+				ActualPrefix:   "",
+				Message:        "Missing '__' separator",
+			},
+		},
+		ViolationsByType: map[ViolationType][]NamingViolation{
+			ViolationMissingSeparator: {
+				{FilePath: "file.md", FileName: "file.md", ViolationType: ViolationMissingSeparator},
+			},
+		},
+	}
+
+	out := FormatText(result, false, false)
+	if !strings.Contains(out, "file.md") {
+		t.Errorf("expected filename in output, got %q", out)
+	}
+}
+
+func TestFormatMarkdown_ViolationWithEmptyActualPrefix(t *testing.T) {
+	// Tests reporter.go:193 — actual == "" branch where "(none)" is substituted
+	result := &ValidationResult{
+		TotalFiles:     1,
+		ValidFiles:     0,
+		ViolationCount: 1,
+		Violations: []NamingViolation{
+			{
+				FilePath:       "docs/tutorials/missing-sep.md",
+				FileName:       "missing-sep.md",
+				ViolationType:  ViolationMissingSeparator,
+				ExpectedPrefix: "tu__",
+				ActualPrefix:   "", // empty actual prefix
+				Message:        "Missing '__' separator",
+			},
+		},
+		ViolationsByType: map[ViolationType][]NamingViolation{
+			ViolationMissingSeparator: {
+				{FilePath: "docs/tutorials/missing-sep.md", FileName: "missing-sep.md", ViolationType: ViolationMissingSeparator, ActualPrefix: ""},
+			},
+		},
+	}
+
+	out := FormatMarkdown(result)
+	if !strings.Contains(out, "(none)") {
+		t.Errorf("expected '(none)' for empty actual prefix, got %q", out)
+	}
+}
+
+func TestFormatFixPlan_MultipleOps_Sort(t *testing.T) {
+	// Tests reporter.go:228 — sort comparator for rename operations (requires 2+ ops)
+	result := &FixResult{
+		RenameOperations: []RenameOperation{
+			{OldPath: "docs/z-file.md", NewPath: "docs/tu__z-file.md", OldName: "z-file.md", NewName: "tu__z-file.md"},
+			{OldPath: "docs/a-file.md", NewPath: "docs/tu__a-file.md", OldName: "a-file.md", NewName: "tu__a-file.md"},
+		},
+		DryRun: true,
+	}
+	out := FormatFixPlan(result)
+	if !strings.Contains(out, "a-file.md") {
+		t.Errorf("expected a-file.md in output, got %q", out)
+	}
+}
+
+func TestFormatFixPlan_MultipleLinkUpdates_Sort(t *testing.T) {
+	// Tests reporter.go:244-248 — sort comparator for link updates:
+	// Line 245-247: different FilePaths (takes true branch)
+	// Line 248: same FilePath, different LineNumber (takes false branch)
+	result := &FixResult{
+		RenameOperations: []RenameOperation{
+			{OldPath: "docs/foo.md", NewPath: "docs/tu__foo.md", OldName: "foo.md", NewName: "tu__foo.md"},
+		},
+		LinkUpdates: []LinkUpdate{
+			// Two updates in the SAME file (different lines) → triggers line 248
+			{FilePath: "docs/b-file.md", LineNumber: 10, OldLink: "./foo.md", NewLink: "./tu__foo.md"},
+			{FilePath: "docs/b-file.md", LineNumber: 5, OldLink: "./foo.md", NewLink: "./tu__foo.md"},
+			// One update in a DIFFERENT file → triggers line 245-247
+			{FilePath: "docs/a-file.md", LineNumber: 3, OldLink: "./foo.md", NewLink: "./tu__foo.md"},
+		},
+		DryRun: true,
+	}
+	out := FormatFixPlan(result)
+	if !strings.Contains(out, "## Links to Update") {
+		t.Errorf("expected links section, got %q", out)
+	}
+	if !strings.Contains(out, "a-file.md") {
+		t.Errorf("expected a-file.md in link updates, got %q", out)
+	}
+}
+
 func TestFormatFixJSON_WithLinkUpdates(t *testing.T) {
 	result := &FixResult{
 		RenameOperations: []RenameOperation{

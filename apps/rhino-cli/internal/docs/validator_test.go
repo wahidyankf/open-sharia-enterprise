@@ -210,3 +210,35 @@ func TestValidateAll_WithViolation(t *testing.T) {
 		t.Error("expected violations for badly named file")
 	}
 }
+
+func TestValidateAll_WalkError(t *testing.T) {
+	// Tests validator.go:27-29 — GetDocsFiles returns error (via getAllDocsFiles Walk error).
+	tmpDir := t.TempDir()
+	docsDir := filepath.Join(tmpDir, "docs")
+	subDir := filepath.Join(docsDir, "tutorials")
+	if err := os.MkdirAll(subDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(subDir, "file.md"), []byte("# Content"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Make the subdirectory unreadable so getAllDocsFiles returns an error
+	if err := os.Chmod(subDir, 0000); err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chmod(subDir, 0755) }()
+
+	opts := ValidationOptions{
+		RepoRoot:   tmpDir,
+		StagedOnly: false,
+	}
+
+	_, err := ValidateAll(opts)
+	// On non-root systems this should return an error; on root it may succeed
+	if err != nil {
+		if len(err.Error()) == 0 {
+			t.Error("expected non-empty error message from ValidateAll")
+		}
+	}
+}

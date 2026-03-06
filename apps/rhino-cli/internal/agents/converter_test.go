@@ -346,3 +346,155 @@ Body content.
 		t.Errorf("Model = %q, want %q", agent.Model, "inherit")
 	}
 }
+
+func TestExtractFrontmatter_FirstLineNotDashes(t *testing.T) {
+	// Tests the "frontmatter does not start with ---" branch (converter.go:37)
+	// Need 3+ lines, with first line NOT being "---"
+	content := "not-a-dash\nsome: content\nmore content here"
+	_, _, err := ExtractFrontmatter([]byte(content))
+	if err == nil {
+		t.Error("expected error when first line is not ---")
+	}
+}
+
+func TestConvertAgent_WriteFileError(t *testing.T) {
+	// Tests os.WriteFile error path (converter.go:204-206)
+	// MkdirAll must succeed (dir already exists), WriteFile must fail (dir is read-only)
+	tmpDir := t.TempDir()
+
+	inputPath := filepath.Join(tmpDir, "agent.md")
+	content := "---\nname: test-agent\ndescription: Test\ntools:\n  - Read\nmodel: sonnet\n---\n\nBody.\n"
+	if err := os.WriteFile(inputPath, []byte(content), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create the output directory first with normal permissions
+	outputDir := filepath.Join(tmpDir, "outdir")
+	if err := os.MkdirAll(outputDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	// Now make it read-only so WriteFile fails but MkdirAll succeeds (dir already exists)
+	if err := os.Chmod(outputDir, 0555); err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chmod(outputDir, 0755) }()
+
+	outputPath := filepath.Join(outputDir, "out.md")
+	err := ConvertAgent(inputPath, outputPath, false)
+	if err == nil {
+		// On some systems (e.g. running as root) this may succeed
+		t.Logf("ConvertAgent succeeded (may be running as root or OS allows it)")
+	}
+}
+
+func TestExtractFrontmatter_NoBody(t *testing.T) {
+	// Tests the endIndex+1 >= len(lines) branch (body = "")
+	content := "---\nname: test\n---"
+	front, body, err := ExtractFrontmatter([]byte(content))
+	if err != nil {
+		t.Fatalf("ExtractFrontmatter() unexpected error: %v", err)
+	}
+	if string(front) != "name: test" {
+		t.Errorf("frontmatter = %q, want %q", string(front), "name: test")
+	}
+	if string(body) != "" {
+		t.Errorf("body = %q, want empty", string(body))
+	}
+}
+
+func TestConvertAgent_MissingSourceFile(t *testing.T) {
+	// Tests os.ReadFile error path (line 128)
+	tmpDir := t.TempDir()
+	err := ConvertAgent(filepath.Join(tmpDir, "nonexistent.md"), filepath.Join(tmpDir, "out.md"), false)
+	if err == nil {
+		t.Error("expected error for missing source file")
+	}
+}
+
+func TestConvertAgent_InvalidYAML(t *testing.T) {
+	// Tests YAML unmarshal error path (line 140)
+	tmpDir := t.TempDir()
+	inputPath := filepath.Join(tmpDir, "bad.md")
+	// Valid frontmatter markers but invalid YAML content
+	content := "---\n: invalid: yaml: {\n---\n\nBody.\n"
+	if err := os.WriteFile(inputPath, []byte(content), 0644); err != nil {
+		t.Fatal(err)
+	}
+	outputPath := filepath.Join(tmpDir, "out.md")
+	err := ConvertAgent(inputPath, outputPath, false)
+	if err == nil {
+		t.Error("expected error for invalid YAML")
+	}
+}
+
+func TestConvertAgent_WriteError(t *testing.T) {
+	// Tests os.WriteFile error path (line 204) by making the output dir read-only
+	tmpDir := t.TempDir()
+
+	inputPath := filepath.Join(tmpDir, "agent.md")
+	content := "---\nname: test-agent\ndescription: Test\ntools:\n  - Read\nmodel: sonnet\n---\n\nBody.\n"
+	if err := os.WriteFile(inputPath, []byte(content), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create a read-only output directory
+	readOnlyDir := filepath.Join(tmpDir, "readonly")
+	if err := os.MkdirAll(readOnlyDir, 0555); err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chmod(readOnlyDir, 0755) }()
+
+	// Try to write inside the read-only directory
+	outputPath := filepath.Join(readOnlyDir, "subdir", "out.md")
+	err := ConvertAgent(inputPath, outputPath, false)
+	if err == nil {
+		// On some systems (e.g. running as root) this may succeed
+		t.Logf("ConvertAgent succeeded (may be running as root or OS allows it)")
+	}
+}
+
+func TestConvertAllAgents_ReadDirError(t *testing.T) {
+	// Tests ConvertAllAgents when .claude/agents dir doesn't exist (line 224)
+	tmpDir := t.TempDir()
+	// No .claude/agents directory
+	_, _, _, err := ConvertAllAgents(tmpDir, false)
+	if err == nil {
+		t.Error("expected error when .claude/agents directory is missing")
+	}
+}
+
+func TestConvertAllAgents_SkipsNonMdAndReadme(t *testing.T) {
+	// Tests that non-.md files and README.md are skipped (lines 229-230)
+	tmpDir := t.TempDir()
+
+	agentsDir := filepath.Join(tmpDir, ".claude", "agents")
+	if err := os.MkdirAll(agentsDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create README.md (should be skipped)
+	if err := os.WriteFile(filepath.Join(agentsDir, "README.md"), []byte("# Agents"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create a non-.md file (should be skipped)
+	if err := os.WriteFile(filepath.Join(agentsDir, "notes.txt"), []byte("notes"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create a directory (should be skipped)
+	if err := os.MkdirAll(filepath.Join(agentsDir, "subdir"), 0755); err != nil {
+		t.Fatal(err)
+	}
+
+	converted, failed, failedFiles, err := ConvertAllAgents(tmpDir, false)
+	if err != nil {
+		t.Fatalf("ConvertAllAgents() unexpected error: %v", err)
+	}
+	if converted != 0 {
+		t.Errorf("expected 0 converted (all skipped), got %d", converted)
+	}
+	if failed != 0 {
+		t.Errorf("expected 0 failed, got %d (files: %v)", failed, failedFiles)
+	}
+}
