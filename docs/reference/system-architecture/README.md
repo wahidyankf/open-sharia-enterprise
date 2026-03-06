@@ -79,8 +79,8 @@ graph TB
 
 ## Contents
 
-- [Applications & Containers](./re-sa__applications.md) - Application inventory, C4 Level 2 container diagram, interactions
-- [Components & Code](./re-sa__components.md) - C4 Level 3 component diagrams, Level 4 code architecture
-- [Deployment](./re-sa__deployment.md) - Deployment architecture, environment branches, Vercel configuration
-- [CI/CD Pipeline](./re-sa__ci-cd.md) - Git hooks, GitHub Actions workflows, Nx build system, development workflow
-- [Technology Stack](./re-sa__technology-stack.md) - Stack summary, quality tools, future considerations
+- [Applications & Containers](./re-syar__applications.md) - Application inventory, C4 Level 2 container diagram, interactions
+- [Components & Code](./re-syar__components.md) - C4 Level 3 component diagrams, Level 4 code architecture
+- [Deployment](./re-syar__deployment.md) - Deployment architecture, environment branches, Vercel configuration
+- [CI/CD Pipeline](./re-syar__ci-cd.md) - Git hooks, GitHub Actions workflows, Nx build system, development workflow
+- [Technology Stack](./re-syar__technology-stack.md) - Stack summary, quality tools, future considerations
