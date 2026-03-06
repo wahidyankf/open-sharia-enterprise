@@ -65,6 +65,7 @@ linters:
         - unreachable
         - unsafeptr
         - unusedresult
+        - unusedwrite # unused writes to struct fields / array elements
         - waitgroup
 
     staticcheck:

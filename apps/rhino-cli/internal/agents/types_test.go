@@ -2,17 +2,13 @@ package agents
 
 import (
 	"testing"
-	"time"
 )
 
 func TestClaudeAgent(t *testing.T) {
 	agent := ClaudeAgent{
-		Name:        "test-agent",
-		Description: "Test agent description",
-		Tools:       []string{"Read", "Write", "Edit"},
-		Model:       "sonnet",
-		Color:       "blue",
-		Skills:      []string{"skill-1", "skill-2"},
+		Name:   "test-agent",
+		Tools:  []string{"Read", "Write", "Edit"},
+		Skills: []string{"skill-1", "skill-2"},
 	}
 
 	if agent.Name != "test-agent" {
@@ -37,7 +33,6 @@ func TestOpenCodeAgent(t *testing.T) {
 		Description: "Test agent description",
 		Model:       "inherit",
 		Tools:       tools,
-		Skills:      []string{"skill-1"},
 	}
 
 	if agent.Description != "Test agent description" {
@@ -56,12 +51,9 @@ func TestOpenCodeAgent(t *testing.T) {
 
 func TestSyncOptions(t *testing.T) {
 	opts := SyncOptions{
-		RepoRoot:   "/path/to/repo",
-		DryRun:     true,
-		AgentsOnly: false,
-		SkillsOnly: false,
-		Verbose:    true,
-		Quiet:      false,
+		RepoRoot: "/path/to/repo",
+		DryRun:   true,
+		Verbose:  true,
 	}
 
 	if opts.RepoRoot != "/path/to/repo" {
@@ -78,11 +70,8 @@ func TestSyncOptions(t *testing.T) {
 func TestSyncResult(t *testing.T) {
 	result := SyncResult{
 		AgentsConverted: 45,
-		AgentsFailed:    0,
 		SkillsCopied:    23,
-		SkillsFailed:    0,
 		FailedFiles:     []string{},
-		Duration:        100 * time.Millisecond,
 	}
 
 	if result.AgentsConverted != 45 {
@@ -98,12 +87,9 @@ func TestSyncResult(t *testing.T) {
 
 func TestSyncResultWithFailures(t *testing.T) {
 	result := SyncResult{
-		AgentsConverted: 43,
-		AgentsFailed:    2,
-		SkillsCopied:    22,
-		SkillsFailed:    1,
-		FailedFiles:     []string{"agent1.md", "skill1.md"},
-		Duration:        150 * time.Millisecond,
+		AgentsFailed: 2,
+		SkillsFailed: 1,
+		FailedFiles:  []string{"agent1.md", "skill1.md"},
 	}
 
 	if result.AgentsFailed != 2 {
@@ -128,7 +114,6 @@ func TestValidationResult(t *testing.T) {
 		PassedChecks: 2,
 		FailedChecks: 0,
 		Checks:       checks,
-		Duration:     50 * time.Millisecond,
 	}
 
 	if result.TotalChecks != 2 {
@@ -140,15 +125,16 @@ func TestValidationResult(t *testing.T) {
 	if result.FailedChecks != 0 {
 		t.Errorf("Expected 0 failed checks, got %d", result.FailedChecks)
 	}
+	if len(result.Checks) != 2 {
+		t.Errorf("Expected 2 checks, got %d", len(result.Checks))
+	}
 }
 
 func TestValidationCheck(t *testing.T) {
 	check := ValidationCheck{
-		Name:     "Test check",
 		Status:   "passed",
 		Expected: "expected value",
 		Actual:   "expected value",
-		Message:  "Values match",
 	}
 
 	if check.Status != "passed" {
@@ -161,11 +147,9 @@ func TestValidationCheck(t *testing.T) {
 
 func TestValidationCheckFailed(t *testing.T) {
 	check := ValidationCheck{
-		Name:     "Test check",
 		Status:   "failed",
 		Expected: "expected value",
 		Actual:   "different value",
-		Message:  "Values do not match",
 	}
 
 	if check.Status != "failed" {
