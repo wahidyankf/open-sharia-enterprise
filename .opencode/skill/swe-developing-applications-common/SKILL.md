@@ -63,7 +63,7 @@ This platform uses **Nx** for monorepo management with clear separation of conce
 
 ### Common Nx Commands
 
-All target names follow [Nx Target Standards](../../governance/development/infra/nx-targets.md). Use canonical names: `dev` (not `serve`), `test:quick` (not `test`), `start` (not `serve` for production).
+All target names follow [Nx Target Standards](../../../governance/development/infra/nx-targets.md). Use canonical names: `dev` (not `serve`), `test:quick` (not `test`), `start` (not `serve` for production).
 
 **Development**:
 
@@ -229,7 +229,7 @@ When code files are modified, **Husky + lint-staged** automatically run:
 - **Run `test:quick` for affected projects**: Executes the fast quality gate (`nx affected -t test:quick`) — this is the canonical pre-push check. Every project must expose a `test:quick` target.
 - **Markdown linting**: Final markdown quality check
 
-> **Note**: `test:e2e` does NOT run in the pre-push hook. It runs on a scheduled GitHub Actions cron job (twice daily per workflow) targeting each `*-e2e` project. See [Nx Target Standards](../../governance/development/infra/nx-targets.md) for the full execution model.
+> **Note**: `test:e2e` does NOT run in the pre-push hook. It runs on a scheduled GitHub Actions cron job (twice daily per workflow) targeting each `*-e2e` project. See [Nx Target Standards](../../../governance/development/infra/nx-targets.md) for the full execution model.
 
 ### Trust the Automation
 
@@ -289,11 +289,11 @@ All language developers follow this pattern:
 
 **All language developers reference**:
 
-- **[CLAUDE.md](../../CLAUDE.md)**: Primary guidance for all agents
-- **[Monorepo Structure](../../docs/reference/re__monorepo-structure.md)**: Nx workspace organization
-- **[Commit Messages Convention](../../governance/development/workflow/commit-messages.md)**: Conventional Commits detailed guide
-- **[Code Quality Convention](../../governance/development/quality/code.md)**: Git hooks and automation
-- **[Trunk Based Development](../../governance/development/workflow/trunk-based-development.md)**: Git workflow philosophy
+- **[CLAUDE.md](../../../CLAUDE.md)**: Primary guidance for all agents
+- **[Monorepo Structure](../../../docs/reference/re__monorepo-structure.md)**: Nx workspace organization
+- **[Commit Messages Convention](../../../governance/development/workflow/commit-messages.md)**: Conventional Commits detailed guide
+- **[Code Quality Convention](../../../governance/development/quality/code.md)**: Git hooks and automation
+- **[Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md)**: Git workflow philosophy
 
 ### Language-Specific Documentation
 
@@ -323,20 +323,20 @@ docs/explanation/software-engineering/programming-languages/[language]/README.md
 
 **Workflow Conventions**:
 
-- [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md) - Git workflow details
-- [Commit Messages Convention](../../governance/development/workflow/commit-messages.md) - Conventional Commits specification
-- [Implementation Workflow](../../governance/development/workflow/implementation.md) - Make it work → right → fast
+- [Trunk Based Development](../../../governance/development/workflow/trunk-based-development.md) - Git workflow details
+- [Commit Messages Convention](../../../governance/development/workflow/commit-messages.md) - Conventional Commits specification
+- [Implementation Workflow](../../../governance/development/workflow/implementation.md) - Make it work → right → fast
 
 **Quality Conventions**:
 
-- [Code Quality Convention](../../governance/development/quality/code.md) - Git hooks, linting, formatting
-- [Reproducible Environments](../../governance/development/workflow/reproducible-environments.md) - Volta, package-lock.json
+- [Code Quality Convention](../../../governance/development/quality/code.md) - Git hooks, linting, formatting
+- [Reproducible Environments](../../../governance/development/workflow/reproducible-environments.md) - Volta, package-lock.json
 
 **Architecture Conventions**:
 
-- [Monorepo Structure Reference](../../docs/reference/re__monorepo-structure.md) - Nx workspace organization
-- [Nx Target Standards](../../governance/development/infra/nx-targets.md) - Canonical target names, mandatory targets per project type, caching rules
-- [Functional Programming](../../governance/development/pattern/functional-programming.md) - FP principles across languages
+- [Monorepo Structure Reference](../../../docs/reference/re__monorepo-structure.md) - Nx workspace organization
+- [Nx Target Standards](../../../governance/development/infra/nx-targets.md) - Canonical target names, mandatory targets per project type, caching rules
+- [Functional Programming](../../../governance/development/pattern/functional-programming.md) - FP principles across languages
 
 ## Related Skills
 
