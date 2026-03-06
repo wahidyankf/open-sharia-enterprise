@@ -15,6 +15,7 @@ tags:
   - go-1.23
   - go-1.24
   - go-1.25
+  - go-1.26
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -22,7 +23,7 @@ principles:
   - pure-functions
   - reproducibility
 created: 2026-02-04
-updated: 2026-02-04
+updated: 2026-03-06
 ---
 
 # Go Coding Standards
@@ -47,14 +48,15 @@ This document defines **authoritative coding standards** for Go development in t
 
 ### Go Version Context
 
-This document covers Go 1.18-1.25 with emphasis on:
+This document covers Go 1.18-1.26 with emphasis on:
 
 - **Go 1.18+**: Generic idioms, workspace patterns
 - **Go 1.21+**: min/max/clear built-ins, PGO idioms
 - **Go 1.22+**: Loop variable scoping, enhanced routing patterns
 - **Go 1.23+**: Iterator idioms, range over func
 - **Go 1.24+**: Swiss Tables map idioms, runtime.AddCleanup
-- **Go 1.25**: Current stable release
+- **Go 1.25**: Green Tea GC (experimental), encoding/json/v2, container-aware GOMAXPROCS
+- **Go 1.26**: Current stable release
 
 ### Standards Sections
 
@@ -336,7 +338,7 @@ func TestCalculateZakat(t *testing.T) {
 // go.mod - Exact dependency versions
 module github.com/open-sharia-enterprise/zakat-service
 
-go 1.26.0
+go 1.26
 
 require (
  github.com/google/uuid v1.6.0
@@ -351,7 +353,7 @@ github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+
 
 ```dockerfile
 # Dockerfile - Reproducible build environment
-FROM golang:1.25.0-alpine AS builder
+FROM golang:1.26.0-alpine AS builder
 
 WORKDIR /app
 
@@ -1396,4 +1398,4 @@ These standards are enforced through:
 
 **Maintainers**: Platform Documentation Team
 **Last Updated**: 2026-02-04
-**Go Version**: Go 1.25 (supports 1.18-1.25)
+**Go Version**: Go 1.26 (supports 1.18-1.26)

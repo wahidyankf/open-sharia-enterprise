@@ -18,6 +18,7 @@ tags:
   - go-1.23
   - go-1.24
   - go-1.25
+  - go-1.26
 principles:
   - automation-over-manual
   - explicit-over-implicit

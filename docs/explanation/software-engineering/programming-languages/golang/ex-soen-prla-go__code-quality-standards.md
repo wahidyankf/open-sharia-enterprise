@@ -17,6 +17,7 @@ tags:
   - go-1.23
   - go-1.24
   - go-1.25
+  - go-1.26
 related:
   - ./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices
 principles:
@@ -972,12 +973,12 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.25"
+          go-version: "1.26"
 
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v4
         with:
-          version: v2.8.0
+          version: v2.10.1
           args: --timeout=5m
 ```
 
@@ -986,7 +987,7 @@ jobs:
 ```yaml
 # .gitlab-ci.yml
 lint:
-  image: golangci/golangci-lint:v2.8.0
+  image: golangci/golangci-lint:v2.10.1
   stage: test
   script:
     - golangci-lint run -v
