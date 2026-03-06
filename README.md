@@ -9,7 +9,7 @@
 
 ## Test Coverage
 
-All projects enforce ≥85% test coverage as part of `test:quick`. Coverage is uploaded to [Codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise) on every push to `main`.
+All projects enforce ≥95% test coverage as part of `test:quick`. Coverage is uploaded to [Codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise) on every push to `main`.
 
 | Project                 | Coverage                                                                                                                                                             |
 | ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
