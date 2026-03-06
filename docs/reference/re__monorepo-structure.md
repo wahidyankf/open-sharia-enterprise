@@ -35,6 +35,9 @@ open-sharia-enterprise/
 ├── docs/                      # Documentation (Diátaxis framework)
 ├── plans/                     # Project planning documents
 ├── .claude/                   # Claude Code configuration
+├── infra/                     # Infrastructure configurations
+│   ├── dev/                  # Local development (Docker Compose)
+│   └── k8s/                  # Kubernetes deployments
 ├── .husky/                    # Git hooks
 ├── .nx/                       # Nx cache (gitignored)
 ├── node_modules/              # Dependencies (gitignored)
@@ -42,6 +45,7 @@ open-sharia-enterprise/
 ├── tsconfig.base.json         # Base TypeScript configuration
 ├── package.json               # Workspace manifest with npm workspaces
 ├── package-lock.json          # Dependency lock file
+├── .dockerignore              # Docker build context exclusions (web app)
 ├── .nxignore                  # Files to exclude from Nx processing
 ├── .gitignore                 # Git ignore rules
 ├── commitlint.config.js       # Commit message validation
@@ -104,6 +108,32 @@ apps/ayokoding-cli/
 ├── dist/                      # Build output (gitignored)
 ├── main.go                    # Entry point
 ├── go.mod                     # Go module definition
+├── project.json               # Nx project configuration
+└── README.md                  # App documentation
+```
+
+### App Structure (Next.js Application)
+
+```
+apps/organiclever-web/
+├── src/                       # Source code
+├── public/                    # Static assets
+├── .storybook/                # Storybook configuration
+├── Dockerfile                 # Production multi-stage build (repo-root context)
+├── next.config.mjs            # Next.js configuration
+├── project.json               # Nx project configuration
+└── README.md                  # App documentation
+```
+
+### App Structure (Spring Boot Application)
+
+```
+apps/organiclever-be/
+├── src/                       # Source code (main + test)
+├── target/                    # Build output (gitignored)
+├── Dockerfile                 # Production multi-stage build
+├── .dockerignore              # Docker build context exclusions
+├── pom.xml                    # Maven configuration
 ├── project.json               # Nx project configuration
 └── README.md                  # App documentation
 ```
