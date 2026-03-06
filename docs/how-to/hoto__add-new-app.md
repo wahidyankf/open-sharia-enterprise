@@ -9,7 +9,7 @@ tags:
   - typescript
   - nextjs
 created: 2025-11-29
-updated: 2025-11-30
+updated: 2026-03-06
 ---
 
 # How to Add a New App
@@ -18,7 +18,7 @@ This guide shows you how to create a new application in the `apps/` folder of th
 
 ## Prerequisites
 
-- Node.js 24.12.0 and npm 11.7.0 (managed by Volta)
+- Node.js 24.13.1 and npm 11.10.1 (managed by Volta)
 - Nx workspace initialized
 - Understanding of the app you want to create (Next.js, Express API, etc.)
 

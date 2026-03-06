@@ -7,7 +7,7 @@ tags:
   - how-to
   - guides
 created: 2025-11-22
-updated: 2025-12-18
+updated: 2026-03-06
 ---
 
 # How-To Guides
@@ -23,8 +23,7 @@ Problem-solving guides for common tasks in the open-sharia-enterprise project. T
 - [How to Set Up Local Development with Docker](./hoto__local-dev-docker.md) - Set up a reproducible local development environment using Docker and Docker Compose for all services
 - [How to Organize Your Work](./hoto__organize-work.md) - Choose the right folder (plans, docs) for different types of work
 - [How to Run Nx Commands](./hoto__run-nx-commands.md) - Common Nx workflows and commands for working with the monorepo
-- [How to Set Up Android Development](./hoto__setup-android-dev.md) - Install the Android SDK and configure `adb` for ARM64 Linux (Ubuntu 24.04 on Apple Silicon). Covers cmdline-tools, SDK components, ARM64 adb fix, Flutter configuration, and verification
 
 ---
 
-**Last Updated**: 2026-02-28
+**Last Updated**: 2026-03-06

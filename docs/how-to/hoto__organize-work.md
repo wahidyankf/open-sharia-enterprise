@@ -57,7 +57,7 @@ flowchart TD
 
 - **Lifecycle:** Permanent, evolves over time
 - **Structure:** Four categories (tutorials, how-to, reference, explanation)
-- **File Naming:** Requires prefixes (`tu__`, `ht__`, `re__`, `ex__`)
+- **File Naming:** Requires prefixes (`tu__`, `hoto__`, `re__`, `ex__`)
 - **Diagram Format:** Mermaid (inside Obsidian vault)
 - **Audience:** Anyone who needs to understand, learn, or reference the project
 

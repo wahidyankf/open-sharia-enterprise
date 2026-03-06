@@ -64,7 +64,7 @@ try {
 
 ### Go Version Context
 
-This guide covers Go 1.18-1.25 with emphasis on:
+This guide covers Go 1.18-1.26 with emphasis on:
 
 - **Go 1.13+**: Error wrapping with `%w`, `errors.Is`, `errors.As`
 - **Go 1.18+**: Generic error types (experimental patterns)
@@ -73,7 +73,8 @@ This guide covers Go 1.18-1.25 with emphasis on:
 - **Go 1.22+**: Improved panic messages
 - **Go 1.23+**: Better error stack traces
 - **Go 1.24+**: Performance improvements in error handling
-- **Go 1.25**: Current stable release
+- **Go 1.25**: Green Tea GC (experimental), encoding/json/v2
+- **Go 1.26**: Current stable release (Green Tea GC default)
 
 ## Error Interface and Error Returns
 

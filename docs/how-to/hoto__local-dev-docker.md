@@ -1,3 +1,15 @@
+---
+title: How to Set Up Local Development with Docker
+description: Set up a reproducible local development environment using Docker and Docker Compose for all services
+category: how-to
+tags:
+  - docker
+  - local-development
+  - docker-compose
+created: 2026-02-28
+updated: 2026-03-06
+---
+
 # How to Set Up Reproducible Local Development with Docker
 
 ## Overview

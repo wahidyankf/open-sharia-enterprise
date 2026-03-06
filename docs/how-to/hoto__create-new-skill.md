@@ -1,3 +1,15 @@
+---
+title: How to Create a New Skill
+description: Guide for creating a new Skill in .claude/skills/ for Claude Code's Skills auto-loading feature
+category: how-to
+tags:
+  - skills
+  - ai-agents
+  - claude-code
+created: 2026-02-01
+updated: 2026-03-06
+---
+
 # How to Create a New Skill
 
 This guide explains how to create a new Skill in `.claude/skills/` for Claude Code's Skills auto-loading feature.
@@ -439,8 +451,8 @@ wow__understanding-repository-architecture/
 
 ## Related How-To Guides
 
-- [How to Create a New Agent](./hoto__add-new-agent.md) - Creating agents that reference Skills
-- [How to Update Repository Governance](./hoto__update-repository-rules.md) - Using wow\_\_rules-maker for Skills updates
+- [How to Add a New App](./hoto__add-new-app.md) - Creating apps that use Skills-powered agents
+- [AI Agents Convention](../../governance/development/agents/ai-agents.md) - Creating agents that reference Skills
 
 ---
 

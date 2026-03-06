@@ -45,8 +45,8 @@ The Diátaxis framework provides a clear structure that:
 
 This documentation follows specific conventions for consistency and quality:
 
-- [Documentation Conventions](./README.md) - File naming, linking, and organization standards
-- [Development Conventions](./README.md) - Development practices, tools, and workflows
+- [Documentation Conventions](../governance/conventions/README.md) - File naming, linking, and organization standards
+- [Development Practices](../governance/development/README.md) - Development practices, tools, and workflows
 
 ## 🚀 Getting Started
 

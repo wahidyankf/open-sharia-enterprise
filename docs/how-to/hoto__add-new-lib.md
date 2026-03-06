@@ -8,7 +8,7 @@ tags:
   - libraries
   - typescript
 created: 2025-11-29
-updated: 2025-11-30
+updated: 2026-03-06
 ---
 
 # How to Add a New Library
@@ -17,7 +17,7 @@ This guide shows you how to create a new reusable library in the `libs/` folder 
 
 ## Prerequisites
 
-- Node.js 24.12.0 and npm 11.7.0 (managed by Volta)
+- Node.js 24.13.1 and npm 11.10.1 (managed by Volta)
 - Nx workspace initialized
 - Understanding of the library's purpose and scope
 
@@ -29,18 +29,18 @@ Follow the naming convention: `[language-prefix]-[name]`
 
 **Language Prefixes**:
 
-- `ts-` - TypeScript (current implementation)
+- `ts-` - TypeScript
+- `golang-` - Go (e.g., `golang-commons`)
+- `hugo-` - Hugo shared utilities (e.g., `hugo-commons`)
 - `java-` - Java (future)
-- `kt-` - Kotlin (future)
 - `py-` - Python (future)
 
 **Examples**:
 
 - `ts-utils` - TypeScript utility functions
 - `ts-components` - Reusable React components
-- `ts-hooks` - Custom React hooks
-- `ts-api` - API client libraries
-- `ts-validators` - Data validation functions
+- `golang-commons` - Shared Go utilities (links checker, output)
+- `hugo-commons` - Shared Hugo test utilities (Godog BDD)
 
 ### Step 2: Create Library Directory
 
