@@ -17,6 +17,16 @@
         "cwd": "libs/hugo-commons"
       }
     },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 go test -v -tags=integration -run TestIntegration -coverprofile=cover_spec.out ./...",
+        "cwd": "libs/hugo-commons"
+      },
+      "cache": true,
+      "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/specs/hugo-commons/**/*.feature"],
+      "outputs": ["{projectRoot}/cover_spec.out"]
+    },
     "install": {
       "executor": "nx:run-commands",
       "options": {
