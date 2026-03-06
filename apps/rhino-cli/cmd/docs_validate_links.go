@@ -12,7 +12,7 @@ var (
 )
 
 var validateDocsLinksCmd = &cobra.Command{
-	Use:   "validate-docs-links",
+	Use:   "validate-links",
 	Short: "Validate markdown links in the repository",
 	Long: `Scan markdown files for broken internal links.
 
@@ -23,25 +23,25 @@ placeholder links are automatically skipped.
 By default, scans all markdown files in core directories (docs/, governance/,
 .claude/, and root). Use --staged-only to validate only staged files.`,
 	Example: `  # Validate all markdown files
-  rhino-cli validate-docs-links
+  rhino-cli docs validate-links
 
   # Validate only staged files (useful in pre-commit hooks)
-  rhino-cli validate-docs-links --staged-only
+  rhino-cli docs validate-links --staged-only
 
   # Output as JSON
-  rhino-cli validate-docs-links -o json
+  rhino-cli docs validate-links -o json
 
   # Output as markdown report
-  rhino-cli validate-docs-links -o markdown
+  rhino-cli docs validate-links -o markdown
 
   # Verbose mode with quiet output
-  rhino-cli validate-docs-links -v -q`,
+  rhino-cli docs validate-links -v -q`,
 	SilenceErrors: true, // We handle error messages ourselves
 	RunE:          runValidateDocsLinks,
 }
 
 func init() {
-	rootCmd.AddCommand(validateDocsLinksCmd)
+	docsCmd.AddCommand(validateDocsLinksCmd)
 	validateDocsLinksCmd.Flags().BoolVar(&validateDocsLinksStagedOnly, "staged-only", false, "only validate staged files")
 }
 

@@ -41,25 +41,25 @@ Skills (.claude/skills/):
 - Name format (lowercase, hyphens, numbers only, max 64 chars)
 - Name matches directory name`,
 	Example: `  # Validate all agents and skills
-  rhino-cli validate-claude
+  rhino-cli agents validate-claude
 
   # Output as JSON
-  rhino-cli validate-claude -o json
+  rhino-cli agents validate-claude -o json
 
   # Verbose mode (show all checks)
-  rhino-cli validate-claude -v
+  rhino-cli agents validate-claude -v
 
   # Validate only agents
-  rhino-cli validate-claude --agents-only
+  rhino-cli agents validate-claude --agents-only
 
   # Validate only skills
-  rhino-cli validate-claude --skills-only`,
+  rhino-cli agents validate-claude --skills-only`,
 	SilenceErrors: true,
 	RunE:          runValidateClaude,
 }
 
 func init() {
-	rootCmd.AddCommand(validateClaudeCmd)
+	agentsCmd.AddCommand(validateClaudeCmd)
 	validateClaudeCmd.Flags().BoolVar(&agentsOnly, "agents-only", false, "validate only agents")
 	validateClaudeCmd.Flags().BoolVar(&skillsOnly, "skills-only", false, "validate only skills")
 }

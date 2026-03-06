@@ -14,7 +14,7 @@ var (
 )
 
 var syncAgentsCmd = &cobra.Command{
-	Use:   "sync-agents",
+	Use:   "sync",
 	Short: "Sync Claude Code agents to OpenCode format",
 	Long: `Convert .claude/ configuration to .opencode/ format with proper
 YAML frontmatter transformation and skills synchronization.
@@ -30,28 +30,28 @@ This command performs the following operations:
   * Direct byte-for-byte copy (skills format is identical)
   * SKILL.md → {skill-name}.md conversion`,
 	Example: `  # Sync all agents and skills
-  rhino-cli sync-agents
+  rhino-cli agents sync
 
   # Preview changes without modifying files
-  rhino-cli sync-agents --dry-run
+  rhino-cli agents sync --dry-run
 
   # Sync only agents (skip skills)
-  rhino-cli sync-agents --agents-only
+  rhino-cli agents sync --agents-only
 
   # Sync only skills (skip agents)
-  rhino-cli sync-agents --skills-only
+  rhino-cli agents sync --skills-only
 
   # Output as JSON
-  rhino-cli sync-agents -o json
+  rhino-cli agents sync -o json
 
   # Verbose mode
-  rhino-cli sync-agents -v`,
+  rhino-cli agents sync -v`,
 	SilenceErrors: true,
 	RunE:          runSyncAgents,
 }
 
 func init() {
-	rootCmd.AddCommand(syncAgentsCmd)
+	agentsCmd.AddCommand(syncAgentsCmd)
 	syncAgentsCmd.Flags().BoolVar(&syncDryRun, "dry-run", false, "preview changes without modifying files")
 	syncAgentsCmd.Flags().BoolVar(&syncAgentsOnly, "agents-only", false, "sync only agents (skip skills)")
 	syncAgentsCmd.Flags().BoolVar(&syncSkillsOnly, "skills-only", false, "sync only skills (skip agents)")

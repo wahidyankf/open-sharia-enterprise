@@ -11,7 +11,7 @@ import (
 var javaAnnotation string
 
 var validateJavaAnnotationsCmd = &cobra.Command{
-	Use:   "validate-java-annotations <source-root>",
+	Use:   "validate-annotations <source-root>",
 	Short: "Validate Java packages have required null-safety annotations",
 	Long: `Scan a Java source tree and verify every package has a package-info.java
 with the required null-safety annotation.
@@ -23,23 +23,23 @@ the command checks:
 
 Any package that fails either check is reported as a violation.`,
 	Example: `  # Validate with default annotation (@NullMarked)
-  rhino-cli validate-java-annotations apps/organiclever-be/src/main/java
+  rhino-cli java validate-annotations apps/organiclever-be/src/main/java
 
   # Use a custom annotation
-  rhino-cli validate-java-annotations apps/organiclever-be/src/main/java --annotation NonNull
+  rhino-cli java validate-annotations apps/organiclever-be/src/main/java --annotation NonNull
 
   # Output as JSON
-  rhino-cli validate-java-annotations apps/organiclever-be/src/main/java -o json
+  rhino-cli java validate-annotations apps/organiclever-be/src/main/java -o json
 
   # Output as markdown report
-  rhino-cli validate-java-annotations apps/organiclever-be/src/main/java -o markdown`,
+  rhino-cli java validate-annotations apps/organiclever-be/src/main/java -o markdown`,
 	Args:          cobra.ExactArgs(1),
 	SilenceErrors: true,
 	RunE:          runValidateJavaAnnotations,
 }
 
 func init() {
-	rootCmd.AddCommand(validateJavaAnnotationsCmd)
+	javaCmd.AddCommand(validateJavaAnnotationsCmd)
 	validateJavaAnnotationsCmd.Flags().StringVar(&javaAnnotation, "annotation", "NullMarked",
 		"annotation name to require in package-info.java files")
 }

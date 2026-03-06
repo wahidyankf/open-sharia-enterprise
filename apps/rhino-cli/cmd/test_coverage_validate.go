@@ -10,7 +10,7 @@ import (
 )
 
 var validateTestCoverageCmd = &cobra.Command{
-	Use:   "validate-test-coverage <coverage-file> <threshold>",
+	Use:   "validate <coverage-file> <threshold>",
 	Short: "Check test coverage against a threshold (Codecov-compatible algorithm)",
 	Long: `Compute line coverage using Codecov's algorithm and compare against a threshold.
 
@@ -27,23 +27,23 @@ Coverage algorithm:
 
 The coverage file path is relative to the git repository root.`,
 	Example: `  # Check Go coverage
-  rhino-cli validate-test-coverage apps/rhino-cli/cover.out 85
+  rhino-cli test-coverage validate apps/rhino-cli/cover.out 85
 
   # Check LCOV coverage
-  rhino-cli validate-test-coverage apps/organiclever-web/coverage/lcov.info 85
+  rhino-cli test-coverage validate apps/organiclever-web/coverage/lcov.info 85
 
   # Output as JSON
-  rhino-cli validate-test-coverage apps/rhino-cli/cover.out 85 -o json
+  rhino-cli test-coverage validate apps/rhino-cli/cover.out 85 -o json
 
   # Output as markdown
-  rhino-cli validate-test-coverage apps/rhino-cli/cover.out 85 -o markdown`,
+  rhino-cli test-coverage validate apps/rhino-cli/cover.out 85 -o markdown`,
 	Args:          cobra.ExactArgs(2),
 	SilenceErrors: true,
 	RunE:          runValidateTestCoverage,
 }
 
 func init() {
-	rootCmd.AddCommand(validateTestCoverageCmd)
+	testCoverageCmd.AddCommand(validateTestCoverageCmd)
 }
 
 func runValidateTestCoverage(cmd *cobra.Command, args []string) error {

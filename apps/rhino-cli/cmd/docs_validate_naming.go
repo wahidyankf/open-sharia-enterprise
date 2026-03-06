@@ -15,7 +15,7 @@ var (
 )
 
 var validateDocsNamingCmd = &cobra.Command{
-	Use:   "validate-docs-naming",
+	Use:   "validate-naming",
 	Short: "Validate documentation file naming conventions",
 	Long: `Scan documentation files in docs/ directory for naming convention violations.
 
@@ -38,31 +38,31 @@ Fix Mode:
   Use --fix to see what files would be renamed (dry-run).
   Use --fix --apply to actually rename the files using git mv.`,
 	Example: `  # Validate all docs files
-  rhino-cli validate-docs-naming
+  rhino-cli docs validate-naming
 
   # Validate only staged files (useful in pre-commit hooks)
-  rhino-cli validate-docs-naming --staged-only
+  rhino-cli docs validate-naming --staged-only
 
   # Output as JSON
-  rhino-cli validate-docs-naming -o json
+  rhino-cli docs validate-naming -o json
 
   # Output as markdown report
-  rhino-cli validate-docs-naming -o markdown
+  rhino-cli docs validate-naming -o markdown
 
   # Show what files would be renamed (dry-run)
-  rhino-cli validate-docs-naming --fix
+  rhino-cli docs validate-naming --fix
 
   # Actually rename files to fix violations
-  rhino-cli validate-docs-naming --fix --apply
+  rhino-cli docs validate-naming --fix --apply
 
   # Fix without updating links in other files
-  rhino-cli validate-docs-naming --fix --apply --no-update-links`,
+  rhino-cli docs validate-naming --fix --apply --no-update-links`,
 	SilenceErrors: true, // We handle error messages ourselves
 	RunE:          runValidateDocsNaming,
 }
 
 func init() {
-	rootCmd.AddCommand(validateDocsNamingCmd)
+	docsCmd.AddCommand(validateDocsNamingCmd)
 	validateDocsNamingCmd.Flags().BoolVar(&validateDocsNamingStagedOnly, "staged-only", false, "only validate staged files in docs/")
 	validateDocsNamingCmd.Flags().BoolVar(&validateDocsNamingFix, "fix", false, "show files that would be renamed (dry-run)")
 	validateDocsNamingCmd.Flags().BoolVar(&validateDocsNamingApply, "apply", false, "actually apply the renames (requires --fix)")
