@@ -38,8 +38,8 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "npx vitest run --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go validate-test-coverage apps/organiclever-web/coverage/lcov.info 95)",
-          "(cd ../../apps/rhino-cli && go run main.go validate-spec-coverage specs/organiclever-web apps/organiclever-web)"
+          "npx vitest run --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/organiclever-web/coverage/lcov.info 95)",
+          "(cd ../../apps/rhino-cli && go run main.go spec-coverage validate specs/organiclever-web apps/organiclever-web)"
         ],
         "parallel": true,
         "cwd": "{projectRoot}"

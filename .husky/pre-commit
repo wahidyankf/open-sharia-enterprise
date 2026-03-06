@@ -47,7 +47,7 @@ npx lint-staged
 # 6. Validate and auto-fix docs file naming conventions (if docs/ affected)
 if git diff --cached --name-only | grep -qE '^docs/'; then
   echo "🔍 Validating and fixing documentation file naming..."
-  CGO_ENABLED=0 go run -C apps/rhino-cli main.go validate-docs-naming --staged-only --fix --apply || exit 1
+  CGO_ENABLED=0 go run -C apps/rhino-cli main.go docs validate-naming --staged-only --fix --apply || exit 1
   # Stage any files modified by link updates and renames
   git add docs/ governance/ .claude/ 2>/dev/null || true
   echo "✅ Documentation naming validation passed"
@@ -56,7 +56,7 @@ else
 fi
 
 # 7. Validate markdown links in staged files
-CGO_ENABLED=0 go run -C apps/rhino-cli main.go validate-docs-links --staged-only || exit 1
+CGO_ENABLED=0 go run -C apps/rhino-cli main.go docs validate-links --staged-only || exit 1
 
 # 8. Validate all markdown files
 npm run lint:md || exit 1

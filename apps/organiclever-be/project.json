@@ -60,7 +60,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli validate-java-annotations apps/organiclever-be/src/main/java",
+          "nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli java validate-annotations apps/organiclever-be/src/main/java",
           "cd apps/organiclever-be && mvn compile -Pnullcheck"
         ],
         "parallel": false
