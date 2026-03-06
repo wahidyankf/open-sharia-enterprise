@@ -7,7 +7,9 @@ export function Navigation({ logout }: { logout: () => Promise<void> }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(() => {
     // Initialize from localStorage if available, otherwise default to false
+    /* v8 ignore start -- SSR path: typeof window === "undefined" is unreachable in jsdom */
     if (typeof window !== "undefined") {
+      /* v8 ignore stop */
       const saved = localStorage.getItem("sidebarCollapsed");
       return saved ? JSON.parse(saved) : false;
     }

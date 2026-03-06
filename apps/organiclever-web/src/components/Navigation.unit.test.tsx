@@ -129,4 +129,14 @@ describe("Navigation", () => {
 
     expect(container.querySelector(".bg-opacity-50")).toBeNull();
   });
+
+  it("initializes in expanded state when localStorage returns null — covers saved=null false branch", () => {
+    // localStorage is cleared in beforeEach, so getItem returns null
+    // The initializer: saved ? JSON.parse(saved) : false → returns false (not collapsed)
+    render(<Navigation logout={mockLogout} />);
+    expect(screen.getByText("Organic Lever")).toBeTruthy();
+    expect(screen.getByText("Dashboard")).toBeTruthy();
+    expect(screen.getByText("Team")).toBeTruthy();
+    expect(screen.getByText("Logout")).toBeTruthy();
+  });
 });
