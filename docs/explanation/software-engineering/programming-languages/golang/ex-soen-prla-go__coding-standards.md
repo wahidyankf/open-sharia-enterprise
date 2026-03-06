@@ -955,6 +955,35 @@ type Service struct{}    // user.Service (good)
 type UserUser struct{}   // user.UserUser (bad!)
 ```
 
+#### Source File Naming
+
+**MUST** use lowercase with underscores as word separators. Never use hyphens in Go filenames.
+
+```
+// CORRECT: Underscores separate words
+agents_sync.go
+agents_validate_sync.go
+docs_validate_links.go
+spec_coverage_validate.go
+
+// WRONG: Hyphens (not valid Go file naming)
+agents-sync.go
+docs-validate-links.go
+```
+
+**Rationale**: The Go ecosystem convention is underscores in source file names. `gofmt` and Go tooling treat hyphens in filenames as unusual. Hyphens are the Gherkin convention (feature files, `@tag` names); underscores are the Go convention (`.go` files).
+
+**For CLI command files** following the domain-prefixed subcommand pattern:
+
+| Artifact         | Pattern                                 | Example                                    |
+| ---------------- | --------------------------------------- | ------------------------------------------ |
+| Parent cmd file  | `{domain}.go`                           | `agents.go`                                |
+| Command file     | `{domain}_{action}.go`                  | `agents_validate_sync.go`                  |
+| Unit test        | `{domain}_{action}_test.go`             | `agents_validate_sync_test.go`             |
+| Integration test | `{domain}_{action}.integration_test.go` | `agents_validate_sync.integration_test.go` |
+
+**See**: [BDD Spec-to-Test Mapping Convention](../../../../../governance/development/infra/bdd-spec-test-mapping.md) for how this maps to Gherkin feature file names (which use hyphens) and `@tag` identifiers.
+
 #### Constants
 
 **MUST** use PascalCase for exported constants, camelCase for unexported constants.
