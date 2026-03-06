@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 import { render, screen, cleanup, act, waitFor } from "@testing-library/react";
 import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
-import { http, HttpResponse } from "msw";
+import { http } from "msw";
 import { AUTHENTICATED } from "../../../../test/helpers/auth-mock";
 import { server } from "../../../../test/server";
 
