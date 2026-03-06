@@ -206,9 +206,9 @@ func InitializeSyncAgentsScenario(sc *godog.ScenarioContext) {
 	sc.Step(`^a \.claude/ directory with agents and skills to convert$`, s.aClaudeDirectoryWithAgentsAndSkillsToConvert)
 	sc.Step(`^a \.claude/ directory with both agents and skills$`, s.aClaudeDirectoryWithBothAgentsAndSkills)
 	sc.Step(`^a \.claude/ agent configured with the "sonnet" model$`, s.aClaudeAgentConfiguredWithTheSonnetModel)
-	sc.Step(`^the developer runs sync-agents$`, s.theDeveloperRunsSyncAgents)
-	sc.Step(`^the developer runs sync-agents with the --dry-run flag$`, s.theDeveloperRunsSyncAgentsWithTheDryRunFlag)
-	sc.Step(`^the developer runs sync-agents with the --agents-only flag$`, s.theDeveloperRunsSyncAgentsWithTheAgentsOnlyFlag)
+	sc.Step(`^the developer runs agents sync$`, s.theDeveloperRunsSyncAgents)
+	sc.Step(`^the developer runs agents sync with the --dry-run flag$`, s.theDeveloperRunsSyncAgentsWithTheDryRunFlag)
+	sc.Step(`^the developer runs agents sync with the --agents-only flag$`, s.theDeveloperRunsSyncAgentsWithTheAgentsOnlyFlag)
 	sc.Step(`^the command exits successfully$`, s.theCommandExitsSuccessfully)
 	sc.Step(`^the \.opencode/ directory contains the converted configuration$`, s.theOpenCodeDirectoryContainsTheConvertedConfiguration)
 	sc.Step(`^the output describes the planned operations$`, s.theOutputDescribesThePlannedOperations)
@@ -224,7 +224,7 @@ func TestIntegrationSyncAgents(t *testing.T) {
 			Format:   "pretty",
 			Paths:    []string{specsSyncAgentsDir},
 			TestingT: t,
-			Tags:     "sync-agents",
+			Tags:     "agents-sync",
 		},
 	}
 	if suite.Run() != 0 {

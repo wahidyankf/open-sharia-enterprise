@@ -21,25 +21,25 @@ var specsJavaDir = func() string {
 
 // Scenario: A source tree with all packages annotated passes validation
 // Given a Java source tree where every package has a @NullMarked-annotated package-info.java
-// When the developer runs validate-java-annotations on the source root
+// When the developer runs java validate-annotations on the source root
 // Then the command exits successfully
 // And the output reports zero violations
 
 // Scenario: A package missing package-info.java fails validation
 // Given a Java source tree where one package has no package-info.java file
-// When the developer runs validate-java-annotations on the source root
+// When the developer runs java validate-annotations on the source root
 // Then the command exits with a failure code
 // And the output identifies the package missing package-info.java
 
 // Scenario: A package-info.java without the required annotation fails validation
 // Given a Java source tree where one package has a package-info.java without @NullMarked
-// When the developer runs validate-java-annotations on the source root
+// When the developer runs java validate-annotations on the source root
 // Then the command exits with a failure code
 // And the output identifies the package with the missing annotation
 
 // Scenario: A custom annotation can be specified via flag
 // Given a Java source tree where every package has a @NonNull-annotated package-info.java
-// When the developer runs validate-java-annotations with --annotation NonNull
+// When the developer runs java validate-annotations with --annotation NonNull
 // Then the command exits successfully
 // And the output reports zero violations
 
@@ -198,9 +198,9 @@ func InitializeJavaAnnotationsScenario(sc *godog.ScenarioContext) {
 		s.aJavaSourceTreeWhereOnePackageHasAPackageInfoJavaWithoutNullMarked)
 	sc.Step(`^a Java source tree where every package has a @NonNull-annotated package-info\.java$`,
 		s.aJavaSourceTreeWhereEveryPackageHasANonNullAnnotatedPackageInfoJava)
-	sc.Step(`^the developer runs validate-java-annotations on the source root$`,
+	sc.Step(`^the developer runs java validate-annotations on the source root$`,
 		s.theDeveloperRunsValidateJavaAnnotationsOnTheSourceRoot)
-	sc.Step(`^the developer runs validate-java-annotations with --annotation NonNull$`,
+	sc.Step(`^the developer runs java validate-annotations with --annotation NonNull$`,
 		s.theDeveloperRunsValidateJavaAnnotationsWithAnnotationNonNull)
 	sc.Step(`^the command exits successfully$`,
 		s.theCommandExitsSuccessfully)

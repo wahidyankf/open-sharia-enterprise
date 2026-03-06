@@ -203,9 +203,9 @@ func InitializeValidateDocsNamingScenario(sc *godog.ScenarioContext) {
 	sc.Step(`^a docs directory containing a file without the double-underscore prefix separator$`, s.aDocsDirWithMissingSeparator)
 	sc.Step(`^a docs directory containing a file whose prefix does not match its directory path$`, s.aDocsDirWithWrongPrefix)
 	sc.Step(`^a docs directory containing files with naming violations$`, s.aDocsDirWithNamingViolations)
-	sc.Step(`^the developer runs validate-docs-naming$`, s.runValidateDocsNaming)
-	sc.Step(`^the developer runs validate-docs-naming with the --fix flag$`, s.runValidateDocsNamingWithFix)
-	sc.Step(`^the developer runs validate-docs-naming with --fix and --apply flags$`, s.runValidateDocsNamingWithFixAndApply)
+	sc.Step(`^the developer runs docs validate-naming$`, s.runValidateDocsNaming)
+	sc.Step(`^the developer runs docs validate-naming with the --fix flag$`, s.runValidateDocsNamingWithFix)
+	sc.Step(`^the developer runs docs validate-naming with --fix and --apply flags$`, s.runValidateDocsNamingWithFixAndApply)
 	sc.Step(`^the command exits successfully$`, s.commandExitsSuccessfully)
 	sc.Step(`^the command exits with a failure code$`, s.commandExitsWithFailureCode)
 	sc.Step(`^the output reports zero violations$`, s.outputReportsZeroViolations)
@@ -222,7 +222,7 @@ func TestIntegrationValidateDocsNaming(t *testing.T) {
 		Options: &godog.Options{
 			Format:   "pretty",
 			Paths:    []string{specsDocsNamingDir},
-			Tags:     "validate-docs-naming",
+			Tags:     "docs-validate-naming",
 			TestingT: t,
 		},
 	}

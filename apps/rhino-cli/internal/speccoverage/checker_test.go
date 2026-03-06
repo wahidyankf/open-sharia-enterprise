@@ -459,7 +459,7 @@ func TestExtractAllStepTexts_SkipsNodeModules(t *testing.T) {
 }
 
 // --- Go godog integration test support ---
-// The validate-spec-coverage integration tests use only TypeScript fixture files.
+// The spec-coverage-validate integration tests use only TypeScript fixture files.
 // These tests cover the Go-specific code paths (sc.Step backtick patterns and
 // // Scenario: comments) that are not exercised by the integration suite.
 

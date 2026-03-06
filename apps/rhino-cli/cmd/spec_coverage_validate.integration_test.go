@@ -202,7 +202,7 @@ func InitializeValidateSpecCoverageScenario(sc *godog.ScenarioContext) {
 	sc.Step(`^a specs directory containing a feature file with no corresponding test file$`, s.aSpecsDirectoryContainingAFeatureFileWithNoCorrespondingTestFile)
 	sc.Step(`^a feature file with a scenario whose title does not appear in any test file$`, s.aFeatureFileWithAScenarioWhoseTitleDoesNotAppearInAnyTestFile)
 	sc.Step(`^a feature file with a step text that does not appear in any test file$`, s.aFeatureFileWithAStepTextThatDoesNotAppearInAnyTestFile)
-	sc.Step(`^the developer runs validate-spec-coverage on the specs and app directories$`, s.theDeveloperRunsValidateSpecCoverageOnTheSpecsAndAppDirectories)
+	sc.Step(`^the developer runs spec-coverage validate on the specs and app directories$`, s.theDeveloperRunsValidateSpecCoverageOnTheSpecsAndAppDirectories)
 	sc.Step(`^the command exits successfully$`, s.theCommandExitsSuccessfully)
 	sc.Step(`^the command exits with a failure code$`, s.theCommandExitsWithAFailureCode)
 	sc.Step(`^the output reports all specs as covered$`, s.theOutputReportsAllSpecsAsCovered)

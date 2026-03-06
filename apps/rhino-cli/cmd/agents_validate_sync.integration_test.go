@@ -212,7 +212,7 @@ func InitializeValidateSyncScenario(sc *godog.ScenarioContext) {
 	sc.Step(`^\.claude/ and \.opencode/ configurations that are fully synchronised$`, s.claudeAndOpencodeConfigsThatAreFullySynchronised)
 	sc.Step(`^an agent in \.claude/ whose description differs from its \.opencode/ counterpart$`, s.anAgentInClaudeWhoseDescriptionDiffersFromItsOpenCodeCounterpart)
 	sc.Step(`^\.claude/ containing more agents than \.opencode/$`, s.claudeContainingMoreAgentsThanOpenCode)
-	sc.Step(`^the developer runs validate-sync$`, s.theDeveloperRunsValidateSync)
+	sc.Step(`^the developer runs agents validate-sync$`, s.theDeveloperRunsValidateSync)
 	sc.Step(`^the command exits successfully$`, s.theCommandExitsSuccessfully)
 	sc.Step(`^the command exits with a failure code$`, s.theCommandExitsWithAFailureCode)
 	sc.Step(`^the output reports all sync checks as passing$`, s.theOutputReportsAllSyncChecksAsPassing)
@@ -227,7 +227,7 @@ func TestIntegrationValidateSync(t *testing.T) {
 			Format:   "pretty",
 			Paths:    []string{specsValidateSyncDir},
 			TestingT: t,
-			Tags:     "validate-sync",
+			Tags:     "agents-validate-sync",
 		},
 	}
 	if suite.Run() != 0 {

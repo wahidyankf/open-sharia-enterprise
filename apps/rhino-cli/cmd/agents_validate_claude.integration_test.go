@@ -228,9 +228,9 @@ func InitializeValidateClaudeScenario(sc *godog.ScenarioContext) {
 	sc.Step(`^a \.claude/ directory containing two agent files declaring the same name$`, s.aClaudeDirWithTwoAgentsDeclaringSameName)
 	sc.Step(`^a \.claude/ directory where agents are valid but skills have issues$`, s.aClaudeDirWhereAgentsAreValidButSkillsHaveIssues)
 	sc.Step(`^a \.claude/ directory where skills are valid but agents have issues$`, s.aClaudeDirWhereSkillsAreValidButAgentsHaveIssues)
-	sc.Step(`^the developer runs validate-claude$`, s.runValidateClaude)
-	sc.Step(`^the developer runs validate-claude with the --agents-only flag$`, s.runValidateClaudeWithAgentsOnlyFlag)
-	sc.Step(`^the developer runs validate-claude with the --skills-only flag$`, s.runValidateClaudeWithSkillsOnlyFlag)
+	sc.Step(`^the developer runs agents validate-claude$`, s.runValidateClaude)
+	sc.Step(`^the developer runs agents validate-claude with the --agents-only flag$`, s.runValidateClaudeWithAgentsOnlyFlag)
+	sc.Step(`^the developer runs agents validate-claude with the --skills-only flag$`, s.runValidateClaudeWithSkillsOnlyFlag)
 	sc.Step(`^the command exits successfully$`, s.commandExitsSuccessfullyForClaude)
 	sc.Step(`^the command exits with a failure code$`, s.commandExitsWithFailureCodeForClaude)
 	sc.Step(`^the output reports all checks as passing$`, s.outputReportsAllChecksAsPassing)
@@ -244,7 +244,7 @@ func TestIntegrationValidateClaude(t *testing.T) {
 		Options: &godog.Options{
 			Format:   "pretty",
 			Paths:    []string{specsClaudeDir},
-			Tags:     "validate-claude",
+			Tags:     "agents-validate-claude",
 			TestingT: t,
 		},
 	}

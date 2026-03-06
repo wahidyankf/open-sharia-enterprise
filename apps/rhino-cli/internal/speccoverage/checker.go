@@ -178,10 +178,14 @@ func walkFeatureFiles(dir string) ([]string, error) {
 
 // findMatchingTestFile returns the path of the first file under appDir whose
 // base name starts with stem+"." or equals stem exactly, or "" if none found.
+// Also matches the underscore variant of a hyphenated stem so that feature file
+// stems (hyphens) match Go test files (underscores).
 func findMatchingTestFile(appDir, stem string) (string, error) {
 	if _, err := os.Stat(appDir); os.IsNotExist(err) {
 		return "", nil
 	}
+
+	underscoreStem := strings.ReplaceAll(stem, "-", "_")
 
 	var found string
 
@@ -197,7 +201,7 @@ func findMatchingTestFile(appDir, stem string) (string, error) {
 		}
 
 		base := filepath.Base(path)
-		if strings.HasPrefix(base, stem+".") || base == stem {
+		if strings.HasPrefix(base, stem+".") || strings.HasPrefix(base, underscoreStem+".") || base == stem || base == underscoreStem {
 			// Skip non-test Go files (e.g. doctor.go) — only _test.go files count.
 			if strings.HasSuffix(base, ".go") && !strings.HasSuffix(base, "_test.go") {
 				return nil
