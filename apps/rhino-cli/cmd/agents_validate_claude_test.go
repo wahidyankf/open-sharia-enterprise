@@ -586,3 +586,38 @@ func TestValidateClaudeCommand_VerboseOutput(t *testing.T) {
 		t.Error("Expected verbose output to contain check status indicators")
 	}
 }
+
+func TestValidateClaudeCommand_MissingGitRoot(t *testing.T) {
+	// Covers line 75: findGitRoot() error when not in a git repository
+	// (must not use conflicting flags, since ConflictingFlags returns early before line 75)
+	originalWd, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("Failed to get working directory: %v", err)
+	}
+	defer func() { _ = os.Chdir(originalWd) }()
+
+	tmpDir := t.TempDir()
+	if err := os.Chdir(tmpDir); err != nil {
+		t.Fatalf("Failed to change to temp directory: %v", err)
+	}
+	// No .git directory — findGitRoot() will fail
+
+	cmd := validateClaudeCmd
+	buf := new(bytes.Buffer)
+	cmd.SetOut(buf)
+	cmd.SetErr(buf)
+
+	agentsOnly = false
+	skillsOnly = false
+	output = "text"
+	verbose = false
+	quiet = false
+
+	err = cmd.RunE(cmd, []string{})
+	if err == nil {
+		t.Fatal("expected error when no .git directory found")
+	}
+	if !strings.Contains(err.Error(), "git") {
+		t.Errorf("expected error mentioning 'git', got: %v", err)
+	}
+}

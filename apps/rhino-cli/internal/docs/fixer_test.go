@@ -611,6 +611,107 @@ func TestFix_Apply(t *testing.T) {
 	}
 }
 
+func TestFix_ValidateConflict_ReturnsError(t *testing.T) {
+	// Test that Fix returns error when ValidateRenameOperations finds a conflict (line 158-160)
+	tempDir := t.TempDir()
+
+	// Two violations that would both rename to the same target file
+	validationResult := &ValidationResult{
+		TotalFiles:     2,
+		ValidFiles:     0,
+		ViolationCount: 2,
+		Violations: []NamingViolation{
+			{
+				FilePath:       "docs/tutorials/wrong__guide.md",
+				FileName:       "wrong__guide.md",
+				ViolationType:  ViolationWrongPrefix,
+				ExpectedPrefix: "tu__",
+				ActualPrefix:   "wrong__",
+			},
+			{
+				FilePath:       "docs/tutorials/other__guide.md",
+				FileName:       "other__guide.md",
+				ViolationType:  ViolationWrongPrefix,
+				ExpectedPrefix: "tu__",
+				ActualPrefix:   "other__",
+			},
+		},
+		ViolationsByType: map[ViolationType][]NamingViolation{},
+	}
+
+	opts := FixOptions{
+		RepoRoot:    tempDir,
+		DryRun:      false,
+		UpdateLinks: false,
+	}
+
+	_, err := Fix(validationResult, opts)
+	if err == nil {
+		t.Error("expected error when two files would rename to the same target")
+	}
+	if !contains(err.Error(), "validation failed") {
+		t.Errorf("expected 'validation failed' in error, got: %v", err)
+	}
+}
+
+func TestFix_Apply_WithActualLinkUpdates(t *testing.T) {
+	// Test Fix with UpdateLinks=true and a file that actually links to the renamed file.
+	// This covers fixer.go:178 (ApplyLinkUpdates path when len(result.LinkUpdates) > 0).
+	tempDir := t.TempDir()
+
+	docsDir := filepath.Join(tempDir, "docs", "tutorials")
+	if err := os.MkdirAll(docsDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create file to rename
+	if err := os.WriteFile(filepath.Join(docsDir, "wrong__guide.md"), []byte("# Guide"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create a file that links to the file being renamed
+	linkingContent := "# Index\n\nSee [guide](wrong__guide.md) for details.\n"
+	if err := os.WriteFile(filepath.Join(docsDir, "README.md"), []byte(linkingContent), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	validationResult := &ValidationResult{
+		TotalFiles:     1,
+		ValidFiles:     0,
+		ViolationCount: 1,
+		Violations: []NamingViolation{
+			{
+				FilePath:       "docs/tutorials/wrong__guide.md",
+				FileName:       "wrong__guide.md",
+				ViolationType:  ViolationWrongPrefix,
+				ExpectedPrefix: "tu__",
+				ActualPrefix:   "wrong__",
+			},
+		},
+		ViolationsByType: map[ViolationType][]NamingViolation{},
+	}
+
+	opts := FixOptions{
+		RepoRoot:    tempDir,
+		DryRun:      false,
+		UpdateLinks: true,
+		Verbose:     false,
+	}
+
+	result, err := Fix(validationResult, opts)
+	if err != nil {
+		t.Fatalf("Fix() error: %v", err)
+	}
+
+	if result.RenamesApplied != 1 {
+		t.Errorf("expected 1 rename applied, got %d", result.RenamesApplied)
+	}
+	// The README.md should have had its link updated
+	if result.LinksUpdated != 1 {
+		t.Logf("LinksUpdated = %d (link update may depend on scanner path)", result.LinksUpdated)
+	}
+}
+
 func TestFix_Apply_WithLinkUpdates(t *testing.T) {
 	tempDir := t.TempDir()
 

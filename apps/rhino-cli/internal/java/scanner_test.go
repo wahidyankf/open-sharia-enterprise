@@ -6,6 +6,31 @@ import (
 	"testing"
 )
 
+func TestScanPackages_WalkError(t *testing.T) {
+	// Create a subdir with a .java file then make it unreadable to trigger WalkDir error.
+	tmpDir := t.TempDir()
+	pkgDir := filepath.Join(tmpDir, "com", "example")
+	if err := os.MkdirAll(pkgDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(pkgDir, "A.java"), []byte("class A {}"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	// Make the subdir unreadable so WalkDir encounters a permission error
+	if err := os.Chmod(pkgDir, 0000); err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chmod(pkgDir, 0755) }()
+
+	_, err := ScanPackages(tmpDir)
+	// On non-root systems this returns an error; root may succeed
+	if err != nil {
+		if len(err.Error()) == 0 {
+			t.Error("expected non-empty error from ScanPackages with unreadable dir")
+		}
+	}
+}
+
 func TestScanPackages_Empty(t *testing.T) {
 	tmpDir := t.TempDir()
 

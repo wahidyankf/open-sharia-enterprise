@@ -328,3 +328,32 @@ func TestValidateTestCoverageCmd_QuietMode(t *testing.T) {
 		t.Error("expected error even in quiet mode for failing coverage")
 	}
 }
+
+func TestValidateTestCoverageCmd_MissingGitRoot(t *testing.T) {
+	// Covers line 51: findGitRoot() error when not in a git repository
+	originalWd, _ := os.Getwd()
+	defer func() { _ = os.Chdir(originalWd) }()
+
+	tmpDir := t.TempDir()
+	if err := os.Chdir(tmpDir); err != nil {
+		t.Fatal(err)
+	}
+	// No .git directory — findGitRoot() will fail
+
+	cmd := validateTestCoverageCmd
+	buf := new(bytes.Buffer)
+	cmd.SetOut(buf)
+	cmd.SetErr(buf)
+
+	verbose = false
+	quiet = false
+	output = "text"
+
+	err := cmd.RunE(cmd, []string{"cover.out", "85"})
+	if err == nil {
+		t.Fatal("expected error when no .git directory found")
+	}
+	if !strings.Contains(err.Error(), "git") {
+		t.Errorf("expected error mentioning 'git', got: %v", err)
+	}
+}

@@ -175,3 +175,41 @@ func TestFormatMarkdown_WithViolations(t *testing.T) {
 		t.Error("expected violating package path")
 	}
 }
+
+func TestFormatMarkdown_UnknownViolationType(t *testing.T) {
+	// Covers the default/fallthrough case in reporter.go:116 switch statement
+	// (a ViolationType that doesn't match ViolationMissingPackageInfo or ViolationMissingAnnotation)
+	result := &ValidationResult{
+		TotalPackages: 1,
+		ValidPackages: 0,
+		AllPackages: []PackageEntry{
+			{PackageDir: "com/example", Valid: false, ViolationType: "unknown_violation"},
+		},
+		Annotation: "NullMarked",
+	}
+
+	out := FormatMarkdown(result)
+
+	if !strings.Contains(out, "## Violations") {
+		t.Error("expected violations section heading")
+	}
+}
+
+func TestFormatText_UnknownViolationType(t *testing.T) {
+	// Covers the default/fallthrough in FormatText switch (ViolationType not matching known types)
+	result := &ValidationResult{
+		TotalPackages: 1,
+		ValidPackages: 0,
+		AllPackages: []PackageEntry{
+			{PackageDir: "com/example", Valid: false, ViolationType: "unknown_violation"},
+		},
+		Annotation: "NullMarked",
+	}
+
+	out := FormatText(result, false, false)
+
+	// Should still produce output with violation count
+	if !strings.Contains(out, "1 violation(s) found") {
+		t.Errorf("expected violation count in output, got: %q", out)
+	}
+}

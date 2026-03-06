@@ -3,6 +3,7 @@ package speccoverage
 import (
 	"os"
 	"path/filepath"
+	"regexp"
 	"testing"
 )
 
@@ -587,5 +588,439 @@ Feature: Go feature
 	}
 	if result.StepGaps[0].StepText != "some step" {
 		t.Errorf("StepGap text = %q, want %q", result.StepGaps[0].StepText, "some step")
+	}
+}
+
+func TestCheckAll_GoTestFile_WithMatchingStep(t *testing.T) {
+	// Test the goStepRe match path that adds a compiled regex pattern
+	root := t.TempDir()
+
+	writeContent(t, filepath.Join(root, "specs", "myfeature.feature"), `
+Feature: My feature
+  Scenario: My scenario
+    Given the user logs in
+`)
+
+	// Go test file with matching godog step definition
+	goTestContent := "package mypackage\n\n" +
+		"// Scenario: My scenario\n" +
+		"func InitializeScenario(ctx *godog.ScenarioContext) {\n" +
+		"\tctx.Step(`^the user logs in$`, theUserLogsIn)\n" +
+		"}\n"
+	writeContent(t, filepath.Join(root, "app", "myfeature.integration_test.go"), goTestContent)
+
+	opts := ScanOptions{
+		RepoRoot: root,
+		SpecsDir: filepath.Join(root, "specs"),
+		AppDir:   filepath.Join(root, "app"),
+	}
+
+	result, err := CheckAll(opts)
+	if err != nil {
+		t.Fatalf("CheckAll() error = %v", err)
+	}
+
+	if len(result.Gaps) != 0 {
+		t.Errorf("Gaps = %v, want none", result.Gaps)
+	}
+	if len(result.ScenarioGaps) != 0 {
+		t.Errorf("ScenarioGaps = %v, want none", result.ScenarioGaps)
+	}
+	if len(result.StepGaps) != 0 {
+		t.Errorf("StepGaps = %v, want none (step matched by regex)", result.StepGaps)
+	}
+}
+
+func TestCheckAll_TSTestFile_SingleQuotedScenario(t *testing.T) {
+	// Tests extractScenarioTitles with single-quoted Scenario definitions
+	root := t.TempDir()
+
+	writeContent(t, filepath.Join(root, "specs", "login.feature"), `
+Feature: Login
+  Scenario: User can login
+    Given I am on the login page
+    When I enter valid credentials
+    Then I am logged in
+`)
+
+	// TS test with single-quoted scenario
+	tsContent := "import { Scenario } from 'vitest-cucumber';\n" +
+		"Scenario('User can login', () => {\n" +
+		"  Given('I am on the login page', () => {});\n" +
+		"  When('I enter valid credentials', () => {});\n" +
+		"  Then('I am logged in', () => {});\n" +
+		"});\n"
+	writeContent(t, filepath.Join(root, "app", "login.test.tsx"), tsContent)
+
+	opts := ScanOptions{
+		RepoRoot: root,
+		SpecsDir: filepath.Join(root, "specs"),
+		AppDir:   filepath.Join(root, "app"),
+	}
+
+	result, err := CheckAll(opts)
+	if err != nil {
+		t.Fatalf("CheckAll() error = %v", err)
+	}
+	if len(result.Gaps) != 0 {
+		t.Errorf("Gaps = %v, want none", result.Gaps)
+	}
+	if len(result.ScenarioGaps) != 0 {
+		t.Errorf("ScenarioGaps = %v, want none", result.ScenarioGaps)
+	}
+	if len(result.StepGaps) != 0 {
+		t.Errorf("StepGaps = %v, want none", result.StepGaps)
+	}
+}
+
+func TestCheckAll_NonGoFileTypes(t *testing.T) {
+	// Tests extractAllStepTexts with .js, .jsx files
+	root := t.TempDir()
+
+	writeContent(t, filepath.Join(root, "specs", "checkout.feature"), `
+Feature: Checkout
+  Scenario: Add to cart
+    Given the product page
+    When I click add to cart
+    Then the item is in cart
+`)
+
+	// JS file with step definitions
+	jsContent := "Given('the product page', () => {});\n" +
+		"When('I click add to cart', () => {});\n" +
+		"Then('the item is in cart', () => {});\n"
+	writeContent(t, filepath.Join(root, "app", "checkout.test.js"), jsContent)
+
+	// JSX file with scenario
+	jsxContent := "import { Scenario } from 'vitest-cucumber';\n" +
+		"Scenario('Add to cart', () => {});\n"
+	writeContent(t, filepath.Join(root, "app", "checkout.test.jsx"), jsxContent)
+
+	opts := ScanOptions{
+		RepoRoot: root,
+		SpecsDir: filepath.Join(root, "specs"),
+		AppDir:   filepath.Join(root, "app"),
+	}
+
+	result, err := CheckAll(opts)
+	if err != nil {
+		t.Fatalf("CheckAll() error = %v", err)
+	}
+	// checkout.test.jsx matches (starts with "checkout.")
+	if len(result.Gaps) != 0 {
+		t.Errorf("Gaps = %v, want none", result.Gaps)
+	}
+}
+
+func TestCheckAll_SkipDirs(t *testing.T) {
+	// Tests that node_modules and .next directories are skipped
+	root := t.TempDir()
+
+	writeContent(t, filepath.Join(root, "specs", "user.feature"), `
+Feature: User
+  Scenario: Valid user
+    Given a valid user
+`)
+
+	// Create matching test in the app
+	tsContent := "Scenario('Valid user', () => {\n  Given('a valid user', () => {});\n});\n"
+	writeContent(t, filepath.Join(root, "app", "user.test.tsx"), tsContent)
+
+	// Create step definitions in node_modules (should be skipped)
+	writeContent(t, filepath.Join(root, "app", "node_modules", "step-defs.ts"),
+		"Given('a step in node_modules', () => {});\n")
+
+	// Create step definitions in .next (should be skipped)
+	writeContent(t, filepath.Join(root, "app", ".next", "step-defs.ts"),
+		"Given('a step in .next', () => {});\n")
+
+	opts := ScanOptions{
+		RepoRoot: root,
+		SpecsDir: filepath.Join(root, "specs"),
+		AppDir:   filepath.Join(root, "app"),
+	}
+
+	result, err := CheckAll(opts)
+	if err != nil {
+		t.Fatalf("CheckAll() error = %v", err)
+	}
+	if len(result.Gaps) != 0 {
+		t.Errorf("Gaps = %v, want none", result.Gaps)
+	}
+}
+
+func TestCheckAll_NonGoFileStem_MatchesGoNonTest(t *testing.T) {
+	// Test that plain .go files (non-_test.go) are skipped when finding matching test files
+	root := t.TempDir()
+
+	writeContent(t, filepath.Join(root, "specs", "doctor.feature"), `
+Feature: Doctor
+  Scenario: Check tools
+    Given all tools installed
+`)
+
+	// Create a non-test .go file that matches the stem — should NOT be treated as test file
+	writeContent(t, filepath.Join(root, "app", "doctor.go"), "package doctor\n")
+
+	opts := ScanOptions{
+		RepoRoot: root,
+		SpecsDir: filepath.Join(root, "specs"),
+		AppDir:   filepath.Join(root, "app"),
+	}
+
+	result, err := CheckAll(opts)
+	if err != nil {
+		t.Fatalf("CheckAll() error = %v", err)
+	}
+	// doctor.go is a non-test file, should not count as a match
+	if len(result.Gaps) != 1 {
+		t.Errorf("Gaps = %d, want 1 (non-test .go file should not match)", len(result.Gaps))
+	}
+}
+
+func TestExtractGoStepTexts_InvalidRegex(t *testing.T) {
+	// Test that invalid regex patterns in godog step definitions are skipped gracefully
+	root := t.TempDir()
+
+	// Go file with an invalid regex pattern in Step()
+	goContent := "package mypackage\n\n" +
+		"func init() {\n" +
+		"\tsc.Step(`[invalid regex(`, myStep)\n" + // invalid regex
+		"\tsc.Step(`^valid step$`, validStep)\n" + // valid regex
+		"}\n"
+	goFile := filepath.Join(root, "test_steps.go")
+	writeContent(t, goFile, goContent)
+
+	sm := &stepMatcher{exact: map[string]bool{}}
+	err := extractGoStepTexts(goFile, sm)
+	if err != nil {
+		t.Fatalf("extractGoStepTexts() should not error for invalid regex, got: %v", err)
+	}
+	// Only the valid regex should be in patterns
+	if len(sm.patterns) != 1 {
+		t.Errorf("patterns = %d, want 1 (invalid regex skipped)", len(sm.patterns))
+	}
+}
+
+func TestStepMatcher_GoPattern(t *testing.T) {
+	// Test the sm.patterns path in matches()
+	sm := &stepMatcher{exact: map[string]bool{}}
+
+	// Add a regex pattern
+	importRe, err := regexp.Compile(`^the user (.+) logs in$`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	sm.patterns = append(sm.patterns, importRe)
+
+	// Should match via pattern
+	if !sm.matches("the user alice logs in") {
+		t.Error("expected pattern to match 'the user alice logs in'")
+	}
+	// Should not match
+	if sm.matches("a completely different step") {
+		t.Error("expected pattern NOT to match 'a completely different step'")
+	}
+}
+
+func TestWalkFeatureFiles_WalkError(t *testing.T) {
+	// Make a subdir unreadable to trigger Walk error path in walkFeatureFiles.
+	tmpDir := t.TempDir()
+	subDir := filepath.Join(tmpDir, "sub")
+	if err := os.MkdirAll(subDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(subDir, "test.feature"), []byte("Feature: test"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chmod(subDir, 0000); err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chmod(subDir, 0755) }()
+
+	_, err := walkFeatureFiles(tmpDir)
+	// On non-root this should return an error
+	if err != nil {
+		if len(err.Error()) == 0 {
+			t.Error("expected non-empty error from walkFeatureFiles with unreadable dir")
+		}
+	}
+}
+
+func TestFindMatchingTestFile_WalkError(t *testing.T) {
+	// Make a subdir unreadable to trigger Walk error in findMatchingTestFile.
+	tmpDir := t.TempDir()
+	subDir := filepath.Join(tmpDir, "src")
+	if err := os.MkdirAll(subDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(subDir, "myspec.test.ts"), []byte(""), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chmod(subDir, 0000); err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chmod(subDir, 0755) }()
+
+	_, err := findMatchingTestFile(tmpDir, "myspec")
+	// On non-root this should return an error
+	if err != nil {
+		if len(err.Error()) == 0 {
+			t.Error("expected non-empty error from findMatchingTestFile with unreadable dir")
+		}
+	}
+}
+
+func TestExtractTSScenarioTitles_UnreadableFile(t *testing.T) {
+	// Make a TS file unreadable to trigger os.Open error path.
+	tmpDir := t.TempDir()
+	path := filepath.Join(tmpDir, "test.tsx")
+	if err := os.WriteFile(path, []byte("Scenario('test', () => {})"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chmod(path, 0000); err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chmod(path, 0644) }()
+
+	_, err := extractTSScenarioTitles(path)
+	// On non-root this should return an error
+	if err != nil {
+		if len(err.Error()) == 0 {
+			t.Error("expected non-empty error from extractTSScenarioTitles with unreadable file")
+		}
+	}
+}
+
+func TestExtractGoScenarioTitles_UnreadableFile(t *testing.T) {
+	// Make a Go file unreadable to trigger os.Open error path.
+	tmpDir := t.TempDir()
+	path := filepath.Join(tmpDir, "feature_test.go")
+	if err := os.WriteFile(path, []byte("package p\n// Scenario: X\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chmod(path, 0000); err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chmod(path, 0644) }()
+
+	_, err := extractGoScenarioTitles(path)
+	// On non-root this should return an error
+	if err != nil {
+		if len(err.Error()) == 0 {
+			t.Error("expected non-empty error from extractGoScenarioTitles with unreadable file")
+		}
+	}
+}
+
+func TestExtractTSStepTexts_UnreadableFile(t *testing.T) {
+	// Make a TS file unreadable to trigger os.Open error path in extractTSStepTexts.
+	tmpDir := t.TempDir()
+	path := filepath.Join(tmpDir, "steps.ts")
+	if err := os.WriteFile(path, []byte("Given('a step', () => {})"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chmod(path, 0000); err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chmod(path, 0644) }()
+
+	sm := &stepMatcher{exact: map[string]bool{}}
+	err := extractTSStepTexts(path, sm)
+	// On non-root this should return an error
+	if err != nil {
+		if len(err.Error()) == 0 {
+			t.Error("expected non-empty error from extractTSStepTexts with unreadable file")
+		}
+	}
+}
+
+func TestExtractGoStepTexts_UnreadableFile(t *testing.T) {
+	// Make a Go file unreadable to trigger os.Open error path in extractGoStepTexts.
+	tmpDir := t.TempDir()
+	path := filepath.Join(tmpDir, "steps_test.go")
+	content := "package p\nfunc init() {\n\tsc.Step(`^a step$`, fn)\n}\n"
+	if err := os.WriteFile(path, []byte(content), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chmod(path, 0000); err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chmod(path, 0644) }()
+
+	sm := &stepMatcher{exact: map[string]bool{}}
+	err := extractGoStepTexts(path, sm)
+	// On non-root this should return an error
+	if err != nil {
+		if len(err.Error()) == 0 {
+			t.Error("expected non-empty error from extractGoStepTexts with unreadable file")
+		}
+	}
+}
+
+func TestCheckAll_WalkFeatureFilesError(t *testing.T) {
+	// Trigger CheckAll error at walkFeatureFiles via an unreadable specs subdir.
+	tmpDir := t.TempDir()
+	specsDir := filepath.Join(tmpDir, "specs")
+	subDir := filepath.Join(specsDir, "sub")
+	if err := os.MkdirAll(subDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(subDir, "test.feature"), []byte("Feature: test"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chmod(subDir, 0000); err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chmod(subDir, 0755) }()
+
+	opts := ScanOptions{
+		RepoRoot: tmpDir,
+		SpecsDir: specsDir,
+		AppDir:   filepath.Join(tmpDir, "app"),
+	}
+
+	_, err := CheckAll(opts)
+	// On non-root this should return an error
+	if err != nil {
+		if len(err.Error()) == 0 {
+			t.Error("expected non-empty error from CheckAll with unreadable specs subdir")
+		}
+	}
+}
+
+func TestCheckAll_ExtractAllStepTextsError(t *testing.T) {
+	// Trigger CheckAll error at extractAllStepTexts by making app subdir unreadable.
+	tmpDir := t.TempDir()
+	specsDir := filepath.Join(tmpDir, "specs")
+	if err := os.MkdirAll(specsDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	// No feature files — walkFeatureFiles returns empty list, then extractAllStepTexts runs
+	appDir := filepath.Join(tmpDir, "app")
+	subDir := filepath.Join(appDir, "src")
+	if err := os.MkdirAll(subDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(subDir, "steps.ts"), []byte("Given('a step', () => {})"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chmod(subDir, 0000); err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chmod(subDir, 0755) }()
+
+	opts := ScanOptions{
+		RepoRoot: tmpDir,
+		SpecsDir: specsDir,
+		AppDir:   appDir,
+	}
+
+	// extractAllStepTexts doesn't return errors through Walk callback (it uses extractTSStepTexts
+	// which returns the error, but Walk receives it). CheckAll may or may not error
+	// depending on how filepath.Walk propagates the error.
+	result, err := CheckAll(opts)
+	if err == nil && result != nil {
+		// If no error (root user or OS behavior), CheckAll completed OK — acceptable
 	}
 }

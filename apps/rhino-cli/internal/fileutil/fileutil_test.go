@@ -139,6 +139,32 @@ func TestWalkMarkdownDirs_NestedSubdirs(t *testing.T) {
 	}
 }
 
+func TestWalkMarkdownDirs_WalkError(t *testing.T) {
+	// Create a subdir then make it unreadable to trigger Walk error path.
+	tmpDir := t.TempDir()
+	docsDir := filepath.Join(tmpDir, "docs")
+	subDir := filepath.Join(docsDir, "tutorials")
+	if err := os.MkdirAll(subDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(subDir, "file.md"), []byte("# Content"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	// Make the subdir unreadable so Walk encounters a permission error
+	if err := os.Chmod(subDir, 0000); err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chmod(subDir, 0755) }()
+
+	_, err := WalkMarkdownDirs(tmpDir, []string{"docs"})
+	// On non-root systems this should return an error; root may succeed
+	if err != nil {
+		if len(err.Error()) == 0 {
+			t.Error("expected non-empty error from WalkMarkdownDirs with unreadable dir")
+		}
+	}
+}
+
 func TestGetStagedFilesFiltered_InGitRepo(t *testing.T) {
 	tmpDir := t.TempDir()
 

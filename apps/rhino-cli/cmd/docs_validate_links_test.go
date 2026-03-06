@@ -298,3 +298,70 @@ func TestValidateDocsLinksCommand_QuietBrokenLinks(t *testing.T) {
 		t.Error("expected error for broken links in quiet mode")
 	}
 }
+
+func TestValidateDocsLinksCommand_MissingGitRoot(t *testing.T) {
+	originalWd, _ := os.Getwd()
+	defer func() { _ = os.Chdir(originalWd) }()
+
+	tmpDir := t.TempDir()
+	if err := os.Chdir(tmpDir); err != nil {
+		t.Fatal(err)
+	}
+	// No .git directory
+
+	cmd := validateDocsLinksCmd
+	buf := new(bytes.Buffer)
+	cmd.SetOut(buf)
+	cmd.SetErr(buf)
+
+	validateDocsLinksStagedOnly = false
+	output = "text"
+	verbose = false
+	quiet = false
+
+	err := cmd.RunE(cmd, []string{})
+	if err == nil {
+		t.Error("expected error when no .git directory found")
+	}
+	if !strings.Contains(err.Error(), "git") {
+		t.Errorf("expected error mentioning 'git', got: %v", err)
+	}
+}
+
+func TestValidateDocsLinksCommand_BrokenLinks_JSONOutput(t *testing.T) {
+	originalWd, _ := os.Getwd()
+	defer func() { _ = os.Chdir(originalWd) }()
+
+	tmpDir := t.TempDir()
+	if err := os.Chdir(tmpDir); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(tmpDir, ".git"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(tmpDir, "docs"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	content := "# Test\n[broken](./nonexistent.md)\n"
+	if err := os.WriteFile(filepath.Join(tmpDir, "docs", "tu__test.md"), []byte(content), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	cmd := validateDocsLinksCmd
+	buf := new(bytes.Buffer)
+	cmd.SetOut(buf)
+	cmd.SetErr(buf)
+
+	validateDocsLinksStagedOnly = false
+	output = "json"
+	verbose = false
+	quiet = false
+
+	err := cmd.RunE(cmd, []string{})
+	if err == nil {
+		t.Error("expected error for broken links in JSON output")
+	}
+	if !strings.Contains(err.Error(), "broken") {
+		t.Errorf("expected error mentioning broken links, got: %v", err)
+	}
+}

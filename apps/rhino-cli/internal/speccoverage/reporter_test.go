@@ -368,3 +368,61 @@ func TestFormatMarkdown_Success(t *testing.T) {
 		t.Errorf("Expected success message, got: %q", out)
 	}
 }
+
+// TestFormatText_WithBothFileAndScenarioGaps covers the separator branch (line 35-37)
+// between the missing test files section and the missing scenarios section.
+func TestFormatText_WithBothFileAndScenarioGaps(t *testing.T) {
+	result := &CheckResult{
+		TotalSpecs:     2,
+		TotalScenarios: 1,
+		TotalSteps:     2,
+		Gaps: []CoverageGap{
+			{SpecFile: "specs/missing.feature", Stem: "missing"},
+		},
+		ScenarioGaps: []ScenarioGap{
+			{SpecFile: "specs/auth/login.feature", ScenarioTitle: "SSO login"},
+		},
+		Duration: 10 * time.Millisecond,
+	}
+
+	out := FormatText(result, false, false)
+
+	if !strings.Contains(out, "Missing test files (1)") {
+		t.Errorf("expected file gap section, got: %q", out)
+	}
+	if !strings.Contains(out, "Missing scenarios (1)") {
+		t.Errorf("expected scenario gap section, got: %q", out)
+	}
+}
+
+// TestFormatText_WithGapsAndStepGaps covers the separator branch (lines 45-47)
+// between scenario/file gaps and step gaps.
+func TestFormatText_WithGapsAndStepGaps(t *testing.T) {
+	result := &CheckResult{
+		TotalSpecs:     2,
+		TotalScenarios: 2,
+		TotalSteps:     4,
+		Gaps: []CoverageGap{
+			{SpecFile: "specs/missing.feature", Stem: "missing"},
+		},
+		ScenarioGaps: []ScenarioGap{},
+		StepGaps: []StepGap{
+			{
+				SpecFile:      "specs/auth/login.feature",
+				ScenarioTitle: "Successful login",
+				StepKeyword:   "Given",
+				StepText:      "a registered user",
+			},
+		},
+		Duration: 10 * time.Millisecond,
+	}
+
+	out := FormatText(result, false, false)
+
+	if !strings.Contains(out, "Missing test files (1)") {
+		t.Errorf("expected file gap section, got: %q", out)
+	}
+	if !strings.Contains(out, "Missing steps (1)") {
+		t.Errorf("expected step gap section, got: %q", out)
+	}
+}

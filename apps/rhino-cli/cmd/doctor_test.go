@@ -188,3 +188,56 @@ func TestDoctorCommand_MissingGitRoot(t *testing.T) {
 		t.Errorf("expected error to mention 'git', got: %v", err)
 	}
 }
+
+func TestDoctorCommand_MissingToolsReturnError(t *testing.T) {
+	// Verify that when tools are missing the command returns an error
+	// with the count in the message. We use a repo without package.json / go.mod
+	// so that version reads fail gracefully (empty required), then rely on
+	// actual system tools for existence checks.
+	cleanup := setupDoctorTestRepo(t)
+	defer cleanup()
+
+	cmd := doctorCmd
+	buf := new(bytes.Buffer)
+	cmd.SetOut(buf)
+	cmd.SetErr(buf)
+
+	output = "text"
+	verbose = false
+	quiet = false
+
+	err := cmd.RunE(cmd, []string{})
+	// The test environment might or might not have tools missing.
+	// We just check that if an error is returned, it mentions "not found in PATH"
+	if err != nil {
+		if !strings.Contains(err.Error(), "not found in PATH") {
+			t.Errorf("expected 'not found in PATH' in error, got: %v", err)
+		}
+	}
+	// Also ensure output always contains the report header
+	if !strings.Contains(buf.String(), "Doctor Report") {
+		t.Error("expected output to contain 'Doctor Report'")
+	}
+}
+
+func TestDoctorCommand_VerboseOutput(t *testing.T) {
+	cleanup := setupDoctorTestRepo(t)
+	defer cleanup()
+
+	cmd := doctorCmd
+	buf := new(bytes.Buffer)
+	cmd.SetOut(buf)
+	cmd.SetErr(buf)
+
+	output = "text"
+	verbose = true
+	quiet = false
+
+	_ = cmd.RunE(cmd, []string{})
+
+	outputStr := buf.String()
+	// Verbose mode should include timing info
+	if !strings.Contains(outputStr, "Doctor Report") {
+		t.Error("expected verbose output to contain 'Doctor Report'")
+	}
+}

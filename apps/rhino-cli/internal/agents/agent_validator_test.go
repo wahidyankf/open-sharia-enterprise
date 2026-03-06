@@ -559,6 +559,36 @@ func TestValidateAgent_GeneratedReportsPath(t *testing.T) {
 	}
 }
 
+func TestValidateAgent_NoClosingFrontmatter(t *testing.T) {
+	// Tests the ExtractFrontmatter error path (line 42-48) when file passes formatting
+	// but has no closing --- marker. This is different from TestValidateAgent_InvalidYAML
+	// which has name:value (no space) and fails the formatting check first.
+	tmpDir := t.TempDir()
+
+	// Content has proper formatting (spaces after colons) but no closing ---
+	// validateYAMLFormatting will pass (formatting is fine), but ExtractFrontmatter will fail
+	content := "---\nname: test-agent\ndescription: Test desc\n"
+	agentPath := filepath.Join(tmpDir, "test-agent.md")
+	if err := os.WriteFile(agentPath, []byte(content), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	agentNames := make(map[string]bool)
+	skillNames := make(map[string]bool)
+	checks := validateAgent(agentPath, "test-agent.md", agentNames, skillNames)
+
+	foundFailed := false
+	for _, c := range checks {
+		if c.Status == "failed" {
+			foundFailed = true
+			break
+		}
+	}
+	if !foundFailed {
+		t.Error("expected at least one failed check for missing closing ---")
+	}
+}
+
 func TestValidateRequiredFields_EmptyTools(t *testing.T) {
 	agent := ClaudeAgentFull{
 		Name:        "test",
@@ -616,5 +646,102 @@ func TestValidateYAMLFormattingRaw_NoFrontmatterStart(t *testing.T) {
 	check := validateYAMLFormattingRaw("test check", content)
 	if check.Status != "failed" {
 		t.Errorf("expected 'failed' when no frontmatter start, got %q", check.Status)
+	}
+}
+
+func TestValidateFieldOrder_InvalidYAML(t *testing.T) {
+	// Tests the yaml.Unmarshal error path in validateFieldOrder (line 158-164)
+	// Invalid YAML that causes Unmarshal to fail
+	badFrontmatter := []byte(": invalid yaml {\n  unclosed: [bracket")
+	check := validateFieldOrder("test.md", badFrontmatter)
+	// When YAML parsing fails inside validateFieldOrder, it returns a "failed" check
+	if check.Status != "failed" {
+		t.Errorf("expected 'failed' for invalid YAML in validateFieldOrder, got %q: %s", check.Status, check.Message)
+	}
+}
+
+func TestValidateAgent_ValidFormattingButNoClosingDashes(t *testing.T) {
+	// Tests agent_validator.go:42-49 — ExtractFrontmatter error path
+	// The file has valid YAML formatting (space after colon) so it passes
+	// validateYAMLFormatting, but has no closing --- so ExtractFrontmatter fails.
+	tmpDir := t.TempDir()
+	agentsDir := filepath.Join(tmpDir, ".claude", "agents")
+	if err := os.MkdirAll(agentsDir, 0755); err != nil {
+		t.Fatalf("Failed to create agents dir: %v", err)
+	}
+
+	// Valid formatting (space after colon) but no closing ---
+	content := "---\nname: test-agent\ndescription: A test\nNo closing dashes here"
+	if err := os.WriteFile(filepath.Join(agentsDir, "test-agent.md"), []byte(content), 0644); err != nil {
+		t.Fatalf("Failed to create agent: %v", err)
+	}
+
+	agentNames := make(map[string]bool)
+	skillNames := make(map[string]bool)
+
+	checks := validateAgent(
+		filepath.Join(agentsDir, "test-agent.md"),
+		"test-agent.md",
+		agentNames,
+		skillNames,
+	)
+
+	if len(checks) == 0 {
+		t.Fatal("expected at least 1 check")
+	}
+	// The ExtractFrontmatter error should produce a failed check
+	failed := false
+	for _, c := range checks {
+		if c.Status == "failed" {
+			failed = true
+			break
+		}
+	}
+	if !failed {
+		t.Error("expected at least one failed check for missing closing ---")
+	}
+}
+
+func TestValidateAgent_ValidFrontmatterBadYAMLParse(t *testing.T) {
+	// Tests agent_validator.go:58-65 — yaml.Unmarshal into ClaudeAgentFull fails
+	// Need valid YAML formatting + valid frontmatter markers but YAML that fails
+	// to unmarshal into ClaudeAgentFull.
+	// Use a mapping that has a key with a sequence value for 'skills' but
+	// with truly malformed YAML inside the frontmatter block.
+	tmpDir := t.TempDir()
+	agentsDir := filepath.Join(tmpDir, ".claude", "agents")
+	if err := os.MkdirAll(agentsDir, 0755); err != nil {
+		t.Fatalf("Failed to create agents dir: %v", err)
+	}
+
+	// Frontmatter that extracts fine but has YAML that causes Unmarshal error
+	// Using invalid YAML after the opening ---
+	content := "---\n: invalid yaml {\n  unclosed: [bracket\n---\n\nBody.\n"
+	if err := os.WriteFile(filepath.Join(agentsDir, "test-agent.md"), []byte(content), 0644); err != nil {
+		t.Fatalf("Failed to create agent: %v", err)
+	}
+
+	agentNames := make(map[string]bool)
+	skillNames := make(map[string]bool)
+
+	checks := validateAgent(
+		filepath.Join(agentsDir, "test-agent.md"),
+		"test-agent.md",
+		agentNames,
+		skillNames,
+	)
+
+	if len(checks) == 0 {
+		t.Fatal("expected at least 1 check")
+	}
+	failed := false
+	for _, c := range checks {
+		if c.Status == "failed" {
+			failed = true
+			break
+		}
+	}
+	if !failed {
+		t.Error("expected at least one failed check for invalid YAML frontmatter")
 	}
 }

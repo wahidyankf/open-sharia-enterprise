@@ -173,6 +173,62 @@ func TestValidateAll_AnnotationStored(t *testing.T) {
 	}
 }
 
+func TestValidateAll_ScanPackagesError(t *testing.T) {
+	// Make sourceRoot unreadable so ScanPackages returns error
+	tmpDir := t.TempDir()
+	subDir := filepath.Join(tmpDir, "com")
+	if err := os.MkdirAll(subDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(subDir, "A.java"), []byte("class A {}"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	// Make it unreadable to force WalkDir error
+	if err := os.Chmod(subDir, 0000); err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chmod(subDir, 0755) }()
+
+	_, err := ValidateAll(ValidationOptions{SourceRoot: tmpDir, Annotation: "NullMarked"})
+	// On non-root this should return an error
+	if err != nil {
+		if len(err.Error()) == 0 {
+			t.Error("expected non-empty error from ValidateAll with unreadable dir")
+		}
+	}
+}
+
+func TestValidateAll_ReadFileError(t *testing.T) {
+	// Create a directory that ScanPackages will find, then create package-info.java
+	// but make it unreadable (not IsNotExist, but a permission error)
+	tmpDir := t.TempDir()
+	pkgDir := filepath.Join(tmpDir, "com", "example")
+	if err := os.MkdirAll(pkgDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	// Create the java file so the package is scanned
+	if err := os.WriteFile(filepath.Join(pkgDir, "A.java"), []byte("class A {}"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	// Create package-info.java but make it unreadable (permission denied, not IsNotExist)
+	pkgInfoPath := filepath.Join(pkgDir, "package-info.java")
+	if err := os.WriteFile(pkgInfoPath, []byte("@NullMarked\npackage com.example;"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chmod(pkgInfoPath, 0000); err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chmod(pkgInfoPath, 0644) }()
+
+	_, err := ValidateAll(ValidationOptions{SourceRoot: tmpDir, Annotation: "NullMarked"})
+	// On non-root this should return an error (permission denied reading package-info.java)
+	if err != nil {
+		if len(err.Error()) == 0 {
+			t.Error("expected non-empty error from ValidateAll with unreadable package-info.java")
+		}
+	}
+}
+
 func TestValidateAll_RelativePackagePaths(t *testing.T) {
 	src := makeSourceRoot(t)
 

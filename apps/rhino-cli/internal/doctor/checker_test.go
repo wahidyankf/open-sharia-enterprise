@@ -735,3 +735,71 @@ func TestRealRunner_BinaryNotFound(t *testing.T) {
 		t.Errorf("expected 'binary not found in PATH' in error, got: %v", err)
 	}
 }
+
+func TestReadNpmVersion_MissingFile(t *testing.T) {
+	_, err := readNpmVersion("/nonexistent/path/package.json")
+	if err == nil {
+		t.Fatal("expected error for missing package.json")
+	}
+}
+
+func TestCompareGTE_Fallback(t *testing.T) {
+	// When version parsing fails, compareGTE falls back to compareExact (line 187-189)
+	// Use the same unparseable string on both sides so compareExact returns OK
+	status, note := compareGTE("not-a-version", "not-a-version")
+	// Both identical, exact comparison returns OK
+	if status != StatusOK {
+		t.Errorf("compareGTE fallback: expected OK for identical unparseable strings, got %q (note: %q)", status, note)
+	}
+}
+
+func TestCompareGTE_FallbackMismatch(t *testing.T) {
+	// Fallback to exact when one side is unparseable
+	status, note := compareGTE("not-a-version", "1.0.0")
+	// They don't match exactly, so Warning
+	if status != StatusWarning {
+		t.Errorf("compareGTE fallback: expected Warning for mismatch, got %q (note: %q)", status, note)
+	}
+}
+
+func TestCheckAll_NilRunner_UsesRealRunner(t *testing.T) {
+	// CheckAll with nil runner should use realRunner (line 251) — covers the nil check branch
+	tmpDir := setupCheckAllRepo(t)
+	result, err := CheckAll(CheckOptions{RepoRoot: tmpDir, Runner: nil})
+	if err != nil {
+		t.Fatalf("CheckAll() with nil runner error: %v", err)
+	}
+	// We can't assert exact status because it depends on the system tools,
+	// but we can assert the result is non-nil and has checks.
+	if result == nil {
+		t.Fatal("expected non-nil result")
+	}
+	if len(result.Checks) != 7 {
+		t.Errorf("expected 7 checks, got %d", len(result.Checks))
+	}
+}
+
+func TestCheckAll_WithWarningStatus(t *testing.T) {
+	// Trigger StatusWarning branch in CheckAll switch (line 270)
+	tmpDir := setupCheckAllRepo(t)
+
+	runner := makeFakeRunner(map[string]fakeRunnerConfig{
+		"git":   {stdout: "git version 2.47.2\n", exitCode: 0},
+		"volta": {stdout: "2.0.2\n", exitCode: 0},
+		// node returns old version → Warning
+		"node":  {stdout: "v20.0.0\n", exitCode: 0},
+		"npm":   {stdout: "11.6.3\n", exitCode: 0},
+		"java":  {stderr: `openjdk version "25" 2025-09-16`, exitCode: 0},
+		"mvn":   {stdout: "Apache Maven 3.9.9 (abc)\nMaven home: /usr\n", exitCode: 0},
+		"go":    {stdout: "go version go1.24.2 linux/amd64\n", exitCode: 0},
+	})
+
+	result, err := CheckAll(CheckOptions{RepoRoot: tmpDir, Runner: runner})
+	if err != nil {
+		t.Fatalf("CheckAll() error: %v", err)
+	}
+
+	if result.WarnCount != 1 {
+		t.Errorf("expected WarnCount == 1 (old node version), got %d", result.WarnCount)
+	}
+}
