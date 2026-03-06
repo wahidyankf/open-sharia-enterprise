@@ -1019,8 +1019,7 @@ func TestCheckAll_ExtractAllStepTextsError(t *testing.T) {
 	// extractAllStepTexts doesn't return errors through Walk callback (it uses extractTSStepTexts
 	// which returns the error, but Walk receives it). CheckAll may or may not error
 	// depending on how filepath.Walk propagates the error.
-	result, err := CheckAll(opts)
-	if err == nil && result != nil {
-		// If no error (root user or OS behavior), CheckAll completed OK — acceptable
-	}
+	// CheckAll may or may not error depending on how filepath.Walk propagates the error.
+	// Either outcome is acceptable — we just verify it doesn't panic.
+	_, _ = CheckAll(opts)
 }

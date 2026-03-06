@@ -714,8 +714,5 @@ func TestValidateSyncCommand_ValidationError(t *testing.T) {
 	// This may succeed (0 agents in sync) or fail — we just check it doesn't panic
 	_ = cmd.RunE(cmd, []string{})
 
-	got := buf.String()
-	if got == "" && verbose == false {
-		// Some output should exist
-	}
+	_ = buf.String()
 }

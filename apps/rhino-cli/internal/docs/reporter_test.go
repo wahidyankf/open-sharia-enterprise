@@ -406,6 +406,9 @@ func TestFormatText_MultipleViolationsInSameDir(t *testing.T) {
 				{FilePath: "docs/tutorials/zzz__guide.md", FileName: "zzz__guide.md", ViolationType: ViolationWrongPrefix, ActualPrefix: "zzz__"},
 				{FilePath: "docs/tutorials/aaa__intro.md", FileName: "aaa__intro.md", ViolationType: ViolationWrongPrefix, ActualPrefix: "aaa__"},
 			},
+			ViolationMissingSeparator: nil,
+			ViolationBadCase:          nil,
+			ViolationMissingPrefix:    nil,
 		},
 	}
 
@@ -435,6 +438,9 @@ func TestFormatText_ViolationNoDir(t *testing.T) {
 			ViolationMissingSeparator: {
 				{FilePath: "file.md", FileName: "file.md", ViolationType: ViolationMissingSeparator},
 			},
+			ViolationWrongPrefix:   nil,
+			ViolationBadCase:       nil,
+			ViolationMissingPrefix: nil,
 		},
 	}
 
@@ -464,6 +470,9 @@ func TestFormatMarkdown_ViolationWithEmptyActualPrefix(t *testing.T) {
 			ViolationMissingSeparator: {
 				{FilePath: "docs/tutorials/missing-sep.md", FileName: "missing-sep.md", ViolationType: ViolationMissingSeparator, ActualPrefix: ""},
 			},
+			ViolationWrongPrefix:   nil,
+			ViolationBadCase:       nil,
+			ViolationMissingPrefix: nil,
 		},
 	}
 
