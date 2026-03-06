@@ -771,22 +771,22 @@ apps/rhino-cli/
 │   ├── helpers.go / _test.go                     # Shared cmd helpers
 │   ├── doctor.go / _test.go                      # Doctor command + unit tests
 │   ├── doctor.integration_test.go               # godog BDD tests (4 scenarios)
-│   ├── validate_test_coverage.go / _test.go       # Coverage threshold command + unit tests
-│   ├── validate-test-coverage.integration_test.go # godog BDD tests (6 scenarios)
-│   ├── validate_docs_links.go / _test.go              # Link validation command + unit tests
-│   ├── validate-docs-links.integration_test.go       # godog BDD tests (4 scenarios)
-│   ├── sync_agents.go / _test.go                 # Agent/skill sync command + unit tests
-│   ├── sync-agents.integration_test.go          # godog BDD tests (4 scenarios)
-│   ├── validate_sync.go / _test.go               # Sync validation command + unit tests
-│   ├── validate-sync.integration_test.go        # godog BDD tests (3 scenarios)
-│   ├── validate_claude.go / _test.go             # Claude Code validation command + unit tests
-│   ├── validate-claude.integration_test.go      # godog BDD tests (5 scenarios)
-│   ├── validate_spec_coverage.go / _test.go      # BDD spec coverage command + unit tests
-│   ├── validate-spec-coverage.integration_test.go # godog BDD tests (4 scenarios)
-│   ├── validate_java_annotations.go / _test.go   # Java annotation validation + unit tests
-│   ├── validate-java-annotations.integration_test.go # godog BDD tests (4 scenarios)
-│   ├── validate_docs_naming.go / _test.go        # Docs naming validation + unit tests
-│   └── validate-docs-naming.integration_test.go # godog BDD tests (5 scenarios)
+│   ├── test_coverage_validate.go / _test.go       # Coverage threshold command + unit tests
+│   ├── test-coverage-validate.integration_test.go # godog BDD tests (6 scenarios)
+│   ├── docs_validate_links.go / _test.go          # Link validation command + unit tests
+│   ├── docs-validate-links.integration_test.go   # godog BDD tests (4 scenarios)
+│   ├── agents_sync.go / _test.go                 # Agent/skill sync command + unit tests
+│   ├── agents-sync.integration_test.go           # godog BDD tests (4 scenarios)
+│   ├── agents_validate_sync.go / _test.go        # Sync validation command + unit tests
+│   ├── agents-validate-sync.integration_test.go  # godog BDD tests (3 scenarios)
+│   ├── agents_validate_claude.go / _test.go      # Claude Code validation command + unit tests
+│   ├── agents-validate-claude.integration_test.go # godog BDD tests (5 scenarios)
+│   ├── spec_coverage_validate.go / _test.go      # BDD spec coverage command + unit tests
+│   ├── spec-coverage-validate.integration_test.go # godog BDD tests (4 scenarios)
+│   ├── java_validate_annotations.go / _test.go   # Java annotation validation + unit tests
+│   ├── java-validate-annotations.integration_test.go # godog BDD tests (4 scenarios)
+│   ├── docs_validate_naming.go / _test.go        # Docs naming validation + unit tests
+│   └── docs-validate-naming.integration_test.go # godog BDD tests (5 scenarios)
 ├── internal/
 │   ├── doctor/               # Development environment checks
 │   │   ├── types.go          # ToolStatus, ToolCheck, DoctorResult, CommandRunner types
