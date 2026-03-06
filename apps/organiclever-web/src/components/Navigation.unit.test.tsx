@@ -4,8 +4,17 @@ import userEvent from "@testing-library/user-event";
 import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 
 vi.mock("next/link", () => ({
-  default: ({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) =>
-    React.createElement("a", { href, className }, children),
+  default: ({
+    href,
+    children,
+    className,
+    onClick,
+  }: {
+    href: string;
+    children: React.ReactNode;
+    className?: string;
+    onClick?: React.MouseEventHandler<HTMLAnchorElement>;
+  }) => React.createElement("a", { href, className, onClick }, children),
 }));
 
 import { Navigation } from "./Navigation";
@@ -103,5 +112,21 @@ describe("Navigation", () => {
     expect(screen.getByText("Organic Lever")).toBeTruthy();
     expect(screen.getByText("Dashboard")).toBeTruthy();
     expect(screen.getByText("Logout")).toBeTruthy();
+  });
+
+  it("closes mobile menu when a nav link is clicked", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<Navigation logout={mockLogout} />);
+
+    // Open mobile menu
+    const buttons = screen.getAllByRole("button");
+    await user.click(buttons[0]!);
+    expect(container.querySelector(".bg-opacity-50")).not.toBeNull();
+
+    // Click a nav link — triggers onClick={() => setIsOpen(false)}
+    const dashboardLink = screen.getByRole("link", { name: /dashboard/i });
+    await user.click(dashboardLink);
+
+    expect(container.querySelector(".bg-opacity-50")).toBeNull();
   });
 });
