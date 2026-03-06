@@ -24,7 +24,7 @@ This practice respects the following core principles:
 
 - **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: `spec-coverage validate` automatically enforces the mapping at file, scenario, and step levels.
 
-- **[Documentation First](../../principles/general/documentation-first.md)**: Specs are written alongside or before the command implementation, serving as living documentation.
+- **[Documentation First](../../principles/content/documentation-first.md)**: Specs are written alongside or before the command implementation, serving as living documentation.
 
 ## Conventions Implemented/Respected
 
