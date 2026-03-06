@@ -79,3 +79,25 @@ When("the user changes the name to {string} and saves", async ({ page }, newName
   await page.getByRole("button", { name: "Save changes" }).click();
   await expect(page.getByRole("dialog")).not.toBeVisible();
 });
+
+When("the user changes the role to {string}", async ({ page }, value: string) => {
+  const roleInput = page.getByRole("dialog").locator("#role");
+  await roleInput.clear();
+  await roleInput.fill(value);
+});
+
+When("the user changes the email to {string}", async ({ page }, value: string) => {
+  const emailInput = page.getByRole("dialog").locator("#email");
+  await emailInput.clear();
+  await emailInput.fill(value);
+});
+
+When("the user changes the github to {string}", async ({ page }, value: string) => {
+  const githubInput = page.getByRole("dialog").locator("#github");
+  await githubInput.clear();
+  await githubInput.fill(value);
+});
+
+Then("the github field should show {string}", async ({ page }, value: string) => {
+  await expect(page.getByRole("dialog").locator("#github")).toHaveValue(value);
+});
