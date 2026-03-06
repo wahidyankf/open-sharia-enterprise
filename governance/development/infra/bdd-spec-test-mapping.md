@@ -22,7 +22,7 @@ This practice respects the following core principles:
 
 - **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Every command's behavior is explicitly specified in Gherkin before implementation. No undocumented commands.
 
-- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: `validate-spec-coverage` automatically enforces the mapping at file, scenario, and step levels.
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: `spec-coverage validate` automatically enforces the mapping at file, scenario, and step levels.
 
 - **[Documentation First](../../principles/general/documentation-first.md)**: Specs are written alongside or before the command implementation, serving as living documentation.
 
@@ -34,7 +34,17 @@ This practice respects the following core principles:
 
 **Every Cobra command file must have a corresponding `@tag` in a Gherkin feature file under `specs/`.**
 
-Infrastructure files (`root.go`, `helpers.go`) that do not register commands are exempt.
+Infrastructure files (`root.go`, `helpers.go`) and parent command files (e.g., `agents.go`, `docs.go`) that do not implement logic are exempt.
+
+## Domain-Prefixed Subcommands
+
+All CLI apps in this monorepo use **Cobra subcommands** grouped by domain. The domain is the prefix in every artifact:
+
+```
+rhino-cli {domain} {action}
+ayokoding-cli {domain} {action}
+oseplatform-cli {domain} {action}
+```
 
 ## Mapping Layers
 
@@ -42,14 +52,16 @@ The mapping operates at three levels:
 
 ### 1. Command to Tag (mandatory)
 
-Each command registers exactly one `@tag` in a feature file. The tag matches the Cobra `Use` field:
+The `@tag` is derived from the Go filename: replace underscores with hyphens.
 
-| Command File                | Cobra `Use`       | Feature `@tag`     |
-| --------------------------- | ----------------- | ------------------ |
-| `agents_sync.go`            | `sync-agents`     | `@sync-agents`     |
-| `agents_validate_sync.go`   | `validate-sync`   | `@validate-sync`   |
-| `agents_validate_claude.go` | `validate-claude` | `@validate-claude` |
-| `doctor.go`                 | `doctor`          | `@doctor`          |
+| Command File                | Full Invocation          | Feature `@tag`            |
+| --------------------------- | ------------------------ | ------------------------- |
+| `agents_sync.go`            | `agents sync`            | `@agents-sync`            |
+| `agents_validate_sync.go`   | `agents validate-sync`   | `@agents-validate-sync`   |
+| `agents_validate_claude.go` | `agents validate-claude` | `@agents-validate-claude` |
+| `docs_validate_links.go`    | `docs validate-links`    | `@docs-validate-links`    |
+| `spec_coverage_validate.go` | `spec-coverage validate` | `@spec-coverage-validate` |
+| `doctor.go`                 | `doctor`                 | `@doctor`                 |
 
 ### 2. Tag to Feature File (flexible)
 
@@ -58,13 +70,13 @@ A feature file may contain **multiple related commands** using separate `Rule` b
 ```gherkin
 Feature: Agent Configuration Synchronisation
 
-  @sync-agents
-  Rule: sync-agents converts .claude/ configuration to .opencode/ format
+  @agents-sync
+  Rule: agents sync converts .claude/ configuration to .opencode/ format
     Scenario: Syncing converts agents and skills to OpenCode format
     ...
 
-  @validate-sync
-  Rule: validate-sync confirms .claude/ and .opencode/ are equivalent
+  @agents-validate-sync
+  Rule: agents validate-sync confirms .claude/ and .opencode/ are equivalent
     Scenario: Directories that are in sync pass validation
     ...
 ```
@@ -72,9 +84,9 @@ Feature: Agent Configuration Synchronisation
 Alternatively, a command with its own distinct domain gets its own feature file:
 
 ```
-specs/rhino-cli/doctor/doctor.feature          ← single @doctor tag
-specs/rhino-cli/agents/sync-agents.feature     ← @sync-agents + @validate-sync tags
-specs/rhino-cli/agents/validate-claude.feature ← single @validate-claude tag
+specs/rhino-cli/doctor/doctor.feature                       <- single @doctor tag
+specs/rhino-cli/agents/agents-sync.feature                  <- @agents-sync + @agents-validate-sync
+specs/rhino-cli/agents/agents-validate-claude.feature       <- single @agents-validate-claude tag
 ```
 
 ### 3. Integration Test to Tag (mandatory)
@@ -87,7 +99,7 @@ func TestIntegrationValidateSync(t *testing.T) {
         ScenarioInitializer: InitializeValidateSyncScenario,
         Options: &godog.Options{
             Paths: []string{specsDir},
-            Tags:  "validate-sync",  // filters to matching @tag
+            Tags:  "agents-validate-sync",  // filters to matching @tag
         },
     }
     // ...
@@ -96,22 +108,19 @@ func TestIntegrationValidateSync(t *testing.T) {
 
 ## File Naming Convention
 
-| Artifact         | Pattern                                       | Example                                      |
-| ---------------- | --------------------------------------------- | -------------------------------------------- |
-| Command file     | `{domain}_{action}.go`                        | `agents_validate_sync.go`                    |
-| Unit test        | `{domain}_{action}_test.go`                   | `agents_validate_sync_test.go`               |
-| Integration test | `{command-name}.integration_test.go`          | `validate-sync.integration_test.go`          |
-| Feature file     | `specs/{app}/{domain}/{command-name}.feature` | `specs/rhino-cli/agents/sync-agents.feature` |
+| Artifact         | Pattern                                          | Example                                               |
+| ---------------- | ------------------------------------------------ | ----------------------------------------------------- |
+| Parent cmd       | `{domain}.go`                                    | `agents.go`                                           |
+| Command file     | `{domain}_{action}.go`                           | `agents_validate_sync.go`                             |
+| Unit test        | `{domain}_{action}_test.go`                      | `agents_validate_sync_test.go`                        |
+| Integration test | `{domain}_{action}.integration_test.go`          | `agents_validate_sync.integration_test.go`            |
+| Feature file     | `specs/{app}/{domain}/{domain}-{action}.feature` | `specs/rhino-cli/agents/agents-validate-sync.feature` |
 
-Note the naming differences:
-
-- **Command and unit test files** use **domain-first underscores** (Go convention): `agents_sync.go`
-- **Integration test and feature files** use **command names with hyphens**: `sync-agents.integration_test.go`, `sync-agents.feature`
-- The stem must match between feature file and integration test for `validate-spec-coverage` to pass
+**The universal rule**: All Go files (command, unit test, integration test) use underscores. Feature files and `@tag`s use hyphens. The `spec-coverage validate` tool normalises hyphens to underscores when matching feature stems to Go test files.
 
 ## Coverage Enforcement
 
-The `validate-spec-coverage` command enforces this mapping at three levels:
+The `spec-coverage validate` command enforces this mapping at three levels:
 
 1. **File-level**: Every `.feature` file must have a matching `*_test.*` file
 2. **Scenario-level**: Every `Scenario:` in the feature must appear as `// Scenario:` comment or `Scenario(...)` call in test code
@@ -120,15 +129,16 @@ The `validate-spec-coverage` command enforces this mapping at three levels:
 Run the check:
 
 ```bash
-rhino-cli validate-spec-coverage specs/rhino-cli apps/rhino-cli
+rhino-cli spec-coverage validate specs/rhino-cli apps/rhino-cli
 ```
 
 ## Adding a New Command
 
-1. Create the feature file (or add a `Rule` block with `@tag` to an existing file)
-2. Create `apps/{app}/cmd/{domain}_{action}.go` with the Cobra command
-3. Create `apps/{app}/cmd/{domain}-{action}.integration_test.go` with godog steps
-4. Verify: `rhino-cli validate-spec-coverage specs/{app} apps/{app}`
+1. Create the parent command file `apps/{app}/cmd/{domain}.go` if the domain is new
+2. Create the feature file `specs/{app}/{domain}/{domain}-{action}.feature`
+3. Create `apps/{app}/cmd/{domain}_{action}.go` with the Cobra command (register with parent)
+4. Create `apps/{app}/cmd/{domain}_{action}.integration_test.go` with godog steps
+5. Verify: `rhino-cli spec-coverage validate specs/{app} apps/{app}`
 
 ## Related Documentation
 

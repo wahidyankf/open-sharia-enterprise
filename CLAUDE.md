@@ -19,7 +19,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `oseplatform-web` - Hugo static site (PaperMod theme)
   - `ayokoding-web` - Hugo static site (Hextra theme, bilingual)
   - `ayokoding-cli` - Go CLI tool for content automation
-  - `rhino-cli` - Go CLI tool for repository management (Repository Hygiene & INtegration Orchestrator; includes `validate-java-annotations`)
+  - `rhino-cli` - Go CLI tool for repository management (Repository Hygiene & INtegration Orchestrator; includes `java validate-annotations`)
   - `oseplatform-cli` - Go CLI tool for OSE Platform site maintenance (link validation)
   - `organiclever-web` - Next.js 16 landing and promotional website (www.organiclever.com)
   - `organiclever-web-e2e` - Playwright E2E tests for organiclever-web
@@ -34,7 +34,7 @@ open-sharia-enterprise/
 │   ├── oseplatform-web/    # OSE Platform website
 │   ├── ayokoding-web/       # AyoKoding website (bilingual)
 │   ├── ayokoding-cli/       # Content automation CLI
-│   ├── rhino-cli/          # Repository management CLI (validate-java-annotations)
+│   ├── rhino-cli/          # Repository management CLI (java validate-annotations)
 │   ├── oseplatform-cli/     # OSE Platform site CLI
 │   ├── organiclever-web/     # OrganicLever landing website (Next.js)
 │   ├── organiclever-web-e2e/ # Playwright E2E tests for organiclever-web
@@ -109,13 +109,13 @@ npm run doctor           # Check all required tools (volta, node, npm, java, mav
 
 **Go projects**: All Go projects (`ayokoding-cli`, `oseplatform-cli`, `rhino-cli`,
 `libs/golang-commons`, `libs/hugo-commons`) enforce ≥95% **line coverage** (matching Codecov's
-algorithm) via `rhino-cli validate-test-coverage`. Coverage is measured with
+algorithm) via `rhino-cli test-coverage validate`. Coverage is measured with
 `go test -coverprofile=cover.out ./...` and enforced by
-`rhino-cli validate-test-coverage <project>/cover.out 95` — both run as part of `test:quick`.
+`rhino-cli test-coverage validate <project>/cover.out 95` — both run as part of `test:quick`.
 
 **TypeScript projects**: `organiclever-web` additionally enforces ≥95% **line coverage** (matching
-Codecov's algorithm) via `rhino-cli validate-test-coverage` applied to the LCOV output from Vitest:
-`rhino-cli validate-test-coverage apps/organiclever-web/coverage/lcov.info 95` — run as part of `test:quick`.
+Codecov's algorithm) via `rhino-cli test-coverage validate` applied to the LCOV output from Vitest:
+`rhino-cli test-coverage validate apps/organiclever-web/coverage/lcov.info 95` — run as part of `test:quick`.
 
 **`test:integration` caching**: Integration tests for `organiclever-web` (MSW), `organiclever-be`
 (MockMvc), `hugo-commons` (Godog + tmpdir mocks), and `golang-commons` (Godog + mock closures)

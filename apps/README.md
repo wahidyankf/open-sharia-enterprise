@@ -13,7 +13,7 @@ Apps follow the naming pattern: **`[domain]-[type]`**
 - `oseplatform-web` - OSE Platform website ([oseplatform.com](https://oseplatform.com)) - Hugo static site
 - `ayokoding-web` - AyoKoding educational platform ([ayokoding.com](https://ayokoding.com)) - Hugo static site
 - `ayokoding-cli` - AyoKoding CLI tool for navigation generation - Go application
-- `rhino-cli` - Repository management CLI tools (includes `validate-java-annotations`) - Go application
+- `rhino-cli` - Repository management CLI tools (includes `java validate-annotations`) - Go application
 - `oseplatform-cli` - OSE Platform CLI tool for link validation - Go application
 - `organiclever-web` - OrganicLever landing website (www.organiclever.com) - Next.js app (port 3200)
 - `organiclever-web-e2e` - E2E tests for organiclever-web - Playwright (browser testing)

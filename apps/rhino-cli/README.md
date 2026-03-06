@@ -12,31 +12,31 @@ A Go-based CLI tool that provides utilities for repository management and automa
 
 ```bash
 # Check test coverage against a threshold (Codecov-compatible algorithm)
-rhino-cli validate-test-coverage apps/rhino-cli/cover.out 85
+rhino-cli test-coverage validate apps/rhino-cli/cover.out 85
 
 # Check all required development tools are installed
 rhino-cli doctor
 
 # Validate Claude Code format
-rhino-cli validate-claude
+rhino-cli agents validate-claude
 
 # Sync Claude Code → OpenCode configurations
-rhino-cli sync-agents
+rhino-cli agents sync
 
 # Validate sync is correct
-rhino-cli validate-sync
+rhino-cli agents validate-sync
 
 # Validate markdown links in the repository
-rhino-cli validate-docs-links
+rhino-cli docs validate-links
 
 # Validate only staged files (useful in git hooks)
-rhino-cli validate-docs-links --staged-only
+rhino-cli docs validate-links --staged-only
 
 # Validate BDD spec coverage (all specs have matching test files)
-rhino-cli validate-spec-coverage specs/organiclever-web apps/organiclever-web
+rhino-cli spec-coverage validate specs/organiclever-web apps/organiclever-web
 
 # Validate Java packages have @NullMarked in package-info.java
-rhino-cli validate-java-annotations apps/organiclever-be/src/main/java
+rhino-cli java validate-annotations apps/organiclever-be/src/main/java
 
 # Echo a message
 rhino-cli --say "hello world"
@@ -96,26 +96,26 @@ rhino-cli --say "hello" -o json
 
 ## Commands
 
-### validate-test-coverage
+### test-coverage validate
 
 Check test coverage against a minimum threshold using Codecov's exact line coverage algorithm.
 Supports both Go `cover.out` and LCOV formats; auto-detects from filename.
 
 ```bash
 # Check Go cover.out (path relative to git root)
-rhino-cli validate-test-coverage apps/rhino-cli/cover.out 85
+rhino-cli test-coverage validate apps/rhino-cli/cover.out 85
 
 # Check LCOV coverage from Vitest
-rhino-cli validate-test-coverage apps/organiclever-web/coverage/lcov.info 85
+rhino-cli test-coverage validate apps/organiclever-web/coverage/lcov.info 85
 
 # Output as JSON
-rhino-cli validate-test-coverage apps/rhino-cli/cover.out 85 -o json
+rhino-cli test-coverage validate apps/rhino-cli/cover.out 85 -o json
 
 # Output as markdown
-rhino-cli validate-test-coverage apps/rhino-cli/cover.out 85 -o markdown
+rhino-cli test-coverage validate apps/rhino-cli/cover.out 85 -o markdown
 
 # Quiet mode
-rhino-cli validate-test-coverage apps/rhino-cli/cover.out 85 -q
+rhino-cli test-coverage validate apps/rhino-cli/cover.out 85 -q
 ```
 
 **What it does:**
@@ -177,28 +177,28 @@ PASS: 86.08% >= 85% threshold
 This command replaces the Python script `scripts/validate-test-coverage.py`, eliminating the Python
 dependency and consolidating all tooling in rhino-cli.
 
-### validate-docs-links
+### docs validate-links
 
 Validate markdown links in the repository. Scans markdown files for broken internal links and generates a categorized report.
 
 ```bash
 # Validate all markdown files
-rhino-cli validate-docs-links
+rhino-cli docs validate-links
 
 # Validate only staged files (useful in pre-commit hooks)
-rhino-cli validate-docs-links --staged-only
+rhino-cli docs validate-links --staged-only
 
 # Output as JSON
-rhino-cli validate-docs-links -o json
+rhino-cli docs validate-links -o json
 
 # Output as markdown report
-rhino-cli validate-docs-links -o markdown
+rhino-cli docs validate-links -o markdown
 
 # Verbose mode
-rhino-cli validate-docs-links -v
+rhino-cli docs validate-links -v
 
 # Quiet mode (errors only)
-rhino-cli validate-docs-links -q
+rhino-cli docs validate-links -q
 ```
 
 **What it does:**
@@ -279,28 +279,28 @@ rhino-cli validate-docs-links -q
 
 This command replaces the Python script at `scripts/validate-docs-links.py` with a faster, more maintainable Go implementation.
 
-### sync-agents
+### agents sync
 
 Sync Claude Code agents and skills to OpenCode format. Converts `.claude/` configuration to `.opencode/` format with proper YAML frontmatter transformation.
 
 ```bash
 # Sync all agents and skills
-rhino-cli sync-agents
+rhino-cli agents sync
 
 # Preview changes without modifying files
-rhino-cli sync-agents --dry-run
+rhino-cli agents sync --dry-run
 
 # Sync only agents (skip skills)
-rhino-cli sync-agents --agents-only
+rhino-cli agents sync --agents-only
 
 # Sync only skills (skip agents)
-rhino-cli sync-agents --skills-only
+rhino-cli agents sync --skills-only
 
 # Output as JSON
-rhino-cli sync-agents -o json
+rhino-cli agents sync -o json
 
 # Verbose mode
-rhino-cli sync-agents -v
+rhino-cli agents sync -v
 ```
 
 **What it does:**
@@ -338,22 +338,22 @@ rhino-cli sync-agents -v
 
 This command replaces the bash scripts `scripts/sync-claude-to-opencode.sh` and `scripts/validate-sync.sh` with a faster, more robust Go implementation.
 
-### validate-sync
+### agents validate-sync
 
 Validate that `.claude/` and `.opencode/` configurations are semantically equivalent.
 
 ```bash
 # Validate sync
-rhino-cli validate-sync
+rhino-cli agents validate-sync
 
 # Output as JSON
-rhino-cli validate-sync -o json
+rhino-cli agents validate-sync -o json
 
 # Verbose mode (show all checks)
-rhino-cli validate-sync -v
+rhino-cli agents validate-sync -v
 
 # Quiet mode (show only summary)
-rhino-cli validate-sync -q
+rhino-cli agents validate-sync -q
 ```
 
 **What it does:**
@@ -398,25 +398,25 @@ Duration: 60ms
 Status: ✓ VALIDATION PASSED
 ```
 
-### validate-claude
+### agents validate-claude
 
 Validate Claude Code agent and skill format in `.claude/` directory.
 
 ```bash
 # Validate all agents and skills
-rhino-cli validate-claude
+rhino-cli agents validate-claude
 
 # Output as JSON
-rhino-cli validate-claude -o json
+rhino-cli agents validate-claude -o json
 
 # Verbose mode (show all checks)
-rhino-cli validate-claude -v
+rhino-cli agents validate-claude -v
 
 # Validate only agents
-rhino-cli validate-claude --agents-only
+rhino-cli agents validate-claude --agents-only
 
 # Validate only skills
-rhino-cli validate-claude --skills-only
+rhino-cli agents validate-claude --skills-only
 ```
 
 **What it validates:**
@@ -468,23 +468,23 @@ Duration: 49ms
 Status: ✓ VALIDATION PASSED
 ```
 
-### validate-spec-coverage
+### spec-coverage validate
 
 Validate that all BDD feature spec files have matching test implementations. Designed to enforce
 the spec-to-test direction for test suites that use explicit file loading (e.g. vitest-cucumber).
 
 ```bash
 # Check organiclever-web spec coverage
-rhino-cli validate-spec-coverage specs/organiclever-web apps/organiclever-web
+rhino-cli spec-coverage validate specs/organiclever-web apps/organiclever-web
 
 # Output as JSON
-rhino-cli validate-spec-coverage specs/organiclever-web apps/organiclever-web -o json
+rhino-cli spec-coverage validate specs/organiclever-web apps/organiclever-web -o json
 
 # Output as markdown
-rhino-cli validate-spec-coverage specs/organiclever-web apps/organiclever-web -o markdown
+rhino-cli spec-coverage validate specs/organiclever-web apps/organiclever-web -o markdown
 
 # Quiet mode
-rhino-cli validate-spec-coverage specs/organiclever-web apps/organiclever-web -q
+rhino-cli spec-coverage validate specs/organiclever-web apps/organiclever-web -q
 ```
 
 **What it does:**
@@ -576,26 +576,26 @@ Missing steps (2):
 }
 ```
 
-### validate-java-annotations
+### java validate-annotations
 
 Validate that all Java packages in a source tree have the required null-safety annotation in
 `package-info.java`. Used by `organiclever-be`'s `typecheck` target.
 
 ```bash
 # Validate with default annotation (@NullMarked)
-rhino-cli validate-java-annotations apps/organiclever-be/src/main/java
+rhino-cli java validate-annotations apps/organiclever-be/src/main/java
 
 # Use a custom annotation
-rhino-cli validate-java-annotations apps/organiclever-be/src/main/java --annotation NonNull
+rhino-cli java validate-annotations apps/organiclever-be/src/main/java --annotation NonNull
 
 # Output as JSON
-rhino-cli validate-java-annotations apps/organiclever-be/src/main/java -o json
+rhino-cli java validate-annotations apps/organiclever-be/src/main/java -o json
 
 # Output as markdown report
-rhino-cli validate-java-annotations apps/organiclever-be/src/main/java -o markdown
+rhino-cli java validate-annotations apps/organiclever-be/src/main/java -o markdown
 
 # Quiet mode (suppress "0 violations found" on success)
-rhino-cli validate-java-annotations apps/organiclever-be/src/main/java -q
+rhino-cli java validate-annotations apps/organiclever-be/src/main/java -q
 ```
 
 **What it does:**
@@ -755,7 +755,7 @@ rhino-cli --help
 rhino-cli help
 
 # Command-specific help
-rhino-cli validate-docs-links --help
+rhino-cli docs validate-links --help
 
 # Version
 rhino-cli --version
@@ -769,24 +769,24 @@ apps/rhino-cli/
 │   ├── root.go                                   # Cobra root command, global flags
 │   ├── root_test.go                              # Unit tests for root command
 │   ├── helpers.go / _test.go                     # Shared cmd helpers
-│   ├── doctor.go / _test.go                      # Doctor command + unit tests
-│   ├── doctor.integration_test.go               # godog BDD tests (4 scenarios)
-│   ├── test_coverage_validate.go / _test.go       # Coverage threshold command + unit tests
-│   ├── test-coverage-validate.integration_test.go # godog BDD tests (6 scenarios)
-│   ├── docs_validate_links.go / _test.go          # Link validation command + unit tests
-│   ├── docs-validate-links.integration_test.go   # godog BDD tests (4 scenarios)
-│   ├── agents_sync.go / _test.go                 # Agent/skill sync command + unit tests
-│   ├── agents-sync.integration_test.go           # godog BDD tests (4 scenarios)
-│   ├── agents_validate_sync.go / _test.go        # Sync validation command + unit tests
-│   ├── agents-validate-sync.integration_test.go  # godog BDD tests (3 scenarios)
-│   ├── agents_validate_claude.go / _test.go      # Claude Code validation command + unit tests
-│   ├── agents-validate-claude.integration_test.go # godog BDD tests (5 scenarios)
-│   ├── spec_coverage_validate.go / _test.go      # BDD spec coverage command + unit tests
-│   ├── spec-coverage-validate.integration_test.go # godog BDD tests (4 scenarios)
-│   ├── java_validate_annotations.go / _test.go   # Java annotation validation + unit tests
-│   ├── java-validate-annotations.integration_test.go # godog BDD tests (4 scenarios)
-│   ├── docs_validate_naming.go / _test.go        # Docs naming validation + unit tests
-│   └── docs-validate-naming.integration_test.go # godog BDD tests (5 scenarios)
+│   ├── doctor.go / _test.go                          # Doctor command + unit tests
+│   ├── doctor.integration_test.go                   # godog BDD tests (4 scenarios)
+│   ├── test_coverage_validate.go / _test.go           # Coverage threshold command + unit tests
+│   ├── test_coverage_validate.integration_test.go    # godog BDD tests (6 scenarios)
+│   ├── docs_validate_links.go / _test.go              # Link validation command + unit tests
+│   ├── docs_validate_links.integration_test.go       # godog BDD tests (4 scenarios)
+│   ├── agents_sync.go / _test.go                     # Agent/skill sync command + unit tests
+│   ├── agents_sync.integration_test.go               # godog BDD tests (4 scenarios)
+│   ├── agents_validate_sync.go / _test.go            # Sync validation command + unit tests
+│   ├── agents_validate_sync.integration_test.go      # godog BDD tests (3 scenarios)
+│   ├── agents_validate_claude.go / _test.go          # Claude Code validation command + unit tests
+│   ├── agents_validate_claude.integration_test.go    # godog BDD tests (5 scenarios)
+│   ├── spec_coverage_validate.go / _test.go          # BDD spec coverage command + unit tests
+│   ├── spec_coverage_validate.integration_test.go    # godog BDD tests (4 scenarios)
+│   ├── java_validate_annotations.go / _test.go       # Java annotation validation + unit tests
+│   ├── java_validate_annotations.integration_test.go # godog BDD tests (4 scenarios)
+│   ├── docs_validate_naming.go / _test.go            # Docs naming validation + unit tests
+│   └── docs_validate_naming.integration_test.go     # godog BDD tests (5 scenarios)
 ├── internal/
 │   ├── doctor/               # Development environment checks
 │   │   ├── types.go          # ToolStatus, ToolCheck, DoctorResult, CommandRunner types
@@ -899,7 +899,7 @@ go test ./...
 
 **Test Coverage:**
 
-- `cmd`: Root command tests, validate-docs-links integration tests, doctor integration tests
+- `cmd`: Root command tests, docs validate-links integration tests, doctor integration tests
 - `internal/doctor`: 95%+ coverage (checker, reporter — all pure functions tested with fake runner)
 - `internal/docs`: 85%+ coverage (naming: scanner, validator, reporter, prefix_rules, fixer; links: links_scanner, links_validator, links_categorizer, links_reporter)
 - `internal/agents`: 85%+ coverage (converter, copier, sync_validator, reporter, claude_validator, agent_validator, skill_validator)
@@ -1061,7 +1061,7 @@ rhino-cli say
 - Added godog BDD integration tests for all 9 rhino-cli commands (39 scenarios)
 - Each command has a `{stem}.integration_test.go` file in `cmd/` with `//go:build integration`
 - In-process `cmd.RunE()` execution pattern — no binary build required; contributes to coverage
-- `validate-spec-coverage` extended: recognizes Go test files via `_test.go`-only matching,
+- `spec-coverage validate` extended: recognizes Go test files via `_test.go`-only matching,
   `// Scenario:` comments for scenario titles, and `sc.Step(\`regex\`)` for step coverage
 - `test:integration` Nx target added to `project.json` with caching (inputs: cmd/\*_/_.go + specs)
 - Fixed `findMatchingTestFile` to exclude Go implementation files (e.g., `doctor.go`) so only
@@ -1069,7 +1069,7 @@ rhino-cli say
 
 ### v0.10.0 (2026-03-05)
 
-- Added `validate-test-coverage` command for Codecov-compatible line coverage enforcement
+- Added `test-coverage validate` command for Codecov-compatible line coverage enforcement
 - Supports Go `cover.out` and LCOV formats with auto-detection from filename
 - Implements exact Codecov line coverage algorithm (covered/partial/missed classification)
 - Go-specific line filtering: excludes blank, comment-only, and brace-only lines
@@ -1079,7 +1079,7 @@ rhino-cli say
 
 ### v0.9.0 (2026-03-05)
 
-- Absorbed `javaproject-cli` as `validate-java-annotations` subcommand
+- Absorbed `javaproject-cli` as `java validate-annotations` subcommand
 - Validates Java packages have required null-safety annotation in `package-info.java`
 - Supports text, JSON, and markdown output formats; `--annotation` flag for custom annotations
 - Integrates into `organiclever-be` `typecheck` target (replaces standalone `javaproject-cli`)
@@ -1087,7 +1087,7 @@ rhino-cli say
 
 ### v0.8.0 (2026-03-04)
 
-- Extended `validate-spec-coverage` with scenario-level and step-level coverage checking
+- Extended `spec-coverage validate` with scenario-level and step-level coverage checking
 - Every `Scenario:` title in a feature file must appear as `Scenario("title", ...)` in the
   matching test file — missing scenarios are reported as `ScenarioGap`
 - Every step line must appear as a step definition anywhere in the app's TS/JS files
@@ -1100,7 +1100,7 @@ rhino-cli say
 
 ### v0.7.0 (2026-03-04)
 
-- Added `validate-spec-coverage` command for BDD spec-to-test coverage validation
+- Added `spec-coverage validate` command for BDD spec-to-test coverage validation
 - Walks any `<specs-dir>` for `.feature` files and checks for matching test files under `<app-dir>`
 - Closes the vitest-cucumber gap: new specs silently ignored unless matched by an integration test
 - Integrated into `organiclever-web` `test:quick` target
@@ -1109,7 +1109,7 @@ rhino-cli say
 
 ### v0.6.0
 
-- Added `validate-docs-naming` command for documentation file naming conventions
+- Added `docs validate-naming` command for documentation file naming conventions
 
 ### v0.5.0 (2026-02-19)
 
@@ -1123,7 +1123,7 @@ rhino-cli say
 
 ### v0.4.0 (2026-01-22)
 
-- Added `validate-claude` command for Claude Code format validation
+- Added `agents validate-claude` command for Claude Code format validation
 - YAML frontmatter validation (11 rules for agents, 3 for skills)
 - Integrated into pre-commit git hook with work avoidance
 - Performance: ~49ms for 45 agents + 21 skills (meets <50ms target)
@@ -1132,8 +1132,8 @@ rhino-cli say
 
 ### v0.3.0 (2026-01-22)
 
-- Added `sync-agents` command for syncing Claude Code → OpenCode formats
-- Added `validate-sync` command for validating semantic equivalence
+- Added `agents sync` command for syncing Claude Code → OpenCode formats
+- Added `agents validate-sync` command for validating semantic equivalence
 - YAML frontmatter conversion (tools, model mapping, normalization)
 - 25-60x performance improvement over bash scripts (121ms vs 3-5s)
 - Comprehensive test suite (85%+ coverage for sync logic)
@@ -1142,7 +1142,7 @@ rhino-cli say
 
 ### v0.2.0 (2026-01-21)
 
-- Added `validate-docs-links` command for markdown link validation
+- Added `docs validate-links` command for markdown link validation
 - Ported from Python to Go for better performance and maintainability
 - Comprehensive test suite (85%+ coverage for link validation)
 - Multiple output formats (text, JSON, markdown)
