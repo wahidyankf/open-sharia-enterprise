@@ -25,7 +25,7 @@ related:
 principles:
   - automation-over-manual
   - explicit-over-implicit
-last_updated: 2026-02-04
+updated: 2026-02-04
 ---
 
 # Go Testing Standards

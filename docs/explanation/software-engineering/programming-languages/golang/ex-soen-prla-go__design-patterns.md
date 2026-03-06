@@ -26,7 +26,7 @@ related:
   - ./ex-soen-prla-go__type-safety-standards.md
   - ./ex-soen-prla-go__concurrency-standards.md
   - ../../../../../governance/development/pattern/functional-programming.md
-last_updated: 2026-02-04
+updated: 2026-02-04
 ---
 
 # Go Design Patterns

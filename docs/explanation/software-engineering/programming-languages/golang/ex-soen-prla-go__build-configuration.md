@@ -24,7 +24,7 @@ principles:
   - explicit-over-implicit
   - reproducibility
 created: 2026-02-04
-updated: 2026-02-04
+updated: 2026-03-06
 ---
 
 # Go Build Configuration
@@ -707,7 +707,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v4
         with:
-          version: v2.8.0
+          version: v2.10.1
           args: --timeout=5m
 
   # Job 3: Test
@@ -793,7 +793,7 @@ verify:
 
 lint:
   stage: lint
-  image: golangci/golangci-lint:v2.8.0-alpine
+  image: golangci/golangci-lint:v2.10.1-alpine
   script:
     - golangci-lint run ./...
 

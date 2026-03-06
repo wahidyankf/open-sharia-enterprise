@@ -21,7 +21,7 @@ related:
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
-last_updated: 2026-01-24
+updated: 2026-01-24
 ---
 
 # Security in Go

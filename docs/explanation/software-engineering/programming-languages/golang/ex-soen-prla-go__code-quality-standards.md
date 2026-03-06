@@ -23,7 +23,7 @@ related:
 principles:
   - automation-over-manual
   - explicit-over-implicit
-last_updated: 2026-01-24
+updated: 2026-03-06
 ---
 
 # Linting and Formatting in Go
@@ -291,10 +291,10 @@ func deprecated() {
 
 ```bash
 # Binary installation
-curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v2.8.0
+curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v2.10.1
 
 # Or with go install
-go install github.com/golangci/golangci-lint/cmd/golangci-lint@v2.8.0
+go install github.com/golangci/golangci-lint/cmd/golangci-lint@v2.10.1
 ```
 
 **Usage**:

@@ -21,7 +21,7 @@ related:
 principles:
   - reproducibility
   - explicit-over-implicit
-last_updated: 2026-01-24
+updated: 2026-01-24
 ---
 
 # Modules and Dependencies in Go
