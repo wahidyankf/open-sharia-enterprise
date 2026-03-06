@@ -557,6 +557,23 @@ func (c *Cache) Set(key, val string) {
 }
 ```
 
+### Enhanced new() with Expressions (Go 1.26+)
+
+Go 1.26 allows `new()` to accept expressions as initial values, eliminating the need for intermediate variables when creating pointers:
+
+```go
+// Before Go 1.26: required intermediate variable
+func newUser(born time.Time) *User {
+    age := yearsSince(born)
+    return &User{Age: &age}
+}
+
+// Go 1.26+: expression directly in new()
+func newUser(born time.Time) *User {
+    return &User{Age: new(yearsSince(born))}
+}
+```
+
 ### Comma-Ok Idiom
 
 **MUST** use comma-ok idiom for operations that can fail silently.

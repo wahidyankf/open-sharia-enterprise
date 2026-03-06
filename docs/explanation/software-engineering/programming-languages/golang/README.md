@@ -145,6 +145,16 @@ OSE Platform follows a three-tier Go versioning strategy focused on modern featu
 
 - New projects SHOULD use Go 1.26 for the latest stable features
 - Current stable release used across all OSE Platform Go modules
+- Green Tea GC now default (10-40% GC overhead reduction)
+- Self-referential generic type constraints (language change)
+- Enhanced `new()` with expression support
+- `errors.AsType()` generic type-safe error extraction
+- `crypto/hpke` package (Hybrid Public Key Encryption, RFC 9180)
+- Post-quantum TLS enabled by default
+- Goroutine leak profiling (experimental)
+- `testing.T.ArtifactDir()` for test artifact management
+- `go fix` rewrite with automated modernizers
+- `io.ReadAll()` ~2x faster, ~50% less memory
 
 **Unlike Java's LTS model**: Go releases every 6 months with backward compatibility guarantees (Go 1 compatibility promise). No LTS distinction exists; all releases receive security patches for one year. Platform strategy focuses on staying current with stable releases.
 

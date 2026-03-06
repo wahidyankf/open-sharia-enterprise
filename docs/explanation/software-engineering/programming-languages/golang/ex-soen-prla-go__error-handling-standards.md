@@ -19,6 +19,8 @@ tags:
   - go-1.23
   - go-1.24
   - go-1.25
+  - go-1.26
+updated: 2026-03-06
 principles:
   - explicit-over-implicit
 ---
@@ -604,6 +606,29 @@ if errors.Is(err, sql.ErrNoRows) {
     fmt.Println("No rows found")
 }
 ```
+
+### errors.AsType (Go 1.26+)
+
+`errors.AsType` is a generic, type-safe alternative to `errors.As` that eliminates the need for a target variable:
+
+```go
+// Before Go 1.26: requires target variable
+var ve *ValidationError
+if errors.As(err, &ve) {
+    fmt.Println(ve.Field)
+}
+
+// Go 1.26+: type-safe, no target variable needed
+if ve, ok := errors.AsType[*ValidationError](err); ok {
+    fmt.Println(ve.Field)
+}
+```
+
+Benefits:
+
+- Compile-time type checking (cannot accidentally pass wrong type)
+- Eliminates intermediate variable declarations
+- Cleaner control flow in error handling chains
 
 ## Sentinel Errors
 

@@ -16,12 +16,13 @@ tags:
   - go-1.23
   - go-1.24
   - go-1.25
+  - go-1.26
 related:
   - ./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
-updated: 2026-01-24
+updated: 2026-03-06
 ---
 
 # Security in Go
@@ -1605,6 +1606,36 @@ func verify(data, signature []byte, publicKey *rsa.PublicKey) error {
     )
 }
 ```
+
+### Hybrid Public Key Encryption (Go 1.26+)
+
+Go 1.26 adds `crypto/hpke` implementing RFC 9180 (Hybrid Public Key Encryption), including post-quantum hybrid KEM support:
+
+```go
+import "crypto/hpke"
+
+// HPKE provides authenticated encryption with
+// asymmetric key encapsulation, suitable for:
+// - Encrypting data to a recipient's public key
+// - Forward-secret key exchange
+// - Post-quantum hybrid encryption schemes
+```
+
+### Post-Quantum TLS (Go 1.26+)
+
+Go 1.26 enables hybrid post-quantum key exchanges by default in TLS:
+
+- `SecP256r1MLKEM768` and `SecP384r1MLKEM1024` are now default curve preferences
+- Provides protection against future quantum computer attacks
+- No code changes needed — automatic for all TLS connections
+
+```go
+// Disable post-quantum if needed (not recommended)
+// GODEBUG=tlssecpmlkem=0
+// Or via Config.CurvePreferences for specific connections
+```
+
+**Deprecation notice**: PKCS #1 v1.5 padding in `crypto/rsa` is deprecated as unsafe. Migrate to OAEP padding (`rsa.EncryptOAEP`).
 
 ## Password Hashing
 

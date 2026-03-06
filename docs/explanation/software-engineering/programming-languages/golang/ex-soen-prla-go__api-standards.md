@@ -16,13 +16,14 @@ tags:
   - go-1.23
   - go-1.24
   - go-1.25
+  - go-1.26
 related:
   - ./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices
   - ./ex-soen-prla-go__security-standards.md
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
-updated: 2026-01-24
+updated: 2026-03-06
 ---
 
 # Web Services in Go
@@ -611,6 +612,27 @@ func fetchWithRetry(url string, maxRetries int) (*http.Response, error) {
  }
 
  return nil, fmt.Errorf("max retries exceeded")
+}
+```
+
+### Reverse Proxy (Go 1.26 Deprecation)
+
+`httputil.ReverseProxy.Director` is deprecated in Go 1.26 in favor of `Rewrite`. The `Director` hook is unsafe because malicious clients can remove headers added by `Director` via hop-by-hop header designation:
+
+```go
+// DEPRECATED: Director (vulnerable to hop-by-hop header stripping)
+proxy := &httputil.ReverseProxy{
+    Director: func(req *http.Request) {
+        req.Header.Set("X-Auth", "token") // Can be stripped!
+    },
+}
+
+// RECOMMENDED: Rewrite (Go 1.20+, safe)
+proxy := &httputil.ReverseProxy{
+    Rewrite: func(r *httputil.ProxyRequest) {
+        r.SetURL(target)
+        r.Out.Header.Set("X-Auth", "token") // Cannot be stripped
+    },
 }
 ```
 

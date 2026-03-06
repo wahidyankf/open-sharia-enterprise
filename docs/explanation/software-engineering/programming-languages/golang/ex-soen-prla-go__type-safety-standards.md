@@ -15,13 +15,14 @@ tags:
   - go-1.23
   - go-1.24
   - go-1.25
+  - go-1.26
 related:
   - ./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices
   - ./ex-soen-prla-go__coding-standards.md#part-1-core-idioms
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
-updated: 2026-01-24
+updated: 2026-03-06
 ---
 
 # Type Safety in Go
@@ -2048,6 +2049,46 @@ func main() {
     fmt.Println(opt3.Unwrap())  // "value: 10"
 }
 ```
+
+### Self-Referential Generics (Go 1.26+)
+
+Go 1.26 allows generic types to reference themselves in their own type parameter constraints, enabling type-safe recursive patterns:
+
+```go
+// Self-referential constraint: T must implement Adder[T]
+type Adder[A Adder[A]] interface {
+    Add(A) A
+}
+
+// Concrete type satisfying the constraint
+type Vec2D struct {
+    X, Y float64
+}
+
+func (v Vec2D) Add(other Vec2D) Vec2D {
+    return Vec2D{X: v.X + other.X, Y: v.Y + other.Y}
+}
+
+// Generic algorithm works with any self-adding type
+func Sum[A Adder[A]](items []A) A {
+    result := items[0]
+    for _, item := range items[1:] {
+        result = result.Add(item)
+    }
+    return result
+}
+
+// Usage
+vectors := []Vec2D{{1, 2}, {3, 4}, {5, 6}}
+total := Sum(vectors) // Vec2D{9, 12}
+```
+
+Use cases:
+
+- **Chainable builders**: Methods return the concrete type, not the interface
+- **Recursive data structures**: Type-safe linked lists, trees
+- **Algebraic types**: Monoid, group operations with type guarantees
+- **Comparable collections**: Self-referencing for comparison operators
 
 ### Result Type Pattern
 

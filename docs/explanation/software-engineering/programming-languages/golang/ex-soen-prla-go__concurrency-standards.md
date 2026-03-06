@@ -11,6 +11,14 @@ tags:
   - channels
   - sync
   - context
+  - go-1.18
+  - go-1.21
+  - go-1.22
+  - go-1.23
+  - go-1.24
+  - go-1.25
+  - go-1.26
+updated: 2026-03-06
 principles:
   - immutability
   - explicit-over-implicit
@@ -2220,6 +2228,20 @@ func goodHandler(ctx context.Context) {
     }()
 }
 ```
+
+#### Goroutine Leak Detection (Go 1.26)
+
+Go 1.26 introduces an experimental goroutine leak profile that detects goroutines permanently blocked on unreachable concurrency primitives:
+
+```bash
+# Build with leak profiling enabled
+GOEXPERIMENT=goroutineleakprofile go build -o myapp
+
+# Access via pprof endpoint at runtime
+# GET /debug/pprof/goroutineleak
+```
+
+The runtime uses GC to identify goroutines blocked on channels or mutexes that have become unreachable — a definitive signal of a goroutine leak. Use this alongside context-based cancellation to catch leaks early in staging environments.
 
 ### 2. Close Channels from Sender Side
 

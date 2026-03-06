@@ -17,13 +17,14 @@ tags:
   - go-1.23
   - go-1.24
   - go-1.25
+  - go-1.26
 related:
   - ./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices
   - ./ex-soen-prla-go__coding-standards.md#part-1-core-idioms
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
-updated: 2026-01-24
+updated: 2026-03-06
 ---
 
 # Domain-Driven Design (DDD) in Go

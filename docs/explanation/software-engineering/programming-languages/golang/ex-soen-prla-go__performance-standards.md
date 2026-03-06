@@ -19,13 +19,14 @@ tags:
   - go-1.23
   - go-1.24
   - go-1.25
+  - go-1.26
 related:
   - ./ex-soen-prla-go__concurrency-standards.md
   - ./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices
 principles:
   - explicit-over-implicit
   - simplicity-over-complexity
-updated: 2026-02-04
+updated: 2026-03-06
 ---
 
 # Go Performance Standards
@@ -2901,23 +2902,39 @@ runtime.GC()
 debug.FreeOSMemory()
 ```
 
-### Green Tea GC (Go 1.25, Experimental)
+### Green Tea GC (Default since Go 1.26)
 
-Go 1.25 introduces Green Tea GC as experimental feature:
+Green Tea GC was introduced experimentally in Go 1.25 and became the **default garbage collector in Go 1.26**. No configuration needed — all Go 1.26 programs benefit automatically.
 
 ```bash
-# Enable Green Tea GC
-GOEXPERIMENT=greenteagc go build main.go
-
-# Or at runtime
-GOEXPERIMENT=greenteagc ./myapp
+# Disable Green Tea GC (fallback to previous GC, removal expected in Go 1.27)
+GOEXPERIMENT=nogreenteagc go build main.go
 ```
 
 Benefits:
 
 - 10-40% reduction in GC overhead for GC-heavy programs
-- Improved pause times
-- Variable make hash optimization
+- Additional ~10% improvement on newer CPUs (Intel Ice Lake, AMD Zen 4+)
+- Better locality and CPU scalability for marking/scanning small objects
+- Leverages vector instructions for scanning small objects
+
+### Goroutine Leak Profiling (Go 1.26, Experimental)
+
+Go 1.26 adds experimental goroutine leak detection via the runtime profiler:
+
+```bash
+# Enable goroutine leak profiling
+GOEXPERIMENT=goroutineleakprofile go build main.go
+
+# Access via pprof endpoint
+# /debug/pprof/goroutineleak
+```
+
+The runtime uses GC to detect goroutines permanently blocked on concurrency primitives (channels, mutexes) where the primitive has become unreachable. This catches goroutine leaks that would otherwise go unnoticed in production.
+
+### Stack Allocation for Slice Backing Stores (Go 1.26)
+
+The Go 1.26 compiler allocates slice backing stores on the stack in more situations, reducing heap allocations without code changes. This benefits small, short-lived slices automatically.
 
 ## Memory Allocation Patterns
 

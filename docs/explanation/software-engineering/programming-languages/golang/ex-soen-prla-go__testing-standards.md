@@ -20,12 +20,13 @@ tags:
   - go-1.23
   - go-1.24
   - go-1.25
+  - go-1.26
 related:
   - ./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices
 principles:
   - automation-over-manual
   - explicit-over-implicit
-updated: 2026-02-04
+updated: 2026-03-06
 ---
 
 # Go Testing Standards
@@ -312,6 +313,24 @@ func TestFileOperations(t *testing.T) {
   // Test code
   // ...
 }
+```
+
+#### Test Artifact Management (Go 1.26+)
+
+Go 1.26 adds `T.ArtifactDir()` for managing test artifacts (screenshots, logs, generated files):
+
+```go
+func TestGenerateReport(t *testing.T) {
+  // ArtifactDir returns a persistent directory when -artifacts flag is set
+  // Otherwise returns a temp directory cleaned up after the test
+  dir := t.ArtifactDir()
+
+  report := generateReport()
+  os.WriteFile(filepath.Join(dir, "report.html"), report, 0644)
+}
+
+// Run with artifact persistence:
+// go test -artifacts=./test-output ./...
 ```
 
 ### 📊 Table-Driven Tests

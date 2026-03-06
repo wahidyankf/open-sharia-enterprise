@@ -16,6 +16,7 @@ tags:
   - go-1.23
   - go-1.24
   - go-1.25
+  - go-1.26
 principles:
   - immutability
   - pure-functions
@@ -26,7 +27,7 @@ related:
   - ./ex-soen-prla-go__type-safety-standards.md
   - ./ex-soen-prla-go__concurrency-standards.md
   - ../../../../../governance/development/pattern/functional-programming.md
-updated: 2026-02-04
+updated: 2026-03-06
 ---
 
 # Go Design Patterns
@@ -1368,6 +1369,39 @@ func ProcessData(data []Data) []Result {
     }
   }
   return results
+}
+```
+
+### Self-Referential Generics (Go 1.26+)
+
+Go 1.26 enables generic types to reference themselves in their own type parameter constraints, enabling type-safe fluent interfaces and builder patterns:
+
+```go
+// Self-referential constraint for chainable builders
+type Builder[B Builder[B]] interface {
+    WithOption(string) B
+    Build() string
+}
+
+type HTMLBuilder struct {
+    tags []string
+}
+
+func (h HTMLBuilder) WithOption(tag string) HTMLBuilder {
+    h.tags = append(h.tags, tag)
+    return h
+}
+
+func (h HTMLBuilder) Build() string {
+    return strings.Join(h.tags, "\n")
+}
+
+// Generic function works with any self-referencing builder
+func Configure[B Builder[B]](b B, options ...string) B {
+    for _, opt := range options {
+        b = b.WithOption(opt)
+    }
+    return b
 }
 ```
 

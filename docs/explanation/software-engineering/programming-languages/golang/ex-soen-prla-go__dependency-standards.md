@@ -16,12 +16,13 @@ tags:
   - go-1.23
   - go-1.24
   - go-1.25
+  - go-1.26
 related:
   - ./ex-soen-prla-go__coding-standards.md#part-2-naming--organization-best-practices
 principles:
   - reproducibility
   - explicit-over-implicit
-updated: 2026-01-24
+updated: 2026-03-06
 ---
 
 # Modules and Dependencies in Go
@@ -125,6 +126,8 @@ module github.com/username/project
 
 go 1.26
 ```
+
+> **Go 1.26 version defaulting**: `go mod init` now defaults to a lower Go version for compatibility. Toolchain v1.N.X creates `go.mod` with `go 1.(N-1).0` (e.g., Go 1.26 creates `go 1.25.0`). This encourages compatibility with currently supported Go versions. Override by editing the `go` directive after initialization.
 
 ### Module Path
 
