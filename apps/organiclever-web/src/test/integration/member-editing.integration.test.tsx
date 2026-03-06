@@ -114,4 +114,54 @@ describeFeature(feature, ({ Scenario, BeforeEachScenario, AfterEachScenario }) =
       expect(screen.queryByText("Alice Johnson")).toBeNull();
     });
   });
+
+  Scenario("Editing role, email, and github fields updates the dialog inputs", ({ Given, When, Then, And }) => {
+    Given("a user is logged in and on the members page", async () => {
+      render(<MembersPage />);
+      await screen.findAllByRole("row");
+    });
+
+    And('the user has opened the edit dialog for "Alice Johnson"', async () => {
+      await openEditDialogFor("Alice Johnson");
+    });
+
+    When('the user changes the role to "Staff Engineer"', async () => {
+      const user = userEvent.setup();
+      const dialog = screen.getByRole("dialog");
+      const roleInput = within(dialog).getByLabelText(/^role$/i);
+      await user.clear(roleInput);
+      await user.type(roleInput, "Staff Engineer");
+    });
+
+    And('the user changes the email to "ali@example.com"', async () => {
+      const user = userEvent.setup();
+      const dialog = screen.getByRole("dialog");
+      const emailInput = within(dialog).getByLabelText(/^email$/i);
+      await user.clear(emailInput);
+      await user.type(emailInput, "ali@example.com");
+    });
+
+    And('the user changes the github to "alijohnson2"', async () => {
+      const user = userEvent.setup();
+      const dialog = screen.getByRole("dialog");
+      const githubInput = within(dialog).getByLabelText(/^github$/i);
+      await user.clear(githubInput);
+      await user.type(githubInput, "alijohnson2");
+    });
+
+    Then('the role field should show "Staff Engineer"', () => {
+      const dialog = screen.getByRole("dialog");
+      expect((within(dialog).getByLabelText(/^role$/i) as HTMLInputElement).value).toBe("Staff Engineer");
+    });
+
+    And('the email field should show "ali@example.com"', () => {
+      const dialog = screen.getByRole("dialog");
+      expect((within(dialog).getByLabelText(/^email$/i) as HTMLInputElement).value).toBe("ali@example.com");
+    });
+
+    And('the github field should show "alijohnson2"', () => {
+      const dialog = screen.getByRole("dialog");
+      expect((within(dialog).getByLabelText(/^github$/i) as HTMLInputElement).value).toBe("alijohnson2");
+    });
+  });
 });
