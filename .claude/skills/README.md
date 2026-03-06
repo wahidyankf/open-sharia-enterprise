@@ -26,9 +26,7 @@ This directory contains skill packages that provide progressive knowledge delive
 
 ### 🤖 Agent Development Skills
 
-- **agent-developing-agents** - Agent creation standards and best practices
-- **agent-documenting-references** - Reference documentation for agent metadata
-- **agent-selecting-models** - Model selection criteria (sonnet, opus, haiku)
+- **agent-developing-agents** - Agent creation, reference documentation structure, and model selection standards
 
 ### 🏗️ Repository Pattern Skills
 
@@ -46,13 +44,9 @@ This directory contains skill packages that provide progressive knowledge delive
 
 ### 🔤 Programming Language Skills
 
-- **swe-programming-elixir** - Elixir coding standards quick reference
-- **swe-programming-elixir-phoenix** - Phoenix web framework development standards
-- **swe-programming-elixir-phoenix-liveview** - Phoenix LiveView real-time UI standards
+- **swe-programming-elixir** - Elixir, Phoenix Framework, and Phoenix LiveView coding standards
 - **swe-programming-golang** - Go coding standards quick reference
-- **swe-programming-java** - Java coding standards quick reference
-- **swe-programming-jvm-spring** - Spring Framework core concepts and patterns
-- **swe-programming-jvm-spring-boot** - Spring Boot application development standards
+- **swe-programming-java** - Java, Spring Framework, and Spring Boot coding standards
 - **swe-programming-python** - Python coding standards quick reference
 - **swe-programming-typescript** - TypeScript coding standards quick reference
 

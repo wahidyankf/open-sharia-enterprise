@@ -6,8 +6,6 @@ model: sonnet
 color: blue
 skills:
   - docs-applying-content-quality
-  - agent-selecting-models
-  - agent-documenting-references
   - agent-developing-agents
 ---
 

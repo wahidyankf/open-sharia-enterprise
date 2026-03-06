@@ -75,10 +75,10 @@ Skills are synced from `.claude/skills/` maintaining folder structure. For compl
 - **Documentation Skills**: docs-applying-content-quality, docs-applying-diataxis-framework, docs-creating-accessible-diagrams, docs-creating-by-example-tutorials, docs-creating-in-the-field-tutorials, docs-validating-factual-accuracy, docs-validating-links, docs-validating-software-engineering-separation
 - **README Skills**: readme-writing-readme-files
 - **Planning Skills**: plan-creating-project-plans, plan-writing-gherkin-criteria
-- **Agent Development Skills**: agent-developing-agents, agent-documenting-references, agent-selecting-models
+- **Agent Development Skills**: agent-developing-agents
 - **Repository Pattern Skills**: repo-applying-maker-checker-fixer, repo-assessing-criticality-confidence, repo-defining-workflows, repo-generating-validation-reports, repo-practicing-trunk-based-development, repo-understanding-repository-architecture
 - **Development Workflow Skills**: swe-developing-applications-common, swe-developing-e2e-test-with-playwright
-- **Programming Language Skills**: swe-programming-elixir, swe-programming-elixir-phoenix, swe-programming-elixir-phoenix-liveview, swe-programming-golang, swe-programming-java, swe-programming-jvm-spring, swe-programming-jvm-spring-boot, swe-programming-python, swe-programming-typescript
+- **Programming Language Skills**: swe-programming-elixir, swe-programming-golang, swe-programming-java, swe-programming-python, swe-programming-typescript
 - **Application-Specific Skills**: apps-ayokoding-web-developing-content, apps-organiclever-web-developing-content, apps-oseplatform-web-developing-content
 
 ---
