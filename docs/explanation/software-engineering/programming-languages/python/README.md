@@ -28,7 +28,7 @@ updated: 2026-01-25
 
 # Python Programming Language Documentation
 
-**Quick Reference**: [Overview](#overview) | [Software Engineering Principles](#software-engineering-principles) | [Version Strategy](#python-version-strategy) | [Python in the Platform](#python-in-the-platform) | [Pythonic Philosophy](#pythonic-philosophy) | [Documentation Structure](#documentation-structure) | [Learning Paths](#learning-paths) | [Code Examples](#code-examples) | [Tools & Ecosystem](#tools-and-ecosystem) | [Resources](#resources-and-references)
+**Quick Reference**: [Overview](#overview) | [Software Engineering Principles](#software-engineering-principles) | [Version Strategy](#python-version-strategy) | [Pythonic Philosophy](#pythonic-philosophy) | [Documentation Structure](#documentation-structure) | [Code Examples](#code-examples) | [Python Ecosystem](#python-ecosystem)
 
 ## Overview
 
@@ -95,7 +95,7 @@ All Python code MUST follow the standards documented here:
 
 ## Software Engineering Principles
 
-Python development in this platform follows the five software engineering principles from [governance/principles/software-engineering/](../../../../../governance/principles/software-engineering/README.md):
+Python development in this platform follows the the software engineering principles from [governance/principles/software-engineering/](../../../../../governance/principles/software-engineering/README.md):
 
 1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - Python automates through pytest testing, black/ruff formatting, mypy type checking, and CI/CD pipelines
 2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - Python enforces through explicit imports, type hints, explicit error handling, clear function signatures
@@ -791,7 +791,7 @@ This documentation comprises core documentation files organized into foundation,
 
 ### Core Documentation
 
-**Foundation** (6 files):
+**Foundation**:
 
 - [README.md](./README.md) (this file) - Overview and learning paths
 - [Best Practices](./ex-soen-prla-py__best-practices.md) - PEP 8, PEP 20, modern patterns
@@ -800,7 +800,7 @@ This documentation comprises core documentation files organized into foundation,
 - [Error Handling](./ex-soen-prla-py__error-handling.md) - Exceptions and context managers
 - [Testing](./ex-soen-prla-py__testing.md) - Testing pyramid, coverage strategy, and test patterns
 
-**Core Patterns** (6 files):
+**Core Patterns**:
 
 - [Functional Programming](./ex-soen-prla-py__functional-programming.md) - Pure functions, itertools, functools
 - [Classes and Protocols](./ex-soen-prla-py__classes-and-protocols.md) - Classes, protocols, dataclasses, Pydantic
@@ -809,7 +809,7 @@ This documentation comprises core documentation files organized into foundation,
 - [Modules and Dependencies](./ex-soen-prla-py__modules-and-dependencies.md) - pip, Poetry, pyproject.toml
 - [Anti-Patterns](./ex-soen-prla-py__anti-patterns.md) - Common mistakes to avoid
 
-**Development Practices** (6 files):
+**Development Practices**:
 
 - [Test-Driven Development](./ex-soen-prla-py__test-driven-development.md) - pytest, unittest, hypothesis
 - [Behaviour-Driven Development](./ex-soen-prla-py__behaviour-driven-development.md) - behave, pytest-bdd, Gherkin
@@ -818,19 +818,10 @@ This documentation comprises core documentation files organized into foundation,
 - [Performance](./ex-soen-prla-py__performance.md) - Profiling, optimization, Cython, PyPy
 - [Memory Management](./ex-soen-prla-py__memory-management.md) - Reference counting, garbage collection
 
-**Advanced Topics** (2 files):
+**Advanced Topics**:
 
 - [Web Services](./ex-soen-prla-py__web-services.md) - FastAPI, Django, Flask, httpx
 - [Finite State Machine](./ex-soen-prla-py__finite-state-machine.md) - FSM patterns with transitions library
-
-**Version Documentation** (6 files):
-
-- [Python 3.11 Release](./ex-soen-prla-py__release-3.11.md) - Baseline Python 3.11 features
-- [Python 3.12 Release](./ex-soen-prla-py__release-3.12.md) - Stable Python 3.12 features
-- [Python 3.14 Release](./ex-soen-prla-py__release-3.14.md) - Python 3.14 features
-- [Python 3.15 Release](./ex-soen-prla-py__release-3.15.md) - Python 3.15 features
-- [Python 3.16 Release](./ex-soen-prla-py__release-3.16.md) - Python 3.16 features
-- [Python 3.17 Release](./ex-soen-prla-py__release-3.17.md) - Python 3.17 features
 
 ### Beginner Path
 
@@ -867,17 +858,6 @@ Build production systems and optimize performance:
 5. **Memory Management**: `ex-soen-prla-py__memory-management.md` - Understanding Python's memory model
 
 **Production Excellence**: Web service patterns enable robust APIs. State machines model complex business processes. Security practices protect sensitive financial data. Performance optimization ensures responsive systems. Memory management prevents resource leaks.
-
-### Version-Specific Learning
-
-Understand Python evolution and feature adoption:
-
-1. **Baseline Features**: `ex-soen-prla-py__release-3.11.md` - Python 3.11 improvements
-2. **Stable Features**: `ex-soen-prla-py__release-3.12.md` - Python 3.12 enhancements
-3. **Latest Features**: `ex-soen-prla-py__release-3.14.md` - Python 3.14 innovations
-4. **Upcoming Features**: `ex-soen-prla-py__release-3.15.md`, `ex-soen-prla-py__release-3.16.md`, `ex-soen-prla-py__release-3.17.md` - Future Python releases
-
-**Stay Current**: Version documentation explains when and why to adopt new features. Baseline features (3.11) provide performance improvements. Stable features (3.12) enhance developer experience. Latest features (3.14) unlock new capabilities like free-threaded mode.
 
 ## Code Examples
 

@@ -77,7 +77,7 @@ OSE Platform Java applications MUST use the following framework stack:
 
 ## Software Engineering Principles
 
-Java development in OSE Platform enforces five foundational software engineering principles:
+Java development in OSE Platform enforces foundational software engineering principles:
 
 1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - MUST automate through records, try-with-resources, static analysis (Error Prone, NullAway), Maven plugins (Spotless, JaCoCo), annotation processing, and TestContainers
 
@@ -115,7 +115,7 @@ OSE Platform follows a three-tier Java versioning strategy:
 - Primitive types in patterns (when finalized)
 - Module import declarations (simplified module system)
 
-**See**: [Java Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/release-highlights/) for detailed LTS feature documentation (Java 17, 21, 25). Version-specific documentation (platform migration guidance) planned for in-directory files.
+**Release highlights**: [Java Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/release-highlights/) on ayokoding-web — Java 17, 21, 25 LTS feature guides.
 
 ## OSE Platform Coding Standards (Authoritative)
 
