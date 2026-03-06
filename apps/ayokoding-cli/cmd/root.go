@@ -16,6 +16,9 @@ var (
 	noColor bool
 )
 
+// osExit is a package-level variable for dependency injection in tests.
+var osExit = os.Exit
+
 var rootCmd = &cobra.Command{
 	Use:   "ayokoding-cli",
 	Short: "CLI tools for ayokoding-web Hugo site",
@@ -30,7 +33,7 @@ and verbose logging.`,
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-		os.Exit(1)
+		osExit(1)
 	}
 }
 
