@@ -22,11 +22,6 @@ Technical reference documentation for the open-sharia-enterprise project. These 
 - [Nx Configuration](./re__nx-configuration.md) - Nx workspace configuration, task caching, and build system
 - [System Architecture](./re__system-architecture.md) - Comprehensive reference for platform architecture, application inventory, interactions, deployment infrastructure, and CI/CD pipelines
 
-### Evaluation & Specifications
-
-- [Evaluation App Specifications](./eval-app-specs/README.md) - Mini app specifications for evaluating programming languages and frameworks
-  - [IAM System Overview](eval-app-specs/re-evapsp__iam-overview.md) - Identity and Access Management specification
-
 ---
 
 **Last Updated**: 2025-12-21
