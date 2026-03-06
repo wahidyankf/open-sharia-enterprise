@@ -14,6 +14,7 @@ tags:
   - go-1.23
   - go-1.24
   - go-1.25
+  - go-1.26
 principles:
   - automation-over-manual
   - explicit-over-implicit
@@ -21,7 +22,7 @@ principles:
   - pure-functions
   - reproducibility
 created: 2026-01-25
-updated: 2026-02-04
+updated: 2026-03-06
 ---
 
 # Golang
@@ -75,7 +76,8 @@ OSE Platform Go applications MUST use the following stack:
 
 - **Baseline**: Go 1.21+ (MUST use minimum) - PGO production-ready, built-in min/max/clear
 - **Recommended**: Go 1.23+ (SHOULD migrate to) - Iterator functions, unique package, timer changes
-- **Latest**: Go 1.25 (RECOMMENDED for new projects) - Green Tea GC (experimental), encoding/json/v2, container-aware GOMAXPROCS
+- **Previous**: Go 1.25 - Green Tea GC (experimental), encoding/json/v2, container-aware GOMAXPROCS
+- **Latest**: Go 1.26 (RECOMMENDED for new projects) - Current stable release used across all OSE Platform Go modules
 
 **See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for Go-specific release documentation location
 
@@ -88,7 +90,7 @@ OSE Platform Go applications MUST use the following stack:
 - **[Go Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/)** - Complete 0-95% language coverage
 - **[Go By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/by-example/)** - 75-85 annotated code examples (beginner to advanced)
 - **[Go In the Field](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/in-the-field/)** - Production patterns and design approaches
-- **[Go Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/release-highlights/)** - Go 1.18-1.25 features (generics, fuzzing, PGO, iterators, Green Tea GC)
+- **[Go Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/release-highlights/)** - Go 1.18-1.26 features (generics, fuzzing, PGO, iterators, Green Tea GC)
 
 **What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply Go knowledge in THIS codebase.
 
@@ -131,14 +133,18 @@ OSE Platform follows a three-tier Go versioning strategy focused on modern featu
 - Timer behavior changes (unbuffered channels, GC-eligible)
 - Generic type aliases (preview)
 
-**Go 1.25 (Latest - RECOMMENDED)**:
+**Go 1.25 (Previous)**:
 
-- New projects SHOULD use Go 1.25 for latest stable features
 - Green Tea GC (experimental, 10-40% GC overhead reduction)
 - `encoding/json/v2` packages (major API revision for better performance)
 - Container-aware GOMAXPROCS (automatic CPU quota detection for containers)
 - Core types removal (language spec cleanup)
 - Leak detection with AddressSanitizer (ASAN)
+
+**Go 1.26 (Latest - RECOMMENDED)**:
+
+- New projects SHOULD use Go 1.26 for the latest stable features
+- Current stable release used across all OSE Platform Go modules
 
 **Unlike Java's LTS model**: Go releases every 6 months with backward compatibility guarantees (Go 1 compatibility promise). No LTS distinction exists; all releases receive security patches for one year. Platform strategy focuses on staying current with stable releases.
 
@@ -217,7 +223,7 @@ graph TD
 
     D --> R["By Example<br/>(75-85 examples)"]:::purple
     D --> S["In the Field<br/>(Production patterns)"]:::purple
-    D --> T["Release Highlights<br/>(Go 1.18-1.25)"]:::purple
+    D --> T["Release Highlights<br/>(Go 1.18-1.26)"]:::purple
 
     classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
     classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
@@ -234,6 +240,7 @@ graph TD
 - oseplatform-cli MUST use Go for OSE Platform site validation (link checking)
 - Administrative tools SHOULD use Go for fast startup and easy distribution (single binary)
 - Code generation and scaffolding MAY use Go with `text/template` or `html/template`
+- All OSE Platform CLI apps MUST use domain-prefixed Cobra subcommands (`{cli-name} {domain} {action}`) — see [BDD Spec-to-Test Mapping Convention](../../../../../governance/development/infra/bdd-spec-test-mapping.md) for source file and Gherkin tag naming rules
 
 **High-Performance Services**:
 
@@ -253,7 +260,7 @@ graph TD
 
 **Version Management (REQUIRED)**:
 
-- MUST use `go.mod` with `go 1.26.0` directive to pin Go version
+- MUST use `go.mod` with `go 1.26` directive to pin Go version
 - SHOULD use MISE/asdf with `.tool-versions` OR SDKMAN with `.sdkmanrc` for local version management
 - MUST NOT rely on system-installed Go without version verification
 
@@ -267,12 +274,12 @@ graph TD
 
 **Automated Quality (REQUIRED)**:
 
-- MUST use `golangci-lint` v2.8.0+ for comprehensive linting (20+ linters enabled)
+- MUST use `golangci-lint` v2.10.1+ for comprehensive linting (20+ linters enabled)
 - MUST use `gofmt` for code formatting (enforced in pre-commit hooks)
 - SHOULD use `staticcheck` for advanced static analysis (included in golangci-lint)
 - MUST use `go vet` for correctness checking (detects common mistakes)
 - SHOULD use `gosec` for security scanning (OWASP vulnerabilities)
-- MUST achieve >85% test coverage for domain logic (measured with `go test -cover`)
+- MUST achieve >=95% test coverage for domain logic (measured with `go test -coverprofile=cover.out ./...` and enforced by `rhino-cli test-coverage validate`)
 
 **Testing Automation (REQUIRED)**:
 
@@ -300,10 +307,11 @@ graph TD
 - [Implementation Workflow](../../../../../governance/development/workflow/implementation.md) - MUST follow "make it work → make it right → make it fast" process
 - [Code Quality Standards](../../../../../governance/development/quality/code.md) - MUST meet platform-wide quality requirements
 - [Commit Messages](../../../../../governance/development/workflow/commit-messages.md) - MUST use Conventional Commits format
+- [BDD Spec-to-Test Mapping Convention](../../../../../governance/development/infra/bdd-spec-test-mapping.md) - MUST follow Go source file naming and Gherkin tag conventions for CLI commands with Godog integration tests
 
 **Code Review Requirements**:
 
-- All Go code MUST pass automated checks (`golangci-lint`, `go test`, coverage >85% for domain logic)
+- All Go code MUST pass automated checks (`golangci-lint`, `go test`, coverage >=95% for domain logic enforced by `rhino-cli test-coverage validate`)
 - Code reviewers MUST verify compliance with standards in this index
 - Non-compliance with mandatory standards (Coding, Testing, Code Quality) blocks merge
 - Goroutine leaks and race conditions MUST be detected with `go test -race`
@@ -331,7 +339,7 @@ graph TD
 ---
 
 **Status**: Authoritative Standard (Mandatory Compliance)
-**Last Updated**: 2026-02-04
-**Go Version**: 1.21+ (baseline), 1.23+ (recommended), 1.25 (recommended for new projects)
+**Last Updated**: 2026-03-06
+**Go Version**: 1.21+ (baseline), 1.23+ (recommended), 1.25 (previous), 1.26 (recommended for new projects)
 **Framework Stack**: Standard library (primary), Gin v1.11.0, Echo v5.0.0, GORM v1.25.0, testify v1.9.0
 **Maintainers**: Platform Architecture Team
