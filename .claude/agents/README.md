@@ -68,6 +68,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 
 ### 💻 Development
 
+- **swe-code-checker** - Validates projects against platform coding standards
 - **swe-e2e-test-developer** - E2E testing with Playwright
 - **swe-elixir-developer** - Elixir application development
 - **swe-golang-developer** - Go application development

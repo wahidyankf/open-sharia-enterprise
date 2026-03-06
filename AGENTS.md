@@ -53,7 +53,7 @@ Specialized agents organized into families:
 3. **Project Planning**: `plan-maker`, `plan-checker`, `plan-executor`, `plan-execution-checker`, `plan-fixer`
 4. **Hugo Content - ayokoding-web**: Bilingual content creators, validators, deployers (includes in-the-field agents: `apps-ayokoding-web-in-the-field-maker`, `apps-ayokoding-web-in-the-field-checker`, `apps-ayokoding-web-in-the-field-fixer`)
 5. **Hugo Content - oseplatform-web**: Landing page content creators, validators, deployers
-6. **Software Engineering & Specialized**: `agent-maker`, `swe-e2e-test-developer`, `swe-elixir-developer`, `swe-golang-developer`, `swe-hugo-developer`, `swe-java-developer`, `swe-python-developer`, `swe-typescript-developer`, `social-linkedin-post-maker`, `apps-organiclever-web-deployer`
+6. **Software Engineering & Specialized**: `agent-maker`, `swe-code-checker`, `swe-e2e-test-developer`, `swe-elixir-developer`, `swe-golang-developer`, `swe-hugo-developer`, `swe-java-developer`, `swe-python-developer`, `swe-typescript-developer`, `social-linkedin-post-maker`, `apps-organiclever-web-deployer`
 7. **Repository Governance**: `repo-governance-maker`, `repo-governance-checker`, `repo-governance-fixer`, `repo-workflow-maker`, `repo-workflow-checker`, `repo-workflow-fixer`
 
 **Full agent catalog**: See [`.opencode/agent/README.md`](./.opencode/agent/README.md)
