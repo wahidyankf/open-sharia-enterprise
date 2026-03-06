@@ -62,13 +62,15 @@ This separation follows the **DRY principle** (Don't Repeat Yourself) - educatio
 
 ```
 docs/explanation/software-engineering/programming-languages/golang/
-├── README.md                                    # Overview + links to ayokoding-web
-├── ex-soen-prla-go__best-practices.md          # OSE Platform Go standards
-├── ex-soen-prla-go__idioms.md                  # OSE Platform Go conventions
-├── ex-soen-prla-go__anti-patterns.md           # OSE Platform mistakes to avoid
-├── ex-soen-prla-go__error-handling.md          # OSE Platform error patterns
-└── ex-soen-prla-go__security.md                # OSE Platform security standards
+├── README.md                                        # Overview + links to ayokoding-web
+├── ex-soen-prla-go__coding-standards.md            # OSE Platform Go conventions
+├── ex-soen-prla-go__code-quality-standards.md      # OSE Platform Go code quality
+├── ex-soen-prla-go__error-handling-standards.md    # OSE Platform error patterns
+├── ex-soen-prla-go__security-standards.md          # OSE Platform security standards
+└── ex-soen-prla-go__testing-standards.md           # OSE Platform testing standards
 ```
+
+> **Note**: Go (along with Java and Elixir) follows the "Domain-Specific Standards Pattern" — multiple topic-focused standards files — rather than the "Three-Document Pattern" (idioms/best-practices/anti-patterns) used by TypeScript, Python, and Dart. Both patterns are valid. See `docs/explanation/software-engineering/programming-languages/README.md` for details.
 
 **Content includes**:
 
@@ -321,7 +323,7 @@ This convention applies to **ALL** programming languages in the repository:
 
 ## Alignment with Software Engineering Principles
 
-Programming language style guides in `docs/explanation/` MUST align with five software engineering principles from [governance/principles/software-engineering/](../../principles/software-engineering/README.md):
+Programming language style guides in `docs/explanation/` MUST align with the software engineering principles from [governance/principles/software-engineering/](../../principles/software-engineering/README.md):
 
 ### 1. Automation Over Manual
 
@@ -370,7 +372,7 @@ Style guides enable reproducible builds:
 ```markdown
 ## Software Engineering Principles
 
-Go development in OSE Platform follows the five software engineering principles:
+Go development in OSE Platform follows the software engineering principles:
 
 1. **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)** - Go automates through golangci-lint, gofmt, go test, code generation
 2. **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)** - Go enforces through explicit error handling, no hidden control flow
@@ -801,7 +803,7 @@ Before publishing programming language documentation:
 - [Documentation First](../../principles/content/documentation-first.md) - Documentation is mandatory, not optional
 - [Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md) - Clear separation prevents confusion
 - [Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md) - Explicit prerequisite statements
-- [Software Engineering Principles Index](../../principles/software-engineering/README.md) - Five principles that style guides align with
+- [Software Engineering Principles Index](../../principles/software-engineering/README.md) - Software engineering principles that style guides align with
 
 ## References
 
