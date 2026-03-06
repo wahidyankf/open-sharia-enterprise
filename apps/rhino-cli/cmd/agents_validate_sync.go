@@ -27,22 +27,22 @@ Skills:
 - Count check: Ensures equal number of skills in both directories
 - Identity check: Validates skills are byte-for-byte identical`,
 	Example: `  # Validate sync
-  rhino-cli validate-sync
+  rhino-cli agents validate-sync
 
   # Output as JSON
-  rhino-cli validate-sync -o json
+  rhino-cli agents validate-sync -o json
 
   # Verbose mode (show all checks)
-  rhino-cli validate-sync -v
+  rhino-cli agents validate-sync -v
 
   # Quiet mode (show only summary)
-  rhino-cli validate-sync -q`,
+  rhino-cli agents validate-sync -q`,
 	SilenceErrors: true,
 	RunE:          runValidateSync,
 }
 
 func init() {
-	rootCmd.AddCommand(validateSyncCmd)
+	agentsCmd.AddCommand(validateSyncCmd)
 }
 
 func runValidateSync(cmd *cobra.Command, args []string) error {

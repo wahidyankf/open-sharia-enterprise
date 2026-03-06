@@ -9,7 +9,7 @@ import (
 )
 
 var validateSpecCoverageCmd = &cobra.Command{
-	Use:   "validate-spec-coverage <specs-dir> <app-dir>",
+	Use:   "validate <specs-dir> <app-dir>",
 	Short: "Validate that all BDD spec files have matching test implementations",
 	Long: `Walk <specs-dir> for .feature files and check each has at least one
 matching test file anywhere under <app-dir>.
@@ -23,20 +23,20 @@ The reverse direction (test referencing a non-existent spec) is already enforced
 at runtime by vitest-cucumber's loadFeature(), so only the spec-to-test direction
 is checked here.`,
 	Example: `  # Check organiclever-web spec coverage
-  rhino-cli validate-spec-coverage specs/organiclever-web apps/organiclever-web
+  rhino-cli spec-coverage validate specs/organiclever-web apps/organiclever-web
 
   # Output as JSON
-  rhino-cli validate-spec-coverage specs/organiclever-web apps/organiclever-web -o json
+  rhino-cli spec-coverage validate specs/organiclever-web apps/organiclever-web -o json
 
   # Quiet mode
-  rhino-cli validate-spec-coverage specs/organiclever-web apps/organiclever-web -q`,
+  rhino-cli spec-coverage validate specs/organiclever-web apps/organiclever-web -q`,
 	Args:          cobra.ExactArgs(2),
 	SilenceErrors: true,
 	RunE:          runValidateSpecCoverage,
 }
 
 func init() {
-	rootCmd.AddCommand(validateSpecCoverageCmd)
+	specCoverageCmd.AddCommand(validateSpecCoverageCmd)
 }
 
 func runValidateSpecCoverage(cmd *cobra.Command, args []string) error {
