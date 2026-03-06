@@ -55,6 +55,7 @@ TypeScript is the primary language for OSE Platform development. It provides sta
 - **[TypeScript Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/typescript/_index.md)** - Complete 0-95% language coverage
 - **[TypeScript By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/typescript/by-example/_index.md)** - 75-85 annotated code examples (beginner → advanced)
 - **[TypeScript In Practice](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/typescript/in-the-field/_index.md)** - Production patterns and design approaches
+- **[TypeScript Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/typescript/release-highlights/)** - TypeScript 4.x-5.x LTS feature guides
 
 **What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply TypeScript knowledge in THIS codebase.
 
@@ -86,7 +87,7 @@ All TypeScript code MUST follow the standards documented here:
 
 ## Software Engineering Principles
 
-TypeScript development in this platform follows the five software engineering principles from [governance/principles/software-engineering/](../../../../../governance/principles/software-engineering/README.md):
+TypeScript development in this platform follows the the software engineering principles from [governance/principles/software-engineering/](../../../../../governance/principles/software-engineering/README.md):
 
 1. **[Automation Over Manual](../../../../../governance/principles/software-engineering/automation-over-manual.md)** - TypeScript automates through ESLint, Prettier, Husky hooks, automated testing with Jest/Vitest, and CI/CD pipelines
 2. **[Explicit Over Implicit](../../../../../governance/principles/software-engineering/explicit-over-implicit.md)** - TypeScript enforces through explicit typing, no `any` types, explicit error handling with Result pattern, clear function signatures
@@ -167,6 +168,8 @@ timeline
 - Improved error messages with actionable suggestions
 - Better JSDoc support for type inference
 
+**See**: [TypeScript Release Highlights](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/typescript/release-highlights/) on ayokoding-web — TypeScript 5.x version feature guides.
+
 ## Documentation Structure
 
 ### Foundation
@@ -202,18 +205,6 @@ timeline
 | [Test-Driven Development](ex-soen-prla-ty__test-driven-development.md)           | TDD practices       | 1,800 | Jest, Vitest, Property testing       |
 | [Behaviour-Driven Development](ex-soen-prla-ty__behaviour-driven-development.md) | BDD with Gherkin    | 1,500 | Cucumber, Playwright, E2E            |
 | [Linting & Formatting](ex-soen-prla-ty__linting-and-formatting.md)               | Code quality        | 1,400 | ESLint 9.x/10.x, Prettier, Hooks     |
-
-### Version-Specific Documentation
-
-| Version                                           | Description       | Key Features                           |
-| ------------------------------------------------- | ----------------- | -------------------------------------- |
-| [TypeScript 5.0](ex-soen-prla-ty__release-5.0.md) | Baseline version  | Decorators, const type parameters      |
-| [TypeScript 5.1](ex-soen-prla-ty__release-5.1.md) | Incremental       | JSDoc improvements, type narrowing     |
-| [TypeScript 5.2](ex-soen-prla-ty__release-5.2.md) | Incremental       | Using declarations, decorator metadata |
-| [TypeScript 5.4](ex-soen-prla-ty__release-5.4.md) | Milestone version | NoInfer utility, Closure narrowing     |
-| [TypeScript 5.6](ex-soen-prla-ty__release-5.6.md) | Stable version    | Iterator helpers, Strict checks        |
-| [TypeScript 5.8](ex-soen-prla-ty__release-5.8.md) | Incremental       | Granular checks, require() imports     |
-| [TypeScript 5.9](ex-soen-prla-ty__release-5.9.md) | Latest version    | Path rewriting, Relative checks        |
 
 ## TypeScript in the Platform
 
