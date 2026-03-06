@@ -20,7 +20,7 @@ Technical reference documentation for the open-sharia-enterprise project. These 
 
 - [Monorepo Structure](./re__monorepo-structure.md) - Nx monorepo organization, apps, libs, and project architecture
 - [Nx Configuration](./re__nx-configuration.md) - Nx workspace configuration, task caching, and build system
-- [System Architecture](./re__system-architecture.md) - Comprehensive reference for platform architecture, application inventory, interactions, deployment infrastructure, and CI/CD pipelines
+- [System Architecture](./system-architecture/README.md) - Comprehensive reference for platform architecture, application inventory, interactions, deployment infrastructure, and CI/CD pipelines
 
 ---
 
