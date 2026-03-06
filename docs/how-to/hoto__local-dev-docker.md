@@ -32,14 +32,14 @@ Docker Compose configurations are organized by deployment target:
 
 ```
 infra/
-├── local/                    # Local development environments
+├── dev/                      # Local development environments
 │   ├── organiclever/       # OrganicLever services ecosystem
 │   │   ├── docker-compose.yml
 │   │   ├── .env.example
 │   │   └── README.md
 │   └── [other-service]/     # Other service ecosystems
-├── cloud/                    # Cloud deployment configs (future)
-└── k8s/                      # Kubernetes configs (future)
+└── k8s/                      # Kubernetes configs
+    └── organiclever/        # OrganicLever K8s deployments
 ```
 
 ## Quick Start
@@ -502,7 +502,7 @@ export DOCKER_BUILDKIT=1
 ### 2. Optimize Image Size
 
 - Use Alpine-based images
-- Multi-stage builds for compiled languages
+- Multi-stage builds for compiled languages (see `apps/organiclever-be/Dockerfile` and `apps/organiclever-web/Dockerfile` for production examples)
 - Remove unnecessary files
 
 ### 3. Cache Dependencies
@@ -557,6 +557,8 @@ docker-compose up -d
 - Production parity
 
 ## CI/CD Integration
+
+**Production Dockerfiles**: Multi-stage production Dockerfiles are co-located with each app (`apps/organiclever-be/Dockerfile`, `apps/organiclever-web/Dockerfile`). These build optimized, non-root images suitable for Kubernetes deployment.
 
 Docker Compose can be used in CI/CD pipelines:
 

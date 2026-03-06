@@ -132,10 +132,33 @@ Expected: `{"message":"auto-reload works!"}`
 
 ## Production Deployment
 
-### Step 1: Build JAR
+### Option 1: Docker Image (Recommended)
+
+Build a production container image using the multi-stage Dockerfile:
 
 ```bash
-# From repository root
+docker build -t organiclever-be:latest apps/organiclever-be/
+```
+
+Run the image:
+
+```bash
+docker run --rm -p 8201:8201 organiclever-be:latest
+```
+
+**Image characteristics**:
+
+- Multi-stage build: JDK (build) + JRE (runtime)
+- Non-root `app` user
+- ZGC garbage collector enabled
+- Spring profile: `prod` by default
+- Image size: ~150-200MB
+- Customizable via `JAVA_OPTS` and `SPRING_PROFILES_ACTIVE` env vars
+
+### Option 2: JAR Directly
+
+```bash
+# Build JAR
 nx build organiclever-be
 
 # Or from app directory
@@ -145,20 +168,11 @@ mvn clean package -DskipTests
 
 Output: `target/organiclever-be-1.0.0.jar`
 
-### Step 2: Run with production config
+Run:
 
 ```bash
-cd infra/dev/organiclever
-docker-compose -f docker-compose.yml up
+java -XX:+UseZGC -jar apps/organiclever-be/target/organiclever-be-1.0.0.jar --spring.profiles.active=prod
 ```
-
-**Production mode differences**:
-
-- Uses JRE image (smaller, ~80MB vs 300MB JDK)
-- No source mount (pre-built JAR only)
-- No DevTools (excluded from JAR)
-- No auto-reload (manual rebuild required)
-- Faster startup (~10 seconds)
 
 ## Nx Commands
 
@@ -454,5 +468,4 @@ Tests cover:
 - Add database integration (PostgreSQL)
 - Add security (Spring Security, JWT)
 - Add API documentation (Swagger/OpenAPI)
-- Add integration tests
-- Add CI/CD pipeline
+- Add CI/CD pipeline (registry push, Kubernetes deploy)

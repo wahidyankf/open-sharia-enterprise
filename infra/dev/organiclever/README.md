@@ -356,6 +356,8 @@ This project uses a 3-environment architecture:
 - **Health**: No details exposed
 - **Configuration**: See `infra/k8s/organiclever/production/`
 
+**Production Docker images**: Defined in each app directory (`apps/organiclever-be/Dockerfile`, `apps/organiclever-web/Dockerfile`), independent of this dev setup.
+
 **Deployment Flow**: dev (local) → staging (K8s) → prod (K8s)
 
 ## Development Options
@@ -549,12 +551,16 @@ services:
 1. **Environment Variables**: Never commit `.env` file with secrets
 2. **Network Isolation**: Services are isolated in organiclever-network
 3. **Read-Only Volumes**: JAR file is mounted read-only
-4. **Non-Root User**: Consider running containers as non-root (future enhancement)
+4. **Non-Root User**: Production Dockerfiles run as non-root `app` user
 5. **Health Checks**: Enables automatic recovery of unhealthy services
 
 ## Future Enhancements
 
-Planned additions to this infrastructure:
+### Completed
+
+- **Production Dockerfiles**: Multi-stage builds in `apps/organiclever-be/Dockerfile` and `apps/organiclever-web/Dockerfile`
+
+### Planned
 
 - **Database**: PostgreSQL for data persistence
 - **Redis**: Caching layer

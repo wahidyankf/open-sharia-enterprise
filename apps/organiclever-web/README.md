@@ -145,6 +145,27 @@ git push origin main:prod-organiclever-web --force
 
 Use the `apps-organiclever-web-deployer` agent for guided deployment.
 
+### Docker (Production Image)
+
+Build a production container image using the multi-stage Dockerfile (from repo root):
+
+```bash
+docker build -f apps/organiclever-web/Dockerfile -t organiclever-web:latest .
+```
+
+Run the image:
+
+```bash
+docker run --rm -p 3200:3200 organiclever-web:latest
+```
+
+**Image characteristics**:
+
+- Multi-stage build: deps + build + Next.js standalone runtime
+- Non-root `app` user
+- Image size: ~150-200MB
+- Uses `output: "standalone"` in `next.config.mjs` (Vercel ignores this setting)
+
 ## Testing
 
 `organiclever-web` uses a three-tier testing strategy. Integration and E2E share the same Gherkin
