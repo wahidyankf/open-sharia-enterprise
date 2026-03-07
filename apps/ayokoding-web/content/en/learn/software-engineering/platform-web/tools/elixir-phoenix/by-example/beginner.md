@@ -3,19 +3,21 @@ title: "Beginner"
 weight: 10000001
 date: 2025-12-25T16:18:56+07:00
 draft: false
-description: Master fundamental Elixir Phoenix concepts through 25 annotated examples covering routing, controllers, LiveView basics, Ecto, forms, and components
+description: "Master fundamental Elixir Phoenix concepts through 25 annotated examples covering routing, controllers, LiveView basics, Ecto, forms, and components"
 tags:
-  - phoenix
-  - elixir
-  - web-framework
-  - tutorial
-  - by-example
-  - beginner
-  - routing
-  - controllers
-  - liveview
-  - ecto
-  - forms
+  [
+    "phoenix",
+    "elixir",
+    "web-framework",
+    "tutorial",
+    "by-example",
+    "beginner",
+    "routing",
+    "controllers",
+    "liveview",
+    "ecto",
+    "forms",
+  ]
 ---
 
 ## Group 1: Phoenix Fundamentals
