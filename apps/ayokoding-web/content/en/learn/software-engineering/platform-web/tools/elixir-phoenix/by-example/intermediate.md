@@ -3,19 +3,21 @@ title: "Intermediate"
 weight: 10000002
 date: 2025-12-25T16:18:56+07:00
 draft: false
-description: Master production patterns in Elixir Phoenix through 25 annotated examples covering advanced LiveView, real-time features, authentication, testing, and APIs
+description: "Master production patterns in Elixir Phoenix through 25 annotated examples covering advanced LiveView, real-time features, authentication, testing, and APIs"
 tags:
-  - phoenix
-  - elixir
-  - web-framework
-  - tutorial
-  - by-example
-  - intermediate
-  - liveview
-  - channels
-  - authentication
-  - apis
-  - testing
+  [
+    "phoenix",
+    "elixir",
+    "web-framework",
+    "tutorial",
+    "by-example",
+    "intermediate",
+    "liveview",
+    "channels",
+    "authentication",
+    "apis",
+    "testing",
+  ]
 ---
 
 ## Group 5: Advanced LiveView
@@ -620,17 +622,20 @@ end
 
 # Client-side subscription (in JavaScript or LiveView)
 <script>
-let channel = socket.channel("room:123", {})
+let channel = socket.channel("room:123", {})  // => Creates channel for "room:123" topic
+                                               // => Second arg is params sent on join
 
-channel.join()
-  .receive("ok", resp => console.log("Joined", resp))
+channel.join()                                 // => Sends join request to server
+  .receive("ok", resp => console.log("Joined", resp))  // => Callback on successful join
+                                                        // => resp is server reply payload
 
-channel.on("message", payload => {
-  console.log("Message:", payload.body)
-})
+channel.on("message", payload => {             // => Subscribe to "message" events from server
+  console.log("Message:", payload.body)        // => Prints body when broadcast received
+})                                             // => Handles broadcast() calls from Elixir
 
 document.getElementById("send").addEventListener("click", () => {
-  channel.push("new_message", {body: input.value})
+  channel.push("new_message", {body: input.value})  // => Sends "new_message" event to server
+                                                     // => Triggers handle_in("new_message", ...) in Elixir
 })
 </script>
 ```
@@ -1213,18 +1218,23 @@ graph TD
 ```
 
 ```elixir
-defmodule MyAppWeb.AuthToken do
-  @salt "user auth"
+defmodule MyAppWeb.AuthToken do          # => Helper module for token operations
+  @salt "user auth"                      # => Salt prevents cross-purpose token reuse
+                                         # => Changing salt invalidates all existing tokens
 
   def sign(%{id: user_id, email: email}) do
+                                         # => Accepts user struct with id and email
     Phoenix.Token.sign(MyAppWeb.Endpoint, @salt, %{user_id: user_id, email: email})
-    # => Returns signed JWT token string
+                                         # => Signs payload with endpoint secret
+                                         # => Returns signed token string (e.g., "SFMyNTY...")
   end  # => Token contains user_id and email as claims
 
-  def verify(token) do
+  def verify(token) do                   # => Validates a token from client request
     Phoenix.Token.verify(MyAppWeb.Endpoint, @salt, token, max_age: 86400)
-    # => Returns {:ok, claims} or {:error, :expired/:invalid}
-  end  # => max_age: 86400 seconds (24 hours)
+                                         # => Returns {:ok, claims} or {:error, :expired/:invalid}
+                                         # => max_age: 86400 seconds (24 hours expiry)
+                                         # => claims is %{user_id: 1, email: "user@example.com"}
+  end
 end
 
 # Generate token on login
@@ -1252,23 +1262,25 @@ defmodule MyAppWeb.Plugs.VerifyToken do   # => Plug: validates JWT on every API 
 
   def call(conn, _opts) do                   # => Runs for every request in pipeline
     case get_auth_header(conn) do             # => Check Authorization header
-      "Bearer " <> token ->                          # => Extract token from header
-        case MyAppWeb.AuthToken.verify(token) do      # => Verify signature
-          {:ok, claims} ->                            # => Token valid
-            assign(conn, :current_user_id, claims.user_id)  # => Store user ID
+      "Bearer " <> token ->                          # => Extract token from "Bearer abc123" format
+                                                     # => token is the raw token string
+        case MyAppWeb.AuthToken.verify(token) do      # => Verify signature and expiry
+          {:ok, claims} ->                            # => Token valid and not expired
+            assign(conn, :current_user_id, claims.user_id)  # => Store user ID in conn
+                                                             # => Controllers read conn.assigns.current_user_id
 
-          {:error, _} ->                              # => Token invalid/expired
+          {:error, _} ->                              # => Token invalid, expired, or tampered
             conn
-            |> put_status(:unauthorized)             # => 401 status
-            |> json(%{error: "Invalid token"})
-            |> halt()                                # => Stop pipeline
+            |> put_status(:unauthorized)             # => 401 status code
+            |> json(%{error: "Invalid token"})       # => JSON error response body
+            |> halt()                                # => Stop pipeline, skip controller
         end
 
-      nil ->
+      nil ->                                         # => Authorization header missing entirely
         conn
-        |> put_status(:unauthorized)
-        |> json(%{error: "Missing token"})
-        |> halt()
+        |> put_status(:unauthorized)                 # => 401 Unauthorized
+        |> json(%{error: "Missing token"})           # => JSON error response body
+        |> halt()                                    # => Stop pipeline execution
     end
   end
 
@@ -1276,7 +1288,7 @@ defmodule MyAppWeb.Plugs.VerifyToken do   # => Plug: validates JWT on every API 
     case get_req_header(conn, "authorization") do
                                              # => Returns list (Plug handles multi-value headers)
       [header] -> header                     # => Single header found, return it
-      _ -> nil                               # => No header, return nil
+      _ -> nil                               # => No header or multiple headers, return nil
     end
   end
 end
@@ -1687,13 +1699,15 @@ Paginate API responses efficiently. Return page metadata along with results.
 # mix.exs
 defp deps do
   [
-    {:scrivener_ecto, "~> 2.7"}                       # => Pagination library
+    {:scrivener_ecto, "~> 2.7"}                       # => Pagination library for Ecto queries
+                                                      # => Adds Repo.paginate/2 function
   ]
 end
 
 # config/config.exs
 config :my_app, MyApp.Repo,
-  page_size: 20                                       # => Default page size
+  page_size: 20                                       # => Default page size (items per page)
+                                                      # => Clients can override with page_size param
 
 # In your context
 defmodule MyApp.Blog do                           # => Blog context module
@@ -1703,34 +1717,38 @@ defmodule MyApp.Blog do                           # => Blog context module
   def list_posts(params \\ %{}) do                # => Paginates posts from request params
                                                   # => params: %{"page" => "2", "page_size" => "10"}
     Post
-    |> where([p], p.published == true)                # => Only published
-    |> order_by([p], desc: p.inserted_at)             # => Newest first
-    |> Repo.paginate(params)                          # => Apply pagination
+    |> where([p], p.published == true)                # => Only published posts in results
+    |> order_by([p], desc: p.inserted_at)             # => Newest first for consistent ordering
+    |> Repo.paginate(params)                          # => Scrivener applies LIMIT/OFFSET from params
     # => Returns %Scrivener.Page{entries: [...], page_number: 1, page_size: 20, total_entries: 100, total_pages: 5}
+    # => entries is list of %Post{} structs for current page
   end
 end
 
 # Controller
 defmodule MyAppWeb.API.PostController do              # => API controller for posts
-  use MyAppWeb, :controller                           # => Phoenix controller
+  use MyAppWeb, :controller                           # => Phoenix controller macros
 
-  def index(conn, params) do                          # => GET /api/posts
-    page = MyApp.Blog.list_posts(params)              # => Get paginated results
+  def index(conn, params) do                          # => GET /api/posts handler
+                                                      # => params includes page, page_size query params
+    page = MyApp.Blog.list_posts(params)              # => Get paginated results as Scrivener.Page
+                                                      # => page.entries has current page items
 
     json(conn, %{
-      data: Enum.map(page.entries, &post_json/1),    # => Posts array
+      data: Enum.map(page.entries, &post_json/1),    # => Transform posts to JSON-safe maps
+                                                      # => &post_json/1 is function capture
       metadata: %{
-        page_number: page.page_number,                # => Current page
-        page_size: page.page_size,                    # => Items per page
-        total_entries: page.total_entries,            # => Total count
-        total_pages: page.total_pages                 # => Total pages
+        page_number: page.page_number,                # => Current page (1-indexed)
+        page_size: page.page_size,                    # => Items per page (default 20)
+        total_entries: page.total_entries,            # => Total matching records in DB
+        total_pages: page.total_pages                 # => Total pages = ceil(total/page_size)
       }
     })                                                # => JSON: {data: [...], metadata: {...}}
   end
 
   defp post_json(post) do                            # => Serializes post to JSON map
     %{id: post.id, title: post.title, body: post.body}
-                                                      # => Only expose needed fields
+                                                      # => Only expose needed fields (not inserted_at, etc.)
   end
 end
 
@@ -1999,31 +2017,36 @@ sequenceDiagram
 
 ```elixir
 # Server-side heartbeat (Channel)
-defmodule MyAppWeb.UserSocket do
-  use Phoenix.Socket
+defmodule MyAppWeb.UserSocket do            # => Socket module managing WebSocket connections
+  use Phoenix.Socket                        # => Imports Socket behavior and macros
 
   # Configure heartbeat interval (30 seconds)
-  @heartbeat_interval 30_000                          # => 30 seconds
+  @heartbeat_interval 30_000                          # => 30,000ms = 30 seconds between pings
+                                                      # => Module attribute for easy tuning
 
   channel "room:*", MyAppWeb.RoomChannel     # => Route room:lobby, room:123 etc to RoomChannel
+                                             # => * wildcard matches any room topic suffix
 
   @impl true
   def connect(_params, socket, _connect_info) do
                                                      # => Called when client WebSocket connects
     # Start heartbeat timer
-    send(self(), :heartbeat)                          # => Send first heartbeat
-    {:ok, socket}                                     # => Accept the connection
+    send(self(), :heartbeat)                          # => Sends :heartbeat to this process immediately
+                                                      # => Triggers handle_info(:heartbeat, ...) callback
+    {:ok, socket}                                     # => Accept the connection and start lifecycle
   end
 
   @impl true
   def id(_socket), do: nil                           # => Anonymous socket (no per-user tracking)
-                                                     # => Return user ID here to enable disconnecting specific users
+                                                     # => Return user ID string here to enable disconnecting specific users
+                                                     # => e.g., "user_socket:#{user_id}"
 
   # Handle heartbeat
   @impl true
-  def handle_info(:heartbeat, socket) do             # => Heartbeat message received
-    Process.send_after(self(), :heartbeat, @heartbeat_interval)  # => Schedule next
-    {:noreply, socket}                                # => Keep connection alive
+  def handle_info(:heartbeat, socket) do             # => Receives :heartbeat from send/2 above
+    Process.send_after(self(), :heartbeat, @heartbeat_interval)  # => Schedule next ping in 30s
+                                                                  # => Keeps loop running indefinitely
+    {:noreply, socket}                                # => No socket changes, keep connection alive
   end
 end
 
@@ -2032,32 +2055,36 @@ defmodule MyAppWeb.Presence do
   # app.js - Client heartbeat and reconnection
   """
   const socket = new Socket("/socket", {
-    params: {token: window.userToken},
+    params: {token: window.userToken},                // => Send auth token on connect
+                                                      // => window.userToken set by server template
     heartbeatIntervalMs: 30000,                       // => Send ping every 30s
-    reconnectAfterMs: (tries) => {
-      const delays = [1000, 2000, 5000, 10000]        // => Exponential backoff
-      return delays[tries - 1] || 10000               // => Cap at 10s
+                                                      // => Keeps connection alive through proxies
+    reconnectAfterMs: (tries) => {                    // => Backoff function called on disconnect
+      const delays = [1000, 2000, 5000, 10000]        // => Retry delays in milliseconds
+      return delays[tries - 1] || 10000               // => Cap at 10s for all subsequent retries
     }                                                 // => Backoff: 1s, 2s, 5s, 10s, 10s...
   })
 
-  socket.onError(() => console.log("Socket error"))   // => Log errors
-  socket.onClose(() => console.log("Socket closed"))  // => Connection lost
+  socket.onError(() => console.log("Socket error"))   // => Fires on connection error
+  socket.onClose(() => console.log("Socket closed"))  // => Fires when connection closes
 
-  socket.connect()                                    // => Initial connection
+  socket.connect()                                    // => Initiates WebSocket connection
+                                                      // => Starts heartbeat after connect
 
   // Join channel with rejoin logic
-  const channel = socket.channel("room:lobby", {})
+  const channel = socket.channel("room:lobby", {})    // => Creates "room:lobby" channel handle
+                                                      // => Does not join yet
 
   channel.on("disconnect", () => {
-    console.log("Disconnected, will auto-reconnect")  // => Phoenix handles this
+    console.log("Disconnected, will auto-reconnect")  // => Phoenix JS SDK auto-rejoins on reconnect
   })
 
-  channel.join()
-    .receive("ok", resp => console.log("Joined", resp))
-    .receive("error", resp => console.log("Join failed", resp))
-    .receive("timeout", () => console.log("Join timeout"))
+  channel.join()                                      // => Sends join request to server
+    .receive("ok", resp => console.log("Joined", resp))      // => Join succeeded
+    .receive("error", resp => console.log("Join failed", resp))  // => Join rejected by server
+    .receive("timeout", () => console.log("Join timeout"))   // => No response from server
 
-  export default socket
+  export default socket                               // => Export for use in other JS modules
   """
 end
 
@@ -2103,43 +2130,48 @@ defmodule MyAppWeb.Endpoint do
   plug Plug.Static,
     at: "/",                               # => Serve static files from URL root
     from: :my_app,                         # => Use my_app's priv/static directory
-    gzip: true                                        # => Serve pre-compressed assets
-    # => Looks for .gz files alongside originals
+    gzip: true                                        # => Serve pre-compressed assets if .gz exists
+    # => Looks for app.js.gz alongside app.js
+    # => Client must send Accept-Encoding: gzip header
 
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],        # => Accept form, file upload, and JSON bodies
-    pass: ["*/*"],                                    # => Pass all content types
-    json_decoder: Jason                               # => Fast JSON parser
+    pass: ["*/*"],                                    # => Pass all content types through
+    json_decoder: Jason                               # => Fast JSON parser (faster than Poison)
 
-  plug Plug.Head                                      # => Handle HEAD requests
+  plug Plug.Head                                      # => Handle HEAD requests (strips body)
+                                                      # => HEAD same as GET but returns only headers
 
   # Compress responses
   plug Plug.Deflate,
-    threshold: 1024                                   # => Only compress >= 1KB
-    # => Uses gzip compression for responses
+    threshold: 1024                                   # => Only compress responses >= 1KB
+    # => Smaller responses don't benefit from compression overhead
+    # => Uses gzip compression for text/json/html responses
 
-  plug MyAppWeb.Router                        # => Forward requests to router after plugs
+  plug MyAppWeb.Router                        # => Forward requests to router after all plugs
 end
 
 # Efficient JSON serialization
 defmodule MyAppWeb.PostView do
-  use MyAppWeb, :view                                # => Phoenix view helpers
+  use MyAppWeb, :view                                # => Phoenix view helpers and macros
 
   def render("index.json", %{posts: posts}) do       # => Renders list of posts as JSON
     # Use stream for large datasets
     %{
-      data: Stream.map(posts, &post_json/1)           # => Lazy evaluation
+      data: Stream.map(posts, &post_json/1)           # => Lazy evaluation (no immediate allocation)
+                                                      # => &post_json/1 is captured function reference
             |> Enum.to_list()                         # => Force stream into list for JSON encoding
+                                                      # => Jason requires enumerable, not stream
     }
   end
 
-  defp post_json(post) do                            # => Serializes single post
+  defp post_json(post) do                            # => Serializes single post to minimal map
     # Only include necessary fields
     %{
-      id: post.id,                                    # => Essential fields only
-      title: post.title,                               # => Post title
-      excerpt: String.slice(post.body, 0, 100)        # => Truncate body to excerpt
-      # => Don't send full body in list endpoint
+      id: post.id,                                    # => Numeric post ID
+      title: post.title,                               # => Post title string
+      excerpt: String.slice(post.body, 0, 100)        # => First 100 chars as preview
+      # => Don't send full body in list endpoint (bandwidth optimization)
     }
   end
 end
@@ -2152,21 +2184,23 @@ defmodule MyAppWeb.API.PostController do      # => API controller for posts
     post = MyApp.Blog.get_post!(id)                  # => Fetch post from DB (raises if not found)
 
     # Generate ETag from content
-    etag = :erlang.phash2(post) |> to_string()        # => Hash of post data
-                                                       # => Changes when post changes
+    etag = :erlang.phash2(post) |> to_string()        # => Erlang hash of post struct
+                                                       # => Changes when any post field changes
+                                                       # => etag is a numeric string like "12345678"
 
     case get_req_header(conn, "if-none-match") do      # => Check browser's cached ETag
-      [^etag] ->
+                                                       # => Browser sends previous ETag on repeat requests
+      [^etag] ->                                       # => Pin operator: matches if equal to current etag
         # Client has current version
-        send_resp(conn, :not_modified, "")            # => 304 Not Modified
-        # => Client uses cached response
+        send_resp(conn, :not_modified, "")            # => 304 Not Modified (no body sent)
+        # => Client uses cached response, saves bandwidth
 
-      _ ->
+      _ ->                                             # => No match or first request
         # Send fresh response with ETag
         conn
-        |> put_resp_header("etag", etag)              # => Set ETag header
-        |> put_resp_header("cache-control", "max-age=300")  # => Cache 5 minutes
-        |> json(%{data: post})
+        |> put_resp_header("etag", etag)              # => Set ETag header for future conditional requests
+        |> put_resp_header("cache-control", "max-age=300")  # => Cache 5 minutes (300 seconds)
+        |> json(%{data: post})                         # => Full JSON response body
     end
   end
 end
@@ -2174,26 +2208,28 @@ end
 # Pagination with cursor-based approach (efficient for large datasets)
 defmodule MyApp.Blog do                           # => Blog context module
   def list_posts_cursor(cursor \\ nil, limit \\ 20) do  # => Cursor-based pagination
-                                                        # => cursor: last seen post ID
+                                                        # => cursor: last seen post ID (nil for first page)
+                                                        # => limit: max items per page (default 20)
     query = from p in Post,
-      order_by: [desc: p.id],                         # => Consistent ordering
-      limit: ^limit                                   # => Fetch one page at a time
+      order_by: [desc: p.id],                         # => Consistent ordering by ID (DESC)
+      limit: ^limit                                   # => Fetch only one page at a time
 
     query = if cursor do
-      where(query, [p], p.id < ^cursor)               # => Start after cursor
+      where(query, [p], p.id < ^cursor)               # => Start after cursor (exclusive)
+                                                       # => Gets posts older than cursor ID
     else
-      query
+      query                                            # => No cursor = first page (most recent)
     end
 
-    posts = Repo.all(query)                           # => Fetch posts
+    posts = Repo.all(query)                           # => Execute query, returns [%Post{}, ...]
 
-    next_cursor = if length(posts) == limit do
-      List.last(posts).id                             # => ID of last item
+    next_cursor = if length(posts) == limit do        # => Full page = more results exist
+      List.last(posts).id                             # => ID of last item becomes next cursor
     else
-      nil                                             # => No more results
+      nil                                             # => Partial page = no more results
     end
 
-    %{posts: posts, next_cursor: next_cursor}       # => Return posts and next page cursor
+    %{posts: posts, next_cursor: next_cursor}       # => Return posts and next page token
                                                        # => Client uses next_cursor in next request
   end
 end

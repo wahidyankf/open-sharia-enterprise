@@ -2,7 +2,7 @@
 title: "Overview"
 date: 2026-02-01T00:00:00+07:00
 draft: false
-weight: 100000000
+weight: 10000000
 description: "Learn Phoenix LiveView through 85 annotated code examples covering 95% of real-time web development patterns - ideal for developers with Elixir and Phoenix experience"
 tags: ["phoenix", "liveview", "tutorial", "by-example", "examples", "real-time", "elixir"]
 ---

@@ -1543,7 +1543,7 @@ WHERE o.order_date >= '2024-01-01';
 
 **Text explanation**: JOIN approach explicitly defines relationship, enabling optimizer to choose best join strategy. DISTINCT eliminates duplicate customers (those with multiple orders). More readable and typically faster than IN subquery.
 
-**Key Takeaway**: Convert IN subqueries to JOINs with DISTINCT for better performance and readability. EXISTS subqueries often outperform IN for large result sets. Use NOT EXISTS instead of NOT IN to handle NULL values correctly.
+**Summary**: Convert IN subqueries to JOINs with DISTINCT for better performance and readability. EXISTS subqueries often outperform IN for large result sets.
 
 **Comparison: Correlated subquery vs JOIN**
 
@@ -1607,7 +1607,7 @@ LEFT JOIN (
 
 **Text explanation**: JOIN approach executes subquery once, aggregates results, then joins. Eliminates row-by-row subquery execution. LEFT JOIN preserves all customers even if no recent orders. COALESCE converts NULL to 0 for clarity.
 
-**Key Takeaway**: Replace correlated subqueries with JOIN + GROUP BY for aggregations. Single execution with JOIN vastly outperforms row-by-row correlated execution.
+**Summary**: Replace correlated subqueries with JOIN + GROUP BY for aggregations. Single execution with JOIN vastly outperforms row-by-row correlated execution.
 
 **Comparison: NOT IN vs NOT EXISTS vs LEFT JOIN**
 

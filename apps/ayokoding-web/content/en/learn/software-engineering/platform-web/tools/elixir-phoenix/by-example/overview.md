@@ -1,17 +1,10 @@
 ---
 title: "Overview"
-weight: 100000000
+weight: 10000000
 date: 2025-12-25T16:18:56+07:00
 draft: false
-description: Learn Elixir Phoenix through 80+ production-ready annotated examples covering routing, LiveView, authentication, and deployment - achieving 95% framework mastery
-tags:
-  - phoenix
-  - elixir
-  - web-framework
-  - tutorial
-  - by-example
-  - examples
-  - code-first
+description: "Learn Elixir Phoenix through 80+ production-ready annotated examples covering routing, LiveView, authentication, and deployment - achieving 95% framework mastery"
+tags: ["phoenix", "elixir", "web-framework", "tutorial", "by-example", "examples", "code-first"]
 ---
 
 ## Want to Master Phoenix Through Working Code?

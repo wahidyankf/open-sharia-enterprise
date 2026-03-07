@@ -358,39 +358,45 @@ graph TD
 
 ```sql
 CREATE TABLE numeric_examples (
-    id INTEGER,
+    id INTEGER,               -- => Row identifier (auto or manual)
     whole_number INTEGER,     -- => Stores integers: -9223372036854775808 to 9223372036854775807
     decimal_number REAL,      -- => Stores floating point (IEEE 754 double precision)
-    scientific REAL           -- => Can store scientific notation
+    scientific REAL           -- => Can store scientific notation values
 );
+-- => Table 'numeric_examples' created with 4 columns
+-- => No constraints defined: all values are optional (nullable)
 
 INSERT INTO numeric_examples (id, whole_number, decimal_number, scientific)
 VALUES
-    (1, 42, 3.14159, 6.022e23),
-    (2, -100, 99.99, 1.602e-19);
--- => Inserts numbers demonstrating range and precision
+    (1, 42, 3.14159, 6.022e23),      -- => Row 1: positive integer, pi, Avogadro's number
+    (2, -100, 99.99, 1.602e-19);     -- => Row 2: negative integer, price, electron charge
+-- => 2 rows inserted demonstrating full numeric range and precision
+-- => scientific values stored internally as IEEE 754 doubles
 
 SELECT * FROM numeric_examples;
--- => Returns: id=1, whole_number=42, decimal_number=3.14159, scientific=6.022e+23
--- =>          id=2, whole_number=-100, decimal_number=99.99, scientific=1.602e-19
+-- => Returns all columns for both rows
+-- => Row 1: id=1, whole_number=42, decimal_number=3.14159, scientific=6.022e+23
+-- => Row 2: id=2, whole_number=-100, decimal_number=99.99, scientific=1.602e-19
 
 -- Arithmetic operations
 SELECT
-    whole_number + 10 AS addition,
-    decimal_number * 2 AS multiplication,
-    whole_number / 3 AS division,
-    whole_number % 3 AS modulo
+    whole_number + 10 AS addition,       -- => 42 + 10 = 52
+    decimal_number * 2 AS multiplication, -- => 3.14159 * 2 = 6.28318
+    whole_number / 3 AS division,         -- => 42 / 3 = 14 (integer division)
+    whole_number % 3 AS modulo            -- => 42 % 3 = 0 (no remainder)
 FROM numeric_examples
-WHERE id = 1;
--- => Returns: addition=52, multiplication=6.28318, division=14, modulo=0
+WHERE id = 1;                             -- => Filters to first row only
+-- => Returns single row: addition=52, multiplication=6.28318, division=14, modulo=0
+-- => Integer division truncates: 42/3 = 14 exactly (no fractional part)
 
 -- Type conversion
 SELECT
-    CAST(decimal_number AS INTEGER) AS truncated,
-    CAST(whole_number AS REAL) AS as_real
+    CAST(decimal_number AS INTEGER) AS truncated,  -- => 3.14159 → 3 (truncates decimals)
+    CAST(whole_number AS REAL) AS as_real          -- => 42 → 42.0 (adds decimal point)
 FROM numeric_examples
-WHERE id = 1;
--- => Returns: truncated=3, as_real=42.0
+WHERE id = 1;                                       -- => Filters to first row
+-- => Returns: truncated=3 (CAST drops decimal, does not round), as_real=42.0
+-- => CAST is explicit type conversion; SQLite also does implicit conversion
 ```
 
 **Key Takeaway**: Use INTEGER for whole numbers and REAL for decimals. SQLite's dynamic typing is flexible but can cause unexpected behavior - use explicit CAST when precision matters, especially for financial calculations.
@@ -407,44 +413,55 @@ TEXT stores character data of any length. SQLite treats TEXT, VARCHAR, and CHAR 
 
 ```sql
 CREATE TABLE text_examples (
-    id INTEGER,
-    short_text TEXT,
-    long_text TEXT,
-    varchar_col VARCHAR(50),  -- => Length hint ignored by SQLite
-    char_col CHAR(10)         -- => Length hint ignored by SQLite
+    id INTEGER,               -- => Row identifier
+    short_text TEXT,          -- => Stores short character strings (any length)
+    long_text TEXT,           -- => Stores longer character strings (no length limit)
+    varchar_col VARCHAR(50),  -- => Length hint (50) ignored by SQLite, same as TEXT
+    char_col CHAR(10)         -- => Length hint (10) ignored by SQLite, same as TEXT
 );
+-- => Table 'text_examples' created with 5 columns
+-- => SQLite treats VARCHAR and CHAR the same as TEXT (no length enforcement)
 
 INSERT INTO text_examples (id, short_text, long_text, varchar_col, char_col)
 VALUES
     (1, 'Hello', 'This is a longer text with multiple words', 'VARCHAR example', 'CHAR ex'),
+    -- => Row 1: short word, multi-word sentence, example values
     (2, 'SQL', 'Standard Query Language for databases', 'Another text', '1234567890');
+    -- => Row 2: acronym, definition, numeric string
+-- => 2 rows inserted: row 2's long_text contains 'database' for LIKE demo
 
 -- String concatenation
-SELECT short_text || ' ' || long_text AS combined
+SELECT short_text || ' ' || long_text AS combined   -- => || joins strings together
 FROM text_examples
-WHERE id = 1;
--- => Returns: "Hello This is a longer text with multiple words"
+WHERE id = 1;                                         -- => Filters to first row only
+-- => Returns single value: "Hello This is a longer text with multiple words"
+-- => || operator concatenates strings; space ' ' separates the two fields
 
 -- String functions
 SELECT
-    UPPER(short_text) AS uppercase,
-    LOWER(short_text) AS lowercase,
-    LENGTH(short_text) AS length,
-    SUBSTR(long_text, 1, 10) AS first_10_chars
+    UPPER(short_text) AS uppercase,          -- => Convert all characters to uppercase
+    LOWER(short_text) AS lowercase,          -- => Convert all characters to lowercase
+    LENGTH(short_text) AS length,            -- => Count characters in string
+    SUBSTR(long_text, 1, 10) AS first_10_chars  -- => Extract substring: start=1, length=10
 FROM text_examples
-WHERE id = 1;
+WHERE id = 1;                                -- => Filters to first row
 -- => Returns: uppercase='HELLO', lowercase='hello', length=5, first_10_chars='This is a '
+-- => SUBSTR(text, start_position, length): positions are 1-based in SQLite
 
 -- Pattern matching with LIKE
 SELECT * FROM text_examples
-WHERE long_text LIKE '%database%';
--- => Returns row 2 (contains "database")
+WHERE long_text LIKE '%database%';  -- => % matches any characters before/after 'database'
+-- => LIKE is case-insensitive in SQLite by default
+-- => Returns row 2 only: long_text contains "databases" (includes 'database' substring)
+-- => Row 1's 'This is a longer text' does not contain 'database'
 
 -- Replace function
 SELECT REPLACE(short_text, 'SQL', 'Structured Query Language') AS replaced
+    -- => REPLACE(string, find, replacement) substitutes all occurrences
 FROM text_examples
-WHERE id = 2;
+WHERE id = 2;                        -- => Filters to row with short_text='SQL'
 -- => Returns: "Structured Query Language"
+-- => 'SQL' found in short_text and replaced with full expansion
 ```
 
 **Key Takeaway**: TEXT is the primary string type in SQLite and handles any length. Use `||` for concatenation, UPPER/LOWER for case conversion, LIKE for pattern matching, and SUBSTR for extraction.
@@ -485,48 +502,62 @@ graph TD
 
 ```sql
 CREATE TABLE employees (
-    id INTEGER,
-    name TEXT,
-    email TEXT,
-    phone TEXT,
-    salary REAL
+    id INTEGER,     -- => Employee identifier
+    name TEXT,      -- => Employee full name
+    email TEXT,     -- => Email address (nullable - some employees have none)
+    phone TEXT,     -- => Phone number (nullable - may be missing)
+    salary REAL     -- => Annual salary (nullable - may be undisclosed)
 );
+-- => Table 'employees' created with 5 columns
+-- => All columns nullable to demonstrate NULL handling scenarios
 
 INSERT INTO employees (id, name, email, phone, salary)
 VALUES
-    (1, 'Alice', 'alice@example.com', '555-1234', 75000),
-    (2, 'Bob', NULL, '555-5678', 60000),
-    (3, 'Charlie', 'charlie@example.com', NULL, 80000),
-    (4, 'Diana', NULL, NULL, NULL);
+    (1, 'Alice', 'alice@example.com', '555-1234', 75000),  -- => Complete record
+    (2, 'Bob', NULL, '555-5678', 60000),                   -- => NULL email
+    (3, 'Charlie', 'charlie@example.com', NULL, 80000),    -- => NULL phone
+    (4, 'Diana', NULL, NULL, NULL);                        -- => Multiple NULLs
 -- => 4 rows inserted with various NULL values
+-- => Row 4 (Diana) has NULL email, phone, and salary
 
 -- WRONG: This doesn't work as expected
 SELECT * FROM employees WHERE email = NULL;
--- => Returns 0 rows (NULL = NULL is always false!)
+-- => NULL = NULL evaluates to UNKNOWN, not TRUE
+-- => Returns 0 rows even though Bob and Diana have NULL emails (silent failure)
 
 -- CORRECT: Use IS NULL
 SELECT * FROM employees WHERE email IS NULL;
--- => Returns Bob and Diana (rows with NULL email)
+-- => IS NULL specifically tests for missing/unknown values
+-- => Returns Bob (id=2) and Diana (id=4) — the two rows with NULL email
 
 -- Find rows with non-NULL values
 SELECT * FROM employees WHERE phone IS NOT NULL;
--- => Returns Alice and Bob (rows with phone numbers)
+-- => IS NOT NULL returns only rows with actual phone values
+-- => Returns Alice (id=1) and Bob (id=2) — the two rows with phone numbers
+-- => Charlie (NULL phone) and Diana (NULL phone) excluded
 
 -- COALESCE provides default for NULL
 SELECT
-    name,
+    name,                                                    -- => Employee name
     COALESCE(email, 'no-email@example.com') AS email_with_default,
+    -- => COALESCE returns first non-NULL value from argument list
+    -- => If email is NULL, returns 'no-email@example.com' as fallback
     COALESCE(salary, 0) AS salary_or_zero
+    -- => If salary is NULL, returns 0 as default
 FROM employees;
--- => Diana's NULL email becomes 'no-email@example.com', NULL salary becomes 0
+-- => Alice: email='alice@example.com' (not NULL, returned as-is), salary_or_zero=75000
+-- => Bob: email_with_default='no-email@example.com' (NULL replaced), salary_or_zero=60000
+-- => Diana: both NULL values replaced with defaults
 
 -- NULL in calculations
 SELECT
-    name,
-    salary,
-    salary * 1.10 AS salary_with_raise
+    name,                               -- => Employee name
+    salary,                             -- => Original salary (may be NULL)
+    salary * 1.10 AS salary_with_raise  -- => Computed 10% raise
 FROM employees;
--- => Diana's salary_with_raise is NULL (NULL in arithmetic produces NULL)
+-- => Any arithmetic with NULL produces NULL result
+-- => Alice: 75000 * 1.10 = 82500.0 (normal calculation)
+-- => Diana: NULL * 1.10 = NULL (NULL propagates through arithmetic)
 ```
 
 **Key Takeaway**: Use `IS NULL` and `IS NOT NULL` to test for missing values - never use `= NULL`. COALESCE provides defaults for NULL values. NULL in arithmetic or comparisons produces NULL.
@@ -566,34 +597,45 @@ graph TD
 
 ```sql
 CREATE TABLE events (
-    id INTEGER,
-    event_name TEXT,
-    event_date TEXT,          -- => Stores date as TEXT (ISO8601: YYYY-MM-DD)
-    event_datetime TEXT,      -- => Stores datetime as TEXT (ISO8601: YYYY-MM-DD HH:MM:SS)
-    created_at INTEGER        -- => Stores Unix timestamp
+    id INTEGER,                -- => Event identifier
+    event_name TEXT,           -- => Human-readable event title
+    event_date TEXT,           -- => Stores date as TEXT (ISO8601: YYYY-MM-DD)
+                               -- => ISO8601 enables lexicographic sorting (alphabetical = chronological)
+    event_datetime TEXT,       -- => Stores datetime as TEXT (ISO8601: YYYY-MM-DD HH:MM:SS)
+                               -- => Full timestamp for events with specific times
+    created_at INTEGER         -- => Unix timestamp (seconds since 1970-01-01 UTC)
+                               -- => Compact storage, useful for system-generated timestamps
 );
+-- => Table 'events' created with 5 columns
+-- => Three common date storage approaches demonstrated for comparison
 
 -- Insert with various date formats
 INSERT INTO events (id, event_name, event_date, event_datetime, created_at)
 VALUES
     (1, 'Conference', '2025-06-15', '2025-06-15 09:00:00', 1735426800),
+    -- => Conference: ISO date, ISO datetime, Unix timestamp all representing same event
     (2, 'Meeting', '2025-07-20', '2025-07-20 14:30:00', 1737369000);
+    -- => Meeting: different event with afternoon time slot
+-- => 2 events inserted with consistent date formats
 
 -- Current date and time
 SELECT
-    date('now') AS current_date,
-    time('now') AS current_time,
-    datetime('now') AS current_datetime;
--- => Returns current UTC date, time, and datetime
+    date('now') AS current_date,           -- => 'now' keyword returns current UTC time
+    time('now') AS current_time,           -- => Extract time portion only
+    datetime('now') AS current_datetime;   -- => Full date and time together
+-- => Returns current UTC date, time, and datetime (not local timezone)
+-- => Example: current_date='2025-12-29', current_time='02:07:25', current_datetime='2025-12-29 02:07:25'
 
 -- Date arithmetic
 SELECT
-    event_name,
-    event_date,
-    date(event_date, '+7 days') AS week_later,
-    date(event_date, '-1 month') AS month_earlier
+    event_name,                              -- => Event title for reference
+    event_date,                              -- => Original event date
+    date(event_date, '+7 days') AS week_later,    -- => Add 7 days to date
+    date(event_date, '-1 month') AS month_earlier -- => Subtract 1 month
 FROM events;
--- => Conference week_later: '2025-06-22', month_earlier: '2025-05-15'
+-- => date(value, modifier) applies time arithmetic modifiers
+-- => Conference (2025-06-15): week_later='2025-06-22', month_earlier='2025-05-15'
+-- => Meeting (2025-07-20): week_later='2025-07-27', month_earlier='2025-06-20'
 
 -- Extract date parts
 SELECT
@@ -708,48 +750,69 @@ WHERE filters rows based on conditions. Only rows where the condition evaluates 
 
 ```sql
 CREATE TABLE orders (
-    id INTEGER,
-    customer TEXT,
-    amount REAL,
-    status TEXT,
-    order_date TEXT
+    id INTEGER,          -- => Order identifier (unique per order)
+    customer TEXT,       -- => Customer name (not normalized for simplicity)
+    amount REAL,         -- => Order total in dollars
+    status TEXT,         -- => Order state: 'completed', 'pending', 'cancelled'
+    order_date TEXT      -- => ISO date when order was placed
 );
+-- => Table 'orders' created with 5 columns
+-- => Sample data spans multiple customers, amounts, and statuses
 
 INSERT INTO orders (id, customer, amount, status, order_date)
 VALUES
-    (1, 'Alice', 150.00, 'completed', '2025-01-15'),
-    (2, 'Bob', 75.50, 'pending', '2025-01-16'),
-    (3, 'Charlie', 200.00, 'completed', '2025-01-17'),
-    (4, 'Alice', 50.00, 'cancelled', '2025-01-18'),
-    (5, 'Diana', 300.00, 'completed', '2025-01-19');
+    (1, 'Alice', 150.00, 'completed', '2025-01-15'),  -- => Completed, above $100
+    (2, 'Bob', 75.50, 'pending', '2025-01-16'),        -- => Pending, below $100
+    (3, 'Charlie', 200.00, 'completed', '2025-01-17'), -- => Completed, above $150
+    (4, 'Alice', 50.00, 'cancelled', '2025-01-18'),    -- => Cancelled, below $100
+    (5, 'Diana', 300.00, 'completed', '2025-01-19');   -- => Completed, above $150
+-- => 5 orders inserted across 4 customers with 3 different statuses
+-- => Table state: Alice has 2 orders, others have 1 each
 
 -- Single condition
 SELECT * FROM orders WHERE status = 'completed';
--- => Returns rows 1, 3, 5 (completed orders)
+-- => WHERE filters to rows where condition is true
+-- => Checks status column against exact string 'completed'
+-- => Returns rows 1, 3, 5 (3 completed orders, pending/cancelled excluded)
 
 -- Numeric comparison
 SELECT * FROM orders WHERE amount > 100;
--- => Returns rows 1, 3, 5 (orders over $100)
+-- => Comparison operator > checks numeric value
+-- => Returns rows 1, 3, 5 (amounts: 150, 200, 300 — all exceed 100)
+-- => Row 2 (75.50) and row 4 (50.00) excluded
 
 -- Multiple conditions with AND
 SELECT * FROM orders WHERE status = 'completed' AND amount > 150;
--- => Returns rows 3, 5 (completed orders over $150)
+-- => AND requires BOTH conditions to be true for row inclusion
+-- => Row 1 (completed, 150): amount NOT > 150, excluded (150 is not > 150)
+-- => Returns rows 3, 5 only (completed AND amount strictly above 150)
 
 -- Multiple conditions with OR
 SELECT * FROM orders WHERE customer = 'Alice' OR amount > 250;
+-- => OR includes row if EITHER condition is true
+-- => Alice's orders: rows 1, 4 (customer matches)
+-- => Large amounts: row 5 (300 > 250)
 -- => Returns rows 1, 4, 5 (Alice's orders or large orders)
 
 -- Negation with NOT or !=
 SELECT * FROM orders WHERE status != 'cancelled';
--- => Returns all rows except row 4
+-- => != (not equal) excludes rows matching the value
+-- => Row 4 has status='cancelled', excluded by != filter
+-- => Returns rows 1, 2, 3, 5 (all non-cancelled orders)
 
 -- Range check with BETWEEN
 SELECT * FROM orders WHERE amount BETWEEN 50 AND 150;
+-- => BETWEEN is inclusive on both ends (50 <= amount <= 150)
+-- => Row 1: 150 qualifies (equal to upper bound)
+-- => Row 2: 75.50 qualifies (within range)
+-- => Row 4: 50.00 qualifies (equal to lower bound)
 -- => Returns rows 1, 2, 4 (amounts from $50 to $150 inclusive)
 
 -- List membership with IN
 SELECT * FROM orders WHERE customer IN ('Alice', 'Bob');
--- => Returns rows 1, 2, 4 (orders from Alice or Bob)
+-- => IN checks if value matches any item in the list
+-- => Equivalent to: customer = 'Alice' OR customer = 'Bob'
+-- => Returns rows 1, 2, 4 (Alice orders: 1,4; Bob order: 2)
 ```
 
 **Key Takeaway**: WHERE filters rows using conditions - comparison operators (=, !=, <, >, <=, >=), BETWEEN for ranges, IN for lists. Combine conditions with AND (both must be true) or OR (either can be true).
@@ -766,42 +829,58 @@ ORDER BY sorts query results by one or more columns. Default is ascending (ASC),
 
 ```sql
 CREATE TABLE students (
-    id INTEGER,
-    name TEXT,
-    grade INTEGER,
-    score REAL
+    id INTEGER,     -- => Student identifier
+    name TEXT,      -- => Student name
+    grade INTEGER,  -- => Grade level (9 or 10 in this dataset)
+    score REAL      -- => Exam score (0-100 range)
 );
+-- => Table 'students' created with 4 columns
+-- => Grade and score fields used to demonstrate multi-column sorting
 
 INSERT INTO students (id, name, grade, score)
 VALUES
-    (1, 'Alice', 10, 95.5),
-    (2, 'Bob', 9, 87.0),
-    (3, 'Charlie', 10, 92.0),
-    (4, 'Diana', 9, 94.5),
-    (5, 'Eve', 10, 88.5);
+    (1, 'Alice', 10, 95.5),    -- => Grade 10, highest score
+    (2, 'Bob', 9, 87.0),       -- => Grade 9, lowest score
+    (3, 'Charlie', 10, 92.0),  -- => Grade 10, third highest
+    (4, 'Diana', 9, 94.5),     -- => Grade 9, second highest
+    (5, 'Eve', 10, 88.5);      -- => Grade 10, fourth highest
+-- => 5 students across 2 grades with varied scores
 
 -- Sort by single column (ascending by default)
 SELECT * FROM students ORDER BY score;
+-- => ORDER BY sorts results; default direction is ASC (lowest first)
 -- => Returns: Bob (87.0), Eve (88.5), Charlie (92.0), Diana (94.5), Alice (95.5)
+-- => Without ORDER BY, row order is not guaranteed
 
 -- Sort descending
 SELECT * FROM students ORDER BY score DESC;
+-- => DESC reverses sort direction (highest first)
 -- => Returns: Alice (95.5), Diana (94.5), Charlie (92.0), Eve (88.5), Bob (87.0)
 
 -- Multi-column sort (grade first, then score)
 SELECT * FROM students ORDER BY grade, score DESC;
--- => Returns: Diana (grade 9, 94.5), Bob (grade 9, 87.0), Alice (grade 10, 95.5), Charlie (grade 10, 92.0), Eve (grade 10, 88.5)
+-- => Primary sort: grade ASC (grade 9 before grade 10)
+-- => Secondary sort: score DESC (higher scores first within same grade)
+-- => Grade 9 group: Diana (94.5), Bob (87.0)
+-- => Grade 10 group: Alice (95.5), Charlie (92.0), Eve (88.5)
+-- => Returns: Diana, Bob, Alice, Charlie, Eve
 
 -- Sort by expression
 SELECT name, score, (score * 1.10) AS bonus_score
+    -- => bonus_score is computed column (10% bonus added)
 FROM students
-ORDER BY bonus_score DESC;
--- => Calculates bonus_score and sorts by it
+ORDER BY bonus_score DESC;  -- => Sort by computed column value
+-- => ORDER BY can reference column aliases and expressions
+-- => Alice: score=95.5, bonus_score=105.05 (highest)
+-- => Ranking by bonus_score same as ranking by score (proportional)
 
 -- Sort with NULL handling (NULLs appear first in ASC, last in DESC)
 INSERT INTO students (id, name, grade, score) VALUES (6, 'Frank', 10, NULL);
+-- => Adds Frank with no score (NULL) to demonstrate NULL sort behavior
 SELECT * FROM students ORDER BY score;
--- => Frank (NULL score) appears first
+-- => NULLs sort BEFORE all non-NULL values in ascending order
+-- => Frank (NULL score) appears as first row
+-- => Remaining students follow in ascending score order
 ```
 
 **Key Takeaway**: Use ORDER BY to sort results by one or more columns. ASC (default) sorts low to high, DESC sorts high to low. Multi-column sorting creates hierarchical order (primary sort, then secondary).
@@ -818,46 +897,59 @@ LIMIT restricts the number of rows returned. OFFSET skips a specified number of 
 
 ```sql
 CREATE TABLE products (
-    id INTEGER,
-    name TEXT,
-    price REAL,
-    stock INTEGER
+    id INTEGER,      -- => Product identifier (1-8 in this dataset)
+    name TEXT,       -- => Product name (Widget A through H)
+    price REAL,      -- => Product price in dollars
+    stock INTEGER    -- => Quantity currently in stock
 );
+-- => Table 'products' created with 4 columns
+-- => 8 products at various prices for LIMIT/OFFSET demonstration
 
 INSERT INTO products (id, name, price, stock)
 VALUES
-    (1, 'Widget A', 10.00, 100),
+    (1, 'Widget A', 10.00, 100),   -- => Cheapest product
     (2, 'Widget B', 15.00, 50),
     (3, 'Widget C', 20.00, 75),
     (4, 'Widget D', 12.00, 120),
     (5, 'Widget E', 18.00, 90),
     (6, 'Widget F', 25.00, 60),
-    (7, 'Widget G', 30.00, 40),
+    (7, 'Widget G', 30.00, 40),    -- => Most expensive product
     (8, 'Widget H', 22.00, 80);
+-- => 8 rows inserted: prices range from $10 to $30
 
 -- Get first 3 products
 SELECT * FROM products LIMIT 3;
--- => Returns rows 1, 2, 3
+-- => LIMIT restricts result set to specified row count
+-- => Returns first 3 rows in natural (insertion) order: rows 1, 2, 3
+-- => Without ORDER BY, row order is arbitrary
 
 -- Get 3 products starting from the 4th row (0-indexed offset)
 SELECT * FROM products LIMIT 3 OFFSET 3;
--- => Returns rows 4, 5, 6
+-- => OFFSET skips N rows before starting to return results
+-- => OFFSET 3 skips first 3 rows, then returns next 3
+-- => Returns rows 4, 5, 6 (Widget D, Widget E, Widget F)
 
 -- Pagination: Page 1 (3 items per page)
 SELECT * FROM products ORDER BY price LIMIT 3 OFFSET 0;
--- => Returns 3 cheapest products
+-- => ORDER BY price ensures consistent ordering for pagination
+-- => OFFSET 0 = start from beginning (page 1)
+-- => Returns 3 cheapest: Widget A ($10), Widget D ($12), Widget B ($15)
 
 -- Pagination: Page 2
 SELECT * FROM products ORDER BY price LIMIT 3 OFFSET 3;
--- => Returns next 3 cheapest products
+-- => OFFSET 3 = skip first 3 rows (page 1 items)
+-- => Returns next 3 by price: Widget E ($18), Widget C ($20), Widget H ($22)
 
 -- Top N query: 5 most expensive products
 SELECT * FROM products ORDER BY price DESC LIMIT 5;
--- => Returns Widget G (30), Widget F (25), Widget H (22), Widget C (20), Widget E (18)
+-- => ORDER BY price DESC sorts highest price first
+-- => LIMIT 5 keeps only top 5 results
+-- => Returns: Widget G ($30), Widget F ($25), Widget H ($22), Widget C ($20), Widget E ($18)
 
 -- OFFSET without LIMIT (gets all remaining rows after offset)
 SELECT * FROM products OFFSET 5;
--- => Returns rows 6, 7, 8
+-- => OFFSET without LIMIT returns all rows after skipping N
+-- => Skips first 5 rows, returns remaining 3: rows 6, 7, 8 (Widget F, G, H)
 ```
 
 **Key Takeaway**: LIMIT restricts result count, OFFSET skips rows. Use together for pagination: `LIMIT page_size OFFSET (page_number - 1) * page_size`. Always ORDER BY for consistent pagination.
@@ -874,41 +966,53 @@ DISTINCT removes duplicate rows from results. When used with multiple columns, i
 
 ```sql
 CREATE TABLE purchases (
-    id INTEGER,
-    customer TEXT,
-    product TEXT,
-    quantity INTEGER
+    id INTEGER,          -- => Purchase record identifier
+    customer TEXT,       -- => Customer name (intentionally repeated for DISTINCT demo)
+    product TEXT,        -- => Product purchased (intentionally repeated for DISTINCT demo)
+    quantity INTEGER     -- => Number of items purchased
 );
+-- => Table 'purchases' created with 4 columns
+-- => Multiple purchases per customer and product to demonstrate DISTINCT behavior
 
 INSERT INTO purchases (id, customer, product, quantity)
 VALUES
-    (1, 'Alice', 'Laptop', 1),
-    (2, 'Bob', 'Mouse', 2),
-    (3, 'Alice', 'Keyboard', 1),
-    (4, 'Charlie', 'Mouse', 1),
-    (5, 'Bob', 'Monitor', 1),
-    (6, 'Alice', 'Mouse', 3);
+    (1, 'Alice', 'Laptop', 1),     -- => Alice's first purchase
+    (2, 'Bob', 'Mouse', 2),        -- => Bob's first purchase
+    (3, 'Alice', 'Keyboard', 1),   -- => Alice's second purchase (duplicate customer)
+    (4, 'Charlie', 'Mouse', 1),    -- => Charlie buys same product as Bob
+    (5, 'Bob', 'Monitor', 1),      -- => Bob's second purchase (duplicate customer)
+    (6, 'Alice', 'Mouse', 3);      -- => Alice's third purchase (duplicate customer AND product)
+-- => 6 rows inserted: Alice appears 3x, Bob 2x, Charlie 1x
+-- => Mouse appears 3x (different customers), Laptop/Keyboard/Monitor appear once
 
 -- Get all customers (with duplicates)
 SELECT customer FROM purchases;
--- => Returns: Alice, Bob, Alice, Charlie, Bob, Alice (6 rows)
+-- => Returns all 6 rows including duplicates
+-- => Returns: Alice, Bob, Alice, Charlie, Bob, Alice (6 rows, no deduplication)
 
 -- Get unique customers
 SELECT DISTINCT customer FROM purchases;
--- => Returns: Alice, Bob, Charlie (3 rows)
+-- => DISTINCT removes duplicate values in result set
+-- => 6 rows → 3 unique customer names
+-- => Returns: Alice, Bob, Charlie (3 rows, each customer once)
 
 -- Get unique products
 SELECT DISTINCT product FROM purchases;
--- => Returns: Laptop, Mouse, Keyboard, Monitor (4 rows)
+-- => DISTINCT on product column removes duplicates
+-- => Mouse appears 3 times in table, but once in DISTINCT result
+-- => Returns: Laptop, Mouse, Keyboard, Monitor (4 unique products)
 
 -- DISTINCT with multiple columns (unique combinations)
 SELECT DISTINCT customer, product FROM purchases;
--- => Returns unique (customer, product) pairs
--- => (Alice, Laptop), (Bob, Mouse), (Alice, Keyboard), (Charlie, Mouse), (Bob, Monitor), (Alice, Mouse)
+-- => With multiple columns, DISTINCT considers the entire row combination
+-- => (Alice, Mouse) appears once even though Alice bought Mouse once
+-- => Returns 6 unique (customer, product) pairs (all rows are distinct combinations)
 
 -- Count distinct values
 SELECT COUNT(DISTINCT customer) AS unique_customers FROM purchases;
--- => Returns 3 (Alice, Bob, Charlie)
+-- => COUNT(DISTINCT column) counts unique non-NULL values in column
+-- => 6 rows → 3 distinct customer names (Alice, Bob, Charlie)
+-- => Returns 3
 ```
 
 **Key Takeaway**: DISTINCT removes duplicate rows from results. With multiple columns, it considers the complete row for uniqueness. Use COUNT(DISTINCT column) to count unique values.
@@ -1040,54 +1144,70 @@ graph TD
 
 ```sql
 CREATE TABLE sales (
-    id INTEGER,
-    product TEXT,
-    quantity INTEGER,
-    price REAL,
-    sale_date TEXT
+    id INTEGER,          -- => Sale record identifier
+    product TEXT,        -- => Product name (repeated across rows for aggregation)
+    quantity INTEGER,    -- => Number of units sold in this transaction
+    price REAL,          -- => Price per unit in dollars
+    sale_date TEXT       -- => Date of sale (ISO format)
 );
+-- => Table 'sales' created with 5 columns
+-- => Intentional duplicates (Widget A appears twice) to show aggregate across rows
 
 INSERT INTO sales (id, product, quantity, price, sale_date)
 VALUES
-    (1, 'Widget A', 10, 15.00, '2025-01-15'),
-    (2, 'Widget B', 5, 25.00, '2025-01-16'),
-    (3, 'Widget A', 8, 15.00, '2025-01-17'),
-    (4, 'Widget C', 12, 10.00, '2025-01-18'),
-    (5, 'Widget B', 3, 25.00, '2025-01-19');
+    (1, 'Widget A', 10, 15.00, '2025-01-15'),  -- => 10 units at $15
+    (2, 'Widget B', 5, 25.00, '2025-01-16'),   -- => 5 units at $25
+    (3, 'Widget A', 8, 15.00, '2025-01-17'),   -- => Second Widget A sale
+    (4, 'Widget C', 12, 10.00, '2025-01-18'),  -- => 12 units at $10
+    (5, 'Widget B', 3, 25.00, '2025-01-19');   -- => Second Widget B sale
+-- => 5 rows inserted: Widget A totals 18 units, Widget B totals 8, Widget C 12
 
 -- Count total rows
 SELECT COUNT(*) AS total_sales FROM sales;
--- => Returns 5
+-- => COUNT(*) counts all rows regardless of NULL values
+-- => Returns 5 (total number of sale transactions in table)
 
 -- Count non-NULL values in column
 SELECT COUNT(quantity) AS quantity_count FROM sales;
--- => Returns 5 (all quantities are non-NULL)
+-- => COUNT(column) counts only non-NULL values in specified column
+-- => All 5 quantity values are non-NULL here
+-- => Returns 5 (same as COUNT(*) when no NULLs exist)
 
 -- Sum total quantity sold
 SELECT SUM(quantity) AS total_quantity FROM sales;
--- => Returns 38 (10 + 5 + 8 + 12 + 3)
+-- => SUM adds all values in the column
+-- => 10 + 5 + 8 + 12 + 3 = 38 units total
+-- => Returns 38
 
 -- Average price
 SELECT AVG(price) AS average_price FROM sales;
--- => Returns 18.0 ((15 + 25 + 15 + 10 + 25) / 5)
+-- => AVG computes arithmetic mean: sum / count
+-- => (15 + 25 + 15 + 10 + 25) / 5 = 90 / 5 = 18.0
+-- => Returns 18.0
 
 -- Minimum and maximum price
 SELECT MIN(price) AS min_price, MAX(price) AS max_price FROM sales;
--- => Returns min_price=10.0, max_price=25.0
+-- => MIN returns lowest value; MAX returns highest value
+-- => Prices in table: 15, 25, 15, 10, 25
+-- => Returns min_price=10.0 (Widget C), max_price=25.0 (Widget B)
 
 -- Multiple aggregates in one query
 SELECT
-    COUNT(*) AS num_sales,
-    SUM(quantity) AS total_qty,
-    AVG(price) AS avg_price,
-    MIN(price) AS min_price,
-    MAX(price) AS max_price
+    COUNT(*) AS num_sales,       -- => Total transactions: 5
+    SUM(quantity) AS total_qty,  -- => Total units sold: 38
+    AVG(price) AS avg_price,     -- => Average price: 18.0
+    MIN(price) AS min_price,     -- => Cheapest product price: 10.0
+    MAX(price) AS max_price      -- => Most expensive product price: 25.0
 FROM sales;
--- => Returns all 5 aggregates in single row
+-- => Single query computes all 5 aggregates in one pass
+-- => Returns one row with 5 columns: 5, 38, 18.0, 10.0, 25.0
 
 -- Aggregate with calculation
 SELECT SUM(quantity * price) AS total_revenue FROM sales;
--- => Returns 605.0 (10*15 + 5*25 + 8*15 + 12*10 + 3*25)
+-- => Multiplies quantity × price per row BEFORE summing
+-- => Row calculations: 10*15=150, 5*25=125, 8*15=120, 12*10=120, 3*25=75
+-- => Sum: 150 + 125 + 120 + 120 + 75 = 590.0
+-- => Returns 590.0 (total revenue across all sales)
 ```
 
 **Key Takeaway**: Aggregate functions reduce multiple rows to single values. COUNT(\*) counts rows, SUM/AVG work on numeric columns, MIN/MAX find extremes. Combine multiple aggregates in one SELECT for comprehensive statistics.
@@ -1104,61 +1224,80 @@ GROUP BY partitions rows into groups and applies aggregate functions to each gro
 
 ```sql
 CREATE TABLE transactions (
-    id INTEGER,
-    account TEXT,
-    type TEXT,
-    amount REAL,
-    transaction_date TEXT
+    id INTEGER,                -- => Transaction identifier
+    account TEXT,              -- => Account holder name
+    type TEXT,                 -- => Transaction type: 'deposit' or 'withdrawal'
+    amount REAL,               -- => Transaction amount in dollars
+    transaction_date TEXT      -- => Date of transaction (ISO format)
 );
+-- => Table 'transactions' created with 5 columns
+-- => Multiple transactions per account to demonstrate GROUP BY behavior
 
 INSERT INTO transactions (id, account, type, amount, transaction_date)
 VALUES
-    (1, 'Alice', 'deposit', 1000.00, '2025-01-15'),
-    (2, 'Bob', 'deposit', 500.00, '2025-01-16'),
-    (3, 'Alice', 'withdrawal', 200.00, '2025-01-17'),
-    (4, 'Charlie', 'deposit', 1500.00, '2025-01-18'),
-    (5, 'Bob', 'withdrawal', 100.00, '2025-01-19'),
-    (6, 'Alice', 'deposit', 300.00, '2025-01-20');
+    (1, 'Alice', 'deposit', 1000.00, '2025-01-15'),     -- => Alice's deposit
+    (2, 'Bob', 'deposit', 500.00, '2025-01-16'),         -- => Bob's deposit
+    (3, 'Alice', 'withdrawal', 200.00, '2025-01-17'),    -- => Alice's withdrawal
+    (4, 'Charlie', 'deposit', 1500.00, '2025-01-18'),    -- => Charlie's deposit
+    (5, 'Bob', 'withdrawal', 100.00, '2025-01-19'),      -- => Bob's withdrawal
+    (6, 'Alice', 'deposit', 300.00, '2025-01-20');       -- => Alice's second deposit
+-- => 6 rows inserted: Alice has 3 transactions, Bob 2, Charlie 1
 
 -- Count transactions per account
 SELECT account, COUNT(*) AS num_transactions
 FROM transactions
-GROUP BY account;
--- => Alice: 3, Bob: 2, Charlie: 1
+GROUP BY account;           -- => Creates one group per distinct account value
+-- => GROUP BY splits all rows into groups by account value
+-- => COUNT(*) counts rows within each group independently
+-- => Alice group: rows 1, 3, 6 → count=3
+-- => Bob group: rows 2, 5 → count=2
+-- => Charlie group: row 4 → count=1
 
 -- Sum amounts per transaction type
 SELECT type, SUM(amount) AS total_amount
 FROM transactions
-GROUP BY type;
--- => deposit: 3300.00, withdrawal: 300.00
+GROUP BY type;              -- => Groups all rows by type (deposit vs withdrawal)
+-- => deposit group: rows 1, 2, 4, 6 → SUM = 1000 + 500 + 1500 + 300 = 3300.00
+-- => withdrawal group: rows 3, 5 → SUM = 200 + 100 = 300.00
 
 -- Multiple aggregates per group
 SELECT
-    account,
-    COUNT(*) AS num_trans,
-    SUM(amount) AS total,
-    AVG(amount) AS average,
-    MIN(amount) AS smallest,
-    MAX(amount) AS largest
+    account,                        -- => Group identifier (must be in GROUP BY or aggregate)
+    COUNT(*) AS num_trans,          -- => Count transactions per account
+    SUM(amount) AS total,           -- => Total amount across account's transactions
+    AVG(amount) AS average,         -- => Average transaction size
+    MIN(amount) AS smallest,        -- => Smallest transaction for account
+    MAX(amount) AS largest          -- => Largest transaction for account
 FROM transactions
 GROUP BY account;
--- => Alice: num_trans=3, total=1100.00, average=366.67, smallest=200.00, largest=1000.00
+-- => Returns one summary row per account:
+-- => Alice: num_trans=3, total=1500.00 (1000+200+300), average=500.00, smallest=200.00, largest=1000.00
+-- => Bob: num_trans=2, total=600.00, average=300.00, smallest=100.00, largest=500.00
+-- => Charlie: num_trans=1, total=1500.00, average=1500.00, smallest=1500.00, largest=1500.00
 
 -- GROUP BY multiple columns
 SELECT
-    account,
-    type,
-    SUM(amount) AS total
+    account,                  -- => Account name
+    type,                     -- => Transaction type
+    SUM(amount) AS total      -- => Sum for this account+type combination
 FROM transactions
-GROUP BY account, type;
--- => (Alice, deposit): 1300.00, (Alice, withdrawal): 200.00, (Bob, deposit): 500.00, etc.
+GROUP BY account, type;       -- => Group by both columns: each unique pair is one group
+-- => (Alice, deposit): rows 1, 6 → 1000 + 300 = 1300.00
+-- => (Alice, withdrawal): row 3 → 200.00
+-- => (Bob, deposit): row 2 → 500.00
+-- => (Bob, withdrawal): row 5 → 100.00
+-- => (Charlie, deposit): row 4 → 1500.00
 
 -- GROUP BY with WHERE (filter before grouping)
 SELECT account, COUNT(*) AS large_transactions
 FROM transactions
-WHERE amount > 500
+WHERE amount > 500               -- => WHERE filters rows BEFORE GROUP BY applies
 GROUP BY account;
--- => Alice: 1, Charlie: 1 (transactions over $500)
+-- => WHERE reduces input: only rows 1 (1000.00) and 4 (1500.00) remain
+-- => Then GROUP BY groups filtered rows by account
+-- => Alice: 1 qualifying transaction (row 1)
+-- => Charlie: 1 qualifying transaction (row 4)
+-- => Bob excluded (no transactions > 500 after filtering)
 ```
 
 **Key Takeaway**: GROUP BY partitions rows into categories and applies aggregates to each group. Combine with COUNT/SUM/AVG for per-category statistics. WHERE filters before grouping, HAVING filters after grouping.
@@ -1175,57 +1314,74 @@ HAVING filters groups AFTER aggregation (unlike WHERE which filters rows BEFORE 
 
 ```sql
 CREATE TABLE store_sales (
-    id INTEGER,
-    store TEXT,
-    product TEXT,
-    revenue REAL
+    id INTEGER,     -- => Sale record identifier
+    store TEXT,     -- => Store name (A, B, or C in dataset)
+    product TEXT,   -- => Product type sold
+    revenue REAL    -- => Revenue generated by this sale
 );
+-- => Table 'store_sales' created with 4 columns
+-- => Multiple sales per store to demonstrate HAVING on aggregated groups
 
 INSERT INTO store_sales (id, store, product, revenue)
 VALUES
-    (1, 'Store A', 'Widget', 1000.00),
-    (2, 'Store B', 'Widget', 500.00),
-    (3, 'Store A', 'Gadget', 1500.00),
-    (4, 'Store C', 'Widget', 800.00),
-    (5, 'Store B', 'Gadget', 600.00),
-    (6, 'Store A', 'Tool', 300.00);
+    (1, 'Store A', 'Widget', 1000.00),   -- => Store A: Widget sale
+    (2, 'Store B', 'Widget', 500.00),    -- => Store B: Widget sale
+    (3, 'Store A', 'Gadget', 1500.00),   -- => Store A: Gadget sale
+    (4, 'Store C', 'Widget', 800.00),    -- => Store C: Widget sale
+    (5, 'Store B', 'Gadget', 600.00),    -- => Store B: Gadget sale
+    (6, 'Store A', 'Tool', 300.00);      -- => Store A: Tool sale
+-- => 6 rows inserted: Store A has 3 sales (total 2800), Store B has 2 (1100), Store C has 1 (800)
 
 -- Find stores with total revenue over $1500
 SELECT store, SUM(revenue) AS total_revenue
 FROM store_sales
-GROUP BY store
-HAVING SUM(revenue) > 1500;
--- => Store A: 2800.00 (only store with revenue > 1500)
+GROUP BY store              -- => Step 1: Group all rows by store
+HAVING SUM(revenue) > 1500; -- => Step 2: Filter GROUPS where aggregate exceeds threshold
+-- => GROUP BY creates 3 groups (A, B, C) with their aggregates
+-- => HAVING filters those groups: Store A (2800 > 1500) ✓, Store B (1100 ≤ 1500) ✗, Store C (800 ≤ 1500) ✗
+-- => Returns 1 row: Store A: 2800.00
 
 -- Find stores selling more than 2 products
 SELECT store, COUNT(*) AS product_count
 FROM store_sales
-GROUP BY store
-HAVING COUNT(*) > 2;
--- => Store A: 3 products
+GROUP BY store              -- => Group by store to count distinct product entries
+HAVING COUNT(*) > 2;        -- => Filter groups where number of sales exceeds 2
+-- => Store A has 3 rows (Widget, Gadget, Tool) → count=3 > 2 ✓
+-- => Store B has 2 rows (Widget, Gadget) → count=2, NOT > 2 ✗
+-- => Store C has 1 row (Widget) → count=1 ✗
+-- => Returns 1 row: Store A with product_count=3
 
 -- Combining WHERE and HAVING
 -- WHERE filters rows, HAVING filters groups
 SELECT product, COUNT(*) AS store_count, AVG(revenue) AS avg_revenue
 FROM store_sales
-WHERE revenue > 500
-GROUP BY product
-HAVING COUNT(*) >= 2;
--- => Widget: 2 stores, avg_revenue=900.00 (Store A and Store C both over $500)
+WHERE revenue > 500              -- => Step 1: Remove rows with revenue ≤ 500 (row 2: Store B Widget $500 excluded)
+GROUP BY product                 -- => Step 2: Group remaining rows by product
+HAVING COUNT(*) >= 2;            -- => Step 3: Keep groups with 2 or more qualifying stores
+-- => After WHERE filter: Widget has rows 1 (1000), 4 (800); Gadget has rows 3 (1500), 5 (600); Tool has row 6 (300)
+-- => Widget group: count=2, avg=(1000+800)/2=900 ✓ (2 stores pass HAVING)
+-- => Gadget group: count=2, avg=(1500+600)/2=1050 ✓ (2 stores pass HAVING)
+-- => Tool group: count=1 ✗ (only 1 row after WHERE filter)
+-- => Returns: Widget (2 stores, avg=900.00) and Gadget (2 stores, avg=1050.00)
 
 -- HAVING with multiple conditions
 SELECT store, SUM(revenue) AS total, COUNT(*) AS products
 FROM store_sales
 GROUP BY store
-HAVING SUM(revenue) > 1000 AND COUNT(*) > 1;
--- => Store A: total=2800.00, products=3
+HAVING SUM(revenue) > 1000 AND COUNT(*) > 1;  -- => Both aggregate conditions must be true
+-- => Store A: total=2800 > 1000 ✓ AND count=3 > 1 ✓ → included
+-- => Store B: total=1100 > 1000 ✓ AND count=2 > 1 ✓ → included
+-- => Store C: total=800, NOT > 1000 ✗ → excluded regardless of count
+-- => Returns: Store A (2800, 3 products) and Store B (1100, 2 products)
 
 -- HAVING can reference column aliases (SQLite-specific)
 SELECT store, SUM(revenue) AS total_revenue
 FROM store_sales
 GROUP BY store
-HAVING total_revenue > 1500;
--- => Store A: 2800.00 (works in SQLite, not all databases)
+HAVING total_revenue > 1500;   -- => Alias 'total_revenue' usable in HAVING (SQLite extension)
+-- => Standard SQL requires repeating SUM(revenue) > 1500 in HAVING
+-- => SQLite allows using the alias for readability
+-- => Returns 1 row: Store A (2800 > 1500)
 ```
 
 **Key Takeaway**: Use WHERE to filter rows before grouping, HAVING to filter groups after aggregation. HAVING conditions typically use aggregate functions (COUNT, SUM, AVG). WHERE executes first, then GROUP BY, then HAVING.
@@ -1479,58 +1635,76 @@ Self-joins join a table to itself, useful for hierarchical relationships (employ
 
 ```sql
 CREATE TABLE employees (
-    id INTEGER,
-    name TEXT,
-    manager_id INTEGER  -- References id in same table
+    id INTEGER,              -- => Employee identifier (used as manager_id reference)
+    name TEXT,               -- => Employee full name
+    manager_id INTEGER       -- => References id in same table (self-referential)
+                             -- => NULL for top-level employees (CEO has no manager)
 );
+-- => Table 'employees' created: single table represents entire organizational hierarchy
+-- => manager_id creates parent-child relationships within the same table
 
 INSERT INTO employees (id, name, manager_id)
 VALUES
-    (1, 'Alice', NULL),      -- CEO (no manager)
-    (2, 'Bob', 1),           -- Reports to Alice
-    (3, 'Charlie', 1),       -- Reports to Alice
-    (4, 'Diana', 2),         -- Reports to Bob
-    (5, 'Eve', 2);           -- Reports to Bob
+    (1, 'Alice', NULL),    -- => CEO: no manager (top of hierarchy)
+    (2, 'Bob', 1),         -- => Reports to Alice (manager_id=1)
+    (3, 'Charlie', 1),     -- => Reports to Alice (manager_id=1)
+    (4, 'Diana', 2),       -- => Reports to Bob (manager_id=2)
+    (5, 'Eve', 2);         -- => Reports to Bob (manager_id=2)
+-- => 5 employees in 3-level hierarchy: Alice → Bob/Charlie → Diana/Eve
 
 -- Self-join: List employees with their managers
 SELECT
-    e.name AS employee,
-    m.name AS manager
-FROM employees e
-LEFT JOIN employees m ON e.manager_id = m.id;
--- => Returns:
--- => Alice, NULL (no manager)
--- => Bob, Alice
--- => Charlie, Alice
--- => Diana, Bob
--- => Eve, Bob
+    e.name AS employee,    -- => Employee from left instance of table
+    m.name AS manager      -- => Manager from right instance of same table
+FROM employees e           -- => Alias 'e' treats table as employee list
+LEFT JOIN employees m ON e.manager_id = m.id;  -- => Alias 'm' treats same table as manager list
+-- => JOIN condition: employee's manager_id matches manager's id
+-- => LEFT JOIN preserves Alice (manager_id=NULL, no matching manager row)
+-- => Returns 5 rows:
+-- =>   Alice → NULL (no manager match for NULL)
+-- =>   Bob → Alice (manager_id=1 matches Alice's id=1)
+-- =>   Charlie → Alice (manager_id=1 matches Alice's id=1)
+-- =>   Diana → Bob (manager_id=2 matches Bob's id=2)
+-- =>   Eve → Bob (manager_id=2 matches Bob's id=2)
 
 -- Find all employees reporting to a specific manager
 SELECT
-    e.name AS employee
-FROM employees e
-INNER JOIN employees m ON e.manager_id = m.id
-WHERE m.name = 'Bob';
--- => Returns: Diana, Eve
+    e.name AS employee     -- => Employee names only
+FROM employees e           -- => Employee table instance
+INNER JOIN employees m ON e.manager_id = m.id  -- => Join to manager table instance
+WHERE m.name = 'Bob';      -- => Filter manager by name
+-- => INNER JOIN excludes Alice (NULL manager_id) automatically
+-- => WHERE filter restricts to rows where the joined manager row has name='Bob'
+-- => Returns: Diana, Eve (both have manager_id=2, Bob's id)
 
 -- Count direct reports per manager
 SELECT
-    m.name AS manager,
-    COUNT(e.id) AS direct_reports
-FROM employees m
-LEFT JOIN employees e ON e.manager_id = m.id
-GROUP BY m.id, m.name;
--- => Alice: 2, Bob: 2, Charlie: 0, Diana: 0, Eve: 0
+    m.name AS manager,            -- => Manager name (from RIGHT instance as left table)
+    COUNT(e.id) AS direct_reports -- => Count employees reporting to this manager
+FROM employees m                  -- => Here 'm' is the outer/manager role
+LEFT JOIN employees e ON e.manager_id = m.id  -- => Find employees whose manager_id = this employee's id
+GROUP BY m.id, m.name;            -- => Group per manager to aggregate counts
+-- => All 5 employees become potential managers (LEFT side)
+-- => JOIN finds their direct reports
+-- => Alice: 2 direct reports (Bob, Charlie)
+-- => Bob: 2 direct reports (Diana, Eve)
+-- => Charlie: 0 (no one has manager_id=3)
+-- => Diana: 0, Eve: 0 (leaf nodes, no subordinates)
 
 -- Find employees at same level (same manager)
 SELECT
-    e1.name AS employee1,
-    e2.name AS employee2,
-    m.name AS common_manager
-FROM employees e1
-INNER JOIN employees e2 ON e1.manager_id = e2.manager_id AND e1.id < e2.id
-INNER JOIN employees m ON e1.manager_id = m.id;
--- => Returns pairs: (Bob, Charlie, Alice), (Diana, Eve, Bob)
+    e1.name AS employee1,         -- => First employee in the pair
+    e2.name AS employee2,         -- => Second employee in the pair
+    m.name AS common_manager      -- => Their shared manager
+FROM employees e1                 -- => First employee instance
+INNER JOIN employees e2           -- => Second employee instance
+    ON e1.manager_id = e2.manager_id  -- => Both report to same manager
+    AND e1.id < e2.id             -- => Prevent duplicates: (Bob,Charlie) not (Charlie,Bob)
+INNER JOIN employees m ON e1.manager_id = m.id;  -- => Resolve manager name
+-- => e1.id < e2.id ensures each pair appears once, not twice
+-- => Bob (id=2) and Charlie (id=3): manager_id both =1 (Alice), 2 < 3 ✓
+-- => Diana (id=4) and Eve (id=5): manager_id both =2 (Bob), 4 < 5 ✓
+-- => Returns 2 pairs: (Bob, Charlie, Alice), (Diana, Eve, Bob)
 ```
 
 **Key Takeaway**: Self-joins treat one table as two separate tables with aliases. Essential for hierarchical data (manager-employee), comparing rows, or finding pairs/groups within same table.
@@ -1547,68 +1721,78 @@ Complex queries often join three or more tables. Each JOIN adds another table to
 
 ```sql
 CREATE TABLE authors (
-    id INTEGER,
-    name TEXT
+    id INTEGER,   -- => Author identifier
+    name TEXT     -- => Author full name
 );
+-- => Table 'authors': 2 authors for this example
 
 CREATE TABLE books (
-    id INTEGER,
-    title TEXT,
-    author_id INTEGER,
-    publisher_id INTEGER
+    id INTEGER,              -- => Book identifier
+    title TEXT,              -- => Book title
+    author_id INTEGER,       -- => Foreign key referencing authors.id
+    publisher_id INTEGER     -- => Foreign key referencing publishers.id
 );
+-- => Table 'books': central table linking authors and publishers
+-- => author_id and publisher_id are the join columns to other tables
 
 CREATE TABLE publishers (
-    id INTEGER,
-    name TEXT,
-    country TEXT
+    id INTEGER,   -- => Publisher identifier
+    name TEXT,    -- => Publisher company name
+    country TEXT  -- => Country of publisher (used in WHERE filter)
 );
+-- => Table 'publishers': 2 publishers in 2 countries
 
 INSERT INTO authors (id, name)
 VALUES (1, 'Alice Author'), (2, 'Bob Writer');
+-- => 2 authors: Alice (id=1), Bob (id=2)
 
 INSERT INTO publishers (id, name, country)
 VALUES (1, 'Pub House A', 'USA'), (2, 'Pub House B', 'UK');
+-- => 2 publishers: US publisher (id=1), UK publisher (id=2)
 
 INSERT INTO books (id, title, author_id, publisher_id)
 VALUES
-    (1, 'SQL Mastery', 1, 1),
-    (2, 'Database Design', 2, 1),
-    (3, 'Query Optimization', 1, 2);
+    (1, 'SQL Mastery', 1, 1),           -- => Alice's book with US publisher
+    (2, 'Database Design', 2, 1),       -- => Bob's book with US publisher
+    (3, 'Query Optimization', 1, 2);    -- => Alice's second book with UK publisher
+-- => 3 books: Alice wrote 2, Bob wrote 1; US publisher has 2 books, UK has 1
 
 -- Join three tables
 SELECT
-    b.title,
-    a.name AS author,
-    p.name AS publisher,
-    p.country
-FROM books b
-INNER JOIN authors a ON b.author_id = a.id
-INNER JOIN publishers p ON b.publisher_id = p.id;
--- => Returns:
--- => SQL Mastery, Alice Author, Pub House A, USA
--- => Database Design, Bob Writer, Pub House A, USA
--- => Query Optimization, Alice Author, Pub House B, UK
+    b.title,             -- => Book title (from books table)
+    a.name AS author,    -- => Author name (from authors table via author_id join)
+    p.name AS publisher, -- => Publisher name (from publishers table via publisher_id join)
+    p.country            -- => Publisher country (from publishers table)
+FROM books b                                    -- => Start with books (has both foreign keys)
+INNER JOIN authors a ON b.author_id = a.id      -- => Add author: match author_id to authors.id
+INNER JOIN publishers p ON b.publisher_id = p.id;  -- => Add publisher: match publisher_id to publishers.id
+-- => Each book row gets expanded with matching author and publisher data
+-- => Returns 3 rows (one per book):
+-- =>   SQL Mastery, Alice Author, Pub House A, USA
+-- =>   Database Design, Bob Writer, Pub House A, USA
+-- =>   Query Optimization, Alice Author, Pub House B, UK
 
 -- Aggregation across multiple joins
 SELECT
-    a.name AS author,
-    COUNT(b.id) AS num_books,
-    COUNT(DISTINCT p.id) AS num_publishers
-FROM authors a
-LEFT JOIN books b ON a.id = b.author_id
-LEFT JOIN publishers p ON b.publisher_id = p.id
-GROUP BY a.id, a.name;
--- => Alice Author: 2 books, 2 publishers
--- => Bob Writer: 1 book, 1 publisher
+    a.name AS author,                         -- => Author name (GROUP BY key)
+    COUNT(b.id) AS num_books,                 -- => Count books per author
+    COUNT(DISTINCT p.id) AS num_publishers    -- => Count unique publishers per author
+FROM authors a                                -- => Start with authors (LEFT side)
+LEFT JOIN books b ON a.id = b.author_id       -- => Include authors with no books
+LEFT JOIN publishers p ON b.publisher_id = p.id  -- => Add publisher info where books exist
+GROUP BY a.id, a.name;                        -- => Aggregate per author
+-- => Alice (id=1): books 1,3 → num_books=2, publishers 1,2 → num_publishers=2
+-- => Bob (id=2): book 2 → num_books=1, publisher 1 → num_publishers=1
 
 -- Filter across joined tables
-SELECT b.title, a.name AS author
-FROM books b
-INNER JOIN authors a ON b.author_id = a.id
-INNER JOIN publishers p ON b.publisher_id = p.id
-WHERE p.country = 'USA';
--- => Returns books published in USA
+SELECT b.title, a.name AS author  -- => Select from joined result
+FROM books b                       -- => Start with books
+INNER JOIN authors a ON b.author_id = a.id        -- => Add authors
+INNER JOIN publishers p ON b.publisher_id = p.id  -- => Add publishers (needed for WHERE)
+WHERE p.country = 'USA';           -- => Filter using publisher's country field
+-- => Only books published in USA qualify (publisher_id=1)
+-- => Returns: SQL Mastery (Alice), Database Design (Bob)
+-- => Query Optimization excluded (UK publisher)
 ```
 
 **Key Takeaway**: Chain multiple JOINs to combine data from 3+ tables. Each JOIN references the previous result. Order matters - start with the main table, then add related tables.
@@ -1626,37 +1810,52 @@ Primary keys uniquely identify each row in a table. Use INTEGER PRIMARY KEY for 
 ```sql
 CREATE TABLE users (
     id INTEGER PRIMARY KEY,  -- => Auto-incrementing primary key
-    username TEXT NOT NULL,
-    email TEXT UNIQUE,       -- => Must be unique across all rows
-    created_at TEXT
+                              -- => SQLite's INTEGER PRIMARY KEY is special: auto-assigns unique IDs
+    username TEXT NOT NULL,   -- => Username required: NOT NULL prevents empty entries
+    email TEXT UNIQUE,        -- => Must be unique across all rows: no two users same email
+                              -- => UNIQUE creates implicit index for fast lookups
+    created_at TEXT           -- => Registration timestamp (optional, can be NULL)
 );
+-- => Table 'users' created with PRIMARY KEY and UNIQUE constraints
+-- => INTEGER PRIMARY KEY enables auto-increment behavior in SQLite
 
 -- Insert with explicit ID
 INSERT INTO users (id, username, email, created_at)
 VALUES (1, 'alice', 'alice@example.com', '2025-01-15');
+-- => Explicit id=1 provided; SQLite uses this exact value
+-- => Row state: id=1, username='alice', email='alice@example.com'
 
 -- Insert without ID (auto-increment)
 INSERT INTO users (username, email, created_at)
 VALUES
     ('bob', 'bob@example.com', '2025-01-16'),
     ('charlie', 'charlie@example.com', '2025-01-17');
--- => SQLite assigns id=2 and id=3 automatically
+-- => Omitting INTEGER PRIMARY KEY column triggers auto-increment
+-- => SQLite assigns id=2 for bob, id=3 for charlie (next available values)
+-- => Table now has 3 rows: Alice (1), Bob (2), Charlie (3)
 
 -- Verify IDs
 SELECT * FROM users;
--- => Returns: id=1, 2, 3
+-- => Returns all 3 rows showing assigned ids
+-- => id values: 1 (explicit), 2 (auto), 3 (auto)
 
 -- Try to insert duplicate primary key (fails)
 INSERT INTO users (id, username, email) VALUES (1, 'duplicate', 'dup@example.com');
+-- => Attempting to insert id=1 which already exists
 -- => ERROR: UNIQUE constraint failed: users.id
+-- => PRIMARY KEY implies UNIQUE: each id value can appear only once
 
 -- Try to insert duplicate email (fails)
 INSERT INTO users (username, email) VALUES ('dave', 'alice@example.com');
+-- => alice@example.com already used by Alice (row 1)
 -- => ERROR: UNIQUE constraint failed: users.email
+-- => UNIQUE constraint on email prevents duplicate entries
 
 -- Primary key enables fast lookup
 SELECT * FROM users WHERE id = 2;
--- => Returns Bob's row instantly (indexed by primary key)
+-- => WHERE on primary key uses automatic index (always O(log N))
+-- => Returns Bob's row instantly without scanning full table
+-- => id=2 is Bob: username='bob', email='bob@example.com'
 ```
 
 **Key Takeaway**: Use INTEGER PRIMARY KEY for auto-incrementing unique IDs. Primary keys ensure uniqueness and enable fast lookups. UNIQUE constraints enforce uniqueness on non-key columns like email.
@@ -1674,47 +1873,61 @@ Foreign keys link tables by referencing primary keys in other tables. They enfor
 ```sql
 -- Enable foreign key support (required in SQLite)
 PRAGMA foreign_keys = ON;
+-- => SQLite disables FK enforcement by default (for backward compatibility)
+-- => Must enable per-connection before creating or inserting into FK-constrained tables
 
 CREATE TABLE categories (
-    id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL
+    id INTEGER PRIMARY KEY,  -- => Category identifier (referenced by products.category_id)
+    name TEXT NOT NULL       -- => Category name required
 );
+-- => Table 'categories': parent table in the parent-child relationship
 
 CREATE TABLE products (
-    id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL,
-    category_id INTEGER,
-    price REAL,
+    id INTEGER PRIMARY KEY,  -- => Product identifier
+    name TEXT NOT NULL,      -- => Product name required
+    category_id INTEGER,     -- => References categories.id (the linking column)
+    price REAL,              -- => Product price
     FOREIGN KEY (category_id) REFERENCES categories(id)
+    -- => Constraint: category_id must match an existing id in categories
+    -- => Enforces referential integrity at the database level
 );
+-- => Table 'products': child table with foreign key to categories
 
 INSERT INTO categories (id, name)
 VALUES (1, 'Electronics'), (2, 'Furniture');
+-- => 2 parent rows inserted: ids 1 and 2 available for FK references
 
 -- Insert product with valid category
 INSERT INTO products (name, category_id, price)
 VALUES ('Laptop', 1, 999.99);
--- => Success: category_id=1 exists in categories
+-- => category_id=1 exists in categories table ✓
+-- => Foreign key constraint satisfied: insert succeeds
 
 -- Try to insert product with non-existent category (fails)
 INSERT INTO products (name, category_id, price)
 VALUES ('Invalid Product', 99, 50.00);
+-- => category_id=99 does NOT exist in categories table ✗
 -- => ERROR: FOREIGN KEY constraint failed (category_id=99 doesn't exist)
+-- => Database rejects the insert to prevent orphaned product record
 
 -- Join tables using foreign key
 SELECT p.name AS product, c.name AS category, p.price
 FROM products p
-INNER JOIN categories c ON p.category_id = c.id;
+INNER JOIN categories c ON p.category_id = c.id;  -- => FK column is the join condition
+-- => FK relationship defines the natural join condition
 -- => Returns: Laptop, Electronics, 999.99
 
 -- Try to delete category with products (fails by default)
 DELETE FROM categories WHERE id = 1;
+-- => Products table has rows referencing categories.id=1 (the Laptop)
 -- => ERROR: FOREIGN KEY constraint failed (products reference this category)
+-- => Database prevents deleting parent row that has child rows
 
 -- Must delete products first, then category
-DELETE FROM products WHERE category_id = 1;
-DELETE FROM categories WHERE id = 1;
--- => Both succeed
+DELETE FROM products WHERE category_id = 1;  -- => Remove child rows first
+DELETE FROM categories WHERE id = 1;          -- => Then safely remove parent row
+-- => Order matters: children before parents
+-- => Both statements succeed when executed in correct order
 ```
 
 **Key Takeaway**: Foreign keys enforce referential integrity by linking tables. They prevent orphaned records and deletion of referenced rows. Enable with `PRAGMA foreign_keys = ON` in SQLite before creating tables.
@@ -1803,48 +2016,61 @@ graph TD
 
 ```sql
 CREATE TABLE customers (
-    id INTEGER PRIMARY KEY,
-    email TEXT,
-    name TEXT,
-    country TEXT
+    id INTEGER PRIMARY KEY,  -- => Primary key: automatically indexed by SQLite
+    email TEXT,              -- => Email address (no index yet, slow to query)
+    name TEXT,               -- => Customer name
+    country TEXT             -- => Country code (for composite index demo)
 );
+-- => Table 'customers' created; only id has an automatic index
 
 -- Insert many rows (simulating large dataset)
 INSERT INTO customers (email, name, country)
 VALUES
-    ('alice@example.com', 'Alice', 'USA'),
-    ('bob@example.com', 'Bob', 'UK'),
-    ('charlie@example.com', 'Charlie', 'USA');
+    ('alice@example.com', 'Alice', 'USA'),   -- => Row 1: auto-assigned id=1
+    ('bob@example.com', 'Bob', 'UK'),         -- => Row 2: auto-assigned id=2
+    ('charlie@example.com', 'Charlie', 'USA'); -- => Row 3: auto-assigned id=3
+-- => 3 rows inserted; email column has no index (must scan all rows to find one)
 
 -- Query without index (table scan)
 EXPLAIN QUERY PLAN
 SELECT * FROM customers WHERE email = 'alice@example.com';
--- => Shows: SCAN TABLE customers (checks every row)
+-- => EXPLAIN QUERY PLAN reveals execution strategy without running query
+-- => Shows: "SCAN TABLE customers" (reads every row sequentially)
+-- => O(N) complexity: must check all 3 rows to find the match
 
 -- Create index on email column
 CREATE INDEX idx_customers_email ON customers(email);
--- => Creates B-tree index for fast email lookups
+-- => Creates B-tree index structure: sorted email values → row locations
+-- => Index name 'idx_customers_email' follows naming convention: idx_table_column
 
 -- Query with index (index scan)
 EXPLAIN QUERY PLAN
 SELECT * FROM customers WHERE email = 'alice@example.com';
--- => Shows: SEARCH TABLE customers USING INDEX idx_customers_email (fast!)
+-- => Shows: "SEARCH TABLE customers USING INDEX idx_customers_email (email=?)"
+-- => SEARCH (vs SCAN) means index-based lookup
+-- => O(log N) complexity: 3 rows → ~2 index lookups vs 3 full row reads
 
 -- Unique index (enforces uniqueness + speeds up queries)
 CREATE UNIQUE INDEX idx_customers_email_unique ON customers(email);
--- => ERROR if duplicate emails exist
+-- => UNIQUE index: rejects duplicate values AND provides fast lookup
+-- => ERROR if duplicate emails already exist in table
+-- => Combines constraint enforcement with query optimization
 
 -- Multi-column index (for queries filtering both columns)
 CREATE INDEX idx_customers_country_name ON customers(country, name);
+-- => Leftmost prefix rule: index used when WHERE includes leading columns
 -- => Optimizes: WHERE country = 'USA' AND name LIKE 'A%'
+-- => Leftmost column (country) must appear in WHERE for index to be used
 
 -- List all indexes
 .indices customers
+-- => SQLite meta-command to list all indexes on a table
 -- => Shows: idx_customers_email, idx_customers_email_unique, idx_customers_country_name
 
 -- Drop index
 DROP INDEX idx_customers_email;
--- => Removes index, queries revert to table scans
+-- => Removes index from database: no data lost, only lookup structure
+-- => After drop, queries on email column revert to full table scans
 ```
 
 **Key Takeaway**: Create indexes on columns used in WHERE, JOIN, and ORDER BY to speed up queries. Indexes trade write speed for read speed. Use EXPLAIN QUERY PLAN to verify index usage.
@@ -1861,54 +2087,67 @@ Transactions group multiple statements into atomic units - either all succeed or
 
 ```sql
 CREATE TABLE accounts (
-    id INTEGER PRIMARY KEY,
-    owner TEXT,
-    balance REAL NOT NULL CHECK (balance >= 0)
+    id INTEGER PRIMARY KEY,          -- => Account identifier
+    owner TEXT,                      -- => Account holder name
+    balance REAL NOT NULL CHECK (balance >= 0)  -- => Balance cannot be negative
+    -- => NOT NULL prevents NULL balance; CHECK enforces minimum value
 );
+-- => Table 'accounts' with balance constraint to demonstrate transaction safety
 
 INSERT INTO accounts (owner, balance)
 VALUES ('Alice', 1000.00), ('Bob', 500.00);
+-- => 2 accounts: Alice (id=1, $1000), Bob (id=2, $500)
+-- => Initial state before any transfers
 
 -- Transaction example: Transfer money atomically
 BEGIN TRANSACTION;
--- => Start transaction (changes not visible to other connections yet)
+-- => Starts a transaction: all subsequent changes are provisional
+-- => Changes are isolated from other database connections until COMMIT
 
 UPDATE accounts SET balance = balance - 200 WHERE owner = 'Alice';
--- => Alice balance: 1000.00 -> 800.00 (not committed yet)
+-- => Deducts $200 from Alice's balance
+-- => Alice balance: 1000.00 → 800.00 (visible within this transaction only)
 
 UPDATE accounts SET balance = balance + 200 WHERE owner = 'Bob';
--- => Bob balance: 500.00 -> 700.00 (not committed yet)
+-- => Credits $200 to Bob's balance
+-- => Bob balance: 500.00 → 700.00 (visible within this transaction only)
 
 -- Verify within transaction
 SELECT * FROM accounts;
--- => Shows: Alice=800.00, Bob=700.00 (temporary state)
+-- => Shows current (uncommitted) state: Alice=800.00, Bob=700.00
+-- => Both changes visible within same transaction
 
 COMMIT;
--- => Saves both updates atomically
+-- => Makes both changes permanent and visible to all connections
+-- => Both debit and credit committed together (atomically)
 
 -- Verify after commit
 SELECT * FROM accounts;
--- => Shows: Alice=800.00, Bob=700.00 (permanent)
+-- => Shows committed state: Alice=800.00, Bob=700.00
+-- => Changes now permanent in database
 
 -- Transaction with ROLLBACK
 BEGIN TRANSACTION;
 
 UPDATE accounts SET balance = balance - 500 WHERE owner = 'Alice';
--- => Alice balance: 800.00 -> 300.00 (tentative)
+-- => Deducts $500 from Alice's balance
+-- => Alice balance: 800.00 → 300.00 (tentative, not committed)
 
 -- Oops, mistake! Cancel transaction
 ROLLBACK;
--- => Discards UPDATE, Alice balance reverts to 800.00
+-- => Discards all changes made since BEGIN TRANSACTION
+-- => Alice balance reverts back to 800.00 as if UPDATE never happened
 
 SELECT * FROM accounts;
--- => Shows: Alice=800.00, Bob=700.00 (unchanged)
+-- => Shows: Alice=800.00, Bob=700.00 (unchanged, ROLLBACK restored state)
 
 -- Constraint violation triggers automatic rollback
 BEGIN TRANSACTION;
 UPDATE accounts SET balance = balance - 1000 WHERE owner = 'Alice';
--- => Would make balance negative (-200), violates CHECK constraint
--- => ERROR: CHECK constraint failed
--- => Transaction automatically rolled back
+-- => Would set Alice's balance to 800.00 - 1000.00 = -200.00
+-- => -200.00 violates CHECK (balance >= 0) constraint
+-- => ERROR: CHECK constraint failed: balance >= 0
+-- => SQLite automatically rolls back the failing statement (and transaction)
 ```
 
 **Key Takeaway**: Use transactions to ensure related changes succeed or fail together. BEGIN starts transaction, COMMIT saves changes, ROLLBACK cancels. Constraint violations automatically rollback transactions.
@@ -1925,61 +2164,74 @@ Views are saved queries that act like virtual tables. They simplify complex quer
 
 ```sql
 CREATE TABLE employees (
-    id INTEGER PRIMARY KEY,
-    name TEXT,
-    department TEXT,
-    salary REAL,
-    hire_date TEXT
+    id INTEGER PRIMARY KEY,  -- => Employee identifier
+    name TEXT,               -- => Employee name
+    department TEXT,         -- => Department name (string, not FK for simplicity)
+    salary REAL,             -- => Annual salary
+    hire_date TEXT           -- => Hire date in ISO format
 );
+-- => Table 'employees': 3 initial employees then 1 added to show view live updates
 
 CREATE TABLE departments (
-    id INTEGER PRIMARY KEY,
-    name TEXT,
-    budget REAL
+    id INTEGER PRIMARY KEY,  -- => Department identifier
+    name TEXT,               -- => Department name (matches employees.department)
+    budget REAL              -- => Annual budget for the department
 );
+-- => Table 'departments': used in the JOIN-based view below
 
 INSERT INTO employees (name, department, salary, hire_date)
 VALUES
-    ('Alice', 'Engineering', 120000, '2020-01-15'),
-    ('Bob', 'Sales', 80000, '2021-03-20'),
-    ('Charlie', 'Engineering', 110000, '2019-06-10');
+    ('Alice', 'Engineering', 120000, '2020-01-15'),   -- => High earner (>100k)
+    ('Bob', 'Sales', 80000, '2021-03-20'),             -- => Not high earner (<100k)
+    ('Charlie', 'Engineering', 110000, '2019-06-10');  -- => High earner (>100k)
+-- => 3 employees: 2 qualify for high_earners view, 1 does not
 
 INSERT INTO departments (id, name, budget)
 VALUES (1, 'Engineering', 500000), (2, 'Sales', 300000);
+-- => 2 departments: Engineering ($500k budget), Sales ($300k budget)
 
 -- Create view: High earners (salary > 100k)
-CREATE VIEW high_earners AS
+CREATE VIEW high_earners AS     -- => CREATE VIEW stores the query, not data
 SELECT name, department, salary
 FROM employees
-WHERE salary > 100000;
+WHERE salary > 100000;          -- => View definition: filter condition
+-- => View 'high_earners' created: each query runs the stored SELECT dynamically
 
 -- Query view like a table
 SELECT * FROM high_earners;
--- => Returns: Alice (120000), Charlie (110000)
+-- => View executes its SELECT query when referenced
+-- => Returns 2 rows: Alice (120000), Charlie (110000)
+-- => Bob excluded (80000 < 100000)
 
 -- Views update automatically when underlying data changes
 INSERT INTO employees (name, department, salary, hire_date)
 VALUES ('Diana', 'Engineering', 130000, '2022-01-01');
+-- => New employee Diana earns 130000 (qualifies for view)
 
 SELECT * FROM high_earners;
--- => Now returns: Alice, Charlie, Diana
+-- => View re-executes SELECT on employees table (which now has 4 rows)
+-- => Returns 3 rows: Alice, Charlie, Diana (all > 100000)
+-- => View automatically reflects the new row without modification
 
 -- Create view with JOIN
-CREATE VIEW employee_departments AS
+CREATE VIEW employee_departments AS  -- => VIEW encapsulates a JOIN query
 SELECT
-    e.name AS employee,
-    e.salary,
-    d.name AS department,
-    d.budget
+    e.name AS employee,    -- => Employee name from employees table
+    e.salary,              -- => Employee salary
+    d.name AS department,  -- => Department name from departments table
+    d.budget               -- => Department budget from departments table
 FROM employees e
-INNER JOIN departments d ON e.department = d.name;
+INNER JOIN departments d ON e.department = d.name;  -- => Join on matching names
+-- => View joins two tables; callers see single virtual table
 
 SELECT * FROM employee_departments WHERE department = 'Engineering';
--- => Returns employees in Engineering with department budget
+-- => Queries the view, which internally executes the JOIN
+-- => Returns Engineering employees: Alice (120k, budget 500k), Charlie (110k, 500k), Diana (130k, 500k)
 
 -- Drop view
 DROP VIEW high_earners;
--- => Removes view, underlying table unaffected
+-- => Removes view definition only; underlying tables unaffected
+-- => Queries using high_earners will fail after DROP
 ```
 
 **Key Takeaway**: Views simplify repetitive queries by saving them as virtual tables. They automatically reflect underlying data changes. Use views for abstraction, security (hide columns), and query reuse.
@@ -1996,51 +2248,60 @@ Subqueries are queries nested inside other queries. Use in WHERE clauses to filt
 
 ```sql
 CREATE TABLE employees (
-    id INTEGER PRIMARY KEY,
-    name TEXT,
-    department TEXT,
-    salary REAL
+    id INTEGER PRIMARY KEY,  -- => Employee identifier
+    name TEXT,               -- => Employee name
+    department TEXT,         -- => Department assignment
+    salary REAL              -- => Annual salary
 );
+-- => Table 'employees' with varied salaries for subquery demonstrations
 
 INSERT INTO employees (name, department, salary)
 VALUES
-    ('Alice', 'Engineering', 120000),
-    ('Bob', 'Sales', 80000),
-    ('Charlie', 'Engineering', 90000),
-    ('Diana', 'Sales', 95000),
-    ('Eve', 'Marketing', 75000);
+    ('Alice', 'Engineering', 120000),   -- => Above average salary
+    ('Bob', 'Sales', 80000),            -- => Below average salary
+    ('Charlie', 'Engineering', 90000),  -- => Below average salary
+    ('Diana', 'Sales', 95000),          -- => Above average salary
+    ('Eve', 'Marketing', 75000);        -- => Below average salary
+-- => 5 employees; average salary = (120+80+90+95+75)/5 = 92000
 
 -- Find employees earning more than average salary
 SELECT name, salary
 FROM employees
 WHERE salary > (SELECT AVG(salary) FROM employees);
--- => Subquery returns 92000 (average)
--- => Returns: Alice (120000), Diana (95000)
+-- => Inner subquery executes first: AVG(salary) across all 5 employees = 92000
+-- => Outer query compares each employee's salary to 92000
+-- => Alice: 120000 > 92000 ✓, Diana: 95000 > 92000 ✓
+-- => Returns 2 rows: Alice (120000), Diana (95000)
 
 -- Find employees in highest-paid department
 SELECT name, department, salary
 FROM employees
-WHERE department = (
-    SELECT department
+WHERE department = (            -- => Subquery returns a single string value
+    SELECT department           -- => Select department name
     FROM employees
-    GROUP BY department
-    ORDER BY SUM(salary) DESC
-    LIMIT 1
+    GROUP BY department         -- => Aggregate per department
+    ORDER BY SUM(salary) DESC   -- => Sort by total salary, highest first
+    LIMIT 1                     -- => Take only the top result
 );
--- => Subquery returns 'Engineering' (highest total salaries: 210000)
--- => Returns: Alice, Charlie (Engineering employees)
+-- => Subquery: Engineering SUM=210000, Sales SUM=175000, Marketing SUM=75000
+-- => ORDER BY DESC + LIMIT 1 returns 'Engineering'
+-- => Outer query: WHERE department = 'Engineering'
+-- => Returns: Alice, Charlie (both in Engineering)
 
 -- IN with subquery: Find employees in departments with budget > 100k
 CREATE TABLE departments (dept_name TEXT, budget REAL);
+-- => Simple 2-column table for budget filtering subquery
 INSERT INTO departments VALUES ('Engineering', 500000), ('Sales', 300000), ('Marketing', 80000);
+-- => Marketing has budget below 100000; will be excluded by subquery
 
 SELECT name, department
 FROM employees
-WHERE department IN (
-    SELECT dept_name FROM departments WHERE budget > 100000
+WHERE department IN (                                      -- => IN checks against subquery result set
+    SELECT dept_name FROM departments WHERE budget > 100000  -- => Returns {Engineering, Sales}
 );
--- => Subquery returns: Engineering, Sales
--- => Returns: Alice, Bob, Charlie, Diana
+-- => Subquery produces list: {Engineering, Sales} (Marketing excluded at 80000)
+-- => IN equivalent to: department = 'Engineering' OR department = 'Sales'
+-- => Returns 4 employees: Alice, Bob, Charlie, Diana (Eve's Marketing excluded)
 
 -- EXISTS: Find departments with employees
 SELECT dept_name
@@ -2048,7 +2309,12 @@ FROM departments d
 WHERE EXISTS (
     SELECT 1 FROM employees e WHERE e.department = d.dept_name
 );
--- => Returns: Engineering, Sales, Marketing (all have employees)
+-- => EXISTS returns TRUE if the subquery produces any rows
+-- => For each department row, subquery checks if any employee's department matches
+-- => Engineering: employees Alice, Charlie match → EXISTS=TRUE ✓
+-- => Sales: employees Bob, Diana match → EXISTS=TRUE ✓
+-- => Marketing: employee Eve matches → EXISTS=TRUE ✓
+-- => Returns all 3 departments: Engineering, Sales, Marketing
 ```
 
 **Key Takeaway**: Subqueries enable filtering based on computed values or related data. Use scalar subqueries (return single value) with comparison operators, or list subqueries with IN/EXISTS.

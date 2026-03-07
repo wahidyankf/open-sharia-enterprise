@@ -3,17 +3,19 @@ title: "Advanced"
 weight: 10000003
 date: 2025-12-25T16:18:56+07:00
 draft: false
-description: Master advanced Elixir Phoenix patterns through 30 annotated examples covering database optimization, performance, deployment, and resilience
+description: "Master advanced Elixir Phoenix patterns through 30 annotated examples covering database optimization, performance, deployment, and resilience"
 tags:
-  - phoenix
-  - elixir
-  - web-framework
-  - tutorial
-  - by-example
-  - advanced
-  - performance
-  - deployment
-  - resilience
+  [
+    "phoenix",
+    "elixir",
+    "web-framework",
+    "tutorial",
+    "by-example",
+    "advanced",
+    "performance",
+    "deployment",
+    "resilience",
+  ]
 ---
 
 ## Group 9: Database Advanced
