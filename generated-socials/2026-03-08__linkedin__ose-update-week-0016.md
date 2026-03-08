@@ -8,7 +8,7 @@ Week 0016, Phase 1 Week 4
 
 ---
 
-Phase 1 Week 4: OrganicLever Takes Shape
+🚀 Phase 1 Week 4: OrganicLever Takes Shape
 
 Four weeks into Phase 1. OrganicLever is real — frontend deployed at www.organiclever.com, Spring Boot backend running in local dev, and a testing infrastructure built for scale.
 
@@ -67,7 +67,7 @@ Every commit visible on GitHub. Monthly updates every second Sunday.
 
 ---
 
-LINKS
+🔗 LINKS
 
 - GitHub: https://github.com/wahidyankf/open-sharia-enterprise
 - Latest Monthly Update: https://www.oseplatform.com/updates/2026-03-08-phase-1-week-4-organiclever-takes-shape/
