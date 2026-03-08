@@ -4,11 +4,11 @@ date: 2026-03-08T19:55:00+07:00
 draft: false
 tags: ["milestone", "phase-1", "progress", "organiclever", "testing", "infrastructure"]
 categories: ["updates"]
-summary: "379 commits in 4 weeks: OrganicLever frontend deployed to production with Spring Boot backend in development, three-tier BDD testing with 99 Gherkin scenarios, 95%+ coverage enforced across all projects, 7 CI/CD workflows, dependency modernization including Next.js 16, Go 1.26, and TailwindCSS v4. Phase 1 infrastructure solidifying."
+summary: "OrganicLever frontend deployed to production with Spring Boot backend in development, three-tier BDD testing with 99 Gherkin scenarios, 95%+ coverage enforced across all projects, 7 CI/CD workflows, dependency modernization including Next.js 16, Go 1.26, and TailwindCSS v4. Phase 1 infrastructure solidifying."
 showtoc: true
 ---
 
-Phase 1 promised to exercise Phase 0 systems with a real product. Four weeks in, OrganicLever exists: frontend deployed at [www.organiclever.com](https://www.organiclever.com), Spring Boot backend running in local development with Docker Compose, E2E tests on schedule. 379 commits landed across infrastructure solidification, testing infrastructure, coverage enforcement, CI/CD pipelines, and dependency modernization.
+Phase 1 promised to exercise Phase 0 systems with a real product. Four weeks in, OrganicLever exists: frontend deployed at [www.organiclever.com](https://www.organiclever.com), Spring Boot backend running in local development with Docker Compose, E2E tests on schedule. Work landed across infrastructure solidification, testing infrastructure, coverage enforcement, CI/CD pipelines, and dependency modernization.
 
 Infrastructure solidification remains the primary goal. Product features come second—we're building the systems that let us build products reliably. The OrganicLever content you see today is placeholder—auth flows, dashboard layout, members CRUD—just enough to exercise the CI/CD pipeline end-to-end.
 
@@ -140,7 +140,6 @@ The agent system grew from 56 to 58 specialized agents, with `swe-code-checker` 
 
 **Week 12 → Week 16 (Phase 1 Progress):**
 
-- **Commits**: 1,200+ → 1,600+ (379 in 4 weeks)
 - **OrganicLever projects**: 0 → 4 (web, backend, web-e2e, be-e2e)
 - **Test coverage**: none → 95%+ enforced across all 7 projects
 - **CI/CD workflows**: 2 → 7
