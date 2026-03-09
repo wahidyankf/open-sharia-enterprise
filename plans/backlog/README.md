@@ -4,7 +4,7 @@ Planned projects for future implementation.
 
 ## Planned Projects
 
-- **[2026-03-09\_\_auth-register-login](./2026-03-09__auth-register-login/README.md)** - Add user registration and JWT-based login to the organiclever-be Spring Boot backend, with PostgreSQL persistence, Flyway migrations, Spring Security configuration, and full integration + E2E test coverage
+None.
 
 ## Instructions
 

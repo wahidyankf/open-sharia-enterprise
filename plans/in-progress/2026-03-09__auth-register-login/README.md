@@ -1,6 +1,6 @@
 ---
 title: "Auth Register and Login"
-status: Backlog
+status: In Progress
 created: 2026-03-09
 ---
 
@@ -20,7 +20,7 @@ Add user registration and login to the `organiclever-be` Spring Boot backend. Th
 
 ## Status
 
-**Backlog** - Not started.
+**In Progress** - Implementation underway.
 
 ## Goals
 
