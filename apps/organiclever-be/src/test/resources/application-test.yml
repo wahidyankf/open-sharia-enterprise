@@ -1,4 +1,21 @@
 # Test profile: mirrors production actuator config (NOT dev which sets show-details: always)
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL;DATABASE_TO_UPPER=false
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: none
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: false
+
+app:
+  jwt:
+    secret: test-jwt-secret-at-least-32-chars-long-for-hs256
+    expiration-ms: 3600000 # 1 hour for tests
+
 management:
   endpoint:
     health:

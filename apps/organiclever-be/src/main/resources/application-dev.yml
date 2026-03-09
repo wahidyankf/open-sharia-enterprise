@@ -1,4 +1,12 @@
 spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/organiclever
+    username: ${POSTGRES_USER:organiclever}
+    password: ${POSTGRES_PASSWORD:organiclever}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
   devtools:
     restart:
       # Enable automatic restart when classpath files change

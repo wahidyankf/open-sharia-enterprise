@@ -7,6 +7,13 @@ spring:
     error:
       include-message: always
       include-binding-errors: always
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+app:
+  jwt:
+    secret: ${APP_JWT_SECRET:change-me-in-production-at-least-32-chars-long}
+    expiration-ms: 86400000 # 24 hours
 
 server:
   port: 8201
