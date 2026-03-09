@@ -1,0 +1,8 @@
+{
+  "skip_files": [
+    "test/support/",
+    "lib/organiclever_be_exph/repo.ex",
+    "lib/organiclever_be_exph_web/gettext.ex",
+    "lib/organiclever_be_exph/accounts/accounts.ex"
+  ]
+}
