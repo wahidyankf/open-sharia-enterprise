@@ -32,29 +32,29 @@ Add all new Maven dependencies and create the Liquibase changelog.
 
 ### Tasks
 
-- [ ] 1.1 Add `spring-boot-starter-security` to `pom.xml`
-- [ ] 1.2 Add `spring-boot-starter-data-jpa` to `pom.xml`
-- [ ] 1.3 Add `spring-boot-starter-validation` to `pom.xml`
-- [ ] 1.4 Add `postgresql` driver (runtime scope) to `pom.xml`
-- [ ] 1.5 Add `liquibase-core` to `pom.xml` (no separate dialect jar required)
-- [ ] 1.6 Add `jjwt-api`, `jjwt-impl` (runtime), `jjwt-jackson` (runtime) to `pom.xml`; add `<jjwt.version>0.12.6</jjwt.version>` property; use `${jjwt.version}` in version tags
-- [ ] 1.7 Add `h2` (test scope) and `spring-security-test` (test scope) to `pom.xml`
-- [ ] 1.8 Create directory `apps/organiclever-be/src/main/resources/db/changelog/changes/`
-- [ ] 1.9 Create `db/changelog/db.changelog-master.yaml` with `includeAll` pointing to `db/changelog/changes/`
-- [ ] 1.10 Create `db/changelog/changes/001-create-users-table.sql` as a Liquibase SQL formatted changelog; include two changesets: `dbms:postgresql` (using `gen_random_uuid()`) and `dbms:h2` (using `RANDOM_UUID()`); both changesets MUST include all 6 audit trail columns (`created_at`, `created_by`, `updated_at`, `updated_by`, `deleted_at`, `deleted_by`) per the database audit trail convention; add `-- rollback DROP TABLE users;` after each `CREATE TABLE`
-- [ ] 1.11 Add `spring.liquibase.change-log` and JWT properties to `application.yml`
-- [ ] 1.12 Add datasource + JPA config to `application-dev.yml` (no Liquibase override needed)
-- [ ] 1.13 Update `application-test.yml`: add H2 datasource and H2 Dialect (no separate Liquibase config — `dbms:h2` changeset is selected automatically)
-- [ ] 1.14 Add datasource + JPA config to `application-staging.yml` (env-var-driven)
-- [ ] 1.15 Add datasource + JPA config to `application-prod.yml` (env-var-driven)
-- [ ] 1.16 Verify `mvn compile -q` succeeds with new dependencies
+- [x] 1.1 Add `spring-boot-starter-security` to `pom.xml`
+- [x] 1.2 Add `spring-boot-starter-data-jpa` to `pom.xml`
+- [x] 1.3 Add `spring-boot-starter-validation` to `pom.xml`
+- [x] 1.4 Add `postgresql` driver (runtime scope) to `pom.xml`
+- [x] 1.5 Add `liquibase-core` to `pom.xml` (no separate dialect jar required)
+- [x] 1.6 Add `jjwt-api`, `jjwt-impl` (runtime), `jjwt-jackson` (runtime) to `pom.xml`; add `<jjwt.version>0.12.6</jjwt.version>` property; use `${jjwt.version}` in version tags
+- [x] 1.7 Add `h2` (test scope) and `spring-security-test` (test scope) to `pom.xml`
+- [x] 1.8 Create directory `apps/organiclever-be/src/main/resources/db/changelog/changes/`
+- [x] 1.9 Create `db/changelog/db.changelog-master.yaml` with `includeAll` pointing to `db/changelog/changes/`
+- [x] 1.10 Create `db/changelog/changes/001-create-users-table.sql` as a Liquibase SQL formatted changelog; include two changesets: `dbms:postgresql` (using `gen_random_uuid()`) and `dbms:h2` (using `RANDOM_UUID()`); both changesets MUST include all 6 audit trail columns (`created_at`, `created_by`, `updated_at`, `updated_by`, `deleted_at`, `deleted_by`) per the database audit trail convention; add `-- rollback DROP TABLE users;` after each `CREATE TABLE`
+- [x] 1.11 Add `spring.liquibase.change-log` and JWT properties to `application.yml`
+- [x] 1.12 Add datasource + JPA config to `application-dev.yml` (no Liquibase override needed)
+- [x] 1.13 Update `application-test.yml`: add H2 datasource and H2 Dialect (no separate Liquibase config — `dbms:h2` changeset is selected automatically)
+- [x] 1.14 Add datasource + JPA config to `application-staging.yml` (env-var-driven)
+- [x] 1.15 Add datasource + JPA config to `application-prod.yml` (env-var-driven)
+- [x] 1.16 Verify `mvn compile -q` succeeds with new dependencies
 - [ ] 1.17 Commit: `feat(organiclever-be): add DB dependencies and Liquibase changelog`
 
 ### Validation
 
-- [ ] `mvn compile` exits 0
-- [ ] `001-create-users-table.sql` contains two changesets: `dbms:postgresql` with `gen_random_uuid()` and `dbms:h2` with `RANDOM_UUID()`; both include `-- rollback DROP TABLE users;`
-- [ ] `db.changelog-master.yaml` references `db/changelog/changes/` via `includeAll`
+- [x] `mvn compile` exits 0
+- [x] `001-create-users-table.sql` contains two changesets: `dbms:postgresql` with `gen_random_uuid()` and `dbms:h2` with `RANDOM_UUID()`; both include `-- rollback DROP TABLE users;`
+- [x] `db.changelog-master.yaml` references `db/changelog/changes/` via `includeAll`
 
 ## Phase 2 - Domain Model and Repository
 
