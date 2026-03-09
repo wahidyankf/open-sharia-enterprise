@@ -72,10 +72,9 @@ Create the `User` entity, `UserRepository`, and all associated packages.
 - [ ] 2.8 Create `RegisterResponse.java` record with `UUID id`, `String username`, `Instant createdAt`
 - [ ] 2.9 Create `AuthResponse.java` record with `String token`, `String type`; add static factory `bearer(String token)`
 - [ ] 2.10 Create package `com.organiclever.be.config` with `package-info.java`
-- [ ] 2.11 Create `AuditorAwareImpl.java` in `com.organiclever.be.config` implementing `AuditorAware<String>`; return `auth.getName()` when a non-anonymous user is authenticated, otherwise return `Optional.of("system")`
-- [ ] 2.12 Add `@EnableJpaAuditing` to `SecurityConfig` (or a dedicated `JpaConfig`) to activate Spring Data JPA Auditing
-- [ ] 2.13 Verify `mvn compile -q` succeeds
-- [ ] 2.14 Commit: `feat(organiclever-be): add User domain model and repository`
+- [ ] 2.11 Create `JpaAuditingConfig.java` in `com.organiclever.be.config` annotated with `@Configuration @EnableJpaAuditing(auditorAwareRef = "auditorProvider")`; define an `AuditorAware<String> auditorProvider()` lambda bean that reads `auth.getName()` from `SecurityContextHolder` and falls back to `"system"` for unauthenticated/anonymous users; use `"anonymousUser".equals(auth.getPrincipal())` (constant first, NPE-safe)
+- [ ] 2.12 Verify `mvn compile -q` succeeds
+- [ ] 2.13 Commit: `feat(organiclever-be): add User domain model and repository`
 
 ### Validation
 
@@ -210,7 +209,7 @@ Update all affected documentation files.
 - [ ] 7.2 Update `apps/organiclever-be/README.md`: document `POST /api/v1/auth/register` and `POST /api/v1/auth/login` endpoints; list required env vars (`APP_JWT_SECRET`, `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD`); note Liquibase changelog approach
 - [ ] 7.3 Update `apps/organiclever-be-e2e/README.md`: add auth step definitions section, document `tests/utils/token-store.ts`, `tests/fixtures/db-cleanup.ts`, `tests/hooks/db.hooks.ts`; document `DATABASE_URL` env var and `pg` package prerequisite
 - [ ] 7.4 Update `infra/dev/organiclever/README.md`: document the new `organiclever-db` PostgreSQL service, how to start the full stack, and all required env vars (`POSTGRES_USER`, `POSTGRES_PASSWORD`, `APP_JWT_SECRET`)
-- [ ] 7.5 Update `docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__data-access.md`: add a `JdbcClient` section documenting it as the preferred query-builder approach in this project (explicit SQL, named parameters, `RowMapper`); note preference over Spring Data JPA for simple domain tables; include a minimal code example matching the `UserRepository` pattern
+- [ ] 7.5 Update `docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__data-access.md`: add or expand the Spring Data JPA section documenting the repository pattern used in this project (`JpaRepository<T, ID>`, derived queries like `findByUsername`/`existsByUsername`, `@Entity` with `@GeneratedValue(strategy=GenerationType.UUID)`, `@EntityListeners(AuditingEntityListener.class)`, `@Where` for soft-delete, and `@PrePersist`); include a minimal code example referencing the `UserRepository` pattern
 - [ ] 7.6 Update `docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__security.md`: add a section on the project-specific JWT + Spring Security setup (`SecurityFilterChain`, `JwtAuthFilter`, `OncePerRequestFilter`, stateless sessions, `CorsConfigurationSource` in `SecurityConfig`); reference the JJWT 0.12.x API
 - [ ] 7.7 Commit: `docs: update data-access and security docs for JWT and Spring Security pattern`
 
@@ -219,7 +218,7 @@ Update all affected documentation files.
 - [ ] `apps/organiclever-be/README.md` describes both auth endpoints and all env vars
 - [ ] `specs/apps/organiclever-be/README.md` lists all three auth feature files
 - [ ] `apps/organiclever-be-e2e/README.md` documents `DATABASE_URL` and the `pg` dependency
-- [ ] `data-access.md` contains expanded Spring Data JPA section with `@Entity` + `@PrePersist` pattern
+- [ ] `data-access.md` contains expanded Spring Data JPA section with `@Entity`, `JpaRepository`, audit-trail annotations, and soft-delete `@Where` pattern
 - [ ] `security.md` contains the project-specific JWT + Spring Security pattern
 
 ## Final Acceptance Criteria

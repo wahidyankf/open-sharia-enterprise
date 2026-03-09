@@ -50,7 +50,7 @@ All new packages follow the existing convention: annotated with `@NullMarked` in
 | `com.organiclever.be.auth.model`        | `User` JPA entity                                                     |
 | `com.organiclever.be.auth.dto`          | `RegisterRequest`, `LoginRequest`, `RegisterResponse`, `AuthResponse` |
 | `com.organiclever.be.security`          | `JwtUtil`, `JwtAuthFilter`, `SecurityConfig`                          |
-| `com.organiclever.be.config`            | `AuditorAwareImpl`, `GlobalExceptionHandler`                          |
+| `com.organiclever.be.config`            | `JpaAuditingConfig`, `GlobalExceptionHandler`                         |
 | `com.organiclever.be.integration.steps` | `AuthSteps` (test), `TokenStore` (test)                               |
 
 ### package-info.java template
@@ -144,28 +144,30 @@ public class User {
 }
 ```
 
-### AuditorAwareImpl
+### JpaAuditingConfig
 
-Required to supply the `created_by` / `updated_by` values via Spring Data JPA Auditing:
+Enables Spring Data JPA Auditing and supplies the `created_by` / `updated_by` values.
+Place in `com.organiclever.be.config`:
 
 ```java
-// in com.organiclever.be.config
-@Component
-public class AuditorAwareImpl implements AuditorAware<String> {
-    @Override
-    public Optional<String> getCurrentAuditor() {
-        Authentication auth =
-            SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated()
-                || auth.getPrincipal().equals("anonymousUser")) {
-            return Optional.of("system");
-        }
-        return Optional.of(auth.getName());
+@Configuration
+@EnableJpaAuditing(auditorAwareRef = "auditorProvider")
+public class JpaAuditingConfig {
+
+    @Bean
+    public AuditorAware<String> auditorProvider() {
+        return () -> {
+            Authentication auth =
+                SecurityContextHolder.getContext().getAuthentication();
+            if (auth == null || !auth.isAuthenticated()
+                    || "anonymousUser".equals(auth.getPrincipal())) {
+                return Optional.of("system");
+            }
+            return Optional.of(auth.getName());
+        };
     }
 }
 ```
-
-Enable auditing by adding `@EnableJpaAuditing` to any `@Configuration` class (e.g., `SecurityConfig` or a dedicated `JpaConfig`).
 
 ### UserRepository
 
