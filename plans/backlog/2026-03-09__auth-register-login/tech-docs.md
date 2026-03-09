@@ -1,0 +1,1045 @@
+---
+title: "Auth Register and Login - Technical Documentation"
+---
+
+# Technical Documentation
+
+## Architecture Overview
+
+The auth feature adds a vertical slice through the existing `organiclever-be` module:
+
+```mermaid
+%% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
+graph TD
+    Client["HTTP Client"]:::orange
+    JwtFilter["JwtAuthFilter<br/>(OncePerRequestFilter)"]:::blue
+    SecurityConfig["SecurityConfig<br/>(SecurityFilterChain)"]:::blue
+    JwtUtil["JwtUtil<br/>(sign / validate JWT)"]:::blue
+    AuthController["AuthController<br/>(/api/v1/auth)"]:::teal
+    AuthService["AuthService"]:::teal
+    UserDetailsService["UserDetailsServiceImpl<br/>(implements UserDetailsService)"]:::teal
+    UserRepository["UserRepository<br/>(Spring Data JPA)"]:::purple
+    DB[("PostgreSQL<br/>(dev/staging/prod)<br/>or H2 (test)")]:::brown
+
+    Client --> SecurityConfig
+    SecurityConfig --> JwtFilter
+    JwtFilter --> JwtUtil
+    SecurityConfig --> AuthController
+    AuthController --> AuthService
+    AuthService --> UserDetailsService
+    AuthService --> JwtUtil
+    UserDetailsService --> UserRepository
+    UserRepository --> DB
+
+    classDef blue fill:#0173B2,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef orange fill:#DE8F05,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef teal fill:#029E73,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef purple fill:#CC78BC,stroke:#000000,color:#FFFFFF,stroke-width:2px
+    classDef brown fill:#CA9161,stroke:#000000,color:#FFFFFF,stroke-width:2px
+```
+
+## New Java Packages
+
+All new packages follow the existing convention: annotated with `@NullMarked` in `package-info.java`, no wildcard imports.
+
+| Package                                 | Purpose                                                               |
+| --------------------------------------- | --------------------------------------------------------------------- |
+| `com.organiclever.be.auth.controller`   | `AuthController` - REST endpoints                                     |
+| `com.organiclever.be.auth.service`      | `AuthService`, `UserDetailsServiceImpl`                               |
+| `com.organiclever.be.auth.repository`   | `UserRepository` (Spring Data JPA)                                    |
+| `com.organiclever.be.auth.model`        | `User` JPA entity                                                     |
+| `com.organiclever.be.auth.dto`          | `RegisterRequest`, `LoginRequest`, `RegisterResponse`, `AuthResponse` |
+| `com.organiclever.be.security`          | `JwtUtil`, `JwtAuthFilter`, `SecurityConfig`                          |
+| `com.organiclever.be.integration.steps` | `AuthSteps` (test), `TokenStore` (test)                               |
+
+### package-info.java template
+
+```java
+@NullMarked
+package com.organiclever.be.auth.controller;
+
+import org.jspecify.annotations.NullMarked;
+```
+
+(Repeat for each new package with the appropriate package name.)
+
+## New Classes
+
+### DTOs (Java records - immutable)
+
+```java
+// RegisterRequest.java
+public record RegisterRequest(
+    @NotBlank @Size(min = 3, max = 50) String username,
+    @NotBlank @Size(min = 8, max = 128) String password
+) {}
+
+// LoginRequest.java
+public record LoginRequest(
+    @NotBlank String username,
+    @NotBlank String password
+) {}
+
+// RegisterResponse.java
+public record RegisterResponse(UUID id, String username, Instant createdAt) {}
+
+// AuthResponse.java
+public record AuthResponse(String token, String type) {
+    public static AuthResponse bearer(String token) {
+        return new AuthResponse(token, "Bearer");
+    }
+}
+```
+
+### User entity
+
+```java
+@Entity
+@Table(name = "users")
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    @Column(nullable = false, unique = true, length = 50)
+    private String username;
+
+    @Column(name = "password_hash", nullable = false)
+    private String passwordHash;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Instant createdAt;
+
+    @PrePersist
+    private void prePersist() { this.createdAt = Instant.now(); }
+    // getters, no public setters (use constructor or builder)
+}
+```
+
+### UserRepository
+
+```java
+public interface UserRepository extends JpaRepository<User, UUID> {
+    Optional<User> findByUsername(String username);
+    boolean existsByUsername(String username);
+}
+```
+
+### AuthService
+
+```java
+@Service
+public class AuthService {
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
+
+    // Constructor injection
+
+    public RegisterResponse register(RegisterRequest request) {
+        if (userRepository.existsByUsername(request.username())) {
+            throw new UsernameAlreadyExistsException(request.username());
+        }
+        User user = new User(request.username(),
+                             passwordEncoder.encode(request.password()));
+        User saved = userRepository.save(user);
+        return new RegisterResponse(saved.getId(), saved.getUsername(), saved.getCreatedAt());
+    }
+
+    public AuthResponse login(LoginRequest request) {
+        User user = userRepository.findByUsername(request.username())
+            .orElseThrow(() -> new InvalidCredentialsException());
+        if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
+            throw new InvalidCredentialsException();
+        }
+        String token = jwtUtil.generateToken(user.getUsername());
+        return AuthResponse.bearer(token);
+    }
+}
+```
+
+### UserDetailsServiceImpl
+
+```java
+@Service
+public class UserDetailsServiceImpl implements UserDetailsService {
+    private final UserRepository userRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+        return org.springframework.security.core.userdetails.User
+            .withUsername(user.getUsername())
+            .password(user.getPasswordHash())
+            .roles("USER")
+            .build();
+    }
+}
+```
+
+### JwtUtil
+
+```java
+@Component
+public class JwtUtil {
+    private final SecretKey signingKey;
+    private final long expirationMs;
+
+    public JwtUtil(@Value("${app.jwt.secret}") String secret,
+                   @Value("${app.jwt.expiration-ms:86400000}") long expirationMs) {
+        this.signingKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        this.expirationMs = expirationMs;
+    }
+
+    public String generateToken(String username) {
+        return Jwts.builder()
+            .subject(username)
+            .issuedAt(new Date())
+            .expiration(new Date(System.currentTimeMillis() + expirationMs))
+            .signWith(signingKey)
+            .compact();
+    }
+
+    public String extractUsername(String token) {
+        return parseClaims(token).getSubject();
+    }
+
+    public boolean isTokenValid(String token) {
+        try {
+            parseClaims(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    private Claims parseClaims(String token) {
+        return Jwts.parser()
+            .verifyWith(signingKey)
+            .build()
+            .parseSignedClaims(token)
+            .getPayload();
+    }
+}
+```
+
+### JwtAuthFilter
+
+```java
+@Component
+public class JwtAuthFilter extends OncePerRequestFilter {
+    private final JwtUtil jwtUtil;
+    private final UserDetailsService userDetailsService;
+
+    // Constructor injection
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
+        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (header != null && header.startsWith("Bearer ")) {
+            String token = header.substring(7);
+            if (jwtUtil.isTokenValid(token)) {
+                String username = jwtUtil.extractUsername(token);
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                UsernamePasswordAuthenticationToken auth =
+                    new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
+                auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            }
+        }
+        filterChain.doFilter(request, response);
+    }
+}
+```
+
+### SecurityConfig
+
+```java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+    private final JwtAuthFilter jwtAuthFilter;
+
+    // Constructor injection
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        return http
+            .csrf(csrf -> csrf.disable())
+            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/v1/auth/**").permitAll()
+                .requestMatchers("/actuator/**").permitAll()
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+            .build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(10);
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+}
+```
+
+### AuthController
+
+```java
+@RestController
+@RequestMapping("/api/v1/auth")
+public class AuthController {
+    private final AuthService authService;
+
+    // Constructor injection
+
+    @PostMapping("/register")
+    public ResponseEntity<RegisterResponse> register(
+            @Valid @RequestBody RegisterRequest request) {
+        RegisterResponse response = authService.register(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(
+            @Valid @RequestBody LoginRequest request) {
+        return ResponseEntity.ok(authService.login(request));
+    }
+}
+```
+
+### Custom Exceptions
+
+```java
+// UsernameAlreadyExistsException.java (in com.organiclever.be.auth.service)
+public class UsernameAlreadyExistsException extends RuntimeException {
+    public UsernameAlreadyExistsException(String username) {
+        super("Username already exists: " + username);
+    }
+}
+
+// InvalidCredentialsException.java (in com.organiclever.be.auth.service)
+public class InvalidCredentialsException extends RuntimeException {
+    public InvalidCredentialsException() {
+        super("Invalid username or password");
+    }
+}
+```
+
+### GlobalExceptionHandler (in com.organiclever.be.config)
+
+```java
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(UsernameAlreadyExistsException.class)
+    public ResponseEntity<Map<String, String>> handleDuplicate(
+            UsernameAlreadyExistsException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+            .body(Map.of("message", ex.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidCredentials(
+            InvalidCredentialsException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .body(Map.of("message", ex.getMessage()));
+    }
+}
+```
+
+## CORS Configuration Update
+
+`CorsConfig` must be replaced or updated because Spring Security manages CORS when `HttpSecurity.cors()` is enabled. The recommended approach with Spring Security is to configure CORS via `CorsConfigurationSource` bean and call `http.cors(cors -> cors.configurationSource(corsConfigurationSource()))` in `SecurityConfig`. Remove or repurpose the existing `CorsConfig` class to avoid duplication.
+
+```java
+// Inside SecurityConfig
+@Bean
+public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration config = new CorsConfiguration();
+    config.setAllowedOriginPatterns(List.of("http://localhost:*"));
+    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    config.setAllowedHeaders(List.of("*"));
+    config.setAllowCredentials(false);
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/api/**", config);
+    return source;
+}
+```
+
+## Database Schema
+
+### Flyway Migration File
+
+**Location**: `apps/organiclever-be/src/main/resources/db/migration/`
+
+**File name**: `V1__create_users_table.sql`
+
+```sql
+CREATE TABLE users (
+    id           UUID         NOT NULL DEFAULT gen_random_uuid(),
+    username     VARCHAR(50)  NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at   TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    CONSTRAINT pk_users PRIMARY KEY (id),
+    CONSTRAINT uq_users_username UNIQUE (username)
+);
+```
+
+**Notes**:
+
+- `gen_random_uuid()` is available in PostgreSQL 13+ without extensions.
+- `TIMESTAMPTZ` stores timezone-aware timestamps; always use UTC in the application.
+- The `password_hash` column is 255 chars; BCrypt output is 60 chars but 255 gives future headroom.
+
+## Dependencies to Add to pom.xml
+
+### Main dependencies
+
+```xml
+<!-- Spring Security -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+
+<!-- Spring Data JPA (Hibernate) -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+
+<!-- Bean Validation (Jakarta) -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-validation</artifactId>
+</dependency>
+
+<!-- PostgreSQL JDBC driver (runtime only) -->
+<dependency>
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+    <scope>runtime</scope>
+</dependency>
+
+<!-- Flyway core + PostgreSQL dialect -->
+<dependency>
+    <groupId>org.flywaydb</groupId>
+    <artifactId>flyway-core</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.flywaydb</groupId>
+    <artifactId>flyway-database-postgresql</artifactId>
+    <scope>runtime</scope>
+</dependency>
+
+<!-- JJWT - JWT library -->
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-api</artifactId>
+    <version>${jjwt.version}</version>
+</dependency>
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-impl</artifactId>
+    <version>${jjwt.version}</version>
+    <scope>runtime</scope>
+</dependency>
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-jackson</artifactId>
+    <version>${jjwt.version}</version>
+    <scope>runtime</scope>
+</dependency>
+```
+
+### Test dependencies
+
+```xml
+<!-- H2 in-memory DB for integration tests -->
+<dependency>
+    <groupId>com.h2database</groupId>
+    <artifactId>h2</artifactId>
+    <scope>test</scope>
+</dependency>
+```
+
+### Properties section - add jjwt version property
+
+```xml
+<jjwt.version>0.12.6</jjwt.version>
+```
+
+(Use the property in the version tags above: `${jjwt.version}`.)
+
+## Application Configuration
+
+### application.yml additions
+
+```yaml
+app:
+  jwt:
+    secret: ${APP_JWT_SECRET:change-me-in-production-at-least-32-chars-long}
+    expiration-ms: 86400000 # 24 hours
+```
+
+### application-dev.yml additions
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/organiclever
+    username: ${POSTGRES_USER:organiclever}
+    password: ${POSTGRES_PASSWORD:organiclever}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+```
+
+### application-test.yml additions
+
+H2 in PostgreSQL compatibility mode, with H2-specific Flyway migration location:
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL;DATABASE_TO_UPPER=false
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: none
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration/h2
+
+app:
+  jwt:
+    secret: test-jwt-secret-at-least-32-chars-long-for-hs256
+    expiration-ms: 3600000 # 1 hour for tests
+```
+
+### H2 compatibility note for Flyway
+
+H2 in `PostgreSQL` compatibility mode supports most PostgreSQL syntax but not `gen_random_uuid()`. Supply a separate H2-specific migration at test-resources scope:
+
+**Location**: `apps/organiclever-be/src/test/resources/db/migration/h2/`
+
+**File**: `V1__create_users_table.sql` — same version number, H2-only dialect:
+
+```sql
+-- db/migration/h2/V1__create_users_table.sql
+CREATE TABLE users (
+    id            UUID         NOT NULL DEFAULT RANDOM_UUID(),
+    username      VARCHAR(50)  NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at    TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    CONSTRAINT pk_users PRIMARY KEY (id),
+    CONSTRAINT uq_users_username UNIQUE (username)
+);
+```
+
+`application-test.yml` points Flyway to `classpath:db/migration/h2` so H2 picks up only this file. Dev/staging/prod profiles use `classpath:db/migration` with the PostgreSQL `gen_random_uuid()` version.
+
+### application-staging.yml and application-prod.yml additions
+
+```yaml
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+```
+
+## Docker Compose Updates
+
+**File**: `infra/dev/organiclever/docker-compose.yml`
+
+Add `organiclever-db` service and update `organiclever-be` to depend on it.
+
+### New service
+
+```yaml
+organiclever-db:
+  image: postgres:17-alpine
+  container_name: organiclever-db
+  environment:
+    POSTGRES_DB: organiclever
+    POSTGRES_USER: ${POSTGRES_USER:-organiclever}
+    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-organiclever}
+  ports:
+    - "5432:5432"
+  volumes:
+    - organiclever-db-data:/var/lib/postgresql/data
+  healthcheck:
+    test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-organiclever} -d organiclever"]
+    interval: 10s
+    timeout: 5s
+    retries: 5
+    start_period: 30s
+  restart: unless-stopped
+  networks:
+    - organiclever-network
+```
+
+### Updated organiclever-be service (additions / changes)
+
+```yaml
+organiclever-be:
+  # ... existing config ...
+  depends_on:
+    organiclever-db:
+      condition: service_healthy
+  environment:
+    - SPRING_PROFILES_ACTIVE=dev
+    - SERVER_PORT=8201
+    - MAVEN_OPTS=${MAVEN_OPTS:--Xmx512m}
+    - SPRING_DATASOURCE_URL=jdbc:postgresql://organiclever-db:5432/organiclever
+    - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER:-organiclever}
+    - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-organiclever}
+    - APP_JWT_SECRET=${APP_JWT_SECRET:-change-me-in-dev-only-not-for-production}
+```
+
+### New named volume
+
+```yaml
+volumes:
+  organiclever-web-node-modules:
+  organiclever-db-data:
+```
+
+### .env.example additions
+
+```bash
+# PostgreSQL credentials for local dev
+POSTGRES_USER=organiclever
+POSTGRES_PASSWORD=organiclever
+
+# JWT signing secret (min 32 chars for HS256 security)
+APP_JWT_SECRET=change-me-in-production-use-a-real-random-secret
+```
+
+## Integration Test Architecture
+
+### Test class additions
+
+**TokenStore.java** - stores the JWT from login steps:
+
+```java
+@Component
+public class TokenStore {
+    @Nullable
+    private String token;
+
+    public void setToken(String token) { this.token = token; }
+
+    @Nullable
+    public String getToken() { return token; }
+
+    public void clear() { this.token = null; }
+}
+```
+
+**AuthSteps.java** - step definitions for register and login:
+
+```java
+public class AuthSteps {
+    @Autowired private MockMvc mockMvc;
+    @Autowired private ResponseStore responseStore;
+    @Autowired private TokenStore tokenStore;
+
+    @When("a client sends POST /api/v1/auth/register with body:")
+    public void postRegister(String body) throws Exception {
+        responseStore.setResult(
+            mockMvc.perform(
+                post("/api/v1/auth/register")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(body))
+            .andReturn());
+    }
+
+    @When("a client sends POST /api/v1/auth/login with body:")
+    public void postLogin(String body) throws Exception {
+        responseStore.setResult(
+            mockMvc.perform(
+                post("/api/v1/auth/login")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(body))
+            .andReturn());
+    }
+
+    @Given("a user {string} is already registered")
+    public void userIsAlreadyRegistered(String username) throws Exception {
+        mockMvc.perform(
+            post("/api/v1/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"username\":\"" + username + "\",\"password\":\"s3cur3Pass!\"}"))
+        .andExpect(status().isCreated());
+    }
+
+    @Given("a user {string} is already registered with password {string}")
+    public void userIsAlreadyRegisteredWithPassword(String username, String password)
+            throws Exception {
+        mockMvc.perform(
+            post("/api/v1/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}"))
+        .andExpect(status().isCreated());
+    }
+
+    @Given("the client has logged in as {string} and stored the JWT token")
+    public void clientLoggedIn(String username) throws Exception {
+        MvcResult result = mockMvc.perform(
+            post("/api/v1/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"username\":\"" + username + "\",\"password\":\"s3cur3Pass!\"}"))
+        .andExpect(status().isOk())
+        .andReturn();
+        String token = JsonPath.read(result.getResponse().getContentAsString(), "$.token");
+        tokenStore.setToken(token);
+    }
+}
+```
+
+**Updated CommonSteps.java** - add `@Before` to clear `TokenStore` alongside `ResponseStore`:
+
+```java
+@Before
+public void resetState() {
+    responseStore.clear();
+    tokenStore.clear();
+}
+```
+
+### CucumberSpringContextConfig.java update
+
+Add `apply(SecurityMockMvcConfigurer)` so Spring Security's filter chain participates in MockMvc:
+
+```java
+@Bean
+public MockMvc mockMvc() {
+    return MockMvcBuilders
+        .webAppContextSetup(webApplicationContext)
+        .apply(SecurityMockMvcConfigurer.springSecurity())
+        .build();
+}
+```
+
+(Import: `org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurer`)
+
+This ensures `JwtAuthFilter` runs in integration tests exactly as it does in production.
+
+## E2E Test Architecture
+
+E2E tests in `apps/organiclever-be-e2e/` use Playwright BDD against a live backend + real PostgreSQL.
+
+### New npm packages for organiclever-be-e2e
+
+Add to `apps/organiclever-be-e2e/package.json` (devDependencies):
+
+```json
+"pg": "^8.13.3",
+"@types/pg": "^8.11.11"
+```
+
+### New file: tests/utils/token-store.ts
+
+```typescript
+let storedToken: string | null = null;
+
+export function setToken(token: string): void {
+  storedToken = token;
+}
+
+export function getToken(): string {
+  if (!storedToken) {
+    throw new Error("No token stored. A login step must run first.");
+  }
+  return storedToken;
+}
+
+export function clearToken(): void {
+  storedToken = null;
+}
+```
+
+### New file: tests/fixtures/db-cleanup.ts
+
+Connects to PostgreSQL and truncates the `users` table. Used in `Before` hooks to ensure
+each scenario starts with a clean database. Connection string is read from `DATABASE_URL`
+env var (defaulting to the docker-compose dev credentials).
+
+```typescript
+import { Client } from "pg";
+
+const DATABASE_URL = process.env.DATABASE_URL || "postgresql://organiclever:organiclever@localhost:5432/organiclever";
+
+export async function cleanupDatabase(): Promise<void> {
+  const client = new Client({ connectionString: DATABASE_URL });
+  await client.connect();
+  try {
+    await client.query("DELETE FROM users");
+  } finally {
+    await client.end();
+  }
+}
+```
+
+### New file: tests/hooks/db.hooks.ts
+
+A `Before` hook that runs before every scenario to wipe test data and clear the token store:
+
+```typescript
+import { createBdd } from "playwright-bdd";
+import { cleanupDatabase } from "../fixtures/db-cleanup";
+import { clearToken } from "../utils/token-store";
+
+const { Before } = createBdd();
+
+Before(async () => {
+  await cleanupDatabase();
+  clearToken();
+});
+```
+
+### New file: tests/steps/auth/auth.steps.ts
+
+```typescript
+import { expect } from "@playwright/test";
+import { createBdd } from "playwright-bdd";
+import { setResponse, getResponse } from "../../utils/response-store";
+import { setToken, getToken } from "../../utils/token-store";
+
+const { Given, When, Then } = createBdd();
+
+When("a client sends POST /api/v1/auth/register with body:", async ({ request }, body: string) => {
+  setResponse(
+    await request.post("/api/v1/auth/register", {
+      data: JSON.parse(body) as Record<string, unknown>,
+      headers: { "Content-Type": "application/json" },
+    }),
+  );
+});
+
+When("a client sends POST /api/v1/auth/login with body:", async ({ request }, body: string) => {
+  setResponse(
+    await request.post("/api/v1/auth/login", {
+      data: JSON.parse(body) as Record<string, unknown>,
+      headers: { "Content-Type": "application/json" },
+    }),
+  );
+});
+
+Given("a user {string} is already registered", async ({ request }, username: string) => {
+  await request.post("/api/v1/auth/register", {
+    data: { username, password: "s3cur3Pass!" },
+    headers: { "Content-Type": "application/json" },
+  });
+});
+
+Given(
+  "a user {string} is already registered with password {string}",
+  async ({ request }, username: string, password: string) => {
+    await request.post("/api/v1/auth/register", {
+      data: { username, password },
+      headers: { "Content-Type": "application/json" },
+    });
+  },
+);
+
+Given("the client has logged in as {string} and stored the JWT token", async ({ request }, username: string) => {
+  const response = await request.post("/api/v1/auth/login", {
+    data: { username, password: "s3cur3Pass!" },
+    headers: { "Content-Type": "application/json" },
+  });
+  const body = (await response.json()) as { token: string };
+  setToken(body.token);
+});
+
+When("a client sends GET /api/v1/hello without an Authorization header", async ({ request }) => {
+  setResponse(await request.get("/api/v1/hello"));
+});
+
+When("a client sends GET /api/v1/hello with the stored Bearer token", async ({ request }) => {
+  setResponse(
+    await request.get("/api/v1/hello", {
+      headers: { Authorization: `Bearer ${getToken()}` },
+    }),
+  );
+});
+
+When("a client sends GET /api/v1/hello with an expired Bearer token", async ({ request }) => {
+  // This token was signed with a valid secret but has exp in the past.
+  // Pre-generate with: jjwt expiry = now - 1 hour.
+  const expiredToken =
+    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlciIsImlhdCI6MTAwMDAwMDAwMCwiZXhwIjoxMDAwMDAwMDAxfQ.invalid";
+  setResponse(
+    await request.get("/api/v1/hello", {
+      headers: { Authorization: `Bearer ${expiredToken}` },
+    }),
+  );
+});
+
+When("a client sends GET /api/v1/hello with Authorization header {string}", async ({ request }, header: string) => {
+  setResponse(
+    await request.get("/api/v1/hello", {
+      headers: { Authorization: header },
+    }),
+  );
+});
+
+Then("the response body should contain a {string} field", async ({}, field: string) => {
+  const body = (await getResponse().json()) as Record<string, unknown>;
+  expect(body[field]).toBeDefined();
+});
+
+Then("the response body should contain {string} equal to {string}", async ({}, field: string, value: string) => {
+  const body = (await getResponse().json()) as Record<string, unknown>;
+  expect(body[field]).toBe(value);
+});
+
+Then("the response body should contain a non-null {string} field", async ({}, field: string) => {
+  const body = (await getResponse().json()) as Record<string, unknown>;
+  expect(body[field]).not.toBeNull();
+  expect(body[field]).toBeDefined();
+});
+
+Then("the response body should not contain a {string} field", async ({}, field: string) => {
+  const body = (await getResponse().json()) as Record<string, unknown>;
+  expect(body[field]).toBeUndefined();
+});
+
+Then("the response body should contain an error message about duplicate username", async () => {
+  const body = (await getResponse().json()) as { message: string };
+  expect(body.message).toMatch(/already exists/i);
+});
+
+Then("the response body should contain an error message about invalid credentials", async () => {
+  const body = (await getResponse().json()) as { message: string };
+  expect(body.message).toMatch(/invalid/i);
+});
+
+Then("the response body should contain a validation error for {string}", async ({}, _field: string) => {
+  const status = getResponse().status();
+  expect(status).toBe(400);
+});
+```
+
+### Updated tests/steps/common.steps.ts
+
+Add `DATABASE_URL` environment variable handling note: the `Before` hook is now in
+`tests/hooks/db.hooks.ts`, so `common.steps.ts` no longer needs to handle cleanup itself.
+
+### playwright.config.ts — add DATABASE_URL to env
+
+No structural changes needed to `playwright.config.ts`. The `DATABASE_URL` is read from the
+process environment. When running via docker-compose E2E profile, set it in the compose file or
+via `.env` in `infra/dev/organiclever/`.
+
+### docker-compose.e2e.yml additions
+
+```yaml
+# In infra/dev/organiclever/docker-compose.e2e.yml
+# Extend with E2E-specific env for both be and e2e runner:
+services:
+  organiclever-be:
+    environment:
+      - MANAGEMENT_ENDPOINT_HEALTH_SHOWDETAILS=when-authorized
+  organiclever-be-e2e:
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-organiclever}:${POSTGRES_PASSWORD:-organiclever}@organiclever-db:5432/organiclever
+      - BASE_URL=http://organiclever-be:8201
+```
+
+## Test Coverage Strategy
+
+All new code paths must be covered by integration tests to meet the 95% JaCoCo line-coverage gate.
+
+| Class                                 | Coverage approach                                                                       |
+| ------------------------------------- | --------------------------------------------------------------------------------------- |
+| `AuthController`                      | Register and login happy paths + validation failure paths via Cucumber steps            |
+| `AuthService.register()`              | Happy path + duplicate username exception path                                          |
+| `AuthService.login()`                 | Happy path + wrong password path + unknown user path                                    |
+| `UserDetailsServiceImpl`              | Loaded via Spring Security during JWT-protected endpoint tests                          |
+| `JwtUtil.generateToken()`             | Exercised by login step                                                                 |
+| `JwtUtil.extractUsername()`           | Exercised by JwtAuthFilter during protected-endpoint tests                              |
+| `JwtUtil.isTokenValid()` - true path  | Exercised by JWT-protected endpoint access test                                         |
+| `JwtUtil.isTokenValid()` - false path | Exercised by malformed-token and expired-token scenarios                                |
+| `JwtAuthFilter`                       | Bearer-present path via JWT-protected test; absent-header path via unauthenticated test |
+| `GlobalExceptionHandler`              | Exercised by duplicate-username and invalid-credentials scenarios                       |
+
+`JaCoCo` excludes `OrganicLeverApplication.class` and `package-info.class` (already configured in `pom.xml`).
+
+## Design Decisions
+
+### Why JJWT 0.12.x?
+
+JJWT 0.12.x uses the fluent `Jwts.builder()` / `Jwts.parser()` API that is compatible with Java 25 and does not use deprecated methods from 0.11.x. The 0.12.x API uses `Keys.hmacShaKeyFor()` for safe key construction.
+
+### Why H2 for integration tests?
+
+The existing integration tests are cached by Nx (`cache: true`). Introducing a real PostgreSQL dependency would break caching because Nx cannot guarantee an external service is identical between runs. H2 in PostgreSQL compatibility mode replays the same Flyway migration and provides sufficient fidelity for testing the auth logic.
+
+### Why Spring Data JPA?
+
+Spring Data JPA reduces boilerplate for the simple CRUD operations required here.
+`UserRepository` needs only `findByUsername` and `existsByUsername` — both generated from
+method names without any custom SQL. This is consistent with the functional preference for
+minimal code. The `User` entity uses `@GeneratedValue(strategy = GenerationType.UUID)` and
+`@PrePersist` for `createdAt`, keeping all DB default logic in the Java layer rather than
+relying on database-side defaults.
+
+### Why BCrypt strength 10?
+
+BCrypt strength 10 is the industry default balancing security and performance (approximately 100ms per hash on modern hardware). Strength 12 would be more secure but adds latency; strength 10 is acceptable for a first implementation.
+
+### Why stateless sessions (no HttpSession)?
+
+JWT-based authentication is inherently stateless. Enabling `SessionCreationPolicy.STATELESS` prevents Spring Security from creating or using `HttpSession`, which aligns with the REST API design and eliminates session fixation concerns.
+
+### Why remove CorsConfig and move CORS to SecurityConfig?
+
+When Spring Security is active, it processes requests before `WebMvcConfigurer.addCorsMappings`. CORS preflight (`OPTIONS`) requests must be handled by the security filter chain. Configuring CORS via `CorsConfigurationSource` in `SecurityConfig` ensures consistent behavior.
+
+### Why use the `pg` npm package for E2E DB cleanup?
+
+Adding a test-only reset endpoint to the backend couples production code to test concerns.
+Using `pg` directly in the Playwright `Before` hook keeps the cleanup in the test layer and
+avoids any risk of the endpoint being accidentally exposed in production profiles.
+
+## Related Docs to Update
+
+The following project documentation files need updates as part of this plan:
+
+| File                                                                                                              | What to update                                                                                                                                                                        |
+| ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__data-access.md` | Add or expand the Spring Data JPA section with the repository pattern used in this project (`findByUsername`, `existsByUsername`, `@Entity` with `@PrePersist`)                       |
+| `docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__security.md`    | Add a section with the project-specific JWT + Spring Security pattern (`SecurityFilterChain`, `JwtAuthFilter`, `OncePerRequestFilter`, stateless sessions, `CorsConfigurationSource`) |
+| `specs/apps/organiclever-be/README.md`                                                                            | List the three new auth feature files (`auth/register.feature`, `auth/login.feature`, `auth/jwt-protection.feature`)                                                                  |
+| `apps/organiclever-be/README.md`                                                                                  | Document `POST /api/v1/auth/register`, `POST /api/v1/auth/login`, required env vars (`APP_JWT_SECRET`, `SPRING_DATASOURCE_URL`), and Flyway migration approach                        |
+| `apps/organiclever-be-e2e/README.md`                                                                              | Document auth step definitions, `token-store.ts`, `db-cleanup.ts` fixture, `DATABASE_URL` env var, and `pg` package prerequisite                                                      |
+| `infra/dev/organiclever/README.md`                                                                                | Document new `organiclever-db` PostgreSQL service, how to start the full stack, and `POSTGRES_USER`/`POSTGRES_PASSWORD`/`APP_JWT_SECRET` env vars                                     |
