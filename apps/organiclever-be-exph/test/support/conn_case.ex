@@ -13,6 +13,9 @@ defmodule OrganicleverBeExphWeb.ConnCase do
   PostgreSQL, you can even run database tests asynchronously
   by setting `use OrganicleverBeExphWeb.ConnCase, async: true`, although
   this option is not recommended for other databases.
+
+  Integration tests tagged with `:integration` skip the database
+  sandbox since they rely on Mox for in-process mocking only.
   """
 
   use ExUnit.CaseTemplate
@@ -32,7 +35,10 @@ defmodule OrganicleverBeExphWeb.ConnCase do
   end
 
   setup tags do
-    OrganicleverBeExph.DataCase.setup_sandbox(tags)
+    unless tags[:integration] do
+      OrganicleverBeExph.DataCase.setup_sandbox(tags)
+    end
+
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 end
