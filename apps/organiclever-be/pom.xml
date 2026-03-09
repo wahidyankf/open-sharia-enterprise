@@ -195,23 +195,25 @@
                 </configuration>
             </plugin>
 
-            <!-- Adds ../../specs/apps/organiclever-be to the test classpath so feature files are
-                 available at classpath root (e.g., hello/hello-endpoint.feature) -->
+            <!-- Copies specs/apps/organiclever-be feature files to the test classpath.
+                 Uses maven-antrun-plugin (Ant copy task) instead of build-helper-maven-plugin
+                 to avoid maven-resources-plugin's "outside project base directory" warning,
+                 which cannot be suppressed via plugin configuration. -->
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.6.0</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
-                        <id>add-specs-as-test-resources</id>
+                        <id>copy-specs-to-test-classpath</id>
                         <phase>generate-test-resources</phase>
-                        <goals><goal>add-test-resource</goal></goals>
+                        <goals><goal>run</goal></goals>
                         <configuration>
-                            <resources>
-                                <resource>
-                                    <directory>../../specs/apps/organiclever-be</directory>
-                                </resource>
-                            </resources>
+                            <target>
+                                <copy todir="${project.build.testOutputDirectory}">
+                                    <fileset dir="${project.basedir}/../../specs/apps/organiclever-be"/>
+                                </copy>
+                            </target>
                         </configuration>
                     </execution>
                 </executions>
@@ -237,6 +239,38 @@
                 </configuration>
             </plugin>
         </plugins>
+        <!-- M2E lifecycle mapping: tells Eclipse/VS Code Java extension how to handle
+             plugin executions that M2E does not know about by default. -->
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-antrun-plugin</artifactId>
+                                        <versionRange>[1.0,)</versionRange>
+                                        <goals><goal>run</goal></goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <!-- Execute on full build; skip on incremental to avoid
+                                             redundant copies during IDE saves. -->
+                                        <execute>
+                                            <runOnIncremental>false</runOnIncremental>
+                                        </execute>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 
     <profiles>
