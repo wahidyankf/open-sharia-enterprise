@@ -104,7 +104,7 @@ The platform consists of 9 applications across 4 technology stacks:
 - **Build Command**: `nx build organiclever-be`
 - **Location**: `apps/organiclever-be/`
 - **Features**:
-  - JaCoCo code coverage enforcement (>=95%)
+  - JaCoCo code coverage enforcement (>=90%)
   - Production Dockerfile with multi-stage build
   - MockMvc integration testing
 
