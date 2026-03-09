@@ -339,21 +339,39 @@ Update all affected documentation files.
 
 ### Tasks
 
-- [ ] 7.1 Update `specs/apps/organiclever-be/README.md`: list the three new auth feature files under a new `auth/` section (`auth/register.feature`, `auth/login.feature`, `auth/jwt-protection.feature`)
-- [ ] 7.2 Update `apps/organiclever-be/README.md`: document `POST /api/v1/auth/register` and `POST /api/v1/auth/login` endpoints; list required env vars (`APP_JWT_SECRET`, `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD`); note Liquibase changelog approach
-- [ ] 7.3 Update `apps/organiclever-be-e2e/README.md`: add auth step definitions section, document `tests/utils/token-store.ts`, `tests/fixtures/db-cleanup.ts`, `tests/hooks/db.hooks.ts`; document `DATABASE_URL` env var and `pg` package prerequisite
-- [ ] 7.4 Update `infra/dev/organiclever/README.md`: document the new `organiclever-db` PostgreSQL service, how to start the full stack, and all required env vars (`POSTGRES_USER`, `POSTGRES_PASSWORD`, `APP_JWT_SECRET`)
-- [ ] 7.5 Update `docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__data-access.md`: add or expand the Spring Data JPA section documenting the repository pattern used in this project (`JpaRepository<T, ID>`, derived queries like `findByUsername`/`existsByUsername`, `@Entity` with `@GeneratedValue(strategy=GenerationType.UUID)`, `@EntityListeners(AuditingEntityListener.class)`, `@Where` for soft-delete, and `@PrePersist`); include a minimal code example referencing the `UserRepository` pattern
-- [ ] 7.6 Update `docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__security.md`: add a section on the project-specific JWT + Spring Security setup (`SecurityFilterChain`, `JwtAuthFilter`, `OncePerRequestFilter`, stateless sessions, `CorsConfigurationSource` in `SecurityConfig`); reference the JJWT 0.12.x API
+- [x] 7.1 Update `specs/apps/organiclever-be/README.md`: list the three new auth feature files under a new `auth/` section (`auth/register.feature`, `auth/login.feature`, `auth/jwt-protection.feature`)
+  - **Implementation Notes**: auth/ section with all three feature files already present in README
+  - **Date**: 2026-03-09
+  - **Status**: Completed
+- [x] 7.2 Update `apps/organiclever-be/README.md`: document `POST /api/v1/auth/register` and `POST /api/v1/auth/login` endpoints; list required env vars (`APP_JWT_SECRET`, `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD`); note Liquibase changelog approach
+  - **Implementation Notes**: Updated with Spring Boot 4.0.3, env vars table, auth endpoints, architecture tree
+  - **Date**: 2026-03-09
+  - **Status**: Completed
+- [x] 7.3 Update `apps/organiclever-be-e2e/README.md`: add auth step definitions section, document `tests/utils/token-store.ts`, `tests/fixtures/db-cleanup.ts`, `tests/hooks/db.hooks.ts`; document `DATABASE_URL` env var and `pg` package prerequisite
+  - **Implementation Notes**: Updated with auth feature files list, DATABASE_URL env var, pg package, updated project structure tree
+  - **Date**: 2026-03-09
+  - **Status**: Completed
+- [x] 7.4 Update `infra/dev/organiclever/README.md`: document the new `organiclever-db` PostgreSQL service, how to start the full stack, and all required env vars (`POSTGRES_USER`, `POSTGRES_PASSWORD`, `APP_JWT_SECRET`)
+  - **Implementation Notes**: Updated with organiclever-db service section, env vars table, health check docs, updated be service endpoints and env vars
+  - **Date**: 2026-03-09
+  - **Status**: Completed
+- [x] 7.5 Update `docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__data-access.md`: add or expand the Spring Data JPA section documenting the repository pattern used in this project (`JpaRepository<T, ID>`, derived queries like `findByUsername`/`existsByUsername`, `@Entity` with `@GeneratedValue(strategy=GenerationType.UUID)`, `@EntityListeners(AuditingEntityListener.class)`, `@Where` for soft-delete, and `@PrePersist`); include a minimal code example referencing the `UserRepository` pattern
+  - **Implementation Notes**: Added "OrganicLever Platform: User Repository" subsection in OSE Platform Examples with User entity, UserRepository, JpaAuditingConfig, and Liquibase schema notes
+  - **Date**: 2026-03-09
+  - **Status**: Completed
+- [x] 7.6 Update `docs/explanation/software-engineering/platform-web/tools/jvm-spring-boot/ex-soen-plwe-to-jvspbo__security.md`: add a section on the project-specific JWT + Spring Security setup (`SecurityFilterChain`, `JwtAuthFilter`, `OncePerRequestFilter`, stateless sessions, `CorsConfigurationSource` in `SecurityConfig`); reference the JJWT 0.12.x API
+  - **Implementation Notes**: Added "OrganicLever Platform: JWT + Spring Security Setup" subsection in OSE Platform Examples with SecurityConfig, JwtAuthFilter, and JwtUtil code examples
+  - **Date**: 2026-03-09
+  - **Status**: Completed
 - [ ] 7.7 Commit: `docs: update data-access and security docs for JWT and Spring Security pattern`
 
 ### Validation
 
-- [ ] `apps/organiclever-be/README.md` describes both auth endpoints and all env vars
-- [ ] `specs/apps/organiclever-be/README.md` lists all three auth feature files
-- [ ] `apps/organiclever-be-e2e/README.md` documents `DATABASE_URL` and the `pg` dependency
-- [ ] `data-access.md` contains expanded Spring Data JPA section with `@Entity`, `JpaRepository`, audit-trail annotations, and soft-delete `@Where` pattern
-- [ ] `security.md` contains the project-specific JWT + Spring Security pattern
+- [x] `apps/organiclever-be/README.md` describes both auth endpoints and all env vars
+- [x] `specs/apps/organiclever-be/README.md` lists all three auth feature files
+- [x] `apps/organiclever-be-e2e/README.md` documents `DATABASE_URL` and the `pg` dependency
+- [x] `data-access.md` contains expanded Spring Data JPA section with `@Entity`, `JpaRepository`, audit-trail annotations, and soft-delete `@SQLRestriction` pattern (Hibernate 7)
+- [x] `security.md` contains the project-specific JWT + Spring Security pattern
 
 ## Final Acceptance Criteria
 
