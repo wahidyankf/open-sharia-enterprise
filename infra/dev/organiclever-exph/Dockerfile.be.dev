@@ -1,0 +1,10 @@
+FROM elixir:1.17-otp-27-alpine
+
+# build-base required for bcrypt_elixir NIF compilation
+RUN apk add --no-cache build-base git && \
+    mix local.hex --force && \
+    mix local.rebar --force
+
+WORKDIR /workspace
+
+CMD ["sh", "-c", "mix ecto.migrate && mix phx.server"]
