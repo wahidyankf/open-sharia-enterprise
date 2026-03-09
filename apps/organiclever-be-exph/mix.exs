@@ -12,6 +12,8 @@ defmodule OrganicleverBeExph.MixProject do
       deps: deps(),
       listeners: [Phoenix.CodeReloader],
       test_coverage: [tool: ExCoveralls],
+      test_paths: ["test"],
+      test_pattern: "**/*_{test,steps}.exs",
       preferred_cli_env: [
         coveralls: :test,
         "coveralls.lcov": :test
@@ -29,7 +31,11 @@ defmodule OrganicleverBeExph.MixProject do
 
   def cli do
     [
-      preferred_envs: [precommit: :test]
+      preferred_envs: [
+        precommit: :test,
+        "test:unit": :test,
+        "test:integration": :test
+      ]
     ]
   end
 
@@ -72,7 +78,6 @@ defmodule OrganicleverBeExph.MixProject do
       setup: ["deps.get", "ecto.setup"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       precommit: ["compile --warnings-as-errors", "deps.unlock --unused", "format", "test"]
     ]
   end
