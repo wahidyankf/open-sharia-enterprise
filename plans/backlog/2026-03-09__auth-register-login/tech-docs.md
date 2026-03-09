@@ -145,7 +145,8 @@ public class AuthService {
 
     // Constructor injection
 
-    public RegisterResponse register(RegisterRequest request) {
+    public RegisterResponse register(RegisterRequest request)
+            throws UsernameAlreadyExistsException {
         if (userRepository.existsByUsername(request.username())) {
             throw new UsernameAlreadyExistsException(request.username());
         }
@@ -155,9 +156,10 @@ public class AuthService {
         return new RegisterResponse(saved.getId(), saved.getUsername(), saved.getCreatedAt());
     }
 
-    public AuthResponse login(LoginRequest request) {
+    public AuthResponse login(LoginRequest request)
+            throws InvalidCredentialsException {
         User user = userRepository.findByUsername(request.username())
-            .orElseThrow(() -> new InvalidCredentialsException());
+            .orElseThrow(InvalidCredentialsException::new);
         if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
             throw new InvalidCredentialsException();
         }
@@ -316,14 +318,16 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(
-            @Valid @RequestBody RegisterRequest request) {
+            @Valid @RequestBody RegisterRequest request)
+            throws UsernameAlreadyExistsException {
         RegisterResponse response = authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(
-            @Valid @RequestBody LoginRequest request) {
+            @Valid @RequestBody LoginRequest request)
+            throws InvalidCredentialsException {
         return ResponseEntity.ok(authService.login(request));
     }
 }
@@ -333,14 +337,14 @@ public class AuthController {
 
 ```java
 // UsernameAlreadyExistsException.java (in com.organiclever.be.auth.service)
-public class UsernameAlreadyExistsException extends RuntimeException {
+public class UsernameAlreadyExistsException extends Exception {
     public UsernameAlreadyExistsException(String username) {
         super("Username already exists: " + username);
     }
 }
 
 // InvalidCredentialsException.java (in com.organiclever.be.auth.service)
-public class InvalidCredentialsException extends RuntimeException {
+public class InvalidCredentialsException extends Exception {
     public InvalidCredentialsException() {
         super("Invalid username or password");
     }
@@ -1046,6 +1050,25 @@ JWT-based authentication is inherently stateless. Enabling `SessionCreationPolic
 ### Why remove CorsConfig and move CORS to SecurityConfig?
 
 When Spring Security is active, it processes requests before `WebMvcConfigurer.addCorsMappings`. CORS preflight (`OPTIONS`) requests must be handled by the security filter chain. Configuring CORS via `CorsConfigurationSource` in `SecurityConfig` ensures consistent behavior.
+
+### Why checked exceptions instead of RuntimeException?
+
+`UsernameAlreadyExistsException` and `InvalidCredentialsException` extend `Exception`, not
+`RuntimeException`. This makes error paths explicit in every method signature
+(`throws UsernameAlreadyExistsException`, `throws InvalidCredentialsException`), so callers
+cannot silently ignore failure modes. Spring MVC's `@ExceptionHandler` handles checked
+exceptions identically to unchecked ones — they bubble up to `DispatcherServlet` in the same
+way because the controller declares `throws` — so there is no runtime overhead or behavioural
+difference. The benefit is compile-time proof that every call site that can fail has explicitly
+acknowledged the failure.
+
+### Why `/api/v1/` prefix on all REST endpoints?
+
+All REST endpoints are versioned under `/api/v1/` (matching the existing `HelloController`
+at `/api/v1/hello`). The prefix gives clients a stable contract: when a breaking change
+requires a new API design, a `v2` prefix can be introduced without removing the `v1` routes.
+`/actuator/**` is excluded from this rule because Spring Boot Actuator manages its own
+namespace independently.
 
 ### Why use the `pg` npm package for E2E DB cleanup?
 

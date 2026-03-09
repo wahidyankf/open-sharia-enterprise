@@ -96,8 +96,8 @@ Add `SecurityConfig`, `JwtUtil`, `JwtAuthFilter`, and custom exceptions.
 - [ ] 3.7 Add `AuthenticationManager` bean inside `SecurityConfig` delegating to `AuthenticationConfiguration`
 - [ ] 3.8 Remove or convert `CorsConfig.java` (the existing `WebMvcConfigurer`): either delete it if CORS is fully handled in `SecurityConfig`, or annotate with `@ConditionalOnMissingBean(SecurityFilterChain.class)` to avoid double-CORS configuration
 - [ ] 3.9 Create package `com.organiclever.be.auth.service` with `package-info.java`
-- [ ] 3.10 Create `UsernameAlreadyExistsException.java` in `com.organiclever.be.auth.service`
-- [ ] 3.11 Create `InvalidCredentialsException.java` in `com.organiclever.be.auth.service`
+- [ ] 3.10 Create `UsernameAlreadyExistsException.java` in `com.organiclever.be.auth.service` extending `Exception` (not `RuntimeException`); checked exception makes the error path explicit in the service and controller signatures
+- [ ] 3.11 Create `InvalidCredentialsException.java` in `com.organiclever.be.auth.service` extending `Exception` (not `RuntimeException`); same reasoning as above
 - [ ] 3.12 Create `GlobalExceptionHandler.java` in `com.organiclever.be.config`: handle `UsernameAlreadyExistsException` → 409, handle `InvalidCredentialsException` → 401, each returning `Map.of("message", ex.getMessage())`
 - [ ] 3.13 Verify `mvn compile -q` succeeds
 - [ ] 3.14 Commit: `feat(organiclever-be): add Spring Security and JWT infrastructure`
@@ -117,9 +117,9 @@ Implement `AuthService`, `UserDetailsServiceImpl`, and `AuthController`.
 ### Tasks
 
 - [ ] 4.1 Create `UserDetailsServiceImpl.java` in `com.organiclever.be.auth.service` implementing `UserDetailsService`; inject `UserRepository`; implement `loadUserByUsername` to look up user and return `User.withUsername().password().roles("USER").build()`; throw `UsernameNotFoundException` when not found
-- [ ] 4.2 Create `AuthService.java` in `com.organiclever.be.auth.service`; inject `UserRepository`, `PasswordEncoder`, `JwtUtil`; implement `register(RegisterRequest)` checking `existsByUsername`, saving with `userRepository.save(user)`, returning `new RegisterResponse(saved.getId(), saved.getUsername(), saved.getCreatedAt())`; implement `login(LoginRequest)` using `findByUsername`, verifying with `passwordEncoder.matches(request.password(), user.getPasswordHash())`, returning `AuthResponse.bearer(token)`
+- [ ] 4.2 Create `AuthService.java` in `com.organiclever.be.auth.service`; inject `UserRepository`, `PasswordEncoder`, `JwtUtil`; implement `register(RegisterRequest) throws UsernameAlreadyExistsException` checking `existsByUsername`, saving with `userRepository.save(user)`, returning `new RegisterResponse(saved.getId(), saved.getUsername(), saved.getCreatedAt())`; implement `login(LoginRequest) throws InvalidCredentialsException` using `findByUsername`, verifying with `passwordEncoder.matches(request.password(), user.getPasswordHash())`, returning `AuthResponse.bearer(token)`; use `InvalidCredentialsException::new` method reference with `orElseThrow`
 - [ ] 4.3 Create package `com.organiclever.be.auth.controller` with `package-info.java`
-- [ ] 4.4 Create `AuthController.java` with `@RestController @RequestMapping("/api/v1/auth")`; inject `AuthService`; implement `POST /register` returning 201 with `RegisterResponse`; implement `POST /login` returning 200 with `AuthResponse`; annotate request bodies with `@Valid`
+- [ ] 4.4 Create `AuthController.java` with `@RestController @RequestMapping("/api/v1/auth")`; inject `AuthService`; implement `POST /register throws UsernameAlreadyExistsException` returning 201 with `RegisterResponse`; implement `POST /login throws InvalidCredentialsException` returning 200 with `AuthResponse`; annotate request bodies with `@Valid`; Spring's `@ExceptionHandler` in `GlobalExceptionHandler` will catch the declared checked exceptions
 - [ ] 4.5 Verify `mvn compile -q` succeeds
 - [ ] 4.6 Run integration tests to check for regressions: `mvn test -P integration -q`; hello and health scenarios must still pass (auth header now required for `/api/v1/hello`)
 - [ ] 4.7 If existing hello/health integration tests fail due to Spring Security 401, update `HelloSteps` to send a valid JWT; or update the test to use a token acquired from `/api/v1/auth/login`

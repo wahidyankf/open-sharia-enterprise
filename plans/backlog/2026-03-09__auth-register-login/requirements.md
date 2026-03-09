@@ -28,6 +28,8 @@ title: "Auth Register and Login - Requirements"
 - `package-info.java` required for every new package.
 - No wildcard imports (Checkstyle).
 - Functional style preferred: immutable DTOs (records), pure service methods.
+- All REST API endpoints must be versioned under `/api/v1/` (e.g., `/api/v1/auth/register`).
+- No `RuntimeException` subclasses in application code: use checked exceptions (`extends Exception`) so error paths are visible in method signatures.
 
 ## User Stories
 
