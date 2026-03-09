@@ -9,13 +9,14 @@ skills:
   - apps-oseplatform-web-developing-content
 ---
 
+# Content Maker for oseplatform-web
+
 ## Agent Metadata
 
 - **Role**: Writer (blue)
 - **Created**: 2025-12-20
 - **Last Updated**: 2026-01-03
 
-# Content Maker for oseplatform-web
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 

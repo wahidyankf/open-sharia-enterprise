@@ -13,13 +13,14 @@ skills:
   - repo-applying-maker-checker-fixer
 ---
 
+# Plan Checker Agent
+
 ## Agent Metadata
 
 - **Role**: Checker (green)
 - **Created**: 2025-12-28
 - **Last Updated**: 2026-01-03
 
-# Plan Checker Agent
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 

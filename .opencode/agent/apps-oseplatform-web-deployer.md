@@ -9,13 +9,14 @@ skills:
   - apps-oseplatform-web-developing-content
 ---
 
+# Deployer for oseplatform-web
+
 ## Agent Metadata
 
 - **Role**: Implementor (purple)
 - **Created**: 2025-12-20
 - **Last Updated**: 2026-03-01
 
-# Deployer for oseplatform-web
 
 **Model Selection Justification**: This agent uses `model: haiku` because it performs straightforward deployment tasks:
 

@@ -10,7 +10,10 @@ skills:
   - plan-creating-project-plans
   - repo-assessing-criticality-confidence
   - repo-applying-maker-checker-fixer
+  - repo-generating-validation-reports
 ---
+
+# Plan Fixer Agent
 
 ## Agent Metadata
 
@@ -29,7 +32,6 @@ skills:
    - **MEDIUM**: Issue exists but fix uncertain → Skip, manual review
    - **FALSE_POSITIVE**: Issue doesn't exist → Skip, report to checker
 
-# Plan Fixer Agent
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 

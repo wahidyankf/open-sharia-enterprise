@@ -136,11 +136,13 @@ Three-stage quality workflow:
 
 All agents follow foundational principles:
 
-1. **Documentation First** - Documentation is mandatory, not optional
-2. **Accessibility First** - WCAG AA (Web Content Accessibility Guidelines Level AA) compliance
-3. **Simplicity Over Complexity** - Minimum viable abstraction
-4. **Explicit Over Implicit** - Clear tool permissions
-5. **Automation Over Manual** - Automate repetitive tasks
+1. **Deliberate Problem-Solving** - Think before coding; surface assumptions and tradeoffs rather than hiding confusion
+2. **Documentation First** - Documentation is mandatory, not optional
+3. **Accessibility First** - WCAG AA (Web Content Accessibility Guidelines Level AA) compliance
+4. **Simplicity Over Complexity** - Minimum viable abstraction
+5. **Explicit Over Implicit** - Clear tool permissions
+6. **Automation Over Manual** - Automate repetitive tasks
+7. **Root Cause Orientation** - Fix root causes, not symptoms; minimal impact; senior engineer standard
 
 **See**: [governance/principles/README.md](./governance/principles/README.md)
 

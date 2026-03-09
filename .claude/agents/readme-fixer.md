@@ -9,7 +9,10 @@ skills:
   - readme-writing-readme-files
   - repo-assessing-criticality-confidence
   - repo-applying-maker-checker-fixer
+  - repo-generating-validation-reports
 ---
+
+# README Fixer Agent
 
 ## Agent Metadata
 
@@ -34,7 +37,6 @@ See `repo-assessing-criticality-confidence` Skill for complete priority matrix (
 
 **Execution Order**: P0 (CRITICAL+HIGH) → P1 → P2 → P3 → P4
 
-# README Fixer Agent
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires advanced reasoning to:
 

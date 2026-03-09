@@ -13,6 +13,8 @@ skills:
   - repo-applying-maker-checker-fixer
 ---
 
+# Link Checker for ayokoding-web
+
 ## Agent Metadata
 
 - **Role**: Checker (green)
@@ -37,7 +39,6 @@ skills:
 - Priority matrix (Criticality × Confidence → P0-P4)
 - Domain-specific examples
 
-# Link Checker for ayokoding-web
 
 **Model Selection Justification**: This agent uses `model: haiku` because it was originally designed for link validation but now references Skills. Consider upgrading to sonnet for validation complexity.
 

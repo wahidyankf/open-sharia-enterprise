@@ -9,7 +9,10 @@ skills:
   - apps-oseplatform-web-developing-content
   - repo-assessing-criticality-confidence
   - repo-applying-maker-checker-fixer
+  - repo-generating-validation-reports
 ---
+
+# Content Fixer for oseplatform-web
 
 ## Agent Metadata
 
@@ -32,7 +35,6 @@ skills:
 
 See `repo-assessing-criticality-confidence` Skill for complete priority matrix and execution order (P0 → P1 → P2 → P3 → P4).
 
-# Content Fixer for oseplatform-web
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 

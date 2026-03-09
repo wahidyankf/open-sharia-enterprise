@@ -14,6 +14,8 @@ skills:
   - docs-applying-content-quality
 ---
 
+# Dart Developer Agent
+
 ## Agent Metadata
 
 - **Role**: Implementor (purple)

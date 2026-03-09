@@ -10,6 +10,8 @@ skills:
   - docs-applying-content-quality
 ---
 
+# Elixir Developer Agent
+
 ## Agent Metadata
 
 - **Role**: Implementor (purple)

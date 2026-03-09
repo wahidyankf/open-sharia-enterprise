@@ -9,13 +9,14 @@ skills:
   - apps-organiclever-web-developing-content
 ---
 
+# Deployer for organiclever-web
+
 ## Agent Metadata
 
 - **Role**: Implementor (purple)
 - **Created**: 2026-02-22
 - **Last Updated**: 2026-02-22
 
-# Deployer for organiclever-web
 
 **Model Selection Justification**: This agent uses `model: haiku` because it performs straightforward deployment tasks:
 

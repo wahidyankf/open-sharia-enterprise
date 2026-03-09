@@ -11,6 +11,8 @@ skills:
   - docs-applying-diataxis-framework
 ---
 
+# Documentation File Manager Agent
+
 ## Agent Metadata
 
 - **Role**: Updater (yellow)
@@ -18,7 +20,6 @@ skills:
 - **Last Updated**: 2026-01-03
 - **Size Tier**: Tier 2 (standard agent with complex decision logic — cascading directory operations, multi-step link tracking, deletion safety analysis)
 
-# Documentation File Manager Agent
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires advanced reasoning to:
 

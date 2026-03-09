@@ -12,6 +12,8 @@ skills:
   - repo-applying-maker-checker-fixer
 ---
 
+# Structure Checker for ayokoding-web
+
 ## Agent Metadata
 
 - **Role**: Checker (green)
@@ -36,7 +38,6 @@ skills:
 - Priority matrix (Criticality × Confidence → P0-P4)
 - Domain-specific examples
 
-# Structure Checker for ayokoding-web
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 

@@ -132,8 +132,29 @@
 ### Meta/Specialized Family
 
 - **agent-maker** - Creates new AI agent files following AI Agents Convention
-- **swe-hugo-developer** - Develops Hugo sites (theme customization, template development)
 - **social-linkedin-post-maker** - Creates LinkedIn posts from project updates
+
+### Development (swe-* Family)
+
+**Language Developers**:
+
+- **swe-clojure-developer** - Clojure application development
+- **swe-csharp-developer** - C# application development
+- **swe-dart-developer** - Dart application development
+- **swe-elixir-developer** - Elixir application development
+- **swe-fsharp-developer** - F# application development
+- **swe-golang-developer** - Go application development
+- **swe-hugo-developer** - Hugo site development (theme customization, templates)
+- **swe-java-developer** - Java application development
+- **swe-kotlin-developer** - Kotlin application development
+- **swe-python-developer** - Python application development
+- **swe-rust-developer** - Rust application development
+- **swe-typescript-developer** - TypeScript application development
+
+**Specialized**:
+
+- **swe-e2e-test-developer** - E2E testing with Playwright
+- **swe-code-checker** - Validates projects against platform coding standards
 
 ## Agent Usage
 

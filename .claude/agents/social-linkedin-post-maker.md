@@ -8,13 +8,14 @@ skills:
   - docs-applying-content-quality
 ---
 
+# LinkedIn Post Maker Agent
+
 ## Agent Metadata
 
 - **Role**: Writer (blue)
 - **Created**: 2025-12-20
 - **Last Updated**: 2026-01-03
 
-# LinkedIn Post Maker Agent
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 

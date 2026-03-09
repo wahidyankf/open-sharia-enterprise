@@ -15,6 +15,8 @@ skills:
   - repo-applying-maker-checker-fixer
 ---
 
+# Plan Execution Checker Agent
+
 ## Agent Metadata
 
 - **Role**: Checker (green)
@@ -39,7 +41,6 @@ skills:
 - Priority matrix (Criticality × Confidence → P0-P4)
 - Domain-specific examples
 
-# Plan Execution Checker Agent
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 

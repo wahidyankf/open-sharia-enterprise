@@ -10,13 +10,14 @@ skills:
   - apps-ayokoding-web-developing-content
 ---
 
+# In-the-Field Tutorial Maker for ayokoding-web
+
 ## Agent Metadata
 
 - **Role**: Writer (blue)
 - **Created**: 2026-02-06
 - **Last Updated**: 2026-02-06
 
-# In-the-Field Tutorial Maker for ayokoding-web
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 

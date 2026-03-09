@@ -12,6 +12,8 @@ skills:
   - repo-applying-maker-checker-fixer
 ---
 
+# Documentation Links Checker Agent
+
 ## Agent Metadata
 
 - **Role**: Checker (green)
@@ -36,7 +38,6 @@ skills:
 - Priority matrix (Criticality × Confidence → P0-P4)
 - Domain-specific examples
 
-# Documentation Links Checker Agent
 
 **Model Selection Justification**: This agent uses `model: haiku` because it performs straightforward tasks:
 

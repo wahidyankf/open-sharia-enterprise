@@ -14,13 +14,14 @@ skills:
   - plan-creating-project-plans
 ---
 
+# Plan Executor Agent
+
 ## Agent Metadata
 
 - **Role**: Implementor (purple)
 - **Created**: 2025-12-28
 - **Last Updated**: 2026-01-03
 
-# Plan Executor Agent
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 

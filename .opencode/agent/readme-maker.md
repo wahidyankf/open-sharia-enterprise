@@ -12,13 +12,14 @@ skills:
   - readme-writing-readme-files
 ---
 
+# README Maker Agent
+
 ## Agent Metadata
 
 - **Role**: Writer (blue)
 - **Created**: 2025-12-15
 - **Last Updated**: 2026-01-03
 
-# README Maker Agent
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 

@@ -17,6 +17,8 @@ skills:
   - repo-applying-maker-checker-fixer
 ---
 
+# Tutorial Quality Validator
+
 ## Agent Metadata
 
 - **Role**: Checker (green)
@@ -41,7 +43,6 @@ skills:
 - Priority matrix (Criticality × Confidence → P0-P4)
 - Domain-specific examples
 
-# Tutorial Quality Validator
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 

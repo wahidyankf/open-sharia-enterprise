@@ -16,7 +16,10 @@ skills:
   - apps-ayokoding-web-developing-content
   - repo-assessing-criticality-confidence
   - repo-applying-maker-checker-fixer
+  - repo-generating-validation-reports
 ---
+
+# Facts Fixer for ayokoding-web
 
 ## Agent Metadata
 
@@ -35,7 +38,6 @@ skills:
    - **MEDIUM**: Issue exists but fix uncertain → Skip, manual review
    - **FALSE_POSITIVE**: Issue doesn't exist → Skip, report to checker
 
-# Facts Fixer for ayokoding-web
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 

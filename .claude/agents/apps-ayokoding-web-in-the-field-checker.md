@@ -13,13 +13,14 @@ skills:
   - repo-applying-maker-checker-fixer
 ---
 
+# In-the-Field Tutorial Checker for ayokoding-web
+
 ## Agent Metadata
 
 - **Role**: Checker (green)
 - **Created**: 2026-02-06
 - **Last Updated**: 2026-02-06
 
-# In-the-Field Tutorial Checker for ayokoding-web
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 

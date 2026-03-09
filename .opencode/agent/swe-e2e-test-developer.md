@@ -14,6 +14,8 @@ skills:
   - docs-applying-content-quality
 ---
 
+# E2E Test Developer Agent
+
 ## Agent Metadata
 
 - **Role**: Implementor (purple)

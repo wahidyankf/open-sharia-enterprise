@@ -13,13 +13,14 @@ skills:
   - repo-applying-maker-checker-fixer
 ---
 
+# Software Engineering Documentation Separation Checker Agent
+
 ## Agent Metadata
 
 - **Role**: Checker (green)
 - **Created**: 2026-02-07
 - **Last Updated**: 2026-02-07
 
-# Software Engineering Documentation Separation Checker Agent
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 

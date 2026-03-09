@@ -14,13 +14,13 @@ skills:
   - apps-ayokoding-web-developing-content
 ---
 
+# Hugo Developer Agent
+
 ## Agent Metadata
 
 - **Role**: Implementor (purple)
 - **Created**: 2025-12-20
 - **Last Updated**: 2026-01-03
-
-# Hugo Developer Agent
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 

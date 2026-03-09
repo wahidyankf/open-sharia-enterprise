@@ -43,6 +43,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 
 ### 🟨 Updating (Updaters/Fixers)
 
+- **docs-file-manager** - File organization and management
 - **docs-fixer** - Apply validated documentation fixes
 - **docs-tutorial-fixer** - Apply tutorial fixes
 - **docs-software-engineering-separation-fixer** - Fix programming language docs separation issues
@@ -60,7 +61,6 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 
 ### 🟪 Operations
 
-- **docs-file-manager** - File organization and management
 - **apps-ayokoding-web-deployer** - AyoKoding deployment
 - **apps-oseplatform-web-deployer** - OSE Platform deployment
 - **apps-organiclever-web-deployer** - organiclever-web deployment
@@ -68,7 +68,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 
 ### 💻 Development
 
-- **swe-code-checker** - Validates projects against platform coding standards
+- **swe-code-checker** - Validates projects against platform coding standards (green/checker agent — validates application code rather than documentation)
 - **swe-clojure-developer** - Clojure application development
 - **swe-csharp-developer** - C# application development
 - **swe-dart-developer** - Dart application development
@@ -152,4 +152,4 @@ All agents follow governance principles:
 
 ---
 
-**Last Updated**: 2026-02-22
+**Last Updated**: 2026-03-09

@@ -10,7 +10,10 @@ skills:
   - docs-applying-diataxis-framework
   - repo-assessing-criticality-confidence
   - repo-applying-maker-checker-fixer
+  - repo-generating-validation-reports
 ---
+
+# Software Engineering Documentation Separation Fixer Agent
 
 ## Agent Metadata
 
@@ -35,7 +38,6 @@ See `repo-assessing-criticality-confidence` Skill for complete priority matrix (
 
 **Execution Order**: P0 (CRITICAL+HIGH) → P1 → P2 → P3 → P4
 
-# Software Engineering Documentation Separation Fixer Agent
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 

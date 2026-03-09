@@ -14,6 +14,8 @@ skills:
   - docs-applying-content-quality
 ---
 
+# Python Developer Agent
+
 ## Agent Metadata
 
 - **Role**: Implementor (purple)

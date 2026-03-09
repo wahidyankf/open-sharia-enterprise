@@ -14,6 +14,8 @@ skills:
   - swe-developing-applications-common
 ---
 
+# Code Checker Agent
+
 ## Agent Metadata
 
 - **Role**: Checker (green)

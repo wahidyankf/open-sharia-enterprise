@@ -12,6 +12,8 @@ skills:
   - repo-applying-maker-checker-fixer
 ---
 
+# Content Checker for oseplatform-web
+
 ## Agent Metadata
 
 - **Role**: Checker (green)
@@ -36,7 +38,6 @@ skills:
 - Priority matrix (Criticality × Confidence → P0-P4)
 - Domain-specific examples
 
-# Content Checker for oseplatform-web
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
