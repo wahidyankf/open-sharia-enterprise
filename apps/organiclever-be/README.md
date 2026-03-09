@@ -124,7 +124,7 @@ Expected: `{"message":"world"}`
 
 ### Step 3: Modify code
 
-Edit `apps/organiclever-be/src/main/java/com/organiclever/be/controller/HelloController.java`:
+Edit `apps/organiclever-be/src/main/java/com/organiclever/be/hello/controller/HelloController.java`:
 
 ```java
 return Map.of("message", "auto-reload works!");
@@ -441,7 +441,8 @@ apps/organiclever-be/
 │   ├── config/
 │   │   ├── GlobalExceptionHandler.java           # @RestControllerAdvice
 │   │   └── JpaAuditingConfig.java                # @EnableJpaAuditing
-│   ├── controller/HelloController.java           # GET /api/v1/hello
+│   ├── hello/
+│   │   └── controller/HelloController.java       # GET /api/v1/hello
 │   └── security/
 │       ├── JwtAuthFilter.java                    # OncePerRequestFilter
 │       ├── JwtUtil.java                          # JJWT 0.12.x token generation/validation

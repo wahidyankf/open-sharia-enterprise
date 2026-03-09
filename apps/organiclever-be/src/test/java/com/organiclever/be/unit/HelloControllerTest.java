@@ -1,6 +1,6 @@
 package com.organiclever.be.unit;
 
-import com.organiclever.be.controller.HelloController;
+import com.organiclever.be.hello.controller.HelloController;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
