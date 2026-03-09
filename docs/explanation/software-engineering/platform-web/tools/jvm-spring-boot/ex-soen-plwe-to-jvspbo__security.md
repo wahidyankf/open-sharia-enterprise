@@ -2345,6 +2345,142 @@ public class IslamicFinanceAuditService {
 }
 ```
 
+### OrganicLever Platform: JWT + Spring Security Setup
+
+The OrganicLever backend uses a stateless JWT filter chain. The architecture follows the
+standard `OncePerRequestFilter` → `SecurityContextHolder` pattern, with three project-specific
+choices documented here.
+
+**`SecurityConfig.java`** — filter chain with CORS, stateless sessions, and 401 entry point:
+
+```java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http,
+            JwtAuthFilter jwtAuthFilter,
+            CorsConfigurationSource corsConfigurationSource) throws Exception {
+        http
+            .cors(cors -> cors.configurationSource(corsConfigurationSource))
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/v1/auth/**", "/actuator/**").permitAll()
+                .anyRequest().authenticated())
+            .exceptionHandling(ex -> ex.authenticationEntryPoint(
+                (request, response, e) ->
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")))
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+        return http.build();
+    }
+
+    // CORS: explicit whitelist — no wildcards
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        var config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of(
+            "http://localhost:3200",
+            "https://www.organiclever.com"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
+        var source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+}
+```
+
+Key design choices:
+
+- `exceptionHandling` with a custom `authenticationEntryPoint` returning `401 Unauthorized`
+  for unauthenticated requests. Without this, Spring Security defaults to `403 Forbidden`.
+- `CorsConfigurationSource` uses `setAllowedOrigins` (not `setAllowedOriginPatterns`) for an
+  explicit two-origin whitelist.
+- `SessionCreationPolicy.STATELESS` prevents Spring Security from creating `HttpSession`,
+  which is correct for a JWT-only API.
+
+**`JwtAuthFilter.java`** — validates the `Authorization: Bearer <token>` header:
+
+```java
+@Component
+public class JwtAuthFilter extends OncePerRequestFilter {
+
+    private final JwtUtil jwtUtil;
+    private final UserDetailsService userDetailsService;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+            HttpServletResponse response, FilterChain chain)
+            throws ServletException, IOException {
+        final String header = request.getHeader("Authorization");
+        if (header == null || !header.startsWith("Bearer ")) {
+            chain.doFilter(request, response);
+            return;
+        }
+        final String token = header.substring(7);
+        final String username = jwtUtil.extractUsername(token);
+        if (username != null
+                && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            if (jwtUtil.isTokenValid(token)) {
+                var authToken = new UsernamePasswordAuthenticationToken(
+                    userDetails, null, userDetails.getAuthorities());
+                authToken.setDetails(
+                    new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
+        }
+        chain.doFilter(request, response);
+    }
+}
+```
+
+**`JwtUtil.java`** — uses JJWT 0.12.x API (`Keys.hmacShaKeyFor`, `Jwts.parser().verifyWith()`):
+
+```java
+@Component
+public class JwtUtil {
+
+    private final SecretKey key;
+    private final long expirationMs;
+
+    public JwtUtil(
+            @Value("${app.jwt.secret}") String secret,
+            @Value("${app.jwt.expiration-ms:86400000}") long expirationMs) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        this.expirationMs = expirationMs;
+    }
+
+    public String generateToken(String username) {
+        return Jwts.builder()
+            .subject(username)
+            .issuedAt(new Date())
+            .expiration(new Date(System.currentTimeMillis() + expirationMs))
+            .signWith(key)
+            .compact();
+    }
+
+    public String extractUsername(String token) {
+        return Jwts.parser().verifyWith(key).build()
+            .parseSignedClaims(token).getPayload().getSubject();
+    }
+
+    public boolean isTokenValid(String token) {
+        try {
+            Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
+    }
+}
+```
+
+Note: `Keys.hmacShaKeyFor` requires a secret of at least 32 bytes for HS256. The minimum is
+enforced in `application.yml` via the comment `# min 32 chars for HS256`.
+
 ## ✅ Security Checklist
 
 Production deployment security checklist for Spring Boot applications.

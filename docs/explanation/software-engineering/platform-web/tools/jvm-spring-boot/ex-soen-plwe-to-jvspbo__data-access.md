@@ -1781,6 +1781,101 @@ public class WaqfProjectService {
 }
 ```
 
+### OrganicLever Platform: User Repository
+
+The OrganicLever platform uses derived query methods exclusively — no `@Query` annotations —
+to keep persistence logic minimal and let the JPA query engine enforce SQL injection safety
+by construction.
+
+**Entity**: `User.java` with UUID primary key, full audit trail, and soft-delete filter:
+
+```java
+@Entity
+@Table(name = "users")
+@EntityListeners(AuditingEntityListener.class)
+@SQLRestriction("deleted_at IS NULL")  // Hibernate 7 replacement for @Where
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    @Column(nullable = false, unique = true)
+    private String username;
+
+    @Column(name = "password_hash", nullable = false)
+    private String passwordHash;
+
+    // Audit trail (all 6 columns) — populated automatically by Spring Data Auditing
+    @CreatedDate  @Column(name = "created_at", nullable = false, updatable = false)
+    private Instant createdAt;
+
+    @CreatedBy   @Column(name = "created_by", nullable = false, updatable = false)
+    private String createdBy;
+
+    @LastModifiedDate  @Column(name = "updated_at", nullable = false)
+    private Instant updatedAt;
+
+    @LastModifiedBy    @Column(name = "updated_by", nullable = false)
+    private String updatedBy;
+
+    @Nullable  @Column(name = "deleted_at")
+    private Instant deletedAt;
+
+    @Nullable  @Column(name = "deleted_by")
+    private String deletedBy;
+
+    protected User() {}  // required by JPA
+
+    public User(String username, String passwordHash) {
+        this.username = username;
+        this.passwordHash = passwordHash;
+    }
+    // getters only, no public setters
+}
+```
+
+**Repository**: `UserRepository.java` — derived queries, no hand-written SQL:
+
+```java
+public interface UserRepository extends JpaRepository<User, UUID> {
+    Optional<User> findByUsername(String username);
+    boolean existsByUsername(String username);
+}
+```
+
+`findByUsername` and `existsByUsername` are Spring Data derived query methods. Spring Data
+translates them to parameterized JPQL (`WHERE u.username = ?1`), so there is no opportunity
+for SQL injection.
+
+**Auditing configuration**: `JpaAuditingConfig.java` provides the `AuditorAware<String>` bean
+that reads the current principal from `SecurityContextHolder` and falls back to `"system"` for
+unauthenticated requests (e.g., the register endpoint, which creates the user before
+authentication exists):
+
+```java
+@Configuration
+@EnableJpaAuditing(auditorAwareRef = "auditorProvider")
+public class JpaAuditingConfig {
+
+    @Bean
+    public AuditorAware<String> auditorProvider() {
+        return () -> {
+            var ctx = SecurityContextHolder.getContext().getAuthentication();
+            if (ctx == null || !ctx.isAuthenticated()
+                    || "anonymousUser".equals(ctx.getPrincipal())) {
+                return Optional.of("system");
+            }
+            return Optional.of(ctx.getName());
+        };
+    }
+}
+```
+
+**Schema**: Liquibase SQL formatted changesets with dual-database support (`dbms:postgresql` using
+`gen_random_uuid()`, `dbms:h2` using `RANDOM_UUID()`) so the same feature files drive both
+MockMvc integration tests (H2) and E2E tests (PostgreSQL 17) without schema changes.
+
 ## ✅ Best Practices
 
 Production guidelines for Spring Data JPA.

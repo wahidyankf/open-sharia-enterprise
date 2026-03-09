@@ -10,6 +10,9 @@ Tests use Playwright's `APIRequestContext` to validate HTTP endpoints — no bro
 
 Feature files in `specs/apps/organiclever-be/` are the source of truth:
 
+- `auth/register.feature` — `POST /api/v1/auth/register` registration scenarios (9)
+- `auth/login.feature` — `POST /api/v1/auth/login` login scenarios (5)
+- `auth/jwt-protection.feature` — JWT-protected endpoint scenarios (6)
 - `hello/hello-endpoint.feature` — `GET /api/v1/hello` returns greeting and respects CORS
 - `actuator/health-check.feature` — `GET /actuator/health` reports service status
 
@@ -31,12 +34,15 @@ tests/utils/response-store.ts         ← shared APIResponse state between steps
 
 ## Prerequisites
 
-The backend must be running on `http://localhost:8201` before executing tests.
+The backend must be running on `http://localhost:8201` before executing tests. Auth tests also
+require a live PostgreSQL database (the E2E `Before` hook deletes all users before each scenario).
 
 **Recommended — Docker Compose** (no local Java/Maven required):
 
 ```bash
-cd infra/dev/organiclever && docker compose up -d
+cd infra/dev/organiclever
+cp .env.example .env  # set POSTGRES_USER, POSTGRES_PASSWORD, APP_JWT_SECRET
+docker compose up -d
 ```
 
 **Alternative — local Maven** (requires Maven installed):
@@ -82,10 +88,14 @@ nx run organiclever-be-e2e:test:quick
 
 ## Environment Variables
 
-| Variable   | Default                 | Description      |
-| ---------- | ----------------------- | ---------------- |
-| `BASE_URL` | `http://localhost:8201` | Backend base URL |
-| `CI`       | unset                   | Enables CI mode  |
+| Variable       | Default                                                              | Description                              |
+| -------------- | -------------------------------------------------------------------- | ---------------------------------------- |
+| `BASE_URL`     | `http://localhost:8201`                                              | Backend base URL                         |
+| `DATABASE_URL` | `postgresql://organiclever:organiclever@localhost:5432/organiclever` | PostgreSQL connection string for cleanup |
+| `CI`           | unset                                                                | Enables CI mode                          |
+
+The `DATABASE_URL` is used by `tests/fixtures/db-cleanup.ts` to delete all rows from `users`
+before each scenario. This requires the `pg` package (installed as a devDependency).
 
 Override the base URL to test against a different environment:
 
@@ -98,18 +108,25 @@ BASE_URL=http://staging.example.com nx run organiclever-be-e2e:test:e2e
 ```
 apps/organiclever-be-e2e/
 ├── playwright.config.ts           # Playwright + playwright-bdd configuration
-├── package.json                   # Dependencies (playwright, playwright-bdd)
+├── package.json                   # Dependencies (playwright, playwright-bdd, pg)
 ├── tsconfig.json                  # TypeScript config
 ├── .gitignore                     # Ignores .features-gen/, test-results/, playwright-report/
 ├── tests/
+│   ├── fixtures/
+│   │   └── db-cleanup.ts          # Deletes all users via pg before each scenario
+│   ├── hooks/
+│   │   └── db.hooks.ts            # Before hook calling cleanupDatabase + clearToken
 │   ├── steps/                     # BDD step definitions
+│   │   ├── auth/
+│   │   │   └── auth.steps.ts      # Given/When/Then for register, login, JWT scenarios
 │   │   ├── common.steps.ts        # Shared: Given API running, Then status code
 │   │   ├── hello/
 │   │   │   └── hello.steps.ts     # When/Then for GET /api/v1/hello
 │   │   └── actuator/
 │   │       └── health.steps.ts    # When/Then for GET /actuator/health
 │   └── utils/
-│       └── response-store.ts      # Shared APIResponse state between steps
+│       ├── response-store.ts      # Shared APIResponse state between steps
+│       └── token-store.ts         # Stored JWT token for JWT-protected scenarios
 └── .features-gen/                 # Auto-generated spec files (gitignored)
 ```
 

@@ -6,9 +6,10 @@ Docker Compose configuration for OrganicLever services ecosystem.
 
 This infrastructure setup provides Docker Compose configuration for the OrganicLever ecosystem. The full ecosystem includes:
 
-- **organiclever-be** - Spring Boot backend service (port 8201, runs in Docker Compose)
+- **organiclever-db** - PostgreSQL 17 database (port 5432, runs in Docker Compose)
+- **organiclever-be** - Spring Boot backend service (port 8201, depends on organiclever-db)
 - **organiclever-web** - Next.js landing website (port 3200, runs in Docker Compose)
-- **organiclever-be-e2e** - Playwright API E2E tests (requires organiclever-be)
+- **organiclever-be-e2e** - Playwright API E2E tests (requires organiclever-be + organiclever-db)
 - **organiclever-web-e2e** - Playwright browser E2E tests (requires organiclever-web)
 
 ## Prerequisites
@@ -60,15 +61,23 @@ This creates a custom development image (~666MB) that includes:
 
 **Note**: You only need to build once. The image persists and Maven won't be reinstalled on subsequent starts.
 
-#### 2. Configure Environment (Optional)
+#### 2. Configure Environment
 
 ```bash
 # From infra/dev/organiclever directory
 cp .env.example .env
-
-# Edit .env with your configuration (optional, defaults work)
-nano .env
 ```
+
+Edit `.env` and set:
+
+| Variable            | Description                       | Default in .env.example             |
+| ------------------- | --------------------------------- | ----------------------------------- |
+| `POSTGRES_USER`     | PostgreSQL username               | `organiclever`                      |
+| `POSTGRES_PASSWORD` | PostgreSQL password               | `organiclever`                      |
+| `APP_JWT_SECRET`    | JWT signing secret (min 32 chars) | example value (change for security) |
+
+The `APP_JWT_SECRET` default is for development only. Use a strong random secret in any
+shared or production-like environment.
 
 #### 3. Start Services
 
@@ -99,6 +108,24 @@ curl -s http://localhost:3200
 
 ## Service Details
 
+### organiclever-db
+
+**Port**: 5432
+**Image**: `postgres:17-alpine`
+**Purpose**: PostgreSQL database for organiclever-be
+
+**Environment Variables** (set in `.env`):
+
+- `POSTGRES_USER` — database user (default: `organiclever`)
+- `POSTGRES_PASSWORD` — database password (default: `organiclever`)
+- `POSTGRES_DB` — database name (always: `organiclever`)
+
+**Health check**: `pg_isready -U $POSTGRES_USER -d organiclever` (every 10 seconds)
+**Data persistence**: `organiclever-db-data` named Docker volume
+
+**Note**: `organiclever-be` depends on `organiclever-db` with `condition: service_healthy`,
+so the backend will not start until PostgreSQL is ready.
+
 ### organiclever-be
 
 **Port**: 8201
@@ -108,14 +135,20 @@ curl -s http://localhost:3200
 
 **Endpoints**:
 
-- `GET /api/v1/hello` - Returns `{message: "world"}`
-- `GET /actuator/health` - Health check
-- `GET /actuator/info` - Service information
+- `POST /api/v1/auth/register` - Register new user
+- `POST /api/v1/auth/login` - Login, returns JWT token
+- `GET /api/v1/hello` - Hello world (requires Bearer token)
+- `GET /actuator/health` - Health check (no auth)
+- `GET /actuator/info` - Service information (no auth)
 
 **Environment Variables**:
 
-- `SPRING_PROFILES_ACTIVE` - Spring profile (dev/prod), default: prod
-- `JAVA_OPTS` - JVM options, default: `-Xms256m -Xmx512m -XX:+UseZGC`
+- `SPRING_PROFILES_ACTIVE` - Spring profile (dev/prod), default: dev
+- `SPRING_DATASOURCE_URL` - JDBC URL pointing to organiclever-db
+- `SPRING_DATASOURCE_USERNAME` - Database username (from `POSTGRES_USER`)
+- `SPRING_DATASOURCE_PASSWORD` - Database password (from `POSTGRES_PASSWORD`)
+- `APP_JWT_SECRET` - JWT signing secret (min 32 chars)
+- `MAVEN_OPTS` - JVM options for Maven process
 
 ### organiclever-web
 

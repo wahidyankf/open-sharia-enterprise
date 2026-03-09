@@ -4,19 +4,37 @@ OrganicLever Platform Backend - Spring Boot REST API
 
 ## Overview
 
-- **Framework**: Spring Boot 4.0.2
+- **Framework**: Spring Boot 4.0.3
 - **Language**: Java 25
 - **Build Tool**: Maven
 - **Port**: 8201
 - **API Base**: `/api/v1`
+- **Security**: Spring Security with stateless JWT authentication (JJWT 0.12.x)
+- **Database**: PostgreSQL (dev/prod) / H2 in-memory (integration tests)
+- **Schema Migration**: Liquibase SQL formatted changesets
 
-**CORS Configuration**: The backend includes CORS configuration to allow web apps on `http://localhost:*` (see `config/CorsConfig.java`).
+**CORS Configuration**: Restricted to `http://localhost:3200` and `https://www.organiclever.com`
+(configured in `SecurityConfig.java`).
 
 ## Prerequisites
 
 - **Java 25** (managed via Volta or SDKMAN)
 - **Maven 3.9+**
 - **Docker & Docker Compose** (for containerized development)
+- **PostgreSQL 17** (via Docker Compose in dev; or external DB in staging/prod)
+
+## Environment Variables
+
+| Variable                     | Required       | Default                                          | Description                                                 |
+| ---------------------------- | -------------- | ------------------------------------------------ | ----------------------------------------------------------- |
+| `APP_JWT_SECRET`             | Yes (prod)     | `change-me-in-production-at-least-32-chars-long` | JWT signing secret (min 32 chars for HS256)                 |
+| `SPRING_DATASOURCE_URL`      | Yes (non-test) | —                                                | JDBC URL (e.g., `jdbc:postgresql://host:5432/organiclever`) |
+| `SPRING_DATASOURCE_USERNAME` | Yes (non-test) | —                                                | Database username                                           |
+| `SPRING_DATASOURCE_PASSWORD` | Yes (non-test) | —                                                | Database password                                           |
+
+**Security note**: Set a strong `APP_JWT_SECRET` in production (min 32 random characters).
+Never commit real secrets to version control. Copy `infra/dev/organiclever/.env.example`
+to `infra/dev/organiclever/.env` for local development.
 
 ## Development Modes
 
@@ -206,15 +224,44 @@ nx typecheck organiclever-be
 
 ## Available Endpoints
 
+### Authentication
+
+- `POST /api/v1/auth/register` - Register a new user (returns 201 with user id, username,
+  createdAt)
+- `POST /api/v1/auth/login` - Login with credentials (returns 200 with JWT token and type)
+
+**Register request body**:
+
+```json
+{ "username": "myuser", "password": "Secur3Pass!" }
+```
+
+Constraints: username 5-50 chars (alphanumeric + underscore); password 8-128 chars with uppercase,
+lowercase, digit, and special character.
+
+**Login request body**:
+
+```json
+{ "username": "myuser", "password": "Secur3Pass!" }
+```
+
+**Login response**:
+
+```json
+{ "token": "<jwt>", "type": "Bearer" }
+```
+
+Pass the token in subsequent requests as `Authorization: Bearer <token>`.
+
 ### Application
 
-- `GET /api/v1/hello` - Hello world endpoint
+- `GET /api/v1/hello` - Hello world endpoint (requires Bearer token)
 
 ### Actuator (Monitoring)
 
-- `GET /actuator/health` - Health check
-- `GET /actuator/info` - Application info
-- `GET /actuator/metrics` - Metrics
+- `GET /actuator/health` - Health check (no auth required)
+- `GET /actuator/info` - Application info (no auth required)
+- `GET /actuator/metrics` - Metrics (no auth required)
 
 ## Configuration Profiles
 
@@ -384,31 +431,44 @@ docker compose build
 ```
 apps/organiclever-be/
 ├── src/main/java/com/organiclever/be/
-│   ├── OrganicLeverApplication.java      # Main entry point
+│   ├── OrganicLeverApplication.java
+│   ├── auth/
+│   │   ├── controller/AuthController.java        # POST /register, POST /login
+│   │   ├── dto/                                  # RegisterRequest, LoginRequest, RegisterResponse, AuthResponse
+│   │   ├── model/User.java                       # JPA entity with audit trail
+│   │   ├── repository/UserRepository.java        # Spring Data JPA
+│   │   └── service/                              # AuthService, UserDetailsServiceImpl, custom exceptions
 │   ├── config/
-│   │   └── CorsConfig.java               # CORS configuration for Flutter web
-│   └── controller/
-│       └── HelloController.java          # REST endpoints
+│   │   ├── GlobalExceptionHandler.java           # @RestControllerAdvice
+│   │   └── JpaAuditingConfig.java                # @EnableJpaAuditing
+│   ├── controller/HelloController.java           # GET /api/v1/hello
+│   └── security/
+│       ├── JwtAuthFilter.java                    # OncePerRequestFilter
+│       ├── JwtUtil.java                          # JJWT 0.12.x token generation/validation
+│       └── SecurityConfig.java                   # SecurityFilterChain, CORS, BCrypt
 ├── src/main/resources/
-│   ├── application.yml                   # Base config
-│   ├── application-dev.yml               # Dev config (DevTools)
-│   └── application-prod.yml              # Prod config
+│   ├── application.yml                           # Base config (Liquibase, JWT defaults)
+│   ├── application-dev.yml                       # Dev config (PostgreSQL, DevTools)
+│   ├── application-staging.yml                   # Staging config (env-var-driven)
+│   └── application-prod.yml                      # Prod config (env-var-driven)
+│   └── db/changelog/
+│       ├── db.changelog-master.yaml              # Liquibase master changelog
+│       └── changes/
+│           └── 001-create-users-table.sql        # dbms:postgresql + dbms:h2 changesets
 └── src/test/
     ├── java/com/organiclever/be/
     │   ├── integration/
-    │   │   ├── CucumberIntegrationTest.java       # @Suite runner
-    │   │   ├── CucumberSpringContextConfig.java   # Spring + MockMvc context config
-    │   │   ├── ResponseStore.java                 # Shared MvcResult state
-    │   │   ├── OrganicLeverApplicationTest.java   # Context-load test
-    │   │   └── steps/
-    │   │       ├── CommonSteps.java
-    │   │       ├── HelloSteps.java
-    │   │       └── HealthSteps.java
+    │   │   ├── ResponseStore.java                # Shared MvcResult state (@Component @Scope)
+    │   │   ├── OrganicLeverApplicationTest.java  # Context-load test
+    │   │   ├── steps/                            # Shared step definitions + context base
+    │   │   ├── registration/                     # RegistrationIT + context config (testdb_registration)
+    │   │   ├── login/                            # LoginIT + context config (testdb_login)
+    │   │   └── jwtprotected/                     # JwtProtectedIT + context config (testdb_jwt)
     │   └── unit/
-    │       └── HelloControllerTest.java           # JUnit 5, no Spring context
+    │       └── HelloControllerTest.java
     └── resources/
-        ├── application-test.yml                   # Test profile (overrides dev show-details)
-        └── junit-platform.properties              # Cucumber config
+        ├── application-test.yml                  # H2 datasource, ddl-auto:create
+        └── junit-platform.properties
 ```
 
 ## Testing
@@ -422,8 +482,12 @@ Three tiers of testing provide complete coverage:
 | E2E         | playwright-bdd         | —                | `apps/organiclever-be-e2e/`      | `nx run organiclever-be-e2e:test:e2e`     | Yes (port 8201)           | No      |
 
 The two Maven profiles are mutually exclusive: `mvn test` includes only `**/unit/**/*Test.java`;
-`mvn test -Pintegration` includes only `**/integration/**/*Test.java`. `test:quick` runs both in
-parallel (MockMvc needs no real server, so there is no shared resource contention).
+`mvn test -Pintegration` includes only `**/*IT.java` (the three Cucumber runner classes). `test:quick`
+runs both in parallel (MockMvc needs no real server, so there is no shared resource contention).
+
+The three `*IT.java` runners execute in parallel (Surefire `parallel=classes`, `threadCount=3`)
+using separate H2 in-memory databases (`testdb_registration`, `testdb_login`, `testdb_jwt`) to
+prevent cross-thread data conflicts.
 
 Integration and E2E tests share the same Gherkin feature files from `specs/apps/organiclever-be/`.
 
@@ -465,7 +529,6 @@ Tests cover:
 
 ## Next Steps
 
-- Add database integration (PostgreSQL)
-- Add security (Spring Security, JWT)
 - Add API documentation (Swagger/OpenAPI)
 - Add CI/CD pipeline (registry push, Kubernetes deploy)
+- Add task management endpoints
