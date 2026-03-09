@@ -43,7 +43,6 @@ defmodule ElixirCabbage.Mixfile do
       # :cover.stop() does not fail on first use.
       {:excoveralls, "0.18.3", only: :test},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
     ]
   end
 

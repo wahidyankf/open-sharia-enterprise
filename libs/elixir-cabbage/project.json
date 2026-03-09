@@ -34,7 +34,7 @@
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "mix dialyzer",
+        "command": "mix compile --warnings-as-errors",
         "cwd": "libs/elixir-cabbage"
       }
     },
