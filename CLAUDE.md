@@ -318,7 +318,7 @@ Volta for Node.js/npm pinning, package-lock.json, .env.example
 
 **Planning**: plan-maker, plan-checker, plan-executor, plan-execution-checker, plan-fixer
 
-**Development**: swe-hugo-developer, swe-elixir-developer, swe-golang-developer, swe-java-developer, swe-python-developer, swe-typescript-developer, swe-e2e-test-developer, swe-code-checker
+**Development**: swe-hugo-developer, swe-elixir-developer, swe-golang-developer, swe-java-developer, swe-python-developer, swe-typescript-developer, swe-e2e-test-developer, swe-code-checker, swe-dart-developer, swe-kotlin-developer, swe-csharp-developer, swe-fsharp-developer, swe-clojure-developer, swe-rust-developer
 
 **Operations**: docs-file-manager, apps-ayokoding-web-deployer, apps-oseplatform-web-deployer, apps-organiclever-web-deployer
 
