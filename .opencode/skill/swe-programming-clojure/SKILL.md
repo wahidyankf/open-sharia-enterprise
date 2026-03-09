@@ -9,6 +9,8 @@ description: Clojure coding standards from authoritative docs/explanation/softwa
 
 Progressive disclosure of Clojure coding standards for agents writing Clojure code.
 
+**Usage**: Auto-loaded for agents when writing Clojure code. Provides quick reference to idioms, best practices, and antipatterns.
+
 **Authoritative Source**: [docs/explanation/software-engineering/programming-languages/clojure/README.md](../../../docs/explanation/software-engineering/programming-languages/clojure/README.md)
 
 ## Prerequisite Knowledge
