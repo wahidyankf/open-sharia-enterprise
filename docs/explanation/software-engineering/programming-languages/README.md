@@ -86,6 +86,12 @@ All code written in the languages documented here MUST follow the standards, pat
 - `swe-programming-golang` - Go standards quick reference
 - `swe-programming-python` - Python standards quick reference
 - `swe-programming-elixir` - Elixir standards quick reference
+- `swe-programming-dart` - Dart standards quick reference
+- `swe-programming-kotlin` - Kotlin standards quick reference
+- `swe-programming-csharp` - C# standards quick reference
+- `swe-programming-fsharp` - F# standards quick reference
+- `swe-programming-clojure` - Clojure standards quick reference
+- `swe-programming-rust` - Rust standards quick reference
 
 <!-- TODO: Software Design Reference - Create governance documentation for software design principles -->
 
@@ -141,6 +147,32 @@ Each language directory contains a README.md (language overview and version info
 - Maintainability issues
 - Anti-idiomatic code patterns
 
+### 🦀 [C#](./c-sharp/README.md)
+
+**C# development with ASP.NET Core, Entity Framework Core, and functional patterns**
+
+C# is a versatile, type-safe language on the .NET ecosystem. OSE Platform uses C# for enterprise backend services with ASP.NET Core, applying functional patterns through records, pattern matching, and nullable reference types.
+
+**Use C# when you need:**
+
+- Enterprise backend APIs (ASP.NET Core)
+- Database-driven applications (Entity Framework Core)
+- High-performance services with async/await and Channels
+- Domain modeling with records and sealed class hierarchies
+
+### 🟣 [Clojure](./clojure/README.md)
+
+**Clojure development with functional programming, REPL-driven development, and Ring/Reitit**
+
+Clojure is a functional Lisp running on the JVM with immutable persistent data structures at its core. OSE Platform leverages Clojure for data transformation pipelines, financial rule engines, and services where functional purity is paramount.
+
+**Use Clojure when you need:**
+
+- Data transformation pipelines with immutable data
+- Financial rule engines with pure functions
+- REPL-driven exploratory development
+- JVM ecosystem with functional programming paradigm
+
 ### 🎯 [Dart](./dart/README.md)
 
 **Dart development for Flutter mobile and web applications**
@@ -152,6 +184,19 @@ Dart is used for building cross-platform mobile and web applications with the Fl
 - Cross-platform mobile applications (Android, iOS)
 - Flutter web applications
 - Reactive UI with widget-based architecture
+
+### 🔷 [F#](./f-sharp/README.md)
+
+**F# development with functional-first programming, railway-oriented error handling, and Giraffe**
+
+F# is a functional-first .NET language where immutability is the default and discriminated unions enable type-driven domain modeling. OSE Platform uses F# for financial computation engines where the type system prevents invalid business states at compile time.
+
+**Use F# when you need:**
+
+- Making invalid domain states unrepresentable via the type system
+- Railway-oriented programming with Result types
+- Functional microservices with Giraffe or Saturn
+- Pure financial calculation engines with units of measure
 
 ### 💜 [Elixir](./elixir/README.md)
 
@@ -165,6 +210,19 @@ Elixir is used for building highly concurrent, fault-tolerant backend services. 
 - Real-time features (WebSockets, LiveView)
 - Fault-tolerant actor model architecture
 - Functional programming with pattern matching
+
+### 🟠 [Kotlin](./kotlin/README.md)
+
+**Kotlin development with coroutines, Ktor, and Spring Boot**
+
+Kotlin is a modern, concise JVM language with null safety, coroutines for structured concurrency, and seamless Java interop. OSE Platform uses Kotlin for backend services where coroutines and sealed class hierarchies improve over Java's verbosity.
+
+**Use Kotlin when you need:**
+
+- Coroutine-based concurrent backend services (Ktor)
+- Spring Boot services with Kotlin idioms
+- Android mobile applications
+- Expressive domain modeling with sealed classes and data classes
 
 ### 🐹 [Go](./golang/README.md)
 
@@ -199,6 +257,19 @@ Java is a primary language for backend services, particularly for domain-driven 
 - High-performance concurrent processing
 - Complex domain models (DDD tactical patterns)
 - Mature tooling and ecosystem
+
+### 🦀 [Rust](./rust/README.md)
+
+**Rust development with ownership-based memory safety, zero-cost abstractions, and Axum**
+
+Rust guarantees memory safety and fearless concurrency without a garbage collector, making it ideal for high-performance, security-critical systems. OSE Platform uses Rust for performance-critical financial computation, WebAssembly targets, and infrastructure tooling.
+
+**Use Rust when you need:**
+
+- Memory-safe, high-performance financial computation
+- WebAssembly targets for browser-based computation
+- System-level services with no GC pauses
+- Infrastructure tooling with single binary distribution
 
 ### 🐍 [Python](./python/README.md)
 
@@ -255,11 +326,16 @@ Languages in this documentation are chosen based on:
 
 | Language       | Primary Use Cases                               | Status                               |
 | -------------- | ----------------------------------------------- | ------------------------------------ |
+| **Clojure**    | Functional microservices, data pipelines        | 📋 Planned - Future integration      |
+| **C#**         | Enterprise APIs, ASP.NET Core services          | 📋 Planned - Future integration      |
 | **Dart**       | Flutter mobile and web applications             | 📋 Planned - Future integration      |
 | **Elixir**     | Phoenix backend, real-time features             | ✅ Active - Phoenix services         |
+| **F#**         | Functional computation, financial engines       | 📋 Planned - Future integration      |
 | **Go**         | CLI tools, infrastructure services              | ✅ Active - rhino-cli, ayokoding-cli |
 | **Java** ☕    | Backend services, domain models, business logic | ✅ Active - In production            |
+| **Kotlin**     | Coroutine-based services, Ktor APIs             | 📋 Planned - Future integration      |
 | **Python**     | Data processing, AI/ML integration              | 📋 Planned - Future integration      |
+| **Rust**       | High-performance computation, WebAssembly       | 📋 Planned - Future integration      |
 | **TypeScript** | Frontend applications, Node.js services         | ✅ Active - organiclever-web         |
 
 **Legend**: ✅ Active (in use) | 📋 Planned (documentation ready, not yet implemented)

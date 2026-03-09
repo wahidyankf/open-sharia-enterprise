@@ -24,7 +24,7 @@ principles:
   - pure-functions
   - reproducibility
 created: 2026-01-29
-updated: 2026-01-29
+updated: 2026-03-09
 ---
 
 # Dart Programming Language Documentation
@@ -72,24 +72,42 @@ Dart's design principles guide development:
 
 **See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
-## Coding Standards
+## OSE Platform Coding Standards (Authoritative)
 
-**This documentation is the authoritative reference** for Dart coding standards in the open-sharia-enterprise platform.
+**MUST follow these mandatory standards for all Dart code in OSE Platform:**
 
-All Dart code MUST follow the standards documented here:
+1. **[Coding Standards](./ex-soen-prla-da__coding-standards.md)** - Naming conventions, package organization, Dart idioms, anti-patterns
+2. **[Testing Standards](./ex-soen-prla-da__testing-standards.md)** - package:test, mockito, widget tests, coverage requirements
+3. **[Code Quality Standards](./ex-soen-prla-da__code-quality-standards.md)** - analysis_options.yaml, dart format, dart_code_metrics
+4. **[Build Configuration](./ex-soen-prla-da__build-configuration.md)** - pubspec.yaml, pubspec.lock, build_runner, Dockerfile
+5. **[Error Handling Standards](./ex-soen-prla-da__error-handling-standards.md)** - Exception hierarchy, Result type, async error handling
+6. **[Concurrency Standards](./ex-soen-prla-da__concurrency-standards.md)** - async/await, Future, Stream, Isolates
+7. **[Performance Standards](./ex-soen-prla-da__performance-standards.md)** - const constructors, lazy initialization, AOT vs JIT
+8. **[Security Standards](./ex-soen-prla-da__security-standards.md)** - Input validation, secure storage, cryptography, SQL safety
+9. **[API Standards](./ex-soen-prla-da__api-standards.md)** - http/dio client patterns, shelf server, REST conventions
+10. **[DDD Standards](./ex-soen-prla-da__ddd-standards.md)** - Value objects, entities, aggregates, domain events, repositories
+11. **[Framework Integration](./ex-soen-prla-da__framework-integration.md)** - Flutter widgets, Riverpod state management, shelf server
+12. **[Type Safety Standards](./ex-soen-prla-da__type-safety-standards.md)** - Null safety, sealed classes, records, extension types
 
-**Learning Dart for OSE Platform**: See the [Dart Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/dart/_index.md) on ayokoding-web for idioms, best practices, anti-patterns, and all language-specific patterns.
+### Quick Reference
 
-**For Agents**: Reference this documentation when writing Dart code.
+**Mandatory Standards (All Dart Developers MUST follow)**:
 
-### Quick Standards Reference
+1. [Coding Standards](./ex-soen-prla-da__coding-standards.md) - Naming, organization, Dart idioms
+2. [Testing Standards](./ex-soen-prla-da__testing-standards.md) - package:test, coverage, widget testing
+3. [Code Quality Standards](./ex-soen-prla-da__code-quality-standards.md) - Static analysis, formatting
 
-- **Naming Conventions**: Follow [Effective Dart Style](https://dart.dev/guides/language/effective-dart/style) — lowerCamelCase for variables/methods, UpperCamelCase for classes
-- **Null Safety**: Use sound null safety (`dart 3.0+`); prefer non-nullable types by default
-- **Error Handling**: Use typed exceptions; avoid catching `Object` or `dynamic`
-- **Async Patterns**: Prefer `async`/`await` over raw `Future` chains
-- **Testing Standards**: Use `package:test`; follow Arrange-Act-Assert pattern
-- **Security Practices**: Validate all inputs; never log sensitive data
+**Context-Specific Standards (Apply when relevant)**:
+
+- **Security**: [Security Standards](./ex-soen-prla-da__security-standards.md) - Input validation, secure storage
+- **Concurrency**: [Concurrency Standards](./ex-soen-prla-da__concurrency-standards.md) - async/await, Streams, Isolates
+- **Domain Modeling**: [DDD Standards](./ex-soen-prla-da__ddd-standards.md) - Value objects, aggregates
+- **APIs**: [API Standards](./ex-soen-prla-da__api-standards.md) - REST conventions for HTTP endpoints
+- **Performance**: [Performance Standards](./ex-soen-prla-da__performance-standards.md) - const, lazy, AOT optimization
+- **Error Handling**: [Error Handling Standards](./ex-soen-prla-da__error-handling-standards.md) - Exception hierarchy, Result
+- **Build**: [Build Configuration](./ex-soen-prla-da__build-configuration.md) - pubspec.yaml, build_runner
+- **Framework**: [Framework Integration](./ex-soen-prla-da__framework-integration.md) - Flutter, Riverpod, shelf
+- **Type Safety**: [Type Safety Standards](./ex-soen-prla-da__type-safety-standards.md) - Null safety, sealed classes
 
 **Related**: [Functional Programming](../../../../../governance/development/pattern/functional-programming.md) - Cross-language FP principles
 
@@ -706,6 +724,6 @@ dev_dependencies:
 
 ---
 
-**Last Updated**: 2026-01-29
+**Last Updated**: 2026-03-09
 **Dart Version**: 3.5+ (Dart 3.0+ recommended for null safety and modern features)
 **Maintainers**: Platform Documentation Team
