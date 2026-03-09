@@ -31,9 +31,12 @@ services:
     container_name: organiclever-be-jasb
     working_dir: /workspace
 
-    # Mount full source code for development
+    # Mount full source code for development.
+    # specs/ is mounted so Maven antrun can copy feature files to the test classpath
+    # (pom.xml resolves ${project.basedir}/../../specs/apps/organiclever-be → /specs/apps/organiclever-be).
     volumes:
       - ../../../apps/organiclever-be-jasb:/workspace:rw
+      - ../../../specs/apps/organiclever-be:/specs/apps/organiclever-be:ro
 
     ports:
       - "8201:8201"
