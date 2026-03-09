@@ -40,7 +40,7 @@ Technology stack summary, quality tools, and future architecture considerations 
 - **Framework**: Spring Boot
 - **Language**: Java
 - **Build**: Maven
-- **Testing**: JaCoCo (>=95% coverage), MockMvc integration tests
+- **Testing**: JaCoCo (>=90% coverage), MockMvc integration tests
 - **Applications**: organiclever-be
 
 ### CLI Tools
