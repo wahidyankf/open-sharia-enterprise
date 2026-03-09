@@ -705,7 +705,7 @@ graph LR
 
 ---
 
-**Last Updated**: 2025-01-23
+**Last Updated**: 2026-01-24
 **Python Version**: 3.11+ (baseline), 3.12+ (stable maintenance), 3.14.x (latest stable)
 **Maintainers**: OSE Platform Documentation Team
 

@@ -10,7 +10,7 @@ tags:
   - antipatterns
   - index
 created: 2026-01-20
-updated: 2026-01-20
+updated: 2026-03-09
 ---
 
 # Programming Languages
@@ -25,13 +25,13 @@ updated: 2026-01-20
 
 This directory contains comprehensive documentation on programming languages used throughout the platform. Languages use one of two documentation patterns:
 
-**Three-Document Pattern** (TypeScript, Python, Dart):
+**Three-Document Pattern** (TypeScript, Python):
 
 1. **Idioms** - Language-specific patterns, conventions, and idiomatic code styles
 2. **Best Practices** - Proven approaches for writing clean, maintainable code
 3. **Antipatterns** - Common mistakes and pitfalls to avoid
 
-**Domain-Specific Standards Pattern** (Java, Go, Elixir):
+**Domain-Specific Standards Pattern** (Java, Go, Elixir, Dart):
 
 Multiple domain-focused standards files covering specific areas (testing, security, concurrency, etc.) as separate documents rather than three consolidated files. See each language's README for their specific document structure.
 
@@ -99,7 +99,7 @@ All code written in the languages documented here MUST follow the standards, pat
 
 Each language directory contains a README.md (language overview and version info) plus either:
 
-**Three-Document Pattern** (TypeScript, Python, Dart):
+**Three-Document Pattern** (TypeScript, Python):
 
 ```
 [language-name]/
@@ -109,7 +109,7 @@ Each language directory contains a README.md (language overview and version info
 └── ex-soen-prla-[la]__antipatterns.md    # Common antipatterns
 ```
 
-**Domain-Specific Standards Pattern** (Java, Go, Elixir):
+**Domain-Specific Standards Pattern** (Java, Go, Elixir, Dart):
 
 ```
 [language-name]/
@@ -147,7 +147,7 @@ Each language directory contains a README.md (language overview and version info
 - Maintainability issues
 - Anti-idiomatic code patterns
 
-### 🦀 [C#](./c-sharp/README.md)
+### 💠 [C#](./c-sharp/README.md)
 
 **C# development with ASP.NET Core, Entity Framework Core, and functional patterns**
 
@@ -431,4 +431,4 @@ To document a new language:
 
 ---
 
-**Last Updated**: 2026-01-20
+**Last Updated**: 2026-03-09
