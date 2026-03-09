@@ -25,10 +25,14 @@ Organize feature files by domain capability (bounded context):
 
 ```
 specs/apps/organiclever-be/
+├── auth/
+│   ├── register.feature
+│   ├── login.feature
+│   └── jwt-protection.feature
 ├── hello/
 │   └── hello-endpoint.feature
-└── [future-context]/
-    └── [domain-capability].feature
+└── actuator/
+    └── health-endpoint.feature
 ```
 
 **File naming**: `[domain-capability].feature` (kebab-case)

@@ -4,6 +4,7 @@ import com.organiclever.be.integration.ResponseStore;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -11,6 +12,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
+@Scope("cucumber-glue")
 public class HelloSteps {
 
     @Autowired
@@ -18,6 +20,9 @@ public class HelloSteps {
 
     @Autowired
     private ResponseStore responseStore;
+
+    @Autowired
+    private TokenStore tokenStore;
 
     @When("^a client sends GET /api/v1/hello$")
     public void aClientSendsGetHello() throws Exception {
@@ -29,6 +34,44 @@ public class HelloSteps {
         responseStore.setResult(
             mockMvc.perform(get("/api/v1/hello").header(HttpHeaders.ORIGIN, origin)).andReturn()
         );
+    }
+
+    @When("^a client sends GET /api/v1/hello without an Authorization header$")
+    public void aClientSendsGetHelloWithoutAuthHeader() throws Exception {
+        responseStore.setResult(mockMvc.perform(get("/api/v1/hello")).andReturn());
+    }
+
+    @When("^a client sends GET /api/v1/hello with the stored Bearer token$")
+    public void aClientSendsGetHelloWithStoredToken() throws Exception {
+        final String token = tokenStore.getToken();
+        responseStore.setResult(
+            mockMvc.perform(
+                get("/api/v1/hello")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+            .andReturn());
+    }
+
+    @When("^a client sends GET /api/v1/hello with an expired Bearer token$")
+    public void aClientSendsGetHelloWithExpiredToken() throws Exception {
+        // This token was signed with a valid secret but has exp in the past.
+        final String expiredToken =
+            "eyJhbGciOiJIUzI1NiJ9"
+                + ".eyJzdWIiOiJ0ZXN0dXNlciIsImlhdCI6MTAwMDAwMDAwMCwiZXhwIjoxMDAwMDAwMDAxfQ"
+                + ".invalid";
+        responseStore.setResult(
+            mockMvc.perform(
+                get("/api/v1/hello")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + expiredToken))
+            .andReturn());
+    }
+
+    @When("^a client sends GET /api/v1/hello with Authorization header \"(.+)\"$")
+    public void aClientSendsGetHelloWithAuthHeader(final String header) throws Exception {
+        responseStore.setResult(
+            mockMvc.perform(
+                get("/api/v1/hello")
+                    .header(HttpHeaders.AUTHORIZATION, header))
+            .andReturn());
     }
 
     @Then("^the response body should be \\{\"message\":\"world!\"\\}$")

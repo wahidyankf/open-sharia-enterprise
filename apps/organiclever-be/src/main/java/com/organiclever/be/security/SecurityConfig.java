@@ -1,5 +1,6 @@
 package com.organiclever.be.security;
 
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,6 +42,13 @@ public class SecurityConfig {
                                         .anyRequest()
                                         .authenticated())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(
+                        ex ->
+                                ex.authenticationEntryPoint(
+                                        (request, response, authException) ->
+                                                response.sendError(
+                                                        HttpServletResponse.SC_UNAUTHORIZED,
+                                                        "Unauthorized")))
                 .build();
     }
 

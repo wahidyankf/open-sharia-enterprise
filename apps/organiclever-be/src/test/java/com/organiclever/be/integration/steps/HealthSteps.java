@@ -4,12 +4,14 @@ import com.organiclever.be.integration.ResponseStore;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
+@Scope("cucumber-glue")
 public class HealthSteps {
 
     @Autowired
@@ -25,6 +27,11 @@ public class HealthSteps {
 
     @When("^an unauthenticated engineer sends GET /actuator/health$")
     public void anUnauthenticatedEngineerSendsGetHealth() throws Exception {
+        responseStore.setResult(mockMvc.perform(get("/actuator/health")).andReturn());
+    }
+
+    @When("^a client sends GET /actuator/health$")
+    public void aClientSendsGetHealth() throws Exception {
         responseStore.setResult(mockMvc.perform(get("/actuator/health")).andReturn());
     }
 

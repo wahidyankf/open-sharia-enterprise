@@ -1,5 +1,7 @@
 # Test profile: mirrors production actuator config (NOT dev which sets show-details: always)
 spring:
+  liquibase:
+    enabled: false
   datasource:
     url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL;DATABASE_TO_UPPER=false
     driver-class-name: org.h2.Driver
@@ -7,7 +9,7 @@ spring:
     password:
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
     database-platform: org.hibernate.dialect.H2Dialect
     show-sql: false
 

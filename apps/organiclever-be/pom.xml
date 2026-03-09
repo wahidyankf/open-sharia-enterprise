@@ -246,8 +246,10 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
+                            <parallel>classes</parallel>
+                            <threadCount>3</threadCount>
                             <includes>
-                                <include>**/integration/**/*Test.java</include>
+                                <include>**/*IT.java</include>
                             </includes>
                         </configuration>
                     </plugin>
