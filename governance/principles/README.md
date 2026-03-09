@@ -119,11 +119,22 @@ Favor minimum viable abstraction and avoid over-engineering. Start simple and ad
 - Direct markdown (not complex templating)
 - Convention documents (not frameworks)
 
+#### 3. [Root Cause Orientation](./general/root-cause-orientation.md)
+
+Find root causes and fix them properly. No temporary patches. Changes touch only what is necessary to solve the actual problem. Hold all work to the standard a senior engineer would approve.
+
+**Key applications**:
+
+- Diagnose before acting - understand the actual cause before writing a fix
+- Minimal impact - every changed line traces directly to the task
+- Senior engineer test - ask "would a senior engineer approve this?" before declaring done
+- Mention unrelated issues found during work; do not silently fix them
+
 ### Content Principles
 
 Principles specific to documentation, education, and communication - how we write, teach, and share knowledge.
 
-#### 3. [Accessibility First](./content/accessibility-first.md)
+#### 4. [Accessibility First](./content/accessibility-first.md)
 
 Design for universal access from the start - WCAG compliance, color-blind friendly palettes, alt text, screen reader support. Accessibility benefits everyone.
 
@@ -135,7 +146,7 @@ Design for universal access from the start - WCAG compliance, color-blind friend
 - Semantic HTML
 - WCAG AA contrast standards
 
-#### 4. [Documentation First](./content/documentation-first.md)
+#### 5. [Documentation First](./content/documentation-first.md)
 
 Documentation is not optional - it is mandatory. Every system, convention, feature, and architectural decision must be documented. Undocumented knowledge is lost knowledge.
 
@@ -148,7 +159,7 @@ Documentation is not optional - it is mandatory. Every system, convention, featu
 - No "self-documenting code" excuse
 - Documentation written BEFORE or WITH code
 
-#### 5. [No Time Estimates](./content/no-time-estimates.md)
+#### 6. [No Time Estimates](./content/no-time-estimates.md)
 
 People work and learn at vastly different speeds. Focus on outcomes and deliverables, not arbitrary time constraints.
 
@@ -160,7 +171,7 @@ People work and learn at vastly different speeds. Focus on outcomes and delivera
 - Outcomes-focused language
 - Plan deliverables (not timelines)
 
-#### 6. [Progressive Disclosure](./content/progressive-disclosure.md)
+#### 7. [Progressive Disclosure](./content/progressive-disclosure.md)
 
 Start simple and layer complexity gradually. Beginners see simple patterns, experts access advanced features when needed.
 
@@ -176,7 +187,7 @@ Start simple and layer complexity gradually. Beginners see simple patterns, expe
 
 Principles specific to software development practices - configuration, automation, and code organization.
 
-#### 7. [Automation Over Manual](./software-engineering/automation-over-manual.md)
+#### 8. [Automation Over Manual](./software-engineering/automation-over-manual.md)
 
 Automate repetitive tasks to ensure consistency and reduce human error. Humans should focus on creative work, machines on repetitive tasks.
 
@@ -188,7 +199,7 @@ Automate repetitive tasks to ensure consistency and reduce human error. Humans s
 - Commitlint (message validation)
 - Link verification cache
 
-#### 8. [Explicit Over Implicit](./software-engineering/explicit-over-implicit.md)
+#### 9. [Explicit Over Implicit](./software-engineering/explicit-over-implicit.md)
 
 Choose explicit composition and configuration over magic, convenience, and hidden behavior. Code should be transparent and understandable.
 
@@ -199,7 +210,7 @@ Choose explicit composition and configuration over magic, convenience, and hidde
 - Explicit frontmatter fields (not defaults)
 - Explicit color hex codes (not CSS color names)
 
-#### 9. [Immutability Over Mutability](./software-engineering/immutability.md)
+#### 10. [Immutability Over Mutability](./software-engineering/immutability.md)
 
 Prefer immutable data structures over mutable state. Modifications create new values instead of changing existing ones.
 
@@ -211,7 +222,7 @@ Prefer immutable data structures over mutable state. Modifications create new va
 - Immer library for complex nested updates
 - Object.freeze for runtime immutability
 
-#### 10. [Pure Functions Over Side Effects](./software-engineering/pure-functions.md)
+#### 11. [Pure Functions Over Side Effects](./software-engineering/pure-functions.md)
 
 Prefer pure functions (deterministic, no side effects) over functions with side effects. Same inputs always produce same outputs.
 
@@ -223,7 +234,7 @@ Prefer pure functions (deterministic, no side effects) over functions with side 
 - Easy testing without mocks
 - Composable function pipelines
 
-#### 11. [Reproducibility First](./software-engineering/reproducibility.md)
+#### 12. [Reproducibility First](./software-engineering/reproducibility.md)
 
 Development environments and builds should be reproducible from the start. Eliminate "works on my machine" problems.
 
@@ -395,4 +406,4 @@ Check that changes:
 
 ---
 
-**Last Updated**: 2025-12-28
+**Last Updated**: 2026-03-09
