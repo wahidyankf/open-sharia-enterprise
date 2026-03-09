@@ -3630,7 +3630,7 @@ You've completed the beginner examples! You now understand:
 
 **Continue learning**:
 
-- [Intermediate Examples (31-60)](/en/learn/software-engineering/platform-web/elixir-phoenix-liveview/by-example/intermediate) - Forms, validation, state management, PubSub
-- [Advanced Examples (61-85)](/en/learn/software-engineering/platform-web/elixir-phoenix-liveview/by-example/advanced) - LiveComponents, JavaScript interop, testing, production patterns
+- [Intermediate Examples (31-60)](/en/learn/software-engineering/platform-web/tools/elixir-phoenix-liveview/by-example/intermediate) - Forms, validation, state management, PubSub
+- [Advanced Examples (61-85)](/en/learn/software-engineering/platform-web/tools/elixir-phoenix-liveview/by-example/advanced) - LiveComponents, JavaScript interop, testing, production patterns
 
 Each example builds on patterns you've learned here. The intermediate section introduces forms with changesets, temporary assigns, streams, and real-time features with PubSub.

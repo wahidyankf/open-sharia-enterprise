@@ -4568,8 +4568,8 @@ end
 
 Continue to advanced examples covering LiveComponents, JavaScript interop, testing, and production patterns:
 
-- [Advanced Examples (61-85)](/en/learn/software-engineering/platform-web/elixir-phoenix-liveview/by-example/advanced)
+- [Advanced Examples (61-85)](/en/learn/software-engineering/platform-web/tools/elixir-phoenix-liveview/by-example/advanced)
 
 Or review fundamentals:
 
-- [Beginner Examples (1-30)](/en/learn/software-engineering/platform-web/elixir-phoenix-liveview/by-example/beginner)
+- [Beginner Examples (1-30)](/en/learn/software-engineering/platform-web/tools/elixir-phoenix-liveview/by-example/beginner)

@@ -2164,7 +2164,7 @@ path_part="${rest#*/}"           # => Remove up to first /
 
 **Key Takeaway**: Use `${#var}` for length, `${var:start:len}` for substrings, `#/##` to remove from start, `%/%%` to remove from end, and `/` for replacement - these are faster than calling `sed` or `awk`.
 
-**Why It Matters**: String manipulation with parameter expansion is significantly faster than spawning external processes, making scripts more efficient and portable across systems. Scripts that process thousands of filenames with ${var##\*/} for basename extraction run orders of magnitude faster than spawning basename for each file. The default value patterns ${VAR:-default} and ${VAR:?error} enable clean configuration handling. These patterns work in POSIX sh, making them more portable than bash-specific string functions.
+**Why It Matters**: String manipulation with parameter expansion is significantly faster than spawning external processes, making scripts more efficient and portable across systems. Scripts that process thousands of filenames with `${var##*/}` for basename extraction run orders of magnitude faster than spawning basename for each file. The default value patterns `${VAR:-default}` and `${VAR:?error}` enable clean configuration handling. These patterns work in POSIX sh, making them more portable than bash-specific string functions.
 
 ---
 

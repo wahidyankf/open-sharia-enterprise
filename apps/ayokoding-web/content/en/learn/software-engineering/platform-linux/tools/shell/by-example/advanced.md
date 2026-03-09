@@ -310,7 +310,7 @@ echo ${!var}                    # => Indirect variable reference
 
 **Key Takeaway**: Parameter expansion eliminates external commands like `sed`, `cut`, `basename`, `dirname` for string operations. Use `${var:-default}` for defaults, `${var#pattern}` for prefix removal, `${var%pattern}` for suffix removal, and `${var//pattern/replacement}` for substitution. Faster and more portable than external tools.
 
-**Why It Matters**: Parameter expansion enables sophisticated string manipulation without external tools. Production scripts use expansion for parsing paths, extracting components, and providing defaults. The ${var##\*/} pattern extracts filenames from paths without spawning basename. The ${var:?message} pattern enforces required variables with meaningful error messages. String case conversion ${var^^} and ${var,,} enables normalization without tr or awk. Mastering parameter expansion makes scripts faster and more portable.
+**Why It Matters**: Parameter expansion enables sophisticated string manipulation without external tools. Production scripts use expansion for parsing paths, extracting components, and providing defaults. The `${var##*/}` pattern extracts filenames from paths without spawning basename. The `${var:?message}` pattern enforces required variables with meaningful error messages. String case conversion `${var^^}` and `${var,,}` enables normalization without tr or awk. Mastering parameter expansion makes scripts faster and more portable.
 
 ---
 
