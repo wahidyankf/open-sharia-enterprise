@@ -44,10 +44,16 @@ This directory contains skill packages that provide progressive knowledge delive
 
 ### 🔤 Programming Language Skills
 
+- **swe-programming-clojure** - Clojure coding standards quick reference
+- **swe-programming-csharp** - C# coding standards quick reference
+- **swe-programming-dart** - Dart coding standards quick reference
 - **swe-programming-elixir** - Elixir, Phoenix Framework, and Phoenix LiveView coding standards
+- **swe-programming-fsharp** - F# coding standards quick reference
 - **swe-programming-golang** - Go coding standards quick reference
 - **swe-programming-java** - Java, Spring Framework, and Spring Boot coding standards
+- **swe-programming-kotlin** - Kotlin coding standards quick reference
 - **swe-programming-python** - Python coding standards quick reference
+- **swe-programming-rust** - Rust coding standards quick reference
 - **swe-programming-typescript** - TypeScript coding standards quick reference
 
 ### 🌐 Hugo Site Development Skills

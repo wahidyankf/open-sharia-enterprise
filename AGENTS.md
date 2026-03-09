@@ -53,7 +53,7 @@ Specialized agents organized into families:
 3. **Project Planning**: `plan-maker`, `plan-checker`, `plan-executor`, `plan-execution-checker`, `plan-fixer`
 4. **Hugo Content - ayokoding-web**: Bilingual content creators, validators, deployers (includes in-the-field agents: `apps-ayokoding-web-in-the-field-maker`, `apps-ayokoding-web-in-the-field-checker`, `apps-ayokoding-web-in-the-field-fixer`)
 5. **Hugo Content - oseplatform-web**: Landing page content creators, validators, deployers
-6. **Software Engineering & Specialized**: `agent-maker`, `swe-code-checker`, `swe-e2e-test-developer`, `swe-elixir-developer`, `swe-golang-developer`, `swe-hugo-developer`, `swe-java-developer`, `swe-python-developer`, `swe-typescript-developer`, `social-linkedin-post-maker`, `apps-organiclever-web-deployer`
+6. **Software Engineering & Specialized**: `agent-maker`, `swe-code-checker`, `swe-clojure-developer`, `swe-csharp-developer`, `swe-dart-developer`, `swe-e2e-test-developer`, `swe-elixir-developer`, `swe-fsharp-developer`, `swe-golang-developer`, `swe-hugo-developer`, `swe-java-developer`, `swe-kotlin-developer`, `swe-python-developer`, `swe-rust-developer`, `swe-typescript-developer`, `social-linkedin-post-maker`, `apps-organiclever-web-deployer`
 7. **Repository Governance**: `repo-governance-maker`, `repo-governance-checker`, `repo-governance-fixer`, `repo-workflow-maker`, `repo-workflow-checker`, `repo-workflow-fixer`
 
 **Full agent catalog**: See [`.opencode/agent/README.md`](./.opencode/agent/README.md)
@@ -119,7 +119,7 @@ Three-stage quality workflow:
 - **Agent Development**: `agent-developing-agents`
 - **Repository Patterns**: `repo-applying-maker-checker-fixer`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`, `repo-understanding-repository-architecture`
 - **Development Workflow**: `repo-practicing-trunk-based-development`, `swe-developing-applications-common`
-- **Programming Languages**: `swe-programming-elixir`, `swe-programming-golang`, `swe-programming-java`, `swe-programming-python`, `swe-programming-typescript`
+- **Programming Languages**: `swe-programming-clojure`, `swe-programming-csharp`, `swe-programming-dart`, `swe-programming-elixir`, `swe-programming-fsharp`, `swe-programming-golang`, `swe-programming-java`, `swe-programming-kotlin`, `swe-programming-python`, `swe-programming-rust`, `swe-programming-typescript`
 - **Application-Specific**: `apps-ayokoding-web-developing-content`, `apps-oseplatform-web-developing-content`, `apps-organiclever-web-developing-content`
 
 **Service Relationship**: Skills serve agents with knowledge and execution but don't govern them (service infrastructure, not governance layer).
@@ -153,4 +153,4 @@ All agents follow foundational principles:
 
 ---
 
-**Last Updated**: 2026-02-22
+**Last Updated**: 2026-03-09
