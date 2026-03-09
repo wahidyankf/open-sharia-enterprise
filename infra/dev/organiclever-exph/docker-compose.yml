@@ -1,0 +1,77 @@
+# Local Development Environment for OrganicLever (EXPH — Elixir/Phoenix)
+# Mutually exclusive with organiclever-jasb — both bind port 8201 and share the same DB.
+# Do not run both stacks simultaneously.
+
+services:
+  organiclever-db:
+    image: postgres:17-alpine
+    container_name: organiclever-db
+    environment:
+      POSTGRES_DB: organiclever_exph
+      POSTGRES_USER: ${POSTGRES_USER:-organiclever}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-organiclever}
+    ports:
+      - "5432:5432"
+    volumes:
+      - organiclever-exph-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-organiclever} -d organiclever_exph"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      - organiclever-network
+
+  organiclever-be-exph:
+    build:
+      context: .
+      dockerfile: Dockerfile.be.dev
+    container_name: organiclever-be-exph
+    working_dir: /workspace
+
+    # Mount app source and local Mix path dependencies.
+    # Mix resolves path deps relative to /workspace:
+    #   "../../libs/elixir-gherkin" → /libs/elixir-gherkin
+    #   "../../libs/elixir-cabbage" → /libs/elixir-cabbage
+    volumes:
+      - ../../../apps/organiclever-be-exph:/workspace:rw
+      - ../../../libs/elixir-gherkin:/libs/elixir-gherkin:ro
+      - ../../../libs/elixir-cabbage:/libs/elixir-cabbage:ro
+      - ../../../specs/apps/organiclever-be:/specs/apps/organiclever-be:ro
+
+    ports:
+      - "8201:8201"
+
+    depends_on:
+      organiclever-db:
+        condition: service_healthy
+
+    environment:
+      - MIX_ENV=dev
+      - PORT=8201
+      - DATABASE_URL=ecto://organiclever:organiclever@organiclever-db:5432/organiclever_exph
+      - APP_JWT_SECRET=${APP_JWT_SECRET:-change-me-in-dev-only-not-for-production}
+
+    # Run migrations before starting the server so fresh containers have the schema applied.
+    command: sh -c "mix deps.get && mix ecto.migrate && mix phx.server"
+
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8201/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+
+    restart: unless-stopped
+    networks:
+      - organiclever-network
+
+networks:
+  organiclever-network:
+    driver: bridge
+    name: organiclever-network
+
+volumes:
+  organiclever-exph-db-data:
