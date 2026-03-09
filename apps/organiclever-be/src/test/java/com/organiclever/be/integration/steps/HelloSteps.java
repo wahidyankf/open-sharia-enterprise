@@ -51,6 +51,17 @@ public class HelloSteps {
             .andReturn());
     }
 
+    @When("^a client sends GET /api/v1/hello with the stored Bearer token and Origin header (.+)$")
+    public void aClientSendsGetHelloWithTokenAndOrigin(final String origin) throws Exception {
+        final String token = tokenStore.getToken();
+        responseStore.setResult(
+            mockMvc.perform(
+                get("/api/v1/hello")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                    .header(HttpHeaders.ORIGIN, origin))
+            .andReturn());
+    }
+
     @When("^a client sends GET /api/v1/hello with an expired Bearer token$")
     public void aClientSendsGetHelloWithExpiredToken() throws Exception {
         // This token was signed with a valid secret but has exp in the past.

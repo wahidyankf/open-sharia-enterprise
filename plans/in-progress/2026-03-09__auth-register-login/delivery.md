@@ -319,10 +319,10 @@ Add Playwright BDD step definitions, DB-cleanup fixture, and update docker-compo
   - **Status**: Completed (24/24 tests pass against live PostgreSQL + Spring Boot backend)
 - [x] 6.16 Commit: `feat(organiclever-be-e2e): add auth E2E step definitions with DB cleanup`
   - **Date**: 2026-03-09
-  - **Status**: Pending commit
+  - **Status**: Completed
 - [x] 6.17 Commit: `feat(infra): add PostgreSQL service to organiclever docker-compose`
   - **Date**: 2026-03-09
-  - **Status**: Pending commit
+  - **Status**: Completed
 
 ### Validation
 
