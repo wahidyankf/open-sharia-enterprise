@@ -9,7 +9,7 @@ tags:
   - philosophy
   - index
 created: 2025-12-15
-updated: 2025-12-28
+updated: 2026-03-09
 ---
 
 # Core Principles
@@ -360,14 +360,16 @@ This convention implements the following core principles:
 
 Prioritize principles in order of importance:
 
-1. **Accessibility First** - Never compromise accessibility
-2. **Explicit Over Implicit** - Clarity beats convenience
-3. **Simplicity Over Complexity** - Simple solutions first
-4. **Automation Over Manual** - Automate when proven repetitive
-5. **Progressive Disclosure** - Support all skill levels
-6. **No Time Estimates** - Focus on outcomes
+1. **Deliberate Problem-Solving** - Think before acting; surface assumptions and tradeoffs first
+2. **Root Cause Orientation** - Fix root causes, not symptoms; minimal impact; senior engineer standard
+3. **Accessibility First** - Never compromise accessibility
+4. **Explicit Over Implicit** - Clarity beats convenience
+5. **Simplicity Over Complexity** - Simple solutions first
+6. **Automation Over Manual** - Automate when proven repetitive
+7. **Progressive Disclosure** - Support all skill levels
+8. **No Time Estimates** - Focus on outcomes
 
-> **Note**: This priority ordering applies when principles appear to conflict. All principles apply in normal circumstances - this list guides conflict resolution, not principle selection.
+> **Note**: This priority ordering applies when principles appear to conflict. All principles apply in normal circumstances - this list guides conflict resolution, not principle selection. Items 1-2 are general problem-solving principles that apply universally; items 3-8 are content, documentation, and software-engineering principles.
 
 ### When Adding New Conventions or Practices
 

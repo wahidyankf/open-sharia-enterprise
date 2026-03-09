@@ -10,7 +10,7 @@ tags:
   - yagni
   - over-engineering
 created: 2025-12-15
-updated: 2026-01-29
+updated: 2026-03-09
 ---
 
 # Simplicity Over Complexity
@@ -632,7 +632,7 @@ All agents must follow this principle by:
 4. **Applying the senior engineer test** - questioning complexity proactively
 5. **Preferring boring solutions** - battle-tested patterns over clever code
 
-See the "Principles Respected" section in [AI Agents Convention](../../development/agents/ai-agents.md#principles-respected) for how agents apply this principle.
+See the "Principles Implemented/Respected" section in [AI Agents Convention](../../development/agents/ai-agents.md#principles-implementedrespected) for how agents apply this principle.
 
 ## Common Violations
 
@@ -704,4 +704,4 @@ The right amount of complexity is the **minimum needed** for the current task.
 
 ---
 
-**Last Updated**: 2026-01-29
+**Last Updated**: 2026-03-09

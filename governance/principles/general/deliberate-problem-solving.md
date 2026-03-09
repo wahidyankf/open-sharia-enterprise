@@ -1,15 +1,15 @@
 ---
 title: "Deliberate Problem-Solving"
 description: Think before coding - surface assumptions, tradeoffs, and confusion rather than hiding them
-category: principle
-subcategory: general
+category: explanation
+subcategory: principles
 tags:
   - problem-solving
   - communication
   - decision-making
   - clarity
 created: 2026-01-29
-updated: 2026-02-02
+updated: 2026-03-09
 ---
 
 # Deliberate Problem-Solving

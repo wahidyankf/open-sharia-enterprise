@@ -10,7 +10,7 @@ tags:
   - conventions
   - markdown
 created: 2025-12-04
-updated: 2025-12-04
+updated: 2026-03-04
 ---
 
 # Emoji Usage Convention
@@ -747,5 +747,5 @@ If unsure whether to use an emoji:
 
 ---
 
-**Last Updated:** 2025-12-04
+**Last Updated:** 2026-03-04
 **Status:** 🆕 New Convention

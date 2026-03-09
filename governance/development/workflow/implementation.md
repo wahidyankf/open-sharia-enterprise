@@ -13,7 +13,7 @@ tags:
   - goal-driven
   - test-driven
 created: 2025-12-15
-updated: 2026-01-29
+updated: 2026-03-09
 ---
 
 # Implementation Workflow
@@ -943,4 +943,4 @@ function processVideoFrame(frame: Frame): ProcessedFrame {
 
 ---
 
-**Last Updated**: 2026-01-29
+**Last Updated**: 2026-03-09

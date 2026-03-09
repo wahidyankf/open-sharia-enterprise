@@ -51,7 +51,7 @@ Enter plan mode for any non-trivial task. A task is non-trivial if it meets any 
 
 ### Plan Format
 
-Write the plan as a checklist in `tasks/todo.md`. Each item should be independently verifiable.
+Write the plan as a checklist in `local-temp/todo.md`. Each item should be independently verifiable.
 
 ```
 ## Plan: [Brief task description]
@@ -180,9 +180,9 @@ After any correction from the user, extract the lesson.
 ### The Process
 
 1. **Identify the pattern**: What category of mistake was made? (misread requirement, wrong assumption, insufficient verification, scope creep, etc.)
-2. **Write a rule**: Write a concrete rule in `tasks/lessons.md` that would prevent this mistake
+2. **Write a rule**: Write a concrete rule in `local-temp/lessons.md` that would prevent this mistake
 3. **Iterate**: After repeated mistakes of the same type, revise the rule until the mistake stops occurring
-4. **Review at session start**: Check `tasks/lessons.md` at the beginning of work on a project to activate relevant lessons
+4. **Review at session start**: Check `local-temp/lessons.md` at the beginning of work on a project to activate relevant lessons
 
 ### Lessons File Format
 
@@ -222,7 +222,7 @@ Mark items complete as you go. An updated checklist shows what has been done and
 
 ### Document Results
 
-Add a review section to `tasks/todo.md` after completing the task. The review captures:
+Add a review section to `local-temp/todo.md` after completing the task. The review captures:
 
 - What the task accomplished
 - Any significant decisions made during execution
@@ -230,7 +230,7 @@ Add a review section to `tasks/todo.md` after completing the task. The review ca
 
 ### Capture Lessons
 
-After any correction, update `tasks/lessons.md`. This is the direct application of the self-improvement loop to task management.
+After any correction, update `local-temp/lessons.md`. This is the direct application of the self-improvement loop to task management.
 
 ## Anti-Patterns
 

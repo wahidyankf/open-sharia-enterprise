@@ -12,7 +12,7 @@ tags:
   - development
   - workflows
 created: 2026-01-04
-updated: 2026-02-22
+updated: 2026-03-09
 ---
 
 # Rules - Repository Governance
@@ -77,7 +77,7 @@ graph TD
 - **[Core Principles](./principles/README.md)** - Foundational values that govern all lower layers
   - Principles organized across categories (General, Content, Software Engineering)
   - Each principle traces back to vision with "Vision Supported" section
-  - Examples: Deliberate Problem-Solving, Simplicity Over Complexity, Accessibility First, Documentation First, Automation Over Manual
+  - Examples: Deliberate Problem-Solving, Simplicity Over Complexity, Root Cause Orientation, Accessibility First, Documentation First, Automation Over Manual
 
 #### Layer 2: Conventions (WHAT - Documentation Rules)
 
@@ -215,4 +215,4 @@ When changing a layer, all lower layers may need updates. Use `repo-governance-m
 
 ---
 
-**Last Updated**: 2026-02-22
+**Last Updated**: 2026-03-09
