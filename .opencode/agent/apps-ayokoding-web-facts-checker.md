@@ -44,7 +44,6 @@ skills:
 - Priority matrix (Criticality × Confidence → P0-P4)
 - Domain-specific examples
 
-
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
 - Advanced reasoning to verify factual accuracy using web sources

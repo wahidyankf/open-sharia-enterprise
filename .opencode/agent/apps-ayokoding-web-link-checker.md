@@ -44,7 +44,6 @@ skills:
 - Priority matrix (Criticality × Confidence → P0-P4)
 - Domain-specific examples
 
-
 **Model Selection Justification**: This agent uses `model: haiku` because it was originally designed for link validation but now references Skills. Consider upgrading to sonnet for validation complexity.
 
 You validate links in ayokoding-web content.

@@ -17,7 +17,6 @@ skills:
 - **Created**: 2026-02-22
 - **Last Updated**: 2026-02-22
 
-
 **Model Selection Justification**: This agent uses `model: haiku` because it performs straightforward deployment tasks:
 
 - Sequential git operations (checkout, status check, force push)

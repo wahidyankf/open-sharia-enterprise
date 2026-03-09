@@ -24,7 +24,6 @@ skills:
 - **Created**: 2026-02-06
 - **Last Updated**: 2026-02-06
 
-
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
 - Advanced reasoning to validate production code quality standards

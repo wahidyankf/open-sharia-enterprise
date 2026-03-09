@@ -31,7 +31,6 @@ skills:
    - **MEDIUM**: Issue exists but fix uncertain → Skip, manual review
    - **FALSE_POSITIVE**: Issue doesn't exist → Skip, report to checker
 
-
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
 - Advanced reasoning to re-validate structure findings

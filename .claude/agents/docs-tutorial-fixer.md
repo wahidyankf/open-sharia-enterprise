@@ -37,7 +37,6 @@ See `repo-assessing-criticality-confidence` Skill for complete priority matrix (
 
 **Execution Order**: P0 (CRITICAL+HIGH) → P1 → P2 → P3 → P4
 
-
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires advanced reasoning to:
 
 - Re-validate complex pedagogical findings with nuanced understanding

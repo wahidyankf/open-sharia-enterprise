@@ -23,7 +23,6 @@ skills:
 - **Last Updated**: 2026-01-03
 - **Size Tier**: Tier 2 (standard agent with complex decision logic — cascading directory operations, multi-step link tracking, deletion safety analysis)
 
-
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires advanced reasoning to:
 
 - Calculate cascading impacts when renaming directories (affects all files inside and all links pointing to them)

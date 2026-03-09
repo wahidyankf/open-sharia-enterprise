@@ -17,7 +17,6 @@ skills:
 - **Created**: 2025-12-15
 - **Last Updated**: 2026-01-03
 
-
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
 - Advanced reasoning to create engaging, accessible README content

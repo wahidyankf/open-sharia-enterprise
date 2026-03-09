@@ -21,7 +21,6 @@ skills:
 - **Created**: 2025-11-29
 - **Last Updated**: 2026-01-03
 
-
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires advanced reasoning to create well-structured documentation. The agent requires:
 
 - Advanced reasoning to create well-structured documentation

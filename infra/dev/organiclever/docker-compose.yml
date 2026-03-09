@@ -3,6 +3,27 @@
 # Frontend: Next.js dev server
 
 services:
+  organiclever-db:
+    image: postgres:17-alpine
+    container_name: organiclever-db
+    environment:
+      POSTGRES_DB: organiclever
+      POSTGRES_USER: ${POSTGRES_USER:-organiclever}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-organiclever}
+    ports:
+      - "5432:5432"
+    volumes:
+      - organiclever-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-organiclever} -d organiclever"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      - organiclever-network
+
   organiclever-be:
     build:
       context: .
@@ -17,10 +38,18 @@ services:
     ports:
       - "8201:8201"
 
+    depends_on:
+      organiclever-db:
+        condition: service_healthy
+
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - SERVER_PORT=8201
       - MAVEN_OPTS=${MAVEN_OPTS:--Xmx512m}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://organiclever-db:5432/organiclever
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER:-organiclever}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-organiclever}
+      - APP_JWT_SECRET=${APP_JWT_SECRET:-change-me-in-dev-only-not-for-production}
 
     # Run Spring Boot with DevTools for auto-reload
     # Maven is pre-installed in the custom dev image (see Dockerfile.be.dev)
@@ -89,3 +118,4 @@ networks:
 
 volumes:
   organiclever-web-node-modules:
+  organiclever-db-data:
