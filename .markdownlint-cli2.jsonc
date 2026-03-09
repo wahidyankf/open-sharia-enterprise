@@ -3,6 +3,7 @@
   "ignores": [
     "node_modules/**",
     "**/node_modules/**",
+    "libs/*/deps/**",
     "dist/**",
     "build/**",
     ".next/**",

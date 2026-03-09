@@ -1,6 +1,9 @@
 # Dependencies
 node_modules/
 
+# Elixir/Mix vendor dependencies (third-party markdown not subject to our rules)
+libs/*/deps/
+
 # Build outputs
 dist/
 build/

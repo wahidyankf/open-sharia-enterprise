@@ -26,22 +26,24 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ### elixir-gherkin
 
-- [ ] Copy source of `cabbage-ex/gherkin` tag `2.0.0` into `libs/elixir-gherkin/`
+- [x] Copy source of `cabbage-ex/gherkin` tag `2.0.0` into `libs/elixir-gherkin/`
       (preserve directory structure: `lib/`, `test/`, `mix.exs`, `mix.lock`, `LICENSE`,
       `CHANGELOG.md`)
-- [ ] In `mix.exs`: rename `app: :gherkin` → `app: :elixir_gherkin`; bump version to
+- [x] In `mix.exs`: rename `app: :gherkin` → `app: :elixir_gherkin`; bump version to
       `2.0.0-ose.1` to distinguish from upstream
-- [ ] In `mix.exs` `project/0`: add `test_coverage: [tool: ExCoveralls]` and
+- [x] In `mix.exs` `project/0`: add `test_coverage: [tool: ExCoveralls]` and
       `preferred_cli_env: [coveralls: :test, "coveralls.lcov": :test]`
-- [ ] In `mix.exs` deps: add `{:excoveralls, "~> 0.18", only: :test}`
-- [ ] Add `project.json` with targets from `tech-docs.md` (Vendored Library Architecture)
-- [ ] Add `.credo.exs` (strict mode)
-- [ ] Add `.formatter.exs`
-- [ ] Add `.dialyzer_ignore.exs` (empty initially)
-- [ ] Add `FORK_NOTES.md` using the template from `tech-docs.md`
-- [ ] Run `mix deps.get` inside `libs/elixir-gherkin/`
-- [ ] Verify `nx run elixir-gherkin:test:quick` passes (existing upstream tests pass as-is)
-- [ ] Verify `nx run elixir-gherkin:typecheck` passes (initial PLT build)
+- [x] In `mix.exs` deps: add `{:excoveralls, "~> 0.18", only: :test}`
+      (pinned to 0.18.3; added `cover.lcov` alias to work around Alpine Docker
+      code-path incompatibility; added 4 targeted tests to reach ≥ 90% coverage)
+- [x] Add `project.json` with targets from `tech-docs.md` (Vendored Library Architecture)
+- [x] Add `.credo.exs` (strict mode)
+- [x] Add `.formatter.exs`
+- [x] Add `.dialyzer_ignore.exs` (empty initially)
+- [x] Add `FORK_NOTES.md` using the template from `tech-docs.md`
+- [x] Run `mix deps.get` inside `libs/elixir-gherkin/`
+- [x] Verify `nx run elixir-gherkin:test:quick` passes — 30 tests, 94.35% coverage, credo clean
+- [ ] Verify `nx run elixir-gherkin:typecheck` passes (initial PLT build) — CI only (see FORK_NOTES.md)
 - [ ] Commit
 
 ### elixir-cabbage
