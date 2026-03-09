@@ -15,7 +15,7 @@ Elixir/Phoenix reimplementation of the OrganicLever backend REST API — a funct
 
 ## Naming
 
-`exph` = **El**ixir + **Ph**oenix (matching the `-jasb` suffix pattern: **Ja**va **S**pring **B**oot).
+`exph` = **Ex** (Elixir ecosystem prefix, as in ExUnit, ExCoveralls) + **Ph**oenix (matching the `-jasb` suffix pattern: **Ja**va **S**pring **B**oot).
 
 ## API Surface (identical to organiclever-be-jasb)
 

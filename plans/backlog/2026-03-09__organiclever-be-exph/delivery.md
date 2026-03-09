@@ -76,8 +76,10 @@ Execute phases in order. Each phase produces a working, committable state.
 
 **Commit**: `feat(organiclever-be-exph): scaffold Phoenix project`
 
-- [ ] Run `mix phx.new organiclever_be_exph --no-live --no-assets --no-dashboard --no-mailer`
-      inside `apps/`; rename folder to `organiclever-be-exph`
+- [ ] From the workspace root, run:
+      `mix phx.new apps/organiclever-be-exph --app organiclever_be_exph --no-live --no-assets --no-dashboard --no-mailer --no-html`
+      (`--app` sets the OTP app name; directory is `apps/organiclever-be-exph` directly — no rename needed.
+      `--no-html` omits unused HTML controllers and templates for a pure JSON REST API.)
 - [ ] Add `project.json` with all targets from `tech-docs.md` (Nx Targets section),
       including `"implicitDependencies": ["elixir-gherkin", "elixir-cabbage"]`
 - [ ] Configure `mix.exs` with all deps:
@@ -145,6 +147,16 @@ Execute phases in order. Each phase produces a working, committable state.
 **Commit**: `feat(organiclever-be-exph): add register and login endpoints`
 
 - [ ] Configure Guardian in `lib/organiclever_be_exph/auth/guardian.ex`
+- [ ] Add Guardian config to `config/runtime.exs` (NOT `config/config.exs` — `System.get_env`
+      must be evaluated at runtime for Docker secret injection to work):
+      `config :organiclever_be_exph, OrganicleverBeExph.Auth.Guardian, issuer: "organiclever_be_exph", secret_key: System.get_env("APP_JWT_SECRET") || raise("APP_JWT_SECRET is not set"), ttl: {24, :hours}`
+      (Without this block the application raises a `Guardian.Token.Jwt.Impl` error at startup.)
+- [ ] Add a hardcoded test secret to `config/test.exs` so `mix test` does not require
+      `APP_JWT_SECRET` in the shell environment:
+      `config :organiclever_be_exph, OrganicleverBeExph.Auth.Guardian, secret_key: "test_secret_do_not_use_in_production"`
+      (`config/test.exs` is evaluated before `runtime.exs` in the config loading order, so
+      the test secret takes precedence and the `|| raise(...)` guard in `runtime.exs` is
+      never reached during `mix test`.)
 - [ ] Create `AuthController` with:
   - `POST /api/v1/auth/register` → 201 `{"id": ..., "username": ...}` (no password field)
   - `POST /api/v1/auth/login` → 200 `{"token": "...", "type": "Bearer"}` or 401/400
@@ -154,7 +166,7 @@ Execute phases in order. Each phase produces a working, committable state.
   - `specs/apps/organiclever-be/auth/register.feature` (9 scenarios)
   - `specs/apps/organiclever-be/auth/login.feature` (5 scenarios)
 - [ ] Implement step definitions in `auth_register_steps.exs` and `auth_login_steps.exs`
-- [ ] Verify all 14 scenarios pass: `mix test --only integration`
+- [ ] Verify all 16 scenarios pass: `mix test --only integration`
 
 ---
 
@@ -164,14 +176,17 @@ Execute phases in order. Each phase produces a working, committable state.
 
 - [ ] Create `HelloController` returning `{"message": "world!"}` (JSON, 200)
 - [ ] Add protected scope in router using `Guardian.Plug.Pipeline`
-- [ ] Add CORS headers for `http://localhost:3200` (and `http://localhost:3000`)
+- [ ] Add CORS plug for `http://localhost:3200` (and `http://localhost:3000`); the plug must
+      handle `OPTIONS` preflight requests — return 200 with CORS headers and halt before the
+      JWT pipeline (see tech-docs.md CORS section for preflight requirements)
 - [ ] Write Cabbage integration tests for:
   - `specs/apps/organiclever-be/hello/hello-endpoint.feature` (2 scenarios)
   - `specs/apps/organiclever-be/auth/jwt-protection.feature` (6 scenarios)
 - [ ] Implement step definitions in `hello_steps.exs` and `jwt_protection_steps.exs`
 - [ ] Verify all 24 scenarios pass: `mix test --only integration`
-- [ ] Run full test suite with coverage: `mix test --cover`
-- [ ] Verify coverage ≥ 90% via `rhino-cli test-coverage validate`
+- [ ] Run full test suite with LCOV output: `mix coveralls.lcov`
+- [ ] Verify coverage ≥ 90%:
+      `(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/organiclever-be-exph/cover/lcov.info 90)`
 - [ ] Verify `mix credo --strict` and `mix dialyzer` pass
 
 ---
@@ -196,6 +211,11 @@ Execute phases in order. Each phase produces a working, committable state.
   - Network: `organiclever-network`
 - [ ] Create `infra/dev/organiclever-exph/docker-compose.e2e.yml`
 - [ ] Create `infra/dev/organiclever-exph/README.md` with startup instructions
+- [ ] Ensure `Dockerfile.be.dev` CMD (or an entrypoint script) runs `mix ecto.migrate` before
+      starting the server — required so fresh Docker E2E containers have the schema applied:
+      `CMD ["sh", "-c", "mix ecto.migrate && mix phx.server"]`
+      (The health endpoint does not hit the DB, so Phase 7 manual tests may appear to pass
+      even with an unmigrated DB — the missing schema surfaces in Phase 8 E2E tests.)
 - [ ] Manual test: `docker compose ... up --build` → container reaches healthy state
 - [ ] Manual test: `curl http://localhost:8201/health` → `{"status":"UP"}`
 
@@ -236,7 +256,7 @@ Execute phases in order. Each phase produces a working, committable state.
 - [ ] Add `erlef/setup-beam@v1` step to `main-ci.yml` (Elixir 1.17, OTP 27)
 - [ ] Add coverage upload step for `apps/organiclever-be-exph/cover/lcov.info` with flag
       `organiclever-be-exph`
-- [ ] Run full `nx run-many -t test:quick --all` locally to confirm no regressions
+- [ ] Run full `nx run-many -t test:quick` locally to confirm no regressions
 - [ ] Push to `main`; verify `Main CI` workflow passes
 
 ---
@@ -256,7 +276,7 @@ Execute phases in order. Each phase produces a working, committable state.
 - [ ] Docker Compose stack starts and health check passes
 - [ ] `e2e-organiclever-exph.yml` workflow green on GitHub Actions
 - [ ] `main-ci.yml` workflow green on GitHub Actions
-- [ ] Update `plans/backlog/README.md` to list this plan
+- [ ] Remove this plan from `plans/backlog/README.md`
 - [ ] Move plan folder to `plans/done/`
 
 ---

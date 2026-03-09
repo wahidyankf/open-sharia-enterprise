@@ -132,6 +132,13 @@ libs/elixir-gherkin/
         "cwd": "libs/elixir-gherkin"
       }
     },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mix test",
+        "cwd": "libs/elixir-gherkin"
+      }
+    },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
@@ -213,6 +220,13 @@ libs/elixir-cabbage/
           "mix format --check-formatted"
         ],
         "parallel": false,
+        "cwd": "libs/elixir-cabbage"
+      }
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mix test",
         "cwd": "libs/elixir-cabbage"
       }
     },
@@ -410,10 +424,35 @@ Use **Guardian** with HMAC-SHA256 (matching JASB's approach). Configuration:
 defmodule OrganicleverBeExph.Auth.Guardian do
   use Guardian, otp_app: :organiclever_be_exph
 
+  alias OrganicleverBeExph.{Repo, Accounts.User}
+
   def subject_for_token(%{id: id}, _claims), do: {:ok, to_string(id)}
-  def resource_from_claims(%{"sub" => id}), do: {:ok, Repo.get(User, id)}
+  def resource_from_claims(%{"sub" => id}), do: {:ok, Repo.get(User, String.to_integer(id))}
 end
 ```
+
+`subject_for_token` stores the user's integer `id` as a string (`to_string(id)`), so the
+`"sub"` claim is `"1"` (a string). `resource_from_claims` must convert it back to an integer
+before passing to `Repo.get/2`, which expects an integer primary key. Omitting
+`String.to_integer/1` causes Ecto to raise a type error or return `nil`, causing all
+authenticated requests to fail with 401.
+
+Guardian also requires an application config entry for the secret key and TTL. Add to
+`config/runtime.exs` (NOT `config/config.exs` — `System.get_env` must be evaluated at
+runtime so Docker secret injection at container start time works correctly):
+
+```elixir
+# config/runtime.exs  ← must be runtime.exs, NOT config.exs
+# (System.get_env reads env at runtime — required for Docker/CI secret injection)
+config :organiclever_be_exph, OrganicleverBeExph.Auth.Guardian,
+  issuer: "organiclever_be_exph",
+  secret_key: System.get_env("APP_JWT_SECRET") || raise("APP_JWT_SECRET is not set"),
+  ttl: {24, :hours}
+```
+
+Without this config block, the application raises a `Guardian.Token.Jwt.Impl` error at
+startup. If a fallback secret is needed for the `test` environment, add a hardcoded test
+secret in `config/test.exs` — not in `runtime.exs`.
 
 JWT secret is read from `APP_JWT_SECRET` environment variable (identical to JASB).
 Token expiry: 24 hours. No refresh token in Phase 1.
@@ -444,7 +483,22 @@ Implemented as Ecto changeset validators (not schema constraints):
 ### CORS
 
 Allow-list: `http://localhost:3200`, `http://localhost:3000`, production origin.
-Use `cors_plug` or Phoenix built-in `Plug.Conn.put_resp_header`.
+Use the Phoenix built-in `Plug.Conn.put_resp_header` (no additional dependency required).
+Add a plug in the router pipeline or endpoint that sets `Access-Control-Allow-Origin` and
+related CORS headers for the allowed origins. This avoids the `cors_plug` Hex package, which
+is not listed in `mix.exs` deps and is not needed for a simple allow-list configuration.
+
+The CORS plug must handle browser preflight requests. The `/api/v1/hello` endpoint sends an
+`Authorization` header, which makes it a "non-simple" CORS request — browsers always issue
+an `OPTIONS` preflight before the actual `GET`. The plug must:
+
+1. For `OPTIONS` requests: return 200 immediately with CORS headers set and halt the
+   connection using `Plug.Conn.halt/1` (before the request reaches the JWT pipeline).
+2. For all other requests: set CORS headers on the response.
+
+Without explicit OPTIONS handling, Phoenix returns 404 or 405 for preflight requests and the
+browser blocks the actual CORS request, even though integration tests (in-process ConnTest,
+no browser) pass.
 
 ---
 
@@ -542,6 +596,11 @@ Use `cors_plug` or Phoenix built-in `Plug.Conn.put_resp_header`.
 > command (`rhino-cli test-coverage validate`) runs after `mix coveralls.lcov` so that
 > `cover/lcov.info` exists. `mix coveralls.lcov` requires the `test_coverage` and
 > `preferred_cli_env` entries in `mix.exs` — see Key Dependencies above.
+>
+> `mix coveralls.lcov` runs the **full test suite** (unit + integration) because integration
+> tests are in-process (Mox, no external services) and fully deterministic — no `--only`
+> filter is needed. This matches the monorepo convention for `organiclever-be-jasb` and
+> `golang-commons`.
 
 ---
 
@@ -574,7 +633,7 @@ Mirrors `infra/dev/organiclever-jasb/docker-compose.yml` with these changes:
 - `depends_on: organiclever-db: condition: service_healthy` — wait for DB before starting
 - Environment: `MIX_ENV=dev`, `PORT=8201`, `DATABASE_URL=postgresql://organiclever:organiclever@organiclever-db:5432/organiclever_exph`,
   `APP_JWT_SECRET`
-- Command: `mix phx.server`
+- Command: `sh -c "mix ecto.migrate && mix phx.server"`
 - Healthcheck: `wget --spider http://localhost:8201/health`
 - Restart: `unless-stopped`
 - Network: `organiclever-network`
@@ -594,7 +653,7 @@ RUN apk add --no-cache build-base git && \
 
 WORKDIR /workspace
 
-CMD ["mix", "phx.server"]
+CMD ["sh", "-c", "mix ecto.migrate && mix phx.server"]
 ```
 
 ### docker-compose.e2e.yml
