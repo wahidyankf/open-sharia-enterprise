@@ -1030,7 +1030,7 @@ public class UserService {
 
 ```bash
 # Via Nx (preferred — wired into pre-push hook)
-nx typecheck organiclever-be
+nx typecheck organiclever-be-jasb
 
 # Via Maven directly
 mvn compile -Pnullcheck

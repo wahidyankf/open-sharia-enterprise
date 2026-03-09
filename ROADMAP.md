@@ -95,7 +95,7 @@ graph TB
 
 - 🌐 [`organiclever-web`](./apps/organiclever-web/) - Next.js landing/promotional website (www.organiclever.com)
 - 🧪 [`organiclever-web-e2e`](./apps/organiclever-web-e2e/) - Playwright E2E tests for organiclever-web
-- 🌐 [`organiclever-be`](./apps/organiclever-be/) - Spring Boot REST API backend (port 8201)
+- 🌐 [`organiclever-be-jasb`](./apps/organiclever-be-jasb/) - Spring Boot REST API backend (port 8201)
 - 🧪 [`organiclever-be-e2e`](./apps/organiclever-be-e2e/) - Playwright API E2E tests for the backend
 
 **Tech Stack:**

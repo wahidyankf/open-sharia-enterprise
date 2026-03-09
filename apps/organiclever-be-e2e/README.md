@@ -1,6 +1,6 @@
 # organiclever-be-e2e
 
-End-to-end tests for the [organiclever-be](../organiclever-be) Spring Boot REST API backend,
+End-to-end tests for the [organiclever-be-jasb](../organiclever-be-jasb) Spring Boot REST API backend,
 using [playwright-bdd](https://github.com/vitalets/playwright-bdd) to drive tests from Gherkin
 feature files.
 
@@ -40,7 +40,7 @@ require a live PostgreSQL database (the E2E `Before` hook deletes all users befo
 **Recommended — Docker Compose** (no local Java/Maven required):
 
 ```bash
-cd infra/dev/organiclever
+cd infra/dev/organiclever-jasb
 cp .env.example .env  # set POSTGRES_USER, POSTGRES_PASSWORD, APP_JWT_SECRET
 docker compose up -d
 ```
@@ -51,7 +51,7 @@ docker compose up -d
 nx dev organiclever-be
 ```
 
-See [organiclever-be README](../organiclever-be/README.md) for full startup options.
+See [organiclever-be-jasb README](../organiclever-be-jasb/README.md) for full startup options.
 
 ## Setup
 
@@ -147,6 +147,6 @@ this scenario will fail — which is expected, as E2E tests validate production-
 
 ## Related
 
-- [organiclever-be](../organiclever-be/README.md) — The backend being tested
+- [organiclever-be-jasb](../organiclever-be-jasb/README.md) — The backend being tested
 - [specs/organiclever-be](../../specs/apps/organiclever-be/) — Gherkin feature files (source of truth)
 - [Playwright docs](../../docs/explanation/software-engineering/automation-testing/tools/playwright/README.md) — Playwright standards for this project

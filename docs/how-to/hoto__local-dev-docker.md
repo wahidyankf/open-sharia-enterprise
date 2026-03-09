@@ -69,7 +69,7 @@ Each service ecosystem has its own Docker Compose setup:
 
 ```bash
 # Example: OrganicLever services
-cd infra/dev/organiclever
+cd infra/dev/organiclever-jasb
 ```
 
 ### 3. Configure Environment (Optional)
@@ -88,14 +88,14 @@ Some services require building before containerization:
 
 ```bash
 # Example: Spring Boot application
-cd ../../../apps/organiclever-be
+cd ../../../apps/organiclever-be-jasb
 mvn clean package -DskipTests
 
 # Or using Nx
-nx run organiclever-be:build
+nx run organiclever-be-jasb:build
 
 # Return to Docker Compose directory
-cd ../../infra/dev/organiclever
+cd ../../infra/dev/organiclever-jasb
 ```
 
 ### 5. Start Services
@@ -114,7 +114,7 @@ docker-compose ps
 ### 6. Verify Services
 
 ```bash
-# Example: Test organiclever-be
+# Example: Test organiclever-be-jasb
 curl http://localhost:8201/api/v1/hello
 # Expected: {"message":"world"}
 
@@ -155,11 +155,11 @@ docker-compose down -v
 
 ## Available Service Ecosystems
 
-### OrganicLever (`infra/dev/organiclever/`)
+### OrganicLever (`infra/dev/organiclever-jasb/`)
 
 **Services (Docker Compose)**:
 
-- `organiclever-be` - Spring Boot backend (port 8201)
+- `organiclever-be-jasb` - Spring Boot backend (port 8201)
 - `organiclever-web` - Next.js landing website (port 3200)
 
 **Related Apps (run separately)**:
@@ -170,11 +170,11 @@ docker-compose down -v
 **Quick Start**:
 
 ```bash
-cd infra/dev/organiclever
+cd infra/dev/organiclever-jasb
 docker-compose up -d
 ```
 
-**Documentation**: [OrganicLever Infrastructure README](../../infra/dev/organiclever/README.md)
+**Documentation**: [OrganicLever Infrastructure README](../../infra/dev/organiclever-jasb/README.md)
 
 ### Future Ecosystems
 
@@ -189,10 +189,10 @@ Additional service ecosystems will be added as the platform grows.
 docker-compose logs -f
 
 # Specific service
-docker-compose logs -f organiclever-be
+docker-compose logs -f organiclever-be-jasb
 
 # Last 100 lines
-docker-compose logs --tail=100 organiclever-be
+docker-compose logs --tail=100 organiclever-be-jasb
 ```
 
 ### Restart Services
@@ -202,19 +202,19 @@ docker-compose logs --tail=100 organiclever-be
 docker-compose restart
 
 # Restart specific service
-docker-compose restart organiclever-be
+docker-compose restart organiclever-be-jasb
 ```
 
 ### Rebuild After Code Changes
 
 ```bash
 # 1. Rebuild the application
-cd ../../apps/organiclever-be
+cd ../../apps/organiclever-be-jasb
 mvn clean package -DskipTests
 
 # 2. Restart the service
-cd ../../infra/dev/organiclever
-docker-compose restart organiclever-be
+cd ../../infra/dev/organiclever-jasb
+docker-compose restart organiclever-be-jasb
 ```
 
 ### Check Resource Usage
@@ -248,16 +248,16 @@ docker system prune
 
 ```bash
 # 1. Build application (one time or after changes)
-nx run organiclever-be:build
+nx run organiclever-be-jasb:build
 
 # 2. Start services
-cd infra/dev/organiclever
+cd infra/dev/organiclever-jasb
 docker-compose up -d
 
 # 3. Make changes to code
 # 4. Rebuild and restart
-nx run organiclever-be:build
-docker-compose restart organiclever-be
+nx run organiclever-be-jasb:build
+docker-compose restart organiclever-be-jasb
 
 # 5. Test changes
 curl http://localhost:8201/api/v1/hello
@@ -269,11 +269,11 @@ curl http://localhost:8201/api/v1/hello
 
 ```bash
 # Run service directly for faster iteration
-cd apps/organiclever-be
+cd apps/organiclever-be-jasb
 mvn spring-boot:run
 
 # Run dependent services in Docker
-cd ../../infra/dev/organiclever
+cd ../../infra/dev/organiclever-jasb
 # Comment out the service you're developing
 # Keep database, cache, etc. in Docker
 docker-compose up -d
@@ -285,7 +285,7 @@ docker-compose up -d
 
 ```bash
 # Run all services in Docker
-cd infra/dev/organiclever
+cd infra/dev/organiclever-jasb
 docker-compose up -d
 
 # Test inter-service communication
@@ -350,7 +350,7 @@ Services in the same Docker Compose network can communicate by service name:
 
 ```bash
 # Example: Frontend calling backend
-http://organiclever-be:8201/api/v1/hello
+http://organiclever-be-jasb:8201/api/v1/hello
 
 # Example: Backend connecting to database
 jdbc:postgresql://organiclever-db:5432/organiclever
@@ -362,7 +362,7 @@ Services expose ports to the host:
 
 | Service                  | Internal Port | Host Port | Purpose                 |
 | ------------------------ | ------------- | --------- | ----------------------- |
-| organiclever-be          | 8201          | 8201      | Backend API             |
+| organiclever-be-jasb     | 8201          | 8201      | Backend API             |
 | organiclever-web         | 3200          | 3200      | Next.js landing website |
 | (future) organiclever-db | 5432          | 5432      | Database                |
 
@@ -396,7 +396,7 @@ docker-compose logs service-name
 lsof -i :8201
 
 # Verify application was built
-ls -lh ../../apps/organiclever-be/target/*.jar
+ls -lh ../../apps/organiclever-be-jasb/target/*.jar
 ```
 
 ### Port Already in Use
@@ -428,10 +428,10 @@ JAVA_OPTS=-Xms256m -Xmx512m -XX:+UseZGC
 docker-compose ps
 
 # Check if service is healthy
-docker inspect organiclever-be | grep -A 10 Health
+docker inspect organiclever-be-jasb | grep -A 10 Health
 
 # Test from inside container
-docker exec organiclever-be wget -O- http://localhost:8201/health
+docker exec organiclever-be-jasb wget -O- http://localhost:8201/health
 ```
 
 ### Build Failed
@@ -472,7 +472,7 @@ cp .env.example .env
 
 ```yaml
 volumes:
-  - ../../apps/organiclever-be/target/app.jar:/app/app.jar:ro
+  - ../../apps/organiclever-be-jasb/target/app.jar:/app/app.jar:ro
 ```
 
 ### 4. Include Health Checks
@@ -498,7 +498,7 @@ networks:
 
 Maintain a central registry of ports to avoid conflicts:
 
-- 8201: organiclever-be (also used by organiclever-be-e2e as `BASE_URL`)
+- 8201: organiclever-be-jasb (also used by organiclever-be-e2e as `BASE_URL`)
 - 3200: organiclever-web (also used by organiclever-web-e2e as `BASE_URL`)
 - 5432: PostgreSQL databases
 
@@ -514,7 +514,7 @@ export DOCKER_BUILDKIT=1
 ### 2. Optimize Image Size
 
 - Use Alpine-based images
-- Multi-stage builds for compiled languages (see `apps/organiclever-be/Dockerfile` and `apps/organiclever-web/Dockerfile` for production examples)
+- Multi-stage builds for compiled languages (see `apps/organiclever-be-jasb Dockerfile` and `apps/organiclever-web/Dockerfile` for production examples)
 - Remove unnecessary files
 
 ### 3. Cache Dependencies
@@ -570,7 +570,7 @@ docker-compose up -d
 
 ## CI/CD Integration
 
-**Production Dockerfiles**: Multi-stage production Dockerfiles are co-located with each app (`apps/organiclever-be/Dockerfile`, `apps/organiclever-web/Dockerfile`). These build optimized, non-root images suitable for Kubernetes deployment.
+**Production Dockerfiles**: Multi-stage production Dockerfiles are co-located with each app (`apps/organiclever-be-jasb/Dockerfile`, `apps/organiclever-web/Dockerfile`). These build optimized, non-root images suitable for Kubernetes deployment.
 
 Docker Compose can be used in CI/CD pipelines:
 
@@ -580,7 +580,7 @@ Docker Compose can be used in CI/CD pipelines:
   run: docker-compose up -d
 
 - name: Run tests
-  run: docker-compose exec organiclever-be mvn test
+  run: docker-compose exec organiclever-be-jasb mvn test
 
 - name: Stop services
   run: docker-compose down
@@ -588,7 +588,7 @@ Docker Compose can be used in CI/CD pipelines:
 
 ## Related Documentation
 
-- [OrganicLever Infrastructure README](../../infra/dev/organiclever/README.md)
+- [OrganicLever Infrastructure README](../../infra/dev/organiclever-jasb/README.md)
 - [Docker Documentation](https://docs.docker.com/)
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
 - [Reproducible Environments Convention](../../governance/development/workflow/reproducible-environments.md)

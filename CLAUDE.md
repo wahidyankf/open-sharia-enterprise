@@ -23,8 +23,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `oseplatform-cli` - Go CLI tool for OSE Platform site maintenance (link validation)
   - `organiclever-web` - Next.js 16 landing and promotional website (www.organiclever.com)
   - `organiclever-web-e2e` - Playwright E2E tests for organiclever-web
-  - `organiclever-be` - Spring Boot REST API backend
-  - `organiclever-be-e2e` - Playwright E2E tests for organiclever-be REST API
+  - `organiclever-be-jasb` - Spring Boot REST API backend (Java Spring Boot)
+  - `organiclever-be-e2e` - Playwright E2E tests for organiclever-be-jasb REST API
 
 ## Project Structure
 
@@ -38,7 +38,7 @@ open-sharia-enterprise/
 │   ├── oseplatform-cli/     # OSE Platform site CLI
 │   ├── organiclever-web/     # OrganicLever landing website (Next.js)
 │   ├── organiclever-web-e2e/ # Playwright E2E tests for organiclever-web
-│   ├── organiclever-be/   # Spring Boot REST API
+│   ├── organiclever-be-jasb/ # Spring Boot REST API (Java Spring Boot)
 │   └── organiclever-be-e2e/ # Playwright E2E tests for backend
 ├── apps-labs/                # Experimental apps (NOT in Nx)
 ├── libs/                     # Reusable libraries (Nx, flat structure)
@@ -117,7 +117,7 @@ algorithm) via `rhino-cli test-coverage validate`. Coverage is measured with
 Codecov's algorithm) via `rhino-cli test-coverage validate` applied to the LCOV output from Vitest:
 `rhino-cli test-coverage validate apps/organiclever-web/coverage/lcov.info 95` — run as part of `test:quick`.
 
-**`test:integration` caching**: Integration tests for `organiclever-web` (MSW), `organiclever-be`
+**`test:integration` caching**: Integration tests for `organiclever-web` (MSW), `organiclever-be-jasb`
 (MockMvc), `hugo-commons` (Godog + tmpdir mocks), and `golang-commons` (Godog + mock closures)
 use in-process mocking only — no external services required. They are fully deterministic and safe
 to cache (`cache: true` in `nx.json`).

@@ -148,7 +148,7 @@ Every project declares tags along four dimensions. Each dimension uses a fixed p
 | `ayokoding-web`        | `["type:app", "platform:hugo", "domain:ayokoding"]`                        |
 | `ayokoding-cli`        | `["type:app", "platform:cli", "lang:golang", "domain:ayokoding"]`          |
 | `rhino-cli`            | `["type:app", "platform:cli", "lang:golang", "domain:tooling"]`            |
-| `organiclever-be`      | `["type:app", "platform:spring-boot", "lang:java", "domain:organiclever"]` |
+| `organiclever-be-jasb` | `["type:app", "platform:spring-boot", "lang:java", "domain:organiclever"]` |
 | `organiclever-be-e2e`  | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]`    |
 | `organiclever-web`     | `["type:app", "platform:nextjs", "lang:ts", "domain:organiclever"]`        |
 | `organiclever-web-e2e` | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]`    |
@@ -163,7 +163,7 @@ A Spring Boot app for the OrganicLever domain declares all four dimensions:
 
 ```json
 {
-  "name": "organiclever-be",
+  "name": "organiclever-be-jasb",
   "tags": ["type:app", "platform:spring-boot", "lang:java", "domain:organiclever"]
 }
 ```
@@ -314,7 +314,7 @@ Playwright suites (`*-e2e`):
 spec files from the Gherkin feature files before Playwright executes them.
 See `apps/organiclever-be-e2e/project.json` for the canonical example.
 
-**`test:integration` with Cucumber JVM**: `organiclever-be` also exposes `test:integration` which
+**`test:integration` with Cucumber JVM**: `organiclever-be-jasb` also exposes `test:integration` which
 runs `mvn test -Pintegration`. This activates Cucumber JVM 7+ with MockMvc — the same Gherkin
 feature files from `specs/apps/organiclever-be/` are executed via a full Spring context but without a
 running server. Unlike `test:e2e`, no live service is required.

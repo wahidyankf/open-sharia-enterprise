@@ -17,8 +17,8 @@ Apps follow the naming pattern: **`[domain]-[type]`**
 - `oseplatform-cli` - OSE Platform CLI tool for link validation - Go application
 - `organiclever-web` - OrganicLever landing website (www.organiclever.com) - Next.js app (port 3200)
 - `organiclever-web-e2e` - E2E tests for organiclever-web - Playwright (browser testing)
-- `organiclever-be` - OrganicLever backend API - Spring Boot application (port 8201)
-- `organiclever-be-e2e` - E2E tests for organiclever-be REST API - Playwright (API testing)
+- `organiclever-be-jasb` - OrganicLever backend API (Java Spring Boot) - Spring Boot application (port 8201)
+- `organiclever-be-e2e` - E2E tests for organiclever-be-jasb REST API - Playwright (API testing)
 
 ## Application Characteristics
 
@@ -84,7 +84,7 @@ apps/oseplatform-cli/
 ### Spring Boot Application (Current)
 
 ```
-apps/organiclever-be/
+apps/organiclever-be-jasb/
 ├── src/main/java/           # Java source code
 │   └── com/organiclever/be/
 │       ├── OrganicLeverApplication.java
@@ -271,7 +271,7 @@ Currently:
 - **Hugo** (static sites) - oseplatform-web, ayokoding-web
 - **Go** (CLI tools) - ayokoding-cli, rhino-cli
 - **TypeScript/Next.js** (landing website) - organiclever-web
-- **Java/Spring Boot** (backend API) - organiclever-be
+- **Java/Spring Boot** (backend API) - organiclever-be-jasb
 - **TypeScript/Playwright** (E2E testing) - organiclever-be-e2e, organiclever-web-e2e
 
 Future: Kotlin, Python apps (each language will have language-specific structure and tooling)
