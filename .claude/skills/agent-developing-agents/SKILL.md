@@ -393,6 +393,12 @@ All agents SHOULD include a "Reference Documentation" section near the end (befo
 ```markdown
 # Agent Name
 
+## Agent Metadata
+
+- **Role**: [Maker (blue) / Checker (green) / Updater (yellow) / Implementor (purple)]
+- **Created**: YYYY-MM-DD
+- **Last Updated**: YYYY-MM-DD
+
 [Agent description]
 
 ## Core Responsibility
@@ -790,6 +796,12 @@ model: sonnet
 ---
 
 # Agent Name
+
+## Agent Metadata
+
+- **Role**: [Role description]
+- **Created**: YYYY-MM-DD
+- **Last Updated**: YYYY-MM-DD
 
 **Model Selection Justification**: [justification here]
 

@@ -79,16 +79,17 @@ Layer 5: Workflows    WHEN - Orchestrate (multi-step processes)
 **Principles** (abbreviated):
 
 1. Deliberate Problem-Solving
-2. Simplicity Over Complexity
-3. Accessibility First
-4. Documentation First
-5. No Time Estimates
-6. Progressive Disclosure
-7. Automation Over Manual
-8. Explicit Over Implicit
-9. Immutability Over Mutability
-10. Pure Functions Over Side Effects
-11. Reproducibility First
+2. Root Cause Orientation
+3. Simplicity Over Complexity
+4. Accessibility First
+5. Documentation First
+6. No Time Estimates
+7. Progressive Disclosure
+8. Automation Over Manual
+9. Explicit Over Implicit
+10. Immutability Over Mutability
+11. Pure Functions Over Side Effects
+12. Reproducibility First
 
 **Requirements**:
 

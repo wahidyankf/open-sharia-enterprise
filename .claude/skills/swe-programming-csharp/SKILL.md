@@ -9,6 +9,8 @@ description: C# coding standards from authoritative docs/explanation/software-en
 
 Progressive disclosure of C# coding standards for agents writing C# code.
 
+**Usage**: Auto-loaded for agents when writing C# code. Provides quick reference to idioms, best practices, and antipatterns.
+
 **Authoritative Source**: [docs/explanation/software-engineering/programming-languages/c-sharp/README.md](../../../docs/explanation/software-engineering/programming-languages/c-sharp/README.md)
 
 ## Prerequisite Knowledge

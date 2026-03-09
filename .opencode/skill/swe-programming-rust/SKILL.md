@@ -9,6 +9,8 @@ description: Rust coding standards from authoritative docs/explanation/software-
 
 Progressive disclosure of Rust coding standards for agents writing Rust code.
 
+**Usage**: Auto-loaded for agents when writing Rust code. Provides quick reference to idioms, best practices, and antipatterns.
+
 **Authoritative Source**: [docs/explanation/software-engineering/programming-languages/rust/README.md](../../../docs/explanation/software-engineering/programming-languages/rust/README.md)
 
 ## Prerequisite Knowledge
