@@ -10,7 +10,7 @@ tags:
   - development
   - standards
 created: 2025-11-23
-updated: 2026-02-22
+updated: 2026-03-09
 ---
 
 # AI Agents Convention
@@ -424,6 +424,12 @@ After frontmatter, agents should follow this structure:
 
 ```markdown
 # [Agent Name] Agent
+
+## Agent Metadata
+
+- **Role**: [Maker (blue) / Checker (green) / Updater (yellow) / Implementor (purple)]
+- **Created**: YYYY-MM-DD
+- **Last Updated**: YYYY-MM-DD
 
 [One-paragraph introduction describing the agent's role]
 
@@ -1258,6 +1264,10 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 - apps-ayokoding-web-deployer (deployment automation)
 - apps-oseplatform-web-deployer (deployment automation)
 - apps-organiclever-web-deployer (deployment automation)
+- social-linkedin-post-maker (single-purpose content generation)
+- apps-ayokoding-web-navigation-maker (navigation file generation)
+- apps-ayokoding-web-title-maker (title extraction and update)
+- repo-workflow-maker (workflow document creation)
 
 **When to use this tier**:
 
@@ -1320,7 +1330,6 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 - plan-checker (pre-implementation validation)
 - repo-governance-maker (cascading updates across files)
 - repo-governance-checker (comprehensive consistency validation)
-- swe-hugo-developer (theme development, asset pipeline, configuration)
 - docs-link-general-checker (external/internal link validation with caching)
 
 **When to use this tier**:
@@ -1335,11 +1344,11 @@ Agent files are organized into **three complexity tiers** with corresponding siz
 
 Quick categorization for existing agents:
 
-| Tier                 | Agents                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Tier 1: Simple**   | apps-ayokoding-web-deployer, apps-oseplatform-web-deployer, apps-organiclever-web-deployer, social-linkedin-post-maker, apps-ayokoding-web-navigation-maker, apps-ayokoding-web-title-maker, apps-ayokoding-web-structure-fixer, apps-ayokoding-web-facts-fixer, apps-ayokoding-web-link-fixer, apps-oseplatform-web-content-fixer, repo-workflow-maker, repo-workflow-checker, repo-workflow-fixer                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| **Tier 2: Standard** | docs-maker, docs-tutorial-maker, docs-checker, docs-tutorial-checker, docs-file-manager, docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-maker, readme-checker, readme-fixer, agent-maker, plan-fixer, apps-ayokoding-web-general-maker, apps-ayokoding-web-general-checker, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-maker, apps-ayokoding-web-by-example-checker, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-in-the-field-maker, apps-ayokoding-web-in-the-field-checker, apps-ayokoding-web-in-the-field-fixer, apps-ayokoding-web-link-checker, apps-ayokoding-web-structure-maker, apps-ayokoding-web-structure-checker, apps-ayokoding-web-facts-checker, apps-oseplatform-web-content-maker, apps-oseplatform-web-content-checker, swe-python-developer, swe-typescript-developer, swe-elixir-developer, swe-java-developer, swe-golang-developer, swe-e2e-test-developer, swe-hugo-developer |
-| **Tier 3: Complex**  | plan-maker, plan-executor, plan-checker, plan-execution-checker, repo-governance-maker, repo-governance-checker, repo-governance-fixer, docs-link-general-checker, docs-software-engineering-separation-checker                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| Tier                 | Agents                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Tier 1: Simple**   | apps-ayokoding-web-deployer, apps-oseplatform-web-deployer, apps-organiclever-web-deployer, social-linkedin-post-maker, apps-ayokoding-web-navigation-maker, apps-ayokoding-web-title-maker, apps-ayokoding-web-structure-fixer, apps-ayokoding-web-facts-fixer, apps-ayokoding-web-link-fixer, apps-oseplatform-web-content-fixer, repo-workflow-maker, repo-workflow-checker, repo-workflow-fixer                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| **Tier 2: Standard** | docs-maker, docs-tutorial-maker, docs-checker, docs-tutorial-checker, docs-file-manager, docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-maker, readme-checker, readme-fixer, agent-maker, plan-fixer, apps-ayokoding-web-general-maker, apps-ayokoding-web-general-checker, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-maker, apps-ayokoding-web-by-example-checker, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-in-the-field-maker, apps-ayokoding-web-in-the-field-checker, apps-ayokoding-web-in-the-field-fixer, apps-ayokoding-web-link-checker, apps-ayokoding-web-structure-maker, apps-ayokoding-web-structure-checker, apps-ayokoding-web-facts-checker, apps-oseplatform-web-content-maker, apps-oseplatform-web-content-checker, swe-python-developer, swe-typescript-developer, swe-elixir-developer, swe-java-developer, swe-golang-developer, swe-e2e-test-developer, swe-hugo-developer, swe-dart-developer, swe-kotlin-developer, swe-csharp-developer, swe-fsharp-developer, swe-clojure-developer, swe-rust-developer, swe-code-checker |
+| **Tier 3: Complex**  | plan-maker, plan-executor, plan-checker, plan-execution-checker, repo-governance-maker, repo-governance-checker, repo-governance-fixer, docs-link-general-checker, docs-software-engineering-separation-checker                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 
 ### When to Condense or Split Agents
 
@@ -1908,11 +1917,15 @@ tools: Read, Glob, Grep
 model: inherit
 color: blue
 skills: []
-created: YYYY-MM-DD
-updated: YYYY-MM-DD
 ---
 
 # Agent Name Agent
+
+## Agent Metadata
+
+- **Role**: [Maker (blue) / Checker (green) / Updater (yellow) / Implementor (purple)]
+- **Created**: YYYY-MM-DD
+- **Last Updated**: YYYY-MM-DD
 
 You are an expert [role/domain] specializing in [specific expertise].
 
@@ -2425,6 +2438,7 @@ See [Skills README](../../../.claude/skills/README.md) for complete catalog.
 
 - [Development Index](../README.md) - Overview of development conventions
 - [Conventions Index](../../conventions/README.md) - Documentation conventions
+- [Agent Workflow Orchestration Convention](./agent-workflow-orchestration.md) - Standards for how agents plan, execute, verify, and self-improve during multi-step tasks
 - [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - Master reference for all color usage (agent categorization, diagrams, accessibility standards)
 - [File Naming Convention](../../conventions/structure/file-naming.md) - How to name files
 - [Linking Convention](../../conventions/formatting/linking.md) - How to link between files
@@ -2433,7 +2447,7 @@ See [Skills README](../../../.claude/skills/README.md) for complete catalog.
 
 ---
 
-**Last Updated**: 2026-02-22
+**Last Updated**: 2026-03-09
 
 ---
 
@@ -2580,5 +2594,5 @@ Skills are **directly copied** from `.claude/skills/` to `.opencode/skill/` (no 
 
 ---
 
-**Last Updated**: 2026-01-16
+**Appendix Added**: 2026-01-16
 **See Also**: [Repository Governance Architecture](../../repository-governance-architecture.md)

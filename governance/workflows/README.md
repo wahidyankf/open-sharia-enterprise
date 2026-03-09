@@ -284,3 +284,7 @@ Planned workflow features:
 - **Do workflows replace plans?** - No, plans are strategic, workflows are tactical
 
 See [Workflow Pattern Convention](./meta/workflow-identifier.md) and [Execution Modes Convention](./meta/execution-modes.md) for comprehensive answers.
+
+---
+
+**Last Updated**: 2026-02-22

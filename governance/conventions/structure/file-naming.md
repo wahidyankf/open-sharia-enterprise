@@ -504,7 +504,7 @@ Files in `docs/explanation/software-engineering/programming-languages/` use a 2-
 | Python      | `py` | First 2 characters of "python"                                       |
 | TypeScript  | `ty` | First 2 characters of "type" (from "TypeScript")                     |
 | Kotlin      | `ko` | First 2 characters of "kotlin"                                       |
-| Rust        | `ru` | First 2 characters of "rust"                                         |
+| Rust        | `rs` | Common file extension abbreviation (`rs`), consistent with ecosystem |
 | Clojure     | `cl` | First 2 characters of "clojure"                                      |
 | F#          | `fs` | Common file extension abbreviation (`fs`), consistent with ecosystem |
 | C#          | `cs` | Common file extension abbreviation (`cs`), consistent with ecosystem |

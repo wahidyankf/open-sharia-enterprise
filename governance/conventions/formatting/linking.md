@@ -9,7 +9,7 @@ tags:
   - conventions
   - github-compatibility
 created: 2025-11-22
-updated: 2025-12-28
+updated: 2026-03-09
 ---
 
 # Documentation Linking Convention
@@ -180,10 +180,10 @@ For more information, refer to our [automation principle](../../principles/softw
 [ex-co\_\_file-naming-convention.md](../structure/file-naming.md)
 
 <!-- Wrong number of ../ for nesting depth -->
-<!-- From governance/conventions/formatting/linking.md (2 levels deep) -->
+<!-- From governance/conventions/formatting/linking.md (3 levels deep) -->
 
-[Documentation Home](./README.md) <!-- Should be ../../README.md -->
-[Tutorials](./README.md) <!-- Only 1 ../ instead of 2 -->
+[Documentation Home](./README.md) <!-- Should be ../../../README.md -->
+[Tutorials](./README.md) <!-- Only 1 ../ instead of 3 -->
 
 <!-- From governance/conventions/README.md (2 levels deep) -->
 
@@ -242,14 +242,14 @@ Understanding relative paths is crucial when linking from files at different nes
 [How-To](./README.md)
 ```
 
-#### From 2-Level Deep Files (`governance/conventions/formatting/linking.md`)
+#### From 3-Level Deep Files (`governance/conventions/formatting/linking.md`)
 
 ```markdown
-<!-- To docs/ root (up 2 levels) -->
+<!-- To docs/ root (up 3 levels) -->
 
 [Documentation Home](./README.md)
 
-<!-- To other categories (up 2, down 1) -->
+<!-- To other categories (up 3, down 1) -->
 
 [Tutorials](./README.md)
 [How-To](./README.md)
@@ -291,18 +291,12 @@ Example from `governance/conventions/structure/file-naming.md` to `docs/tutorial
 
 ```
 Start:  governance/conventions/structure/file-naming.md
-  ../   governance/conventions/       (up 1)
-  ../   docs/explanation/                   (up 2)
-  ../   docs/                               (up 3 - wait, only need 2!)
+  ../   governance/conventions/structure/ → governance/conventions/   (up 1)
+  ../   governance/conventions/ → governance/                         (up 2)
+  ../   governance/ → / (repo root)                                   (up 3)
+  docs/tutorials/README.md                                            (down into target)
 
-Actually:
-Start:  governance/conventions/structure/file-naming.md
-  ../   docs/explanation/                   (up 1)
-  ../   docs/                               (up 2)
-  tutorials/  docs/tutorials/               (down 1)
-  README.md                                 (target file)
-
-Final path: ../../tutorials/README.md
+Final path: ../../../docs/tutorials/README.md
 ```
 
 ## Hugo Content Linking
@@ -366,7 +360,7 @@ When creating documentation, verify links by:
 
 ---
 
-**Last Updated**: 2025-12-28
+**Last Updated**: 2026-03-09
 
 ## When to Link Rule References
 
@@ -491,7 +485,7 @@ We renamed "link-convention" to "linking-convention" for clarity
 
 ### Validation
 
-The [docs-checker agent](../../../.opencode/agent/docs-checker.md) validates this two-tier formatting requirement:
+The [docs-checker agent](../../../.claude/agents/docs-checker.md) validates this two-tier formatting requirement:
 
 - **First mention without link** → CRITICAL issue (breaks navigation)
 - **Subsequent mention without inline code** → HIGH issue (convention violation)

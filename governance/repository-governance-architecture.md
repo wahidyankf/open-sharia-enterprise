@@ -9,7 +9,7 @@ tags:
   - six-layer
   - structure
 created: 2026-02-09
-updated: 2026-02-22
+updated: 2026-03-09
 ---
 
 # Repository Governance Architecture
@@ -17,7 +17,7 @@ updated: 2026-02-22
 **Document Type**: Explanation
 **Purpose**: Comprehensive architectural overview of the six-layer governance hierarchy governing the open-sharia-enterprise repository
 **Audience**: All contributors, AI agents, governance designers
-**Last Updated**: 2026-02-22
+**Last Updated**: 2026-03-09
 
 ---
 
@@ -183,6 +183,7 @@ Layer 5: Workflows    WHEN - Orchestrate (multi-step processes)
 
 - **Deliberate Problem-Solving** - Think before coding, surface assumptions, ask questions rather than guessing
 - **Simplicity Over Complexity** - Minimum viable abstraction, avoid over-engineering
+- **Root Cause Orientation** - Fix root causes, not symptoms; minimal impact; senior engineer standard
 
 **Content Principles:**
 
@@ -820,6 +821,6 @@ As the repository grows, additional layers might be considered:
 
 ---
 
-**Last Updated**: 2026-02-22 (Updated to reflect 4-color scheme and agent role descriptions)
+**Last Updated**: 2026-03-09 (Updated to reflect 4-color scheme and agent role descriptions)
 **Maintained By**: Repository governance team
 **Review Cycle**: Quarterly (ensure layer descriptions remain accurate)
