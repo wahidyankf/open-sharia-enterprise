@@ -4,6 +4,9 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
+- [2026-03-09\_\_organiclever-be-exph](./2026-03-09__organiclever-be-exph/README.md) —
+  Elixir/Phoenix reimplementation of the OrganicLever backend REST API
+
 ## Instructions
 
 **Quick Idea Capture**: For 1-3 liner ideas not ready for formal planning, use `../ideas.md`.
