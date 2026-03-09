@@ -69,7 +69,6 @@ defmodule OrganicleverBeExph.MixProject do
       {:excoveralls, "~> 0.18", only: :test},
       # Dev / quality
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
     ]
   end
 
