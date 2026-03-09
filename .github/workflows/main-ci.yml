@@ -32,6 +32,12 @@ jobs:
           java-version: "25"
           distribution: "temurin"
 
+      - name: Setup Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: "1.17"
+          otp-version: "27"
+
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
         with:
@@ -101,4 +107,12 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/organiclever-web/coverage/lcov.info
           flags: organiclever-web
+          fail_ci_if_error: false
+
+      - name: Upload coverage — organiclever-be-exph
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: apps/organiclever-be-exph/cover/lcov.info
+          flags: organiclever-be-exph
           fail_ci_if_error: false
