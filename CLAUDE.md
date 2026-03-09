@@ -236,6 +236,7 @@ All work follows foundational principles from `governance/principles/`:
 - **Simplicity Over Complexity**: Minimum viable abstraction
 - **Explicit Over Implicit**: Explicit configuration over magic
 - **Automation Over Manual**: Automate repetitive tasks
+- **Root Cause Orientation**: Fix root causes, not symptoms; minimal impact; senior engineer standard
 
 **See**: [governance/principles/README.md](./governance/principles/README.md)
 
@@ -307,6 +308,12 @@ Make it work → Make it right → Make it fast
 Volta for Node.js/npm pinning, package-lock.json, .env.example
 
 **See**: [governance/development/workflow/reproducible-environments.md](./governance/development/workflow/reproducible-environments.md)
+
+### Agent Workflow Orchestration
+
+Plan mode for non-trivial tasks (3+ steps or architecture decisions), subagents for focused subtasks, verify before done, autonomous bug fixing, self-improvement loop after corrections
+
+**See**: [governance/development/agents/agent-workflow-orchestration.md](./governance/development/agents/agent-workflow-orchestration.md)
 
 ## AI Agents
 

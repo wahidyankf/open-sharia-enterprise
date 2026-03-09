@@ -935,9 +935,11 @@ function processVideoFrame(frame: Frame): ProcessedFrame {
 ## Related Documentation
 
 - [Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md) - Start simple principle
+- [Root Cause Orientation](../../principles/general/root-cause-orientation.md) - Surgical changes implement the minimal impact practice from this principle
 - [Code Quality Convention](../quality/code.md) - Automated quality checks
 - [Trunk Based Development](./trunk-based-development.md) - Git workflow
 - [Acceptance Criteria Convention](../infra/acceptance-criteria.md) - Defining "works" in Stage 1
+- [Agent Workflow Orchestration](../agents/agent-workflow-orchestration.md) - How agents apply this workflow in multi-step task execution
 
 ---
 

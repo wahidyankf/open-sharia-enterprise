@@ -26,6 +26,7 @@ These standards define **HOW to develop AI agents**, covering agent file structu
 
 - [AI Agents Convention](./ai-agents.md) - Complete standards for creating and managing AI agents including naming, file structure, frontmatter requirements, tool access patterns, and model selection
 - [Skill Context Architecture](./skill-context-architecture.md) - Architectural constraint requiring all repository skills to use inline context for universal subagent compatibility
+- [Agent Workflow Orchestration Convention](./agent-workflow-orchestration.md) - Standards for how AI agents plan, execute, verify, and self-improve during multi-step tasks. Covers plan mode, subagent strategy, verification before done, autonomous bug fixing, and the self-improvement loop
 
 ## Related Documentation
 
@@ -52,4 +53,4 @@ This set of development practices respects the following conventions:
 
 ---
 
-**Last Updated**: 2026-01-01
+**Last Updated**: 2026-03-09

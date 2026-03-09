@@ -280,6 +280,7 @@ dependencies:
 - [AI Agents Convention](./ai-agents.md) - Complete agent development standards
 - [Anti-Patterns](./anti-patterns.md) - Common mistakes to avoid
 - [Skill Context Architecture](./skill-context-architecture.md) - Skill integration patterns
+- [Agent Workflow Orchestration Convention](./agent-workflow-orchestration.md) - How agents plan, verify, and self-improve during multi-step tasks
 - [Agents Index](../../../.claude/agents/README.md) - All available agents
 
 ## Summary
