@@ -48,7 +48,7 @@ Add all new Maven dependencies and create the Liquibase changelog.
 - [x] 1.14 Add datasource + JPA config to `application-staging.yml` (env-var-driven)
 - [x] 1.15 Add datasource + JPA config to `application-prod.yml` (env-var-driven)
 - [x] 1.16 Verify `mvn compile -q` succeeds with new dependencies
-- [ ] 1.17 Commit: `feat(organiclever-be): add DB dependencies and Liquibase changelog`
+- [x] 1.17 Commit: `feat(organiclever-be): add DB dependencies and Liquibase changelog`
 
 ### Validation
 
@@ -62,30 +62,30 @@ Create the `User` entity, `UserRepository`, and all associated packages.
 
 ### Tasks
 
-- [ ] 2.1 Create package `com.organiclever.be.auth.model` with `package-info.java` (`@NullMarked`)
-- [ ] 2.2 Create `User.java` entity with fields: `id (UUID)`, `username`, `passwordHash`, and all 6 audit trail fields (`createdAt`, `createdBy`, `updatedAt`, `updatedBy`, `@Nullable deletedAt`, `@Nullable deletedBy`); annotate with `@Entity`, `@Table(name="users")`, `@EntityListeners(AuditingEntityListener.class)`, `@Where(clause = "deleted_at IS NULL")`; use `@CreatedDate`, `@CreatedBy`, `@LastModifiedDate`, `@LastModifiedBy` on audit fields; add a `protected User()` no-arg constructor (required by JPA) and a `public User(String username, String passwordHash)` constructor; no public setters
-- [ ] 2.3 Create package `com.organiclever.be.auth.repository` with `package-info.java`
-- [ ] 2.4 Create `UserRepository.java` extending `JpaRepository<User, UUID>` with methods: `Optional<User> findByUsername(String username)` and `boolean existsByUsername(String username)`
-- [ ] 2.5 Create package `com.organiclever.be.auth.dto` with `package-info.java`
-- [ ] 2.6 Create `RegisterRequest.java` record with: `username` annotated `@NotBlank @Size(min=5, max=50) @Pattern(regexp="^[a-zA-Z0-9_]{5,50}$")` (alphanumeric + underscore only, min 5 chars); `password` annotated `@NotBlank @Size(min=8, max=128) @Pattern(regexp="^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\,.<>/?]).{8,128}$")` (must contain uppercase, lowercase, digit, special character)
-- [ ] 2.7 Create `LoginRequest.java` record with `@NotBlank String username` and `@NotBlank String password`
-- [ ] 2.8 Create `RegisterResponse.java` record with `UUID id`, `String username`, `Instant createdAt`
-- [ ] 2.9 Create `AuthResponse.java` record with `String token`, `String type`; add static factory `bearer(String token)`
-- [ ] 2.10 Create package `com.organiclever.be.config` with `package-info.java`
-- [ ] 2.11 Create `JpaAuditingConfig.java` in `com.organiclever.be.config` annotated with `@Configuration @EnableJpaAuditing(auditorAwareRef = "auditorProvider")`; define an `AuditorAware<String> auditorProvider()` lambda bean that reads `auth.getName()` from `SecurityContextHolder` and falls back to `"system"` for unauthenticated/anonymous users; use `"anonymousUser".equals(auth.getPrincipal())` (constant first, NPE-safe)
-- [ ] 2.12 Verify `mvn compile -q` succeeds
+- [x] 2.1 Create package `com.organiclever.be.auth.model` with `package-info.java` (`@NullMarked`)
+- [x] 2.2 Create `User.java` entity with fields: `id (UUID)`, `username`, `passwordHash`, and all 6 audit trail fields (`createdAt`, `createdBy`, `updatedAt`, `updatedBy`, `@Nullable deletedAt`, `@Nullable deletedBy`); annotate with `@Entity`, `@Table(name="users")`, `@EntityListeners(AuditingEntityListener.class)`, `@SQLRestriction("deleted_at IS NULL")` (Hibernate 7 replaced `@Where` with `@SQLRestriction`); use `@CreatedDate`, `@CreatedBy`, `@LastModifiedDate`, `@LastModifiedBy` on audit fields; add a `protected User()` no-arg constructor (required by JPA) and a `public User(String username, String passwordHash)` constructor; no public setters
+- [x] 2.3 Create package `com.organiclever.be.auth.repository` with `package-info.java`
+- [x] 2.4 Create `UserRepository.java` extending `JpaRepository<User, UUID>` with methods: `Optional<User> findByUsername(String username)` and `boolean existsByUsername(String username)`
+- [x] 2.5 Create package `com.organiclever.be.auth.dto` with `package-info.java`
+- [x] 2.6 Create `RegisterRequest.java` record with: `username` annotated `@NotBlank @Size(min=5, max=50) @Pattern(regexp="^[a-zA-Z0-9_]{5,50}$")` (alphanumeric + underscore only, min 5 chars); `password` annotated `@NotBlank @Size(min=8, max=128) @Pattern(regexp="^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\,.<>/?]).{8,128}$")` (must contain uppercase, lowercase, digit, special character)
+- [x] 2.7 Create `LoginRequest.java` record with `@NotBlank String username` and `@NotBlank String password`
+- [x] 2.8 Create `RegisterResponse.java` record with `UUID id`, `String username`, `Instant createdAt`
+- [x] 2.9 Create `AuthResponse.java` record with `String token`, `String type`; add static factory `bearer(String token)`
+- [x] 2.10 Create package `com.organiclever.be.config` with `package-info.java`
+- [x] 2.11 Create `JpaAuditingConfig.java` in `com.organiclever.be.config` annotated with `@Configuration @EnableJpaAuditing(auditorAwareRef = "auditorProvider")`; define an `AuditorAware<String> auditorProvider()` lambda bean that reads `auth.getName()` from `SecurityContextHolder` and falls back to `"system"` for unauthenticated/anonymous users; use `"anonymousUser".equals(auth.getPrincipal())` (constant first, NPE-safe)
+- [x] 2.12 Verify `mvn compile -q` succeeds
 - [ ] 2.13 Commit: `feat(organiclever-be): add User domain model and repository`
 
 ### Validation
 
-- [ ] `mvn compile` exits 0
-- [ ] `User` entity has `@NullMarked` on its package (via `package-info.java`)
-- [ ] `User` entity has all 6 audit trail columns annotated with `@CreatedDate`, `@CreatedBy`, `@LastModifiedDate`, `@LastModifiedBy`, and `@Nullable` for soft-delete fields
-- [ ] `User` entity is annotated with `@EntityListeners(AuditingEntityListener.class)` and `@Where(clause = "deleted_at IS NULL")`
-- [ ] `RegisterRequest.username` has `@NotBlank`, `@Size(min=5, max=50)`, and `@Pattern` (alphanumeric + underscore)
-- [ ] `RegisterRequest.password` has `@NotBlank`, `@Size(min=8, max=128)`, and `@Pattern` (uppercase + lowercase + digit + special char)
-- [ ] All DTO classes are Java records (immutable)
-- [ ] `UserRepository` extends `JpaRepository<User, UUID>` with no custom SQL
+- [x] `mvn compile` exits 0
+- [x] `User` entity has `@NullMarked` on its package (via `package-info.java`)
+- [x] `User` entity has all 6 audit trail columns annotated with `@CreatedDate`, `@CreatedBy`, `@LastModifiedDate`, `@LastModifiedBy`, and `@Nullable` for soft-delete fields
+- [x] `User` entity is annotated with `@EntityListeners(AuditingEntityListener.class)` and `@SQLRestriction("deleted_at IS NULL")` (Hibernate 7 replacement for `@Where`)
+- [x] `RegisterRequest.username` has `@NotBlank`, `@Size(min=5, max=50)`, and `@Pattern` (alphanumeric + underscore)
+- [x] `RegisterRequest.password` has `@NotBlank`, `@Size(min=8, max=128)`, and `@Pattern` (uppercase + lowercase + digit + special char)
+- [x] All DTO classes are Java records (immutable)
+- [x] `UserRepository` extends `JpaRepository<User, UUID>` with no custom SQL
 
 ## Phase 3 - Spring Security and JWT Infrastructure
 
