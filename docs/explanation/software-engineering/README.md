@@ -11,7 +11,7 @@ tags:
   - patterns
   - index
 created: 2026-01-20
-updated: 2026-01-20
+updated: 2026-03-09
 ---
 
 # Software Design
@@ -233,4 +233,4 @@ The open-sharia-enterprise project applies both C4 and DDD principles:
 
 ---
 
-**Last Updated**: 2026-01-20
+**Last Updated**: 2026-03-09
