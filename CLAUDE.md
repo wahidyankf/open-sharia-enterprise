@@ -108,14 +108,14 @@ npm run doctor           # Check all required tools (volta, node, npm, java, mav
 **See**: [governance/development/infra/nx-targets.md](./governance/development/infra/nx-targets.md) for canonical target names, mandatory targets per project type, and caching rules.
 
 **Go projects**: All Go projects (`ayokoding-cli`, `oseplatform-cli`, `rhino-cli`,
-`libs/golang-commons`, `libs/hugo-commons`) enforce ≥95% **line coverage** (matching Codecov's
+`libs/golang-commons`, `libs/hugo-commons`) enforce ≥90% **line coverage** (matching Codecov's
 algorithm) via `rhino-cli test-coverage validate`. Coverage is measured with
 `go test -coverprofile=cover.out ./...` and enforced by
-`rhino-cli test-coverage validate <project>/cover.out 95` — both run as part of `test:quick`.
+`rhino-cli test-coverage validate <project>/cover.out 90` — both run as part of `test:quick`.
 
-**TypeScript projects**: `organiclever-web` additionally enforces ≥95% **line coverage** (matching
+**TypeScript projects**: `organiclever-web` additionally enforces ≥90% **line coverage** (matching
 Codecov's algorithm) via `rhino-cli test-coverage validate` applied to the LCOV output from Vitest:
-`rhino-cli test-coverage validate apps/organiclever-web/coverage/lcov.info 95` — run as part of `test:quick`.
+`rhino-cli test-coverage validate apps/organiclever-web/coverage/lcov.info 90` — run as part of `test:quick`.
 
 **`test:integration` caching**: Integration tests for `organiclever-web` (MSW), `organiclever-be-jasb`
 (MockMvc), `hugo-commons` (Godog + tmpdir mocks), and `golang-commons` (Godog + mock closures)
