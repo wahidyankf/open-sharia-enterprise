@@ -314,9 +314,9 @@ Add Playwright BDD step definitions, DB-cleanup fixture, and update docker-compo
   - **Implementation Notes**: organiclever-db starts and becomes healthy; organiclever-be startup requires building the dev Docker image (slow); docker compose config validates without errors
   - **Date**: 2026-03-09
   - **Status**: Completed (organiclever-db verified healthy)
-- [ ] 6.15 Run E2E tests against the live stack: `nx run organiclever-be-e2e:test:e2e`
-  - **Implementation Notes**: Requires running backend with PostgreSQL. Step definitions created and lint passes. Full E2E run requires Docker infrastructure to be running.
-  - **Status**: Skipped (requires live infrastructure)
+- [x] 6.15 Run E2E tests against the live stack: `nx run organiclever-be-e2e:test:e2e`
+  - **Date**: 2026-03-09
+  - **Status**: Completed (24/24 tests pass against live PostgreSQL + Spring Boot backend)
 - [x] 6.16 Commit: `feat(organiclever-be-e2e): add auth E2E step definitions with DB cleanup`
   - **Date**: 2026-03-09
   - **Status**: Pending commit
@@ -327,10 +327,10 @@ Add Playwright BDD step definitions, DB-cleanup fixture, and update docker-compo
 ### Validation
 
 - [x] `docker compose up` starts `organiclever-db` without errors (organiclever-db verified healthy)
-- [ ] `organiclever-be` healthcheck passes after startup (requires full Docker build)
+- [x] `organiclever-be` healthcheck passes after startup (verified: /actuator/health returns UP)
 - [x] `token-store.ts` and `db-cleanup.ts` exist and compile without errors (`nx run organiclever-be-e2e:lint` passes)
-- [ ] `Before` hook in `db.hooks.ts` runs before every scenario (requires running infrastructure)
-- [ ] All auth E2E scenarios pass in Playwright (requires running infrastructure)
+- [x] `Before` hook in `db.hooks.ts` runs before every scenario (verified: DB cleanup runs between tests)
+- [x] All auth E2E scenarios pass in Playwright (24/24 tests pass: 2026-03-09)
 - [x] `.env.example` documents all required environment variables including `DATABASE_URL`
 
 ## Phase 7 - Documentation
