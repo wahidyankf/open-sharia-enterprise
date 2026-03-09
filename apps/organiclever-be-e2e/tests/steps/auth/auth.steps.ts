@@ -5,7 +5,7 @@ import { setToken, getToken } from "../../utils/token-store";
 
 const { Given, When, Then } = createBdd();
 
-When("a client sends POST /api/v1/auth/register with body:", async ({ request }, body: string) => {
+When(/^a client sends POST \/api\/v1\/auth\/register with body:$/, async ({ request }, body: string) => {
   setResponse(
     await request.post("/api/v1/auth/register", {
       data: JSON.parse(body) as Record<string, unknown>,
@@ -14,7 +14,7 @@ When("a client sends POST /api/v1/auth/register with body:", async ({ request },
   );
 });
 
-When("a client sends POST /api/v1/auth/login with body:", async ({ request }, body: string) => {
+When(/^a client sends POST \/api\/v1\/auth\/login with body:$/, async ({ request }, body: string) => {
   setResponse(
     await request.post("/api/v1/auth/login", {
       data: JSON.parse(body) as Record<string, unknown>,
@@ -49,11 +49,11 @@ Given("the client has logged in as {string} and stored the JWT token", async ({ 
   setToken(body.token);
 });
 
-When("a client sends GET /api/v1/hello without an Authorization header", async ({ request }) => {
+When(/^a client sends GET \/api\/v1\/hello without an Authorization header$/, async ({ request }) => {
   setResponse(await request.get("/api/v1/hello"));
 });
 
-When("a client sends GET /api/v1/hello with the stored Bearer token", async ({ request }) => {
+When(/^a client sends GET \/api\/v1\/hello with the stored Bearer token$/, async ({ request }) => {
   setResponse(
     await request.get("/api/v1/hello", {
       headers: { Authorization: `Bearer ${getToken()}` },
@@ -61,7 +61,7 @@ When("a client sends GET /api/v1/hello with the stored Bearer token", async ({ r
   );
 });
 
-When("a client sends GET /api/v1/hello with an expired Bearer token", async ({ request }) => {
+When(/^a client sends GET \/api\/v1\/hello with an expired Bearer token$/, async ({ request }) => {
   // This token was signed with a valid secret but has exp in the past.
   const expiredToken =
     "eyJhbGciOiJIUzI1NiJ9" + ".eyJzdWIiOiJ0ZXN0dXNlciIsImlhdCI6MTAwMDAwMDAwMCwiZXhwIjoxMDAwMDAwMDAxfQ" + ".invalid";
@@ -72,13 +72,16 @@ When("a client sends GET /api/v1/hello with an expired Bearer token", async ({ r
   );
 });
 
-When("a client sends GET /api/v1/hello with Authorization header {string}", async ({ request }, header: string) => {
-  setResponse(
-    await request.get("/api/v1/hello", {
-      headers: { Authorization: header },
-    }),
-  );
-});
+When(
+  /^a client sends GET \/api\/v1\/hello with Authorization header "([^"]*)"$/,
+  async ({ request }, header: string) => {
+    setResponse(
+      await request.get("/api/v1/hello", {
+        headers: { Authorization: header },
+      }),
+    );
+  },
+);
 
 Then(
   "the response body should contain {string} equal to {string}",

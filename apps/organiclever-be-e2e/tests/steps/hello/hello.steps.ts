@@ -1,6 +1,7 @@
 import { expect } from "@playwright/test";
 import { createBdd } from "playwright-bdd";
 import { setResponse, getResponse } from "../../utils/response-store";
+import { getToken } from "../../utils/token-store";
 
 const { When, Then } = createBdd();
 
@@ -15,6 +16,17 @@ When(/^a client sends GET \/api\/v1\/hello with an Origin header of (.+)$/, asyn
     }),
   );
 });
+
+When(
+  /^a client sends GET \/api\/v1\/hello with the stored Bearer token and Origin header (.+)$/,
+  async ({ request }, origin: string) => {
+    setResponse(
+      await request.get("/api/v1/hello", {
+        headers: { Authorization: `Bearer ${getToken()}`, Origin: origin },
+      }),
+    );
+  },
+);
 
 Then(/^the response body should be \{"message":"world!"\}$/, async () => {
   const body = await getResponse().json();
