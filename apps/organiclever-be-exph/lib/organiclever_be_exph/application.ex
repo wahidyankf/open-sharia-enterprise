@@ -10,7 +10,8 @@ defmodule OrganicleverBeExph.Application do
     children = [
       OrganicleverBeExphWeb.Telemetry,
       OrganicleverBeExph.Repo,
-      {DNSCluster, query: Application.get_env(:organiclever_be_exph, :dns_cluster_query) || :ignore},
+      {DNSCluster,
+       query: Application.get_env(:organiclever_be_exph, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: OrganicleverBeExph.PubSub},
       # Start a worker by calling: OrganicleverBeExph.Worker.start_link(arg)
       # {OrganicleverBeExph.Worker, arg},

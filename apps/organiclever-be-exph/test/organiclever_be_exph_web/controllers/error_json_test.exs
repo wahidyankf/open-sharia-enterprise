@@ -1,8 +1,12 @@
 defmodule OrganicleverBeExphWeb.ErrorJSONTest do
-  use OrganicleverBeExphWeb.ConnCase, async: true
+  use ExUnit.Case, async: true
+
+  @moduletag :unit
 
   test "renders 404" do
-    assert OrganicleverBeExphWeb.ErrorJSON.render("404.json", %{}) == %{errors: %{detail: "Not Found"}}
+    assert OrganicleverBeExphWeb.ErrorJSON.render("404.json", %{}) == %{
+             errors: %{detail: "Not Found"}
+           }
   end
 
   test "renders 500" do
