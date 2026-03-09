@@ -74,7 +74,7 @@ Create the `User` entity, `UserRepository`, and all associated packages.
 - [x] 2.10 Create package `com.organiclever.be.config` with `package-info.java`
 - [x] 2.11 Create `JpaAuditingConfig.java` in `com.organiclever.be.config` annotated with `@Configuration @EnableJpaAuditing(auditorAwareRef = "auditorProvider")`; define an `AuditorAware<String> auditorProvider()` lambda bean that reads `auth.getName()` from `SecurityContextHolder` and falls back to `"system"` for unauthenticated/anonymous users; use `"anonymousUser".equals(auth.getPrincipal())` (constant first, NPE-safe)
 - [x] 2.12 Verify `mvn compile -q` succeeds
-- [ ] 2.13 Commit: `feat(organiclever-be): add User domain model and repository`
+- [x] 2.13 Commit: `feat(organiclever-be): add User domain model and repository`
 
 ### Validation
 
@@ -93,32 +93,32 @@ Add `SecurityConfig`, `JwtUtil`, `JwtAuthFilter`, and custom exceptions.
 
 ### Tasks
 
-- [ ] 3.1 Create package `com.organiclever.be.security` with `package-info.java`
-- [ ] 3.2 Create `JwtUtil.java` with constructor-injected `@Value("${app.jwt.secret}")` and `@Value("${app.jwt.expiration-ms:86400000}")`; implement `generateToken(String username)`, `extractUsername(String token)`, and `isTokenValid(String token)` using JJWT 0.12.x API (`Keys.hmacShaKeyFor`, `Jwts.builder()`, `Jwts.parser().verifyWith()`)
-- [ ] 3.3 Create `JwtAuthFilter.java` extending `OncePerRequestFilter`; inject `JwtUtil` and `UserDetailsService`; extract `Bearer` token from `Authorization` header; if valid, load `UserDetails`, create `UsernamePasswordAuthenticationToken`, set in `SecurityContextHolder`
-- [ ] 3.4 Create `SecurityConfig.java` annotated with `@Configuration @EnableWebSecurity`; define `SecurityFilterChain` bean: disable CSRF, stateless sessions, permit `/api/v1/auth/**` and `/actuator/**`, require auth for all other requests, add `JwtAuthFilter` before `UsernamePasswordAuthenticationFilter`
-- [ ] 3.5 Add `CorsConfigurationSource` bean inside `SecurityConfig`; use `setAllowedOrigins(List.of("http://localhost:3200", "https://www.organiclever.com"))` — explicit whitelist only, no wildcards; allow methods GET/POST/PUT/DELETE/OPTIONS; restrict headers to `Authorization`, `Content-Type`, `Accept`; wire into `HttpSecurity` via `.cors(cors -> cors.configurationSource(corsConfigurationSource()))`
-- [ ] 3.6 Add `PasswordEncoder` bean (`BCryptPasswordEncoder(10)`) inside `SecurityConfig`
-- [ ] 3.7 Add `AuthenticationManager` bean inside `SecurityConfig` delegating to `AuthenticationConfiguration`
-- [ ] 3.8 Remove or convert `CorsConfig.java` (the existing `WebMvcConfigurer`): either delete it if CORS is fully handled in `SecurityConfig`, or annotate with `@ConditionalOnMissingBean(SecurityFilterChain.class)` to avoid double-CORS configuration
-- [ ] 3.9 Create package `com.organiclever.be.auth.service` with `package-info.java`
-- [ ] 3.10 Create `UsernameAlreadyExistsException.java` in `com.organiclever.be.auth.service` extending `Exception` (not `RuntimeException`); checked exception makes the error path explicit in the service and controller signatures
-- [ ] 3.11 Create `InvalidCredentialsException.java` in `com.organiclever.be.auth.service` extending `Exception` (not `RuntimeException`); same reasoning as above
-- [ ] 3.12 Create `GlobalExceptionHandler.java` in `com.organiclever.be.config`: handle `UsernameAlreadyExistsException` → 409, handle `InvalidCredentialsException` → 401, each returning `Map.of("message", ex.getMessage())`
-- [ ] 3.13 Verify `mvn compile -q` succeeds
+- [x] 3.1 Create package `com.organiclever.be.security` with `package-info.java`
+- [x] 3.2 Create `JwtUtil.java` with constructor-injected `@Value("${app.jwt.secret}")` and `@Value("${app.jwt.expiration-ms:86400000}")`; implement `generateToken(String username)`, `extractUsername(String token)`, and `isTokenValid(String token)` using JJWT 0.12.x API (`Keys.hmacShaKeyFor`, `Jwts.builder()`, `Jwts.parser().verifyWith()`)
+- [x] 3.3 Create `JwtAuthFilter.java` extending `OncePerRequestFilter`; inject `JwtUtil` and `UserDetailsService`; extract `Bearer` token from `Authorization` header; if valid, load `UserDetails`, create `UsernamePasswordAuthenticationToken`, set in `SecurityContextHolder`
+- [x] 3.4 Create `SecurityConfig.java` annotated with `@Configuration @EnableWebSecurity`; define `SecurityFilterChain` bean: disable CSRF, stateless sessions, permit `/api/v1/auth/**` and `/actuator/**`, require auth for all other requests, add `JwtAuthFilter` before `UsernamePasswordAuthenticationFilter`
+- [x] 3.5 Add `CorsConfigurationSource` bean inside `SecurityConfig`; use `setAllowedOrigins(List.of("http://localhost:3200", "https://www.organiclever.com"))` — explicit whitelist only, no wildcards; allow methods GET/POST/PUT/DELETE/OPTIONS; restrict headers to `Authorization`, `Content-Type`, `Accept`; wire into `HttpSecurity` via `.cors(cors -> cors.configurationSource(corsConfigurationSource()))`
+- [x] 3.6 Add `PasswordEncoder` bean (`BCryptPasswordEncoder(10)`) inside `SecurityConfig`
+- [x] 3.7 Add `AuthenticationManager` bean inside `SecurityConfig` delegating to `AuthenticationConfiguration`
+- [x] 3.8 Remove or convert `CorsConfig.java` (the existing `WebMvcConfigurer`): deleted as CORS is fully handled in `SecurityConfig`
+- [x] 3.9 Create package `com.organiclever.be.auth.service` with `package-info.java`
+- [x] 3.10 Create `UsernameAlreadyExistsException.java` in `com.organiclever.be.auth.service` extending `Exception` (not `RuntimeException`); checked exception makes the error path explicit in the service and controller signatures
+- [x] 3.11 Create `InvalidCredentialsException.java` in `com.organiclever.be.auth.service` extending `Exception` (not `RuntimeException`); same reasoning as above
+- [x] 3.12 Create `GlobalExceptionHandler.java` in `com.organiclever.be.config`: handle `UsernameAlreadyExistsException` → 409, handle `InvalidCredentialsException` → 401, each returning `Map.of("message", ex.getMessage())`
+- [x] 3.13 Verify `mvn compile -q` succeeds
 - [ ] 3.14 Commit: `feat(organiclever-be): add Spring Security and JWT infrastructure`
 
 ### Validation
 
-- [ ] `mvn compile` exits 0
-- [ ] `SecurityConfig` disables CSRF and configures stateless sessions
-- [ ] `/api/v1/auth/**` and `/actuator/**` are permitted without authentication
-- [ ] `JwtUtil` uses `Keys.hmacShaKeyFor()` (not deprecated constructors)
-- [ ] `GlobalExceptionHandler` handles both custom exceptions
-- [ ] `CorsConfigurationSource` uses `setAllowedOrigins` (not patterns/wildcards) with exactly `http://localhost:3200` and `https://www.organiclever.com`
-- [ ] Allowed headers restricted to `Authorization`, `Content-Type`, `Accept`
-- [ ] `UserRepository` uses only derived query methods — no `@Query` with string concatenation
-- [ ] `AuthSteps.java` uses `ObjectMapper.writeValueAsString(Map.of(...))` for all JSON construction — no string concatenation
+- [x] `mvn compile` exits 0
+- [x] `SecurityConfig` disables CSRF and configures stateless sessions
+- [x] `/api/v1/auth/**` and `/actuator/**` are permitted without authentication
+- [x] `JwtUtil` uses `Keys.hmacShaKeyFor()` (not deprecated constructors)
+- [x] `GlobalExceptionHandler` handles both custom exceptions
+- [x] `CorsConfigurationSource` uses `setAllowedOrigins` (not patterns/wildcards) with exactly `http://localhost:3200` and `https://www.organiclever.com`
+- [x] Allowed headers restricted to `Authorization`, `Content-Type`, `Accept`
+- [x] `UserRepository` uses only derived query methods — no `@Query` with string concatenation
+- [x] `AuthSteps.java` uses `ObjectMapper.writeValueAsString(Map.of(...))` for all JSON construction — no string concatenation
 
 ## Phase 4 - Auth Controller and Service
 
