@@ -38,7 +38,7 @@ Add all new Maven dependencies and create the Liquibase changelog.
 - [ ] 1.4 Add `postgresql` driver (runtime scope) to `pom.xml`
 - [ ] 1.5 Add `liquibase-core` to `pom.xml` (no separate dialect jar required)
 - [ ] 1.6 Add `jjwt-api`, `jjwt-impl` (runtime), `jjwt-jackson` (runtime) to `pom.xml`; add `<jjwt.version>0.12.6</jjwt.version>` property; use `${jjwt.version}` in version tags
-- [ ] 1.7 Add `h2` (test scope) to `pom.xml`
+- [ ] 1.7 Add `h2` (test scope) and `spring-security-test` (test scope) to `pom.xml`
 - [ ] 1.8 Create directory `apps/organiclever-be/src/main/resources/db/changelog/changes/`
 - [ ] 1.9 Create `db/changelog/db.changelog-master.yaml` with `includeAll` pointing to `db/changelog/changes/`
 - [ ] 1.10 Create `db/changelog/changes/001-create-users-table.sql` as a Liquibase SQL formatted changelog; include two changesets: `dbms:postgresql` (using `gen_random_uuid()`) and `dbms:h2` (using `RANDOM_UUID()`); add `-- rollback DROP TABLE users;` after each `CREATE TABLE`
@@ -63,7 +63,7 @@ Create the `User` entity, `UserRepository`, and all associated packages.
 ### Tasks
 
 - [ ] 2.1 Create package `com.organiclever.be.auth.model` with `package-info.java` (`@NullMarked`)
-- [ ] 2.2 Create `User.java` entity with fields: `id (UUID)`, `username`, `passwordHash`, `createdAt`; annotate with `@Entity`, `@Table(name="users")`; use `@GeneratedValue(strategy=GenerationType.UUID)` for `id`; add `@PrePersist` to set `createdAt`; no public setters (use all-args constructor or builder)
+- [ ] 2.2 Create `User.java` entity with fields: `id (UUID)`, `username`, `passwordHash`, `createdAt`; annotate with `@Entity`, `@Table(name="users")`; use `@GeneratedValue(strategy=GenerationType.UUID)` for `id`; add `@PrePersist` to set `createdAt`; add a `protected User()` no-arg constructor (required by JPA) and a `public User(String username, String passwordHash)` constructor; no public setters
 - [ ] 2.3 Create package `com.organiclever.be.auth.repository` with `package-info.java`
 - [ ] 2.4 Create `UserRepository.java` extending `JpaRepository<User, UUID>` with methods: `Optional<User> findByUsername(String username)` and `boolean existsByUsername(String username)`
 - [ ] 2.5 Create package `com.organiclever.be.auth.dto` with `package-info.java`

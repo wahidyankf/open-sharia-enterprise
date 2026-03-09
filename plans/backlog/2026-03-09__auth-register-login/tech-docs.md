@@ -112,7 +112,16 @@ public class User {
 
     @PrePersist
     private void prePersist() { this.createdAt = Instant.now(); }
-    // getters, no public setters (use constructor or builder)
+
+    // Required by JPA
+    protected User() {}
+
+    public User(String username, String passwordHash) {
+        this.username = username;
+        this.passwordHash = passwordHash;
+    }
+
+    // getters, no public setters
 }
 ```
 
@@ -271,6 +280,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
             .csrf(csrf -> csrf.disable())
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/v1/auth/**").permitAll()
@@ -494,6 +504,13 @@ CREATE TABLE users (
     <artifactId>h2</artifactId>
     <scope>test</scope>
 </dependency>
+
+<!-- Spring Security Test - required for SecurityMockMvcConfigurer.springSecurity() -->
+<dependency>
+    <groupId>org.springframework.security</groupId>
+    <artifactId>spring-security-test</artifactId>
+    <scope>test</scope>
+</dependency>
 ```
 
 ### Properties section - add jjwt version property
@@ -505,15 +522,6 @@ CREATE TABLE users (
 (Use the property in the version tags above: `${jjwt.version}`.)
 
 ## Application Configuration
-
-### application.yml additions
-
-```yaml
-app:
-  jwt:
-    secret: ${APP_JWT_SECRET:change-me-in-production-at-least-32-chars-long}
-    expiration-ms: 86400000 # 24 hours
-```
 
 ### application.yml additions
 
