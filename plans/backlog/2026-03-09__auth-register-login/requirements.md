@@ -20,6 +20,7 @@ title: "Auth Register and Login - Requirements"
 - Validation failures return structured JSON error bodies consistent with Spring's existing error format.
 - Integration tests must not require an external database or network call.
 - The Liquibase changelog must be idempotent when re-run against an empty schema.
+- SQL injection must be prevented via parameterized queries (Spring Data JPA derived methods only; no string-concatenated SQL). `@Pattern` on input fields provides a secondary defense at the HTTP boundary.
 
 ## Constraints
 
@@ -31,6 +32,7 @@ title: "Auth Register and Login - Requirements"
 - All REST API endpoints must be versioned under `/api/v1/` (e.g., `/api/v1/auth/register`).
 - No `RuntimeException` subclasses in application code: use checked exceptions (`extends Exception`) so error paths are visible in method signatures.
 - Every database table MUST include 6 audit trail columns: `created_at`, `created_by`, `updated_at`, `updated_by`, `deleted_at` (nullable), `deleted_by` (nullable). Deletion is always soft (set `deleted_at`/`deleted_by`; never `DELETE` rows).
+- CORS must explicitly whitelist `organiclever-web` origins only: `http://localhost:3200` (dev) and `https://www.organiclever.com` (production). Wildcard origins are forbidden.
 
 ## User Stories
 
@@ -98,6 +100,30 @@ Feature: User Registration
       """
     Then the response status code should be 400
     And the response body should contain a validation error for "password"
+
+  Scenario: Reject registration with weak password (no uppercase)
+    When a client sends POST /api/v1/auth/register with body:
+      """
+      { "username": "validuser", "password": "alllower1!" }
+      """
+    Then the response status code should be 400
+    And the response body should contain a validation error for "password"
+
+  Scenario: Reject registration with weak password (no special character)
+    When a client sends POST /api/v1/auth/register with body:
+      """
+      { "username": "validuser", "password": "NoSpecial1" }
+      """
+    Then the response status code should be 400
+    And the response body should contain a validation error for "password"
+
+  Scenario: Reject registration with invalid username format
+    When a client sends POST /api/v1/auth/register with body:
+      """
+      { "username": "invalid user!", "password": "s3cur3Pass!" }
+      """
+    Then the response status code should be 400
+    And the response body should contain a validation error for "username"
 ```
 
 ### Story 2 - Log in and receive a JWT token
@@ -205,10 +231,14 @@ Feature: JWT Protected Endpoints
 
 ### RegisterRequest
 
-| Field    | Rule                            | HTTP status on violation |
-| -------- | ------------------------------- | ------------------------ |
-| username | Not blank, min 3 chars, max 50  | 400                      |
-| password | Not blank, min 8 chars, max 128 | 400                      |
+| Field    | Rule                                                                                                                                        | HTTP status on violation |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| username | Not blank, min 5 chars, max 50, alphanumeric + underscore only (regex: `^[a-zA-Z0-9_]{5,50}$`)                                              | 400                      |
+| password | Not blank, min 8 chars, max 128, must contain at least one uppercase, one lowercase, one digit, one special character (see password policy) | 400                      |
+
+**Password policy regex**: `^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\,.<>/?]).{8,128}$`
+
+Accepted special characters: `! @ # $ % ^ & * ( ) _ + - = [ ] { } ; ' : " \ , . < > / ?`
 
 ### LoginRequest
 

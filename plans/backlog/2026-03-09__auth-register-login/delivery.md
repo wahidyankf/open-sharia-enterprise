@@ -67,7 +67,7 @@ Create the `User` entity, `UserRepository`, and all associated packages.
 - [ ] 2.3 Create package `com.organiclever.be.auth.repository` with `package-info.java`
 - [ ] 2.4 Create `UserRepository.java` extending `JpaRepository<User, UUID>` with methods: `Optional<User> findByUsername(String username)` and `boolean existsByUsername(String username)`
 - [ ] 2.5 Create package `com.organiclever.be.auth.dto` with `package-info.java`
-- [ ] 2.6 Create `RegisterRequest.java` record with `@NotBlank @Size(min=3, max=50) String username` and `@NotBlank @Size(min=8, max=128) String password`
+- [ ] 2.6 Create `RegisterRequest.java` record with: `username` annotated `@NotBlank @Size(min=5, max=50) @Pattern(regexp="^[a-zA-Z0-9_]{5,50}$")` (alphanumeric + underscore only, min 5 chars); `password` annotated `@NotBlank @Size(min=8, max=128) @Pattern(regexp="^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\,.<>/?]).{8,128}$")` (must contain uppercase, lowercase, digit, special character)
 - [ ] 2.7 Create `LoginRequest.java` record with `@NotBlank String username` and `@NotBlank String password`
 - [ ] 2.8 Create `RegisterResponse.java` record with `UUID id`, `String username`, `Instant createdAt`
 - [ ] 2.9 Create `AuthResponse.java` record with `String token`, `String type`; add static factory `bearer(String token)`
@@ -82,6 +82,8 @@ Create the `User` entity, `UserRepository`, and all associated packages.
 - [ ] `User` entity has `@NullMarked` on its package (via `package-info.java`)
 - [ ] `User` entity has all 6 audit trail columns annotated with `@CreatedDate`, `@CreatedBy`, `@LastModifiedDate`, `@LastModifiedBy`, and `@Nullable` for soft-delete fields
 - [ ] `User` entity is annotated with `@EntityListeners(AuditingEntityListener.class)` and `@Where(clause = "deleted_at IS NULL")`
+- [ ] `RegisterRequest.username` has `@NotBlank`, `@Size(min=5, max=50)`, and `@Pattern` (alphanumeric + underscore)
+- [ ] `RegisterRequest.password` has `@NotBlank`, `@Size(min=8, max=128)`, and `@Pattern` (uppercase + lowercase + digit + special char)
 - [ ] All DTO classes are Java records (immutable)
 - [ ] `UserRepository` extends `JpaRepository<User, UUID>` with no custom SQL
 
@@ -95,7 +97,7 @@ Add `SecurityConfig`, `JwtUtil`, `JwtAuthFilter`, and custom exceptions.
 - [ ] 3.2 Create `JwtUtil.java` with constructor-injected `@Value("${app.jwt.secret}")` and `@Value("${app.jwt.expiration-ms:86400000}")`; implement `generateToken(String username)`, `extractUsername(String token)`, and `isTokenValid(String token)` using JJWT 0.12.x API (`Keys.hmacShaKeyFor`, `Jwts.builder()`, `Jwts.parser().verifyWith()`)
 - [ ] 3.3 Create `JwtAuthFilter.java` extending `OncePerRequestFilter`; inject `JwtUtil` and `UserDetailsService`; extract `Bearer` token from `Authorization` header; if valid, load `UserDetails`, create `UsernamePasswordAuthenticationToken`, set in `SecurityContextHolder`
 - [ ] 3.4 Create `SecurityConfig.java` annotated with `@Configuration @EnableWebSecurity`; define `SecurityFilterChain` bean: disable CSRF, stateless sessions, permit `/api/v1/auth/**` and `/actuator/**`, require auth for all other requests, add `JwtAuthFilter` before `UsernamePasswordAuthenticationFilter`
-- [ ] 3.5 Add `CorsConfigurationSource` bean inside `SecurityConfig` (allow `http://localhost:*`, methods GET/POST/PUT/DELETE/OPTIONS, all headers, no credentials); wire it into `HttpSecurity` via `.cors(cors -> cors.configurationSource(...))`
+- [ ] 3.5 Add `CorsConfigurationSource` bean inside `SecurityConfig`; use `setAllowedOrigins(List.of("http://localhost:3200", "https://www.organiclever.com"))` — explicit whitelist only, no wildcards; allow methods GET/POST/PUT/DELETE/OPTIONS; restrict headers to `Authorization`, `Content-Type`, `Accept`; wire into `HttpSecurity` via `.cors(cors -> cors.configurationSource(corsConfigurationSource()))`
 - [ ] 3.6 Add `PasswordEncoder` bean (`BCryptPasswordEncoder(10)`) inside `SecurityConfig`
 - [ ] 3.7 Add `AuthenticationManager` bean inside `SecurityConfig` delegating to `AuthenticationConfiguration`
 - [ ] 3.8 Remove or convert `CorsConfig.java` (the existing `WebMvcConfigurer`): either delete it if CORS is fully handled in `SecurityConfig`, or annotate with `@ConditionalOnMissingBean(SecurityFilterChain.class)` to avoid double-CORS configuration
@@ -113,6 +115,10 @@ Add `SecurityConfig`, `JwtUtil`, `JwtAuthFilter`, and custom exceptions.
 - [ ] `/api/v1/auth/**` and `/actuator/**` are permitted without authentication
 - [ ] `JwtUtil` uses `Keys.hmacShaKeyFor()` (not deprecated constructors)
 - [ ] `GlobalExceptionHandler` handles both custom exceptions
+- [ ] `CorsConfigurationSource` uses `setAllowedOrigins` (not patterns/wildcards) with exactly `http://localhost:3200` and `https://www.organiclever.com`
+- [ ] Allowed headers restricted to `Authorization`, `Content-Type`, `Accept`
+- [ ] `UserRepository` uses only derived query methods — no `@Query` with string concatenation
+- [ ] `AuthSteps.java` uses `ObjectMapper.writeValueAsString(Map.of(...))` for all JSON construction — no string concatenation
 
 ## Phase 4 - Auth Controller and Service
 
@@ -143,7 +149,7 @@ Create Gherkin feature files and Cucumber step definitions for all auth scenario
 ### Tasks
 
 - [ ] 5.1 Create directory `specs/apps/organiclever-be/auth/`
-- [ ] 5.2 Create `specs/apps/organiclever-be/auth/register.feature` with all register scenarios from `requirements.md` Story 1 acceptance criteria (6 scenarios: success, duplicate, empty username, short username, empty password, short password)
+- [ ] 5.2 Create `specs/apps/organiclever-be/auth/register.feature` with all register scenarios from `requirements.md` Story 1 acceptance criteria (all scenarios including: success, duplicate, empty username, short username, invalid username format, empty password, short password, weak password no uppercase, weak password no special character)
 - [ ] 5.3 Create `specs/apps/organiclever-be/auth/login.feature` with all login scenarios from `requirements.md` Story 2 acceptance criteria (5 scenarios: success, wrong password, unknown user, empty username, empty password)
 - [ ] 5.4 Create `specs/apps/organiclever-be/auth/jwt-protection.feature` with all JWT protection scenarios from `requirements.md` Story 3 acceptance criteria (6 scenarios: no token 401, valid token 200, expired token 401, malformed token 401, actuator no-auth, auth endpoint no-auth)
 - [ ] 5.5 Update `specs/apps/organiclever-be/README.md` to list the new `auth/` directory and its feature files

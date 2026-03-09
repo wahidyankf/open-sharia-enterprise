@@ -71,8 +71,17 @@ import org.jspecify.annotations.NullMarked;
 ```java
 // RegisterRequest.java
 public record RegisterRequest(
-    @NotBlank @Size(min = 3, max = 50) String username,
-    @NotBlank @Size(min = 8, max = 128) String password
+    @NotBlank
+    @Size(min = 5, max = 50)
+    @Pattern(regexp = "^[a-zA-Z0-9_]{5,50}$",
+             message = "Username must contain only letters, digits, or underscores")
+    String username,
+
+    @NotBlank
+    @Size(min = 8, max = 128)
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\,.<>/?]).{8,128}$",
+             message = "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character")
+    String password
 ) {}
 
 // LoginRequest.java
@@ -426,9 +435,13 @@ public class GlobalExceptionHandler {
 @Bean
 public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration config = new CorsConfiguration();
-    config.setAllowedOriginPatterns(List.of("http://localhost:*"));
+    // Explicit whitelist: organiclever-web only. No wildcards.
+    config.setAllowedOrigins(List.of(
+        "http://localhost:3200",          // organiclever-web dev
+        "https://www.organiclever.com"    // organiclever-web production
+    ));
     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-    config.setAllowedHeaders(List.of("*"));
+    config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
     config.setAllowCredentials(false);
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/api/**", config);
@@ -497,6 +510,7 @@ CREATE TABLE users (
 - The `password_hash` column is 255 chars; BCrypt output is 60 chars but 255 gives future headroom.
 - The `-- rollback` directive enables `liquibase rollback` without writing separate rollback SQL.
 - All 6 audit trail columns (`created_at`, `created_by`, `updated_at`, `updated_by`, `deleted_at`, `deleted_by`) are mandatory per the [database audit trail convention](../../../../governance/development/pattern/database-audit-trail.md). `deleted_at` / `deleted_by` being NULL means the row is active (soft-delete pattern).
+- `CONSTRAINT uq_users_username UNIQUE (username)` serves as both the uniqueness constraint and the lookup index for `findByUsername`. PostgreSQL and H2 both create a B-tree index automatically from this constraint — no separate `CREATE INDEX` is required.
 
 ## Dependencies to Add to pom.xml
 
@@ -773,12 +787,16 @@ public class AuthSteps {
             .andReturn());
     }
 
+    // Injected or declared; use Spring's ObjectMapper bean if available
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     @Given("a user {string} is already registered")
     public void userIsAlreadyRegistered(String username) throws Exception {
         mockMvc.perform(
             post("/api/v1/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"username\":\"" + username + "\",\"password\":\"s3cur3Pass!\"}"))
+                .content(objectMapper.writeValueAsString(
+                    Map.of("username", username, "password", "s3cur3Pass!"))))
         .andExpect(status().isCreated());
     }
 
@@ -788,7 +806,8 @@ public class AuthSteps {
         mockMvc.perform(
             post("/api/v1/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}"))
+                .content(objectMapper.writeValueAsString(
+                    Map.of("username", username, "password", password))))
         .andExpect(status().isCreated());
     }
 
@@ -797,7 +816,8 @@ public class AuthSteps {
         MvcResult result = mockMvc.perform(
             post("/api/v1/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"username\":\"" + username + "\",\"password\":\"s3cur3Pass!\"}"))
+                .content(objectMapper.writeValueAsString(
+                    Map.of("username", username, "password", "s3cur3Pass!"))))
         .andExpect(status().isOk())
         .andReturn();
         String token = JsonPath.read(result.getResponse().getContentAsString(), "$.token");
@@ -870,9 +890,13 @@ export function clearToken(): void {
 
 ### New file: tests/fixtures/db-cleanup.ts
 
-Connects to PostgreSQL and truncates the `users` table. Used in `Before` hooks to ensure
-each scenario starts with a clean database. Connection string is read from `DATABASE_URL`
-env var (defaulting to the docker-compose dev credentials).
+Connects to PostgreSQL and hard-deletes all rows from `users`. Used in `Before` hooks to
+ensure each scenario starts with a clean database. Connection string is read from
+`DATABASE_URL` env var (defaulting to the docker-compose dev credentials).
+
+Note: `DELETE FROM users` is a **test-only** hard delete used exclusively for scenario
+isolation. It does not violate the soft-delete convention, which applies only to application
+code. The query is a static string — no user input is ever concatenated into it.
 
 ```typescript
 import { Client } from "pg";
@@ -1105,6 +1129,63 @@ JWT-based authentication is inherently stateless. Enabling `SessionCreationPolic
 ### Why remove CorsConfig and move CORS to SecurityConfig?
 
 When Spring Security is active, it processes requests before `WebMvcConfigurer.addCorsMappings`. CORS preflight (`OPTIONS`) requests must be handled by the security filter chain. Configuring CORS via `CorsConfigurationSource` in `SecurityConfig` ensures consistent behavior.
+
+### How is SQL injection prevented?
+
+Three layers prevent SQL injection:
+
+1. **`@Pattern` input validation (Layer 1 — outermost)**
+   `RegisterRequest.username` is validated against `^[a-zA-Z0-9_]{5,50}$` before the request
+   reaches any service or repository method. SQL metacharacters (`'`, `"`, `;`, `--`, etc.)
+   are rejected at the HTTP layer with a 400 response. The username never reaches the
+   database with dangerous characters.
+
+2. **Spring Data JPA parameterized queries (Layer 2 — repository)**
+   `findByUsername(String username)` and `existsByUsername(String username)` are derived
+   query methods. Spring Data JPA translates them to JPQL, which Hibernate executes as
+   `PreparedStatement` with bound parameters. User input is **never concatenated** into a
+   SQL string — it is always passed as a typed parameter binding. This is structurally
+   immune to SQL injection regardless of the input content.
+
+3. **No custom `@Query` with string concatenation (Layer 3 — convention)**
+   No `@Query` annotations exist in `UserRepository`. Any future custom query added to this
+   or any other repository MUST use named JPQL parameters (`:paramName`) or positional
+   parameters (`?1`), never string concatenation. Native SQL queries that concatenate user
+   input are forbidden.
+
+**Integration test note**: `AuthSteps.java` uses `ObjectMapper.writeValueAsString(Map.of(...))`
+to construct JSON payloads — never string concatenation. This prevents malformed JSON and
+eliminates any injection risk even in test fixtures.
+
+### Why explicit CORS origin whitelist instead of wildcard?
+
+`setAllowedOrigins(List.of("http://localhost:3200", "https://www.organiclever.com"))` is used
+instead of `setAllowedOriginPatterns(List.of("*"))` or `setAllowedOriginPatterns(List.of("http://localhost:*"))`.
+Wildcards allow any origin to make cross-origin requests to the API, which violates the
+principle of least privilege and defeats CORS as a security layer. Only `organiclever-web`
+(port 3200 in dev, `www.organiclever.com` in production) is the legitimate consumer of this
+API. Explicitly listing origins ensures an attacker cannot use a different origin to issue
+authenticated requests from a user's browser.
+
+`setAllowedHeaders` is also restricted to `Authorization`, `Content-Type`, and `Accept` — the
+only headers the frontend needs. Allowing `*` headers is unnecessary.
+
+### Why strict username and password validation?
+
+**Username regex (`^[a-zA-Z0-9_]{5,50}$`)**: Restricts usernames to alphanumeric characters
+and underscores. Spaces, symbols, and Unicode are excluded to prevent homograph attacks
+(look-alike characters), injection attempts embedded in usernames, and display rendering
+issues. Minimum 5 characters ensures a meaningful identifier.
+
+**Password regex (lookahead-based)**: Enforces composition rules — at least one uppercase,
+one lowercase, one digit, one special character — before the length check. This raises the
+entropy floor significantly above a length-only policy. `@Pattern` uses Bean Validation, so
+violations produce a structured 400 with field-level error messages consistent with all other
+validation failures.
+
+Using `@Size` plus `@Pattern` together on the same field means both constraints are evaluated
+independently — a password that is too short and has no uppercase will report both violations
+in the `errors` array.
 
 ### Why audit trail columns on every table?
 
