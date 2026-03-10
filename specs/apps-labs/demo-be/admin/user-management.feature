@@ -38,7 +38,6 @@ Feature: Admin User Management
     And all returned users should have a display name matching "Alice"
 
   Scenario: Non-admin user is rejected with 403 when listing all users
-    Given a user "alice" is registered with password "Str0ng#Pass1"
-    And "alice" has logged in and stored the access token
+    Given "alice" has logged in and stored the access token
     When alice sends GET /api/v1/admin/users
     Then the response status code should be 403

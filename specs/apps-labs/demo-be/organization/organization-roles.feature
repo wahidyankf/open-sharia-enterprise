@@ -35,6 +35,7 @@ Feature: Organization Roles
 
   Scenario: Member of "acme" cannot access resources of a different organization
     Given an organization "beta" exists
+    And "carol" has logged in and stored the access token
     When carol sends GET /api/v1/orgs/{beta_id}/members
     Then the response status code should be 403
 

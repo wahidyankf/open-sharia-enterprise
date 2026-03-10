@@ -26,12 +26,14 @@ Feature: Organization Membership
     Then the response status code should be 204
 
   Scenario: Removed member loses access to organization resources
-    Given alice has removed bob from the organization
+    Given "bob" has logged in and stored the access token
+    And alice has removed bob from the organization
     When bob sends GET /api/v1/orgs/{acme_id}/members
     Then the response status code should be 403
 
   Scenario: A user can be a member of multiple organizations simultaneously
     Given an organization "beta" exists with alice as owner
     And bob is also a member of "beta"
+    And "bob" has logged in and stored the access token
     When bob sends GET /api/v1/users/me
     Then the response body should show bob is a member of both "acme" and "beta" organizations
