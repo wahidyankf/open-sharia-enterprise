@@ -59,7 +59,7 @@ public class UserController {
         if (!passwordEncoder.matches(request.oldPassword(), user.getPasswordHash())) {
             throw new InvalidCredentialsException();
         }
-        user.setPasswordHash(passwordEncoder.encode(request.newPassword()));
+        user.setPasswordHash(java.util.Objects.requireNonNull(passwordEncoder.encode(request.newPassword())));
         userRepository.save(user);
         return ResponseEntity.ok().build();
     }

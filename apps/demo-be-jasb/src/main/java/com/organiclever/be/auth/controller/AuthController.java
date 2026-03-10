@@ -72,7 +72,7 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
-    private String extractToken(final HttpServletRequest request) {
+    private @org.jspecify.annotations.Nullable String extractToken(final HttpServletRequest request) {
         String header = request.getHeader("Authorization");
         if (header != null && header.startsWith("Bearer ")) {
             return header.substring(7);
