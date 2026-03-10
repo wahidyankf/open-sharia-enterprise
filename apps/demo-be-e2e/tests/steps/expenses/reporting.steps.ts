@@ -1,45 +1,46 @@
+import { expect } from "@playwright/test";
 import { createBdd } from "playwright-bdd";
+import { setResponse, getResponse } from "../../utils/response-store";
+import { getTokenForUser } from "../../utils/token-store";
 
 const { When, Then } = createBdd();
 
-// Stubs — implement alongside production features
+// ---------------------------------------------------------------------------
+// Financial reporting (P&L) steps
+// ---------------------------------------------------------------------------
 
-When(/^alice sends GET \/api\/v1\/reports\/pl\?from=2025-01-01&to=2025-01-31&currency=USD$/, async () => {
-  throw new Error("TODO: not implemented");
-});
-
-When(/^alice sends GET \/api\/v1\/reports\/pl\?from=2025-02-01&to=2025-02-28&currency=USD$/, async () => {
-  throw new Error("TODO: not implemented");
-});
-
-When(/^alice sends GET \/api\/v1\/reports\/pl\?from=2025-03-01&to=2025-03-31&currency=USD$/, async () => {
-  throw new Error("TODO: not implemented");
-});
-
-When(/^alice sends GET \/api\/v1\/reports\/pl\?from=2025-04-01&to=2025-04-30&currency=USD$/, async () => {
-  throw new Error("TODO: not implemented");
-});
-
-When(/^alice sends GET \/api\/v1\/reports\/pl\?from=2025-05-01&to=2025-05-31&currency=USD$/, async () => {
-  throw new Error("TODO: not implemented");
-});
-
-When(/^alice sends GET \/api\/v1\/reports\/pl\?from=2099-01-01&to=2099-01-31&currency=USD$/, async () => {
-  throw new Error("TODO: not implemented");
-});
+When(
+  /^alice sends GET \/api\/v1\/reports\/pl\?from=(\d{4}-\d{2}-\d{2})&to=(\d{4}-\d{2}-\d{2})&currency=(\w+)$/,
+  async ({ request }, from: string, to: string, currency: string) => {
+    const token = getTokenForUser("alice");
+    setResponse(
+      await request.get(`/api/v1/reports/pl?from=${from}&to=${to}&currency=${currency}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    );
+  },
+);
 
 Then(
   "the income breakdown should contain {string} with amount {string}",
   // oxlint-disable-next-line no-empty-pattern
-  async ({}, _category: string, _amount: string) => {
-    throw new Error("TODO: not implemented");
+  async ({}, category: string, amount: string) => {
+    const body = (await getResponse().json()) as Record<string, unknown>;
+    // income_breakdown is an object: { "salary": "3000.00", "freelance": "500.00" }
+    const incomeBreakdown = body["income_breakdown"] as Record<string, string> | undefined;
+    expect(incomeBreakdown).toBeDefined();
+    expect(incomeBreakdown![category]).toBe(amount);
   },
 );
 
 Then(
   "the expense breakdown should contain {string} with amount {string}",
   // oxlint-disable-next-line no-empty-pattern
-  async ({}, _category: string, _amount: string) => {
-    throw new Error("TODO: not implemented");
+  async ({}, category: string, amount: string) => {
+    const body = (await getResponse().json()) as Record<string, unknown>;
+    // expense_breakdown is an object: { "transport": "200.00" }
+    const expenseBreakdown = body["expense_breakdown"] as Record<string, string> | undefined;
+    expect(expenseBreakdown).toBeDefined();
+    expect(expenseBreakdown![category]).toBe(amount);
   },
 );
