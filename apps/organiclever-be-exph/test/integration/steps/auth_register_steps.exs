@@ -87,7 +87,7 @@ defmodule OrganicleverBeExphWeb.Integration.AuthRegisterSteps do
           _vars,
           %{conn: conn} = state do
     body = Jason.decode!(conn.resp_body)
-    assert body["error"] =~ ~r/[Uu]sername.*exist|already|[Dd]uplicate/i
+    assert body["message"] =~ ~r/[Uu]sername.*exist|already|[Dd]uplicate/i
     {:ok, state}
   end
 

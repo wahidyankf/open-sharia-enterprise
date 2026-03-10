@@ -16,7 +16,7 @@ defmodule OrganicleverBeExphWeb.AuthController do
         if username_taken?(changeset) do
           conn
           |> put_status(:conflict)
-          |> json(%{error: "Username already exists"})
+          |> json(%{message: "Username already exists"})
         else
           conn
           |> put_status(:bad_request)
@@ -49,7 +49,7 @@ defmodule OrganicleverBeExphWeb.AuthController do
           {:error, :invalid_credentials} ->
             conn
             |> put_status(:unauthorized)
-            |> json(%{error: "Invalid credentials"})
+            |> json(%{message: "Invalid credentials"})
         end
     end
   end

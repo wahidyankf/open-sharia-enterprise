@@ -84,7 +84,7 @@ defmodule OrganicleverBeExphWeb.Integration.AuthLoginSteps do
           _vars,
           %{conn: conn} = state do
     body = Jason.decode!(conn.resp_body)
-    assert body["error"] =~ ~r/[Ii]nvalid|[Cc]redential/i
+    assert body["message"] =~ ~r/[Ii]nvalid|[Cc]redential/i
     {:ok, state}
   end
 
