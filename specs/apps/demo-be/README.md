@@ -4,22 +4,23 @@ Platform-agnostic Gherkin acceptance specifications for a demo-scale backend ser
 authentication, user management, and a multi-currency expense domain. The spec is sized for
 ergonomic evaluation — small enough to implement in a weekend, but complex enough to exercise
 the patterns that matter: JWT lifecycle, input validation, error handling, password hashing,
-dependency injection, decimal money handling, and unit-of-measure validation.
+dependency injection, decimal money handling, unit-of-measure validation, and file upload
+handling.
 
 No external services are required. Implementations need only a local database (SQLite or Docker
 Postgres). Supported currencies: **USD** and **IDR**.
 
 ## What This Covers
 
-| Domain           | Description                                                      |
-| ---------------- | ---------------------------------------------------------------- |
-| health           | Service liveness check                                           |
-| authentication   | Password login, token refresh, logout                            |
-| user-lifecycle   | Registration, profile, password change, self-deactivation        |
-| security         | Password policy, account lockout, admin unlock                   |
-| token-management | JWT claims, JWKS endpoint, token revocation                      |
-| admin            | User listing, search, account control, password reset token      |
-| expenses         | Multi-currency expense CRUD, currency precision, unit-of-measure |
+| Domain           | Description                                                                               |
+| ---------------- | ----------------------------------------------------------------------------------------- |
+| health           | Service liveness check                                                                    |
+| authentication   | Password login, token refresh, logout                                                     |
+| user-lifecycle   | Registration, profile, password change, self-deactivation                                 |
+| security         | Password policy, account lockout, admin unlock                                            |
+| token-management | JWT claims, JWKS endpoint, token revocation                                               |
+| admin            | User listing, search, account control, password reset token                               |
+| expenses         | Income/expense CRUD, currency precision, unit-of-measure, P&L reporting, file attachments |
 
 ## Implementations
 
@@ -35,7 +36,7 @@ paths, runtime-specific error formats).
 
 This spec is organized into two subdirectories:
 
-- **[gherkin/](./gherkin/README.md)** — 12 Gherkin feature files, ~66 scenarios, covering 7
+- **[gherkin/](./gherkin/README.md)** — 13 Gherkin feature files, ~73 scenarios, covering 7
   domains
 - **[c4/](./c4/README.md)** — C4 architecture diagrams for the demo backend service
 
@@ -64,7 +65,8 @@ specs/apps/demo-be/
 │       ├── expense-management.feature    (7 scenarios)
 │       ├── currency-handling.feature     (6 scenarios)
 │       ├── unit-handling.feature         (4 scenarios)
-│       └── reporting.feature             (6 scenarios)
+│       ├── reporting.feature             (6 scenarios)
+│       └── attachments.feature           (7 scenarios)
 └── c4/
     └── README.md
 ```
