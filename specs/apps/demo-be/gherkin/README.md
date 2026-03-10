@@ -1,6 +1,6 @@
 # Demo Backend Gherkin Specs
 
-Gherkin feature files for the demo-scale backend service. 11 files, ~59 scenarios across 7
+Gherkin feature files for the demo-scale backend service. 12 files, ~66 scenarios across 7
 domains.
 
 ## Feature Files
@@ -15,9 +15,10 @@ domains.
 | security         | `security/security.feature`              | 5         |
 | token-management | `token-management/tokens.feature`        | 6         |
 | admin            | `admin/admin.feature`                    | 6         |
-| expenses         | `expenses/expense-management.feature`    | 6         |
+| expenses         | `expenses/expense-management.feature`    | 7         |
 | expenses         | `expenses/currency-handling.feature`     | 6         |
 | expenses         | `expenses/unit-handling.feature`         | 4         |
+| expenses         | `expenses/reporting.feature`             | 6         |
 
 ## Conventions
 
