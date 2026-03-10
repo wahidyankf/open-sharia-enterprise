@@ -14,6 +14,7 @@ defmodule OrganicleverBeExph.MixProject do
       test_coverage: [tool: ExCoveralls],
       test_paths: ["test"],
       test_pattern: "**/*_{test,steps}.exs",
+      test_load_filters: [~r/_test\.exs$/, ~r/_steps\.exs$/],
       preferred_cli_env: [
         coveralls: :test,
         "coveralls.lcov": :test
