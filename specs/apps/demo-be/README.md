@@ -35,7 +35,7 @@ paths, runtime-specific error formats).
 
 This spec is organized into two subdirectories:
 
-- **[gherkin/](./gherkin/README.md)** — 11 Gherkin feature files, ~59 scenarios, covering 7
+- **[gherkin/](./gherkin/README.md)** — 12 Gherkin feature files, ~66 scenarios, covering 7
   domains
 - **[c4/](./c4/README.md)** — C4 architecture diagrams for the demo backend service
 
@@ -61,9 +61,10 @@ specs/apps/demo-be/
 │   ├── admin/
 │   │   └── admin.feature                 (6 scenarios)
 │   └── expenses/
-│       ├── expense-management.feature    (6 scenarios)
+│       ├── expense-management.feature    (7 scenarios)
 │       ├── currency-handling.feature     (6 scenarios)
-│       └── unit-handling.feature         (4 scenarios)
+│       ├── unit-handling.feature         (4 scenarios)
+│       └── reporting.feature             (6 scenarios)
 └── c4/
     └── README.md
 ```

@@ -10,14 +10,14 @@ Feature: Currency Handling
     And "alice" has logged in and stored the access token
 
   Scenario: USD expense amount preserves two decimal places
-    Given alice has created an expense with body { "amount": "10.50", "currency": "USD", "category": "food", "description": "Coffee" }
+    Given alice has created an expense with body { "amount": "10.50", "currency": "USD", "category": "food", "description": "Coffee", "date": "2025-01-15", "type": "expense" }
     When alice sends GET /api/v1/expenses/{expenseId}
     Then the response status code should be 200
     And the response body should contain "amount" equal to "10.50"
     And the response body should contain "currency" equal to "USD"
 
   Scenario: IDR expense amount is stored and returned as a whole number
-    Given alice has created an expense with body { "amount": "150000", "currency": "IDR", "category": "transport", "description": "Taxi" }
+    Given alice has created an expense with body { "amount": "150000", "currency": "IDR", "category": "transport", "description": "Taxi", "date": "2025-01-15", "type": "expense" }
     When alice sends GET /api/v1/expenses/{expenseId}
     Then the response status code should be 200
     And the response body should contain "amount" equal to "150000"
@@ -34,9 +34,9 @@ Feature: Currency Handling
     And the response body should contain a validation error for "currency"
 
   Scenario: Expense summary groups totals by currency without cross-currency mixing
-    Given alice has created an expense with body { "amount": "20.00", "currency": "USD", "category": "food", "description": "Lunch" }
-    And alice has created an expense with body { "amount": "10.00", "currency": "USD", "category": "food", "description": "Coffee" }
-    And alice has created an expense with body { "amount": "150000", "currency": "IDR", "category": "transport", "description": "Taxi" }
+    Given alice has created an expense with body { "amount": "20.00", "currency": "USD", "category": "food", "description": "Lunch", "date": "2025-01-15", "type": "expense" }
+    And alice has created an expense with body { "amount": "10.00", "currency": "USD", "category": "food", "description": "Coffee", "date": "2025-01-15", "type": "expense" }
+    And alice has created an expense with body { "amount": "150000", "currency": "IDR", "category": "transport", "description": "Taxi", "date": "2025-01-15", "type": "expense" }
     When alice sends GET /api/v1/expenses/summary
     Then the response status code should be 200
     And the response body should contain "USD" total equal to "30.00"
