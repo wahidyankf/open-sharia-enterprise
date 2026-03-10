@@ -1,6 +1,7 @@
 # Demo IAM Gherkin Specs
 
-Gherkin feature files for the demo-scale IAM service. 10 files, ~55 scenarios across 7 domains.
+Gherkin feature files for the demo-scale IAM + expense service. 13 files, ~71 scenarios across 8
+domains.
 
 ## Feature Files
 
@@ -16,6 +17,9 @@ Gherkin feature files for the demo-scale IAM service. 10 files, ~55 scenarios ac
 | security         | `security/security.feature`              | 5         |
 | token-management | `token-management/tokens.feature`        | 6         |
 | admin            | `admin/admin.feature`                    | 7         |
+| expenses         | `expenses/expense-management.feature`    | 6         |
+| expenses         | `expenses/currency-handling.feature`     | 6         |
+| expenses         | `expenses/unit-handling.feature`         | 4         |
 
 ## Conventions
 

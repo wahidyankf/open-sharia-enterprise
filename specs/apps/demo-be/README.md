@@ -1,24 +1,26 @@
-# Demo IAM API Specs
+# Demo IAM + Expense API Specs
 
 Platform-agnostic Gherkin acceptance specifications for a demo-scale IAM (Identity and Access
-Management) service. The spec is sized for ergonomic evaluation — small enough to implement in a
-weekend, but complex enough to exercise the patterns that matter: JWT lifecycle, RBAC middleware,
-input validation, error handling, password hashing, and dependency injection.
+Management) service with a multi-currency expense domain. The spec is sized for ergonomic
+evaluation — small enough to implement in a weekend, but complex enough to exercise the patterns
+that matter: JWT lifecycle, RBAC middleware, input validation, error handling, password hashing,
+dependency injection, decimal money handling, and unit-of-measure validation.
 
 No external services are required. Implementations need only a local database (SQLite or Docker
-Postgres).
+Postgres). Supported currencies: **USD** and **IDR**.
 
 ## What This Covers
 
-| Domain           | Description                                                  |
-| ---------------- | ------------------------------------------------------------ |
-| health           | Service liveness check                                       |
-| authentication   | Password login, token refresh, logout                        |
-| user-lifecycle   | Registration, profile, password change, self-deactivation    |
-| authorization    | Role and permission management, role assignment, enforcement |
-| security         | Password policy, account lockout, admin unlock               |
-| token-management | JWT claims, JWKS endpoint, token revocation                  |
-| admin            | User listing, search, account control, password reset token  |
+| Domain           | Description                                                      |
+| ---------------- | ---------------------------------------------------------------- |
+| health           | Service liveness check                                           |
+| authentication   | Password login, token refresh, logout                            |
+| user-lifecycle   | Registration, profile, password change, self-deactivation        |
+| authorization    | Role and permission management, role assignment, enforcement     |
+| security         | Password policy, account lockout, admin unlock                   |
+| token-management | JWT claims, JWKS endpoint, token revocation                      |
+| admin            | User listing, search, account control, password reset token      |
+| expenses         | Multi-currency expense CRUD, currency precision, unit-of-measure |
 
 ## Implementations
 
@@ -34,8 +36,8 @@ paths, runtime-specific error formats).
 
 This spec is organized into two subdirectories:
 
-- **[gherkin/](./gherkin/README.md)** — 10 Gherkin feature files, ~55 scenarios, covering 7 IAM
-  domains
+- **[gherkin/](./gherkin/README.md)** — 13 Gherkin feature files, ~71 scenarios, covering 8
+  domains (IAM + expenses)
 - **[c4/](./c4/README.md)** — C4 architecture diagrams for the demo IAM service
 
 ## Feature File Organization
@@ -60,8 +62,12 @@ specs/apps/demo-be/
 │   │   └── security.feature              (5 scenarios)
 │   ├── token-management/
 │   │   └── tokens.feature                (6 scenarios)
-│   └── admin/
-│       └── admin.feature                 (7 scenarios)
+│   ├── admin/
+│   │   └── admin.feature                 (7 scenarios)
+│   └── expenses/
+│       ├── expense-management.feature    (6 scenarios)
+│       ├── currency-handling.feature     (6 scenarios)
+│       └── unit-handling.feature         (4 scenarios)
 └── c4/
     └── README.md
 ```
