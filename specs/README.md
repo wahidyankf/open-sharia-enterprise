@@ -30,9 +30,16 @@ Acceptance specs belong at the monorepo root rather than inside app directories 
   Cucumber JVM + playwright-bdd)
 - **[organiclever-web/](./apps/organiclever-web/README.md)** — Web landing page specifications (Next.js,
   vitest-cucumber + playwright-bdd)
+- **[demo-be/](./apps/demo-be/README.md)** — Demo IAM API specifications (platform-agnostic Gherkin,
+  10 files, ~55 scenarios)
 - **[rhino-cli/](./apps/rhino-cli/README.md)** — Repository management CLI specifications (Go, godog)
 - **[ayokoding-cli/](./apps/ayokoding-cli/README.md)** — Content automation CLI specifications (Go, godog)
 - **[oseplatform-cli/](./apps/oseplatform-cli/README.md)** — OSE Platform site CLI specifications (Go, godog)
+
+## Experimental App Specs
+
+- **[apps-labs/](./apps-labs/README.md)** — Specs for framework evaluations, POCs, and tech stack
+  comparisons; graduates to `apps/` when the implementation is promoted
 
 ## Library Specs
 
@@ -54,7 +61,8 @@ All feature files follow the OSE Platform BDD standards:
 
 ## Adding Specs
 
-1. Choose the appropriate subdirectory: `specs/apps/` for applications, `specs/libs/` for libraries
+1. Choose the appropriate subdirectory: `specs/apps/` for production-bound applications,
+   `specs/apps-labs/` for experimental/POC applications, `specs/libs/` for libraries
 2. Create a folder matching the project name: `specs/apps/[app-name]/` or `specs/libs/[lib-name]/`
 3. Add a `README.md` describing the project, BDD framework, and feature file organization
 4. Organize `.feature` files by bounded context or user journey (kebab-case names)
