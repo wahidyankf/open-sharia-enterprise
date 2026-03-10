@@ -1,7 +1,7 @@
 FROM elixir:1.19-otp-27-alpine
 
 # build-base required for bcrypt_elixir NIF compilation
-RUN apk add --no-cache build-base git && \
+RUN apk add --no-cache build-base curl git && \
     mix local.hex --force && \
     mix local.rebar --force
 
