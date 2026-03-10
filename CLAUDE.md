@@ -24,6 +24,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `organiclever-web` - Next.js 16 landing and promotional website (www.organiclever.com)
   - `organiclever-web-e2e` - Playwright E2E tests for organiclever-web
   - `demo-be-jasb` - Spring Boot REST API backend (Java Spring Boot)
+  - `demo-be-exph` - Elixir/Phoenix REST API backend (alternative to demo-be-jasb)
   - `demo-be-e2e` - Playwright E2E tests for demo-be-jasb REST API
 
 ## Project Structure
@@ -39,6 +40,7 @@ open-sharia-enterprise/
 │   ├── organiclever-web/     # OrganicLever landing website (Next.js)
 │   ├── organiclever-web-e2e/ # Playwright E2E tests for organiclever-web
 │   ├── demo-be-jasb/ # Spring Boot REST API (Java Spring Boot)
+│   ├── demo-be-exph/ # Elixir/Phoenix REST API (alternative implementation)
 │   └── demo-be-e2e/ # Playwright E2E tests for backend
 ├── apps-labs/                # Experimental apps (NOT in Nx)
 ├── libs/                     # Reusable libraries (Nx, flat structure)
