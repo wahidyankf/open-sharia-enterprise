@@ -1,0 +1,15 @@
+{
+  "skip_files": [
+    "test/support/",
+    "deps/",
+    "lib/demo_be_exph.ex",
+    "lib/demo_be_exph/repo.ex",
+    "lib/demo_be_exph_web/gettext.ex",
+    "lib/demo_be_exph/accounts/accounts_behaviour.ex",
+    "lib/demo_be_exph/auth/guardian.ex",
+    "lib/demo_be_exph_web/endpoint.ex",
+    "lib/demo_be_exph_web/telemetry.ex",
+    "lib/demo_be_exph/application.ex",
+    "lib/demo_be_exph_web/plugs/cors_plug.ex"
+  ]
+}

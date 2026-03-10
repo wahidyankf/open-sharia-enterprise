@@ -1,0 +1,110 @@
+defmodule DemoBeExphWeb.ExpenseController do
+  use DemoBeExphWeb, :controller
+
+  alias DemoBeExph.Expense.ExpenseContext
+  alias Guardian.Plug, as: GuardianPlug
+
+  def index(conn, params) do
+    user = GuardianPlug.current_resource(conn)
+    page = params |> Map.get("page", "1") |> String.to_integer()
+    result = ExpenseContext.list_expenses(user.id, page: page)
+
+    json(conn, %{
+      data: Enum.map(result.data, &expense_json/1),
+      total: result.total,
+      page: result.page
+    })
+  end
+
+  def create(conn, params) do
+    user = GuardianPlug.current_resource(conn)
+
+    case ExpenseContext.create_expense(user.id, params) do
+      {:ok, expense} ->
+        conn
+        |> put_status(:created)
+        |> json(expense_json(expense))
+
+      {:error, changeset} ->
+        conn
+        |> put_status(:bad_request)
+        |> json(%{errors: format_errors(changeset)})
+    end
+  end
+
+  def show(conn, %{"id" => id}) do
+    user = GuardianPlug.current_resource(conn)
+
+    case ExpenseContext.get_expense(user.id, String.to_integer(id)) do
+      nil ->
+        conn |> put_status(:not_found) |> json(%{message: "Not found"})
+
+      expense ->
+        json(conn, expense_json(expense))
+    end
+  end
+
+  def update(conn, %{"id" => id} = params) do
+    user = GuardianPlug.current_resource(conn)
+
+    case ExpenseContext.update_expense(user.id, String.to_integer(id), params) do
+      {:ok, expense} ->
+        json(conn, expense_json(expense))
+
+      {:error, :not_found} ->
+        conn |> put_status(:not_found) |> json(%{message: "Not found"})
+
+      {:error, changeset} ->
+        conn |> put_status(:bad_request) |> json(%{errors: format_errors(changeset)})
+    end
+  end
+
+  def delete(conn, %{"id" => id}) do
+    user = GuardianPlug.current_resource(conn)
+
+    case ExpenseContext.delete_expense(user.id, String.to_integer(id)) do
+      {:ok, _} ->
+        conn |> put_status(:no_content) |> json(%{})
+
+      {:error, :not_found} ->
+        conn |> put_status(:not_found) |> json(%{message: "Not found"})
+    end
+  end
+
+  def summary(conn, _params) do
+    user = GuardianPlug.current_resource(conn)
+    totals = ExpenseContext.summary(user.id)
+    serializable = Enum.into(totals, %{}, fn {k, v} -> {k, Decimal.to_string(v)} end)
+    json(conn, serializable)
+  end
+
+  defp expense_json(expense) do
+    %{
+      id: expense.id,
+      amount: Decimal.to_string(expense.amount),
+      currency: expense.currency,
+      category: expense.category,
+      type: expense.type,
+      description: expense.description,
+      date: Date.to_iso8601(expense.date),
+      unit: expense.unit,
+      quantity: format_quantity(expense.quantity),
+      inserted_at: expense.inserted_at,
+      updated_at: expense.updated_at
+    }
+  end
+
+  defp format_quantity(nil), do: nil
+
+  defp format_quantity(d) do
+    if Decimal.equal?(d, Decimal.round(d, 0)) do
+      d |> Decimal.round(0) |> Decimal.to_integer()
+    else
+      Decimal.to_float(d)
+    end
+  end
+
+  defp format_errors(changeset) do
+    Ecto.Changeset.traverse_errors(changeset, fn {msg, _opts} -> msg end)
+  end
+end

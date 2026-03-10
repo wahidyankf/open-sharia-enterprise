@@ -14,8 +14,14 @@ defmodule Cabbage.Feature.Loader do
     |> fix_step_types()
   end
 
-  defp fix_step_types(%Feature{scenarios: scenarios} = feature) do
-    scenarios = scenarios |> Enum.map(&fix_step_types/1)
+  defp fix_step_types(%Feature{scenarios: scenarios, background_steps: bg_steps} = feature) do
+    scenarios =
+      scenarios
+      |> Enum.map(fn scenario ->
+        %{scenario | steps: bg_steps ++ scenario.steps}
+      end)
+      |> Enum.map(&fix_step_types/1)
+
     %{feature | scenarios: scenarios}
   end
 

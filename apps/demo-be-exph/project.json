@@ -1,0 +1,84 @@
+{
+  "name": "demo-be-exph",
+  "sourceRoot": "apps/demo-be-exph/lib",
+  "projectType": "application",
+  "implicitDependencies": ["elixir-gherkin", "elixir-cabbage"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "MIX_ENV=prod mix do deps.get --only prod, compile --warnings-as-errors",
+        "cwd": "apps/demo-be-exph"
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mix phx.server",
+        "cwd": "apps/demo-be-exph"
+      }
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mix phx.server",
+        "cwd": "apps/demo-be-exph"
+      }
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "MIX_ENV=test mix coveralls.lcov",
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-be-exph/cover/lcov.info 90)",
+          "mix credo --strict",
+          "mix format --check-formatted"
+        ],
+        "parallel": false,
+        "cwd": "apps/demo-be-exph"
+      }
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mix test --only unit",
+        "cwd": "apps/demo-be-exph"
+      }
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mix test --only integration",
+        "cwd": "apps/demo-be-exph"
+      },
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/lib/**/*.ex",
+        "{projectRoot}/test/**/*.exs",
+        "{workspaceRoot}/specs/apps/demo-be/gherkin/**/*.feature"
+      ]
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mix credo --strict",
+        "cwd": "apps/demo-be-exph"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mix compile --warnings-as-errors",
+        "cwd": "apps/demo-be-exph"
+      }
+    },
+    "install": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mix deps.get",
+        "cwd": "apps/demo-be-exph"
+      }
+    }
+  },
+  "tags": ["type:app", "platform:phoenix", "lang:elixir", "domain:demo-be"]
+}

@@ -40,7 +40,7 @@ flags:
     paths:
       - libs/hugo-commons/
     carryforward: true
-  organiclever-be-exph:
+  demo-be-exph:
     paths:
-      - apps/organiclever-be-exph/
+      - apps/demo-be-exph/
     carryforward: true
