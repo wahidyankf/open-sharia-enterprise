@@ -5,7 +5,7 @@ Feature: Tokens
   So that downstream services can authorize requests and compromised tokens can be invalidated
 
   Background:
-    Given the IAM API is running
+    Given the API is running
     And a user "alice" is registered with password "Str0ng#Pass1"
     And "alice" has logged in and stored the access token
 

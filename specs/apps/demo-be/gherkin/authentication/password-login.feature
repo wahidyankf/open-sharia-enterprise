@@ -5,7 +5,7 @@ Feature: Password Login
   So that I can obtain tokens to access protected resources
 
   Background:
-    Given the IAM API is running
+    Given the API is running
     And a user "alice" is registered with password "Str0ng#Pass1"
 
   Scenario: Successful login returns access token and refresh token

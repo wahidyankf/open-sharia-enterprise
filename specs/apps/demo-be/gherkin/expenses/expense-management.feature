@@ -5,7 +5,7 @@ Feature: Financial Entry Management
   So that I can track my financial activity across currencies and categories
 
   Background:
-    Given the IAM API is running
+    Given the API is running
     And a user "alice" is registered with email "alice@example.com" and password "Str0ng#Pass1"
     And "alice" has logged in and stored the access token
 

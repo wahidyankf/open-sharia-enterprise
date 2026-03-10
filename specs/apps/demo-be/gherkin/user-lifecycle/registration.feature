@@ -2,10 +2,10 @@ Feature: User Registration
 
   As a new visitor
   I want to register an account with my username, email, and password
-  So that I can access the IAM-protected platform
+  So that I can access the protected platform
 
   Background:
-    Given the IAM API is running
+    Given the API is running
 
   Scenario: Successful registration returns created user profile without password
     When the client sends POST /api/v1/auth/register with body { "username": "alice", "email": "alice@example.com", "password": "Str0ng#Pass1" }

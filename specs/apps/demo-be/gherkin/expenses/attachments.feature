@@ -7,7 +7,7 @@ Feature: Entry Attachments
   Supported types — images: image/jpeg, image/png; documents: application/pdf
 
   Background:
-    Given the IAM API is running
+    Given the API is running
     And a user "alice" is registered with email "alice@example.com" and password "Str0ng#Pass1"
     And "alice" has logged in and stored the access token
     And alice has created an entry with body { "amount": "10.50", "currency": "USD", "category": "food", "description": "Lunch", "date": "2025-01-15", "type": "expense" }

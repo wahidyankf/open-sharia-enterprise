@@ -8,7 +8,7 @@ Feature: Unit Handling
   imperial: gallon, lb, oz, mile; universal: piece, hour
 
   Background:
-    Given the IAM API is running
+    Given the API is running
     And a user "alice" is registered with email "alice@example.com" and password "Str0ng#Pass1"
     And "alice" has logged in and stored the access token
 
@@ -27,11 +27,11 @@ Feature: Unit Handling
     And the response body should contain "unit" equal to "gallon"
 
   Scenario: Create expense with an unsupported unit returns 400
-    When alice sends POST /api/v1/expenses with body { "amount": "10.00", "currency": "USD", "category": "misc", "description": "Cargo", "quantity": 5, "unit": "fathom" }
+    When alice sends POST /api/v1/expenses with body { "amount": "10.00", "currency": "USD", "category": "misc", "description": "Cargo", "date": "2025-01-15", "type": "expense", "quantity": 5, "unit": "fathom" }
     Then the response status code should be 400
     And the response body should contain a validation error for "unit"
 
   Scenario: Expense without quantity and unit fields is accepted
-    When alice sends POST /api/v1/expenses with body { "amount": "25.00", "currency": "USD", "category": "food", "description": "Dinner" }
+    When alice sends POST /api/v1/expenses with body { "amount": "25.00", "currency": "USD", "category": "food", "description": "Dinner", "date": "2025-01-15", "type": "expense" }
     Then the response status code should be 201
     And the response body should contain a non-null "id" field

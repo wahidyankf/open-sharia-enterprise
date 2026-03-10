@@ -5,7 +5,7 @@ Feature: Admin
   So that I can monitor the user base and respond to security incidents
 
   Background:
-    Given the IAM API is running
+    Given the API is running
     And an admin user "superadmin" is registered and logged in
     And users "alice", "bob", and "carol" are registered
 
@@ -28,7 +28,8 @@ Feature: Admin
     And alice's account status should be "disabled"
 
   Scenario: Disabled user's access token is rejected with 401
-    Given alice's account has been disabled by the admin
+    Given "alice" has logged in and stored the access token
+    And alice's account has been disabled by the admin
     When the client sends GET /api/v1/users/me with alice's access token
     Then the response status code should be 401
 

@@ -83,7 +83,7 @@ TBD — depends on the chosen implementation language and framework.
 2. Create the folder if it does not exist: `specs/apps/demo-be/gherkin/[context]/`
 3. Create the `.feature` file: `[domain-capability].feature`
 4. Open with `Feature:` then a user story block (`As a … / I want … / So that …`)
-5. Use `Given the IAM API is running` as the first Background step
+5. Use `Given the API is running` as the first Background step
 6. Use only HTTP-semantic steps — no framework or library names
 
 ## Related

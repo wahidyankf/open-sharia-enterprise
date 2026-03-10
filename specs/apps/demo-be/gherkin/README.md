@@ -24,7 +24,7 @@ domains.
 ## Conventions
 
 - **File naming**: `[domain-capability].feature` (kebab-case)
-- **First Background step**: `Given the IAM API is running`
+- **First Background step**: `Given the API is running`
 - **Step language**: HTTP-semantic only — no framework or library names
 - **User story block**: Every `Feature:` block opens with `As a … / I want … / So that …`
 

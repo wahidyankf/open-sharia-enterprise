@@ -5,7 +5,7 @@ Feature: Currency Handling
   So that monetary values are never imprecise or cross-currency mixed
 
   Background:
-    Given the IAM API is running
+    Given the API is running
     And a user "alice" is registered with email "alice@example.com" and password "Str0ng#Pass1"
     And "alice" has logged in and stored the access token
 
@@ -24,12 +24,12 @@ Feature: Currency Handling
     And the response body should contain "currency" equal to "IDR"
 
   Scenario: Unsupported currency code returns 400
-    When alice sends POST /api/v1/expenses with body { "amount": "10.00", "currency": "EUR", "category": "food", "description": "Lunch" }
+    When alice sends POST /api/v1/expenses with body { "amount": "10.00", "currency": "EUR", "category": "food", "description": "Lunch", "date": "2025-01-15", "type": "expense" }
     Then the response status code should be 400
     And the response body should contain a validation error for "currency"
 
   Scenario: Malformed currency code returns 400
-    When alice sends POST /api/v1/expenses with body { "amount": "10.00", "currency": "US", "category": "food", "description": "Lunch" }
+    When alice sends POST /api/v1/expenses with body { "amount": "10.00", "currency": "US", "category": "food", "description": "Lunch", "date": "2025-01-15", "type": "expense" }
     Then the response status code should be 400
     And the response body should contain a validation error for "currency"
 
@@ -43,6 +43,6 @@ Feature: Currency Handling
     And the response body should contain "IDR" total equal to "150000"
 
   Scenario: Negative amount is rejected with 400
-    When alice sends POST /api/v1/expenses with body { "amount": "-10.00", "currency": "USD", "category": "food", "description": "Refund" }
+    When alice sends POST /api/v1/expenses with body { "amount": "-10.00", "currency": "USD", "category": "food", "description": "Refund", "date": "2025-01-15", "type": "expense" }
     Then the response status code should be 400
     And the response body should contain a validation error for "amount"

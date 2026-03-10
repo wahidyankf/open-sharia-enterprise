@@ -5,7 +5,7 @@ Feature: Security
   So that weak credentials and brute-force attacks are blocked
 
   Background:
-    Given the IAM API is running
+    Given the API is running
 
   Scenario: Reject password shorter than 12 characters
     When the client sends POST /api/v1/auth/register with body { "username": "alice", "email": "alice@example.com", "password": "Short1!Ab" }
