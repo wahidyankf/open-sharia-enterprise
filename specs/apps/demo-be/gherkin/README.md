@@ -1,6 +1,6 @@
-# Demo IAM Gherkin Specs
+# Demo Backend Gherkin Specs
 
-Gherkin feature files for the demo-scale IAM + expense service. 13 files, ~71 scenarios across 8
+Gherkin feature files for the demo-scale backend service. 11 files, ~59 scenarios across 7
 domains.
 
 ## Feature Files
@@ -12,11 +12,9 @@ domains.
 | authentication   | `authentication/token-lifecycle.feature` | 7         |
 | user-lifecycle   | `user-lifecycle/registration.feature`    | 6         |
 | user-lifecycle   | `user-lifecycle/user-account.feature`    | 6         |
-| authorization    | `authorization/roles.feature`            | 6         |
-| authorization    | `authorization/permissions.feature`      | 5         |
 | security         | `security/security.feature`              | 5         |
 | token-management | `token-management/tokens.feature`        | 6         |
-| admin            | `admin/admin.feature`                    | 7         |
+| admin            | `admin/admin.feature`                    | 6         |
 | expenses         | `expenses/expense-management.feature`    | 6         |
 | expenses         | `expenses/currency-handling.feature`     | 6         |
 | expenses         | `expenses/unit-handling.feature`         | 4         |

@@ -26,7 +26,7 @@ Feature: Security
 
   Scenario: Admin unlocks a locked account
     Given a user "alice" is registered and locked after too many failed logins
-    And an admin user "superadmin" is registered and logged in with role "admin"
+    And an admin user "superadmin" is registered and logged in
     When the admin sends POST /api/v1/admin/users/{alice_id}/unlock
     Then the response status code should be 200
 

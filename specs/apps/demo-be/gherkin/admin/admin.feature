@@ -6,7 +6,7 @@ Feature: Admin
 
   Background:
     Given the IAM API is running
-    And an admin user "superadmin" is registered and logged in with role "admin"
+    And an admin user "superadmin" is registered and logged in
     And users "alice", "bob", and "carol" are registered
 
   Scenario: List all users returns a paginated response
@@ -20,11 +20,6 @@ Feature: Admin
     When the admin sends GET /api/v1/admin/users?email=alice@example.com
     Then the response status code should be 200
     And the response body should contain at least one user with "email" equal to "alice@example.com"
-
-  Scenario: Non-admin user is rejected with 403 when listing all users
-    Given "alice" has logged in and stored the access token
-    When alice sends GET /api/v1/admin/users
-    Then the response status code should be 403
 
   Scenario: Admin disables a user account
     Given "alice" has logged in and stored the access token

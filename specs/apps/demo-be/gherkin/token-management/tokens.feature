@@ -6,17 +6,16 @@ Feature: Tokens
 
   Background:
     Given the IAM API is running
-    And a user "alice" is registered with role "editor" and password "Str0ng#Pass1"
+    And a user "alice" is registered with password "Str0ng#Pass1"
     And "alice" has logged in and stored the access token
 
   Scenario: Access token payload contains user ID claim
     When alice decodes her access token payload
     Then the token should contain a non-null "sub" claim
 
-  Scenario: Access token payload contains roles claim listing assigned roles
+  Scenario: Access token payload contains issuer claim
     When alice decodes her access token payload
-    Then the token should contain a "roles" claim
-    And the "roles" claim should include "editor"
+    Then the token should contain a non-null "iss" claim
 
   Scenario: JWKS endpoint returns the public key for token signature verification
     When the client sends GET /.well-known/jwks.json
@@ -34,7 +33,7 @@ Feature: Tokens
     Then the response status code should be 401
 
   Scenario: Deactivating a user revokes all their active tokens
-    Given an admin user "superadmin" is registered and logged in with role "admin"
+    Given an admin user "superadmin" is registered and logged in
     And the admin has disabled alice's account via POST /api/v1/admin/users/{alice_id}/disable
     When the client sends GET /api/v1/users/me with alice's access token
     Then the response status code should be 401

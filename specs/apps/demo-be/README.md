@@ -1,9 +1,9 @@
-# Demo IAM + Expense API Specs
+# Demo Backend API Specs
 
-Platform-agnostic Gherkin acceptance specifications for a demo-scale IAM (Identity and Access
-Management) service with a multi-currency expense domain. The spec is sized for ergonomic
-evaluation — small enough to implement in a weekend, but complex enough to exercise the patterns
-that matter: JWT lifecycle, RBAC middleware, input validation, error handling, password hashing,
+Platform-agnostic Gherkin acceptance specifications for a demo-scale backend service covering
+authentication, user management, and a multi-currency expense domain. The spec is sized for
+ergonomic evaluation — small enough to implement in a weekend, but complex enough to exercise
+the patterns that matter: JWT lifecycle, input validation, error handling, password hashing,
 dependency injection, decimal money handling, and unit-of-measure validation.
 
 No external services are required. Implementations need only a local database (SQLite or Docker
@@ -16,7 +16,6 @@ Postgres). Supported currencies: **USD** and **IDR**.
 | health           | Service liveness check                                           |
 | authentication   | Password login, token refresh, logout                            |
 | user-lifecycle   | Registration, profile, password change, self-deactivation        |
-| authorization    | Role and permission management, role assignment, enforcement     |
 | security         | Password policy, account lockout, admin unlock                   |
 | token-management | JWT claims, JWKS endpoint, token revocation                      |
 | admin            | User listing, search, account control, password reset token      |
@@ -36,9 +35,9 @@ paths, runtime-specific error formats).
 
 This spec is organized into two subdirectories:
 
-- **[gherkin/](./gherkin/README.md)** — 13 Gherkin feature files, ~71 scenarios, covering 8
-  domains (IAM + expenses)
-- **[c4/](./c4/README.md)** — C4 architecture diagrams for the demo IAM service
+- **[gherkin/](./gherkin/README.md)** — 11 Gherkin feature files, ~59 scenarios, covering 7
+  domains
+- **[c4/](./c4/README.md)** — C4 architecture diagrams for the demo backend service
 
 ## Feature File Organization
 
@@ -55,15 +54,12 @@ specs/apps/demo-be/
 │   ├── user-lifecycle/
 │   │   ├── registration.feature          (6 scenarios)
 │   │   └── user-account.feature          (6 scenarios)
-│   ├── authorization/
-│   │   ├── roles.feature                 (6 scenarios)
-│   │   └── permissions.feature           (5 scenarios)
 │   ├── security/
 │   │   └── security.feature              (5 scenarios)
 │   ├── token-management/
 │   │   └── tokens.feature                (6 scenarios)
 │   ├── admin/
-│   │   └── admin.feature                 (7 scenarios)
+│   │   └── admin.feature                 (6 scenarios)
 │   └── expenses/
 │       ├── expense-management.feature    (6 scenarios)
 │       ├── currency-handling.feature     (6 scenarios)
