@@ -1,7 +1,13 @@
 package com.organiclever.be.auth.dto;
 
-public record AuthResponse(String token, String type) {
-    public static AuthResponse bearer(final String token) {
-        return new AuthResponse(token, "Bearer");
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record AuthResponse(
+    @JsonProperty("access_token") String accessToken,
+    @JsonProperty("refresh_token") String refreshToken,
+    @JsonProperty("token_type") String tokenType) {
+
+    public static AuthResponse bearer(final String accessToken, final String refreshToken) {
+        return new AuthResponse(accessToken, refreshToken, "Bearer");
     }
 }

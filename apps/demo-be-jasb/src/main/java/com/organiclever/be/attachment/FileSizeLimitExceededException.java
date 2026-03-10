@@ -1,0 +1,9 @@
+package com.organiclever.be.attachment;
+
+/** Thrown when an uploaded file exceeds the maximum allowed size. */
+public class FileSizeLimitExceededException extends RuntimeException {
+
+    public FileSizeLimitExceededException() {
+        super("File size exceeds the maximum allowed limit");
+    }
+}

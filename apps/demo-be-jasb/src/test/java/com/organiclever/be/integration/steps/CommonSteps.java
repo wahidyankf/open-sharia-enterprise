@@ -56,6 +56,11 @@ public class CommonSteps {
         // No-op: MockMvc context is always ready when scenarios execute.
     }
 
+    @Given("the API is running")
+    public void theApiIsRunning() {
+        // No-op: MockMvc context is always ready when scenarios execute.
+    }
+
     @Then("the response status code should be {int}")
     public void theResponseStatusCodeShouldBe(final int expectedStatusCode) throws Exception {
         MockMvcResultMatchers.status()

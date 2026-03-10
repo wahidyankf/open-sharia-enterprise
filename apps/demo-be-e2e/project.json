@@ -1,21 +1,21 @@
 {
-  "name": "organiclever-be-e2e",
+  "name": "demo-be-e2e",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "sourceRoot": "apps/organiclever-be-e2e/tests",
+  "sourceRoot": "apps/demo-be-e2e/tests",
   "targets": {
     "install": {
       "executor": "nx:run-commands",
       "options": {
         "command": "npm install",
-        "cwd": "apps/organiclever-be-e2e"
+        "cwd": "apps/demo-be-e2e"
       }
     },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
         "command": "npx oxlint@latest .",
-        "cwd": "apps/organiclever-be-e2e"
+        "cwd": "apps/demo-be-e2e"
       }
     },
     "test:quick": {
@@ -23,31 +23,31 @@
       "options": {
         "commands": ["npx oxlint@latest .", "npx bddgen"],
         "parallel": true,
-        "cwd": "apps/organiclever-be-e2e"
+        "cwd": "apps/demo-be-e2e"
       }
     },
     "test:e2e": {
       "executor": "nx:run-commands",
       "options": {
         "command": "npx bddgen && npx playwright test",
-        "cwd": "apps/organiclever-be-e2e"
+        "cwd": "apps/demo-be-e2e"
       }
     },
     "test:e2e:ui": {
       "executor": "nx:run-commands",
       "options": {
         "command": "npx bddgen && npx playwright test --ui",
-        "cwd": "apps/organiclever-be-e2e"
+        "cwd": "apps/demo-be-e2e"
       }
     },
     "test:e2e:report": {
       "executor": "nx:run-commands",
       "options": {
         "command": "npx playwright show-report",
-        "cwd": "apps/organiclever-be-e2e"
+        "cwd": "apps/demo-be-e2e"
       }
     }
   },
-  "tags": ["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"],
-  "implicitDependencies": ["organiclever-be-jasb"]
+  "tags": ["type:e2e", "platform:playwright", "lang:ts", "domain:demo-be"],
+  "implicitDependencies": ["demo-be-jasb"]
 }

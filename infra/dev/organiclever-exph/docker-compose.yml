@@ -1,5 +1,5 @@
 # Local Development Environment for OrganicLever (EXPH — Elixir/Phoenix)
-# Mutually exclusive with organiclever-jasb — both bind port 8201 and share the same DB.
+# Mutually exclusive with demo-be — both bind port 8201 and share the same DB.
 # Do not run both stacks simultaneously.
 
 services:

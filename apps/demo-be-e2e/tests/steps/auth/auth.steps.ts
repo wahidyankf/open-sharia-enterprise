@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { createBdd } from "playwright-bdd";
 import { setResponse, getResponse } from "../../utils/response-store";
-import { setToken, getToken } from "../../utils/token-store";
+import { setToken } from "../../utils/token-store";
 
 const { Given, When, Then } = createBdd();
 
@@ -48,40 +48,6 @@ Given("the client has logged in as {string} and stored the JWT token", async ({ 
   const body = (await response.json()) as { token: string };
   setToken(body.token);
 });
-
-When(/^a client sends GET \/api\/v1\/hello without an Authorization header$/, async ({ request }) => {
-  setResponse(await request.get("/api/v1/hello"));
-});
-
-When(/^a client sends GET \/api\/v1\/hello with the stored Bearer token$/, async ({ request }) => {
-  setResponse(
-    await request.get("/api/v1/hello", {
-      headers: { Authorization: `Bearer ${getToken()}` },
-    }),
-  );
-});
-
-When(/^a client sends GET \/api\/v1\/hello with an expired Bearer token$/, async ({ request }) => {
-  // This token was signed with a valid secret but has exp in the past.
-  const expiredToken =
-    "eyJhbGciOiJIUzI1NiJ9" + ".eyJzdWIiOiJ0ZXN0dXNlciIsImlhdCI6MTAwMDAwMDAwMCwiZXhwIjoxMDAwMDAwMDAxfQ" + ".invalid";
-  setResponse(
-    await request.get("/api/v1/hello", {
-      headers: { Authorization: `Bearer ${expiredToken}` },
-    }),
-  );
-});
-
-When(
-  /^a client sends GET \/api\/v1\/hello with Authorization header "([^"]*)"$/,
-  async ({ request }, header: string) => {
-    setResponse(
-      await request.get("/api/v1/hello", {
-        headers: { Authorization: header },
-      }),
-    );
-  },
-);
 
 Then(
   "the response body should contain {string} equal to {string}",

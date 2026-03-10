@@ -1,6 +1,7 @@
 package com.organiclever.be.auth.service;
 
 import com.organiclever.be.auth.repository.UserRepository;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,9 +25,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                                 () ->
                                         new UsernameNotFoundException(
                                                 "User not found: " + username));
+        boolean enabled = "ACTIVE".equals(user.getStatus());
         return org.springframework.security.core.userdetails.User.withUsername(user.getUsername())
                 .password(user.getPasswordHash())
-                .roles("USER")
+                .authorities(new SimpleGrantedAuthority("ROLE_" + user.getRole()))
+                .disabled(!enabled)
+                .accountLocked("LOCKED".equals(user.getStatus()))
                 .build();
     }
 }

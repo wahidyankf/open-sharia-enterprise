@@ -41,6 +41,10 @@ public class SecurityConfig {
                                         .permitAll()
                                         .requestMatchers("/error")
                                         .permitAll()
+                                        .requestMatchers("/.well-known/jwks.json")
+                                        .permitAll()
+                                        .requestMatchers("/api/v1/admin/**")
+                                        .hasRole("ADMIN")
                                         .anyRequest()
                                         .authenticated())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
@@ -57,13 +61,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        // Explicit whitelist: organiclever-web only. No wildcards.
         config.setAllowedOrigins(
                 List.of(
-                        "http://localhost:3200", // organiclever-web dev
-                        "https://www.organiclever.com" // organiclever-web production
-                        ));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                        "http://localhost:3200",
+                        "https://www.organiclever.com"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
         config.setAllowCredentials(false);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

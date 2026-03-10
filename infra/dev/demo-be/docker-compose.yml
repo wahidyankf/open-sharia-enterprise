@@ -1,55 +1,55 @@
-# Local Development Environment for OrganicLever
+# Local Development Environment for Demo Backend
 # Backend: Spring Boot with auto-reload via Spring Boot DevTools
 # Frontend: Next.js dev server
 
 services:
-  organiclever-db:
+  demo-be-db:
     image: postgres:17-alpine
-    container_name: organiclever-db
+    container_name: demo-be-db
     environment:
-      POSTGRES_DB: organiclever
+      POSTGRES_DB: demo_be
       POSTGRES_USER: ${POSTGRES_USER:-organiclever}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-organiclever}
     ports:
       - "5432:5432"
     volumes:
-      - organiclever-db-data:/var/lib/postgresql/data
+      - demo-be-db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-organiclever} -d organiclever"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-organiclever} -d demo_be"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s
     restart: unless-stopped
     networks:
-      - organiclever-network
+      - demo-be-network
 
-  organiclever-be-jasb:
+  demo-be-jasb:
     build:
       context: .
       dockerfile: Dockerfile.be.dev
-    container_name: organiclever-be-jasb
+    container_name: demo-be-jasb
     working_dir: /workspace
 
     # Mount full source code for development.
     # specs/ is mounted so Maven antrun can copy feature files to the test classpath
-    # (pom.xml resolves ${project.basedir}/../../specs/apps/organiclever-be → /specs/apps/organiclever-be).
+    # (pom.xml resolves ${project.basedir}/../../specs/apps/demo-be/gherkin → /specs/apps/demo-be/gherkin).
     volumes:
-      - ../../../apps/organiclever-be-jasb:/workspace:rw
-      - ../../../specs/apps/organiclever-be:/specs/apps/organiclever-be:ro
+      - ../../../apps/demo-be-jasb:/workspace:rw
+      - ../../../specs/apps/demo-be/gherkin:/specs/apps/demo-be/gherkin:ro
 
     ports:
       - "8201:8201"
 
     depends_on:
-      organiclever-db:
+      demo-be-db:
         condition: service_healthy
 
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - SERVER_PORT=8201
       - MAVEN_OPTS=${MAVEN_OPTS:--Xmx512m}
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://organiclever-db:5432/organiclever
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://demo-be-db:5432/demo_be
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER:-organiclever}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-organiclever}
       - APP_JWT_SECRET=${APP_JWT_SECRET:-change-me-in-dev-only-not-for-production}
@@ -67,7 +67,7 @@ services:
 
     restart: unless-stopped
     networks:
-      - organiclever-network
+      - demo-be-network
 
   organiclever-web:
     build:
@@ -78,7 +78,7 @@ services:
 
     volumes:
       - ../../../apps/organiclever-web:/workspace:rw
-      - organiclever-web-node-modules:/workspace/node_modules
+      - demo-be-web-node-modules:/workspace/node_modules
 
     ports:
       - "3200:3200"
@@ -112,13 +112,13 @@ services:
 
     restart: unless-stopped
     networks:
-      - organiclever-network
+      - demo-be-network
 
 networks:
-  organiclever-network:
+  demo-be-network:
     driver: bridge
-    name: organiclever-network
+    name: demo-be-network
 
 volumes:
-  organiclever-web-node-modules:
-  organiclever-db-data:
+  demo-be-web-node-modules:
+  demo-be-db-data:

@@ -1,5 +1,5 @@
 {
-  "name": "organiclever-be-e2e",
+  "name": "demo-be-e2e",
   "private": true,
   "scripts": {
     "test": "playwright test",

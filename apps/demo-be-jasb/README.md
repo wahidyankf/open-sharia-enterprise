@@ -1,6 +1,6 @@
-# organiclever-be-jasb
+# demo-be-jasb
 
-OrganicLever Platform Backend - Spring Boot REST API
+Demo Backend - Spring Boot REST API
 
 ## Overview
 
@@ -33,8 +33,8 @@ OrganicLever Platform Backend - Spring Boot REST API
 | `SPRING_DATASOURCE_PASSWORD` | Yes (non-test) | —                                                | Database password                                           |
 
 **Security note**: Set a strong `APP_JWT_SECRET` in production (min 32 random characters).
-Never commit real secrets to version control. Copy `infra/dev/organiclever-jasb/.env.example`
-to `infra/dev/organiclever-jasb/.env` for local development.
+Never commit real secrets to version control. Copy `infra/dev/demo-be/.env.example`
+to `infra/dev/demo-be/.env` for local development.
 
 ## Development Modes
 
@@ -44,10 +44,10 @@ Use the convenient npm scripts from the repository root:
 
 ```bash
 # Start development environment
-npm run organiclever:dev
+npm run demo-be:dev
 
 # Restart (clean restart with fresh state)
-npm run organiclever:dev:restart
+npm run demo-be:dev:restart
 ```
 
 **Benefits**:
@@ -59,7 +59,7 @@ npm run organiclever:dev:restart
 
 **Auto-reload workflow**:
 
-1. Edit source files in `apps/organiclever-be-jasb/src/`
+1. Edit source files in `apps/demo-be-jasb/src/`
 2. Save changes (Ctrl+S)
 3. Watch logs for restart message (1-2 seconds)
 4. Test changes immediately
@@ -72,7 +72,7 @@ npm run organiclever:dev:restart
 If you prefer direct Docker Compose control:
 
 ```bash
-cd infra/dev/organiclever-jasb
+cd infra/dev/demo-be
 
 # First-time only: Build the custom dev image
 docker compose build
@@ -95,10 +95,10 @@ Run directly on host machine (0.5-1 second restarts):
 
 ```bash
 # From repository root
-nx dev organiclever-be-jasb
+nx dev demo-be-jasb
 
 # Or from app directory
-cd apps/organiclever-be-jasb
+cd apps/demo-be-jasb
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
@@ -109,7 +109,7 @@ mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ### Step 1: Start application
 
 ```bash
-npm run organiclever:dev
+npm run demo-be:dev
 ```
 
 Wait for: `Started OrganicLeverApplication in X seconds`
@@ -124,7 +124,7 @@ Expected: `{"message":"world"}`
 
 ### Step 3: Modify code
 
-Edit `apps/organiclever-be-jasb/src/main/java/com/organiclever/be/hello/controller/HelloController.java`:
+Edit `apps/demo-be-jasb/src/main/java/com/organiclever/be/hello/controller/HelloController.java`:
 
 ```java
 return Map.of("message", "auto-reload works!");
@@ -155,13 +155,13 @@ Expected: `{"message":"auto-reload works!"}`
 Build a production container image using the multi-stage Dockerfile:
 
 ```bash
-docker build -t organiclever-be-jasb:latest apps/organiclever-be-jasb/
+docker build -t demo-be-jasb:latest apps/demo-be-jasb/
 ```
 
 Run the image:
 
 ```bash
-docker run --rm -p 8201:8201 organiclever-be-jasb:latest
+docker run --rm -p 8201:8201 demo-be-jasb:latest
 ```
 
 **Image characteristics**:
@@ -177,47 +177,47 @@ docker run --rm -p 8201:8201 organiclever-be-jasb:latest
 
 ```bash
 # Build JAR
-nx build organiclever-be-jasb
+nx build demo-be-jasb
 
 # Or from app directory
-cd apps/organiclever-be-jasb
+cd apps/demo-be-jasb
 mvn clean package -DskipTests
 ```
 
-Output: `target/organiclever-be-jasb-1.0.0.jar`
+Output: `target/demo-be-jasb-1.0.0.jar`
 
 Run:
 
 ```bash
-java -XX:+UseZGC -jar apps/organiclever-be-jasb/target/organiclever-be-jasb-1.0.0.jar --spring.profiles.active=prod
+java -XX:+UseZGC -jar apps/demo-be-jasb/target/demo-be-jasb-1.0.0.jar --spring.profiles.active=prod
 ```
 
 ## Nx Commands
 
 ```bash
 # Build JAR
-nx build organiclever-be-jasb
+nx build demo-be-jasb
 
 # Start development server (Maven spring-boot:run)
-nx dev organiclever-be-jasb
+nx dev demo-be-jasb
 
 # Start production server (runs built JAR)
-nx run organiclever-be-jasb:start
+nx run demo-be-jasb:start
 
 # Run fast quality gate: unit + integration in parallel (no running service needed)
-nx run organiclever-be-jasb:test:quick
+nx run demo-be-jasb:test:quick
 
 # Run unit tests only (JUnit 5, no Spring context)
-nx run organiclever-be-jasb:test:unit
+nx run demo-be-jasb:test:unit
 
 # Run integration tests only (Cucumber JVM + MockMvc, no running service needed)
-nx run organiclever-be-jasb:test:integration
+nx run demo-be-jasb:test:integration
 
 # Lint code
-nx lint organiclever-be-jasb
+nx lint demo-be-jasb
 
 # Package annotation + null-safety check (JSpecify + NullAway — runs in pre-push hook)
-nx typecheck organiclever-be-jasb
+nx typecheck demo-be-jasb
 ```
 
 **See**: [Nx Target Standards](../../governance/development/infra/nx-targets.md) for canonical target names. Use `dev` (not `serve`) for the development server.
@@ -228,7 +228,7 @@ nx typecheck organiclever-be-jasb
 
 - `POST /api/v1/auth/register` - Register a new user (returns 201 with user id, username,
   createdAt)
-- `POST /api/v1/auth/login` - Login with credentials (returns 200 with JWT token and type)
+- `POST /api/v1/auth/login` - Login with credentials (returns 200 with access_token, refresh_token, and token_type)
 
 **Register request body**:
 
@@ -248,7 +248,7 @@ lowercase, digit, and special character.
 **Login response**:
 
 ```json
-{ "token": "<jwt>", "type": "Bearer" }
+{ "access_token": "<jwt>", "refresh_token": "<refresh>", "token_type": "Bearer" }
 ```
 
 Pass the token in subsequent requests as `Authorization: Bearer <token>`.
@@ -305,13 +305,13 @@ LiveReload server is running on port 35729
 
 ```bash
 # Watch container logs while editing files
-docker-compose logs -f organiclever-be-jasb
+docker-compose logs -f demo-be-jasb
 ```
 
 **Force restart**:
 
 ```bash
-docker-compose restart organiclever-be-jasb
+docker-compose restart demo-be-jasb
 ```
 
 ### Port 8201 already in use
@@ -332,7 +332,7 @@ First startup downloads ~100MB of dependencies. Subsequent starts are fast due t
 
 ```bash
 # Pre-download dependencies
-cd apps/organiclever-be-jasb
+cd apps/demo-be-jasb
 mvn dependency:go-offline
 ```
 
@@ -365,10 +365,10 @@ mvn clean install
 
 ```bash
 # Start dev environment
-cd infra/dev/organiclever-jasb
+cd infra/dev/demo-be
 docker-compose up
 
-# Edit code in apps/organiclever-be-jasb/src/
+# Edit code in apps/demo-be-jasb/src/
 # Save → Auto-reload (1-2 seconds)
 # Test changes immediately
 ```
@@ -377,38 +377,38 @@ docker-compose up
 
 ```bash
 # Fast quality gate: unit + integration in parallel (no running service needed)
-nx run organiclever-be-jasb:test:quick
+nx run demo-be-jasb:test:quick
 
 # Unit tests only (JUnit 5, no Spring context)
-nx run organiclever-be-jasb:test:unit        # mvn test
+nx run demo-be-jasb:test:unit        # mvn test
 
 # Integration tests only (Cucumber JVM + MockMvc)
-nx run organiclever-be-jasb:test:integration # mvn test -Pintegration
+nx run demo-be-jasb:test:integration # mvn test -Pintegration
 ```
 
 ### 3. Production Build
 
 ```bash
-nx build organiclever-be-jasb
-cd infra/dev/organiclever-jasb
+nx build demo-be-jasb
+cd infra/dev/demo-be
 docker-compose -f docker-compose.yml up
 ```
 
 ## Docker Development Image
 
-The Docker-based development environment uses a custom image built from `infra/dev/organiclever-jasb/Dockerfile.be.dev`:
+The Docker-based development environment uses a custom image built from `infra/dev/demo-be/Dockerfile.be.dev`:
 
 **Key Features**:
 
 - ✅ **Pre-installed Maven**: Maven 3.9.11 installed during image build, not at runtime
 - ✅ **Faster startup**: Saves 10-20 seconds on each `docker compose up`
 - ✅ **Consistent environment**: Same tooling for all developers
-- ✅ **Isolated**: Maven installation contained to organiclever-be-jasb service only
+- ✅ **Isolated**: Maven installation contained to demo-be-jasb service only
 
 **Building the image** (first-time only):
 
 ```bash
-cd infra/dev/organiclever-jasb
+cd infra/dev/demo-be
 docker compose build
 ```
 
@@ -427,7 +427,7 @@ docker compose build
 ## Architecture
 
 ```
-apps/organiclever-be-jasb/
+apps/demo-be-jasb/
 ├── src/main/java/com/organiclever/be/
 │   ├── OrganicLeverApplication.java
 │   ├── auth/
@@ -474,11 +474,11 @@ apps/organiclever-be-jasb/
 
 Three tiers of testing provide complete coverage:
 
-| Tier        | Tool                   | Surefire profile | Location                         | Command                                        | Requires running service? | Cached? |
-| ----------- | ---------------------- | ---------------- | -------------------------------- | ---------------------------------------------- | ------------------------- | ------- |
-| Unit        | JUnit 5                | (default)        | `src/test/java/.../unit/`        | `nx run organiclever-be-jasb:test:unit`        | No                        | Yes     |
-| Integration | Cucumber JVM + MockMvc | `-Pintegration`  | `src/test/java/.../integration/` | `nx run organiclever-be-jasb:test:integration` | No                        | Yes     |
-| E2E         | playwright-bdd         | —                | `apps/organiclever-be-e2e/`      | `nx run organiclever-be-e2e:test:e2e`          | Yes (port 8201)           | No      |
+| Tier        | Tool                   | Surefire profile | Location                         | Command                                | Requires running service? | Cached? |
+| ----------- | ---------------------- | ---------------- | -------------------------------- | -------------------------------------- | ------------------------- | ------- |
+| Unit        | JUnit 5                | (default)        | `src/test/java/.../unit/`        | `nx run demo-be-jasb:test:unit`        | No                        | Yes     |
+| Integration | Cucumber JVM + MockMvc | `-Pintegration`  | `src/test/java/.../integration/` | `nx run demo-be-jasb:test:integration` | No                        | Yes     |
+| E2E         | playwright-bdd         | —                | `apps/demo-be-e2e/`              | `nx run demo-be-e2e:test:e2e`          | Yes (port 8201)           | No      |
 
 The two Maven profiles are mutually exclusive: `mvn test` includes only `**/unit/**/*Test.java`;
 `mvn test -Pintegration` includes only `**/*IT.java` (the three Cucumber runner classes). `test:quick`
@@ -488,15 +488,15 @@ The three `*IT.java` runners execute in parallel (Surefire `parallel=classes`, `
 using separate H2 in-memory databases (`testdb_registration`, `testdb_login`, `testdb_jwt`) to
 prevent cross-thread data conflicts.
 
-Integration and E2E tests share the same Gherkin feature files from `specs/apps/organiclever-be/`.
+Integration and E2E tests share the same Gherkin feature files from `specs/apps/demo-be/gherkin/`.
 
 ### Unit Tests
 
 No Spring context. Tests individual classes in isolation (`mvn test`, default Surefire includes):
 
 ```bash
-nx run organiclever-be-jasb:test:unit
-# or: cd apps/organiclever-be-jasb && mvn test
+nx run demo-be-jasb:test:unit
+# or: cd apps/demo-be-jasb && mvn test
 ```
 
 ### Integration Tests (MockMvc)
@@ -507,18 +507,18 @@ required — Cucumber JVM reads the same Gherkin feature files as the E2E suite 
 (`cache: true`):
 
 ```bash
-nx run organiclever-be-jasb:test:integration
-# or: cd apps/organiclever-be-jasb && mvn test -Pintegration
+nx run demo-be-jasb:test:integration
+# or: cd apps/demo-be-jasb && mvn test -Pintegration
 ```
 
 ### E2E Testing
 
-The [`organiclever-be-e2e`](../organiclever-be-e2e/) project provides Playwright-based E2E tests
+The [`demo-be-e2e`](../demo-be-e2e/) project provides Playwright-based E2E tests
 for this API. Run them after starting the backend:
 
 ```bash
 # Start backend (any method above), then:
-nx run organiclever-be-e2e:test:e2e
+nx run demo-be-e2e:test:e2e
 ```
 
 Tests cover:

@@ -1,6 +1,6 @@
 spring:
   application:
-    name: organiclever-be-jasb
+    name: demo-be
   profiles:
     active: dev
   web:
@@ -9,6 +9,10 @@ spring:
       include-binding-errors: always
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 app:
   jwt:

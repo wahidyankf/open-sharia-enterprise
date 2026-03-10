@@ -10,7 +10,7 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 
 @Suite
 @IncludeEngines("cucumber")
-@SelectClasspathResource("auth/jwt-protection.feature")
+@SelectClasspathResource("security/security.feature")
 @ConfigurationParameter(
     key = GLUE_PROPERTY_NAME,
     value = "com.organiclever.be.integration.jwtprotected"
