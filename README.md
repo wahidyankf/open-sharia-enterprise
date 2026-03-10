@@ -4,6 +4,7 @@
 
 [![Main CI](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/main-ci.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/main-ci.yml)
 [![E2E - OrganicLever (JASB)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-organiclever-jasb.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-organiclever-jasb.yml)
+[![E2E - OrganicLever (EXPH)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-organiclever-exph.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-organiclever-exph.yml)
 [![Test and Deploy - AyoKoding Web](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/deploy-ayokoding-web.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/deploy-ayokoding-web.yml)
 [![Test and Deploy - OSE Platform Web](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/deploy-oseplatform-web.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/deploy-oseplatform-web.yml)
 
@@ -17,6 +18,7 @@ All projects enforce ≥95% test coverage as part of `test:quick`. Coverage is u
 | `apps/ayokoding-cli`        | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=ayokoding-cli)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)        |
 | `apps/oseplatform-cli`      | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=oseplatform-cli)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)      |
 | `apps/organiclever-be-jasb` | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=organiclever-be-jasb)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise) |
+| `apps/organiclever-be-exph` | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=organiclever-be-exph)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise) |
 | `apps/organiclever-web`     | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=organiclever-web)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)     |
 | `libs/golang-commons`       | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=golang-commons)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)       |
 | `libs/hugo-commons`         | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=hugo-commons)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)         |
