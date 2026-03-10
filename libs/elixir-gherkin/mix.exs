@@ -30,7 +30,7 @@ defmodule ElixirGherkin.Mixfile do
 
   defp deps do
     [
-      # Pin to 0.18.3 — 0.18.4+ has a code-path regression with Elixir 1.17.3 where
+      # Pin to 0.18.3 — 0.18.4+ has a code-path regression with Elixir 1.19.5 where
       # ExCoveralls module is not in the VM's code path at coverage-setup time.
       # Use the custom cover.lcov alias (below) which pre-starts :tools so
       # :cover.stop() does not fail on first use.
@@ -41,7 +41,7 @@ defmodule ElixirGherkin.Mixfile do
 
   defp aliases do
     [
-      # Workaround for Elixir 1.17.3 + ExCoveralls 0.18.x in Alpine Docker:
+      # Workaround for Elixir 1.19.5 + ExCoveralls 0.18.x in Alpine Docker:
       #
       # Bug 1 — ExCoveralls module not in code path:
       #   Mix only adds :only-:test deps to the code path inside Mix.Tasks.Test.
