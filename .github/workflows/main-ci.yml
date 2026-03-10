@@ -47,6 +47,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install Elixir dependencies (organiclever-be-exph)
+        run: mix deps.get
+        working-directory: apps/organiclever-be-exph
+
       - name: test:quick (all projects)
         run: npx nx run-many -t test:quick --all
 
