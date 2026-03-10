@@ -1,0 +1,77 @@
+# Local Development Environment for Demo Backend (EXPH — Elixir/Phoenix)
+# Mutually exclusive with demo-be-jasb — both bind port 8201 and share the same DB.
+# Do not run both stacks simultaneously.
+
+services:
+  demo-be-exph-db:
+    image: postgres:17-alpine
+    container_name: demo-be-exph-db
+    environment:
+      POSTGRES_DB: demo_be_exph
+      POSTGRES_USER: ${POSTGRES_USER:-demo_be_exph}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-demo_be_exph}
+    ports:
+      - "5432:5432"
+    volumes:
+      - demo-be-exph-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-demo_be_exph} -d demo_be_exph"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      - demo-be-exph-network
+
+  demo-be-exph:
+    build:
+      context: .
+      dockerfile: Dockerfile.be.dev
+    container_name: demo-be-exph
+    working_dir: /workspace
+
+    # Mount app source and local Mix path dependencies.
+    # Mix resolves path deps relative to /workspace:
+    #   "../../libs/elixir-gherkin" → /libs/elixir-gherkin
+    #   "../../libs/elixir-cabbage" → /libs/elixir-cabbage
+    volumes:
+      - ../../../apps/demo-be-exph:/workspace:rw
+      - ../../../libs/elixir-gherkin:/libs/elixir-gherkin:ro
+      - ../../../libs/elixir-cabbage:/libs/elixir-cabbage:ro
+      - ../../../specs/apps/demo-be/gherkin:/specs/apps/demo-be/gherkin:ro
+
+    ports:
+      - "8201:8201"
+
+    depends_on:
+      demo-be-exph-db:
+        condition: service_healthy
+
+    environment:
+      - MIX_ENV=dev
+      - PORT=8201
+      - DATABASE_URL=ecto://demo_be_exph:demo_be_exph@demo-be-exph-db:5432/demo_be_exph
+      - APP_JWT_SECRET=${APP_JWT_SECRET:-change-me-in-dev-only-not-for-production}
+
+    # Run migrations before starting the server so fresh containers have the schema applied.
+    command: sh -c "mix deps.get && mix ecto.migrate && mix phx.server"
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8201/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 180s
+
+    restart: unless-stopped
+    networks:
+      - demo-be-exph-network
+
+networks:
+  demo-be-exph-network:
+    driver: bridge
+    name: demo-be-exph-network
+
+volumes:
+  demo-be-exph-db-data:

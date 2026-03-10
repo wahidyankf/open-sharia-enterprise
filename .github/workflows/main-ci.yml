@@ -51,7 +51,7 @@ jobs:
         run: |
           (cd libs/elixir-gherkin && mix deps.get)
           (cd libs/elixir-cabbage && mix deps.get)
-          (cd apps/organiclever-be-exph && mix deps.get)
+          (cd apps/demo-be-exph && mix deps.get)
 
       - name: test:quick (all projects)
         run: npx nx run-many -t test:quick --all
@@ -115,10 +115,10 @@ jobs:
           flags: organiclever-web
           fail_ci_if_error: false
 
-      - name: Upload coverage — organiclever-be-exph
+      - name: Upload coverage — demo-be-exph
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: apps/organiclever-be-exph/cover/lcov.info
-          flags: organiclever-be-exph
+          files: apps/demo-be-exph/cover/lcov.info
+          flags: demo-be-exph
           fail_ci_if_error: false
