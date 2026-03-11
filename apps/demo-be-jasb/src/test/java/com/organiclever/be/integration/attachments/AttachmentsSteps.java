@@ -212,6 +212,50 @@ public class AttachmentsSteps {
                         .andReturn());
     }
 
+    @When("^alice sends GET /api/v1/expenses/\\{bobExpenseId\\}/attachments$")
+    public void aliceSendsGetAttachmentsOnBobsExpense() throws Exception {
+        String token = tokenStore.getToken();
+        UUID bobExpenseId = tokenStore.getBobExpenseId();
+        if (token == null || bobExpenseId == null) {
+            throw new IllegalStateException("Token or bob expense ID not stored");
+        }
+        responseStore.setResult(
+                mockMvc.perform(
+                        get("/api/v1/expenses/" + bobExpenseId + "/attachments")
+                                .header("Authorization", "Bearer " + token))
+                        .andReturn());
+    }
+
+    @When("^alice sends DELETE /api/v1/expenses/\\{bobExpenseId\\}/attachments/\\{attachmentId\\}$")
+    public void aliceDeletesAttachmentOnBobsExpense() throws Exception {
+        String token = tokenStore.getToken();
+        UUID bobExpenseId = tokenStore.getBobExpenseId();
+        UUID attachmentId = tokenStore.getAttachmentId();
+        if (token == null || bobExpenseId == null || attachmentId == null) {
+            throw new IllegalStateException("Token, bob expense ID, or attachment ID not stored");
+        }
+        responseStore.setResult(
+                mockMvc.perform(
+                        delete("/api/v1/expenses/" + bobExpenseId + "/attachments/" + attachmentId)
+                                .header("Authorization", "Bearer " + token))
+                        .andReturn());
+    }
+
+    @When("^alice sends DELETE /api/v1/expenses/\\{expenseId\\}/attachments/\\{randomAttachmentId\\}$")
+    public void aliceDeletesNonExistentAttachment() throws Exception {
+        String token = tokenStore.getToken();
+        UUID expenseId = tokenStore.getExpenseId();
+        if (token == null || expenseId == null) {
+            throw new IllegalStateException("Token or expense ID not stored");
+        }
+        UUID randomId = UUID.randomUUID();
+        responseStore.setResult(
+                mockMvc.perform(
+                        delete("/api/v1/expenses/" + expenseId + "/attachments/" + randomId)
+                                .header("Authorization", "Bearer " + token))
+                        .andReturn());
+    }
+
     // Note: "the response body should contain a validation error for {string}"
     // is provided by AuthSteps (in integration.steps package)
 }

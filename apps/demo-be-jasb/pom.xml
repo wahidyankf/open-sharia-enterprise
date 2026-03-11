@@ -293,6 +293,7 @@
                             <excludes>
                                 <exclude>**/OrganicLeverApplication.class</exclude>
                                 <exclude>**/package-info.class</exclude>
+                                <exclude>**/JpaAuditingConfig.class</exclude>
                             </excludes>
                         </configuration>
                         <executions>
