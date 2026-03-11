@@ -59,6 +59,7 @@
     "*.{js,jsx,ts,tsx,mjs,cjs}": "prettier --write",
     "*.json": "prettier --write",
     "*.go": "gofmt -w",
+    "*.fs": "bash -c 'DOTNET_ROOT=$HOME/.dotnet fantomas \"$@\"' --",
     "apps/ayokoding-web/archetypes/**/*.md": "echo 'Skipping Hugo archetype'",
     "*.md": "prettier --write",
     "*.{yml,yaml}": "prettier --write",

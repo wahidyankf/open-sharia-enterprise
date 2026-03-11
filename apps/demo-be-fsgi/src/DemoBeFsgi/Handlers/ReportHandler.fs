@@ -1,0 +1,89 @@
+module DemoBeFsgi.Handlers.ReportHandler
+
+open System
+open System.Linq
+open Giraffe
+open Microsoft.AspNetCore.Http
+open Microsoft.EntityFrameworkCore
+open DemoBeFsgi.Infrastructure.AppDbContext
+
+let profitAndLoss: HttpHandler =
+    fun next ctx ->
+        task {
+            let userId = ctx.Items["UserId"] :?> Guid
+            let db = ctx.GetService<AppDbContext>()
+
+            let fromParam = ctx.TryGetQueryStringValue("from")
+            let toParam = ctx.TryGetQueryStringValue("to")
+
+            let currencyParam =
+                ctx.TryGetQueryStringValue("currency") |> Option.defaultValue "USD"
+
+            let fromDate =
+                match fromParam with
+                | Some s ->
+                    match DateTime.TryParse(s) with
+                    | true, d -> d
+                    | _ -> DateTime.MinValue
+                | None -> DateTime.MinValue
+
+            let toDate =
+                match toParam with
+                | Some s ->
+                    match DateTime.TryParse(s) with
+                    | true, d -> d.AddDays(1.0).AddSeconds(-1.0)
+                    | _ -> DateTime.MaxValue
+                | None -> DateTime.MaxValue
+
+            let currency = currencyParam.ToUpperInvariant()
+
+            let entries =
+                db.Expenses
+                    .Where(fun e ->
+                        e.UserId = userId
+                        && e.Currency = currency
+                        && e.Date >= fromDate
+                        && e.Date <= toDate)
+                    .ToListAsync()
+                |> Async.AwaitTask
+                |> Async.RunSynchronously
+
+            let incomeEntries = entries |> Seq.filter (fun e -> e.EntryType = "income")
+            let expenseEntries = entries |> Seq.filter (fun e -> e.EntryType = "expense")
+
+            let incomeTotal = incomeEntries |> Seq.sumBy (fun e -> e.Amount)
+            let expenseTotal = expenseEntries |> Seq.sumBy (fun e -> e.Amount)
+            let net = incomeTotal - expenseTotal
+
+            let formatAmount (a: decimal) =
+                match currency with
+                | "IDR" -> a.ToString("0")
+                | _ -> a.ToString("0.00")
+
+            let incomeBreakdown =
+                incomeEntries
+                |> Seq.groupBy (fun e -> e.Category)
+                |> Seq.map (fun (cat, items) ->
+                    {| category = cat
+                       amount = formatAmount (items |> Seq.sumBy (fun e -> e.Amount)) |})
+                |> Seq.toArray
+
+            let expenseBreakdown =
+                expenseEntries
+                |> Seq.groupBy (fun e -> e.Category)
+                |> Seq.map (fun (cat, items) ->
+                    {| category = cat
+                       amount = formatAmount (items |> Seq.sumBy (fun e -> e.Amount)) |})
+                |> Seq.toArray
+
+            return!
+                json
+                    {| income_total = formatAmount incomeTotal
+                       expense_total = formatAmount expenseTotal
+                       net = formatAmount net
+                       currency = currency
+                       income_breakdown = incomeBreakdown
+                       expense_breakdown = expenseBreakdown |}
+                    next
+                    ctx
+        }

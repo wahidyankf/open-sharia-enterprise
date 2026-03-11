@@ -4,8 +4,7 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
-- [2026-03-11\_\_demo-be-fsgi](./2026-03-11__demo-be-fsgi/README.md) —
-  F#/Giraffe reimplementation of the demo backend REST API
+No active plans.
 
 ## Instructions
 
