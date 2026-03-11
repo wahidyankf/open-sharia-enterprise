@@ -1,0 +1,71 @@
+{
+  "name": "demo-be-ktkt",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/demo-be-ktkt/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "./gradlew build -x test",
+        "cwd": "apps/demo-be-ktkt"
+      },
+      "outputs": ["{projectRoot}/build"]
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "./gradlew run",
+        "cwd": "apps/demo-be-ktkt"
+      }
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "java -jar build/libs/demo-be-ktkt-all.jar",
+        "cwd": "apps/demo-be-ktkt"
+      }
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "./gradlew test koverXmlReport",
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-be-ktkt/build/reports/kover/report.xml 90)",
+          "./gradlew detekt ktfmtCheck"
+        ],
+        "parallel": false,
+        "cwd": "apps/demo-be-ktkt"
+      }
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "./gradlew test --tests '*.unit.*'",
+        "cwd": "apps/demo-be-ktkt"
+      }
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "./gradlew test --tests '*.integration.*'",
+        "cwd": "apps/demo-be-ktkt"
+      },
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/main/**/*.kt",
+        "{projectRoot}/src/test/**/*.kt",
+        "{workspaceRoot}/specs/apps/demo-be/gherkin/**/*.feature"
+      ]
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "./gradlew detekt",
+        "cwd": "apps/demo-be-ktkt"
+      }
+    }
+  },
+  "tags": ["type:app", "platform:ktor", "lang:kotlin", "domain:demo-be"],
+  "implicitDependencies": ["rhino-cli"]
+}
