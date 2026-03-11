@@ -2,7 +2,6 @@ package com.organiclever.be.integration.token_management;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.organiclever.be.auth.repository.RevokedTokenRepository;
-import com.organiclever.be.auth.repository.UserRepository;
 import com.organiclever.be.integration.ResponseStore;
 import com.organiclever.be.integration.steps.TokenStore;
 import com.jayway.jsonpath.JsonPath;
@@ -34,9 +33,6 @@ public class TokenManagementSteps {
 
     @Autowired
     private RevokedTokenRepository revokedTokenRepository;
-
-    @Autowired
-    private UserRepository userRepository;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 

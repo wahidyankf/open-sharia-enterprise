@@ -168,7 +168,6 @@ public class AttachmentsSteps {
     @Given("^bob has created an entry with body (.*)$")
     public void bobHasCreatedAnEntryWithBody(final String body) throws Exception {
         // Bob registers and logs in
-        String bobUsername = "bob";
         // Register bob if not registered
         mockMvc.perform(
                 post("/api/v1/auth/register")

@@ -1,12 +1,10 @@
 package com.organiclever.be.integration.expense_management;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.organiclever.be.integration.ResponseStore;
 import com.organiclever.be.integration.steps.TokenStore;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
-import java.util.Map;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -31,8 +29,6 @@ public class ExpenseManagementSteps {
 
     @Autowired
     private TokenStore tokenStore;
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @When("^alice sends POST /api/v1/expenses with body \\{ \"amount\": \"10\\.50\", \"currency\": \"USD\", \"category\": \"food\", \"description\": \"Lunch\", \"date\": \"2025-01-15\", \"type\": \"expense\" \\}$")
     public void aliceCreatesExpenseEntry() throws Exception {
