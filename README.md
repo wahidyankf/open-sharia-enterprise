@@ -3,7 +3,7 @@
 ✨ An enterprise solutions platform for Sharia-compliant business systems.
 
 [![Main CI](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/main-ci.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/main-ci.yml)
-[![E2E - Demo Backend (JASB)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be.yml)
+[![E2E - Demo Backend (JASB)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-jasb.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-jasb.yml)
 [![E2E - OrganicLever (EXPH)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-organiclever-exph.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-organiclever-exph.yml)
 [![Test and Deploy - AyoKoding Web](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/deploy-ayokoding-web.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/deploy-ayokoding-web.yml)
 [![Test and Deploy - OSE Platform Web](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/deploy-oseplatform-web.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/deploy-oseplatform-web.yml)
