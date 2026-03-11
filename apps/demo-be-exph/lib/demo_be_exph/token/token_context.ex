@@ -3,6 +3,8 @@ defmodule DemoBeExph.Token.TokenContext do
   Token context for refresh token rotation and access token revocation.
   """
 
+  @behaviour DemoBeExph.Token.TokenBehaviour
+
   import Ecto.Query
 
   alias DemoBeExph.Repo

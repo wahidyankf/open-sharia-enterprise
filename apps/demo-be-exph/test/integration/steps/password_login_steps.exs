@@ -7,6 +7,8 @@ defmodule DemoBeExphWeb.Integration.PasswordLoginSteps do
 
   @moduletag :integration
 
+  defp accounts, do: Application.get_env(:demo_be_exph, :accounts_module)
+
   defgiven ~r/^the API is running$/, _vars, state do
     {:ok, state}
   end
@@ -33,7 +35,7 @@ defmodule DemoBeExphWeb.Integration.PasswordLoginSteps do
         Helpers.register_user!(username, email, password)
       end
 
-    DemoBeExph.Accounts.deactivate_user(user)
+    accounts().deactivate_user(user)
     {:ok, state}
   end
 

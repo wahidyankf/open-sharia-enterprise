@@ -7,16 +7,19 @@ defmodule DemoBeExph.Application do
 
   @impl true
   def start(_type, _args) do
-    children = [
+    base_children = [
       DemoBeExphWeb.Telemetry,
-      DemoBeExph.Repo,
       {DNSCluster, query: Application.get_env(:demo_be_exph, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: DemoBeExph.PubSub},
-      # Start a worker by calling: DemoBeExph.Worker.start_link(arg)
-      # {DemoBeExph.Worker, arg},
-      # Start to serve requests, typically the last entry
       DemoBeExphWeb.Endpoint
     ]
+
+    children =
+      if Mix.env() != :test do
+        [DemoBeExph.Repo | base_children]
+      else
+        base_children
+      end
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options

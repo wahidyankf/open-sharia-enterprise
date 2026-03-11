@@ -1,8 +1,9 @@
 defmodule DemoBeExph.Accounts do
   @moduledoc """
   Accounts context for user registration, authentication, and profile management.
-  Uses real Ecto/PostgreSQL — no Mox indirection.
   """
+
+  @behaviour DemoBeExph.Accounts.Behaviour
 
   import Ecto.Query
 

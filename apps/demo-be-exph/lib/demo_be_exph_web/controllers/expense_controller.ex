@@ -1,13 +1,20 @@
 defmodule DemoBeExphWeb.ExpenseController do
   use DemoBeExphWeb, :controller
 
-  alias DemoBeExph.Expense.ExpenseContext
   alias Guardian.Plug, as: GuardianPlug
+
+  defp expense_ctx,
+    do:
+      Application.get_env(
+        :demo_be_exph,
+        :expense_module,
+        DemoBeExph.Expense.ExpenseContext
+      )
 
   def index(conn, params) do
     user = GuardianPlug.current_resource(conn)
     page = params |> Map.get("page", "1") |> String.to_integer()
-    result = ExpenseContext.list_expenses(user.id, page: page)
+    result = expense_ctx().list_expenses(user.id, page: page)
 
     json(conn, %{
       data: Enum.map(result.data, &expense_json/1),
@@ -19,7 +26,7 @@ defmodule DemoBeExphWeb.ExpenseController do
   def create(conn, params) do
     user = GuardianPlug.current_resource(conn)
 
-    case ExpenseContext.create_expense(user.id, params) do
+    case expense_ctx().create_expense(user.id, params) do
       {:ok, expense} ->
         conn
         |> put_status(:created)
@@ -35,7 +42,7 @@ defmodule DemoBeExphWeb.ExpenseController do
   def show(conn, %{"id" => id}) do
     user = GuardianPlug.current_resource(conn)
 
-    case ExpenseContext.get_expense(user.id, String.to_integer(id)) do
+    case expense_ctx().get_expense(user.id, String.to_integer(id)) do
       nil ->
         conn |> put_status(:not_found) |> json(%{message: "Not found"})
 
@@ -47,7 +54,7 @@ defmodule DemoBeExphWeb.ExpenseController do
   def update(conn, %{"id" => id} = params) do
     user = GuardianPlug.current_resource(conn)
 
-    case ExpenseContext.update_expense(user.id, String.to_integer(id), params) do
+    case expense_ctx().update_expense(user.id, String.to_integer(id), params) do
       {:ok, expense} ->
         json(conn, expense_json(expense))
 
@@ -62,7 +69,7 @@ defmodule DemoBeExphWeb.ExpenseController do
   def delete(conn, %{"id" => id}) do
     user = GuardianPlug.current_resource(conn)
 
-    case ExpenseContext.delete_expense(user.id, String.to_integer(id)) do
+    case expense_ctx().delete_expense(user.id, String.to_integer(id)) do
       {:ok, _} ->
         conn |> put_status(:no_content) |> json(%{})
 
@@ -73,7 +80,7 @@ defmodule DemoBeExphWeb.ExpenseController do
 
   def summary(conn, _params) do
     user = GuardianPlug.current_resource(conn)
-    totals = ExpenseContext.summary(user.id)
+    totals = expense_ctx().summary(user.id)
     serializable = Enum.into(totals, %{}, fn {k, v} -> {k, Decimal.to_string(v)} end)
     json(conn, serializable)
   end

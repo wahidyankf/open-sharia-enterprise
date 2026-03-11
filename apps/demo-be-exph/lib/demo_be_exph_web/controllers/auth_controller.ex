@@ -1,12 +1,15 @@
 defmodule DemoBeExphWeb.AuthController do
   use DemoBeExphWeb, :controller
 
-  alias DemoBeExph.Accounts
   alias DemoBeExph.Auth.Guardian
-  alias DemoBeExph.Token.TokenContext
+
+  defp accounts, do: Application.get_env(:demo_be_exph, :accounts_module, DemoBeExph.Accounts)
+
+  defp token_ctx,
+    do: Application.get_env(:demo_be_exph, :token_module, DemoBeExph.Token.TokenContext)
 
   def register(conn, params) do
-    case Accounts.register_user(params) do
+    case accounts().register_user(params) do
       {:ok, user} ->
         conn
         |> put_status(:created)
@@ -52,7 +55,7 @@ defmodule DemoBeExphWeb.AuthController do
       {:ok, claims} ->
         jti = Map.get(claims, "jti")
         user_id = claims |> Map.get("sub") |> parse_user_id()
-        TokenContext.revoke_access_token(jti, user_id)
+        token_ctx().revoke_access_token(jti, user_id)
 
       {:error, _reason} ->
         nil
@@ -68,8 +71,8 @@ defmodule DemoBeExphWeb.AuthController do
       {:ok, claims} ->
         jti = Map.get(claims, "jti")
         user_id = claims |> Map.get("sub") |> parse_user_id()
-        TokenContext.revoke_access_token(jti, user_id)
-        TokenContext.revoke_all_refresh_tokens(user_id)
+        token_ctx().revoke_access_token(jti, user_id)
+        token_ctx().revoke_all_refresh_tokens(user_id)
 
       {:error, _} ->
         nil
@@ -93,11 +96,11 @@ defmodule DemoBeExphWeb.AuthController do
   # Private helpers
 
   defp do_login(conn, username, password) do
-    case Accounts.authenticate_user(username, password) do
+    case accounts().authenticate_user(username, password) do
       {:ok, user} ->
         {:ok, access_token, claims} = Guardian.encode_and_sign(user)
         jti = Map.get(claims, "jti")
-        {:ok, refresh_token} = TokenContext.create_refresh_token(user.id)
+        {:ok, refresh_token} = token_ctx().create_refresh_token(user.id)
         _ = jti
 
         json(conn, %{
@@ -124,7 +127,7 @@ defmodule DemoBeExphWeb.AuthController do
   end
 
   defp do_refresh(conn, raw_token) do
-    case TokenContext.validate_refresh_token(raw_token) do
+    case token_ctx().validate_refresh_token(raw_token) do
       {:error, :token_expired} ->
         conn
         |> put_status(:unauthorized)
@@ -136,16 +139,16 @@ defmodule DemoBeExphWeb.AuthController do
         |> json(%{message: "Invalid refresh token"})
 
       {:ok, record} ->
-        user = Accounts.get_user(record.user_id)
+        user = accounts().get_user(record.user_id)
 
         if is_nil(user) or user.status not in ["ACTIVE"] do
           conn
           |> put_status(:unauthorized)
           |> json(%{message: "Account has been deactivated"})
         else
-          TokenContext.consume_refresh_token(raw_token)
+          token_ctx().consume_refresh_token(raw_token)
           {:ok, access_token, _claims} = Guardian.encode_and_sign(user)
-          {:ok, new_refresh_token} = TokenContext.create_refresh_token(user.id)
+          {:ok, new_refresh_token} = token_ctx().create_refresh_token(user.id)
 
           json(conn, %{
             access_token: access_token,

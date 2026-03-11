@@ -11,6 +11,11 @@ config :demo_be_exph,
   ecto_repos: [DemoBeExph.Repo],
   generators: [timestamp_type: :utc_datetime]
 
+config :demo_be_exph, :accounts_module, DemoBeExph.Accounts
+config :demo_be_exph, :token_module, DemoBeExph.Token.TokenContext
+config :demo_be_exph, :expense_module, DemoBeExph.Expense.ExpenseContext
+config :demo_be_exph, :attachment_module, DemoBeExph.Attachment.AttachmentContext
+
 # Configure the endpoint
 config :demo_be_exph, DemoBeExphWeb.Endpoint,
   url: [host: "localhost"],

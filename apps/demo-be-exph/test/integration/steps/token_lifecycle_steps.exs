@@ -3,15 +3,12 @@ defmodule DemoBeExphWeb.Integration.TokenLifecycleSteps do
 
   use DemoBeExphWeb.ConnCase
 
-  import Ecto.Query
-
-  alias DemoBeExph.Accounts
   alias DemoBeExph.Integration.Helpers
-  alias DemoBeExph.Repo
-  alias DemoBeExph.Token.RefreshToken
-  alias DemoBeExph.Token.TokenContext
 
   @moduletag :integration
+
+  defp accounts, do: Application.get_env(:demo_be_exph, :accounts_module)
+  defp token_ctx, do: Application.get_env(:demo_be_exph, :token_module)
 
   defgiven ~r/^the API is running$/, _vars, state do
     {:ok, state}
@@ -35,29 +32,22 @@ defmodule DemoBeExphWeb.Integration.TokenLifecycleSteps do
   defgiven ~r/^alice's refresh token has expired$/,
            _vars,
            %{refresh_token: refresh_token} = state do
-    # Expire the token in the DB by setting expires_at to the past
-    token_hash = :crypto.hash(:sha256, refresh_token) |> Base.encode16(case: :lower)
-
-    Repo.update_all(
-      from(t in RefreshToken, where: t.token_hash == ^token_hash),
-      set: [expires_at: ~U[2020-01-01 00:00:00Z]]
-    )
-
+    token_ctx().expire_refresh_token!(refresh_token)
     {:ok, state}
   end
 
   defgiven ~r/^alice has used her refresh token to get a new token pair$/,
            _vars,
            %{alice: user, refresh_token: refresh_token} = state do
-    TokenContext.consume_refresh_token(refresh_token)
-    {:ok, new_refresh_token} = TokenContext.create_refresh_token(user.id)
+    token_ctx().consume_refresh_token(refresh_token)
+    {:ok, new_refresh_token} = token_ctx().create_refresh_token(user.id)
     {:ok, Map.put(state, :new_refresh_token, new_refresh_token)}
   end
 
   defgiven ~r/^the user "(?<username>[^"]+)" has been deactivated$/,
            %{username: _username},
            %{alice: user} = state do
-    Accounts.deactivate_user(user)
+    accounts().deactivate_user(user)
     {:ok, state}
   end
 

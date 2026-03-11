@@ -3,7 +3,8 @@ defmodule DemoBeExphWeb.ConnCase do
   This module defines the test case to be used by
   tests that require setting up a connection.
 
-  Integration tests (tagged :integration) use the real Ecto SQL sandbox.
+  Integration tests (tagged :integration) use the in-memory store
+  instead of a real database.
   """
 
   use ExUnit.CaseTemplate
@@ -20,8 +21,8 @@ defmodule DemoBeExphWeb.ConnCase do
     end
   end
 
-  setup tags do
-    DemoBeExph.DataCase.setup_sandbox(tags)
+  setup _tags do
+    DemoBeExph.Test.InMemoryStore.reset()
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 end

@@ -3,6 +3,8 @@ defmodule DemoBeExph.Expense.ExpenseContext do
   Context for managing financial entries (income and expenses).
   """
 
+  @behaviour DemoBeExph.Expense.ExpenseBehaviour
+
   import Ecto.Query
 
   alias DemoBeExph.Expense.Expense

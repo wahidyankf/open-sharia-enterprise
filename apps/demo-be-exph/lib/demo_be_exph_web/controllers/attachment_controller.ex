@@ -2,23 +2,37 @@ defmodule DemoBeExphWeb.AttachmentController do
   use DemoBeExphWeb, :controller
 
   alias DemoBeExph.Attachment.Attachment
-  alias DemoBeExph.Attachment.AttachmentContext
-  alias DemoBeExph.Expense.ExpenseContext
   alias Guardian.Plug, as: GuardianPlug
 
   @supported_content_types ~w(image/jpeg image/png application/pdf)
   @max_size_bytes Attachment.max_size_bytes()
 
+  defp expense_ctx,
+    do:
+      Application.get_env(
+        :demo_be_exph,
+        :expense_module,
+        DemoBeExph.Expense.ExpenseContext
+      )
+
+  defp attachment_ctx,
+    do:
+      Application.get_env(
+        :demo_be_exph,
+        :attachment_module,
+        DemoBeExph.Attachment.AttachmentContext
+      )
+
   def index(conn, %{"expense_id" => expense_id}) do
     user = GuardianPlug.current_resource(conn)
     expense_id_int = String.to_integer(expense_id)
 
-    case ExpenseContext.get_expense(user.id, expense_id_int) do
+    case expense_ctx().get_expense(user.id, expense_id_int) do
       nil ->
         conn |> put_status(:not_found) |> json(%{message: "Expense not found"})
 
       _expense ->
-        attachments = AttachmentContext.list_attachments(expense_id_int)
+        attachments = attachment_ctx().list_attachments(expense_id_int)
         json(conn, %{attachments: Enum.map(attachments, &attachment_json/1)})
     end
   end
@@ -27,7 +41,7 @@ defmodule DemoBeExphWeb.AttachmentController do
     user = GuardianPlug.current_resource(conn)
     expense_id_int = String.to_integer(expense_id)
 
-    case ExpenseContext.get_expense(user.id, expense_id_int) do
+    case expense_ctx().get_expense(user.id, expense_id_int) do
       nil ->
         conn |> put_status(:forbidden) |> json(%{message: "Expense not found or access denied"})
 
@@ -40,12 +54,12 @@ defmodule DemoBeExphWeb.AttachmentController do
     user = GuardianPlug.current_resource(conn)
     expense_id_int = String.to_integer(expense_id)
 
-    case ExpenseContext.get_expense(user.id, expense_id_int) do
+    case expense_ctx().get_expense(user.id, expense_id_int) do
       nil ->
         conn |> put_status(:not_found) |> json(%{message: "Expense not found"})
 
       _expense ->
-        case AttachmentContext.get_attachment(expense_id_int, String.to_integer(att_id)) do
+        case attachment_ctx().get_attachment(expense_id_int, String.to_integer(att_id)) do
           nil -> conn |> put_status(:not_found) |> json(%{message: "Attachment not found"})
           attachment -> json(conn, attachment_json(attachment))
         end
@@ -56,12 +70,12 @@ defmodule DemoBeExphWeb.AttachmentController do
     user = GuardianPlug.current_resource(conn)
     expense_id_int = String.to_integer(expense_id)
 
-    case ExpenseContext.get_expense(user.id, expense_id_int) do
+    case expense_ctx().get_expense(user.id, expense_id_int) do
       nil ->
         conn |> put_status(:not_found) |> json(%{message: "Expense not found"})
 
       _expense ->
-        case AttachmentContext.delete_attachment(expense_id_int, String.to_integer(att_id)) do
+        case attachment_ctx().delete_attachment(expense_id_int, String.to_integer(att_id)) do
           {:ok, _} ->
             conn |> put_status(:no_content) |> json(%{})
 
@@ -107,7 +121,7 @@ defmodule DemoBeExphWeb.AttachmentController do
       "data" => file_data
     }
 
-    case AttachmentContext.create_attachment(expense_id, attrs) do
+    case attachment_ctx().create_attachment(expense_id, attrs) do
       {:ok, attachment} ->
         conn
         |> put_status(:created)

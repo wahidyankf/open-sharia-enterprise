@@ -3,6 +3,8 @@ defmodule DemoBeExph.Attachment.AttachmentContext do
   Context for managing file attachments on expense entries.
   """
 
+  @behaviour DemoBeExph.Attachment.AttachmentBehaviour
+
   import Ecto.Query
 
   alias DemoBeExph.Attachment.Attachment

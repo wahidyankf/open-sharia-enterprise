@@ -3,12 +3,12 @@ defmodule DemoBeExphWeb.Integration.SecuritySteps do
 
   use DemoBeExphWeb.ConnCase
 
-  alias DemoBeExph.Accounts
-  alias DemoBeExph.Accounts.User
   alias DemoBeExph.Integration.Helpers
-  alias DemoBeExph.Repo
+  alias DemoBeExph.Test.InMemoryStore
 
   @moduletag :integration
+
+  defp accounts, do: Application.get_env(:demo_be_exph, :accounts_module)
 
   defgiven ~r/^the API is running$/, _vars, state do
     {:ok, state}
@@ -26,13 +26,16 @@ defmodule DemoBeExphWeb.Integration.SecuritySteps do
            _vars,
            %{alice: user} = state do
     # Simulate max failed attempts reached — account is now locked
-    Repo.update!(
-      User.status_changeset(user, %{
-        status: "LOCKED",
-        failed_login_attempts: 5,
-        locked_at: DateTime.utc_now() |> DateTime.truncate(:second)
-      })
-    )
+    InMemoryStore.update_state(fn s ->
+      locked_user =
+        Map.merge(user, %{
+          status: "LOCKED",
+          failed_login_attempts: 5,
+          locked_at: DateTime.utc_now() |> DateTime.truncate(:second)
+        })
+
+      Map.update!(s, :users, fn users -> Map.put(users, user.id, locked_user) end)
+    end)
 
     {:ok, state}
   end
@@ -43,10 +46,15 @@ defmodule DemoBeExphWeb.Integration.SecuritySteps do
     password = "Str0ng#Pass1"
     email = "#{username}@example.com"
     user = Helpers.register_user!(username, email, password)
-    {:ok, locked_user} = Accounts.deactivate_user(user)
-    # Set to LOCKED status
-    Repo.update!(User.status_changeset(locked_user, %{status: "LOCKED"}))
-    updated_user = Accounts.get_user(user.id)
+    {:ok, _} = accounts().deactivate_user(user)
+    # Set to LOCKED status directly in store
+    InMemoryStore.update_state(fn s ->
+      Map.update!(s, :users, fn users ->
+        Map.update!(users, user.id, fn u -> Map.put(u, :status, "LOCKED") end)
+      end)
+    end)
+
+    updated_user = accounts().get_user(user.id)
     {:ok, Map.merge(state, %{alice: updated_user, alice_password: password})}
   end
 
@@ -62,7 +70,7 @@ defmodule DemoBeExphWeb.Integration.SecuritySteps do
   end
 
   defgiven ~r/^an admin has unlocked alice's account$/, _vars, %{alice: alice} = state do
-    Accounts.unlock_user(alice)
+    accounts().unlock_user(alice)
     {:ok, state}
   end
 
@@ -125,7 +133,7 @@ defmodule DemoBeExphWeb.Integration.SecuritySteps do
   defthen ~r/^alice's account status should be "(?<status>[^"]+)"$/,
           %{status: status},
           %{alice: alice} = state do
-    updated = Accounts.get_user(alice.id)
+    updated = accounts().get_user(alice.id)
     assert String.downcase(updated.status) == String.downcase(status)
     {:ok, state}
   end

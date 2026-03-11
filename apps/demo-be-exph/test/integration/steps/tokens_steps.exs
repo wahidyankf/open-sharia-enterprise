@@ -4,9 +4,10 @@ defmodule DemoBeExphWeb.Integration.TokensSteps do
   use DemoBeExphWeb.ConnCase
 
   alias DemoBeExph.Integration.Helpers
-  alias DemoBeExph.Token.TokenContext
 
   @moduletag :integration
+
+  defp token_ctx, do: Application.get_env(:demo_be_exph, :token_module)
 
   defgiven ~r/^the API is running$/, _vars, state do
     {:ok, state}
@@ -125,7 +126,7 @@ defmodule DemoBeExphWeb.Integration.TokensSteps do
     payload = Helpers.decode_jwt_payload(access_token)
     jti = Map.get(payload, "jti")
     assert jti != nil
-    assert TokenContext.revoked?(jti)
+    assert token_ctx().revoked?(jti)
     {:ok, state}
   end
 end

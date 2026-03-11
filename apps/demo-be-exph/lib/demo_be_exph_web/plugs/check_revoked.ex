@@ -6,8 +6,10 @@ defmodule DemoBeExphWeb.Plugs.CheckRevoked do
 
   import Plug.Conn
 
-  alias DemoBeExph.Token.TokenContext
   alias Guardian.Plug, as: GuardianPlug
+
+  defp token_ctx,
+    do: Application.get_env(:demo_be_exph, :token_module, DemoBeExph.Token.TokenContext)
 
   def init(opts), do: opts
 
@@ -15,7 +17,7 @@ defmodule DemoBeExphWeb.Plugs.CheckRevoked do
     claims = GuardianPlug.current_claims(conn)
     jti = claims && Map.get(claims, "jti")
 
-    if jti && TokenContext.revoked?(jti) do
+    if jti && token_ctx().revoked?(jti) do
       conn
       |> put_resp_content_type("application/json")
       |> send_resp(401, Jason.encode!(%{error: "Token has been revoked"}))

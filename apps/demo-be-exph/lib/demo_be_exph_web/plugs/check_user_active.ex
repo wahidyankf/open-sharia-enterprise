@@ -7,8 +7,9 @@ defmodule DemoBeExphWeb.Plugs.CheckUserActive do
 
   import Plug.Conn
 
-  alias DemoBeExph.Accounts
   alias Guardian.Plug, as: GuardianPlug
+
+  defp accounts, do: Application.get_env(:demo_be_exph, :accounts_module, DemoBeExph.Accounts)
 
   def init(opts), do: opts
 
@@ -17,7 +18,7 @@ defmodule DemoBeExphWeb.Plugs.CheckUserActive do
 
     if claims do
       user_id = claims |> Map.get("sub") |> String.to_integer()
-      user = Accounts.get_user(user_id)
+      user = accounts().get_user(user_id)
 
       cond do
         is_nil(user) ->

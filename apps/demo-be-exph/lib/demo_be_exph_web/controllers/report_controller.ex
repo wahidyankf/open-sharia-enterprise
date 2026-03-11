@@ -1,8 +1,15 @@
 defmodule DemoBeExphWeb.ReportController do
   use DemoBeExphWeb, :controller
 
-  alias DemoBeExph.Expense.ExpenseContext
   alias Guardian.Plug, as: GuardianPlug
+
+  defp expense_ctx,
+    do:
+      Application.get_env(
+        :demo_be_exph,
+        :expense_module,
+        DemoBeExph.Expense.ExpenseContext
+      )
 
   def pl(conn, params) do
     user = GuardianPlug.current_resource(conn)
@@ -13,7 +20,7 @@ defmodule DemoBeExphWeb.ReportController do
 
     with {:ok, from_date} <- parse_date(from_str),
          {:ok, to_date} <- parse_date(to_str) do
-      report = ExpenseContext.pl_report(user.id, from_date, to_date, currency)
+      report = expense_ctx().pl_report(user.id, from_date, to_date, currency)
 
       json(conn, %{
         income_total: Decimal.to_string(report.income_total),

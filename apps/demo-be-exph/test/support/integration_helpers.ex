@@ -1,16 +1,17 @@
 defmodule DemoBeExph.Integration.Helpers do
   @moduledoc """
-  Shared helpers for Cabbage integration tests using real Ecto sandbox.
+  Shared helpers for Cabbage integration tests using in-memory store.
   """
 
-  alias DemoBeExph.Accounts
   alias DemoBeExph.Auth.Guardian
-  alias DemoBeExph.Token.TokenContext
+
+  defp accounts, do: Application.get_env(:demo_be_exph, :accounts_module)
+  defp token_ctx, do: Application.get_env(:demo_be_exph, :token_module)
 
   @doc "Register a user and return the User struct."
   def register_user!(username, email, password) do
     {:ok, user} =
-      Accounts.register_user(%{
+      accounts().register_user(%{
         "username" => username,
         "email" => email,
         "password" => password
@@ -22,7 +23,7 @@ defmodule DemoBeExph.Integration.Helpers do
   @doc "Log in a user and return {access_token, refresh_token}."
   def login_user!(user) do
     {:ok, access_token, _claims} = Guardian.encode_and_sign(user)
-    {:ok, refresh_token} = TokenContext.create_refresh_token(user.id)
+    {:ok, refresh_token} = token_ctx().create_refresh_token(user.id)
     {access_token, refresh_token}
   end
 
@@ -37,7 +38,7 @@ defmodule DemoBeExph.Integration.Helpers do
 
   @doc "Make user an admin."
   def make_admin!(user) do
-    {:ok, admin_user} = Accounts.set_admin_role(user)
+    {:ok, admin_user} = accounts().set_admin_role(user)
     admin_user
   end
 end

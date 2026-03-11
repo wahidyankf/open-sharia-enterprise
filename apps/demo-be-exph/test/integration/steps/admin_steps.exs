@@ -3,10 +3,11 @@ defmodule DemoBeExphWeb.Integration.AdminSteps do
 
   use DemoBeExphWeb.ConnCase
 
-  alias DemoBeExph.Accounts
   alias DemoBeExph.Integration.Helpers
 
   @moduletag :integration
+
+  defp accounts, do: Application.get_env(:demo_be_exph, :accounts_module)
 
   defgiven ~r/^the API is running$/, _vars, state do
     {:ok, state}
@@ -53,7 +54,7 @@ defmodule DemoBeExphWeb.Integration.AdminSteps do
   end
 
   defgiven ~r/^alice's account has been disabled$/, _vars, %{alice: alice} = state do
-    Accounts.deactivate_user(alice)
+    accounts().deactivate_user(alice)
     {:ok, state}
   end
 
@@ -156,7 +157,7 @@ defmodule DemoBeExphWeb.Integration.AdminSteps do
   defthen ~r/^alice's account status should be "(?<status>[^"]+)"$/,
           %{status: status},
           %{alice: alice} = state do
-    updated = Accounts.get_user(alice.id)
+    updated = accounts().get_user(alice.id)
     assert String.downcase(updated.status) == String.downcase(status)
     {:ok, state}
   end

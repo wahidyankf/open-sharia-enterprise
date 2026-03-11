@@ -1,18 +1,5 @@
 import Config
 
-# Configure your database
-#
-# The MIX_TEST_PARTITION environment variable can be used
-# to provide built-in test partitioning in CI environment.
-# Run `mix help test` for more information.
-config :demo_be_exph, DemoBeExph.Repo,
-  username: "demo_be_exph",
-  password: "demo_be_exph",
-  hostname: "localhost",
-  database: "demo_be_exph_test#{System.get_env("MIX_TEST_PARTITION")}",
-  pool: Ecto.Adapters.SQL.Sandbox,
-  pool_size: System.schedulers_online() * 2
-
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
 config :demo_be_exph, DemoBeExphWeb.Endpoint,
@@ -25,6 +12,12 @@ config :demo_be_exph, DemoBeExphWeb.Endpoint,
 config :demo_be_exph, DemoBeExph.Auth.Guardian,
   secret_key: "test_secret_do_not_use_in_production",
   ttl: {24, :hours}
+
+# In-memory module overrides — no PostgreSQL required for tests
+config :demo_be_exph, :accounts_module, DemoBeExph.Test.InMemoryAccounts
+config :demo_be_exph, :token_module, DemoBeExph.Test.InMemoryTokenContext
+config :demo_be_exph, :expense_module, DemoBeExph.Test.InMemoryExpenseContext
+config :demo_be_exph, :attachment_module, DemoBeExph.Test.InMemoryAttachmentContext
 
 # Elixir Cabbage BDD — feature files relative to workspace root
 config :elixir_cabbage,

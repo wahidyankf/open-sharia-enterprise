@@ -1,8 +1,9 @@
 defmodule DemoBeExphWeb.UserController do
   use DemoBeExphWeb, :controller
 
-  alias DemoBeExph.Accounts
   alias Guardian.Plug, as: GuardianPlug
+
+  defp accounts, do: Application.get_env(:demo_be_exph, :accounts_module, DemoBeExph.Accounts)
 
   def me(conn, _params) do
     user = GuardianPlug.current_resource(conn)
@@ -20,7 +21,7 @@ defmodule DemoBeExphWeb.UserController do
   def update_me(conn, params) do
     user = GuardianPlug.current_resource(conn)
 
-    case Accounts.update_user(user, params) do
+    case accounts().update_user(user, params) do
       {:ok, updated_user} ->
         json(conn, %{
           id: updated_user.id,
@@ -41,7 +42,7 @@ defmodule DemoBeExphWeb.UserController do
     old_password = Map.get(params, "old_password", "")
     new_password = Map.get(params, "new_password", "")
 
-    case Accounts.change_password(user, old_password, new_password) do
+    case accounts().change_password(user, old_password, new_password) do
       {:ok, _user} ->
         json(conn, %{message: "Password changed successfully"})
 
@@ -60,7 +61,7 @@ defmodule DemoBeExphWeb.UserController do
   def deactivate(conn, _params) do
     user = GuardianPlug.current_resource(conn)
 
-    case Accounts.deactivate_user(user) do
+    case accounts().deactivate_user(user) do
       {:ok, _user} ->
         json(conn, %{message: "Account deactivated successfully"})
 
