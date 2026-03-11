@@ -1,16 +1,11 @@
-# Test profile: mirrors production health config (NOT dev which sets show-details: always)
+# Test profile: Testcontainers provides the PostgreSQL datasource via @ServiceConnection.
+# No datasource URL/driver config needed here - auto-configured from the container bean.
 spring:
   liquibase:
-    enabled: false
-  datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL;DATABASE_TO_UPPER=false
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    enabled: true
   jpa:
     hibernate:
-      ddl-auto: create
-    database-platform: org.hibernate.dialect.H2Dialect
+      ddl-auto: none
     show-sql: false
 
 app:
