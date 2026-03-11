@@ -13,6 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -74,5 +75,12 @@ public class GlobalExceptionHandler {
             final FileSizeLimitExceededException ex) {
         return ResponseEntity.status(HttpStatus.CONTENT_TOO_LARGE)
                 .body(Map.of("message", "File size exceeds the maximum allowed limit"));
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<Map<String, String>> handleResponseStatus(
+            final ResponseStatusException ex) {
+        return ResponseEntity.status(ex.getStatusCode())
+                .body(Map.of("message", ex.getReason() != null ? ex.getReason() : "Error"));
     }
 }
