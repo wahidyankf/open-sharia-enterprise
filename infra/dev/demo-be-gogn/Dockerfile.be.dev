@@ -1,0 +1,8 @@
+# Development Docker Image for Demo Backend (GOGN — Go/Gin)
+# Uses Go 1.24 Alpine for building and running the application.
+
+FROM golang:1.24-alpine
+
+WORKDIR /workspace
+
+CMD ["go", "run", "./cmd/server"]

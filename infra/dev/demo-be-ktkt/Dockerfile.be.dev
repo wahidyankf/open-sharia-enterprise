@@ -1,0 +1,8 @@
+# Development Docker Image for Demo Backend (KTKT — Kotlin/Ktor)
+# Uses Eclipse Temurin JDK 25 Alpine for building and running the application.
+
+FROM eclipse-temurin:25-jdk-alpine
+
+WORKDIR /workspace
+
+CMD ["./gradlew", "run"]

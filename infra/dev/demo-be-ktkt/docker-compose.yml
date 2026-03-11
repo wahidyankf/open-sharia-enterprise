@@ -1,0 +1,70 @@
+# Local Development Environment for Demo Backend (KTKT — Kotlin/Ktor)
+# Mutually exclusive with other demo-be backends — all bind port 8201.
+# Do not run multiple backend stacks simultaneously.
+
+services:
+  demo-be-ktkt-db:
+    image: postgres:17-alpine
+    container_name: demo-be-ktkt-db
+    environment:
+      POSTGRES_DB: demo_be_ktkt
+      POSTGRES_USER: ${POSTGRES_USER:-demo_be_ktkt}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-demo_be_ktkt}
+    ports:
+      - "5432:5432"
+    volumes:
+      - demo-be-ktkt-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-demo_be_ktkt} -d demo_be_ktkt"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      - demo-be-ktkt-network
+
+  demo-be-ktkt:
+    build:
+      context: .
+      dockerfile: Dockerfile.be.dev
+    container_name: demo-be-ktkt
+    working_dir: /workspace
+
+    # Mount app source and shared Gherkin specs.
+    volumes:
+      - ../../../apps/demo-be-ktkt:/workspace:rw
+      - ../../../specs/apps/demo-be/gherkin:/specs/apps/demo-be/gherkin:ro
+
+    ports:
+      - "8201:8201"
+
+    depends_on:
+      demo-be-ktkt-db:
+        condition: service_healthy
+
+    environment:
+      - PORT=8201
+      - DATABASE_URL=postgresql://demo_be_ktkt:demo_be_ktkt@demo-be-ktkt-db:5432/demo_be_ktkt
+      - APP_JWT_SECRET=${APP_JWT_SECRET:-change-me-in-dev-only-not-for-production}
+
+    command: ./gradlew run
+
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8201/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+
+    restart: unless-stopped
+    networks:
+      - demo-be-ktkt-network
+
+networks:
+  demo-be-ktkt-network:
+    driver: bridge
+    name: demo-be-ktkt-network
+
+volumes:
+  demo-be-ktkt-db-data:

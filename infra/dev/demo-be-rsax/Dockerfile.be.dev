@@ -1,0 +1,12 @@
+# Development Docker Image for Demo Backend (RSAX — Rust/Axum)
+# Uses Rust 1.87 Slim for building and running the application.
+
+FROM rust:1.87-slim
+
+# Install curl for healthcheck and pkg-config/libssl-dev for common Rust crate dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends curl pkg-config libssl-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /workspace
+
+CMD ["cargo", "run"]

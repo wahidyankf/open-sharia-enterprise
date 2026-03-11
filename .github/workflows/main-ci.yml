@@ -43,6 +43,20 @@ jobs:
         with:
           dotnet-version: "10.0.x"
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install uv
+        run: pip install uv
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
+
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
         with:
@@ -62,6 +76,9 @@ jobs:
           (cd libs/elixir-gherkin && mix deps.get)
           (cd libs/elixir-cabbage && mix deps.get)
           (cd apps/demo-be-exph && mix deps.get)
+
+      - name: Install Python dependencies
+        run: (cd apps/demo-be-pyfa && uv sync)
 
       - name: test:quick (all projects)
         run: npx nx run-many -t test:quick --all
@@ -139,4 +156,44 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: apps/demo-be-fsgi/coverage/altcov.info
           flags: demo-be-fsgi
+          fail_ci_if_error: false
+
+      - name: Upload coverage — demo-be-gogn
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: apps/demo-be-gogn/cover_unit.out
+          flags: demo-be-gogn
+          fail_ci_if_error: false
+
+      - name: Upload coverage — demo-be-pyfa
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: apps/demo-be-pyfa/coverage/lcov.info
+          flags: demo-be-pyfa
+          fail_ci_if_error: false
+
+      - name: Upload coverage — demo-be-rsax
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: apps/demo-be-rsax/coverage/lcov.info
+          flags: demo-be-rsax
+          fail_ci_if_error: false
+
+      - name: Upload coverage — demo-be-ktkt
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: apps/demo-be-ktkt/build/reports/kover/report.xml
+          flags: demo-be-ktkt
+          fail_ci_if_error: false
+
+      - name: Upload coverage — demo-be-javx
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: apps/demo-be-javx/target/site/jacoco-integration/jacoco.xml
+          flags: demo-be-javx
           fail_ci_if_error: false

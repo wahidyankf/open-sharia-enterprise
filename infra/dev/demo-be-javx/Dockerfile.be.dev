@@ -1,0 +1,11 @@
+# Development Docker Image for Demo Backend (JAVX — Java/Vert.x)
+# Uses Eclipse Temurin JDK 25 Alpine with Maven for building and running the application.
+
+FROM eclipse-temurin:25-jdk-alpine
+
+# Install Maven
+RUN apk add --no-cache maven
+
+WORKDIR /workspace
+
+CMD ["mvn", "compile", "exec:java"]
