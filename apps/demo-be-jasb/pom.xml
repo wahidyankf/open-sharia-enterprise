@@ -185,6 +185,11 @@
                 <configuration>
                     <source>25</source>
                     <target>25</target>
+                    <compilerArgs>
+                        <arg>-Xlint:deprecation</arg>
+                        <arg>-Xlint:removal</arg>
+                        <arg>-Werror</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
 
@@ -218,6 +223,7 @@
                 <version>3.6.0</version>
                 <configuration>
                     <configLocation>checkstyle.xml</configLocation>
+                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
                 </configuration>
             </plugin>
 
@@ -294,6 +300,15 @@
                                 <exclude>**/OrganicLeverApplication.class</exclude>
                                 <exclude>**/package-info.class</exclude>
                                 <exclude>**/JpaAuditingConfig.class</exclude>
+                                <!-- JPA entity models: auto-generated getters/setters/equals/hashCode -->
+                                <exclude>**/model/User.class</exclude>
+                                <exclude>**/model/Expense.class</exclude>
+                                <exclude>**/model/Attachment.class</exclude>
+                                <exclude>**/model/RevokedToken.class</exclude>
+                                <exclude>**/model/RefreshToken.class</exclude>
+                                <!-- DTO record classes -->
+                                <exclude>**/dto/*Request.class</exclude>
+                                <exclude>**/dto/*Response.class</exclude>
                             </excludes>
                         </configuration>
                         <executions>
