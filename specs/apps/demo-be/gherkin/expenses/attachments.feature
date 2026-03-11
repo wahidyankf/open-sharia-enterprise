@@ -57,3 +57,21 @@ Feature: Entry Attachments
     And bob has created an entry with body { "amount": "25.00", "currency": "USD", "category": "transport", "description": "Taxi", "date": "2025-01-15", "type": "expense" }
     When alice uploads file "receipt.jpg" with content type "image/jpeg" to POST /api/v1/expenses/{bobExpenseId}/attachments
     Then the response status code should be 403
+
+  Scenario: List attachments on another user's entry returns 403
+    Given a user "bob" is registered with email "bob@example.com" and password "Str0ng#Pass2"
+    And bob has created an entry with body { "amount": "25.00", "currency": "USD", "category": "transport", "description": "Taxi", "date": "2025-01-15", "type": "expense" }
+    When alice sends GET /api/v1/expenses/{bobExpenseId}/attachments
+    Then the response status code should be 403
+
+  Scenario: Delete attachment on another user's entry returns 403
+    Given a user "bob" is registered with email "bob@example.com" and password "Str0ng#Pass2"
+    And bob has created an entry with body { "amount": "25.00", "currency": "USD", "category": "transport", "description": "Taxi", "date": "2025-01-15", "type": "expense" }
+    And alice has uploaded file "receipt.jpg" with content type "image/jpeg" to the entry
+    When alice sends DELETE /api/v1/expenses/{bobExpenseId}/attachments/{attachmentId}
+    Then the response status code should be 403
+
+  Scenario: Delete non-existent attachment returns 404
+    Given alice has uploaded file "receipt.jpg" with content type "image/jpeg" to the entry
+    When alice sends DELETE /api/v1/expenses/{expenseId}/attachments/{randomAttachmentId}
+    Then the response status code should be 404
