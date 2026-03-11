@@ -13,7 +13,6 @@
     "lib/demo_be_exph/token/token_context.ex",
     "lib/demo_be_exph/expense/expense_context.ex",
     "lib/demo_be_exph/attachment/attachment_context.ex",
-    "lib/demo_be_exph/auth/guardian.ex",
     "lib/demo_be_exph_web/endpoint.ex",
     "lib/demo_be_exph_web/telemetry.ex",
     "lib/demo_be_exph/application.ex",
