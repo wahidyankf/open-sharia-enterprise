@@ -24,9 +24,11 @@ Postgres). Supported currencies: **USD** and **IDR**.
 
 ## Implementations
 
-| Implementation | Language | Integration runner | E2E runner |
-| -------------- | -------- | ------------------ | ---------- |
-| demo-be        | TBD      | TBD                | TBD        |
+| Implementation | Language         | Integration runner | E2E runner |
+| -------------- | ---------------- | ------------------ | ---------- |
+| demo-be-jasb   | Java (Spring)    | Cucumber + MockMvc | Playwright |
+| demo-be-exph   | Elixir (Phoenix) | Cabbage + ConnCase | Playwright |
+| demo-be-fsgi   | F# (Giraffe)     | TickSpec + xUnit   | Playwright |
 
 Each new language implementation adds its own step definitions. The feature files here are the
 single source of truth and must not contain language-specific concepts (framework names, library

@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>DemoBeFsgi</AssemblyName>
+    <RootNamespace>DemoBeFsgi</RootNamespace>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Nullable>enable</Nullable>
+    <OtherFlags>--nowarn:3261 --nowarn:3264 --nowarn:3511</OtherFlags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Domain/Types.fs" />
+    <Compile Include="Domain/User.fs" />
+    <Compile Include="Domain/Expense.fs" />
+    <Compile Include="Domain/Attachment.fs" />
+    <Compile Include="Infrastructure/AppDbContext.fs" />
+    <Compile Include="Infrastructure/PasswordHasher.fs" />
+    <Compile Include="Auth/JwtService.fs" />
+    <Compile Include="Auth/JwtMiddleware.fs" />
+    <Compile Include="Auth/AdminMiddleware.fs" />
+    <Compile Include="Handlers/AuthHandler.fs" />
+    <Compile Include="Handlers/TokenHandler.fs" />
+    <Compile Include="Handlers/UserHandler.fs" />
+    <Compile Include="Handlers/AdminHandler.fs" />
+    <Compile Include="Handlers/ExpenseHandler.fs" />
+    <Compile Include="Handlers/ReportHandler.fs" />
+    <Compile Include="Handlers/AttachmentHandler.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Giraffe" Version="7.*" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.*" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.*" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.*" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.*" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.*" />
+    <PackageReference Include="FSharp.SystemTextJson" Version="1.*" />
+  </ItemGroup>
+
+  <Target Name="CopyGherkinSpecs" BeforeTargets="Build">
+    <ItemGroup>
+      <GherkinFiles Include="$(ProjectDir)..\..\..\..\specs\apps\demo-be\gherkin\**\*.feature" />
+    </ItemGroup>
+    <Copy SourceFiles="@(GherkinFiles)" DestinationFolder="$(OutputPath)specs\%(RecursiveDir)" />
+  </Target>
+
+</Project>

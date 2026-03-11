@@ -25,7 +25,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `organiclever-web-e2e` - Playwright E2E tests for organiclever-web
   - `demo-be-jasb` - Spring Boot REST API backend (Java Spring Boot)
   - `demo-be-exph` - Elixir/Phoenix REST API backend (alternative to demo-be-jasb)
-  - `demo-be-e2e` - Playwright E2E tests for demo-be-jasb REST API
+  - `demo-be-fsgi` - F#/Giraffe REST API backend (alternative to demo-be-jasb)
+  - `demo-be-e2e` - Playwright E2E tests for demo-be REST API backends
 
 ## Project Structure
 
@@ -41,6 +42,7 @@ open-sharia-enterprise/
 │   ├── organiclever-web-e2e/ # Playwright E2E tests for organiclever-web
 │   ├── demo-be-jasb/ # Spring Boot REST API (Java Spring Boot)
 │   ├── demo-be-exph/ # Elixir/Phoenix REST API (alternative implementation)
+│   ├── demo-be-fsgi/ # F#/Giraffe REST API (alternative implementation)
 │   └── demo-be-e2e/ # Playwright E2E tests for backend
 ├── apps-labs/                # Experimental apps (NOT in Nx)
 ├── libs/                     # Reusable libraries (Nx, flat structure)
@@ -123,9 +125,16 @@ Codecov's algorithm) via `rhino-cli test-coverage validate` applied to the LCOV 
 via `rhino-cli test-coverage validate` applied to the JaCoCo XML report:
 `rhino-cli test-coverage validate apps/demo-be-jasb/target/site/jacoco-integration/jacoco.xml 90` — run as part of `test:quick`.
 
+**F# projects**: `demo-be-fsgi` enforces ≥90% **line coverage** (matching Codecov's algorithm)
+via `rhino-cli test-coverage validate` applied to the AltCover LCOV report:
+`rhino-cli test-coverage validate apps/demo-be-fsgi/coverage/altcov.info 90` — run as part of
+`test:quick`. Uses AltCover with `--linecover` instead of XPlat Code Coverage to avoid F#
+`task{}` async state machine BRDA inflation.
+
 **`test:integration` caching**: Integration tests for `organiclever-web` (MSW), `demo-be-jasb`
 (MockMvc + mocked repositories via InMemoryDataStore), `demo-be-exph` (in-memory context
-implementations via InMemoryStore), `hugo-commons` (Godog + tmpdir mocks), and `golang-commons`
+implementations via InMemoryStore), `demo-be-fsgi` (SQLite in-memory via WebApplicationFactory),
+`hugo-commons` (Godog + tmpdir mocks), and `golang-commons`
 (Godog + mock closures) use in-process mocking only — no external services required. They are
 fully deterministic and safe to cache (`cache: true` in `nx.json`).
 

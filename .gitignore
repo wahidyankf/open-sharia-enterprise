@@ -110,6 +110,17 @@ secrets.json
 *.crt
 *.pfx
 
+# .NET / F# build artifacts
+[Bb]in/
+[Oo]bj/
+*.nupkg
+*.snupkg
+project.lock.json
+project.fragment.lock.json
+*.binlog
+# AltCover default output
+coverage.xml
+
 # Claude Code settings
 .claude/settings.local.json
 .claude/settings.local.json.bkup
