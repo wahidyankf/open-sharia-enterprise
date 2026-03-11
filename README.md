@@ -17,8 +17,6 @@ All projects enforce ≥90% test coverage as part of `test:quick`. Coverage is u
 | `apps/ayokoding-cli`    | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=ayokoding-cli)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)    |
 | `apps/oseplatform-cli`  | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=oseplatform-cli)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)  |
 | `apps/organiclever-web` | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=organiclever-web)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise) |
-| `libs/golang-commons`   | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=golang-commons)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)   |
-| `libs/hugo-commons`     | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=hugo-commons)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)     |
 
 🌐 **Live Sites**:
 
@@ -145,9 +143,9 @@ open-sharia-enterprise/
 
 This project uses **Nx** to manage applications and libraries:
 
-- **`apps/`** - Deployable applications (current: [`oseplatform-web`](./apps/oseplatform-web/), [`ayokoding-web`](./apps/ayokoding-web/), [`ayokoding-cli`](./apps/ayokoding-cli/), [`rhino-cli`](./apps/rhino-cli/), [`oseplatform-cli`](./apps/oseplatform-cli/), [`organiclever-web`](./apps/organiclever-web/), [`organiclever-web-e2e`](./apps/organiclever-web-e2e/), [`demo-be-jasb`](./apps/demo-be-jasb/), [`demo-be-e2e`](./apps/demo-be-e2e/))
-- **`libs/`** - Reusable libraries with language prefixes (`ts-*`, future: `java-*`, `py-*`) - currently empty
-- **`apps-labs/`** - Experimental apps and POCs (framework evaluation, language exploration) - currently empty
+- **`apps/`** - Deployable applications (current: [`oseplatform-web`](./apps/oseplatform-web/), [`ayokoding-web`](./apps/ayokoding-web/), [`ayokoding-cli`](./apps/ayokoding-cli/), [`rhino-cli`](./apps/rhino-cli/), [`oseplatform-cli`](./apps/oseplatform-cli/), [`organiclever-web`](./apps/organiclever-web/), [`organiclever-web-e2e`](./apps/organiclever-web-e2e/), [`demo-be-jasb`](./apps/demo-be-jasb/), [`demo-be-exph`](./apps/demo-be-exph/), [`demo-be-e2e`](./apps/demo-be-e2e/))
+- **`libs/`** - Reusable libraries
+- **`apps-labs/`** - Experimental apps and POCs (current: `ayokoding-web__source-code`, `hello-rust-be`)
 
 **Quick Commands**:
 
