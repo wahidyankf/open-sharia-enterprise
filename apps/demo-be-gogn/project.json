@@ -1,0 +1,73 @@
+{
+  "name": "demo-be-gogn",
+  "sourceRoot": "apps/demo-be-gogn",
+  "projectType": "application",
+  "tags": ["type:app", "platform:gin", "lang:golang", "domain:demo-be"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 go build -o dist/demo-be-gogn ./cmd/server",
+        "cwd": "apps/demo-be-gogn"
+      },
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go run ./cmd/server",
+        "cwd": "apps/demo-be-gogn"
+      }
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dist/demo-be-gogn",
+        "cwd": "apps/demo-be-gogn"
+      }
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 go test -coverprofile=cover.out ./... -count=1 && head -1 cover.out > cover_unit.out && grep -v 'gorm_store\\|internal/server\\|cmd/server' cover.out >> cover_unit.out && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-be-gogn/cover_unit.out 90)",
+        "cwd": "apps/demo-be-gogn"
+      },
+      "outputs": ["{projectRoot}/cover.out", "{projectRoot}/cover_unit.out"]
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 go test -v -run TestUnit ./... -count=1",
+        "cwd": "apps/demo-be-gogn"
+      }
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 go test -v -tags=integration -run TestIntegration -coverprofile=cover_spec.out ./internal/integration/... -count=1",
+        "cwd": "apps/demo-be-gogn"
+      },
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/internal/**/*.go",
+        "{workspaceRoot}/specs/apps/demo-be/gherkin/**/*.feature"
+      ],
+      "outputs": ["{projectRoot}/cover_spec.out"]
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 golangci-lint run --allow-parallel-runners ./...",
+        "cwd": "apps/demo-be-gogn"
+      }
+    },
+    "install": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "go mod tidy",
+        "cwd": "apps/demo-be-gogn"
+      }
+    }
+  },
+  "implicitDependencies": ["rhino-cli"]
+}

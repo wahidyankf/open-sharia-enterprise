@@ -2,6 +2,7 @@ go 1.26
 
 use (
 	./apps/ayokoding-cli
+	./apps/demo-be-gogn
 	./apps/oseplatform-cli
 	./apps/rhino-cli
 	./libs/golang-commons
