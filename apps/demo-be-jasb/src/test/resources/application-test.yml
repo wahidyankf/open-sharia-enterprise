@@ -1,12 +1,13 @@
-# Test profile: Testcontainers provides the PostgreSQL datasource via @ServiceConnection.
-# No datasource URL/driver config needed here - auto-configured from the container bean.
+# Test profile: No real database — repositories are mocked via MockRepositoriesConfig.
 spring:
-  liquibase:
-    enabled: true
-  jpa:
-    hibernate:
-      ddl-auto: none
-    show-sql: false
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration
+      - org.springframework.boot.hibernate.autoconfigure.HibernateJpaAutoConfiguration
+      - org.springframework.boot.liquibase.autoconfigure.LiquibaseAutoConfiguration
+      - org.springframework.boot.data.jpa.autoconfigure.JpaRepositoriesAutoConfiguration
+  main:
+    allow-bean-definition-overriding: true
 
 app:
   jwt:
