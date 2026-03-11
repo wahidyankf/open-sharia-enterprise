@@ -7,6 +7,8 @@ defmodule DemoBeExph.Test.InMemoryTokenContext do
   @behaviour DemoBeExph.Token.TokenBehaviour
 
   alias DemoBeExph.Test.InMemoryStore
+  alias DemoBeExph.Token.RefreshToken
+  alias DemoBeExph.Token.RevokedToken
 
   @refresh_token_ttl_days 30
 
@@ -20,15 +22,16 @@ defmodule DemoBeExph.Test.InMemoryTokenContext do
       |> DateTime.add(@refresh_token_ttl_days, :day)
       |> DateTime.truncate(:second)
 
-    record = %{
-      user_id: user_id,
-      token_hash: token_hash,
-      expires_at: expires_at,
-      inserted_at: DateTime.utc_now() |> DateTime.truncate(:second)
-    }
+    attrs = %{user_id: user_id, token_hash: token_hash, expires_at: expires_at}
+    changeset = RefreshToken.changeset(%RefreshToken{}, attrs)
 
-    store_refresh_token(token_hash, record)
-    {:ok, raw_token}
+    if changeset.valid? do
+      record = Ecto.Changeset.apply_changes(changeset)
+      store_refresh_token(token_hash, record)
+      {:ok, raw_token}
+    else
+      {:error, changeset}
+    end
   end
 
   @impl true
@@ -57,10 +60,14 @@ defmodule DemoBeExph.Test.InMemoryTokenContext do
   end
 
   @impl true
-  def revoke_access_token(jti, _user_id \\ nil) do
-    InMemoryStore.update_state(fn s ->
-      Map.update!(s, :revoked_jtis, &MapSet.put(&1, jti))
-    end)
+  def revoke_access_token(jti, user_id \\ nil) do
+    changeset = RevokedToken.changeset(%RevokedToken{}, %{jti: jti, user_id: user_id})
+
+    if changeset.valid? do
+      InMemoryStore.update_state(fn s ->
+        Map.update!(s, :revoked_jtis, &MapSet.put(&1, jti))
+      end)
+    end
 
     :ok
   end
