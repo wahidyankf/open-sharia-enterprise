@@ -15,6 +15,9 @@ func DetectFormat(filename string) Format {
 	if strings.HasSuffix(lower, ".info") || strings.Contains(lower, "lcov") {
 		return FormatLCOV
 	}
+	if strings.HasSuffix(lower, ".xml") && strings.Contains(lower, "jacoco") {
+		return FormatJaCoCo
+	}
 
 	f, err := os.Open(filename)
 	if err != nil {
@@ -30,6 +33,9 @@ func DetectFormat(filename string) Format {
 		}
 		if strings.HasPrefix(first, "SF:") || strings.HasPrefix(first, "TN:") {
 			return FormatLCOV
+		}
+		if strings.HasPrefix(first, "<?xml") || strings.HasPrefix(first, "<report") {
+			return FormatJaCoCo
 		}
 	}
 

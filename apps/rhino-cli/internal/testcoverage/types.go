@@ -9,6 +9,8 @@ const (
 	FormatGo Format = "go"
 	// FormatLCOV represents LCOV format.
 	FormatLCOV Format = "lcov"
+	// FormatJaCoCo represents JaCoCo XML format.
+	FormatJaCoCo Format = "jacoco"
 )
 
 // Result holds the computed coverage statistics for a single coverage file.

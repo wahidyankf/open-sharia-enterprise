@@ -93,3 +93,48 @@ func TestDetectFormat_EmptyFile(t *testing.T) {
 		t.Errorf("expected FormatGo for empty file, got %v", got)
 	}
 }
+
+func TestDetectFormat_JaCoCoFilename(t *testing.T) {
+	got := DetectFormat("/some/path/jacoco.xml")
+	if got != FormatJaCoCo {
+		t.Errorf("expected FormatJaCoCo for jacoco.xml, got %v", got)
+	}
+}
+
+func TestDetectFormat_JaCoCoCaseInsensitive(t *testing.T) {
+	got := DetectFormat("/some/path/JACOCO_report.xml")
+	if got != FormatJaCoCo {
+		t.Errorf("expected FormatJaCoCo for JACOCO_report.xml, got %v", got)
+	}
+}
+
+func TestDetectFormat_JaCoCoRequiresXmlExtension(t *testing.T) {
+	got := DetectFormat("/some/path/jacoco.exec")
+	if got != FormatGo {
+		t.Errorf("expected FormatGo for jacoco.exec (not .xml), got %v", got)
+	}
+}
+
+func TestDetectFormat_XMLContentReport(t *testing.T) {
+	tmpDir := t.TempDir()
+	path := filepath.Join(tmpDir, "report.xml")
+	if err := os.WriteFile(path, []byte(`<?xml version="1.0"?><report name="t"></report>`), 0644); err != nil {
+		t.Fatal(err)
+	}
+	got := DetectFormat(path)
+	if got != FormatJaCoCo {
+		t.Errorf("expected FormatJaCoCo for <?xml content, got %v", got)
+	}
+}
+
+func TestDetectFormat_XMLContentReportTag(t *testing.T) {
+	tmpDir := t.TempDir()
+	path := filepath.Join(tmpDir, "coverage.xml")
+	if err := os.WriteFile(path, []byte(`<report name="t"></report>`), 0644); err != nil {
+		t.Fatal(err)
+	}
+	got := DetectFormat(path)
+	if got != FormatJaCoCo {
+		t.Errorf("expected FormatJaCoCo for <report content, got %v", got)
+	}
+}
