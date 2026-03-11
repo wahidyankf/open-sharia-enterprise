@@ -1,4 +1,4 @@
-use cucumber::{given, then, when};
+use cucumber::{given, when};
 
 use crate::world::{json_req, AppWorld};
 

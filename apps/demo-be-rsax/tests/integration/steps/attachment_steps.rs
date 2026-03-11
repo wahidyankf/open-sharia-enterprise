@@ -100,7 +100,7 @@ async fn alice_delete_attachment(world: &mut AppWorld) {
         .unwrap_or_default();
     let req = Request::builder()
         .method("DELETE")
-        .uri(&format!(
+        .uri(format!(
             "/api/v1/expenses/{expense_id}/attachments/{att_id}"
         ))
         .header("Authorization", &bearer)
@@ -255,7 +255,7 @@ async fn alice_delete_bob_attachment(world: &mut AppWorld) {
         .unwrap_or_default();
     let req = Request::builder()
         .method("DELETE")
-        .uri(&format!(
+        .uri(format!(
             "/api/v1/expenses/{expense_id}/attachments/{att_id}"
         ))
         .header("Authorization", &bearer)
@@ -274,7 +274,7 @@ async fn alice_delete_nonexistent_attachment(world: &mut AppWorld) {
     let random_id = uuid::Uuid::new_v4();
     let req = Request::builder()
         .method("DELETE")
-        .uri(&format!(
+        .uri(format!(
             "/api/v1/expenses/{expense_id}/attachments/{random_id}"
         ))
         .header("Authorization", &bearer)

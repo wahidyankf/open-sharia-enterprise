@@ -22,8 +22,11 @@ pub struct AppWorld {
     pub auth_token: Option<String>,
     pub refresh_token: Option<String>,
     pub user_id: Option<Uuid>,
+    #[allow(dead_code)]
     pub second_auth_token: Option<String>,
+    #[allow(dead_code)]
     pub second_refresh_token: Option<String>,
+    #[allow(dead_code)]
     pub second_user_id: Option<Uuid>,
     pub admin_token: Option<String>,
     pub last_expense_id: Option<Uuid>,

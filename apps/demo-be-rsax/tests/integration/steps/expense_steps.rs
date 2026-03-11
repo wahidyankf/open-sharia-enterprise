@@ -1,4 +1,4 @@
-use cucumber::{given, then, when};
+use cucumber::{given, when};
 
 use crate::world::{get_req, json_req, AppWorld};
 
@@ -119,7 +119,7 @@ async fn alice_delete_expense(world: &mut AppWorld) {
         .unwrap_or_default();
     let req = http::Request::builder()
         .method("DELETE")
-        .uri(&format!("/api/v1/expenses/{expense_id}"))
+        .uri(format!("/api/v1/expenses/{expense_id}"))
         .header("Authorization", &bearer)
         .body(axum::body::Body::empty())
         .unwrap();
