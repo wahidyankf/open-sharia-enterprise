@@ -3,7 +3,6 @@ package com.organiclever.be.integration.token_lifecycle;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.organiclever.be.auth.repository.RefreshTokenRepository;
-import com.organiclever.be.auth.repository.UserRepository;
 import com.organiclever.be.integration.ResponseStore;
 import com.organiclever.be.integration.steps.TokenStore;
 import io.cucumber.java.en.Given;
@@ -35,9 +34,6 @@ public class TokenLifecycleSteps {
 
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
-
-    @Autowired
-    private UserRepository userRepository;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 

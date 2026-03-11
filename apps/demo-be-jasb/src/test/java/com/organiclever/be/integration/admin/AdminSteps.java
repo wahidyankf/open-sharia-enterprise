@@ -1,7 +1,6 @@
 package com.organiclever.be.integration.admin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.JsonPath;
 import com.organiclever.be.auth.repository.UserRepository;
 import com.organiclever.be.integration.ResponseStore;
 import com.organiclever.be.integration.steps.TokenStore;
@@ -14,10 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -97,7 +94,6 @@ public class AdminSteps {
     @Then("the response body should contain at least one user with {string} equal to {string}")
     public void theResponseBodyShouldContainUserWithFieldEqual(
             final String field, final String value) throws Exception {
-        String body = responseStore.getResult().getResponse().getContentAsString();
         // Check that at least one element in $.data has the field equal to value
         MockMvcResultMatchers.jsonPath("$.data").isArray().match(responseStore.getResult());
         MockMvcResultMatchers.jsonPath("$.data[0]." + field).value(value)

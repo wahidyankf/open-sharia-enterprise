@@ -65,14 +65,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<Map<String, String>> handleMaxUploadSize(
             final MaxUploadSizeExceededException ex) {
-        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
+        return ResponseEntity.status(HttpStatus.CONTENT_TOO_LARGE)
                 .body(Map.of("message", "File size exceeds the maximum allowed limit"));
     }
 
     @ExceptionHandler(FileSizeLimitExceededException.class)
     public ResponseEntity<Map<String, String>> handleFileSizeLimit(
             final FileSizeLimitExceededException ex) {
-        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
+        return ResponseEntity.status(HttpStatus.CONTENT_TOO_LARGE)
                 .body(Map.of("message", "File size exceeds the maximum allowed limit"));
     }
 }
