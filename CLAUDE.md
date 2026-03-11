@@ -119,6 +119,10 @@ algorithm) via `rhino-cli test-coverage validate`. Coverage is measured with
 Codecov's algorithm) via `rhino-cli test-coverage validate` applied to the LCOV output from Vitest:
 `rhino-cli test-coverage validate apps/organiclever-web/coverage/lcov.info 90` — run as part of `test:quick`.
 
+**Java projects**: `demo-be-jasb` enforces ≥90% **line coverage** (matching Codecov's algorithm)
+via `rhino-cli test-coverage validate` applied to the JaCoCo XML report:
+`rhino-cli test-coverage validate apps/demo-be-jasb/target/site/jacoco-integration/jacoco.xml 90` — run as part of `test:quick`.
+
 **`test:integration` caching**: Integration tests for `organiclever-web` (MSW), `demo-be-jasb`
 (MockMvc + mocked repositories via InMemoryDataStore), `demo-be-exph` (in-memory context
 implementations via InMemoryStore), `hugo-commons` (Godog + tmpdir mocks), and `golang-commons`

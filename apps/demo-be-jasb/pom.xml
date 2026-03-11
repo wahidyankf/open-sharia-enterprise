@@ -301,23 +301,12 @@
                                 <goals><goal>prepare-agent</goal></goals>
                             </execution>
                             <execution>
-                                <id>integration-check</id>
+                                <id>integration-report</id>
                                 <phase>test</phase>
-                                <goals><goal>check</goal></goals>
+                                <goals><goal>report</goal></goals>
                                 <configuration>
                                     <dataFile>${project.build.directory}/jacoco-integration.exec</dataFile>
-                                    <rules>
-                                        <rule>
-                                            <element>BUNDLE</element>
-                                            <limits>
-                                                <limit>
-                                                    <counter>LINE</counter>
-                                                    <value>COVEREDRATIO</value>
-                                                    <minimum>0.90</minimum>
-                                                </limit>
-                                            </limits>
-                                        </rule>
-                                    </rules>
+                                    <outputDirectory>${project.build.directory}/site/jacoco-integration</outputDirectory>
                                 </configuration>
                             </execution>
                         </executions>

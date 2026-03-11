@@ -30,8 +30,12 @@
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["mvn test", "mvn test -Pintegration"],
-        "parallel": true,
+        "commands": [
+          "mvn test",
+          "mvn test -Pintegration",
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-be-jasb/target/site/jacoco-integration/jacoco.xml 90)"
+        ],
+        "parallel": false,
         "cwd": "apps/demo-be-jasb"
       }
     },

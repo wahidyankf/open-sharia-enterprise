@@ -16,6 +16,7 @@ var validateTestCoverageCmd = &cobra.Command{
 
 Auto-detects format from the coverage file:
   - LCOV format: filenames ending in ".info" or containing "lcov"
+  - JaCoCo XML format: filenames ending in ".xml" and containing "jacoco"
   - Go cover.out format: all other files
 
 Coverage algorithm:
@@ -31,6 +32,9 @@ The coverage file path is relative to the git repository root.`,
 
   # Check LCOV coverage
   rhino-cli test-coverage validate apps/organiclever-web/coverage/lcov.info 85
+
+  # Check JaCoCo XML coverage
+  rhino-cli test-coverage validate apps/demo-be-jasb/target/site/jacoco-integration/jacoco.xml 85
 
   # Output as JSON
   rhino-cli test-coverage validate apps/rhino-cli/cover.out 85 -o json
@@ -63,6 +67,8 @@ func runValidateTestCoverage(cmd *cobra.Command, args []string) error {
 	switch testcoverage.DetectFormat(absPath) {
 	case testcoverage.FormatLCOV:
 		result, err = testcoverage.ComputeLCOVResult(absPath, threshold)
+	case testcoverage.FormatJaCoCo:
+		result, err = testcoverage.ComputeJaCoCoResult(absPath, threshold)
 	case testcoverage.FormatGo:
 		result, err = testcoverage.ComputeGoResult(absPath, threshold)
 	}
