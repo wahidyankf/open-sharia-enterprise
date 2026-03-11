@@ -19,7 +19,7 @@ func TestComputeJaCoCoResult_ValidReport(t *testing.T) {
   </package>
 </report>`
 
-	path := writeTemp(t, "jacoco.xml", xml)
+	path := writeTemp(t, xml)
 	result, err := ComputeJaCoCoResult(path, 50)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -61,7 +61,7 @@ func TestComputeJaCoCoResult_PartialBranches(t *testing.T) {
   </package>
 </report>`
 
-	path := writeTemp(t, "jacoco.xml", xml)
+	path := writeTemp(t, xml)
 	result, err := ComputeJaCoCoResult(path, 90)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -90,7 +90,7 @@ func TestComputeJaCoCoResult_EmptyReport(t *testing.T) {
 <report name="empty">
 </report>`
 
-	path := writeTemp(t, "jacoco.xml", xml)
+	path := writeTemp(t, xml)
 	result, err := ComputeJaCoCoResult(path, 90)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -115,7 +115,7 @@ func TestComputeJaCoCoResult_FileNotFound(t *testing.T) {
 }
 
 func TestComputeJaCoCoResult_MalformedXML(t *testing.T) {
-	path := writeTemp(t, "jacoco.xml", "this is not xml at all <><><<")
+	path := writeTemp(t, "this is not xml at all <><><<")
 	_, err := ComputeJaCoCoResult(path, 90)
 	if err == nil {
 		t.Fatal("expected error for malformed XML")
@@ -139,7 +139,7 @@ func TestComputeJaCoCoResult_MultiplePackages(t *testing.T) {
   </package>
 </report>`
 
-	path := writeTemp(t, "jacoco.xml", xml)
+	path := writeTemp(t, xml)
 	result, err := ComputeJaCoCoResult(path, 50)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -172,7 +172,7 @@ func TestComputeJaCoCoResult_ThresholdExactlyMet(t *testing.T) {
   </package>
 </report>`
 
-	path := writeTemp(t, "jacoco.xml", xml)
+	path := writeTemp(t, xml)
 	result, err := ComputeJaCoCoResult(path, 100)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -183,9 +183,9 @@ func TestComputeJaCoCoResult_ThresholdExactlyMet(t *testing.T) {
 	}
 }
 
-func writeTemp(t *testing.T, name, content string) string {
+func writeTemp(t *testing.T, content string) string {
 	t.Helper()
-	path := filepath.Join(t.TempDir(), name)
+	path := filepath.Join(t.TempDir(), "jacoco.xml")
 	if err := os.WriteFile(path, []byte(content), 0644); err != nil {
 		t.Fatal(err)
 	}
