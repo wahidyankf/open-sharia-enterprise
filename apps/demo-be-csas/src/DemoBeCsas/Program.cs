@@ -16,7 +16,8 @@ builder.WebHost.UseUrls($"http://+:{builder.Configuration["PORT"] ?? "8201"}");
 var databaseUrl = builder.Configuration["DATABASE_URL"];
 if (!string.IsNullOrEmpty(databaseUrl))
 {
-    builder.Services.AddDbContext<AppDbContext>(opts => opts.UseNpgsql(databaseUrl));
+    builder.Services.AddDbContext<AppDbContext>(opts =>
+        opts.UseNpgsql(databaseUrl).UseSnakeCaseNamingConvention());
 }
 
 // Authentication
