@@ -15,7 +15,7 @@ WORKDIR /workspace
 COPY pom.xml /tmp/build/pom.xml
 COPY src/ /tmp/build/src/
 RUN cd /tmp/build \
-    && mvn package -Dmaven.test.skip=true -B \
+    && mvn package -Dmaven.test.skip=true -Dantrun.skip=true -B \
     && mkdir -p /app \
     && cp /tmp/build/target/demo-be-javx-1.0.0.jar /app/app.jar \
     && rm -rf /tmp/build
