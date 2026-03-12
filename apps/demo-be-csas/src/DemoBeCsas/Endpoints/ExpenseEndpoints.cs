@@ -116,11 +116,11 @@ public static class ExpenseEndpoints
 
         var summaries = await expenseRepo.SummaryByCurrencyAsync(userId.Value, ct);
 
-        // Build a currency-keyed dictionary: e.g. { "USD": 30.00, "IDR": 150000 }
+        // Build a currency-keyed dictionary: e.g. { "USD": "30.00", "IDR": "150000" }
         // Total = income - expense per currency (expense is negative contribution)
         var currencyTotals = summaries.ToDictionary(
             s => s.Currency,
-            s => s.ExpenseTotal
+            s => FormatAmount(s.ExpenseTotal, s.Currency)
         );
 
         return Results.Ok(currencyTotals);
@@ -271,13 +271,18 @@ public static class ExpenseEndpoints
         return DateTimeOffset.UtcNow;
     }
 
+    private static string FormatAmount(decimal amount, string currency) =>
+        currency == "IDR"
+            ? Math.Round(amount, 0, MidpointRounding.AwayFromZero).ToString("F0")
+            : amount.ToString("F2");
+
     private static object ToResponse(Infrastructure.Models.ExpenseModel e) =>
         new
         {
             id = e.Id,
             description = e.Title,
             category = e.Category,
-            amount = e.Amount,
+            amount = FormatAmount(e.Amount, e.Currency),
             currency = e.Currency,
             type = e.Type.ToString().ToLowerInvariant(),
             quantity = e.Quantity,

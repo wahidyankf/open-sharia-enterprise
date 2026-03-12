@@ -31,6 +31,8 @@ public class TokenRevocationMiddleware(RequestDelegate next)
             if (sub is null || !Guid.TryParse(sub, out var userId))
             {
                 ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                ctx.Response.ContentType = "application/json";
+                await ctx.Response.WriteAsJsonAsync(new { message = "Unauthorized" });
                 return;
             }
 
@@ -43,6 +45,8 @@ public class TokenRevocationMiddleware(RequestDelegate next)
                 if (jti is not null && await revokedTokenRepo.IsRevokedAsync(jti, ctx.RequestAborted))
                 {
                     ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    ctx.Response.ContentType = "application/json";
+                    await ctx.Response.WriteAsJsonAsync(new { message = "Unauthorized" });
                     return;
                 }
 
@@ -52,6 +56,8 @@ public class TokenRevocationMiddleware(RequestDelegate next)
                 if (revokedBefore.HasValue && issuedAt.HasValue && issuedAt.Value <= revokedBefore.Value)
                 {
                     ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    ctx.Response.ContentType = "application/json";
+                    await ctx.Response.WriteAsJsonAsync(new { message = "Unauthorized" });
                     return;
                 }
             }
@@ -61,6 +67,8 @@ public class TokenRevocationMiddleware(RequestDelegate next)
             if (user is null || user.Status != UserStatus.Active)
             {
                 ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                ctx.Response.ContentType = "application/json";
+                await ctx.Response.WriteAsJsonAsync(new { message = "Account is deactivated" });
                 return;
             }
         }

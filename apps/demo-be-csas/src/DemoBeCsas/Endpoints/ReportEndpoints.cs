@@ -57,24 +57,29 @@ public static class ReportEndpoints
         var incomeBreakdown = expenses
             .Where(e => e.Type == ExpenseType.Income)
             .GroupBy(e => e.Category)
-            .ToDictionary(g => g.Key, g => g.Sum(e => e.Amount));
+            .ToDictionary(g => g.Key, g => FormatAmount(g.Sum(e => e.Amount), currency ?? "USD"));
 
         var expenseBreakdown = expenses
             .Where(e => e.Type == ExpenseType.Expense)
             .GroupBy(e => e.Category)
-            .ToDictionary(g => g.Key, g => g.Sum(e => e.Amount));
+            .ToDictionary(g => g.Key, g => FormatAmount(g.Sum(e => e.Amount), currency ?? "USD"));
 
         return Results.Ok(
             new
             {
-                income_total = incomeTotal,
-                expense_total = expenseTotal,
-                net = incomeTotal - expenseTotal,
+                income_total = FormatAmount(incomeTotal, currency ?? "USD"),
+                expense_total = FormatAmount(expenseTotal, currency ?? "USD"),
+                net = FormatAmount(incomeTotal - expenseTotal, currency ?? "USD"),
                 income_breakdown = incomeBreakdown,
                 expense_breakdown = expenseBreakdown,
             }
         );
     }
+
+    private static string FormatAmount(decimal amount, string currency) =>
+        currency == "IDR"
+            ? Math.Round(amount, 0, MidpointRounding.AwayFromZero).ToString("F0")
+            : amount.ToString("F2");
 
     private static Guid? GetUserId(HttpContext ctx)
     {

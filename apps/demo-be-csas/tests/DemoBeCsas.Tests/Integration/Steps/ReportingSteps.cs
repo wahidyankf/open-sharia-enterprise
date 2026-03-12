@@ -64,7 +64,10 @@ public class ReportingSteps(SharedState state, AuthSteps auth)
             .Should().BeTrue($"'income_breakdown' not found in: {body}");
         breakdown.TryGetProperty(category, out var catEl)
             .Should().BeTrue($"Category '{category}' not found in income_breakdown of: {body}");
-        decimal.Parse(catEl.GetRawText()).Should().Be(decimal.Parse(amount));
+        var actual = catEl.ValueKind == JsonValueKind.Number
+            ? catEl.GetDecimal()
+            : decimal.Parse(catEl.GetString()!, System.Globalization.CultureInfo.InvariantCulture);
+        actual.Should().Be(decimal.Parse(amount, System.Globalization.CultureInfo.InvariantCulture));
     }
 
     [Then(@"^the expense breakdown should contain ""([^""]+)"" with amount ""([^""]+)""$")]
@@ -77,7 +80,10 @@ public class ReportingSteps(SharedState state, AuthSteps auth)
             .Should().BeTrue($"'expense_breakdown' not found in: {body}");
         breakdown.TryGetProperty(category, out var catEl)
             .Should().BeTrue($"Category '{category}' not found in expense_breakdown of: {body}");
-        decimal.Parse(catEl.GetRawText()).Should().Be(decimal.Parse(amount));
+        var actual = catEl.ValueKind == JsonValueKind.Number
+            ? catEl.GetDecimal()
+            : decimal.Parse(catEl.GetString()!, System.Globalization.CultureInfo.InvariantCulture);
+        actual.Should().Be(decimal.Parse(amount, System.Globalization.CultureInfo.InvariantCulture));
     }
 
     // ─────────────────────────────────────────────────────────────

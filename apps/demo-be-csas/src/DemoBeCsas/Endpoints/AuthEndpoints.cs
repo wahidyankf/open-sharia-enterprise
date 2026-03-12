@@ -89,24 +89,24 @@ public static class AuthEndpoints
     {
         if (req.Username is null || req.Password is null)
         {
-            return Results.Unauthorized();
+            return Results.Json(new { message = "Invalid username or password" }, statusCode: 401);
         }
 
         var user = await userRepo.FindByUsernameAsync(req.Username, ct);
         if (user is null)
         {
-            return Results.Unauthorized();
+            return Results.Json(new { message = "Invalid username or password" }, statusCode: 401);
         }
 
         if (user.Status == UserStatus.Locked)
         {
             // Return 401 for locked accounts (not 423) to match feature spec
-            return Results.Unauthorized();
+            return Results.Json(new { message = "Account is locked" }, statusCode: 401);
         }
 
         if (user.Status == UserStatus.Disabled)
         {
-            return Results.Unauthorized();
+            return Results.Json(new { message = "Account is disabled" }, statusCode: 401);
         }
 
         if (!hasher.VerifyPassword(req.Password, user.PasswordHash))
@@ -118,12 +118,12 @@ public static class AuthEndpoints
             }
 
             await userRepo.UpdateAsync(user, ct);
-            return Results.Unauthorized();
+            return Results.Json(new { message = "Invalid username or password" }, statusCode: 401);
         }
 
         if (user.Status == UserStatus.Inactive)
         {
-            return Results.Unauthorized();
+            return Results.Json(new { message = "Account is deactivated" }, statusCode: 401);
         }
 
         user.FailedLoginAttempts = 0;
@@ -156,38 +156,38 @@ public static class AuthEndpoints
     {
         if (req.RefreshToken is null)
         {
-            return Results.Unauthorized();
+            return Results.Json(new { message = "Invalid token" }, statusCode: 401);
         }
 
         var principal = jwtService.DecodeToken(req.RefreshToken);
         if (principal is null)
         {
-            return Results.Unauthorized();
+            return Results.Json(new { message = "Invalid token" }, statusCode: 401);
         }
 
         var userId = principal.FindFirst(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub)?.Value;
         if (userId is null || !Guid.TryParse(userId, out var userGuid))
         {
-            return Results.Unauthorized();
+            return Results.Json(new { message = "Invalid token" }, statusCode: 401);
         }
 
         var jti = jwtService.GetJti(req.RefreshToken);
         if (jti is null || await revokedTokenRepo.IsRevokedAsync(jti, ct))
         {
-            return Results.Unauthorized();
+            return Results.Json(new { message = "Invalid token" }, statusCode: 401);
         }
 
         var issuedAt = jwtService.GetIssuedAt(req.RefreshToken);
         var revokedBefore = await revokedTokenRepo.GetUserRevokedBeforeAsync(userGuid, ct);
         if (revokedBefore.HasValue && issuedAt.HasValue && issuedAt.Value <= revokedBefore.Value)
         {
-            return Results.Unauthorized();
+            return Results.Json(new { message = "Invalid token" }, statusCode: 401);
         }
 
         var user = await userRepo.FindByIdAsync(userGuid, ct);
         if (user is null || user.Status != UserStatus.Active)
         {
-            return Results.Unauthorized();
+            return Results.Json(new { message = "Invalid token" }, statusCode: 401);
         }
 
         // Revoke old refresh token
