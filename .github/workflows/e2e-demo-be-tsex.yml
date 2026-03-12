@@ -40,6 +40,9 @@ jobs:
       - name: Setup Volta
         uses: volta-cli/action@v4
 
+      - name: Clean Docker-created node_modules
+        run: sudo rm -rf apps/demo-be-tsex/node_modules
+
       - name: Install dependencies
         run: npm ci
 
