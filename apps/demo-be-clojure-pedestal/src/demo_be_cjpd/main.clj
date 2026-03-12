@@ -11,7 +11,7 @@
   [& _args]
   (let [cfg (config/load-config)
         ds  (db/create-datasource (:database-url cfg))]
-    (schema/create-schema! ds)
+    (schema/create-schema! ds (:database-url cfg))
     (let [srv (server/create-server cfg ds)]
       (server/start! srv)
       (println (str "Server started on port " (:port cfg)))

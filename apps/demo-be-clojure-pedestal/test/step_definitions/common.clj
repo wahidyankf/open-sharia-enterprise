@@ -21,7 +21,7 @@
         db-url  (str "jdbc:sqlite:file:" db-name "?mode=memory&cache=shared")
         cfg     (assoc (config/load-config) :port port :database-url db-url)
         ds      (db/create-datasource db-url)
-        _       (schema/create-schema! ds)
+        _       (schema/create-schema! ds db-url)
         srv     (server/create-server cfg ds)
         started (server/start! srv)]
     {:server  started
