@@ -36,6 +36,7 @@ Postgres). Supported currencies: **USD** and **IDR**.
 | demo-be-java-vertx        | Java (Vert.x)       | Cucumber + Vert.x Test           | Playwright |
 | demo-be-ts-effect         | TypeScript (Effect) | Cucumber.js + Effect HTTP client | Playwright |
 | demo-be-csharp-aspnetcore | C# (ASP.NET Core)   | Reqnroll + WebApplicationFactory | Playwright |
+| demo-be-clojure-pedestal  | Clojure (Pedestal)  | kaocha-cucumber + clj-http       | Playwright |
 
 Each new language implementation adds its own step definitions. The feature files here are the
 single source of truth and must not contain language-specific concepts (framework names, library

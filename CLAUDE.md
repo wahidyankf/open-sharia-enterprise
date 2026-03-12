@@ -33,6 +33,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `demo-be-java-vertx` - Java/Vert.x REST API backend (alternative to demo-be-java-springboot)
   - `demo-be-ts-effect` - TypeScript/Effect REST API backend (alternative to demo-be-java-springboot)
   - `demo-be-csharp-aspnetcore` - C#/ASP.NET Core REST API backend (alternative to demo-be-java-springboot)
+  - `demo-be-clojure-pedestal` - Clojure/Pedestal REST API backend (alternative to demo-be-java-springboot)
   - `demo-be-e2e` - Playwright E2E tests for demo-be REST API backends
 
 ## Project Structure
@@ -57,6 +58,7 @@ open-sharia-enterprise/
 │   ├── demo-be-java-vertx/ # Java/Vert.x REST API (alternative implementation)
 │   ├── demo-be-ts-effect/ # TypeScript/Effect REST API (alternative implementation)
 │   ├── demo-be-csharp-aspnetcore/ # C#/ASP.NET Core REST API (alternative implementation)
+│   ├── demo-be-clojure-pedestal/ # Clojure/Pedestal REST API (alternative implementation)
 │   └── demo-be-e2e/ # Playwright E2E tests for backend
 ├── apps-labs/                # Experimental apps (NOT in Nx)
 ├── libs/                     # Reusable libraries (Nx, flat structure)
@@ -164,6 +166,11 @@ via `rhino-cli test-coverage validate` applied to the Coverlet LCOV report:
 `rhino-cli test-coverage validate apps/demo-be-csharp-aspnetcore/coverage/**/coverage.info 90` — run as part
 of `test:quick`. Uses Coverlet XPlat Code Coverage collector with LCOV format output.
 
+**Clojure projects**: `demo-be-clojure-pedestal` enforces ≥90% **line coverage** (matching Codecov's algorithm)
+via `rhino-cli test-coverage validate` applied to the cloverage LCOV report:
+`rhino-cli test-coverage validate apps/demo-be-clojure-pedestal/coverage/lcov.info 90` — run as part
+of `test:quick`. Uses cloverage with `--lcov` output format.
+
 **`test:integration` caching**: Integration tests for `organiclever-web` (MSW), `demo-be-java-springboot`
 (MockMvc + mocked repositories via InMemoryDataStore), `demo-be-elixir-phoenix` (in-memory context
 implementations via InMemoryStore), `demo-be-fsharp-giraffe` (SQLite in-memory via WebApplicationFactory),
@@ -172,6 +179,7 @@ in-memory stores), `demo-be-rust-axum` (cucumber + Tower TestClient + in-memory 
 `demo-be-kotlin-ktor` (Cucumber JVM + Ktor testApplication + SQLite in-memory),
 `demo-be-java-vertx` (Cucumber JVM + Vert.x Test + in-memory stores),
 `demo-be-csharp-aspnetcore` (Reqnroll + WebApplicationFactory + SQLite in-memory),
+`demo-be-clojure-pedestal` (kaocha-cucumber + clj-http + SQLite in-memory),
 `hugo-commons` (Godog + tmpdir mocks), and `golang-commons`
 (Godog + mock closures) use in-process mocking only — no external services required. They are
 fully deterministic and safe to cache (`cache: true` in `nx.json`).
@@ -562,13 +570,23 @@ Project planning in `plans/` folder:
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->
 
-# General Guidelines for working with Nx
+## General Guidelines for working with Nx
 
+- For navigating/exploring the workspace, invoke the `nx-workspace` skill first - it has patterns for querying projects, targets, and dependencies
 - When running tasks (for example build, lint, test, e2e, etc.), always prefer running the task through `nx` (i.e. `nx run`, `nx run-many`, `nx affected`) instead of using the underlying tooling directly
+- Prefix nx commands with the workspace's package manager (e.g., `pnpm nx build`, `npm exec nx test`) - avoids using globally installed CLI
 - You have access to the Nx MCP server and its tools, use them to help the user
-- When answering questions about the repository, use the `nx_workspace` tool first to gain an understanding of the workspace architecture where applicable.
-- When working in individual projects, use the `nx_project_details` mcp tool to analyze and understand the specific project structure and dependencies
-- For questions around nx configuration, best practices or if you're unsure, use the `nx_docs` tool to get relevant, up-to-date docs. Always use this instead of assuming things about nx configuration
-- If the user needs help with an Nx configuration or project graph error, use the `nx_workspace` tool to get any errors
+- For Nx plugin best practices, check `node_modules/@nx/<plugin>/PLUGIN.md`. Not all plugins have this file - proceed without it if unavailable.
+- NEVER guess CLI flags - always check nx_docs or `--help` first when unsure
+
+## Scaffolding & Generators
+
+- For scaffolding tasks (creating apps, libs, project structure, setup), ALWAYS invoke the `nx-generate` skill FIRST before exploring or calling MCP tools
+
+## When to use nx_docs
+
+- USE for: advanced config options, unfamiliar flags, migration guides, plugin configuration, edge cases
+- DON'T USE for: basic generator syntax (`nx g @nx/react:app`), standard commands, things you already know
+- The `nx-generate` skill handles generator discovery internally - don't call nx_docs just to look up generator syntax
 
 <!-- nx configuration end-->
