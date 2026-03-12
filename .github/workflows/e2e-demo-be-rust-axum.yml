@@ -1,4 +1,4 @@
-name: E2E - Demo Backend (RSAX)
+name: E2E - Demo Backend (Rust/Axum)
 
 on:
   schedule:

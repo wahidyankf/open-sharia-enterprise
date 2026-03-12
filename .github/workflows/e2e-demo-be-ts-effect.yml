@@ -1,4 +1,4 @@
-name: E2E - Demo Backend (TSEX)
+name: E2E - Demo Backend (TypeScript/Effect)
 
 on:
   schedule:

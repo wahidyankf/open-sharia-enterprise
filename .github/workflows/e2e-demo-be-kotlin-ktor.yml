@@ -1,4 +1,4 @@
-name: E2E - Demo Backend (KTKT)
+name: E2E - Demo Backend (Kotlin/Ktor)
 
 on:
   schedule:

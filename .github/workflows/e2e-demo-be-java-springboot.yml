@@ -1,4 +1,4 @@
-name: E2E - Demo Backend (JASB)
+name: E2E - Demo Backend (Java/Spring Boot)
 
 on:
   schedule:

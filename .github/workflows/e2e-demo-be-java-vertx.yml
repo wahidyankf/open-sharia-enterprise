@@ -1,4 +1,4 @@
-name: E2E - Demo Backend (JAVX)
+name: E2E - Demo Backend (Java/Vert.x)
 
 on:
   schedule:

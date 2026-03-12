@@ -1,4 +1,4 @@
-name: E2E - Demo Backend (EXPH)
+name: E2E - Demo Backend (Elixir/Phoenix)
 
 on:
   schedule:

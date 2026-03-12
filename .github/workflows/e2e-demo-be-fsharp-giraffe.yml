@@ -1,4 +1,4 @@
-name: E2E - Demo Backend (FSGI)
+name: E2E - Demo Backend (F#/Giraffe)
 
 on:
   schedule:

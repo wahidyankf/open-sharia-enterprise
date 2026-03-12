@@ -1,4 +1,4 @@
-name: E2E - Demo Backend (GOGN)
+name: E2E - Demo Backend (Go/Gin)
 
 on:
   schedule:

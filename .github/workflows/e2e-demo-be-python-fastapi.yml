@@ -1,4 +1,4 @@
-name: E2E - Demo Backend (PYFA)
+name: E2E - Demo Backend (Python/FastAPI)
 
 on:
   schedule:

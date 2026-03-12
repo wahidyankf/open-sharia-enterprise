@@ -1,4 +1,4 @@
-name: E2E - Demo Backend (CSAS)
+name: E2E - Demo Backend (C#/ASP.NET Core)
 
 on:
   schedule:
