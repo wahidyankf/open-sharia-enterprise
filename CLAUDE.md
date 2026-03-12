@@ -31,6 +31,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `demo-be-rsax` - Rust/Axum REST API backend (alternative to demo-be-jasb)
   - `demo-be-ktkt` - Kotlin/Ktor REST API backend (alternative to demo-be-jasb)
   - `demo-be-javx` - Java/Vert.x REST API backend (alternative to demo-be-jasb)
+  - `demo-be-tsex` - TypeScript/Effect REST API backend (alternative to demo-be-jasb)
+  - `demo-be-csas` - C#/ASP.NET Core REST API backend (alternative to demo-be-jasb)
   - `demo-be-e2e` - Playwright E2E tests for demo-be REST API backends
 
 ## Project Structure
@@ -53,6 +55,8 @@ open-sharia-enterprise/
 │   ├── demo-be-rsax/ # Rust/Axum REST API (alternative implementation)
 │   ├── demo-be-ktkt/ # Kotlin/Ktor REST API (alternative implementation)
 │   ├── demo-be-javx/ # Java/Vert.x REST API (alternative implementation)
+│   ├── demo-be-tsex/ # TypeScript/Effect REST API (alternative implementation)
+│   ├── demo-be-csas/ # C#/ASP.NET Core REST API (alternative implementation)
 │   └── demo-be-e2e/ # Playwright E2E tests for backend
 ├── apps-labs/                # Experimental apps (NOT in Nx)
 ├── libs/                     # Reusable libraries (Nx, flat structure)
@@ -127,9 +131,11 @@ npm run doctor           # Check all required tools (volta, node, npm, java, mav
 `go test -coverprofile=cover.out ./...` and enforced by
 `rhino-cli test-coverage validate <project>/cover.out 90` — both run as part of `test:quick`.
 
-**TypeScript projects**: `organiclever-web` additionally enforces ≥90% **line coverage** (matching
-Codecov's algorithm) via `rhino-cli test-coverage validate` applied to the LCOV output from Vitest:
-`rhino-cli test-coverage validate apps/organiclever-web/coverage/lcov.info 90` — run as part of `test:quick`.
+**TypeScript projects**: `organiclever-web` and `demo-be-tsex` enforce ≥90% **line coverage**
+(matching Codecov's algorithm) via `rhino-cli test-coverage validate` applied to the LCOV output
+from Vitest: `rhino-cli test-coverage validate apps/organiclever-web/coverage/lcov.info 90` and
+`rhino-cli test-coverage validate apps/demo-be-tsex/coverage/lcov.info 90` — both run as part of
+`test:quick`.
 
 **Java projects**: `demo-be-jasb` and `demo-be-javx` enforce ≥90% **line coverage** (matching
 Codecov's algorithm) via `rhino-cli test-coverage validate` applied to the JaCoCo XML report —
@@ -153,6 +159,11 @@ via `rhino-cli test-coverage validate` applied to the AltCover LCOV report:
 `test:quick`. Uses AltCover with `--linecover` instead of XPlat Code Coverage to avoid F#
 `task{}` async state machine BRDA inflation.
 
+**C# projects**: `demo-be-csas` enforces ≥90% **line coverage** (matching Codecov's algorithm)
+via `rhino-cli test-coverage validate` applied to the Coverlet LCOV report:
+`rhino-cli test-coverage validate apps/demo-be-csas/coverage/**/coverage.info 90` — run as part
+of `test:quick`. Uses Coverlet XPlat Code Coverage collector with LCOV format output.
+
 **`test:integration` caching**: Integration tests for `organiclever-web` (MSW), `demo-be-jasb`
 (MockMvc + mocked repositories via InMemoryDataStore), `demo-be-exph` (in-memory context
 implementations via InMemoryStore), `demo-be-fsgi` (SQLite in-memory via WebApplicationFactory),
@@ -160,6 +171,7 @@ implementations via InMemoryStore), `demo-be-fsgi` (SQLite in-memory via WebAppl
 in-memory stores), `demo-be-rsax` (cucumber + Tower TestClient + in-memory stores),
 `demo-be-ktkt` (Cucumber JVM + Ktor testApplication + SQLite in-memory),
 `demo-be-javx` (Cucumber JVM + Vert.x Test + in-memory stores),
+`demo-be-csas` (Reqnroll + WebApplicationFactory + SQLite in-memory),
 `hugo-commons` (Godog + tmpdir mocks), and `golang-commons`
 (Godog + mock closures) use in-process mocking only — no external services required. They are
 fully deterministic and safe to cache (`cache: true` in `nx.json`).

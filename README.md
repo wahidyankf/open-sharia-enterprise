@@ -36,6 +36,8 @@ All projects enforce ≥90% test coverage as part of `test:quick`. Coverage is u
 [![E2E - Demo Backend (RSAX)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-rsax.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-rsax.yml)
 [![E2E - Demo Backend (KTKT)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-ktkt.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-ktkt.yml)
 [![E2E - Demo Backend (JAVX)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-javx.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-javx.yml)
+[![E2E - Demo Backend (TSEX)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-tsex.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-tsex.yml)
+[![E2E - Demo Backend (CSAS)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-csas.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-csas.yml)
 
 | Project             | Coverage                                                                                                                                                         |
 | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -47,6 +49,8 @@ All projects enforce ≥90% test coverage as part of `test:quick`. Coverage is u
 | `apps/demo-be-rsax` | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-rsax)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise) |
 | `apps/demo-be-ktkt` | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-ktkt)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise) |
 | `apps/demo-be-javx` | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-javx)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise) |
+| `apps/demo-be-tsex` | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-tsex)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise) |
+| `apps/demo-be-csas` | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-csas)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise) |
 
 ## 🚧 Project Status
 

@@ -19,6 +19,7 @@
     "vscjava.vscode-spring-boot-dashboard",
     "vscjava.vscode-spring-initializr",
     "rust-lang.rust-analyzer",
-    "sethjones.kotlin-on-vscode"
+    "sethjones.kotlin-on-vscode",
+    "ms-dotnettools.csdevkit"
   ]
 }
