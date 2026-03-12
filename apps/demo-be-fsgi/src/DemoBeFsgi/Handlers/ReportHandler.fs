@@ -23,17 +23,17 @@ let profitAndLoss: HttpHandler =
                 match fromParam with
                 | Some s ->
                     match DateTime.TryParse(s) with
-                    | true, d -> d
-                    | _ -> DateTime.MinValue
-                | None -> DateTime.MinValue
+                    | true, d -> DateTime.SpecifyKind(d, DateTimeKind.Utc)
+                    | _ -> DateTime.SpecifyKind(DateTime.MinValue, DateTimeKind.Utc)
+                | None -> DateTime.SpecifyKind(DateTime.MinValue, DateTimeKind.Utc)
 
             let toDate =
                 match toParam with
                 | Some s ->
                     match DateTime.TryParse(s) with
-                    | true, d -> d.AddDays(1.0).AddSeconds(-1.0)
-                    | _ -> DateTime.MaxValue
-                | None -> DateTime.MaxValue
+                    | true, d -> DateTime.SpecifyKind(d.AddDays(1.0).AddSeconds(-1.0), DateTimeKind.Utc)
+                    | _ -> DateTime.SpecifyKind(DateTime.MaxValue, DateTimeKind.Utc)
+                | None -> DateTime.SpecifyKind(DateTime.MaxValue, DateTimeKind.Utc)
 
             let currency = currencyParam.ToUpperInvariant()
 

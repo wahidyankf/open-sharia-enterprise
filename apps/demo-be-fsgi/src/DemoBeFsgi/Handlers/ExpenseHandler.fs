@@ -174,7 +174,7 @@ let create: HttpHandler =
 
                                 let dateVal =
                                     match DateTime.TryParse(r.date) with
-                                    | true, d -> d
+                                    | true, d -> DateTime.SpecifyKind(d, DateTimeKind.Utc)
                                     | _ -> DateTime.UtcNow
 
                                 let now = DateTime.UtcNow
@@ -423,7 +423,7 @@ let update (expenseId: Guid) : HttpHandler =
                     | Ok amount ->
                         let dateVal =
                             match DateTime.TryParse(r.date) with
-                            | true, d -> d
+                            | true, d -> DateTime.SpecifyKind(d, DateTimeKind.Utc)
                             | _ -> expense.Date
 
                         let updated =
