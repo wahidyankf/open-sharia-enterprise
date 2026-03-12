@@ -232,12 +232,7 @@ Execute phases in order. Each phase produces a working, committable state.
       covered (error paths, edge cases for currency/unit/password/email validation)
 - [x] Add unit tests for handler response mapping (`RespondError` for each `DomainErrorCode`)
 - [x] Verify `gofmt -l .` returns no files (pre-commit would catch this, but verify manually)
-- [x] Verify `golangci-lint run ./...` passes with zero violations
-      - Fixed `errcheck` violations (unchecked error returns)
-      - Fixed `exhaustive` violations (non-exhaustive switch statements)
-      - Fixed `staticcheck` violations (SA/S/ST checks including ST1000 package comments)
-      - Fixed `forcetypeassert` violations (safe type assertions with ok check)
-      - Fixed `unparam` violations (constant parameters removed from test helpers)
+- [x] Verify `golangci-lint run ./...` passes with zero violations - Fixed `errcheck` violations (unchecked error returns) - Fixed `exhaustive` violations (non-exhaustive switch statements) - Fixed `staticcheck` violations (SA/S/ST checks including ST1000 package comments) - Fixed `forcetypeassert` violations (safe type assertions with ok check) - Fixed `unparam` violations (constant parameters removed from test helpers)
 - [x] Verify `CGO_ENABLED=0 go build ./cmd/server` produces clean binary
 - [x] Added `//go:build integration` tag to `gorm_store_test.go` to prevent CGO build failures
       when running with `CGO_ENABLED=0`
@@ -298,6 +293,7 @@ if err != nil { return err }
 **Commit**: `ci: add demo-be-gogn coverage upload to main-ci`
 
 - [x] Add coverage upload step to `.github/workflows/main-ci.yml`:
+
   ```yaml
   - name: Upload coverage — demo-be-gogn
     uses: codecov/codecov-action@v5
@@ -307,6 +303,7 @@ if err != nil { return err }
       flags: demo-be-gogn
       fail_ci_if_error: false
   ```
+
 - [x] No new SDK setup step required — Go SDK is already present in `main-ci.yml` for other
       Go projects (`rhino-cli`, `ayokoding-cli`, `oseplatform-cli`, `golang-commons`,
       `hugo-commons`)

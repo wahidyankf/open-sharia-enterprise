@@ -6,11 +6,13 @@ export async function cleanupDatabase(): Promise<void> {
   const client = new Client({ connectionString: DATABASE_URL });
   await client.connect();
   try {
-    // Truncate all tables in a single statement; IF EXISTS handles backends
-    // whose PostgreSQL schema may not include every table.
-    await client.query(
-      "TRUNCATE TABLE IF EXISTS attachments, expenses, revoked_tokens, refresh_tokens, users CASCADE",
-    );
+    // Delete in FK dependency order; skip tables that don't exist (42P01).
+    const tables = ["attachments", "expenses", "revoked_tokens", "refresh_tokens", "users"];
+    for (const table of tables) {
+      await client.query(`DELETE FROM ${table}`).catch((err: { code?: string }) => {
+        if (err.code !== "42P01") throw err;
+      });
+    }
   } finally {
     await client.end();
   }

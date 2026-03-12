@@ -9,6 +9,7 @@
     "apps/*/_build/**",
     "dist/**",
     "build/**",
+    "**/build/**",
     ".next/**",
     ".nx/**",
     "apps/*/public/**",
@@ -18,7 +19,8 @@
     ".vscode/**",
     ".idea/**",
     "apps/*/playwright-report/**",
-    "apps/*/test-results/**"
+    "apps/*/test-results/**",
+    "apps/*/.venv/**"
   ],
 
   // Repository-specific markdown linting rules
