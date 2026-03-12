@@ -45,8 +45,10 @@ services:
 
     environment:
       - PORT=8201
-      - DATABASE_URL=postgresql://demo_be_ktkt:demo_be_ktkt@demo-be-ktkt-db:5432/demo_be_ktkt
-      - APP_JWT_SECRET=${APP_JWT_SECRET:-change-me-in-dev-only-not-for-production}
+      - DATABASE_URL=jdbc:postgresql://demo-be-ktkt-db:5432/demo_be_ktkt
+      - DATABASE_USER=${POSTGRES_USER:-demo_be_ktkt}
+      - DATABASE_PASSWORD=${POSTGRES_PASSWORD:-demo_be_ktkt}
+      - JWT_SECRET=${APP_JWT_SECRET:-change-me-in-dev-only-not-for-production}
 
     command: ./gradlew run
 

@@ -3,10 +3,17 @@ node_modules/
 
 # Elixir/Mix vendor dependencies (third-party markdown not subject to our rules)
 libs/*/deps/
+libs/*/_build/
+apps/*/deps/
+apps/*/_build/
+
+# Python virtual environments
+apps/*/.venv/
 
 # Build outputs
 dist/
 build/
+**/build/
 .next/
 .nx/
 

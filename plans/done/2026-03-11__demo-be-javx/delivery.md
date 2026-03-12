@@ -281,6 +281,7 @@ Execute phases in order. Each phase produces a working, committable state.
 - [x] Verify `nx run demo-be-javx:test:quick` passes end-to-end
 
 **Key fixes applied:**
+
 - Jackson version conflict: `jackson-core 2.16.1` (from Vert.x) conflicted with `jackson-databind 2.18.3`;
   fixed by explicitly declaring `jackson-core 2.18.3` in pom.xml. The `getNumberTypeFP()` method was
   added in Jackson 2.17+ and caused `NoSuchMethodError` when parsing JSON with floating-point numbers.
@@ -329,6 +330,7 @@ Execute phases in order. Each phase produces a working, committable state.
 **Commit**: `ci: add demo-be-javx coverage upload to main-ci`
 
 - [x] Add coverage upload step to `.github/workflows/main-ci.yml` after existing Java steps:
+
   ```yaml
   - name: Upload coverage — demo-be-javx
     uses: codecov/codecov-action@v5
@@ -338,6 +340,7 @@ Execute phases in order. Each phase produces a working, committable state.
       flags: demo-be-javx
       fail_ci_if_error: false
   ```
+
 - [x] Note: JDK 25 setup step already exists for `demo-be-jasb` — reuse it, do not duplicate
 - [x] Push to `main`; verify `Main CI` workflow passes
 
