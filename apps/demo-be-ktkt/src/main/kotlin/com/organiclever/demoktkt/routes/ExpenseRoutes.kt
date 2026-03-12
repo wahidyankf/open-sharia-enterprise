@@ -17,6 +17,7 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.RoutingCall
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.time.LocalDate
 import java.util.UUID
 import kotlinx.serialization.Serializable
@@ -38,11 +39,16 @@ data class CreateExpenseDto(
   val unit: String? = null,
 )
 
+private fun formatAmount(currency: String, amount: BigDecimal): String {
+  val scale = if (currency.uppercase() == "IDR") 0 else 2
+  return amount.setScale(scale, RoundingMode.HALF_UP).toPlainString()
+}
+
 private fun Expense.toJsonObject() = buildJsonObject {
   put("id", id.toString())
   put("user_id", userId.toString())
   put("type", type.name.lowercase())
-  put("amount", amount.toPlainString())
+  put("amount", formatAmount(currency, amount))
   put("currency", currency)
   put("category", category)
   put("description", description)
@@ -120,7 +126,7 @@ object ExpenseRoutes : KoinComponent {
     val userId = requireUserId(call)
     val summaries = expenseRepository.summaryByUser(userId)
 
-    val summaryMap = summaries.associate { s -> s.currency to s.total.toPlainString() }
+    val summaryMap = summaries.associate { s -> s.currency to formatAmount(s.currency, s.total) }
 
     call.respond(summaryMap)
   }
