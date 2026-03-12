@@ -173,7 +173,7 @@ const refresh = HttpServerRequest.HttpServerRequest.pipe(
       }
 
       if (user.status !== "ACTIVE") {
-        return yield* Effect.fail(new UnauthorizedError({ reason: "Account is not active" }));
+        return yield* Effect.fail(new UnauthorizedError({ reason: "Account is deactivated" }));
       }
 
       const newAccessToken = yield* jwt.signAccess(user.id, user.username, user.role);

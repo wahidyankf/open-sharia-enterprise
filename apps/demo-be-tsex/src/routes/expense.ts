@@ -38,8 +38,8 @@ function expenseToResponse(expense: {
     currency: expense.currency,
     category: expense.category,
     description: expense.description,
-    quantity: expense.quantity,
-    unit: expense.unit,
+    quantity: expense.quantity !== null ? Number(expense.quantity) : undefined,
+    unit: expense.unit ?? undefined,
     date: expense.date,
   };
 }
