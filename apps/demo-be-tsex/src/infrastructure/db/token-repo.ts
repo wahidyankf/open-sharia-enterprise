@@ -26,8 +26,9 @@ export const RevokedTokenRepositoryLive = Layer.effect(
         Effect.gen(function* () {
           const now = new Date().toISOString();
           yield* sql`
-            INSERT OR IGNORE INTO revoked_tokens (jti, user_id, revoked_at)
+            INSERT INTO revoked_tokens (jti, user_id, revoked_at)
             VALUES (${jti}, ${userId}, ${now})
+            ON CONFLICT(jti) DO NOTHING
           `;
         }),
 
