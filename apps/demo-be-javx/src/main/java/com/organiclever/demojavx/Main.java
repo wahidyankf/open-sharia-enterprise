@@ -8,6 +8,14 @@ public final class Main {
     }
 
     public static void main(String[] args) {
-        Vertx.vertx().deployVerticle(new MainVerticle());
+        System.out.println("Starting demo-be-javx...");
+        Vertx vertx = Vertx.vertx();
+        vertx.deployVerticle(new MainVerticle())
+                .onSuccess(id -> System.out.println("Verticle deployed: " + id))
+                .onFailure(err -> {
+                    System.err.println("Failed to deploy verticle: " + err.getMessage());
+                    err.printStackTrace();
+                    vertx.close();
+                });
     }
 }
