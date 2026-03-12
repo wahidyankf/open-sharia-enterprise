@@ -40,22 +40,25 @@
      updated_at TEXT NOT NULL
    )")
 
-(def create-attachments-sql
-  "CREATE TABLE IF NOT EXISTS attachments (
+(defn create-attachments-sql
+  "Return CREATE TABLE DDL for attachments using the correct binary type."
+  [database-url]
+  (let [binary-type (if (.startsWith database-url "jdbc:sqlite") "BLOB" "BYTEA")]
+    (str "CREATE TABLE IF NOT EXISTS attachments (
      id TEXT PRIMARY KEY,
      expense_id TEXT NOT NULL,
      user_id TEXT NOT NULL,
      filename TEXT NOT NULL,
      content_type TEXT NOT NULL,
      size INTEGER NOT NULL,
-     data BLOB NOT NULL,
+     data " binary-type " NOT NULL,
      created_at TEXT NOT NULL
-   )")
+   )")))
 
 (defn create-schema!
   "Create all database tables if they do not exist."
-  [ds]
+  [ds database-url]
   (jdbc/execute! ds [create-users-sql])
   (jdbc/execute! ds [create-revoked-tokens-sql])
   (jdbc/execute! ds [create-expenses-sql])
-  (jdbc/execute! ds [create-attachments-sql]))
+  (jdbc/execute! ds [(create-attachments-sql database-url)]))

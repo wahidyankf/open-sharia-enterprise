@@ -7,8 +7,9 @@
 (def ^:private test-ds (atom nil))
 
 (defn- setup-db [test-fn]
-  (let [ds (db/create-datasource "jdbc:sqlite::memory:")]
-    (schema/create-schema! ds)
+  (let [db-url "jdbc:sqlite::memory:"
+        ds (db/create-datasource db-url)]
+    (schema/create-schema! ds db-url)
     (reset! test-ds ds)
     (test-fn)
     (.close ds)))
