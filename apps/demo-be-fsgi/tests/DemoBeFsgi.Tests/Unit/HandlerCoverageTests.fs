@@ -29,43 +29,43 @@ type TypesModuleTests() =
         Assert.Equal("IDR", currencyToString IDR)
 
     [<Fact>]
-    member _.``roleToString returns user``() = Assert.Equal("user", roleToString User)
+    member _.``roleToString returns USER``() = Assert.Equal("USER", roleToString User)
 
     [<Fact>]
-    member _.``roleToString returns admin``() =
-        Assert.Equal("admin", roleToString Admin)
+    member _.``roleToString returns ADMIN``() =
+        Assert.Equal("ADMIN", roleToString Admin)
 
     [<Fact>]
-    member _.``statusToString returns active``() =
-        Assert.Equal("active", statusToString Active)
+    member _.``statusToString returns ACTIVE``() =
+        Assert.Equal("ACTIVE", statusToString Active)
 
     [<Fact>]
-    member _.``statusToString returns inactive``() =
-        Assert.Equal("inactive", statusToString Inactive)
+    member _.``statusToString returns INACTIVE``() =
+        Assert.Equal("INACTIVE", statusToString Inactive)
 
     [<Fact>]
-    member _.``statusToString returns disabled``() =
-        Assert.Equal("disabled", statusToString Disabled)
+    member _.``statusToString returns DISABLED``() =
+        Assert.Equal("DISABLED", statusToString Disabled)
 
     [<Fact>]
-    member _.``statusToString returns locked``() =
-        Assert.Equal("locked", statusToString Locked)
+    member _.``statusToString returns LOCKED``() =
+        Assert.Equal("LOCKED", statusToString Locked)
 
     [<Fact>]
-    member _.``parseStatus returns Active for active``() =
-        Assert.Equal(Some Active, parseStatus "active")
+    member _.``parseStatus returns Active for ACTIVE``() =
+        Assert.Equal(Some Active, parseStatus "ACTIVE")
 
     [<Fact>]
-    member _.``parseStatus returns Inactive for inactive``() =
-        Assert.Equal(Some Inactive, parseStatus "inactive")
+    member _.``parseStatus returns Inactive for INACTIVE``() =
+        Assert.Equal(Some Inactive, parseStatus "INACTIVE")
 
     [<Fact>]
-    member _.``parseStatus returns Disabled for disabled``() =
-        Assert.Equal(Some Disabled, parseStatus "disabled")
+    member _.``parseStatus returns Disabled for DISABLED``() =
+        Assert.Equal(Some Disabled, parseStatus "DISABLED")
 
     [<Fact>]
-    member _.``parseStatus returns Locked for locked``() =
-        Assert.Equal(Some Locked, parseStatus "locked")
+    member _.``parseStatus returns Locked for LOCKED``() =
+        Assert.Equal(Some Locked, parseStatus "LOCKED")
 
     [<Fact>]
     member _.``parseStatus returns None for unknown``() =

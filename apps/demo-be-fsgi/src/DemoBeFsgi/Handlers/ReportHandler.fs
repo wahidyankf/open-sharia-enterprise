@@ -48,8 +48,8 @@ let profitAndLoss: HttpHandler =
                 |> Async.AwaitTask
                 |> Async.RunSynchronously
 
-            let incomeEntries = entries |> Seq.filter (fun e -> e.EntryType = "income")
-            let expenseEntries = entries |> Seq.filter (fun e -> e.EntryType = "expense")
+            let incomeEntries = entries |> Seq.filter (fun e -> e.EntryType = "INCOME")
+            let expenseEntries = entries |> Seq.filter (fun e -> e.EntryType = "EXPENSE")
 
             let incomeTotal = incomeEntries |> Seq.sumBy (fun e -> e.Amount)
             let expenseTotal = expenseEntries |> Seq.sumBy (fun e -> e.Amount)
