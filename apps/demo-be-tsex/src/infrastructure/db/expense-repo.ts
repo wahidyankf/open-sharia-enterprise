@@ -21,6 +21,13 @@ export interface ExpenseRepositoryApi {
     to: string,
     currency: string,
   ) => Effect.Effect<Expense[], SqlError>;
+  readonly findByDateRangeGroupedByCategory: (
+    userId: string,
+    from: string,
+    to: string,
+    currency: string,
+    type: string,
+  ) => Effect.Effect<Array<{ category: string; total: number }>, SqlError>;
 }
 
 export class ExpenseRepository extends Context.Tag("ExpenseRepository")<ExpenseRepository, ExpenseRepositoryApi>() {}
@@ -33,6 +40,7 @@ function rowToExpense(row: any): Expense {
     type: row.type as Expense["type"],
     amount: row.amount as number,
     currency: row.currency as string,
+    category: (row.category as string) ?? "",
     description: row.description as string,
     quantity: row.quantity as string | null,
     unit: row.unit as string | null,
@@ -54,9 +62,10 @@ export const ExpenseRepositoryLive = Layer.effect(
           const now = new Date().toISOString();
           const quantity = data.quantity ?? null;
           const unit = data.unit ?? null;
+          const category = data.category ?? "";
           yield* sql`
-            INSERT INTO expenses (id, user_id, type, amount, currency, description, quantity, unit, date, created_at, updated_at)
-            VALUES (${id}, ${data.userId}, ${data.type}, ${data.amount}, ${data.currency}, ${data.description}, ${quantity}, ${unit}, ${data.date}, ${now}, ${now})
+            INSERT INTO expenses (id, user_id, type, amount, currency, category, description, quantity, unit, date, created_at, updated_at)
+            VALUES (${id}, ${data.userId}, ${data.type}, ${data.amount}, ${data.currency}, ${category}, ${data.description}, ${quantity}, ${unit}, ${data.date}, ${now}, ${now})
           `;
           const rows = yield* sql`SELECT * FROM expenses WHERE id = ${id}`;
           return rowToExpense(rows[0]);
@@ -89,6 +98,7 @@ export const ExpenseRepositoryLive = Layer.effect(
           const current = rowToExpense(existing[0]);
           const amount = data.amount ?? current.amount;
           const currency = data.currency ?? current.currency;
+          const category = data.category ?? current.category;
           const description = data.description ?? current.description;
           const quantity = data.quantity ?? current.quantity ?? null;
           const unit = data.unit ?? current.unit ?? null;
@@ -97,7 +107,8 @@ export const ExpenseRepositoryLive = Layer.effect(
           yield* sql`
             UPDATE expenses
             SET type = ${type}, amount = ${amount}, currency = ${currency},
-                description = ${description}, quantity = ${quantity}, unit = ${unit},
+                category = ${category}, description = ${description},
+                quantity = ${quantity}, unit = ${unit},
                 date = ${date}, updated_at = ${now}
             WHERE id = ${id}
           `;
@@ -141,6 +152,16 @@ export const ExpenseRepositoryLive = Layer.effect(
           const rows =
             yield* sql`SELECT * FROM expenses WHERE user_id = ${userId} AND currency = ${currency} AND date >= ${from} AND date <= ${to} ORDER BY date ASC`;
           return rows.map(rowToExpense);
+        }),
+
+      findByDateRangeGroupedByCategory: (userId: string, from: string, to: string, currency: string, type: string) =>
+        Effect.gen(function* () {
+          const rows =
+            yield* sql`SELECT category, SUM(amount) as total FROM expenses WHERE user_id = ${userId} AND currency = ${currency} AND type = ${type} AND date >= ${from} AND date <= ${to} GROUP BY category`;
+          return rows.map((r) => ({
+            category: r.category as string,
+            total: r.total as number,
+          }));
         }),
     };
   }),

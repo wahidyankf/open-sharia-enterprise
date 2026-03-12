@@ -9,6 +9,7 @@ export interface JwtClaims {
   readonly role: Role;
   readonly jti: string;
   readonly tokenType: "access" | "refresh";
+  readonly iat: number;
 }
 
 export interface JwtServiceApi {
@@ -36,6 +37,7 @@ export const makeJwtService = (secret: string): JwtServiceApi => {
         })
           .setProtectedHeader({ alg: "HS256" })
           .setSubject(userId)
+          .setIssuer("demo-be-tsex")
           .setIssuedAt()
           .setExpirationTime("15m")
           .sign(secretBytes);
@@ -65,6 +67,7 @@ export const makeJwtService = (secret: string): JwtServiceApi => {
             role: (payload.role ?? "USER") as Role,
             jti: (payload.jti ?? payload["jti"]) as string,
             tokenType: (payload.tokenType ?? "access") as "access" | "refresh",
+            iat: (payload.iat ?? 0) as number,
           };
         },
         catch: () => new UnauthorizedError({ reason: "Invalid or expired token" }),

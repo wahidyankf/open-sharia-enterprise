@@ -40,6 +40,7 @@ const validAccessClaims: JwtClaims = {
   role: "USER",
   jti: "test-jti",
   tokenType: "access",
+  iat: 0,
 };
 
 const adminClaims: JwtClaims = {

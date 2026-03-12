@@ -1,4 +1,5 @@
 import { setWorldConstructor, World } from "@cucumber/cucumber";
+import { TEST_PORT } from "./hooks.js";
 
 export interface HttpResponse {
   readonly status: number;
@@ -8,7 +9,7 @@ export interface HttpResponse {
 }
 
 export class CustomWorld extends World {
-  public baseUrl: string = "http://localhost:8201";
+  public baseUrl: string = `http://localhost:${TEST_PORT}`;
   public response: HttpResponse | null = null;
   public tokens: Map<string, string> = new Map();
   public userIds: Map<string, string> = new Map();
@@ -116,6 +117,33 @@ export class CustomWorld extends World {
     const res = await fetch(`${this.baseUrl}${path}`, {
       method: "DELETE",
       headers,
+    });
+    const responseBody = await res.json().catch(() => null);
+    return {
+      status: res.status,
+      body: responseBody,
+      headers: Object.fromEntries(res.headers.entries()),
+    };
+  }
+
+  async uploadFile(
+    path: string,
+    filename: string,
+    contentType: string,
+    content: Buffer,
+    token?: string,
+  ): Promise<HttpResponse> {
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    const formData = new FormData();
+    const blob = new Blob([content], { type: contentType });
+    formData.append("file", blob, filename);
+    const res = await fetch(`${this.baseUrl}${path}`, {
+      method: "POST",
+      headers,
+      body: formData,
     });
     const responseBody = await res.json().catch(() => null);
     return {

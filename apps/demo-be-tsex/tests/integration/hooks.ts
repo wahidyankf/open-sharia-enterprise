@@ -1,125 +1,48 @@
-import { BeforeAll, AfterAll } from "@cucumber/cucumber";
-import { Effect, Layer, ManagedRuntime } from "effect";
+import { BeforeAll, AfterAll, Before } from "@cucumber/cucumber";
+import { Effect, Layer, ManagedRuntime, Option } from "effect";
 import { SqliteClient } from "@effect/sql-sqlite-node";
 import { NodeHttpServer } from "@effect/platform-node";
-import { HttpRouter, HttpServer, HttpServerResponse, HttpMiddleware } from "@effect/platform";
-import { createServer } from "node:http";
-import {
-  ValidationError,
-  NotFoundError,
-  UnauthorizedError,
-  ForbiddenError,
-  ConflictError,
-  FileTooLargeError,
-  UnsupportedMediaTypeError,
-} from "../../src/domain/errors.js";
+import { HttpServer, HttpServerRequest, FileSystem } from "@effect/platform";
+import { createServer, type Server } from "node:http";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { existsSync, unlinkSync } from "node:fs";
+import { CREATE_TABLE_STATEMENTS } from "../../src/infrastructure/db/schema.js";
 import { UserRepositoryLive } from "../../src/infrastructure/db/user-repo.js";
 import { ExpenseRepositoryLive } from "../../src/infrastructure/db/expense-repo.js";
 import { AttachmentRepositoryLive } from "../../src/infrastructure/db/attachment-repo.js";
 import { RevokedTokenRepositoryLive } from "../../src/infrastructure/db/token-repo.js";
 import { PasswordServiceLive } from "../../src/infrastructure/password.js";
 import { JwtServiceLive } from "../../src/auth/jwt.js";
-import { healthRouter } from "../../src/routes/health.js";
+import { AppRouter } from "../../src/app.js";
 import { SqlClient } from "@effect/sql";
 
 export const TEST_PORT = 8299;
 export const TEST_JWT_SECRET = "test-jwt-secret-at-least-32-chars-long!!";
 
-const CREATE_TABLES_SQL = `
-  CREATE TABLE IF NOT EXISTS users (
-    id TEXT PRIMARY KEY,
-    username TEXT NOT NULL UNIQUE,
-    email TEXT NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL,
-    display_name TEXT NOT NULL,
-    role TEXT NOT NULL DEFAULT 'USER',
-    status TEXT NOT NULL DEFAULT 'ACTIVE',
-    failed_login_attempts INTEGER NOT NULL DEFAULT 0,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-  );
-  CREATE TABLE IF NOT EXISTS expenses (
-    id TEXT PRIMARY KEY,
-    user_id TEXT NOT NULL,
-    type TEXT NOT NULL,
-    amount REAL NOT NULL,
-    currency TEXT NOT NULL,
-    description TEXT NOT NULL,
-    quantity TEXT,
-    unit TEXT,
-    date TEXT NOT NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-  );
-  CREATE TABLE IF NOT EXISTS attachments (
-    id TEXT PRIMARY KEY,
-    expense_id TEXT NOT NULL,
-    user_id TEXT NOT NULL,
-    filename TEXT NOT NULL,
-    content_type TEXT NOT NULL,
-    size INTEGER NOT NULL,
-    data BLOB NOT NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-  );
-  CREATE TABLE IF NOT EXISTS revoked_tokens (
-    jti TEXT PRIMARY KEY,
-    user_id TEXT NOT NULL,
-    revoked_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-  );
-`;
+// Use a temp file so both schema-init and AppLayer share the same SQLite database
+const TEST_DB_PATH = join(tmpdir(), `demo-be-tsex-integration-test-${process.pid}.db`);
 
-const SqliteLayer = SqliteClient.layer({ filename: ":memory:" });
+const SqliteLayer = SqliteClient.layer({ filename: TEST_DB_PATH });
 
-const errorHandler = HttpMiddleware.make((app) =>
-  Effect.catchAll(app, (error) => {
-    if (error instanceof ValidationError) {
-      return HttpServerResponse.json(
-        {
-          error: "Validation error",
-          field: error.field,
-          message: error.message,
-        },
-        { status: 400 },
-      );
-    }
-    if (error instanceof UnauthorizedError) {
-      return HttpServerResponse.json({ error: "Unauthorized", message: error.reason }, { status: 401 });
-    }
-    if (error instanceof ForbiddenError) {
-      return HttpServerResponse.json({ error: "Forbidden", message: error.reason }, { status: 403 });
-    }
-    if (error instanceof NotFoundError) {
-      return HttpServerResponse.json({ error: "Not found", message: `${error.resource} not found` }, { status: 404 });
-    }
-    if (error instanceof ConflictError) {
-      return HttpServerResponse.json({ error: "Conflict", message: error.message }, { status: 409 });
-    }
-    if (error instanceof FileTooLargeError) {
-      return HttpServerResponse.json(
-        {
-          error: "File too large",
-          message: "File exceeds maximum allowed size",
-        },
-        { status: 413 },
-      );
-    }
-    if (error instanceof UnsupportedMediaTypeError) {
-      return HttpServerResponse.json(
-        {
-          error: "Unsupported media type",
-          message: "File type not allowed",
-        },
-        { status: 415 },
-      );
-    }
-    return HttpServerResponse.json({ error: "Internal server error" }, { status: 500 });
-  }),
-);
+// Keep reference to HTTP server for explicit close in AfterAll
+let httpServer: Server | null = null;
 
-const AppRouter = HttpRouter.empty.pipe(HttpRouter.mountApp("/", healthRouter));
+// Increase max body size to 20MB to allow the server to receive oversized files
+// (route handlers check and reject files > MAX_ATTACHMENT_SIZE = 10MB with 413)
+const MaxBodySizeLayer = Layer.succeed(HttpServerRequest.MaxBodySize, Option.some(FileSystem.Size(20 * 1024 * 1024)));
 
-const AppLayer = HttpServer.serve(AppRouter, errorHandler).pipe(
-  Layer.provide(NodeHttpServer.layer(() => createServer(), { port: TEST_PORT })),
+const AppLayer = HttpServer.serve(AppRouter).pipe(
+  Layer.provide(
+    NodeHttpServer.layer(
+      () => {
+        httpServer = createServer();
+        return httpServer;
+      },
+      { port: TEST_PORT },
+    ),
+  ),
+  Layer.provide(MaxBodySizeLayer),
   Layer.provide(UserRepositoryLive),
   Layer.provide(ExpenseRepositoryLive),
   Layer.provide(AttachmentRepositoryLive),
@@ -133,22 +56,86 @@ const AppLayer = HttpServer.serve(AppRouter, errorHandler).pipe(
 let runtime: ManagedRuntime.ManagedRuntime<never, never>;
 
 BeforeAll(async function () {
-  // Initialize schema
+  // Initialize schema - execute each statement individually (SQLite doesn't support multi-statement prepare)
   await Effect.runPromise(
     Effect.gen(function* () {
       const sql = yield* SqlClient.SqlClient;
-      yield* sql.unsafe(CREATE_TABLES_SQL);
+      for (const statement of CREATE_TABLE_STATEMENTS) {
+        yield* sql.unsafe(statement);
+      }
     }).pipe(Effect.provide(SqliteLayer)),
   );
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   runtime = ManagedRuntime.make(AppLayer) as unknown as ManagedRuntime.ManagedRuntime<never, never>;
-  // Give the server time to start
+  // Start the server by running Effect.never (non-blocking — the server runs in background)
+  // This initializes all layers including the HTTP server
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (runtime as unknown as { runPromise: (effect: any) => Promise<any> }).runPromise(Effect.never).catch(() => {
+    // Ignore disposal error when runtime is disposed in AfterAll
+  });
+  // Give the server time to fully bind the port
   await new Promise((resolve) => setTimeout(resolve, 500));
 });
 
 AfterAll(async function () {
+  // Close the HTTP server first to release the port and connections
+  if (httpServer) {
+    // Close all connections (Node.js 18.2+)
+    if (typeof httpServer.closeAllConnections === "function") {
+      httpServer.closeAllConnections();
+    }
+    httpServer.close();
+  }
   if (runtime) {
-    await runtime.dispose();
+    // Best-effort disposal
+    runtime.dispose().catch(() => {
+      /* ignore */
+    });
+  }
+  // Clean up temp DB file
+  if (existsSync(TEST_DB_PATH)) {
+    try {
+      unlinkSync(TEST_DB_PATH);
+    } catch {
+      // Ignore cleanup errors
+    }
+  }
+  // Schedule force-exit after cucumber has had time to write output
+  // This runs AFTER AfterAll returns, giving cucumber time to print the summary
+  setImmediate(() => {
+    // Give cucumber 200ms to flush output after AfterAll returns
+    setTimeout(() => process.exit(0), 200);
+  });
+});
+
+// Clear all tables before each scenario to ensure test isolation
+Before(async function () {
+  try {
+    await Effect.runPromise(
+      Effect.gen(function* () {
+        const sql = yield* SqlClient.SqlClient;
+        yield* sql.unsafe("DELETE FROM revoked_tokens");
+        yield* sql.unsafe("DELETE FROM attachments");
+        yield* sql.unsafe("DELETE FROM expenses");
+        yield* sql.unsafe("DELETE FROM users");
+      }).pipe(Effect.provide(SqliteLayer)),
+    );
+  } catch (e) {
+    console.error("Before hook DB clear error:", e);
+    throw e;
   }
 });
+
+/**
+ * Promote a user to ADMIN role directly in the DB.
+ * Used by integration test step definitions for admin scenarios.
+ */
+export async function promoteToAdmin(username: string): Promise<void> {
+  await Effect.runPromise(
+    Effect.gen(function* () {
+      const sql = yield* SqlClient.SqlClient;
+      yield* sql.unsafe(`UPDATE users SET role = 'ADMIN' WHERE username = '${username}'`);
+    }).pipe(Effect.provide(SqliteLayer)),
+  );
+}

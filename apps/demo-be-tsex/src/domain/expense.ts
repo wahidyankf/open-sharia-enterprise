@@ -10,6 +10,7 @@ export interface Expense {
   readonly type: ExpenseType;
   readonly amount: number;
   readonly currency: string;
+  readonly category: string;
   readonly description: string;
   readonly quantity: string | null;
   readonly unit: string | null;
@@ -23,6 +24,7 @@ export interface CreateExpenseData {
   readonly type: ExpenseType;
   readonly amount: number;
   readonly currency: string;
+  readonly category?: string;
   readonly description: string;
   readonly quantity?: string;
   readonly unit?: string;

@@ -1,8 +1,15 @@
-import { HttpRouter, HttpServer, HttpServerResponse, HttpMiddleware } from "@effect/platform";
+import { HttpRouter, HttpServer, HttpServerResponse, HttpBody } from "@effect/platform";
 import { NodeHttpServer } from "@effect/platform-node";
 import { Layer, Effect } from "effect";
 import { createServer } from "node:http";
 import { healthRouter } from "./routes/health.js";
+import { authRouter } from "./routes/auth.js";
+import { userRouter } from "./routes/user.js";
+import { expenseRouter } from "./routes/expense.js";
+import { attachmentRouter } from "./routes/attachment.js";
+import { reportRouter } from "./routes/report.js";
+import { adminRouter } from "./routes/admin.js";
+import { jwksRouter } from "./routes/jwks.js";
 import {
   ValidationError,
   NotFoundError,
@@ -13,53 +20,56 @@ import {
   UnsupportedMediaTypeError,
 } from "./domain/errors.js";
 
-export const AppRouter = HttpRouter.empty.pipe(HttpRouter.mountApp("/", healthRouter));
+export const handleDomainError = (
+  error: unknown,
+): Effect.Effect<HttpServerResponse.HttpServerResponse, HttpBody.HttpBodyError> => {
+  if (error instanceof ValidationError) {
+    return HttpServerResponse.json(
+      { error: "Validation error", field: error.field, message: error.message },
+      { status: 400 },
+    );
+  }
+  if (error instanceof UnauthorizedError) {
+    return HttpServerResponse.json({ error: "Unauthorized", message: error.reason }, { status: 401 });
+  }
+  if (error instanceof ForbiddenError) {
+    return HttpServerResponse.json({ error: "Forbidden", message: error.reason }, { status: 403 });
+  }
+  if (error instanceof NotFoundError) {
+    return HttpServerResponse.json({ error: "Not found", message: `${error.resource} not found` }, { status: 404 });
+  }
+  if (error instanceof ConflictError) {
+    return HttpServerResponse.json({ error: "Conflict", message: error.message }, { status: 409 });
+  }
+  if (error instanceof FileTooLargeError) {
+    return HttpServerResponse.json(
+      { error: "File too large", message: "File exceeds maximum allowed size" },
+      { status: 413 },
+    );
+  }
+  if (error instanceof UnsupportedMediaTypeError) {
+    return HttpServerResponse.json(
+      { error: "Unsupported media type", message: "File type not allowed" },
+      { status: 415 },
+    );
+  }
+  return HttpServerResponse.json({ error: "Internal server error" }, { status: 500 });
+};
 
-export const errorHandler = HttpMiddleware.make((app) =>
-  Effect.catchAll(app, (error) => {
-    if (error instanceof ValidationError) {
-      return HttpServerResponse.json(
-        {
-          error: "Validation error",
-          field: error.field,
-          message: error.message,
-        },
-        { status: 400 },
-      );
-    }
-    if (error instanceof UnauthorizedError) {
-      return HttpServerResponse.json({ error: "Unauthorized", message: error.reason }, { status: 401 });
-    }
-    if (error instanceof ForbiddenError) {
-      return HttpServerResponse.json({ error: "Forbidden", message: error.reason }, { status: 403 });
-    }
-    if (error instanceof NotFoundError) {
-      return HttpServerResponse.json({ error: "Not found", message: `${error.resource} not found` }, { status: 404 });
-    }
-    if (error instanceof ConflictError) {
-      return HttpServerResponse.json({ error: "Conflict", message: error.message }, { status: 409 });
-    }
-    if (error instanceof FileTooLargeError) {
-      return HttpServerResponse.json(
-        {
-          error: "File too large",
-          message: "File exceeds maximum allowed size",
-        },
-        { status: 413 },
-      );
-    }
-    if (error instanceof UnsupportedMediaTypeError) {
-      return HttpServerResponse.json(
-        {
-          error: "Unsupported media type",
-          message: "File type not allowed",
-        },
-        { status: 415 },
-      );
-    }
-    return HttpServerResponse.json({ error: "Internal server error" }, { status: 500 });
-  }),
+export const AppRouter = HttpRouter.empty.pipe(
+  HttpRouter.concat(healthRouter),
+  HttpRouter.concat(authRouter),
+  HttpRouter.concat(userRouter),
+  HttpRouter.concat(expenseRouter),
+  HttpRouter.concat(attachmentRouter),
+  HttpRouter.concat(reportRouter),
+  HttpRouter.concat(adminRouter),
+  HttpRouter.concat(jwksRouter),
+  HttpRouter.catchAll(handleDomainError),
 );
 
-export const makeAppLayer = (port: number) =>
-  HttpServer.serve(AppRouter, errorHandler).pipe(Layer.provide(NodeHttpServer.layer(() => createServer(), { port })));
+export const makeServerLayer = (port: number) =>
+  HttpServer.serve(AppRouter).pipe(Layer.provide(NodeHttpServer.layer(() => createServer(), { port })));
+
+// Kept for backward compat — callers that also provide service layers
+export const makeAppLayer = makeServerLayer;

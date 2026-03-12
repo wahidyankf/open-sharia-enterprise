@@ -49,7 +49,7 @@
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx cucumber-js",
+        "command": "npx cucumber-js '../../specs/apps/demo-be/gherkin/**/*.feature' --require-module tsx/cjs --require 'tests/integration/hooks.ts' --require 'tests/integration/world.ts' --require 'tests/integration/steps/**/*.ts' --format progress --format 'json:coverage/cucumber-report.json'",
         "cwd": "apps/demo-be-tsex"
       },
       "cache": true,

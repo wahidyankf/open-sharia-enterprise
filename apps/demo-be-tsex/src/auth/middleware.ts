@@ -28,7 +28,7 @@ export const requireAuth = (
       return yield* Effect.fail(new UnauthorizedError({ reason: "Not an access token" }));
     }
     const tokenRepo = yield* RevokedTokenRepository;
-    const isRevoked = yield* tokenRepo.isRevoked(claims.jti);
+    const isRevoked = yield* tokenRepo.isRevoked(claims.jti, claims.sub, claims.iat);
     if (isRevoked) {
       return yield* Effect.fail(new UnauthorizedError({ reason: "Token has been revoked" }));
     }
