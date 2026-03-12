@@ -3,14 +3,14 @@ package com.organiclever.demojavx.repository.pg;
 import com.organiclever.demojavx.domain.model.TokenRevocation;
 import com.organiclever.demojavx.repository.TokenRevocationRepository;
 import io.vertx.core.Future;
-import io.vertx.pgclient.PgPool;
+import io.vertx.sqlclient.Pool;
 import java.util.List;
 
 public class PgTokenRevocationRepository implements TokenRevocationRepository {
 
-    private final PgPool pool;
+    private final Pool pool;
 
-    public PgTokenRevocationRepository(PgPool pool) {
+    public PgTokenRevocationRepository(Pool pool) {
         this.pool = pool;
     }
 
@@ -33,7 +33,7 @@ public class PgTokenRevocationRepository implements TokenRevocationRepository {
         return Future.failedFuture("PG not implemented yet");
     }
 
-    public PgPool getPool() {
+    public Pool getPool() {
         return pool;
     }
 }

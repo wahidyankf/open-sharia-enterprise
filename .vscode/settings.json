@@ -1,6 +1,10 @@
 {
-  "java.compile.nullAnalysis.mode": "automatic",
+  "java.compile.nullAnalysis.mode": "disabled",
   "java.configuration.updateBuildConfiguration": "automatic",
+  "java.import.exclusions": [
+    "**/apps/organiclever-app/**",
+    "**/.claude/worktrees/**"
+  ],
   "gopls": {
     "buildFlags": ["-tags=integration"]
   }
