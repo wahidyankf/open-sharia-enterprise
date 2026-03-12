@@ -14,7 +14,7 @@
 (defn- error-response [status message]
   {:status  status
    :headers {"Content-Type" "application/json"}
-   :body    (json/generate-string {:error message})})
+   :body    (json/generate-string {:message message})})
 
 (defn- attachment->response [attachment base-url]
   {:id           (:id attachment)
@@ -58,12 +58,12 @@
                 (not (attachment-domain/valid-content-type? content-type))
                 {:status  415
                  :headers {"Content-Type" "application/json"}
-                 :body    (json/generate-string {:error "Unsupported file type" :field "file"})}
+                 :body    (json/generate-string {:message "Unsupported file type" :field "file"})}
 
                 (not (attachment-domain/valid-file-size? size))
                 {:status  413
                  :headers {"Content-Type" "application/json"}
-                 :body    (json/generate-string {:error "File size exceeds the 10MB limit"})}
+                 :body    (json/generate-string {:message "File size exceeds the 10MB limit"})}
 
                 :else
                 (let [attachment (attachment-repo/create-attachment!

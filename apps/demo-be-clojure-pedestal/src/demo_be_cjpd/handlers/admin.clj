@@ -14,7 +14,7 @@
 (defn- error-response [status message]
   {:status  status
    :headers {"Content-Type" "application/json"}
-   :body    (json/generate-string {:error message})})
+   :body    (json/generate-string {:message message})})
 
 (defn- user->public [user]
   (dissoc user :password-hash :failed-login-attempts))

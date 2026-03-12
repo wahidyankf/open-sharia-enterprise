@@ -13,7 +13,7 @@
 (defn- error-response [status message]
   {:status  status
    :headers {"Content-Type" "application/json"}
-   :body    (json/generate-string {:error message})})
+   :body    (json/generate-string {:message message})})
 
 (defn- expense->response [expense]
   (cond-> {:id          (:id expense)
@@ -65,7 +65,7 @@
       (if error
         {:status  (:status error)
          :headers {"Content-Type" "application/json"}
-         :body    (json/generate-string {:error (:message error) :field (:field error)})}
+         :body    (json/generate-string {:message (:message error) :field (:field error)})}
         (let [expense (expense-repo/create-expense! ds
                                                     {:user-id     user-id
                                                      :type        type
@@ -125,7 +125,7 @@
           (if error
             {:status  (:status error)
              :headers {"Content-Type" "application/json"}
-             :body    (json/generate-string {:error (:message error) :field (:field error)})}
+             :body    (json/generate-string {:message (:message error) :field (:field error)})}
             (let [updated (expense-repo/update-expense! ds expense-id
                                                         {:type        type
                                                          :amount      amount

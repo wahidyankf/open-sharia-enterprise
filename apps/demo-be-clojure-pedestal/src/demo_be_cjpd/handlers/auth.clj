@@ -16,7 +16,7 @@
 (defn- error-response [status message]
   {:status  status
    :headers {"Content-Type" "application/json"}
-   :body    (json/generate-string {:error message})})
+   :body    (json/generate-string {:message message})})
 
 (defn- user->public [user]
   (dissoc user :password-hash :failed-login-attempts))
@@ -36,14 +36,14 @@
         (not (user-domain/valid-email? email))
         {:status  400
          :headers {"Content-Type" "application/json"}
-         :body    (json/generate-string {:error "Invalid email format" :field "email"})}
+         :body    (json/generate-string {:message "Invalid email format" :field "email"})}
 
         :else
         (let [pw-error (user-domain/validate-password-strength password)]
           (if pw-error
             {:status  400
              :headers {"Content-Type" "application/json"}
-             :body    (json/generate-string {:error (:message pw-error) :field "password"})}
+             :body    (json/generate-string {:message (:message pw-error) :field "password"})}
             (do
               (when (user-repo/find-by-username ds username)
                 (throw (ex-info "Username already exists"

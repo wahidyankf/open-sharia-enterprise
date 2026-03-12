@@ -13,4 +13,4 @@
               (assoc ctx :response
                      {:status  status
                       :headers {"Content-Type" "application/json"}
-                      :body    (json/generate-string {:error message})})))})
+                      :body    (json/generate-string {:message message})})))})
