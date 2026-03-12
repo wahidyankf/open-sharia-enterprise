@@ -44,3 +44,7 @@ flags:
     paths:
       - apps/demo-be-elixir-phoenix/
     carryforward: true
+  demo-be-clojure-pedestal:
+    paths:
+      - apps/demo-be-clojure-pedestal/
+    carryforward: true

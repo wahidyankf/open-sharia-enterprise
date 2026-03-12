@@ -38,6 +38,7 @@ All projects enforce ≥90% test coverage as part of `test:quick`. Coverage is u
 [![E2E - Demo Backend (Java/Vert.x)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-java-vertx.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-java-vertx.yml)
 [![E2E - Demo Backend (TypeScript/Effect)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-ts-effect.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-ts-effect.yml)
 [![E2E - Demo Backend (C#/ASP.NET Core)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-csharp-aspnetcore.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-csharp-aspnetcore.yml)
+[![E2E - Demo Backend (Clojure/Pedestal)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-clojure-pedestal.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-clojure-pedestal.yml)
 
 | Project                          | Coverage                                                                                                                                                                      |
 | -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -51,6 +52,7 @@ All projects enforce ≥90% test coverage as part of `test:quick`. Coverage is u
 | `apps/demo-be-java-vertx`        | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-java-vertx)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)        |
 | `apps/demo-be-ts-effect`         | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-ts-effect)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)         |
 | `apps/demo-be-csharp-aspnetcore` | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-csharp-aspnetcore)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise) |
+| `apps/demo-be-clojure-pedestal`  | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-clojure-pedestal)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)  |
 
 ## 🚧 Project Status
 

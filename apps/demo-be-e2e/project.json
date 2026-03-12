@@ -66,6 +66,7 @@
     "demo-be-kotlin-ktor",
     "demo-be-java-vertx",
     "demo-be-ts-effect",
-    "demo-be-csharp-aspnetcore"
+    "demo-be-csharp-aspnetcore",
+    "demo-be-clojure-pedestal"
   ]
 }

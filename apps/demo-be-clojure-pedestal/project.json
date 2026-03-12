@@ -1,0 +1,71 @@
+{
+  "name": "demo-be-clojure-pedestal",
+  "sourceRoot": "apps/demo-be-clojure-pedestal",
+  "projectType": "application",
+  "tags": ["type:app", "platform:pedestal", "lang:clojure", "domain:demo-be"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clj -T:build uber",
+        "cwd": "apps/demo-be-clojure-pedestal"
+      },
+      "outputs": ["{projectRoot}/target"]
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clj -M -m demo-be-cjpd.main",
+        "cwd": "apps/demo-be-clojure-pedestal"
+      }
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "java -jar target/demo-be-clojure-pedestal-standalone.jar",
+        "cwd": "apps/demo-be-clojure-pedestal"
+      }
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -M:coverage -m kaocha.runner --plugin cloverage --lcov --cov-output coverage --cov-ns-exclude-regex demo-be-cjpd\\.main",
+          "(cd ../../ && CGO_ENABLED=0 go run apps/rhino-cli/main.go test-coverage validate apps/demo-be-clojure-pedestal/coverage/lcov.info 90)",
+          "clj-kondo --lint src test"
+        ],
+        "parallel": false,
+        "cwd": "apps/demo-be-clojure-pedestal"
+      },
+      "outputs": ["{projectRoot}/coverage"]
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clj -M:test -m kaocha.runner unit",
+        "cwd": "apps/demo-be-clojure-pedestal"
+      }
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clj -M:test -m kaocha.runner integration",
+        "cwd": "apps/demo-be-clojure-pedestal"
+      },
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/test/**/*",
+        "{workspaceRoot}/specs/apps/demo-be/gherkin/**/*.feature"
+      ]
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "clj-kondo --lint src test",
+        "cwd": "apps/demo-be-clojure-pedestal"
+      }
+    }
+  },
+  "implicitDependencies": ["rhino-cli"]
+}
