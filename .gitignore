@@ -24,6 +24,10 @@ cover.out
 # IDE and editor
 # .vscode/
 .idea/
+.settings/
+.classpath
+.project
+.factorypath
 *.swp
 *.swo
 *~
