@@ -24,18 +24,18 @@ Postgres). Supported currencies: **USD** and **IDR**.
 
 ## Implementations
 
-| Implementation | Language            | Integration runner               | E2E runner |
-| -------------- | ------------------- | -------------------------------- | ---------- |
-| demo-be-jasb   | Java (Spring)       | Cucumber + MockMvc               | Playwright |
-| demo-be-exph   | Elixir (Phoenix)    | Cabbage + ConnCase               | Playwright |
-| demo-be-fsgi   | F# (Giraffe)        | TickSpec + xUnit                 | Playwright |
-| demo-be-gogn   | Go (Gin)            | Godog + httptest                 | Playwright |
-| demo-be-pyfa   | Python (FastAPI)    | pytest-bdd + TestClient          | Playwright |
-| demo-be-rsax   | Rust (Axum)         | cucumber + Tower TestClient      | Playwright |
-| demo-be-ktkt   | Kotlin (Ktor)       | Cucumber + testApplication       | Playwright |
-| demo-be-javx   | Java (Vert.x)       | Cucumber + Vert.x Test           | Playwright |
-| demo-be-tsex   | TypeScript (Effect) | Cucumber.js + Effect HTTP client | Playwright |
-| demo-be-csas   | C# (ASP.NET Core)   | Reqnroll + WebApplicationFactory | Playwright |
+| Implementation            | Language            | Integration runner               | E2E runner |
+| ------------------------- | ------------------- | -------------------------------- | ---------- |
+| demo-be-java-springboot   | Java (Spring)       | Cucumber + MockMvc               | Playwright |
+| demo-be-elixir-phoenix    | Elixir (Phoenix)    | Cabbage + ConnCase               | Playwright |
+| demo-be-fsharp-giraffe    | F# (Giraffe)        | TickSpec + xUnit                 | Playwright |
+| demo-be-golang-gin        | Go (Gin)            | Godog + httptest                 | Playwright |
+| demo-be-python-fastapi    | Python (FastAPI)    | pytest-bdd + TestClient          | Playwright |
+| demo-be-rust-axum         | Rust (Axum)         | cucumber + Tower TestClient      | Playwright |
+| demo-be-kotlin-ktor       | Kotlin (Ktor)       | Cucumber + testApplication       | Playwright |
+| demo-be-java-vertx        | Java (Vert.x)       | Cucumber + Vert.x Test           | Playwright |
+| demo-be-ts-effect         | TypeScript (Effect) | Cucumber.js + Effect HTTP client | Playwright |
+| demo-be-csharp-aspnetcore | C# (ASP.NET Core)   | Reqnroll + WebApplicationFactory | Playwright |
 
 Each new language implementation adds its own step definitions. The feature files here are the
 single source of truth and must not contain language-specific concepts (framework names, library

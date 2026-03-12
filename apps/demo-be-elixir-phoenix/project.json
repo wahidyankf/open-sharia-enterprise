@@ -1,0 +1,84 @@
+{
+  "name": "demo-be-elixir-phoenix",
+  "sourceRoot": "apps/demo-be-elixir-phoenix/lib",
+  "projectType": "application",
+  "implicitDependencies": ["elixir-gherkin", "elixir-cabbage"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "MIX_ENV=prod mix do deps.get --only prod, compile --warnings-as-errors",
+        "cwd": "apps/demo-be-elixir-phoenix"
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mix phx.server",
+        "cwd": "apps/demo-be-elixir-phoenix"
+      }
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mix phx.server",
+        "cwd": "apps/demo-be-elixir-phoenix"
+      }
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "MIX_ENV=test mix coveralls.lcov",
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-be-elixir-phoenix/cover/lcov.info 90)",
+          "mix credo --strict",
+          "mix format --check-formatted"
+        ],
+        "parallel": false,
+        "cwd": "apps/demo-be-elixir-phoenix"
+      }
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mix test --only unit",
+        "cwd": "apps/demo-be-elixir-phoenix"
+      }
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mix test --only integration",
+        "cwd": "apps/demo-be-elixir-phoenix"
+      },
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/lib/**/*.ex",
+        "{projectRoot}/test/**/*.exs",
+        "{workspaceRoot}/specs/apps/demo-be/gherkin/**/*.feature"
+      ]
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mix credo --strict",
+        "cwd": "apps/demo-be-elixir-phoenix"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mix compile --warnings-as-errors",
+        "cwd": "apps/demo-be-elixir-phoenix"
+      }
+    },
+    "install": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mix deps.get",
+        "cwd": "apps/demo-be-elixir-phoenix"
+      }
+    }
+  },
+  "tags": ["type:app", "platform:phoenix", "lang:elixir", "domain:demo-be"]
+}

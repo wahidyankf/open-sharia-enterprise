@@ -28,29 +28,29 @@ All projects enforce ≥90% test coverage as part of `test:quick`. Coverage is u
 
 ## 🧪 Demo Apps
 
-[![E2E - Demo Backend (JASB)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-jasb.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-jasb.yml)
-[![E2E - Demo Backend (EXPH)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-exph.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-exph.yml)
-[![E2E - Demo Backend (FSGI)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-fsgi.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-fsgi.yml)
-[![E2E - Demo Backend (GOGN)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-gogn.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-gogn.yml)
-[![E2E - Demo Backend (PYFA)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-pyfa.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-pyfa.yml)
-[![E2E - Demo Backend (RSAX)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-rsax.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-rsax.yml)
-[![E2E - Demo Backend (KTKT)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-ktkt.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-ktkt.yml)
-[![E2E - Demo Backend (JAVX)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-javx.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-javx.yml)
-[![E2E - Demo Backend (TSEX)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-tsex.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-tsex.yml)
-[![E2E - Demo Backend (CSAS)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-csas.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-csas.yml)
+[![E2E - Demo Backend (JASB)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-java-springboot.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-java-springboot.yml)
+[![E2E - Demo Backend (EXPH)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-elixir-phoenix.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-elixir-phoenix.yml)
+[![E2E - Demo Backend (FSGI)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-fsharp-giraffe.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-fsharp-giraffe.yml)
+[![E2E - Demo Backend (GOGN)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-golang-gin.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-golang-gin.yml)
+[![E2E - Demo Backend (PYFA)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-python-fastapi.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-python-fastapi.yml)
+[![E2E - Demo Backend (RSAX)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-rust-axum.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-rust-axum.yml)
+[![E2E - Demo Backend (KTKT)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-kotlin-ktor.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-kotlin-ktor.yml)
+[![E2E - Demo Backend (JAVX)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-java-vertx.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-java-vertx.yml)
+[![E2E - Demo Backend (TSEX)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-ts-effect.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-ts-effect.yml)
+[![E2E - Demo Backend (CSAS)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-csharp-aspnetcore.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/e2e-demo-be-csharp-aspnetcore.yml)
 
-| Project             | Coverage                                                                                                                                                         |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `apps/demo-be-jasb` | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-jasb)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise) |
-| `apps/demo-be-exph` | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-exph)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise) |
-| `apps/demo-be-fsgi` | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-fsgi)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise) |
-| `apps/demo-be-gogn` | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-gogn)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise) |
-| `apps/demo-be-pyfa` | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-pyfa)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise) |
-| `apps/demo-be-rsax` | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-rsax)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise) |
-| `apps/demo-be-ktkt` | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-ktkt)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise) |
-| `apps/demo-be-javx` | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-javx)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise) |
-| `apps/demo-be-tsex` | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-tsex)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise) |
-| `apps/demo-be-csas` | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-csas)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise) |
+| Project                          | Coverage                                                                                                                                                                      |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/demo-be-java-springboot`   | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-java-springboot)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)   |
+| `apps/demo-be-elixir-phoenix`    | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-elixir-phoenix)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)    |
+| `apps/demo-be-fsharp-giraffe`    | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-fsharp-giraffe)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)    |
+| `apps/demo-be-golang-gin`        | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-golang-gin)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)        |
+| `apps/demo-be-python-fastapi`    | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-python-fastapi)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)    |
+| `apps/demo-be-rust-axum`         | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-rust-axum)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)         |
+| `apps/demo-be-kotlin-ktor`       | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-kotlin-ktor)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)       |
+| `apps/demo-be-java-vertx`        | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-java-vertx)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)        |
+| `apps/demo-be-ts-effect`         | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-ts-effect)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)         |
+| `apps/demo-be-csharp-aspnetcore` | [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-be-csharp-aspnetcore)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise) |
 
 ## 🚧 Project Status
 
@@ -61,7 +61,7 @@ All projects enforce ≥90% test coverage as part of `test:quick`. Coverage is u
 Building OrganicLever, a full-stack individual productivity tracker:
 
 - 🌐 **Landing site**: [organiclever.com](https://www.organiclever.com/) ([organiclever-web](./apps/organiclever-web/)) - Next.js promotional website
-- ☕ **Backend API**: Spring Boot REST API ([demo-be-jasb](./apps/demo-be-jasb/))
+- ☕ **Backend API**: Spring Boot REST API ([demo-be-java-springboot](./apps/demo-be-java-springboot/))
 - ✅ **Phase 0 complete**: [ayokoding.com](https://ayokoding.com), [oseplatform.com](https://oseplatform.com), AI agents, governance, CLI tools
 
 **Next Phase: Phase 2 (SMB Application)** - Small and medium business application building on OrganicLever's foundation.
@@ -161,7 +161,7 @@ open-sharia-enterprise/
 
 This project uses **Nx** to manage applications and libraries:
 
-- **`apps/`** - Deployable applications (current: [`oseplatform-web`](./apps/oseplatform-web/), [`ayokoding-web`](./apps/ayokoding-web/), [`ayokoding-cli`](./apps/ayokoding-cli/), [`rhino-cli`](./apps/rhino-cli/), [`oseplatform-cli`](./apps/oseplatform-cli/), [`organiclever-web`](./apps/organiclever-web/), [`organiclever-web-e2e`](./apps/organiclever-web-e2e/), [`demo-be-jasb`](./apps/demo-be-jasb/), [`demo-be-exph`](./apps/demo-be-exph/), [`demo-be-fsgi`](./apps/demo-be-fsgi/), [`demo-be-gogn`](./apps/demo-be-gogn/), [`demo-be-pyfa`](./apps/demo-be-pyfa/), [`demo-be-rsax`](./apps/demo-be-rsax/), [`demo-be-ktkt`](./apps/demo-be-ktkt/), [`demo-be-javx`](./apps/demo-be-javx/), [`demo-be-e2e`](./apps/demo-be-e2e/))
+- **`apps/`** - Deployable applications (current: [`oseplatform-web`](./apps/oseplatform-web/), [`ayokoding-web`](./apps/ayokoding-web/), [`ayokoding-cli`](./apps/ayokoding-cli/), [`rhino-cli`](./apps/rhino-cli/), [`oseplatform-cli`](./apps/oseplatform-cli/), [`organiclever-web`](./apps/organiclever-web/), [`organiclever-web-e2e`](./apps/organiclever-web-e2e/), [`demo-be-java-springboot`](./apps/demo-be-java-springboot/), [`demo-be-elixir-phoenix`](./apps/demo-be-elixir-phoenix/), [`demo-be-fsharp-giraffe`](./apps/demo-be-fsharp-giraffe/), [`demo-be-golang-gin`](./apps/demo-be-golang-gin/), [`demo-be-python-fastapi`](./apps/demo-be-python-fastapi/), [`demo-be-rust-axum`](./apps/demo-be-rust-axum/), [`demo-be-kotlin-ktor`](./apps/demo-be-kotlin-ktor/), [`demo-be-java-vertx`](./apps/demo-be-java-vertx/), [`demo-be-e2e`](./apps/demo-be-e2e/))
 - **`libs/`** - Reusable libraries
 - **`apps-labs/`** - Experimental apps and POCs (current: `ayokoding-web__source-code`, `hello-rust-be`)
 

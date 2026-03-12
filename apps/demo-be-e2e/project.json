@@ -57,15 +57,15 @@
   },
   "tags": ["type:e2e", "platform:playwright", "lang:ts", "domain:demo-be"],
   "implicitDependencies": [
-    "demo-be-jasb",
-    "demo-be-exph",
-    "demo-be-fsgi",
-    "demo-be-gogn",
-    "demo-be-pyfa",
-    "demo-be-rsax",
-    "demo-be-ktkt",
-    "demo-be-javx",
-    "demo-be-tsex",
-    "demo-be-csas"
+    "demo-be-java-springboot",
+    "demo-be-elixir-phoenix",
+    "demo-be-fsharp-giraffe",
+    "demo-be-golang-gin",
+    "demo-be-python-fastapi",
+    "demo-be-rust-axum",
+    "demo-be-kotlin-ktor",
+    "demo-be-java-vertx",
+    "demo-be-ts-effect",
+    "demo-be-csharp-aspnetcore"
   ]
 }

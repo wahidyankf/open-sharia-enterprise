@@ -80,8 +80,8 @@ Flat structure - all apps at the same level, no subdirectories.
 - `oseplatform-cli` - OSE Platform site maintenance CLI (Go application)
 - `organiclever-web` - OrganicLever landing website (Next.js application)
 - `organiclever-web-e2e` - Playwright E2E tests for organiclever-web
-- `demo-be-jasb` - OrganicLever REST API backend (Java Spring Boot application)
-- `demo-be-e2e` - Playwright E2E tests for demo-be-jasb
+- `demo-be-java-springboot` - OrganicLever REST API backend (Java Spring Boot application)
+- `demo-be-e2e` - Playwright E2E tests for demo-be-java-springboot
 
 ### App Structure (Hugo Static Site)
 
@@ -132,7 +132,7 @@ apps/organiclever-web/
 ### App Structure (Spring Boot Application)
 
 ```
-apps/demo-be-jasb/
+apps/demo-be-java-springboot/
 ├── src/                       # Source code (main + test)
 ├── target/                    # Build output (gitignored)
 ├── Dockerfile                 # Production multi-stage build

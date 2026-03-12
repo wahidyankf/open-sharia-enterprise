@@ -1,0 +1,62 @@
+name: E2E - Demo Backend (GOGN)
+
+on:
+  schedule:
+    - cron: "0 23 * * *" # 6 AM WIB (UTC+7)
+    - cron: "0 11 * * *" # 6 PM WIB (UTC+7)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  e2e-be:
+    name: Run backend E2E tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Start backend
+        run: docker compose -f infra/dev/demo-be-golang-gin/docker-compose.yml -f infra/dev/demo-be-golang-gin/docker-compose.e2e.yml up --build -d demo-be-golang-gin
+
+      - name: Wait for backend to be healthy
+        run: |
+          echo "Waiting for backend to become healthy..."
+          for i in $(seq 1 24); do
+            STATUS=$(docker inspect --format='{{.State.Health.Status}}' 'demo-be-golang-gin' 2>/dev/null || echo "unknown")
+            echo "[$i/24] Health: $STATUS"
+            if [ "$STATUS" = "healthy" ]; then
+              echo "Backend is healthy"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "Backend did not become healthy within 4 minutes"
+          docker logs demo-be-golang-gin
+          exit 1
+
+      - name: Setup Volta
+        uses: volta-cli/action@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run E2E tests
+        run: npx nx run demo-be-e2e:test:e2e
+        env:
+          BASE_URL: http://localhost:8201
+          DATABASE_URL: postgresql://demo_be_golang_gin:demo_be_golang_gin@localhost:5432/demo_be_golang_gin
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-demo-be-golang-gin
+          path: apps/demo-be-e2e/playwright-report/
+          retention-days: 7
+
+      - name: Stop backend
+        if: always()
+        run: docker compose -f infra/dev/demo-be-golang-gin/docker-compose.yml down

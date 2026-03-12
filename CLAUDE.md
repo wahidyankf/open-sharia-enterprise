@@ -23,16 +23,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `oseplatform-cli` - Go CLI tool for OSE Platform site maintenance (link validation)
   - `organiclever-web` - Next.js 16 landing and promotional website (www.organiclever.com)
   - `organiclever-web-e2e` - Playwright E2E tests for organiclever-web
-  - `demo-be-jasb` - Spring Boot REST API backend (Java Spring Boot)
-  - `demo-be-exph` - Elixir/Phoenix REST API backend (alternative to demo-be-jasb)
-  - `demo-be-fsgi` - F#/Giraffe REST API backend (alternative to demo-be-jasb)
-  - `demo-be-gogn` - Go/Gin REST API backend (alternative to demo-be-jasb)
-  - `demo-be-pyfa` - Python/FastAPI REST API backend (alternative to demo-be-jasb)
-  - `demo-be-rsax` - Rust/Axum REST API backend (alternative to demo-be-jasb)
-  - `demo-be-ktkt` - Kotlin/Ktor REST API backend (alternative to demo-be-jasb)
-  - `demo-be-javx` - Java/Vert.x REST API backend (alternative to demo-be-jasb)
-  - `demo-be-tsex` - TypeScript/Effect REST API backend (alternative to demo-be-jasb)
-  - `demo-be-csas` - C#/ASP.NET Core REST API backend (alternative to demo-be-jasb)
+  - `demo-be-java-springboot` - Spring Boot REST API backend (Java Spring Boot)
+  - `demo-be-elixir-phoenix` - Elixir/Phoenix REST API backend (alternative to demo-be-java-springboot)
+  - `demo-be-fsharp-giraffe` - F#/Giraffe REST API backend (alternative to demo-be-java-springboot)
+  - `demo-be-golang-gin` - Go/Gin REST API backend (alternative to demo-be-java-springboot)
+  - `demo-be-python-fastapi` - Python/FastAPI REST API backend (alternative to demo-be-java-springboot)
+  - `demo-be-rust-axum` - Rust/Axum REST API backend (alternative to demo-be-java-springboot)
+  - `demo-be-kotlin-ktor` - Kotlin/Ktor REST API backend (alternative to demo-be-java-springboot)
+  - `demo-be-java-vertx` - Java/Vert.x REST API backend (alternative to demo-be-java-springboot)
+  - `demo-be-ts-effect` - TypeScript/Effect REST API backend (alternative to demo-be-java-springboot)
+  - `demo-be-csharp-aspnetcore` - C#/ASP.NET Core REST API backend (alternative to demo-be-java-springboot)
   - `demo-be-e2e` - Playwright E2E tests for demo-be REST API backends
 
 ## Project Structure
@@ -47,16 +47,16 @@ open-sharia-enterprise/
 │   ├── oseplatform-cli/     # OSE Platform site CLI
 │   ├── organiclever-web/     # OrganicLever landing website (Next.js)
 │   ├── organiclever-web-e2e/ # Playwright E2E tests for organiclever-web
-│   ├── demo-be-jasb/ # Spring Boot REST API (Java Spring Boot)
-│   ├── demo-be-exph/ # Elixir/Phoenix REST API (alternative implementation)
-│   ├── demo-be-fsgi/ # F#/Giraffe REST API (alternative implementation)
-│   ├── demo-be-gogn/ # Go/Gin REST API (alternative implementation)
-│   ├── demo-be-pyfa/ # Python/FastAPI REST API (alternative implementation)
-│   ├── demo-be-rsax/ # Rust/Axum REST API (alternative implementation)
-│   ├── demo-be-ktkt/ # Kotlin/Ktor REST API (alternative implementation)
-│   ├── demo-be-javx/ # Java/Vert.x REST API (alternative implementation)
-│   ├── demo-be-tsex/ # TypeScript/Effect REST API (alternative implementation)
-│   ├── demo-be-csas/ # C#/ASP.NET Core REST API (alternative implementation)
+│   ├── demo-be-java-springboot/ # Spring Boot REST API (Java Spring Boot)
+│   ├── demo-be-elixir-phoenix/ # Elixir/Phoenix REST API (alternative implementation)
+│   ├── demo-be-fsharp-giraffe/ # F#/Giraffe REST API (alternative implementation)
+│   ├── demo-be-golang-gin/ # Go/Gin REST API (alternative implementation)
+│   ├── demo-be-python-fastapi/ # Python/FastAPI REST API (alternative implementation)
+│   ├── demo-be-rust-axum/ # Rust/Axum REST API (alternative implementation)
+│   ├── demo-be-kotlin-ktor/ # Kotlin/Ktor REST API (alternative implementation)
+│   ├── demo-be-java-vertx/ # Java/Vert.x REST API (alternative implementation)
+│   ├── demo-be-ts-effect/ # TypeScript/Effect REST API (alternative implementation)
+│   ├── demo-be-csharp-aspnetcore/ # C#/ASP.NET Core REST API (alternative implementation)
 │   └── demo-be-e2e/ # Playwright E2E tests for backend
 ├── apps-labs/                # Experimental apps (NOT in Nx)
 ├── libs/                     # Reusable libraries (Nx, flat structure)
@@ -126,52 +126,52 @@ npm run doctor           # Check all required tools (volta, node, npm, java, mav
 **See**: [governance/development/infra/nx-targets.md](./governance/development/infra/nx-targets.md) for canonical target names, mandatory targets per project type, and caching rules.
 
 **Go projects**: All Go projects (`ayokoding-cli`, `oseplatform-cli`, `rhino-cli`,
-`libs/golang-commons`, `libs/hugo-commons`, `demo-be-gogn`) enforce ≥90% **line coverage**
+`libs/golang-commons`, `libs/hugo-commons`, `demo-be-golang-gin`) enforce ≥90% **line coverage**
 (matching Codecov's algorithm) via `rhino-cli test-coverage validate`. Coverage is measured with
 `go test -coverprofile=cover.out ./...` and enforced by
 `rhino-cli test-coverage validate <project>/cover.out 90` — both run as part of `test:quick`.
 
-**TypeScript projects**: `organiclever-web` and `demo-be-tsex` enforce ≥90% **line coverage**
+**TypeScript projects**: `organiclever-web` and `demo-be-ts-effect` enforce ≥90% **line coverage**
 (matching Codecov's algorithm) via `rhino-cli test-coverage validate` applied to the LCOV output
 from Vitest: `rhino-cli test-coverage validate apps/organiclever-web/coverage/lcov.info 90` and
-`rhino-cli test-coverage validate apps/demo-be-tsex/coverage/lcov.info 90` — both run as part of
+`rhino-cli test-coverage validate apps/demo-be-ts-effect/coverage/lcov.info 90` — both run as part of
 `test:quick`.
 
-**Java projects**: `demo-be-jasb` and `demo-be-javx` enforce ≥90% **line coverage** (matching
+**Java projects**: `demo-be-java-springboot` and `demo-be-java-vertx` enforce ≥90% **line coverage** (matching
 Codecov's algorithm) via `rhino-cli test-coverage validate` applied to the JaCoCo XML report —
 run as part of `test:quick`.
 
-**Kotlin projects**: `demo-be-ktkt` enforces ≥90% **line coverage** (matching Codecov's algorithm)
+**Kotlin projects**: `demo-be-kotlin-ktor` enforces ≥90% **line coverage** (matching Codecov's algorithm)
 via `rhino-cli test-coverage validate` applied to the Kover JaCoCo XML report —
 run as part of `test:quick`.
 
-**Python projects**: `demo-be-pyfa` enforces ≥90% **line coverage** (matching Codecov's algorithm)
+**Python projects**: `demo-be-python-fastapi` enforces ≥90% **line coverage** (matching Codecov's algorithm)
 via `rhino-cli test-coverage validate` applied to the LCOV output from coverage.py:
-`rhino-cli test-coverage validate apps/demo-be-pyfa/coverage/lcov.info 90` — run as part of `test:quick`.
+`rhino-cli test-coverage validate apps/demo-be-python-fastapi/coverage/lcov.info 90` — run as part of `test:quick`.
 
-**Rust projects**: `demo-be-rsax` enforces ≥90% **line coverage** (matching Codecov's algorithm)
+**Rust projects**: `demo-be-rust-axum` enforces ≥90% **line coverage** (matching Codecov's algorithm)
 via `rhino-cli test-coverage validate` applied to the LCOV output from cargo-llvm-cov:
-`rhino-cli test-coverage validate apps/demo-be-rsax/coverage/lcov.info 90` — run as part of `test:quick`.
+`rhino-cli test-coverage validate apps/demo-be-rust-axum/coverage/lcov.info 90` — run as part of `test:quick`.
 
-**F# projects**: `demo-be-fsgi` enforces ≥90% **line coverage** (matching Codecov's algorithm)
+**F# projects**: `demo-be-fsharp-giraffe` enforces ≥90% **line coverage** (matching Codecov's algorithm)
 via `rhino-cli test-coverage validate` applied to the AltCover LCOV report:
-`rhino-cli test-coverage validate apps/demo-be-fsgi/coverage/altcov.info 90` — run as part of
+`rhino-cli test-coverage validate apps/demo-be-fsharp-giraffe/coverage/altcov.info 90` — run as part of
 `test:quick`. Uses AltCover with `--linecover` instead of XPlat Code Coverage to avoid F#
 `task{}` async state machine BRDA inflation.
 
-**C# projects**: `demo-be-csas` enforces ≥90% **line coverage** (matching Codecov's algorithm)
+**C# projects**: `demo-be-csharp-aspnetcore` enforces ≥90% **line coverage** (matching Codecov's algorithm)
 via `rhino-cli test-coverage validate` applied to the Coverlet LCOV report:
-`rhino-cli test-coverage validate apps/demo-be-csas/coverage/**/coverage.info 90` — run as part
+`rhino-cli test-coverage validate apps/demo-be-csharp-aspnetcore/coverage/**/coverage.info 90` — run as part
 of `test:quick`. Uses Coverlet XPlat Code Coverage collector with LCOV format output.
 
-**`test:integration` caching**: Integration tests for `organiclever-web` (MSW), `demo-be-jasb`
-(MockMvc + mocked repositories via InMemoryDataStore), `demo-be-exph` (in-memory context
-implementations via InMemoryStore), `demo-be-fsgi` (SQLite in-memory via WebApplicationFactory),
-`demo-be-gogn` (Godog + httptest + in-memory stores), `demo-be-pyfa` (pytest-bdd + TestClient +
-in-memory stores), `demo-be-rsax` (cucumber + Tower TestClient + in-memory stores),
-`demo-be-ktkt` (Cucumber JVM + Ktor testApplication + SQLite in-memory),
-`demo-be-javx` (Cucumber JVM + Vert.x Test + in-memory stores),
-`demo-be-csas` (Reqnroll + WebApplicationFactory + SQLite in-memory),
+**`test:integration` caching**: Integration tests for `organiclever-web` (MSW), `demo-be-java-springboot`
+(MockMvc + mocked repositories via InMemoryDataStore), `demo-be-elixir-phoenix` (in-memory context
+implementations via InMemoryStore), `demo-be-fsharp-giraffe` (SQLite in-memory via WebApplicationFactory),
+`demo-be-golang-gin` (Godog + httptest + in-memory stores), `demo-be-python-fastapi` (pytest-bdd + TestClient +
+in-memory stores), `demo-be-rust-axum` (cucumber + Tower TestClient + in-memory stores),
+`demo-be-kotlin-ktor` (Cucumber JVM + Ktor testApplication + SQLite in-memory),
+`demo-be-java-vertx` (Cucumber JVM + Vert.x Test + in-memory stores),
+`demo-be-csharp-aspnetcore` (Reqnroll + WebApplicationFactory + SQLite in-memory),
 `hugo-commons` (Godog + tmpdir mocks), and `golang-commons`
 (Godog + mock closures) use in-process mocking only — no external services required. They are
 fully deterministic and safe to cache (`cache: true` in `nx.json`).

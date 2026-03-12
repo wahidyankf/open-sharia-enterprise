@@ -1,0 +1,85 @@
+{
+  "name": "demo-be-rust-axum",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/demo-be-rust-axum/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cargo build --release",
+        "cwd": "apps/demo-be-rust-axum"
+      },
+      "outputs": ["{projectRoot}/target/release/demo-be-rust-axum"],
+      "dependsOn": []
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "APP_JWT_SECRET=dev-jwt-secret-that-is-32-chars-long! cargo run",
+        "cwd": "apps/demo-be-rust-axum"
+      }
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "APP_JWT_SECRET=dev-jwt-secret-that-is-32-chars-long! ./target/release/demo-be-rust-axum",
+        "cwd": "apps/demo-be-rust-axum"
+      }
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "cargo fmt --check",
+          "cargo clippy -- -D warnings",
+          "cargo test --lib",
+          "mkdir -p coverage && cargo llvm-cov --lcov --output-path coverage/lcov.info",
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-be-rust-axum/coverage/lcov.info 90)"
+        ],
+        "parallel": false,
+        "cwd": "apps/demo-be-rust-axum"
+      },
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**/*.rs",
+        "{projectRoot}/tests/**/*.rs",
+        "{projectRoot}/Cargo.toml",
+        "{projectRoot}/Cargo.lock"
+      ],
+      "outputs": ["{projectRoot}/coverage/lcov.info"]
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cargo test --lib",
+        "cwd": "apps/demo-be-rust-axum"
+      }
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cargo test --test integration",
+        "cwd": "apps/demo-be-rust-axum"
+      },
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**/*.rs",
+        "{projectRoot}/tests/**/*.rs",
+        "{projectRoot}/Cargo.toml",
+        "{projectRoot}/Cargo.lock",
+        "{workspaceRoot}/specs/apps/demo-be/gherkin/**/*.feature"
+      ]
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["cargo fmt --check", "cargo clippy -- -D warnings"],
+        "parallel": false,
+        "cwd": "apps/demo-be-rust-axum"
+      }
+    }
+  },
+  "tags": ["type:app", "platform:axum", "lang:rust", "domain:demo-be"],
+  "implicitDependencies": ["rhino-cli"]
+}

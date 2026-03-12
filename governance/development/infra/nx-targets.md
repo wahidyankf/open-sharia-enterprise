@@ -143,26 +143,26 @@ Every project declares tags along four dimensions. Each dimension uses a fixed p
 
 ### Current Project Tags
 
-| Project                | Tags                                                                    |
-| ---------------------- | ----------------------------------------------------------------------- |
-| `ayokoding-web`        | `["type:app", "platform:hugo", "domain:ayokoding"]`                     |
-| `ayokoding-cli`        | `["type:app", "platform:cli", "lang:golang", "domain:ayokoding"]`       |
-| `rhino-cli`            | `["type:app", "platform:cli", "lang:golang", "domain:tooling"]`         |
-| `demo-be-jasb`         | `["type:app", "platform:spring-boot", "lang:java", "domain:demo-be"]`   |
-| `demo-be-exph`         | `["type:app", "platform:phoenix", "lang:elixir", "domain:demo-be"]`     |
-| `demo-be-fsgi`         | `["type:app", "platform:giraffe", "lang:fsharp", "domain:demo-be"]`     |
-| `demo-be-gogn`         | `["type:app", "platform:gin", "lang:golang", "domain:demo-be"]`         |
-| `demo-be-pyfa`         | `["type:app", "platform:fastapi", "lang:python", "domain:demo-be"]`     |
-| `demo-be-rsax`         | `["type:app", "platform:axum", "lang:rust", "domain:demo-be"]`          |
-| `demo-be-ktkt`         | `["type:app", "platform:ktor", "lang:kotlin", "domain:demo-be"]`        |
-| `demo-be-javx`         | `["type:app", "platform:vertx", "lang:java", "domain:demo-be"]`         |
-| `demo-be-e2e`          | `["type:e2e", "platform:playwright", "lang:ts", "domain:demo-be"]`      |
-| `organiclever-web`     | `["type:app", "platform:nextjs", "lang:ts", "domain:organiclever"]`     |
-| `organiclever-web-e2e` | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]` |
-| `oseplatform-cli`      | `["type:app", "platform:cli", "lang:golang", "domain:oseplatform"]`     |
-| `oseplatform-web`      | `["type:app", "platform:hugo", "domain:oseplatform"]`                   |
-| `hugo-commons`         | `["type:lib", "lang:golang"]`                                           |
-| `golang-commons`       | `["type:lib", "lang:golang"]`                                           |
+| Project                   | Tags                                                                    |
+| ------------------------- | ----------------------------------------------------------------------- |
+| `ayokoding-web`           | `["type:app", "platform:hugo", "domain:ayokoding"]`                     |
+| `ayokoding-cli`           | `["type:app", "platform:cli", "lang:golang", "domain:ayokoding"]`       |
+| `rhino-cli`               | `["type:app", "platform:cli", "lang:golang", "domain:tooling"]`         |
+| `demo-be-java-springboot` | `["type:app", "platform:spring-boot", "lang:java", "domain:demo-be"]`   |
+| `demo-be-elixir-phoenix`  | `["type:app", "platform:phoenix", "lang:elixir", "domain:demo-be"]`     |
+| `demo-be-fsharp-giraffe`  | `["type:app", "platform:giraffe", "lang:fsharp", "domain:demo-be"]`     |
+| `demo-be-golang-gin`      | `["type:app", "platform:gin", "lang:golang", "domain:demo-be"]`         |
+| `demo-be-python-fastapi`  | `["type:app", "platform:fastapi", "lang:python", "domain:demo-be"]`     |
+| `demo-be-rust-axum`       | `["type:app", "platform:axum", "lang:rust", "domain:demo-be"]`          |
+| `demo-be-kotlin-ktor`     | `["type:app", "platform:ktor", "lang:kotlin", "domain:demo-be"]`        |
+| `demo-be-java-vertx`      | `["type:app", "platform:vertx", "lang:java", "domain:demo-be"]`         |
+| `demo-be-e2e`             | `["type:e2e", "platform:playwright", "lang:ts", "domain:demo-be"]`      |
+| `organiclever-web`        | `["type:app", "platform:nextjs", "lang:ts", "domain:organiclever"]`     |
+| `organiclever-web-e2e`    | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]` |
+| `oseplatform-cli`         | `["type:app", "platform:cli", "lang:golang", "domain:oseplatform"]`     |
+| `oseplatform-web`         | `["type:app", "platform:hugo", "domain:oseplatform"]`                   |
+| `hugo-commons`            | `["type:lib", "lang:golang"]`                                           |
+| `golang-commons`          | `["type:lib", "lang:golang"]`                                           |
 
 ### Example: Complete Tag Declaration
 
@@ -170,7 +170,7 @@ A Spring Boot app for the demo-be domain declares all four dimensions:
 
 ```json
 {
-  "name": "demo-be-jasb",
+  "name": "demo-be-java-springboot",
   "tags": ["type:app", "platform:spring-boot", "lang:java", "domain:demo-be"]
 }
 ```
@@ -324,38 +324,38 @@ Playwright suites (`*-e2e`):
 spec files from the Gherkin feature files before Playwright executes them.
 See `apps/demo-be-e2e/project.json` for the canonical example.
 
-**`test:integration` with Cucumber JVM**: `demo-be-jasb` also exposes `test:integration` which
+**`test:integration` with Cucumber JVM**: `demo-be-java-springboot` also exposes `test:integration` which
 runs `mvn test -Pintegration`. This activates Cucumber JVM 7+ with MockMvc — the same Gherkin
 feature files from `specs/apps/demo-be/gherkin/` are executed via a full Spring context but without a
 running server or real database. All repositories are mocked via `MockRepositoriesConfig` backed by
 `InMemoryDataStore` (ConcurrentHashMap-based).
 
-**`test:integration` with Cabbage BDD**: `demo-be-exph` exposes `test:integration` which runs
+**`test:integration` with Cabbage BDD**: `demo-be-elixir-phoenix` exposes `test:integration` which runs
 `mix test --only integration`. The same Gherkin feature files are executed via `elixir-cabbage`
 with Phoenix ConnCase. All context modules are replaced by in-memory implementations backed by
 `InMemoryStore` (Agent-based state) — no PostgreSQL or Ecto Repo is started in test.
 
-**`test:integration` with Godog BDD**: `demo-be-gogn` exposes `test:integration` which runs
+**`test:integration` with Godog BDD**: `demo-be-golang-gin` exposes `test:integration` which runs
 `go test -tags=integration -run TestIntegration ./internal/integration/...`. The same Gherkin
 feature files are executed via Godog with `httptest.Server`. All repositories use in-memory
 ConcurrentHashMap-equivalent stores — no external database required.
 
-**`test:integration` with pytest-bdd**: `demo-be-pyfa` exposes `test:integration` which runs
+**`test:integration` with pytest-bdd**: `demo-be-python-fastapi` exposes `test:integration` which runs
 `uv run pytest -m integration`. The same Gherkin feature files are executed via `pytest-bdd`
 with FastAPI `TestClient`. All repositories use in-memory dict-based stores — no external
 database required.
 
-**`test:integration` with cucumber-rs**: `demo-be-rsax` exposes `test:integration` which runs
+**`test:integration` with cucumber-rs**: `demo-be-rust-axum` exposes `test:integration` which runs
 `cargo test --test integration`. The same Gherkin feature files are executed via `cucumber` crate
 with Tower `TestClient`. All repositories use in-memory `RwLock<HashMap>` stores — no external
 database required.
 
-**`test:integration` with Cucumber JVM (Ktor)**: `demo-be-ktkt` exposes `test:integration` which
+**`test:integration` with Cucumber JVM (Ktor)**: `demo-be-kotlin-ktor` exposes `test:integration` which
 runs `./gradlew test`. The same Gherkin feature files are executed via Cucumber JVM with Ktor
 `testApplication {}`. All repositories use in-memory ConcurrentHashMap stores backed by Exposed +
 SQLite in-memory — no external database required.
 
-**`test:integration` with Cucumber JVM (Vert.x)**: `demo-be-javx` exposes `test:integration`
+**`test:integration` with Cucumber JVM (Vert.x)**: `demo-be-java-vertx` exposes `test:integration`
 which runs `mvn test -Pintegration`. The same Gherkin feature files are executed via Cucumber JVM
 with Vert.x Test. All repositories use in-memory ConcurrentHashMap stores — no external database
 required.

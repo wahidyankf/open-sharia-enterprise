@@ -238,11 +238,11 @@ graph TB
 
 ### E2E OrganicLever Workflow
 
-**File**: `.github/workflows/e2e-demo-be-jasb.yml`
+**File**: `.github/workflows/e2e-demo-be-java-springboot.yml`
 
 **Trigger**: Push to `main` or pull request (when organiclever apps change)
 
-**Purpose**: Runs Playwright E2E tests for organiclever-web and demo-be-jasb
+**Purpose**: Runs Playwright E2E tests for organiclever-web and demo-be-java-springboot
 
 ## Nx Build System
 

@@ -1,6 +1,6 @@
 # demo-be-e2e
 
-End-to-end tests for the [demo-be-jasb](../demo-be-jasb) Spring Boot REST API backend,
+End-to-end tests for the [demo-be-java-springboot](../demo-be-java-springboot) Spring Boot REST API backend,
 using [playwright-bdd](https://github.com/vitalets/playwright-bdd) to drive tests from Gherkin
 feature files.
 
@@ -40,7 +40,7 @@ require a live PostgreSQL database (the E2E `Before` hook deletes all users befo
 **Recommended — Docker Compose** (no local Java/Maven required):
 
 ```bash
-cd infra/dev/demo-be-jasb
+cd infra/dev/demo-be-java-springboot
 cp .env.example .env  # set POSTGRES_USER, POSTGRES_PASSWORD, APP_JWT_SECRET
 docker compose up -d
 ```
@@ -48,10 +48,10 @@ docker compose up -d
 **Alternative — local Maven** (requires Maven installed):
 
 ```bash
-nx dev demo-be-jasb
+nx dev demo-be-java-springboot
 ```
 
-See [demo-be-jasb README](../demo-be-jasb/README.md) for full startup options.
+See [demo-be-java-springboot README](../demo-be-java-springboot/README.md) for full startup options.
 
 ## Setup
 
@@ -147,6 +147,6 @@ this scenario will fail — which is expected, as E2E tests validate production-
 
 ## Related
 
-- [demo-be-jasb](../demo-be-jasb/README.md) — The backend being tested
+- [demo-be-java-springboot](../demo-be-java-springboot/README.md) — The backend being tested
 - [specs/apps/demo-be/gherkin](../../specs/apps/demo-be/gherkin/) — Gherkin feature files (source of truth)
 - [Playwright docs](../../docs/explanation/software-engineering/automation-testing/tools/playwright/README.md) — Playwright standards for this project

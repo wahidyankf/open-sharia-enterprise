@@ -81,16 +81,16 @@ jobs:
         run: |
           (cd libs/elixir-gherkin && mix deps.get)
           (cd libs/elixir-cabbage && mix deps.get)
-          (cd apps/demo-be-exph && mix deps.get)
+          (cd apps/demo-be-elixir-phoenix && mix deps.get)
 
       - name: Install Python dependencies
-        run: (cd apps/demo-be-pyfa && uv sync)
+        run: (cd apps/demo-be-python-fastapi && uv sync)
 
       - name: test:quick (all projects)
         run: npx nx run-many -t test:quick --all
 
-      - name: Generate JaCoCo XML report (demo-be-jasb)
-        run: cd apps/demo-be-jasb && mvn jacoco:report -Pintegration
+      - name: Generate JaCoCo XML report (demo-be-java-springboot)
+        run: cd apps/demo-be-java-springboot && mvn jacoco:report -Pintegration
 
       - name: Upload coverage — rhino-cli
         uses: codecov/codecov-action@v5
@@ -132,12 +132,12 @@ jobs:
           flags: hugo-commons
           fail_ci_if_error: false
 
-      - name: Upload coverage — demo-be-jasb
+      - name: Upload coverage — demo-be-java-springboot
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: apps/demo-be-jasb/target/site/jacoco/jacoco.xml
-          flags: demo-be-jasb
+          files: apps/demo-be-java-springboot/target/site/jacoco/jacoco.xml
+          flags: demo-be-java-springboot
           fail_ci_if_error: false
 
       - name: Upload coverage — organiclever-web
@@ -148,74 +148,74 @@ jobs:
           flags: organiclever-web
           fail_ci_if_error: false
 
-      - name: Upload coverage — demo-be-exph
+      - name: Upload coverage — demo-be-elixir-phoenix
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: apps/demo-be-exph/cover/lcov.info
-          flags: demo-be-exph
+          files: apps/demo-be-elixir-phoenix/cover/lcov.info
+          flags: demo-be-elixir-phoenix
           fail_ci_if_error: false
 
-      - name: Upload coverage — demo-be-fsgi
+      - name: Upload coverage — demo-be-fsharp-giraffe
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: apps/demo-be-fsgi/coverage/altcov.info
-          flags: demo-be-fsgi
+          files: apps/demo-be-fsharp-giraffe/coverage/altcov.info
+          flags: demo-be-fsharp-giraffe
           fail_ci_if_error: false
 
-      - name: Upload coverage — demo-be-gogn
+      - name: Upload coverage — demo-be-golang-gin
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: apps/demo-be-gogn/cover_unit.out
-          flags: demo-be-gogn
+          files: apps/demo-be-golang-gin/cover_unit.out
+          flags: demo-be-golang-gin
           fail_ci_if_error: false
 
-      - name: Upload coverage — demo-be-pyfa
+      - name: Upload coverage — demo-be-python-fastapi
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: apps/demo-be-pyfa/coverage/lcov.info
-          flags: demo-be-pyfa
+          files: apps/demo-be-python-fastapi/coverage/lcov.info
+          flags: demo-be-python-fastapi
           fail_ci_if_error: false
 
-      - name: Upload coverage — demo-be-rsax
+      - name: Upload coverage — demo-be-rust-axum
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: apps/demo-be-rsax/coverage/lcov.info
-          flags: demo-be-rsax
+          files: apps/demo-be-rust-axum/coverage/lcov.info
+          flags: demo-be-rust-axum
           fail_ci_if_error: false
 
-      - name: Upload coverage — demo-be-ktkt
+      - name: Upload coverage — demo-be-kotlin-ktor
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: apps/demo-be-ktkt/build/reports/kover/report.xml
-          flags: demo-be-ktkt
+          files: apps/demo-be-kotlin-ktor/build/reports/kover/report.xml
+          flags: demo-be-kotlin-ktor
           fail_ci_if_error: false
 
-      - name: Upload coverage — demo-be-javx
+      - name: Upload coverage — demo-be-java-vertx
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: apps/demo-be-javx/target/site/jacoco-integration/jacoco.xml
-          flags: demo-be-javx
+          files: apps/demo-be-java-vertx/target/site/jacoco-integration/jacoco.xml
+          flags: demo-be-java-vertx
           fail_ci_if_error: false
 
-      - name: Upload coverage — demo-be-tsex
+      - name: Upload coverage — demo-be-ts-effect
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: apps/demo-be-tsex/coverage/lcov.info
-          flags: demo-be-tsex
+          files: apps/demo-be-ts-effect/coverage/lcov.info
+          flags: demo-be-ts-effect
           fail_ci_if_error: false
 
-      - name: Upload coverage — demo-be-csas
+      - name: Upload coverage — demo-be-csharp-aspnetcore
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: apps/demo-be-csas/coverage/**/coverage.info
-          flags: demo-be-csas
+          files: apps/demo-be-csharp-aspnetcore/coverage/**/coverage.info
+          flags: demo-be-csharp-aspnetcore
           fail_ci_if_error: false

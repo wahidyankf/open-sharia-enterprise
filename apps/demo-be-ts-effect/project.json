@@ -1,0 +1,79 @@
+{
+  "name": "demo-be-ts-effect",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/demo-be-ts-effect/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx vite build",
+        "cwd": "apps/demo-be-ts-effect"
+      },
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx tsx watch src/main.ts",
+        "cwd": "apps/demo-be-ts-effect"
+      }
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node dist/main.js",
+        "cwd": "apps/demo-be-ts-effect"
+      }
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx vitest run --coverage",
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-be-ts-effect/coverage/lcov.info 90)",
+          "npx tsc --noEmit",
+          "npx oxlint ."
+        ],
+        "parallel": false,
+        "cwd": "apps/demo-be-ts-effect"
+      }
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx vitest run tests/unit",
+        "cwd": "apps/demo-be-ts-effect"
+      }
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx cucumber-js '../../specs/apps/demo-be/gherkin/**/*.feature' --require-module tsx/cjs --require 'tests/integration/hooks.ts' --require 'tests/integration/world.ts' --require 'tests/integration/steps/**/*.ts' --format progress --format 'json:coverage/cucumber-report.json'",
+        "cwd": "apps/demo-be-ts-effect"
+      },
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**/*.ts",
+        "{projectRoot}/tests/**/*.ts",
+        "{workspaceRoot}/specs/apps/demo-be/gherkin/**/*.feature"
+      ]
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx oxlint .",
+        "cwd": "apps/demo-be-ts-effect"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx tsc --noEmit",
+        "cwd": "apps/demo-be-ts-effect"
+      }
+    }
+  },
+  "tags": ["type:app", "platform:effect", "lang:typescript", "domain:demo-be"],
+  "implicitDependencies": ["rhino-cli"]
+}

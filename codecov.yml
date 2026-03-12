@@ -24,9 +24,9 @@ flags:
     paths:
       - apps/oseplatform-cli/
     carryforward: true
-  demo-be-jasb:
+  demo-be-java-springboot:
     paths:
-      - apps/demo-be-jasb/
+      - apps/demo-be-java-springboot/
     carryforward: true
   organiclever-web:
     paths:
@@ -40,7 +40,7 @@ flags:
     paths:
       - libs/hugo-commons/
     carryforward: true
-  demo-be-exph:
+  demo-be-elixir-phoenix:
     paths:
-      - apps/demo-be-exph/
+      - apps/demo-be-elixir-phoenix/
     carryforward: true

@@ -1,0 +1,71 @@
+{
+  "name": "demo-be-kotlin-ktor",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/demo-be-kotlin-ktor/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "JAVA_HOME=${JAVA_HOME_21_X64:-$(ls -d ${SDKMAN_DIR:-$HOME/.sdkman}/candidates/java/21* 2>/dev/null | head -1)} ./gradlew build -x test",
+        "cwd": "apps/demo-be-kotlin-ktor"
+      },
+      "outputs": ["{projectRoot}/build"]
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "JAVA_HOME=${JAVA_HOME_21_X64:-$(ls -d ${SDKMAN_DIR:-$HOME/.sdkman}/candidates/java/21* 2>/dev/null | head -1)} ./gradlew run",
+        "cwd": "apps/demo-be-kotlin-ktor"
+      }
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "java -jar build/libs/demo-be-kotlin-ktor-all.jar",
+        "cwd": "apps/demo-be-kotlin-ktor"
+      }
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "JAVA_HOME=${JAVA_HOME_21_X64:-$(ls -d ${SDKMAN_DIR:-$HOME/.sdkman}/candidates/java/21* 2>/dev/null | head -1)} ./gradlew test koverXmlReport",
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-be-kotlin-ktor/build/reports/kover/report.xml 90)",
+          "JAVA_HOME=${JAVA_HOME_21_X64:-$(ls -d ${SDKMAN_DIR:-$HOME/.sdkman}/candidates/java/21* 2>/dev/null | head -1)} ./gradlew detekt ktfmtCheck"
+        ],
+        "parallel": false,
+        "cwd": "apps/demo-be-kotlin-ktor"
+      }
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "JAVA_HOME=${JAVA_HOME_21_X64:-$(ls -d ${SDKMAN_DIR:-$HOME/.sdkman}/candidates/java/21* 2>/dev/null | head -1)} ./gradlew test --tests '*.unit.*'",
+        "cwd": "apps/demo-be-kotlin-ktor"
+      }
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "JAVA_HOME=${JAVA_HOME_21_X64:-$(ls -d ${SDKMAN_DIR:-$HOME/.sdkman}/candidates/java/21* 2>/dev/null | head -1)} ./gradlew test --tests '*.integration.*'",
+        "cwd": "apps/demo-be-kotlin-ktor"
+      },
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/main/**/*.kt",
+        "{projectRoot}/src/test/**/*.kt",
+        "{workspaceRoot}/specs/apps/demo-be/gherkin/**/*.feature"
+      ]
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "JAVA_HOME=${JAVA_HOME_21_X64:-$(ls -d ${SDKMAN_DIR:-$HOME/.sdkman}/candidates/java/21* 2>/dev/null | head -1)} ./gradlew detekt",
+        "cwd": "apps/demo-be-kotlin-ktor"
+      }
+    }
+  },
+  "tags": ["type:app", "platform:ktor", "lang:kotlin", "domain:demo-be"],
+  "implicitDependencies": ["rhino-cli"]
+}

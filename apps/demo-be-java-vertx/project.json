@@ -1,0 +1,81 @@
+{
+  "name": "demo-be-java-vertx",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/demo-be-java-vertx/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mvn clean package -DskipTests",
+        "cwd": "apps/demo-be-java-vertx"
+      },
+      "outputs": ["{projectRoot}/target"],
+      "dependsOn": []
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mvn compile exec:java -Dexec.mainClass=com.organiclever.demojavx.Main",
+        "cwd": "apps/demo-be-java-vertx"
+      }
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "sh -c 'java -jar target/demo-be-java-vertx-*.jar'",
+        "cwd": "apps/demo-be-java-vertx"
+      }
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "mvn test",
+          "mvn test -Pintegration",
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-be-java-vertx/target/site/jacoco-integration/jacoco.xml 90)",
+          "mvn checkstyle:check",
+          "(cd ../.. && nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli java validate-annotations apps/demo-be-java-vertx/src/main/java)",
+          "mvn compile -Pnullcheck"
+        ],
+        "parallel": false,
+        "cwd": "apps/demo-be-java-vertx"
+      }
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mvn test",
+        "cwd": "apps/demo-be-java-vertx"
+      }
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mvn test -Pintegration",
+        "cwd": "apps/demo-be-java-vertx"
+      },
+      "cache": true,
+      "inputs": ["{projectRoot}/src/**/*.java", "{workspaceRoot}/specs/apps/demo-be/gherkin/**/*.feature"]
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "mvn checkstyle:check",
+        "cwd": "apps/demo-be-java-vertx"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli java validate-annotations apps/demo-be-java-vertx/src/main/java",
+          "cd apps/demo-be-java-vertx && mvn compile -Pnullcheck"
+        ],
+        "parallel": false
+      }
+    }
+  },
+  "tags": ["type:app", "platform:vertx", "lang:java", "domain:demo-be"],
+  "implicitDependencies": ["rhino-cli"]
+}

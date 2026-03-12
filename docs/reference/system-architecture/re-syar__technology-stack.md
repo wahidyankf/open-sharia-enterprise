@@ -41,7 +41,7 @@ Technology stack summary, quality tools, and future architecture considerations 
 - **Language**: Java
 - **Build**: Maven
 - **Testing**: JaCoCo (>=90% coverage), MockMvc integration tests
-- **Applications**: demo-be-jasb
+- **Applications**: demo-be-java-springboot
 
 ### CLI Tools
 
