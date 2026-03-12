@@ -37,8 +37,6 @@ public class TokenLifecycleSteps {
     public void alicesRefreshTokenHasExpired() throws Exception {
         // Find alice's user object by looking up via login, then generate expired token
         // We need to get the user id first
-        AuthSteps authSteps = new AuthSteps(state);
-        String password = state.getPassword() != null ? state.getPassword() : "Str0ng#Pass1";
         // Get alice's user id from the access token
         String accessToken = state.getAccessToken();
         if (accessToken != null) {
@@ -58,22 +56,19 @@ public class TokenLifecycleSteps {
             String expiredToken = AppFactory.getJwtService().generateExpiredRefreshToken(fakeUser);
             state.setRefreshToken(expiredToken);
         }
-        // password used for context
-        // authSteps used above
     }
 
     @Given("alice has used her refresh token to get a new token pair")
     public void aliceHasUsedRefreshToken() throws Exception {
         String originalRefreshToken = state.getRefreshToken();
         JsonObject body = new JsonObject().put("refresh_token", originalRefreshToken);
-        HttpResponse<Buffer> response = AppFactory.getClient()
+        // Don't update state.refreshToken — keep original for the test assertion
+        AppFactory.getClient()
                 .post("/api/v1/auth/refresh")
                 .sendJsonObject(body)
                 .toCompletionStage()
                 .toCompletableFuture()
                 .get(5, TimeUnit.SECONDS);
-        // Don't update state.refreshToken — keep original for the test assertion
-        // response discarded
     }
 
     @When("^alice sends POST /api/v1/auth/refresh with her original refresh token$")

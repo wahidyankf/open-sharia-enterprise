@@ -55,14 +55,6 @@ class CoverageIT {
                 .get(5, TimeUnit.SECONDS);
     }
 
-    private HttpResponse<Buffer> get(String path) throws Exception {
-        return client().get(path)
-                .send()
-                .toCompletionStage()
-                .toCompletableFuture()
-                .get(5, TimeUnit.SECONDS);
-    }
-
     private String register(String username, String password) throws Exception {
         JsonObject body = new JsonObject()
                 .put("username", username)

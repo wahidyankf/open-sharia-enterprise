@@ -3,16 +3,16 @@ package com.organiclever.demojavx.repository.pg;
 import com.organiclever.demojavx.domain.model.User;
 import com.organiclever.demojavx.repository.UserRepository;
 import io.vertx.core.Future;
-import io.vertx.pgclient.PgPool;
+import io.vertx.sqlclient.Pool;
 import java.util.List;
 import java.util.Optional;
 import org.jspecify.annotations.Nullable;
 
 public class PgUserRepository implements UserRepository {
 
-    private final PgPool pool;
+    private final Pool pool;
 
-    public PgUserRepository(PgPool pool) {
+    public PgUserRepository(Pool pool) {
         this.pool = pool;
     }
 
@@ -51,7 +51,7 @@ public class PgUserRepository implements UserRepository {
         return Future.failedFuture("PG not implemented yet");
     }
 
-    public PgPool getPool() {
+    public Pool getPool() {
         return pool;
     }
 }

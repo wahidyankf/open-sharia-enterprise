@@ -178,10 +178,7 @@ public class AuthHandler implements Handler<RoutingContext> {
                     }
                     return userRepo.findById(claims.subject());
                 })
-                .compose(obj -> {
-                    @SuppressWarnings("unchecked")
-                    java.util.Optional<User> userOpt =
-                            (java.util.Optional<User>) obj;
+                .compose(userOpt -> {
                     if (userOpt.isEmpty()) {
                         return Future.failedFuture(new DomainException(401, "User not found"));
                     }

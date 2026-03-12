@@ -34,7 +34,9 @@
           "mvn test",
           "mvn test -Pintegration",
           "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-be-javx/target/site/jacoco-integration/jacoco.xml 90)",
-          "mvn checkstyle:check"
+          "mvn checkstyle:check",
+          "(cd ../.. && nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli java validate-annotations apps/demo-be-javx/src/main/java)",
+          "mvn compile -Pnullcheck"
         ],
         "parallel": false,
         "cwd": "apps/demo-be-javx"
