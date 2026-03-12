@@ -245,7 +245,7 @@ class ErrorPathsTest {
         adminToken,
       )
     assertEquals(200, status)
-    assertTrue(body.contains("disabled"), "Expected disabled status in: $body")
+    assertTrue(body.contains("DISABLED"), "Expected disabled status in: $body")
     // Re-enable alice so other tests can use her token
     HttpHelper.post("/api/v1/admin/users/$aliceUserId/enable", "", adminToken)
   }

@@ -56,7 +56,7 @@ object AdminRoutes : KoinComponent {
             put("email", user.email)
             put("display_name", user.displayName)
             put("role", user.role.name.lowercase())
-            put("status", user.status.name.lowercase())
+            put("status", user.status.name)
           }
         )
       }
@@ -84,7 +84,7 @@ object AdminRoutes : KoinComponent {
 
     tokenRepository.revokeAllForUser(userId)
 
-    call.respond(mapOf("id" to user.id.toString(), "status" to user.status.name.lowercase()))
+    call.respond(mapOf("id" to user.id.toString(), "status" to user.status.name))
   }
 
   suspend fun enable(call: RoutingCall) {
@@ -97,7 +97,7 @@ object AdminRoutes : KoinComponent {
       userRepository.update(userId, UpdateUserPatch(status = UserStatus.ACTIVE))
         ?: throw DomainException(DomainError.NotFound("user"))
 
-    call.respond(mapOf("id" to user.id.toString(), "status" to user.status.name.lowercase()))
+    call.respond(mapOf("id" to user.id.toString(), "status" to user.status.name))
   }
 
   suspend fun unlock(call: RoutingCall) {
@@ -112,7 +112,7 @@ object AdminRoutes : KoinComponent {
         UpdateUserPatch(status = UserStatus.ACTIVE, failedLoginCount = 0),
       ) ?: throw DomainException(DomainError.NotFound("user"))
 
-    call.respond(mapOf("id" to user.id.toString(), "status" to user.status.name.lowercase()))
+    call.respond(mapOf("id" to user.id.toString(), "status" to user.status.name))
   }
 
   suspend fun forcePasswordReset(call: RoutingCall) {

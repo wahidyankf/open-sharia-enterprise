@@ -47,7 +47,7 @@ object UserRoutes : KoinComponent {
         "email" to user.email,
         "display_name" to user.displayName,
         "role" to user.role.name,
-        "status" to user.status.name.lowercase(),
+        "status" to user.status.name,
       )
     )
   }

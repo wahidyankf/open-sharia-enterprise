@@ -223,7 +223,7 @@ class AdditionalCoverageTest {
         adminToken,
       )
     assertEquals(200, status, "Expected 200 when disabling alice: $body")
-    assertTrue(body.contains("disabled"), "Expected status disabled in: $body")
+    assertTrue(body.contains("DISABLED"), "Expected status DISABLED in: $body")
     // Re-enable alice for cleanup
     HttpHelper.post("/api/v1/admin/users/$aliceUserId/enable", "", adminToken)
   }
