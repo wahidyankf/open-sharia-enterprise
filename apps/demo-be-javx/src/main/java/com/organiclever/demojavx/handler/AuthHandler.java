@@ -183,6 +183,10 @@ public class AuthHandler implements Handler<RoutingContext> {
                         return Future.failedFuture(new DomainException(401, "User not found"));
                     }
                     User user = userOpt.get();
+                    if (User.STATUS_DISABLED.equals(user.status())) {
+                        return Future.failedFuture(new DomainException(401,
+                                "Account disabled"));
+                    }
                     if (!User.STATUS_ACTIVE.equals(user.status())) {
                         return Future.failedFuture(new DomainException(401,
                                 "Account deactivated"));

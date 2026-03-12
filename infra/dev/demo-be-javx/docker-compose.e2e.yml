@@ -6,3 +6,4 @@ services:
   demo-be-javx:
     environment:
       - APP_ENV=production
+      - DATABASE_URL=postgresql://demo_be_javx:demo_be_javx@demo-be-javx-db:5432/demo_be_javx
