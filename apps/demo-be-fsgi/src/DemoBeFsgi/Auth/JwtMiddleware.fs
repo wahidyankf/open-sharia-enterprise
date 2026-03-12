@@ -40,13 +40,10 @@ let requireAuth: HttpHandler =
                     let jti = JwtService.getTokenJti token
                     let db = ctx.GetService<AppDbContext>()
 
-                    let isRevoked =
+                    let! isRevoked =
                         match jti with
-                        | None -> true
-                        | Some j ->
-                            db.RevokedTokens.AsNoTracking().AnyAsync(fun rt -> rt.TokenJti = j)
-                            |> Async.AwaitTask
-                            |> Async.RunSynchronously
+                        | None -> System.Threading.Tasks.Task.FromResult(true)
+                        | Some j -> db.RevokedTokens.AsNoTracking().AnyAsync(fun rt -> rt.TokenJti = j)
 
                     if isRevoked then
                         ctx.Response.StatusCode <- 401
@@ -95,10 +92,7 @@ let requireAuth: HttpHandler =
                                         earlyReturn
                                         ctx
                             | Some uid ->
-                                let user =
-                                    db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = uid)
-                                    |> Async.AwaitTask
-                                    |> Async.RunSynchronously
+                                let! user = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = uid)
 
                                 if obj.ReferenceEquals(user, null) then
                                     ctx.Response.StatusCode <- 401

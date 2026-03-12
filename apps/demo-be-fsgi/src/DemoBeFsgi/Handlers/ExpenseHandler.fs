@@ -206,7 +206,7 @@ let create: HttpHandler =
                                       UpdatedAt = now }
 
                                 db.Expenses.Add(entity) |> ignore
-                                db.SaveChangesAsync() |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+                                let! _ = db.SaveChangesAsync()
 
                                 ctx.Response.StatusCode <- 201
 
@@ -255,13 +255,10 @@ let list: HttpHandler =
                 )
 
             let query = db.Expenses.Where(fun e -> e.UserId = userId)
-            let total = query.CountAsync() |> Async.AwaitTask |> Async.RunSynchronously
+            let! total = query.CountAsync()
             let offset = (page - 1) * size
 
-            let expenses =
-                query.OrderByDescending(fun e -> e.Date).Skip(offset).Take(size).ToListAsync()
-                |> Async.AwaitTask
-                |> Async.RunSynchronously
+            let! expenses = query.OrderByDescending(fun e -> e.Date).Skip(offset).Take(size).ToListAsync()
 
             let data =
                 expenses
@@ -303,10 +300,7 @@ let getById (expenseId: Guid) : HttpHandler =
             let userId = ctx.Items["UserId"] :?> Guid
             let db = ctx.GetService<AppDbContext>()
 
-            let expense =
-                db.Expenses.AsNoTracking().FirstOrDefaultAsync(fun e -> e.Id = expenseId)
-                |> Async.AwaitTask
-                |> Async.RunSynchronously
+            let! expense = db.Expenses.AsNoTracking().FirstOrDefaultAsync(fun e -> e.Id = expenseId)
 
             if obj.ReferenceEquals(expense, null) then
                 ctx.Response.StatusCode <- 404
@@ -382,10 +376,7 @@ let update (expenseId: Guid) : HttpHandler =
                 let userId = ctx.Items["UserId"] :?> Guid
                 let db = ctx.GetService<AppDbContext>()
 
-                let expense =
-                    db.Expenses.AsNoTracking().FirstOrDefaultAsync(fun e -> e.Id = expenseId)
-                    |> Async.AwaitTask
-                    |> Async.RunSynchronously
+                let! expense = db.Expenses.AsNoTracking().FirstOrDefaultAsync(fun e -> e.Id = expenseId)
 
                 if obj.ReferenceEquals(expense, null) then
                     ctx.Response.StatusCode <- 404
@@ -458,7 +449,7 @@ let update (expenseId: Guid) : HttpHandler =
                                 UpdatedAt = DateTime.UtcNow }
 
                         db.Expenses.Update(updated) |> ignore
-                        db.SaveChangesAsync() |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+                        let! _ = db.SaveChangesAsync()
 
                         let formattedAmount =
                             match updated.Currency with
@@ -484,10 +475,7 @@ let delete (expenseId: Guid) : HttpHandler =
             let userId = ctx.Items["UserId"] :?> Guid
             let db = ctx.GetService<AppDbContext>()
 
-            let expense =
-                db.Expenses.AsNoTracking().FirstOrDefaultAsync(fun e -> e.Id = expenseId)
-                |> Async.AwaitTask
-                |> Async.RunSynchronously
+            let! expense = db.Expenses.AsNoTracking().FirstOrDefaultAsync(fun e -> e.Id = expenseId)
 
             if obj.ReferenceEquals(expense, null) then
                 ctx.Response.StatusCode <- 404
@@ -509,7 +497,7 @@ let delete (expenseId: Guid) : HttpHandler =
                         ctx
             else
                 db.Expenses.Remove(expense) |> ignore
-                db.SaveChangesAsync() |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+                let! _ = db.SaveChangesAsync()
 
                 ctx.Response.StatusCode <- 204
                 return! text "" earlyReturn ctx
@@ -521,10 +509,7 @@ let summary: HttpHandler =
             let userId = ctx.Items["UserId"] :?> Guid
             let db = ctx.GetService<AppDbContext>()
 
-            let expenses =
-                db.Expenses.Where(fun e -> e.UserId = userId && e.EntryType = "EXPENSE").ToListAsync()
-                |> Async.AwaitTask
-                |> Async.RunSynchronously
+            let! expenses = db.Expenses.Where(fun e -> e.UserId = userId && e.EntryType = "EXPENSE").ToListAsync()
 
             let grouped =
                 expenses

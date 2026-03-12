@@ -19,10 +19,7 @@ let setAdminRoleForUser (username: string) : HttpHandler =
         task {
             let db = ctx.GetService<DemoBeFsgi.Infrastructure.AppDbContext.AppDbContext>()
 
-            let user =
-                db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Username = username)
-                |> Async.AwaitTask
-                |> Async.RunSynchronously
+            let! user = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Username = username)
 
             if obj.ReferenceEquals(user, null) then
                 ctx.Response.StatusCode <- 404
@@ -30,7 +27,7 @@ let setAdminRoleForUser (username: string) : HttpHandler =
             else
                 let updated = { user with Role = "ADMIN" }
                 db.Users.Update(updated) |> ignore
-                db.SaveChangesAsync() |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+                let! _ = db.SaveChangesAsync()
                 return! json {| message = "Role set to admin" |} next ctx
         }
 

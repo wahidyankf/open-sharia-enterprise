@@ -14,10 +14,7 @@ let upload (expenseId: Guid) : HttpHandler =
             let userId = ctx.Items["UserId"] :?> Guid
             let db = ctx.GetService<AppDbContext>()
 
-            let expense =
-                db.Expenses.AsNoTracking().FirstOrDefaultAsync(fun e -> e.Id = expenseId)
-                |> Async.AwaitTask
-                |> Async.RunSynchronously
+            let! expense = db.Expenses.AsNoTracking().FirstOrDefaultAsync(fun e -> e.Id = expenseId)
 
             if obj.ReferenceEquals(expense, null) then
                 ctx.Response.StatusCode <- 404
@@ -113,7 +110,7 @@ let upload (expenseId: Guid) : HttpHandler =
                                         ctx
                             | Ok _ ->
                                 use ms = new System.IO.MemoryStream()
-                                file.CopyToAsync(ms) |> Async.AwaitTask |> Async.RunSynchronously
+                                do! file.CopyToAsync(ms)
                                 let data = ms.ToArray()
                                 let attachmentId = Guid.NewGuid()
                                 let now = DateTime.UtcNow
@@ -130,7 +127,7 @@ let upload (expenseId: Guid) : HttpHandler =
                                       CreatedAt = now }
 
                                 db.Attachments.Add(entity) |> ignore
-                                db.SaveChangesAsync() |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+                                let! _ = db.SaveChangesAsync()
 
                                 ctx.Response.StatusCode <- 201
 
@@ -151,10 +148,7 @@ let list (expenseId: Guid) : HttpHandler =
             let userId = ctx.Items["UserId"] :?> Guid
             let db = ctx.GetService<AppDbContext>()
 
-            let expense =
-                db.Expenses.AsNoTracking().FirstOrDefaultAsync(fun e -> e.Id = expenseId)
-                |> Async.AwaitTask
-                |> Async.RunSynchronously
+            let! expense = db.Expenses.AsNoTracking().FirstOrDefaultAsync(fun e -> e.Id = expenseId)
 
             if obj.ReferenceEquals(expense, null) then
                 ctx.Response.StatusCode <- 404
@@ -175,10 +169,7 @@ let list (expenseId: Guid) : HttpHandler =
                         earlyReturn
                         ctx
             else
-                let attachments =
-                    db.Attachments.Where(fun a -> a.ExpenseId = expenseId).ToListAsync()
-                    |> Async.AwaitTask
-                    |> Async.RunSynchronously
+                let! attachments = db.Attachments.Where(fun a -> a.ExpenseId = expenseId).ToListAsync()
 
                 let data =
                     attachments
@@ -199,10 +190,7 @@ let delete (expenseId: Guid, attachmentId: Guid) : HttpHandler =
             let userId = ctx.Items["UserId"] :?> Guid
             let db = ctx.GetService<AppDbContext>()
 
-            let expense =
-                db.Expenses.AsNoTracking().FirstOrDefaultAsync(fun e -> e.Id = expenseId)
-                |> Async.AwaitTask
-                |> Async.RunSynchronously
+            let! expense = db.Expenses.AsNoTracking().FirstOrDefaultAsync(fun e -> e.Id = expenseId)
 
             if obj.ReferenceEquals(expense, null) then
                 ctx.Response.StatusCode <- 404
@@ -223,12 +211,10 @@ let delete (expenseId: Guid, attachmentId: Guid) : HttpHandler =
                         earlyReturn
                         ctx
             else
-                let attachment =
+                let! attachment =
                     db.Attachments
                         .AsNoTracking()
                         .FirstOrDefaultAsync(fun a -> a.Id = attachmentId && a.ExpenseId = expenseId)
-                    |> Async.AwaitTask
-                    |> Async.RunSynchronously
 
                 if obj.ReferenceEquals(attachment, null) then
                     ctx.Response.StatusCode <- 404
@@ -241,7 +227,7 @@ let delete (expenseId: Guid, attachmentId: Guid) : HttpHandler =
                             ctx
                 else
                     db.Attachments.Remove(attachment) |> ignore
-                    db.SaveChangesAsync() |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+                    let! _ = db.SaveChangesAsync()
 
                     ctx.Response.StatusCode <- 204
                     return! text "" earlyReturn ctx
