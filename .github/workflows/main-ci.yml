@@ -203,3 +203,19 @@ jobs:
           files: apps/demo-be-javx/target/site/jacoco-integration/jacoco.xml
           flags: demo-be-javx
           fail_ci_if_error: false
+
+      - name: Upload coverage — demo-be-tsex
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: apps/demo-be-tsex/coverage/lcov.info
+          flags: demo-be-tsex
+          fail_ci_if_error: false
+
+      - name: Upload coverage — demo-be-csas
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: apps/demo-be-csas/coverage/**/coverage.info
+          flags: demo-be-csas
+          fail_ci_if_error: false
