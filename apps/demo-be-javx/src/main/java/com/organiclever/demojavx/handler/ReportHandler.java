@@ -3,7 +3,6 @@ package com.organiclever.demojavx.handler;
 import com.organiclever.demojavx.domain.model.Expense;
 import com.organiclever.demojavx.repository.ExpenseRepository;
 import io.vertx.core.Handler;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import java.math.BigDecimal;
@@ -69,8 +68,8 @@ public class ReportHandler implements Handler<RoutingContext> {
                     BigDecimal net = incomeTotal.subtract(expenseTotal);
                     int scale = "IDR".equals(filterCurrency) ? 0 : 2;
 
-                    JsonArray incomeBreakdown = buildBreakdown(incomeByCategory, scale);
-                    JsonArray expenseBreakdown = buildBreakdown(expenseByCategory, scale);
+                    JsonObject incomeBreakdown = buildBreakdown(incomeByCategory, scale);
+                    JsonObject expenseBreakdown = buildBreakdown(expenseByCategory, scale);
 
                     JsonObject resp = new JsonObject()
                             .put("income_total", incomeTotal
@@ -90,14 +89,12 @@ public class ReportHandler implements Handler<RoutingContext> {
                 .onFailure(ctx::fail);
     }
 
-    private JsonArray buildBreakdown(Map<String, BigDecimal> map, int scale) {
-        JsonArray arr = new JsonArray();
+    private JsonObject buildBreakdown(Map<String, BigDecimal> map, int scale) {
+        JsonObject obj = new JsonObject();
         for (Map.Entry<String, BigDecimal> entry : map.entrySet()) {
-            arr.add(new JsonObject()
-                    .put("category", entry.getKey())
-                    .put("amount", entry.getValue()
-                            .setScale(scale, RoundingMode.HALF_UP).toPlainString()));
+            obj.put(entry.getKey(), entry.getValue()
+                    .setScale(scale, RoundingMode.HALF_UP).toPlainString());
         }
-        return arr;
+        return obj;
     }
 }

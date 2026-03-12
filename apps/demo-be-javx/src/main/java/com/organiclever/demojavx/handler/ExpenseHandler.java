@@ -228,14 +228,10 @@ public class ExpenseHandler implements Handler<RoutingContext> {
                         }
                     }
 
-                    JsonArray summaryArray = new JsonArray();
+                    JsonObject resp = new JsonObject();
                     for (Map.Entry<String, BigDecimal> entry : totals.entrySet()) {
-                        summaryArray.add(new JsonObject()
-                                .put("currency", entry.getKey())
-                                .put("total", entry.getValue().setScale(2, java.math.RoundingMode.HALF_UP).toPlainString()));
+                        resp.put(entry.getKey(), entry.getValue().toPlainString());
                     }
-
-                    JsonObject resp = new JsonObject().put("summary", summaryArray);
                     ctx.response()
                             .setStatusCode(200)
                             .putHeader("Content-Type", "application/json")
@@ -248,7 +244,7 @@ public class ExpenseHandler implements Handler<RoutingContext> {
         JsonObject obj = new JsonObject()
                 .put("id", expense.id())
                 .put("type", expense.type())
-                .put("amount", expense.amount().setScale(2, java.math.RoundingMode.HALF_UP).toPlainString())
+                .put("amount", expense.amount().toPlainString())
                 .put("currency", expense.currency())
                 .put("category", expense.category())
                 .put("description", expense.description())
