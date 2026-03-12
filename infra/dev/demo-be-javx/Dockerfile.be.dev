@@ -1,11 +1,17 @@
 # Development Docker Image for Demo Backend (JAVX — Java/Vert.x)
-# Uses Eclipse Temurin JDK 25 Alpine with Maven for building and running the application.
+# Pre-downloads Maven dependencies so container starts fast in CI.
+# The app source is mounted via docker-compose volume at /workspace.
 
 FROM eclipse-temurin:25-jdk-alpine
 
-# Install Maven
-RUN apk add --no-cache maven
+# Install Maven and wget (for healthcheck)
+RUN apk add --no-cache maven wget
 
 WORKDIR /workspace
+
+# Pre-download dependencies using the project pom.xml (copied into build context by CI).
+# This bakes the .m2 cache into the image layer, avoiding cold downloads on startup.
+COPY pom.xml /tmp/pom.xml
+RUN cd /tmp && mvn dependency:resolve dependency:resolve-plugins -B -f pom.xml; rm -f /tmp/pom.xml
 
 CMD ["mvn", "compile", "exec:java"]
