@@ -66,6 +66,13 @@
             <version>${vertx.version}</version>
         </dependency>
 
+        <!-- SCRAM-SHA-256 authentication for PostgreSQL (optional dep of vertx-pg-client) -->
+        <dependency>
+            <groupId>com.ongres.scram</groupId>
+            <artifactId>client</artifactId>
+            <version>2.1</version>
+        </dependency>
+
         <!-- Auth0 JWT library -->
         <dependency>
             <groupId>com.auth0</groupId>
