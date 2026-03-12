@@ -81,7 +81,7 @@ public class AdminHandler implements Handler<RoutingContext> {
                 .onSuccess(user -> {
                     JsonObject resp = new JsonObject()
                             .put("id", user.id())
-                            .put("status", user.status().toLowerCase());
+                            .put("status", user.status());
                     ctx.response()
                             .setStatusCode(200)
                             .putHeader("Content-Type", "application/json")
@@ -102,7 +102,7 @@ public class AdminHandler implements Handler<RoutingContext> {
                 .onSuccess(user -> {
                     JsonObject resp = new JsonObject()
                             .put("id", user.id())
-                            .put("status", user.status().toLowerCase());
+                            .put("status", user.status());
                     ctx.response()
                             .setStatusCode(200)
                             .putHeader("Content-Type", "application/json")
@@ -154,7 +154,7 @@ public class AdminHandler implements Handler<RoutingContext> {
                 .put("email", user.email())
                 .put("display_name", user.displayName())
                 .put("role", user.role())
-                .put("status", user.status().toLowerCase());
+                .put("status", user.status());
     }
 
     private int parseInt(String value, int defaultValue) {

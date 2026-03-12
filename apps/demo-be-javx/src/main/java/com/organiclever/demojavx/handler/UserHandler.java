@@ -137,6 +137,6 @@ public class UserHandler implements Handler<RoutingContext> {
                 .put("email", user.email())
                 .put("display_name", user.displayName())
                 .put("role", user.role())
-                .put("status", user.status().toLowerCase());
+                .put("status", user.status());
     }
 }

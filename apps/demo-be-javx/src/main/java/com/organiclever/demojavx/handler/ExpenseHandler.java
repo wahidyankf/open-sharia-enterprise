@@ -232,7 +232,7 @@ public class ExpenseHandler implements Handler<RoutingContext> {
                     for (Map.Entry<String, BigDecimal> entry : totals.entrySet()) {
                         summaryArray.add(new JsonObject()
                                 .put("currency", entry.getKey())
-                                .put("total", entry.getValue().toPlainString()));
+                                .put("total", entry.getValue().setScale(2, java.math.RoundingMode.HALF_UP).toPlainString()));
                     }
 
                     JsonObject resp = new JsonObject().put("summary", summaryArray);
@@ -248,7 +248,7 @@ public class ExpenseHandler implements Handler<RoutingContext> {
         JsonObject obj = new JsonObject()
                 .put("id", expense.id())
                 .put("type", expense.type())
-                .put("amount", expense.amount().toPlainString())
+                .put("amount", expense.amount().setScale(2, java.math.RoundingMode.HALF_UP).toPlainString())
                 .put("currency", expense.currency())
                 .put("category", expense.category())
                 .put("description", expense.description())
