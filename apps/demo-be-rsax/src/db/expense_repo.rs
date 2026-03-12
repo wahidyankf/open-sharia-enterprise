@@ -22,7 +22,11 @@ fn row_to_expense(row: &AnyRow) -> Expense {
         date: NaiveDate::parse_from_str(&date_str, "%Y-%m-%d")
             .unwrap_or_else(|_| Utc::now().date_naive()),
         entry_type: row.get("entry_type"),
-        quantity: row.try_get("quantity").ok().flatten(),
+        quantity: row
+            .try_get::<Option<String>, _>("quantity")
+            .ok()
+            .flatten()
+            .and_then(|s| s.parse::<f64>().ok()),
         unit: row.try_get("unit").ok().flatten(),
     }
 }
@@ -58,7 +62,7 @@ pub async fn create_expense(
     .bind(description)
     .bind(&date_str)
     .bind(entry_type)
-    .bind(quantity)
+    .bind(quantity.map(|q| q.to_string()))
     .bind(unit)
     .bind(&now_str)
     .bind(&now_str)
@@ -148,7 +152,7 @@ pub async fn update_expense(
     .bind(description)
     .bind(&date_str)
     .bind(entry_type)
-    .bind(quantity)
+    .bind(quantity.map(|q| q.to_string()))
     .bind(unit)
     .bind(&now_str)
     .bind(&id_str)
