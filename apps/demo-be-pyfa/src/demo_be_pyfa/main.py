@@ -1,5 +1,7 @@
 """FastAPI application factory."""
 
+import logging
+from contextlib import asynccontextmanager
 from typing import Any
 
 from fastapi import FastAPI, Request
@@ -7,6 +9,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from demo_be_pyfa.auth.jwt_service import get_jwks
+from demo_be_pyfa.database import engine
 from demo_be_pyfa.domain.errors import (
     AccountLockedError,
     ConflictError,
@@ -17,12 +20,22 @@ from demo_be_pyfa.domain.errors import (
     UnsupportedMediaTypeError,
     ValidationError,
 )
+from demo_be_pyfa.infrastructure.models import Base
 from demo_be_pyfa.routers import admin, attachments, auth, expenses, health, reports, tokens, users
+
+logger = logging.getLogger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):  # type: ignore[no-untyped-def]
+    """Application lifespan: create database tables on startup."""
+    Base.metadata.create_all(bind=engine)
+    yield
 
 
 def create_app() -> FastAPI:
     """Create and configure the FastAPI application."""
-    app = FastAPI(title="demo-be-pyfa", version="0.1.0")
+    app = FastAPI(title="demo-be-pyfa", version="0.1.0", lifespan=lifespan)
 
     # Register routers
     app.include_router(health.router)
@@ -100,6 +113,14 @@ def create_app() -> FastAPI:
         return JSONResponse(
             status_code=415,
             content={"message": "Unsupported media type", "field": "file"},
+        )
+
+    @app.exception_handler(Exception)
+    async def generic_error_handler(request: Request, exc: Exception) -> JSONResponse:
+        logger.exception("Unhandled exception: %s", exc)
+        return JSONResponse(
+            status_code=500,
+            content={"message": "Internal server error"},
         )
 
     return app
