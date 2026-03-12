@@ -1,4 +1,4 @@
-# Plan: demo-be-csharp-aspnetcore (In Progress)
+# Plan: demo-be-csharp-aspnetcore (Done)
 
 C# / ASP.NET Core reimplementation of the demo backend REST API — a functional twin of
 `apps/demo-be-java-springboot` (Java/Spring Boot), `apps/demo-be-elixir-phoenix` (Elixir/Phoenix),
@@ -6,7 +6,7 @@ C# / ASP.NET Core reimplementation of the demo backend REST API — a functional
 (Python/FastAPI), `apps/demo-be-rust-axum` (Rust/Axum), and `apps/demo-be-kotlin-ktor` (Kotlin/Ktor)
 using C# 12 and ASP.NET Core 9 Minimal APIs.
 
-**Status**: In Progress
+**Status**: Done
 
 ## Goals
 

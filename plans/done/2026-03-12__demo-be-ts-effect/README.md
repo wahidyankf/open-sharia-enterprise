@@ -1,10 +1,10 @@
-# Plan: demo-be-ts-effect (In Progress)
+# Plan: demo-be-ts-effect (Done)
 
 TypeScript / Effect TS reimplementation of the demo backend REST API — a functional twin of
 `apps/demo-be-java-springboot` (Java/Spring Boot), `apps/demo-be-python-fastapi` (Python/FastAPI),
 `apps/demo-be-rust-axum` (Rust/Axum), and others, using Node.js, Vite, and Effect TS.
 
-**Status**: In Progress
+**Status**: Done
 
 ## Goals
 
