@@ -48,7 +48,7 @@
               (when (user-repo/find-by-username ds username)
                 (throw (ex-info "Username already exists"
                                 {:status 409
-                                 :message "Username already taken"})))
+                                 :message "Username already exists"})))
               (when (user-repo/find-by-email ds email)
                 (throw (ex-info "Email already exists"
                                 {:status 409
