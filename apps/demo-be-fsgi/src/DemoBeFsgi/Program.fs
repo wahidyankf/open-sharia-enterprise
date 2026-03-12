@@ -112,12 +112,20 @@ type Marker = class end
 
 [<EntryPoint>]
 let main args =
-    Host
-        .CreateDefaultBuilder(args)
-        .ConfigureWebHostDefaults(fun webHostBuilder ->
-            webHostBuilder.Configure(configureApp).ConfigureServices(configureServices).UseUrls("http://+:8201")
-            |> ignore)
-        .Build()
-        .Run()
+    let host =
+        Host
+            .CreateDefaultBuilder(args)
+            .ConfigureWebHostDefaults(fun webHostBuilder ->
+                webHostBuilder.Configure(configureApp).ConfigureServices(configureServices).UseUrls("http://+:8201")
+                |> ignore)
+            .Build()
 
+    use scope = host.Services.CreateScope()
+
+    let db =
+        scope.ServiceProvider.GetRequiredService<DemoBeFsgi.Infrastructure.AppDbContext.AppDbContext>()
+
+    db.Database.EnsureCreated() |> ignore
+
+    host.Run()
     0
