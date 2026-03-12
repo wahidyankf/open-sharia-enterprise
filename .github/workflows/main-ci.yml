@@ -101,7 +101,7 @@ jobs:
         run: (cd apps/demo-be-python-fastapi && uv sync)
 
       - name: Install Clojure dependencies
-        run: (cd apps/demo-be-clojure-pedestal && JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clj -P && JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clj -P -M:test:coverage)
+        run: (cd apps/demo-be-clojure-pedestal && JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -P && JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -P -M:test:coverage)
 
       - name: test:quick (all projects)
         run: npx nx run-many -t test:quick --all
