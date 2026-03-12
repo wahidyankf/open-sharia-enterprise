@@ -18,6 +18,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.andWhere
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.sum
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
@@ -108,13 +109,14 @@ class ExposedExpenseRepository : ExpenseRepository {
 
   override suspend fun summaryByUser(userId: UUID): List<CurrencySummary> =
     newSuspendedTransaction(Dispatchers.IO) {
-      ExpensesTable.selectAll()
+      val sumColumn = ExpensesTable.amount.sum()
+      ExpensesTable.select(ExpensesTable.currency, sumColumn)
         .where { ExpensesTable.userId eq userId }
         .groupBy(ExpensesTable.currency)
         .map { row ->
           CurrencySummary(
             currency = row[ExpensesTable.currency],
-            total = row[ExpensesTable.amount.sum()] ?: BigDecimal.ZERO,
+            total = row[sumColumn] ?: BigDecimal.ZERO,
           )
         }
     }
