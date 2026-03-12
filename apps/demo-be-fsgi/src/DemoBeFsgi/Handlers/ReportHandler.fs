@@ -37,7 +37,7 @@ let profitAndLoss: HttpHandler =
 
             let currency = currencyParam.ToUpperInvariant()
 
-            let entries =
+            let! entries =
                 db.Expenses
                     .Where(fun e ->
                         e.UserId = userId
@@ -45,8 +45,6 @@ let profitAndLoss: HttpHandler =
                         && e.Date >= fromDate
                         && e.Date <= toDate)
                     .ToListAsync()
-                |> Async.AwaitTask
-                |> Async.RunSynchronously
 
             let incomeEntries = entries |> Seq.filter (fun e -> e.EntryType = "INCOME")
             let expenseEntries = entries |> Seq.filter (fun e -> e.EntryType = "EXPENSE")

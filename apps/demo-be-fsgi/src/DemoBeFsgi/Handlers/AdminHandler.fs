@@ -43,13 +43,10 @@ let listUsers: HttpHandler =
                 | Some email -> db.Users.Where(fun u -> u.Email = email)
                 | None -> db.Users :> IQueryable<UserEntity>
 
-            let total = query.CountAsync() |> Async.AwaitTask |> Async.RunSynchronously
+            let! total = query.CountAsync()
             let offset = (page - 1) * size
 
-            let users =
-                query.Skip(offset).Take(size).ToListAsync()
-                |> Async.AwaitTask
-                |> Async.RunSynchronously
+            let! users = query.Skip(offset).Take(size).ToListAsync()
 
             let userData =
                 users
@@ -89,10 +86,7 @@ let disableUser (userId: Guid) : HttpHandler =
 
             let db = ctx.GetService<AppDbContext>()
 
-            let user =
-                db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
-                |> Async.AwaitTask
-                |> Async.RunSynchronously
+            let! user = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
 
             if obj.ReferenceEquals(user, null) then
                 ctx.Response.StatusCode <- 404
@@ -110,7 +104,7 @@ let disableUser (userId: Guid) : HttpHandler =
                         UpdatedAt = DateTime.UtcNow }
 
                 db.Users.Update(updated) |> ignore
-                db.SaveChangesAsync() |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+                let! _ = db.SaveChangesAsync()
 
                 return!
                     json
@@ -126,10 +120,7 @@ let enableUser (userId: Guid) : HttpHandler =
         task {
             let db = ctx.GetService<AppDbContext>()
 
-            let user =
-                db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
-                |> Async.AwaitTask
-                |> Async.RunSynchronously
+            let! user = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
 
             if obj.ReferenceEquals(user, null) then
                 ctx.Response.StatusCode <- 404
@@ -147,7 +138,7 @@ let enableUser (userId: Guid) : HttpHandler =
                         UpdatedAt = DateTime.UtcNow }
 
                 db.Users.Update(updated) |> ignore
-                db.SaveChangesAsync() |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+                let! _ = db.SaveChangesAsync()
 
                 return!
                     json
@@ -163,10 +154,7 @@ let unlockUser (userId: Guid) : HttpHandler =
         task {
             let db = ctx.GetService<AppDbContext>()
 
-            let user =
-                db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
-                |> Async.AwaitTask
-                |> Async.RunSynchronously
+            let! user = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
 
             if obj.ReferenceEquals(user, null) then
                 ctx.Response.StatusCode <- 404
@@ -185,7 +173,7 @@ let unlockUser (userId: Guid) : HttpHandler =
                         UpdatedAt = DateTime.UtcNow }
 
                 db.Users.Update(updated) |> ignore
-                db.SaveChangesAsync() |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+                let! _ = db.SaveChangesAsync()
 
                 return!
                     json
@@ -201,10 +189,7 @@ let forcePasswordReset (userId: Guid) : HttpHandler =
         task {
             let db = ctx.GetService<AppDbContext>()
 
-            let user =
-                db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
-                |> Async.AwaitTask
-                |> Async.RunSynchronously
+            let! user = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
 
             if obj.ReferenceEquals(user, null) then
                 ctx.Response.StatusCode <- 404

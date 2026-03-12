@@ -90,10 +90,7 @@ let register: HttpHandler =
                 | Ok _, Ok _, Ok _ ->
                     let db = ctx.GetService<AppDbContext>()
 
-                    let existingUser =
-                        db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Username = r.username)
-                        |> Async.AwaitTask
-                        |> Async.RunSynchronously
+                    let! existingUser = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Username = r.username)
 
                     if not (obj.ReferenceEquals(existingUser, null)) then
                         ctx.Response.StatusCode <- 409
@@ -121,7 +118,7 @@ let register: HttpHandler =
                               UpdatedAt = now }
 
                         db.Users.Add(entity) |> ignore
-                        db.SaveChangesAsync() |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+                        let! _ = db.SaveChangesAsync()
 
                         ctx.Response.StatusCode <- 201
 
@@ -172,10 +169,7 @@ let login: HttpHandler =
             | Some r ->
                 let db = ctx.GetService<AppDbContext>()
 
-                let user =
-                    db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Username = r.username)
-                    |> Async.AwaitTask
-                    |> Async.RunSynchronously
+                let! user = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Username = r.username)
 
                 if obj.ReferenceEquals(user, null) then
                     ctx.Response.StatusCode <- 401
@@ -229,7 +223,7 @@ let login: HttpHandler =
                             UpdatedAt = DateTime.UtcNow }
 
                     db.Users.Update(updated) |> ignore
-                    db.SaveChangesAsync() |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+                    let! _ = db.SaveChangesAsync()
 
                     if newAttempts >= maxFailedAttempts then
                         ctx.Response.StatusCode <- 401
@@ -256,7 +250,7 @@ let login: HttpHandler =
                             UpdatedAt = DateTime.UtcNow }
 
                     db.Users.Update(updated) |> ignore
-                    db.SaveChangesAsync() |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+                    let! _ = db.SaveChangesAsync()
 
                     let accessToken = generateAccessToken user.Id user.Username user.Email user.Role
                     let refreshTokenStr = generateRefreshToken user.Id
@@ -272,7 +266,7 @@ let login: HttpHandler =
                           Revoked = false }
 
                     db.RefreshTokens.Add(rtEntity) |> ignore
-                    db.SaveChangesAsync() |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+                    let! _ = db.SaveChangesAsync()
 
                     return!
                         json
@@ -311,12 +305,10 @@ let refresh: HttpHandler =
             | Some r ->
                 let db = ctx.GetService<AppDbContext>()
 
-                let rtEntity =
+                let! rtEntity =
                     db.RefreshTokens
                         .AsNoTracking()
                         .FirstOrDefaultAsync(fun rt -> rt.TokenHash = r.refresh_token && not rt.Revoked)
-                    |> Async.AwaitTask
-                    |> Async.RunSynchronously
 
                 if obj.ReferenceEquals(rtEntity, null) then
                     ctx.Response.StatusCode <- 401
@@ -337,10 +329,7 @@ let refresh: HttpHandler =
                             earlyReturn
                             ctx
                 else
-                    let user =
-                        db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = rtEntity.UserId)
-                        |> Async.AwaitTask
-                        |> Async.RunSynchronously
+                    let! user = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = rtEntity.UserId)
 
                     if obj.ReferenceEquals(user, null) then
                         ctx.Response.StatusCode <- 401
@@ -363,7 +352,7 @@ let refresh: HttpHandler =
                     else
                         let revokedRt = { rtEntity with Revoked = true }
                         db.RefreshTokens.Update(revokedRt) |> ignore
-                        db.SaveChangesAsync() |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+                        let! _ = db.SaveChangesAsync()
 
                         let accessToken = generateAccessToken user.Id user.Username user.Email user.Role
                         let newRefreshToken = generateRefreshToken user.Id
@@ -379,7 +368,7 @@ let refresh: HttpHandler =
                               Revoked = false }
 
                         db.RefreshTokens.Add(newRtEntity) |> ignore
-                        db.SaveChangesAsync() |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+                        let! _ = db.SaveChangesAsync()
 
                         return!
                             json
@@ -407,10 +396,7 @@ let logout: HttpHandler =
 
             match jti with
             | Some j ->
-                let exists =
-                    db.RevokedTokens.AnyAsync(fun rt -> rt.TokenJti = j)
-                    |> Async.AwaitTask
-                    |> Async.RunSynchronously
+                let! exists = db.RevokedTokens.AnyAsync(fun rt -> rt.TokenJti = j)
 
                 if not exists then
                     let userId =
@@ -427,7 +413,8 @@ let logout: HttpHandler =
                           ExpiresAt = expiry |> Option.defaultValue DateTime.UtcNow }
 
                     db.RevokedTokens.Add(revokedEntity) |> ignore
-                    db.SaveChangesAsync() |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+                    let! _ = db.SaveChangesAsync()
+                    ()
             | None -> ()
 
             return! json {| message = "Logged out successfully" |} next ctx
@@ -456,10 +443,7 @@ let logoutAll: HttpHandler =
 
             match jti with
             | Some j ->
-                let exists =
-                    db.RevokedTokens.AnyAsync(fun rt -> rt.TokenJti = j)
-                    |> Async.AwaitTask
-                    |> Async.RunSynchronously
+                let! exists = db.RevokedTokens.AnyAsync(fun rt -> rt.TokenJti = j)
 
                 if not exists then
                     let revokedEntity: RevokedTokenEntity =
@@ -470,18 +454,17 @@ let logoutAll: HttpHandler =
                           ExpiresAt = expiry |> Option.defaultValue DateTime.UtcNow }
 
                     db.RevokedTokens.Add(revokedEntity) |> ignore
-                    db.SaveChangesAsync() |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+                    let! _ = db.SaveChangesAsync()
+                    ()
             | None -> ()
 
-            let activeTokens =
+            let! activeTokens =
                 db.RefreshTokens.AsNoTracking().Where(fun rt -> rt.UserId = userId && not rt.Revoked).ToListAsync()
-                |> Async.AwaitTask
-                |> Async.RunSynchronously
 
             for rt in activeTokens do
                 db.RefreshTokens.Update({ rt with Revoked = true }) |> ignore
 
-            db.SaveChangesAsync() |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+            let! _ = db.SaveChangesAsync()
 
             return! json {| message = "All sessions logged out" |} next ctx
         }

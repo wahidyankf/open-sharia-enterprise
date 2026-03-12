@@ -23,10 +23,7 @@ let getProfile: HttpHandler =
             let userId = ctx.Items["UserId"] :?> Guid
             let db = ctx.GetService<AppDbContext>()
 
-            let user =
-                db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
-                |> Async.AwaitTask
-                |> Async.RunSynchronously
+            let! user = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
 
             if obj.ReferenceEquals(user, null) then
                 ctx.Response.StatusCode <- 404
@@ -79,10 +76,7 @@ let updateProfile: HttpHandler =
                 let userId = ctx.Items["UserId"] :?> Guid
                 let db = ctx.GetService<AppDbContext>()
 
-                let user =
-                    db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
-                    |> Async.AwaitTask
-                    |> Async.RunSynchronously
+                let! user = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
 
                 if obj.ReferenceEquals(user, null) then
                     ctx.Response.StatusCode <- 404
@@ -104,7 +98,7 @@ let updateProfile: HttpHandler =
                             UpdatedAt = DateTime.UtcNow }
 
                     db.Users.Update(updated) |> ignore
-                    db.SaveChangesAsync() |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+                    let! _ = db.SaveChangesAsync()
 
                     return!
                         json
@@ -145,10 +139,7 @@ let changePassword: HttpHandler =
                 let userId = ctx.Items["UserId"] :?> Guid
                 let db = ctx.GetService<AppDbContext>()
 
-                let user =
-                    db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
-                    |> Async.AwaitTask
-                    |> Async.RunSynchronously
+                let! user = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
 
                 if obj.ReferenceEquals(user, null) then
                     ctx.Response.StatusCode <- 404
@@ -175,7 +166,7 @@ let changePassword: HttpHandler =
                             UpdatedAt = DateTime.UtcNow }
 
                     db.Users.Update(updated) |> ignore
-                    db.SaveChangesAsync() |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+                    let! _ = db.SaveChangesAsync()
 
                     return! json {| message = "Password changed successfully" |} next ctx
         }
@@ -186,10 +177,7 @@ let deactivate: HttpHandler =
             let userId = ctx.Items["UserId"] :?> Guid
             let db = ctx.GetService<AppDbContext>()
 
-            let user =
-                db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
-                |> Async.AwaitTask
-                |> Async.RunSynchronously
+            let! user = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
 
             if obj.ReferenceEquals(user, null) then
                 ctx.Response.StatusCode <- 404
@@ -207,7 +195,7 @@ let deactivate: HttpHandler =
                         UpdatedAt = DateTime.UtcNow }
 
                 db.Users.Update(updated) |> ignore
-                db.SaveChangesAsync() |> Async.AwaitTask |> Async.RunSynchronously |> ignore
+                let! _ = db.SaveChangesAsync()
 
                 return! json {| message = "Account deactivated" |} next ctx
         }
