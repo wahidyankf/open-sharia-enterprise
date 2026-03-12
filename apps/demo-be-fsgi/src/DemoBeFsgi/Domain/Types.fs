@@ -58,20 +58,20 @@ let currencyToString =
 
 let roleToString =
     function
-    | User -> "user"
-    | Admin -> "admin"
+    | User -> "USER"
+    | Admin -> "ADMIN"
 
 let statusToString =
     function
-    | Active -> "active"
-    | Inactive -> "inactive"
-    | Disabled -> "disabled"
-    | Locked -> "locked"
+    | Active -> "ACTIVE"
+    | Inactive -> "INACTIVE"
+    | Disabled -> "DISABLED"
+    | Locked -> "LOCKED"
 
 let parseStatus (s: string) =
-    match s.ToLowerInvariant() with
-    | "active" -> Some Active
-    | "inactive" -> Some Inactive
-    | "disabled" -> Some Disabled
-    | "locked" -> Some Locked
+    match s.ToUpperInvariant() with
+    | "ACTIVE" -> Some Active
+    | "INACTIVE" -> Some Inactive
+    | "DISABLED" -> Some Disabled
+    | "LOCKED" -> Some Locked
     | _ -> None

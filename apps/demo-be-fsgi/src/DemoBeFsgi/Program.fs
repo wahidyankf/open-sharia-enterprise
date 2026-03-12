@@ -28,7 +28,7 @@ let setAdminRoleForUser (username: string) : HttpHandler =
                 ctx.Response.StatusCode <- 404
                 return! json {| error = "Not Found" |} earlyReturn ctx
             else
-                let updated = { user with Role = "admin" }
+                let updated = { user with Role = "ADMIN" }
                 db.Users.Update(updated) |> ignore
                 db.SaveChangesAsync() |> Async.AwaitTask |> Async.RunSynchronously |> ignore
                 return! json {| message = "Role set to admin" |} next ctx

@@ -12,7 +12,7 @@ let requireAdmin: HttpHandler =
                 else
                     ""
 
-            if role = "admin" then
+            if role = "ADMIN" then
                 return! next ctx
             else
                 ctx.Response.StatusCode <- 403
