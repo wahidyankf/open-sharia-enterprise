@@ -1,21 +1,19 @@
 {
+  "output_dir": "cover/",
   "skip_files": [
-    "test/support/",
-    "deps/",
-    "lib/demo_be_elixir_phoenix.ex",
-    "lib/demo_be_elixir_phoenix/repo.ex",
-    "lib/demo_be_elixir_phoenix_web/gettext.ex",
-    "lib/demo_be_elixir_phoenix/accounts/accounts_behaviour.ex",
-    "lib/demo_be_elixir_phoenix/token/token_behaviour.ex",
-    "lib/demo_be_elixir_phoenix/expense/expense_behaviour.ex",
-    "lib/demo_be_elixir_phoenix/attachment/attachment_behaviour.ex",
-    "lib/demo_be_elixir_phoenix/accounts/accounts.ex",
-    "lib/demo_be_elixir_phoenix/token/token_context.ex",
-    "lib/demo_be_elixir_phoenix/expense/expense_context.ex",
-    "lib/demo_be_elixir_phoenix/attachment/attachment_context.ex",
-    "lib/demo_be_elixir_phoenix_web/endpoint.ex",
-    "lib/demo_be_elixir_phoenix_web/telemetry.ex",
-    "lib/demo_be_elixir_phoenix/application.ex",
-    "lib/demo_be_elixir_phoenix_web/plugs/cors_plug.ex"
+    "lib/demo_be_exph.ex",
+    "lib/demo_be_exph/application.ex",
+    "lib/demo_be_exph/repo.ex",
+    "lib/demo_be_exph/accounts/accounts.ex",
+    "lib/demo_be_exph/accounts/accounts_behaviour.ex",
+    "lib/demo_be_exph/attachment/attachment_behaviour.ex",
+    "lib/demo_be_exph/attachment/attachment_context.ex",
+    "lib/demo_be_exph/expense/expense_behaviour.ex",
+    "lib/demo_be_exph/expense/expense_context.ex",
+    "lib/demo_be_exph/token/token_behaviour.ex",
+    "lib/demo_be_exph/token/token_context.ex",
+    "lib/demo_be_exph_web/gettext.ex",
+    "lib/demo_be_exph_web/telemetry.ex",
+    "lib/demo_be_exph_web/plugs/cors_plug.ex"
   ]
 }
