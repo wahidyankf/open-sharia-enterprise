@@ -52,10 +52,10 @@ services:
 
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8201/health"]
-      interval: 30s
+      interval: 15s
       timeout: 10s
-      retries: 3
-      start_period: 120s
+      retries: 5
+      start_period: 240s
 
     restart: unless-stopped
     networks:
