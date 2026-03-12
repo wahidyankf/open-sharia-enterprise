@@ -42,6 +42,7 @@ public class MainVerticle extends AbstractVerticle {
 
         buildRepositories(databaseUrl)
                 .onSuccess(repos -> {
+                    System.out.println("Repositories initialized, creating HTTP server on port " + port);
                     Router router = AppRouter.create(vertx, jwtService, repos.userRepo(),
                             repos.expenseRepo(), repos.attachmentRepo(), repos.revocationRepo(),
                             passwordService);
@@ -49,10 +50,15 @@ public class MainVerticle extends AbstractVerticle {
                     vertx.createHttpServer()
                             .requestHandler(router)
                             .listen(port)
+                            .onSuccess(server -> System.out.println(
+                                    "Server listening on port " + server.actualPort()))
                             .<Void>mapEmpty()
                             .onComplete(startPromise);
                 })
-                .onFailure(startPromise::fail);
+                .onFailure(err -> {
+                    System.err.println("Failed to initialize repositories: " + err.getMessage());
+                    startPromise.fail(err);
+                });
     }
 
     private Future<Repositories> buildRepositories(String databaseUrl) {
