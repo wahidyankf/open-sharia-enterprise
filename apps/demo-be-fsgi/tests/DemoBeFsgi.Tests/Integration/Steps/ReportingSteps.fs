@@ -31,19 +31,13 @@ let ``the income breakdown should contain "(.+)" with amount "(.+)"``
     try
         let doc = JsonDocument.Parse(body)
         let breakdownEl = doc.RootElement.GetProperty("income_breakdown")
-        let found = ref false
+        let mutable found = false
 
-        for item in breakdownEl.EnumerateArray() do
-            try
-                let catEl = item.GetProperty("category")
-                let amtEl = item.GetProperty("amount")
+        for prop in breakdownEl.EnumerateObject() do
+            if prop.Name = category && prop.Value.GetString() = amount then
+                found <- true
 
-                if catEl.GetString() = category && amtEl.GetString() = amount then
-                    found.Value <- true
-            with _ ->
-                ()
-
-        Assert.True(found.Value, $"Expected income_breakdown to contain '{category}' with amount '{amount}' in: {body}")
+        Assert.True(found, $"Expected income_breakdown to contain '{category}' with amount '{amount}' in: {body}")
     with ex ->
         Assert.Fail($"Could not parse response: {body}. Error: {ex.Message}")
 
@@ -60,22 +54,13 @@ let ``the expense breakdown should contain "(.+)" with amount "(.+)"``
     try
         let doc = JsonDocument.Parse(body)
         let breakdownEl = doc.RootElement.GetProperty("expense_breakdown")
-        let found = ref false
+        let mutable found = false
 
-        for item in breakdownEl.EnumerateArray() do
-            try
-                let catEl = item.GetProperty("category")
-                let amtEl = item.GetProperty("amount")
+        for prop in breakdownEl.EnumerateObject() do
+            if prop.Name = category && prop.Value.GetString() = amount then
+                found <- true
 
-                if catEl.GetString() = category && amtEl.GetString() = amount then
-                    found.Value <- true
-            with _ ->
-                ()
-
-        Assert.True(
-            found.Value,
-            $"Expected expense_breakdown to contain '{category}' with amount '{amount}' in: {body}"
-        )
+        Assert.True(found, $"Expected expense_breakdown to contain '{category}' with amount '{amount}' in: {body}")
     with ex ->
         Assert.Fail($"Could not parse response: {body}. Error: {ex.Message}")
 

@@ -61,18 +61,14 @@ let profitAndLoss: HttpHandler =
             let incomeBreakdown =
                 incomeEntries
                 |> Seq.groupBy (fun e -> e.Category)
-                |> Seq.map (fun (cat, items) ->
-                    {| category = cat
-                       amount = formatAmount (items |> Seq.sumBy (fun e -> e.Amount)) |})
-                |> Seq.toArray
+                |> Seq.map (fun (cat, items) -> cat, formatAmount (items |> Seq.sumBy (fun e -> e.Amount)))
+                |> dict
 
             let expenseBreakdown =
                 expenseEntries
                 |> Seq.groupBy (fun e -> e.Category)
-                |> Seq.map (fun (cat, items) ->
-                    {| category = cat
-                       amount = formatAmount (items |> Seq.sumBy (fun e -> e.Amount)) |})
-                |> Seq.toArray
+                |> Seq.map (fun (cat, items) -> cat, formatAmount (items |> Seq.sumBy (fun e -> e.Amount)))
+                |> dict
 
             return!
                 json
