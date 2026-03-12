@@ -8,4 +8,4 @@ RUN apk add --no-cache curl
 
 WORKDIR /workspace
 
-CMD ["sh", "-c", "npm ci && npx tsx src/main.ts"]
+CMD ["sh", "-c", "npm install --no-package-lock && npx tsx src/main.ts"]

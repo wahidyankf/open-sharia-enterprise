@@ -45,10 +45,12 @@ services:
 
     environment:
       - PORT=8201
-      - DATABASE_URL=postgresql://demo_be_clojure_pedestal:demo_be_clojure_pedestal@demo-be-clojure-pedestal-db:5432/demo_be_clojure_pedestal
+      - DATABASE_URL=jdbc:postgresql://demo-be-clojure-pedestal-db:5432/demo_be_clojure_pedestal
+      - DB_USER=demo_be_clojure_pedestal
+      - DB_PASSWORD=demo_be_clojure_pedestal
       - APP_JWT_SECRET=${APP_JWT_SECRET:-change-me-in-dev-only-not-for-production}
 
-    command: clj -M -m demo-be-cjpd.main
+    command: clojure -M -m demo-be-cjpd.main
 
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8201/health"]
