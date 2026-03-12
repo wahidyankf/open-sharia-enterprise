@@ -7,7 +7,7 @@
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clj -T:build uber",
+        "command": "JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -T:build uber",
         "cwd": "apps/demo-be-clojure-pedestal"
       },
       "outputs": ["{projectRoot}/target"]
@@ -15,7 +15,7 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clj -M -m demo-be-cjpd.main",
+        "command": "JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -M -m demo-be-cjpd.main",
         "cwd": "apps/demo-be-clojure-pedestal"
       }
     },
@@ -42,14 +42,14 @@
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clj -M:test -m kaocha.runner unit",
+        "command": "JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -M:test -m kaocha.runner unit",
         "cwd": "apps/demo-be-clojure-pedestal"
       }
     },
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clj -M:test -m kaocha.runner integration",
+        "command": "JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -M:test -m kaocha.runner integration",
         "cwd": "apps/demo-be-clojure-pedestal"
       },
       "cache": true,
