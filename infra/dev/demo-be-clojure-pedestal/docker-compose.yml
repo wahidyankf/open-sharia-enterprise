@@ -26,8 +26,8 @@ services:
 
   demo-be-clojure-pedestal:
     build:
-      context: .
-      dockerfile: Dockerfile.be.dev
+      context: ../../..
+      dockerfile: infra/dev/demo-be-clojure-pedestal/Dockerfile.be.dev
     container_name: demo-be-clojure-pedestal
     working_dir: /workspace
 
@@ -57,7 +57,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 60s
+      start_period: 120s
 
     restart: unless-stopped
     networks:
