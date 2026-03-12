@@ -173,21 +173,31 @@ func (h *Handler) Refresh(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "invalid or expired refresh token"})
 		return
 	}
+	// Check user status before validating token state so deactivated/disabled
+	// users receive an informative message rather than a generic "invalid token".
+	user, err := h.store.GetUserByID(c.Request.Context(), rt.UserID)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "user not found"})
+		return
+	}
+	if user.Status == domain.StatusInactive {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "account has been deactivated"})
+		return
+	}
+	if user.Status == domain.StatusDisabled {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "account has been disabled"})
+		return
+	}
+	if user.Status != domain.StatusActive {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "account has been deactivated"})
+		return
+	}
 	if rt.Revoked {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "invalid token"})
 		return
 	}
 	if time.Now().After(rt.ExpiresAt) {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "refresh token has expired"})
-		return
-	}
-	user, err := h.store.GetUserByID(c.Request.Context(), rt.UserID)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"message": "user not found"})
-		return
-	}
-	if user.Status != domain.StatusActive {
-		c.JSON(http.StatusUnauthorized, gin.H{"message": "account has been deactivated"})
 		return
 	}
 	// Revoke old refresh token.
