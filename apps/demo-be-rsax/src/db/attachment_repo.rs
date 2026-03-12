@@ -47,7 +47,7 @@ pub async fn create_attachment(
 
     sqlx::query(
         r#"INSERT INTO attachments (id, expense_id, user_id, filename, content_type, size, data, created_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)"#,
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)"#,
     )
     .bind(&id_str)
     .bind(&expense_id_str)
@@ -71,7 +71,7 @@ pub async fn find_by_id(pool: &AnyPool, id: Uuid) -> Result<Option<Attachment>, 
     let id_str = id.to_string();
     let row = sqlx::query(
         r#"SELECT id, expense_id, user_id, filename, content_type, size, data, created_at
-           FROM attachments WHERE id = ?"#,
+           FROM attachments WHERE id = $1"#,
     )
     .bind(&id_str)
     .fetch_optional(pool)
@@ -87,7 +87,7 @@ pub async fn list_for_expense(
     let expense_id_str = expense_id.to_string();
     let rows = sqlx::query(
         r#"SELECT id, expense_id, user_id, filename, content_type, size, data, created_at
-           FROM attachments WHERE expense_id = ? ORDER BY created_at ASC"#,
+           FROM attachments WHERE expense_id = $1 ORDER BY created_at ASC"#,
     )
     .bind(&expense_id_str)
     .fetch_all(pool)
@@ -98,7 +98,7 @@ pub async fn list_for_expense(
 
 pub async fn delete_attachment(pool: &AnyPool, id: Uuid) -> Result<(), AppError> {
     let id_str = id.to_string();
-    sqlx::query("DELETE FROM attachments WHERE id = ?")
+    sqlx::query("DELETE FROM attachments WHERE id = $1")
         .bind(&id_str)
         .execute(pool)
         .await?;

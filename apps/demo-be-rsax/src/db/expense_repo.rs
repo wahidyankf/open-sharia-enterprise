@@ -48,7 +48,7 @@ pub async fn create_expense(
 
     sqlx::query(
         r#"INSERT INTO expenses (id, user_id, amount_stored, currency, category, description, date, entry_type, quantity, unit, created_at, updated_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"#,
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)"#,
     )
     .bind(&id_str)
     .bind(&user_id_str)
@@ -76,7 +76,7 @@ pub async fn find_by_id(pool: &AnyPool, id: Uuid) -> Result<Option<Expense>, App
     let id_str = id.to_string();
     let row = sqlx::query(
         r#"SELECT id, user_id, amount_stored, currency, category, description, date, entry_type, quantity, unit
-           FROM expenses WHERE id = ?"#,
+           FROM expenses WHERE id = $1"#,
     )
     .bind(&id_str)
     .fetch_optional(pool)
@@ -101,7 +101,7 @@ pub async fn list_for_user(
 
     let rows = sqlx::query(
         r#"SELECT id, user_id, amount_stored, currency, category, description, date, entry_type, quantity, unit
-           FROM expenses WHERE user_id = ? ORDER BY date DESC LIMIT ? OFFSET ?"#,
+           FROM expenses WHERE user_id = $1 ORDER BY date DESC LIMIT $2 OFFSET $3"#,
     )
     .bind(&user_id_str)
     .bind(page_size)
@@ -112,7 +112,7 @@ pub async fn list_for_user(
     let expenses = rows.iter().map(row_to_expense).collect();
 
     use sqlx::Row;
-    let count_row: AnyRow = sqlx::query("SELECT COUNT(*) as cnt FROM expenses WHERE user_id = ?")
+    let count_row: AnyRow = sqlx::query("SELECT COUNT(*) as cnt FROM expenses WHERE user_id = $1")
         .bind(&user_id_str)
         .fetch_one(pool)
         .await?;
@@ -139,8 +139,8 @@ pub async fn update_expense(
     let now_str = Utc::now().to_rfc3339();
 
     sqlx::query(
-        r#"UPDATE expenses SET amount_stored = ?, currency = ?, category = ?, description = ?, date = ?,
-           entry_type = ?, quantity = ?, unit = ?, updated_at = ? WHERE id = ?"#,
+        r#"UPDATE expenses SET amount_stored = $1, currency = $2, category = $3, description = $4, date = $5,
+           entry_type = $6, quantity = $7, unit = $8, updated_at = $9 WHERE id = $10"#,
     )
     .bind(amount_stored)
     .bind(currency)
@@ -164,11 +164,11 @@ pub async fn update_expense(
 
 pub async fn delete_expense(pool: &AnyPool, id: Uuid) -> Result<(), AppError> {
     let id_str = id.to_string();
-    sqlx::query("DELETE FROM attachments WHERE expense_id = ?")
+    sqlx::query("DELETE FROM attachments WHERE expense_id = $1")
         .bind(&id_str)
         .execute(pool)
         .await?;
-    sqlx::query("DELETE FROM expenses WHERE id = ?")
+    sqlx::query("DELETE FROM expenses WHERE id = $1")
         .bind(&id_str)
         .execute(pool)
         .await?;
@@ -188,7 +188,7 @@ pub async fn summarize_by_currency(
     let user_id_str = user_id.to_string();
     let rows = sqlx::query(
         r#"SELECT currency, SUM(amount_stored) as total FROM expenses
-           WHERE user_id = ? AND entry_type = 'expense' GROUP BY currency"#,
+           WHERE user_id = $1 AND entry_type = 'expense' GROUP BY currency"#,
     )
     .bind(&user_id_str)
     .fetch_all(pool)
@@ -230,8 +230,8 @@ pub async fn pl_report(
 
     let income_row: AnyRow = sqlx::query(
         r#"SELECT COALESCE(SUM(amount_stored), 0) as total FROM expenses
-           WHERE user_id = ? AND currency = ? AND entry_type = 'income'
-           AND date >= ? AND date <= ?"#,
+           WHERE user_id = $1 AND currency = $2 AND entry_type = 'income'
+           AND date >= $3 AND date <= $4"#,
     )
     .bind(&user_id_str)
     .bind(currency_str)
@@ -243,8 +243,8 @@ pub async fn pl_report(
 
     let expense_row: AnyRow = sqlx::query(
         r#"SELECT COALESCE(SUM(amount_stored), 0) as total FROM expenses
-           WHERE user_id = ? AND currency = ? AND entry_type = 'expense'
-           AND date >= ? AND date <= ?"#,
+           WHERE user_id = $1 AND currency = $2 AND entry_type = 'expense'
+           AND date >= $3 AND date <= $4"#,
     )
     .bind(&user_id_str)
     .bind(currency_str)
@@ -256,8 +256,8 @@ pub async fn pl_report(
 
     let income_rows = sqlx::query(
         r#"SELECT category, SUM(amount_stored) as total FROM expenses
-           WHERE user_id = ? AND currency = ? AND entry_type = 'income'
-           AND date >= ? AND date <= ? GROUP BY category"#,
+           WHERE user_id = $1 AND currency = $2 AND entry_type = 'income'
+           AND date >= $3 AND date <= $4 GROUP BY category"#,
     )
     .bind(&user_id_str)
     .bind(currency_str)
@@ -268,8 +268,8 @@ pub async fn pl_report(
 
     let expense_rows = sqlx::query(
         r#"SELECT category, SUM(amount_stored) as total FROM expenses
-           WHERE user_id = ? AND currency = ? AND entry_type = 'expense'
-           AND date >= ? AND date <= ? GROUP BY category"#,
+           WHERE user_id = $1 AND currency = $2 AND entry_type = 'expense'
+           AND date >= $3 AND date <= $4 GROUP BY category"#,
     )
     .bind(&user_id_str)
     .bind(currency_str)
