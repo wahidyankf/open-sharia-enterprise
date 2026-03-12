@@ -132,7 +132,7 @@ public static class AuthEndpoints
         var accessToken = jwtService.CreateAccessToken(
             user.Id.ToString(),
             user.Username,
-            user.Role.ToString()
+            user.Role.ToString().ToUpperInvariant()
         );
         var refreshToken = jwtService.CreateRefreshToken(user.Id.ToString());
 
@@ -196,7 +196,7 @@ public static class AuthEndpoints
         var newAccessToken = jwtService.CreateAccessToken(
             user.Id.ToString(),
             user.Username,
-            user.Role.ToString()
+            user.Role.ToString().ToUpperInvariant()
         );
         var newRefreshToken = jwtService.CreateRefreshToken(user.Id.ToString());
 

@@ -18,15 +18,24 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.HasKey(e => e.Id);
             entity.HasIndex(e => e.Username).IsUnique();
             entity.HasIndex(e => e.Email).IsUnique();
-            entity.Property(e => e.Status).HasConversion<string>();
-            entity.Property(e => e.Role).HasConversion<string>();
+            entity.Property(e => e.Status).HasConversion(
+                v => v.ToString().ToUpperInvariant(),
+                v => Enum.Parse<UserStatus>(v, ignoreCase: true)
+            );
+            entity.Property(e => e.Role).HasConversion(
+                v => v.ToString().ToUpperInvariant(),
+                v => Enum.Parse<Role>(v, ignoreCase: true)
+            );
         });
 
         modelBuilder.Entity<ExpenseModel>(entity =>
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Amount).HasPrecision(18, 6);
-            entity.Property(e => e.Type).HasConversion<string>();
+            entity.Property(e => e.Type).HasConversion(
+                v => v.ToString().ToUpperInvariant(),
+                v => Enum.Parse<ExpenseType>(v, ignoreCase: true)
+            );
         });
 
         modelBuilder.Entity<AttachmentModel>(entity =>

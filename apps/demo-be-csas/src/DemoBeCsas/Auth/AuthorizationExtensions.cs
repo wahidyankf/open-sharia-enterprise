@@ -9,7 +9,7 @@ public static class AuthorizationExtensions
             opts.AddPolicy(
                 "Admin",
                 policy => policy.RequireAssertion(ctx =>
-                    ctx.User.HasClaim("role", "Admin")
+                    ctx.User.HasClaim("role", "ADMIN")
                 )
             );
         });
