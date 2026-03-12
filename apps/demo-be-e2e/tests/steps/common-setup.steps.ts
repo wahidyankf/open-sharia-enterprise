@@ -155,13 +155,19 @@ async function ensureSuperadmin(request: import("@playwright/test").APIRequestCo
 Then("alice's account status should be {string}", async ({ request }, status: string) => {
   const adminToken = await ensureSuperadmin(request);
   const aliceId = getIdForUser("alice");
-  const res = await request.get("/api/v1/admin/users?page=1&size=100", {
-    headers: { Authorization: `Bearer ${adminToken}` },
-  });
-  const body = (await res.json()) as { data: Array<Record<string, unknown>> };
-  const aliceRecord = body.data.find((u) => u["id"] === aliceId);
-  expect(aliceRecord).toBeDefined();
-  expect(aliceRecord!["status"]).toBe(status.toUpperCase());
+  // Try page=1 first (1-based backends), fall back to page=0 (0-based backends like Spring)
+  for (const page of [1, 0]) {
+    const res = await request.get(`/api/v1/admin/users?page=${page}&size=100`, {
+      headers: { Authorization: `Bearer ${adminToken}` },
+    });
+    const body = (await res.json()) as { data: Array<Record<string, unknown>> };
+    const aliceRecord = body.data?.find((u) => u["id"] === aliceId);
+    if (aliceRecord) {
+      expect(aliceRecord["status"]).toBe(status.toUpperCase());
+      return;
+    }
+  }
+  throw new Error(`alice (id=${aliceId}) not found in admin users list on any page`);
 });
 
 // ---------------------------------------------------------------------------
