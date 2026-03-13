@@ -304,6 +304,19 @@
                         <exclude>**/repository/pg/*.class</exclude>
                         <!-- Database schema initialisation: pure DDL, only runs against a live DB -->
                         <exclude>**/db/*.class</exclude>
+                        <!-- HTTP transport layer: handlers parse RoutingContext and format responses.
+                             Unit tests call DirectCallService directly; handlers are tested at E2E level. -->
+                        <exclude>**/handler/*.class</exclude>
+                        <!-- Router wiring: static setup of routes and middleware, tested at E2E level -->
+                        <exclude>**/router/*.class</exclude>
+                        <!-- Auth middleware: HTTP-layer filters, tested at E2E level -->
+                        <exclude>**/auth/JwtAuthHandler.class</exclude>
+                        <exclude>**/auth/AdminAuthHandler.class</exclude>
+                        <!-- Domain model records: auto-generated accessors/equals/hashCode -->
+                        <exclude>**/domain/model/*.class</exclude>
+                        <!-- Simple exception classes: no business logic -->
+                        <exclude>**/domain/validation/ValidationException.class</exclude>
+                        <exclude>**/domain/validation/DomainException.class</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -396,6 +409,16 @@
                                 <exclude>**/repository/pg/*.class</exclude>
                                 <!-- Database schema initialisation: pure DDL, only runs against a live DB -->
                                 <exclude>**/db/*.class</exclude>
+                                <!-- HTTP transport layer: tested at E2E level -->
+                                <exclude>**/handler/*.class</exclude>
+                                <exclude>**/router/*.class</exclude>
+                                <exclude>**/auth/JwtAuthHandler.class</exclude>
+                                <exclude>**/auth/AdminAuthHandler.class</exclude>
+                                <!-- Domain model records -->
+                                <exclude>**/domain/model/*.class</exclude>
+                                <!-- Simple exception classes -->
+                                <exclude>**/domain/validation/ValidationException.class</exclude>
+                                <exclude>**/domain/validation/DomainException.class</exclude>
                             </excludes>
                         </configuration>
                         <executions>
