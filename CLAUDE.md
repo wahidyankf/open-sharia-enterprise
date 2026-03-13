@@ -171,11 +171,11 @@ via `rhino-cli test-coverage validate` applied to the cloverage LCOV report from
 `rhino-cli test-coverage validate apps/demo-be-clojure-pedestal/coverage/lcov.info 90` — run as part
 of `test:quick`. Uses cloverage with `--lcov` output format.
 
-**`test:integration` caching**: Integration tests are NOT cacheable (`cache: false` in `nx.json`).
-Demo-be backends run integration tests inside Docker via `docker-compose.integration.yml` (PostgreSQL +
-test runner containers) — Docker builds may pull updated base images, and container execution is not
-tracked by Nx file-based caching. Other projects: `organiclever-web` (MSW), Go CLI apps (Godog + BDD
-features), `hugo-commons` (Godog + tmpdir mocks), `golang-commons` (Godog + mock closures).
+**`test:integration` caching**: Default `cache: false` in `nx.json`. Demo-be backends use
+docker-compose with real PostgreSQL — non-deterministic and must never be cached. Projects using
+in-process mocking only (MSW, Godog) override to `cache: true` in their `project.json`:
+`organiclever-web` (MSW), Go CLI apps (Godog + BDD features), `hugo-commons` (Godog + tmpdir mocks),
+`golang-commons` (Godog + mock closures).
 
 **Three-level testing standard**: Three rules determine mandatory test levels per project type:
 

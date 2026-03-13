@@ -57,7 +57,8 @@
       "options": {
         "command": "npx vitest run --project integration",
         "cwd": "{projectRoot}"
-      }
+      },
+      "cache": true
     },
     "lint": {
       "executor": "nx:run-commands",
