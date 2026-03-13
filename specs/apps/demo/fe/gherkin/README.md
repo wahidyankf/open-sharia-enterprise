@@ -39,7 +39,7 @@ as an 8th domain), but:
 - **be**: HTTP-semantic (GET, POST, status codes, response bodies)
 - **fe**: UI-semantic (clicks, types, sees, navigates, form submissions)
 
-Each `apps/demo-fe-{framework}/` (e.g., `demo-fe-react-nextjs`) consumes these specs, just as
+Each `apps/demo-fe-{lang}-{framework}/` (e.g., `demo-fe-ts-nextjs`) consumes these specs, just as
 `apps/demo-be-{lang}-{framework}/` consumes `specs/apps/demo/be/gherkin/`. Step definitions
 translate UI actions into component renders and API call verifications.
 
