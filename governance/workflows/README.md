@@ -85,6 +85,7 @@ All workflows support standard input parameters:
 | [AyoKoding Web By-Example Quality Gate](./ayokoding-web/ayokoding-web-by-example-quality-gate.md)                         | Validate by-example tutorial quality (95% coverage through 75-85 examples) and apply fixes iteratively until EXCELLENT status achieved                                                | apps-ayokoding-web-by-example-checker, apps-ayokoding-web-by-example-fixer                                                                                                                                                                                                                                             | Medium     |
 | [AyoKoding Web In-the-Field Quality Gate](./ayokoding-web/ayokoding-web-in-the-field-quality-gate.md)                     | Validate in-the-field production guide quality and apply fixes iteratively until EXCELLENT status achieved                                                                            | apps-ayokoding-web-in-the-field-checker, apps-ayokoding-web-in-the-field-fixer                                                                                                                                                                                                                                         | Medium     |
 | [Documentation Software Engineering Separation Quality Gate](./docs/docs-software-engineering-separation-quality-gate.md) | Validate software engineering documentation separation between OSE Platform style guides and AyoKoding educational content, apply fixes iteratively until ZERO findings               | docs-software-engineering-separation-checker, docs-software-engineering-separation-fixer                                                                                                                                                                                                                               | Medium     |
+| [Specs Validation](./specs/specs-validation.md)                                                                           | Validate specs/ directory for structural completeness, content accuracy, cross-spec consistency, and C4 diagram correctness, apply fixes iteratively until ZERO findings              | specs-checker, specs-fixer                                                                                                                                                                                                                                                                                             | Medium     |
 
 All _-quality-gate workflows follow the [_-check-fix Workflow Pattern](./meta/workflow-identifier.md#-check-fix-workflow-pattern) which fixes ALL findings (CRITICAL, HIGH, MEDIUM, LOW criticality levels) and iterates until ZERO findings remain.
 
@@ -106,6 +107,12 @@ Workflows for Hugo website content:
 - **ayokoding-facts**: Factual accuracy validation for ayokoding-web (planned - no workflow file yet)
 - **ayokoding-structure**: Navigation structure and weight management (planned - no workflow file yet)
 - **oseplatform-web-content**: oseplatform-web content (planned - no workflow file yet)
+
+### Specification Workflows
+
+Workflows for specification quality:
+
+- **specs**: Validate specs/ for structural completeness, content accuracy, cross-spec consistency, C4 diagrams
 
 ### Repository Governance Workflows
 
