@@ -16,6 +16,8 @@
     "lib/demo_be_exph_web/telemetry.ex",
     "lib/demo_be_exph_web/plugs/cors_plug.ex",
     "test/support/conn_case_integration.ex",
-    "test/support/data_case.ex"
+    "test/support/data_case.ex",
+    "test/support/data_case_integration.ex",
+    "test/support/integration_service_layer.ex"
   ]
 }
