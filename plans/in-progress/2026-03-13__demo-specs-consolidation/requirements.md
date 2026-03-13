@@ -152,6 +152,16 @@ Feature: Frontend path migration
     Given the consolidation is complete
     When I search the codebase for "specs/apps/demo-fe"
     Then no results are found outside of "plans/done/"
+
+  Scenario: FE gherkin specs accessible at new path
+    Given the consolidation is complete
+    Then the directory "specs/apps/demo/fe/gherkin/" exists
+    And it contains the same feature files as the old "specs/apps/demo-fe/gherkin/"
+
+  Scenario: FE C4 component diagram at new path
+    Given the consolidation is complete
+    Then "specs/apps/demo/c4/component-fe.md" exists
+    And it describes the frontend component architecture
 ```
 
 ### US-6: All CI Passes — Local and GitHub Actions

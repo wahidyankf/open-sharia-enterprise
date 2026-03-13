@@ -112,23 +112,31 @@ These files contain paths used by Nx to locate specs for `test:unit` and `test:i
 | ------------------------------------------------------------ | --------- | ------------------------- |
 | `apps/demo-be-fsharp-giraffe/Dockerfile.integration`         | absolute  | COPY specs path           |
 | `apps/demo-be-csharp-aspnetcore/Dockerfile.integration`      | absolute  | COPY specs path           |
+| `apps/demo-be-kotlin-ktor/Dockerfile.integration`            | absolute  | CMD mkdir/cp specs path   |
+| `apps/demo-be-ts-effect/Dockerfile.integration`              | absolute  | CMD cp specs path         |
 | `apps/demo-be-clojure-pedestal/Dockerfile.integration`       | absolute  | COPY/CMD specs path       |
 | `apps/demo-be-python-fastapi/docker-compose.integration.yml` | relative  | volume mount              |
 | `infra/dev/demo-be-*/docker-compose.yml`                     | relative  | volume mounts (~10 files) |
 
 ### Category 5: Documentation (LOW priority)
 
-| File                                                             | Notes                                   |
-| ---------------------------------------------------------------- | --------------------------------------- |
-| `CLAUDE.md`                                                      | Three-level testing standard references |
-| `apps/demo-be-*/README.md`                                       | ~8 backend app READMEs                  |
-| `apps/demo-be-e2e/README.md`                                     | E2E test suite README                   |
-| `governance/development/infra/bdd-spec-test-mapping.md`          | Spec mapping convention                 |
-| `governance/development/quality/three-level-testing-standard.md` | Testing standard                        |
-| `governance/development/infra/nx-targets.md`                     | Nx target docs                          |
-| `docs/explanation/.../ex-soen-aute-to-pl__bdd.md`                | BDD Playwright docs                     |
-| `specs/apps/demo/be/README.md`                                   | New — adapted from old demo-be README   |
-| `specs/apps/demo/fe/README.md`                                   | New — adapted from old demo-fe README   |
+| File                                                                                                   | Notes                                   |
+| ------------------------------------------------------------------------------------------------------ | --------------------------------------- |
+| `CLAUDE.md`                                                                                            | Three-level testing standard references |
+| `apps/demo-be-*/README.md`                                                                             | ~8 backend app READMEs                  |
+| `apps/demo-be-e2e/README.md`                                                                           | E2E test suite README                   |
+| `governance/development/infra/bdd-spec-test-mapping.md`                                                | Spec mapping convention                 |
+| `governance/development/quality/three-level-testing-standard.md`                                       | Testing standard                        |
+| `governance/development/infra/nx-targets.md`                                                           | Nx target docs                          |
+| `docs/explanation/software-engineering/automation-testing/tools/playwright/ex-soen-aute-to-pl__bdd.md` | BDD Playwright docs                     |
+| `governance/conventions/formatting/diagrams.md`                                                        | C4 example path references              |
+| `governance/workflows/specs/specs-validation.md`                                                       | Workflow example paths                  |
+| `specs/apps-labs/README.md`                                                                            | Cross-reference to demo specs           |
+| `.claude/agents/specs-checker.md`                                                                      | Example folder paths                    |
+| `.claude/agents/specs-maker.md`                                                                        | Example target paths                    |
+| `.claude/agents/specs-fixer.md`                                                                        | Example paths                           |
+| `specs/apps/demo/be/README.md`                                                                         | New — adapted from old demo-be README   |
+| `specs/apps/demo/fe/README.md`                                                                         | New — adapted from old demo-fe README   |
 
 ### Category 6: Historical Plans (LOW priority — update only if trivial)
 

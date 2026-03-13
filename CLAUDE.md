@@ -380,11 +380,11 @@ Plan mode for non-trivial tasks (3+ steps or architecture decisions), subagents 
 
 ## AI Agents
 
-**Content Creation**: docs-maker, docs-tutorial-maker, readme-maker, apps-ayokoding-web-general-maker, apps-ayokoding-web-by-example-maker, apps-ayokoding-web-in-the-field-maker, apps-ayokoding-web-structure-maker, apps-ayokoding-web-navigation-maker, apps-ayokoding-web-title-maker, apps-oseplatform-web-content-maker
+**Content Creation**: docs-maker, docs-tutorial-maker, readme-maker, specs-maker, apps-ayokoding-web-general-maker, apps-ayokoding-web-by-example-maker, apps-ayokoding-web-in-the-field-maker, apps-ayokoding-web-structure-maker, apps-ayokoding-web-navigation-maker, apps-ayokoding-web-title-maker, apps-oseplatform-web-content-maker
 
-**Validation**: docs-checker, docs-tutorial-checker, docs-link-general-checker, docs-software-engineering-separation-checker, readme-checker, apps-ayokoding-web-general-checker, apps-ayokoding-web-by-example-checker, apps-ayokoding-web-in-the-field-checker, apps-ayokoding-web-facts-checker, apps-ayokoding-web-link-checker, apps-ayokoding-web-structure-checker, apps-oseplatform-web-content-checker
+**Validation**: docs-checker, docs-tutorial-checker, docs-link-general-checker, docs-software-engineering-separation-checker, readme-checker, specs-checker, apps-ayokoding-web-general-checker, apps-ayokoding-web-by-example-checker, apps-ayokoding-web-in-the-field-checker, apps-ayokoding-web-facts-checker, apps-ayokoding-web-link-checker, apps-ayokoding-web-structure-checker, apps-oseplatform-web-content-checker
 
-**Fixing**: docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-fixer, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-in-the-field-fixer, apps-ayokoding-web-facts-fixer, apps-ayokoding-web-link-fixer, apps-ayokoding-web-structure-fixer, apps-oseplatform-web-content-fixer
+**Fixing**: docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-fixer, specs-fixer, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-in-the-field-fixer, apps-ayokoding-web-facts-fixer, apps-ayokoding-web-link-fixer, apps-ayokoding-web-structure-fixer, apps-oseplatform-web-content-fixer
 
 **Planning**: plan-maker, plan-checker, plan-executor, plan-execution-checker, plan-fixer
 

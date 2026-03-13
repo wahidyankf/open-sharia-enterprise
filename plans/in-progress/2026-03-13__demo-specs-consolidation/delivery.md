@@ -86,10 +86,12 @@ radius contained to `specs/apps/demo/` only.
 - [ ] `apps/demo-be-elixir-phoenix/config/test.exs`
 - [ ] `apps/demo-be-elixir-phoenix/config/integration.exs`
 
-### Docker Configuration (~15 files)
+### Docker Configuration (~16 files)
 
 - [ ] `apps/demo-be-fsharp-giraffe/Dockerfile.integration`
 - [ ] `apps/demo-be-csharp-aspnetcore/Dockerfile.integration`
+- [ ] `apps/demo-be-kotlin-ktor/Dockerfile.integration`
+- [ ] `apps/demo-be-ts-effect/Dockerfile.integration`
 - [ ] `apps/demo-be-clojure-pedestal/Dockerfile.integration`
 - [ ] `apps/demo-be-python-fastapi/docker-compose.integration.yml`
 - [ ] `infra/dev/demo-be-java-springboot/docker-compose.yml`
@@ -125,7 +127,14 @@ radius contained to `specs/apps/demo/` only.
 - [ ] `governance/development/infra/bdd-spec-test-mapping.md`
 - [ ] `governance/development/quality/three-level-testing-standard.md`
 - [ ] `governance/development/infra/nx-targets.md`
-- [ ] `docs/explanation/.../ex-soen-aute-to-pl__bdd.md`
+- [ ] `docs/explanation/software-engineering/automation-testing/tools/playwright/ex-soen-aute-to-pl__bdd.md`
+- [ ] `governance/conventions/formatting/diagrams.md`
+- [ ] `governance/workflows/specs/specs-validation.md` (update example paths)
+- [ ] `specs/apps-labs/README.md`
+- [ ] `.claude/agents/specs-checker.md` (update example folder paths)
+- [ ] `.claude/agents/specs-maker.md` (update example target paths)
+- [ ] `.claude/agents/specs-fixer.md` (update example paths)
+- [ ] Run `npm run sync:claude-to-opencode` to sync `.opencode/agent/specs-*.md`
 
 ## Phase 7: Historical Plans (LOW priority)
 
@@ -134,12 +143,9 @@ radius contained to `specs/apps/demo/` only.
 
 ## Phase 8: Stale Reference Check
 
-- [ ] `grep -r "specs/apps/demo-be" . --include='*.json' --include='*.xml' --include='*.yml'
---include='*.yaml' --include='*.ts' --include='*.js' --include='*.go' --include='*.rs'
---include='*.py' --include='*.exs' --include='*.ex' --include='*.fs' --include='*.cs'
---include='*.kts' --include='*.clj' --include='*.edn'` — returns nothing
-- [ ] `grep -r "specs/apps/demo-fe" . --include='*.json' --include='*.ts'` — returns nothing
-- [ ] Verify no stale references in markdown files (except `plans/done/` historical records)
+- [ ] `grep -r "specs/apps/demo-be" . --include='*.json' --include='*.xml' --include='*.yml' --include='*.yaml' --include='*.ts' --include='*.js' --include='*.go' --include='*.rs' --include='*.py' --include='*.exs' --include='*.ex' --include='*.fs' --include='*.cs' --include='*.kts' --include='*.clj' --include='*.edn' --include='*.md' --exclude-dir=node_modules --exclude-dir=.nx --exclude-dir=dist --exclude-dir=target --exclude-dir=build --exclude-dir=.features-gen --exclude-dir=generated-reports` — returns nothing (except `plans/done/`)
+- [ ] `grep -r "specs/apps/demo-fe" . --include='*.json' --include='*.ts' --include='*.md' --include='*.yml' --include='*.yaml' --exclude-dir=node_modules --exclude-dir=.nx --exclude-dir=dist --exclude-dir=target --exclude-dir=build --exclude-dir=.features-gen --exclude-dir=generated-reports` — returns nothing (except `plans/done/`)
+- [ ] Verify no stale references remain outside `plans/done/` historical records
 
 ## Phase 9: Local Validation — Lint and Typecheck
 

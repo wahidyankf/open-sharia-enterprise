@@ -88,7 +88,7 @@ the validated scope.
 
 **Source Audit**: {audit-report-path}
 **Folders scoped**: {list from audit report}
-**Date**: YYYY-MM-DD HH:MM (UTC+7)
+**Timestamp**: YYYY-MM-DD--HH-MM UTC+7
 **Mode**: {mode}
 
 ## Summary
@@ -119,7 +119,7 @@ the validated scope.
 4. **Never modify .feature scenario content** — only structural fixes (file names, READMEs)
 5. **Preserve git history** — use `git mv` for renames
 6. **Skip uncertain fixes** — if confidence is MEDIUM, log and skip unless mode is strict/ocd
-7. **FALSE_POSITIVE carry-forward** — maintain in `generated-reports/.known-false-positives-specs.md`
+7. **FALSE_POSITIVE carry-forward** — maintain in `generated-reports/.known-false-positives.md`
 
 ## What This Agent Does NOT Do
 
@@ -135,3 +135,11 @@ the validated scope.
 - **Automation Over Manual**: Automated re-validation and application
 - **Root Cause Orientation**: Fixes root cause (README accuracy) not symptoms
 - **Simplicity Over Complexity**: Clear fix/skip/fail categorization
+
+## Reference Documentation
+
+- [AGENTS.md](../../AGENTS.md) — OpenCode agent documentation
+- [AI Agents Convention](../../governance/development/agents/agent-workflow-orchestration.md) — Agent workflow orchestration
+- [Maker-Checker-Fixer Pattern](../../governance/development/pattern/maker-checker-fixer.md) — Three-stage quality workflow
+- [Specs Validation Workflow](../../governance/workflows/specs/specs-validation.md) — Orchestrated validation workflow
+- Related agents: [specs-checker](./specs-checker.md), [specs-maker](./specs-maker.md)

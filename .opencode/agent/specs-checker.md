@@ -183,7 +183,7 @@ Use the standard audit report format:
 - `specs/apps/demo-be`
 - `specs/apps/demo-fe`
 
-**Date**: YYYY-MM-DD HH:MM (UTC+7)
+**Timestamp**: YYYY-MM-DD--HH-MM UTC+7
 **UUID Chain**: {uuid}
 
 ## Summary
@@ -235,3 +235,11 @@ Use the standard audit report format:
 - **Automation Over Manual**: Fully automated validation with progressive reporting
 - **Simplicity Over Complexity**: Seven clear validation categories
 - **Accessibility First**: Validates C4 diagrams use accessible color palette
+
+## Reference Documentation
+
+- [AGENTS.md](../../AGENTS.md) — OpenCode agent documentation
+- [AI Agents Convention](../../governance/development/agents/agent-workflow-orchestration.md) — Agent workflow orchestration
+- [Maker-Checker-Fixer Pattern](../../governance/development/pattern/maker-checker-fixer.md) — Three-stage quality workflow
+- [Specs Validation Workflow](../../governance/workflows/specs/specs-validation.md) — Orchestrated validation workflow
+- Related agents: [specs-fixer](./specs-fixer.md), [specs-maker](./specs-maker.md)
