@@ -106,9 +106,6 @@ jobs:
       - name: test:quick (all projects)
         run: npx nx run-many -t test:quick --all
 
-      - name: Generate JaCoCo XML report (demo-be-java-springboot)
-        run: cd apps/demo-be-java-springboot && mvn jacoco:report -Pintegration
-
       - name: Upload coverage — rhino-cli
         uses: codecov/codecov-action@v5
         with:
@@ -217,7 +214,7 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: apps/demo-be-java-vertx/target/site/jacoco-integration/jacoco.xml
+          files: apps/demo-be-java-vertx/target/site/jacoco/jacoco.xml
           flags: demo-be-java-vertx
           fail_ci_if_error: false
 

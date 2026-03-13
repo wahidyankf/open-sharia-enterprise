@@ -248,31 +248,30 @@ No code changes expected for most. Verify compliance, adapt where needed.
 
 ## Phase 4: CI Workflows and README Badges
 
-- [ ] **4.1 Update `main-ci.yml`**
-  - [ ] Remove `mvn jacoco:report -Pintegration` step (line 110) — no longer needed
-  - [ ] Update each coverage upload `files:` path to point to unit test coverage output (11 backends — paths depend on per-backend configuration in Phase 2)
-  - [ ] Verify no other steps depend on integration test output
-  - [ ] Commit: `ci: update main-ci.yml coverage paths for unit test output` → push
-- [ ] **4.2 Create `integration-ci.yml`**
-  - [ ] Create workflow file with cron schedule: `0 21 * * *`, `0 3 * * *`, `0 9 * * *`, `0 15 * * *` (WIB 04, 10, 16, 22)
-  - [ ] Add `workflow_dispatch` trigger for manual runs
-  - [ ] Add all language runtime setup steps (same as `main-ci.yml`: Volta, Go, Java 21+25, Elixir, .NET, Python, uv, Rust, Hugo, Clojure CLI, clj-kondo)
-  - [ ] Add `npm ci` and language-specific dependency install steps
-  - [ ] Run `npx nx run-many -t test:integration --all`
-  - [ ] Commit: `ci: add integration-ci.yml scheduled workflow (4x daily)` → push
-  - [ ] Trigger manually to verify
-- [ ] **4.3 Verify `pr-quality-gate.yml`**
-  - [ ] Confirm it runs `nx affected -t typecheck`, `nx affected -t lint`, `nx affected -t test:quick` as separate steps
-  - [ ] Confirm no changes needed (already compliant)
-- [ ] **4.4 Verify E2E workflows (12 files)**
-  - [ ] Confirm all `e2e-demo-be-*.yml` and `e2e-organiclever-web.yml` use cron `0 23 * * *` and `0 11 * * *` (WIB 06/18)
-  - [ ] Confirm no changes needed (already compliant)
-- [ ] **4.5 Update root `README.md`**
-  - [ ] Add **Integration** badge column to CI & Test Coverage table for demo-be backends (from `integration-ci.yml`)
-  - [ ] Add Integration badge row for `organiclever-web` and Go CLI apps
-  - [ ] Update table headers: Integration (4x daily) | E2E (2x daily) | Coverage
-  - [ ] Add description text explaining CI schedule (integration 4x daily, E2E 2x daily, test:quick on every push/PR)
-  - [ ] Commit: `docs: add integration CI badges and update README test coverage section` → push
+- [x] **4.1 Update `main-ci.yml`**
+  - [x] Remove `mvn jacoco:report -Pintegration` step (line 110) — no longer needed
+  - [x] Update each coverage upload `files:` path to point to unit test coverage output (11 backends — paths depend on per-backend configuration in Phase 2)
+  - [x] Verify no other steps depend on integration test output
+  - [x] Fix `demo-be-java-vertx` coverage path from `jacoco-integration` to `jacoco`
+- [x] **4.2 Create `integration-ci.yml`**
+  - [x] Create workflow file with cron schedule: `0 21 * * *`, `0 3 * * *`, `0 9 * * *`, `0 15 * * *` (WIB 04, 10, 16, 22)
+  - [x] Add `workflow_dispatch` trigger for manual runs
+  - [x] Add all language runtime setup steps (same as `main-ci.yml`: Volta, Go, Java 21+25, Elixir, .NET, Python, uv, Rust, Hugo, Clojure CLI)
+  - [x] Add `npm ci` and language-specific dependency install steps
+  - [x] Run `npx nx run-many -t test:integration --all`
+- [x] **4.3 Verify `pr-quality-gate.yml`**
+  - [x] Confirm it runs `nx affected -t typecheck`, `nx affected -t lint`, `nx affected -t test:quick` as separate steps
+  - [x] Confirm no changes needed (already compliant)
+- [x] **4.4 Verify E2E workflows (12 files)**
+  - [x] Confirm all `e2e-demo-be-*.yml` and `e2e-organiclever-web.yml` use cron `0 23 * * *` and `0 11 * * *` (WIB 06/18)
+  - [x] Confirm no changes needed (already compliant)
+- [x] **4.5 Update root `README.md`**
+  - [x] Add **Integration** badge column to CI & Test Coverage table for demo-be backends (from `integration-ci.yml`)
+  - [x] Add Integration badge row for `organiclever-web` and Go CLI apps
+  - [x] Update table headers: Integration (4x daily) | E2E (2x daily) | Coverage
+  - [x] Add description text explaining CI schedule (integration 4x daily, E2E 2x daily, test:quick on every push/PR)
+  - [x] Add Integration CI badge at top level alongside Main CI badge
+  - [x] Commit: `ci: update CI workflows and README badges for testing standardization` → push
 
 ## Phase 5: Final Verification
 
