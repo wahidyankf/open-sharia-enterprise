@@ -10,6 +10,13 @@
         "cwd": "libs/golang-commons"
       }
     },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 go test ./... -count=1",
+        "cwd": "libs/golang-commons"
+      }
+    },
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {

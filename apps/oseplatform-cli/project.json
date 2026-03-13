@@ -19,6 +19,13 @@
         "cwd": "apps/oseplatform-cli"
       }
     },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 go test ./... -count=1",
+        "cwd": "apps/oseplatform-cli"
+      }
+    },
     "run": {
       "executor": "nx:run-commands",
       "options": {

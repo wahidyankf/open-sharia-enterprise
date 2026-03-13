@@ -10,6 +10,13 @@
         "cwd": "libs/hugo-commons"
       }
     },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 go test ./... -count=1",
+        "cwd": "libs/hugo-commons"
+      }
+    },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
