@@ -143,7 +143,7 @@ Annotate every entity with `@EntityListeners(AuditingEntityListener.class)`. Use
 
 ```java
 @NullMarked
-package com.organiclever.be.auth.model;
+package com.demobejasb.auth.model;
 
 import jakarta.persistence.*;
 import org.jspecify.annotations.Nullable;

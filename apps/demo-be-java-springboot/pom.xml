@@ -12,7 +12,7 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.organiclever</groupId>
+    <groupId>com.demobejasb</groupId>
     <artifactId>demo-be-java-springboot</artifactId>
     <version>1.0.0</version>
     <name>demo-be-java-springboot</name>
@@ -417,7 +417,7 @@
                                 <arg>-XDcompilePolicy=simple</arg>
                                 <arg>--should-stop=ifError=FLOW</arg>
                                 <!-- Enable only NullAway; JSpecifyMode requires JDK 22+ (satisfied by Java 25) -->
-                                <arg>-Xplugin:ErrorProne -XepDisableAllChecks -Xep:NullAway:ERROR -XepOpt:NullAway:AnnotatedPackages=com.organiclever -XepOpt:NullAway:JSpecifyMode=true</arg>
+                                <arg>-Xplugin:ErrorProne -XepDisableAllChecks -Xep:NullAway:ERROR -XepOpt:NullAway:AnnotatedPackages=com.demobejasb -XepOpt:NullAway:JSpecifyMode=true</arg>
                             </compilerArgs>
                             <annotationProcessorPaths>
                                 <path>

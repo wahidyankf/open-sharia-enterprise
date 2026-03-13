@@ -62,17 +62,17 @@ Create the `User` entity, `UserRepository`, and all associated packages.
 
 ### Tasks
 
-- [x] 2.1 Create package `com.organiclever.be.auth.model` with `package-info.java` (`@NullMarked`)
+- [x] 2.1 Create package `com.demobejasb.auth.model` with `package-info.java` (`@NullMarked`)
 - [x] 2.2 Create `User.java` entity with fields: `id (UUID)`, `username`, `passwordHash`, and all 6 audit trail fields (`createdAt`, `createdBy`, `updatedAt`, `updatedBy`, `@Nullable deletedAt`, `@Nullable deletedBy`); annotate with `@Entity`, `@Table(name="users")`, `@EntityListeners(AuditingEntityListener.class)`, `@SQLRestriction("deleted_at IS NULL")` (Hibernate 7 replaced `@Where` with `@SQLRestriction`); use `@CreatedDate`, `@CreatedBy`, `@LastModifiedDate`, `@LastModifiedBy` on audit fields; add a `protected User()` no-arg constructor (required by JPA) and a `public User(String username, String passwordHash)` constructor; no public setters
-- [x] 2.3 Create package `com.organiclever.be.auth.repository` with `package-info.java`
+- [x] 2.3 Create package `com.demobejasb.auth.repository` with `package-info.java`
 - [x] 2.4 Create `UserRepository.java` extending `JpaRepository<User, UUID>` with methods: `Optional<User> findByUsername(String username)` and `boolean existsByUsername(String username)`
-- [x] 2.5 Create package `com.organiclever.be.auth.dto` with `package-info.java`
+- [x] 2.5 Create package `com.demobejasb.auth.dto` with `package-info.java`
 - [x] 2.6 Create `RegisterRequest.java` record with: `username` annotated `@NotBlank @Size(min=5, max=50) @Pattern(regexp="^[a-zA-Z0-9_]{5,50}$")` (alphanumeric + underscore only, min 5 chars); `password` annotated `@NotBlank @Size(min=8, max=128) @Pattern(regexp="^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\,.<>/?]).{8,128}$")` (must contain uppercase, lowercase, digit, special character)
 - [x] 2.7 Create `LoginRequest.java` record with `@NotBlank String username` and `@NotBlank String password`
 - [x] 2.8 Create `RegisterResponse.java` record with `UUID id`, `String username`, `Instant createdAt`
 - [x] 2.9 Create `AuthResponse.java` record with `String token`, `String type`; add static factory `bearer(String token)`
-- [x] 2.10 Create package `com.organiclever.be.config` with `package-info.java`
-- [x] 2.11 Create `JpaAuditingConfig.java` in `com.organiclever.be.config` annotated with `@Configuration @EnableJpaAuditing(auditorAwareRef = "auditorProvider")`; define an `AuditorAware<String> auditorProvider()` lambda bean that reads `auth.getName()` from `SecurityContextHolder` and falls back to `"system"` for unauthenticated/anonymous users; use `"anonymousUser".equals(auth.getPrincipal())` (constant first, NPE-safe)
+- [x] 2.10 Create package `com.demobejasb.config` with `package-info.java`
+- [x] 2.11 Create `JpaAuditingConfig.java` in `com.demobejasb.config` annotated with `@Configuration @EnableJpaAuditing(auditorAwareRef = "auditorProvider")`; define an `AuditorAware<String> auditorProvider()` lambda bean that reads `auth.getName()` from `SecurityContextHolder` and falls back to `"system"` for unauthenticated/anonymous users; use `"anonymousUser".equals(auth.getPrincipal())` (constant first, NPE-safe)
 - [x] 2.12 Verify `mvn compile -q` succeeds
 - [x] 2.13 Commit: `feat(organiclever-be): add User domain model and repository`
 
@@ -93,7 +93,7 @@ Add `SecurityConfig`, `JwtUtil`, `JwtAuthFilter`, and custom exceptions.
 
 ### Tasks
 
-- [x] 3.1 Create package `com.organiclever.be.security` with `package-info.java`
+- [x] 3.1 Create package `com.demobejasb.security` with `package-info.java`
 - [x] 3.2 Create `JwtUtil.java` with constructor-injected `@Value("${app.jwt.secret}")` and `@Value("${app.jwt.expiration-ms:86400000}")`; implement `generateToken(String username)`, `extractUsername(String token)`, and `isTokenValid(String token)` using JJWT 0.12.x API (`Keys.hmacShaKeyFor`, `Jwts.builder()`, `Jwts.parser().verifyWith()`)
 - [x] 3.3 Create `JwtAuthFilter.java` extending `OncePerRequestFilter`; inject `JwtUtil` and `UserDetailsService`; extract `Bearer` token from `Authorization` header; if valid, load `UserDetails`, create `UsernamePasswordAuthenticationToken`, set in `SecurityContextHolder`
 - [x] 3.4 Create `SecurityConfig.java` annotated with `@Configuration @EnableWebSecurity`; define `SecurityFilterChain` bean: disable CSRF, stateless sessions, permit `/api/v1/auth/**` and `/actuator/**`, require auth for all other requests, add `JwtAuthFilter` before `UsernamePasswordAuthenticationFilter`
@@ -101,10 +101,10 @@ Add `SecurityConfig`, `JwtUtil`, `JwtAuthFilter`, and custom exceptions.
 - [x] 3.6 Add `PasswordEncoder` bean (`BCryptPasswordEncoder(10)`) inside `SecurityConfig`
 - [x] 3.7 Add `AuthenticationManager` bean inside `SecurityConfig` delegating to `AuthenticationConfiguration`
 - [x] 3.8 Remove or convert `CorsConfig.java` (the existing `WebMvcConfigurer`): deleted as CORS is fully handled in `SecurityConfig`
-- [x] 3.9 Create package `com.organiclever.be.auth.service` with `package-info.java`
-- [x] 3.10 Create `UsernameAlreadyExistsException.java` in `com.organiclever.be.auth.service` extending `Exception` (not `RuntimeException`); checked exception makes the error path explicit in the service and controller signatures
-- [x] 3.11 Create `InvalidCredentialsException.java` in `com.organiclever.be.auth.service` extending `Exception` (not `RuntimeException`); same reasoning as above
-- [x] 3.12 Create `GlobalExceptionHandler.java` in `com.organiclever.be.config`: handle `UsernameAlreadyExistsException` → 409, handle `InvalidCredentialsException` → 401, each returning `Map.of("message", ex.getMessage())`
+- [x] 3.9 Create package `com.demobejasb.auth.service` with `package-info.java`
+- [x] 3.10 Create `UsernameAlreadyExistsException.java` in `com.demobejasb.auth.service` extending `Exception` (not `RuntimeException`); checked exception makes the error path explicit in the service and controller signatures
+- [x] 3.11 Create `InvalidCredentialsException.java` in `com.demobejasb.auth.service` extending `Exception` (not `RuntimeException`); same reasoning as above
+- [x] 3.12 Create `GlobalExceptionHandler.java` in `com.demobejasb.config`: handle `UsernameAlreadyExistsException` → 409, handle `InvalidCredentialsException` → 401, each returning `Map.of("message", ex.getMessage())`
 - [x] 3.13 Verify `mvn compile -q` succeeds
 - [x] 3.14 Commit: `feat(organiclever-be): add Spring Security and JWT infrastructure`
 
@@ -126,9 +126,9 @@ Implement `AuthService`, `UserDetailsServiceImpl`, and `AuthController`.
 
 ### Tasks
 
-- [x] 4.1 Create `UserDetailsServiceImpl.java` in `com.organiclever.be.auth.service` implementing `UserDetailsService`; inject `UserRepository`; implement `loadUserByUsername` to look up user and return `User.withUsername().password().roles("USER").build()`; throw `UsernameNotFoundException` when not found
-- [x] 4.2 Create `AuthService.java` in `com.organiclever.be.auth.service`; inject `UserRepository`, `PasswordEncoder`, `JwtUtil`; implement `register(RegisterRequest) throws UsernameAlreadyExistsException` checking `existsByUsername`, saving with `userRepository.save(user)`, returning `new RegisterResponse(saved.getId(), saved.getUsername(), saved.getCreatedAt())`; implement `login(LoginRequest) throws InvalidCredentialsException` using `findByUsername`, verifying with `passwordEncoder.matches(request.password(), user.getPasswordHash())`, returning `AuthResponse.bearer(token)`; use `InvalidCredentialsException::new` method reference with `orElseThrow`
-- [x] 4.3 Create package `com.organiclever.be.auth.controller` with `package-info.java`
+- [x] 4.1 Create `UserDetailsServiceImpl.java` in `com.demobejasb.auth.service` implementing `UserDetailsService`; inject `UserRepository`; implement `loadUserByUsername` to look up user and return `User.withUsername().password().roles("USER").build()`; throw `UsernameNotFoundException` when not found
+- [x] 4.2 Create `AuthService.java` in `com.demobejasb.auth.service`; inject `UserRepository`, `PasswordEncoder`, `JwtUtil`; implement `register(RegisterRequest) throws UsernameAlreadyExistsException` checking `existsByUsername`, saving with `userRepository.save(user)`, returning `new RegisterResponse(saved.getId(), saved.getUsername(), saved.getCreatedAt())`; implement `login(LoginRequest) throws InvalidCredentialsException` using `findByUsername`, verifying with `passwordEncoder.matches(request.password(), user.getPasswordHash())`, returning `AuthResponse.bearer(token)`; use `InvalidCredentialsException::new` method reference with `orElseThrow`
+- [x] 4.3 Create package `com.demobejasb.auth.controller` with `package-info.java`
 - [x] 4.4 Create `AuthController.java` with `@RestController @RequestMapping("/api/v1/auth")`; inject `AuthService`; implement `POST /register throws UsernameAlreadyExistsException` returning 201 with `RegisterResponse`; implement `POST /login throws InvalidCredentialsException` returning 200 with `AuthResponse`; annotate request bodies with `@Valid`; Spring's `@ExceptionHandler` in `GlobalExceptionHandler` will catch the declared checked exceptions
 - [x] 4.5 Verify `mvn compile -q` succeeds
 - [x] 4.6 Run integration tests to check for regressions: `mvn test -P integration -q`; hello and health scenarios pass; CORS test fails because old MockMvc is built without springSecurity() - this will be fixed in Phase 5 with the new runner architecture; `OrganicLeverApplicationTest` fixed by adding `@ActiveProfiles("test")`; hello-endpoint.feature updated to use whitelisted origin port 3200
@@ -172,7 +172,7 @@ Create Gherkin feature files and Cucumber step definitions for all auth scenario
   - **Implementation Notes**: Created with @Component @Scope("cucumber-glue") as instructed; ResponseStore and TokenStore are shared state beans (not glue step classes), so @Component is correct for them
   - **Date**: 2026-03-09
   - **Status**: Completed
-- [x] 5.7 Add `@Scope("cucumber-glue")` to `ResponseStore.java` in `com.organiclever.be.integration` (note: this file lives in the `integration` package, not `integration.steps`)
+- [x] 5.7 Add `@Scope("cucumber-glue")` to `ResponseStore.java` in `com.demobejasb.integration` (note: this file lives in the `integration` package, not `integration.steps`)
   - **Implementation Notes**: Added @Component @Scope("cucumber-glue") to ResponseStore
   - **Date**: 2026-03-09
   - **Status**: Completed
@@ -184,19 +184,19 @@ Create Gherkin feature files and Cucumber step definitions for all auth scenario
   - **Implementation Notes**: Added @Scope("cucumber-glue") only (no @Component — Cucumber 7 rejects it on glue classes); transaction rollback pattern implemented
   - **Date**: 2026-03-09
   - **Status**: Completed
-- [x] 5.10 Create `BaseCucumberContextConfig.java` (abstract, no `@CucumberContextConfiguration`) in `com.organiclever.be.integration.steps`; define `@Bean MockMvc mockMvc()` applying `SecurityMockMvcConfigurer.springSecurity()` (see tech-docs)
+- [x] 5.10 Create `BaseCucumberContextConfig.java` (abstract, no `@CucumberContextConfiguration`) in `com.demobejasb.integration.steps`; define `@Bean MockMvc mockMvc()` applying `SecurityMockMvcConfigurer.springSecurity()` (see tech-docs)
   - **Implementation Notes**: Created abstract base; MockMvc bean moved to separate MockMvcConfig.java @TestConfiguration (Spring Boot 4 forbids @Bean in test classes that extend context configs); imports MockMvcConfig; uses SecurityMockMvcConfigurers.springSecurity() (plural class name)
   - **Date**: 2026-03-09
   - **Status**: Completed
-- [x] 5.11 Create subpackage `com.organiclever.be.integration.registration` with `package-info.java`; create `RegistrationContextConfig.java` (`@CucumberContextConfiguration @SpringBootTest(MOCK) @ActiveProfiles("test") @TestPropertySource(url=testdb_registration)` extending `BaseCucumberContextConfig`); create `RegistrationIT.java` (`@Suite @IncludeEngines("cucumber")` selecting `auth/register.feature` via `@SelectClasspathResource("auth/register.feature")`, glue = registration + steps packages)
+- [x] 5.11 Create subpackage `com.demobejasb.integration.registration` with `package-info.java`; create `RegistrationContextConfig.java` (`@CucumberContextConfiguration @SpringBootTest(MOCK) @ActiveProfiles("test") @TestPropertySource(url=testdb_registration)` extending `BaseCucumberContextConfig`); create `RegistrationIT.java` (`@Suite @IncludeEngines("cucumber")` selecting `auth/register.feature` via `@SelectClasspathResource("auth/register.feature")`, glue = registration + steps packages)
   - **Implementation Notes**: Created; datasource URL set to testdb_registration for isolation
   - **Date**: 2026-03-09
   - **Status**: Completed
-- [x] 5.12 Create subpackage `com.organiclever.be.integration.login` with `package-info.java`; create `LoginContextConfig.java` (url=`testdb_login`) and `LoginIT.java` (selects `auth/login.feature` via `@SelectClasspathResource("auth/login.feature")`, glue = login + steps)
+- [x] 5.12 Create subpackage `com.demobejasb.integration.login` with `package-info.java`; create `LoginContextConfig.java` (url=`testdb_login`) and `LoginIT.java` (selects `auth/login.feature` via `@SelectClasspathResource("auth/login.feature")`, glue = login + steps)
   - **Implementation Notes**: Created; datasource URL set to testdb_login
   - **Date**: 2026-03-09
   - **Status**: Completed
-- [x] 5.13 Create subpackage `com.organiclever.be.integration.jwtprotected` with `package-info.java`; create `JwtProtectedContextConfig.java` (url=`testdb_jwt`) and `JwtProtectedIT.java` (selects `auth/jwt-protection.feature` via `@SelectClasspathResource("auth/jwt-protection.feature")`, glue = jwtprotected + steps)
+- [x] 5.13 Create subpackage `com.demobejasb.integration.jwtprotected` with `package-info.java`; create `JwtProtectedContextConfig.java` (url=`testdb_jwt`) and `JwtProtectedIT.java` (selects `auth/jwt-protection.feature` via `@SelectClasspathResource("auth/jwt-protection.feature")`, glue = jwtprotected + steps)
   - **Implementation Notes**: Created; datasource URL set to testdb_jwt
   - **Date**: 2026-03-09
   - **Status**: Completed

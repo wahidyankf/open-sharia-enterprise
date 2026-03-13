@@ -44,24 +44,24 @@ All new packages follow the existing convention: annotated with `@NullMarked` in
 
 | Package                                        | Purpose                                                                                                                  |
 | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `com.organiclever.be.auth.controller`          | `AuthController` - REST endpoints                                                                                        |
-| `com.organiclever.be.auth.service`             | `AuthService`, `UserDetailsServiceImpl`, `UsernameAlreadyExistsException`, `InvalidCredentialsException`                 |
-| `com.organiclever.be.auth.repository`          | `UserRepository` (Spring Data JPA)                                                                                       |
-| `com.organiclever.be.auth.model`               | `User` JPA entity                                                                                                        |
-| `com.organiclever.be.auth.dto`                 | `RegisterRequest`, `LoginRequest`, `RegisterResponse`, `AuthResponse`                                                    |
-| `com.organiclever.be.security`                 | `JwtUtil`, `JwtAuthFilter`, `SecurityConfig`                                                                             |
-| `com.organiclever.be.config`                   | `JpaAuditingConfig`, `GlobalExceptionHandler`                                                                            |
-| `com.organiclever.be.integration`              | `ResponseStore` (existing; updated to add `@Scope("cucumber-glue")`)                                                     |
-| `com.organiclever.be.integration.steps`        | `AuthSteps`, `CommonSteps` (updated), `HelloSteps`, `HealthSteps`, `TokenStore`, `BaseCucumberContextConfig` (test-only) |
-| `com.organiclever.be.integration.registration` | `RegistrationContextConfig`, `RegistrationIT` (test-only; runs `register.feature`)                                       |
-| `com.organiclever.be.integration.login`        | `LoginContextConfig`, `LoginIT` (test-only; runs `login.feature`)                                                        |
-| `com.organiclever.be.integration.jwtprotected` | `JwtProtectedContextConfig`, `JwtProtectedIT` (test-only; runs `jwt-protection.feature`)                                 |
+| `com.demobejasb.auth.controller`          | `AuthController` - REST endpoints                                                                                        |
+| `com.demobejasb.auth.service`             | `AuthService`, `UserDetailsServiceImpl`, `UsernameAlreadyExistsException`, `InvalidCredentialsException`                 |
+| `com.demobejasb.auth.repository`          | `UserRepository` (Spring Data JPA)                                                                                       |
+| `com.demobejasb.auth.model`               | `User` JPA entity                                                                                                        |
+| `com.demobejasb.auth.dto`                 | `RegisterRequest`, `LoginRequest`, `RegisterResponse`, `AuthResponse`                                                    |
+| `com.demobejasb.security`                 | `JwtUtil`, `JwtAuthFilter`, `SecurityConfig`                                                                             |
+| `com.demobejasb.config`                   | `JpaAuditingConfig`, `GlobalExceptionHandler`                                                                            |
+| `com.demobejasb.integration`              | `ResponseStore` (existing; updated to add `@Scope("cucumber-glue")`)                                                     |
+| `com.demobejasb.integration.steps`        | `AuthSteps`, `CommonSteps` (updated), `HelloSteps`, `HealthSteps`, `TokenStore`, `BaseCucumberContextConfig` (test-only) |
+| `com.demobejasb.integration.registration` | `RegistrationContextConfig`, `RegistrationIT` (test-only; runs `register.feature`)                                       |
+| `com.demobejasb.integration.login`        | `LoginContextConfig`, `LoginIT` (test-only; runs `login.feature`)                                                        |
+| `com.demobejasb.integration.jwtprotected` | `JwtProtectedContextConfig`, `JwtProtectedIT` (test-only; runs `jwt-protection.feature`)                                 |
 
 ### package-info.java template
 
 ```java
 @NullMarked
-package com.organiclever.be.auth.controller;
+package com.demobejasb.auth.controller;
 
 import org.jspecify.annotations.NullMarked;
 ```
@@ -160,7 +160,7 @@ public class User {
 ### JpaAuditingConfig
 
 Enables Spring Data JPA Auditing and supplies the `created_by` / `updated_by` values.
-Place in `com.organiclever.be.config`:
+Place in `com.demobejasb.config`:
 
 ```java
 @Configuration
@@ -393,14 +393,14 @@ public class AuthController {
 ### Custom Exceptions
 
 ```java
-// UsernameAlreadyExistsException.java (in com.organiclever.be.auth.service)
+// UsernameAlreadyExistsException.java (in com.demobejasb.auth.service)
 public class UsernameAlreadyExistsException extends Exception {
     public UsernameAlreadyExistsException(String username) {
         super("Username already exists: " + username);
     }
 }
 
-// InvalidCredentialsException.java (in com.organiclever.be.auth.service)
+// InvalidCredentialsException.java (in com.demobejasb.auth.service)
 public class InvalidCredentialsException extends Exception {
     public InvalidCredentialsException() {
         super("Invalid username or password");
@@ -408,7 +408,7 @@ public class InvalidCredentialsException extends Exception {
 }
 ```
 
-### GlobalExceptionHandler (in com.organiclever.be.config)
+### GlobalExceptionHandler (in com.demobejasb.config)
 
 ```java
 @RestControllerAdvice
@@ -910,7 +910,7 @@ Running all three feature files in parallel requires **separate Spring contexts 
 each backed by a **distinct named H2 database**. The architecture has three layers:
 
 **Layer 1 — Shared abstract base** (`BaseCucumberContextConfig.java` in
-`com.organiclever.be.integration.steps`):
+`com.demobejasb.integration.steps`):
 
 ```java
 // Not annotated with @CucumberContextConfiguration — only the concrete subclasses are.
@@ -941,7 +941,7 @@ prevents unique-constraint conflicts between parallel features that use the same
 (e.g., `"alice"` appears in all three features):
 
 ```java
-// RegistrationContextConfig.java — in com.organiclever.be.integration.registration
+// RegistrationContextConfig.java — in com.demobejasb.integration.registration
 @CucumberContextConfiguration
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @ActiveProfiles("test")
@@ -954,7 +954,7 @@ public class RegistrationContextConfig extends BaseCucumberContextConfig {}
 ```
 
 ```java
-// LoginContextConfig.java — in com.organiclever.be.integration.login
+// LoginContextConfig.java — in com.demobejasb.integration.login
 @CucumberContextConfiguration
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @ActiveProfiles("test")
@@ -967,7 +967,7 @@ public class LoginContextConfig extends BaseCucumberContextConfig {}
 ```
 
 ```java
-// JwtProtectedContextConfig.java — in com.organiclever.be.integration.jwtprotected
+// JwtProtectedContextConfig.java — in com.demobejasb.integration.jwtprotected
 @CucumberContextConfiguration
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @ActiveProfiles("test")
@@ -988,14 +988,14 @@ per runner.
 and limits the glue path to prevent Cucumber from discovering the other context configs:
 
 ```java
-// RegistrationIT.java — in com.organiclever.be.integration.registration
+// RegistrationIT.java — in com.demobejasb.integration.registration
 @Suite
 @IncludeEngines("cucumber")
 @SelectClasspathResource("auth/register.feature")
 @ConfigurationParameter(
     key = GLUE_PROPERTY_NAME,
-    value = "com.organiclever.be.integration.registration"
-          + ",com.organiclever.be.integration.steps")
+    value = "com.demobejasb.integration.registration"
+          + ",com.demobejasb.integration.steps")
 @ConfigurationParameter(
     key = PLUGIN_PROPERTY_NAME,
     value = "pretty,html:target/cucumber-reports/registration.html")
@@ -1003,14 +1003,14 @@ public class RegistrationIT {}
 ```
 
 ```java
-// LoginIT.java — in com.organiclever.be.integration.login
+// LoginIT.java — in com.demobejasb.integration.login
 @Suite
 @IncludeEngines("cucumber")
 @SelectClasspathResource("auth/login.feature")
 @ConfigurationParameter(
     key = GLUE_PROPERTY_NAME,
-    value = "com.organiclever.be.integration.login"
-          + ",com.organiclever.be.integration.steps")
+    value = "com.demobejasb.integration.login"
+          + ",com.demobejasb.integration.steps")
 @ConfigurationParameter(
     key = PLUGIN_PROPERTY_NAME,
     value = "pretty,html:target/cucumber-reports/login.html")
@@ -1018,14 +1018,14 @@ public class LoginIT {}
 ```
 
 ```java
-// JwtProtectedIT.java — in com.organiclever.be.integration.jwtprotected
+// JwtProtectedIT.java — in com.demobejasb.integration.jwtprotected
 @Suite
 @IncludeEngines("cucumber")
 @SelectClasspathResource("auth/jwt-protection.feature")
 @ConfigurationParameter(
     key = GLUE_PROPERTY_NAME,
-    value = "com.organiclever.be.integration.jwtprotected"
-          + ",com.organiclever.be.integration.steps")
+    value = "com.demobejasb.integration.jwtprotected"
+          + ",com.demobejasb.integration.steps")
 @ConfigurationParameter(
     key = PLUGIN_PROPERTY_NAME,
     value = "pretty,html:target/cucumber-reports/jwt-protected.html")

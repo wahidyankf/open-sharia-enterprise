@@ -997,7 +997,7 @@ Boot 4 approach is:
 
 ```java
 @NullMarked
-package com.organiclever.be.controller;
+package com.demobejasb.controller;
 
 import org.jspecify.annotations.NullMarked;
 ```
