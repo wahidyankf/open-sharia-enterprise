@@ -70,7 +70,35 @@ Feature: Unified C4 diagrams
     And the FE component diagram shows pages, state, API client, guards
 ```
 
-### US-3: All Backend References Updated
+### US-3: Specs Validation Gate Before Rewiring
+
+As a developer consolidating specs,
+I want the merged specs validated in OCD mode before rewiring app references,
+So that any structural, content, or consistency issues are fixed while the blast radius is small.
+
+**Acceptance Criteria:**
+
+```gherkin
+Feature: Specs validation gate
+
+  Scenario: Merged specs pass OCD validation
+    Given the directory restructuring is complete (Phases 1-3)
+    And the merged specs are at "specs/apps/demo/"
+    When the specs-validation workflow runs in ocd mode for "specs/apps/demo"
+    Then zero findings remain at all criticality levels
+
+  Scenario: Cross-spec consistency between be and fe
+    Given both "specs/apps/demo/be/" and "specs/apps/demo/fe/" contain gherkin specs
+    When cross-folder consistency is checked
+    Then shared domains (authentication, expenses, health, etc.) align between be and fe
+    And C4 diagrams reference consistent actors across L1, L2, and L3
+
+  Scenario: Specs fixes committed before rewiring
+    Given the specs validation produced fixes
+    Then those fixes are committed before any application path updates begin
+```
+
+### US-4: All Backend References Updated
 
 As a developer building a demo-be backend,
 I want all paths pointing to `specs/apps/demo-be/gherkin/` updated to `specs/apps/demo/be/gherkin/`,
@@ -109,7 +137,7 @@ Feature: Backend path migration
     And "nx run demo-be-clojure-pedestal:test:quick" passes
 ```
 
-### US-4: All Frontend References Updated
+### US-5: All Frontend References Updated
 
 As a developer preparing to build a demo-fe frontend,
 I want all paths pointing to `specs/apps/demo-fe/` updated to `specs/apps/demo/fe/`,
@@ -126,7 +154,7 @@ Feature: Frontend path migration
     Then no results are found outside of "plans/done/"
 ```
 
-### US-5: All CI Passes — Local and GitHub Actions
+### US-6: All CI Passes — Local and GitHub Actions
 
 As a maintainer,
 I want every CI pipeline to pass after the migration — both locally and on GitHub Actions,
