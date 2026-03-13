@@ -1,6 +1,6 @@
 ---
 title: "BDD Spec-to-Test Mapping Convention"
-description: Every CLI command must have a corresponding Gherkin specification with matching integration tests
+description: Gherkin spec consumption rules for CLI apps (1:1 command mapping) and demo-be backends (three-level unit/integration/e2e)
 category: explanation
 subcategory: development
 tags:
@@ -8,13 +8,17 @@ tags:
   - gherkin
   - integration-testing
   - spec-coverage
+  - demo-be
 created: 2026-03-06
-updated: 2026-03-06
+updated: 2026-03-13
 ---
 
 # BDD Spec-to-Test Mapping Convention
 
-This convention defines the mandatory 1:1 mapping between CLI commands and their Gherkin specifications.
+This convention defines how Gherkin specifications are consumed across the monorepo:
+
+- **CLI apps**: Mandatory 1:1 mapping between commands and Gherkin specs via Godog integration tests
+- **Demo-be backends**: Three-level consumption of shared Gherkin specs (unit/integration/e2e) with different step implementations at each level
 
 ## Principles Implemented/Respected
 
@@ -30,7 +34,9 @@ This practice respects the following core principles:
 
 - **[Acceptance Criteria Convention](./acceptance-criteria.md)**: Feature files follow Gherkin standards defined there.
 
-## Core Rule
+## CLI Apps: Command-to-Spec Mapping
+
+### Core Rule
 
 **Every Cobra command file must have a corresponding `@tag` in a Gherkin feature file under `specs/`.**
 
@@ -108,12 +114,12 @@ func TestIntegrationValidateSync(t *testing.T) {
 
 ## File Naming Convention
 
-| Artifact         | Pattern                                          | Example                                               |
-| ---------------- | ------------------------------------------------ | ----------------------------------------------------- |
-| Parent cmd       | `{domain}.go`                                    | `agents.go`                                           |
-| Command file     | `{domain}_{action}.go`                           | `agents_validate_sync.go`                             |
-| Unit test        | `{domain}_{action}_test.go`                      | `agents_validate_sync_test.go`                        |
-| Integration test | `{domain}_{action}.integration_test.go`          | `agents_validate_sync.integration_test.go`            |
+| Artifact         | Pattern                                          | Example                                                    |
+| ---------------- | ------------------------------------------------ | ---------------------------------------------------------- |
+| Parent cmd       | `{domain}.go`                                    | `agents.go`                                                |
+| Command file     | `{domain}_{action}.go`                           | `agents_validate_sync.go`                                  |
+| Unit test        | `{domain}_{action}_test.go`                      | `agents_validate_sync_test.go`                             |
+| Integration test | `{domain}_{action}.integration_test.go`          | `agents_validate_sync.integration_test.go`                 |
 | Feature file     | `specs/{app}/{domain}/{domain}-{action}.feature` | `specs/apps/rhino-cli/agents/agents-validate-sync.feature` |
 
 **The universal rule**: All Go files (command, unit test, integration test) use underscores. Feature files and `@tag`s use hyphens. The `spec-coverage validate` tool normalises hyphens to underscores when matching feature stems to Go test files.
@@ -140,9 +146,81 @@ rhino-cli spec-coverage validate specs/apps/rhino-cli apps/rhino-cli
 4. Create `apps/{app}/cmd/{domain}_{action}.integration_test.go` with godog steps
 5. Verify: `rhino-cli spec-coverage validate specs/{app} apps/{app}`
 
+## Demo-be Backend: Three-Level Spec Consumption
+
+All 11 demo-be backends consume the **same 76 Gherkin scenarios** from `specs/apps/demo-be/gherkin/` at three test levels. The feature files are the shared contract — only the step implementations change per level.
+
+### Shared Specs
+
+```
+specs/apps/demo-be/gherkin/
+├── auth/
+│   ├── login.feature
+│   ├── register.feature
+│   └── ...
+├── users/
+│   ├── list-users.feature
+│   └── ...
+└── ... (13 feature files, 76 scenarios total)
+```
+
+### Three Levels
+
+| Level           | Nx Target          | Step Implementations                                        | Dependencies             | What's Real            |
+| --------------- | ------------------ | ----------------------------------------------------------- | ------------------------ | ---------------------- |
+| **Unit**        | `test:unit`        | Call service/repository functions directly with mocked deps | All mocked               | Application logic only |
+| **Integration** | `test:integration` | Call service/repository functions directly with real DB     | Real PostgreSQL (Docker) | Application + database |
+| **E2E**         | `test:e2e`         | Playwright HTTP requests to running server                  | Full running server      | Everything             |
+
+### Unit-Level Step Definitions
+
+Unit steps call application service/repository functions directly. All dependencies (database, external APIs) are mocked via in-memory implementations or test doubles.
+
+- No Spring context, no HTTP framework, no database connections
+- Steps instantiate services with mocked repositories
+- Coverage is measured at this level (≥90% line coverage)
+- Must run all 76 scenarios
+
+### Integration-Level Step Definitions
+
+Integration steps call application service/repository functions directly against a real PostgreSQL database via docker-compose. No HTTP layer.
+
+- `docker-compose.integration.yml` starts PostgreSQL + test runner
+- `Dockerfile.integration` contains language runtime + test execution
+- Steps connect to PostgreSQL, run migrations, execute all 76 scenarios
+- Coverage is NOT measured at this level
+- Must run all 76 scenarios
+
+### E2E-Level Step Definitions
+
+E2E tests live in `apps/demo-be-e2e/` (shared Playwright suite). Steps make real HTTP requests to a running backend via `playwright-bdd`.
+
+- Runs against any of the 11 backends
+- Tests the full HTTP API contract
+- Must run all 76 scenarios
+- Managed by `demo-be-e2e` project, not individual backends
+
+### Validation
+
+To verify all 76 scenarios pass at each level for a given backend:
+
+```bash
+# Unit tests (mocked dependencies)
+nx run demo-be-{lang}-{framework}:test:unit
+
+# Integration tests (real PostgreSQL via docker-compose)
+nx run demo-be-{lang}-{framework}:test:integration
+
+# E2E tests (Playwright HTTP against running backend)
+nx run demo-be-e2e:test:e2e
+```
+
+All three commands must report 76 scenarios passing. The Gherkin feature files serve as the single source of truth — if a scenario fails at any level, the backend is non-compliant.
+
 ## Related Documentation
 
 - [Acceptance Criteria Convention](./acceptance-criteria.md) - Gherkin format standards
-- [Nx Target Standards](./nx-targets.md) - `test:integration` target for godog suites
+- [Nx Target Standards](./nx-targets.md) - `test:integration` target definitions and caching rules
 - [specs/README.md](../../../specs/README.md) - Spec directory organization
 - [specs/apps/rhino-cli/README.md](../../../specs/apps/rhino-cli/README.md) - rhino-cli spec structure
+- [specs/apps/demo-be/README.md](../../../specs/apps/demo-be/README.md) - Demo-be spec structure and three-level consumption
