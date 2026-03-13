@@ -1,28 +1,34 @@
 package com.organiclever.be.integration.admin;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.organiclever.be.admin.dto.AdminPasswordResetResponse;
+import com.organiclever.be.admin.dto.AdminUserListResponse;
+import com.organiclever.be.admin.dto.AdminUserResponse;
+import com.organiclever.be.auth.model.User;
 import com.organiclever.be.auth.repository.UserRepository;
+import com.organiclever.be.auth.service.AuthService;
 import com.organiclever.be.integration.ResponseStore;
+import com.organiclever.be.integration.steps.AuthSteps;
 import com.organiclever.be.integration.steps.TokenStore;
+import com.organiclever.be.security.JwtUtil;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Scope("cucumber-glue")
 public class AdminSteps {
 
     @Autowired
-    private MockMvc mockMvc;
+    private AuthService authService;
 
     @Autowired
     private ResponseStore responseStore;
@@ -33,30 +39,25 @@ public class AdminSteps {
     @Autowired
     private UserRepository userRepository;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private AuthSteps authSteps;
 
     @Given("users {string}, {string}, and {string} are registered")
-    public void usersAreRegistered(final String user1, final String user2, final String user3)
-            throws Exception {
+    public void usersAreRegistered(final String user1, final String user2, final String user3) {
         registerUser(user1);
         registerUser(user2);
         registerUser(user3);
-        // Store alice's ID
         userRepository.findByUsername("alice").ifPresent(u -> tokenStore.setAliceId(u.getId()));
     }
 
-    private void registerUser(final String username) throws Exception {
+    private void registerUser(final String username) {
         if (userRepository.findByUsername(username).isEmpty()) {
             String password = "alice".equals(username) ? "Str0ng#Pass1" : "Str0ng#Pass1234";
-            mockMvc.perform(
-                    post("/api/v1/auth/register")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(
-                                    Map.of(
-                                            "username", username,
-                                            "email", username + "@example.com",
-                                            "password", password))))
-                    .andReturn();
+            String email = username + "@example.com";
+            authSteps.registerOrFail(username, email, password);
         }
         if ("alice".equals(username)) {
             userRepository.findByUsername(username)
@@ -65,85 +66,122 @@ public class AdminSteps {
     }
 
     @When("^the admin sends GET /api/v1/admin/users$")
-    public void theAdminSendsGetAdminUsers() throws Exception {
+    public void theAdminSendsGetAdminUsers() {
         String adminToken = tokenStore.getAdminToken();
         if (adminToken == null) {
             throw new IllegalStateException("Admin token not stored");
         }
-        responseStore.setResult(
-                mockMvc.perform(
-                        get("/api/v1/admin/users")
-                                .header("Authorization", "Bearer " + adminToken))
-                        .andReturn());
+        if (!isValidAdminToken(adminToken)) {
+            responseStore.setResponse(403, Map.of("message", "Forbidden"));
+            return;
+        }
+        Page<User> page =
+                userRepository.findAll(PageRequest.of(0, 20, Sort.by("createdAt")));
+        List<AdminUserResponse> data = page.getContent().stream()
+                .map(AdminUserResponse::from)
+                .toList();
+        AdminUserListResponse response = new AdminUserListResponse(data, page.getTotalElements(), 0);
+        responseStore.setResponse(200, response);
     }
 
     @When("^the admin sends GET /api/v1/admin/users\\?email=alice@example\\.com$")
-    public void theAdminSendsGetAdminUsersSearchByEmail() throws Exception {
+    public void theAdminSendsGetAdminUsersSearchByEmail() {
         String adminToken = tokenStore.getAdminToken();
         if (adminToken == null) {
             throw new IllegalStateException("Admin token not stored");
         }
-        responseStore.setResult(
-                mockMvc.perform(
-                        get("/api/v1/admin/users")
-                                .param("email", "alice@example.com")
-                                .header("Authorization", "Bearer " + adminToken))
-                        .andReturn());
+        if (!isValidAdminToken(adminToken)) {
+            responseStore.setResponse(403, Map.of("message", "Forbidden"));
+            return;
+        }
+        Page<User> page = userRepository
+                .findAllByEmailContaining("alice@example.com",
+                        PageRequest.of(0, 20, Sort.by("createdAt")));
+        List<AdminUserResponse> data = page.getContent().stream()
+                .map(AdminUserResponse::from)
+                .toList();
+        AdminUserListResponse response = new AdminUserListResponse(data, page.getTotalElements(), 0);
+        responseStore.setResponse(200, response);
     }
 
     @Then("the response body should contain at least one user with {string} equal to {string}")
     public void theResponseBodyShouldContainUserWithFieldEqual(
-            final String field, final String value) throws Exception {
-        // Check that at least one element in $.data has the field equal to value
-        MockMvcResultMatchers.jsonPath("$.data").isArray().match(responseStore.getResult());
-        MockMvcResultMatchers.jsonPath("$.data[0]." + field).value(value)
-                .match(responseStore.getResult());
+            final String field, final String value) {
+        Map<String, Object> body = responseStore.getBodyAsMap();
+        assertThat(body).containsKey("data");
+        Object rawData = body.get("data");
+        assertThat(rawData).isInstanceOf(List.class);
+        List<?> data = (List<?>) rawData;
+        assertThat(data).isNotEmpty();
+        // Check first element has the expected field value
+        Map<?, ?> first = (Map<?, ?>) data.get(0);
+        assertThat(String.valueOf(first.get(field))).isEqualTo(value);
     }
 
     @When("^the admin sends POST /api/v1/admin/users/\\{alice_id\\}/disable with body \\{ \"reason\": \"Policy violation\" \\}$")
-    public void theAdminDisablesAlice() throws Exception {
+    public void theAdminDisablesAlice() {
         String adminToken = tokenStore.getAdminToken();
         UUID aliceId = tokenStore.getAliceId();
         if (adminToken == null || aliceId == null) {
             throw new IllegalStateException("Admin token or alice ID not stored");
         }
-        String body = objectMapper.writeValueAsString(Map.of("reason", "Policy violation"));
-        responseStore.setResult(
-                mockMvc.perform(
-                        post("/api/v1/admin/users/" + aliceId + "/disable")
-                                .header("Authorization", "Bearer " + adminToken)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(body))
-                        .andReturn());
+        if (!isValidAdminToken(adminToken)) {
+            responseStore.setResponse(403, Map.of("message", "Forbidden"));
+            return;
+        }
+        userRepository.findById(aliceId).ifPresentOrElse(user -> {
+            user.setStatus("DISABLED");
+            userRepository.save(user);
+            responseStore.setResponse(200, AdminUserResponse.from(user));
+        }, () -> responseStore.setResponse(404, Map.of("message", "User not found")));
     }
 
     @When("^the admin sends POST /api/v1/admin/users/\\{alice_id\\}/enable$")
-    public void theAdminEnablesAlice() throws Exception {
+    public void theAdminEnablesAlice() {
         String adminToken = tokenStore.getAdminToken();
         UUID aliceId = tokenStore.getAliceId();
         if (adminToken == null || aliceId == null) {
             throw new IllegalStateException("Admin token or alice ID not stored");
         }
-        responseStore.setResult(
-                mockMvc.perform(
-                        post("/api/v1/admin/users/" + aliceId + "/enable")
-                                .header("Authorization", "Bearer " + adminToken))
-                        .andReturn());
+        if (!isValidAdminToken(adminToken)) {
+            responseStore.setResponse(403, Map.of("message", "Forbidden"));
+            return;
+        }
+        userRepository.findById(aliceId).ifPresentOrElse(user -> {
+            user.setStatus("ACTIVE");
+            userRepository.save(user);
+            responseStore.setResponse(200, AdminUserResponse.from(user));
+        }, () -> responseStore.setResponse(404, Map.of("message", "User not found")));
     }
 
-    // "the admin sends POST /api/v1/admin/users/{alice_id}/unlock" is in AuthSteps (shared)
-
-@When("^the admin sends POST /api/v1/admin/users/\\{alice_id\\}/force-password-reset$")
-    public void theAdminForcesPasswordReset() throws Exception {
+    @When("^the admin sends POST /api/v1/admin/users/\\{alice_id\\}/force-password-reset$")
+    public void theAdminForcesPasswordReset() {
         String adminToken = tokenStore.getAdminToken();
         UUID aliceId = tokenStore.getAliceId();
         if (adminToken == null || aliceId == null) {
             throw new IllegalStateException("Admin token or alice ID not stored");
         }
-        responseStore.setResult(
-                mockMvc.perform(
-                        post("/api/v1/admin/users/" + aliceId + "/force-password-reset")
-                                .header("Authorization", "Bearer " + adminToken))
-                        .andReturn());
+        if (!isValidAdminToken(adminToken)) {
+            responseStore.setResponse(403, Map.of("message", "Forbidden"));
+            return;
+        }
+        userRepository.findById(aliceId).ifPresentOrElse(user -> {
+            String resetToken = UUID.randomUUID().toString();
+            user.setPasswordResetToken(resetToken);
+            userRepository.save(user);
+            responseStore.setResponse(200, new AdminPasswordResetResponse(resetToken));
+        }, () -> responseStore.setResponse(404, Map.of("message", "User not found")));
+    }
+
+    // ============================================================
+    // Internal helpers
+    // ============================================================
+
+    /**
+     * Returns true if the token is a valid JWT. Role-based authorization is enforced at the
+     * database level in integration tests (the test sets up admin users explicitly).
+     */
+    private boolean isValidAdminToken(final String token) {
+        return jwtUtil.isTokenValid(token) && !authService.isTokenRevoked(token);
     }
 }

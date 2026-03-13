@@ -1,27 +1,20 @@
 package com.organiclever.be.integration.currency_handling;
 
-import com.jayway.jsonpath.JsonPath;
 import com.organiclever.be.integration.ResponseStore;
+import com.organiclever.be.integration.steps.ExpenseStepHelper;
 import com.organiclever.be.integration.steps.TokenStore;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import java.util.Map;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Scope("cucumber-glue")
 public class CurrencyHandlingSteps {
-
-    @Autowired
-    private MockMvc mockMvc;
 
     @Autowired
     private ResponseStore responseStore;
@@ -29,69 +22,43 @@ public class CurrencyHandlingSteps {
     @Autowired
     private TokenStore tokenStore;
 
+    @Autowired
+    private ExpenseStepHelper expenseHelper;
+
     @Given("^alice has created an expense with body (.*)$")
-    public void aliceHasCreatedAnExpenseWithBody(final String body) throws Exception {
+    public void aliceHasCreatedAnExpenseWithBody(final String body) {
         String token = tokenStore.getToken();
         if (token == null) {
             throw new IllegalStateException("Token not stored");
         }
-        MvcResult result = mockMvc.perform(
-                post("/api/v1/expenses")
-                        .header("Authorization", "Bearer " + token)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andReturn();
-        String id = JsonPath.read(result.getResponse().getContentAsString(), "$.id");
-        tokenStore.setExpenseId(UUID.fromString(id));
+        UUID id = expenseHelper.createExpenseOrFail(token, body);
+        tokenStore.setExpenseId(id);
     }
 
     @When("^alice sends GET /api/v1/expenses/\\{expenseId\\}$")
-    public void aliceSendsGetExpenseById() throws Exception {
-        String token = tokenStore.getToken();
+    public void aliceSendsGetExpenseById() {
         UUID expenseId = tokenStore.getExpenseId();
-        if (token == null || expenseId == null) {
-            throw new IllegalStateException("Token or expense ID not stored");
+        if (expenseId == null) {
+            throw new IllegalStateException("Expense ID not stored");
         }
-        responseStore.setResult(
-                mockMvc.perform(
-                        get("/api/v1/expenses/" + expenseId)
-                                .header("Authorization", "Bearer " + token))
-                        .andReturn());
+        expenseHelper.getExpenseById(expenseId);
     }
 
     @When("^alice sends POST /api/v1/expenses with body (.*)$")
-    public void aliceSendsPostExpensesWithBody(final String body) throws Exception {
-        String token = tokenStore.getToken();
-        if (token == null) {
-            throw new IllegalStateException("Token not stored");
-        }
-        responseStore.setResult(
-                mockMvc.perform(
-                        post("/api/v1/expenses")
-                                .header("Authorization", "Bearer " + token)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(body))
-                        .andReturn());
+    public void aliceSendsPostExpensesWithBody(final String body) {
+        expenseHelper.createExpenseForCurrentUser(body, true);
     }
 
     @When("^alice sends GET /api/v1/expenses/summary$")
-    public void aliceSendsGetExpensesSummary() throws Exception {
-        String token = tokenStore.getToken();
-        if (token == null) {
-            throw new IllegalStateException("Token not stored");
-        }
-        responseStore.setResult(
-                mockMvc.perform(
-                        get("/api/v1/expenses/summary")
-                                .header("Authorization", "Bearer " + token))
-                        .andReturn());
+    public void aliceSendsGetExpensesSummary() {
+        expenseHelper.getExpenseSummary();
     }
 
     @Then("the response body should contain {string} total equal to {string}")
     public void theResponseBodyShouldContainCurrencyTotalEqual(
-            final String currency, final String total) throws Exception {
-        MockMvcResultMatchers.jsonPath("$." + currency).value(total)
-                .match(responseStore.getResult());
+            final String currency, final String total) {
+        Map<String, Object> body = responseStore.getBodyAsMap();
+        assertThat(body).containsKey(currency);
+        assertThat(String.valueOf(body.get(currency))).isEqualTo(total);
     }
 }

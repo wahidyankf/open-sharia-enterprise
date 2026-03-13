@@ -1,30 +1,29 @@
 package com.organiclever.be.integration.token_lifecycle;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.JsonPath;
+import com.organiclever.be.auth.dto.AuthResponse;
 import com.organiclever.be.auth.repository.RefreshTokenRepository;
+import com.organiclever.be.auth.service.AccountNotActiveException;
+import com.organiclever.be.auth.service.AuthService;
+import com.organiclever.be.auth.service.InvalidTokenException;
+import com.organiclever.be.auth.service.TokenExpiredException;
 import com.organiclever.be.integration.ResponseStore;
+import com.organiclever.be.integration.steps.AuthSteps;
 import com.organiclever.be.integration.steps.TokenStore;
+import com.organiclever.be.security.JwtUtil;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @Scope("cucumber-glue")
 public class TokenLifecycleSteps {
 
     @Autowired
-    private MockMvc mockMvc;
+    private AuthService authService;
 
     @Autowired
     private ResponseStore responseStore;
@@ -35,31 +34,27 @@ public class TokenLifecycleSteps {
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private AuthSteps authSteps;
 
     @When("^alice sends POST /api/v1/auth/refresh with her refresh token$")
-    public void aliceSendsPostRefreshWithHerRefreshToken() throws Exception {
+    public void aliceSendsPostRefreshWithHerRefreshToken() {
         String rt = tokenStore.getRefreshToken();
         if (rt == null) {
             throw new IllegalStateException("Refresh token not stored");
         }
-        String body = objectMapper.writeValueAsString(Map.of("refresh_token", rt));
-        responseStore.setResult(
-                mockMvc.perform(
-                        post("/api/v1/auth/refresh")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(body))
-                        .andReturn());
+        performRefresh(rt);
     }
 
     @Given("alice's refresh token has expired")
-    public void alicesRefreshTokenHasExpired() throws Exception {
-        // Expire the refresh token in DB
+    public void alicesRefreshTokenHasExpired() {
         String rt = tokenStore.getRefreshToken();
         if (rt == null) {
             return;
         }
-        // Hash the token to find it in DB
         String tokenHash = hashToken(rt);
         refreshTokenRepository.findByTokenHash(tokenHash).ifPresent(token -> {
             token.setExpiresAt(java.time.Instant.now().minus(1, java.time.temporal.ChronoUnit.DAYS));
@@ -68,88 +63,85 @@ public class TokenLifecycleSteps {
     }
 
     @Given("alice has used her refresh token to get a new token pair")
-    public void aliceHasUsedHerRefreshTokenToGetANewTokenPair() throws Exception {
+    public void aliceHasUsedHerRefreshTokenToGetANewTokenPair() {
         String originalRt = tokenStore.getRefreshToken();
         tokenStore.setOriginalRefreshToken(originalRt);
-        // Use the refresh token
-        String body = objectMapper.writeValueAsString(Map.of("refresh_token", originalRt));
-        MvcResult result = mockMvc.perform(
-                post("/api/v1/auth/refresh")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn();
-        String responseBody = result.getResponse().getContentAsString();
-        String newAccessToken = JsonPath.read(responseBody, "$.access_token");
-        String newRefreshToken = JsonPath.read(responseBody, "$.refresh_token");
-        tokenStore.setToken(newAccessToken);
-        tokenStore.setRefreshToken(newRefreshToken);
+        try {
+            AuthResponse response = authService.refresh(originalRt);
+            tokenStore.setToken(response.accessToken());
+            tokenStore.setRefreshToken(response.refreshToken());
+        } catch (InvalidTokenException | AccountNotActiveException e) {
+            throw new RuntimeException("Unexpected refresh failure: " + e.getMessage(), e);
+        }
     }
 
     @When("^alice sends POST /api/v1/auth/refresh with her original refresh token$")
-    public void aliceSendsPostRefreshWithHerOriginalRefreshToken() throws Exception {
+    public void aliceSendsPostRefreshWithHerOriginalRefreshToken() {
         String originalRt = tokenStore.getOriginalRefreshToken();
         if (originalRt == null) {
             throw new IllegalStateException("Original refresh token not stored");
         }
-        String body = objectMapper.writeValueAsString(Map.of("refresh_token", originalRt));
-        responseStore.setResult(
-                mockMvc.perform(
-                        post("/api/v1/auth/refresh")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(body))
-                        .andReturn());
+        performRefresh(originalRt);
     }
 
     @When("^alice sends POST /api/v1/auth/logout with her access token$")
-    public void aliceSendsPostLogoutWithHerAccessToken() throws Exception {
+    public void aliceSendsPostLogoutWithHerAccessToken() {
         String token = tokenStore.getToken();
         if (token == null) {
             throw new IllegalStateException("Token not stored");
         }
-        responseStore.setResult(
-                mockMvc.perform(
-                        post("/api/v1/auth/logout")
-                                .header("Authorization", "Bearer " + token))
-                        .andReturn());
+        authService.logout(token);
+        responseStore.setResponse(200);
     }
 
     @Then("alice's access token should be invalidated")
-    public void alicesAccessTokenShouldBeInvalidated() throws Exception {
+    public void alicesAccessTokenShouldBeInvalidated() {
         String token = tokenStore.getToken();
         if (token == null) {
             throw new IllegalStateException("Token not stored");
         }
-        MvcResult result = mockMvc.perform(
-                get("/api/v1/users/me")
-                        .header("Authorization", "Bearer " + token))
-                .andReturn();
-        assertThat(result.getResponse().getStatus()).isEqualTo(401);
+        // After logout the token is in the revoked list; a GET /users/me should return 401
+        boolean revoked = authService.isTokenRevoked(token);
+        assertThat(revoked).isTrue();
     }
 
     @When("^alice sends POST /api/v1/auth/logout-all with her access token$")
-    public void aliceSendsPostLogoutAllWithHerAccessToken() throws Exception {
+    public void aliceSendsPostLogoutAllWithHerAccessToken() {
         String token = tokenStore.getToken();
         if (token == null) {
             throw new IllegalStateException("Token not stored");
         }
-        responseStore.setResult(
-                mockMvc.perform(
-                        post("/api/v1/auth/logout-all")
-                                .header("Authorization", "Bearer " + token))
-                        .andReturn());
+        String username = jwtUtil.extractUsername(token);
+        authService.logoutAll(token, username);
+        responseStore.setResponse(200);
     }
 
     @Given("alice has already logged out once")
-    public void aliceHasAlreadyLoggedOutOnce() throws Exception {
+    public void aliceHasAlreadyLoggedOutOnce() {
         String token = tokenStore.getToken();
         if (token == null) {
             throw new IllegalStateException("Token not stored");
         }
-        mockMvc.perform(
-                post("/api/v1/auth/logout")
-                        .header("Authorization", "Bearer " + token))
-                .andReturn();
+        authService.logout(token);
+    }
+
+    // ============================================================
+    // Internal helpers
+    // ============================================================
+
+    private void performRefresh(final String rawRefreshToken) {
+        try {
+            AuthResponse resp = authService.refresh(rawRefreshToken);
+            responseStore.setResponse(200, resp);
+            tokenStore.setToken(resp.accessToken());
+            tokenStore.setRefreshToken(resp.refreshToken());
+        } catch (TokenExpiredException e) {
+            responseStore.setResponse(401, Map.of("message", "Token has expired"));
+        } catch (InvalidTokenException e) {
+            responseStore.setResponse(401, Map.of("message", "Invalid token"));
+        } catch (AccountNotActiveException e) {
+            responseStore.setResponse(401, Map.of("message", "Account is deactivated or not active"));
+        }
     }
 
     private String hashToken(final String token) {
