@@ -33,19 +33,24 @@ definitions translate UI actions into API calls and verify the rendered output.
 
 ## Implementations
 
-Each future frontend implementation will live in `apps/demo-fe-{framework}/` (e.g.,
-`demo-fe-react-nextjs`, `demo-fe-vue-nuxt`). This mirrors the backend pattern where
-`specs/apps/demo/be/` is consumed by `apps/demo-be-{lang}-{framework}/`. No frontend
-implementations exist yet — the specs are ready for when they are built.
-
-Frontend implementations consume these 92 Gherkin scenarios at **three test levels**. The feature
+Frontend implementations consume these 92 Gherkin scenarios at **two test levels**. The feature
 files are the shared contract — only the step implementations differ per level.
 
-| Level           | Nx Target          | What Happens                                         | Dependencies                |
-| --------------- | ------------------ | ---------------------------------------------------- | --------------------------- |
-| **Unit**        | `test:unit`        | Steps test component logic with mocked API calls     | All mocked                  |
-| **Integration** | `test:integration` | Steps render components with mocked API responses    | MSW or similar mock layer   |
-| **E2E**         | `test:e2e`         | Playwright drives a real browser against running app | Full running frontend + API |
+| Implementation             | Framework               | BDD Tool                 | Port |
+| -------------------------- | ----------------------- | ------------------------ | ---- |
+| `demo-fe-ts-nextjs`        | Next.js 16 (App Router) | @amiceli/vitest-cucumber | 3301 |
+| `demo-fe-ts-tanstackstart` | TanStack Start v1 RC    | @amiceli/vitest-cucumber | 3301 |
+| `demo-fe-ts-remix`         | React Router v7         | @amiceli/vitest-cucumber | 3301 |
+| `demo-fe-dart-flutter`     | Flutter Web (Dart)      | bdd_widget_test          | 3301 |
+| `demo-fe-elixir-phoenix`   | Phoenix LiveView        | Cabbage                  | 3301 |
+
+E2E tests are centralized in `demo-fe-e2e` (Playwright + playwright-bdd v8), which tests any
+frontend via `BASE_URL` env var against `demo-be-java-springboot` on port 8201.
+
+| Level    | Nx Target   | What Happens                                         | Dependencies                |
+| -------- | ----------- | ---------------------------------------------------- | --------------------------- |
+| **Unit** | `test:unit` | Steps test component logic with mocked API calls     | All mocked                  |
+| **E2E**  | `test:e2e`  | Playwright drives a real browser against running app | Full running frontend + API |
 
 ### Unit Level
 
@@ -54,37 +59,12 @@ files are the shared contract — only the step implementations differ per level
 - Coverage is measured here (>=90% line coverage via `rhino-cli test-coverage validate`)
 - All 92 scenarios must pass
 
-### Integration Level
-
-- Steps render components in a test harness (JSDOM, Testing Library, etc.)
-- API responses are mocked (MSW, vi.mock, etc.)
-- No real backend needed — all API calls intercepted
-- All 92 scenarios must pass
-
 ### E2E Level
 
 - Playwright drives a real browser
-- Frontend runs against a real backend (demo-be-\*) with real PostgreSQL
+- Frontend runs against `demo-be-java-springboot` with real PostgreSQL
 - Tests verify full user journeys end-to-end
 - All 92 scenarios must pass
-
-### Recommended Directory Structure for Step Definitions
-
-Each frontend implementation should separate test levels:
-
-```
-apps/demo-fe-{framework}/
-├── src/                          # Application source code
-├── test/
-│   ├── unit/                     # Unit-level step definitions (mocked deps)
-│   │   ├── steps/                # Gherkin step implementations
-│   │   └── support/              # Test helpers, mock factories
-│   └── integration/              # Integration-level step definitions (rendered components)
-│       ├── steps/                # Gherkin step implementations
-│       └── support/              # MSW handlers, test harness setup
-├── project.json
-└── README.md
-```
 
 ## Feature File Organization
 

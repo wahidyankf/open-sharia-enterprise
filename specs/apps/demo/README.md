@@ -24,13 +24,13 @@ specs/apps/demo/
 
 ## Backend vs Frontend
 
-| Aspect      | Backend (be/)                                    | Frontend (fe/)                       |
-| ----------- | ------------------------------------------------ | ------------------------------------ |
-| Perspective | HTTP-semantic (GET, POST, status codes)          | UI-semantic (clicks, types, sees)    |
-| Background  | `Given the API is running`                       | `Given the app is running`           |
-| Scenarios   | 76 across 13 features                            | 92 across 15 features                |
-| Domains     | 7 domains                                        | 8 domains (7 shared + layout)        |
-| Consumed by | `apps/demo-be-{lang}-{framework}/` (11 backends) | `apps/demo-fe-{framework}/` (future) |
+| Aspect      | Backend (be/)                                    | Frontend (fe/)                                   |
+| ----------- | ------------------------------------------------ | ------------------------------------------------ |
+| Perspective | HTTP-semantic (GET, POST, status codes)          | UI-semantic (clicks, types, sees)                |
+| Background  | `Given the API is running`                       | `Given the app is running`                       |
+| Scenarios   | 76 across 13 features                            | 92 across 15 features                            |
+| Domains     | 7 domains                                        | 8 domains (7 shared + layout)                    |
+| Consumed by | `apps/demo-be-{lang}-{framework}/` (11 backends) | `apps/demo-fe-{lang}-{framework}/` (5 frontends) |
 
 Both spec sets cover the same functional surface from different perspectives. The frontend app
 consumes the backend API.
