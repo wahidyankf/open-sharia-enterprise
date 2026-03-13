@@ -1,6 +1,5 @@
 package com.demobektkt.unit.steps
 
-import com.demobektkt.auth.PasswordService
 import com.demobektkt.domain.Role
 import com.demobektkt.domain.UserStatus
 import com.demobektkt.infrastructure.repositories.CreateUserRequest
@@ -11,7 +10,6 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertTrue
 
 class UnitAuthSteps {
-  private val passwordService = PasswordService()
 
   private fun registerUserDirect(username: String, email: String, password: String) {
     runBlocking {
@@ -23,7 +21,7 @@ class UnitAuthSteps {
               username = username,
               email = email,
               displayName = username,
-              passwordHash = passwordService.hash(password),
+              passwordHash = UnitTestWorld.passwordService.hash(password),
               role = Role.USER,
             )
           )
@@ -35,11 +33,7 @@ class UnitAuthSteps {
   }
 
   private fun loginAs(username: String, password: String): Boolean {
-    val (status, body) =
-      UnitHttpHelper.post(
-        "/api/v1/auth/login",
-        """{"username":"$username","password":"$password"}""",
-      )
+    val (status, body) = UnitServiceDispatcher.login(username, password)
     if (status == 200) {
       UnitJsonHelper.getString(body, "access_token")?.let {
         UnitTestWorld.accessTokens[username] = it
@@ -79,7 +73,7 @@ class UnitAuthSteps {
           UnitTestWorld.userRepo.createAdmin(
             username,
             "$username@example.com",
-            passwordService.hash(password),
+            UnitTestWorld.passwordService.hash(password),
           )
         UnitTestWorld.userIds[username] = u.id.toString()
       } else {
@@ -131,10 +125,7 @@ class UnitAuthSteps {
   @Given("{string} has had the maximum number of failed login attempts")
   fun userHasHadMaxFailedLoginAttempts(username: String) {
     repeat(5) {
-      UnitHttpHelper.post(
-        "/api/v1/auth/login",
-        """{"username":"$username","password":"WrongPass#1234"}""",
-      )
+      UnitServiceDispatcher.login(username, "WrongPass#1234")
     }
     runBlocking {
       UnitTestWorld.userRepo.findByUsername(username)?.let {
@@ -154,12 +145,7 @@ class UnitAuthSteps {
   @Given("alice has used her refresh token to get a new token pair")
   fun aliceHasUsedRefreshTokenToGetNewPair() {
     val refreshToken = UnitTestWorld.refreshTokens["alice"] ?: error("alice has no refresh token")
-    val (status, body) =
-      UnitHttpHelper.post(
-        "/api/v1/auth/refresh",
-        """{"refresh_token":"$refreshToken"}""",
-        UnitTestWorld.accessTokens["alice"],
-      )
+    val (status, body) = UnitServiceDispatcher.refresh(refreshToken)
     assertTrue(status == 200, "Refresh should succeed. Status: $status Body: $body")
     UnitJsonHelper.getString(body, "access_token")?.let {
       UnitTestWorld.accessTokens["alice:new"] = it
@@ -172,7 +158,7 @@ class UnitAuthSteps {
   @Given("alice has already logged out once")
   fun aliceHasAlreadyLoggedOutOnce() {
     val token = UnitTestWorld.accessTokens["alice"] ?: error("alice has no access token")
-    UnitHttpHelper.post("/api/v1/auth/logout", "", token)
+    UnitServiceDispatcher.logout(token)
   }
 
   @Given("the user {string} has been deactivated")
@@ -214,7 +200,7 @@ class UnitAuthSteps {
   @Given("alice has logged out and her access token is blacklisted")
   fun aliceHasLoggedOutAndTokenIsBlacklisted() {
     val token = UnitTestWorld.accessTokens["alice"] ?: error("alice has no access token")
-    UnitHttpHelper.post("/api/v1/auth/logout", "", token)
+    UnitServiceDispatcher.logout(token)
   }
 
   @Given(
@@ -223,13 +209,13 @@ class UnitAuthSteps {
   fun theAdminHasDisabledAlicesAccount() {
     val aliceId = UnitTestWorld.userIds["alice"] ?: error("alice id not stored")
     val adminToken = UnitTestWorld.accessTokens["superadmin"] ?: error("admin token not stored")
-    UnitHttpHelper.post("/api/v1/admin/users/$aliceId/disable", """{"reason":"test"}""", adminToken)
+    UnitServiceDispatcher.disableUser(adminToken, aliceId, "test")
   }
 
   @Given("alice has deactivated her own account via POST \\/api\\/v1\\/users\\/me\\/deactivate")
   fun aliceHasDeactivatedHerOwnAccount() {
     val token = UnitTestWorld.accessTokens["alice"] ?: error("alice has no access token")
-    UnitHttpHelper.post("/api/v1/users/me/deactivate", "", token)
+    UnitServiceDispatcher.deactivate(token)
   }
 
   // ---- When steps ----
@@ -238,8 +224,7 @@ class UnitAuthSteps {
     "^the client sends POST /api/v1/auth/register with body \\{ \"username\": \"([^\"]+)\", \"email\": \"([^\"]+)\", \"password\": \"([^\"]*)\" \\}$"
   )
   fun theClientSendsPostRegisterWithBody(username: String, email: String, password: String) {
-    val body = """{"username":"$username","email":"$email","password":"$password"}"""
-    val (status, respBody) = UnitHttpHelper.post("/api/v1/auth/register", body)
+    val (status, respBody) = UnitServiceDispatcher.register(username, email, password)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = respBody
     if (status == 201) {
@@ -251,8 +236,7 @@ class UnitAuthSteps {
     "^the client sends POST /api/v1/auth/login with body \\{ \"username\": \"([^\"]+)\", \"password\": \"([^\"]+)\" \\}$"
   )
   fun theClientSendsPostLoginWithBody(username: String, password: String) {
-    val body = """{"username":"$username","password":"$password"}"""
-    val (status, respBody) = UnitHttpHelper.post("/api/v1/auth/login", body)
+    val (status, respBody) = UnitServiceDispatcher.login(username, password)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = respBody
   }
@@ -260,9 +244,7 @@ class UnitAuthSteps {
   @When("alice sends POST \\/api\\/v1\\/auth\\/refresh with her refresh token")
   fun aliceSendsPostRefreshWithRefreshToken() {
     val refreshToken = UnitTestWorld.refreshTokens["alice"] ?: error("alice has no refresh token")
-    val accessToken = UnitTestWorld.accessTokens["alice"]
-    val body = """{"refresh_token":"$refreshToken"}"""
-    val (status, respBody) = UnitHttpHelper.post("/api/v1/auth/refresh", body, accessToken)
+    val (status, respBody) = UnitServiceDispatcher.refresh(refreshToken)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = respBody
   }
@@ -270,7 +252,7 @@ class UnitAuthSteps {
   @When("alice sends POST \\/api\\/v1\\/auth\\/logout with her access token")
   fun aliceSendsPostLogoutWithAccessToken() {
     val token = UnitTestWorld.accessTokens["alice"] ?: error("alice has no access token")
-    val (status, respBody) = UnitHttpHelper.post("/api/v1/auth/logout", "", token)
+    val (status, respBody) = UnitServiceDispatcher.logout(token)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = respBody
   }
@@ -278,7 +260,7 @@ class UnitAuthSteps {
   @When("alice sends POST \\/api\\/v1\\/auth\\/logout-all with her access token")
   fun aliceSendsPostLogoutAllWithAccessToken() {
     val token = UnitTestWorld.accessTokens["alice"] ?: error("alice has no access token")
-    val (status, respBody) = UnitHttpHelper.post("/api/v1/auth/logout-all", "", token)
+    val (status, respBody) = UnitServiceDispatcher.logoutAll(token)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = respBody
   }
@@ -286,7 +268,7 @@ class UnitAuthSteps {
   @When("^the client sends GET /api/v1/users/me with alice's access token$")
   fun theClientSendsGetUsersMeWithAlicesToken() {
     val token = UnitTestWorld.accessTokens["alice"] ?: error("alice has no access token")
-    val (status, body) = UnitHttpHelper.get("/api/v1/users/me", token)
+    val (status, body) = UnitServiceDispatcher.getProfile(token)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = body
   }
@@ -302,9 +284,16 @@ class UnitAuthSteps {
     date: String,
     type: String,
   ) {
-    val body =
-      """{"amount":"$amount","currency":"$currency","category":"$category","description":"$description","date":"$date","type":"$type"}"""
-    val (status, respBody) = UnitHttpHelper.post("/api/v1/expenses", body)
+    val (status, respBody) =
+      UnitServiceDispatcher.createExpense(
+        "",
+        amount,
+        currency,
+        category,
+        description,
+        date,
+        type,
+      )
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = respBody
   }

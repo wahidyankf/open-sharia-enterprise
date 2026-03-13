@@ -10,7 +10,7 @@ class UnitTokenManagementSteps {
   @When("alice decodes her access token payload")
   fun aliceDecodesHerAccessTokenPayload() {
     val token = UnitTestWorld.accessTokens["alice"] ?: error("alice has no access token")
-    val (status, body) = UnitHttpHelper.get("/api/v1/tokens/claims", token)
+    val (status, body) = UnitServiceDispatcher.tokenClaims(token)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = body
   }
@@ -22,7 +22,7 @@ class UnitTokenManagementSteps {
 
   @When("^the client sends GET /\\.well-known/jwks\\.json$")
   fun theClientSendsGetJwks() {
-    val (status, body) = UnitHttpHelper.get("/.well-known/jwks.json")
+    val (status, body) = UnitServiceDispatcher.jwks()
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = body
   }

@@ -7,7 +7,7 @@ class UnitUserAccountSteps {
   @When("alice sends GET \\/api\\/v1\\/users\\/me")
   fun aliceSendsGetUsersMe() {
     val token = UnitTestWorld.accessTokens["alice"] ?: error("alice has no access token")
-    val (status, body) = UnitHttpHelper.get("/api/v1/users/me", token)
+    val (status, body) = UnitServiceDispatcher.getProfile(token)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = body
   }
@@ -15,8 +15,7 @@ class UnitUserAccountSteps {
   @When("^alice sends PATCH /api/v1/users/me with body \\{ \"display_name\": \"([^\"]+)\" \\}$")
   fun aliceSendsPatchUsersMeWithBody(displayName: String) {
     val token = UnitTestWorld.accessTokens["alice"] ?: error("alice has no access token")
-    val body = """{"display_name":"$displayName"}"""
-    val (status, respBody) = UnitHttpHelper.patch("/api/v1/users/me", body, token)
+    val (status, respBody) = UnitServiceDispatcher.updateDisplayName(token, displayName)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = respBody
   }
@@ -26,8 +25,7 @@ class UnitUserAccountSteps {
   )
   fun aliceSendsPostChangePasswordWithBody(oldPassword: String, newPassword: String) {
     val token = UnitTestWorld.accessTokens["alice"] ?: error("alice has no access token")
-    val body = """{"old_password":"$oldPassword","new_password":"$newPassword"}"""
-    val (status, respBody) = UnitHttpHelper.post("/api/v1/users/me/password", body, token)
+    val (status, respBody) = UnitServiceDispatcher.changePassword(token, oldPassword, newPassword)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = respBody
   }
@@ -35,7 +33,7 @@ class UnitUserAccountSteps {
   @When("alice sends POST \\/api\\/v1\\/users\\/me\\/deactivate")
   fun aliceSendsPostDeactivate() {
     val token = UnitTestWorld.accessTokens["alice"] ?: error("alice has no access token")
-    val (status, respBody) = UnitHttpHelper.post("/api/v1/users/me/deactivate", "", token)
+    val (status, respBody) = UnitServiceDispatcher.deactivate(token)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = respBody
   }

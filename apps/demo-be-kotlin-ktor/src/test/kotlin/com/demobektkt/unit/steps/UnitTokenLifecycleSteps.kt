@@ -9,7 +9,7 @@ class UnitTokenLifecycleSteps {
   @Then("alice's access token should be invalidated")
   fun alicesAccessTokenShouldBeInvalidated() {
     val token = UnitTestWorld.accessTokens["alice"] ?: error("alice has no access token")
-    val (status, _) = UnitHttpHelper.get("/api/v1/users/me", token)
+    val (status, _) = UnitServiceDispatcher.getProfile(token)
     assertEquals(401, status, "Expected alice's token to be invalidated (401)")
   }
 
@@ -17,9 +17,7 @@ class UnitTokenLifecycleSteps {
   fun aliceSendsPostRefreshWithOriginalToken() {
     val originalToken =
       UnitTestWorld.refreshTokens["alice"] ?: error("alice has no original refresh token")
-    val newAccessToken = UnitTestWorld.accessTokens["alice:new"]
-    val body = """{"refresh_token":"$originalToken"}"""
-    val (status, respBody) = UnitHttpHelper.post("/api/v1/auth/refresh", body, newAccessToken)
+    val (status, respBody) = UnitServiceDispatcher.refresh(originalToken)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = respBody
   }
