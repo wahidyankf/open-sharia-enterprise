@@ -23,14 +23,24 @@ type TestWebAppFactory() =
 
     override _.ConfigureWebHost(builder: IWebHostBuilder) =
         builder.ConfigureServices(fun services ->
-            // Remove the existing DbContext registration
-            let descriptor =
+            // Remove ALL EF Core service registrations (DbContext options, provider,
+            // internal services) to avoid "multiple database providers" error when
+            // DATABASE_URL is set and Npgsql was registered by the app.
+            let descriptorsToRemove =
                 services
-                |> Seq.tryFind (fun d -> d.ServiceType = typeof<DbContextOptions<AppDbContext>>)
+                |> Seq.filter (fun d ->
+                    let ns =
+                        if isNull d.ServiceType then ""
+                        elif isNull d.ServiceType.Namespace then ""
+                        else d.ServiceType.Namespace
 
-            match descriptor with
-            | Some d -> services.Remove(d) |> ignore
-            | None -> ()
+                    d.ServiceType = typeof<DbContextOptions<AppDbContext>>
+                    || d.ServiceType = typeof<DbContextOptions>
+                    || ns.Contains("EntityFrameworkCore"))
+                |> Seq.toList
+
+            for d in descriptorsToRemove do
+                services.Remove(d) |> ignore
 
             // Add SQLite in-memory with the open connection so schema is preserved
             services.AddDbContext<AppDbContext>(fun opts ->
