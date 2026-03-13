@@ -2,7 +2,6 @@ package com.organiclever.demojavx.unit;
 
 import com.organiclever.demojavx.auth.JwtService;
 import com.organiclever.demojavx.domain.model.User;
-import com.organiclever.demojavx.unit.UnitFactory;
 import com.organiclever.demojavx.support.DirectCallService;
 import com.organiclever.demojavx.support.ServiceResponse;
 import io.vertx.core.json.JsonArray;

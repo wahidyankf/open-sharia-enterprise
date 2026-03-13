@@ -167,9 +167,7 @@ async fn login_store_both_tokens(world: &mut AppWorld, username: String) {
             .map(String::from);
         if username == "alice" {
             let token = world.auth_token.clone().unwrap_or_default();
-            world
-                .svc_get_profile(&format!("Bearer {token}"))
-                .await;
+            world.svc_get_profile(&format!("Bearer {token}")).await;
             world.user_id = world
                 .last_body
                 .get("id")
@@ -198,9 +196,7 @@ async fn login_store_access_token(world: &mut AppWorld, username: String) {
                 .map(String::from);
             if username == "alice" {
                 let token = world.auth_token.clone().unwrap_or_default();
-                world
-                    .svc_get_profile(&format!("Bearer {token}"))
-                    .await;
+                world.svc_get_profile(&format!("Bearer {token}")).await;
                 world.user_id = world
                     .last_body
                     .get("id")

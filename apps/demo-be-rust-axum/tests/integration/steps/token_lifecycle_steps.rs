@@ -24,8 +24,7 @@ async fn refresh_with_alice_token(world: &mut AppWorld) {
 async fn alice_refresh_expired(world: &mut AppWorld) {
     // Use an obviously expired/invalid token
     world.refresh_token = Some(
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxfQ.invalid"
-            .to_string(),
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxfQ.invalid".to_string(),
     );
 }
 
@@ -76,9 +75,7 @@ async fn logout_all_alice(world: &mut AppWorld) {
 #[then("alice's access token should be invalidated")]
 async fn check_token_invalidated(world: &mut AppWorld) {
     let token = world.auth_token.clone().unwrap_or_default();
-    world
-        .svc_get_profile(&format!("Bearer {token}"))
-        .await;
+    world.svc_get_profile(&format!("Bearer {token}")).await;
     assert_eq!(
         world.last_status, 401,
         "Expected 401 after logout, got {}",

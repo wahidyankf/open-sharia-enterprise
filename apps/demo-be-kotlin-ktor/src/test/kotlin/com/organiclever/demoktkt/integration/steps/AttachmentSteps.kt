@@ -24,6 +24,7 @@ class AttachmentSteps {
     @Given(
         "bob has created an entry with body \\{ {string}: {string}, {string}: {string}, {string}: {string}, {string}: {string}, {string}: {string}, {string}: {string} \\}"
     )
+    @Suppress("CyclomaticComplexMethod", "NestedBlockDepth")
     fun bobHasCreatedEntry(
         k1: String,
         v1: String,

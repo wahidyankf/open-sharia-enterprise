@@ -51,7 +51,7 @@ def alice_max_failed_attempts(client: ServiceClient, registered_user: dict) -> N
 
 @given("an admin has unlocked alice's account")
 def admin_unlocks_alice(client: ServiceClient, locked_user: dict) -> None:
-    admin_data = _register_and_promote_admin(client, "tmpadmin", _ADMIN_PASSWORD)
+    _register_and_promote_admin(client, "tmpadmin", _ADMIN_PASSWORD)
     admin_tokens = client.login_user("tmpadmin", _ADMIN_PASSWORD)
     resp = client.post_admin_unlock_user(
         locked_user["id"],

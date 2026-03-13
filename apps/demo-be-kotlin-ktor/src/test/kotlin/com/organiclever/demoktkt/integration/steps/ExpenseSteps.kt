@@ -33,6 +33,7 @@ class ExpenseSteps {
         return JsonHelper.getString(respBody, "id") ?: error("No id in expense response: $respBody")
     }
 
+    @Suppress("NestedBlockDepth")
     private fun loginAndEnsureToken(username: String, passwords: List<String>) {
         if (!TestWorld.accessTokens.containsKey(username)) {
             for (pwd in passwords) {

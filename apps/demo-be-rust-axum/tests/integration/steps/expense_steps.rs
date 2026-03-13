@@ -18,7 +18,15 @@ pub async fn create_expense_helper(world: &mut AppWorld, body_json: &str) {
 
     world
         .svc_create_expense(
-            &bearer, amount, currency, category, description, date, entry_type, quantity, unit,
+            &bearer,
+            amount,
+            currency,
+            category,
+            description,
+            date,
+            entry_type,
+            quantity,
+            unit,
         )
         .await;
 }
