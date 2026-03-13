@@ -4,6 +4,7 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-03-12: Demo Backend Clojure/Pedestal](./2026-03-12__demo-be-clojure-pedestal/README.md) - Clojure/Pedestal reimplementation of the demo backend REST API with 76 Gherkin scenarios via kaocha-cucumber, cloverage LCOV coverage, Docker Compose infra, and GitHub Actions E2E workflow (Completed: 2026-03-13)
 - [2026-03-12: Demo Backend C#/ASP.NET Core](./2026-03-12__demo-be-csharp-aspnetcore/README.md) - C#/ASP.NET Core reimplementation of the demo backend REST API with Minimal APIs, 76 Gherkin scenarios via Reqnroll, Coverlet line coverage, Docker Compose infra, and GitHub Actions E2E workflow (Completed: 2026-03-12)
 - [2026-03-12: Demo Backend TypeScript/Effect](./2026-03-12__demo-be-ts-effect/README.md) - TypeScript/Effect reimplementation of the demo backend REST API with Vite, Cucumber.js BDD integration tests, 76 Gherkin scenarios, Vitest coverage, Docker Compose infra, and GitHub Actions E2E workflow (Completed: 2026-03-12)
 - [2026-03-11: Demo Backend F#/Giraffe](./2026-03-11__demo-be-fsharp-giraffe/README.md) - F#/Giraffe reimplementation of the demo backend REST API with 22 endpoints, 76 Gherkin scenarios via TickSpec, 95.46% AltCover line coverage, Docker Compose infra, and GitHub Actions E2E workflow (Completed: 2026-03-11)

@@ -8,7 +8,7 @@ Clojure / Pedestal reimplementation of the demo backend REST API — a functiona
 `apps/demo-be-ts-effect` (TypeScript/Effect), and `apps/demo-be-csharp-aspnetcore` (C#/ASP.NET Core)
 using Clojure 1.12+ and Pedestal 0.7.
 
-**Status**: In Progress
+**Status**: Done
 
 ## Goals
 
