@@ -4,7 +4,6 @@ package integration_pg_test
 
 import (
 	"fmt"
-	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -12,7 +11,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/wahidyankf/open-sharia-enterprise/apps/demo-be-golang-gin/internal/auth"
-	"github.com/wahidyankf/open-sharia-enterprise/apps/demo-be-golang-gin/internal/router"
+	"github.com/wahidyankf/open-sharia-enterprise/apps/demo-be-golang-gin/internal/handler"
 	"github.com/wahidyankf/open-sharia-enterprise/apps/demo-be-golang-gin/internal/store"
 )
 
@@ -20,10 +19,11 @@ const testJWTSecret = "test-jwt-secret-at-least-32-chars-long"
 
 // scenarioCtx holds per-scenario state shared across step definitions.
 type scenarioCtx struct {
-	Router       *gin.Engine
+	Handler      *handler.Handler
+	JWTSvc       *auth.JWTService
 	Store        store.Store
-	LastResponse *http.Response
-	LastBody     []byte
+	LastStatus   int
+	LastBody     map[string]interface{}
 	AccessToken  string
 	RefreshToken string
 	UserID       string
@@ -60,9 +60,12 @@ func (ctx *scenarioCtx) reset() error {
 	}
 
 	jwtSvc := auth.NewJWTService(testJWTSecret)
+	h := handler.New(gormStore, jwtSvc)
+
+	ctx.Handler = h
+	ctx.JWTSvc = jwtSvc
 	ctx.Store = gormStore
-	ctx.Router = router.NewRouter(gormStore, jwtSvc)
-	ctx.LastResponse = nil
+	ctx.LastStatus = 0
 	ctx.LastBody = nil
 	ctx.AccessToken = ""
 	ctx.RefreshToken = ""

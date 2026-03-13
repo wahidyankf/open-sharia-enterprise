@@ -5,6 +5,7 @@ package integration_pg_test
 import (
 	"fmt"
 
+	"github.com/gin-gonic/gin"
 	"github.com/cucumber/godog"
 )
 
@@ -17,17 +18,18 @@ func registerUserAccountSteps(sc *godog.ScenarioContext, ctx *scenarioCtx) {
 }
 
 func (ctx *scenarioCtx) aliceSendsGetProfile() error {
-	resp, body := doRequest(ctx.Router, "GET", "/api/v1/users/me", nil, ctx.AccessToken)
-	ctx.LastResponse = resp
+	status, body := ctx.getProfile(ctx.AccessToken)
+	ctx.LastStatus = status
 	ctx.LastBody = body
 	return nil
 }
 
 func (ctx *scenarioCtx) aliceSendsUpdateProfile(displayName string) error {
 	reqBody := map[string]string{"display_name": displayName}
-	resp, body := doRequest(ctx.Router, "PATCH", "/api/v1/users/me", reqBody, ctx.AccessToken)
-	ctx.LastResponse = resp
-	ctx.LastBody = body
+	c, w := buildGinContext("PATCH", "/api/v1/users/me", reqBody, ctx.AccessToken, gin.Params{}, ctx.JWTSvc)
+	ctx.Handler.UpdateProfile(c)
+	ctx.LastStatus = w.Code
+	ctx.LastBody = readResponse(w)
 	return nil
 }
 
@@ -36,23 +38,24 @@ func (ctx *scenarioCtx) aliceSendsChangePassword(oldPassword, newPassword string
 		"old_password": oldPassword,
 		"new_password": newPassword,
 	}
-	resp, body := doRequest(ctx.Router, "POST", "/api/v1/users/me/password", reqBody, ctx.AccessToken)
-	ctx.LastResponse = resp
-	ctx.LastBody = body
+	c, w := buildGinContext("POST", "/api/v1/users/me/password", reqBody, ctx.AccessToken, gin.Params{}, ctx.JWTSvc)
+	ctx.Handler.ChangePassword(c)
+	ctx.LastStatus = w.Code
+	ctx.LastBody = readResponse(w)
 	return nil
 }
 
 func (ctx *scenarioCtx) aliceSendsDeactivate() error {
-	resp, body := doRequest(ctx.Router, "POST", "/api/v1/users/me/deactivate", nil, ctx.AccessToken)
-	ctx.LastResponse = resp
+	status, body := ctx.deactivateSelf(ctx.AccessToken)
+	ctx.LastStatus = status
 	ctx.LastBody = body
 	return nil
 }
 
 func (ctx *scenarioCtx) aliceHasDeactivatedHerAccount() error {
-	resp, body := doRequest(ctx.Router, "POST", "/api/v1/users/me/deactivate", nil, ctx.AccessToken)
-	if resp.StatusCode != 200 {
-		return fmt.Errorf("deactivation failed with %d: %s", resp.StatusCode, string(body))
+	status, body := ctx.deactivateSelf(ctx.AccessToken)
+	if status != 200 {
+		return fmt.Errorf("deactivation failed with %d: %v", status, body)
 	}
 	return nil
 }

@@ -3,9 +3,9 @@
 package integration_pg_test
 
 import (
-	"encoding/json"
 	"fmt"
 
+	"github.com/gin-gonic/gin"
 	"github.com/cucumber/godog"
 )
 
@@ -20,39 +20,35 @@ func registerExpenseSteps(sc *godog.ScenarioContext, ctx *scenarioCtx) {
 	sc.Step(`^the client sends POST /api/v1/expenses with body \{ "amount": "([^"]*)", "currency": "([^"]*)", "category": "([^"]*)", "description": "([^"]*)", "date": "([^"]*)", "type": "([^"]*)" \}$`, ctx.unauthClientSendsCreateExpense)
 }
 
-func (ctx *scenarioCtx) aliceSendsCreateExpense(amount, currency, category, description, date, expType string) error {
+// createExpense calls CreateExpense handler directly and captures the response.
+func (ctx *scenarioCtx) createExpense(amount, currency, category, description, date, expType, token string) (int, map[string]interface{}) {
 	body := map[string]interface{}{
 		"amount": amount, "currency": currency, "category": category,
 		"description": description, "date": date, "type": expType,
 	}
-	resp, respBody := doRequest(ctx.Router, "POST", "/api/v1/expenses", body, ctx.AccessToken)
-	ctx.LastResponse = resp
-	ctx.LastBody = respBody
-	if resp.StatusCode == 201 {
-		var parsed map[string]interface{}
-		if err := json.Unmarshal(respBody, &parsed); err == nil {
-			if id, ok := parsed["id"].(string); ok {
-				ctx.ExpenseID = id
-			}
+	c, w := buildGinContext("POST", "/api/v1/expenses", body, token, gin.Params{}, ctx.JWTSvc)
+	ctx.Handler.CreateExpense(c)
+	return w.Code, readResponse(w)
+}
+
+func (ctx *scenarioCtx) aliceSendsCreateExpense(amount, currency, category, description, date, expType string) error {
+	status, body := ctx.createExpense(amount, currency, category, description, date, expType, ctx.AccessToken)
+	ctx.LastStatus = status
+	ctx.LastBody = body
+	if status == 201 {
+		if id, ok := body["id"].(string); ok {
+			ctx.ExpenseID = id
 		}
 	}
 	return nil
 }
 
 func (ctx *scenarioCtx) aliceHasCreatedEntry(amount, currency, category, description, date, expType string) error {
-	body := map[string]interface{}{
-		"amount": amount, "currency": currency, "category": category,
-		"description": description, "date": date, "type": expType,
+	status, body := ctx.createExpense(amount, currency, category, description, date, expType, ctx.AccessToken)
+	if status != 201 {
+		return fmt.Errorf("create expense failed with %d: %v", status, body)
 	}
-	resp, respBody := doRequest(ctx.Router, "POST", "/api/v1/expenses", body, ctx.AccessToken)
-	if resp.StatusCode != 201 {
-		return fmt.Errorf("create expense failed with %d: %s", resp.StatusCode, string(respBody))
-	}
-	var parsed map[string]interface{}
-	if err := json.Unmarshal(respBody, &parsed); err != nil {
-		return err
-	}
-	if id, ok := parsed["id"].(string); ok {
+	if id, ok := body["id"].(string); ok {
 		ctx.ExpenseID = id
 	}
 	return nil
@@ -73,16 +69,20 @@ func (ctx *scenarioCtx) aliceHasCreated3Entries() error {
 }
 
 func (ctx *scenarioCtx) aliceSendsGetExpense() error {
-	resp, body := doRequest(ctx.Router, "GET", "/api/v1/expenses/"+ctx.ExpenseID, nil, ctx.AccessToken)
-	ctx.LastResponse = resp
-	ctx.LastBody = body
+	params := gin.Params{{Key: "id", Value: ctx.ExpenseID}}
+	c, w := buildGinContext("GET", "/api/v1/expenses/"+ctx.ExpenseID, nil, ctx.AccessToken, params, ctx.JWTSvc)
+	ctx.Handler.GetExpense(c)
+	ctx.LastStatus = w.Code
+	ctx.LastBody = readResponse(w)
 	return nil
 }
 
 func (ctx *scenarioCtx) aliceSendsListExpenses() error {
-	resp, body := doRequest(ctx.Router, "GET", "/api/v1/expenses", nil, ctx.AccessToken)
-	ctx.LastResponse = resp
-	ctx.LastBody = body
+	c, w := buildGinContext("GET", "/api/v1/expenses", nil, ctx.AccessToken, gin.Params{}, ctx.JWTSvc)
+	c.Request.URL.RawQuery = "page=1&size=20"
+	ctx.Handler.ListExpenses(c)
+	ctx.LastStatus = w.Code
+	ctx.LastBody = readResponse(w)
 	return nil
 }
 
@@ -91,26 +91,27 @@ func (ctx *scenarioCtx) aliceSendsPutExpense(amount, currency, category, descrip
 		"amount": amount, "currency": currency, "category": category,
 		"description": description, "date": date, "type": expType,
 	}
-	resp, respBody := doRequest(ctx.Router, "PUT", "/api/v1/expenses/"+ctx.ExpenseID, body, ctx.AccessToken)
-	ctx.LastResponse = resp
-	ctx.LastBody = respBody
+	params := gin.Params{{Key: "id", Value: ctx.ExpenseID}}
+	c, w := buildGinContext("PUT", "/api/v1/expenses/"+ctx.ExpenseID, body, ctx.AccessToken, params, ctx.JWTSvc)
+	ctx.Handler.UpdateExpense(c)
+	ctx.LastStatus = w.Code
+	ctx.LastBody = readResponse(w)
 	return nil
 }
 
 func (ctx *scenarioCtx) aliceSendsDeleteExpense() error {
-	resp, body := doRequest(ctx.Router, "DELETE", "/api/v1/expenses/"+ctx.ExpenseID, nil, ctx.AccessToken)
-	ctx.LastResponse = resp
-	ctx.LastBody = body
+	params := gin.Params{{Key: "id", Value: ctx.ExpenseID}}
+	c, w := buildGinContext("DELETE", "/api/v1/expenses/"+ctx.ExpenseID, nil, ctx.AccessToken, params, ctx.JWTSvc)
+	ctx.Handler.DeleteExpense(c)
+	ctx.LastStatus = w.Code
+	ctx.LastBody = readResponse(w)
 	return nil
 }
 
 func (ctx *scenarioCtx) unauthClientSendsCreateExpense(amount, currency, category, description, date, expType string) error {
-	body := map[string]interface{}{
-		"amount": amount, "currency": currency, "category": category,
-		"description": description, "date": date, "type": expType,
-	}
-	resp, respBody := doRequest(ctx.Router, "POST", "/api/v1/expenses", body, "")
-	ctx.LastResponse = resp
-	ctx.LastBody = respBody
+	// No token — the handler will fail to extract claims and return 401.
+	status, body := ctx.createExpense(amount, currency, category, description, date, expType, "")
+	ctx.LastStatus = status
+	ctx.LastBody = body
 	return nil
 }

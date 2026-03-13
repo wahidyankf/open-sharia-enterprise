@@ -5,6 +5,7 @@ package integration_pg_test
 import (
 	"fmt"
 
+	"github.com/gin-gonic/gin"
 	"github.com/cucumber/godog"
 )
 
@@ -15,18 +16,19 @@ func registerReportingSteps(sc *godog.ScenarioContext, ctx *scenarioCtx) {
 }
 
 func (ctx *scenarioCtx) aliceSendsGetPLReport(from, to, currency string) error {
-	url := fmt.Sprintf("/api/v1/reports/pl?from=%s&to=%s&currency=%s", from, to, currency)
-	resp, body := doRequest(ctx.Router, "GET", url, nil, ctx.AccessToken)
-	ctx.LastResponse = resp
-	ctx.LastBody = body
+	rawQuery := fmt.Sprintf("from=%s&to=%s&currency=%s", from, to, currency)
+	c, w := buildGinContext("GET", "/api/v1/reports/pl?"+rawQuery, nil, ctx.AccessToken, gin.Params{}, ctx.JWTSvc)
+	c.Request.URL.RawQuery = rawQuery
+	ctx.Handler.PLReport(c)
+	ctx.LastStatus = w.Code
+	ctx.LastBody = readResponse(w)
 	return nil
 }
 
 func (ctx *scenarioCtx) theIncomeBreakdownShouldContainCategory(category, amount string) error {
-	body := parseBody(ctx.LastBody)
-	breakdown, ok := body["income_breakdown"]
+	breakdown, ok := ctx.LastBody["income_breakdown"]
 	if !ok {
-		return fmt.Errorf("response does not contain 'income_breakdown'; body: %s", string(ctx.LastBody))
+		return fmt.Errorf("response does not contain 'income_breakdown'; body: %v", ctx.LastBody)
 	}
 	breakdownMap, ok := breakdown.(map[string]interface{})
 	if !ok {
@@ -43,10 +45,9 @@ func (ctx *scenarioCtx) theIncomeBreakdownShouldContainCategory(category, amount
 }
 
 func (ctx *scenarioCtx) theExpenseBreakdownShouldContainCategory(category, amount string) error {
-	body := parseBody(ctx.LastBody)
-	breakdown, ok := body["expense_breakdown"]
+	breakdown, ok := ctx.LastBody["expense_breakdown"]
 	if !ok {
-		return fmt.Errorf("response does not contain 'expense_breakdown'; body: %s", string(ctx.LastBody))
+		return fmt.Errorf("response does not contain 'expense_breakdown'; body: %v", ctx.LastBody)
 	}
 	breakdownMap, ok := breakdown.(map[string]interface{})
 	if !ok {

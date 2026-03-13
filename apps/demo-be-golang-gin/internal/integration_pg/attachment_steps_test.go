@@ -3,9 +3,9 @@
 package integration_pg_test
 
 import (
-	"encoding/json"
 	"fmt"
 
+	"github.com/gin-gonic/gin"
 	"github.com/cucumber/godog"
 
 	"github.com/wahidyankf/open-sharia-enterprise/apps/demo-be-golang-gin/internal/domain"
@@ -27,18 +27,23 @@ func registerAttachmentSteps(sc *godog.ScenarioContext, ctx *scenarioCtx) {
 	sc.Step(`^alice uploads file "([^"]*)" with content type "([^"]*)" to the entry$`, ctx.aliceHasUploadedFileTo)
 }
 
+// uploadAttachment calls UploadAttachment handler directly using multipart form data.
+func (ctx *scenarioCtx) uploadAttachment(expenseID, filename, contentType string, content []byte, token string) (int, map[string]interface{}) {
+	path := fmt.Sprintf("/api/v1/expenses/%s/attachments", expenseID)
+	params := gin.Params{{Key: "id", Value: expenseID}}
+	c, w := buildMultipartGinContext(path, filename, contentType, content, token, params, ctx.JWTSvc)
+	ctx.Handler.UploadAttachment(c)
+	return w.Code, readResponse(w)
+}
+
 func (ctx *scenarioCtx) aliceUploadsFileTo(filename, contentType string) error {
 	content := []byte("fake file content")
-	path := fmt.Sprintf("/api/v1/expenses/%s/attachments", ctx.ExpenseID)
-	resp, body := uploadFile(ctx.Router, path, filename, contentType, content, ctx.AccessToken)
-	ctx.LastResponse = resp
+	status, body := ctx.uploadAttachment(ctx.ExpenseID, filename, contentType, content, ctx.AccessToken)
+	ctx.LastStatus = status
 	ctx.LastBody = body
-	if resp.StatusCode == 201 {
-		var parsed map[string]interface{}
-		if err := json.Unmarshal(body, &parsed); err == nil {
-			if id, ok := parsed["id"].(string); ok {
-				ctx.AttachmentID = id
-			}
+	if status == 201 {
+		if id, ok := body["id"].(string); ok {
+			ctx.AttachmentID = id
 		}
 	}
 	return nil
@@ -46,84 +51,90 @@ func (ctx *scenarioCtx) aliceUploadsFileTo(filename, contentType string) error {
 
 func (ctx *scenarioCtx) aliceUploadsFileToBobExpense(filename, contentType string) error {
 	content := []byte("fake file content")
-	path := fmt.Sprintf("/api/v1/expenses/%s/attachments", ctx.BobExpenseID)
-	resp, body := uploadFile(ctx.Router, path, filename, contentType, content, ctx.AccessToken)
-	ctx.LastResponse = resp
+	status, body := ctx.uploadAttachment(ctx.BobExpenseID, filename, contentType, content, ctx.AccessToken)
+	ctx.LastStatus = status
 	ctx.LastBody = body
 	return nil
 }
 
 func (ctx *scenarioCtx) aliceHasUploadedFileTo(filename, contentType string) error {
 	content := []byte("fake file content")
-	path := fmt.Sprintf("/api/v1/expenses/%s/attachments", ctx.ExpenseID)
-	resp, body := uploadFile(ctx.Router, path, filename, contentType, content, ctx.AccessToken)
-	if resp.StatusCode != 201 {
-		return fmt.Errorf("upload failed with %d: %s", resp.StatusCode, string(body))
+	status, body := ctx.uploadAttachment(ctx.ExpenseID, filename, contentType, content, ctx.AccessToken)
+	if status != 201 {
+		return fmt.Errorf("upload failed with %d: %v", status, body)
 	}
-	var parsed map[string]interface{}
-	if err := json.Unmarshal(body, &parsed); err != nil {
-		return err
-	}
-	if id, ok := parsed["id"].(string); ok {
+	if id, ok := body["id"].(string); ok {
 		ctx.AttachmentID = id
 	}
 	return nil
 }
 
 func (ctx *scenarioCtx) aliceSendsGetAttachments() error {
-	path := fmt.Sprintf("/api/v1/expenses/%s/attachments", ctx.ExpenseID)
-	resp, body := doRequest(ctx.Router, "GET", path, nil, ctx.AccessToken)
-	ctx.LastResponse = resp
-	ctx.LastBody = body
+	params := gin.Params{{Key: "id", Value: ctx.ExpenseID}}
+	c, w := buildGinContext("GET", fmt.Sprintf("/api/v1/expenses/%s/attachments", ctx.ExpenseID), nil, ctx.AccessToken, params, ctx.JWTSvc)
+	ctx.Handler.ListAttachments(c)
+	ctx.LastStatus = w.Code
+	ctx.LastBody = readResponse(w)
 	return nil
 }
 
 func (ctx *scenarioCtx) aliceSendsGetAttachmentsForBobExpense() error {
-	path := fmt.Sprintf("/api/v1/expenses/%s/attachments", ctx.BobExpenseID)
-	resp, body := doRequest(ctx.Router, "GET", path, nil, ctx.AccessToken)
-	ctx.LastResponse = resp
-	ctx.LastBody = body
+	params := gin.Params{{Key: "id", Value: ctx.BobExpenseID}}
+	c, w := buildGinContext("GET", fmt.Sprintf("/api/v1/expenses/%s/attachments", ctx.BobExpenseID), nil, ctx.AccessToken, params, ctx.JWTSvc)
+	ctx.Handler.ListAttachments(c)
+	ctx.LastStatus = w.Code
+	ctx.LastBody = readResponse(w)
 	return nil
 }
 
 func (ctx *scenarioCtx) aliceSendsDeleteAttachment() error {
-	path := fmt.Sprintf("/api/v1/expenses/%s/attachments/%s", ctx.ExpenseID, ctx.AttachmentID)
-	resp, body := doRequest(ctx.Router, "DELETE", path, nil, ctx.AccessToken)
-	ctx.LastResponse = resp
-	ctx.LastBody = body
+	params := gin.Params{
+		{Key: "id", Value: ctx.ExpenseID},
+		{Key: "aid", Value: ctx.AttachmentID},
+	}
+	c, w := buildGinContext("DELETE", fmt.Sprintf("/api/v1/expenses/%s/attachments/%s", ctx.ExpenseID, ctx.AttachmentID), nil, ctx.AccessToken, params, ctx.JWTSvc)
+	ctx.Handler.DeleteAttachment(c)
+	ctx.LastStatus = w.Code
+	ctx.LastBody = readResponse(w)
 	return nil
 }
 
 func (ctx *scenarioCtx) aliceSendsDeleteNonExistentAttachment() error {
-	path := fmt.Sprintf("/api/v1/expenses/%s/attachments/nonexistent-attachment-id", ctx.ExpenseID)
-	resp, body := doRequest(ctx.Router, "DELETE", path, nil, ctx.AccessToken)
-	ctx.LastResponse = resp
-	ctx.LastBody = body
+	params := gin.Params{
+		{Key: "id", Value: ctx.ExpenseID},
+		{Key: "aid", Value: "nonexistent-attachment-id"},
+	}
+	c, w := buildGinContext("DELETE", fmt.Sprintf("/api/v1/expenses/%s/attachments/nonexistent-attachment-id", ctx.ExpenseID), nil, ctx.AccessToken, params, ctx.JWTSvc)
+	ctx.Handler.DeleteAttachment(c)
+	ctx.LastStatus = w.Code
+	ctx.LastBody = readResponse(w)
 	return nil
 }
 
 func (ctx *scenarioCtx) aliceSendsDeleteAttachmentOnBobExpense() error {
-	path := fmt.Sprintf("/api/v1/expenses/%s/attachments/%s", ctx.BobExpenseID, ctx.AttachmentID)
-	resp, body := doRequest(ctx.Router, "DELETE", path, nil, ctx.AccessToken)
-	ctx.LastResponse = resp
-	ctx.LastBody = body
+	params := gin.Params{
+		{Key: "id", Value: ctx.BobExpenseID},
+		{Key: "aid", Value: ctx.AttachmentID},
+	}
+	c, w := buildGinContext("DELETE", fmt.Sprintf("/api/v1/expenses/%s/attachments/%s", ctx.BobExpenseID, ctx.AttachmentID), nil, ctx.AccessToken, params, ctx.JWTSvc)
+	ctx.Handler.DeleteAttachment(c)
+	ctx.LastStatus = w.Code
+	ctx.LastBody = readResponse(w)
 	return nil
 }
 
 func (ctx *scenarioCtx) aliceUploadsOversizedFile() error {
 	content := make([]byte, domain.MaxAttachmentSize+1)
-	path := fmt.Sprintf("/api/v1/expenses/%s/attachments", ctx.ExpenseID)
-	resp, body := uploadFile(ctx.Router, path, "large.pdf", "application/pdf", content, ctx.AccessToken)
-	ctx.LastResponse = resp
+	status, body := ctx.uploadAttachment(ctx.ExpenseID, "large.pdf", "application/pdf", content, ctx.AccessToken)
+	ctx.LastStatus = status
 	ctx.LastBody = body
 	return nil
 }
 
 func (ctx *scenarioCtx) theResponseBodyShouldContain2Items(arrayField string) error {
-	body := parseBody(ctx.LastBody)
-	v, ok := body[arrayField]
+	v, ok := ctx.LastBody[arrayField]
 	if !ok {
-		return fmt.Errorf("response does not contain %q field; body: %s", arrayField, string(ctx.LastBody))
+		return fmt.Errorf("response does not contain %q field; body: %v", arrayField, ctx.LastBody)
 	}
 	arr, ok := v.([]interface{})
 	if !ok {
@@ -136,10 +147,9 @@ func (ctx *scenarioCtx) theResponseBodyShouldContain2Items(arrayField string) er
 }
 
 func (ctx *scenarioCtx) theResponseBodyShouldContainAttachmentWithField(field, value string) error {
-	body := parseBody(ctx.LastBody)
-	v, ok := body["attachments"]
+	v, ok := ctx.LastBody["attachments"]
 	if !ok {
-		return fmt.Errorf("response does not contain 'attachments' field; body: %s", string(ctx.LastBody))
+		return fmt.Errorf("response does not contain 'attachments' field; body: %v", ctx.LastBody)
 	}
 	attachments, ok := v.([]interface{})
 	if !ok {
@@ -158,32 +168,29 @@ func (ctx *scenarioCtx) theResponseBodyShouldContainAttachmentWithField(field, v
 }
 
 func (ctx *scenarioCtx) bobHasCreatedEntry(amount, currency, category, description, date, expType string) error {
-	loginBody := map[string]string{"username": "bob", "password": "Str0ng#Pass2"}
-	resp, body := doRequest(ctx.Router, "POST", "/api/v1/auth/login", loginBody, "")
-	if resp.StatusCode != 200 {
-		return fmt.Errorf("bob login failed: %s", string(body))
+	// Log in as bob.
+	loginStatus, loginBody := ctx.login("bob", "Str0ng#Pass2")
+	if loginStatus != 200 {
+		return fmt.Errorf("bob login failed: %v", loginBody)
 	}
-	var parsed map[string]interface{}
-	if err := json.Unmarshal(body, &parsed); err != nil {
-		return err
-	}
-	bobToken, ok := parsed["access_token"].(string)
+	bobToken, ok := loginBody["access_token"].(string)
 	if !ok {
 		return fmt.Errorf("access_token is not a string")
 	}
+	ctx.BobAccessToken = bobToken
+
+	// Create expense as bob.
 	expBody := map[string]interface{}{
 		"amount": amount, "currency": currency, "category": category,
 		"description": description, "date": date, "type": expType,
 	}
-	resp2, body2 := doRequest(ctx.Router, "POST", "/api/v1/expenses", expBody, bobToken)
-	if resp2.StatusCode != 201 {
-		return fmt.Errorf("bob expense creation failed: %s", string(body2))
+	c, w := buildGinContext("POST", "/api/v1/expenses", expBody, bobToken, gin.Params{}, ctx.JWTSvc)
+	ctx.Handler.CreateExpense(c)
+	if w.Code != 201 {
+		return fmt.Errorf("bob expense creation failed with %d: %v", w.Code, readResponse(w))
 	}
-	var expParsed map[string]interface{}
-	if err := json.Unmarshal(body2, &expParsed); err != nil {
-		return err
-	}
-	if id, ok := expParsed["id"].(string); ok {
+	body := readResponse(w)
+	if id, ok := body["id"].(string); ok {
 		ctx.BobExpenseID = id
 	}
 	return nil
