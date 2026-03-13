@@ -1,9 +1,10 @@
 defmodule DemoBeExphWeb.Integration.AttachmentsSteps do
   use Cabbage.Feature, async: false, file: "expenses/attachments.feature"
 
-  use DemoBeExphWeb.ConnCaseIntegration
+  use DemoBeExph.DataCaseIntegration
 
   alias DemoBeExph.Integration.Helpers
+  alias DemoBeExph.Integration.ServiceLayer
 
   @moduletag :integration
 
@@ -28,70 +29,54 @@ defmodule DemoBeExphWeb.Integration.AttachmentsSteps do
   defgiven ~r/^alice has created an entry with body \{ (?<body>.+) \}$/,
            %{body: body_content},
            %{access_token: access_token} = state do
-    body = Jason.encode!(Jason.decode!("{" <> body_content <> "}"))
-
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(access_token))
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/expenses", body)
-
-    assert conn.status == 201
-    expense_body = Jason.decode!(conn.resp_body)
-    {:ok, Map.put(state, :expense_id, expense_body["id"])}
+    params = Jason.decode!("{" <> body_content <> "}")
+    response = ServiceLayer.create_expense(access_token, params)
+    assert response.status == 201
+    {:ok, Map.put(state, :expense_id, response.body["id"])}
   end
 
   defgiven ~r/^bob has created an entry with body \{ (?<body>.+) \}$/,
            %{body: body_content},
            %{"bob" => bob_user} = state do
     {bob_token, _} = Helpers.login_user!(bob_user)
-    body = Jason.encode!(Jason.decode!("{" <> body_content <> "}"))
-
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(bob_token))
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/expenses", body)
-
-    assert conn.status == 201
-    expense_body = Jason.decode!(conn.resp_body)
-    {:ok, Map.put(state, :bob_expense_id, expense_body["id"])}
+    params = Jason.decode!("{" <> body_content <> "}")
+    response = ServiceLayer.create_expense(bob_token, params)
+    assert response.status == 201
+    {:ok, Map.put(state, :bob_expense_id, response.body["id"])}
   end
 
   defgiven ~r/^alice has uploaded file "(?<filename>[^"]+)" with content type "(?<content_type>[^"]+)" to the entry$/,
            %{filename: filename, content_type: content_type},
            %{access_token: access_token, expense_id: expense_id} = state do
-    conn = upload_file(build_conn(), access_token, expense_id, filename, content_type)
-    assert conn.status == 201
-    att_body = Jason.decode!(conn.resp_body)
+    response = upload_file(access_token, expense_id, filename, content_type)
+    assert response.status == 201
     attachments = Map.get(state, :uploaded_attachment_ids, [])
-    {:ok, Map.put(state, :uploaded_attachment_ids, attachments ++ [att_body["id"]])}
+    {:ok, Map.put(state, :uploaded_attachment_ids, attachments ++ [response.body["id"]])}
   end
 
   defwhen ~r/^alice uploads file "(?<filename>[^"]+)" with content type "(?<content_type>[^"]+)" to POST \/api\/v1\/expenses\/\{expenseId\}\/attachments$/,
           %{filename: filename, content_type: content_type},
           %{access_token: access_token, expense_id: expense_id} = state do
-    conn = upload_file(build_conn(), access_token, expense_id, filename, content_type)
-    att_body = if conn.status == 201, do: Jason.decode!(conn.resp_body), else: %{}
-    {:ok, Map.merge(state, %{conn: conn, last_attachment_id: att_body["id"]})}
+    response = upload_file(access_token, expense_id, filename, content_type)
+
+    last_attachment_id =
+      if response.status == 201, do: response.body["id"], else: nil
+
+    {:ok, Map.merge(state, %{response: response, last_attachment_id: last_attachment_id})}
   end
 
   defwhen ~r/^alice uploads file "(?<filename>[^"]+)" with content type "(?<content_type>[^"]+)" to POST \/api\/v1\/expenses\/\{bobExpenseId\}\/attachments$/,
           %{filename: filename, content_type: content_type},
           %{access_token: access_token, bob_expense_id: bob_expense_id} = state do
-    conn = upload_file(build_conn(), access_token, bob_expense_id, filename, content_type)
-    {:ok, Map.put(state, :conn, conn)}
+    response = upload_file(access_token, bob_expense_id, filename, content_type)
+    {:ok, Map.put(state, :response, response)}
   end
 
   defwhen ~r/^alice sends GET \/api\/v1\/expenses\/\{bobExpenseId\}\/attachments$/,
           _vars,
           %{access_token: access_token, bob_expense_id: bob_expense_id} = state do
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(access_token))
-      |> get("/api/v1/expenses/#{bob_expense_id}/attachments")
-
-    {:ok, Map.put(state, :conn, conn)}
+    response = ServiceLayer.list_attachments(access_token, bob_expense_id)
+    {:ok, Map.put(state, :response, response)}
   end
 
   defwhen ~r/^alice sends DELETE \/api\/v1\/expenses\/\{bobExpenseId\}\/attachments\/\{attachmentId\}$/,
@@ -101,59 +86,43 @@ defmodule DemoBeExphWeb.Integration.AttachmentsSteps do
             bob_expense_id: bob_expense_id,
             uploaded_attachment_ids: [att_id | _]
           } = state do
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(access_token))
-      |> delete("/api/v1/expenses/#{bob_expense_id}/attachments/#{att_id}")
-
-    {:ok, Map.put(state, :conn, conn)}
+    response = ServiceLayer.delete_attachment(access_token, bob_expense_id, att_id)
+    {:ok, Map.put(state, :response, response)}
   end
 
   defwhen ~r/^alice sends DELETE \/api\/v1\/expenses\/\{expenseId\}\/attachments\/\{randomAttachmentId\}$/,
           _vars,
           %{access_token: access_token, expense_id: expense_id} = state do
     random_id = :rand.uniform(999_999_999)
-
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(access_token))
-      |> delete("/api/v1/expenses/#{expense_id}/attachments/#{random_id}")
-
-    {:ok, Map.put(state, :conn, conn)}
+    response = ServiceLayer.delete_attachment(access_token, expense_id, random_id)
+    {:ok, Map.put(state, :response, response)}
   end
 
   defwhen ~r/^alice uploads an oversized file to POST \/api\/v1\/expenses\/\{expenseId\}\/attachments$/,
           _vars,
           %{access_token: access_token, expense_id: expense_id} = state do
-    # Create a file larger than max_size_bytes (5MB)
     large_data = :crypto.strong_rand_bytes(6 * 1024 * 1024)
     tmp_path = System.tmp_dir!() <> "/oversized_test_#{System.unique_integer()}.jpg"
     File.write!(tmp_path, large_data)
 
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(access_token))
-      |> post("/api/v1/expenses/#{expense_id}/attachments", %{
-        "file" => %Plug.Upload{
-          path: tmp_path,
-          filename: "oversized.jpg",
-          content_type: "image/jpeg"
-        }
-      })
+    response =
+      ServiceLayer.upload_attachment(
+        access_token,
+        expense_id,
+        "oversized.jpg",
+        "image/jpeg",
+        tmp_path
+      )
 
     File.rm(tmp_path)
-    {:ok, Map.put(state, :conn, conn)}
+    {:ok, Map.put(state, :response, response)}
   end
 
   defwhen ~r/^alice sends GET \/api\/v1\/expenses\/\{expenseId\}\/attachments$/,
           _vars,
           %{access_token: access_token, expense_id: expense_id} = state do
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(access_token))
-      |> get("/api/v1/expenses/#{expense_id}/attachments")
-
-    {:ok, Map.put(state, :conn, conn)}
+    response = ServiceLayer.list_attachments(access_token, expense_id)
+    {:ok, Map.put(state, :response, response)}
   end
 
   defwhen ~r/^alice sends DELETE \/api\/v1\/expenses\/\{expenseId\}\/attachments\/\{attachmentId\}$/,
@@ -163,92 +132,79 @@ defmodule DemoBeExphWeb.Integration.AttachmentsSteps do
             expense_id: expense_id,
             uploaded_attachment_ids: [att_id | _]
           } = state do
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(access_token))
-      |> delete("/api/v1/expenses/#{expense_id}/attachments/#{att_id}")
-
-    {:ok, Map.put(state, :conn, conn)}
+    response = ServiceLayer.delete_attachment(access_token, expense_id, att_id)
+    {:ok, Map.put(state, :response, response)}
   end
 
   defthen ~r/^the response status code should be (?<code>\d+)$/,
           %{code: code},
-          %{conn: conn} = state do
-    assert conn.status == String.to_integer(code)
+          %{response: response} = state do
+    assert response.status == String.to_integer(code)
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain a non-null "(?<field>[^"]+)" field$/,
           %{field: field},
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert Map.has_key?(body, field)
-    assert body[field] != nil
+          %{response: response} = state do
+    assert Map.has_key?(response.body, field)
+    assert response.body[field] != nil
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain "(?<field>[^"]+)" equal to "(?<value>[^"]+)"$/,
           %{field: field, value: value},
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert body[field] == value
+          %{response: response} = state do
+    assert response.body[field] == value
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain (?<count>\d+) items in the "(?<field>[^"]+)" array$/,
           %{count: count, field: field},
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert length(body[field]) == String.to_integer(count)
+          %{response: response} = state do
+    assert length(response.body[field]) == String.to_integer(count)
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain an attachment with "(?<field>[^"]+)" equal to "(?<value>[^"]+)"$/,
           %{field: field, value: value},
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    attachments = body["attachments"]
+          %{response: response} = state do
+    attachments = response.body["attachments"]
     assert Enum.any?(attachments, fn a -> a[field] == value end)
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain a validation error for "(?<field>[^"]+)"$/,
           %{field: field},
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert Map.has_key?(body, "errors")
-    errors = body["errors"]
+          %{response: response} = state do
+    assert Map.has_key?(response.body, "errors")
+    errors = response.body["errors"]
     assert Map.has_key?(errors, field)
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain an error message about file size$/,
           _vars,
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert body["message"] =~ ~r/[Ss]ize|[Ll]arge|[Mm]aximum/i
+          %{response: response} = state do
+    assert response.body["message"] =~ ~r/[Ss]ize|[Ll]arge|[Mm]aximum/i
     {:ok, state}
   end
 
-  # Helper to upload a file in multipart form
-  defp upload_file(conn, access_token, expense_id, filename, content_type) do
-    # Create a small temp file with test content
+  # Helper to create a temp file and upload it via the service layer
+  defp upload_file(access_token, expense_id, filename, content_type) do
     ext = filename |> Path.extname()
     tmp_path = System.tmp_dir!() <> "/test_upload_#{System.unique_integer()}#{ext}"
     File.write!(tmp_path, "test content for #{filename}")
 
-    result =
-      conn
-      |> put_req_header("authorization", Helpers.bearer_header(access_token))
-      |> post("/api/v1/expenses/#{expense_id}/attachments", %{
-        "file" => %Plug.Upload{
-          path: tmp_path,
-          filename: filename,
-          content_type: content_type
-        }
-      })
+    response =
+      ServiceLayer.upload_attachment(
+        access_token,
+        expense_id,
+        filename,
+        content_type,
+        tmp_path
+      )
 
     File.rm(tmp_path)
-    result
+    response
   end
 end

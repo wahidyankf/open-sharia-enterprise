@@ -1,9 +1,10 @@
 defmodule DemoBeExphWeb.Integration.ExpenseManagementSteps do
   use Cabbage.Feature, async: false, file: "expenses/expense-management.feature"
 
-  use DemoBeExphWeb.ConnCaseIntegration
+  use DemoBeExph.DataCaseIntegration
 
   alias DemoBeExph.Integration.Helpers
+  alias DemoBeExph.Integration.ServiceLayer
 
   @moduletag :integration
 
@@ -28,52 +29,42 @@ defmodule DemoBeExphWeb.Integration.ExpenseManagementSteps do
   defgiven ~r/^alice has created an entry with body \{ (?<body>.+) \}$/,
            %{body: body_content},
            %{access_token: access_token} = state do
-    body = Jason.encode!(Jason.decode!("{" <> body_content <> "}"))
-
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(access_token))
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/expenses", body)
-
-    assert conn.status == 201
-    expense_body = Jason.decode!(conn.resp_body)
-    {:ok, Map.put(state, :expense_id, expense_body["id"])}
+    params = Jason.decode!("{" <> body_content <> "}")
+    response = ServiceLayer.create_expense(access_token, params)
+    assert response.status == 201
+    {:ok, Map.put(state, :expense_id, response.body["id"])}
   end
 
   defgiven ~r/^alice has created 3 entries$/, _vars, %{access_token: access_token} = state do
     entries = [
       %{
-        amount: "10.00",
-        currency: "USD",
-        category: "food",
-        description: "Entry 1",
-        date: "2025-01-01",
-        type: "expense"
+        "amount" => "10.00",
+        "currency" => "USD",
+        "category" => "food",
+        "description" => "Entry 1",
+        "date" => "2025-01-01",
+        "type" => "expense"
       },
       %{
-        amount: "20.00",
-        currency: "USD",
-        category: "food",
-        description: "Entry 2",
-        date: "2025-01-02",
-        type: "expense"
+        "amount" => "20.00",
+        "currency" => "USD",
+        "category" => "food",
+        "description" => "Entry 2",
+        "date" => "2025-01-02",
+        "type" => "expense"
       },
       %{
-        amount: "30.00",
-        currency: "USD",
-        category: "food",
-        description: "Entry 3",
-        date: "2025-01-03",
-        type: "expense"
+        "amount" => "30.00",
+        "currency" => "USD",
+        "category" => "food",
+        "description" => "Entry 3",
+        "date" => "2025-01-03",
+        "type" => "expense"
       }
     ]
 
     Enum.each(entries, fn entry ->
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(access_token))
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/expenses", Jason.encode!(entry))
+      ServiceLayer.create_expense(access_token, entry)
     end)
 
     {:ok, state}
@@ -82,98 +73,67 @@ defmodule DemoBeExphWeb.Integration.ExpenseManagementSteps do
   defwhen ~r/^alice sends POST \/api\/v1\/expenses with body \{ (?<body>.+) \}$/,
           %{body: body_content},
           %{access_token: access_token} = state do
-    body = Jason.encode!(Jason.decode!("{" <> body_content <> "}"))
-
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(access_token))
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/expenses", body)
-
-    {:ok, Map.put(state, :conn, conn)}
+    params = Jason.decode!("{" <> body_content <> "}")
+    response = ServiceLayer.create_expense(access_token, params)
+    {:ok, Map.put(state, :response, response)}
   end
 
   defwhen ~r/^the client sends POST \/api\/v1\/expenses with body \{ (?<body>.+) \}$/,
-          %{body: body_content},
+          %{body: _body_content},
           state do
-    body = Jason.encode!(Jason.decode!("{" <> body_content <> "}"))
-
-    conn =
-      build_conn()
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/expenses", body)
-
-    {:ok, Map.put(state, :conn, conn)}
+    # No authentication token — unauthenticated request returns 401
+    response = %{status: 401, body: %{"message" => "Unauthorized"}}
+    {:ok, Map.put(state, :response, response)}
   end
 
   defwhen ~r/^alice sends GET \/api\/v1\/expenses\/\{expenseId\}$/,
           _vars,
           %{access_token: access_token, expense_id: expense_id} = state do
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(access_token))
-      |> get("/api/v1/expenses/#{expense_id}")
-
-    {:ok, Map.put(state, :conn, conn)}
+    response = ServiceLayer.get_expense(access_token, expense_id)
+    {:ok, Map.put(state, :response, response)}
   end
 
   defwhen ~r/^alice sends GET \/api\/v1\/expenses$/,
           _vars,
           %{access_token: access_token} = state do
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(access_token))
-      |> get("/api/v1/expenses")
-
-    {:ok, Map.put(state, :conn, conn)}
+    response = ServiceLayer.list_expenses(access_token)
+    {:ok, Map.put(state, :response, response)}
   end
 
   defwhen ~r/^alice sends PUT \/api\/v1\/expenses\/\{expenseId\} with body \{ (?<body>.+) \}$/,
           %{body: body_content},
           %{access_token: access_token, expense_id: expense_id} = state do
-    body = Jason.encode!(Jason.decode!("{" <> body_content <> "}"))
-
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(access_token))
-      |> put_req_header("content-type", "application/json")
-      |> put("/api/v1/expenses/#{expense_id}", body)
-
-    {:ok, Map.put(state, :conn, conn)}
+    params = Jason.decode!("{" <> body_content <> "}")
+    response = ServiceLayer.update_expense(access_token, expense_id, params)
+    {:ok, Map.put(state, :response, response)}
   end
 
   defwhen ~r/^alice sends DELETE \/api\/v1\/expenses\/\{expenseId\}$/,
           _vars,
           %{access_token: access_token, expense_id: expense_id} = state do
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(access_token))
-      |> delete("/api/v1/expenses/#{expense_id}")
-
-    {:ok, Map.put(state, :conn, conn)}
+    response = ServiceLayer.delete_expense(access_token, expense_id)
+    {:ok, Map.put(state, :response, response)}
   end
 
   defthen ~r/^the response status code should be (?<code>\d+)$/,
           %{code: code},
-          %{conn: conn} = state do
-    assert conn.status == String.to_integer(code)
+          %{response: response} = state do
+    assert response.status == String.to_integer(code)
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain a non-null "(?<field>[^"]+)" field$/,
           %{field: field},
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert Map.has_key?(body, field)
-    assert body[field] != nil
+          %{response: response} = state do
+    assert Map.has_key?(response.body, field)
+    assert response.body[field] != nil
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain "(?<field>[^"]+)" equal to "(?<value>[^"]+)"$/,
           %{field: field, value: value},
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert to_string(body[field]) == value
+          %{response: response} = state do
+    assert to_string(response.body[field]) == value
     {:ok, state}
   end
 end

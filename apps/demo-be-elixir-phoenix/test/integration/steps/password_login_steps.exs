@@ -1,9 +1,10 @@
 defmodule DemoBeExphWeb.Integration.PasswordLoginSteps do
   use Cabbage.Feature, async: false, file: "authentication/password-login.feature"
 
-  use DemoBeExphWeb.ConnCaseIntegration
+  use DemoBeExph.DataCaseIntegration
 
   alias DemoBeExph.Integration.Helpers
+  alias DemoBeExph.Integration.ServiceLayer
 
   @moduletag :integration
 
@@ -42,53 +43,43 @@ defmodule DemoBeExphWeb.Integration.PasswordLoginSteps do
   defwhen ~r/^the client sends POST \/api\/v1\/auth\/login with body \{ "username": "(?<username>[^"]+)", "password": "(?<password>[^"]+)" \}$/,
           %{username: username, password: password},
           state do
-    body = Jason.encode!(%{username: username, password: password})
-
-    conn =
-      build_conn()
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/auth/login", body)
-
-    {:ok, Map.put(state, :conn, conn)}
+    response = ServiceLayer.login(%{"username" => username, "password" => password})
+    {:ok, Map.put(state, :response, response)}
   end
 
   defthen ~r/^the response status code should be (?<code>\d+)$/,
           %{code: code},
-          %{conn: conn} = state do
-    assert conn.status == String.to_integer(code)
+          %{response: response} = state do
+    assert response.status == String.to_integer(code)
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain a non-null "(?<field>[^"]+)" field$/,
           %{field: field},
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert Map.has_key?(body, field)
-    assert body[field] != nil
+          %{response: response} = state do
+    assert Map.has_key?(response.body, field)
+    assert response.body[field] != nil
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain "(?<field>[^"]+)" equal to "(?<value>[^"]+)"$/,
           %{field: field, value: value},
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert body[field] == value
+          %{response: response} = state do
+    assert response.body[field] == value
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain an error message about invalid credentials$/,
           _vars,
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert body["message"] =~ ~r/[Ii]nvalid|[Cc]redential/i
+          %{response: response} = state do
+    assert response.body["message"] =~ ~r/[Ii]nvalid|[Cc]redential/i
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain an error message about account deactivation$/,
           _vars,
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert body["message"] =~ ~r/[Dd]eactivat|[Ii]nactive|[Dd]isbaled/i
+          %{response: response} = state do
+    assert response.body["message"] =~ ~r/[Dd]eactivat|[Ii]nactive|[Dd]isabled/i
     {:ok, state}
   end
 end

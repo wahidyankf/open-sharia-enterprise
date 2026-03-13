@@ -1,9 +1,10 @@
 defmodule DemoBeExphWeb.Integration.TokenLifecycleSteps do
   use Cabbage.Feature, async: false, file: "authentication/token-lifecycle.feature"
 
-  use DemoBeExphWeb.ConnCaseIntegration
+  use DemoBeExph.DataCaseIntegration
 
   alias DemoBeExph.Integration.Helpers
+  alias DemoBeExph.Integration.ServiceLayer
 
   @moduletag :integration
 
@@ -54,110 +55,78 @@ defmodule DemoBeExphWeb.Integration.TokenLifecycleSteps do
   defgiven ~r/^alice has already logged out once$/,
            _vars,
            %{alice: _user, access_token: access_token} = state do
-    build_conn()
-    |> put_req_header("authorization", "Bearer #{access_token}")
-    |> post("/api/v1/auth/logout", %{})
-
+    ServiceLayer.logout(access_token)
     {:ok, state}
   end
 
   defwhen ~r/^alice sends POST \/api\/v1\/auth\/refresh with her refresh token$/,
           _vars,
           %{refresh_token: refresh_token} = state do
-    body = Jason.encode!(%{refresh_token: refresh_token})
-
-    conn =
-      build_conn()
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/auth/refresh", body)
-
-    {:ok, Map.put(state, :conn, conn)}
+    response = ServiceLayer.refresh(refresh_token)
+    {:ok, Map.put(state, :response, response)}
   end
 
   defwhen ~r/^alice sends POST \/api\/v1\/auth\/refresh with her original refresh token$/,
           _vars,
           %{refresh_token: refresh_token} = state do
-    body = Jason.encode!(%{refresh_token: refresh_token})
-
-    conn =
-      build_conn()
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/auth/refresh", body)
-
-    {:ok, Map.put(state, :conn, conn)}
+    response = ServiceLayer.refresh(refresh_token)
+    {:ok, Map.put(state, :response, response)}
   end
 
   defwhen ~r/^alice sends POST \/api\/v1\/auth\/logout with her access token$/,
           _vars,
           %{access_token: access_token} = state do
-    conn =
-      build_conn()
-      |> put_req_header("authorization", "Bearer #{access_token}")
-      |> post("/api/v1/auth/logout", %{})
-
-    {:ok, Map.put(state, :conn, conn)}
+    response = ServiceLayer.logout(access_token)
+    {:ok, Map.put(state, :response, response)}
   end
 
   defwhen ~r/^alice sends POST \/api\/v1\/auth\/logout-all with her access token$/,
           _vars,
           %{access_token: access_token} = state do
-    conn =
-      build_conn()
-      |> put_req_header("authorization", "Bearer #{access_token}")
-      |> post("/api/v1/auth/logout-all", %{})
-
-    {:ok, Map.put(state, :conn, conn)}
+    response = ServiceLayer.logout_all(access_token)
+    {:ok, Map.put(state, :response, response)}
   end
 
   defthen ~r/^the response status code should be (?<code>\d+)$/,
           %{code: code},
-          %{conn: conn} = state do
-    assert conn.status == String.to_integer(code)
+          %{response: response} = state do
+    assert response.status == String.to_integer(code)
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain a non-null "(?<field>[^"]+)" field$/,
           %{field: field},
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert Map.has_key?(body, field)
-    assert body[field] != nil
+          %{response: response} = state do
+    assert Map.has_key?(response.body, field)
+    assert response.body[field] != nil
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain an error message about token expiration$/,
           _vars,
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert body["message"] =~ ~r/[Ee]xpir/i
+          %{response: response} = state do
+    assert response.body["message"] =~ ~r/[Ee]xpir/i
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain an error message about invalid token$/,
           _vars,
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert body["message"] =~ ~r/[Ii]nvalid/i
+          %{response: response} = state do
+    assert response.body["message"] =~ ~r/[Ii]nvalid/i
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain an error message about account deactivation$/,
           _vars,
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert body["message"] =~ ~r/[Dd]eactivat|[Ii]nactive|[Dd]isabled/i
+          %{response: response} = state do
+    assert response.body["message"] =~ ~r/[Dd]eactivat|[Ii]nactive|[Dd]isabled/i
     {:ok, state}
   end
 
   defthen ~r/^alice's access token should be invalidated$/,
           _vars,
           %{access_token: access_token} = state do
-    conn =
-      build_conn()
-      |> put_req_header("authorization", "Bearer #{access_token}")
-      |> get("/api/v1/users/me")
-
-    assert conn.status == 401
+    assert ServiceLayer.access_token_invalidated?(access_token)
     {:ok, state}
   end
 end

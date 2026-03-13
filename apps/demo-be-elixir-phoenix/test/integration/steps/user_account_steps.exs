@@ -1,9 +1,10 @@
 defmodule DemoBeExphWeb.Integration.UserAccountSteps do
   use Cabbage.Feature, async: false, file: "user-lifecycle/user-account.feature"
 
-  use DemoBeExphWeb.ConnCaseIntegration
+  use DemoBeExph.DataCaseIntegration
 
   alias DemoBeExph.Integration.Helpers
+  alias DemoBeExph.Integration.ServiceLayer
 
   @moduletag :integration
 
@@ -28,115 +29,78 @@ defmodule DemoBeExphWeb.Integration.UserAccountSteps do
   defgiven ~r/^alice has deactivated her own account via POST \/api\/v1\/users\/me\/deactivate$/,
            _vars,
            %{access_token: access_token} = state do
-    build_conn()
-    |> put_req_header("authorization", Helpers.bearer_header(access_token))
-    |> put_req_header("content-type", "application/json")
-    |> post("/api/v1/users/me/deactivate", "{}")
-
+    ServiceLayer.deactivate_me(access_token)
     {:ok, state}
   end
 
   defwhen ~r/^alice sends GET \/api\/v1\/users\/me$/,
           _vars,
           %{access_token: access_token} = state do
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(access_token))
-      |> get("/api/v1/users/me")
-
-    {:ok, Map.put(state, :conn, conn)}
+    response = ServiceLayer.get_me(access_token)
+    {:ok, Map.put(state, :response, response)}
   end
 
   defwhen ~r/^alice sends PATCH \/api\/v1\/users\/me with body \{ "display_name": "(?<display_name>[^"]+)" \}$/,
           %{display_name: display_name},
           %{access_token: access_token} = state do
-    body = Jason.encode!(%{display_name: display_name})
-
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(access_token))
-      |> put_req_header("content-type", "application/json")
-      |> patch("/api/v1/users/me", body)
-
-    {:ok, Map.put(state, :conn, conn)}
+    response = ServiceLayer.update_me(access_token, %{"display_name" => display_name})
+    {:ok, Map.put(state, :response, response)}
   end
 
   defwhen ~r/^alice sends POST \/api\/v1\/users\/me\/password with body \{ "old_password": "(?<old_password>[^"]+)", "new_password": "(?<new_password>[^"]+)" \}$/,
           %{old_password: old_password, new_password: new_password},
           %{access_token: access_token} = state do
-    body = Jason.encode!(%{old_password: old_password, new_password: new_password})
-
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(access_token))
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/users/me/password", body)
-
-    {:ok, Map.put(state, :conn, conn)}
+    response = ServiceLayer.change_password(access_token, old_password, new_password)
+    {:ok, Map.put(state, :response, response)}
   end
 
   defwhen ~r/^alice sends POST \/api\/v1\/users\/me\/deactivate$/,
           _vars,
           %{access_token: access_token} = state do
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(access_token))
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/users/me/deactivate", "{}")
-
-    {:ok, Map.put(state, :conn, conn)}
+    response = ServiceLayer.deactivate_me(access_token)
+    {:ok, Map.put(state, :response, response)}
   end
 
   defwhen ~r/^the client sends POST \/api\/v1\/auth\/login with body \{ "username": "(?<username>[^"]+)", "password": "(?<password>[^"]+)" \}$/,
           %{username: username, password: password},
           state do
-    body = Jason.encode!(%{username: username, password: password})
-
-    conn =
-      build_conn()
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/auth/login", body)
-
-    {:ok, Map.put(state, :conn, conn)}
+    response = ServiceLayer.login(%{"username" => username, "password" => password})
+    {:ok, Map.put(state, :response, response)}
   end
 
   defthen ~r/^the response status code should be (?<code>\d+)$/,
           %{code: code},
-          %{conn: conn} = state do
-    assert conn.status == String.to_integer(code)
+          %{response: response} = state do
+    assert response.status == String.to_integer(code)
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain "(?<field>[^"]+)" equal to "(?<value>[^"]+)"$/,
           %{field: field, value: value},
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert body[field] == value
+          %{response: response} = state do
+    assert response.body[field] == value
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain a non-null "(?<field>[^"]+)" field$/,
           %{field: field},
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert Map.has_key?(body, field)
-    assert body[field] != nil
+          %{response: response} = state do
+    assert Map.has_key?(response.body, field)
+    assert response.body[field] != nil
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain an error message about invalid credentials$/,
           _vars,
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert body["message"] =~ ~r/[Ii]nvalid|[Cc]redential/i
+          %{response: response} = state do
+    assert response.body["message"] =~ ~r/[Ii]nvalid|[Cc]redential/i
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain an error message about account deactivation$/,
           _vars,
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert body["message"] =~ ~r/[Dd]eactivat|[Ii]nactive|[Dd]isabled/i
+          %{response: response} = state do
+    assert response.body["message"] =~ ~r/[Dd]eactivat|[Ii]nactive|[Dd]isabled/i
     {:ok, state}
   end
 end

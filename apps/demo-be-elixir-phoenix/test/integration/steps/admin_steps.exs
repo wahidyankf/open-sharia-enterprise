@@ -1,9 +1,10 @@
 defmodule DemoBeExphWeb.Integration.AdminSteps do
   use Cabbage.Feature, async: false, file: "admin/admin.feature"
 
-  use DemoBeExphWeb.ConnCaseIntegration
+  use DemoBeExph.DataCaseIntegration
 
   alias DemoBeExph.Integration.Helpers
+  alias DemoBeExph.Integration.ServiceLayer
 
   @moduletag :integration
 
@@ -43,13 +44,7 @@ defmodule DemoBeExphWeb.Integration.AdminSteps do
   defgiven ~r/^alice's account has been disabled by the admin$/,
            _vars,
            %{alice: alice, admin_token: admin_token} = state do
-    body = Jason.encode!(%{reason: "Policy violation"})
-
-    build_conn()
-    |> put_req_header("authorization", Helpers.bearer_header(admin_token))
-    |> put_req_header("content-type", "application/json")
-    |> post("/api/v1/admin/users/#{alice.id}/disable", body)
-
+    ServiceLayer.admin_disable_user(admin_token, alice.id, "Policy violation")
     {:ok, state}
   end
 
@@ -61,95 +56,64 @@ defmodule DemoBeExphWeb.Integration.AdminSteps do
   defwhen ~r/^the admin sends GET \/api\/v1\/admin\/users$/,
           _vars,
           %{admin_token: admin_token} = state do
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(admin_token))
-      |> get("/api/v1/admin/users")
-
-    {:ok, Map.put(state, :conn, conn)}
+    response = ServiceLayer.admin_list_users(admin_token)
+    {:ok, Map.put(state, :response, response)}
   end
 
   defwhen ~r/^the admin sends GET \/api\/v1\/admin\/users\?email=(?<email>[^\s]+)$/,
           %{email: email},
           %{admin_token: admin_token} = state do
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(admin_token))
-      |> get("/api/v1/admin/users?email=#{email}")
-
-    {:ok, Map.put(state, :conn, conn)}
+    response = ServiceLayer.admin_list_users(admin_token, email: email)
+    {:ok, Map.put(state, :response, response)}
   end
 
   defwhen ~r/^the admin sends POST \/api\/v1\/admin\/users\/\{alice_id\}\/disable with body \{ "reason": "(?<reason>[^"]+)" \}$/,
           %{reason: reason},
           %{alice: alice, admin_token: admin_token} = state do
-    body = Jason.encode!(%{reason: reason})
-
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(admin_token))
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/admin/users/#{alice.id}/disable", body)
-
-    {:ok, Map.put(state, :conn, conn)}
+    response = ServiceLayer.admin_disable_user(admin_token, alice.id, reason)
+    {:ok, Map.put(state, :response, response)}
   end
 
   defwhen ~r/^the client sends GET \/api\/v1\/users\/me with alice's access token$/,
           _vars,
           %{alice_token: alice_token} = state do
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(alice_token))
-      |> get("/api/v1/users/me")
-
-    {:ok, Map.put(state, :conn, conn)}
+    response = ServiceLayer.get_me(alice_token)
+    {:ok, Map.put(state, :response, response)}
   end
 
   defwhen ~r/^the admin sends POST \/api\/v1\/admin\/users\/\{alice_id\}\/enable$/,
           _vars,
           %{alice: alice, admin_token: admin_token} = state do
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(admin_token))
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/admin/users/#{alice.id}/enable", "{}")
-
-    {:ok, Map.put(state, :conn, conn)}
+    response = ServiceLayer.admin_enable_user(admin_token, alice.id)
+    {:ok, Map.put(state, :response, response)}
   end
 
   defwhen ~r/^the admin sends POST \/api\/v1\/admin\/users\/\{alice_id\}\/force-password-reset$/,
           _vars,
           %{alice: alice, admin_token: admin_token} = state do
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(admin_token))
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/admin/users/#{alice.id}/force-password-reset", "{}")
-
-    {:ok, Map.put(state, :conn, conn)}
+    response = ServiceLayer.admin_force_password_reset(admin_token, alice.id)
+    {:ok, Map.put(state, :response, response)}
   end
 
   defthen ~r/^the response status code should be (?<code>\d+)$/,
           %{code: code},
-          %{conn: conn} = state do
-    assert conn.status == String.to_integer(code)
+          %{response: response} = state do
+    assert response.status == String.to_integer(code)
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain a non-null "(?<field>[^"]+)" field$/,
           %{field: field},
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert Map.has_key?(body, field)
-    assert body[field] != nil
+          %{response: response} = state do
+    assert Map.has_key?(response.body, field)
+    assert response.body[field] != nil
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain at least one user with "(?<field>[^"]+)" equal to "(?<value>[^"]+)"$/,
           %{field: field, value: value},
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    users = body["data"]
+          %{response: response} = state do
+    users = response.body["data"]
     assert Enum.any?(users, fn u -> u[field] == value end)
     {:ok, state}
   end
