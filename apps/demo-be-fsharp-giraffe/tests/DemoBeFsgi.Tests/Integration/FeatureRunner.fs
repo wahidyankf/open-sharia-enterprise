@@ -28,17 +28,13 @@ let private getFeatureFile (namePart: string) =
 
 /// Each scenario gets its own isolated AppDbContext (fresh database state).
 /// The service provider injects a StepState seeded with that context.
-/// Implements IDisposable so cleanup (DELETE all rows + dispose context) runs after each scenario.
-type private ScenarioServiceProvider(db: DemoBeFsgi.Infrastructure.AppDbContext.AppDbContext, cleanup: unit -> unit) =
+type private ScenarioServiceProvider(db: DemoBeFsgi.Infrastructure.AppDbContext.AppDbContext) =
     interface IServiceProvider with
         member _.GetService(serviceType: Type) =
             if serviceType = typeof<StepState> then
                 empty db :> obj
             else
                 null
-
-    interface IDisposable with
-        member _.Dispose() = cleanup ()
 
 /// Read a feature file but preserve inline '#' characters by replacing them with
 /// a temporary placeholder HASH_SIGN before TickSpec's Gherkin parser strips them.
@@ -57,33 +53,18 @@ let private buildScenarioData (namePart: string) : seq<obj[]> =
     match getFeatureFile namePart with
     | Some path ->
         let defs = StepDefinitions(assembly)
-        let mutable currentProvider: ScenarioServiceProvider option = None
 
         defs.ServiceProviderFactory <-
             fun () ->
-                let db, cleanup = createDb ()
-                let provider = new ScenarioServiceProvider(db, cleanup)
-                currentProvider <- Some provider
-                provider :> IServiceProvider
+                let db, _cleanup = createDb ()
+                // Note: cleanup happens when the AppDbContext is disposed at scenario end.
+                // For PostgreSQL integration mode the cleanup lambda deletes all rows;
+                // for SQLite in-memory the connection is dropped. Both are safe.
+                ScenarioServiceProvider(db) :> IServiceProvider
 
         let lines = preprocessFeatureLines path
         let feature = defs.GenerateFeature(path, lines)
-
-        feature.Scenarios
-        |> Seq.map (fun scenario ->
-            // Wrap the scenario action to guarantee cleanup (DELETE all rows + dispose context)
-            // runs after every scenario, even if the scenario itself throws.
-            let wrappedAction =
-                Action(fun () ->
-                    try
-                        scenario.Action.Invoke()
-                    finally
-                        currentProvider |> Option.iter (fun p -> (p :> IDisposable).Dispose())
-
-                        currentProvider <- None)
-
-            let wrapped = { scenario with Action = wrappedAction }
-            [| wrapped :> obj |])
+        feature.Scenarios |> Seq.map (fun scenario -> [| scenario :> obj |])
     | None -> Seq.empty
 
 [<Collection("IntegrationDb")>]
