@@ -241,6 +241,7 @@ func (h *Handler) DeleteExpense(c *gin.Context) {
 		return
 	}
 	c.Status(http.StatusNoContent)
+	c.Writer.WriteHeaderNow()
 }
 
 // ExpenseSummary handles GET /api/v1/expenses/summary.

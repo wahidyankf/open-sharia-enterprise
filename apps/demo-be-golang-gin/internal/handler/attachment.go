@@ -141,4 +141,5 @@ func (h *Handler) DeleteAttachment(c *gin.Context) {
 		return
 	}
 	c.Status(http.StatusNoContent)
+	c.Writer.WriteHeaderNow()
 }

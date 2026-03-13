@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"net/http"
 	"time"
 
@@ -19,9 +20,26 @@ func (h *Handler) GetProfile(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "unauthorized"})
 		return
 	}
+	// Check whether the access token has been blacklisted (e.g. after logout).
+	// This replicates the middleware guard for callers that invoke the handler
+	// directly without going through the router (e.g. integration tests).
+	blacklisted, err := h.store.IsAccessTokenBlacklisted(context.Background(), claims.ID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "internal server error"})
+		return
+	}
+	if blacklisted {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "token has been revoked"})
+		return
+	}
 	user, err := h.store.GetUserByID(c.Request.Context(), claims.Subject)
 	if err != nil {
 		RespondError(c, err)
+		return
+	}
+	// Reject access if the account has been disabled or deactivated.
+	if user.Status != domain.StatusActive {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "account is not active"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
