@@ -40,7 +40,13 @@
         ],
         "parallel": false,
         "cwd": "apps/demo-be-fsharp-giraffe"
-      }
+      },
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**/*.fs",
+        "{projectRoot}/tests/**/*.fs",
+        "{workspaceRoot}/specs/apps/demo-be/gherkin/**/*.feature"
+      ]
     },
     "test:unit": {
       "executor": "nx:run-commands",
@@ -52,15 +58,10 @@
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet test tests/DemoBeFsgi.Tests/DemoBeFsgi.Tests.fsproj --filter Category=Integration",
+        "command": "docker compose -f docker-compose.integration.yml down -v && docker compose -f docker-compose.integration.yml up --abort-on-container-exit --build",
         "cwd": "apps/demo-be-fsharp-giraffe"
       },
-      "cache": true,
-      "inputs": [
-        "{projectRoot}/src/**/*.fs",
-        "{projectRoot}/tests/**/*.fs",
-        "{workspaceRoot}/specs/apps/demo-be/gherkin/**/*.feature"
-      ]
+      "cache": false
     },
     "lint": {
       "executor": "nx:run-commands",

@@ -50,13 +50,13 @@ nx dev demo-be-fsharp-giraffe
 # Start production server
 nx start demo-be-fsharp-giraffe
 
-# Run fast quality gate (tests + format check + lint)
+# Run fast quality gate (BDD + unit tests with SQLite in-memory + coverage + format + lint)
 nx run demo-be-fsharp-giraffe:test:quick
 
-# Run unit tests only
+# Run isolated unit tests only (pure function tests, no WebApplicationFactory)
 nx run demo-be-fsharp-giraffe:test:unit
 
-# Run integration tests only (BDD with TickSpec + WebApplicationFactory)
+# Run integration tests against real PostgreSQL via Docker Compose
 nx run demo-be-fsharp-giraffe:test:integration
 
 # Lint with FSharpLint
@@ -111,6 +111,17 @@ Docker Compose configuration for local development will be added in a later phas
 `infra/dev/demo-be-fsharp-giraffe/`. It will start PostgreSQL 17 and the F#/Giraffe application with
 volume-mounted source code for hot reload.
 
+For integration testing against real PostgreSQL, use `docker-compose.integration.yml`:
+
+```bash
+# Run integration tests against real PostgreSQL (via Nx)
+nx run demo-be-fsharp-giraffe:test:integration
+
+# Or directly with docker compose
+docker compose -f docker-compose.integration.yml down -v
+docker compose -f docker-compose.integration.yml up --abort-on-container-exit --build
+```
+
 ## Architecture
 
 ```
@@ -121,7 +132,13 @@ apps/demo-be-fsharp-giraffe/
 │       └── Program.fs           # Entry point, Giraffe web app config
 ├── tests/
 │   └── DemoBeFsgi.Tests/
-│       └── DemoBeFsgi.Tests.fsproj  # Test project (TickSpec, xunit)
+│       ├── DemoBeFsgi.Tests.fsproj  # Test project (TickSpec, xunit, AltCover)
+│       ├── TestFixture.fs           # WebApplicationFactory (SQLite or PostgreSQL)
+│       ├── State.fs                 # BDD step state record
+│       ├── Unit/                    # Isolated unit tests (Category=Unit)
+│       └── Integration/             # BDD step definitions and feature runner
+├── docker-compose.integration.yml   # PostgreSQL + test-runner for real DB tests
+├── Dockerfile.integration           # Test image build (mcr.microsoft.com/dotnet/sdk:10.0)
 ├── global.json                  # SDK version pin (10.0.x)
 ├── .editorconfig                # F# formatting (Fantomas settings)
 └── project.json                 # Nx targets
@@ -129,14 +146,25 @@ apps/demo-be-fsharp-giraffe/
 
 ## Testing Strategy
 
-| Tier        | Tool                             | Description                       | Requires Running Service |
-| ----------- | -------------------------------- | --------------------------------- | ------------------------ |
-| Unit        | xunit                            | Isolated pure functions           | No                       |
-| Integration | TickSpec + WebApplicationFactory | BDD Gherkin scenarios, in-process | No                       |
-| E2E         | Playwright (demo-be-e2e)         | Full HTTP against running server  | Yes (port 8201)          |
+Three levels of tests provide fast feedback at every stage:
 
-Integration tests share the same Gherkin feature files from `specs/apps/demo-be/gherkin/` as
-`demo-be-java-springboot` and `demo-be-elixir-phoenix`.
+| Tier        | Nx Target          | Tool                                        | Database             | Description                                   | Requires External Service |
+| ----------- | ------------------ | ------------------------------------------- | -------------------- | --------------------------------------------- | ------------------------- |
+| Unit        | `test:unit`        | xunit (`Category=Unit`)                     | None                 | Isolated pure functions and domain logic      | No                        |
+| BDD (quick) | `test:quick`       | TickSpec + WebApplicationFactory + AltCover | SQLite in-memory     | Full BDD scenarios, in-process, with coverage | No                        |
+| Integration | `test:integration` | TickSpec + WebApplicationFactory + Docker   | PostgreSQL 17 (real) | Full BDD scenarios against real PostgreSQL    | Yes (Docker)              |
+| E2E         | (demo-be-e2e)      | Playwright                                  | PostgreSQL 17 (real) | Full HTTP against running server              | Yes (port 8201)           |
+
+The `TestWebAppFactory` automatically switches database providers based on the `DATABASE_URL`
+environment variable:
+
+- **`DATABASE_URL` absent** (unit/`test:quick` mode): uses SQLite in-memory with a shared
+  connection per scenario — no external services required.
+- **`DATABASE_URL` present** (docker-compose integration mode): delegates to the production
+  Npgsql/PostgreSQL registration in `Program.fs` — uses real PostgreSQL.
+
+All BDD tests share the same Gherkin feature files from `specs/apps/demo-be/gherkin/` as
+`demo-be-java-springboot`, `demo-be-elixir-phoenix`, and other backend implementations.
 
 ## See Also
 

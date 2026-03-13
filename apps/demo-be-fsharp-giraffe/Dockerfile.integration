@@ -1,0 +1,36 @@
+# Integration test runner
+# Build context is the monorepo root (../../ relative to this file).
+# This allows specs/ to be copied into the image so TickSpec can find feature files at build time.
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine
+
+WORKDIR /build
+
+# Copy solution-level files first for dependency caching.
+# Paths are relative to the monorepo root (build context).
+COPY apps/demo-be-fsharp-giraffe/global.json .
+COPY apps/demo-be-fsharp-giraffe/dotnet-tools.json .
+COPY apps/demo-be-fsharp-giraffe/.editorconfig .
+
+# Copy project files for restore (before code to cache the restore layer).
+COPY apps/demo-be-fsharp-giraffe/src/DemoBeFsgi/DemoBeFsgi.fsproj src/DemoBeFsgi/
+COPY apps/demo-be-fsharp-giraffe/tests/DemoBeFsgi.Tests/DemoBeFsgi.Tests.fsproj tests/DemoBeFsgi.Tests/
+
+# Copy specs so the CopyGherkinSpecs MSBuild target can find feature files at build time.
+# The .fsproj references: $(ProjectDir)..\..\..\..\specs\apps\demo-be\gherkin\**\*.feature
+# With WORKDIR=/build, that path resolves to /build/specs/apps/demo-be/gherkin.
+COPY specs/apps/demo-be/gherkin /build/specs/apps/demo-be/gherkin
+
+# Restore dependencies (layer cache until project files change).
+RUN dotnet restore tests/DemoBeFsgi.Tests/DemoBeFsgi.Tests.fsproj
+
+# Copy source and test code
+COPY apps/demo-be-fsharp-giraffe/src/ src/
+COPY apps/demo-be-fsharp-giraffe/tests/ tests/
+
+# Build the test project.
+RUN dotnet build tests/DemoBeFsgi.Tests/DemoBeFsgi.Tests.fsproj --no-restore
+
+# Run all tests against real PostgreSQL.
+# DATABASE_URL and APP_JWT_SECRET are supplied by docker-compose as environment variables.
+# The TestWebAppFactory detects DATABASE_URL and uses Npgsql instead of SQLite.
+CMD ["dotnet", "test", "tests/DemoBeFsgi.Tests/DemoBeFsgi.Tests.fsproj", "--no-build", "--logger", "console;verbosity=normal"]
