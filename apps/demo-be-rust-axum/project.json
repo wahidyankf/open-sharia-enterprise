@@ -31,10 +31,8 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "cargo fmt --check",
-          "cargo clippy -- -D warnings",
-          "cargo test --lib",
-          "mkdir -p coverage && cargo llvm-cov --lcov --output-path coverage/lcov.info",
+          "cargo test --lib --test unit",
+          "mkdir -p coverage && cargo llvm-cov --lcov --output-path coverage/lcov.info --lib --test unit",
           "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-be-rust-axum/coverage/lcov.info 90)"
         ],
         "parallel": false,
@@ -43,33 +41,39 @@
       "cache": true,
       "inputs": [
         "{projectRoot}/src/**/*.rs",
-        "{projectRoot}/tests/**/*.rs",
+        "{projectRoot}/tests/unit/**/*.rs",
         "{projectRoot}/Cargo.toml",
-        "{projectRoot}/Cargo.lock"
+        "{projectRoot}/Cargo.lock",
+        "{workspaceRoot}/specs/apps/demo-be/gherkin/**/*.feature"
       ],
       "outputs": ["{projectRoot}/coverage/lcov.info"]
     },
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cargo test --lib",
-        "cwd": "apps/demo-be-rust-axum"
-      }
-    },
-    "test:integration": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "cargo test --test integration",
+        "command": "cargo test --lib --test unit",
         "cwd": "apps/demo-be-rust-axum"
       },
       "cache": true,
       "inputs": [
         "{projectRoot}/src/**/*.rs",
-        "{projectRoot}/tests/**/*.rs",
+        "{projectRoot}/tests/unit/**/*.rs",
         "{projectRoot}/Cargo.toml",
         "{projectRoot}/Cargo.lock",
         "{workspaceRoot}/specs/apps/demo-be/gherkin/**/*.feature"
       ]
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "docker compose -f docker-compose.integration.yml down -v",
+          "docker compose -f docker-compose.integration.yml up --abort-on-container-exit --build"
+        ],
+        "parallel": false,
+        "cwd": "apps/demo-be-rust-axum"
+      },
+      "cache": false
     },
     "lint": {
       "executor": "nx:run-commands",
