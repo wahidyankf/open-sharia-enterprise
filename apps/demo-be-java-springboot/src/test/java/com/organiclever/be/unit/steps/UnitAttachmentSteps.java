@@ -57,7 +57,7 @@ public class UnitAttachmentSteps {
     public void aliceHasUploadedFileToEntry(
             final String filename, final String contentType) {
         UUID expenseId = stateStore.getExpenseId();
-        performUploadForSetup(filename, contentType, expenseId, getAlice());
+        performUploadForSetup(filename, contentType, expenseId);
     }
 
     @When("^alice sends GET /api/v1/expenses/\\{expenseId\\}/attachments$")
@@ -277,8 +277,7 @@ public class UnitAttachmentSteps {
     private void performUploadForSetup(
             final String filename,
             final String contentType,
-            final UUID expenseId,
-            final User user) {
+            final UUID expenseId) {
         if (expenseId == null) {
             throw new IllegalStateException("Expense ID not set for attachment upload");
         }
@@ -289,11 +288,6 @@ public class UnitAttachmentSteps {
                 expense, filename, contentType, fileContent.length, fileContent);
         Attachment saved = attachmentRepository.save(attachment);
         stateStore.setAttachmentId(saved.getId());
-    }
-
-    private User getAlice() {
-        return userRepository.findByUsername(resolveUsername())
-                .orElseThrow(() -> new RuntimeException("User not found: " + resolveUsername()));
     }
 
     private void registerBob() {

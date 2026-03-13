@@ -7,7 +7,6 @@ import com.organiclever.be.auth.service.AuthService;
 import com.organiclever.be.auth.service.InvalidTokenException;
 import com.organiclever.be.auth.service.TokenExpiredException;
 import com.organiclever.be.integration.ResponseStore;
-import com.organiclever.be.integration.steps.AuthSteps;
 import com.organiclever.be.integration.steps.TokenStore;
 import com.organiclever.be.security.JwtUtil;
 import io.cucumber.java.en.Given;
@@ -36,9 +35,6 @@ public class TokenLifecycleSteps {
 
     @Autowired
     private JwtUtil jwtUtil;
-
-    @Autowired
-    private AuthSteps authSteps;
 
     @When("^alice sends POST /api/v1/auth/refresh with her refresh token$")
     public void aliceSendsPostRefreshWithHerRefreshToken() {

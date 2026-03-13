@@ -43,7 +43,7 @@ public class ExpenseHandler implements Handler<RoutingContext> {
     private void handleCreate(RoutingContext ctx) {
         JsonObject body = ctx.body().asJsonObject();
         if (body == null) {
-            ctx.fail(new com.organiclever.demojavx.domain.validation.ValidationException("body", "Body is null"));
+            ctx.fail(new ValidationException("body", "Body is null"));
             return;
         }
         String userId = ctx.get("userId");
