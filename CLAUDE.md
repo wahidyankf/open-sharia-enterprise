@@ -177,17 +177,17 @@ in-process mocking only (MSW, Godog) override to `cache: true` in their `project
 `organiclever-web` (MSW), Go CLI apps (Godog + BDD features), `hugo-commons` (Godog + tmpdir mocks),
 `golang-commons` (Godog + mock closures).
 
-**Three-level testing standard**: Three rules determine mandatory test levels per project type:
+**Three-level testing standard** (demo-be backends):
 
-1. **All apps and libs** must have `test:unit` (mocks only, cacheable) — except Hugo sites
-2. **All apps** must also have `test:integration` (demo-be: real PostgreSQL via docker-compose,
-   no HTTP; others: MSW/Godog; NOT cacheable) — libs exempt, Hugo sites exempt
-3. **All web apps** (APIs + UIs) must have `test:e2e` (Playwright, NOT cacheable) — CLIs/libs exempt
+1. **Unit (`test:unit`)**: All mocked dependencies; must consume Gherkin specs from `specs/apps/demo-be/gherkin/`; call service functions directly with mocked repositories; coverage measured here (>=90%)
+2. **Integration (`test:integration`)**: Real PostgreSQL via docker-compose; **no HTTP calls** (no MockMvc, TestClient, httptest, ConnTest, WebApplicationFactory, fetch, clj-http, Router.oneshot); must consume Gherkin specs; call service functions directly with real DB
+3. **E2E (`test:e2e`)**: Full stack via Playwright; real HTTP + real DB; must consume Gherkin specs
 
-For demo-be backends, the same Gherkin specs (`specs/apps/demo-be/gherkin/`) serve as the contract
-at all three levels — only the step implementations change. `test:quick` includes only `test:unit` +
-coverage check + specs coverage check. It does NOT include `lint`, `typecheck`, `test:integration`,
-or `test:e2e` (lint and typecheck are separate Nx targets).
+All three levels consume the same Gherkin specs — only step implementations change. `test:quick`
+includes only `test:unit` + coverage check + specs coverage check. It does NOT include `lint`,
+`typecheck`, `test:integration`, or `test:e2e`.
+
+**See**: [governance/development/quality/three-level-testing-standard.md](./governance/development/quality/three-level-testing-standard.md)
 
 ## Markdown Quality
 
