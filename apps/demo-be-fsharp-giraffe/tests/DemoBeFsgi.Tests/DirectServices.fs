@@ -995,6 +995,7 @@ let deleteExpense (db: AppDbContext) (token: string option) (expenseId: Guid) : 
             elif expense.UserId <> userId then
                 return forbidden "Access denied"
             else
+                db.ChangeTracker.Clear()
                 db.Expenses.Remove(expense) |> ignore
                 let! _ = db.SaveChangesAsync() |> Async.AwaitTask
                 return noContent ()
@@ -1154,6 +1155,7 @@ let deleteAttachment
                 if obj.ReferenceEquals(attachment, null) then
                     return notFound "Attachment not found"
                 else
+                    db.ChangeTracker.Clear()
                     db.Attachments.Remove(attachment) |> ignore
                     let! _ = db.SaveChangesAsync() |> Async.AwaitTask
                     return noContent ()
