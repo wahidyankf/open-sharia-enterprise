@@ -443,26 +443,26 @@ These projects don't need the same README/architecture documentation rewrite as 
 
 ##### Current State (18 workflow files)
 
-| Workflow                            | Trigger                            | What it does                                                                     |
-| ----------------------------------- | ---------------------------------- | -------------------------------------------------------------------------------- |
-| `main-ci.yml`                       | Push to `main`                     | `npx nx run-many -t test:quick --all` + coverage uploads to Codecov              |
-| `pr-quality-gate.yml`               | PR opened/sync/reopen              | `nx affected -t typecheck` + `nx affected -t lint` + `nx affected -t test:quick` |
-| `validate-docs-links.yml`           | PR opened/sync/reopen              | `rhino-cli docs validate-links`                                                  |
-| `format-pr.yml`                     | PR opened/sync/reopen              | Formatting checks                                                                |
-| `deploy-ayokoding-web.yml`          | Push to `prod-ayokoding-web`       | Deploy to Vercel                                                                 |
-| `deploy-oseplatform-web.yml`        | Push to `prod-oseplatform-web`     | Deploy to Vercel                                                                 |
-| `e2e-demo-be-java-springboot.yml`   | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
-| `e2e-demo-be-kotlin-ktor.yml`       | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
-| `e2e-demo-be-java-vertx.yml`        | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
-| `e2e-demo-be-fsharp-giraffe.yml`    | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
-| `e2e-demo-be-csharp-aspnetcore.yml` | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
-| `e2e-demo-be-golang-gin.yml`        | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
-| `e2e-demo-be-ts-effect.yml`         | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
-| `e2e-demo-be-python-fastapi.yml`    | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
-| `e2e-demo-be-clojure-pedestal.yml`  | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
-| `e2e-demo-be-elixir-phoenix.yml`    | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
-| `e2e-demo-be-rust-axum.yml`         | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
-| `e2e-organiclever-web.yml`          | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
+| Workflow                                             | Trigger                            | What it does                                                                     |
+| ---------------------------------------------------- | ---------------------------------- | -------------------------------------------------------------------------------- |
+| `main-ci.yml`                                        | Push to `main`                     | `npx nx run-many -t test:quick --all` + coverage uploads to Codecov              |
+| `pr-quality-gate.yml`                                | PR opened/sync/reopen              | `nx affected -t typecheck` + `nx affected -t lint` + `nx affected -t test:quick` |
+| `pr-validate-links.yml`                              | PR opened/sync/reopen              | `rhino-cli docs validate-links`                                                  |
+| `pr-format.yml`                                      | PR opened/sync/reopen              | Formatting checks                                                                |
+| `test-and-deploy-ayokoding-web.yml`                  | Push to `prod-ayokoding-web`       | Deploy to Vercel                                                                 |
+| `test-and-deploy-oseplatform-web.yml`                | Push to `prod-oseplatform-web`     | Deploy to Vercel                                                                 |
+| `test-integration-e2e-demo-be-java-springboot.yml`   | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
+| `test-integration-e2e-demo-be-kotlin-ktor.yml`       | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
+| `test-integration-e2e-demo-be-java-vertx.yml`        | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
+| `test-integration-e2e-demo-be-fsharp-giraffe.yml`    | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
+| `test-integration-e2e-demo-be-csharp-aspnetcore.yml` | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
+| `test-integration-e2e-demo-be-golang-gin.yml`        | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
+| `test-integration-e2e-demo-be-ts-effect.yml`         | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
+| `test-integration-e2e-demo-be-python-fastapi.yml`    | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
+| `test-integration-e2e-demo-be-clojure-pedestal.yml`  | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
+| `test-integration-e2e-demo-be-elixir-phoenix.yml`    | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
+| `test-integration-e2e-demo-be-rust-axum.yml`         | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
+| `test-integration-e2e-organiclever-web.yml`          | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
 
 ##### Changes Needed
 
@@ -477,13 +477,7 @@ These projects don't need the same README/architecture documentation rewrite as 
 
 - Already runs `typecheck`, `lint`, and `test:quick` as separate steps. Since `test:quick` no longer includes lint/typecheck, there's no double-running. Already compliant.
 
-**New `integration-ci.yml`** — Create scheduled workflow:
-
-- **Schedule**: Cron 4x daily at WIB 04:00, 10:00, 16:00, 22:00 (UTC 21:00, 03:00, 09:00, 15:00)
-- **Trigger**: `schedule` + `workflow_dispatch`
-- **What it runs**: `npx nx run-many -t test:integration --all`
-- **Infrastructure requirements**: The CI runner needs Docker (for demo-be docker-compose) AND host-level language runtimes (Go for CLI apps, Elixir for phoenix, Node.js for organiclever-web MSW tests). Setup steps similar to `main-ci.yml` are needed.
-- **Docker-in-CI**: GitHub Actions `ubuntu-latest` has Docker pre-installed. Demo-be `test:integration` targets run `docker compose up --abort-on-container-exit` which works natively.
+**`integration-tests.yml`** — Removed. The scheduled all-projects integration workflow was deleted. Integration tests now run only via per-service "Test Integration + E2E" workflows (2x daily at WIB 06/18).
 
 **E2E workflows (12 files)** — Already compliant:
 
@@ -491,10 +485,10 @@ These projects don't need the same README/architecture documentation rewrite as 
 
 **Other workflows** — No changes needed:
 
-- `validate-docs-links.yml` — PR link validation, unrelated to testing
-- `format-pr.yml` — PR formatting checks, unrelated to testing
-- `deploy-ayokoding-web.yml` — Deployment only
-- `deploy-oseplatform-web.yml` — Deployment only
+- `pr-validate-links.yml` — PR link validation, unrelated to testing
+- `pr-format.yml` — PR formatting checks, unrelated to testing
+- `test-and-deploy-ayokoding-web.yml` — Deployment only
+- `test-and-deploy-oseplatform-web.yml` — Deployment only
 
 #### 8. Root `README.md`
 

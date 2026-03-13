@@ -360,7 +360,7 @@ The `apps/ayokoding-web/` project uses a production deployment branch:
 - **Location**: Deploys `apps/ayokoding-web/` (Nx-integrated Hugo application)
 - **Workflow** (automated):
   1. All development happens in `main`
-  2. The `deploy-ayokoding-web.yml` GitHub Actions workflow runs at 6 AM and 6 PM WIB, detects changes in `apps/ayokoding-web/`, builds, then force-pushes `main` to `prod-ayokoding-web`
+  2. The `test-and-deploy-ayokoding-web.yml` GitHub Actions workflow runs at 6 AM and 6 PM WIB, detects changes in `apps/ayokoding-web/`, builds, then force-pushes `main` to `prod-ayokoding-web`
   3. Push to `prod-ayokoding-web` triggers production deployment via Vercel
 - **Important**: Never commit directly to `prod-ayokoding-web` outside the CI automation
 

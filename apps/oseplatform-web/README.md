@@ -133,7 +133,7 @@ hugo new content/updates/YYYY-MM-DD-post-title.md
 
 ### Automated Deployment (Primary)
 
-Deployment is automated via the `deploy-oseplatform-web.yml` GitHub Actions workflow:
+Deployment is automated via the `test-and-deploy-oseplatform-web.yml` GitHub Actions workflow:
 
 - **Schedule**: Runs at **6 AM and 6 PM WIB** (UTC+7) every day
 - **Change detection**: Compares `HEAD` on `main` against `prod-oseplatform-web`, scoped to `apps/oseplatform-web/`. Skips build and deploy if nothing changed

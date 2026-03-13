@@ -1148,7 +1148,7 @@ chmod +x build.sh
 1. Make changes in `main` branch
 2. Test locally: `hugo server`
 3. Commit and push to `main`
-4. Deploy: The `deploy-ayokoding-web.yml` GitHub Actions workflow runs automatically at 6 AM and 6 PM WIB, detects changes in `apps/ayokoding-web/`, builds, and force-pushes `main` to `prod-ayokoding-web`
+4. Deploy: The `test-and-deploy-ayokoding-web.yml` GitHub Actions workflow runs automatically at 6 AM and 6 PM WIB, detects changes in `apps/ayokoding-web/`, builds, and force-pushes `main` to `prod-ayokoding-web`
 5. Vercel detects the push and builds the production site
 
 For immediate deployment, trigger the workflow manually from the GitHub Actions UI (set `force_deploy=true`), or use the `apps-ayokoding-web-deployer` agent.
@@ -1158,7 +1158,7 @@ For immediate deployment, trigger the workflow manually from the GitHub Actions 
 1. Make changes in `main` branch
 2. Test locally: `hugo server`
 3. Commit and push to `main`
-4. Deploy: The `deploy-oseplatform-web.yml` GitHub Actions workflow runs automatically at 6 AM and 6 PM WIB, detects changes in `apps/oseplatform-web/`, builds, and force-pushes `main` to `prod-oseplatform-web`
+4. Deploy: The `test-and-deploy-oseplatform-web.yml` GitHub Actions workflow runs automatically at 6 AM and 6 PM WIB, detects changes in `apps/oseplatform-web/`, builds, and force-pushes `main` to `prod-oseplatform-web`
 5. Vercel detects the push and builds the production site
 
 For immediate deployment, trigger the workflow manually from the GitHub Actions UI (set `force_deploy=true`), or use the `apps-oseplatform-web-deployer` agent.

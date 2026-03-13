@@ -253,20 +253,15 @@ No code changes expected for most. Verify compliance, adapt where needed.
   - [x] Update each coverage upload `files:` path to point to unit test coverage output (11 backends — paths depend on per-backend configuration in Phase 2)
   - [x] Verify no other steps depend on integration test output
   - [x] Fix `demo-be-java-vertx` coverage path from `jacoco-integration` to `jacoco`
-- [x] **4.2 Create `integration-ci.yml`**
-  - [x] Create workflow file with cron schedule: `0 21 * * *`, `0 3 * * *`, `0 9 * * *`, `0 15 * * *` (WIB 04, 10, 16, 22)
-  - [x] Add `workflow_dispatch` trigger for manual runs
-  - [x] Add all language runtime setup steps (same as `main-ci.yml`: Volta, Go, Java 21+25, Elixir, .NET, Python, uv, Rust, Hugo, Clojure CLI)
-  - [x] Add `npm ci` and language-specific dependency install steps
-  - [x] Run `npx nx run-many -t test:integration --all`
+- [x] **4.2 ~~Create `integration-tests.yml`~~** (removed — workflow was deleted; integration tests now run only via per-service "Test Integration + E2E" workflows)
 - [x] **4.3 Verify `pr-quality-gate.yml`**
   - [x] Confirm it runs `nx affected -t typecheck`, `nx affected -t lint`, `nx affected -t test:quick` as separate steps
   - [x] Confirm no changes needed (already compliant)
 - [x] **4.4 Verify E2E workflows (12 files)**
-  - [x] Confirm all `e2e-demo-be-*.yml` and `e2e-organiclever-web.yml` use cron `0 23 * * *` and `0 11 * * *` (WIB 06/18)
+  - [x] Confirm all `e2e-demo-be-*.yml` and `test-integration-e2e-organiclever-web.yml` use cron `0 23 * * *` and `0 11 * * *` (WIB 06/18)
   - [x] Confirm no changes needed (already compliant)
 - [x] **4.5 Update root `README.md`**
-  - [x] Add **Integration** badge column to CI & Test Coverage table for demo-be backends (from `integration-ci.yml`)
+  - [x] ~~Add Integration badge column to CI & Test Coverage table for demo-be backends~~ (removed — `integration-tests.yml` was deleted)
   - [x] Add Integration badge row for `organiclever-web` and Go CLI apps
   - [x] Update table headers: Integration (4x daily) | E2E (2x daily) | Coverage
   - [x] Add description text explaining CI schedule (integration 4x daily, E2E 2x daily, test:quick on every push/PR)
@@ -300,7 +295,7 @@ Run all targets end-to-end and confirm the full system works. No commits in this
   - [x] Both Hugo sites have: `test:quick`, `build`
   - [x] Both E2E runners have: `test:e2e`, `test:quick`, `lint`
 - [x] **5.6 CI schedule verification**
-  - [x] Confirmed `integration-ci.yml` cron schedule: WIB 04, 10, 16, 22 (UTC 21, 03, 09, 15)
+  - [x] ~~Confirmed `integration-tests.yml` cron schedule~~ (removed — workflow was deleted)
   - [x] Confirmed E2E workflows run at WIB 06, 18 (UTC 23, 11)
   - [x] Confirmed `main-ci.yml` runs `test:quick` (not integration/e2e) on push to main
   - [x] Confirmed `pr-quality-gate.yml` runs typecheck + lint + test:quick on PRs

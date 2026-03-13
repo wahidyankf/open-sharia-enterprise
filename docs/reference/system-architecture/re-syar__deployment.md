@@ -103,6 +103,6 @@ graph TB
 - **Purpose**: Deployment triggers only
 - **Branches**: `prod-oseplatform-web`, `prod-ayokoding-web`, `prod-organiclever-web`
 - **Policy**: NEVER commit directly to these branches outside CI automation
-- **Workflow**: Automated by scheduled GitHub Actions workflows (`deploy-ayokoding-web.yml`,
-  `deploy-oseplatform-web.yml`, `deploy-organiclever-web.yml`) running at 6 AM and 6 PM WIB; or
+- **Workflow**: Automated by scheduled GitHub Actions workflows (`test-and-deploy-ayokoding-web.yml`,
+  `test-and-deploy-oseplatform-web.yml`, `deploy-organiclever-web.yml`) running at 6 AM and 6 PM WIB; or
   trigger manually from GitHub Actions UI

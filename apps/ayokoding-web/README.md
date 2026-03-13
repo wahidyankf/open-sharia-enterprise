@@ -313,7 +313,7 @@ The project uses a dedicated production branch for automatic deployment to ayoko
 
 ### Automated Deployment (Primary)
 
-Deployment is automated via the `deploy-ayokoding-web.yml` GitHub Actions workflow:
+Deployment is automated via the `test-and-deploy-ayokoding-web.yml` GitHub Actions workflow:
 
 - **Schedule**: Runs at **6 AM and 6 PM WIB** (UTC+7) every day
 - **Change detection**: Compares `HEAD` on `main` against `prod-ayokoding-web`, scoped to `apps/ayokoding-web/`. Skips build and deploy if nothing changed

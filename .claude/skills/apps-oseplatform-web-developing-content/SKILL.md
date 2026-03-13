@@ -483,14 +483,14 @@ Deploy oseplatform-web to production using automated CI or the deployer agent.
 
 ### Automated Deployment (Primary)
 
-The `deploy-oseplatform-web.yml` GitHub Actions workflow handles routine deployment:
+The `test-and-deploy-oseplatform-web.yml` GitHub Actions workflow handles routine deployment:
 
 - **Schedule**: Runs at 6 AM and 6 PM WIB (UTC+7) every day
 - **Change detection**: Diffs `HEAD` vs `prod-oseplatform-web` scoped to `apps/oseplatform-web/` — skips build/deploy when nothing changed
 - **Build**: Runs `nx build oseplatform-web` (Hugo extended build with PaperMod theme)
 - **Deploy**: Force-pushes `main` to `prod-oseplatform-web`; Vercel auto-builds
 
-**Manual trigger**: From the GitHub Actions UI, trigger `deploy-oseplatform-web.yml` with `force_deploy=true` to deploy immediately regardless of changes.
+**Manual trigger**: From the GitHub Actions UI, trigger `test-and-deploy-oseplatform-web.yml` with `force_deploy=true` to deploy immediately regardless of changes.
 
 ### Emergency / On-Demand Deployment
 

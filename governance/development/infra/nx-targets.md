@@ -61,16 +61,13 @@ Deeper tests run outside the pre-push/PR cycle — on a schedule or triggered ex
 
 ```mermaid
 flowchart TD
-    H["GitHub Actions<br/>integration-ci.yml<br/>cron 4× per day<br/>(WIB 04, 10, 16, 22)"] --> I["test:integration<br/>all projects"]
     H2["GitHub Actions<br/>e2e-*.yml<br/>cron 2× per day<br/>(WIB 06, 18)"] --> I2["test:integration + test:e2e<br/>per service"]
 
     J[On demand / CI matrix] --> K[test:unit]
     J --> L[test:integration]
     J --> M[test:e2e]
 
-    style H fill:#0173B2,color:#fff
     style H2 fill:#0173B2,color:#fff
-    style I fill:#CA9161,color:#fff
     style I2 fill:#CA9161,color:#fff
     style J fill:#0173B2,color:#fff
     style K fill:#CA9161,color:#fff
@@ -214,7 +211,7 @@ Derived from three rules: (1) All apps+libs → unit tests, (2) All apps → int
 
 \* E2E tests live in dedicated `*-e2e` runner projects, not in the backend/frontend project itself.
 
-**CI schedules**: `test:integration` runs 4x daily via `integration-ci.yml` (WIB 04, 10, 16, 22) for all projects. Per-service "Test Integration + E2E" workflows run 2x daily (WIB 06, 18) combining `test:integration` + `test:e2e` for each service. `test:quick` runs on every push to main and every PR.
+**CI schedules**: Per-service "Test Integration + E2E" workflows run 2x daily (WIB 06, 18) combining `test:integration` + `test:e2e` for each service. `test:quick` runs on every push to main and every PR.
 
 ### All Projects
 

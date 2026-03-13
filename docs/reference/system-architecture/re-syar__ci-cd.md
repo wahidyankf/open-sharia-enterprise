@@ -145,7 +145,7 @@ graph TB
 
 ### PR Format Workflow
 
-**File**: `.github/workflows/format-pr.yml`
+**File**: `.github/workflows/pr-format.yml`
 
 **Trigger**: Pull request opened, synchronized, or reopened
 
@@ -162,7 +162,7 @@ graph TB
 
 ### PR Link Validation Workflow
 
-**File**: `.github/workflows/validate-docs-links.yml`
+**File**: `.github/workflows/pr-validate-links.yml`
 
 **Trigger**: Pull request opened, synchronized, or reopened
 
@@ -177,7 +177,7 @@ graph TB
 
 ### Test and Deploy AyoKoding Web Workflow
 
-**File**: `.github/workflows/deploy-ayokoding-web.yml`
+**File**: `.github/workflows/test-and-deploy-ayokoding-web.yml`
 
 **Trigger**: Scheduled (6 AM and 6 PM WIB daily) or manual `workflow_dispatch`
 
@@ -192,7 +192,7 @@ graph TB
 
 ### Test and Deploy OSE Platform Web Workflow
 
-**File**: `.github/workflows/deploy-oseplatform-web.yml`
+**File**: `.github/workflows/test-and-deploy-oseplatform-web.yml`
 
 **Trigger**: Scheduled (6 AM and 6 PM WIB daily) or manual `workflow_dispatch`
 
@@ -238,7 +238,7 @@ graph TB
 
 ### E2E OrganicLever Workflow
 
-**File**: `.github/workflows/e2e-demo-be-java-springboot.yml`
+**File**: `.github/workflows/test-integration-e2e-demo-be-java-springboot.yml`
 
 **Trigger**: Push to `main` or pull request (when organiclever apps change)
 
