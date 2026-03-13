@@ -142,6 +142,7 @@ tasks.register<Test>("testIntegration") {
 // In Docker, specs are pre-copied to src/test/resources/specs/ so this task is skipped
 // via the SKIP_SPEC_COPY env var to avoid Gradle scanning /sys filesystem.
 val specsDir = file("${rootProject.projectDir}/../../specs/apps/demo-be/gherkin")
+
 if (System.getenv("SKIP_SPEC_COPY") == null && specsDir.exists()) {
   tasks.processTestResources { from(specsDir) { into("specs/apps/demo-be/gherkin") } }
 }

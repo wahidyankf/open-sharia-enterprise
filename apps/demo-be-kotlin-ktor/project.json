@@ -31,12 +31,16 @@
       "options": {
         "commands": [
           "JAVA_HOME=${JAVA_HOME_21_X64:-$(ls -d ${SDKMAN_DIR:-$HOME/.sdkman}/candidates/java/21* 2>/dev/null | head -1)} ./gradlew testUnit koverXmlReport",
-          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-be-kotlin-ktor/build/reports/kover/report.xml 90)",
-          "JAVA_HOME=${JAVA_HOME_21_X64:-$(ls -d ${SDKMAN_DIR:-$HOME/.sdkman}/candidates/java/21* 2>/dev/null | head -1)} ./gradlew detekt ktfmtCheck"
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-be-kotlin-ktor/build/reports/kover/report.xml 90)"
         ],
         "parallel": false,
         "cwd": "apps/demo-be-kotlin-ktor"
-      }
+      },
+      "inputs": [
+        "{projectRoot}/src/**",
+        "{projectRoot}/build.gradle.kts",
+        "{workspaceRoot}/specs/apps/demo-be/gherkin/**/*.feature"
+      ]
     },
     "test:unit": {
       "executor": "nx:run-commands",
@@ -48,15 +52,10 @@
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "JAVA_HOME=${JAVA_HOME_21_X64:-$(ls -d ${SDKMAN_DIR:-$HOME/.sdkman}/candidates/java/21* 2>/dev/null | head -1)} ./gradlew testIntegration",
+        "command": "docker compose -f docker-compose.integration.yml down -v && docker compose -f docker-compose.integration.yml up --abort-on-container-exit --build",
         "cwd": "apps/demo-be-kotlin-ktor"
       },
-      "cache": true,
-      "inputs": [
-        "{projectRoot}/src/main/**/*.kt",
-        "{projectRoot}/src/test/**/*.kt",
-        "{workspaceRoot}/specs/apps/demo-be/gherkin/**/*.feature"
-      ]
+      "cache": false
     },
     "lint": {
       "executor": "nx:run-commands",
