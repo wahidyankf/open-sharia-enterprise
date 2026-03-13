@@ -13,6 +13,7 @@
             [demo-be-cjpd.handlers.auth :as auth-handler]
             [demo-be-cjpd.handlers.expense :as expense-handler]
             [demo-be-cjpd.handlers.health :as health-handler]
+            [demo-be-cjpd.handlers.jwks :as jwks-handler]
             [demo-be-cjpd.handlers.report :as report-handler]
             [demo-be-cjpd.handlers.token :as token-handler]
             [demo-be-cjpd.handlers.user :as user-handler]))
@@ -121,6 +122,11 @@
   ([]
    (public-request nil)))
 
+(defn- keywordize-map
+  "Convert string keys in a map to keywords."
+  [m]
+  (into {} (map (fn [[k v]] [(if (string? k) (keyword k) k) v]) m)))
+
 (defn- auth-request
   "Build a Ring-like request map with :identity for authenticated endpoints."
   [identity & {:keys [json-body query-params path-params headers]
@@ -129,7 +135,7 @@
    :json-params  (if json-body (parse-json json-body) {})
    :headers      (merge {"host" "localhost"} headers)
    :query-params query-params
-   :path-params  path-params})
+   :path-params  (keywordize-map path-params)})
 
 ;; ============================================================
 ;; Error handling wrapper
@@ -285,12 +291,25 @@
            :last-response result
            :last-body (:body result))))
 
+(defn call-jwks
+  "GET /.well-known/jwks.json — direct handler call (no auth)."
+  [ctx]
+  (let [{:keys [config]} ctx
+        handler (jwks-handler/jwks-handler config)
+        result  (response->result (handler {}))]
+    (assoc ctx
+           :last-response result
+           :last-body (:body result))))
+
 (defn call-get
   "Generic GET with no auth — returns updated ctx."
   [ctx path]
   (cond
     (= "/health" path)
     (call-health ctx)
+
+    (= "/.well-known/jwks.json" path)
+    (call-jwks ctx)
 
     :else
     (assoc ctx
