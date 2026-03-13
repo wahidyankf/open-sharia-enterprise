@@ -16,7 +16,6 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Set;
@@ -294,10 +293,4 @@ public class UnitExpenseSteps {
         }
     }
 
-    private String formatAmount(final BigDecimal amount, final String currency) {
-        if ("IDR".equals(currency)) {
-            return amount.setScale(0, RoundingMode.HALF_UP).toPlainString();
-        }
-        return amount.setScale(2, RoundingMode.HALF_UP).toPlainString();
-    }
 }

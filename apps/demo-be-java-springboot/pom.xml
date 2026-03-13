@@ -227,6 +227,19 @@
                 </configuration>
             </plugin>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.28.0</version>
+                <configuration>
+                    <rulesets>
+                        <ruleset>pmd-ruleset.xml</ruleset>
+                    </rulesets>
+                    <includeTests>true</includeTests>
+                    <printFailingErrors>true</printFailingErrors>
+                </configuration>
+            </plugin>
+
             <!-- Unit tests only by default (integration profile adds its own include) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

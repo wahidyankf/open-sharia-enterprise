@@ -1,6 +1,5 @@
 package com.organiclever.be.integration.expense_management;
 
-import com.organiclever.be.integration.steps.AuthSteps;
 import com.organiclever.be.integration.steps.ExpenseStepHelper;
 import com.organiclever.be.integration.steps.TokenStore;
 import io.cucumber.java.en.Given;
@@ -17,9 +16,6 @@ public class ExpenseManagementSteps {
 
     @Autowired
     private TokenStore tokenStore;
-
-    @Autowired
-    private AuthSteps authSteps;
 
     @When("^alice sends POST /api/v1/expenses with body \\{ \"amount\": \"10\\.50\", \"currency\": \"USD\", \"category\": \"food\", \"description\": \"Lunch\", \"date\": \"2025-01-15\", \"type\": \"expense\" \\}$")
     public void aliceCreatesExpenseEntry() {
