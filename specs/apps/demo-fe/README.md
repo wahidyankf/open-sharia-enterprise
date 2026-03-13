@@ -130,5 +130,6 @@ specs/apps/demo-fe/
 
 ## Related
 
+- **C4 Architecture**: [c4/](./c4/README.md) — Context, Container, and Component diagrams
 - **Backend counterpart**: [specs/apps/demo-be/](../demo-be/README.md) — HTTP-semantic API specs
 - **BDD Standards**: [behavior-driven-development-bdd/](../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)
