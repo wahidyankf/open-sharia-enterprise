@@ -8,6 +8,11 @@ open Xunit
 open DemoBeFsgi.Tests.TestFixture
 open DemoBeFsgi.Tests.State
 
+/// xUnit collection that forces all integration test classes to run sequentially.
+/// Required because integration tests share a single PostgreSQL database.
+[<CollectionDefinition("IntegrationDb", DisableParallelization = true)>]
+type IntegrationDbCollection() = class end
+
 let private assembly = Assembly.GetExecutingAssembly()
 
 let private specsDir =
@@ -23,13 +28,17 @@ let private getFeatureFile (namePart: string) =
 
 /// Each scenario gets its own isolated AppDbContext (fresh database state).
 /// The service provider injects a StepState seeded with that context.
-type private ScenarioServiceProvider(db: DemoBeFsgi.Infrastructure.AppDbContext.AppDbContext) =
+/// Implements IDisposable so cleanup (DELETE all rows + dispose context) runs after each scenario.
+type private ScenarioServiceProvider(db: DemoBeFsgi.Infrastructure.AppDbContext.AppDbContext, cleanup: unit -> unit) =
     interface IServiceProvider with
         member _.GetService(serviceType: Type) =
             if serviceType = typeof<StepState> then
                 empty db :> obj
             else
                 null
+
+    interface IDisposable with
+        member _.Dispose() = cleanup ()
 
 /// Read a feature file but preserve inline '#' characters by replacing them with
 /// a temporary placeholder HASH_SIGN before TickSpec's Gherkin parser strips them.
@@ -48,20 +57,36 @@ let private buildScenarioData (namePart: string) : seq<obj[]> =
     match getFeatureFile namePart with
     | Some path ->
         let defs = StepDefinitions(assembly)
+        let mutable currentProvider: ScenarioServiceProvider option = None
 
         defs.ServiceProviderFactory <-
             fun () ->
-                let db, _cleanup = createDb ()
-                // Note: cleanup happens when the AppDbContext is disposed at scenario end.
-                // For PostgreSQL integration mode the cleanup lambda deletes all rows;
-                // for SQLite in-memory the connection is dropped. Both are safe.
-                ScenarioServiceProvider(db) :> IServiceProvider
+                let db, cleanup = createDb ()
+                let provider = new ScenarioServiceProvider(db, cleanup)
+                currentProvider <- Some provider
+                provider :> IServiceProvider
 
         let lines = preprocessFeatureLines path
         let feature = defs.GenerateFeature(path, lines)
-        feature.Scenarios |> Seq.map (fun scenario -> [| scenario :> obj |])
+
+        feature.Scenarios
+        |> Seq.map (fun scenario ->
+            // Wrap the scenario action to guarantee cleanup (DELETE all rows + dispose context)
+            // runs after every scenario, even if the scenario itself throws.
+            let wrappedAction =
+                Action(fun () ->
+                    try
+                        scenario.Action.Invoke()
+                    finally
+                        currentProvider |> Option.iter (fun p -> (p :> IDisposable).Dispose())
+
+                        currentProvider <- None)
+
+            let wrapped = { scenario with Action = wrappedAction }
+            [| wrapped :> obj |])
     | None -> Seq.empty
 
+[<Collection("IntegrationDb")>]
 [<Trait("Category", "Integration")>]
 type HealthFeatureTests() =
     static member Scenarios() : seq<obj[]> =
@@ -71,6 +96,7 @@ type HealthFeatureTests() =
     [<MemberData("Scenarios")>]
     member this.``Health Check``(scenario: Scenario) = scenario.Action.Invoke()
 
+[<Collection("IntegrationDb")>]
 [<Trait("Category", "Integration")>]
 type RegistrationFeatureTests() =
     static member Scenarios() : seq<obj[]> =
@@ -80,6 +106,7 @@ type RegistrationFeatureTests() =
     [<MemberData("Scenarios")>]
     member this.``Registration``(scenario: Scenario) = scenario.Action.Invoke()
 
+[<Collection("IntegrationDb")>]
 [<Trait("Category", "Integration")>]
 type PasswordLoginFeatureTests() =
     static member Scenarios() : seq<obj[]> =
@@ -89,6 +116,7 @@ type PasswordLoginFeatureTests() =
     [<MemberData("Scenarios")>]
     member this.``Password Login``(scenario: Scenario) = scenario.Action.Invoke()
 
+[<Collection("IntegrationDb")>]
 [<Trait("Category", "Integration")>]
 type TokenLifecycleFeatureTests() =
     static member Scenarios() : seq<obj[]> =
@@ -98,6 +126,7 @@ type TokenLifecycleFeatureTests() =
     [<MemberData("Scenarios")>]
     member this.``Token Lifecycle``(scenario: Scenario) = scenario.Action.Invoke()
 
+[<Collection("IntegrationDb")>]
 [<Trait("Category", "Integration")>]
 type TokensFeatureTests() =
     static member Scenarios() : seq<obj[]> =
@@ -107,6 +136,7 @@ type TokensFeatureTests() =
     [<MemberData("Scenarios")>]
     member this.``Tokens``(scenario: Scenario) = scenario.Action.Invoke()
 
+[<Collection("IntegrationDb")>]
 [<Trait("Category", "Integration")>]
 type UserAccountFeatureTests() =
     static member Scenarios() : seq<obj[]> =
@@ -116,6 +146,7 @@ type UserAccountFeatureTests() =
     [<MemberData("Scenarios")>]
     member this.``User Account``(scenario: Scenario) = scenario.Action.Invoke()
 
+[<Collection("IntegrationDb")>]
 [<Trait("Category", "Integration")>]
 type SecurityFeatureTests() =
     static member Scenarios() : seq<obj[]> =
@@ -125,6 +156,7 @@ type SecurityFeatureTests() =
     [<MemberData("Scenarios")>]
     member this.``Security``(scenario: Scenario) = scenario.Action.Invoke()
 
+[<Collection("IntegrationDb")>]
 [<Trait("Category", "Integration")>]
 type AdminFeatureTests() =
     static member Scenarios() : seq<obj[]> =
@@ -134,6 +166,7 @@ type AdminFeatureTests() =
     [<MemberData("Scenarios")>]
     member this.``Admin``(scenario: Scenario) = scenario.Action.Invoke()
 
+[<Collection("IntegrationDb")>]
 [<Trait("Category", "Integration")>]
 type ExpenseManagementFeatureTests() =
     static member Scenarios() : seq<obj[]> =
@@ -143,6 +176,7 @@ type ExpenseManagementFeatureTests() =
     [<MemberData("Scenarios")>]
     member this.``Expense Management``(scenario: Scenario) = scenario.Action.Invoke()
 
+[<Collection("IntegrationDb")>]
 [<Trait("Category", "Integration")>]
 type CurrencyHandlingFeatureTests() =
     static member Scenarios() : seq<obj[]> =
@@ -152,6 +186,7 @@ type CurrencyHandlingFeatureTests() =
     [<MemberData("Scenarios")>]
     member this.``Currency Handling``(scenario: Scenario) = scenario.Action.Invoke()
 
+[<Collection("IntegrationDb")>]
 [<Trait("Category", "Integration")>]
 type UnitHandlingFeatureTests() =
     static member Scenarios() : seq<obj[]> =
@@ -161,6 +196,7 @@ type UnitHandlingFeatureTests() =
     [<MemberData("Scenarios")>]
     member this.``Unit Handling``(scenario: Scenario) = scenario.Action.Invoke()
 
+[<Collection("IntegrationDb")>]
 [<Trait("Category", "Integration")>]
 type ReportingFeatureTests() =
     static member Scenarios() : seq<obj[]> =
@@ -170,6 +206,7 @@ type ReportingFeatureTests() =
     [<MemberData("Scenarios")>]
     member this.``Reporting``(scenario: Scenario) = scenario.Action.Invoke()
 
+[<Collection("IntegrationDb")>]
 [<Trait("Category", "Integration")>]
 type AttachmentsFeatureTests() =
     static member Scenarios() : seq<obj[]> =
