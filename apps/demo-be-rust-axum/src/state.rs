@@ -1,6 +1,6 @@
 use sqlx::AnyPool;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct AppState {
     pub pool: AnyPool,
     pub jwt_secret: String,
