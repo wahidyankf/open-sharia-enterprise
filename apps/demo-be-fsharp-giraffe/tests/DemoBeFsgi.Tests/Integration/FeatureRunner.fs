@@ -5,6 +5,7 @@ open System.IO
 open System.Reflection
 open TickSpec
 open Xunit
+open Microsoft.EntityFrameworkCore
 open DemoBeFsgi.Tests.TestFixture
 open DemoBeFsgi.Tests.State
 
@@ -57,9 +58,13 @@ let private buildScenarioData (namePart: string) : seq<obj[]> =
         defs.ServiceProviderFactory <-
             fun () ->
                 let db, _cleanup = createDb ()
-                // Note: cleanup happens when the AppDbContext is disposed at scenario end.
-                // For PostgreSQL integration mode the cleanup lambda deletes all rows;
-                // for SQLite in-memory the connection is dropped. Both are safe.
+                // Truncate all tables so each scenario starts with a clean database.
+                // Safe on both PostgreSQL (shared DB) and SQLite (isolated in-memory).
+                db.Database.ExecuteSqlRaw("DELETE FROM attachments") |> ignore
+                db.Database.ExecuteSqlRaw("DELETE FROM expenses") |> ignore
+                db.Database.ExecuteSqlRaw("DELETE FROM refresh_tokens") |> ignore
+                db.Database.ExecuteSqlRaw("DELETE FROM revoked_tokens") |> ignore
+                db.Database.ExecuteSqlRaw("DELETE FROM users") |> ignore
                 ScenarioServiceProvider(db) :> IServiceProvider
 
         let lines = preprocessFeatureLines path
