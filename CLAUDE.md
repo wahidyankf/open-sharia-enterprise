@@ -107,10 +107,10 @@ nx affected -t build
 nx affected -t test:quick
 nx affected -t lint
 
-# Deeper test targets (run on-demand or via CI)
-nx run [project-name]:test:unit
-nx run [project-name]:test:integration
-nx run [project-name]:test:e2e
+# Three-level test targets
+nx run [project-name]:test:unit          # Mocked dependencies, no Docker, cacheable
+nx run [project-name]:test:integration   # Demo-be: real PostgreSQL via docker-compose; others: MSW/Godog. NOT cacheable
+nx run [project-name]:test:e2e           # Real HTTP via Playwright. NOT cacheable
 
 # Dependency graph
 nx graph
@@ -129,64 +129,65 @@ npm run doctor           # Check all required tools (volta, node, npm, java, mav
 
 **Go projects**: All Go projects (`ayokoding-cli`, `oseplatform-cli`, `rhino-cli`,
 `libs/golang-commons`, `libs/hugo-commons`, `demo-be-golang-gin`) enforce ≥90% **line coverage**
-(matching Codecov's algorithm) via `rhino-cli test-coverage validate`. Coverage is measured with
-`go test -coverprofile=cover.out ./...` and enforced by
+(matching Codecov's algorithm) via `rhino-cli test-coverage validate`. Coverage is measured from
+`test:unit` with `go test -coverprofile=cover.out ./...` and enforced by
 `rhino-cli test-coverage validate <project>/cover.out 90` — both run as part of `test:quick`.
 
 **TypeScript projects**: `organiclever-web` and `demo-be-ts-effect` enforce ≥90% **line coverage**
 (matching Codecov's algorithm) via `rhino-cli test-coverage validate` applied to the LCOV output
-from Vitest: `rhino-cli test-coverage validate apps/organiclever-web/coverage/lcov.info 90` and
+from `test:unit` (Vitest): `rhino-cli test-coverage validate apps/organiclever-web/coverage/lcov.info 90` and
 `rhino-cli test-coverage validate apps/demo-be-ts-effect/coverage/lcov.info 90` — both run as part of
 `test:quick`.
 
 **Java projects**: `demo-be-java-springboot` and `demo-be-java-vertx` enforce ≥90% **line coverage** (matching
-Codecov's algorithm) via `rhino-cli test-coverage validate` applied to the JaCoCo XML report —
-run as part of `test:quick`.
+Codecov's algorithm) via `rhino-cli test-coverage validate` applied to the JaCoCo XML report from
+`test:unit` — run as part of `test:quick`.
 
 **Kotlin projects**: `demo-be-kotlin-ktor` enforces ≥90% **line coverage** (matching Codecov's algorithm)
-via `rhino-cli test-coverage validate` applied to the Kover JaCoCo XML report —
+via `rhino-cli test-coverage validate` applied to the Kover JaCoCo XML report from `test:unit` —
 run as part of `test:quick`.
 
 **Python projects**: `demo-be-python-fastapi` enforces ≥90% **line coverage** (matching Codecov's algorithm)
-via `rhino-cli test-coverage validate` applied to the LCOV output from coverage.py:
+via `rhino-cli test-coverage validate` applied to the LCOV output from `test:unit` (coverage.py):
 `rhino-cli test-coverage validate apps/demo-be-python-fastapi/coverage/lcov.info 90` — run as part of `test:quick`.
 
 **Rust projects**: `demo-be-rust-axum` enforces ≥90% **line coverage** (matching Codecov's algorithm)
-via `rhino-cli test-coverage validate` applied to the LCOV output from cargo-llvm-cov:
+via `rhino-cli test-coverage validate` applied to the LCOV output from `test:unit` (cargo-llvm-cov):
 `rhino-cli test-coverage validate apps/demo-be-rust-axum/coverage/lcov.info 90` — run as part of `test:quick`.
 
 **F# projects**: `demo-be-fsharp-giraffe` enforces ≥90% **line coverage** (matching Codecov's algorithm)
-via `rhino-cli test-coverage validate` applied to the AltCover LCOV report:
+via `rhino-cli test-coverage validate` applied to the AltCover LCOV report from `test:unit`:
 `rhino-cli test-coverage validate apps/demo-be-fsharp-giraffe/coverage/altcov.info 90` — run as part of
 `test:quick`. Uses AltCover with `--linecover` instead of XPlat Code Coverage to avoid F#
 `task{}` async state machine BRDA inflation.
 
 **C# projects**: `demo-be-csharp-aspnetcore` enforces ≥90% **line coverage** (matching Codecov's algorithm)
-via `rhino-cli test-coverage validate` applied to the Coverlet LCOV report:
+via `rhino-cli test-coverage validate` applied to the Coverlet LCOV report from `test:unit`:
 `rhino-cli test-coverage validate apps/demo-be-csharp-aspnetcore/coverage/**/coverage.info 90` — run as part
 of `test:quick`. Uses Coverlet XPlat Code Coverage collector with LCOV format output.
 
 **Clojure projects**: `demo-be-clojure-pedestal` enforces ≥90% **line coverage** (matching Codecov's algorithm)
-via `rhino-cli test-coverage validate` applied to the cloverage LCOV report:
+via `rhino-cli test-coverage validate` applied to the cloverage LCOV report from `test:unit`:
 `rhino-cli test-coverage validate apps/demo-be-clojure-pedestal/coverage/lcov.info 90` — run as part
 of `test:quick`. Uses cloverage with `--lcov` output format.
 
-**`test:integration` caching**: Integration tests for `organiclever-web` (MSW), `demo-be-java-springboot`
-(MockMvc + mocked repositories via InMemoryDataStore), `demo-be-elixir-phoenix` (in-memory context
-implementations via InMemoryStore), `demo-be-fsharp-giraffe` (SQLite in-memory via WebApplicationFactory),
-`demo-be-golang-gin` (Godog + httptest + in-memory stores), `demo-be-python-fastapi` (pytest-bdd + TestClient +
-in-memory stores), `demo-be-rust-axum` (cucumber + Tower TestClient + in-memory stores),
-`demo-be-kotlin-ktor` (Cucumber JVM + Ktor testApplication + SQLite in-memory),
-`demo-be-java-vertx` (Cucumber JVM + Vert.x Test + in-memory stores),
-`demo-be-csharp-aspnetcore` (Reqnroll + WebApplicationFactory + SQLite in-memory),
-`demo-be-clojure-pedestal` (kaocha-cucumber + clj-http + SQLite in-memory),
-`hugo-commons` (Godog + tmpdir mocks), and `golang-commons`
-(Godog + mock closures) use in-process mocking only — no external services required. They are
-fully deterministic and safe to cache (`cache: true` in `nx.json`).
+**`test:integration` caching**: Integration tests are NOT cacheable (`cache: false` in `nx.json`).
+Demo-be backends run integration tests inside Docker via `docker-compose.integration.yml` (PostgreSQL +
+test runner containers) — Docker builds may pull updated base images, and container execution is not
+tracked by Nx file-based caching. Other projects: `organiclever-web` (MSW), Go CLI apps (Godog + BDD
+features), `hugo-commons` (Godog + tmpdir mocks), `golang-commons` (Godog + mock closures).
 
-**Unit vs. integration test principle**: Unit tests cover only what integration tests cannot reach
-(isolated pure functions, hooks, algorithmic logic). Feature-level workflows already exercised by
-integration tests must not be duplicated in unit tests.
+**Three-level testing standard**: Three rules determine mandatory test levels per project type:
+
+1. **All apps and libs** must have `test:unit` (mocks only, cacheable) — except Hugo sites
+2. **All apps** must also have `test:integration` (demo-be: real PostgreSQL via docker-compose,
+   no HTTP; others: MSW/Godog; NOT cacheable) — libs exempt, Hugo sites exempt
+3. **All web apps** (APIs + UIs) must have `test:e2e` (Playwright, NOT cacheable) — CLIs/libs exempt
+
+For demo-be backends, the same Gherkin specs (`specs/apps/demo-be/gherkin/`) serve as the contract
+at all three levels — only the step implementations change. `test:quick` includes only `test:unit` +
+coverage check + specs coverage check. It does NOT include `lint`, `typecheck`, `test:integration`,
+or `test:e2e` (lint and typecheck are separate Nx targets).
 
 ## Markdown Quality
 
