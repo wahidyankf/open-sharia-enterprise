@@ -36,7 +36,7 @@ type scenarioCtx struct {
 	AliceID        string
 }
 
-func (c *scenarioCtx) reset() error {
+func (ctx *scenarioCtx) reset() error {
 	gin.SetMode(gin.TestMode)
 
 	databaseURL := os.Getenv("DATABASE_URL")
@@ -60,19 +60,19 @@ func (c *scenarioCtx) reset() error {
 	}
 
 	jwtSvc := auth.NewJWTService(testJWTSecret)
-	c.Store = gormStore
-	c.Router = router.NewRouter(gormStore, jwtSvc)
-	c.LastResponse = nil
-	c.LastBody = nil
-	c.AccessToken = ""
-	c.RefreshToken = ""
-	c.UserID = ""
-	c.ExpenseID = ""
-	c.AttachmentID = ""
-	c.BobAccessToken = ""
-	c.BobExpenseID = ""
-	c.AdminToken = ""
-	c.AliceID = ""
+	ctx.Store = gormStore
+	ctx.Router = router.NewRouter(gormStore, jwtSvc)
+	ctx.LastResponse = nil
+	ctx.LastBody = nil
+	ctx.AccessToken = ""
+	ctx.RefreshToken = ""
+	ctx.UserID = ""
+	ctx.ExpenseID = ""
+	ctx.AttachmentID = ""
+	ctx.BobAccessToken = ""
+	ctx.BobExpenseID = ""
+	ctx.AdminToken = ""
+	ctx.AliceID = ""
 	return nil
 }
 
