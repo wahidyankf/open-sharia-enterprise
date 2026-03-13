@@ -398,7 +398,7 @@ Then in `junit-platform.properties`:
 
 ```properties
 cucumber.features=classpath:specs
-cucumber.glue=com.organiclever.demojavx.integration.steps
+cucumber.glue=com.demobejavx.integration.steps
 cucumber.plugin=pretty,json:target/cucumber-reports/cucumber.json
 ```
 
@@ -652,7 +652,7 @@ JaCoCo is configured in the `integration` profile to output XML for `rhino-cli`:
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "mvn compile exec:java -Dexec.mainClass=com.organiclever.demojavx.Main",
+        "command": "mvn compile exec:java -Dexec.mainClass=com.demobejavx.Main",
         "cwd": "apps/demo-be-java-vertx"
       }
     },
@@ -799,7 +799,7 @@ RUN apk add --no-cache maven
 
 WORKDIR /workspace
 
-CMD ["mvn", "compile", "exec:java", "-Dexec.mainClass=com.organiclever.demojavx.Main"]
+CMD ["mvn", "compile", "exec:java", "-Dexec.mainClass=com.demobejavx.Main"]
 ```
 
 ---
