@@ -24,6 +24,7 @@ import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -36,8 +37,13 @@ import static org.mockito.Mockito.when;
 /**
  * Provides all service beans and mock repositories for unit tests. No web layer, no DB, no
  * security filter chain — pure service/repository wiring with the in-memory data store.
+ *
+ * <p>Active only under the {@code unit-test} profile to prevent this configuration from being
+ * picked up by the integration-test context, which loads the full {@code OrganicLeverApplication}
+ * and scans all sub-packages.
  */
 @Configuration
+@Profile("unit-test")
 public class UnitServicesConfig {
 
     @Bean

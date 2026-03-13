@@ -9,11 +9,16 @@ import org.springframework.boot.liquibase.autoconfigure.LiquibaseAutoConfigurati
 import org.springframework.boot.security.autoconfigure.SecurityAutoConfiguration;
 import org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Profile;
 
 /**
  * Minimal Spring Boot application class for unit tests. Excludes all database, JPA, Liquibase, and
  * web security auto-configurations so the context starts with service beans and mocked repositories
  * only.
+ *
+ * <p>The {@code @Profile("unit-test")} guard ensures this application class is not picked up as a
+ * configuration candidate when the integration-test context loads {@code OrganicLeverApplication}
+ * and scans all sub-packages.
  */
 @SpringBootApplication(
         exclude = {
@@ -29,6 +34,7 @@ import org.springframework.context.annotation.ComponentScan;
         basePackages = {
             "com.organiclever.be.unit.steps"
         })
+@Profile("unit-test")
 public class UnitTestApplication {
 
     public static void main(final String[] args) {

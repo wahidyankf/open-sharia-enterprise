@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -21,8 +22,12 @@ import org.springframework.stereotype.Component;
 /**
  * In-memory data store for unit tests. Mirrors the integration-test InMemoryDataStore but lives in
  * the unit test package so there is no cross-package coupling.
+ *
+ * <p>Active only under the {@code unit-test} profile to prevent this component from being
+ * registered in the integration-test context.
  */
 @Component
+@Profile("unit-test")
 public class UnitInMemoryDataStore {
 
     private final ConcurrentHashMap<UUID, User> users = new ConcurrentHashMap<>();

@@ -10,7 +10,7 @@ Demo Backend - Spring Boot REST API
 - **Port**: 8201
 - **API Base**: `/api/v1`
 - **Security**: Spring Security with stateless JWT authentication (JJWT 0.12.x)
-- **Database**: PostgreSQL (dev/prod) / mocked repositories with InMemoryDataStore (integration tests)
+- **Database**: PostgreSQL (dev/prod/integration tests) / mocked repositories with InMemoryDataStore (unit tests)
 - **Schema Migration**: Liquibase SQL formatted changesets
 
 **CORS Configuration**: Restricted to `http://localhost:3200` and `https://www.organiclever.com`
@@ -204,13 +204,13 @@ nx dev demo-be-java-springboot
 # Start production server (runs built JAR)
 nx run demo-be-java-springboot:start
 
-# Run fast quality gate: unit + integration in parallel (no running service needed)
+# Run fast quality gate: unit tests + coverage check (no running service needed)
 nx run demo-be-java-springboot:test:quick
 
-# Run unit tests only (JUnit 5, no Spring context)
+# Run unit tests only (Cucumber JVM + mocked repos, no Spring context)
 nx run demo-be-java-springboot:test:unit
 
-# Run integration tests only (Cucumber JVM + MockMvc, no running service needed)
+# Run integration tests (Cucumber JVM + real PostgreSQL via docker-compose)
 nx run demo-be-java-springboot:test:integration
 
 # Lint code
@@ -376,14 +376,14 @@ docker-compose up
 ### 2. Running Tests
 
 ```bash
-# Fast quality gate: unit + integration in parallel (no running service needed)
+# Fast quality gate: unit tests + coverage check (pre-push hook)
 nx run demo-be-java-springboot:test:quick
 
-# Unit tests only (JUnit 5, no Spring context)
+# Unit tests only (Cucumber JVM + mocked repos)
 nx run demo-be-java-springboot:test:unit        # mvn test
 
-# Integration tests only (Cucumber JVM + MockMvc)
-nx run demo-be-java-springboot:test:integration # mvn test -Pintegration
+# Integration tests (Cucumber JVM + real PostgreSQL via docker-compose)
+nx run demo-be-java-springboot:test:integration # docker compose up --abort-on-container-exit
 ```
 
 ### 3. Production Build
@@ -454,62 +454,70 @@ apps/demo-be-java-springboot/
 │       ├── db.changelog-master.yaml              # Liquibase master changelog
 │       └── changes/
 │           └── 001-create-users-table.sql        # dbms:postgresql + dbms:h2 changesets
+├── docker-compose.integration.yml                # PostgreSQL + test-runner for integration tests
+├── Dockerfile.integration                        # Java 25 + Maven image for integration test runner
 └── src/test/
     ├── java/com/organiclever/be/
-    │   ├── integration/
-    │   │   ├── ResponseStore.java                # Shared MvcResult state (@Component @Scope)
-    │   │   ├── OrganicLeverApplicationTest.java  # Context-load test
-    │   │   ├── steps/                            # Shared step definitions, InMemoryDataStore, MockRepositoriesConfig
+    │   ├── integration/                          # Integration tests (real PostgreSQL)
+    │   │   ├── ResponseStore.java                # Shared response state (@Component @Scope)
+    │   │   ├── DatabaseCleaner.java              # Truncates all tables between scenarios
+    │   │   ├── steps/                            # Step definitions calling controllers directly
     │   │   ├── registration/                     # RegistrationIT (Cucumber runner)
     │   │   ├── login/                            # LoginIT (Cucumber runner)
-    │   │   └── jwtprotected/                     # JwtProtectedIT (Cucumber runner)
-    │   └── unit/
-    │       └── HelloControllerTest.java
+    │   │   └── ...                               # 13 domain-specific Cucumber runners
+    │   └── unit/                                 # Unit tests (mocked repos, no DB)
+    │       ├── steps/                            # Unit step definitions calling controllers directly
+    │       │   ├── UnitInMemoryDataStore.java    # ConcurrentHashMap-backed mock store
+    │       │   ├── UnitServicesConfig.java       # Mock repository beans
+    │       │   └── Unit*Steps.java               # Per-domain step definitions
+    │       ├── registration/                     # RegistrationUnitTest (Cucumber runner)
+    │       └── ...                               # 13 domain-specific Cucumber runners
     └── resources/
         ├── application-test.yml                  # Excludes DB autoconfiguration; mocked repos
+        ├── application-unit-test.yml             # Unit test profile config
+        ├── application-integration-test.yml      # Real PostgreSQL via DATABASE_URL
         └── junit-platform.properties
 ```
 
 ## Testing
 
-Three tiers of testing provide complete coverage:
+Three levels of testing consume the same 76 Gherkin scenarios from `specs/apps/demo-be/gherkin/`:
 
-| Tier        | Tool                   | Surefire profile | Location                         | Command                                           | Requires running service? | Cached? |
-| ----------- | ---------------------- | ---------------- | -------------------------------- | ------------------------------------------------- | ------------------------- | ------- |
-| Unit        | JUnit 5                | (default)        | `src/test/java/.../unit/`        | `nx run demo-be-java-springboot:test:unit`        | No                        | Yes     |
-| Integration | Cucumber JVM + MockMvc | `-Pintegration`  | `src/test/java/.../integration/` | `nx run demo-be-java-springboot:test:integration` | No                        | Yes     |
-| E2E         | playwright-bdd         | —                | `apps/demo-be-e2e/`              | `nx run demo-be-e2e:test:e2e`                     | Yes (port 8201)           | No      |
+| Level       | Tool                           | Dependencies         | Command                                           | Cached? |
+| ----------- | ------------------------------ | -------------------- | ------------------------------------------------- | ------- |
+| Unit        | Cucumber JVM + mocked repos    | InMemoryDataStore    | `nx run demo-be-java-springboot:test:unit`        | Yes     |
+| Integration | Cucumber JVM + real PostgreSQL | Docker Compose       | `nx run demo-be-java-springboot:test:integration` | No      |
+| E2E         | Playwright + HTTP              | Running backend + DB | `nx run demo-be-e2e:test:e2e`                     | No      |
 
-The two Maven profiles are mutually exclusive: `mvn test` includes only `**/unit/**/*Test.java`;
-`mvn test -Pintegration` includes only `**/*IT.java` (the three Cucumber runner classes). `test:quick`
-runs both in parallel (MockMvc needs no real server, so there is no shared resource contention).
+**What's mocked at each level**:
 
-The three `*IT.java` runners execute in parallel (Surefire `parallel=classes`, `threadCount=3`).
-All repositories are mocked via `MockRepositoriesConfig` backed by a shared `InMemoryDataStore`
-(ConcurrentHashMap-based). No real database is started — Spring Boot autoconfiguration for
-DataSource, Hibernate, Liquibase, and JPA repositories is excluded in `application-test.yml`.
+- **Unit**: Repositories are mocked via `UnitInMemoryDataStore` (ConcurrentHashMap). No database, no
+  Spring Data JPA. Steps call controller methods directly as plain Java calls.
+- **Integration**: Real PostgreSQL via `docker-compose.integration.yml`. Liquibase runs migrations.
+  `DatabaseCleaner` truncates all tables between scenarios. Steps call controllers directly (no HTTP).
+- **E2E**: Full HTTP requests via Playwright against a running backend with real PostgreSQL.
 
-Integration and E2E tests share the same Gherkin feature files from `specs/apps/demo-be/gherkin/`.
+**Coverage**: Measured from `test:unit` only. `test:quick` = `test:unit` + `rhino-cli test-coverage validate` (≥90%).
 
 ### Unit Tests
 
-No Spring context. Tests individual classes in isolation (`mvn test`, default Surefire includes):
+Cucumber JVM with mocked repositories. No database, no Spring Data JPA autoconfiguration.
+All 76 scenarios run against `UnitInMemoryDataStore`:
 
 ```bash
 nx run demo-be-java-springboot:test:unit
 # or: cd apps/demo-be-java-springboot && mvn test
 ```
 
-### Integration Tests (MockMvc)
+### Integration Tests (PostgreSQL via Docker Compose)
 
-Full Spring context via `@SpringBootTest(webEnvironment = MOCK)` + MockMvc. No running service
-required — Cucumber JVM reads the same Gherkin feature files as the E2E suite (`mvn test
--Pintegration`). Because all dependencies are in-process, integration tests are **cached** by Nx
-(`cache: true`):
+Real PostgreSQL database via `docker-compose.integration.yml`. The `test-runner` service builds
+the app, runs Liquibase migrations, and executes all 76 Cucumber scenarios against real SQL.
+Not cached — always re-runs:
 
 ```bash
 nx run demo-be-java-springboot:test:integration
-# or: cd apps/demo-be-java-springboot && mvn test -Pintegration
+# or: cd apps/demo-be-java-springboot && docker compose -f docker-compose.integration.yml down -v && docker compose -f docker-compose.integration.yml up --abort-on-container-exit --build
 ```
 
 ### E2E Testing
@@ -521,11 +529,6 @@ for this API. Run them after starting the backend:
 # Start backend (any method above), then:
 nx run demo-be-e2e:test:e2e
 ```
-
-Tests cover:
-
-- `GET /api/v1/hello` — status 200, `{"message":"world!"}`, JSON content-type
-- `GET /health` — status 200, `{"status":"UP"}`
 
 ## Next Steps
 
