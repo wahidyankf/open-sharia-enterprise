@@ -1,9 +1,10 @@
 defmodule DemoBeExphWeb.Integration.UnitHandlingSteps do
   use Cabbage.Feature, async: false, file: "expenses/unit-handling.feature"
 
-  use DemoBeExphWeb.ConnCaseIntegration
+  use DemoBeExph.DataCaseIntegration
 
   alias DemoBeExph.Integration.Helpers
+  alias DemoBeExph.Integration.ServiceLayer
 
   @moduletag :integration
 
@@ -28,74 +29,53 @@ defmodule DemoBeExphWeb.Integration.UnitHandlingSteps do
   defgiven ~r/^alice has created an expense with body \{ (?<body>.+) \}$/,
            %{body: body_content},
            %{access_token: access_token} = state do
-    body = Jason.encode!(Jason.decode!("{" <> body_content <> "}"))
-
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(access_token))
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/expenses", body)
-
-    assert conn.status == 201
-    expense_body = Jason.decode!(conn.resp_body)
-    {:ok, Map.put(state, :expense_id, expense_body["id"])}
+    params = Jason.decode!("{" <> body_content <> "}")
+    response = ServiceLayer.create_expense(access_token, params)
+    assert response.status == 201
+    {:ok, Map.put(state, :expense_id, response.body["id"])}
   end
 
   defwhen ~r/^alice sends GET \/api\/v1\/expenses\/\{expenseId\}$/,
           _vars,
           %{access_token: access_token, expense_id: expense_id} = state do
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(access_token))
-      |> get("/api/v1/expenses/#{expense_id}")
-
-    {:ok, Map.put(state, :conn, conn)}
+    response = ServiceLayer.get_expense(access_token, expense_id)
+    {:ok, Map.put(state, :response, response)}
   end
 
   defwhen ~r/^alice sends POST \/api\/v1\/expenses with body \{ (?<body>.+) \}$/,
           %{body: body_content},
           %{access_token: access_token} = state do
-    body = Jason.encode!(Jason.decode!("{" <> body_content <> "}"))
-
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(access_token))
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/expenses", body)
-
-    {:ok, Map.put(state, :conn, conn)}
+    params = Jason.decode!("{" <> body_content <> "}")
+    response = ServiceLayer.create_expense(access_token, params)
+    {:ok, Map.put(state, :response, response)}
   end
 
   defthen ~r/^the response status code should be (?<code>\d+)$/,
           %{code: code},
-          %{conn: conn} = state do
-    assert conn.status == String.to_integer(code)
+          %{response: response} = state do
+    assert response.status == String.to_integer(code)
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain a non-null "(?<field>[^"]+)" field$/,
           %{field: field},
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert Map.has_key?(body, field)
-    assert body[field] != nil
+          %{response: response} = state do
+    assert Map.has_key?(response.body, field)
+    assert response.body[field] != nil
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain "(?<field>[^"]+)" equal to "(?<value>[^"]+)"$/,
           %{field: field, value: value},
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert to_string(body[field]) == value
+          %{response: response} = state do
+    assert to_string(response.body[field]) == value
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain "(?<field>[^"]+)" equal to (?<value>[0-9.]+)$/,
           %{field: field, value: value},
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    # Compare numerically
-    actual = body[field]
+          %{response: response} = state do
+    actual = response.body[field]
 
     expected =
       if String.contains?(value, ".") do
@@ -110,10 +90,9 @@ defmodule DemoBeExphWeb.Integration.UnitHandlingSteps do
 
   defthen ~r/^the response body should contain a validation error for "(?<field>[^"]+)"$/,
           %{field: field},
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert Map.has_key?(body, "errors")
-    errors = body["errors"]
+          %{response: response} = state do
+    assert Map.has_key?(response.body, "errors")
+    errors = response.body["errors"]
     assert Map.has_key?(errors, field)
     {:ok, state}
   end

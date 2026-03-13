@@ -1,9 +1,10 @@
 defmodule DemoBeExphWeb.Integration.SecuritySteps do
   use Cabbage.Feature, async: false, file: "security/security.feature"
 
-  use DemoBeExphWeb.ConnCaseIntegration
+  use DemoBeExph.DataCaseIntegration
 
   alias DemoBeExph.Integration.Helpers
+  alias DemoBeExph.Integration.ServiceLayer
 
   @moduletag :integration
 
@@ -71,54 +72,38 @@ defmodule DemoBeExphWeb.Integration.SecuritySteps do
   defwhen ~r/^the client sends POST \/api\/v1\/auth\/register with body \{ "username": "(?<username>[^"]+)", "email": "(?<email>[^"]+)", "password": "(?<password>[^"]+)" \}$/,
           %{username: username, email: email, password: password},
           state do
-    body = Jason.encode!(%{username: username, email: email, password: password})
+    response =
+      ServiceLayer.register(%{"username" => username, "email" => email, "password" => password})
 
-    conn =
-      build_conn()
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/auth/register", body)
-
-    {:ok, Map.put(state, :conn, conn)}
+    {:ok, Map.put(state, :response, response)}
   end
 
   defwhen ~r/^the client sends POST \/api\/v1\/auth\/login with body \{ "username": "(?<username>[^"]+)", "password": "(?<password>[^"]+)" \}$/,
           %{username: username, password: password},
           state do
-    body = Jason.encode!(%{username: username, password: password})
-
-    conn =
-      build_conn()
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/auth/login", body)
-
-    {:ok, Map.put(state, :conn, conn)}
+    response = ServiceLayer.login(%{"username" => username, "password" => password})
+    {:ok, Map.put(state, :response, response)}
   end
 
   defwhen ~r/^the admin sends POST \/api\/v1\/admin\/users\/\{alice_id\}\/unlock$/,
           _vars,
           %{alice: alice, admin_token: admin_token} = state do
-    conn =
-      build_conn()
-      |> put_req_header("authorization", Helpers.bearer_header(admin_token))
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/admin/users/#{alice.id}/unlock", "{}")
-
-    {:ok, Map.put(state, :conn, conn)}
+    response = ServiceLayer.admin_unlock_user(admin_token, alice.id)
+    {:ok, Map.put(state, :response, response)}
   end
 
   defthen ~r/^the response status code should be (?<code>\d+)$/,
           %{code: code},
-          %{conn: conn} = state do
-    assert conn.status == String.to_integer(code)
+          %{response: response} = state do
+    assert response.status == String.to_integer(code)
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain a validation error for "(?<field>[^"]+)"$/,
           %{field: field},
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert Map.has_key?(body, "errors")
-    errors = body["errors"]
+          %{response: response} = state do
+    assert Map.has_key?(response.body, "errors")
+    errors = response.body["errors"]
     assert Map.has_key?(errors, field)
     assert errors[field] != []
     {:ok, state}
@@ -134,10 +119,9 @@ defmodule DemoBeExphWeb.Integration.SecuritySteps do
 
   defthen ~r/^the response body should contain a non-null "(?<field>[^"]+)" field$/,
           %{field: field},
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert Map.has_key?(body, field)
-    assert body[field] != nil
+          %{response: response} = state do
+    assert Map.has_key?(response.body, field)
+    assert response.body[field] != nil
     {:ok, state}
   end
 end

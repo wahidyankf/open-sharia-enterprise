@@ -93,6 +93,27 @@ defmodule DemoBeExph.Token.TokenContext do
     :ok
   end
 
+  @doc """
+  Expire a refresh token for test setup only — sets expires_at to the past.
+  Not part of TokenBehaviour; used in integration test step definitions.
+  """
+  def expire_refresh_token!(raw_token) do
+    token_hash = hash_token(raw_token)
+    past = ~U[2020-01-01 00:00:00Z]
+
+    case Repo.get_by(RefreshToken, token_hash: token_hash) do
+      nil ->
+        :ok
+
+      record ->
+        record
+        |> Ecto.Changeset.change(expires_at: past)
+        |> Repo.update!()
+
+        :ok
+    end
+  end
+
   # Private
 
   defp hash_token(raw_token) do

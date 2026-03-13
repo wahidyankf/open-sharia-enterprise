@@ -1,9 +1,10 @@
 defmodule DemoBeExphWeb.Integration.RegistrationSteps do
   use Cabbage.Feature, async: false, file: "user-lifecycle/registration.feature"
 
-  use DemoBeExphWeb.ConnCaseIntegration
+  use DemoBeExph.DataCaseIntegration
 
   alias DemoBeExph.Integration.Helpers
+  alias DemoBeExph.Integration.ServiceLayer
 
   @moduletag :integration
 
@@ -21,62 +22,53 @@ defmodule DemoBeExphWeb.Integration.RegistrationSteps do
   defwhen ~r/^the client sends POST \/api\/v1\/auth\/register with body \{ "username": "(?<username>[^"]+)", "email": "(?<email>[^"]+)", "password": "(?<password>[^"]*)" \}$/,
           %{username: username, email: email, password: password},
           state do
-    body = Jason.encode!(%{username: username, email: email, password: password})
+    response =
+      ServiceLayer.register(%{"username" => username, "email" => email, "password" => password})
 
-    conn =
-      build_conn()
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/auth/register", body)
-
-    {:ok, Map.put(state, :conn, conn)}
+    {:ok, Map.put(state, :response, response)}
   end
 
   defthen ~r/^the response status code should be (?<code>\d+)$/,
           %{code: code},
-          %{conn: conn} = state do
-    assert conn.status == String.to_integer(code)
+          %{response: response} = state do
+    assert response.status == String.to_integer(code)
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain "(?<field>[^"]+)" equal to "(?<value>[^"]+)"$/,
           %{field: field, value: value},
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert body[field] == value
+          %{response: response} = state do
+    assert response.body[field] == value
     {:ok, state}
   end
 
   defthen ~r/^the response body should not contain a "(?<field>[^"]+)" field$/,
           %{field: field},
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    refute Map.has_key?(body, field)
+          %{response: response} = state do
+    refute Map.has_key?(response.body, field)
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain a non-null "(?<field>[^"]+)" field$/,
           %{field: field},
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert Map.has_key?(body, field)
-    assert body[field] != nil
+          %{response: response} = state do
+    assert Map.has_key?(response.body, field)
+    assert response.body[field] != nil
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain an error message about duplicate username$/,
           _vars,
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert body["message"] =~ ~r/[Uu]sername.*exist|already|[Dd]uplicate/i
+          %{response: response} = state do
+    assert response.body["message"] =~ ~r/[Uu]sername.*exist|already|[Dd]uplicate/i
     {:ok, state}
   end
 
   defthen ~r/^the response body should contain a validation error for "(?<field>[^"]+)"$/,
           %{field: field},
-          %{conn: conn} = state do
-    body = Jason.decode!(conn.resp_body)
-    assert Map.has_key?(body, "errors")
-    errors = body["errors"]
+          %{response: response} = state do
+    assert Map.has_key?(response.body, "errors")
+    errors = response.body["errors"]
     assert Map.has_key?(errors, field)
     assert errors[field] != []
     {:ok, state}
