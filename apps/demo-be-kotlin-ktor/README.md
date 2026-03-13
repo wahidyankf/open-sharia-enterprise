@@ -56,9 +56,9 @@ curl http://localhost:8201/health
 nx build demo-be-kotlin-ktor          # Compile and package fat JAR
 nx dev demo-be-kotlin-ktor            # Start development server
 nx start demo-be-kotlin-ktor          # Start production JAR
-nx run demo-be-kotlin-ktor:test:quick # Unit + integration tests + coverage gate + lint
-nx run demo-be-kotlin-ktor:test:unit  # Unit tests only
-nx run demo-be-kotlin-ktor:test:integration  # Integration (Cucumber) tests only
+nx run demo-be-kotlin-ktor:test:quick # Unit tests + coverage gate + lint
+nx run demo-be-kotlin-ktor:test:unit  # Unit tests only (Cucumber + JUnit)
+nx run demo-be-kotlin-ktor:test:integration  # Integration tests (Cucumber + JUnit, in-memory repos)
 nx lint demo-be-kotlin-ktor           # Run detekt linter
 ```
 
@@ -69,6 +69,42 @@ surface.
 
 ## Test Architecture
 
-Integration tests use real Ktor Netty server on a random port with in-memory repository
-implementations (ConcurrentHashMap). No external services required. Cucumber JVM reads feature
-files from `specs/apps/demo-be/gherkin/` copied into the test classpath via `processTestResources`.
+Three-level testing strategy following the same pattern as `demo-be-java-springboot`:
+
+### Level 1: Unit Tests (`test:unit` / `testUnit`)
+
+Unit-level Cucumber BDD scenarios + JUnit tests using an embedded Ktor Netty server on a random port
+with in-memory repository implementations (ConcurrentHashMap). No external services required.
+
+- **Cucumber step definitions**: `src/test/kotlin/.../unit/steps/`
+- **JUnit error-path tests**: `src/test/kotlin/.../unit/UnitErrorPathsTest.kt`, `UnitAdditionalCoverageTest.kt`
+- **Server**: `UnitTestServer` starts a real Netty instance with Koin DI wired to in-memory repos
+- **Coverage**: Kover instruments only `testUnit`; must pass >= 90% via `rhino-cli`
+
+### Level 2: Integration Tests (`test:integration` / `testIntegration`)
+
+Integration-level Cucumber BDD scenarios + JUnit tests using the same embedded Netty server approach
+with in-memory repositories. These share the same Gherkin feature files as unit tests but use a
+separate set of step definitions.
+
+- **Cucumber step definitions**: `src/test/kotlin/.../integration/steps/`
+- **JUnit error-path tests**: `src/test/kotlin/.../integration/ErrorPathsTest.kt`, `AdditionalCoverageTest.kt`
+- **Server**: `TestServer` starts a real Netty instance with Koin DI wired to in-memory repos
+
+### Level 3: E2E Tests (`demo-be-e2e`)
+
+Playwright E2E tests in `apps/demo-be-e2e/` run against a real PostgreSQL database via
+`docker-compose.integration.yml`. The `Dockerfile.integration` builds the project inside a container
+and runs `testIntegration` against the PostgreSQL service.
+
+### Cucumber Glue Isolation
+
+Both unit and integration test suites share the same Gherkin feature files
+(`specs/apps/demo-be/gherkin/`). The `cucumber.glue` system property in each Gradle task controls
+which step definitions are used:
+
+- `testUnit`: `cucumber.glue=com.organiclever.demoktkt.unit.steps`
+- `testIntegration`: `cucumber.glue=com.organiclever.demoktkt.integration.steps`
+
+JUnit test separation uses `@Tag("integration")` annotations on integration-only test classes,
+excluded via `excludeTags("integration")` in `testUnit`.

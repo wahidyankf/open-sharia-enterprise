@@ -1,25 +1,24 @@
-package com.organiclever.demoktkt.integration
+package com.organiclever.demoktkt.unit
 
 import com.organiclever.demoktkt.auth.PasswordService
-import com.organiclever.demoktkt.integration.steps.HttpHelper
-import com.organiclever.demoktkt.integration.steps.JsonHelper
-import com.organiclever.demoktkt.integration.steps.TestServer
-import com.organiclever.demoktkt.integration.steps.TestWorld
+import com.organiclever.demoktkt.unit.steps.UnitHttpHelper
+import com.organiclever.demoktkt.unit.steps.UnitJsonHelper
+import com.organiclever.demoktkt.unit.steps.UnitTestServer
+import com.organiclever.demoktkt.unit.steps.UnitTestWorld
 import java.util.UUID
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 
 /**
- * Integration tests for error paths in route handlers. These tests run against the real embedded
- * server (TestServer) and cover branches not exercised by the main Cucumber BDD scenarios.
+ * Unit-level tests for error paths in route handlers. These tests run against the embedded server
+ * with in-memory repositories (UnitTestServer) and cover branches not exercised by Cucumber
+ * scenarios.
  */
-@Tag("integration")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ErrorPathsTest {
+class UnitErrorPathsTest {
 
   private lateinit var aliceToken: String
   private lateinit var aliceExpenseId: String
@@ -28,49 +27,53 @@ class ErrorPathsTest {
 
   @BeforeAll
   fun setup() {
-    TestServer.start()
-    TestWorld.reset()
+    UnitTestServer.start()
+    UnitTestWorld.reset()
 
     // Register alice via HTTP
     val username = "errtest${UUID.randomUUID().toString().take(6)}"
     val password = "Str0ng#Pass1"
-    HttpHelper.post(
+    UnitHttpHelper.post(
       "/api/v1/auth/register",
       """{"username":"$username","email":"$username@test.com","password":"$password"}""",
     )
     val (loginStatus, loginBody) =
-      HttpHelper.post("/api/v1/auth/login", """{"username":"$username","password":"$password"}""")
+      UnitHttpHelper.post(
+        "/api/v1/auth/login",
+        """{"username":"$username","password":"$password"}""",
+      )
     assertTrue(loginStatus == 200, "Login should succeed, got $loginStatus: $loginBody")
-    aliceToken = JsonHelper.getString(loginBody, "access_token") ?: error("No token in: $loginBody")
+    aliceToken =
+      UnitJsonHelper.getString(loginBody, "access_token") ?: error("No token in: $loginBody")
     aliceUserId =
-      JsonHelper.getString(loginBody, "id")
+      UnitJsonHelper.getString(loginBody, "id")
         ?: run {
           // Get user id from profile
-          val (_, profileBody) = HttpHelper.get("/api/v1/users/me", aliceToken)
-          JsonHelper.getString(profileBody, "id") ?: error("No id in profile: $profileBody")
+          val (_, profileBody) = UnitHttpHelper.get("/api/v1/users/me", aliceToken)
+          UnitJsonHelper.getString(profileBody, "id") ?: error("No id in profile: $profileBody")
         }
 
     // Create one expense for alice
     val (createStatus, createBody) =
-      HttpHelper.post(
+      UnitHttpHelper.post(
         "/api/v1/expenses",
         """{"amount":"10.00","currency":"USD","category":"food","description":"Test","date":"2025-01-01","type":"expense"}""",
         aliceToken,
       )
     assertTrue(createStatus == 201, "Create expense should succeed, got $createStatus: $createBody")
-    aliceExpenseId = JsonHelper.getString(createBody, "id") ?: error("No id in: $createBody")
+    aliceExpenseId = UnitJsonHelper.getString(createBody, "id") ?: error("No id in: $createBody")
 
-    // Create admin user directly via repository (bypasses role restriction in /register)
+    // Create admin user directly via repository
     val passwordService = PasswordService()
     val adminUsername = "admin${UUID.randomUUID().toString().take(6)}"
     val adminPassword = "Adm1n#Secure123"
-    TestWorld.userRepo.createAdmin(
+    UnitTestWorld.userRepo.createAdmin(
       adminUsername,
       "$adminUsername@test.com",
       passwordService.hash(adminPassword),
     )
     val (adminLoginStatus, adminLoginBody) =
-      HttpHelper.post(
+      UnitHttpHelper.post(
         "/api/v1/auth/login",
         """{"username":"$adminUsername","password":"$adminPassword"}""",
       )
@@ -79,31 +82,33 @@ class ErrorPathsTest {
       "Admin login should succeed, got $adminLoginStatus: $adminLoginBody",
     )
     adminToken =
-      JsonHelper.getString(adminLoginBody, "access_token") ?: error("No token in: $adminLoginBody")
+      UnitJsonHelper.getString(adminLoginBody, "access_token")
+        ?: error("No token in: $adminLoginBody")
 
     // Resolve alice's user id from profile
-    val (_, profileBody) = HttpHelper.get("/api/v1/users/me", aliceToken)
-    aliceUserId = JsonHelper.getString(profileBody, "id") ?: error("No id in profile: $profileBody")
+    val (_, profileBody) = UnitHttpHelper.get("/api/v1/users/me", aliceToken)
+    aliceUserId =
+      UnitJsonHelper.getString(profileBody, "id") ?: error("No id in profile: $profileBody")
   }
 
   // ---- ExpenseRoutes error paths ----
 
   @Test
   fun `get expense with invalid UUID returns 404`() {
-    val (status, _) = HttpHelper.get("/api/v1/expenses/not-a-uuid", aliceToken)
+    val (status, _) = UnitHttpHelper.get("/api/v1/expenses/not-a-uuid", aliceToken)
     assertEquals(404, status)
   }
 
   @Test
   fun `get non-existent expense returns 404`() {
-    val (status, _) = HttpHelper.get("/api/v1/expenses/${UUID.randomUUID()}", aliceToken)
+    val (status, _) = UnitHttpHelper.get("/api/v1/expenses/${UUID.randomUUID()}", aliceToken)
     assertEquals(404, status)
   }
 
   @Test
   fun `create expense with invalid type returns 400`() {
     val (status, body) =
-      HttpHelper.post(
+      UnitHttpHelper.post(
         "/api/v1/expenses",
         """{"amount":"10.00","currency":"USD","category":"food","description":"Test","date":"2025-01-01","type":"bad_type"}""",
         aliceToken,
@@ -115,7 +120,7 @@ class ErrorPathsTest {
   @Test
   fun `create expense with invalid date returns 400`() {
     val (status, body) =
-      HttpHelper.post(
+      UnitHttpHelper.post(
         "/api/v1/expenses",
         """{"amount":"10.00","currency":"USD","category":"food","description":"Test","date":"not-a-date","type":"expense"}""",
         aliceToken,
@@ -127,7 +132,7 @@ class ErrorPathsTest {
   @Test
   fun `update expense with invalid UUID in path returns 404`() {
     val (status, _) =
-      HttpHelper.put(
+      UnitHttpHelper.put(
         "/api/v1/expenses/not-a-uuid",
         """{"amount":"10.00","currency":"USD","category":"food","description":"Test","date":"2025-01-01","type":"expense"}""",
         aliceToken,
@@ -138,7 +143,7 @@ class ErrorPathsTest {
   @Test
   fun `update non-existent expense returns 404`() {
     val (status, _) =
-      HttpHelper.put(
+      UnitHttpHelper.put(
         "/api/v1/expenses/${UUID.randomUUID()}",
         """{"amount":"10.00","currency":"USD","category":"food","description":"Test","date":"2025-01-01","type":"expense"}""",
         aliceToken,
@@ -149,7 +154,7 @@ class ErrorPathsTest {
   @Test
   fun `update expense with invalid type returns 400`() {
     val (status, body) =
-      HttpHelper.put(
+      UnitHttpHelper.put(
         "/api/v1/expenses/$aliceExpenseId",
         """{"amount":"10.00","currency":"USD","category":"food","description":"Test","date":"2025-01-01","type":"bad_type"}""",
         aliceToken,
@@ -161,7 +166,7 @@ class ErrorPathsTest {
   @Test
   fun `update expense with invalid date returns 400`() {
     val (status, body) =
-      HttpHelper.put(
+      UnitHttpHelper.put(
         "/api/v1/expenses/$aliceExpenseId",
         """{"amount":"10.00","currency":"USD","category":"food","description":"Test","date":"not-a-date","type":"expense"}""",
         aliceToken,
@@ -172,13 +177,13 @@ class ErrorPathsTest {
 
   @Test
   fun `delete expense with invalid UUID in path returns 404`() {
-    val (status, _) = HttpHelper.delete("/api/v1/expenses/not-a-uuid", aliceToken)
+    val (status, _) = UnitHttpHelper.delete("/api/v1/expenses/not-a-uuid", aliceToken)
     assertEquals(404, status)
   }
 
   @Test
   fun `delete non-existent expense returns 404`() {
-    val (status, _) = HttpHelper.delete("/api/v1/expenses/${UUID.randomUUID()}", aliceToken)
+    val (status, _) = UnitHttpHelper.delete("/api/v1/expenses/${UUID.randomUUID()}", aliceToken)
     assertEquals(404, status)
   }
 
@@ -187,7 +192,7 @@ class ErrorPathsTest {
   @Test
   fun `non-admin user gets 403 on admin disable endpoint`() {
     val (status, _) =
-      HttpHelper.post(
+      UnitHttpHelper.post(
         "/api/v1/admin/users/${UUID.randomUUID()}/disable",
         """{"reason":"test"}""",
         aliceToken,
@@ -198,14 +203,14 @@ class ErrorPathsTest {
   @Test
   fun `non-admin user gets 403 on admin enable endpoint`() {
     val (status, _) =
-      HttpHelper.post("/api/v1/admin/users/${UUID.randomUUID()}/enable", "", aliceToken)
+      UnitHttpHelper.post("/api/v1/admin/users/${UUID.randomUUID()}/enable", "", aliceToken)
     assertEquals(403, status)
   }
 
   @Test
   fun `non-admin user gets 403 on admin force-password-reset endpoint`() {
     val (status, _) =
-      HttpHelper.post(
+      UnitHttpHelper.post(
         "/api/v1/admin/users/${UUID.randomUUID()}/force-password-reset",
         "",
         aliceToken,
@@ -215,7 +220,7 @@ class ErrorPathsTest {
 
   @Test
   fun `admin can list users`() {
-    val (status, body) = HttpHelper.get("/api/v1/admin/users", adminToken)
+    val (status, body) = UnitHttpHelper.get("/api/v1/admin/users", adminToken)
     assertEquals(200, status)
     assertTrue(body.contains("data"), "Expected data in response: $body")
   }
@@ -223,14 +228,18 @@ class ErrorPathsTest {
   @Test
   fun `admin disable user with invalid UUID returns 404`() {
     val (status, _) =
-      HttpHelper.post("/api/v1/admin/users/not-a-uuid/disable", """{"reason":"test"}""", adminToken)
+      UnitHttpHelper.post(
+        "/api/v1/admin/users/not-a-uuid/disable",
+        """{"reason":"test"}""",
+        adminToken,
+      )
     assertEquals(404, status)
   }
 
   @Test
   fun `admin disable non-existent user returns 404`() {
     val (status, _) =
-      HttpHelper.post(
+      UnitHttpHelper.post(
         "/api/v1/admin/users/${UUID.randomUUID()}/disable",
         """{"reason":"not found"}""",
         adminToken,
@@ -241,7 +250,7 @@ class ErrorPathsTest {
   @Test
   fun `admin disable existing user returns 200`() {
     val (status, body) =
-      HttpHelper.post(
+      UnitHttpHelper.post(
         "/api/v1/admin/users/$aliceUserId/disable",
         """{"reason":"test disable"}""",
         adminToken,
@@ -249,33 +258,33 @@ class ErrorPathsTest {
     assertEquals(200, status)
     assertTrue(body.contains("DISABLED"), "Expected disabled status in: $body")
     // Re-enable alice so other tests can use her token
-    HttpHelper.post("/api/v1/admin/users/$aliceUserId/enable", "", adminToken)
+    UnitHttpHelper.post("/api/v1/admin/users/$aliceUserId/enable", "", adminToken)
   }
 
   @Test
   fun `admin enable user with invalid UUID returns 404`() {
-    val (status, _) = HttpHelper.post("/api/v1/admin/users/not-a-uuid/enable", "", adminToken)
+    val (status, _) = UnitHttpHelper.post("/api/v1/admin/users/not-a-uuid/enable", "", adminToken)
     assertEquals(404, status)
   }
 
   @Test
   fun `admin enable non-existent user returns 404`() {
     val (status, _) =
-      HttpHelper.post("/api/v1/admin/users/${UUID.randomUUID()}/enable", "", adminToken)
+      UnitHttpHelper.post("/api/v1/admin/users/${UUID.randomUUID()}/enable", "", adminToken)
     assertEquals(404, status)
   }
 
   @Test
   fun `admin force-password-reset with invalid UUID returns 404`() {
     val (status, _) =
-      HttpHelper.post("/api/v1/admin/users/not-a-uuid/force-password-reset", "", adminToken)
+      UnitHttpHelper.post("/api/v1/admin/users/not-a-uuid/force-password-reset", "", adminToken)
     assertEquals(404, status)
   }
 
   @Test
   fun `admin force-password-reset non-existent user returns 404`() {
     val (status, _) =
-      HttpHelper.post(
+      UnitHttpHelper.post(
         "/api/v1/admin/users/${UUID.randomUUID()}/force-password-reset",
         "",
         adminToken,
@@ -287,28 +296,31 @@ class ErrorPathsTest {
 
   @Test
   fun `get attachments with invalid expense UUID returns 404`() {
-    val (status, _) = HttpHelper.get("/api/v1/expenses/not-a-uuid/attachments", aliceToken)
+    val (status, _) = UnitHttpHelper.get("/api/v1/expenses/not-a-uuid/attachments", aliceToken)
     assertEquals(404, status)
   }
 
   @Test
   fun `get attachments for non-existent expense returns 404`() {
     val (status, _) =
-      HttpHelper.get("/api/v1/expenses/${UUID.randomUUID()}/attachments", aliceToken)
+      UnitHttpHelper.get("/api/v1/expenses/${UUID.randomUUID()}/attachments", aliceToken)
     assertEquals(404, status)
   }
 
   @Test
   fun `delete attachment with invalid attachment UUID returns 404`() {
     val (status, _) =
-      HttpHelper.delete("/api/v1/expenses/$aliceExpenseId/attachments/not-a-uuid", aliceToken)
+      UnitHttpHelper.delete("/api/v1/expenses/$aliceExpenseId/attachments/not-a-uuid", aliceToken)
     assertEquals(404, status)
   }
 
   @Test
   fun `delete attachment with invalid expense UUID returns 404`() {
     val (status, _) =
-      HttpHelper.delete("/api/v1/expenses/not-a-uuid/attachments/${UUID.randomUUID()}", aliceToken)
+      UnitHttpHelper.delete(
+        "/api/v1/expenses/not-a-uuid/attachments/${UUID.randomUUID()}",
+        aliceToken,
+      )
     assertEquals(404, status)
   }
 
@@ -316,46 +328,58 @@ class ErrorPathsTest {
 
   @Test
   fun `report pl without from parameter returns 400`() {
-    val (status, _) = HttpHelper.get("/api/v1/reports/pl?to=2025-01-31&currency=USD", aliceToken)
+    val (status, _) =
+      UnitHttpHelper.get("/api/v1/reports/pl?to=2025-01-31&currency=USD", aliceToken)
     assertEquals(400, status)
   }
 
   @Test
   fun `report pl without to parameter returns 400`() {
-    val (status, _) = HttpHelper.get("/api/v1/reports/pl?from=2025-01-01&currency=USD", aliceToken)
+    val (status, _) =
+      UnitHttpHelper.get("/api/v1/reports/pl?from=2025-01-01&currency=USD", aliceToken)
     assertEquals(400, status)
   }
 
   @Test
   fun `report pl without currency parameter returns 400`() {
-    val (status, _) = HttpHelper.get("/api/v1/reports/pl?from=2025-01-01&to=2025-01-31", aliceToken)
+    val (status, _) =
+      UnitHttpHelper.get("/api/v1/reports/pl?from=2025-01-01&to=2025-01-31", aliceToken)
     assertEquals(400, status)
   }
 
   @Test
   fun `report pl with invalid from date returns 400`() {
     val (status, _) =
-      HttpHelper.get("/api/v1/reports/pl?from=not-a-date&to=2025-01-31&currency=USD", aliceToken)
+      UnitHttpHelper.get(
+        "/api/v1/reports/pl?from=not-a-date&to=2025-01-31&currency=USD",
+        aliceToken,
+      )
     assertEquals(400, status)
   }
 
   @Test
   fun `report pl with invalid to date returns 400`() {
     val (status, _) =
-      HttpHelper.get("/api/v1/reports/pl?from=2025-01-01&to=not-a-date&currency=USD", aliceToken)
+      UnitHttpHelper.get(
+        "/api/v1/reports/pl?from=2025-01-01&to=not-a-date&currency=USD",
+        aliceToken,
+      )
     assertEquals(400, status)
   }
 
   @Test
   fun `report pl for IDR currency uses zero scale`() {
     // Creates an IDR expense and requests IDR report to cover the IDR scale branch
-    HttpHelper.post(
+    UnitHttpHelper.post(
       "/api/v1/expenses",
       """{"amount":"150000","currency":"IDR","category":"food","description":"Test IDR","date":"2025-06-01","type":"expense"}""",
       aliceToken,
     )
     val (status, body) =
-      HttpHelper.get("/api/v1/reports/pl?from=2025-06-01&to=2025-06-30&currency=IDR", aliceToken)
+      UnitHttpHelper.get(
+        "/api/v1/reports/pl?from=2025-06-01&to=2025-06-30&currency=IDR",
+        aliceToken,
+      )
     assertEquals(200, status)
     assertTrue(body.contains("IDR"), "Expected IDR in response: $body")
   }
@@ -364,18 +388,17 @@ class ErrorPathsTest {
 
   @Test
   fun `logout without Authorization header succeeds with 200`() {
-    val (status, body) = HttpHelper.post("/api/v1/auth/logout", "", null)
+    val (status, body) = UnitHttpHelper.post("/api/v1/auth/logout", "", null)
     assertEquals(200, status)
     assertTrue(body.contains("Logged out"), "Expected logged out message: $body")
   }
 
   @Test
   fun `logout with invalid token succeeds with 200`() {
-    // Invalid token - decoded will be null, skips revocation
     val fakeAuthHeader = "Bearer invalid.token.here"
     val request =
       java.net.http.HttpRequest.newBuilder()
-        .uri(java.net.URI.create("${TestWorld.baseUrl()}/api/v1/auth/logout"))
+        .uri(java.net.URI.create("${UnitTestWorld.baseUrl()}/api/v1/auth/logout"))
         .header("Authorization", fakeAuthHeader)
         .header("Content-Type", "application/json")
         .header("Accept", "application/json")
@@ -391,8 +414,7 @@ class ErrorPathsTest {
 
   @Test
   fun `malformed JSON body returns 500 via generic exception handler`() {
-    val (status, body) = HttpHelper.post("/api/v1/auth/register", "not valid json {{{", null)
-    // BadRequestException from content negotiation → generic Exception handler → 500
+    val (status, body) = UnitHttpHelper.post("/api/v1/auth/register", "not valid json {{{", null)
     assertEquals(500, status)
     assertTrue(body.contains("Internal server error"), "Expected internal server error in: $body")
   }

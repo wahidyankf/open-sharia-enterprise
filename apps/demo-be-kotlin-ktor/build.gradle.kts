@@ -100,15 +100,56 @@ tasks.test {
   reports.html.required.set(false)
 }
 
-// Copy Gherkin specs into test resources classpath
-tasks.processTestResources {
-  from("${rootProject.projectDir}/../../specs/apps/demo-be/gherkin") {
-    into("specs/apps/demo-be/gherkin")
+val testSourceSet = sourceSets.test.get()
+
+tasks.register<Test>("testUnit") {
+  description = "Run unit tests only (Cucumber BDD + plain JUnit)"
+  group = "verification"
+  testClassesDirs = testSourceSet.output.classesDirs
+  classpath = testSourceSet.runtimeClasspath
+  useJUnitPlatform {
+    // Exclude integration-tagged JUnit tests (ErrorPathsTest, AdditionalCoverageTest)
+    excludeTags("integration")
   }
+  systemProperty("cucumber.junit-platform.naming-strategy", "long")
+  // Override cucumber.glue to use unit step definitions only
+  systemProperty("cucumber.glue", "com.organiclever.demoktkt.unit.steps")
+  maxParallelForks = 1
+  reports.junitXml.required.set(false)
+  reports.html.required.set(false)
+}
+
+tasks.register<Test>("testIntegration") {
+  description = "Run integration tests only (Cucumber BDD + JUnit)"
+  group = "verification"
+  testClassesDirs = testSourceSet.output.classesDirs
+  classpath = testSourceSet.runtimeClasspath
+  useJUnitPlatform {
+    // Exclude unit-tagged tests (UnitCucumberRunner and unit JUnit tests)
+    excludeTags("unit")
+  }
+  systemProperty("cucumber.junit-platform.naming-strategy", "long")
+  // Set cucumber.glue to integration step definitions
+  systemProperty("cucumber.glue", "com.organiclever.demoktkt.integration.steps")
+  maxParallelForks = 1
+  reports.junitXml.required.set(false)
+  reports.html.required.set(false)
+  // Exclude unit JUnit test classes
+  exclude("com/organiclever/demoktkt/unit/**")
+}
+
+// Copy Gherkin specs into test resources classpath.
+// In Docker, specs are pre-copied to src/test/resources/specs/ so this task is skipped
+// via the SKIP_SPEC_COPY env var to avoid Gradle scanning /sys filesystem.
+val specsDir = file("${rootProject.projectDir}/../../specs/apps/demo-be/gherkin")
+if (System.getenv("SKIP_SPEC_COPY") == null && specsDir.exists()) {
+  tasks.processTestResources { from(specsDir) { into("specs/apps/demo-be/gherkin") } }
 }
 
 // Kover configuration
 kover {
+  // Only instrument testUnit for coverage (not testIntegration or default test)
+  currentProject { instrumentation { disabledForTestTasks.addAll("test", "testIntegration") } }
   reports {
     filters {
       excludes {
@@ -134,6 +175,10 @@ kover {
     }
   }
 }
+
+// Disable the default 'test' task so only testUnit/testIntegration run
+// This prevents Kover from pulling in the default test task
+tasks.test { enabled = false }
 
 // detekt configuration
 detekt {
