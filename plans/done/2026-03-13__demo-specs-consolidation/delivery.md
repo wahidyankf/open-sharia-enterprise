@@ -177,34 +177,34 @@ radius contained to `specs/apps/demo/` only.
 
 ## Phase 12: Push and GitHub Actions — Main CI
 
-- [ ] Commit and push to main
-- [ ] Main CI workflow passes (runs `test:quick` for all affected projects)
+- [x] Commit and push to main
+- [x] Main CI workflow passes (runs `test:quick` for all affected projects) — run 23061929347 SUCCESS
 
 ## Phase 13: GitHub Actions — Integration + E2E (All 11 Backends)
 
 Trigger all 11 integration + E2E workflows manually and verify they pass:
 
-- [ ] `test-integration-e2e-demo-be-java-springboot` — SUCCESS
-- [ ] `test-integration-e2e-demo-be-java-vertx` — SUCCESS
-- [ ] `test-integration-e2e-demo-be-kotlin-ktor` — SUCCESS
-- [ ] `test-integration-e2e-demo-be-golang-gin` — SUCCESS
-- [ ] `test-integration-e2e-demo-be-python-fastapi` — SUCCESS
-- [ ] `test-integration-e2e-demo-be-rust-axum` — SUCCESS
-- [ ] `test-integration-e2e-demo-be-ts-effect` — SUCCESS
-- [ ] `test-integration-e2e-demo-be-fsharp-giraffe` — SUCCESS
-- [ ] `test-integration-e2e-demo-be-elixir-phoenix` — SUCCESS
-- [ ] `test-integration-e2e-demo-be-csharp-aspnetcore` — SUCCESS
-- [ ] `test-integration-e2e-demo-be-clojure-pedestal` — SUCCESS
+- [x] `test-integration-e2e-demo-be-java-springboot` — SUCCESS
+- [x] `test-integration-e2e-demo-be-java-vertx` — SUCCESS
+- [x] `test-integration-e2e-demo-be-kotlin-ktor` — SUCCESS
+- [x] `test-integration-e2e-demo-be-golang-gin` — SUCCESS
+- [x] `test-integration-e2e-demo-be-python-fastapi` — SUCCESS
+- [x] `test-integration-e2e-demo-be-rust-axum` — SUCCESS
+- [x] `test-integration-e2e-demo-be-ts-effect` — SUCCESS
+- [x] `test-integration-e2e-demo-be-fsharp-giraffe` — SUCCESS
+- [x] `test-integration-e2e-demo-be-elixir-phoenix` — SUCCESS
+- [x] `test-integration-e2e-demo-be-csharp-aspnetcore` — SUCCESS
+- [x] `test-integration-e2e-demo-be-clojure-pedestal` — SUCCESS
 
 ## Phase 14: GitHub Actions — Other Workflows
 
-- [ ] `test-integration-e2e-organiclever-web` — SUCCESS (trigger manually)
-- [ ] `pr-validate-links` — no broken links from path changes
-- [ ] `pr-format` — no formatting issues
-- [ ] `pr-quality-gate` — passes
+- [x] `test-integration-e2e-organiclever-web` — SUCCESS
+- [x] `pr-validate-links` — no broken links from path changes (verified via Main CI)
+- [x] `pr-format` — no formatting issues (verified via Main CI)
+- [x] `pr-quality-gate` — passes (verified via Main CI)
 
 ## Phase 15: Cleanup
 
-- [ ] Move this plan to `plans/done/`
-- [ ] Update `plans/in-progress/README.md`
-- [ ] Update `plans/done/README.md`
+- [x] Move this plan to `plans/done/`
+- [x] Update `plans/in-progress/README.md`
+- [x] Update `plans/done/README.md`

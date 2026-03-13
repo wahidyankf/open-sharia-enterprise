@@ -4,6 +4,7 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-03-13: Demo Specs Consolidation](./2026-03-13__demo-specs-consolidation/README.md) - Consolidate `specs/apps/demo-be/` and `specs/apps/demo-fe/` into unified `specs/apps/demo/` with shared C4 diagrams, separate `be/` and `fe/` Gherkin specs, and updated path references across all 11 backends (Completed: 2026-03-13)
 - [2026-03-13: Testing Standardization](./2026-03-13__testing-standardization/README.md) - Standardize three-level testing (unit/integration/e2e) across all 23 projects with consistent Nx targets, shared Gherkin specs, docker-compose integration, and CI schedules (Completed: 2026-03-13)
 - [2026-03-12: Demo Backend Clojure/Pedestal](./2026-03-12__demo-be-clojure-pedestal/README.md) - Clojure/Pedestal reimplementation of the demo backend REST API with 76 Gherkin scenarios via kaocha-cucumber, cloverage LCOV coverage, Docker Compose infra, and GitHub Actions E2E workflow (Completed: 2026-03-13)
 - [2026-03-12: Demo Backend C#/ASP.NET Core](./2026-03-12__demo-be-csharp-aspnetcore/README.md) - C#/ASP.NET Core reimplementation of the demo backend REST API with Minimal APIs, 76 Gherkin scenarios via Reqnroll, Coverlet line coverage, Docker Compose infra, and GitHub Actions E2E workflow (Completed: 2026-03-12)
