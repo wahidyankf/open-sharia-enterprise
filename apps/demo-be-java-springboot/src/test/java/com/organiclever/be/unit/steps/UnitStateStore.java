@@ -2,6 +2,7 @@ package com.organiclever.be.unit.steps;
 
 import java.util.UUID;
 import org.jspecify.annotations.Nullable;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -9,8 +10,12 @@ import org.springframework.stereotype.Component;
  * Holds per-scenario state for unit tests: the last service response or exception, plus token and
  * ID context. Mirrors the role of ResponseStore + TokenStore in the integration tests but without
  * any HTTP/MockMvc dependency.
+ *
+ * <p>Active only under the {@code unit-test} profile to prevent this component from being
+ * registered in the integration-test context.
  */
 @Component
+@Profile("unit-test")
 @Scope("cucumber-glue")
 public class UnitStateStore {
 

@@ -58,7 +58,7 @@
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "mvn test -Pintegration",
+        "command": "docker compose -f docker-compose.integration.yml down -v && docker compose -f docker-compose.integration.yml up --abort-on-container-exit --build",
         "cwd": "apps/demo-be-java-springboot"
       },
       "cache": false

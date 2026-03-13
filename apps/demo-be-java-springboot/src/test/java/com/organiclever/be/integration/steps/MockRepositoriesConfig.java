@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -22,10 +23,15 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
 /**
- * Provides mocked repositories and a no-op transaction manager for integration tests. All
- * repository calls delegate to {@link InMemoryDataStore} so tests run without a real database.
+ * Provides mocked repositories and a no-op transaction manager for the legacy {@code test}
+ * profile. All repository calls delegate to {@link InMemoryDataStore} so tests run without a
+ * real database.
+ *
+ * <p>This configuration is inactive under the {@code integration-test} profile, which uses a
+ * real PostgreSQL database instead.
  */
 @Configuration
+@Profile("test")
 public class MockRepositoriesConfig {
 
     @Bean

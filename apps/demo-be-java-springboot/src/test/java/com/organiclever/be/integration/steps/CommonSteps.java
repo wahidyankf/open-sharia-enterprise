@@ -19,28 +19,28 @@ public class CommonSteps {
     private TokenStore tokenStore;
 
     @Autowired
-    private InMemoryDataStore dataStore;
+    private DatabaseCleaner databaseCleaner;
 
     @Before
     public void beginScenario() {
         responseStore.clear();
         tokenStore.clear();
-        dataStore.reset();
+        databaseCleaner.truncateAll();
     }
 
     @After
     public void cleanupScenario() {
-        dataStore.reset();
+        databaseCleaner.truncateAll();
     }
 
     @Given("the OrganicLever API is running")
     public void theOrganicLeverApiIsRunning() {
-        // No-op: MockMvc context is always ready when scenarios execute.
+        // No-op: Spring Boot context is always ready when scenarios execute.
     }
 
     @Given("the API is running")
     public void theApiIsRunning() {
-        // No-op: MockMvc context is always ready when scenarios execute.
+        // No-op: Spring Boot context is always ready when scenarios execute.
     }
 
     @Then("the response status code should be {int}")

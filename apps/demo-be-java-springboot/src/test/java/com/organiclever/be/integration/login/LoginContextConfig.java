@@ -7,5 +7,5 @@ import org.springframework.test.context.ActiveProfiles;
 
 @CucumberContextConfiguration
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@ActiveProfiles("test")
+@ActiveProfiles("integration-test")
 public class LoginContextConfig extends BaseCucumberContextConfig {}

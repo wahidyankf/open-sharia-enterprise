@@ -16,13 +16,18 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
- * In-memory data store backing mocked repositories during integration tests. Thread-safe via
- * ConcurrentHashMap. Provides save/find/delete operations and secondary indexes for lookups.
+ * In-memory data store backing mocked repositories during the legacy {@code test} profile.
+ * Thread-safe via ConcurrentHashMap. Provides save/find/delete operations and secondary indexes
+ * for lookups.
+ *
+ * <p>Inactive under the {@code integration-test} profile, which uses a real PostgreSQL database.
  */
 @Component
+@Profile("test")
 public class InMemoryDataStore {
 
     // Primary stores keyed by UUID
