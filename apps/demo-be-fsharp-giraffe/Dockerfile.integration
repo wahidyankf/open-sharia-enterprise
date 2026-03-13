@@ -20,7 +20,7 @@ COPY apps/demo-be-fsharp-giraffe/src/DemoBeFsgi/DemoBeFsgi.fsproj src/DemoBeFsgi
 COPY apps/demo-be-fsharp-giraffe/tests/DemoBeFsgi.Tests/DemoBeFsgi.Tests.fsproj tests/DemoBeFsgi.Tests/
 
 # Copy specs so the CopyGherkinSpecs MSBuild target can find feature files at build time.
-# The .fsproj references: $(ProjectDir)..\..\..\..\specs\apps\demo-be\gherkin\**\*.feature
+# The .fsproj references: $(ProjectDir)..\..\..\..\specs\apps\demo\be\gherkin\**\*.feature
 # Going up 4 levels from /build/tests/DemoBeFsgi.Tests/ resolves to /specs/apps/demo/be/gherkin.
 COPY specs/apps/demo/be/gherkin /specs/apps/demo/be/gherkin
 
