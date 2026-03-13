@@ -113,7 +113,7 @@ Execute phases in order. Each phase produces a working, committable state.
 - [x] Create `integration/steps/HealthSteps.java` for `health-check.feature`
 - [x] Create integration test runner `CucumberIT.java` annotated with
       `@Suite`, `@SelectClasspathResource("specs/health")`,
-      `@ConfigurationParameter(GLUE_PROPERTY_NAME, "com.organiclever.demojavx.integration.steps")`
+      `@ConfigurationParameter(GLUE_PROPERTY_NAME, "com.demobejavx.integration.steps")`
 - [x] Verify `mvn test -Pintegration` runs Cucumber and 2 health scenarios pass
 - [x] Commit
 
