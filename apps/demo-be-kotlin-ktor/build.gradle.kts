@@ -21,11 +21,11 @@ val sqliteVersion = "3.49.1.0"
 val jbcryptVersion = "0.4"
 val javaJwtVersion = "4.4.0"
 
-group = "com.organiclever"
+group = "com.demobektkt"
 
 version = "0.0.1"
 
-application { mainClass.set("com.organiclever.demoktkt.ApplicationKt") }
+application { mainClass.set("com.demobektkt.ApplicationKt") }
 
 ktor { fatJar { archiveFileName.set("demo-be-kotlin-ktor-all.jar") } }
 
@@ -113,7 +113,7 @@ tasks.register<Test>("testUnit") {
   }
   systemProperty("cucumber.junit-platform.naming-strategy", "long")
   // Override cucumber.glue to use unit step definitions only
-  systemProperty("cucumber.glue", "com.organiclever.demoktkt.unit.steps")
+  systemProperty("cucumber.glue", "com.demobektkt.unit.steps")
   maxParallelForks = 1
   reports.junitXml.required.set(false)
   reports.html.required.set(false)
@@ -130,12 +130,12 @@ tasks.register<Test>("testIntegration") {
   }
   systemProperty("cucumber.junit-platform.naming-strategy", "long")
   // Set cucumber.glue to integration step definitions
-  systemProperty("cucumber.glue", "com.organiclever.demoktkt.integration.steps")
+  systemProperty("cucumber.glue", "com.demobektkt.integration.steps")
   maxParallelForks = 1
   reports.junitXml.required.set(false)
   reports.html.required.set(false)
   // Exclude unit JUnit test classes
-  exclude("com/organiclever/demoktkt/unit/**")
+  exclude("com/demobektkt/unit/**")
 }
 
 // Copy Gherkin specs into test resources classpath.
@@ -157,13 +157,13 @@ kover {
         // Exclude Exposed production DB repositories (untestable without real DB in integration
         // tests)
         classes(
-          "com.organiclever.demoktkt.infrastructure.Exposed*",
-          "com.organiclever.demoktkt.infrastructure.DatabaseFactory",
-          "com.organiclever.demoktkt.infrastructure.tables.*",
+          "com.demobektkt.infrastructure.Exposed*",
+          "com.demobektkt.infrastructure.DatabaseFactory",
+          "com.demobektkt.infrastructure.tables.*",
           // Exclude main entry point (only calls embeddedServer)
-          "com.organiclever.demoktkt.ApplicationKt",
+          "com.demobektkt.ApplicationKt",
           // Exclude DI module setup (wires Exposed repos, not testable without DB)
-          "com.organiclever.demoktkt.plugins.DIKt",
+          "com.demobektkt.plugins.DIKt",
         )
       }
     }

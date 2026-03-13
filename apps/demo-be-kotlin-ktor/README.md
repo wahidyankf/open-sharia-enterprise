@@ -103,8 +103,8 @@ Both unit and integration test suites share the same Gherkin feature files
 (`specs/apps/demo-be/gherkin/`). The `cucumber.glue` system property in each Gradle task controls
 which step definitions are used:
 
-- `testUnit`: `cucumber.glue=com.organiclever.demoktkt.unit.steps`
-- `testIntegration`: `cucumber.glue=com.organiclever.demoktkt.integration.steps`
+- `testUnit`: `cucumber.glue=com.demobektkt.unit.steps`
+- `testIntegration`: `cucumber.glue=com.demobektkt.integration.steps`
 
 JUnit test separation uses `@Tag("integration")` annotations on integration-only test classes,
 excluded via `excludeTags("integration")` in `testUnit`.

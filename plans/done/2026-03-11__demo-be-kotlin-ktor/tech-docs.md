@@ -57,7 +57,7 @@ Cucumber discovers feature files from the classpath path
 # src/test/resources/junit-platform.properties
 cucumber.publish.enabled=false
 cucumber.plugin=pretty,json:build/reports/cucumber.json
-cucumber.glue=com.organiclever.demoktkt.integration.steps
+cucumber.glue=com.demobektkt.integration.steps
 cucumber.features=classpath:specs/apps/demo-be/gherkin
 ```
 
