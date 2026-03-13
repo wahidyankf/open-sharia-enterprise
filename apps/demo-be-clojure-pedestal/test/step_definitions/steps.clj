@@ -235,6 +235,9 @@
     (= "/api/v1/auth/refresh" path)
     (common/call-refresh state body-str)
 
+    (= "/api/v1/expenses" path)
+    (common/call-create-expense state nil body-str)
+
     :else
     (assoc state
            :last-response {:status 404 :body {:message "Not found"}}
@@ -262,6 +265,9 @@
   (cond
     (= "/health" path)
     (common/call-health state)
+
+    (= "/.well-known/jwks.json" path)
+    (common/call-jwks state)
 
     :else
     (assoc state

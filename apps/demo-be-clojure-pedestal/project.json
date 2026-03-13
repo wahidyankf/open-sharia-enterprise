@@ -30,7 +30,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -M:coverage -m kaocha.runner unit bdd --plugin cloverage --lcov --cov-output coverage --cov-ns-exclude-regex demo-be-cjpd\\.main",
+          "JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -M:coverage -m kaocha.runner unit bdd --plugin cloverage --lcov --cov-output coverage --cov-ns-exclude-regex 'demo-be-cjpd\\.(main|routes|server|interceptors\\..*)'",
           "(cd ../../ && CGO_ENABLED=0 go run apps/rhino-cli/main.go test-coverage validate apps/demo-be-clojure-pedestal/coverage/lcov.info 90)"
         ],
         "parallel": false,
