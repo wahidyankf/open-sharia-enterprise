@@ -113,6 +113,7 @@ Development practices in this directory fall into several categories:
 - [Criticality Levels Convention](./quality/criticality-levels.md) - Universal criticality level system for categorizing validation findings by importance and urgency (CRITICAL/HIGH/MEDIUM/LOW)
 - [Fixer Confidence Levels Convention](./quality/fixer-confidence-levels.md) - Universal confidence level system for fixer agents to assess and apply validated fixes (HIGH/MEDIUM/FALSE_POSITIVE)
 - [Markdown Quality Convention](./quality/markdown.md) - Standards for markdown linting and formatting using markdownlint-cli2 and Prettier for consistent markdown quality
+- [Three-Level Testing Standard](./quality/three-level-testing-standard.md) - Mandatory three-level testing architecture for all projects: unit (all mocked dependencies + Gherkin specs for demo-be), integration (real PostgreSQL, no HTTP for demo-be; in-process mocking for MSW/Godog projects), E2E (full stack + Gherkin specs via Playwright for web apps and API backends)
 
 ### Pattern Documentation
 

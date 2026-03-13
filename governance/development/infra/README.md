@@ -32,6 +32,7 @@ These standards define **HOW to manage development infrastructure**, including w
 ## Related Documentation
 
 - [Development Index](../README.md) - All development practices
+- [Three-Level Testing Standard](../quality/three-level-testing-standard.md) - Defines what `test:unit`, `test:integration`, and `test:e2e` must do at each isolation level for all projects
 - [Explicit Over Implicit Principle](../../principles/software-engineering/explicit-over-implicit.md) - Why clear organization matters
 - [AI Agents Convention](../agents/ai-agents.md) - Agent development standards
 - [Repository Architecture](../../repository-governance-architecture.md) - Six-layer governance model
