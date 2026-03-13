@@ -332,6 +332,7 @@ let refresh (db: AppDbContext) (refreshTokenStr: string) : Async<int * string> =
                 return unauthorized "Account has been deactivated"
             else
                 let revokedRt = { rtEntity with Revoked = true }
+                db.ChangeTracker.Clear()
                 db.RefreshTokens.Update(revokedRt) |> ignore
                 let! _ = db.SaveChangesAsync() |> Async.AwaitTask
 
@@ -433,6 +434,8 @@ let logoutAll (db: AppDbContext) (token: string option) : Async<int * string> =
                     .Where(fun rt -> rt.UserId = userId && not rt.Revoked)
                     .ToListAsync()
                 |> Async.AwaitTask
+
+            db.ChangeTracker.Clear()
 
             for rt in activeTokens do
                 db.RefreshTokens.Update({ rt with Revoked = true }) |> ignore
@@ -730,6 +733,7 @@ let setAdminRole (db: AppDbContext) (username: string) : Async<int * string> =
             return notFound "User not found"
         else
             let updated = { user with Role = roleToString Admin }
+            db.ChangeTracker.Clear()
             db.Users.Update(updated) |> ignore
             let! _ = db.SaveChangesAsync() |> Async.AwaitTask
             return ok {| message = "Role set to admin" |}
@@ -955,6 +959,7 @@ let updateExpense
                             EntryType = if entryType <> null then entryType.ToUpperInvariant() else expense.EntryType
                             UpdatedAt = DateTime.UtcNow }
 
+                    db.ChangeTracker.Clear()
                     db.Expenses.Update(updated) |> ignore
                     let! _ = db.SaveChangesAsync() |> Async.AwaitTask
 
