@@ -1,10 +1,7 @@
 import { BeforeAll, AfterAll, Before } from "@cucumber/cucumber";
-import { Effect, Layer, ManagedRuntime, Option, Redacted } from "effect";
+import { Effect, Layer, ManagedRuntime, Redacted } from "effect";
 import { PgClient } from "@effect/sql-pg";
 import { SqliteClient } from "@effect/sql-sqlite-node";
-import { NodeHttpServer } from "@effect/platform-node";
-import { HttpServer, HttpServerRequest, FileSystem } from "@effect/platform";
-import { createServer, type Server } from "node:http";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { existsSync, unlinkSync } from "node:fs";
@@ -15,11 +12,9 @@ import { AttachmentRepositoryLive } from "../../src/infrastructure/db/attachment
 import { RevokedTokenRepositoryLive } from "../../src/infrastructure/db/token-repo.js";
 import { PasswordServiceLive } from "../../src/infrastructure/password.js";
 import { JwtServiceLive } from "../../src/auth/jwt.js";
-import { AppRouter } from "../../src/app.js";
 import { SqlClient } from "@effect/sql";
 import type { SqlError } from "@effect/sql/SqlError";
 
-export const TEST_PORT = 8299;
 export const TEST_JWT_SECRET = process.env["APP_JWT_SECRET"] ?? "test-jwt-secret-at-least-32-chars-long!!";
 
 const DATABASE_URL = process.env["DATABASE_URL"] ?? "";
@@ -56,37 +51,33 @@ function makeDbSetup(): DbSetup {
 }
 
 const DB = makeDbSetup();
-const SqlLayer = DB.layer;
+export const SqlLayer = DB.layer;
 
-// Keep reference to HTTP server for explicit close in AfterAll
-let httpServer: Server | null = null;
+/**
+ * Service layer — all domain services backed by real PostgreSQL (or SQLite fallback).
+ * No HTTP server is started. Integration tests call service functions directly.
+ */
+export const ServiceLayer = Layer.mergeAll(
+  UserRepositoryLive,
+  ExpenseRepositoryLive,
+  AttachmentRepositoryLive,
+  RevokedTokenRepositoryLive,
+  PasswordServiceLive,
+  JwtServiceLive(TEST_JWT_SECRET),
+).pipe(Layer.provide(SqlLayer));
 
-// Increase max body size to 20MB to allow the server to receive oversized files
-// (route handlers check and reject files > MAX_ATTACHMENT_SIZE = 10MB with 413)
-const MaxBodySizeLayer = Layer.succeed(HttpServerRequest.MaxBodySize, Option.some(FileSystem.Size(20 * 1024 * 1024)));
-
-const AppLayer = HttpServer.serve(AppRouter).pipe(
-  Layer.provide(
-    NodeHttpServer.layer(
-      () => {
-        httpServer = createServer();
-        return httpServer;
-      },
-      { port: TEST_PORT },
-    ),
-  ),
-  Layer.provide(MaxBodySizeLayer),
-  Layer.provide(UserRepositoryLive),
-  Layer.provide(ExpenseRepositoryLive),
-  Layer.provide(AttachmentRepositoryLive),
-  Layer.provide(RevokedTokenRepositoryLive),
-  Layer.provide(PasswordServiceLive),
-  Layer.provide(JwtServiceLive(TEST_JWT_SECRET)),
-  Layer.provide(SqlLayer),
-);
+export type ServiceRuntime = ManagedRuntime.ManagedRuntime<
+  | import("../../src/infrastructure/db/user-repo.js").UserRepository
+  | import("../../src/infrastructure/db/expense-repo.js").ExpenseRepository
+  | import("../../src/infrastructure/db/attachment-repo.js").AttachmentRepository
+  | import("../../src/infrastructure/db/token-repo.js").RevokedTokenRepository
+  | import("../../src/infrastructure/password.js").PasswordService
+  | import("../../src/auth/jwt.js").JwtService,
+  never
+>;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-let runtime: ManagedRuntime.ManagedRuntime<never, never>;
+export let serviceRuntime: any = null;
 
 BeforeAll(async function () {
   // Initialize schema
@@ -103,30 +94,12 @@ BeforeAll(async function () {
     }).pipe(Effect.provide(SqlLayer)),
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  runtime = ManagedRuntime.make(AppLayer) as unknown as ManagedRuntime.ManagedRuntime<never, never>;
-  // Start the server by running Effect.never (non-blocking — the server runs in background)
-  // This initializes all layers including the HTTP server
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (runtime as unknown as { runPromise: (effect: any) => Promise<any> }).runPromise(Effect.never).catch(() => {
-    // Ignore disposal error when runtime is disposed in AfterAll
-  });
-  // Give the server time to fully bind the port
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  serviceRuntime = ManagedRuntime.make(ServiceLayer);
 });
 
 AfterAll(async function () {
-  // Close the HTTP server first to release the port and connections
-  if (httpServer) {
-    // Close all connections (Node.js 18.2+)
-    if (typeof httpServer.closeAllConnections === "function") {
-      httpServer.closeAllConnections();
-    }
-    httpServer.close();
-  }
-  if (runtime) {
-    // Best-effort disposal
-    runtime.dispose().catch(() => {
+  if (serviceRuntime) {
+    serviceRuntime.dispose().catch(() => {
       /* ignore */
     });
   }
