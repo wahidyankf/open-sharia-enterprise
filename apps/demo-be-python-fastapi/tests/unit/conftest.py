@@ -1,4 +1,4 @@
-"""Integration test configuration: GHERKIN_ROOT path and shared step fixtures."""
+"""Unit test configuration: GHERKIN_ROOT path and shared step fixtures for unit BDD tests."""
 
 import os
 import pathlib
@@ -35,7 +35,7 @@ def _register_user_helper(
     return resp.json()
 
 
-# Shared step definitions available to ALL integration tests via this conftest.py
+# Shared step definitions available to ALL unit BDD tests via this conftest.py
 
 
 @given("the API is running", target_fixture="client")
@@ -170,8 +170,9 @@ def shared_check_validation_error(response, field: str) -> None:  # type: ignore
     assert field.lower() in body_str, f"Expected validation error for '{field}', got: {body}"
 
 
+# Apply unit marker to all tests in this package
 def pytest_collection_modifyitems(items: list) -> None:  # type: ignore[override]
-    """Apply integration marker to all BDD tests collected from integration/steps/ package."""
+    """Apply unit marker to all BDD tests collected from unit/steps/ package."""
     for item in items:
-        if "integration/steps" in str(item.fspath):
-            item.add_marker(pytest.mark.integration)
+        if "unit/steps" in str(item.fspath):
+            item.add_marker(pytest.mark.unit)

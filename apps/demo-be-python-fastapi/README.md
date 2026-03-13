@@ -11,7 +11,7 @@ Python/FastAPI implementation of the demo backend REST API — a functional twin
 | Web framework    | FastAPI (Uvicorn)                                              |
 | Database ORM     | SQLAlchemy 2.0+ (PostgreSQL prod / SQLite in-memory for tests) |
 | JWT              | PyJWT                                                          |
-| Password hashing | passlib + bcrypt                                               |
+| Password hashing | bcrypt                                                         |
 | BDD tests        | pytest-bdd (Gherkin feature files)                             |
 | Linting          | Ruff                                                           |
 | Type checking    | Pyright                                                        |
@@ -65,16 +65,64 @@ docker compose up --build
 
 ## Nx Targets
 
-| Target                                           | Description                                             |
-| ------------------------------------------------ | ------------------------------------------------------- |
-| `nx build demo-be-python-fastapi`                | Build distributable wheel                               |
-| `nx dev demo-be-python-fastapi`                  | Start dev server with reload                            |
-| `nx start demo-be-python-fastapi`                | Start production server                                 |
-| `nx run demo-be-python-fastapi:test:quick`       | Full quality gate (tests + coverage + lint + typecheck) |
-| `nx run demo-be-python-fastapi:test:unit`        | Unit tests only                                         |
-| `nx run demo-be-python-fastapi:test:integration` | BDD integration tests only                              |
-| `nx lint demo-be-python-fastapi`                 | Ruff lint check                                         |
-| `nx run demo-be-python-fastapi:typecheck`        | Pyright type check                                      |
+| Target                                           | Description                                                           |
+| ------------------------------------------------ | --------------------------------------------------------------------- |
+| `nx build demo-be-python-fastapi`                | Build distributable wheel                                             |
+| `nx dev demo-be-python-fastapi`                  | Start dev server with reload                                          |
+| `nx start demo-be-python-fastapi`                | Start production server                                               |
+| `nx run demo-be-python-fastapi:test:quick`       | Unit tests + coverage check (no lint, no integration)                 |
+| `nx run demo-be-python-fastapi:test:unit`        | Unit tests only (SQLite in-memory, no external services)              |
+| `nx run demo-be-python-fastapi:test:integration` | Integration tests via Docker Compose (real PostgreSQL)                |
+| `nx lint demo-be-python-fastapi`                 | Ruff lint check                                                       |
+| `nx run demo-be-python-fastapi:typecheck`        | Pyright type check                                                    |
+
+## Three-Level Test Architecture
+
+This project follows a three-level test strategy that separates concerns by execution context:
+
+### Level 1: Unit tests (`pytest -m unit`)
+
+- Location: `tests/unit/` (pure function tests) and `tests/unit/steps/` (BDD step definitions)
+- Database: SQLite shared-cache in-memory (no external services required)
+- Coverage: Measures ≥90% line coverage from unit tests alone
+- Includes all 76 Gherkin scenarios via pytest-bdd with `TestClient` + SQLite override
+- Fast, fully deterministic, safe to cache
+
+### Level 2: Integration tests (`pytest -m integration`, local)
+
+- Location: `tests/integration/steps/`
+- Database: SQLite shared-cache in-memory (same as unit level, but for clarity)
+- Includes all 76 Gherkin scenarios via pytest-bdd with `TestClient` + SQLite override
+- Identical functional coverage to level 1; distinguishes test intent
+
+### Level 3: Docker integration tests (`nx run demo-be-python-fastapi:test:integration`)
+
+- Runs `tests/integration/` step definitions via Docker Compose
+- Database: Real PostgreSQL 17-alpine service
+- Tests the full stack including real SQL dialect behavior, ACID transactions, and
+  PostgreSQL-specific constraints
+- Not cached (`cache: false`)
+
+### Running Tests
+
+```bash
+# Fast quality gate (unit tests + coverage) — run by pre-push hook
+nx run demo-be-python-fastapi:test:quick
+
+# Unit tests only
+nx run demo-be-python-fastapi:test:unit
+
+# Full Docker integration tests (requires Docker)
+nx run demo-be-python-fastapi:test:integration
+
+# Run unit tests directly
+cd apps/demo-be-python-fastapi
+uv run pytest -m unit
+
+# Run with coverage
+uv run coverage run -m pytest -m unit
+uv run coverage lcov -o coverage/lcov.info
+```
 
 ## API Endpoints
 
@@ -110,15 +158,10 @@ docker compose up --build
 
 ## Gherkin BDD Tests
 
-Integration tests consume the shared `specs/apps/demo-be/gherkin/` feature files (76 scenarios
-across 13 features) using **pytest-bdd**. The FastAPI `TestClient` with SQLite in-memory provides
-fully in-process, deterministic testing — no external services required.
+Tests consume the shared `specs/apps/demo-be/gherkin/` feature files (76 scenarios across 13
+features) using **pytest-bdd**.
 
-```bash
-# Run all integration tests
-uv run pytest -m integration
-
-# Run all tests with coverage
-uv run coverage run -m pytest
-uv run coverage lcov -o coverage/lcov.info
-```
+Unit-level BDD tests (`tests/unit/steps/`) use `TestClient` backed by SQLite in-memory for fast,
+deterministic execution without external services. Integration-level BDD tests
+(`tests/integration/steps/`) use the same `TestClient` approach locally but run against a real
+PostgreSQL instance in Docker.

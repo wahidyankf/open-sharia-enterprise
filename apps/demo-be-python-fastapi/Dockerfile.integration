@@ -1,0 +1,26 @@
+# Integration test runner for demo-be-python-fastapi
+# Builds the project inside the container and runs integration tests against
+# the postgres service defined in docker-compose.integration.yml.
+FROM python:3.13-slim
+
+# Install uv
+RUN pip install uv --quiet
+
+WORKDIR /build
+
+# Copy dependency files first for layer caching
+COPY pyproject.toml uv.lock ./
+
+# Sync all dependencies (including dev) without the project itself
+RUN uv sync --dev --no-install-project --frozen
+
+# Copy source and tests
+COPY src/ src/
+COPY tests/ tests/
+
+# Install the project itself
+RUN uv sync --dev --frozen
+
+# DATABASE_URL and GHERKIN_ROOT are supplied by docker-compose as environment
+# variables. The specs volume is mounted at /specs by docker-compose.
+CMD ["uv", "run", "pytest", "-m", "integration", "--tb=short", "-q"]

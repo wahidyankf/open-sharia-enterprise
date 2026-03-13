@@ -30,36 +30,38 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "uv run coverage run -m pytest",
+          "uv run coverage run -m pytest -m unit",
           "uv run coverage lcov -o coverage/lcov.info",
-          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-be-python-fastapi/coverage/lcov.info 90)",
-          "uv run ruff format --check .",
-          "uv run ruff check .",
-          "uv run pyright"
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-be-python-fastapi/coverage/lcov.info 90)"
         ],
         "parallel": false,
         "cwd": "apps/demo-be-python-fastapi"
-      }
+      },
+      "inputs": [
+        "{projectRoot}/src/**/*.py",
+        "{projectRoot}/tests/**/*.py",
+        "{workspaceRoot}/specs/apps/demo-be/gherkin/**/*.feature"
+      ]
     },
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
         "command": "uv run pytest -m unit",
         "cwd": "apps/demo-be-python-fastapi"
-      }
-    },
-    "test:integration": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "uv run pytest -m integration",
-        "cwd": "apps/demo-be-python-fastapi"
       },
-      "cache": true,
       "inputs": [
         "{projectRoot}/src/**/*.py",
         "{projectRoot}/tests/**/*.py",
         "{workspaceRoot}/specs/apps/demo-be/gherkin/**/*.feature"
       ]
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f docker-compose.integration.yml down -v && docker compose -f docker-compose.integration.yml up --abort-on-container-exit --build",
+        "cwd": "apps/demo-be-python-fastapi"
+      },
+      "cache": false
     },
     "lint": {
       "executor": "nx:run-commands",
