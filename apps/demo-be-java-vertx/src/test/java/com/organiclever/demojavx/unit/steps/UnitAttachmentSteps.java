@@ -1,6 +1,6 @@
 package com.organiclever.demojavx.unit.steps;
 
-import com.organiclever.demojavx.support.AppFactory;
+import com.organiclever.demojavx.unit.UnitFactory;
 import com.organiclever.demojavx.support.DirectCallService;
 import com.organiclever.demojavx.support.ScenarioState;
 import com.organiclever.demojavx.support.ServiceResponse;
@@ -22,7 +22,7 @@ public class UnitAttachmentSteps {
     }
 
     private DirectCallService svc() {
-        return AppFactory.getService();
+        return UnitFactory.getService();
     }
 
     @When("^alice uploads file \"([^\"]*)\" with content type \"([^\"]*)\" to POST /api/v1/expenses/\\{expenseId\\}/attachments$")

@@ -1,6 +1,6 @@
 package com.organiclever.demojavx.unit.steps;
 
-import com.organiclever.demojavx.support.AppFactory;
+import com.organiclever.demojavx.unit.UnitFactory;
 import com.organiclever.demojavx.support.ScenarioState;
 import com.organiclever.demojavx.support.ServiceResponse;
 import io.cucumber.java.After;
@@ -21,18 +21,18 @@ public class UnitCommonSteps {
     }
 
     @BeforeAll
-    public static void deployApp() throws Exception {
-        AppFactory.deploy();
+    public static void deployApp() {
+        UnitFactory.deploy();
     }
 
     @AfterAll
     public static void closeApp() {
-        AppFactory.close();
+        UnitFactory.close();
     }
 
     @Before
-    public void resetState() throws Exception {
-        AppFactory.reset();
+    public void resetState() {
+        UnitFactory.reset();
         state.reset();
     }
 

@@ -1,6 +1,6 @@
 package com.organiclever.demojavx.unit.steps;
 
-import com.organiclever.demojavx.support.AppFactory;
+import com.organiclever.demojavx.unit.UnitFactory;
 import com.organiclever.demojavx.support.DirectCallService;
 import com.organiclever.demojavx.support.ScenarioState;
 import com.organiclever.demojavx.support.ServiceResponse;
@@ -21,7 +21,7 @@ public class UnitSecuritySteps {
     }
 
     private DirectCallService svc() {
-        return AppFactory.getService();
+        return UnitFactory.getService();
     }
 
     @Given("{string} has had the maximum number of failed login attempts")

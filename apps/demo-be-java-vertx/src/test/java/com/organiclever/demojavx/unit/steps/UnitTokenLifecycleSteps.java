@@ -1,7 +1,7 @@
 package com.organiclever.demojavx.unit.steps;
 
 import com.organiclever.demojavx.domain.model.User;
-import com.organiclever.demojavx.support.AppFactory;
+import com.organiclever.demojavx.unit.UnitFactory;
 import com.organiclever.demojavx.support.DirectCallService;
 import com.organiclever.demojavx.support.ScenarioState;
 import com.organiclever.demojavx.support.ServiceResponse;
@@ -20,7 +20,7 @@ public class UnitTokenLifecycleSteps {
     }
 
     private DirectCallService svc() {
-        return AppFactory.getService();
+        return UnitFactory.getService();
     }
 
     @When("^alice sends POST /api/v1/auth/refresh with her refresh token$")
@@ -40,7 +40,7 @@ public class UnitTokenLifecycleSteps {
                 String userId = meResp.body().getString("id");
                 User fakeUser = new User(userId, "alice", "alice@example.com", "alice",
                         "hash", User.ROLE_USER, User.STATUS_ACTIVE, 0, Instant.now());
-                String expiredToken = AppFactory.getJwtService().generateExpiredRefreshToken(
+                String expiredToken = UnitFactory.getJwtService().generateExpiredRefreshToken(
                         fakeUser);
                 state.setRefreshToken(expiredToken);
             }

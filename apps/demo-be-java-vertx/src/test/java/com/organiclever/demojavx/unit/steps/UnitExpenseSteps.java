@@ -1,6 +1,6 @@
 package com.organiclever.demojavx.unit.steps;
 
-import com.organiclever.demojavx.support.AppFactory;
+import com.organiclever.demojavx.unit.UnitFactory;
 import com.organiclever.demojavx.support.DirectCallService;
 import com.organiclever.demojavx.support.ScenarioState;
 import com.organiclever.demojavx.support.ServiceResponse;
@@ -17,7 +17,7 @@ public class UnitExpenseSteps {
     }
 
     private DirectCallService svc() {
-        return AppFactory.getService();
+        return UnitFactory.getService();
     }
 
     @Given("^alice has created an entry with body \\{ \"amount\": \"([^\"]*)\", \"currency\": \"([^\"]*)\", \"category\": \"([^\"]*)\", \"description\": \"([^\"]*)\", \"date\": \"([^\"]*)\", \"type\": \"([^\"]*)\" \\}$")

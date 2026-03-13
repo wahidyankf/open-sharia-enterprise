@@ -2,7 +2,7 @@ package com.organiclever.demojavx.unit;
 
 import com.organiclever.demojavx.auth.JwtService;
 import com.organiclever.demojavx.domain.model.User;
-import com.organiclever.demojavx.support.AppFactory;
+import com.organiclever.demojavx.unit.UnitFactory;
 import com.organiclever.demojavx.support.DirectCallService;
 import com.organiclever.demojavx.support.ServiceResponse;
 import io.vertx.core.json.JsonArray;
@@ -23,19 +23,19 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class UnitCoverageTest {
 
     @BeforeAll
-    static void startServer() throws Exception {
-        AppFactory.deploy();
+    static void startServer() {
+        UnitFactory.deploy();
     }
 
     @AfterEach
-    void resetState() throws Exception {
-        AppFactory.reset();
+    void resetState() {
+        UnitFactory.reset();
     }
 
     // ─────────────────────────── helpers ────────────────────────────
 
     private DirectCallService svc() {
-        return AppFactory.getService();
+        return UnitFactory.getService();
     }
 
     private String register(String username, String password) throws Exception {
@@ -158,7 +158,7 @@ class UnitCoverageTest {
 
         User fakeUser = new User(userId, "alice", "alice@example.com", "alice",
                 "hash", User.ROLE_USER, User.STATUS_ACTIVE, 0, Instant.now());
-        String expiredRefresh = AppFactory.getJwtService().generateExpiredRefreshToken(fakeUser);
+        String expiredRefresh = UnitFactory.getJwtService().generateExpiredRefreshToken(fakeUser);
 
         ServiceResponse resp = svc().refresh(expiredRefresh);
         assertEquals(401, resp.statusCode());

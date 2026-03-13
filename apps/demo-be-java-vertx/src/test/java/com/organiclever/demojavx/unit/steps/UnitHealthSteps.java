@@ -1,6 +1,6 @@
 package com.organiclever.demojavx.unit.steps;
 
-import com.organiclever.demojavx.support.AppFactory;
+import com.organiclever.demojavx.unit.UnitFactory;
 import com.organiclever.demojavx.support.ScenarioState;
 import com.organiclever.demojavx.support.ServiceResponse;
 import io.cucumber.java.en.Then;
@@ -18,13 +18,13 @@ public class UnitHealthSteps {
 
     @When("^an operations engineer sends GET /health$")
     public void operationsEngineerSendsGetHealth() {
-        ServiceResponse response = AppFactory.getService().getHealth();
+        ServiceResponse response = UnitFactory.getService().getHealth();
         state.setLastResponse(response);
     }
 
     @When("^an unauthenticated engineer sends GET /health$")
     public void unauthenticatedEngineerSendsGetHealth() {
-        ServiceResponse response = AppFactory.getService().getHealth();
+        ServiceResponse response = UnitFactory.getService().getHealth();
         state.setLastResponse(response);
     }
 
