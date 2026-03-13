@@ -52,12 +52,12 @@ curl http://localhost:8201/health
 ## Nx Targets
 
 ```bash
-nx build demo-be-java-vertx          # Compile with Maven
-nx dev demo-be-java-vertx            # Start development server
-nx run demo-be-java-vertx:test:quick # Unit + integration tests + coverage gate + lint
-nx run demo-be-java-vertx:test:unit  # Unit tests only
-nx run demo-be-java-vertx:test:integration  # Integration (Cucumber) tests only
-nx lint demo-be-java-vertx           # Run Checkstyle
+nx build demo-be-java-vertx                    # Compile with Maven
+nx dev demo-be-java-vertx                      # Start development server
+nx run demo-be-java-vertx:test:quick           # Unit tests + coverage gate (fast, cacheable)
+nx run demo-be-java-vertx:test:unit            # Unit tests only (mvn test)
+nx run demo-be-java-vertx:test:integration     # Integration tests via Docker Compose + PostgreSQL
+nx lint demo-be-java-vertx                     # Run Checkstyle
 ```
 
 ## API Endpoints
@@ -66,6 +66,45 @@ See [plan README](../../plans/done/2026-03-11__demo-be-java-vertx/README.md) for
 
 ## Test Architecture
 
-Integration tests use Cucumber JVM with Vert.x Test and in-memory store implementations
-(ConcurrentHashMap). No external services required. Cucumber reads feature files from
-`specs/apps/demo-be/gherkin/` copied into the test classpath.
+Three-level testing strategy with clear separation of concerns.
+
+### Level 1: Unit Tests (`test:unit` / `test:quick`)
+
+Runs with `mvn test` (default Maven profile, no `-P` flag needed).
+
+- **Cucumber BDD scenarios** (76 scenarios): All Gherkin feature files from
+  `specs/apps/demo-be/gherkin/` run against an in-process Vert.x HTTP server
+  backed by in-memory repositories (ConcurrentHashMap). Step definitions live in
+  `src/test/java/.../unit/steps/`. Runner: `UnitCucumberTest.java`.
+- **Plain JUnit tests**: `ExpenseValidatorTest`, `JwtServiceTest`, `PasswordServiceTest`,
+  `UserValidatorTest`, `HandlerNullGuardTest` (NullAway compliance paths via Mockito).
+- **Coverage error-path tests**: `UnitCoverageTest.java` exercises HTTP error paths
+  (null bodies, forbidden access, expired tokens) not covered by Gherkin scenarios.
+- **Coverage**: JaCoCo generates `target/site/jacoco/jacoco.xml`, validated by
+  `rhino-cli test-coverage validate` at the 90% threshold.
+- **What is mocked**: No external services. All repositories are in-memory
+  (`InMemoryUserRepository`, `InMemoryExpenseRepository`, etc.).
+
+### Level 2: Integration Tests (`test:integration`)
+
+Runs via `docker compose` against a real PostgreSQL database.
+
+- **Docker Compose**: `docker-compose.integration.yml` starts a PostgreSQL 17 container
+  and a test-runner container (`Dockerfile.integration`).
+- **Profile**: `mvn test -Pintegration` runs both `*IT.java` Cucumber runners and
+  unit tests, with JaCoCo producing `target/site/jacoco-integration/jacoco.xml`.
+- **What is real**: PostgreSQL database with schema auto-migration.
+- **Not cached**: Each run starts fresh containers (`cache: false`).
+
+### Level 3: E2E Tests (`demo-be-e2e`)
+
+Runs Playwright against any backend implementation. See `apps/demo-be-e2e/`.
+
+### Test Commands Summary
+
+| Command                                                | Scope           | Speed   | Cached |
+| ------------------------------------------------------ | --------------- | ------- | ------ |
+| `nx run demo-be-java-vertx:test:quick`                 | Unit + coverage | Fast    | Yes    |
+| `nx run demo-be-java-vertx:test:unit`                  | Unit only       | Fast    | Yes    |
+| `nx run demo-be-java-vertx:test:integration`           | Docker + PG     | Slow    | No     |
+| `nx run demo-be-e2e:test:e2e --app=demo-be-java-vertx` | Full E2E        | Slowest | No     |

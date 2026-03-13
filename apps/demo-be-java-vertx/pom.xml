@@ -274,7 +274,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Unit tests only by default -->
+            <!-- Unit tests only by default (plain JUnit + Cucumber in unit package) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -283,7 +283,47 @@
                     <includes>
                         <include>**/unit/**/*Test.java</include>
                     </includes>
+                    <systemPropertyVariables>
+                        <cucumber.junit-platform.naming-strategy>long</cucumber.junit-platform.naming-strategy>
+                    </systemPropertyVariables>
                 </configuration>
+            </plugin>
+
+            <!-- JaCoCo for unit-level coverage -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.13</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/package-info.class</exclude>
+                        <exclude>**/Main.class</exclude>
+                        <!-- MainVerticle* catches the top-level class and its inner records -->
+                        <exclude>**/MainVerticle*.class</exclude>
+                        <!-- PostgreSQL repository implementations (only used in prod with a real DB) -->
+                        <exclude>**/repository/pg/*.class</exclude>
+                        <!-- Database schema initialisation: pure DDL, only runs against a live DB -->
+                        <exclude>**/db/*.class</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-prepare-agent</id>
+                        <goals><goal>prepare-agent</goal></goals>
+                    </execution>
+                    <execution>
+                        <id>default-report</id>
+                        <phase>test</phase>
+                        <goals><goal>report</goal></goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/site/jacoco</outputDirectory>
+                            <formats>
+                                <format>XML</format>
+                                <format>HTML</format>
+                            </formats>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
 

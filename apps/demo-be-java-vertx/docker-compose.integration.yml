@@ -1,0 +1,28 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: demo_be_java_vertx
+      POSTGRES_USER: demo_be_java_vertx
+      POSTGRES_PASSWORD: demo_be_java_vertx
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U demo_be_java_vertx -d demo_be_java_vertx"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+    ports:
+      - "5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+
+  test-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile.integration
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "jdbc:postgresql://postgres:5432/demo_be_java_vertx?user=demo_be_java_vertx&password=demo_be_java_vertx"
+    volumes:
+      - ../../specs:/specs:ro

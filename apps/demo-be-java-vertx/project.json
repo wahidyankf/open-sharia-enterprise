@@ -32,31 +32,36 @@
       "options": {
         "commands": [
           "mvn test",
-          "mvn test -Pintegration",
-          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-be-java-vertx/target/site/jacoco-integration/jacoco.xml 90)",
-          "mvn checkstyle:check",
-          "(cd ../.. && nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli java validate-annotations apps/demo-be-java-vertx/src/main/java)",
-          "mvn compile -Pnullcheck"
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-be-java-vertx/target/site/jacoco/jacoco.xml 90)"
         ],
         "parallel": false,
         "cwd": "apps/demo-be-java-vertx"
-      }
+      },
+      "inputs": [
+        "{projectRoot}/src/**",
+        "{projectRoot}/pom.xml",
+        "{workspaceRoot}/specs/apps/demo-be/gherkin/**/*.feature"
+      ]
     },
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
         "command": "mvn test",
         "cwd": "apps/demo-be-java-vertx"
-      }
+      },
+      "inputs": [
+        "{projectRoot}/src/**",
+        "{projectRoot}/pom.xml",
+        "{workspaceRoot}/specs/apps/demo-be/gherkin/**/*.feature"
+      ]
     },
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "mvn test -Pintegration",
+        "command": "docker compose -f docker-compose.integration.yml down -v && docker compose -f docker-compose.integration.yml up --abort-on-container-exit --build",
         "cwd": "apps/demo-be-java-vertx"
       },
-      "cache": true,
-      "inputs": ["{projectRoot}/src/**/*.java", "{workspaceRoot}/specs/apps/demo-be/gherkin/**/*.feature"]
+      "cache": false
     },
     "lint": {
       "executor": "nx:run-commands",
