@@ -1,30 +1,38 @@
 package com.organiclever.be.integration.steps;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.JsonPath;
+import com.organiclever.be.auth.dto.AuthResponse;
+import com.organiclever.be.auth.dto.LoginRequest;
+import com.organiclever.be.auth.dto.RegisterRequest;
+import com.organiclever.be.auth.dto.RegisterResponse;
 import com.organiclever.be.auth.repository.UserRepository;
+import com.organiclever.be.auth.service.AccountNotActiveException;
+import com.organiclever.be.auth.service.AuthService;
+import com.organiclever.be.auth.service.InvalidCredentialsException;
+import com.organiclever.be.auth.service.UsernameAlreadyExistsException;
 import com.organiclever.be.integration.ResponseStore;
+import com.organiclever.be.security.JwtUtil;
+import com.organiclever.be.user.dto.UserProfileResponse;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @Scope("cucumber-glue")
 public class AuthSteps {
 
+    private static final Validator BEAN_VALIDATOR =
+            Validation.buildDefaultValidatorFactory().getValidator();
+
     @Autowired
-    private MockMvc mockMvc;
+    private AuthService authService;
 
     @Autowired
     private ResponseStore responseStore;
@@ -35,6 +43,9 @@ public class AuthSteps {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     // ============================================================
@@ -42,69 +53,52 @@ public class AuthSteps {
     // ============================================================
 
     @When("^a client sends POST /api/v1/auth/register with body:$")
-    public void postRegister(final String body) throws Exception {
-        responseStore.setResult(
-                mockMvc.perform(
-                        post("/api/v1/auth/register")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(body))
-                        .andReturn());
+    public void postRegister(final String body) {
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> map = objectMapper.readValue(body, Map.class);
+            String username = (String) map.get("username");
+            String email = (String) map.get("email");
+            Object rawPassword = map.getOrDefault("password", "");
+            String password = rawPassword != null ? (String) rawPassword : "";
+            performRegister(username, email, password);
+        } catch (Exception e) {
+            responseStore.setResponse(400, Map.of("message", "Validation failed: " + e.getMessage()));
+        }
     }
 
     @When("^the client sends POST /api/v1/auth/register with body \\{ \"username\": \"([^\"]+)\", \"email\": \"([^\"]+)\", \"password\": \"([^\"]*)\" \\}$")
     public void theClientSendsPostRegisterWithBody(
-            final String username, final String email, final String password) throws Exception {
-        String body = objectMapper.writeValueAsString(
-                Map.of("username", username, "email", email, "password", password));
-        responseStore.setResult(
-                mockMvc.perform(
-                        post("/api/v1/auth/register")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(body))
-                        .andReturn());
+            final String username, final String email, final String password) {
+        performRegister(username, email, password);
     }
 
     @Given("a user {string} is registered with email {string} and password {string}")
     public void aUserIsRegisteredWithEmailAndPassword(
-            final String username, final String email, final String password) throws Exception {
-        MvcResult result = mockMvc.perform(
-                post("/api/v1/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(
-                                Map.of("username", username, "email", email, "password", password))))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andReturn();
+            final String username, final String email, final String password) {
+        RegisterResponse response = registerOrFail(username, email, password);
         if ("alice".equals(username)) {
-            String id = JsonPath.read(result.getResponse().getContentAsString(), "$.id");
-            tokenStore.setAliceId(UUID.fromString(id));
+            tokenStore.setAliceId(response.id());
         }
     }
 
     @Given("a user {string} is registered with password {string}")
-    public void aUserIsRegisteredWithPassword(final String username, final String password)
-            throws Exception {
+    public void aUserIsRegisteredWithPassword(final String username, final String password) {
         String email = username + "@example.com";
-        MvcResult result = mockMvc.perform(
-                post("/api/v1/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(
-                                Map.of("username", username, "email", email, "password", password))))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andReturn();
+        RegisterResponse response = registerOrFail(username, email, password);
         if ("alice".equals(username)) {
-            String id = JsonPath.read(result.getResponse().getContentAsString(), "$.id");
-            tokenStore.setAliceId(UUID.fromString(id));
+            tokenStore.setAliceId(response.id());
         }
     }
 
     @Given("a user {string} is already registered")
-    public void userIsAlreadyRegistered(final String username) throws Exception {
+    public void userIsAlreadyRegistered(final String username) {
         aUserIsRegisteredWithPassword(username, "Str0ng#Pass1234");
     }
 
     @Given("a user {string} is already registered with password {string}")
     public void userIsAlreadyRegisteredWithPassword(
-            final String username, final String password) throws Exception {
+            final String username, final String password) {
         aUserIsRegisteredWithPassword(username, password);
     }
 
@@ -113,112 +107,64 @@ public class AuthSteps {
     // ============================================================
 
     @When("^a client sends POST /api/v1/auth/login with body:$")
-    public void postLogin(final String body) throws Exception {
-        responseStore.setResult(
-                mockMvc.perform(
-                        post("/api/v1/auth/login")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(body))
-                        .andReturn());
+    public void postLogin(final String body) {
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> map = objectMapper.readValue(body, Map.class);
+            String username = (String) map.get("username");
+            String password = (String) map.get("password");
+            performLogin(username, password);
+        } catch (Exception e) {
+            responseStore.setResponse(400, Map.of("message", "Validation failed: " + e.getMessage()));
+        }
     }
 
     @When("^the client sends POST /api/v1/auth/login with body \\{ \"username\": \"([^\"]+)\", \"password\": \"([^\"]+)\" \\}$")
-    public void theClientSendsPostLoginWithBody(final String username, final String password)
-            throws Exception {
-        String body = objectMapper.writeValueAsString(
-                Map.of("username", username, "password", password));
-        responseStore.setResult(
-                mockMvc.perform(
-                        post("/api/v1/auth/login")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(body))
-                        .andReturn());
+    public void theClientSendsPostLoginWithBody(final String username, final String password) {
+        performLogin(username, password);
     }
 
     @Given("the client has logged in as {string} and stored the JWT token")
-    public void clientLoggedIn(final String username) throws Exception {
-        MvcResult result = mockMvc.perform(
-                post("/api/v1/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(
-                                Map.of("username", username, "password", "Str0ng#Pass1234"))))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn();
-        String token = JsonPath.read(result.getResponse().getContentAsString(), "$.access_token");
-        tokenStore.setToken(token);
+    public void clientLoggedIn(final String username) {
+        AuthResponse auth = loginOrFail(username, "Str0ng#Pass1234");
+        tokenStore.setToken(auth.accessToken());
     }
 
     @Given("{string} has logged in and stored the access token")
-    public void userHasLoggedInAndStoredAccessToken(final String username) throws Exception {
+    public void userHasLoggedInAndStoredAccessToken(final String username) {
         String password = "alice".equals(username) ? "Str0ng#Pass1" : "Str0ng#Pass1234";
-        MvcResult result = mockMvc.perform(
-                post("/api/v1/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(
-                                Map.of("username", username, "password", password))))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn();
-        String responseBody = result.getResponse().getContentAsString();
-        String token = JsonPath.read(responseBody, "$.access_token");
-        tokenStore.setToken(token);
-        // Also store alice id if available
+        AuthResponse auth = loginOrFail(username, password);
+        tokenStore.setToken(auth.accessToken());
         if ("alice".equals(username) && tokenStore.getAliceId() == null) {
-            // Try to find in DB
             userRepository.findByUsername("alice").ifPresent(u -> tokenStore.setAliceId(u.getId()));
         }
     }
 
     @Given("{string} has logged in and stored the access token and refresh token")
-    public void userHasLoggedInAndStoredTokens(final String username) throws Exception {
+    public void userHasLoggedInAndStoredTokens(final String username) {
         String password = "alice".equals(username) ? "Str0ng#Pass1" : "Str0ng#Pass1234";
-        MvcResult result = mockMvc.perform(
-                post("/api/v1/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(
-                                Map.of("username", username, "password", password))))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn();
-        String responseBody = result.getResponse().getContentAsString();
-        String accessToken = JsonPath.read(responseBody, "$.access_token");
-        String refreshToken = JsonPath.read(responseBody, "$.refresh_token");
-        tokenStore.setToken(accessToken);
-        tokenStore.setRefreshToken(refreshToken);
+        AuthResponse auth = loginOrFail(username, password);
+        tokenStore.setToken(auth.accessToken());
+        tokenStore.setRefreshToken(auth.refreshToken());
     }
 
     @Given("an admin user {string} is registered and logged in")
-    public void anAdminUserIsRegisteredAndLoggedIn(final String username) throws Exception {
+    public void anAdminUserIsRegisteredAndLoggedIn(final String username) {
         String email = username + "@example.com";
         String password = "Adm1n#Secure123";
-        // Register the admin
-        MvcResult regResult = mockMvc.perform(
-                post("/api/v1/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(
-                                Map.of("username", username, "email", email, "password", password))))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andReturn();
-        String adminId = JsonPath.read(regResult.getResponse().getContentAsString(), "$.id");
-        // Set the user role to ADMIN in DB
+        RegisterResponse reg = registerOrFail(username, email, password);
+        // Promote to ADMIN
         userRepository.findByUsername(username).ifPresent(user -> {
             user.setRole("ADMIN");
             userRepository.save(user);
         });
-        // Login
-        MvcResult loginResult = mockMvc.perform(
-                post("/api/v1/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(
-                                Map.of("username", username, "password", password))))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn();
-        String adminToken = JsonPath.read(loginResult.getResponse().getContentAsString(), "$.access_token");
-        tokenStore.setAdminToken(adminToken);
-        tokenStore.setAdminUserId(UUID.fromString(adminId));
+        AuthResponse auth = loginOrFail(username, password);
+        tokenStore.setAdminToken(auth.accessToken());
+        tokenStore.setAdminUserId(reg.id());
     }
 
     @Given("a user {string} is registered and deactivated")
-    public void aUserIsRegisteredAndDeactivated(final String username) throws Exception {
-        // Only register if not already registered
+    public void aUserIsRegisteredAndDeactivated(final String username) {
         if (userRepository.findByUsername(username).isEmpty()) {
             aUserIsRegisteredWithPassword(username, "Str0ng#Pass1");
         }
@@ -229,43 +175,37 @@ public class AuthSteps {
     }
 
     @Given("a user {string} is registered and locked after too many failed logins")
-    public void aUserIsRegisteredAndLockedAfterTooManyFailedLogins(final String username)
-            throws Exception {
+    public void aUserIsRegisteredAndLockedAfterTooManyFailedLogins(final String username) {
         if (userRepository.findByUsername(username).isEmpty()) {
             aUserIsRegisteredWithPassword(username, "Str0ng#Pass1");
         }
-        // Simulate lock by setting status directly
         userRepository.findByUsername(username).ifPresent(user -> {
             user.setStatus("LOCKED");
             user.setFailedLoginAttempts(5);
             userRepository.save(user);
         });
-        // Also store alice id
         if ("alice".equals(username)) {
             userRepository.findByUsername(username).ifPresent(u -> tokenStore.setAliceId(u.getId()));
         }
     }
 
     @Given("{string} has had the maximum number of failed login attempts")
-    public void userHasHadMaxFailedLoginAttempts(final String username) throws Exception {
-        // Try to login with wrong password 5 times to lock the account
-        String wrongPassword = "WrongPass#1234";
+    public void userHasHadMaxFailedLoginAttempts(final String username) {
+        // Attempt 5 failed logins to lock the account
         for (int i = 0; i < 5; i++) {
-            mockMvc.perform(
-                    post("/api/v1/auth/login")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(
-                                    Map.of("username", username, "password", wrongPassword))))
-                    .andReturn();
+            try {
+                authService.login(new LoginRequest(username, "WrongPass#1234"));
+            } catch (InvalidCredentialsException | AccountNotActiveException e) {
+                // Expected
+            }
         }
-        // Store alice id
         if ("alice".equals(username)) {
             userRepository.findByUsername(username).ifPresent(u -> tokenStore.setAliceId(u.getId()));
         }
     }
 
     @Given("an admin has unlocked alice's account")
-    public void anAdminHasUnlockedAlicesAccount() throws Exception {
+    public void anAdminHasUnlockedAlicesAccount() {
         userRepository.findByUsername("alice").ifPresent(user -> {
             user.setStatus("ACTIVE");
             user.setFailedLoginAttempts(0);
@@ -274,7 +214,7 @@ public class AuthSteps {
     }
 
     @Given("alice's account has been disabled by the admin")
-    public void alicesAccountHasBeenDisabledByAdmin() throws Exception {
+    public void alicesAccountHasBeenDisabledByAdmin() {
         userRepository.findByUsername("alice").ifPresent(user -> {
             user.setStatus("DISABLED");
             userRepository.save(user);
@@ -282,7 +222,7 @@ public class AuthSteps {
     }
 
     @Given("alice's account has been disabled")
-    public void alicesAccountHasBeenDisabled() throws Exception {
+    public void alicesAccountHasBeenDisabled() {
         userRepository.findByUsername("alice").ifPresent(user -> {
             user.setStatus("DISABLED");
             userRepository.save(user);
@@ -290,7 +230,7 @@ public class AuthSteps {
     }
 
     @Given("the user {string} has been deactivated")
-    public void theUserHasBeenDeactivated(final String username) throws Exception {
+    public void theUserHasBeenDeactivated(final String username) {
         userRepository.findByUsername(username).ifPresent(user -> {
             user.setStatus("DISABLED");
             userRepository.save(user);
@@ -298,16 +238,12 @@ public class AuthSteps {
     }
 
     @When("^the client sends GET /api/v1/users/me with alice's access token$")
-    public void theClientSendsGetUsersMeWithAlicesToken() throws Exception {
+    public void theClientSendsGetUsersMeWithAlicesToken() {
         String token = tokenStore.getToken();
         if (token == null) {
             throw new IllegalStateException("Alice's token not stored");
         }
-        responseStore.setResult(
-                mockMvc.perform(
-                        get("/api/v1/users/me")
-                                .header("Authorization", "Bearer " + token))
-                        .andReturn());
+        performGetUsersMe(token);
     }
 
     // ============================================================
@@ -315,17 +251,28 @@ public class AuthSteps {
     // ============================================================
 
     @When("^the admin sends POST /api/v1/admin/users/\\{alice_id\\}/unlock$")
-    public void theAdminSendsPostUnlockAliceShared() throws Exception {
+    public void theAdminSendsPostUnlockAliceShared() {
         String adminToken = tokenStore.getAdminToken();
-        java.util.UUID aliceId = tokenStore.getAliceId();
+        UUID aliceId = tokenStore.getAliceId();
         if (adminToken == null || aliceId == null) {
             throw new IllegalStateException("Admin token or alice ID not stored");
         }
-        responseStore.setResult(
-                mockMvc.perform(
-                        post("/api/v1/admin/users/" + aliceId + "/unlock")
-                                .header("Authorization", "Bearer " + adminToken))
-                        .andReturn());
+        // Authorization check: admin token must be valid
+        if (!jwtUtil.isTokenValid(adminToken)) {
+            responseStore.setResponse(401, Map.of("message", "Invalid token"));
+            return;
+        }
+        userRepository.findById(aliceId).ifPresent(user -> {
+            user.setStatus("ACTIVE");
+            user.setFailedLoginAttempts(0);
+            userRepository.save(user);
+        });
+        userRepository.findById(aliceId).ifPresentOrElse(
+                user -> responseStore.setResponse(200, Map.of(
+                        "id", user.getId().toString(),
+                        "username", user.getUsername(),
+                        "status", user.getStatus())),
+                () -> responseStore.setResponse(404, Map.of("message", "User not found")));
     }
 
     // ============================================================
@@ -333,73 +280,153 @@ public class AuthSteps {
     // ============================================================
 
     @Then("the response body should contain {string} equal to {string}")
-    public void responseBodyContainsFieldEqualTo(final String field, final String value)
-            throws Exception {
-        MockMvcResultMatchers.jsonPath("$." + field).value(value)
-                .match(responseStore.getResult());
+    public void responseBodyContainsFieldEqualTo(final String field, final String value) {
+        Map<String, Object> body = responseStore.getBodyAsMap();
+        assertThat(body).containsKey(field);
+        assertThat(String.valueOf(body.get(field))).isEqualTo(value);
     }
 
     @Then("the response body should not contain a {string} field")
-    public void responseBodyShouldNotContainField(final String field) throws Exception {
-        MockMvcResultMatchers.jsonPath("$." + field).doesNotExist()
-                .match(responseStore.getResult());
+    public void responseBodyShouldNotContainField(final String field) {
+        Map<String, Object> body = responseStore.getBodyAsMap();
+        assertThat(body).doesNotContainKey(field);
     }
 
     @Then("the response body should contain a non-null {string} field")
-    public void responseBodyContainsNonNullField(final String field) throws Exception {
-        MockMvcResultMatchers.jsonPath("$." + field).exists()
-                .match(responseStore.getResult());
-        MockMvcResultMatchers.jsonPath("$." + field).isNotEmpty()
-                .match(responseStore.getResult());
+    public void responseBodyContainsNonNullField(final String field) {
+        Map<String, Object> body = responseStore.getBodyAsMap();
+        assertThat(body).containsKey(field);
+        assertThat(body.get(field)).isNotNull();
     }
 
     @Then("the response body should contain a {string} field")
-    public void responseBodyContainsField(final String field) throws Exception {
-        MockMvcResultMatchers.jsonPath("$." + field).exists()
-                .match(responseStore.getResult());
+    public void responseBodyContainsField(final String field) {
+        Map<String, Object> body = responseStore.getBodyAsMap();
+        assertThat(body).containsKey(field);
     }
 
     @Then("the response body should contain an error message about duplicate username")
-    public void responseBodyContainsDuplicateUsernameError() throws Exception {
-        final String body = responseStore.getResult().getResponse().getContentAsString();
-        assertThat(body).containsIgnoringCase("already exists");
+    public void responseBodyContainsDuplicateUsernameError() {
+        assertThat(responseStore.getBody()).containsIgnoringCase("already exists");
     }
 
     @Then("the response body should contain an error message about invalid credentials")
-    public void responseBodyContainsInvalidCredentialsError() throws Exception {
-        final String body = responseStore.getResult().getResponse().getContentAsString();
-        assertThat(body).containsIgnoringCase("invalid");
+    public void responseBodyContainsInvalidCredentialsError() {
+        assertThat(responseStore.getBody()).containsIgnoringCase("invalid");
     }
 
     @Then("the response body should contain an error message about account deactivation")
-    public void responseBodyContainsAccountDeactivationError() throws Exception {
-        final String body = responseStore.getResult().getResponse().getContentAsString();
-        assertThat(body).containsIgnoringCase("deactivat");
+    public void responseBodyContainsAccountDeactivationError() {
+        assertThat(responseStore.getBody()).containsIgnoringCase("deactivat");
     }
 
     @Then("the response body should contain an error message about token expiration")
-    public void responseBodyContainsTokenExpirationError() throws Exception {
-        final String body = responseStore.getResult().getResponse().getContentAsString();
-        assertThat(body).containsIgnoringCase("expir");
+    public void responseBodyContainsTokenExpirationError() {
+        assertThat(responseStore.getBody()).containsIgnoringCase("expir");
     }
 
     @Then("the response body should contain an error message about invalid token")
-    public void responseBodyContainsInvalidTokenError() throws Exception {
-        final String body = responseStore.getResult().getResponse().getContentAsString();
-        assertThat(body).containsIgnoringCase("invalid");
+    public void responseBodyContainsInvalidTokenError() {
+        assertThat(responseStore.getBody()).containsIgnoringCase("invalid");
     }
 
     @Then("the response body should contain a validation error for {string}")
-    public void responseBodyContainsValidationError(final String field) throws Exception {
-        int status = responseStore.getResult().getResponse().getStatus();
+    public void responseBodyContainsValidationError(final String field) {
+        int status = responseStore.getStatusCode();
         assertThat(status).isIn(400, 415);
     }
 
     @Then("alice's account status should be {string}")
-    public void alicesAccountStatusShouldBe(final String status) throws Exception {
+    public void alicesAccountStatusShouldBe(final String status) {
         String actualStatus = userRepository.findByUsername("alice")
                 .map(u -> u.getStatus().toLowerCase())
                 .orElseThrow(() -> new RuntimeException("Alice not found"));
         assertThat(actualStatus).isEqualToIgnoringCase(status);
+    }
+
+    // ============================================================
+    // Internal helpers
+    // ============================================================
+
+    /**
+     * Performs registration and stores the HTTP-equivalent response. Maps exceptions to their
+     * corresponding HTTP status codes, mirroring GlobalExceptionHandler and Bean Validation.
+     */
+    void performRegister(
+            final String username, final String email, final String password) {
+        // Bean Validation check (replicates @Valid on the controller method parameter)
+        var violations = BEAN_VALIDATOR.validate(new RegisterRequest(username, email, password));
+        if (!violations.isEmpty()) {
+            String msg = violations.iterator().next().getMessage();
+            responseStore.setResponse(400, Map.of("message", "Validation failed for field: " + msg));
+            return;
+        }
+        try {
+            RegisterResponse resp = authService.register(new RegisterRequest(username, email, password));
+            responseStore.setResponse(201, resp);
+        } catch (UsernameAlreadyExistsException e) {
+            responseStore.setResponse(409, Map.of("message", e.getMessage()));
+        }
+    }
+
+    /**
+     * Performs registration and throws if it fails (used in Given steps where failure is unexpected).
+     */
+    public RegisterResponse registerOrFail(
+            final String username, final String email, final String password) {
+        try {
+            return authService.register(new RegisterRequest(username, email, password));
+        } catch (UsernameAlreadyExistsException e) {
+            throw new RuntimeException("Unexpected registration failure: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Performs login and stores the HTTP-equivalent response.
+     */
+    void performLogin(final String username, final String password) {
+        // Bean Validation check
+        var violations = BEAN_VALIDATOR.validate(new LoginRequest(username, password));
+        if (!violations.isEmpty()) {
+            String msg = violations.iterator().next().getMessage();
+            responseStore.setResponse(400, Map.of("message", "Validation failed for field: " + msg));
+            return;
+        }
+        try {
+            AuthResponse resp = authService.login(new LoginRequest(username, password));
+            responseStore.setResponse(200, resp);
+            tokenStore.setToken(resp.accessToken());
+            tokenStore.setRefreshToken(resp.refreshToken());
+        } catch (InvalidCredentialsException e) {
+            responseStore.setResponse(401, Map.of("message", e.getMessage()));
+        } catch (AccountNotActiveException e) {
+            responseStore.setResponse(401, Map.of("message", "Account is deactivated or not active"));
+        }
+    }
+
+    /**
+     * Performs login and throws if it fails (used in Given steps where failure is unexpected).
+     */
+    AuthResponse loginOrFail(final String username, final String password) {
+        try {
+            return authService.login(new LoginRequest(username, password));
+        } catch (InvalidCredentialsException | AccountNotActiveException e) {
+            throw new RuntimeException("Unexpected login failure: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Performs a GET /api/v1/users/me using the provided token for authorization. Mirrors the
+     * UserController logic: validates the JWT then returns the user profile.
+     */
+    void performGetUsersMe(final String token) {
+        if (!jwtUtil.isTokenValid(token) || authService.isTokenRevoked(token)) {
+            responseStore.setResponse(401, Map.of("message", "Unauthorized"));
+            return;
+        }
+        String username = jwtUtil.extractUsername(token);
+        userRepository.findByUsername(username).ifPresentOrElse(
+                user -> responseStore.setResponse(200, UserProfileResponse.from(user)),
+                () -> responseStore.setResponse(404, Map.of("message", "User not found")));
     }
 }

@@ -7,7 +7,8 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Scope("cucumber-glue")
 public class CommonSteps {
@@ -44,9 +45,7 @@ public class CommonSteps {
     }
 
     @Then("the response status code should be {int}")
-    public void theResponseStatusCodeShouldBe(final int expectedStatusCode) throws Exception {
-        MockMvcResultMatchers.status()
-            .is(expectedStatusCode)
-            .match(responseStore.getResult());
+    public void theResponseStatusCodeShouldBe(final int expectedStatusCode) {
+        assertThat(responseStore.getStatusCode()).isEqualTo(expectedStatusCode);
     }
 }

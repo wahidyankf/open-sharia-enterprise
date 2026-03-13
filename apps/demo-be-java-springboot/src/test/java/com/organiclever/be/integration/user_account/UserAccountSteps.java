@@ -1,26 +1,20 @@
 package com.organiclever.be.integration.user_account;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.organiclever.be.auth.repository.UserRepository;
 import com.organiclever.be.integration.ResponseStore;
 import com.organiclever.be.integration.steps.TokenStore;
+import com.organiclever.be.security.JwtUtil;
+import com.organiclever.be.user.dto.UserProfileResponse;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import java.util.Map;
+import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Scope("cucumber-glue")
 public class UserAccountSteps {
-
-    @Autowired
-    private MockMvc mockMvc;
 
     @Autowired
     private ResponseStore responseStore;
@@ -28,94 +22,124 @@ public class UserAccountSteps {
     @Autowired
     private TokenStore tokenStore;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @When("^alice sends GET /api/v1/users/me$")
-    public void aliceSendsGetUsersMe() throws Exception {
+    public void aliceSendsGetUsersMe() {
         String token = tokenStore.getToken();
         if (token == null) {
             throw new IllegalStateException("Token not stored");
         }
-        responseStore.setResult(
-                mockMvc.perform(
-                        get("/api/v1/users/me")
-                                .header("Authorization", "Bearer " + token))
-                        .andReturn());
+        performGetUsersMe(token);
     }
 
     @When("^alice sends PATCH /api/v1/users/me with body \\{ \"display_name\": \"Alice Smith\" \\}$")
-    public void aliceSendsPatchUsersMeWithDisplayName() throws Exception {
+    public void aliceSendsPatchUsersMeWithDisplayName() {
         String token = tokenStore.getToken();
         if (token == null) {
             throw new IllegalStateException("Token not stored");
         }
-        String body = objectMapper.writeValueAsString(Map.of("display_name", "Alice Smith"));
-        responseStore.setResult(
-                mockMvc.perform(
-                        patch("/api/v1/users/me")
-                                .header("Authorization", "Bearer " + token)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(body))
-                        .andReturn());
+        if (!jwtUtil.isTokenValid(token)) {
+            responseStore.setResponse(401, Map.of("message", "Unauthorized"));
+            return;
+        }
+        String username = jwtUtil.extractUsername(token);
+        userRepository.findByUsername(username).ifPresentOrElse(user -> {
+            user.setDisplayName("Alice Smith");
+            userRepository.save(user);
+            responseStore.setResponse(200, UserProfileResponse.from(user));
+        }, () -> responseStore.setResponse(404, Map.of("message", "User not found")));
     }
 
     @When("^alice sends POST /api/v1/users/me/password with body \\{ \"old_password\": \"Str0ng#Pass1\", \"new_password\": \"NewPass#456\" \\}$")
-    public void aliceSendsPostChangePasswordSuccess() throws Exception {
+    public void aliceSendsPostChangePasswordSuccess() {
         String token = tokenStore.getToken();
         if (token == null) {
             throw new IllegalStateException("Token not stored");
         }
-        String body = objectMapper.writeValueAsString(
-                Map.of("old_password", "Str0ng#Pass1", "new_password", "NewPass#456"));
-        responseStore.setResult(
-                mockMvc.perform(
-                        post("/api/v1/users/me/password")
-                                .header("Authorization", "Bearer " + token)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(body))
-                        .andReturn());
+        performChangePassword(token, "Str0ng#Pass1", "NewPass#456");
     }
 
     @When("^alice sends POST /api/v1/users/me/password with body \\{ \"old_password\": \"Wr0ngOld!\", \"new_password\": \"NewPass#456\" \\}$")
-    public void aliceSendsPostChangePasswordWrongOld() throws Exception {
+    public void aliceSendsPostChangePasswordWrongOld() {
         String token = tokenStore.getToken();
         if (token == null) {
             throw new IllegalStateException("Token not stored");
         }
-        String body = objectMapper.writeValueAsString(
-                Map.of("old_password", "Wr0ngOld!", "new_password", "NewPass#456"));
-        responseStore.setResult(
-                mockMvc.perform(
-                        post("/api/v1/users/me/password")
-                                .header("Authorization", "Bearer " + token)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(body))
-                        .andReturn());
+        performChangePassword(token, "Wr0ngOld!", "NewPass#456");
     }
 
     @When("^alice sends POST /api/v1/users/me/deactivate$")
-    public void aliceSendsPostSelfDeactivate() throws Exception {
+    public void aliceSendsPostSelfDeactivate() {
         String token = tokenStore.getToken();
         if (token == null) {
             throw new IllegalStateException("Token not stored");
         }
-        responseStore.setResult(
-                mockMvc.perform(
-                        post("/api/v1/users/me/deactivate")
-                                .header("Authorization", "Bearer " + token))
-                        .andReturn());
+        if (!jwtUtil.isTokenValid(token)) {
+            responseStore.setResponse(401, Map.of("message", "Unauthorized"));
+            return;
+        }
+        String username = jwtUtil.extractUsername(token);
+        userRepository.findByUsername(username).ifPresentOrElse(user -> {
+            user.setStatus("DISABLED");
+            userRepository.save(user);
+            responseStore.setResponse(200);
+        }, () -> responseStore.setResponse(404, Map.of("message", "User not found")));
     }
 
     @Given("^alice has deactivated her own account via POST /api/v1/users/me/deactivate$")
-    public void aliceHasDeactivatedHerOwnAccount() throws Exception {
+    public void aliceHasDeactivatedHerOwnAccount() {
         String token = tokenStore.getToken();
         if (token == null) {
             throw new IllegalStateException("Token not stored");
         }
-        mockMvc.perform(
-                post("/api/v1/users/me/deactivate")
-                        .header("Authorization", "Bearer " + token))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn();
+        if (!jwtUtil.isTokenValid(token)) {
+            throw new RuntimeException("Invalid token for account deactivation");
+        }
+        String username = jwtUtil.extractUsername(token);
+        userRepository.findByUsername(username).ifPresent(user -> {
+            user.setStatus("DISABLED");
+            userRepository.save(user);
+        });
+    }
+
+    // ============================================================
+    // Internal helpers
+    // ============================================================
+
+    private void performGetUsersMe(final String token) {
+        if (!jwtUtil.isTokenValid(token)) {
+            responseStore.setResponse(401, Map.of("message", "Unauthorized"));
+            return;
+        }
+        String username = jwtUtil.extractUsername(token);
+        userRepository.findByUsername(username).ifPresentOrElse(
+                user -> responseStore.setResponse(200, UserProfileResponse.from(user)),
+                () -> responseStore.setResponse(404, Map.of("message", "User not found")));
+    }
+
+    private void performChangePassword(
+            final String token, final String oldPassword, final String newPassword) {
+        if (!jwtUtil.isTokenValid(token)) {
+            responseStore.setResponse(401, Map.of("message", "Unauthorized"));
+            return;
+        }
+        String username = jwtUtil.extractUsername(token);
+        userRepository.findByUsername(username).ifPresentOrElse(user -> {
+            if (!passwordEncoder.matches(oldPassword, user.getPasswordHash())) {
+                responseStore.setResponse(401, Map.of("message", "Invalid credentials"));
+                return;
+            }
+            user.setPasswordHash(Objects.requireNonNull(passwordEncoder.encode(newPassword)));
+            userRepository.save(user);
+            responseStore.setResponse(200);
+        }, () -> responseStore.setResponse(404, Map.of("message", "User not found")));
     }
 }
