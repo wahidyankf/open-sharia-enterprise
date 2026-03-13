@@ -4,7 +4,9 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
-(none)
+- [2026-03-13\_\_demo-specs-consolidation](./2026-03-13__demo-specs-consolidation/README.md) — Merge
+  `specs/apps/demo-be/` and `specs/apps/demo-fe/` into unified `specs/apps/demo/` with shared C4
+  diagrams
 
 ## Instructions
 
