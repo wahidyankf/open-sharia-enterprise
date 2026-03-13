@@ -1,6 +1,5 @@
 import { BeforeAll, AfterAll, Before } from "@cucumber/cucumber";
-import { Effect, Layer, ManagedRuntime, Option, Redacted } from "effect";
-import { PgClient } from "@effect/sql-pg";
+import { Effect, Layer, ManagedRuntime, Option } from "effect";
 import { SqliteClient } from "@effect/sql-sqlite-node";
 import { NodeHttpServer } from "@effect/platform-node";
 import { HttpServer, HttpServerRequest, FileSystem } from "@effect/platform";
@@ -8,55 +7,23 @@ import { createServer, type Server } from "node:http";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { existsSync, unlinkSync } from "node:fs";
-import { CREATE_TABLE_STATEMENTS, CREATE_TABLES_SQL_PG } from "../../src/infrastructure/db/schema.js";
-import { UserRepositoryLive } from "../../src/infrastructure/db/user-repo.js";
-import { ExpenseRepositoryLive } from "../../src/infrastructure/db/expense-repo.js";
-import { AttachmentRepositoryLive } from "../../src/infrastructure/db/attachment-repo.js";
-import { RevokedTokenRepositoryLive } from "../../src/infrastructure/db/token-repo.js";
-import { PasswordServiceLive } from "../../src/infrastructure/password.js";
-import { JwtServiceLive } from "../../src/auth/jwt.js";
-import { AppRouter } from "../../src/app.js";
+import { CREATE_TABLE_STATEMENTS } from "../../../src/infrastructure/db/schema.js";
+import { UserRepositoryLive } from "../../../src/infrastructure/db/user-repo.js";
+import { ExpenseRepositoryLive } from "../../../src/infrastructure/db/expense-repo.js";
+import { AttachmentRepositoryLive } from "../../../src/infrastructure/db/attachment-repo.js";
+import { RevokedTokenRepositoryLive } from "../../../src/infrastructure/db/token-repo.js";
+import { PasswordServiceLive } from "../../../src/infrastructure/password.js";
+import { JwtServiceLive } from "../../../src/auth/jwt.js";
+import { AppRouter } from "../../../src/app.js";
 import { SqlClient } from "@effect/sql";
-import type { SqlError } from "@effect/sql/SqlError";
 
-export const TEST_PORT = 8299;
-export const TEST_JWT_SECRET = process.env["APP_JWT_SECRET"] ?? "test-jwt-secret-at-least-32-chars-long!!";
+export const TEST_PORT = 8300;
+export const TEST_JWT_SECRET = "test-jwt-secret-at-least-32-chars-long!!";
 
-const DATABASE_URL = process.env["DATABASE_URL"] ?? "";
+// Use a temp file so both schema-init and AppLayer share the same SQLite database
+const TEST_DB_PATH = join(tmpdir(), `demo-be-ts-effect-unit-bdd-${process.pid}.db`);
 
-function isPostgres(url: string): boolean {
-  return url.startsWith("postgresql://") || url.startsWith("postgres://");
-}
-
-type DbLayer = Layer.Layer<SqlClient.SqlClient, SqlError, never>;
-
-interface DbSetup {
-  layer: DbLayer;
-  schemaSql: string | null;
-  tableStatements: string[] | null;
-  dbPath: string | null;
-}
-
-function makeDbSetup(): DbSetup {
-  if (isPostgres(DATABASE_URL)) {
-    return {
-      layer: PgClient.layer({ url: Redacted.make(DATABASE_URL) }) as unknown as DbLayer,
-      schemaSql: CREATE_TABLES_SQL_PG,
-      tableStatements: null,
-      dbPath: null,
-    };
-  }
-  const dbPath = join(tmpdir(), `demo-be-ts-effect-integration-test-${process.pid}.db`);
-  return {
-    layer: SqliteClient.layer({ filename: dbPath }) as unknown as DbLayer,
-    schemaSql: null,
-    tableStatements: CREATE_TABLE_STATEMENTS,
-    dbPath,
-  };
-}
-
-const DB = makeDbSetup();
-const SqlLayer = DB.layer;
+const SqliteLayer = SqliteClient.layer({ filename: TEST_DB_PATH });
 
 // Keep reference to HTTP server for explicit close in AfterAll
 let httpServer: Server | null = null;
@@ -82,31 +49,26 @@ const AppLayer = HttpServer.serve(AppRouter).pipe(
   Layer.provide(RevokedTokenRepositoryLive),
   Layer.provide(PasswordServiceLive),
   Layer.provide(JwtServiceLive(TEST_JWT_SECRET)),
-  Layer.provide(SqlLayer),
+  Layer.provide(SqliteLayer),
 );
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let runtime: ManagedRuntime.ManagedRuntime<never, never>;
 
 BeforeAll(async function () {
-  // Initialize schema
+  // Initialize schema - execute each statement individually (SQLite doesn't support multi-statement prepare)
   await Effect.runPromise(
     Effect.gen(function* () {
       const sql = yield* SqlClient.SqlClient;
-      if (DB.schemaSql) {
-        yield* sql.unsafe(DB.schemaSql);
-      } else if (DB.tableStatements) {
-        for (const statement of DB.tableStatements) {
-          yield* sql.unsafe(statement);
-        }
+      for (const statement of CREATE_TABLE_STATEMENTS) {
+        yield* sql.unsafe(statement);
       }
-    }).pipe(Effect.provide(SqlLayer)),
+    }).pipe(Effect.provide(SqliteLayer)),
   );
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   runtime = ManagedRuntime.make(AppLayer) as unknown as ManagedRuntime.ManagedRuntime<never, never>;
   // Start the server by running Effect.never (non-blocking — the server runs in background)
-  // This initializes all layers including the HTTP server
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (runtime as unknown as { runPromise: (effect: any) => Promise<any> }).runPromise(Effect.never).catch(() => {
     // Ignore disposal error when runtime is disposed in AfterAll
@@ -130,10 +92,10 @@ AfterAll(async function () {
       /* ignore */
     });
   }
-  // Clean up temp DB file (SQLite only)
-  if (DB.dbPath && existsSync(DB.dbPath)) {
+  // Clean up temp DB file
+  if (existsSync(TEST_DB_PATH)) {
     try {
-      unlinkSync(DB.dbPath);
+      unlinkSync(TEST_DB_PATH);
     } catch {
       // Ignore cleanup errors
     }
@@ -154,7 +116,7 @@ Before(async function () {
         yield* sql.unsafe("DELETE FROM attachments");
         yield* sql.unsafe("DELETE FROM expenses");
         yield* sql.unsafe("DELETE FROM users");
-      }).pipe(Effect.provide(SqlLayer)),
+      }).pipe(Effect.provide(SqliteLayer)),
     );
   } catch (e) {
     console.error("Before hook DB clear error:", e);
@@ -164,13 +126,13 @@ Before(async function () {
 
 /**
  * Promote a user to ADMIN role directly in the DB.
- * Used by integration test step definitions for admin scenarios.
+ * Used by unit BDD step definitions for admin scenarios.
  */
 export async function promoteToAdmin(username: string): Promise<void> {
   await Effect.runPromise(
     Effect.gen(function* () {
       const sql = yield* SqlClient.SqlClient;
       yield* sql.unsafe(`UPDATE users SET role = 'ADMIN' WHERE username = '${username}'`);
-    }).pipe(Effect.provide(SqlLayer)),
+    }).pipe(Effect.provide(SqliteLayer)),
   );
 }

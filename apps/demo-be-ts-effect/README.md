@@ -8,19 +8,48 @@ variants.
 
 ## Tech Stack
 
-| Concern          | Choice                                    |
-| ---------------- | ----------------------------------------- |
-| Language         | TypeScript (strict)                       |
-| Runtime          | Node.js (managed by Volta)                |
-| Build            | Vite (library mode for server build)      |
-| Web framework    | `@effect/platform` Node.js HTTP server    |
-| Database         | `@effect/sql` + `@effect/sql-sqlite-node` |
-| JWT              | `jose` library                            |
-| Password hashing | `bcrypt`                                  |
-| BDD tests        | Cucumber.js                               |
-| Linting          | oxlint                                    |
-| Coverage         | Vitest v8 → LCOV → rhino-cli              |
-| Port             | **8201**                                  |
+| Concern          | Choice                                          |
+| ---------------- | ----------------------------------------------- |
+| Language         | TypeScript (strict)                             |
+| Runtime          | Node.js (managed by Volta)                      |
+| Build            | Vite (library mode for server build)            |
+| Web framework    | `@effect/platform` Node.js HTTP server          |
+| Database         | `@effect/sql` + SQLite (unit) / PostgreSQL (int)|
+| JWT              | `jose` library                                  |
+| Password hashing | `bcrypt`                                        |
+| Unit BDD tests   | Cucumber.js + SQLite in-memory                  |
+| Coverage         | Vitest v8 → LCOV → rhino-cli                    |
+| Linting          | oxlint                                          |
+| Port             | **8201**                                        |
+
+## Test Architecture
+
+This project uses a three-level testing strategy:
+
+### Level 1: Unit tests (`tests/unit/`)
+
+Pure unit tests covering isolated functions, domain logic, and algorithms using Vitest. These run
+fast with no external dependencies.
+
+### Level 2: Unit BDD (`tests/unit/bdd/`)
+
+Cucumber.js BDD scenarios from `specs/apps/demo-be/gherkin/` run against an in-process server
+backed by SQLite in-memory. All 76 Gherkin scenarios execute with no real database required.
+Deterministic, fast, and safe to cache.
+
+Step definitions in `tests/unit/bdd/steps/` mirror the shared spec. The hooks start a local HTTP
+server on port 8300 using SQLite and clear tables before each scenario for full isolation.
+
+Both levels run as part of `test:quick` (the pre-push quality gate).
+
+### Level 3: Integration tests (`tests/integration/`)
+
+Full BDD scenarios run against a real PostgreSQL 17 database via Docker Compose. This level
+validates database compatibility and production-equivalent behaviour. Results are never cached.
+
+```bash
+nx run demo-be-ts-effect:test:integration  # requires Docker
+```
 
 ## Nx Targets
 
@@ -28,9 +57,9 @@ variants.
 nx dev demo-be-ts-effect                      # Start dev server with tsx watch
 nx build demo-be-ts-effect                    # Build with Vite
 nx start demo-be-ts-effect                    # Run built dist/main.js
-nx run demo-be-ts-effect:test:quick           # Full quality gate (unit + coverage + typecheck + lint)
-nx run demo-be-ts-effect:test:unit            # Unit tests only
-nx run demo-be-ts-effect:test:integration     # Cucumber.js BDD integration tests
+nx run demo-be-ts-effect:test:quick           # Unit tests + coverage + BDD scenarios (pre-push gate)
+nx run demo-be-ts-effect:test:unit            # Unit tests + BDD scenarios only
+nx run demo-be-ts-effect:test:integration     # Cucumber.js BDD against PostgreSQL (Docker)
 nx run demo-be-ts-effect:lint                 # oxlint
 nx run demo-be-ts-effect:typecheck            # tsc --noEmit
 ```
@@ -100,9 +129,9 @@ The application uses Effect TS throughout:
 
 - **Routes**: `HttpRouter` handlers returning `Effect` values
 - **Services**: `Context.Tag` services with `Layer` composition
-- **Database**: `@effect/sql` with SQLite (tests) or PostgreSQL (production)
+- **Database**: `@effect/sql` with SQLite (unit BDD / local dev) or PostgreSQL (integration)
 - **Errors**: `Data.TaggedError` domain errors mapped to HTTP responses
-- **Tests**: In-process HTTP server with SQLite in-memory database
+- **Tests**: Three-level strategy — unit (Vitest), unit BDD (Cucumber+SQLite), integration (Cucumber+PostgreSQL+Docker)
 
 ## Related
 
