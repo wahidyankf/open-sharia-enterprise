@@ -1,17 +1,19 @@
 module DemoBeFsgi.Tests.Integration.Steps.AdminSteps
 
+open System
 open System.Text.Json
 open TickSpec
 open Xunit
 open DemoBeFsgi.Tests.State
+open DemoBeFsgi.Tests.DirectServices
 open DemoBeFsgi.Tests.Integration.Steps.CommonSteps
 open DemoBeFsgi.Tests.Integration.Steps.TokenManagementSteps
 
 [<Given>]
 let ``users "(.+)", "(.+)", and "(.+)" are registered`` (u1: string) (u2: string) (u3: string) (state: StepState) =
-    let body1 = registerUser state.Client u1 $"{u1}@example.com" "Str0ng#Pass1"
-    registerUser state.Client u2 $"{u2}@example.com" "Str0ng#Pass2" |> ignore
-    registerUser state.Client u3 $"{u3}@example.com" "Str0ng#Pass3" |> ignore
+    let body1 = registerUser state u1 $"{u1}@example.com" "Str0ng#Pass1"
+    registerUser state u2 $"{u2}@example.com" "Str0ng#Pass2" |> ignore
+    registerUser state u3 $"{u3}@example.com" "Str0ng#Pass3" |> ignore
     // Store alice (u1) id so admin steps can reference it via state.UserId
     let aliceId = getStringProp body1 "id"
     { state with UserId = aliceId }
@@ -19,21 +21,19 @@ let ``users "(.+)", "(.+)", and "(.+)" are registered`` (u1: string) (u2: string
 [<When>]
 let ``the admin sends GET /api/v1/admin/users`` (state: StepState) =
     let adminToken = state.ExtraData |> Map.tryFind "adminToken"
-    let response, body = sendGet state.Client "/api/v1/admin/users" adminToken
+    let status, body = listUsers state.Db adminToken 1 20 None |> Async.RunSynchronously
 
     { state with
-        Response = Some response
+        Response = Some { Status = status; Body = body }
         ResponseBody = Some body }
 
 [<When>]
 let ``the admin sends GET /api/v1/admin/users\?email=(.+)`` (email: string) (state: StepState) =
     let adminToken = state.ExtraData |> Map.tryFind "adminToken"
-
-    let response, body =
-        sendGet state.Client $"/api/v1/admin/users?email={email}" adminToken
+    let status, body = listUsers state.Db adminToken 1 20 (Some email) |> Async.RunSynchronously
 
     { state with
-        Response = Some response
+        Response = Some { Status = status; Body = body }
         ResponseBody = Some body }
 
 [<Then>]
@@ -65,59 +65,111 @@ let ``the response body should contain at least one user with "(.+)" equal to "(
     state
 
 [<When>]
-let ``the admin sends POST /api/v1/admin/users/\{alice_id\}/disable with body (.+)`` (body: string) (state: StepState) =
+let ``the admin sends POST /api/v1/admin/users/\{alice_id\}/disable with body (.+)`` (bodyStr: string) (state: StepState) =
     let adminToken = state.ExtraData |> Map.tryFind "adminToken"
-    let aliceId = state.UserId |> Option.defaultValue ""
 
-    let response, responseBody =
-        sendPost state.Client $"/api/v1/admin/users/{aliceId}/disable" body adminToken
+    let aliceGuid =
+        state.UserId
+        |> Option.bind (fun s ->
+            try
+                Some(Guid.Parse(s))
+            with _ ->
+                None)
 
-    { state with
-        Response = Some response
-        ResponseBody = Some responseBody }
+    match aliceGuid with
+    | Some id ->
+        let status, body = disableUser state.Db adminToken id |> Async.RunSynchronously
+
+        { state with
+            Response = Some { Status = status; Body = body }
+            ResponseBody = Some body }
+    | None ->
+        { state with
+            Response = Some { Status = 404; Body = """{"error":"Not Found"}""" }
+            ResponseBody = Some """{"error":"Not Found"}""" }
 
 [<Given>]
 let ``alice's account has been disabled by the admin`` (state: StepState) =
     let adminToken = state.ExtraData |> Map.tryFind "adminToken"
-    let aliceId = state.UserId |> Option.defaultValue ""
 
-    sendPost state.Client $"/api/v1/admin/users/{aliceId}/disable" """{ "reason": "Test disable" }""" adminToken
-    |> ignore
+    let aliceGuid =
+        state.UserId
+        |> Option.bind (fun s ->
+            try
+                Some(Guid.Parse(s))
+            with _ ->
+                None)
+
+    match aliceGuid with
+    | Some id -> disableUser state.Db adminToken id |> Async.RunSynchronously |> ignore
+    | None -> ()
 
     state
 
 [<Given>]
 let ``alice's account has been disabled`` (state: StepState) =
     let adminToken = state.ExtraData |> Map.tryFind "adminToken"
-    let aliceId = state.UserId |> Option.defaultValue ""
 
-    sendPost state.Client $"/api/v1/admin/users/{aliceId}/disable" """{ "reason": "Test disable" }""" adminToken
-    |> ignore
+    let aliceGuid =
+        state.UserId
+        |> Option.bind (fun s ->
+            try
+                Some(Guid.Parse(s))
+            with _ ->
+                None)
+
+    match aliceGuid with
+    | Some id -> disableUser state.Db adminToken id |> Async.RunSynchronously |> ignore
+    | None -> ()
 
     state
 
 [<When>]
 let ``the admin sends POST /api/v1/admin/users/\{alice_id\}/enable`` (state: StepState) =
     let adminToken = state.ExtraData |> Map.tryFind "adminToken"
-    let aliceId = state.UserId |> Option.defaultValue ""
 
-    let response, responseBody =
-        sendPost state.Client $"/api/v1/admin/users/{aliceId}/enable" "" adminToken
+    let aliceGuid =
+        state.UserId
+        |> Option.bind (fun s ->
+            try
+                Some(Guid.Parse(s))
+            with _ ->
+                None)
 
-    { state with
-        Response = Some response
-        ResponseBody = Some responseBody }
+    match aliceGuid with
+    | Some id ->
+        let status, body = enableUser state.Db adminToken id |> Async.RunSynchronously
+
+        { state with
+            Response = Some { Status = status; Body = body }
+            ResponseBody = Some body }
+    | None ->
+        { state with
+            Response = Some { Status = 404; Body = """{"error":"Not Found"}""" }
+            ResponseBody = Some """{"error":"Not Found"}""" }
 
 [<When>]
 let ``the admin sends POST /api/v1/admin/users/\{alice_id\}/force-password-reset`` (state: StepState) =
     let adminToken = state.ExtraData |> Map.tryFind "adminToken"
-    let aliceId = state.UserId |> Option.defaultValue ""
 
-    let response, responseBody =
-        sendPost state.Client $"/api/v1/admin/users/{aliceId}/force-password-reset" "" adminToken
+    let aliceGuid =
+        state.UserId
+        |> Option.bind (fun s ->
+            try
+                Some(Guid.Parse(s))
+            with _ ->
+                None)
 
-    { state with
-        Response = Some response
-        ResponseBody = Some responseBody }
+    match aliceGuid with
+    | Some id ->
+        let status, body = forcePasswordReset state.Db adminToken id |> Async.RunSynchronously
+
+        { state with
+            Response = Some { Status = status; Body = body }
+            ResponseBody = Some body }
+    | None ->
+        { state with
+            Response = Some { Status = 404; Body = """{"error":"Not Found"}""" }
+            ResponseBody = Some """{"error":"Not Found"}""" }
 
 // Note: alice's account status step is handled by SecuritySteps.``alice's account status should be "(.+)"``

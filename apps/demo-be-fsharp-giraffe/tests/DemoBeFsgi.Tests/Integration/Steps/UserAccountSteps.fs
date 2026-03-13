@@ -1,48 +1,72 @@
 module DemoBeFsgi.Tests.Integration.Steps.UserAccountSteps
 
+open System.Text.Json
 open TickSpec
-open Xunit
 open DemoBeFsgi.Tests.State
+open DemoBeFsgi.Tests.DirectServices
 open DemoBeFsgi.Tests.Integration.Steps.CommonSteps
 
 [<When>]
 let ``alice sends GET /api/v1/users/me`` (state: StepState) =
-    let response, body = sendGet state.Client "/api/v1/users/me" state.AccessToken
+    let status, body = getProfile state.Db state.AccessToken |> Async.RunSynchronously
 
     { state with
-        Response = Some response
+        Response = Some { Status = status; Body = body }
         ResponseBody = Some body }
 
 [<When>]
-let ``alice sends PATCH /api/v1/users/me with body (.+)`` (body: string) (state: StepState) =
-    let response, responseBody =
-        sendPatch state.Client "/api/v1/users/me" body state.AccessToken
+let ``alice sends PATCH /api/v1/users/me with body (.+)`` (bodyStr: string) (state: StepState) =
+    let displayName =
+        try
+            let doc = JsonDocument.Parse(bodyStr)
+
+            match doc.RootElement.TryGetProperty("display_name") with
+            | true, el -> el.GetString()
+            | _ -> null
+        with _ ->
+            null
+
+    let status, body =
+        updateProfile state.Db state.AccessToken displayName |> Async.RunSynchronously
 
     { state with
-        Response = Some response
-        ResponseBody = Some responseBody }
+        Response = Some { Status = status; Body = body }
+        ResponseBody = Some body }
 
 [<When>]
-let ``alice sends POST /api/v1/users/me/password with body (.+)`` (body: string) (state: StepState) =
-    let response, responseBody =
-        sendPost state.Client "/api/v1/users/me/password" (decode body) state.AccessToken
+let ``alice sends POST /api/v1/users/me/password with body (.+)`` (bodyStr: string) (state: StepState) =
+    let decoded = decode bodyStr
+
+    let oldPw, newPw =
+        try
+            let doc = JsonDocument.Parse(decoded)
+            let r = doc.RootElement
+
+            let str (key: string) =
+                match r.TryGetProperty(key) with
+                | true, el -> el.GetString()
+                | _ -> null
+
+            str "old_password", str "new_password"
+        with _ ->
+            null, null
+
+    let status, body =
+        changePassword state.Db state.AccessToken oldPw newPw |> Async.RunSynchronously
 
     { state with
-        Response = Some response
-        ResponseBody = Some responseBody }
+        Response = Some { Status = status; Body = body }
+        ResponseBody = Some body }
 
 [<When>]
 let ``alice sends POST /api/v1/users/me/deactivate`` (state: StepState) =
-    let response, responseBody =
-        sendPost state.Client "/api/v1/users/me/deactivate" "" state.AccessToken
+    let status, body = deactivate state.Db state.AccessToken |> Async.RunSynchronously
 
     { state with
-        Response = Some response
-        ResponseBody = Some responseBody }
+        Response = Some { Status = status; Body = body }
+        ResponseBody = Some body }
 
 [<Given>]
 let ``alice has deactivated her own account via POST /api/v1/users/me/deactivate`` (state: StepState) =
-    sendPost state.Client "/api/v1/users/me/deactivate" "" state.AccessToken
-    |> ignore
-
+    deactivate state.Db state.AccessToken |> Async.RunSynchronously |> ignore
     state

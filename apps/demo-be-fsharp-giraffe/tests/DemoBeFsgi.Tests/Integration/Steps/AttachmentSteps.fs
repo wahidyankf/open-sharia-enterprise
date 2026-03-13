@@ -1,44 +1,13 @@
 module DemoBeFsgi.Tests.Integration.Steps.AttachmentSteps
 
 open System
-open System.IO
-open System.Net.Http
-open System.Net.Http.Headers
 open System.Text.Json
 open TickSpec
 open Xunit
 open DemoBeFsgi.Tests.State
+open DemoBeFsgi.Tests.DirectServices
 open DemoBeFsgi.Tests.Integration.Steps.CommonSteps
 open DemoBeFsgi.Tests.Integration.Steps.ExpenseSteps
-
-let private uploadFile
-    (client: HttpClient)
-    (url: string)
-    (filename: string)
-    (contentType: string)
-    (data: byte[])
-    (token: string option)
-    =
-    use content = new MultipartFormDataContent()
-    use fileContent = new ByteArrayContent(data)
-    fileContent.Headers.ContentType <- MediaTypeHeaderValue(contentType)
-    content.Add(fileContent, "file", filename)
-
-    let req = new HttpRequestMessage(HttpMethod.Post, url)
-    req.Content <- content
-
-    match token with
-    | Some t -> req.Headers.Authorization <- AuthenticationHeaderValue("Bearer", t)
-    | None -> ()
-
-    let response = client.SendAsync(req) |> Async.AwaitTask |> Async.RunSynchronously
-
-    let responseBody =
-        response.Content.ReadAsStringAsync()
-        |> Async.AwaitTask
-        |> Async.RunSynchronously
-
-    response, responseBody
 
 [<When>]
 let ``alice uploads file "(.+)" with content type "(.+)" to POST /api/v1/expenses/\{expenseId\}/attachments``
@@ -46,19 +15,32 @@ let ``alice uploads file "(.+)" with content type "(.+)" to POST /api/v1/expense
     (contentType: string)
     (state: StepState)
     =
-    let expenseId = state.ExpenseId |> Option.defaultValue ""
-    let url = $"/api/v1/expenses/{expenseId}/attachments"
-    let data = Array.create 1024 0uy // 1KB test file
+    let expenseId =
+        state.ExpenseId
+        |> Option.bind (fun s ->
+            try
+                Some(Guid.Parse(s))
+            with _ ->
+                None)
 
-    let response, responseBody =
-        uploadFile state.Client url filename contentType data state.AccessToken
+    match expenseId with
+    | Some id ->
+        let data = Array.create 1024 0uy // 1 KB test file
 
-    let attachmentId = getStringProp responseBody "id"
+        let status, responseBody =
+            uploadAttachment state.Db state.AccessToken id filename contentType data
+            |> Async.RunSynchronously
 
-    { state with
-        Response = Some response
-        ResponseBody = Some responseBody
-        AttachmentId = attachmentId }
+        let attachmentId = getStringProp responseBody "id"
+
+        { state with
+            Response = Some { Status = status; Body = responseBody }
+            ResponseBody = Some responseBody
+            AttachmentId = attachmentId }
+    | None ->
+        { state with
+            Response = Some { Status = 404; Body = """{"error":"Not Found"}""" }
+            ResponseBody = Some """{"error":"Not Found"}""" }
 
 [<When>]
 let ``alice uploads file "(.+)" with content type "(.+)" to POST /api/v1/expenses/\{bobExpenseId\}/attachments``
@@ -67,30 +49,55 @@ let ``alice uploads file "(.+)" with content type "(.+)" to POST /api/v1/expense
     (state: StepState)
     =
     let bobExpenseId =
-        state.ExtraData |> Map.tryFind "bobExpenseId" |> Option.defaultValue ""
+        state.ExtraData
+        |> Map.tryFind "bobExpenseId"
+        |> Option.bind (fun s ->
+            try
+                Some(Guid.Parse(s))
+            with _ ->
+                None)
 
-    let url = $"/api/v1/expenses/{bobExpenseId}/attachments"
-    let data = Array.create 1024 0uy
+    match bobExpenseId with
+    | Some id ->
+        let data = Array.create 1024 0uy
 
-    let response, responseBody =
-        uploadFile state.Client url filename contentType data state.AccessToken
+        let status, responseBody =
+            uploadAttachment state.Db state.AccessToken id filename contentType data
+            |> Async.RunSynchronously
 
-    { state with
-        Response = Some response
-        ResponseBody = Some responseBody }
+        { state with
+            Response = Some { Status = status; Body = responseBody }
+            ResponseBody = Some responseBody }
+    | None ->
+        { state with
+            Response = Some { Status = 404; Body = """{"error":"Not Found"}""" }
+            ResponseBody = Some """{"error":"Not Found"}""" }
 
 [<When>]
 let ``alice uploads an oversized file to POST /api/v1/expenses/\{expenseId\}/attachments`` (state: StepState) =
-    let expenseId = state.ExpenseId |> Option.defaultValue ""
-    let url = $"/api/v1/expenses/{expenseId}/attachments"
-    let data = Array.create (11 * 1024 * 1024) 0uy // 11MB - over the 10MB limit
+    let expenseId =
+        state.ExpenseId
+        |> Option.bind (fun s ->
+            try
+                Some(Guid.Parse(s))
+            with _ ->
+                None)
 
-    let response, responseBody =
-        uploadFile state.Client url "large.jpg" "image/jpeg" data state.AccessToken
+    match expenseId with
+    | Some id ->
+        let data = Array.create (11 * 1024 * 1024) 0uy // 11 MB — over the 10 MB limit
 
-    { state with
-        Response = Some response
-        ResponseBody = Some responseBody }
+        let status, responseBody =
+            uploadAttachment state.Db state.AccessToken id "large.jpg" "image/jpeg" data
+            |> Async.RunSynchronously
+
+        { state with
+            Response = Some { Status = status; Body = responseBody }
+            ResponseBody = Some responseBody }
+    | None ->
+        { state with
+            Response = Some { Status = 404; Body = """{"error":"Not Found"}""" }
+            ResponseBody = Some """{"error":"Not Found"}""" }
 
 [<Given>]
 let ``alice has uploaded file "(.+)" with content type "(.+)" to the entry``
@@ -98,89 +105,168 @@ let ``alice has uploaded file "(.+)" with content type "(.+)" to the entry``
     (contentType: string)
     (state: StepState)
     =
-    let expenseId = state.ExpenseId |> Option.defaultValue ""
-    let url = $"/api/v1/expenses/{expenseId}/attachments"
-    let data = Array.create 1024 0uy
+    let expenseId =
+        state.ExpenseId
+        |> Option.bind (fun s ->
+            try
+                Some(Guid.Parse(s))
+            with _ ->
+                None)
 
-    let response, responseBody =
-        uploadFile state.Client url filename contentType data state.AccessToken
+    match expenseId with
+    | Some id ->
+        let data = Array.create 1024 0uy
 
-    let attachmentId = getStringProp responseBody "id"
+        let _status, responseBody =
+            uploadAttachment state.Db state.AccessToken id filename contentType data
+            |> Async.RunSynchronously
 
-    { state with
-        AttachmentId = attachmentId }
+        let attachmentId = getStringProp responseBody "id"
+        { state with AttachmentId = attachmentId }
+    | None -> state
 
 [<When>]
 let ``alice sends GET /api/v1/expenses/\{expenseId\}/attachments`` (state: StepState) =
-    let expenseId = state.ExpenseId |> Option.defaultValue ""
+    let expenseId =
+        state.ExpenseId
+        |> Option.bind (fun s ->
+            try
+                Some(Guid.Parse(s))
+            with _ ->
+                None)
 
-    let response, body =
-        sendGet state.Client $"/api/v1/expenses/{expenseId}/attachments" state.AccessToken
+    match expenseId with
+    | Some id ->
+        let status, body = listAttachments state.Db state.AccessToken id |> Async.RunSynchronously
 
-    { state with
-        Response = Some response
-        ResponseBody = Some body }
+        { state with
+            Response = Some { Status = status; Body = body }
+            ResponseBody = Some body }
+    | None ->
+        { state with
+            Response = Some { Status = 404; Body = """{"error":"Not Found"}""" }
+            ResponseBody = Some """{"error":"Not Found"}""" }
 
 [<When>]
 let ``alice sends GET /api/v1/expenses/\{bobExpenseId\}/attachments`` (state: StepState) =
     let bobExpenseId =
-        state.ExtraData |> Map.tryFind "bobExpenseId" |> Option.defaultValue ""
+        state.ExtraData
+        |> Map.tryFind "bobExpenseId"
+        |> Option.bind (fun s ->
+            try
+                Some(Guid.Parse(s))
+            with _ ->
+                None)
 
-    let response, body =
-        sendGet state.Client $"/api/v1/expenses/{bobExpenseId}/attachments" state.AccessToken
+    match bobExpenseId with
+    | Some id ->
+        let status, body = listAttachments state.Db state.AccessToken id |> Async.RunSynchronously
 
-    { state with
-        Response = Some response
-        ResponseBody = Some body }
+        { state with
+            Response = Some { Status = status; Body = body }
+            ResponseBody = Some body }
+    | None ->
+        { state with
+            Response = Some { Status = 404; Body = """{"error":"Not Found"}""" }
+            ResponseBody = Some """{"error":"Not Found"}""" }
 
 [<When>]
 let ``alice sends DELETE /api/v1/expenses/\{expenseId\}/attachments/\{attachmentId\}`` (state: StepState) =
-    let expenseId = state.ExpenseId |> Option.defaultValue ""
-    let attachmentId = state.AttachmentId |> Option.defaultValue ""
+    let expenseId =
+        state.ExpenseId
+        |> Option.bind (fun s ->
+            try
+                Some(Guid.Parse(s))
+            with _ ->
+                None)
 
-    let response, body =
-        sendDelete state.Client $"/api/v1/expenses/{expenseId}/attachments/{attachmentId}" state.AccessToken
+    let attachmentId =
+        state.AttachmentId
+        |> Option.bind (fun s ->
+            try
+                Some(Guid.Parse(s))
+            with _ ->
+                None)
 
-    { state with
-        Response = Some response
-        ResponseBody = Some body }
+    match expenseId, attachmentId with
+    | Some eid, Some aid ->
+        let status, body = deleteAttachment state.Db state.AccessToken eid aid |> Async.RunSynchronously
+
+        { state with
+            Response = Some { Status = status; Body = body }
+            ResponseBody = Some body }
+    | _ ->
+        { state with
+            Response = Some { Status = 404; Body = """{"error":"Not Found"}""" }
+            ResponseBody = Some """{"error":"Not Found"}""" }
 
 [<When>]
 let ``alice sends DELETE /api/v1/expenses/\{bobExpenseId\}/attachments/\{attachmentId\}`` (state: StepState) =
     let bobExpenseId =
-        state.ExtraData |> Map.tryFind "bobExpenseId" |> Option.defaultValue ""
+        state.ExtraData
+        |> Map.tryFind "bobExpenseId"
+        |> Option.bind (fun s ->
+            try
+                Some(Guid.Parse(s))
+            with _ ->
+                None)
 
-    let attachmentId = state.AttachmentId |> Option.defaultValue ""
+    let attachmentId =
+        state.AttachmentId
+        |> Option.bind (fun s ->
+            try
+                Some(Guid.Parse(s))
+            with _ ->
+                None)
 
-    let response, body =
-        sendDelete state.Client $"/api/v1/expenses/{bobExpenseId}/attachments/{attachmentId}" state.AccessToken
+    match bobExpenseId, attachmentId with
+    | Some eid, Some aid ->
+        let status, body = deleteAttachment state.Db state.AccessToken eid aid |> Async.RunSynchronously
 
-    { state with
-        Response = Some response
-        ResponseBody = Some body }
+        { state with
+            Response = Some { Status = status; Body = body }
+            ResponseBody = Some body }
+    | _ ->
+        { state with
+            Response = Some { Status = 404; Body = """{"error":"Not Found"}""" }
+            ResponseBody = Some """{"error":"Not Found"}""" }
 
 [<When>]
 let ``alice sends DELETE /api/v1/expenses/\{expenseId\}/attachments/\{randomAttachmentId\}`` (state: StepState) =
-    let expenseId = state.ExpenseId |> Option.defaultValue ""
-    let randomId = Guid.NewGuid().ToString()
+    let expenseId =
+        state.ExpenseId
+        |> Option.bind (fun s ->
+            try
+                Some(Guid.Parse(s))
+            with _ ->
+                None)
 
-    let response, body =
-        sendDelete state.Client $"/api/v1/expenses/{expenseId}/attachments/{randomId}" state.AccessToken
+    let randomId = Guid.NewGuid()
 
-    { state with
-        Response = Some response
-        ResponseBody = Some body }
+    match expenseId with
+    | Some eid ->
+        let status, body = deleteAttachment state.Db state.AccessToken eid randomId |> Async.RunSynchronously
+
+        { state with
+            Response = Some { Status = status; Body = body }
+            ResponseBody = Some body }
+    | None ->
+        { state with
+            Response = Some { Status = 404; Body = """{"error":"Not Found"}""" }
+            ResponseBody = Some """{"error":"Not Found"}""" }
 
 // Note: "a user ... is registered with email ... and password ..." is handled by CommonSteps
 
 [<Given>]
-let ``bob has created an entry with body (.+)`` (body: string) (state: StepState) =
-    let bobToken, _ = loginUser state.Client "bob" "Str0ng#Pass2"
-    let response, responseBody = sendPost state.Client "/api/v1/expenses" body bobToken
-    let expenseId = getStringProp responseBody "id" |> Option.defaultValue ""
+let ``bob has created an entry with body (.+)`` (bodyStr: string) (state: StepState) =
+    let bobToken, _ = loginUser state "bob" "Str0ng#Pass2"
+
+    let bobState = { state with AccessToken = bobToken }
+    let _status, responseBody, expenseId = createExpenseFromBody bobState bodyStr
+    let expenseIdStr = expenseId |> Option.defaultValue ""
 
     { state with
-        ExtraData = state.ExtraData |> Map.add "bobExpenseId" expenseId }
+        ExtraData = state.ExtraData |> Map.add "bobExpenseId" expenseIdStr }
 
 [<Then>]
 let ``the response body should contain 2 items in the "attachments" array`` (state: StepState) =

@@ -1,36 +1,25 @@
 module DemoBeFsgi.Tests.Integration.Steps.HealthSteps
 
+open System.Text.Json
 open TickSpec
 open Xunit
-open System.Text.Json
 open DemoBeFsgi.Tests.State
+open DemoBeFsgi.Tests.DirectServices
 
 [<When>]
 let ``an operations engineer sends GET /health`` (state: StepState) =
-    let response =
-        state.Client.GetAsync("/health") |> Async.AwaitTask |> Async.RunSynchronously
-
-    let body =
-        response.Content.ReadAsStringAsync()
-        |> Async.AwaitTask
-        |> Async.RunSynchronously
+    let status, body = health ()
 
     { state with
-        Response = Some response
+        Response = Some { Status = status; Body = body }
         ResponseBody = Some body }
 
 [<When>]
 let ``an unauthenticated engineer sends GET /health`` (state: StepState) =
-    let response =
-        state.Client.GetAsync("/health") |> Async.AwaitTask |> Async.RunSynchronously
-
-    let body =
-        response.Content.ReadAsStringAsync()
-        |> Async.AwaitTask
-        |> Async.RunSynchronously
+    let status, body = health ()
 
     { state with
-        Response = Some response
+        Response = Some { Status = status; Body = body }
         ResponseBody = Some body }
 
 [<Then>]

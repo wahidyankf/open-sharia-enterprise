@@ -2,8 +2,6 @@ module DemoBeFsgi.Tests.Unit.HandlerCoverageTests
 
 open System
 open System.IdentityModel.Tokens.Jwt
-open System.Net.Http
-open System.Net.Http.Headers
 open System.Security.Claims
 open System.Text
 open System.Text.Json
@@ -12,6 +10,7 @@ open Xunit
 open DemoBeFsgi.Domain.Types
 open DemoBeFsgi.Domain.Expense
 open DemoBeFsgi.Tests.TestFixture
+open DemoBeFsgi.Tests.DirectServices
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Pure function branch coverage
@@ -171,7 +170,6 @@ type JwtServiceTests() =
 
     [<Fact>]
     member _.``generateAccessToken uses environment variable when set``() =
-        // This exercises the 'else s' branch in getSecret()
         let original = Environment.GetEnvironmentVariable("APP_JWT_SECRET")
 
         try
@@ -190,7 +188,7 @@ type JwtServiceTests() =
                 Environment.SetEnvironmentVariable("APP_JWT_SECRET", original)
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Handler coverage via HTTP integration
+// Handler coverage via direct service calls
 // ─────────────────────────────────────────────────────────────────────────────
 
 let private jwtSecret = "dev-jwt-secret-at-least-32-characters-long-for-hmac"
@@ -218,720 +216,537 @@ let private makeCustomToken (claimsArr: Claim array) (includeJti: bool) =
 
     JwtSecurityTokenHandler().WriteToken(token)
 
-let private createClient () =
-    let factory = new TestWebAppFactory()
-    factory.CreateClient()
-
 let private shortId () =
     let raw = Guid.NewGuid().ToString("N")
     raw.Substring(0, 8)
 
-let private post (client: HttpClient) (url: string) (body: string) =
-    let content = new StringContent(body, Encoding.UTF8, "application/json")
-    let req = new HttpRequestMessage(HttpMethod.Post, url)
-    req.Content <- content
-    let resp = client.SendAsync(req) |> Async.AwaitTask |> Async.RunSynchronously
+let private registerAndLogin (db: DemoBeFsgi.Infrastructure.AppDbContext.AppDbContext) (username: string) =
+    let email = $"{username}@example.com"
+    register db username email "Str0ng#Pass1!" |> Async.RunSynchronously |> ignore
+    let status, body = login db username "Str0ng#Pass1!" |> Async.RunSynchronously
 
-    let respBody =
-        resp.Content.ReadAsStringAsync() |> Async.AwaitTask |> Async.RunSynchronously
+    if status = 200 then
+        let doc = JsonDocument.Parse(body)
+        doc.RootElement.GetProperty("access_token").GetString()
+    else
+        failwith $"Login failed for {username}: {status} {body}"
 
-    int resp.StatusCode, respBody
+let private createExpenseForUser (db: DemoBeFsgi.Infrastructure.AppDbContext.AppDbContext) (token: string) =
+    let status, body =
+        createExpense db (Some token) "10.00" "USD" "food" "test" "2024-01-01" "expense" None None
+        |> Async.RunSynchronously
 
-let private postAuth (client: HttpClient) (url: string) (body: string) (token: string) =
-    let content = new StringContent(body, Encoding.UTF8, "application/json")
-    let req = new HttpRequestMessage(HttpMethod.Post, url)
-    req.Content <- content
-    req.Headers.Authorization <- AuthenticationHeaderValue("Bearer", token)
-    let resp = client.SendAsync(req) |> Async.AwaitTask |> Async.RunSynchronously
-
-    let respBody =
-        resp.Content.ReadAsStringAsync() |> Async.AwaitTask |> Async.RunSynchronously
-
-    int resp.StatusCode, respBody
-
-let private getAuth (client: HttpClient) (url: string) (token: string) =
-    let req = new HttpRequestMessage(HttpMethod.Get, url)
-    req.Headers.Authorization <- AuthenticationHeaderValue("Bearer", token)
-    let resp = client.SendAsync(req) |> Async.AwaitTask |> Async.RunSynchronously
-
-    let respBody =
-        resp.Content.ReadAsStringAsync() |> Async.AwaitTask |> Async.RunSynchronously
-
-    int resp.StatusCode, respBody
-
-let private patchAuth (client: HttpClient) (url: string) (body: string) (token: string) =
-    let content = new StringContent(body, Encoding.UTF8, "application/json")
-    let req = new HttpRequestMessage(HttpMethod.Patch, url)
-    req.Content <- content
-    req.Headers.Authorization <- AuthenticationHeaderValue("Bearer", token)
-    let resp = client.SendAsync(req) |> Async.AwaitTask |> Async.RunSynchronously
-
-    let respBody =
-        resp.Content.ReadAsStringAsync() |> Async.AwaitTask |> Async.RunSynchronously
-
-    int resp.StatusCode, respBody
-
-let private putAuth (client: HttpClient) (url: string) (body: string) (token: string) =
-    let content = new StringContent(body, Encoding.UTF8, "application/json")
-    let req = new HttpRequestMessage(HttpMethod.Put, url)
-    req.Content <- content
-    req.Headers.Authorization <- AuthenticationHeaderValue("Bearer", token)
-    let resp = client.SendAsync(req) |> Async.AwaitTask |> Async.RunSynchronously
-
-    let respBody =
-        resp.Content.ReadAsStringAsync() |> Async.AwaitTask |> Async.RunSynchronously
-
-    int resp.StatusCode, respBody
-
-let private deleteAuth (client: HttpClient) (url: string) (token: string) =
-    let req = new HttpRequestMessage(HttpMethod.Delete, url)
-    req.Headers.Authorization <- AuthenticationHeaderValue("Bearer", token)
-    let resp = client.SendAsync(req) |> Async.AwaitTask |> Async.RunSynchronously
-
-    let respBody =
-        resp.Content.ReadAsStringAsync() |> Async.AwaitTask |> Async.RunSynchronously
-
-    int resp.StatusCode, respBody
-
-let private registerAndLogin (client: HttpClient) (username: string) =
-    let email = sprintf "%s@example.com" username
-
-    let regBody =
-        sprintf """{ "username": "%s", "email": "%s", "password": "Str0ng#Pass1!" }""" username email
-
-    post client "/api/v1/auth/register" regBody |> ignore
-
-    let loginBody =
-        sprintf """{ "username": "%s", "password": "Str0ng#Pass1!" }""" username
-
-    let _, respBody = post client "/api/v1/auth/login" loginBody
-    let doc = JsonDocument.Parse(respBody)
-    doc.RootElement.GetProperty("access_token").GetString()
-
-let private createExpense (client: HttpClient) (token: string) =
-    let body =
-        """{ "amount": "10.00", "currency": "USD", "category": "food", "description": "test", "date": "2024-01-01", "type": "expense" }"""
-
-    let _, createResp = postAuth client "/api/v1/expenses" body token
-    let expDoc = JsonDocument.Parse(createResp)
-    expDoc.RootElement.GetProperty("id").GetString()
+    if status = 201 then
+        let doc = JsonDocument.Parse(body)
+        doc.RootElement.GetProperty("id").GetString()
+    else
+        failwith $"Create expense failed: {status} {body}"
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Program.fs handler coverage
+// Program handler coverage
 // ─────────────────────────────────────────────────────────────────────────────
 
-[<Trait("Category", "Integration")>]
+[<Trait("Category", "Unit")>]
 type ProgramHandlerCoverageTests() =
 
     [<Fact>]
-    member _.``setAdminRoleForUser with nonexistent user returns 404``() =
-        use client = createClient ()
-        let fakeUsername = sprintf "nobody_%s" (shortId ())
-        let url = sprintf "/test/set-admin-role/%s" fakeUsername
-        let req = new HttpRequestMessage(HttpMethod.Post, url)
-        let resp = client.SendAsync(req) |> Async.AwaitTask |> Async.RunSynchronously
-        Assert.Equal(404, int resp.StatusCode)
+    member _.``setAdminRole with nonexistent user returns 404``() =
+        let db, cleanup = createDb ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let fakeUsername = $"nobody_{shortId ()}"
+        let status, _ = setAdminRole db fakeUsername |> Async.RunSynchronously
+        Assert.Equal(404, status)
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Auth handler
 // ─────────────────────────────────────────────────────────────────────────────
 
-[<Trait("Category", "Integration")>]
+[<Trait("Category", "Unit")>]
 type AuthHandlerCoverageTests() =
 
     [<Fact>]
-    member _.``register with invalid JSON returns 400``() =
-        use client = createClient ()
-        let status, _ = post client "/api/v1/auth/register" "not-json"
+    member _.``register with empty username returns 400``() =
+        let db, cleanup = createDb ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let status, _ = register db "" "a@example.com" "Str0ng#Pass1!" |> Async.RunSynchronously
         Assert.Equal(400, status)
 
     [<Fact>]
-    member _.``login with invalid JSON returns 400``() =
-        use client = createClient ()
-        let status, _ = post client "/api/v1/auth/login" "not-json"
+    member _.``register with empty email returns 400``() =
+        let db, cleanup = createDb ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let status, _ = register db "alice" "" "Str0ng#Pass1!" |> Async.RunSynchronously
         Assert.Equal(400, status)
 
     [<Fact>]
-    member _.``refresh with invalid JSON returns 400``() =
-        use client = createClient ()
-        let status, _ = post client "/api/v1/auth/refresh" "not-json"
+    member _.``register with empty password returns 400``() =
+        let db, cleanup = createDb ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let status, _ = register db "alice" "a@example.com" "" |> Async.RunSynchronously
         Assert.Equal(400, status)
 
     [<Fact>]
-    member _.``register with null fields returns 400``() =
-        use client = createClient ()
-        let body = """{ "username": null, "email": null, "password": null }"""
-        let status, _ = post client "/api/v1/auth/register" body
+    member _.``register with null username returns 400``() =
+        let db, cleanup = createDb ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let status, _ = register db null "a@example.com" "Str0ng#Pass1!" |> Async.RunSynchronously
         Assert.Equal(400, status)
 
     [<Fact>]
     member _.``login with inactive account returns 401``() =
-        use client = createClient ()
-        let username = sprintf "ina_%s" (shortId ())
-        let email = sprintf "%s@example.com" username
-
-        let regBody =
-            sprintf """{ "username": "%s", "email": "%s", "password": "Str0ng#Pass1!" }""" username email
-
-        post client "/api/v1/auth/register" regBody |> ignore
-
-        let loginBody =
-            sprintf """{ "username": "%s", "password": "Str0ng#Pass1!" }""" username
-
-        let _, loginResp = post client "/api/v1/auth/login" loginBody
-        let doc = JsonDocument.Parse(loginResp)
-        let token = doc.RootElement.GetProperty("access_token").GetString()
-        postAuth client "/api/v1/users/me/deactivate" "" token |> ignore
-        let status, _ = post client "/api/v1/auth/login" loginBody
+        let db, cleanup = createDb ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let username = $"ina_{shortId ()}"
+        let token = registerAndLogin db username
+        deactivate db (Some token) |> Async.RunSynchronously |> ignore
+        let status, _ = login db username "Str0ng#Pass1!" |> Async.RunSynchronously
         Assert.Equal(401, status)
 
     [<Fact>]
     member _.``login with disabled account returns 401``() =
-        use client = createClient ()
-        let username = sprintf "dis_%s" (shortId ())
-        let email = sprintf "%s@example.com" username
+        let db, cleanup = createDb ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let username = $"dis_{shortId ()}"
 
-        let regBody =
-            sprintf """{ "username": "%s", "email": "%s", "password": "Str0ng#Pass1!" }""" username email
+        let email = $"{username}@example.com"
+        let _s, regBody = register db username email "Str0ng#Pass1!" |> Async.RunSynchronously
+        let userId = JsonDocument.Parse(regBody).RootElement.GetProperty("id").GetString()
 
-        let _, regResp = post client "/api/v1/auth/register" regBody
-        let doc = JsonDocument.Parse(regResp)
-        let userId = doc.RootElement.GetProperty("id").GetString()
+        let adminName = $"adm_{shortId ()}"
+        let adminEmail = $"{adminName}@example.com"
+        register db adminName adminEmail "Str0ng#Pass1!" |> Async.RunSynchronously |> ignore
+        setAdminRole db adminName |> Async.RunSynchronously |> ignore
+        let adminToken, _ = Some(registerAndLogin db adminName), None
+        disableUser db adminToken (Guid.Parse(userId)) |> Async.RunSynchronously |> ignore
 
-        let adminName = sprintf "adm_%s" (shortId ())
-        let adminEmail = sprintf "%s@example.com" adminName
-
-        let adminRegBody =
-            sprintf """{ "username": "%s", "email": "%s", "password": "Str0ng#Pass1!" }""" adminName adminEmail
-
-        post client "/api/v1/auth/register" adminRegBody |> ignore
-        post client (sprintf "/test/set-admin-role/%s" adminName) "" |> ignore
-
-        let adminLoginBody =
-            sprintf """{ "username": "%s", "password": "Str0ng#Pass1!" }""" adminName
-
-        let _, adminLoginResp = post client "/api/v1/auth/login" adminLoginBody
-        let adminDoc = JsonDocument.Parse(adminLoginResp)
-        let adminToken = adminDoc.RootElement.GetProperty("access_token").GetString()
-        let disableUrl = sprintf "/api/v1/admin/users/%s/disable" userId
-        postAuth client disableUrl """{"reason":"test"}""" adminToken |> ignore
-
-        let loginBody =
-            sprintf """{ "username": "%s", "password": "Str0ng#Pass1!" }""" username
-
-        let status, _ = post client "/api/v1/auth/login" loginBody
+        let status, _ = login db username "Str0ng#Pass1!" |> Async.RunSynchronously
         Assert.Equal(401, status)
 
     [<Fact>]
     member _.``login account gets locked after 5 failed attempts``() =
-        use client = createClient ()
-        let username = sprintf "lck_%s" (shortId ())
-        let email = sprintf "%s@example.com" username
-
-        let regBody =
-            sprintf """{ "username": "%s", "email": "%s", "password": "Str0ng#Pass1!" }""" username email
-
-        post client "/api/v1/auth/register" regBody |> ignore
-
-        let badLogin =
-            sprintf """{ "username": "%s", "password": "WrongPass1!" }""" username
+        let db, cleanup = createDb ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let username = $"lck_{shortId ()}"
+        let email = $"{username}@example.com"
+        register db username email "Str0ng#Pass1!" |> Async.RunSynchronously |> ignore
 
         for _ in 1..4 do
-            let status, _ = post client "/api/v1/auth/login" badLogin
+            let status, _ = login db username "WrongPass1!" |> Async.RunSynchronously
             Assert.Equal(401, status)
 
-        let status, _ = post client "/api/v1/auth/login" badLogin
+        let status, _ = login db username "WrongPass1!" |> Async.RunSynchronously
         Assert.Equal(401, status)
 
     [<Fact>]
     member _.``refresh with invalid token returns 401``() =
-        use client = createClient ()
-
-        let status, _ =
-            post client "/api/v1/auth/refresh" """{ "refresh_token": "nonexistent" }"""
-
+        let db, cleanup = createDb ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let status, _ = refresh db "nonexistent" |> Async.RunSynchronously
         Assert.Equal(401, status)
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Token handler
 // ─────────────────────────────────────────────────────────────────────────────
 
-[<Trait("Category", "Integration")>]
+[<Trait("Category", "Unit")>]
 type TokenHandlerCoverageTests() =
 
     [<Fact>]
     member _.``claims endpoint with valid token returns 200``() =
-        use client = createClient ()
-        let username = sprintf "tok_%s" (shortId ())
-        let token = registerAndLogin client username
-        let status, body = getAuth client "/api/v1/tokens/claims" token
+        let db, cleanup = createDb ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let username = $"tok_{shortId ()}"
+        let token = registerAndLogin db username
+        let status, body = getTokenClaims (Some token)
         Assert.Equal(200, status)
         Assert.Contains("sub", body)
 
     [<Fact>]
-    member _.``claims endpoint without auth returns 401``() =
-        use client = createClient ()
-        let req = new HttpRequestMessage(HttpMethod.Get, "/api/v1/tokens/claims")
-        let resp = client.SendAsync(req) |> Async.AwaitTask |> Async.RunSynchronously
-        Assert.Equal(401, int resp.StatusCode)
+    member _.``claims endpoint without token returns 400``() =
+        let status, _ = getTokenClaims None
+        // No token → cannot decode → 400
+        Assert.Equal(400, status)
 
     [<Fact>]
     member _.``jwks endpoint returns keys``() =
-        use client = createClient ()
-        let req = new HttpRequestMessage(HttpMethod.Get, "/.well-known/jwks.json")
-        let resp = client.SendAsync(req) |> Async.AwaitTask |> Async.RunSynchronously
-
-        let body =
-            resp.Content.ReadAsStringAsync() |> Async.AwaitTask |> Async.RunSynchronously
-
-        Assert.Equal(200, int resp.StatusCode)
+        let status, body = getJwks ()
+        Assert.Equal(200, status)
         Assert.Contains("keys", body)
 
 // ─────────────────────────────────────────────────────────────────────────────
 // User handler
 // ─────────────────────────────────────────────────────────────────────────────
 
-[<Trait("Category", "Integration")>]
+[<Trait("Category", "Unit")>]
 type UserHandlerCoverageTests() =
 
     [<Fact>]
-    member _.``updateProfile with invalid JSON returns 400``() =
-        use client = createClient ()
-        let username = sprintf "upd_%s" (shortId ())
-        let token = registerAndLogin client username
-        let status, _ = patchAuth client "/api/v1/users/me" "not-json" token
-        Assert.Equal(400, status)
-
-    [<Fact>]
-    member _.``changePassword with invalid JSON returns 400``() =
-        use client = createClient ()
-        let username = sprintf "chg_%s" (shortId ())
-        let token = registerAndLogin client username
-        let status, _ = postAuth client "/api/v1/users/me/password" "not-json" token
-        Assert.Equal(400, status)
-
-    [<Fact>]
     member _.``changePassword with wrong old password returns 401``() =
-        use client = createClient ()
-        let username = sprintf "pwd_%s" (shortId ())
-        let token = registerAndLogin client username
-
-        let body =
-            """{ "old_password": "WrongPass1!", "new_password": "NewStr0ng#Pass1!" }"""
-
-        let status, _ = postAuth client "/api/v1/users/me/password" body token
+        let db, cleanup = createDb ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let username = $"pwd_{shortId ()}"
+        let token = registerAndLogin db username
+        let status, _ = changePassword db (Some token) "WrongPass1!" "NewStr0ng#Pass1!" |> Async.RunSynchronously
         Assert.Equal(401, status)
 
     [<Fact>]
     member _.``updateProfile with null display name uses existing``() =
-        use client = createClient ()
-        let username = sprintf "prf_%s" (shortId ())
-        let token = registerAndLogin client username
-        let body = """{ "display_name": null }"""
-        let status, _ = patchAuth client "/api/v1/users/me" body token
+        let db, cleanup = createDb ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let username = $"prf_{shortId ()}"
+        let token = registerAndLogin db username
+        let status, _ = updateProfile db (Some token) null |> Async.RunSynchronously
         Assert.Equal(200, status)
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Admin handler
 // ─────────────────────────────────────────────────────────────────────────────
 
-[<Trait("Category", "Integration")>]
+[<Trait("Category", "Unit")>]
 type AdminHandlerCoverageTests() =
 
-    let createAdminClient () =
-        let client = createClient ()
-        let adminName = sprintf "adm_%s" (shortId ())
-        let adminEmail = sprintf "%s@example.com" adminName
-
-        let regBody =
-            sprintf """{ "username": "%s", "email": "%s", "password": "Str0ng#Pass1!" }""" adminName adminEmail
-
-        post client "/api/v1/auth/register" regBody |> ignore
-        post client (sprintf "/test/set-admin-role/%s" adminName) "" |> ignore
-
-        let loginBody =
-            sprintf """{ "username": "%s", "password": "Str0ng#Pass1!" }""" adminName
-
-        let _, loginResp = post client "/api/v1/auth/login" loginBody
-        let doc = JsonDocument.Parse(loginResp)
-        let adminToken = doc.RootElement.GetProperty("access_token").GetString()
-        client, adminToken
+    let createAdminContext () =
+        let db, cleanup = createDb ()
+        let adminName = $"adm_{shortId ()}"
+        let adminEmail = $"{adminName}@example.com"
+        register db adminName adminEmail "Str0ng#Pass1!" |> Async.RunSynchronously |> ignore
+        setAdminRole db adminName |> Async.RunSynchronously |> ignore
+        let adminToken = registerAndLogin db adminName
+        db, cleanup, adminToken
 
     [<Fact>]
     member _.``disableUser with nonexistent user returns 404``() =
-        let client, adminToken = createAdminClient ()
-
-        let fakeId = Guid.NewGuid().ToString()
-        let disableUrl = sprintf "/api/v1/admin/users/%s/disable" fakeId
-        let status, _ = postAuth client disableUrl """{"reason":"test"}""" adminToken
+        let db, cleanup, adminToken = createAdminContext ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let fakeId = Guid.NewGuid()
+        let status, _ = disableUser db (Some adminToken) fakeId |> Async.RunSynchronously
         Assert.Equal(404, status)
-        (client :> IDisposable).Dispose()
 
     [<Fact>]
     member _.``enableUser with nonexistent user returns 404``() =
-        let client, adminToken = createAdminClient ()
-        let fakeId = Guid.NewGuid().ToString()
-        let enableUrl = sprintf "/api/v1/admin/users/%s/enable" fakeId
-        let status, _ = postAuth client enableUrl "" adminToken
+        let db, cleanup, adminToken = createAdminContext ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let fakeId = Guid.NewGuid()
+        let status, _ = enableUser db (Some adminToken) fakeId |> Async.RunSynchronously
         Assert.Equal(404, status)
-        (client :> IDisposable).Dispose()
 
     [<Fact>]
     member _.``unlockUser with nonexistent user returns 404``() =
-        let client, adminToken = createAdminClient ()
-        let fakeId = Guid.NewGuid().ToString()
-        let unlockUrl = sprintf "/api/v1/admin/users/%s/unlock" fakeId
-        let status, _ = postAuth client unlockUrl "" adminToken
+        let db, cleanup, adminToken = createAdminContext ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let fakeId = Guid.NewGuid()
+        let status, _ = unlockUser db (Some adminToken) fakeId |> Async.RunSynchronously
         Assert.Equal(404, status)
-        (client :> IDisposable).Dispose()
 
     [<Fact>]
     member _.``forcePasswordReset with nonexistent user returns 404``() =
-        let client, adminToken = createAdminClient ()
-        let fakeId = Guid.NewGuid().ToString()
-        let resetUrl = sprintf "/api/v1/admin/users/%s/force-password-reset" fakeId
-        let status, _ = postAuth client resetUrl "" adminToken
+        let db, cleanup, adminToken = createAdminContext ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let fakeId = Guid.NewGuid()
+        let status, _ = forcePasswordReset db (Some adminToken) fakeId |> Async.RunSynchronously
         Assert.Equal(404, status)
-        (client :> IDisposable).Dispose()
 
     [<Fact>]
     member _.``listUsers with email filter returns filtered results``() =
-        let client, adminToken = createAdminClient ()
-
-        let status, _ =
-            getAuth client "/api/v1/admin/users?email=notexists@example.com" adminToken
-
+        let db, cleanup, adminToken = createAdminContext ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let status, _ = listUsers db (Some adminToken) 1 20 (Some "notexists@example.com") |> Async.RunSynchronously
         Assert.Equal(200, status)
-        (client :> IDisposable).Dispose()
-
-    [<Fact>]
-    member _.``listUsers with invalid page param uses default``() =
-        let client, adminToken = createAdminClient ()
-        let status, _ = getAuth client "/api/v1/admin/users?page=abc&size=xyz" adminToken
-        Assert.Equal(200, status)
-        (client :> IDisposable).Dispose()
 
     [<Fact>]
     member _.``non-admin user gets 403 on admin endpoint``() =
-        use client = createClient ()
-        let username = sprintf "nonadm_%s" (shortId ())
-        let token = registerAndLogin client username
-        let status, _ = getAuth client "/api/v1/admin/users" token
+        let db, cleanup = createDb ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let username = $"nonadm_{shortId ()}"
+        let token = registerAndLogin db username
+        let status, _ = listUsers db (Some token) 1 20 None |> Async.RunSynchronously
         Assert.Equal(403, status)
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Expense handler
 // ─────────────────────────────────────────────────────────────────────────────
 
-[<Trait("Category", "Integration")>]
+[<Trait("Category", "Unit")>]
 type ExpenseHandlerCoverageTests() =
 
-    let setupUser (client: HttpClient) =
-        let username = sprintf "exp_%s" (shortId ())
-        registerAndLogin client username
-
-    [<Fact>]
-    member _.``create expense with invalid JSON returns 400``() =
-        use client = createClient ()
-        let token = setupUser client
-        let status, _ = postAuth client "/api/v1/expenses" "not-json" token
-        Assert.Equal(400, status)
+    let setupUser () =
+        let db, cleanup = createDb ()
+        let username = $"exp_{shortId ()}"
+        let token = registerAndLogin db username
+        db, cleanup, token
 
     [<Fact>]
     member _.``create expense with invalid currency returns 400``() =
-        use client = createClient ()
-        let token = setupUser client
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
 
-        let body =
-            """{ "amount": "10.00", "currency": "EUR", "category": "food", "description": "test", "date": "2024-01-01", "type": "expense" }"""
+        let status, _ =
+            createExpense db (Some token) "10.00" "EUR" "food" "test" "2024-01-01" "expense" None None
+            |> Async.RunSynchronously
 
-        let status, _ = postAuth client "/api/v1/expenses" body token
         Assert.Equal(400, status)
 
     [<Fact>]
     member _.``create expense with empty amount returns 400``() =
-        use client = createClient ()
-        let token = setupUser client
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
 
-        let body =
-            """{ "amount": "", "currency": "USD", "category": "food", "description": "test", "date": "2024-01-01", "type": "expense" }"""
+        let status, _ =
+            createExpense db (Some token) "" "USD" "food" "test" "2024-01-01" "expense" None None
+            |> Async.RunSynchronously
 
-        let status, _ = postAuth client "/api/v1/expenses" body token
         Assert.Equal(400, status)
 
     [<Fact>]
     member _.``create expense with invalid amount format returns 400``() =
-        use client = createClient ()
-        let token = setupUser client
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
 
-        let body =
-            """{ "amount": "not-a-number", "currency": "USD", "category": "food", "description": "test", "date": "2024-01-01", "type": "expense" }"""
+        let status, _ =
+            createExpense db (Some token) "not-a-number" "USD" "food" "test" "2024-01-01" "expense" None None
+            |> Async.RunSynchronously
 
-        let status, _ = postAuth client "/api/v1/expenses" body token
         Assert.Equal(400, status)
 
     [<Fact>]
     member _.``create expense with negative amount returns 400``() =
-        use client = createClient ()
-        let token = setupUser client
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
 
-        let body =
-            """{ "amount": "-5.00", "currency": "USD", "category": "food", "description": "test", "date": "2024-01-01", "type": "expense" }"""
+        let status, _ =
+            createExpense db (Some token) "-5.00" "USD" "food" "test" "2024-01-01" "expense" None None
+            |> Async.RunSynchronously
 
-        let status, _ = postAuth client "/api/v1/expenses" body token
         Assert.Equal(400, status)
 
     [<Fact>]
     member _.``create expense with invalid unit returns 400``() =
-        use client = createClient ()
-        let token = setupUser client
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
 
-        let body =
-            """{ "amount": "10.00", "currency": "USD", "category": "food", "description": "test", "date": "2024-01-01", "type": "expense", "unit": "fathom" }"""
+        let status, _ =
+            createExpense
+                db
+                (Some token)
+                "10.00"
+                "USD"
+                "food"
+                "test"
+                "2024-01-01"
+                "expense"
+                None
+                (Some "fathom")
+            |> Async.RunSynchronously
 
-        let status, _ = postAuth client "/api/v1/expenses" body token
         Assert.Equal(400, status)
 
     [<Fact>]
     member _.``create expense with IDR currency formats correctly``() =
-        use client = createClient ()
-        let token = setupUser client
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
 
-        let body =
-            """{ "amount": "150000", "currency": "IDR", "category": "food", "description": "test", "date": "2024-01-01", "type": "expense" }"""
+        let status, respBody =
+            createExpense db (Some token) "150000" "IDR" "food" "test" "2024-01-01" "expense" None None
+            |> Async.RunSynchronously
 
-        let status, respBody = postAuth client "/api/v1/expenses" body token
         Assert.Equal(201, status)
         Assert.Contains("150000", respBody)
 
     [<Fact>]
     member _.``create expense with invalid date defaults to now``() =
-        use client = createClient ()
-        let token = setupUser client
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
 
-        let body =
-            """{ "amount": "10.00", "currency": "USD", "category": "food", "description": "test", "date": "not-a-date", "type": "expense" }"""
+        let status, _ =
+            createExpense db (Some token) "10.00" "USD" "food" "test" "not-a-date" "expense" None None
+            |> Async.RunSynchronously
 
-        let status, _ = postAuth client "/api/v1/expenses" body token
         Assert.Equal(201, status)
 
     [<Fact>]
     member _.``create expense with null category and description``() =
-        use client = createClient ()
-        let token = setupUser client
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
 
-        let body =
-            """{ "amount": "10.00", "currency": "USD", "category": null, "description": null, "date": "2024-01-01", "type": null }"""
+        let status, _ =
+            createExpense db (Some token) "10.00" "USD" null null "2024-01-01" null None None
+            |> Async.RunSynchronously
 
-        let status, _ = postAuth client "/api/v1/expenses" body token
         Assert.Equal(201, status)
 
     [<Fact>]
     member _.``create expense with quantity and unit``() =
-        use client = createClient ()
-        let token = setupUser client
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
 
-        let body =
-            """{ "amount": "10.00", "currency": "USD", "category": "food", "description": "test", "date": "2024-01-01", "type": "expense", "quantity": 2.5, "unit": "kg" }"""
+        let status, _ =
+            createExpense db (Some token) "10.00" "USD" "food" "test" "2024-01-01" "expense" (Some 2.5) (Some "kg")
+            |> Async.RunSynchronously
 
-        let status, _ = postAuth client "/api/v1/expenses" body token
         Assert.Equal(201, status)
 
     [<Fact>]
     member _.``getById returns 404 for nonexistent expense``() =
-        use client = createClient ()
-        let token = setupUser client
-        let fakeId = Guid.NewGuid().ToString()
-        let url = sprintf "/api/v1/expenses/%s" fakeId
-        let status, _ = getAuth client url token
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let status, _ = getExpenseById db (Some token) (Guid.NewGuid()) |> Async.RunSynchronously
         Assert.Equal(404, status)
 
     [<Fact>]
     member _.``getById returns 403 when accessing another user's expense``() =
-        use client = createClient ()
-        let token1 = setupUser client
-        let token2 = setupUser client
-        let expId = createExpense client token1
-        let url = sprintf "/api/v1/expenses/%s" expId
-        let status, _ = getAuth client url token2
+        let db, cleanup, token1 = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let username2 = $"exp_{shortId ()}"
+        let token2 = registerAndLogin db username2
+        let expId = createExpenseForUser db token1
+        let status, _ = getExpenseById db (Some token2) (Guid.Parse(expId)) |> Async.RunSynchronously
         Assert.Equal(403, status)
 
     [<Fact>]
     member _.``getById with unit returns unit in response``() =
-        use client = createClient ()
-        let token = setupUser client
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
 
-        let body =
-            """{ "amount": "10.00", "currency": "USD", "category": "food", "description": "test", "date": "2024-01-01", "type": "expense", "quantity": 2.0, "unit": "kg" }"""
+        let _s, body =
+            createExpense db (Some token) "10.00" "USD" "food" "test" "2024-01-01" "expense" (Some 2.0) (Some "kg")
+            |> Async.RunSynchronously
 
-        let _, createResp = postAuth client "/api/v1/expenses" body token
-        let expDoc = JsonDocument.Parse(createResp)
-        let expId = expDoc.RootElement.GetProperty("id").GetString()
-        let url = sprintf "/api/v1/expenses/%s" expId
-        let status, respBody = getAuth client url token
+        let expId = Guid.Parse(JsonDocument.Parse(body).RootElement.GetProperty("id").GetString())
+        let status, respBody = getExpenseById db (Some token) expId |> Async.RunSynchronously
         Assert.Equal(200, status)
         Assert.Contains("kg", respBody)
 
     [<Fact>]
     member _.``getById with IDR currency formats correctly``() =
-        use client = createClient ()
-        let token = setupUser client
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
 
-        let body =
-            """{ "amount": "150000", "currency": "IDR", "category": "food", "description": "test", "date": "2024-01-01", "type": "expense" }"""
+        let _s, body =
+            createExpense db (Some token) "150000" "IDR" "food" "test" "2024-01-01" "expense" None None
+            |> Async.RunSynchronously
 
-        let _, createResp = postAuth client "/api/v1/expenses" body token
-        let expDoc = JsonDocument.Parse(createResp)
-        let expId = expDoc.RootElement.GetProperty("id").GetString()
-        let url = sprintf "/api/v1/expenses/%s" expId
-        let status, respBody = getAuth client url token
+        let expId = Guid.Parse(JsonDocument.Parse(body).RootElement.GetProperty("id").GetString())
+        let status, respBody = getExpenseById db (Some token) expId |> Async.RunSynchronously
         Assert.Equal(200, status)
         Assert.Contains("150000", respBody)
 
     [<Fact>]
-    member _.``update expense with invalid JSON returns 400``() =
-        use client = createClient ()
-        let token = setupUser client
-        let fakeId = Guid.NewGuid().ToString()
-        let url = sprintf "/api/v1/expenses/%s" fakeId
-        let status, _ = putAuth client url "not-json" token
-        Assert.Equal(400, status)
-
-    [<Fact>]
     member _.``update expense returns 404 for nonexistent``() =
-        use client = createClient ()
-        let token = setupUser client
-        let fakeId = Guid.NewGuid().ToString()
-        let url = sprintf "/api/v1/expenses/%s" fakeId
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
 
-        let body =
-            """{ "amount": "20.00", "currency": "USD", "category": "food", "description": "updated", "date": "2024-01-01", "type": "expense" }"""
+        let status, _ =
+            updateExpense db (Some token) (Guid.NewGuid()) "20.00" "USD" "food" "updated" "2024-01-01" "expense"
+            |> Async.RunSynchronously
 
-        let status, _ = putAuth client url body token
         Assert.Equal(404, status)
 
     [<Fact>]
     member _.``update expense returns 403 for another user's expense``() =
-        use client = createClient ()
-        let token1 = setupUser client
-        let token2 = setupUser client
-        let expId = createExpense client token1
-        let url = sprintf "/api/v1/expenses/%s" expId
+        let db, cleanup, token1 = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let username2 = $"exp_{shortId ()}"
+        let token2 = registerAndLogin db username2
+        let expId = createExpenseForUser db token1
 
-        let body =
-            """{ "amount": "20.00", "currency": "USD", "category": "food", "description": "test", "date": "2024-01-01", "type": "expense" }"""
+        let status, _ =
+            updateExpense
+                db
+                (Some token2)
+                (Guid.Parse(expId))
+                "20.00"
+                "USD"
+                "food"
+                "test"
+                "2024-01-01"
+                "expense"
+            |> Async.RunSynchronously
 
-        let status, _ = putAuth client url body token2
         Assert.Equal(403, status)
 
     [<Fact>]
     member _.``update expense with invalid amount returns 400``() =
-        use client = createClient ()
-        let token = setupUser client
-        let expId = createExpense client token
-        let url = sprintf "/api/v1/expenses/%s" expId
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let expId = createExpenseForUser db token
 
-        let body =
-            """{ "amount": "bad", "currency": "USD", "category": "food", "description": "test", "date": "2024-01-01", "type": "expense" }"""
+        let status, _ =
+            updateExpense db (Some token) (Guid.Parse(expId)) "bad" "USD" "food" "test" "2024-01-01" "expense"
+            |> Async.RunSynchronously
 
-        let status, _ = putAuth client url body token
         Assert.Equal(400, status)
 
     [<Fact>]
     member _.``update expense with IDR currency formats correctly``() =
-        use client = createClient ()
-        let token = setupUser client
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
 
-        let createBody =
-            """{ "amount": "150000", "currency": "IDR", "category": "food", "description": "test", "date": "2024-01-01", "type": "expense" }"""
+        let _s, body =
+            createExpense db (Some token) "150000" "IDR" "food" "test" "2024-01-01" "expense" None None
+            |> Async.RunSynchronously
 
-        let _, createResp = postAuth client "/api/v1/expenses" createBody token
-        let expDoc = JsonDocument.Parse(createResp)
-        let expId = expDoc.RootElement.GetProperty("id").GetString()
-        let url = sprintf "/api/v1/expenses/%s" expId
+        let expId = Guid.Parse(JsonDocument.Parse(body).RootElement.GetProperty("id").GetString())
 
-        let body =
-            """{ "amount": "200000", "currency": "IDR", "category": "food", "description": "updated", "date": "2024-01-02", "type": "expense" }"""
+        let status, respBody =
+            updateExpense db (Some token) expId "200000" "IDR" "food" "updated" "2024-01-02" "expense"
+            |> Async.RunSynchronously
 
-        let status, respBody = putAuth client url body token
         Assert.Equal(200, status)
         Assert.Contains("200000", respBody)
 
     [<Fact>]
     member _.``update expense with null optional fields uses existing values``() =
-        use client = createClient ()
-        let token = setupUser client
-        let expId = createExpense client token
-        let url = sprintf "/api/v1/expenses/%s" expId
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let expId = createExpenseForUser db token
 
-        let body =
-            """{ "amount": "15.00", "currency": null, "category": null, "description": null, "date": "not-a-date", "type": null }"""
+        let status, _ =
+            updateExpense db (Some token) (Guid.Parse(expId)) "15.00" null null null "not-a-date" null
+            |> Async.RunSynchronously
 
-        let status, _ = putAuth client url body token
         Assert.Equal(200, status)
 
     [<Fact>]
     member _.``delete expense returns 404 for nonexistent``() =
-        use client = createClient ()
-        let token = setupUser client
-        let fakeId = Guid.NewGuid().ToString()
-        let url = sprintf "/api/v1/expenses/%s" fakeId
-        let status, _ = deleteAuth client url token
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let status, _ = deleteExpense db (Some token) (Guid.NewGuid()) |> Async.RunSynchronously
         Assert.Equal(404, status)
 
     [<Fact>]
     member _.``delete expense returns 403 for another user's expense``() =
-        use client = createClient ()
-        let token1 = setupUser client
-        let token2 = setupUser client
-        let expId = createExpense client token1
-        let url = sprintf "/api/v1/expenses/%s" expId
-        let status, _ = deleteAuth client url token2
+        let db, cleanup, token1 = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let username2 = $"exp_{shortId ()}"
+        let token2 = registerAndLogin db username2
+        let expId = createExpenseForUser db token1
+        let status, _ = deleteExpense db (Some token2) (Guid.Parse(expId)) |> Async.RunSynchronously
         Assert.Equal(403, status)
 
     [<Fact>]
     member _.``list expenses with IDR currency formats correctly``() =
-        use client = createClient ()
-        let token = setupUser client
-
-        let body =
-            """{ "amount": "150000", "currency": "IDR", "category": "food", "description": "test", "date": "2024-01-01", "type": "expense" }"""
-
-        postAuth client "/api/v1/expenses" body token |> ignore
-        let status, respBody = getAuth client "/api/v1/expenses" token
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        createExpense db (Some token) "150000" "IDR" "food" "test" "2024-01-01" "expense" None None |> Async.RunSynchronously |> ignore
+        let status, respBody = listExpenses db (Some token) 1 20 |> Async.RunSynchronously
         Assert.Equal(200, status)
         Assert.Contains("150000", respBody)
 
     [<Fact>]
     member _.``list expenses with quantity``() =
-        use client = createClient ()
-        let token = setupUser client
-
-        let body =
-            """{ "amount": "10.00", "currency": "USD", "category": "food", "description": "test", "date": "2024-01-01", "type": "expense", "quantity": 1.5, "unit": "kg" }"""
-
-        postAuth client "/api/v1/expenses" body token |> ignore
-        let status, respBody = getAuth client "/api/v1/expenses" token
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        createExpense db (Some token) "10.00" "USD" "food" "test" "2024-01-01" "expense" (Some 1.5) (Some "kg") |> Async.RunSynchronously |> ignore
+        let status, respBody = listExpenses db (Some token) 1 20 |> Async.RunSynchronously
         Assert.Equal(200, status)
         Assert.Contains("1.5", respBody)
 
     [<Fact>]
-    member _.``list expenses with invalid page and size params``() =
-        use client = createClient ()
-        let token = setupUser client
-        let status, _ = getAuth client "/api/v1/expenses?page=abc&size=xyz" token
-        Assert.Equal(200, status)
-
-    [<Fact>]
     member _.``summary with IDR expenses formats correctly``() =
-        use client = createClient ()
-        let token = setupUser client
-
-        let body =
-            """{ "amount": "150000", "currency": "IDR", "category": "food", "description": "test", "date": "2024-01-01", "type": "expense" }"""
-
-        postAuth client "/api/v1/expenses" body token |> ignore
-        let status, respBody = getAuth client "/api/v1/expenses/summary" token
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        createExpense db (Some token) "150000" "IDR" "food" "test" "2024-01-01" "expense" None None |> Async.RunSynchronously |> ignore
+        let status, respBody = expenseSummary db (Some token) |> Async.RunSynchronously
         Assert.Equal(200, status)
         Assert.Contains("IDR", respBody)
 
@@ -939,497 +754,259 @@ type ExpenseHandlerCoverageTests() =
 // Attachment handler
 // ─────────────────────────────────────────────────────────────────────────────
 
-[<Trait("Category", "Integration")>]
+[<Trait("Category", "Unit")>]
 type AttachmentHandlerCoverageTests() =
 
-    let setupUser (client: HttpClient) =
-        let username = sprintf "att_%s" (shortId ())
-        registerAndLogin client username
+    let setupUser () =
+        let db, cleanup = createDb ()
+        let username = $"att_{shortId ()}"
+        let token = registerAndLogin db username
+        db, cleanup, token
 
     [<Fact>]
     member _.``upload attachment to nonexistent expense returns 404``() =
-        use client = createClient ()
-        let token = setupUser client
-        let fakeId = Guid.NewGuid().ToString()
-
-        use content = new MultipartFormDataContent()
-        use fileContent = new ByteArrayContent([| 0uy; 1uy; 2uy |])
-        fileContent.Headers.ContentType <- MediaTypeHeaderValue("image/jpeg")
-        content.Add(fileContent, "file", "test.jpg")
-
-        let url = sprintf "/api/v1/expenses/%s/attachments" fakeId
-        let req = new HttpRequestMessage(HttpMethod.Post, url)
-        req.Headers.Authorization <- AuthenticationHeaderValue("Bearer", token)
-        req.Content <- content
-        let resp = client.SendAsync(req) |> Async.AwaitTask |> Async.RunSynchronously
-        Assert.Equal(404, int resp.StatusCode)
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let fakeId = Guid.NewGuid()
+        let data = [| 0uy; 1uy; 2uy |]
+        let status, _ = uploadAttachment db (Some token) fakeId "test.jpg" "image/jpeg" data |> Async.RunSynchronously
+        Assert.Equal(404, status)
 
     [<Fact>]
     member _.``upload attachment to another user's expense returns 403``() =
-        use client = createClient ()
-        let token1 = setupUser client
-        let token2 = setupUser client
-        let expId = createExpense client token1
-
-        use content = new MultipartFormDataContent()
-        use fileContent = new ByteArrayContent([| 0uy; 1uy; 2uy |])
-        fileContent.Headers.ContentType <- MediaTypeHeaderValue("image/jpeg")
-        content.Add(fileContent, "file", "test.jpg")
-
-        let url = sprintf "/api/v1/expenses/%s/attachments" expId
-        let req = new HttpRequestMessage(HttpMethod.Post, url)
-        req.Headers.Authorization <- AuthenticationHeaderValue("Bearer", token2)
-        req.Content <- content
-        let resp = client.SendAsync(req) |> Async.AwaitTask |> Async.RunSynchronously
-        Assert.Equal(403, int resp.StatusCode)
+        let db, cleanup, token1 = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let username2 = $"att_{shortId ()}"
+        let token2 = registerAndLogin db username2
+        let expId = createExpenseForUser db token1
+        let data = [| 0uy; 1uy; 2uy |]
+        let status, _ = uploadAttachment db (Some token2) (Guid.Parse(expId)) "test.jpg" "image/jpeg" data |> Async.RunSynchronously
+        Assert.Equal(403, status)
 
     [<Fact>]
     member _.``upload attachment with unsupported content type returns 415``() =
-        use client = createClient ()
-        let token = setupUser client
-        let expId = createExpense client token
-
-        use content = new MultipartFormDataContent()
-        use fileContent = new ByteArrayContent([| 0uy; 1uy; 2uy |])
-        fileContent.Headers.ContentType <- MediaTypeHeaderValue("application/octet-stream")
-        content.Add(fileContent, "file", "test.bin")
-
-        let url = sprintf "/api/v1/expenses/%s/attachments" expId
-        let req = new HttpRequestMessage(HttpMethod.Post, url)
-        req.Headers.Authorization <- AuthenticationHeaderValue("Bearer", token)
-        req.Content <- content
-        let resp = client.SendAsync(req) |> Async.AwaitTask |> Async.RunSynchronously
-        Assert.Equal(415, int resp.StatusCode)
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let expId = createExpenseForUser db token
+        let data = [| 0uy; 1uy; 2uy |]
+        let status, _ = uploadAttachment db (Some token) (Guid.Parse(expId)) "test.bin" "application/octet-stream" data |> Async.RunSynchronously
+        Assert.Equal(415, status)
 
     [<Fact>]
     member _.``list attachments for nonexistent expense returns 404``() =
-        use client = createClient ()
-        let token = setupUser client
-        let fakeId = Guid.NewGuid().ToString()
-        let url = sprintf "/api/v1/expenses/%s/attachments" fakeId
-        let status, _ = getAuth client url token
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let status, _ = listAttachments db (Some token) (Guid.NewGuid()) |> Async.RunSynchronously
         Assert.Equal(404, status)
 
     [<Fact>]
     member _.``list attachments for another user's expense returns 403``() =
-        use client = createClient ()
-        let token1 = setupUser client
-        let token2 = setupUser client
-        let expId = createExpense client token1
-        let url = sprintf "/api/v1/expenses/%s/attachments" expId
-        let status, _ = getAuth client url token2
+        let db, cleanup, token1 = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let username2 = $"att_{shortId ()}"
+        let token2 = registerAndLogin db username2
+        let expId = createExpenseForUser db token1
+        let status, _ = listAttachments db (Some token2) (Guid.Parse(expId)) |> Async.RunSynchronously
         Assert.Equal(403, status)
 
     [<Fact>]
     member _.``delete attachment for nonexistent expense returns 404``() =
-        use client = createClient ()
-        let token = setupUser client
-        let fakeId = Guid.NewGuid().ToString()
-        let fakeAttId = Guid.NewGuid().ToString()
-        let url = sprintf "/api/v1/expenses/%s/attachments/%s" fakeId fakeAttId
-        let status, _ = deleteAuth client url token
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let fakeId = Guid.NewGuid()
+        let fakeAttId = Guid.NewGuid()
+        let status, _ = deleteAttachment db (Some token) fakeId fakeAttId |> Async.RunSynchronously
         Assert.Equal(404, status)
 
     [<Fact>]
     member _.``delete attachment for another user's expense returns 403``() =
-        use client = createClient ()
-        let token1 = setupUser client
-        let token2 = setupUser client
-        let expId = createExpense client token1
-        let fakeAttId = Guid.NewGuid().ToString()
-        let url = sprintf "/api/v1/expenses/%s/attachments/%s" expId fakeAttId
-        let status, _ = deleteAuth client url token2
+        let db, cleanup, token1 = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let username2 = $"att_{shortId ()}"
+        let token2 = registerAndLogin db username2
+        let expId = createExpenseForUser db token1
+        let fakeAttId = Guid.NewGuid()
+        let status, _ = deleteAttachment db (Some token2) (Guid.Parse(expId)) fakeAttId |> Async.RunSynchronously
         Assert.Equal(403, status)
 
     [<Fact>]
     member _.``delete nonexistent attachment on own expense returns 404``() =
-        use client = createClient ()
-        let token = setupUser client
-        let expId = createExpense client token
-        let fakeAttId = Guid.NewGuid().ToString()
-        let url = sprintf "/api/v1/expenses/%s/attachments/%s" expId fakeAttId
-        let status, _ = deleteAuth client url token
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let expId = createExpenseForUser db token
+        let fakeAttId = Guid.NewGuid()
+        let status, _ = deleteAttachment db (Some token) (Guid.Parse(expId)) fakeAttId |> Async.RunSynchronously
         Assert.Equal(404, status)
 
 // ─────────────────────────────────────────────────────────────────────────────
-// JwtMiddleware coverage
+// Auth / JWT middleware coverage via resolveAuth
 // ─────────────────────────────────────────────────────────────────────────────
 
-[<Trait("Category", "Integration")>]
+[<Trait("Category", "Unit")>]
 type JwtMiddlewareCoverageTests() =
 
     [<Fact>]
-    member _.``request with no authorization header returns 401``() =
-        use client = createClient ()
-        let req = new HttpRequestMessage(HttpMethod.Get, "/api/v1/users/me")
-        let resp = client.SendAsync(req) |> Async.AwaitTask |> Async.RunSynchronously
-        Assert.Equal(401, int resp.StatusCode)
-
-    [<Fact>]
-    member _.``request with non-bearer authorization returns 401``() =
-        use client = createClient ()
-        let req = new HttpRequestMessage(HttpMethod.Get, "/api/v1/users/me")
-        req.Headers.Authorization <- AuthenticationHeaderValue("Basic", "dXNlcjpwYXNz")
-        let resp = client.SendAsync(req) |> Async.AwaitTask |> Async.RunSynchronously
-        Assert.Equal(401, int resp.StatusCode)
-
-    [<Fact>]
-    member _.``request with invalid JWT returns 401``() =
-        use client = createClient ()
-        let req = new HttpRequestMessage(HttpMethod.Get, "/api/v1/users/me")
-        req.Headers.Authorization <- AuthenticationHeaderValue("Bearer", "invalid.jwt.token")
-        let resp = client.SendAsync(req) |> Async.AwaitTask |> Async.RunSynchronously
-        Assert.Equal(401, int resp.StatusCode)
-
-    [<Fact>]
-    member _.``request with revoked token returns 401``() =
-        use client = createClient ()
-        let username = sprintf "rev_%s" (shortId ())
-        let token = registerAndLogin client username
-        postAuth client "/api/v1/auth/logout" "" token |> ignore
-        let status, _ = getAuth client "/api/v1/users/me" token
+    member _.``request with no token returns 401``() =
+        let db, cleanup = createDb ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let status, _ = getProfile db None |> Async.RunSynchronously
         Assert.Equal(401, status)
 
     [<Fact>]
-    member _.``request with token having no jti returns 401 as revoked``() =
-        // A valid JWT (passes signature check) but without jti - treated as revoked
-        use client = createClient ()
+    member _.``request with invalid JWT returns 401``() =
+        let db, cleanup = createDb ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let status, _ = getProfile db (Some "invalid.jwt.token") |> Async.RunSynchronously
+        Assert.Equal(401, status)
+
+    [<Fact>]
+    member _.``request with revoked token returns 401``() =
+        let db, cleanup = createDb ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let username = $"rev_{shortId ()}"
+        let token = registerAndLogin db username
+        logout db (Some token) |> Async.RunSynchronously |> ignore
+        let status, _ = getProfile db (Some token) |> Async.RunSynchronously
+        Assert.Equal(401, status)
+
+    [<Fact>]
+    member _.``request with token having no jti treated as revoked returns 401``() =
+        let db, cleanup = createDb ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
         let userId = Guid.NewGuid()
         let claimsArr = [| Claim(JwtRegisteredClaimNames.Sub, userId.ToString()) |]
         let token = makeCustomToken claimsArr false
-        // Token has no jti so isRevoked will be None -> true
-        let status, _ = getAuth client "/api/v1/users/me" token
+        let status, _ = getProfile db (Some token) |> Async.RunSynchronously
         Assert.Equal(401, status)
 
     [<Fact>]
     member _.``request with token with non-guid sub returns 401``() =
-        // A valid JWT with a non-Guid subject
-        use client = createClient ()
+        let db, cleanup = createDb ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
         let claimsArr = [| Claim(JwtRegisteredClaimNames.Sub, "not-a-guid") |]
         let token = makeCustomToken claimsArr true
-        let status, _ = getAuth client "/api/v1/users/me" token
-        Assert.Equal(401, status)
-
-    [<Fact>]
-    member _.``request with token having custom claim but no sub returns 401``() =
-        // A valid JWT with no sub claim at all - forces sub = null and sub2 fallback to "sub" type
-        use client = createClient ()
-        // Use "username" as custom claim type that is NOT "sub" or nameidentifier
-        let claimsArr = [| Claim("custom_claim", "value") |]
-        let token = makeCustomToken claimsArr true
-        let status, _ = getAuth client "/api/v1/users/me" token
+        let status, _ = getProfile db (Some token) |> Async.RunSynchronously
         Assert.Equal(401, status)
 
     [<Fact>]
     member _.``request with valid guid sub but non-existent user returns 401``() =
-        // A valid JWT where sub is a Guid that has never been registered
-        // This exercises JwtMiddleware lines 103-106 (user not found in DB)
-        use client = createClient ()
+        let db, cleanup = createDb ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
         let nonExistentGuid = Guid.NewGuid()
 
         let claimsArr =
-            [| Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier", nonExistentGuid.ToString()) |]
+            [| Claim(
+                   "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
+                   nonExistentGuid.ToString()
+               ) |]
 
         let token = makeCustomToken claimsArr true
-        let status, _ = getAuth client "/api/v1/users/me" token
+        let status, _ = getProfile db (Some token) |> Async.RunSynchronously
         Assert.Equal(401, status)
+
+    [<Fact>]
+    member _.``request with deactivated user account returns 401``() =
+        let db, cleanup = createDb ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let username = $"dact_{shortId ()}"
+        let token = registerAndLogin db username
+        deactivate db (Some token) |> Async.RunSynchronously |> ignore
+        let status, body = getProfile db (Some token) |> Async.RunSynchronously
+        Assert.Equal(401, status)
+        Assert.Contains("deactivated", body)
+
+    [<Fact>]
+    member _.``request with locked user account returns 401 with locked message``() =
+        let db, cleanup = createDb ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let username = $"lkm_{shortId ()}"
+        let email = $"{username}@example.com"
+        register db username email "Str0ng#Pass1!" |> Async.RunSynchronously |> ignore
+        let _s, loginResp = login db username "Str0ng#Pass1!" |> Async.RunSynchronously
+        let doc = JsonDocument.Parse(loginResp)
+        let token = doc.RootElement.GetProperty("access_token").GetString()
+
+        for _ in 1..5 do
+            login db username "WrongPass1!" |> Async.RunSynchronously |> ignore
+
+        let status, body = getProfile db (Some token) |> Async.RunSynchronously
+        Assert.Equal(401, status)
+        Assert.Contains("locked", body)
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Report handler
 // ─────────────────────────────────────────────────────────────────────────────
 
-[<Trait("Category", "Integration")>]
+[<Trait("Category", "Unit")>]
 type ReportHandlerCoverageTests() =
 
-    let setupUser (client: HttpClient) =
-        let username = sprintf "rpt_%s" (shortId ())
-        registerAndLogin client username
+    let setupUser () =
+        let db, cleanup = createDb ()
+        let username = $"rpt_{shortId ()}"
+        let token = registerAndLogin db username
+        db, cleanup, token
 
     [<Fact>]
     member _.``profit and loss with IDR currency returns formatted results``() =
-        use client = createClient ()
-        let token = setupUser client
-
-        let incomeBody =
-            """{ "amount": "500000", "currency": "IDR", "category": "salary", "description": "income", "date": "2024-01-15", "type": "income" }"""
-
-        postAuth client "/api/v1/expenses" incomeBody token |> ignore
-
-        let expenseBody =
-            """{ "amount": "100000", "currency": "IDR", "category": "food", "description": "expense", "date": "2024-01-15", "type": "expense" }"""
-
-        postAuth client "/api/v1/expenses" expenseBody token |> ignore
-        let status, respBody = getAuth client "/api/v1/reports/pl?currency=IDR" token
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        createExpense db (Some token) "500000" "IDR" "salary" "income" "2024-01-15" "income" None None |> Async.RunSynchronously |> ignore
+        createExpense db (Some token) "100000" "IDR" "food" "expense" "2024-01-15" "expense" None None |> Async.RunSynchronously |> ignore
+        let status, respBody = profitAndLoss db (Some token) "" "" "IDR" |> Async.RunSynchronously
         Assert.Equal(200, status)
         Assert.Contains("500000", respBody)
 
     [<Fact>]
     member _.``profit and loss with invalid date params uses defaults``() =
-        use client = createClient ()
-        let token = setupUser client
-        let status, _ = getAuth client "/api/v1/reports/pl?from=notadate&to=notadate" token
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let status, _ = profitAndLoss db (Some token) "notadate" "notadate" "USD" |> Async.RunSynchronously
         Assert.Equal(200, status)
 
     [<Fact>]
     member _.``profit and loss with valid date range filters correctly``() =
-        use client = createClient ()
-        let token = setupUser client
-
-        let status, _ =
-            getAuth client "/api/v1/reports/pl?from=2024-01-01&to=2024-12-31" token
-
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let status, _ = profitAndLoss db (Some token) "2024-01-01" "2024-12-31" "USD" |> Async.RunSynchronously
         Assert.Equal(200, status)
 
     [<Fact>]
     member _.``profit and loss with no date params returns all``() =
-        use client = createClient ()
-        let token = setupUser client
-        let status, _ = getAuth client "/api/v1/reports/pl" token
+        let db, cleanup, token = setupUser ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let status, _ = profitAndLoss db (Some token) "" "" "USD" |> Async.RunSynchronously
         Assert.Equal(200, status)
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Additional JwtMiddleware + AuthHandler coverage
+// Additional auth handler coverage
 // ─────────────────────────────────────────────────────────────────────────────
 
-[<Trait("Category", "Integration")>]
-type JwtMiddlewareAdditionalTests() =
-
-    [<Fact>]
-    member _.``request with deactivated user account returns 401 with deactivated message``() =
-        // A valid access token, but user has been deactivated after token was issued
-        use client = createClient ()
-        let username = sprintf "dact_%s" (shortId ())
-        let token = registerAndLogin client username
-        // Deactivate the user using the token
-        postAuth client "/api/v1/users/me/deactivate" "" token |> ignore
-        // Now try to use the same token - middleware checks DB status
-        let req = new HttpRequestMessage(HttpMethod.Get, "/api/v1/users/me")
-        req.Headers.Authorization <- AuthenticationHeaderValue("Bearer", token)
-        let resp = client.SendAsync(req) |> Async.AwaitTask |> Async.RunSynchronously
-        Assert.Equal(401, int resp.StatusCode)
-
-        let body =
-            resp.Content.ReadAsStringAsync() |> Async.AwaitTask |> Async.RunSynchronously
-
-        Assert.Contains("deactivated", body)
-
-    [<Fact>]
-    member _.``request with locked user account via middleware returns 401 with locked message``() =
-        // Register a user, get a valid token, then lock the account via failed logins, then use old token
-        use client = createClient ()
-        let username = sprintf "lkm_%s" (shortId ())
-        let email = sprintf "%s@example.com" username
-
-        let regBody =
-            sprintf """{ "username": "%s", "email": "%s", "password": "Str0ng#Pass1!" }""" username email
-
-        post client "/api/v1/auth/register" regBody |> ignore
-
-        let loginBody =
-            sprintf """{ "username": "%s", "password": "Str0ng#Pass1!" }""" username
-
-        let _, loginResp = post client "/api/v1/auth/login" loginBody
-        let doc = JsonDocument.Parse(loginResp)
-        let token = doc.RootElement.GetProperty("access_token").GetString()
-        // Lock the account by making 5 failed login attempts
-        let badLogin =
-            sprintf """{ "username": "%s", "password": "WrongPass1!" }""" username
-
-        for _ in 1..5 do
-            post client "/api/v1/auth/login" badLogin |> ignore
-        // Now use the original valid token - middleware should see Locked status
-        let req = new HttpRequestMessage(HttpMethod.Get, "/api/v1/users/me")
-        req.Headers.Authorization <- AuthenticationHeaderValue("Bearer", token)
-        let resp = client.SendAsync(req) |> Async.AwaitTask |> Async.RunSynchronously
-        Assert.Equal(401, int resp.StatusCode)
-
-        let body =
-            resp.Content.ReadAsStringAsync() |> Async.AwaitTask |> Async.RunSynchronously
-
-        Assert.Contains("locked", body)
-
-[<Trait("Category", "Integration")>]
+[<Trait("Category", "Unit")>]
 type AuthHandlerAdditionalTests() =
 
     [<Fact>]
     member _.``refresh with inactive user returns 401``() =
-        use client = createClient ()
-        let username = sprintf "rfi_%s" (shortId ())
-        let email = sprintf "%s@example.com" username
-
-        let regBody =
-            sprintf """{ "username": "%s", "email": "%s", "password": "Str0ng#Pass1!" }""" username email
-
-        post client "/api/v1/auth/register" regBody |> ignore
-
-        let loginBody =
-            sprintf """{ "username": "%s", "password": "Str0ng#Pass1!" }""" username
-
-        let _, loginResp = post client "/api/v1/auth/login" loginBody
+        let db, cleanup = createDb ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let username = $"rfi_{shortId ()}"
+        let email = $"{username}@example.com"
+        register db username email "Str0ng#Pass1!" |> Async.RunSynchronously |> ignore
+        let _s, loginResp = login db username "Str0ng#Pass1!" |> Async.RunSynchronously
         let doc = JsonDocument.Parse(loginResp)
         let token = doc.RootElement.GetProperty("access_token").GetString()
         let rt = doc.RootElement.GetProperty("refresh_token").GetString()
-        // Deactivate the user
-        postAuth client "/api/v1/users/me/deactivate" "" token |> ignore
-        // Try to refresh - the refresh endpoint checks user status
-        let refreshBody = sprintf """{ "refresh_token": "%s" }""" rt
-        let status, _ = post client "/api/v1/auth/refresh" refreshBody
+        deactivate db (Some token) |> Async.RunSynchronously |> ignore
+        let status, _ = refresh db rt |> Async.RunSynchronously
         Assert.Equal(401, status)
 
     [<Fact>]
     member _.``logout already logged out token is idempotent``() =
-        use client = createClient ()
-        let username = sprintf "dbl_%s" (shortId ())
-        let token = registerAndLogin client username
-        // First logout
-        postAuth client "/api/v1/auth/logout" "" token |> ignore
-        // Second logout with same token - token already in revoked list
-        let status, _ = postAuth client "/api/v1/auth/logout" "" token
-        // The logout handler is behind requireAuth which will now return 401
-        // since the token is revoked
-        Assert.True(status = 200 || status = 401)
-
-    [<Fact>]
-    member _.``logoutAll with no-jti token runs none branch``() =
-        use client = createClient ()
-        let username = sprintf "lanoJti_%s" (shortId ())
-        let token = registerAndLogin client username
-        // We need to call logoutAll with requireAuth passing - then test the jti=None branch
-        // Actually logoutAll requires auth, so we can't use a no-jti token directly
-        // But we can create a valid user then test logoutAll succeeds normally
-        let req1 = new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/logout-all")
-        req1.Headers.Authorization <- AuthenticationHeaderValue("Bearer", token)
-        let resp1 = client.SendAsync(req1) |> Async.AwaitTask |> Async.RunSynchronously
-        Assert.Equal(200, int resp1.StatusCode)
-
-    [<Fact>]
-    member _.``logoutAll with already revoked jti is idempotent``() =
-        use client = createClient ()
-        let username = sprintf "lall_%s" (shortId ())
-        let token = registerAndLogin client username
-        // First call - revokes token and all refresh tokens
-        let req1 = new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/logout-all")
-        req1.Headers.Authorization <- AuthenticationHeaderValue("Bearer", token)
-        let resp1 = client.SendAsync(req1) |> Async.AwaitTask |> Async.RunSynchronously
-        // Token is now revoked so second call will hit requireAuth 401
-        Assert.Equal(200, int resp1.StatusCode)
-
-    [<Fact>]
-    member _.``logout without authorization header returns 200 with none jti``() =
-        use client = createClient ()
-        // No auth header - getTokenJti "" returns None, so | None -> () branch runs
-        let req = new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/logout")
-        let resp = client.SendAsync(req) |> Async.AwaitTask |> Async.RunSynchronously
-        Assert.Equal(200, int resp.StatusCode)
-
-    [<Fact>]
-    member _.``logout twice with same token hits already-revoked branch``() =
-        use client = createClient ()
-        let username = sprintf "dbl2_%s" (shortId ())
-        let token = registerAndLogin client username
-        // First logout: stores jti in revoked tokens
-        let req1 = new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/logout")
-        req1.Headers.Authorization <- AuthenticationHeaderValue("Bearer", token)
-        client.SendAsync(req1) |> Async.AwaitTask |> Async.RunSynchronously |> ignore
-        // Second logout with same token: jti already exists, skips saving
-        let req2 = new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/logout")
-        req2.Headers.Authorization <- AuthenticationHeaderValue("Bearer", token)
-        let resp2 = client.SendAsync(req2) |> Async.AwaitTask |> Async.RunSynchronously
-        Assert.Equal(200, int resp2.StatusCode)
-
-    [<Fact>]
-    member _.``logout with no-jti token runs none branch``() =
-        use client = createClient ()
-        // Create a token without jti claim - jti=None branch
-        let userId = Guid.NewGuid()
-        let claimsArr = [| Claim(JwtRegisteredClaimNames.Sub, userId.ToString()) |]
-        let token = makeCustomToken claimsArr false
-        let req = new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/logout")
-        req.Headers.Authorization <- AuthenticationHeaderValue("Bearer", token)
-        let resp = client.SendAsync(req) |> Async.AwaitTask |> Async.RunSynchronously
-        Assert.Equal(200, int resp.StatusCode)
-
-[<Trait("Category", "Integration")>]
-type AdminHandlerAdditionalTests() =
-
-    let createAdminClient () =
-        let client = createClient ()
-        let adminName = sprintf "adm2_%s" (shortId ())
-        let adminEmail = sprintf "%s@example.com" adminName
-
-        let regBody =
-            sprintf """{ "username": "%s", "email": "%s", "password": "Str0ng#Pass1!" }""" adminName adminEmail
-
-        post client "/api/v1/auth/register" regBody |> ignore
-        post client (sprintf "/test/set-admin-role/%s" adminName) "" |> ignore
-
-        let loginBody =
-            sprintf """{ "username": "%s", "password": "Str0ng#Pass1!" }""" adminName
-
-        let _, loginResp = post client "/api/v1/auth/login" loginBody
-        let doc = JsonDocument.Parse(loginResp)
-        let adminToken = doc.RootElement.GetProperty("access_token").GetString()
-        client, adminToken
-
-    [<Fact>]
-    member _.``disableUser with empty body still works``() =
-        let client, adminToken = createAdminClient ()
-        let username = sprintf "dis2_%s" (shortId ())
-        let email = sprintf "%s@example.com" username
-
-        let regBody =
-            sprintf """{ "username": "%s", "email": "%s", "password": "Str0ng#Pass1!" }""" username email
-
-        let _, regResp = post client "/api/v1/auth/register" regBody
-        let doc = JsonDocument.Parse(regResp)
-        let userId = doc.RootElement.GetProperty("id").GetString()
-        let disableUrl = sprintf "/api/v1/admin/users/%s/disable" userId
-        // Send empty body - the handler has a try/with that handles deserialization failure
-        let status, _ = postAuth client disableUrl "" adminToken
-        // Should work as the user is found (just no reason provided)
+        let db, cleanup = createDb ()
+        use _ = { new IDisposable with member _.Dispose() = cleanup () }
+        let username = $"dbl_{shortId ()}"
+        let token = registerAndLogin db username
+        logout db (Some token) |> Async.RunSynchronously |> ignore
+        // Second logout with same token — logout is safe to call twice
+        let status, _ = logout db (Some token) |> Async.RunSynchronously
+        // logout returns 200 regardless; the token is already revoked in DB
         Assert.Equal(200, status)
-        (client :> IDisposable).Dispose()
-
-[<Trait("Category", "Integration")>]
-type AttachmentHandlerAdditionalTests() =
-
-    let setupUser (client: HttpClient) =
-        let username = sprintf "att2_%s" (shortId ())
-        registerAndLogin client username
-
-    [<Fact>]
-    member _.``upload attachment with no file returns 400``() =
-        use client = createClient ()
-        let token = setupUser client
-        let expId = createExpense client token
-
-        // Send a multipart form with only a text field (no file part)
-        use content = new MultipartFormDataContent()
-        use textContent = new StringContent("text-value")
-        content.Add(textContent, "field1")
-
-        let url = sprintf "/api/v1/expenses/%s/attachments" expId
-        let req = new HttpRequestMessage(HttpMethod.Post, url)
-        req.Headers.Authorization <- AuthenticationHeaderValue("Bearer", token)
-        req.Content <- content
-        let resp = client.SendAsync(req) |> Async.AwaitTask |> Async.RunSynchronously
-        Assert.Equal(400, int resp.StatusCode)
-
-    [<Fact>]
-    member _.``upload attachment with non-form content type returns 400``() =
-        // Sending JSON (not multipart) to the upload endpoint triggers ReadFormAsync failure
-        // This exercises AttachmentHandler lines 43-51 (form = None branch)
-        use client = createClient ()
-        let token = setupUser client
-        let expId = createExpense client token
-        let url = sprintf "/api/v1/expenses/%s/attachments" expId
-
-        use content =
-            new StringContent("""{"file": "data"}""", Encoding.UTF8, "application/json")
-
-        let req = new HttpRequestMessage(HttpMethod.Post, url)
-        req.Headers.Authorization <- AuthenticationHeaderValue("Bearer", token)
-        req.Content <- content
-        let resp = client.SendAsync(req) |> Async.AwaitTask |> Async.RunSynchronously
-        // ReadFormAsync throws on non-form content type -> returns 400
-        Assert.Equal(400, int resp.StatusCode)

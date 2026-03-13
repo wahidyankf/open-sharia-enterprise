@@ -1,112 +1,20 @@
 module DemoBeFsgi.Tests.Integration.Steps.CommonSteps
 
-open System
-open System.Net.Http
-open System.Net.Http.Headers
-open System.Text
 open System.Text.Json
 open TickSpec
 open Xunit
 open DemoBeFsgi.Tests.State
+open DemoBeFsgi.Tests.DirectServices
 
-// ────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 // Helpers
-// ────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 
 let private opts = JsonSerializerOptions(PropertyNameCaseInsensitive = true)
 
 /// Restore '#' characters that were replaced with 'HASH_SIGN' by the feature
 /// pre-processor in FeatureRunner (TickSpec strips inline '#' as Gherkin comments).
 let internal decode (s: string) = s.Replace("HASH_SIGN", "#")
-
-let internal sendPost (client: HttpClient) (url: string) (body: string) (token: string option) =
-    let content = new StringContent(body, Encoding.UTF8, "application/json")
-
-    let req = new HttpRequestMessage(HttpMethod.Post, url)
-    req.Content <- content
-
-    match token with
-    | Some t -> req.Headers.Authorization <- AuthenticationHeaderValue("Bearer", t)
-    | None -> ()
-
-    let response = client.SendAsync(req) |> Async.AwaitTask |> Async.RunSynchronously
-
-    let responseBody =
-        response.Content.ReadAsStringAsync()
-        |> Async.AwaitTask
-        |> Async.RunSynchronously
-
-    response, responseBody
-
-let internal sendGet (client: HttpClient) (url: string) (token: string option) =
-    let req = new HttpRequestMessage(HttpMethod.Get, url)
-
-    match token with
-    | Some t -> req.Headers.Authorization <- AuthenticationHeaderValue("Bearer", t)
-    | None -> ()
-
-    let response = client.SendAsync(req) |> Async.AwaitTask |> Async.RunSynchronously
-
-    let responseBody =
-        response.Content.ReadAsStringAsync()
-        |> Async.AwaitTask
-        |> Async.RunSynchronously
-
-    response, responseBody
-
-let internal sendPatch (client: HttpClient) (url: string) (body: string) (token: string option) =
-    let content = new StringContent(body, Encoding.UTF8, "application/json")
-
-    let req = new HttpRequestMessage(HttpMethod.Patch, url)
-    req.Content <- content
-
-    match token with
-    | Some t -> req.Headers.Authorization <- AuthenticationHeaderValue("Bearer", t)
-    | None -> ()
-
-    let response = client.SendAsync(req) |> Async.AwaitTask |> Async.RunSynchronously
-
-    let responseBody =
-        response.Content.ReadAsStringAsync()
-        |> Async.AwaitTask
-        |> Async.RunSynchronously
-
-    response, responseBody
-
-let internal sendPut (client: HttpClient) (url: string) (body: string) (token: string option) =
-    let content = new StringContent(body, Encoding.UTF8, "application/json")
-
-    let req = new HttpRequestMessage(HttpMethod.Put, url)
-    req.Content <- content
-
-    match token with
-    | Some t -> req.Headers.Authorization <- AuthenticationHeaderValue("Bearer", t)
-    | None -> ()
-
-    let response = client.SendAsync(req) |> Async.AwaitTask |> Async.RunSynchronously
-
-    let responseBody =
-        response.Content.ReadAsStringAsync()
-        |> Async.AwaitTask
-        |> Async.RunSynchronously
-
-    response, responseBody
-
-let internal sendDelete (client: HttpClient) (url: string) (token: string option) =
-    let req = new HttpRequestMessage(HttpMethod.Delete, url)
-
-    match token with
-    | Some t -> req.Headers.Authorization <- AuthenticationHeaderValue("Bearer", t)
-    | None -> ()
-
-    let response = client.SendAsync(req) |> Async.AwaitTask |> Async.RunSynchronously
-
-    let responseBody =
-        response.Content.ReadAsStringAsync()
-        |> Async.AwaitTask
-        |> Async.RunSynchronously
-
-    response, responseBody
 
 let internal getJsonProp (json: string) (prop: string) =
     try
@@ -124,40 +32,49 @@ let internal getStringProp (json: string) (prop: string) =
     with _ ->
         None
 
-let internal registerUser (client: HttpClient) (username: string) (email: string) (password: string) =
+/// Run a direct service call and return (status, body) as a ServiceResponse + body string.
+let internal call (status: int) (body: string) : ServiceResponse * string =
+    { Status = status; Body = body }, body
+
+/// Helper to apply a direct service result to StepState.
+let internal applyResult (status: int) (body: string) (state: StepState) : StepState =
+    { state with
+        Response = Some { Status = status; Body = body }
+        ResponseBody = Some body }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Shared registration / login helpers (used across step files)
+// ─────────────────────────────────────────────────────────────────────────────
+
+let internal registerUser (state: StepState) (username: string) (email: string) (password: string) : string =
     let pw = decode password
+    let status, body = register state.Db username email pw |> Async.RunSynchronously
+    body
 
-    let body =
-        $"""{{ "username": "{username}", "email": "{email}", "password": "{pw}" }}"""
-
-    let response, responseBody = sendPost client "/api/v1/auth/register" body None
-    responseBody
-
-let internal loginUser (client: HttpClient) (username: string) (password: string) =
+let internal loginUser (state: StepState) (username: string) (password: string) : string option * string option =
     let pw = decode password
-    let body = $"""{{ "username": "{username}", "password": "{pw}" }}"""
-    let response, responseBody = sendPost client "/api/v1/auth/login" body None
-    let accessToken = getStringProp responseBody "access_token"
-    let refreshToken = getStringProp responseBody "refresh_token"
+    let _status, body = login state.Db username pw |> Async.RunSynchronously
+    let accessToken = getStringProp body "access_token"
+    let refreshToken = getStringProp body "refresh_token"
     accessToken, refreshToken
 
-// ────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 // Shared background steps
-// ────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 
 [<Given>]
 let ``the API is running`` (state: StepState) = state
 
 [<Then>]
 let ``the response status code should be (\d+)`` (code: int) (state: StepState) =
-    let actual = int state.Response.Value.StatusCode
+    let actual = state.Response.Value.Status
     Assert.Equal(code, actual)
     state
 
 [<Given>]
 let ``a user "(.+)" is registered with password "(.+)"`` (username: string) (password: string) (state: StepState) =
     let email = $"{username}@example.com"
-    registerUser state.Client username email password |> ignore
+    registerUser state username email password |> ignore
     state
 
 [<Given>]
@@ -167,23 +84,21 @@ let ``a user "(.+)" is registered with email "(.+)" and password "(.+)"``
     (password: string)
     (state: StepState)
     =
-    registerUser state.Client username email password |> ignore
+    registerUser state username email password |> ignore
     state
 
 [<Given>]
 let ``"(.+)" has logged in and stored the access token`` (username: string) (state: StepState) =
-    // Try standard passwords for common test users
     let passwords = [ "Str0ng#Pass1"; "Str0ng#Pass2"; "Str0ng#Pass3"; "Str0ng#Admin1" ]
-
     let mutable accessToken = None
     let mutable userId = None
 
     for pw in passwords do
         if accessToken.IsNone then
-            let at, _ = loginUser state.Client username pw
+            let at, _ = loginUser state username pw
 
             if at.IsSome then
-                let response, body = sendGet state.Client "/api/v1/users/me" at
+                let _status, body = getProfile state.Db at |> Async.RunSynchronously
                 accessToken <- at
                 userId <- getStringProp body "id"
 
@@ -194,17 +109,16 @@ let ``"(.+)" has logged in and stored the access token`` (username: string) (sta
 [<Given>]
 let ``"(.+)" has logged in and stored the access token and refresh token`` (username: string) (state: StepState) =
     let passwords = [ "Str0ng#Pass1"; "Str0ng#Pass2"; "Str0ng#Admin1" ]
-
     let mutable accessToken = None
     let mutable refreshToken = None
     let mutable userId = None
 
     for pw in passwords do
         if accessToken.IsNone then
-            let at, rt = loginUser state.Client username pw
+            let at, rt = loginUser state username pw
 
             if at.IsSome then
-                let response, body = sendGet state.Client "/api/v1/users/me" at
+                let _status, body = getProfile state.Db at |> Async.RunSynchronously
                 accessToken <- at
                 refreshToken <- rt
                 userId <- getStringProp body "id"
@@ -214,9 +128,165 @@ let ``"(.+)" has logged in and stored the access token and refresh token`` (user
         RefreshToken = refreshToken
         UserId = userId }
 
-// ────────────────────────────────────────────────────────────────────────────
-// Generic HTTP request steps
-// ────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// Generic request steps — map HTTP-like Gherkin to direct service calls
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// Parse a JSON body string into its component fields for CreateExpense calls.
+/// Returns defaults when fields are missing.
+let private parseExpenseBody (bodyStr: string) =
+    try
+        let doc = JsonDocument.Parse(bodyStr)
+        let r = doc.RootElement
+
+        let str (key: string) =
+            match r.TryGetProperty(key) with
+            | true, el -> el.GetString()
+            | _ -> null
+
+        let floatOpt (key: string) =
+            match r.TryGetProperty(key) with
+            | true, el when el.ValueKind = JsonValueKind.Number -> Some(el.GetDouble())
+            | _ -> None
+
+        str "amount",
+        str "currency",
+        str "category",
+        str "description",
+        str "date",
+        str "type",
+        floatOpt "quantity",
+        (match r.TryGetProperty("unit") with
+         | true, el when el.ValueKind = JsonValueKind.String -> Some(el.GetString())
+         | _ -> None)
+    with _ ->
+        null, null, null, null, null, null, None, None
+
+/// Parse display_name from a profile update body.
+let private parseProfileBody (bodyStr: string) =
+    try
+        let doc = JsonDocument.Parse(bodyStr)
+        let r = doc.RootElement
+
+        match r.TryGetProperty("display_name") with
+        | true, el -> el.GetString()
+        | _ -> null
+    with _ ->
+        null
+
+/// Parse old_password and new_password from a change-password body.
+let private parsePasswordBody (bodyStr: string) =
+    try
+        let doc = JsonDocument.Parse(bodyStr)
+        let r = doc.RootElement
+
+        let str (key: string) =
+            match r.TryGetProperty(key) with
+            | true, el -> el.GetString()
+            | _ -> null
+
+        str "old_password", str "new_password"
+    with _ ->
+        null, null
+
+/// Parse refresh_token from a refresh body.
+let private parseRefreshBody (bodyStr: string) =
+    try
+        let doc = JsonDocument.Parse(bodyStr)
+        let r = doc.RootElement
+
+        match r.TryGetProperty("refresh_token") with
+        | true, el -> el.GetString()
+        | _ -> null
+    with _ ->
+        null
+
+/// Map a URL + method + body to a direct service call.
+/// Returns (status, body).
+let private dispatchCall
+    (state: StepState)
+    (method: string)
+    (url: string)
+    (body: string)
+    (token: string option)
+    : int * string =
+    let m = method.ToUpperInvariant()
+    let u = url.ToLowerInvariant()
+
+    // Auth routes
+    if u = "/api/v1/auth/register" && m = "POST" then
+        let doc = JsonDocument.Parse(if body = "" then "{}" else body)
+        let r = doc.RootElement
+
+        let str (key: string) =
+            match r.TryGetProperty(key) with
+            | true, el -> el.GetString()
+            | _ -> ""
+
+        register state.Db (str "username") (str "email") (str "password") |> Async.RunSynchronously
+    elif u = "/api/v1/auth/login" && m = "POST" then
+        let doc = JsonDocument.Parse(if body = "" then "{}" else body)
+        let r = doc.RootElement
+
+        let str (key: string) =
+            match r.TryGetProperty(key) with
+            | true, el -> el.GetString()
+            | _ -> ""
+
+        login state.Db (str "username") (str "password") |> Async.RunSynchronously
+    elif u = "/api/v1/auth/refresh" && m = "POST" then
+        let rt = parseRefreshBody body
+        refresh state.Db (if rt = null then "" else rt) |> Async.RunSynchronously
+    elif u = "/api/v1/auth/logout" && m = "POST" then
+        logout state.Db token |> Async.RunSynchronously
+    elif u = "/api/v1/auth/logout-all" && m = "POST" then
+        logoutAll state.Db token |> Async.RunSynchronously
+    elif u = "/health" && m = "GET" then
+        health ()
+    elif u = "/api/v1/users/me" && m = "GET" then
+        getProfile state.Db token |> Async.RunSynchronously
+    elif u = "/api/v1/users/me" && m = "PATCH" then
+        let displayName = parseProfileBody body
+        updateProfile state.Db token displayName |> Async.RunSynchronously
+    elif u = "/api/v1/users/me/password" && m = "POST" then
+        let oldPw, newPw = parsePasswordBody body
+        changePassword state.Db token oldPw newPw |> Async.RunSynchronously
+    elif u = "/api/v1/users/me/deactivate" && m = "POST" then
+        deactivate state.Db token |> Async.RunSynchronously
+    elif u = "/api/v1/expenses" && m = "POST" then
+        let amount, currency, category, description, date, entryType, quantity, unit = parseExpenseBody body
+
+        createExpense state.Db token amount currency category description date entryType quantity unit
+        |> Async.RunSynchronously
+    elif u = "/api/v1/expenses" && m = "GET" then
+        listExpenses state.Db token 1 20 |> Async.RunSynchronously
+    elif u = "/api/v1/expenses/summary" && m = "GET" then
+        expenseSummary state.Db token |> Async.RunSynchronously
+    elif u.StartsWith("/api/v1/expenses/") && u.EndsWith("/attachments") && m = "GET" then
+        let expId =
+            let parts = u.Split('/')
+
+            try
+                System.Guid.Parse(parts[parts.Length - 2])
+            with _ ->
+                System.Guid.Empty
+
+        listAttachments state.Db token expId |> Async.RunSynchronously
+    elif u.StartsWith("/api/v1/admin/users") && m = "GET" then
+        let emailFilter =
+            if url.Contains("?email=") then
+                let idx = url.IndexOf("?email=")
+                Some(url.Substring(idx + 7))
+            else
+                None
+
+        listUsers state.Db token 1 20 emailFilter |> Async.RunSynchronously
+    elif url.StartsWith("/test/set-admin-role/") && m = "POST" then
+        let username = url.Substring("/test/set-admin-role/".Length)
+        setAdminRole state.Db username |> Async.RunSynchronously
+    else
+        // Fallback: return 404 for unrecognised routes
+        404, """{"error":"Not Found","message":"Route not recognised in direct dispatch"}"""
 
 [<When>]
 let ``the client sends (GET|POST|PUT|PATCH|DELETE) (.+) with body (.+)``
@@ -226,17 +296,8 @@ let ``the client sends (GET|POST|PUT|PATCH|DELETE) (.+) with body (.+)``
     (state: StepState)
     =
     let decodedBody = decode body
-
-    let response, responseBody =
-        match method.ToUpperInvariant() with
-        | "POST" -> sendPost state.Client url decodedBody None
-        | "PUT" -> sendPut state.Client url decodedBody None
-        | "PATCH" -> sendPatch state.Client url decodedBody None
-        | _ -> sendPost state.Client url decodedBody None
-
-    { state with
-        Response = Some response
-        ResponseBody = Some responseBody }
+    let status, responseBody = dispatchCall state method url decodedBody None
+    applyResult status responseBody state
 
 [<When>]
 let ``the client sends (GET|POST|PUT|PATCH|DELETE) ([^ ]+) with ([^']+)'s access token``
@@ -245,38 +306,22 @@ let ``the client sends (GET|POST|PUT|PATCH|DELETE) ([^ ]+) with ([^']+)'s access
     (username: string)
     (state: StepState)
     =
-    let response, responseBody =
-        match method.ToUpperInvariant() with
-        | "GET" -> sendGet state.Client url state.AccessToken
-        | "POST" -> sendPost state.Client url "" state.AccessToken
-        | "DELETE" -> sendDelete state.Client url state.AccessToken
-        | _ -> sendGet state.Client url state.AccessToken
-
-    { state with
-        Response = Some response
-        ResponseBody = Some responseBody }
+    let status, responseBody = dispatchCall state method url "" state.AccessToken
+    applyResult status responseBody state
 
 [<When>]
 let ``the client sends (GET|POST|PUT|PATCH|DELETE) ([^ ]+)$`` (method: string) (url: string) (state: StepState) =
-    let response, responseBody =
-        match method.ToUpperInvariant() with
-        | "GET" -> sendGet state.Client url None
-        | "DELETE" -> sendDelete state.Client url None
-        | _ -> sendPost state.Client url "" None
+    let status, responseBody = dispatchCall state method url "" None
+    applyResult status responseBody state
 
-    { state with
-        Response = Some response
-        ResponseBody = Some responseBody }
-
-// ────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 // Response body assertion steps
-// ────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 
 [<Then>]
 let ``the response body should contain "(.+)" equal to "(.+)"`` (field: string) (expected: string) (state: StepState) =
     let body = state.ResponseBody.Value
     let actual = getStringProp body field
-
     Assert.True(actual.IsSome, $"Field '{field}' not found in response: {body}")
     Assert.Equal(expected, actual.Value)
     state
@@ -287,9 +332,7 @@ let ``the response body should contain a non-null "(.+)" field`` (field: string)
     let el = getJsonProp body field
     Assert.True(el.IsSome, $"Field '{field}' not found in response: {body}")
     let v = el.Value
-
-    let isNull = v.ValueKind = System.Text.Json.JsonValueKind.Null
-
+    let isNull = v.ValueKind = JsonValueKind.Null
     Assert.False(isNull, $"Field '{field}' is null in response: {body}")
     state
 
@@ -314,6 +357,5 @@ let ``the response body should contain a validation error for "(.+)"`` (field: s
 [<Then>]
 let ``the response body should contain an error message about (.+)`` (topic: string) (state: StepState) =
     let body = state.ResponseBody.Value
-    // Check that the response body contains some error-related content
     Assert.True(body.Length > 0, $"Response body should not be empty: {body}")
     state

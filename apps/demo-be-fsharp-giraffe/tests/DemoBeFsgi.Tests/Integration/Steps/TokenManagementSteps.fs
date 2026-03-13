@@ -1,11 +1,11 @@
 module DemoBeFsgi.Tests.Integration.Steps.TokenManagementSteps
 
-open System
 open System.IdentityModel.Tokens.Jwt
 open System.Text.Json
 open TickSpec
 open Xunit
 open DemoBeFsgi.Tests.State
+open DemoBeFsgi.Tests.DirectServices
 open DemoBeFsgi.Tests.Integration.Steps.CommonSteps
 
 [<When>]
@@ -21,7 +21,7 @@ let ``alice decodes her access token payload`` (state: StepState) =
             None
 
     let claimsJson =
-        claims |> Option.map (fun m -> System.Text.Json.JsonSerializer.Serialize(m))
+        claims |> Option.map (fun m -> JsonSerializer.Serialize(m))
 
     { state with ResponseBody = claimsJson }
 
@@ -42,7 +42,6 @@ let ``the token should contain a non-null "(.+)" claim`` (claim: string) (state:
             d.RootElement.EnumerateObject() |> Seq.exists (fun p -> p.Name = claim)
 
         if not hasProperty then
-            // Try common OIDC claim name aliases
             let aliases =
                 match claim with
                 | "sub" ->
@@ -75,28 +74,28 @@ let ``the response body should contain at least one key in the "keys" array`` (s
 
 [<Then>]
 let ``alice's access token should be recorded as revoked`` (state: StepState) =
-    // Try to use the token - it should be rejected
-    let response, body = sendGet state.Client "/api/v1/users/me" state.AccessToken
-    Assert.Equal(401, int response.StatusCode)
+    // Attempt to use the token — it should be rejected because it was revoked
+    let status, _body = getProfile state.Db state.AccessToken |> Async.RunSynchronously
+    Assert.Equal(401, status)
     state
 
 [<Given>]
 let ``alice has logged out and her access token is blacklisted`` (state: StepState) =
-    sendPost state.Client "/api/v1/auth/logout" "" state.AccessToken |> ignore
+    logout state.Db state.AccessToken |> Async.RunSynchronously |> ignore
     state
 
 [<Given>]
 let ``an admin user "(.+)" is registered and logged in`` (adminName: string) (state: StepState) =
     let email = $"{adminName}@example.com"
-    registerUser state.Client adminName email "Str0ng#Admin1" |> ignore
+    registerUser state adminName email "Str0ng#Admin1" |> ignore
 
-    // Use test endpoint to set admin role
-    sendPost state.Client $"/test/set-admin-role/{adminName}" "" None |> ignore
+    // Use direct service to set admin role (test-only)
+    setAdminRole state.Db adminName |> Async.RunSynchronously |> ignore
 
-    let accessToken, _ = loginUser state.Client adminName "Str0ng#Admin1"
+    let accessToken, _ = loginUser state adminName "Str0ng#Admin1"
 
     // Get user ID
-    let response, body = sendGet state.Client "/api/v1/users/me" accessToken
+    let _status, body = getProfile state.Db accessToken |> Async.RunSynchronously
     let userId = getStringProp body "id" |> Option.defaultValue ""
 
     { state with
@@ -106,12 +105,21 @@ let ``an admin user "(.+)" is registered and logged in`` (adminName: string) (st
             |> Map.add "adminUserId" userId }
 
 [<Given>]
-let ``the admin has disabled alice's account via POST /api/v1/admin/users/\{alice_id\}/disable`` (state: StepState) =
-    let aliceId = state.UserId |> Option.defaultValue ""
-    let adminToken = state.ExtraData |> Map.tryFind "adminToken"
-    let body = """{ "reason": "Admin action" }"""
+let ``the admin has disabled alice's account via POST /api/v1/admin/users/\{alice_id\}/disable``
+    (state: StepState)
+    =
+    let aliceId =
+        state.UserId
+        |> Option.bind (fun s ->
+            try
+                Some(System.Guid.Parse(s))
+            with _ ->
+                None)
 
-    sendPost state.Client $"/api/v1/admin/users/{aliceId}/disable" body adminToken
-    |> ignore
+    let adminToken = state.ExtraData |> Map.tryFind "adminToken"
+
+    match aliceId with
+    | Some id -> disableUser state.Db adminToken id |> Async.RunSynchronously |> ignore
+    | None -> ()
 
     state

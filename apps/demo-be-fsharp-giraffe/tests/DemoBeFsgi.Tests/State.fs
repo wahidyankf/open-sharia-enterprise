@@ -1,10 +1,14 @@
 module DemoBeFsgi.Tests.State
 
-open System.Net.Http
+open DemoBeFsgi.Infrastructure.AppDbContext
+
+/// Represents a simulated HTTP-style response from a direct service call.
+/// Status maps to HTTP status codes; Body is JSON text.
+type ServiceResponse = { Status: int; Body: string }
 
 type StepState =
-    { Client: HttpClient
-      Response: HttpResponseMessage option
+    { Db: AppDbContext
+      Response: ServiceResponse option
       ResponseBody: string option
       AccessToken: string option
       RefreshToken: string option
@@ -13,8 +17,8 @@ type StepState =
       AttachmentId: string option
       ExtraData: Map<string, string> }
 
-let empty (client: HttpClient) =
-    { Client = client
+let empty (db: AppDbContext) =
+    { Db = db
       Response = None
       ResponseBody = None
       AccessToken = None

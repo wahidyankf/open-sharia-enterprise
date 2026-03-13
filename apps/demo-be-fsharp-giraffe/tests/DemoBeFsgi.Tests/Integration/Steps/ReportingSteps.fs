@@ -4,7 +4,7 @@ open System.Text.Json
 open TickSpec
 open Xunit
 open DemoBeFsgi.Tests.State
-open DemoBeFsgi.Tests.Integration.Steps.CommonSteps
+open DemoBeFsgi.Tests.DirectServices
 
 [<When>]
 let ``alice sends GET /api/v1/reports/pl\?from=(.+)&to=(.+)&currency=(.+)``
@@ -13,11 +13,11 @@ let ``alice sends GET /api/v1/reports/pl\?from=(.+)&to=(.+)&currency=(.+)``
     (currency: string)
     (state: StepState)
     =
-    let url = $"/api/v1/reports/pl?from={fromDate}&to={toDate}&currency={currency}"
-    let response, body = sendGet state.Client url state.AccessToken
+    let status, body =
+        profitAndLoss state.Db state.AccessToken fromDate toDate currency |> Async.RunSynchronously
 
     { state with
-        Response = Some response
+        Response = Some { Status = status; Body = body }
         ResponseBody = Some body }
 
 [<Then>]
