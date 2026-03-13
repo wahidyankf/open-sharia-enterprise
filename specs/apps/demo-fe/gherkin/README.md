@@ -1,6 +1,6 @@
 # Demo Frontend Gherkin Specs
 
-Gherkin feature files for the demo-scale frontend application. 13 files, 76 scenarios across 7
+Gherkin feature files for the demo-scale frontend application. 15 files, 92 scenarios across 8
 domains.
 
 ## Feature Files
@@ -20,6 +20,8 @@ domains.
 | expenses         | `expenses/unit-handling.feature`      | 4         |
 | expenses         | `expenses/reporting.feature`          | 6         |
 | expenses         | `expenses/attachments.feature`        | 10        |
+| layout           | `layout/responsive.feature`           | 10        |
+| layout           | `layout/accessibility.feature`        | 6         |
 
 ## Conventions
 

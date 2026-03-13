@@ -1,9 +1,9 @@
 # Demo Frontend App Specs
 
 Platform-agnostic Gherkin acceptance specifications for a demo-scale frontend application that
-consumes the [demo-be API](../demo-be/README.md). The spec mirrors the backend's 7 domains with 76
-UI-centric scenarios covering: authentication forms, session management, user profile, admin panel,
-expense CRUD, financial reporting, and file attachment handling.
+consumes the [demo-be API](../demo-be/README.md). The spec covers 8 domains with 92 scenarios
+including: authentication forms, session management, user profile, admin panel, expense CRUD,
+financial reporting, file attachment handling, and responsive layout with accessibility.
 
 ## What This Covers
 
@@ -16,6 +16,7 @@ expense CRUD, financial reporting, and file attachment handling.
 | token-management | Session info display, token verification, logout behavior                           |
 | admin            | User listing, search, disable/enable accounts, password reset token                 |
 | expenses         | Entry CRUD UI, currency precision, unit-of-measure, P&L reporting, file attachments |
+| layout           | Responsive design (desktop/tablet/mobile viewports), WCAG accessibility             |
 
 ## Relationship to demo-be
 
@@ -24,8 +25,8 @@ expense CRUD, financial reporting, and file attachment handling.
 | Perspective | Backend API — HTTP-semantic                      | Frontend UI — user interaction-semantic |
 | Steps       | `sends GET/POST`, `status code`, `response body` | `clicks`, `types`, `sees`, `navigates`  |
 | Background  | `Given the API is running`                       | `Given the app is running`              |
-| Scenarios   | 76 across 13 features                            | 76 across 13 features                   |
-| Domains     | 7 domains                                        | Same 7 domains                          |
+| Scenarios   | 76 across 13 features                            | 92 across 15 features                   |
+| Domains     | 7 domains                                        | 8 domains (7 shared + layout)           |
 
 Both spec sets cover the same functional surface. The frontend app consumes the backend API — step
 definitions translate UI actions into API calls and verify the rendered output.
@@ -105,12 +106,15 @@ specs/apps/demo-fe/
     │   └── tokens.feature                  (6 scenarios)
     ├── admin/
     │   └── admin-panel.feature             (6 scenarios)
-    └── expenses/
-        ├── expense-management.feature      (7 scenarios)
-        ├── currency-handling.feature       (6 scenarios)
-        ├── unit-handling.feature           (4 scenarios)
-        ├── reporting.feature               (6 scenarios)
-        └── attachments.feature             (10 scenarios)
+    ├── expenses/
+    │   ├── expense-management.feature      (7 scenarios)
+    │   ├── currency-handling.feature       (6 scenarios)
+    │   ├── unit-handling.feature           (4 scenarios)
+    │   ├── reporting.feature               (6 scenarios)
+    │   └── attachments.feature             (10 scenarios)
+    └── layout/
+        ├── responsive.feature              (10 scenarios)
+        └── accessibility.feature           (6 scenarios)
 ```
 
 **File naming**: `[domain-capability].feature` (kebab-case)
