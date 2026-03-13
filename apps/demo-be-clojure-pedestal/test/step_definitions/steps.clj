@@ -1,10 +1,11 @@
 (ns step-definitions.steps
-  "Cucumber step definitions for all feature files."
+  "Cucumber step definitions for all feature files.
+   All interactions go through direct service-handler calls — no HTTP client."
   (:require [clojure.string :as str]
             [clojure.test :refer [is]]
-            [clj-http.client :as http]
             [cheshire.core :as json]
             [next.jdbc :as jdbc]
+            [next.jdbc.result-set :as rs]
             [lambdaisland.cucumber.dsl :refer [Given When Then]]
             [step-definitions.common :as common]))
 
@@ -13,7 +14,7 @@
 ;; ============================================================
 
 (Given "the API is running" [state]
-  (if (:server state)
+  (if (:ds state)
     state
     (merge state (common/start-test-server!))))
 
@@ -43,11 +44,10 @@
                       (common/login-user! username))
         ds        (:ds new-state)
         user-id   (common/get-user-id new-state username)]
-    ;; Ensure the user has ADMIN role regardless of registration order
+    ;; Promote user to ADMIN and re-login so the JWT reflects the ADMIN role
     (when (and ds user-id)
       (jdbc/execute! ds
                      ["UPDATE users SET role = 'ADMIN' WHERE id = ?" user-id]))
-    ;; Re-login so the JWT reflects the updated ADMIN role
     (common/login-user! new-state username)))
 
 (Given "{string} has logged in and stored the access token" [state username]
@@ -58,26 +58,17 @@
 
 (Given "a user {string} is registered and deactivated" [state username]
   (let [new-state (common/register-user! state username)
-        login-resp (http/post (str (common/base-url new-state) "/api/v1/auth/login")
-                              {:body         (json/generate-string {:username username
-                                                                    :password "Str0ng#Pass1"})
-                               :content-type :json
-                               :throw-exceptions false})
-        token (-> login-resp :body (json/parse-string true) :access_token)]
-    (http/post (str (common/base-url new-state) "/api/v1/users/me/deactivate")
-               {:headers      {"Authorization" (str "Bearer " token)}
-                :content-type :json
-                :throw-exceptions false})
+        login-ctx (common/login-user! new-state username)
+        token     (common/get-access-token login-ctx username)]
+    (common/call-deactivate login-ctx token)
     new-state))
 
 (Given "a user {string} is registered and locked after too many failed logins" [state username]
   (let [new-state (common/register-user! state username)]
     (dotimes [_ 5]
-      (http/post (str (common/base-url new-state) "/api/v1/auth/login")
-                 {:body         (json/generate-string {:username username
-                                                       :password "WrongP@ss!"})
-                  :content-type :json
-                  :throw-exceptions false}))
+      (common/call-login new-state
+                         (json/generate-string {:username username
+                                                :password "WrongP@ss!"})))
     new-state))
 
 (Given "an admin has unlocked alice's account" [state]
@@ -89,23 +80,17 @@
         _           (when (and ds admin-id)
                       (jdbc/execute! ds
                                      ["UPDATE users SET role = 'ADMIN' WHERE id = ?" admin-id]))
-        ;; Re-login to get JWT with ADMIN role
         admin-state (common/login-user! admin-state "superadmin-unlock")
-        alice-id    (common/get-user-id state "alice")]
-    (http/post (str (common/base-url state)
-                    "/api/v1/admin/users/" alice-id "/unlock")
-               {:headers      (common/auth-header admin-state "superadmin-unlock")
-                :content-type :json
-                :throw-exceptions false})
+        alice-id    (common/get-user-id state "alice")
+        admin-token (common/get-access-token admin-state "superadmin-unlock")]
+    (common/call-admin-unlock-user admin-state admin-token alice-id)
     state))
 
 (Given "{string} has had the maximum number of failed login attempts" [state username]
   (dotimes [_ 5]
-    (http/post (str (common/base-url state) "/api/v1/auth/login")
-               {:body         (json/generate-string {:username username
-                                                     :password "WrongP@ss!"})
-                :content-type :json
-                :throw-exceptions false}))
+    (common/call-login state
+                       (json/generate-string {:username username
+                                              :password "WrongP@ss!"})))
   state)
 
 ;; ============================================================
@@ -117,35 +102,24 @@
 
 (Given "alice has used her refresh token to get a new token pair" [state]
   (let [refresh-token (common/get-refresh-token state "alice")]
-    (http/post (str (common/base-url state) "/api/v1/auth/refresh")
-               {:body             (json/generate-string {:refresh_token refresh-token})
-                :content-type     :json
-                :throw-exceptions false})
+    (common/call-refresh state
+                         (json/generate-string {:refresh_token refresh-token}))
     (assoc state :alice-original-refresh-token refresh-token)))
 
 (Given "the user {string} has been deactivated" [state username]
   (let [new-state (common/login-user! state username)
         token     (common/get-access-token new-state username)]
-    (http/post (str (common/base-url new-state) "/api/v1/users/me/deactivate")
-               {:headers      {"Authorization" (str "Bearer " token)}
-                :content-type :json
-                :throw-exceptions false})
+    (common/call-deactivate new-state token)
     new-state))
 
 (Given "alice has already logged out once" [state]
   (let [token (common/get-access-token state "alice")]
-    (http/post (str (common/base-url state) "/api/v1/auth/logout")
-               {:headers      {"Authorization" (str "Bearer " token)}
-                :content-type :json
-                :throw-exceptions false}))
+    (common/call-logout state token))
   state)
 
 (Given "alice has logged out and her access token is blacklisted" [state]
   (let [token (common/get-access-token state "alice")]
-    (http/post (str (common/base-url state) "/api/v1/auth/logout")
-               {:headers      {"Authorization" (str "Bearer " token)}
-                :content-type :json
-                :throw-exceptions false}))
+    (common/call-logout state token))
   state)
 
 ;; ============================================================
@@ -153,13 +127,10 @@
 ;; ============================================================
 
 (Given "alice's account has been disabled by the admin" [state]
-  (let [alice-id (common/get-user-id state "alice")]
-    (http/post (str (common/base-url state)
-                    "/api/v1/admin/users/" alice-id "/disable")
-               {:headers      (common/auth-header state "superadmin")
-                :body         (json/generate-string {:reason "Test"})
-                :content-type :json
-                :throw-exceptions false}))
+  (let [alice-id    (common/get-user-id state "alice")
+        admin-token (common/get-access-token state "superadmin")]
+    (common/call-admin-disable-user state admin-token alice-id
+                                    (json/generate-string {:reason "Test"})))
   state)
 
 (Given "alice's account has been disabled" [state]
@@ -172,101 +143,73 @@
                       (jdbc/execute! ds
                                      ["UPDATE users SET role = 'ADMIN' WHERE id = ?" admin-id]))
         admin-state (common/login-user! admin-state "superadmin-disable")
-        alice-id    (common/get-user-id state "alice")]
-    (http/post (str (common/base-url state)
-                    "/api/v1/admin/users/" alice-id "/disable")
-               {:headers      (common/auth-header admin-state "superadmin-disable")
-                :body         (json/generate-string {:reason "Test"})
-                :content-type :json
-                :throw-exceptions false}))
+        alice-id    (common/get-user-id state "alice")
+        admin-token (common/get-access-token admin-state "superadmin-disable")]
+    (common/call-admin-disable-user admin-state admin-token alice-id
+                                    (json/generate-string {:reason "Test"})))
   state)
 
 (Given "^the admin has disabled alice's account via POST /api/v1/admin/users/\\{alice_id\\}/disable$"
   [state]
-  (let [alice-id (common/get-user-id state "alice")]
-    (http/post (str (common/base-url state)
-                    "/api/v1/admin/users/" alice-id "/disable")
-               {:headers      (common/auth-header state "superadmin")
-                :body         (json/generate-string {:reason "Test"})
-                :content-type :json
-                :throw-exceptions false}))
+  (let [alice-id    (common/get-user-id state "alice")
+        admin-token (common/get-access-token state "superadmin")]
+    (common/call-admin-disable-user state admin-token alice-id
+                                    (json/generate-string {:reason "Test"})))
   state)
 
 ;; ============================================================
-;; Expense setup — unquoted body, so regex patterns required
+;; Expense setup
 ;; ============================================================
 
 (Given "^alice has created an entry with body (.+)$" [state body-str]
-  (let [token (common/get-access-token state "alice")
-        resp  (http/post (str (common/base-url state) "/api/v1/expenses")
-                         {:headers      {"Authorization" (str "Bearer " token)}
-                          :body         body-str
-                          :content-type :json
-                          :throw-exceptions false})
-        body  (common/parse-json (:body resp))]
+  (let [token  (common/get-access-token state "alice")
+        result (common/call-create-expense state token body-str)
+        body   (:last-body result)]
     (assoc state :alice-expense-id (:id body)
-           :alice-last-expense body)))
+                 :alice-last-expense body)))
 
 (Given "^alice has created an expense with body (.+)$" [state body-str]
-  (let [token (common/get-access-token state "alice")
-        resp  (http/post (str (common/base-url state) "/api/v1/expenses")
-                         {:headers      {"Authorization" (str "Bearer " token)}
-                          :body         body-str
-                          :content-type :json
-                          :throw-exceptions false})
-        body  (common/parse-json (:body resp))]
+  (let [token  (common/get-access-token state "alice")
+        result (common/call-create-expense state token body-str)
+        body   (:last-body result)]
     (assoc state :alice-expense-id (:id body)
-           :alice-last-expense body)))
+                 :alice-last-expense body)))
 
 (Given "alice has created 3 entries" [state]
   (let [token (common/get-access-token state "alice")]
     (dotimes [i 3]
-      (http/post (str (common/base-url state) "/api/v1/expenses")
-                 {:headers      {"Authorization" (str "Bearer " token)}
-                  :body         (json/generate-string
-                                  {:amount      "10.00"
-                                   :currency    "USD"
-                                   :category    "food"
-                                   :description (str "Entry " i)
-                                   :date        "2025-01-15"
-                                   :type        "expense"})
-                  :content-type :json
-                  :throw-exceptions false})))
+      (common/call-create-expense state token
+                                  (json/generate-string
+                                    {:amount      "10.00"
+                                     :currency    "USD"
+                                     :category    "food"
+                                     :description (str "Entry " i)
+                                     :date        "2025-01-15"
+                                     :type        "expense"}))))
   state)
 
 (Given "^bob has created an entry with body (.+)$" [state body-str]
   (let [new-state (common/login-user! state "bob")
         token     (common/get-access-token new-state "bob")
-        resp      (http/post (str (common/base-url new-state) "/api/v1/expenses")
-                             {:headers      {"Authorization" (str "Bearer " token)}
-                              :body         body-str
-                              :content-type :json
-                              :throw-exceptions false})
-        body      (common/parse-json (:body resp))]
+        result    (common/call-create-expense new-state token body-str)
+        body      (:last-body result)]
     (assoc new-state :bob-expense-id (:id body)
-           :bob-last-expense body)))
+                     :bob-last-expense body)))
 
 ;; ============================================================
 ;; Attachment setup
 ;; ============================================================
 
-(Given "alice has uploaded file {string} with content type {string} to the entry" [state filename content-type]
+(Given "alice has uploaded file {string} with content type {string} to the entry"
+  [state filename content-type]
   (let [token      (common/get-access-token state "alice")
         expense-id (:alice-expense-id state)
         data       (byte-array [0xFF 0xD8 0xFF 0xE0])
-        resp       (http/post (str (common/base-url state)
-                                   "/api/v1/expenses/" expense-id "/attachments")
-                              {:headers      {"Authorization" (str "Bearer " token)}
-                               ;; clj-http byte-array multipart: :part-name = form field name,
-                               ;; :name = filename in Content-Disposition header
-                               :multipart    [{:part-name "file"
-                                               :name      filename
-                                               :content   data
-                                               :mime-type content-type}]
-                               :throw-exceptions false})
-        body       (common/parse-json (:body resp))]
+        result     (common/call-upload-attachment state token expense-id
+                                                  filename content-type data)
+        body       (:last-body result)]
     (assoc state :alice-attachment-id (:id body)
-           :alice-last-attachment body)))
+                 :alice-last-attachment body)))
 
 ;; ============================================================
 ;; Self-deactivation setup
@@ -274,267 +217,203 @@
 
 (Given "^alice has deactivated her own account via POST /api/v1/users/me/deactivate$" [state]
   (let [token (common/get-access-token state "alice")]
-    (http/post (str (common/base-url state) "/api/v1/users/me/deactivate")
-               {:headers      {"Authorization" (str "Bearer " token)}
-                :content-type :json
-                :throw-exceptions false}))
+    (common/call-deactivate state token))
   state)
 
 ;; ============================================================
-;; Public HTTP actions — paths are UNQUOTED in Gherkin, so regex required
+;; Public actions — routes dispatched by path pattern
 ;; ============================================================
 
 (When "^the client sends POST (.+?) with body (.+)$" [state path body-str]
-  (let [resp (http/post (str (common/base-url state) path)
-                        {:body             body-str
-                         :content-type     :json
-                         :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (cond
+    (= "/api/v1/auth/register" path)
+    (common/call-register state body-str)
 
-;; More specific pattern (with trailing context) must be defined before the generic GET
+    (= "/api/v1/auth/login" path)
+    (common/call-login state body-str)
+
+    (= "/api/v1/auth/refresh" path)
+    (common/call-refresh state body-str)
+
+    :else
+    (assoc state
+           :last-response {:status 404 :body {:message "Not found"}}
+           :last-body {:message "Not found"})))
+
 (When "^the client sends GET (.+?) with alice's access token$" [state path]
-  (let [token (common/get-access-token state "alice")
-        resp  (http/get (str (common/base-url state) path)
-                        {:headers      {"Authorization" (str "Bearer " token)}
-                         :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (let [token (common/get-access-token state "alice")]
+    (cond
+      (= "/api/v1/users/me" path)
+      (common/call-get-profile state token)
+
+      (re-matches #"/api/v1/expenses/[^/]+" path)
+      (let [expense-id (last (str/split path #"/"))]
+        (common/call-get-expense state token expense-id))
+
+      (= "/api/v1/expenses" path)
+      (common/call-list-expenses state token)
+
+      :else
+      (assoc state
+             :last-response {:status 404 :body {:message "Not found"}}
+             :last-body {:message "Not found"}))))
 
 (When "^the client sends GET (.+)$" [state path]
-  (let [resp (http/get (str (common/base-url state) path)
-                       {:throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (cond
+    (= "/health" path)
+    (common/call-health state)
+
+    :else
+    (assoc state
+           :last-response {:status 404 :body {:message "Not found"}}
+           :last-body {:message "Not found"})))
 
 (When "^an operations engineer sends GET (.+)$" [state path]
-  (let [resp (http/get (str (common/base-url state) path)
-                       {:throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (cond
+    (= "/health" path)
+    (common/call-health state)
+
+    :else
+    (assoc state
+           :last-response {:status 404 :body {:message "Not found"}}
+           :last-body {:message "Not found"})))
 
 (When "^an unauthenticated engineer sends GET (.+)$" [state path]
-  (let [resp (http/get (str (common/base-url state) path)
-                       {:throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (cond
+    (= "/health" path)
+    (common/call-health state)
+
+    :else
+    (assoc state
+           :last-response {:status 404 :body {:message "Not found"}}
+           :last-body {:message "Not found"})))
 
 ;; ============================================================
-;; Authenticated user actions (alice) — fixed paths, no args
+;; Authenticated user actions (alice)
 ;; ============================================================
 
 (When "^alice sends GET /api/v1/users/me$" [state]
-  (let [token (common/get-access-token state "alice")
-        resp  (http/get (str (common/base-url state) "/api/v1/users/me")
-                        {:headers      {"Authorization" (str "Bearer " token)}
-                         :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (common/call-get-profile state (common/get-access-token state "alice")))
 
 (When "^alice sends GET /api/v1/expenses$" [state]
-  (let [token (common/get-access-token state "alice")
-        resp  (http/get (str (common/base-url state) "/api/v1/expenses")
-                        {:headers      {"Authorization" (str "Bearer " token)}
-                         :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (common/call-list-expenses state (common/get-access-token state "alice")))
 
 (When "^alice sends GET /api/v1/expenses/\\{expenseId\\}$" [state]
-  (let [token      (common/get-access-token state "alice")
-        expense-id (:alice-expense-id state)
-        resp       (http/get (str (common/base-url state) "/api/v1/expenses/" expense-id)
-                             {:headers      {"Authorization" (str "Bearer " token)}
-                              :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (common/call-get-expense state
+                            (common/get-access-token state "alice")
+                            (:alice-expense-id state)))
 
 (When "^alice sends GET /api/v1/expenses/summary$" [state]
-  (let [token (common/get-access-token state "alice")
-        resp  (http/get (str (common/base-url state) "/api/v1/expenses/summary")
-                        {:headers      {"Authorization" (str "Bearer " token)}
-                         :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (common/call-expense-summary state (common/get-access-token state "alice")))
 
 (When "^alice sends GET /api/v1/reports/pl\\?(.+)$" [state query-string]
-  (let [token (common/get-access-token state "alice")
-        resp  (http/get (str (common/base-url state) "/api/v1/reports/pl?" query-string)
-                        {:headers      {"Authorization" (str "Bearer " token)}
-                         :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (let [token        (common/get-access-token state "alice")
+        query-params (into {}
+                           (map (fn [pair]
+                                  (let [[k v] (str/split pair #"=")]
+                                    [k v]))
+                                (str/split query-string #"&")))]
+    (common/call-pl-report state token query-params)))
 
 (When "^alice sends POST /api/v1/users/me/deactivate$" [state]
-  (let [token (common/get-access-token state "alice")
-        resp  (http/post (str (common/base-url state) "/api/v1/users/me/deactivate")
-                         {:headers      {"Authorization" (str "Bearer " token)}
-                          :content-type :json
-                          :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (common/call-deactivate state (common/get-access-token state "alice")))
 
 (When "^alice sends POST /api/v1/users/me/password with body (.+)$" [state body-str]
-  (let [token (common/get-access-token state "alice")
-        resp  (http/post (str (common/base-url state) "/api/v1/users/me/password")
-                         {:headers      {"Authorization" (str "Bearer " token)}
-                          :body         body-str
-                          :content-type :json
-                          :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (common/call-change-password state (common/get-access-token state "alice") body-str))
 
 (When "^alice sends POST /api/v1/expenses with body (.+)$" [state body-str]
-  (let [token (common/get-access-token state "alice")
-        resp  (http/post (str (common/base-url state) "/api/v1/expenses")
-                         {:headers      {"Authorization" (str "Bearer " token)}
-                          :body         body-str
-                          :content-type :json
-                          :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (let [result (common/call-create-expense state
+                                            (common/get-access-token state "alice")
+                                            body-str)]
+    (assoc result :alice-expense-id (get-in result [:last-body :id]))))
 
 (When "^alice sends PATCH /api/v1/users/me with body (.+)$" [state body-str]
-  (let [token (common/get-access-token state "alice")
-        resp  (http/patch (str (common/base-url state) "/api/v1/users/me")
-                          {:headers      {"Authorization" (str "Bearer " token)}
-                           :body         body-str
-                           :content-type :json
-                           :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (common/call-update-profile state (common/get-access-token state "alice") body-str))
 
 (When "^alice sends PUT /api/v1/expenses/\\{expenseId\\} with body (.+)$" [state body-str]
-  (let [token      (common/get-access-token state "alice")
-        expense-id (:alice-expense-id state)
-        resp       (http/put (str (common/base-url state) "/api/v1/expenses/" expense-id)
-                             {:headers      {"Authorization" (str "Bearer " token)}
-                              :body         body-str
-                              :content-type :json
-                              :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (common/call-update-expense state
+                               (common/get-access-token state "alice")
+                               (:alice-expense-id state)
+                               body-str))
 
 (When "^alice sends DELETE /api/v1/expenses/\\{expenseId\\}$" [state]
-  (let [token      (common/get-access-token state "alice")
-        expense-id (:alice-expense-id state)
-        resp       (http/delete (str (common/base-url state) "/api/v1/expenses/" expense-id)
-                                {:headers      {"Authorization" (str "Bearer " token)}
-                                 :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (common/call-delete-expense state
+                               (common/get-access-token state "alice")
+                               (:alice-expense-id state)))
 
 ;; ============================================================
-;; Auth token actions — fixed paths, no captures needed
+;; Auth token actions
 ;; ============================================================
 
 (When "^alice sends POST /api/v1/auth/refresh with her refresh token$" [state]
   (let [refresh-token (or (:alice-refresh-token state)
-                          (common/get-refresh-token state "alice"))
-        resp          (http/post (str (common/base-url state) "/api/v1/auth/refresh")
-                                 {:body             (json/generate-string {:refresh_token refresh-token})
-                                  :content-type     :json
-                                  :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+                          (common/get-refresh-token state "alice"))]
+    (common/call-refresh state (json/generate-string {:refresh_token refresh-token}))))
 
 (When "^alice sends POST /api/v1/auth/refresh with her original refresh token$" [state]
   (let [refresh-token (or (:alice-original-refresh-token state)
-                          (common/get-refresh-token state "alice"))
-        resp          (http/post (str (common/base-url state) "/api/v1/auth/refresh")
-                                 {:body             (json/generate-string {:refresh_token refresh-token})
-                                  :content-type     :json
-                                  :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+                          (common/get-refresh-token state "alice"))]
+    (common/call-refresh state (json/generate-string {:refresh_token refresh-token}))))
 
 (When "^alice sends POST /api/v1/auth/logout with her access token$" [state]
-  (let [token (common/get-access-token state "alice")
-        resp  (http/post (str (common/base-url state) "/api/v1/auth/logout")
-                         {:headers      {"Authorization" (str "Bearer " token)}
-                          :content-type :json
-                          :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (common/call-logout state (common/get-access-token state "alice")))
 
 (When "^alice sends POST /api/v1/auth/logout-all with her access token$" [state]
-  (let [token (common/get-access-token state "alice")
-        resp  (http/post (str (common/base-url state) "/api/v1/auth/logout-all")
-                         {:headers      {"Authorization" (str "Bearer " token)}
-                          :content-type :json
-                          :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (common/call-logout-all state (common/get-access-token state "alice")))
 
 ;; ============================================================
-;; Admin actions — paths are UNQUOTED in Gherkin, regex required
+;; Admin actions
 ;; ============================================================
 
 (When "^the admin sends GET (.+)$" [state path]
-  (let [token (common/get-access-token state "superadmin")
-        resp  (http/get (str (common/base-url state) path)
-                        {:headers      {"Authorization" (str "Bearer " token)}
-                         :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (let [token (common/get-access-token state "superadmin")]
+    (cond
+      (= "/api/v1/admin/users" path)
+      (common/call-admin-list-users state token)
+
+      (re-matches #"/api/v1/admin/users\?.*" path)
+      (let [query-string (second (str/split path #"\?"))
+            query-params (when query-string
+                           (into {}
+                                 (map (fn [pair]
+                                        (let [[k v] (str/split pair #"=")]
+                                          [k v]))
+                                      (str/split query-string #"&"))))]
+        (common/call-admin-list-users state token :query-params (or query-params {})))
+
+      :else
+      (assoc state
+             :last-response {:status 404 :body {:message "Not found"}}
+             :last-body {:message "Not found"}))))
 
 (When "^the admin sends POST /api/v1/admin/users/\\{alice_id\\}/disable with body (.+)$"
   [state body-str]
-  (let [token    (common/get-access-token state "superadmin")
-        alice-id (common/get-user-id state "alice")
-        resp     (http/post (str (common/base-url state)
-                                 "/api/v1/admin/users/" alice-id "/disable")
-                            {:headers      {"Authorization" (str "Bearer " token)}
-                             :body         body-str
-                             :content-type :json
-                             :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (common/call-admin-disable-user state
+                                   (common/get-access-token state "superadmin")
+                                   (common/get-user-id state "alice")
+                                   body-str))
 
 (When "^the admin sends POST /api/v1/admin/users/\\{alice_id\\}/enable$" [state]
-  (let [token    (common/get-access-token state "superadmin")
-        alice-id (common/get-user-id state "alice")
-        resp     (http/post (str (common/base-url state)
-                                 "/api/v1/admin/users/" alice-id "/enable")
-                            {:headers      {"Authorization" (str "Bearer " token)}
-                             :content-type :json
-                             :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (common/call-admin-enable-user state
+                                  (common/get-access-token state "superadmin")
+                                  (common/get-user-id state "alice")))
 
 (When "^the admin sends POST /api/v1/admin/users/\\{alice_id\\}/force-password-reset$" [state]
-  (let [token    (common/get-access-token state "superadmin")
-        alice-id (common/get-user-id state "alice")
-        resp     (http/post (str (common/base-url state)
-                                 "/api/v1/admin/users/" alice-id "/force-password-reset")
-                            {:headers      {"Authorization" (str "Bearer " token)}
-                             :content-type :json
-                             :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (common/call-admin-force-password-reset state
+                                           (common/get-access-token state "superadmin")
+                                           (common/get-user-id state "alice")))
 
 (When "^the admin sends POST /api/v1/admin/users/\\{alice_id\\}/unlock$" [state]
-  (let [token    (common/get-access-token state "superadmin")
-        alice-id (common/get-user-id state "alice")
-        resp     (http/post (str (common/base-url state)
-                                 "/api/v1/admin/users/" alice-id "/unlock")
-                            {:headers      {"Authorization" (str "Bearer " token)}
-                             :content-type :json
-                             :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (common/call-admin-unlock-user state
+                                  (common/get-access-token state "superadmin")
+                                  (common/get-user-id state "alice")))
 
 ;; ============================================================
 ;; Token introspection actions
 ;; ============================================================
 
 (When "^alice decodes her access token payload$" [state]
-  (let [token (common/get-access-token state "alice")
-        resp  (http/get (str (common/base-url state) "/api/v1/tokens/claims")
-                        {:headers      {"Authorization" (str "Bearer " token)}
-                         :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp))
-           :token-claims (common/parse-json (:body resp)))))
+  (common/call-token-claims state (common/get-access-token state "alice")))
 
 ;; ============================================================
 ;; Attachment actions
@@ -545,105 +424,50 @@
   (let [token      (common/get-access-token state "alice")
         expense-id (:alice-expense-id state)
         data       (byte-array [0xFF 0xD8 0xFF 0xE0])
-        resp       (http/post (str (common/base-url state)
-                                   "/api/v1/expenses/" expense-id "/attachments")
-                              {:headers      {"Authorization" (str "Bearer " token)}
-                               :multipart    [{:part-name "file"
-                                               :name      filename
-                                               :content   data
-                                               :mime-type content-type}]
-                               :throw-exceptions false})
-        body       (common/parse-json (:body resp))]
-    (assoc state :last-response resp
-           :last-body body
-           :alice-attachment-id (:id body))))
+        result     (common/call-upload-attachment state token expense-id
+                                                  filename content-type data)]
+    (assoc result :alice-attachment-id (get-in result [:last-body :id]))))
 
 (When "^alice uploads file \"([^\"]*)\" with content type \"([^\"]*)\" to POST /api/v1/expenses/\\{bobExpenseId\\}/attachments$"
   [state filename content-type]
   (let [token      (common/get-access-token state "alice")
         expense-id (:bob-expense-id state)
-        data       (byte-array [0xFF 0xD8 0xFF 0xE0])
-        resp       (http/post (str (common/base-url state)
-                                   "/api/v1/expenses/" expense-id "/attachments")
-                              {:headers      {"Authorization" (str "Bearer " token)}
-                               :multipart    [{:part-name "file"
-                                               :name      filename
-                                               :content   data
-                                               :mime-type content-type}]
-                               :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+        data       (byte-array [0xFF 0xD8 0xFF 0xE0])]
+    (common/call-upload-attachment state token expense-id filename content-type data)))
 
 (When "^alice uploads an oversized file to POST /api/v1/expenses/\\{expenseId\\}/attachments$" [state]
   (let [token      (common/get-access-token state "alice")
         expense-id (:alice-expense-id state)
-        big-data   (byte-array (+ (* 10 1024 1024) 1))
-        resp       (http/post (str (common/base-url state)
-                                   "/api/v1/expenses/" expense-id "/attachments")
-                              {:headers      {"Authorization" (str "Bearer " token)}
-                               :multipart    [{:part-name "file"
-                                               :name      "big.jpg"
-                                               :content   big-data
-                                               :mime-type "image/jpeg"}]
-                               :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+        big-data   (byte-array (+ (* 10 1024 1024) 1))]
+    (common/call-upload-attachment state token expense-id "big.jpg" "image/jpeg" big-data)))
 
 (When "^alice sends GET /api/v1/expenses/\\{expenseId\\}/attachments$" [state]
-  (let [token      (common/get-access-token state "alice")
-        expense-id (:alice-expense-id state)
-        resp       (http/get (str (common/base-url state)
-                                  "/api/v1/expenses/" expense-id "/attachments")
-                             {:headers      {"Authorization" (str "Bearer " token)}
-                              :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (common/call-list-attachments state
+                                 (common/get-access-token state "alice")
+                                 (:alice-expense-id state)))
 
 (When "^alice sends GET /api/v1/expenses/\\{bobExpenseId\\}/attachments$" [state]
-  (let [token      (common/get-access-token state "alice")
-        expense-id (:bob-expense-id state)
-        resp       (http/get (str (common/base-url state)
-                                  "/api/v1/expenses/" expense-id "/attachments")
-                             {:headers      {"Authorization" (str "Bearer " token)}
-                              :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (common/call-list-attachments state
+                                 (common/get-access-token state "alice")
+                                 (:bob-expense-id state)))
 
 (When "^alice sends DELETE /api/v1/expenses/\\{expenseId\\}/attachments/\\{attachmentId\\}$" [state]
-  (let [token         (common/get-access-token state "alice")
-        expense-id    (:alice-expense-id state)
-        attachment-id (:alice-attachment-id state)
-        resp          (http/delete (str (common/base-url state)
-                                        "/api/v1/expenses/" expense-id
-                                        "/attachments/" attachment-id)
-                                   {:headers      {"Authorization" (str "Bearer " token)}
-                                    :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (common/call-delete-attachment state
+                                  (common/get-access-token state "alice")
+                                  (:alice-expense-id state)
+                                  (:alice-attachment-id state)))
 
 (When "^alice sends DELETE /api/v1/expenses/\\{bobExpenseId\\}/attachments/\\{attachmentId\\}$" [state]
-  (let [token         (common/get-access-token state "alice")
-        expense-id    (:bob-expense-id state)
-        attachment-id (:alice-attachment-id state)
-        resp          (http/delete (str (common/base-url state)
-                                        "/api/v1/expenses/" expense-id
-                                        "/attachments/" attachment-id)
-                                   {:headers      {"Authorization" (str "Bearer " token)}
-                                    :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (common/call-delete-attachment state
+                                  (common/get-access-token state "alice")
+                                  (:bob-expense-id state)
+                                  (:alice-attachment-id state)))
 
 (When "^alice sends DELETE /api/v1/expenses/\\{expenseId\\}/attachments/\\{randomAttachmentId\\}$" [state]
-  (let [token      (common/get-access-token state "alice")
-        expense-id (:alice-expense-id state)
-        rand-id    (str (java.util.UUID/randomUUID))
-        resp       (http/delete (str (common/base-url state)
-                                     "/api/v1/expenses/" expense-id
-                                     "/attachments/" rand-id)
-                                {:headers      {"Authorization" (str "Bearer " token)}
-                                 :throw-exceptions false})]
-    (assoc state :last-response resp
-           :last-body (common/parse-json (:body resp)))))
+  (common/call-delete-attachment state
+                                  (common/get-access-token state "alice")
+                                  (:alice-expense-id state)
+                                  (str (java.util.UUID/randomUUID))))
 
 ;; ============================================================
 ;; Assertion steps
@@ -652,7 +476,7 @@
 (Then "the response status code should be {int}" [state status-code]
   (is (= status-code (:status (:last-response state)))
       (str "Expected " status-code " but got " (:status (:last-response state))
-           "\nBody: " (:body (:last-response state))))
+           "\nBody: " (:last-body state)))
   state)
 
 (Then "the health status should be {string}" [state expected-status]
@@ -761,43 +585,32 @@
   (let [alice-id    (common/get-user-id state "alice")
         admin-token (common/get-access-token state "superadmin")]
     (if admin-token
-      ;; Admin is available — use admin users endpoint
-      (let [resp  (http/get (str (common/base-url state) "/api/v1/admin/users")
-                            {:headers      {"Authorization" (str "Bearer " admin-token)}
-                             :throw-exceptions false})
-            users (-> resp :body (json/parse-string true) :data)
-            alice (first (filter #(= alice-id (:id %)) users))]
-        (is (= (clojure.string/lower-case expected-status)
-               (clojure.string/lower-case (or (:status alice) "")))))
-      ;; No admin — verify via attempted login behaviour
-      (let [expected-lower (clojure.string/lower-case expected-status)]
-        (cond
-          (= "locked" expected-lower)
-          (let [resp (http/post (str (common/base-url state) "/api/v1/auth/login")
-                                {:body             (json/generate-string {:username "alice"
-                                                                          :password "Str0ng#Pass1"})
-                                 :content-type     :json
-                                 :throw-exceptions false})]
-            (is (= 401 (:status resp))
-                "Locked account should return 401"))
-          :else
-          (is false (str "Cannot verify status " expected-status " without admin token"))))))
+      ;; Admin is available — verify via admin list-users
+      (let [result (common/call-admin-list-users state admin-token)
+            users  (get-in result [:last-body :data])
+            alice  (first (filter #(= alice-id (:id %)) users))]
+        (is (= (str/lower-case expected-status)
+               (str/lower-case (or (:status alice) "")))))
+      ;; No admin token — query the DB directly
+      (let [ds   (:ds state)
+            row  (when (and ds alice-id)
+                   (jdbc/execute-one! ds
+                                      ["SELECT status FROM users WHERE id = ?" alice-id]
+                                      {:builder-fn rs/as-unqualified-maps}))]
+        (is (= (str/lower-case expected-status)
+               (str/lower-case (or (:status row) "")))))))
   state)
 
 (Then "alice's access token should be invalidated" [state]
-  (let [token (common/get-access-token state "alice")
-        resp  (http/get (str (common/base-url state) "/api/v1/users/me")
-                        {:headers      {"Authorization" (str "Bearer " token)}
-                         :throw-exceptions false})]
-    (is (= 401 (:status resp))))
+  (let [token (common/get-access-token state "alice")]
+    (is (not (common/token-valid? state token))
+        "Alice's token should be invalid after logout/revocation"))
   state)
 
 (Then "alice's access token should be recorded as revoked" [state]
-  (let [token (common/get-access-token state "alice")
-        resp  (http/get (str (common/base-url state) "/api/v1/users/me")
-                        {:headers      {"Authorization" (str "Bearer " token)}
-                         :throw-exceptions false})]
-    (is (= 401 (:status resp))))
+  (let [token (common/get-access-token state "alice")]
+    (is (not (common/token-valid? state token))
+        "Alice's token should be revoked"))
   state)
 
 (Then "the token should contain a non-null {string} claim" [state claim]
