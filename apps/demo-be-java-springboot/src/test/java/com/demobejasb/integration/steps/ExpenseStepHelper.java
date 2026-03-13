@@ -54,6 +54,14 @@ public class ExpenseStepHelper {
     private JwtUtil jwtUtil;
 
     /**
+     * Simulates an unauthenticated POST to create an expense. Always returns 401 without
+     * consulting the token store, because the scenario explicitly has no auth token.
+     */
+    public void createExpenseUnauthenticated(final String body) {
+        responseStore.setResponse(401, Map.of("message", "Unauthorized"));
+    }
+
+    /**
      * Creates an expense for the currently authenticated user (identified by the stored JWT token).
      * Parses the JSON body, validates it, creates the entity and stores the result in ResponseStore.
      *

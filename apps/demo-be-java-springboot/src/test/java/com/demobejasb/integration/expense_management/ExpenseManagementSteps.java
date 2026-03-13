@@ -86,8 +86,8 @@ public class ExpenseManagementSteps {
 
     @When("^the client sends POST /api/v1/expenses with body \\{ \"amount\": \"10\\.00\", \"currency\": \"USD\", \"category\": \"food\", \"description\": \"Coffee\", \"date\": \"2025-01-01\", \"type\": \"expense\" \\}$")
     public void unauthenticatedClientCreatesExpense() {
-        // No token stored → should return 401
+        // Explicitly unauthenticated — must not use the token stored by the Background step
         String body = "{\"amount\":\"10.00\",\"currency\":\"USD\",\"category\":\"food\",\"description\":\"Coffee\",\"date\":\"2025-01-01\",\"type\":\"expense\"}";
-        expenseHelper.createExpenseForCurrentUser(body, false);
+        expenseHelper.createExpenseUnauthenticated(body);
     }
 }
