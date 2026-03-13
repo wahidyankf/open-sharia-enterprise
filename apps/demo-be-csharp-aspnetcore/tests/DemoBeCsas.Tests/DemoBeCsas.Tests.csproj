@@ -23,7 +23,7 @@
 
   <!-- Include shared Gherkin feature files for Reqnroll code-behind generation -->
   <ItemGroup>
-    <ReqnrollFeatureFiles Include="..\..\..\..\specs\apps\demo-be\gherkin\**\*.feature" />
+    <ReqnrollFeatureFiles Include="..\..\..\..\specs\apps\demo\be\gherkin\**\*.feature" />
   </ItemGroup>
 
   <!-- .NET 10 sets EnableDefaultCompileItems=false globally, breaking Reqnroll's auto-include.
