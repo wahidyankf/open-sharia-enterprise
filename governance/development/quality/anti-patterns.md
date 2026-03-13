@@ -164,6 +164,8 @@ rm deprecated-guide.md
 
 **Problem**: Pre-push hook runs the entire test suite or uses non-standard target names (slow, and breaks workspace-level automation).
 
+**Note**: `test:integration` and `test:e2e` must never be included in `test:quick`. See [Three-Level Testing Standard](./three-level-testing-standard.md) for which test level runs where.
+
 **Bad Example:**
 
 ```bash
@@ -361,24 +363,63 @@ git add .           # Stages unintended changes!
 - Gradual quality improvement
 - Developer-friendly
 
+### Anti-Pattern 11: Mixing Test Levels
+
+**Problem**: Using HTTP dispatch in integration tests, or using a real database in unit tests, conflating what each level is meant to verify.
+
+**Bad Example:**
+
+```java
+// Integration test using MockMvc (HTTP layer — wrong for integration level)
+@Test
+void createProduct() {
+    mockMvc.perform(post("/api/products")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(json))
+        .andExpect(status().isCreated()); // HTTP dispatch — belongs in E2E!
+}
+```
+
+**Solution:**
+
+```java
+// Integration test calling service directly with real database (correct)
+@Test
+void createProduct() {
+    var result = productService.create(productData, realRepo); // direct call
+    assertThat(result.isSuccess()).isTrue();
+}
+```
+
+**Rationale:**
+
+- Integration tests verify persistence and transactions, not HTTP routing
+- HTTP contract is verified at E2E level with Playwright
+- Mixing levels obscures which concern fails when a test breaks
+- Real databases in unit tests make them slow, non-deterministic, and uncacheable
+
+**See**: [Three-Level Testing Standard](./three-level-testing-standard.md) for the full level definitions and boundaries.
+
 ## Summary of Anti-Patterns
 
-| Anti-Pattern              | Problem                     | Solution                          |
-| ------------------------- | --------------------------- | --------------------------------- |
-| **Manual Quality Checks** | Inconsistent, forgotten     | Automated git hooks               |
-| **No Prioritization**     | Equal treatment of issues   | Criticality levels                |
-| **Blind Fixes**           | Incorrect automated changes | Confidence assessment             |
-| **Deleting Content**      | Knowledge loss              | Content preservation              |
-| **Running All Tests**     | Slow pre-push               | Affected tests only               |
-| **Ad-Hoc Validation**     | Inconsistent patterns       | Standardized methodology          |
-| **Ignoring Criticality**  | Random fix order            | Priority-based execution          |
-| **No CI Quality Gates**   | Bad code merges             | Fail build on violations          |
-| **Undocumented Rules**    | Unclear purpose             | Document rules and rationale      |
-| **Format All Files**      | Slow, unintended changes    | Lint-staged for staged files only |
+| Anti-Pattern              | Problem                              | Solution                          |
+| ------------------------- | ------------------------------------ | --------------------------------- |
+| **Manual Quality Checks** | Inconsistent, forgotten              | Automated git hooks               |
+| **No Prioritization**     | Equal treatment of issues            | Criticality levels                |
+| **Blind Fixes**           | Incorrect automated changes          | Confidence assessment             |
+| **Deleting Content**      | Knowledge loss                       | Content preservation              |
+| **Running All Tests**     | Slow pre-push                        | Affected tests only               |
+| **Ad-Hoc Validation**     | Inconsistent patterns                | Standardized methodology          |
+| **Ignoring Criticality**  | Random fix order                     | Priority-based execution          |
+| **No CI Quality Gates**   | Bad code merges                      | Fail build on violations          |
+| **Undocumented Rules**    | Unclear purpose                      | Document rules and rationale      |
+| **Format All Files**      | Slow, unintended changes             | Lint-staged for staged files only |
+| **Mixing Test Levels**    | HTTP in integration; real DB in unit | Follow three-level boundaries     |
 
 ## Related Documentation
 
 - [Code Quality Convention](./code.md) - Automated quality tools and git hooks
+- [Three-Level Testing Standard](./three-level-testing-standard.md) - Mandatory unit/integration/E2E boundaries for all projects
 - [Criticality Levels Convention](./criticality-levels.md) - Issue categorization
 - [Fixer Confidence Levels Convention](./fixer-confidence-levels.md) - Confidence assessment
 - [Repository Validation Methodology](./repository-validation.md) - Validation patterns

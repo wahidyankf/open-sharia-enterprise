@@ -61,8 +61,8 @@ Deeper tests run outside the pre-push/PR cycle — on a schedule or triggered ex
 
 ```mermaid
 flowchart TD
-    H["GitHub Actions<br/>integration-ci.yml<br/>cron 4× per day<br/>(WIB 04, 10, 16, 22)"] --> I["test:integration<br/>all projects with<br/>integration tests"]
-    H2["GitHub Actions<br/>e2e-*.yml<br/>cron 2× per day<br/>(WIB 06, 18)"] --> I2["test:e2e<br/>per -e2e project"]
+    H["GitHub Actions<br/>integration-ci.yml<br/>cron 4× per day<br/>(WIB 04, 10, 16, 22)"] --> I["test:integration<br/>all projects"]
+    H2["GitHub Actions<br/>e2e-*.yml<br/>cron 2× per day<br/>(WIB 06, 18)"] --> I2["test:integration + test:e2e<br/>per service"]
 
     J[On demand / CI matrix] --> K[test:unit]
     J --> L[test:integration]
@@ -91,6 +91,8 @@ flowchart TD
 - **[File Naming Convention](../../conventions/structure/file-naming.md)**: `project.json` follows Nx workspace conventions; target names follow the kebab-case + colon-variant pattern defined here.
 
 - **[Reproducible Environments Convention](../workflow/reproducible-environments.md)**: Projects with local dependencies expose an `install` target so dependency state is always explicit and reproducible.
+
+- **[Three-Level Testing Standard](../quality/three-level-testing-standard.md)**: The `test:unit`, `test:integration`, and `test:e2e` targets defined here map to the mandatory three-level testing architecture. Each target's isolation boundaries, caching rules, and CI schedule derive from that standard.
 
 ## Target Naming Standards
 
@@ -212,7 +214,7 @@ Derived from three rules: (1) All apps+libs → unit tests, (2) All apps → int
 
 \* E2E tests live in dedicated `*-e2e` runner projects, not in the backend/frontend project itself.
 
-**CI schedules**: `test:integration` runs 4x daily (WIB 04, 10, 16, 22), `test:e2e` runs 2x daily (WIB 06, 18), `test:quick` runs on every push to main and every PR.
+**CI schedules**: `test:integration` runs 4x daily via `integration-ci.yml` (WIB 04, 10, 16, 22) for all projects. Per-service "Test Integration + E2E" workflows run 2x daily (WIB 06, 18) combining `test:integration` + `test:e2e` for each service. `test:quick` runs on every push to main and every PR.
 
 ### All Projects
 
@@ -340,7 +342,7 @@ Playwright suites (`*-e2e`):
 | `test:e2e:ui`     | Run tests with Playwright UI |
 | `test:e2e:report` | Open the HTML test report    |
 
-**Execution strategy**: `test:e2e` is **not** part of the pre-push hook. It runs on a scheduled GitHub Actions cron job (2x daily at WIB 06:00 and 18:00) targeting each `*-e2e` project individually. This keeps pre-push fast while ensuring continuous E2E coverage against deployed or locally running services.
+**Execution strategy**: `test:e2e` is **not** part of the pre-push hook. It runs on scheduled GitHub Actions cron jobs (2x daily at WIB 06:00 and 18:00) in per-service "Test Integration + E2E" workflows that combine `test:integration` + `test:e2e` for each service. This keeps pre-push fast while ensuring continuous integration and E2E coverage.
 
 **BDD suites**: When the E2E project uses playwright-bdd, `test:e2e` runs
 `npx bddgen && npx playwright test`. The `bddgen` step regenerates `.features-gen/`
@@ -451,6 +453,7 @@ Example override for a Hugo site:
 - **Heavy `test:quick`**: Including slow integration tests or E2E in `test:quick` defeats its purpose — keep the total to a few minutes, not tens of minutes
 - **Mixing concerns in `test:unit`**: `test:unit` must not spin up databases, external APIs, or network services — those belong in `test:integration`
 - **Using a real database in unit tests**: Unit tests must use mocked repositories or in-memory implementations — never a real database (no Testcontainers, no H2, no Ecto SQL Sandbox). Real databases belong in integration tests (demo-be backends via docker-compose) or E2E tests
+- **Using HTTP dispatch in integration tests**: Integration tests for demo-be backends must call service/repository functions directly — not through MockMvc, TestClient, httptest, ConnTest, WebApplicationFactory, or any equivalent HTTP dispatch. HTTP contract verification belongs in E2E tests. See [Three-Level Testing Standard](../quality/three-level-testing-standard.md) for the full level boundaries
 - **Enabling cache on demo-be `test:integration`**: Demo-be integration tests use real PostgreSQL via docker-compose — setting `cache: true` would serve stale results when database state matters. Only in-process-mocking integration tests (MSW, Godog) may enable caching
 - **`build` on interpreted-language projects**: Adding a no-op `build` to Python or Ruby just to appear consistent — if there is no compile step, there is no `build` target
 - **`typecheck` on compile-enforced languages without additional analysis**: Go and plain Java enforce types through `build`; a separate `typecheck` that only re-runs the compiler is redundant. **Exception**: Java with JSpecify + NullAway warrants `typecheck` because NullAway is a distinct null-safety pass not included in `build`
