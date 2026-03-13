@@ -170,16 +170,16 @@ E2E tests already align with the new standard:
 - **Retain BDD framework**: Same Gherkin runner (Cucumber, Godog, TickSpec, etc.), new step implementations
 - **Update `test:integration` nx target**: Run `docker compose -f docker-compose.integration.yml up --abort-on-container-exit` and capture exit code
 
-#### 3. All Other Projects — No Changes
+#### 3. All Other Projects — Minimal or No Changes
 
-Already compliant with the three rules:
+These projects are already architecturally compliant with the three rules. However, some need **test:quick reconfiguration** to separate unit from integration tests (coverage must come from `test:unit` alone):
 
-- **Web UI** (`organiclever-web`): Rules 1+2+3 — unit + integration (MSW) + E2E already working
-- **Hugo sites** (`oseplatform-web`, `ayokoding-web`): Exempt — build + link validation only
-- **CLI apps** (`ayokoding-cli`, `oseplatform-cli`, `rhino-cli`): Rules 1+2 — unit + Godog integration already working
-- **Libraries** (`golang-commons`, `hugo-commons`): Rule 1 — unit tests already working (integration exists but optional)
-- **Libraries** (`elixir-cabbage`, `elixir-gherkin`): Rule 1 — unit tests already working
-- **E2E runners** (`demo-be-e2e`, `organiclever-web-e2e`): Playwright already working
+- **Web UI** (`organiclever-web`): Rules 1+2+3 — test architecture already correct, but **needs test suite splitting**: currently `test:quick` runs unit + MSW together. Must split into separate `test:unit` (no MSW) and `test:integration` (MSW) targets so `test:quick` only runs unit tests.
+- **CLI apps** (`ayokoding-cli`, `oseplatform-cli`, `rhino-cli`): Rules 1+2 — test architecture already correct, but **may need target reconfiguration**: currently coverage comes from combined unit + Godog runs. Must ensure `test:quick` runs `test:unit` only and coverage ≥90% from unit tests alone.
+- **Hugo sites** (`oseplatform-web`, `ayokoding-web`): Exempt — no changes needed, build + link validation only
+- **Libraries** (`golang-commons`, `hugo-commons`): Rule 1 — no changes needed, unit tests already working (integration exists but optional)
+- **Libraries** (`elixir-cabbage`, `elixir-gherkin`): Rule 1 — no changes needed, unit tests already working
+- **E2E runners** (`demo-be-e2e`, `organiclever-web-e2e`): No changes needed, Playwright already working
 
 ### Per-Backend Work Summary (Demo-be Only)
 
@@ -422,20 +422,20 @@ Both paths guarantee `test:quick` runs. PRs additionally run `typecheck` and `li
 - **`test:quick` target** — Ensure it runs `test:unit` + coverage check + specs coverage check. Does NOT include lint, typecheck, `test:integration`, or `test:e2e`.
 - **Caching inputs** — Ensure `specs/apps/demo-be/gherkin/**/*.feature`, `docker-compose.integration.yml`, and `Dockerfile.integration` are in inputs for `test:integration`. Specs also in inputs for `test:unit`.
 
-### Files That Do NOT Need Changes
+### Files That Do NOT Need Documentation Overhaul
 
-- **`apps/demo-be-e2e/`** — Already compliant with the new standard.
-- **`apps/organiclever-web/`** — Already compliant (Vitest + MSW).
-- **`apps/organiclever-web-e2e/`** — Already compliant (Playwright + bddgen).
-- **`apps/oseplatform-web/`** — Already compliant (link validation only).
-- **`apps/ayokoding-web/`** — Already compliant (link validation only).
-- **`apps/ayokoding-cli/`** — Already compliant (Go unit + Godog integration).
-- **`apps/oseplatform-cli/`** — Already compliant (Go unit + Godog integration).
-- **`apps/rhino-cli/`** — Already compliant (Go unit + Godog integration).
-- **`libs/golang-commons/`** — Already compliant (Go unit + Godog integration).
-- **`libs/hugo-commons/`** — Already compliant (Go unit + Godog integration).
-- **`libs/elixir-cabbage/`** — Already compliant (ExUnit).
-- **`libs/elixir-gherkin/`** — Already compliant (ExUnit).
+These projects don't need the same README/architecture documentation rewrite as demo-be backends. However, some need **project.json target updates** in Phase 3 of the delivery checklist:
+
+- **`apps/organiclever-web/`** — Test architecture already correct, but `project.json` needs target splitting (unit vs MSW integration) in Phase 3.
+- **`apps/ayokoding-cli/`**, **`apps/oseplatform-cli/`**, **`apps/rhino-cli/`** — Test architecture already correct, but `project.json` may need target reconfiguration (unit vs Godog integration) in Phase 3.
+- **`apps/demo-be-e2e/`** — Already compliant, no changes needed.
+- **`apps/organiclever-web-e2e/`** — Already compliant (Playwright + bddgen), no changes needed.
+- **`apps/oseplatform-web/`** — Already compliant (link validation only), no changes needed.
+- **`apps/ayokoding-web/`** — Already compliant (link validation only), no changes needed.
+- **`libs/golang-commons/`** — Already compliant (Go unit + Godog integration), no changes needed.
+- **`libs/hugo-commons/`** — Already compliant (Go unit + Godog integration), no changes needed.
+- **`libs/elixir-cabbage/`** — Already compliant (ExUnit), no changes needed.
+- **`libs/elixir-gherkin/`** — Already compliant (ExUnit), no changes needed.
 - **`governance/conventions/`** — No convention changes needed.
 - **`governance/principles/`** — Principles remain the same.
 
