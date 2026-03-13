@@ -1,5 +1,5 @@
 import { Given, Then } from "@cucumber/cucumber";
-import { expect } from "@playwright/test";
+import assert from "node:assert/strict";
 import type { CustomWorld } from "../world.js";
 import { promoteToAdmin } from "../hooks.js";
 
@@ -72,14 +72,14 @@ Then("alice's account status should be {string}", async function (this: CustomWo
     // Just verify via login attempt behavior
     const loginRes = await this.post("/api/v1/auth/login", { username: "alice", password: "Str0ng#Pass1" });
     if (expectedStatus.toLowerCase() === "locked") {
-      expect(loginRes.status).toBe(401);
+      assert.strictEqual(loginRes.status, 401);
     }
     return;
   }
   const res = await this.get("/api/v1/admin/users?email=alice@example.com", adminToken);
-  expect(res.status).toBe(200);
+  assert.strictEqual(res.status, 200);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const data = (res.body as any).data as Array<{ status: string }>;
-  expect(data.length).toBeGreaterThan(0);
-  expect(data[0]?.status?.toLowerCase()).toBe(expectedStatus.toLowerCase());
+  assert.ok(data.length > 0);
+  assert.strictEqual(data[0]?.status?.toLowerCase(), expectedStatus.toLowerCase());
 });

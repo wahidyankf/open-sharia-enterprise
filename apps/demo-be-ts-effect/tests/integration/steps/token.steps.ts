@@ -1,5 +1,5 @@
 import { Given, When, Then } from "@cucumber/cucumber";
-import { expect } from "@playwright/test";
+import assert from "node:assert/strict";
 import type { CustomWorld } from "../world.js";
 
 // ---- Given ----
@@ -45,25 +45,25 @@ When("alice decodes her access token payload", function (this: CustomWorld) {
 
 Then("the token should contain a non-null {string} claim", function (this: CustomWorld, claim: string) {
   const payload = this.context["tokenPayload"] as Record<string, unknown>;
-  expect(payload).toBeDefined();
-  expect(payload[claim]).not.toBeNull();
-  expect(payload[claim]).not.toBeUndefined();
+  assert.ok(payload !== undefined);
+  assert.ok(payload[claim] !== null);
+  assert.ok(payload[claim] !== undefined);
 });
 
 Then(
   "the response body should contain at least one key in the {string} array",
   function (this: CustomWorld, field: string) {
-    expect(this.response).not.toBeNull();
+    assert.ok(this.response !== null);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const body = this.response?.body as Record<string, unknown>;
     const arr = body[field] as unknown[];
-    expect(Array.isArray(arr)).toBe(true);
-    expect(arr.length).toBeGreaterThan(0);
+    assert.ok(Array.isArray(arr));
+    assert.ok(arr.length > 0);
   },
 );
 
 Then("alice's access token should be recorded as revoked", async function (this: CustomWorld) {
   const token = this.tokens.get("alice_access") ?? "";
   const res = await this.get("/api/v1/users/me", token);
-  expect(res.status).toBe(401);
+  assert.strictEqual(res.status, 401);
 });

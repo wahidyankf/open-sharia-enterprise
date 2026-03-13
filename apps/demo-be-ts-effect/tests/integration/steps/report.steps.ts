@@ -1,5 +1,5 @@
 import { When, Then } from "@cucumber/cucumber";
-import { expect } from "@playwright/test";
+import assert from "node:assert/strict";
 import type { CustomWorld } from "../world.js";
 
 When(/^alice sends GET (\/api\/v1\/reports\/.+)$/, async function (this: CustomWorld, path: string) {
@@ -10,23 +10,23 @@ When(/^alice sends GET (\/api\/v1\/reports\/.+)$/, async function (this: CustomW
 Then(
   /^the income breakdown should contain "([^"]*)" with amount "([^"]*)"$/,
   function (this: CustomWorld, category: string, amount: string) {
-    expect(this.response).not.toBeNull();
+    assert.ok(this.response !== null);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const body = this.response?.body as any;
     const breakdown = body?.income_breakdown as Record<string, string> | undefined;
-    expect(breakdown).toBeDefined();
-    expect(String(breakdown?.[category])).toBe(amount);
+    assert.ok(breakdown !== undefined);
+    assert.strictEqual(String(breakdown?.[category]), amount);
   },
 );
 
 Then(
   /^the expense breakdown should contain "([^"]*)" with amount "([^"]*)"$/,
   function (this: CustomWorld, category: string, amount: string) {
-    expect(this.response).not.toBeNull();
+    assert.ok(this.response !== null);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const body = this.response?.body as any;
     const breakdown = body?.expense_breakdown as Record<string, string> | undefined;
-    expect(breakdown).toBeDefined();
-    expect(String(breakdown?.[category])).toBe(amount);
+    assert.ok(breakdown !== undefined);
+    assert.strictEqual(String(breakdown?.[category]), amount);
   },
 );

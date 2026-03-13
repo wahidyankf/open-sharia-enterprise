@@ -1,5 +1,5 @@
 import { Given, When, Then } from "@cucumber/cucumber";
-import { expect } from "@playwright/test";
+import assert from "node:assert/strict";
 import type { CustomWorld } from "../world.js";
 
 // Helper: register a user
@@ -107,47 +107,47 @@ When(/^the client sends GET (.+) with alice's access token$/, async function (th
 Then(
   "the response body should contain {string} equal to {string}",
   function (this: CustomWorld, field: string, value: string) {
-    expect(this.response).not.toBeNull();
-    expect(String(this.response?.body?.[field])).toBe(value);
+    assert.ok(this.response !== null);
+    assert.strictEqual(String(this.response?.body?.[field]), value);
   },
 );
 
 Then("the response body should contain a non-null {string} field", function (this: CustomWorld, field: string) {
-  expect(this.response).not.toBeNull();
-  expect(this.response?.body?.[field]).not.toBeNull();
-  expect(this.response?.body?.[field]).not.toBeUndefined();
+  assert.ok(this.response !== null);
+  assert.ok(this.response?.body?.[field] !== null);
+  assert.ok(this.response?.body?.[field] !== undefined);
 });
 
 Then("the response body should not contain a {string} field", function (this: CustomWorld, field: string) {
-  expect(this.response?.body?.[field]).toBeUndefined();
+  assert.strictEqual(this.response?.body?.[field], undefined);
 });
 
 Then("the response body should contain an error message about invalid credentials", function (this: CustomWorld) {
-  expect(this.response).not.toBeNull();
+  assert.ok(this.response !== null);
   const body = this.response?.body as Record<string, string>;
   const message = (body["message"] ?? body["error"] ?? "").toLowerCase();
-  expect(message.length).toBeGreaterThan(0);
+  assert.ok(message.length > 0);
 });
 
 Then("the response body should contain an error message about account deactivation", function (this: CustomWorld) {
-  expect(this.response).not.toBeNull();
+  assert.ok(this.response !== null);
   const body = this.response?.body as Record<string, string>;
   const message = (body["message"] ?? body["error"] ?? "").toLowerCase();
-  expect(message.length).toBeGreaterThan(0);
+  assert.ok(message.length > 0);
 });
 
 Then("the response body should contain a validation error for {string}", function (this: CustomWorld, field: string) {
-  expect(this.response).not.toBeNull();
+  assert.ok(this.response !== null);
   const body = this.response?.body as Record<string, string>;
   const bodyField = body["field"];
   const hasField = bodyField === field || (body["message"] ?? "").toLowerCase().includes(field.toLowerCase());
   const hasError = body["error"] !== undefined || body["message"] !== undefined;
-  expect(hasField || hasError).toBe(true);
+  assert.ok(hasField || hasError);
 });
 
 Then("the response body should contain an error message about duplicate username", function (this: CustomWorld) {
-  expect(this.response).not.toBeNull();
+  assert.ok(this.response !== null);
   const body = this.response?.body as Record<string, string>;
   const message = (body["message"] ?? body["error"] ?? "").toLowerCase();
-  expect(message.length).toBeGreaterThan(0);
+  assert.ok(message.length > 0);
 });

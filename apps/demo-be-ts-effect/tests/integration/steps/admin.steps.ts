@@ -1,5 +1,5 @@
 import { Given, When, Then } from "@cucumber/cucumber";
-import { expect } from "@playwright/test";
+import assert from "node:assert/strict";
 import type { CustomWorld } from "../world.js";
 import { promoteToAdmin } from "../hooks.js";
 
@@ -130,12 +130,12 @@ When(/^the admin sends POST \/api\/v1\/admin\/users\/\{alice_id\}\/unlock$/, asy
 Then(
   /^the response body should contain at least one user with "([^"]*)" equal to "([^"]*)"$/,
   function (this: CustomWorld, field: string, value: string) {
-    expect(this.response).not.toBeNull();
+    assert.ok(this.response !== null);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data = (this.response?.body as any)?.data as Array<Record<string, string>>;
-    expect(Array.isArray(data)).toBe(true);
+    assert.ok(Array.isArray(data));
     const found = data.some((item) => String(item[field]) === value);
-    expect(found).toBe(true);
+    assert.ok(found);
   },
 );
 

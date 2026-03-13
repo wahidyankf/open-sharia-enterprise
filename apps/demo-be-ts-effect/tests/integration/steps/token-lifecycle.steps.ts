@@ -1,5 +1,5 @@
 import { Given, When, Then } from "@cucumber/cucumber";
-import { expect } from "@playwright/test";
+import assert from "node:assert/strict";
 import type { CustomWorld } from "../world.js";
 import { TEST_JWT_SECRET } from "../hooks.js";
 import * as jose from "jose";
@@ -75,23 +75,23 @@ When(/^alice sends POST \/api\/v1\/auth\/logout-all with her access token$/, asy
 // ---- Then ----
 
 Then("the response body should contain an error message about token expiration", function (this: CustomWorld) {
-  expect(this.response).not.toBeNull();
+  assert.ok(this.response !== null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const body = this.response?.body as Record<string, string>;
   const message = (body["message"] ?? body["error"] ?? "").toLowerCase();
-  expect(message.length).toBeGreaterThan(0);
+  assert.ok(message.length > 0);
 });
 
 Then("the response body should contain an error message about invalid token", function (this: CustomWorld) {
-  expect(this.response).not.toBeNull();
+  assert.ok(this.response !== null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const body = this.response?.body as Record<string, string>;
   const message = (body["message"] ?? body["error"] ?? "").toLowerCase();
-  expect(message.length).toBeGreaterThan(0);
+  assert.ok(message.length > 0);
 });
 
 Then("alice's access token should be invalidated", async function (this: CustomWorld) {
   const token = this.tokens.get("alice_access") ?? "";
   const res = await this.get("/api/v1/users/me", token);
-  expect(res.status).toBe(401);
+  assert.strictEqual(res.status, 401);
 });

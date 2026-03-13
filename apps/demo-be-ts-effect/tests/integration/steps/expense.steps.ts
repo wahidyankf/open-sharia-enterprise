@@ -1,5 +1,5 @@
 import { Given, When, Then } from "@cucumber/cucumber";
-import { expect } from "@playwright/test";
+import assert from "node:assert/strict";
 import type { CustomWorld } from "../world.js";
 
 // Helper: create an expense and store its ID
@@ -106,22 +106,22 @@ When(/^alice sends DELETE \/api\/v1\/expenses\/\{expenseId\}$/, async function (
 Then(
   /^the response body should contain "([^"]*)" equal to (\d+(?:\.\d+)?)$/,
   function (this: CustomWorld, field: string, valueStr: string) {
-    expect(this.response).not.toBeNull();
+    assert.ok(this.response !== null);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const body = this.response?.body as Record<string, unknown>;
     const numValue = parseFloat(valueStr);
     // stored as string (e.g. "50.5") or number
     const actual = typeof body[field] === "string" ? parseFloat(body[field] as string) : (body[field] as number);
-    expect(actual).toBe(numValue);
+    assert.strictEqual(actual, numValue);
   },
 );
 
 Then(
   /^the response body should contain "([^"]*)" total equal to "([^"]*)"$/,
   function (this: CustomWorld, currency: string, amount: string) {
-    expect(this.response).not.toBeNull();
+    assert.ok(this.response !== null);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const body = this.response?.body as Record<string, string>;
-    expect(String(body[currency])).toBe(amount);
+    assert.strictEqual(String(body[currency]), amount);
   },
 );

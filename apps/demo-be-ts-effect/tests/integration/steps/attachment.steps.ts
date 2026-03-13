@@ -1,5 +1,5 @@
 import { Given, When, Then } from "@cucumber/cucumber";
-import { expect } from "@playwright/test";
+import assert from "node:assert/strict";
 import type { CustomWorld } from "../world.js";
 
 const MAX_ATTACHMENT_SIZE = 10 * 1024 * 1024; // 10MB
@@ -124,32 +124,32 @@ When(
 Then(
   "the response body should contain {int} items in the {string} array",
   function (this: CustomWorld, count: number, field: string) {
-    expect(this.response).not.toBeNull();
+    assert.ok(this.response !== null);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const body = this.response?.body as Record<string, unknown>;
     const arr = body[field] as unknown[];
-    expect(Array.isArray(arr)).toBe(true);
-    expect(arr.length).toBe(count);
+    assert.ok(Array.isArray(arr));
+    assert.strictEqual(arr.length, count);
   },
 );
 
 Then(
   /^the response body should contain an attachment with "([^"]*)" equal to "([^"]*)"$/,
   function (this: CustomWorld, field: string, value: string) {
-    expect(this.response).not.toBeNull();
+    assert.ok(this.response !== null);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const body = this.response?.body as any;
     const attachments = body?.attachments as Array<Record<string, string>>;
-    expect(Array.isArray(attachments)).toBe(true);
+    assert.ok(Array.isArray(attachments));
     const found = attachments.some((a) => String(a[field]) === value);
-    expect(found).toBe(true);
+    assert.ok(found);
   },
 );
 
 Then("the response body should contain an error message about file size", function (this: CustomWorld) {
-  expect(this.response).not.toBeNull();
+  assert.ok(this.response !== null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const body = this.response?.body as Record<string, string>;
   const message = (body["message"] ?? body["error"] ?? "").toLowerCase();
-  expect(message.length).toBeGreaterThan(0);
+  assert.ok(message.length > 0);
 });
