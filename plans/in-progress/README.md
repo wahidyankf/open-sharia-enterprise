@@ -4,7 +4,7 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
-- [2026-03-13 Testing Standardization](./2026-03-13__testing-standardization/) - Standardize three-level testing (unit/integration/e2e) across all demo-be backends
+(none)
 
 ## Instructions
 
