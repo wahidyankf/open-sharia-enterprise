@@ -102,8 +102,23 @@ func (s *GORMStore) ListUsers(_ context.Context, q ListUsersQuery) ([]*domain.Us
 	return users, total, nil
 }
 
-// SaveRefreshToken stores a refresh token.
+// SaveRefreshToken stores a refresh token.  When a record with the same
+// token_str already exists (e.g. test helpers that back-date ExpiresAt),
+// the existing row is updated in-place so the latest ExpiresAt and Revoked
+// values are applied.
 func (s *GORMStore) SaveRefreshToken(_ context.Context, t *domain.RefreshToken) error {
+	// Try to create; on unique-constraint conflict for token_str, update the
+	// expiry and revoked fields of the existing row.
+	result := s.db.Where("token_str = ?", t.TokenStr).First(&domain.RefreshToken{})
+	if result.Error == nil {
+		// Row already exists — update its mutable fields.
+		return s.db.Model(&domain.RefreshToken{}).
+			Where("token_str = ?", t.TokenStr).
+			Updates(map[string]interface{}{
+				"expires_at": t.ExpiresAt,
+				"revoked":    t.Revoked,
+			}).Error
+	}
 	return s.db.Create(t).Error
 }
 
