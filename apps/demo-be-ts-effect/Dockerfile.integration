@@ -1,5 +1,6 @@
 # Integration test runner
 # Runs Cucumber.js BDD tests against the postgres service in docker-compose.integration.yml.
+# Tests call Effect service functions directly — no HTTP server is started.
 FROM node:24-alpine
 
 WORKDIR /app
