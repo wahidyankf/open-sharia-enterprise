@@ -1,0 +1,19 @@
+FROM rust:latest
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    pkg-config \
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy Cargo manifests for dependency caching
+COPY Cargo.toml Cargo.lock ./
+
+# Copy source code and tests
+COPY src ./src
+COPY tests ./tests
+
+# Run integration tests against the provided DATABASE_URL
+CMD ["cargo", "test", "--test", "integration", "--", "--nocapture"]

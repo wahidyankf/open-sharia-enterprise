@@ -8,7 +8,7 @@ use std::sync::Arc;
 use tower::ServiceExt;
 use uuid::Uuid;
 
-use demo_be_rust_axum::{app::router, db::pool::create_pool, state::AppState};
+use demo_be_rust_axum::{app::router, db::pool::create_test_pool, state::AppState};
 
 pub const TEST_JWT_SECRET: &str = "test-jwt-secret-that-is-32-chars-long!!";
 
@@ -39,9 +39,7 @@ pub struct AppWorld {
 
 impl AppWorld {
     async fn new_world() -> Result<Self, anyhow::Error> {
-        let database_url =
-            std::env::var("DATABASE_URL").unwrap_or_else(|_| "sqlite::memory:".to_string());
-        let pool = create_pool(&database_url).await?;
+        let pool = create_test_pool().await?;
         let state = Arc::new(AppState::new(pool.clone(), TEST_JWT_SECRET.to_string()));
         let app = router(state);
         Ok(Self {
