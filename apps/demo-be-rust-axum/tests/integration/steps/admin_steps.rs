@@ -129,5 +129,7 @@ async fn admin_force_password_reset(world: &mut AppWorld) {
         Some(id) => id,
         None => return,
     };
-    world.svc_admin_force_password_reset(&bearer, alice_id).await;
+    world
+        .svc_admin_force_password_reset(&bearer, alice_id)
+        .await;
 }

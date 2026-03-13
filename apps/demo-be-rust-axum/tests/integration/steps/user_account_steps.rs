@@ -51,7 +51,5 @@ async fn alice_deactivated_herself(world: &mut AppWorld) {
 #[when("the client sends GET /api/v1/users/me with alice's access token")]
 async fn get_me_with_alice_token(world: &mut AppWorld) {
     let token = world.auth_token.clone().unwrap_or_default();
-    world
-        .svc_get_profile(&format!("Bearer {token}"))
-        .await;
+    world.svc_get_profile(&format!("Bearer {token}")).await;
 }

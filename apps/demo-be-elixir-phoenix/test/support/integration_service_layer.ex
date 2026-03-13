@@ -333,19 +333,20 @@ defmodule DemoBeExph.Integration.ServiceLayer do
 
       {:ok, _admin} ->
         case accounts().get_user(user_id) do
-          nil ->
-            %{status: 404, body: %{"message" => "User not found"}}
-
-          user ->
-            case accounts().disable_user(user) do
-              {:ok, _} ->
-                token_ctx().revoke_all_refresh_tokens(user.id)
-                %{status: 200, body: %{"message" => "User disabled"}}
-
-              {:error, _} ->
-                %{status: 500, body: %{"message" => "Failed to disable user"}}
-            end
+          nil -> %{status: 404, body: %{"message" => "User not found"}}
+          user -> do_disable_user(user)
         end
+    end
+  end
+
+  defp do_disable_user(user) do
+    case accounts().disable_user(user) do
+      {:ok, _} ->
+        token_ctx().revoke_all_refresh_tokens(user.id)
+        %{status: 200, body: %{"message" => "User disabled"}}
+
+      {:error, _} ->
+        %{status: 500, body: %{"message" => "Failed to disable user"}}
     end
   end
 
@@ -357,15 +358,16 @@ defmodule DemoBeExph.Integration.ServiceLayer do
 
       {:ok, _admin} ->
         case accounts().get_user(user_id) do
-          nil ->
-            %{status: 404, body: %{"message" => "User not found"}}
-
-          user ->
-            case accounts().enable_user(user) do
-              {:ok, _} -> %{status: 200, body: %{"message" => "User enabled"}}
-              {:error, _} -> %{status: 500, body: %{"message" => "Failed"}}
-            end
+          nil -> %{status: 404, body: %{"message" => "User not found"}}
+          user -> do_enable_user(user)
         end
+    end
+  end
+
+  defp do_enable_user(user) do
+    case accounts().enable_user(user) do
+      {:ok, _} -> %{status: 200, body: %{"message" => "User enabled"}}
+      {:error, _} -> %{status: 500, body: %{"message" => "Failed"}}
     end
   end
 
@@ -377,15 +379,16 @@ defmodule DemoBeExph.Integration.ServiceLayer do
 
       {:ok, _admin} ->
         case accounts().get_user(user_id) do
-          nil ->
-            %{status: 404, body: %{"message" => "User not found"}}
-
-          user ->
-            case accounts().unlock_user(user) do
-              {:ok, _} -> %{status: 200, body: %{"message" => "User unlocked"}}
-              {:error, _} -> %{status: 500, body: %{"message" => "Failed"}}
-            end
+          nil -> %{status: 404, body: %{"message" => "User not found"}}
+          user -> do_unlock_user(user)
         end
+    end
+  end
+
+  defp do_unlock_user(user) do
+    case accounts().unlock_user(user) do
+      {:ok, _} -> %{status: 200, body: %{"message" => "User unlocked"}}
+      {:error, _} -> %{status: 500, body: %{"message" => "Failed"}}
     end
   end
 
@@ -589,12 +592,10 @@ defmodule DemoBeExph.Integration.ServiceLayer do
   end
 
   defp upload_attachment_file(expense_id, filename, content_type, file_path) do
-    cond do
-      content_type not in @supported_content_types ->
-        %{status: 415, body: %{"errors" => %{"file" => ["content type not supported"]}}}
-
-      true ->
-        store_validated_attachment(expense_id, filename, content_type, file_path)
+    if content_type in @supported_content_types do
+      store_validated_attachment(expense_id, filename, content_type, file_path)
+    else
+      %{status: 415, body: %{"errors" => %{"file" => ["content type not supported"]}}}
     end
   end
 

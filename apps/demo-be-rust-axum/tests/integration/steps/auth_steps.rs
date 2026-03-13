@@ -40,9 +40,7 @@ async fn register_alice_bad_email(world: &mut AppWorld) {
     regex = r#"the client sends POST /api/v1/auth/register with body \{ "username": "alice", "email": "alice@example\.com", "password": "" \}"#
 )]
 async fn register_alice_empty_password(world: &mut AppWorld) {
-    world
-        .svc_register("alice", "alice@example.com", "")
-        .await;
+    world.svc_register("alice", "alice@example.com", "").await;
 }
 
 #[when(

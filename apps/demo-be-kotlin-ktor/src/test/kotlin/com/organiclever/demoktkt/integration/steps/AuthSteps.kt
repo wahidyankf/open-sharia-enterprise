@@ -259,6 +259,7 @@ class AuthSteps {
     @When(
         "^the client sends POST /api/v1/expenses with body \\{ \"amount\": \"([^\"]+)\", \"currency\": \"([^\"]+)\", \"category\": \"([^\"]+)\", \"description\": \"([^\"]+)\", \"date\": \"([^\"]+)\", \"type\": \"([^\"]+)\" \\}$"
     )
+    @Suppress("UnusedParameter")
     fun theClientSendsPostExpensesWithBody(
         amount: String,
         currency: String,

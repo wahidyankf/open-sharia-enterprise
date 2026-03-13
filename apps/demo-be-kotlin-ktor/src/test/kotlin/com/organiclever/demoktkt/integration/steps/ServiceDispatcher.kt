@@ -42,6 +42,7 @@ private const val MAX_FAILED_LOGINS = 5
  * Each method mirrors the corresponding Ktor route handler and returns
  * `Pair<Int, String>` (HTTP-equivalent status code, JSON body string).
  */
+@Suppress("LargeClass")
 object ServiceDispatcher {
 
     // -------------------------------------------------------------------------
@@ -327,6 +328,7 @@ object ServiceDispatcher {
                 .getOrElse { e -> domainErrorResponse(e) }
         }
 
+    @Suppress("UnusedParameter")
     fun disableUser(accessToken: String, userId: String, reason: String): Pair<Int, String> =
         runBlocking {
             runCatching {

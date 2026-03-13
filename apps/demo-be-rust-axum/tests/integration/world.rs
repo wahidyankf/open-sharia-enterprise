@@ -51,10 +51,9 @@ impl ServiceResponse {
     pub fn from_error(err: &AppError) -> Self {
         use serde_json::json;
         let (status, body) = match err {
-            AppError::Validation { field, message } => (
-                400u16,
-                json!({"message": format!("{field}: {message}")}),
-            ),
+            AppError::Validation { field, message } => {
+                (400u16, json!({"message": format!("{field}: {message}")}))
+            }
             AppError::NotFound { .. } => (404, json!({"message": "Not found"})),
             AppError::Forbidden { message } => (403, json!({"message": message})),
             AppError::Conflict { message } => (409, json!({"message": message})),
@@ -63,10 +62,9 @@ impl ServiceResponse {
                 413,
                 json!({"message": "File size exceeds the maximum allowed limit"}),
             ),
-            AppError::UnsupportedMediaType => (
-                415,
-                json!({"message": "file: Unsupported file type"}),
-            ),
+            AppError::UnsupportedMediaType => {
+                (415, json!({"message": "file: Unsupported file type"}))
+            }
             AppError::Database(_) | AppError::Jwt(_) | AppError::Internal(_) => {
                 (500, json!({"message": "Internal server error"}))
             }
@@ -82,10 +80,7 @@ async fn auth_from_bearer(
     bearer: &str,
     jwt_secret: &str,
 ) -> Result<AuthContext, AppError> {
-    let token = bearer
-        .strip_prefix("Bearer ")
-        .unwrap_or(bearer)
-        .trim();
+    let token = bearer.strip_prefix("Bearer ").unwrap_or(bearer).trim();
     if token.is_empty() {
         return Err(AppError::Unauthorized {
             message: "Missing Authorization header".to_string(),
@@ -113,11 +108,12 @@ async fn auth_from_bearer(
         });
     }
 
-    let user = user_repo::find_by_id(pool, user_id)
-        .await?
-        .ok_or_else(|| AppError::Unauthorized {
-            message: "User not found".to_string(),
-        })?;
+    let user =
+        user_repo::find_by_id(pool, user_id)
+            .await?
+            .ok_or_else(|| AppError::Unauthorized {
+                message: "User not found".to_string(),
+            })?;
 
     let status = UserStatus::parse_str(&user.status).unwrap_or(UserStatus::Active);
     if status != UserStatus::Active {
@@ -231,12 +227,7 @@ impl AppWorld {
     // -----------------------------------------------------------------------
 
     /// POST /api/v1/auth/register
-    pub async fn svc_register(
-        &mut self,
-        username: &str,
-        email: &str,
-        password: &str,
-    ) {
+    pub async fn svc_register(&mut self, username: &str, email: &str, password: &str) {
         let resp = svc_register(&self.state, username, email, password).await;
         self.record(resp);
     }
@@ -479,9 +470,15 @@ impl AppWorld {
         content_type: &str,
         data: Vec<u8>,
     ) {
-        let resp =
-            svc_upload_attachment(&self.state, bearer, expense_id, filename, content_type, data)
-                .await;
+        let resp = svc_upload_attachment(
+            &self.state,
+            bearer,
+            expense_id,
+            filename,
+            content_type,
+            data,
+        )
+        .await;
         if resp.status == 201 {
             self.last_attachment_id = resp
                 .body
@@ -514,13 +511,7 @@ impl AppWorld {
     // -----------------------------------------------------------------------
 
     /// GET /api/v1/reports/pl
-    pub async fn svc_pl_report(
-        &mut self,
-        bearer: &str,
-        from: &str,
-        to: &str,
-        currency: &str,
-    ) {
+    pub async fn svc_pl_report(&mut self, bearer: &str, from: &str, to: &str, currency: &str) {
         let resp = svc_pl_report(&self.state, bearer, from, to, currency).await;
         self.record(resp);
     }
@@ -550,7 +541,12 @@ impl AppWorld {
 // AUTH
 // ---------------------------------------------------------------------------
 
-pub async fn svc_register(state: &AppState, username: &str, email: &str, password: &str) -> ServiceResponse {
+pub async fn svc_register(
+    state: &AppState,
+    username: &str,
+    email: &str,
+    password: &str,
+) -> ServiceResponse {
     use serde_json::json;
 
     // Validate inputs
@@ -652,11 +648,15 @@ pub async fn svc_login(state: &AppState, username: &str, password: &str) -> Serv
     }
 
     let role = Role::parse_str(&user.role).unwrap_or(Role::User);
-    let (access_token, _) =
-        match encode_access_token(user.id, &user.username, &role.to_string(), &state.jwt_secret) {
-            Ok(pair) => pair,
-            Err(e) => return ServiceResponse::from_error(&e),
-        };
+    let (access_token, _) = match encode_access_token(
+        user.id,
+        &user.username,
+        &role.to_string(),
+        &state.jwt_secret,
+    ) {
+        Ok(pair) => pair,
+        Err(e) => return ServiceResponse::from_error(&e),
+    };
     let (refresh_token, _) = match encode_refresh_token(user.id, &state.jwt_secret) {
         Ok(pair) => pair,
         Err(e) => return ServiceResponse::from_error(&e),
@@ -718,11 +718,15 @@ pub async fn svc_refresh(state: &AppState, refresh_token_str: &str) -> ServiceRe
     }
 
     let role = Role::parse_str(&user.role).unwrap_or(Role::User);
-    let (access_token, _) =
-        match encode_access_token(user.id, &user.username, &role.to_string(), &state.jwt_secret) {
-            Ok(pair) => pair,
-            Err(e) => return ServiceResponse::from_error(&e),
-        };
+    let (access_token, _) = match encode_access_token(
+        user.id,
+        &user.username,
+        &role.to_string(),
+        &state.jwt_secret,
+    ) {
+        Ok(pair) => pair,
+        Err(e) => return ServiceResponse::from_error(&e),
+    };
     let (refresh_token, _) = match encode_refresh_token(user.id, &state.jwt_secret) {
         Ok(pair) => pair,
         Err(e) => return ServiceResponse::from_error(&e),
@@ -886,9 +890,7 @@ pub async fn svc_change_password(
         Err(e) => return ServiceResponse::from_error(&e),
     };
 
-    if let Err(e) =
-        user_repo::update_password_hash(&state.pool, auth.user_id, &new_hash).await
-    {
+    if let Err(e) = user_repo::update_password_hash(&state.pool, auth.user_id, &new_hash).await {
         return ServiceResponse::from_error(&e);
     }
     if let Err(e) = token_repo::revoke_all_for_user(&state.pool, auth.user_id).await {
@@ -1050,9 +1052,7 @@ pub async fn svc_admin_force_password_reset(
     }
 
     let reset_token = Uuid::new_v4().to_string();
-    if let Err(e) =
-        user_repo::set_password_reset_token(&state.pool, user_id, &reset_token).await
-    {
+    if let Err(e) = user_repo::set_password_reset_token(&state.pool, user_id, &reset_token).await {
         return ServiceResponse::from_error(&e);
     }
 
@@ -1171,11 +1171,7 @@ pub async fn svc_list_expenses(state: &AppState, bearer: &str) -> ServiceRespons
     }
 }
 
-pub async fn svc_get_expense(
-    state: &AppState,
-    bearer: &str,
-    expense_id: Uuid,
-) -> ServiceResponse {
+pub async fn svc_get_expense(state: &AppState, bearer: &str, expense_id: Uuid) -> ServiceResponse {
     let auth = match auth_from_bearer(&state.pool, bearer, &state.jwt_secret).await {
         Ok(a) => a,
         Err(e) => return ServiceResponse::from_error(&e),

@@ -50,7 +50,6 @@ from demo_be_python_fastapi.domain.user import validate_password_strength
 from demo_be_python_fastapi.infrastructure.models import UserModel
 from demo_be_python_fastapi.infrastructure.password_hasher import hash_password, verify_password
 
-
 # ---------------------------------------------------------------------------
 # Response abstraction
 # ---------------------------------------------------------------------------

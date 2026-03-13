@@ -40,9 +40,7 @@ async fn jwks_has_keys(world: &mut AppWorld, field: String) {
 #[then("alice's access token should be recorded as revoked")]
 async fn token_is_revoked(world: &mut AppWorld) {
     let token = world.auth_token.clone().unwrap_or_default();
-    world
-        .svc_get_profile(&format!("Bearer {token}"))
-        .await;
+    world.svc_get_profile(&format!("Bearer {token}")).await;
     assert_eq!(
         world.last_status, 401,
         "Expected 401 for revoked token, got {}",
