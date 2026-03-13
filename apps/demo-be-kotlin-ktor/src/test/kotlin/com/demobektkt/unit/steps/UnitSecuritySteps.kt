@@ -22,7 +22,7 @@ class UnitSecuritySteps {
   fun theAdminSendsPostUnlockAlice() {
     val aliceId = UnitTestWorld.userIds["alice"] ?: error("alice id not stored")
     val adminToken = UnitTestWorld.accessTokens["superadmin"] ?: error("admin token not stored")
-    val (status, body) = UnitHttpHelper.post("/api/v1/admin/users/$aliceId/unlock", "", adminToken)
+    val (status, body) = UnitServiceDispatcher.unlockUser(adminToken, aliceId)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = body
   }

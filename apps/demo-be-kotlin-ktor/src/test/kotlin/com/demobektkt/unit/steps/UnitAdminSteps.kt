@@ -9,7 +9,7 @@ class UnitAdminSteps {
   @When("the admin sends GET \\/api\\/v1\\/admin\\/users")
   fun theAdminSendsGetAdminUsers() {
     val token = UnitTestWorld.accessTokens["superadmin"] ?: error("admin token not stored")
-    val (status, body) = UnitHttpHelper.get("/api/v1/admin/users", token)
+    val (status, body) = UnitServiceDispatcher.listUsers(token)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = body
   }
@@ -17,7 +17,7 @@ class UnitAdminSteps {
   @When("^the admin sends GET /api/v1/admin/users\\?email=([^@]+@[^\\s]+)$")
   fun theAdminSendsGetAdminUsersWithEmailFilter(email: String) {
     val token = UnitTestWorld.accessTokens["superadmin"] ?: error("admin token not stored")
-    val (status, body) = UnitHttpHelper.get("/api/v1/admin/users?email=$email", token)
+    val (status, body) = UnitServiceDispatcher.listUsers(token, email)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = body
   }
@@ -28,9 +28,7 @@ class UnitAdminSteps {
   fun theAdminSendsPostDisableAliceWithBody(reason: String) {
     val aliceId = UnitTestWorld.userIds["alice"] ?: error("alice id not stored")
     val adminToken = UnitTestWorld.accessTokens["superadmin"] ?: error("admin token not stored")
-    val body = """{"reason":"$reason"}"""
-    val (status, respBody) =
-      UnitHttpHelper.post("/api/v1/admin/users/$aliceId/disable", body, adminToken)
+    val (status, respBody) = UnitServiceDispatcher.disableUser(adminToken, aliceId, reason)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = respBody
   }
@@ -39,7 +37,7 @@ class UnitAdminSteps {
   fun theAdminSendsPostEnableAlice() {
     val aliceId = UnitTestWorld.userIds["alice"] ?: error("alice id not stored")
     val adminToken = UnitTestWorld.accessTokens["superadmin"] ?: error("admin token not stored")
-    val (status, body) = UnitHttpHelper.post("/api/v1/admin/users/$aliceId/enable", "", adminToken)
+    val (status, body) = UnitServiceDispatcher.enableUser(adminToken, aliceId)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = body
   }
@@ -48,8 +46,7 @@ class UnitAdminSteps {
   fun theAdminSendsPostForcePasswordResetAlice() {
     val aliceId = UnitTestWorld.userIds["alice"] ?: error("alice id not stored")
     val adminToken = UnitTestWorld.accessTokens["superadmin"] ?: error("admin token not stored")
-    val (status, body) =
-      UnitHttpHelper.post("/api/v1/admin/users/$aliceId/force-password-reset", "", adminToken)
+    val (status, body) = UnitServiceDispatcher.forcePasswordReset(adminToken, aliceId)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = body
   }

@@ -73,12 +73,13 @@ Three-level testing strategy following the same pattern as `demo-be-java-springb
 
 ### Level 1: Unit Tests (`test:unit` / `testUnit`)
 
-Unit-level Cucumber BDD scenarios + JUnit tests using an embedded Ktor Netty server on a random port
-with in-memory repository implementations (ConcurrentHashMap). No external services required.
+Unit-level Cucumber BDD scenarios + JUnit tests using `UnitServiceDispatcher` which calls
+domain/repository logic directly with in-memory repository implementations (ConcurrentHashMap).
+No HTTP server, no Koin DI, no external services required.
 
 - **Cucumber step definitions**: `src/test/kotlin/.../unit/steps/`
 - **JUnit error-path tests**: `src/test/kotlin/.../unit/UnitErrorPathsTest.kt`, `UnitAdditionalCoverageTest.kt`
-- **Server**: `UnitTestServer` starts a real Netty instance with Koin DI wired to in-memory repos
+- **Service dispatcher**: `UnitServiceDispatcher` mirrors route handler logic, bypassing HTTP
 - **Coverage**: Kover instruments only `testUnit`; must pass >= 90% via `rhino-cli`
 
 ### Level 2: Integration Tests (`test:integration` / `testIntegration`)

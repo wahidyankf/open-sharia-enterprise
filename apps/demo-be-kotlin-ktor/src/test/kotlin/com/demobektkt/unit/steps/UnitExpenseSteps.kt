@@ -7,11 +7,48 @@ import org.junit.jupiter.api.Assertions.assertTrue
 
 class UnitExpenseSteps {
 
-  private fun createExpense(username: String, body: String): String {
+  private fun createExpenseFromFields(
+    username: String,
+    amount: String,
+    currency: String,
+    category: String,
+    description: String,
+    date: String,
+    type: String,
+    quantity: Double? = null,
+    unit: String? = null,
+  ): String {
     val token = UnitTestWorld.accessTokens[username] ?: error("$username has no access token")
-    val (status, respBody) = UnitHttpHelper.post("/api/v1/expenses", body, token)
+    val (status, respBody) =
+      UnitServiceDispatcher.createExpense(
+        token,
+        amount,
+        currency,
+        category,
+        description,
+        date,
+        type,
+        quantity,
+        unit,
+      )
     assertTrue(status == 201, "Expected 201 creating expense, got $status. Body: $respBody")
-    return UnitJsonHelper.getString(respBody, "id") ?: error("No id in expense response: $respBody")
+    return UnitJsonHelper.getString(respBody, "id")
+      ?: error("No id in expense response: $respBody")
+  }
+
+  private fun createExpenseFromKV(username: String, vararg kvPairs: Pair<String, String>): String {
+    val map = kvPairs.toMap()
+    return createExpenseFromFields(
+      username,
+      map["amount"] ?: error("missing amount"),
+      map["currency"] ?: error("missing currency"),
+      map["category"] ?: error("missing category"),
+      map["description"] ?: error("missing description"),
+      map["date"] ?: error("missing date"),
+      map["type"] ?: error("missing type"),
+      map["quantity"]?.toDoubleOrNull(),
+      map["unit"],
+    )
   }
 
   @Given(
@@ -31,8 +68,7 @@ class UnitExpenseSteps {
     k6: String,
     v6: String,
   ) {
-    val body = """{"$k1":"$v1","$k2":"$v2","$k3":"$v3","$k4":"$v4","$k5":"$v5","$k6":"$v6"}"""
-    val id = createExpense("alice", body)
+    val id = createExpenseFromKV("alice", k1 to v1, k2 to v2, k3 to v3, k4 to v4, k5 to v5, k6 to v6)
     UnitTestWorld.expenseIds["alice:last"] = id
   }
 
@@ -53,8 +89,7 @@ class UnitExpenseSteps {
     k6: String,
     v6: String,
   ) {
-    val body = """{"$k1":"$v1","$k2":"$v2","$k3":"$v3","$k4":"$v4","$k5":"$v5","$k6":"$v6"}"""
-    val id = createExpense("alice", body)
+    val id = createExpenseFromKV("alice", k1 to v1, k2 to v2, k3 to v3, k4 to v4, k5 to v5, k6 to v6)
     UnitTestWorld.expenseIds["alice:last"] = id
   }
 
@@ -71,9 +106,18 @@ class UnitExpenseSteps {
     quantity: String,
     unit: String,
   ) {
-    val body =
-      """{"amount":"$amount","currency":"$currency","category":"$category","description":"$description","date":"$date","type":"$type","quantity":$quantity,"unit":"$unit"}"""
-    val id = createExpense("alice", body)
+    val id =
+      createExpenseFromFields(
+        "alice",
+        amount,
+        currency,
+        category,
+        description,
+        date,
+        type,
+        quantity.toDouble(),
+        unit,
+      )
     UnitTestWorld.expenseIds["alice:last"] = id
   }
 
@@ -90,28 +134,33 @@ class UnitExpenseSteps {
     quantity: String,
     unit: String,
   ) {
-    val body =
-      """{"amount":"$amount","currency":"$currency","category":"$category","description":"$description","date":"$date","type":"$type","quantity":$quantity,"unit":"$unit"}"""
-    val id = createExpense("alice", body)
+    val id =
+      createExpenseFromFields(
+        "alice",
+        amount,
+        currency,
+        category,
+        description,
+        date,
+        type,
+        quantity.toDouble(),
+        unit,
+      )
     UnitTestWorld.expenseIds["alice:last"] = id
   }
 
   @Given("alice has created 3 entries")
   fun aliceHasCreated3Entries() {
-    val bodies =
-      listOf(
-        """{"amount":"10.00","currency":"USD","category":"food","description":"Entry1","date":"2025-01-01","type":"expense"}""",
-        """{"amount":"20.00","currency":"USD","category":"food","description":"Entry2","date":"2025-01-02","type":"expense"}""",
-        """{"amount":"30.00","currency":"USD","category":"food","description":"Entry3","date":"2025-01-03","type":"expense"}""",
-      )
-    bodies.forEach { createExpense("alice", it) }
+    createExpenseFromFields("alice", "10.00", "USD", "food", "Entry1", "2025-01-01", "expense")
+    createExpenseFromFields("alice", "20.00", "USD", "food", "Entry2", "2025-01-02", "expense")
+    createExpenseFromFields("alice", "30.00", "USD", "food", "Entry3", "2025-01-03", "expense")
   }
 
   @When("alice sends GET \\/api\\/v1\\/expenses\\/\\{expenseId\\}")
   fun aliceSendsGetExpenseById() {
     val token = UnitTestWorld.accessTokens["alice"] ?: error("alice has no access token")
     val expenseId = UnitTestWorld.expenseIds["alice:last"] ?: error("no expense id stored")
-    val (status, body) = UnitHttpHelper.get("/api/v1/expenses/$expenseId", token)
+    val (status, body) = UnitServiceDispatcher.getExpenseById(token, expenseId)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = body
   }
@@ -119,7 +168,7 @@ class UnitExpenseSteps {
   @When("alice sends GET \\/api\\/v1\\/expenses")
   fun aliceSendsGetExpenses() {
     val token = UnitTestWorld.accessTokens["alice"] ?: error("alice has no access token")
-    val (status, body) = UnitHttpHelper.get("/api/v1/expenses", token)
+    val (status, body) = UnitServiceDispatcher.listExpenses(token)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = body
   }
@@ -127,7 +176,7 @@ class UnitExpenseSteps {
   @When("alice sends GET \\/api\\/v1\\/expenses\\/summary")
   fun aliceSendsGetExpensesSummary() {
     val token = UnitTestWorld.accessTokens["alice"] ?: error("alice has no access token")
-    val (status, body) = UnitHttpHelper.get("/api/v1/expenses/summary", token)
+    val (status, body) = UnitServiceDispatcher.expenseSummary(token)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = body
   }
@@ -145,9 +194,17 @@ class UnitExpenseSteps {
   ) {
     val token = UnitTestWorld.accessTokens["alice"] ?: error("alice has no access token")
     val expenseId = UnitTestWorld.expenseIds["alice:last"] ?: error("no expense id stored")
-    val body =
-      """{"amount":"$amount","currency":"$currency","category":"$category","description":"$description","date":"$date","type":"$type"}"""
-    val (status, respBody) = UnitHttpHelper.put("/api/v1/expenses/$expenseId", body, token)
+    val (status, respBody) =
+      UnitServiceDispatcher.updateExpense(
+        token,
+        expenseId,
+        amount,
+        currency,
+        category,
+        description,
+        date,
+        type,
+      )
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = respBody
   }
@@ -156,7 +213,7 @@ class UnitExpenseSteps {
   fun aliceSendsDeleteExpense() {
     val token = UnitTestWorld.accessTokens["alice"] ?: error("alice has no access token")
     val expenseId = UnitTestWorld.expenseIds["alice:last"] ?: error("no expense id stored")
-    val (status, body) = UnitHttpHelper.delete("/api/v1/expenses/$expenseId", token)
+    val (status, body) = UnitServiceDispatcher.deleteExpense(token, expenseId)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = body
   }
@@ -173,9 +230,8 @@ class UnitExpenseSteps {
     type: String,
   ) {
     val token = UnitTestWorld.accessTokens["alice"] ?: error("alice has no access token")
-    val body =
-      """{"amount":"$amount","currency":"$currency","category":"$category","description":"$description","date":"$date","type":"$type"}"""
-    val (status, respBody) = UnitHttpHelper.post("/api/v1/expenses", body, token)
+    val (status, respBody) =
+      UnitServiceDispatcher.createExpense(token, amount, currency, category, description, date, type)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = respBody
     if (status == 201) {
@@ -197,9 +253,18 @@ class UnitExpenseSteps {
     unit: String,
   ) {
     val token = UnitTestWorld.accessTokens["alice"] ?: error("alice has no access token")
-    val body =
-      """{"amount":"$amount","currency":"$currency","category":"$category","description":"$description","date":"$date","type":"$type","quantity":$quantity,"unit":"$unit"}"""
-    val (status, respBody) = UnitHttpHelper.post("/api/v1/expenses", body, token)
+    val (status, respBody) =
+      UnitServiceDispatcher.createExpense(
+        token,
+        amount,
+        currency,
+        category,
+        description,
+        date,
+        type,
+        quantity.toDouble(),
+        unit,
+      )
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = respBody
     if (status == 201) {

@@ -10,19 +10,19 @@ class UnitCommonSteps {
 
   @Given("the API is running")
   fun theApiIsRunning() {
-    // No-op: Ktor testApplication starts in-process for each request
+    // No-op: UnitServiceDispatcher calls domain logic directly
   }
 
   @When("an operations engineer sends GET \\/health")
   fun operationsEngineerSendsGetHealth() {
-    val (status, body) = UnitHttpHelper.get("/health")
+    val (status, body) = UnitServiceDispatcher.health()
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = body
   }
 
   @When("an unauthenticated engineer sends GET \\/health")
   fun unauthenticatedEngineerSendsGetHealth() {
-    val (status, body) = UnitHttpHelper.get("/health")
+    val (status, body) = UnitServiceDispatcher.health()
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = body
   }

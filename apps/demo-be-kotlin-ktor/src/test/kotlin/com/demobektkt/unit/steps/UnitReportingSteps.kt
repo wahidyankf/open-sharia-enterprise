@@ -9,8 +9,7 @@ class UnitReportingSteps {
   @When("^alice sends GET /api/v1/reports/pl\\?from=([^&]+)&to=([^&]+)&currency=([A-Z]+)$")
   fun aliceSendsGetReportsPl(from: String, to: String, currency: String) {
     val token = UnitTestWorld.accessTokens["alice"] ?: error("alice has no access token")
-    val (status, body) =
-      UnitHttpHelper.get("/api/v1/reports/pl?from=$from&to=$to&currency=$currency", token)
+    val (status, body) = UnitServiceDispatcher.pl(token, from, to, currency)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = body
   }

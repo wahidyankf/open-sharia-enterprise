@@ -164,6 +164,10 @@ kover {
           "com.demobektkt.ApplicationKt",
           // Exclude DI module setup (wires Exposed repos, not testable without DB)
           "com.demobektkt.plugins.DIKt",
+          // Exclude HTTP/route layer — unit tests call domain logic directly via
+          // UnitServiceDispatcher (no HTTP). Routes are covered by integration/e2e tests.
+          "com.demobektkt.routes.*",
+          "com.demobektkt.plugins.*",
         )
       }
     }

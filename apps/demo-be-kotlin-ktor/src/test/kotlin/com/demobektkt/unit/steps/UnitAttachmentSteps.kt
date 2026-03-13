@@ -18,13 +18,7 @@ class UnitAttachmentSteps {
     val token = UnitTestWorld.accessTokens[username] ?: error("$username has no access token")
     val expenseId =
       UnitTestWorld.expenseIds[expenseIdKey] ?: error("no expense id stored at $expenseIdKey")
-    return UnitHttpHelper.postMultipart(
-      "/api/v1/expenses/$expenseId/attachments",
-      filename,
-      contentType,
-      fileContent,
-      token,
-    )
+    return UnitServiceDispatcher.uploadAttachment(token, expenseId, filename, contentType, fileContent)
   }
 
   @Given(
@@ -47,8 +41,7 @@ class UnitAttachmentSteps {
     // Login bob
     val passwords = listOf("Str0ng#Pass2", "Str0ng#Pass1")
     for (pwd in passwords) {
-      val (status, body) =
-        UnitHttpHelper.post("/api/v1/auth/login", """{"username":"bob","password":"$pwd"}""")
+      val (status, body) = UnitServiceDispatcher.login("bob", pwd)
       if (status == 200) {
         UnitJsonHelper.getString(body, "access_token")?.let {
           UnitTestWorld.accessTokens["bob"] = it
@@ -56,9 +49,18 @@ class UnitAttachmentSteps {
         break
       }
     }
-    val body = """{"$k1":"$v1","$k2":"$v2","$k3":"$v3","$k4":"$v4","$k5":"$v5","$k6":"$v6"}"""
+    val map = mapOf(k1 to v1, k2 to v2, k3 to v3, k4 to v4, k5 to v5, k6 to v6)
     val token = UnitTestWorld.accessTokens["bob"] ?: error("bob has no access token")
-    val (status, respBody) = UnitHttpHelper.post("/api/v1/expenses", body, token)
+    val (status, respBody) =
+      UnitServiceDispatcher.createExpense(
+        token,
+        map["amount"] ?: error("missing amount"),
+        map["currency"] ?: error("missing currency"),
+        map["category"] ?: error("missing category"),
+        map["description"] ?: error("missing description"),
+        map["date"] ?: error("missing date"),
+        map["type"] ?: error("missing type"),
+      )
     assertTrue(status == 201, "Expected 201 creating bob's expense, got $status. Body: $respBody")
     UnitJsonHelper.getString(respBody, "id")?.let { UnitTestWorld.expenseIds["bob:last"] = it }
   }
@@ -89,12 +91,12 @@ class UnitAttachmentSteps {
     val token = UnitTestWorld.accessTokens["alice"] ?: error("alice has no access token")
     val expenseId = UnitTestWorld.expenseIds["bob:last"] ?: error("no bob expense id stored")
     val (status, body) =
-      UnitHttpHelper.postMultipart(
-        "/api/v1/expenses/$expenseId/attachments",
+      UnitServiceDispatcher.uploadAttachment(
+        token,
+        expenseId,
         filename,
         contentType,
         "test file content".toByteArray(),
-        token,
       )
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = body
@@ -115,7 +117,7 @@ class UnitAttachmentSteps {
   fun aliceSendsGetAttachments() {
     val token = UnitTestWorld.accessTokens["alice"] ?: error("alice has no access token")
     val expenseId = UnitTestWorld.expenseIds["alice:last"] ?: error("no expense id stored")
-    val (status, body) = UnitHttpHelper.get("/api/v1/expenses/$expenseId/attachments", token)
+    val (status, body) = UnitServiceDispatcher.listAttachments(token, expenseId)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = body
   }
@@ -124,7 +126,7 @@ class UnitAttachmentSteps {
   fun aliceSendsGetBobsAttachments() {
     val token = UnitTestWorld.accessTokens["alice"] ?: error("alice has no access token")
     val expenseId = UnitTestWorld.expenseIds["bob:last"] ?: error("no bob expense id stored")
-    val (status, body) = UnitHttpHelper.get("/api/v1/expenses/$expenseId/attachments", token)
+    val (status, body) = UnitServiceDispatcher.listAttachments(token, expenseId)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = body
   }
@@ -136,8 +138,7 @@ class UnitAttachmentSteps {
     val token = UnitTestWorld.accessTokens["alice"] ?: error("alice has no access token")
     val expenseId = UnitTestWorld.expenseIds["alice:last"] ?: error("no expense id stored")
     val attachmentId = UnitTestWorld.attachmentIds["alice:last"] ?: error("no attachment id stored")
-    val (status, body) =
-      UnitHttpHelper.delete("/api/v1/expenses/$expenseId/attachments/$attachmentId", token)
+    val (status, body) = UnitServiceDispatcher.deleteAttachment(token, expenseId, attachmentId)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = body
   }
@@ -148,8 +149,7 @@ class UnitAttachmentSteps {
     val expenseId = UnitTestWorld.expenseIds["bob:last"] ?: error("no bob expense id stored")
     val attachmentId =
       UnitTestWorld.attachmentIds["alice:last"] ?: "00000000-0000-0000-0000-000000000000"
-    val (status, body) =
-      UnitHttpHelper.delete("/api/v1/expenses/$expenseId/attachments/$attachmentId", token)
+    val (status, body) = UnitServiceDispatcher.deleteAttachment(token, expenseId, attachmentId)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = body
   }
@@ -161,8 +161,7 @@ class UnitAttachmentSteps {
     val token = UnitTestWorld.accessTokens["alice"] ?: error("alice has no access token")
     val expenseId = UnitTestWorld.expenseIds["alice:last"] ?: error("no expense id stored")
     val randomId = "00000000-0000-0000-0000-000000000000"
-    val (status, body) =
-      UnitHttpHelper.delete("/api/v1/expenses/$expenseId/attachments/$randomId", token)
+    val (status, body) = UnitServiceDispatcher.deleteAttachment(token, expenseId, randomId)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = body
   }
