@@ -30,21 +30,21 @@ type scenarioCtx struct {
 	AliceID        string
 }
 
-func (c *scenarioCtx) reset() {
+func (ctx *scenarioCtx) reset() {
 	gin.SetMode(gin.TestMode)
 	memStore := store.NewMemoryStore()
 	jwtSvc := auth.NewJWTService(testJWTSecret)
-	c.Store = memStore
-	c.Router = router.NewRouter(memStore, jwtSvc)
-	c.LastResponse = nil
-	c.LastBody = nil
-	c.AccessToken = ""
-	c.RefreshToken = ""
-	c.UserID = ""
-	c.ExpenseID = ""
-	c.AttachmentID = ""
-	c.BobAccessToken = ""
-	c.BobExpenseID = ""
-	c.AdminToken = ""
-	c.AliceID = ""
+	ctx.Store = memStore
+	ctx.Router = router.NewRouter(memStore, jwtSvc)
+	ctx.LastResponse = nil
+	ctx.LastBody = nil
+	ctx.AccessToken = ""
+	ctx.RefreshToken = ""
+	ctx.UserID = ""
+	ctx.ExpenseID = ""
+	ctx.AttachmentID = ""
+	ctx.BobAccessToken = ""
+	ctx.BobExpenseID = ""
+	ctx.AdminToken = ""
+	ctx.AliceID = ""
 }

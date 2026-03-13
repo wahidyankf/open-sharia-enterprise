@@ -69,7 +69,10 @@ func (ctx *scenarioCtx) aUserIsRegisteredAndDeactivated(username string) error {
 	if err := json.Unmarshal(body, &parsed); err != nil {
 		return err
 	}
-	token := parsed["access_token"].(string)
+	token, ok := parsed["access_token"].(string)
+	if !ok {
+		return fmt.Errorf("access_token is not a string")
+	}
 	resp2, body2 := doRequest(ctx.Router, "POST", "/api/v1/users/me/deactivate", nil, token)
 	if resp2.StatusCode != 200 {
 		return fmt.Errorf("deactivation failed: %s", string(body2))
@@ -184,8 +187,16 @@ func (ctx *scenarioCtx) userHasLoggedInAndStoredBothTokens(username string) erro
 	if err := json.Unmarshal(body, &parsed); err != nil {
 		return err
 	}
-	ctx.AccessToken = parsed["access_token"].(string)
-	ctx.RefreshToken = parsed["refresh_token"].(string)
+	accessToken, ok := parsed["access_token"].(string)
+	if !ok {
+		return fmt.Errorf("access_token is not a string")
+	}
+	ctx.AccessToken = accessToken
+	refreshToken, ok := parsed["refresh_token"].(string)
+	if !ok {
+		return fmt.Errorf("refresh_token is not a string")
+	}
+	ctx.RefreshToken = refreshToken
 	return nil
 }
 

@@ -167,7 +167,10 @@ func (ctx *scenarioCtx) bobHasCreatedEntry(amount, currency, category, descripti
 	if err := json.Unmarshal(body, &parsed); err != nil {
 		return err
 	}
-	bobToken := parsed["access_token"].(string)
+	bobToken, ok := parsed["access_token"].(string)
+	if !ok {
+		return fmt.Errorf("access_token is not a string")
+	}
 	expBody := map[string]interface{}{
 		"amount": amount, "currency": currency, "category": category,
 		"description": description, "date": date, "type": expType,

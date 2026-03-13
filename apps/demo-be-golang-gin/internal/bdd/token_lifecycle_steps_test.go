@@ -55,8 +55,16 @@ func (ctx *scenarioCtx) aliceHasUsedRefreshTokenToGetNewPair() error {
 	if err := json.Unmarshal(respBody, &parsed); err != nil {
 		return err
 	}
-	ctx.AccessToken = parsed["access_token"].(string)
-	ctx.RefreshToken = parsed["refresh_token"].(string)
+	accessToken, ok := parsed["access_token"].(string)
+	if !ok {
+		return fmt.Errorf("access_token is not a string")
+	}
+	ctx.AccessToken = accessToken
+	refreshToken, ok := parsed["refresh_token"].(string)
+	if !ok {
+		return fmt.Errorf("refresh_token is not a string")
+	}
+	ctx.RefreshToken = refreshToken
 	ctx.LastBody = []byte(fmt.Sprintf(`{"original_refresh_token": "%s"}`, originalRefresh))
 	return nil
 }
@@ -66,7 +74,10 @@ func (ctx *scenarioCtx) aliceSendsRefreshWithOriginalRefreshToken() error {
 	if err := json.Unmarshal(ctx.LastBody, &parsed); err != nil {
 		return err
 	}
-	originalToken := parsed["original_refresh_token"].(string)
+	originalToken, ok := parsed["original_refresh_token"].(string)
+	if !ok {
+		return fmt.Errorf("original_refresh_token is not a string")
+	}
 	body := map[string]string{"refresh_token": originalToken}
 	resp, respBody := doRequest(ctx.Router, "POST", "/api/v1/auth/refresh", body, "")
 	ctx.LastResponse = resp

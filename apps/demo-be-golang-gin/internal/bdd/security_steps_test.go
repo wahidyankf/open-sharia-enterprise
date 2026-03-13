@@ -86,7 +86,10 @@ func (ctx *scenarioCtx) anAdminUserIsRegisteredAndLoggedIn(username string) erro
 	if err := json.Unmarshal(body, &parsed); err != nil {
 		return err
 	}
-	adminID := parsed["id"].(string)
+	adminID, ok := parsed["id"].(string)
+	if !ok {
+		return fmt.Errorf("id is not a string")
+	}
 	user, err := ctx.Store.GetUserByID(context.Background(), adminID)
 	if err != nil {
 		return err
@@ -104,7 +107,11 @@ func (ctx *scenarioCtx) anAdminUserIsRegisteredAndLoggedIn(username string) erro
 	if err := json.Unmarshal(body2, &loginParsed); err != nil {
 		return err
 	}
-	ctx.AdminToken = loginParsed["access_token"].(string)
+	adminToken, ok := loginParsed["access_token"].(string)
+	if !ok {
+		return fmt.Errorf("access_token is not a string")
+	}
+	ctx.AdminToken = adminToken
 	return nil
 }
 
