@@ -66,7 +66,7 @@ specs/apps/demo/
 | Category                                                             | Files Affected | Risk                               |
 | -------------------------------------------------------------------- | -------------- | ---------------------------------- |
 | Backend app configs (project.json, pom.xml, build.gradle.kts)        | ~15            | HIGH — breaks builds if wrong      |
-| Docker/docker-compose files (absolute paths)                         | ~15            | HIGH — breaks CI integration tests |
+| Docker/docker-compose files (absolute paths)                         | ~16            | HIGH — breaks CI integration tests |
 | Test runner configs (.cucumber.js, conftest.py, suite_test.go, etc.) | ~15            | HIGH — breaks test discovery       |
 | E2E test config (playwright.config.ts)                               | 1              | HIGH                               |
 | Infrastructure docker-compose (infra/dev/)                           | ~10            | MEDIUM                             |

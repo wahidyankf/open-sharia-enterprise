@@ -55,6 +55,7 @@ Specialized agents organized into families:
 5. **Hugo Content - oseplatform-web**: Landing page content creators, validators, deployers
 6. **Software Engineering & Specialized**: `agent-maker`, `swe-code-checker`, `swe-clojure-developer`, `swe-csharp-developer`, `swe-dart-developer`, `swe-e2e-test-developer`, `swe-elixir-developer`, `swe-fsharp-developer`, `swe-golang-developer`, `swe-hugo-developer`, `swe-java-developer`, `swe-kotlin-developer`, `swe-python-developer`, `swe-rust-developer`, `swe-typescript-developer`, `social-linkedin-post-maker`, `apps-organiclever-web-deployer`
 7. **Repository Governance**: `repo-governance-maker`, `repo-governance-checker`, `repo-governance-fixer`, `repo-workflow-maker`, `repo-workflow-checker`, `repo-workflow-fixer`
+8. **Specs Validation**: `specs-maker`, `specs-checker`, `specs-fixer`
 
 **Full agent catalog**: See [`.opencode/agent/README.md`](./.opencode/agent/README.md)
 

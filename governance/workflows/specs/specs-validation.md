@@ -341,7 +341,7 @@ Result: SUCCESS (2 iterations, 3 below-threshold findings reported)
 
 - Fixer re-validates each finding before applying
 - Skips FALSE_POSITIVE findings automatically
-- Maintains `.known-false-positives-specs.md` for persistent memory
+- Maintains `.known-false-positives.md` for persistent memory
 
 **Error Recovery**:
 
