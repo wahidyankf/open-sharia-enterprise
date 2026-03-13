@@ -20,8 +20,7 @@ let ``alice decodes her access token payload`` (state: StepState) =
         with _ ->
             None
 
-    let claimsJson =
-        claims |> Option.map (fun m -> JsonSerializer.Serialize(m))
+    let claimsJson = claims |> Option.map (fun m -> JsonSerializer.Serialize(m))
 
     { state with ResponseBody = claimsJson }
 
@@ -105,9 +104,7 @@ let ``an admin user "(.+)" is registered and logged in`` (adminName: string) (st
             |> Map.add "adminUserId" userId }
 
 [<Given>]
-let ``the admin has disabled alice's account via POST /api/v1/admin/users/\{alice_id\}/disable``
-    (state: StepState)
-    =
+let ``the admin has disabled alice's account via POST /api/v1/admin/users/\{alice_id\}/disable`` (state: StepState) =
     let aliceId =
         state.UserId
         |> Option.bind (fun s ->

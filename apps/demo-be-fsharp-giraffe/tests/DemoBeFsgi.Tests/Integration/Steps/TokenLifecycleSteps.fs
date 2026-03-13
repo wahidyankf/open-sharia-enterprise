@@ -48,14 +48,16 @@ let ``alice's refresh token has expired`` (state: StepState) =
     let userId = state.UserId |> Option.defaultValue (Guid.Empty.ToString())
     let expiredToken = makeExpiredRefreshToken userId
 
-    { state with RefreshToken = Some expiredToken }
+    { state with
+        RefreshToken = Some expiredToken }
 
 [<Given>]
 let ``alice has used her refresh token to get a new token pair`` (state: StepState) =
     let rt = state.RefreshToken |> Option.defaultValue ""
     refresh state.Db rt |> Async.RunSynchronously |> ignore
     // Preserve the original refresh token in ExtraData for reuse test
-    { state with ExtraData = state.ExtraData |> Map.add "originalRefreshToken" rt }
+    { state with
+        ExtraData = state.ExtraData |> Map.add "originalRefreshToken" rt }
 
 [<When>]
 let ``alice sends POST /api/v1/auth/refresh with her original refresh token`` (state: StepState) =

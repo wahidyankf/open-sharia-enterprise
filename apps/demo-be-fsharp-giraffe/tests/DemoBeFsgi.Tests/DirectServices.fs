@@ -24,8 +24,12 @@ open DemoBeFsgi.Auth.JwtService
 
 let private opts = JsonSerializerOptions(PropertyNameCaseInsensitive = true)
 
-let private ok (payload: obj) = 200, JsonSerializer.Serialize(payload, opts)
-let private created (payload: obj) = 201, JsonSerializer.Serialize(payload, opts)
+let private ok (payload: obj) =
+    200, JsonSerializer.Serialize(payload, opts)
+
+let private created (payload: obj) =
+    201, JsonSerializer.Serialize(payload, opts)
+
 let private noContent () = 204, ""
 
 let private badRequest (message: string) =
@@ -98,13 +102,7 @@ let private parseAmount (s: string) =
     if String.IsNullOrEmpty(s) then
         Error(ValidationError("amount", "Amount is required"))
     else
-        match
-            Decimal.TryParse(
-                s,
-                Globalization.NumberStyles.Any,
-                Globalization.CultureInfo.InvariantCulture
-            )
-        with
+        match Decimal.TryParse(s, Globalization.NumberStyles.Any, Globalization.CultureInfo.InvariantCulture) with
         | true, v -> Ok v
         | _ -> Error(ValidationError("amount", "Invalid amount format"))
 
@@ -129,7 +127,9 @@ let resolveAuth (db: AppDbContext) (token: string option) : Async<Result<Guid, i
                 let! isRevoked =
                     match jti with
                     | None -> async { return true }
-                    | Some j -> db.RevokedTokens.AsNoTracking().AnyAsync(fun rt -> rt.TokenJti = j) |> Async.AwaitTask
+                    | Some j ->
+                        db.RevokedTokens.AsNoTracking().AnyAsync(fun rt -> rt.TokenJti = j)
+                        |> Async.AwaitTask
 
                 if isRevoked then
                     return Error(unauthorized "Token has been revoked")
@@ -138,7 +138,11 @@ let resolveAuth (db: AppDbContext) (token: string option) : Async<Result<Guid, i
                         claims.FindFirst(fun c ->
                             c.Type = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")
 
-                    let sub2 = if sub = null then claims.FindFirst(fun c -> c.Type = "sub") else sub
+                    let sub2 =
+                        if sub = null then
+                            claims.FindFirst(fun c -> c.Type = "sub")
+                        else
+                            sub
 
                     if sub2 = null then
                         return Error(unauthorized "Invalid token claims")
@@ -158,8 +162,14 @@ let resolveAuth (db: AppDbContext) (token: string option) : Async<Result<Guid, i
 
                             if obj.ReferenceEquals(user, null) then
                                 return Error(unauthorized "User not found")
-                            elif user.Status <> statusToString Active then
+                            elif user.Status = statusToString Locked then
+                                return Error(unauthorized "Account is locked after too many failed attempts")
+                            elif user.Status = statusToString Inactive then
                                 return Error(unauthorized "Account has been deactivated")
+                            elif user.Status = statusToString Disabled then
+                                return Error(unauthorized "Account has been disabled by an administrator")
+                            elif user.Status <> statusToString Active then
+                                return Error(unauthorized "Account is not active")
                             else
                                 return Ok uid
     }
@@ -259,7 +269,10 @@ let login (db: AppDbContext) (username: string) (password: string) : Async<int *
             let newAttempts = user.FailedLoginAttempts + 1
 
             let newStatus =
-                if newAttempts >= maxFailedAttempts then statusToString Locked else user.Status
+                if newAttempts >= maxFailedAttempts then
+                    statusToString Locked
+                else
+                    user.Status
 
             let updated =
                 { user with
@@ -381,7 +394,9 @@ let logout (db: AppDbContext) (token: string option) : Async<int * string> =
                                 c.Type = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
                                 || c.Type = "sub")
 
-                        sub |> Option.map (fun c -> Guid.Parse(c.Value)) |> Option.defaultValue Guid.Empty
+                        sub
+                        |> Option.map (fun c -> Guid.Parse(c.Value))
+                        |> Option.defaultValue Guid.Empty
                     with _ ->
                         Guid.Empty
 
@@ -429,10 +444,7 @@ let logoutAll (db: AppDbContext) (token: string option) : Async<int * string> =
             | None -> ()
 
             let! activeTokens =
-                db.RefreshTokens
-                    .AsNoTracking()
-                    .Where(fun rt -> rt.UserId = userId && not rt.Revoked)
-                    .ToListAsync()
+                db.RefreshTokens.AsNoTracking().Where(fun rt -> rt.UserId = userId && not rt.Revoked).ToListAsync()
                 |> Async.AwaitTask
 
             db.ChangeTracker.Clear()
@@ -489,7 +501,11 @@ let updateProfile (db: AppDbContext) (token: string option) (displayName: string
             else
                 let updated =
                     { user with
-                        DisplayName = if displayName <> null then displayName else user.DisplayName
+                        DisplayName =
+                            if displayName <> null then
+                                displayName
+                            else
+                                user.DisplayName
                         UpdatedAt = DateTime.UtcNow }
 
                 db.ChangeTracker.Clear()
@@ -803,7 +819,10 @@ let createExpense
                                   Description = if description = null then "" else description
                                   Date = dateVal
                                   EntryType =
-                                    if entryType = null then "EXPENSE" else entryType.ToUpperInvariant()
+                                    if entryType = null then
+                                        "EXPENSE"
+                                    else
+                                        entryType.ToUpperInvariant()
                                   Quantity =
                                     match quantity with
                                     | Some q -> Nullable(decimal q)
@@ -859,7 +878,11 @@ let listExpenses (db: AppDbContext) (token: string option) (page: int) (size: in
                         | "IDR" -> e.Amount.ToString("0")
                         | _ -> e.Amount.ToString("0.00")
 
-                    let qtyOpt = if e.Quantity.HasValue then Some(float e.Quantity.Value) else None
+                    let qtyOpt =
+                        if e.Quantity.HasValue then
+                            Some(float e.Quantity.Value)
+                        else
+                            None
 
                     {| id = e.Id
                        amount = formattedAmount
@@ -872,7 +895,11 @@ let listExpenses (db: AppDbContext) (token: string option) (page: int) (size: in
                        unit = if e.Unit = null then None else Some e.Unit |})
                 |> Seq.toArray
 
-            return ok {| data = data; total = total; page = p |}
+            return
+                ok
+                    {| data = data
+                       total = total
+                       page = p |}
     }
 
 let getExpenseById (db: AppDbContext) (token: string option) (expenseId: Guid) : Async<int * string> =
@@ -897,7 +924,10 @@ let getExpenseById (db: AppDbContext) (token: string option) (expenseId: Guid) :
                     | _ -> expense.Amount.ToString("0.00")
 
                 let qtyOpt =
-                    if expense.Quantity.HasValue then Some(float expense.Quantity.Value) else None
+                    if expense.Quantity.HasValue then
+                        Some(float expense.Quantity.Value)
+                    else
+                        None
 
                 return
                     ok
@@ -952,11 +982,23 @@ let updateExpense
                     let updated =
                         { expense with
                             Amount = amt
-                            Currency = if currency <> null then currency.ToUpperInvariant() else expense.Currency
+                            Currency =
+                                if currency <> null then
+                                    currency.ToUpperInvariant()
+                                else
+                                    expense.Currency
                             Category = if category <> null then category else expense.Category
-                            Description = if description <> null then description else expense.Description
+                            Description =
+                                if description <> null then
+                                    description
+                                else
+                                    expense.Description
                             Date = dateVal
-                            EntryType = if entryType <> null then entryType.ToUpperInvariant() else expense.EntryType
+                            EntryType =
+                                if entryType <> null then
+                                    entryType.ToUpperInvariant()
+                                else
+                                    expense.EntryType
                             UpdatedAt = DateTime.UtcNow }
 
                     db.ChangeTracker.Clear()
@@ -1009,9 +1051,7 @@ let expenseSummary (db: AppDbContext) (token: string option) : Async<int * strin
         | Error e -> return e
         | Ok userId ->
             let! expenses =
-                db.Expenses
-                    .Where(fun e -> e.UserId = userId && e.EntryType = "EXPENSE")
-                    .ToListAsync()
+                db.Expenses.Where(fun e -> e.UserId = userId && e.EntryType = "EXPENSE").ToListAsync()
                 |> Async.AwaitTask
 
             let grouped =
@@ -1192,11 +1232,7 @@ let profitAndLoss
 
             let! entries =
                 db.Expenses
-                    .Where(fun e ->
-                        e.UserId = userId
-                        && e.Currency = curr
-                        && e.Date >= from
-                        && e.Date <= ``to``)
+                    .Where(fun e -> e.UserId = userId && e.Currency = curr && e.Date >= from && e.Date <= ``to``)
                     .ToListAsync()
                 |> Async.AwaitTask
 

@@ -14,7 +14,8 @@ let ``alice sends GET /api/v1/reports/pl\?from=(.+)&to=(.+)&currency=(.+)``
     (state: StepState)
     =
     let status, body =
-        profitAndLoss state.Db state.AccessToken fromDate toDate currency |> Async.RunSynchronously
+        profitAndLoss state.Db state.AccessToken fromDate toDate currency
+        |> Async.RunSynchronously
 
     { state with
         Response = Some { Status = status; Body = body }

@@ -23,10 +23,7 @@ let createDb () : AppDbContext * (unit -> unit) =
         let connStr = Environment.GetEnvironmentVariable("DATABASE_URL")
 
         let options =
-            DbContextOptionsBuilder<AppDbContext>()
-                .UseNpgsql(connStr)
-                .UseSnakeCaseNamingConvention()
-                .Options
+            DbContextOptionsBuilder<AppDbContext>().UseNpgsql(connStr).UseSnakeCaseNamingConvention().Options
 
         let db = new AppDbContext(options)
 
@@ -48,8 +45,7 @@ let createDb () : AppDbContext * (unit -> unit) =
         let conn = new SqliteConnection("DataSource=:memory:")
         conn.Open()
 
-        let options =
-            DbContextOptionsBuilder<AppDbContext>().UseSqlite(conn).Options
+        let options = DbContextOptionsBuilder<AppDbContext>().UseSqlite(conn).Options
 
         let db = new AppDbContext(options)
         db.Database.EnsureCreated() |> ignore

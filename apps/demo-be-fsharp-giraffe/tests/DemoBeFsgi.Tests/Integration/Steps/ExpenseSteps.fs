@@ -97,19 +97,24 @@ let ``alice sends GET /api/v1/expenses/\{expenseId\}`` (state: StepState) =
 
     match expenseId with
     | Some id ->
-        let status, body = getExpenseById state.Db state.AccessToken id |> Async.RunSynchronously
+        let status, body =
+            getExpenseById state.Db state.AccessToken id |> Async.RunSynchronously
 
         { state with
             Response = Some { Status = status; Body = body }
             ResponseBody = Some body }
     | None ->
         { state with
-            Response = Some { Status = 404; Body = """{"error":"Not Found"}""" }
+            Response =
+                Some
+                    { Status = 404
+                      Body = """{"error":"Not Found"}""" }
             ResponseBody = Some """{"error":"Not Found"}""" }
 
 [<When>]
 let ``alice sends GET /api/v1/expenses`` (state: StepState) =
-    let status, body = listExpenses state.Db state.AccessToken 1 20 |> Async.RunSynchronously
+    let status, body =
+        listExpenses state.Db state.AccessToken 1 20 |> Async.RunSynchronously
 
     { state with
         Response = Some { Status = status; Body = body }
@@ -156,7 +161,10 @@ let ``alice sends PUT /api/v1/expenses/\{expenseId\} with body (.+)`` (bodyStr: 
             ResponseBody = Some responseBody }
     | None ->
         { state with
-            Response = Some { Status = 404; Body = """{"error":"Not Found"}""" }
+            Response =
+                Some
+                    { Status = 404
+                      Body = """{"error":"Not Found"}""" }
             ResponseBody = Some """{"error":"Not Found"}""" }
 
 [<When>]
@@ -171,19 +179,24 @@ let ``alice sends DELETE /api/v1/expenses/\{expenseId\}`` (state: StepState) =
 
     match expenseId with
     | Some id ->
-        let status, body = deleteExpense state.Db state.AccessToken id |> Async.RunSynchronously
+        let status, body =
+            deleteExpense state.Db state.AccessToken id |> Async.RunSynchronously
 
         { state with
             Response = Some { Status = status; Body = body }
             ResponseBody = Some body }
     | None ->
         { state with
-            Response = Some { Status = 404; Body = """{"error":"Not Found"}""" }
+            Response =
+                Some
+                    { Status = 404
+                      Body = """{"error":"Not Found"}""" }
             ResponseBody = Some """{"error":"Not Found"}""" }
 
 [<When>]
 let ``alice sends GET /api/v1/expenses/summary`` (state: StepState) =
-    let status, body = expenseSummary state.Db state.AccessToken |> Async.RunSynchronously
+    let status, body =
+        expenseSummary state.Db state.AccessToken |> Async.RunSynchronously
 
     { state with
         Response = Some { Status = status; Body = body }

@@ -39,7 +39,10 @@ let ``alice uploads file "(.+)" with content type "(.+)" to POST /api/v1/expense
             AttachmentId = attachmentId }
     | None ->
         { state with
-            Response = Some { Status = 404; Body = """{"error":"Not Found"}""" }
+            Response =
+                Some
+                    { Status = 404
+                      Body = """{"error":"Not Found"}""" }
             ResponseBody = Some """{"error":"Not Found"}""" }
 
 [<When>]
@@ -70,7 +73,10 @@ let ``alice uploads file "(.+)" with content type "(.+)" to POST /api/v1/expense
             ResponseBody = Some responseBody }
     | None ->
         { state with
-            Response = Some { Status = 404; Body = """{"error":"Not Found"}""" }
+            Response =
+                Some
+                    { Status = 404
+                      Body = """{"error":"Not Found"}""" }
             ResponseBody = Some """{"error":"Not Found"}""" }
 
 [<When>]
@@ -96,7 +102,10 @@ let ``alice uploads an oversized file to POST /api/v1/expenses/\{expenseId\}/att
             ResponseBody = Some responseBody }
     | None ->
         { state with
-            Response = Some { Status = 404; Body = """{"error":"Not Found"}""" }
+            Response =
+                Some
+                    { Status = 404
+                      Body = """{"error":"Not Found"}""" }
             ResponseBody = Some """{"error":"Not Found"}""" }
 
 [<Given>]
@@ -122,7 +131,9 @@ let ``alice has uploaded file "(.+)" with content type "(.+)" to the entry``
             |> Async.RunSynchronously
 
         let attachmentId = getStringProp responseBody "id"
-        { state with AttachmentId = attachmentId }
+
+        { state with
+            AttachmentId = attachmentId }
     | None -> state
 
 [<When>]
@@ -137,14 +148,18 @@ let ``alice sends GET /api/v1/expenses/\{expenseId\}/attachments`` (state: StepS
 
     match expenseId with
     | Some id ->
-        let status, body = listAttachments state.Db state.AccessToken id |> Async.RunSynchronously
+        let status, body =
+            listAttachments state.Db state.AccessToken id |> Async.RunSynchronously
 
         { state with
             Response = Some { Status = status; Body = body }
             ResponseBody = Some body }
     | None ->
         { state with
-            Response = Some { Status = 404; Body = """{"error":"Not Found"}""" }
+            Response =
+                Some
+                    { Status = 404
+                      Body = """{"error":"Not Found"}""" }
             ResponseBody = Some """{"error":"Not Found"}""" }
 
 [<When>]
@@ -160,14 +175,18 @@ let ``alice sends GET /api/v1/expenses/\{bobExpenseId\}/attachments`` (state: St
 
     match bobExpenseId with
     | Some id ->
-        let status, body = listAttachments state.Db state.AccessToken id |> Async.RunSynchronously
+        let status, body =
+            listAttachments state.Db state.AccessToken id |> Async.RunSynchronously
 
         { state with
             Response = Some { Status = status; Body = body }
             ResponseBody = Some body }
     | None ->
         { state with
-            Response = Some { Status = 404; Body = """{"error":"Not Found"}""" }
+            Response =
+                Some
+                    { Status = 404
+                      Body = """{"error":"Not Found"}""" }
             ResponseBody = Some """{"error":"Not Found"}""" }
 
 [<When>]
@@ -190,14 +209,18 @@ let ``alice sends DELETE /api/v1/expenses/\{expenseId\}/attachments/\{attachment
 
     match expenseId, attachmentId with
     | Some eid, Some aid ->
-        let status, body = deleteAttachment state.Db state.AccessToken eid aid |> Async.RunSynchronously
+        let status, body =
+            deleteAttachment state.Db state.AccessToken eid aid |> Async.RunSynchronously
 
         { state with
             Response = Some { Status = status; Body = body }
             ResponseBody = Some body }
     | _ ->
         { state with
-            Response = Some { Status = 404; Body = """{"error":"Not Found"}""" }
+            Response =
+                Some
+                    { Status = 404
+                      Body = """{"error":"Not Found"}""" }
             ResponseBody = Some """{"error":"Not Found"}""" }
 
 [<When>]
@@ -221,14 +244,18 @@ let ``alice sends DELETE /api/v1/expenses/\{bobExpenseId\}/attachments/\{attachm
 
     match bobExpenseId, attachmentId with
     | Some eid, Some aid ->
-        let status, body = deleteAttachment state.Db state.AccessToken eid aid |> Async.RunSynchronously
+        let status, body =
+            deleteAttachment state.Db state.AccessToken eid aid |> Async.RunSynchronously
 
         { state with
             Response = Some { Status = status; Body = body }
             ResponseBody = Some body }
     | _ ->
         { state with
-            Response = Some { Status = 404; Body = """{"error":"Not Found"}""" }
+            Response =
+                Some
+                    { Status = 404
+                      Body = """{"error":"Not Found"}""" }
             ResponseBody = Some """{"error":"Not Found"}""" }
 
 [<When>]
@@ -245,14 +272,19 @@ let ``alice sends DELETE /api/v1/expenses/\{expenseId\}/attachments/\{randomAtta
 
     match expenseId with
     | Some eid ->
-        let status, body = deleteAttachment state.Db state.AccessToken eid randomId |> Async.RunSynchronously
+        let status, body =
+            deleteAttachment state.Db state.AccessToken eid randomId
+            |> Async.RunSynchronously
 
         { state with
             Response = Some { Status = status; Body = body }
             ResponseBody = Some body }
     | None ->
         { state with
-            Response = Some { Status = 404; Body = """{"error":"Not Found"}""" }
+            Response =
+                Some
+                    { Status = 404
+                      Body = """{"error":"Not Found"}""" }
             ResponseBody = Some """{"error":"Not Found"}""" }
 
 // Note: "a user ... is registered with email ... and password ..." is handled by CommonSteps

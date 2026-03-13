@@ -30,7 +30,9 @@ let ``the admin sends GET /api/v1/admin/users`` (state: StepState) =
 [<When>]
 let ``the admin sends GET /api/v1/admin/users\?email=(.+)`` (email: string) (state: StepState) =
     let adminToken = state.ExtraData |> Map.tryFind "adminToken"
-    let status, body = listUsers state.Db adminToken 1 20 (Some email) |> Async.RunSynchronously
+
+    let status, body =
+        listUsers state.Db adminToken 1 20 (Some email) |> Async.RunSynchronously
 
     { state with
         Response = Some { Status = status; Body = body }
@@ -65,7 +67,10 @@ let ``the response body should contain at least one user with "(.+)" equal to "(
     state
 
 [<When>]
-let ``the admin sends POST /api/v1/admin/users/\{alice_id\}/disable with body (.+)`` (bodyStr: string) (state: StepState) =
+let ``the admin sends POST /api/v1/admin/users/\{alice_id\}/disable with body (.+)``
+    (bodyStr: string)
+    (state: StepState)
+    =
     let adminToken = state.ExtraData |> Map.tryFind "adminToken"
 
     let aliceGuid =
@@ -85,7 +90,10 @@ let ``the admin sends POST /api/v1/admin/users/\{alice_id\}/disable with body (.
             ResponseBody = Some body }
     | None ->
         { state with
-            Response = Some { Status = 404; Body = """{"error":"Not Found"}""" }
+            Response =
+                Some
+                    { Status = 404
+                      Body = """{"error":"Not Found"}""" }
             ResponseBody = Some """{"error":"Not Found"}""" }
 
 [<Given>]
@@ -145,7 +153,10 @@ let ``the admin sends POST /api/v1/admin/users/\{alice_id\}/enable`` (state: Ste
             ResponseBody = Some body }
     | None ->
         { state with
-            Response = Some { Status = 404; Body = """{"error":"Not Found"}""" }
+            Response =
+                Some
+                    { Status = 404
+                      Body = """{"error":"Not Found"}""" }
             ResponseBody = Some """{"error":"Not Found"}""" }
 
 [<When>]
@@ -162,14 +173,18 @@ let ``the admin sends POST /api/v1/admin/users/\{alice_id\}/force-password-reset
 
     match aliceGuid with
     | Some id ->
-        let status, body = forcePasswordReset state.Db adminToken id |> Async.RunSynchronously
+        let status, body =
+            forcePasswordReset state.Db adminToken id |> Async.RunSynchronously
 
         { state with
             Response = Some { Status = status; Body = body }
             ResponseBody = Some body }
     | None ->
         { state with
-            Response = Some { Status = 404; Body = """{"error":"Not Found"}""" }
+            Response =
+                Some
+                    { Status = 404
+                      Body = """{"error":"Not Found"}""" }
             ResponseBody = Some """{"error":"Not Found"}""" }
 
 // Note: alice's account status step is handled by SecuritySteps.``alice's account status should be "(.+)"``

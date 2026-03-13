@@ -35,7 +35,10 @@ let private getFeatureFile (namePart: string) =
 type private UnitScenarioServiceProvider(db: DemoBeFsgi.Infrastructure.AppDbContext.AppDbContext) =
     interface IServiceProvider with
         member _.GetService(serviceType: Type) =
-            if serviceType = typeof<StepState> then empty db :> obj else null
+            if serviceType = typeof<StepState> then
+                empty db :> obj
+            else
+                null
 
 /// Preserve inline '#' characters by replacing them with a temporary placeholder
 /// before TickSpec's Gherkin parser strips them as comments.

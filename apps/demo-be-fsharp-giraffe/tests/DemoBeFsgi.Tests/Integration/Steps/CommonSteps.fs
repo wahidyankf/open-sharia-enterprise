@@ -33,8 +33,7 @@ let internal getStringProp (json: string) (prop: string) =
         None
 
 /// Run a direct service call and return (status, body) as a ServiceResponse + body string.
-let internal call (status: int) (body: string) : ServiceResponse * string =
-    { Status = status; Body = body }, body
+let internal call (status: int) (body: string) : ServiceResponse * string = { Status = status; Body = body }, body
 
 /// Helper to apply a direct service result to StepState.
 let internal applyResult (status: int) (body: string) (state: StepState) : StepState =
@@ -223,7 +222,8 @@ let private dispatchCall
             | true, el -> el.GetString()
             | _ -> ""
 
-        register state.Db (str "username") (str "email") (str "password") |> Async.RunSynchronously
+        register state.Db (str "username") (str "email") (str "password")
+        |> Async.RunSynchronously
     elif u = "/api/v1/auth/login" && m = "POST" then
         let doc = JsonDocument.Parse(if body = "" then "{}" else body)
         let r = doc.RootElement
@@ -254,7 +254,8 @@ let private dispatchCall
     elif u = "/api/v1/users/me/deactivate" && m = "POST" then
         deactivate state.Db token |> Async.RunSynchronously
     elif u = "/api/v1/expenses" && m = "POST" then
-        let amount, currency, category, description, date, entryType, quantity, unit = parseExpenseBody body
+        let amount, currency, category, description, date, entryType, quantity, unit =
+            parseExpenseBody body
 
         createExpense state.Db token amount currency category description date entryType quantity unit
         |> Async.RunSynchronously
@@ -284,6 +285,10 @@ let private dispatchCall
     elif url.StartsWith("/test/set-admin-role/") && m = "POST" then
         let username = url.Substring("/test/set-admin-role/".Length)
         setAdminRole state.Db username |> Async.RunSynchronously
+    elif u = "/.well-known/jwks.json" && m = "GET" then
+        getJwks ()
+    elif u.StartsWith("/api/v1/tokens") && m = "GET" then
+        getTokenClaims token
     else
         // Fallback: return 404 for unrecognised routes
         404, """{"error":"Not Found","message":"Route not recognised in direct dispatch"}"""
