@@ -18,7 +18,10 @@ specs reflects this reality.
 3. Update all 107+ file references across the entire codebase (source code, Docker configs, CI, docs,
    governance, plans)
 4. Ensure every directory has a `README.md`
-5. Pass ALL CI — locally (lint, typecheck, test:quick) and on GitHub Actions (Main CI, all 11
+5. Run [specs-validation](../../../governance/workflows/specs/specs-validation.md) in **OCD mode**
+   on the merged `specs/apps/demo/` before rewiring app references — fix all issues while the
+   blast radius is small (specs only, no app code touched yet)
+6. Pass ALL CI — locally (lint, typecheck, test:quick) and on GitHub Actions (Main CI, all 11
    integration + E2E workflows, organiclever-web, PR workflows). Trigger CI manually and verify.
 
 ## Target Structure

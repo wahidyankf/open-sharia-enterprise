@@ -173,7 +173,32 @@ Write new README.md files at every level:
 - `specs/apps/demo/fe/README.md` — adapted from old demo-fe README
 - `specs/apps/demo/fe/gherkin/README.md` — already exists (moved)
 
-### Step 4: Global Find-and-Replace
+### Step 4: Specs Validation Gate (OCD Mode)
+
+Before touching any application code, validate the merged specs are internally consistent:
+
+```bash
+# Run specs-validation workflow in OCD mode
+# Validates: specs/apps/demo/ and all subfolders (be/, fe/, c4/)
+# Mode: ocd (fix ALL levels — CRITICAL, HIGH, MEDIUM, LOW)
+# Cross-folder: checks be/ ↔ fe/ consistency (shared domains, actors, terminology)
+```
+
+**What this catches before rewiring**:
+
+- Missing or incorrect README counts (feature files, scenarios)
+- Gherkin format issues (Background steps, naming conventions)
+- C4 diagram inconsistencies (merged L1/L2 referencing actors not in both perspectives)
+- Cross-reference broken links (old paths remaining in moved files)
+- `be/` ↔ `fe/` consistency (shared domains like authentication, expenses should align)
+- Spec-to-implementation alignment (README references to non-existent implementations)
+
+**Why here**: Fixing spec issues in isolation (only `specs/apps/demo/`) is cheap. After rewiring
+107+ files across 11 backends, any spec fix would require re-validating everything downstream.
+
+Commit any fixes from the validation before proceeding.
+
+### Step 5: Global Find-and-Replace
 
 Run targeted replacements across the codebase:
 
@@ -191,7 +216,7 @@ specs/apps/demo-fe            →  specs/apps/demo/fe
 
 **Order matters**: Replace longer, more specific paths first to avoid partial replacements.
 
-### Step 5: Validate Locally
+### Step 6: Validate Locally
 
 1. `grep -r "specs/apps/demo-be" .` — should return nothing (except plans/done/)
 2. `grep -r "specs/apps/demo-fe" .` — should return nothing (except plans/done/)
@@ -201,7 +226,7 @@ specs/apps/demo-fe            →  specs/apps/demo/fe
 6. `nx run-many -t test:quick` for all 11 demo-be backends — all pass
 7. `nx run organiclever-web:test:quick` and CLI tools — all pass
 
-### Step 6: Validate on GitHub Actions
+### Step 7: Validate on GitHub Actions
 
 1. Push to main
 2. Main CI passes (runs `test:quick` for all affected projects)

@@ -27,7 +27,29 @@
 - [ ] Verify `specs/apps/demo/fe/gherkin/README.md` exists and links are correct
 - [ ] Update internal cross-references in all README files
 
-## Phase 4: Backend Path Updates (HIGH priority)
+## Phase 4: Specs Validation Gate (OCD Mode)
+
+Run the [specs-validation workflow](../../../governance/workflows/specs/specs-validation.md) in
+**OCD mode** on the newly merged `specs/apps/demo/` to catch all issues before propagating paths
+to 11 backends. This is the quality gate — fix everything in the specs themselves before touching
+any application code.
+
+- [ ] Run specs-validation workflow: `folders: [specs/apps/demo], mode: ocd`
+- [ ] All 7 validation categories pass at ZERO findings:
+  - [ ] Structural Completeness — every directory has README.md
+  - [ ] Feature File Inventory — README counts match actual .feature files and scenarios
+  - [ ] Gherkin Format Compliance — headers, user stories, Background steps, naming
+  - [ ] Cross-Spec Consistency — `be/` and `fe/` shared domains align (auth, expenses, etc.)
+  - [ ] C4 Diagram Consistency — accessible colors, actor coherence across L1/L2/L3
+  - [ ] Cross-Reference Integrity — all markdown links resolve
+  - [ ] Spec-to-Implementation Alignment — README references point to real implementations
+- [ ] Commit specs fixes (if any) before proceeding to path rewiring
+
+**Why before Phase 5**: If we rewire 107+ files to point at broken specs, we'd have to fix specs
+AND re-validate all 11 backends. Fixing specs in isolation (before rewiring) keeps the blast
+radius contained to `specs/apps/demo/` only.
+
+## Phase 5: Backend Path Updates (HIGH priority)
 
 ### Project Configuration (11 files)
 
@@ -85,7 +107,7 @@
 
 - [ ] `apps/demo-be-e2e/playwright.config.ts`
 
-## Phase 5: Documentation Updates (LOW priority)
+## Phase 6: Documentation Updates (LOW priority)
 
 - [ ] `CLAUDE.md` — update specs path references
 - [ ] `apps/demo-be-java-springboot/README.md`
@@ -105,12 +127,12 @@
 - [ ] `governance/development/infra/nx-targets.md`
 - [ ] `docs/explanation/.../ex-soen-aute-to-pl__bdd.md`
 
-## Phase 6: Historical Plans (LOW priority)
+## Phase 7: Historical Plans (LOW priority)
 
 - [ ] Update `plans/done/` references where trivially fixable
 - [ ] Accept that some historical references may remain as-is
 
-## Phase 7: Stale Reference Check
+## Phase 8: Stale Reference Check
 
 - [ ] `grep -r "specs/apps/demo-be" . --include='*.json' --include='*.xml' --include='*.yml'
 --include='*.yaml' --include='*.ts' --include='*.js' --include='*.go' --include='*.rs'
@@ -119,14 +141,14 @@
 - [ ] `grep -r "specs/apps/demo-fe" . --include='*.json' --include='*.ts'` — returns nothing
 - [ ] Verify no stale references in markdown files (except `plans/done/` historical records)
 
-## Phase 8: Local Validation — Lint and Typecheck
+## Phase 9: Local Validation — Lint and Typecheck
 
 - [ ] `npm run lint:md` passes
 - [ ] `npm run format:md:check` passes
 - [ ] `nx affected -t lint` passes
 - [ ] `nx affected -t typecheck` passes
 
-## Phase 9: Local Validation — test:quick (All 11 Backends)
+## Phase 10: Local Validation — test:quick (All 11 Backends)
 
 - [ ] `nx run demo-be-java-springboot:test:quick` passes
 - [ ] `nx run demo-be-java-vertx:test:quick` passes
@@ -140,19 +162,19 @@
 - [ ] `nx run demo-be-csharp-aspnetcore:test:quick` passes
 - [ ] `nx run demo-be-clojure-pedestal:test:quick` passes
 
-## Phase 10: Local Validation — Non-Backend Projects
+## Phase 11: Local Validation — Non-Backend Projects
 
 - [ ] `nx run organiclever-web:test:quick` passes
 - [ ] `nx run rhino-cli:test:quick` passes
 - [ ] `nx run ayokoding-cli:test:quick` passes
 - [ ] `nx run oseplatform-cli:test:quick` passes
 
-## Phase 11: Push and GitHub Actions — Main CI
+## Phase 12: Push and GitHub Actions — Main CI
 
 - [ ] Commit and push to main
 - [ ] Main CI workflow passes (runs `test:quick` for all affected projects)
 
-## Phase 12: GitHub Actions — Integration + E2E (All 11 Backends)
+## Phase 13: GitHub Actions — Integration + E2E (All 11 Backends)
 
 Trigger all 11 integration + E2E workflows manually and verify they pass:
 
@@ -168,14 +190,14 @@ Trigger all 11 integration + E2E workflows manually and verify they pass:
 - [ ] `test-integration-e2e-demo-be-csharp-aspnetcore` — SUCCESS
 - [ ] `test-integration-e2e-demo-be-clojure-pedestal` — SUCCESS
 
-## Phase 13: GitHub Actions — Other Workflows
+## Phase 14: GitHub Actions — Other Workflows
 
 - [ ] `test-integration-e2e-organiclever-web` — SUCCESS (trigger manually)
 - [ ] `pr-validate-links` — no broken links from path changes
 - [ ] `pr-format` — no formatting issues
 - [ ] `pr-quality-gate` — passes
 
-## Phase 14: Cleanup
+## Phase 15: Cleanup
 
 - [ ] Move this plan to `plans/done/`
 - [ ] Update `plans/in-progress/README.md`
