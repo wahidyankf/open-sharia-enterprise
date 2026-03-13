@@ -44,8 +44,6 @@ http-body-util = "0.1"
 [dev-dependencies]
 cucumber = { version = "0.21", features = ["libtest"] }
 tokio = { version = "1", features = ["full"] }
-tower = { version = "0.5", features = ["util"] }
-http-body-util = "0.1"
 
 [profile.release]
 lto = true

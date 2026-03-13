@@ -1,11 +1,9 @@
 use cucumber::{given, then, when};
 
-use crate::world::{get_req, json_req, AppWorld};
+use crate::world::AppWorld;
 
 async fn alice_create(world: &mut AppWorld, body: &str) {
-    let bearer = world.bearer();
-    let req = json_req("POST", "/api/v1/expenses", body, Some(&bearer));
-    world.send(req).await.unwrap();
+    crate::steps::expense_steps::create_expense_helper(world, body).await;
 }
 
 #[given(
@@ -74,61 +72,49 @@ async fn alice_income_idr_5m(world: &mut AppWorld) {
 #[when(regex = r#"alice sends GET /api/v1/reports/pl\?from=2025-01-01&to=2025-01-31&currency=USD"#)]
 async fn alice_pl_jan(world: &mut AppWorld) {
     let bearer = world.bearer();
-    let req = get_req(
-        "/api/v1/reports/pl?from=2025-01-01&to=2025-01-31&currency=USD",
-        Some(&bearer),
-    );
-    world.send(req).await.unwrap();
+    world
+        .svc_pl_report(&bearer, "2025-01-01", "2025-01-31", "USD")
+        .await;
 }
 
 #[when(regex = r#"alice sends GET /api/v1/reports/pl\?from=2025-02-01&to=2025-02-28&currency=USD"#)]
 async fn alice_pl_feb(world: &mut AppWorld) {
     let bearer = world.bearer();
-    let req = get_req(
-        "/api/v1/reports/pl?from=2025-02-01&to=2025-02-28&currency=USD",
-        Some(&bearer),
-    );
-    world.send(req).await.unwrap();
+    world
+        .svc_pl_report(&bearer, "2025-02-01", "2025-02-28", "USD")
+        .await;
 }
 
 #[when(regex = r#"alice sends GET /api/v1/reports/pl\?from=2025-03-01&to=2025-03-31&currency=USD"#)]
 async fn alice_pl_mar(world: &mut AppWorld) {
     let bearer = world.bearer();
-    let req = get_req(
-        "/api/v1/reports/pl?from=2025-03-01&to=2025-03-31&currency=USD",
-        Some(&bearer),
-    );
-    world.send(req).await.unwrap();
+    world
+        .svc_pl_report(&bearer, "2025-03-01", "2025-03-31", "USD")
+        .await;
 }
 
 #[when(regex = r#"alice sends GET /api/v1/reports/pl\?from=2025-04-01&to=2025-04-30&currency=USD"#)]
 async fn alice_pl_apr(world: &mut AppWorld) {
     let bearer = world.bearer();
-    let req = get_req(
-        "/api/v1/reports/pl?from=2025-04-01&to=2025-04-30&currency=USD",
-        Some(&bearer),
-    );
-    world.send(req).await.unwrap();
+    world
+        .svc_pl_report(&bearer, "2025-04-01", "2025-04-30", "USD")
+        .await;
 }
 
 #[when(regex = r#"alice sends GET /api/v1/reports/pl\?from=2025-05-01&to=2025-05-31&currency=USD"#)]
 async fn alice_pl_may(world: &mut AppWorld) {
     let bearer = world.bearer();
-    let req = get_req(
-        "/api/v1/reports/pl?from=2025-05-01&to=2025-05-31&currency=USD",
-        Some(&bearer),
-    );
-    world.send(req).await.unwrap();
+    world
+        .svc_pl_report(&bearer, "2025-05-01", "2025-05-31", "USD")
+        .await;
 }
 
 #[when(regex = r#"alice sends GET /api/v1/reports/pl\?from=2099-01-01&to=2099-01-31&currency=USD"#)]
 async fn alice_pl_future(world: &mut AppWorld) {
     let bearer = world.bearer();
-    let req = get_req(
-        "/api/v1/reports/pl?from=2099-01-01&to=2099-01-31&currency=USD",
-        Some(&bearer),
-    );
-    world.send(req).await.unwrap();
+    world
+        .svc_pl_report(&bearer, "2099-01-01", "2099-01-31", "USD")
+        .await;
 }
 
 #[then(expr = "the income breakdown should contain {string} with amount {string}")]

@@ -1,13 +1,11 @@
 use cucumber::{given, then, when};
 
-use crate::world::{get_req, json_req, AppWorld};
+use crate::world::AppWorld;
 
 #[when("alice sends POST /api/v1/auth/refresh with her refresh token")]
 async fn refresh_with_alice_token(world: &mut AppWorld) {
     let token = world.refresh_token.clone().unwrap_or_default();
-    let body = format!(r#"{{"refresh_token": "{token}"}}"#);
-    let req = json_req("POST", "/api/v1/auth/refresh", &body, None);
-    world.send(req).await.unwrap();
+    world.svc_refresh(&token).await;
     if world.last_status == 200 {
         world.auth_token = world
             .last_body
@@ -26,7 +24,8 @@ async fn refresh_with_alice_token(world: &mut AppWorld) {
 async fn alice_refresh_expired(world: &mut AppWorld) {
     // Use an obviously expired/invalid token
     world.refresh_token = Some(
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxfQ.invalid".to_string(),
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxfQ.invalid"
+            .to_string(),
     );
 }
 
@@ -35,9 +34,7 @@ async fn alice_used_refresh_token(world: &mut AppWorld) {
     let original = world.refresh_token.clone().unwrap_or_default();
     world.original_refresh_token = Some(original.clone());
 
-    let body = format!(r#"{{"refresh_token": "{original}"}}"#);
-    let req = json_req("POST", "/api/v1/auth/refresh", &body, None);
-    world.send(req).await.unwrap();
+    world.svc_refresh(&original).await;
     if world.last_status == 200 {
         world.auth_token = world
             .last_body
@@ -55,53 +52,33 @@ async fn alice_used_refresh_token(world: &mut AppWorld) {
 #[when("alice sends POST /api/v1/auth/refresh with her original refresh token")]
 async fn refresh_with_original_token(world: &mut AppWorld) {
     let token = world.original_refresh_token.clone().unwrap_or_default();
-    let body = format!(r#"{{"refresh_token": "{token}"}}"#);
-    let req = json_req("POST", "/api/v1/auth/refresh", &body, None);
-    world.send(req).await.unwrap();
+    world.svc_refresh(&token).await;
 }
 
 #[given(expr = "the user {string} has been deactivated")]
 async fn user_deactivated_step(world: &mut AppWorld, _username: String) {
-    // Deactivate alice using admin or using alice's own token
     let token = world.auth_token.clone().unwrap_or_default();
-    let req = json_req(
-        "POST",
-        "/api/v1/users/me/deactivate",
-        "{}",
-        Some(&format!("Bearer {token}")),
-    );
-    world.send(req).await.unwrap();
+    world.svc_deactivate(&format!("Bearer {token}")).await;
 }
 
 #[when("alice sends POST /api/v1/auth/logout with her access token")]
 async fn logout_alice(world: &mut AppWorld) {
     let token = world.auth_token.clone().unwrap_or_default();
-    let req = json_req(
-        "POST",
-        "/api/v1/auth/logout",
-        "{}",
-        Some(&format!("Bearer {token}")),
-    );
-    world.send(req).await.unwrap();
+    world.svc_logout(&format!("Bearer {token}")).await;
 }
 
 #[when("alice sends POST /api/v1/auth/logout-all with her access token")]
 async fn logout_all_alice(world: &mut AppWorld) {
     let token = world.auth_token.clone().unwrap_or_default();
-    let req = json_req(
-        "POST",
-        "/api/v1/auth/logout-all",
-        "{}",
-        Some(&format!("Bearer {token}")),
-    );
-    world.send(req).await.unwrap();
+    world.svc_logout_all(&format!("Bearer {token}")).await;
 }
 
 #[then("alice's access token should be invalidated")]
 async fn check_token_invalidated(world: &mut AppWorld) {
     let token = world.auth_token.clone().unwrap_or_default();
-    let req = get_req("/api/v1/users/me", Some(&format!("Bearer {token}")));
-    world.send(req).await.unwrap();
+    world
+        .svc_get_profile(&format!("Bearer {token}"))
+        .await;
     assert_eq!(
         world.last_status, 401,
         "Expected 401 after logout, got {}",
@@ -112,13 +89,7 @@ async fn check_token_invalidated(world: &mut AppWorld) {
 #[given("alice has already logged out once")]
 async fn alice_already_logged_out(world: &mut AppWorld) {
     let token = world.auth_token.clone().unwrap_or_default();
-    let req = json_req(
-        "POST",
-        "/api/v1/auth/logout",
-        "{}",
-        Some(&format!("Bearer {token}")),
-    );
-    world.send(req).await.unwrap();
+    world.svc_logout(&format!("Bearer {token}")).await;
 }
 
 #[then("the response body should contain an error message about token expiration")]
