@@ -128,12 +128,12 @@ Tags are the standard mechanism for attaching structured metadata to projects in
 
 Every project declares tags along four dimensions. Each dimension uses a fixed prefix and a controlled vocabulary.
 
-| Dimension | Prefix      | Allowed Values                                                                                                        | Required                       | Purpose                                                       |
-| --------- | ----------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------------------------- |
-| Type      | `type:`     | `app`, `lib`, `e2e`                                                                                                   | Always                         | Distinguishes deployable apps, reusable libs, and test suites |
-| Platform  | `platform:` | `hugo`, `cli`, `nextjs`, `spring-boot`, `phoenix`, `giraffe`, `gin`, `fastapi`, `axum`, `ktor`, `vertx`, `playwright` | Apps and e2e projects          | Framework or runtime environment                              |
-| Language  | `lang:`     | `golang`, `ts`, `java`, `elixir`, `fsharp`, `python`, `rust`, `kotlin`                                                | Projects with application code | Primary language of source code                               |
-| Domain    | `domain:`   | `ayokoding`, `oseplatform`, `organiclever`, `demo-be`, `tooling`                                                      | Always                         | Business or product domain                                    |
+| Dimension | Prefix      | Allowed Values                                                                                                                                                   | Required                       | Purpose                                                       |
+| --------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------------------------- |
+| Type      | `type:`     | `app`, `lib`, `e2e`                                                                                                                                              | Always                         | Distinguishes deployable apps, reusable libs, and test suites |
+| Platform  | `platform:` | `hugo`, `cli`, `nextjs`, `spring-boot`, `phoenix`, `giraffe`, `gin`, `fastapi`, `axum`, `ktor`, `vertx`, `playwright`, `tanstackstart`, `reactrouter`, `flutter` | Apps and e2e projects          | Framework or runtime environment                              |
+| Language  | `lang:`     | `golang`, `ts`, `java`, `elixir`, `fsharp`, `python`, `rust`, `kotlin`, `dart`                                                                                   | Projects with application code | Primary language of source code                               |
+| Domain    | `domain:`   | `ayokoding`, `oseplatform`, `organiclever`, `demo-be`, `demo-fe`, `tooling`                                                                                      | Always                         | Business or product domain                                    |
 
 ### Special Rules
 
@@ -145,26 +145,32 @@ Every project declares tags along four dimensions. Each dimension uses a fixed p
 
 ### Current Project Tags
 
-| Project                   | Tags                                                                    |
-| ------------------------- | ----------------------------------------------------------------------- |
-| `ayokoding-web`           | `["type:app", "platform:hugo", "domain:ayokoding"]`                     |
-| `ayokoding-cli`           | `["type:app", "platform:cli", "lang:golang", "domain:ayokoding"]`       |
-| `rhino-cli`               | `["type:app", "platform:cli", "lang:golang", "domain:tooling"]`         |
-| `demo-be-java-springboot` | `["type:app", "platform:spring-boot", "lang:java", "domain:demo-be"]`   |
-| `demo-be-elixir-phoenix`  | `["type:app", "platform:phoenix", "lang:elixir", "domain:demo-be"]`     |
-| `demo-be-fsharp-giraffe`  | `["type:app", "platform:giraffe", "lang:fsharp", "domain:demo-be"]`     |
-| `demo-be-golang-gin`      | `["type:app", "platform:gin", "lang:golang", "domain:demo-be"]`         |
-| `demo-be-python-fastapi`  | `["type:app", "platform:fastapi", "lang:python", "domain:demo-be"]`     |
-| `demo-be-rust-axum`       | `["type:app", "platform:axum", "lang:rust", "domain:demo-be"]`          |
-| `demo-be-kotlin-ktor`     | `["type:app", "platform:ktor", "lang:kotlin", "domain:demo-be"]`        |
-| `demo-be-java-vertx`      | `["type:app", "platform:vertx", "lang:java", "domain:demo-be"]`         |
-| `demo-be-e2e`             | `["type:e2e", "platform:playwright", "lang:ts", "domain:demo-be"]`      |
-| `organiclever-web`        | `["type:app", "platform:nextjs", "lang:ts", "domain:organiclever"]`     |
-| `organiclever-web-e2e`    | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]` |
-| `oseplatform-cli`         | `["type:app", "platform:cli", "lang:golang", "domain:oseplatform"]`     |
-| `oseplatform-web`         | `["type:app", "platform:hugo", "domain:oseplatform"]`                   |
-| `hugo-commons`            | `["type:lib", "lang:golang"]`                                           |
-| `golang-commons`          | `["type:lib", "lang:golang"]`                                           |
+| Project                    | Tags                                                                    |
+| -------------------------- | ----------------------------------------------------------------------- |
+| `ayokoding-web`            | `["type:app", "platform:hugo", "domain:ayokoding"]`                     |
+| `ayokoding-cli`            | `["type:app", "platform:cli", "lang:golang", "domain:ayokoding"]`       |
+| `rhino-cli`                | `["type:app", "platform:cli", "lang:golang", "domain:tooling"]`         |
+| `demo-be-java-springboot`  | `["type:app", "platform:spring-boot", "lang:java", "domain:demo-be"]`   |
+| `demo-be-elixir-phoenix`   | `["type:app", "platform:phoenix", "lang:elixir", "domain:demo-be"]`     |
+| `demo-be-fsharp-giraffe`   | `["type:app", "platform:giraffe", "lang:fsharp", "domain:demo-be"]`     |
+| `demo-be-golang-gin`       | `["type:app", "platform:gin", "lang:golang", "domain:demo-be"]`         |
+| `demo-be-python-fastapi`   | `["type:app", "platform:fastapi", "lang:python", "domain:demo-be"]`     |
+| `demo-be-rust-axum`        | `["type:app", "platform:axum", "lang:rust", "domain:demo-be"]`          |
+| `demo-be-kotlin-ktor`      | `["type:app", "platform:ktor", "lang:kotlin", "domain:demo-be"]`        |
+| `demo-be-java-vertx`       | `["type:app", "platform:vertx", "lang:java", "domain:demo-be"]`         |
+| `demo-be-e2e`              | `["type:e2e", "platform:playwright", "lang:ts", "domain:demo-be"]`      |
+| `organiclever-web`         | `["type:app", "platform:nextjs", "lang:ts", "domain:organiclever"]`     |
+| `organiclever-web-e2e`     | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]` |
+| `demo-fe-ts-nextjs`        | `["type:app", "platform:nextjs", "lang:ts", "domain:demo-fe"]`          |
+| `demo-fe-ts-tanstackstart` | `["type:app", "platform:tanstackstart", "lang:ts", "domain:demo-fe"]`   |
+| `demo-fe-ts-remix`         | `["type:app", "platform:reactrouter", "lang:ts", "domain:demo-fe"]`     |
+| `demo-fe-dart-flutter`     | `["type:app", "platform:flutter", "lang:dart", "domain:demo-fe"]`       |
+| `demo-fe-elixir-phoenix`   | `["type:app", "platform:phoenix", "lang:elixir", "domain:demo-fe"]`     |
+| `demo-fe-e2e`              | `["type:e2e", "platform:playwright", "lang:ts", "domain:demo-fe"]`      |
+| `oseplatform-cli`          | `["type:app", "platform:cli", "lang:golang", "domain:oseplatform"]`     |
+| `oseplatform-web`          | `["type:app", "platform:hugo", "domain:oseplatform"]`                   |
+| `hugo-commons`             | `["type:lib", "lang:golang"]`                                           |
+| `golang-commons`           | `["type:lib", "lang:golang"]`                                           |
 
 ### Example: Complete Tag Declaration
 
@@ -204,6 +210,7 @@ Derived from three rules: (1) All apps+libs → unit tests, (2) All apps → int
 | ------------ | ----------- | ------------------ | ---------- | ------------ | ------ | ------- | ----------- |
 | API Backend  | Yes         | Yes (PG)           | Yes\*      | Yes          | Yes    | Yes     | If typed    |
 | Web UI App   | Yes         | Yes (MSW)          | Yes\*      | Yes          | Yes    | Yes     | If typed    |
+| Demo-fe FE   | Yes         | —                  | Yes\*      | Yes          | Yes    | Yes     | If typed    |
 | CLI App      | Yes         | Yes (Godog)        | —          | Yes          | Yes    | Yes     | If typed    |
 | Library      | Yes         | Optional           | —          | Yes          | Yes    | —       | If typed    |
 | Hugo Site    | —           | —                  | —          | Yes          | —      | Yes     | —           |
@@ -241,6 +248,9 @@ them for `nx affected -t lint`.
 | Python/FastAPI     | unit tests with `pytest` (mocked dependencies) → LCOV → `rhino-cli test-coverage validate` ≥90%                                                                                                                                    |
 | Rust/Axum          | unit tests with `cargo test --lib` + `cargo llvm-cov --lcov` → `rhino-cli test-coverage validate` ≥90%                                                                                                                             |
 | Hugo site          | link check via the site's CLI tool (build runs separately via `nx build`)                                                                                                                                                          |
+| Demo-fe TS app     | unit tests via vitest (typecheck and lint run separately in pre-push); coverage from unit tests only via `rhino-cli test-coverage validate` >=90%; specs coverage via `rhino-cli spec-coverage validate`                           |
+| Demo-fe Flutter    | unit tests (`flutter test --coverage`); LCOV coverage validated via `rhino-cli test-coverage validate` >=90%; specs coverage via `rhino-cli spec-coverage validate`; `dart analyze` via `lint`                                     |
+| Demo-fe Elixir     | unit tests (`mix coveralls.lcov`); LCOV coverage validated via `rhino-cli test-coverage validate` >=90%; specs coverage via `rhino-cli spec-coverage validate`                                                                     |
 | Flutter/Dart       | unit tests (`flutter test`); `flutter analyze` runs via `typecheck`, not `lint`                                                                                                                                                    |
 | Playwright `*-e2e` | run the linter directly (no unit tests to add beyond linting)                                                                                                                                                                      |
 

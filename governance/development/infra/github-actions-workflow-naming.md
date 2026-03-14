@@ -101,6 +101,11 @@ Every workflow currently in the repository follows this rule:
 | `Test Integration + E2E Demo Backend (C#/ASP.NET Core)`   | `test-integration-e2e-demo-be-csharp-aspnetcore.yml` |
 | `Test Integration + E2E Demo Backend (Clojure/Pedestal)`  | `test-integration-e2e-demo-be-clojure-pedestal.yml`  |
 | `Test Integration + E2E OrganicLever Web`                 | `test-integration-e2e-organiclever-web.yml`          |
+| `E2E - demo-fe-ts-nextjs`                                 | `e2e-demo-fe-ts-nextjs.yml`                          |
+| `E2E - demo-fe-ts-tanstackstart`                          | `e2e-demo-fe-ts-tanstackstart.yml`                   |
+| `E2E - demo-fe-ts-remix`                                  | `e2e-demo-fe-ts-remix.yml`                           |
+| `E2E - demo-fe-dart-flutter`                              | `e2e-demo-fe-dart-flutter.yml`                       |
+| `E2E - demo-fe-elixir-phoenix`                            | `e2e-demo-fe-elixir-phoenix.yml`                     |
 
 ## Examples
 

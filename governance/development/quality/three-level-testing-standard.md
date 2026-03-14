@@ -161,14 +161,15 @@ The exact directory structure varies by language convention (e.g., Go uses `_tes
 
 The three-level standard applies universally, with adaptations per project type:
 
-| Project Type                  | Unit               | Integration                      | E2E                | Gherkin Specs                 |
-| ----------------------------- | ------------------ | -------------------------------- | ------------------ | ----------------------------- |
-| Demo-be API backend           | All mocked + specs | Real PostgreSQL, no HTTP + specs | Playwright + specs | `specs/apps/demo/be/gherkin/` |
-| Web UI app (organiclever-web) | Vitest mocks       | MSW in-process (cacheable)       | Playwright         | Project-specific              |
-| CLI app (Go)                  | Go test mocks      | Godog BDD in-process (cacheable) | N/A                | `specs/{app}/`                |
-| Library (Go)                  | Go test mocks      | Godog BDD in-process (cacheable) | N/A                | `specs/{lib}/`                |
-| Hugo site                     | Exempt             | Exempt                           | Exempt             | N/A                           |
-| E2E runner                    | N/A                | N/A                              | Playwright         | Shared specs                  |
+| Project Type                  | Unit                         | Integration                      | E2E                                  | Gherkin Specs                 |
+| ----------------------------- | ---------------------------- | -------------------------------- | ------------------------------------ | ----------------------------- |
+| Demo-be API backend           | All mocked + specs           | Real PostgreSQL, no HTTP + specs | Playwright + specs                   | `specs/apps/demo/be/gherkin/` |
+| Web UI app (organiclever-web) | Vitest mocks                 | MSW in-process (cacheable)       | Playwright                           | Project-specific              |
+| CLI app (Go)                  | Go test mocks                | Godog BDD in-process (cacheable) | N/A                                  | `specs/{app}/`                |
+| Library (Go)                  | Go test mocks                | Godog BDD in-process (cacheable) | N/A                                  | `specs/{lib}/`                |
+| Demo-fe frontend              | Vitest/Flutter mocks + specs | N/A                              | Playwright (via demo-fe-e2e) + specs | `specs/apps/demo/fe/gherkin/` |
+| Hugo site                     | Exempt                       | Exempt                           | Exempt                               | N/A                           |
+| E2E runner                    | N/A                          | N/A                              | Playwright                           | Shared specs                  |
 
 **Key rules by project type**:
 
@@ -176,6 +177,7 @@ The three-level standard applies universally, with adaptations per project type:
 - **Web UI apps**: All three levels mandatory; integration uses in-process mocking (MSW); cacheable
 - **CLI apps**: Unit + integration mandatory; integration uses Godog BDD with in-process command execution; cacheable
 - **Libraries**: Unit mandatory; integration optional (Godog BDD with public API calls); cacheable
+- **Demo-fe frontends**: Two-level testing (unit + E2E); no integration tier; all consume Gherkin specs from `specs/apps/demo/fe/gherkin/`; E2E via centralized `demo-fe-e2e` Playwright suite
 - **Hugo sites**: Exempt from all test levels (only `test:quick` for link checking)
 
 ## Anti-Patterns

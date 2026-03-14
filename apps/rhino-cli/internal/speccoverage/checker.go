@@ -206,6 +206,19 @@ func findMatchingTestFile(appDir, stem string) (string, error) {
 			if strings.HasSuffix(base, ".go") && !strings.HasSuffix(base, "_test.go") {
 				return nil
 			}
+			// Skip non-test TS/JS files (e.g. login.tsx) — only files with test
+			// indicators (.test., .spec., .steps., .integration., _test.) count.
+			ext := filepath.Ext(base)
+			if ext == ".ts" || ext == ".tsx" || ext == ".js" || ext == ".jsx" {
+				isTestFile := strings.Contains(base, ".test.") ||
+					strings.Contains(base, ".spec.") ||
+					strings.Contains(base, ".steps.") ||
+					strings.Contains(base, ".integration.") ||
+					strings.Contains(base, "_test.")
+				if !isTestFile {
+					return nil
+				}
+			}
 			found = path
 			return filepath.SkipAll
 		}
