@@ -15,6 +15,7 @@ public class SharedState
     public string? LastResetToken { get; set; }
     public Guid? LastExpenseId { get; set; }
     public Guid? LastAttachmentId { get; set; }
+    public bool TestApiDisabled { get; set; }
 }
 
 /// <summary>
