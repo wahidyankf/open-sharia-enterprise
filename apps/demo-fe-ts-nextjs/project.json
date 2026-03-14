@@ -1,0 +1,61 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "demo-fe-ts-nextjs",
+  "sourceRoot": "apps/demo-fe-ts-nextjs/src",
+  "projectType": "application",
+  "targets": {
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "next dev --port 3301",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "next build",
+        "cwd": "{projectRoot}"
+      },
+      "outputs": ["{projectRoot}/.next"],
+      "dependsOn": []
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "next start --port 3301",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx oxlint@latest .",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx vitest run --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-fe-ts-nextjs/coverage/lcov.info 70)",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx vitest run --project unit",
+        "cwd": "{projectRoot}"
+      }
+    }
+  },
+  "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:demo-fe"],
+  "implicitDependencies": []
+}
