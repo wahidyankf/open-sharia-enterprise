@@ -40,6 +40,13 @@
         "cwd": "{projectRoot}"
       }
     },
+    "test:e2e:shard": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx bddgen && npx playwright test --shard=${SHARD}",
+        "cwd": "{projectRoot}"
+      }
+    },
     "test:e2e:ui": {
       "executor": "nx:run-commands",
       "options": {
