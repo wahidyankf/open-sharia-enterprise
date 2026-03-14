@@ -19,21 +19,21 @@ class UserProfileResponse(BaseModel):
     id: str
     username: str
     email: str
-    display_name: str | None
+    displayName: str | None
     status: str
 
 
 class UpdateProfileRequest(BaseModel):
     """Update profile request model."""
 
-    display_name: str
+    displayName: str
 
 
 class ChangePasswordRequest(BaseModel):
     """Change password request model."""
 
-    old_password: str
-    new_password: str
+    oldPassword: str
+    newPassword: str
 
 
 @router.get("/me", response_model=UserProfileResponse)
@@ -45,7 +45,7 @@ def get_profile(
         id=current_user.id,
         username=current_user.username,
         email=current_user.email,
-        display_name=current_user.display_name,
+        displayName=current_user.display_name,
         status=current_user.status,
     )
 
@@ -58,14 +58,14 @@ def update_profile(
 ) -> UserProfileResponse:
     """Update current user display name."""
     user_repo = get_user_repo(db)
-    user = user_repo.update_display_name(current_user.id, body.display_name)
+    user = user_repo.update_display_name(current_user.id, body.displayName)
     if user is None:
         raise UnauthorizedError("User not found")
     return UserProfileResponse(
         id=user.id,
         username=user.username,
         email=user.email,
-        display_name=user.display_name,
+        displayName=user.display_name,
         status=user.status,
     )
 
@@ -77,9 +77,9 @@ def change_password(
     current_user: UserModel = Depends(get_current_user),
 ) -> dict:
     """Change password for the current user."""
-    if not verify_password(body.old_password, current_user.password_hash):
+    if not verify_password(body.oldPassword, current_user.password_hash):
         raise UnauthorizedError("Invalid credentials")
-    new_hash = hash_password(body.new_password)
+    new_hash = hash_password(body.newPassword)
     user_repo = get_user_repo(db)
     user_repo.update_password(current_user.id, new_hash)
     return {"message": "Password changed"}

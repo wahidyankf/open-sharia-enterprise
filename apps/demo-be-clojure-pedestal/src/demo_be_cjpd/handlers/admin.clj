@@ -6,10 +6,15 @@
             [demo-be-cjpd.db.user-repo :as user-repo]
             [demo-be-cjpd.db.token-repo :as token-repo]))
 
+(defn- kebab->camel [s]
+  (let [parts (str/split s #"-")]
+    (str (first parts)
+         (apply str (map str/capitalize (rest parts))))))
+
 (defn- json-response [status body]
   {:status  status
    :headers {"Content-Type" "application/json"}
-   :body    (json/generate-string body {:key-fn #(str/replace (name %) #"-" "_")})})
+   :body    (json/generate-string body {:key-fn #(kebab->camel (name %))})})
 
 (defn- error-response [status message]
   {:status  status
@@ -28,10 +33,10 @@
           page    (Integer/parseInt (or (get params "page") "1"))
           size    (Integer/parseInt (or (get params "size") "20"))
           result  (user-repo/list-users ds {:search search :page page :size size})]
-      (json-response 200 {:data  (mapv user->public (:data result))
-                          :total (:total result)
-                          :page  (:page result)
-                          :size  (:size result)}))))
+      (json-response 200 {:content       (mapv user->public (:data result))
+                          :total-elements (:total result)
+                          :page           (:page result)
+                          :size           (:size result)}))))
 
 (defn disable-user-handler
   "POST /api/v1/admin/users/:id/disable — Disable a user account."
@@ -82,5 +87,5 @@
                                                   user-id
                                                   (:username user)
                                                   "RESET")]
-          (json-response 200 {:reset_token reset-token
-                              :user_id     user-id}))))))
+          (json-response 200 {:token   reset-token
+                              :user-id user-id}))))))

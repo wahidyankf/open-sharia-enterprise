@@ -108,8 +108,8 @@ const listExpenses = HttpServerRequest.HttpServerRequest.pipe(
       const result = yield* expenseRepo.findByUserId(claims.sub, page, size);
 
       return yield* HttpServerResponse.json({
-        data: result.items.map(expenseToResponse),
-        total: result.total,
+        content: result.items.map(expenseToResponse),
+        totalElements: result.total,
         page,
         size,
       });

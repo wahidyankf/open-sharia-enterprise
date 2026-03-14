@@ -21,25 +21,25 @@ public static class AdminEndpoints
         CancellationToken ct,
         [FromQuery] int page = 1,
         [FromQuery] int size = 20,
-        [FromQuery] string? email = null
+        [FromQuery] string? search = null
     )
     {
         var safePage = Math.Max(1, page == 0 ? 1 : page);
         var safeSize = size <= 0 ? 20 : size;
-        var (items, total) = await userRepo.ListAsync(safePage, safeSize, email, ct);
+        var (items, total) = await userRepo.ListAsync(safePage, safeSize, search, ct);
         return Results.Ok(
             new
             {
-                data = items.Select(u => new
+                content = items.Select(u => new
                 {
                     id = u.Id,
                     username = u.Username,
                     email = u.Email,
-                    display_name = u.DisplayName,
+                    displayName = u.DisplayName,
                     status = u.Status.ToString().ToUpperInvariant(),
                     role = u.Role.ToString().ToUpperInvariant(),
                 }),
-                total,
+                totalElements = total,
                 page = safePage,
                 size = safeSize,
             }
@@ -111,6 +111,6 @@ public static class AdminEndpoints
         }
 
         var resetToken = Guid.NewGuid().ToString("N");
-        return Results.Ok(new { reset_token = resetToken });
+        return Results.Ok(new { token = resetToken });
     }
 }

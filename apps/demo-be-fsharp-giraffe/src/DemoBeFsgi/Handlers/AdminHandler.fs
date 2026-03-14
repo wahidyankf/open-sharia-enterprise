@@ -18,7 +18,7 @@ let listUsers: HttpHandler =
             let db = ctx.GetService<AppDbContext>()
             let pageParam = ctx.TryGetQueryStringValue("page") |> Option.defaultValue "1"
             let sizeParam = ctx.TryGetQueryStringValue("size") |> Option.defaultValue "20"
-            let emailFilter = ctx.TryGetQueryStringValue("email")
+            let emailFilter = ctx.TryGetQueryStringValue("search")
 
             let page =
                 Math.Max(
@@ -54,15 +54,15 @@ let listUsers: HttpHandler =
                     {| id = u.Id
                        username = u.Username
                        email = u.Email
-                       display_name = u.DisplayName
+                       displayName = u.DisplayName
                        role = u.Role
                        status = u.Status |})
                 |> Seq.toArray
 
             return!
                 json
-                    {| data = userData
-                       total = total
+                    {| content = userData
+                       totalElements = total
                        page = page
                        size = size |}
                     next
@@ -206,7 +206,7 @@ let forcePasswordReset (userId: Guid) : HttpHandler =
                 return!
                     json
                         {| message = "Password reset token generated"
-                           reset_token = resetToken |}
+                           token = resetToken |}
                         next
                         ctx
         }

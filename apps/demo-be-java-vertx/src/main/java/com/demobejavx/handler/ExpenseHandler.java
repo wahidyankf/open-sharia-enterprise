@@ -119,8 +119,8 @@ public class ExpenseHandler implements Handler<RoutingContext> {
                     }
 
                     JsonObject resp = new JsonObject()
-                            .put("data", data)
-                            .put("total", total)
+                            .put("content", data)
+                            .put("totalElements", total)
                             .put("page", page)
                             .put("size", size);
 

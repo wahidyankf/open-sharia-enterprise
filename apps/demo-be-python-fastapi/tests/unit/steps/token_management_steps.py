@@ -34,7 +34,7 @@ def alice_login_for_tokens(client: TestClient, registered_user: dict) -> dict:
 def alice_logout_blacklisted(client: TestClient, alice_tokens: dict) -> None:
     client.post(
         "/api/v1/auth/logout",
-        headers={"Authorization": f"Bearer {alice_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {alice_tokens['accessToken']}"},
     )
 
 
@@ -57,7 +57,7 @@ def admin_disable_alice(client: TestClient, registered_user: dict, admin_tokens:
     resp = client.post(
         f"/api/v1/admin/users/{registered_user['id']}/disable",
         json={"reason": "Test"},
-        headers={"Authorization": f"Bearer {admin_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {admin_tokens['accessToken']}"},
     )
     assert resp.status_code == 200, f"Disable failed: {resp.text}"
 
@@ -67,7 +67,7 @@ def admin_disable_alice(client: TestClient, registered_user: dict, admin_tokens:
 
 @when("alice decodes her access token payload", target_fixture="decoded_payload")
 def alice_decode_token(alice_tokens: dict) -> dict:
-    token = alice_tokens["access_token"]
+    token = alice_tokens["accessToken"]
     parts = token.split(".")
     assert len(parts) == 3, "Invalid JWT structure"
     payload_b64 = parts[1]
@@ -87,7 +87,7 @@ def get_jwks(client: TestClient):  # type: ignore[no-untyped-def]
 def alice_logout_tokens(client: TestClient, alice_tokens: dict):  # type: ignore[no-untyped-def]
     return client.post(
         "/api/v1/auth/logout",
-        headers={"Authorization": f"Bearer {alice_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {alice_tokens['accessToken']}"},
     )
 
 
@@ -98,7 +98,7 @@ def alice_logout_tokens(client: TestClient, alice_tokens: dict):  # type: ignore
 def get_me_with_alice_token(client: TestClient, alice_tokens: dict):  # type: ignore[no-untyped-def]
     return client.get(
         "/api/v1/users/me",
-        headers={"Authorization": f"Bearer {alice_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {alice_tokens['accessToken']}"},
     )
 
 
@@ -122,6 +122,6 @@ def check_jwks_keys(response) -> None:  # type: ignore[no-untyped-def]
 def check_alice_token_revoked(client: TestClient, alice_tokens: dict) -> None:
     resp = client.get(
         "/api/v1/users/me",
-        headers={"Authorization": f"Bearer {alice_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {alice_tokens['accessToken']}"},
     )
     assert resp.status_code == 401, f"Expected 401 for revoked token, got {resp.status_code}"

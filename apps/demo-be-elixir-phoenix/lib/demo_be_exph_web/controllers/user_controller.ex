@@ -12,7 +12,7 @@ defmodule DemoBeExphWeb.UserController do
       id: user.id,
       username: user.username,
       email: user.email,
-      display_name: user.display_name || user.username,
+      displayName: user.display_name || user.username,
       role: user.role,
       status: user.status
     })
@@ -27,7 +27,7 @@ defmodule DemoBeExphWeb.UserController do
           id: updated_user.id,
           username: updated_user.username,
           email: updated_user.email,
-          display_name: updated_user.display_name || updated_user.username
+          displayName: updated_user.display_name || updated_user.username
         })
 
       {:error, changeset} ->

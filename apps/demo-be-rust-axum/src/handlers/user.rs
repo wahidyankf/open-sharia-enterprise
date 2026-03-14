@@ -16,6 +16,7 @@ pub struct UserProfile {
     pub id: String,
     pub username: String,
     pub email: String,
+    #[serde(rename = "displayName")]
     pub display_name: String,
     pub role: String,
     pub status: String,
@@ -43,6 +44,7 @@ pub async fn get_profile(
 
 #[derive(Deserialize)]
 pub struct UpdateProfileRequest {
+    #[serde(rename = "displayName")]
     pub display_name: Option<String>,
 }
 
@@ -67,7 +69,9 @@ pub async fn update_profile(
 
 #[derive(Deserialize)]
 pub struct ChangePasswordRequest {
+    #[serde(rename = "oldPassword")]
     pub old_password: Option<String>,
+    #[serde(rename = "newPassword")]
     pub new_password: Option<String>,
 }
 

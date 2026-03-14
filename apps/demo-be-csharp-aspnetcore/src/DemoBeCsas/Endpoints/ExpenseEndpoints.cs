@@ -94,8 +94,8 @@ public static class ExpenseEndpoints
         return Results.Ok(
             new
             {
-                data = items.Select(ToResponse),
-                total,
+                content = items.Select(ToResponse),
+                totalElements = total,
                 page = safePage,
                 size = safeSize,
             }

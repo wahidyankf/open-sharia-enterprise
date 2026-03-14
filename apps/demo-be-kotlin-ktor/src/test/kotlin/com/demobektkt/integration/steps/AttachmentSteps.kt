@@ -45,7 +45,7 @@ class AttachmentSteps {
             for (pwd in passwords) {
                 val (status, body) = ServiceDispatcher.login("bob", pwd)
                 if (status == 200) {
-                    JsonHelper.getString(body, "access_token")?.let {
+                    JsonHelper.getString(body, "accessToken")?.let {
                         TestWorld.accessTokens["bob"] = it
                     }
                     break

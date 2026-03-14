@@ -24,6 +24,11 @@
 (defn- snake-case->kebab-case [s]
   (str/replace s #"_" "-"))
 
+(defn- kebab->camel [s]
+  (let [parts (str/split s #"-")]
+    (str (first parts)
+         (apply str (map str/capitalize (rest parts))))))
+
 (defn- keywordize-keys-kebab [m]
   (into {}
         (map (fn [[k v]]
@@ -39,7 +44,7 @@
               (assoc-in ctx [:request :json-params] kebab)))})
 
 (def json-response
-  "Interceptor that serializes response body to JSON."
+  "Interceptor that serializes response body to JSON using camelCase keys."
   {:name  ::json-response
    :leave (fn [ctx]
             (let [response (:response ctx)
@@ -47,6 +52,6 @@
               (if (map? body)
                 (-> ctx
                     (assoc-in [:response :body]
-                               (json/generate-string body {:key-fn #(str/replace (name %) #"-" "_")}))
+                               (json/generate-string body {:key-fn #(kebab->camel (name %))}))
                     (assoc-in [:response :headers "Content-Type"] "application/json"))
                 ctx)))})

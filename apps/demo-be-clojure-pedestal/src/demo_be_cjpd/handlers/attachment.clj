@@ -6,10 +6,15 @@
             [demo-be-cjpd.db.expense-repo :as expense-repo]
             [demo-be-cjpd.domain.attachment :as attachment-domain]))
 
+(defn- kebab->camel [s]
+  (let [parts (str/split s #"-")]
+    (str (first parts)
+         (apply str (map str/capitalize (rest parts))))))
+
 (defn- json-response [status body]
   {:status  status
    :headers {"Content-Type" "application/json"}
-   :body    (json/generate-string body {:key-fn #(str/replace (name %) #"-" "_")})})
+   :body    (json/generate-string body {:key-fn #(kebab->camel (name %))})})
 
 (defn- error-response [status message]
   {:status  status
@@ -18,16 +23,16 @@
 
 (defn- attachment->response [attachment base-url]
   {:id           (:id attachment)
-   :expense_id   (:expense-id attachment)
+   :expense-id   (:expense-id attachment)
    :filename     (:filename attachment)
-   :content_type (:content-type attachment)
+   :content-type (:content-type attachment)
    :size         (:size attachment)
    :url          (str base-url "/api/v1/expenses/"
                       (:expense-id attachment)
                       "/attachments/"
                       (:id attachment)
                       "/data")
-   :created_at   (:created-at attachment)})
+   :created-at   (:created-at attachment)})
 
 (defn upload-attachment-handler
   "POST /api/v1/expenses/:id/attachments — Upload an attachment."
@@ -99,10 +104,8 @@
               scheme      (or (get-in request [:headers "x-forwarded-proto"]) "http")
               host        (or (get-in request [:headers "host"]) "localhost")
               base-url    (str scheme "://" host)]
-          {:status  200
-           :headers {"Content-Type" "application/json"}
-           :body    (json/generate-string
-                      {:attachments (mapv #(attachment->response % base-url) attachments)})})))))
+          (json-response 200
+                         {:attachments (mapv #(attachment->response % base-url) attachments)}))))))
 
 (defn delete-attachment-handler
   "DELETE /api/v1/expenses/:id/attachments/:attachment-id — Delete an attachment."

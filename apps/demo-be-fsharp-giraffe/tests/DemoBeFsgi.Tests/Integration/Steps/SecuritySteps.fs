@@ -29,7 +29,7 @@ let ``"(.+)" has had the maximum number of failed login attempts`` (username: st
 
     try
         let doc = System.Text.Json.JsonDocument.Parse(body)
-        let dataEl = doc.RootElement.GetProperty("data")
+        let dataEl = doc.RootElement.GetProperty("content")
 
         for item in dataEl.EnumerateArray() do
             try
@@ -92,7 +92,7 @@ let ``a user "(.+)" is registered and locked after too many failed logins`` (use
 
     try
         let doc = System.Text.Json.JsonDocument.Parse(body)
-        let dataEl = doc.RootElement.GetProperty("data")
+        let dataEl = doc.RootElement.GetProperty("content")
 
         for item in dataEl.EnumerateArray() do
             try
@@ -125,7 +125,7 @@ let ``an admin has unlocked alice's account`` (state: StepState) =
 
     try
         let doc = System.Text.Json.JsonDocument.Parse(body)
-        let dataEl = doc.RootElement.GetProperty("data")
+        let dataEl = doc.RootElement.GetProperty("content")
 
         for item in dataEl.EnumerateArray() do
             try

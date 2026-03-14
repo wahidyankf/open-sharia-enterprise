@@ -294,8 +294,8 @@ describe("GET /api/v1/expenses", () => {
     });
     const { status, body } = await runRouter(req, makeTestLayer());
     expect(status).toBe(200);
-    expect(body["data"]).toBeDefined();
-    expect(body["total"]).toBeDefined();
+    expect(body["content"]).toBeDefined();
+    expect(body["totalElements"]).toBeDefined();
     expect(body["page"]).toBeDefined();
   });
 

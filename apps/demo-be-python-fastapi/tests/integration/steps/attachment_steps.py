@@ -28,7 +28,7 @@ def alice_login_attach(client: ServiceClient, registered_user: dict) -> dict:
 )
 def alice_create_attachment_entry(client: ServiceClient, alice_tokens: dict, body: str) -> dict:
     data = json.loads(body)
-    resp = client.post_expense(f"Bearer {alice_tokens['access_token']}", data)
+    resp = client.post_expense(f"Bearer {alice_tokens['accessToken']}", data)
     assert resp.status_code == 201, f"Create entry failed: {resp.text}"
     return resp.json()
 
@@ -41,7 +41,7 @@ def bob_create_entry(client: ServiceClient, registered_user: dict, body: str) ->
     # registered_user is bob (last registration in the scenario)
     bob_tokens = client.login_user("bob", _PASSWORD2)
     data = json.loads(body)
-    resp = client.post_expense(f"Bearer {bob_tokens['access_token']}", data)
+    resp = client.post_expense(f"Bearer {bob_tokens['accessToken']}", data)
     assert resp.status_code == 201
     return resp.json()
 
@@ -62,7 +62,7 @@ def alice_upload_attachment_given(
     file_content = b"dummy file content"
     resp = client.post_attachment(
         created_expense["id"],
-        f"Bearer {alice_tokens['access_token']}",
+        f"Bearer {alice_tokens['accessToken']}",
         filename,
         content_type,
         file_content,
@@ -90,7 +90,7 @@ def alice_upload_file(
     file_content = b"dummy file content"
     return client.post_attachment(
         created_expense["id"],
-        f"Bearer {alice_tokens['access_token']}",
+        f"Bearer {alice_tokens['accessToken']}",
         filename,
         content_type,
         file_content,
@@ -113,7 +113,7 @@ def alice_upload_to_bob_expense(
     file_content = b"dummy file content"
     return client.post_attachment(
         bob_expense["id"],
-        f"Bearer {alice_tokens['access_token']}",
+        f"Bearer {alice_tokens['accessToken']}",
         filename,
         content_type,
         file_content,
@@ -130,7 +130,7 @@ def alice_upload_oversized(
     big_content = b"x" * (11 * 1024 * 1024)
     return client.post_attachment(
         created_expense["id"],
-        f"Bearer {alice_tokens['access_token']}",
+        f"Bearer {alice_tokens['accessToken']}",
         "large.pdf",
         "application/pdf",
         big_content,
@@ -143,7 +143,7 @@ def alice_list_attachments(
 ) -> FakeResponse:
     return client.get_attachments(
         created_expense["id"],
-        f"Bearer {alice_tokens['access_token']}",
+        f"Bearer {alice_tokens['accessToken']}",
     )
 
 
@@ -153,7 +153,7 @@ def alice_list_bob_attachments(
 ) -> FakeResponse:
     return client.get_attachments(
         bob_expense["id"],
-        f"Bearer {alice_tokens['access_token']}",
+        f"Bearer {alice_tokens['accessToken']}",
     )
 
 
@@ -170,7 +170,7 @@ def alice_delete_attachment(
     return client.delete_attachment(
         created_expense["id"],
         uploaded_attachment["id"],
-        f"Bearer {alice_tokens['access_token']}",
+        f"Bearer {alice_tokens['accessToken']}",
     )
 
 
@@ -187,7 +187,7 @@ def alice_delete_bob_attachment(
     return client.delete_attachment(
         bob_expense["id"],
         uploaded_attachment["id"],
-        f"Bearer {alice_tokens['access_token']}",
+        f"Bearer {alice_tokens['accessToken']}",
     )
 
 
@@ -202,7 +202,7 @@ def alice_delete_nonexistent_attachment(
     return client.delete_attachment(
         created_expense["id"],
         random_id,
-        f"Bearer {alice_tokens['access_token']}",
+        f"Bearer {alice_tokens['accessToken']}",
     )
 
 

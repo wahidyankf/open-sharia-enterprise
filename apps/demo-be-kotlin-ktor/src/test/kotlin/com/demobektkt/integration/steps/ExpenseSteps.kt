@@ -39,10 +39,10 @@ class ExpenseSteps {
             for (pwd in passwords) {
                 val (status, body) = ServiceDispatcher.login(username, pwd)
                 if (status == 200) {
-                    JsonHelper.getString(body, "access_token")?.let {
+                    JsonHelper.getString(body, "accessToken")?.let {
                         TestWorld.accessTokens[username] = it
                     }
-                    JsonHelper.getString(body, "refresh_token")?.let {
+                    JsonHelper.getString(body, "refreshToken")?.let {
                         TestWorld.refreshTokens[username] = it
                     }
                     break

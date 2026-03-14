@@ -24,14 +24,14 @@ Given("alice's refresh token has expired", async function (this: CustomWorld) {
 Given("alice has used her refresh token to get a new token pair", async function (this: CustomWorld) {
   const refreshToken = this.tokens.get("alice_refresh") ?? "";
   this.context["alice_original_refresh"] = refreshToken;
-  const res = await this.post("/api/v1/auth/refresh", { refresh_token: refreshToken });
+  const res = await this.post("/api/v1/auth/refresh", { refreshToken: refreshToken });
   if (res.status !== 200) {
     throw new Error(`Failed to refresh: ${JSON.stringify(res.body)}`);
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  this.tokens.set("alice_access", (res.body as any).access_token as string);
+  this.tokens.set("alice_access", (res.body as any).accessToken as string);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  this.tokens.set("alice_refresh", (res.body as any).refresh_token as string);
+  this.tokens.set("alice_refresh", (res.body as any).refreshToken as string);
 });
 
 Given(/^the user "([^"]*)" has been deactivated$/, async function (this: CustomWorld, username: string) {
@@ -54,12 +54,12 @@ Given("alice has already logged out once", async function (this: CustomWorld) {
 
 When(/^alice sends POST \/api\/v1\/auth\/refresh with her refresh token$/, async function (this: CustomWorld) {
   const refreshToken = this.tokens.get("alice_refresh") ?? "";
-  this.response = await this.post("/api/v1/auth/refresh", { refresh_token: refreshToken });
+  this.response = await this.post("/api/v1/auth/refresh", { refreshToken: refreshToken });
 });
 
 When(/^alice sends POST \/api\/v1\/auth\/refresh with her original refresh token$/, async function (this: CustomWorld) {
   const originalRefresh = this.context["alice_original_refresh"] as string;
-  this.response = await this.post("/api/v1/auth/refresh", { refresh_token: originalRefresh });
+  this.response = await this.post("/api/v1/auth/refresh", { refreshToken: originalRefresh });
 });
 
 When(/^alice sends POST \/api\/v1\/auth\/logout with her access token$/, async function (this: CustomWorld) {

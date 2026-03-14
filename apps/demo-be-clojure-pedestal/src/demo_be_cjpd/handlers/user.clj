@@ -5,10 +5,15 @@
             [demo-be-cjpd.auth.password :as password]
             [demo-be-cjpd.db.user-repo :as user-repo]))
 
+(defn- kebab->camel [s]
+  (let [parts (str/split s #"-")]
+    (str (first parts)
+         (apply str (map str/capitalize (rest parts))))))
+
 (defn- json-response [status body]
   {:status  status
    :headers {"Content-Type" "application/json"}
-   :body    (json/generate-string body {:key-fn #(str/replace (name %) #"-" "_")})})
+   :body    (json/generate-string body {:key-fn #(kebab->camel (name %))})})
 
 (defn- error-response [status message]
   {:status  status
@@ -34,7 +39,7 @@
   (fn [request]
     (let [user-id      (:user-id (:identity request))
           params       (:json-params request)
-          display-name (or (:display_name params) (:display-name params))
+          display-name (or (:displayName params) (:display_name params) (:display-name params))
           updated      (user-repo/update-display-name! ds user-id display-name)]
       (json-response 200 (user->public updated)))))
 
@@ -44,8 +49,8 @@
   (fn [request]
     (let [user-id  (:user-id (:identity request))
           params   (:json-params request)
-          old-pw   (or (:old_password params) (:old-password params))
-          new-pw   (or (:new_password params) (:new-password params))
+          old-pw   (or (:oldPassword params) (:old_password params) (:old-password params))
+          new-pw   (or (:newPassword params) (:new_password params) (:new-password params))
           user     (user-repo/find-by-id ds user-id)]
       (cond
         (not (password/verify-password old-pw (:password-hash user)))

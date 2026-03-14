@@ -154,8 +154,8 @@ public class UnitCommonSteps {
 
     private String mapFieldName(String field) {
         return switch (field) {
-            case "access_token" -> "access_token";
-            case "refresh_token" -> "refresh_token";
+            case "accessToken" -> "accessToken";
+            case "refreshToken" -> "refreshToken";
             default -> field;
         };
     }

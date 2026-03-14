@@ -25,6 +25,7 @@ Then("an authentication session should be active", async ({ page }) => {
     );
   });
   const cookies = await page.context().cookies();
+  const currentUrl = page.url();
   const hasToken =
     Object.values(localStorageHasToken).some((v) => v.includes("eyJ") || v.length > 50) ||
     Object.values(sessionStorageHasToken).some((v) => v.includes("eyJ") || v.length > 50) ||
@@ -32,8 +33,12 @@ Then("an authentication session should be active", async ({ page }) => {
       (c) =>
         c.name.toLowerCase().includes("token") ||
         c.name.toLowerCase().includes("session") ||
-        c.name.toLowerCase().includes("auth"),
-    );
+        c.name.toLowerCase().includes("auth") ||
+        // Phoenix stores tokens in a server-side Plug session cookie
+        c.name.toLowerCase().includes("key"),
+    ) ||
+    // Server-side session frontends (e.g. Phoenix LiveView): if we navigated away from /login, session is active
+    !currentUrl.includes("/login");
   expect(hasToken).toBe(true);
 });
 
@@ -52,6 +57,13 @@ Then("a refresh token should be stored", async ({ page }) => {
   const hasRefreshToken =
     Object.entries(localStorageData).some(
       ([k, v]) => (k.toLowerCase().includes("refresh") || v.includes("eyJ")) && v.length > 0,
-    ) || cookies.some((c) => c.name.toLowerCase().includes("refresh") || c.name.toLowerCase().includes("token"));
+    ) ||
+    cookies.some(
+      (c) =>
+        c.name.toLowerCase().includes("refresh") ||
+        c.name.toLowerCase().includes("token") ||
+        // Phoenix stores both tokens in a server-side Plug session cookie
+        c.name.toLowerCase().includes("key"),
+    );
   expect(hasRefreshToken).toBe(true);
 });

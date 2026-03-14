@@ -48,7 +48,7 @@ def disable_alice_by_admin(
     assert alice is not None
     resp = client.post_admin_disable_user(
         alice["id"],
-        f"Bearer {admin_tokens['access_token']}",
+        f"Bearer {admin_tokens['accessToken']}",
         reason="Test disable",
     )
     assert resp.status_code == 200
@@ -62,7 +62,7 @@ def alice_account_disabled(
     assert alice is not None
     resp = client.post_admin_disable_user(
         alice["id"],
-        f"Bearer {admin_tokens['access_token']}",
+        f"Bearer {admin_tokens['accessToken']}",
         reason="Initial disable",
     )
     assert resp.status_code == 200
@@ -73,17 +73,17 @@ def alice_account_disabled(
 
 @when("the admin sends GET /api/v1/admin/users", target_fixture="response")
 def admin_list_users(client: ServiceClient, admin_tokens: dict) -> FakeResponse:
-    return client.get_admin_users(f"Bearer {admin_tokens['access_token']}")
+    return client.get_admin_users(f"Bearer {admin_tokens['accessToken']}")
 
 
 @when(
-    "the admin sends GET /api/v1/admin/users?email=alice@example.com",
+    "the admin sends GET /api/v1/admin/users?search=alice@example.com",
     target_fixture="response",
 )
 def admin_search_users_by_email(client: ServiceClient, admin_tokens: dict) -> FakeResponse:
     return client.get_admin_users(
-        f"Bearer {admin_tokens['access_token']}",
-        email="alice@example.com",
+        f"Bearer {admin_tokens['accessToken']}",
+        search="alice@example.com",
     )
 
 
@@ -101,7 +101,7 @@ def admin_disable_alice(
     data = json.loads(body)
     return client.post_admin_disable_user(
         alice["id"],
-        f"Bearer {admin_tokens['access_token']}",
+        f"Bearer {admin_tokens['accessToken']}",
         reason=data.get("reason"),
     )
 
@@ -111,7 +111,7 @@ def admin_disable_alice(
     target_fixture="response",
 )
 def get_me_alice_token(client: ServiceClient, alice_tokens: dict) -> FakeResponse:
-    return client.get_me(f"Bearer {alice_tokens['access_token']}")
+    return client.get_me(f"Bearer {alice_tokens['accessToken']}")
 
 
 @when(
@@ -125,7 +125,7 @@ def admin_enable_alice(
     assert alice is not None
     return client.post_admin_enable_user(
         alice["id"],
-        f"Bearer {admin_tokens['access_token']}",
+        f"Bearer {admin_tokens['accessToken']}",
     )
 
 
@@ -140,7 +140,7 @@ def admin_force_password_reset(
     assert alice is not None
     return client.post_admin_force_password_reset(
         alice["id"],
-        f"Bearer {admin_tokens['access_token']}",
+        f"Bearer {admin_tokens['accessToken']}",
     )
 
 
@@ -152,7 +152,7 @@ def admin_force_password_reset(
 )
 def check_alice_in_results(response: FakeResponse) -> None:
     body = response.json()
-    users = body.get("data", [])
+    users = body.get("content", [])
     assert any(u.get("email") == "alice@example.com" for u in users), (
         f"alice@example.com not found in users: {users}"
     )
@@ -165,11 +165,11 @@ def check_alice_disabled(
     alice = next((u for u in registered_users if u["username"] == "alice"), None)
     assert alice is not None
     resp = client.get_admin_users(
-        f"Bearer {admin_tokens['access_token']}",
-        email="alice@example.com",
+        f"Bearer {admin_tokens['accessToken']}",
+        search="alice@example.com",
     )
     body = resp.json()
-    users = body.get("data", [])
+    users = body.get("content", [])
     alice_info = next((u for u in users if u["username"] == "alice"), None)
     assert alice_info is not None
     assert alice_info["status"].upper() == "DISABLED"
@@ -182,11 +182,11 @@ def check_alice_active(
     alice = next((u for u in registered_users if u["username"] == "alice"), None)
     assert alice is not None
     resp = client.get_admin_users(
-        f"Bearer {admin_tokens['access_token']}",
-        email="alice@example.com",
+        f"Bearer {admin_tokens['accessToken']}",
+        search="alice@example.com",
     )
     body = resp.json()
-    users = body.get("data", [])
+    users = body.get("content", [])
     alice_info = next((u for u in users if u["username"] == "alice"), None)
     assert alice_info is not None
     assert alice_info["status"].upper() == "ACTIVE"

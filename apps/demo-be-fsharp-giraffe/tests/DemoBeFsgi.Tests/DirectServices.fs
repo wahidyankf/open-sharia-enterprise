@@ -245,7 +245,7 @@ let register (db: AppDbContext) (username: string) (email: string) (password: st
                         {| id = userId
                            username = entity.Username
                            email = entity.Email
-                           display_name = entity.DisplayName |}
+                           displayName = entity.DisplayName |}
         | _ -> return badRequest "Validation failed"
     }
 
@@ -317,8 +317,8 @@ let login (db: AppDbContext) (username: string) (password: string) : Async<int *
 
             return
                 ok
-                    {| access_token = accessToken
-                       refresh_token = refreshTokenStr
+                    {| accessToken = accessToken
+                       refreshToken = refreshTokenStr
                        token_type = "Bearer" |}
     }
 
@@ -366,8 +366,8 @@ let refresh (db: AppDbContext) (refreshTokenStr: string) : Async<int * string> =
 
                 return
                     ok
-                        {| access_token = accessToken
-                           refresh_token = newRefreshToken
+                        {| accessToken = accessToken
+                           refreshToken = newRefreshToken
                            token_type = "Bearer" |}
     }
 
@@ -480,7 +480,7 @@ let getProfile (db: AppDbContext) (token: string option) : Async<int * string> =
                         {| id = user.Id
                            username = user.Username
                            email = user.Email
-                           display_name = user.DisplayName
+                           displayName = user.DisplayName
                            role = user.Role
                            status = user.Status |}
     }
@@ -517,7 +517,7 @@ let updateProfile (db: AppDbContext) (token: string option) (displayName: string
                         {| id = updated.Id
                            username = updated.Username
                            email = updated.Email
-                           display_name = updated.DisplayName |}
+                           displayName = updated.DisplayName |}
     }
 
 let changePassword
@@ -612,15 +612,15 @@ let listUsers
                     {| id = u.Id
                        username = u.Username
                        email = u.Email
-                       display_name = u.DisplayName
+                       displayName = u.DisplayName
                        role = u.Role
                        status = u.Status |})
                 |> Seq.toArray
 
             return
                 ok
-                    {| data = userData
-                       total = total
+                    {| content = userData
+                       totalElements = total
                        page = p
                        size = s |}
     }
@@ -735,7 +735,7 @@ let forcePasswordReset (db: AppDbContext) (token: string option) (targetUserId: 
                 return
                     ok
                         {| message = "Password reset token generated"
-                           reset_token = resetToken |}
+                           token = resetToken |}
     }
 
 /// Test-only: set a user's role to ADMIN without authentication.
@@ -897,8 +897,8 @@ let listExpenses (db: AppDbContext) (token: string option) (page: int) (size: in
 
             return
                 ok
-                    {| data = data
-                       total = total
+                    {| content = data
+                       totalElements = total
                        page = p |}
     }
 

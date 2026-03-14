@@ -32,7 +32,7 @@ public class AuthSteps {
             ServiceResponse loginResp = login(username, password);
             JsonObject loginBody = loginResp.body();
             Assertions.assertNotNull(loginBody);
-            state.setBobAccessToken(loginBody.getString("access_token"));
+            state.setBobAccessToken(loginBody.getString("accessToken"));
         }
     }
 
@@ -44,7 +44,7 @@ public class AuthSteps {
         ServiceResponse loginResp = login(username, password);
         JsonObject loginBody = loginResp.body();
         Assertions.assertNotNull(loginBody);
-        String token = loginBody.getString("access_token");
+        String token = loginBody.getString("accessToken");
         AppFactory.getService().deactivateMe(token);
     }
 
@@ -54,8 +54,8 @@ public class AuthSteps {
         ServiceResponse resp = login(username, password);
         JsonObject body = resp.body();
         Assertions.assertNotNull(body);
-        state.setAccessToken(body.getString("access_token"));
-        state.setRefreshToken(body.getString("refresh_token"));
+        state.setAccessToken(body.getString("accessToken"));
+        state.setRefreshToken(body.getString("refreshToken"));
     }
 
     @Given("{string} has logged in and stored the access token")
@@ -64,11 +64,11 @@ public class AuthSteps {
         ServiceResponse resp = login(username, password);
         JsonObject body = resp.body();
         Assertions.assertNotNull(body);
-        state.setAccessToken(body.getString("access_token"));
+        state.setAccessToken(body.getString("accessToken"));
         if ("alice".equals(username)) {
-            state.setRefreshToken(body.getString("refresh_token"));
+            state.setRefreshToken(body.getString("refreshToken"));
         }
-        ServiceResponse meResp = AppFactory.getService().getMe(body.getString("access_token"));
+        ServiceResponse meResp = AppFactory.getService().getMe(body.getString("accessToken"));
         JsonObject meBody = meResp.body();
         if (meBody != null) {
             String userId = meBody.getString("id", "");

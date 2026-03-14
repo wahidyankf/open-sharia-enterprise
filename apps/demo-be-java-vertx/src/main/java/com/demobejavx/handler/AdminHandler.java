@@ -34,7 +34,7 @@ public class AdminHandler implements Handler<RoutingContext> {
     }
 
     private void handleList(RoutingContext ctx) {
-        String emailFilter = ctx.queryParam("email").stream().findFirst().orElse(null);
+        String emailFilter = ctx.queryParam("search").stream().findFirst().orElse(null);
         String pageParam = ctx.queryParam("page").stream().findFirst().orElse("1");
         String sizeParam = ctx.queryParam("size").stream().findFirst().orElse("20");
 
@@ -56,8 +56,8 @@ public class AdminHandler implements Handler<RoutingContext> {
                     }
 
                     JsonObject resp = new JsonObject()
-                            .put("data", data)
-                            .put("total", total)
+                            .put("content", data)
+                            .put("totalElements", total)
                             .put("page", page)
                             .put("size", size);
 
@@ -154,7 +154,7 @@ public class AdminHandler implements Handler<RoutingContext> {
                 })
                 .onSuccess(user -> {
                     String resetToken = UUID.randomUUID().toString();
-                    JsonObject resp = new JsonObject().put("reset_token", resetToken);
+                    JsonObject resp = new JsonObject().put("token", resetToken);
                     ctx.response()
                             .setStatusCode(200)
                             .putHeader("Content-Type", "application/json")
@@ -168,7 +168,7 @@ public class AdminHandler implements Handler<RoutingContext> {
                 .put("id", user.id())
                 .put("username", user.username())
                 .put("email", user.email())
-                .put("display_name", user.displayName())
+                .put("displayName", user.displayName())
                 .put("role", user.role())
                 .put("status", user.status());
     }

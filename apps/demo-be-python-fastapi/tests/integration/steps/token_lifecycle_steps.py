@@ -23,7 +23,7 @@ def alice_login_tokens(client: ServiceClient, registered_user: dict) -> dict:
 def alice_expired_refresh_token(client: ServiceClient, registered_user: dict) -> dict:
     # Get a real access token but substitute an expired refresh token
     tokens = client.login_user("alice", _PASSWORD)
-    tokens["refresh_token"] = create_expired_refresh_token(registered_user["id"])
+    tokens["refreshToken"] = create_expired_refresh_token(registered_user["id"])
     return tokens
 
 
@@ -33,7 +33,7 @@ def alice_expired_refresh_token(client: ServiceClient, registered_user: dict) ->
 )
 def alice_used_refresh_token(client: ServiceClient, registered_user: dict) -> dict:
     tokens = client.login_user("alice", _PASSWORD)
-    original_refresh = tokens["refresh_token"]
+    original_refresh = tokens["refreshToken"]
     # Use the refresh token once so it becomes revoked
     resp = client.post_refresh(original_refresh)
     assert resp.status_code == 200
@@ -43,7 +43,7 @@ def alice_used_refresh_token(client: ServiceClient, registered_user: dict) -> di
 
 @given('the user "alice" has been deactivated', target_fixture="deactivated_alice")
 def deactivate_alice(client: ServiceClient, registered_user: dict, alice_tokens: dict) -> dict:
-    resp = client.post_me_deactivate(f"Bearer {alice_tokens['access_token']}")
+    resp = client.post_me_deactivate(f"Bearer {alice_tokens['accessToken']}")
     assert resp.status_code == 200
     return registered_user
 
@@ -52,7 +52,7 @@ def deactivate_alice(client: ServiceClient, registered_user: dict, alice_tokens:
 def alice_already_logged_out(
     client: ServiceClient, registered_user: dict, alice_tokens: dict
 ) -> None:
-    client.post_logout(f"Bearer {alice_tokens['access_token']}")
+    client.post_logout(f"Bearer {alice_tokens['accessToken']}")
 
 
 # --- When steps ---
@@ -60,7 +60,7 @@ def alice_already_logged_out(
 
 @when("alice sends POST /api/v1/auth/refresh with her refresh token", target_fixture="response")
 def alice_refresh(client: ServiceClient, alice_tokens: dict) -> FakeResponse:
-    return client.post_refresh(alice_tokens["refresh_token"])
+    return client.post_refresh(alice_tokens["refreshToken"])
 
 
 _STEP_REFRESH_ORIGINAL = "alice sends POST /api/v1/auth/refresh with her original refresh token"
@@ -68,18 +68,18 @@ _STEP_REFRESH_ORIGINAL = "alice sends POST /api/v1/auth/refresh with her origina
 
 @when(_STEP_REFRESH_ORIGINAL, target_fixture="response")
 def alice_refresh_with_original(client: ServiceClient, alice_tokens: dict) -> FakeResponse:
-    original = alice_tokens.get("_original_refresh", alice_tokens["refresh_token"])
+    original = alice_tokens.get("_original_refresh", alice_tokens["refreshToken"])
     return client.post_refresh(original)
 
 
 @when("alice sends POST /api/v1/auth/logout with her access token", target_fixture="response")
 def alice_logout(client: ServiceClient, alice_tokens: dict) -> FakeResponse:
-    return client.post_logout(f"Bearer {alice_tokens['access_token']}")
+    return client.post_logout(f"Bearer {alice_tokens['accessToken']}")
 
 
 @when("alice sends POST /api/v1/auth/logout-all with her access token", target_fixture="response")
 def alice_logout_all(client: ServiceClient, alice_tokens: dict) -> FakeResponse:
-    return client.post_logout_all(f"Bearer {alice_tokens['access_token']}")
+    return client.post_logout_all(f"Bearer {alice_tokens['accessToken']}")
 
 
 # --- Then steps ---
@@ -87,5 +87,5 @@ def alice_logout_all(client: ServiceClient, alice_tokens: dict) -> FakeResponse:
 
 @then("alice's access token should be invalidated")
 def check_access_token_invalidated(client: ServiceClient, alice_tokens: dict) -> None:
-    resp = client.get_me(f"Bearer {alice_tokens['access_token']}")
+    resp = client.get_me(f"Bearer {alice_tokens['accessToken']}")
     assert resp.status_code == 401, f"Expected 401 after logout, got {resp.status_code}"

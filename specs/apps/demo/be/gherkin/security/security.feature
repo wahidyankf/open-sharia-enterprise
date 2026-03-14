@@ -35,4 +35,4 @@ Feature: Security
     And an admin has unlocked alice's account
     When the client sends POST /api/v1/auth/login with body { "username": "alice", "password": "Str0ng#Pass1" }
     Then the response status code should be 200
-    And the response body should contain a non-null "access_token" field
+    And the response body should contain a non-null "accessToken" field

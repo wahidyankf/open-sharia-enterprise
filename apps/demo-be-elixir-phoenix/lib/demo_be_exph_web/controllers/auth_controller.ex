@@ -82,12 +82,12 @@ defmodule DemoBeExphWeb.AuthController do
   end
 
   def refresh(conn, params) do
-    raw_token = Map.get(params, "refresh_token", "")
+    raw_token = Map.get(params, "refreshToken", "")
 
     if raw_token == "" do
       conn
       |> put_status(:bad_request)
-      |> json(%{errors: %{refresh_token: ["can't be blank"]}})
+      |> json(%{errors: %{refreshToken: ["can't be blank"]}})
     else
       do_refresh(conn, raw_token)
     end
@@ -104,8 +104,8 @@ defmodule DemoBeExphWeb.AuthController do
         _ = jti
 
         json(conn, %{
-          access_token: access_token,
-          refresh_token: refresh_token,
+          accessToken: access_token,
+          refreshToken: refresh_token,
           token_type: "Bearer"
         })
 
@@ -151,8 +151,8 @@ defmodule DemoBeExphWeb.AuthController do
           {:ok, new_refresh_token} = token_ctx().create_refresh_token(user.id)
 
           json(conn, %{
-            access_token: access_token,
-            refresh_token: new_refresh_token,
+            accessToken: access_token,
+            refreshToken: new_refresh_token,
             token_type: "Bearer"
           })
         end

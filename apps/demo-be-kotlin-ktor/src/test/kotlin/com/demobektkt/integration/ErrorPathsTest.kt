@@ -39,7 +39,7 @@ class ErrorPathsTest {
         val (loginStatus, loginBody) = ServiceDispatcher.login(username, password)
         assertTrue(loginStatus == 200, "Login should succeed, got $loginStatus: $loginBody")
         aliceToken =
-            JsonHelper.getString(loginBody, "access_token") ?: error("No token in: $loginBody")
+            JsonHelper.getString(loginBody, "accessToken") ?: error("No token in: $loginBody")
 
         // Get alice user ID from profile
         val (_, profileBody) = ServiceDispatcher.getProfile(aliceToken)
@@ -78,7 +78,7 @@ class ErrorPathsTest {
             "Admin login should succeed, got $adminLoginStatus: $adminLoginBody",
         )
         adminToken =
-            JsonHelper.getString(adminLoginBody, "access_token")
+            JsonHelper.getString(adminLoginBody, "accessToken")
                 ?: error("No token in: $adminLoginBody")
     }
 

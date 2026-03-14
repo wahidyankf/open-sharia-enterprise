@@ -18,7 +18,7 @@ use crate::state::AppState;
 pub struct ListUsersQuery {
     pub page: Option<i64>,
     pub page_size: Option<i64>,
-    pub email: Option<String>,
+    pub search: Option<String>,
 }
 
 #[derive(Serialize)]
@@ -26,6 +26,7 @@ pub struct UserSummary {
     pub id: String,
     pub username: String,
     pub email: String,
+    #[serde(rename = "displayName")]
     pub display_name: String,
     pub role: String,
     pub status: String,
@@ -33,7 +34,8 @@ pub struct UserSummary {
 
 #[derive(Serialize)]
 pub struct ListUsersResponse {
-    pub data: Vec<UserSummary>,
+    pub content: Vec<UserSummary>,
+    #[serde(rename = "totalElements")]
     pub total: i64,
     pub page: i64,
     pub page_size: i64,
@@ -46,11 +48,11 @@ pub async fn list_users(
 ) -> Result<Json<ListUsersResponse>, AppError> {
     let page = params.page.unwrap_or(1).max(1);
     let page_size = params.page_size.unwrap_or(20);
-    let email_filter = params.email.as_deref();
+    let search_filter = params.search.as_deref();
 
-    let result = user_repo::list_users(&state.pool, page, page_size, email_filter).await?;
+    let result = user_repo::list_users(&state.pool, page, page_size, search_filter).await?;
 
-    let data = result
+    let content = result
         .users
         .into_iter()
         .map(|u| UserSummary {
@@ -64,7 +66,7 @@ pub async fn list_users(
         .collect();
 
     Ok(Json(ListUsersResponse {
-        data,
+        content,
         total: result.total,
         page,
         page_size,
@@ -121,5 +123,5 @@ pub async fn force_password_reset(
     let reset_token = Uuid::new_v4().to_string();
     user_repo::set_password_reset_token(&state.pool, user_id, &reset_token).await?;
 
-    Ok(Json(json!({"reset_token": reset_token})))
+    Ok(Json(json!({"token": reset_token})))
 }

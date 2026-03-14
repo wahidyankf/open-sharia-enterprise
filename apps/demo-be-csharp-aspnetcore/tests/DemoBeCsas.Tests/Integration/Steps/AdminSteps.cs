@@ -20,14 +20,14 @@ public class AdminSteps(ServiceLayer svc, SharedState state, AuthSteps auth)
         state.LastResponse = await svc.AdminListUsersAsync(auth._adminToken, page: 1, size: 20);
     }
 
-    [When(@"^the admin sends GET /api/v1/admin/users\?email=alice@example\.com$")]
+    [When(@"^the admin sends GET /api/v1/admin/users\?search=alice@example\.com$")]
     public async Task WhenAdminSearchesByEmail()
     {
         state.LastResponse = await svc.AdminListUsersAsync(
             auth._adminToken,
             page: 1,
             size: 20,
-            email: "alice@example.com"
+            search: "alice@example.com"
         );
     }
 
@@ -67,7 +67,7 @@ public class AdminSteps(ServiceLayer svc, SharedState state, AuthSteps auth)
         if (state.LastResponse.IsSuccess)
         {
             using var doc = JsonDocument.Parse(state.LastResponse.Body);
-            if (doc.RootElement.TryGetProperty("reset_token", out var rt))
+            if (doc.RootElement.TryGetProperty("token", out var rt))
             {
                 state.LastResetToken = rt.GetString();
             }

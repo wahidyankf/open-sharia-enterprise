@@ -81,7 +81,7 @@ public class AuthHandler implements Handler<RoutingContext> {
                             .put("id", user.id())
                             .put("username", user.username())
                             .put("email", user.email())
-                            .put("display_name", user.displayName())
+                            .put("displayName", user.displayName())
                             .put("role", user.role());
                     ctx.response()
                             .setStatusCode(201)
@@ -138,8 +138,8 @@ public class AuthHandler implements Handler<RoutingContext> {
                 })
                 .onSuccess(tokens -> {
                     JsonObject resp = new JsonObject()
-                            .put("access_token", tokens.accessToken())
-                            .put("refresh_token", tokens.refreshToken())
+                            .put("accessToken", tokens.accessToken())
+                            .put("refreshToken", tokens.refreshToken())
                             .put("token_type", "Bearer");
                     ctx.response()
                             .setStatusCode(200)
@@ -155,7 +155,7 @@ public class AuthHandler implements Handler<RoutingContext> {
             ctx.fail(401);
             return;
         }
-        String refreshToken = body.getString("refresh_token", "");
+        String refreshToken = body.getString("refreshToken", "");
 
         JwtService.Claims claims;
         try {
@@ -211,8 +211,8 @@ public class AuthHandler implements Handler<RoutingContext> {
                 })
                 .onSuccess(tokens -> {
                     JsonObject resp = new JsonObject()
-                            .put("access_token", tokens.accessToken())
-                            .put("refresh_token", tokens.refreshToken())
+                            .put("accessToken", tokens.accessToken())
+                            .put("refreshToken", tokens.refreshToken())
                             .put("token_type", "Bearer");
                     ctx.response()
                             .setStatusCode(200)

@@ -9,7 +9,7 @@ async fn get_alice_profile(world: &mut AppWorld) {
 }
 
 #[when(
-    regex = r#"alice sends PATCH /api/v1/users/me with body \{ "display_name": "Alice Smith" \}"#
+    regex = r#"alice sends PATCH /api/v1/users/me with body \{ "displayName": "Alice Smith" \}"#
 )]
 async fn patch_display_name(world: &mut AppWorld) {
     let bearer = world.bearer();
@@ -17,7 +17,7 @@ async fn patch_display_name(world: &mut AppWorld) {
 }
 
 #[when(
-    regex = r#"alice sends POST /api/v1/users/me/password with body \{ "old_password": "Str0ng#Pass1", "new_password": "NewPass#456" \}"#
+    regex = r#"alice sends POST /api/v1/users/me/password with body \{ "oldPassword": "Str0ng#Pass1", "newPassword": "NewPass#456" \}"#
 )]
 async fn change_password_correct(world: &mut AppWorld) {
     let bearer = world.bearer();
@@ -27,7 +27,7 @@ async fn change_password_correct(world: &mut AppWorld) {
 }
 
 #[when(
-    regex = r#"alice sends POST /api/v1/users/me/password with body \{ "old_password": "Wr0ngOld!", "new_password": "NewPass#456" \}"#
+    regex = r#"alice sends POST /api/v1/users/me/password with body \{ "oldPassword": "Wr0ngOld!", "newPassword": "NewPass#456" \}"#
 )]
 async fn change_password_wrong_old(world: &mut AppWorld) {
     let bearer = world.bearer();

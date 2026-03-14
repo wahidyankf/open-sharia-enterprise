@@ -26,6 +26,7 @@ defmodule DemoFeExphWeb.Router do
     live "/login", LoginLive
     live "/register", RegisterLive
     live "/tokens", TokensLive
+    get "/auth/session", SessionController, :create
   end
 
   # Protected routes — authentication required

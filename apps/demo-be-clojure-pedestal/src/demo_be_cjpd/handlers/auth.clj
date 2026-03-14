@@ -10,10 +10,15 @@
             [demo-be-cjpd.db.user-repo :as user-repo]
             [demo-be-cjpd.domain.user :as user-domain]))
 
+(defn- kebab->camel [s]
+  (let [parts (str/split s #"-")]
+    (str (first parts)
+         (apply str (map str/capitalize (rest parts))))))
+
 (defn- json-response [status body]
   {:status  status
    :headers {"Content-Type" "application/json"}
-   :body    (json/generate-string body {:key-fn #(str/replace (name %) #"-" "_")})})
+   :body    (json/generate-string body {:key-fn #(kebab->camel (name %))})})
 
 (defn- error-response [status message]
   {:status  status
@@ -102,9 +107,9 @@
                                                      (:username user)
                                                      (:role user))
                 refresh-token (jwt/sign-refresh-token (:jwt-secret config) (:id user))]
-            (json-response 200 {:access_token  access-token
-                                :refresh_token refresh-token
-                                :token_type    "Bearer"
+            (json-response 200 {:access-token  access-token
+                                :refresh-token refresh-token
+                                :token-type    "Bearer"
                                 :user          (user->public user)})))))))
 
 (defn refresh-handler
@@ -112,7 +117,7 @@
   [config ds]
   (fn [request]
     (let [params        (:json-params request)
-          refresh-token (or (:refresh_token params) (:refresh-token params))
+          refresh-token (or (:refreshToken params) (:refresh_token params) (:refresh-token params))
           claims        (jwt/verify-token (:jwt-secret config) refresh-token)]
       (if-not claims
         (error-response 401 "Token has expired or is invalid")
@@ -144,9 +149,9 @@
                                                                (:username user)
                                                                (:role user))
                             new-refresh (jwt/sign-refresh-token (:jwt-secret config) user-id)]
-                        (json-response 200 {:access_token  new-access
-                                            :refresh_token new-refresh
-                                            :token_type    "Bearer"})))))))))))))
+                        (json-response 200 {:access-token  new-access
+                                            :refresh-token new-refresh
+                                            :token-type    "Bearer"})))))))))))))
 
 (defn logout-handler
   "POST /api/v1/auth/logout — Revoke the provided access token."
@@ -155,7 +160,8 @@
     (let [params     (:json-params request)
           auth-token (or (some-> (get-in request [:headers "authorization"])
                                  (str/replace #"^Bearer " ""))
-                         (:access_token params))
+                         (:access-token params)
+                         (:accessToken params))
           claims     (when auth-token (jwt/verify-token (:jwt-secret config) auth-token))]
       (when claims
         (token-repo/revoke-token! ds (:jti claims) (:sub claims)))

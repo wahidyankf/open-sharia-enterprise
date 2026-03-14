@@ -36,7 +36,7 @@ public class UnitUserAccountSteps {
         stateStore.setResponseBody(resp.getBody());
     }
 
-    @When("^alice sends PATCH /api/v1/users/me with body \\{ \"display_name\": \"Alice Smith\" \\}$")
+    @When("^alice sends PATCH /api/v1/users/me with body \\{ \"displayName\": \"Alice Smith\" \\}$")
     public void aliceSendsPatchUsersMeWithDisplayName() {
         String username = resolveUsername();
         ResponseEntity<UserProfileResponse> resp = userController.updateProfile(
@@ -46,12 +46,12 @@ public class UnitUserAccountSteps {
         stateStore.setResponseBody(resp.getBody());
     }
 
-    @When("^alice sends POST /api/v1/users/me/password with body \\{ \"old_password\": \"Str0ng#Pass1\", \"new_password\": \"NewPass#456\" \\}$")
+    @When("^alice sends POST /api/v1/users/me/password with body \\{ \"oldPassword\": \"Str0ng#Pass1\", \"newPassword\": \"NewPass#456\" \\}$")
     public void aliceSendsPostChangePasswordSuccess() {
         performChangePassword("Str0ng#Pass1", "NewPass#456");
     }
 
-    @When("^alice sends POST /api/v1/users/me/password with body \\{ \"old_password\": \"Wr0ngOld!\", \"new_password\": \"NewPass#456\" \\}$")
+    @When("^alice sends POST /api/v1/users/me/password with body \\{ \"oldPassword\": \"Wr0ngOld!\", \"newPassword\": \"NewPass#456\" \\}$")
     public void aliceSendsPostChangePasswordWrongOld() {
         performChangePassword("Wr0ngOld!", "NewPass#456");
     }

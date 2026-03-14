@@ -36,6 +36,7 @@ pub struct RegisterResponse {
     pub id: String,
     pub username: String,
     pub email: String,
+    #[serde(rename = "displayName")]
     pub display_name: String,
 }
 
@@ -91,7 +92,9 @@ pub struct LoginRequest {
 
 #[derive(Serialize)]
 pub struct LoginResponse {
+    #[serde(rename = "accessToken")]
     pub access_token: String,
+    #[serde(rename = "refreshToken")]
     pub refresh_token: String,
     pub token_type: String,
 }

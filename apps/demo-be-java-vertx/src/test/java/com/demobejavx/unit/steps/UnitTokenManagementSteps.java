@@ -83,7 +83,7 @@ public class UnitTokenManagementSteps {
 
         ServiceResponse listResp = svc().adminListUsers(adminToken, null, 1, 100);
         String aliceId = UnitSecuritySteps.findUserIdByUsername(
-                listResp.body().getJsonArray("data"), "alice");
+                listResp.body().getJsonArray("content"), "alice");
 
         svc().adminDisableUser(adminToken, aliceId);
     }

@@ -26,7 +26,7 @@ def alice_login_units(client: ServiceClient, registered_user: dict) -> dict:
 )
 def alice_create_unit_expense(client: ServiceClient, alice_tokens: dict, body: str) -> dict:
     data = json.loads(body)
-    resp = client.post_expense(f"Bearer {alice_tokens['access_token']}", data)
+    resp = client.post_expense(f"Bearer {alice_tokens['accessToken']}", data)
     assert resp.status_code == 201, f"Create expense failed: {resp.text}"
     return resp.json()
 
@@ -40,7 +40,7 @@ def alice_get_unit_expense(
 ) -> FakeResponse:
     return client.get_expense(
         created_expense["id"],
-        f"Bearer {alice_tokens['access_token']}",
+        f"Bearer {alice_tokens['accessToken']}",
     )
 
 
@@ -52,7 +52,7 @@ def alice_post_unit_expense(
     client: ServiceClient, alice_tokens: dict, body: str
 ) -> FakeResponse:
     data = json.loads(body)
-    return client.post_expense(f"Bearer {alice_tokens['access_token']}", data)
+    return client.post_expense(f"Bearer {alice_tokens['accessToken']}", data)
 
 
 # --- Then steps ---

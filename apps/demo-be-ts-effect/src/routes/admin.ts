@@ -12,7 +12,7 @@ function userToResponse(user: any) {
     id: user.id as string,
     username: user.username as string,
     email: user.email as string,
-    display_name: user.displayName as string,
+    displayName: user.displayName as string,
     role: user.role as string,
     status: user.status as string,
   };
@@ -25,14 +25,14 @@ const listUsers = HttpServerRequest.HttpServerRequest.pipe(
       const url = new URL(req.url, "http://localhost");
       const page = Math.max(1, parseInt(url.searchParams.get("page") ?? "1", 10));
       const size = Math.min(100, parseInt(url.searchParams.get("size") ?? "20", 10));
-      const email = url.searchParams.get("email") ?? undefined;
+      const search = url.searchParams.get("search") ?? url.searchParams.get("email") ?? undefined;
 
       const userRepo = yield* UserRepository;
-      const result = yield* userRepo.listUsers(page, size, email);
+      const result = yield* userRepo.listUsers(page, size, search);
 
       return yield* HttpServerResponse.json({
-        data: result.items.map(userToResponse),
-        total: result.total,
+        content: result.items.map(userToResponse),
+        totalElements: result.total,
         page,
         size,
       });
@@ -148,8 +148,7 @@ const forcePasswordReset = HttpRouter.params.pipe(
           const resetToken = yield* jwt.signAccess(user.id, user.username, user.role);
 
           return yield* HttpServerResponse.json({
-            reset_token: resetToken,
-            user_id: user.id,
+            token: resetToken,
           });
         }),
       ),

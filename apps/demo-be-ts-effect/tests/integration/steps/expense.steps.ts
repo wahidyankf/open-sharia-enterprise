@@ -53,7 +53,7 @@ Given(/^bob has created an entry with body (.+)$/, async function (this: CustomW
       throw new Error(`Bob not logged in: ${JSON.stringify(loginRes.body)}`);
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    bobToken = (loginRes.body as any).access_token as string;
+    bobToken = (loginRes.body as any).accessToken as string;
     this.tokens.set("bob_access", bobToken);
   }
   const id = await createExpense(this, bobToken, body);

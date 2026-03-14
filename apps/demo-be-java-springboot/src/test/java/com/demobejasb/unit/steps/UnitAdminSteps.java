@@ -55,7 +55,7 @@ public class UnitAdminSteps {
         stateStore.setResponseBody(resp.getBody());
     }
 
-    @When("^the admin sends GET /api/v1/admin/users\\?email=alice@example\\.com$")
+    @When("^the admin sends GET /api/v1/admin/users\\?search=alice@example\\.com$")
     public void theAdminSendsGetAdminUsersSearchByEmail() {
         ResponseEntity<AdminUserListResponse> resp =
                 adminController.listUsers("alice@example.com", 0, 20);

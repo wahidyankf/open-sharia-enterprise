@@ -26,7 +26,7 @@ def alice_login_reporting(client: ServiceClient, registered_user: dict) -> dict:
 )
 def alice_create_reporting_entry(client: ServiceClient, alice_tokens: dict, body: str) -> dict:
     data = json.loads(body)
-    resp = client.post_expense(f"Bearer {alice_tokens['access_token']}", data)
+    resp = client.post_expense(f"Bearer {alice_tokens['accessToken']}", data)
     assert resp.status_code == 201, f"Create entry failed: {resp.text}"
     return resp.json()
 
@@ -42,7 +42,7 @@ def alice_get_pl_report(
     client: ServiceClient, alice_tokens: dict, from_: str, to: str, currency: str
 ) -> FakeResponse:
     return client.get_pl_report(
-        f"Bearer {alice_tokens['access_token']}",
+        f"Bearer {alice_tokens['accessToken']}",
         from_,
         to,
         currency,

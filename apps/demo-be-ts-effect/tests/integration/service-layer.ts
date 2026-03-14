@@ -89,7 +89,9 @@ function errorToResponse(error: any): HttpResponse {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function runEffect<A>(effect: Effect.Effect<A, unknown, any>): Promise<{ ok: true; value: A } | { ok: false; error: unknown }> {
+async function runEffect<A>(
+  effect: Effect.Effect<A, unknown, any>,
+): Promise<{ ok: true; value: A } | { ok: false; error: unknown }> {
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const value = await (serviceRuntime as any).runPromise(effect);
@@ -103,7 +105,13 @@ async function runEffect<A>(effect: Effect.Effect<A, unknown, any>): Promise<{ o
 // Auth helpers
 // ---------------------------------------------------------------------------
 
-function verifyToken(token: string): Effect.Effect<import("../../src/auth/jwt.js").JwtClaims, UnauthorizedError | import("@effect/sql/SqlError").SqlError, JwtService | RevokedTokenRepository> {
+function verifyToken(
+  token: string,
+): Effect.Effect<
+  import("../../src/auth/jwt.js").JwtClaims,
+  UnauthorizedError | import("@effect/sql/SqlError").SqlError,
+  JwtService | RevokedTokenRepository
+> {
   return Effect.gen(function* () {
     const jwt = yield* JwtService;
     const claims = yield* jwt.verify(token);
@@ -172,7 +180,7 @@ function userToAdminResponse(user: any) {
     id: user.id as string,
     username: user.username as string,
     email: user.email as string,
-    display_name: user.displayName as string,
+    displayName: user.displayName as string,
     role: user.role as string,
     status: user.status as string,
   };
@@ -235,7 +243,7 @@ export async function register(body: Record<string, unknown>): Promise<HttpRespo
         id: user.id,
         username: user.username,
         email: user.email,
-        display_name: user.displayName,
+        displayName: user.displayName,
         role: user.role,
         status: user.status,
       };
@@ -291,8 +299,8 @@ export async function login(body: Record<string, unknown>): Promise<HttpResponse
       const refreshToken = yield* jwt.signRefresh(user.id);
 
       return {
-        access_token: accessToken,
-        refresh_token: refreshToken,
+        accessToken,
+        refreshToken,
         token_type: "Bearer",
       };
     }),
@@ -351,7 +359,7 @@ export async function logoutAll(authHeader: string | undefined): Promise<HttpRes
 }
 
 export async function refreshToken(body: Record<string, unknown>): Promise<HttpResponse> {
-  const refreshTokenStr = (body["refresh_token"] as string | undefined) ?? "";
+  const refreshTokenStr = ((body["refreshToken"] ?? body["refresh_token"]) as string | undefined) ?? "";
 
   const result = await runEffect(
     Effect.gen(function* () {
@@ -389,8 +397,8 @@ export async function refreshToken(body: Record<string, unknown>): Promise<HttpR
       const newRefreshToken = yield* jwt.signRefresh(user.id);
 
       return {
-        access_token: newAccessToken,
-        refresh_token: newRefreshToken,
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
         token_type: "Bearer",
       };
     }),
@@ -444,7 +452,7 @@ export async function getMe(authHeader: string | undefined): Promise<HttpRespons
         id: user.id,
         username: user.username,
         email: user.email,
-        display_name: user.displayName,
+        displayName: user.displayName,
         role: user.role,
         status: user.status,
       };
@@ -466,7 +474,7 @@ export async function updateMe(authHeader: string | undefined, body: Record<stri
         return yield* Effect.fail(new UnauthorizedError({ reason: "Missing Authorization header" }));
       }
       const claims = yield* verifyToken(tokenStr);
-      const displayName = body["display_name"] as string | undefined;
+      const displayName = (body["displayName"] ?? body["display_name"]) as string | undefined;
 
       const userRepo = yield* UserRepository;
       const user = yield* userRepo.findById(claims.sub);
@@ -487,7 +495,7 @@ export async function updateMe(authHeader: string | undefined, body: Record<stri
         id: updated.id,
         username: updated.username,
         email: updated.email,
-        display_name: updated.displayName,
+        displayName: updated.displayName,
         role: updated.role,
         status: updated.status,
       };
@@ -512,8 +520,8 @@ export async function changePassword(
         return yield* Effect.fail(new UnauthorizedError({ reason: "Missing Authorization header" }));
       }
       const claims = yield* verifyToken(tokenStr);
-      const oldPassword = (body["old_password"] as string | undefined) ?? "";
-      const newPassword = (body["new_password"] as string | undefined) ?? "";
+      const oldPassword = ((body["oldPassword"] ?? body["old_password"]) as string | undefined) ?? "";
+      const newPassword = ((body["newPassword"] ?? body["new_password"]) as string | undefined) ?? "";
 
       const userRepo = yield* UserRepository;
       const user = yield* userRepo.findById(claims.sub);
@@ -597,9 +605,7 @@ export async function createExpense(
       const unitRaw = body["unit"] as string | undefined;
 
       if (!description) {
-        return yield* Effect.fail(
-          new ValidationError({ field: "description", message: "Description is required" }),
-        );
+        return yield* Effect.fail(new ValidationError({ field: "description", message: "Description is required" }));
       }
       if (!date) {
         return yield* Effect.fail(new ValidationError({ field: "date", message: "Date is required" }));
@@ -607,9 +613,7 @@ export async function createExpense(
 
       const amount = typeof amountRaw === "string" ? parseFloat(amountRaw) : (amountRaw ?? 0);
       if (isNaN(amount)) {
-        return yield* Effect.fail(
-          new ValidationError({ field: "amount", message: "Amount must be a number" }),
-        );
+        return yield* Effect.fail(new ValidationError({ field: "amount", message: "Amount must be a number" }));
       }
 
       yield* validateAmount(currency, amount);
@@ -660,8 +664,8 @@ export async function listExpenses(
       const result = yield* expenseRepo.findByUserId(claims.sub, page, size);
 
       return {
-        data: result.items.map(expenseToResponse),
-        total: result.total,
+        content: result.items.map(expenseToResponse),
+        totalElements: result.total,
         page,
         size,
       };
@@ -728,8 +732,7 @@ export async function updateExpense(
         return yield* Effect.fail(new ForbiddenError({ reason: "Access denied" }));
       }
 
-      const typeRaw =
-        body["type"] !== undefined ? ((body["type"] as string).toUpperCase() as ExpenseType) : undefined;
+      const typeRaw = body["type"] !== undefined ? ((body["type"] as string).toUpperCase() as ExpenseType) : undefined;
       const amountRaw = body["amount"] as string | number | undefined;
       const currencyRaw = body["currency"] as string | undefined;
       const category = body["category"] as string | undefined;
@@ -740,11 +743,7 @@ export async function updateExpense(
 
       const currency = currencyRaw !== undefined ? currencyRaw.toUpperCase() : existing.currency;
       const amount =
-        amountRaw !== undefined
-          ? typeof amountRaw === "string"
-            ? parseFloat(amountRaw)
-            : amountRaw
-          : existing.amount;
+        amountRaw !== undefined ? (typeof amountRaw === "string" ? parseFloat(amountRaw) : amountRaw) : existing.amount;
 
       if (amountRaw !== undefined || currencyRaw !== undefined) {
         yield* validateAmount(currency, amount);
@@ -890,10 +889,7 @@ export async function uploadAttachment(
   return { status: 201, body: result.value, headers: {} };
 }
 
-export async function listAttachments(
-  authHeader: string | undefined,
-  expenseId: string,
-): Promise<HttpResponse> {
+export async function listAttachments(authHeader: string | undefined, expenseId: string): Promise<HttpResponse> {
   const tokenStr = extractToken(authHeader);
 
   const result = await runEffect(
@@ -1054,7 +1050,9 @@ export async function getReport(
 // Admin routes
 // ---------------------------------------------------------------------------
 
-function requireAdminToken(tokenStr: string): Effect.Effect<
+function requireAdminToken(
+  tokenStr: string,
+): Effect.Effect<
   import("../../src/auth/jwt.js").JwtClaims,
   UnauthorizedError | ForbiddenError | import("@effect/sql/SqlError").SqlError,
   JwtService | RevokedTokenRepository
@@ -1083,14 +1081,14 @@ export async function adminListUsers(
 
       const page = Math.max(1, parseInt(queryParams["page"] ?? "1", 10));
       const size = Math.min(100, parseInt(queryParams["size"] ?? "20", 10));
-      const email = queryParams["email"];
+      const search = queryParams["search"] ?? queryParams["email"];
 
       const userRepo = yield* UserRepository;
-      const result = yield* userRepo.listUsers(page, size, email);
+      const result = yield* userRepo.listUsers(page, size, search);
 
       return {
-        data: result.items.map(userToAdminResponse),
-        total: result.total,
+        content: result.items.map(userToAdminResponse),
+        totalElements: result.total,
         page,
         size,
       };
@@ -1103,10 +1101,7 @@ export async function adminListUsers(
   return { status: 200, body: result.value, headers: {} };
 }
 
-export async function adminDisableUser(
-  authHeader: string | undefined,
-  userId: string,
-): Promise<HttpResponse> {
+export async function adminDisableUser(authHeader: string | undefined, userId: string): Promise<HttpResponse> {
   const tokenStr = extractToken(authHeader);
 
   const result = await runEffect(
@@ -1142,10 +1137,7 @@ export async function adminDisableUser(
   return { status: 200, body: result.value, headers: {} };
 }
 
-export async function adminEnableUser(
-  authHeader: string | undefined,
-  userId: string,
-): Promise<HttpResponse> {
+export async function adminEnableUser(authHeader: string | undefined, userId: string): Promise<HttpResponse> {
   const tokenStr = extractToken(authHeader);
 
   const result = await runEffect(
@@ -1178,10 +1170,7 @@ export async function adminEnableUser(
   return { status: 200, body: result.value, headers: {} };
 }
 
-export async function adminUnlockUser(
-  authHeader: string | undefined,
-  userId: string,
-): Promise<HttpResponse> {
+export async function adminUnlockUser(authHeader: string | undefined, userId: string): Promise<HttpResponse> {
   const tokenStr = extractToken(authHeader);
 
   const result = await runEffect(
@@ -1215,10 +1204,7 @@ export async function adminUnlockUser(
   return { status: 200, body: result.value, headers: {} };
 }
 
-export async function adminForcePasswordReset(
-  authHeader: string | undefined,
-  userId: string,
-): Promise<HttpResponse> {
+export async function adminForcePasswordReset(authHeader: string | undefined, userId: string): Promise<HttpResponse> {
   const tokenStr = extractToken(authHeader);
 
   const result = await runEffect(
@@ -1238,8 +1224,7 @@ export async function adminForcePasswordReset(
       const resetToken = yield* jwt.signAccess(user.id, user.username, user.role);
 
       return {
-        reset_token: resetToken,
-        user_id: user.id,
+        token: resetToken,
       };
     }),
   );

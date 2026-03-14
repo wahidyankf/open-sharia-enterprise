@@ -40,7 +40,7 @@ public static class UserEndpoints
                 id = user.Id,
                 username = user.Username,
                 email = user.Email,
-                display_name = user.DisplayName ?? user.Username,
+                displayName = user.DisplayName ?? user.Username,
                 status = user.Status.ToString().ToUpperInvariant(),
                 role = user.Role.ToString().ToUpperInvariant(),
             }
@@ -75,7 +75,7 @@ public static class UserEndpoints
                 id = user.Id,
                 username = user.Username,
                 email = user.Email,
-                display_name = user.DisplayName,
+                displayName = user.DisplayName,
                 status = user.Status.ToString().ToUpperInvariant(),
                 role = user.Role.ToString().ToUpperInvariant(),
             }
@@ -153,15 +153,7 @@ public static class UserEndpoints
         return sub is not null && Guid.TryParse(sub, out var g) ? g : null;
     }
 
-    private sealed record PatchMeRequest(
-        [property: System.Text.Json.Serialization.JsonPropertyName("display_name")]
-        string? DisplayName
-    );
+    private sealed record PatchMeRequest(string? DisplayName);
 
-    private sealed record ChangePasswordRequest(
-        [property: System.Text.Json.Serialization.JsonPropertyName("old_password")]
-        string? OldPassword,
-        [property: System.Text.Json.Serialization.JsonPropertyName("new_password")]
-        string? NewPassword
-    );
+    private sealed record ChangePasswordRequest(string? OldPassword, string? NewPassword);
 }

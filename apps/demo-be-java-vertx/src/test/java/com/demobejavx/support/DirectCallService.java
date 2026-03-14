@@ -138,7 +138,7 @@ public final class DirectCallService {
                 .put("id", saved.id())
                 .put("username", saved.username())
                 .put("email", saved.email())
-                .put("display_name", saved.displayName())
+                .put("displayName", saved.displayName())
                 .put("role", saved.role()));
     }
 
@@ -175,8 +175,8 @@ public final class DirectCallService {
         User loggedIn = await(userRepo.update(resetUser));
         JwtService.TokenPair tokens = jwtService.generateTokenPair(loggedIn);
         return ServiceResponse.of(200, new JsonObject()
-                .put("access_token", tokens.accessToken())
-                .put("refresh_token", tokens.refreshToken())
+                .put("accessToken", tokens.accessToken())
+                .put("refreshToken", tokens.refreshToken())
                 .put("token_type", "Bearer"));
     }
 
@@ -224,8 +224,8 @@ public final class DirectCallService {
         await(revocationRepo.save(
                 new TokenRevocation(tokens.refreshJti(), uid, Instant.now())));
         return ServiceResponse.of(200, new JsonObject()
-                .put("access_token", tokens.accessToken())
-                .put("refresh_token", tokens.refreshToken())
+                .put("accessToken", tokens.accessToken())
+                .put("refreshToken", tokens.refreshToken())
                 .put("token_type", "Bearer"));
     }
 
@@ -299,7 +299,7 @@ public final class DirectCallService {
         if (newPassword.isEmpty()) {
             return ServiceResponse.of(400, new JsonObject()
                     .put("message", "New password must not be empty")
-                    .put("field", "new_password"));
+                    .put("field", "newPassword"));
         }
         if (!passwordService.verify(oldPassword, user.passwordHash())) {
             return ServiceResponse.of(401, new JsonObject()
@@ -368,8 +368,8 @@ public final class DirectCallService {
             data.add(buildUserSummary(u));
         }
         return ServiceResponse.of(200, new JsonObject()
-                .put("data", data)
-                .put("total", total)
+                .put("content", data)
+                .put("totalElements", total)
                 .put("page", page)
                 .put("size", size));
     }
@@ -441,7 +441,7 @@ public final class DirectCallService {
             return ServiceResponse.of(404, new JsonObject().put("message", "User not found"));
         }
         String resetToken = UUID.randomUUID().toString();
-        return ServiceResponse.of(200, new JsonObject().put("reset_token", resetToken));
+        return ServiceResponse.of(200, new JsonObject().put("token", resetToken));
     }
 
     // ─────────────────────────── Expenses ────────────────────────────
@@ -515,8 +515,8 @@ public final class DirectCallService {
             data.add(buildExpenseResponse(e));
         }
         return ServiceResponse.of(200, new JsonObject()
-                .put("data", data)
-                .put("total", total)
+                .put("content", data)
+                .put("totalElements", total)
                 .put("page", page)
                 .put("size", size));
     }
@@ -844,7 +844,7 @@ public final class DirectCallService {
                 .put("id", user.id())
                 .put("username", user.username())
                 .put("email", user.email())
-                .put("display_name", user.displayName())
+                .put("displayName", user.displayName())
                 .put("role", user.role())
                 .put("status", user.status());
     }
@@ -854,7 +854,7 @@ public final class DirectCallService {
                 .put("id", user.id())
                 .put("username", user.username())
                 .put("email", user.email())
-                .put("display_name", user.displayName())
+                .put("displayName", user.displayName())
                 .put("role", user.role())
                 .put("status", user.status());
     }

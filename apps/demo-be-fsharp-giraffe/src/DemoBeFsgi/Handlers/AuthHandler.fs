@@ -22,7 +22,7 @@ type RegisterRequest =
 type LoginRequest = { username: string; password: string }
 
 [<CLIMutable>]
-type RefreshRequest = { refresh_token: string }
+type RefreshRequest = { refreshToken: string }
 
 let private maxFailedAttempts = 5
 
@@ -127,7 +127,7 @@ let register: HttpHandler =
                                 {| id = userId
                                    username = entity.Username
                                    email = entity.Email
-                                   display_name = entity.DisplayName |}
+                                   displayName = entity.DisplayName |}
                                 earlyReturn
                                 ctx
                 | _ ->
@@ -270,8 +270,8 @@ let login: HttpHandler =
 
                     return!
                         json
-                            {| access_token = accessToken
-                               refresh_token = refreshTokenStr
+                            {| accessToken = accessToken
+                               refreshToken = refreshTokenStr
                                token_type = "Bearer" |}
                             earlyReturn
                             ctx
@@ -308,7 +308,7 @@ let refresh: HttpHandler =
                 let! rtEntity =
                     db.RefreshTokens
                         .AsNoTracking()
-                        .FirstOrDefaultAsync(fun rt -> rt.TokenHash = r.refresh_token && not rt.Revoked)
+                        .FirstOrDefaultAsync(fun rt -> rt.TokenHash = r.refreshToken && not rt.Revoked)
 
                 if obj.ReferenceEquals(rtEntity, null) then
                     ctx.Response.StatusCode <- 401
@@ -372,8 +372,8 @@ let refresh: HttpHandler =
 
                         return!
                             json
-                                {| access_token = accessToken
-                                   refresh_token = newRefreshToken
+                                {| accessToken = accessToken
+                                   refreshToken = newRefreshToken
                                    token_type = "Bearer" |}
                                 earlyReturn
                                 ctx

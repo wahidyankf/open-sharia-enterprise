@@ -39,7 +39,7 @@ def alice_create_attachment_entry(client: TestClient, alice_tokens: dict, body: 
     resp = client.post(
         "/api/v1/expenses",
         json=data,
-        headers={"Authorization": f"Bearer {alice_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {alice_tokens['accessToken']}"},
     )
     assert resp.status_code == 201, f"Create entry failed: {resp.text}"
     return resp.json()
@@ -60,7 +60,7 @@ def bob_create_entry(client: TestClient, registered_user: dict, body: str) -> di
     resp2 = client.post(
         "/api/v1/expenses",
         json=data,
-        headers={"Authorization": f"Bearer {bob_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {bob_tokens['accessToken']}"},
     )
     assert resp2.status_code == 201
     return resp2.json()
@@ -79,7 +79,7 @@ def alice_upload_attachment_given(
     resp = client.post(
         f"/api/v1/expenses/{created_expense['id']}/attachments",
         files={"file": (filename, io.BytesIO(file_content), content_type)},
-        headers={"Authorization": f"Bearer {alice_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {alice_tokens['accessToken']}"},
     )
     assert resp.status_code == 201, f"Upload failed: {resp.text}"
     return resp.json()
@@ -101,7 +101,7 @@ def alice_upload_file(
     return client.post(
         f"/api/v1/expenses/{created_expense['id']}/attachments",
         files={"file": (filename, io.BytesIO(file_content), content_type)},
-        headers={"Authorization": f"Bearer {alice_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {alice_tokens['accessToken']}"},
     )
 
 
@@ -122,7 +122,7 @@ def alice_upload_to_bob_expense(
     return client.post(
         f"/api/v1/expenses/{bob_expense['id']}/attachments",
         files={"file": (filename, io.BytesIO(file_content), content_type)},
-        headers={"Authorization": f"Bearer {alice_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {alice_tokens['accessToken']}"},
     )
 
 
@@ -135,7 +135,7 @@ def alice_upload_oversized(client: TestClient, alice_tokens: dict, created_expen
     return client.post(
         f"/api/v1/expenses/{created_expense['id']}/attachments",
         files={"file": ("large.pdf", io.BytesIO(big_content), "application/pdf")},
-        headers={"Authorization": f"Bearer {alice_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {alice_tokens['accessToken']}"},
     )
 
 
@@ -143,7 +143,7 @@ def alice_upload_oversized(client: TestClient, alice_tokens: dict, created_expen
 def alice_list_attachments(client: TestClient, alice_tokens: dict, created_expense: dict):  # type: ignore[no-untyped-def]
     return client.get(
         f"/api/v1/expenses/{created_expense['id']}/attachments",
-        headers={"Authorization": f"Bearer {alice_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {alice_tokens['accessToken']}"},
     )
 
 
@@ -151,7 +151,7 @@ def alice_list_attachments(client: TestClient, alice_tokens: dict, created_expen
 def alice_list_bob_attachments(client: TestClient, alice_tokens: dict, bob_expense: dict):  # type: ignore[no-untyped-def]
     return client.get(
         f"/api/v1/expenses/{bob_expense['id']}/attachments",
-        headers={"Authorization": f"Bearer {alice_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {alice_tokens['accessToken']}"},
     )
 
 
@@ -164,7 +164,7 @@ def alice_delete_attachment(
 ):  # type: ignore[no-untyped-def]
     return client.delete(
         f"/api/v1/expenses/{created_expense['id']}/attachments/{uploaded_attachment['id']}",
-        headers={"Authorization": f"Bearer {alice_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {alice_tokens['accessToken']}"},
     )
 
 
@@ -177,7 +177,7 @@ def alice_delete_bob_attachment(
 ):  # type: ignore[no-untyped-def]
     return client.delete(
         f"/api/v1/expenses/{bob_expense['id']}/attachments/{uploaded_attachment['id']}",
-        headers={"Authorization": f"Bearer {alice_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {alice_tokens['accessToken']}"},
     )
 
 
@@ -193,7 +193,7 @@ def alice_delete_nonexistent_attachment(
     random_id = str(uuid.uuid4())
     return client.delete(
         f"/api/v1/expenses/{created_expense['id']}/attachments/{random_id}",
-        headers={"Authorization": f"Bearer {alice_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {alice_tokens['accessToken']}"},
     )
 
 

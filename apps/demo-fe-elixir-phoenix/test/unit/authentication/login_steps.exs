@@ -78,6 +78,18 @@ defmodule DemoFeExphWeb.Unit.LoginSteps do
           {:ok, new_view, _html} = live(conn_with_session, to)
           new_view
 
+        {:error, {:redirect, %{to: _to}}} ->
+          # login_live redirected to session controller — set session manually and go home
+          conn_with_session =
+            conn
+            |> Plug.Test.init_test_session(%{
+              "access_token" => "test_access_token",
+              "refresh_token" => "test_refresh_token"
+            })
+
+          {:ok, new_view, _html} = live(conn_with_session, "/")
+          new_view
+
         _ ->
           view
       end

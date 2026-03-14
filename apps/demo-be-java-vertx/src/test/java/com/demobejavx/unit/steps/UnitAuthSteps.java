@@ -32,7 +32,7 @@ public class UnitAuthSteps {
         registerUser(username, email, password);
         if ("bob".equals(username)) {
             ServiceResponse loginResp = login(username, password);
-            String bobToken = loginResp.body().getString("access_token");
+            String bobToken = loginResp.body().getString("accessToken");
             state.setBobAccessToken(bobToken);
         }
     }
@@ -43,7 +43,7 @@ public class UnitAuthSteps {
         state.setPassword(password);
         registerUser(username, username + "@example.com", password);
         ServiceResponse loginResp = login(username, password);
-        String token = loginResp.body().getString("access_token");
+        String token = loginResp.body().getString("accessToken");
         svc().deactivateMe(token);
     }
 
@@ -51,17 +51,17 @@ public class UnitAuthSteps {
     public void hasLoggedInAndStoredBothTokens(String username) throws Exception {
         String password = state.getPassword() != null ? state.getPassword() : "Str0ng#Pass1";
         ServiceResponse resp = login(username, password);
-        state.setAccessToken(resp.body().getString("access_token"));
-        state.setRefreshToken(resp.body().getString("refresh_token"));
+        state.setAccessToken(resp.body().getString("accessToken"));
+        state.setRefreshToken(resp.body().getString("refreshToken"));
     }
 
     @Given("{string} has logged in and stored the access token")
     public void hasLoggedInAndStoredAccessToken(String username) throws Exception {
         String password = state.getPassword() != null ? state.getPassword() : "Str0ng#Pass1";
         ServiceResponse resp = login(username, password);
-        state.setAccessToken(resp.body().getString("access_token"));
+        state.setAccessToken(resp.body().getString("accessToken"));
         if ("alice".equals(username)) {
-            state.setRefreshToken(resp.body().getString("refresh_token"));
+            state.setRefreshToken(resp.body().getString("refreshToken"));
         }
         ServiceResponse meResp = svc().getMe(state.getAccessToken());
         if (meResp.statusCode() == 200 && meResp.body() != null) {

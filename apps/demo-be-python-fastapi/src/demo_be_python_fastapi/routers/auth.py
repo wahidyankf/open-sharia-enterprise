@@ -41,7 +41,7 @@ class RegisterResponse(BaseModel):
     id: str
     username: str
     email: str
-    display_name: str | None
+    displayName: str | None
 
 
 class LoginRequest(BaseModel):
@@ -54,8 +54,8 @@ class LoginRequest(BaseModel):
 class TokenResponse(BaseModel):
     """Token response model."""
 
-    access_token: str
-    refresh_token: str
+    accessToken: str
+    refreshToken: str
     token_type: str = "Bearer"
 
 
@@ -86,7 +86,7 @@ def register(
         id=user.id,
         username=user.username,
         email=user.email,
-        display_name=user.display_name,
+        displayName=user.display_name,
     )
 
 
@@ -121,7 +121,7 @@ def login(
     user_repo.reset_failed_attempts(user.id)
     access_token = create_access_token(user.id, user.username, user.role)
     refresh_token = create_refresh_token(user.id)
-    return TokenResponse(access_token=access_token, refresh_token=refresh_token)
+    return TokenResponse(accessToken=access_token, refreshToken=refresh_token)
 
 
 @router.post("/refresh", response_model=TokenResponse)
@@ -161,7 +161,7 @@ def refresh(
 
     access_token = create_access_token(user.id, user.username, user.role)
     new_refresh_token = create_refresh_token(user.id)
-    return TokenResponse(access_token=access_token, refresh_token=new_refresh_token)
+    return TokenResponse(accessToken=access_token, refreshToken=new_refresh_token)
 
 
 @router.post("/logout")

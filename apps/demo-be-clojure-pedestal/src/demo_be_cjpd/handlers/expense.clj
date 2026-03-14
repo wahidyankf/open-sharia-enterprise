@@ -5,10 +5,15 @@
             [demo-be-cjpd.db.expense-repo :as expense-repo]
             [demo-be-cjpd.domain.expense :as expense-domain]))
 
+(defn- kebab->camel [s]
+  (let [parts (str/split s #"-")]
+    (str (first parts)
+         (apply str (map str/capitalize (rest parts))))))
+
 (defn- json-response [status body]
   {:status  status
    :headers {"Content-Type" "application/json"}
-   :body    (json/generate-string body {:key-fn #(str/replace (name %) #"-" "_")})})
+   :body    (json/generate-string body {:key-fn #(kebab->camel (name %))})})
 
 (defn- error-response [status message]
   {:status  status
@@ -17,15 +22,15 @@
 
 (defn- expense->response [expense]
   (cond-> {:id          (:id expense)
-           :user_id     (:user-id expense)
+           :user-id     (:user-id expense)
            :type        (:type expense)
            :amount      (:amount expense)
            :currency    (:currency expense)
            :description (:description expense)
            :category    (:category expense)
            :date        (:date expense)
-           :created_at  (:created-at expense)
-           :updated_at  (:updated-at expense)}
+           :created-at  (:created-at expense)
+           :updated-at  (:updated-at expense)}
     (:unit expense)     (assoc :unit (:unit expense))
     (:quantity expense) (assoc :quantity (:quantity expense))))
 
@@ -98,10 +103,10 @@
           page     (Integer/parseInt (or (get params "page") "1"))
           size     (Integer/parseInt (or (get params "size") "20"))
           result   (expense-repo/list-by-user ds user-id {:page page :size size})]
-      (json-response 200 {:data  (mapv expense->response (:data result))
-                          :total (:total result)
-                          :page  (:page result)
-                          :size  (:size result)}))))
+      (json-response 200 {:content        (mapv expense->response (:data result))
+                          :total-elements (:total result)
+                          :page           (:page result)
+                          :size           (:size result)}))))
 
 (defn update-expense-handler
   "PUT /api/v1/expenses/:id — Update an existing expense."

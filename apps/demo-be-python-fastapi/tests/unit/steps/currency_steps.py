@@ -37,7 +37,7 @@ def alice_create_currency_expense(client: TestClient, alice_tokens: dict, body: 
     resp = client.post(
         "/api/v1/expenses",
         json=data,
-        headers={"Authorization": f"Bearer {alice_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {alice_tokens['accessToken']}"},
     )
     assert resp.status_code == 201, f"Create expense failed: {resp.text}"
     return resp.json()
@@ -50,7 +50,7 @@ def alice_create_currency_expense(client: TestClient, alice_tokens: dict, body: 
 def alice_get_currency_expense(client: TestClient, alice_tokens: dict, created_expense: dict):  # type: ignore[no-untyped-def]
     return client.get(
         f"/api/v1/expenses/{created_expense['id']}",
-        headers={"Authorization": f"Bearer {alice_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {alice_tokens['accessToken']}"},
     )
 
 
@@ -63,7 +63,7 @@ def alice_post_currency_expense(client: TestClient, alice_tokens: dict, body: st
     return client.post(
         "/api/v1/expenses",
         json=data,
-        headers={"Authorization": f"Bearer {alice_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {alice_tokens['accessToken']}"},
     )
 
 
@@ -71,7 +71,7 @@ def alice_post_currency_expense(client: TestClient, alice_tokens: dict, body: st
 def alice_get_summary(client: TestClient, alice_tokens: dict):  # type: ignore[no-untyped-def]
     return client.get(
         "/api/v1/expenses/summary",
-        headers={"Authorization": f"Bearer {alice_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {alice_tokens['accessToken']}"},
     )
 
 

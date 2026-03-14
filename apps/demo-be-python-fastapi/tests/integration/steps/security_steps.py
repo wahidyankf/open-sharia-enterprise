@@ -55,7 +55,7 @@ def admin_unlocks_alice(client: ServiceClient, locked_user: dict) -> None:
     admin_tokens = client.login_user("tmpadmin", _ADMIN_PASSWORD)
     resp = client.post_admin_unlock_user(
         locked_user["id"],
-        f"Bearer {admin_tokens['access_token']}",
+        f"Bearer {admin_tokens['accessToken']}",
     )
     assert resp.status_code == 200, f"Unlock failed: {resp.text}"
 
@@ -72,7 +72,7 @@ def admin_unlock_alice(
 ) -> FakeResponse:
     return client.post_admin_unlock_user(
         locked_user["id"],
-        f"Bearer {admin_tokens['access_token']}",
+        f"Bearer {admin_tokens['accessToken']}",
     )
 
 
