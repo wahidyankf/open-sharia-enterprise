@@ -53,8 +53,8 @@ let internal registerUser (state: StepState) (username: string) (email: string) 
 let internal loginUser (state: StepState) (username: string) (password: string) : string option * string option =
     let pw = decode password
     let _status, body = login state.Db username pw |> Async.RunSynchronously
-    let accessToken = getStringProp body "access_token"
-    let refreshToken = getStringProp body "refresh_token"
+    let accessToken = getStringProp body "accessToken"
+    let refreshToken = getStringProp body "refreshToken"
     accessToken, refreshToken
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -161,19 +161,19 @@ let private parseExpenseBody (bodyStr: string) =
     with _ ->
         null, null, null, null, null, null, None, None
 
-/// Parse display_name from a profile update body.
+/// Parse displayName from a profile update body.
 let private parseProfileBody (bodyStr: string) =
     try
         let doc = JsonDocument.Parse(bodyStr)
         let r = doc.RootElement
 
-        match r.TryGetProperty("display_name") with
+        match r.TryGetProperty("displayName") with
         | true, el -> el.GetString()
         | _ -> null
     with _ ->
         null
 
-/// Parse old_password and new_password from a change-password body.
+/// Parse oldPassword and newPassword from a change-password body.
 let private parsePasswordBody (bodyStr: string) =
     try
         let doc = JsonDocument.Parse(bodyStr)
@@ -184,17 +184,17 @@ let private parsePasswordBody (bodyStr: string) =
             | true, el -> el.GetString()
             | _ -> null
 
-        str "old_password", str "new_password"
+        str "oldPassword", str "newPassword"
     with _ ->
         null, null
 
-/// Parse refresh_token from a refresh body.
+/// Parse refreshToken from a refresh body.
 let private parseRefreshBody (bodyStr: string) =
     try
         let doc = JsonDocument.Parse(bodyStr)
         let r = doc.RootElement
 
-        match r.TryGetProperty("refresh_token") with
+        match r.TryGetProperty("refreshToken") with
         | true, el -> el.GetString()
         | _ -> null
     with _ ->
@@ -275,9 +275,9 @@ let private dispatchCall
         listAttachments state.Db token expId |> Async.RunSynchronously
     elif u.StartsWith("/api/v1/admin/users") && m = "GET" then
         let emailFilter =
-            if url.Contains("?email=") then
-                let idx = url.IndexOf("?email=")
-                Some(url.Substring(idx + 7))
+            if url.Contains("?search=") then
+                let idx = url.IndexOf("?search=")
+                Some(url.Substring(idx + 8))
             else
                 None
 

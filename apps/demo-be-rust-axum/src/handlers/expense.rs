@@ -133,10 +133,10 @@ pub async fn list_expenses(
     let result =
         expense_repo::list_for_user(&state.pool, auth_user.user_id, page, page_size).await?;
 
-    let data: Vec<Value> = result.expenses.iter().map(expense_to_json).collect();
+    let content: Vec<Value> = result.expenses.iter().map(expense_to_json).collect();
     Ok(Json(json!({
-        "data": data,
-        "total": result.total,
+        "content": content,
+        "totalElements": result.total,
         "page": page,
         "page_size": page_size,
     })))

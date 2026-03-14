@@ -10,12 +10,12 @@ open DemoBeFsgi.Infrastructure.PasswordHasher
 open DemoBeFsgi.Domain.Types
 
 [<CLIMutable>]
-type UpdateProfileRequest = { display_name: string }
+type UpdateProfileRequest = { displayName: string }
 
 [<CLIMutable>]
 type ChangePasswordRequest =
-    { old_password: string
-      new_password: string }
+    { oldPassword: string
+      newPassword: string }
 
 let getProfile: HttpHandler =
     fun next ctx ->
@@ -40,7 +40,7 @@ let getProfile: HttpHandler =
                         {| id = user.Id
                            username = user.Username
                            email = user.Email
-                           display_name = user.DisplayName
+                           displayName = user.DisplayName
                            role = user.Role
                            status = user.Status |}
                         next
@@ -91,8 +91,8 @@ let updateProfile: HttpHandler =
                     let updated =
                         { user with
                             DisplayName =
-                                if r.display_name <> null then
-                                    r.display_name
+                                if r.displayName <> null then
+                                    r.displayName
                                 else
                                     user.DisplayName
                             UpdatedAt = DateTime.UtcNow }
@@ -105,7 +105,7 @@ let updateProfile: HttpHandler =
                             {| id = updated.Id
                                username = updated.Username
                                email = updated.Email
-                               display_name = updated.DisplayName |}
+                               displayName = updated.DisplayName |}
                             next
                             ctx
         }
@@ -150,7 +150,7 @@ let changePassword: HttpHandler =
                                message = "User not found" |}
                             earlyReturn
                             ctx
-                elif not (verifyPassword r.old_password user.PasswordHash) then
+                elif not (verifyPassword r.oldPassword user.PasswordHash) then
                     ctx.Response.StatusCode <- 401
 
                     return!
@@ -162,7 +162,7 @@ let changePassword: HttpHandler =
                 else
                     let updated =
                         { user with
-                            PasswordHash = hashPassword r.new_password
+                            PasswordHash = hashPassword r.newPassword
                             UpdatedAt = DateTime.UtcNow }
 
                     db.Users.Update(updated) |> ignore

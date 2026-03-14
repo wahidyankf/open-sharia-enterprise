@@ -379,10 +379,10 @@ public class AuthSteps(ServiceLayer svc, SharedState state)
         }
 
         using var doc = JsonDocument.Parse(response.Body);
-        var accessToken = doc.RootElement.TryGetProperty("access_token", out var at)
+        var accessToken = doc.RootElement.TryGetProperty("accessToken", out var at)
             ? at.GetString()
             : null;
-        var refreshToken = doc.RootElement.TryGetProperty("refresh_token", out var rt)
+        var refreshToken = doc.RootElement.TryGetProperty("refreshToken", out var rt)
             ? rt.GetString()
             : null;
         return (accessToken, refreshToken);

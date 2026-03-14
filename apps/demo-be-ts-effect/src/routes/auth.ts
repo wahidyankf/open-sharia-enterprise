@@ -43,7 +43,7 @@ const register = HttpServerRequest.HttpServerRequest.pipe(
           id: user.id,
           username: user.username,
           email: user.email,
-          display_name: user.displayName,
+          displayName: user.displayName,
           role: user.role,
           status: user.status,
         },
@@ -100,8 +100,8 @@ const login = HttpServerRequest.HttpServerRequest.pipe(
       const refreshToken = yield* jwt.signRefresh(user.id);
 
       return yield* HttpServerResponse.json({
-        access_token: accessToken,
-        refresh_token: refreshToken,
+        accessToken,
+        refreshToken,
         token_type: "Bearer",
       });
     }),
@@ -144,7 +144,7 @@ const refresh = HttpServerRequest.HttpServerRequest.pipe(
   Effect.flatMap((req) =>
     Effect.gen(function* () {
       const body = yield* req.json as Effect.Effect<Record<string, unknown>, unknown>;
-      const refreshToken = (body["refresh_token"] as string | undefined) ?? "";
+      const refreshToken = ((body["refreshToken"] ?? body["refresh_token"]) as string | undefined) ?? "";
 
       if (!refreshToken) {
         return yield* Effect.fail(new UnauthorizedError({ reason: "Missing refresh token" }));
@@ -183,8 +183,8 @@ const refresh = HttpServerRequest.HttpServerRequest.pipe(
       const newRefreshToken = yield* jwt.signRefresh(user.id);
 
       return yield* HttpServerResponse.json({
-        access_token: newAccessToken,
-        refresh_token: newRefreshToken,
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
         token_type: "Bearer",
       });
     }),

@@ -82,7 +82,7 @@ public class TokenManagementSteps {
         JsonObject listBody = listResp.body();
         Assertions.assertNotNull(listBody);
         String aliceId = SecuritySteps.findUserIdByUsername(
-                listBody.getJsonArray("data"), "alice");
+                listBody.getJsonArray("content"), "alice");
 
         AppFactory.getService().adminDisableUser(adminToken, aliceId);
     }

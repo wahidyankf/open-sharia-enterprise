@@ -19,7 +19,7 @@ async function loginUser(world: CustomWorld, username: string, password: string)
     throw new Error(`Login failed for ${username}: ${JSON.stringify(res.body)}`);
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return res.body as { access_token: string; refresh_token: string };
+  return res.body as { accessToken: string; refreshToken: string };
 }
 
 // ---- Background: register user ----
@@ -36,7 +36,7 @@ Given(
       const loginRes = await this.post("/api/v1/auth/login", { username, password });
       if (loginRes.status === 200) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        this.tokens.set(`${username}_access`, (loginRes.body as any).access_token);
+        this.tokens.set(`${username}_access`, (loginRes.body as any).accessToken);
       }
     }
     this.context[`${username}_password`] = password;
@@ -58,16 +58,16 @@ Given(
   async function (this: CustomWorld, username: string) {
     const password = (this.context[`${username}_password`] as string) ?? "Str0ng#Pass1";
     const tokens = await loginUser(this, username, password);
-    this.tokens.set(`${username}_access`, tokens.access_token);
-    this.tokens.set(`${username}_refresh`, tokens.refresh_token);
+    this.tokens.set(`${username}_access`, tokens.accessToken);
+    this.tokens.set(`${username}_refresh`, tokens.refreshToken);
   },
 );
 
 Given("{string} has logged in and stored the access token", async function (this: CustomWorld, username: string) {
   const password = (this.context[`${username}_password`] as string) ?? "Str0ng#Pass1";
   const tokens = await loginUser(this, username, password);
-  this.tokens.set(`${username}_access`, tokens.access_token);
-  this.tokens.set(`${username}_refresh`, tokens.refresh_token);
+  this.tokens.set(`${username}_access`, tokens.accessToken);
+  this.tokens.set(`${username}_refresh`, tokens.refreshToken);
 });
 
 Given("a user {string} is registered and deactivated", async function (this: CustomWorld, username: string) {
@@ -82,7 +82,7 @@ Given("a user {string} is registered and deactivated", async function (this: Cus
   }
   // Login and deactivate (user may already exist from Background)
   const tokens = await loginUser(this, username, password);
-  await this.post("/api/v1/users/me/deactivate", {}, tokens.access_token);
+  await this.post("/api/v1/users/me/deactivate", {}, tokens.accessToken);
 });
 
 // ---- When: POST with JSON body in step text ----

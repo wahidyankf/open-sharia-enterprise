@@ -12,8 +12,8 @@ class AuthSteps {
     private fun loginAs(username: String, password: String): Boolean {
         val (status, body) = ServiceDispatcher.login(username, password)
         if (status == 200) {
-            JsonHelper.getString(body, "access_token")?.let { TestWorld.accessTokens[username] = it }
-            JsonHelper.getString(body, "refresh_token")?.let {
+            JsonHelper.getString(body, "accessToken")?.let { TestWorld.accessTokens[username] = it }
+            JsonHelper.getString(body, "refreshToken")?.let {
                 TestWorld.refreshTokens[username] = it
             }
             return true
@@ -134,8 +134,8 @@ class AuthSteps {
         val refreshToken = TestWorld.refreshTokens["alice"] ?: error("alice has no refresh token")
         val (status, body) = ServiceDispatcher.refresh(refreshToken)
         assertTrue(status == 200, "Refresh should succeed. Status: $status Body: $body")
-        JsonHelper.getString(body, "access_token")?.let { TestWorld.accessTokens["alice:new"] = it }
-        JsonHelper.getString(body, "refresh_token")?.let { TestWorld.refreshTokens["alice:new"] = it }
+        JsonHelper.getString(body, "accessToken")?.let { TestWorld.accessTokens["alice:new"] = it }
+        JsonHelper.getString(body, "refreshToken")?.let { TestWorld.refreshTokens["alice:new"] = it }
     }
 
     @Given("alice has already logged out once")

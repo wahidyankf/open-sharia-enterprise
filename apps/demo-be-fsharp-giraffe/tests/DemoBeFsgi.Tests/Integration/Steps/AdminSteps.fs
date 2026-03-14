@@ -28,7 +28,7 @@ let ``the admin sends GET /api/v1/admin/users`` (state: StepState) =
         ResponseBody = Some body }
 
 [<When>]
-let ``the admin sends GET /api/v1/admin/users\?email=(.+)`` (email: string) (state: StepState) =
+let ``the admin sends GET /api/v1/admin/users\?search=(.+)`` (email: string) (state: StepState) =
     let adminToken = state.ExtraData |> Map.tryFind "adminToken"
 
     let status, body =
@@ -48,7 +48,7 @@ let ``the response body should contain at least one user with "(.+)" equal to "(
 
     try
         let doc = JsonDocument.Parse(body)
-        let dataEl = doc.RootElement.GetProperty("data")
+        let dataEl = doc.RootElement.GetProperty("content")
         let found = ref false
 
         for item in dataEl.EnumerateArray() do

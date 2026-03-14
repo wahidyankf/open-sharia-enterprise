@@ -244,8 +244,8 @@ class HandlerNullGuardTest {
         // body must be non-null so the body guard passes first; password must be non-empty
         when(ctx.body()).thenReturn(mock(io.vertx.ext.web.RequestBody.class));
         io.vertx.core.json.JsonObject body = new io.vertx.core.json.JsonObject()
-                .put("old_password", "old")
-                .put("new_password", "NewPass#1234");
+                .put("oldPassword", "old")
+                .put("newPassword", "NewPass#1234");
         when(ctx.body().asJsonObject()).thenReturn(body);
         when(ctx.<String>get("userId")).thenReturn(null);
 

@@ -423,7 +423,7 @@ public class UnitAuthSteps {
                 case "id" -> resp.id();
                 case "username" -> resp.username();
                 case "email" -> resp.email();
-                case "display_name" -> resp.displayName();
+                case "display_name", "displayName" -> resp.displayName();
                 case "status" -> resp.status();
                 case "role" -> resp.role();
                 default -> null;
@@ -436,14 +436,14 @@ public class UnitAuthSteps {
                 case "email" -> resp.email();
                 case "status" -> resp.status();
                 case "role" -> resp.role();
-                case "display_name" -> resp.displayName();
+                case "display_name", "displayName" -> resp.displayName();
                 default -> null;
             };
         }
         if (body instanceof com.demobejasb.admin.dto.AdminUserListResponse resp) {
             return switch (jsonField) {
-                case "data" -> resp.data();
-                case "total" -> resp.total();
+                case "data", "content" -> resp.data();
+                case "total", "totalElements" -> resp.total();
                 case "page" -> resp.page();
                 default -> null;
             };
@@ -464,8 +464,8 @@ public class UnitAuthSteps {
         }
         if (body instanceof com.demobejasb.expense.dto.ExpenseListResponse resp) {
             return switch (jsonField) {
-                case "data" -> resp.data();
-                case "total" -> resp.total();
+                case "data", "content" -> resp.data();
+                case "total", "totalElements" -> resp.total();
                 case "page" -> resp.page();
                 default -> null;
             };
@@ -491,7 +491,7 @@ public class UnitAuthSteps {
         }
         if (body instanceof com.demobejasb.admin.dto.AdminPasswordResetResponse resp) {
             return switch (jsonField) {
-                case "reset_token" -> resp.resetToken();
+                case "reset_token", "token" -> resp.resetToken();
                 default -> null;
             };
         }

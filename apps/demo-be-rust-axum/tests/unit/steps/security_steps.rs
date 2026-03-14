@@ -84,7 +84,7 @@ async fn register_admin_and_login(world: &mut AppWorld, username: String) {
         if world.last_status == 200 {
             world.admin_token = world
                 .last_body
-                .get("access_token")
+                .get("accessToken")
                 .and_then(|v| v.as_str())
                 .map(String::from);
         }
@@ -113,7 +113,7 @@ async fn admin_unlocked_alice(world: &mut AppWorld) {
             if world.last_status == 200 {
                 world.admin_token = world
                     .last_body
-                    .get("access_token")
+                    .get("accessToken")
                     .and_then(|v| v.as_str())
                     .map(String::from);
             }

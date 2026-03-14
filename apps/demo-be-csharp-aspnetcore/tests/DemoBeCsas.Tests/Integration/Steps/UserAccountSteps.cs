@@ -20,14 +20,14 @@ public class UserAccountSteps(ServiceLayer svc, SharedState state)
         state.LastResponse = await svc.GetMeAsync(state.AccessToken);
     }
 
-    [When(@"^alice sends PATCH /api/v1/users/me with body \{ ""display_name"": ""([^""]+)"" \}$")]
+    [When(@"^alice sends PATCH /api/v1/users/me with body \{ ""displayName"": ""([^""]+)"" \}$")]
     public async Task WhenAlicePatchesMe(string displayName)
     {
         state.LastResponse = await svc.PatchMeAsync(state.AccessToken, displayName);
     }
 
     [When(
-        @"^alice sends POST /api/v1/users/me/password with body \{ ""old_password"": ""([^""]+)"", ""new_password"": ""([^""]+)"" \}$"
+        @"^alice sends POST /api/v1/users/me/password with body \{ ""oldPassword"": ""([^""]+)"", ""newPassword"": ""([^""]+)"" \}$"
     )]
     public async Task WhenAliceChangesPassword(string oldPassword, string newPassword)
     {

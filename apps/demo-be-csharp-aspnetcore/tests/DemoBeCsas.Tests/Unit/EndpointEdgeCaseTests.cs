@@ -78,7 +78,7 @@ public class EndpointEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
         );
         var loginJson = await loginResp.Content.ReadAsStringAsync();
         using var doc = JsonDocument.Parse(loginJson);
-        return doc.RootElement.GetProperty("access_token").GetString()!;
+        return doc.RootElement.GetProperty("accessToken").GetString()!;
     }
 
     private HttpClient CreateClientWithNoSubToken()
@@ -435,7 +435,7 @@ public class EndpointEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
         );
         var loginJson = await loginResp.Content.ReadAsStringAsync();
         using var loginDoc = JsonDocument.Parse(loginJson);
-        var token = loginDoc.RootElement.GetProperty("access_token").GetString()!;
+        var token = loginDoc.RootElement.GetProperty("accessToken").GetString()!;
 
         // Delete user from DB directly
         using var scope = _factory.Services.CreateScope();
@@ -478,7 +478,7 @@ public class EndpointEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
         );
         var loginJson = await loginResp.Content.ReadAsStringAsync();
         using var loginDoc = JsonDocument.Parse(loginJson);
-        var token = loginDoc.RootElement.GetProperty("access_token").GetString()!;
+        var token = loginDoc.RootElement.GetProperty("accessToken").GetString()!;
 
         // Delete user from DB
         using var scope = _factory.Services.CreateScope();
@@ -491,7 +491,7 @@ public class EndpointEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
         }
 
         var authorizedClient = CreateAuthorizedClient(token);
-        var pwBody = JsonSerializer.Serialize(new { old_password = password, new_password = "NewStr0ng#Pass2" });
+        var pwBody = JsonSerializer.Serialize(new { oldPassword = password, newPassword = "NewStr0ng#Pass2" });
         var response = await authorizedClient.PostAsync(
             "/api/v1/users/me/password",
             new StringContent(pwBody, Encoding.UTF8, "application/json")
@@ -609,7 +609,7 @@ public class EndpointEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
     {
         // Covers AuthEndpoints lines 158-160: null refreshToken check
         var client = _factory.CreateClient();
-        var body = JsonSerializer.Serialize(new { refresh_token = (string?)null });
+        var body = JsonSerializer.Serialize(new { refreshToken = (string?)null });
         var response = await client.PostAsync(
             "/api/v1/auth/refresh",
             new StringContent(body, Encoding.UTF8, "application/json")
@@ -622,7 +622,7 @@ public class EndpointEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
     {
         // Covers AuthEndpoints lines 170-172: DecodeToken returns null
         var client = _factory.CreateClient();
-        var body = JsonSerializer.Serialize(new { refresh_token = "not-a-valid-token" });
+        var body = JsonSerializer.Serialize(new { refreshToken = "not-a-valid-token" });
         var response = await client.PostAsync(
             "/api/v1/auth/refresh",
             new StringContent(body, Encoding.UTF8, "application/json")
@@ -636,7 +636,7 @@ public class EndpointEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
         // Covers AuthEndpoints lines 183-185: userId null or non-GUID parse
         var client = _factory.CreateClient();
         var tokenWithoutSub = CreateTokenWithoutSubClaim();
-        var body = JsonSerializer.Serialize(new { refresh_token = tokenWithoutSub });
+        var body = JsonSerializer.Serialize(new { refreshToken = tokenWithoutSub });
         var response = await client.PostAsync(
             "/api/v1/auth/refresh",
             new StringContent(body, Encoding.UTF8, "application/json")
@@ -652,7 +652,7 @@ public class EndpointEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
         // Covers UserEndpoints lines 112-114: new password is null
         var token = await RegisterAndLoginAsync("pwdnull_user");
         var client = CreateAuthorizedClient(token);
-        var body = JsonSerializer.Serialize(new { old_password = "Str0ng#EdgePass1", new_password = (string?)null });
+        var body = JsonSerializer.Serialize(new { oldPassword = "Str0ng#EdgePass1", newPassword = (string?)null });
         var response = await client.PostAsync(
             "/api/v1/users/me/password",
             new StringContent(body, Encoding.UTF8, "application/json")
@@ -692,6 +692,6 @@ public class EndpointEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
         );
         var loginJson = await loginResp.Content.ReadAsStringAsync();
         using var loginDoc = JsonDocument.Parse(loginJson);
-        return loginDoc.RootElement.GetProperty("access_token").GetString()!;
+        return loginDoc.RootElement.GetProperty("accessToken").GetString()!;
     }
 }

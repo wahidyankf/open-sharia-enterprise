@@ -60,7 +60,7 @@ async fn register_and_deactivate(world: &mut AppWorld, username: String) {
     world.svc_login(&username, "Str0ng#Pass1").await;
     let token = world
         .last_body
-        .get("access_token")
+        .get("accessToken")
         .and_then(|v| v.as_str())
         .map(String::from)
         .unwrap_or_default();
@@ -96,12 +96,12 @@ async fn login_alice_correct(world: &mut AppWorld) {
     if world.last_status == 200 {
         world.auth_token = world
             .last_body
-            .get("access_token")
+            .get("accessToken")
             .and_then(|v| v.as_str())
             .map(String::from);
         world.refresh_token = world
             .last_body
-            .get("refresh_token")
+            .get("refreshToken")
             .and_then(|v| v.as_str())
             .map(String::from);
     }

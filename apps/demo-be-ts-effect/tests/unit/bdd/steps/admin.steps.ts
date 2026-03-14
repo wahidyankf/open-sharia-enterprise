@@ -27,9 +27,9 @@ Given("an admin user {string} is registered and logged in", async function (this
     throw new Error(`Failed to login admin ${username}: ${JSON.stringify(loginRes.body)}`);
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const tokens = loginRes.body as { access_token: string; refresh_token: string };
-  this.tokens.set(`${username}_access`, tokens.access_token);
-  this.tokens.set(`${username}_refresh`, tokens.refresh_token);
+  const tokens = loginRes.body as { accessToken: string; refreshToken: string };
+  this.tokens.set(`${username}_access`, tokens.accessToken);
+  this.tokens.set(`${username}_refresh`, tokens.refreshToken);
   this.context[`${username}_password`] = password;
 });
 
@@ -46,10 +46,10 @@ Given(
       } else if (res.status === 409) {
         // Already registered — get ID via admin list
         const adminToken = this.tokens.get("superadmin_access") ?? "";
-        const listRes = await this.get(`/api/v1/admin/users?email=${email}`, adminToken);
+        const listRes = await this.get(`/api/v1/admin/users?search=${email}`, adminToken);
         if (listRes.status === 200) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const data = (listRes.body as any).data as Array<{ id: string; username: string }>;
+          const data = (listRes.body as any).content as Array<{ id: string; username: string }>;
           const user = data.find((u) => u.username === username);
           if (user) {
             this.userIds.set(username, user.id);
@@ -132,7 +132,7 @@ Then(
   function (this: CustomWorld, field: string, value: string) {
     expect(this.response).not.toBeNull();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const data = (this.response?.body as any)?.data as Array<Record<string, string>>;
+    const data = (this.response?.body as any)?.content as Array<Record<string, string>>;
     expect(Array.isArray(data)).toBe(true);
     const found = data.some((item) => String(item[field]) === value);
     expect(found).toBe(true);

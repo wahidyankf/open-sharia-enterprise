@@ -287,8 +287,8 @@ let list: HttpHandler =
 
             return!
                 json
-                    {| data = data
-                       total = total
+                    {| content = data
+                       totalElements = total
                        page = page |}
                     next
                     ctx

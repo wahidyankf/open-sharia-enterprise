@@ -21,11 +21,17 @@ defmodule DemoFeExphWeb.LoginLive do
         access_token = body["accessToken"]
         refresh_token = body["refreshToken"]
 
-        {:noreply,
-         socket
-         |> Phoenix.LiveView.put_session(:access_token, access_token)
-         |> Phoenix.LiveView.put_session(:refresh_token, refresh_token)
-         |> push_navigate(to: "/")}
+        secret =
+          Application.get_env(:demo_fe_exph, DemoFeExphWeb.Endpoint)[:secret_key_base]
+
+        signed =
+          Phoenix.Token.sign(
+            %{secret_key_base: secret},
+            "session_tokens",
+            %{"access_token" => access_token, "refresh_token" => refresh_token}
+          )
+
+        {:noreply, redirect(socket, to: "/auth/session?token=#{signed}")}
 
       {:error, {_status, body}} ->
         message = body["message"] || "Invalid credentials."

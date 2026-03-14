@@ -76,7 +76,7 @@ object ServiceDispatcher {
                             put("id", user.id.toString())
                             put("username", user.username)
                             put("email", user.email)
-                            put("display_name", user.displayName)
+                            put("displayName", user.displayName)
                         }
                         .toString(),
                 )
@@ -117,8 +117,8 @@ object ServiceDispatcher {
             Pair(
                 200,
                 buildJsonObject {
-                        put("access_token", accessToken)
-                        put("refresh_token", refreshToken)
+                        put("accessToken", accessToken)
+                        put("refreshToken", refreshToken)
                         put("token_type", "Bearer")
                     }
                     .toString(),
@@ -162,8 +162,8 @@ object ServiceDispatcher {
             Pair(
                 200,
                 buildJsonObject {
-                        put("access_token", newAccess)
-                        put("refresh_token", newRefresh)
+                        put("accessToken", newAccess)
+                        put("refreshToken", newRefresh)
                         put("token_type", "Bearer")
                     }
                     .toString(),
@@ -218,7 +218,7 @@ object ServiceDispatcher {
                         put("id", user.id.toString())
                         put("username", user.username)
                         put("email", user.email)
-                        put("display_name", user.displayName)
+                        put("displayName", user.displayName)
                         put("role", user.role.name)
                         put("status", user.status.name)
                     }
@@ -243,7 +243,7 @@ object ServiceDispatcher {
                             put("id", user.id.toString())
                             put("username", user.username)
                             put("email", user.email)
-                            put("display_name", user.displayName)
+                            put("displayName", user.displayName)
                         }
                         .toString(),
                 )
@@ -310,7 +310,7 @@ object ServiceDispatcher {
                                 put("id", user.id.toString())
                                 put("username", user.username)
                                 put("email", user.email)
-                                put("display_name", user.displayName)
+                                put("displayName", user.displayName)
                                 put("role", user.role.name.lowercase())
                                 put("status", user.status.name)
                             }
@@ -318,8 +318,8 @@ object ServiceDispatcher {
                     }
                 }
                 val response = buildJsonObject {
-                    put("data", arr)
-                    put("total", result.total)
+                    put("content", arr)
+                    put("totalElements", result.total)
                     put("page", result.page)
                     put("pageSize", result.pageSize)
                 }
@@ -411,7 +411,7 @@ object ServiceDispatcher {
             Pair(
                 200,
                 buildJsonObject {
-                        put("reset_token", resetToken)
+                        put("token", resetToken)
                         put("user_id", userId)
                     }
                     .toString(),
@@ -480,8 +480,8 @@ object ServiceDispatcher {
             val userId = requireAuthUserId(accessToken)
             val result = TestWorld.expenseRepo.findAllByUser(userId, 1, 100)
             val response = buildJsonObject {
-                putJsonArray("data") { result.data.forEach { add(expenseToJson(it)) } }
-                put("total", result.total)
+                putJsonArray("content") { result.data.forEach { add(expenseToJson(it)) } }
+                put("totalElements", result.total)
                 put("page", result.page)
                 put("pageSize", result.pageSize)
             }

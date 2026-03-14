@@ -36,7 +36,7 @@ public class SecuritySteps {
                     .adminListUsers(adminToken, null, 1, 100);
             JsonObject body = resp.body();
             Assertions.assertNotNull(body);
-            JsonArray data = body.getJsonArray("data");
+            JsonArray data = body.getJsonArray("content");
             boolean found = false;
             for (int i = 0; i < data.size(); i++) {
                 JsonObject user = data.getJsonObject(i);
@@ -89,7 +89,7 @@ public class SecuritySteps {
         ServiceResponse loginResp = authSteps.login(username, "Admin#Pass1234");
         JsonObject loginBody = loginResp.body();
         Assertions.assertNotNull(loginBody);
-        String adminToken = loginBody.getString("access_token");
+        String adminToken = loginBody.getString("accessToken");
         state.setAdminAccessToken(adminToken);
     }
 
@@ -106,14 +106,14 @@ public class SecuritySteps {
         ServiceResponse loginResp = authSteps.login("tempAdmin", "Admin#Pass1234");
         JsonObject loginBody = loginResp.body();
         Assertions.assertNotNull(loginBody);
-        String adminToken = loginBody.getString("access_token");
+        String adminToken = loginBody.getString("accessToken");
 
         // Find alice's user id
         ServiceResponse listResp = AppFactory.getService()
                 .adminListUsers(adminToken, null, 1, 100);
         JsonObject listBody = listResp.body();
         Assertions.assertNotNull(listBody);
-        String aliceId = findUserIdByUsername(listBody.getJsonArray("data"), "alice");
+        String aliceId = findUserIdByUsername(listBody.getJsonArray("content"), "alice");
 
         // Unlock alice
         AppFactory.getService().adminUnlockUser(adminToken, aliceId);
@@ -128,7 +128,7 @@ public class SecuritySteps {
                 .adminListUsers(adminToken, null, 1, 100);
         JsonObject listBody = listResp.body();
         Assertions.assertNotNull(listBody);
-        String aliceId = findUserIdByUsername(listBody.getJsonArray("data"), "alice");
+        String aliceId = findUserIdByUsername(listBody.getJsonArray("content"), "alice");
 
         ServiceResponse response = AppFactory.getService().adminUnlockUser(adminToken, aliceId);
         state.setLastResponse(response);

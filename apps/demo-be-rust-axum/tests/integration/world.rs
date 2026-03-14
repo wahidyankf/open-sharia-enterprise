@@ -612,7 +612,7 @@ pub async fn svc_register(
             "id": user.id.to_string(),
             "username": user.username,
             "email": user.email,
-            "display_name": user.display_name,
+            "displayName": user.display_name,
         })),
         Err(e) => ServiceResponse::from_error(&e),
     }
@@ -691,8 +691,8 @@ pub async fn svc_login(state: &AppState, username: &str, password: &str) -> Serv
     };
 
     ServiceResponse::ok(json!({
-        "access_token": access_token,
-        "refresh_token": refresh_token,
+        "accessToken": access_token,
+        "refreshToken": refresh_token,
         "token_type": "Bearer",
     }))
 }
@@ -761,8 +761,8 @@ pub async fn svc_refresh(state: &AppState, refresh_token_str: &str) -> ServiceRe
     };
 
     ServiceResponse::ok(json!({
-        "access_token": access_token,
-        "refresh_token": refresh_token,
+        "accessToken": access_token,
+        "refreshToken": refresh_token,
         "token_type": "Bearer",
     }))
 }
@@ -837,7 +837,7 @@ pub async fn svc_get_profile(state: &AppState, bearer: &str) -> ServiceResponse 
             "id": user.id.to_string(),
             "username": user.username,
             "email": user.email,
-            "display_name": user.display_name,
+            "displayName": user.display_name,
             "role": user.role,
             "status": user.status,
         })),
@@ -865,7 +865,7 @@ pub async fn svc_update_profile(
             "id": user.id.to_string(),
             "username": user.username,
             "email": user.email,
-            "display_name": user.display_name,
+            "displayName": user.display_name,
             "role": user.role,
             "status": user.status,
         })),
@@ -984,15 +984,15 @@ pub async fn svc_admin_list_users(
                         "id": u.id.to_string(),
                         "username": u.username,
                         "email": u.email,
-                        "display_name": u.display_name,
+                        "displayName": u.display_name,
                         "role": u.role,
                         "status": u.status,
                     })
                 })
                 .collect();
             ServiceResponse::ok(json!({
-                "data": data,
-                "total": result.total,
+                "content": data,
+                "totalElements": result.total,
                 "page": 1i64,
                 "page_size": 20i64,
             }))
@@ -1084,7 +1084,7 @@ pub async fn svc_admin_force_password_reset(
         return ServiceResponse::from_error(&e);
     }
 
-    ServiceResponse::ok(json!({"reset_token": reset_token}))
+    ServiceResponse::ok(json!({"token": reset_token}))
 }
 
 // ---------------------------------------------------------------------------
@@ -1189,8 +1189,8 @@ pub async fn svc_list_expenses(state: &AppState, bearer: &str) -> ServiceRespons
         Ok(result) => {
             let data: Vec<Value> = result.expenses.iter().map(expense_to_json).collect();
             ServiceResponse::ok(json!({
-                "data": data,
-                "total": result.total,
+                "content": data,
+                "totalElements": result.total,
                 "page": 1i64,
                 "page_size": 20i64,
             }))

@@ -22,7 +22,7 @@ const getMe = HttpServerRequest.HttpServerRequest.pipe(
         id: user.id,
         username: user.username,
         email: user.email,
-        display_name: user.displayName,
+        displayName: user.displayName,
         role: user.role,
         status: user.status,
       });
@@ -35,7 +35,7 @@ const updateMe = HttpServerRequest.HttpServerRequest.pipe(
     Effect.gen(function* () {
       const claims = yield* requireAuth(req);
       const body = yield* req.json as Effect.Effect<Record<string, unknown>, unknown>;
-      const displayName = body["display_name"] as string | undefined;
+      const displayName = (body["displayName"] ?? body["display_name"]) as string | undefined;
 
       const userRepo = yield* UserRepository;
       const user = yield* userRepo.findById(claims.sub);
@@ -56,7 +56,7 @@ const updateMe = HttpServerRequest.HttpServerRequest.pipe(
         id: updated.id,
         username: updated.username,
         email: updated.email,
-        display_name: updated.displayName,
+        displayName: updated.displayName,
         role: updated.role,
         status: updated.status,
       });
@@ -69,8 +69,8 @@ const changePassword = HttpServerRequest.HttpServerRequest.pipe(
     Effect.gen(function* () {
       const claims = yield* requireAuth(req);
       const body = yield* req.json as Effect.Effect<Record<string, unknown>, unknown>;
-      const oldPassword = (body["old_password"] as string | undefined) ?? "";
-      const newPassword = (body["new_password"] as string | undefined) ?? "";
+      const oldPassword = ((body["oldPassword"] ?? body["old_password"]) as string | undefined) ?? "";
+      const newPassword = ((body["newPassword"] ?? body["new_password"]) as string | undefined) ?? "";
 
       const userRepo = yield* UserRepository;
       const user = yield* userRepo.findById(claims.sub);

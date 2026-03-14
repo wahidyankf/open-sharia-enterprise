@@ -24,7 +24,7 @@ def alice_login_for_tokens(client: ServiceClient, registered_user: dict) -> dict
 
 @given("alice has logged out and her access token is blacklisted")
 def alice_logout_blacklisted(client: ServiceClient, alice_tokens: dict) -> None:
-    client.post_logout(f"Bearer {alice_tokens['access_token']}")
+    client.post_logout(f"Bearer {alice_tokens['accessToken']}")
 
 
 @given(
@@ -43,7 +43,7 @@ def admin_disable_alice(
 ) -> None:
     resp = client.post_admin_disable_user(
         registered_user["id"],
-        f"Bearer {admin_tokens['access_token']}",
+        f"Bearer {admin_tokens['accessToken']}",
         reason="Test",
     )
     assert resp.status_code == 200, f"Disable failed: {resp.text}"
@@ -54,7 +54,7 @@ def admin_disable_alice(
 
 @when("alice decodes her access token payload", target_fixture="decoded_payload")
 def alice_decode_token(alice_tokens: dict) -> dict:
-    token = alice_tokens["access_token"]
+    token = alice_tokens["accessToken"]
     parts = token.split(".")
     assert len(parts) == 3, "Invalid JWT structure"
     payload_b64 = parts[1]
@@ -71,7 +71,7 @@ def get_jwks(client: ServiceClient) -> FakeResponse:
 
 @when("alice sends POST /api/v1/auth/logout with her access token", target_fixture="response")
 def alice_logout_tokens(client: ServiceClient, alice_tokens: dict) -> FakeResponse:
-    return client.post_logout(f"Bearer {alice_tokens['access_token']}")
+    return client.post_logout(f"Bearer {alice_tokens['accessToken']}")
 
 
 @when(
@@ -79,7 +79,7 @@ def alice_logout_tokens(client: ServiceClient, alice_tokens: dict) -> FakeRespon
     target_fixture="response",
 )
 def get_me_with_alice_token(client: ServiceClient, alice_tokens: dict) -> FakeResponse:
-    return client.get_me(f"Bearer {alice_tokens['access_token']}")
+    return client.get_me(f"Bearer {alice_tokens['accessToken']}")
 
 
 # --- Then steps ---
@@ -100,5 +100,5 @@ def check_jwks_keys(response: FakeResponse) -> None:
 
 @then("alice's access token should be recorded as revoked")
 def check_alice_token_revoked(client: ServiceClient, alice_tokens: dict) -> None:
-    resp = client.get_me(f"Bearer {alice_tokens['access_token']}")
+    resp = client.get_me(f"Bearer {alice_tokens['accessToken']}")
     assert resp.status_code == 401, f"Expected 401 for revoked token, got {resp.status_code}"

@@ -70,7 +70,7 @@ public class UserHandler implements Handler<RoutingContext> {
             ctx.fail(400);
             return;
         }
-        String displayName = body.getString("display_name", "");
+        String displayName = body.getString("displayName", "");
 
         userRepo.findById(userId)
                 .compose(userOpt -> {
@@ -101,11 +101,11 @@ public class UserHandler implements Handler<RoutingContext> {
             ctx.fail(400);
             return;
         }
-        String oldPassword = body.getString("old_password", "");
-        String newPassword = body.getString("new_password", "");
+        String oldPassword = body.getString("oldPassword", "");
+        String newPassword = body.getString("newPassword", "");
 
         if (newPassword.isEmpty()) {
-            ctx.fail(new ValidationException("new_password", "New password must not be empty"));
+            ctx.fail(new ValidationException("newPassword", "New password must not be empty"));
             return;
         }
 
@@ -151,7 +151,7 @@ public class UserHandler implements Handler<RoutingContext> {
                 .put("id", user.id())
                 .put("username", user.username())
                 .put("email", user.email())
-                .put("display_name", user.displayName())
+                .put("displayName", user.displayName())
                 .put("role", user.role())
                 .put("status", user.status());
     }

@@ -20,7 +20,7 @@ let ``alice sends PATCH /api/v1/users/me with body (.+)`` (bodyStr: string) (sta
         try
             let doc = JsonDocument.Parse(bodyStr)
 
-            match doc.RootElement.TryGetProperty("display_name") with
+            match doc.RootElement.TryGetProperty("displayName") with
             | true, el -> el.GetString()
             | _ -> null
         with _ ->
@@ -47,7 +47,7 @@ let ``alice sends POST /api/v1/users/me/password with body (.+)`` (bodyStr: stri
                 | true, el -> el.GetString()
                 | _ -> null
 
-            str "old_password", str "new_password"
+            str "oldPassword", str "newPassword"
         with _ ->
             null, null
 

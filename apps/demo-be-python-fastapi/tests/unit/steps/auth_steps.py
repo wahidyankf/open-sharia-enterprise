@@ -34,7 +34,7 @@ def register_and_deactivate_user(client: TestClient, username: str, registered_u
     tokens = _login_user(client, username)
     resp = client.post(
         "/api/v1/users/me/deactivate",
-        headers={"Authorization": f"Bearer {tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {tokens['accessToken']}"},
     )
     assert resp.status_code == 200
     return registered_user

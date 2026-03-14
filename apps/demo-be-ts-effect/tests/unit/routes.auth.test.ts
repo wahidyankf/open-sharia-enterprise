@@ -243,8 +243,8 @@ describe("POST /api/v1/auth/login", () => {
     });
     const { status, body } = await runRouter(req, makeTestLayer());
     expect(status).toBe(200);
-    expect(body["access_token"]).toBeDefined();
-    expect(body["refresh_token"]).toBeDefined();
+    expect(body["accessToken"]).toBeDefined();
+    expect(body["refreshToken"]).toBeDefined();
     expect(body["token_type"]).toBe("Bearer");
   });
 
@@ -365,11 +365,11 @@ describe("POST /api/v1/auth/refresh", () => {
   it("returns new tokens with a valid refresh token", async () => {
     const req = makeRequest({
       url: "/api/v1/auth/refresh",
-      body: { refresh_token: "valid-refresh-token" },
+      body: { refreshToken: "valid-refresh-token" },
     });
     const { status, body } = await runRouter(req, makeTestLayer());
     expect(status).toBe(200);
-    expect(body["access_token"]).toBeDefined();
+    expect(body["accessToken"]).toBeDefined();
   });
 
   it("returns 401 with missing refresh token body", async () => {
@@ -381,7 +381,7 @@ describe("POST /api/v1/auth/refresh", () => {
   it("returns 401 with revoked refresh token", async () => {
     const req = makeRequest({
       url: "/api/v1/auth/refresh",
-      body: { refresh_token: "valid-refresh-token" },
+      body: { refreshToken: "valid-refresh-token" },
     });
     const { status } = await runRouter(req, makeTestLayer({}, true, true));
     expect(status).toBe(401);
@@ -390,7 +390,7 @@ describe("POST /api/v1/auth/refresh", () => {
   it("returns 401 when user not found on refresh", async () => {
     const req = makeRequest({
       url: "/api/v1/auth/refresh",
-      body: { refresh_token: "valid-refresh-token" },
+      body: { refreshToken: "valid-refresh-token" },
     });
     const { status } = await runRouter(req, makeTestLayer({ findById: () => Effect.succeed(null) }));
     expect(status).toBe(401);
@@ -399,7 +399,7 @@ describe("POST /api/v1/auth/refresh", () => {
   it("returns 401 when refreshed user is not active", async () => {
     const req = makeRequest({
       url: "/api/v1/auth/refresh",
-      body: { refresh_token: "valid-refresh-token" },
+      body: { refreshToken: "valid-refresh-token" },
     });
     const inactiveUser = { ...mockUser, status: "INACTIVE" as const };
     const { status } = await runRouter(req, makeTestLayer({ findById: () => Effect.succeed(inactiveUser) }));
@@ -409,7 +409,7 @@ describe("POST /api/v1/auth/refresh", () => {
   it("returns 401 when access token is used as refresh token", async () => {
     const req = makeRequest({
       url: "/api/v1/auth/refresh",
-      body: { refresh_token: "valid-access-token" },
+      body: { refreshToken: "valid-access-token" },
     });
     const { status } = await runRouter(req, makeTestLayer());
     expect(status).toBe(401);

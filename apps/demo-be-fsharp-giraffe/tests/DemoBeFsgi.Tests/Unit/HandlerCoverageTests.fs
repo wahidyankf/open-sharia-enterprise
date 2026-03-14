@@ -230,7 +230,7 @@ let private registerAndLogin (db: DemoBeFsgi.Infrastructure.AppDbContext.AppDbCo
 
     if status = 200 then
         let doc = JsonDocument.Parse(body)
-        doc.RootElement.GetProperty("access_token").GetString()
+        doc.RootElement.GetProperty("accessToken").GetString()
     else
         failwith $"Login failed for {username}: {status} {body}"
 
@@ -1204,7 +1204,7 @@ type JwtMiddlewareCoverageTests() =
         register db username email "Str0ng#Pass1!" |> Async.RunSynchronously |> ignore
         let _s, loginResp = login db username "Str0ng#Pass1!" |> Async.RunSynchronously
         let doc = JsonDocument.Parse(loginResp)
-        let token = doc.RootElement.GetProperty("access_token").GetString()
+        let token = doc.RootElement.GetProperty("accessToken").GetString()
 
         for _ in 1..5 do
             login db username "WrongPass1!" |> Async.RunSynchronously |> ignore
@@ -1307,8 +1307,8 @@ type AuthHandlerAdditionalTests() =
         register db username email "Str0ng#Pass1!" |> Async.RunSynchronously |> ignore
         let _s, loginResp = login db username "Str0ng#Pass1!" |> Async.RunSynchronously
         let doc = JsonDocument.Parse(loginResp)
-        let token = doc.RootElement.GetProperty("access_token").GetString()
-        let rt = doc.RootElement.GetProperty("refresh_token").GetString()
+        let token = doc.RootElement.GetProperty("accessToken").GetString()
+        let rt = doc.RootElement.GetProperty("refreshToken").GetString()
         deactivate db (Some token) |> Async.RunSynchronously |> ignore
         let status, _ = refresh db rt |> Async.RunSynchronously
         Assert.Equal(401, status)
@@ -1374,7 +1374,7 @@ let private httpLogin (client: HttpClient) (username: string) (password: string)
 let private httpLoginGetToken (client: HttpClient) (username: string) =
     let _s, body = httpLogin client username "Str0ng#Pass1!"
     let doc = JsonDocument.Parse(body)
-    doc.RootElement.GetProperty("access_token").GetString(), doc.RootElement.GetProperty("refresh_token").GetString()
+    doc.RootElement.GetProperty("accessToken").GetString(), doc.RootElement.GetProperty("refreshToken").GetString()
 
 let private withAuth (token: string) (req: HttpRequestMessage) =
     req.Headers.Authorization <- AuthenticationHeaderValue("Bearer", token)
@@ -1503,13 +1503,13 @@ type HttpAuthHandlerTests() =
         let un = $"href_{shortId ()}"
         httpRegister client un $"{un}@example.com" "Str0ng#Pass1!" |> ignore
         let _, rt = httpLoginGetToken client un
-        let status, _ = httpPost client "/api/v1/auth/refresh" None {| refresh_token = rt |}
+        let status, _ = httpPost client "/api/v1/auth/refresh" None {| refreshToken = rt |}
         Assert.Equal(200, status)
 
     [<Fact>]
     member _.``POST /auth/refresh with invalid token returns 401``() =
         let status, _ =
-            httpPost client "/api/v1/auth/refresh" None {| refresh_token = "bad-token" |}
+            httpPost client "/api/v1/auth/refresh" None {| refreshToken = "bad-token" |}
 
         Assert.Equal(401, status)
 
@@ -1679,7 +1679,7 @@ type HttpUserHandlerTests() =
         let token, _ = httpLoginGetToken client un
 
         let status, body =
-            httpPatch client "/api/v1/users/me" (Some token) {| display_name = "New Name" |}
+            httpPatch client "/api/v1/users/me" (Some token) {| displayName = "New Name" |}
 
         Assert.Equal(200, status)
         Assert.Contains("New Name", body)
@@ -1707,8 +1707,8 @@ type HttpUserHandlerTests() =
                 client
                 "/api/v1/users/me/password"
                 (Some token)
-                {| old_password = "Str0ng#Pass1!"
-                   new_password = "NewStr0ng#Pass2!" |}
+                {| oldPassword = "Str0ng#Pass1!"
+                   newPassword = "NewStr0ng#Pass2!" |}
 
         Assert.Equal(200, status)
 
@@ -1723,8 +1723,8 @@ type HttpUserHandlerTests() =
                 client
                 "/api/v1/users/me/password"
                 (Some token)
-                {| old_password = "WrongPass1!"
-                   new_password = "NewStr0ng#Pass2!" |}
+                {| oldPassword = "WrongPass1!"
+                   newPassword = "NewStr0ng#Pass2!" |}
 
         Assert.Equal(401, status)
 

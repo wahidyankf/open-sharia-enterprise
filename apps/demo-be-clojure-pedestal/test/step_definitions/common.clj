@@ -265,8 +265,8 @@
         result  (call-handler handler request)
         body    (:body result)]
     (assoc ctx
-           (keyword (str username "-access-token"))  (:access_token body)
-           (keyword (str username "-refresh-token")) (:refresh_token body)
+           (keyword (str username "-access-token"))  (or (:accessToken body) (:access_token body))
+           (keyword (str username "-refresh-token")) (or (:refreshToken body) (:refresh_token body))
            (keyword (str username "-login-response")) body)))
 
 ;; ============================================================

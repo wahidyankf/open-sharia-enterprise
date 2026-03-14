@@ -26,7 +26,7 @@ def register_and_deactivate_user(
     client: ServiceClient, username: str, registered_user: dict
 ) -> dict:
     tokens = _login_user(client, username)
-    resp = client.post_me_deactivate(f"Bearer {tokens['access_token']}")
+    resp = client.post_me_deactivate(f"Bearer {tokens['accessToken']}")
     assert resp.status_code == 200
     return registered_user
 

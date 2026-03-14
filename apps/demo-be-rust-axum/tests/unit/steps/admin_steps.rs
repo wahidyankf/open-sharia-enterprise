@@ -31,16 +31,16 @@ async fn admin_list_users(world: &mut AppWorld) {
     world.send(req).await.unwrap();
 }
 
-#[when(regex = r#"the admin sends GET /api/v1/admin/users\?email=alice@example\.com"#)]
+#[when(regex = r#"the admin sends GET /api/v1/admin/users\?search=alice@example\.com"#)]
 async fn admin_search_users_by_email(world: &mut AppWorld) {
     let bearer = world.admin_bearer();
-    let req = get_req("/api/v1/admin/users?email=alice@example.com", Some(&bearer));
+    let req = get_req("/api/v1/admin/users?search=alice@example.com", Some(&bearer));
     world.send(req).await.unwrap();
 }
 
 #[then(expr = "the response body should contain at least one user with {string} equal to {string}")]
 async fn response_has_user_with_field(world: &mut AppWorld, field: String, value: String) {
-    let data = world.last_body.get("data").and_then(|v| v.as_array());
+    let data = world.last_body.get("content").and_then(|v| v.as_array());
     let found = data
         .map(|arr| {
             arr.iter().any(|user| {

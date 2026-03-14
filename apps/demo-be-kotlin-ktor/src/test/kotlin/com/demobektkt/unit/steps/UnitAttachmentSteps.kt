@@ -43,7 +43,7 @@ class UnitAttachmentSteps {
     for (pwd in passwords) {
       val (status, body) = UnitServiceDispatcher.login("bob", pwd)
       if (status == 200) {
-        UnitJsonHelper.getString(body, "access_token")?.let {
+        UnitJsonHelper.getString(body, "accessToken")?.let {
           UnitTestWorld.accessTokens["bob"] = it
         }
         break

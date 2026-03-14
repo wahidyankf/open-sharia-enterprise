@@ -56,7 +56,7 @@ Given("an admin has unlocked alice's account", async function (this: CustomWorld
     throw new Error(`Failed to login admin: ${JSON.stringify(loginRes.body)}`);
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const adminToken = (loginRes.body as any).access_token as string;
+  const adminToken = (loginRes.body as any).accessToken as string;
 
   const aliceId = this.userIds.get("alice") ?? "";
   const unlockRes = await this.post(`/api/v1/admin/users/${aliceId}/unlock`, {}, adminToken);
@@ -76,10 +76,10 @@ Then("alice's account status should be {string}", async function (this: CustomWo
     }
     return;
   }
-  const res = await this.get("/api/v1/admin/users?email=alice@example.com", adminToken);
+  const res = await this.get("/api/v1/admin/users?search=alice@example.com", adminToken);
   expect(res.status).toBe(200);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const data = (res.body as any).data as Array<{ status: string }>;
+  const data = (res.body as any).content as Array<{ status: string }>;
   expect(data.length).toBeGreaterThan(0);
   expect(data[0]?.status?.toLowerCase()).toBe(expectedStatus.toLowerCase());
 });

@@ -210,7 +210,7 @@ class ServiceClient:
                     "id": user.id,
                     "username": user.username,
                     "email": user.email,
-                    "display_name": user.display_name,
+                    "displayName": user.display_name,
                 },
                 status=201,
             )
@@ -250,8 +250,8 @@ class ServiceClient:
             refresh_token = create_refresh_token(user.id)
             return _ok(
                 {
-                    "access_token": access_token,
-                    "refresh_token": refresh_token,
+                    "accessToken": access_token,
+                    "refreshToken": refresh_token,
                     "token_type": "Bearer",
                 }
             )
@@ -294,8 +294,8 @@ class ServiceClient:
             new_refresh = create_refresh_token(user.id)
             return _ok(
                 {
-                    "access_token": new_access,
-                    "refresh_token": new_refresh,
+                    "accessToken": new_access,
+                    "refreshToken": new_refresh,
                     "token_type": "Bearer",
                 }
             )
@@ -347,7 +347,7 @@ class ServiceClient:
                     "id": user.id,
                     "username": user.username,
                     "email": user.email,
-                    "display_name": user.display_name,
+                    "displayName": user.display_name,
                     "status": user.status,
                 }
             )
@@ -370,7 +370,7 @@ class ServiceClient:
                     "id": updated.id,
                     "username": updated.username,
                     "email": updated.email,
-                    "display_name": updated.display_name,
+                    "displayName": updated.display_name,
                     "status": updated.status,
                 }
             )
@@ -419,7 +419,7 @@ class ServiceClient:
         authorization: str | None,
         page: int = 1,
         size: int = 20,
-        email: str | None = None,
+        search: str | None = None,
     ) -> FakeResponse:
         """GET /api/v1/admin/users"""
         token = _bearer(authorization)
@@ -428,10 +428,10 @@ class ServiceClient:
         try:
             _require_admin(token, self._db)
             user_repo = get_user_repo(self._db)
-            users, total = user_repo.list_users(page, size, email)
+            users, total = user_repo.list_users(page, size, search)
             return _ok(
                 {
-                    "data": [
+                    "content": [
                         {
                             "id": u.id,
                             "username": u.username,
@@ -441,7 +441,7 @@ class ServiceClient:
                         }
                         for u in users
                     ],
-                    "total": total,
+                    "totalElements": total,
                     "page": page,
                     "size": size,
                 }
@@ -525,7 +525,7 @@ class ServiceClient:
             if user is None:
                 raise NotFoundError(f"User {user_id} not found")
             reset_token = user_repo.generate_password_reset_token(user_id)
-            return _ok({"reset_token": reset_token})
+            return _ok({"token": reset_token})
         except (UnauthorizedError, ForbiddenError, NotFoundError) as exc:
             return _err(exc)
 
@@ -622,8 +622,8 @@ class ServiceClient:
             items, total = expense_repo.list_by_user(user.id, page, size)
             return _ok(
                 {
-                    "data": [self._expense_to_dict(e) for e in items],
-                    "total": total,
+                    "content": [self._expense_to_dict(e) for e in items],
+                    "totalElements": total,
                     "page": page,
                     "size": size,
                 }

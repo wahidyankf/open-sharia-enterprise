@@ -140,7 +140,7 @@ async fn bob_created_entry(world: &mut AppWorld) {
     if world.last_status == 200 {
         world.bob_auth_token = world
             .last_body
-            .get("access_token")
+            .get("accessToken")
             .and_then(|v| v.as_str())
             .map(String::from);
         let bob_bearer = world.bob_bearer();

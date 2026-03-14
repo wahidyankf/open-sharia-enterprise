@@ -75,7 +75,7 @@ def admin_unlocks_alice(client: TestClient, locked_user: dict) -> None:
     tmp_tokens = login_resp.json()
     resp = client.post(
         f"/api/v1/admin/users/{locked_user['id']}/unlock",
-        headers={"Authorization": f"Bearer {tmp_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {tmp_tokens['accessToken']}"},
     )
     assert resp.status_code == 200, f"Unlock failed: {resp.text}"
 
@@ -90,7 +90,7 @@ def admin_unlocks_alice(client: TestClient, locked_user: dict) -> None:
 def admin_unlock_alice(client: TestClient, locked_user: dict, admin_tokens: dict):  # type: ignore[no-untyped-def]
     return client.post(
         f"/api/v1/admin/users/{locked_user['id']}/unlock",
-        headers={"Authorization": f"Bearer {admin_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {admin_tokens['accessToken']}"},
     )
 
 

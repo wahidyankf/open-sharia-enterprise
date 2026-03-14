@@ -43,8 +43,8 @@ class ExpenseResponse(BaseModel):
 class ExpenseListResponse(BaseModel):
     """Paginated expense list response."""
 
-    data: list[ExpenseResponse]
-    total: int
+    content: list[ExpenseResponse]
+    totalElements: int
     page: int
     size: int
 
@@ -125,8 +125,8 @@ def list_expenses(
     expense_repo = get_expense_repo(db)
     items, total = expense_repo.list_by_user(current_user.id, page, size)
     return ExpenseListResponse(
-        data=[_model_to_response(e) for e in items],
-        total=total,
+        content=[_model_to_response(e) for e in items],
+        totalElements=total,
         page=page,
         size=size,
     )

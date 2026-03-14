@@ -53,9 +53,9 @@ class AdditionalCoverageTest {
         val (loginStatus, loginBody) = ServiceDispatcher.login(aliceName, alicePw)
         assertTrue(loginStatus == 200, "Alice login should succeed: $loginBody")
         aliceToken =
-            JsonHelper.getString(loginBody, "access_token") ?: error("No access_token: $loginBody")
+            JsonHelper.getString(loginBody, "accessToken") ?: error("No access_token: $loginBody")
         aliceRefreshToken =
-            JsonHelper.getString(loginBody, "refresh_token") ?: error("No refresh_token: $loginBody")
+            JsonHelper.getString(loginBody, "refreshToken") ?: error("No refresh_token: $loginBody")
         aliceAccessToken = aliceToken
 
         // Get alice user ID from profile
@@ -85,7 +85,7 @@ class AdditionalCoverageTest {
         val (bobLoginStatus, bobLoginBody) = ServiceDispatcher.login(bobName, bobPw)
         assertTrue(bobLoginStatus == 200, "Bob login: $bobLoginBody")
         bobToken =
-            JsonHelper.getString(bobLoginBody, "access_token")
+            JsonHelper.getString(bobLoginBody, "accessToken")
                 ?: error("No bob access_token: $bobLoginBody")
 
         // Create expense for bob
@@ -114,7 +114,7 @@ class AdditionalCoverageTest {
         val (adminLoginStatus, adminLoginBody) = ServiceDispatcher.login(adminName, adminPw)
         assertTrue(adminLoginStatus == 200, "Admin login: $adminLoginBody")
         adminToken =
-            JsonHelper.getString(adminLoginBody, "access_token")
+            JsonHelper.getString(adminLoginBody, "accessToken")
                 ?: error("No admin access_token: $adminLoginBody")
     }
 

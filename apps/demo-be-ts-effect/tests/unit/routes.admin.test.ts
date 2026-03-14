@@ -166,8 +166,8 @@ describe("GET /api/v1/admin/users", () => {
     });
     const { status, body } = await runRouter(req, makeTestLayer());
     expect(status).toBe(200);
-    expect(body["data"]).toBeDefined();
-    expect(body["total"]).toBeDefined();
+    expect(body["content"]).toBeDefined();
+    expect(body["totalElements"]).toBeDefined();
   });
 
   it("returns 403 for non-admin user", async () => {
@@ -186,15 +186,15 @@ describe("GET /api/v1/admin/users", () => {
     expect(status).toBe(401);
   });
 
-  it("returns filtered users by email", async () => {
+  it("returns filtered users by search", async () => {
     const req = makeRequest({
-      url: "/api/v1/admin/users?email=alice@example.com",
+      url: "/api/v1/admin/users?search=alice@example.com",
       method: "GET",
       headers: { authorization: "Bearer valid-admin-token" },
     });
     const { status, body } = await runRouter(req, makeTestLayer());
     expect(status).toBe(200);
-    expect(body["data"]).toBeDefined();
+    expect(body["content"]).toBeDefined();
   });
 });
 
@@ -334,7 +334,7 @@ describe("POST /api/v1/admin/users/:userId/force-password-reset", () => {
     });
     const { status, body } = await runRouter(req, makeTestLayer());
     expect(status).toBe(200);
-    expect(body["reset_token"]).toBeDefined();
+    expect(body["token"]).toBeDefined();
   });
 
   it("returns 404 when user not found", async () => {

@@ -40,7 +40,7 @@ public class UnitSecuritySteps {
             ServiceResponse resp = svc().adminListUsers(adminToken, null, 1, 100);
             JsonObject body = resp.body();
             Assertions.assertNotNull(body);
-            JsonArray data = body.getJsonArray("data");
+            JsonArray data = body.getJsonArray("content");
             boolean found = false;
             for (int i = 0; i < data.size(); i++) {
                 JsonObject user = data.getJsonObject(i);
@@ -87,7 +87,7 @@ public class UnitSecuritySteps {
         svc().promoteToAdmin(adminId);
 
         ServiceResponse loginResp = authSteps.login(username, "Admin#Pass1234");
-        String adminToken = loginResp.body().getString("access_token");
+        String adminToken = loginResp.body().getString("accessToken");
         state.setAdminAccessToken(adminToken);
     }
 
@@ -99,10 +99,10 @@ public class UnitSecuritySteps {
         String adminId = regResp.body().getString("id");
         svc().promoteToAdmin(adminId);
         ServiceResponse loginResp = authSteps.login("tempAdmin", "Admin#Pass1234");
-        String adminToken = loginResp.body().getString("access_token");
+        String adminToken = loginResp.body().getString("accessToken");
 
         ServiceResponse listResp = svc().adminListUsers(adminToken, null, 1, 100);
-        String aliceId = findUserIdByUsername(listResp.body().getJsonArray("data"), "alice");
+        String aliceId = findUserIdByUsername(listResp.body().getJsonArray("content"), "alice");
 
         svc().adminUnlockUser(adminToken, aliceId);
     }
@@ -113,7 +113,7 @@ public class UnitSecuritySteps {
         Assertions.assertNotNull(adminToken);
 
         ServiceResponse listResp = svc().adminListUsers(adminToken, null, 1, 100);
-        String aliceId = findUserIdByUsername(listResp.body().getJsonArray("data"), "alice");
+        String aliceId = findUserIdByUsername(listResp.body().getJsonArray("content"), "alice");
 
         ServiceResponse response = svc().adminUnlockUser(adminToken, aliceId);
         state.setLastResponse(response);

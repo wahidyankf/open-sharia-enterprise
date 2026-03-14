@@ -9,6 +9,14 @@
             [lambdaisland.cucumber.dsl :refer [Given When Then]]
             [step-definitions.common :as common]))
 
+(defn- camel->kebab
+  "Convert camelCase string to kebab-case. e.g. 'accessToken' -> 'access-token'."
+  [s]
+  (-> s
+      (str/replace #"([A-Z])" "-$1")
+      str/lower-case
+      (str/replace #"^-" "")))
+
 ;; ============================================================
 ;; Server lifecycle
 ;; ============================================================
@@ -498,26 +506,31 @@
 (Then "the response body should contain {string} equal to {string}" [state field value]
   (let [k    (keyword (str/replace field #"_" "-"))
         k2   (keyword field)
+        k3   (keyword (camel->kebab field))
         body (:last-body state)]
     (is (or (= value (get body k))
             (= value (get body k2))
+            (= value (get body k3))
             (= value (str (get body k)))
-            (= value (str (get body k2))))
+            (= value (str (get body k2)))
+            (= value (str (get body k3))))
         (str "Expected field " field " = " value " in " body)))
   state)
 
 (Then "the response body should contain {string} equal to {double}" [state field value]
-  (let [k2     (keyword field)
-        body   (:last-body state)
-        actual (or (get body (keyword (str/replace field #"_" "-"))) (get body k2))]
+  (let [body   (:last-body state)
+        actual (or (get body (keyword (str/replace field #"_" "-")))
+                   (get body (keyword field))
+                   (get body (keyword (camel->kebab field))))]
     (is (= value (double actual))
         (str "Expected " field " = " value " in " body)))
   state)
 
 (Then "the response body should contain {string} equal to {int}" [state field value]
-  (let [k2     (keyword field)
-        body   (:last-body state)
-        actual (or (get body (keyword (str/replace field #"_" "-"))) (get body k2))]
+  (let [body   (:last-body state)
+        actual (or (get body (keyword (str/replace field #"_" "-")))
+                   (get body (keyword field))
+                   (get body (keyword (camel->kebab field))))]
     (is (= (double value) (double actual))
         (str "Expected " field " = " value " in " body)))
   state)
@@ -525,16 +538,18 @@
 (Then "the response body should contain a non-null {string} field" [state field]
   (let [k    (keyword (str/replace field #"_" "-"))
         k2   (keyword field)
+        k3   (keyword (camel->kebab field))
         body (:last-body state)]
-    (is (or (some? (get body k)) (some? (get body k2)))
+    (is (or (some? (get body k)) (some? (get body k2)) (some? (get body k3)))
         (str "Expected non-null " field " in " body)))
   state)
 
 (Then "the response body should not contain a {string} field" [state field]
   (let [k    (keyword (str/replace field #"_" "-"))
         k2   (keyword field)
+        k3   (keyword (camel->kebab field))
         body (:last-body state)]
-    (is (and (nil? (get body k)) (nil? (get body k2)))
+    (is (and (nil? (get body k)) (nil? (get body k2)) (nil? (get body k3)))
         (str "Expected " field " to be absent in " body)))
   state)
 
@@ -576,9 +591,11 @@
 
 (Then "the response body should contain at least one user with {string} equal to {string}"
   [state field value]
-  (let [data (get (:last-body state) :data)
-        k    (keyword field)]
-    (is (some #(= value (get % k)) data)
+  (let [body (or (:last-body state) {})
+        data (or (:content body) (:data body))
+        k    (keyword field)
+        k2   (keyword (camel->kebab field))]
+    (is (some #(or (= value (get % k)) (= value (get % k2))) data)
         (str "Expected user with " field " = " value)))
   state)
 
@@ -593,7 +610,8 @@
     (if admin-token
       ;; Admin is available — verify via admin list-users
       (let [result (common/call-admin-list-users state admin-token)
-            users  (get-in result [:last-body :data])
+            body   (get result :last-body {})
+            users  (or (:content body) (:data body))
             alice  (first (filter #(= alice-id (:id %)) users))]
         (is (= (str/lower-case expected-status)
                (str/lower-case (or (:status alice) "")))))
@@ -641,7 +659,7 @@
 
 (Then "the income breakdown should contain {string} with amount {string}" [state category amount]
   (let [body      (:last-body state)
-        breakdown (or (:income_breakdown body) (:income-breakdown body))
+        breakdown (or (:incomeBreakdown body) (:income_breakdown body) (:income-breakdown body))
         actual    (get breakdown (keyword category))]
     (is (= amount (str actual))
         (str "Expected income breakdown " category " = " amount " in " breakdown)))
@@ -649,7 +667,7 @@
 
 (Then "the expense breakdown should contain {string} with amount {string}" [state category amount]
   (let [body      (:last-body state)
-        breakdown (or (:expense_breakdown body) (:expense-breakdown body))
+        breakdown (or (:expenseBreakdown body) (:expense_breakdown body) (:expense-breakdown body))
         actual    (get breakdown (keyword category))]
     (is (= amount (str actual))
         (str "Expected expense breakdown " category " = " amount " in " breakdown)))

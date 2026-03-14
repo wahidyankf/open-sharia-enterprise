@@ -46,13 +46,13 @@ class UnitCoverageTest {
     private String login(String username, String password) throws Exception {
         ServiceResponse resp = svc().login(username, password);
         assertEquals(200, resp.statusCode());
-        return resp.body().getString("access_token");
+        return resp.body().getString("accessToken");
     }
 
     private String loginAndGetRefreshToken(String username, String password) throws Exception {
         ServiceResponse resp = svc().login(username, password);
         assertEquals(200, resp.statusCode());
-        return resp.body().getString("refresh_token");
+        return resp.body().getString("refreshToken");
     }
 
     // ─────────────────── TokenHandler.handleClaims ──────────────────
@@ -110,7 +110,7 @@ class UnitCoverageTest {
 
         // Find alice's ID via admin list
         ServiceResponse listResp = svc().adminListUsers(adminToken, null, 1, 100);
-        String aliceId = findUserId(listResp.body().getJsonArray("data"), "alice");
+        String aliceId = findUserId(listResp.body().getJsonArray("content"), "alice");
 
         // Disable alice
         svc().adminDisableUser(adminToken, aliceId);

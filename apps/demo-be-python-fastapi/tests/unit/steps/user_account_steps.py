@@ -32,7 +32,7 @@ def alice_login(client: TestClient, registered_user: dict) -> dict:
 def alice_self_deactivate(client: TestClient, alice_tokens: dict) -> None:
     resp = client.post(
         "/api/v1/users/me/deactivate",
-        headers={"Authorization": f"Bearer {alice_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {alice_tokens['accessToken']}"},
     )
     assert resp.status_code == 200
 
@@ -44,7 +44,7 @@ def alice_self_deactivate(client: TestClient, alice_tokens: dict) -> None:
 def alice_get_me(client: TestClient, alice_tokens: dict):  # type: ignore[no-untyped-def]
     return client.get(
         "/api/v1/users/me",
-        headers={"Authorization": f"Bearer {alice_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {alice_tokens['accessToken']}"},
     )
 
 
@@ -57,7 +57,7 @@ def alice_patch_me(client: TestClient, alice_tokens: dict, body: str):  # type: 
     return client.patch(
         "/api/v1/users/me",
         json=data,
-        headers={"Authorization": f"Bearer {alice_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {alice_tokens['accessToken']}"},
     )
 
 
@@ -70,7 +70,7 @@ def alice_change_password(client: TestClient, alice_tokens: dict, body: str):  #
     return client.post(
         "/api/v1/users/me/password",
         json=data,
-        headers={"Authorization": f"Bearer {alice_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {alice_tokens['accessToken']}"},
     )
 
 
@@ -78,5 +78,5 @@ def alice_change_password(client: TestClient, alice_tokens: dict, body: str):  #
 def alice_deactivate(client: TestClient, alice_tokens: dict):  # type: ignore[no-untyped-def]
     return client.post(
         "/api/v1/users/me/deactivate",
-        headers={"Authorization": f"Bearer {alice_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {alice_tokens['accessToken']}"},
     )

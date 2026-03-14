@@ -25,8 +25,8 @@ class UserSummary(BaseModel):
 class UserListResponse(BaseModel):
     """Paginated user list response."""
 
-    data: list[UserSummary]
-    total: int
+    content: list[UserSummary]
+    totalElements: int
     page: int
     size: int
 
@@ -40,22 +40,22 @@ class DisableRequest(BaseModel):
 class PasswordResetResponse(BaseModel):
     """Password reset token response."""
 
-    reset_token: str
+    token: str
 
 
 @router.get("/users", response_model=UserListResponse)
 def list_users(
     page: int = Query(default=1, ge=1),
     size: int = Query(default=20, ge=1, le=100),
-    email: str | None = Query(default=None),
+    search: str | None = Query(default=None),
     db: Session = Depends(get_db),
     _admin: UserModel = Depends(require_admin),
 ) -> UserListResponse:
     """List all users (admin only)."""
     user_repo = get_user_repo(db)
-    users, total = user_repo.list_users(page, size, email)
+    users, total = user_repo.list_users(page, size, search)
     return UserListResponse(
-        data=[
+        content=[
             UserSummary(
                 id=u.id,
                 username=u.username,
@@ -65,7 +65,7 @@ def list_users(
             )
             for u in users
         ],
-        total=total,
+        totalElements=total,
         page=page,
         size=size,
     )
@@ -131,4 +131,4 @@ def force_password_reset(
     if user is None:
         raise NotFoundError(f"User {user_id} not found")
     reset_token = user_repo.generate_password_reset_token(user_id)
-    return PasswordResetResponse(reset_token=reset_token)
+    return PasswordResetResponse(token=reset_token)

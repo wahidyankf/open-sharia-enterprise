@@ -68,7 +68,7 @@ def disable_alice_by_admin(client: TestClient, registered_users: list, admin_tok
     resp = client.post(
         f"/api/v1/admin/users/{alice['id']}/disable",
         json={"reason": "Test disable"},
-        headers={"Authorization": f"Bearer {admin_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {admin_tokens['accessToken']}"},
     )
     assert resp.status_code == 200
 
@@ -80,7 +80,7 @@ def alice_account_disabled(client: TestClient, registered_users: list, admin_tok
     resp = client.post(
         f"/api/v1/admin/users/{alice['id']}/disable",
         json={"reason": "Initial disable"},
-        headers={"Authorization": f"Bearer {admin_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {admin_tokens['accessToken']}"},
     )
     assert resp.status_code == 200
 
@@ -92,19 +92,19 @@ def alice_account_disabled(client: TestClient, registered_users: list, admin_tok
 def admin_list_users(client: TestClient, admin_tokens: dict):  # type: ignore[no-untyped-def]
     return client.get(
         "/api/v1/admin/users",
-        headers={"Authorization": f"Bearer {admin_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {admin_tokens['accessToken']}"},
     )
 
 
 @when(
-    "the admin sends GET /api/v1/admin/users?email=alice@example.com",
+    "the admin sends GET /api/v1/admin/users?search=alice@example.com",
     target_fixture="response",
 )
 def admin_search_users_by_email(client: TestClient, admin_tokens: dict):  # type: ignore[no-untyped-def]
     return client.get(
         "/api/v1/admin/users",
-        params={"email": "alice@example.com"},
-        headers={"Authorization": f"Bearer {admin_tokens['access_token']}"},
+        params={"search": "alice@example.com"},
+        headers={"Authorization": f"Bearer {admin_tokens['accessToken']}"},
     )
 
 
@@ -121,7 +121,7 @@ def admin_disable_alice(client: TestClient, registered_users: list, admin_tokens
     return client.post(
         f"/api/v1/admin/users/{alice['id']}/disable",
         json=data,
-        headers={"Authorization": f"Bearer {admin_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {admin_tokens['accessToken']}"},
     )
 
 
@@ -132,7 +132,7 @@ def admin_disable_alice(client: TestClient, registered_users: list, admin_tokens
 def get_me_alice_token(client: TestClient, alice_tokens: dict):  # type: ignore[no-untyped-def]
     return client.get(
         "/api/v1/users/me",
-        headers={"Authorization": f"Bearer {alice_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {alice_tokens['accessToken']}"},
     )
 
 
@@ -145,7 +145,7 @@ def admin_enable_alice(client: TestClient, registered_users: list, admin_tokens:
     assert alice is not None
     return client.post(
         f"/api/v1/admin/users/{alice['id']}/enable",
-        headers={"Authorization": f"Bearer {admin_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {admin_tokens['accessToken']}"},
     )
 
 
@@ -158,7 +158,7 @@ def admin_force_password_reset(client: TestClient, registered_users: list, admin
     assert alice is not None
     return client.post(
         f"/api/v1/admin/users/{alice['id']}/force-password-reset",
-        headers={"Authorization": f"Bearer {admin_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {admin_tokens['accessToken']}"},
     )
 
 
@@ -170,7 +170,7 @@ def admin_force_password_reset(client: TestClient, registered_users: list, admin
 )
 def check_alice_in_results(response) -> None:  # type: ignore[no-untyped-def]
     body = response.json()
-    users = body.get("data", [])
+    users = body.get("content", [])
     assert any(u.get("email") == "alice@example.com" for u in users), (
         f"alice@example.com not found in users: {users}"
     )
@@ -182,11 +182,11 @@ def check_alice_disabled(client: TestClient, registered_users: list, admin_token
     assert alice is not None
     resp = client.get(
         "/api/v1/admin/users",
-        params={"email": "alice@example.com"},
-        headers={"Authorization": f"Bearer {admin_tokens['access_token']}"},
+        params={"search": "alice@example.com"},
+        headers={"Authorization": f"Bearer {admin_tokens['accessToken']}"},
     )
     body = resp.json()
-    users = body.get("data", [])
+    users = body.get("content", [])
     alice_info = next((u for u in users if u["username"] == "alice"), None)
     assert alice_info is not None
     assert alice_info["status"].upper() == "DISABLED"
@@ -198,11 +198,11 @@ def check_alice_active(client: TestClient, registered_users: list, admin_tokens:
     assert alice is not None
     resp = client.get(
         "/api/v1/admin/users",
-        params={"email": "alice@example.com"},
-        headers={"Authorization": f"Bearer {admin_tokens['access_token']}"},
+        params={"search": "alice@example.com"},
+        headers={"Authorization": f"Bearer {admin_tokens['accessToken']}"},
     )
     body = resp.json()
-    users = body.get("data", [])
+    users = body.get("content", [])
     alice_info = next((u for u in users if u["username"] == "alice"), None)
     assert alice_info is not None
     assert alice_info["status"].upper() == "ACTIVE"

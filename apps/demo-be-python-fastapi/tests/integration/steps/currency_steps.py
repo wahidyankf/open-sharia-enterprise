@@ -26,7 +26,7 @@ def alice_login_currency(client: ServiceClient, registered_user: dict) -> dict:
 )
 def alice_create_currency_expense(client: ServiceClient, alice_tokens: dict, body: str) -> dict:
     data = json.loads(body)
-    resp = client.post_expense(f"Bearer {alice_tokens['access_token']}", data)
+    resp = client.post_expense(f"Bearer {alice_tokens['accessToken']}", data)
     assert resp.status_code == 201, f"Create expense failed: {resp.text}"
     return resp.json()
 
@@ -40,7 +40,7 @@ def alice_get_currency_expense(
 ) -> FakeResponse:
     return client.get_expense(
         created_expense["id"],
-        f"Bearer {alice_tokens['access_token']}",
+        f"Bearer {alice_tokens['accessToken']}",
     )
 
 
@@ -52,12 +52,12 @@ def alice_post_currency_expense(
     client: ServiceClient, alice_tokens: dict, body: str
 ) -> FakeResponse:
     data = json.loads(body)
-    return client.post_expense(f"Bearer {alice_tokens['access_token']}", data)
+    return client.post_expense(f"Bearer {alice_tokens['accessToken']}", data)
 
 
 @when("alice sends GET /api/v1/expenses/summary", target_fixture="response")
 def alice_get_summary(client: ServiceClient, alice_tokens: dict) -> FakeResponse:
-    return client.get_expenses_summary(f"Bearer {alice_tokens['access_token']}")
+    return client.get_expenses_summary(f"Bearer {alice_tokens['accessToken']}")
 
 
 # --- Then steps ---

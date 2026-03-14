@@ -35,10 +35,10 @@ class UnitAuthSteps {
   private fun loginAs(username: String, password: String): Boolean {
     val (status, body) = UnitServiceDispatcher.login(username, password)
     if (status == 200) {
-      UnitJsonHelper.getString(body, "access_token")?.let {
+      UnitJsonHelper.getString(body, "accessToken")?.let {
         UnitTestWorld.accessTokens[username] = it
       }
-      UnitJsonHelper.getString(body, "refresh_token")?.let {
+      UnitJsonHelper.getString(body, "refreshToken")?.let {
         UnitTestWorld.refreshTokens[username] = it
       }
       return true
@@ -147,10 +147,10 @@ class UnitAuthSteps {
     val refreshToken = UnitTestWorld.refreshTokens["alice"] ?: error("alice has no refresh token")
     val (status, body) = UnitServiceDispatcher.refresh(refreshToken)
     assertTrue(status == 200, "Refresh should succeed. Status: $status Body: $body")
-    UnitJsonHelper.getString(body, "access_token")?.let {
+    UnitJsonHelper.getString(body, "accessToken")?.let {
       UnitTestWorld.accessTokens["alice:new"] = it
     }
-    UnitJsonHelper.getString(body, "refresh_token")?.let {
+    UnitJsonHelper.getString(body, "refreshToken")?.let {
       UnitTestWorld.refreshTokens["alice:new"] = it
     }
   }

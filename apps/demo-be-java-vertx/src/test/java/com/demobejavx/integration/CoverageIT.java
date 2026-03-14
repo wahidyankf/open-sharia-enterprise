@@ -51,7 +51,7 @@ class CoverageIT {
         assertEquals(200, resp.statusCode());
         JsonObject body = resp.body();
         assertNotNull(body);
-        return body.getString("access_token");
+        return body.getString("accessToken");
     }
 
     private String loginAndGetRefreshToken(String username, String password) throws Exception {
@@ -59,7 +59,7 @@ class CoverageIT {
         assertEquals(200, resp.statusCode());
         JsonObject body = resp.body();
         assertNotNull(body);
-        return body.getString("refresh_token");
+        return body.getString("refreshToken");
     }
 
     // ─────────────────── TokenHandler.handleClaims ──────────────────
@@ -132,7 +132,7 @@ class CoverageIT {
         ServiceResponse listResp = svc().adminListUsers(adminToken, null, 1, 100);
         JsonObject listBody = listResp.body();
         assertNotNull(listBody);
-        String aliceId = findUserId(listBody.getJsonArray("data"), "alice");
+        String aliceId = findUserId(listBody.getJsonArray("content"), "alice");
 
         // Disable alice
         svc().adminDisableUser(adminToken, aliceId);

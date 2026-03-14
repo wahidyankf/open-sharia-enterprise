@@ -85,7 +85,7 @@ public sealed class ServiceLayer(IntegrationTestHost host)
                 id = user.Id,
                 username = user.Username,
                 email = user.Email,
-                display_name = user.DisplayName,
+                displayName = user.DisplayName,
             }
         );
     }
@@ -145,8 +145,8 @@ public sealed class ServiceLayer(IntegrationTestHost host)
             200,
             new
             {
-                access_token = accessToken,
-                refresh_token = refreshToken,
+                accessToken,
+                refreshToken,
                 token_type = "Bearer",
             }
         );
@@ -228,8 +228,8 @@ public sealed class ServiceLayer(IntegrationTestHost host)
             200,
             new
             {
-                access_token = newAccessToken,
-                refresh_token = newRefreshToken,
+                accessToken = newAccessToken,
+                refreshToken = newRefreshToken,
                 token_type = "Bearer",
             }
         );
@@ -338,7 +338,7 @@ public sealed class ServiceLayer(IntegrationTestHost host)
                 id = user.Id,
                 username = user.Username,
                 email = user.Email,
-                display_name = user.DisplayName ?? user.Username,
+                displayName = user.DisplayName ?? user.Username,
                 status = user.Status.ToString().ToUpperInvariant(),
                 role = user.Role.ToString().ToUpperInvariant(),
             }
@@ -384,7 +384,7 @@ public sealed class ServiceLayer(IntegrationTestHost host)
                 id = user.Id,
                 username = user.Username,
                 email = user.Email,
-                display_name = user.DisplayName,
+                displayName = user.DisplayName,
                 status = user.Status.ToString().ToUpperInvariant(),
                 role = user.Role.ToString().ToUpperInvariant(),
             }
@@ -486,7 +486,7 @@ public sealed class ServiceLayer(IntegrationTestHost host)
         string? accessToken,
         int page = 1,
         int size = 20,
-        string? email = null
+        string? search = null
     )
     {
         if (accessToken is null)
@@ -506,22 +506,22 @@ public sealed class ServiceLayer(IntegrationTestHost host)
         var userRepo = sp.GetRequiredService<IUserRepository>();
         var safePage = Math.Max(1, page);
         var safeSize = size <= 0 ? 20 : size;
-        var (items, total) = await userRepo.ListAsync(safePage, safeSize, email);
+        var (items, total) = await userRepo.ListAsync(safePage, safeSize, search);
 
         return Json(
             200,
             new
             {
-                data = items.Select(u => new
+                content = items.Select(u => new
                 {
                     id = u.Id,
                     username = u.Username,
                     email = u.Email,
-                    display_name = u.DisplayName,
+                    displayName = u.DisplayName,
                     status = u.Status.ToString().ToUpperInvariant(),
                     role = u.Role.ToString().ToUpperInvariant(),
                 }),
-                total,
+                totalElements = total,
                 page = safePage,
                 size = safeSize,
             }
@@ -640,7 +640,7 @@ public sealed class ServiceLayer(IntegrationTestHost host)
         }
 
         var resetToken = Guid.NewGuid().ToString("N");
-        return Json(200, new { reset_token = resetToken });
+        return Json(200, new { token = resetToken });
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -756,8 +756,8 @@ public sealed class ServiceLayer(IntegrationTestHost host)
             200,
             new
             {
-                data = items.Select(ExpenseToResponse),
-                total,
+                content = items.Select(ExpenseToResponse),
+                totalElements = total,
                 page = safePage,
                 size = safeSize,
             }
@@ -1433,7 +1433,7 @@ public sealed class ServiceLayer(IntegrationTestHost host)
             statusCode,
             JsonSerializer.Serialize(body, new JsonSerializerOptions
             {
-                PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             })
         );
 

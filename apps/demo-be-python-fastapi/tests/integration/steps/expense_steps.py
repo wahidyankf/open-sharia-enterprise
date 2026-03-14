@@ -26,7 +26,7 @@ def alice_login_expense(client: ServiceClient, registered_user: dict) -> dict:
 )
 def alice_create_entry(client: ServiceClient, alice_tokens: dict, body: str) -> dict:
     data = json.loads(body)
-    resp = client.post_expense(f"Bearer {alice_tokens['access_token']}", data)
+    resp = client.post_expense(f"Bearer {alice_tokens['accessToken']}", data)
     assert resp.status_code == 201, f"Create expense failed: {resp.text}"
     return resp.json()
 
@@ -36,7 +36,7 @@ def alice_create_3_entries(client: ServiceClient, alice_tokens: dict) -> list:
     expenses = []
     for i in range(3):
         resp = client.post_expense(
-            f"Bearer {alice_tokens['access_token']}",
+            f"Bearer {alice_tokens['accessToken']}",
             {
                 "amount": f"{10 + i}.00",
                 "currency": "USD",
@@ -60,7 +60,7 @@ def alice_create_3_entries(client: ServiceClient, alice_tokens: dict) -> list:
 )
 def alice_post_expense(client: ServiceClient, alice_tokens: dict, body: str) -> FakeResponse:
     data = json.loads(body)
-    return client.post_expense(f"Bearer {alice_tokens['access_token']}", data)
+    return client.post_expense(f"Bearer {alice_tokens['accessToken']}", data)
 
 
 @when(
@@ -87,13 +87,13 @@ def alice_get_expense(
 ) -> FakeResponse:
     return client.get_expense(
         created_expense["id"],
-        f"Bearer {alice_tokens['access_token']}",
+        f"Bearer {alice_tokens['accessToken']}",
     )
 
 
 @when("alice sends GET /api/v1/expenses", target_fixture="response")
 def alice_list_expenses(client: ServiceClient, alice_tokens: dict) -> FakeResponse:
-    return client.get_expenses(f"Bearer {alice_tokens['access_token']}")
+    return client.get_expenses(f"Bearer {alice_tokens['accessToken']}")
 
 
 @when(
@@ -106,7 +106,7 @@ def alice_update_expense(
     data = json.loads(body)
     return client.put_expense(
         created_expense["id"],
-        f"Bearer {alice_tokens['access_token']}",
+        f"Bearer {alice_tokens['accessToken']}",
         data,
     )
 
@@ -117,5 +117,5 @@ def alice_delete_expense(
 ) -> FakeResponse:
     return client.delete_expense(
         created_expense["id"],
-        f"Bearer {alice_tokens['access_token']}",
+        f"Bearer {alice_tokens['accessToken']}",
     )

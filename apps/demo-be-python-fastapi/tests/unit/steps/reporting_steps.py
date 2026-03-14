@@ -37,7 +37,7 @@ def alice_create_reporting_entry(client: TestClient, alice_tokens: dict, body: s
     resp = client.post(
         "/api/v1/expenses",
         json=data,
-        headers={"Authorization": f"Bearer {alice_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {alice_tokens['accessToken']}"},
     )
     assert resp.status_code == 201, f"Create entry failed: {resp.text}"
     return resp.json()
@@ -54,7 +54,7 @@ def alice_get_pl_report(client: TestClient, alice_tokens: dict, from_: str, to: 
     return client.get(
         "/api/v1/reports/pl",
         params={"from": from_, "to": to, "currency": currency},
-        headers={"Authorization": f"Bearer {alice_tokens['access_token']}"},
+        headers={"Authorization": f"Bearer {alice_tokens['accessToken']}"},
     )
 
 

@@ -28,7 +28,7 @@ public class AdminSteps {
                 .adminListUsers(state.getAdminAccessToken(), null, 1, 100);
         JsonObject body = listResp.body();
         Assertions.assertNotNull(body);
-        JsonArray data = body.getJsonArray("data");
+        JsonArray data = body.getJsonArray("content");
         String aliceId = SecuritySteps.findUserIdByUsername(data, "alice");
         state.setUserId(aliceId);
     }
@@ -40,7 +40,7 @@ public class AdminSteps {
         state.setLastResponse(response);
     }
 
-    @When("^the admin sends GET /api/v1/admin/users\\?email=(.+)$")
+    @When("^the admin sends GET /api/v1/admin/users\\?search=(.+)$")
     public void adminSendsGetUsersWithEmailFilter(String email) throws Exception {
         ServiceResponse response = AppFactory.getService()
                 .adminListUsers(state.getAdminAccessToken(), email, 1, 20);
@@ -80,8 +80,8 @@ public class AdminSteps {
         Assertions.assertNotNull(response);
         JsonObject body = response.body();
         Assertions.assertNotNull(body);
-        JsonArray data = body.getJsonArray("data");
-        Assertions.assertNotNull(data, "Expected 'data' array in response");
+        JsonArray data = body.getJsonArray("content");
+        Assertions.assertNotNull(data, "Expected 'content' array in response");
         boolean found = false;
         for (int i = 0; i < data.size(); i++) {
             JsonObject user = data.getJsonObject(i);

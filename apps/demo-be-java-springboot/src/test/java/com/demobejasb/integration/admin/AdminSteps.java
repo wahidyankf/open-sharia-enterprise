@@ -84,7 +84,7 @@ public class AdminSteps {
         responseStore.setResponse(200, response);
     }
 
-    @When("^the admin sends GET /api/v1/admin/users\\?email=alice@example\\.com$")
+    @When("^the admin sends GET /api/v1/admin/users\\?search=alice@example\\.com$")
     public void theAdminSendsGetAdminUsersSearchByEmail() {
         String adminToken = tokenStore.getAdminToken();
         if (adminToken == null) {
@@ -108,9 +108,8 @@ public class AdminSteps {
     public void theResponseBodyShouldContainUserWithFieldEqual(
             final String field, final String value) {
         Map<String, Object> body = responseStore.getBodyAsMap();
-        assertThat(body).containsKey("data");
-        Object rawData = body.get("data");
-        assertThat(rawData).isInstanceOf(List.class);
+        Object rawData = body.containsKey("data") ? body.get("data") : body.get("content");
+        assertThat(rawData).isNotNull().isInstanceOf(List.class);
         List<?> data = (List<?>) rawData;
         assertThat(data).isNotEmpty();
         // Check first element has the expected field value

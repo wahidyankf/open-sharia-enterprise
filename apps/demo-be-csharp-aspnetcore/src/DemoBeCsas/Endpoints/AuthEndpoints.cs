@@ -74,7 +74,7 @@ public static class AuthEndpoints
                 id = user.Id,
                 username = user.Username,
                 email = user.Email,
-                display_name = user.DisplayName,
+                displayName = user.DisplayName,
             }
         );
     }
@@ -139,8 +139,8 @@ public static class AuthEndpoints
         return Results.Ok(
             new
             {
-                access_token = accessToken,
-                refresh_token = refreshToken,
+                accessToken,
+                refreshToken,
                 token_type = "Bearer",
             }
         );
@@ -220,8 +220,8 @@ public static class AuthEndpoints
         return Results.Ok(
             new
             {
-                access_token = newAccessToken,
-                refresh_token = newRefreshToken,
+                accessToken = newAccessToken,
+                refreshToken = newRefreshToken,
                 token_type = "Bearer",
             }
         );
@@ -288,8 +288,5 @@ public static class AuthEndpoints
 
     private sealed record LoginRequest(string? Username, string? Password);
 
-    private sealed record RefreshRequest(
-        [property: System.Text.Json.Serialization.JsonPropertyName("refresh_token")]
-        string? RefreshToken
-    );
+    private sealed record RefreshRequest(string? RefreshToken);
 }

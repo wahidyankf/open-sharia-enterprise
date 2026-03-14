@@ -35,7 +35,7 @@ class UnitErrorPathsTest {
     val (loginStatus, loginBody) = UnitServiceDispatcher.login(username, password)
     assertTrue(loginStatus == 200, "Login should succeed, got $loginStatus: $loginBody")
     aliceToken =
-      UnitJsonHelper.getString(loginBody, "access_token") ?: error("No token in: $loginBody")
+      UnitJsonHelper.getString(loginBody, "accessToken") ?: error("No token in: $loginBody")
 
     // Get user id from profile
     val (_, profileBody) = UnitServiceDispatcher.getProfile(aliceToken)
@@ -72,7 +72,7 @@ class UnitErrorPathsTest {
       "Admin login should succeed, got $adminLoginStatus: $adminLoginBody",
     )
     adminToken =
-      UnitJsonHelper.getString(adminLoginBody, "access_token")
+      UnitJsonHelper.getString(adminLoginBody, "accessToken")
         ?: error("No token in: $adminLoginBody")
   }
 

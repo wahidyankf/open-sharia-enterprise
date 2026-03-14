@@ -30,7 +30,7 @@ public class UnitAdminSteps {
         authSteps.registerUser(u2, u2 + "@example.com", "Str0ng#Pass1");
         authSteps.registerUser(u3, u3 + "@example.com", "Str0ng#Pass1");
         ServiceResponse listResp = svc().adminListUsers(state.getAdminAccessToken(), null, 1, 100);
-        JsonArray data = listResp.body().getJsonArray("data");
+        JsonArray data = listResp.body().getJsonArray("content");
         String aliceId = UnitSecuritySteps.findUserIdByUsername(data, "alice");
         state.setUserId(aliceId);
     }
@@ -41,7 +41,7 @@ public class UnitAdminSteps {
         state.setLastResponse(response);
     }
 
-    @When("^the admin sends GET /api/v1/admin/users\\?email=(.+)$")
+    @When("^the admin sends GET /api/v1/admin/users\\?search=(.+)$")
     public void adminSendsGetUsersWithEmailFilter(String email) throws Exception {
         ServiceResponse response = svc().adminListUsers(state.getAdminAccessToken(), email, 1, 100);
         state.setLastResponse(response);
@@ -78,8 +78,8 @@ public class UnitAdminSteps {
         Assertions.assertNotNull(response);
         JsonObject body = response.body();
         Assertions.assertNotNull(body);
-        JsonArray data = body.getJsonArray("data");
-        Assertions.assertNotNull(data, "Expected 'data' array in response");
+        JsonArray data = body.getJsonArray("content");
+        Assertions.assertNotNull(data, "Expected 'content' array in response");
         boolean found = false;
         for (int i = 0; i < data.size(); i++) {
             JsonObject user = data.getJsonObject(i);

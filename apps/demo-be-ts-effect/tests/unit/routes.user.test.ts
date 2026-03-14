@@ -199,11 +199,11 @@ describe("PATCH /api/v1/users/me", () => {
       url: "/api/v1/users/me",
       method: "PATCH",
       headers: { authorization: "Bearer valid-access-token" },
-      body: { display_name: "Alice Smith" },
+      body: { displayName: "Alice Smith" },
     });
     const { status, body } = await runRouter(req, makeTestLayer({ findById: () => Effect.succeed(updatedUser) }));
     expect(status).toBe(200);
-    expect(body["display_name"]).toBe("Alice Smith");
+    expect(body["displayName"]).toBe("Alice Smith");
   });
 
   it("returns 401 without token", async () => {
@@ -217,7 +217,7 @@ describe("PATCH /api/v1/users/me", () => {
       url: "/api/v1/users/me",
       method: "PATCH",
       headers: { authorization: "Bearer valid-access-token" },
-      body: { display_name: "Alice" },
+      body: { displayName: "Alice" },
     });
     const { status } = await runRouter(req, makeTestLayer({ findById: () => Effect.succeed(null) }));
     expect(status).toBe(404);
@@ -229,7 +229,7 @@ describe("PATCH /api/v1/users/me", () => {
       url: "/api/v1/users/me",
       method: "PATCH",
       headers: { authorization: "Bearer valid-access-token" },
-      body: { display_name: "Alice Smith" },
+      body: { displayName: "Alice Smith" },
     });
     const { status } = await runRouter(
       req,
@@ -250,7 +250,7 @@ describe("POST /api/v1/users/me/password", () => {
       url: "/api/v1/users/me/password",
       method: "POST",
       headers: { authorization: "Bearer valid-access-token" },
-      body: { old_password: "OldPass", new_password: "NewPass" },
+      body: { oldPassword: "OldPass", newPassword: "NewPass" },
     });
     const { status } = await runRouter(req, makeTestLayer());
     expect(status).toBe(200);
@@ -261,7 +261,7 @@ describe("POST /api/v1/users/me/password", () => {
       url: "/api/v1/users/me/password",
       method: "POST",
       headers: { authorization: "Bearer valid-access-token" },
-      body: { old_password: "WrongOld", new_password: "NewPass" },
+      body: { oldPassword: "WrongOld", newPassword: "NewPass" },
     });
     const { status } = await runRouter(req, makeTestLayer({}, false));
     expect(status).toBe(401);
@@ -272,7 +272,7 @@ describe("POST /api/v1/users/me/password", () => {
       url: "/api/v1/users/me/password",
       method: "POST",
       headers: { authorization: "Bearer valid-access-token" },
-      body: { old_password: "OldPass", new_password: "NewPass" },
+      body: { oldPassword: "OldPass", newPassword: "NewPass" },
     });
     const { status } = await runRouter(req, makeTestLayer({ findById: () => Effect.succeed(null) }));
     expect(status).toBe(404);

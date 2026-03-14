@@ -26,14 +26,14 @@ public class UnitUserAccountSteps {
         state.setLastResponse(response);
     }
 
-    @When("^alice sends PATCH /api/v1/users/me with body \\{ \"display_name\": \"([^\"]*)\" \\}$")
+    @When("^alice sends PATCH /api/v1/users/me with body \\{ \"displayName\": \"([^\"]*)\" \\}$")
     public void aliceSendsPatchMe(String displayName) throws Exception {
         String token = state.getAccessToken();
         ServiceResponse response = svc().updateMe(token, displayName);
         state.setLastResponse(response);
     }
 
-    @When("^alice sends POST /api/v1/users/me/password with body \\{ \"old_password\": \"([^\"]*)\", \"new_password\": \"([^\"]*)\" \\}$")
+    @When("^alice sends POST /api/v1/users/me/password with body \\{ \"oldPassword\": \"([^\"]*)\", \"newPassword\": \"([^\"]*)\" \\}$")
     public void aliceSendsChangePassword(String oldPassword, String newPassword) throws Exception {
         String token = state.getAccessToken();
         ServiceResponse response = svc().changePassword(token, oldPassword, newPassword);
