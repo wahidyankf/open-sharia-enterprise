@@ -19,7 +19,9 @@ defmodule DemoFeExphWeb.Unit.TokensSteps do
                        "sub" => "user-1",
                        "iss" => "demo-be",
                        "exp" => 9_999_999_999
-                     }), padding: false)
+                     }),
+                     padding: false
+                   )
 
                  "#{header}.#{payload}.fake_sig"
                end).()
@@ -111,7 +113,7 @@ defmodule DemoFeExphWeb.Unit.TokensSteps do
           %{jwks_result: result} = state do
     assert {:ok, body} = result
     keys = body["keys"] || []
-    assert length(keys) >= 1
+    assert keys != []
     {:ok, state}
   end
 

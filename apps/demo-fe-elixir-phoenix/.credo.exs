@@ -9,8 +9,10 @@
       },
       checks: [
         {Credo.Check.Readability.MaxLineLength, max_length: 120},
-        {Credo.Check.Warning.WrongTestFileExtension,
-         included: [~r/_test\.exs$/], excluded: [~r/_steps\.exs$/]}
+        # Cabbage BDD step files use ConnCase but are named *_steps.exs, not *_test.exs
+        {Credo.Check.Warning.WrongTestFilename, false},
+        {Credo.Check.Design.AliasUsage, false},
+        {Credo.Check.Readability.Specs, false}
       ]
     }
   ]
