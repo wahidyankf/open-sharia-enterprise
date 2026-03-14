@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLogin } from "@/lib/queries/use-auth";
 import { useAuth } from "@/lib/auth/auth-provider";
 import { ApiError } from "@/lib/api/client";
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { isAuthenticated } = useAuth();
@@ -209,5 +209,13 @@ export default function LoginPage() {
         </a>
       </p>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div style={{ maxWidth: "28rem", margin: "4rem auto", padding: "2rem" }}>Loading...</div>}>
+      <LoginContent />
+    </Suspense>
   );
 }
