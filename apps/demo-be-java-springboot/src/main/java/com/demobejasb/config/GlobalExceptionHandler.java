@@ -6,6 +6,7 @@ import com.demobejasb.auth.service.InvalidCredentialsException;
 import com.demobejasb.auth.service.InvalidTokenException;
 import com.demobejasb.auth.service.TokenExpiredException;
 import com.demobejasb.auth.service.UsernameAlreadyExistsException;
+import com.demobejasb.test.controller.UserNotFoundException;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -75,6 +76,13 @@ public class GlobalExceptionHandler {
             final FileSizeLimitExceededException ex) {
         return ResponseEntity.status(HttpStatus.CONTENT_TOO_LARGE)
                 .body(Map.of("message", "File size exceeds the maximum allowed limit"));
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleUserNotFound(
+            final UserNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("message", ex.getMessage()));
     }
 
     @ExceptionHandler(ResponseStatusException.class)

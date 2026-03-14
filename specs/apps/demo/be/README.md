@@ -20,10 +20,11 @@ Supported currencies: **USD** and **IDR**.
 | token-management | JWT claims, JWKS endpoint, token revocation                                               |
 | admin            | User listing, search, account control, password reset token                               |
 | expenses         | Income/expense CRUD, currency precision, unit-of-measure, P&L reporting, file attachments |
+| test-support     | Test-only database reset and user promotion (gated by `ENABLE_TEST_API=true`)             |
 
 ## Three-Level Spec Consumption
 
-Every backend consumes these 76 Gherkin scenarios at **three test levels**. The feature files are the shared contract — only the step implementations differ per level.
+Every backend consumes these Gherkin scenarios at **three test levels**. The feature files are the shared contract — only the step implementations differ per level.
 
 | Level           | Nx Target          | What Happens                                                     | Dependencies             |
 | --------------- | ------------------ | ---------------------------------------------------------------- | ------------------------ |
@@ -36,7 +37,6 @@ Every backend consumes these 76 Gherkin scenarios at **three test levels**. The 
 - Steps instantiate services directly with mocked/in-memory repositories
 - No framework context (no Spring, no Phoenix, no HTTP server)
 - Coverage is measured here (>=90% line coverage via `rhino-cli test-coverage validate`)
-- All 76 scenarios must pass
 
 ### Integration Level
 
@@ -44,15 +44,13 @@ Every backend consumes these 76 Gherkin scenarios at **three test levels**. The 
 - Steps call the same service/repository functions but with real PostgreSQL connections
 - Migrations run against a fresh database each time
 - No HTTP layer — tests call application code directly
-- All 76 scenarios must pass
 - Coverage is NOT measured at this level
 
 ### E2E Level
 
 - Shared Playwright suite in `apps/demo-be-e2e/`
 - Tests make real HTTP requests to a running backend
-- Runs against any of the 11 backends
-- All 76 scenarios must pass
+- Runs against any of the supported backends
 
 ### Recommended Directory Structure for Step Definitions
 
@@ -99,8 +97,7 @@ files here are the single source of truth and must not contain language-specific
 
 This spec is organized into two subdirectories:
 
-- **[gherkin/](./gherkin/README.md)** — 13 Gherkin feature files, 76 scenarios, covering 7
-  domains
+- **[gherkin/](./gherkin/README.md)** — Gherkin feature files covering all domains
 - **[c4/](../c4/README.md)** — C4 architecture diagrams for the demo application
 
 ## Feature File Organization
@@ -124,12 +121,14 @@ specs/apps/demo/be/
     │   └── tokens.feature                (6 scenarios)
     ├── admin/
     │   └── admin.feature                 (6 scenarios)
-    └── expenses/
-        ├── expense-management.feature    (7 scenarios)
-        ├── currency-handling.feature     (6 scenarios)
-        ├── unit-handling.feature         (4 scenarios)
-        ├── reporting.feature             (6 scenarios)
-        └── attachments.feature           (10 scenarios)
+    ├── expenses/
+    │   ├── expense-management.feature    (7 scenarios)
+    │   ├── currency-handling.feature     (6 scenarios)
+    │   ├── unit-handling.feature         (4 scenarios)
+    │   ├── reporting.feature             (6 scenarios)
+    │   └── attachments.feature           (10 scenarios)
+    └── test-support/
+        └── test-api.feature              (3 scenarios)
 ```
 
 **File naming**: `[domain-capability].feature` (kebab-case)

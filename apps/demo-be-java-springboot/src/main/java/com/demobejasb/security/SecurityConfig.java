@@ -43,6 +43,8 @@ public class SecurityConfig {
                                         .permitAll()
                                         .requestMatchers("/.well-known/jwks.json")
                                         .permitAll()
+                                        .requestMatchers("/api/v1/test/**")
+                                        .permitAll()
                                         .requestMatchers("/api/v1/admin/**")
                                         .hasRole("ADMIN")
                                         .anyRequest()

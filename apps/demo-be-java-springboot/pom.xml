@@ -280,6 +280,9 @@
                         <exclude>**/config/GlobalExceptionHandler.class</exclude>
                         <!-- Simple exception class: no business logic to test in unit scope -->
                         <exclude>**/attachment/FileSizeLimitExceededException.class</exclude>
+                        <!-- Test-only API: conditionally loaded, not production code -->
+                        <exclude>**/test/controller/TestApiController.class</exclude>
+                        <exclude>**/test/controller/UserNotFoundException.class</exclude>
                     </excludes>
                 </configuration>
                 <executions>

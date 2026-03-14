@@ -16,6 +16,8 @@ app:
   jwt:
     secret: ${APP_JWT_SECRET:change-me-in-production-at-least-32-chars-long}
     expiration-ms: 86400000 # 24 hours
+  test-api:
+    enabled: ${ENABLE_TEST_API:false}
 
 server:
   port: 8201
