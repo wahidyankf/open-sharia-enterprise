@@ -17,6 +17,13 @@
       str/lower-case
       (str/replace #"^-" "")))
 
+(defn- snake->camel
+  "Convert snake_case string to camelCase. e.g. 'income_total' -> 'incomeTotal'."
+  [s]
+  (let [parts (str/split s #"_")]
+    (str (first parts)
+         (apply str (map str/capitalize (rest parts))))))
+
 ;; ============================================================
 ;; Server lifecycle
 ;; ============================================================
@@ -507,13 +514,16 @@
   (let [k    (keyword (str/replace field #"_" "-"))
         k2   (keyword field)
         k3   (keyword (camel->kebab field))
+        k4   (keyword (snake->camel field))
         body (:last-body state)]
     (is (or (= value (get body k))
             (= value (get body k2))
             (= value (get body k3))
+            (= value (get body k4))
             (= value (str (get body k)))
             (= value (str (get body k2)))
-            (= value (str (get body k3))))
+            (= value (str (get body k3)))
+            (= value (str (get body k4))))
         (str "Expected field " field " = " value " in " body)))
   state)
 
@@ -521,7 +531,8 @@
   (let [body   (:last-body state)
         actual (or (get body (keyword (str/replace field #"_" "-")))
                    (get body (keyword field))
-                   (get body (keyword (camel->kebab field))))]
+                   (get body (keyword (camel->kebab field)))
+                   (get body (keyword (snake->camel field))))]
     (is (= value (double actual))
         (str "Expected " field " = " value " in " body)))
   state)
@@ -530,7 +541,8 @@
   (let [body   (:last-body state)
         actual (or (get body (keyword (str/replace field #"_" "-")))
                    (get body (keyword field))
-                   (get body (keyword (camel->kebab field))))]
+                   (get body (keyword (camel->kebab field)))
+                   (get body (keyword (snake->camel field))))]
     (is (= (double value) (double actual))
         (str "Expected " field " = " value " in " body)))
   state)
@@ -539,8 +551,9 @@
   (let [k    (keyword (str/replace field #"_" "-"))
         k2   (keyword field)
         k3   (keyword (camel->kebab field))
+        k4   (keyword (snake->camel field))
         body (:last-body state)]
-    (is (or (some? (get body k)) (some? (get body k2)) (some? (get body k3)))
+    (is (or (some? (get body k)) (some? (get body k2)) (some? (get body k3)) (some? (get body k4)))
         (str "Expected non-null " field " in " body)))
   state)
 
@@ -548,8 +561,9 @@
   (let [k    (keyword (str/replace field #"_" "-"))
         k2   (keyword field)
         k3   (keyword (camel->kebab field))
+        k4   (keyword (snake->camel field))
         body (:last-body state)]
-    (is (and (nil? (get body k)) (nil? (get body k2)) (nil? (get body k3)))
+    (is (and (nil? (get body k)) (nil? (get body k2)) (nil? (get body k3)) (nil? (get body k4)))
         (str "Expected " field " to be absent in " body)))
   state)
 

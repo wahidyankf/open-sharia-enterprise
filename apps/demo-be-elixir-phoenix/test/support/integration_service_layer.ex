@@ -100,8 +100,8 @@ defmodule DemoBeExph.Integration.ServiceLayer do
         %{
           status: 200,
           body: %{
-            "access_token" => access_token,
-            "refresh_token" => refresh_token,
+            "accessToken" => access_token,
+            "refreshToken" => refresh_token,
             "token_type" => "Bearer"
           }
         }
@@ -165,7 +165,7 @@ defmodule DemoBeExph.Integration.ServiceLayer do
 
   @doc "POST /api/v1/auth/refresh"
   def refresh(raw_token) when raw_token == "" do
-    %{status: 400, body: %{"errors" => %{"refresh_token" => ["can't be blank"]}}}
+    %{status: 400, body: %{"errors" => %{"refreshToken" => ["can't be blank"]}}}
   end
 
   def refresh(raw_token) do
@@ -189,8 +189,8 @@ defmodule DemoBeExph.Integration.ServiceLayer do
           %{
             status: 200,
             body: %{
-              "access_token" => access_token,
-              "refresh_token" => new_refresh_token,
+              "accessToken" => access_token,
+              "refreshToken" => new_refresh_token,
               "token_type" => "Bearer"
             }
           }
@@ -231,7 +231,7 @@ defmodule DemoBeExph.Integration.ServiceLayer do
             "id" => user.id,
             "username" => user.username,
             "email" => user.email,
-            "display_name" => user.display_name || user.username,
+            "displayName" => user.display_name || user.username,
             "role" => user.role,
             "status" => user.status
           }
@@ -246,7 +246,9 @@ defmodule DemoBeExph.Integration.ServiceLayer do
         response
 
       {:ok, user} ->
-        case accounts().update_user(user, params) do
+        attrs = remap_update_params(params)
+
+        case accounts().update_user(user, attrs) do
           {:ok, updated_user} ->
             %{
               status: 200,
@@ -254,7 +256,7 @@ defmodule DemoBeExph.Integration.ServiceLayer do
                 "id" => updated_user.id,
                 "username" => updated_user.username,
                 "email" => updated_user.email,
-                "display_name" => updated_user.display_name || updated_user.username
+                "displayName" => updated_user.display_name || updated_user.username
               }
             }
 
@@ -317,8 +319,8 @@ defmodule DemoBeExph.Integration.ServiceLayer do
         %{
           status: 200,
           body: %{
-            "data" => Enum.map(result.data, &user_json/1),
-            "total" => result.total,
+            "content" => Enum.map(result.data, &user_json/1),
+            "totalElements" => result.total,
             "page" => result.page
           }
         }
@@ -410,7 +412,7 @@ defmodule DemoBeExph.Integration.ServiceLayer do
               status: 200,
               body: %{
                 "message" => "Password reset token generated",
-                "reset_token" => reset_token,
+                "token" => reset_token,
                 "user_id" => user.id
               }
             }
@@ -451,8 +453,8 @@ defmodule DemoBeExph.Integration.ServiceLayer do
         %{
           status: 200,
           body: %{
-            "data" => Enum.map(result.data, &expense_json/1),
-            "total" => result.total,
+            "content" => Enum.map(result.data, &expense_json/1),
+            "totalElements" => result.total,
             "page" => result.page
           }
         }
@@ -751,6 +753,16 @@ defmodule DemoBeExph.Integration.ServiceLayer do
     |> Enum.into(%{}, fn {k, v} -> {Atom.to_string(k), v} end)
   end
 
+  defp remap_update_params(params) do
+    params
+    |> then(fn p ->
+      case Map.pop(p, "displayName") do
+        {nil, p} -> p
+        {val, p} -> Map.put(p, "display_name", val)
+      end
+    end)
+  end
+
   defp parse_date(""), do: {:error, :invalid_date}
 
   defp parse_date(str) do
@@ -793,8 +805,7 @@ defmodule DemoBeExph.Integration.ServiceLayer do
       "filename" => attachment.filename,
       "content_type" => attachment.content_type,
       "size" => attachment.size,
-      "url" =>
-        "/api/v1/expenses/#{attachment.expense_id}/attachments/#{attachment.id}",
+      "url" => "/api/v1/expenses/#{attachment.expense_id}/attachments/#{attachment.id}",
       "inserted_at" => attachment.inserted_at
     }
   end
@@ -806,7 +817,7 @@ defmodule DemoBeExph.Integration.ServiceLayer do
       "email" => user.email,
       "role" => user.role,
       "status" => user.status,
-      "display_name" => user.display_name || user.username
+      "displayName" => user.display_name || user.username
     }
   end
 end

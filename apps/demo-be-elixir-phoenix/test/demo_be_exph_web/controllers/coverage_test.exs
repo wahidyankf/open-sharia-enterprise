@@ -218,15 +218,15 @@ defmodule DemoBeExphWeb.CoverageTest do
       assert body["errors"]["password"] != nil
     end
 
-    test "refresh returns 400 when refresh_token is empty" do
+    test "refresh returns 400 when refreshToken is empty" do
       conn =
         build_conn()
         |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/auth/refresh", Jason.encode!(%{refresh_token: ""}))
+        |> post("/api/v1/auth/refresh", Jason.encode!(%{refreshToken: ""}))
 
       assert conn.status == 400
       body = Jason.decode!(conn.resp_body)
-      assert body["errors"]["refresh_token"] != nil
+      assert body["errors"]["refreshToken"] != nil
     end
 
     test "logout succeeds with invalid token (graceful error)" do

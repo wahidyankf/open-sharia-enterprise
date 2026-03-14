@@ -20,8 +20,9 @@ defmodule DemoBeExphWeb.UserController do
 
   def update_me(conn, params) do
     user = GuardianPlug.current_resource(conn)
+    attrs = remap_update_params(params)
 
-    case accounts().update_user(user, params) do
+    case accounts().update_user(user, attrs) do
       {:ok, updated_user} ->
         json(conn, %{
           id: updated_user.id,
@@ -39,8 +40,8 @@ defmodule DemoBeExphWeb.UserController do
 
   def change_password(conn, params) do
     user = GuardianPlug.current_resource(conn)
-    old_password = Map.get(params, "old_password", "")
-    new_password = Map.get(params, "new_password", "")
+    old_password = Map.get(params, "oldPassword", "")
+    new_password = Map.get(params, "newPassword", "")
 
     case accounts().change_password(user, old_password, new_password) do
       {:ok, _user} ->
@@ -70,6 +71,16 @@ defmodule DemoBeExphWeb.UserController do
         |> put_status(:bad_request)
         |> json(%{errors: format_errors(changeset)})
     end
+  end
+
+  defp remap_update_params(params) do
+    params
+    |> then(fn p ->
+      case Map.pop(p, "displayName") do
+        {nil, p} -> p
+        {val, p} -> Map.put(p, "display_name", val)
+      end
+    end)
   end
 
   defp format_errors(changeset) do

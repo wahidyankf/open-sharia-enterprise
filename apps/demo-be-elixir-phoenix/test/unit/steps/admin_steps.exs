@@ -69,13 +69,13 @@ defmodule DemoBeExphWeb.Unit.AdminSteps do
     {:ok, Map.put(state, :conn, conn)}
   end
 
-  defwhen ~r/^the admin sends GET \/api\/v1\/admin\/users\?email=(?<email>[^\s]+)$/,
-          %{email: email},
+  defwhen ~r/^the admin sends GET \/api\/v1\/admin\/users\?search=(?<search>[^\s]+)$/,
+          %{search: search},
           %{admin_token: admin_token} = state do
     conn =
       build_conn()
       |> put_req_header("authorization", Helpers.bearer_header(admin_token))
-      |> get("/api/v1/admin/users?email=#{email}")
+      |> get("/api/v1/admin/users?search=#{search}")
 
     {:ok, Map.put(state, :conn, conn)}
   end
@@ -149,7 +149,7 @@ defmodule DemoBeExphWeb.Unit.AdminSteps do
           %{field: field, value: value},
           %{conn: conn} = state do
     body = Jason.decode!(conn.resp_body)
-    users = body["data"]
+    users = body["content"]
     assert Enum.any?(users, fn u -> u[field] == value end)
     {:ok, state}
   end

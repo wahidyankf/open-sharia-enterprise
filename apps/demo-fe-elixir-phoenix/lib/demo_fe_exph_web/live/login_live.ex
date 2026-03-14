@@ -21,12 +21,9 @@ defmodule DemoFeExphWeb.LoginLive do
         access_token = body["accessToken"]
         refresh_token = body["refreshToken"]
 
-        secret =
-          Application.get_env(:demo_fe_exph, DemoFeExphWeb.Endpoint)[:secret_key_base]
-
         signed =
           Phoenix.Token.sign(
-            %{secret_key_base: secret},
+            DemoFeExphWeb.Endpoint,
             "session_tokens",
             %{"access_token" => access_token, "refresh_token" => refresh_token}
           )

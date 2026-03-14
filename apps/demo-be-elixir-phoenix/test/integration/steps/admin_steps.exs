@@ -60,10 +60,10 @@ defmodule DemoBeExphWeb.Integration.AdminSteps do
     {:ok, Map.put(state, :response, response)}
   end
 
-  defwhen ~r/^the admin sends GET \/api\/v1\/admin\/users\?email=(?<email>[^\s]+)$/,
-          %{email: email},
+  defwhen ~r/^the admin sends GET \/api\/v1\/admin\/users\?search=(?<search>[^\s]+)$/,
+          %{search: search},
           %{admin_token: admin_token} = state do
-    response = ServiceLayer.admin_list_users(admin_token, email: email)
+    response = ServiceLayer.admin_list_users(admin_token, email: search)
     {:ok, Map.put(state, :response, response)}
   end
 
@@ -113,7 +113,7 @@ defmodule DemoBeExphWeb.Integration.AdminSteps do
   defthen ~r/^the response body should contain at least one user with "(?<field>[^"]+)" equal to "(?<value>[^"]+)"$/,
           %{field: field, value: value},
           %{response: response} = state do
-    users = response.body["data"]
+    users = response.body["content"]
     assert Enum.any?(users, fn u -> u[field] == value end)
     {:ok, state}
   end
