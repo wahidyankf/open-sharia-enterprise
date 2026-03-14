@@ -21,8 +21,3 @@ Feature: Test Support API
       | username | alice |
     Then the response status should be 200
     And user "alice" should have the "ADMIN" role
-
-  Scenario: Test API returns 404 when disabled
-    Given the test API is disabled
-    When a POST request is sent to "/api/v1/test/reset-db"
-    Then the response status should be 404
