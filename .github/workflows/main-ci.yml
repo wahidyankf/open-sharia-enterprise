@@ -102,6 +102,7 @@ jobs:
           (cd libs/elixir-gherkin && mix deps.get)
           (cd libs/elixir-cabbage && mix deps.get)
           (cd apps/demo-be-elixir-phoenix && mix deps.get)
+          (cd apps/demo-fe-elixir-phoenix && mix deps.get)
 
       - name: Install Python dependencies
         run: (cd apps/demo-be-python-fastapi && uv sync)

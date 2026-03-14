@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vite --port 3301",
     "build": "vite build",
-    "start": "node dist/server/index.js"
+    "start": "node_modules/.bin/h3 serve dist/server/server.js"
   },
   "dependencies": {
     "@tanstack/react-router": "^1.120.0",
