@@ -13,19 +13,6 @@ func registerReportingSteps(sc *godog.ScenarioContext, ctx *scenarioCtx) {
 	sc.Step(`^the expense breakdown should contain "([^"]*)" with amount "([^"]*)"$`, ctx.theExpenseBreakdownShouldContainCategory)
 }
 
-// remapPLFieldName translates legacy snake_case field names from the shared Gherkin spec
-// to the camelCase field names returned by the backend.
-func remapPLFieldName(field string) string {
-	switch field {
-	case "income_total":
-		return "totalIncome"
-	case "expense_total":
-		return "totalExpense"
-	default:
-		return field
-	}
-}
-
 func (ctx *scenarioCtx) aliceSendsGetPLReport(from, to, currency string) error {
 	// Map legacy from/to params to startDate/endDate.
 	url := fmt.Sprintf("/api/v1/reports/pl?startDate=%s&endDate=%s&currency=%s", from, to, currency)
