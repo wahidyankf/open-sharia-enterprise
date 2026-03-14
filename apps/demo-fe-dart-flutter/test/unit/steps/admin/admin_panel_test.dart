@@ -71,6 +71,14 @@ class _TestAdminPanelState extends State<_TestAdminPanel> {
     _applyFilter();
   }
 
+  @override
+  void didUpdateWidget(covariant _TestAdminPanel oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.searchQuery != widget.searchQuery) {
+      _applyFilter();
+    }
+  }
+
   void _applyFilter() {
     final query = widget.searchQuery ?? '';
     if (query.isNotEmpty) {
