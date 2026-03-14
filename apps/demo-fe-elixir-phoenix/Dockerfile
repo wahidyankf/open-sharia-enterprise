@@ -14,8 +14,8 @@ RUN mix assets.deploy
 RUN mix compile
 RUN mix release
 
-FROM alpine:3.20
-RUN apk add --no-cache libstdc++ openssl ncurses-libs
+FROM alpine:3.22
+RUN apk add --no-cache libstdc++ openssl ncurses-libs libgcc
 RUN addgroup -S app && adduser -S app -G app
 WORKDIR /app
 COPY --from=build --chown=app:app /app/_build/prod/rel/demo_fe_exph ./
