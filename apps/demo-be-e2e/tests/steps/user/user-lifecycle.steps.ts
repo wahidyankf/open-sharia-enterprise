@@ -17,11 +17,11 @@ When(/^alice sends GET \/api\/v1\/users\/me$/, async ({ request }) => {
   );
 });
 
-When(/^alice sends PATCH \/api\/v1\/users\/me with body \{ "display_name": "Alice Smith" \}$/, async ({ request }) => {
+When(/^alice sends PATCH \/api\/v1\/users\/me with body \{ "displayName": "Alice Smith" \}$/, async ({ request }) => {
   const token = getTokenForUser("alice");
   setResponse(
     await request.patch("/api/v1/users/me", {
-      data: { display_name: "Alice Smith" },
+      data: { displayName: "Alice Smith" },
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -31,12 +31,12 @@ When(/^alice sends PATCH \/api\/v1\/users\/me with body \{ "display_name": "Alic
 });
 
 When(
-  /^alice sends POST \/api\/v1\/users\/me\/password with body \{ "old_password": "Str0ng#Pass1", "new_password": "NewPass#456" \}$/,
+  /^alice sends POST \/api\/v1\/users\/me\/password with body \{ "oldPassword": "Str0ng#Pass1", "newPassword": "NewPass#456" \}$/,
   async ({ request }) => {
     const token = getTokenForUser("alice");
     setResponse(
       await request.post("/api/v1/users/me/password", {
-        data: { old_password: "Str0ng#Pass1", new_password: "NewPass#456" },
+        data: { oldPassword: "Str0ng#Pass1", newPassword: "NewPass#456" },
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -47,12 +47,12 @@ When(
 );
 
 When(
-  /^alice sends POST \/api\/v1\/users\/me\/password with body \{ "old_password": "Wr0ngOld!", "new_password": "NewPass#456" \}$/,
+  /^alice sends POST \/api\/v1\/users\/me\/password with body \{ "oldPassword": "Wr0ngOld!", "newPassword": "NewPass#456" \}$/,
   async ({ request }) => {
     const token = getTokenForUser("alice");
     setResponse(
       await request.post("/api/v1/users/me/password", {
-        data: { old_password: "Wr0ngOld!", new_password: "NewPass#456" },
+        data: { oldPassword: "Wr0ngOld!", newPassword: "NewPass#456" },
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

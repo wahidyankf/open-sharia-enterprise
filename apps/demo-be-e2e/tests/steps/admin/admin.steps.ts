@@ -34,10 +34,10 @@ When(/^the admin sends GET \/api\/v1\/admin\/users$/, async ({ request }) => {
   );
 });
 
-When(/^the admin sends GET \/api\/v1\/admin\/users\?email=alice@example\.com$/, async ({ request }) => {
+When(/^the admin sends GET \/api\/v1\/admin\/users\?search=alice@example\.com$/, async ({ request }) => {
   const token = getTokenForUser("superadmin");
   setResponse(
-    await request.get("/api/v1/admin/users?email=alice@example.com", {
+    await request.get("/api/v1/admin/users?search=alice@example.com", {
       headers: { Authorization: `Bearer ${token}` },
     }),
   );
@@ -119,8 +119,8 @@ Then(
   // oxlint-disable-next-line no-empty-pattern
   async ({}, field: string, value: string) => {
     const body = (await getResponse().json()) as Record<string, unknown>;
-    // The paginated response has a "data" array
-    const data = body["data"] as Array<Record<string, unknown>>;
+    // The paginated response has a "content" array
+    const data = body["content"] as Array<Record<string, unknown>>;
     expect(Array.isArray(data)).toBe(true);
     const match = data.find((user) => user[field] === value);
     expect(match).toBeDefined();
