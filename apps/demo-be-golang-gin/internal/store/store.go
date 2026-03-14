@@ -9,9 +9,10 @@ import (
 
 // ListUsersQuery defines filtering and pagination options for listing users.
 type ListUsersQuery struct {
-	Email string
-	Page  int
-	Size  int
+	Email  string
+	Search string
+	Page   int
+	Size   int
 }
 
 // ListExpensesQuery defines filtering and pagination options for listing expenses.
@@ -53,6 +54,7 @@ type Store interface {
 	UpdateExpense(ctx context.Context, e *domain.Expense) error
 	DeleteExpense(ctx context.Context, id string) error
 	SumExpensesByCurrency(ctx context.Context, userID string) ([]domain.CurrencySummary, error)
+	ExpenseSummaryByCurrency(ctx context.Context, userID string) ([]domain.ExpenseCurrencySummary, error)
 
 	// Attachments
 	CreateAttachment(ctx context.Context, a *domain.Attachment) error

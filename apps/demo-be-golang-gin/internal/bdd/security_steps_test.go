@@ -107,7 +107,7 @@ func (ctx *scenarioCtx) anAdminUserIsRegisteredAndLoggedIn(username string) erro
 	if err := json.Unmarshal(body2, &loginParsed); err != nil {
 		return err
 	}
-	adminToken, ok := loginParsed["access_token"].(string)
+	adminToken, ok := loginParsed["accessToken"].(string)
 	if !ok {
 		return fmt.Errorf("access_token is not a string")
 	}

@@ -20,7 +20,7 @@ func (h *Handler) TokenClaims(c *gin.Context) {
 		"sub":      claims.Subject,
 		"iss":      claims.Issuer,
 		"username": claims.Username,
-		"role":     claims.Role,
+		"roles":    []string{string(claims.Role)},
 		"jti":      claims.ID,
 		"exp":      claims.ExpiresAt.Unix(),
 		"iat":      claims.IssuedAt.Unix(),

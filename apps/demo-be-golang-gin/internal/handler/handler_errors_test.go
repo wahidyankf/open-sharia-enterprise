@@ -181,6 +181,10 @@ func (s *errStore) SumExpensesByCurrency(ctx context.Context, userID string) ([]
 	return s.inner.SumExpensesByCurrency(ctx, userID)
 }
 
+func (s *errStore) ExpenseSummaryByCurrency(ctx context.Context, userID string) ([]domain.ExpenseCurrencySummary, error) {
+	return s.inner.ExpenseSummaryByCurrency(ctx, userID)
+}
+
 func (s *errStore) CreateAttachment(ctx context.Context, a *domain.Attachment) error {
 	if s.createAttachmentErr != nil {
 		return s.createAttachmentErr
@@ -259,9 +263,9 @@ func registerAndLoginErrStore(t *testing.T, r *gin.Engine, username, email strin
 	if code2 != 200 {
 		t.Fatalf("login failed with %d", code2)
 	}
-	token, ok := body2["access_token"].(string)
+	token, ok := body2["accessToken"].(string)
 	if !ok {
-		t.Fatalf("access_token not found in response")
+		t.Fatalf("accessToken not found in response")
 	}
 	return token
 }
@@ -335,7 +339,7 @@ func TestUnitRefreshHandlerErrorPaths(t *testing.T) {
 	t.Run("non-existent refresh token", func(t *testing.T) {
 		r, _ := newTestRouter()
 		code, _ := doReq(r, "POST", "/api/v1/auth/refresh", map[string]string{
-			"refresh_token": "nonexistent-token",
+			"refreshToken": "nonexistent-token",
 		}, "")
 		if code != 401 {
 			t.Errorf("expected 401 for non-existent token, got %d", code)
@@ -358,7 +362,7 @@ func TestUnitRefreshHandlerErrorPaths(t *testing.T) {
 		_ = es.inner.SaveRefreshToken(context.Background(), expiredRT)
 
 		code, _ := doReq(r, "POST", "/api/v1/auth/refresh", map[string]string{
-			"refresh_token": "expired-token-str",
+			"refreshToken": "expired-token-str",
 		}, "")
 		if code != 401 {
 			t.Errorf("expected 401 for expired token, got %d", code)
@@ -380,7 +384,7 @@ func TestUnitRefreshHandlerErrorPaths(t *testing.T) {
 		_ = es.inner.SaveRefreshToken(context.Background(), validRT)
 
 		code, _ := doReq(r, "POST", "/api/v1/auth/refresh", map[string]string{
-			"refresh_token": "orphan-token-str",
+			"refreshToken": "orphan-token-str",
 		}, "")
 		if code != 401 {
 			t.Errorf("expected 401 for user not found, got %d", code)
@@ -399,7 +403,7 @@ func TestUnitRefreshHandlerErrorPaths(t *testing.T) {
 		_ = es.inner.UpdateUser(context.Background(), u)
 
 		code, _ := doReq(r, "POST", "/api/v1/auth/refresh", map[string]string{
-			"refresh_token": refreshToken,
+			"refreshToken": refreshToken,
 		}, "")
 		if code != 401 {
 			t.Errorf("expected 401 for inactive user, got %d", code)
@@ -414,7 +418,7 @@ func TestUnitRefreshHandlerErrorPaths(t *testing.T) {
 
 		es.revokeRefreshTokenErr = errForced
 		code, _ := doReq(r, "POST", "/api/v1/auth/refresh", map[string]string{
-			"refresh_token": refreshToken,
+			"refreshToken": refreshToken,
 		}, "")
 		if code != 500 {
 			t.Errorf("expected 500 for RevokeRefreshToken error, got %d", code)
@@ -429,7 +433,7 @@ func TestUnitRefreshHandlerErrorPaths(t *testing.T) {
 
 		es.saveRefreshTokenErr = errForced
 		code, _ := doReq(r, "POST", "/api/v1/auth/refresh", map[string]string{
-			"refresh_token": refreshToken,
+			"refreshToken": refreshToken,
 		}, "")
 		if code != 500 {
 			t.Errorf("expected 500 for SaveRefreshToken error, got %d", code)
@@ -443,7 +447,7 @@ func TestUnitLogoutWithRefreshToken(t *testing.T) {
 	accessToken, refreshToken := registerAndLogin(t, r, "logout_user", "logout@example.com", "Str0ng#Pass1")
 
 	code, _ := doReq(r, "POST", "/api/v1/auth/logout", map[string]string{
-		"refresh_token": refreshToken,
+		"refreshToken": refreshToken,
 	}, accessToken)
 	if code != 200 {
 		t.Errorf("expected 200, got %d", code)
@@ -488,7 +492,7 @@ func TestUnitUpdateProfileStoreError(t *testing.T) {
 		// Let JWT middleware's GetUserByID call pass (1 call), fail on 2nd (handler's).
 		es.getUserByIDErr = domain.NewNotFoundError("not found")
 		es.getUserByIDErrAfter = 1
-		code, _ := doReq(r, "PATCH", "/api/v1/users/me", map[string]string{"display_name": "New Name"}, accessToken)
+		code, _ := doReq(r, "PATCH", "/api/v1/users/me", map[string]string{"displayName": "New Name"}, accessToken)
 		if code != 404 {
 			t.Errorf("expected 404 for GetUserByID error, got %d", code)
 		}
@@ -500,7 +504,7 @@ func TestUnitUpdateProfileStoreError(t *testing.T) {
 		accessToken := registerAndLoginErrStore(t, r, "alice_up2", "alice_up2@example.com")
 
 		es.updateUserErr = errForced
-		code2, _ := doReq(r, "PATCH", "/api/v1/users/me", map[string]string{"display_name": "New Name"}, accessToken)
+		code2, _ := doReq(r, "PATCH", "/api/v1/users/me", map[string]string{"displayName": "New Name"}, accessToken)
 		if code2 != 500 {
 			t.Errorf("expected 500 for UpdateUser error, got %d", code2)
 		}
@@ -518,7 +522,7 @@ func TestUnitChangePasswordStoreError(t *testing.T) {
 		es.getUserByIDErr = domain.NewNotFoundError("not found")
 		es.getUserByIDErrAfter = 1
 		code, _ := doReq(r, "POST", "/api/v1/users/me/password", map[string]string{
-			"old_password": "Str0ng#Pass1", "new_password": "NewPass#456",
+			"oldPassword": "Str0ng#Pass1", "newPassword": "NewPass#456",
 		}, accessToken)
 		if code != 404 {
 			t.Errorf("expected 404 for GetUserByID error, got %d", code)
@@ -532,7 +536,7 @@ func TestUnitChangePasswordStoreError(t *testing.T) {
 
 		es.updateUserErr = errForced
 		code2, _ := doReq(r, "POST", "/api/v1/users/me/password", map[string]string{
-			"old_password": "Str0ng#Pass1", "new_password": "NewPass#456",
+			"oldPassword": "Str0ng#Pass1", "newPassword": "NewPass#456",
 		}, accessToken)
 		if code2 != 500 {
 			t.Errorf("expected 500 for UpdateUser error, got %d", code2)
@@ -1005,7 +1009,7 @@ func TestUnitReportStoreError(t *testing.T) {
 			c.Set(string(auth.ClaimsKey), "wrong-type")
 			c.Next()
 		}, h.PLReport)
-		req := httptest.NewRequest("GET", "/test?from=2025-01-01&to=2025-01-31&currency=USD", nil)
+		req := httptest.NewRequest("GET", "/test?startDate=2025-01-01&endDate=2025-01-31&currency=USD", nil)
 		w := httptest.NewRecorder()
 		r.ServeHTTP(w, req)
 		if w.Code != 401 {
@@ -1019,7 +1023,7 @@ func TestUnitReportStoreError(t *testing.T) {
 		accessToken := registerAndLoginErrStore(t, r, "alice_pl", "alice_pl@example.com")
 
 		es.plReportErr = errForced
-		code, _ := doReq(r, "GET", "/api/v1/reports/pl?from=2025-01-01&to=2025-01-31&currency=USD", nil, accessToken)
+		code, _ := doReq(r, "GET", "/api/v1/reports/pl?startDate=2025-01-01&endDate=2025-01-31&currency=USD", nil, accessToken)
 		if code != 500 {
 			t.Errorf("expected 500, got %d", code)
 		}
@@ -1151,9 +1155,9 @@ func setupAdminToken(t *testing.T, r *gin.Engine, es *errStore) string {
 	_, body := doReq(r, "POST", "/api/v1/auth/login", map[string]string{
 		"username": "superadmin_err", "password": "Admin#Pass123",
 	}, "")
-	tok, ok := body["access_token"].(string)
+	tok, ok := body["accessToken"].(string)
 	if !ok {
-		t.Fatalf("access_token not found in admin login response")
+		t.Fatalf("accessToken not found in admin login response")
 	}
 	return tok
 }

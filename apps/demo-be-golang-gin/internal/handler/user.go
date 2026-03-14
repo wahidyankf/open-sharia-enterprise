@@ -43,12 +43,14 @@ func (h *Handler) GetProfile(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"id":           user.ID,
-		"username":     user.Username,
-		"email":        user.Email,
-		"display_name": user.DisplayName,
-		"status":       user.Status,
-		"role":         user.Role,
+		"id":          user.ID,
+		"username":    user.Username,
+		"email":       user.Email,
+		"displayName": user.DisplayName,
+		"status":      user.Status,
+		"roles":       []string{string(user.Role)},
+		"createdAt":   user.CreatedAt,
+		"updatedAt":   user.UpdatedAt,
 	})
 }
 
@@ -70,7 +72,7 @@ func (h *Handler) UpdateProfile(c *gin.Context) {
 		RespondError(c, err)
 		return
 	}
-	if displayName, ok := body["display_name"]; ok {
+	if displayName, ok := body["displayName"]; ok {
 		user.DisplayName = displayName
 	}
 	user.UpdatedAt = time.Now()
@@ -79,19 +81,21 @@ func (h *Handler) UpdateProfile(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"id":           user.ID,
-		"username":     user.Username,
-		"email":        user.Email,
-		"display_name": user.DisplayName,
-		"status":       user.Status,
-		"role":         user.Role,
+		"id":          user.ID,
+		"username":    user.Username,
+		"email":       user.Email,
+		"displayName": user.DisplayName,
+		"status":      user.Status,
+		"roles":       []string{string(user.Role)},
+		"createdAt":   user.CreatedAt,
+		"updatedAt":   user.UpdatedAt,
 	})
 }
 
 // ChangePasswordRequest is the request body for password change.
 type ChangePasswordRequest struct {
-	OldPassword string `json:"old_password"`
-	NewPassword string `json:"new_password"`
+	OldPassword string `json:"oldPassword"`
+	NewPassword string `json:"newPassword"`
 }
 
 // ChangePassword handles POST /api/v1/users/me/password.

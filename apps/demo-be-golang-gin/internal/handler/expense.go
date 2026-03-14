@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"math"
 	"net/http"
 	"strconv"
 	"strings"
@@ -40,13 +41,15 @@ func formatAmountString(currency string, amount float64) string {
 func expenseToResponse(e *domain.Expense) gin.H {
 	resp := gin.H{
 		"id":          e.ID,
-		"user_id":     e.UserID,
+		"userId":      e.UserID,
 		"amount":      formatAmountString(e.Currency, e.Amount),
 		"currency":    e.Currency,
 		"category":    e.Category,
 		"description": e.Description,
 		"date":        e.Date,
 		"type":        e.Type,
+		"createdAt":   e.CreatedAt,
+		"updatedAt":   e.UpdatedAt,
 	}
 	if e.Quantity != nil {
 		resp["quantity"] = *e.Quantity
@@ -137,28 +140,36 @@ func (h *Handler) ListExpenses(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "unauthorized"})
 		return
 	}
-	pageStr := c.DefaultQuery("page", "1")
+	pageStr := c.DefaultQuery("page", "0")
 	sizeStr := c.DefaultQuery("size", "20")
 	page, _ := strconv.Atoi(pageStr)
 	size, _ := strconv.Atoi(sizeStr)
+	if page < 0 {
+		page = 0
+	}
+	if size < 1 {
+		size = 20
+	}
 	q := store.ListExpensesQuery{UserID: claims.Subject, Page: page, Size: size}
 	expenses, total, err := h.store.ListExpenses(c.Request.Context(), q)
 	if err != nil {
 		RespondError(c, err)
 		return
 	}
-	var data []gin.H
+	var content []gin.H
 	for _, e := range expenses {
-		data = append(data, expenseToResponse(e))
+		content = append(content, expenseToResponse(e))
 	}
-	if data == nil {
-		data = []gin.H{}
+	if content == nil {
+		content = []gin.H{}
 	}
+	totalPages := int(math.Ceil(float64(total) / float64(size)))
 	c.JSON(http.StatusOK, gin.H{
-		"data":  data,
-		"total": total,
-		"page":  page,
-		"size":  size,
+		"content":       content,
+		"totalElements": total,
+		"totalPages":    totalPages,
+		"page":          page,
+		"size":          size,
 	})
 }
 
@@ -257,7 +268,7 @@ func (h *Handler) ExpenseSummary(c *gin.Context) {
 		RespondError(c, err)
 		return
 	}
-	result := make(map[string]string)
+	result := gin.H{}
 	for _, s := range summaries {
 		result[s.Currency] = formatAmountString(s.Currency, s.Total)
 	}

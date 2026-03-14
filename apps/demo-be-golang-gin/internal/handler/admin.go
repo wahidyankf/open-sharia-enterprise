@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"math"
 	"net/http"
 	"strconv"
 	"time"
@@ -14,36 +15,46 @@ import (
 
 // ListUsers handles GET /api/v1/admin/users.
 func (h *Handler) ListUsers(c *gin.Context) {
-	email := c.Query("email")
-	pageStr := c.DefaultQuery("page", "1")
+	search := c.Query("search")
+	pageStr := c.DefaultQuery("page", "0")
 	sizeStr := c.DefaultQuery("size", "20")
 	page, _ := strconv.Atoi(pageStr)
 	size, _ := strconv.Atoi(sizeStr)
-	q := store.ListUsersQuery{Email: email, Page: page, Size: size}
+	if page < 0 {
+		page = 0
+	}
+	if size < 1 {
+		size = 20
+	}
+	q := store.ListUsersQuery{Search: search, Page: page, Size: size}
 	users, total, err := h.store.ListUsers(c.Request.Context(), q)
 	if err != nil {
 		RespondError(c, err)
 		return
 	}
-	var data []gin.H
+	var content []gin.H
 	for _, u := range users {
-		data = append(data, gin.H{
-			"id":           u.ID,
-			"username":     u.Username,
-			"email":        u.Email,
-			"display_name": u.DisplayName,
-			"status":       u.Status,
-			"role":         u.Role,
+		content = append(content, gin.H{
+			"id":          u.ID,
+			"username":    u.Username,
+			"email":       u.Email,
+			"displayName": u.DisplayName,
+			"status":      u.Status,
+			"roles":       []string{string(u.Role)},
+			"createdAt":   u.CreatedAt,
+			"updatedAt":   u.UpdatedAt,
 		})
 	}
-	if data == nil {
-		data = []gin.H{}
+	if content == nil {
+		content = []gin.H{}
 	}
+	totalPages := int(math.Ceil(float64(total) / float64(size)))
 	c.JSON(http.StatusOK, gin.H{
-		"data":  data,
-		"total": total,
-		"page":  page,
-		"size":  size,
+		"content":       content,
+		"totalElements": total,
+		"totalPages":    totalPages,
+		"page":          page,
+		"size":          size,
 	})
 }
 
@@ -114,5 +125,5 @@ func (h *Handler) ForcePasswordReset(c *gin.Context) {
 		return
 	}
 	resetToken := uuid.New().String()
-	c.JSON(http.StatusOK, gin.H{"reset_token": resetToken})
+	c.JSON(http.StatusOK, gin.H{"token": resetToken})
 }

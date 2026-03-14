@@ -59,10 +59,10 @@ func registerAndLogin(t *testing.T, r *gin.Engine, username, email, password str
 	if code2 != 200 {
 		t.Fatalf("login failed with %d", code2)
 	}
-	accessTok, ok1 := body2["access_token"].(string)
-	refreshTok, ok2 := body2["refresh_token"].(string)
+	accessTok, ok1 := body2["accessToken"].(string)
+	refreshTok, ok2 := body2["refreshToken"].(string)
 	if !ok1 || !ok2 {
-		t.Fatalf("access_token or refresh_token not found in login response")
+		t.Fatalf("accessToken or refreshToken not found in login response")
 	}
 	return accessTok, refreshTok
 }
@@ -186,7 +186,7 @@ func TestUnitRefreshHandler(t *testing.T) {
 
 	// Success.
 	code, body := doReq(r, "POST", "/api/v1/auth/refresh", map[string]string{
-		"refresh_token": refreshToken,
+		"refreshToken": refreshToken,
 	}, "")
 	if code != 200 {
 		t.Errorf("expected 200, got %d; body: %v", code, body)
@@ -194,7 +194,7 @@ func TestUnitRefreshHandler(t *testing.T) {
 
 	// Invalid token (already used).
 	code2, _ := doReq(r, "POST", "/api/v1/auth/refresh", map[string]string{
-		"refresh_token": refreshToken,
+		"refreshToken": refreshToken,
 	}, "")
 	if code2 != 401 {
 		t.Errorf("expected 401 for revoked token, got %d", code2)
@@ -272,12 +272,12 @@ func TestUnitUpdateProfileHandler(t *testing.T) {
 	r, _ := newTestRouter()
 	accessToken, _ := registerAndLogin(t, r, "alice", "alice@example.com", "Str0ng#Pass1")
 
-	code, body := doReq(r, "PATCH", "/api/v1/users/me", map[string]string{"display_name": "Alice Smith"}, accessToken)
+	code, body := doReq(r, "PATCH", "/api/v1/users/me", map[string]string{"displayName": "Alice Smith"}, accessToken)
 	if code != 200 {
 		t.Errorf("expected 200, got %d; body: %v", code, body)
 	}
-	if body["display_name"] != "Alice Smith" {
-		t.Errorf("expected display_name Alice Smith, got %v", body["display_name"])
+	if body["displayName"] != "Alice Smith" {
+		t.Errorf("expected displayName Alice Smith, got %v", body["displayName"])
 	}
 
 	// Invalid JSON.
@@ -296,7 +296,7 @@ func TestUnitChangePasswordHandler(t *testing.T) {
 	accessToken, _ := registerAndLogin(t, r, "alice", "alice@example.com", "Str0ng#Pass1")
 
 	code, _ := doReq(r, "POST", "/api/v1/users/me/password", map[string]string{
-		"old_password": "Str0ng#Pass1", "new_password": "NewPass#456",
+		"oldPassword": "Str0ng#Pass1", "newPassword": "NewPass#456",
 	}, accessToken)
 	if code != 200 {
 		t.Errorf("expected 200, got %d", code)
@@ -304,7 +304,7 @@ func TestUnitChangePasswordHandler(t *testing.T) {
 
 	// Wrong old password.
 	code2, _ := doReq(r, "POST", "/api/v1/users/me/password", map[string]string{
-		"old_password": "WrongPass!", "new_password": "AnotherPass#789",
+		"oldPassword": "WrongPass!", "newPassword": "AnotherPass#789",
 	}, accessToken)
 	if code2 != 401 {
 		t.Errorf("expected 401, got %d", code2)
@@ -514,15 +514,15 @@ func TestUnitPLReport(t *testing.T) {
 		"description": "Food", "date": "2025-01-20", "type": "expense",
 	}, accessToken)
 
-	code, body := doReq(r, "GET", "/api/v1/reports/pl?from=2025-01-01&to=2025-01-31&currency=USD", nil, accessToken)
+	code, body := doReq(r, "GET", "/api/v1/reports/pl?startDate=2025-01-01&endDate=2025-01-31&currency=USD", nil, accessToken)
 	if code != 200 {
 		t.Errorf("expected 200, got %d; body: %v", code, body)
 	}
-	if body["income_total"] != "5000.00" {
-		t.Errorf("expected income_total 5000.00, got %v", body["income_total"])
+	if body["totalIncome"] != "5000.00" {
+		t.Errorf("expected totalIncome 5000.00, got %v", body["totalIncome"])
 	}
-	if body["expense_total"] != "150.00" {
-		t.Errorf("expected expense_total 150.00, got %v", body["expense_total"])
+	if body["totalExpense"] != "150.00" {
+		t.Errorf("expected totalExpense 150.00, got %v", body["totalExpense"])
 	}
 
 	// Missing params.
@@ -532,7 +532,7 @@ func TestUnitPLReport(t *testing.T) {
 	}
 
 	// Invalid currency.
-	code3, _ := doReq(r, "GET", "/api/v1/reports/pl?from=2025-01-01&to=2025-01-31&currency=EUR", nil, accessToken)
+	code3, _ := doReq(r, "GET", "/api/v1/reports/pl?startDate=2025-01-01&endDate=2025-01-31&currency=EUR", nil, accessToken)
 	if code3 != 400 {
 		t.Errorf("expected 400 for invalid currency, got %d", code3)
 	}
@@ -661,9 +661,9 @@ func TestUnitAdminHandlers(t *testing.T) {
 	_, body3 := doReq(r, "POST", "/api/v1/auth/login", map[string]string{
 		"username": "superadmin", "password": "Admin#Pass123",
 	}, "")
-	adminToken, ok := body3["access_token"].(string)
+	adminToken, ok := body3["accessToken"].(string)
 	if !ok {
-		t.Fatalf("access_token not found in admin login response")
+		t.Fatalf("accessToken not found in admin login response")
 	}
 
 	// List users.
@@ -702,8 +702,8 @@ func TestUnitAdminHandlers(t *testing.T) {
 	if code9 != 200 {
 		t.Errorf("expected 200 for force-password-reset, got %d", code9)
 	}
-	if body9["reset_token"] == nil {
-		t.Error("expected non-null reset_token")
+	if body9["token"] == nil {
+		t.Error("expected non-null token")
 	}
 
 	// Non-admin access.

@@ -60,6 +60,22 @@ type CurrencySummary struct {
 	Total    float64
 }
 
+// ExpenseCategoryBreakdown holds the total for a specific category and type.
+type ExpenseCategoryBreakdown struct {
+	Category string
+	Type     string
+	Total    float64
+}
+
+// ExpenseCurrencySummary holds income, expense, and category breakdown for a currency.
+type ExpenseCurrencySummary struct {
+	Currency     string
+	TotalIncome  float64
+	TotalExpense float64
+	Net          float64
+	Categories   []ExpenseCategoryBreakdown
+}
+
 // PLReport is the profit and loss report result.
 type PLReport struct {
 	IncomTotal       float64

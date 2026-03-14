@@ -165,7 +165,7 @@ func (ctx *scenarioCtx) bobHasCreatedEntry(amount, currency, category, descripti
 	if err := json.Unmarshal(body, &parsed); err != nil {
 		return err
 	}
-	bobToken, ok := parsed["access_token"].(string)
+	bobToken, ok := parsed["accessToken"].(string)
 	if !ok {
 		return fmt.Errorf("access_token is not a string")
 	}

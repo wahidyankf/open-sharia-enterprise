@@ -76,26 +76,28 @@ func (s *GORMStore) UpdateUser(_ context.Context, u *domain.User) error {
 	return s.db.Save(u).Error
 }
 
-// ListUsers returns a paginated list of users, optionally filtered by email.
+// ListUsers returns a paginated list of users, optionally filtered by email or search term.
 func (s *GORMStore) ListUsers(_ context.Context, q ListUsersQuery) ([]*domain.User, int64, error) {
 	var users []*domain.User
 	var total int64
 	db := s.db.Model(&domain.User{})
-	if q.Email != "" {
+	if q.Search != "" {
+		db = db.Where("email LIKE ? OR username LIKE ?", "%"+q.Search+"%", "%"+q.Search+"%")
+	} else if q.Email != "" {
 		db = db.Where("email LIKE ?", "%"+q.Email+"%")
 	}
 	if err := db.Count(&total).Error; err != nil {
 		return nil, 0, err
 	}
 	page := q.Page
-	if page < 1 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
 	size := q.Size
 	if size < 1 {
 		size = 20
 	}
-	offset := (page - 1) * size
+	offset := page * size
 	if err := db.Offset(offset).Limit(size).Find(&users).Error; err != nil {
 		return nil, 0, err
 	}
@@ -184,14 +186,14 @@ func (s *GORMStore) ListExpenses(_ context.Context, q ListExpensesQuery) ([]*dom
 		return nil, 0, err
 	}
 	page := q.Page
-	if page < 1 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
 	size := q.Size
 	if size < 1 {
 		size = 20
 	}
-	offset := (page - 1) * size
+	offset := page * size
 	if err := db.Offset(offset).Limit(size).Find(&expenses).Error; err != nil {
 		return nil, 0, err
 	}
@@ -226,6 +228,59 @@ func (s *GORMStore) SumExpensesByCurrency(_ context.Context, userID string) ([]d
 	result := make([]domain.CurrencySummary, 0, len(rows))
 	for _, r := range rows {
 		result = append(result, domain.CurrencySummary{Currency: r.Currency, Total: r.Total})
+	}
+	return result, nil
+}
+
+// ExpenseSummaryByCurrency returns income/expense breakdown grouped by currency.
+func (s *GORMStore) ExpenseSummaryByCurrency(_ context.Context, userID string) ([]domain.ExpenseCurrencySummary, error) {
+	type row struct {
+		Currency string
+		Type     string
+		Category string
+		Total    float64
+	}
+	var rows []row
+	err := s.db.Model(&domain.Expense{}).
+		Select("currency, type, category, SUM(amount) as total").
+		Where("user_id = ?", userID).
+		Group("currency, type, category").
+		Scan(&rows).Error
+	if err != nil {
+		return nil, err
+	}
+	type currencyData struct {
+		totalIncome  float64
+		totalExpense float64
+		categories   []domain.ExpenseCategoryBreakdown
+	}
+	byCurrency := make(map[string]*currencyData)
+	for _, r := range rows {
+		if _, ok := byCurrency[r.Currency]; !ok {
+			byCurrency[r.Currency] = &currencyData{}
+		}
+		d := byCurrency[r.Currency]
+		switch domain.EntryType(r.Type) {
+		case domain.EntryTypeIncome:
+			d.totalIncome += r.Total
+		case domain.EntryTypeExpense:
+			d.totalExpense += r.Total
+		}
+		d.categories = append(d.categories, domain.ExpenseCategoryBreakdown{
+			Category: r.Category,
+			Type:     r.Type,
+			Total:    r.Total,
+		})
+	}
+	result := make([]domain.ExpenseCurrencySummary, 0, len(byCurrency))
+	for currency, d := range byCurrency {
+		result = append(result, domain.ExpenseCurrencySummary{
+			Currency:     currency,
+			TotalIncome:  d.totalIncome,
+			TotalExpense: d.totalExpense,
+			Net:          d.totalIncome - d.totalExpense,
+			Categories:   d.categories,
+		})
 	}
 	return result, nil
 }

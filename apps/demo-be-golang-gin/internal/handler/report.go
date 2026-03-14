@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 
@@ -19,11 +20,11 @@ func (h *Handler) PLReport(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "unauthorized"})
 		return
 	}
-	from := c.Query("from")
-	to := c.Query("to")
+	startDate := c.Query("startDate")
+	endDate := c.Query("endDate")
 	currency := c.Query("currency")
-	if from == "" || to == "" || currency == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "from, to, and currency are required"})
+	if startDate == "" || endDate == "" || currency == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "startDate, endDate, and currency are required"})
 		return
 	}
 	if err := domain.ValidateCurrency(currency); err != nil {
@@ -32,8 +33,8 @@ func (h *Handler) PLReport(c *gin.Context) {
 	}
 	q := store.PLReportQuery{
 		UserID:   claims.Subject,
-		From:     from,
-		To:       to,
+		From:     startDate,
+		To:       endDate,
 		Currency: currency,
 	}
 	report, err := h.store.PLReport(c.Request.Context(), q)
@@ -41,19 +42,22 @@ func (h *Handler) PLReport(c *gin.Context) {
 		RespondError(c, err)
 		return
 	}
-	incomeBreakdown := make(map[string]string)
+	incomeBreakdown := make([]gin.H, 0, len(report.IncomeBreakdown))
 	for cat, amt := range report.IncomeBreakdown {
-		incomeBreakdown[cat] = fmt.Sprintf("%.2f", amt)
+		incomeBreakdown = append(incomeBreakdown, gin.H{"category": cat, "type": "income", "total": fmt.Sprintf("%.2f", amt)})
 	}
-	expenseBreakdown := make(map[string]string)
+	expenseBreakdown := make([]gin.H, 0, len(report.ExpenseBreakdown))
 	for cat, amt := range report.ExpenseBreakdown {
-		expenseBreakdown[cat] = fmt.Sprintf("%.2f", amt)
+		expenseBreakdown = append(expenseBreakdown, gin.H{"category": cat, "type": "expense", "total": fmt.Sprintf("%.2f", amt)})
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"income_total":      fmt.Sprintf("%.2f", report.IncomTotal),
-		"expense_total":     fmt.Sprintf("%.2f", report.ExpenseTotal),
-		"net":               fmt.Sprintf("%.2f", report.Net),
-		"income_breakdown":  incomeBreakdown,
-		"expense_breakdown": expenseBreakdown,
+		"totalIncome":      fmt.Sprintf("%.2f", report.IncomTotal),
+		"totalExpense":     fmt.Sprintf("%.2f", report.ExpenseTotal),
+		"net":              fmt.Sprintf("%.2f", report.Net),
+		"incomeBreakdown":  incomeBreakdown,
+		"expenseBreakdown": expenseBreakdown,
+		"startDate":        startDate,
+		"endDate":          endDate,
+		"currency":         strings.ToUpper(currency),
 	})
 }

@@ -143,9 +143,9 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"access_token":  accessToken,
-		"refresh_token": refreshTokenStr,
-		"token_type":    "Bearer",
+		"accessToken":  accessToken,
+		"refreshToken": refreshTokenStr,
+		"token_type":   "Bearer",
 	})
 }
 
@@ -156,7 +156,7 @@ func (h *Handler) Refresh(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid request body"})
 		return
 	}
-	refreshTokenStr := body["refresh_token"]
+	refreshTokenStr := body["refreshToken"]
 	if refreshTokenStr == "" {
 		// Try Authorization header.
 		header := c.GetHeader("Authorization")
@@ -227,9 +227,9 @@ func (h *Handler) Refresh(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"access_token":  accessToken,
-		"refresh_token": newRefreshStr,
-		"token_type":    "Bearer",
+		"accessToken":  accessToken,
+		"refreshToken": newRefreshStr,
+		"token_type":   "Bearer",
 	})
 }
 
@@ -237,7 +237,7 @@ func (h *Handler) Refresh(c *gin.Context) {
 func (h *Handler) Logout(c *gin.Context) {
 	var body map[string]string
 	_ = c.ShouldBindJSON(&body)
-	refreshTokenStr := body["refresh_token"]
+	refreshTokenStr := body["refreshToken"]
 	if refreshTokenStr != "" {
 		_ = h.store.RevokeRefreshToken(c.Request.Context(), refreshTokenStr)
 	}

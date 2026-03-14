@@ -93,7 +93,7 @@ func TestUnitGORMStoreUsers(t *testing.T) {
 	// ListUsers.
 	b := &domain.User{ID: "g-id3", Username: "bob", Email: "bob@example.com", PasswordHash: "hash", Status: domain.StatusActive, Role: domain.RoleUser}
 	_ = gs.CreateUser(ctx, b)
-	users, total, err := gs.ListUsers(ctx, store.ListUsersQuery{Page: 1, Size: 10})
+	users, total, err := gs.ListUsers(ctx, store.ListUsersQuery{Page: 0, Size: 10})
 	if err != nil {
 		t.Fatalf("ListUsers failed: %v", err)
 	}
@@ -103,13 +103,13 @@ func TestUnitGORMStoreUsers(t *testing.T) {
 	_ = users
 
 	// ListUsers with email filter.
-	filtered, _, _ := gs.ListUsers(ctx, store.ListUsersQuery{Email: "alice", Page: 1, Size: 10})
+	filtered, _, _ := gs.ListUsers(ctx, store.ListUsersQuery{Email: "alice", Page: 0, Size: 10})
 	if len(filtered) == 0 {
 		t.Error("expected to find alice in filtered list")
 	}
 
 	// ListUsers paging.
-	_, _, _ = gs.ListUsers(ctx, store.ListUsersQuery{Page: 2, Size: 1})
+	_, _, _ = gs.ListUsers(ctx, store.ListUsersQuery{Page: 1, Size: 1})
 }
 
 func TestUnitGORMStoreTokens(t *testing.T) {
@@ -210,7 +210,7 @@ func TestUnitGORMStoreExpenses(t *testing.T) {
 	}
 
 	// ListExpenses.
-	expenses, total, err := gs.ListExpenses(ctx, store.ListExpensesQuery{UserID: "u1", Page: 1, Size: 10})
+	expenses, total, err := gs.ListExpenses(ctx, store.ListExpensesQuery{UserID: "u1", Page: 0, Size: 10})
 	if err != nil {
 		t.Fatalf("ListExpenses failed: %v", err)
 	}
@@ -220,7 +220,7 @@ func TestUnitGORMStoreExpenses(t *testing.T) {
 	_ = expenses
 
 	// ListExpenses paging.
-	_, _, _ = gs.ListExpenses(ctx, store.ListExpensesQuery{UserID: "u1", Page: 2, Size: 10})
+	_, _, _ = gs.ListExpenses(ctx, store.ListExpensesQuery{UserID: "u1", Page: 1, Size: 10})
 
 	// UpdateExpense.
 	e.Amount = 20.00
@@ -244,6 +244,13 @@ func TestUnitGORMStoreExpenses(t *testing.T) {
 		t.Fatalf("SumExpensesByCurrency failed: %v", err)
 	}
 	_ = summaries
+
+	// ExpenseSummaryByCurrency.
+	richSummaries, err := gs.ExpenseSummaryByCurrency(ctx, "u1")
+	if err != nil {
+		t.Fatalf("ExpenseSummaryByCurrency failed: %v", err)
+	}
+	_ = richSummaries
 
 	// DeleteExpense.
 	if err := gs.DeleteExpense(ctx, "ge1"); err != nil {

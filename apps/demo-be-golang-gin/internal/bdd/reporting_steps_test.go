@@ -2,6 +2,7 @@ package bdd_test
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/cucumber/godog"
 )
@@ -12,8 +13,22 @@ func registerReportingSteps(sc *godog.ScenarioContext, ctx *scenarioCtx) {
 	sc.Step(`^the expense breakdown should contain "([^"]*)" with amount "([^"]*)"$`, ctx.theExpenseBreakdownShouldContainCategory)
 }
 
+// remapPLFieldName translates legacy snake_case field names from the shared Gherkin spec
+// to the camelCase field names returned by the backend.
+func remapPLFieldName(field string) string {
+	switch field {
+	case "income_total":
+		return "totalIncome"
+	case "expense_total":
+		return "totalExpense"
+	default:
+		return field
+	}
+}
+
 func (ctx *scenarioCtx) aliceSendsGetPLReport(from, to, currency string) error {
-	url := fmt.Sprintf("/api/v1/reports/pl?from=%s&to=%s&currency=%s", from, to, currency)
+	// Map legacy from/to params to startDate/endDate.
+	url := fmt.Sprintf("/api/v1/reports/pl?startDate=%s&endDate=%s&currency=%s", from, to, currency)
 	resp, body := doRequest(ctx.Router, "GET", url, nil, ctx.AccessToken)
 	ctx.LastResponse = resp
 	ctx.LastBody = body
@@ -22,40 +37,54 @@ func (ctx *scenarioCtx) aliceSendsGetPLReport(from, to, currency string) error {
 
 func (ctx *scenarioCtx) theIncomeBreakdownShouldContainCategory(category, amount string) error {
 	body := parseBody(ctx.LastBody)
-	breakdown, ok := body["income_breakdown"]
+	breakdown, ok := body["incomeBreakdown"]
 	if !ok {
-		return fmt.Errorf("response does not contain 'income_breakdown'; body: %s", string(ctx.LastBody))
+		return fmt.Errorf("response does not contain 'incomeBreakdown'; body: %s", string(ctx.LastBody))
 	}
-	breakdownMap, ok := breakdown.(map[string]interface{})
+	items, ok := breakdown.([]interface{})
 	if !ok {
-		return fmt.Errorf("'income_breakdown' is not a map")
+		return fmt.Errorf("'incomeBreakdown' is not an array")
 	}
-	v, ok := breakdownMap[category]
-	if !ok {
-		return fmt.Errorf("income_breakdown does not contain category %q", category)
+	for _, item := range items {
+		m, ok := item.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if fmt.Sprintf("%v", m["category"]) == category {
+			got := strings.TrimRight(fmt.Sprintf("%v", m["total"]), "0")
+			got = strings.TrimRight(got, ".")
+			want := strings.TrimRight(amount, "0")
+			want = strings.TrimRight(want, ".")
+			if got == want || fmt.Sprintf("%v", m["total"]) == amount {
+				return nil
+			}
+			return fmt.Errorf("incomeBreakdown category %q: expected amount %q, got %q", category, amount, fmt.Sprintf("%v", m["total"]))
+		}
 	}
-	if fmt.Sprintf("%v", v) != amount {
-		return fmt.Errorf("expected income_breakdown[%q] = %q, got %q", category, amount, fmt.Sprintf("%v", v))
-	}
-	return nil
+	return fmt.Errorf("incomeBreakdown does not contain category %q", category)
 }
 
 func (ctx *scenarioCtx) theExpenseBreakdownShouldContainCategory(category, amount string) error {
 	body := parseBody(ctx.LastBody)
-	breakdown, ok := body["expense_breakdown"]
+	breakdown, ok := body["expenseBreakdown"]
 	if !ok {
-		return fmt.Errorf("response does not contain 'expense_breakdown'; body: %s", string(ctx.LastBody))
+		return fmt.Errorf("response does not contain 'expenseBreakdown'; body: %s", string(ctx.LastBody))
 	}
-	breakdownMap, ok := breakdown.(map[string]interface{})
+	items, ok := breakdown.([]interface{})
 	if !ok {
-		return fmt.Errorf("'expense_breakdown' is not a map")
+		return fmt.Errorf("'expenseBreakdown' is not an array")
 	}
-	v, ok := breakdownMap[category]
-	if !ok {
-		return fmt.Errorf("expense_breakdown does not contain category %q", category)
+	for _, item := range items {
+		m, ok := item.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if fmt.Sprintf("%v", m["category"]) == category {
+			if fmt.Sprintf("%v", m["total"]) == amount {
+				return nil
+			}
+			return fmt.Errorf("expenseBreakdown category %q: expected amount %q, got %q", category, amount, fmt.Sprintf("%v", m["total"]))
+		}
 	}
-	if fmt.Sprintf("%v", v) != amount {
-		return fmt.Errorf("expected expense_breakdown[%q] = %q, got %q", category, amount, fmt.Sprintf("%v", v))
-	}
-	return nil
+	return fmt.Errorf("expenseBreakdown does not contain category %q", category)
 }

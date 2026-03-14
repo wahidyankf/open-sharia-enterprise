@@ -85,7 +85,7 @@ func TestUnitMemoryStoreUsers(t *testing.T) {
 	// ListUsers.
 	b := makeUser("id3", "bob")
 	_ = ms.CreateUser(ctx, b)
-	users, total, err := ms.ListUsers(ctx, store.ListUsersQuery{Page: 1, Size: 10})
+	users, total, err := ms.ListUsers(ctx, store.ListUsersQuery{Page: 0, Size: 10})
 	if err != nil {
 		t.Fatalf("ListUsers failed: %v", err)
 	}
@@ -95,7 +95,7 @@ func TestUnitMemoryStoreUsers(t *testing.T) {
 	_ = users
 
 	// ListUsers with email filter.
-	filtered, _, _ := ms.ListUsers(ctx, store.ListUsersQuery{Email: "alice", Page: 1, Size: 10})
+	filtered, _, _ := ms.ListUsers(ctx, store.ListUsersQuery{Email: "alice", Page: 0, Size: 10})
 	if len(filtered) == 0 {
 		t.Error("expected to find alice in filtered list")
 	}
@@ -220,7 +220,7 @@ func TestUnitMemoryStoreExpenses(t *testing.T) {
 	}
 
 	// ListExpenses.
-	expenses, total, err := ms.ListExpenses(ctx, store.ListExpensesQuery{UserID: "user1", Page: 1, Size: 10})
+	expenses, total, err := ms.ListExpenses(ctx, store.ListExpensesQuery{UserID: "user1", Page: 0, Size: 10})
 	if err != nil {
 		t.Fatalf("ListExpenses failed: %v", err)
 	}
@@ -263,6 +263,23 @@ func TestUnitMemoryStoreExpenses(t *testing.T) {
 	}
 	if len(summaries) == 0 {
 		t.Error("expected at least one currency summary")
+	}
+
+	// ExpenseSummaryByCurrency.
+	richSummaries, err := ms.ExpenseSummaryByCurrency(ctx, "user1")
+	if err != nil {
+		t.Fatalf("ExpenseSummaryByCurrency failed: %v", err)
+	}
+	if len(richSummaries) == 0 {
+		t.Error("expected at least one rich currency summary")
+	}
+	// Empty user.
+	emptySummaries, err := ms.ExpenseSummaryByCurrency(ctx, "no-such-user")
+	if err != nil {
+		t.Fatalf("ExpenseSummaryByCurrency (empty) failed: %v", err)
+	}
+	if len(emptySummaries) != 0 {
+		t.Errorf("expected empty summaries for unknown user, got %d", len(emptySummaries))
 	}
 
 	// DeleteExpense.

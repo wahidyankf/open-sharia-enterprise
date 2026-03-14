@@ -59,12 +59,13 @@ func (h *Handler) UploadAttachment(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusCreated, gin.H{
-		"id":           attachment.ID,
-		"expense_id":   attachment.ExpenseID,
-		"filename":     attachment.Filename,
-		"content_type": attachment.ContentType,
-		"size":         attachment.Size,
-		"url":          attachment.URL,
+		"id":          attachment.ID,
+		"expenseId":   attachment.ExpenseID,
+		"filename":    attachment.Filename,
+		"contentType": attachment.ContentType,
+		"size":        attachment.Size,
+		"url":         attachment.URL,
+		"createdAt":   attachment.CreatedAt,
 	})
 }
 
@@ -94,12 +95,13 @@ func (h *Handler) ListAttachments(c *gin.Context) {
 	var items []gin.H
 	for _, a := range attachments {
 		items = append(items, gin.H{
-			"id":           a.ID,
-			"expense_id":   a.ExpenseID,
-			"filename":     a.Filename,
-			"content_type": a.ContentType,
-			"size":         a.Size,
-			"url":          a.URL,
+			"id":          a.ID,
+			"expenseId":   a.ExpenseID,
+			"filename":    a.Filename,
+			"contentType": a.ContentType,
+			"size":        a.Size,
+			"url":         a.URL,
+			"createdAt":   a.CreatedAt,
 		})
 	}
 	if items == nil {

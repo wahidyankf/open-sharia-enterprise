@@ -22,7 +22,7 @@ func (ctx *scenarioCtx) aliceSendsGetProfile() error {
 }
 
 func (ctx *scenarioCtx) aliceSendsUpdateProfile(displayName string) error {
-	reqBody := map[string]string{"display_name": displayName}
+	reqBody := map[string]string{"displayName": displayName}
 	resp, body := doRequest(ctx.Router, "PATCH", "/api/v1/users/me", reqBody, ctx.AccessToken)
 	ctx.LastResponse = resp
 	ctx.LastBody = body
@@ -31,8 +31,8 @@ func (ctx *scenarioCtx) aliceSendsUpdateProfile(displayName string) error {
 
 func (ctx *scenarioCtx) aliceSendsChangePassword(oldPassword, newPassword string) error {
 	reqBody := map[string]string{
-		"old_password": oldPassword,
-		"new_password": newPassword,
+		"oldPassword": oldPassword,
+		"newPassword": newPassword,
 	}
 	resp, body := doRequest(ctx.Router, "POST", "/api/v1/users/me/password", reqBody, ctx.AccessToken)
 	ctx.LastResponse = resp

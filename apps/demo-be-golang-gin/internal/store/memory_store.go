@@ -97,27 +97,33 @@ func (m *MemoryStore) UpdateUser(_ context.Context, u *domain.User) error {
 	return nil
 }
 
-// ListUsers returns a paginated list of users, optionally filtered by email.
+// ListUsers returns a paginated list of users, optionally filtered by email or search term.
 func (m *MemoryStore) ListUsers(_ context.Context, q ListUsersQuery) ([]*domain.User, int64, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 	var filtered []*domain.User
 	for _, u := range m.users {
-		if q.Email != "" && !strings.Contains(strings.ToLower(u.Email), strings.ToLower(q.Email)) {
+		if q.Search != "" {
+			emailMatch := strings.Contains(strings.ToLower(u.Email), strings.ToLower(q.Search))
+			usernameMatch := strings.Contains(strings.ToLower(u.Username), strings.ToLower(q.Search))
+			if !emailMatch && !usernameMatch {
+				continue
+			}
+		} else if q.Email != "" && !strings.Contains(strings.ToLower(u.Email), strings.ToLower(q.Email)) {
 			continue
 		}
 		filtered = append(filtered, copyUser(u))
 	}
 	total := int64(len(filtered))
 	page := q.Page
-	if page < 1 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
 	size := q.Size
 	if size < 1 {
 		size = 20
 	}
-	start := (page - 1) * size
+	start := page * size
 	if start >= len(filtered) {
 		return []*domain.User{}, total, nil
 	}
@@ -221,14 +227,14 @@ func (m *MemoryStore) ListExpenses(_ context.Context, q ListExpensesQuery) ([]*d
 	}
 	total := int64(len(filtered))
 	page := q.Page
-	if page < 1 {
-		page = 1
+	if page < 0 {
+		page = 0
 	}
 	size := q.Size
 	if size < 1 {
 		size = 20
 	}
-	start := (page - 1) * size
+	start := page * size
 	if start >= len(filtered) {
 		return []*domain.Expense{}, total, nil
 	}
@@ -277,6 +283,49 @@ func (m *MemoryStore) SumExpensesByCurrency(_ context.Context, userID string) ([
 	var result []domain.CurrencySummary
 	for currency, total := range totals {
 		result = append(result, domain.CurrencySummary{Currency: currency, Total: total})
+	}
+	return result, nil
+}
+
+// ExpenseSummaryByCurrency returns income/expense breakdown grouped by currency.
+func (m *MemoryStore) ExpenseSummaryByCurrency(_ context.Context, userID string) ([]domain.ExpenseCurrencySummary, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	type currencyData struct {
+		totalIncome  float64
+		totalExpense float64
+		categories   []domain.ExpenseCategoryBreakdown
+	}
+	byCurrency := make(map[string]*currencyData)
+	for _, e := range m.expenses {
+		if e.UserID != userID {
+			continue
+		}
+		if _, ok := byCurrency[e.Currency]; !ok {
+			byCurrency[e.Currency] = &currencyData{}
+		}
+		d := byCurrency[e.Currency]
+		switch e.Type {
+		case domain.EntryTypeIncome:
+			d.totalIncome += e.Amount
+		case domain.EntryTypeExpense:
+			d.totalExpense += e.Amount
+		}
+		d.categories = append(d.categories, domain.ExpenseCategoryBreakdown{
+			Category: e.Category,
+			Type:     string(e.Type),
+			Total:    e.Amount,
+		})
+	}
+	result := make([]domain.ExpenseCurrencySummary, 0, len(byCurrency))
+	for currency, d := range byCurrency {
+		result = append(result, domain.ExpenseCurrencySummary{
+			Currency:     currency,
+			TotalIncome:  d.totalIncome,
+			TotalExpense: d.totalExpense,
+			Net:          d.totalIncome - d.totalExpense,
+			Categories:   d.categories,
+		})
 	}
 	return result, nil
 }

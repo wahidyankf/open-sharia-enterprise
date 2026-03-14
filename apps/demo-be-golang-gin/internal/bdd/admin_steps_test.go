@@ -39,7 +39,7 @@ func (ctx *scenarioCtx) theAdminSendsGetAdminUsers() error {
 }
 
 func (ctx *scenarioCtx) theAdminSendsGetAdminUsersWithEmail(email string) error {
-	resp, body := doRequest(ctx.Router, "GET", "/api/v1/admin/users?email="+email, nil, ctx.AdminToken)
+	resp, body := doRequest(ctx.Router, "GET", "/api/v1/admin/users?search="+email, nil, ctx.AdminToken)
 	ctx.LastResponse = resp
 	ctx.LastBody = body
 	return nil
@@ -47,13 +47,13 @@ func (ctx *scenarioCtx) theAdminSendsGetAdminUsersWithEmail(email string) error 
 
 func (ctx *scenarioCtx) responseBodyContainsAtLeastOneUserWithField(field, value string) error {
 	body := parseBody(ctx.LastBody)
-	data, ok := body["data"]
+	data, ok := body["content"]
 	if !ok {
-		return fmt.Errorf("response does not contain 'data' field; body: %s", string(ctx.LastBody))
+		return fmt.Errorf("response does not contain 'content' field; body: %s", string(ctx.LastBody))
 	}
 	users, ok := data.([]interface{})
 	if !ok {
-		return fmt.Errorf("'data' field is not an array")
+		return fmt.Errorf("'content' field is not an array")
 	}
 	for _, u := range users {
 		uMap, ok := u.(map[string]interface{})

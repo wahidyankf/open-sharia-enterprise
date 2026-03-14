@@ -68,7 +68,7 @@ func (ctx *scenarioCtx) aUserIsRegisteredAndDeactivated(username string) error {
 	if err := json.Unmarshal(body, &parsed); err != nil {
 		return err
 	}
-	token, ok := parsed["access_token"].(string)
+	token, ok := parsed["accessToken"].(string)
 	if !ok {
 		return fmt.Errorf("access_token is not a string")
 	}
@@ -103,9 +103,39 @@ func (ctx *scenarioCtx) theClientSendsPostLogin(username, password string) error
 	return nil
 }
 
+// fieldAlias maps legacy field names from the shared Gherkin spec to the
+// camelCase field names returned by the backend.
+func fieldAlias(field string) string {
+	switch field {
+	case "income_total":
+		return "totalIncome"
+	case "expense_total":
+		return "totalExpense"
+	case "access_token":
+		return "accessToken"
+	case "refresh_token":
+		return "refreshToken"
+	case "display_name":
+		return "displayName"
+	case "reset_token":
+		return "token"
+	case "data":
+		return "content"
+	case "total":
+		return "totalElements"
+	case "content_type":
+		return "contentType"
+	case "expense_id":
+		return "expenseId"
+	default:
+		return field
+	}
+}
+
 func (ctx *scenarioCtx) theResponseBodyShouldContainFieldEqualTo(field, value string) error {
 	body := parseBody(ctx.LastBody)
-	v, ok := body[field]
+	resolved := fieldAlias(field)
+	v, ok := body[resolved]
 	if !ok {
 		return fmt.Errorf("response does not contain field %q; body: %s", field, string(ctx.LastBody))
 	}
@@ -117,7 +147,8 @@ func (ctx *scenarioCtx) theResponseBodyShouldContainFieldEqualTo(field, value st
 
 func (ctx *scenarioCtx) theResponseBodyShouldContainNonNullField(field string) error {
 	body := parseBody(ctx.LastBody)
-	v, ok := body[field]
+	resolved := fieldAlias(field)
+	v, ok := body[resolved]
 	if !ok || v == nil || v == "" {
 		return fmt.Errorf("field %q is missing or null; body: %s", field, string(ctx.LastBody))
 	}
@@ -126,7 +157,8 @@ func (ctx *scenarioCtx) theResponseBodyShouldContainNonNullField(field string) e
 
 func (ctx *scenarioCtx) theResponseBodyShouldNotContainField(field string) error {
 	body := parseBody(ctx.LastBody)
-	if _, ok := body[field]; ok {
+	resolved := fieldAlias(field)
+	if _, ok := body[resolved]; ok {
 		return fmt.Errorf("response unexpectedly contains field %q", field)
 	}
 	return nil
@@ -189,12 +221,12 @@ func (ctx *scenarioCtx) userHasLoggedInAndStoredBothTokens(username string) erro
 	if err := json.Unmarshal(body, &parsed); err != nil {
 		return err
 	}
-	accessToken, ok := parsed["access_token"].(string)
+	accessToken, ok := parsed["accessToken"].(string)
 	if !ok {
 		return fmt.Errorf("access_token is not a string")
 	}
 	ctx.AccessToken = accessToken
-	refreshToken, ok := parsed["refresh_token"].(string)
+	refreshToken, ok := parsed["refreshToken"].(string)
 	if !ok {
 		return fmt.Errorf("refresh_token is not a string")
 	}
