@@ -64,7 +64,7 @@ defmodule DemoBeExphWeb.Unit.TokenLifecycleSteps do
   defwhen ~r/^alice sends POST \/api\/v1\/auth\/refresh with her refresh token$/,
           _vars,
           %{refresh_token: refresh_token} = state do
-    body = Jason.encode!(%{refresh_token: refresh_token})
+    body = Jason.encode!(%{"refreshToken" => refresh_token})
 
     conn =
       build_conn()
@@ -77,7 +77,7 @@ defmodule DemoBeExphWeb.Unit.TokenLifecycleSteps do
   defwhen ~r/^alice sends POST \/api\/v1\/auth\/refresh with her original refresh token$/,
           _vars,
           %{refresh_token: refresh_token} = state do
-    body = Jason.encode!(%{refresh_token: refresh_token})
+    body = Jason.encode!(%{"refreshToken" => refresh_token})
 
     conn =
       build_conn()

@@ -14,10 +14,10 @@ class AdminSteps {
         TestWorld.lastResponseBody = body
     }
 
-    @When("^the admin sends GET /api/v1/admin/users\\?email=([^@]+@[^\\s]+)$")
-    fun theAdminSendsGetAdminUsersWithEmailFilter(email: String) {
+    @When("^the admin sends GET /api/v1/admin/users\\?search=([^@]+@[^\\s]+)$")
+    fun theAdminSendsGetAdminUsersWithSearchFilter(search: String) {
         val token = TestWorld.accessTokens["superadmin"] ?: error("admin token not stored")
-        val (status, body) = ServiceDispatcher.listUsers(token, email)
+        val (status, body) = ServiceDispatcher.listUsers(token, search)
         TestWorld.lastResponseStatus = status
         TestWorld.lastResponseBody = body
     }

@@ -47,10 +47,10 @@ defmodule DemoBeExphWeb.Unit.UserAccountSteps do
     {:ok, Map.put(state, :conn, conn)}
   end
 
-  defwhen ~r/^alice sends PATCH \/api\/v1\/users\/me with body \{ "display_name": "(?<display_name>[^"]+)" \}$/,
-          %{display_name: display_name},
+  defwhen ~r/^alice sends PATCH \/api\/v1\/users\/me with body \{ "displayName": "(?<displayName>[^"]+)" \}$/,
+          %{displayName: displayName},
           %{access_token: access_token} = state do
-    body = Jason.encode!(%{display_name: display_name})
+    body = Jason.encode!(%{"displayName" => displayName})
 
     conn =
       build_conn()
@@ -61,10 +61,10 @@ defmodule DemoBeExphWeb.Unit.UserAccountSteps do
     {:ok, Map.put(state, :conn, conn)}
   end
 
-  defwhen ~r/^alice sends POST \/api\/v1\/users\/me\/password with body \{ "old_password": "(?<old_password>[^"]+)", "new_password": "(?<new_password>[^"]+)" \}$/,
-          %{old_password: old_password, new_password: new_password},
+  defwhen ~r/^alice sends POST \/api\/v1\/users\/me\/password with body \{ "oldPassword": "(?<oldPassword>[^"]+)", "newPassword": "(?<newPassword>[^"]+)" \}$/,
+          %{oldPassword: oldPassword, newPassword: newPassword},
           %{access_token: access_token} = state do
-    body = Jason.encode!(%{old_password: old_password, new_password: new_password})
+    body = Jason.encode!(%{"oldPassword" => oldPassword, "newPassword" => newPassword})
 
     conn =
       build_conn()

@@ -17,8 +17,8 @@ defmodule DemoBeExphWeb.ExpenseController do
     result = expense_ctx().list_expenses(user.id, page: page)
 
     json(conn, %{
-      data: Enum.map(result.data, &expense_json/1),
-      total: result.total,
+      content: Enum.map(result.data, &expense_json/1),
+      totalElements: result.total,
       page: result.page
     })
   end

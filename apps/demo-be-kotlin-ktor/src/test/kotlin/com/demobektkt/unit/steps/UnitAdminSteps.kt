@@ -14,10 +14,10 @@ class UnitAdminSteps {
     UnitTestWorld.lastResponseBody = body
   }
 
-  @When("^the admin sends GET /api/v1/admin/users\\?email=([^@]+@[^\\s]+)$")
-  fun theAdminSendsGetAdminUsersWithEmailFilter(email: String) {
+  @When("^the admin sends GET /api/v1/admin/users\\?search=([^@]+@[^\\s]+)$")
+  fun theAdminSendsGetAdminUsersWithSearchFilter(search: String) {
     val token = UnitTestWorld.accessTokens["superadmin"] ?: error("admin token not stored")
-    val (status, body) = UnitServiceDispatcher.listUsers(token, email)
+    val (status, body) = UnitServiceDispatcher.listUsers(token, search)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = body
   }

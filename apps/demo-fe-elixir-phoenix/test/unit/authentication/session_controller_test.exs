@@ -4,11 +4,8 @@ defmodule DemoFeExphWeb.SessionControllerTest do
   @moduletag :unit
 
   defp sign_tokens(access_token, refresh_token) do
-    secret =
-      Application.get_env(:demo_fe_exph, DemoFeExphWeb.Endpoint)[:secret_key_base]
-
     Phoenix.Token.sign(
-      %{secret_key_base: secret},
+      DemoFeExphWeb.Endpoint,
       "session_tokens",
       %{"access_token" => access_token, "refresh_token" => refresh_token}
     )

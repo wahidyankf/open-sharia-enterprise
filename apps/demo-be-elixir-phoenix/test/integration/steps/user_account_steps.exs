@@ -40,17 +40,17 @@ defmodule DemoBeExphWeb.Integration.UserAccountSteps do
     {:ok, Map.put(state, :response, response)}
   end
 
-  defwhen ~r/^alice sends PATCH \/api\/v1\/users\/me with body \{ "display_name": "(?<display_name>[^"]+)" \}$/,
-          %{display_name: display_name},
+  defwhen ~r/^alice sends PATCH \/api\/v1\/users\/me with body \{ "displayName": "(?<displayName>[^"]+)" \}$/,
+          %{displayName: displayName},
           %{access_token: access_token} = state do
-    response = ServiceLayer.update_me(access_token, %{"display_name" => display_name})
+    response = ServiceLayer.update_me(access_token, %{"displayName" => displayName})
     {:ok, Map.put(state, :response, response)}
   end
 
-  defwhen ~r/^alice sends POST \/api\/v1\/users\/me\/password with body \{ "old_password": "(?<old_password>[^"]+)", "new_password": "(?<new_password>[^"]+)" \}$/,
-          %{old_password: old_password, new_password: new_password},
+  defwhen ~r/^alice sends POST \/api\/v1\/users\/me\/password with body \{ "oldPassword": "(?<oldPassword>[^"]+)", "newPassword": "(?<newPassword>[^"]+)" \}$/,
+          %{oldPassword: oldPassword, newPassword: newPassword},
           %{access_token: access_token} = state do
-    response = ServiceLayer.change_password(access_token, old_password, new_password)
+    response = ServiceLayer.change_password(access_token, oldPassword, newPassword)
     {:ok, Map.put(state, :response, response)}
   end
 

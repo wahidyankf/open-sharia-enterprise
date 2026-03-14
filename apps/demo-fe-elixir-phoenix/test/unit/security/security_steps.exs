@@ -142,6 +142,16 @@ defmodule DemoFeExphWeb.Unit.SecuritySteps do
           {:ok, new_view, _html} = live(conn_with_session, to)
           new_view
 
+        {:error, {:redirect, %{to: _to}}} ->
+          conn_with_session =
+            Plug.Test.init_test_session(conn, %{
+              "access_token" => "test_access_token",
+              "refresh_token" => "test_refresh_token"
+            })
+
+          {:ok, new_view, _html} = live(conn_with_session, "/")
+          new_view
+
         _ ->
           view
       end

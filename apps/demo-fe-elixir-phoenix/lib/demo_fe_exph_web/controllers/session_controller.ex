@@ -12,11 +12,7 @@ defmodule DemoFeExphWeb.SessionController do
   replayed.
   """
   def create(conn, %{"token" => signed}) do
-    secret = Application.get_env(:demo_fe_exph, DemoFeExphWeb.Endpoint)[:secret_key_base]
-
-    case Phoenix.Token.verify(%{secret_key_base: secret}, "session_tokens", signed,
-           max_age: @max_age
-         ) do
+    case Phoenix.Token.verify(DemoFeExphWeb.Endpoint, "session_tokens", signed, max_age: @max_age) do
       {:ok, %{"access_token" => access_token, "refresh_token" => refresh_token}} ->
         conn
         |> put_session(:access_token, access_token)

@@ -16,19 +16,19 @@ defmodule DemoBeExphWeb.AdminController do
       |> put_status(:forbidden)
       |> json(%{message: "Admin access required"})
     else
-      email = Map.get(params, "email")
+      search = Map.get(params, "search")
       raw_page = params |> Map.get("page", "1") |> String.to_integer()
       page = max(raw_page, 1)
 
       opts = [page: page]
-      opts = if email, do: Keyword.put(opts, :email, email), else: opts
+      opts = if search, do: Keyword.put(opts, :email, search), else: opts
 
       result = accounts().list_users(opts)
 
       conn
       |> json(%{
-        data: Enum.map(result.data, &user_json/1),
-        total: result.total,
+        content: Enum.map(result.data, &user_json/1),
+        totalElements: result.total,
         page: result.page
       })
     end
@@ -89,7 +89,7 @@ defmodule DemoBeExphWeb.AdminController do
 
       json(conn, %{
         message: "Password reset token generated",
-        reset_token: reset_token,
+        token: reset_token,
         user_id: user.id
       })
     else
@@ -115,7 +115,7 @@ defmodule DemoBeExphWeb.AdminController do
       email: user.email,
       role: user.role,
       status: user.status,
-      display_name: user.display_name || user.username
+      displayName: user.display_name || user.username
     }
   end
 end
