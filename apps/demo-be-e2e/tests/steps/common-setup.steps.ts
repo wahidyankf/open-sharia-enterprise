@@ -160,8 +160,10 @@ Then("alice's account status should be {string}", async ({ request }, status: st
     const res = await request.get(`/api/v1/admin/users?page=${page}&size=100`, {
       headers: { Authorization: `Bearer ${adminToken}` },
     });
-    const body = (await res.json()) as { data: Array<Record<string, unknown>> };
-    const aliceRecord = body.data?.find((u) => u["id"] === aliceId);
+    const body = (await res.json()) as Record<string, unknown>;
+    // Different backends use different field names: Go/Gin uses "content", Spring Boot uses "content" or "data"
+    const users = (body["content"] ?? body["data"] ?? []) as Array<Record<string, unknown>>;
+    const aliceRecord = users.find((u) => u["id"] === aliceId);
     if (aliceRecord) {
       expect(aliceRecord["status"]).toBe(status.toUpperCase());
       return;
