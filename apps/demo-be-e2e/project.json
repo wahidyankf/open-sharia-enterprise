@@ -40,10 +40,10 @@
         "cwd": "apps/demo-be-e2e"
       }
     },
-    "test:e2e:no-test-api": {
+    "test:e2e:shard": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx bddgen && npx playwright test --grep-invert 'Test Support API'",
+        "command": "npx bddgen && npx playwright test --shard=${SHARD}",
         "cwd": "apps/demo-be-e2e"
       }
     },

@@ -12,11 +12,6 @@ Given("the test API is enabled via ENABLE_TEST_API environment variable", async 
   // No-op: the test suite assumes the backend is running with ENABLE_TEST_API=true.
 });
 
-Given("the test API is disabled", async () => {
-  // No-op: this scenario verifies the backend returns 404 when the test API is disabled.
-  // The E2E suite cannot toggle env vars at runtime; this step is a documentation marker.
-});
-
 // ---------------------------------------------------------------------------
 // Setup
 // ---------------------------------------------------------------------------

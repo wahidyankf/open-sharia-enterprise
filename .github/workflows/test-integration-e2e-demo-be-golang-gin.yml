@@ -1,6 +1,13 @@
 name: Test Integration + E2E Demo Backend (Go/Gin)
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/demo-be-golang-gin/**"
+      - "apps/demo-be-e2e/**"
+      - "specs/apps/demo/be/**"
+      - "infra/dev/demo-be-golang-gin/**"
   schedule:
     - cron: "0 23 * * *" # 6 AM WIB (UTC+7)
     - cron: "0 11 * * *" # 6 PM WIB (UTC+7)
@@ -10,8 +17,8 @@ permissions:
   contents: read
 
 jobs:
-  integration-e2e-be:
-    name: Run integration + E2E tests
+  integration-tests:
+    name: Run integration tests
     runs-on: ubuntu-latest
 
     steps:
@@ -26,6 +33,18 @@ jobs:
       - name: Teardown integration
         if: always()
         run: docker compose -f apps/demo-be-golang-gin/docker-compose.integration.yml down -v
+
+  e2e-tests:
+    name: Run E2E tests (shard ${{ matrix.shard }}/4)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Start backend
         run: docker compose -f infra/dev/demo-be-golang-gin/docker-compose.yml -f infra/dev/demo-be-golang-gin/docker-compose.e2e.yml up --build -d demo-be-golang-gin
@@ -53,19 +72,19 @@ jobs:
         run: npm ci
 
       - name: Run E2E tests
-        run: npx nx run demo-be-e2e:test:e2e
+        run: npx nx run demo-be-e2e:test:e2e:shard
         env:
           BASE_URL: http://localhost:8201
-          DATABASE_URL: postgresql://demo_be_golang_gin:demo_be_golang_gin@localhost:5432/demo_be_golang_gin
+          SHARD: ${{ matrix.shard }}/4
 
       - name: Upload test report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report-demo-be-golang-gin
+          name: playwright-report-demo-be-golang-gin-shard-${{ matrix.shard }}
           path: apps/demo-be-e2e/playwright-report/
           retention-days: 7
 
       - name: Stop backend
         if: always()
-        run: docker compose -f infra/dev/demo-be-golang-gin/docker-compose.yml down
+        run: docker compose -f infra/dev/demo-be-golang-gin/docker-compose.yml down -v

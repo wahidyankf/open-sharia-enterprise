@@ -9,10 +9,13 @@ const testDir = defineBddConfig({
 
 export default defineConfig({
   testDir,
-  fullyParallel: true,
+  // Each scenario resets the shared database before running, so tests must
+  // run sequentially within a single machine to avoid DB state conflicts.
+  // CI parallelism is achieved via matrix sharding (each shard = separate machine + DB).
+  fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: 1,
   reporter: process.env.CI ? "html" : "list",
   use: {
     baseURL: process.env.BASE_URL || "http://localhost:3301",
