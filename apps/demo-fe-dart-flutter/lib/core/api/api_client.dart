@@ -83,7 +83,7 @@ class AuthInterceptor extends Interceptor {
       try {
         final refreshResponse = await _dio.post<Map<String, dynamic>>(
           '/api/v1/auth/refresh',
-          data: {'refresh_token': refreshToken},
+          data: {'refreshToken': refreshToken},
           options: Options(
             headers: {
               // Prevent this refresh call from triggering another retry.
@@ -93,9 +93,9 @@ class AuthInterceptor extends Interceptor {
         );
 
         final newAccessToken =
-            (refreshResponse.data?['access_token'] as String?) ?? '';
+            (refreshResponse.data?['accessToken'] as String?) ?? '';
         final newRefreshToken =
-            (refreshResponse.data?['refresh_token'] as String?) ?? refreshToken;
+            (refreshResponse.data?['refreshToken'] as String?) ?? refreshToken;
 
         TokenStore.instance.accessToken = newAccessToken;
         TokenStore.instance.refreshToken = newRefreshToken;

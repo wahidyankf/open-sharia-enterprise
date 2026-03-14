@@ -16,8 +16,8 @@ defmodule DemoFeExphWeb.AdminLive do
         {:ok,
          assign(socket,
            token: token,
-           users: body["users"] || [],
-           total: body["total"] || 0,
+           users: body["content"] || [],
+           total: body["totalElements"] || 0,
            page: @default_page,
            size: @default_size,
            search: nil,
@@ -50,8 +50,8 @@ defmodule DemoFeExphWeb.AdminLive do
       {:ok, body} ->
         {:noreply,
          assign(socket,
-           users: body["users"] || [],
-           total: body["total"] || 0,
+           users: body["content"] || [],
+           total: body["totalElements"] || 0,
            page: 1,
            search: query,
            error: nil
@@ -137,7 +137,11 @@ defmodule DemoFeExphWeb.AdminLive do
          ) do
       {:ok, body} ->
         {:noreply,
-         assign(socket, users: body["users"] || [], total: body["total"] || 0, error: nil)}
+         assign(socket,
+           users: body["content"] || [],
+           total: body["totalElements"] || 0,
+           error: nil
+         )}
 
       {:error, _reason} ->
         {:noreply, assign(socket, error: "Failed to reload users.")}

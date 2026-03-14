@@ -12,12 +12,12 @@ Feature: Admin
   Scenario: List all users returns a paginated response
     When the admin sends GET /api/v1/admin/users
     Then the response status code should be 200
-    And the response body should contain a non-null "data" field
-    And the response body should contain a non-null "total" field
+    And the response body should contain a non-null "content" field
+    And the response body should contain a non-null "totalElements" field
     And the response body should contain a non-null "page" field
 
   Scenario: Search users by email returns matching results
-    When the admin sends GET /api/v1/admin/users?email=alice@example.com
+    When the admin sends GET /api/v1/admin/users?search=alice@example.com
     Then the response status code should be 200
     And the response body should contain at least one user with "email" equal to "alice@example.com"
 
@@ -42,4 +42,4 @@ Feature: Admin
   Scenario: Admin generates a password-reset token for a user
     When the admin sends POST /api/v1/admin/users/{alice_id}/force-password-reset
     Then the response status code should be 200
-    And the response body should contain a non-null "reset_token" field
+    And the response body should contain a non-null "token" field

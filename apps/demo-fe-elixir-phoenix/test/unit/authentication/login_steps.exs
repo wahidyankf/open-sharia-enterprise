@@ -26,7 +26,7 @@ defmodule DemoFeExphWeb.Unit.LoginSteps do
          "id" => "user-1",
          "username" => username,
          "email" => "#{username}@example.com",
-         "display_name" => username
+         "displayName" => username
        }}
     )
 

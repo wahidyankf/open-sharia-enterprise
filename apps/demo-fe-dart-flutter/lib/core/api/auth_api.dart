@@ -39,14 +39,14 @@ Future<AuthTokens> login({
 Future<AuthTokens> refreshToken(String token) async {
   final response = await dio.post<Map<String, dynamic>>(
     '/api/v1/auth/refresh',
-    data: {'refresh_token': token},
+    data: {'refreshToken': token},
   );
   return AuthTokens.fromJson(response.data!);
 }
 
 /// Invalidates the supplied refresh token (logs out current session).
 Future<void> logout(String token) async {
-  await dio.post<void>('/api/v1/auth/logout', data: {'refresh_token': token});
+  await dio.post<void>('/api/v1/auth/logout', data: {'refreshToken': token});
 }
 
 /// Invalidates all refresh tokens for the authenticated user.

@@ -112,7 +112,7 @@ func (ctx *ScenarioCtx) anAdminUserIsRegisteredAndLoggedIn(username string) erro
 	if err := json.Unmarshal(body2, &loginParsed); err != nil {
 		return err
 	}
-	ctx.AdminToken = loginParsed["access_token"].(string)
+	ctx.AdminToken = loginParsed["accessToken"].(string)
 	return nil
 }
 

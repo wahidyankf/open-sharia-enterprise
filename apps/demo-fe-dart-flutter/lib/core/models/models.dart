@@ -19,8 +19,8 @@ class AuthTokens {
   });
 
   factory AuthTokens.fromJson(Map<String, dynamic> json) => AuthTokens(
-    accessToken: json['access_token'] as String,
-    refreshToken: json['refresh_token'] as String,
+    accessToken: json['accessToken'] as String,
+    refreshToken: json['refreshToken'] as String,
     tokenType: (json['token_type'] as String?) ?? 'Bearer',
     expiresIn: (json['expires_in'] as num?)?.toInt() ?? 3600,
   );
@@ -31,8 +31,8 @@ class AuthTokens {
   final int expiresIn;
 
   Map<String, dynamic> toJson() => {
-    'access_token': accessToken,
-    'refresh_token': refreshToken,
+    'accessToken': accessToken,
+    'refreshToken': refreshToken,
     'token_type': tokenType,
     'expires_in': expiresIn,
   };
@@ -59,11 +59,11 @@ class User {
     id: json['id'] as String,
     username: json['username'] as String,
     email: json['email'] as String,
-    displayName: (json['display_name'] as String?) ?? '',
-    role: json['role'] as String,
+    displayName: (json['displayName'] as String?) ?? '',
+    role: (json['role'] as String?) ?? ((json['roles'] as List?)?.firstOrNull as String?) ?? '',
     status: json['status'] as String,
-    createdAt: json['created_at'] as String,
-    updatedAt: json['updated_at'] as String?,
+    createdAt: (json['createdAt'] as String?) ?? (json['created_at'] as String?) ?? '',
+    updatedAt: (json['updatedAt'] as String?) ?? (json['updated_at'] as String?),
   );
 
   final String id;
@@ -87,12 +87,12 @@ class UserListResponse {
 
   factory UserListResponse.fromJson(Map<String, dynamic> json) =>
       UserListResponse(
-        users: (json['users'] as List<dynamic>)
+        users: ((json['content'] as List<dynamic>?) ?? [])
             .map((e) => User.fromJson(e as Map<String, dynamic>))
             .toList(),
-        total: (json['total'] as num).toInt(),
-        page: (json['page'] as num).toInt(),
-        size: (json['size'] as num).toInt(),
+        total: (json['totalElements'] as num?)?.toInt() ?? 0,
+        page: (json['page'] as num?)?.toInt() ?? 0,
+        size: (json['size'] as num?)?.toInt() ?? 20,
       );
 
   final List<User> users;
@@ -123,16 +123,17 @@ class Expense {
 
   factory Expense.fromJson(Map<String, dynamic> json) => Expense(
     id: json['id'] as String,
-    userId: json['user_id'] as String,
-    title: json['title'] as String,
-    amount: (json['amount'] as num).toDouble(),
+    userId: (json['userId'] as String?) ?? (json['user_id'] as String?) ?? '',
+    title: (json['title'] as String?) ?? (json['description'] as String?) ?? '',
+    amount: double.tryParse(json['amount'].toString()) ?? 0.0,
     currency: json['currency'] as String,
     category: json['category'] as String,
-    expenseDate: json['expense_date'] as String,
-    createdAt: json['created_at'] as String,
+    expenseDate: (json['date'] as String?) ?? (json['expense_date'] as String?) ?? '',
+    createdAt: (json['createdAt'] as String?) ?? (json['created_at'] as String?) ?? '',
     description: json['description'] as String?,
-    updatedAt: json['updated_at'] as String?,
-    attachmentCount: (json['attachment_count'] as num?)?.toInt() ?? 0,
+    updatedAt: (json['updatedAt'] as String?) ?? (json['updated_at'] as String?),
+    attachmentCount: (json['attachmentCount'] as num?)?.toInt() ??
+        (json['attachment_count'] as num?)?.toInt() ?? 0,
   );
 
   final String id;
@@ -159,12 +160,12 @@ class ExpenseListResponse {
 
   factory ExpenseListResponse.fromJson(Map<String, dynamic> json) =>
       ExpenseListResponse(
-        expenses: (json['expenses'] as List<dynamic>)
+        expenses: ((json['content'] as List<dynamic>?) ?? [])
             .map((e) => Expense.fromJson(e as Map<String, dynamic>))
             .toList(),
-        total: (json['total'] as num).toInt(),
-        page: (json['page'] as num).toInt(),
-        size: (json['size'] as num).toInt(),
+        total: (json['totalElements'] as num?)?.toInt() ?? 0,
+        page: (json['page'] as num?)?.toInt() ?? 0,
+        size: (json['size'] as num?)?.toInt() ?? 20,
       );
 
   final List<Expense> expenses;

@@ -37,7 +37,7 @@ defmodule DemoFeExphWeb.Unit.AdminPanelSteps do
       :list_users,
       {:ok,
        %{
-         "users" => [
+         "content" => [
            %{
              "id" => "user-1",
              "username" => "alice",
@@ -57,7 +57,7 @@ defmodule DemoFeExphWeb.Unit.AdminPanelSteps do
              "status" => "active"
            }
          ],
-         "total" => 3
+         "totalElements" => 3
        }}
     )
 
@@ -84,7 +84,7 @@ defmodule DemoFeExphWeb.Unit.AdminPanelSteps do
       :list_users,
       {:ok,
        %{
-         "users" => [
+         "content" => [
            %{
              "id" => "user-1",
              "username" => "alice",
@@ -92,7 +92,7 @@ defmodule DemoFeExphWeb.Unit.AdminPanelSteps do
              "status" => "disabled"
            }
          ],
-         "total" => 1
+         "totalElements" => 1
        }}
     )
 
@@ -114,7 +114,7 @@ defmodule DemoFeExphWeb.Unit.AdminPanelSteps do
       :list_users,
       {:ok,
        %{
-         "users" => [
+         "content" => [
            %{
              "id" => "user-1",
              "username" => "alice",
@@ -122,7 +122,7 @@ defmodule DemoFeExphWeb.Unit.AdminPanelSteps do
              "status" => "active"
            }
          ],
-         "total" => 1
+         "totalElements" => 1
        }}
     )
 
@@ -137,7 +137,7 @@ defmodule DemoFeExphWeb.Unit.AdminPanelSteps do
       :list_users,
       {:ok,
        %{
-         "users" => [
+         "content" => [
            %{
              "id" => "user-1",
              "username" => "alice",
@@ -145,7 +145,7 @@ defmodule DemoFeExphWeb.Unit.AdminPanelSteps do
              "status" => "disabled"
            }
          ],
-         "total" => 1
+         "totalElements" => 1
        }}
     )
 
@@ -163,7 +163,7 @@ defmodule DemoFeExphWeb.Unit.AdminPanelSteps do
       :list_users,
       {:ok,
        %{
-         "users" => [
+         "content" => [
            %{
              "id" => "user-1",
              "username" => "alice",
@@ -171,7 +171,7 @@ defmodule DemoFeExphWeb.Unit.AdminPanelSteps do
              "status" => "disabled"
            }
          ],
-         "total" => 1
+         "totalElements" => 1
        }}
     )
 
@@ -190,7 +190,7 @@ defmodule DemoFeExphWeb.Unit.AdminPanelSteps do
           :list_users,
           {:ok,
            %{
-             "users" => [
+             "content" => [
                %{
                  "id" => "user-1",
                  "username" => "alice",
@@ -198,7 +198,7 @@ defmodule DemoFeExphWeb.Unit.AdminPanelSteps do
                  "status" => "active"
                }
              ],
-             "total" => 1
+             "totalElements" => 1
            }}
         )
 

@@ -45,7 +45,7 @@ defmodule DemoFeExphWeb.Unit.AccessibilitySteps do
          "id" => "user-1",
          "username" => username,
          "email" => "#{username}@example.com",
-         "display_name" => username
+         "displayName" => username
        }}
     )
 
@@ -68,7 +68,7 @@ defmodule DemoFeExphWeb.Unit.AccessibilitySteps do
     }
 
     attachment = %{"id" => "att-1", "filename" => "receipt.jpg", "content_type" => "image/jpeg"}
-    ApiStub.put(:list_expenses, {:ok, %{"expenses" => [expense], "total" => 1}})
+    ApiStub.put(:list_expenses, {:ok, %{"content" => [expense], "totalElements" => 1}})
     ApiStub.put(:get_expense, {:ok, expense})
     ApiStub.put(:list_attachments, {:ok, %{"attachments" => [attachment]}})
     {:ok, view, _html} = live(conn, "/expenses")

@@ -10,8 +10,8 @@ import (
 
 func registerUserAccountSteps(sc *godog.ScenarioContext, ctx *ScenarioCtx) {
 	sc.Step(`^alice sends GET /api/v1/users/me$`, ctx.aliceSendsGetProfile)
-	sc.Step(`^alice sends PATCH /api/v1/users/me with body \{ "display_name": "([^"]*)" \}$`, ctx.aliceSendsUpdateProfile)
-	sc.Step(`^alice sends POST /api/v1/users/me/password with body \{ "old_password": "([^"]*)", "new_password": "([^"]*)" \}$`, ctx.aliceSendsChangePassword)
+	sc.Step(`^alice sends PATCH /api/v1/users/me with body \{ "displayName": "([^"]*)" \}$`, ctx.aliceSendsUpdateProfile)
+	sc.Step(`^alice sends POST /api/v1/users/me/password with body \{ "oldPassword": "([^"]*)", "newPassword": "([^"]*)" \}$`, ctx.aliceSendsChangePassword)
 	sc.Step(`^alice sends POST /api/v1/users/me/deactivate$`, ctx.aliceSendsDeactivate)
 	sc.Step(`^alice has deactivated her own account via POST /api/v1/users/me/deactivate$`, ctx.aliceHasDeactivatedHerAccount)
 }
@@ -24,7 +24,7 @@ func (ctx *ScenarioCtx) aliceSendsGetProfile() error {
 }
 
 func (ctx *ScenarioCtx) aliceSendsUpdateProfile(displayName string) error {
-	reqBody := map[string]string{"display_name": displayName}
+	reqBody := map[string]string{"displayName": displayName}
 	resp, body := doRequest(ctx.Router, "PATCH", "/api/v1/users/me", reqBody, ctx.AccessToken)
 	ctx.LastResponse = resp
 	ctx.LastBody = body
@@ -33,8 +33,8 @@ func (ctx *ScenarioCtx) aliceSendsUpdateProfile(displayName string) error {
 
 func (ctx *ScenarioCtx) aliceSendsChangePassword(oldPassword, newPassword string) error {
 	reqBody := map[string]string{
-		"old_password": oldPassword,
-		"new_password": newPassword,
+		"oldPassword": oldPassword,
+		"newPassword": newPassword,
 	}
 	resp, body := doRequest(ctx.Router, "POST", "/api/v1/users/me/password", reqBody, ctx.AccessToken)
 	ctx.LastResponse = resp

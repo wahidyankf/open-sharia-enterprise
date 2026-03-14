@@ -16,8 +16,8 @@ defmodule DemoFeExphWeb.ExpensesLive do
         {:ok,
          assign(socket,
            token: token,
-           expenses: body["expenses"] || [],
-           total: body["total"] || 0,
+           expenses: body["content"] || [],
+           total: body["totalElements"] || 0,
            page: @default_page,
            size: @default_size,
            error: nil,
@@ -204,8 +204,8 @@ defmodule DemoFeExphWeb.ExpensesLive do
       {:ok, body} ->
         {:noreply,
          assign(socket,
-           expenses: body["expenses"] || [],
-           total: body["total"] || 0,
+           expenses: body["content"] || [],
+           total: body["totalElements"] || 0,
            error: nil,
            selected: nil
          )}

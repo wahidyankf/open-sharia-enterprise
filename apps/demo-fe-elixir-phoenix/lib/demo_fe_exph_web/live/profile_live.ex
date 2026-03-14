@@ -113,7 +113,7 @@ defmodule DemoFeExphWeb.ProfileLive do
       <%= if @user do %>
         <p>Username: {@user["username"]}</p>
         <p>Email: {@user["email"]}</p>
-        <p>Display name: {@user["display_name"]}</p>
+        <p>Display name: {@user["displayName"]}</p>
         <form phx-submit="update_profile">
           <input type="text" name="display_name" placeholder="New display name" />
           <button type="submit">Update Profile</button>

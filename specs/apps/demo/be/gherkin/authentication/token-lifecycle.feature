@@ -12,8 +12,8 @@ Feature: Token Lifecycle
   Scenario: Successful refresh returns a new access token and refresh token
     When alice sends POST /api/v1/auth/refresh with her refresh token
     Then the response status code should be 200
-    And the response body should contain a non-null "access_token" field
-    And the response body should contain a non-null "refresh_token" field
+    And the response body should contain a non-null "accessToken" field
+    And the response body should contain a non-null "refreshToken" field
 
   Scenario: Reject refresh with an expired refresh token
     Given alice's refresh token has expired

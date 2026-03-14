@@ -59,8 +59,8 @@ defmodule DemoFeExphWeb.Unit.SecuritySteps do
       :list_users,
       {:ok,
        %{
-         "users" => [%{"id" => "user-1", "username" => username, "status" => "locked"}],
-         "total" => 1
+         "content" => [%{"id" => "user-1", "username" => username, "status" => "locked"}],
+         "totalElements" => 1
        }}
     )
 
@@ -78,7 +78,7 @@ defmodule DemoFeExphWeb.Unit.SecuritySteps do
            state do
     ApiStub.put(
       :login,
-      {:ok, %{"access_token" => "test_access_token", "refresh_token" => "test_refresh_token"}}
+      {:ok, %{"accessToken" => "test_access_token", "refreshToken" => "test_refresh_token"}}
     )
 
     {:ok, state}
@@ -158,8 +158,8 @@ defmodule DemoFeExphWeb.Unit.SecuritySteps do
       :list_users,
       {:ok,
        %{
-         "users" => [%{"id" => "user-1", "username" => "alice", "status" => "active"}],
-         "total" => 1
+         "content" => [%{"id" => "user-1", "username" => "alice", "status" => "active"}],
+         "totalElements" => 1
        }}
     )
 
@@ -175,8 +175,8 @@ defmodule DemoFeExphWeb.Unit.SecuritySteps do
       :list_users,
       {:ok,
        %{
-         "users" => [%{"id" => "user-1", "username" => "alice", "status" => "active"}],
-         "total" => 1
+         "content" => [%{"id" => "user-1", "username" => "alice", "status" => "active"}],
+         "totalElements" => 1
        }}
     )
 

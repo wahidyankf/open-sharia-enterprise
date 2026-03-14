@@ -10,14 +10,14 @@ defmodule DemoFeExph.Api.Users do
 
   @doc "Updates the current user's display name."
   def update_profile(token, display_name) do
-    Client.patch("/api/v1/users/me", %{display_name: display_name}, token)
+    Client.patch("/api/v1/users/me", %{"displayName" => display_name}, token)
   end
 
   @doc "Changes the current user's password."
   def change_password(token, old_password, new_password) do
     Client.post(
-      "/api/v1/users/me/change-password",
-      %{old_password: old_password, new_password: new_password},
+      "/api/v1/users/me/password",
+      %{"oldPassword" => old_password, "newPassword" => new_password},
       token
     )
   end

@@ -85,12 +85,12 @@ defmodule DemoFeExphWeb.Unit.ResponsiveSteps do
         }
       end)
 
-    ApiStub.put(:list_expenses, {:ok, %{"expenses" => expenses, "total" => 3}})
+    ApiStub.put(:list_expenses, {:ok, %{"content" => expenses, "totalElements" => 3}})
     {:ok, state}
   end
 
   defgiven ~r/^an admin user "(?<username>[^"]+)" is logged in$/, %{username: _username}, state do
-    ApiStub.put(:list_users, {:ok, %{"users" => [], "total" => 0}})
+    ApiStub.put(:list_users, {:ok, %{"content" => [], "totalElements" => 0}})
     {:ok, Map.put(state, :admin_token, @admin_token)}
   end
 
@@ -125,7 +125,7 @@ defmodule DemoFeExphWeb.Unit.ResponsiveSteps do
       "type" => "expense"
     }
 
-    ApiStub.put(:list_expenses, {:ok, %{"expenses" => [expense], "total" => 1}})
+    ApiStub.put(:list_expenses, {:ok, %{"content" => [expense], "totalElements" => 1}})
     ApiStub.put(:get_expense, {:ok, expense})
     ApiStub.put(:list_attachments, {:ok, %{"attachments" => []}})
     {:ok, Map.put(state, :expense, expense)}

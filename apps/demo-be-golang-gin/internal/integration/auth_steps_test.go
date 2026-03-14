@@ -72,7 +72,7 @@ func (ctx *ScenarioCtx) aUserIsRegisteredAndDeactivated(username string) error {
 	if err := json.Unmarshal(body, &parsed); err != nil {
 		return err
 	}
-	token := parsed["access_token"].(string)
+	token := parsed["accessToken"].(string)
 	// Deactivate.
 	resp2, body2 := doRequest(ctx.Router, "POST", "/api/v1/users/me/deactivate", nil, token)
 	if resp2.StatusCode != 200 {
@@ -190,8 +190,8 @@ func (ctx *ScenarioCtx) userHasLoggedInAndStoredBothTokens(username string) erro
 	if err := json.Unmarshal(body, &parsed); err != nil {
 		return err
 	}
-	ctx.AccessToken = parsed["access_token"].(string)
-	ctx.RefreshToken = parsed["refresh_token"].(string)
+	ctx.AccessToken = parsed["accessToken"].(string)
+	ctx.RefreshToken = parsed["refreshToken"].(string)
 	return nil
 }
 

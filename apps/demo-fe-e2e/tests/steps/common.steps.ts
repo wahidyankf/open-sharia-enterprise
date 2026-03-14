@@ -244,13 +244,11 @@ When("{word} opens the entry detail for {string}", async ({ page }, _username: s
 });
 
 When("{word} opens the session info panel", async ({ page }) => {
-  const sessionLink = page
-    .getByRole("link", { name: /session|profile|account/i })
-    .or(page.getByRole("button", { name: /session|profile/i }));
-  if (await sessionLink.isVisible({ timeout: 2000 }).catch(() => false)) {
-    await sessionLink.click();
+  const tokensLink = page.getByRole("link", { name: /^tokens$/i });
+  if (await tokensLink.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await tokensLink.click();
   } else {
-    await page.goto("/profile");
+    await page.goto("/tokens");
   }
 });
 

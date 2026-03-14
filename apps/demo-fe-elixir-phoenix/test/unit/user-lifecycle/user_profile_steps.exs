@@ -36,7 +36,7 @@ defmodule DemoFeExphWeb.Unit.UserProfileSteps do
     ApiStub.put(
       :get_current_user,
       {:ok,
-       %{"id" => "user-1", "username" => username, "email" => email, "display_name" => username}}
+       %{"id" => "user-1", "username" => username, "email" => email, "displayName" => username}}
     )
 
     {:ok, Map.put(state, :user, %{"username" => username, "email" => email})}
@@ -69,7 +69,7 @@ defmodule DemoFeExphWeb.Unit.UserProfileSteps do
          "id" => "user-1",
          "username" => "alice",
          "email" => "alice@example.com",
-         "display_name" => name
+         "displayName" => name
        }}
     )
 

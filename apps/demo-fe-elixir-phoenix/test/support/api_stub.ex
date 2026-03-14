@@ -57,18 +57,18 @@ defmodule DemoFeExph.Test.ApiStub do
       health: {:ok, %{"status" => "UP"}},
       register: {:ok, %{"id" => "user-1", "username" => "alice"}},
       login:
-        {:ok, %{"access_token" => "test_access_token", "refresh_token" => "test_refresh_token"}},
+        {:ok, %{"accessToken" => "test_access_token", "refreshToken" => "test_refresh_token"}},
       logout: {:ok, %{}},
       logout_all: {:ok, %{}},
       refresh:
-        {:ok, %{"access_token" => "new_access_token", "refresh_token" => "new_refresh_token"}},
+        {:ok, %{"accessToken" => "new_access_token", "refreshToken" => "new_refresh_token"}},
       get_current_user:
         {:ok,
          %{
            "id" => "user-1",
            "username" => "alice",
            "email" => "alice@example.com",
-           "display_name" => "Alice"
+           "displayName" => "Alice"
          }},
       update_profile:
         {:ok,
@@ -76,21 +76,21 @@ defmodule DemoFeExph.Test.ApiStub do
            "id" => "user-1",
            "username" => "alice",
            "email" => "alice@example.com",
-           "display_name" => "Alice Smith"
+           "displayName" => "Alice Smith"
          }},
       change_password: {:ok, %{}},
       deactivate_account: {:ok, %{}},
       list_users:
         {:ok,
          %{
-           "users" => [%{"id" => "user-1", "username" => "alice", "status" => "active"}],
-           "total" => 1
+           "content" => [%{"id" => "user-1", "username" => "alice", "status" => "active"}],
+           "totalElements" => 1
          }},
       disable_user: {:ok, %{}},
       enable_user: {:ok, %{}},
       unlock_user: {:ok, %{}},
       force_password_reset: {:ok, %{"token" => "reset-token-abc123"}},
-      list_expenses: {:ok, %{"expenses" => [], "total" => 0}},
+      list_expenses: {:ok, %{"content" => [], "totalElements" => 0}},
       get_expense:
         {:ok,
          %{

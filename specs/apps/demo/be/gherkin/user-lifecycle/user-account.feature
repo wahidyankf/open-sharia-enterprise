@@ -14,19 +14,19 @@ Feature: User Account
     Then the response status code should be 200
     And the response body should contain "username" equal to "alice"
     And the response body should contain "email" equal to "alice@example.com"
-    And the response body should contain a non-null "display_name" field
+    And the response body should contain a non-null "displayName" field
 
   Scenario: Update display name succeeds
-    When alice sends PATCH /api/v1/users/me with body { "display_name": "Alice Smith" }
+    When alice sends PATCH /api/v1/users/me with body { "displayName": "Alice Smith" }
     Then the response status code should be 200
-    And the response body should contain "display_name" equal to "Alice Smith"
+    And the response body should contain "displayName" equal to "Alice Smith"
 
   Scenario: Successful password change returns 200
-    When alice sends POST /api/v1/users/me/password with body { "old_password": "Str0ng#Pass1", "new_password": "NewPass#456" }
+    When alice sends POST /api/v1/users/me/password with body { "oldPassword": "Str0ng#Pass1", "newPassword": "NewPass#456" }
     Then the response status code should be 200
 
   Scenario: Reject password change with incorrect old password
-    When alice sends POST /api/v1/users/me/password with body { "old_password": "Wr0ngOld!", "new_password": "NewPass#456" }
+    When alice sends POST /api/v1/users/me/password with body { "oldPassword": "Wr0ngOld!", "newPassword": "NewPass#456" }
     Then the response status code should be 401
     And the response body should contain an error message about invalid credentials
 

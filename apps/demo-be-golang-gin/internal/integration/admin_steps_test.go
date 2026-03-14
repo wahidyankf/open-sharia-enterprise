@@ -15,7 +15,7 @@ import (
 func registerAdminSteps(sc *godog.ScenarioContext, ctx *ScenarioCtx) {
 	sc.Step(`^users "([^"]*)", "([^"]*)", and "([^"]*)" are registered$`, ctx.multipleUsersAreRegistered)
 	sc.Step(`^the admin sends GET /api/v1/admin/users$`, ctx.theAdminSendsGetAdminUsers)
-	sc.Step(`^the admin sends GET /api/v1/admin/users\?email=([^\s]*)$`, ctx.theAdminSendsGetAdminUsersWithEmail)
+	sc.Step(`^the admin sends GET /api/v1/admin/users\?search=([^\s]*)$`, ctx.theAdminSendsGetAdminUsersWithEmail)
 	sc.Step(`^the response body should contain at least one user with "([^"]*)" equal to "([^"]*)"$`, ctx.responseBodyContainsAtLeastOneUserWithField)
 	sc.Step(`^"([^"]*)" has logged in and stored the access token$`, ctx.userHasLoggedInAndStoredAccessToken)
 	sc.Step(`^the admin sends POST /api/v1/admin/users/\{alice_id\}/disable with body \{ "reason": "([^"]*)" \}$`, ctx.theAdminSendsDisableAlice)
@@ -44,7 +44,7 @@ func (ctx *ScenarioCtx) theAdminSendsGetAdminUsers() error {
 }
 
 func (ctx *ScenarioCtx) theAdminSendsGetAdminUsersWithEmail(email string) error {
-	resp, body := doRequest(ctx.Router, "GET", "/api/v1/admin/users?email="+email, nil, ctx.AdminToken)
+	resp, body := doRequest(ctx.Router, "GET", "/api/v1/admin/users?search="+email, nil, ctx.AdminToken)
 	ctx.LastResponse = resp
 	ctx.LastBody = body
 	return nil
@@ -52,9 +52,9 @@ func (ctx *ScenarioCtx) theAdminSendsGetAdminUsersWithEmail(email string) error 
 
 func (ctx *ScenarioCtx) responseBodyContainsAtLeastOneUserWithField(field, value string) error {
 	body := parseBody(ctx.LastBody)
-	data, ok := body["data"]
+	data, ok := body["content"]
 	if !ok {
-		return fmt.Errorf("response does not contain 'data' field; body: %s", string(ctx.LastBody))
+		return fmt.Errorf("response does not contain 'content' field; body: %s", string(ctx.LastBody))
 	}
 	users, ok := data.([]interface{})
 	if !ok {

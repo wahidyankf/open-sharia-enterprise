@@ -37,7 +37,7 @@ Future<Expense> createExpense({
       'amount': amount,
       'currency': currency,
       'category': category,
-      'expense_date': expenseDate,
+      'date': expenseDate,
       if (description != null) 'description': description,
     },
   );
@@ -61,7 +61,7 @@ Future<Expense> updateExpense(
     if (amount != null) 'amount': amount,
     if (currency != null) 'currency': currency,
     if (category != null) 'category': category,
-    if (expenseDate != null) 'expense_date': expenseDate,
+    if (expenseDate != null) 'date': expenseDate,
     if (description != null) 'description': description,
   };
 

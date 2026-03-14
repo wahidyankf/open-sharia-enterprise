@@ -18,13 +18,13 @@ defmodule DemoFeExphWeb.LoginLive do
 
     case auth.login(username, password) do
       {:ok, body} ->
-        access_token = body["access_token"]
-        refresh_token = body["refresh_token"]
+        access_token = body["accessToken"]
+        refresh_token = body["refreshToken"]
 
         {:noreply,
          socket
-         |> assign(:access_token, access_token)
-         |> assign(:refresh_token, refresh_token)
+         |> Phoenix.LiveView.put_session(:access_token, access_token)
+         |> Phoenix.LiveView.put_session(:refresh_token, refresh_token)
          |> push_navigate(to: "/")}
 
       {:error, {_status, body}} ->

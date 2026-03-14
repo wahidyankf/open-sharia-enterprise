@@ -34,8 +34,8 @@ Feature: Financial Entry Management
     Given alice has created 3 entries
     When alice sends GET /api/v1/expenses
     Then the response status code should be 200
-    And the response body should contain a non-null "data" field
-    And the response body should contain a non-null "total" field
+    And the response body should contain a non-null "content" field
+    And the response body should contain a non-null "totalElements" field
     And the response body should contain a non-null "page" field
 
   Scenario: Update an entry amount and description returns 200

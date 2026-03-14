@@ -79,7 +79,7 @@ defmodule DemoFeExphWeb.Unit.AttachmentsSteps do
       "type" => type
     }
 
-    ApiStub.put(:list_expenses, {:ok, %{"expenses" => [expense], "total" => 1}})
+    ApiStub.put(:list_expenses, {:ok, %{"content" => [expense], "totalElements" => 1}})
     ApiStub.put(:get_expense, {:ok, expense})
     ApiStub.put(:list_attachments, {:ok, %{"attachments" => []}})
     {:ok, Map.put(state, :alice_expense, expense)}

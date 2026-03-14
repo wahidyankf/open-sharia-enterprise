@@ -29,7 +29,7 @@ func registerTokenLifecycleSteps(sc *godog.ScenarioContext, ctx *ScenarioCtx) {
 }
 
 func (ctx *ScenarioCtx) aliceSendsRefreshWithRefreshToken() error {
-	body := map[string]string{"refresh_token": ctx.RefreshToken}
+	body := map[string]string{"refreshToken": ctx.RefreshToken}
 	resp, respBody := doRequest(ctx.Router, "POST", "/api/v1/auth/refresh", body, "")
 	ctx.LastResponse = resp
 	ctx.LastBody = respBody
@@ -50,7 +50,7 @@ func (ctx *ScenarioCtx) alicesRefreshTokenHasExpired() error {
 
 func (ctx *ScenarioCtx) aliceHasUsedRefreshTokenToGetNewPair() error {
 	originalRefresh := ctx.RefreshToken
-	body := map[string]string{"refresh_token": ctx.RefreshToken}
+	body := map[string]string{"refreshToken": ctx.RefreshToken}
 	resp, respBody := doRequest(ctx.Router, "POST", "/api/v1/auth/refresh", body, "")
 	if resp.StatusCode != 200 {
 		return fmt.Errorf("refresh failed with %d: %s", resp.StatusCode, string(respBody))
@@ -59,8 +59,8 @@ func (ctx *ScenarioCtx) aliceHasUsedRefreshTokenToGetNewPair() error {
 	if err := json.Unmarshal(respBody, &parsed); err != nil {
 		return err
 	}
-	ctx.AccessToken = parsed["access_token"].(string)
-	ctx.RefreshToken = parsed["refresh_token"].(string)
+	ctx.AccessToken = parsed["accessToken"].(string)
+	ctx.RefreshToken = parsed["refreshToken"].(string)
 	// Store the original refresh token so subsequent steps can use it.
 	ctx.LastBody = []byte(fmt.Sprintf(`{"original_refresh_token": "%s"}`, originalRefresh))
 	return nil
@@ -74,7 +74,7 @@ func (ctx *ScenarioCtx) aliceSendsRefreshWithOriginalRefreshToken() error {
 		return err
 	}
 	originalToken := parsed["original_refresh_token"].(string)
-	body := map[string]string{"refresh_token": originalToken}
+	body := map[string]string{"refreshToken": originalToken}
 	resp, respBody := doRequest(ctx.Router, "POST", "/api/v1/auth/refresh", body, "")
 	ctx.LastResponse = resp
 	ctx.LastBody = respBody

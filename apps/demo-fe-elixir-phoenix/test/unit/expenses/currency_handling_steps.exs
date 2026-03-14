@@ -64,7 +64,7 @@ defmodule DemoFeExphWeb.Unit.CurrencyHandlingSteps do
       "type" => "expense"
     }
 
-    ApiStub.put(:list_expenses, {:ok, %{"expenses" => [expense], "total" => 1}})
+    ApiStub.put(:list_expenses, {:ok, %{"content" => [expense], "totalElements" => 1}})
     ApiStub.put(:get_expense, {:ok, expense})
     ApiStub.put(:list_attachments, {:ok, %{"attachments" => []}})
     {:ok, Map.put(state, :current_expense, expense)}
@@ -92,7 +92,7 @@ defmodule DemoFeExphWeb.Unit.CurrencyHandlingSteps do
       }
     ]
 
-    ApiStub.put(:list_expenses, {:ok, %{"expenses" => expenses, "total" => 2}})
+    ApiStub.put(:list_expenses, {:ok, %{"content" => expenses, "totalElements" => 2}})
 
     ApiStub.put(
       :get_expense_summary,

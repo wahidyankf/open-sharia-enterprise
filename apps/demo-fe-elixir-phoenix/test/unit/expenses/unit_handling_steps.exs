@@ -74,7 +74,7 @@ defmodule DemoFeExphWeb.Unit.UnitHandlingSteps do
       "unit" => unit
     }
 
-    ApiStub.put(:list_expenses, {:ok, %{"expenses" => [expense], "total" => 1}})
+    ApiStub.put(:list_expenses, {:ok, %{"content" => [expense], "totalElements" => 1}})
     ApiStub.put(:get_expense, {:ok, expense})
     ApiStub.put(:list_attachments, {:ok, %{"attachments" => []}})
     {:ok, Map.put(state, :current_expense, expense)}
@@ -163,7 +163,7 @@ defmodule DemoFeExphWeb.Unit.UnitHandlingSteps do
     }
 
     ApiStub.put(:create_expense, {:ok, created})
-    ApiStub.put(:list_expenses, {:ok, %{"expenses" => [created], "total" => 1}})
+    ApiStub.put(:list_expenses, {:ok, %{"content" => [created], "totalElements" => 1}})
 
     form_data = %{
       amount: amount,

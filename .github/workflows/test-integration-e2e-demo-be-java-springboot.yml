@@ -53,7 +53,7 @@ jobs:
         run: npm ci
 
       - name: Run E2E tests
-        run: npx nx run demo-be-e2e:test:e2e
+        run: npx nx run demo-be-e2e:test:e2e:no-test-api
 
       - name: Upload test report
         if: always()

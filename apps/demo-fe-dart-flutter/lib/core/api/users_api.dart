@@ -15,9 +15,9 @@ Future<User> getCurrentUser() async {
 
 /// Updates the display name of the current user and returns the updated [User].
 Future<User> updateProfile(String displayName) async {
-  final response = await dio.put<Map<String, dynamic>>(
+  final response = await dio.patch<Map<String, dynamic>>(
     '/api/v1/users/me',
-    data: {'display_name': displayName},
+    data: {'displayName': displayName},
   );
   return User.fromJson(response.data!);
 }
@@ -30,8 +30,8 @@ Future<void> changePassword({
   required String newPassword,
 }) async {
   await dio.post<void>(
-    '/api/v1/users/me/change-password',
-    data: {'old_password': oldPassword, 'new_password': newPassword},
+    '/api/v1/users/me/password',
+    data: {'oldPassword': oldPassword, 'newPassword': newPassword},
   );
 }
 

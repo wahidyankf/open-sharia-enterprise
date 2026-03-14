@@ -65,7 +65,7 @@ defmodule DemoFeExphWeb.Unit.ExpenseManagementSteps do
       "type" => type
     }
 
-    ApiStub.put(:list_expenses, {:ok, %{"expenses" => [expense], "total" => 1}})
+    ApiStub.put(:list_expenses, {:ok, %{"content" => [expense], "totalElements" => 1}})
     ApiStub.put(:get_expense, {:ok, expense})
     {:ok, Map.put(state, :current_expense, expense)}
   end
@@ -84,7 +84,7 @@ defmodule DemoFeExphWeb.Unit.ExpenseManagementSteps do
         }
       end)
 
-    ApiStub.put(:list_expenses, {:ok, %{"expenses" => expenses, "total" => 3}})
+    ApiStub.put(:list_expenses, {:ok, %{"content" => expenses, "totalElements" => 3}})
     {:ok, state}
   end
 
@@ -130,7 +130,7 @@ defmodule DemoFeExphWeb.Unit.ExpenseManagementSteps do
     }
 
     ApiStub.put(:create_expense, {:ok, created_expense})
-    ApiStub.put(:list_expenses, {:ok, %{"expenses" => [created_expense], "total" => 1}})
+    ApiStub.put(:list_expenses, {:ok, %{"content" => [created_expense], "totalElements" => 1}})
 
     {:ok, Map.put(state, :form_data, form_data)}
   end
@@ -241,7 +241,7 @@ defmodule DemoFeExphWeb.Unit.ExpenseManagementSteps do
       end
 
     # After deletion, list_expenses will be called again - stub empty list
-    ApiStub.put(:list_expenses, {:ok, %{"expenses" => [], "total" => 0}})
+    ApiStub.put(:list_expenses, {:ok, %{"content" => [], "totalElements" => 0}})
     view |> element("button[phx-click='delete_expense']", "Delete") |> render_click()
     {:ok, Map.put(state, :view, view)}
   end

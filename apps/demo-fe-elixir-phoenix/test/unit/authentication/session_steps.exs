@@ -41,7 +41,7 @@ defmodule DemoFeExphWeb.Unit.SessionSteps do
          "id" => "user-1",
          "username" => username,
          "email" => "#{username}@example.com",
-         "display_name" => username
+         "displayName" => username
        }}
     )
 
@@ -131,13 +131,13 @@ defmodule DemoFeExphWeb.Unit.SessionSteps do
 
   defthen ~r/^a new access token should be stored$/, _vars, %{refresh_result: result} = state do
     assert {:ok, body} = result
-    assert body["access_token"] != nil
+    assert body["accessToken"] != nil
     {:ok, state}
   end
 
   defthen ~r/^a new refresh token should be stored$/, _vars, %{refresh_result: result} = state do
     assert {:ok, body} = result
-    assert body["refresh_token"] != nil
+    assert body["refreshToken"] != nil
     {:ok, state}
   end
 
