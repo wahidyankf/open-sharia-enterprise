@@ -19,6 +19,7 @@ generated-reports
 local-temp
 specs
 !specs/apps/demo/be/gherkin
+!specs/apps/demo/fe/gherkin
 infra
 .claude
 .opencode
