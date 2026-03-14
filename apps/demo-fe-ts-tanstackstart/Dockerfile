@@ -47,4 +47,4 @@ server {
 EOF
 EXPOSE 3301
 ENV PORT=3300 NODE_ENV=production
-CMD sh -c "node dist/server/index.js & nginx -g 'daemon off;'"
+CMD sh -c "node dist/server/server.js & nginx -g 'daemon off;'"
