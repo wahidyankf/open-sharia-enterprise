@@ -15,8 +15,8 @@ router = APIRouter()
 class PLResponse(BaseModel):
     """Profit and loss report response."""
 
-    income_total: str
-    expense_total: str
+    totalIncome: str
+    totalExpense: str
     net: str
     income_breakdown: dict[str, str]
     expense_breakdown: dict[str, str]

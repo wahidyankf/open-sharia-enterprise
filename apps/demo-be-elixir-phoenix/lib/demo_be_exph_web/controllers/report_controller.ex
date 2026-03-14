@@ -23,8 +23,8 @@ defmodule DemoBeExphWeb.ReportController do
       report = expense_ctx().pl_report(user.id, from_date, to_date, currency)
 
       json(conn, %{
-        income_total: Decimal.to_string(report.income_total),
-        expense_total: Decimal.to_string(report.expense_total),
+        totalIncome: Decimal.to_string(report.income_total),
+        totalExpense: Decimal.to_string(report.expense_total),
         net: Decimal.to_string(report.net),
         income_breakdown:
           report.income_breakdown

@@ -191,7 +191,7 @@ public class UnitAttachmentSteps {
         boolean found = resp.attachments().stream().anyMatch(a -> {
             Object fieldValue = switch (field) {
                 case "filename" -> a.filename();
-                case "content_type" -> a.contentType();
+                case "contentType" -> a.contentType();
                 default -> null;
             };
             return value.equals(fieldValue);

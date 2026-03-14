@@ -88,8 +88,8 @@ object ReportRoutes : KoinComponent {
       put("currency", currency)
       put("from", from.toString())
       put("to", to.toString())
-      put("income_total", incomeTotal.toPlainString())
-      put("expense_total", expenseTotal.toPlainString())
+      put("totalIncome", incomeTotal.toPlainString())
+      put("totalExpense", expenseTotal.toPlainString())
       put("net", net.toPlainString())
       put(
         "income_breakdown",

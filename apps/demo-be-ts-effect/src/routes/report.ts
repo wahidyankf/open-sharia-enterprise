@@ -67,8 +67,8 @@ const getPL = HttpServerRequest.HttpServerRequest.pipe(
       }
 
       return yield* HttpServerResponse.json({
-        income_total: formatAmount(incomeTotal, currency),
-        expense_total: formatAmount(expenseTotal, currency),
+        totalIncome: formatAmount(incomeTotal, currency),
+        totalExpense: formatAmount(expenseTotal, currency),
         net: formatAmount(net, currency),
         income_breakdown: incomeBreakdownFormatted,
         expense_breakdown: expenseBreakdownFormatted,

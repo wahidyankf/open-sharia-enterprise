@@ -135,7 +135,7 @@ let upload (expenseId: Guid) : HttpHandler =
                                     json
                                         {| id = attachmentId
                                            filename = entity.Filename
-                                           content_type = entity.ContentType
+                                           contentType = entity.ContentType
                                            file_size = entity.FileSize
                                            url = entity.Url |}
                                         earlyReturn
@@ -176,7 +176,7 @@ let list (expenseId: Guid) : HttpHandler =
                     |> Seq.map (fun a ->
                         {| id = a.Id
                            filename = a.Filename
-                           content_type = a.ContentType
+                           contentType = a.ContentType
                            file_size = a.FileSize
                            url = a.Url |})
                     |> Seq.toArray

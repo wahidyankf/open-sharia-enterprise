@@ -546,8 +546,8 @@ defmodule DemoBeExph.Integration.ServiceLayer do
           %{
             status: 200,
             body: %{
-              "income_total" => Decimal.to_string(report.income_total),
-              "expense_total" => Decimal.to_string(report.expense_total),
+              "totalIncome" => Decimal.to_string(report.income_total),
+              "totalExpense" => Decimal.to_string(report.expense_total),
               "net" => Decimal.to_string(report.net),
               "income_breakdown" =>
                 Enum.into(report.income_breakdown, %{}, fn {k, v} ->
@@ -803,7 +803,7 @@ defmodule DemoBeExph.Integration.ServiceLayer do
       "id" => attachment.id,
       "expense_id" => attachment.expense_id,
       "filename" => attachment.filename,
-      "content_type" => attachment.content_type,
+      "contentType" => attachment.content_type,
       "size" => attachment.size,
       "url" => "/api/v1/expenses/#{attachment.expense_id}/attachments/#{attachment.id}",
       "inserted_at" => attachment.inserted_at

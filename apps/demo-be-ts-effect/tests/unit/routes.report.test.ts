@@ -143,8 +143,8 @@ describe("GET /api/v1/reports/pl", () => {
     });
     const { status, body } = await runRouter(req, makeTestLayer());
     expect(status).toBe(200);
-    expect(body["income_total"]).toBeDefined();
-    expect(body["expense_total"]).toBeDefined();
+    expect(body["totalIncome"]).toBeDefined();
+    expect(body["totalExpense"]).toBeDefined();
     expect(body["net"]).toBeDefined();
   });
 
@@ -195,8 +195,8 @@ describe("GET /api/v1/reports/pl", () => {
     });
     const { status, body } = await runRouter(req, makeTestLayer({ findByDateRange: () => Effect.succeed([]) }));
     expect(status).toBe(200);
-    expect(body["income_total"]).toBe("0.00");
-    expect(body["expense_total"]).toBe("0.00");
+    expect(body["totalIncome"]).toBe("0.00");
+    expect(body["totalExpense"]).toBe("0.00");
     expect(body["net"]).toBe("0.00");
   });
 
@@ -212,8 +212,8 @@ describe("GET /api/v1/reports/pl", () => {
     });
     const { status, body } = await runRouter(req, makeTestLayer({ findByDateRange: () => Effect.succeed(entries) }));
     expect(status).toBe(200);
-    expect(body["income_total"]).toBe("5000.00");
-    expect(body["expense_total"]).toBe("150.00");
+    expect(body["totalIncome"]).toBe("5000.00");
+    expect(body["totalExpense"]).toBe("150.00");
     expect(body["net"]).toBe("4850.00");
   });
 
@@ -229,8 +229,8 @@ describe("GET /api/v1/reports/pl", () => {
     });
     const { status, body } = await runRouter(req, makeTestLayer({ findByDateRange: () => Effect.succeed(entries) }));
     expect(status).toBe(200);
-    expect(body["income_total"]).toBe("100.50");
-    expect(body["expense_total"]).toBe("50.25");
+    expect(body["totalIncome"]).toBe("100.50");
+    expect(body["totalExpense"]).toBe("50.25");
   });
 
   it("includes income and expense breakdown by category", async () => {

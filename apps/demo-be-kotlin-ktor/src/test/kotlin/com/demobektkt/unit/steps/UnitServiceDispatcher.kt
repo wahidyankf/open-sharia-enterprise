@@ -840,8 +840,8 @@ object UnitServiceDispatcher {
                     put("currency", currency)
                     put("from", fromDate.toString())
                     put("to", toDate.toString())
-                    put("income_total", incomeTotal.toPlainString())
-                    put("expense_total", expenseTotal.toPlainString())
+                    put("totalIncome", incomeTotal.toPlainString())
+                    put("totalExpense", expenseTotal.toPlainString())
                     put("net", net.toPlainString())
                     put(
                         "income_breakdown",
@@ -1060,7 +1060,7 @@ object UnitServiceDispatcher {
         put("id", attachment.id.toString())
         put("expense_id", attachment.expenseId.toString())
         put("filename", attachment.filename)
-        put("content_type", attachment.contentType)
+        put("contentType", attachment.contentType)
         put("size_bytes", attachment.sizeBytes)
         put(
             "url",

@@ -14,7 +14,7 @@ function attachmentToResponse(attachment: any) {
     id,
     expense_id: expenseId,
     filename: attachment.filename as string,
-    content_type: attachment.contentType as string,
+    contentType: attachment.contentType as string,
     size: attachment.size as number,
     url: `/api/v1/expenses/${expenseId}/attachments/${id}`,
   };

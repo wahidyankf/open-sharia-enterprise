@@ -474,15 +474,15 @@ public class UnitAuthSteps {
             return switch (jsonField) {
                 case "id" -> resp.id();
                 case "filename" -> resp.filename();
-                case "content_type" -> resp.contentType();
+                case "contentType" -> resp.contentType();
                 case "url" -> resp.url();
                 default -> null;
             };
         }
         if (body instanceof com.demobejasb.report.dto.PlReportResponse resp) {
             return switch (jsonField) {
-                case "income_total" -> resp.incomeTotal();
-                case "expense_total" -> resp.expenseTotal();
+                case "totalIncome" -> resp.incomeTotal();
+                case "totalExpense" -> resp.expenseTotal();
                 case "net" -> resp.net();
                 case "income_breakdown" -> resp.incomeBreakdown();
                 case "expense_breakdown" -> resp.expenseBreakdown();

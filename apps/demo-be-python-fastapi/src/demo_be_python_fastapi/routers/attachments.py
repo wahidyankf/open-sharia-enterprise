@@ -25,7 +25,7 @@ class AttachmentResponse(BaseModel):
 
     id: str
     filename: str
-    content_type: str
+    contentType: str
     size: int
     url: str
 
@@ -79,7 +79,7 @@ async def upload_attachment(
     return AttachmentResponse(
         id=attachment.id,
         filename=attachment.filename,
-        content_type=attachment.content_type,
+        contentType=attachment.content_type,
         size=attachment.size,
         url=attachment.url,
     )
@@ -100,7 +100,7 @@ def list_attachments(
             AttachmentResponse(
                 id=a.id,
                 filename=a.filename,
-                content_type=a.content_type,
+                contentType=a.content_type,
                 size=a.size,
                 url=a.url,
             )

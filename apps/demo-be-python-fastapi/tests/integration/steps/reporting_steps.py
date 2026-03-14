@@ -52,21 +52,21 @@ def alice_get_pl_report(
 # --- Then steps ---
 
 
-@then(parsers.parse('the response body should contain "income_total" equal to "{value}"'))
+@then(parsers.parse('the response body should contain "totalIncome" equal to "{value}"'))
 def check_income_total(response: FakeResponse, value: str) -> None:
     body = response.json()
-    assert "income_total" in body, f"income_total not in: {body}"
-    assert str(body["income_total"]) == value, (
-        f"Expected income_total={value}, got {body['income_total']}"
+    assert "totalIncome" in body, f"totalIncome not in: {body}"
+    assert str(body["totalIncome"]) == value, (
+        f"Expected totalIncome={value}, got {body['totalIncome']}"
     )
 
 
-@then(parsers.parse('the response body should contain "expense_total" equal to "{value}"'))
+@then(parsers.parse('the response body should contain "totalExpense" equal to "{value}"'))
 def check_expense_total(response: FakeResponse, value: str) -> None:
     body = response.json()
-    assert "expense_total" in body, f"expense_total not in: {body}"
-    assert str(body["expense_total"]) == value, (
-        f"Expected expense_total={value}, got {body['expense_total']}"
+    assert "totalExpense" in body, f"totalExpense not in: {body}"
+    assert str(body["totalExpense"]) == value, (
+        f"Expected totalExpense={value}, got {body['totalExpense']}"
     )
 
 

@@ -30,7 +30,7 @@ private fun Attachment.toJsonObject() = buildJsonObject {
   put("id", id.toString())
   put("expense_id", expenseId.toString())
   put("filename", filename)
-  put("content_type", contentType)
+  put("contentType", contentType)
   put("size_bytes", sizeBytes)
   put("url", "/api/v1/expenses/$expenseId/attachments/$id")
   put("created_at", createdAt.toString())

@@ -72,8 +72,8 @@ let profitAndLoss: HttpHandler =
 
             return!
                 json
-                    {| income_total = formatAmount incomeTotal
-                       expense_total = formatAmount expenseTotal
+                    {| totalIncome = formatAmount incomeTotal
+                       totalExpense = formatAmount expenseTotal
                        net = formatAmount net
                        currency = currency
                        income_breakdown = incomeBreakdown

@@ -229,12 +229,12 @@ def check_attachment_filename(response: FakeResponse, filename: str) -> None:
     )
 
 
-@then(parsers.parse('the response body should contain "content_type" equal to "{content_type}"'))
+@then(parsers.parse('the response body should contain "contentType" equal to "{content_type}"'))
 def check_attachment_content_type(response: FakeResponse, content_type: str) -> None:
     body = response.json()
-    assert "content_type" in body, f"'content_type' not in response: {body}"
-    assert body["content_type"] == content_type, (
-        f"Expected content_type={content_type!r}, got {body['content_type']!r}"
+    assert "contentType" in body, f"'contentType' not in response: {body}"
+    assert body["contentType"] == content_type, (
+        f"Expected contentType={content_type!r}, got {body['contentType']!r}"
     )
 
 

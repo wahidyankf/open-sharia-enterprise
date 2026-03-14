@@ -7,7 +7,7 @@ import java.util.UUID;
 public record AttachmentResponse(
         UUID id,
         String filename,
-        @JsonProperty("content_type") String contentType,
+        @JsonProperty("contentType") String contentType,
         long size,
         String url) {
 

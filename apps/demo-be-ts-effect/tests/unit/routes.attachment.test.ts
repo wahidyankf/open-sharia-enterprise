@@ -200,7 +200,7 @@ describe("POST /api/v1/expenses/:expenseId/attachments", () => {
     const { status, body } = await runRouter(req, makeTestLayer());
     expect(status).toBe(201);
     expect(body["filename"]).toBeDefined();
-    expect(body["content_type"]).toBeDefined();
+    expect(body["contentType"]).toBeDefined();
   });
 
   it("uploads a PNG attachment", async () => {

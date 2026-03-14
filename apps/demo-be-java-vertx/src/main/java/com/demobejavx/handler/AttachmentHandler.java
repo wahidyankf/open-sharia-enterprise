@@ -158,7 +158,7 @@ public class AttachmentHandler implements Handler<RoutingContext> {
         return new JsonObject()
                 .put("id", attachment.id())
                 .put("filename", attachment.filename())
-                .put("content_type", attachment.contentType())
+                .put("contentType", attachment.contentType())
                 .put("size", attachment.size())
                 .put("url", "/api/v1/expenses/" + attachment.expenseId()
                         + "/attachments/" + attachment.id());

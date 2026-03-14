@@ -284,8 +284,8 @@ class ExpenseRepository:
             return str(d.quantize(quantizer))
 
         return {
-            "income_total": fmt(income_total),
-            "expense_total": fmt(expense_total),
+            "totalIncome": fmt(income_total),
+            "totalExpense": fmt(expense_total),
             "net": fmt(net),
             "income_breakdown": {k: fmt(v) for k, v in income_breakdown.items()},
             "expense_breakdown": {k: fmt(v) for k, v in expense_breakdown.items()},

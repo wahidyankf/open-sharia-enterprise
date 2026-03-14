@@ -1589,8 +1589,8 @@ pub async fn svc_pl_report(
                 .map(|c| (c.category.clone(), json!(currency.format_amount(c.total))))
                 .collect();
             ServiceResponse::ok(json!({
-                "income_total": currency.format_amount(report.income_total),
-                "expense_total": currency.format_amount(report.expense_total),
+                "totalIncome": currency.format_amount(report.income_total),
+                "totalExpense": currency.format_amount(report.expense_total),
                 "net": currency.format_amount(net),
                 "income_breakdown": income_breakdown,
                 "expense_breakdown": expense_breakdown,
@@ -1627,7 +1627,7 @@ fn attachment_to_json(att: &Attachment) -> Value {
         "id": att.id.to_string(),
         "expense_id": att.expense_id.to_string(),
         "filename": att.filename,
-        "content_type": att.content_type,
+        "contentType": att.content_type,
         "size": att.size,
         "url": format!("/api/v1/expenses/{}/attachments/{}", att.expense_id, att.id),
     })

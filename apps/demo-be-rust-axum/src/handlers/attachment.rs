@@ -25,7 +25,7 @@ fn attachment_to_json(att: &crate::domain::attachment::Attachment) -> Value {
         "id": att.id.to_string(),
         "expense_id": att.expense_id.to_string(),
         "filename": att.filename,
-        "content_type": att.content_type,
+        "contentType": att.content_type,
         "size": att.size,
         "url": format!("/api/v1/expenses/{}/attachments/{}", att.expense_id, att.id),
     })

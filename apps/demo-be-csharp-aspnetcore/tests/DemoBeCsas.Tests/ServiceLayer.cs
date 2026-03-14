@@ -1021,8 +1021,8 @@ public sealed class ServiceLayer(IntegrationTestHost host)
             200,
             new
             {
-                income_total = FormatAmount(incomeTotal, effectiveCurrency),
-                expense_total = FormatAmount(expenseTotal, effectiveCurrency),
+                totalIncome = FormatAmount(incomeTotal, effectiveCurrency),
+                totalExpense = FormatAmount(expenseTotal, effectiveCurrency),
                 net = FormatAmount(incomeTotal - expenseTotal, effectiveCurrency),
                 income_breakdown = incomeBreakdown,
                 expense_breakdown = expenseBreakdown,
@@ -1095,7 +1095,7 @@ public sealed class ServiceLayer(IntegrationTestHost host)
                 id = attachment.Id,
                 expense_id = attachment.ExpenseId,
                 filename = attachment.FileName,
-                content_type = attachment.ContentType,
+                contentType = attachment.ContentType,
                 file_size_bytes = attachment.FileSizeBytes,
                 url = $"/api/v1/expenses/{expenseId}/attachments/{attachment.Id}/download",
                 created_at = attachment.CreatedAt,
@@ -1147,7 +1147,7 @@ public sealed class ServiceLayer(IntegrationTestHost host)
                     id = a.Id,
                     expense_id = a.ExpenseId,
                     filename = a.FileName,
-                    content_type = a.ContentType,
+                    contentType = a.ContentType,
                     file_size_bytes = a.FileSizeBytes,
                     url = $"/api/v1/expenses/{expenseId}/attachments/{a.Id}/download",
                     created_at = a.CreatedAt,

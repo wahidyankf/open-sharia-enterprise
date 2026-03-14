@@ -156,7 +156,7 @@ defmodule DemoBeExphWeb.AttachmentController do
       id: attachment.id,
       expense_id: attachment.expense_id,
       filename: attachment.filename,
-      content_type: attachment.content_type,
+      contentType: attachment.content_type,
       size: attachment.size,
       url: "/api/v1/expenses/#{attachment.expense_id}/attachments/#{attachment.id}",
       inserted_at: attachment.inserted_at

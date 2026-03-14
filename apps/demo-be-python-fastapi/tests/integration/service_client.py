@@ -797,7 +797,7 @@ class ServiceClient:
                 {
                     "id": attachment.id,
                     "filename": attachment.filename,
-                    "content_type": attachment.content_type,
+                    "contentType": attachment.content_type,
                     "size": attachment.size,
                     "url": attachment.url,
                 },
@@ -833,7 +833,7 @@ class ServiceClient:
                         {
                             "id": a.id,
                             "filename": a.filename,
-                            "content_type": a.content_type,
+                            "contentType": a.content_type,
                             "size": a.size,
                             "url": a.url,
                         }

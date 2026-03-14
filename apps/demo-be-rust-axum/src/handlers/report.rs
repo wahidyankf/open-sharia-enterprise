@@ -14,8 +14,10 @@ use crate::state::AppState;
 
 #[derive(Deserialize)]
 pub struct PlReportQuery {
-    pub from: Option<String>,
-    pub to: Option<String>,
+    #[serde(rename = "startDate", alias = "from")]
+    pub start_date: Option<String>,
+    #[serde(rename = "endDate", alias = "to")]
+    pub end_date: Option<String>,
     pub currency: Option<String>,
 }
 
@@ -24,8 +26,8 @@ pub async fn pl_report(
     auth_user: AuthUser,
     Query(params): Query<PlReportQuery>,
 ) -> Result<Json<Value>, AppError> {
-    let from_str = params.from.unwrap_or_default();
-    let to_str = params.to.unwrap_or_default();
+    let from_str = params.start_date.unwrap_or_default();
+    let to_str = params.end_date.unwrap_or_default();
     let currency_str = params.currency.unwrap_or_else(|| "USD".to_string());
 
     let from =
@@ -61,8 +63,8 @@ pub async fn pl_report(
         .collect();
 
     Ok(Json(json!({
-        "income_total": currency.format_amount(report.income_total),
-        "expense_total": currency.format_amount(report.expense_total),
+        "totalIncome": currency.format_amount(report.income_total),
+        "totalExpense": currency.format_amount(report.expense_total),
         "net": currency.format_amount(net),
         "income_breakdown": income_breakdown,
         "expense_breakdown": expense_breakdown,

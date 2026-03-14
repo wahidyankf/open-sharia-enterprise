@@ -194,7 +194,7 @@ function attachmentToResponse(attachment: any) {
     id,
     expense_id: expenseId,
     filename: attachment.filename as string,
-    content_type: attachment.contentType as string,
+    contentType: attachment.contentType as string,
     size: attachment.size as number,
     url: `/api/v1/expenses/${expenseId}/attachments/${id}`,
   };
@@ -1028,8 +1028,8 @@ export async function getReport(
       }
 
       return {
-        income_total: formatAmount(incomeTotal, currency),
-        expense_total: formatAmount(expenseTotal, currency),
+        totalIncome: formatAmount(incomeTotal, currency),
+        totalExpense: formatAmount(expenseTotal, currency),
         net: formatAmount(net, currency),
         income_breakdown: incomeBreakdownFormatted,
         expense_breakdown: expenseBreakdownFormatted,

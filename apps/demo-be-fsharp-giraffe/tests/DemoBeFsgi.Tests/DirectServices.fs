@@ -1127,7 +1127,7 @@ let uploadAttachment
                             created
                                 {| id = attachmentId
                                    filename = entity.Filename
-                                   content_type = entity.ContentType
+                                   contentType = entity.ContentType
                                    file_size = entity.FileSize
                                    url = entity.Url |}
     }
@@ -1157,7 +1157,7 @@ let listAttachments (db: AppDbContext) (token: string option) (expenseId: Guid) 
                     |> Seq.map (fun a ->
                         {| id = a.Id
                            filename = a.Filename
-                           content_type = a.ContentType
+                           contentType = a.ContentType
                            file_size = a.FileSize
                            url = a.Url |})
                     |> Seq.toArray
@@ -1262,8 +1262,8 @@ let profitAndLoss
 
             return
                 ok
-                    {| income_total = formatAmount incomeTotal
-                       expense_total = formatAmount expenseTotal
+                    {| totalIncome = formatAmount incomeTotal
+                       totalExpense = formatAmount expenseTotal
                        net = formatAmount net
                        currency = curr
                        income_breakdown = incomeBreakdown

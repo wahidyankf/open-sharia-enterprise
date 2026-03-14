@@ -799,9 +799,9 @@ public final class DirectCallService {
         JsonArray expenseBreakdown = buildBreakdownArray(expenseByCategory, scale);
 
         return ServiceResponse.of(200, new JsonObject()
-                .put("income_total",
+                .put("totalIncome",
                         incomeTotal.setScale(scale, RoundingMode.HALF_UP).toPlainString())
-                .put("expense_total",
+                .put("totalExpense",
                         expenseTotal.setScale(scale, RoundingMode.HALF_UP).toPlainString())
                 .put("net", net.setScale(scale, RoundingMode.HALF_UP).toPlainString())
                 .put("currency", filterCurrency)
@@ -881,7 +881,7 @@ public final class DirectCallService {
         return new JsonObject()
                 .put("id", attachment.id())
                 .put("filename", attachment.filename())
-                .put("content_type", attachment.contentType())
+                .put("contentType", attachment.contentType())
                 .put("size", attachment.size())
                 .put("url", "/api/v1/expenses/" + attachment.expenseId()
                         + "/attachments/" + attachment.id());

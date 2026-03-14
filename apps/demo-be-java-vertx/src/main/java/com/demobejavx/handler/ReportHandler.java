@@ -76,9 +76,9 @@ public class ReportHandler implements Handler<RoutingContext> {
                     JsonObject expenseBreakdown = buildBreakdown(expenseByCategory, scale);
 
                     JsonObject resp = new JsonObject()
-                            .put("income_total", incomeTotal
+                            .put("totalIncome", incomeTotal
                                     .setScale(scale, RoundingMode.HALF_UP).toPlainString())
-                            .put("expense_total", expenseTotal
+                            .put("totalExpense", expenseTotal
                                     .setScale(scale, RoundingMode.HALF_UP).toPlainString())
                             .put("net", net.setScale(scale, RoundingMode.HALF_UP).toPlainString())
                             .put("currency", filterCurrency)
