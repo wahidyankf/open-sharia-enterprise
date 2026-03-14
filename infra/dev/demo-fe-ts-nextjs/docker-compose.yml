@@ -55,6 +55,8 @@ services:
     build:
       context: ../../../apps/demo-fe-ts-nextjs
       dockerfile: Dockerfile
+      args:
+        BACKEND_URL: http://demo-be:8201
     container_name: demo-fe-tsnx
     ports:
       - "3301:3301"

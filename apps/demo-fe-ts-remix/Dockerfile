@@ -1,7 +1,7 @@
 FROM node:24-alpine AS deps
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
+COPY package.json ./
+RUN npm install --ignore-scripts
 
 FROM node:24-alpine AS build
 WORKDIR /app
@@ -10,12 +10,41 @@ COPY . .
 RUN npx react-router build
 
 FROM node:24-alpine
-RUN addgroup -S app && adduser -S app -G app
+RUN apk add --no-cache nginx && mkdir -p /run/nginx
 WORKDIR /app
-COPY --from=build --chown=app:app /app/build ./build
-COPY --from=build --chown=app:app /app/node_modules ./node_modules
-COPY --from=build --chown=app:app /app/package.json ./
-USER app
+COPY --from=build /app/build ./build
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/package.json ./
+COPY <<EOF /etc/nginx/http.d/default.conf
+server {
+    listen 3301;
+
+    location /api/ {
+        proxy_pass http://demo-be:8201;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+    }
+
+    location /health {
+        proxy_pass http://demo-be:8201;
+        proxy_set_header Host \$host;
+    }
+
+    location /.well-known/ {
+        proxy_pass http://demo-be:8201;
+        proxy_set_header Host \$host;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:3300;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+}
+EOF
 EXPOSE 3301
-ENV PORT=3301 NODE_ENV=production
-CMD ["npx", "react-router-serve", "build/server/index.js"]
+ENV PORT=3300 NODE_ENV=production
+CMD sh -c "npx react-router-serve build/server/index.js & nginx -g 'daemon off;'"

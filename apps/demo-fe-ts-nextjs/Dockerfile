@@ -1,13 +1,14 @@
 FROM node:24-alpine AS deps
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
+COPY package.json ./
+RUN npm install --ignore-scripts
 
 FROM node:24-alpine AS build
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-ENV NEXT_TELEMETRY_DISABLED=1
+ARG BACKEND_URL=http://demo-be:8201
+ENV BACKEND_URL=${BACKEND_URL} NEXT_TELEMETRY_DISABLED=1
 RUN npx next build
 
 FROM node:24-alpine

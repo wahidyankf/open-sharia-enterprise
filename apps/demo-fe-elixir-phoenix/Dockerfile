@@ -9,7 +9,7 @@ RUN mix deps.compile
 COPY config config
 COPY lib lib
 COPY assets assets
-COPY priv priv
+RUN mkdir -p priv/static
 RUN mix assets.deploy
 RUN mix compile
 RUN mix release
