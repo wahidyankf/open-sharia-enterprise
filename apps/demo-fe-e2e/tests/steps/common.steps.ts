@@ -55,7 +55,7 @@ Given("{word} has logged in", async ({ page }, username: string) => {
   await page.getByRole("textbox", { name: /username/i }).fill(username);
   await page.getByRole("textbox", { name: /password/i }).fill("Str0ng#Pass1");
   await page.getByRole("button", { name: /log in|sign in|login/i }).click();
-  await page.waitForURL((url) => !url.includes("/login"));
+  await page.waitForURL((url) => !url.toString().includes("/login"));
 });
 
 Given("{word} has logged out", async ({ page }) => {
@@ -79,7 +79,7 @@ Given("an admin user {string} is logged in", async ({ page }, adminUsername: str
   await page.getByRole("textbox", { name: /username/i }).fill(adminUsername);
   await page.getByRole("textbox", { name: /password/i }).fill("Str0ng#Pass1");
   await page.getByRole("button", { name: /log in|sign in|login/i }).click();
-  await page.waitForURL((url) => !url.includes("/login"));
+  await page.waitForURL((url) => !url.toString().includes("/login"));
 });
 
 // ---------------------------------------------------------------------------
@@ -355,7 +355,7 @@ Given("a user {string} is logged in", async ({ page }, username: string) => {
   await page.getByRole("textbox", { name: /username/i }).fill(username);
   await page.getByRole("textbox", { name: /password/i }).fill("Str0ng#Pass1");
   await page.getByRole("button", { name: /log in|sign in|login/i }).click();
-  await page.waitForURL((url) => !url.includes("/login"));
+  await page.waitForURL((url) => !url.toString().includes("/login"));
 });
 
 // Used in admin + token-management
