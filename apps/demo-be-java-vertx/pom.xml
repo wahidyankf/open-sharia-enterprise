@@ -317,6 +317,9 @@
                         <!-- Simple exception classes: no business logic -->
                         <exclude>**/domain/validation/ValidationException.class</exclude>
                         <exclude>**/domain/validation/DomainException.class</exclude>
+                        <!-- Test API support: only active when ENABLE_TEST_API=true, tested at E2E level -->
+                        <exclude>**/test/*.class</exclude>
+                        <exclude>**/test/**/*.class</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -419,6 +422,9 @@
                                 <!-- Simple exception classes -->
                                 <exclude>**/domain/validation/ValidationException.class</exclude>
                                 <exclude>**/domain/validation/DomainException.class</exclude>
+                                <!-- Test API support: only active when ENABLE_TEST_API=true, tested at E2E level -->
+                                <exclude>**/test/*.class</exclude>
+                                <exclude>**/test/**/*.class</exclude>
                             </excludes>
                         </configuration>
                         <executions>
