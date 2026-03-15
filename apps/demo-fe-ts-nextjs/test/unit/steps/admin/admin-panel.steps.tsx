@@ -166,7 +166,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
         size: 20,
       });
       const user = userEvent.setup();
-      await user.type(screen.getByPlaceholderText(/search by email/i), "alice@example.com");
+      await user.type(screen.getByPlaceholderText(/search by (email|username)/i), "alice@example.com");
       await user.click(screen.getByRole("button", { name: /^search$/i }));
       await waitFor(() => {
         expect(screen.queryByText("bob")).not.toBeInTheDocument();
@@ -323,7 +323,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       const user = userEvent.setup();
       await user.click(
         screen.getByRole("button", {
-          name: /generate password reset token for alice/i,
+          name: /generate reset token for alice/i,
         }),
       );
       await waitFor(() => {
@@ -331,12 +331,16 @@ describeFeature(feature, ({ Scenario, Background }) => {
       });
     });
 
-    Then("a password reset token should be displayed", () => {
-      expect(adminApi.forcePasswordReset).toHaveBeenCalled();
+    Then("a password reset token should be displayed", async () => {
+      await waitFor(() => {
+        expect(screen.getByTestId("reset-token")).toBeInTheDocument();
+      });
     });
 
-    And("a copy-to-clipboard button should be available", () => {
-      expect(adminApi.forcePasswordReset).toHaveBeenCalled();
+    And("a copy-to-clipboard button should be available", async () => {
+      await waitFor(() => {
+        expect(screen.getByRole("button", { name: /copy/i })).toBeInTheDocument();
+      });
     });
   });
 });
