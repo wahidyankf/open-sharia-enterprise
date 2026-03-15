@@ -65,7 +65,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report-be-tsex
+          name: playwright-report-demo-be-ts-effect
           path: apps/demo-be-e2e/playwright-report/
           retention-days: 7
 

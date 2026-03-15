@@ -54,12 +54,15 @@ jobs:
 
       - name: Run E2E tests
         run: npx nx run demo-be-e2e:test:e2e:no-test-api
+        env:
+          BASE_URL: http://localhost:8201
+          DATABASE_URL: postgresql://organiclever:organiclever@localhost:5432/demo_be
 
       - name: Upload test report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report-be
+          name: playwright-report-demo-be-java-springboot
           path: apps/demo-be-e2e/playwright-report/
           retention-days: 7
 
