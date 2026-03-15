@@ -69,8 +69,8 @@ public class UnitAdminSteps {
         Object body = stateStore.getResponseBody();
         assertThat(body).isInstanceOf(AdminUserListResponse.class);
         AdminUserListResponse resp = (AdminUserListResponse) body;
-        assertThat(resp.data()).isNotEmpty();
-        boolean found = resp.data().stream().anyMatch(user -> {
+        assertThat(resp.content()).isNotEmpty();
+        boolean found = resp.content().stream().anyMatch(user -> {
             Object fieldValue = switch (field) {
                 case "email" -> user.email();
                 case "username" -> user.username();

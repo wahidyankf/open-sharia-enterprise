@@ -108,7 +108,7 @@ public class AdminSteps {
     public void theResponseBodyShouldContainUserWithFieldEqual(
             final String field, final String value) {
         Map<String, Object> body = responseStore.getBodyAsMap();
-        Object rawData = body.containsKey("data") ? body.get("data") : body.get("content");
+        Object rawData = body.containsKey("content") ? body.get("content") : body.get("data");
         assertThat(rawData).isNotNull().isInstanceOf(List.class);
         List<?> data = (List<?>) rawData;
         assertThat(data).isNotEmpty();
