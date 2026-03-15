@@ -35,12 +35,8 @@ jobs:
         run: docker compose -f apps/demo-be-golang-gin/docker-compose.integration.yml down -v
 
   e2e-tests:
-    name: Run E2E tests (shard ${{ matrix.shard }}/4)
+    name: Run E2E tests
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [1, 2, 3, 4]
 
     steps:
       - name: Checkout code
@@ -72,16 +68,15 @@ jobs:
         run: npm ci
 
       - name: Run E2E tests
-        run: npx nx run demo-be-e2e:test:e2e:shard
+        run: npx nx run demo-be-e2e:test:e2e
         env:
           BASE_URL: http://localhost:8201
-          SHARD: ${{ matrix.shard }}/4
 
       - name: Upload test report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report-demo-be-golang-gin-shard-${{ matrix.shard }}
+          name: playwright-report-demo-be-golang-gin
           path: apps/demo-be-e2e/playwright-report/
           retention-days: 7
 
