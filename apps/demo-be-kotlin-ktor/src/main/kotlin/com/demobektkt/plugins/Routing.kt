@@ -5,6 +5,7 @@ import com.demobektkt.routes.AttachmentRoutes
 import com.demobektkt.routes.AuthRoutes
 import com.demobektkt.routes.ExpenseRoutes
 import com.demobektkt.routes.ReportRoutes
+import com.demobektkt.routes.TestRoutes
 import com.demobektkt.routes.TokenRoutes
 import com.demobektkt.routes.UserRoutes
 import io.ktor.server.application.Application
@@ -21,6 +22,13 @@ import io.ktor.server.routing.routing
 fun Application.configureRouting() {
   routing {
     get("/health") { call.respond(mapOf("status" to "UP")) }
+
+    if (System.getenv("ENABLE_TEST_API") == "true") {
+      route("/api/v1/test") {
+        post("/reset-db") { TestRoutes.resetDb(call) }
+        post("/promote-admin") { TestRoutes.promoteAdmin(call) }
+      }
+    }
 
     route("/.well-known") { get("/jwks.json") { TokenRoutes.jwks(call) } }
 

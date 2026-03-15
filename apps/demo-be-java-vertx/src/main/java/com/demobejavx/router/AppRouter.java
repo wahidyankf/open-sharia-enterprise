@@ -18,10 +18,13 @@ import com.demobejavx.repository.AttachmentRepository;
 import com.demobejavx.repository.ExpenseRepository;
 import com.demobejavx.repository.TokenRevocationRepository;
 import com.demobejavx.repository.UserRepository;
+import com.demobejavx.test.TestApiHandler;
+import com.demobejavx.test.TestApiService;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
+import org.jspecify.annotations.Nullable;
 
 public final class AppRouter {
 
@@ -30,7 +33,8 @@ public final class AppRouter {
 
     public static Router create(Vertx vertx, JwtService jwtService, UserRepository userRepo,
             ExpenseRepository expenseRepo, AttachmentRepository attachmentRepo,
-            TokenRevocationRepository revocationRepo, PasswordService passwordService) {
+            TokenRevocationRepository revocationRepo, PasswordService passwordService,
+            @Nullable TestApiService testApiService) {
 
         Router router = Router.router(vertx);
 
@@ -193,6 +197,14 @@ public final class AppRouter {
         router.delete("/api/v1/expenses/:id/attachments/:aid")
                 .handler(jwtAuth)
                 .handler(new AttachmentHandler("delete", expenseRepo, attachmentRepo));
+
+        // Test API routes — only registered when ENABLE_TEST_API=true
+        if (testApiService != null) {
+            router.post("/api/v1/test/reset-db")
+                    .handler(new TestApiHandler("reset-db", testApiService));
+            router.post("/api/v1/test/promote-admin")
+                    .handler(new TestApiHandler("promote-admin", testApiService));
+        }
 
         return router;
     }

@@ -22,6 +22,15 @@ defmodule DemoBeExphWeb.Router do
     get "/.well-known/jwks.json", DemoBeExphWeb.JwksController, :index
   end
 
+  if System.get_env("ENABLE_TEST_API") == "true" do
+    scope "/api/v1/test", DemoBeExphWeb do
+      pipe_through :api
+
+      post "/reset-db", TestApiController, :reset_db
+      post "/promote-admin", TestApiController, :promote_admin
+    end
+  end
+
   scope "/api/v1", DemoBeExphWeb do
     pipe_through :api
 

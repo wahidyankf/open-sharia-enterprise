@@ -16,6 +16,9 @@ import com.demobejavx.repository.pg.PgExpenseRepository;
 import com.demobejavx.repository.pg.PgTokenRevocationRepository;
 import com.demobejavx.repository.pg.PgUserRepository;
 import com.demobejavx.router.AppRouter;
+import com.demobejavx.test.InMemoryTestApiService;
+import com.demobejavx.test.PgTestApiService;
+import com.demobejavx.test.TestApiService;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -25,6 +28,7 @@ import io.vertx.pgclient.PgBuilder;
 import io.vertx.sqlclient.Pool;
 import io.vertx.sqlclient.PoolOptions;
 import java.net.URI;
+import org.jspecify.annotations.Nullable;
 
 public class MainVerticle extends AbstractVerticle {
 
@@ -36,6 +40,7 @@ public class MainVerticle extends AbstractVerticle {
         String jwtSecret = System.getenv().getOrDefault("APP_JWT_SECRET", DEFAULT_JWT_SECRET);
         int port = parsePort(System.getenv("APP_PORT"), DEFAULT_PORT);
         String databaseUrl = System.getenv("DATABASE_URL");
+        boolean enableTestApi = "true".equalsIgnoreCase(System.getenv("ENABLE_TEST_API"));
 
         JwtService jwtService = new JwtService(jwtSecret);
         PasswordService passwordService = new PasswordService();
@@ -43,9 +48,12 @@ public class MainVerticle extends AbstractVerticle {
         buildRepositories(databaseUrl)
                 .onSuccess(repos -> {
                     System.out.println("Repositories initialized, creating HTTP server on port " + port);
+                    TestApiService testApiService = enableTestApi
+                            ? buildTestApiService(repos)
+                            : null;
                     Router router = AppRouter.create(vertx, jwtService, repos.userRepo(),
                             repos.expenseRepo(), repos.attachmentRepo(), repos.revocationRepo(),
-                            passwordService);
+                            passwordService, testApiService);
 
                     vertx.createHttpServer()
                             .requestHandler(router)
@@ -61,14 +69,15 @@ public class MainVerticle extends AbstractVerticle {
                 });
     }
 
-    private Future<Repositories> buildRepositories(String databaseUrl) {
+    private Future<Repositories> buildRepositories(@Nullable String databaseUrl) {
         if (databaseUrl == null || databaseUrl.isBlank()) {
-            Repositories repos = new Repositories(
-                    new InMemoryUserRepository(),
-                    new InMemoryExpenseRepository(),
-                    new InMemoryAttachmentRepository(),
-                    new InMemoryTokenRevocationRepository());
-            return Future.succeededFuture(repos);
+            InMemoryUserRepository userRepo = new InMemoryUserRepository();
+            InMemoryExpenseRepository expenseRepo = new InMemoryExpenseRepository();
+            InMemoryAttachmentRepository attachmentRepo = new InMemoryAttachmentRepository();
+            InMemoryTokenRevocationRepository revocationRepo =
+                    new InMemoryTokenRevocationRepository();
+            return Future.succeededFuture(
+                    new Repositories(userRepo, expenseRepo, attachmentRepo, revocationRepo, null));
         }
 
         Pool pool = createPgPool(databaseUrl);
@@ -77,7 +86,8 @@ public class MainVerticle extends AbstractVerticle {
                         new PgUserRepository(pool),
                         new PgExpenseRepository(pool),
                         new PgAttachmentRepository(pool),
-                        new PgTokenRevocationRepository(pool)));
+                        new PgTokenRevocationRepository(pool),
+                        pool));
     }
 
     private Pool createPgPool(String databaseUrl) {
@@ -126,9 +136,26 @@ public class MainVerticle extends AbstractVerticle {
         }
     }
 
+    @Nullable
+    private TestApiService buildTestApiService(Repositories repos) {
+        if (repos.pool() != null) {
+            return new PgTestApiService(repos.pool(), repos.userRepo());
+        }
+        if (repos.userRepo() instanceof InMemoryUserRepository inMemUser
+                && repos.expenseRepo() instanceof InMemoryExpenseRepository inMemExpense
+                && repos.attachmentRepo() instanceof InMemoryAttachmentRepository inMemAttachment
+                && repos.revocationRepo()
+                        instanceof InMemoryTokenRevocationRepository inMemRevocation) {
+            return new InMemoryTestApiService(
+                    inMemUser, inMemExpense, inMemAttachment, inMemRevocation);
+        }
+        return null;
+    }
+
     private record Repositories(
             UserRepository userRepo,
             ExpenseRepository expenseRepo,
             AttachmentRepository attachmentRepo,
-            TokenRevocationRepository revocationRepo) {}
+            TokenRevocationRepository revocationRepo,
+            @Nullable Pool pool) {}
 }

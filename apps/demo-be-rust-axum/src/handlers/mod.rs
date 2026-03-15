@@ -4,5 +4,6 @@ pub mod auth;
 pub mod expense;
 pub mod health;
 pub mod report;
+pub mod test_api;
 pub mod token;
 pub mod user;

@@ -79,6 +79,7 @@ class ExposedUserRepository : UserRepository {
         patch.passwordHash?.let { v -> it[passwordHash] = v }
         patch.status?.let { v -> it[status] = v }
         patch.failedLoginCount?.let { v -> it[failedLoginCount] = v }
+        patch.role?.let { v -> it[role] = v }
         it[updatedAt] = now
       }
       UsersTable.selectAll().where { UsersTable.id eq id }.map { rowToUser(it) }.singleOrNull()
