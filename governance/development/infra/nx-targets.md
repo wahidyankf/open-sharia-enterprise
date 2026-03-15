@@ -109,7 +109,7 @@ Use these canonical names. Aliases (`serve`, `start:dev`, `unit-test`) are anti-
 | `dev`              | Start local development server with hot-reload                                                                   | Apps with dev servers             |
 | `start`            | Start server in production mode                                                                                  | Apps with production server mode  |
 | `run`              | Execute the application directly                                                                                 | CLI applications                  |
-| `install`          | Install project-local dependencies                                                                               | E2E suites, Flutter, Go CLIs      |
+| `install`          | Install project-local dependencies                                                                               | E2E suites, Go CLIs               |
 | `clean`            | Remove build artifacts and caches                                                                                | Projects with large build outputs |
 
 ### Naming Rules
@@ -128,12 +128,12 @@ Tags are the standard mechanism for attaching structured metadata to projects in
 
 Every project declares tags along four dimensions. Each dimension uses a fixed prefix and a controlled vocabulary.
 
-| Dimension | Prefix      | Allowed Values                                                                                                                                                   | Required                       | Purpose                                                       |
-| --------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------------------------- |
-| Type      | `type:`     | `app`, `lib`, `e2e`                                                                                                                                              | Always                         | Distinguishes deployable apps, reusable libs, and test suites |
-| Platform  | `platform:` | `hugo`, `cli`, `nextjs`, `spring-boot`, `phoenix`, `giraffe`, `gin`, `fastapi`, `axum`, `ktor`, `vertx`, `playwright`, `tanstackstart`, `reactrouter`, `flutter` | Apps and e2e projects          | Framework or runtime environment                              |
-| Language  | `lang:`     | `golang`, `ts`, `java`, `elixir`, `fsharp`, `python`, `rust`, `kotlin`, `dart`                                                                                   | Projects with application code | Primary language of source code                               |
-| Domain    | `domain:`   | `ayokoding`, `oseplatform`, `organiclever`, `demo-be`, `demo-fe`, `tooling`                                                                                      | Always                         | Business or product domain                                    |
+| Dimension | Prefix      | Allowed Values                                                                                                        | Required                       | Purpose                                                       |
+| --------- | ----------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------------------------- |
+| Type      | `type:`     | `app`, `lib`, `e2e`                                                                                                   | Always                         | Distinguishes deployable apps, reusable libs, and test suites |
+| Platform  | `platform:` | `hugo`, `cli`, `nextjs`, `spring-boot`, `phoenix`, `giraffe`, `gin`, `fastapi`, `axum`, `ktor`, `vertx`, `playwright` | Apps and e2e projects          | Framework or runtime environment                              |
+| Language  | `lang:`     | `golang`, `ts`, `java`, `elixir`, `fsharp`, `python`, `rust`, `kotlin`, `dart`                                        | Projects with application code | Primary language of source code                               |
+| Domain    | `domain:`   | `ayokoding`, `oseplatform`, `organiclever`, `demo-be`, `demo-fe`, `tooling`                                           | Always                         | Business or product domain                                    |
 
 ### Special Rules
 
@@ -145,31 +145,28 @@ Every project declares tags along four dimensions. Each dimension uses a fixed p
 
 ### Current Project Tags
 
-| Project                    | Tags                                                                    |
-| -------------------------- | ----------------------------------------------------------------------- |
-| `ayokoding-web`            | `["type:app", "platform:hugo", "domain:ayokoding"]`                     |
-| `ayokoding-cli`            | `["type:app", "platform:cli", "lang:golang", "domain:ayokoding"]`       |
-| `rhino-cli`                | `["type:app", "platform:cli", "lang:golang", "domain:tooling"]`         |
-| `demo-be-java-springboot`  | `["type:app", "platform:spring-boot", "lang:java", "domain:demo-be"]`   |
-| `demo-be-elixir-phoenix`   | `["type:app", "platform:phoenix", "lang:elixir", "domain:demo-be"]`     |
-| `demo-be-fsharp-giraffe`   | `["type:app", "platform:giraffe", "lang:fsharp", "domain:demo-be"]`     |
-| `demo-be-golang-gin`       | `["type:app", "platform:gin", "lang:golang", "domain:demo-be"]`         |
-| `demo-be-python-fastapi`   | `["type:app", "platform:fastapi", "lang:python", "domain:demo-be"]`     |
-| `demo-be-rust-axum`        | `["type:app", "platform:axum", "lang:rust", "domain:demo-be"]`          |
-| `demo-be-kotlin-ktor`      | `["type:app", "platform:ktor", "lang:kotlin", "domain:demo-be"]`        |
-| `demo-be-java-vertx`       | `["type:app", "platform:vertx", "lang:java", "domain:demo-be"]`         |
-| `demo-be-e2e`              | `["type:e2e", "platform:playwright", "lang:ts", "domain:demo-be"]`      |
-| `organiclever-web`         | `["type:app", "platform:nextjs", "lang:ts", "domain:organiclever"]`     |
-| `organiclever-web-e2e`     | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]` |
-| `demo-fe-ts-nextjs`        | `["type:app", "platform:nextjs", "lang:ts", "domain:demo-fe"]`          |
-| `demo-fe-ts-tanstackstart` | `["type:app", "platform:tanstackstart", "lang:ts", "domain:demo-fe"]`   |
-| `demo-fe-ts-remix`         | `["type:app", "platform:reactrouter", "lang:ts", "domain:demo-fe"]`     |
-| `demo-fe-dart-flutter`     | `["type:app", "platform:flutter", "lang:dart", "domain:demo-fe"]`       |
-| `demo-fe-e2e`              | `["type:e2e", "platform:playwright", "lang:ts", "domain:demo-fe"]`      |
-| `oseplatform-cli`          | `["type:app", "platform:cli", "lang:golang", "domain:oseplatform"]`     |
-| `oseplatform-web`          | `["type:app", "platform:hugo", "domain:oseplatform"]`                   |
-| `hugo-commons`             | `["type:lib", "lang:golang"]`                                           |
-| `golang-commons`           | `["type:lib", "lang:golang"]`                                           |
+| Project                   | Tags                                                                    |
+| ------------------------- | ----------------------------------------------------------------------- |
+| `ayokoding-web`           | `["type:app", "platform:hugo", "domain:ayokoding"]`                     |
+| `ayokoding-cli`           | `["type:app", "platform:cli", "lang:golang", "domain:ayokoding"]`       |
+| `rhino-cli`               | `["type:app", "platform:cli", "lang:golang", "domain:tooling"]`         |
+| `demo-be-java-springboot` | `["type:app", "platform:spring-boot", "lang:java", "domain:demo-be"]`   |
+| `demo-be-elixir-phoenix`  | `["type:app", "platform:phoenix", "lang:elixir", "domain:demo-be"]`     |
+| `demo-be-fsharp-giraffe`  | `["type:app", "platform:giraffe", "lang:fsharp", "domain:demo-be"]`     |
+| `demo-be-golang-gin`      | `["type:app", "platform:gin", "lang:golang", "domain:demo-be"]`         |
+| `demo-be-python-fastapi`  | `["type:app", "platform:fastapi", "lang:python", "domain:demo-be"]`     |
+| `demo-be-rust-axum`       | `["type:app", "platform:axum", "lang:rust", "domain:demo-be"]`          |
+| `demo-be-kotlin-ktor`     | `["type:app", "platform:ktor", "lang:kotlin", "domain:demo-be"]`        |
+| `demo-be-java-vertx`      | `["type:app", "platform:vertx", "lang:java", "domain:demo-be"]`         |
+| `demo-be-e2e`             | `["type:e2e", "platform:playwright", "lang:ts", "domain:demo-be"]`      |
+| `organiclever-web`        | `["type:app", "platform:nextjs", "lang:ts", "domain:organiclever"]`     |
+| `organiclever-web-e2e`    | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]` |
+| `demo-fe-ts-nextjs`       | `["type:app", "platform:nextjs", "lang:ts", "domain:demo-fe"]`          |
+| `demo-fe-e2e`             | `["type:e2e", "platform:playwright", "lang:ts", "domain:demo-fe"]`      |
+| `oseplatform-cli`         | `["type:app", "platform:cli", "lang:golang", "domain:oseplatform"]`     |
+| `oseplatform-web`         | `["type:app", "platform:hugo", "domain:oseplatform"]`                   |
+| `hugo-commons`            | `["type:lib", "lang:golang"]`                                           |
+| `golang-commons`          | `["type:lib", "lang:golang"]`                                           |
 
 ### Example: Complete Tag Declaration
 
@@ -223,17 +220,11 @@ Derived from three rules: (1) All apps+libs → unit tests, (2) All apps → int
 
 Every project in `apps/` and `libs/` must expose:
 
-| Target       | Requirement                                                                                                                                                                                              |
-| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `test:quick` | Complete in a few minutes (not tens of minutes); enforced by the pre-push hook and as a required GitHub Actions status check before PR merge                                                             |
-| `lint`       | Exit non-zero on violations; enforced by the pre-push hook; **exception: Dart/Flutter omits this target** (see note below)                                                                               |
-| `typecheck`  | Required for statically typed projects (TypeScript, Python/mypy, Dart/Flutter, Java with JSpecify + NullAway); enforced by the pre-push hook; skipped by Nx for projects that do not declare this target |
-
-**Dart/Flutter exception — `lint` intentionally omitted**: `flutter analyze` combines type
-checking and linting into a single pass. The pre-push hook runs `typecheck` → `lint`
-sequentially — declaring both with the same `flutter analyze` command would execute it twice per
-push with zero additional coverage. Flutter projects declare only `typecheck`; Nx silently skips
-them for `nx affected -t lint`.
+| Target       | Requirement                                                                                                                                                                                |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `test:quick` | Complete in a few minutes (not tens of minutes); enforced by the pre-push hook and as a required GitHub Actions status check before PR merge                                               |
+| `lint`       | Exit non-zero on violations; enforced by the pre-push hook                                                                                                                                 |
+| `typecheck`  | Required for statically typed projects (TypeScript, Python/mypy, Java with JSpecify + NullAway); enforced by the pre-push hook; skipped by Nx for projects that do not declare this target |
 
 **`test:quick` composition** — each project decides which fast checks form its gate. The target runs its checks directly (calling the underlying tools, not other Nx targets) to avoid double execution when `lint` or `typecheck` are also run standalone by the pre-push hook. Common compositions:
 
@@ -248,16 +239,14 @@ them for `nx affected -t lint`.
 | Rust/Axum          | unit tests with `cargo test --lib` + `cargo llvm-cov --lcov` → `rhino-cli test-coverage validate` ≥90%                                                                                                                             |
 | Hugo site          | link check via the site's CLI tool (build runs separately via `nx build`)                                                                                                                                                          |
 | Demo-fe TS app     | unit tests via vitest (typecheck and lint run separately in pre-push); coverage from unit tests only via `rhino-cli test-coverage validate` >=90%; specs coverage via `rhino-cli spec-coverage validate`                           |
-| Demo-fe Flutter    | unit tests (`flutter test --coverage`); LCOV coverage validated via `rhino-cli test-coverage validate` >=90%; specs coverage via `rhino-cli spec-coverage validate`; `dart analyze` via `lint`                                     |
 | Demo-fe Elixir     | unit tests (`mix coveralls.lcov`); LCOV coverage validated via `rhino-cli test-coverage validate` >=90%; specs coverage via `rhino-cli spec-coverage validate`                                                                     |
-| Flutter/Dart       | unit tests (`flutter test`); `flutter analyze` runs via `typecheck`, not `lint`                                                                                                                                                    |
 | Playwright `*-e2e` | run the linter directly (no unit tests to add beyond linting)                                                                                                                                                                      |
 
 The rule: include only checks that complete fast. If `test:unit` is slow for a project, exclude it from `test:quick` and run it separately. **The target must always exist** — even if it only runs the type checker — so the pre-push hook covers every project.
 
 ### Statically Typed Projects
 
-TypeScript, Python (with mypy), Dart/Flutter:
+TypeScript, Python (with mypy):
 
 | Target      | Requirement                                                                |
 | ----------- | -------------------------------------------------------------------------- |
@@ -267,7 +256,7 @@ TypeScript, Python (with mypy), Dart/Flutter:
 
 ### Compiled and Bundled Projects
 
-Projects that produce artifacts from a compilation or bundling step (Go, Java, Hugo, Next.js, Flutter):
+Projects that produce artifacts from a compilation or bundling step (Go, Java, Hugo, Next.js):
 
 | Target  | Requirement                                                          |
 | ------- | -------------------------------------------------------------------- |
@@ -277,7 +266,7 @@ Projects that produce artifacts from a compilation or bundling step (Go, Java, H
 
 ### Apps with Development Servers
 
-Hugo sites, Next.js, Flutter web, Spring Boot, Python web apps:
+Hugo sites, Next.js, Spring Boot, Python web apps:
 
 | Target | Requirement                                       |
 | ------ | ------------------------------------------------- |
@@ -293,7 +282,7 @@ Spring Boot, Next.js, Python web apps:
 
 ### Projects with Unit Tests
 
-Spring Boot, Flutter, Python apps, TypeScript apps:
+Spring Boot, Python apps, TypeScript apps:
 
 | Target      | Requirement                                                          |
 | ----------- | -------------------------------------------------------------------- |
@@ -429,13 +418,12 @@ containers and volumes.
 
 Declare the output directory in `project.json` `outputs` to enable Nx cache restoration.
 
-| Project Type | Output Directory           |
-| ------------ | -------------------------- |
-| Go CLI       | `{projectRoot}/dist/`      |
-| Hugo site    | `{projectRoot}/public/`    |
-| Next.js      | `{projectRoot}/.next/`     |
-| Flutter web  | `{projectRoot}/build/web/` |
-| Spring Boot  | `{projectRoot}/target/`    |
+| Project Type | Output Directory        |
+| ------------ | ----------------------- |
+| Go CLI       | `{projectRoot}/dist/`   |
+| Hugo site    | `{projectRoot}/public/` |
+| Next.js      | `{projectRoot}/.next/`  |
+| Spring Boot  | `{projectRoot}/target/` |
 
 Example override for a Hugo site:
 
