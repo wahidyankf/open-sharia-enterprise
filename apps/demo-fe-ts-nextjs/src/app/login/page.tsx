@@ -54,7 +54,11 @@ function LoginContent() {
     if (!loginMutation.isError) return null;
     const err = loginMutation.error;
     if (err instanceof ApiError) {
-      if (err.status === 401) return "Invalid username or password.";
+      if (err.status === 401) {
+        const msg = (err.body as { message?: string } | null)?.message ?? "";
+        if (msg.toLowerCase().includes("locked")) return "Your account is locked. Please contact an administrator.";
+        return "Invalid username or password.";
+      }
       if (err.status === 403) return "Your account is deactivated or disabled.";
     }
     return "Login failed. Please try again.";

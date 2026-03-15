@@ -238,7 +238,7 @@ export default function ExpenseSummaryPage() {
       )}
 
       {data && (
-        <>
+        <div data-testid="pl-chart">
           <div style={cardStyle}>
             <h2 style={{ marginTop: 0 }}>
               Summary: {data.currency} &mdash; {data.startDate} to {data.endDate}
@@ -280,7 +280,7 @@ export default function ExpenseSummaryPage() {
 
           <CategoryTable title="Income Breakdown" rows={data.incomeBreakdown} />
           <CategoryTable title="Expense Breakdown" rows={data.expenseBreakdown} />
-        </>
+        </div>
       )}
 
       {!submitted && !isLoading && (
