@@ -13,8 +13,13 @@ let profitAndLoss: HttpHandler =
             let userId = ctx.Items["UserId"] :?> Guid
             let db = ctx.GetService<AppDbContext>()
 
-            let fromParam = ctx.TryGetQueryStringValue("from")
-            let toParam = ctx.TryGetQueryStringValue("to")
+            let fromParam =
+                ctx.TryGetQueryStringValue("startDate")
+                |> Option.orElseWith (fun () -> ctx.TryGetQueryStringValue("from"))
+
+            let toParam =
+                ctx.TryGetQueryStringValue("endDate")
+                |> Option.orElseWith (fun () -> ctx.TryGetQueryStringValue("to"))
 
             let currencyParam =
                 ctx.TryGetQueryStringValue("currency") |> Option.defaultValue "USD"
@@ -61,14 +66,20 @@ let profitAndLoss: HttpHandler =
             let incomeBreakdown =
                 incomeEntries
                 |> Seq.groupBy (fun e -> e.Category)
-                |> Seq.map (fun (cat, items) -> cat, formatAmount (items |> Seq.sumBy (fun e -> e.Amount)))
-                |> dict
+                |> Seq.map (fun (cat, items) ->
+                    {| category = cat
+                       ``type`` = "income"
+                       total = formatAmount (items |> Seq.sumBy (fun e -> e.Amount)) |})
+                |> Seq.toArray
 
             let expenseBreakdown =
                 expenseEntries
                 |> Seq.groupBy (fun e -> e.Category)
-                |> Seq.map (fun (cat, items) -> cat, formatAmount (items |> Seq.sumBy (fun e -> e.Amount)))
-                |> dict
+                |> Seq.map (fun (cat, items) ->
+                    {| category = cat
+                       ``type`` = "expense"
+                       total = formatAmount (items |> Seq.sumBy (fun e -> e.Amount)) |})
+                |> Seq.toArray
 
             return!
                 json
@@ -76,8 +87,8 @@ let profitAndLoss: HttpHandler =
                        totalExpense = formatAmount expenseTotal
                        net = formatAmount net
                        currency = currency
-                       income_breakdown = incomeBreakdown
-                       expense_breakdown = expenseBreakdown |}
+                       incomeBreakdown = incomeBreakdown
+                       expenseBreakdown = expenseBreakdown |}
                     next
                     ctx
         }

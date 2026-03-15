@@ -80,18 +80,20 @@ def check_net(response: FakeResponse, value: str) -> None:
 @then(parsers.parse('the income breakdown should contain "{category}" with amount "{amount}"'))
 def check_income_breakdown(response: FakeResponse, category: str, amount: str) -> None:
     body = response.json()
-    breakdown = body.get("income_breakdown", {})
-    assert category in breakdown, f"Category '{category}' not in income_breakdown: {breakdown}"
-    assert str(breakdown[category]) == amount, (
-        f"Expected income_breakdown[{category}]={amount}, got {breakdown[category]}"
+    breakdown = body.get("incomeBreakdown", [])
+    entry = next((item for item in breakdown if item.get("category") == category), None)
+    assert entry is not None, f"Category '{category}' not in incomeBreakdown: {breakdown}"
+    assert str(entry["total"]) == amount, (
+        f"Expected incomeBreakdown[{category}]={amount}, got {entry['total']}"
     )
 
 
 @then(parsers.parse('the expense breakdown should contain "{category}" with amount "{amount}"'))
 def check_expense_breakdown(response: FakeResponse, category: str, amount: str) -> None:
     body = response.json()
-    breakdown = body.get("expense_breakdown", {})
-    assert category in breakdown, f"Category '{category}' not in expense_breakdown: {breakdown}"
-    assert str(breakdown[category]) == amount, (
-        f"Expected expense_breakdown[{category}]={amount}, got {breakdown[category]}"
+    breakdown = body.get("expenseBreakdown", [])
+    entry = next((item for item in breakdown if item.get("category") == category), None)
+    assert entry is not None, f"Category '{category}' not in expenseBreakdown: {breakdown}"
+    assert str(entry["total"]) == amount, (
+        f"Expected expenseBreakdown[{category}]={amount}, got {entry['total']}"
     )

@@ -31,14 +31,24 @@ let ``the income breakdown should contain "(.+)" with amount "(.+)"``
 
     try
         let doc = JsonDocument.Parse(body)
-        let breakdownEl = doc.RootElement.GetProperty("income_breakdown")
+        let breakdownEl = doc.RootElement.GetProperty("incomeBreakdown")
         let mutable found = false
 
-        for prop in breakdownEl.EnumerateObject() do
-            if prop.Name = category && prop.Value.GetString() = amount then
+        for item in breakdownEl.EnumerateArray() do
+            let catOk =
+                item.TryGetProperty("category")
+                |> (fun (ok, el) -> ok && el.GetString() = category)
+
+            let totalOk =
+                item.TryGetProperty("total") |> (fun (ok, el) -> ok && el.GetString() = amount)
+
+            if catOk && totalOk then
                 found <- true
 
-        Assert.True(found, $"Expected income_breakdown to contain '{category}' with amount '{amount}' in: {body}")
+        Assert.True(
+            found,
+            $"Expected incomeBreakdown to contain '{{category: {category}, total: {amount}}}' in: {body}"
+        )
     with ex ->
         Assert.Fail($"Could not parse response: {body}. Error: {ex.Message}")
 
@@ -54,14 +64,24 @@ let ``the expense breakdown should contain "(.+)" with amount "(.+)"``
 
     try
         let doc = JsonDocument.Parse(body)
-        let breakdownEl = doc.RootElement.GetProperty("expense_breakdown")
+        let breakdownEl = doc.RootElement.GetProperty("expenseBreakdown")
         let mutable found = false
 
-        for prop in breakdownEl.EnumerateObject() do
-            if prop.Name = category && prop.Value.GetString() = amount then
+        for item in breakdownEl.EnumerateArray() do
+            let catOk =
+                item.TryGetProperty("category")
+                |> (fun (ok, el) -> ok && el.GetString() = category)
+
+            let totalOk =
+                item.TryGetProperty("total") |> (fun (ok, el) -> ok && el.GetString() = amount)
+
+            if catOk && totalOk then
                 found <- true
 
-        Assert.True(found, $"Expected expense_breakdown to contain '{category}' with amount '{amount}' in: {body}")
+        Assert.True(
+            found,
+            $"Expected expenseBreakdown to contain '{{category: {category}, total: {amount}}}' in: {body}"
+        )
     with ex ->
         Assert.Fail($"Could not parse response: {body}. Error: {ex.Message}")
 

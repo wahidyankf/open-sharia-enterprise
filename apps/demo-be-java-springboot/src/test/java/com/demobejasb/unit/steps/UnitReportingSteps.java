@@ -5,6 +5,7 @@ import com.demobejasb.report.dto.PlReportResponse;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import java.time.LocalDate;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
@@ -59,8 +60,12 @@ public class UnitReportingSteps {
         Object body = stateStore.getResponseBody();
         assertThat(body).isInstanceOf(PlReportResponse.class);
         PlReportResponse resp = (PlReportResponse) body;
-        assertThat(resp.incomeBreakdown()).containsKey(category);
-        assertThat(resp.incomeBreakdown().get(category)).isEqualTo(amount);
+        Map<String, String> entry = resp.incomeBreakdown().stream()
+                .filter(item -> category.equals(item.get("category")))
+                .findFirst()
+                .orElse(null);
+        assertThat(entry).isNotNull();
+        assertThat(entry.get("total")).isEqualTo(amount);
     }
 
     @Then("the expense breakdown should contain {string} with amount {string}")
@@ -69,8 +74,12 @@ public class UnitReportingSteps {
         Object body = stateStore.getResponseBody();
         assertThat(body).isInstanceOf(PlReportResponse.class);
         PlReportResponse resp = (PlReportResponse) body;
-        assertThat(resp.expenseBreakdown()).containsKey(category);
-        assertThat(resp.expenseBreakdown().get(category)).isEqualTo(amount);
+        Map<String, String> entry = resp.expenseBreakdown().stream()
+                .filter(item -> category.equals(item.get("category")))
+                .findFirst()
+                .orElse(null);
+        assertThat(entry).isNotNull();
+        assertThat(entry.get("total")).isEqualTo(amount);
     }
 
     // ============================================================

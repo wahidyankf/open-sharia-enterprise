@@ -1251,14 +1251,20 @@ let profitAndLoss
             let incomeBreakdown =
                 incomeEntries
                 |> Seq.groupBy (fun e -> e.Category)
-                |> Seq.map (fun (cat, items) -> cat, formatAmount (items |> Seq.sumBy (fun e -> e.Amount)))
-                |> dict
+                |> Seq.map (fun (cat, items) ->
+                    {| category = cat
+                       ``type`` = "income"
+                       total = formatAmount (items |> Seq.sumBy (fun e -> e.Amount)) |})
+                |> Seq.toArray
 
             let expenseBreakdown =
                 expenseEntries
                 |> Seq.groupBy (fun e -> e.Category)
-                |> Seq.map (fun (cat, items) -> cat, formatAmount (items |> Seq.sumBy (fun e -> e.Amount)))
-                |> dict
+                |> Seq.map (fun (cat, items) ->
+                    {| category = cat
+                       ``type`` = "expense"
+                       total = formatAmount (items |> Seq.sumBy (fun e -> e.Amount)) |})
+                |> Seq.toArray
 
             return
                 ok
@@ -1266,8 +1272,8 @@ let profitAndLoss
                        totalExpense = formatAmount expenseTotal
                        net = formatAmount net
                        currency = curr
-                       income_breakdown = incomeBreakdown
-                       expense_breakdown = expenseBreakdown |}
+                       incomeBreakdown = incomeBreakdown
+                       expenseBreakdown = expenseBreakdown |}
     }
 
 // ─────────────────────────────────────────────────────────────────────────────

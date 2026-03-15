@@ -13,9 +13,12 @@ Then(
     assert.ok(this.response !== null);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const body = this.response?.body as any;
-    const breakdown = body?.income_breakdown as Record<string, string> | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const breakdown = body?.incomeBreakdown as Array<any> | undefined;
     assert.ok(breakdown !== undefined);
-    assert.strictEqual(String(breakdown?.[category]), amount);
+    const entry = breakdown?.find((item: { category: string }) => item.category === category);
+    assert.ok(entry !== undefined, `Category '${category}' not found in incomeBreakdown`);
+    assert.strictEqual(String(entry.total), amount);
   },
 );
 
@@ -25,8 +28,11 @@ Then(
     assert.ok(this.response !== null);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const body = this.response?.body as any;
-    const breakdown = body?.expense_breakdown as Record<string, string> | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const breakdown = body?.expenseBreakdown as Array<any> | undefined;
     assert.ok(breakdown !== undefined);
-    assert.strictEqual(String(breakdown?.[category]), amount);
+    const entry = breakdown?.find((item: { category: string }) => item.category === category);
+    assert.ok(entry !== undefined, `Category '${category}' not found in expenseBreakdown`);
+    assert.strictEqual(String(entry.total), amount);
   },
 );

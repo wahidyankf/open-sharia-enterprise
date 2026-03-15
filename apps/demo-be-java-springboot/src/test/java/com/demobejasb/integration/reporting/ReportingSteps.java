@@ -90,21 +90,33 @@ public class ReportingSteps {
     @Then("the income breakdown should contain {string} with amount {string}")
     public void theIncomeBreakdownShouldContain(final String category, final String amount) {
         Map<String, Object> body = responseStore.getBodyAsMap();
-        assertThat(body).containsKey("income_breakdown");
-        Object breakdown = body.get("income_breakdown");
-        assertThat(breakdown).isInstanceOf(Map.class);
-        Map<?, ?> incomeBreakdown = (Map<?, ?>) breakdown;
-        assertThat(String.valueOf(incomeBreakdown.get(category))).isEqualTo(amount);
+        assertThat(body).containsKey("incomeBreakdown");
+        Object breakdown = body.get("incomeBreakdown");
+        assertThat(breakdown).isInstanceOf(List.class);
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> incomeBreakdown = (List<Map<String, Object>>) breakdown;
+        Map<String, Object> entry = incomeBreakdown.stream()
+                .filter(item -> category.equals(item.get("category")))
+                .findFirst()
+                .orElse(null);
+        assertThat(entry).isNotNull();
+        assertThat(String.valueOf(entry.get("total"))).isEqualTo(amount);
     }
 
     @Then("the expense breakdown should contain {string} with amount {string}")
     public void theExpenseBreakdownShouldContain(final String category, final String amount) {
         Map<String, Object> body = responseStore.getBodyAsMap();
-        assertThat(body).containsKey("expense_breakdown");
-        Object breakdown = body.get("expense_breakdown");
-        assertThat(breakdown).isInstanceOf(Map.class);
-        Map<?, ?> expenseBreakdown = (Map<?, ?>) breakdown;
-        assertThat(String.valueOf(expenseBreakdown.get(category))).isEqualTo(amount);
+        assertThat(body).containsKey("expenseBreakdown");
+        Object breakdown = body.get("expenseBreakdown");
+        assertThat(breakdown).isInstanceOf(List.class);
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> expenseBreakdown = (List<Map<String, Object>>) breakdown;
+        Map<String, Object> entry = expenseBreakdown.stream()
+                .filter(item -> category.equals(item.get("category")))
+                .findFirst()
+                .orElse(null);
+        assertThat(entry).isNotNull();
+        assertThat(String.valueOf(entry.get("total"))).isEqualTo(amount);
     }
 
     // ============================================================
@@ -142,21 +154,25 @@ public class ReportingSteps {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal net = incomeTotal.subtract(expenseTotal);
 
-        Map<String, String> incomeBreakdown = expenses.stream()
+        List<Map<String, String>> incomeBreakdown = expenses.stream()
                 .filter(e -> "income".equals(e.getType()))
                 .collect(Collectors.groupingBy(
                         Expense::getCategory,
                         Collectors.reducing(BigDecimal.ZERO, Expense::getAmount, BigDecimal::add)))
                 .entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, e -> format(e.getValue(), currency)));
+                .map(entry -> Map.of("category", entry.getKey(), "type", "income",
+                        "total", format(entry.getValue(), currency)))
+                .collect(Collectors.toList());
 
-        Map<String, String> expenseBreakdown = expenses.stream()
+        List<Map<String, String>> expenseBreakdown = expenses.stream()
                 .filter(e -> "expense".equals(e.getType()))
                 .collect(Collectors.groupingBy(
                         Expense::getCategory,
                         Collectors.reducing(BigDecimal.ZERO, Expense::getAmount, BigDecimal::add)))
                 .entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, e -> format(e.getValue(), currency)));
+                .map(entry -> Map.of("category", entry.getKey(), "type", "expense",
+                        "total", format(entry.getValue(), currency)))
+                .collect(Collectors.toList());
 
         responseStore.setResponse(200, new PlReportResponse(
                 format(incomeTotal, currency),

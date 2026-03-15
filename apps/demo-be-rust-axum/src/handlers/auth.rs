@@ -163,6 +163,7 @@ pub async fn login(
 
 #[derive(Deserialize)]
 pub struct RefreshRequest {
+    #[serde(alias = "refreshToken")]
     pub refresh_token: Option<String>,
 }
 

@@ -28,12 +28,12 @@ public class ReportingSteps {
 
     @Then("the income breakdown should contain {string} with amount {string}")
     public void incomeBreakdownContains(String category, String amount) {
-        checkBreakdown("income_breakdown", category, amount);
+        checkBreakdown("incomeBreakdown", category, amount);
     }
 
     @Then("the expense breakdown should contain {string} with amount {string}")
     public void expenseBreakdownContains(String category, String amount) {
-        checkBreakdown("expense_breakdown", category, amount);
+        checkBreakdown("expenseBreakdown", category, amount);
     }
 
     private void checkBreakdown(String field, String category, String amount) {
@@ -47,9 +47,9 @@ public class ReportingSteps {
         for (int i = 0; i < breakdown.size(); i++) {
             JsonObject entry = breakdown.getJsonObject(i);
             if (category.equals(entry.getString("category"))) {
-                Assertions.assertEquals(amount, entry.getString("amount"),
-                        "Expected amount " + amount + " for category " + category
-                                + " but got " + entry.getString("amount"));
+                Assertions.assertEquals(amount, entry.getString("total"),
+                        "Expected total " + amount + " for category " + category
+                                + " but got " + entry.getString("total"));
                 found = true;
                 break;
             }

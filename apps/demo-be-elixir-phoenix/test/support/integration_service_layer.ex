@@ -549,13 +549,13 @@ defmodule DemoBeExph.Integration.ServiceLayer do
               "totalIncome" => Decimal.to_string(report.income_total),
               "totalExpense" => Decimal.to_string(report.expense_total),
               "net" => Decimal.to_string(report.net),
-              "income_breakdown" =>
-                Enum.into(report.income_breakdown, %{}, fn {k, v} ->
-                  {k, Decimal.to_string(v)}
+              "incomeBreakdown" =>
+                Enum.map(report.income_breakdown, fn {k, v} ->
+                  %{"category" => k, "type" => "income", "total" => Decimal.to_string(v)}
                 end),
-              "expense_breakdown" =>
-                Enum.into(report.expense_breakdown, %{}, fn {k, v} ->
-                  {k, Decimal.to_string(v)}
+              "expenseBreakdown" =>
+                Enum.map(report.expense_breakdown, fn {k, v} ->
+                  %{"category" => k, "type" => "expense", "total" => Decimal.to_string(v)}
                 end),
               "currency" => currency
             }

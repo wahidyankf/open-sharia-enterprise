@@ -9,15 +9,23 @@
   (fn [request]
     (let [user-id  (:user-id (:identity request))
           params   (:query-params request)
-          ;; Pedestal populates :query-params with keyword keys; support both
-          from     (or (get params :from) (get params "from"))
-          to       (or (get params :to) (get params "to"))
+          ;; Support both startDate/endDate (E2E) and from/to (Gherkin spec)
+          from     (or (get params :startDate) (get params "startDate")
+                       (get params :from) (get params "from"))
+          to       (or (get params :endDate) (get params "endDate")
+                       (get params :to) (get params "to"))
           currency (or (get params :currency) (get params "currency") "USD")
-          report   (expense-repo/pl-report ds user-id from to currency)]
+          report   (expense-repo/pl-report ds user-id from to currency)
+          income-breakdown
+          (mapv (fn [[cat amt]] {"category" cat "type" "income" "total" amt})
+                (:income-breakdown report))
+          expense-breakdown
+          (mapv (fn [[cat amt]] {"category" cat "type" "expense" "total" amt})
+                (:expense-breakdown report))]
       {:status  200
        :headers {"Content-Type" "application/json"}
        :body    (json/generate-string {:totalIncome      (:income-total report)
                                        :totalExpense     (:expense-total report)
                                        :net              (:net report)
-                                       :incomeBreakdown  (:income-breakdown report)
-                                       :expenseBreakdown (:expense-breakdown report)})})))
+                                       :incomeBreakdown  income-breakdown
+                                       :expenseBreakdown expense-breakdown})})))

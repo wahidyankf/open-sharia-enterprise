@@ -246,10 +246,12 @@ describe("GET /api/v1/reports/pl", () => {
     });
     const { status, body } = await runRouter(req, makeTestLayer({ findByDateRange: () => Effect.succeed(entries) }));
     expect(status).toBe(200);
-    const incomeBreakdown = body["income_breakdown"] as Record<string, string>;
-    expect(incomeBreakdown["salary"]).toBe("3000.00");
-    expect(incomeBreakdown["freelance"]).toBe("500.00");
-    const expenseBreakdown = body["expense_breakdown"] as Record<string, string>;
-    expect(expenseBreakdown["transport"]).toBe("200.00");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const incomeBreakdown = body["incomeBreakdown"] as Array<any>;
+    expect(incomeBreakdown.find((i: { category: string }) => i.category === "salary")?.total).toBe("3000.00");
+    expect(incomeBreakdown.find((i: { category: string }) => i.category === "freelance")?.total).toBe("500.00");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const expenseBreakdown = body["expenseBreakdown"] as Array<any>;
+    expect(expenseBreakdown.find((i: { category: string }) => i.category === "transport")?.total).toBe("200.00");
   });
 });

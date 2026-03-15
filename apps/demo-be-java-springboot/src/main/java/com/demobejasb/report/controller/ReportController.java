@@ -38,8 +38,8 @@ public class ReportController {
     @GetMapping("/pl")
     public ResponseEntity<PlReportResponse> profitAndLoss(
             @AuthenticationPrincipal final UserDetails userDetails,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate from,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate to,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate endDate,
             @RequestParam final String currency) {
         User user =
                 userRepository
@@ -51,7 +51,10 @@ public class ReportController {
                         .getContent()
                         .stream()
                         .filter(e -> e.getCurrency().equals(currency))
-                        .filter(e -> !e.getDate().isBefore(from) && !e.getDate().isAfter(to))
+                        .filter(
+                                e ->
+                                        !e.getDate().isBefore(startDate)
+                                                && !e.getDate().isAfter(endDate))
                         .toList();
 
         BigDecimal incomeTotal =
@@ -66,7 +69,7 @@ public class ReportController {
                         .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal net = incomeTotal.subtract(expenseTotal);
 
-        Map<String, String> incomeBreakdown =
+        List<Map<String, String>> incomeBreakdown =
                 expenses.stream()
                         .filter(e -> "income".equals(e.getType()))
                         .collect(
@@ -78,10 +81,18 @@ public class ReportController {
                                                 BigDecimal::add)))
                         .entrySet()
                         .stream()
-                        .collect(
-                                Collectors.toMap(
-                                        Map.Entry::getKey, e -> format(e.getValue(), currency)));
-        Map<String, String> expenseBreakdown =
+                        .map(
+                                entry ->
+                                        Map.of(
+                                                "category",
+                                                entry.getKey(),
+                                                "type",
+                                                "income",
+                                                "total",
+                                                format(entry.getValue(), currency)))
+                        .collect(Collectors.toList());
+
+        List<Map<String, String>> expenseBreakdown =
                 expenses.stream()
                         .filter(e -> "expense".equals(e.getType()))
                         .collect(
@@ -93,9 +104,16 @@ public class ReportController {
                                                 BigDecimal::add)))
                         .entrySet()
                         .stream()
-                        .collect(
-                                Collectors.toMap(
-                                        Map.Entry::getKey, e -> format(e.getValue(), currency)));
+                        .map(
+                                entry ->
+                                        Map.of(
+                                                "category",
+                                                entry.getKey(),
+                                                "type",
+                                                "expense",
+                                                "total",
+                                                format(entry.getValue(), currency)))
+                        .collect(Collectors.toList());
 
         return ResponseEntity.ok(
                 new PlReportResponse(

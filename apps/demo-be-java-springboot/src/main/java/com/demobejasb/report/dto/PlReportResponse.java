@@ -1,11 +1,11 @@
 package com.demobejasb.report.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
 import java.util.Map;
 
 public record PlReportResponse(
-        @JsonProperty("totalIncome") String incomeTotal,
-        @JsonProperty("totalExpense") String expenseTotal,
+        String totalIncome,
+        String totalExpense,
         String net,
-        @JsonProperty("income_breakdown") Map<String, String> incomeBreakdown,
-        @JsonProperty("expense_breakdown") Map<String, String> expenseBreakdown) {}
+        List<Map<String, String>> incomeBreakdown,
+        List<Map<String, String>> expenseBreakdown) {}

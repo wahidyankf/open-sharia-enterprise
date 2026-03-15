@@ -133,10 +133,14 @@ async fn alice_pl_future(world: &mut AppWorld) {
 
 #[then(expr = "the income breakdown should contain {string} with amount {string}")]
 async fn income_breakdown_contains(world: &mut AppWorld, category: String, amount: String) {
-    let actual = world
-        .last_body
-        .get("income_breakdown")
-        .and_then(|v| v.get(&category))
+    let breakdown = world.last_body.get("incomeBreakdown").and_then(|v| v.as_array());
+    let actual = breakdown
+        .and_then(|arr| {
+            arr.iter().find(|item| {
+                item.get("category").and_then(|v| v.as_str()) == Some(category.as_str())
+            })
+        })
+        .and_then(|item| item.get("total"))
         .and_then(|v| v.as_str())
         .unwrap_or("");
     assert_eq!(
@@ -149,10 +153,14 @@ async fn income_breakdown_contains(world: &mut AppWorld, category: String, amoun
 
 #[then(expr = "the expense breakdown should contain {string} with amount {string}")]
 async fn expense_breakdown_contains(world: &mut AppWorld, category: String, amount: String) {
-    let actual = world
-        .last_body
-        .get("expense_breakdown")
-        .and_then(|v| v.get(&category))
+    let breakdown = world.last_body.get("expenseBreakdown").and_then(|v| v.as_array());
+    let actual = breakdown
+        .and_then(|arr| {
+            arr.iter().find(|item| {
+                item.get("category").and_then(|v| v.as_str()) == Some(category.as_str())
+            })
+        })
+        .and_then(|item| item.get("total"))
         .and_then(|v| v.as_str())
         .unwrap_or("");
     assert_eq!(

@@ -53,7 +53,7 @@ def alice_create_reporting_entry(client: TestClient, alice_tokens: dict, body: s
 def alice_get_pl_report(client: TestClient, alice_tokens: dict, from_: str, to: str, currency: str):  # type: ignore[no-untyped-def]
     return client.get(
         "/api/v1/reports/pl",
-        params={"from": from_, "to": to, "currency": currency},
+        params={"startDate": from_, "endDate": to, "currency": currency},
         headers={"Authorization": f"Bearer {alice_tokens['accessToken']}"},
     )
 
@@ -89,18 +89,20 @@ def check_net(response, value: str) -> None:
 @then(parsers.parse('the income breakdown should contain "{category}" with amount "{amount}"'))
 def check_income_breakdown(response, category: str, amount: str) -> None:
     body = response.json()
-    breakdown = body.get("income_breakdown", {})
-    assert category in breakdown, f"Category '{category}' not in income_breakdown: {breakdown}"
-    assert str(breakdown[category]) == amount, (
-        f"Expected income_breakdown[{category}]={amount}, got {breakdown[category]}"
+    breakdown = body.get("incomeBreakdown", [])
+    entry = next((item for item in breakdown if item.get("category") == category), None)
+    assert entry is not None, f"Category '{category}' not in incomeBreakdown: {breakdown}"
+    assert str(entry["total"]) == amount, (
+        f"Expected incomeBreakdown[{category}]={amount}, got {entry['total']}"
     )
 
 
 @then(parsers.parse('the expense breakdown should contain "{category}" with amount "{amount}"'))
 def check_expense_breakdown(response, category: str, amount: str) -> None:
     body = response.json()
-    breakdown = body.get("expense_breakdown", {})
-    assert category in breakdown, f"Category '{category}' not in expense_breakdown: {breakdown}"
-    assert str(breakdown[category]) == amount, (
-        f"Expected expense_breakdown[{category}]={amount}, got {breakdown[category]}"
+    breakdown = body.get("expenseBreakdown", [])
+    entry = next((item for item in breakdown if item.get("category") == category), None)
+    assert entry is not None, f"Category '{category}' not in expenseBreakdown: {breakdown}"
+    assert str(entry["total"]) == amount, (
+        f"Expected expenseBreakdown[{category}]={amount}, got {entry['total']}"
     )

@@ -72,9 +72,13 @@ defmodule DemoBeExphWeb.Unit.ReportingSteps do
           %{category: category, amount: amount},
           %{conn: conn} = state do
     body = Jason.decode!(conn.resp_body)
-    income_breakdown = body["income_breakdown"]
-    assert Map.has_key?(income_breakdown, category)
-    stored = income_breakdown[category] |> Decimal.new() |> Decimal.to_string()
+    income_breakdown = body["incomeBreakdown"]
+    entry = Enum.find(income_breakdown, fn item -> item["category"] == category end)
+
+    assert entry != nil,
+           "Category '#{category}' not found in incomeBreakdown: #{inspect(income_breakdown)}"
+
+    stored = entry["total"] |> Decimal.new() |> Decimal.to_string()
     expected = amount |> Decimal.new() |> Decimal.to_string()
     assert stored == expected
     {:ok, state}
@@ -84,9 +88,13 @@ defmodule DemoBeExphWeb.Unit.ReportingSteps do
           %{category: category, amount: amount},
           %{conn: conn} = state do
     body = Jason.decode!(conn.resp_body)
-    expense_breakdown = body["expense_breakdown"]
-    assert Map.has_key?(expense_breakdown, category)
-    stored = expense_breakdown[category] |> Decimal.new() |> Decimal.to_string()
+    expense_breakdown = body["expenseBreakdown"]
+    entry = Enum.find(expense_breakdown, fn item -> item["category"] == category end)
+
+    assert entry != nil,
+           "Category '#{category}' not found in expenseBreakdown: #{inspect(expense_breakdown)}"
+
+    stored = entry["total"] |> Decimal.new() |> Decimal.to_string()
     expected = amount |> Decimal.new() |> Decimal.to_string()
     assert stored == expected
     {:ok, state}

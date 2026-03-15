@@ -3,6 +3,7 @@ package com.demobejavx.handler;
 import com.demobejavx.domain.model.Expense;
 import com.demobejavx.repository.ExpenseRepository;
 import io.vertx.core.Handler;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import java.math.BigDecimal;
@@ -27,8 +28,10 @@ public class ReportHandler implements Handler<RoutingContext> {
             ctx.fail(400);
             return;
         }
-        String fromStr = ctx.queryParam("from").stream().findFirst().orElse("");
-        String toStr = ctx.queryParam("to").stream().findFirst().orElse("");
+        String fromStr = ctx.queryParam("startDate").stream().findFirst()
+                .orElseGet(() -> ctx.queryParam("from").stream().findFirst().orElse(""));
+        String toStr = ctx.queryParam("endDate").stream().findFirst()
+                .orElseGet(() -> ctx.queryParam("to").stream().findFirst().orElse(""));
         String currency = ctx.queryParam("currency").stream().findFirst().orElse("USD")
                 .toUpperCase();
 
@@ -72,8 +75,8 @@ public class ReportHandler implements Handler<RoutingContext> {
                     BigDecimal net = incomeTotal.subtract(expenseTotal);
                     int scale = "IDR".equals(filterCurrency) ? 0 : 2;
 
-                    JsonObject incomeBreakdown = buildBreakdown(incomeByCategory, scale);
-                    JsonObject expenseBreakdown = buildBreakdown(expenseByCategory, scale);
+                    JsonArray incomeBreakdown = buildBreakdownArray(incomeByCategory, scale, "income");
+                    JsonArray expenseBreakdown = buildBreakdownArray(expenseByCategory, scale, "expense");
 
                     JsonObject resp = new JsonObject()
                             .put("totalIncome", incomeTotal
@@ -82,8 +85,8 @@ public class ReportHandler implements Handler<RoutingContext> {
                                     .setScale(scale, RoundingMode.HALF_UP).toPlainString())
                             .put("net", net.setScale(scale, RoundingMode.HALF_UP).toPlainString())
                             .put("currency", filterCurrency)
-                            .put("income_breakdown", incomeBreakdown)
-                            .put("expense_breakdown", expenseBreakdown);
+                            .put("incomeBreakdown", incomeBreakdown)
+                            .put("expenseBreakdown", expenseBreakdown);
 
                     ctx.response()
                             .setStatusCode(200)
@@ -93,12 +96,15 @@ public class ReportHandler implements Handler<RoutingContext> {
                 .onFailure(ctx::fail);
     }
 
-    private JsonObject buildBreakdown(Map<String, BigDecimal> map, int scale) {
-        JsonObject obj = new JsonObject();
+    private JsonArray buildBreakdownArray(Map<String, BigDecimal> map, int scale, String type) {
+        JsonArray arr = new JsonArray();
         for (Map.Entry<String, BigDecimal> entry : map.entrySet()) {
-            obj.put(entry.getKey(), entry.getValue()
-                    .setScale(scale, RoundingMode.HALF_UP).toPlainString());
+            arr.add(new JsonObject()
+                    .put("category", entry.getKey())
+                    .put("type", type)
+                    .put("total", entry.getValue()
+                            .setScale(scale, RoundingMode.HALF_UP).toPlainString()));
         }
-        return obj;
+        return arr;
     }
 }

@@ -3,7 +3,7 @@
 from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, Header
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 from sqlalchemy.orm import Session
 
 from demo_be_python_fastapi.auth.jwt_service import (
@@ -62,7 +62,9 @@ class TokenResponse(BaseModel):
 class RefreshRequest(BaseModel):
     """Refresh token request model."""
 
-    refresh_token: str
+    model_config = ConfigDict(populate_by_name=True)
+
+    refresh_token: str = Field(alias="refreshToken")
 
 
 @router.post("/register", status_code=201, response_model=RegisterResponse)
