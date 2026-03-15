@@ -95,6 +95,14 @@ nx run demo-fe-e2e:test:quick
 
 **See**: [Nx Target Standards](../../governance/development/infra/nx-targets.md) for canonical E2E target names. `test:e2e` runs on a scheduled cron (twice daily at 6 AM and 6 PM WIB via GitHub Actions), not on pre-push.
 
+## CI Integration
+
+This suite runs in two contexts:
+
+1. **`test-demo-fe-ts-nextjs.yml`** — the dedicated frontend workflow. Triggers on changes to `demo-fe-ts-nextjs`, `demo-fe-e2e`, or `demo-be-golang-gin`. Always uses the Go/Gin backend stack via `infra/dev/demo-fe-ts-nextjs/docker-compose.yml`.
+
+2. **Each `test-demo-be-*.yml` backend workflow** — after the backend's integration and BE E2E tests pass, an `e2e-fe` job runs on a fresh runner. It starts the **same backend** being tested (with `ENABLE_TEST_API=true`) alongside the Next.js frontend via that backend's `infra/dev/demo-be-<name>/docker-compose.ci.yml` overlay. This validates that the frontend works end-to-end against every supported backend — not just Go/Gin.
+
 ## Environment Variables
 
 | Variable   | Default                 | Description                     |

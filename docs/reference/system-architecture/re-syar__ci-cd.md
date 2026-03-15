@@ -236,13 +236,38 @@ graph TB
 
 **Purpose**: Runs affected tests and quality checks for pull requests
 
-### E2E OrganicLever Workflow
+### Demo Backend Workflows
 
-**File**: `.github/workflows/test-demo-be-java-springboot.yml`
+**Files**: `.github/workflows/test-demo-be-*.yml` (one per backend)
 
-**Trigger**: Push to `main` or pull request (when organiclever apps change)
+**Backends**: golang-gin, java-springboot, java-vertx, elixir-phoenix, fsharp-giraffe, python-fastapi, rust-axum, kotlin-ktor, ts-effect, csharp-aspnetcore, clojure-pedestal
 
-**Purpose**: Runs Playwright E2E tests for organiclever-web and demo-be-java-springboot
+**Trigger**: Scheduled (6 AM and 6 PM WIB daily) or manual `workflow_dispatch`. The golang-gin workflow also triggers on push to `main` when its paths change.
+
+**Job structure** (per workflow):
+
+Each backend workflow runs its own backend stack — never a different backend.
+
+1. **`integration-tests`** (golang-gin only) or **`integration-e2e-be`** (all others):
+   - Runs backend integration tests via `docker-compose.integration.yml`
+   - Starts backend + runs `demo-be-e2e:test:e2e` against it
+   - Uses the backend's own infra compose files
+
+2. **`e2e-fe`** (all backends):
+   - Starts the full stack: DB + this backend (with `ENABLE_TEST_API=true`) + `demo-fe-ts-nextjs`
+   - Waits for the frontend on port 3301
+   - Runs `demo-fe-e2e:test:e2e` (92 scenarios) against the full stack
+   - Uploads artifact: `playwright-report-fe-e2e-<backend-slug>`
+
+**Why per-backend FE E2E**: Every backend implements the test-only API (`POST /api/v1/test/reset-db`, `POST /api/v1/test/promote-admin`) enabled via `ENABLE_TEST_API=true`. This allows `demo-fe-e2e` to reset database state between scenarios against any backend. Running FE E2E against each backend independently ensures the frontend works correctly with all supported API implementations, not just the reference Go/Gin backend.
+
+### Demo Frontend Workflow
+
+**File**: `.github/workflows/test-demo-fe-ts-nextjs.yml`
+
+**Trigger**: Push to `main` (when frontend/FE E2E/backend paths change), scheduled cron, or manual `workflow_dispatch`
+
+**Purpose**: Dedicated FE E2E workflow using the Go/Gin reference backend stack via `infra/dev/demo-fe-ts-nextjs/docker-compose.yml`
 
 ## Nx Build System
 
