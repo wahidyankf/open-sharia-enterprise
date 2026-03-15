@@ -153,3 +153,4 @@ coverage.xml
 # Claude Code settings
 .claude/settings.local.json
 .claude/settings.local.json.bkup
+.claude/worktrees/
