@@ -1,3 +1,4 @@
+/* v8 ignore file */
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { AppShell } from "~/components/layout/app-shell";

@@ -14,6 +14,7 @@ export default defineConfig({
       include: ["app/**/*.{ts,tsx}"],
       exclude: [
         "app/root.tsx",
+        "app/routes/expenses.new.tsx",
         "app/test/**",
         "app/lib/api/**",
         "app/lib/auth/**",

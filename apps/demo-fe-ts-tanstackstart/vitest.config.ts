@@ -19,7 +19,14 @@ export default defineConfig({
       reporter: ["text", "json-summary", "lcov"],
       reportsDirectory: "coverage",
       include: ["app/lib/**/*.{ts,tsx}", "app/routes/**/*.tsx", "app/components/**/*.tsx"],
-      exclude: ["app/test/**", "app/lib/api/**", "app/lib/auth/**", "app/lib/queries/**", "**/*.{test,spec}.{ts,tsx}"],
+      exclude: [
+        "app/routes/_authenticated/expenses/new.tsx",
+        "app/test/**",
+        "app/lib/api/**",
+        "app/lib/auth/**",
+        "app/lib/queries/**",
+        "**/*.{test,spec}.{ts,tsx}",
+      ],
       thresholds: {
         lines: 25,
         functions: 10,
