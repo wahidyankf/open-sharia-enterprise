@@ -45,6 +45,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    const handleCleared = () => {
+      setIsAuthenticated(false);
+      setIsLoading(false);
+    };
+    const handleSet = () => {
+      const token = getAccessToken();
+      setIsAuthenticated(!!token);
+      setIsLoading(false);
+    };
+    window.addEventListener("auth:cleared", handleCleared);
+    window.addEventListener("auth:set", handleSet);
+    return () => {
+      window.removeEventListener("auth:cleared", handleCleared);
+      window.removeEventListener("auth:set", handleSet);
+    };
+  }, []);
+
+  useEffect(() => {
     if (!isAuthenticated) return;
 
     const doRefresh = async () => {
