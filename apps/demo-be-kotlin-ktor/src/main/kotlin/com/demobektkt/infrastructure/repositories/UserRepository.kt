@@ -18,6 +18,7 @@ data class UpdateUserPatch(
   val passwordHash: String? = null,
   val status: UserStatus? = null,
   val failedLoginCount: Int? = null,
+  val role: com.demobektkt.domain.Role? = null,
 )
 
 interface UserRepository {

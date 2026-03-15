@@ -28,6 +28,7 @@
     <Compile Include="Handlers/ExpenseHandler.fs" />
     <Compile Include="Handlers/ReportHandler.fs" />
     <Compile Include="Handlers/AttachmentHandler.fs" />
+    <Compile Include="Handlers/TestHandler.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

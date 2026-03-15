@@ -5,7 +5,7 @@ use axum::{
 };
 use std::sync::Arc;
 
-use crate::handlers::{admin, attachment, auth, expense, health, report, token, user};
+use crate::handlers::{admin, attachment, auth, expense, health, report, test_api, token, user};
 use crate::state::AppState;
 
 pub fn router(state: Arc<AppState>) -> Router {
@@ -17,13 +17,25 @@ pub fn router(state: Arc<AppState>) -> Router {
 }
 
 fn api_router() -> Router<Arc<AppState>> {
-    Router::new()
+    let mut router = Router::new()
         .nest("/auth", auth_router())
         .nest("/users", user_router())
         .nest("/admin", admin_router())
         .nest("/expenses", expense_router())
         .nest("/tokens", token_router())
-        .nest("/reports", report_router())
+        .nest("/reports", report_router());
+
+    if std::env::var("ENABLE_TEST_API").as_deref() == Ok("true") {
+        router = router.nest("/test", test_api_router());
+    }
+
+    router
+}
+
+fn test_api_router() -> Router<Arc<AppState>> {
+    Router::new()
+        .route("/reset-db", post(test_api::reset_db))
+        .route("/promote-admin", post(test_api::promote_admin))
 }
 
 fn auth_router() -> Router<Arc<AppState>> {

@@ -13,28 +13,21 @@ open DemoBeFsgi.Auth.AdminMiddleware
 
 let healthHandler: HttpHandler = fun next ctx -> json {| status = "UP" |} next ctx
 
-// Test-only handler: sets a user's role to admin
-let setAdminRoleForUser (username: string) : HttpHandler =
-    fun next ctx ->
-        task {
-            let db = ctx.GetService<DemoBeFsgi.Infrastructure.AppDbContext.AppDbContext>()
+let testApiEnabled () =
+    Environment.GetEnvironmentVariable("ENABLE_TEST_API") = "true"
 
-            let! user = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Username = username)
-
-            if obj.ReferenceEquals(user, null) then
-                ctx.Response.StatusCode <- 404
-                return! json {| error = "Not Found" |} earlyReturn ctx
-            else
-                let updated = { user with Role = "ADMIN" }
-                db.Users.Update(updated) |> ignore
-                let! _ = db.SaveChangesAsync()
-                return! json {| message = "Role set to admin" |} next ctx
-        }
+let testApiRoutes: HttpHandler =
+    choose
+        [ POST >=> route "/api/v1/test/reset-db" >=> Handlers.TestHandler.resetDb
+          POST
+          >=> route "/api/v1/test/promote-admin"
+          >=> Handlers.TestHandler.promoteAdmin ]
 
 let webApp: HttpHandler =
     choose
         [ GET >=> route "/health" >=> healthHandler
-          POST >=> routef "/test/set-admin-role/%s" setAdminRoleForUser
+          if testApiEnabled () then
+              testApiRoutes
           GET >=> route "/.well-known/jwks.json" >=> Handlers.TokenHandler.jwks
           subRoute
               "/api/v1"

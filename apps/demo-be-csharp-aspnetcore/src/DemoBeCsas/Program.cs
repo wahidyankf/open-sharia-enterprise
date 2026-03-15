@@ -76,6 +76,11 @@ app.MapReportEndpoints();
 app.MapAttachmentEndpoints();
 app.MapTokenEndpoints();
 
+if (builder.Configuration["ENABLE_TEST_API"] == "true")
+{
+    app.MapTestApiEndpoints();
+}
+
 await app.RunAsync();
 
 // Needed for WebApplicationFactory in integration tests

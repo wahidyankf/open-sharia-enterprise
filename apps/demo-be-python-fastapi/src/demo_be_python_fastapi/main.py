@@ -1,6 +1,7 @@
 """FastAPI application factory."""
 
 import logging
+import os
 from contextlib import asynccontextmanager
 from typing import Any
 
@@ -29,6 +30,7 @@ from demo_be_python_fastapi.routers import (
     expenses,
     health,
     reports,
+    test_api,
     tokens,
     users,
 )
@@ -57,6 +59,10 @@ def create_app() -> FastAPI:
     app.include_router(reports.router, prefix="/api/v1/reports")
     app.include_router(attachments.router, prefix="/api/v1/expenses")
     app.include_router(tokens.router, prefix="/api/v1/tokens")
+
+    # Test API endpoints — only registered when ENABLE_TEST_API=true
+    if os.getenv("ENABLE_TEST_API") == "true":
+        app.include_router(test_api.router, prefix="/api/v1/test")
 
     # JWKS well-known endpoint
     @app.get("/.well-known/jwks.json")

@@ -10,6 +10,7 @@ import { attachmentRouter } from "./routes/attachment.js";
 import { reportRouter } from "./routes/report.js";
 import { adminRouter } from "./routes/admin.js";
 import { jwksRouter } from "./routes/jwks.js";
+import { testApiRouter } from "./routes/test-api.js";
 import {
   ValidationError,
   NotFoundError,
@@ -56,7 +57,7 @@ export const handleDomainError = (
   return HttpServerResponse.json({ error: "Internal server error" }, { status: 500 });
 };
 
-export const AppRouter = HttpRouter.empty.pipe(
+const baseRouter = HttpRouter.empty.pipe(
   HttpRouter.concat(healthRouter),
   HttpRouter.concat(authRouter),
   HttpRouter.concat(userRouter),
@@ -65,8 +66,11 @@ export const AppRouter = HttpRouter.empty.pipe(
   HttpRouter.concat(reportRouter),
   HttpRouter.concat(adminRouter),
   HttpRouter.concat(jwksRouter),
-  HttpRouter.catchAll(handleDomainError),
 );
+
+export const AppRouter = (
+  process.env["ENABLE_TEST_API"] === "true" ? baseRouter.pipe(HttpRouter.concat(testApiRouter)) : baseRouter
+).pipe(HttpRouter.catchAll(handleDomainError));
 
 export const makeServerLayer = (port: number) =>
   HttpServer.serve(AppRouter).pipe(Layer.provide(NodeHttpServer.layer(() => createServer(), { port })));
