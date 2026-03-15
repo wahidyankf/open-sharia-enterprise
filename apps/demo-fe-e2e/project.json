@@ -67,7 +67,6 @@
     "demo-fe-ts-nextjs",
     "demo-fe-ts-tanstackstart",
     "demo-fe-ts-remix",
-    "demo-fe-dart-flutter",
-    "demo-fe-elixir-phoenix"
+    "demo-fe-dart-flutter"
   ]
 }
