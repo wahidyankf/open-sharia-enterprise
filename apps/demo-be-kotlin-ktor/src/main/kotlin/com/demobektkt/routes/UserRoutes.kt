@@ -22,9 +22,9 @@ import kotlinx.serialization.Serializable
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-@Serializable data class UpdateDisplayNameRequest(val display_name: String)
+@Serializable data class UpdateDisplayNameRequest(val displayName: String)
 
-@Serializable data class ChangePasswordRequest(val old_password: String, val new_password: String)
+@Serializable data class ChangePasswordRequest(val oldPassword: String, val newPassword: String)
 
 object UserRoutes : KoinComponent {
   private val userRepository: UserRepository by inject()
@@ -45,7 +45,7 @@ object UserRoutes : KoinComponent {
         "id" to user.id.toString(),
         "username" to user.username,
         "email" to user.email,
-        "display_name" to user.displayName,
+        "displayName" to user.displayName,
         "role" to user.role.name,
         "status" to user.status.name,
       )
@@ -59,10 +59,10 @@ object UserRoutes : KoinComponent {
     val userId = UUID.fromString(principal.payload.subject)
 
     val request = call.receive<UpdateDisplayNameRequest>()
-    validateDisplayName(request.display_name).getOrThrow()
+    validateDisplayName(request.displayName).getOrThrow()
 
     val user =
-      userRepository.update(userId, UpdateUserPatch(displayName = request.display_name))
+      userRepository.update(userId, UpdateUserPatch(displayName = request.displayName))
         ?: throw DomainException(DomainError.NotFound("user"))
 
     call.respond(
@@ -70,7 +70,7 @@ object UserRoutes : KoinComponent {
         "id" to user.id.toString(),
         "username" to user.username,
         "email" to user.email,
-        "display_name" to user.displayName,
+        "displayName" to user.displayName,
       )
     )
   }
@@ -85,11 +85,11 @@ object UserRoutes : KoinComponent {
     val user =
       userRepository.findById(userId) ?: throw DomainException(DomainError.NotFound("user"))
 
-    if (!passwordService.verify(request.old_password, user.passwordHash)) {
+    if (!passwordService.verify(request.oldPassword, user.passwordHash)) {
       throw DomainException(DomainError.Unauthorized("Invalid credentials"))
     }
 
-    val newHash = passwordService.hash(request.new_password)
+    val newHash = passwordService.hash(request.newPassword)
     userRepository.update(userId, UpdateUserPatch(passwordHash = newHash))
 
     call.respond(HttpStatusCode.OK, mapOf("message" to "Password changed"))
