@@ -27,7 +27,7 @@ export default function AdminPage() {
   const [page, setPage] = useState(0);
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState<string | undefined>(undefined);
-  const [copiedToken, setCopiedToken] = useState<string | null>(null);
+  const [generatedToken, setGeneratedToken] = useState<{ userId: string; token: string; copied: boolean } | null>(null);
   const [disableReason, setDisableReason] = useState("");
   const [disablingUserId, setDisablingUserId] = useState<string | null>(null);
 
@@ -59,11 +59,16 @@ export default function AdminPage() {
   const handleCopyToken = (userId: string) => {
     resetMutation.mutate(userId, {
       onSuccess: (result) => {
-        void navigator.clipboard.writeText(result.token).then(() => {
-          setCopiedToken(userId);
-          setTimeout(() => setCopiedToken(null), 3000);
-        });
+        setGeneratedToken({ userId, token: result.token, copied: false });
       },
+    });
+  };
+
+  const handleCopyToClipboard = () => {
+    if (!generatedToken) return;
+    void navigator.clipboard.writeText(generatedToken.token).then(() => {
+      setGeneratedToken((prev) => (prev ? { ...prev, copied: true } : null));
+      setTimeout(() => setGeneratedToken((prev) => (prev ? { ...prev, copied: false } : null)), 3000);
     });
   };
 
@@ -125,13 +130,23 @@ export default function AdminPage() {
         </button>
       )}
       <button
-        style={btnStyle(copiedToken === user.id ? "#27ae60" : "#1a73e8")}
+        style={btnStyle("#1a73e8")}
         onClick={() => handleCopyToken(user.id)}
         disabled={resetMutation.isPending}
-        aria-label={`Generate password reset token for ${user.username}`}
+        aria-label={`Generate Reset Token for ${user.username}`}
       >
-        {copiedToken === user.id ? "Copied!" : "Reset Token"}
+        Generate Reset Token
       </button>
+      {generatedToken?.userId === user.id && (
+        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem", marginTop: "0.35rem" }}>
+          <code data-testid="reset-token" style={{ fontSize: "0.75rem", background: "#f4f4f4", padding: "0.2rem 0.4rem", borderRadius: "3px", wordBreak: "break-all" }}>
+            {generatedToken.token}
+          </code>
+          <button style={btnStyle(generatedToken.copied ? "#27ae60" : "#555")} onClick={handleCopyToClipboard} aria-label="Copy token">
+            {generatedToken.copied ? "Copied!" : "Copy"}
+          </button>
+        </span>
+      )}
     </td>
   );
 
@@ -140,15 +155,15 @@ export default function AdminPage() {
       <h1 style={{ marginBottom: "1.5rem" }}>Admin: Users</h1>
 
       <form onSubmit={handleSearch} style={{ display: "flex", gap: "0.75rem", marginBottom: "1.5rem" }}>
-        <label htmlFor="search-email" style={{ display: "none" }}>
-          Search by email
+        <label htmlFor="search-users" style={{ display: "none" }}>
+          Search users
         </label>
         <input
-          id="search-email"
-          type="email"
+          id="search-users"
+          type="text"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
-          placeholder="Search by email"
+          placeholder="Search by username or email"
           style={{
             flex: 1,
             padding: "0.6rem 0.75rem",
@@ -277,6 +292,9 @@ export default function AdminPage() {
 
       {data && (
         <>
+          <p style={{ color: "#888", fontSize: "0.85rem", marginBottom: "0.75rem" }}>
+            {data.totalElements} users
+          </p>
           <div style={{ overflowX: "auto" }}>
             <table
               style={{
