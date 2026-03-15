@@ -42,8 +42,6 @@ pub async fn promote_admin(
     State(state): State<Arc<AppState>>,
     Json(body): Json<PromoteAdminRequest>,
 ) -> Result<impl IntoResponse, AppError> {
-    use sqlx::Row;
-
     let row = sqlx::query("SELECT id FROM users WHERE username = $1")
         .bind(&body.username)
         .fetch_optional(&state.pool)
