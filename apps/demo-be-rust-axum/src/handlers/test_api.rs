@@ -8,9 +8,7 @@ use crate::state::AppState;
 
 /// Deletes all data in dependency order:
 /// attachments → expenses → refresh_tokens → revoked_tokens → users.
-pub async fn reset_db(
-    State(state): State<Arc<AppState>>,
-) -> Result<impl IntoResponse, AppError> {
+pub async fn reset_db(State(state): State<Arc<AppState>>) -> Result<impl IntoResponse, AppError> {
     sqlx::query("DELETE FROM attachments")
         .execute(&state.pool)
         .await?;
