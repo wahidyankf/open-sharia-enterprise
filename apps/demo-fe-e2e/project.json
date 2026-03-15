@@ -63,10 +63,5 @@
     }
   },
   "tags": ["type:e2e", "platform:playwright", "lang:ts", "domain:demo-fe"],
-  "implicitDependencies": [
-    "demo-fe-ts-nextjs",
-    "demo-fe-ts-tanstackstart",
-    "demo-fe-ts-remix",
-    "demo-fe-dart-flutter"
-  ]
+  "implicitDependencies": ["demo-fe-ts-nextjs"]
 }

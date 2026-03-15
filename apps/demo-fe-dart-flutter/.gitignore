@@ -1,8 +1,0 @@
-.dart_tool/
-build/
-.packages
-.flutter-plugins
-.flutter-plugins-dependencies
-coverage/
-*.iml
-.metadata

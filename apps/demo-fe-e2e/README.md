@@ -38,13 +38,10 @@ tests/steps/**/*.ts                   <- step implementations
 
 This centralized E2E suite tests any demo-fe frontend by setting `BASE_URL`:
 
-| Frontend                   | Framework               | Default Port |
-| -------------------------- | ----------------------- | ------------ |
-| `demo-fe-ts-nextjs`        | Next.js 16 (App Router) | 3301         |
-| `demo-fe-ts-tanstackstart` | TanStack Start v1 RC    | 3301         |
-| `demo-fe-ts-remix`         | React Router v7         | 3301         |
-| `demo-fe-dart-flutter`     | Flutter Web             | 3301         |
-| `demo-fe-elixir-phoenix`   | Phoenix LiveView        | 3301         |
+| Frontend                 | Framework               | Default Port |
+| ------------------------ | ----------------------- | ------------ |
+| `demo-fe-ts-nextjs`      | Next.js 16 (App Router) | 3301         |
+| `demo-fe-elixir-phoenix` | Phoenix LiveView        | 3301         |
 
 ## Prerequisites
 
@@ -61,8 +58,6 @@ nx dev demo-be-golang-gin
 
 ```bash
 nx dev demo-fe-ts-nextjs
-# or: nx dev demo-fe-ts-tanstackstart
-# or: nx dev demo-fe-ts-remix
 # or: nx dev demo-fe-elixir-phoenix
 ```
 
@@ -130,9 +125,6 @@ apps/demo-fe-e2e/
 ## Related
 
 - [demo-fe-ts-nextjs](../demo-fe-ts-nextjs/README.md) - Next.js frontend implementation
-- [demo-fe-ts-tanstackstart](../demo-fe-ts-tanstackstart/README.md) - TanStack Start frontend implementation
-- [demo-fe-ts-remix](../demo-fe-ts-remix/README.md) - React Router v7 frontend implementation
-- [demo-fe-dart-flutter](../demo-fe-dart-flutter/README.md) - Flutter Web frontend implementation
 - [demo-fe-elixir-phoenix](../demo-fe-elixir-phoenix/README.md) - Phoenix LiveView frontend implementation
 - [demo-be-golang-gin](../demo-be-golang-gin/README.md) - Backend API
 - [specs/apps/demo/fe/gherkin](../../specs/apps/demo/fe/gherkin/) - Gherkin feature files (source of truth)
