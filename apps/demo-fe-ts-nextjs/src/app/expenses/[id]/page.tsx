@@ -78,6 +78,7 @@ export default function ExpenseDetailPage({ params }: PageProps) {
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [deleteAttachmentId, setDeleteAttachmentId] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [deleteAttachmentError, setDeleteAttachmentError] = useState<string | null>(null);
 
   const isOwner = currentUser?.id === expense?.userId;
 
@@ -158,10 +159,19 @@ export default function ExpenseDetailPage({ params }: PageProps) {
   };
 
   const handleDeleteAttachment = (attachmentId: string) => {
+    setDeleteAttachmentError(null);
     deleteAttachmentMutation.mutate(
       { expenseId: id, attachmentId },
       {
         onSuccess: () => setDeleteAttachmentId(null),
+        onError: (err) => {
+          setDeleteAttachmentId(null);
+          if (err instanceof ApiError && err.status === 404) {
+            setDeleteAttachmentError("Attachment not found. It may have been deleted already.");
+          } else {
+            setDeleteAttachmentError("Failed to delete attachment. Please try again.");
+          }
+        },
       },
     );
   };
@@ -251,6 +261,32 @@ export default function ExpenseDetailPage({ params }: PageProps) {
           role="alertdialog"
           aria-modal="true"
           aria-labelledby="delete-dialog-title"
+          onKeyDown={(e) => {
+            if (e.key === "Escape") {
+              setDeleteConfirm(false);
+              return;
+            }
+            if (e.key === "Tab") {
+              const focusable = Array.from(
+                (e.currentTarget as HTMLElement).querySelectorAll<HTMLElement>(
+                  'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+                ),
+              );
+              const first = focusable[0];
+              const last = focusable[focusable.length - 1];
+              if (e.shiftKey) {
+                if (document.activeElement === first) {
+                  e.preventDefault();
+                  last?.focus();
+                }
+              } else {
+                if (document.activeElement === last) {
+                  e.preventDefault();
+                  first?.focus();
+                }
+              }
+            }
+          }}
           style={{
             position: "fixed",
             inset: 0,
@@ -275,6 +311,8 @@ export default function ExpenseDetailPage({ params }: PageProps) {
             <p>Are you sure you want to delete this expense?</p>
             <div style={{ display: "flex", gap: "0.75rem" }}>
               <button
+                // eslint-disable-next-line jsx-a11y/no-autofocus
+                autoFocus
                 onClick={handleDelete}
                 disabled={deleteMutation.isPending}
                 style={{
@@ -374,36 +412,38 @@ export default function ExpenseDetailPage({ params }: PageProps) {
                 <label htmlFor="edit-currency" style={labelStyle}>
                   Currency
                 </label>
-                <select
+                <input
                   id="edit-currency"
+                  type="text"
+                  list="edit-currency-list"
                   value={editForm.currency ?? "USD"}
                   onChange={(e) => setEditForm({ ...editForm, currency: e.target.value })}
                   style={inputStyle}
-                >
+                />
+                <datalist id="edit-currency-list">
                   {SUPPORTED_CURRENCIES.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
+                    <option key={c} value={c} />
                   ))}
-                </select>
+                </datalist>
               </div>
 
               <div>
                 <label htmlFor="edit-type" style={labelStyle}>
                   Type
                 </label>
-                <select
+                <input
                   id="edit-type"
+                  type="text"
+                  list="edit-type-list"
                   value={editForm.type ?? "EXPENSE"}
                   onChange={(e) => setEditForm({ ...editForm, type: e.target.value })}
                   style={inputStyle}
-                >
+                />
+                <datalist id="edit-type-list">
                   {EXPENSE_TYPES.map((t) => (
-                    <option key={t} value={t}>
-                      {t}
-                    </option>
+                    <option key={t} value={t} />
                   ))}
-                </select>
+                </datalist>
               </div>
 
               <div>
@@ -456,19 +496,19 @@ export default function ExpenseDetailPage({ params }: PageProps) {
                 <label htmlFor="edit-unit" style={labelStyle}>
                   Unit (optional)
                 </label>
-                <select
+                <input
                   id="edit-unit"
+                  type="text"
+                  list="edit-unit-list"
                   value={editForm.unit ?? ""}
                   onChange={(e) => setEditForm({ ...editForm, unit: e.target.value || undefined })}
                   style={inputStyle}
-                >
-                  <option value="">None</option>
+                />
+                <datalist id="edit-unit-list">
                   {SUPPORTED_UNITS.map((u) => (
-                    <option key={u} value={u}>
-                      {u}
-                    </option>
+                    <option key={u} value={u} />
                   ))}
-                </select>
+                </datalist>
               </div>
             </div>
 
@@ -522,6 +562,21 @@ export default function ExpenseDetailPage({ params }: PageProps) {
 
       <div style={cardStyle}>
         <h2 style={{ marginTop: 0 }}>Attachments</h2>
+
+        {deleteAttachmentError && (
+          <div
+            role="alert"
+            style={{
+              backgroundColor: "#fdf2f2",
+              color: "#c0392b",
+              padding: "0.6rem 1rem",
+              borderRadius: "4px",
+              marginBottom: "1rem",
+            }}
+          >
+            {deleteAttachmentError}
+          </div>
+        )}
 
         {uploadError && (
           <div
@@ -622,8 +677,24 @@ export default function ExpenseDetailPage({ params }: PageProps) {
                 }}
               >
                 <div>
+                  {attachment.contentType.startsWith("image/") && (
+                    <img
+                      src={`/api/v1/expenses/${id}/attachments/${attachment.id}/content`}
+                      alt={`Attachment: ${attachment.filename}`}
+                      width={120}
+                      height={80}
+                      style={{
+                        display: "block",
+                        marginBottom: "0.5rem",
+                        objectFit: "contain",
+                        border: "1px solid #eee",
+                        borderRadius: "4px",
+                        backgroundColor: "#f8f9fa",
+                      }}
+                    />
+                  )}
                   <span style={{ fontWeight: "500" }}>{attachment.filename}</span>
-                  <span style={{ color: "#888", fontSize: "0.85rem", marginLeft: "0.75rem" }}>
+                  <span style={{ color: "#666", fontSize: "0.85rem", marginLeft: "0.75rem" }}>
                     {attachment.contentType} &middot; {formatFileSize(attachment.size)}
                   </span>
                 </div>

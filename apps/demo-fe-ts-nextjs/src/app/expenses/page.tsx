@@ -85,15 +85,15 @@ export default function ExpensesPage() {
     } else if (isNaN(amountNum) || amountNum < 0) {
       errors.amount = "Amount must be a non-negative number";
     }
-    if (!SUPPORTED_CURRENCIES.includes(form.currency)) {
-      errors.currency = `Currency must be one of: ${SUPPORTED_CURRENCIES.join(", ")}`;
+    if (!SUPPORTED_CURRENCIES.includes(form.currency.trim().toUpperCase())) {
+      errors.currency = "Invalid currency. Supported: USD, IDR";
     }
     if (!form.category.trim()) errors.category = "Category is required";
     if (!form.description.trim()) errors.description = "Description is required";
     if (!form.date) errors.date = "Date is required";
-    if (!EXPENSE_TYPES.includes(form.type)) errors.type = "Type is required";
-    if (form.unit && !SUPPORTED_UNITS.includes(form.unit)) {
-      errors.unit = `Unit must be one of: ${SUPPORTED_UNITS.join(", ")}`;
+    if (!EXPENSE_TYPES.includes(form.type.trim().toUpperCase())) errors.type = "Type is required";
+    if (form.unit && !SUPPORTED_UNITS.includes(form.unit.trim().toLowerCase())) {
+      errors.unit = "Invalid unit";
     }
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -106,6 +106,8 @@ export default function ExpensesPage() {
 
     const payload: CreateExpenseRequest = {
       ...form,
+      currency: form.currency.trim().toUpperCase(),
+      type: form.type.trim().toUpperCase(),
       quantity: form.quantity ?? undefined,
       unit: form.unit || undefined,
     };
@@ -218,19 +220,20 @@ export default function ExpensesPage() {
                 <label htmlFor="currency" style={labelStyle}>
                   Currency
                 </label>
-                <select
+                <input
                   id="currency"
+                  type="text"
+                  list="create-currency-list"
                   value={form.currency}
                   onChange={(e) => setForm({ ...form, currency: e.target.value })}
                   aria-required="true"
                   style={inputStyle}
-                >
+                />
+                <datalist id="create-currency-list">
                   {SUPPORTED_CURRENCIES.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
+                    <option key={c} value={c} />
                   ))}
-                </select>
+                </datalist>
                 {formErrors.currency && (
                   <span role="alert" style={{ color: "#c0392b", fontSize: "0.8rem" }}>
                     {formErrors.currency}
@@ -242,18 +245,24 @@ export default function ExpensesPage() {
                 <label htmlFor="type" style={labelStyle}>
                   Type
                 </label>
-                <select
+                <input
                   id="type"
+                  type="text"
+                  list="create-type-list"
                   value={form.type}
                   onChange={(e) => setForm({ ...form, type: e.target.value })}
                   style={inputStyle}
-                >
+                />
+                <datalist id="create-type-list">
                   {EXPENSE_TYPES.map((t) => (
-                    <option key={t} value={t}>
-                      {t}
-                    </option>
+                    <option key={t} value={t} />
                   ))}
-                </select>
+                </datalist>
+                {formErrors.type && (
+                  <span role="alert" style={{ color: "#c0392b", fontSize: "0.8rem" }}>
+                    {formErrors.type}
+                  </span>
+                )}
               </div>
 
               <div>
@@ -315,19 +324,19 @@ export default function ExpensesPage() {
                 <label htmlFor="unit" style={labelStyle}>
                   Unit (optional)
                 </label>
-                <select
+                <input
                   id="unit"
+                  type="text"
+                  list="create-unit-list"
                   value={form.unit ?? ""}
                   onChange={(e) => setForm({ ...form, unit: e.target.value || undefined })}
                   style={inputStyle}
-                >
-                  <option value="">None</option>
+                />
+                <datalist id="create-unit-list">
                   {SUPPORTED_UNITS.map((u) => (
-                    <option key={u} value={u}>
-                      {u}
-                    </option>
+                    <option key={u} value={u} />
                   ))}
-                </select>
+                </datalist>
                 {formErrors.unit && (
                   <span role="alert" style={{ color: "#c0392b", fontSize: "0.8rem" }}>
                     {formErrors.unit}
@@ -446,6 +455,11 @@ export default function ExpensesPage() {
 
       {data && (
         <>
+          {data.totalElements !== undefined && (
+            <p style={{ color: "#555", marginBottom: "0.75rem", fontSize: "0.9rem" }}>
+              {data.totalElements} entries
+            </p>
+          )}
           <div style={{ overflowX: "auto" }}>
             <table
               style={{
@@ -481,6 +495,7 @@ export default function ExpensesPage() {
                 {data.content.map((expense: Expense, idx: number) => (
                   <tr
                     key={expense.id}
+                    data-testid="entry-card"
                     style={{
                       backgroundColor: idx % 2 === 0 ? "#fff" : "#fafafa",
                       borderBottom: "1px solid #eee",

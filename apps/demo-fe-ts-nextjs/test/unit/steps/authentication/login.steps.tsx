@@ -90,17 +90,17 @@ describeFeature(feature, ({ Scenario, Background }) => {
       await user.type(screen.getByLabelText(/password/i), "Str0ng#Pass1");
       await user.click(screen.getByRole("button", { name: /log in/i }));
       await waitFor(() => {
-        expect(mockPush).toHaveBeenCalledWith("/");
+        expect(mockPush).toHaveBeenCalledWith("/expenses");
       });
     });
 
     Then("alice should be on the dashboard page", () => {
-      expect(mockPush).toHaveBeenCalledWith("/");
+      expect(mockPush).toHaveBeenCalledWith("/expenses");
     });
 
     And("the navigation should display alice's username", () => {
       // Username display is in Header component; login page redirects to dashboard
-      expect(mockPush).toHaveBeenCalledWith("/");
+      expect(mockPush).toHaveBeenCalledWith("/expenses");
     });
   });
 
@@ -156,7 +156,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
     });
 
     And("alice should remain on the login page", () => {
-      expect(mockPush).not.toHaveBeenCalledWith("/");
+      expect(mockPush).not.toHaveBeenCalledWith("/expenses");
     });
   });
 
@@ -183,7 +183,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
     });
 
     And("alice should remain on the login page", () => {
-      expect(mockPush).not.toHaveBeenCalledWith("/");
+      expect(mockPush).not.toHaveBeenCalledWith("/expenses");
     });
   });
 
@@ -214,7 +214,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
     });
 
     And("alice should remain on the login page", () => {
-      expect(mockPush).not.toHaveBeenCalledWith("/");
+      expect(mockPush).not.toHaveBeenCalledWith("/expenses");
     });
   });
 });

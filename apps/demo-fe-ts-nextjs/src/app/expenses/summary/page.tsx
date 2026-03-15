@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { AppShell } from "@/components/layout/app-shell";
-import { usePLReport } from "@/lib/queries/use-expenses";
+import { usePLReport, useExpenseSummary } from "@/lib/queries/use-expenses";
 import type { CategoryBreakdown } from "@/lib/api/types";
 
 const SUPPORTED_CURRENCIES = ["USD", "IDR"];
@@ -95,6 +95,13 @@ export default function ExpenseSummaryPage() {
     submitted ? queryParams.currency : "",
   );
 
+  // Backend returns Record<string, string> e.g. {"USD": "50.00", "IDR": "100000.00"}
+  const { data: summaryData } = useExpenseSummary();
+  const summaryEntries =
+    summaryData && typeof summaryData === "object" && !Array.isArray(summaryData)
+      ? Object.entries(summaryData as Record<string, string>)
+      : [];
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setQueryParams({ startDate, endDate, currency });
@@ -103,7 +110,33 @@ export default function ExpenseSummaryPage() {
 
   return (
     <AppShell>
-      <h1 style={{ marginBottom: "1.5rem" }}>P&amp;L Summary</h1>
+      <h1 style={{ marginBottom: "1.5rem" }}>Expense Summary</h1>
+
+      {summaryEntries.length > 0 && (
+        <div style={cardStyle}>
+          <h2 style={{ marginTop: 0 }}>Total by Currency</h2>
+          <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+            {summaryEntries.map(([cur, total]) => (
+              <div
+                key={cur}
+                style={{
+                  backgroundColor: "#f8f9fa",
+                  borderRadius: "8px",
+                  padding: "1rem",
+                  minWidth: "140px",
+                  textAlign: "center",
+                  border: "1px solid #e0e0e0",
+                }}
+              >
+                <div style={{ fontSize: "0.85rem", color: "#666", marginBottom: "0.25rem" }}>{cur}</div>
+                <div style={{ fontSize: "1.2rem", fontWeight: "700", color: "#c0392b" }}>
+                  {cur} {total}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div style={cardStyle}>
         <h2 style={{ marginTop: 0 }}>Filter</h2>

@@ -13,7 +13,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/", label: "Home", icon: "&#127968;" },
   { href: "/expenses", label: "Expenses", icon: "&#128181;" },
   { href: "/expenses/summary", label: "Summary", icon: "&#128202;" },
-  { href: "/admin", label: "Admin", icon: "&#128101;" },
+  { href: "/admin/users", label: "Admin", icon: "&#128101;" },
   { href: "/tokens", label: "Tokens", icon: "&#128272;" },
   { href: "/profile", label: "Profile", icon: "&#128100;" },
 ];
@@ -48,6 +48,7 @@ export function Sidebar({ isOpen, onClose, variant }: SidebarProps) {
       )}
       <nav
         aria-label="Main navigation"
+        data-testid={isMobile ? "nav-drawer" : undefined}
         style={{
           position: isMobile ? "fixed" : "relative",
           left: isMobile ? 0 : undefined,

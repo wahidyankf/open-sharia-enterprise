@@ -124,6 +124,7 @@ export default function ProfilePage() {
           {[
             ["Username", user?.username],
             ["Email", user?.email],
+            ["Display Name", user?.displayName],
             ["Status", user?.status],
           ].map(([label, value]) => (
             <div key={label} style={{ display: "flex", gap: "1rem", marginBottom: "0.5rem" }}>

@@ -1,8 +1,15 @@
-import { apiFetch, getAccessToken } from "./client";
+import { apiFetch, getAccessToken, ApiError } from "./client";
 import type { Attachment } from "./types";
 
-export function listAttachments(expenseId: string): Promise<Attachment[]> {
-  return apiFetch<Attachment[]>(`/api/v1/expenses/${expenseId}/attachments`);
+export async function listAttachments(expenseId: string): Promise<Attachment[]> {
+  const result = await apiFetch<{ attachments: Attachment[] } | Attachment[]>(
+    `/api/v1/expenses/${expenseId}/attachments`,
+  );
+  // Backend returns { attachments: [...] } wrapper
+  if (result && !Array.isArray(result) && "attachments" in result) {
+    return result.attachments;
+  }
+  return Array.isArray(result) ? result : [];
 }
 
 export async function uploadAttachment(expenseId: string, file: File): Promise<Attachment> {
@@ -21,7 +28,7 @@ export async function uploadAttachment(expenseId: string, file: File): Promise<A
 
   if (!res.ok) {
     const body = await res.json().catch(() => null);
-    throw new Error(`Upload failed: ${res.status} ${JSON.stringify(body)}`);
+    throw new ApiError(res.status, body);
   }
 
   return res.json() as Promise<Attachment>;

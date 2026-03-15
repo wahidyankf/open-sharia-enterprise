@@ -27,7 +27,7 @@ export default function HomePage() {
       >
         <h2 style={{ marginTop: 0, marginBottom: "1rem" }}>Backend Status</h2>
 
-        {isLoading && <p style={{ color: "#888" }}>Checking backend status...</p>}
+        {isLoading && <p style={{ color: "#666" }}>Checking backend status...</p>}
 
         {isError && (
           <p
@@ -51,14 +51,14 @@ export default function HomePage() {
                 width: "0.75rem",
                 height: "0.75rem",
                 borderRadius: "50%",
-                backgroundColor: data.status === "UP" ? "#27ae60" : "#e74c3c",
+                backgroundColor: data.status === "UP" ? "#2d7a2d" : "#c0392b",
                 display: "inline-block",
               }}
             />
             <span
               style={{
                 fontWeight: "bold",
-                color: data.status === "UP" ? "#27ae60" : "#e74c3c",
+                color: data.status === "UP" ? "#2d7a2d" : "#c0392b",
               }}
             >
               {data.status}
@@ -68,7 +68,7 @@ export default function HomePage() {
       </div>
 
       <p style={{ marginTop: "2rem", color: "#666" }}>
-        <a href="/login" style={{ color: "#1a73e8" }}>
+        <a href="/login" style={{ color: "#1558c0" }}>
           Log in
         </a>{" "}
         to access the full dashboard.

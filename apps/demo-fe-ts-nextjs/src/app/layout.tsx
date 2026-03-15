@@ -3,13 +3,17 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 import { AuthProvider } from "@/lib/auth/auth-provider";
+import { ApiError } from "@/lib/api/client";
 
 function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
         staleTime: 60 * 1000,
-        retry: 1,
+        retry: (failureCount, error) => {
+          if (error instanceof ApiError && (error.status === 401 || error.status === 403)) return false;
+          return failureCount < 1;
+        },
       },
     },
   });

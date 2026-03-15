@@ -343,6 +343,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
         incomeBreakdown: [{ category: "salary", type: "INCOME", total: "5000.00" }],
         expenseBreakdown: [{ category: "food", type: "EXPENSE", total: "150.00" }],
       });
+      vi.mocked(expensesApi.getExpenseSummary).mockResolvedValue({ USD: "50.00", IDR: "100000.00" } as unknown as Awaited<ReturnType<typeof expensesApi.getExpenseSummary>>);
     });
 
     When("alice navigates to the expense summary page", async () => {

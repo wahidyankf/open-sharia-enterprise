@@ -24,7 +24,7 @@ function LoginContent() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.push("/");
+      router.push("/expenses");
     }
   }, [isAuthenticated, router]);
 
@@ -44,7 +44,7 @@ function LoginContent() {
       { username, password },
       {
         onSuccess: () => {
-          router.push("/");
+          router.push("/expenses");
         },
       },
     );
@@ -132,7 +132,7 @@ function LoginContent() {
             aria-invalid={!!fieldErrors.username}
             style={{
               width: "100%",
-              padding: "0.6rem 0.75rem",
+              padding: "0.75rem 0.75rem",
               border: fieldErrors.username ? "1px solid #c0392b" : "1px solid #ccc",
               borderRadius: "4px",
               fontSize: "1rem",

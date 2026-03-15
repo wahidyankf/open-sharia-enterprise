@@ -14,11 +14,17 @@ export function getRefreshToken(): string | null {
 export function setTokens(accessToken: string, refreshToken: string): void {
   localStorage.setItem(TOKEN_KEY, accessToken);
   localStorage.setItem(REFRESH_KEY, refreshToken);
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("auth:set"));
+  }
 }
 
 export function clearTokens(): void {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(REFRESH_KEY);
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("auth:cleared"));
+  }
 }
 
 export class ApiError extends Error {
@@ -49,6 +55,15 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
 
   if (!res.ok) {
     const body = await res.json().catch(() => null);
+    // Only clear session on 401 (unauthenticated / token expired).
+    // 403 (forbidden / insufficient permission) should NOT log the user out.
+    if (res.status === 401 && typeof window !== "undefined") {
+      sessionStorage.setItem(
+        "auth_error",
+        "Your account has been disabled or deactivated. Please log in again.",
+      );
+      clearTokens();
+    }
     throw new ApiError(res.status, body);
   }
 
