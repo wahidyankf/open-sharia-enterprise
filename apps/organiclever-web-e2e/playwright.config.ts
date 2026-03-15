@@ -13,7 +13,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: [["html"], ["junit", { outputFile: "test-results/junit.xml" }]],
+  reporter: [["list"], ["html"], ["junit", { outputFile: "test-results/junit.xml" }]],
   // webkit in CI Docker is slower than the 5s default; 15s handles all timing variances.
   expect: { timeout: 15000 },
   use: {
