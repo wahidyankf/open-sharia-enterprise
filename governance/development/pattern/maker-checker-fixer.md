@@ -371,7 +371,7 @@ The maker-checker-fixer pattern aligns with the agent color categorization syste
 | ------------- | -------- | ------- | -------------------------------------------- | ----------------------------------------------------------------------------------------- |
 | 🟦 **Blue**   | Writers  | Maker   | Has `Write` (creates new files)              | apps-ayokoding-web-general-maker, apps-ayokoding-web-by-example-maker, readme-maker       |
 | 🟩 **Green**  | Checkers | Checker | Has `Write`, `Bash` (no `Edit`)              | apps-ayokoding-web-general-checker, apps-ayokoding-web-by-example-checker, readme-checker |
-| 🟨 **Yellow** | Updaters | Fixer   | Has `Edit` + `Write` (for report generation) | repo-governance-fixer                                                                     |
+| 🟨 **Yellow** | Fixers   | Fixer   | Has `Edit` + `Write` (for report generation) | repo-governance-fixer                                                                     |
 
 **Note**: Purple (🟪 Implementors) agents execute plans and use all tools, falling outside the maker-checker-fixer pattern.
 

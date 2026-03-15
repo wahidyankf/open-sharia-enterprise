@@ -309,12 +309,12 @@ graph TD
 
 #### Agent Color Assignment
 
-| Emoji | Color  | Hex Code | Role                                                                   | Examples                                                                                              |
-| ----- | ------ | -------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| 🟦    | Blue   | #0173B2  | **Writers/Creators** - Agents that create or write new content         | docs-maker, docs-tutorial-maker, agent-maker, plan-maker                                              |
-| 🟩    | Green  | #029E73  | **Checkers/Validators** - Agents that validate or check consistency    | docs-checker, docs-link-general-checker, docs-tutorial-checker, plan-checker, repo-governance-checker |
-| 🟨    | Yellow | #F1C40F  | **Updaters/Modifiers** - Agents that update or modify existing content | docs-file-manager, repo-governance-maker                                                              |
-| 🟪    | Purple | #CC78BC  | **Implementors/Executors** - Agents that execute or implement plans    | plan-executor, plan-execution-checker                                                                 |
+| Emoji | Color  | Hex Code | Role                                                                | Examples                                                                                              |
+| ----- | ------ | -------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| 🟦    | Blue   | #0173B2  | **Writers/Creators** - Agents that create or write new content      | docs-maker, docs-tutorial-maker, agent-maker, plan-maker                                              |
+| 🟩    | Green  | #029E73  | **Checkers/Validators** - Agents that validate or check consistency | docs-checker, docs-link-general-checker, docs-tutorial-checker, plan-checker, repo-governance-checker |
+| 🟨    | Yellow | #F1C40F  | **Fixers** - Agents that apply validated fixes to existing content  | docs-file-manager, repo-governance-fixer                                                              |
+| 🟪    | Purple | #CC78BC  | **Implementors/Executors** - Agents that execute or implement plans | plan-executor, plan-execution-checker                                                                 |
 
 #### Implementation in `.opencode/agent/README.md`
 
@@ -347,7 +347,7 @@ Expert at systematically implementing project plans. Use when executing delivery
 3. **Text label** (agent name like "docs-maker") - Primary identifier
 4. **Context** (placement in README, description) - Semantic meaning
 
-**Users with color blindness can identify agents by**: - Agent name (primary identifier) - File name (secondary identifier) - Role suffix (writer, checker, updater, implementor) - Description text - Position in document
+**Users with color blindness can identify agents by**: - Agent name (primary identifier) - File name (secondary identifier) - Role suffix (writer, checker, fixer, implementor) - Description text - Position in document
 
 The colored square emoji is **supplementary enhancement** only, not the primary identification method.
 

@@ -12,6 +12,7 @@ skills:
   - docs-applying-content-quality
   - docs-creating-by-example-tutorials
   - apps-ayokoding-web-developing-content
+  - docs-creating-accessible-diagrams
 ---
 
 # By Example Tutorial Maker for ayokoding-web

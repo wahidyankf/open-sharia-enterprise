@@ -141,7 +141,7 @@ Use for AI agent categorization in `.claude/agents/README.md` (primary) and `.op
 | ----- | ------------------------------------ | ------------------------------------------------------- |
 | 🟦    | **Writer/Creator Agents (Blue)**     | Agents that create or write content (docs, plans, etc.) |
 | 🟩    | **Checker/Validator Agents (Green)** | Agents that validate or check consistency               |
-| 🟨    | **Updater/Modifier Agents (Yellow)** | Agents that update or modify existing content           |
+| 🟨    | **Fixer Agents (Yellow)**            | Agents that update or modify existing content           |
 | 🟪    | **Implementor Agents (Purple)**      | Agents that execute or implement plans                  |
 
 **Note:** These colored square emojis are used in both `.claude/agents/README.md` (primary) and `.opencode/agent/README.md` (secondary) to visually categorize agents by role. They match the `color` field in agent frontmatter. See [AI Agents Convention](../../development/agents/ai-agents.md) for complete details on agent color categorization.
@@ -164,7 +164,7 @@ Use for AI agent categorization in `.claude/agents/README.md` (primary) and `.op
 
 3. **Users with color blindness can still identify items by shape/text alone**
    - Square emoji shape (🟦) is distinct from other emoji shapes
-   - Text labels ("Writer", "Checker", "Updater") provide semantic meaning
+   - Text labels ("Writer", "Checker", "Fixer") provide semantic meaning
    - Context (placement next to agent names) provides additional cues
 
 4. **Never rely on color alone for categorization**

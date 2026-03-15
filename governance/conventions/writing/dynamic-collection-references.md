@@ -70,6 +70,8 @@ The repository contains 57 specialized AI agents.
 The repository contains [specialized AI agents](./.claude/agents/README.md).
 ```
 
+> **Note**: The path `./.claude/agents/README.md` in the example above is illustrative. Use the correct relative path based on your file's actual location. For example, from `governance/conventions/writing/`, the correct path would be `../../../.claude/agents/README.md`.
+
 **PASS: Omit the count entirely**:
 
 ```markdown

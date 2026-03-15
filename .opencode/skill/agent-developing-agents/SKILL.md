@@ -395,7 +395,7 @@ All agents SHOULD include a "Reference Documentation" section near the end (befo
 
 ## Agent Metadata
 
-- **Role**: [Maker (blue) / Checker (green) / Updater (yellow) / Implementor (purple)]
+- **Role**: [Maker (blue) / Checker (green) / Fixer (yellow) / Implementor (purple)]
 - **Created**: YYYY-MM-DD
 - **Last Updated**: YYYY-MM-DD
 
