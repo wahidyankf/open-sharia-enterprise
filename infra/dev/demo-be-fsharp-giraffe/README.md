@@ -67,12 +67,12 @@ curl http://localhost:8201/api/v1/users/me \
 ## E2E Tests
 
 ```bash
-# Start the stack in E2E mode (docker-compose.e2e.yml merges on top of docker-compose.yml)
-docker compose -f docker-compose.yml -f docker-compose.e2e.yml up --build -d
+# Start the stack in CI mode (docker-compose.ci.yml merges on top of docker-compose.yml)
+docker compose -f docker-compose.yml -f docker-compose.ci.yml up --build -d
 
 # Run E2E tests from workspace root
 BASE_URL=http://localhost:8201 npx nx run demo-be-e2e:test:e2e
 
 # Stop stack
-docker compose -f docker-compose.yml -f docker-compose.e2e.yml down
+docker compose -f docker-compose.yml -f docker-compose.ci.yml down
 ```

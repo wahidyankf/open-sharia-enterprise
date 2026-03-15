@@ -66,22 +66,22 @@ curl http://localhost:8201/api/v1/users/me \
 
 ## Shared Database Note
 
-Both `demo-be-golang-gin` and `demo-be-elixir-phoenix` use PostgreSQL on port 5432.
-They cannot run simultaneously since both bind port 8201. The databases have different
-names (`organiclever` for jasb, `demo_be_elixir_phoenix` for exph) so they can share the
-same PostgreSQL instance if needed, but this requires custom setup.
+All demo-be backends use PostgreSQL on port 5432 but cannot run simultaneously since all
+bind port 8201. The databases have different
+names (`demo_be_elixir_phoenix` for this backend, `demo_be` for golang-gin/java-springboot, etc.) so they could share a PostgreSQL
+instance with custom setup, but the default stacks are mutually exclusive.
 
 ## E2E Tests
 
 ```bash
-# Start the stack in E2E mode (docker-compose.e2e.yml merges on top of docker-compose.yml)
-docker compose -f docker-compose.yml -f docker-compose.e2e.yml up --build -d
+# Start the stack in CI mode (docker-compose.ci.yml merges on top of docker-compose.yml)
+docker compose -f docker-compose.yml -f docker-compose.ci.yml up --build -d
 
 # Run E2E tests from workspace root
 BASE_URL=http://localhost:8201 npx nx run demo-be-e2e:test:e2e
 
 # Stop stack
-docker compose -f docker-compose.yml -f docker-compose.e2e.yml down
+docker compose -f docker-compose.yml -f docker-compose.ci.yml down
 ```
 
 ## Volume Mounts for Local Dependencies
