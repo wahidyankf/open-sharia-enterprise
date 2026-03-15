@@ -62,7 +62,8 @@ public class TestApiHandler implements Handler<RoutingContext> {
                                 .encode()))
                 .onFailure(err -> {
                     if (err instanceof TestApiService.UserNotFoundException) {
-                        ctx.fail(new DomainException(404, err.getMessage()));
+                        String msg = err.getMessage();
+                        ctx.fail(new DomainException(404, msg != null ? msg : "User not found"));
                     } else {
                         ctx.fail(err);
                     }
