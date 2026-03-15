@@ -674,7 +674,8 @@
 (Then "the income breakdown should contain {string} with amount {string}" [state category amount]
   (let [body      (:last-body state)
         breakdown (or (:incomeBreakdown body) (:income_breakdown body) (:income-breakdown body))
-        actual    (get breakdown (keyword category))]
+        entry     (some #(when (= category (:category %)) %) breakdown)
+        actual    (:total entry)]
     (is (= amount (str actual))
         (str "Expected income breakdown " category " = " amount " in " breakdown)))
   state)
@@ -682,7 +683,8 @@
 (Then "the expense breakdown should contain {string} with amount {string}" [state category amount]
   (let [body      (:last-body state)
         breakdown (or (:expenseBreakdown body) (:expense_breakdown body) (:expense-breakdown body))
-        actual    (get breakdown (keyword category))]
+        entry     (some #(when (= category (:category %)) %) breakdown)
+        actual    (:total entry)]
     (is (= amount (str actual))
         (str "Expected expense breakdown " category " = " amount " in " breakdown)))
   state)
