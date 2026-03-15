@@ -113,8 +113,8 @@ object ExpenseRoutes : KoinComponent {
     val result = expenseRepository.findAllByUser(userId, page, pageSize)
 
     val response = buildJsonObject {
-      putJsonArray("data") { result.data.forEach { add(it.toJsonObject()) } }
-      put("total", result.total)
+      putJsonArray("content") { result.data.forEach { add(it.toJsonObject()) } }
+      put("totalElements", result.total)
       put("page", result.page)
       put("pageSize", result.pageSize)
     }
