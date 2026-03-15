@@ -442,8 +442,8 @@ public class UnitAuthSteps {
         }
         if (body instanceof com.demobejasb.admin.dto.AdminUserListResponse resp) {
             return switch (jsonField) {
-                case "data", "content" -> resp.data();
-                case "total", "totalElements" -> resp.total();
+                case "data", "content" -> resp.content();
+                case "total", "totalElements" -> resp.totalElements();
                 case "page" -> resp.page();
                 default -> null;
             };
@@ -464,8 +464,8 @@ public class UnitAuthSteps {
         }
         if (body instanceof com.demobejasb.expense.dto.ExpenseListResponse resp) {
             return switch (jsonField) {
-                case "data", "content" -> resp.data();
-                case "total", "totalElements" -> resp.total();
+                case "data", "content" -> resp.content();
+                case "total", "totalElements" -> resp.totalElements();
                 case "page" -> resp.page();
                 default -> null;
             };
@@ -491,7 +491,7 @@ public class UnitAuthSteps {
         }
         if (body instanceof com.demobejasb.admin.dto.AdminPasswordResetResponse resp) {
             return switch (jsonField) {
-                case "reset_token", "token" -> resp.resetToken();
+                case "reset_token", "token" -> resp.token();
                 default -> null;
             };
         }
