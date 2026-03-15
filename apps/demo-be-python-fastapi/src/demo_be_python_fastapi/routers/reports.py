@@ -12,20 +12,28 @@ from demo_be_python_fastapi.infrastructure.models import UserModel
 router = APIRouter()
 
 
+class BreakdownItem(BaseModel):
+    """Single category breakdown item."""
+
+    category: str
+    type: str
+    total: str
+
+
 class PLResponse(BaseModel):
     """Profit and loss report response."""
 
     totalIncome: str
     totalExpense: str
     net: str
-    income_breakdown: dict[str, str]
-    expense_breakdown: dict[str, str]
+    incomeBreakdown: list[BreakdownItem]
+    expenseBreakdown: list[BreakdownItem]
 
 
 @router.get("/pl", response_model=PLResponse)
 def get_pl_report(
-    from_: str = Query(alias="from"),
-    to: str = Query(),
+    startDate: str = Query(),
+    endDate: str = Query(),
     currency: str = Query(),
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
@@ -33,5 +41,19 @@ def get_pl_report(
     """Generate profit and loss report for a date range."""
     validated_currency = validate_currency(currency)
     expense_repo = get_expense_repo(db)
-    report = expense_repo.pl_report(current_user.id, from_, to, validated_currency)
-    return PLResponse(**report)
+    report = expense_repo.pl_report(current_user.id, startDate, endDate, validated_currency)
+    income_breakdown = [
+        BreakdownItem(category=cat, type="income", total=amt)
+        for cat, amt in report["income_breakdown"].items()
+    ]
+    expense_breakdown = [
+        BreakdownItem(category=cat, type="expense", total=amt)
+        for cat, amt in report["expense_breakdown"].items()
+    ]
+    return PLResponse(
+        totalIncome=report["totalIncome"],
+        totalExpense=report["totalExpense"],
+        net=report["net"],
+        incomeBreakdown=income_breakdown,
+        expenseBreakdown=expense_breakdown,
+    )

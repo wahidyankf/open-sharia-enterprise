@@ -13,9 +13,12 @@ Then(
     expect(this.response).not.toBeNull();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const body = this.response?.body as any;
-    const breakdown = body?.income_breakdown as Record<string, string> | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const breakdown = body?.incomeBreakdown as Array<any> | undefined;
     expect(breakdown).toBeDefined();
-    expect(String(breakdown?.[category])).toBe(amount);
+    const entry = breakdown?.find((item: { category: string }) => item.category === category);
+    expect(entry).toBeDefined();
+    expect(String(entry?.total)).toBe(amount);
   },
 );
 
@@ -25,8 +28,11 @@ Then(
     expect(this.response).not.toBeNull();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const body = this.response?.body as any;
-    const breakdown = body?.expense_breakdown as Record<string, string> | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const breakdown = body?.expenseBreakdown as Array<any> | undefined;
     expect(breakdown).toBeDefined();
-    expect(String(breakdown?.[category])).toBe(amount);
+    const entry = breakdown?.find((item: { category: string }) => item.category === category);
+    expect(entry).toBeDefined();
+    expect(String(entry?.total)).toBe(amount);
   },
 );

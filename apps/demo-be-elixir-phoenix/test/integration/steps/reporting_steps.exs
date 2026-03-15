@@ -61,9 +61,13 @@ defmodule DemoBeExphWeb.Integration.ReportingSteps do
   defthen ~r/^the income breakdown should contain "(?<category>[^"]+)" with amount "(?<amount>[^"]+)"$/,
           %{category: category, amount: amount},
           %{response: response} = state do
-    income_breakdown = response.body["income_breakdown"]
-    assert Map.has_key?(income_breakdown, category)
-    stored = income_breakdown[category] |> Decimal.new() |> Decimal.to_string()
+    income_breakdown = response.body["incomeBreakdown"]
+    entry = Enum.find(income_breakdown, fn item -> item["category"] == category end)
+
+    assert entry != nil,
+           "Category '#{category}' not found in incomeBreakdown: #{inspect(income_breakdown)}"
+
+    stored = entry["total"] |> Decimal.new() |> Decimal.to_string()
     expected = amount |> Decimal.new() |> Decimal.to_string()
     assert stored == expected
     {:ok, state}
@@ -72,9 +76,13 @@ defmodule DemoBeExphWeb.Integration.ReportingSteps do
   defthen ~r/^the expense breakdown should contain "(?<category>[^"]+)" with amount "(?<amount>[^"]+)"$/,
           %{category: category, amount: amount},
           %{response: response} = state do
-    expense_breakdown = response.body["expense_breakdown"]
-    assert Map.has_key?(expense_breakdown, category)
-    stored = expense_breakdown[category] |> Decimal.new() |> Decimal.to_string()
+    expense_breakdown = response.body["expenseBreakdown"]
+    entry = Enum.find(expense_breakdown, fn item -> item["category"] == category end)
+
+    assert entry != nil,
+           "Category '#{category}' not found in expenseBreakdown: #{inspect(expense_breakdown)}"
+
+    stored = entry["total"] |> Decimal.new() |> Decimal.to_string()
     expected = amount |> Decimal.new() |> Decimal.to_string()
     assert stored == expected
     {:ok, state}

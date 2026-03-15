@@ -795,8 +795,8 @@ public final class DirectCallService {
         BigDecimal net = incomeTotal.subtract(expenseTotal);
         int scale = "IDR".equals(filterCurrency) ? 0 : 2;
 
-        JsonArray incomeBreakdown = buildBreakdownArray(incomeByCategory, scale);
-        JsonArray expenseBreakdown = buildBreakdownArray(expenseByCategory, scale);
+        JsonArray incomeBreakdown = buildBreakdownArray(incomeByCategory, scale, "income");
+        JsonArray expenseBreakdown = buildBreakdownArray(expenseByCategory, scale, "expense");
 
         return ServiceResponse.of(200, new JsonObject()
                 .put("totalIncome",
@@ -805,8 +805,8 @@ public final class DirectCallService {
                         expenseTotal.setScale(scale, RoundingMode.HALF_UP).toPlainString())
                 .put("net", net.setScale(scale, RoundingMode.HALF_UP).toPlainString())
                 .put("currency", filterCurrency)
-                .put("income_breakdown", incomeBreakdown)
-                .put("expense_breakdown", expenseBreakdown));
+                .put("incomeBreakdown", incomeBreakdown)
+                .put("expenseBreakdown", expenseBreakdown));
     }
 
     // ─────────────────────────── Admin helpers ────────────────────────
@@ -887,12 +887,13 @@ public final class DirectCallService {
                         + "/attachments/" + attachment.id());
     }
 
-    private JsonArray buildBreakdownArray(Map<String, BigDecimal> map, int scale) {
+    private JsonArray buildBreakdownArray(Map<String, BigDecimal> map, int scale, String type) {
         JsonArray arr = new JsonArray();
         for (Map.Entry<String, BigDecimal> entry : map.entrySet()) {
             arr.add(new JsonObject()
                     .put("category", entry.getKey())
-                    .put("amount", entry.getValue()
+                    .put("type", type)
+                    .put("total", entry.getValue()
                             .setScale(scale, RoundingMode.HALF_UP).toPlainString()));
         }
         return arr;

@@ -1017,22 +1017,24 @@ export async function getReport(
 
       const net = incomeTotal - expenseTotal;
 
-      const incomeBreakdownFormatted: Record<string, string> = {};
-      for (const [cat, amount] of Object.entries(incomeBreakdown)) {
-        incomeBreakdownFormatted[cat] = formatAmount(amount, currency);
-      }
+      const incomeBreakdownArr = Object.entries(incomeBreakdown).map(([cat, amount]) => ({
+        category: cat,
+        type: "income",
+        total: formatAmount(amount, currency),
+      }));
 
-      const expenseBreakdownFormatted: Record<string, string> = {};
-      for (const [cat, amount] of Object.entries(expenseBreakdown)) {
-        expenseBreakdownFormatted[cat] = formatAmount(amount, currency);
-      }
+      const expenseBreakdownArr = Object.entries(expenseBreakdown).map(([cat, amount]) => ({
+        category: cat,
+        type: "expense",
+        total: formatAmount(amount, currency),
+      }));
 
       return {
         totalIncome: formatAmount(incomeTotal, currency),
         totalExpense: formatAmount(expenseTotal, currency),
         net: formatAmount(net, currency),
-        income_breakdown: incomeBreakdownFormatted,
-        expense_breakdown: expenseBreakdownFormatted,
+        incomeBreakdown: incomeBreakdownArr,
+        expenseBreakdown: expenseBreakdownArr,
         currency,
         from,
         to,

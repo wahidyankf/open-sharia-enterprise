@@ -60,14 +60,14 @@ public class ReportingSteps(ServiceLayer svc, SharedState state)
         state.LastResponse.Should().NotBeNull();
         var body = state.LastResponse!.Body;
         using var doc = JsonDocument.Parse(body);
-        doc.RootElement.TryGetProperty("income_breakdown", out var breakdown)
-            .Should().BeTrue($"'income_breakdown' not found in: {body}");
-        breakdown.TryGetProperty(category, out var catEl)
-            .Should().BeTrue($"Category '{category}' not found in income_breakdown of: {body}");
-        var actual = catEl.ValueKind == JsonValueKind.Number
-            ? catEl.GetDecimal()
-            : decimal.Parse(catEl.GetString()!, System.Globalization.CultureInfo.InvariantCulture);
-        actual.Should().Be(decimal.Parse(amount, System.Globalization.CultureInfo.InvariantCulture));
+        doc.RootElement.TryGetProperty("incomeBreakdown", out var breakdown)
+            .Should().BeTrue($"'incomeBreakdown' not found in: {body}");
+        var entry = breakdown.EnumerateArray()
+            .FirstOrDefault(el => el.TryGetProperty("category", out var cat) && cat.GetString() == category);
+        entry.ValueKind.Should().NotBe(JsonValueKind.Undefined, $"Category '{category}' not found in incomeBreakdown of: {body}");
+        var totalStr = entry.GetProperty("total").GetString()!;
+        decimal.Parse(totalStr, System.Globalization.CultureInfo.InvariantCulture)
+            .Should().Be(decimal.Parse(amount, System.Globalization.CultureInfo.InvariantCulture));
     }
 
     [Then(@"^the expense breakdown should contain ""([^""]+)"" with amount ""([^""]+)""$")]
@@ -76,14 +76,14 @@ public class ReportingSteps(ServiceLayer svc, SharedState state)
         state.LastResponse.Should().NotBeNull();
         var body = state.LastResponse!.Body;
         using var doc = JsonDocument.Parse(body);
-        doc.RootElement.TryGetProperty("expense_breakdown", out var breakdown)
-            .Should().BeTrue($"'expense_breakdown' not found in: {body}");
-        breakdown.TryGetProperty(category, out var catEl)
-            .Should().BeTrue($"Category '{category}' not found in expense_breakdown of: {body}");
-        var actual = catEl.ValueKind == JsonValueKind.Number
-            ? catEl.GetDecimal()
-            : decimal.Parse(catEl.GetString()!, System.Globalization.CultureInfo.InvariantCulture);
-        actual.Should().Be(decimal.Parse(amount, System.Globalization.CultureInfo.InvariantCulture));
+        doc.RootElement.TryGetProperty("expenseBreakdown", out var breakdown)
+            .Should().BeTrue($"'expenseBreakdown' not found in: {body}");
+        var entry = breakdown.EnumerateArray()
+            .FirstOrDefault(el => el.TryGetProperty("category", out var cat) && cat.GetString() == category);
+        entry.ValueKind.Should().NotBe(JsonValueKind.Undefined, $"Category '{category}' not found in expenseBreakdown of: {body}");
+        var totalStr = entry.GetProperty("total").GetString()!;
+        decimal.Parse(totalStr, System.Globalization.CultureInfo.InvariantCulture)
+            .Should().Be(decimal.Parse(amount, System.Globalization.CultureInfo.InvariantCulture));
     }
 
     // ─────────────────────────────────────────────────────────────

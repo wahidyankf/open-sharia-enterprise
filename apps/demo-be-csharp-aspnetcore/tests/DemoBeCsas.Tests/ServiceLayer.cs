@@ -1004,18 +1004,24 @@ public sealed class ServiceLayer(IntegrationTestHost host)
         var incomeBreakdown = expenses
             .Where(e => e.Type == ExpenseType.Income)
             .GroupBy(e => e.Category)
-            .ToDictionary(
-                g => g.Key,
-                g => FormatAmount(g.Sum(e => e.Amount), effectiveCurrency)
-            );
+            .Select(g => new
+            {
+                category = g.Key,
+                type = "income",
+                total = FormatAmount(g.Sum(e => e.Amount), effectiveCurrency),
+            })
+            .ToList();
 
         var expenseBreakdown = expenses
             .Where(e => e.Type == ExpenseType.Expense)
             .GroupBy(e => e.Category)
-            .ToDictionary(
-                g => g.Key,
-                g => FormatAmount(g.Sum(e => e.Amount), effectiveCurrency)
-            );
+            .Select(g => new
+            {
+                category = g.Key,
+                type = "expense",
+                total = FormatAmount(g.Sum(e => e.Amount), effectiveCurrency),
+            })
+            .ToList();
 
         return Json(
             200,
@@ -1024,8 +1030,8 @@ public sealed class ServiceLayer(IntegrationTestHost host)
                 totalIncome = FormatAmount(incomeTotal, effectiveCurrency),
                 totalExpense = FormatAmount(expenseTotal, effectiveCurrency),
                 net = FormatAmount(incomeTotal - expenseTotal, effectiveCurrency),
-                income_breakdown = incomeBreakdown,
-                expense_breakdown = expenseBreakdown,
+                incomeBreakdown = incomeBreakdown,
+                expenseBreakdown = expenseBreakdown,
             }
         );
     }

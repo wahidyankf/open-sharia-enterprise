@@ -748,7 +748,21 @@ class ServiceClient:
             validated_currency = validate_currency(currency)
             expense_repo = get_expense_repo(self._db)
             report = expense_repo.pl_report(user.id, from_, to, validated_currency)
-            return _ok(report)
+            income_breakdown = [
+                {"category": cat, "type": "income", "total": amt}
+                for cat, amt in report["income_breakdown"].items()
+            ]
+            expense_breakdown = [
+                {"category": cat, "type": "expense", "total": amt}
+                for cat, amt in report["expense_breakdown"].items()
+            ]
+            return _ok({
+                "totalIncome": report["totalIncome"],
+                "totalExpense": report["totalExpense"],
+                "net": report["net"],
+                "incomeBreakdown": income_breakdown,
+                "expenseBreakdown": expense_breakdown,
+            })
         except (UnauthorizedError, ForbiddenError, ValidationError) as exc:
             return _err(exc)
 

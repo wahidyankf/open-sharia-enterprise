@@ -50,23 +50,35 @@ pub async fn pl_report(
 
     let net = report.income_total - report.expense_total;
 
-    let income_breakdown: serde_json::Map<String, Value> = report
+    let income_breakdown: Vec<Value> = report
         .income_breakdown
         .iter()
-        .map(|c| (c.category.clone(), json!(currency.format_amount(c.total))))
+        .map(|c| {
+            json!({
+                "category": c.category,
+                "type": "income",
+                "total": currency.format_amount(c.total)
+            })
+        })
         .collect();
 
-    let expense_breakdown: serde_json::Map<String, Value> = report
+    let expense_breakdown: Vec<Value> = report
         .expense_breakdown
         .iter()
-        .map(|c| (c.category.clone(), json!(currency.format_amount(c.total))))
+        .map(|c| {
+            json!({
+                "category": c.category,
+                "type": "expense",
+                "total": currency.format_amount(c.total)
+            })
+        })
         .collect();
 
     Ok(Json(json!({
         "totalIncome": currency.format_amount(report.income_total),
         "totalExpense": currency.format_amount(report.expense_total),
         "net": currency.format_amount(net),
-        "income_breakdown": income_breakdown,
-        "expense_breakdown": expense_breakdown,
+        "incomeBreakdown": income_breakdown,
+        "expenseBreakdown": expense_breakdown,
     })))
 }

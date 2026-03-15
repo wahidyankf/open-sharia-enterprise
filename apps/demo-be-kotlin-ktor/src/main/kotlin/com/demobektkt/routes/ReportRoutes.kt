@@ -12,6 +12,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDate
 import java.util.UUID
+import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import org.koin.core.component.KoinComponent
@@ -27,11 +28,15 @@ object ReportRoutes : KoinComponent {
     val userId = UUID.fromString(principal.payload.subject)
 
     val fromStr =
-      call.request.queryParameters["from"]
-        ?: throw DomainException(DomainError.ValidationError("from", "from parameter is required"))
+      call.request.queryParameters["startDate"]
+        ?: throw DomainException(
+          DomainError.ValidationError("startDate", "startDate parameter is required")
+        )
     val toStr =
-      call.request.queryParameters["to"]
-        ?: throw DomainException(DomainError.ValidationError("to", "to parameter is required"))
+      call.request.queryParameters["endDate"]
+        ?: throw DomainException(
+          DomainError.ValidationError("endDate", "endDate parameter is required")
+        )
     val currency =
       call.request.queryParameters["currency"]
         ?: throw DomainException(
@@ -41,11 +46,13 @@ object ReportRoutes : KoinComponent {
     val from =
       runCatching { LocalDate.parse(fromStr) }.getOrNull()
         ?: throw DomainException(
-          DomainError.ValidationError("from", "Invalid date format: $fromStr")
+          DomainError.ValidationError("startDate", "Invalid date format: $fromStr")
         )
     val to =
       runCatching { LocalDate.parse(toStr) }.getOrNull()
-        ?: throw DomainException(DomainError.ValidationError("to", "Invalid date format: $toStr"))
+        ?: throw DomainException(
+          DomainError.ValidationError("endDate", "Invalid date format: $toStr")
+        )
 
     val entries = expenseRepository.findByUserAndPeriod(userId, from, to, currency)
 
@@ -64,41 +71,49 @@ object ReportRoutes : KoinComponent {
         .setScale(scale, RoundingMode.HALF_UP)
     val net = (incomeTotal - expenseTotal).setScale(scale, RoundingMode.HALF_UP)
 
-    val incomeBreakdown =
-      incomeEntries
-        .groupBy { it.category }
-        .mapValues { (_, list) ->
-          list
-            .fold(BigDecimal.ZERO) { acc, e -> acc + e.amount }
-            .setScale(scale, RoundingMode.HALF_UP)
-            .toPlainString()
-        }
+    val incomeBreakdownArray =
+      buildJsonArray {
+        incomeEntries
+          .groupBy { it.category }
+          .forEach { (cat, list) ->
+            val total =
+              list
+                .fold(BigDecimal.ZERO) { acc, e -> acc + e.amount }
+                .setScale(scale, RoundingMode.HALF_UP)
+                .toPlainString()
+            add(buildJsonObject {
+              put("category", cat)
+              put("type", "income")
+              put("total", total)
+            })
+          }
+      }
 
-    val expenseBreakdown =
-      expenseEntries
-        .groupBy { it.category }
-        .mapValues { (_, list) ->
-          list
-            .fold(BigDecimal.ZERO) { acc, e -> acc + e.amount }
-            .setScale(scale, RoundingMode.HALF_UP)
-            .toPlainString()
-        }
+    val expenseBreakdownArray =
+      buildJsonArray {
+        expenseEntries
+          .groupBy { it.category }
+          .forEach { (cat, list) ->
+            val total =
+              list
+                .fold(BigDecimal.ZERO) { acc, e -> acc + e.amount }
+                .setScale(scale, RoundingMode.HALF_UP)
+                .toPlainString()
+            add(buildJsonObject {
+              put("category", cat)
+              put("type", "expense")
+              put("total", total)
+            })
+          }
+      }
 
     val response = buildJsonObject {
       put("currency", currency)
-      put("from", from.toString())
-      put("to", to.toString())
       put("totalIncome", incomeTotal.toPlainString())
       put("totalExpense", expenseTotal.toPlainString())
       put("net", net.toPlainString())
-      put(
-        "income_breakdown",
-        buildJsonObject { incomeBreakdown.forEach { (cat, amt) -> put(cat, amt) } },
-      )
-      put(
-        "expense_breakdown",
-        buildJsonObject { expenseBreakdown.forEach { (cat, amt) -> put(cat, amt) } },
-      )
+      put("incomeBreakdown", incomeBreakdownArray)
+      put("expenseBreakdown", expenseBreakdownArray)
     }
 
     call.respond(response)
