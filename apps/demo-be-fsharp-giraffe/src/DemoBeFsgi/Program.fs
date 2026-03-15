@@ -32,22 +32,14 @@ let setAdminRoleForUser (username: string) : HttpHandler =
                 return! json {| message = "Role set to admin" |} next ctx
         }
 
-let testApiEnabled () =
-    Environment.GetEnvironmentVariable("ENABLE_TEST_API") = "true"
-
-let testApiRoutes: HttpHandler =
-    choose
-        [ POST >=> route "/api/v1/test/reset-db" >=> Handlers.TestHandler.resetDb
-          POST
-          >=> route "/api/v1/test/promote-admin"
-          >=> Handlers.TestHandler.promoteAdmin ]
-
 let webApp: HttpHandler =
     choose
         [ GET >=> route "/health" >=> healthHandler
           POST >=> routef "/test/set-admin-role/%s" setAdminRoleForUser
-          if testApiEnabled () then
-              testApiRoutes
+          POST >=> route "/api/v1/test/reset-db" >=> Handlers.TestHandler.resetDb
+          POST
+          >=> route "/api/v1/test/promote-admin"
+          >=> Handlers.TestHandler.promoteAdmin
           GET >=> route "/.well-known/jwks.json" >=> Handlers.TokenHandler.jwks
           subRoute
               "/api/v1"
