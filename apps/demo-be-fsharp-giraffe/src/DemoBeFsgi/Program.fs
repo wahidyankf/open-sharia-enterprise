@@ -13,6 +13,25 @@ open DemoBeFsgi.Auth.AdminMiddleware
 
 let healthHandler: HttpHandler = fun next ctx -> json {| status = "UP" |} next ctx
 
+// Test-only handler: promotes a user to admin role by username (URL path param).
+// Used by HandlerCoverageTests and Gherkin step definitions unconditionally.
+let setAdminRoleForUser (username: string) : HttpHandler =
+    fun next ctx ->
+        task {
+            let db = ctx.GetService<DemoBeFsgi.Infrastructure.AppDbContext.AppDbContext>()
+
+            let! user = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Username = username)
+
+            if obj.ReferenceEquals(user, null) then
+                ctx.Response.StatusCode <- 404
+                return! json {| error = "Not Found" |} earlyReturn ctx
+            else
+                let updated = { user with Role = "ADMIN" }
+                db.Users.Update(updated) |> ignore
+                let! _ = db.SaveChangesAsync()
+                return! json {| message = "Role set to admin" |} next ctx
+        }
+
 let testApiEnabled () =
     Environment.GetEnvironmentVariable("ENABLE_TEST_API") = "true"
 
@@ -26,6 +45,7 @@ let testApiRoutes: HttpHandler =
 let webApp: HttpHandler =
     choose
         [ GET >=> route "/health" >=> healthHandler
+          POST >=> routef "/test/set-admin-role/%s" setAdminRoleForUser
           if testApiEnabled () then
               testApiRoutes
           GET >=> route "/.well-known/jwks.json" >=> Handlers.TokenHandler.jwks

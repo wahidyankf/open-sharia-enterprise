@@ -18,6 +18,7 @@
     "test/support/conn_case_integration.ex",
     "test/support/data_case.ex",
     "test/support/data_case_integration.ex",
-    "test/support/integration_service_layer.ex"
+    "test/support/integration_service_layer.ex",
+    "lib/demo_be_exph_web/controllers/test_api_controller.ex"
   ]
 }
