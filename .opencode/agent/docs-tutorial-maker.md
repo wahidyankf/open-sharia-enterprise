@@ -12,6 +12,7 @@ skills:
   - docs-creating-accessible-diagrams
   - docs-applying-content-quality
   - docs-applying-diataxis-framework
+  - docs-creating-by-example-tutorials
 ---
 
 # Tutorial Documentation Maker

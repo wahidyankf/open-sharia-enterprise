@@ -11,6 +11,7 @@ skills:
   - docs-applying-content-quality
   - plan-writing-gherkin-criteria
   - repo-defining-workflows
+  - docs-applying-diataxis-framework
 ---
 
 # Workflow Maker Agent

@@ -17,7 +17,7 @@ skills:
 
 ## Agent Metadata
 
-- **Role**: Updater (yellow)
+- **Role**: Fixer (yellow)
 - **Created**: 2025-12-20
 - **Last Updated**: 2026-01-03
 

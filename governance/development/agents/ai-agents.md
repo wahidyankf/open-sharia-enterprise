@@ -188,7 +188,7 @@ skills: []
 
 5. **`color`** (required)
    - Visual categorization based on agent role
-   - Options: `blue` (writers), `green` (checkers), `yellow` (updaters), `purple` (implementors)
+   - Options: `blue` (writers), `green` (checkers), `yellow` (fixers), `purple` (implementors)
    - Helps users quickly identify agent type
    - See "Agent Color Categorization" below for assignment guidelines
 
@@ -427,7 +427,7 @@ After frontmatter, agents should follow this structure:
 
 ## Agent Metadata
 
-- **Role**: [Maker (blue) / Checker (green) / Updater (yellow) / Implementor (purple)]
+- **Role**: [Maker (blue) / Checker (green) / Fixer (yellow) / Implementor (purple)]
 - **Created**: YYYY-MM-DD
 - **Last Updated**: YYYY-MM-DD
 
@@ -753,7 +753,7 @@ Agents are categorized by their **primary role** which aligns with naming suffix
 | ------------- | ---------------- | ------------------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | 🟦 **Blue**   | **Writers**      | Create new content from scratch       | Has `Write` tool                        | docs-maker<br>plan-maker<br>docs-tutorial-maker<br>repo-governance-maker                                                        |
 | 🟩 **Green**  | **Checkers**     | Validate and generate reports         | Has `Write`, `Bash` (no `Edit`)\*\*     | repo-governance-checker<br>plan-checker<br>docs-checker<br>docs-link-general-checker\*\*<br>apps-ayokoding-web-link-checker\*\* |
-| 🟨 **Yellow** | **Updaters**     | Modify and propagate existing content | Has `Edit` (usually not `Write`)        | docs-file-manager<br>readme-fixer<br>repo-governance-fixer                                                                      |
+| 🟨 **Yellow** | **Fixers**       | Modify and propagate existing content | Has `Edit` (usually not `Write`)        | docs-file-manager<br>readme-fixer<br>repo-governance-fixer                                                                      |
 | 🟪 **Purple** | **Implementors** | Execute plans with full tool access   | Has `Write`, `Edit`, `Bash` (or Bash)\* | plan-executor<br>deployers\*                                                                                                    |
 
 **Edge Case Notes:**
@@ -768,7 +768,7 @@ Agents are categorized by their **primary role** which aligns with naming suffix
 
 This role-based categorization was chosen because it:
 
-1. **Aligns with naming conventions** - Role suffixes (-writer, -checker, -updater, -implementor) directly map to colors
+1. **Aligns with naming conventions** - Role suffixes (-writer, -checker, -fixer, -implementor) directly map to colors
 2. **Maps to tool permissions** - Clear security boundaries between read-only, edit-only, write-capable, and full-access agents
 3. **Provides clear user guidance** - Users can quickly identify which category of agent they need
 4. **Extensible** - New agents naturally fit into one of the four role categories
@@ -829,7 +829,7 @@ Start: What is the agent's primary capability?
     │       - EXCEPTION: Link checkers also have Edit tool for cache management (see "Link Checker Agents Note" below)
     │
     ├─ Modifies/updates existing content only
-    │   └─> color: yellow (Updater)
+    │   └─> color: yellow (Fixer)
     │       - Has `Edit` but NOT `Write`
     │       - Examples: docs-file-manager, readme-fixer, repo-governance-fixer
     │
@@ -854,8 +854,8 @@ Start: What is the agent's primary capability?
   - Don't create or edit files, only run git/deployment commands
   - Edge case: purple without Write/Edit tools (Bash-only orchestration)
   - Examples: apps-ayokoding-web-deployer, apps-oseplatform-web-deployer, apps-organiclever-web-deployer
-- **Updaters with Write tool**: Investigate actual usage
-  - Yellow (Updaters) should have Edit but NOT Write
+- **Fixers with Write tool**: Investigate actual usage
+  - Yellow (Fixers) should have Edit but NOT Write
   - If Write is needed for creating new convention files → keep yellow, document exception
   - If Write can be removed → remove Write to match yellow categorization
   - Example: readme-fixer, repo-governance-fixer (fixer agents that generate audit reports, keep Write for report writing)
@@ -883,7 +883,7 @@ Agents are identified through FIVE independent methods:
 **Users with color blindness can identify agents by:**
 
 - Reading the agent name
-- Recognizing the role suffix pattern (-maker, -checker, -updater, -executor)
+- Recognizing the role suffix pattern (-maker, -checker, -fixer, -executor)
 - Seeing that the emoji is a square (shape, not color)
 - Reading the description field
 
@@ -903,8 +903,8 @@ All agent colors are from the verified accessible palette:
 \*Yellow emoji (#F1C40F) has slightly lower contrast but remains distinguishable because it's combined with:
 
 - Square shape (not relying on color alone)
-- Text label "Updater"
-- Role suffix "-updater"
+- Text label "Fixer"
+- Role suffix "-fixer"
 
 **Source**: Verified through ColorBrewer2, Paul Tol's schemes, and WCAG testing. See [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - the master reference for all color usage - for complete palette details, scientific verification sources, testing methodology, and WCAG compliance standards.
 
@@ -989,7 +989,7 @@ color: green
 ---
 ```
 
-**Updater Agent (Yellow):**
+**Fixer Agent (Yellow):**
 
 ```yaml
 ---
@@ -1923,7 +1923,7 @@ skills: []
 
 ## Agent Metadata
 
-- **Role**: [Maker (blue) / Checker (green) / Updater (yellow) / Implementor (purple)]
+- **Role**: [Maker (blue) / Checker (green) / Fixer (yellow) / Implementor (purple)]
 - **Created**: YYYY-MM-DD
 - **Last Updated**: YYYY-MM-DD
 

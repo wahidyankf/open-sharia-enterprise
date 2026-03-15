@@ -43,7 +43,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **repo-workflow-checker** - Workflow documentation validation
 - **specs-checker** - Specs structural completeness and cross-spec consistency validation
 
-### 🟨 Updating (Updaters/Fixers)
+### 🟨 Fixing (Fixers)
 
 - **docs-file-manager** - File organization and management
 - **docs-fixer** - Apply validated documentation fixes
@@ -105,7 +105,7 @@ skills: []
 **Description**: Required field - when Claude should delegate to this agent
 **Tools**: Comma-separated string with capitalized tool names (only tools the agent needs)
 **Model**: Required field - use `inherit` (default), `haiku`, `sonnet`, or `opus`
-**Color**: Required field - `blue` (makers), `green` (checkers), `yellow` (updaters), `purple` (implementors)
+**Color**: Required field - `blue` (makers), `green` (checkers), `yellow` (fixers), `purple` (implementors)
 **Skills**: Required field - list of Skill names (empty array `[]` if no Skills used)
 
 Note: Frontmatter MUST NOT contain YAML inline comments (# symbols). Put explanations in the document body.
@@ -116,7 +116,7 @@ Three-stage quality workflow:
 
 1. **Maker** (🟦 Blue) - Creates content
 2. **Checker** (🟩 Green) - Validates content, generates audit reports
-3. **Updater** (🟨 Yellow) - Applies validated fixes (agents in this role are named "fixer" in the family convention)
+3. **Fixer** (🟨 Yellow) - Applies validated fixes
 
 **Criticality Levels**: CRITICAL, HIGH, MEDIUM, LOW
 **Confidence Levels**: HIGH, MEDIUM, FALSE_POSITIVE

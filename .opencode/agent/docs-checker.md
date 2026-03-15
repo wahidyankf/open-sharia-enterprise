@@ -16,6 +16,7 @@ skills:
   - repo-generating-validation-reports
   - repo-assessing-criticality-confidence
   - repo-applying-maker-checker-fixer
+  - docs-creating-accessible-diagrams
 ---
 
 # Documentation Checker Agent

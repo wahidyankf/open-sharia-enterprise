@@ -12,7 +12,7 @@ tags:
   - development
   - workflows
 created: 2026-01-04
-updated: 2026-03-09
+updated: 2026-03-15
 ---
 
 # Rules - Repository Governance
@@ -29,6 +29,7 @@ The `governance/` directory groups all governance documentation together:
 - **Layer 1: Principles** - WHY we value specific approaches
 - **Layer 2: Conventions** - WHAT documentation rules we follow
 - **Layer 3: Development** - HOW we develop software
+- **Layer 4: AI Agents** - WHO enforces rules (see [.claude/agents/](../.claude/agents/README.md))
 - **Layer 5: Workflows** - WHEN we run multi-step orchestrated processes
 
 See [Repository Governance Architecture](./repository-governance-architecture.md) for complete explanation of the six-layer architecture, layer characteristics, traceability examples, and usage guidance.
@@ -215,4 +216,4 @@ When changing a layer, all lower layers may need updates. Use `repo-governance-m
 
 ---
 
-**Last Updated**: 2026-03-09
+**Last Updated**: 2026-03-15

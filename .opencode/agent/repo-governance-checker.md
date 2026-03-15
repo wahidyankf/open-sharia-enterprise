@@ -21,7 +21,7 @@ skills:
 
 - **Role**: Checker (green)
 - **Created**: 2025-12-01
-- **Last Updated**: 2026-01-04
+- **Last Updated**: 2026-03-15
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
