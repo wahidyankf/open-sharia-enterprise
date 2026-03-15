@@ -1,4 +1,4 @@
-name: Test Demo FE (TypeScript/Next.js)
+name: Test - Demo FE (TypeScript/Next.js)
 
 on:
   push:

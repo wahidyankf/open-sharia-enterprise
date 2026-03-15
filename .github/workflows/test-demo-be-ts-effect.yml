@@ -1,4 +1,4 @@
-name: Test Demo BE (TypeScript/Effect)
+name: Test - Demo BE (TypeScript/Effect)
 
 on:
   schedule:

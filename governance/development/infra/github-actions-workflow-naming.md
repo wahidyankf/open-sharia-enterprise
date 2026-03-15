@@ -81,27 +81,27 @@ The result must exactly match the filename (without path).
 
 Every workflow currently in the repository follows this rule:
 
-| `name:` field                           | Filename                              |
-| --------------------------------------- | ------------------------------------- |
-| `Main CI`                               | `main-ci.yml`                         |
-| `PR - Quality Gate`                     | `pr-quality-gate.yml`                 |
-| `PR - Format`                           | `pr-format.yml`                       |
-| `PR - Validate Links`                   | `pr-validate-links.yml`               |
-| `Test and Deploy - AyoKoding Web`       | `test-and-deploy-ayokoding-web.yml`   |
-| `Test and Deploy - OSE Platform Web`    | `test-and-deploy-oseplatform-web.yml` |
-| `Test Demo BE (Java/Spring Boot)`  | `test-demo-be-java-springboot.yml`    |
-| `Test Demo BE (Java/Vert.x)`       | `test-demo-be-java-vertx.yml`         |
-| `Test Demo BE (Elixir/Phoenix)`    | `test-demo-be-elixir-phoenix.yml`     |
-| `Test Demo BE (F#/Giraffe)`        | `test-demo-be-fsharp-giraffe.yml`     |
-| `Test Demo BE (Go/Gin)`            | `test-demo-be-golang-gin.yml`         |
-| `Test Demo BE (Python/FastAPI)`    | `test-demo-be-python-fastapi.yml`     |
-| `Test Demo BE (Rust/Axum)`         | `test-demo-be-rust-axum.yml`          |
-| `Test Demo BE (Kotlin/Ktor)`       | `test-demo-be-kotlin-ktor.yml`        |
-| `Test Demo BE (TypeScript/Effect)` | `test-demo-be-ts-effect.yml`          |
-| `Test Demo BE (C#/ASP.NET Core)`   | `test-demo-be-csharp-aspnetcore.yml`  |
-| `Test Demo BE (Clojure/Pedestal)`  | `test-demo-be-clojure-pedestal.yml`   |
-| `Test OrganicLever Web`                 | `test-organiclever-web.yml`           |
-| `Test Demo FE (TypeScript/Next.js)`              | `test-demo-fe-ts-nextjs.yml`          |
+| `name:` field                         | Filename                              |
+| ------------------------------------- | ------------------------------------- |
+| `Main CI`                             | `main-ci.yml`                         |
+| `PR - Quality Gate`                   | `pr-quality-gate.yml`                 |
+| `PR - Format`                         | `pr-format.yml`                       |
+| `PR - Validate Links`                 | `pr-validate-links.yml`               |
+| `Test and Deploy - AyoKoding Web`     | `test-and-deploy-ayokoding-web.yml`   |
+| `Test and Deploy - OSE Platform Web`  | `test-and-deploy-oseplatform-web.yml` |
+| `Test - Demo BE (Java/Spring Boot)`   | `test-demo-be-java-springboot.yml`    |
+| `Test - Demo BE (Java/Vert.x)`        | `test-demo-be-java-vertx.yml`         |
+| `Test - Demo BE (Elixir/Phoenix)`     | `test-demo-be-elixir-phoenix.yml`     |
+| `Test - Demo BE (F#/Giraffe)`         | `test-demo-be-fsharp-giraffe.yml`     |
+| `Test - Demo BE (Go/Gin)`             | `test-demo-be-golang-gin.yml`         |
+| `Test - Demo BE (Python/FastAPI)`     | `test-demo-be-python-fastapi.yml`     |
+| `Test - Demo BE (Rust/Axum)`          | `test-demo-be-rust-axum.yml`          |
+| `Test - Demo BE (Kotlin/Ktor)`        | `test-demo-be-kotlin-ktor.yml`        |
+| `Test - Demo BE (TypeScript/Effect)`  | `test-demo-be-ts-effect.yml`          |
+| `Test - Demo BE (C#/ASP.NET Core)`    | `test-demo-be-csharp-aspnetcore.yml`  |
+| `Test - Demo BE (Clojure/Pedestal)`   | `test-demo-be-clojure-pedestal.yml`   |
+| `Test - OrganicLever Web`             | `test-organiclever-web.yml`           |
+| `Test - Demo FE (TypeScript/Next.js)` | `test-demo-fe-ts-nextjs.yml`          |
 
 ## Examples
 
@@ -118,12 +118,12 @@ Derivation: `PR - Quality Gate` → lowercase → `pr - quality gate` → spaces
 
 ```yaml
 # File: .github/workflows/test-demo-be-java-springboot.yml
-name: Test Demo Backend (Java/Spring Boot)
+name: Test - Demo BE (Java/Spring Boot)
 ```
 
-Derivation: `Test Demo BE (Java/Spring Boot)` → lowercase → `test demo backend (java/spring boot)` → remove `(`, `)`, `/` → `test demo backend javaspring boot` → spaces to hyphens → `test-demo-backend-javaspring-boot` → collapse hyphens → `test-demo-backend-javaspring-boot` → append `.yml` → `test-demo-backend-javaspring-boot.yml`.
+Derivation: `Test - Demo BE (Java/Spring Boot)` → lowercase → `test - demo be (java/spring boot)` → remove `(`, `)`, `/` → `test - demo be javaspring boot` → spaces to hyphens → `test---demo-be-javaspring-boot` → collapse hyphens → `test-demo-be-javaspring-boot` → append `.yml` → `test-demo-be-java-springboot.yml`.
 
-The actual filename is `test-demo-be-java-springboot.yml`. The `name:` uses the full word `Backend` while the filename abbreviates to `be`, and `Java/Spring Boot` maps to `java-springboot`. This is deliberate shortening for filename length. See the Special Considerations section below.
+The actual filename is `test-demo-be-java-springboot.yml`. `Java/Spring Boot` maps to `java-springboot` (slash removed, space removed). See the Special Considerations section below.
 
 ### FAIL: Misaligned name and filename
 
