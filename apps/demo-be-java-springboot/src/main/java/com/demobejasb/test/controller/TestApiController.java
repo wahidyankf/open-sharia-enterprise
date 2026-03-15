@@ -58,7 +58,7 @@ public class TestApiController {
     @PostMapping("/promote-admin")
     public ResponseEntity<Map<String, String>> promoteAdmin(
             @RequestBody final Map<String, String> body) {
-        String username = body.get("username");
+        String username = body.getOrDefault("username", "");
         User user =
                 userRepository
                         .findByUsername(username)
