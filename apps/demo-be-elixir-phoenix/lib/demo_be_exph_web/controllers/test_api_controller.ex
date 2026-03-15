@@ -1,8 +1,6 @@
 defmodule DemoBeExphWeb.TestApiController do
   use DemoBeExphWeb, :controller
 
-  import Ecto.Query
-
   alias DemoBeExph.Accounts.User
   alias DemoBeExph.Attachment.Attachment
   alias DemoBeExph.Expense.Expense
