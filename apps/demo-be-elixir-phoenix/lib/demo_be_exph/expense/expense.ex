@@ -33,6 +33,7 @@ defmodule DemoBeExph.Expense.Expense do
       :quantity,
       :date
     ])
+    |> update_change(:type, &String.downcase/1)
     |> validate_required([:user_id, :amount, :currency, :category, :type, :description, :date])
     |> validate_inclusion(:currency, @supported_currencies,
       message: "is not supported. Supported: #{Enum.join(@supported_currencies, ", ")}"
@@ -48,6 +49,7 @@ defmodule DemoBeExph.Expense.Expense do
   def update_changeset(expense, attrs) do
     expense
     |> cast(attrs, [:amount, :currency, :category, :type, :description, :unit, :quantity, :date])
+    |> update_change(:type, &String.downcase/1)
     |> validate_required([:amount, :currency, :category, :type, :description, :date])
     |> validate_inclusion(:currency, @supported_currencies,
       message: "is not supported. Supported: #{Enum.join(@supported_currencies, ", ")}"
