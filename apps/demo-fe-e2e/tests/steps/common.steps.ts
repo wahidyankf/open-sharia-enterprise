@@ -68,16 +68,29 @@ Given("{word} has logged out", async ({ page }) => {
     .or(page.getByRole("menuitem", { name: /l[o\s]g[o\s]?ut|log\s*out|sign\s*out/i }))
     .or(page.getByRole("link", { name: /l[o\s]g[o\s]?ut|log\s*out|sign\s*out/i }));
   // Open user menu dropdown if logout not directly visible
-  if (!(await logoutBtn.first().isVisible({ timeout: 2000 }).catch(() => false))) {
-    const userMenuBtn = page
-      .getByRole("button", { name: /user menu/i })
-      .or(page.getByLabel(/user menu/i));
-    if (await userMenuBtn.first().isVisible({ timeout: 1000 }).catch(() => false)) {
+  if (
+    !(await logoutBtn
+      .first()
+      .isVisible({ timeout: 2000 })
+      .catch(() => false))
+  ) {
+    const userMenuBtn = page.getByRole("button", { name: /user menu/i }).or(page.getByLabel(/user menu/i));
+    if (
+      await userMenuBtn
+        .first()
+        .isVisible({ timeout: 1000 })
+        .catch(() => false)
+    ) {
       await userMenuBtn.first().click();
       await page.waitForTimeout(300);
     }
   }
-  if (await logoutBtn.first().isVisible({ timeout: 2000 }).catch(() => false)) {
+  if (
+    await logoutBtn
+      .first()
+      .isVisible({ timeout: 2000 })
+      .catch(() => false)
+  ) {
     await logoutBtn.first().click();
     await page.waitForURL(/\/login/, { timeout: 10000 }).catch(() => {});
   } else {
@@ -100,11 +113,13 @@ Given("an admin user {string} is logged in", async ({ page }, adminUsername: str
   // Navigate to app first so localStorage is accessible (about:blank doesn't allow it),
   // then clear any existing tokens so /login doesn't redirect to /expenses
   await page.goto("/login", { waitUntil: "domcontentloaded" }).catch(() => {});
-  await page.evaluate(() => {
-    localStorage.removeItem("demo_fe_access_token");
-    localStorage.removeItem("demo_fe_refresh_token");
-    sessionStorage.clear();
-  }).catch(() => {});
+  await page
+    .evaluate(() => {
+      localStorage.removeItem("demo_fe_access_token");
+      localStorage.removeItem("demo_fe_refresh_token");
+      sessionStorage.clear();
+    })
+    .catch(() => {});
   await page.goto("/login");
   await page.waitForLoadState("load");
   await page.getByRole("textbox", { name: /username/i }).fill(adminUsername);
@@ -120,7 +135,17 @@ Given("an admin user {string} is logged in", async ({ page }, adminUsername: str
 When(
   "{word} submits the login form with username {string} and password {string}",
   async ({ page }, _actor: string, username: string, password: string) => {
+    // Clear any stale tokens so the login page doesn't redirect away
+    await page.goto("/login", { waitUntil: "domcontentloaded" }).catch(() => {});
+    await page
+      .evaluate(() => {
+        localStorage.removeItem("demo_fe_access_token");
+        localStorage.removeItem("demo_fe_refresh_token");
+        sessionStorage.clear();
+      })
+      .catch(() => {});
     await page.goto("/login");
+    await page.waitForLoadState("load");
     await page.getByRole("textbox", { name: /username/i }).fill(username);
     await page.getByRole("textbox", { name: /password/i }).fill(password);
     await page.getByRole("button", { name: /log in|sign in|login/i }).click();
@@ -135,17 +160,25 @@ When("{word} clicks the {string} button", async ({ page }, _username: string, bu
   // Allow optional whitespace/dash between every character: "Logout" → matches "Log out", "Log-out", "Logout"
   const fuzzyRegex = new RegExp(buttonText.split("").join("[\\s\\-]?"), "i");
 
-  const target = page
-    .getByRole("button", { name: fuzzyRegex })
-    .or(page.getByRole("menuitem", { name: fuzzyRegex }));
+  const target = page.getByRole("button", { name: fuzzyRegex }).or(page.getByRole("menuitem", { name: fuzzyRegex }));
 
   // If not directly visible, try opening a user menu / dropdown first
-  if (!(await target.first().isVisible({ timeout: 2000 }).catch(() => false))) {
+  if (
+    !(await target
+      .first()
+      .isVisible({ timeout: 2000 })
+      .catch(() => false))
+  ) {
     const userMenuBtn = page
       .getByRole("button", { name: /user menu/i })
       .or(page.getByLabel(/user menu/i))
       .or(page.getByRole("button", { name: /account/i }));
-    if (await userMenuBtn.first().isVisible({ timeout: 1000 }).catch(() => false)) {
+    if (
+      await userMenuBtn
+        .first()
+        .isVisible({ timeout: 1000 })
+        .catch(() => false)
+    ) {
       await userMenuBtn.first().click();
       await page.waitForTimeout(300);
     }
@@ -227,8 +260,13 @@ When("the admin navigates to {word}'s user detail page", async ({ page }, userna
   const searchInput = page.getByRole("textbox", { name: /search/i }).or(page.getByPlaceholder(/search/i));
   if (await searchInput.isVisible({ timeout: 2000 }).catch(() => false)) {
     await searchInput.fill(username);
-    await page.keyboard.press("Enter");
-    await page.waitForTimeout(500);
+    // Wait for the filtered API response before interacting with the list
+    await Promise.all([
+      page.waitForResponse((resp) => /admin\/users/.test(resp.url()) && resp.status() === 200, {
+        timeout: 15000,
+      }),
+      page.keyboard.press("Enter"),
+    ]).catch(() => page.waitForTimeout(2000));
   }
   await page.getByText(username).first().click();
 });
@@ -237,7 +275,13 @@ When("the admin navigates to {word}'s user detail in the admin panel", async ({ 
   await page.goto("/admin");
   const searchInput = page.getByRole("textbox", { name: /search/i }).or(page.getByPlaceholder(/search/i));
   await searchInput.fill(username);
-  await page.keyboard.press("Enter");
+  // Wait for the filtered API response before interacting with the list
+  await Promise.all([
+    page.waitForResponse((resp) => /admin\/users/.test(resp.url()) && resp.status() === 200, {
+      timeout: 15000,
+    }),
+    page.keyboard.press("Enter"),
+  ]).catch(() => page.waitForTimeout(2000));
   await page.getByText(username).first().click();
 });
 
@@ -306,10 +350,22 @@ When("{word} submits the entry form", async ({ page }) => {
 When("{word} confirms the deletion", async ({ page }) => {
   // Scope to an open alertdialog if present; else fall back to page-level
   const dialog = page.getByRole("alertdialog").filter({ hasText: /delete|remove/i });
-  if (await dialog.first().isVisible({ timeout: 2000 }).catch(() => false)) {
-    await dialog.first().getByRole("button", { name: /confirm|yes|delete/i }).first().click();
+  if (
+    await dialog
+      .first()
+      .isVisible({ timeout: 2000 })
+      .catch(() => false)
+  ) {
+    await dialog
+      .first()
+      .getByRole("button", { name: /confirm|yes|delete/i })
+      .first()
+      .click();
   } else {
-    await page.getByRole("button", { name: /confirm|yes|delete/i }).first().click();
+    await page
+      .getByRole("button", { name: /confirm|yes|delete/i })
+      .first()
+      .click();
   }
 });
 
@@ -379,10 +435,9 @@ Then("an error message about account being disabled should be displayed", async 
 });
 
 Then("the authentication session should be cleared", async ({ page }) => {
-  await page.waitForFunction(
-    () => !Object.values(window.localStorage).some((v) => v?.includes("eyJ")),
-    { timeout: 10000 },
-  ).catch(() => {});
+  await page
+    .waitForFunction(() => !Object.values(window.localStorage).some((v) => v?.includes("eyJ")), { timeout: 10000 })
+    .catch(() => {});
   const hasToken = await page.evaluate(() => {
     return Object.values(window.localStorage).some((v) => v?.includes("eyJ"));
   });

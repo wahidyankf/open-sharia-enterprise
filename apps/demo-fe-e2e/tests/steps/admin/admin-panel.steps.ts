@@ -38,7 +38,10 @@ When("the admin types {string} in the search field", async ({ page }, searchTerm
 When(
   "the admin clicks the {string} button with reason {string}",
   async ({ page }, buttonText: string, reason: string) => {
-    await page.getByRole("button", { name: new RegExp(buttonText, "i") }).first().click();
+    await page
+      .getByRole("button", { name: new RegExp(buttonText, "i") })
+      .first()
+      .click();
     const reasonInput = page.getByRole("textbox", { name: /reason/i }).or(page.getByLabel(/reason/i));
     if (await reasonInput.isVisible({ timeout: 2000 }).catch(() => false)) {
       await reasonInput.fill(reason);
@@ -66,6 +69,8 @@ When("the admin clicks the {string} button", async ({ page }, buttonText: string
 
 When("{word} attempts to access the dashboard", async ({ page }) => {
   await page.goto("/expenses");
+  // Wait for all async auth checks (API response + state update + redirect) to settle
+  await page.waitForLoadState("networkidle", { timeout: 15000 }).catch(() => {});
 });
 
 Then("the user list should display registered users", async ({ page }) => {
