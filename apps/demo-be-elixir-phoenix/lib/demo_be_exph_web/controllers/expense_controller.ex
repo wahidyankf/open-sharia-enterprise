@@ -88,6 +88,7 @@ defmodule DemoBeExphWeb.ExpenseController do
   defp expense_json(expense) do
     %{
       id: expense.id,
+      userId: expense.user_id,
       amount: Decimal.to_string(expense.amount),
       currency: expense.currency,
       category: expense.category,

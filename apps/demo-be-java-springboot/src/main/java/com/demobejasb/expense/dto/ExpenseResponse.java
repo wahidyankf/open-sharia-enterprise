@@ -7,6 +7,7 @@ import org.jspecify.annotations.Nullable;
 
 public record ExpenseResponse(
         UUID id,
+        UUID userId,
         String amount,
         String currency,
         String category,
@@ -35,6 +36,7 @@ public record ExpenseResponse(
         }
         return new ExpenseResponse(
                 expense.getId(),
+                expense.getUser().getId(),
                 formattedAmount,
                 expense.getCurrency(),
                 expense.getCategory(),

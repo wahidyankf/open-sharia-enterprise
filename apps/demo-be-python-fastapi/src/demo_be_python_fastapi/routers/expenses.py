@@ -30,6 +30,7 @@ class ExpenseResponse(BaseModel):
     """Expense response model."""
 
     id: str
+    userId: str
     amount: str
     currency: str
     category: str
@@ -67,6 +68,7 @@ def _model_to_response(m) -> ExpenseResponse:  # type: ignore[no-untyped-def]
             quantity = None
     return ExpenseResponse(
         id=m.id,
+        userId=m.user_id,
         amount=m.amount,
         currency=m.currency,
         category=m.category,

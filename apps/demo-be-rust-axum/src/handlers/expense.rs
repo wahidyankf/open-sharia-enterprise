@@ -54,6 +54,7 @@ fn expense_to_json(expense: &crate::domain::expense::Expense) -> Value {
     let amount_display = currency.format_amount(expense.amount_stored);
     json!({
         "id": expense.id.to_string(),
+        "userId": expense.user_id.to_string(),
         "amount": amount_display,
         "currency": expense.currency,
         "category": expense.category,

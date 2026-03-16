@@ -218,6 +218,7 @@ let create: HttpHandler =
                                 return!
                                     json
                                         {| id = expenseId
+                                           userId = userId
                                            amount = formattedAmount
                                            currency = entity.Currency
                                            category = entity.Category
@@ -275,6 +276,7 @@ let list: HttpHandler =
                             None
 
                     {| id = e.Id
+                       userId = e.UserId
                        amount = formattedAmount
                        currency = e.Currency
                        category = e.Category
@@ -335,6 +337,7 @@ let getById (expenseId: Guid) : HttpHandler =
                 return!
                     json
                         {| id = expense.Id
+                           userId = expense.UserId
                            amount = formattedAmount
                            currency = expense.Currency
                            category = expense.Category
@@ -459,6 +462,7 @@ let update (expenseId: Guid) : HttpHandler =
                         return!
                             json
                                 {| id = updated.Id
+                                   userId = updated.UserId
                                    amount = formattedAmount
                                    currency = updated.Currency
                                    category = updated.Category
