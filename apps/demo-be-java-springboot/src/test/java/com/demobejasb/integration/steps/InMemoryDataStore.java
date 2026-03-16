@@ -91,6 +91,16 @@ public class InMemoryDataStore {
         return toPage(matching, pageable);
     }
 
+    public Page<User> findAllUsersBySearch(final String search, final Pageable pageable) {
+        String lower = search.toLowerCase();
+        List<User> matching = users.values().stream()
+                .filter(u -> (u.getEmail() != null && u.getEmail().toLowerCase().contains(lower))
+                        || (u.getUsername() != null && u.getUsername().toLowerCase().contains(lower)))
+                .sorted((a, b) -> a.getCreatedAt().compareTo(b.getCreatedAt()))
+                .toList();
+        return toPage(matching, pageable);
+    }
+
     public void deleteUserById(final UUID id) {
         User removed = users.remove(id);
         if (removed != null) {

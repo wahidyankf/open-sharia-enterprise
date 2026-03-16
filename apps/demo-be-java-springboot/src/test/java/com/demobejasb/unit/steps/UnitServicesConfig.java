@@ -79,6 +79,10 @@ public class UnitServicesConfig {
                 anyString(), any(org.springframework.data.domain.Pageable.class)))
                 .thenAnswer(inv -> dataStore.findAllUsersByEmail(
                         inv.getArgument(0), inv.getArgument(1)));
+        when(repo.findAllByEmailOrUsernameContaining(
+                anyString(), any(org.springframework.data.domain.Pageable.class)))
+                .thenAnswer(inv -> dataStore.findAllUsersBySearch(
+                        inv.getArgument(0), inv.getArgument(1)));
         doAnswer(inv -> {
             dataStore.deleteUserById(inv.getArgument(0));
             return null;
