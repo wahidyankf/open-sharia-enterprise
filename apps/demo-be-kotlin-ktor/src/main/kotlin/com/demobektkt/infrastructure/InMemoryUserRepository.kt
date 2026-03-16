@@ -66,10 +66,12 @@ class InMemoryUserRepository : UserRepository {
     store[id] = user.copy(failedLoginCount = 0, updatedAt = Instant.now())
   }
 
-  override suspend fun findAll(page: Int, pageSize: Int, emailFilter: String?): Page<User> {
+  override suspend fun findAll(page: Int, pageSize: Int, searchFilter: String?): Page<User> {
     val filtered =
-      if (emailFilter != null) {
-        store.values.filter { it.email.contains(emailFilter, ignoreCase = true) }
+      if (searchFilter != null) {
+        store.values.filter {
+          it.username.contains(searchFilter, ignoreCase = true) || it.email.contains(searchFilter, ignoreCase = true)
+        }
       } else {
         store.values.toList()
       }

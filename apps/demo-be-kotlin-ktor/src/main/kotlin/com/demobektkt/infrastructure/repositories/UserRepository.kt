@@ -36,5 +36,5 @@ interface UserRepository {
 
   suspend fun resetFailedLogins(id: UUID)
 
-  suspend fun findAll(page: Int, pageSize: Int, emailFilter: String?): Page<User>
+  suspend fun findAll(page: Int, pageSize: Int, searchFilter: String?): Page<User>
 }

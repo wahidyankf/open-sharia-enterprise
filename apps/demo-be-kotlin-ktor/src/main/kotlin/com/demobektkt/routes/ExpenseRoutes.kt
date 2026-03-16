@@ -46,7 +46,7 @@ private fun formatAmount(currency: String, amount: BigDecimal): String {
 
 private fun Expense.toJsonObject() = buildJsonObject {
   put("id", id.toString())
-  put("user_id", userId.toString())
+  put("userId", userId.toString())
   put("type", type.name.lowercase())
   put("amount", formatAmount(currency, amount))
   put("currency", currency)
