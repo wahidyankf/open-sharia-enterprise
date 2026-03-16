@@ -1,14 +1,6 @@
 name: Test - Demo FE (TypeScript/Next.js)
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "apps/demo-fe-ts-nextjs/**"
-      - "apps/demo-fe-e2e/**"
-      - "apps/demo-be-golang-gin/**"
-      - "specs/apps/demo/fe/**"
-      - "infra/dev/demo-fe-ts-nextjs/**"
   schedule:
     - cron: "0 23 * * *" # 6 AM WIB (UTC+7)
     - cron: "0 11 * * *" # 6 PM WIB (UTC+7)
