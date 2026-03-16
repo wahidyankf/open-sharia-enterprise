@@ -205,15 +205,15 @@ pub async fn list_users(
     pool: &AnyPool,
     page: i64,
     page_size: i64,
-    email_filter: Option<&str>,
+    search_filter: Option<&str>,
 ) -> Result<ListUsersResult, AppError> {
     let offset = (page - 1) * page_size;
 
-    let (users, total) = if let Some(email) = email_filter {
-        let pattern = format!("%{email}%");
+    let (users, total) = if let Some(search) = search_filter {
+        let pattern = format!("%{search}%");
         let rows = sqlx::query(
             r#"SELECT id, username, email, display_name, password_hash, role, status, failed_attempts, created_at, updated_at
-               FROM users WHERE email LIKE $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3"#,
+               FROM users WHERE email LIKE $1 OR username LIKE $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3"#,
         )
         .bind(&pattern)
         .bind(page_size)
@@ -224,7 +224,7 @@ pub async fn list_users(
 
         use sqlx::Row;
         let count_row: AnyRow =
-            sqlx::query("SELECT COUNT(*) as cnt FROM users WHERE email LIKE $1")
+            sqlx::query("SELECT COUNT(*) as cnt FROM users WHERE email LIKE $1 OR username LIKE $1")
                 .bind(&pattern)
                 .fetch_one(pool)
                 .await?;
