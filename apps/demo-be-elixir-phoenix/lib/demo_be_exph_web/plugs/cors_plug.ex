@@ -6,7 +6,7 @@ defmodule DemoBeExphWeb.CorsPlug do
 
   import Plug.Conn
 
-  @allowed_origins ["http://localhost:3200", "http://localhost:3000"]
+  @allowed_origins ["http://localhost:3200", "http://localhost:3000", "http://localhost:3301"]
 
   def init(opts), do: opts
 
