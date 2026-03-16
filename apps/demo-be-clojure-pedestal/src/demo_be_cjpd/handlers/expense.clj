@@ -58,7 +58,7 @@
   (fn [request]
     (let [user-id  (:user-id (:identity request))
           params   (:json-params request)
-          type     (or (:type params) "expense")
+          type     (str/lower-case (or (:type params) "expense"))
           amount   (str (:amount params))
           currency (str (:currency params))
           desc     (:description params)
@@ -118,7 +118,7 @@
       (if-not existing
         (error-response 404 "Expense not found")
         (let [params   (:json-params request)
-              type     (or (:type params) (:type existing))
+              type     (str/lower-case (or (:type params) (:type existing)))
               amount   (str (or (:amount params) (:amount existing)))
               currency (str (or (:currency params) (:currency existing)))
               desc     (or (:description params) (:description existing))
