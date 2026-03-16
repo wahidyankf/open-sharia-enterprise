@@ -13,7 +13,8 @@ defmodule DemoBeExphWeb.ExpenseController do
 
   def index(conn, params) do
     user = GuardianPlug.current_resource(conn)
-    page = params |> Map.get("page", "1") |> String.to_integer()
+    raw_page = params |> Map.get("page", "1") |> String.to_integer()
+    page = max(raw_page, 1)
     result = expense_ctx().list_expenses(user.id, page: page)
 
     json(conn, %{

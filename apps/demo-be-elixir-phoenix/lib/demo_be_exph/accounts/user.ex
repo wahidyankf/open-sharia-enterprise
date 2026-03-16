@@ -24,8 +24,8 @@ defmodule DemoBeExph.Accounts.User do
     |> cast(attrs, [:username, :email, :display_name, :password, :role, :status])
     |> validate_required([:username, :email, :password])
     |> validate_length(:username, min: 3)
-    |> validate_format(:username, ~r/^[a-zA-Z0-9_]+$/,
-      message: "must contain only letters, digits, and underscores"
+    |> validate_format(:username, ~r/^[a-zA-Z0-9_\-]+$/,
+      message: "must contain only letters, digits, underscores, and hyphens"
     )
     |> validate_format(:email, ~r/^[^\s]+@[^\s]+\.[^\s]+$/,
       message: "must be a valid email address"
