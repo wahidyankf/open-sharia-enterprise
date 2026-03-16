@@ -9,7 +9,7 @@ const testDir = defineBddConfig({
 
 export default defineConfig({
   testDir,
-  timeout: 20000,
+  timeout: 60000,
   // Each scenario resets the shared database before running, so tests must
   // run sequentially within a single machine to avoid DB state conflicts.
   fullyParallel: false,

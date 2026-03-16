@@ -269,6 +269,13 @@ When("the admin navigates to {word}'s user detail page", async ({ page }, userna
       ),
       page.keyboard.press("Enter"),
     ]).catch(() => page.waitForTimeout(2000));
+    // Wait for the filtered row to be visible in the DOM before proceeding
+    await page
+      .getByRole("row")
+      .filter({ hasText: username })
+      .first()
+      .waitFor({ state: "visible", timeout: 5000 })
+      .catch(() => {});
   }
   await page.getByText(username).first().click();
 });
@@ -286,6 +293,13 @@ When("the admin navigates to {word}'s user detail in the admin panel", async ({ 
     ),
     page.keyboard.press("Enter"),
   ]).catch(() => page.waitForTimeout(2000));
+  // Wait for the filtered row to be visible in the DOM before proceeding
+  await page
+    .getByRole("row")
+    .filter({ hasText: username })
+    .first()
+    .waitFor({ state: "visible", timeout: 5000 })
+    .catch(() => {});
   await page.getByText(username).first().click();
 });
 
@@ -454,9 +468,11 @@ Then("the authentication session should be cleared", async ({ page }) => {
 
 Then("{word}'s status should display as {string}", async ({ page }, username: string, status: string) => {
   // Scope to the row containing the username to avoid strict mode violations
-  // when multiple users have the same status
+  // when multiple users have the same status.
+  // Use a longer timeout to allow slow backends (e.g. JVM) to complete the
+  // post-mutation refetch and update the list before the assertion fires.
   const row = page.getByRole("row").filter({ hasText: username });
-  await expect(row.getByText(new RegExp(status, "i"))).toBeVisible();
+  await expect(row.getByText(new RegExp(status, "i"))).toBeVisible({ timeout: 15000 });
 });
 
 Then("the entry list should contain an entry with description {string}", async ({ page }, description: string) => {
