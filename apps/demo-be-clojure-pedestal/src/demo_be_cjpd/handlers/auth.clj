@@ -128,7 +128,9 @@
             (error-response 401 "Invalid token type")
             (if (token-repo/revoked? ds jti)
               (error-response 401 "Token is invalid or already used")
-              (let [user (user-repo/find-by-id ds user-id)]
+              (if (token-repo/all-revoked-for-user? ds user-id (or (:iat claims) 0))
+                (error-response 401 "Token has been revoked")
+                (let [user (user-repo/find-by-id ds user-id)]
                 (if-not user
                   (error-response 401 "User not found")
                   (cond
@@ -151,7 +153,7 @@
                             new-refresh (jwt/sign-refresh-token (:jwt-secret config) user-id)]
                         (json-response 200 {:access-token  new-access
                                             :refresh-token new-refresh
-                                            "token_type"   "Bearer"})))))))))))))
+                                            "token_type"   "Bearer"}))))))))))))))
 
 (defn logout-handler
   "POST /api/v1/auth/logout — Revoke the provided access token."
