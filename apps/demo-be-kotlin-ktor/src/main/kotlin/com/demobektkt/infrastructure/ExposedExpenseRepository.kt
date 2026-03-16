@@ -1,5 +1,6 @@
 package com.demobektkt.infrastructure
 
+import com.demobektkt.domain.EntryType
 import com.demobektkt.domain.Expense
 import com.demobektkt.domain.Page
 import com.demobektkt.infrastructure.repositories.CreateExpenseRequest
@@ -112,6 +113,7 @@ class ExposedExpenseRepository : ExpenseRepository {
       val sumColumn = ExpensesTable.amount.sum()
       ExpensesTable.select(ExpensesTable.currency, sumColumn)
         .where { ExpensesTable.userId eq userId }
+        .andWhere { ExpensesTable.type eq EntryType.EXPENSE }
         .groupBy(ExpensesTable.currency)
         .map { row ->
           CurrencySummary(

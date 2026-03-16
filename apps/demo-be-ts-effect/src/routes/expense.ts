@@ -240,10 +240,12 @@ const getExpenseSummary = HttpServerRequest.HttpServerRequest.pipe(
       const summary = yield* expenseRepo.summarize(claims.sub);
 
       // Return flat object: { "USD": "30.00", "IDR": "150000" }
-      // The total expense amount per currency (sum of all expense entries)
+      // Only include currencies with a positive expense total (matches Go/Clojure behaviour)
       const result: Record<string, string> = {};
       for (const [currency, { expense }] of Object.entries(summary)) {
-        result[currency] = formatAmount(expense, currency);
+        if (expense > 0) {
+          result[currency] = formatAmount(expense, currency);
+        }
       }
 
       return yield* HttpServerResponse.json(result);
