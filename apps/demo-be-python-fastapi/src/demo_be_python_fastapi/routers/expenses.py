@@ -118,13 +118,14 @@ def get_summary(
 
 @router.get("", response_model=ExpenseListResponse)
 def list_expenses(
-    page: int = Query(default=1, ge=1),
+    page: int = Query(default=1, ge=0),
     size: int = Query(default=20, ge=1, le=100),
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
 ) -> ExpenseListResponse:
     """List own expense entries (paginated)."""
     expense_repo = get_expense_repo(db)
+    page = max(1, page)
     items, total = expense_repo.list_by_user(current_user.id, page, size)
     return ExpenseListResponse(
         content=[_model_to_response(e) for e in items],

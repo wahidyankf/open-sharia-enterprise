@@ -187,7 +187,7 @@ class ExpenseRepository:
             category=data["category"],
             description=data.get("description"),
             date=data["date"],
-            entry_type=data.get("type", "expense"),
+            entry_type=data.get("type", "expense").lower(),
             quantity=str(data["quantity"]) if data.get("quantity") is not None else None,
             unit=data.get("unit"),
         )
@@ -215,7 +215,7 @@ class ExpenseRepository:
         expense.category = data["category"]
         expense.description = data.get("description")
         expense.date = data["date"]
-        expense.entry_type = data.get("type", "expense")
+        expense.entry_type = data.get("type", "expense").lower()
         if "quantity" in data:
             expense.quantity = str(data["quantity"]) if data["quantity"] is not None else None
         if "unit" in data:

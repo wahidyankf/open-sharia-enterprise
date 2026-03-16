@@ -45,7 +45,7 @@ class PasswordResetResponse(BaseModel):
 
 @router.get("/users", response_model=UserListResponse)
 def list_users(
-    page: int = Query(default=1, ge=1),
+    page: int = Query(default=1, ge=0),
     size: int = Query(default=20, ge=1, le=100),
     search: str | None = Query(default=None),
     db: Session = Depends(get_db),
@@ -53,6 +53,7 @@ def list_users(
 ) -> UserListResponse:
     """List all users (admin only)."""
     user_repo = get_user_repo(db)
+    page = max(1, page)
     users, total = user_repo.list_users(page, size, search)
     return UserListResponse(
         content=[
