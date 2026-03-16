@@ -267,6 +267,7 @@ public class ExpenseHandler implements Handler<RoutingContext> {
     private JsonObject buildExpenseResponse(Expense expense) {
         JsonObject obj = new JsonObject()
                 .put("id", expense.id())
+                .put("userId", expense.userId())
                 .put("type", expense.type())
                 .put("amount", expense.amount().toPlainString())
                 .put("currency", expense.currency())
