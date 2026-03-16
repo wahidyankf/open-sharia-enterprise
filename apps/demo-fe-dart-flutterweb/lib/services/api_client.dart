@@ -37,14 +37,14 @@ Dio createApiClient() {
   ));
 
   dio.interceptors.add(InterceptorsWrapper(
-    onRequest: (options, handler) {
+    onRequest: (RequestOptions options, RequestInterceptorHandler handler) {
       final token = getAccessToken();
       if (token != null) {
         options.headers['Authorization'] = 'Bearer $token';
       }
       return handler.next(options);
     },
-    onError: (error, handler) {
+    onError: (DioException error, ErrorInterceptorHandler handler) {
       if (error.response?.statusCode == 401) {
         window.sessionStorage.setItem(
           'auth_error',

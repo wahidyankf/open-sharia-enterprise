@@ -14,17 +14,17 @@ Future<List<Attachment>> listAttachments(String expenseId) async {
   );
   final data = response.data;
   // Backend returns { attachments: [...] } wrapper
+  final List<dynamic> items;
   if (data is Map<String, dynamic> && data.containsKey('attachments')) {
-    return (data['attachments'] as List<dynamic>)
-        .map((e) => Attachment.fromJson(e as Map<String, dynamic>))
-        .toList();
+    items = data['attachments'] as List<dynamic>;
+  } else if (data is List<dynamic>) {
+    items = data;
+  } else {
+    items = [];
   }
-  if (data is List<dynamic>) {
-    return data
-        .map((e) => Attachment.fromJson(e as Map<String, dynamic>))
-        .toList();
-  }
-  return [];
+  return items
+      .map((dynamic e) => Attachment.fromJson(e as Map<String, dynamic>))
+      .toList();
 }
 
 Future<Attachment> uploadAttachment(String expenseId, File file) async {
