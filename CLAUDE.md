@@ -36,6 +36,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `demo-be-clojure-pedestal` - Clojure/Pedestal REST API backend (alternative to demo-be-golang-gin)
   - `demo-be-e2e` - Playwright E2E tests for demo-be REST API backends
   - `demo-fe-ts-nextjs` - Next.js 16 frontend (TypeScript, App Router)
+  - `demo-fe-dart-flutterweb` - Flutter Web frontend (Dart, alternative to demo-fe-ts-nextjs)
   - `demo-fe-e2e` - Playwright E2E tests for demo-fe frontends
 
 ## Project Structure
@@ -63,6 +64,7 @@ open-sharia-enterprise/
 │   ├── demo-be-clojure-pedestal/ # Clojure/Pedestal REST API (alternative implementation)
 │   ├── demo-be-e2e/ # Playwright E2E tests for backend
 │   ├── demo-fe-ts-nextjs/ # Next.js 16 frontend (TypeScript)
+│   ├── demo-fe-dart-flutterweb/ # Flutter Web frontend (Dart)
 │   └── demo-fe-e2e/ # Playwright E2E tests for frontend
 ├── apps-labs/                # Experimental apps (NOT in Nx)
 ├── libs/                     # Reusable libraries (Nx, flat structure)
@@ -179,6 +181,10 @@ of `test:quick`. Uses cloverage with `--lcov` output format.
 `rhino-cli test-coverage validate` applied to the LCOV output from `test:unit` (Vitest) — run as
 part of `test:quick`. Lower threshold reflects that API/auth/queries layers are fully mocked in
 unit tests by design.
+
+**Dart frontends**: `demo-fe-dart-flutterweb` enforces ≥70% **line coverage** via
+`rhino-cli test-coverage validate` applied to the LCOV output from `test:unit` (Flutter test) — run
+as part of `test:quick`.
 
 **`test:integration` caching**: Default `cache: false` in `nx.json`. Demo-be backends use
 docker-compose with real PostgreSQL — non-deterministic and must never be cached. Projects using

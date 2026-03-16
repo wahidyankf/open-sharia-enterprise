@@ -332,12 +332,12 @@ Per-project:
 
 All projects use a standard four-dimension tag scheme:
 
-| Dimension   | Values                                                | Required                 | Purpose                 |
-| ----------- | ----------------------------------------------------- | ------------------------ | ----------------------- |
-| `type:`     | `app`, `lib`, `e2e`                                   | Yes                      | Project kind            |
-| `platform:` | `hugo`, `cli`, `nextjs`, `spring-boot`, `playwright`  | For apps/e2e             | Framework/runtime       |
-| `lang:`     | `golang`, `ts`, `java`                                | Where source code exists | Primary language        |
-| `domain:`   | `ayokoding`, `oseplatform`, `organiclever`, `tooling` | Yes                      | Business/product domain |
+| Dimension   | Values                                                          | Required                 | Purpose                 |
+| ----------- | --------------------------------------------------------------- | ------------------------ | ----------------------- |
+| `type:`     | `app`, `lib`, `e2e`                                             | Yes                      | Project kind            |
+| `platform:` | `hugo`, `cli`, `nextjs`, `flutter`, `spring-boot`, `playwright` | For apps/e2e             | Framework/runtime       |
+| `lang:`     | `golang`, `ts`, `java`, `dart`                                  | Where source code exists | Primary language        |
+| `domain:`   | `ayokoding`, `oseplatform`, `organiclever`, `tooling`           | Yes                      | Business/product domain |
 
 **Notes**:
 
