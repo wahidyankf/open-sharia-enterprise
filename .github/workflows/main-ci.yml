@@ -69,6 +69,11 @@ jobs:
           hugo-version: "0.156.0"
           extended: true
 
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
       - name: Setup Clojure CLI
         run: |
           curl -L -O https://github.com/clojure/brew-install/releases/latest/download/linux-install.sh
