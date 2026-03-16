@@ -258,25 +258,26 @@ When("the admin navigates to the user management page", async ({ page }) => {
 When("the admin navigates to {word}'s user detail page", async ({ page }, username: string) => {
   await page.goto("/admin");
   const searchInput = page.getByRole("textbox", { name: /search/i }).or(page.getByPlaceholder(/search/i));
-  if (await searchInput.isVisible({ timeout: 2000 }).catch(() => false)) {
-    await searchInput.fill(username);
-    // Wait for the search-filtered API response (URL must include search= to avoid catching the
-    // initial unfiltered load that slow JVM backends may deliver after we register the listener)
-    await Promise.all([
-      page.waitForResponse(
-        (resp) => /admin\/users/.test(resp.url()) && resp.url().includes("search=") && resp.status() === 200,
-        { timeout: 15000 },
-      ),
-      page.keyboard.press("Enter"),
-    ]).catch(() => page.waitForTimeout(2000));
-    // Wait for the filtered row to be visible in the DOM before proceeding
-    await page
-      .getByRole("row")
-      .filter({ hasText: username })
-      .first()
-      .waitFor({ state: "visible", timeout: 5000 })
-      .catch(() => {});
-  }
+  // Wait for the admin page to fully render before searching.
+  // JVM backends (e.g. Clojure) may take longer than 2 s to render the first page.
+  await searchInput.waitFor({ state: "visible", timeout: 15000 });
+  await searchInput.fill(username);
+  // Wait for the search-filtered API response (URL must include search= to avoid catching the
+  // initial unfiltered load that slow JVM backends may deliver after we register the listener)
+  await Promise.all([
+    page.waitForResponse(
+      (resp) => /admin\/users/.test(resp.url()) && resp.url().includes("search=") && resp.status() === 200,
+      { timeout: 15000 },
+    ),
+    page.keyboard.press("Enter"),
+  ]).catch(() => page.waitForTimeout(2000));
+  // Wait for the filtered row to be visible in the DOM before proceeding
+  await page
+    .getByRole("row")
+    .filter({ hasText: username })
+    .first()
+    .waitFor({ state: "visible", timeout: 5000 })
+    .catch(() => {});
   await page.getByText(username).first().click();
 });
 
