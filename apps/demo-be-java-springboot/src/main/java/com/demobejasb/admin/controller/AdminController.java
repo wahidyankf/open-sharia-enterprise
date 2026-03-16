@@ -33,13 +33,13 @@ public class AdminController {
 
     @GetMapping("/users")
     public ResponseEntity<AdminUserListResponse> listUsers(
-            @RequestParam(required = false) @Nullable String email,
+            @RequestParam(required = false) @Nullable String search,
             @RequestParam(defaultValue = "0") final int page,
             @RequestParam(defaultValue = "20") final int size) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by("createdAt"));
         Page<User> users;
-        if (email != null && !email.isBlank()) {
-            users = userRepository.findAllByEmailContaining(email, pageRequest);
+        if (search != null && !search.isBlank()) {
+            users = userRepository.findAllByEmailOrUsernameContaining(search, pageRequest);
         } else {
             users = userRepository.findAll(pageRequest);
         }

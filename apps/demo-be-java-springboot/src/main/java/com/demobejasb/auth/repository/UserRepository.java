@@ -20,4 +20,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     @Query("SELECT u FROM User u WHERE u.email = :email ORDER BY u.createdAt ASC")
     Page<User> findAllByEmailContaining(@Param("email") String email, Pageable pageable);
+
+    @Query("SELECT u FROM User u WHERE LOWER(u.email) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(u.username) LIKE LOWER(CONCAT('%', :search, '%'))")
+    Page<User> findAllByEmailOrUsernameContaining(@Param("search") String search, Pageable pageable);
 }

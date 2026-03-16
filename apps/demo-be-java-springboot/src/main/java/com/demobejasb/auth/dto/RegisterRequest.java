@@ -9,8 +9,8 @@ public record RegisterRequest(
     @NotBlank
     @Size(min = 3, max = 50)
     @Pattern(
-        regexp = "^[a-zA-Z0-9_]{3,50}$",
-        message = "Username must contain only letters, digits, or underscores")
+        regexp = "^[a-zA-Z0-9_\\-]{3,50}$",
+        message = "Username must contain only letters, digits, underscores, or hyphens")
     String username,
 
     @NotBlank

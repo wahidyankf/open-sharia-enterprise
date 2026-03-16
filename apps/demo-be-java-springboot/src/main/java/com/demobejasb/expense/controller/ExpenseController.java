@@ -59,7 +59,7 @@ public class ExpenseController {
                         request.category(),
                         request.description(),
                         request.date(),
-                        request.type());
+                        request.type().toLowerCase());
         expense.setQuantity(request.quantity());
         expense.setUnit(request.unit());
         Expense saved = expenseRepository.save(expense);
@@ -127,7 +127,7 @@ public class ExpenseController {
         expense.setCategory(request.category());
         expense.setDescription(request.description());
         expense.setDate(request.date());
-        expense.setType(request.type());
+        expense.setType(request.type().toLowerCase());
         expense.setQuantity(request.quantity());
         expense.setUnit(request.unit());
         expense.setUpdatedAt(Instant.now());

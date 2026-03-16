@@ -17,7 +17,7 @@ public record ExpenseRequest(
         @NotBlank String description,
         @NotNull LocalDate date,
         @NotBlank
-                @Pattern(regexp = "expense|income", message = "Type must be expense or income")
+                @Pattern(regexp = "(?i)expense|(?i)income", message = "Type must be expense or income")
                 String type,
         @Nullable @Positive BigDecimal quantity,
         @Nullable
