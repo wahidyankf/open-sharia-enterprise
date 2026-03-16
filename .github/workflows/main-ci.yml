@@ -108,6 +108,9 @@ jobs:
       - name: Install Clojure dependencies
         run: (cd apps/demo-be-clojure-pedestal && JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -P && JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -P -M:test:coverage)
 
+      - name: Install Flutter dependencies
+        run: (cd apps/demo-fe-dart-flutterweb && flutter pub get)
+
       - name: test:quick (all projects)
         run: npx nx run-many -t test:quick --all
 

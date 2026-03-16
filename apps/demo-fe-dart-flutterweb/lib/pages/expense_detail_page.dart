@@ -244,9 +244,10 @@ void _renderDetail(
             ..textContent = 'Save Changes'
             ..disabled = false;
           final body = err.response?.data;
-          final msg = body is Map
-              ? (body['message'] as String? ?? 'Failed to update expense.')
-              : 'Failed to update expense.';
+          String msg = 'Failed to update expense.';
+          if (body is Map) {
+            msg = body['message'] as String? ?? 'Failed to update expense.';
+          }
           if (editError != null) {
             editError
               ..textContent = msg

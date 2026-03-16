@@ -40,5 +40,6 @@ Future<Map<String, String>> getExpenseSummary({String? currency}) async {
     '/api/v1/expenses/summary',
     queryParameters: currency != null ? {'currency': currency} : null,
   );
-  return response.data!.map((k, v) => MapEntry(k, v.toString()));
+  return response.data!
+      .map((String k, dynamic v) => MapEntry(k, v.toString()));
 }

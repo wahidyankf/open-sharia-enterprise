@@ -196,7 +196,10 @@ void render(Element parent) {
 
           final status = err.response?.statusCode;
           final body = err.response?.data;
-          final msg = body is Map ? (body['message'] as String? ?? '') : '';
+          String msg = '';
+          if (body is Map) {
+            msg = body['message'] as String? ?? '';
+          }
 
           String errorMsg;
           if (status == 401) {
