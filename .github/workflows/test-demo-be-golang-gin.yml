@@ -1,13 +1,6 @@
 name: Test - Demo BE (Go/Gin)
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "apps/demo-be-golang-gin/**"
-      - "apps/demo-be-e2e/**"
-      - "specs/apps/demo/be/**"
-      - "infra/dev/demo-be-golang-gin/**"
   schedule:
     - cron: "0 23 * * *" # 6 AM WIB (UTC+7)
     - cron: "0 11 * * *" # 6 PM WIB (UTC+7)
