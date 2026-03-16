@@ -117,11 +117,13 @@ public static class ExpenseEndpoints
         var summaries = await expenseRepo.SummaryByCurrencyAsync(userId.Value, ct);
 
         // Build a currency-keyed dictionary: e.g. { "USD": "30.00", "IDR": "150000" }
-        // Total = income - expense per currency (expense is negative contribution)
-        var currencyTotals = summaries.ToDictionary(
-            s => s.Currency,
-            s => FormatAmount(s.ExpenseTotal, s.Currency)
-        );
+        // Only include currencies with a positive expense total (matches Go/Clojure behaviour)
+        var currencyTotals = summaries
+            .Where(s => s.ExpenseTotal > 0)
+            .ToDictionary(
+                s => s.Currency,
+                s => FormatAmount(s.ExpenseTotal, s.Currency)
+            );
 
         return Results.Ok(currencyTotals);
     }

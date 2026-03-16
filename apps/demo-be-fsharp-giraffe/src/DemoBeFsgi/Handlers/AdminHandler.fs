@@ -40,7 +40,7 @@ let listUsers: HttpHandler =
 
             let query =
                 match emailFilter with
-                | Some email -> db.Users.Where(fun u -> u.Email = email)
+                | Some search -> db.Users.Where(fun u -> u.Username.Contains(search) || u.Email.Contains(search))
                 | None -> db.Users :> IQueryable<UserEntity>
 
             let! total = query.CountAsync()
