@@ -69,11 +69,10 @@ When("the admin clicks the {string} button", async ({ page }, buttonText: string
 
 When("{word} attempts to access the dashboard", async ({ page }) => {
   await page.goto("/expenses");
-  // Wait for network to settle then explicitly wait for the /login redirect.
-  // Slow JVM backends may still be processing the auth check when networkidle fires,
-  // so we give an additional 15 s for the redirect to complete.
-  await page.waitForLoadState("networkidle", { timeout: 15000 }).catch(() => {});
-  await page.waitForURL(/\/login/, { timeout: 15000 }).catch(() => {});
+  // Use a single long wait for the /login redirect.
+  // Stacking waitForLoadState + waitForURL can exceed the per-test timeout on slow
+  // JVM backends because each guard is allowed its full duration independently.
+  await page.waitForURL(/\/login/, { timeout: 20000 }).catch(() => {});
 });
 
 Then("the user list should display registered users", async ({ page }) => {
