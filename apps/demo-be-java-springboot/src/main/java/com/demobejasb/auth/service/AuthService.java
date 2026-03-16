@@ -66,13 +66,15 @@ public class AuthService {
                 .orElseThrow(InvalidCredentialsException::new);
 
         if ("LOCKED".equals(user.getStatus())) {
-            throw new InvalidCredentialsException();
+            throw new InvalidCredentialsException("Account is locked due to too many failed login attempts");
         }
 
         if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
             user.setFailedLoginAttempts(user.getFailedLoginAttempts() + 1);
             if (user.getFailedLoginAttempts() >= MAX_FAILED_ATTEMPTS) {
                 user.setStatus("LOCKED");
+                userRepository.save(user);
+                throw new InvalidCredentialsException("Account is locked due to too many failed login attempts");
             }
             userRepository.save(user);
             throw new InvalidCredentialsException();
