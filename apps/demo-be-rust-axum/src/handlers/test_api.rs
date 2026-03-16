@@ -15,10 +15,7 @@ pub async fn reset_db(State(state): State<Arc<AppState>>) -> Result<impl IntoRes
     sqlx::query("DELETE FROM expenses")
         .execute(&state.pool)
         .await?;
-    sqlx::query("DELETE FROM refresh_tokens")
-        .execute(&state.pool)
-        .await?;
-    sqlx::query("DELETE FROM revoked_tokens")
+    sqlx::query("DELETE FROM token_revocations")
         .execute(&state.pool)
         .await?;
     sqlx::query("DELETE FROM users")

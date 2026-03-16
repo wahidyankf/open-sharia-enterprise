@@ -40,8 +40,8 @@ fn parse_currency(s: &str) -> Result<Currency, AppError> {
 }
 
 fn parse_entry_type(s: &str) -> Result<String, AppError> {
-    match s {
-        "expense" | "income" => Ok(s.to_string()),
+    match s.to_lowercase().as_str() {
+        "expense" | "income" => Ok(s.to_lowercase()),
         _ => Err(AppError::Validation {
             field: "type".to_string(),
             message: format!("unsupported entry type: {s}"),
