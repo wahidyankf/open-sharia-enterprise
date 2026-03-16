@@ -69,9 +69,9 @@ When("the admin clicks the {string} button", async ({ page }, buttonText: string
 
 When("{word} attempts to access the dashboard", async ({ page }) => {
   await page.goto("/expenses");
-  // Use a single long wait for the /login redirect.
-  // Stacking waitForLoadState + waitForURL can exceed the per-test timeout on slow
-  // JVM backends because each guard is allowed its full duration independently.
+  // Wait for the first API response — a 401 from a disabled account triggers clearTokens
+  // → auth:cleared → redirect.  Then wait for the redirect URL.
+  await page.waitForResponse((resp) => resp.url().includes("/api/"), { timeout: 15000 }).catch(() => {});
   await page.waitForURL(/\/login/, { timeout: 20000 }).catch(() => {});
 });
 

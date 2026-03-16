@@ -148,7 +148,12 @@ When(
     await page.waitForLoadState("load");
     await page.getByRole("textbox", { name: /username/i }).fill(username);
     await page.getByRole("textbox", { name: /password/i }).fill(password);
-    await page.getByRole("button", { name: /log in|sign in|login/i }).click();
+    // Wait for the login API response so the mutation has time to complete
+    // before subsequent assertion steps check the URL.
+    await Promise.all([
+      page.waitForResponse((resp) => resp.url().includes("/api/v1/auth/login"), { timeout: 30000 }),
+      page.getByRole("button", { name: /log in|sign in|login/i }).click(),
+    ]).catch(() => {});
   },
 );
 
@@ -193,6 +198,10 @@ When("{word} clicks the {string} button", async ({ page }, _username: string, bu
 
 When("{word} navigates to a protected page", async ({ page }) => {
   await page.goto("/expenses");
+  // Wait for the first API response — a 401 from a disabled/revoked account triggers
+  // the clearTokens → auth:cleared → redirect chain.  Give the response time to arrive
+  // so the subsequent URL assertion can observe the redirect.
+  await page.waitForResponse((resp) => resp.url().includes("/api/"), { timeout: 15000 }).catch(() => {});
 });
 
 When("{word} navigates to the login page", async ({ page }) => {
@@ -271,12 +280,17 @@ When("the admin navigates to {word}'s user detail page", async ({ page }, userna
     ),
     page.keyboard.press("Enter"),
   ]).catch(() => page.waitForTimeout(2000));
-  // Wait for the filtered row to be visible in the DOM before proceeding
+  // Wait until ALL tbody rows contain the username — ensures the search filter has fully
+  // rendered and we are not clicking on a stale unfiltered row from a previous render cycle.
   await page
-    .getByRole("row")
-    .filter({ hasText: username })
-    .first()
-    .waitFor({ state: "visible", timeout: 5000 })
+    .waitForFunction(
+      (name: string) => {
+        const rows = Array.from(document.querySelectorAll("tbody tr"));
+        return rows.length > 0 && rows.every((r) => r.textContent?.includes(name));
+      },
+      username,
+      { timeout: 10000 },
+    )
     .catch(() => {});
   await page.getByText(username).first().click();
 });
@@ -294,12 +308,17 @@ When("the admin navigates to {word}'s user detail in the admin panel", async ({ 
     ),
     page.keyboard.press("Enter"),
   ]).catch(() => page.waitForTimeout(2000));
-  // Wait for the filtered row to be visible in the DOM before proceeding
+  // Wait until ALL tbody rows contain the username — ensures the search filter has fully
+  // rendered and we are not clicking on a stale unfiltered row from a previous render cycle.
   await page
-    .getByRole("row")
-    .filter({ hasText: username })
-    .first()
-    .waitFor({ state: "visible", timeout: 5000 })
+    .waitForFunction(
+      (name: string) => {
+        const rows = Array.from(document.querySelectorAll("tbody tr"));
+        return rows.length > 0 && rows.every((r) => r.textContent?.includes(name));
+      },
+      username,
+      { timeout: 10000 },
+    )
     .catch(() => {});
   await page.getByText(username).first().click();
 });
