@@ -33,6 +33,7 @@ function expenseToResponse(expense: {
 }) {
   return {
     id: expense.id,
+    userId: expense.userId,
     type: expense.type.toLowerCase(),
     amount: formatAmount(expense.amount, expense.currency),
     currency: expense.currency,

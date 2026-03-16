@@ -12,6 +12,7 @@ import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
 import org.jetbrains.exposed.sql.andWhere
+import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
@@ -105,11 +106,13 @@ class ExposedUserRepository : UserRepository {
     }
   }
 
-  override suspend fun findAll(page: Int, pageSize: Int, emailFilter: String?): Page<User> =
+  override suspend fun findAll(page: Int, pageSize: Int, searchFilter: String?): Page<User> =
     newSuspendedTransaction(Dispatchers.IO) {
       var query = UsersTable.selectAll()
-      if (emailFilter != null) {
-        query = query.andWhere { UsersTable.email like "%$emailFilter%" }
+      if (searchFilter != null) {
+        query = query.andWhere {
+          (UsersTable.username like "%$searchFilter%") or (UsersTable.email like "%$searchFilter%")
+        }
       }
       val total = query.count()
       val items =

@@ -43,9 +43,9 @@ object AdminRoutes : KoinComponent {
     requireAdmin(call)
     val page = call.request.queryParameters["page"]?.toIntOrNull() ?: 1
     val pageSize = call.request.queryParameters["pageSize"]?.toIntOrNull() ?: 20
-    val emailFilter = call.request.queryParameters["email"]
+    val searchFilter = call.request.queryParameters["search"] ?: call.request.queryParameters["email"]
 
-    val result = userRepository.findAll(page, pageSize, emailFilter)
+    val result = userRepository.findAll(page, pageSize, searchFilter)
 
     val usersArray: JsonArray = buildJsonArray {
       result.data.forEach { user ->
