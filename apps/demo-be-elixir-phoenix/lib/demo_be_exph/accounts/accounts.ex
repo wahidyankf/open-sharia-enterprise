@@ -45,16 +45,17 @@ defmodule DemoBeExph.Accounts do
     Repo.get_by(User, email: email)
   end
 
-  @doc "List all users, optionally filtered by email."
+  @doc "List all users, optionally filtered by search term (matches username or email via LIKE)."
   def list_users(opts \\ []) do
-    email_filter = Keyword.get(opts, :email)
+    search_filter = Keyword.get(opts, :email)
     page = Keyword.get(opts, :page, 1)
     page_size = Keyword.get(opts, :page_size, 20)
     offset = (page - 1) * page_size
 
     query =
-      if email_filter do
-        from u in User, where: u.email == ^email_filter
+      if search_filter do
+        pattern = "%#{search_filter}%"
+        from u in User, where: ilike(u.email, ^pattern) or ilike(u.username, ^pattern)
       else
         from(u in User)
       end
