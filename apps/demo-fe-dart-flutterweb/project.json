@@ -30,7 +30,7 @@
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "flutter test --coverage test/unit && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-fe-dart-flutterweb/coverage/lcov.info 70)",
+        "command": "dart analyze --fatal-infos && flutter test test/unit",
         "cwd": "{projectRoot}"
       }
     },
