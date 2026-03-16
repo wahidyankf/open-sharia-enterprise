@@ -107,7 +107,8 @@ object ExpenseRoutes : KoinComponent {
 
   suspend fun list(call: RoutingCall) {
     val userId = requireUserId(call)
-    val page = call.request.queryParameters["page"]?.toIntOrNull() ?: 1
+    val rawPage = call.request.queryParameters["page"]?.toIntOrNull() ?: 0
+    val page = rawPage + 1
     val pageSize = call.request.queryParameters["pageSize"]?.toIntOrNull() ?: 20
 
     val result = expenseRepository.findAllByUser(userId, page, pageSize)
