@@ -35,9 +35,11 @@
   - [ ] `paths/test-support.yaml` — POST reset-db, POST promote-admin
 - [ ] Write `.spectral.yaml` with camelCase, description, and example rules
 - [ ] Add `demo-contracts` as Nx project (`project.json`) with `lint` and `bundle` targets
-- [ ] Add `**/generated-contracts/` and `specs/apps/demo/contracts/generated/` to root `.gitignore`
+- [ ] Add `**/generated-contracts/`, `**/generated_contracts/` (Python), and
+      `specs/apps/demo/contracts/generated/` to root `.gitignore`
 - [ ] Verify Spectral lint passes with zero errors
-- [ ] Verify Redocly CLI bundle resolves all `$ref`s correctly into `generated/openapi-bundled.yaml`
+- [ ] Verify Redocly CLI bundle resolves all `$ref`s into `generated/openapi-bundled.yaml` and
+      `generated/openapi-bundled.json` (JSON needed for ajv in E2E tests)
 - [ ] Write example files for major endpoints
 
 **Validation**:
@@ -151,7 +153,7 @@ schemas/models. Enforcement via `test:unit` (part of `test:quick`).
 **Implementation Steps**:
 
 - [ ] Add postinstall script to `package.json`: `npx nx run-many -t codegen --projects=demo-*`
-- [ ] Update root `.gitignore` with `**/generated-contracts/` pattern
+- [ ] Verify root `.gitignore` has `**/generated-contracts/` and `**/generated_contracts/` patterns
 - [ ] Update `specs/apps/demo/README.md` — add contracts section with link to
       `specs/apps/demo/contracts/README.md`
 - [ ] Update `specs/apps/demo/contracts/README.md` — document codegen workflow, how to modify

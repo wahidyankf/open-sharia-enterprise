@@ -236,15 +236,15 @@ Feature: API contract enforcement via code generation
     And the folder contains encoders and decoders for each schema
 
   Scenario: Generated folders are gitignored
-    Given every demo app has generated-contracts/ in its .gitignore
+    Given the root .gitignore includes **/generated-contracts/ and **/generated_contracts/
     When a developer runs git status after codegen
-    Then generated-contracts/ does not appear as untracked
+    Then no generated-contracts/ folder appears as untracked
 
   Scenario: Backend compile-time enforcement (statically typed)
     Given demo-be-golang-gin uses generated Go structs as handler return types
     When the contract changes and codegen re-runs
-    Then any handler returning the old shape fails go build
-    And this is caught by nx affected -t build before push
+    Then any handler returning the old shape fails compilation
+    And this is caught by nx affected -t test:quick before push
 
   Scenario: Backend test-time enforcement (dynamically typed)
     Given demo-be-elixir-phoenix uses generated structs with @enforce_keys
