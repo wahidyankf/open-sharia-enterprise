@@ -64,21 +64,26 @@ auto-generated type-safe code (encoders/decoders) in every app.
 
 ### Recommended Approach
 
-**Alternative 6: OpenAPI 3.1 (Modular YAML) + Spectral Linting + Code Generation** — chosen from
-6 alternatives analyzed in [requirements.md](./requirements.md). Key reasons:
+**Alternative 3: OpenAPI 3.1 (Modular YAML) + Spectral Linting + Code Generation** — chosen from
+10 alternatives analyzed across 5 categories (REST-native specs, data-shape-only formats,
+language-specific source-of-truth, higher-level DSLs, non-REST paradigms) in
+[requirements.md](./requirements.md). The only framework meeting all 10 hard requirements. Key
+reasons:
 
 - Full HTTP semantics (paths, methods, status codes, headers, body schemas)
-- Language-agnostic YAML authoring
+- Language-agnostic YAML authoring — no new DSL to learn
 - Modular domain-split files mirror existing Gherkin organization
-- Spectral linting enforces API style conventions
+- Spectral linting enforces API style conventions (camelCase, descriptions, examples)
 - Mature code generators exist for all 11 languages (web-verified)
 - Generated types include encoders/decoders for type-safe serialization
 - Auto-generated browsable API documentation (Redoc) for product/public teams
+- 100% open source and free — every tool is MIT or Apache 2.0 licensed
 
 ## Plan Structure
 
-- **[requirements.md](./requirements.md)** — Alternatives analysis, recommendation matrix,
-  acceptance criteria
+- **[requirements.md](./requirements.md)** — Problem statement, solution space, 10 alternatives
+  analysis (with web research), language coverage matrix, hard requirements compliance, tool-specific
+  comparisons, recommendation with rationale
 - **[tech-docs.md](./tech-docs.md)** — Contract file structure, code generation strategy per
   language, Nx integration, gitignore setup, Spectral rules
 - **[delivery.md](./delivery.md)** — 5-phase implementation plan with checklists, open questions
