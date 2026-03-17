@@ -8,43 +8,43 @@
 
 **Implementation Steps**:
 
-- [ ] Create `specs/apps/demo/contracts/` directory structure (paths/, schemas/, examples/)
-- [ ] Write `README.md` with purpose, usage guide, and contribution rules
-- [ ] Write root `openapi.yaml` with server config, security schemes, and `$ref` path mappings
-- [ ] Write all schema files:
-  - [ ] `schemas/auth.yaml` — LoginRequest, RegisterRequest, RefreshRequest, AuthTokens
-  - [ ] `schemas/user.yaml` — User, UpdateProfileRequest, ChangePasswordRequest
-  - [ ] `schemas/expense.yaml` — Expense, CreateExpenseRequest, UpdateExpenseRequest
-  - [ ] `schemas/expense-list.yaml` — ExpenseListResponse (uses pagination.yaml)
-  - [ ] `schemas/report.yaml` — PLReport, CategoryBreakdown, ExpenseSummary
-  - [ ] `schemas/attachment.yaml` — Attachment
-  - [ ] `schemas/token.yaml` — TokenClaims, JwksResponse, JwkKey
-  - [ ] `schemas/admin.yaml` — DisableRequest, PasswordResetResponse, UserListResponse
-  - [ ] `schemas/pagination.yaml` — reusable pagination envelope
-  - [ ] `schemas/error.yaml` — standardized error response
-  - [ ] `schemas/health.yaml` — HealthResponse
-- [ ] Write all path files:
-  - [ ] `paths/health.yaml` — GET /health
-  - [ ] `paths/auth.yaml` — POST login, register, refresh, logout, logout-all
-  - [ ] `paths/users.yaml` — GET/PATCH /me, POST password, POST deactivate
-  - [ ] `paths/expenses.yaml` — CRUD + summary
-  - [ ] `paths/attachments.yaml` — POST/GET/DELETE attachments
-  - [ ] `paths/reports.yaml` — GET /api/v1/reports/pl
-  - [ ] `paths/admin.yaml` — GET users, POST disable/enable/unlock/force-password-reset
-  - [ ] `paths/tokens.yaml` — GET claims, GET /.well-known/jwks.json
-  - [ ] `paths/test-support.yaml` — POST reset-db, POST promote-admin
-- [ ] Write `.spectral.yaml` with strict camelCase (zero exceptions), description, and example
+- [x] Create `specs/apps/demo/contracts/` directory structure (paths/, schemas/, examples/)
+- [x] Write `README.md` with purpose, usage guide, and contribution rules
+- [x] Write root `openapi.yaml` with server config, security schemes, and `$ref` path mappings
+- [x] Write all schema files:
+  - [x] `schemas/auth.yaml` — LoginRequest, RegisterRequest, RefreshRequest, AuthTokens
+  - [x] `schemas/user.yaml` — User, UpdateProfileRequest, ChangePasswordRequest
+  - [x] `schemas/expense.yaml` — Expense, CreateExpenseRequest, UpdateExpenseRequest
+  - [x] `schemas/expense-list.yaml` — ExpenseListResponse (uses pagination.yaml)
+  - [x] `schemas/report.yaml` — PLReport, CategoryBreakdown, ExpenseSummary
+  - [x] `schemas/attachment.yaml` — Attachment
+  - [x] `schemas/token.yaml` — TokenClaims, JwksResponse, JwkKey
+  - [x] `schemas/admin.yaml` — DisableRequest, PasswordResetResponse, UserListResponse
+  - [x] `schemas/pagination.yaml` — reusable pagination envelope
+  - [x] `schemas/error.yaml` — standardized error response
+  - [x] `schemas/health.yaml` — HealthResponse
+- [x] Write all path files:
+  - [x] `paths/health.yaml` — GET /health
+  - [x] `paths/auth.yaml` — POST login, register, refresh, logout, logout-all
+  - [x] `paths/users.yaml` — GET/PATCH /me, POST password, POST deactivate
+  - [x] `paths/expenses.yaml` — CRUD + summary
+  - [x] `paths/attachments.yaml` — POST/GET/DELETE attachments
+  - [x] `paths/reports.yaml` — GET /api/v1/reports/pl
+  - [x] `paths/admin.yaml` — GET users, POST disable/enable/unlock/force-password-reset
+  - [x] `paths/tokens.yaml` — GET claims, GET /.well-known/jwks.json
+  - [x] `paths/test-support.yaml` — POST reset-db, POST promote-admin
+- [x] Write `.spectral.yaml` with strict camelCase (zero exceptions), description, and example
       rules
-- [ ] Write `redocly.yaml` with docs theme config and `x-test-only` filtering
-- [ ] Add `demo-contracts` as Nx project (`project.json`) with `lint`, `bundle`, and `docs` targets
-- [ ] Add `**/generated-contracts/`, `**/generated_contracts/` (Python), and
+- [x] Write `redocly.yaml` with docs theme config and `x-test-only` filtering
+- [x] Add `demo-contracts` as Nx project (`project.json`) with `lint`, `bundle`, and `docs` targets
+- [x] Add `**/generated-contracts/`, `**/generated_contracts/` (Python), and
       `specs/apps/demo/contracts/generated/` to root `.gitignore`
-- [ ] Verify Spectral lint passes with zero errors (includes camelCase enforcement)
-- [ ] Verify Redocly CLI bundle resolves all `$ref`s into `generated/openapi-bundled.yaml` and
+- [x] Verify Spectral lint passes with zero errors (includes camelCase enforcement)
+- [x] Verify Redocly CLI bundle resolves all `$ref`s into `generated/openapi-bundled.yaml` and
       `generated/openapi-bundled.json` (JSON needed for ajv in E2E tests)
-- [ ] Verify Redocly CLI `build-docs` generates browsable HTML at `generated/docs/index.html`
-- [ ] Verify test-only endpoints (`/api/v1/test/*`) are excluded from generated docs
-- [ ] Write example files for major endpoints
+- [x] Verify Redocly CLI `build-docs` generates browsable HTML at `generated/docs/index.html`
+- [x] Verify test-only endpoints (`/api/v1/test/*`) are excluded from generated docs
+- [x] Write example files for major endpoints
 
 **Validation**:
 
