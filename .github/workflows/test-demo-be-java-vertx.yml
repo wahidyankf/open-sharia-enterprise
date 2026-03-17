@@ -41,6 +41,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Generate contract types
+        run: |
+          npm ci
+          npx nx run demo-contracts:bundle
+          npx nx run demo-fe-ts-nextjs:codegen
+
       - name: Copy source to build context for dependency and compile caching
         run: |
           cp apps/demo-be-java-vertx/pom.xml infra/dev/demo-be-java-vertx/pom.xml
