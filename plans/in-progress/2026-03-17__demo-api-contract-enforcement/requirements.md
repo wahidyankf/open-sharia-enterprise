@@ -15,7 +15,7 @@ exact shape of every request and response.
    own `types.ts` / Dart models. Nothing enforces they are identical.
 2. **Drift is invisible** — a naming mismatch (e.g., `token_type` vs `tokenType`) can only be
    caught by E2E tests, and only if a Gherkin scenario asserts that specific field.
-3. **Gherkin specs define behavior, not shape** — 76 backend + 92 frontend scenarios specify _what_
+3. **Gherkin specs define behavior, not shape** — 78 backend + 92 frontend scenarios specify _what_
    the API does, but not the exact field names, types, nullability, or constraints of every payload.
 4. **No documentation** — there is no browsable reference showing all endpoints, their schemas, and
    examples. Product and stakeholders must read code or ask developers.
@@ -141,13 +141,14 @@ browsable documentation.
 **Current status**: All tools actively maintained and open source:
 
 - OpenAPI 3.2.0 (September 2025), backward-compatible with 3.1
-- Spectral (MIT, ~2.4K GitHub stars) — most widely adopted OpenAPI linter
+- Spectral (Apache 2.0, ~2.4K GitHub stars) — most widely adopted OpenAPI linter
 - Redocly CLI (MIT community edition) — bundling, linting, documentation generation
 - Redoc (MIT, ~25K GitHub stars) — most popular OpenAPI documentation renderer
 - openapi-generator (Apache 2.0, ~22K GitHub stars) — multi-language code generation
 - oapi-codegen (Apache 2.0, ~6.3K GitHub stars) — Go-specific, most popular Go generator
 - @hey-api/openapi-ts (MIT) — modern TS codegen used by Vercel, PayPal
-- NSwag (MIT) — .NET/F# code generation
+- NSwag (MIT) — C# code generation
+- openapi-generator fsharp-giraffe-server (Apache 2.0, beta) — F# model type generation
 - datamodel-code-generator (MIT) — Python Pydantic model generation
 
 **Pros**:
@@ -513,7 +514,7 @@ Coverage of all 11 backend languages by each framework's code generation tooling
 | Python     | Validate           | datamodel-code-generator | quicktype          | via JSON Schema | via OAS      | Preview         | Stable        | Official        | Strawberry      |
 | Rust       | Validate           | openapi-generator        | quicktype          | via JSON Schema | via OAS      | via OAS         | Stable        | Community       | juniper         |
 | Elixir     | Validate           | Custom lib               | **No**             | **No**          | via OAS      | via OAS         | **No**        | Community       | Absinthe        |
-| F#         | Validate           | NSwag                    | **No**             | **No**          | via OAS      | via OAS         | **No**        | Community       | **No**          |
+| F#         | Validate           | openapi-generator        | **No**             | **No**          | via OAS      | via OAS         | **No**        | Community       | **No**          |
 | C#         | Validate           | NSwag                    | quicktype          | via JSON Schema | via OAS      | Preview         | **No**        | Official        | Hot Chocolate   |
 | TypeScript | Validate           | @hey-api/openapi-ts      | quicktype          | Native          | Native       | Preview         | Stable        | Official        | GQL Codegen     |
 | Dart       | Validate           | openapi-generator        | quicktype          | via JSON Schema | via OAS      | via OAS         | **No**        | Official        | Ferry           |
@@ -591,8 +592,8 @@ popular in the Go ecosystem, no Java dependency (unlike openapi-generator).
 
 | Tool        | License | Language | Performance                 | Key Strength                                            |
 | ----------- | ------- | -------- | --------------------------- | ------------------------------------------------------- |
-| Spectral    | MIT     | Node.js  | Slower on large docs        | Most adopted, highly configurable, custom functions     |
-| Vacuum      | MIT     | Go       | ~3x faster than Spectral    | Fastest, zero deps (single binary), Spectral-compatible |
+| Spectral    | Apache  | Node.js  | Slower on large docs        | Most adopted, highly configurable, custom functions     |
+| Vacuum      | MIT     | Go       | 2-18x faster than Spectral  | Fastest, zero deps (single binary), Spectral-compatible |
 | Redocly CLI | MIT\*   | Node.js  | Between Spectral and Vacuum | Combined linting + bundling + docs in one tool          |
 
 \* Redocly CLI community edition is MIT; some advanced features require paid license but are NOT
@@ -677,20 +678,21 @@ community plugins available. Disqualifying for this repo.
 
 ### Selected Toolchain
 
-| Role                  | Tool                         | License    | Why                                          |
-| --------------------- | ---------------------------- | ---------- | -------------------------------------------- |
-| Spec format           | OpenAPI 3.1                  | Apache 2.0 | Industry standard, all 11 languages          |
-| Linting               | Spectral                     | MIT        | Most configurable, custom camelCase rules    |
-| Bundling              | Redocly CLI                  | MIT        | Resolves `$ref`, produces YAML + JSON        |
-| Documentation         | Redoc                        | MIT        | Best visual quality, static HTML             |
-| Go codegen            | oapi-codegen                 | Apache 2.0 | Gin support, most popular Go generator       |
-| Java/Kotlin/Rust/Dart | openapi-generator            | Apache 2.0 | Multi-language, mature                       |
-| F#/C# codegen         | NSwag                        | MIT        | Best .NET/F# support                         |
-| TS codegen            | @hey-api/openapi-ts          | MIT        | Zod + TanStack Query plugins, used by Vercel |
-| Python codegen        | datamodel-code-generator     | MIT        | Pydantic v2 models                           |
-| Elixir codegen        | libs/elixir-openapi-codegen  | Custom     | No off-the-shelf tool exists                 |
-| Clojure codegen       | libs/clojure-openapi-codegen | Custom     | No off-the-shelf tool exists                 |
-| E2E validation        | ajv                          | MIT        | JSON Schema validation in Playwright tests   |
+| Role                  | Tool                               | License    | Why                                          |
+| --------------------- | ---------------------------------- | ---------- | -------------------------------------------- |
+| Spec format           | OpenAPI 3.1                        | Apache 2.0 | Industry standard, all 11 languages          |
+| Linting               | Spectral                           | Apache 2.0 | Most configurable, custom camelCase rules    |
+| Bundling              | Redocly CLI                        | MIT        | Resolves `$ref`, produces YAML + JSON        |
+| Documentation         | Redoc                              | MIT        | Best visual quality, static HTML             |
+| Go codegen            | oapi-codegen                       | Apache 2.0 | Gin support, most popular Go generator       |
+| Java/Kotlin/Rust/Dart | openapi-generator                  | Apache 2.0 | Multi-language, mature                       |
+| C# codegen            | NSwag                              | MIT        | Best .NET codegen, System.Text.Json          |
+| F# codegen            | openapi-generator (fsharp-giraffe) | Apache 2.0 | Beta but targets Giraffe directly            |
+| TS codegen            | @hey-api/openapi-ts                | MIT        | Zod + TanStack Query plugins, used by Vercel |
+| Python codegen        | datamodel-code-generator           | MIT        | Pydantic v2 models                           |
+| Elixir codegen        | libs/elixir-openapi-codegen        | Custom     | No off-the-shelf tool exists                 |
+| Clojure codegen       | libs/clojure-openapi-codegen       | Custom     | No off-the-shelf tool exists                 |
+| E2E validation        | ajv                                | MIT        | JSON Schema validation in Playwright tests   |
 
 ---
 

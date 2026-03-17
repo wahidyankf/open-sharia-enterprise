@@ -77,8 +77,9 @@ for all statically typed apps. Wire `codegen` as dependency of `typecheck`/`buil
       use generated data classes, verify `./gradlew build` passes
 - [ ] **demo-be-rust-axum**: Add `openapi-generator` Rust generator via build script, add `codegen`
       target, update handlers to use generated serde structs, verify `cargo build` passes
-- [ ] **demo-be-fsharp-giraffe**: Add `NSwag.MSBuild` NuGet package, configure F# type generation,
-      add `codegen` target, update handlers to use generated record types, verify `dotnet build` passes
+- [ ] **demo-be-fsharp-giraffe**: Add `openapi-generator` with `fsharp-giraffe-server` generator
+      (beta), configure to generate F# model types only, add `codegen` target, update handlers to use
+      generated types, verify `dotnet build` passes
 - [ ] **demo-be-csharp-aspnetcore**: Add `NSwag.MSBuild` NuGet package, configure C# class
       generation, add `codegen` target, update controllers to use generated classes, verify
       `dotnet build` passes
@@ -260,7 +261,8 @@ Clojure. Enforcement via `test:unit` (part of `test:quick`).
 - **Java/Kotlin**: `openapi-generator-maven-plugin` / `openapi-generator-gradle-plugin`
 - **Python**: `datamodel-code-generator` (pip)
 - **Rust**: `openapi-generator` CLI or `progenitor` crate
-- **.NET**: `NSwag.MSBuild` NuGet package
+- **C#**: `NSwag.MSBuild` NuGet package
+- **F#**: `openapi-generator` CLI with `fsharp-giraffe-server` generator (beta)
 - **Dart**: `openapi-generator` CLI (via Java)
 - **Elixir**: `libs/elixir-openapi-codegen` (deps: `yaml_elixir`)
 - **Clojure**: `libs/clojure-openapi-codegen` (deps: `clj-yaml`)

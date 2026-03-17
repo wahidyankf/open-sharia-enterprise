@@ -79,19 +79,19 @@ apps/demo-fe-ts-nextjs/
 
 These languages catch contract violations at compile time via `typecheck` or `build` targets.
 
-| Language      | App                       | Generator                    | Generated Output                     | Encoder/Decoder                    |
-| ------------- | ------------------------- | ---------------------------- | ------------------------------------ | ---------------------------------- |
-| Go            | demo-be-golang-gin        | `oapi-codegen` (strict)      | Go structs + strict server interface | `encoding/json` via generated code |
-| Java (Spring) | demo-be-java-springboot   | `openapi-generator` (spring) | Java DTOs with Jackson annotations   | Jackson `@JsonProperty`            |
-| Java (Vert.x) | demo-be-java-vertx        | `openapi-generator` (java)   | Java DTOs with Jackson annotations   | Jackson `@JsonProperty`            |
-| Kotlin        | demo-be-kotlin-ktor       | `openapi-generator` (kotlin) | Kotlin data classes                  | kotlinx.serialization              |
-| Rust          | demo-be-rust-axum         | `openapi-generator` (rust)   | Rust structs with serde derive       | `serde::Serialize/Deserialize`     |
-| F#            | demo-be-fsharp-giraffe    | `NSwag` CLI                  | F# record types                      | System.Text.Json                   |
-| C#            | demo-be-csharp-aspnetcore | `NSwag` CLI                  | C# classes with JsonProperty         | System.Text.Json / Newtonsoft      |
-| TypeScript    | demo-be-ts-effect         | `@hey-api/openapi-ts`        | TS types + Effect Schema definitions | Effect `Schema.decode`/`.encode`   |
-| TypeScript    | demo-fe-ts-nextjs         | `@hey-api/openapi-ts` + Zod  | TS types + Zod schemas + SDK client  | Zod `z.parse()` + typed SDK client |
-| TypeScript    | demo-fe-ts-tanstack-start | `@hey-api/openapi-ts` + Zod  | TS types + Zod schemas + SDK client  | Zod `z.parse()` + typed SDK client |
-| Dart          | demo-fe-dart-flutterweb   | `openapi-generator` (dart)   | Dart classes with json_serializable  | `toJson()` / `fromJson()`          |
+| Language      | App                       | Generator                            | Generated Output                     | Encoder/Decoder                    |
+| ------------- | ------------------------- | ------------------------------------ | ------------------------------------ | ---------------------------------- |
+| Go            | demo-be-golang-gin        | `oapi-codegen` (strict)              | Go structs + strict server interface | `encoding/json` via generated code |
+| Java (Spring) | demo-be-java-springboot   | `openapi-generator` (spring)         | Java DTOs with Jackson annotations   | Jackson `@JsonProperty`            |
+| Java (Vert.x) | demo-be-java-vertx        | `openapi-generator` (java)           | Java DTOs with Jackson annotations   | Jackson `@JsonProperty`            |
+| Kotlin        | demo-be-kotlin-ktor       | `openapi-generator` (kotlin)         | Kotlin data classes                  | kotlinx.serialization              |
+| Rust          | demo-be-rust-axum         | `openapi-generator` (rust)           | Rust structs with serde derive       | `serde::Serialize/Deserialize`     |
+| F#            | demo-be-fsharp-giraffe    | `openapi-generator` (fsharp-giraffe) | F# model types                       | System.Text.Json                   |
+| C#            | demo-be-csharp-aspnetcore | `NSwag` CLI                          | C# classes with JsonProperty         | System.Text.Json / Newtonsoft      |
+| TypeScript    | demo-be-ts-effect         | `@hey-api/openapi-ts`                | TS types + Effect Schema definitions | Effect `Schema.decode`/`.encode`   |
+| TypeScript    | demo-fe-ts-nextjs         | `@hey-api/openapi-ts` + Zod          | TS types + Zod schemas + SDK client  | Zod `z.parse()` + typed SDK client |
+| TypeScript    | demo-fe-ts-tanstack-start | `@hey-api/openapi-ts` + Zod          | TS types + Zod schemas + SDK client  | Zod `z.parse()` + typed SDK client |
+| Dart          | demo-fe-dart-flutterweb   | `openapi-generator` (dart)           | Dart classes with json_serializable  | `toJson()` / `fromJson()`          |
 
 **Library verification** (web-researched 2026-03-17):
 
@@ -99,10 +99,12 @@ These languages catch contract violations at compile time via `typecheck` or `bu
   auto-parses request bodies and encodes responses, forcing handler code to comply with schema.
   Supports Gin, Chi, Echo, Fiber, Iris.
 - **openapi-generator** — Multi-language generator supporting Java (Spring, Vert.x), Kotlin
-  (kotlinx.serialization), Rust (serde), Dart (json_serializable). Generates DTOs with full
-  encoder/decoder annotations.
-- **NSwag** — .NET toolchain generating C# classes and F# types from OpenAPI specs with
-  System.Text.Json serialization. Generates strongly-typed HTTP clients and models.
+  (kotlinx.serialization), Rust (serde), Dart (json_serializable), and F# (fsharp-giraffe-server,
+  beta). Generates DTOs with full encoder/decoder annotations. The F# generator targets Giraffe
+  specifically, producing F# model types with System.Text.Json serialization.
+- **NSwag** — .NET toolchain generating C# classes from OpenAPI specs with System.Text.Json
+  serialization (partial; Newtonsoft.Json fallback). Generates strongly-typed HTTP clients and
+  models. Used for C# only (does not support F# output).
 - **@hey-api/openapi-ts** — Production-grade OpenAPI-to-TypeScript codegen used by Vercel, PayPal,
   and OpenCode. Generates TypeScript types, Zod schemas (via plugin), TanStack Query hooks, and
   SDK clients from OpenAPI 3.x. 20+ plugins available.

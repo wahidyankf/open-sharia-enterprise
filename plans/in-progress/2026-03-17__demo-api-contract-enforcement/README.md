@@ -34,7 +34,7 @@ auto-generated type-safe code (encoders/decoders) in every app.
 
 ### Context
 
-- **Behavior specs exist** — 76 backend + 92 frontend Gherkin scenarios define _what_ the API does,
+- **Behavior specs exist** — 78 backend + 92 frontend Gherkin scenarios define _what_ the API does,
   but not the exact shape of every field, type, or constraint
 - **Types are duplicated** — each backend has its own DTOs/structs, each frontend has its own
   `types.ts` / Dart models. Nothing enforces sync.
