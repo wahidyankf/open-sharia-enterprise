@@ -115,32 +115,32 @@ Clojure. Enforcement via `test:unit` (part of `test:quick`).
 
 **Implementation Steps — Codegen Libs**:
 
-- [ ] **libs/elixir-openapi-codegen**: Create Elixir Nx library project
-  - [ ] Set up `mix.exs` with `yaml_elixir` dependency
-  - [ ] Implement OpenAPI YAML parser (reads bundled spec, extracts component schemas)
-  - [ ] Implement Elixir struct generator (emits `defstruct` + `@enforce_keys` + `@type` typespecs)
-  - [ ] Add `project.json` with `build`, `test:unit`, `test:quick`, `lint` targets
-  - [ ] Write unit tests: given sample OpenAPI schemas, assert generated Elixir code has correct
+- [x] **libs/elixir-openapi-codegen**: Create Elixir Nx library project
+  - [x] Set up `mix.exs` with `yaml_elixir` dependency
+  - [x] Implement OpenAPI YAML parser (reads bundled spec, extracts component schemas)
+  - [x] Implement Elixir struct generator (emits `defstruct` + `@enforce_keys` + `@type` typespecs)
+  - [x] Add `project.json` with `build`, `test:unit`, `test:quick`, `lint` targets
+  - [x] Write unit tests: given sample OpenAPI schemas, assert generated Elixir code has correct
         struct fields, enforce_keys, and typespecs
-  - [ ] Write integration tests: generate structs from the actual demo contract, compile them,
+  - [x] Write integration tests: generate structs from the actual demo contract, compile them,
         verify they accept valid data and reject invalid data
-  - [ ] Enforce ≥90% line coverage via `rhino-cli test-coverage validate`
-  - [ ] Verify `nx run elixir-openapi-codegen:test:quick` passes
-- [ ] **libs/clojure-openapi-codegen**: Create Clojure Nx library project
-  - [ ] Set up `deps.edn` with `clj-yaml` dependency
-  - [ ] Implement OpenAPI YAML parser (reads bundled spec, extracts component schemas)
-  - [ ] Implement Malli schema generator (emits Malli `[:map ...]` definitions per schema)
-  - [ ] Add `project.json` with `build`, `test:unit`, `test:quick`, `lint` targets
-  - [ ] Write unit tests: given sample OpenAPI schemas, assert generated Malli schemas have correct
+  - [x] Enforce ≥90% line coverage via `rhino-cli test-coverage validate`
+  - [x] Verify `nx run elixir-openapi-codegen:test:quick` passes
+- [x] **libs/clojure-openapi-codegen**: Create Clojure Nx library project
+  - [x] Set up `deps.edn` with `clj-yaml` dependency
+  - [x] Implement OpenAPI YAML parser (reads bundled spec, extracts component schemas)
+  - [x] Implement Malli schema generator (emits Malli `[:map ...]` definitions per schema)
+  - [x] Add `project.json` with `build`, `test:unit`, `test:quick`, `lint` targets
+  - [x] Write unit tests: given sample OpenAPI schemas, assert generated Malli schemas have correct
         keys, types, and required/optional markers
-  - [ ] Write integration tests: generate schemas from the actual demo contract, validate sample
+  - [x] Write integration tests: generate schemas from the actual demo contract, validate sample
         JSON payloads against generated schemas (accept valid, reject invalid)
-  - [ ] Enforce ≥90% line coverage via `rhino-cli test-coverage validate`
-  - [ ] Verify `nx run clojure-openapi-codegen:test:quick` passes
+  - [x] Enforce ≥90% line coverage via `rhino-cli test-coverage validate`
+  - [x] Verify `nx run clojure-openapi-codegen:test:quick` passes
 
 **Implementation Steps — App Integration**:
 
-- [ ] **demo-be-python-fastapi**: Add `datamodel-code-generator` dev dependency, add `codegen`
+- [x] **demo-be-python-fastapi**: Add `datamodel-code-generator` dev dependency, add `codegen`
       target generating Pydantic v2 models into `generated_contracts/`, update FastAPI route handlers
       to use generated models as `response_model`, verify `pytest` passes
 - [ ] **demo-be-elixir-phoenix**: Add `codegen` target that invokes
@@ -149,7 +149,7 @@ Clojure. Enforcement via `test:unit` (part of `test:quick`).
 - [ ] **demo-be-clojure-pedestal**: Add `codegen` target that invokes
       `libs/clojure-openapi-codegen` to generate Malli schemas into `generated_contracts/`, add
       middleware validating responses against generated schemas, verify `lein test` passes
-- [ ] Wire `codegen` as dependency of `test:unit` in each app's `project.json`
+- [x] Wire `codegen` as dependency of `test:unit` in each app's `project.json`
 - [ ] Verify `nx run-many -t test:quick --projects=elixir-openapi-codegen,clojure-openapi-codegen,demo-be-python-fastapi,demo-be-elixir-phoenix,demo-be-clojure-pedestal` passes
 
 **Validation**:

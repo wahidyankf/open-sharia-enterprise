@@ -1,0 +1,6 @@
+openapi: "3.1.0"
+info:
+  title: No Schemas API
+  version: 1.0.0
+components:
+  responses: {}

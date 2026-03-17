@@ -1,0 +1,59 @@
+{
+  "name": "clojure-openapi-codegen",
+  "sourceRoot": "libs/clojure-openapi-codegen",
+  "projectType": "library",
+  "tags": ["type:lib", "lang:clojure"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -M -e '(compile (symbol \"openapi-codegen.core\"))'",
+        "cwd": "libs/clojure-openapi-codegen"
+      },
+      "cache": true,
+      "inputs": ["{projectRoot}/src/**/*.clj", "{projectRoot}/deps.edn"]
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -M:test -m kaocha.runner unit",
+        "cwd": "libs/clojure-openapi-codegen"
+      },
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**/*.clj",
+        "{projectRoot}/test/**/*.clj",
+        "{projectRoot}/deps.edn",
+        "{projectRoot}/tests.edn"
+      ]
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -M:coverage -m kaocha.runner unit --plugin cloverage --lcov --cov-output coverage",
+          "(cd ../../ && CGO_ENABLED=0 go run apps/rhino-cli/main.go test-coverage validate libs/clojure-openapi-codegen/coverage/lcov.info 90)"
+        ],
+        "parallel": false,
+        "cwd": "libs/clojure-openapi-codegen"
+      },
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**/*.clj",
+        "{projectRoot}/test/**/*.clj",
+        "{projectRoot}/deps.edn",
+        "{projectRoot}/tests.edn"
+      ],
+      "outputs": ["{projectRoot}/coverage"]
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "clj-kondo --lint src test",
+        "cwd": "libs/clojure-openapi-codegen"
+      },
+      "cache": true
+    }
+  },
+  "implicitDependencies": ["rhino-cli"]
+}

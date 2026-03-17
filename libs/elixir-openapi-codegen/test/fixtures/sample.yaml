@@ -1,0 +1,50 @@
+openapi: "3.1.0"
+info:
+  title: Sample API
+  version: 1.0.0
+components:
+  schemas:
+    User:
+      type: object
+      description: A user account
+      required:
+        - id
+        - username
+        - email
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        displayName:
+          type: string
+        age:
+          type: integer
+          nullable: true
+        score:
+          type: number
+          nullable: true
+        active:
+          type: boolean
+        tags:
+          type: array
+          items:
+            type: string
+        metadata:
+          type: object
+    LoginRequest:
+      type: object
+      description: Login credentials
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    EmptySchema:
+      type: object
+      description: A schema with no properties or required fields
