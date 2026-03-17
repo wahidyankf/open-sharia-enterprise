@@ -36,6 +36,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `demo-be-clojure-pedestal` - Clojure/Pedestal REST API backend (alternative to demo-be-golang-gin)
   - `demo-be-e2e` - Playwright E2E tests for demo-be REST API backends
   - `demo-fe-ts-nextjs` - Next.js 16 frontend (TypeScript, App Router)
+  - `demo-fe-ts-tanstack-start` - TanStack Start frontend (TypeScript, alternative to demo-fe-ts-nextjs)
   - `demo-fe-dart-flutterweb` - Flutter Web frontend (Dart, alternative to demo-fe-ts-nextjs)
   - `demo-fe-e2e` - Playwright E2E tests for demo-fe frontends
 
@@ -64,6 +65,7 @@ open-sharia-enterprise/
 │   ├── demo-be-clojure-pedestal/ # Clojure/Pedestal REST API (alternative implementation)
 │   ├── demo-be-e2e/ # Playwright E2E tests for backend
 │   ├── demo-fe-ts-nextjs/ # Next.js 16 frontend (TypeScript)
+│   ├── demo-fe-ts-tanstack-start/ # TanStack Start frontend (TypeScript)
 │   ├── demo-fe-dart-flutterweb/ # Flutter Web frontend (Dart)
 │   └── demo-fe-e2e/ # Playwright E2E tests for frontend
 ├── apps-labs/                # Experimental apps (NOT in Nx)

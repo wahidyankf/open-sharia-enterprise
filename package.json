@@ -65,10 +65,6 @@
     "*.{yml,yaml}": "prettier --write",
     "*.{css,scss}": "prettier --write"
   },
-  "overrides": {
-    "markdown-it": "14.1.1",
-    "minimatch": ">=10.2.1"
-  },
   "dependencies": {
     "tailwindcss": "^4.2.1"
   }

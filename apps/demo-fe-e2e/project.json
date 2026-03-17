@@ -63,5 +63,5 @@
     }
   },
   "tags": ["type:e2e", "platform:playwright", "lang:ts", "domain:demo-fe"],
-  "implicitDependencies": ["demo-fe-ts-nextjs", "demo-fe-dart-flutterweb"]
+  "implicitDependencies": ["demo-fe-ts-nextjs", "demo-fe-dart-flutterweb", "demo-fe-ts-tanstack-start"]
 }
