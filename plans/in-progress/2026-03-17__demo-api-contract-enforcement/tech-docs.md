@@ -89,8 +89,8 @@ These languages catch contract violations at compile time via `typecheck` or `bu
 | F#            | demo-be-fsharp-giraffe    | `NSwag` CLI                  | F# record types                      | System.Text.Json                   |
 | C#            | demo-be-csharp-aspnetcore | `NSwag` CLI                  | C# classes with JsonProperty         | System.Text.Json / Newtonsoft      |
 | TypeScript    | demo-be-ts-effect         | `@hey-api/openapi-ts`        | TS types + Effect Schema definitions | Effect `Schema.decode`/`.encode`   |
-| TypeScript    | demo-fe-ts-nextjs         | `@hey-api/openapi-ts` + Zod  | TS types + Zod schemas + SDK client  | `z.parse()` / `z.safeParse()`      |
-| TypeScript    | demo-fe-ts-tanstack-start | `@hey-api/openapi-ts` + Zod  | TS types + Zod schemas + SDK client  | `z.parse()` / `z.safeParse()`      |
+| TypeScript    | demo-fe-ts-nextjs         | `@hey-api/openapi-ts` + Zod  | TS types + Zod schemas + SDK client  | Zod `z.parse()` + typed SDK client |
+| TypeScript    | demo-fe-ts-tanstack-start | `@hey-api/openapi-ts` + Zod  | TS types + Zod schemas + SDK client  | Zod `z.parse()` + typed SDK client |
 | Dart          | demo-fe-dart-flutterweb   | `openapi-generator` (dart)   | Dart classes with json_serializable  | `toJson()` / `fromJson()`          |
 
 **Library verification** (web-researched 2026-03-17):
@@ -107,8 +107,9 @@ These languages catch contract violations at compile time via `typecheck` or `bu
   and OpenCode. Generates TypeScript types, Zod schemas (via plugin), TanStack Query hooks, and
   SDK clients from OpenAPI 3.x. 20+ plugins available.
 - **Zod** — TypeScript-first schema validation with static type inference. Generated Zod schemas
-  provide runtime decoders (`z.parse()`) and encoders (`z.safeParse()`) that validate API
-  responses match the contract at runtime, not just compile time.
+  provide runtime decoders (`z.parse()` throws on mismatch, `z.safeParse()` returns
+  `{success, data, error}`) that validate API responses match the contract at runtime. Request
+  encoding is enforced at compile time via the generated SDK client's typed method signatures.
 - **Effect Schema** — Native to the Effect ecosystem. `Schema.decode` / `Schema.encode` provide
   bidirectional runtime validation. Used for `demo-be-ts-effect` since the project already uses
   Effect.
