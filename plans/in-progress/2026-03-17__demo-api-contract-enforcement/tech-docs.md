@@ -65,10 +65,11 @@ apps/demo-be-golang-gin/
 apps/demo-fe-ts-nextjs/
 ├── src/
 │   ├── generated-contracts/  # gitignored via root **/generated-contracts/
-│   │   └── api.d.ts          # Generated TypeScript types
+│   │   ├── types.gen.ts      # Generated TypeScript types
+│   │   ├── zod.gen.ts        # Generated Zod schemas (runtime decoders)
+│   │   └── sdk.gen.ts        # Generated type-safe SDK client
 │   └── lib/api/
-│       ├── client.ts         # Uses openapi-fetch with generated types
-│       └── types.ts          # Re-exports from generated (or removed)
+│       └── client.ts         # Re-exports generated SDK or wraps it
 └── ...
 ```
 
@@ -87,9 +88,9 @@ These languages catch contract violations at compile time via `typecheck` or `bu
 | Rust          | demo-be-rust-axum         | `openapi-generator` (rust)   | Rust structs with serde derive       | `serde::Serialize/Deserialize`     |
 | F#            | demo-be-fsharp-giraffe    | `NSwag` CLI                  | F# record types                      | System.Text.Json                   |
 | C#            | demo-be-csharp-aspnetcore | `NSwag` CLI                  | C# classes with JsonProperty         | System.Text.Json / Newtonsoft      |
-| TypeScript    | demo-be-ts-effect         | `openapi-typescript`         | TypeScript types                     | Effect Schema encode/decode        |
-| TypeScript    | demo-fe-ts-nextjs         | `openapi-typescript`         | TypeScript types                     | `openapi-fetch` type-safe client   |
-| TypeScript    | demo-fe-ts-tanstack-start | `openapi-typescript`         | TypeScript types                     | `openapi-fetch` type-safe client   |
+| TypeScript    | demo-be-ts-effect         | `@hey-api/openapi-ts`        | TS types + Effect Schema definitions | Effect `Schema.decode`/`.encode`   |
+| TypeScript    | demo-fe-ts-nextjs         | `@hey-api/openapi-ts` + Zod  | TS types + Zod schemas + SDK client  | `z.parse()` / `z.safeParse()`      |
+| TypeScript    | demo-fe-ts-tanstack-start | `@hey-api/openapi-ts` + Zod  | TS types + Zod schemas + SDK client  | `z.parse()` / `z.safeParse()`      |
 | Dart          | demo-fe-dart-flutterweb   | `openapi-generator` (dart)   | Dart classes with json_serializable  | `toJson()` / `fromJson()`          |
 
 **Library verification** (web-researched 2026-03-17):
@@ -102,10 +103,15 @@ These languages catch contract violations at compile time via `typecheck` or `bu
   encoder/decoder annotations.
 - **NSwag** — .NET toolchain generating C# classes and F# types from OpenAPI specs with
   System.Text.Json serialization. Generates strongly-typed HTTP clients and models.
-- **openapi-typescript** — Generates TypeScript types from OpenAPI 3.0/3.1 in milliseconds.
-  Runtime-free types. Pairs with `openapi-fetch` for type-safe HTTP client.
-- **openapi-fetch** — Type-safe fetch client (6kb) that uses `openapi-typescript` generated types.
-  Provides compile-time checked request/response types with zero runtime overhead.
+- **@hey-api/openapi-ts** — Production-grade OpenAPI-to-TypeScript codegen used by Vercel, PayPal,
+  and OpenCode. Generates TypeScript types, Zod schemas (via plugin), TanStack Query hooks, and
+  SDK clients from OpenAPI 3.x. 20+ plugins available.
+- **Zod** — TypeScript-first schema validation with static type inference. Generated Zod schemas
+  provide runtime decoders (`z.parse()`) and encoders (`z.safeParse()`) that validate API
+  responses match the contract at runtime, not just compile time.
+- **Effect Schema** — Native to the Effect ecosystem. `Schema.decode` / `Schema.encode` provide
+  bidirectional runtime validation. Used for `demo-be-ts-effect` since the project already uses
+  Effect.
 
 ### Dynamically Typed Languages (test-time enforcement)
 
@@ -398,18 +404,26 @@ JwkKey, HealthResponse, PasswordResetResponse, ErrorResponse
 
 ## Design Decisions
 
-### Decision 1: Code Generation Over Runtime Validation
+### Decision 1: Code Generation with Runtime Decoders
 
-**Context**: Contract enforcement can use runtime validators (check JSON at test time) or code
-generation (produce typed code that fails compilation on mismatch).
+**Context**: Contract enforcement can use compile-time-only types, runtime-only validators, or
+both. Pure compile-time types (e.g., `openapi-typescript`) catch field name typos at build time but
+cannot catch runtime shape mismatches (e.g., backend returns a number where the contract says
+string).
 
-**Decision**: Use code generation. Each app gets auto-generated types with encoders/decoders.
+**Decision**: Use code generation that produces **both** compile-time types **and** runtime
+decoders/encoders. For TypeScript specifically: `@hey-api/openapi-ts` with the Zod plugin generates
+TS types + Zod schemas; Effect Schema for the Effect backend. Other languages use their native
+encoder/decoder mechanisms (Jackson, serde, Pydantic, etc.).
 
 **Rationale**:
 
-- Compile-time errors are faster feedback than test failures
-- Generated encoders/decoders guarantee serialization matches the contract
-- No runtime dependencies in production (generated code is just types + annotations)
+- Compile-time types catch field name mismatches at build time (fast feedback)
+- Runtime decoders (Zod `z.parse()`, Effect `Schema.decode`) catch shape/type mismatches at
+  runtime (defense in depth)
+- `@hey-api/openapi-ts` is production-proven (Vercel, PayPal) and generates SDK clients, Zod
+  schemas, and TanStack Query hooks from a single OpenAPI spec
+- Effect Schema is native to the Effect ecosystem (no Zod dependency in `demo-be-ts-effect`)
 - Developers get IDE autocomplete for all API types
 
 ### Decision 2: Gitignored Generated Code
