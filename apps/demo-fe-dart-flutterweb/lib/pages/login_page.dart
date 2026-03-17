@@ -40,6 +40,39 @@ void render(Element parent) {
     main.appendChild(successDiv);
   }
 
+  // Show auth_error (from 401 interceptor: deactivated/disabled)
+  final authError = window.sessionStorage.getItem('auth_error');
+  if (authError != null) {
+    window.sessionStorage.removeItem('auth_error');
+    window.sessionStorage.removeItem('session_expired');
+    final infoDiv = document.createElement('div') as HTMLDivElement;
+    infoDiv.setAttribute('role', 'alert');
+    infoDiv.textContent = authError;
+    infoDiv.style.setProperty('background-color', '#fdf2f2');
+    infoDiv.style.setProperty('color', '#c0392b');
+    infoDiv.style.setProperty('padding', '0.75rem 1rem');
+    infoDiv.style.setProperty('border-radius', '4px');
+    infoDiv.style.setProperty('margin-bottom', '1rem');
+    infoDiv.style.setProperty('border', '1px solid #f5c6cb');
+    main.appendChild(infoDiv);
+  } else {
+    // Show session_expired (from router redirect: no token on protected route)
+    final sessionExpired = window.sessionStorage.getItem('session_expired');
+    if (sessionExpired != null) {
+      window.sessionStorage.removeItem('session_expired');
+      final infoDiv = document.createElement('div') as HTMLDivElement;
+      infoDiv.setAttribute('role', 'status');
+      infoDiv.textContent = 'Your session has expired. Please log in again.';
+      infoDiv.style.setProperty('background-color', '#fff8e1');
+      infoDiv.style.setProperty('color', '#856404');
+      infoDiv.style.setProperty('padding', '0.75rem 1rem');
+      infoDiv.style.setProperty('border-radius', '4px');
+      infoDiv.style.setProperty('margin-bottom', '1rem');
+      infoDiv.style.setProperty('border', '1px solid #ffc107');
+      main.appendChild(infoDiv);
+    }
+  }
+
   // Error container
   final errorDiv = document.createElement('div') as HTMLDivElement;
   errorDiv.id = 'login-error';
@@ -189,13 +222,13 @@ void render(Element parent) {
           );
           setTokens(tokens.accessToken, tokens.refreshToken);
           router.navigateTo('/expenses');
-        } on DioException catch (err) {
+        } catch (err) {
           submitBtn.textContent = 'Log In';
           submitBtn.disabled = false;
           submitBtn.style.setProperty('cursor', 'pointer');
 
-          final status = err.response?.statusCode;
-          final body = err.response?.data;
+          final status = err is DioException ? err.response?.statusCode : null;
+          final body = err is DioException ? err.response?.data : null;
           String msg = '';
           if (body is Map) {
             msg = body['message'] as String? ?? '';

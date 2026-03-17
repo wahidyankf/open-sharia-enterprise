@@ -142,7 +142,7 @@ void render(Element parent) {
   passwordGroup.appendChild(passwordInput);
 
   final passwordHint = document.createElement('p') as HTMLParagraphElement;
-  passwordHint.textContent = 'Min 12 chars, 1 uppercase, 1 special character';
+  passwordHint.textContent = 'Min 12 chars, 1 uppercase, 1 symbol (e.g. !@#)';
   passwordHint.style.setProperty('font-size', '0.8rem');
   passwordHint.style.setProperty('color', '#666');
   passwordHint.style.setProperty('margin-top', '0.3rem');
@@ -218,6 +218,7 @@ void render(Element parent) {
       }
 
       if (password.isEmpty) {
+        passwordHint.remove();
         passwordError.textContent = 'Password is required';
         passwordError.style.setProperty('display', 'block');
         passwordInput.setAttribute('aria-invalid', 'true');
@@ -231,6 +232,7 @@ void render(Element parent) {
           hints.add('1 special character');
         }
         if (hints.isNotEmpty) {
+          passwordHint.remove();
           passwordError.textContent = 'Password must contain: ${hints.join(', ')}';
           passwordError.style.setProperty('display', 'block');
           passwordInput.setAttribute('aria-invalid', 'true');
@@ -251,12 +253,12 @@ void render(Element parent) {
             RegisterRequest(username: username, email: email, password: password),
           );
           router.navigateTo('/login?registered=true');
-        } on DioException catch (err) {
+        } catch (err) {
           submitBtn.textContent = 'Create Account';
           submitBtn.disabled = false;
           submitBtn.style.setProperty('cursor', 'pointer');
 
-          final status = err.response?.statusCode;
+          final status = err is DioException ? err.response?.statusCode : null;
 
           String errorMsg;
           if (status == 409) {

@@ -1,6 +1,5 @@
 import 'dart:js_interop';
 
-import 'package:dio/dio.dart';
 import 'package:web/web.dart';
 
 import '../models/user.dart';
@@ -92,8 +91,7 @@ void render(Element parent) {
     ..style.setProperty('justify-content', 'flex-end');
 
   final confirmDisableBtn = document.createElement('button') as HTMLButtonElement
-    ..textContent = 'Disable'
-    ..disabled = true;
+    ..textContent = 'Disable';
   _styleActionButton(confirmDisableBtn, '#c0392b');
 
   final cancelDialogBtn = document.createElement('button') as HTMLButtonElement
@@ -110,17 +108,9 @@ void render(Element parent) {
     overlay.style.setProperty('display', 'none');
     reasonTextarea.value = '';
     dialogError.style.setProperty('display', 'none');
-    confirmDisableBtn.disabled = true;
     dialogTitle.textContent = 'Disable User';
     disablingUserId = null;
   }
-
-  reasonTextarea.addEventListener(
-    'input',
-    ((Event _) {
-      confirmDisableBtn.disabled = reasonTextarea.value.trim().isEmpty;
-    }).toJS,
-  );
 
   cancelDialogBtn.addEventListener('click', ((Event _) => closeDialog()).toJS);
 
@@ -262,7 +252,7 @@ void render(Element parent) {
             disablingUserId = user.id;
             dialogTitle.textContent = 'Disable User: ${user.username}';
             reasonTextarea.value = '';
-            confirmDisableBtn.disabled = true;
+            confirmDisableBtn.removeAttribute('disabled');
             dialogError.style.setProperty('display', 'none');
             overlay.style.setProperty('display', 'flex');
           }).toJS,
@@ -281,7 +271,7 @@ void render(Element parent) {
               try {
                 await admin_svc.enableUser(user.id);
                 loadUsers();
-              } on DioException {
+              } catch (_) {
                 enableBtn.disabled = false;
               }
             }();
@@ -301,7 +291,7 @@ void render(Element parent) {
               try {
                 await admin_svc.unlockUser(user.id);
                 loadUsers();
-              } on DioException {
+              } catch (_) {
                 unlockBtn.disabled = false;
               }
             }();
@@ -369,7 +359,7 @@ void render(Element parent) {
               // Insert token area below the buttons
               actionsCell.appendChild(document.createElement('br'));
               actionsCell.appendChild(tokenArea);
-            } on DioException {
+            } catch (_) {
               resetBtn.disabled = false;
             }
           }();
@@ -472,18 +462,25 @@ void render(Element parent) {
         final userId = disablingUserId;
         if (userId == null) return;
 
-        confirmDisableBtn.disabled = true;
+        if (reason.isEmpty) {
+          dialogError
+            ..textContent = 'Please enter a reason.'
+            ..style.setProperty('display', 'block');
+          return;
+        }
+
+        confirmDisableBtn.setAttribute('disabled', '');
         dialogError.style.setProperty('display', 'none');
 
         try {
           await admin_svc.disableUser(userId, DisableRequest(reason: reason));
           closeDialog();
           loadUsers();
-        } on DioException {
+        } catch (_) {
           dialogError
             ..textContent = 'Failed to disable user. Please try again.'
             ..style.setProperty('display', 'block');
-          confirmDisableBtn.disabled = false;
+          confirmDisableBtn.removeAttribute('disabled');
         }
       }();
     }).toJS,

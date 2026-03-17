@@ -16,23 +16,17 @@ Future<Expense> getExpense(String id) async {
 }
 
 Future<Expense> createExpense(CreateExpenseRequest data) async {
-  final response = await apiClient.post<Map<String, dynamic>>(
-    '/api/v1/expenses',
-    data: data.toJson(),
-  );
-  return Expense.fromJson(response.data!);
+  final json = await keepalivePost('/api/v1/expenses', data.toJson());
+  return Expense.fromJson(json);
 }
 
 Future<Expense> updateExpense(String id, UpdateExpenseRequest data) async {
-  final response = await apiClient.put<Map<String, dynamic>>(
-    '/api/v1/expenses/$id',
-    data: data.toJson(),
-  );
-  return Expense.fromJson(response.data!);
+  final json = await keepalivePut('/api/v1/expenses/$id', data.toJson());
+  return Expense.fromJson(json);
 }
 
 Future<void> deleteExpense(String id) async {
-  await apiClient.delete<void>('/api/v1/expenses/$id');
+  await keepaliveDelete('/api/v1/expenses/$id');
 }
 
 Future<Map<String, String>> getExpenseSummary({String? currency}) async {

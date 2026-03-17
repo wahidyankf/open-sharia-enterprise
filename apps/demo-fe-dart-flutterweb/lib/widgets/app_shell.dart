@@ -10,10 +10,36 @@ import '../main.dart' as router;
 typedef RenderFn = void Function(Element content);
 
 void renderWithShell(Element parent, RenderFn renderContent) {
+  // Inject responsive CSS (only once)
+  if (document.getElementById('responsive-shell-css') == null) {
+    final style = document.createElement('style') as HTMLStyleElement;
+    style.id = 'responsive-shell-css';
+    style.textContent = '''
+      @media (max-width: 1024px) and (min-width: 481px) {
+        #shell-sidebar .nav-label { display: none; }
+        #shell-sidebar { width: 3.5rem !important; }
+        #shell-sidebar a { justify-content: center; padding: 0.75rem 0.5rem !important; }
+        #shell-sidebar a span[aria-hidden] { font-size: 1.4rem; }
+      }
+      @media (max-width: 480px) {
+        #shell-sidebar { display: none !important; }
+        #shell-sidebar.drawer-open {
+          display: flex !important;
+          position: fixed;
+          top: 3.5rem; left: 0; bottom: 0;
+          width: 14rem !important;
+          z-index: 500;
+          box-shadow: 4px 0 12px rgba(0,0,0,0.3);
+        }
+      }
+    ''';
+    document.head?.appendChild(style);
+  }
+
   final wrapper = document.createElement('div') as HTMLDivElement;
   wrapper.style.setProperty('display', 'flex');
   wrapper.style.setProperty('flex-direction', 'column');
-  wrapper.style.setProperty('min-height', '100vh');
+  wrapper.style.setProperty('height', '100vh');
 
   // Header
   final header = _buildHeader();
@@ -27,6 +53,27 @@ void renderWithShell(Element parent, RenderFn renderContent) {
 
   final sidebar = _buildSidebar();
   body.appendChild(sidebar);
+
+  // Wire up hamburger menu toggle
+  final menuBtn =
+      header.querySelector('[aria-label="Toggle navigation menu"]');
+  if (menuBtn != null) {
+    menuBtn.addEventListener(
+      'click',
+      ((Event _) {
+        final isOpen = sidebar.classList.contains('drawer-open');
+        if (isOpen) {
+          sidebar.classList.remove('drawer-open');
+          sidebar.removeAttribute('role');
+          sidebar.removeAttribute('data-testid');
+        } else {
+          sidebar.classList.add('drawer-open');
+          sidebar.setAttribute('role', 'dialog');
+          sidebar.setAttribute('data-testid', 'nav-drawer');
+        }
+      }).toJS,
+    );
+  }
 
   final main = document.createElement('main') as HTMLElement;
   main.id = 'main-content';
@@ -192,6 +239,7 @@ Element _buildHeader() {
 
 Element _buildSidebar() {
   final nav = document.createElement('nav') as HTMLElement;
+  nav.id = 'shell-sidebar';
   nav.setAttribute('aria-label', 'Main navigation');
   nav.style.setProperty('width', '14rem');
   nav.style.setProperty('background-color', '#16213e');
@@ -224,6 +272,7 @@ Element _buildSidebar() {
 
     final a = document.createElement('a') as HTMLAnchorElement;
     a.href = item['href']!;
+    a.title = item['label']!;
     a.style.setProperty('display', 'flex');
     a.style.setProperty('align-items', 'center');
     a.style.setProperty('gap', '0.75rem');
@@ -250,6 +299,7 @@ Element _buildSidebar() {
     a.appendChild(icon);
 
     final label = document.createElement('span') as HTMLSpanElement;
+    label.className = 'nav-label';
     label.style.setProperty('font-size', '0.9rem');
     label.textContent = item['label']!;
     a.appendChild(label);
@@ -259,6 +309,10 @@ Element _buildSidebar() {
       'click',
       ((Event e) {
         e.preventDefault();
+        // Close mobile drawer if open
+        nav.classList.remove('drawer-open');
+        nav.removeAttribute('role');
+        nav.removeAttribute('data-testid');
         router.navigateTo(href);
       }).toJS,
     );
