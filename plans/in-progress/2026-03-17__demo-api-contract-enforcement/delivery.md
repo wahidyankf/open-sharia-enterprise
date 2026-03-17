@@ -150,7 +150,7 @@ Clojure. Enforcement via `test:unit` (part of `test:quick`).
       `libs/clojure-openapi-codegen` to generate Malli schemas into `generated_contracts/`, add
       middleware validating responses against generated schemas, verify `lein test` passes
 - [x] Wire `codegen` as dependency of `test:unit` in each app's `project.json`
-- [ ] Verify `nx run-many -t test:quick --projects=elixir-openapi-codegen,clojure-openapi-codegen,demo-be-python-fastapi,demo-be-elixir-phoenix,demo-be-clojure-pedestal` passes
+- [x] Verify `nx run-many -t test:quick --projects=elixir-openapi-codegen,clojure-openapi-codegen,demo-be-python-fastapi,demo-be-elixir-phoenix,demo-be-clojure-pedestal` passes
 
 **Validation**:
 
@@ -172,9 +172,9 @@ Clojure. Enforcement via `test:unit` (part of `test:quick`).
 
 - [x] Add `ajv` + `ajv-formats` to `demo-be-e2e` dev dependencies
 - [x] Create `demo-be-e2e/tests/utils/contract-validator.ts`
-- [ ] Integrate validator into existing backend E2E step definitions
-- [ ] Add same validator to `demo-fe-e2e` test utilities
-- [ ] Run full E2E suites — fix any discovered drift
+- [x] Integrate validator into existing backend E2E step definitions
+- [x] Add same validator to `demo-fe-e2e` test utilities
+- [x] Run full E2E suites — fix any discovered drift
 
 **Validation**:
 
@@ -203,9 +203,9 @@ Clojure. Enforcement via `test:unit` (part of `test:quick`).
   - Add note about contract enforcement in Three-Level Testing section
 - [x] Update `governance/development/infra/nx-targets.md` — add `codegen` and `docs` as standard
       targets for demo apps
-- [ ] Verify fresh clone workflow: `git clone` → `npm install` → `nx affected -t typecheck` passes
-- [ ] Verify contract change workflow: modify schema → `nx affected -t typecheck` catches all apps
-- [ ] Verify docs workflow: `nx run demo-contracts:docs` → open `generated/docs/index.html` in
+- [x] Verify fresh clone workflow: `git clone` → `npm install` → `nx affected -t typecheck` passes
+- [x] Verify contract change workflow: modify schema → `nx affected -t typecheck` catches all apps
+- [x] Verify docs workflow: `nx run demo-contracts:docs` → open `generated/docs/index.html` in
       browser → verify all endpoints visible, test-only excluded
 
 **Validation**:
