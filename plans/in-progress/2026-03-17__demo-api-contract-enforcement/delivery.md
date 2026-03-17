@@ -143,10 +143,10 @@ Clojure. Enforcement via `test:unit` (part of `test:quick`).
 - [x] **demo-be-python-fastapi**: Add `datamodel-code-generator` dev dependency, add `codegen`
       target generating Pydantic v2 models into `generated_contracts/`, update FastAPI route handlers
       to use generated models as `response_model`, verify `pytest` passes
-- [ ] **demo-be-elixir-phoenix**: Add `codegen` target that invokes
+- [x] **demo-be-elixir-phoenix**: Add `codegen` target that invokes
       `libs/elixir-openapi-codegen` to generate structs into `generated-contracts/`, update
       controllers to return generated structs, verify `mix test` passes
-- [ ] **demo-be-clojure-pedestal**: Add `codegen` target that invokes
+- [x] **demo-be-clojure-pedestal**: Add `codegen` target that invokes
       `libs/clojure-openapi-codegen` to generate Malli schemas into `generated_contracts/`, add
       middleware validating responses against generated schemas, verify `lein test` passes
 - [x] Wire `codegen` as dependency of `test:unit` in each app's `project.json`
@@ -195,7 +195,7 @@ Clojure. Enforcement via `test:unit` (part of `test:quick`).
       `specs/apps/demo/contracts/README.md`
 - [x] Update `specs/apps/demo/contracts/README.md` — document codegen workflow, how to modify
       contract, how generated code flows to each app, how to generate/view docs
-- [ ] Update `libs/README.md` — add `elixir-openapi-codegen` and `clojure-openapi-codegen` entries
+- [x] Update `libs/README.md` — add `elixir-openapi-codegen` and `clojure-openapi-codegen` entries
 - [x] Update `CLAUDE.md`:
   - Add `demo-contracts` to Current Apps list
   - Document `codegen` and `docs` Nx targets and dependency chain
