@@ -39,6 +39,10 @@ void _initAuth() {
     _refreshTimer?.cancel();
     _refreshTimer = null;
   }).toJS);
+
+  window.addEventListener('auth:401', ((Event _) {
+    navigateTo('/login');
+  }).toJS);
 }
 
 void _startRefreshTimer() {
@@ -80,6 +84,15 @@ void _handleRoute() {
   }
   appDiv.textContent = '';
 
+  // Clean up stale dialogs appended to body by previous pages
+  final staleDialogs = document.body?.querySelectorAll('[role="alertdialog"], [role="dialog"]');
+  if (staleDialogs != null) {
+    for (int i = staleDialogs.length - 1; i >= 0; i--) {
+      final node = staleDialogs.item(i);
+      if (node != null) node.parentNode?.removeChild(node);
+    }
+  }
+
   // Public routes
   if (path == '/') {
     home.render(appDiv);
@@ -96,6 +109,7 @@ void _handleRoute() {
 
   // Protected routes — check auth
   if (getAccessToken() == null) {
+    window.sessionStorage.setItem('session_expired', 'true');
     navigateTo('/login');
     return;
   }

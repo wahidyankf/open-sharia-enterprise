@@ -1,4 +1,7 @@
-import 'package:dio/dio.dart';
+import 'dart:convert';
+import 'dart:js_interop';
+
+import 'package:dio/dio.dart' hide Headers;
 import 'package:web/web.dart';
 
 const _tokenKey = 'demo_fe_access_token';
@@ -45,12 +48,17 @@ Dio createApiClient() {
       return handler.next(options);
     },
     onError: (DioException error, ErrorInterceptorHandler handler) {
-      if (error.response?.statusCode == 401) {
+      final path = error.requestOptions.path;
+      final isAuthRoute = path.contains('/auth/login') ||
+          path.contains('/auth/register') ||
+          path.contains('/auth/refresh');
+      if (error.response?.statusCode == 401 && !isAuthRoute) {
         window.sessionStorage.setItem(
           'auth_error',
-          'Your account has been disabled or deactivated. Please log in again.',
+          'Your session has expired or your account has been disabled. Please log in again.',
         );
         clearTokens();
+        window.dispatchEvent(CustomEvent('auth:401'));
       }
       return handler.next(error);
     },
@@ -60,3 +68,93 @@ Dio createApiClient() {
 }
 
 final apiClient = createApiClient();
+
+/// POST with keepalive: true — survives page navigation (for mutations).
+Future<Map<String, dynamic>> keepalivePost(
+  String url,
+  Map<String, dynamic> body,
+) async {
+  final token = getAccessToken();
+  final headers = <String, String>{
+    'Content-Type': 'application/json',
+  };
+  if (token != null) {
+    headers['Authorization'] = 'Bearer $token';
+  }
+
+  final jsHeaders = Headers();
+  headers.forEach((k, v) => jsHeaders.append(k, v));
+
+  final response = await window
+      .fetch(
+        url.toJS,
+        RequestInit(
+          method: 'POST',
+          headers: jsHeaders,
+          body: jsonEncode(body).toJS,
+          keepalive: true,
+        ),
+      )
+      .toDart;
+
+  if (!response.ok) {
+    throw ApiError(response.status, null);
+  }
+  final text = (await response.text().toDart).toDart;
+  return jsonDecode(text) as Map<String, dynamic>;
+}
+
+/// PUT with keepalive: true — survives page navigation (for mutations).
+Future<Map<String, dynamic>> keepalivePut(
+  String url,
+  Map<String, dynamic> body,
+) async {
+  final token = getAccessToken();
+  final headers = <String, String>{
+    'Content-Type': 'application/json',
+  };
+  if (token != null) {
+    headers['Authorization'] = 'Bearer $token';
+  }
+
+  final jsHeaders = Headers();
+  headers.forEach((k, v) => jsHeaders.append(k, v));
+
+  final response = await window
+      .fetch(
+        url.toJS,
+        RequestInit(
+          method: 'PUT',
+          headers: jsHeaders,
+          body: jsonEncode(body).toJS,
+          keepalive: true,
+        ),
+      )
+      .toDart;
+
+  if (!response.ok) {
+    throw ApiError(response.status, null);
+  }
+  final text = (await response.text().toDart).toDart;
+  return jsonDecode(text) as Map<String, dynamic>;
+}
+
+/// DELETE with keepalive: true — survives page navigation (for mutations).
+Future<void> keepaliveDelete(String url) async {
+  final token = getAccessToken();
+  final jsHeaders = Headers();
+  if (token != null) {
+    jsHeaders.append('Authorization', 'Bearer $token');
+  }
+
+  await window
+      .fetch(
+        url.toJS,
+        RequestInit(
+          method: 'DELETE',
+          headers: jsHeaders,
+          keepalive: true,
+        ),
+      )
+      .toDart;
+}

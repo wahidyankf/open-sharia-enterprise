@@ -1,6 +1,6 @@
 import 'dart:js_interop';
 
-import 'package:dio/dio.dart';
+
 import 'package:web/web.dart';
 
 import '../services/expense_service.dart' as expense_svc;
@@ -237,8 +237,8 @@ void render(Element parent) {
           generateBtn
             ..textContent = 'Generate Report'
             ..disabled = false;
-          _renderReport(reportContainer, report);
-        } on DioException {
+          _renderReport(reportContainer, report, currency);
+        } catch (_) {
           loadingMsg.remove();
           generateBtn
             ..textContent = 'Generate Report'
@@ -260,7 +260,15 @@ void render(Element parent) {
   parent.appendChild(main);
 }
 
-void _renderReport(Element container, PLReport report) {
+void _renderReport(Element container, PLReport report, String currency) {
+  // Currency label
+  final currencyLabel = document.createElement('p') as HTMLParagraphElement
+    ..textContent = 'Currency: $currency'
+    ..style.setProperty('font-weight', '600')
+    ..style.setProperty('margin-bottom', '0.75rem')
+    ..style.setProperty('color', '#555');
+  container.appendChild(currencyLabel);
+
   // Summary cards
   final net = double.tryParse(report.net) ?? 0.0;
   final isPositive = net >= 0;

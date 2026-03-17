@@ -239,11 +239,11 @@ void _renderDetail(
             main.removeChild(main.firstChild!);
           }
           _renderDetail(main, updated, currentUser, id);
-        } on DioException catch (err) {
+        } catch (err) {
           saveBtn
             ..textContent = 'Save Changes'
             ..disabled = false;
-          final body = err.response?.data;
+          final body = err is DioException ? err.response?.data : null;
           String msg = 'Failed to update expense.';
           if (body is Map) {
             msg = body['message'] as String? ?? 'Failed to update expense.';
@@ -269,7 +269,7 @@ void _renderDetail(
       try {
         await expense_svc.deleteExpense(id);
         router.navigateTo('/expenses');
-      } on DioException {
+      } catch (_) {
         // ignore — navigate anyway
         router.navigateTo('/expenses');
       }
@@ -301,8 +301,26 @@ void _renderDetail(
       ..type = 'file'
       ..id = 'file-upload'
       ..accept = 'image/*,.pdf,.txt'
-      ..style.setProperty('display', 'block')
-      ..style.setProperty('margin-bottom', '0.5rem');
+      ..setAttribute('aria-hidden', 'true')
+      ..setAttribute('tabindex', '-1')
+      ..style.setProperty('position', 'absolute')
+      ..style.setProperty('width', '1px')
+      ..style.setProperty('height', '1px')
+      ..style.setProperty('overflow', 'hidden')
+      ..style.setProperty('clip', 'rect(0,0,0,0)');
+    final uploadBtn = document.createElement('button') as HTMLButtonElement
+      ..type = 'button'
+      ..textContent = 'Upload Attachment'
+      ..style.setProperty('padding', '0.5rem 1rem')
+      ..style.setProperty('background-color', '#1a73e8')
+      ..style.setProperty('color', '#fff')
+      ..style.setProperty('border', 'none')
+      ..style.setProperty('border-radius', '4px')
+      ..style.setProperty('cursor', 'pointer')
+      ..style.setProperty('margin-bottom', '0.5rem')
+      ..style.setProperty('display', 'block');
+    uploadBtn.addEventListener('click', ((Event _) => fileInput.click()).toJS);
+    uploadGroup.appendChild(uploadBtn);
     uploadGroup.appendChild(fileInput);
 
     final uploadError = document.createElement('div') as HTMLDivElement
@@ -353,9 +371,9 @@ void _renderDetail(
             fileInput.value = '';
             // Refresh attachment list
             _refreshAttachments(attachSection, id, isOwner, uploadGroup);
-          } on DioException catch (err) {
+          } catch (err) {
             fileInput.value = '';
-            final status = err.response?.statusCode;
+            final status = err is DioException ? err.response?.statusCode : null;
             if (status == 413) {
               uploadError
                 ..textContent = 'File is too large.'
@@ -479,7 +497,7 @@ void _loadAttachmentList(
           dialogId: 'delete-att-dialog-${att.id}',
           titleId: 'delete-att-dialog-title-${att.id}',
           titleText: 'Delete Attachment',
-          message: 'Delete "${att.filename}"?',
+          message: 'Are you sure you want to delete this attachment?',
           confirmLabel: 'Yes, Delete',
           onConfirm: () async {
             await attach_svc.deleteAttachment(expenseId, att.id);
@@ -799,6 +817,38 @@ HTMLDivElement _buildDeleteDialog({
     ..appendChild(confirmBtn);
   dialog.appendChild(btnRow);
   overlay.appendChild(dialog);
+
+  // Focus trap: keep Tab within dialog buttons
+  overlay.addEventListener(
+    'keydown',
+    ((KeyboardEvent e) {
+      if (e.key != 'Tab') return;
+      final focusables = [cancelBtn, confirmBtn];
+      final first = focusables.first;
+      final last = focusables.last;
+      if (e.shiftKey) {
+        if (document.activeElement == first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement == last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    }).toJS,
+  );
+
+  // Escape key closes dialog
+  overlay.addEventListener(
+    'keydown',
+    ((KeyboardEvent e) {
+      if (e.key == 'Escape') {
+        overlay.style.setProperty('display', 'none');
+      }
+    }).toJS,
+  );
 
   return overlay;
 }

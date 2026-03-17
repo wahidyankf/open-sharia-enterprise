@@ -1,4 +1,4 @@
-import '../models/user.dart';
+import '../models/user.dart' show DisableRequest, PasswordResetResponse, UserListResponse;
 import 'api_client.dart';
 
 Future<UserListResponse> listUsers({
@@ -16,26 +16,23 @@ Future<UserListResponse> listUsers({
   return UserListResponse.fromJson(response.data!);
 }
 
-Future<User> disableUser(String userId, DisableRequest data) async {
-  final response = await apiClient.post<Map<String, dynamic>>(
+Future<void> disableUser(String userId, DisableRequest data) async {
+  await apiClient.post<Map<String, dynamic>>(
     '/api/v1/admin/users/$userId/disable',
     data: data.toJson(),
   );
-  return User.fromJson(response.data!);
 }
 
-Future<User> enableUser(String userId) async {
-  final response = await apiClient.post<Map<String, dynamic>>(
+Future<void> enableUser(String userId) async {
+  await apiClient.post<Map<String, dynamic>>(
     '/api/v1/admin/users/$userId/enable',
   );
-  return User.fromJson(response.data!);
 }
 
-Future<User> unlockUser(String userId) async {
-  final response = await apiClient.post<Map<String, dynamic>>(
+Future<void> unlockUser(String userId) async {
+  await apiClient.post<Map<String, dynamic>>(
     '/api/v1/admin/users/$userId/unlock',
   );
-  return User.fromJson(response.data!);
 }
 
 Future<PasswordResetResponse> forcePasswordReset(String userId) async {

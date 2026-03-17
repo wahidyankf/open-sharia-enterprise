@@ -70,7 +70,21 @@ void _renderProfile(Element main, User user) {
 
   addInfo('Username', user.username);
   addInfo('Email', user.email);
-  addInfo('Display Name', user.displayName);
+  final displayNameDd = document.createElement('dd') as HTMLElement
+    ..id = 'profile-display-name'
+    ..textContent = user.displayName
+    ..style.setProperty('margin', '0')
+    ..style.setProperty('font-size', '1rem');
+  final displayNameDt = document.createElement('dt') as HTMLElement
+    ..textContent = 'Display Name'
+    ..style.setProperty('font-weight', '600')
+    ..style.setProperty('color', '#555')
+    ..style.setProperty('font-size', '0.85rem')
+    ..style.setProperty('margin-top', '0.75rem')
+    ..style.setProperty('margin-bottom', '0.2rem');
+  dl
+    ..appendChild(displayNameDt)
+    ..appendChild(displayNameDd);
   addInfo('Status', user.status);
 
   infoCard.appendChild(dl);
@@ -169,11 +183,12 @@ void _renderProfile(Element main, User user) {
           await user_svc.updateProfile(UpdateProfileRequest(displayName: newName));
           nameSaveBtn
             ..textContent = 'Save Changes'
-            ..disabled = false;
+            ..removeAttribute('disabled');
           nameSuccess
             ..textContent = 'Display name updated successfully.'
             ..style.setProperty('display', 'block');
-        } on DioException {
+          displayNameDd.textContent = newName;
+        } catch (_) {
           nameSaveBtn
             ..textContent = 'Save Changes'
             ..disabled = false;
@@ -314,11 +329,11 @@ void _renderProfile(Element main, User user) {
           pwSuccess
             ..textContent = 'Password changed successfully.'
             ..style.setProperty('display', 'block');
-        } on DioException catch (err) {
+        } catch (err) {
           pwBtn
             ..textContent = 'Change Password'
             ..disabled = false;
-          final status = err.response?.statusCode;
+          final status = err is DioException ? err.response?.statusCode : null;
           if (status == 400) {
             pwError
               ..textContent = 'Current password is incorrect.'
@@ -401,20 +416,13 @@ void _renderProfile(Element main, User user) {
     ..style.setProperty('cursor', 'pointer')
     ..style.setProperty('font-size', '0.95rem');
 
-  cancelDeactivateBtn.addEventListener(
-    'click',
-    ((Event _) {
-      confirmSection.style.setProperty('display', 'none');
-    }).toJS,
-  );
-
   confirmDeactivateBtn.addEventListener(
     'click',
     ((Event _) {
       () async {
         confirmDeactivateBtn
           ..textContent = 'Deactivating...'
-          ..disabled = true;
+          ..setAttribute('disabled', '');
         try {
           await user_svc.deactivateAccount();
         } catch (_) {
@@ -442,9 +450,18 @@ void _renderProfile(Element main, User user) {
     ..style.setProperty('cursor', 'pointer')
     ..style.setProperty('font-size', '0.95rem');
 
+  cancelDeactivateBtn.addEventListener(
+    'click',
+    ((Event _) {
+      confirmSection.style.setProperty('display', 'none');
+      deactivateBtn.style.setProperty('display', 'inline-block');
+    }).toJS,
+  );
+
   deactivateBtn.addEventListener(
     'click',
     ((Event _) {
+      deactivateBtn.style.setProperty('display', 'none');
       confirmSection.style.setProperty('display', 'block');
       confirmDeactivateBtn.focus();
     }).toJS,
