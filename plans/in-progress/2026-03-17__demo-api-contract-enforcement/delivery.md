@@ -2,194 +2,225 @@
 
 ## Implementation Phases
 
-### Phase 1: Contract Authoring
+### Phase 1: Contract Authoring + Infrastructure
 
-**Goal**: Write the complete OpenAPI 3.1 modular specification and validate it with Spectral.
+**Goal**: Write the OpenAPI 3.1 modular spec, set up Spectral linting, bundling, and gitignore.
 
 **Implementation Steps**:
 
 - [ ] Create `specs/apps/demo/contracts/` directory structure (paths/, schemas/, examples/)
 - [ ] Write `README.md` with purpose, usage guide, and contribution rules
 - [ ] Write root `openapi.yaml` with server config, security schemes, and `$ref` path mappings
-- [ ] Write `schemas/auth.yaml` — LoginRequest, LoginResponse, RegisterRequest, RegisterResponse,
-      RefreshRequest, RefreshResponse
-- [ ] Write `schemas/user.yaml` — User, UpdateProfileRequest, ChangePasswordRequest
-- [ ] Write `schemas/expense.yaml` — Expense, CreateExpenseRequest, UpdateExpenseRequest
-- [ ] Write `schemas/expense-list.yaml` — ExpenseListResponse (uses pagination.yaml)
-- [ ] Write `schemas/report.yaml` — PLReport, CategoryBreakdown, ExpenseSummary
-- [ ] Write `schemas/attachment.yaml` — Attachment
-- [ ] Write `schemas/token.yaml` — TokenClaims, JwksResponse, JwkKey
-- [ ] Write `schemas/admin.yaml` — DisableRequest, PasswordResetResponse
-- [ ] Write `schemas/pagination.yaml` — reusable pagination envelope
-- [ ] Write `schemas/error.yaml` — standardized error response
-- [ ] Write `schemas/health.yaml` — HealthResponse
-- [ ] Write `paths/health.yaml` — GET /health
-- [ ] Write `paths/auth.yaml` — POST login, register, refresh, logout, logout-all
-- [ ] Write `paths/users.yaml` — GET/PATCH /me, POST password, POST deactivate
-- [ ] Write `paths/expenses.yaml` — CRUD + summary
-- [ ] Write `paths/attachments.yaml` — POST/GET/DELETE attachments
-- [ ] Write `paths/reports.yaml` — GET /api/v1/reports/pl
-- [ ] Write `paths/admin.yaml` — GET users, POST disable/enable/unlock/force-password-reset
-- [ ] Write `paths/tokens.yaml` — GET claims, GET /.well-known/jwks.json
-- [ ] Write `paths/test-support.yaml` — POST reset-db, POST promote-admin
+- [ ] Write all schema files:
+  - [ ] `schemas/auth.yaml` — LoginRequest, RegisterRequest, RefreshRequest, AuthTokens
+  - [ ] `schemas/user.yaml` — User, UpdateProfileRequest, ChangePasswordRequest
+  - [ ] `schemas/expense.yaml` — Expense, CreateExpenseRequest, UpdateExpenseRequest
+  - [ ] `schemas/expense-list.yaml` — ExpenseListResponse (uses pagination.yaml)
+  - [ ] `schemas/report.yaml` — PLReport, CategoryBreakdown, ExpenseSummary
+  - [ ] `schemas/attachment.yaml` — Attachment
+  - [ ] `schemas/token.yaml` — TokenClaims, JwksResponse, JwkKey
+  - [ ] `schemas/admin.yaml` — DisableRequest, PasswordResetResponse, UserListResponse
+  - [ ] `schemas/pagination.yaml` — reusable pagination envelope
+  - [ ] `schemas/error.yaml` — standardized error response
+  - [ ] `schemas/health.yaml` — HealthResponse
+- [ ] Write all path files:
+  - [ ] `paths/health.yaml` — GET /health
+  - [ ] `paths/auth.yaml` — POST login, register, refresh, logout, logout-all
+  - [ ] `paths/users.yaml` — GET/PATCH /me, POST password, POST deactivate
+  - [ ] `paths/expenses.yaml` — CRUD + summary
+  - [ ] `paths/attachments.yaml` — POST/GET/DELETE attachments
+  - [ ] `paths/reports.yaml` — GET /api/v1/reports/pl
+  - [ ] `paths/admin.yaml` — GET users, POST disable/enable/unlock/force-password-reset
+  - [ ] `paths/tokens.yaml` — GET claims, GET /.well-known/jwks.json
+  - [ ] `paths/test-support.yaml` — POST reset-db, POST promote-admin
 - [ ] Write `.spectral.yaml` with camelCase, description, and example rules
-- [ ] Add `demo-contracts` as Nx project with `lint` and `bundle` targets
+- [ ] Add `demo-contracts` as Nx project (`project.json`) with `lint` and `bundle` targets
+- [ ] Add `**/generated-contracts/` and `specs/apps/demo/contracts/generated/` to root `.gitignore`
 - [ ] Verify Spectral lint passes with zero errors
-- [ ] Verify Redocly CLI bundle resolves all `$ref`s correctly
-- [ ] Write example files for major endpoints (auth-login, expense-create, user-register)
+- [ ] Verify Redocly CLI bundle resolves all `$ref`s correctly into `generated/openapi-bundled.yaml`
+- [ ] Write example files for major endpoints
 
 **Validation**:
 
 - `npx @stoplight/spectral-cli lint openapi.yaml` exits 0
 - `npx @redocly/cli bundle openapi.yaml` produces valid bundled output
-- All endpoints from Gherkin specs are covered in the contract
+- All endpoints from Gherkin specs are covered
+- `.gitignore` patterns correctly exclude generated folders
 
 ---
 
-### Phase 2: Frontend Enforcement
+### Phase 2: Code Generation for Statically Typed Apps
 
-**Goal**: Replace hand-written frontend types with types generated from the contract.
+**Goal**: Set up `codegen` Nx targets producing types + encoders/decoders in `generated-contracts/`
+for all statically typed apps. Wire `codegen` as dependency of `typecheck`/`build`/`test:unit`.
 
 **Implementation Steps**:
 
-- [ ] Add `openapi-typescript` as dev dependency to workspace
-- [ ] Create codegen script: `openapi-typescript specs/apps/demo/contracts/generated/openapi-bundled.yaml -o <app>/src/lib/api/generated-types.d.ts`
-- [ ] Update `demo-fe-ts-nextjs` to import generated types instead of hand-written `types.ts`
-- [ ] Update `demo-fe-ts-tanstack-start` to import generated types similarly
-- [ ] Set up `openapi_generator_cli` for `demo-fe-dart-flutterweb` (generates Dart models)
-- [ ] Add `codegen` Nx target to each frontend that regenerates types from the contract
-- [ ] Verify `typecheck` passes for `demo-fe-ts-nextjs`
-- [ ] Verify `typecheck` passes for `demo-fe-ts-tanstack-start`
-- [ ] Verify `build` passes for `demo-fe-dart-flutterweb`
+- [ ] **demo-be-golang-gin**: Install `oapi-codegen`, create config (`oapi-codegen.yaml` with
+      strict-server + gin output), add `codegen` target, update handlers to implement generated
+      strict server interface, verify `go build` passes
+- [ ] **demo-be-java-springboot**: Add `openapi-generator-maven-plugin` to `pom.xml`, configure
+      Spring generator, add `codegen` target, update controllers to use generated DTOs with Jackson
+      annotations, verify `mvn compile` passes
+- [ ] **demo-be-java-vertx**: Add `openapi-generator-maven-plugin`, configure Java generator, add
+      `codegen` target, update handlers to use generated DTOs, verify `mvn compile` passes
+- [ ] **demo-be-kotlin-ktor**: Add `openapi-generator-gradle-plugin` to `build.gradle.kts`,
+      configure Kotlin generator with kotlinx.serialization, add `codegen` target, update routes to
+      use generated data classes, verify `./gradlew build` passes
+- [ ] **demo-be-rust-axum**: Add `openapi-generator` Rust generator via build script, add `codegen`
+      target, update handlers to use generated serde structs, verify `cargo build` passes
+- [ ] **demo-be-fsharp-giraffe**: Add `NSwag.MSBuild` NuGet package, configure F# type generation,
+      add `codegen` target, update handlers to use generated record types, verify `dotnet build` passes
+- [ ] **demo-be-csharp-aspnetcore**: Add `NSwag.MSBuild` NuGet package, configure C# class
+      generation, add `codegen` target, update controllers to use generated classes, verify
+      `dotnet build` passes
+- [ ] **demo-be-ts-effect**: Add `openapi-typescript` dev dependency, add `codegen` target, update
+      handlers to use generated types with Effect Schema encode/decode, verify `tsc` passes
+- [ ] **demo-fe-ts-nextjs**: Add `openapi-typescript` + `openapi-fetch` dev dependencies, add
+      `codegen` target, replace hand-written `types.ts` with imports from generated types, update API
+      client to use `openapi-fetch` `createClient`, verify `tsc` passes
+- [ ] **demo-fe-ts-tanstack-start**: Same as demo-fe-ts-nextjs — `openapi-typescript` +
+      `openapi-fetch`, add `codegen` target, replace types, verify `tsc` passes
+- [ ] **demo-fe-dart-flutterweb**: Add `openapi-generator` Dart generator, add `codegen` target,
+      replace hand-written models with generated classes using `json_serializable`, verify
+      `dart analyze` passes
+- [ ] Wire `codegen` as dependency of `typecheck`/`build`/`test:unit` in each app's `project.json`
+- [ ] Verify `nx run-many -t typecheck --projects=demo-fe-*` passes
+- [ ] Verify `nx run-many -t build --projects=demo-be-golang-gin,demo-be-rust-axum` passes
 
 **Validation**:
 
-- `nx run demo-fe-ts-nextjs:typecheck` passes
-- `nx run demo-fe-ts-tanstack-start:typecheck` passes
-- `nx run demo-fe-dart-flutterweb:build` passes
-- Intentionally breaking a type in the contract causes compilation failure
+- Each statically typed app's `generated-contracts/` is populated by `codegen`
+- `nx affected -t typecheck` catches TS/Dart mismatches
+- `nx affected -t build` catches Go/Java/Kotlin/Rust/F#/C# mismatches
+- Intentionally breaking a field name in the contract and re-running codegen causes compile failure
 
 ---
 
-### Phase 3: E2E Enforcement
+### Phase 3: Code Generation for Dynamically Typed Apps
 
-**Goal**: Add runtime response validation against the contract in E2E test suites.
+**Goal**: Set up `codegen` Nx targets for Python, Elixir, and Clojure producing typed
+schemas/models. Enforcement via `test:unit` (part of `test:quick`).
+
+**Implementation Steps**:
+
+- [ ] **demo-be-python-fastapi**: Add `datamodel-code-generator` dev dependency, add `codegen`
+      target generating Pydantic v2 models into `generated_contracts/`, update FastAPI route handlers
+      to use generated models as `response_model`, verify `pytest` passes
+- [ ] **demo-be-elixir-phoenix**: Create custom codegen script that reads bundled OpenAPI and
+      generates Elixir structs with `@enforce_keys` + `@type` typespecs, add `codegen` target, update
+      controllers to return generated structs, verify `mix test` passes
+- [ ] **demo-be-clojure-pedestal**: Create custom codegen script generating Malli schemas from
+      bundled OpenAPI, add `codegen` target, add middleware validating responses against Malli schemas,
+      verify `lein test` passes
+- [ ] Wire `codegen` as dependency of `test:unit` in each app's `project.json`
+- [ ] Verify `nx run-many -t test:quick --projects=demo-be-python-fastapi,demo-be-elixir-phoenix,demo-be-clojure-pedestal` passes
+
+**Validation**:
+
+- Each dynamically typed app's `generated-contracts/` (or `generated_contracts/`) is populated
+- `test:unit` validates responses against generated schemas/models
+- `nx affected -t test:quick` catches violations before push
+- Intentionally removing a required field causes `test:unit` failure
+
+---
+
+### Phase 4: E2E Runtime Validation (Safety Net)
+
+**Goal**: Add `ajv`-based response validation to E2E tests as an additional safety layer.
 
 **Implementation Steps**:
 
 - [ ] Add `ajv` + `@apidevtools/json-schema-ref-parser` to `demo-be-e2e` dev dependencies
-- [ ] Create shared response validator utility in `demo-be-e2e/tests/utils/contract-validator.ts`
-- [ ] Integrate validator into existing backend E2E step definitions (validate every API response)
+- [ ] Create `demo-be-e2e/tests/utils/contract-validator.ts`
+- [ ] Integrate validator into existing backend E2E step definitions
 - [ ] Add same validator to `demo-fe-e2e` test utilities
-- [ ] Run full `demo-be-e2e` E2E suite — fix any discovered drift
-- [ ] Run full `demo-fe-e2e` E2E suite — fix any discovered drift
+- [ ] Run full E2E suites — fix any discovered drift
 
 **Validation**:
 
 - `nx run demo-be-e2e:test:e2e` passes with contract validation enabled
 - `nx run demo-fe-e2e:test:e2e` passes with contract validation enabled
-- Intentionally returning wrong field name in a backend causes E2E test failure
 
 ---
 
-### Phase 4: Backend Enforcement (per backend)
+### Phase 5: Documentation + Postinstall
 
-**Goal**: Add contract validation test helpers to all 11 backend implementations.
-
-**Implementation Steps**:
-
-- [ ] **demo-be-golang-gin**: Add `getkin/kin-openapi` dependency, create `contract_test.go` helper
-      that validates response bodies against the spec in unit tests
-- [ ] **demo-be-java-springboot**: Add `com.atlassian.oai:swagger-request-validator-spring-webmvc`,
-      create MockMvc assertion wrapper
-- [ ] **demo-be-java-vertx**: Add `com.atlassian.oai:swagger-request-validator-core`, create custom
-      test validator
-- [ ] **demo-be-kotlin-ktor**: Add `com.atlassian.oai:swagger-request-validator-core`, create test
-      helper
-- [ ] **demo-be-python-fastapi**: Add `openapi-core` to test dependencies, create pytest fixture
-      wrapping TestClient with validation
-- [ ] **demo-be-rust-axum**: Add `jsonschema` crate to dev-dependencies, create test helper that
-      validates serialized responses
-- [ ] **demo-be-elixir-phoenix**: Add `ex_json_schema` dependency, create ConnCase helper for
-      response validation
-- [ ] **demo-be-fsharp-giraffe**: Add `NJsonSchema` NuGet package, create test helper
-- [ ] **demo-be-csharp-aspnetcore**: Add `NJsonSchema` NuGet package, create WebApplicationFactory
-      validator
-- [ ] **demo-be-clojure-pedestal**: Add `metosin/scjsv` dependency, create test middleware for
-      response validation
-- [ ] **demo-be-ts-effect**: Add `ajv` dev dependency, create test helper for response validation
-- [ ] Run `nx run-many -t test:unit --projects=demo-be-*` — verify all pass
-
-**Validation**:
-
-- Each backend's `test:unit` validates response shapes against the contract
-- `nx run-many -t test:unit --projects=demo-be-*` passes with zero contract violations
-- Intentionally removing a required field in a backend causes `test:unit` failure
-
----
-
-### Phase 5: CI Integration
-
-**Goal**: Wire contract validation into the Nx dependency graph and CI pipeline.
+**Goal**: Update documentation, add postinstall hook, verify end-to-end workflow.
 
 **Implementation Steps**:
 
-- [ ] Add `contracts:lint` to pre-push affected targets
-- [ ] Add implicit dependency from all `demo-*` projects to `demo-contracts` in `nx.json`
-- [ ] Verify `nx affected -t test:unit` includes backends when contract files change
-- [ ] Verify `nx affected -t typecheck` includes frontends when contract files change
-- [ ] Update `specs/apps/demo/README.md` to reference contracts directory
-- [ ] Update `CLAUDE.md` to document contract enforcement workflow
+- [ ] Add postinstall script to `package.json`: `npx nx run-many -t codegen --projects=demo-*`
+- [ ] Update root `.gitignore` with `**/generated-contracts/` pattern
+- [ ] Update `specs/apps/demo/README.md` — add contracts section with link to
+      `specs/apps/demo/contracts/README.md`
+- [ ] Update `specs/apps/demo/contracts/README.md` — document codegen workflow, how to modify
+      contract, how generated code flows to each app
+- [ ] Update `CLAUDE.md`:
+  - Add `demo-contracts` to Current Apps list
+  - Document `codegen` Nx target and dependency chain
+  - Document `generated-contracts/` gitignore pattern
+  - Add note about contract enforcement in Three-Level Testing section
+- [ ] Update `governance/development/infra/nx-targets.md` — add `codegen` as a standard target
+      for demo apps
+- [ ] Verify fresh clone workflow: `git clone` → `npm install` → `nx affected -t typecheck` passes
+- [ ] Verify contract change workflow: modify schema → `nx affected -t typecheck` catches all apps
 
 **Validation**:
 
-- Modifying `specs/apps/demo/contracts/schemas/expense.yaml` and running `nx affected` shows all
-  demo-be-\* and demo-fe-\* projects as affected
-- Pre-push hook runs contract lint for affected changes
-- Full CI pipeline passes with all contract enforcement active
+- Fresh clone: `npm install` triggers codegen, `typecheck`/`build` succeeds
+- Contract change: `nx affected` shows all demo apps, codegen re-runs, compile catches mismatches
+- Pre-push: `git push` triggers `typecheck` + `lint` + `test:quick`, all pass
+- PR: quality gate runs same checks, all pass
 
 ---
 
 ## Open Questions
 
-1. **Should generated frontend types replace or coexist with hand-written types?**
-   Replacing is cleaner but means frontend devs must regenerate on every contract change.
-   Coexisting means a CI check that generated matches hand-written.
-   **Recommendation**: Replace — add a `codegen` Nx target that runs before `typecheck`.
+1. **Should `codegen` be cacheable?**
+   Yes — if the bundled spec hasn't changed, the generated code is identical. Nx caching skips
+   redundant regeneration. Cache key includes `openapi-bundled.yaml` hash.
 
-2. **Should backend contract validation run in `test:unit` or `test:integration`?**
-   `test:unit` is faster and cacheable, but uses mocked responses. `test:integration` tests real
-   responses but is slower.
-   **Recommendation**: Both — unit tests validate response _construction_, integration tests
-   validate end-to-end _correctness_.
+2. **What if a code generator doesn't support all OpenAPI features?**
+   Fall back to simpler generation (e.g., just types without full server interface) and add
+   runtime validation for unsupported features. Document per-language limitations.
 
-3. **How to handle test-only endpoints (`/api/v1/test/*`)?**
-   They're part of the API surface but shouldn't appear in production docs.
-   **Recommendation**: Use `x-test-only: true` OpenAPI extension. Spectral rule warns if test
-   endpoints lack this extension. Documentation generators filter them out.
+3. **How to handle the `token_type` (snake_case) exception?**
+   Add Spectral rule exception for OAuth2 fields. Code generators handle this natively since
+   they follow the spec literally.
 
-4. **Should the bundled OpenAPI be committed or generated in CI?**
-   Committing makes it easy to review the resolved spec. Generating avoids staleness.
-   **Recommendation**: Generate in CI via `bundle` target. Commit the bundled file for convenience
-   but validate it's up-to-date in CI.
+4. **Should the postinstall codegen run on CI?**
+   Yes — `npm ci` in CI triggers postinstall, which runs codegen. This ensures CI has all
+   generated code before running typecheck/build/test.
+
+5. **What about custom codegen scripts for Elixir/Clojure?**
+   Write them as small scripts in `tools/codegen/` (e.g., `tools/codegen/elixir-codegen.exs`,
+   `tools/codegen/clojure-codegen.clj`). These read the bundled YAML and emit language-specific
+   code. Keep them simple — just type/schema generation, not full framework code.
 
 ---
 
 ## Risks and Mitigations
 
-| Risk                                                  | Impact | Mitigation                                                                   |
-| ----------------------------------------------------- | ------ | ---------------------------------------------------------------------------- |
-| OpenAPI spec doesn't match actual implementation      | High   | Phase 3 (E2E) catches any drift against real backends                        |
-| Some languages have weak OpenAPI validation libraries | Medium | Fall back to JSON Schema extraction + language-native JSON Schema validators |
-| Large number of projects to update (15+)              | Medium | Phased rollout: contract first, then frontends, E2E, backends                |
-| Spectral rules too strict or too lenient              | Low    | Start with minimal rules, expand based on actual drift patterns              |
-| Generated types cause breaking changes in frontends   | Medium | Generated types committed to repo; diff visible in PR review                 |
+| Risk                                                          | Impact | Mitigation                                                             |
+| ------------------------------------------------------------- | ------ | ---------------------------------------------------------------------- |
+| Code generator produces incompatible output                   | High   | Test each generator against existing app code before migrating         |
+| Custom codegen scripts for Elixir/Clojure are fragile         | Medium | Keep scripts minimal; generate only structs/schemas, not handlers      |
+| Postinstall codegen slows npm install                         | Low    | Nx caching ensures codegen only runs when spec changes                 |
+| oapi-codegen strict mode conflicts with existing Gin handlers | Medium | Incremental migration: generate types first, then strict interface     |
+| Generated code has merge conflicts across branches            | N/A    | Generated code is gitignored — no merge conflicts possible             |
+| Fresh clone fails if codegen tool not installed               | Medium | All generators are npm/Go/Maven dependencies, installed by npm install |
 
 ---
 
 ## Dependencies
 
-- **npm packages**: `@stoplight/spectral-cli`, `@redocly/cli`, `openapi-typescript`, `ajv`
-- **Per-language libraries**: See [tech-docs.md](./tech-docs.md) Per-Language Enforcement Strategy
-- **Existing infrastructure**: Nx workspace, existing Gherkin specs, existing frontend types
-- **No external services**: All validation is local/CI — no hosted API required
+- **npm packages**: `@stoplight/spectral-cli`, `@redocly/cli`, `openapi-typescript`,
+  `openapi-fetch`, `ajv`
+- **Go**: `oapi-codegen` (go install)
+- **Java/Kotlin**: `openapi-generator-maven-plugin` / `openapi-generator-gradle-plugin`
+- **Python**: `datamodel-code-generator` (pip)
+- **Rust**: `openapi-generator` CLI or `progenitor` crate
+- **.NET**: `NSwag.MSBuild` NuGet package
+- **Dart**: `openapi-generator` CLI (via Java)
+- **Elixir/Clojure**: Custom scripts (no external dependencies beyond YAML parsing)

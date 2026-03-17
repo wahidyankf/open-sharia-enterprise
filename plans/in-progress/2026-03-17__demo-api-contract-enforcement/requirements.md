@@ -4,18 +4,18 @@
 
 **Primary Objectives**:
 
-1. Create a machine-readable API contract covering all demo application endpoints
-2. Enforce contract compliance across all 11 backend implementations at test time
-3. Enforce contract compliance across all 3 frontend implementations at build/typecheck time
-4. Enforce contract compliance in E2E test suites at runtime
-5. Integrate contract validation into Nx dependency graph and CI pipeline
+1. Create a machine-readable OpenAPI 3.1 contract covering all demo application endpoints
+2. Auto-generate type-safe code (types + encoders/decoders) into each app's `generated-contracts/`
+   folder from the contract
+3. Apps import generated types; mismatches fail at compile time (`typecheck`/`build`)
+4. Generated folders are gitignored — code is regenerated via `nx run <app>:codegen`
+5. Violations caught by existing PR quality gate (`nx affected -t typecheck`, `lint`, `test:quick`)
 
 **Secondary Objectives**:
 
-1. Generate API documentation (Swagger UI / Redoc) from the contract for free
-2. Enable future code generation for client SDKs or server stubs
-3. Establish API style conventions (camelCase fields, consistent error format) via linting
-4. Provide example request/response pairs as documentation and test fixtures
+1. Generate API documentation (Swagger UI / Redoc) from the contract
+2. Establish API style conventions (camelCase fields, consistent error format) via Spectral linting
+3. Provide example request/response pairs as documentation and test fixtures
 
 ## User Stories
 
@@ -24,118 +24,92 @@
 ```gherkin
 Feature: Contract prevents unnoticed API drift
   As a backend developer
-  I want the contract to catch when my response shape doesn't match
+  I want generated types to enforce the contract shape
   So that all implementations stay in sync
 
 Scenario: Adding a field without updating the contract
   Given the OpenAPI contract defines the Expense response schema
-  And the schema does not include a "tags" field
-  When I add a "tags" field to demo-be-golang-gin's expense response
-  And I run test:unit
-  Then the contract validator should flag an unexpected field
-  And the test should fail until I update the contract
+  And the generated Go struct does not include a "tags" field
+  When I try to set response.Tags in demo-be-golang-gin
+  Then the Go compiler should fail because the field does not exist
+  And I must update the contract and re-run codegen to add it
 
 Scenario: Removing a required field
-  Given the OpenAPI contract requires "currency" in the Expense response
-  When I remove "currency" from demo-be-python-fastapi's response
-  And I run test:unit
-  Then the contract validator should flag the missing required field
+  Given the generated Python Pydantic model requires "currency"
+  When I remove "currency" from demo-be-python-fastapi's handler return
+  Then Pydantic validation should fail in test:unit
+  And pre-push hook catches this via test:quick
 ```
 
 **Story 2: Frontend Developer Consuming API Types**
 
 ```gherkin
-Feature: Frontend types stay in sync with backend contract
+Feature: Frontend types are auto-generated from contract
   As a frontend developer
-  I want types generated from the contract
-  So that I never use stale type definitions
+  I want generated types with encoders/decoders
+  So that my API calls are type-safe
 
 Scenario: Contract change updates frontend types
   Given the OpenAPI contract adds an optional "tags" field to Expense
-  When I regenerate types with openapi-typescript
-  Then the generated Expense type should include "tags?: string[]"
-  And TypeScript compilation should succeed
+  When I run nx run demo-fe-ts-nextjs:codegen
+  Then the generated types include "tags?: string[]"
+  And the openapi-fetch client automatically handles encoding/decoding
+  And TypeScript compilation succeeds
 
 Scenario: Frontend code references non-existent field
   Given the generated types do not include a "notes" field on Expense
   When I reference expense.notes in demo-fe-ts-nextjs
   Then tsc should produce a compile error
+  And pre-push hook blocks the push via typecheck
 ```
 
-**Story 3: E2E Test Validating Response Shape**
+**Story 3: Contract Change Triggers Regeneration**
 
 ```gherkin
-Feature: E2E tests validate API responses against contract
-  As a QA engineer
-  I want every API response validated against the contract during E2E runs
-  So that shape mismatches are caught end-to-end
-
-Scenario: Response passes contract validation
-  Given the demo-be-e2e test sends POST /api/v1/auth/login
-  When the backend returns a 200 response with accessToken and refreshToken
-  Then the ajv validator should confirm the response matches the contract schema
-  And the test should pass
-
-Scenario: Response violates contract
-  Given the backend returns a 200 response with "access_token" instead of "accessToken"
-  Then the ajv validator should flag a schema violation
-  And the E2E test should fail
-```
-
-**Story 4: Contract Change Triggers Affected Projects**
-
-```gherkin
-Feature: Nx dependency graph includes contract
+Feature: Nx dependency graph triggers codegen cascade
   As a developer
-  I want contract changes to trigger re-testing of all consumers
+  I want contract changes to regenerate all consumer code
   So that no project silently falls out of compliance
 
-Scenario: Modifying a schema triggers all backends
+Scenario: Modifying a schema triggers codegen for all apps
   Given I modify specs/apps/demo/contracts/schemas/expense.yaml
   When Nx computes affected projects
-  Then all demo-be-* projects should be in the affected list
-  And all demo-fe-* projects should be in the affected list
+  Then demo-contracts:bundle runs first
+  Then all demo-be-* and demo-fe-* codegen targets run
+  Then typecheck/build/test:quick runs against the new generated code
+  And any mismatch fails the PR quality gate
+```
+
+**Story 4: Generated Code is Not Committed**
+
+```gherkin
+Feature: Generated contracts are gitignored
+  As a developer
+  I want generated-contracts/ folders to be gitignored
+  So that the repo stays clean and the contract is the only source of truth
+
+Scenario: Fresh clone regenerates all contract code
+  Given a developer clones the repository
+  When they run npm install (which triggers postinstall codegen)
+  Then all generated-contracts/ folders are populated
+  And typecheck/build succeeds immediately
+
+Scenario: Generated code is excluded from git
+  Given apps/demo-be-golang-gin/generated-contracts/ exists locally
+  When I run git status
+  Then generated-contracts/ should not appear as untracked
 ```
 
 ## Alternatives Analysis
 
 ### Alternative 1: OpenAPI 3.1 (Single YAML) + Language-Specific Validators
 
-**Approach**: Write a single `openapi.yaml` in `specs/apps/demo/contracts/` that fully describes
-every endpoint. Each project validates against it at test time.
+**Approach**: Single `openapi.yaml` with runtime validators in each project's tests.
 
-**Enforcement per project type**:
+**Pros**: Industry standard, massive tooling, human-readable YAML, JSON Schema 2020-12 compatible
 
-| Project Type         | Enforcement Mechanism                                                                       | When        |
-| -------------------- | ------------------------------------------------------------------------------------------- | ----------- |
-| Go backends          | `kin-openapi` middleware or test helper — validates every request/response against the spec | `test:unit` |
-| Java/Kotlin backends | `openapi-diff` or `swagger-request-validator` (Atlassian)                                   | `test:unit` |
-| Python backends      | `openapi-core` validator                                                                    | `test:unit` |
-| Rust backends        | Custom validator or `utoipa` compile-time check                                             | `test:unit` |
-| Elixir backends      | `open_api_spex` cast/validate                                                               | `test:unit` |
-| F# / C# backends     | `NSwag` or `Microsoft.OpenApi` reader + validator                                           | `test:unit` |
-| Clojure backends     | `metosin/scjsv` (JSON Schema) or `luposlip/json-schema`                                     | `test:unit` |
-| TS Effect backend    | `zod-openapi` or `openapi-typescript` generated types                                       | `typecheck` |
-| TypeScript frontends | `openapi-typescript` → generates `types.ts`; `tsc` fails on drift                           | `typecheck` |
-| Dart frontend        | `openapi_generator_cli` → generates models; compiler fails on drift                         | `build`     |
-| E2E tests            | `ajv` (JSON Schema extracted from OpenAPI) validates every response                         | `test:e2e`  |
-
-**Pros**:
-
-- Industry standard — massive tooling ecosystem
-- Human-readable YAML, easy to review in PRs
-- Can generate interactive docs (Swagger UI / Redoc) for free
-- Supports `$ref` for reusable schemas (DRY)
-- JSON Schema 2020-12 compatible (OpenAPI 3.1)
-- Most languages have mature, battle-tested validators
-- Can generate client SDKs and server stubs (optional, not required)
-
-**Cons**:
-
-- Large single file can be hard to review (mitigated by splitting into `$ref` files)
-- Some languages (Elixir, Clojure, F#) have thinner tooling
-- Spec authoring requires OpenAPI knowledge
-- Runtime validation adds overhead (acceptable in tests, debatable in prod)
+**Cons**: Large single file, runtime-only validation (not compile-time), no generated
+encoders/decoders
 
 **Estimated effort**: Medium
 
@@ -143,44 +117,11 @@ every endpoint. Each project validates against it at test time.
 
 ### Alternative 2: JSON Schema (Standalone) + Test-Time Validation
 
-**Approach**: Write JSON Schema files per endpoint (request + response) in
-`specs/apps/demo/contracts/schemas/`. Each project loads the schema and validates against it in
-tests.
+**Approach**: JSON Schema files per endpoint, validated at test time.
 
-**Contract location**:
+**Pros**: Simpler than OpenAPI, every language has a JSON Schema library
 
-```
-specs/apps/demo/contracts/
-├── README.md
-└── schemas/
-    ├── auth/
-    │   ├── login-request.json
-    │   ├── login-response.json
-    │   └── ...
-    ├── expenses/
-    │   ├── create-expense-request.json
-    │   ├── expense-list-response.json
-    │   └── ...
-    └── common/
-        ├── pagination.json
-        └── error.json
-```
-
-**Pros**:
-
-- Simpler than OpenAPI — just schemas, no path/method/parameter overhead
-- Every language has a JSON Schema library (even Elixir: `ex_json_schema`)
-- Schemas are independently testable
-- Easy to understand — one file per shape
-
-**Cons**:
-
-- Does NOT capture endpoints, HTTP methods, status codes, headers, or query params — only body
-  shapes. A backend could return the right body on the wrong endpoint.
-- More files to maintain (~40-50 schema files)
-- No standard way to tie schemas to endpoints (need a separate mapping file)
-- Cannot generate API docs or client code
-- Duplicates some information already in Gherkin (field names, types)
+**Cons**: No HTTP semantics (methods, paths, status codes), no code generation, many files
 
 **Estimated effort**: Medium
 
@@ -188,24 +129,11 @@ specs/apps/demo/contracts/
 
 ### Alternative 3: TypeScript Types as Source of Truth + Cross-Language Validation
 
-**Approach**: Maintain canonical TypeScript interfaces in `specs/apps/demo/contracts/types.ts`.
-Use `typescript-json-schema` to generate JSON Schemas. Other languages validate against generated
-schemas.
+**Approach**: Canonical TypeScript interfaces + `typescript-json-schema` to generate JSON Schemas.
 
-**Pros**:
+**Pros**: Types already exist, TypeScript is expressive, low authoring friction
 
-- Developers already know TypeScript — lower authoring friction
-- The types already exist in `demo-fe-ts-nextjs/src/lib/api/types.ts`
-- TypeScript's type system is expressive (unions, optional fields, string literals)
-- JSON Schema generation is well-supported (`ts-json-schema-generator`, `zod-to-json-schema`)
-
-**Cons**:
-
-- TypeScript-centric — feels wrong for a polyglot repo with 11 languages
-- Requires a build step to generate JSON Schemas
-- TypeScript type system doesn't capture HTTP semantics (methods, paths, status codes)
-- Generated schemas are a secondary artifact — debugging requires tracing back to TS
-- Non-TS developers must understand TypeScript to modify contracts
+**Cons**: TypeScript-centric (wrong for polyglot repo), no HTTP semantics, requires build step
 
 **Estimated effort**: Low-Medium
 
@@ -213,25 +141,11 @@ schemas.
 
 ### Alternative 4: Protocol Buffers (Protobuf) + gRPC-Gateway Style
 
-**Approach**: Define the API contract in `.proto` files. Use `protoc` with JSON-mapping plugins to
-generate JSON Schema or language-specific types. The actual API remains REST/JSON but the contract
-is defined in Protobuf.
+**Approach**: `.proto` files with `protoc` plugins for each language.
 
-**Pros**:
+**Pros**: Precise types, schema evolution rules, enterprise-grade code generation
 
-- Extremely precise type definitions (no ambiguity)
-- First-class code generation for Go, Java, Python, Rust, C#, Dart, Kotlin
-- Well-established in enterprise environments
-- Schema evolution rules built in (field numbers)
-
-**Cons**:
-
-- Heavy tooling overhead (`protoc` + plugins for each language)
-- The API is REST/JSON, not gRPC — Protobuf adds conceptual mismatch
-- Protobuf JSON mapping has quirks (camelCase default, wrapper types for nullable)
-- No native Elixir, F#, or Clojure Protobuf support (requires plugins/wrappers)
-- Developers must learn Protobuf syntax
-- Overkill for a REST API that doesn't use gRPC
+**Cons**: Conceptual mismatch with REST/JSON, heavy tooling, no Elixir/F#/Clojure support
 
 **Estimated effort**: High
 
@@ -239,91 +153,37 @@ is defined in Protobuf.
 
 ### Alternative 5: Zod Schemas + `zod-to-openapi` Bridge
 
-**Approach**: Write Zod schemas in TypeScript as the source of truth. Generate OpenAPI spec from
-Zod via `zod-to-openapi`. Non-TypeScript projects validate against the generated OpenAPI spec.
+**Approach**: Zod schemas → OpenAPI spec → language-specific validators.
 
-**Pros**:
+**Pros**: Zod gives runtime + compile-time safety for TS, OpenAPI output for ecosystem
 
-- Zod provides runtime validation + TypeScript inference (single definition)
-- TypeScript projects get compile-time safety AND runtime validation
-- OpenAPI output enables the full ecosystem (docs, validators, generators)
-- Best of both worlds: developer-friendly authoring + industry-standard output
-
-**Cons**:
-
-- Same TypeScript-centricity issue as Alternative 3
-- Adds a Zod dependency and build step
-- Two layers of abstraction (Zod → OpenAPI → JSON Schema → validation)
-- Non-TS developers must read Zod to understand contracts
-- Generated OpenAPI may not be as clean as hand-written
+**Cons**: TypeScript-centric, two layers of abstraction, non-TS devs must read Zod
 
 **Estimated effort**: Medium
 
 ---
 
-### Alternative 6: OpenAPI 3.1 (Modular YAML) + Spectral Linting + Contract Tests
+### Alternative 6: OpenAPI 3.1 (Modular YAML) + Spectral Linting + Code Generation
 
-**Approach**: Same as Alternative 1 but with a modular file structure (split by domain using
-`$ref`) and Spectral linting to enforce API style rules. Add a dedicated `contracts:validate`
-Nx target.
-
-**Contract location**:
-
-```
-specs/apps/demo/contracts/
-├── README.md
-├── openapi.yaml              # Root spec (references domain files)
-├── .spectral.yaml            # API style rules
-├── paths/
-│   ├── auth.yaml             # /api/v1/auth/* paths
-│   ├── users.yaml            # /api/v1/users/* paths
-│   ├── expenses.yaml         # /api/v1/expenses/* paths
-│   ├── admin.yaml            # /api/v1/admin/* paths
-│   ├── reports.yaml          # /api/v1/reports/* paths
-│   ├── tokens.yaml           # /api/v1/tokens/* paths
-│   ├── health.yaml           # /health, /.well-known/* paths
-│   └── test-support.yaml     # /api/v1/test/* paths
-├── schemas/
-│   ├── auth.yaml             # Auth request/response schemas
-│   ├── user.yaml             # User schemas
-│   ├── expense.yaml          # Expense schemas
-│   ├── report.yaml           # Report schemas
-│   ├── attachment.yaml       # Attachment schemas
-│   ├── token.yaml            # Token/JWKS schemas
-│   ├── admin.yaml            # Admin schemas
-│   ├── pagination.yaml       # Shared pagination envelope
-│   └── error.yaml            # Shared error response
-└── examples/
-    ├── auth-login.yaml       # Example request/response pairs
-    └── ...
-```
-
-**Enforcement**:
-
-1. **Spectral CI lint** — ensures the OpenAPI spec follows style rules (consistent naming, required
-   fields, proper `$ref` usage)
-2. **Per-backend contract test** — a test helper reads `openapi.yaml`, intercepts every HTTP
-   response, and validates it against the spec
-3. **Per-frontend type generation** — `openapi-typescript` generates types; `tsc` catches drift
-4. **E2E response validation** — middleware in Playwright validates every API response against the
-   spec
-5. **Nx target `contracts:validate`** — bundles the modular YAML into a single resolved spec and
-   validates it
+**Approach**: Modular OpenAPI spec split by domain using `$ref`. Language-specific code generators
+produce types + encoders/decoders in each app's `generated-contracts/` folder. Apps import
+generated types; compiler catches mismatches. Spectral lints the spec for style.
 
 **Pros**:
 
-- All pros of Alternative 1
-- Modular structure — easy to review domain-by-domain in PRs
-- Spectral linting catches API style issues (inconsistent naming, missing descriptions)
-- Example files serve as documentation AND test fixtures
-- `$ref` structure maps naturally to the domain organization in Gherkin specs
-- Scales well as API grows
+- All HTTP semantics in one spec (paths, methods, status codes, body schemas)
+- Modular structure mirrors Gherkin domain organization
+- Code generation produces compile-time-safe types in all 11 languages
+- Generated encoders/decoders handle serialization type-safely
+- Spectral linting enforces naming conventions
+- `generated-contracts/` gitignored — contract is sole source of truth
+- Violations caught by existing pre-push hook and PR quality gate
 
 **Cons**:
 
-- More files than a single OpenAPI YAML (but each file is small and focused)
-- Spectral adds another tool to the CI pipeline
-- Requires `$ref` resolution step (standard tooling handles this)
+- More files than single YAML (but each is small and domain-focused)
+- Code generator per language (11 generators to configure)
+- Dynamic languages (Elixir, Clojure) enforce at test time rather than compile time
 
 **Estimated effort**: Medium-High
 
@@ -331,43 +191,37 @@ specs/apps/demo/contracts/
 
 ## Recommendation Matrix
 
-| Criterion                         | Alt 1: OpenAPI Single | Alt 2: JSON Schema | Alt 3: TS Types | Alt 4: Protobuf | Alt 5: Zod Bridge | Alt 6: OpenAPI Modular |
-| --------------------------------- | --------------------- | ------------------ | --------------- | --------------- | ----------------- | ---------------------- |
-| Captures full HTTP semantics      | Yes                   | No                 | Partial         | Partial         | Yes (via gen)     | Yes                    |
-| Language-agnostic authoring       | Yes                   | Yes                | No              | Yes             | No                | Yes                    |
-| Tooling maturity (all 11 langs)   | High                  | High               | Medium          | Low             | Medium            | High                   |
-| File organization / reviewability | Medium                | High               | Medium          | Medium          | Medium            | High                   |
-| Code generation capability        | Yes                   | No                 | Partial         | Yes             | Yes               | Yes                    |
-| API documentation generation      | Yes                   | No                 | No              | No              | Yes               | Yes                    |
-| Style/lint enforcement            | Manual                | No                 | No              | No              | No                | Yes (Spectral)         |
-| Learning curve                    | Medium                | Low                | Low (TS devs)   | High            | Medium            | Medium                 |
-| Conceptual fit (REST/JSON API)    | Perfect               | Good               | OK              | Poor            | Good              | Perfect                |
-| Maintenance burden                | Medium                | High (many files)  | Low             | High            | Medium            | Medium                 |
-| Complements existing Gherkin      | Yes                   | Partial            | Partial         | No              | Yes               | Yes                    |
+| Criterion                       | Alt 1: OpenAPI Single | Alt 2: JSON Schema | Alt 3: TS Types | Alt 4: Protobuf | Alt 5: Zod | Alt 6: OpenAPI Modular + Codegen |
+| ------------------------------- | --------------------- | ------------------ | --------------- | --------------- | ---------- | -------------------------------- |
+| Compile-time enforcement        | No                    | No                 | TS only         | Yes (most)      | TS only    | Yes (all statically-typed)       |
+| Generated encoders/decoders     | No                    | No                 | No              | Yes             | TS only    | Yes                              |
+| Captures full HTTP semantics    | Yes                   | No                 | Partial         | Partial         | Yes        | Yes                              |
+| Language-agnostic authoring     | Yes                   | Yes                | No              | Yes             | No         | Yes                              |
+| Tooling maturity (all 11 langs) | High                  | High               | Medium          | Low             | Medium     | High                             |
+| Gitignored generated code       | N/A                   | N/A                | Partial         | Yes             | Partial    | Yes                              |
+| Works with existing CI          | No (new checks)       | No                 | Partial         | No              | Partial    | Yes (typecheck/test:quick)       |
+| Complements existing Gherkin    | Yes                   | Partial            | Partial         | No              | Yes        | Yes                              |
 
 ## Recommended Approach: Alternative 6
 
-**Why Alternative 6 — OpenAPI 3.1 Modular + Spectral**:
+**Why Alternative 6 — OpenAPI 3.1 Modular + Spectral + Code Generation**:
 
-1. **Full HTTP semantics** — paths, methods, parameters, headers, status codes, and body schemas in
-   one specification. No separate mapping file needed.
-2. **Language-agnostic** — YAML is readable by all 11 backend languages and both frontend
-   ecosystems. No team member needs TypeScript or Protobuf knowledge.
-3. **Modular structure** — domain-split files mirror the existing Gherkin domain organization,
-   making PRs reviewable and ownership clear.
-4. **Spectral linting** — enforces API naming conventions (camelCase fields, consistent error
-   format, required descriptions) beyond just schema correctness.
-5. **Ecosystem leverage** — OpenAPI 3.1 is JSON Schema 2020-12 compatible, so every JSON Schema
-   validator works on extracted schemas. Code generation, documentation, and mock servers are all
-   available.
-6. **Complements Gherkin** — Gherkin says "when I POST this, I get 201 with an id". OpenAPI says
-   "the POST body must have these exact fields with these exact types, and the 201 response has
-   this exact shape". They cover orthogonal concerns.
+1. **Compile-time safety** — generated types make it impossible to return wrong shapes in statically
+   typed languages. Dynamic languages (Elixir, Clojure, Python) enforce via generated
+   schemas/models at test time, caught by `test:quick`.
+2. **Encoders/decoders included** — generated code handles JSON serialization/deserialization
+   type-safely (Jackson for Java, serde for Rust, Pydantic for Python, etc.)
+3. **Zero runtime overhead** — generated types are compile-time-only artifacts. No validation
+   middleware in production.
+4. **Fits existing CI** — `nx affected -t typecheck` and `test:quick` already run in pre-push hook
+   and PR quality gate. No new CI steps needed.
+5. **Gitignored** — `generated-contracts/` is not committed. The OpenAPI spec is the sole source of
+   truth. Generated code is a build artifact.
 
 ## Acceptance Criteria
 
 ```gherkin
-Feature: API contract enforcement
+Feature: API contract enforcement via code generation
 
   Scenario: Contract spec exists and is valid
     Given the file specs/apps/demo/contracts/openapi.yaml exists
@@ -375,54 +229,63 @@ Feature: API contract enforcement
     Then there should be zero errors
     And the spec should cover all endpoints from the Gherkin features
 
-  Scenario: Contract changes trigger affected project tests
-    Given a developer modifies specs/apps/demo/contracts/schemas/expense.yaml
-    When Nx computes affected projects
-    Then all demo-be-* and demo-fe-* projects should be affected
+  Scenario: Each app has a codegen target
+    Given every demo-be-* and demo-fe-* project has a "codegen" Nx target
+    When nx run <app>:codegen runs
+    Then a generated-contracts/ folder is created with language-specific types
+    And the folder contains encoders and decoders for each schema
 
-  Scenario: Backend response matches contract
-    Given the OpenAPI spec defines POST /api/v1/expenses response as 201
-    And the 201 response schema requires fields "id", "amount", "currency"
-    When demo-be-golang-gin handles a create expense request in test:unit
-    Then the response body must validate against the contract schema
-    And a missing or extra field should fail the test
+  Scenario: Generated folders are gitignored
+    Given every demo app has generated-contracts/ in its .gitignore
+    When a developer runs git status after codegen
+    Then generated-contracts/ does not appear as untracked
 
-  Scenario: Frontend types are generated from contract
-    Given the OpenAPI spec defines the Expense schema
-    When openapi-typescript generates types for demo-fe-ts-nextjs
-    Then the generated Expense type should match the contract exactly
-    And any drift from hand-written types should cause tsc to fail
+  Scenario: Backend compile-time enforcement (statically typed)
+    Given demo-be-golang-gin uses generated Go structs as handler return types
+    When the contract changes and codegen re-runs
+    Then any handler returning the old shape fails go build
+    And this is caught by nx affected -t build before push
 
-  Scenario: E2E tests validate responses against contract
-    Given demo-be-e2e runs a Playwright test hitting POST /api/v1/auth/login
-    When the backend returns a 200 response
-    Then the response body should be validated against the OpenAPI spec
-    And a schema violation should fail the E2E test
+  Scenario: Backend test-time enforcement (dynamically typed)
+    Given demo-be-elixir-phoenix uses generated structs with @enforce_keys
+    When the contract changes and codegen re-runs
+    Then any handler returning the old shape fails in test:unit
+    And this is caught by nx affected -t test:quick before push
 
-  Scenario: All 11 backends pass contract validation
-    Given each demo-be-* project has a contract validation test helper
-    When nx run-many -t test:unit --projects=demo-be-*
-    Then all backends should pass with zero contract violations
+  Scenario: Frontend compile-time enforcement
+    Given demo-fe-ts-nextjs imports generated TypeScript types
+    When the contract changes and codegen re-runs
+    Then any component using old field names fails tsc
+    And this is caught by nx affected -t typecheck before push
 
-  Scenario: All frontends compile with generated types
-    Given each demo-fe-* project uses generated types from the contract
-    When nx run-many -t typecheck --projects=demo-fe-*
-    Then all frontends should compile successfully
+  Scenario: PR quality gate catches violations
+    Given a PR modifies specs/apps/demo/contracts/schemas/expense.yaml
+    When the PR quality gate runs
+    Then nx affected -t typecheck runs (catches TS/Dart mismatches)
+    And nx affected -t test:quick runs (catches all language mismatches)
+    And the PR fails if any app doesn't match the new contract
+
+  Scenario: Fresh clone works after npm install
+    Given a developer clones the repository
+    When they run npm install
+    Then postinstall triggers codegen for all demo apps
+    And typecheck/build succeeds immediately
 ```
 
 ## Constraints
 
-1. **Must not break existing tests** — contract enforcement is additive; existing Gherkin-based
-   tests continue to work unchanged
-2. **Must not require runtime dependencies in production** — validation is test-time only
-3. **Must use existing Nx infrastructure** — new targets, implicit dependencies, affected graph
+1. **Must not break existing tests** — contract enforcement is additive
+2. **Generated code must be gitignored** — only the OpenAPI spec is committed
+3. **Must use existing CI pipeline** — no new GitHub Actions workflows; leverage `typecheck`,
+   `lint`, `test:quick` which already run in PR quality gate
 4. **Contract lives in `specs/`** — not inside any individual app
 5. **Trunk Based Development** — all work on main branch
+6. **Generated code must include encoders AND decoders** — not just types but full
+   serialization/deserialization support
 
 ## Out of Scope
 
 1. Replacing Gherkin specs with OpenAPI — they serve different purposes
-2. Runtime validation in production (only test-time enforcement)
-3. Generating server stubs from the contract (manual implementation stays)
+2. Runtime validation in production (only compile-time/test-time enforcement)
+3. Generating full server stubs (only types + encoders/decoders, not routing/handlers)
 4. WebSocket or streaming API contracts (REST/JSON only)
-5. Authentication token content validation (JWT claims are covered by Gherkin)

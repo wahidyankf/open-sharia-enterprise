@@ -12,46 +12,68 @@
 
 Establish a single, enforceable API contract specification in `specs/apps/demo/contracts/` that
 governs request/response shapes between all `demo-be-*` backends (11 languages), `demo-fe-*`
-frontends (3 frameworks), and `demo-*-e2e` test suites — with build-time or test-time enforcement
-so drift is caught automatically.
+frontends (3 frameworks), and `demo-*-e2e` test suites — with **compile-time enforcement** via
+auto-generated type-safe code (encoders/decoders) in every app.
 
 ### Goals
 
-1. **Single source of truth** for every endpoint's request body, response body, query parameters,
-   path parameters, headers, and status codes
-2. **Automated enforcement** — backends and frontends must conform; violations fail CI
-3. **Language-agnostic** — consumable by Go, Java, Kotlin, Python, Rust, Elixir, F#, C#, Clojure,
-   TypeScript, and Dart
-4. **Colocated with specs** — lives in `specs/apps/demo/contracts/` alongside existing Gherkin specs
-5. **Complements Gherkin** — Gherkin defines behavior flows; contracts define structural shapes
+1. **Single source of truth** — one OpenAPI 3.1 spec defines every endpoint's request body,
+   response body, query parameters, path parameters, headers, and status codes
+2. **Auto-generated code** — each app has a `generated-contracts/` folder (gitignored) containing
+   language-specific types, encoders, and decoders generated from the contract
+3. **Compile-time enforcement** — apps import generated types; mismatches fail `typecheck`/`build`
+4. **Pre-push safety** — violations caught by `nx affected -t typecheck`, `lint`, and `test:quick`
+   (already in pre-push hook and PR quality gate)
+5. **Language-agnostic** — the contract is YAML; code generators produce Go structs, Java DTOs,
+   Kotlin data classes, Python Pydantic models, Rust serde structs, Elixir structs, F#/C# records,
+   Clojure Malli schemas, TypeScript types, and Dart classes
 
 ### Context
 
-- **Behavior specs exist** — 76 backend Gherkin scenarios + 92 frontend scenarios define _what_ the
-  API does, but not the precise shape of every request/response field, type, or constraint
-- **Types are duplicated** — each backend defines its own DTOs/structs, and each frontend maintains
-  its own `types.ts` / Dart models. Nothing enforces sync.
-- **Drift is invisible** — if `demo-be-rust-axum` returns `created_at` (snake_case) while others
-  return `createdAt` (camelCase), only E2E tests catch it at runtime, and only if a scenario
-  happens to assert that field
-- **No machine-readable contract** — Gherkin specs are human-readable but cannot be used for
-  automated schema validation or code generation
+- **Behavior specs exist** — 76 backend + 92 frontend Gherkin scenarios define _what_ the API does,
+  but not the exact shape of every field, type, or constraint
+- **Types are duplicated** — each backend has its own DTOs/structs, each frontend has its own
+  `types.ts` / Dart models. Nothing enforces sync.
+- **Drift is invisible** — naming mismatches (e.g., `created_at` vs `createdAt`) only surface in
+  E2E tests, and only if a scenario asserts that field
+- **No machine-readable contract** — Gherkin is human-readable but cannot drive code generation
+
+### Enforcement Model
+
+```
+  specs/apps/demo/contracts/openapi.yaml
+                    │
+           ┌────────┼────────┐
+           ▼        ▼        ▼
+       codegen   codegen   codegen      ← Nx target per app
+           │        │        │
+           ▼        ▼        ▼
+   Go structs   TS types  Dart classes  ← generated-contracts/ (gitignored)
+           │        │        │
+           ▼        ▼        ▼
+     app imports generated types
+     mismatch = compile error           ← caught by typecheck/build/test:quick
+           │        │        │
+           ▼        ▼        ▼
+     pre-push hook & PR quality gate    ← nx affected -t typecheck/lint/test:quick
+```
 
 ### Recommended Approach
 
-**Alternative 6: OpenAPI 3.1 (Modular YAML) + Spectral Linting + Contract Tests** — chosen from
+**Alternative 6: OpenAPI 3.1 (Modular YAML) + Spectral Linting + Code Generation** — chosen from
 6 alternatives analyzed in [requirements.md](./requirements.md). Key reasons:
 
 - Full HTTP semantics (paths, methods, status codes, headers, body schemas)
 - Language-agnostic YAML authoring
 - Modular domain-split files mirror existing Gherkin organization
 - Spectral linting enforces API style conventions
-- Mature validators exist for all 11 languages (web-verified)
+- Mature code generators exist for all 11 languages (web-verified)
+- Generated types include encoders/decoders for type-safe serialization
 
 ## Plan Structure
 
 - **[requirements.md](./requirements.md)** — Alternatives analysis, recommendation matrix,
   acceptance criteria
-- **[tech-docs.md](./tech-docs.md)** — Contract file structure, enforcement architecture,
-  per-language strategy, Nx integration, Spectral rules
+- **[tech-docs.md](./tech-docs.md)** — Contract file structure, code generation strategy per
+  language, Nx integration, gitignore setup, Spectral rules
 - **[delivery.md](./delivery.md)** — 5-phase implementation plan with checklists, open questions

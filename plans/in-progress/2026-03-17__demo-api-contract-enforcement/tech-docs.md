@@ -7,6 +7,7 @@ specs/apps/demo/contracts/
 ├── README.md                 # Purpose, usage, how to add/modify
 ├── openapi.yaml              # Root OpenAPI 3.1 document
 ├── .spectral.yaml            # Spectral linting rules
+├── project.json              # Nx project: demo-contracts (lint, bundle targets)
 ├── paths/
 │   ├── health.yaml           # GET /health
 │   ├── auth.yaml             # POST /api/v1/auth/{login,register,refresh,logout,logout-all}
@@ -22,140 +23,114 @@ specs/apps/demo/contracts/
 │   ├── user.yaml             # User, UpdateProfileRequest, ChangePasswordRequest
 │   ├── expense.yaml          # Expense, CreateExpenseRequest, UpdateExpenseRequest
 │   ├── expense-list.yaml     # ExpenseListResponse (uses pagination.yaml)
-│   ├── report.yaml           # PLReport, CategoryBreakdown
+│   ├── report.yaml           # PLReport, CategoryBreakdown, ExpenseSummary
 │   ├── attachment.yaml       # Attachment
 │   ├── token.yaml            # TokenClaims, JwksResponse, JwkKey
 │   ├── admin.yaml            # DisableRequest, PasswordResetResponse, UserListResponse
 │   ├── pagination.yaml       # Reusable pagination envelope
 │   ├── error.yaml            # Standardized error response
 │   └── health.yaml           # HealthResponse
+├── generated/                # Bundled spec output (gitignored)
+│   └── openapi-bundled.yaml  # Single resolved file for code generators
 └── examples/
-    ├── auth-login.yaml       # Login request/response example pair
-    ├── expense-create.yaml   # Create expense example pair
-    └── ...                   # One per major endpoint
+    ├── auth-login.yaml       # Example request/response pairs
+    └── expense-create.yaml   # Example expense creation
 ```
 
-## Root OpenAPI Document
+## Generated Code in Each App
 
-```yaml
-# specs/apps/demo/contracts/openapi.yaml
-openapi: "3.1.0"
-info:
-  title: Demo Application API
-  version: "1.0.0"
-  description: >
-    Canonical API contract for the demo full-stack application.
-    Consumed by 11 backend implementations, 3 frontend implementations,
-    and 2 E2E test suites.
-servers:
-  - url: http://localhost:{port}
-    variables:
-      port:
-        default: "8080"
-        description: Backend server port
-paths:
-  /health:
-    $ref: "./paths/health.yaml#/health"
-  /api/v1/auth/login:
-    $ref: "./paths/auth.yaml#/login"
-  /api/v1/auth/register:
-    $ref: "./paths/auth.yaml#/register"
-  # ... all paths reference domain files
-components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-  schemas:
-    $ref: "./schemas/" # Bundled during resolution
-```
+Every demo app gets a `generated-contracts/` folder that is:
 
-## Enforcement Architecture
+- **Auto-generated** from `specs/apps/demo/contracts/generated/openapi-bundled.yaml`
+- **Gitignored** — not committed; regenerated via `nx run <app>:codegen`
+- **Imported by app code** — handlers/controllers use generated types for request/response
+- **Contains encoders/decoders** — type-safe JSON serialization/deserialization
+
+### Generated Folder Layout (per app)
 
 ```
-┌─────────────────────────────────────────────────────┐
-│              specs/apps/demo/contracts/              │
-│                   openapi.yaml                       │
-│              (Single Source of Truth)                │
-└──────────┬──────────┬──────────┬────────────────────┘
-           │          │          │
-     ┌─────▼────┐ ┌───▼────┐ ┌──▼──────────────┐
-     │ Spectral │ │  Type  │ │  Schema          │
-     │  Lint    │ │  Gen   │ │  Validators      │
-     │ (CI)     │ │ (FE)   │ │  (BE tests)      │
-     └─────┬────┘ └───┬────┘ └──┬──────────────┘
-           │          │          │
-     ┌─────▼────┐ ┌───▼────┐ ┌──▼──────────────┐
-     │  Style   │ │ TS/Dart│ │ Go,Java,Kotlin,  │
-     │  Rules   │ │ compile│ │ Python,Rust,     │
-     │  Pass?   │ │ check  │ │ Elixir,F#,C#,    │
-     │          │ │        │ │ Clojure,TS       │
-     └──────────┘ └────────┘ └─────────────────┘
+apps/demo-be-golang-gin/
+├── generated-contracts/      # gitignored
+│   ├── types.gen.go          # Go structs matching OpenAPI schemas
+│   ├── server.gen.go         # Server interface (strict mode)
+│   └── spec.gen.go           # Embedded OpenAPI spec
+├── internal/
+│   ├── handler/              # Handlers implement generated interface
+│   └── ...
+└── .gitignore                # includes: generated-contracts/
+
+apps/demo-fe-ts-nextjs/
+├── src/
+│   ├── generated-contracts/  # gitignored
+│   │   └── api.d.ts          # Generated TypeScript types
+│   └── lib/api/
+│       ├── client.ts         # Uses openapi-fetch with generated types
+│       └── types.ts          # Re-exports from generated (or removed)
+└── .gitignore                # includes: src/generated-contracts/
 ```
 
-## Per-Language Enforcement Strategy
+## Code Generation Strategy Per Language
 
-### Backends — Test-Time Response Validation
+### Statically Typed Languages (compile-time enforcement)
 
-Each backend adds a **contract test helper** that:
+These languages catch contract violations at compile time via `typecheck` or `build` targets.
 
-1. Reads the bundled `openapi.yaml` (resolved to a single file)
-2. On every HTTP handler test, validates the response body against the corresponding schema for
-   that endpoint + status code
-3. Fails the test if the response doesn't match
-
-| Language            | Library                                                     | Integration Point                       |
-| ------------------- | ----------------------------------------------------------- | --------------------------------------- |
-| Go                  | `getkin/kin-openapi`                                        | Test middleware or helper in `_test.go` |
-| Java (Spring Boot)  | `com.atlassian.oai:swagger-request-validator-spring-webmvc` | MockMvc assertion                       |
-| Java (Vert.x)       | `com.atlassian.oai:swagger-request-validator-core`          | Custom test validator                   |
-| Kotlin (Ktor)       | `com.atlassian.oai:swagger-request-validator-core`          | Test helper                             |
-| Python (FastAPI)    | `openapi-core`                                              | Pytest fixture wrapping TestClient      |
-| Rust (Axum)         | Custom via `serde_json` + `jsonschema` crate                | Test helper                             |
-| Elixir (Phoenix)    | `open_api_spex` or `ex_json_schema`                         | ConnCase helper                         |
-| F# (Giraffe)        | `NSwag.Core` or `NJsonSchema`                               | Test helper                             |
-| C# (ASP.NET Core)   | `NSwag.Core` or Verify.Http                                 | WebApplicationFactory                   |
-| Clojure (Pedestal)  | `metosin/scjsv` (wraps networknt/json-schema-validator)     | Test middleware                         |
-| TypeScript (Effect) | `ajv` with OpenAPI schema extraction                        | Test helper                             |
+| Language      | App                       | Generator                    | Generated Output                     | Encoder/Decoder                    |
+| ------------- | ------------------------- | ---------------------------- | ------------------------------------ | ---------------------------------- |
+| Go            | demo-be-golang-gin        | `oapi-codegen` (strict)      | Go structs + strict server interface | `encoding/json` via generated code |
+| Java (Spring) | demo-be-java-springboot   | `openapi-generator` (spring) | Java DTOs with Jackson annotations   | Jackson `@JsonProperty`            |
+| Java (Vert.x) | demo-be-java-vertx        | `openapi-generator` (java)   | Java DTOs with Jackson annotations   | Jackson `@JsonProperty`            |
+| Kotlin        | demo-be-kotlin-ktor       | `openapi-generator` (kotlin) | Kotlin data classes                  | kotlinx.serialization              |
+| Rust          | demo-be-rust-axum         | `openapi-generator` (rust)   | Rust structs with serde derive       | `serde::Serialize/Deserialize`     |
+| F#            | demo-be-fsharp-giraffe    | `NSwag` CLI                  | F# record types                      | System.Text.Json                   |
+| C#            | demo-be-csharp-aspnetcore | `NSwag` CLI                  | C# classes with JsonProperty         | System.Text.Json / Newtonsoft      |
+| TypeScript    | demo-be-ts-effect         | `openapi-typescript`         | TypeScript types                     | Effect Schema encode/decode        |
+| TypeScript    | demo-fe-ts-nextjs         | `openapi-typescript`         | TypeScript types                     | `openapi-fetch` type-safe client   |
+| TypeScript    | demo-fe-ts-tanstack-start | `openapi-typescript`         | TypeScript types                     | `openapi-fetch` type-safe client   |
+| Dart          | demo-fe-dart-flutterweb   | `openapi-generator` (dart)   | Dart classes with json_serializable  | `toJson()` / `fromJson()`          |
 
 **Library verification** (web-researched 2026-03-17):
 
-- **getkin/kin-openapi** — OpenAPI 3.0/3.1 Go library with `openapi3filter` package for
-  request/response validation. Actively maintained (2025 releases).
-- **Atlassian swagger-request-validator** — Java library validating HTTP requests/responses against
-  OpenAPI specs. Supports Spring 6+ WebMVC. Available on Maven Central.
-- **openapi-core** — Python library (v0.23.0, Mar 2026) supporting OpenAPI 3.0/3.1/3.2. Has
-  first-class FastAPI middleware integration via `FastAPIOpenAPIMiddleware`.
-- **jsonschema crate** — High-performance Rust JSON Schema validator. Requires Rust 1.83.0+.
-  Supports draft 4/6/7/2019-09/2020-12.
-- **ex_json_schema** — Elixir JSON Schema validator (v0.11.2) supporting draft 4/6/7.
-- **NJsonSchema** — .NET library (v11.5.2) for JSON Schema validation. Works with F# via
-  `FSharp.Data.JsonSchema`. Integrates with NSwag for OpenAPI.
-- **metosin/scjsv** — Simple Clojure JSON Schema Validator, wraps
-  `networknt/json-schema-validator` (Java). Runs on JVM natively.
+- **oapi-codegen** — Generates Go types + strict server interfaces from OpenAPI 3.x. Strict mode
+  auto-parses request bodies and encodes responses, forcing handler code to comply with schema.
+  Supports Gin, Chi, Echo, Fiber, Iris.
+- **openapi-generator** — Multi-language generator supporting Java (Spring, Vert.x), Kotlin
+  (kotlinx.serialization), Rust (serde), Dart (json_serializable). Generates DTOs with full
+  encoder/decoder annotations.
+- **NSwag** — .NET toolchain generating C# classes and F# types from OpenAPI specs with
+  System.Text.Json serialization. Generates strongly-typed HTTP clients and models.
+- **openapi-typescript** — Generates TypeScript types from OpenAPI 3.0/3.1 in milliseconds.
+  Runtime-free types. Pairs with `openapi-fetch` for type-safe HTTP client.
+- **openapi-fetch** — Type-safe fetch client (6kb) that uses `openapi-typescript` generated types.
+  Provides compile-time checked request/response types with zero runtime overhead.
 
-### Frontends — Type Generation + Compile Check
+### Dynamically Typed Languages (test-time enforcement)
 
-| Framework           | Tool                           | Workflow                                                                    |
-| ------------------- | ------------------------------ | --------------------------------------------------------------------------- |
-| Next.js (TS)        | `openapi-typescript`           | Generates `types.d.ts` → imported by API client → `tsc` fails on mismatch   |
-| TanStack Start (TS) | `openapi-typescript`           | Same as Next.js                                                             |
-| Flutter (Dart)      | `openapi_generator_cli` (Dart) | Generates models → imported by API client → Dart analyzer fails on mismatch |
+These languages lack static type systems, so enforcement happens at test time via generated
+schemas/structs validated in `test:unit`. This is caught by `test:quick` in pre-push hook and PR
+quality gate.
+
+| Language | App                      | Generator                             | Generated Output                    | Encoder/Decoder                       |
+| -------- | ------------------------ | ------------------------------------- | ----------------------------------- | ------------------------------------- |
+| Python   | demo-be-python-fastapi   | `datamodel-code-generator` (Pydantic) | Pydantic v2 models                  | `.model_dump()` / `.model_validate()` |
+| Elixir   | demo-be-elixir-phoenix   | Custom script + `open_api_spex`       | Elixir structs with `@enforce_keys` | Jason encode + CastAndValidate        |
+| Clojure  | demo-be-clojure-pedestal | Custom script → Malli schemas         | Malli schema definitions            | `m/encode` / `m/decode`               |
 
 **Library verification** (web-researched 2026-03-17):
 
-- **openapi-typescript** — Generates TypeScript types from OpenAPI 3.0 & 3.1 specs. Runtime-free
-  types, millisecond generation. Requires Node.js 20+. Available at `openapi-ts.dev`.
-- **openapi_generator_cli** — Dart/Flutter wrapper around openapi-generator. Generates Dart models
-  and API clients from OpenAPI specs. Available on pub.dev.
+- **datamodel-code-generator** — Python tool (v0.45.0, Dec 2025) generating Pydantic v2 models
+  from OpenAPI/JSON Schema. 274k weekly downloads. Pydantic provides runtime validation +
+  serialization via `.model_dump()` and `.model_validate()`.
+- **open_api_spex** — Elixir library (v3.22.2) for OpenAPI schema definition, casting, and
+  validation. `CastAndValidate` plug validates request/response against schemas.
+- **Malli** — Clojure data validation library supporting OpenAPI schema generation. `m/encode`
+  and `m/decode` provide type-safe serialization with coercion.
 
-### E2E Tests — Runtime Response Validation
+### E2E Tests — Additional Runtime Validation
 
-Both `demo-be-e2e` and `demo-fe-e2e` (Playwright/TypeScript) add an `ajv`-based helper that
-validates every API response against the OpenAPI spec during test runs.
-
-**Implementation pattern**:
+Both `demo-be-e2e` and `demo-fe-e2e` (Playwright/TypeScript) add an `ajv`-based response validator
+as a safety net. This catches drift that might bypass compile-time checks (e.g., a backend returns
+extra fields not in the schema).
 
 ```typescript
 // demo-be-e2e/tests/utils/contract-validator.ts
@@ -175,9 +150,21 @@ export function validateResponse(path: string, method: string, statusCode: numbe
 
 ## Nx Integration
 
-### New Nx Project: `demo-contracts`
+### Dependency Chain
 
-Added via `specs/apps/demo/contracts/project.json`:
+```
+demo-contracts:lint → demo-contracts:bundle → <app>:codegen → <app>:typecheck/build/test:unit
+```
+
+Every demo app's `codegen` target depends on `demo-contracts:bundle`. Every `typecheck`, `build`,
+and `test:unit` target depends on `codegen`. This ensures:
+
+1. Contract changes trigger re-bundling
+2. Re-bundling triggers code regeneration in all affected apps
+3. Regenerated code triggers recompilation/type checking
+4. Any mismatch fails the chain
+
+### New Nx Project: `demo-contracts`
 
 ```json
 {
@@ -185,48 +172,79 @@ Added via `specs/apps/demo/contracts/project.json`:
   "root": "specs/apps/demo/contracts",
   "targets": {
     "lint": {
-      "command": "npx @stoplight/spectral-cli lint specs/apps/demo/contracts/openapi.yaml --ruleset specs/apps/demo/contracts/.spectral.yaml"
+      "command": "npx @stoplight/spectral-cli lint specs/apps/demo/contracts/openapi.yaml --ruleset specs/apps/demo/contracts/.spectral.yaml",
+      "cache": true,
+      "inputs": ["specs/apps/demo/contracts/**/*.yaml"]
     },
     "bundle": {
       "command": "npx @redocly/cli bundle specs/apps/demo/contracts/openapi.yaml -o specs/apps/demo/contracts/generated/openapi-bundled.yaml",
-      "dependsOn": ["lint"]
-    },
-    "validate": {
-      "dependsOn": ["lint", "bundle"]
+      "dependsOn": ["lint"],
+      "cache": true,
+      "inputs": ["specs/apps/demo/contracts/**/*.yaml"],
+      "outputs": ["specs/apps/demo/contracts/generated/"]
     }
   }
 }
 ```
 
-**Library verification** (web-researched 2026-03-17):
-
-- **@stoplight/spectral-cli** — OpenAPI linter supporting 3.0/3.1. Adopted by 40% of Fortune 500
-  API teams (2025). Supports custom rulesets via `.spectral.yaml`.
-- **@redocly/cli** — OpenAPI CLI tool with `bundle` command that resolves `$ref` references into a
-  single output file. Supports YAML and JSON output.
-
-### Implicit Dependencies
-
-All `demo-be-*` and `demo-fe-*` projects declare an implicit dependency on `demo-contracts` in
-`nx.json`:
+### Per-App Codegen Target (example: Go)
 
 ```json
 {
-  "targetDefaults": {
-    "test:unit": {
-      "dependsOn": ["^validate"]
-    }
+  "codegen": {
+    "command": "oapi-codegen -config oapi-codegen.yaml ../../specs/apps/demo/contracts/generated/openapi-bundled.yaml",
+    "dependsOn": ["demo-contracts:bundle"],
+    "cache": true,
+    "inputs": ["specs/apps/demo/contracts/generated/openapi-bundled.yaml"],
+    "outputs": ["apps/demo-be-golang-gin/generated-contracts/"]
   },
-  "projects": {
-    "demo-be-golang-gin": { "implicitDependencies": ["demo-contracts"] },
-    "demo-be-java-springboot": { "implicitDependencies": ["demo-contracts"] },
-    "demo-fe-ts-nextjs": { "implicitDependencies": ["demo-contracts"] }
+  "build": {
+    "dependsOn": ["codegen"]
+  },
+  "test:unit": {
+    "dependsOn": ["codegen"]
   }
 }
 ```
 
-This ensures changes to `specs/apps/demo/contracts/**` trigger re-testing of all consumer projects
-via `nx affected`.
+### Implicit Dependencies
+
+All demo apps declare implicit dependency on `demo-contracts` in `nx.json` so that `nx affected`
+detects contract changes:
+
+```json
+{
+  "namedInputs": {
+    "contract": ["specs/apps/demo/contracts/**/*.yaml"]
+  }
+}
+```
+
+### Postinstall Hook
+
+`package.json` includes a postinstall script that runs codegen for all demo apps, ensuring a fresh
+clone is immediately buildable:
+
+```json
+{
+  "scripts": {
+    "postinstall": "npx nx run-many -t codegen --projects=demo-*"
+  }
+}
+```
+
+## Gitignore Setup
+
+### Root `.gitignore` Addition
+
+```gitignore
+# Generated contract code (regenerated by nx run <app>:codegen)
+**/generated-contracts/
+# Bundled OpenAPI spec
+specs/apps/demo/contracts/generated/
+```
+
+This single root-level pattern covers all apps. No per-app `.gitignore` changes needed.
 
 ## Spectral Rules
 
@@ -251,7 +269,7 @@ rules:
       field: description
       function: truthy
 
-  # Require examples on all endpoints
+  # Require examples on endpoints
   oas3-operation-examples:
     severity: warn
     given: "$.paths.*.*.responses.*.content.application/json"
@@ -259,6 +277,30 @@ rules:
       field: example
       function: truthy
 ```
+
+**Note**: `token_type` (snake_case) is an exception to camelCase per OAuth2 RFC 6749. The Spectral
+rule will need a property-level exception for this field.
+
+## Existing CI Integration
+
+The existing PR quality gate (`.github/workflows/pr-quality-gate.yml`) already runs:
+
+```yaml
+- name: Typecheck (affected)
+  run: npx nx affected -t typecheck
+
+- name: Lint (affected)
+  run: npx nx affected -t lint
+
+- name: Test quick (affected)
+  run: npx nx affected -t test:quick
+```
+
+Since `codegen` is a dependency of `typecheck`/`build`/`test:unit` (and `test:unit` is part of
+`test:quick`), **no changes to the PR quality gate are needed**. Contract violations are
+automatically caught.
+
+The pre-push hook (`.husky/pre-push`) runs the same commands, providing local enforcement.
 
 ## API Surface Summary
 
@@ -302,42 +344,25 @@ The contract covers all endpoints from the existing Gherkin specs:
 | GET    | /api/v1/expenses/{id}/attachments       | —              | 200          | Attachment[]  |
 | DELETE | /api/v1/expenses/{id}/attachments/{aid} | —              | 204          | —             |
 
-### Reporting
+### Reporting, Admin, Token, Health, Test Support
 
-| Method | Path               | Query Params       | Success Code | Response Body |
-| ------ | ------------------ | ------------------ | ------------ | ------------- |
-| GET    | /api/v1/reports/pl | from, to, currency | 200          | PLReport      |
-
-### Admin Operations
-
-| Method | Path                                          | Request Body   | Success Code | Response Body         |
-| ------ | --------------------------------------------- | -------------- | ------------ | --------------------- |
-| GET    | /api/v1/admin/users                           | —              | 200          | UserListResponse      |
-| POST   | /api/v1/admin/users/{id}/disable              | DisableRequest | 200          | —                     |
-| POST   | /api/v1/admin/users/{id}/enable               | —              | 200          | —                     |
-| POST   | /api/v1/admin/users/{id}/unlock               | —              | 200          | —                     |
-| POST   | /api/v1/admin/users/{id}/force-password-reset | —              | 200          | PasswordResetResponse |
-
-### Token & Health
-
-| Method | Path                   | Success Code | Response Body  |
-| ------ | ---------------------- | ------------ | -------------- |
-| GET    | /health                | 200          | HealthResponse |
-| GET    | /.well-known/jwks.json | 200          | JwksResponse   |
-| GET    | /api/v1/tokens/claims  | 200          | TokenClaims    |
-
-### Test Support (x-test-only)
-
-| Method | Path                       | Success Code | Response Body |
-| ------ | -------------------------- | ------------ | ------------- |
-| POST   | /api/v1/test/reset-db      | 200          | —             |
-| POST   | /api/v1/test/promote-admin | 200          | —             |
+| Method | Path                                          | Success Code | Response Body         |
+| ------ | --------------------------------------------- | ------------ | --------------------- |
+| GET    | /api/v1/reports/pl                            | 200          | PLReport              |
+| GET    | /api/v1/admin/users                           | 200          | UserListResponse      |
+| POST   | /api/v1/admin/users/{id}/disable              | 200          | —                     |
+| POST   | /api/v1/admin/users/{id}/enable               | 200          | —                     |
+| POST   | /api/v1/admin/users/{id}/unlock               | 200          | —                     |
+| POST   | /api/v1/admin/users/{id}/force-password-reset | 200          | PasswordResetResponse |
+| GET    | /health                                       | 200          | HealthResponse        |
+| GET    | /.well-known/jwks.json                        | 200          | JwksResponse          |
+| GET    | /api/v1/tokens/claims                         | 200          | TokenClaims           |
+| POST   | /api/v1/test/reset-db                         | 200          | —                     |
+| POST   | /api/v1/test/promote-admin                    | 200          | —                     |
 
 ## Schema Definitions
 
-Based on the canonical types from `demo-fe-ts-nextjs/src/lib/api/types.ts`:
-
-### Core Schemas
+Based on the canonical types from `demo-fe-ts-nextjs/src/lib/api/types.ts` and Gherkin specs:
 
 **AuthTokens**: `{ accessToken: string, refreshToken: string, token_type: string }`
 
@@ -349,101 +374,73 @@ Based on the canonical types from `demo-fe-ts-nextjs/src/lib/api/types.ts`:
 
 **Pagination Envelope**: `{ content: T[], totalElements: number, totalPages: number, page: number, size: number }`
 
-### Request Schemas
+**Request schemas**: RegisterRequest, LoginRequest, RefreshRequest, CreateExpenseRequest,
+UpdateExpenseRequest, UpdateProfileRequest, ChangePasswordRequest, DisableRequest
 
-**RegisterRequest**: `{ username: string, email: string, password: string }`
-
-**LoginRequest**: `{ username: string, password: string }`
-
-**RefreshRequest**: `{ refreshToken: string }`
-
-**CreateExpenseRequest**: `{ amount: string, currency: string, category: string, description: string, date: string, type: string, quantity?: number, unit?: string }`
-
-**UpdateExpenseRequest**: All fields optional version of CreateExpenseRequest
-
-**UpdateProfileRequest**: `{ displayName: string }`
-
-**ChangePasswordRequest**: `{ oldPassword: string, newPassword: string }`
-
-**DisableRequest**: `{ reason: string }`
-
-### Response-Only Schemas
-
-**PLReport**: `{ startDate: string, endDate: string, currency: string, totalIncome: string, totalExpense: string, net: string, incomeBreakdown: CategoryBreakdown[], expenseBreakdown: CategoryBreakdown[] }`
-
-**CategoryBreakdown**: `{ category: string, type: string, total: string }`
-
-**Attachment**: `{ id: string, filename: string, contentType: string, size: number, createdAt: string }`
-
-**TokenClaims**: `{ sub: string, iss: string, exp: number, iat: number, roles: string[] }`
-
-**JwksResponse**: `{ keys: JwkKey[] }` where JwkKey = `{ kty: string, kid: string, use: string, n: string, e: string }`
-
-**HealthResponse**: `{ status: string }`
-
-**PasswordResetResponse**: `{ token: string }`
-
-**ErrorResponse**: `{ error: string, message: string }` (standardized)
+**Response-only schemas**: PLReport, CategoryBreakdown, Attachment, TokenClaims, JwksResponse,
+JwkKey, HealthResponse, PasswordResetResponse, ErrorResponse
 
 ## Design Decisions
 
-### Decision 1: Modular YAML Over Single File
+### Decision 1: Code Generation Over Runtime Validation
 
-**Context**: OpenAPI specs can be written as a single monolithic file or split into modules.
+**Context**: Contract enforcement can use runtime validators (check JSON at test time) or code
+generation (produce typed code that fails compilation on mismatch).
 
-**Decision**: Use modular YAML with `$ref` references, split by domain.
-
-**Rationale**:
-
-- Domain-split files mirror existing Gherkin spec organization (`be/gherkin/authentication/`,
-  `be/gherkin/expenses/`, etc.)
-- Smaller files are easier to review in PRs
-- Multiple developers can work on different domains without merge conflicts
-- Redocly CLI handles `$ref` resolution into a single bundled file for consumers
-
-**Alternatives Considered**:
-
-- Single `openapi.yaml` — rejected, too large (~800-1000 lines) for easy review
-- Per-endpoint files — rejected, too granular (30+ files just for paths)
-
-### Decision 2: Test-Time Only Enforcement
-
-**Context**: Contract validation can run at build time, test time, or runtime in production.
-
-**Decision**: Enforce contracts only at test time (unit, integration, E2E). No production runtime
-validation.
+**Decision**: Use code generation. Each app gets auto-generated types with encoders/decoders.
 
 **Rationale**:
 
-- Test-time catches all drift before merge
-- No performance overhead in production
-- No additional production dependencies
-- Consistent with existing three-level testing standard
+- Compile-time errors are faster feedback than test failures
+- Generated encoders/decoders guarantee serialization matches the contract
+- No runtime dependencies in production (generated code is just types + annotations)
+- Developers get IDE autocomplete for all API types
 
-### Decision 3: Generated Types for Frontends
+### Decision 2: Gitignored Generated Code
 
-**Context**: Frontend types can be hand-written or generated from the contract.
+**Context**: Generated code can be committed or gitignored.
 
-**Decision**: Generate types from the contract using `openapi-typescript` (TS) and
-`openapi_generator_cli` (Dart). Generated types replace hand-written types.
-
-**Rationale**:
-
-- Eliminates the possibility of hand-written types drifting from the contract
-- Single source of truth (contract) rather than two sources (contract + hand-written types)
-- Generation is fast (milliseconds for `openapi-typescript`)
-- Generated types are committed to the repo for easy review
-
-### Decision 4: Test-Only Endpoints Use OpenAPI Extension
-
-**Context**: `/api/v1/test/*` endpoints exist only for testing and shouldn't appear in production
-API documentation.
-
-**Decision**: Mark test-only endpoints with `x-test-only: true` OpenAPI extension. Spectral rule
-warns if test endpoints lack this extension.
+**Decision**: Gitignore all `generated-contracts/` folders. Only the OpenAPI spec is committed.
 
 **Rationale**:
 
-- Keeps all endpoints in a single spec (no separate test spec)
-- Documentation generators can filter out `x-test-only` endpoints
-- Contract validation still covers test endpoints
+- Single source of truth (the YAML spec), not N+1 sources
+- No merge conflicts in generated files
+- Generated code is a build artifact, like compiled binaries
+- Postinstall hook ensures fresh clones work immediately
+
+### Decision 3: Codegen as Nx Target Dependency
+
+**Context**: How to ensure codegen runs before compilation.
+
+**Decision**: Each app's `typecheck`/`build`/`test:unit` depends on `codegen`. `codegen` depends
+on `demo-contracts:bundle`.
+
+**Rationale**:
+
+- Nx handles the dependency chain automatically
+- `nx affected` correctly identifies which apps need re-codegen when contract changes
+- Cacheable — Nx skips codegen if inputs haven't changed
+- No manual steps required
+
+### Decision 4: Dynamic Languages Use Test-Time Enforcement
+
+**Context**: Elixir, Clojure, and (partially) Python lack compile-time type checking.
+
+**Decision**: Generate typed schemas/models for these languages. Enforcement happens at `test:unit`
+via Pydantic validation (Python), struct enforcement (Elixir), and Malli validation (Clojure).
+
+**Rationale**:
+
+- `test:unit` is part of `test:quick`, which runs in pre-push hook and PR quality gate
+- Pydantic models provide both type hints (mypy) AND runtime validation
+- Elixir `@enforce_keys` catches missing fields at struct creation
+- Malli `m/decode` with `:strip-extra-keys` catches schema violations
+- This matches each language's idiom rather than fighting it
+
+### Decision 5: Test-Only Endpoints Use OpenAPI Extension
+
+**Context**: `/api/v1/test/*` endpoints exist only for testing.
+
+**Decision**: Mark with `x-test-only: true`. Code generators include them. Documentation generators
+filter them out.
