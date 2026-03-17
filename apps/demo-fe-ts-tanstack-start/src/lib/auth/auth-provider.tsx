@@ -31,6 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
 
   const logout = useCallback(() => {
+    sessionStorage.setItem("explicit_logout", "true");
     clearTokens();
     setIsAuthenticated(false);
   }, []);
