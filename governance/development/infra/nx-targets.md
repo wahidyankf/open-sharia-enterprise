@@ -109,6 +109,8 @@ Use these canonical names. Aliases (`serve`, `start:dev`, `unit-test`) are anti-
 | `dev`              | Start local development server with hot-reload                                                                   | Apps with dev servers             |
 | `start`            | Start server in production mode                                                                                  | Apps with production server mode  |
 | `run`              | Execute the application directly                                                                                 | CLI applications                  |
+| `codegen`          | Generate code from OpenAPI contract spec into `generated-contracts/`                                             | Demo apps with contract types     |
+| `docs`             | Generate browsable API documentation from contract spec                                                          | Contract spec projects            |
 | `install`          | Install project-local dependencies                                                                               | E2E suites, Go CLIs               |
 | `clean`            | Remove build artifacts and caches                                                                                | Projects with large build outputs |
 

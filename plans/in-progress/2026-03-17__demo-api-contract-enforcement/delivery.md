@@ -67,20 +67,20 @@ for all statically typed apps. Wire `codegen` as dependency of `typecheck`/`buil
 - [x] **demo-be-golang-gin**: Install `oapi-codegen`, create config (`oapi-codegen.yaml` with
       strict-server + gin output), add `codegen` target, update handlers to implement generated
       strict server interface, verify `go build` passes
-- [ ] **demo-be-java-springboot**: Add `openapi-generator-maven-plugin` to `pom.xml`, configure
+- [x] **demo-be-java-springboot**: Add `openapi-generator-maven-plugin` to `pom.xml`, configure
       Spring generator, add `codegen` target, update controllers to use generated DTOs with Jackson
       annotations, verify `mvn compile` passes
-- [ ] **demo-be-java-vertx**: Add `openapi-generator-maven-plugin`, configure Java generator, add
+- [x] **demo-be-java-vertx**: Add `openapi-generator-maven-plugin`, configure Java generator, add
       `codegen` target, update handlers to use generated DTOs, verify `mvn compile` passes
-- [ ] **demo-be-kotlin-ktor**: Add `openapi-generator-gradle-plugin` to `build.gradle.kts`,
+- [x] **demo-be-kotlin-ktor**: Add `openapi-generator-gradle-plugin` to `build.gradle.kts`,
       configure Kotlin generator with kotlinx.serialization, add `codegen` target, update routes to
       use generated data classes, verify `./gradlew build` passes
-- [ ] **demo-be-rust-axum**: Add `openapi-generator` Rust generator via build script, add `codegen`
+- [x] **demo-be-rust-axum**: Add `openapi-generator` Rust generator via build script, add `codegen`
       target, update handlers to use generated serde structs, verify `cargo build` passes
-- [ ] **demo-be-fsharp-giraffe**: Add `openapi-generator` with `fsharp-giraffe-server` generator
+- [x] **demo-be-fsharp-giraffe**: Add `openapi-generator` with `fsharp-giraffe-server` generator
       (beta), configure to generate F# model types only, add `codegen` target, update handlers to use
       generated types, verify `dotnet build` passes
-- [ ] **demo-be-csharp-aspnetcore**: Add `NSwag.MSBuild` NuGet package, configure C# class
+- [x] **demo-be-csharp-aspnetcore**: Add `NSwag.MSBuild` NuGet package, configure C# class
       generation, add `codegen` target, update controllers to use generated classes, verify
       `dotnet build` passes
 - [x] **demo-be-ts-effect**: Add `@hey-api/openapi-ts` dev dependency, add `codegen` target
@@ -91,12 +91,12 @@ for all statically typed apps. Wire `codegen` as dependency of `typecheck`/`buil
       types, use generated Zod schemas as runtime decoders for API responses, verify `tsc` passes
 - [x] **demo-fe-ts-tanstack-start**: Same as demo-fe-ts-nextjs — `@hey-api/openapi-ts` + Zod
       plugin, add `codegen` target, replace types, use Zod runtime decoders, verify `tsc` passes
-- [ ] **demo-fe-dart-flutterweb**: Add `openapi-generator` Dart generator, add `codegen` target,
+- [x] **demo-fe-dart-flutterweb**: Add `openapi-generator` Dart generator, add `codegen` target,
       replace hand-written models with generated classes using `json_serializable`, verify
       `dart analyze` passes
-- [ ] Wire `codegen` as dependency of `typecheck`/`build`/`test:unit` in each app's `project.json`
-- [ ] Verify `nx run-many -t typecheck --projects=demo-fe-*` passes
-- [ ] Verify `nx run-many -t build --projects=demo-be-golang-gin,demo-be-rust-axum` passes
+- [x] Wire `codegen` as dependency of `typecheck`/`build`/`test:unit` in each app's `project.json`
+- [x] Verify `nx run-many -t typecheck --projects=demo-fe-*` passes
+- [x] Verify `nx run-many -t build --projects=demo-be-golang-gin,demo-be-rust-axum` passes
 
 **Validation**:
 
@@ -170,8 +170,8 @@ Clojure. Enforcement via `test:unit` (part of `test:quick`).
 
 **Implementation Steps**:
 
-- [ ] Add `ajv` + `@apidevtools/json-schema-ref-parser` to `demo-be-e2e` dev dependencies
-- [ ] Create `demo-be-e2e/tests/utils/contract-validator.ts`
+- [x] Add `ajv` + `ajv-formats` to `demo-be-e2e` dev dependencies
+- [x] Create `demo-be-e2e/tests/utils/contract-validator.ts`
 - [ ] Integrate validator into existing backend E2E step definitions
 - [ ] Add same validator to `demo-fe-e2e` test utilities
 - [ ] Run full E2E suites — fix any discovered drift
@@ -189,19 +189,19 @@ Clojure. Enforcement via `test:unit` (part of `test:quick`).
 
 **Implementation Steps**:
 
-- [ ] Add postinstall script to `package.json`: `npx nx run-many -t codegen --projects=demo-*`
-- [ ] Verify root `.gitignore` has `**/generated-contracts/` and `**/generated_contracts/` patterns
-- [ ] Update `specs/apps/demo/README.md` — add contracts section with link to
+- [x] Add postinstall script to `package.json`: `npx nx run-many -t codegen --projects=demo-*`
+- [x] Verify root `.gitignore` has `**/generated-contracts/` and `**/generated_contracts/` patterns
+- [x] Update `specs/apps/demo/README.md` — add contracts section with link to
       `specs/apps/demo/contracts/README.md`
-- [ ] Update `specs/apps/demo/contracts/README.md` — document codegen workflow, how to modify
+- [x] Update `specs/apps/demo/contracts/README.md` — document codegen workflow, how to modify
       contract, how generated code flows to each app, how to generate/view docs
 - [ ] Update `libs/README.md` — add `elixir-openapi-codegen` and `clojure-openapi-codegen` entries
-- [ ] Update `CLAUDE.md`:
+- [x] Update `CLAUDE.md`:
   - Add `demo-contracts` to Current Apps list
   - Document `codegen` and `docs` Nx targets and dependency chain
   - Document `generated-contracts/` gitignore pattern
   - Add note about contract enforcement in Three-Level Testing section
-- [ ] Update `governance/development/infra/nx-targets.md` — add `codegen` and `docs` as standard
+- [x] Update `governance/development/infra/nx-targets.md` — add `codegen` and `docs` as standard
       targets for demo apps
 - [ ] Verify fresh clone workflow: `git clone` → `npm install` → `nx affected -t typecheck` passes
 - [ ] Verify contract change workflow: modify schema → `nx affected -t typecheck` catches all apps

@@ -34,6 +34,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `demo-be-ts-effect` - TypeScript/Effect REST API backend (alternative to demo-be-golang-gin)
   - `demo-be-csharp-aspnetcore` - C#/ASP.NET Core REST API backend (alternative to demo-be-golang-gin)
   - `demo-be-clojure-pedestal` - Clojure/Pedestal REST API backend (alternative to demo-be-golang-gin)
+  - `demo-contracts` - OpenAPI 3.1 API contract spec (in `specs/apps/demo/contracts/`); generates
+    types + encoders/decoders for all demo apps via `codegen` Nx target
   - `demo-be-e2e` - Playwright E2E tests for demo-be REST API backends
   - `demo-fe-ts-nextjs` - Next.js 16 frontend (TypeScript, App Router)
   - `demo-fe-ts-tanstack-start` - TanStack Start frontend (TypeScript, alternative to demo-fe-ts-nextjs)
@@ -120,6 +122,12 @@ nx run [project-name]:test:unit          # Mocked dependencies, no Docker, cache
 nx run [project-name]:test:integration   # Demo-be: real PostgreSQL via docker-compose; others: MSW/Godog. NOT cacheable
 nx run [project-name]:test:e2e           # Real HTTP via Playwright. NOT cacheable
 
+# Contract codegen (generates types from OpenAPI spec into generated-contracts/)
+nx run demo-contracts:lint       # Lint + bundle the OpenAPI spec
+nx run demo-contracts:docs       # Generate browsable API documentation
+nx run [project-name]:codegen    # Generate types for a specific app
+nx run-many -t codegen --projects=demo-*  # Generate for all demo apps
+
 # Dependency graph
 nx graph
 
@@ -203,6 +211,12 @@ in-process mocking only (MSW, Godog) override to `cache: true` in their `project
 All three levels consume the same Gherkin specs — only step implementations change. `test:quick`
 includes only `test:unit` + coverage check + specs coverage check. It does NOT include `lint`,
 `typecheck`, `test:integration`, or `test:e2e`.
+
+**Contract enforcement**: All demo apps have a `codegen` Nx target that generates types +
+encoders/decoders from the OpenAPI spec at `specs/apps/demo/contracts/`. Generated code lives in
+`generated-contracts/` (gitignored). The `codegen` target is a dependency of `typecheck`, `build`,
+and `test:unit` — so contract violations are caught by `nx affected -t typecheck` and `test:quick`
+in the pre-push hook and PR quality gate.
 
 **See**: [governance/development/quality/three-level-testing-standard.md](./governance/development/quality/three-level-testing-standard.md)
 

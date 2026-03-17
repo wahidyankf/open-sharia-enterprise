@@ -51,8 +51,10 @@ consumes the backend API.
 ## Spec Artifacts
 
 - **[c4/](./c4/README.md)** — C4 architecture diagrams (context, container, 2 component)
-- **[be/](./be/README.md)** — Backend API specs (13 Gherkin features, 76 scenarios)
+- **[be/](./be/README.md)** — Backend API specs (13 Gherkin features, 78 scenarios)
 - **[fe/](./fe/README.md)** — Frontend app specs (15 Gherkin features, 92 scenarios)
+- **[contracts/](./contracts/README.md)** — OpenAPI 3.1 API contract (request/response shapes,
+  code generation, browsable documentation)
 
 ## Related
 
