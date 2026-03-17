@@ -4,6 +4,16 @@
   "projectType": "application",
   "tags": ["type:app", "platform:pedestal", "lang:clojure", "domain:demo-be"],
   "targets": {
+    "codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} cd libs/clojure-openapi-codegen && clojure -M -e '(require (quote openapi-codegen.core)) (openapi-codegen.core/generate \"../../specs/apps/demo/contracts/generated/openapi-bundled.yaml\" \"../../apps/demo-be-clojure-pedestal/generated_contracts\")'"
+      },
+      "dependsOn": ["demo-contracts:bundle", "clojure-openapi-codegen:build"],
+      "cache": true,
+      "inputs": ["{workspaceRoot}/specs/apps/demo/contracts/generated/openapi-bundled.yaml"],
+      "outputs": ["{projectRoot}/generated_contracts"]
+    },
     "build": {
       "executor": "nx:run-commands",
       "options": {

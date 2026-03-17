@@ -4,6 +4,16 @@
   "projectType": "application",
   "implicitDependencies": ["elixir-gherkin", "elixir-cabbage"],
   "targets": {
+    "codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd libs/elixir-openapi-codegen && mix run -e 'OpenApiCodegen.generate(\"../../specs/apps/demo/contracts/generated/openapi-bundled.yaml\", \"../../apps/demo-be-elixir-phoenix/generated-contracts\")'"
+      },
+      "dependsOn": ["demo-contracts:bundle", "elixir-openapi-codegen:build"],
+      "cache": true,
+      "inputs": ["{workspaceRoot}/specs/apps/demo/contracts/generated/openapi-bundled.yaml"],
+      "outputs": ["{projectRoot}/generated-contracts"]
+    },
     "build": {
       "executor": "nx:run-commands",
       "options": {

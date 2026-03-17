@@ -51,7 +51,20 @@ This flat structure with language prefixes supports a **polyglot monorepo** wher
 
 ## Current Implementation
 
-**`golang-commons`** - The first library in `libs/`. Provides shared Go utilities used by `ayokoding-cli` and `oseplatform-cli` (links checker, output formatting). Future libraries may use TypeScript, Java, Kotlin, or Python depending on project needs.
+**`golang-commons`** - Shared Go utilities used by `ayokoding-cli` and `oseplatform-cli` (links
+checker, output formatting).
+
+**`hugo-commons`** - Shared Hugo utilities used by Hugo-based sites.
+
+**`elixir-openapi-codegen`** - Elixir library that reads an OpenAPI 3.1 bundled YAML spec and
+generates Elixir struct modules with `defstruct`, `@enforce_keys`, and `@type` typespecs. Used by
+`demo-be-elixir-phoenix` to generate contract types from `specs/apps/demo/contracts/`.
+
+**`clojure-openapi-codegen`** - Clojure library that reads an OpenAPI 3.1 bundled YAML spec and
+generates Malli schema definitions. Used by `demo-be-clojure-pedestal` to generate contract
+schemas from `specs/apps/demo/contracts/`.
+
+**`elixir-cabbage`** / **`elixir-gherkin`** - Elixir Gherkin BDD testing libraries.
 
 ## Library Characteristics
 
