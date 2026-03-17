@@ -106,31 +106,60 @@ for all statically typed apps. Wire `codegen` as dependency of `typecheck`/`buil
 
 ---
 
-### Phase 3: Code Generation for Dynamically Typed Apps
+### Phase 3: Codegen Libs + Dynamically Typed Apps
 
-**Goal**: Set up `codegen` Nx targets for Python, Elixir, and Clojure producing typed
-schemas/models. Enforcement via `test:unit` (part of `test:quick`).
+**Goal**: Create `libs/elixir-openapi-codegen` and `libs/clojure-openapi-codegen` as Nx library
+projects with full test suites and coverage. Set up `codegen` Nx targets for Python, Elixir, and
+Clojure. Enforcement via `test:unit` (part of `test:quick`).
 
-**Implementation Steps**:
+**Implementation Steps — Codegen Libs**:
+
+- [ ] **libs/elixir-openapi-codegen**: Create Elixir Nx library project
+  - [ ] Set up `mix.exs` with `yaml_elixir` dependency
+  - [ ] Implement OpenAPI YAML parser (reads bundled spec, extracts component schemas)
+  - [ ] Implement Elixir struct generator (emits `defstruct` + `@enforce_keys` + `@type` typespecs)
+  - [ ] Add `project.json` with `build`, `test:unit`, `test:quick`, `lint` targets
+  - [ ] Write unit tests: given sample OpenAPI schemas, assert generated Elixir code has correct
+        struct fields, enforce_keys, and typespecs
+  - [ ] Write integration tests: generate structs from the actual demo contract, compile them,
+        verify they accept valid data and reject invalid data
+  - [ ] Enforce ≥90% line coverage via `rhino-cli test-coverage validate`
+  - [ ] Verify `nx run elixir-openapi-codegen:test:quick` passes
+- [ ] **libs/clojure-openapi-codegen**: Create Clojure Nx library project
+  - [ ] Set up `deps.edn` with `clj-yaml` dependency
+  - [ ] Implement OpenAPI YAML parser (reads bundled spec, extracts component schemas)
+  - [ ] Implement Malli schema generator (emits Malli `[:map ...]` definitions per schema)
+  - [ ] Add `project.json` with `build`, `test:unit`, `test:quick`, `lint` targets
+  - [ ] Write unit tests: given sample OpenAPI schemas, assert generated Malli schemas have correct
+        keys, types, and required/optional markers
+  - [ ] Write integration tests: generate schemas from the actual demo contract, validate sample
+        JSON payloads against generated schemas (accept valid, reject invalid)
+  - [ ] Enforce ≥90% line coverage via `rhino-cli test-coverage validate`
+  - [ ] Verify `nx run clojure-openapi-codegen:test:quick` passes
+
+**Implementation Steps — App Integration**:
 
 - [ ] **demo-be-python-fastapi**: Add `datamodel-code-generator` dev dependency, add `codegen`
       target generating Pydantic v2 models into `generated_contracts/`, update FastAPI route handlers
       to use generated models as `response_model`, verify `pytest` passes
-- [ ] **demo-be-elixir-phoenix**: Create custom codegen script that reads bundled OpenAPI and
-      generates Elixir structs with `@enforce_keys` + `@type` typespecs, add `codegen` target, update
+- [ ] **demo-be-elixir-phoenix**: Add `codegen` target that invokes
+      `libs/elixir-openapi-codegen` to generate structs into `generated-contracts/`, update
       controllers to return generated structs, verify `mix test` passes
-- [ ] **demo-be-clojure-pedestal**: Create custom codegen script generating Malli schemas from
-      bundled OpenAPI, add `codegen` target, add middleware validating responses against Malli schemas,
-      verify `lein test` passes
+- [ ] **demo-be-clojure-pedestal**: Add `codegen` target that invokes
+      `libs/clojure-openapi-codegen` to generate Malli schemas into `generated_contracts/`, add
+      middleware validating responses against generated schemas, verify `lein test` passes
 - [ ] Wire `codegen` as dependency of `test:unit` in each app's `project.json`
-- [ ] Verify `nx run-many -t test:quick --projects=demo-be-python-fastapi,demo-be-elixir-phoenix,demo-be-clojure-pedestal` passes
+- [ ] Verify `nx run-many -t test:quick --projects=elixir-openapi-codegen,clojure-openapi-codegen,demo-be-python-fastapi,demo-be-elixir-phoenix,demo-be-clojure-pedestal` passes
 
 **Validation**:
 
+- `libs/elixir-openapi-codegen` passes `test:quick` with ≥90% coverage
+- `libs/clojure-openapi-codegen` passes `test:quick` with ≥90% coverage
 - Each dynamically typed app's `generated-contracts/` (or `generated_contracts/`) is populated
 - `test:unit` validates responses against generated schemas/models
 - `nx affected -t test:quick` catches violations before push
 - Intentionally removing a required field causes `test:unit` failure
+- `nx graph` shows correct dependency: app → codegen lib → demo-contracts
 
 ---
 
@@ -165,6 +194,7 @@ schemas/models. Enforcement via `test:unit` (part of `test:quick`).
       `specs/apps/demo/contracts/README.md`
 - [ ] Update `specs/apps/demo/contracts/README.md` — document codegen workflow, how to modify
       contract, how generated code flows to each app, how to generate/view docs
+- [ ] Update `libs/README.md` — add `elixir-openapi-codegen` and `clojure-openapi-codegen` entries
 - [ ] Update `CLAUDE.md`:
   - Add `demo-contracts` to Current Apps list
   - Document `codegen` and `docs` Nx targets and dependency chain
@@ -201,10 +231,11 @@ schemas/models. Enforcement via `test:unit` (part of `test:quick`).
    Yes — `npm ci` in CI triggers postinstall, which runs codegen. This ensures CI has all
    generated code before running typecheck/build/test.
 
-4. **What about custom codegen scripts for Elixir/Clojure?**
-   Write them as small scripts in `tools/codegen/` (e.g., `tools/codegen/elixir-codegen.exs`,
-   `tools/codegen/clojure-codegen.clj`). These read the bundled YAML and emit language-specific
-   code. Keep them simple — just type/schema generation, not full framework code.
+4. **What about custom codegen for Elixir/Clojure?**
+   Implemented as Nx library projects in `libs/elixir-openapi-codegen` and
+   `libs/clojure-openapi-codegen`. Each gets its own `project.json`, test suite (≥90% coverage),
+   and Nx dependency tracking — following the same pattern as `libs/elixir-cabbage` and
+   `libs/elixir-gherkin`.
 
 ---
 
@@ -213,7 +244,7 @@ schemas/models. Enforcement via `test:unit` (part of `test:quick`).
 | Risk                                                          | Impact | Mitigation                                                             |
 | ------------------------------------------------------------- | ------ | ---------------------------------------------------------------------- |
 | Code generator produces incompatible output                   | High   | Test each generator against existing app code before migrating         |
-| Custom codegen scripts for Elixir/Clojure are fragile         | Medium | Keep scripts minimal; generate only structs/schemas, not handlers      |
+| Custom codegen libs for Elixir/Clojure are fragile            | Medium | Nx libs with ≥90% test coverage; generate only structs/schemas         |
 | Postinstall codegen slows npm install                         | Low    | Nx caching ensures codegen only runs when spec changes                 |
 | oapi-codegen strict mode conflicts with existing Gin handlers | Medium | Incremental migration: generate types first, then strict interface     |
 | Generated code has merge conflicts across branches            | N/A    | Generated code is gitignored — no merge conflicts possible             |
@@ -231,4 +262,5 @@ schemas/models. Enforcement via `test:unit` (part of `test:quick`).
 - **Rust**: `openapi-generator` CLI or `progenitor` crate
 - **.NET**: `NSwag.MSBuild` NuGet package
 - **Dart**: `openapi-generator` CLI (via Java)
-- **Elixir/Clojure**: Custom scripts (no external dependencies beyond YAML parsing)
+- **Elixir**: `libs/elixir-openapi-codegen` (deps: `yaml_elixir`)
+- **Clojure**: `libs/clojure-openapi-codegen` (deps: `clj-yaml`)

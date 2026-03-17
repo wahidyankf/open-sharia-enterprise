@@ -122,8 +122,8 @@ quality gate.
 | Language | App                      | Generator                             | Generated Output                    | Encoder/Decoder                       |
 | -------- | ------------------------ | ------------------------------------- | ----------------------------------- | ------------------------------------- |
 | Python   | demo-be-python-fastapi   | `datamodel-code-generator` (Pydantic) | Pydantic v2 models                  | `.model_dump()` / `.model_validate()` |
-| Elixir   | demo-be-elixir-phoenix   | Custom script + `open_api_spex`       | Elixir structs with `@enforce_keys` | Jason encode + CastAndValidate        |
-| Clojure  | demo-be-clojure-pedestal | Custom script → Malli schemas         | Malli schema definitions            | `m/encode` / `m/decode`               |
+| Elixir   | demo-be-elixir-phoenix   | `libs/elixir-openapi-codegen`         | Elixir structs with `@enforce_keys` | Jason encode + CastAndValidate        |
+| Clojure  | demo-be-clojure-pedestal | `libs/clojure-openapi-codegen`        | Malli schema definitions            | `m/encode` / `m/decode`               |
 
 **Library verification** (web-researched 2026-03-17):
 
@@ -131,9 +131,33 @@ quality gate.
   from OpenAPI/JSON Schema. 274k weekly downloads. Pydantic provides runtime validation +
   serialization via `.model_dump()` and `.model_validate()`.
 - **open_api_spex** — Elixir library (v3.22.2) for OpenAPI schema definition, casting, and
-  validation. `CastAndValidate` plug validates request/response against schemas.
+  validation. `CastAndValidate` plug validates request/response against schemas. Used by
+  `libs/elixir-openapi-codegen` to define generated schemas.
 - **Malli** — Clojure data validation library supporting OpenAPI schema generation. `m/encode`
-  and `m/decode` provide type-safe serialization with coercion.
+  and `m/decode` provide type-safe serialization with coercion. Used by
+  `libs/clojure-openapi-codegen` to generate schema definitions.
+
+### Custom Codegen Libraries
+
+Elixir and Clojure lack off-the-shelf OpenAPI codegen tools (unlike Go's `oapi-codegen` or Java's
+`openapi-generator`). Two dedicated libs in `libs/` fill this gap:
+
+**`libs/elixir-openapi-codegen/`** — Elixir Nx project:
+
+- Reads the bundled `openapi-bundled.yaml`
+- Generates Elixir modules with `defstruct` + `@enforce_keys` + `@type` typespecs for each
+  OpenAPI schema
+- Output: `.ex` files in the consuming app's `generated-contracts/`
+- Deps: `yaml_elixir` (YAML parsing)
+- Tests: validate generated structs match expected field names/types for sample schemas
+
+**`libs/clojure-openapi-codegen/`** — Clojure Nx project:
+
+- Reads the bundled `openapi-bundled.yaml`
+- Generates Clojure namespaces with Malli schema definitions for each OpenAPI schema
+- Output: `.clj` files in the consuming app's `generated_contracts/`
+- Deps: `clj-yaml` (YAML parsing)
+- Tests: validate generated Malli schemas accept/reject sample data correctly
 
 ### E2E Tests — Additional Runtime Validation
 
@@ -162,16 +186,21 @@ export function validateResponse(path: string, method: string, statusCode: numbe
 ### Dependency Chain
 
 ```
-demo-contracts:lint → demo-contracts:bundle → <app>:codegen → <app>:typecheck/build/test:unit
+demo-contracts:lint → demo-contracts:bundle
+    → <app>:codegen (most apps: direct tool invocation)     → <app>:typecheck/build/test:unit
+    → elixir-openapi-codegen:build → demo-be-elixir-phoenix:codegen → ...
+    → clojure-openapi-codegen:build → demo-be-clojure-pedestal:codegen → ...
 ```
 
-Every demo app's `codegen` target depends on `demo-contracts:bundle`. Every `typecheck`, `build`,
-and `test:unit` target depends on `codegen`. This ensures:
+Every demo app's `codegen` target depends on `demo-contracts:bundle`. For Elixir and Clojure,
+`codegen` also depends on the respective `libs/*-openapi-codegen:build` target. Every `typecheck`,
+`build`, and `test:unit` target depends on `codegen`. This ensures:
 
 1. Contract changes trigger re-bundling
 2. Re-bundling triggers code regeneration in all affected apps
-3. Regenerated code triggers recompilation/type checking
-4. Any mismatch fails the chain
+3. Codegen lib changes also trigger regeneration for their consumers
+4. Regenerated code triggers recompilation/type checking
+5. Any mismatch fails the chain
 
 ### New Nx Project: `demo-contracts`
 
@@ -453,12 +482,15 @@ on `demo-contracts:bundle`.
 - Cacheable — Nx skips codegen if inputs haven't changed
 - No manual steps required
 
-### Decision 4: Dynamic Languages Use Test-Time Enforcement
+### Decision 4: Dynamic Languages Use Test-Time Enforcement via Codegen Libs
 
-**Context**: Elixir, Clojure, and (partially) Python lack compile-time type checking.
+**Context**: Elixir, Clojure, and (partially) Python lack compile-time type checking. Elixir and
+Clojure also lack off-the-shelf OpenAPI codegen tools.
 
-**Decision**: Generate typed schemas/models for these languages. Enforcement happens at `test:unit`
-via Pydantic validation (Python), struct enforcement (Elixir), and Malli validation (Clojure).
+**Decision**: Generate typed schemas/models for these languages. Elixir and Clojure codegen is
+implemented as dedicated Nx libraries (`libs/elixir-openapi-codegen`,
+`libs/clojure-openapi-codegen`). Enforcement happens at `test:unit` via Pydantic validation
+(Python), struct enforcement (Elixir), and Malli validation (Clojure).
 
 **Rationale**:
 
@@ -466,6 +498,9 @@ via Pydantic validation (Python), struct enforcement (Elixir), and Malli validat
 - Pydantic models provide both type hints (mypy) AND runtime validation
 - Elixir `@enforce_keys` catches missing fields at struct creation
 - Malli `m/decode` with `:strip-extra-keys` catches schema violations
+- Codegen libs in `libs/` get proper Nx project treatment: cacheable targets, dependency tracking,
+  own test suites, and visibility in `nx graph`
+- Follows existing `libs/` convention (`libs/elixir-cabbage`, `libs/elixir-gherkin`)
 - This matches each language's idiom rather than fighting it
 
 ### Decision 5: Test-Only Endpoints Use OpenAPI Extension

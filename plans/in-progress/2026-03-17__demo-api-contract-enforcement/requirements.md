@@ -205,7 +205,7 @@ generated types; compiler catches mismatches. Spectral lints the spec for style.
 **Cons**:
 
 - More files than single YAML (but each is small and domain-focused)
-- Code generator per language (11 generators to configure)
+- Code generator per language (9 off-the-shelf + 2 custom libs in `libs/`)
 - Dynamic languages (Elixir, Clojure) enforce at test time rather than compile time
 
 **Estimated effort**: Medium-High
