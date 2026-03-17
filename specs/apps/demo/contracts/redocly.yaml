@@ -1,0 +1,10 @@
+apis:
+  demo:
+    root: openapi.yaml
+openapi:
+  hideDownloadButton: false
+  disableSearch: false
+  expandResponses: "200,201"
+decorators:
+  remove-x-internal:
+    internalFlagProperty: x-test-only
