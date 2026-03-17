@@ -5,7 +5,6 @@ import { render, screen, waitFor, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { vi, expect } from "vitest";
-import * as expensesApi from "@/lib/api/expenses";
 import * as reportsApi from "@/lib/api/reports";
 
 const feature = await loadFeature(
@@ -84,13 +83,13 @@ function createQueryClient() {
 
 const makeSummary = (overrides: Record<string, unknown> = {}) => ({
   totalIncome: "5000.00",
-  totalExpenses: "150.00",
-  netAmount: "4850.00",
+  totalExpense: "150.00",
+  net: "4850.00",
   currency: "USD",
   startDate: "2025-01-01",
   endDate: "2025-01-31",
-  incomeBreakdown: [{ category: "salary", amount: "5000.00", count: 1 }],
-  expenseBreakdown: [{ category: "transport", amount: "150.00", count: 1 }],
+  incomeBreakdown: [{ category: "salary", type: "INCOME", total: "5000.00" }],
+  expenseBreakdown: [{ category: "transport", type: "EXPENSE", total: "150.00" }],
   ...overrides,
 });
 
@@ -159,10 +158,10 @@ describeFeature(feature, ({ Scenario, Background }) => {
       vi.mocked(reportsApi.getPLReport).mockResolvedValue(
         makeSummary({
           incomeBreakdown: [
-            { category: "salary", amount: "4000.00", count: 1 },
-            { category: "freelance", amount: "1000.00", count: 2 },
+            { category: "salary", type: "INCOME", total: "4000.00" },
+            { category: "freelance", type: "INCOME", total: "1000.00" },
           ],
-          expenseBreakdown: [{ category: "transport", amount: "150.00", count: 3 }],
+          expenseBreakdown: [{ category: "transport", type: "EXPENSE", total: "150.00" }],
         }),
       );
     });
@@ -195,9 +194,9 @@ describeFeature(feature, ({ Scenario, Background }) => {
       vi.mocked(reportsApi.getPLReport).mockResolvedValue(
         makeSummary({
           totalIncome: "1000.00",
-          totalExpenses: "0.00",
-          netAmount: "1000.00",
-          incomeBreakdown: [{ category: "freelance", amount: "1000.00", count: 1 }],
+          totalExpense: "0.00",
+          net: "1000.00",
+          incomeBreakdown: [{ category: "freelance", type: "INCOME", total: "1000.00" }],
           expenseBreakdown: [],
         }),
       );
@@ -226,10 +225,10 @@ describeFeature(feature, ({ Scenario, Background }) => {
       vi.mocked(reportsApi.getPLReport).mockResolvedValue(
         makeSummary({
           totalIncome: "0.00",
-          totalExpenses: "75.00",
-          netAmount: "-75.00",
+          totalExpense: "75.00",
+          net: "-75.00",
           incomeBreakdown: [],
-          expenseBreakdown: [{ category: "food", amount: "75.00", count: 1 }],
+          expenseBreakdown: [{ category: "food", type: "EXPENSE", total: "75.00" }],
         }),
       );
     });
@@ -280,8 +279,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
       vi.mocked(reportsApi.getPLReport).mockResolvedValue(
         makeSummary({
           totalIncome: "0.00",
-          totalExpenses: "0.00",
-          netAmount: "0.00",
+          totalExpense: "0.00",
+          net: "0.00",
           incomeBreakdown: [],
           expenseBreakdown: [],
         }),

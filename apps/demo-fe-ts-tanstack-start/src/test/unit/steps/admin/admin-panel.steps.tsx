@@ -288,7 +288,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
       });
       vi.mocked(adminApi.forcePasswordReset).mockResolvedValue({
         token: "temp-reset-token-abc123",
-        temporaryPassword: "Temp#Pass1",
       });
       await renderAdminPage(queryClient);
     });

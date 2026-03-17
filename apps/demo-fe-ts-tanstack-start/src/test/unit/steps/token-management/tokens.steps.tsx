@@ -2,7 +2,6 @@ import React from "react";
 import path from "path";
 import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
 import { render, screen, waitFor, cleanup } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { vi, expect } from "vitest";
 import * as tokensApi from "@/lib/api/tokens";

@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { AppShell } from "../components/layout/app-shell";
 import { useAuth } from "../lib/auth/auth-provider";
@@ -9,7 +9,6 @@ export const Route = createFileRoute("/_auth")({
 
 function AuthLayout() {
   const { isAuthenticated, isLoading } = useAuth();
-  const navigate = useNavigate();
 
   const { error: authError, setError: setAuthError } = useAuth();
 
@@ -25,9 +24,9 @@ function AuthLayout() {
           setAuthError("Your session has expired or your account has been disabled. Please log in again.");
         }
       }
-      void navigate({ to: "/login" });
+      window.location.href = "/login";
     }
-  }, [isAuthenticated, isLoading, navigate, authError, setAuthError]);
+  }, [isAuthenticated, isLoading, authError, setAuthError]);
 
   if (isLoading) return <div>Loading...</div>;
   if (!isAuthenticated) return null;

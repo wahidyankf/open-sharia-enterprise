@@ -131,7 +131,7 @@ function makeExpense(overrides: Record<string, unknown> = {}) {
 }
 
 function makeAttachment(id: string, filename: string, contentType: string, size = 1024) {
-  return { id, filename, contentType, size, expenseId: "exp-1", userId: "user-1" };
+  return { id, filename, contentType, size, createdAt: "2025-01-15T00:00:00Z", expenseId: "exp-1", userId: "user-1" };
 }
 
 async function renderDetailPage(queryClient: QueryClient, expectedText = "Lunch") {

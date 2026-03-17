@@ -458,7 +458,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       const user = userEvent.setup();
       // The outer Delete button has no aria-label, just text "Delete"
       const deleteButtons = screen.getAllByRole("button", { name: /^delete$/i });
-      await user.click(deleteButtons[0]);
+      await user.click(deleteButtons[0]!);
       await waitFor(() => {
         expect(screen.getByRole("alertdialog")).toBeInTheDocument();
       });

@@ -429,6 +429,7 @@ describe("Expense detail - upload error handling", () => {
       filename: "large.jpg",
       contentType: "image/jpeg",
       size: 2 * 1024 * 1024, // 2 MB
+      createdAt: "2025-01-15T00:00:00Z",
       expenseId: "exp-1",
       userId: "user-1",
     };
@@ -464,7 +465,7 @@ describe("Expense detail - upload error handling", () => {
 
     const user = userEvent.setup();
     const deleteButtons = screen.getAllByRole("button", { name: /^delete$/i });
-    await user.click(deleteButtons[0]);
+    await user.click(deleteButtons[0]!);
     await waitFor(() => {
       expect(screen.getByRole("alertdialog")).toBeInTheDocument();
     });

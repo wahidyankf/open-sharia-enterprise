@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig, type PluginOption } from "vite";
 import react from "@vitejs/plugin-react";
 import { TanStackRouterVite } from "@tanstack/router-vite-plugin";
 import tsconfigPaths from "vite-tsconfig-paths";
@@ -8,9 +8,9 @@ export default defineConfig({
     TanStackRouterVite({
       routesDirectory: "./src/routes",
       generatedRouteTree: "./src/routeTree.gen.ts",
-    }),
-    react(),
-    tsconfigPaths(),
+    }) as PluginOption,
+    react() as PluginOption,
+    tsconfigPaths() as PluginOption,
   ],
   server: {
     proxy: {
