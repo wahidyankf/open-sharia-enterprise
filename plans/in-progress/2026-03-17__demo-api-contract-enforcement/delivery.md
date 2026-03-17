@@ -82,13 +82,14 @@ for all statically typed apps. Wire `codegen` as dependency of `typecheck`/`buil
 - [ ] **demo-be-csharp-aspnetcore**: Add `NSwag.MSBuild` NuGet package, configure C# class
       generation, add `codegen` target, update controllers to use generated classes, verify
       `dotnet build` passes
-- [ ] **demo-be-ts-effect**: Add `openapi-typescript` dev dependency, add `codegen` target, update
-      handlers to use generated types with Effect Schema encode/decode, verify `tsc` passes
-- [ ] **demo-fe-ts-nextjs**: Add `openapi-typescript` + `openapi-fetch` dev dependencies, add
-      `codegen` target, replace hand-written `types.ts` with imports from generated types, update API
-      client to use `openapi-fetch` `createClient`, verify `tsc` passes
-- [ ] **demo-fe-ts-tanstack-start**: Same as demo-fe-ts-nextjs — `openapi-typescript` +
-      `openapi-fetch`, add `codegen` target, replace types, verify `tsc` passes
+- [ ] **demo-be-ts-effect**: Add `@hey-api/openapi-ts` dev dependency, add `codegen` target
+      generating TS types + Effect Schema definitions, update handlers to use generated types with
+      `Schema.decode`/`Schema.encode`, verify `tsc` passes
+- [ ] **demo-fe-ts-nextjs**: Add `@hey-api/openapi-ts` with Zod plugin, add `codegen` target
+      generating TS types + Zod schemas + SDK client, replace hand-written `types.ts` with generated
+      types, use generated Zod schemas as runtime decoders for API responses, verify `tsc` passes
+- [ ] **demo-fe-ts-tanstack-start**: Same as demo-fe-ts-nextjs — `@hey-api/openapi-ts` + Zod
+      plugin, add `codegen` target, replace types, use Zod runtime decoders, verify `tsc` passes
 - [ ] **demo-fe-dart-flutterweb**: Add `openapi-generator` Dart generator, add `codegen` target,
       replace hand-written models with generated classes using `json_serializable`, verify
       `dart analyze` passes
@@ -222,8 +223,8 @@ schemas/models. Enforcement via `test:unit` (part of `test:quick`).
 
 ## Dependencies
 
-- **npm packages**: `@stoplight/spectral-cli`, `@redocly/cli`, `openapi-typescript`,
-  `openapi-fetch`, `ajv`
+- **npm packages**: `@stoplight/spectral-cli`, `@redocly/cli`, `@hey-api/openapi-ts`, `zod`,
+  `ajv`
 - **Go**: `oapi-codegen` (go install)
 - **Java/Kotlin**: `openapi-generator-maven-plugin` / `openapi-generator-gradle-plugin`
 - **Python**: `datamodel-code-generator` (pip)

@@ -54,7 +54,7 @@ Scenario: Contract change updates frontend types
   Given the OpenAPI contract adds an optional "tags" field to Expense
   When I run nx run demo-fe-ts-nextjs:codegen
   Then the generated types include "tags?: string[]"
-  And the openapi-fetch client automatically handles encoding/decoding
+  And the generated Zod schema includes the new field for runtime validation
   And TypeScript compilation succeeds
 
 Scenario: Frontend code references non-existent field
@@ -229,13 +229,13 @@ generated types; compiler catches mismatches. Spectral lints the spec for style.
 
 **Why Alternative 6 — OpenAPI 3.1 Modular + Spectral + Code Generation**:
 
-1. **Compile-time safety** — generated types make it impossible to return wrong shapes in statically
-   typed languages. Dynamic languages (Elixir, Clojure, Python) enforce via generated
-   schemas/models at test time, caught by `test:quick`.
+1. **Compile-time + runtime safety** — generated types catch field name mismatches at build time;
+   generated runtime decoders (Zod for TS frontends, Effect Schema for TS Effect backend, Pydantic
+   for Python, etc.) catch shape/type mismatches at runtime. Defense in depth.
 2. **Encoders/decoders included** — generated code handles JSON serialization/deserialization
-   type-safely (Jackson for Java, serde for Rust, Pydantic for Python, etc.)
-3. **Zero runtime overhead** — generated types are compile-time-only artifacts. No validation
-   middleware in production.
+   type-safely (Zod `z.parse()` for TS, Jackson for Java, serde for Rust, Pydantic for Python)
+3. **Minimal runtime overhead** — Zod adds ~12kb to TS frontends (acceptable for API validation).
+   Non-TS languages use their native serialization (zero additional overhead).
 4. **Fits existing CI** — `nx affected -t typecheck` and `test:quick` already run in pre-push hook
    and PR quality gate. No new CI steps needed.
 5. **Gitignored** — `generated-contracts/` is not committed. The OpenAPI spec is the sole source of
