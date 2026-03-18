@@ -73,11 +73,6 @@ pub async fn list_users(
     }))
 }
 
-#[derive(Deserialize)]
-pub struct DisableUserRequest {
-    pub reason: Option<String>,
-}
-
 pub async fn disable_user(
     State(state): State<Arc<AppState>>,
     _admin: AdminUser,

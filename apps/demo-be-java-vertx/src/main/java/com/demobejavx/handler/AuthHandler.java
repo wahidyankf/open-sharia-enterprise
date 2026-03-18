@@ -307,7 +307,7 @@ public class AuthHandler implements Handler<RoutingContext> {
                 .id(user.id() != null ? user.id() : "")
                 .username(user.username())
                 .email(user.email())
-                .displayName(user.displayName())
+                .displayName(user.displayName() != null ? user.displayName() : "")
                 .status(status)
                 .roles(java.util.List.of(user.role()));
     }

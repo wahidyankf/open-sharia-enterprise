@@ -5,7 +5,7 @@ use crate::world::{get_req, json_req, AppWorld};
 #[when("alice sends POST /api/v1/auth/refresh with her refresh token")]
 async fn refresh_with_alice_token(world: &mut AppWorld) {
     let token = world.refresh_token.clone().unwrap_or_default();
-    let body = format!(r#"{{"refresh_token": "{token}"}}"#);
+    let body = format!(r#"{{"refreshToken": "{token}"}}"#);
     let req = json_req("POST", "/api/v1/auth/refresh", &body, None);
     world.send(req).await.unwrap();
     if world.last_status == 200 {
@@ -35,7 +35,7 @@ async fn alice_used_refresh_token(world: &mut AppWorld) {
     let original = world.refresh_token.clone().unwrap_or_default();
     world.original_refresh_token = Some(original.clone());
 
-    let body = format!(r#"{{"refresh_token": "{original}"}}"#);
+    let body = format!(r#"{{"refreshToken": "{original}"}}"#);
     let req = json_req("POST", "/api/v1/auth/refresh", &body, None);
     world.send(req).await.unwrap();
     if world.last_status == 200 {
@@ -55,7 +55,7 @@ async fn alice_used_refresh_token(world: &mut AppWorld) {
 #[when("alice sends POST /api/v1/auth/refresh with her original refresh token")]
 async fn refresh_with_original_token(world: &mut AppWorld) {
     let token = world.original_refresh_token.clone().unwrap_or_default();
-    let body = format!(r#"{{"refresh_token": "{token}"}}"#);
+    let body = format!(r#"{{"refreshToken": "{token}"}}"#);
     let req = json_req("POST", "/api/v1/auth/refresh", &body, None);
     world.send(req).await.unwrap();
 }

@@ -4,7 +4,7 @@ use axum::{
     response::IntoResponse,
     Json,
 };
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use serde_json::json;
 use std::sync::Arc;
 use uuid::Uuid;
@@ -21,15 +21,9 @@ use crate::domain::{
     user::{validate_email, validate_password},
 };
 use crate::state::AppState;
+use demo_contracts::models::{AuthTokens, LoginRequest, RefreshRequest, RegisterRequest};
 
 const MAX_FAILED_ATTEMPTS: i64 = 5;
-
-#[derive(Deserialize)]
-pub struct RegisterRequest {
-    pub username: Option<String>,
-    pub email: Option<String>,
-    pub password: Option<String>,
-}
 
 #[derive(Serialize)]
 pub struct RegisterResponse {
@@ -44,9 +38,9 @@ pub async fn register(
     State(state): State<Arc<AppState>>,
     Json(body): Json<RegisterRequest>,
 ) -> Result<impl IntoResponse, AppError> {
-    let username = body.username.unwrap_or_default();
-    let email = body.email.unwrap_or_default();
-    let password = body.password.unwrap_or_default();
+    let username = body.username;
+    let email = body.email;
+    let password = body.password;
 
     // Validate inputs
     validate_email(&email)?;
@@ -84,28 +78,12 @@ pub async fn register(
     ))
 }
 
-#[derive(Deserialize)]
-pub struct LoginRequest {
-    pub username: Option<String>,
-    pub password: Option<String>,
-}
-
-#[derive(Serialize)]
-pub struct LoginResponse {
-    #[serde(rename = "accessToken")]
-    pub access_token: String,
-    #[serde(rename = "refreshToken")]
-    pub refresh_token: String,
-    #[serde(rename = "tokenType")]
-    pub token_type: String,
-}
-
 pub async fn login(
     State(state): State<Arc<AppState>>,
     Json(body): Json<LoginRequest>,
-) -> Result<Json<LoginResponse>, AppError> {
-    let username = body.username.unwrap_or_default();
-    let password = body.password.unwrap_or_default();
+) -> Result<Json<AuthTokens>, AppError> {
+    let username = body.username;
+    let password = body.password;
 
     let user = user_repo::find_by_username(&state.pool, &username)
         .await?
@@ -155,24 +133,18 @@ pub async fn login(
     )?;
     let (refresh_token, _refresh_jti) = encode_refresh_token(user.id, &state.jwt_secret)?;
 
-    Ok(Json(LoginResponse {
+    Ok(Json(AuthTokens {
         access_token,
         refresh_token,
         token_type: "Bearer".to_string(),
     }))
 }
 
-#[derive(Deserialize)]
-pub struct RefreshRequest {
-    #[serde(alias = "refreshToken")]
-    pub refresh_token: Option<String>,
-}
-
 pub async fn refresh(
     State(state): State<Arc<AppState>>,
     Json(body): Json<RefreshRequest>,
-) -> Result<Json<LoginResponse>, AppError> {
-    let token_str = body.refresh_token.unwrap_or_default();
+) -> Result<Json<AuthTokens>, AppError> {
+    let token_str = body.refresh_token;
     let claims = decode_refresh_token(&token_str, &state.jwt_secret)?;
 
     // Check if this refresh token jti is revoked (single-use rotation)
@@ -213,7 +185,7 @@ pub async fn refresh(
     )?;
     let (refresh_token, _refresh_jti) = encode_refresh_token(user.id, &state.jwt_secret)?;
 
-    Ok(Json(LoginResponse {
+    Ok(Json(AuthTokens {
         access_token,
         refresh_token,
         token_type: "Bearer".to_string(),

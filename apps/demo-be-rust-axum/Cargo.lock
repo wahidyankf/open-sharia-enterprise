@@ -503,6 +503,7 @@ dependencies = [
  "bcrypt",
  "chrono",
  "cucumber",
+ "demo-contracts",
  "http",
  "http-body-util",
  "jsonwebtoken",
@@ -516,6 +517,14 @@ dependencies = [
  "tracing",
  "tracing-subscriber",
  "uuid",
+]
+
+[[package]]
+name = "demo-contracts"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
