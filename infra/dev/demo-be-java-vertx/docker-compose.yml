@@ -26,8 +26,8 @@ services:
 
   demo-be-java-vertx:
     build:
-      context: .
-      dockerfile: Dockerfile.be.dev
+      context: ../../../apps/demo-be-java-vertx
+      dockerfile: ../../infra/dev/demo-be-java-vertx/Dockerfile.be.dev
     container_name: demo-be-java-vertx
     working_dir: /workspace
 
