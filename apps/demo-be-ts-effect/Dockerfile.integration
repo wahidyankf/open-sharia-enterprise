@@ -16,6 +16,7 @@ RUN npm ci
 
 # Copy source code and tests
 COPY src/ src/
+COPY generated-contracts/ generated-contracts/
 COPY tests/integration/ tests/integration/
 COPY tsconfig.json .
 COPY cucumber.js .

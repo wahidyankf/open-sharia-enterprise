@@ -13,6 +13,7 @@ RUN clojure -P -M:test
 
 # Copy source, resources, test code, and kaocha config
 COPY src/ src/
+COPY generated_contracts/ generated_contracts/
 COPY resources/ resources/
 COPY test/ test/
 COPY tests.edn .

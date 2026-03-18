@@ -29,6 +29,7 @@ RUN dotnet restore tests/DemoBeFsgi.Tests/DemoBeFsgi.Tests.fsproj
 
 # Copy source and test code
 COPY apps/demo-be-fsharp-giraffe/src/ src/
+COPY apps/demo-be-fsharp-giraffe/generated-contracts/ generated-contracts/
 COPY apps/demo-be-fsharp-giraffe/tests/ tests/
 
 # Build the test project.

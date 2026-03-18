@@ -13,6 +13,7 @@ RUN go mod download
 
 # Copy source code.
 COPY . .
+COPY generated-contracts/ generated-contracts/
 
 # The specs volume is mounted at /specs by docker-compose.
 # Run integration tests against real PostgreSQL.

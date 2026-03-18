@@ -33,6 +33,7 @@ RUN dotnet restore tests/DemoBeCsas.Tests/DemoBeCsas.Tests.csproj --force-evalua
 
 # Copy source and test code
 COPY apps/demo-be-csharp-aspnetcore/src/ src/
+COPY apps/demo-be-csharp-aspnetcore/generated-contracts/ generated-contracts/
 COPY apps/demo-be-csharp-aspnetcore/tests/ tests/
 
 # Build the test project (includes restore to ensure all analyzer packages are available).

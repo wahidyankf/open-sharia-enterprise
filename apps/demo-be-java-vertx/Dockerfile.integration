@@ -12,6 +12,7 @@ RUN mvn dependency:go-offline -B -q
 
 # Copy source code
 COPY src/ src/
+COPY generated-contracts/ generated-contracts/
 
 # The specs volume is mounted at /specs by docker-compose.
 # pom.xml's maven-antrun-plugin resolves ${project.basedir}/../../specs

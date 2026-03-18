@@ -16,6 +16,7 @@ RUN uv sync --dev --no-install-project --frozen
 
 # Copy source and tests
 COPY src/ src/
+COPY generated_contracts/ generated_contracts/
 COPY tests/ tests/
 
 # Install the project itself

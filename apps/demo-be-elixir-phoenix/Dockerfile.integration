@@ -25,6 +25,7 @@ RUN MIX_ENV=integration mix local.hex --force && \
 
 # Copy application source, tests, config, and migrations
 COPY apps/demo-be-elixir-phoenix/lib/ lib/
+COPY apps/demo-be-elixir-phoenix/generated-contracts/ generated-contracts/
 COPY apps/demo-be-elixir-phoenix/test/ test/
 COPY apps/demo-be-elixir-phoenix/config/ config/
 COPY apps/demo-be-elixir-phoenix/priv/ priv/

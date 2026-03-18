@@ -11,8 +11,9 @@ RUN apt-get update && apt-get install -y \
 # Copy Cargo manifests for dependency caching
 COPY Cargo.toml Cargo.lock ./
 
-# Copy source code and tests
+# Copy source code, generated contracts, and tests
 COPY src ./src
+COPY generated-contracts ./generated-contracts
 COPY tests ./tests
 
 # Run integration tests against the provided DATABASE_URL

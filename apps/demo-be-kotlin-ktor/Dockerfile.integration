@@ -14,6 +14,7 @@ RUN chmod +x gradlew && ./gradlew dependencies --no-daemon -q || true
 
 # Copy source code
 COPY src/ src/
+COPY generated-contracts/ generated-contracts/
 COPY detekt.yml .
 
 # Skip Gradle's processTestResources spec copy (avoids /sys filesystem scanning in Docker).
