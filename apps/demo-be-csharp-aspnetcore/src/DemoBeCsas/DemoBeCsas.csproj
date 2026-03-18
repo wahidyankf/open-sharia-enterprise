@@ -5,6 +5,35 @@
     <RootNamespace>DemoBeCsas</RootNamespace>
   </PropertyGroup>
 
+  <!-- Generated contract model files (source-inclusion — no .csproj in generated-contracts/).
+       Contracts/Option.cs is auto-included by the SDK default glob; it provides the
+       Org.OpenAPITools.Client.Option<T> shim required by the generated models. -->
+  <ItemGroup>
+    <Compile Include="..\..\generated-contracts\src\Org.OpenAPITools\DemoBeCsas.Contracts\Attachment.cs" />
+    <Compile Include="..\..\generated-contracts\src\Org.OpenAPITools\DemoBeCsas.Contracts\AuthTokens.cs" />
+    <Compile Include="..\..\generated-contracts\src\Org.OpenAPITools\DemoBeCsas.Contracts\CategoryBreakdown.cs" />
+    <Compile Include="..\..\generated-contracts\src\Org.OpenAPITools\DemoBeCsas.Contracts\ChangePasswordRequest.cs" />
+    <Compile Include="..\..\generated-contracts\src\Org.OpenAPITools\DemoBeCsas.Contracts\CreateExpenseRequest.cs" />
+    <Compile Include="..\..\generated-contracts\src\Org.OpenAPITools\DemoBeCsas.Contracts\DisableRequest.cs" />
+    <Compile Include="..\..\generated-contracts\src\Org.OpenAPITools\DemoBeCsas.Contracts\ErrorResponse.cs" />
+    <Compile Include="..\..\generated-contracts\src\Org.OpenAPITools\DemoBeCsas.Contracts\Expense.cs" />
+    <Compile Include="..\..\generated-contracts\src\Org.OpenAPITools\DemoBeCsas.Contracts\ExpenseListResponse.cs" />
+    <Compile Include="..\..\generated-contracts\src\Org.OpenAPITools\DemoBeCsas.Contracts\ExpenseSummary.cs" />
+    <Compile Include="..\..\generated-contracts\src\Org.OpenAPITools\DemoBeCsas.Contracts\HealthResponse.cs" />
+    <Compile Include="..\..\generated-contracts\src\Org.OpenAPITools\DemoBeCsas.Contracts\JwkKey.cs" />
+    <Compile Include="..\..\generated-contracts\src\Org.OpenAPITools\DemoBeCsas.Contracts\JwksResponse.cs" />
+    <Compile Include="..\..\generated-contracts\src\Org.OpenAPITools\DemoBeCsas.Contracts\LoginRequest.cs" />
+    <Compile Include="..\..\generated-contracts\src\Org.OpenAPITools\DemoBeCsas.Contracts\PasswordResetResponse.cs" />
+    <Compile Include="..\..\generated-contracts\src\Org.OpenAPITools\DemoBeCsas.Contracts\PLReport.cs" />
+    <Compile Include="..\..\generated-contracts\src\Org.OpenAPITools\DemoBeCsas.Contracts\RefreshRequest.cs" />
+    <Compile Include="..\..\generated-contracts\src\Org.OpenAPITools\DemoBeCsas.Contracts\RegisterRequest.cs" />
+    <Compile Include="..\..\generated-contracts\src\Org.OpenAPITools\DemoBeCsas.Contracts\TokenClaims.cs" />
+    <Compile Include="..\..\generated-contracts\src\Org.OpenAPITools\DemoBeCsas.Contracts\UpdateExpenseRequest.cs" />
+    <Compile Include="..\..\generated-contracts\src\Org.OpenAPITools\DemoBeCsas.Contracts\UpdateProfileRequest.cs" />
+    <Compile Include="..\..\generated-contracts\src\Org.OpenAPITools\DemoBeCsas.Contracts\User.cs" />
+    <Compile Include="..\..\generated-contracts\src\Org.OpenAPITools\DemoBeCsas.Contracts\UserListResponse.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />

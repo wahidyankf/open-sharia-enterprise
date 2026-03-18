@@ -1,6 +1,7 @@
 using DemoBeCsas.Domain;
 using DemoBeCsas.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Org.OpenAPITools.DemoBeCsas.Contracts;
 
 namespace DemoBeCsas.Endpoints;
 
@@ -20,7 +21,7 @@ public static class ExpenseEndpoints
 
     private static async Task<IResult> CreateExpenseAsync(
         HttpContext ctx,
-        [FromBody] ExpenseRequest req,
+        [FromBody] CreateExpenseRequest req,
         IExpenseRepository expenseRepo,
         CancellationToken ct
     )
@@ -31,16 +32,12 @@ public static class ExpenseEndpoints
             return Results.Unauthorized();
         }
 
-        // Accept either "description" or "title" as the display name
-        var title = req.Description ?? req.Title;
-        if (title is null || req.Currency is null)
+        if (!decimal.TryParse(req.Amount, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var amount))
         {
-            return Results.BadRequest(
-                new { message = "description/title and currency are required" }
-            );
+            return Results.BadRequest(new { message = "amount must be a valid number" });
         }
 
-        var amountError = CurrencyValidation.ValidateAmount(req.Currency, req.Amount);
+        var amountError = CurrencyValidation.ValidateAmount(req.Currency, amount);
         if (amountError is not null)
         {
             return DomainErrorMapper.ToHttpResult(amountError);
@@ -55,17 +52,17 @@ public static class ExpenseEndpoints
             }
         }
 
-        var type = ParseExpenseType(req.Type);
-        var date = ParseDate(req.DateStr);
-        var category = req.Category ?? string.Empty;
+        var type = req.Type == CreateExpenseRequest.TypeEnum.Income ? ExpenseType.Income : ExpenseType.Expense;
+        var date = new DateTimeOffset(req.Date.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero);
+        var quantity = req.Quantity.HasValue ? (double?)Convert.ToDouble(req.Quantity.Value) : null;
         var expense = await expenseRepo.CreateAsync(
             userId.Value,
-            title,
-            category,
-            req.Amount,
+            req.Description,
+            req.Category,
+            amount,
             req.Currency,
             type,
-            req.Quantity,
+            quantity,
             req.Unit,
             date,
             ct
@@ -153,7 +150,7 @@ public static class ExpenseEndpoints
     private static async Task<IResult> UpdateExpenseAsync(
         HttpContext ctx,
         Guid id,
-        [FromBody] ExpenseRequest req,
+        [FromBody] UpdateExpenseRequest req,
         IExpenseRepository expenseRepo,
         CancellationToken ct
     )
@@ -164,48 +161,68 @@ public static class ExpenseEndpoints
             return Results.Unauthorized();
         }
 
-        var title = req.Description ?? req.Title;
-        if (title is null || req.Currency is null)
-        {
-            return Results.BadRequest(
-                new { message = "description/title and currency are required" }
-            );
-        }
-
-        var amountError = CurrencyValidation.ValidateAmount(req.Currency, req.Amount);
-        if (amountError is not null)
-        {
-            return DomainErrorMapper.ToHttpResult(amountError);
-        }
-
-        if (req.Unit is not null)
-        {
-            var unitError = UnitValidation.ValidateUnit(req.Unit);
-            if (unitError is not null)
-            {
-                return DomainErrorMapper.ToHttpResult(unitError);
-            }
-        }
-
         var existing = await expenseRepo.FindByIdAsync(id, userId.Value, ct);
         if (existing is null)
         {
             return Results.NotFound(new { message = "Expense not found" });
         }
 
-        var type = ParseExpenseType(req.Type);
-        var date = ParseDate(req.DateStr);
+        // Resolve update fields, falling back to existing values when not provided
+        var title = req.Description ?? existing.Title;
+        var currency = req.Currency ?? existing.Currency;
+
+        if (!decimal.TryParse(
+            req.Amount ?? existing.Amount.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            System.Globalization.NumberStyles.Any,
+            System.Globalization.CultureInfo.InvariantCulture,
+            out var amount))
+        {
+            return Results.BadRequest(new { message = "amount must be a valid number" });
+        }
+
+        var amountError = CurrencyValidation.ValidateAmount(currency, amount);
+        if (amountError is not null)
+        {
+            return DomainErrorMapper.ToHttpResult(amountError);
+        }
+
+        var unit = req.Unit ?? existing.Unit;
+        if (unit is not null)
+        {
+            var unitError = UnitValidation.ValidateUnit(unit);
+            if (unitError is not null)
+            {
+                return DomainErrorMapper.ToHttpResult(unitError);
+            }
+        }
+
+        ExpenseType type;
+        if (req.Type.HasValue)
+        {
+            type = req.Type.Value == UpdateExpenseRequest.TypeEnum.Income ? ExpenseType.Income : ExpenseType.Expense;
+        }
+        else
+        {
+            type = existing.Type;
+        }
+        var date = req.Date.HasValue
+            ? new DateTimeOffset(req.Date.Value.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero)
+            : existing.Date;
         var category = req.Category ?? existing.Category;
+        var quantity = req.Quantity.HasValue
+            ? (double?)Convert.ToDouble(req.Quantity.Value)
+            : existing.Quantity;
+
         var updated = await expenseRepo.UpdateAsync(
             id,
             userId.Value,
             title,
             category,
-            req.Amount,
-            req.Currency,
+            amount,
+            currency,
             type,
-            req.Quantity,
-            req.Unit,
+            quantity,
+            unit,
             date,
             ct
         );
@@ -244,35 +261,6 @@ public static class ExpenseEndpoints
         return sub is not null && Guid.TryParse(sub, out var g) ? g : null;
     }
 
-    private static ExpenseType ParseExpenseType(string? type) =>
-        type?.ToLowerInvariant() == "income" ? ExpenseType.Income : ExpenseType.Expense;
-
-    private static DateTimeOffset ParseDate(string? dateStr)
-    {
-        if (dateStr is null)
-        {
-            return DateTimeOffset.UtcNow;
-        }
-
-        // If the input is a plain date (yyyy-MM-dd), treat it as UTC midnight
-        // to avoid local-timezone offsets skewing date-range comparisons.
-        var normalized = dateStr.Length == 10 ? dateStr + "T00:00:00Z" : dateStr;
-
-        if (
-            DateTimeOffset.TryParse(
-                normalized,
-                System.Globalization.CultureInfo.InvariantCulture,
-                System.Globalization.DateTimeStyles.None,
-                out var parsed
-            )
-        )
-        {
-            return parsed;
-        }
-
-        return DateTimeOffset.UtcNow;
-    }
-
     private static string FormatAmount(decimal amount, string currency) =>
         currency == "IDR"
             ? Math.Round(amount, 0, MidpointRounding.AwayFromZero).ToString("F0")
@@ -294,16 +282,4 @@ public static class ExpenseEndpoints
             created_at = e.CreatedAt,
             updated_at = e.UpdatedAt,
         };
-
-    private sealed record ExpenseRequest(
-        string? Description,
-        string? Title,
-        string? Category,
-        decimal Amount,
-        string? Currency,
-        string? Type,
-        double? Quantity,
-        string? Unit,
-        [property: System.Text.Json.Serialization.JsonPropertyName("date")] string? DateStr
-    );
 }

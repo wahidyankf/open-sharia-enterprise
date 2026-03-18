@@ -6,8 +6,22 @@ using DemoBeCsas.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Org.OpenAPITools.DemoBeCsas.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Register generated contract JSON converters so request bodies with enum string
+// values (e.g. "income"/"expense" for TypeEnum) deserialize correctly.
+builder.Services.ConfigureHttpJsonOptions(opts =>
+{
+    opts.SerializerOptions.Converters.Add(new RegisterRequestJsonConverter());
+    opts.SerializerOptions.Converters.Add(new LoginRequestJsonConverter());
+    opts.SerializerOptions.Converters.Add(new RefreshRequestJsonConverter());
+    opts.SerializerOptions.Converters.Add(new UpdateProfileRequestJsonConverter());
+    opts.SerializerOptions.Converters.Add(new ChangePasswordRequestJsonConverter());
+    opts.SerializerOptions.Converters.Add(new CreateExpenseRequestJsonConverter());
+    opts.SerializerOptions.Converters.Add(new UpdateExpenseRequestJsonConverter());
+});
 
 // Configuration
 builder.WebHost.UseUrls($"http://+:{builder.Configuration["PORT"] ?? "8201"}");
@@ -61,6 +75,22 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await db.Database.EnsureCreatedAsync();
 }
+
+// Map ArgumentException thrown by generated JSON converters to 400 Bad Request.
+// The generated converters (csharp OpenAPI generator) throw ArgumentException when required
+// request fields are missing or null — which is contract validation, not a server error.
+app.Use(async (ctx, next) =>
+{
+    try
+    {
+        await next(ctx);
+    }
+    catch (ArgumentException)
+    {
+        ctx.Response.StatusCode = StatusCodes.Status400BadRequest;
+        await ctx.Response.WriteAsJsonAsync(new { message = "Invalid or missing required request fields" });
+    }
+});
 
 app.UseAuthentication();
 app.UseAuthorization();

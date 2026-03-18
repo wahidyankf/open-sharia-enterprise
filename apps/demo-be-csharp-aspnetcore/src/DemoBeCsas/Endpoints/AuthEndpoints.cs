@@ -3,6 +3,7 @@ using DemoBeCsas.Domain;
 using DemoBeCsas.Infrastructure;
 using DemoBeCsas.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Org.OpenAPITools.DemoBeCsas.Contracts;
 
 namespace DemoBeCsas.Endpoints;
 
@@ -27,11 +28,6 @@ public static class AuthEndpoints
         CancellationToken ct
     )
     {
-        if (req.Username is null || req.Email is null || req.Password is null)
-        {
-            return Results.BadRequest(new { message = "username, email, and password are required" });
-        }
-
         var usernameError = UserValidation.ValidateUsername(req.Username);
         if (usernameError is not null)
         {
@@ -63,7 +59,7 @@ public static class AuthEndpoints
             req.Username,
             req.Email,
             hash,
-            req.DisplayName ?? req.Username,
+            req.Username,
             ct: ct
         );
 
@@ -87,11 +83,6 @@ public static class AuthEndpoints
         CancellationToken ct
     )
     {
-        if (req.Username is null || req.Password is null)
-        {
-            return Results.Json(new { message = "Invalid username or password" }, statusCode: 401);
-        }
-
         var user = await userRepo.FindByUsernameAsync(req.Username, ct);
         if (user is null)
         {
@@ -154,11 +145,6 @@ public static class AuthEndpoints
         CancellationToken ct
     )
     {
-        if (req.RefreshToken is null)
-        {
-            return Results.Json(new { message = "Invalid token" }, statusCode: 401);
-        }
-
         var principal = jwtService.DecodeToken(req.RefreshToken);
         if (principal is null)
         {
@@ -279,14 +265,4 @@ public static class AuthEndpoints
         return Results.Ok();
     }
 
-    private sealed record RegisterRequest(
-        string? Username,
-        string? Email,
-        string? Password,
-        string? DisplayName = null
-    );
-
-    private sealed record LoginRequest(string? Username, string? Password);
-
-    private sealed record RefreshRequest(string? RefreshToken);
 }

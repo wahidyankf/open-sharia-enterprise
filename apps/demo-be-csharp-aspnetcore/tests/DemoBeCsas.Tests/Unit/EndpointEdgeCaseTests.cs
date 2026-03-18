@@ -136,16 +136,17 @@ public class EndpointEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
     }
 
     [Fact]
-    public async Task Login_WithMissingFields_Returns401()
+    public async Task Login_WithMissingFields_Returns400()
     {
-        // Covers AuthEndpoints lines 91-93: null username/password check
+        // Contract enforcement: LoginRequest requires username and password fields.
+        // Sending an empty body returns 400 (generated converter throws ArgumentException).
         var client = _factory.CreateClient();
         var body = JsonSerializer.Serialize(new { });
         var response = await client.PostAsync(
             "/api/v1/auth/login",
             new StringContent(body, Encoding.UTF8, "application/json")
         );
-        ((int)response.StatusCode).Should().Be(401);
+        ((int)response.StatusCode).Should().Be(400);
     }
 
     [Fact]
@@ -187,15 +188,23 @@ public class EndpointEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
         ((int)response.StatusCode).Should().Be(401);
     }
 
-    // ── ExpenseEndpoints: missing required fields ──────────────────────
+    // ── ExpenseEndpoints: validation ──────────────────────────────────
 
     [Fact]
-    public async Task CreateExpense_WithMissingTitleAndCurrency_Returns400()
+    public async Task CreateExpense_WithInvalidAmountString_Returns400()
     {
-        // Covers ExpenseEndpoints lines 37-41: title is null || currency is null
+        // Covers ExpenseEndpoints decimal.TryParse failure path
         var token = await RegisterAndLoginAsync("expenseedge1");
         var client = CreateAuthorizedClient(token);
-        var body = JsonSerializer.Serialize(new { amount = 10.00m });
+        var body = JsonSerializer.Serialize(new
+        {
+            amount = "not-a-number",
+            currency = "USD",
+            category = "food",
+            description = "Lunch",
+            date = "2025-01-15",
+            type = "expense",
+        });
         var response = await client.PostAsync(
             "/api/v1/expenses",
             new StringContent(body, Encoding.UTF8, "application/json")
@@ -204,9 +213,9 @@ public class EndpointEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
     }
 
     [Fact]
-    public async Task UpdateExpense_WithMissingTitleAndCurrency_Returns400()
+    public async Task UpdateExpense_WithInvalidAmountString_Returns400()
     {
-        // Covers ExpenseEndpoints lines 167-171: title/currency check in UpdateExpenseAsync
+        // Covers UpdateExpenseAsync decimal.TryParse failure path
         var token = await RegisterAndLoginAsync("expenseedge2");
         var client = CreateAuthorizedClient(token);
 
@@ -214,8 +223,11 @@ public class EndpointEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
         var createBody = JsonSerializer.Serialize(new
         {
             description = "Test expense",
-            amount = 10.00m,
+            amount = "10.00",
             currency = "USD",
+            category = "food",
+            date = "2025-01-15",
+            type = "expense",
         });
         var createResp = await client.PostAsync(
             "/api/v1/expenses",
@@ -226,8 +238,8 @@ public class EndpointEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
         using var createDoc = JsonDocument.Parse(createJson);
         var expenseId = createDoc.RootElement.GetProperty("id").GetString()!;
 
-        // Now update with missing fields
-        var updateBody = JsonSerializer.Serialize(new { amount = 20.00m });
+        // Update with non-parseable amount string
+        var updateBody = JsonSerializer.Serialize(new { amount = "not-a-number" });
         var response = await client.PutAsync(
             $"/api/v1/expenses/{expenseId}",
             new StringContent(updateBody, Encoding.UTF8, "application/json")
@@ -238,13 +250,13 @@ public class EndpointEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
     [Fact]
     public async Task UpdateExpense_WithNonExistentId_Returns404()
     {
-        // Covers ExpenseEndpoints lines 190-192: expense not found in UpdateExpenseAsync
+        // Covers ExpenseEndpoints: expense not found in UpdateExpenseAsync
         var token = await RegisterAndLoginAsync("expenseedge3");
         var client = CreateAuthorizedClient(token);
         var body = JsonSerializer.Serialize(new
         {
             description = "Updated",
-            amount = 10.00m,
+            amount = "10.00",
             currency = "USD",
         });
         var response = await client.PutAsync(
@@ -277,14 +289,16 @@ public class EndpointEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
     [Fact]
     public async Task CreateExpense_WithIncomeType_Succeeds()
     {
-        // Covers ExpenseEndpoints line 246: ParseExpenseType "income" branch
+        // Covers CreateExpenseAsync TypeEnum.Income branch
         var token = await RegisterAndLoginAsync("expenseedge6");
         var client = CreateAuthorizedClient(token);
         var body = JsonSerializer.Serialize(new
         {
             description = "Salary",
-            amount = 5000.00m,
+            amount = "5000.00",
             currency = "USD",
+            category = "salary",
+            date = "2025-01-31",
             type = "income",
         });
         var response = await client.PostAsync(
@@ -295,17 +309,19 @@ public class EndpointEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
     }
 
     [Fact]
-    public async Task CreateExpense_WithNullDate_UsesCurrentTime()
+    public async Task CreateExpense_WithValidDate_Succeeds()
     {
-        // Covers ExpenseEndpoints lines 251-253: ParseDate with null dateStr
+        // Covers CreateExpenseAsync with a valid DateOnly date field
         var token = await RegisterAndLoginAsync("expenseedge7");
         var client = CreateAuthorizedClient(token);
         var body = JsonSerializer.Serialize(new
         {
-            description = "No date",
-            amount = 10.00m,
+            description = "Dated expense",
+            amount = "10.00",
             currency = "USD",
-            // date is intentionally omitted (null)
+            category = "food",
+            date = "2025-03-01",
+            type = "expense",
         });
         var response = await client.PostAsync(
             "/api/v1/expenses",
@@ -315,17 +331,19 @@ public class EndpointEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
     }
 
     [Fact]
-    public async Task CreateExpense_WithInvalidDate_FallsBackToCurrentTime()
+    public async Task CreateExpense_WithExpenseType_Succeeds()
     {
-        // Covers ExpenseEndpoints line 271: ParseDate fallback when parse fails
+        // Covers CreateExpenseAsync TypeEnum.Expense branch
         var token = await RegisterAndLoginAsync("expenseedge8");
         var client = CreateAuthorizedClient(token);
         var body = JsonSerializer.Serialize(new
         {
-            description = "Bad date",
-            amount = 10.00m,
+            description = "Grocery",
+            amount = "25.50",
             currency = "USD",
-            date = "not-a-date",
+            category = "food",
+            date = "2025-02-10",
+            type = "expense",
         });
         var response = await client.PostAsync(
             "/api/v1/expenses",
@@ -337,15 +355,18 @@ public class EndpointEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
     [Fact]
     public async Task UpdateExpense_WithInvalidAmountForCurrency_Returns400()
     {
-        // Covers ExpenseEndpoints lines 175-177: amount validation in UpdateExpenseAsync
+        // Covers UpdateExpenseAsync: amount validation for currency-specific rules
         var token = await RegisterAndLoginAsync("expenseedge9");
         var client = CreateAuthorizedClient(token);
 
         var createBody = JsonSerializer.Serialize(new
         {
             description = "Original",
-            amount = 100m,
+            amount = "100",
             currency = "IDR",
+            category = "food",
+            date = "2025-01-10",
+            type = "expense",
         });
         var createResp = await client.PostAsync(
             "/api/v1/expenses",
@@ -356,11 +377,10 @@ public class EndpointEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
         using var createDoc = JsonDocument.Parse(createJson);
         var expenseId = createDoc.RootElement.GetProperty("id").GetString()!;
 
-        // Update with fractional IDR amount (invalid)
+        // Update with fractional IDR amount (invalid per currency validation)
         var updateBody = JsonSerializer.Serialize(new
         {
-            description = "Updated",
-            amount = 100.50m,
+            amount = "100.50",
             currency = "IDR",
         });
         var response = await client.PutAsync(
@@ -373,15 +393,18 @@ public class EndpointEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
     [Fact]
     public async Task UpdateExpense_WithInvalidUnit_Returns400()
     {
-        // Covers ExpenseEndpoints lines 180-186: unit validation in UpdateExpenseAsync
+        // Covers UpdateExpenseAsync: unit validation path
         var token = await RegisterAndLoginAsync("expenseedge10");
         var client = CreateAuthorizedClient(token);
 
         var createBody = JsonSerializer.Serialize(new
         {
             description = "Original",
-            amount = 10.00m,
+            amount = "10.00",
             currency = "USD",
+            category = "food",
+            date = "2025-01-10",
+            type = "expense",
         });
         var createResp = await client.PostAsync(
             "/api/v1/expenses",
@@ -395,9 +418,6 @@ public class EndpointEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
         // Update with invalid unit
         var updateBody = JsonSerializer.Serialize(new
         {
-            description = "Updated",
-            amount = 10.00m,
-            currency = "USD",
             unit = "furlong",
         });
         var response = await client.PutAsync(
@@ -605,16 +625,18 @@ public class EndpointEdgeCaseTests : IClassFixture<TestWebApplicationFactory>
     // ── Auth: Refresh edge cases ──────────────────────────────────────
 
     [Fact]
-    public async Task Refresh_WithNullRefreshToken_Returns401()
+    public async Task Refresh_WithNullRefreshToken_Returns400()
     {
-        // Covers AuthEndpoints lines 158-160: null refreshToken check
+        // Contract enforcement: RefreshRequest.refreshToken is required non-null.
+        // Sending null for a required non-nullable field returns 400 (generated converter
+        // throws ArgumentNullException, which the ArgumentException handler maps to 400).
         var client = _factory.CreateClient();
         var body = JsonSerializer.Serialize(new { refreshToken = (string?)null });
         var response = await client.PostAsync(
             "/api/v1/auth/refresh",
             new StringContent(body, Encoding.UTF8, "application/json")
         );
-        ((int)response.StatusCode).Should().Be(401);
+        ((int)response.StatusCode).Should().Be(400);
     }
 
     [Fact]
