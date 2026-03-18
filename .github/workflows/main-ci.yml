@@ -93,6 +93,12 @@ jobs:
           dotnet tool install -g fantomas
           dotnet tool install -g dotnet-fsharplint
 
+      - name: Install oapi-codegen (Go OpenAPI codegen)
+        run: go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
+
+      - name: Install datamodel-code-generator (Python OpenAPI codegen)
+        run: pip install datamodel-code-generator[http]
+
       - name: Install dependencies
         run: npm ci
 
@@ -108,10 +114,11 @@ jobs:
       - name: Install Clojure dependencies
         run: (cd apps/demo-be-clojure-pedestal && JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -P && JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -P -M:test:coverage)
 
-      - name: Generate contract types (required before Flutter pub get)
+      - name: Generate contract types (required before test:quick and Flutter pub get)
         run: |
+          mkdir -p libs/clojure-openapi-codegen/classes
           npx nx run demo-contracts:bundle
-          npx nx run demo-fe-dart-flutterweb:codegen
+          npx nx run-many -t codegen --projects=demo-*
 
       - name: Install Flutter dependencies
         run: (cd apps/demo-fe-dart-flutterweb && flutter pub get)

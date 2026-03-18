@@ -668,7 +668,7 @@ definitions.
 **Validation**:
 
 - [x] **Verify** `nx run demo-be-e2e:test:e2e` passes (against a running backend)
-- [ ] **Verify** `nx run demo-fe-e2e:test:e2e` passes (against running frontend + backend)
+- [x] **Verify** `nx run demo-fe-e2e:test:e2e` passes (against running frontend + backend)
 
 ---
 
