@@ -23,6 +23,17 @@ jobs:
           cp apps/demo-be-java-vertx/pom.xml infra/dev/demo-be-java-vertx/pom.xml
           cp -r apps/demo-be-java-vertx/src infra/dev/demo-be-java-vertx/src
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Generate contract types for backend
+        run: |
+          npm ci --ignore-scripts
+          npx nx run demo-contracts:bundle
+          npx nx run demo-be-java-vertx:codegen
+
       - name: Run integration tests
         run: |
           docker compose -f apps/demo-be-java-vertx/docker-compose.integration.yml down -v 2>/dev/null || true

@@ -18,6 +18,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: "27"
+          elixir-version: "1.18"
+
+      - name: Generate contract types for backend
+        run: |
+          npm ci --ignore-scripts
+          cd libs/elixir-openapi-codegen && mix deps.get && cd ../..
+          npx nx run demo-contracts:bundle
+          npx nx run demo-be-elixir-phoenix:codegen
+
       - name: Run integration tests
         run: |
           docker compose -f apps/demo-be-elixir-phoenix/docker-compose.integration.yml down -v 2>/dev/null || true

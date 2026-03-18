@@ -18,6 +18,29 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Install Clojure CLI
+        uses: DeLaGuardo/setup-clojure@12.5
+        with:
+          cli: latest
+
+      - name: Generate contract types for backend
+        run: |
+          npm ci --ignore-scripts
+          mkdir -p libs/clojure-openapi-codegen/classes
+          npx nx run demo-contracts:bundle
+          npx nx run demo-be-clojure-pedestal:codegen
+
       - name: Run integration tests
         run: |
           docker compose -f apps/demo-be-clojure-pedestal/docker-compose.integration.yml down -v 2>/dev/null || true

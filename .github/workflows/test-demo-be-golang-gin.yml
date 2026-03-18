@@ -18,6 +18,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+
+      - name: Install oapi-codegen
+        run: go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
+
+      - name: Generate contract types for backend
+        run: |
+          npm ci --ignore-scripts
+          npx nx run demo-contracts:bundle
+          npx nx run demo-be-golang-gin:codegen
+
       - name: Run integration tests
         run: |
           docker compose -f apps/demo-be-golang-gin/docker-compose.integration.yml down -v 2>/dev/null || true
