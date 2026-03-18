@@ -1,9 +1,9 @@
 package com.demobektkt.routes
 
+import com.demobektkt.contracts.CreateExpenseRequest as ContractCreateExpenseRequest
 import com.demobektkt.domain.DomainError
 import com.demobektkt.domain.DomainException
 import com.demobektkt.domain.EntryType
-import com.demobektkt.domain.Expense
 import com.demobektkt.domain.validateAmount
 import com.demobektkt.domain.validateCurrency
 import com.demobektkt.domain.validateUnit
@@ -17,47 +17,10 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.RoutingCall
 import java.math.BigDecimal
-import java.math.RoundingMode
 import java.time.LocalDate
 import java.util.UUID
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
-import kotlinx.serialization.json.putJsonArray
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-
-@Serializable
-data class CreateExpenseDto(
-  val amount: String,
-  val currency: String,
-  val category: String,
-  val description: String,
-  val date: String,
-  val type: String,
-  val quantity: Double? = null,
-  val unit: String? = null,
-)
-
-private fun formatAmount(currency: String, amount: BigDecimal): String {
-  val scale = if (currency.uppercase() == "IDR") 0 else 2
-  return amount.setScale(scale, RoundingMode.HALF_UP).toPlainString()
-}
-
-private fun Expense.toJsonObject() = buildJsonObject {
-  put("id", id.toString())
-  put("userId", userId.toString())
-  put("type", type.name.lowercase())
-  put("amount", formatAmount(currency, amount))
-  put("currency", currency)
-  put("category", category)
-  put("description", description)
-  put("date", date.toString())
-  quantity?.let { put("quantity", it) }
-  unit?.let { put("unit", it) }
-  put("created_at", createdAt.toString())
-  put("updated_at", updatedAt.toString())
-}
 
 object ExpenseRoutes : KoinComponent {
   private val expenseRepository: ExpenseRepository by inject()
@@ -69,40 +32,62 @@ object ExpenseRoutes : KoinComponent {
     return UUID.fromString(principal.payload.subject)
   }
 
+  /** Convert [kotlinx.datetime.LocalDate] to [java.time.LocalDate]. */
+  private fun kotlinx.datetime.LocalDate.toJavaLocalDate(): LocalDate =
+    LocalDate.of(year, monthNumber, dayOfMonth)
+
+  /** Map a [ContractCreateExpenseRequest] to validated domain values. */
+  private fun ContractCreateExpenseRequest.toDomainRequest(userId: UUID): CreateExpenseRequest {
+    val domainCurrency = validateCurrency(currency).getOrThrow()
+    val domainAmount = validateAmount(domainCurrency, BigDecimal(amount)).getOrThrow()
+    val domainUnit = validateUnit(unit).getOrThrow()
+    val domainType =
+      when (type) {
+        ContractCreateExpenseRequest.Type.income -> EntryType.INCOME
+        ContractCreateExpenseRequest.Type.expense -> EntryType.EXPENSE
+      }
+    return CreateExpenseRequest(
+      userId = userId,
+      type = domainType,
+      amount = domainAmount,
+      currency = domainCurrency,
+      category = category,
+      description = description,
+      date = date.toJavaLocalDate(),
+      quantity = quantity,
+      unit = domainUnit,
+    )
+  }
+
+  /** Map a [ContractCreateExpenseRequest] to a domain [UpdateExpenseRequest]. */
+  private fun ContractCreateExpenseRequest.toUpdateDomainRequest(): UpdateExpenseRequest {
+    val domainCurrency = validateCurrency(currency).getOrThrow()
+    val domainAmount = validateAmount(domainCurrency, BigDecimal(amount)).getOrThrow()
+    val domainUnit = validateUnit(unit).getOrThrow()
+    val domainType =
+      when (type) {
+        ContractCreateExpenseRequest.Type.income -> EntryType.INCOME
+        ContractCreateExpenseRequest.Type.expense -> EntryType.EXPENSE
+      }
+    return UpdateExpenseRequest(
+      type = domainType,
+      amount = domainAmount,
+      currency = domainCurrency,
+      category = category,
+      description = description,
+      date = date.toJavaLocalDate(),
+      quantity = quantity,
+      unit = domainUnit,
+    )
+  }
+
   suspend fun create(call: RoutingCall) {
     val userId = requireUserId(call)
-    val dto = call.receive<CreateExpenseDto>()
+    val dto = call.receive<ContractCreateExpenseRequest>()
 
-    val currency = validateCurrency(dto.currency).getOrThrow()
-    val amount = validateAmount(currency, BigDecimal(dto.amount)).getOrThrow()
-    val unit = validateUnit(dto.unit).getOrThrow()
+    val expense = expenseRepository.create(dto.toDomainRequest(userId))
 
-    val type =
-      runCatching { EntryType.valueOf(dto.type.uppercase()) }.getOrNull()
-        ?: throw DomainException(DomainError.ValidationError("type", "Invalid type: ${dto.type}"))
-
-    val date =
-      runCatching { LocalDate.parse(dto.date) }.getOrNull()
-        ?: throw DomainException(
-          DomainError.ValidationError("date", "Invalid date format: ${dto.date}")
-        )
-
-    val expense =
-      expenseRepository.create(
-        CreateExpenseRequest(
-          userId = userId,
-          type = type,
-          amount = amount,
-          currency = currency,
-          category = dto.category,
-          description = dto.description,
-          date = date,
-          quantity = dto.quantity?.let { BigDecimal(it.toString()) },
-          unit = unit,
-        )
-      )
-
-    call.respond(HttpStatusCode.Created, expense.toJsonObject())
+    call.respond(HttpStatusCode.Created, expense.toContractExpense())
   }
 
   suspend fun list(call: RoutingCall) {
@@ -113,21 +98,18 @@ object ExpenseRoutes : KoinComponent {
 
     val result = expenseRepository.findAllByUser(userId, page, pageSize)
 
-    val response = buildJsonObject {
-      putJsonArray("content") { result.data.forEach { add(it.toJsonObject()) } }
-      put("totalElements", result.total)
-      put("page", result.page)
-      put("pageSize", result.pageSize)
-    }
-
-    call.respond(response)
+    call.respond(result.toContractExpenseListResponse())
   }
 
   suspend fun summary(call: RoutingCall) {
     val userId = requireUserId(call)
     val summaries = expenseRepository.summaryByUser(userId)
 
-    val summaryMap = summaries.associate { s -> s.currency to formatAmount(s.currency, s.total) }
+    val summaryMap =
+      summaries.associate { s ->
+        val scale = if (s.currency.uppercase() == "IDR") 0 else 2
+        s.currency to s.total.setScale(scale, java.math.RoundingMode.HALF_UP).toPlainString()
+      }
 
     call.respond(summaryMap)
   }
@@ -146,7 +128,7 @@ object ExpenseRoutes : KoinComponent {
       throw DomainException(DomainError.Forbidden("Access denied"))
     }
 
-    call.respond(expense.toJsonObject())
+    call.respond(expense.toContractExpense())
   }
 
   suspend fun update(call: RoutingCall) {
@@ -163,38 +145,13 @@ object ExpenseRoutes : KoinComponent {
       throw DomainException(DomainError.Forbidden("Access denied"))
     }
 
-    val dto = call.receive<CreateExpenseDto>()
-
-    val currency = validateCurrency(dto.currency).getOrThrow()
-    val amount = validateAmount(currency, BigDecimal(dto.amount)).getOrThrow()
-    val unit = validateUnit(dto.unit).getOrThrow()
-
-    val type =
-      runCatching { EntryType.valueOf(dto.type.uppercase()) }.getOrNull()
-        ?: throw DomainException(DomainError.ValidationError("type", "Invalid type: ${dto.type}"))
-
-    val date =
-      runCatching { LocalDate.parse(dto.date) }.getOrNull()
-        ?: throw DomainException(
-          DomainError.ValidationError("date", "Invalid date format: ${dto.date}")
-        )
+    val dto = call.receive<ContractCreateExpenseRequest>()
 
     val expense =
-      expenseRepository.update(
-        expenseId,
-        UpdateExpenseRequest(
-          type = type,
-          amount = amount,
-          currency = currency,
-          category = dto.category,
-          description = dto.description,
-          date = date,
-          quantity = dto.quantity?.let { BigDecimal(it.toString()) },
-          unit = unit,
-        ),
-      ) ?: throw DomainException(DomainError.NotFound("expense"))
+      expenseRepository.update(expenseId, dto.toUpdateDomainRequest())
+        ?: throw DomainException(DomainError.NotFound("expense"))
 
-    call.respond(expense.toJsonObject())
+    call.respond(expense.toContractExpense())
   }
 
   suspend fun delete(call: RoutingCall) {

@@ -124,9 +124,7 @@ class UnitAuthSteps {
 
   @Given("{string} has had the maximum number of failed login attempts")
   fun userHasHadMaxFailedLoginAttempts(username: String) {
-    repeat(5) {
-      UnitServiceDispatcher.login(username, "WrongPass#1234")
-    }
+    repeat(5) { UnitServiceDispatcher.login(username, "WrongPass#1234") }
     runBlocking {
       UnitTestWorld.userRepo.findByUsername(username)?.let {
         UnitTestWorld.userIds[username] = it.id.toString()
@@ -285,15 +283,7 @@ class UnitAuthSteps {
     type: String,
   ) {
     val (status, respBody) =
-      UnitServiceDispatcher.createExpense(
-        "",
-        amount,
-        currency,
-        category,
-        description,
-        date,
-        type,
-      )
+      UnitServiceDispatcher.createExpense("", amount, currency, category, description, date, type)
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = respBody
   }

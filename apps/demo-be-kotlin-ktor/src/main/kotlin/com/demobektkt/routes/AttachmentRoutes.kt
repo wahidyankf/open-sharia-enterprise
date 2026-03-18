@@ -1,6 +1,6 @@
 package com.demobektkt.routes
 
-import com.demobektkt.domain.Attachment
+import com.demobektkt.contracts.Attachment as ContractAttachment
 import com.demobektkt.domain.DomainError
 import com.demobektkt.domain.DomainException
 import com.demobektkt.domain.validateContentType
@@ -20,21 +20,11 @@ import io.ktor.utils.io.readRemaining
 import java.util.UUID
 import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlinx.io.readByteArray
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
-import kotlinx.serialization.json.putJsonArray
+import kotlinx.serialization.Serializable
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-private fun Attachment.toJsonObject() = buildJsonObject {
-  put("id", id.toString())
-  put("expense_id", expenseId.toString())
-  put("filename", filename)
-  put("contentType", contentType)
-  put("size_bytes", sizeBytes)
-  put("url", "/api/v1/expenses/$expenseId/attachments/$id")
-  put("created_at", createdAt.toString())
-}
+@Serializable data class AttachmentListResponse(val attachments: List<ContractAttachment>)
 
 object AttachmentRoutes : KoinComponent {
   private val attachmentRepository: AttachmentRepository by inject()
@@ -103,7 +93,7 @@ object AttachmentRoutes : KoinComponent {
         )
       )
 
-    call.respond(HttpStatusCode.Created, attachment.toJsonObject())
+    call.respond(HttpStatusCode.Created, attachment.toContractAttachment())
   }
 
   suspend fun list(call: RoutingCall) {
@@ -121,9 +111,7 @@ object AttachmentRoutes : KoinComponent {
     }
 
     val attachments = attachmentRepository.findAllByExpense(expenseId)
-    val response = buildJsonObject {
-      putJsonArray("attachments") { attachments.forEach { add(it.toJsonObject()) } }
-    }
+    val response = AttachmentListResponse(attachments.map { it.toContractAttachment() })
     call.respond(response)
   }
 

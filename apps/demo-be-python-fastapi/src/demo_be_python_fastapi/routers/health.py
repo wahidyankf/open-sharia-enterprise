@@ -1,15 +1,10 @@
 """Health check router."""
 
 from fastapi import APIRouter
-from pydantic import BaseModel
+
+from generated_contracts import HealthResponse
 
 router = APIRouter()
-
-
-class HealthResponse(BaseModel):
-    """Health check response model."""
-
-    status: str
 
 
 @router.get("/health", response_model=HealthResponse)

@@ -2,6 +2,9 @@ package com.demobektkt.routes
 
 import com.demobektkt.auth.JwtService
 import com.demobektkt.auth.PasswordService
+import com.demobektkt.contracts.LoginRequest
+import com.demobektkt.contracts.RefreshRequest
+import com.demobektkt.contracts.RegisterRequest
 import com.demobektkt.domain.DomainError
 import com.demobektkt.domain.DomainException
 import com.demobektkt.domain.Role
@@ -27,13 +30,6 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 private const val MAX_FAILED_LOGINS = 5
-
-@Serializable
-data class RegisterRequest(val username: String, val email: String, val password: String)
-
-@Serializable data class LoginRequest(val username: String, val password: String)
-
-@Serializable data class RefreshRequest(val refreshToken: String)
 
 @Serializable data class LogoutRequest(val access_token: String? = null)
 
@@ -66,15 +62,7 @@ object AuthRoutes : KoinComponent {
         )
       )
 
-    call.respond(
-      HttpStatusCode.Created,
-      mapOf(
-        "id" to user.id.toString(),
-        "username" to user.username,
-        "email" to user.email,
-        "display_name" to user.displayName,
-      ),
-    )
+    call.respond(HttpStatusCode.Created, user.toContractUser())
   }
 
   suspend fun login(call: RoutingCall) {
@@ -109,13 +97,7 @@ object AuthRoutes : KoinComponent {
     val accessToken = jwtService.generateAccessToken(user.id, user.username, user.role)
     val refreshToken = jwtService.generateRefreshToken(user.id)
 
-    call.respond(
-      mapOf(
-        "accessToken" to accessToken,
-        "refreshToken" to refreshToken,
-        "tokenType" to "Bearer",
-      )
-    )
+    call.respond(buildAuthTokens(accessToken, refreshToken))
   }
 
   suspend fun refresh(call: RoutingCall) {
@@ -152,13 +134,7 @@ object AuthRoutes : KoinComponent {
     val newAccessToken = jwtService.generateAccessToken(userId, user.username, user.role)
     val newRefreshToken = jwtService.generateRefreshToken(userId)
 
-    call.respond(
-      mapOf(
-        "accessToken" to newAccessToken,
-        "refreshToken" to newRefreshToken,
-        "tokenType" to "Bearer",
-      )
-    )
+    call.respond(buildAuthTokens(newAccessToken, newRefreshToken))
   }
 
   suspend fun logout(call: RoutingCall) {

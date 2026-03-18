@@ -1,5 +1,6 @@
 package com.demobektkt.plugins
 
+import com.demobektkt.contracts.HealthResponse
 import com.demobektkt.routes.AdminRoutes
 import com.demobektkt.routes.AttachmentRoutes
 import com.demobektkt.routes.AuthRoutes
@@ -21,7 +22,7 @@ import io.ktor.server.routing.routing
 
 fun Application.configureRouting() {
   routing {
-    get("/health") { call.respond(mapOf("status" to "UP")) }
+    get("/health") { call.respond(HealthResponse(status = "UP")) }
 
     if (System.getenv("ENABLE_TEST_API") == "true") {
       route("/api/v1/test") {

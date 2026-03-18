@@ -13,8 +13,8 @@ import org.junit.jupiter.api.TestInstance
 
 /**
  * Unit-level tests for error paths in service dispatching. These tests run against the
- * UnitServiceDispatcher with in-memory repositories and cover branches not exercised by
- * Cucumber scenarios.
+ * UnitServiceDispatcher with in-memory repositories and cover branches not exercised by Cucumber
+ * scenarios.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UnitErrorPathsTest {
@@ -86,8 +86,7 @@ class UnitErrorPathsTest {
 
   @Test
   fun `get non-existent expense returns 404`() {
-    val (status, _) =
-      UnitServiceDispatcher.getExpenseById(aliceToken, UUID.randomUUID().toString())
+    val (status, _) = UnitServiceDispatcher.getExpenseById(aliceToken, UUID.randomUUID().toString())
     assertEquals(404, status)
   }
 
@@ -197,8 +196,7 @@ class UnitErrorPathsTest {
 
   @Test
   fun `delete non-existent expense returns 404`() {
-    val (status, _) =
-      UnitServiceDispatcher.deleteExpense(aliceToken, UUID.randomUUID().toString())
+    val (status, _) = UnitServiceDispatcher.deleteExpense(aliceToken, UUID.randomUUID().toString())
     assertEquals(404, status)
   }
 
@@ -213,8 +211,7 @@ class UnitErrorPathsTest {
 
   @Test
   fun `non-admin user gets 403 on admin enable endpoint`() {
-    val (status, _) =
-      UnitServiceDispatcher.enableUser(aliceToken, UUID.randomUUID().toString())
+    val (status, _) = UnitServiceDispatcher.enableUser(aliceToken, UUID.randomUUID().toString())
     assertEquals(403, status)
   }
 
@@ -247,8 +244,7 @@ class UnitErrorPathsTest {
 
   @Test
   fun `admin disable existing user returns 200`() {
-    val (status, body) =
-      UnitServiceDispatcher.disableUser(adminToken, aliceUserId, "test disable")
+    val (status, body) = UnitServiceDispatcher.disableUser(adminToken, aliceUserId, "test disable")
     assertEquals(200, status)
     assertTrue(body.contains("DISABLED"), "Expected disabled status in: $body")
     // Re-enable alice so other tests can use her token
@@ -305,11 +301,7 @@ class UnitErrorPathsTest {
   @Test
   fun `delete attachment with invalid expense UUID returns 404`() {
     val (status, _) =
-      UnitServiceDispatcher.deleteAttachment(
-        aliceToken,
-        "not-a-uuid",
-        UUID.randomUUID().toString(),
-      )
+      UnitServiceDispatcher.deleteAttachment(aliceToken, "not-a-uuid", UUID.randomUUID().toString())
     assertEquals(404, status)
   }
 

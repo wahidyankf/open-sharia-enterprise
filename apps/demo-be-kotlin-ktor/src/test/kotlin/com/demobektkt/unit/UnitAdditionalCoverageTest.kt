@@ -19,9 +19,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 
 /**
- * Unit-level additional coverage tests targeting uncovered lines in service dispatching,
- * in-memory repositories, and domain error handling. These complement UnitErrorPathsTest
- * by covering the remaining branches not exercised by the Cucumber BDD scenarios.
+ * Unit-level additional coverage tests targeting uncovered lines in service dispatching, in-memory
+ * repositories, and domain error handling. These complement UnitErrorPathsTest by covering the
+ * remaining branches not exercised by the Cucumber BDD scenarios.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UnitAdditionalCoverageTest {
@@ -51,8 +51,7 @@ class UnitAdditionalCoverageTest {
     aliceToken =
       UnitJsonHelper.getString(loginBody, "accessToken") ?: error("No access_token: $loginBody")
     aliceRefreshToken =
-      UnitJsonHelper.getString(loginBody, "refreshToken")
-        ?: error("No refresh_token: $loginBody")
+      UnitJsonHelper.getString(loginBody, "refreshToken") ?: error("No refresh_token: $loginBody")
     aliceAccessToken = aliceToken
 
     // Get alice user ID from profile
@@ -278,10 +277,7 @@ class UnitAdditionalCoverageTest {
 
     val (status, body) = UnitServiceDispatcher.refresh(orphanRefreshToken)
     assertEquals(401, status)
-    assertTrue(
-      body.contains("not found") || body.contains("User"),
-      "Expected user error in: $body",
-    )
+    assertTrue(body.contains("not found") || body.contains("User"), "Expected user error in: $body")
   }
 
   // ---- AuthRoutes: logout without token ----

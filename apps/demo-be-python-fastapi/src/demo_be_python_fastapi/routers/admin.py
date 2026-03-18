@@ -1,46 +1,39 @@
 """Admin router for user management."""
 
+import math
+from datetime import UTC, datetime
+
 from fastapi import APIRouter, Depends, Query
-from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from demo_be_python_fastapi.auth.dependencies import require_admin
 from demo_be_python_fastapi.dependencies import get_db, get_user_repo
 from demo_be_python_fastapi.domain.errors import NotFoundError
 from demo_be_python_fastapi.infrastructure.models import UserModel
+from generated_contracts import DisableRequest, PasswordResetResponse, User, UserListResponse
 
 router = APIRouter()
 
 
-class UserSummary(BaseModel):
-    """User summary for admin list."""
-
-    id: str
-    username: str
-    email: str
-    status: str
-    role: str
+def _ensure_utc(dt: datetime) -> datetime:
+    """Attach UTC timezone to a naive datetime (SQLite strips timezone info in tests)."""
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo=UTC)
+    return dt
 
 
-class UserListResponse(BaseModel):
-    """Paginated user list response."""
-
-    content: list[UserSummary]
-    totalElements: int
-    page: int
-    size: int
-
-
-class DisableRequest(BaseModel):
-    """Disable user request."""
-
-    reason: str | None = None
-
-
-class PasswordResetResponse(BaseModel):
-    """Password reset token response."""
-
-    token: str
+def _user_to_contract(user: UserModel) -> User:
+    """Map a UserModel ORM instance to the generated User contract type."""
+    return User(
+        id=user.id,
+        username=user.username,
+        email=user.email,
+        displayName=user.display_name or "",
+        status=user.status,
+        roles=[user.role],
+        createdAt=_ensure_utc(user.created_at),
+        updatedAt=_ensure_utc(user.updated_at),
+    )
 
 
 @router.get("/users", response_model=UserListResponse)
@@ -55,18 +48,11 @@ def list_users(
     user_repo = get_user_repo(db)
     page = max(1, page)
     users, total = user_repo.list_users(page, size, search)
+    total_pages = math.ceil(total / size) if size > 0 else 0
     return UserListResponse(
-        content=[
-            UserSummary(
-                id=u.id,
-                username=u.username,
-                email=u.email,
-                status=u.status,
-                role=u.role,
-            )
-            for u in users
-        ],
+        content=[_user_to_contract(u) for u in users],
         totalElements=total,
+        totalPages=total_pages,
         page=page,
         size=size,
     )

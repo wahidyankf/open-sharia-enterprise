@@ -1,6 +1,7 @@
 """Attachments router: upload, list, delete."""
 
 import uuid
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, File, UploadFile
 from pydantic import BaseModel
@@ -20,6 +21,15 @@ from demo_be_python_fastapi.infrastructure.models import UserModel
 router = APIRouter()
 
 
+def _ensure_utc(dt: datetime) -> datetime:
+    """Attach UTC timezone to a naive datetime (SQLite strips timezone info in tests)."""
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo=UTC)
+    return dt
+
+
+# AttachmentResponse is kept local: the generated Attachment type is missing the `url` field
+# which the Gherkin spec explicitly requires in attachment responses.
 class AttachmentResponse(BaseModel):
     """Attachment metadata response."""
 
@@ -30,6 +40,7 @@ class AttachmentResponse(BaseModel):
     url: str
 
 
+# AttachmentListResponse is kept local: not defined in the OpenAPI spec.
 class AttachmentListResponse(BaseModel):
     """List of attachments."""
 

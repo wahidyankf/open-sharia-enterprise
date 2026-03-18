@@ -1,7 +1,8 @@
 """User account router."""
 
+from datetime import UTC, datetime
+
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from demo_be_python_fastapi.auth.dependencies import get_current_user
@@ -9,65 +10,52 @@ from demo_be_python_fastapi.dependencies import get_db, get_revoked_token_repo, 
 from demo_be_python_fastapi.domain.errors import UnauthorizedError
 from demo_be_python_fastapi.infrastructure.models import UserModel
 from demo_be_python_fastapi.infrastructure.password_hasher import hash_password, verify_password
+from generated_contracts import ChangePasswordRequest, UpdateProfileRequest, User
 
 router = APIRouter()
 
 
-class UserProfileResponse(BaseModel):
-    """User profile response model."""
-
-    id: str
-    username: str
-    email: str
-    displayName: str | None
-    status: str
+def _ensure_utc(dt: datetime) -> datetime:
+    """Attach UTC timezone to a naive datetime (SQLite strips timezone info in tests)."""
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo=UTC)
+    return dt
 
 
-class UpdateProfileRequest(BaseModel):
-    """Update profile request model."""
-
-    displayName: str
-
-
-class ChangePasswordRequest(BaseModel):
-    """Change password request model."""
-
-    oldPassword: str
-    newPassword: str
-
-
-@router.get("/me", response_model=UserProfileResponse)
-def get_profile(
-    current_user: UserModel = Depends(get_current_user),
-) -> UserProfileResponse:
-    """Get current user profile."""
-    return UserProfileResponse(
-        id=current_user.id,
-        username=current_user.username,
-        email=current_user.email,
-        displayName=current_user.display_name,
-        status=current_user.status,
+def _user_to_contract(user: UserModel) -> User:
+    """Map a UserModel ORM instance to the generated User contract type."""
+    return User(
+        id=user.id,
+        username=user.username,
+        email=user.email,
+        displayName=user.display_name or "",
+        status=user.status,
+        roles=[user.role],
+        createdAt=_ensure_utc(user.created_at),
+        updatedAt=_ensure_utc(user.updated_at),
     )
 
 
-@router.patch("/me", response_model=UserProfileResponse)
+@router.get("/me", response_model=User)
+def get_profile(
+    current_user: UserModel = Depends(get_current_user),
+) -> User:
+    """Get current user profile."""
+    return _user_to_contract(current_user)
+
+
+@router.patch("/me", response_model=User)
 def update_profile(
     body: UpdateProfileRequest,
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
-) -> UserProfileResponse:
+) -> User:
     """Update current user display name."""
     user_repo = get_user_repo(db)
     user = user_repo.update_display_name(current_user.id, body.displayName)
     if user is None:
         raise UnauthorizedError("User not found")
-    return UserProfileResponse(
-        id=user.id,
-        username=user.username,
-        email=user.email,
-        displayName=user.display_name,
-        status=user.status,
-    )
+    return _user_to_contract(user)
 
 
 @router.post("/me/password")

@@ -2,6 +2,8 @@ package com.demobektkt.routes
 
 import com.demobektkt.auth.JwtService
 import com.demobektkt.auth.PasswordService
+import com.demobektkt.contracts.ChangePasswordRequest
+import com.demobektkt.contracts.UpdateProfileRequest
 import com.demobektkt.domain.DomainError
 import com.demobektkt.domain.DomainException
 import com.demobektkt.domain.UserStatus
@@ -18,13 +20,8 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.RoutingCall
 import java.time.Instant
 import java.util.UUID
-import kotlinx.serialization.Serializable
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-
-@Serializable data class UpdateDisplayNameRequest(val displayName: String)
-
-@Serializable data class ChangePasswordRequest(val oldPassword: String, val newPassword: String)
 
 object UserRoutes : KoinComponent {
   private val userRepository: UserRepository by inject()
@@ -40,16 +37,7 @@ object UserRoutes : KoinComponent {
     val user =
       userRepository.findById(userId) ?: throw DomainException(DomainError.NotFound("user"))
 
-    call.respond(
-      mapOf(
-        "id" to user.id.toString(),
-        "username" to user.username,
-        "email" to user.email,
-        "displayName" to user.displayName,
-        "role" to user.role.name,
-        "status" to user.status.name,
-      )
-    )
+    call.respond(user.toContractUser())
   }
 
   suspend fun updateDisplayName(call: RoutingCall) {
@@ -58,21 +46,14 @@ object UserRoutes : KoinComponent {
         ?: throw DomainException(DomainError.Unauthorized("Unauthorized"))
     val userId = UUID.fromString(principal.payload.subject)
 
-    val request = call.receive<UpdateDisplayNameRequest>()
+    val request = call.receive<UpdateProfileRequest>()
     validateDisplayName(request.displayName).getOrThrow()
 
     val user =
       userRepository.update(userId, UpdateUserPatch(displayName = request.displayName))
         ?: throw DomainException(DomainError.NotFound("user"))
 
-    call.respond(
-      mapOf(
-        "id" to user.id.toString(),
-        "username" to user.username,
-        "email" to user.email,
-        "displayName" to user.displayName,
-      )
-    )
+    call.respond(user.toContractUser())
   }
 
   suspend fun changePassword(call: RoutingCall) {

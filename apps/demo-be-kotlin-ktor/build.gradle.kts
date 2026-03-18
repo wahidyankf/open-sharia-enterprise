@@ -20,6 +20,7 @@ val postgresDriverVersion = "42.7.5"
 val sqliteVersion = "3.49.1.0"
 val jbcryptVersion = "0.4"
 val javaJwtVersion = "4.4.0"
+val kotlinxDatetimeVersion = "0.6.1"
 
 group = "com.demobektkt"
 
@@ -37,8 +38,20 @@ java {
 tasks.withType<KotlinCompile> {
   compilerOptions {
     jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
-    freeCompilerArgs.add("-Xjsr305=strict")
+    freeCompilerArgs.addAll(
+      "-Xjsr305=strict",
+      // opt-in required for kotlin.time.Instant used in generated contract types
+      "-opt-in=kotlin.time.ExperimentalTime",
+    )
   }
+}
+
+// Include generated contract types in compilation.
+// ErrorResponse is excluded because it declares Map<String, Any> with @Contextual —
+// kotlin.Any has no serializer and causes a compile-time crash in the Kotlin serialization plugin.
+sourceSets.main {
+  kotlin.srcDirs("generated-contracts/src/main/kotlin")
+  kotlin.exclude("com/demobektkt/contracts/ErrorResponse.kt")
 }
 
 repositories { mavenCentral() }
@@ -63,6 +76,9 @@ dependencies {
 
   // Database drivers
   implementation("org.postgresql:postgresql:$postgresDriverVersion")
+
+  // kotlinx-datetime (required by generated contract types)
+  implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
 
   // JWT
   implementation("com.auth0:java-jwt:$javaJwtVersion")
@@ -168,6 +184,9 @@ kover {
           // UnitServiceDispatcher (no HTTP). Routes are covered by integration/e2e tests.
           "com.demobektkt.routes.*",
           "com.demobektkt.plugins.*",
+          // Exclude generated contract types — data classes + companion serializer objects
+          // are exercised only by integration/e2e tests (HTTP serialization layer).
+          "com.demobektkt.contracts.*",
         )
       }
     }

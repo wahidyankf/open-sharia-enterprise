@@ -18,7 +18,13 @@ class UnitAttachmentSteps {
     val token = UnitTestWorld.accessTokens[username] ?: error("$username has no access token")
     val expenseId =
       UnitTestWorld.expenseIds[expenseIdKey] ?: error("no expense id stored at $expenseIdKey")
-    return UnitServiceDispatcher.uploadAttachment(token, expenseId, filename, contentType, fileContent)
+    return UnitServiceDispatcher.uploadAttachment(
+      token,
+      expenseId,
+      filename,
+      contentType,
+      fileContent,
+    )
   }
 
   @Given(

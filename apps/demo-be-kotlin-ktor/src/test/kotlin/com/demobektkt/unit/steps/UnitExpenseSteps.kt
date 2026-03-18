@@ -32,8 +32,7 @@ class UnitExpenseSteps {
         unit,
       )
     assertTrue(status == 201, "Expected 201 creating expense, got $status. Body: $respBody")
-    return UnitJsonHelper.getString(respBody, "id")
-      ?: error("No id in expense response: $respBody")
+    return UnitJsonHelper.getString(respBody, "id") ?: error("No id in expense response: $respBody")
   }
 
   private fun createExpenseFromKV(username: String, vararg kvPairs: Pair<String, String>): String {
@@ -68,7 +67,8 @@ class UnitExpenseSteps {
     k6: String,
     v6: String,
   ) {
-    val id = createExpenseFromKV("alice", k1 to v1, k2 to v2, k3 to v3, k4 to v4, k5 to v5, k6 to v6)
+    val id =
+      createExpenseFromKV("alice", k1 to v1, k2 to v2, k3 to v3, k4 to v4, k5 to v5, k6 to v6)
     UnitTestWorld.expenseIds["alice:last"] = id
   }
 
@@ -89,7 +89,8 @@ class UnitExpenseSteps {
     k6: String,
     v6: String,
   ) {
-    val id = createExpenseFromKV("alice", k1 to v1, k2 to v2, k3 to v3, k4 to v4, k5 to v5, k6 to v6)
+    val id =
+      createExpenseFromKV("alice", k1 to v1, k2 to v2, k3 to v3, k4 to v4, k5 to v5, k6 to v6)
     UnitTestWorld.expenseIds["alice:last"] = id
   }
 
@@ -231,7 +232,15 @@ class UnitExpenseSteps {
   ) {
     val token = UnitTestWorld.accessTokens["alice"] ?: error("alice has no access token")
     val (status, respBody) =
-      UnitServiceDispatcher.createExpense(token, amount, currency, category, description, date, type)
+      UnitServiceDispatcher.createExpense(
+        token,
+        amount,
+        currency,
+        category,
+        description,
+        date,
+        type,
+      )
     UnitTestWorld.lastResponseStatus = status
     UnitTestWorld.lastResponseBody = respBody
     if (status == 201) {

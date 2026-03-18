@@ -7,22 +7,13 @@ import com.demobektkt.domain.UserStatus
 import com.demobektkt.infrastructure.repositories.TokenRepository
 import com.demobektkt.infrastructure.repositories.UpdateUserPatch
 import com.demobektkt.infrastructure.repositories.UserRepository
-import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.principal
 import io.ktor.server.response.respond
 import io.ktor.server.routing.RoutingCall
 import java.util.UUID
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.buildJsonArray
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-
-@Serializable data class DisableUserRequest(val reason: String? = null)
 
 object AdminRoutes : KoinComponent {
   private val userRepository: UserRepository by inject()
@@ -44,36 +35,12 @@ object AdminRoutes : KoinComponent {
     val rawPage = call.request.queryParameters["page"]?.toIntOrNull() ?: 0
     val page = rawPage + 1
     val pageSize = call.request.queryParameters["pageSize"]?.toIntOrNull() ?: 20
-    val searchFilter = call.request.queryParameters["search"] ?: call.request.queryParameters["email"]
+    val searchFilter =
+      call.request.queryParameters["search"] ?: call.request.queryParameters["email"]
 
     val result = userRepository.findAll(page, pageSize, searchFilter)
 
-    val usersArray: JsonArray = buildJsonArray {
-      result.data.forEach { user ->
-        add(
-          buildJsonObject {
-            put("id", user.id.toString())
-            put("username", user.username)
-            put("email", user.email)
-            put("display_name", user.displayName)
-            put("role", user.role.name.lowercase())
-            put("status", user.status.name)
-          }
-        )
-      }
-    }
-
-    val totalPages =
-      if (result.total == 0L) 1
-      else ((result.total + pageSize - 1) / pageSize).toInt()
-    val response: JsonObject = buildJsonObject {
-      put("content", usersArray)
-      put("totalElements", result.total)
-      put("totalPages", totalPages)
-      put("page", result.page)
-    }
-
-    call.respond(response)
+    call.respond(result.toContractUserListResponse())
   }
 
   suspend fun disable(call: RoutingCall) {
@@ -129,9 +96,6 @@ object AdminRoutes : KoinComponent {
 
     val resetToken = UUID.randomUUID().toString()
 
-    call.respond(
-      HttpStatusCode.OK,
-      mapOf("token" to resetToken),
-    )
+    call.respond(buildPasswordResetResponse(resetToken))
   }
 }

@@ -1,6 +1,7 @@
 package com.demobektkt.routes
 
 import com.demobektkt.auth.JWT_ISSUER
+import com.demobektkt.contracts.TokenClaims
 import com.demobektkt.domain.DomainError
 import com.demobektkt.domain.DomainException
 import io.ktor.server.auth.jwt.JWTPrincipal
@@ -20,20 +21,25 @@ object TokenRoutes : KoinComponent {
         ?: throw DomainException(DomainError.Unauthorized("Unauthorized"))
 
     val payload = principal.payload
-    val response = buildJsonObject {
-      put("sub", payload.subject)
-      put("iss", payload.issuer)
-      put("jti", payload.getClaim("jti").asString())
-      put("username", payload.getClaim("username").asString())
-      put("role", payload.getClaim("role").asString())
-      payload.expiresAt?.time?.let { put("exp", it) }
-      payload.issuedAt?.time?.let { put("iat", it) }
-    }
+    val expSeconds = payload.expiresAt?.time?.let { (it / 1000).toInt() } ?: 0
+    val iatSeconds = payload.issuedAt?.time?.let { (it / 1000).toInt() } ?: 0
+    val role = payload.getClaim("role").asString() ?: ""
 
-    call.respond(response)
+    val tokenClaims =
+      TokenClaims(
+        sub = payload.subject,
+        iss = payload.issuer,
+        exp = expSeconds,
+        iat = iatSeconds,
+        roles = if (role.isNotEmpty()) listOf(role) else emptyList(),
+      )
+
+    call.respond(tokenClaims)
   }
 
   suspend fun jwks(call: RoutingCall) {
+    // JWKS endpoint uses buildJsonObject because contracts.JwkKey is designed for
+    // RSA keys (requires n and e fields) but this service uses HS256 (symmetric key).
     val response = buildJsonObject {
       putJsonArray("keys") {
         add(

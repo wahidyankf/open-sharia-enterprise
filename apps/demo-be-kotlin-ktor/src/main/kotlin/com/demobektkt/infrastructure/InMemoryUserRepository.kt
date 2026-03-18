@@ -70,7 +70,8 @@ class InMemoryUserRepository : UserRepository {
     val filtered =
       if (searchFilter != null) {
         store.values.filter {
-          it.username.contains(searchFilter, ignoreCase = true) || it.email.contains(searchFilter, ignoreCase = true)
+          it.username.contains(searchFilter, ignoreCase = true) ||
+            it.email.contains(searchFilter, ignoreCase = true)
         }
       } else {
         store.values.toList()

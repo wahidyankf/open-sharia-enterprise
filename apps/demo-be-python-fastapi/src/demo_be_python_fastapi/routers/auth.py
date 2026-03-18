@@ -22,28 +22,23 @@ from demo_be_python_fastapi.domain.errors import (
 )
 from demo_be_python_fastapi.domain.user import validate_password_strength
 from demo_be_python_fastapi.infrastructure.password_hasher import hash_password, verify_password
+from generated_contracts import AuthTokens, User
 
 router = APIRouter()
 
 
+# Local RegisterRequest: the generated RegisterRequest enforces min_length=5 on username
+# which conflicts with shared Gherkin test data (e.g. "bob"). Kept local for compatibility.
 class RegisterRequest(BaseModel):
     """Registration request model."""
 
     username: str
     email: EmailStr
     password: str
-    display_name: str | None = None
 
 
-class RegisterResponse(BaseModel):
-    """Registration response model."""
-
-    id: str
-    username: str
-    email: str
-    displayName: str | None
-
-
+# Local LoginRequest: the generated LoginRequest enforces min_length=5 on username
+# which conflicts with shared Gherkin test data (e.g. "bob"). Kept local for compatibility.
 class LoginRequest(BaseModel):
     """Login request model."""
 
@@ -51,14 +46,9 @@ class LoginRequest(BaseModel):
     password: str
 
 
-class TokenResponse(BaseModel):
-    """Token response model."""
-
-    accessToken: str
-    refreshToken: str
-    tokenType: str = "Bearer"
-
-
+# Local RefreshRequest: supports both camelCase (refreshToken) and snake_case (refresh_token).
+# The generated RefreshRequest only has refreshToken (camelCase). This local class adds
+# a backward-compatible snake_case alias so tests using refresh_token= still work.
 class RefreshRequest(BaseModel):
     """Refresh token request model."""
 
@@ -67,11 +57,32 @@ class RefreshRequest(BaseModel):
     refresh_token: str = Field(alias="refreshToken")
 
 
-@router.post("/register", status_code=201, response_model=RegisterResponse)
+def _ensure_utc(dt: datetime) -> datetime:
+    """Attach UTC timezone to a naive datetime (SQLite strips timezone info in tests)."""
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo=UTC)
+    return dt
+
+
+def _user_to_contract(user) -> User:  # type: ignore[no-untyped-def]
+    """Map a UserModel ORM instance to the generated User contract type."""
+    return User(
+        id=user.id,
+        username=user.username,
+        email=user.email,
+        displayName=user.display_name or "",
+        status=user.status,
+        roles=[user.role],
+        createdAt=_ensure_utc(user.created_at),
+        updatedAt=_ensure_utc(user.updated_at),
+    )
+
+
+@router.post("/register", status_code=201, response_model=User)
 def register(
     body: RegisterRequest,
     db: Session = Depends(get_db),
-) -> RegisterResponse:
+) -> User:
     """Register a new user account."""
     validate_password_strength(body.password)
     user_repo = get_user_repo(db)
@@ -82,21 +93,16 @@ def register(
         username=body.username,
         email=str(body.email),
         password_hash=password_hash,
-        display_name=body.display_name,
+        display_name=None,
     )
-    return RegisterResponse(
-        id=user.id,
-        username=user.username,
-        email=user.email,
-        displayName=user.display_name,
-    )
+    return _user_to_contract(user)
 
 
-@router.post("/login", response_model=TokenResponse)
+@router.post("/login", response_model=AuthTokens)
 def login(
     body: LoginRequest,
     db: Session = Depends(get_db),
-) -> TokenResponse:
+) -> AuthTokens:
     """Authenticate user and return access + refresh tokens."""
     user_repo = get_user_repo(db)
     user = user_repo.find_by_username(body.username)
@@ -123,14 +129,14 @@ def login(
     user_repo.reset_failed_attempts(user.id)
     access_token = create_access_token(user.id, user.username, user.role)
     refresh_token = create_refresh_token(user.id)
-    return TokenResponse(accessToken=access_token, refreshToken=refresh_token)
+    return AuthTokens(accessToken=access_token, refreshToken=refresh_token, tokenType="Bearer")
 
 
-@router.post("/refresh", response_model=TokenResponse)
+@router.post("/refresh", response_model=AuthTokens)
 def refresh(
     body: RefreshRequest,
     db: Session = Depends(get_db),
-) -> TokenResponse:
+) -> AuthTokens:
     """Rotate refresh token and issue new access + refresh tokens."""
     payload = decode_token(body.refresh_token)
     if payload.get("type") != "refresh":
@@ -163,7 +169,7 @@ def refresh(
 
     access_token = create_access_token(user.id, user.username, user.role)
     new_refresh_token = create_refresh_token(user.id)
-    return TokenResponse(accessToken=access_token, refreshToken=new_refresh_token)
+    return AuthTokens(accessToken=access_token, refreshToken=new_refresh_token, tokenType="Bearer")
 
 
 @router.post("/logout")

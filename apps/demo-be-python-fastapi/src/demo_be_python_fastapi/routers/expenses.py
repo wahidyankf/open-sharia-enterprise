@@ -1,7 +1,9 @@
 """Expenses router: CRUD, summary."""
 
+import math
+from datetime import UTC, date, datetime
+
 from fastapi import APIRouter, Depends, Query
-from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from demo_be_python_fastapi.auth.dependencies import get_current_user
@@ -9,48 +11,49 @@ from demo_be_python_fastapi.dependencies import get_db, get_expense_repo
 from demo_be_python_fastapi.domain.errors import ForbiddenError, NotFoundError
 from demo_be_python_fastapi.domain.expense import validate_amount, validate_currency, validate_unit
 from demo_be_python_fastapi.infrastructure.models import UserModel
+from generated_contracts import CreateExpenseRequest, Expense, ExpenseListResponse
 
 router = APIRouter()
 
 
-class ExpenseRequest(BaseModel):
-    """Create/update expense request."""
-
-    amount: str
-    currency: str
-    category: str
-    description: str | None = None
-    date: str
-    type: str = "expense"
-    quantity: float | None = None
-    unit: str | None = None
+def _ensure_utc(dt: datetime) -> datetime:
+    """Attach UTC timezone to a naive datetime (SQLite strips timezone info in tests)."""
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo=UTC)
+    return dt
 
 
-class ExpenseResponse(BaseModel):
-    """Expense response model."""
+def _model_to_contract(m) -> Expense:  # type: ignore[no-untyped-def]
+    """Map an ExpenseModel ORM instance to the generated Expense contract type."""
+    quantity = None
+    if m.quantity is not None:
+        try:
+            quantity = float(m.quantity)
+        except (ValueError, TypeError):
+            quantity = None
+    # ORM stores date as a string; convert to date object for contract compliance
+    expense_date: date
+    if isinstance(m.date, str):
+        expense_date = date.fromisoformat(m.date)
+    else:
+        expense_date = m.date
+    return Expense(
+        id=m.id,
+        userId=m.user_id,
+        amount=m.amount,
+        currency=m.currency,
+        category=m.category,
+        description=m.description or "",
+        date=expense_date,
+        type=m.entry_type,
+        quantity=quantity,
+        unit=m.unit,
+        createdAt=_ensure_utc(m.created_at),
+        updatedAt=_ensure_utc(m.updated_at),
+    )
 
-    id: str
-    userId: str
-    amount: str
-    currency: str
-    category: str
-    description: str | None
-    date: str
-    type: str
-    quantity: float | None
-    unit: str | None
 
-
-class ExpenseListResponse(BaseModel):
-    """Paginated expense list response."""
-
-    content: list[ExpenseResponse]
-    totalElements: int
-    page: int
-    size: int
-
-
-def _validate_expense_data(body: ExpenseRequest) -> None:
+def _validate_expense_data(body: CreateExpenseRequest) -> None:
     """Validate expense request data."""
     currency = validate_currency(body.currency)
     validate_amount(currency, body.amount)
@@ -58,34 +61,12 @@ def _validate_expense_data(body: ExpenseRequest) -> None:
         validate_unit(body.unit)
 
 
-def _model_to_response(m) -> ExpenseResponse:  # type: ignore[no-untyped-def]
-    quantity = None
-    if m.quantity is not None:
-        try:
-            q = float(m.quantity)
-            quantity = q
-        except (ValueError, TypeError):
-            quantity = None
-    return ExpenseResponse(
-        id=m.id,
-        userId=m.user_id,
-        amount=m.amount,
-        currency=m.currency,
-        category=m.category,
-        description=m.description,
-        date=m.date,
-        type=m.entry_type,
-        quantity=quantity,
-        unit=m.unit,
-    )
-
-
-@router.post("", status_code=201, response_model=ExpenseResponse)
+@router.post("", status_code=201, response_model=Expense)
 def create_expense(
-    body: ExpenseRequest,
+    body: CreateExpenseRequest,
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
-) -> ExpenseResponse:
+) -> Expense:
     """Create a new expense or income entry."""
     _validate_expense_data(body)
     expense_repo = get_expense_repo(db)
@@ -96,13 +77,13 @@ def create_expense(
             "currency": validate_currency(body.currency),
             "category": body.category,
             "description": body.description,
-            "date": body.date,
+            "date": body.date.isoformat(),
             "type": body.type,
             "quantity": body.quantity,
             "unit": body.unit,
         },
     )
-    return _model_to_response(expense)
+    return _model_to_contract(expense)
 
 
 @router.get("/summary")
@@ -127,20 +108,22 @@ def list_expenses(
     expense_repo = get_expense_repo(db)
     page = max(1, page)
     items, total = expense_repo.list_by_user(current_user.id, page, size)
+    total_pages = math.ceil(total / size) if size > 0 else 0
     return ExpenseListResponse(
-        content=[_model_to_response(e) for e in items],
+        content=[_model_to_contract(e) for e in items],
         totalElements=total,
+        totalPages=total_pages,
         page=page,
         size=size,
     )
 
 
-@router.get("/{expense_id}", response_model=ExpenseResponse)
+@router.get("/{expense_id}", response_model=Expense)
 def get_expense(
     expense_id: str,
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
-) -> ExpenseResponse:
+) -> Expense:
     """Get a specific expense entry by ID."""
     expense_repo = get_expense_repo(db)
     expense = expense_repo.find_by_id(expense_id)
@@ -148,16 +131,16 @@ def get_expense(
         raise NotFoundError(f"Expense {expense_id} not found")
     if expense.user_id != current_user.id:
         raise ForbiddenError("Access denied")
-    return _model_to_response(expense)
+    return _model_to_contract(expense)
 
 
-@router.put("/{expense_id}", response_model=ExpenseResponse)
+@router.put("/{expense_id}", response_model=Expense)
 def update_expense(
     expense_id: str,
-    body: ExpenseRequest,
+    body: CreateExpenseRequest,
     db: Session = Depends(get_db),
     current_user: UserModel = Depends(get_current_user),
-) -> ExpenseResponse:
+) -> Expense:
     """Update an expense entry."""
     expense_repo = get_expense_repo(db)
     expense = expense_repo.find_by_id(expense_id)
@@ -173,7 +156,7 @@ def update_expense(
             "currency": validate_currency(body.currency),
             "category": body.category,
             "description": body.description,
-            "date": body.date,
+            "date": body.date.isoformat(),
             "type": body.type,
             "quantity": body.quantity,
             "unit": body.unit,
@@ -181,7 +164,7 @@ def update_expense(
     )
     if updated is None:
         raise NotFoundError(f"Expense {expense_id} not found")
-    return _model_to_response(updated)
+    return _model_to_contract(updated)
 
 
 @router.delete("/{expense_id}", status_code=204)
