@@ -767,13 +767,13 @@ definitions.
 - [x] Phase 1: Verify Codegen (Elixir, Clojure, Dart)
 - [x] Phase 2: Wire demo-be-ts-effect
 - [x] Phase 3: Wire demo-be-golang-gin
-- [ ] Phase 4: Wire demo-be-java-springboot
-- [ ] Phase 5: Wire demo-be-java-vertx
-- [ ] Phase 6: Wire demo-be-kotlin-ktor
-- [ ] Phase 7: Wire demo-be-rust-axum
-- [ ] Phase 8: Wire demo-be-python-fastapi
-- [ ] Phase 9: Wire demo-be-fsharp-giraffe + demo-be-csharp-aspnetcore
-- [ ] Phase 10: Wire demo-be-elixir-phoenix + demo-be-clojure-pedestal
-- [ ] Phase 11: Wire demo-fe-dart-flutterweb
+- [x] Phase 4: Wire demo-be-java-springboot
+- [x] Phase 5: Wire demo-be-java-vertx
+- [x] Phase 6: Wire demo-be-kotlin-ktor
+- [x] Phase 7: Wire demo-be-rust-axum
+- [x] Phase 8: Wire demo-be-python-fastapi
+- [x] Phase 9: Wire demo-be-fsharp-giraffe + demo-be-csharp-aspnetcore
+- [x] Phase 10: Wire demo-be-elixir-phoenix (Elixir done, Clojure blocked) + demo-be-clojure-pedestal
+- [ ] Phase 11: Wire demo-fe-dart-flutterweb (blocked — lint requires codegen)
 - [ ] Phase 12: Wire E2E Contract Validation
 - [ ] Phase 13: End-to-End Verification
