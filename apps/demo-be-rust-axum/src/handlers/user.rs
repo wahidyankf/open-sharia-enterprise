@@ -1,5 +1,5 @@
 use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use serde_json::json;
 use std::sync::Arc;
 
@@ -10,6 +10,7 @@ use crate::auth::{
 use crate::db::{token_repo, user_repo};
 use crate::domain::errors::AppError;
 use crate::state::AppState;
+use demo_contracts::models::{ChangePasswordRequest, UpdateProfileRequest};
 
 #[derive(Serialize)]
 pub struct UserProfile {
@@ -42,18 +43,12 @@ pub async fn get_profile(
     }))
 }
 
-#[derive(Deserialize)]
-pub struct UpdateProfileRequest {
-    #[serde(rename = "displayName")]
-    pub display_name: Option<String>,
-}
-
 pub async fn update_profile(
     State(state): State<Arc<AppState>>,
     auth_user: AuthUser,
     Json(body): Json<UpdateProfileRequest>,
 ) -> Result<Json<UserProfile>, AppError> {
-    let display_name = body.display_name.unwrap_or_default();
+    let display_name = body.display_name;
     let user =
         user_repo::update_display_name(&state.pool, auth_user.user_id, &display_name).await?;
 
@@ -67,21 +62,13 @@ pub async fn update_profile(
     }))
 }
 
-#[derive(Deserialize)]
-pub struct ChangePasswordRequest {
-    #[serde(rename = "oldPassword")]
-    pub old_password: Option<String>,
-    #[serde(rename = "newPassword")]
-    pub new_password: Option<String>,
-}
-
 pub async fn change_password(
     State(state): State<Arc<AppState>>,
     auth_user: AuthUser,
     Json(body): Json<ChangePasswordRequest>,
 ) -> Result<impl IntoResponse, AppError> {
-    let old_password = body.old_password.unwrap_or_default();
-    let new_password = body.new_password.unwrap_or_default();
+    let old_password = body.old_password;
+    let new_password = body.new_password;
 
     let user = user_repo::find_by_id(&state.pool, auth_user.user_id)
         .await?

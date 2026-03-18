@@ -14,6 +14,7 @@ path = "tests/integration/main.rs"
 harness = false
 
 [dependencies]
+demo-contracts = { path = "generated-contracts" }
 axum = { version = "0.8", features = ["multipart"] }
 tokio = { version = "1", features = ["full"] }
 serde = { version = "1", features = ["derive"] }

@@ -517,7 +517,7 @@
                                 <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
                                 <arg>-XDcompilePolicy=simple</arg>
                                 <arg>--should-stop=ifError=FLOW</arg>
-                                <arg>-Xplugin:ErrorProne -XepDisableAllChecks -Xep:NullAway:ERROR -XepOpt:NullAway:AnnotatedPackages=com.demobejavx -XepOpt:NullAway:JSpecifyMode=true</arg>
+                                <arg>-Xplugin:ErrorProne -XepDisableAllChecks -Xep:NullAway:ERROR -XepOpt:NullAway:AnnotatedPackages=com.demobejavx -XepOpt:NullAway:UnannotatedSubPackages=com.demobejavx.contracts -XepOpt:NullAway:JSpecifyMode=true</arg>
                             </compilerArgs>
                             <annotationProcessorPaths>
                                 <path>

@@ -18,19 +18,7 @@ use crate::domain::{
     types::{is_supported_unit, Currency},
 };
 use crate::state::AppState;
-
-#[derive(Deserialize)]
-pub struct CreateExpenseRequest {
-    pub amount: Option<String>,
-    pub currency: Option<String>,
-    pub category: Option<String>,
-    pub description: Option<String>,
-    pub date: Option<String>,
-    #[serde(rename = "type")]
-    pub entry_type: Option<String>,
-    pub quantity: Option<f64>,
-    pub unit: Option<String>,
-}
+use demo_contracts::models::{CreateExpenseRequest, UpdateExpenseRequest};
 
 fn parse_currency(s: &str) -> Result<Currency, AppError> {
     Currency::parse_from_str(s).ok_or_else(|| AppError::Validation {
@@ -71,12 +59,13 @@ pub async fn create_expense(
     auth_user: AuthUser,
     Json(body): Json<CreateExpenseRequest>,
 ) -> Result<impl IntoResponse, AppError> {
-    let amount_str = body.amount.unwrap_or_default();
-    let currency_str = body.currency.unwrap_or_default();
-    let category = body.category.unwrap_or_default();
-    let description = body.description.unwrap_or_default();
-    let date_str = body.date.unwrap_or_default();
-    let entry_type_str = body.entry_type.unwrap_or_default();
+    let amount_str = body.amount;
+    let currency_str = body.currency;
+    let category = body.category;
+    let description = body.description;
+    let date_str = body.date;
+    // Convert the Type enum to a string
+    let entry_type_str = format!("{:?}", body.r#type).to_lowercase();
 
     let currency = parse_currency(&currency_str)?;
     let amount_stored = parse_amount(&currency, &amount_str)?;
@@ -167,7 +156,7 @@ pub async fn update_expense(
     State(state): State<Arc<AppState>>,
     auth_user: AuthUser,
     Path(expense_id): Path<Uuid>,
-    Json(body): Json<CreateExpenseRequest>,
+    Json(body): Json<UpdateExpenseRequest>,
 ) -> Result<Json<Value>, AppError> {
     // Check ownership first
     let existing = expense_repo::find_by_id(&state.pool, expense_id)
@@ -187,7 +176,10 @@ pub async fn update_expense(
     let category = body.category.unwrap_or_default();
     let description = body.description.unwrap_or_default();
     let date_str = body.date.unwrap_or_default();
-    let entry_type_str = body.entry_type.unwrap_or_default();
+    let entry_type_str = body
+        .r#type
+        .map(|t| format!("{t:?}").to_lowercase())
+        .unwrap_or_default();
 
     let currency = parse_currency(&currency_str)?;
     let amount_stored = parse_amount(&currency, &amount_str)?;
