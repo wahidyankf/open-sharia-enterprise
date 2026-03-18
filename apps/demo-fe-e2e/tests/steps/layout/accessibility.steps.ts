@@ -40,7 +40,7 @@ Given("{word} has an entry with a JPEG attachment", async ({ page }, username: s
     category: "receipts",
     description: "A11y img test",
     date: "2025-01-10",
-    type: "EXPENSE",
+    type: "expense",
   })) as { id: string };
   const receiptPath = path.resolve(process.cwd(), "tests/fixtures/receipt.jpg");
   await uploadAttachmentApi(accessToken, expense.id, receiptPath, "receipt.jpg", "image/jpeg");
