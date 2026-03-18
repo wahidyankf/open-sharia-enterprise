@@ -1,21 +1,22 @@
 package com.demobejasb.auth.service;
 
-import com.demobejasb.auth.dto.AuthResponse;
-import com.demobejasb.auth.dto.LoginRequest;
-import com.demobejasb.auth.dto.RegisterRequest;
-import com.demobejasb.auth.dto.RegisterResponse;
 import com.demobejasb.auth.model.RefreshToken;
 import com.demobejasb.auth.model.RevokedToken;
 import com.demobejasb.auth.model.User;
 import com.demobejasb.auth.repository.RefreshTokenRepository;
 import com.demobejasb.auth.repository.RevokedTokenRepository;
 import com.demobejasb.auth.repository.UserRepository;
+import com.demobejasb.contracts.AuthTokens;
+import com.demobejasb.contracts.LoginRequest;
+import com.demobejasb.contracts.RegisterRequest;
 import com.demobejasb.security.JwtUtil;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Objects;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -47,29 +48,28 @@ public class AuthService {
     }
 
     @Transactional
-    public RegisterResponse register(final RegisterRequest request)
+    public com.demobejasb.contracts.User register(final RegisterRequest request)
             throws UsernameAlreadyExistsException {
-        if (userRepository.existsByUsername(request.username())) {
-            throw new UsernameAlreadyExistsException(request.username());
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new UsernameAlreadyExistsException(request.getUsername());
         }
-        String encoded = Objects.requireNonNull(passwordEncoder.encode(request.password()));
-        User user = new User(request.username(), request.email(), encoded);
+        String encoded = Objects.requireNonNull(passwordEncoder.encode(request.getPassword()));
+        User user = new User(request.getUsername(), request.getEmail(), encoded);
         User saved = userRepository.save(user);
-        return new RegisterResponse(
-                saved.getId(), saved.getUsername(), saved.getCreatedAt().toString());
+        return buildUserResponse(saved);
     }
 
     @Transactional
-    public AuthResponse login(final LoginRequest request)
+    public AuthTokens login(final LoginRequest request)
             throws InvalidCredentialsException, AccountNotActiveException {
-        User user = userRepository.findByUsername(request.username())
+        User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(InvalidCredentialsException::new);
 
         if ("LOCKED".equals(user.getStatus())) {
             throw new InvalidCredentialsException("Account is locked due to too many failed login attempts");
         }
 
-        if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             user.setFailedLoginAttempts(user.getFailedLoginAttempts() + 1);
             if (user.getFailedLoginAttempts() >= MAX_FAILED_ATTEMPTS) {
                 user.setStatus("LOCKED");
@@ -91,7 +91,7 @@ public class AuthService {
     }
 
     @Transactional
-    public AuthResponse refresh(final String rawRefreshToken)
+    public AuthTokens refresh(final String rawRefreshToken)
             throws InvalidTokenException, AccountNotActiveException {
         String tokenHash = hashToken(rawRefreshToken);
         RefreshToken refreshToken = refreshTokenRepository.findByTokenHash(tokenHash)
@@ -146,13 +146,38 @@ public class AuthService {
         }
     }
 
-    private AuthResponse generateTokenPair(final User user) {
+    private AuthTokens generateTokenPair(final User user) {
         String accessToken = jwtUtil.generateAccessToken(user.getUsername(), user.getId());
         String rawRefreshToken = jwtUtil.generateRefreshToken();
         String tokenHash = hashToken(rawRefreshToken);
         Instant expiresAt = Instant.now().plus(REFRESH_TOKEN_EXPIRY_DAYS, ChronoUnit.DAYS);
         refreshTokenRepository.save(new RefreshToken(user, tokenHash, expiresAt));
-        return AuthResponse.bearer(accessToken, rawRefreshToken);
+        AuthTokens tokens = new AuthTokens();
+        tokens.setAccessToken(accessToken);
+        tokens.setRefreshToken(rawRefreshToken);
+        tokens.setTokenType("Bearer");
+        return tokens;
+    }
+
+    public static com.demobejasb.contracts.User buildUserResponse(final User user) {
+        com.demobejasb.contracts.User response = new com.demobejasb.contracts.User();
+        response.setId(user.getId().toString());
+        response.setUsername(user.getUsername());
+        response.setEmail(user.getEmail() != null ? user.getEmail() : "");
+        response.setDisplayName(
+                user.getDisplayName() != null ? user.getDisplayName() : user.getUsername());
+        response.setStatus(
+                com.demobejasb.contracts.User.StatusEnum.fromValue(user.getStatus()));
+        response.setRoles(List.of(user.getRole()));
+        response.setCreatedAt(
+                user.getCreatedAt() != null
+                        ? user.getCreatedAt().atOffset(java.time.ZoneOffset.UTC)
+                        : OffsetDateTime.now());
+        response.setUpdatedAt(
+                user.getUpdatedAt() != null
+                        ? user.getUpdatedAt().atOffset(java.time.ZoneOffset.UTC)
+                        : OffsetDateTime.now());
+        return response;
     }
 
     private String hashToken(final String token) {

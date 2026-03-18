@@ -1,7 +1,7 @@
 package com.demobejasb.integration.token_lifecycle;
 
-import com.demobejasb.auth.dto.AuthResponse;
 import com.demobejasb.auth.repository.RefreshTokenRepository;
+import com.demobejasb.contracts.AuthTokens;
 import com.demobejasb.auth.service.AccountNotActiveException;
 import com.demobejasb.auth.service.AuthService;
 import com.demobejasb.auth.service.InvalidTokenException;
@@ -63,9 +63,9 @@ public class TokenLifecycleSteps {
         String originalRt = tokenStore.getRefreshToken();
         tokenStore.setOriginalRefreshToken(originalRt);
         try {
-            AuthResponse response = authService.refresh(originalRt);
-            tokenStore.setToken(response.accessToken());
-            tokenStore.setRefreshToken(response.refreshToken());
+            AuthTokens response = authService.refresh(originalRt);
+            tokenStore.setToken(response.getAccessToken());
+            tokenStore.setRefreshToken(response.getRefreshToken());
         } catch (InvalidTokenException | AccountNotActiveException e) {
             throw new RuntimeException("Unexpected refresh failure: " + e.getMessage(), e);
         }
@@ -127,10 +127,10 @@ public class TokenLifecycleSteps {
 
     private void performRefresh(final String rawRefreshToken) {
         try {
-            AuthResponse resp = authService.refresh(rawRefreshToken);
+            AuthTokens resp = authService.refresh(rawRefreshToken);
             responseStore.setResponse(200, resp);
-            tokenStore.setToken(resp.accessToken());
-            tokenStore.setRefreshToken(resp.refreshToken());
+            tokenStore.setToken(resp.getAccessToken());
+            tokenStore.setRefreshToken(resp.getRefreshToken());
         } catch (TokenExpiredException e) {
             responseStore.setResponse(401, Map.of("message", "Token has expired"));
         } catch (InvalidTokenException e) {

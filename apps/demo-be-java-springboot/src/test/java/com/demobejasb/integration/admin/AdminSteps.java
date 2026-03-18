@@ -1,11 +1,10 @@
 package com.demobejasb.integration.admin;
 
-import com.demobejasb.admin.dto.AdminPasswordResetResponse;
-import com.demobejasb.admin.dto.AdminUserListResponse;
-import com.demobejasb.admin.dto.AdminUserResponse;
 import com.demobejasb.auth.model.User;
 import com.demobejasb.auth.repository.UserRepository;
 import com.demobejasb.auth.service.AuthService;
+import com.demobejasb.contracts.PasswordResetResponse;
+import com.demobejasb.contracts.UserListResponse;
 import com.demobejasb.integration.ResponseStore;
 import com.demobejasb.integration.steps.AuthSteps;
 import com.demobejasb.integration.steps.TokenStore;
@@ -77,10 +76,15 @@ public class AdminSteps {
         }
         Page<User> page =
                 userRepository.findAll(PageRequest.of(0, 20, Sort.by("createdAt")));
-        List<AdminUserResponse> data = page.getContent().stream()
-                .map(AdminUserResponse::from)
+        List<com.demobejasb.contracts.User> data = page.getContent().stream()
+                .map(AuthService::buildUserResponse)
                 .toList();
-        AdminUserListResponse response = new AdminUserListResponse(data, page.getTotalElements(), 0);
+        UserListResponse response = new UserListResponse();
+        response.setContent(data);
+        response.setTotalElements((int) page.getTotalElements());
+        response.setTotalPages(page.getTotalPages());
+        response.setPage(0);
+        response.setSize(20);
         responseStore.setResponse(200, response);
     }
 
@@ -97,10 +101,15 @@ public class AdminSteps {
         Page<User> page = userRepository
                 .findAllByEmailContaining("alice@example.com",
                         PageRequest.of(0, 20, Sort.by("createdAt")));
-        List<AdminUserResponse> data = page.getContent().stream()
-                .map(AdminUserResponse::from)
+        List<com.demobejasb.contracts.User> data = page.getContent().stream()
+                .map(AuthService::buildUserResponse)
                 .toList();
-        AdminUserListResponse response = new AdminUserListResponse(data, page.getTotalElements(), 0);
+        UserListResponse response = new UserListResponse();
+        response.setContent(data);
+        response.setTotalElements((int) page.getTotalElements());
+        response.setTotalPages(page.getTotalPages());
+        response.setPage(0);
+        response.setSize(20);
         responseStore.setResponse(200, response);
     }
 
@@ -131,7 +140,7 @@ public class AdminSteps {
         userRepository.findById(aliceId).ifPresentOrElse(user -> {
             user.setStatus("DISABLED");
             userRepository.save(user);
-            responseStore.setResponse(200, AdminUserResponse.from(user));
+            responseStore.setResponse(200, AuthService.buildUserResponse(user));
         }, () -> responseStore.setResponse(404, Map.of("message", "User not found")));
     }
 
@@ -149,7 +158,7 @@ public class AdminSteps {
         userRepository.findById(aliceId).ifPresentOrElse(user -> {
             user.setStatus("ACTIVE");
             userRepository.save(user);
-            responseStore.setResponse(200, AdminUserResponse.from(user));
+            responseStore.setResponse(200, AuthService.buildUserResponse(user));
         }, () -> responseStore.setResponse(404, Map.of("message", "User not found")));
     }
 
@@ -168,7 +177,9 @@ public class AdminSteps {
             String resetToken = UUID.randomUUID().toString();
             user.setPasswordResetToken(resetToken);
             userRepository.save(user);
-            responseStore.setResponse(200, new AdminPasswordResetResponse(resetToken));
+            PasswordResetResponse response = new PasswordResetResponse();
+            response.setToken(resetToken);
+            responseStore.setResponse(200, response);
         }, () -> responseStore.setResponse(404, Map.of("message", "User not found")));
     }
 

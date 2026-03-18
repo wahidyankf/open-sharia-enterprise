@@ -1,10 +1,10 @@
 package com.demobejasb.integration.user_account;
 
 import com.demobejasb.auth.repository.UserRepository;
+import com.demobejasb.auth.service.AuthService;
 import com.demobejasb.integration.ResponseStore;
 import com.demobejasb.integration.steps.TokenStore;
 import com.demobejasb.security.JwtUtil;
-import com.demobejasb.user.dto.UserProfileResponse;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import java.util.Map;
@@ -54,7 +54,7 @@ public class UserAccountSteps {
         userRepository.findByUsername(username).ifPresentOrElse(user -> {
             user.setDisplayName("Alice Smith");
             userRepository.save(user);
-            responseStore.setResponse(200, UserProfileResponse.from(user));
+            responseStore.setResponse(200, AuthService.buildUserResponse(user));
         }, () -> responseStore.setResponse(404, Map.of("message", "User not found")));
     }
 
@@ -121,7 +121,7 @@ public class UserAccountSteps {
         }
         String username = jwtUtil.extractUsername(token);
         userRepository.findByUsername(username).ifPresentOrElse(
-                user -> responseStore.setResponse(200, UserProfileResponse.from(user)),
+                user -> responseStore.setResponse(200, AuthService.buildUserResponse(user)),
                 () -> responseStore.setResponse(404, Map.of("message", "User not found")));
     }
 

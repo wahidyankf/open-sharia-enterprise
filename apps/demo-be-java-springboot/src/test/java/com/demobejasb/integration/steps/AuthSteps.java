@@ -1,25 +1,20 @@
 package com.demobejasb.integration.steps;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.demobejasb.auth.dto.AuthResponse;
-import com.demobejasb.auth.dto.LoginRequest;
-import com.demobejasb.auth.dto.RegisterRequest;
-import com.demobejasb.auth.dto.RegisterResponse;
 import com.demobejasb.auth.repository.UserRepository;
 import com.demobejasb.auth.service.AccountNotActiveException;
 import com.demobejasb.auth.service.AuthService;
 import com.demobejasb.auth.service.InvalidCredentialsException;
 import com.demobejasb.auth.service.UsernameAlreadyExistsException;
+import com.demobejasb.contracts.AuthTokens;
+import com.demobejasb.contracts.LoginRequest;
+import com.demobejasb.contracts.RegisterRequest;
 import com.demobejasb.integration.ResponseStore;
 import com.demobejasb.security.JwtUtil;
-import com.demobejasb.user.dto.UserProfileResponse;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
 import java.util.Map;
-import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 
@@ -27,9 +22,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Scope("cucumber-glue")
 public class AuthSteps {
-
-    private static final Validator BEAN_VALIDATOR =
-            Validation.buildDefaultValidatorFactory().getValidator();
 
     @Autowired
     private AuthService authService;
@@ -76,18 +68,18 @@ public class AuthSteps {
     @Given("a user {string} is registered with email {string} and password {string}")
     public void aUserIsRegisteredWithEmailAndPassword(
             final String username, final String email, final String password) {
-        RegisterResponse response = registerOrFail(username, email, password);
+        com.demobejasb.contracts.User response = registerOrFail(username, email, password);
         if ("alice".equals(username)) {
-            tokenStore.setAliceId(response.id());
+            tokenStore.setAliceId(java.util.UUID.fromString(response.getId()));
         }
     }
 
     @Given("a user {string} is registered with password {string}")
     public void aUserIsRegisteredWithPassword(final String username, final String password) {
         String email = username + "@example.com";
-        RegisterResponse response = registerOrFail(username, email, password);
+        com.demobejasb.contracts.User response = registerOrFail(username, email, password);
         if ("alice".equals(username)) {
-            tokenStore.setAliceId(response.id());
+            tokenStore.setAliceId(java.util.UUID.fromString(response.getId()));
         }
     }
 
@@ -126,15 +118,15 @@ public class AuthSteps {
 
     @Given("the client has logged in as {string} and stored the JWT token")
     public void clientLoggedIn(final String username) {
-        AuthResponse auth = loginOrFail(username, "Str0ng#Pass1234");
-        tokenStore.setToken(auth.accessToken());
+        AuthTokens auth = loginOrFail(username, "Str0ng#Pass1234");
+        tokenStore.setToken(auth.getAccessToken());
     }
 
     @Given("{string} has logged in and stored the access token")
     public void userHasLoggedInAndStoredAccessToken(final String username) {
         String password = "alice".equals(username) ? "Str0ng#Pass1" : "Str0ng#Pass1234";
-        AuthResponse auth = loginOrFail(username, password);
-        tokenStore.setToken(auth.accessToken());
+        AuthTokens auth = loginOrFail(username, password);
+        tokenStore.setToken(auth.getAccessToken());
         if ("alice".equals(username) && tokenStore.getAliceId() == null) {
             userRepository.findByUsername("alice").ifPresent(u -> tokenStore.setAliceId(u.getId()));
         }
@@ -143,24 +135,24 @@ public class AuthSteps {
     @Given("{string} has logged in and stored the access token and refresh token")
     public void userHasLoggedInAndStoredTokens(final String username) {
         String password = "alice".equals(username) ? "Str0ng#Pass1" : "Str0ng#Pass1234";
-        AuthResponse auth = loginOrFail(username, password);
-        tokenStore.setToken(auth.accessToken());
-        tokenStore.setRefreshToken(auth.refreshToken());
+        AuthTokens auth = loginOrFail(username, password);
+        tokenStore.setToken(auth.getAccessToken());
+        tokenStore.setRefreshToken(auth.getRefreshToken());
     }
 
     @Given("an admin user {string} is registered and logged in")
     public void anAdminUserIsRegisteredAndLoggedIn(final String username) {
         String email = username + "@example.com";
         String password = "Adm1n#Secure123";
-        RegisterResponse reg = registerOrFail(username, email, password);
+        com.demobejasb.contracts.User reg = registerOrFail(username, email, password);
         // Promote to ADMIN
         userRepository.findByUsername(username).ifPresent(user -> {
             user.setRole("ADMIN");
             userRepository.save(user);
         });
-        AuthResponse auth = loginOrFail(username, password);
-        tokenStore.setAdminToken(auth.accessToken());
-        tokenStore.setAdminUserId(reg.id());
+        AuthTokens auth = loginOrFail(username, password);
+        tokenStore.setAdminToken(auth.getAccessToken());
+        tokenStore.setAdminUserId(java.util.UUID.fromString(reg.getId()));
     }
 
     @Given("a user {string} is registered and deactivated")
@@ -194,7 +186,10 @@ public class AuthSteps {
         // Attempt 5 failed logins to lock the account
         for (int i = 0; i < 5; i++) {
             try {
-                authService.login(new LoginRequest(username, "WrongPass#1234"));
+                LoginRequest req = new LoginRequest();
+                req.setUsername(username);
+                req.setPassword("WrongPass#1234");
+                authService.login(req);
             } catch (InvalidCredentialsException | AccountNotActiveException e) {
                 // Expected
             }
@@ -253,7 +248,7 @@ public class AuthSteps {
     @When("^the admin sends POST /api/v1/admin/users/\\{alice_id\\}/unlock$")
     public void theAdminSendsPostUnlockAliceShared() {
         String adminToken = tokenStore.getAdminToken();
-        UUID aliceId = tokenStore.getAliceId();
+        java.util.UUID aliceId = tokenStore.getAliceId();
         if (adminToken == null || aliceId == null) {
             throw new IllegalStateException("Admin token or alice ID not stored");
         }
@@ -354,15 +349,19 @@ public class AuthSteps {
      */
     void performRegister(
             final String username, final String email, final String password) {
-        // Bean Validation check (replicates @Valid on the controller method parameter)
-        var violations = BEAN_VALIDATOR.validate(new RegisterRequest(username, email, password));
-        if (!violations.isEmpty()) {
-            String msg = violations.iterator().next().getMessage();
-            responseStore.setResponse(400, Map.of("message", "Validation failed for field: " + msg));
+        // Manual validation (replicates @Valid on the controller method parameter)
+        if (isBlank(username) || isBlank(email) || isBlank(password)
+                || (username != null && (username.length() < 3 || username.length() > 50))
+                || (password != null && password.length() < 12)) {
+            responseStore.setResponse(400, Map.of("message", "Validation failed"));
             return;
         }
         try {
-            RegisterResponse resp = authService.register(new RegisterRequest(username, email, password));
+            RegisterRequest req = new RegisterRequest();
+            req.setUsername(username);
+            req.setEmail(email);
+            req.setPassword(password);
+            com.demobejasb.contracts.User resp = authService.register(req);
             responseStore.setResponse(201, resp);
         } catch (UsernameAlreadyExistsException e) {
             responseStore.setResponse(409, Map.of("message", e.getMessage()));
@@ -372,12 +371,19 @@ public class AuthSteps {
     /**
      * Performs registration and throws if it fails (used in Given steps where failure is unexpected).
      */
-    public RegisterResponse registerOrFail(
+    public com.demobejasb.contracts.User registerOrFail(
             final String username, final String email, final String password) {
         try {
-            return authService.register(new RegisterRequest(username, email, password));
+            RegisterRequest req = new RegisterRequest();
+            req.setUsername(username);
+            req.setEmail(email);
+            req.setPassword(password);
+            return authService.register(req);
         } catch (UsernameAlreadyExistsException e) {
-            throw new RuntimeException("Unexpected registration failure: " + e.getMessage(), e);
+            // Already registered — return the existing user info
+            return userRepository.findByUsername(username)
+                    .map(AuthService::buildUserResponse)
+                    .orElseThrow(() -> new RuntimeException("User not found: " + username));
         }
     }
 
@@ -385,18 +391,19 @@ public class AuthSteps {
      * Performs login and stores the HTTP-equivalent response.
      */
     void performLogin(final String username, final String password) {
-        // Bean Validation check
-        var violations = BEAN_VALIDATOR.validate(new LoginRequest(username, password));
-        if (!violations.isEmpty()) {
-            String msg = violations.iterator().next().getMessage();
-            responseStore.setResponse(400, Map.of("message", "Validation failed for field: " + msg));
+        // Manual validation
+        if (isBlank(username) || isBlank(password)) {
+            responseStore.setResponse(400, Map.of("message", "Validation failed"));
             return;
         }
         try {
-            AuthResponse resp = authService.login(new LoginRequest(username, password));
+            LoginRequest req = new LoginRequest();
+            req.setUsername(username);
+            req.setPassword(password);
+            AuthTokens resp = authService.login(req);
             responseStore.setResponse(200, resp);
-            tokenStore.setToken(resp.accessToken());
-            tokenStore.setRefreshToken(resp.refreshToken());
+            tokenStore.setToken(resp.getAccessToken());
+            tokenStore.setRefreshToken(resp.getRefreshToken());
         } catch (InvalidCredentialsException e) {
             responseStore.setResponse(401, Map.of("message", e.getMessage()));
         } catch (AccountNotActiveException e) {
@@ -407,9 +414,12 @@ public class AuthSteps {
     /**
      * Performs login and throws if it fails (used in Given steps where failure is unexpected).
      */
-    AuthResponse loginOrFail(final String username, final String password) {
+    AuthTokens loginOrFail(final String username, final String password) {
         try {
-            return authService.login(new LoginRequest(username, password));
+            LoginRequest req = new LoginRequest();
+            req.setUsername(username);
+            req.setPassword(password);
+            return authService.login(req);
         } catch (InvalidCredentialsException | AccountNotActiveException e) {
             throw new RuntimeException("Unexpected login failure: " + e.getMessage(), e);
         }
@@ -426,7 +436,11 @@ public class AuthSteps {
         }
         String username = jwtUtil.extractUsername(token);
         userRepository.findByUsername(username).ifPresentOrElse(
-                user -> responseStore.setResponse(200, UserProfileResponse.from(user)),
+                user -> responseStore.setResponse(200, AuthService.buildUserResponse(user)),
                 () -> responseStore.setResponse(404, Map.of("message", "User not found")));
+    }
+
+    private static boolean isBlank(final String s) {
+        return s == null || s.isBlank();
     }
 }

@@ -7,7 +7,8 @@ import com.demobejasb.expense.repository.ExpenseRepository;
 import com.demobejasb.integration.ResponseStore;
 import com.demobejasb.integration.steps.ExpenseStepHelper;
 import com.demobejasb.integration.steps.TokenStore;
-import com.demobejasb.report.dto.PlReportResponse;
+import com.demobejasb.contracts.CategoryBreakdown;
+import com.demobejasb.contracts.PLReport;
 import com.demobejasb.security.JwtUtil;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -154,35 +155,46 @@ public class ReportingSteps {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal net = incomeTotal.subtract(expenseTotal);
 
-        List<Map<String, String>> incomeBreakdown = expenses.stream()
+        List<CategoryBreakdown> incomeBreakdown = expenses.stream()
                 .filter(e -> "income".equals(e.getType()))
                 .collect(Collectors.groupingBy(
                         Expense::getCategory,
                         Collectors.reducing(BigDecimal.ZERO, Expense::getAmount, BigDecimal::add)))
                 .entrySet().stream()
-                .map(entry -> Map.of("category", entry.getKey(), "type", "income",
-                        "total", format(entry.getValue(), currency)))
+                .map(entry -> {
+                    CategoryBreakdown cb = new CategoryBreakdown();
+                    cb.setCategory(entry.getKey());
+                    cb.setType("income");
+                    cb.setTotal(format(entry.getValue(), currency));
+                    return cb;
+                })
                 .collect(Collectors.toList());
 
-        List<Map<String, String>> expenseBreakdown = expenses.stream()
+        List<CategoryBreakdown> expenseBreakdown = expenses.stream()
                 .filter(e -> "expense".equals(e.getType()))
                 .collect(Collectors.groupingBy(
                         Expense::getCategory,
                         Collectors.reducing(BigDecimal.ZERO, Expense::getAmount, BigDecimal::add)))
                 .entrySet().stream()
-                .map(entry -> Map.of("category", entry.getKey(), "type", "expense",
-                        "total", format(entry.getValue(), currency)))
+                .map(entry -> {
+                    CategoryBreakdown cb = new CategoryBreakdown();
+                    cb.setCategory(entry.getKey());
+                    cb.setType("expense");
+                    cb.setTotal(format(entry.getValue(), currency));
+                    return cb;
+                })
                 .collect(Collectors.toList());
 
-        responseStore.setResponse(200, new PlReportResponse(
-                from,
-                to,
-                currency,
-                format(incomeTotal, currency),
-                format(expenseTotal, currency),
-                format(net, currency),
-                incomeBreakdown,
-                expenseBreakdown));
+        PLReport report = new PLReport();
+        report.setStartDate(LocalDate.parse(from));
+        report.setEndDate(LocalDate.parse(to));
+        report.setCurrency(currency);
+        report.setTotalIncome(format(incomeTotal, currency));
+        report.setTotalExpense(format(expenseTotal, currency));
+        report.setNet(format(net, currency));
+        report.setIncomeBreakdown(incomeBreakdown);
+        report.setExpenseBreakdown(expenseBreakdown);
+        responseStore.setResponse(200, report);
     }
 
     private String format(final BigDecimal amount, final String currency) {

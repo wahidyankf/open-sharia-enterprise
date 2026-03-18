@@ -1,10 +1,9 @@
 package com.demobejasb.unit.steps;
 
-import com.demobejasb.auth.dto.RegisterRequest;
-import com.demobejasb.auth.dto.RegisterResponse;
 import com.demobejasb.auth.repository.UserRepository;
 import com.demobejasb.auth.service.AuthService;
 import com.demobejasb.auth.service.UsernameAlreadyExistsException;
+import com.demobejasb.contracts.RegisterRequest;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
@@ -63,10 +62,13 @@ public class UnitCommonSteps {
     public void aUserIsRegisteredWithEmailAndPassword(
             final String username, final String email, final String password) {
         try {
-            RegisterResponse resp = authService.register(
-                    new RegisterRequest(username, email, password));
+            RegisterRequest req = new RegisterRequest();
+            req.setUsername(username);
+            req.setEmail(email);
+            req.setPassword(password);
+            com.demobejasb.contracts.User resp = authService.register(req);
             if ("alice".equals(username)) {
-                stateStore.setAliceId(resp.id());
+                stateStore.setAliceId(java.util.UUID.fromString(resp.getId()));
             }
         } catch (UsernameAlreadyExistsException e) {
             // Already registered — look up alice's ID

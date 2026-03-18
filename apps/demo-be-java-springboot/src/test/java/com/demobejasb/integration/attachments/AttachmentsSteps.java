@@ -4,12 +4,12 @@ import com.demobejasb.attachment.dto.AttachmentListResponse;
 import com.demobejasb.attachment.dto.AttachmentResponse;
 import com.demobejasb.attachment.model.Attachment;
 import com.demobejasb.attachment.repository.AttachmentRepository;
-import com.demobejasb.auth.dto.AuthResponse;
 import com.demobejasb.auth.model.User;
 import com.demobejasb.auth.repository.UserRepository;
 import com.demobejasb.auth.service.AccountNotActiveException;
 import com.demobejasb.auth.service.AuthService;
 import com.demobejasb.auth.service.InvalidCredentialsException;
+import com.demobejasb.contracts.AuthTokens;
 import com.demobejasb.expense.model.Expense;
 import com.demobejasb.expense.repository.ExpenseRepository;
 import com.demobejasb.integration.ResponseStore;
@@ -163,15 +163,17 @@ public class AttachmentsSteps {
             authSteps.registerOrFail("bob", "bob@example.com", "Str0ng#Pass2");
         }
         // Login bob
-        AuthResponse bobAuth;
+        AuthTokens bobAuth;
         try {
-            bobAuth = authService.login(
-                    new com.demobejasb.auth.dto.LoginRequest("bob", "Str0ng#Pass2"));
+            com.demobejasb.contracts.LoginRequest loginReq = new com.demobejasb.contracts.LoginRequest();
+            loginReq.setUsername("bob");
+            loginReq.setPassword("Str0ng#Pass2");
+            bobAuth = authService.login(loginReq);
         } catch (InvalidCredentialsException | AccountNotActiveException e) {
             throw new RuntimeException("Failed to login as bob: " + e.getMessage(), e);
         }
         // Create expense as bob
-        UUID id = expenseHelper.createExpenseOrFail(bobAuth.accessToken(), body);
+        UUID id = expenseHelper.createExpenseOrFail(bobAuth.getAccessToken(), body);
         tokenStore.setBobExpenseId(id);
     }
 

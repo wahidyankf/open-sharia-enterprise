@@ -2,14 +2,14 @@ package com.demobejasb.report.controller;
 
 import com.demobejasb.auth.model.User;
 import com.demobejasb.auth.repository.UserRepository;
+import com.demobejasb.contracts.CategoryBreakdown;
+import com.demobejasb.contracts.PLReport;
 import com.demobejasb.expense.model.Expense;
 import com.demobejasb.expense.repository.ExpenseRepository;
-import com.demobejasb.report.dto.PlReportResponse;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -36,7 +36,7 @@ public class ReportController {
     }
 
     @GetMapping("/pl")
-    public ResponseEntity<PlReportResponse> profitAndLoss(
+    public ResponseEntity<PLReport> profitAndLoss(
             @AuthenticationPrincipal final UserDetails userDetails,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate endDate,
@@ -69,7 +69,7 @@ public class ReportController {
                         .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal net = incomeTotal.subtract(expenseTotal);
 
-        List<Map<String, String>> incomeBreakdown =
+        List<CategoryBreakdown> incomeBreakdown =
                 expenses.stream()
                         .filter(e -> "income".equals(e.getType()))
                         .collect(
@@ -82,17 +82,16 @@ public class ReportController {
                         .entrySet()
                         .stream()
                         .map(
-                                entry ->
-                                        Map.of(
-                                                "category",
-                                                entry.getKey(),
-                                                "type",
-                                                "income",
-                                                "total",
-                                                format(entry.getValue(), currency)))
+                                entry -> {
+                                    CategoryBreakdown cb = new CategoryBreakdown();
+                                    cb.setCategory(entry.getKey());
+                                    cb.setType("income");
+                                    cb.setTotal(format(entry.getValue(), currency));
+                                    return cb;
+                                })
                         .collect(Collectors.toList());
 
-        List<Map<String, String>> expenseBreakdown =
+        List<CategoryBreakdown> expenseBreakdown =
                 expenses.stream()
                         .filter(e -> "expense".equals(e.getType()))
                         .collect(
@@ -105,26 +104,25 @@ public class ReportController {
                         .entrySet()
                         .stream()
                         .map(
-                                entry ->
-                                        Map.of(
-                                                "category",
-                                                entry.getKey(),
-                                                "type",
-                                                "expense",
-                                                "total",
-                                                format(entry.getValue(), currency)))
+                                entry -> {
+                                    CategoryBreakdown cb = new CategoryBreakdown();
+                                    cb.setCategory(entry.getKey());
+                                    cb.setType("expense");
+                                    cb.setTotal(format(entry.getValue(), currency));
+                                    return cb;
+                                })
                         .collect(Collectors.toList());
 
-        return ResponseEntity.ok(
-                new PlReportResponse(
-                        startDate.toString(),
-                        endDate.toString(),
-                        currency,
-                        format(incomeTotal, currency),
-                        format(expenseTotal, currency),
-                        format(net, currency),
-                        incomeBreakdown,
-                        expenseBreakdown));
+        PLReport report = new PLReport();
+        report.setStartDate(startDate);
+        report.setEndDate(endDate);
+        report.setCurrency(currency);
+        report.setTotalIncome(format(incomeTotal, currency));
+        report.setTotalExpense(format(expenseTotal, currency));
+        report.setNet(format(net, currency));
+        report.setIncomeBreakdown(incomeBreakdown);
+        report.setExpenseBreakdown(expenseBreakdown);
+        return ResponseEntity.ok(report);
     }
 
     private String format(final BigDecimal amount, final String currency) {
