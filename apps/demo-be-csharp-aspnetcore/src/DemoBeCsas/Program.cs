@@ -21,6 +21,7 @@ builder.Services.ConfigureHttpJsonOptions(opts =>
     opts.SerializerOptions.Converters.Add(new ChangePasswordRequestJsonConverter());
     opts.SerializerOptions.Converters.Add(new CreateExpenseRequestJsonConverter());
     opts.SerializerOptions.Converters.Add(new UpdateExpenseRequestJsonConverter());
+    opts.SerializerOptions.Converters.Add(new ExpenseJsonConverter());
 });
 
 // Configuration

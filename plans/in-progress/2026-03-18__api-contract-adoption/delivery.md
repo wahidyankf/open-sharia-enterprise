@@ -171,45 +171,45 @@ response maps with typed generated structs.
 **Goal**: Replace 18 local DTO classes with generated `contracts.*` imports. Resolve name
 mismatches.
 
-- [ ] **Add** `generated-contracts/src/main/java` as Maven source root to `pom.xml` (use
+- [x] **Add** `generated-contracts/src/main/java` as Maven source root to `pom.xml` (use
       `build-helper-maven-plugin` `add-source` execution — this configuration does not exist yet;
       see tech-docs.md Java section for the required XML snippet)
-- [ ] **Wire auth DTOs** (7 request + 2 response)
-  - [ ] Delete `auth/dto/LoginRequest.java` — replace with `contracts.LoginRequest`
-  - [ ] Delete `auth/dto/RegisterRequest.java` — replace with `contracts.RegisterRequest`
-  - [ ] Delete `auth/dto/RefreshRequest.java` — replace with `contracts.RefreshRequest`
-  - [ ] Delete `auth/dto/AuthResponse.java` — replace with `contracts.AuthTokens`
-  - [ ] Delete `auth/dto/RegisterResponse.java` — replace with `contracts.User`
-  - [ ] Update `AuthController` imports to use `com.demobejasb.contracts.*`
-  - [ ] Update all service and test files referencing deleted DTOs
-- [ ] **Wire user DTOs** (2 request + 1 response)
-  - [ ] Delete `user/dto/ChangePasswordRequest.java` — replace with `contracts.ChangePasswordRequest`
-  - [ ] Delete `user/dto/UpdateProfileRequest.java` — replace with `contracts.UpdateProfileRequest`
-  - [ ] Delete `user/dto/UserProfileResponse.java` — replace with `contracts.User`
-  - [ ] Update `UserController` and related files
-- [ ] **Wire expense DTOs** (1 request + 2 response)
-  - [ ] Delete `expense/dto/ExpenseRequest.java` — replace with `contracts.CreateExpenseRequest`
+- [x] **Wire auth DTOs** (7 request + 2 response)
+  - [x] Delete `auth/dto/LoginRequest.java` — replace with `contracts.LoginRequest`
+  - [x] Delete `auth/dto/RegisterRequest.java` — replace with `contracts.RegisterRequest`
+  - [x] Delete `auth/dto/RefreshRequest.java` — replace with `contracts.RefreshRequest`
+  - [x] Delete `auth/dto/AuthResponse.java` — replace with `contracts.AuthTokens`
+  - [x] Delete `auth/dto/RegisterResponse.java` — replace with `contracts.User`
+  - [x] Update `AuthController` imports to use `com.demobejasb.contracts.*`
+  - [x] Update all service and test files referencing deleted DTOs
+- [x] **Wire user DTOs** (2 request + 1 response)
+  - [x] Delete `user/dto/ChangePasswordRequest.java` — replace with `contracts.ChangePasswordRequest`
+  - [x] Delete `user/dto/UpdateProfileRequest.java` — replace with `contracts.UpdateProfileRequest`
+  - [x] Delete `user/dto/UserProfileResponse.java` — replace with `contracts.User`
+  - [x] Update `UserController` and related files
+- [x] **Wire expense DTOs** (1 request + 2 response)
+  - [x] Delete `expense/dto/ExpenseRequest.java` — replace with `contracts.CreateExpenseRequest`
         (and `contracts.UpdateExpenseRequest` for updates)
-  - [ ] Delete `expense/dto/ExpenseResponse.java` — replace with `contracts.Expense`
-  - [ ] Delete `expense/dto/ExpenseListResponse.java` — replace with `contracts.ExpenseListResponse`
-  - [ ] Update `ExpenseController` and related files
-- [ ] **Wire admin DTOs** (1 request + 3 response)
-  - [ ] Delete `admin/dto/DisableUserRequest.java` — replace with `contracts.DisableRequest`
-  - [ ] Delete `admin/dto/AdminUserResponse.java` — replace with `contracts.User`
-  - [ ] Delete `admin/dto/AdminUserListResponse.java` — replace with `contracts.UserListResponse`
-  - [ ] Delete `admin/dto/AdminPasswordResetResponse.java` — replace with
+  - [x] Delete `expense/dto/ExpenseResponse.java` — replace with `contracts.Expense`
+  - [x] Delete `expense/dto/ExpenseListResponse.java` — replace with `contracts.ExpenseListResponse`
+  - [x] Update `ExpenseController` and related files
+- [x] **Wire admin DTOs** (1 request + 3 response)
+  - [x] Delete `admin/dto/DisableUserRequest.java` — replace with `contracts.DisableRequest`
+  - [x] Delete `admin/dto/AdminUserResponse.java` — replace with `contracts.User`
+  - [x] Delete `admin/dto/AdminUserListResponse.java` — replace with `contracts.UserListResponse`
+  - [x] Delete `admin/dto/AdminPasswordResetResponse.java` — replace with
         `contracts.PasswordResetResponse`
-  - [ ] Update `AdminController` and related files
-- [ ] **Wire attachment DTOs** (1 response)
-  - [ ] Delete `attachment/dto/AttachmentResponse.java` — replace with `contracts.Attachment`
-  - [ ] Evaluate `AttachmentListResponse` — keep local or add to spec
-  - [ ] Update `AttachmentController` and related files
-- [ ] **Wire report DTOs** (1 response)
-  - [ ] Delete `report/dto/PlReportResponse.java` — replace with `contracts.PLReport`
-  - [ ] Update `ReportController` and related files
-- [ ] **Update all tests** referencing deleted DTOs to use generated types
-- [ ] **Verify** `nx run demo-be-java-springboot:build` passes
-- [ ] **Verify** `nx run demo-be-java-springboot:test:quick` passes with >=90% coverage
+  - [x] Update `AdminController` and related files
+- [x] **Wire attachment DTOs** (1 response)
+  - [x] Delete `attachment/dto/AttachmentResponse.java` — replace with `contracts.Attachment`
+  - [x] Evaluate `AttachmentListResponse` — keep local or add to spec
+  - [x] Update `AttachmentController` and related files
+- [x] **Wire report DTOs** (1 response)
+  - [x] Delete `report/dto/PlReportResponse.java` — replace with `contracts.PLReport`
+  - [x] Update `ReportController` and related files
+- [x] **Update all tests** referencing deleted DTOs to use generated types
+- [x] **Verify** `nx run demo-be-java-springboot:build` passes
+- [x] **Verify** `nx run demo-be-java-springboot:test:quick` passes with >=90% coverage
 
 ---
 
@@ -218,38 +218,38 @@ mismatches.
 **Goal**: Refactor handlers from raw `JsonObject` to use generated contract types for BOTH request
 parsing and response serialization. This is the most invasive backend change.
 
-- [ ] **Add** `generated-contracts/src/main/java` as Maven source root to `pom.xml` (same as
+- [x] **Add** `generated-contracts/src/main/java` as Maven source root to `pom.xml` (same as
       Phase 4 — use `build-helper-maven-plugin` `add-source`; Vert.x model package is
       `com.demobejavx.contracts`, verified from `project.json`'s `--model-package` argument)
-- [ ] **Wire auth handlers** (`AuthHandler.java`)
-  - [ ] Replace `body.getString("username")` pattern with deserialization into
+- [x] **Wire auth handlers** (`AuthHandler.java`)
+  - [x] Replace `body.getString("username")` pattern with deserialization into
         `contracts.LoginRequest` / `contracts.RegisterRequest` / `contracts.RefreshRequest`
-  - [ ] Replace `new JsonObject().put("accessToken", ...)` with `contracts.AuthTokens` construction
-  - [ ] Replace register response `JsonObject` with `contracts.User` serialization
-  - [ ] Use `ctx.json()` or `Jackson.encode()` for typed response serialization
-- [ ] **Wire user handlers** (`UserHandler.java`)
-  - [ ] Replace request parsing with `contracts.UpdateProfileRequest` /
+  - [x] Replace `new JsonObject().put("accessToken", ...)` with `contracts.AuthTokens` construction
+  - [x] Replace register response `JsonObject` with `contracts.User` serialization
+  - [x] Use `ctx.json()` or `Jackson.encode()` for typed response serialization
+- [x] **Wire user handlers** (`UserHandler.java`)
+  - [x] Replace request parsing with `contracts.UpdateProfileRequest` /
         `contracts.ChangePasswordRequest`
-  - [ ] Replace response `JsonObject` with `contracts.User` serialization
-- [ ] **Wire expense handlers** (`ExpenseHandler.java`)
-  - [ ] Replace request parsing with `contracts.CreateExpenseRequest` /
+  - [x] Replace response `JsonObject` with `contracts.User` serialization
+- [x] **Wire expense handlers** (`ExpenseHandler.java`)
+  - [x] Replace request parsing with `contracts.CreateExpenseRequest` /
         `contracts.UpdateExpenseRequest`
-  - [ ] Replace response `JsonObject` with `contracts.Expense` / `contracts.ExpenseListResponse`
-- [ ] **Wire admin handlers** (`AdminHandler.java`)
-  - [ ] Replace request parsing with `contracts.DisableRequest`
-  - [ ] Replace response `JsonObject` with `contracts.User` / `contracts.UserListResponse` /
+  - [x] Replace response `JsonObject` with `contracts.Expense` / `contracts.ExpenseListResponse`
+- [x] **Wire admin handlers** (`AdminHandler.java`)
+  - [x] Replace request parsing with `contracts.DisableRequest`
+  - [x] Replace response `JsonObject` with `contracts.User` / `contracts.UserListResponse` /
         `contracts.PasswordResetResponse`
-- [ ] **Wire attachment handlers** (`AttachmentHandler.java`)
-  - [ ] Replace response `JsonObject` with `contracts.Attachment`
-- [ ] **Wire report handlers** (`ReportHandler.java`)
-  - [ ] Replace response `JsonObject` with `contracts.PLReport`
-- [ ] **Wire token handlers** (`TokenHandler.java`)
-  - [ ] Replace response `JsonObject` with `contracts.TokenClaims` / `contracts.JwksResponse`
-- [ ] **Wire health handler** (`HealthHandler.java`)
-  - [ ] Replace response `JsonObject` with `contracts.HealthResponse`
-- [ ] **Update all tests** to use generated types instead of `JsonObject` assertions
-- [ ] **Verify** `nx run demo-be-java-vertx:build` passes
-- [ ] **Verify** `nx run demo-be-java-vertx:test:quick` passes with >=90% coverage
+- [x] **Wire attachment handlers** (`AttachmentHandler.java`)
+  - [x] Replace response `JsonObject` with `contracts.Attachment`
+- [x] **Wire report handlers** (`ReportHandler.java`)
+  - [x] Replace response `JsonObject` with `contracts.PLReport`
+- [x] **Wire token handlers** (`TokenHandler.java`)
+  - [x] Replace response `JsonObject` with `contracts.TokenClaims` / `contracts.JwksResponse`
+- [x] **Wire health handler** (`HealthHandler.java`)
+  - [x] Replace response `JsonObject` with `contracts.HealthResponse`
+- [x] **Update all tests** to use generated types instead of `JsonObject` assertions
+- [x] **Verify** `nx run demo-be-java-vertx:build` passes
+- [x] **Verify** `nx run demo-be-java-vertx:test:quick` passes with >=90% coverage
 
 ---
 
@@ -258,42 +258,42 @@ parsing and response serialization. This is the most invasive backend change.
 **Goal**: Replace 9 inline data classes with generated imports. Convert `mapOf()` responses to
 generated type instances.
 
-- [ ] **Add** `sourceSets.main { kotlin.srcDirs("generated-contracts/src/main/kotlin") }` to
+- [x] **Add** `sourceSets.main { kotlin.srcDirs("generated-contracts/src/main/kotlin") }` to
       `build.gradle.kts` (Kotlin DSL syntax; this configuration does not exist yet — see
       tech-docs.md Kotlin section for the correct syntax)
-- [ ] **Wire `AuthRoutes.kt`** (request + response)
-  - [ ] Remove local `RegisterRequest` data class — import `contracts.RegisterRequest`
-  - [ ] Remove local `LoginRequest` data class — import `contracts.LoginRequest`
-  - [ ] Remove local `RefreshRequest` data class — import `contracts.RefreshRequest`
-  - [ ] Keep local `LogoutRequest` (not in spec)
-  - [ ] Replace `call.respond(mapOf(...))` login response with `call.respond(contracts.AuthTokens(...))`
-  - [ ] Replace `call.respond(mapOf(...))` register response with `call.respond(contracts.User(...))`
-  - [ ] Replace `call.respond(mapOf(...))` refresh response with `call.respond(contracts.AuthTokens(...))`
-- [ ] **Wire `UserRoutes.kt`** (request + response)
-  - [ ] Remove local `UpdateDisplayNameRequest` — import `contracts.UpdateProfileRequest`
-  - [ ] Remove local `ChangePasswordRequest` — import `contracts.ChangePasswordRequest`
-  - [ ] Replace `call.respond(mapOf(...))` user responses with `call.respond(contracts.User(...))`
-- [ ] **Wire `ExpenseRoutes.kt`** (request + response)
-  - [ ] Remove local `CreateExpenseDto` — import `contracts.CreateExpenseRequest`
-  - [ ] Replace `call.respond(mapOf(...))` expense responses with `call.respond(contracts.Expense(...))`
-  - [ ] Replace expense list response with `call.respond(contracts.ExpenseListResponse(...))`
-- [ ] **Wire `AdminRoutes.kt`** (request + response)
-  - [ ] Remove local `DisableUserRequest` — import `contracts.DisableRequest`
-  - [ ] Replace admin responses with generated types (`User`, `UserListResponse`,
+- [x] **Wire `AuthRoutes.kt`** (request + response)
+  - [x] Remove local `RegisterRequest` data class — import `contracts.RegisterRequest`
+  - [x] Remove local `LoginRequest` data class — import `contracts.LoginRequest`
+  - [x] Remove local `RefreshRequest` data class — import `contracts.RefreshRequest`
+  - [x] Keep local `LogoutRequest` (not in spec)
+  - [x] Replace `call.respond(mapOf(...))` login response with `call.respond(contracts.AuthTokens(...))`
+  - [x] Replace `call.respond(mapOf(...))` register response with `call.respond(contracts.User(...))`
+  - [x] Replace `call.respond(mapOf(...))` refresh response with `call.respond(contracts.AuthTokens(...))`
+- [x] **Wire `UserRoutes.kt`** (request + response)
+  - [x] Remove local `UpdateDisplayNameRequest` — import `contracts.UpdateProfileRequest`
+  - [x] Remove local `ChangePasswordRequest` — import `contracts.ChangePasswordRequest`
+  - [x] Replace `call.respond(mapOf(...))` user responses with `call.respond(contracts.User(...))`
+- [x] **Wire `ExpenseRoutes.kt`** (request + response)
+  - [x] Remove local `CreateExpenseDto` — import `contracts.CreateExpenseRequest`
+  - [x] Replace `call.respond(mapOf(...))` expense responses with `call.respond(contracts.Expense(...))`
+  - [x] Replace expense list response with `call.respond(contracts.ExpenseListResponse(...))`
+- [x] **Wire `AdminRoutes.kt`** (request + response)
+  - [x] Remove local `DisableUserRequest` — import `contracts.DisableRequest`
+  - [x] Replace admin responses with generated types (`User`, `UserListResponse`,
         `PasswordResetResponse`)
-- [ ] **Wire `AttachmentRoutes.kt`** (response only)
-  - [ ] Replace attachment responses with `contracts.Attachment(...)`
-- [ ] **Wire `ReportRoutes.kt`** (response only)
-  - [ ] Replace P&L report response with `contracts.PLReport(...)`
-- [ ] **Wire `TokenRoutes.kt`** (response only)
-  - [ ] Replace token responses with `contracts.TokenClaims(...)` / `contracts.JwksResponse(...)`
-- [ ] **Wire `HealthRoutes.kt`** (response only)
-  - [ ] Replace health response with `contracts.HealthResponse(...)`
-- [ ] **Wire `TestRoutes.kt`**
-  - [ ] Keep local `PromoteAdminRequest` (test-only, not in spec)
-- [ ] **Update all tests** referencing removed data classes
-- [ ] **Verify** `nx run demo-be-kotlin-ktor:build` passes
-- [ ] **Verify** `nx run demo-be-kotlin-ktor:test:quick` passes with >=90% coverage
+- [x] **Wire `AttachmentRoutes.kt`** (response only)
+  - [x] Replace attachment responses with `contracts.Attachment(...)`
+- [x] **Wire `ReportRoutes.kt`** (response only)
+  - [x] Replace P&L report response with `contracts.PLReport(...)`
+- [x] **Wire `TokenRoutes.kt`** (response only)
+  - [x] Replace token responses with `contracts.TokenClaims(...)` / `contracts.JwksResponse(...)`
+- [x] **Wire `HealthRoutes.kt`** (response only)
+  - [x] Replace health response with `contracts.HealthResponse(...)`
+- [x] **Wire `TestRoutes.kt`**
+  - [x] Keep local `PromoteAdminRequest` (test-only, not in spec)
+- [x] **Update all tests** referencing removed data classes
+- [x] **Verify** `nx run demo-be-kotlin-ktor:build` passes
+- [x] **Verify** `nx run demo-be-kotlin-ktor:test:quick` passes with >=90% coverage
 
 ---
 
@@ -302,48 +302,48 @@ generated type instances.
 **Goal**: Replace 12 local structs with generated model imports. Add generated-contracts as crate
 dependency.
 
-- [ ] **Create crate scaffolding** (generated-contracts/ has no Cargo.toml — must be created)
-  - [ ] Create `generated-contracts/Cargo.toml` with `[package] name = "demo-contracts"` and
+- [x] **Create crate scaffolding** (generated-contracts/ has no Cargo.toml — must be created)
+  - [x] Create `generated-contracts/Cargo.toml` with `[package] name = "demo-contracts"` and
         `edition = "2021"`
-  - [ ] Create `generated-contracts/src/lib.rs` with `pub mod models;`
-  - [ ] Create `generated-contracts/src/models/mod.rs` re-exporting all generated model files
-  - [ ] Add `demo-contracts = { path = "generated-contracts" }` to main `Cargo.toml`
+  - [x] Create `generated-contracts/src/lib.rs` with `pub mod models;`
+  - [x] Create `generated-contracts/src/models/mod.rs` re-exporting all generated model files
+  - [x] Add `demo-contracts = { path = "generated-contracts" }` to main `Cargo.toml`
         (crate name is `demo-contracts`, not `generated-contracts`)
-- [ ] **Wire `src/handlers/auth.rs`** (request + response)
-  - [ ] Remove local `RegisterRequest`, `LoginRequest`, `RefreshRequest` structs
-  - [ ] Remove local `RegisterResponse`, `LoginResponse` structs
-  - [ ] Import generated types: `use demo_contracts::models::{RegisterRequest, LoginRequest, ...}`
-  - [ ] Replace `RegisterResponse` with `demo_contracts::models::User`
-  - [ ] Replace `LoginResponse` with `demo_contracts::models::AuthTokens`
-- [ ] **Wire `src/handlers/user.rs`** (request + response)
-  - [ ] Remove local `UpdateProfileRequest`, `ChangePasswordRequest` structs
-  - [ ] Remove local `UserProfile` struct
-  - [ ] Import generated types
-  - [ ] Replace `UserProfile` with `models::User`
-- [ ] **Wire `src/handlers/expense.rs`** (request + response)
-  - [ ] Remove local `CreateExpenseRequest` struct
-  - [ ] Import generated types including `Expense`, `ExpenseListResponse`
-  - [ ] Type-annotate expense responses with generated types
-- [ ] **Wire `src/handlers/admin.rs`** (request + response)
-  - [ ] Remove local `DisableUserRequest`, `UserSummary`, `ListUsersResponse` structs
-  - [ ] Import `models::DisableRequest`, `models::User`, `models::UserListResponse`
-  - [ ] Replace `UserSummary` with `models::User`
-  - [ ] Replace `ListUsersResponse` with `models::UserListResponse`
-- [ ] **Wire `src/handlers/attachment.rs`** (response only)
-  - [ ] Import `models::Attachment`
-  - [ ] Type-annotate attachment responses
-- [ ] **Wire `src/handlers/report.rs`** (response only)
-  - [ ] Import `models::PLReport`
-  - [ ] Type-annotate P&L report response
-- [ ] **Wire `src/handlers/token.rs`** (response only)
-  - [ ] Import `models::TokenClaims`, `models::JwksResponse`
-  - [ ] Type-annotate token responses
-- [ ] **Wire `src/handlers/health.rs`** (response only)
-  - [ ] Import `models::HealthResponse`
-  - [ ] Type-annotate health response
-- [ ] **Update all tests** referencing removed structs
-- [ ] **Verify** `nx run demo-be-rust-axum:build` passes
-- [ ] **Verify** `nx run demo-be-rust-axum:test:quick` passes with >=90% coverage
+- [x] **Wire `src/handlers/auth.rs`** (request + response)
+  - [x] Remove local `RegisterRequest`, `LoginRequest`, `RefreshRequest` structs
+  - [x] Remove local `RegisterResponse`, `LoginResponse` structs
+  - [x] Import generated types: `use demo_contracts::models::{RegisterRequest, LoginRequest, ...}`
+  - [x] Replace `RegisterResponse` with `demo_contracts::models::User`
+  - [x] Replace `LoginResponse` with `demo_contracts::models::AuthTokens`
+- [x] **Wire `src/handlers/user.rs`** (request + response)
+  - [x] Remove local `UpdateProfileRequest`, `ChangePasswordRequest` structs
+  - [x] Remove local `UserProfile` struct
+  - [x] Import generated types
+  - [x] Replace `UserProfile` with `models::User`
+- [x] **Wire `src/handlers/expense.rs`** (request + response)
+  - [x] Remove local `CreateExpenseRequest` struct
+  - [x] Import generated types including `Expense`, `ExpenseListResponse`
+  - [x] Type-annotate expense responses with generated types
+- [x] **Wire `src/handlers/admin.rs`** (request + response)
+  - [x] Remove local `DisableUserRequest`, `UserSummary`, `ListUsersResponse` structs
+  - [x] Import `models::DisableRequest`, `models::User`, `models::UserListResponse`
+  - [x] Replace `UserSummary` with `models::User`
+  - [x] Replace `ListUsersResponse` with `models::UserListResponse`
+- [x] **Wire `src/handlers/attachment.rs`** (response only)
+  - [x] Import `models::Attachment`
+  - [x] Type-annotate attachment responses
+- [x] **Wire `src/handlers/report.rs`** (response only)
+  - [x] Import `models::PLReport`
+  - [x] Type-annotate P&L report response
+- [x] **Wire `src/handlers/token.rs`** (response only)
+  - [x] Import `models::TokenClaims`, `models::JwksResponse`
+  - [x] Type-annotate token responses
+- [x] **Wire `src/handlers/health.rs`** (response only)
+  - [x] Import `models::HealthResponse`
+  - [x] Type-annotate health response
+- [x] **Update all tests** referencing removed structs
+- [x] **Verify** `nx run demo-be-rust-axum:build` passes
+- [x] **Verify** `nx run demo-be-rust-axum:test:quick` passes with >=90% coverage
 
 ---
 
@@ -352,48 +352,48 @@ dependency.
 **Goal**: Replace 22 local Pydantic models (8 request-type + 14 response-type) with generated
 imports. Update `response_model=` parameters to use generated types.
 
-- [ ] **Verify** `from generated_contracts import LoginRequest` works from app source root
-- [ ] Note: All router files are under `src/demo_be_python_fastapi/routers/` (e.g.,
+- [x] **Verify** `from generated_contracts import LoginRequest` works from app source root
+- [x] Note: All router files are under `src/demo_be_python_fastapi/routers/` (e.g.,
       `src/demo_be_python_fastapi/routers/auth.py`)
-- [ ] **Wire `src/demo_be_python_fastapi/routers/auth.py`** (request + response)
-  - [ ] Remove local `RegisterRequest` class — import from `generated_contracts`
-  - [ ] Remove local `LoginRequest` class — import from `generated_contracts`
-  - [ ] Remove local `RefreshRequest` class — import from `generated_contracts`
-  - [ ] Remove local `TokenResponse` class — import `AuthTokens` from `generated_contracts`
-  - [ ] Remove local `RegisterResponse` class — evaluate (use `User` or keep)
-  - [ ] Update `response_model=` parameters to use generated types
-- [ ] **Wire `src/demo_be_python_fastapi/routers/users.py`** (request + response)
-  - [ ] Remove local `UpdateProfileRequest` — import from `generated_contracts`
-  - [ ] Remove local `ChangePasswordRequest` — import from `generated_contracts`
-  - [ ] Remove local `UserProfileResponse` — import `User` from `generated_contracts`
-  - [ ] Update `response_model=` to use `User`
-- [ ] **Wire `src/demo_be_python_fastapi/routers/expenses.py`** (request + response)
-  - [ ] Remove local `ExpenseRequest` — import `CreateExpenseRequest` from `generated_contracts`
-  - [ ] Add import for `UpdateExpenseRequest` (may not exist locally)
-  - [ ] Remove local `ExpenseResponse` — import `Expense` from `generated_contracts`
-  - [ ] Remove local `ExpenseListResponse` — import from `generated_contracts`
-  - [ ] Update `response_model=` parameters
-- [ ] **Wire `src/demo_be_python_fastapi/routers/admin.py`** (request + response)
-  - [ ] Remove local `DisableRequest` — import from `generated_contracts`
-  - [ ] Remove local `UserSummary` — import `User` from `generated_contracts`
-  - [ ] Remove local `UserListResponse` — import from `generated_contracts`
-  - [ ] Update `response_model=` parameters
-- [ ] **Wire `src/demo_be_python_fastapi/routers/attachments.py`** (response only)
-  - [ ] Remove local `AttachmentResponse` — import `Attachment` from `generated_contracts`
-  - [ ] Evaluate `AttachmentListResponse` (not in spec — keep or add)
-  - [ ] Update `response_model=`
-- [ ] **Wire `src/demo_be_python_fastapi/routers/reports.py`** (response only)
-  - [ ] Remove local `BreakdownItem` — import `CategoryBreakdown` from `generated_contracts`
-  - [ ] Remove local `PLResponse` — import `PLReport` from `generated_contracts`
-  - [ ] Update `response_model=`
-- [ ] **Wire `src/demo_be_python_fastapi/routers/tokens.py`** (response only)
-  - [ ] Remove local `ClaimsResponse` — import `TokenClaims` from `generated_contracts`
-  - [ ] Update `response_model=`
-- [ ] **Wire `src/demo_be_python_fastapi/routers/health.py`** (response only)
-  - [ ] Remove local `HealthResponse` — import from `generated_contracts`
-  - [ ] Update `response_model=`
-- [ ] **Update all tests** referencing removed models
-- [ ] **Verify** `nx run demo-be-python-fastapi:test:quick` passes with >=90% coverage
+- [x] **Wire `src/demo_be_python_fastapi/routers/auth.py`** (request + response)
+  - [x] Remove local `RegisterRequest` class — import from `generated_contracts`
+  - [x] Remove local `LoginRequest` class — import from `generated_contracts`
+  - [x] Remove local `RefreshRequest` class — import from `generated_contracts`
+  - [x] Remove local `TokenResponse` class — import `AuthTokens` from `generated_contracts`
+  - [x] Remove local `RegisterResponse` class — evaluate (use `User` or keep)
+  - [x] Update `response_model=` parameters to use generated types
+- [x] **Wire `src/demo_be_python_fastapi/routers/users.py`** (request + response)
+  - [x] Remove local `UpdateProfileRequest` — import from `generated_contracts`
+  - [x] Remove local `ChangePasswordRequest` — import from `generated_contracts`
+  - [x] Remove local `UserProfileResponse` — import `User` from `generated_contracts`
+  - [x] Update `response_model=` to use `User`
+- [x] **Wire `src/demo_be_python_fastapi/routers/expenses.py`** (request + response)
+  - [x] Remove local `ExpenseRequest` — import `CreateExpenseRequest` from `generated_contracts`
+  - [x] Add import for `UpdateExpenseRequest` (may not exist locally)
+  - [x] Remove local `ExpenseResponse` — import `Expense` from `generated_contracts`
+  - [x] Remove local `ExpenseListResponse` — import from `generated_contracts`
+  - [x] Update `response_model=` parameters
+- [x] **Wire `src/demo_be_python_fastapi/routers/admin.py`** (request + response)
+  - [x] Remove local `DisableRequest` — import from `generated_contracts`
+  - [x] Remove local `UserSummary` — import `User` from `generated_contracts`
+  - [x] Remove local `UserListResponse` — import from `generated_contracts`
+  - [x] Update `response_model=` parameters
+- [x] **Wire `src/demo_be_python_fastapi/routers/attachments.py`** (response only)
+  - [x] Remove local `AttachmentResponse` — import `Attachment` from `generated_contracts`
+  - [x] Evaluate `AttachmentListResponse` (not in spec — keep or add)
+  - [x] Update `response_model=`
+- [x] **Wire `src/demo_be_python_fastapi/routers/reports.py`** (response only)
+  - [x] Remove local `BreakdownItem` — import `CategoryBreakdown` from `generated_contracts`
+  - [x] Remove local `PLResponse` — import `PLReport` from `generated_contracts`
+  - [x] Update `response_model=`
+- [x] **Wire `src/demo_be_python_fastapi/routers/tokens.py`** (response only)
+  - [x] Remove local `ClaimsResponse` — import `TokenClaims` from `generated_contracts`
+  - [x] Update `response_model=`
+- [x] **Wire `src/demo_be_python_fastapi/routers/health.py`** (response only)
+  - [x] Remove local `HealthResponse` — import from `generated_contracts`
+  - [x] Update `response_model=`
+- [x] **Update all tests** referencing removed models
+- [x] **Verify** `nx run demo-be-python-fastapi:test:quick` passes with >=90% coverage
 
 ---
 
@@ -404,73 +404,73 @@ records/classes with generated types for both request parsing and response const
 
 **demo-be-fsharp-giraffe**:
 
-- [ ] **Add source inclusion** in main app's `.fsproj` (no `.fsproj` in `generated-contracts/`)
-  - [ ] Add `<Compile Include="../generated-contracts/OpenAPI/src/DemoBeFsgi.Contracts/*.fs" />`
+- [x] **Add source inclusion** in main app's `.fsproj` (no `.fsproj` in `generated-contracts/`)
+  - [x] Add `<Compile Include="../generated-contracts/OpenAPI/src/DemoBeFsgi.Contracts/*.fs" />`
         to main `.fsproj` before any files that reference generated types
-- [ ] **Create `[<CLIMutable>]` wrapper records** for request binding
-  - [ ] Generated F# records do NOT carry `[<CLIMutable>]`; Giraffe's `bindJsonAsync<T>()` fails
+- [x] **Create `[<CLIMutable>]` wrapper records** for request binding
+  - [x] Generated F# records do NOT carry `[<CLIMutable>]`; Giraffe's `bindJsonAsync<T>()` fails
         without it
-  - [ ] Create thin `[<CLIMutable>]` wrapper records that map to/from generated types for each
+  - [x] Create thin `[<CLIMutable>]` wrapper records that map to/from generated types for each
         request type: `RegisterRequest`, `LoginRequest`, `RefreshRequest`, `UpdateProfileRequest`,
         `ChangePasswordRequest`, `CreateExpenseRequest`, `UpdateExpenseRequest`, `DisableRequest`
-  - [ ] Use generated types directly for response construction (no `[<CLIMutable>]` needed)
-- [ ] **Wire `AuthHandler.fs`** (request + response)
-  - [ ] Remove local `RegisterRequest`, `LoginRequest`, `RefreshRequest` records
-  - [ ] Open `OpenAPI.DemoBeFsgi.Contracts` namespace
-  - [ ] Use thin `[<CLIMutable>]` wrapper records for request deserialization
-  - [ ] Map wrapper records to generated types for business logic
-  - [ ] Use generated types for response construction (`AuthTokens`, `User`)
-- [ ] **Wire `UserHandler.fs`** (request + response)
-  - [ ] Remove local `UpdateProfileRequest`, `ChangePasswordRequest` records
-  - [ ] Use generated types for request and response
-- [ ] **Wire `ExpenseHandler.fs`** (request + response)
-  - [ ] Remove local `CreateExpenseRequest`, `UpdateExpenseRequest` records
-  - [ ] Use generated types for request and response (`Expense`, `ExpenseListResponse`)
-- [ ] **Wire `AdminHandler.fs`** (request + response)
-  - [ ] Remove local `DisableRequest` record
-  - [ ] Use generated types for request and response (`User`, `UserListResponse`,
+  - [x] Use generated types directly for response construction (no `[<CLIMutable>]` needed)
+- [x] **Wire `AuthHandler.fs`** (request + response)
+  - [x] Remove local `RegisterRequest`, `LoginRequest`, `RefreshRequest` records
+  - [x] Open `OpenAPI.DemoBeFsgi.Contracts` namespace
+  - [x] Use thin `[<CLIMutable>]` wrapper records for request deserialization
+  - [x] Map wrapper records to generated types for business logic
+  - [x] Use generated types for response construction (`AuthTokens`, `User`)
+- [x] **Wire `UserHandler.fs`** (request + response)
+  - [x] Remove local `UpdateProfileRequest`, `ChangePasswordRequest` records
+  - [x] Use generated types for request and response
+- [x] **Wire `ExpenseHandler.fs`** (request + response)
+  - [x] Remove local `CreateExpenseRequest`, `UpdateExpenseRequest` records
+  - [x] Use generated types for request and response (`Expense`, `ExpenseListResponse`)
+- [x] **Wire `AdminHandler.fs`** (request + response)
+  - [x] Remove local `DisableRequest` record
+  - [x] Use generated types for request and response (`User`, `UserListResponse`,
         `PasswordResetResponse`)
-- [ ] **Wire `AttachmentHandler.fs`** (response only)
-  - [ ] Use generated `Attachment` for response
-- [ ] **Wire `ReportHandler.fs`** (response only)
-  - [ ] Use generated `PLReport` for response
-- [ ] **Wire `TokenHandler.fs`** (response only)
-  - [ ] Use generated `TokenClaims`, `JwksResponse` for response
-- [ ] **Wire `HealthHandler.fs`** (response only)
-  - [ ] Use generated `HealthResponse` for response
-- [ ] **Update all tests** referencing removed records
-- [ ] **Verify** `nx run demo-be-fsharp-giraffe:build` passes
-- [ ] **Verify** `nx run demo-be-fsharp-giraffe:test:quick` passes with >=90% coverage
+- [x] **Wire `AttachmentHandler.fs`** (response only)
+  - [x] Use generated `Attachment` for response
+- [x] **Wire `ReportHandler.fs`** (response only)
+  - [x] Use generated `PLReport` for response
+- [x] **Wire `TokenHandler.fs`** (response only)
+  - [x] Use generated `TokenClaims`, `JwksResponse` for response
+- [x] **Wire `HealthHandler.fs`** (response only)
+  - [x] Use generated `HealthResponse` for response
+- [x] **Update all tests** referencing removed records
+- [x] **Verify** `nx run demo-be-fsharp-giraffe:build` passes
+- [x] **Verify** `nx run demo-be-fsharp-giraffe:test:quick` passes with >=90% coverage
 
 **demo-be-csharp-aspnetcore**:
 
-- [ ] **Add source inclusion** in main app's `.csproj` (no `.csproj` in `generated-contracts/`)
-  - [ ] Add `<Compile Include="../generated-contracts/src/Org.OpenAPITools/DemoBeCsas.Contracts/*.cs" />`
+- [x] **Add source inclusion** in main app's `.csproj` (no `.csproj` in `generated-contracts/`)
+  - [x] Add `<Compile Include="../generated-contracts/src/Org.OpenAPITools/DemoBeCsas.Contracts/*.cs" />`
         to main `.csproj`
-- [ ] **Wire `AuthEndpoints.cs`** (request + response)
-  - [ ] Remove local `RegisterRequest`, `LoginRequest`, `RefreshRequest` sealed records
-  - [ ] Add `using Org.OpenAPITools.DemoBeCsas.Contracts;` (actual namespace — not `DemoBeCsas.Contracts`)
-  - [ ] Use generated types for request binding and response (`AuthTokens`, `User`)
-- [ ] **Wire `UserEndpoints.cs`** (request + response)
-  - [ ] Remove local `PatchMeRequest` (replace with `UpdateProfileRequest`)
-  - [ ] Remove local `ChangePasswordRequest`
-  - [ ] Use generated types for request and response
-- [ ] **Wire `ExpenseEndpoints.cs`** (request + response)
-  - [ ] Remove local `ExpenseRequest` (replace with `CreateExpenseRequest` + `UpdateExpenseRequest`)
-  - [ ] Use generated types for request and response
-- [ ] **Wire `AdminEndpoints.cs`** (request + response)
-  - [ ] Use generated types for disable request and responses
-- [ ] **Wire `AttachmentEndpoints.cs`** (response only)
-  - [ ] Use generated `Attachment` for response
-- [ ] **Wire `ReportEndpoints.cs`** (response only)
-  - [ ] Use generated `PLReport` for response
-- [ ] **Wire `TokenEndpoints.cs`** (response only)
-  - [ ] Use generated `TokenClaims`, `JwksResponse` for response
-- [ ] **Wire `HealthEndpoints.cs`** (response only)
-  - [ ] Use generated `HealthResponse` for response
-- [ ] **Update all tests** referencing removed records
-- [ ] **Verify** `nx run demo-be-csharp-aspnetcore:build` passes
-- [ ] **Verify** `nx run demo-be-csharp-aspnetcore:test:quick` passes with >=90% coverage
+- [x] **Wire `AuthEndpoints.cs`** (request + response)
+  - [x] Remove local `RegisterRequest`, `LoginRequest`, `RefreshRequest` sealed records
+  - [x] Add `using Org.OpenAPITools.DemoBeCsas.Contracts;` (actual namespace — not `DemoBeCsas.Contracts`)
+  - [x] Use generated types for request binding and response (`AuthTokens`, `User`)
+- [x] **Wire `UserEndpoints.cs`** (request + response)
+  - [x] Remove local `PatchMeRequest` (replace with `UpdateProfileRequest`)
+  - [x] Remove local `ChangePasswordRequest`
+  - [x] Use generated types for request and response
+- [x] **Wire `ExpenseEndpoints.cs`** (request + response)
+  - [x] Remove local `ExpenseRequest` (replace with `CreateExpenseRequest` + `UpdateExpenseRequest`)
+  - [x] Use generated types for request and response
+- [x] **Wire `AdminEndpoints.cs`** (request + response)
+  - [x] Use generated types for disable request and responses
+- [x] **Wire `AttachmentEndpoints.cs`** (response only)
+  - [x] Use generated `Attachment` for response
+- [x] **Wire `ReportEndpoints.cs`** (response only)
+  - [x] Use generated `PLReport` for response
+- [x] **Wire `TokenEndpoints.cs`** (response only)
+  - [x] Use generated `TokenClaims`, `JwksResponse` for response
+- [x] **Wire `HealthEndpoints.cs`** (response only)
+  - [x] Use generated `HealthResponse` for response
+- [x] **Update all tests** referencing removed records
+- [x] **Verify** `nx run demo-be-csharp-aspnetcore:build` passes
+- [x] **Verify** `nx run demo-be-csharp-aspnetcore:test:quick` passes with >=90% coverage
 
 ---
 
@@ -481,81 +481,81 @@ records/classes with generated types for both request parsing and response const
 
 **demo-be-elixir-phoenix**:
 
-- [ ] **Add generated-contracts to Mix source paths** in `mix.exs`
-- [ ] **Verify module namespace from Phase 1 output** — expected `GeneratedSchemas.*` (the codegen
+- [x] **Add generated-contracts to Mix source paths** in `mix.exs`
+- [x] **Verify module namespace from Phase 1 output** — expected `GeneratedSchemas.*` (the codegen
       defaults to `@default_namespace "GeneratedSchemas"`; no namespace override is passed in
       `project.json`). All struct references below use `GeneratedSchemas.*` as the expected prefix.
       Update if Phase 1 reveals a different namespace.
-- [ ] **Wire `AuthController`** (request validation + response struct construction)
-  - [ ] Alias generated `GeneratedSchemas.LoginRequest`, `GeneratedSchemas.RegisterRequest`,
+- [x] **Wire `AuthController`** (request validation + response struct construction)
+  - [x] Alias generated `GeneratedSchemas.LoginRequest`, `GeneratedSchemas.RegisterRequest`,
         `GeneratedSchemas.RefreshRequest` modules
-  - [ ] Validate incoming params against generated struct fields
-  - [ ] Construct `%GeneratedSchemas.AuthTokens{}` for login/refresh responses
-  - [ ] Construct `%GeneratedSchemas.User{}` for register/profile responses
-- [ ] **Wire `UserController`** (request + response)
-  - [ ] Alias generated `GeneratedSchemas.UpdateProfileRequest`,
+  - [x] Validate incoming params against generated struct fields
+  - [x] Construct `%GeneratedSchemas.AuthTokens{}` for login/refresh responses
+  - [x] Construct `%GeneratedSchemas.User{}` for register/profile responses
+- [x] **Wire `UserController`** (request + response)
+  - [x] Alias generated `GeneratedSchemas.UpdateProfileRequest`,
         `GeneratedSchemas.ChangePasswordRequest`
-  - [ ] Validate incoming params
-  - [ ] Construct `%GeneratedSchemas.User{}` for user profile response
-- [ ] **Wire `ExpenseController`** (request + response)
-  - [ ] Alias generated `GeneratedSchemas.CreateExpenseRequest`,
+  - [x] Validate incoming params
+  - [x] Construct `%GeneratedSchemas.User{}` for user profile response
+- [x] **Wire `ExpenseController`** (request + response)
+  - [x] Alias generated `GeneratedSchemas.CreateExpenseRequest`,
         `GeneratedSchemas.UpdateExpenseRequest`
-  - [ ] Validate incoming params
-  - [ ] Construct `%GeneratedSchemas.Expense{}` / `%GeneratedSchemas.ExpenseListResponse{}` for
+  - [x] Validate incoming params
+  - [x] Construct `%GeneratedSchemas.Expense{}` / `%GeneratedSchemas.ExpenseListResponse{}` for
         responses
-- [ ] **Wire `AdminController`** (request + response)
-  - [ ] Alias generated `GeneratedSchemas.DisableRequest`
-  - [ ] Construct `%GeneratedSchemas.User{}` / `%GeneratedSchemas.UserListResponse{}` /
+- [x] **Wire `AdminController`** (request + response)
+  - [x] Alias generated `GeneratedSchemas.DisableRequest`
+  - [x] Construct `%GeneratedSchemas.User{}` / `%GeneratedSchemas.UserListResponse{}` /
         `%GeneratedSchemas.PasswordResetResponse{}` for responses
-- [ ] **Wire `AttachmentController`** (response only)
-  - [ ] Construct `%GeneratedSchemas.Attachment{}` for responses
-- [ ] **Wire `ReportController`** (response only)
-  - [ ] Construct `%GeneratedSchemas.PLReport{}` for response
-- [ ] **Wire `TokenController`** (response only)
-  - [ ] Construct `%GeneratedSchemas.TokenClaims{}` / `%GeneratedSchemas.JwksResponse{}` for
+- [x] **Wire `AttachmentController`** (response only)
+  - [x] Construct `%GeneratedSchemas.Attachment{}` for responses
+- [x] **Wire `ReportController`** (response only)
+  - [x] Construct `%GeneratedSchemas.PLReport{}` for response
+- [x] **Wire `TokenController`** (response only)
+  - [x] Construct `%GeneratedSchemas.TokenClaims{}` / `%GeneratedSchemas.JwksResponse{}` for
         responses
-- [ ] **Wire `HealthController`** (response only)
-  - [ ] Construct `%GeneratedSchemas.HealthResponse{}` for response
-- [ ] **Add struct construction tests** — at least one test per generated struct verifying
+- [x] **Wire `HealthController`** (response only)
+  - [x] Construct `%GeneratedSchemas.HealthResponse{}` for response
+- [x] **Add struct construction tests** — at least one test per generated struct verifying
       `@enforce_keys` catches missing required fields
-- [ ] **Verify** `nx run demo-be-elixir-phoenix:test:quick` passes
+- [x] **Verify** `nx run demo-be-elixir-phoenix:test:quick` passes
 
 **demo-be-clojure-pedestal**:
 
-- [ ] **Add generated schemas to classpath** in `deps.edn`
-- [ ] **Verify namespace from Phase 1 output** — generated schemas use namespace
+- [x] **Add generated schemas to classpath** in `deps.edn`
+- [x] **Verify namespace from Phase 1 output** — generated schemas use namespace
       `openapi-codegen.schemas.<kebab-name>` (e.g., `openapi-codegen.schemas.auth-tokens`).
       Confirm exact names by inspecting the Phase 1 codegen output.
-- [ ] **Create contract validation helper**
-  - [ ] Create `contracts.clj` namespace that requires all generated schemas, e.g.:
+- [x] **Create contract validation helper**
+  - [x] Create `contracts.clj` namespace that requires all generated schemas, e.g.:
         `(:require [openapi-codegen.schemas.auth-tokens :as auth-tokens-schema] ...)`
-  - [ ] Add `validate-response` function using `m/validate`
-- [ ] **Wire auth handlers** (request + response validation)
-  - [ ] Require `openapi-codegen.schemas.login-request`, `openapi-codegen.schemas.register-request`,
+  - [x] Add `validate-response` function using `m/validate`
+- [x] **Wire auth handlers** (request + response validation)
+  - [x] Require `openapi-codegen.schemas.login-request`, `openapi-codegen.schemas.register-request`,
         `openapi-codegen.schemas.refresh-request` for request validation
-  - [ ] Add `validate-response` calls on login/register/refresh responses against
+  - [x] Add `validate-response` calls on login/register/refresh responses against
         `openapi-codegen.schemas.auth-tokens` / `openapi-codegen.schemas.user` generated schemas
-- [ ] **Wire user handlers** (request + response validation)
-  - [ ] Validate user profile response against `openapi-codegen.schemas.user` schema
-- [ ] **Wire expense handlers** (request + response validation)
-  - [ ] Validate expense responses against `openapi-codegen.schemas.expense` /
+- [x] **Wire user handlers** (request + response validation)
+  - [x] Validate user profile response against `openapi-codegen.schemas.user` schema
+- [x] **Wire expense handlers** (request + response validation)
+  - [x] Validate expense responses against `openapi-codegen.schemas.expense` /
         `openapi-codegen.schemas.expense-list-response` schemas
-- [ ] **Wire admin handlers** (request + response validation)
-  - [ ] Validate admin responses against `openapi-codegen.schemas.user` /
+- [x] **Wire admin handlers** (request + response validation)
+  - [x] Validate admin responses against `openapi-codegen.schemas.user` /
         `openapi-codegen.schemas.user-list-response` /
         `openapi-codegen.schemas.password-reset-response` schemas
-- [ ] **Wire attachment handlers** (response validation)
-  - [ ] Validate against `openapi-codegen.schemas.attachment` schema
-- [ ] **Wire report handlers** (response validation)
-  - [ ] Validate against `openapi-codegen.schemas.pl-report` schema
-- [ ] **Wire token handlers** (response validation)
-  - [ ] Validate against `openapi-codegen.schemas.token-claims` /
+- [x] **Wire attachment handlers** (response validation)
+  - [x] Validate against `openapi-codegen.schemas.attachment` schema
+- [x] **Wire report handlers** (response validation)
+  - [x] Validate against `openapi-codegen.schemas.pl-report` schema
+- [x] **Wire token handlers** (response validation)
+  - [x] Validate against `openapi-codegen.schemas.token-claims` /
         `openapi-codegen.schemas.jwks-response` schemas
-- [ ] **Wire health handler** (response validation)
-  - [ ] Validate against `openapi-codegen.schemas.health-response` schema
-- [ ] **Add schema validation tests** — at least one test per generated schema verifying
+- [x] **Wire health handler** (response validation)
+  - [x] Validate against `openapi-codegen.schemas.health-response` schema
+- [x] **Add schema validation tests** — at least one test per generated schema verifying
       validation catches missing required fields
-- [ ] **Verify** `nx run demo-be-clojure-pedestal:test:quick` passes
+- [x] **Verify** `nx run demo-be-clojure-pedestal:test:quick` passes
 
 ---
 
@@ -563,28 +563,28 @@ records/classes with generated types for both request parsing and response const
 
 **Goal**: Replace 20+ hand-written model classes with generated Dart classes.
 
-- [ ] **Add generated package as path dependency** in `pubspec.yaml`
-- [ ] **Run `flutter pub get`** to install
-- [ ] **Wire `lib/models/auth.dart`**
-  - [ ] Replace local `LoginRequest`, `RegisterRequest`, `AuthTokens` with re-exports from
+- [x] **Add generated package as path dependency** in `pubspec.yaml`
+- [x] **Run `flutter pub get`** to install
+- [x] **Wire `lib/models/auth.dart`**
+  - [x] Replace local `LoginRequest`, `RegisterRequest`, `AuthTokens` with re-exports from
         generated package
-- [ ] **Wire `lib/models/user.dart`**
-  - [ ] Replace local `User`, `UserListResponse`, `UpdateProfileRequest`,
+- [x] **Wire `lib/models/user.dart`**
+  - [x] Replace local `User`, `UserListResponse`, `UpdateProfileRequest`,
         `ChangePasswordRequest`, `DisableRequest`, `PasswordResetResponse` with generated types
-- [ ] **Wire `lib/models/expense.dart`**
-  - [ ] Replace local `Expense`, `ExpenseListResponse`, `CreateExpenseRequest`,
+- [x] **Wire `lib/models/expense.dart`**
+  - [x] Replace local `Expense`, `ExpenseListResponse`, `CreateExpenseRequest`,
         `UpdateExpenseRequest` with generated types
-- [ ] **Wire `lib/models/attachment.dart`**
-  - [ ] Replace local `Attachment` with generated type
-- [ ] **Wire `lib/models/token.dart`**
-  - [ ] Replace local `TokenClaims`, `JwkKey`, `JwksResponse` with generated types
-- [ ] **Wire `lib/models/report.dart`**
-  - [ ] Replace local `CategoryBreakdown`, `ExpenseSummary`, `PLReport` with generated types
-- [ ] **Wire `lib/models/health.dart`**
-  - [ ] Replace local `HealthResponse` with generated type
-- [ ] **Update `lib/services/*.dart`** to compile against updated model imports
-- [ ] **Verify** `dart analyze` passes with no errors
-- [ ] **Verify** `nx run demo-fe-dart-flutterweb:test:quick` passes with >=70% coverage
+- [x] **Wire `lib/models/attachment.dart`**
+  - [x] Replace local `Attachment` with generated type
+- [x] **Wire `lib/models/token.dart`**
+  - [x] Replace local `TokenClaims`, `JwkKey`, `JwksResponse` with generated types
+- [x] **Wire `lib/models/report.dart`**
+  - [x] Replace local `CategoryBreakdown`, `ExpenseSummary`, `PLReport` with generated types
+- [x] **Wire `lib/models/health.dart`**
+  - [x] Replace local `HealthResponse` with generated type
+- [x] **Update `lib/services/*.dart`** to compile against updated model imports
+- [x] **Verify** `dart analyze` passes with no errors
+- [x] **Verify** `nx run demo-fe-dart-flutterweb:test:quick` passes with >=70% coverage
 
 ---
 
@@ -620,8 +620,9 @@ definitions.
   - [ ] Add contract validation after health check response
 - [ ] **Wire `tests/steps/security/security.steps.ts`**
   - [ ] Add contract validation after every 2xx response
-- [ ] **Wire `tests/steps/common.steps.ts`**
-  - [ ] Add contract validation for any shared response handling
+- [x] **Wire `tests/steps/common.steps.ts`**
+  - [x] Add contract validation for any shared response handling (validates in status code check
+        step — covers all 2xx responses centrally)
 - [ ] **Wire `tests/steps/common-setup.steps.ts`**
   - [ ] Add contract validation if it handles responses
 - [ ] **Wire `tests/steps/test-support/test-api.steps.ts`**
@@ -773,7 +774,7 @@ definitions.
 - [x] Phase 7: Wire demo-be-rust-axum
 - [x] Phase 8: Wire demo-be-python-fastapi
 - [x] Phase 9: Wire demo-be-fsharp-giraffe + demo-be-csharp-aspnetcore
-- [x] Phase 10: Wire demo-be-elixir-phoenix (Elixir done, Clojure blocked) + demo-be-clojure-pedestal
-- [ ] Phase 11: Wire demo-fe-dart-flutterweb (blocked — lint requires codegen)
-- [ ] Phase 12: Wire E2E Contract Validation
-- [ ] Phase 13: End-to-End Verification
+- [x] Phase 10: Wire demo-be-elixir-phoenix + demo-be-clojure-pedestal
+- [x] Phase 11: Wire demo-fe-dart-flutterweb
+- [ ] Phase 12: Wire E2E Contract Validation (common.steps.ts done; per-step files pending)
+- [ ] Phase 13: End-to-End Verification (5 of 14 E2E workflows still failing)

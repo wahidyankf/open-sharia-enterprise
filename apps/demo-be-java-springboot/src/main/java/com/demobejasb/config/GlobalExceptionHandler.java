@@ -54,6 +54,13 @@ public class GlobalExceptionHandler {
                 .body(Map.of("message", "Invalid token"));
     }
 
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<Map<String, String>> handleValidationException(
+            final ValidationException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("message", "Validation failed for field: " + ex.getField()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidation(
             final MethodArgumentNotValidException ex) {

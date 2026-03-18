@@ -321,26 +321,12 @@ public class UnitAuthSteps {
 
     private void performRegister(
             final String username, final String email, final String password) {
-        // Manual validation (generated types lack Bean Validation annotations)
+        // Blank-field validation (generated types lack Bean Validation annotations)
         if (username == null || username.isBlank()
                 || email == null || email.isBlank()
                 || password == null || password.isBlank()) {
             stateStore.setStatusCode(400);
             stateStore.setLastException(new IllegalArgumentException("Validation failed"));
-            return;
-        }
-        // Email format validation
-        if (!email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
-            stateStore.setStatusCode(400);
-            stateStore.setLastException(new IllegalArgumentException("Invalid email format"));
-            return;
-        }
-        // Password strength validation (≥12 chars, uppercase, special char)
-        if (password.length() < 12
-                || !password.chars().anyMatch(Character::isUpperCase)
-                || !password.matches(".*[^a-zA-Z0-9].*")) {
-            stateStore.setStatusCode(400);
-            stateStore.setLastException(new IllegalArgumentException("Password too weak"));
             return;
         }
         RegisterRequest request = new RegisterRequest();
@@ -356,6 +342,9 @@ public class UnitAuthSteps {
             if (response.getBody() != null && "alice".equals(username)) {
                 stateStore.setAliceId(java.util.UUID.fromString(response.getBody().getId()));
             }
+        } catch (com.demobejasb.config.ValidationException e) {
+            stateStore.setStatusCode(400);
+            stateStore.setLastException(e);
         } catch (UsernameAlreadyExistsException e) {
             stateStore.setStatusCode(409);
             stateStore.setLastException(e);

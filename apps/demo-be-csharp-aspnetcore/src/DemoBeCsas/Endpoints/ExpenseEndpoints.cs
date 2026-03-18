@@ -1,6 +1,7 @@
 using DemoBeCsas.Domain;
 using DemoBeCsas.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Org.OpenAPITools.Client;
 using Org.OpenAPITools.DemoBeCsas.Contracts;
 
 namespace DemoBeCsas.Endpoints;
@@ -266,20 +267,33 @@ public static class ExpenseEndpoints
             ? Math.Round(amount, 0, MidpointRounding.AwayFromZero).ToString("F0")
             : amount.ToString("F2");
 
-    private static object ToResponse(Infrastructure.Models.ExpenseModel e) =>
-        new
-        {
-            id = e.Id,
-            userId = e.UserId,
-            description = e.Title,
-            category = e.Category,
-            amount = FormatAmount(e.Amount, e.Currency),
-            currency = e.Currency,
-            type = e.Type.ToString().ToLowerInvariant(),
-            quantity = e.Quantity,
-            unit = e.Unit,
-            date = e.Date.ToString("yyyy-MM-dd"),
-            created_at = e.CreatedAt,
-            updated_at = e.UpdatedAt,
-        };
+    private static Expense ToResponse(Infrastructure.Models.ExpenseModel e)
+    {
+        var type = e.Type == Domain.ExpenseType.Income
+            ? Expense.TypeEnum.Income
+            : Expense.TypeEnum.Expense;
+
+        var quantity = e.Quantity.HasValue
+            ? new Option<decimal?>((decimal)e.Quantity.Value)
+            : default(Option<decimal?>);
+
+        var unit = e.Unit is not null
+            ? new Option<string?>(e.Unit)
+            : default(Option<string?>);
+
+        return new Expense(
+            id: e.Id.ToString(),
+            amount: FormatAmount(e.Amount, e.Currency),
+            currency: e.Currency,
+            category: e.Category,
+            description: e.Title,
+            date: DateOnly.FromDateTime(e.Date.UtcDateTime),
+            type: type,
+            userId: e.UserId.ToString(),
+            createdAt: e.CreatedAt.UtcDateTime,
+            updatedAt: e.UpdatedAt.UtcDateTime,
+            quantity: quantity,
+            unit: unit
+        );
+    }
 }

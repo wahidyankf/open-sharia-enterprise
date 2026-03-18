@@ -6,6 +6,7 @@ import com.demobejasb.auth.model.User;
 import com.demobejasb.auth.repository.RefreshTokenRepository;
 import com.demobejasb.auth.repository.RevokedTokenRepository;
 import com.demobejasb.auth.repository.UserRepository;
+import com.demobejasb.config.ValidationException;
 import com.demobejasb.contracts.AuthTokens;
 import com.demobejasb.contracts.LoginRequest;
 import com.demobejasb.contracts.RegisterRequest;
@@ -18,6 +19,7 @@ import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +29,10 @@ public class AuthService {
 
     private static final int MAX_FAILED_ATTEMPTS = 5;
     private static final long REFRESH_TOKEN_EXPIRY_DAYS = 30;
+    private static final Pattern EMAIL_PATTERN =
+            Pattern.compile("^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$");
+    private static final Pattern UPPER_PATTERN = Pattern.compile("[A-Z]");
+    private static final Pattern SPECIAL_PATTERN = Pattern.compile("[^a-zA-Z0-9]");
 
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -50,6 +56,8 @@ public class AuthService {
     @Transactional
     public com.demobejasb.contracts.User register(final RegisterRequest request)
             throws UsernameAlreadyExistsException {
+        validateEmail(request.getEmail());
+        validatePasswordStrength(request.getPassword());
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new UsernameAlreadyExistsException(request.getUsername());
         }
@@ -178,6 +186,29 @@ public class AuthService {
                         ? user.getUpdatedAt().atOffset(java.time.ZoneOffset.UTC)
                         : OffsetDateTime.now());
         return response;
+    }
+
+    private static void validateEmail(final String email) {
+        if (email == null || !EMAIL_PATTERN.matcher(email).matches()) {
+            throw new ValidationException("invalid email format", "email");
+        }
+    }
+
+    private static void validatePasswordStrength(final String password) {
+        if (password == null || password.isEmpty()) {
+            throw new ValidationException("password is required", "password");
+        }
+        if (password.length() < 12) {
+            throw new ValidationException("password must be at least 12 characters", "password");
+        }
+        if (!UPPER_PATTERN.matcher(password).find()) {
+            throw new ValidationException(
+                    "password must contain at least one uppercase letter", "password");
+        }
+        if (!SPECIAL_PATTERN.matcher(password).find()) {
+            throw new ValidationException(
+                    "password must contain at least one special character", "password");
+        }
     }
 
     private String hashToken(final String token) {

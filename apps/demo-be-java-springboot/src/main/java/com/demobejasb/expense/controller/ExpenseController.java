@@ -2,6 +2,7 @@ package com.demobejasb.expense.controller;
 
 import com.demobejasb.auth.model.User;
 import com.demobejasb.auth.repository.UserRepository;
+import com.demobejasb.config.ValidationException;
 import com.demobejasb.contracts.CreateExpenseRequest;
 import com.demobejasb.contracts.Expense;
 import com.demobejasb.contracts.ExpenseListResponse;
@@ -16,6 +17,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,6 +40,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/expenses")
 public class ExpenseController {
 
+    private static final Set<String> SUPPORTED_CURRENCIES = Set.of("USD", "IDR");
+    private static final Set<String> SUPPORTED_UNITS = Set.of(
+            "liter", "ml", "kg", "g", "km", "meter", "gallon", "lb", "oz", "mile", "piece", "hour");
+
     private final ExpenseRepository expenseRepository;
     private final UserRepository userRepository;
 
@@ -51,6 +57,7 @@ public class ExpenseController {
     public ResponseEntity<Expense> create(
             @AuthenticationPrincipal final UserDetails userDetails,
             @Valid @RequestBody final CreateExpenseRequest request) {
+        validateExpenseRequest(request);
         User user = getUser(userDetails);
         com.demobejasb.expense.model.Expense expense =
                 new com.demobejasb.expense.model.Expense(
@@ -125,6 +132,7 @@ public class ExpenseController {
             @AuthenticationPrincipal final UserDetails userDetails,
             @PathVariable final UUID id,
             @Valid @RequestBody final CreateExpenseRequest request) {
+        validateExpenseRequest(request);
         User user = getUser(userDetails);
         com.demobejasb.expense.model.Expense expense =
                 expenseRepository
@@ -190,6 +198,17 @@ public class ExpenseController {
                         ? expense.getUpdatedAt().atOffset(ZoneOffset.UTC)
                         : now);
         return response;
+    }
+
+    private static void validateExpenseRequest(final CreateExpenseRequest request) {
+        String currency = request.getCurrency();
+        if (currency == null || currency.length() != 3 || !SUPPORTED_CURRENCIES.contains(currency.toUpperCase())) {
+            throw new ValidationException("unsupported or invalid currency: " + currency, "currency");
+        }
+        String unit = request.getUnit();
+        if (unit != null && !unit.isBlank() && !SUPPORTED_UNITS.contains(unit.toLowerCase())) {
+            throw new ValidationException("unsupported unit: " + unit, "unit");
+        }
     }
 
     private User getUser(final UserDetails userDetails) {

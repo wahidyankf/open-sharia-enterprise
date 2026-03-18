@@ -3,7 +3,6 @@ package com.demobejavx.handler;
 import com.demobejavx.contracts.CreateExpenseRequest;
 import com.demobejavx.contracts.Expense;
 import com.demobejavx.contracts.ExpenseListResponse;
-import com.demobejavx.contracts.ExpenseSummary;
 import com.demobejavx.contracts.UpdateExpenseRequest;
 import com.demobejavx.domain.validation.DomainException;
 import com.demobejavx.domain.validation.ExpenseValidator;
@@ -282,47 +281,22 @@ public class ExpenseHandler implements Handler<RoutingContext> {
 
         expenseRepo.findByUserId(userId)
                 .onSuccess(expenses -> {
-                    Map<String, BigDecimal[]> perCurrency = new HashMap<>();
+                    Map<String, BigDecimal> totals = new HashMap<>();
                     for (com.demobejavx.domain.model.Expense e : expenses) {
-                        BigDecimal[] totals = perCurrency.computeIfAbsent(
-                                e.currency(), k -> new BigDecimal[]{BigDecimal.ZERO,
-                                        BigDecimal.ZERO});
-                        if (com.demobejavx.domain.model.Expense.TYPE_INCOME.equals(e.type())) {
-                            totals[0] = totals[0].add(e.amount());
-                        } else {
-                            totals[1] = totals[1].add(e.amount());
+                        if (!com.demobejavx.domain.model.Expense.TYPE_INCOME.equals(e.type())) {
+                            totals.merge(e.currency(), e.amount(), BigDecimal::add);
                         }
                     }
 
-                    // Default to USD summary if no expenses
-                    if (perCurrency.isEmpty()) {
-                        ExpenseSummary resp = new ExpenseSummary()
-                                .currency("USD")
-                                .totalIncome("0.00")
-                                .totalExpense("0.00")
-                                .net("0.00")
-                                .categories(new ArrayList<>());
-                        AuthHandler.sendJson(ctx, 200, resp);
-                        return;
+                    Map<String, String> result = new java.util.LinkedHashMap<>();
+                    for (Map.Entry<String, BigDecimal> entry : totals.entrySet()) {
+                        String currency = entry.getKey();
+                        int scale = "IDR".equals(currency) ? 0 : 2;
+                        BigDecimal rounded = entry.getValue().setScale(scale, RoundingMode.HALF_UP);
+                        result.put(currency, rounded.toPlainString());
                     }
 
-                    // Return first currency's summary (matches original single-currency behavior)
-                    Map.Entry<String, BigDecimal[]> entry =
-                            perCurrency.entrySet().iterator().next();
-                    String currency = entry.getKey();
-                    BigDecimal[] totals = entry.getValue();
-                    int scale = "IDR".equals(currency) ? 0 : 2;
-                    BigDecimal income = totals[0].setScale(scale, RoundingMode.HALF_UP);
-                    BigDecimal expense = totals[1].setScale(scale, RoundingMode.HALF_UP);
-                    BigDecimal net = income.subtract(expense);
-
-                    ExpenseSummary resp = new ExpenseSummary()
-                            .currency(currency)
-                            .totalIncome(income.toPlainString())
-                            .totalExpense(expense.toPlainString())
-                            .net(net.toPlainString())
-                            .categories(new ArrayList<>());
-                    AuthHandler.sendJson(ctx, 200, resp);
+                    AuthHandler.sendJson(ctx, 200, result);
                 })
                 .onFailure(ctx::fail);
     }

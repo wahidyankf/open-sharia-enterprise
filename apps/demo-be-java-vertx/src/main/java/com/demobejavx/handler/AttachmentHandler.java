@@ -89,7 +89,7 @@ public class AttachmentHandler implements Handler<RoutingContext> {
                     return attachmentRepo.save(attachment);
                 })
                 .onSuccess(attachment -> {
-                    Attachment resp = buildContractAttachment(attachment);
+                    java.util.Map<String, Object> resp = buildUploadResponse(attachment);
                     AuthHandler.sendJson(ctx, 201, resp);
                 })
                 .onFailure(ctx::fail);
@@ -166,11 +166,33 @@ public class AttachmentHandler implements Handler<RoutingContext> {
 
     private Attachment buildContractAttachment(
             com.demobejavx.domain.model.Attachment attachment) {
+        java.time.OffsetDateTime createdAt = attachment.createdAt() != null
+                ? attachment.createdAt().atOffset(java.time.ZoneOffset.UTC)
+                : java.time.OffsetDateTime.now(java.time.ZoneOffset.UTC);
         return new Attachment()
                 .id(attachment.id() != null ? attachment.id() : "")
                 .filename(attachment.filename())
                 .contentType(attachment.contentType())
-                .size((int) attachment.size());
+                .size((int) attachment.size())
+                .createdAt(createdAt);
+    }
+
+    private java.util.Map<String, Object> buildUploadResponse(
+            com.demobejavx.domain.model.Attachment attachment) {
+        java.util.Map<String, Object> resp = new java.util.LinkedHashMap<>();
+        resp.put("id", attachment.id() != null ? attachment.id() : "");
+        resp.put("filename", attachment.filename());
+        resp.put("contentType", attachment.contentType());
+        resp.put("size", (int) attachment.size());
+        java.time.OffsetDateTime createdAt = attachment.createdAt() != null
+                ? attachment.createdAt().atOffset(java.time.ZoneOffset.UTC)
+                : java.time.OffsetDateTime.now(java.time.ZoneOffset.UTC);
+        resp.put("createdAt", createdAt);
+        String expenseId = attachment.expenseId() != null ? attachment.expenseId() : "";
+        String attachmentId = attachment.id() != null ? attachment.id() : "";
+        resp.put("url",
+                "/api/v1/expenses/" + expenseId + "/attachments/" + attachmentId + "/data");
+        return resp;
     }
 
     public static class FileSizeLimitException extends RuntimeException {
