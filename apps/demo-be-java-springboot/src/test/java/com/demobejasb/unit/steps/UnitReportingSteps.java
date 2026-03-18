@@ -1,11 +1,11 @@
 package com.demobejasb.unit.steps;
 
+import com.demobejasb.contracts.CategoryBreakdown;
+import com.demobejasb.contracts.PLReport;
 import com.demobejasb.report.controller.ReportController;
-import com.demobejasb.report.dto.PlReportResponse;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import java.time.LocalDate;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
@@ -58,28 +58,28 @@ public class UnitReportingSteps {
     public void theIncomeBreakdownShouldContain(
             final String category, final String amount) {
         Object body = stateStore.getResponseBody();
-        assertThat(body).isInstanceOf(PlReportResponse.class);
-        PlReportResponse resp = (PlReportResponse) body;
-        Map<String, String> entry = resp.incomeBreakdown().stream()
-                .filter(item -> category.equals(item.get("category")))
+        assertThat(body).isInstanceOf(PLReport.class);
+        PLReport resp = (PLReport) body;
+        CategoryBreakdown entry = resp.getIncomeBreakdown().stream()
+                .filter(item -> category.equals(item.getCategory()))
                 .findFirst()
                 .orElse(null);
         assertThat(entry).isNotNull();
-        assertThat(entry.get("total")).isEqualTo(amount);
+        assertThat(entry.getTotal()).isEqualTo(amount);
     }
 
     @Then("the expense breakdown should contain {string} with amount {string}")
     public void theExpenseBreakdownShouldContain(
             final String category, final String amount) {
         Object body = stateStore.getResponseBody();
-        assertThat(body).isInstanceOf(PlReportResponse.class);
-        PlReportResponse resp = (PlReportResponse) body;
-        Map<String, String> entry = resp.expenseBreakdown().stream()
-                .filter(item -> category.equals(item.get("category")))
+        assertThat(body).isInstanceOf(PLReport.class);
+        PLReport resp = (PLReport) body;
+        CategoryBreakdown entry = resp.getExpenseBreakdown().stream()
+                .filter(item -> category.equals(item.getCategory()))
                 .findFirst()
                 .orElse(null);
         assertThat(entry).isNotNull();
-        assertThat(entry.get("total")).isEqualTo(amount);
+        assertThat(entry.getTotal()).isEqualTo(amount);
     }
 
     // ============================================================
@@ -90,7 +90,7 @@ public class UnitReportingSteps {
             final LocalDate from, final LocalDate to, final String currency) {
         String raw = stateStore.getCurrentUsername();
         final String username = (raw == null) ? "alice" : raw;
-        ResponseEntity<PlReportResponse> resp = reportController.profitAndLoss(
+        ResponseEntity<PLReport> resp = reportController.profitAndLoss(
                 UnitAuthSteps.userDetails(username), from, to, currency);
         stateStore.setStatusCode(resp.getStatusCode().value());
         stateStore.setResponseBody(resp.getBody());

@@ -1,15 +1,15 @@
 package com.demobejasb.auth.controller;
 
-import com.demobejasb.auth.dto.AuthResponse;
-import com.demobejasb.auth.dto.LoginRequest;
-import com.demobejasb.auth.dto.RefreshRequest;
-import com.demobejasb.auth.dto.RegisterRequest;
-import com.demobejasb.auth.dto.RegisterResponse;
 import com.demobejasb.auth.service.AccountNotActiveException;
 import com.demobejasb.auth.service.AuthService;
 import com.demobejasb.auth.service.InvalidCredentialsException;
 import com.demobejasb.auth.service.InvalidTokenException;
 import com.demobejasb.auth.service.UsernameAlreadyExistsException;
+import com.demobejasb.contracts.AuthTokens;
+import com.demobejasb.contracts.LoginRequest;
+import com.demobejasb.contracts.RefreshRequest;
+import com.demobejasb.contracts.RegisterRequest;
+import com.demobejasb.contracts.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -32,22 +32,22 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponse> register(
+    public ResponseEntity<User> register(
             @Valid @RequestBody final RegisterRequest request)
             throws UsernameAlreadyExistsException {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody final LoginRequest request)
+    public ResponseEntity<AuthTokens> login(@Valid @RequestBody final LoginRequest request)
             throws InvalidCredentialsException, AccountNotActiveException {
         return ResponseEntity.ok(authService.login(request));
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<AuthResponse> refresh(@Valid @RequestBody final RefreshRequest request)
+    public ResponseEntity<AuthTokens> refresh(@Valid @RequestBody final RefreshRequest request)
             throws InvalidTokenException, AccountNotActiveException {
-        return ResponseEntity.ok(authService.refresh(request.refreshToken()));
+        return ResponseEntity.ok(authService.refresh(request.getRefreshToken()));
     }
 
     @PostMapping("/logout")

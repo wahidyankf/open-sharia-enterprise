@@ -2,15 +2,17 @@ package com.demobejasb.expense.controller;
 
 import com.demobejasb.auth.model.User;
 import com.demobejasb.auth.repository.UserRepository;
-import com.demobejasb.expense.dto.ExpenseListResponse;
-import com.demobejasb.expense.dto.ExpenseRequest;
-import com.demobejasb.expense.dto.ExpenseResponse;
-import com.demobejasb.expense.model.Expense;
+import com.demobejasb.contracts.CreateExpenseRequest;
+import com.demobejasb.contracts.Expense;
+import com.demobejasb.contracts.ExpenseListResponse;
 import com.demobejasb.expense.repository.ExpenseRepository;
 import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -47,35 +49,35 @@ public class ExpenseController {
     }
 
     @PostMapping
-    public ResponseEntity<ExpenseResponse> create(
+    public ResponseEntity<Expense> create(
             @AuthenticationPrincipal final UserDetails userDetails,
-            @Valid @RequestBody final ExpenseRequest request) {
+            @Valid @RequestBody final CreateExpenseRequest request) {
         User user = getUser(userDetails);
-        Expense expense =
-                new Expense(
+        com.demobejasb.expense.model.Expense expense =
+                new com.demobejasb.expense.model.Expense(
                         user,
-                        request.amount(),
-                        request.currency(),
-                        request.category(),
-                        request.description(),
-                        request.date(),
-                        request.type().toLowerCase());
-        expense.setQuantity(request.quantity());
-        expense.setUnit(request.unit());
-        Expense saved = expenseRepository.save(expense);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ExpenseResponse.from(saved));
+                        new BigDecimal(request.getAmount()),
+                        request.getCurrency(),
+                        request.getCategory(),
+                        request.getDescription(),
+                        request.getDate(),
+                        request.getType().getValue().toLowerCase());
+        expense.setQuantity(request.getQuantity());
+        expense.setUnit(request.getUnit());
+        com.demobejasb.expense.model.Expense saved = expenseRepository.save(expense);
+        return ResponseEntity.status(HttpStatus.CREATED).body(buildExpenseResponse(saved));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ExpenseResponse> getById(
+    public ResponseEntity<Expense> getById(
             @AuthenticationPrincipal final UserDetails userDetails,
             @PathVariable final UUID id) {
         User user = getUser(userDetails);
-        Expense expense =
+        com.demobejasb.expense.model.Expense expense =
                 expenseRepository
                         .findByIdAndUser(id, user)
                         .orElseThrow(() -> new RuntimeException("Expense not found"));
-        return ResponseEntity.ok(ExpenseResponse.from(expense));
+        return ResponseEntity.ok(buildExpenseResponse(expense));
     }
 
     @GetMapping
@@ -84,23 +86,30 @@ public class ExpenseController {
             @RequestParam(defaultValue = "0") final int page,
             @RequestParam(defaultValue = "20") final int size) {
         User user = getUser(userDetails);
-        Page<Expense> expenses =
+        Page<com.demobejasb.expense.model.Expense> expenses =
                 expenseRepository.findAllByUser(
                         user, PageRequest.of(page, size, Sort.by("createdAt").descending()));
-        List<ExpenseResponse> data = expenses.getContent().stream().map(ExpenseResponse::from).toList();
-        return ResponseEntity.ok(new ExpenseListResponse(data, expenses.getTotalElements(), page));
+        List<Expense> data = expenses.getContent().stream()
+                .map(ExpenseController::buildExpenseResponse).toList();
+        ExpenseListResponse response = new ExpenseListResponse();
+        response.setContent(data);
+        response.setTotalElements((int) expenses.getTotalElements());
+        response.setTotalPages(expenses.getTotalPages());
+        response.setPage(page);
+        response.setSize(size);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/summary")
     public ResponseEntity<Map<String, String>> summary(
             @AuthenticationPrincipal final UserDetails userDetails) {
         User user = getUser(userDetails);
-        List<Expense> allExpenses =
+        List<com.demobejasb.expense.model.Expense> allExpenses =
                 expenseRepository
                         .findAllByUser(user, PageRequest.of(0, Integer.MAX_VALUE, Sort.unsorted()))
                         .getContent();
         Map<String, BigDecimal> totals = new HashMap<>();
-        for (Expense e : allExpenses) {
+        for (com.demobejasb.expense.model.Expense e : allExpenses) {
             if ("expense".equals(e.getType())) {
                 totals.merge(e.getCurrency(), e.getAmount(), BigDecimal::add);
             }
@@ -113,26 +122,26 @@ public class ExpenseController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ExpenseResponse> update(
+    public ResponseEntity<Expense> update(
             @AuthenticationPrincipal final UserDetails userDetails,
             @PathVariable final UUID id,
-            @Valid @RequestBody final ExpenseRequest request) {
+            @Valid @RequestBody final CreateExpenseRequest request) {
         User user = getUser(userDetails);
-        Expense expense =
+        com.demobejasb.expense.model.Expense expense =
                 expenseRepository
                         .findByIdAndUser(id, user)
                         .orElseThrow(() -> new RuntimeException("Expense not found"));
-        expense.setAmount(request.amount());
-        expense.setCurrency(request.currency());
-        expense.setCategory(request.category());
-        expense.setDescription(request.description());
-        expense.setDate(request.date());
-        expense.setType(request.type().toLowerCase());
-        expense.setQuantity(request.quantity());
-        expense.setUnit(request.unit());
+        expense.setAmount(new BigDecimal(request.getAmount()));
+        expense.setCurrency(request.getCurrency());
+        expense.setCategory(request.getCategory());
+        expense.setDescription(request.getDescription());
+        expense.setDate(request.getDate());
+        expense.setType(request.getType().getValue().toLowerCase());
+        expense.setQuantity(request.getQuantity());
+        expense.setUnit(request.getUnit());
         expense.setUpdatedAt(Instant.now());
-        Expense saved = expenseRepository.save(expense);
-        return ResponseEntity.ok(ExpenseResponse.from(saved));
+        com.demobejasb.expense.model.Expense saved = expenseRepository.save(expense);
+        return ResponseEntity.ok(buildExpenseResponse(saved));
     }
 
     @DeleteMapping("/{id}")
@@ -140,12 +149,48 @@ public class ExpenseController {
             @AuthenticationPrincipal final UserDetails userDetails,
             @PathVariable final UUID id) {
         User user = getUser(userDetails);
-        Expense expense =
+        com.demobejasb.expense.model.Expense expense =
                 expenseRepository
                         .findByIdAndUser(id, user)
                         .orElseThrow(() -> new RuntimeException("Expense not found"));
         expenseRepository.delete(expense);
         return ResponseEntity.noContent().build();
+    }
+
+    public static Expense buildExpenseResponse(final com.demobejasb.expense.model.Expense expense) {
+        String formattedAmount;
+        if ("IDR".equals(expense.getCurrency())) {
+            formattedAmount =
+                    expense.getAmount()
+                            .setScale(0, RoundingMode.HALF_UP)
+                            .toPlainString();
+        } else {
+            formattedAmount =
+                    expense.getAmount()
+                            .setScale(2, RoundingMode.HALF_UP)
+                            .toPlainString();
+        }
+        Expense response = new Expense();
+        response.setId(expense.getId().toString());
+        response.setUserId(expense.getUser().getId().toString());
+        response.setAmount(formattedAmount);
+        response.setCurrency(expense.getCurrency());
+        response.setCategory(expense.getCategory());
+        response.setDescription(expense.getDescription());
+        response.setDate(expense.getDate());
+        response.setType(Expense.TypeEnum.fromValue(expense.getType()));
+        response.setQuantity(expense.getQuantity());
+        response.setUnit(expense.getUnit());
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+        response.setCreatedAt(
+                expense.getCreatedAt() != null
+                        ? expense.getCreatedAt().atOffset(ZoneOffset.UTC)
+                        : now);
+        response.setUpdatedAt(
+                expense.getUpdatedAt() != null
+                        ? expense.getUpdatedAt().atOffset(ZoneOffset.UTC)
+                        : now);
+        return response;
     }
 
     private User getUser(final UserDetails userDetails) {

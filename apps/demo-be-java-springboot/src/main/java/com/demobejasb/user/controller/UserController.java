@@ -2,10 +2,10 @@ package com.demobejasb.user.controller;
 
 import com.demobejasb.auth.model.User;
 import com.demobejasb.auth.repository.UserRepository;
+import com.demobejasb.auth.service.AuthService;
 import com.demobejasb.auth.service.InvalidCredentialsException;
-import com.demobejasb.user.dto.ChangePasswordRequest;
-import com.demobejasb.user.dto.UpdateProfileRequest;
-import com.demobejasb.user.dto.UserProfileResponse;
+import com.demobejasb.contracts.ChangePasswordRequest;
+import com.demobejasb.contracts.UpdateProfileRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -32,22 +32,22 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserProfileResponse> getProfile(
+    public ResponseEntity<com.demobejasb.contracts.User> getProfile(
             @AuthenticationPrincipal final UserDetails userDetails) {
         User user = getUser(userDetails);
-        return ResponseEntity.ok(UserProfileResponse.from(user));
+        return ResponseEntity.ok(AuthService.buildUserResponse(user));
     }
 
     @PatchMapping("/me")
-    public ResponseEntity<UserProfileResponse> updateProfile(
+    public ResponseEntity<com.demobejasb.contracts.User> updateProfile(
             @AuthenticationPrincipal final UserDetails userDetails,
             @Valid @RequestBody final UpdateProfileRequest request) {
         User user = getUser(userDetails);
-        if (request.displayName() != null) {
-            user.setDisplayName(request.displayName());
+        if (request.getDisplayName() != null) {
+            user.setDisplayName(request.getDisplayName());
         }
         userRepository.save(user);
-        return ResponseEntity.ok(UserProfileResponse.from(user));
+        return ResponseEntity.ok(AuthService.buildUserResponse(user));
     }
 
     @PostMapping("/me/password")
@@ -56,10 +56,10 @@ public class UserController {
             @Valid @RequestBody final ChangePasswordRequest request)
             throws InvalidCredentialsException {
         User user = getUser(userDetails);
-        if (!passwordEncoder.matches(request.oldPassword(), user.getPasswordHash())) {
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPasswordHash())) {
             throw new InvalidCredentialsException();
         }
-        user.setPasswordHash(java.util.Objects.requireNonNull(passwordEncoder.encode(request.newPassword())));
+        user.setPasswordHash(java.util.Objects.requireNonNull(passwordEncoder.encode(request.getNewPassword())));
         userRepository.save(user);
         return ResponseEntity.ok().build();
     }

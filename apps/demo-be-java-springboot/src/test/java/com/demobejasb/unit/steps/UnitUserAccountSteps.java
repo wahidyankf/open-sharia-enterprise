@@ -2,10 +2,9 @@ package com.demobejasb.unit.steps;
 
 import com.demobejasb.auth.repository.UserRepository;
 import com.demobejasb.auth.service.InvalidCredentialsException;
+import com.demobejasb.contracts.ChangePasswordRequest;
+import com.demobejasb.contracts.UpdateProfileRequest;
 import com.demobejasb.user.controller.UserController;
-import com.demobejasb.user.dto.ChangePasswordRequest;
-import com.demobejasb.user.dto.UpdateProfileRequest;
-import com.demobejasb.user.dto.UserProfileResponse;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,7 @@ public class UnitUserAccountSteps {
     @When("^alice sends GET /api/v1/users/me$")
     public void aliceSendsGetUsersMe() {
         String username = resolveUsername();
-        ResponseEntity<UserProfileResponse> resp = userController.getProfile(
+        ResponseEntity<com.demobejasb.contracts.User> resp = userController.getProfile(
                 UnitAuthSteps.userDetails(username));
         stateStore.setStatusCode(resp.getStatusCode().value());
         stateStore.setResponseBody(resp.getBody());
@@ -39,9 +38,10 @@ public class UnitUserAccountSteps {
     @When("^alice sends PATCH /api/v1/users/me with body \\{ \"displayName\": \"Alice Smith\" \\}$")
     public void aliceSendsPatchUsersMeWithDisplayName() {
         String username = resolveUsername();
-        ResponseEntity<UserProfileResponse> resp = userController.updateProfile(
-                UnitAuthSteps.userDetails(username),
-                new UpdateProfileRequest("Alice Smith"));
+        UpdateProfileRequest req = new UpdateProfileRequest();
+        req.setDisplayName("Alice Smith");
+        ResponseEntity<com.demobejasb.contracts.User> resp = userController.updateProfile(
+                UnitAuthSteps.userDetails(username), req);
         stateStore.setStatusCode(resp.getStatusCode().value());
         stateStore.setResponseBody(resp.getBody());
     }
@@ -86,9 +86,11 @@ public class UnitUserAccountSteps {
             final String oldPassword, final String newPassword) {
         String username = resolveUsername();
         try {
+            ChangePasswordRequest req = new ChangePasswordRequest();
+            req.setOldPassword(oldPassword);
+            req.setNewPassword(newPassword);
             ResponseEntity<Void> resp = userController.changePassword(
-                    UnitAuthSteps.userDetails(username),
-                    new ChangePasswordRequest(oldPassword, newPassword));
+                    UnitAuthSteps.userDetails(username), req);
             stateStore.setStatusCode(resp.getStatusCode().value());
             stateStore.setResponseBody(java.util.Map.of("message", "Password changed"));
         } catch (InvalidCredentialsException e) {

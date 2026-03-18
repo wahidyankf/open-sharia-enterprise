@@ -3,10 +3,9 @@ package com.demobejasb.integration.steps;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.demobejasb.auth.model.User;
 import com.demobejasb.auth.repository.UserRepository;
-import com.demobejasb.expense.dto.ExpenseListResponse;
-import com.demobejasb.expense.dto.ExpenseRequest;
-import com.demobejasb.expense.dto.ExpenseResponse;
-import com.demobejasb.expense.model.Expense;
+import com.demobejasb.contracts.Expense;
+import com.demobejasb.contracts.ExpenseListResponse;
+import com.demobejasb.expense.controller.ExpenseController;
 import com.demobejasb.expense.repository.ExpenseRepository;
 import com.demobejasb.integration.ResponseStore;
 import com.demobejasb.security.JwtUtil;
@@ -15,6 +14,7 @@ import jakarta.validation.Validator;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -34,8 +34,6 @@ import org.springframework.stereotype.Component;
 @Scope("cucumber-glue")
 public class ExpenseStepHelper {
 
-    private static final Validator BEAN_VALIDATOR =
-            Validation.buildDefaultValidatorFactory().getValidator();
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Autowired
@@ -65,7 +63,7 @@ public class ExpenseStepHelper {
      * Creates an expense for the currently authenticated user (identified by the stored JWT token).
      * Parses the JSON body, validates it, creates the entity and stores the result in ResponseStore.
      *
-     * @param body JSON string matching ExpenseRequest schema
+     * @param body JSON string matching CreateExpenseRequest schema
      * @param storeId if true, also stores the created expense ID in TokenStore
      */
     public void createExpenseForCurrentUser(final String body, final boolean storeId) {
@@ -78,29 +76,27 @@ public class ExpenseStepHelper {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found: " + username));
 
-        ExpenseRequest request = parseExpenseBody(body);
-        if (request == null) {
+        ParsedExpense parsed = parseExpenseBody(body);
+        if (parsed == null) {
             responseStore.setResponse(400, Map.of("message", "Invalid request body"));
             return;
         }
-        var violations = BEAN_VALIDATOR.validate(request);
-        if (!violations.isEmpty()) {
-            String msg = violations.iterator().next().getMessage();
-            responseStore.setResponse(400, Map.of("message", "Validation failed for field: " + msg));
+        if (!parsed.isValid()) {
+            responseStore.setResponse(400, Map.of("message", "Validation failed"));
             return;
         }
-        Expense expense = new Expense(
+        com.demobejasb.expense.model.Expense expense = new com.demobejasb.expense.model.Expense(
                 user,
-                request.amount(),
-                request.currency(),
-                request.category(),
-                request.description(),
-                request.date(),
-                request.type());
-        expense.setQuantity(request.quantity());
-        expense.setUnit(request.unit());
-        Expense saved = expenseRepository.save(expense);
-        ExpenseResponse resp = ExpenseResponse.from(saved);
+                parsed.amount,
+                parsed.currency,
+                parsed.category,
+                parsed.description,
+                parsed.date,
+                parsed.type);
+        expense.setQuantity(parsed.quantity);
+        expense.setUnit(parsed.unit);
+        com.demobejasb.expense.model.Expense saved = expenseRepository.save(expense);
+        Expense resp = ExpenseController.buildExpenseResponse(saved);
         responseStore.setResponse(201, resp);
         if (storeId) {
             tokenStore.setExpenseId(saved.getId());
@@ -115,20 +111,20 @@ public class ExpenseStepHelper {
         String username = jwtUtil.extractUsername(token);
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found: " + username));
-        ExpenseRequest request = parseExpenseBody(body);
-        if (request == null) {
+        ParsedExpense parsed = parseExpenseBody(body);
+        if (parsed == null) {
             throw new RuntimeException("Could not parse expense body: " + body);
         }
-        Expense expense = new Expense(
+        com.demobejasb.expense.model.Expense expense = new com.demobejasb.expense.model.Expense(
                 user,
-                request.amount(),
-                request.currency(),
-                request.category(),
-                request.description(),
-                request.date(),
-                request.type());
-        expense.setQuantity(request.quantity());
-        expense.setUnit(request.unit());
+                parsed.amount,
+                parsed.currency,
+                parsed.category,
+                parsed.description,
+                parsed.date,
+                parsed.type);
+        expense.setQuantity(parsed.quantity);
+        expense.setUnit(parsed.unit);
         return expenseRepository.save(expense).getId();
     }
 
@@ -145,7 +141,7 @@ public class ExpenseStepHelper {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         expenseRepository.findByIdAndUser(expenseId, user).ifPresentOrElse(
-                e -> responseStore.setResponse(200, ExpenseResponse.from(e)),
+                e -> responseStore.setResponse(200, ExpenseController.buildExpenseResponse(e)),
                 () -> responseStore.setResponse(404, Map.of("message", "Expense not found")));
     }
 
@@ -161,10 +157,17 @@ public class ExpenseStepHelper {
         String username = jwtUtil.extractUsername(token);
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Page<Expense> page = expenseRepository.findAllByUser(
+        Page<com.demobejasb.expense.model.Expense> page = expenseRepository.findAllByUser(
                 user, PageRequest.of(0, 20, Sort.by("createdAt").descending()));
-        List<ExpenseResponse> data = page.getContent().stream().map(ExpenseResponse::from).toList();
-        responseStore.setResponse(200, new ExpenseListResponse(data, page.getTotalElements(), 0));
+        List<Expense> data = page.getContent().stream()
+                .map(ExpenseController::buildExpenseResponse).toList();
+        ExpenseListResponse response = new ExpenseListResponse();
+        response.setContent(data);
+        response.setTotalElements((int) page.getTotalElements());
+        response.setTotalPages(page.getTotalPages());
+        response.setPage(0);
+        response.setSize(20);
+        responseStore.setResponse(200, response);
     }
 
     /**
@@ -179,23 +182,23 @@ public class ExpenseStepHelper {
         String username = jwtUtil.extractUsername(token);
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        ExpenseRequest request = parseExpenseBody(body);
-        if (request == null) {
+        ParsedExpense parsed = parseExpenseBody(body);
+        if (parsed == null) {
             responseStore.setResponse(400, Map.of("message", "Invalid request body"));
             return;
         }
         expenseRepository.findByIdAndUser(expenseId, user).ifPresentOrElse(expense -> {
-            expense.setAmount(request.amount());
-            expense.setCurrency(request.currency());
-            expense.setCategory(request.category());
-            expense.setDescription(request.description());
-            expense.setDate(request.date());
-            expense.setType(request.type());
-            expense.setQuantity(request.quantity());
-            expense.setUnit(request.unit());
+            expense.setAmount(parsed.amount);
+            expense.setCurrency(parsed.currency);
+            expense.setCategory(parsed.category);
+            expense.setDescription(parsed.description);
+            expense.setDate(parsed.date);
+            expense.setType(parsed.type);
+            expense.setQuantity(parsed.quantity);
+            expense.setUnit(parsed.unit);
             expense.setUpdatedAt(Instant.now());
-            Expense saved = expenseRepository.save(expense);
-            responseStore.setResponse(200, ExpenseResponse.from(saved));
+            com.demobejasb.expense.model.Expense saved = expenseRepository.save(expense);
+            responseStore.setResponse(200, ExpenseController.buildExpenseResponse(saved));
         }, () -> responseStore.setResponse(404, Map.of("message", "Expense not found")));
     }
 
@@ -229,11 +232,11 @@ public class ExpenseStepHelper {
         String username = jwtUtil.extractUsername(token);
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        List<Expense> all = expenseRepository
+        List<com.demobejasb.expense.model.Expense> all = expenseRepository
                 .findAllByUser(user, PageRequest.of(0, Integer.MAX_VALUE, Sort.unsorted()))
                 .getContent();
         java.util.Map<String, BigDecimal> totals = new java.util.HashMap<>();
-        for (Expense e : all) {
+        for (com.demobejasb.expense.model.Expense e : all) {
             if ("expense".equals(e.getType())) {
                 totals.merge(e.getCurrency(), e.getAmount(), BigDecimal::add);
             }
@@ -246,10 +249,10 @@ public class ExpenseStepHelper {
     }
 
     /**
-     * Parses a JSON body string into an ExpenseRequest.
+     * Parses a JSON body string into a ParsedExpense holder.
      */
     @Nullable
-    private ExpenseRequest parseExpenseBody(final String body) {
+    private ParsedExpense parseExpenseBody(final String body) {
         try {
             Map<?, ?> map = MAPPER.readValue(body, Map.class);
             BigDecimal amount = new BigDecimal(String.valueOf(map.get("amount")));
@@ -262,7 +265,7 @@ public class ExpenseStepHelper {
                     ? new BigDecimal(String.valueOf(map.get("quantity")))
                     : null;
             String unit = (String) map.get("unit");
-            return new ExpenseRequest(amount, currency, category, description, date, type,
+            return new ParsedExpense(amount, currency, category, description, date, type,
                     quantity, unit);
         } catch (Exception e) {
             return null;
@@ -274,5 +277,45 @@ public class ExpenseStepHelper {
             return amount.setScale(0, java.math.RoundingMode.HALF_UP).toPlainString();
         }
         return amount.setScale(2, java.math.RoundingMode.HALF_UP).toPlainString();
+    }
+
+    /** Simple data holder for parsed expense fields. */
+    static class ParsedExpense {
+        final BigDecimal amount;
+        final String currency;
+        final String category;
+        final String description;
+        final LocalDate date;
+        final String type;
+        final @Nullable BigDecimal quantity;
+        final @Nullable String unit;
+
+        ParsedExpense(
+                final BigDecimal amount,
+                final String currency,
+                final String category,
+                final String description,
+                final LocalDate date,
+                final String type,
+                final @Nullable BigDecimal quantity,
+                final @Nullable String unit) {
+            this.amount = amount;
+            this.currency = currency;
+            this.category = category;
+            this.description = description;
+            this.date = date;
+            this.type = type;
+            this.quantity = quantity;
+            this.unit = unit;
+        }
+
+        boolean isValid() {
+            return amount != null && amount.compareTo(BigDecimal.ZERO) > 0
+                    && currency != null && !currency.isBlank()
+                    && category != null && !category.isBlank()
+                    && description != null && !description.isBlank()
+                    && date != null
+                    && type != null && !type.isBlank();
+        }
     }
 }

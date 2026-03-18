@@ -5,7 +5,7 @@ import com.demobejasb.attachment.dto.AttachmentListResponse;
 import com.demobejasb.attachment.dto.AttachmentResponse;
 import com.demobejasb.attachment.model.Attachment;
 import com.demobejasb.attachment.repository.AttachmentRepository;
-import com.demobejasb.auth.dto.RegisterRequest;
+import com.demobejasb.contracts.RegisterRequest;
 import com.demobejasb.auth.model.User;
 import com.demobejasb.auth.repository.UserRepository;
 import com.demobejasb.auth.service.AuthService;
@@ -293,8 +293,11 @@ public class UnitAttachmentSteps {
     private void registerBob() {
         if (userRepository.findByUsername("bob").isEmpty()) {
             try {
-                authService.register(
-                        new RegisterRequest("bob", "bob@example.com", "Str0ng#Pass2"));
+                RegisterRequest req = new RegisterRequest();
+                req.setUsername("bob");
+                req.setEmail("bob@example.com");
+                req.setPassword("Str0ng#Pass2");
+                authService.register(req);
             } catch (UsernameAlreadyExistsException ignored) {
                 // Already registered
             }

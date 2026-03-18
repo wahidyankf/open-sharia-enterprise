@@ -1,13 +1,13 @@
 package com.demobejasb.unit.steps;
 
 import com.demobejasb.auth.controller.AuthController;
-import com.demobejasb.auth.dto.AuthResponse;
-import com.demobejasb.auth.dto.RefreshRequest;
 import com.demobejasb.auth.repository.RefreshTokenRepository;
 import com.demobejasb.auth.service.AccountNotActiveException;
 import com.demobejasb.auth.service.AuthService;
 import com.demobejasb.auth.service.InvalidTokenException;
 import com.demobejasb.auth.service.TokenExpiredException;
+import com.demobejasb.contracts.AuthTokens;
+import com.demobejasb.contracts.RefreshRequest;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -63,9 +63,9 @@ public class UnitTokenLifecycleSteps {
         String originalRt = stateStore.getRefreshToken();
         stateStore.setOriginalRefreshToken(originalRt);
         try {
-            AuthResponse resp = authService.refresh(originalRt);
-            stateStore.setAccessToken(resp.accessToken());
-            stateStore.setRefreshToken(resp.refreshToken());
+            AuthTokens resp = authService.refresh(originalRt);
+            stateStore.setAccessToken(resp.getAccessToken());
+            stateStore.setRefreshToken(resp.getRefreshToken());
         } catch (InvalidTokenException | AccountNotActiveException e) {
             throw new RuntimeException("Expected refresh to succeed: " + e.getMessage(), e);
         }
@@ -139,15 +139,16 @@ public class UnitTokenLifecycleSteps {
 
     private void performRefresh(final String rawRefreshToken) {
         try {
-            ResponseEntity<AuthResponse> response =
-                    authController.refresh(new RefreshRequest(rawRefreshToken));
-            AuthResponse resp = response.getBody();
+            RefreshRequest req = new RefreshRequest();
+            req.setRefreshToken(rawRefreshToken);
+            ResponseEntity<AuthTokens> response = authController.refresh(req);
+            AuthTokens resp = response.getBody();
             stateStore.setStatusCode(response.getStatusCode().value());
             stateStore.setResponseBody(resp);
             stateStore.setLastException(null);
             if (resp != null) {
-                stateStore.setAccessToken(resp.accessToken());
-                stateStore.setRefreshToken(resp.refreshToken());
+                stateStore.setAccessToken(resp.getAccessToken());
+                stateStore.setRefreshToken(resp.getRefreshToken());
             }
         } catch (TokenExpiredException e) {
             stateStore.setStatusCode(401);

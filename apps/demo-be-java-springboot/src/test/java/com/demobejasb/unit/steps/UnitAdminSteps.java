@@ -1,14 +1,13 @@
 package com.demobejasb.unit.steps;
 
 import com.demobejasb.admin.controller.AdminController;
-import com.demobejasb.admin.dto.AdminPasswordResetResponse;
-import com.demobejasb.admin.dto.AdminUserListResponse;
-import com.demobejasb.admin.dto.AdminUserResponse;
-import com.demobejasb.admin.dto.DisableUserRequest;
-import com.demobejasb.auth.dto.RegisterRequest;
 import com.demobejasb.auth.repository.UserRepository;
 import com.demobejasb.auth.service.UsernameAlreadyExistsException;
 import com.demobejasb.auth.service.AuthService;
+import com.demobejasb.contracts.DisableRequest;
+import com.demobejasb.contracts.PasswordResetResponse;
+import com.demobejasb.contracts.User;
+import com.demobejasb.contracts.UserListResponse;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -50,14 +49,14 @@ public class UnitAdminSteps {
 
     @When("^the admin sends GET /api/v1/admin/users$")
     public void theAdminSendsGetAdminUsers() {
-        ResponseEntity<AdminUserListResponse> resp = adminController.listUsers(null, 0, 20);
+        ResponseEntity<UserListResponse> resp = adminController.listUsers(null, 0, 20);
         stateStore.setStatusCode(resp.getStatusCode().value());
         stateStore.setResponseBody(resp.getBody());
     }
 
     @When("^the admin sends GET /api/v1/admin/users\\?search=alice@example\\.com$")
     public void theAdminSendsGetAdminUsersSearchByEmail() {
-        ResponseEntity<AdminUserListResponse> resp =
+        ResponseEntity<UserListResponse> resp =
                 adminController.listUsers("alice@example.com", 0, 20);
         stateStore.setStatusCode(resp.getStatusCode().value());
         stateStore.setResponseBody(resp.getBody());
@@ -67,14 +66,14 @@ public class UnitAdminSteps {
     public void theResponseBodyShouldContainUserWithFieldEqual(
             final String field, final String value) {
         Object body = stateStore.getResponseBody();
-        assertThat(body).isInstanceOf(AdminUserListResponse.class);
-        AdminUserListResponse resp = (AdminUserListResponse) body;
-        assertThat(resp.content()).isNotEmpty();
-        boolean found = resp.content().stream().anyMatch(user -> {
+        assertThat(body).isInstanceOf(UserListResponse.class);
+        UserListResponse resp = (UserListResponse) body;
+        assertThat(resp.getContent()).isNotEmpty();
+        boolean found = resp.getContent().stream().anyMatch(user -> {
             Object fieldValue = switch (field) {
-                case "email" -> user.email();
-                case "username" -> user.username();
-                case "status" -> user.status();
+                case "email" -> user.getEmail();
+                case "username" -> user.getUsername();
+                case "status" -> user.getStatus() != null ? user.getStatus().getValue() : null;
                 default -> null;
             };
             return value.equals(fieldValue);
@@ -90,8 +89,9 @@ public class UnitAdminSteps {
             return;
         }
         try {
-            ResponseEntity<AdminUserResponse> resp = adminController.disableUser(
-                    aliceId, new DisableUserRequest("Policy violation"));
+            DisableRequest disableReq = new DisableRequest();
+            disableReq.setReason("Policy violation");
+            ResponseEntity<User> resp = adminController.disableUser(aliceId, disableReq);
             stateStore.setStatusCode(resp.getStatusCode().value());
             stateStore.setResponseBody(resp.getBody());
         } catch (RuntimeException e) {
@@ -108,7 +108,7 @@ public class UnitAdminSteps {
             return;
         }
         try {
-            ResponseEntity<AdminUserResponse> resp = adminController.enableUser(aliceId);
+            ResponseEntity<User> resp = adminController.enableUser(aliceId);
             stateStore.setStatusCode(resp.getStatusCode().value());
             stateStore.setResponseBody(resp.getBody());
         } catch (RuntimeException e) {
@@ -125,7 +125,7 @@ public class UnitAdminSteps {
             return;
         }
         try {
-            ResponseEntity<AdminPasswordResetResponse> resp =
+            ResponseEntity<PasswordResetResponse> resp =
                     adminController.forcePasswordReset(aliceId);
             stateStore.setStatusCode(resp.getStatusCode().value());
             stateStore.setResponseBody(resp.getBody());
@@ -144,7 +144,12 @@ public class UnitAdminSteps {
             String password = "alice".equals(username) ? "Str0ng#Pass1" : "Str0ng#Pass1234";
             String email = username + "@example.com";
             try {
-                authService.register(new RegisterRequest(username, email, password));
+                com.demobejasb.contracts.RegisterRequest req =
+                        new com.demobejasb.contracts.RegisterRequest();
+                req.setUsername(username);
+                req.setEmail(email);
+                req.setPassword(password);
+                authService.register(req);
             } catch (UsernameAlreadyExistsException ignored) {
                 // Already registered
             }

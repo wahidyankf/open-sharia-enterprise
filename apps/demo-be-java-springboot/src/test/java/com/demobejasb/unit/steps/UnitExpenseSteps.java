@@ -3,22 +3,17 @@ package com.demobejasb.unit.steps;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.demobejasb.auth.model.User;
 import com.demobejasb.auth.repository.UserRepository;
+import com.demobejasb.contracts.CreateExpenseRequest;
+import com.demobejasb.contracts.Expense;
+import com.demobejasb.contracts.ExpenseListResponse;
 import com.demobejasb.expense.controller.ExpenseController;
-import com.demobejasb.expense.dto.ExpenseListResponse;
-import com.demobejasb.expense.dto.ExpenseRequest;
-import com.demobejasb.expense.dto.ExpenseResponse;
-import com.demobejasb.expense.model.Expense;
 import com.demobejasb.expense.repository.ExpenseRepository;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -33,9 +28,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @Scope("cucumber-glue")
 public class UnitExpenseSteps {
-
-    private static final Validator VALIDATOR =
-            Validation.buildDefaultValidatorFactory().getValidator();
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -81,7 +73,7 @@ public class UnitExpenseSteps {
     public void aliceHasCreated3Entries() {
         User user = getAlice();
         for (int i = 0; i < 3; i++) {
-            Expense expense = new Expense(
+            com.demobejasb.expense.model.Expense expense = new com.demobejasb.expense.model.Expense(
                     user, new BigDecimal("5.00"), "USD", "misc", "Entry",
                     LocalDate.of(2025, 1, 1), "expense");
             expenseRepository.save(expense);
@@ -100,7 +92,7 @@ public class UnitExpenseSteps {
             return;
         }
         try {
-            ResponseEntity<ExpenseResponse> resp = expenseController.getById(
+            ResponseEntity<Expense> resp = expenseController.getById(
                     UnitAuthSteps.userDetails(resolveUsername()), expenseId);
             stateStore.setStatusCode(resp.getStatusCode().value());
             stateStore.setResponseBody(resp.getBody());
@@ -137,11 +129,15 @@ public class UnitExpenseSteps {
             stateStore.setStatusCode(404);
             return;
         }
-        ExpenseRequest req = new ExpenseRequest(
-                new BigDecimal("12.00"), "USD", "food", "Updated breakfast",
-                LocalDate.of(2025, 1, 10), "expense", null, null);
+        CreateExpenseRequest req = new CreateExpenseRequest();
+        req.setAmount("12.00");
+        req.setCurrency("USD");
+        req.setCategory("food");
+        req.setDescription("Updated breakfast");
+        req.setDate(LocalDate.of(2025, 1, 10));
+        req.setType(CreateExpenseRequest.TypeEnum.EXPENSE);
         try {
-            ResponseEntity<ExpenseResponse> resp = expenseController.update(
+            ResponseEntity<Expense> resp = expenseController.update(
                     UnitAuthSteps.userDetails(resolveUsername()), expenseId, req);
             stateStore.setStatusCode(resp.getStatusCode().value());
             stateStore.setResponseBody(resp.getBody());
@@ -218,22 +214,54 @@ public class UnitExpenseSteps {
             if (quantityObj != null) {
                 qty = new BigDecimal(quantityObj.toString());
             }
-            ExpenseRequest req = new ExpenseRequest(
-                    new BigDecimal(amount),
-                    currency,
-                    category,
-                    description,
-                    LocalDate.parse(dateStr),
-                    type,
-                    qty,
-                    unit);
-            Set<ConstraintViolation<ExpenseRequest>> violations = VALIDATOR.validate(req);
-            if (!violations.isEmpty()) {
+
+            // Manual validation (generated types lack Bean Validation annotations)
+            if (amount == null || amount.isBlank()
+                    || currency == null || currency.isBlank()
+                    || category == null || category.isBlank()
+                    || description == null || description.isBlank()
+                    || dateStr == null || dateStr.isBlank()
+                    || type == null || type.isBlank()) {
                 stateStore.setStatusCode(400);
-                stateStore.setLastException(
-                        new IllegalArgumentException("Validation failed"));
+                stateStore.setLastException(new IllegalArgumentException("Validation failed"));
                 return;
             }
+            // Amount must be positive
+            BigDecimal parsedAmount = new BigDecimal(amount);
+            if (parsedAmount.compareTo(BigDecimal.ZERO) <= 0) {
+                stateStore.setStatusCode(400);
+                stateStore.setLastException(new IllegalArgumentException("Amount must be positive"));
+                return;
+            }
+            // Currency must be a supported 3-letter ISO code
+            java.util.Set<String> supportedCurrencies = java.util.Set.of(
+                    "USD", "IDR", "SGD", "MYR", "SAR", "AED", "BHD", "KWD", "QAR", "OMR");
+            if (!currency.matches("[A-Z]{3}") || !supportedCurrencies.contains(currency)) {
+                stateStore.setStatusCode(400);
+                stateStore.setLastException(new IllegalArgumentException("Unsupported currency: " + currency));
+                return;
+            }
+            // Unit must be null or in supported list
+            if (unit != null) {
+                java.util.Set<String> supportedUnits = java.util.Set.of(
+                        "liter", "ml", "kg", "g", "km", "meter",
+                        "gallon", "lb", "oz", "mile", "piece", "hour");
+                if (!supportedUnits.contains(unit)) {
+                    stateStore.setStatusCode(400);
+                    stateStore.setLastException(new IllegalArgumentException("Unsupported unit: " + unit));
+                    return;
+                }
+            }
+
+            CreateExpenseRequest req = new CreateExpenseRequest();
+            req.setAmount(amount);
+            req.setCurrency(currency);
+            req.setCategory(category);
+            req.setDescription(description);
+            req.setDate(LocalDate.parse(dateStr));
+            req.setType(CreateExpenseRequest.TypeEnum.fromValue(type));
+            req.setQuantity(qty);
+            req.setUnit(unit);
 
             if (storeResult) {
                 // This is a When step — user might be unauthenticated
@@ -245,13 +273,13 @@ public class UnitExpenseSteps {
             }
 
             // Call the controller to exercise controller code paths
-            ResponseEntity<ExpenseResponse> resp = expenseController.create(
+            ResponseEntity<Expense> resp = expenseController.create(
                     UnitAuthSteps.userDetails(resolveUsername()), req);
-            ExpenseResponse saved = resp.getBody();
+            Expense saved = resp.getBody();
             stateStore.setStatusCode(resp.getStatusCode().value());
             stateStore.setResponseBody(saved);
             if (saved != null) {
-                stateStore.setExpenseId(saved.id());
+                stateStore.setExpenseId(UUID.fromString(saved.getId()));
             }
         } catch (ResponseStatusException e) {
             stateStore.setStatusCode(e.getStatusCode().value());
@@ -281,12 +309,13 @@ public class UnitExpenseSteps {
                 qty = new BigDecimal(quantityObj.toString());
             }
             User user = getAlice();
-            Expense expense = new Expense(
-                    user, new BigDecimal(amount), currency, category, description,
-                    LocalDate.parse(dateStr), type);
+            com.demobejasb.expense.model.Expense expense =
+                    new com.demobejasb.expense.model.Expense(
+                            user, new BigDecimal(amount), currency, category, description,
+                            LocalDate.parse(dateStr), type);
             expense.setQuantity(qty);
             expense.setUnit(unit);
-            Expense saved = expenseRepository.save(expense);
+            com.demobejasb.expense.model.Expense saved = expenseRepository.save(expense);
             stateStore.setExpenseId(saved.getId());
         } catch (Exception e) {
             throw new RuntimeException("Failed to create expense in setup: " + e.getMessage(), e);
