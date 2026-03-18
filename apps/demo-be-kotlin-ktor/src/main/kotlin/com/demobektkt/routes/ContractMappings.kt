@@ -73,13 +73,25 @@ fun Expense.toContractExpense(): ContractExpense =
   )
 
 /** Map domain [Attachment] to [ContractAttachment] for HTTP responses. */
-fun Attachment.toContractAttachment(): ContractAttachment =
-  ContractAttachment(
+/** Attachment response with contract fields + extra url field for BDD spec compatibility. */
+@kotlinx.serialization.Serializable
+data class AttachmentWithUrl(
+  val id: String,
+  val filename: String,
+  val contentType: String,
+  @kotlinx.serialization.SerialName("size") val propertySize: Int,
+  @kotlinx.serialization.Contextual val createdAt: java.time.Instant,
+  val url: String,
+)
+
+fun Attachment.toAttachmentWithUrl(expenseId: java.util.UUID): AttachmentWithUrl =
+  AttachmentWithUrl(
     id = id.toString(),
     filename = filename,
     contentType = contentType,
     propertySize = sizeBytes.toInt(),
-    createdAt = createdAt.toContractInstant(),
+    createdAt = createdAt,
+    url = "/api/v1/expenses/$expenseId/attachments/$id/download",
   )
 
 /** Build an [AuthTokens] response from token strings. */

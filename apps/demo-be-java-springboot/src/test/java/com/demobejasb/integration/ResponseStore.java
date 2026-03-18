@@ -16,7 +16,20 @@ import org.springframework.stereotype.Component;
 @Scope("cucumber-glue")
 public class ResponseStore {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER;
+
+    static {
+        ObjectMapper m = new ObjectMapper();
+        // Register JSR310 module if available (Spring Boot includes it transitively)
+        try {
+            Class<?> moduleClass = Class.forName("com.fasterxml.jackson.datatype.jsr310.JavaTimeModule");
+            m.registerModule((com.fasterxml.jackson.databind.Module) moduleClass.getDeclaredConstructor().newInstance());
+            m.disable(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        } catch (Exception ignored) {
+            // JSR310 module not available — fall back to default serialization
+        }
+        MAPPER = m;
+    }
 
     private int statusCode;
     @Nullable

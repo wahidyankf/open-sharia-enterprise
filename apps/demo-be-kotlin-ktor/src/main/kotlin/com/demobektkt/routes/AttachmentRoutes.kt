@@ -24,7 +24,7 @@ import kotlinx.serialization.Serializable
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-@Serializable data class AttachmentListResponse(val attachments: List<ContractAttachment>)
+@Serializable data class AttachmentListResponse(val attachments: List<AttachmentWithUrl>)
 
 object AttachmentRoutes : KoinComponent {
   private val attachmentRepository: AttachmentRepository by inject()
@@ -93,7 +93,7 @@ object AttachmentRoutes : KoinComponent {
         )
       )
 
-    call.respond(HttpStatusCode.Created, attachment.toContractAttachment())
+    call.respond(HttpStatusCode.Created, attachment.toAttachmentWithUrl(expenseId))
   }
 
   suspend fun list(call: RoutingCall) {
@@ -111,7 +111,7 @@ object AttachmentRoutes : KoinComponent {
     }
 
     val attachments = attachmentRepository.findAllByExpense(expenseId)
-    val response = AttachmentListResponse(attachments.map { it.toContractAttachment() })
+    val response = AttachmentListResponse(attachments.map { it.toAttachmentWithUrl(expenseId) })
     call.respond(response)
   }
 
