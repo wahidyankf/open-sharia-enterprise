@@ -7,11 +7,14 @@
     "codegen": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx openapi-generator-cli generate -i $(pwd)/specs/apps/demo/contracts/generated/openapi-bundled.yaml -g dart -o $(pwd)/apps/demo-fe-dart-flutterweb/generated-contracts --additional-properties=pubName=demo_contracts --global-property=models,modelDocs=false,apiDocs=false"
+        "command": "npx openapi-generator-cli generate -i $(pwd)/specs/apps/demo/contracts/generated/openapi-bundled.yaml -g dart -o $(pwd)/apps/demo-fe-dart-flutterweb/generated-contracts --additional-properties=pubName=demo_contracts --global-property=models,modelDocs=false,apiDocs=false && sh $(pwd)/apps/demo-fe-dart-flutterweb/scripts/post-codegen.sh && cd $(pwd)/apps/demo-fe-dart-flutterweb && flutter pub get"
       },
       "dependsOn": ["demo-contracts:bundle"],
       "cache": true,
-      "inputs": ["{workspaceRoot}/specs/apps/demo/contracts/generated/openapi-bundled.yaml"],
+      "inputs": [
+        "{workspaceRoot}/specs/apps/demo/contracts/generated/openapi-bundled.yaml",
+        "{projectRoot}/scripts/post-codegen.sh"
+      ],
       "outputs": ["{projectRoot}/generated-contracts"]
     },
     "dev": {
@@ -28,10 +31,19 @@
         "cwd": "{projectRoot}"
       },
       "outputs": ["{projectRoot}/build/web"],
-      "dependsOn": []
+      "dependsOn": ["codegen"]
     },
     "lint": {
       "executor": "nx:run-commands",
+      "dependsOn": ["codegen"],
+      "options": {
+        "command": "dart analyze --fatal-infos",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["codegen"],
       "options": {
         "command": "dart analyze --fatal-infos",
         "cwd": "{projectRoot}"
@@ -39,6 +51,7 @@
     },
     "test:quick": {
       "executor": "nx:run-commands",
+      "dependsOn": ["codegen"],
       "options": {
         "command": "dart analyze --fatal-infos && flutter test test/unit",
         "cwd": "{projectRoot}"
@@ -46,6 +59,7 @@
     },
     "test:unit": {
       "executor": "nx:run-commands",
+      "dependsOn": ["codegen"],
       "options": {
         "command": "flutter test test/unit",
         "cwd": "{projectRoot}"

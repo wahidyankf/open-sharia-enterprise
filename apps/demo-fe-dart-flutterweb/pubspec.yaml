@@ -11,6 +11,8 @@ dependencies:
     sdk: flutter
   dio: ^5.8.0+1
   web: ^1.1.1
+  demo_contracts:
+    path: ./generated-contracts
 
 dev_dependencies:
   flutter_test:
