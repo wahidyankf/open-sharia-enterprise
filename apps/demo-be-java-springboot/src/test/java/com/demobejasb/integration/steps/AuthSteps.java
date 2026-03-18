@@ -349,10 +349,9 @@ public class AuthSteps {
      */
     void performRegister(
             final String username, final String email, final String password) {
-        // Manual validation (replicates @Valid on the controller method parameter)
+        // Blank-field validation (replicates @Valid on the controller method parameter)
         if (isBlank(username) || isBlank(email) || isBlank(password)
-                || (username != null && (username.length() < 3 || username.length() > 50))
-                || (password != null && password.length() < 12)) {
+                || (username != null && (username.length() < 3 || username.length() > 50))) {
             responseStore.setResponse(400, Map.of("message", "Validation failed"));
             return;
         }
@@ -363,6 +362,8 @@ public class AuthSteps {
             req.setPassword(password);
             com.demobejasb.contracts.User resp = authService.register(req);
             responseStore.setResponse(201, resp);
+        } catch (com.demobejasb.config.ValidationException e) {
+            responseStore.setResponse(400, Map.of("message", e.getMessage()));
         } catch (UsernameAlreadyExistsException e) {
             responseStore.setResponse(409, Map.of("message", e.getMessage()));
         }

@@ -306,13 +306,32 @@ public class ExpenseStepHelper {
             this.unit = unit;
         }
 
+        private static final java.util.Set<String> SUPPORTED_CURRENCIES =
+                java.util.Set.of("USD", "IDR");
+        private static final java.util.Set<String> SUPPORTED_UNITS = java.util.Set.of(
+                "liter", "ml", "kg", "g", "km", "meter", "gallon", "lb", "oz", "mile", "piece",
+                "hour");
+
         boolean isValid() {
-            return amount != null && amount.compareTo(BigDecimal.ZERO) > 0
-                    && currency != null && !currency.isBlank()
-                    && category != null && !category.isBlank()
-                    && description != null && !description.isBlank()
-                    && date != null
-                    && type != null && !type.isBlank();
+            if (amount == null || amount.compareTo(BigDecimal.ZERO) < 0
+                    || currency == null || currency.isBlank()
+                    || category == null || category.isBlank()
+                    || description == null || description.isBlank()
+                    || date == null
+                    || type == null || type.isBlank()) {
+                return false;
+            }
+            // Currency must be 3 chars and in supported set
+            if (currency.length() != 3
+                    || !SUPPORTED_CURRENCIES.contains(currency.toUpperCase())) {
+                return false;
+            }
+            // Unit is optional but if present must be in supported set
+            if (unit != null && !unit.isBlank()
+                    && !SUPPORTED_UNITS.contains(unit.toLowerCase())) {
+                return false;
+            }
+            return true;
         }
     }
 }
