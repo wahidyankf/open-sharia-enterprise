@@ -41,10 +41,23 @@ jobs:
         with:
           node-version: "24"
 
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Install Clojure CLI
+        uses: DeLaGuardo/setup-clojure@12.5
+        with:
+          cli: latest
+
       - name: Generate contract types
         run: |
           npm ci --ignore-scripts
+          mkdir -p libs/clojure-openapi-codegen/classes
           npx nx run demo-contracts:bundle
+          npx nx run demo-be-clojure-pedestal:codegen
           npx nx run demo-fe-ts-nextjs:codegen
           npx nx run demo-fe-ts-tanstack-start:codegen
 

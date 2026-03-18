@@ -50,6 +50,7 @@ jobs:
         run: |
           npm ci --ignore-scripts
           npx nx run demo-contracts:bundle
+          npx nx run demo-be-java-vertx:codegen
           npx nx run demo-fe-ts-nextjs:codegen
           npx nx run demo-fe-ts-tanstack-start:codegen
 

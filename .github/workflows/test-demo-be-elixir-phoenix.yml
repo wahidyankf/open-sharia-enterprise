@@ -41,10 +41,18 @@ jobs:
         with:
           node-version: "24"
 
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: "27"
+          elixir-version: "1.18"
+
       - name: Generate contract types
         run: |
           npm ci --ignore-scripts
+          cd libs/elixir-openapi-codegen && mix deps.get && cd ../..
           npx nx run demo-contracts:bundle
+          npx nx run demo-be-elixir-phoenix:codegen
           npx nx run demo-fe-ts-nextjs:codegen
           npx nx run demo-fe-ts-tanstack-start:codegen
 
