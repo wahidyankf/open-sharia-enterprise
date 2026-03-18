@@ -461,7 +461,7 @@
                                 <arg>-XDcompilePolicy=simple</arg>
                                 <arg>--should-stop=ifError=FLOW</arg>
                                 <!-- Enable only NullAway; JSpecifyMode requires JDK 22+ (satisfied by Java 25) -->
-                                <arg>-Xplugin:ErrorProne -XepDisableAllChecks -Xep:NullAway:ERROR -XepOpt:NullAway:AnnotatedPackages=com.demobejasb -XepOpt:NullAway:JSpecifyMode=true</arg>
+                                <arg>-Xplugin:ErrorProne -XepDisableAllChecks -Xep:NullAway:ERROR -XepOpt:NullAway:AnnotatedPackages=com.demobejasb -XepOpt:NullAway:UnannotatedSubPackages=com.demobejasb.contracts -XepOpt:NullAway:JSpecifyMode=true</arg>
                             </compilerArgs>
                             <annotationProcessorPaths>
                                 <path>

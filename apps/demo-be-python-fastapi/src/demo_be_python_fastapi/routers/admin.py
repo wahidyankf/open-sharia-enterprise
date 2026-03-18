@@ -10,7 +10,7 @@ from demo_be_python_fastapi.auth.dependencies import require_admin
 from demo_be_python_fastapi.dependencies import get_db, get_user_repo
 from demo_be_python_fastapi.domain.errors import NotFoundError
 from demo_be_python_fastapi.infrastructure.models import UserModel
-from generated_contracts import DisableRequest, PasswordResetResponse, User, UserListResponse
+from generated_contracts import DisableRequest, PasswordResetResponse, Status, User, UserListResponse
 
 router = APIRouter()
 
@@ -29,7 +29,7 @@ def _user_to_contract(user: UserModel) -> User:
         username=user.username,
         email=user.email,
         displayName=user.display_name or "",
-        status=user.status,
+        status=Status(user.status),
         roles=[user.role],
         createdAt=_ensure_utc(user.created_at),
         updatedAt=_ensure_utc(user.updated_at),

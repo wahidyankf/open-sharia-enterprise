@@ -22,7 +22,7 @@ from demo_be_python_fastapi.domain.errors import (
 )
 from demo_be_python_fastapi.domain.user import validate_password_strength
 from demo_be_python_fastapi.infrastructure.password_hasher import hash_password, verify_password
-from generated_contracts import AuthTokens, User
+from generated_contracts import AuthTokens, Status, User
 
 router = APIRouter()
 
@@ -71,7 +71,7 @@ def _user_to_contract(user) -> User:  # type: ignore[no-untyped-def]
         username=user.username,
         email=user.email,
         displayName=user.display_name or "",
-        status=user.status,
+        status=Status(user.status),
         roles=[user.role],
         createdAt=_ensure_utc(user.created_at),
         updatedAt=_ensure_utc(user.updated_at),
