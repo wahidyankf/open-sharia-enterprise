@@ -19,13 +19,13 @@ import kotlinx.serialization.modules.contextual
 /** Serializer for [java.math.BigDecimal] as a plain string. */
 object BigDecimalSerializer : KSerializer<BigDecimal> {
   override val descriptor: SerialDescriptor =
-    PrimitiveSerialDescriptor("BigDecimal", PrimitiveKind.STRING)
+    PrimitiveSerialDescriptor("BigDecimal", PrimitiveKind.DOUBLE)
 
   override fun serialize(encoder: Encoder, value: BigDecimal) {
-    encoder.encodeString(value.toPlainString())
+    encoder.encodeDouble(value.stripTrailingZeros().toDouble())
   }
 
-  override fun deserialize(decoder: Decoder): BigDecimal = BigDecimal(decoder.decodeString())
+  override fun deserialize(decoder: Decoder): BigDecimal = BigDecimal(decoder.decodeDouble().toString())
 }
 
 /** Serializer for [kotlin.time.Instant] (kotlinx-datetime) as ISO-8601. */
