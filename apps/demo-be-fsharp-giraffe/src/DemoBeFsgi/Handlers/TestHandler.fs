@@ -5,6 +5,7 @@ open System.Text.Json
 open Giraffe
 open Microsoft.EntityFrameworkCore
 open DemoBeFsgi.Infrastructure.AppDbContext
+open DemoBeFsgi.Contracts.ContractWrappers
 
 let private testApiEnabled () =
     Environment.GetEnvironmentVariable("ENABLE_TEST_API") = "true"
@@ -25,9 +26,6 @@ let resetDb: HttpHandler =
 
                 return! json {| message = "Database reset successful" |} next ctx
             }
-
-[<CLIMutable>]
-type PromoteAdminRequest = { username: string }
 
 let promoteAdmin: HttpHandler =
     fun next ctx ->

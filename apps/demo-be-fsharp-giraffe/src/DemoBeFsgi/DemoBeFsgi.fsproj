@@ -12,6 +12,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Generated contract types from OpenAPI spec (generated-contracts/, gitignored) -->
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\DemoBeFsgi.Contracts\CategoryBreakdown.fs" />
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\DemoBeFsgi.Contracts\AuthTokens.fs" />
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\DemoBeFsgi.Contracts\JwkKey.fs" />
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\DemoBeFsgi.Contracts\JwksResponse.fs" />
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\DemoBeFsgi.Contracts\HealthResponse.fs" />
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\DemoBeFsgi.Contracts\User.fs" />
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\DemoBeFsgi.Contracts\UserListResponse.fs" />
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\DemoBeFsgi.Contracts\Expense.fs" />
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\DemoBeFsgi.Contracts\ExpenseListResponse.fs" />
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\DemoBeFsgi.Contracts\ExpenseSummary.fs" />
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\DemoBeFsgi.Contracts\Attachment.fs" />
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\DemoBeFsgi.Contracts\PLReport.fs" />
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\DemoBeFsgi.Contracts\PasswordResetResponse.fs" />
+    <Compile Include="..\..\generated-contracts\OpenAPI\src\DemoBeFsgi.Contracts\TokenClaims.fs" />
+    <!-- CLIMutable request wrappers for JSON deserialization -->
+    <Compile Include="Contracts/ContractWrappers.fs" />
+    <!-- Domain and infrastructure -->
     <Compile Include="Domain/Types.fs" />
     <Compile Include="Domain/User.fs" />
     <Compile Include="Domain/Expense.fs" />

@@ -9,28 +9,7 @@ open Microsoft.EntityFrameworkCore
 open DemoBeFsgi.Infrastructure.AppDbContext
 open DemoBeFsgi.Domain.Types
 open DemoBeFsgi.Domain.Expense
-
-[<CLIMutable>]
-type CreateExpenseRequest =
-    { amount: string
-      currency: string
-      category: string
-      description: string
-      date: string
-      ``type``: string
-      quantity: Nullable<float>
-      unit: string }
-
-[<CLIMutable>]
-type UpdateExpenseRequest =
-    { amount: string
-      currency: string
-      category: string
-      description: string
-      date: string
-      ``type``: string
-      quantity: Nullable<float>
-      unit: string }
+open DemoBeFsgi.Contracts.ContractWrappers
 
 let private parseAmount (s: string) =
     if String.IsNullOrEmpty(s) then

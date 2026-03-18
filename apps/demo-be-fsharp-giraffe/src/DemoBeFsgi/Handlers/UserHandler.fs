@@ -8,14 +8,7 @@ open Microsoft.EntityFrameworkCore
 open DemoBeFsgi.Infrastructure.AppDbContext
 open DemoBeFsgi.Infrastructure.PasswordHasher
 open DemoBeFsgi.Domain.Types
-
-[<CLIMutable>]
-type UpdateProfileRequest = { displayName: string }
-
-[<CLIMutable>]
-type ChangePasswordRequest =
-    { oldPassword: string
-      newPassword: string }
+open DemoBeFsgi.Contracts.ContractWrappers
 
 let getProfile: HttpHandler =
     fun next ctx ->

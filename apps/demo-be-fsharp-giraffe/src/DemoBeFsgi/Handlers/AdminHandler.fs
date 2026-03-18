@@ -8,9 +8,7 @@ open Microsoft.AspNetCore.Http
 open Microsoft.EntityFrameworkCore
 open DemoBeFsgi.Infrastructure.AppDbContext
 open DemoBeFsgi.Domain.Types
-
-[<CLIMutable>]
-type DisableRequest = { reason: string }
+open DemoBeFsgi.Contracts.ContractWrappers
 
 let listUsers: HttpHandler =
     fun next ctx ->

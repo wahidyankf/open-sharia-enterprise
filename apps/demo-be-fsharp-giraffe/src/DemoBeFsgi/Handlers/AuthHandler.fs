@@ -11,18 +11,7 @@ open DemoBeFsgi.Infrastructure.PasswordHasher
 open DemoBeFsgi.Domain.User
 open DemoBeFsgi.Domain.Types
 open DemoBeFsgi.Auth.JwtService
-
-[<CLIMutable>]
-type RegisterRequest =
-    { username: string
-      email: string
-      password: string }
-
-[<CLIMutable>]
-type LoginRequest = { username: string; password: string }
-
-[<CLIMutable>]
-type RefreshRequest = { refreshToken: string }
+open DemoBeFsgi.Contracts.ContractWrappers
 
 let private maxFailedAttempts = 5
 
