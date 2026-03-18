@@ -40,6 +40,12 @@
     </dependencyManagement>
 
     <dependencies>
+        <!-- Jackson Java Time module for OffsetDateTime serialization -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+
         <!-- Core Spring Boot Dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
