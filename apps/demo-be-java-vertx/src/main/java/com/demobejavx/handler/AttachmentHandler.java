@@ -1,23 +1,28 @@
 package com.demobejavx.handler;
 
-import com.demobejavx.domain.model.Attachment;
+import com.demobejavx.contracts.Attachment;
 import com.demobejavx.domain.model.Expense;
 import com.demobejavx.domain.validation.DomainException;
 import com.demobejavx.domain.validation.ExpenseValidator;
 import com.demobejavx.repository.AttachmentRepository;
 import com.demobejavx.repository.ExpenseRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.RoutingContext;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AttachmentHandler implements Handler<RoutingContext> {
 
     private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
     private final ExpenseRepository expenseRepo;
     private final AttachmentRepository attachmentRepo;
@@ -77,16 +82,15 @@ public class AttachmentHandler implements Handler<RoutingContext> {
                                 "Unsupported file type: " + contentType));
                     }
 
-                    Attachment attachment = new Attachment(null, expenseId, userId,
-                            upload.fileName(), contentType, size, new byte[0], Instant.now());
+                    com.demobejavx.domain.model.Attachment attachment =
+                            new com.demobejavx.domain.model.Attachment(null, expenseId, userId,
+                                    upload.fileName(), contentType, size, new byte[0],
+                                    Instant.now());
                     return attachmentRepo.save(attachment);
                 })
                 .onSuccess(attachment -> {
-                    JsonObject resp = buildAttachmentResponse(attachment);
-                    ctx.response()
-                            .setStatusCode(201)
-                            .putHeader("Content-Type", "application/json")
-                            .end(resp.encode());
+                    Attachment resp = buildContractAttachment(attachment);
+                    AuthHandler.sendJson(ctx, 201, resp);
                 })
                 .onFailure(ctx::fail);
     }
@@ -111,15 +115,21 @@ public class AttachmentHandler implements Handler<RoutingContext> {
                     return attachmentRepo.findByExpenseId(expenseId);
                 })
                 .onSuccess(attachments -> {
-                    JsonArray arr = new JsonArray();
-                    for (Attachment a : attachments) {
-                        arr.add(buildAttachmentResponse(a));
+                    List<Attachment> items = new ArrayList<>();
+                    for (com.demobejavx.domain.model.Attachment a : attachments) {
+                        items.add(buildContractAttachment(a));
                     }
-                    JsonObject resp = new JsonObject().put("attachments", arr);
-                    ctx.response()
-                            .setStatusCode(200)
-                            .putHeader("Content-Type", "application/json")
-                            .end(resp.encode());
+                    try {
+                        java.util.Map<String, Object> wrapper = new java.util.HashMap<>();
+                        wrapper.put("attachments", items);
+                        String json = MAPPER.writeValueAsString(wrapper);
+                        ctx.response()
+                                .setStatusCode(200)
+                                .putHeader("Content-Type", "application/json")
+                                .end(json);
+                    } catch (Exception e) {
+                        ctx.fail(500);
+                    }
                 })
                 .onFailure(ctx::fail);
     }
@@ -154,14 +164,13 @@ public class AttachmentHandler implements Handler<RoutingContext> {
                 .onFailure(ctx::fail);
     }
 
-    private JsonObject buildAttachmentResponse(Attachment attachment) {
-        return new JsonObject()
-                .put("id", attachment.id())
-                .put("filename", attachment.filename())
-                .put("contentType", attachment.contentType())
-                .put("size", attachment.size())
-                .put("url", "/api/v1/expenses/" + attachment.expenseId()
-                        + "/attachments/" + attachment.id());
+    private Attachment buildContractAttachment(
+            com.demobejavx.domain.model.Attachment attachment) {
+        return new Attachment()
+                .id(attachment.id() != null ? attachment.id() : "")
+                .filename(attachment.filename())
+                .contentType(attachment.contentType())
+                .size((int) attachment.size());
     }
 
     public static class FileSizeLimitException extends RuntimeException {

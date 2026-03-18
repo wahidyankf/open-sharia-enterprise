@@ -3,13 +3,20 @@ package com.demobejavx.handler;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.demobejavx.auth.JwtService;
 import com.demobejavx.auth.PasswordService;
+import com.demobejavx.contracts.AuthTokens;
+import com.demobejavx.contracts.LoginRequest;
+import com.demobejavx.contracts.RefreshRequest;
+import com.demobejavx.contracts.RegisterRequest;
+import com.demobejavx.contracts.User;
 import com.demobejavx.domain.model.TokenRevocation;
-import com.demobejavx.domain.model.User;
 import com.demobejavx.domain.validation.DomainException;
 import com.demobejavx.domain.validation.UserValidator;
 import com.demobejavx.domain.validation.ValidationException;
 import com.demobejavx.repository.TokenRevocationRepository;
 import com.demobejavx.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
@@ -19,6 +26,9 @@ import java.time.Instant;
 public class AuthHandler implements Handler<RoutingContext> {
 
     private static final int MAX_FAILED_ATTEMPTS = 5;
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
     private final UserRepository userRepo;
     private final TokenRevocationRepository revocationRepo;
@@ -54,9 +64,18 @@ public class AuthHandler implements Handler<RoutingContext> {
             ctx.fail(new ValidationException("body", "Request body is required"));
             return;
         }
-        String username = body.getString("username", "");
-        String email = body.getString("email", "");
-        String password = body.getString("password", "");
+
+        RegisterRequest req;
+        try {
+            req = MAPPER.readValue(body.encode(), RegisterRequest.class);
+        } catch (Exception e) {
+            ctx.fail(new ValidationException("body", "Invalid request body"));
+            return;
+        }
+
+        String username = req.getUsername() != null ? req.getUsername() : "";
+        String email = req.getEmail() != null ? req.getEmail() : "";
+        String password = req.getPassword() != null ? req.getPassword() : "";
 
         try {
             UserValidator.validateRegistration(username, email, password);
@@ -72,21 +91,15 @@ public class AuthHandler implements Handler<RoutingContext> {
                                 "Username already exists"));
                     }
                     String hash = passwordService.hash(password);
-                    User newUser = new User(null, username, email, username,
-                            hash, User.ROLE_USER, User.STATUS_ACTIVE, 0, Instant.now());
+                    com.demobejavx.domain.model.User newUser = new com.demobejavx.domain.model.User(
+                            null, username, email, username,
+                            hash, com.demobejavx.domain.model.User.ROLE_USER,
+                            com.demobejavx.domain.model.User.STATUS_ACTIVE, 0, Instant.now());
                     return userRepo.save(newUser);
                 })
                 .onSuccess(user -> {
-                    JsonObject resp = new JsonObject()
-                            .put("id", user.id())
-                            .put("username", user.username())
-                            .put("email", user.email())
-                            .put("displayName", user.displayName())
-                            .put("role", user.role());
-                    ctx.response()
-                            .setStatusCode(201)
-                            .putHeader("Content-Type", "application/json")
-                            .end(resp.encode());
+                    User resp = buildContractUser(user);
+                    sendJson(ctx, 201, resp);
                 })
                 .onFailure(ctx::fail);
     }
@@ -97,8 +110,17 @@ public class AuthHandler implements Handler<RoutingContext> {
             ctx.fail(401);
             return;
         }
-        String username = body.getString("username", "");
-        String password = body.getString("password", "");
+
+        LoginRequest req;
+        try {
+            req = MAPPER.readValue(body.encode(), LoginRequest.class);
+        } catch (Exception e) {
+            ctx.fail(401);
+            return;
+        }
+
+        String username = req.getUsername() != null ? req.getUsername() : "";
+        String password = req.getPassword() != null ? req.getPassword() : "";
 
         userRepo.findByUsername(username)
                 .compose(userOpt -> {
@@ -106,30 +128,33 @@ public class AuthHandler implements Handler<RoutingContext> {
                         return Future.failedFuture(new DomainException(401,
                                 "Invalid credentials"));
                     }
-                    User user = userOpt.get();
-                    if (User.STATUS_INACTIVE.equals(user.status())) {
+                    com.demobejavx.domain.model.User user = userOpt.get();
+                    if (com.demobejavx.domain.model.User.STATUS_INACTIVE.equals(user.status())) {
                         return Future.failedFuture(new DomainException(401,
                                 "Account deactivated"));
                     }
-                    if (User.STATUS_DISABLED.equals(user.status())) {
+                    if (com.demobejavx.domain.model.User.STATUS_DISABLED.equals(user.status())) {
                         return Future.failedFuture(new DomainException(401,
                                 "Account disabled"));
                     }
-                    if (User.STATUS_LOCKED.equals(user.status())) {
+                    if (com.demobejavx.domain.model.User.STATUS_LOCKED.equals(user.status())) {
                         return Future.failedFuture(new DomainException(401,
                                 "Account locked"));
                     }
                     if (!passwordService.verify(password, user.passwordHash())) {
                         int attempts = user.failedLoginAttempts() + 1;
-                        User updated = user.withFailedLoginAttempts(attempts);
+                        com.demobejavx.domain.model.User updated =
+                                user.withFailedLoginAttempts(attempts);
                         if (attempts >= MAX_FAILED_ATTEMPTS) {
-                            updated = updated.withStatus(User.STATUS_LOCKED);
+                            updated = updated.withStatus(
+                                    com.demobejavx.domain.model.User.STATUS_LOCKED);
                         }
                         return userRepo.update(updated)
                                 .compose(u -> Future.failedFuture(
                                         new DomainException(401, "Invalid credentials")));
                     }
-                    User resetUser = user.withFailedLoginAttempts(0);
+                    com.demobejavx.domain.model.User resetUser =
+                            user.withFailedLoginAttempts(0);
                     return userRepo.update(resetUser);
                 })
                 .compose(user -> {
@@ -137,14 +162,11 @@ public class AuthHandler implements Handler<RoutingContext> {
                     return Future.succeededFuture(tokens);
                 })
                 .onSuccess(tokens -> {
-                    JsonObject resp = new JsonObject()
-                            .put("accessToken", tokens.accessToken())
-                            .put("refreshToken", tokens.refreshToken())
-                            .put("tokenType", "Bearer");
-                    ctx.response()
-                            .setStatusCode(200)
-                            .putHeader("Content-Type", "application/json")
-                            .end(resp.encode());
+                    AuthTokens resp = new AuthTokens()
+                            .accessToken(tokens.accessToken())
+                            .refreshToken(tokens.refreshToken())
+                            .tokenType("Bearer");
+                    sendJson(ctx, 200, resp);
                 })
                 .onFailure(ctx::fail);
     }
@@ -155,7 +177,16 @@ public class AuthHandler implements Handler<RoutingContext> {
             ctx.fail(401);
             return;
         }
-        String refreshToken = body.getString("refreshToken", "");
+
+        RefreshRequest req;
+        try {
+            req = MAPPER.readValue(body.encode(), RefreshRequest.class);
+        } catch (Exception e) {
+            ctx.fail(401);
+            return;
+        }
+
+        String refreshToken = req.getRefreshToken() != null ? req.getRefreshToken() : "";
 
         JwtService.Claims claims;
         try {
@@ -182,12 +213,12 @@ public class AuthHandler implements Handler<RoutingContext> {
                     if (userOpt.isEmpty()) {
                         return Future.failedFuture(new DomainException(401, "User not found"));
                     }
-                    User user = userOpt.get();
-                    if (User.STATUS_DISABLED.equals(user.status())) {
+                    com.demobejavx.domain.model.User user = userOpt.get();
+                    if (com.demobejavx.domain.model.User.STATUS_DISABLED.equals(user.status())) {
                         return Future.failedFuture(new DomainException(401,
                                 "Account disabled"));
                     }
-                    if (!User.STATUS_ACTIVE.equals(user.status())) {
+                    if (!com.demobejavx.domain.model.User.STATUS_ACTIVE.equals(user.status())) {
                         return Future.failedFuture(new DomainException(401,
                                 "Account deactivated"));
                     }
@@ -210,14 +241,11 @@ public class AuthHandler implements Handler<RoutingContext> {
                     return revocationRepo.save(revocation).map(ignored -> tokens);
                 })
                 .onSuccess(tokens -> {
-                    JsonObject resp = new JsonObject()
-                            .put("accessToken", tokens.accessToken())
-                            .put("refreshToken", tokens.refreshToken())
-                            .put("tokenType", "Bearer");
-                    ctx.response()
-                            .setStatusCode(200)
-                            .putHeader("Content-Type", "application/json")
-                            .end(resp.encode());
+                    AuthTokens resp = new AuthTokens()
+                            .accessToken(tokens.accessToken())
+                            .refreshToken(tokens.refreshToken())
+                            .tokenType("Bearer");
+                    sendJson(ctx, 200, resp);
                 })
                 .onFailure(ctx::fail);
     }
@@ -262,5 +290,37 @@ public class AuthHandler implements Handler<RoutingContext> {
                 .compose(ignored -> revocationRepo.save(allRevoke))
                 .onSuccess(ignored -> ctx.response().setStatusCode(200).end())
                 .onFailure(ctx::fail);
+    }
+
+    static User buildContractUser(com.demobejavx.domain.model.User user) {
+        User.StatusEnum status;
+        switch (user.status()) {
+            case com.demobejavx.domain.model.User.STATUS_INACTIVE ->
+                status = User.StatusEnum.INACTIVE;
+            case com.demobejavx.domain.model.User.STATUS_DISABLED ->
+                status = User.StatusEnum.DISABLED;
+            case com.demobejavx.domain.model.User.STATUS_LOCKED ->
+                status = User.StatusEnum.LOCKED;
+            default -> status = User.StatusEnum.ACTIVE;
+        }
+        return new User()
+                .id(user.id() != null ? user.id() : "")
+                .username(user.username())
+                .email(user.email())
+                .displayName(user.displayName())
+                .status(status)
+                .roles(java.util.List.of(user.role()));
+    }
+
+    static void sendJson(RoutingContext ctx, int statusCode, Object obj) {
+        try {
+            String json = MAPPER.writeValueAsString(obj);
+            ctx.response()
+                    .setStatusCode(statusCode)
+                    .putHeader("Content-Type", "application/json")
+                    .end(json);
+        } catch (Exception e) {
+            ctx.fail(500);
+        }
     }
 }

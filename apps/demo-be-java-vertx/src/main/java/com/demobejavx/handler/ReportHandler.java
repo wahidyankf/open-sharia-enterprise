@@ -1,14 +1,15 @@
 package com.demobejavx.handler;
 
+import com.demobejavx.contracts.CategoryBreakdown;
+import com.demobejavx.contracts.PLReport;
 import com.demobejavx.domain.model.Expense;
 import com.demobejavx.repository.ExpenseRepository;
 import io.vertx.core.Handler;
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,36 +76,38 @@ public class ReportHandler implements Handler<RoutingContext> {
                     BigDecimal net = incomeTotal.subtract(expenseTotal);
                     int scale = "IDR".equals(filterCurrency) ? 0 : 2;
 
-                    JsonArray incomeBreakdown = buildBreakdownArray(incomeByCategory, scale, "income");
-                    JsonArray expenseBreakdown = buildBreakdownArray(expenseByCategory, scale, "expense");
+                    List<CategoryBreakdown> incomeBreakdown = buildBreakdownList(
+                            incomeByCategory, scale, "income");
+                    List<CategoryBreakdown> expenseBreakdown = buildBreakdownList(
+                            expenseByCategory, scale, "expense");
 
-                    JsonObject resp = new JsonObject()
-                            .put("totalIncome", incomeTotal
+                    PLReport resp = new PLReport()
+                            .startDate(fromDate)
+                            .endDate(toDate)
+                            .currency(filterCurrency)
+                            .totalIncome(incomeTotal
                                     .setScale(scale, RoundingMode.HALF_UP).toPlainString())
-                            .put("totalExpense", expenseTotal
+                            .totalExpense(expenseTotal
                                     .setScale(scale, RoundingMode.HALF_UP).toPlainString())
-                            .put("net", net.setScale(scale, RoundingMode.HALF_UP).toPlainString())
-                            .put("currency", filterCurrency)
-                            .put("incomeBreakdown", incomeBreakdown)
-                            .put("expenseBreakdown", expenseBreakdown);
+                            .net(net.setScale(scale, RoundingMode.HALF_UP).toPlainString())
+                            .incomeBreakdown(incomeBreakdown)
+                            .expenseBreakdown(expenseBreakdown);
 
-                    ctx.response()
-                            .setStatusCode(200)
-                            .putHeader("Content-Type", "application/json")
-                            .end(resp.encode());
+                    AuthHandler.sendJson(ctx, 200, resp);
                 })
                 .onFailure(ctx::fail);
     }
 
-    private JsonArray buildBreakdownArray(Map<String, BigDecimal> map, int scale, String type) {
-        JsonArray arr = new JsonArray();
+    private List<CategoryBreakdown> buildBreakdownList(
+            Map<String, BigDecimal> map, int scale, String type) {
+        List<CategoryBreakdown> result = new ArrayList<>();
         for (Map.Entry<String, BigDecimal> entry : map.entrySet()) {
-            arr.add(new JsonObject()
-                    .put("category", entry.getKey())
-                    .put("type", type)
-                    .put("total", entry.getValue()
+            result.add(new CategoryBreakdown()
+                    .category(entry.getKey())
+                    .type(type)
+                    .total(entry.getValue()
                             .setScale(scale, RoundingMode.HALF_UP).toPlainString()));
         }
-        return arr;
+        return result;
     }
 }

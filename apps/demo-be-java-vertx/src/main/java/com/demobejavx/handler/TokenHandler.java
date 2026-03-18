@@ -2,9 +2,10 @@ package com.demobejavx.handler;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.demobejavx.auth.JwtService;
+import com.demobejavx.contracts.TokenClaims;
 import io.vertx.core.Handler;
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
+import java.util.List;
 
 public class TokenHandler implements Handler<RoutingContext> {
 
@@ -35,21 +36,18 @@ public class TokenHandler implements Handler<RoutingContext> {
 
         try {
             JwtService.Claims claims = jwtService.validate(token);
-            JsonObject resp = new JsonObject()
-                    .put("sub", claims.subject())
-                    .put("iss", "demo-be-java-vertx")
-                    .put("jti", claims.jti())
-                    .put("role", claims.role());
-            ctx.response()
-                    .setStatusCode(200)
-                    .putHeader("Content-Type", "application/json")
-                    .end(resp.encode());
+            TokenClaims resp = new TokenClaims()
+                    .sub(claims.subject())
+                    .iss("demo-be-java-vertx")
+                    .roles(List.of(claims.role()));
+            AuthHandler.sendJson(ctx, 200, resp);
         } catch (JWTVerificationException e) {
             ctx.fail(401);
         }
     }
 
     private void handleJwks(RoutingContext ctx) {
+        // jwtService.getJwks() returns a pre-built JSON string in JwksResponse format
         ctx.response()
                 .setStatusCode(200)
                 .putHeader("Content-Type", "application/json")

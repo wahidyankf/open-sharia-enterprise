@@ -94,6 +94,22 @@
             <version>${jspecify.version}</version>
         </dependency>
 
+        <!-- javax.annotation-api: required by OpenAPI-generated contracts
+             (uses @javax.annotation.Generated) -->
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.3.2</version>
+        </dependency>
+
+        <!-- jsr305: required by OpenAPI-generated contracts
+             (uses @javax.annotation.Nonnull / @javax.annotation.Nullable) -->
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+
         <!-- Jackson for JSON serialization -->
         <!-- jackson-core must be declared explicitly to override the older version
              (2.16.x) pulled in transitively by Vert.x; without this, parsing JSON
@@ -185,6 +201,27 @@
 
     <build>
         <plugins>
+            <!-- Add generated-contracts/src/main/java as a source root so that
+                 the OpenAPI-generated contract types (com.demobejavx.contracts.*)
+                 are compiled together with the main application sources. -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <id>add-generated-contracts-source</id>
+                        <phase>generate-sources</phase>
+                        <goals><goal>add-source</goal></goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.basedir}/generated-contracts/src/main/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -320,6 +357,8 @@
                         <!-- Test API support: only active when ENABLE_TEST_API=true, tested at E2E level -->
                         <exclude>**/test/*.class</exclude>
                         <exclude>**/test/**/*.class</exclude>
+                        <!-- OpenAPI-generated contract POJOs: auto-generated getters/setters/builders -->
+                        <exclude>**/contracts/*.class</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -425,6 +464,8 @@
                                 <!-- Test API support: only active when ENABLE_TEST_API=true, tested at E2E level -->
                                 <exclude>**/test/*.class</exclude>
                                 <exclude>**/test/**/*.class</exclude>
+                                <!-- OpenAPI-generated contract POJOs: auto-generated getters/setters/builders -->
+                                <exclude>**/contracts/*.class</exclude>
                             </excludes>
                         </configuration>
                         <executions>
