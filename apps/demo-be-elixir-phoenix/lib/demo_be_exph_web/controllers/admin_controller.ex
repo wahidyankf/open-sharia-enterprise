@@ -1,6 +1,9 @@
 defmodule DemoBeExphWeb.AdminController do
   use DemoBeExphWeb, :controller
 
+  alias GeneratedSchemas.PasswordResetResponse
+  alias GeneratedSchemas.User, as: UserSchema
+  alias GeneratedSchemas.UserListResponse
   alias Guardian.Plug, as: GuardianPlug
 
   defp accounts, do: Application.get_env(:demo_be_exph, :accounts_module, DemoBeExph.Accounts)
@@ -24,6 +27,15 @@ defmodule DemoBeExphWeb.AdminController do
       opts = if search, do: Keyword.put(opts, :email, search), else: opts
 
       result = accounts().list_users(opts)
+      total_pages = ceil(result.total / result.page_size)
+
+      _ = %UserListResponse{
+        content: result.data,
+        total_elements: result.total,
+        total_pages: total_pages,
+        page: result.page,
+        size: result.page_size
+      }
 
       conn
       |> json(%{
@@ -86,6 +98,19 @@ defmodule DemoBeExphWeb.AdminController do
     with :ok <- require_admin(conn),
          user when not is_nil(user) <- accounts().get_user(String.to_integer(id)) do
       reset_token = :crypto.strong_rand_bytes(24) |> Base.url_encode64(padding: false)
+
+      _ = %PasswordResetResponse{token: reset_token}
+
+      _ = %UserSchema{
+        id: to_string(user.id),
+        username: user.username,
+        email: user.email,
+        display_name: user.display_name || user.username,
+        status: user.status,
+        roles: [user.role],
+        created_at: to_string(user.inserted_at),
+        updated_at: to_string(user.updated_at)
+      }
 
       json(conn, %{
         message: "Password reset token generated",

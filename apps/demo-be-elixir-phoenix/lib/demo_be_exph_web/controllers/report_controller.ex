@@ -1,6 +1,8 @@
 defmodule DemoBeExphWeb.ReportController do
   use DemoBeExphWeb, :controller
 
+  alias GeneratedSchemas.CategoryBreakdown
+  alias GeneratedSchemas.PLReport
   alias Guardian.Plug, as: GuardianPlug
 
   defp expense_ctx,
@@ -29,6 +31,23 @@ defmodule DemoBeExphWeb.ReportController do
       expense_breakdown =
         report.expense_breakdown
         |> Enum.map(fn {k, v} -> %{category: k, type: "expense", total: Decimal.to_string(v)} end)
+
+      _ = %PLReport{
+        start_date: Date.to_iso8601(from_date),
+        end_date: Date.to_iso8601(to_date),
+        currency: currency,
+        total_income: Decimal.to_string(report.income_total),
+        total_expense: Decimal.to_string(report.expense_total),
+        net: Decimal.to_string(report.net),
+        income_breakdown:
+          Enum.map(income_breakdown, fn b ->
+            %CategoryBreakdown{category: b.category, type: b.type, total: b.total}
+          end),
+        expense_breakdown:
+          Enum.map(expense_breakdown, fn b ->
+            %CategoryBreakdown{category: b.category, type: b.type, total: b.total}
+          end)
+      }
 
       json(conn, %{
         totalIncome: Decimal.to_string(report.income_total),

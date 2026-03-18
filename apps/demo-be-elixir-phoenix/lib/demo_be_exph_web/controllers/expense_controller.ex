@@ -1,6 +1,8 @@
 defmodule DemoBeExphWeb.ExpenseController do
   use DemoBeExphWeb, :controller
 
+  alias GeneratedSchemas.Expense, as: ExpenseSchema
+  alias GeneratedSchemas.ExpenseListResponse
   alias Guardian.Plug, as: GuardianPlug
 
   defp expense_ctx,
@@ -16,6 +18,15 @@ defmodule DemoBeExphWeb.ExpenseController do
     raw_page = params |> Map.get("page", "1") |> String.to_integer()
     page = max(raw_page, 1)
     result = expense_ctx().list_expenses(user.id, page: page)
+    total_pages = ceil(result.total / result.page_size)
+
+    _ = %ExpenseListResponse{
+      content: result.data,
+      total_elements: result.total,
+      total_pages: total_pages,
+      page: result.page,
+      size: result.page_size
+    }
 
     json(conn, %{
       content: Enum.map(result.data, &expense_json/1),
@@ -29,6 +40,8 @@ defmodule DemoBeExphWeb.ExpenseController do
 
     case expense_ctx().create_expense(user.id, params) do
       {:ok, expense} ->
+        _ = validate_expense_shape(expense)
+
         conn
         |> put_status(:created)
         |> json(expense_json(expense))
@@ -48,6 +61,7 @@ defmodule DemoBeExphWeb.ExpenseController do
         conn |> put_status(:not_found) |> json(%{message: "Not found"})
 
       expense ->
+        _ = validate_expense_shape(expense)
         json(conn, expense_json(expense))
     end
   end
@@ -57,6 +71,7 @@ defmodule DemoBeExphWeb.ExpenseController do
 
     case expense_ctx().update_expense(user.id, String.to_integer(id), params) do
       {:ok, expense} ->
+        _ = validate_expense_shape(expense)
         json(conn, expense_json(expense))
 
       {:error, :not_found} ->
@@ -84,6 +99,21 @@ defmodule DemoBeExphWeb.ExpenseController do
     totals = expense_ctx().summary(user.id)
     serializable = Enum.into(totals, %{}, fn {k, v} -> {k, Decimal.to_string(v)} end)
     json(conn, serializable)
+  end
+
+  defp validate_expense_shape(expense) do
+    %ExpenseSchema{
+      id: to_string(expense.id),
+      amount: Decimal.to_string(expense.amount),
+      currency: expense.currency,
+      category: expense.category,
+      description: expense.description,
+      date: Date.to_iso8601(expense.date),
+      type: expense.type,
+      user_id: to_string(expense.user_id),
+      created_at: to_string(expense.inserted_at),
+      updated_at: to_string(expense.updated_at)
+    }
   end
 
   defp expense_json(expense) do

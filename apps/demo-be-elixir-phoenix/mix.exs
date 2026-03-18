@@ -41,9 +41,9 @@ defmodule DemoBeExph.MixProject do
   end
 
   # Specifies which paths to compile per environment.
-  defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(:integration), do: ["lib", "test/support"]
-  defp elixirc_paths(_), do: ["lib"]
+  defp elixirc_paths(:test), do: ["lib", "test/support", "generated-contracts"]
+  defp elixirc_paths(:integration), do: ["lib", "test/support", "generated-contracts"]
+  defp elixirc_paths(_), do: ["lib", "generated-contracts"]
 
   # Specifies test paths per environment.
   # :integration runs only the integration step definitions (real PostgreSQL via docker).

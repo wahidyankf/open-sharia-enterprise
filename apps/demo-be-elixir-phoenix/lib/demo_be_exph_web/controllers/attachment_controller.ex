@@ -2,6 +2,7 @@ defmodule DemoBeExphWeb.AttachmentController do
   use DemoBeExphWeb, :controller
 
   alias DemoBeExph.Attachment.Attachment
+  alias GeneratedSchemas.Attachment, as: AttachmentSchema
   alias Guardian.Plug, as: GuardianPlug
 
   @supported_content_types ~w(image/jpeg image/png application/pdf)
@@ -152,6 +153,14 @@ defmodule DemoBeExphWeb.AttachmentController do
   end
 
   defp attachment_json(attachment) do
+    _ = %AttachmentSchema{
+      id: to_string(attachment.id),
+      filename: attachment.filename,
+      content_type: attachment.content_type,
+      size: attachment.size,
+      created_at: to_string(attachment.inserted_at)
+    }
+
     %{
       id: attachment.id,
       expense_id: attachment.expense_id,

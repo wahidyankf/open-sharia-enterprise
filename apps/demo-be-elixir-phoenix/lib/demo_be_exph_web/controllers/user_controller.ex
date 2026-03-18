@@ -1,12 +1,24 @@
 defmodule DemoBeExphWeb.UserController do
   use DemoBeExphWeb, :controller
 
+  alias GeneratedSchemas.User, as: UserSchema
   alias Guardian.Plug, as: GuardianPlug
 
   defp accounts, do: Application.get_env(:demo_be_exph, :accounts_module, DemoBeExph.Accounts)
 
   def me(conn, _params) do
     user = GuardianPlug.current_resource(conn)
+
+    _ = %UserSchema{
+      id: to_string(user.id),
+      username: user.username,
+      email: user.email,
+      display_name: user.display_name || user.username,
+      status: user.status,
+      roles: [user.role],
+      created_at: to_string(user.inserted_at),
+      updated_at: to_string(user.updated_at)
+    }
 
     json(conn, %{
       id: user.id,
@@ -24,6 +36,17 @@ defmodule DemoBeExphWeb.UserController do
 
     case accounts().update_user(user, attrs) do
       {:ok, updated_user} ->
+        _ = %UserSchema{
+          id: to_string(updated_user.id),
+          username: updated_user.username,
+          email: updated_user.email,
+          display_name: updated_user.display_name || updated_user.username,
+          status: updated_user.status,
+          roles: [updated_user.role],
+          created_at: to_string(updated_user.inserted_at),
+          updated_at: to_string(updated_user.updated_at)
+        }
+
         json(conn, %{
           id: updated_user.id,
           username: updated_user.username,

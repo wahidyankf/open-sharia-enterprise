@@ -2,6 +2,8 @@ defmodule DemoBeExphWeb.AuthController do
   use DemoBeExphWeb, :controller
 
   alias DemoBeExph.Auth.Guardian
+  alias GeneratedSchemas.AuthTokens
+  alias GeneratedSchemas.User, as: UserSchema
 
   defp accounts, do: Application.get_env(:demo_be_exph, :accounts_module, DemoBeExph.Accounts)
 
@@ -11,6 +13,17 @@ defmodule DemoBeExphWeb.AuthController do
   def register(conn, params) do
     case accounts().register_user(params) do
       {:ok, user} ->
+        _ = %UserSchema{
+          id: to_string(user.id),
+          username: user.username,
+          email: user.email,
+          display_name: user.display_name || user.username,
+          status: user.status,
+          roles: [user.role],
+          created_at: to_string(user.inserted_at),
+          updated_at: to_string(user.updated_at)
+        }
+
         conn
         |> put_status(:created)
         |> json(%{id: user.id, username: user.username, email: user.email})
@@ -103,6 +116,12 @@ defmodule DemoBeExphWeb.AuthController do
         {:ok, refresh_token} = token_ctx().create_refresh_token(user.id)
         _ = jti
 
+        _ = %AuthTokens{
+          access_token: access_token,
+          refresh_token: refresh_token,
+          token_type: "Bearer"
+        }
+
         json(conn, %{
           accessToken: access_token,
           refreshToken: refresh_token,
@@ -149,6 +168,12 @@ defmodule DemoBeExphWeb.AuthController do
           token_ctx().consume_refresh_token(raw_token)
           {:ok, access_token, _claims} = Guardian.encode_and_sign(user)
           {:ok, new_refresh_token} = token_ctx().create_refresh_token(user.id)
+
+          _ = %AuthTokens{
+            access_token: access_token,
+            refresh_token: new_refresh_token,
+            token_type: "Bearer"
+          }
 
           json(conn, %{
             accessToken: access_token,
