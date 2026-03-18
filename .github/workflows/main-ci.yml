@@ -104,6 +104,7 @@ jobs:
 
       - name: Install Elixir dependencies
         run: |
+          (cd libs/elixir-openapi-codegen && mix deps.get)
           (cd libs/elixir-gherkin && mix deps.get)
           (cd libs/elixir-cabbage && mix deps.get)
           (cd apps/demo-be-elixir-phoenix && mix deps.get)
@@ -112,7 +113,9 @@ jobs:
         run: (cd apps/demo-be-python-fastapi && uv sync)
 
       - name: Install Clojure dependencies
-        run: (cd apps/demo-be-clojure-pedestal && JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -P && JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -P -M:test:coverage)
+        run: |
+          (cd libs/clojure-openapi-codegen && JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -P)
+          (cd apps/demo-be-clojure-pedestal && JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -P && JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -P -M:test:coverage)
 
       - name: Generate contract types (required before test:quick and Flutter pub get)
         run: |
