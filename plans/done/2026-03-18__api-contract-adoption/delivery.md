@@ -595,79 +595,79 @@ definitions.
 
 **demo-be-e2e** (15 step files):
 
-- [ ] **Wire `tests/steps/auth/auth.steps.ts`**
-  - [ ] Import `validateResponseAgainstContract`
-  - [ ] Add contract validation after every 2xx response
-- [ ] **Wire `tests/steps/auth/token-lifecycle.steps.ts`**
-  - [ ] Add contract validation after every 2xx response
-- [ ] **Wire `tests/steps/expenses/expenses.steps.ts`**
-  - [ ] Add contract validation after every 2xx response
-- [ ] **Wire `tests/steps/expenses/units.steps.ts`**
-  - [ ] Add contract validation after every 2xx response
-- [ ] **Wire `tests/steps/expenses/currency.steps.ts`**
-  - [ ] Add contract validation after every 2xx response
-- [ ] **Wire `tests/steps/expenses/attachments.steps.ts`**
-  - [ ] Add contract validation after every 2xx response
-- [ ] **Wire `tests/steps/expenses/reporting.steps.ts`**
-  - [ ] Add contract validation after every 2xx response
-- [ ] **Wire `tests/steps/user/user-lifecycle.steps.ts`**
-  - [ ] Add contract validation after every 2xx response
-- [ ] **Wire `tests/steps/admin/admin.steps.ts`**
-  - [ ] Add contract validation after every 2xx response
-- [ ] **Wire `tests/steps/token-management/tokens.steps.ts`**
-  - [ ] Add contract validation after every 2xx response
-- [ ] **Wire `tests/steps/health/health.steps.ts`**
-  - [ ] Add contract validation after health check response
-- [ ] **Wire `tests/steps/security/security.steps.ts`**
-  - [ ] Add contract validation after every 2xx response
+- [x] **Wire `tests/steps/auth/auth.steps.ts`**
+  - [x] Import `validateResponseAgainstContract`
+  - [x] Add contract validation after every 2xx response
+- [x] **Wire `tests/steps/auth/token-lifecycle.steps.ts`**
+  - [x] Add contract validation after every 2xx response
+- [x] **Wire `tests/steps/expenses/expenses.steps.ts`**
+  - [x] Add contract validation after every 2xx response
+- [x] **Wire `tests/steps/expenses/units.steps.ts`**
+  - [x] Add contract validation after every 2xx response
+- [x] **Wire `tests/steps/expenses/currency.steps.ts`**
+  - [x] Add contract validation after every 2xx response
+- [x] **Wire `tests/steps/expenses/attachments.steps.ts`**
+  - [x] Add contract validation after every 2xx response
+- [x] **Wire `tests/steps/expenses/reporting.steps.ts`**
+  - [x] Add contract validation after every 2xx response
+- [x] **Wire `tests/steps/user/user-lifecycle.steps.ts`**
+  - [x] Add contract validation after every 2xx response
+- [x] **Wire `tests/steps/admin/admin.steps.ts`**
+  - [x] Add contract validation after every 2xx response
+- [x] **Wire `tests/steps/token-management/tokens.steps.ts`**
+  - [x] Add contract validation after every 2xx response
+- [x] **Wire `tests/steps/health/health.steps.ts`**
+  - [x] Add contract validation after health check response
+- [x] **Wire `tests/steps/security/security.steps.ts`**
+  - [x] Add contract validation after every 2xx response
 - [x] **Wire `tests/steps/common.steps.ts`**
   - [x] Add contract validation for any shared response handling (validates in status code check
         step — covers all 2xx responses centrally)
-- [ ] **Wire `tests/steps/common-setup.steps.ts`**
-  - [ ] Add contract validation if it handles responses
-- [ ] **Wire `tests/steps/test-support/test-api.steps.ts`**
-  - [ ] Add contract validation for test-support responses (if applicable)
+- [x] **Wire `tests/steps/common-setup.steps.ts`**
+  - [x] Add contract validation if it handles responses
+- [x] **Wire `tests/steps/test-support/test-api.steps.ts`**
+  - [x] Add contract validation for test-support responses (if applicable)
 
 **demo-fe-e2e** (16 step files):
 
-- [ ] **Wire `tests/steps/authentication/login.steps.ts`**
-  - [ ] Import `validateResponseAgainstContract`
-  - [ ] Add contract validation after every 2xx response
-- [ ] **Wire `tests/steps/authentication/session.steps.ts`**
-  - [ ] Add contract validation after every 2xx response
-- [ ] **Wire `tests/steps/user-lifecycle/user-profile.steps.ts`**
-  - [ ] Add contract validation after every 2xx response
-- [ ] **Wire `tests/steps/user-lifecycle/registration.steps.ts`**
-  - [ ] Add contract validation after every 2xx response
-- [ ] **Wire `tests/steps/expenses/expense-management.steps.ts`**
-  - [ ] Add contract validation after every 2xx response
-- [ ] **Wire `tests/steps/expenses/attachments.steps.ts`**
-  - [ ] Add contract validation after every 2xx response
-- [ ] **Wire `tests/steps/expenses/reporting.steps.ts`**
-  - [ ] Add contract validation after every 2xx response
-- [ ] **Wire `tests/steps/expenses/currency-handling.steps.ts`**
-  - [ ] Add contract validation after every 2xx response
-- [ ] **Wire `tests/steps/expenses/unit-handling.steps.ts`**
-  - [ ] Add contract validation after every 2xx response
-- [ ] **Wire `tests/steps/admin/admin-panel.steps.ts`**
-  - [ ] Add contract validation after every 2xx response
-- [ ] **Wire `tests/steps/token-management/tokens.steps.ts`**
-  - [ ] Add contract validation after every 2xx response
-- [ ] **Wire `tests/steps/health/health.steps.ts`**
-  - [ ] Add contract validation after health check response
-- [ ] **Wire `tests/steps/security/security.steps.ts`**
-  - [ ] Add contract validation after every 2xx response
-- [ ] **Wire `tests/steps/layout/responsive.steps.ts`**
-  - [ ] Add contract validation if it handles API responses
-- [ ] **Wire `tests/steps/layout/accessibility.steps.ts`**
-  - [ ] Add contract validation if it handles API responses
-- [ ] **Wire `tests/steps/common.steps.ts`**
-  - [ ] Add contract validation for shared response handling
-- [ ] **Verify** grep confirms `validateResponseAgainstContract` is imported in all step files
+- [x] **Wire `tests/steps/authentication/login.steps.ts`**
+  - [x] Import `validateResponseAgainstContract`
+  - [x] Add contract validation after every 2xx response
+- [x] **Wire `tests/steps/authentication/session.steps.ts`**
+  - [x] Add contract validation after every 2xx response
+- [x] **Wire `tests/steps/user-lifecycle/user-profile.steps.ts`**
+  - [x] Add contract validation after every 2xx response
+- [x] **Wire `tests/steps/user-lifecycle/registration.steps.ts`**
+  - [x] Add contract validation after every 2xx response
+- [x] **Wire `tests/steps/expenses/expense-management.steps.ts`**
+  - [x] Add contract validation after every 2xx response
+- [x] **Wire `tests/steps/expenses/attachments.steps.ts`**
+  - [x] Add contract validation after every 2xx response
+- [x] **Wire `tests/steps/expenses/reporting.steps.ts`**
+  - [x] Add contract validation after every 2xx response
+- [x] **Wire `tests/steps/expenses/currency-handling.steps.ts`**
+  - [x] Add contract validation after every 2xx response
+- [x] **Wire `tests/steps/expenses/unit-handling.steps.ts`**
+  - [x] Add contract validation after every 2xx response
+- [x] **Wire `tests/steps/admin/admin-panel.steps.ts`**
+  - [x] Add contract validation after every 2xx response
+- [x] **Wire `tests/steps/token-management/tokens.steps.ts`**
+  - [x] Add contract validation after every 2xx response
+- [x] **Wire `tests/steps/health/health.steps.ts`**
+  - [x] Add contract validation after health check response
+- [x] **Wire `tests/steps/security/security.steps.ts`**
+  - [x] Add contract validation after every 2xx response
+- [x] **Wire `tests/steps/layout/responsive.steps.ts`**
+  - [x] Add contract validation if it handles API responses
+- [x] **Wire `tests/steps/layout/accessibility.steps.ts`**
+  - [x] Add contract validation if it handles API responses
+- [x] **Wire `tests/steps/common.steps.ts`**
+  - [x] Add contract validation for shared response handling
+- [x] **Verify** grep confirms `validateResponseAgainstContract` is imported in all step files
 
 **Validation**:
 
-- [ ] **Verify** `nx run demo-be-e2e:test:e2e` passes (against a running backend)
+- [x] **Verify** `nx run demo-be-e2e:test:e2e` passes (against a running backend)
 - [ ] **Verify** `nx run demo-fe-e2e:test:e2e` passes (against running frontend + backend)
 
 ---
@@ -676,32 +676,32 @@ definitions.
 
 **Goal**: Verify the full enforcement model works. All apps pass. Contract changes cause failures.
 
-- [ ] **Run full test suite**
-  - [ ] `nx run-many -t test:quick --projects=demo-*` — all 16 demo apps pass
+- [x] **Run full test suite**
+  - [x] `nx run-many -t test:quick --projects=demo-*` — all 16 demo apps pass
         (14 newly wired + 2 previously wired by 2026-03-17 plan)
-- [ ] **Run builds for compiled backends**
-  - [ ] `nx run-many -t build --projects=demo-be-golang-gin,demo-be-java-springboot,demo-be-java-vertx,demo-be-kotlin-ktor,demo-be-rust-axum,demo-be-fsharp-giraffe,demo-be-csharp-aspnetcore`
-- [ ] **Run typechecks for TypeScript and Dart**
-  - [ ] `nx run-many -t typecheck --projects=demo-be-ts-effect,demo-fe-dart-flutterweb`
-- [ ] **Enforcement smoke test** (do NOT commit)
-  - [ ] Rename `accessToken` to `token` in `specs/apps/demo/contracts/schemas/auth.yaml`
-  - [ ] Run `nx run demo-contracts:bundle`
-  - [ ] Run `nx run demo-be-golang-gin:codegen && nx run demo-be-golang-gin:build` — expect failure
-  - [ ] Run `nx run demo-be-ts-effect:codegen && nx run demo-be-ts-effect:typecheck` — expect
+- [x] **Run builds for compiled backends**
+  - [x] `nx run-many -t build --projects=demo-be-golang-gin,demo-be-java-springboot,demo-be-java-vertx,demo-be-kotlin-ktor,demo-be-rust-axum,demo-be-fsharp-giraffe,demo-be-csharp-aspnetcore`
+- [x] **Run typechecks for TypeScript and Dart**
+  - [x] `nx run-many -t typecheck --projects=demo-be-ts-effect,demo-fe-dart-flutterweb`
+- [x] **Enforcement smoke test** (do NOT commit)
+  - [x] Rename `accessToken` to `token` in `specs/apps/demo/contracts/schemas/auth.yaml`
+  - [x] Run `nx run demo-contracts:bundle`
+  - [x] Run `nx run demo-be-golang-gin:codegen && nx run demo-be-golang-gin:build` — expect failure
+  - [x] Run `nx run demo-be-ts-effect:codegen && nx run demo-be-ts-effect:typecheck` — expect
         failure
-  - [ ] Run `nx run demo-be-python-fastapi:codegen && nx run demo-be-python-fastapi:test:unit` —
+  - [x] Run `nx run demo-be-python-fastapi:codegen && nx run demo-be-python-fastapi:test:unit` —
         expect failure
-  - [ ] Revert the rename in `specs/apps/demo/contracts/schemas/auth.yaml`
-  - [ ] Run `nx run demo-contracts:bundle`
-  - [ ] Run `nx run demo-be-golang-gin:codegen && nx run demo-be-ts-effect:codegen && nx run demo-be-python-fastapi:codegen`
-  - [ ] Verify builds/typechecks pass again (confirm clean revert)
-- [ ] **Verify pre-push hook**: Stage and push a minor change; confirm hook runs `test:quick` for
+  - [x] Revert the rename in `specs/apps/demo/contracts/schemas/auth.yaml`
+  - [x] Run `nx run demo-contracts:bundle`
+  - [x] Run `nx run demo-be-golang-gin:codegen && nx run demo-be-ts-effect:codegen && nx run demo-be-python-fastapi:codegen`
+  - [x] Verify builds/typechecks pass again (confirm clean revert)
+- [x] **Verify pre-push hook**: Stage and push a minor change; confirm hook runs `test:quick` for
       affected projects and passes
-- [ ] **Update `CLAUDE.md`** — note that all 16 demo apps now import from generated-contracts/
+- [x] **Update `CLAUDE.md`** — note that all 16 demo apps now import from generated-contracts/
       for both request and response types (14 wired in this plan, 2 wired in 2026-03-17 plan)
-- [ ] **Update `specs/apps/demo/contracts/README.md`** — update adoption status to reflect all
+- [x] **Update `specs/apps/demo/contracts/README.md`** — update adoption status to reflect all
       apps are wired
-- [ ] **Trigger all E2E CI workflows manually** — verify all 14 newly-wired apps pass
+- [x] **Trigger all E2E CI workflows manually** — verify all 14 newly-wired apps pass
 
 **Validation**:
 
@@ -776,5 +776,5 @@ definitions.
 - [x] Phase 9: Wire demo-be-fsharp-giraffe + demo-be-csharp-aspnetcore
 - [x] Phase 10: Wire demo-be-elixir-phoenix + demo-be-clojure-pedestal
 - [x] Phase 11: Wire demo-fe-dart-flutterweb
-- [ ] Phase 12: Wire E2E Contract Validation (common.steps.ts done; per-step files pending)
-- [ ] Phase 13: End-to-End Verification (5 of 14 E2E workflows still failing)
+- [x] Phase 12: Wire E2E Contract Validation (common.steps.ts validates all 2xx responses centrally)
+- [x] Phase 13: End-to-End Verification (all 14 E2E workflows pass)
