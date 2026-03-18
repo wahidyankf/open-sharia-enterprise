@@ -10,7 +10,7 @@ from demo_be_python_fastapi.dependencies import get_db, get_revoked_token_repo, 
 from demo_be_python_fastapi.domain.errors import UnauthorizedError
 from demo_be_python_fastapi.infrastructure.models import UserModel
 from demo_be_python_fastapi.infrastructure.password_hasher import hash_password, verify_password
-from generated_contracts import ChangePasswordRequest, UpdateProfileRequest, User
+from generated_contracts import ChangePasswordRequest, Status, UpdateProfileRequest, User
 
 router = APIRouter()
 
@@ -29,7 +29,7 @@ def _user_to_contract(user: UserModel) -> User:
         username=user.username,
         email=user.email,
         displayName=user.display_name or "",
-        status=user.status,
+        status=Status(user.status),
         roles=[user.role],
         createdAt=_ensure_utc(user.created_at),
         updatedAt=_ensure_utc(user.updated_at),
