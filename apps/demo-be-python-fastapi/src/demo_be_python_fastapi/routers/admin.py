@@ -4,13 +4,19 @@ import math
 from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, Query
+from generated_contracts import (
+    DisableRequest,
+    PasswordResetResponse,
+    Status,
+    User,
+    UserListResponse,
+)
 from sqlalchemy.orm import Session
 
 from demo_be_python_fastapi.auth.dependencies import require_admin
 from demo_be_python_fastapi.dependencies import get_db, get_user_repo
 from demo_be_python_fastapi.domain.errors import NotFoundError
 from demo_be_python_fastapi.infrastructure.models import UserModel
-from generated_contracts import DisableRequest, PasswordResetResponse, Status, User, UserListResponse
 
 router = APIRouter()
 

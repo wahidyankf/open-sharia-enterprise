@@ -1,7 +1,6 @@
 """Health check router."""
 
 from fastapi import APIRouter
-
 from generated_contracts import HealthResponse
 
 router = APIRouter()

@@ -4,6 +4,7 @@ import math
 from datetime import UTC, date, datetime
 
 from fastapi import APIRouter, Depends, Query
+from generated_contracts import CreateExpenseRequest, Expense, ExpenseListResponse
 from sqlalchemy.orm import Session
 
 from demo_be_python_fastapi.auth.dependencies import get_current_user
@@ -11,7 +12,6 @@ from demo_be_python_fastapi.dependencies import get_db, get_expense_repo
 from demo_be_python_fastapi.domain.errors import ForbiddenError, NotFoundError
 from demo_be_python_fastapi.domain.expense import validate_amount, validate_currency, validate_unit
 from demo_be_python_fastapi.infrastructure.models import UserModel
-from generated_contracts import CreateExpenseRequest, Expense, ExpenseListResponse
 
 router = APIRouter()
 

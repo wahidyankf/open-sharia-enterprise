@@ -3,13 +3,13 @@
 from datetime import date
 
 from fastapi import APIRouter, Depends, Query
+from generated_contracts import CategoryBreakdown, PLReport
 from sqlalchemy.orm import Session
 
 from demo_be_python_fastapi.auth.dependencies import get_current_user
 from demo_be_python_fastapi.dependencies import get_db, get_expense_repo
 from demo_be_python_fastapi.domain.expense import validate_currency
 from demo_be_python_fastapi.infrastructure.models import UserModel
-from generated_contracts import CategoryBreakdown, PLReport
 
 router = APIRouter()
 

@@ -99,7 +99,7 @@ func (h *Handler) CreateExpense(c *gin.Context) {
 		Currency:    strings.ToUpper(req.Currency),
 		Category:    req.Category,
 		Description: req.Description,
-		Date:        req.Date.Time.Format("2006-01-02"),
+		Date:        req.Date.Format("2006-01-02"),
 		Type:        domain.EntryType(req.Type),
 		Quantity:    quantity,
 		Unit:        unit,
@@ -228,7 +228,7 @@ func (h *Handler) UpdateExpense(c *gin.Context) {
 		expense.Description = *req.Description
 	}
 	if req.Date != nil {
-		expense.Date = req.Date.Time.Format("2006-01-02")
+		expense.Date = req.Date.Format("2006-01-02")
 	}
 	if req.Type != nil {
 		expense.Type = domain.EntryType(*req.Type)

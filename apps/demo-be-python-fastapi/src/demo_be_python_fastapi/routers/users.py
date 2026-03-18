@@ -3,6 +3,7 @@
 from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends
+from generated_contracts import ChangePasswordRequest, Status, UpdateProfileRequest, User
 from sqlalchemy.orm import Session
 
 from demo_be_python_fastapi.auth.dependencies import get_current_user
@@ -10,7 +11,6 @@ from demo_be_python_fastapi.dependencies import get_db, get_revoked_token_repo, 
 from demo_be_python_fastapi.domain.errors import UnauthorizedError
 from demo_be_python_fastapi.infrastructure.models import UserModel
 from demo_be_python_fastapi.infrastructure.password_hasher import hash_password, verify_password
-from generated_contracts import ChangePasswordRequest, Status, UpdateProfileRequest, User
 
 router = APIRouter()
 

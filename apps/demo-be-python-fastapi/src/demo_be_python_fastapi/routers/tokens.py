@@ -2,11 +2,11 @@
 
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordBearer
+from generated_contracts import TokenClaims
 
 from demo_be_python_fastapi.auth.dependencies import get_current_user
 from demo_be_python_fastapi.auth.jwt_service import decode_token
 from demo_be_python_fastapi.infrastructure.models import UserModel
-from generated_contracts import TokenClaims
 
 router = APIRouter()
 
