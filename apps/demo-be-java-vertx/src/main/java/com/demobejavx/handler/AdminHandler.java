@@ -1,13 +1,14 @@
 package com.demobejavx.handler;
 
-import com.demobejavx.domain.model.User;
+import com.demobejavx.contracts.PasswordResetResponse;
+import com.demobejavx.contracts.User;
+import com.demobejavx.contracts.UserListResponse;
 import com.demobejavx.domain.validation.DomainException;
 import com.demobejavx.repository.UserRepository;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,27 +45,26 @@ public class AdminHandler implements Handler<RoutingContext> {
         userRepo.findByEmail(emailFilter)
                 .onSuccess(users -> {
                     int total = users.size();
+                    int totalPages = size > 0 ? (int) Math.ceil((double) total / size) : 0;
                     int start = (page - 1) * size;
-                    List<User> pageUsers = users.stream()
+                    List<com.demobejavx.domain.model.User> pageUsers = users.stream()
                             .skip(start)
                             .limit(size)
                             .toList();
 
-                    JsonArray data = new JsonArray();
-                    for (User u : pageUsers) {
-                        data.add(buildUserSummary(u));
+                    List<User> content = new ArrayList<>();
+                    for (com.demobejavx.domain.model.User u : pageUsers) {
+                        content.add(AuthHandler.buildContractUser(u));
                     }
 
-                    JsonObject resp = new JsonObject()
-                            .put("content", data)
-                            .put("totalElements", total)
-                            .put("page", page)
-                            .put("size", size);
+                    UserListResponse resp = new UserListResponse()
+                            .content(content)
+                            .totalElements(total)
+                            .totalPages(totalPages)
+                            .page(page)
+                            .size(size);
 
-                    ctx.response()
-                            .setStatusCode(200)
-                            .putHeader("Content-Type", "application/json")
-                            .end(resp.encode());
+                    AuthHandler.sendJson(ctx, 200, resp);
                 })
                 .onFailure(ctx::fail);
     }
@@ -80,16 +80,12 @@ public class AdminHandler implements Handler<RoutingContext> {
                     if (userOpt.isEmpty()) {
                         return Future.failedFuture(new DomainException(404, "User not found"));
                     }
-                    return userRepo.update(userOpt.get().withStatus(User.STATUS_DISABLED));
+                    return userRepo.update(userOpt.get().withStatus(
+                            com.demobejavx.domain.model.User.STATUS_DISABLED));
                 })
                 .onSuccess(user -> {
-                    JsonObject resp = new JsonObject()
-                            .put("id", user.id())
-                            .put("status", user.status());
-                    ctx.response()
-                            .setStatusCode(200)
-                            .putHeader("Content-Type", "application/json")
-                            .end(resp.encode());
+                    User resp = AuthHandler.buildContractUser(user);
+                    AuthHandler.sendJson(ctx, 200, resp);
                 })
                 .onFailure(ctx::fail);
     }
@@ -105,16 +101,12 @@ public class AdminHandler implements Handler<RoutingContext> {
                     if (userOpt.isEmpty()) {
                         return Future.failedFuture(new DomainException(404, "User not found"));
                     }
-                    return userRepo.update(userOpt.get().withStatus(User.STATUS_ACTIVE));
+                    return userRepo.update(userOpt.get().withStatus(
+                            com.demobejavx.domain.model.User.STATUS_ACTIVE));
                 })
                 .onSuccess(user -> {
-                    JsonObject resp = new JsonObject()
-                            .put("id", user.id())
-                            .put("status", user.status());
-                    ctx.response()
-                            .setStatusCode(200)
-                            .putHeader("Content-Type", "application/json")
-                            .end(resp.encode());
+                    User resp = AuthHandler.buildContractUser(user);
+                    AuthHandler.sendJson(ctx, 200, resp);
                 })
                 .onFailure(ctx::fail);
     }
@@ -130,8 +122,8 @@ public class AdminHandler implements Handler<RoutingContext> {
                     if (userOpt.isEmpty()) {
                         return Future.failedFuture(new DomainException(404, "User not found"));
                     }
-                    User updated = userOpt.get()
-                            .withStatus(User.STATUS_ACTIVE)
+                    com.demobejavx.domain.model.User updated = userOpt.get()
+                            .withStatus(com.demobejavx.domain.model.User.STATUS_ACTIVE)
                             .withFailedLoginAttempts(0);
                     return userRepo.update(updated);
                 })
@@ -154,23 +146,10 @@ public class AdminHandler implements Handler<RoutingContext> {
                 })
                 .onSuccess(user -> {
                     String resetToken = UUID.randomUUID().toString();
-                    JsonObject resp = new JsonObject().put("token", resetToken);
-                    ctx.response()
-                            .setStatusCode(200)
-                            .putHeader("Content-Type", "application/json")
-                            .end(resp.encode());
+                    PasswordResetResponse resp = new PasswordResetResponse().token(resetToken);
+                    AuthHandler.sendJson(ctx, 200, resp);
                 })
                 .onFailure(ctx::fail);
-    }
-
-    private JsonObject buildUserSummary(User user) {
-        return new JsonObject()
-                .put("id", user.id())
-                .put("username", user.username())
-                .put("email", user.email())
-                .put("displayName", user.displayName())
-                .put("role", user.role())
-                .put("status", user.status());
     }
 
     private int parseInt(String value, int defaultValue) {

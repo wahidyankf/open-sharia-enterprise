@@ -1,17 +1,26 @@
 package com.demobejavx.handler;
 
 import com.demobejavx.auth.PasswordService;
-import com.demobejavx.domain.model.User;
+import com.demobejavx.contracts.ChangePasswordRequest;
+import com.demobejavx.contracts.UpdateProfileRequest;
+import com.demobejavx.contracts.User;
 import com.demobejavx.domain.validation.DomainException;
 import com.demobejavx.domain.validation.ValidationException;
 import com.demobejavx.repository.TokenRevocationRepository;
 import com.demobejavx.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 
 public class UserHandler implements Handler<RoutingContext> {
+
+    private static final ObjectMapper MAPPER = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
     private final UserRepository userRepo;
     private final TokenRevocationRepository revocationRepo;
@@ -49,12 +58,8 @@ public class UserHandler implements Handler<RoutingContext> {
                         ctx.fail(404);
                         return;
                     }
-                    User user = userOpt.get();
-                    JsonObject resp = buildUserResponse(user);
-                    ctx.response()
-                            .setStatusCode(200)
-                            .putHeader("Content-Type", "application/json")
-                            .end(resp.encode());
+                    User resp = AuthHandler.buildContractUser(userOpt.get());
+                    AuthHandler.sendJson(ctx, 200, resp);
                 })
                 .onFailure(ctx::fail);
     }
@@ -70,22 +75,29 @@ public class UserHandler implements Handler<RoutingContext> {
             ctx.fail(400);
             return;
         }
-        String displayName = body.getString("displayName", "");
+
+        UpdateProfileRequest req;
+        try {
+            req = MAPPER.readValue(body.encode(), UpdateProfileRequest.class);
+        } catch (Exception e) {
+            ctx.fail(400);
+            return;
+        }
+
+        String displayName = req.getDisplayName() != null ? req.getDisplayName() : "";
 
         userRepo.findById(userId)
                 .compose(userOpt -> {
                     if (userOpt.isEmpty()) {
                         return Future.failedFuture(new DomainException(404, "User not found"));
                     }
-                    User updated = userOpt.get().withDisplayName(displayName);
+                    com.demobejavx.domain.model.User updated =
+                            userOpt.get().withDisplayName(displayName);
                     return userRepo.update(updated);
                 })
                 .onSuccess(user -> {
-                    JsonObject resp = buildUserResponse(user);
-                    ctx.response()
-                            .setStatusCode(200)
-                            .putHeader("Content-Type", "application/json")
-                            .end(resp.encode());
+                    User resp = AuthHandler.buildContractUser(user);
+                    AuthHandler.sendJson(ctx, 200, resp);
                 })
                 .onFailure(ctx::fail);
     }
@@ -101,8 +113,17 @@ public class UserHandler implements Handler<RoutingContext> {
             ctx.fail(400);
             return;
         }
-        String oldPassword = body.getString("oldPassword", "");
-        String newPassword = body.getString("newPassword", "");
+
+        ChangePasswordRequest req;
+        try {
+            req = MAPPER.readValue(body.encode(), ChangePasswordRequest.class);
+        } catch (Exception e) {
+            ctx.fail(400);
+            return;
+        }
+
+        String oldPassword = req.getOldPassword() != null ? req.getOldPassword() : "";
+        String newPassword = req.getNewPassword() != null ? req.getNewPassword() : "";
 
         if (newPassword.isEmpty()) {
             ctx.fail(new ValidationException("newPassword", "New password must not be empty"));
@@ -114,7 +135,7 @@ public class UserHandler implements Handler<RoutingContext> {
                     if (userOpt.isEmpty()) {
                         return Future.failedFuture(new DomainException(404, "User not found"));
                     }
-                    User user = userOpt.get();
+                    com.demobejavx.domain.model.User user = userOpt.get();
                     if (!passwordService.verify(oldPassword, user.passwordHash())) {
                         return Future.failedFuture(new DomainException(401,
                                 "Invalid credentials"));
@@ -138,21 +159,12 @@ public class UserHandler implements Handler<RoutingContext> {
                     if (userOpt.isEmpty()) {
                         return Future.failedFuture(new DomainException(404, "User not found"));
                     }
-                    User updated = userOpt.get().withStatus(User.STATUS_INACTIVE);
+                    com.demobejavx.domain.model.User updated = userOpt.get()
+                            .withStatus(com.demobejavx.domain.model.User.STATUS_INACTIVE);
                     return userRepo.update(updated);
                 })
                 .compose(user -> revocationRepo.deleteByUserId(userId))
                 .onSuccess(ignored -> ctx.response().setStatusCode(200).end())
                 .onFailure(ctx::fail);
-    }
-
-    private JsonObject buildUserResponse(User user) {
-        return new JsonObject()
-                .put("id", user.id())
-                .put("username", user.username())
-                .put("email", user.email())
-                .put("displayName", user.displayName())
-                .put("role", user.role())
-                .put("status", user.status());
     }
 }
