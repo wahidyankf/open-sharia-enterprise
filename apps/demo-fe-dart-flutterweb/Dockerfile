@@ -1,9 +1,7 @@
 FROM ghcr.io/cirruslabs/flutter:stable AS build
 WORKDIR /app
-COPY pubspec.yaml pubspec.lock ./
-COPY generated-contracts ./generated-contracts
-RUN flutter pub get
 COPY . .
+RUN flutter pub get
 RUN flutter build web --release
 
 FROM nginx:alpine
