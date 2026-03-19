@@ -20,6 +20,7 @@
         "command": "JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -T:build uber",
         "cwd": "apps/demo-be-clojure-pedestal"
       },
+      "dependsOn": ["codegen"],
       "outputs": ["{projectRoot}/target"]
     },
     "dev": {
@@ -46,10 +47,12 @@
         "parallel": false,
         "cwd": "apps/demo-be-clojure-pedestal"
       },
+      "cache": true,
       "inputs": [
         "{projectRoot}/src/**/*",
         "{projectRoot}/test/**/*",
         "{projectRoot}/tests.edn",
+        "{projectRoot}/generated_contracts/**/*",
         "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature"
       ],
       "outputs": ["{projectRoot}/coverage"]
@@ -60,10 +63,12 @@
         "command": "JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -M:test -m kaocha.runner unit bdd",
         "cwd": "apps/demo-be-clojure-pedestal"
       },
+      "cache": true,
       "inputs": [
         "{projectRoot}/src/**/*",
         "{projectRoot}/test/**/*",
         "{projectRoot}/tests.edn",
+        "{projectRoot}/generated_contracts/**/*",
         "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature"
       ]
     },
@@ -81,6 +86,15 @@
         "command": "clj-kondo --lint src test",
         "cwd": "apps/demo-be-clojure-pedestal"
       }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "clj-kondo --lint src",
+        "cwd": "apps/demo-be-clojure-pedestal"
+      },
+      "dependsOn": ["codegen"],
+      "cache": true
     }
   },
   "implicitDependencies": ["rhino-cli"]

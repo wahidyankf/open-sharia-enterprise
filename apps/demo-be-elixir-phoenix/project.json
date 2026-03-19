@@ -19,7 +19,8 @@
       "options": {
         "command": "MIX_ENV=prod mix do deps.get --only prod, compile --warnings-as-errors",
         "cwd": "apps/demo-be-elixir-phoenix"
-      }
+      },
+      "dependsOn": ["codegen"]
     },
     "dev": {
       "executor": "nx:run-commands",
@@ -45,25 +46,26 @@
         "parallel": false,
         "cwd": "apps/demo-be-elixir-phoenix"
       },
+      "cache": true,
       "inputs": [
         "{projectRoot}/lib/**/*.ex",
         "{projectRoot}/test/**/*.exs",
+        "{projectRoot}/generated-contracts/**/*",
         "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature"
-      ]
+      ],
+      "outputs": ["{projectRoot}/cover/lcov.info"]
     },
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "MIX_ENV=test mix coveralls.lcov --only unit",
-          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-be-elixir-phoenix/cover/lcov.info 90)"
-        ],
-        "parallel": false,
+        "command": "MIX_ENV=test mix test --only unit",
         "cwd": "apps/demo-be-elixir-phoenix"
       },
+      "cache": true,
       "inputs": [
         "{projectRoot}/lib/**/*.ex",
         "{projectRoot}/test/**/*.exs",
+        "{projectRoot}/generated-contracts/**/*",
         "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature"
       ]
     },
@@ -87,7 +89,8 @@
       "options": {
         "command": "mix compile --warnings-as-errors",
         "cwd": "apps/demo-be-elixir-phoenix"
-      }
+      },
+      "dependsOn": ["codegen"]
     },
     "install": {
       "executor": "nx:run-commands",

@@ -52,15 +52,30 @@
     },
     "test:quick": {
       "executor": "nx:run-commands",
+      "cache": true,
       "dependsOn": ["codegen"],
+      "inputs": [
+        "default",
+        "{projectRoot}/generated-contracts/**/*"
+      ],
+      "outputs": ["{projectRoot}/coverage/"],
       "options": {
-        "command": "dart analyze --fatal-infos && flutter test test/unit",
+        "commands": [
+          "flutter test test/unit --coverage",
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-fe-dart-flutterweb/coverage/lcov.info 70)"
+        ],
+        "parallel": false,
         "cwd": "{projectRoot}"
       }
     },
     "test:unit": {
       "executor": "nx:run-commands",
+      "cache": true,
       "dependsOn": ["codegen"],
+      "inputs": [
+        "default",
+        "{projectRoot}/generated-contracts/**/*"
+      ],
       "options": {
         "command": "flutter test test/unit",
         "cwd": "{projectRoot}"

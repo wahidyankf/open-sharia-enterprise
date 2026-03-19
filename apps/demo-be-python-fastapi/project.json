@@ -20,7 +20,8 @@
         "command": "uv build",
         "cwd": "apps/demo-be-python-fastapi"
       },
-      "outputs": ["{projectRoot}/dist"]
+      "outputs": ["{projectRoot}/dist"],
+      "dependsOn": ["codegen"]
     },
     "dev": {
       "executor": "nx:run-commands",
@@ -47,11 +48,14 @@
         "parallel": false,
         "cwd": "apps/demo-be-python-fastapi"
       },
+      "cache": true,
       "inputs": [
         "{projectRoot}/src/**/*.py",
         "{projectRoot}/tests/**/*.py",
+        "{projectRoot}/generated_contracts/**/*",
         "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature"
-      ]
+      ],
+      "outputs": ["{projectRoot}/coverage/lcov.info"]
     },
     "test:unit": {
       "executor": "nx:run-commands",
@@ -59,9 +63,11 @@
         "command": "uv run pytest -m unit",
         "cwd": "apps/demo-be-python-fastapi"
       },
+      "cache": true,
       "inputs": [
         "{projectRoot}/src/**/*.py",
         "{projectRoot}/tests/**/*.py",
+        "{projectRoot}/generated_contracts/**/*",
         "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature"
       ]
     },
@@ -85,7 +91,8 @@
       "options": {
         "command": "uv run pyright",
         "cwd": "apps/demo-be-python-fastapi"
-      }
+      },
+      "dependsOn": ["codegen"]
     }
   },
   "tags": ["type:app", "platform:fastapi", "lang:python", "domain:demo-be"],

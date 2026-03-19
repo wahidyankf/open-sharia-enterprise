@@ -20,6 +20,7 @@
         "command": "JAVA_HOME=${JAVA_HOME_21_X64:-$(ls -d ${SDKMAN_DIR:-$HOME/.sdkman}/candidates/java/21* 2>/dev/null | head -1)} ./gradlew build -x test",
         "cwd": "apps/demo-be-kotlin-ktor"
       },
+      "dependsOn": ["codegen"],
       "outputs": ["{projectRoot}/build"]
     },
     "dev": {
@@ -46,18 +47,28 @@
         "parallel": false,
         "cwd": "apps/demo-be-kotlin-ktor"
       },
+      "cache": true,
       "inputs": [
         "{projectRoot}/src/**",
         "{projectRoot}/build.gradle.kts",
+        "{projectRoot}/generated-contracts/**/*",
         "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature"
-      ]
+      ],
+      "outputs": ["{projectRoot}/build/reports/kover"]
     },
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
         "command": "JAVA_HOME=${JAVA_HOME_21_X64:-$(ls -d ${SDKMAN_DIR:-$HOME/.sdkman}/candidates/java/21* 2>/dev/null | head -1)} ./gradlew testUnit",
         "cwd": "apps/demo-be-kotlin-ktor"
-      }
+      },
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**",
+        "{projectRoot}/build.gradle.kts",
+        "{projectRoot}/generated-contracts/**/*",
+        "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature"
+      ]
     },
     "test:integration": {
       "executor": "nx:run-commands",
@@ -73,6 +84,15 @@
         "command": "JAVA_HOME=${JAVA_HOME_21_X64:-$(ls -d ${SDKMAN_DIR:-$HOME/.sdkman}/candidates/java/21* 2>/dev/null | head -1)} ./gradlew detekt",
         "cwd": "apps/demo-be-kotlin-ktor"
       }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "JAVA_HOME=${JAVA_HOME_21_X64:-$(ls -d ${SDKMAN_DIR:-$HOME/.sdkman}/candidates/java/21* 2>/dev/null | head -1)} ./gradlew compileKotlin",
+        "cwd": "apps/demo-be-kotlin-ktor"
+      },
+      "dependsOn": ["codegen"],
+      "cache": true
     }
   },
   "tags": ["type:app", "platform:ktor", "lang:kotlin", "domain:demo-be"],

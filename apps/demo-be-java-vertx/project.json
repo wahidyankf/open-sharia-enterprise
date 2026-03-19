@@ -25,7 +25,7 @@
         "cwd": "apps/demo-be-java-vertx"
       },
       "outputs": ["{projectRoot}/target"],
-      "dependsOn": []
+      "dependsOn": ["codegen"]
     },
     "dev": {
       "executor": "nx:run-commands",
@@ -51,11 +51,14 @@
         "parallel": false,
         "cwd": "apps/demo-be-java-vertx"
       },
+      "cache": true,
       "inputs": [
         "{projectRoot}/src/**",
         "{projectRoot}/pom.xml",
+        "{projectRoot}/generated-contracts/**/*",
         "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature"
-      ]
+      ],
+      "outputs": ["{projectRoot}/target/site/jacoco/jacoco.xml"]
     },
     "test:unit": {
       "executor": "nx:run-commands",
@@ -63,9 +66,11 @@
         "command": "mvn test",
         "cwd": "apps/demo-be-java-vertx"
       },
+      "cache": true,
       "inputs": [
         "{projectRoot}/src/**",
         "{projectRoot}/pom.xml",
+        "{projectRoot}/generated-contracts/**/*",
         "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature"
       ]
     },
