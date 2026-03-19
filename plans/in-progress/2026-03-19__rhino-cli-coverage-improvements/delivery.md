@@ -21,7 +21,8 @@
 - [ ] Refactor LCOV parser to return per-file data
 - [ ] Refactor JaCoCo parser to return per-file data
 - [ ] Wire Cobertura parser to return per-file data
-- [ ] Add `--per-file` and `--below-threshold` flags to `test-coverage validate` command
+- [ ] Add `--per-file` flag to `test-coverage validate` command
+- [ ] Add `--below-threshold` flag to `test-coverage validate` command
 - [ ] Implement per-file text rendering in `reporter.go` (sorted ascending by %)
 - [ ] Implement per-file JSON rendering (files array in output)
 - [ ] Implement per-file markdown rendering (table with highlighting)
@@ -68,9 +69,15 @@
 - [ ] Create `internal/testcoverage/diff.go` with diff coverage logic
 - [ ] Cross-reference changed lines with coverage data
 - [ ] Calculate diff coverage using Codecov 3-state algorithm: `covered / (covered + partial + missed)`
-- [ ] Handle edge cases: renamed files, binary files, missing coverage data
+- [ ] Handle edge case: renamed files (match by new filename)
+- [ ] Handle edge case: binary files (skip, no coverage data)
+- [ ] Handle edge case: files not in coverage report (count as 0% for changed lines)
 - [ ] Create `cmd/test_coverage_diff.go` subcommand
-- [ ] Add `--base`, `--threshold`, `--staged`, `--per-file`, `--exclude` flags
+- [ ] Add `--base` flag (git ref to diff against, default: main)
+- [ ] Add `--threshold` flag (fail if diff coverage below threshold)
+- [ ] Add `--staged` flag (diff staged changes instead of branch diff)
+- [ ] Add `--per-file` flag (show per-file diff coverage breakdown)
+- [ ] Add `--exclude` flag (exclude files matching glob, repeatable)
 - [ ] Implement text/JSON/markdown output for diff coverage
 - [ ] Write unit tests for git diff parsing
 - [ ] Write unit tests for diff coverage calculation
@@ -193,7 +200,8 @@
 - File exclusion works across validate, merge, and diff commands
 - spec-coverage file matching works for all 11 languages (Go, TS/JS, Java, Kotlin, Python,
   Elixir, Rust, F#, C#, Clojure, Dart)
-- spec-coverage step extraction works for all 11 languages with framework-specific regex
+- spec-coverage step extraction works for 10 languages with framework-specific regex
+  (Dart deferred pending BDD framework adoption)
 - spec-coverage `--shared-steps` mode validates E2E projects (demo-be-e2e, demo-fe-e2e)
 - spec-coverage `--shared-steps` mode validates frontend projects (demo-fe-\*)
 - spec-coverage scenario extraction works for languages with explicit scenario markers
