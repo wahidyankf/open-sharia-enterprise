@@ -38,6 +38,12 @@ rhino-cli spec-coverage validate specs/apps/organiclever-web apps/organiclever-w
 # Validate Java packages have @NullMarked in package-info.java
 rhino-cli java validate-annotations apps/demo-be-java-springboot/src/main/java
 
+# Clean unused/same-package imports from generated Java contracts
+rhino-cli contracts java-clean-imports apps/demo-be-java-springboot/generated-contracts
+
+# Create Dart package scaffolding for generated contracts
+rhino-cli contracts dart-scaffold apps/demo-fe-dart-flutterweb/generated-contracts
+
 # Echo a message
 rhino-cli --say "hello world"
 
@@ -648,6 +654,73 @@ rhino-cli java validate-annotations apps/demo-be-java-springboot/src/main/java -
 }
 ```
 
+### contracts java-clean-imports
+
+Remove unused and same-package imports from generated Java files. Used as a post-processing step
+after OpenAPI code generation for Java backends.
+
+```bash
+# Clean imports in generated contracts
+rhino-cli contracts java-clean-imports apps/demo-be-java-springboot/generated-contracts
+
+# Output as JSON
+rhino-cli contracts java-clean-imports apps/demo-be-java-vertx/generated-contracts -o json
+```
+
+**What it does:**
+
+- Walks all `.java` files in the specified directory
+- Removes imports from the same package as the file
+- Removes imports whose class name is not referenced in the file body
+- Deduplicates identical import lines
+- Only rewrites files when changes are detected (atomic write via temp file + rename)
+
+**Arguments:**
+
+- `<generated-contracts-dir>` - Path to the generated contracts directory
+
+**Exit codes:**
+
+- `0` - Always succeeds (import cleaning is best-effort)
+
+**Replaces:**
+
+This command replaces `scripts/clean-generated-java-imports.sh`, an AWK-based shell script.
+
+### contracts dart-scaffold
+
+Create Dart package scaffolding for generated contracts. Used as a post-processing step after
+OpenAPI code generation for the Flutter Web frontend.
+
+```bash
+# Create scaffold
+rhino-cli contracts dart-scaffold apps/demo-fe-dart-flutterweb/generated-contracts
+
+# Output as JSON
+rhino-cli contracts dart-scaffold apps/demo-fe-dart-flutterweb/generated-contracts -o json
+```
+
+**What it does:**
+
+- Writes `pubspec.yaml` with package metadata and dependencies
+- Creates `lib/` directory
+- Generates barrel library (`lib/demo_contracts.dart`) with:
+  - Part directives for all model files in `lib/model/` (sorted alphabetically)
+  - Utility functions required by generated model code
+
+**Arguments:**
+
+- `<generated-contracts-dir>` - Path to the generated contracts directory
+
+**Exit codes:**
+
+- `0` - Scaffold created successfully
+- `1` - Error writing files
+
+**Replaces:**
+
+This command replaces `apps/demo-fe-dart-flutterweb/scripts/post-codegen.sh`.
+
 ### doctor
 
 Check that all required development tools are installed with the correct versions.
@@ -785,6 +858,11 @@ apps/rhino-cli/
 │   ├── spec_coverage_validate.integration_test.go    # godog BDD tests (4 scenarios)
 │   ├── java_validate_annotations.go / _test.go       # Java annotation validation + unit tests
 │   ├── java_validate_annotations.integration_test.go # godog BDD tests (4 scenarios)
+│   ├── contracts.go                                    # Parent contracts command
+│   ├── contracts_java_clean_imports.go / _test.go     # Java import cleaning + unit tests
+│   ├── contracts_java_clean_imports.integration_test.go # godog BDD tests (5 scenarios)
+│   ├── contracts_dart_scaffold.go / _test.go          # Dart scaffolding + unit tests
+│   ├── contracts_dart_scaffold.integration_test.go    # godog BDD tests (3 scenarios)
 │   ├── docs_validate_naming.go / _test.go            # Docs naming validation + unit tests
 │   └── docs_validate_naming.integration_test.go     # godog BDD tests (5 scenarios)
 ├── internal/
@@ -828,6 +906,14 @@ apps/rhino-cli/
 │   │   ├── checker_test.go   # Unit tests (temp dir fixtures)
 │   │   ├── reporter.go       # Output formatting (text, JSON, markdown)
 │   │   └── reporter_test.go  # Reporter unit tests
+│   ├── contracts/            # Contract codegen post-processing
+│   │   ├── types.go          # Options/Result structs for both commands
+│   │   ├── java_clean_imports.go # Java import cleaning (port of AWK script)
+│   │   ├── java_clean_imports_test.go
+│   │   ├── dart_scaffold.go  # Dart package scaffolding
+│   │   ├── dart_scaffold_test.go
+│   │   ├── reporter.go       # Output formatting (text, JSON, markdown)
+│   │   └── reporter_test.go
 │   ├── java/                 # Java null-safety annotation validation
 │   │   ├── types.go          # PackageEntry, ValidationResult, ValidationOptions
 │   │   ├── scanner.go        # Walk source tree, find Java package directories
@@ -904,6 +990,7 @@ go test ./...
 - `internal/docs`: 95%+ coverage (naming: scanner, validator, reporter, prefix_rules, fixer; links: links_scanner, links_validator, links_categorizer, links_reporter)
 - `internal/agents`: 95%+ coverage (converter, copier, sync_validator, reporter, claude_validator, agent_validator, skill_validator)
 - `internal/speccoverage`: ≥95% coverage (parser, checker with temp dir fixtures, reporter for all formats)
+- `internal/contracts`: ≥90% coverage (java_clean_imports, dart_scaffold, reporter — all pure functions with temp dir fixtures)
 - `internal/java`: ≥95% coverage (scanner, validator, reporter — all pure functions tested with temp dir fixtures)
 - `internal/testcoverage`: ≥95% coverage (detect, go_coverage, lcov_coverage, reporter — all pure functions with temp dir fixtures)
 
@@ -947,7 +1034,7 @@ nx install rhino-cli
 
 - `build` - Build the CLI binary to `dist/`
 - `test:quick` - Run unit tests with ≥95% coverage enforcement
-- `test:integration` - Run all 39 godog BDD scenarios (cached; only re-runs when sources or specs change)
+- `test:integration` - Run all 47 godog BDD scenarios (cached; only re-runs when sources or specs change)
 - `lint` - Static analysis via golangci-lint
 - `run` - Run the CLI directly (`go run main.go`)
 - `install` - Install Go dependencies (`go mod tidy`)
@@ -960,7 +1047,7 @@ The project uses two complementary test tiers:
   Run via `nx run rhino-cli:test:quick` with ≥95% line coverage enforcement.
 - **Integration tests** (`//go:build integration`, `go test -tags=integration -run TestIntegration ./cmd/...`):
   godog BDD tests that drive each command in-process via `cmd.RunE()` against controlled filesystem
-  fixtures. One file per command in `apps/rhino-cli/cmd/`, 39 scenarios total across 9 suites.
+  fixtures. One file per command in `apps/rhino-cli/cmd/`, 47 scenarios total across 11 suites.
   Run via `nx run rhino-cli:test:integration` (cached). Integration tests are co-located with the
   implementation in `cmd/` (not a separate folder): they are in `package cmd` to access unexported
   flag variables (`output`, `quiet`, `verbose`) that each command sets before calling `RunE()`.
@@ -1055,6 +1142,17 @@ rhino-cli say
 ```
 
 ## Version History
+
+### v0.12.0 (2026-03-19)
+
+- Added `contracts java-clean-imports` command: removes unused, same-package, and duplicate imports
+  from generated Java files (replaces `scripts/clean-generated-java-imports.sh`)
+- Added `contracts dart-scaffold` command: creates pubspec.yaml and barrel library for generated Dart
+  contracts (replaces `apps/demo-fe-dart-flutterweb/scripts/post-codegen.sh`)
+- Updated `demo-be-java-springboot`, `demo-be-java-vertx`, and `demo-fe-dart-flutterweb` codegen
+  targets to use rhino-cli instead of shell scripts
+- 8 new godog BDD scenarios (5 Java import cleaning + 3 Dart scaffolding)
+- Deleted `scripts/` directory and `apps/demo-fe-dart-flutterweb/scripts/` directory
 
 ### v0.11.0 (2026-03-05)
 

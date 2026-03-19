@@ -18,6 +18,7 @@ the contract between the CLI implementation and its consumers.
 | `agents/`        | `agents sync`, `agents validate-claude`, `agents validate-sync` |
 | `docs/`          | `docs validate-links`, `docs validate-naming`                   |
 | `doctor/`        | `doctor`                                                        |
+| `contracts/`     | `contracts java-clean-imports`, `contracts dart-scaffold`       |
 | `java/`          | `java validate-annotations`                                     |
 | `spec-coverage/` | `spec-coverage validate`                                        |
 | `test-coverage/` | `test-coverage validate`                                        |

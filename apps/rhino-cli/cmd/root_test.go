@@ -79,7 +79,7 @@ func TestRootCommand_Initialization(t *testing.T) {
 		t.Errorf("Expected short description 'CLI tools for repository management', got %s", rootCmd.Short)
 	}
 
-	if rootCmd.Version != "0.10.0" {
+	if rootCmd.Version != "0.12.0" {
 		t.Errorf("Expected version '0.10.0', got %s", rootCmd.Version)
 	}
 }
@@ -123,7 +123,7 @@ func TestRootCommand_GlobalFlags(t *testing.T) {
 }
 
 func TestRootCommand_Version(t *testing.T) {
-	if rootCmd.Version != "0.10.0" {
+	if rootCmd.Version != "0.12.0" {
 		t.Errorf("Expected version '0.10.0', got %s", rootCmd.Version)
 	}
 }
