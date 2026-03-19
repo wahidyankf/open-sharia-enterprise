@@ -4,6 +4,7 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-03-19: Demo CI and Test Standardization](./2026-03-19__demo-ci-test-standardization/README.md) - Standardize CI workflows, Nx test targets, Docker infrastructure, and tooling versions across all 16 demo apps. Aligned Go/Elixir/Python versions in scheduled workflows, added typecheck targets to 4 backends, fixed codegen dependencies, separated lint from test:quick, added cache/inputs/outputs with Gherkin specs and generated-contracts, standardized Docker health checks to curl (Completed: 2026-03-19)
 - [2026-03-13: Demo Specs Consolidation](./2026-03-13__demo-specs-consolidation/README.md) - Consolidate `specs/apps/demo-be/` and `specs/apps/demo-fe/` into unified `specs/apps/demo/` with shared C4 diagrams, separate `be/` and `fe/` Gherkin specs, and updated path references across all 11 backends (Completed: 2026-03-13)
 - [2026-03-13: Testing Standardization](./2026-03-13__testing-standardization/README.md) - Standardize three-level testing (unit/integration/e2e) across all 23 projects with consistent Nx targets, shared Gherkin specs, docker-compose integration, and CI schedules (Completed: 2026-03-13)
 - [2026-03-12: Demo Backend Clojure/Pedestal](./2026-03-12__demo-be-clojure-pedestal/README.md) - Clojure/Pedestal reimplementation of the demo backend REST API with 76 Gherkin scenarios via kaocha-cucumber, cloverage LCOV coverage, Docker Compose infra, and GitHub Actions E2E workflow (Completed: 2026-03-13)
