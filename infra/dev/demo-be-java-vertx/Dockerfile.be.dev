@@ -4,8 +4,8 @@
 
 FROM eclipse-temurin:25-jdk-alpine
 
-# Install Maven and wget (for healthcheck)
-RUN apk add --no-cache maven wget
+# Install Maven and curl (for healthcheck)
+RUN apk add --no-cache maven curl
 
 WORKDIR /workspace
 

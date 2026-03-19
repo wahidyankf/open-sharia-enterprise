@@ -3,6 +3,9 @@
 
 FROM golang:1.24-alpine
 
+# Install curl for health checks
+RUN apk add --no-cache curl
+
 WORKDIR /workspace
 
 CMD ["go", "run", "./cmd/server"]

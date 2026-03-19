@@ -4,9 +4,9 @@
 
 FROM eclipse-temurin:25-jdk-alpine
 
-# Install Maven once during image build (not at runtime)
+# Install Maven and curl once during image build (not at runtime)
 # This saves ~10-20 seconds on every 'docker compose up'
-RUN apk add --no-cache maven
+RUN apk add --no-cache maven curl
 
 # Set working directory where source code will be mounted
 WORKDIR /workspace
