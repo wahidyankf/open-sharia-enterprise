@@ -3,6 +3,9 @@
 
 FROM eclipse-temurin:21-jdk-alpine
 
+# Install curl for health checks
+RUN apk add --no-cache curl
+
 WORKDIR /workspace
 
 CMD ["./gradlew", "run"]
