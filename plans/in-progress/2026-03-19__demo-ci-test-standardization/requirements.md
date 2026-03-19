@@ -140,8 +140,8 @@ Scenario: Codegen dependency chain is consistent
   When the CI standardization is complete
   Then every backend typecheck target has dependsOn: [codegen]
   And every backend build target has dependsOn: [codegen]
-  And test:unit does NOT depend on codegen directly (codegen runs via typecheck/build chain)
-  And test:quick does NOT depend on codegen directly
+  And test:unit does NOT depend on codegen directly (except Rust/Flutter — see FR-11)
+  And test:quick does NOT depend on codegen directly (except Rust/Flutter — see FR-11)
 ```
 
 ## Functional Requirements
@@ -264,6 +264,12 @@ Currently missing `dependsOn: ["codegen"]` on `build`:
 
 The `test:unit` and `test:quick` targets do NOT directly depend on codegen — they rely on the
 pre-push hook running `typecheck` before `test:quick`.
+
+**Exception**: `demo-be-rust-axum` already has `dependsOn: ["codegen"]` on both `test:unit` and
+`test:quick`. This is kept because Rust's `cargo test` compiles source code (unlike interpreted
+languages), and compilation fails without generated contract types. Similarly,
+`demo-fe-dart-flutterweb` has `dependsOn: ["codegen"]` on test targets for the same reason
+(Dart compilation requires generated types).
 
 ### FR-12: Docker health check standardization
 

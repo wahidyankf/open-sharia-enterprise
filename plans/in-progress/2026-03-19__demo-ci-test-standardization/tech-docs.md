@@ -73,19 +73,18 @@ Static type checking / compilation check. Must catch contract mismatches at comp
 
 **Language-specific commands:**
 
-| Language      | Command                                                   | Notes                                  |
-| ------------- | --------------------------------------------------------- | -------------------------------------- |
-| Go            | `go vet ./...`                                            | Catches type errors and issues         |
-| Java (Maven)  | `mvn compile -Pnullcheck`                                 | NullAway profile                       |
-| Java (Gradle) | N/A — use `mvn compile` equivalent                        |                                        |
-| Kotlin        | `./gradlew compileKotlin`                                 | Gradle compile check                   |
-| Rust          | `cargo check`                                             | Fast type check without codegen        |
-| TypeScript    | `tsc --noEmit`                                            | Standard TS check                      |
-| Python        | `pyright`                                                 | Type checker                           |
-| Elixir        | `mix compile --warnings-as-errors`                        | Already exists                         |
-| F#            | `dotnet build --no-restore /p:TreatWarningsAsErrors=true` | Already exists                         |
-| C#            | `dotnet build /p:TreatWarningsAsErrors=true --no-restore` | Already exists                         |
-| Clojure       | `clj-kondo --lint src`                                    | Static analysis (closest to typecheck) |
+| Language     | Command                                                   | Notes                                  |
+| ------------ | --------------------------------------------------------- | -------------------------------------- |
+| Go           | `go vet ./...`                                            | Catches type errors and issues         |
+| Java (Maven) | `mvn compile -Pnullcheck`                                 | NullAway profile (SpringBoot + Vert.x) |
+| Kotlin       | `./gradlew compileKotlin`                                 | Gradle compile check                   |
+| Rust         | `cargo check`                                             | Fast type check without codegen        |
+| TypeScript   | `tsc --noEmit`                                            | Standard TS check                      |
+| Python       | `pyright`                                                 | Type checker                           |
+| Elixir       | `mix compile --warnings-as-errors`                        | Already exists                         |
+| F#           | `dotnet build --no-restore /p:TreatWarningsAsErrors=true` | Already exists                         |
+| C#           | `dotnet build /p:TreatWarningsAsErrors=true --no-restore` | Already exists                         |
+| Clojure      | `clj-kondo --lint src`                                    | Static analysis (closest to typecheck) |
 
 #### 3. lint
 
@@ -102,19 +101,18 @@ Code style and quality checks. Separate from typecheck and test:quick.
 
 **Language-specific commands:**
 
-| Language      | Command                                        | Notes                              |
-| ------------- | ---------------------------------------------- | ---------------------------------- |
-| Go            | `golangci-lint run`                            | Already exists                     |
-| Java (Maven)  | `mvn checkstyle:check` or similar              | Already exists                     |
-| Java (Gradle) | N/A                                            |                                    |
-| Kotlin        | `./gradlew detekt`                             | Currently missing as Nx target     |
-| Rust          | `cargo clippy -- -D warnings`                  | Already exists                     |
-| TypeScript    | `oxlint` or `eslint`                           | Already exists                     |
-| Python        | `ruff check` or similar                        | Already exists                     |
-| Elixir        | `mix credo --strict`                           | Already exists                     |
-| F#            | `fantomas --check . && dotnet fsharplint lint` | Currently inside test:quick        |
-| C#            | `dotnet build /p:TreatWarningsAsErrors=true`   | Already exists (same as typecheck) |
-| Clojure       | `clj-kondo --lint src test`                    | Already exists                     |
+| Language     | Command                                        | Notes                                                          |
+| ------------ | ---------------------------------------------- | -------------------------------------------------------------- |
+| Go           | `golangci-lint run`                            | Already exists                                                 |
+| Java (Maven) | `mvn checkstyle:check` or similar              | Already exists (SpringBoot + Vert.x)                           |
+| Kotlin       | `./gradlew detekt`                             | Already exists                                                 |
+| Rust         | `cargo clippy -- -D warnings`                  | Already exists                                                 |
+| TypeScript   | `oxlint` or `eslint`                           | Already exists                                                 |
+| Python       | `ruff check` or similar                        | Already exists                                                 |
+| Elixir       | `mix credo --strict`                           | Already exists                                                 |
+| F#           | `fantomas --check . && dotnet fsharplint lint` | Target state (fantomas currently in test:quick, will be moved) |
+| C#           | `dotnet build /p:TreatWarningsAsErrors=true`   | Already exists (same as typecheck)                             |
+| Clojure      | `clj-kondo --lint src test`                    | Already exists                                                 |
 
 #### 4. build
 
@@ -257,7 +255,8 @@ healthcheck:
 ### Start Period Rationale
 
 Start periods should reflect actual cold-start time. Current values are sometimes arbitrary.
-Recommended baseline:
+Recommended **initial baselines** (actual values will be determined by Phase 5 benchmarking —
+these are starting points, not final values):
 
 | Category                      | Start Period | Rationale                                 |
 | ----------------------------- | ------------ | ----------------------------------------- |
