@@ -43,6 +43,8 @@ when manually triggered. No version mismatches remain across any `test-demo-*.ym
 typecheck targets missing the codegen dependency.
 
 - [ ] **demo-be-golang-gin: Add typecheck target**
+  - [ ] Verify `go.mod` includes `generated-contracts` package (or add `replace` directive
+        if needed — `go vet` requires all imported packages to be resolvable)
   - [ ] Add to `project.json`:
 
     ```jsonc
@@ -53,6 +55,7 @@ typecheck targets missing the codegen dependency.
     }
     ```
 
+  - [ ] Run `nx run demo-be-golang-gin:codegen` first, then verify `go vet ./...` passes
   - [ ] Verify `nx run demo-be-golang-gin:typecheck` passes
 
 - [ ] **demo-be-rust-axum: Add typecheck target**
@@ -318,6 +321,7 @@ Flutter test:quick enforces coverage at 70% and does not include `dart analyze`.
   - [ ] Every backend `typecheck` has `dependsOn: ["codegen"]`
   - [ ] Every backend `build` has `dependsOn: ["codegen"]`
   - [ ] `test:unit` and `test:quick` do NOT directly depend on `codegen`
+        (exception: Rust and Flutter keep `dependsOn: ["codegen"]` — see FR-11)
 
 - [ ] **Run full test sweep**
   - [ ] `nx run-many -t test:quick --projects=demo-*` — all pass
