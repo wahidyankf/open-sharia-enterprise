@@ -223,6 +223,7 @@ All examples follow a consistent five-part format:
 **Key Takeaway**: 1-2 sentence summary.
 
 **Why It Matters**: 50-100 words explaining production relevance.
+
 ```
 
 **Code annotations**:
