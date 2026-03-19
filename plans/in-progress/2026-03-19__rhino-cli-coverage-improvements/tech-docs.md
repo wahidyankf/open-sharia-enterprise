@@ -7,7 +7,7 @@ New features follow the established patterns: cmd/ for CLI parsing, internal/ fo
 dependency injection for testability.
 
 ```mermaid
-graph TD
+graph LR
     A["test-coverage validate"] --> B["detect.go (format detection)"]
     B --> C["go_coverage.go"]
     B --> D["lcov_coverage.go"]
