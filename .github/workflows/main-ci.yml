@@ -126,6 +126,12 @@ jobs:
       - name: Install Flutter dependencies
         run: (cd apps/demo-fe-dart-flutterweb && flutter pub get)
 
+      - name: typecheck (all projects)
+        run: npx nx run-many -t typecheck --all
+
+      - name: lint (all projects)
+        run: npx nx run-many -t lint --all
+
       - name: test:quick (all projects)
         run: npx nx run-many -t test:quick --all
 
