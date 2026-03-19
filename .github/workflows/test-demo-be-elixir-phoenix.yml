@@ -27,7 +27,7 @@ jobs:
         uses: erlef/setup-beam@v1
         with:
           otp-version: "27"
-          elixir-version: "1.18"
+          elixir-version: "1.19"
 
       - name: Generate contract types for backend
         run: |
@@ -63,7 +63,7 @@ jobs:
         uses: erlef/setup-beam@v1
         with:
           otp-version: "27"
-          elixir-version: "1.18"
+          elixir-version: "1.19"
 
       - name: Generate contract types
         run: |
