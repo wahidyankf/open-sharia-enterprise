@@ -7,6 +7,9 @@ type: docs
 layout: list
 ---
 
+- [Infrastructure as Code](/en/learn/software-engineering/infrastructure/infrastructure-as-code)
+  - [By Example](/en/learn/software-engineering/infrastructure/infrastructure-as-code/by-example)
+  - [Overview](/en/learn/software-engineering/infrastructure/infrastructure-as-code/overview)
 - [Overview](/en/learn/software-engineering/infrastructure/overview)
 - [Concepts](/en/learn/software-engineering/infrastructure/concepts)
   - [How to](/en/learn/software-engineering/infrastructure/concepts/how-to)
