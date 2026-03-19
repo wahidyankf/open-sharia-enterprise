@@ -2,8 +2,8 @@
 
  :linters
  {:namespace-name-mismatch {:level :warning}
-  :unused-private-var      {:level :warning}
-  :unused-binding          {:level :warning
+  :unused-private-var      {:level :error}
+  :unused-binding          {:level :error
                             :exclude-destructured-as-default true}}
 
  :config-in-ns
