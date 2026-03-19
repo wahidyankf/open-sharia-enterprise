@@ -4,6 +4,8 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
+- [2026-03-19: rhino-cli Coverage Improvements](./2026-03-19__rhino-cli-coverage-improvements/README.md) - Add Cobertura XML format, per-file reporting, coverage merging, diff coverage, file exclusion patterns, and spec-coverage multi-language support (v0.12.0 → v0.13.0)
+
 ## Instructions
 
 **Quick Idea Capture**: For 1-3 liner ideas not ready for formal planning, use `../ideas.md`.
