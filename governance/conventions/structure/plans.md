@@ -227,6 +227,29 @@ Plans can use either **single-file** or **multi-file** structure depending on si
 - **tech-docs.md**: Architecture diagrams, API design, data models, technical decisions
 - **delivery.md**: Milestones, deliverables, success metrics, validation checklist
 
+### Granular Checklist Items in delivery.md
+
+Every checkbox in `delivery.md` must represent exactly one concrete, independently verifiable action. Multi-step work hidden behind a single checkbox defeats the purpose of a checklist: it makes progress invisible and creates ambiguity about what "done" means.
+
+**Rule**: One checkbox = one concrete action. If completing the item requires multiple distinct steps, split it into multiple checkboxes.
+
+**Bad** (too coarse — hides multiple steps):
+
+```markdown
+- [ ] Implement coverage merging with all formats and tests
+```
+
+**Good** (granular — each item is independently completable):
+
+```markdown
+- [ ] Create `internal/testcoverage/merge.go` with format-agnostic merge logic
+- [ ] Implement `CoverageMap` type for normalized per-line data
+- [ ] Add parsers to return `CoverageMap` from each format
+- [ ] Write unit tests for merge logic (same format, cross-format, overlapping)
+```
+
+**Test for granularity**: Each checkbox must pass this test — can you verify it is done without completing anything else on the list? If the answer is no, the item is too coarse.
+
 **Acceptance Criteria**: All user stories in requirements.md must include testable acceptance criteria using Gherkin format. See [Acceptance Criteria Convention](../../development/infra/acceptance-criteria.md) for complete details.
 
 ### Important Note on File Naming
@@ -426,4 +449,4 @@ Quick ideas and todos that haven't been formalized into plans yet.
 
 ---
 
-**Last Updated**: 2025-12-05
+**Last Updated**: 2026-03-19
