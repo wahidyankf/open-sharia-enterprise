@@ -16,6 +16,19 @@ to support demo-be backend naming conventions.
 
 rhino-cli v0.12.0 supports 3 coverage formats (Go cover.out, LCOV, JaCoCo XML) with single-file
 threshold validation. The tool outputs aggregate coverage percentage and pass/fail status.
+`spec-coverage validate` only supports Go and TS/JS test file matching and step extraction.
+
+### Coverage Format Map (All Projects)
+
+| Format           | Projects                                                                                                                                                                                                                                                                                                                                    |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Go cover.out** | rhino-cli, ayokoding-cli, oseplatform-cli, demo-be-golang-gin, golang-commons, hugo-commons                                                                                                                                                                                                                                                 |
+| **LCOV**         | demo-be-elixir-phoenix, demo-be-python-fastapi, demo-be-rust-axum, demo-be-fsharp-giraffe, demo-be-csharp-aspnetcore, demo-be-ts-effect, demo-be-clojure-pedestal, demo-fe-ts-nextjs, demo-fe-ts-tanstack-start, demo-fe-dart-flutterweb, organiclever-web, elixir-cabbage, elixir-gherkin, elixir-openapi-codegen, clojure-openapi-codegen |
+| **JaCoCo XML**   | demo-be-java-springboot, demo-be-java-vertx, demo-be-kotlin-ktor (Kover `report.xml` -- no "jacoco" in filename, uses content-based detection)                                                                                                                                                                                              |
+| **No coverage**  | ayokoding-web, oseplatform-web (Hugo sites), demo-be-e2e, demo-fe-e2e, organiclever-web-e2e (E2E test suites)                                                                                                                                                                                                                               |
+
+All projects are already covered by the existing 3 formats. Cobertura XML (R1) adds future-proofing
+for external use cases (GitLab CI, Python default, .NET Coverlet default).
 
 ### Goals
 
@@ -25,8 +38,9 @@ threshold validation. The tool outputs aggregate coverage percentage and pass/fa
 3. **Coverage merging** -- Combine multiple coverage files into a unified report
 4. **Diff coverage** -- Report coverage only for changed lines (git diff), enabling PR quality gates
 5. **File exclusion patterns** -- Exclude generated code and test utilities from coverage calculation
-6. **spec-coverage demo-be support** -- Fix naming convention mismatch that prevents demo-be
-   backends from using `spec-coverage validate`
+6. **spec-coverage multi-language support** -- Extend `spec-coverage validate` to support all 11
+   demo-be backend languages: file matching, scenario extraction, and step definition extraction
+   for Go, TS/JS, Java, Kotlin, Python, Elixir, Rust, F#, C#, Clojure, and Dart
 
 ### Non-Goals
 

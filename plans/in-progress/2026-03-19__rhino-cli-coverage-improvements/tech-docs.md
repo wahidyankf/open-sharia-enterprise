@@ -73,6 +73,11 @@ graph TD
 attribute; JaCoCo uses `<report>` root element. Content-based detection reads the first few
 lines to find the root element name.
 
+**Kover compatibility note**: Kotlin's Kover outputs `report.xml` (no "jacoco" in filename).
+Filename-based detection misses it, so it falls through to content-based detection which
+correctly identifies `<report>` root as JaCoCo. The Cobertura addition must NOT break this --
+ensure `<report>` → JaCoCo is checked before `<coverage>` → Cobertura in the content scan.
+
 **XML struct mapping**:
 
 ```go
@@ -226,97 +231,162 @@ if needed.
 3. Aggregate remaining files for percentage calculation
 4. Report only non-excluded files in per-file output
 
-### D6: spec-coverage Multi-Language Matching
+### D6: spec-coverage Multi-Language Support
 
-**Current `findMatchingTestFile` logic** (simplified):
+Three layers must be extended: file matching, scenario extraction, and step extraction.
+
+#### Layer 1: File Matching (`findMatchingTestFile`)
+
+**Current logic** (actual code from `checker.go:204`):
 
 ```go
-// Current: only matches {stem}_test.go, {stem}.test.ts, etc.
-if strings.HasPrefix(base, stem+".") || strings.HasPrefix(base, stem+"_") {
-    return true
-}
+// ACTUAL current code — only matches stem+"." prefix, NOT stem+"_"
+if strings.HasPrefix(base, stem+".") || strings.HasPrefix(base, underscoreStem+".") ||
+   base == stem || base == underscoreStem {
 ```
 
-**Enhanced matching strategy**: Build a list of candidate patterns per feature stem, check all.
+This misses `health_check_steps_test.go` (underscore separator) and `HealthCheckSteps.java`
+(PascalCase). The fix adds underscore-prefix matching, PascalCase matching, and `test_` prefix.
 
 ```go
-func candidatePatterns(stem string) []string {
-    snake := toSnakeCase(stem)  // "health-check" → "health_check"
-    pascal := toPascalCase(stem) // "health-check" → "HealthCheck"
+func matchesStem(base, stem string) bool {
+    snake := strings.ReplaceAll(stem, "-", "_")
+    pascal := toPascalCase(stem)
+    testSnake := "test_" + snake  // Python convention
 
-    return []string{
-        // Existing patterns (CLI apps)
-        stem,                        // health-check (prefix match)
-        snake,                       // health_check (prefix match)
-
-        // Go BDD steps
-        snake + "_steps",            // health_check_steps_test.go
-
-        // TypeScript/JS steps
-        stem + ".steps",             // health-check.steps.ts
-        "steps/" + stem,             // steps/health-check.steps.ts
-
-        // Java/Kotlin (PascalCase)
-        pascal + "Steps",            // HealthCheckSteps.java
-        pascal + "Test",             // HealthCheckTest.java
-
-        // Elixir
-        snake + "_steps",            // health_check_steps.exs
-
-        // Python (test_ prefix)
-        "test_" + snake,             // test_health_check.py
-
-        // Rust
-        snake + "_test",             // health_check_test.rs
-
-        // F#/C#
-        pascal + "Tests",            // HealthCheckTests.fs
-        pascal + "Steps",            // HealthCheckSteps.cs
-
-        // Clojure
-        snake + "_test",             // health_check_test.clj
-        snake + "_steps",            // health_check_steps.clj
+    // Check all prefix patterns (dot, underscore, exact)
+    for _, prefix := range []string{
+        stem + ".", stem + "_",           // kebab: health-check. / health-check_
+        snake + ".", snake + "_",         // snake: health_check. / health_check_
+        pascal,                            // PascalCase: HealthCheck (prefix)
+        testSnake + ".", testSnake + "_", // Python: test_health_check. / test_health_check_
+    } {
+        if strings.HasPrefix(base, prefix) {
+            return true
+        }
     }
+    return base == stem || base == snake
 }
 ```
 
-**Backward compatibility**: All existing patterns remain. New patterns are additive.
+#### Layer 2: Test File Recognition
 
-**Test file indicators** (already in checker.go, may need expansion):
+Extend the extension-based test file filter for new languages:
 
-- Go: `_test.go` suffix
-- TS/JS: `.test.`, `.spec.`, `.steps.`, `.integration.`, `_test.`
-- Java/Kotlin: files in `test/` directory
-- Elixir: `_test.exs`, `_steps.exs`
-- Python: `test_` prefix or `_test.py` suffix
-- Rust: `_test.rs` or in `tests/` directory
-- F#/C#: files in `Tests` project or `_test` suffix
-- Clojure: `_test.clj` suffix
+| Extension           | Test File Indicator                                                                 |
+| ------------------- | ----------------------------------------------------------------------------------- |
+| `.go`               | Must end in `_test.go` (existing)                                                   |
+| `.ts/.tsx/.js/.jsx` | Must contain `.test.`, `.spec.`, `.steps.`, `.integration.`, or `_test.` (existing) |
+| `.java`             | Must be in `test/` or `tests/` ancestor directory                                   |
+| `.kt`               | Must be in `test/` or `tests/` ancestor directory                                   |
+| `.py`               | Must start with `test_` OR end with `_test.py` OR be in `tests/` directory          |
+| `.exs`              | Must end in `_test.exs` or `_steps.exs`                                             |
+| `.rs`               | Must end in `_test.rs` or be in `tests/` directory                                  |
+| `.fs`               | Must be in `Tests` project directory                                                |
+| `.cs`               | Must be in `Tests` project directory or end in `Steps.cs`/`Tests.cs`                |
+| `.clj`              | Must end in `_test.clj` or `_steps.clj`                                             |
+
+#### Layer 3: Step Extraction (`extractAllStepTexts`)
+
+**New regex patterns** for each language:
+
+```go
+// Java/Kotlin: @Given("text") @When("text") @Then("text") @And("text") @But("text")
+jvmStepRe = regexp.MustCompile(`@(?:Given|When|Then|And|But)\s*\(\s*"((?:[^"\\]|\\.)*)"\s*\)`)
+
+// Python: @given("text") @when("text") @then("text")
+pyStepRe = regexp.MustCompile(`@(?:given|when|then|step)\s*\(\s*"((?:[^"\\]|\\.)*)"\s*\)`)
+
+// Elixir: defgiven ~r/^text$/ or defwhen ~r/^text$/ or defthen ~r/^text$/
+exStepRe = regexp.MustCompile(`def(?:given|when|then|and_|but_)\s+~r/\^?(.*?)\$?/`)
+
+// Rust: #[given("text")] #[when("text")] #[then("text")]
+rsStepRe = regexp.MustCompile(`#\[(?:given|when|then)\s*\(\s*"((?:[^"\\]|\\.)*)"\s*\)\s*\]`)
+
+// C#: [Given("text")] [When("text")] [Then("text")]
+csStepRe = regexp.MustCompile(`\[(?:Given|When|Then|And|But)\s*\(\s*"((?:[^"\\]|\\.)*)"\s*\)\s*\]`)
+
+// F#: let [<Given>] ``text`` () = (backtick-quoted method name IS the step text)
+fsStepRe = regexp.MustCompile("\\[<(?:Given|When|Then)>\\]\\s+``((?:[^`]|`[^`])*)``")
+
+// Clojure: (Given "text" ...) (When "text" ...) (Then "text" ...)
+cljStepRe = regexp.MustCompile(`\((?:Given|When|Then|And|But)\s+"((?:[^"\\]|\\.)*)"\s`)
+```
+
+**Extraction type per language**: Java/Kotlin/Python/Rust/C#/Clojure extract exact text.
+Go extracts regex patterns (compiled). Elixir extracts regex patterns (from `~r/...$/`).
+F# extracts exact text from backtick-quoted method names.
+
+#### Layer 4: Scenario Extraction (`extractScenarioTitles`)
+
+Extend with language-specific patterns:
+
+```go
+// Java/Kotlin/C#/Rust: // Scenario: Title (same as Go comment pattern)
+// Python: @scenario("feature.feature", "Title")
+pyScenarioRe = regexp.MustCompile(`@scenario\s*\(\s*"[^"]*"\s*,\s*"((?:[^"\\]|\\.)*)"\s*\)`)
+
+// Elixir, F#, Clojure: auto-bind from feature files — skip scenario extraction
+// (validate only at step level for these frameworks)
+```
+
+**skipDirs expansion**: Add language-specific build directories:
+
+```go
+var skipDirs = map[string]bool{
+    // Existing
+    "node_modules": true, ".next": true, "build": true, "dist": true,
+    "storybook-static": true, "coverage": true, ".git": true,
+    // New
+    "target": true,        // Java/Kotlin Maven/Gradle, Rust/Clojure
+    "_build": true,        // Elixir Mix
+    "deps": true,          // Elixir Mix
+    "bin": true,           // .NET
+    "obj": true,           // .NET
+    "__pycache__": true,   // Python
+    ".pytest_cache": true, // Python
+    ".venv": true,         // Python
+    "generated-contracts": true, // All demo apps
+    "generated_contracts": true, // Python/Clojure convention
+}
+```
 
 ## File Changes Summary
 
 ### New Files
 
-| File                                               | Purpose                    |
-| -------------------------------------------------- | -------------------------- |
-| `internal/testcoverage/cobertura_coverage.go`      | Cobertura XML parser       |
-| `internal/testcoverage/cobertura_coverage_test.go` | Unit tests                 |
-| `internal/testcoverage/per_file.go`                | Per-file aggregation logic |
-| `internal/testcoverage/per_file_test.go`           | Unit tests                 |
-| `internal/testcoverage/merge.go`                   | Coverage merging logic     |
-| `internal/testcoverage/merge_test.go`              | Unit tests                 |
-| `internal/testcoverage/diff.go`                    | Diff coverage logic        |
-| `internal/testcoverage/diff_test.go`               | Unit tests                 |
-| `internal/testcoverage/exclude.go`                 | File exclusion logic       |
-| `internal/testcoverage/exclude_test.go`            | Unit tests                 |
-| `internal/testcoverage/gitdiff.go`                 | Git diff parser            |
-| `internal/testcoverage/gitdiff_test.go`            | Unit tests                 |
-| `cmd/test_coverage_merge.go`                       | Merge subcommand           |
-| `cmd/test_coverage_merge_test.go`                  | Unit tests                 |
-| `cmd/test_coverage_merge.integration_test.go`      | BDD integration tests      |
-| `cmd/test_coverage_diff.go`                        | Diff subcommand            |
-| `cmd/test_coverage_diff_test.go`                   | Unit tests                 |
-| `cmd/test_coverage_diff.integration_test.go`       | BDD integration tests      |
+| File                                               | Purpose                                 |
+| -------------------------------------------------- | --------------------------------------- |
+| `internal/testcoverage/cobertura_coverage.go`      | Cobertura XML parser                    |
+| `internal/testcoverage/cobertura_coverage_test.go` | Unit tests                              |
+| `internal/testcoverage/per_file.go`                | Per-file aggregation logic              |
+| `internal/testcoverage/per_file_test.go`           | Unit tests                              |
+| `internal/testcoverage/merge.go`                   | Coverage merging logic                  |
+| `internal/testcoverage/merge_test.go`              | Unit tests                              |
+| `internal/testcoverage/diff.go`                    | Diff coverage logic                     |
+| `internal/testcoverage/diff_test.go`               | Unit tests                              |
+| `internal/testcoverage/exclude.go`                 | File exclusion logic                    |
+| `internal/testcoverage/exclude_test.go`            | Unit tests                              |
+| `internal/testcoverage/gitdiff.go`                 | Git diff parser                         |
+| `internal/testcoverage/gitdiff_test.go`            | Unit tests                              |
+| `internal/speccoverage/java_steps.go`              | Java/Kotlin step+scenario extraction    |
+| `internal/speccoverage/java_steps_test.go`         | Unit tests                              |
+| `internal/speccoverage/python_steps.go`            | Python step+scenario extraction         |
+| `internal/speccoverage/python_steps_test.go`       | Unit tests                              |
+| `internal/speccoverage/elixir_steps.go`            | Elixir step extraction (regex patterns) |
+| `internal/speccoverage/elixir_steps_test.go`       | Unit tests                              |
+| `internal/speccoverage/rust_steps.go`              | Rust step+scenario extraction           |
+| `internal/speccoverage/rust_steps_test.go`         | Unit tests                              |
+| `internal/speccoverage/dotnet_steps.go`            | F# and C# step+scenario extraction      |
+| `internal/speccoverage/dotnet_steps_test.go`       | Unit tests                              |
+| `internal/speccoverage/clojure_steps.go`           | Clojure step extraction                 |
+| `internal/speccoverage/clojure_steps_test.go`      | Unit tests                              |
+| `cmd/test_coverage_merge.go`                       | Merge subcommand                        |
+| `cmd/test_coverage_merge_test.go`                  | Unit tests                              |
+| `cmd/test_coverage_merge.integration_test.go`      | BDD integration tests                   |
+| `cmd/test_coverage_diff.go`                        | Diff subcommand                         |
+| `cmd/test_coverage_diff_test.go`                   | Unit tests                              |
+| `cmd/test_coverage_diff.integration_test.go`       | BDD integration tests                   |
 
 ### Modified Files
 
@@ -329,8 +399,8 @@ func candidatePatterns(stem string) []string {
 | `cmd/test_coverage_validate.go`                  | Add `--per-file`, `--below-threshold`, `--exclude` flags |
 | `cmd/test_coverage_validate_test.go`             | Tests for new flags                                      |
 | `cmd/test_coverage_validate.integration_test.go` | BDD scenarios for new flags                              |
-| `internal/speccoverage/checker.go`               | Enhanced multi-language matching                         |
-| `internal/speccoverage/checker_test.go`          | Tests for new patterns                                   |
+| `internal/speccoverage/checker.go`               | Multi-language file matching, step/scenario dispatch     |
+| `internal/speccoverage/checker_test.go`          | Tests for all language patterns                          |
 | `cmd/root.go`                                    | Version bump to 0.13.0                                   |
 | `README.md`                                      | Document all new features                                |
 
