@@ -233,6 +233,7 @@ All examples follow a consistent 5-part format:
 **Key Takeaway**: 1-2 sentence summary.
 
 **Why It Matters**: 50-100 words of production context.
+
 ```
 
 **Code annotations**:

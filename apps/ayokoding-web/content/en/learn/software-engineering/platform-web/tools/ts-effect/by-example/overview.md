@@ -241,6 +241,7 @@ All examples follow a consistent format:
 **Key Takeaway**: 1-2 sentence summary.
 
 **Why It Matters**: 50-100 words on production significance.
+
 ```
 
 **Code annotations**:
