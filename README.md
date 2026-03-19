@@ -115,8 +115,8 @@ open-sharia-enterprise/
 
 - **Sites**: [`oseplatform-web`](./apps/oseplatform-web/), [`ayokoding-web`](./apps/ayokoding-web/), [`organiclever-web`](./apps/organiclever-web/), [`organiclever-web-e2e`](./apps/organiclever-web-e2e/)
 - **CLI tools**: [`ayokoding-cli`](./apps/ayokoding-cli/), [`rhino-cli`](./apps/rhino-cli/), [`oseplatform-cli`](./apps/oseplatform-cli/)
-- **Demo backends**: [`demo-be-java-springboot`](./apps/demo-be-java-springboot/), [`demo-be-elixir-phoenix`](./apps/demo-be-elixir-phoenix/), [`demo-be-fsharp-giraffe`](./apps/demo-be-fsharp-giraffe/), [`demo-be-golang-gin`](./apps/demo-be-golang-gin/), [`demo-be-python-fastapi`](./apps/demo-be-python-fastapi/), [`demo-be-rust-axum`](./apps/demo-be-rust-axum/), [`demo-be-kotlin-ktor`](./apps/demo-be-kotlin-ktor/), [`demo-be-java-vertx`](./apps/demo-be-java-vertx/), [`demo-be-ts-effect`](./apps/demo-be-ts-effect/), [`demo-be-csharp-aspnetcore`](./apps/demo-be-csharp-aspnetcore/), [`demo-be-clojure-pedestal`](./apps/demo-be-clojure-pedestal/), [`demo-be-e2e`](./apps/demo-be-e2e/)
-- **Demo frontends**: [`demo-fe-ts-nextjs`](./apps/demo-fe-ts-nextjs/), [`demo-fe-e2e`](./apps/demo-fe-e2e/)
+- **Demo backends**: [`demo-be-golang-gin`](./apps/demo-be-golang-gin/), [`demo-be-java-springboot`](./apps/demo-be-java-springboot/), [`demo-be-elixir-phoenix`](./apps/demo-be-elixir-phoenix/), [`demo-be-fsharp-giraffe`](./apps/demo-be-fsharp-giraffe/), [`demo-be-python-fastapi`](./apps/demo-be-python-fastapi/), [`demo-be-rust-axum`](./apps/demo-be-rust-axum/), [`demo-be-kotlin-ktor`](./apps/demo-be-kotlin-ktor/), [`demo-be-java-vertx`](./apps/demo-be-java-vertx/), [`demo-be-ts-effect`](./apps/demo-be-ts-effect/), [`demo-be-csharp-aspnetcore`](./apps/demo-be-csharp-aspnetcore/), [`demo-be-clojure-pedestal`](./apps/demo-be-clojure-pedestal/)
+- **Demo frontends**: [`demo-fe-ts-nextjs`](./apps/demo-fe-ts-nextjs/), [`demo-fe-ts-tanstack-start`](./apps/demo-fe-ts-tanstack-start/), [`demo-fe-dart-flutterweb`](./apps/demo-fe-dart-flutterweb/)
 
 **Libraries** (`libs/`): Reusable shared code
 
@@ -205,11 +205,17 @@ CI and coverage status for demo backend implementations across multiple language
 
 ### 🖥️ Demo Frontend Apps
 
-Frontend implementation consuming the demo-be API, with E2E tests centralized in [`apps/demo-fe-e2e`](./apps/demo-fe-e2e/) (Playwright + playwright-bdd v8):
+Frontend implementations consuming the demo-be API:
 
 - [`apps/demo-fe-ts-nextjs`](./apps/demo-fe-ts-nextjs/)
   - [![CI](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-demo-fe-ts-nextjs.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-demo-fe-ts-nextjs.yml)
   - [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-fe-ts-nextjs)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
+- [`apps/demo-fe-ts-tanstack-start`](./apps/demo-fe-ts-tanstack-start/)
+  - [![CI](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-demo-fe-ts-tanstack-start.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-demo-fe-ts-tanstack-start.yml)
+  - [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-fe-ts-tanstack-start)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
+- [`apps/demo-fe-dart-flutterweb`](./apps/demo-fe-dart-flutterweb/)
+  - [![CI](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-demo-fe-dart-flutterweb.yml/badge.svg)](https://github.com/wahidyankf/open-sharia-enterprise/actions/workflows/test-demo-fe-dart-flutterweb.yml)
+  - [![codecov](https://codecov.io/gh/wahidyankf/open-sharia-enterprise/graph/badge.svg?flag=demo-fe-dart-flutterweb)](https://codecov.io/gh/wahidyankf/open-sharia-enterprise)
 
 ## 📚 Documentation
 
