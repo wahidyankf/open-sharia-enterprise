@@ -55,6 +55,7 @@
         "{projectRoot}/tests/unit/**/*.rs",
         "{projectRoot}/Cargo.toml",
         "{projectRoot}/Cargo.lock",
+        "{projectRoot}/generated-contracts/**/*",
         "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature"
       ],
       "outputs": ["{projectRoot}/coverage/lcov.info"]
@@ -72,6 +73,7 @@
         "{projectRoot}/tests/unit/**/*.rs",
         "{projectRoot}/Cargo.toml",
         "{projectRoot}/Cargo.lock",
+        "{projectRoot}/generated-contracts/**/*",
         "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature"
       ]
     },
@@ -94,6 +96,15 @@
         "parallel": false,
         "cwd": "apps/demo-be-rust-axum"
       }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cargo check",
+        "cwd": "apps/demo-be-rust-axum"
+      },
+      "dependsOn": ["codegen"],
+      "cache": true
     }
   },
   "tags": ["type:app", "platform:axum", "lang:rust", "domain:demo-be"],

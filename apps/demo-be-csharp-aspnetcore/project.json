@@ -20,6 +20,7 @@
         "command": "dotnet publish src/DemoBeCsas/DemoBeCsas.csproj -c Release -o dist",
         "cwd": "apps/demo-be-csharp-aspnetcore"
       },
+      "dependsOn": ["codegen"],
       "outputs": ["{projectRoot}/dist"]
     },
     "dev": {
@@ -46,18 +47,28 @@
         "parallel": false,
         "cwd": "apps/demo-be-csharp-aspnetcore"
       },
+      "cache": true,
       "inputs": [
         "{projectRoot}/src/**/*.cs",
         "{projectRoot}/tests/**/*.cs",
+        "{projectRoot}/generated-contracts/**/*",
         "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature"
-      ]
+      ],
+      "outputs": ["{projectRoot}/coverage"]
     },
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
         "command": "dotnet test tests/DemoBeCsas.Tests/DemoBeCsas.Tests.csproj",
         "cwd": "apps/demo-be-csharp-aspnetcore"
-      }
+      },
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**/*.cs",
+        "{projectRoot}/tests/**/*.cs",
+        "{projectRoot}/generated-contracts/**/*",
+        "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature"
+      ]
     },
     "test:integration": {
       "executor": "nx:run-commands",

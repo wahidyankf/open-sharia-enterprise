@@ -54,6 +54,12 @@
     },
     "test:quick": {
       "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "default",
+        "{projectRoot}/src/generated-contracts/**/*"
+      ],
+      "outputs": ["{projectRoot}/coverage"],
       "options": {
         "command": "npx vitest run --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-fe-ts-nextjs/coverage/lcov.info 70)",
         "cwd": "{projectRoot}"
@@ -61,6 +67,11 @@
     },
     "test:unit": {
       "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "default",
+        "{projectRoot}/src/generated-contracts/**/*"
+      ],
       "options": {
         "command": "npx vitest run --project unit",
         "cwd": "{projectRoot}"

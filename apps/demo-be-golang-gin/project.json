@@ -20,7 +20,8 @@
         "command": "CGO_ENABLED=0 go build -o dist/demo-be-golang-gin ./cmd/server",
         "cwd": "apps/demo-be-golang-gin"
       },
-      "outputs": ["{projectRoot}/dist"]
+      "outputs": ["{projectRoot}/dist"],
+      "dependsOn": ["codegen"]
     },
     "dev": {
       "executor": "nx:run-commands",
@@ -46,6 +47,7 @@
       "inputs": [
         "{projectRoot}/internal/**/*.go",
         "{projectRoot}/cmd/**/*.go",
+        "{projectRoot}/generated-contracts/**/*",
         "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature"
       ],
       "outputs": ["{projectRoot}/cover.out", "{projectRoot}/cover_unit.out"]
@@ -55,7 +57,14 @@
       "options": {
         "command": "CGO_ENABLED=0 go test -v -run TestUnit ./... -count=1",
         "cwd": "apps/demo-be-golang-gin"
-      }
+      },
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/internal/**/*.go",
+        "{projectRoot}/cmd/**/*.go",
+        "{projectRoot}/generated-contracts/**/*",
+        "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature"
+      ]
     },
     "test:integration": {
       "executor": "nx:run-commands",
@@ -71,6 +80,15 @@
         "command": "CGO_ENABLED=0 golangci-lint run --allow-parallel-runners ./...",
         "cwd": "apps/demo-be-golang-gin"
       }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "CGO_ENABLED=0 go vet ./...",
+        "cwd": "apps/demo-be-golang-gin"
+      },
+      "dependsOn": ["codegen"],
+      "cache": true
     },
     "install": {
       "executor": "nx:run-commands",

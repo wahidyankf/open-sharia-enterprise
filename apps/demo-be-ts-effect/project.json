@@ -20,6 +20,7 @@
         "command": "npx vite build",
         "cwd": "apps/demo-be-ts-effect"
       },
+      "dependsOn": ["codegen"],
       "outputs": ["{projectRoot}/dist"]
     },
     "dev": {
@@ -52,8 +53,10 @@
         "{projectRoot}/src/**/*.ts",
         "{projectRoot}/tests/unit/**/*.ts",
         "{projectRoot}/vitest.config.ts",
+        "{projectRoot}/generated-contracts/**/*",
         "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature"
-      ]
+      ],
+      "outputs": ["{projectRoot}/coverage"]
     },
     "test:unit": {
       "executor": "nx:run-commands",
@@ -69,6 +72,7 @@
       "inputs": [
         "{projectRoot}/src/**/*.ts",
         "{projectRoot}/tests/unit/**/*.ts",
+        "{projectRoot}/generated-contracts/**/*",
         "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature"
       ]
     },
