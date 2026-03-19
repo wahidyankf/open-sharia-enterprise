@@ -87,7 +87,7 @@ func TestFormatText_ExactPythonFormat(t *testing.T) {
 
 func TestFormatJSON_Pass(t *testing.T) {
 	r := makeResult(90, 2, 8, 90.0, FormatGo)
-	out, err := FormatJSON(r)
+	out, err := FormatJSON(r, false, 0)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -112,7 +112,7 @@ func TestFormatJSON_Pass(t *testing.T) {
 
 func TestFormatJSON_Fail(t *testing.T) {
 	r := makeResult(50, 0, 50, 50.0, FormatLCOV)
-	out, err := FormatJSON(r)
+	out, err := FormatJSON(r, false, 0)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -131,7 +131,7 @@ func TestFormatJSON_Fail(t *testing.T) {
 
 func TestFormatMarkdown_Pass(t *testing.T) {
 	r := makeResult(90, 2, 8, 90.0, FormatGo)
-	out := FormatMarkdown(r)
+	out := FormatMarkdown(r, false, 0)
 
 	if !strings.Contains(out, "## Coverage Report") {
 		t.Errorf("expected markdown header, got: %s", out)
@@ -146,7 +146,7 @@ func TestFormatMarkdown_Pass(t *testing.T) {
 
 func TestFormatMarkdown_Fail(t *testing.T) {
 	r := makeResult(50, 0, 50, 50.0, FormatGo)
-	out := FormatMarkdown(r)
+	out := FormatMarkdown(r, false, 0)
 
 	if !strings.Contains(out, "**FAIL**") {
 		t.Errorf("expected FAIL in markdown, got: %s", out)
@@ -155,11 +155,90 @@ func TestFormatMarkdown_Fail(t *testing.T) {
 
 func TestFormatMarkdown_ContainsAllFields(t *testing.T) {
 	r := makeResult(100, 5, 10, 87.0, FormatLCOV)
-	out := FormatMarkdown(r)
+	out := FormatMarkdown(r, false, 0)
 
 	for _, field := range []string{"| File |", "| Format |", "| Line Coverage |", "| Threshold |", "| Covered |", "| Partial |", "| Missed |", "| Total |"} {
 		if !strings.Contains(out, field) {
 			t.Errorf("expected field %q in markdown, got: %s", field, out)
 		}
+	}
+}
+
+func makeResultWithFiles() *Result {
+	r := makeResult(150, 10, 40, 75.0, FormatLCOV)
+	r.Files = []FileResult{
+		{Path: "src/a.ts", Covered: 100, Partial: 5, Missed: 10, Total: 115, Pct: 86.96},
+		{Path: "src/b.ts", Covered: 50, Partial: 5, Missed: 30, Total: 85, Pct: 58.82},
+	}
+	return r
+}
+
+func TestFormatTextPerFile_SortedAscending(t *testing.T) {
+	r := makeResultWithFiles()
+	out := FormatTextPerFile(r, 0)
+	idxB := strings.Index(out, "src/b.ts")
+	idxA := strings.Index(out, "src/a.ts")
+	if idxB < 0 || idxA < 0 {
+		t.Fatalf("expected both files in output, got: %s", out)
+	}
+	if idxB > idxA {
+		t.Error("expected src/b.ts (lower pct) before src/a.ts")
+	}
+}
+
+func TestFormatTextPerFile_BelowThresholdFilter(t *testing.T) {
+	r := makeResultWithFiles()
+	out := FormatTextPerFile(r, 80)
+	if !strings.Contains(out, "src/b.ts") {
+		t.Errorf("expected src/b.ts (58%% < 80%%) in output, got: %s", out)
+	}
+	if strings.Contains(out, "src/a.ts") {
+		t.Errorf("did not expect src/a.ts (87%% >= 80%%) in output, got: %s", out)
+	}
+}
+
+func TestFormatTextPerFile_NoFiles(t *testing.T) {
+	r := makeResult(100, 0, 0, 100.0, FormatGo)
+	out := FormatTextPerFile(r, 0)
+	if !strings.Contains(out, "No files to report") {
+		t.Errorf("expected empty message, got: %s", out)
+	}
+}
+
+func TestFormatJSON_WithPerFile(t *testing.T) {
+	r := makeResultWithFiles()
+	out, err := FormatJSON(r, true, 0)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	var parsed map[string]any
+	if err := json.Unmarshal([]byte(out), &parsed); err != nil {
+		t.Fatalf("invalid JSON: %v", err)
+	}
+	files, ok := parsed["files"].([]any)
+	if !ok || len(files) != 2 {
+		t.Errorf("expected 2 files in JSON, got: %v", parsed["files"])
+	}
+}
+
+func TestFormatJSON_WithoutPerFile(t *testing.T) {
+	r := makeResultWithFiles()
+	out, err := FormatJSON(r, false, 0)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if strings.Contains(out, "\"files\"") {
+		t.Error("expected no files field when perFile=false")
+	}
+}
+
+func TestFormatMarkdown_WithPerFile(t *testing.T) {
+	r := makeResultWithFiles()
+	out := FormatMarkdown(r, true, 0)
+	if !strings.Contains(out, "### Per-File Breakdown") {
+		t.Error("expected per-file section in markdown")
+	}
+	if !strings.Contains(out, "src/b.ts") {
+		t.Error("expected src/b.ts in markdown per-file table")
 	}
 }

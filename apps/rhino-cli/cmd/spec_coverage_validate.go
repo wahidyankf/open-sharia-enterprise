@@ -35,7 +35,10 @@ is checked here.`,
 	RunE:          runValidateSpecCoverage,
 }
 
+var sharedSteps bool
+
 func init() {
+	validateSpecCoverageCmd.Flags().BoolVar(&sharedSteps, "shared-steps", false, "skip file matching, validate steps across ALL source files")
 	specCoverageCmd.AddCommand(validateSpecCoverageCmd)
 }
 
@@ -49,11 +52,12 @@ func runValidateSpecCoverage(cmd *cobra.Command, args []string) error {
 	appDir := filepath.Join(repoRoot, args[1])
 
 	opts := speccoverage.ScanOptions{
-		RepoRoot: repoRoot,
-		SpecsDir: specsDir,
-		AppDir:   appDir,
-		Verbose:  verbose,
-		Quiet:    quiet,
+		RepoRoot:    repoRoot,
+		SpecsDir:    specsDir,
+		AppDir:      appDir,
+		Verbose:     verbose,
+		Quiet:       quiet,
+		SharedSteps: sharedSteps,
 	}
 
 	result, err := speccoverage.CheckAll(opts)

@@ -138,3 +138,51 @@ func TestDetectFormat_XMLContentReportTag(t *testing.T) {
 		t.Errorf("expected FormatJaCoCo for <report content, got %v", got)
 	}
 }
+
+func TestDetectFormat_CoberturaFilename(t *testing.T) {
+	got := DetectFormat("/some/path/cobertura.xml")
+	if got != FormatCobertura {
+		t.Errorf("expected FormatCobertura for cobertura.xml, got %v", got)
+	}
+}
+
+func TestDetectFormat_CoberturaCaseInsensitive(t *testing.T) {
+	got := DetectFormat("/some/path/Cobertura_report.xml")
+	if got != FormatCobertura {
+		t.Errorf("expected FormatCobertura for Cobertura_report.xml, got %v", got)
+	}
+}
+
+func TestDetectFormat_CoberturaRequiresXmlExtension(t *testing.T) {
+	got := DetectFormat("/some/path/cobertura.dat")
+	if got != FormatGo {
+		t.Errorf("expected FormatGo for cobertura.dat (not .xml), got %v", got)
+	}
+}
+
+func TestDetectFormat_XMLContentCoverageTag(t *testing.T) {
+	tmpDir := t.TempDir()
+	path := filepath.Join(tmpDir, "coverage.xml")
+	content := "<?xml version=\"1.0\" ?>\n<coverage version=\"5.5\">\n</coverage>"
+	if err := os.WriteFile(path, []byte(content), 0644); err != nil {
+		t.Fatal(err)
+	}
+	got := DetectFormat(path)
+	if got != FormatCobertura {
+		t.Errorf("expected FormatCobertura for <coverage> content, got %v", got)
+	}
+}
+
+func TestDetectFormat_KoverReportXML(t *testing.T) {
+	// Kover outputs report.xml (no "jacoco" in filename) — must detect via <report> content
+	tmpDir := t.TempDir()
+	path := filepath.Join(tmpDir, "report.xml")
+	content := "<?xml version=\"1.0\" ?>\n<report name=\"Kover\">\n</report>"
+	if err := os.WriteFile(path, []byte(content), 0644); err != nil {
+		t.Fatal(err)
+	}
+	got := DetectFormat(path)
+	if got != FormatJaCoCo {
+		t.Errorf("expected FormatJaCoCo for Kover report.xml with <report> content, got %v", got)
+	}
+}

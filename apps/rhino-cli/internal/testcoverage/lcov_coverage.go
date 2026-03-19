@@ -10,6 +10,7 @@ import (
 
 // lcovFile holds per-file coverage data from an LCOV file.
 type lcovFile struct {
+	path     string        // source file path (from SF: record)
 	daLines  map[int]int   // line_no -> count
 	brdaData map[int][]int // line_no -> branch counts
 }
@@ -36,6 +37,8 @@ func parseLCOV(filename string) ([]lcovFile, error) {
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 		switch {
+		case strings.HasPrefix(line, "SF:"):
+			current.path = line[3:]
 		case strings.HasPrefix(line, "DA:"):
 			parts := strings.SplitN(line[3:], ",", 3)
 			if len(parts) >= 2 {
@@ -80,19 +83,22 @@ func ComputeLCOVResult(filename string, threshold float64) (Result, error) {
 	}
 
 	covered, partial, missed := 0, 0, 0
+	var perFile []FileResult
 
 	for _, file := range files {
+		fc, fp, fm := 0, 0, 0
+
 		// Classify DA lines
 		for lineNo, count := range file.daLines {
 			branches := file.brdaData[lineNo]
 			if count > 0 {
 				if len(branches) > 0 && !allPositive(branches) {
-					partial++
+					fp++
 				} else {
-					covered++
+					fc++
 				}
 			} else {
-				missed++
+				fm++
 			}
 		}
 
@@ -100,14 +106,27 @@ func ComputeLCOVResult(filename string, threshold float64) (Result, error) {
 		for lineNo, branchCounts := range file.brdaData {
 			if _, inDA := file.daLines[lineNo]; !inDA {
 				if allPositive(branchCounts) {
-					covered++
+					fc++
 				} else if anyPositive(branchCounts) {
-					partial++
+					fp++
 				} else {
-					missed++
+					fm++
 				}
 			}
 		}
+
+		covered += fc
+		partial += fp
+		missed += fm
+
+		ft := fc + fp + fm
+		fpct := 100.0
+		if ft > 0 {
+			fpct = 100.0 * float64(fc) / float64(ft)
+		}
+		perFile = append(perFile, FileResult{
+			Path: file.path, Covered: fc, Partial: fp, Missed: fm, Total: ft, Pct: fpct,
+		})
 	}
 
 	total := covered + partial + missed
@@ -126,6 +145,7 @@ func ComputeLCOVResult(filename string, threshold float64) (Result, error) {
 		Pct:       pct,
 		Threshold: threshold,
 		Passed:    pct >= threshold,
+		Files:     perFile,
 	}, nil
 }
 

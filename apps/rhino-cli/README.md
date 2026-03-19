@@ -105,7 +105,7 @@ rhino-cli --say "hello" -o json
 ### test-coverage validate
 
 Check test coverage against a minimum threshold using Codecov's exact line coverage algorithm.
-Supports both Go `cover.out` and LCOV formats; auto-detects from filename.
+Supports Go `cover.out`, LCOV, JaCoCo XML, and Cobertura XML formats; auto-detects from filename and content.
 
 ```bash
 # Check Go cover.out (path relative to git root)
@@ -147,6 +147,9 @@ rhino-cli test-coverage validate apps/rhino-cli/cover.out 85 -q
 - `-o, --output` - Output format: text, json, markdown (default: text)
 - `-v, --verbose` - Verbose output with timestamps
 - `-q, --quiet` - Quiet mode (errors only)
+- `--per-file` - Show per-file coverage breakdown (sorted ascending by %)
+- `--below-threshold <pct>` - With `--per-file`, show only files below this coverage percentage
+- `--exclude <glob>` - Exclude files matching glob pattern (repeatable)
 
 **Exit codes:**
 
@@ -474,6 +477,50 @@ Duration: 49ms
 Status: ✓ VALIDATION PASSED
 ```
 
+### test-coverage merge
+
+Merge multiple coverage files from different formats into a single LCOV output.
+
+```bash
+# Merge two LCOV files
+rhino-cli test-coverage merge cov1.info cov2.info --out-file merged.info
+
+# Merge and validate threshold
+rhino-cli test-coverage merge unit.info integration.info --out-file merged.info --validate 90
+
+# Merge with file exclusion
+rhino-cli test-coverage merge coverage.info --exclude "generated/*" --out-file merged.info
+```
+
+**Flags:**
+
+- `--out-file <path>` - Output file path (LCOV format)
+- `--validate <threshold>` - Validate merged coverage against threshold
+- `--exclude <glob>` - Exclude files matching glob pattern (repeatable)
+
+### test-coverage diff
+
+Calculate coverage for only the lines changed in the current branch.
+
+```bash
+# Diff coverage against main
+rhino-cli test-coverage diff apps/myapp/coverage/lcov.info
+
+# Diff against specific branch with threshold
+rhino-cli test-coverage diff apps/myapp/coverage/lcov.info --base develop --threshold 80
+
+# Diff staged changes with per-file breakdown
+rhino-cli test-coverage diff apps/myapp/coverage/lcov.info --staged --per-file
+```
+
+**Flags:**
+
+- `--base <ref>` - Git ref to diff against (default: main)
+- `--threshold <pct>` - Fail if diff coverage below threshold
+- `--staged` - Diff staged changes instead of branch diff
+- `--per-file` - Show per-file diff coverage breakdown
+- `--exclude <glob>` - Exclude files matching glob pattern (repeatable)
+
 ### spec-coverage validate
 
 Validate that all BDD feature spec files have matching test implementations. Designed to enforce
@@ -491,6 +538,9 @@ rhino-cli spec-coverage validate specs/apps/organiclever-web apps/organiclever-w
 
 # Quiet mode
 rhino-cli spec-coverage validate specs/apps/organiclever-web apps/organiclever-web -q
+
+# Shared steps mode (for E2E projects with shared step files)
+rhino-cli spec-coverage validate specs/apps/demo-be/be/gherkin apps/demo-be-e2e --shared-steps
 ```
 
 **What it does:**
