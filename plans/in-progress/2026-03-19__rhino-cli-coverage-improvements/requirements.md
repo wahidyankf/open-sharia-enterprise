@@ -285,6 +285,17 @@ Add `--exclude` flag to `test-coverage validate` (and `merge`, `diff`) that excl
 matching glob patterns from coverage calculation. This is useful for excluding generated code,
 test utilities, and vendor directories.
 
+Several projects already do manual exclusion outside rhino-cli:
+
+- **demo-be-golang-gin**: `grep -v 'gorm_store|internal/server|cmd/server|generated-contracts'`
+- **demo-be-rust-axum**: `cargo llvm-cov --ignore-filename-regex 'test_api'`
+- **demo-be-clojure-pedestal**: `--cov-ns-exclude-regex 'demo-be-cjpd\\.(main|routes|...)'`
+- **demo-be-fsharp-giraffe**: AltCover `--assemblyExcludeFilter` + `--fileFilter`
+
+The `--exclude` flag provides a standardized alternative. Go projects could replace the `grep -v`
+pipeline with `--exclude` patterns. Other projects' tool-specific flags run before rhino-cli
+receives the data, so they remain as-is.
+
 ### Acceptance Criteria
 
 ```gherkin
@@ -326,82 +337,167 @@ Feature: File exclusion patterns
 
 ---
 
-## R6: spec-coverage Demo Backend Support
+## R6: spec-coverage Multi-Language Support
 
 ### Description
 
-Fix `spec-coverage validate` to support demo-be backend naming conventions. Currently the tool
-expects test files named after feature stems (e.g., `health-check.feature` → `health_check_test.go`)
-using `HasPrefix(base, stem)`. Demo-be backends use different naming patterns like
-`health_steps_test.go`, `steps/*.ts`, or framework-specific test structures (Elixir steps, Java
-Spring test classes, etc.).
+Extend `spec-coverage validate` to support all 11 demo-be backend languages. The current
+implementation has **three layers** that each only support Go and TS/JS:
 
-### Current Naming Convention Problem
+1. **File matching** (`findMatchingTestFile`): Only matches `HasPrefix(base, stem+".")` -- misses
+   underscore-separated Go files, PascalCase Java/Kotlin/C#/F# files, `test_` prefix Python files
+2. **Scenario extraction** (`extractScenarioTitles`): Only parses Go `// Scenario:` comments and
+   TS/JS `Scenario("title")` calls -- no Java/Kotlin annotations, Python decorators, Elixir macros
+3. **Step extraction** (`extractAllStepTexts`): Only processes `.go` and `.ts/.tsx/.js/.jsx` files
+   -- no `.java`, `.kt`, `.py`, `.ex/.exs`, `.rs`, `.fs`, `.cs`, `.clj` support
 
-| Language   | Feature File           | Expected by Tool       | Actual Test File              |
-| ---------- | ---------------------- | ---------------------- | ----------------------------- |
-| Go         | `health-check.feature` | `health_check_test.go` | `health_steps_test.go`        |
-| TypeScript | `health-check.feature` | `health-check.test.ts` | `steps/health-check.steps.ts` |
-| Java       | `health-check.feature` | `health-check*test*`   | `HealthCheckSteps.java`       |
-| Elixir     | `health-check.feature` | `health_check*test*`   | `health_check_steps.exs`      |
-| Python     | `health-check.feature` | `health_check*test*`   | `test_health_check.py`        |
+All three layers must be extended for each language.
+
+### Current Support Gap
+
+| Language      | File Matching             | Scenario Extraction  | Step Extraction           |
+| ------------- | ------------------------- | -------------------- | ------------------------- |
+| Go            | Partial (dot-prefix only) | Yes (`// Scenario:`) | Yes (`sc.Step`)           |
+| TypeScript/JS | Yes (`.test.`, `.spec.`)  | Yes (`Scenario()`)   | Yes (`Given/When/Then()`) |
+| Java          | No                        | No                   | No                        |
+| Kotlin        | No                        | No                   | No                        |
+| Python        | No                        | No                   | No                        |
+| Elixir        | No                        | No                   | No                        |
+| Rust          | No                        | No                   | No                        |
+| F#            | No                        | No                   | No                        |
+| C#            | No                        | No                   | No                        |
+| Clojure       | No                        | No                   | No                        |
+| Dart          | No                        | No                   | No                        |
+
+### Step Definition Patterns Per Language
+
+| Language | Framework       | Step Pattern                                       | Example                                                    |
+| -------- | --------------- | -------------------------------------------------- | ---------------------------------------------------------- |
+| Go       | godog           | `sc.Step(\`^text$\`, fn)`                          | `sc.Step(\`^the system is running$\`, theSystemIsRunning)` |
+| TS/JS    | Cucumber.js     | `Given("text", fn)`                                | `Given("the system is running", async () => { ... })`      |
+| Java     | Cucumber-JVM    | `@Given("text")`                                   | `@Given("the system is running")`                          |
+| Kotlin   | Cucumber-JVM    | `@Given("text")`                                   | `@Given("the system is running")`                          |
+| Python   | pytest-bdd      | `@given("text")` / `@given(parsers.parse("text"))` | `@given("the system is running")`                          |
+| Elixir   | Cabbage         | `defgiven ~r/^text$/`                              | `defgiven ~r/^the system is running$/, _vars, state do`    |
+| Rust     | cucumber-rs     | `#[given("text")]`                                 | `#[given("the system is running")]`                        |
+| F#       | TickSpec        | `let [<Given>] \`\`text\`\` ()`                    | `let [<Given>] \`\`the system is running\`\` () =`         |
+| C#       | Reqnroll        | `[Given("text")]`                                  | `[Given("the system is running")]`                         |
+| Clojure  | kaocha-cucumber | `(Given "text" [state] ...)`                       | `(Given "the system is running" [state] ...)`              |
+
+### Scenario Title Extraction Per Language
+
+| Language       | Pattern                                               | Example                                                   |
+| -------------- | ----------------------------------------------------- | --------------------------------------------------------- |
+| Go             | `// Scenario: Title` comment                          | `// Scenario: User logs in successfully`                  |
+| TS/JS          | `Scenario("Title", fn)` call                          | `Scenario("User logs in successfully", () => {})`         |
+| Java/Kotlin/C# | `// Scenario: Title` comment (Cucumber convention)    | `// Scenario: User logs in successfully`                  |
+| Python         | `@scenario("file.feature", "Title")` decorator        | `@scenario("login.feature", "User logs in successfully")` |
+| Elixir         | Cabbage auto-loads feature file -- scenarios implicit | N/A (match by step coverage)                              |
+| Rust           | `// Scenario: Title` comment                          | `// Scenario: User logs in successfully`                  |
+| F#             | TickSpec auto-binds from feature file                 | N/A (match by step coverage)                              |
+| Clojure        | kaocha-cucumber auto-loads from feature file          | N/A (match by step coverage)                              |
 
 ### Acceptance Criteria
 
 ```gherkin
-Feature: spec-coverage for demo-be backends
+Feature: spec-coverage multi-language support
 
   Background:
     Given rhino-cli is built and available
 
-  Scenario: Match Go BDD step files
-    Given specs at specs/apps/demo/be/gherkin/ with "health-check.feature"
-    And a Go test file at "test/health_steps_test.go"
-    When I run "rhino-cli spec-coverage validate specs/apps/demo/be/gherkin apps/demo-be-golang-gin"
+  Scenario: Match Go BDD step files (underscore pattern)
+    Given specs with "health-check.feature"
+    And a Go test file "health_steps_test.go" containing sc.Step definitions
+    When I run "rhino-cli spec-coverage validate specs-dir app-dir"
     Then "health-check.feature" is matched to "health_steps_test.go"
+    And step definitions from sc.Step are extracted
 
-  Scenario: Match TypeScript step files in subdirectory
-    Given specs with "user-registration.feature"
-    And a TS file at "tests/unit/bdd/steps/user-registration.steps.ts"
-    When I run "rhino-cli spec-coverage validate specs-dir app-dir"
-    Then the feature is matched to the steps file
-
-  Scenario: Match Java step classes (PascalCase)
+  Scenario: Match and extract Java Cucumber steps
     Given specs with "health-check.feature"
-    And a Java file at "src/test/java/.../HealthCheckSteps.java"
+    And a Java file "HealthCheckSteps.java" with @Given/@When/@Then annotations
     When I run "rhino-cli spec-coverage validate specs-dir app-dir"
-    Then the feature is matched to the Java steps class
+    Then "health-check.feature" is matched to "HealthCheckSteps.java"
+    And step texts from @Given/@When/@Then annotations are extracted
+    And scenario titles from "// Scenario:" comments are extracted
 
-  Scenario: Match Elixir step files
+  Scenario: Match and extract Kotlin Cucumber steps
     Given specs with "health-check.feature"
-    And an Elixir file at "test/features/health_check_steps.exs"
+    And a Kotlin file "HealthCheckSteps.kt" with @Given/@When/@Then annotations
     When I run "rhino-cli spec-coverage validate specs-dir app-dir"
-    Then the feature is matched to the Elixir steps file
+    Then the feature is matched and steps are extracted
 
-  Scenario: Match Python test files (test_ prefix)
+  Scenario: Match and extract Python pytest-bdd steps
     Given specs with "health-check.feature"
-    And a Python file at "tests/bdd/test_health_check.py"
+    And a Python file "test_health_check.py" with @given/@when/@then decorators
     When I run "rhino-cli spec-coverage validate specs-dir app-dir"
-    Then the feature is matched to the Python test file
+    Then "health-check.feature" is matched to "test_health_check.py"
+    And step texts from @given/@when/@then decorators are extracted
+
+  Scenario: Match and extract Elixir Cabbage steps
+    Given specs with "health-check.feature"
+    And an Elixir file "health_check_steps.exs" with defgiven/defwhen/defthen macros
+    When I run "rhino-cli spec-coverage validate specs-dir app-dir"
+    Then the feature is matched and step definitions are extracted
+
+  Scenario: Match and extract Rust cucumber-rs steps
+    Given specs with "health-check.feature"
+    And a Rust file containing #[given("...")] attributes
+    When I run "rhino-cli spec-coverage validate specs-dir app-dir"
+    Then step texts from #[given/when/then] attributes are extracted
+
+  Scenario: Match and extract F# TickSpec steps
+    Given specs with "health-check.feature"
+    And an F# file "HealthCheckTests.fs" with [<Given>] attributes
+    When I run "rhino-cli spec-coverage validate specs-dir app-dir"
+    Then step texts from [<Given>]/[<When>]/[<Then>] backtick methods are extracted
+
+  Scenario: Match and extract C# Reqnroll steps
+    Given specs with "health-check.feature"
+    And a C# file "HealthCheckSteps.cs" with [Given("...")] attributes
+    When I run "rhino-cli spec-coverage validate specs-dir app-dir"
+    Then step texts from [Given]/[When]/[Then] attributes are extracted
+
+  Scenario: Match and extract Clojure kaocha-cucumber steps
+    Given specs with "health-check.feature"
+    And a Clojure file "health_check_steps.clj" with (Given "..." ...) forms
+    When I run "rhino-cli spec-coverage validate specs-dir app-dir"
+    Then step texts from (Given/When/Then "text" ...) forms are extracted
+
+  Scenario: Match and extract Dart Flutter test steps
+    Given specs with "health-check.feature" in demo-fe specs
+    And a Dart file with step definitions
+    When I run "rhino-cli spec-coverage validate specs-dir app-dir"
+    Then step texts are extracted from Dart test patterns
 
   Scenario: Backward compatibility with CLI apps
     Given specs and test files following existing CLI naming conventions
     When I run "rhino-cli spec-coverage validate specs-dir app-dir"
     Then existing CLI app matching still works unchanged
+    And existing Go and TS/JS step extraction still works unchanged
 ```
 
-### Matching Strategy
+### File Matching Strategy
 
 Expand `findMatchingTestFile` to check multiple patterns per feature stem:
 
-1. **Current**: `{stem}_test.go`, `{stem}.test.ts`, `{stem}.spec.ts`
-2. **New Go**: `{stem}_steps_test.go`, `steps/{stem}_test.go`
-3. **New TS**: `steps/{stem}.steps.ts`, `{stem}.steps.ts`
-4. **New Java**: `{PascalCase(stem)}Steps.java`, `{PascalCase(stem)}Test.java`
-5. **New Elixir**: `{snake_case(stem)}_steps.exs`
-6. **New Python**: `test_{snake_case(stem)}.py`
-7. **New Rust**: `{snake_case(stem)}_test.rs`, `tests/{snake_case(stem)}.rs`
-8. **New F#**: `{PascalCase(stem)}Tests.fs`
-9. **New C#**: `{PascalCase(stem)}Steps.cs`, `{PascalCase(stem)}Tests.cs`
-10. **New Clojure**: `{snake_case(stem)}_test.clj`, `{snake_case(stem)}_steps.clj`
-11. **New Kotlin**: `{PascalCase(stem)}Steps.kt`, `{PascalCase(stem)}Test.kt`
+1. **Current (keep)**: `HasPrefix(base, stem+".")` and `HasPrefix(base, underscoreStem+".")`
+2. **New underscore prefix**: `HasPrefix(base, stem+"_")` and `HasPrefix(base, underscoreStem+"_")`
+3. **New `test_` prefix (Python)**: `HasPrefix(base, "test_"+underscoreStem)`
+4. **New PascalCase (Java/Kotlin/C#/F#)**: `HasPrefix(base, PascalCase(stem))`
+5. **New extensions to recognize**: `.java`, `.kt`, `.py`, `.ex`, `.exs`, `.rs`, `.fs`, `.cs`, `.clj`
+
+### Step Extraction Strategy
+
+Extend `extractAllStepTexts` switch statement with new cases:
+
+| Extension           | Extraction Method                                                                |
+| ------------------- | -------------------------------------------------------------------------------- |
+| `.go`               | Existing: `sc.Step(\`^pattern$\`)` → compile as regex                            |
+| `.ts/.tsx/.js/.jsx` | Existing: `Given/When/Then("text")` → exact text                                 |
+| `.java`, `.kt`      | New: `@Given("text")` / `@When("text")` / `@Then("text")` annotation regex       |
+| `.py`               | New: `@given("text")` / `@when("text")` / `@then("text")` decorator regex        |
+| `.ex`, `.exs`       | New: `defgiven ~r/^text$/` / `defwhen` / `defthen` macro regex                   |
+| `.rs`               | New: `#[given("text")]` / `#[when("text")]` / `#[then("text")]` attribute regex  |
+| `.fs`               | New: `let [<Given>]`text` ` backtick method regex                                |
+| `.cs`               | New: `[Given("text")]` / `[When("text")]` / `[Then("text")]` attribute regex     |
+| `.clj`              | New: `(Given "text" ...)` / `(When "text" ...)` / `(Then "text" ...)` form regex |

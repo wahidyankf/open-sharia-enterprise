@@ -80,16 +80,54 @@
 
 ## Phase 6: spec-coverage Multi-Language Support (R6)
 
-- [ ] Add `toSnakeCase` and `toPascalCase` helpers for stem conversion
-- [ ] Expand `findMatchingTestFile` with multi-language candidate patterns
-- [ ] Add test file indicators for Elixir (`.exs`), Rust (`.rs`), F# (`.fs`), C# (`.cs`),
-      Clojure (`.clj`), Kotlin (`.kt`), Python (`test_` prefix)
-- [ ] Preserve backward compatibility with existing CLI app matching
-- [ ] Write unit tests for each language pattern
-- [ ] Write BDD integration test with multi-language fixtures
-- [ ] Update Gherkin feature file in `specs/apps/rhino-cli/`
-- [ ] Verify: existing spec-coverage for CLI apps still works
-- [ ] Verify: `nx run rhino-cli:test:quick` passes
+### 6A: File Matching Layer
+
+- [ ] Add `toSnakeCase` and `toPascalCase` string helpers
+- [ ] Rewrite `findMatchingTestFile` to use `matchesStem` with underscore+PascalCase+test\_ patterns
+- [ ] Add test file recognition for new extensions:
+  - [ ] `.java`, `.kt` — test if in `test/` or `tests/` ancestor directory
+  - [ ] `.py` — test if `test_` prefix, `_test.py` suffix, or in `tests/` directory
+  - [ ] `.exs` — test if `_test.exs` or `_steps.exs` suffix
+  - [ ] `.rs` — test if `_test.rs` suffix or in `tests/` directory
+  - [ ] `.fs`, `.cs` — test if in `Tests` project directory or `Steps`/`Tests` suffix
+  - [ ] `.clj` — test if `_test.clj` or `_steps.clj` suffix
+- [ ] Expand `skipDirs` with `target`, `_build`, `deps`, `bin`, `obj`, `__pycache__`,
+      `.pytest_cache`, `.venv`, `generated-contracts`, `generated_contracts`
+- [ ] Write unit tests for each language file matching pattern
+- [ ] Verify: existing CLI app matching still works (backward compat)
+
+### 6B: Step Extraction Layer
+
+- [ ] Create `internal/speccoverage/java_steps.go` — JVM `@Given/@When/@Then` annotation regex
+- [ ] Create `internal/speccoverage/python_steps.go` — Python `@given/@when/@then` decorator regex
+- [ ] Create `internal/speccoverage/elixir_steps.go` — Elixir `defgiven/defwhen/defthen ~r/...$/`
+      regex (extract as compiled patterns, like Go)
+- [ ] Create `internal/speccoverage/rust_steps.go` — Rust `#[given("...")]` attribute regex
+- [ ] Create `internal/speccoverage/dotnet_steps.go` — C# `[Given("...")]` and F#
+      `[<Given>]`text` ` backtick method regex
+- [ ] Create `internal/speccoverage/clojure_steps.go` — Clojure `(Given "..." ...)` form regex
+- [ ] Extend `extractAllStepTexts` switch statement with `.java`, `.kt`, `.py`, `.ex`, `.exs`,
+      `.rs`, `.fs`, `.cs`, `.clj` cases dispatching to new extractors
+- [ ] Write unit tests for each language step extraction (with real-world fixture snippets)
+
+### 6C: Scenario Extraction Layer
+
+- [ ] Extend `extractScenarioTitles` to dispatch by extension:
+  - [ ] `.java`, `.kt`, `.cs`, `.rs` — reuse Go `// Scenario: Title` comment pattern
+  - [ ] `.py` — add `@scenario("file.feature", "Title")` decorator regex
+  - [ ] `.exs`, `.fs`, `.clj` — skip scenario extraction (auto-bind frameworks)
+- [ ] Write unit tests for each language scenario extraction
+
+### 6D: Integration and Verification
+
+- [ ] Write BDD integration test with multi-language fixture files
+- [ ] Add Gherkin feature file to `specs/apps/rhino-cli/`
+- [ ] Smoke test: run against actual demo-be-golang-gin test files
+- [ ] Smoke test: run against actual demo-be-java-springboot test files
+- [ ] Smoke test: run against actual demo-be-elixir-phoenix test files
+- [ ] Smoke test: run against actual demo-be-ts-effect test files
+- [ ] Verify: existing spec-coverage for organiclever-web still works
+- [ ] Verify: `nx run rhino-cli:test:quick` passes with >=90% coverage
 
 ## Phase 7: Documentation and Version Bump
 
@@ -116,11 +154,16 @@
 ## Success Criteria
 
 - All 4 coverage formats detected and validated correctly (Go, LCOV, JaCoCo, Cobertura)
+- Kover `report.xml` (no "jacoco" in filename) correctly detected as JaCoCo via content
 - Per-file reporting shows file breakdown in text/JSON/markdown formats
 - Coverage merging produces correct LCOV output from mixed-format inputs
 - Diff coverage correctly identifies changed lines and their coverage status
 - File exclusion works across validate, merge, and diff commands
-- spec-coverage matches test files for all 11 demo-be backend languages
+- spec-coverage file matching works for all 11 languages (Go, TS/JS, Java, Kotlin, Python,
+  Elixir, Rust, F#, C#, Clojure, Dart)
+- spec-coverage step extraction works for all 11 languages with framework-specific regex patterns
+- spec-coverage scenario extraction works for languages with explicit scenario markers
+- Backward compatibility: existing organiclever-web and CLI app spec-coverage unchanged
 - All existing tests still pass (zero regressions)
 - Coverage >=90% maintained across all packages
 - No new golangci-lint violations
