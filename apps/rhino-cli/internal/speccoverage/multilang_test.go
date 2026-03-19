@@ -6,6 +6,13 @@ import (
 	"testing"
 )
 
+func writeTestFile(t *testing.T, path, content string) {
+	t.Helper()
+	if err := os.WriteFile(path, []byte(content), 0644); err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestMatchesStem(t *testing.T) {
 	tests := []struct {
 		base, stem string
@@ -81,7 +88,7 @@ func TestExtractJVMStepTexts(t *testing.T) {
 	content := `@Given("the user is logged in")
 @When("they click logout")
 @Then("they are redirected to login page")`
-	os.WriteFile(path, []byte(content), 0644)
+	writeTestFile(t, path, content)
 
 	sm := &stepMatcher{exact: map[string]bool{}}
 	err := extractJVMStepTexts(path, sm)
@@ -102,7 +109,7 @@ func TestExtractPythonStepTexts(t *testing.T) {
 	content := `@given("the user exists")
 @when("they submit the form")
 @then("a success message is shown")`
-	os.WriteFile(path, []byte(content), 0644)
+	writeTestFile(t, path, content)
 
 	sm := &stepMatcher{exact: map[string]bool{}}
 	err := extractPythonStepTexts(path, sm)
@@ -120,7 +127,7 @@ func TestExtractElixirStepTexts(t *testing.T) {
 	content := `defgiven ~r/^the system is running$/
 defwhen ~r/^the user sends a request$/
 defthen ~r/^a response is returned$/`
-	os.WriteFile(path, []byte(content), 0644)
+	writeTestFile(t, path, content)
 
 	sm := &stepMatcher{exact: map[string]bool{}}
 	err := extractElixirStepTexts(path, sm)
@@ -147,7 +154,7 @@ fn when_click(world: &mut World, button: String) {}
 #[then(regex = r#"the response contains "([^"]+)""#)]
 fn then_response(world: &mut World) {}
 `
-	os.WriteFile(path, []byte(content), 0644)
+	writeTestFile(t, path, content)
 
 	sm := &stepMatcher{exact: map[string]bool{}}
 	err := extractRustStepTexts(path, sm)
@@ -178,7 +185,7 @@ func TestExtractCSharpStepTexts(t *testing.T) {
 	content := `[Given("the app is started")]
 [When(@"^the user clicks (.*)$")]
 [Then("the result is shown")]`
-	os.WriteFile(path, []byte(content), 0644)
+	writeTestFile(t, path, content)
 
 	sm := &stepMatcher{exact: map[string]bool{}}
 	err := extractCSharpStepTexts(path, sm)
@@ -197,7 +204,7 @@ func TestExtractClojureStepTexts(t *testing.T) {
   (fn [state] state))
 (When "a request is sent"
   (fn [state] state))`
-	os.WriteFile(path, []byte(content), 0644)
+	writeTestFile(t, path, content)
 
 	sm := &stepMatcher{exact: map[string]bool{}}
 	err := extractClojureStepTexts(path, sm)
@@ -214,20 +221,24 @@ func TestCheckSharedSteps(t *testing.T) {
 
 	// Create feature file
 	specDir := filepath.Join(root, "specs")
-	os.MkdirAll(specDir, 0755)
+	if err := os.MkdirAll(specDir, 0755); err != nil {
+		t.Fatal(err)
+	}
 	featureContent := `Feature: Test
   Scenario: Login
     Given the user is logged in
     When they click logout
     Then they are redirected`
-	os.WriteFile(filepath.Join(specDir, "test.feature"), []byte(featureContent), 0644)
+	writeTestFile(t, filepath.Join(specDir, "test.feature"), featureContent)
 
 	// Create step file matching 2 of 3 steps
 	appDir := filepath.Join(root, "app")
-	os.MkdirAll(appDir, 0755)
+	if err := os.MkdirAll(appDir, 0755); err != nil {
+		t.Fatal(err)
+	}
 	stepContent := `Given("the user is logged in", async () => {});
 When("they click logout", async () => {});`
-	os.WriteFile(filepath.Join(appDir, "common.steps.ts"), []byte(stepContent), 0644)
+	writeTestFile(t, filepath.Join(appDir, "common.steps.ts"), stepContent)
 
 	result, err := checkSharedSteps(ScanOptions{
 		RepoRoot:    root,
@@ -259,7 +270,7 @@ def test_user_logs_in():
 @scenario("login.feature", "User fails login")
 def test_user_fails_login():
     pass`
-	os.WriteFile(path, []byte(content), 0644)
+	writeTestFile(t, path, content)
 
 	titles, err := extractPythonScenarioTitles(path)
 	if err != nil {

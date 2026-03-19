@@ -98,7 +98,7 @@ func FormatLCOVString(cm CoverageMap) string {
 	for _, filePath := range files {
 		lines := cm[filePath]
 		sb.WriteString("TN:\n")
-		sb.WriteString(fmt.Sprintf("SF:%s\n", filePath))
+		_, _ = fmt.Fprintf(&sb, "SF:%s\n", filePath)
 
 		// Sort line numbers
 		lineNos := make([]int, 0, len(lines))
@@ -111,14 +111,14 @@ func FormatLCOVString(cm CoverageMap) string {
 		for _, ln := range lineNos {
 			lc := lines[ln]
 			for _, br := range lc.Branches {
-				sb.WriteString(fmt.Sprintf("BRDA:%d,%d,%d,%d\n", ln, br.BlockID, br.BranchID, br.HitCount))
+				_, _ = fmt.Fprintf(&sb, "BRDA:%d,%d,%d,%d\n", ln, br.BlockID, br.BranchID, br.HitCount)
 			}
 		}
 
 		// Write DA records
 		for _, ln := range lineNos {
 			lc := lines[ln]
-			sb.WriteString(fmt.Sprintf("DA:%d,%d\n", ln, lc.HitCount))
+			_, _ = fmt.Fprintf(&sb, "DA:%d,%d\n", ln, lc.HitCount)
 		}
 
 		sb.WriteString("end_of_record\n")
@@ -329,9 +329,8 @@ func ToCoverageMap(filename string) (CoverageMap, error) {
 		return ToCoverageMapJaCoCo(filename)
 	case FormatCobertura:
 		return ToCoverageMapCobertura(filename)
-	case FormatGo:
-		return ToCoverageMapGo(filename)
-	default:
+	case FormatGo, FormatDiff:
 		return ToCoverageMapGo(filename)
 	}
+	return ToCoverageMapGo(filename)
 }

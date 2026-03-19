@@ -121,7 +121,9 @@ func TestResultFromCoverageMap(t *testing.T) {
 func TestToCoverageMapLCOV(t *testing.T) {
 	content := "TN:\nSF:src/a.ts\nDA:1,1\nDA:2,0\nend_of_record\n"
 	path := filepath.Join(t.TempDir(), "lcov.info")
-	os.WriteFile(path, []byte(content), 0644)
+	if err := os.WriteFile(path, []byte(content), 0644); err != nil {
+		t.Fatal(err)
+	}
 
 	cm, err := ToCoverageMapLCOV(path)
 	if err != nil {
@@ -138,7 +140,9 @@ func TestToCoverageMapLCOV(t *testing.T) {
 func TestToCoverageMap_AutoDetect(t *testing.T) {
 	content := "TN:\nSF:src/a.ts\nDA:1,1\nend_of_record\n"
 	path := filepath.Join(t.TempDir(), "lcov.info")
-	os.WriteFile(path, []byte(content), 0644)
+	if err := os.WriteFile(path, []byte(content), 0644); err != nil {
+		t.Fatal(err)
+	}
 
 	cm, err := ToCoverageMap(path)
 	if err != nil {

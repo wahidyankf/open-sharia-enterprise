@@ -83,6 +83,8 @@ func runValidateTestCoverage(cmd *cobra.Command, args []string) error {
 		result, err = testcoverage.ComputeCoberturaResult(absPath, threshold)
 	case testcoverage.FormatGo:
 		result, err = testcoverage.ComputeGoResult(absPath, threshold)
+	case testcoverage.FormatDiff:
+		return fmt.Errorf("diff format is not a valid input format for validate")
 	}
 	if err != nil {
 		return fmt.Errorf("coverage check failed: %w", err)
