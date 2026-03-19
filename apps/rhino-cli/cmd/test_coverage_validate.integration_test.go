@@ -27,6 +27,9 @@ var specsValidateTestCoverageDir = func() string {
 // Scenario: An LCOV file above the threshold reports success
 // Scenario: Coverage at exactly the threshold passes
 // Scenario: JSON output includes structured coverage metrics
+// Scenario: Per-file flag shows individual file coverage
+// Scenario: A Cobertura XML file above the threshold reports success
+// Scenario: A Cobertura XML file with partial branches classifies correctly
 // Scenario: A non-existent coverage file reports an error
 
 type validateTestCoverageSteps struct {
@@ -44,6 +47,9 @@ func (s *validateTestCoverageSteps) before(_ context.Context, _ *godog.Scenario)
 	verbose = false
 	quiet = false
 	output = "text"
+	perFile = false
+	belowThreshold = 0
+	excludePatterns = nil
 	_ = os.Chdir(s.tmpDir)
 	return context.Background(), nil
 }
@@ -154,6 +160,139 @@ func (s *validateTestCoverageSteps) anLCOVCoverageFileRecording90PercentLineCove
 	return nil
 }
 
+// coberturaCoverContent90 produces a Cobertura XML file with 9/10 lines covered (90%).
+func coberturaCoverContent90() string {
+	return `<?xml version="1.0" ?>
+<coverage version="5.5" timestamp="1234567890">
+  <packages>
+    <package name="pkg">
+      <classes>
+        <class name="pkg.Cls" filename="pkg/cls.py">
+          <lines>
+            <line number="1" hits="1"/>
+            <line number="2" hits="1"/>
+            <line number="3" hits="1"/>
+            <line number="4" hits="1"/>
+            <line number="5" hits="1"/>
+            <line number="6" hits="1"/>
+            <line number="7" hits="1"/>
+            <line number="8" hits="1"/>
+            <line number="9" hits="1"/>
+            <line number="10" hits="0"/>
+          </lines>
+        </class>
+      </classes>
+    </package>
+  </packages>
+</coverage>`
+}
+
+// coberturaCoverContentPartial produces a Cobertura XML file with partial branches (33% coverage).
+func coberturaCoverContentPartial() string {
+	return `<?xml version="1.0" ?>
+<coverage version="5.5">
+  <packages>
+    <package name="pkg">
+      <classes>
+        <class name="pkg.Cls" filename="pkg/cls.py">
+          <lines>
+            <line number="1" hits="1" branch="true" condition-coverage="50% (1/2)"/>
+            <line number="2" hits="1" branch="true" condition-coverage="100% (2/2)"/>
+            <line number="3" hits="0"/>
+          </lines>
+        </class>
+      </classes>
+    </package>
+  </packages>
+</coverage>`
+}
+
+// lcovContentMultiFile produces an LCOV file with 2 source files (overall 90%).
+func lcovContentMultiFile() string {
+	return "TN:\n" +
+		"SF:src/a.ts\n" +
+		"DA:1,1\n" +
+		"DA:2,1\n" +
+		"DA:3,1\n" +
+		"DA:4,1\n" +
+		"DA:5,1\n" +
+		"LH:5\n" +
+		"LF:5\n" +
+		"end_of_record\n" +
+		"TN:\n" +
+		"SF:src/b.ts\n" +
+		"DA:1,1\n" +
+		"DA:2,1\n" +
+		"DA:3,1\n" +
+		"DA:4,1\n" +
+		"DA:5,0\n" +
+		"LH:4\n" +
+		"LF:5\n" +
+		"end_of_record\n"
+}
+
+func (s *validateTestCoverageSteps) anLCOVCoverageFileWithMultipleSourceFiles() error {
+	coverPath := filepath.Join(s.tmpDir, "lcov.info")
+	if err := os.WriteFile(coverPath, []byte(lcovContentMultiFile()), 0644); err != nil {
+		return err
+	}
+	s.coverFile = "lcov.info"
+	return nil
+}
+
+func (s *validateTestCoverageSteps) theDeveloperRunsValidateTestCoverageWithAn85PercentThresholdAndPerFileFlag() error {
+	perFile = true
+	buf := new(bytes.Buffer)
+	validateTestCoverageCmd.SetOut(buf)
+	validateTestCoverageCmd.SetErr(buf)
+	s.cmdErr = validateTestCoverageCmd.RunE(validateTestCoverageCmd, []string{s.coverFile, "85"})
+	s.cmdOutput = buf.String()
+	return nil
+}
+
+func (s *validateTestCoverageSteps) theOutputContainsPerFileCoverageBreakdown() error {
+	if !strings.Contains(s.cmdOutput, "Per-file") && !strings.Contains(s.cmdOutput, "src/") {
+		return fmt.Errorf("expected per-file output but got: %s", s.cmdOutput)
+	}
+	return nil
+}
+
+func (s *validateTestCoverageSteps) theDeveloperRunsValidateWithExclusion() error {
+	perFile = true
+	excludePatterns = []string{"b.ts"}
+	buf := new(bytes.Buffer)
+	validateTestCoverageCmd.SetOut(buf)
+	validateTestCoverageCmd.SetErr(buf)
+	s.cmdErr = validateTestCoverageCmd.RunE(validateTestCoverageCmd, []string{s.coverFile, "85"})
+	s.cmdOutput = buf.String()
+	return nil
+}
+
+func (s *validateTestCoverageSteps) theOutputDoesNotContainTheExcludedFile() error {
+	if strings.Contains(s.cmdOutput, "src/b.ts") {
+		return fmt.Errorf("expected output to NOT contain src/b.ts but got: %s", s.cmdOutput)
+	}
+	return nil
+}
+
+func (s *validateTestCoverageSteps) aCoberturaXMLCoverageFileRecording90PercentLineCoverage() error {
+	coverPath := filepath.Join(s.tmpDir, "cobertura.xml")
+	if err := os.WriteFile(coverPath, []byte(coberturaCoverContent90()), 0644); err != nil {
+		return err
+	}
+	s.coverFile = "cobertura.xml"
+	return nil
+}
+
+func (s *validateTestCoverageSteps) aCoberturaXMLCoverageFileWithPartialBranchCoverage() error {
+	coverPath := filepath.Join(s.tmpDir, "cobertura.xml")
+	if err := os.WriteFile(coverPath, []byte(coberturaCoverContentPartial()), 0644); err != nil {
+		return err
+	}
+	s.coverFile = "cobertura.xml"
+	return nil
+}
+
 func (s *validateTestCoverageSteps) noCoverageFileExistsAtTheSpecifiedPath() error {
 	s.coverFile = "nonexistent_cover.out"
 	return nil
@@ -260,6 +399,13 @@ func InitializeValidateTestCoverageScenario(sc *godog.ScenarioContext) {
 	sc.Step(`^a Go coverage file recording 70% line coverage$`, s.aGoCoverageFileRecording70PercentLineCoverage)
 	sc.Step(`^a Go coverage file recording 85% line coverage$`, s.aGoCoverageFileRecording85PercentLineCoverage)
 	sc.Step(`^an LCOV coverage file recording 90% line coverage$`, s.anLCOVCoverageFileRecording90PercentLineCoverage)
+	sc.Step(`^an LCOV coverage file with multiple source files$`, s.anLCOVCoverageFileWithMultipleSourceFiles)
+	sc.Step(`^the developer runs test-coverage validate with an 85% threshold and per-file flag$`, s.theDeveloperRunsValidateTestCoverageWithAn85PercentThresholdAndPerFileFlag)
+	sc.Step(`^the output contains per-file coverage breakdown$`, s.theOutputContainsPerFileCoverageBreakdown)
+	sc.Step(`^the developer runs test-coverage validate with exclusion of a source file$`, s.theDeveloperRunsValidateWithExclusion)
+	sc.Step(`^the output does not contain the excluded file$`, s.theOutputDoesNotContainTheExcludedFile)
+	sc.Step(`^a Cobertura XML coverage file recording 90% line coverage$`, s.aCoberturaXMLCoverageFileRecording90PercentLineCoverage)
+	sc.Step(`^a Cobertura XML coverage file with partial branch coverage$`, s.aCoberturaXMLCoverageFileWithPartialBranchCoverage)
 	sc.Step(`^no coverage file exists at the specified path$`, s.noCoverageFileExistsAtTheSpecifiedPath)
 	sc.Step(`^the developer runs test-coverage validate with an 85% threshold$`, s.theDeveloperRunsValidateTestCoverageWithAn85PercentThreshold)
 	sc.Step(`^the developer runs test-coverage validate with an 85% threshold requesting JSON output$`, s.theDeveloperRunsValidateTestCoverageWithAn85PercentThresholdRequestingJSONOutput)
@@ -280,6 +426,7 @@ func TestIntegrationValidateTestCoverage(t *testing.T) {
 			Format:   "pretty",
 			Paths:    []string{specsValidateTestCoverageDir},
 			TestingT: t,
+			Tags:     "@test-coverage-validate",
 		},
 	}
 	if suite.Run() != 0 {

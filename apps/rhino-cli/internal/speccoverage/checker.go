@@ -45,19 +45,94 @@ func (sm *stepMatcher) matches(stepText string) bool {
 
 // skipDirs are directories to skip when walking app source files.
 var skipDirs = map[string]bool{
-	"node_modules":     true,
-	".next":            true,
-	"build":            true,
-	"dist":             true,
-	"storybook-static": true,
-	"coverage":         true,
-	".git":             true,
+	"node_modules":        true,
+	".next":               true,
+	"build":               true,
+	"dist":                true,
+	"storybook-static":    true,
+	"coverage":            true,
+	".git":                true,
+	"target":              true,
+	"_build":              true,
+	"deps":                true,
+	"bin":                 true,
+	"obj":                 true,
+	"__pycache__":         true,
+	".pytest_cache":       true,
+	".venv":               true,
+	"generated-contracts": true,
+	"generated_contracts": true,
+	".dart_tool":          true,
+	".features-gen":       true,
 }
 
-// CheckAll walks SpecsDir for .feature files and checks each has a matching
-// test file anywhere under AppDir. Returns gaps for unmatched specs.
-// Also checks scenario-level and step-level coverage for matched specs.
+// CheckAll walks SpecsDir for .feature files and validates coverage.
+// In default mode: 1:1 file matching + scenario + step validation.
+// In --shared-steps mode: step-only validation across ALL source files.
 func CheckAll(opts ScanOptions) (*CheckResult, error) {
+	if opts.SharedSteps {
+		return checkSharedSteps(opts)
+	}
+	return checkOneToOne(opts)
+}
+
+// checkSharedSteps validates step-level coverage only (no file/scenario matching).
+// Used for E2E projects where step files are shared across features.
+func checkSharedSteps(opts ScanOptions) (*CheckResult, error) {
+	start := time.Now()
+
+	specFiles, err := walkFeatureFiles(opts.SpecsDir)
+	if err != nil {
+		return nil, err
+	}
+
+	allStepTexts, err := extractAllStepTexts(opts.AppDir)
+	if err != nil {
+		return nil, err
+	}
+
+	var stepGaps []StepGap
+	totalScenarios := 0
+	totalSteps := 0
+
+	for _, specFile := range specFiles {
+		relSpec, err := filepath.Rel(opts.RepoRoot, specFile)
+		if err != nil {
+			relSpec = specFile
+		}
+
+		scenarios, err := ParseFeatureFile(specFile)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, sc := range scenarios {
+			totalScenarios++
+			for _, step := range sc.Steps {
+				totalSteps++
+				if !allStepTexts.matches(step.Text) {
+					stepGaps = append(stepGaps, StepGap{
+						SpecFile:      relSpec,
+						ScenarioTitle: sc.Title,
+						StepKeyword:   step.Keyword,
+						StepText:      step.Text,
+					})
+				}
+			}
+		}
+	}
+
+	return &CheckResult{
+		TotalSpecs:     len(specFiles),
+		TotalScenarios: totalScenarios,
+		TotalSteps:     totalSteps,
+		StepGaps:       stepGaps,
+		Duration:       time.Since(start),
+	}, nil
+}
+
+// checkOneToOne performs the original 1:1 file matching + scenario + step validation.
+func checkOneToOne(opts ScanOptions) (*CheckResult, error) {
 	start := time.Now()
 
 	specFiles, err := walkFeatureFiles(opts.SpecsDir)
@@ -176,16 +251,98 @@ func walkFeatureFiles(dir string) ([]string, error) {
 	return files, nil
 }
 
-// findMatchingTestFile returns the path of the first file under appDir whose
-// base name starts with stem+"." or equals stem exactly, or "" if none found.
-// Also matches the underscore variant of a hyphenated stem so that feature file
-// stems (hyphens) match Go test files (underscores).
+// toPascalCase converts a kebab-case stem to PascalCase.
+// e.g., "health-check" → "HealthCheck"
+func toPascalCase(stem string) string {
+	parts := strings.Split(stem, "-")
+	var b strings.Builder
+	for _, p := range parts {
+		if p == "" {
+			continue
+		}
+		b.WriteString(strings.ToUpper(p[:1]) + p[1:])
+	}
+	return b.String()
+}
+
+// matchesStem checks if a file's base name matches a feature file stem.
+// Supports kebab-case, snake_case, PascalCase, and test_ prefix matching.
+func matchesStem(base, stem string) bool {
+	snake := strings.ReplaceAll(stem, "-", "_")
+	pascal := toPascalCase(stem)
+	testSnake := "test_" + snake
+
+	for _, prefix := range []string{
+		stem + ".", stem + "_",
+		snake + ".", snake + "_",
+		pascal,
+		testSnake + ".", testSnake + "_",
+	} {
+		if strings.HasPrefix(base, prefix) {
+			return true
+		}
+	}
+	return base == stem || base == snake
+}
+
+// isTestFile checks if a file is a test file based on its path and extension.
+func isTestFile(path string) bool {
+	base := filepath.Base(path)
+	ext := filepath.Ext(base)
+
+	switch ext {
+	case "":
+		// Files with no extension are accepted (backward compat for exact stem match)
+		return true
+	case ".go":
+		return strings.HasSuffix(base, "_test.go")
+	case ".ts", ".tsx", ".js", ".jsx":
+		return strings.Contains(base, ".test.") ||
+			strings.Contains(base, ".spec.") ||
+			strings.Contains(base, ".steps.") ||
+			strings.Contains(base, ".integration.") ||
+			strings.Contains(base, "_test.")
+	case ".java", ".kt":
+		return isInTestDir(path)
+	case ".py":
+		return strings.HasPrefix(base, "test_") ||
+			strings.HasSuffix(base, "_test.py") ||
+			isInTestDir(path)
+	case ".exs":
+		return strings.HasSuffix(base, "_test.exs") || strings.HasSuffix(base, "_steps.exs")
+	case ".rs":
+		return strings.HasSuffix(base, "_test.rs") || isInTestDir(path)
+	case ".fs", ".cs":
+		return isInTestDir(path) ||
+			strings.HasSuffix(base, "Steps.cs") ||
+			strings.HasSuffix(base, "Tests.cs") ||
+			strings.HasSuffix(base, "Steps.fs") ||
+			strings.HasSuffix(base, "Tests.fs")
+	case ".clj":
+		return strings.HasSuffix(base, "_test.clj") || strings.HasSuffix(base, "_steps.clj")
+	case ".dart":
+		return strings.HasSuffix(base, "_test.dart") || isInTestDir(path)
+	}
+	return false
+}
+
+// isInTestDir checks if a file is inside a test/ or tests/ or Tests/ directory.
+func isInTestDir(path string) bool {
+	parts := strings.Split(filepath.ToSlash(path), "/")
+	for _, p := range parts {
+		if p == "test" || p == "tests" || p == "Tests" {
+			return true
+		}
+	}
+	return false
+}
+
+// findMatchingTestFile returns the path of the first test file under appDir
+// matching the feature file stem, or "" if none found.
 func findMatchingTestFile(appDir, stem string) (string, error) {
 	if _, err := os.Stat(appDir); os.IsNotExist(err) {
 		return "", nil
 	}
-
-	underscoreStem := strings.ReplaceAll(stem, "-", "_")
 
 	var found string
 
@@ -201,23 +358,9 @@ func findMatchingTestFile(appDir, stem string) (string, error) {
 		}
 
 		base := filepath.Base(path)
-		if strings.HasPrefix(base, stem+".") || strings.HasPrefix(base, underscoreStem+".") || base == stem || base == underscoreStem {
-			// Skip non-test Go files (e.g. doctor.go) — only _test.go files count.
-			if strings.HasSuffix(base, ".go") && !strings.HasSuffix(base, "_test.go") {
+		if matchesStem(base, stem) {
+			if !isTestFile(path) {
 				return nil
-			}
-			// Skip non-test TS/JS files (e.g. login.tsx) — only files with test
-			// indicators (.test., .spec., .steps., .integration., _test.) count.
-			ext := filepath.Ext(base)
-			if ext == ".ts" || ext == ".tsx" || ext == ".js" || ext == ".jsx" {
-				isTestFile := strings.Contains(base, ".test.") ||
-					strings.Contains(base, ".spec.") ||
-					strings.Contains(base, ".steps.") ||
-					strings.Contains(base, ".integration.") ||
-					strings.Contains(base, "_test.")
-				if !isTestFile {
-					return nil
-				}
 			}
 			found = path
 			return filepath.SkipAll
@@ -242,13 +385,26 @@ func hasMatchingTestFile(appDir, stem string) (bool, error) {
 
 // extractScenarioTitles reads ONLY the matching test file and returns
 // all scenario titles found, whitespace-normalised.
-// For .go files, it extracts titles from // Scenario: ... comments.
-// For all other files, it extracts titles from Scenario("...", ...) calls.
+// Dispatches by file extension to the appropriate extractor.
 func extractScenarioTitles(testFilePath string) (map[string]bool, error) {
-	if strings.HasSuffix(testFilePath, ".go") {
+	ext := filepath.Ext(testFilePath)
+	switch ext {
+	case ".go":
 		return extractGoScenarioTitles(testFilePath)
+	case ".java", ".kt", ".cs", ".rs":
+		// Uses // Scenario: comment pattern (same as Go)
+		return extractGoScenarioTitles(testFilePath)
+	case ".py":
+		return extractPythonScenarioTitles(testFilePath)
+	case ".exs", ".fs", ".clj":
+		// Auto-bind frameworks — skip scenario extraction
+		return map[string]bool{}, nil
+	case ".dart":
+		// Use // Scenario: comment pattern
+		return extractGoScenarioTitles(testFilePath)
+	default:
+		return extractTSScenarioTitles(testFilePath)
 	}
-	return extractTSScenarioTitles(testFilePath)
 }
 
 // extractTSScenarioTitles reads a TS/JS test file and returns all scenario
@@ -326,6 +482,20 @@ func extractAllStepTexts(appDir string) (*stepMatcher, error) {
 			return extractTSStepTexts(path, sm)
 		case ".go":
 			return extractGoStepTexts(path, sm)
+		case ".java", ".kt":
+			return extractJVMStepTexts(path, sm)
+		case ".py":
+			return extractPythonStepTexts(path, sm)
+		case ".ex", ".exs":
+			return extractElixirStepTexts(path, sm)
+		case ".rs":
+			return extractRustStepTexts(path, sm)
+		case ".cs":
+			return extractCSharpStepTexts(path, sm)
+		case ".fs":
+			return extractFSharpStepTexts(path, sm)
+		case ".clj":
+			return extractClojureStepTexts(path, sm)
 		}
 		return nil
 	})

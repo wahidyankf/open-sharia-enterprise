@@ -9,6 +9,12 @@ import (
 	"github.com/wahidyankf/open-sharia-enterprise/apps/rhino-cli/internal/testcoverage"
 )
 
+var (
+	perFile        bool
+	belowThreshold float64
+	excludePatterns []string
+)
+
 var validateTestCoverageCmd = &cobra.Command{
 	Use:   "validate <coverage-file> <threshold>",
 	Short: "Check test coverage against a threshold (Codecov-compatible algorithm)",
@@ -16,7 +22,8 @@ var validateTestCoverageCmd = &cobra.Command{
 
 Auto-detects format from the coverage file:
   - LCOV format: filenames ending in ".info" or containing "lcov"
-  - JaCoCo XML format: filenames ending in ".xml" and containing "jacoco"
+  - JaCoCo XML format: filenames ending in ".xml" containing "jacoco", or XML with <report> root
+  - Cobertura XML format: filenames ending in ".xml" containing "cobertura", or XML with <coverage> root
   - Go cover.out format: all other files
 
 Coverage algorithm:
@@ -47,6 +54,9 @@ The coverage file path is relative to the git repository root.`,
 }
 
 func init() {
+	validateTestCoverageCmd.Flags().BoolVar(&perFile, "per-file", false, "show per-file coverage breakdown")
+	validateTestCoverageCmd.Flags().Float64Var(&belowThreshold, "below-threshold", 0, "with --per-file, show only files below this coverage percentage")
+	validateTestCoverageCmd.Flags().StringArrayVar(&excludePatterns, "exclude", nil, "exclude files matching glob pattern (repeatable)")
 	testCoverageCmd.AddCommand(validateTestCoverageCmd)
 }
 
@@ -69,6 +79,8 @@ func runValidateTestCoverage(cmd *cobra.Command, args []string) error {
 		result, err = testcoverage.ComputeLCOVResult(absPath, threshold)
 	case testcoverage.FormatJaCoCo:
 		result, err = testcoverage.ComputeJaCoCoResult(absPath, threshold)
+	case testcoverage.FormatCobertura:
+		result, err = testcoverage.ComputeCoberturaResult(absPath, threshold)
 	case testcoverage.FormatGo:
 		result, err = testcoverage.ComputeGoResult(absPath, threshold)
 	}
@@ -76,10 +88,21 @@ func runValidateTestCoverage(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("coverage check failed: %w", err)
 	}
 
+	if len(excludePatterns) > 0 {
+		testcoverage.ExcludeFiles(&result, excludePatterns)
+	}
+
+	perFileText := ""
+	if perFile {
+		perFileText = testcoverage.FormatTextPerFile(&result, belowThreshold)
+	}
+
 	if err := writeFormatted(cmd, output, verbose, quiet, outputFuncs{
-		text:     func(v, q bool) string { return testcoverage.FormatText(&result, v, q) },
-		json:     func() (string, error) { return testcoverage.FormatJSON(&result) },
-		markdown: func() string { return testcoverage.FormatMarkdown(&result) },
+		text: func(v, q bool) string {
+			return testcoverage.FormatText(&result, v, q) + perFileText
+		},
+		json:     func() (string, error) { return testcoverage.FormatJSON(&result, perFile, belowThreshold) },
+		markdown: func() string { return testcoverage.FormatMarkdown(&result, perFile, belowThreshold) },
 	}); err != nil {
 		return err
 	}

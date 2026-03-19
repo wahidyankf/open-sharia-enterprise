@@ -14,6 +14,7 @@ type jacocoReport struct {
 
 // jacocoPackage represents a <package> element.
 type jacocoPackage struct {
+	Name        string             `xml:"name,attr"`
 	SourceFiles []jacocoSourceFile `xml:"sourcefile"`
 }
 
@@ -61,20 +62,35 @@ func ComputeJaCoCoResult(filename string, threshold float64) (Result, error) {
 	}
 
 	covered, partial, missed := 0, 0, 0
+	var perFile []FileResult
 
 	for _, pkg := range report.Packages {
 		for _, sf := range pkg.SourceFiles {
+			fc, fp, fm := 0, 0, 0
 			for _, line := range sf.Lines {
 				if line.Ci > 0 {
 					if line.Mb > 0 {
-						partial++
+						fp++
 					} else {
-						covered++
+						fc++
 					}
 				} else {
-					missed++
+					fm++
 				}
 			}
+			covered += fc
+			partial += fp
+			missed += fm
+
+			ft := fc + fp + fm
+			fpct := 100.0
+			if ft > 0 {
+				fpct = 100.0 * float64(fc) / float64(ft)
+			}
+			filePath := pkg.Name + "/" + sf.Name
+			perFile = append(perFile, FileResult{
+				Path: filePath, Covered: fc, Partial: fp, Missed: fm, Total: ft, Pct: fpct,
+			})
 		}
 	}
 
@@ -94,5 +110,6 @@ func ComputeJaCoCoResult(filename string, threshold float64) (Result, error) {
 		Pct:       pct,
 		Threshold: threshold,
 		Passed:    pct >= threshold,
+		Files:     perFile,
 	}, nil
 }

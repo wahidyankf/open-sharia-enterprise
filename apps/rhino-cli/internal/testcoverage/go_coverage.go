@@ -130,6 +130,7 @@ func ComputeGoResult(filename string, threshold float64) (Result, error) {
 	}
 
 	covered, partial, missed := 0, 0, 0
+	var perFile []FileResult
 
 	for fp, fblocks := range fileBlocks {
 		// Strip module prefix to get a path relative to the project directory
@@ -148,6 +149,7 @@ func ComputeGoResult(filename string, threshold float64) (Result, error) {
 			}
 		}
 
+		fc, fp2, fm := 0, 0, 0
 		for lineNo, counts := range lineCounts {
 			// Skip non-code lines when source is available
 			if source != nil {
@@ -168,13 +170,26 @@ func ComputeGoResult(filename string, threshold float64) (Result, error) {
 			}
 
 			if hasCovered && !hasMissed {
-				covered++
+				fc++
 			} else if hasCovered && hasMissed {
-				partial++
+				fp2++
 			} else {
-				missed++
+				fm++
 			}
 		}
+
+		covered += fc
+		partial += fp2
+		missed += fm
+
+		ft := fc + fp2 + fm
+		fpct := 100.0
+		if ft > 0 {
+			fpct = 100.0 * float64(fc) / float64(ft)
+		}
+		perFile = append(perFile, FileResult{
+			Path: fp, Covered: fc, Partial: fp2, Missed: fm, Total: ft, Pct: fpct,
+		})
 	}
 
 	total := covered + partial + missed
@@ -193,5 +208,6 @@ func ComputeGoResult(filename string, threshold float64) (Result, error) {
 		Pct:       pct,
 		Threshold: threshold,
 		Passed:    pct >= threshold,
+		Files:     perFile,
 	}, nil
 }
