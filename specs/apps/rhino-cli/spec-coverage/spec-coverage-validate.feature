@@ -28,3 +28,13 @@ Feature: BDD Spec-to-Test Coverage Validation
     When the developer runs spec-coverage validate on the specs and app directories
     Then the command exits with a failure code
     And the output identifies the step as an undefined step
+
+  Scenario: Shared-steps mode validates steps across all source files
+    Given feature files with steps implemented in shared step files
+    When the developer runs spec-coverage validate with shared-steps flag
+    Then the command validates steps across all source files without file matching
+
+  Scenario: Multi-language test file matching recognizes language-specific patterns
+    Given feature files with test implementations in multiple languages
+    When the developer runs spec-coverage validate on the specs and app directories
+    Then test files are matched using language-specific conventions

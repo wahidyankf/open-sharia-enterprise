@@ -2,8 +2,9 @@
 
 ## Status
 
-**Status**: In Progress
+**Status**: Done
 **Created**: 2026-03-19
+**Completed**: 2026-03-20
 **Scope**: `apps/rhino-cli/` (v0.12.0 → v0.13.0)
 
 ## Overview

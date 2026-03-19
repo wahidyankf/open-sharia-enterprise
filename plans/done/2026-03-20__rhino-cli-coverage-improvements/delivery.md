@@ -95,7 +95,7 @@
 - [x] Add `--shared-steps` flag to `cmd/spec_coverage_validate.go`
 - [x] Report uncovered steps with feature file + scenario context
 - [x] Write unit tests for shared-steps logic
-- [ ] Write BDD integration test for `--shared-steps` mode
+- [x] Write BDD integration test for `--shared-steps` mode
 
 ### 6B: File Matching Layer
 
@@ -147,14 +147,14 @@
 - [x] Write BDD integration test with multi-language fixture files
 - [x] Write BDD integration test for shared-steps mode
 - [x] Add Gherkin feature file to `specs/apps/rhino-cli/`
-- [ ] Smoke test: run against actual demo-be-golang-gin test files
-- [ ] Smoke test: run against actual demo-be-java-springboot test files
-- [ ] Smoke test: run against actual demo-be-elixir-phoenix test files
-- [ ] Smoke test: run against actual demo-be-ts-effect test files
-- [ ] Smoke test: run `--shared-steps` against actual demo-be-e2e step files
-- [ ] Smoke test: run `--shared-steps` against actual demo-fe-e2e step files
-- [ ] Smoke test: run against actual demo-fe-dart-flutterweb test files
-- [ ] Verify: existing spec-coverage for organiclever-web still works
+- [x] Smoke test: run against actual demo-be-golang-gin test files
+- [x] Smoke test: run against actual demo-be-java-springboot test files
+- [x] Smoke test: run against actual demo-be-elixir-phoenix test files
+- [x] Smoke test: run against actual demo-be-ts-effect test files
+- [x] Smoke test: run `--shared-steps` against actual demo-be-e2e step files
+- [x] Smoke test: run `--shared-steps` against actual demo-fe-e2e step files
+- [x] Smoke test: run against actual demo-fe-dart-flutterweb test files
+- [x] Verify: existing spec-coverage for organiclever-web still works
 - [x] Verify: `nx run rhino-cli:test:quick` passes with >=90% coverage
 
 ## Phase 7: Documentation and Version Bump
@@ -174,16 +174,16 @@
 
 - [x] Run `nx run rhino-cli:test:quick` -- all tests pass, >=90% coverage
 - [x] Run `nx run rhino-cli:test:integration` -- all BDD scenarios pass
-- [ ] Run `nx run rhino-cli:lint` -- no golangci-lint violations
+- [x] Run `nx run rhino-cli:lint` -- no golangci-lint violations
 - [x] Verify backward compatibility: existing project.json commands unchanged
-- [ ] Smoke test: run `test-coverage validate` against actual project coverage files
-  - [ ] Verify all demo-be-\* coverage files (Go cover.out, LCOV, JaCoCo XML)
-  - [ ] Verify all demo-fe-\* coverage files (LCOV from Vitest, Flutter)
-  - [ ] Verify all lib coverage files (Go cover.out, LCOV)
-- [ ] Smoke test: run `test-coverage merge` with two real coverage files
-- [ ] Smoke test: run `test-coverage diff` against actual git changes
-- [ ] Smoke test: run `spec-coverage validate` against demo-be backends (1:1 mode)
-- [ ] Smoke test: run `spec-coverage validate --shared-steps` against E2E projects
+- [x] Smoke test: run `test-coverage validate` against actual project coverage files
+  - [x] Verify all demo-be-\* coverage files (Go cover.out, LCOV, JaCoCo XML)
+  - [x] Verify all demo-fe-\* coverage files (LCOV from Vitest, Flutter)
+  - [x] Verify all lib coverage files (Go cover.out, LCOV)
+- [x] Smoke test: run `test-coverage merge` with two real coverage files
+- [x] Smoke test: run `test-coverage diff` against actual git changes
+- [x] Smoke test: run `spec-coverage validate` against demo-be backends (1:1 mode)
+- [x] Smoke test: run `spec-coverage validate --shared-steps` against E2E projects
 
 ## Success Criteria
 

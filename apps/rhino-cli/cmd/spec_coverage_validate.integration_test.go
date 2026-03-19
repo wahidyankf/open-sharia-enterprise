@@ -24,6 +24,8 @@ var specsValidateSpecCoverageDir = func() string {
 // Scenario: A feature file without a matching test is reported as a gap
 // Scenario: A scenario without a matching implementation is reported as a gap
 // Scenario: A step without a matching step definition is reported as a gap
+// Scenario: Shared-steps mode validates steps across all source files
+// Scenario: Multi-language test file matching recognizes language-specific patterns
 
 type validateSpecCoverageSteps struct {
 	originalWd string
@@ -45,6 +47,7 @@ func (s *validateSpecCoverageSteps) before(_ context.Context, _ *godog.Scenario)
 	verbose = false
 	quiet = false
 	output = "text"
+	sharedSteps = false
 	_ = os.Chdir(s.tmpDir)
 	return context.Background(), nil
 }
@@ -192,6 +195,58 @@ func (s *validateSpecCoverageSteps) theOutputIdentifiesTheStepAsAnUndefinedStep(
 	return nil
 }
 
+func (s *validateSpecCoverageSteps) featureFilesWithStepsImplementedInSharedStepFiles() error {
+	featureContent := "Feature: Shared\n  Scenario: Shared scenario\n    Given a shared step\n    When another shared step\n"
+	if err := os.WriteFile(filepath.Join(s.tmpDir, s.specsDir, "shared.feature"), []byte(featureContent), 0644); err != nil {
+		return err
+	}
+	stepContent := "Given(\"a shared step\", async () => {});\nWhen(\"another shared step\", async () => {});\n"
+	if err := os.WriteFile(filepath.Join(s.tmpDir, s.appDir, "common.steps.ts"), []byte(stepContent), 0644); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *validateSpecCoverageSteps) theDeveloperRunsValidateSpecCoverageWithSharedStepsFlag() error {
+	sharedSteps = true
+	buf := new(bytes.Buffer)
+	validateSpecCoverageCmd.SetOut(buf)
+	validateSpecCoverageCmd.SetErr(buf)
+	s.cmdErr = validateSpecCoverageCmd.RunE(validateSpecCoverageCmd, []string{s.specsDir, s.appDir})
+	s.cmdOutput = buf.String()
+	return nil
+}
+
+func (s *validateSpecCoverageSteps) theCommandValidatesStepsAcrossAllSourceFilesWithoutFileMatching() error {
+	if s.cmdErr != nil {
+		return fmt.Errorf("expected shared-steps validation to succeed but got: %v\nOutput: %s", s.cmdErr, s.cmdOutput)
+	}
+	return nil
+}
+
+func (s *validateSpecCoverageSteps) featureFilesWithTestImplementationsInMultipleLanguages() error {
+	featureContent := "Feature: Multi\n  Scenario: Multi scenario\n    Given a multi step\n"
+	if err := os.WriteFile(filepath.Join(s.tmpDir, s.specsDir, "multi-lang.feature"), []byte(featureContent), 0644); err != nil {
+		return err
+	}
+	testDir := filepath.Join(s.tmpDir, s.appDir, "test")
+	if err := os.MkdirAll(testDir, 0755); err != nil {
+		return err
+	}
+	javaContent := "// Scenario: Multi scenario\n@Given(\"a multi step\")\npublic void step() {}\n"
+	if err := os.WriteFile(filepath.Join(testDir, "MultiLangSteps.java"), []byte(javaContent), 0644); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *validateSpecCoverageSteps) testFilesAreMatchedUsingLanguageSpecificConventions() error {
+	if s.cmdErr != nil {
+		return fmt.Errorf("expected multi-language matching to succeed but got: %v\nOutput: %s", s.cmdErr, s.cmdOutput)
+	}
+	return nil
+}
+
 // InitializeValidateSpecCoverageScenario registers all step definitions.
 func InitializeValidateSpecCoverageScenario(sc *godog.ScenarioContext) {
 	s := &validateSpecCoverageSteps{}
@@ -209,6 +264,11 @@ func InitializeValidateSpecCoverageScenario(sc *godog.ScenarioContext) {
 	sc.Step(`^the output identifies the feature file as an uncovered spec$`, s.theOutputIdentifiesTheFeatureFileAsAnUncoveredSpec)
 	sc.Step(`^the output identifies the scenario as an unimplemented scenario$`, s.theOutputIdentifiesTheScenarioAsAnUnimplementedScenario)
 	sc.Step(`^the output identifies the step as an undefined step$`, s.theOutputIdentifiesTheStepAsAnUndefinedStep)
+	sc.Step(`^feature files with steps implemented in shared step files$`, s.featureFilesWithStepsImplementedInSharedStepFiles)
+	sc.Step(`^the developer runs spec-coverage validate with shared-steps flag$`, s.theDeveloperRunsValidateSpecCoverageWithSharedStepsFlag)
+	sc.Step(`^the command validates steps across all source files without file matching$`, s.theCommandValidatesStepsAcrossAllSourceFilesWithoutFileMatching)
+	sc.Step(`^feature files with test implementations in multiple languages$`, s.featureFilesWithTestImplementationsInMultipleLanguages)
+	sc.Step(`^test files are matched using language-specific conventions$`, s.testFilesAreMatchedUsingLanguageSpecificConventions)
 }
 
 func TestIntegrationValidateSpecCoverage(t *testing.T) {
