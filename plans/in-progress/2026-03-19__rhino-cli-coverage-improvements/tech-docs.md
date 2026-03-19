@@ -231,9 +231,49 @@ if needed.
 3. Aggregate remaining files for percentage calculation
 4. Report only non-excluded files in per-file output
 
-### D6: spec-coverage Multi-Language Support
+### D6: spec-coverage Multi-Language and Multi-Project Support
 
-Three layers must be extended: file matching, scenario extraction, and step extraction.
+Four layers must be addressed: shared-steps mode, file matching, scenario extraction, and step
+extraction.
+
+#### Layer 0: Shared Steps Mode (`--shared-steps`)
+
+**Problem**: E2E projects (demo-be-e2e, demo-fe-e2e) use playwright-bdd where step files are
+shared across features (e.g., `common.steps.ts` handles steps from 14 features). The current
+`findMatchingTestFile` assumes 1:1 feature→test file mapping, which fundamentally doesn't work.
+
+**Solution**: Add `--shared-steps` flag that changes the validation mode:
+
+```go
+// Default mode (existing): 1:1 file matching + scenario + step validation
+// Shared-steps mode: skip file matching, validate steps across ALL files
+
+func CheckAll(opts ScanOptions) (*CheckResult, error) {
+    if opts.SharedSteps {
+        return checkSharedSteps(opts) // NEW: step-only validation
+    }
+    return checkOneToOne(opts)        // existing behavior
+}
+
+func checkSharedSteps(opts ScanOptions) (*CheckResult, error) {
+    // 1. Walk all features, collect all step texts
+    // 2. Walk all source files in app-dir, extract all step definitions
+    // 3. For each feature step, check if ANY step definition matches
+    // 4. Report gaps for unmatched steps (not files)
+}
+```
+
+**When to use**:
+
+- `--shared-steps`: demo-be-e2e, demo-fe-e2e (playwright-bdd), any project with shared step files
+- Default (no flag): demo-be-\* backends (unit tests with 1:1 file mapping), CLI apps
+
+**playwright-bdd note**: Uses `const { Given, When, Then } = createBdd()` — the extracted
+`Given("text", fn)` syntax is identical to Cucumber.js. The existing TS/JS step regex already
+handles this. No new regex needed for playwright-bdd.
+
+**Dart note**: Uses `bdd_widget_test` or custom BDD patterns with lowercase `given("text", fn)`.
+Need a Dart-specific regex for lowercase step keywords.
 
 #### Layer 1: File Matching (`findMatchingTestFile`)
 
@@ -285,6 +325,7 @@ Extend the extension-based test file filter for new languages:
 | `.fs`               | Must be in `Tests` project directory                                                |
 | `.cs`               | Must be in `Tests` project directory or end in `Steps.cs`/`Tests.cs`                |
 | `.clj`              | Must end in `_test.clj` or `_steps.clj`                                             |
+| `.dart`             | Must end in `_test.dart` or be in `test/` directory                                 |
 
 #### Layer 3: Step Extraction (`extractAllStepTexts`)
 
@@ -311,6 +352,9 @@ fsStepRe = regexp.MustCompile("\\[<(?:Given|When|Then)>\\]\\s+``((?:[^`]|`[^`])*
 
 // Clojure: (Given "text" ...) (When "text" ...) (Then "text" ...)
 cljStepRe = regexp.MustCompile(`\((?:Given|When|Then|And|But)\s+"((?:[^"\\]|\\.)*)"\s`)
+
+// Dart: given("text", fn) when("text", fn) then("text", fn) (lowercase from bdd_widget_test)
+dartStepRe = regexp.MustCompile(`(?:given|when|then|and|but)\s*\(\s*"((?:[^"\\]|\\.)*)"\s*,`)
 ```
 
 **Extraction type per language**: Java/Kotlin/Python/Rust/C#/Clojure extract exact text.
@@ -348,6 +392,8 @@ var skipDirs = map[string]bool{
     ".venv": true,         // Python
     "generated-contracts": true, // All demo apps
     "generated_contracts": true, // Python/Clojure convention
+    ".dart_tool": true,        // Dart/Flutter
+    ".features-gen": true,     // playwright-bdd generated files
 }
 ```
 
@@ -381,6 +427,10 @@ var skipDirs = map[string]bool{
 | `internal/speccoverage/dotnet_steps_test.go`       | Unit tests                              |
 | `internal/speccoverage/clojure_steps.go`           | Clojure step extraction                 |
 | `internal/speccoverage/clojure_steps_test.go`      | Unit tests                              |
+| `internal/speccoverage/dart_steps.go`              | Dart step extraction                    |
+| `internal/speccoverage/dart_steps_test.go`         | Unit tests                              |
+| `internal/speccoverage/shared_steps.go`            | Shared-steps mode logic                 |
+| `internal/speccoverage/shared_steps_test.go`       | Unit tests                              |
 | `cmd/test_coverage_merge.go`                       | Merge subcommand                        |
 | `cmd/test_coverage_merge_test.go`                  | Unit tests                              |
 | `cmd/test_coverage_merge.integration_test.go`      | BDD integration tests                   |
@@ -401,6 +451,7 @@ var skipDirs = map[string]bool{
 | `cmd/test_coverage_validate.integration_test.go` | BDD scenarios for new flags                              |
 | `internal/speccoverage/checker.go`               | Multi-language file matching, step/scenario dispatch     |
 | `internal/speccoverage/checker_test.go`          | Tests for all language patterns                          |
+| `cmd/spec_coverage_validate.go`                  | Add `--shared-steps` flag                                |
 | `cmd/root.go`                                    | Version bump to 0.13.0                                   |
 | `README.md`                                      | Document all new features                                |
 

@@ -342,37 +342,52 @@ Feature: File exclusion patterns
 
 ---
 
-## R6: spec-coverage Multi-Language Support
+## R6: spec-coverage Multi-Language and Multi-Project Support
 
 ### Description
 
-Extend `spec-coverage validate` to support all 10 demo-be backend languages. The current
-implementation has **three layers** that each only support Go and TS/JS:
+Extend `spec-coverage validate` to support **all demo projects**: 11 demo-be backends, 3 demo-fe
+frontends, and 2 E2E test suites. Every Gherkin spec (feature and scenario) must be implemented
+without exception across all project types.
+
+The current implementation has **three layers** that each only support Go and TS/JS:
 
 1. **File matching** (`findMatchingTestFile`): Only matches `HasPrefix(base, stem+".")` -- misses
    underscore-separated Go files, PascalCase Java/Kotlin/C#/F# files, `test_` prefix Python files
 2. **Scenario extraction** (`extractScenarioTitles`): Only parses Go `// Scenario:` comments and
    TS/JS `Scenario("title")` calls -- no Java/Kotlin annotations, Python decorators, Elixir macros
 3. **Step extraction** (`extractAllStepTexts`): Only processes `.go` and `.ts/.tsx/.js/.jsx` files
-   -- no `.java`, `.kt`, `.py`, `.ex/.exs`, `.rs`, `.fs`, `.cs`, `.clj` support
+   -- no `.java`, `.kt`, `.py`, `.ex/.exs`, `.rs`, `.fs`, `.cs`, `.clj`, `.dart` support
 
-All three layers must be extended for each language.
+Additionally, a **fundamental architecture limitation** exists: the current tool assumes 1:1
+feature-to-test-file mapping, which does not work for E2E projects (playwright-bdd) or shared
+step libraries where multiple features share step files like `common.steps.ts`.
+
+### Project Scope
+
+| Project Type         | Projects                                                              | Specs Dir                                                  | Step Pattern                        |
+| -------------------- | --------------------------------------------------------------------- | ---------------------------------------------------------- | ----------------------------------- |
+| **Backends (unit)**  | 11 demo-be-\* apps                                                    | `specs/apps/demo/be/gherkin/` (14 features, 152 scenarios) | 1:1 file mapping, language-specific |
+| **Frontends (unit)** | demo-fe-ts-nextjs, demo-fe-ts-tanstack-start, demo-fe-dart-flutterweb | `specs/apps/demo/fe/gherkin/` (15 features, 92 scenarios)  | 1:1 or shared steps                 |
+| **Backend E2E**      | demo-be-e2e                                                           | `specs/apps/demo/be/gherkin/` (same 14 features)           | Shared steps (playwright-bdd)       |
+| **Frontend E2E**     | demo-fe-e2e                                                           | `specs/apps/demo/fe/gherkin/` (same 15 features)           | Shared steps (playwright-bdd)       |
 
 ### Current Support Gap
 
-| Language      | File Matching             | Scenario Extraction  | Step Extraction           |
-| ------------- | ------------------------- | -------------------- | ------------------------- |
-| Go            | Partial (dot-prefix only) | Yes (`// Scenario:`) | Yes (`sc.Step`)           |
-| TypeScript/JS | Yes (`.test.`, `.spec.`)  | Yes (`Scenario()`)   | Yes (`Given/When/Then()`) |
-| Java          | No                        | No                   | No                        |
-| Kotlin        | No                        | No                   | No                        |
-| Python        | No                        | No                   | No                        |
-| Elixir        | No                        | No                   | No                        |
-| Rust          | No                        | No                   | No                        |
-| F#            | No                        | No                   | No                        |
-| C#            | No                        | No                   | No                        |
-| Clojure       | No                        | No                   | No                        |
-| Dart          | N/A (frontend only)       | N/A                  | N/A                       |
+| Language              | File Matching             | Scenario Extraction  | Step Extraction           |
+| --------------------- | ------------------------- | -------------------- | ------------------------- |
+| Go                    | Partial (dot-prefix only) | Yes (`// Scenario:`) | Yes (`sc.Step`)           |
+| TypeScript/JS         | Yes (`.test.`, `.spec.`)  | Yes (`Scenario()`)   | Yes (`Given/When/Then()`) |
+| Java                  | No                        | No                   | No                        |
+| Kotlin                | No                        | No                   | No                        |
+| Python                | No                        | No                   | No                        |
+| Elixir                | No                        | No                   | No                        |
+| Rust                  | No                        | No                   | No                        |
+| F#                    | No                        | No                   | No                        |
+| C#                    | No                        | No                   | No                        |
+| Clojure               | No                        | No                   | No                        |
+| Dart                  | No                        | No                   | No                        |
+| **Shared steps mode** | **N/A (not supported)**   | **N/A**              | **N/A**                   |
 
 ### Step Definition Patterns Per Language
 
@@ -388,6 +403,8 @@ All three layers must be extended for each language.
 | F#       | TickSpec        | `let [<Given>] \`\`text\`\` ()`                    | `let [<Given>] \`\`the system is running\`\` () =`         |
 | C#       | Reqnroll        | `[Given("text")]`                                  | `[Given("the system is running")]`                         |
 | Clojure  | kaocha-cucumber | `(Given "text" [state] ...)`                       | `(Given "the system is running" [state] ...)`              |
+| TS/JS    | playwright-bdd  | `Given("text", fn)` (via `createBdd()`)            | `Given("the API is running", async () => { ... })`         |
+| Dart     | bdd_widget_test | `given("text", fn)` / `when("text", fn)`           | `given("the app is running", () { ... })`                  |
 
 ### Scenario Title Extraction Per Language
 
@@ -468,6 +485,46 @@ Feature: spec-coverage multi-language support
     When I run "rhino-cli spec-coverage validate specs-dir app-dir"
     Then step texts from (Given/When/Then "text" ...) forms are extracted
 
+  Scenario: Match and extract Dart step definitions
+    Given specs with "health-check.feature"
+    And a Dart file with given/when/then step definitions
+    When I run "rhino-cli spec-coverage validate specs-dir app-dir"
+    Then step texts from Dart given/when/then functions are extracted
+
+  Scenario: Shared steps mode for E2E projects (playwright-bdd)
+    Given BE specs at specs/apps/demo/be/gherkin/ with 14 feature files
+    And demo-be-e2e has shared step files in tests/steps/ (e.g., common.steps.ts)
+    When I run "rhino-cli spec-coverage validate specs-dir app-dir --shared-steps"
+    Then file-level matching is skipped (no 1:1 feature→test file requirement)
+    And step-level coverage is checked across ALL step files in app-dir
+    And every step text from every feature is checked against extracted steps
+    And missing steps are reported as gaps
+
+  Scenario: Shared steps mode reports uncovered steps
+    Given specs with steps "A", "B", "C" across multiple features
+    And step files only define steps "A" and "B"
+    When I run "rhino-cli spec-coverage validate specs-dir app-dir --shared-steps"
+    Then the output reports step "C" as uncovered
+    And the exit code is 1
+
+  Scenario: Shared steps mode for FE E2E (demo-fe-e2e)
+    Given FE specs at specs/apps/demo/fe/gherkin/ with 15 feature files
+    And demo-fe-e2e has shared step files in tests/steps/
+    When I run "rhino-cli spec-coverage validate specs-dir app-dir --shared-steps"
+    Then all FE spec steps are checked against extracted step definitions
+
+  Scenario: Shared steps mode for FE unit tests
+    Given FE specs at specs/apps/demo/fe/gherkin/
+    And demo-fe-ts-nextjs has BDD step files in test/unit/
+    When I run "rhino-cli spec-coverage validate specs-dir app-dir --shared-steps"
+    Then step coverage is validated across all unit step files
+
+  Scenario: Without --shared-steps flag uses 1:1 matching (default)
+    Given specs and test files following 1:1 naming conventions
+    When I run "rhino-cli spec-coverage validate specs-dir app-dir"
+    Then 1:1 file matching is used (existing behavior)
+    And --shared-steps is NOT implied
+
   Scenario: Backward compatibility with CLI apps
     Given specs and test files following existing CLI naming conventions
     When I run "rhino-cli spec-coverage validate specs-dir app-dir"
@@ -483,20 +540,21 @@ Expand `findMatchingTestFile` to check multiple patterns per feature stem:
 2. **New underscore prefix**: `HasPrefix(base, stem+"_")` and `HasPrefix(base, underscoreStem+"_")`
 3. **New `test_` prefix (Python)**: `HasPrefix(base, "test_"+underscoreStem)`
 4. **New PascalCase (Java/Kotlin/C#/F#)**: `HasPrefix(base, PascalCase(stem))`
-5. **New extensions to recognize**: `.java`, `.kt`, `.py`, `.ex`, `.exs`, `.rs`, `.fs`, `.cs`, `.clj`
+5. **New extensions to recognize**: `.java`, `.kt`, `.py`, `.ex`, `.exs`, `.rs`, `.fs`, `.cs`, `.clj`, `.dart`
 
 ### Step Extraction Strategy
 
 Extend `extractAllStepTexts` switch statement with new cases:
 
-| Extension           | Extraction Method                                                                |
-| ------------------- | -------------------------------------------------------------------------------- |
-| `.go`               | Existing: `sc.Step(\`^pattern$\`)` → compile as regex                            |
-| `.ts/.tsx/.js/.jsx` | Existing: `Given/When/Then("text")` → exact text                                 |
-| `.java`, `.kt`      | New: `@Given("text")` / `@When("text")` / `@Then("text")` annotation regex       |
-| `.py`               | New: `@given("text")` / `@when("text")` / `@then("text")` decorator regex        |
-| `.ex`, `.exs`       | New: `defgiven ~r/^text$/` / `defwhen` / `defthen` macro regex                   |
-| `.rs`               | New: `#[given("text")]` / `#[when("text")]` / `#[then("text")]` attribute regex  |
-| `.fs`               | New: `let [<Given>]`text` ` backtick method regex                                |
-| `.cs`               | New: `[Given("text")]` / `[When("text")]` / `[Then("text")]` attribute regex     |
-| `.clj`              | New: `(Given "text" ...)` / `(When "text" ...)` / `(Then "text" ...)` form regex |
+| Extension           | Extraction Method                                                                 |
+| ------------------- | --------------------------------------------------------------------------------- |
+| `.go`               | Existing: `sc.Step(\`^pattern$\`)` → compile as regex                             |
+| `.ts/.tsx/.js/.jsx` | Existing: `Given/When/Then("text")` → exact text                                  |
+| `.java`, `.kt`      | New: `@Given("text")` / `@When("text")` / `@Then("text")` annotation regex        |
+| `.py`               | New: `@given("text")` / `@when("text")` / `@then("text")` decorator regex         |
+| `.ex`, `.exs`       | New: `defgiven ~r/^text$/` / `defwhen` / `defthen` macro regex                    |
+| `.rs`               | New: `#[given("text")]` / `#[when("text")]` / `#[then("text")]` attribute regex   |
+| `.fs`               | New: `let [<Given>]`text` ` backtick method regex                                 |
+| `.cs`               | New: `[Given("text")]` / `[When("text")]` / `[Then("text")]` attribute regex      |
+| `.clj`              | New: `(Given "text" ...)` / `(When "text" ...)` / `(Then "text" ...)` form regex  |
+| `.dart`             | New: `given("text", fn)` / `when("text", fn)` / `then("text", fn)` function regex |

@@ -38,9 +38,11 @@ for external use cases (GitLab CI, Python default, .NET Coverlet default).
 3. **Coverage merging** -- Combine multiple coverage files into a unified report
 4. **Diff coverage** -- Report coverage only for changed lines (git diff), enabling PR quality gates
 5. **File exclusion patterns** -- Exclude generated code and test utilities from coverage calculation
-6. **spec-coverage multi-language support** -- Extend `spec-coverage validate` to support all 10
-   demo-be backend languages: file matching, scenario extraction, and step definition extraction
-   for Go, TS/JS, Java, Kotlin, Python, Elixir, Rust, F#, C#, and Clojure
+6. **spec-coverage multi-language and multi-project support** -- Extend `spec-coverage validate`
+   to support all demo projects: 11 backends (10 languages), 3 frontends, and 2 E2E suites.
+   Add `--shared-steps` mode for playwright-bdd E2E and shared step libraries. Add file matching,
+   scenario extraction, and step extraction for Go, TS/JS, Java, Kotlin, Python, Elixir, Rust,
+   F#, C#, Clojure, and Dart. Every Gherkin spec must be implemented without exception.
 
 ### Non-Goals
 
