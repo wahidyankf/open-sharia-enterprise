@@ -28,4 +28,31 @@ These foundational tutorials (0-30% coverage) prepare you for comprehensive Spri
 - **Transactions** - Manage database transactions declaratively with @Transactional
 - **Production Patterns** - Connection pooling, lazy loading, caching, pagination
 
-Content coming soon.
+## Why Spring Data JPA
+
+Spring Data JPA eliminates boilerplate code that every JPA-based application needs. Without it, developers write repetitive DAO (Data Access Object) implementations for basic CRUD operations, pagination, and sorting. Spring Data JPA replaces hundreds of lines of boilerplate with interface declarations and method naming conventions.
+
+### When to Choose Spring Data JPA
+
+Spring Data JPA excels in scenarios requiring:
+
+- **Rapid development** — Repository interfaces generate implementations at runtime from method signatures
+- **Complex queries** — JPQL, native SQL, Specifications, and QueryDSL integration for dynamic queries
+- **Enterprise features** — Auditing, pagination, sorting, projections, and optimistic locking out of the box
+- **Spring ecosystem integration** — Seamless transaction management, caching, and Spring Boot auto-configuration
+
+### Spring Data JPA vs Other Data Access Approaches
+
+- **vs Plain JPA/Hibernate** — Spring Data JPA adds repository abstractions, derived queries, and pagination on top of JPA. Use plain JPA when you need full control over entity manager lifecycle
+- **vs MyBatis** — Spring Data JPA uses object-relational mapping with annotations while MyBatis maps SQL results directly. Choose MyBatis for complex SQL-heavy applications where ORM adds unwanted abstraction
+- **vs JDBC Template** — Spring Data JPA handles object mapping automatically while JDBC Template requires manual row mapping. Choose JDBC Template for simple queries where ORM overhead is unnecessary
+- **vs jOOQ** — Spring Data JPA works with entities and relationships while jOOQ generates type-safe SQL. Choose jOOQ for complex reporting queries and database-specific features
+
+## Next Steps
+
+Start your Spring Data JPA journey:
+
+1. **[Spring Data JPA By-Example Overview](/en/learn/software-engineering/data/tools/spring-data-jpa/by-example/overview)** — Understand the by-example approach
+2. **[Beginner Examples](/en/learn/software-engineering/data/tools/spring-data-jpa/by-example/beginner)** — Master fundamentals
+3. **[Intermediate Examples](/en/learn/software-engineering/data/tools/spring-data-jpa/by-example/intermediate)** — Production patterns
+4. **[Advanced Examples](/en/learn/software-engineering/data/tools/spring-data-jpa/by-example/advanced)** — Expert mastery

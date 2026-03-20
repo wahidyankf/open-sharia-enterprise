@@ -202,7 +202,7 @@ Start your Datomic journey:
 3. **[Intermediate Examples](/en/learn/software-engineering/data/databases/datomic/by-example/intermediate)** - Production patterns (Examples 31-60)
 4. **[Advanced Examples](/en/learn/software-engineering/data/databases/datomic/by-example/advanced)** - Expert mastery (Examples 61-80)
 
-Prefer narrative learning? Traditional beginner, intermediate, and advanced tutorials coming soon.
+Prefer narrative learning? Check the by-example path above for a code-first approach covering 95% of Datomic concepts.
 
 ## Community and Resources
 
