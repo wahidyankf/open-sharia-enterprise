@@ -7,9 +7,9 @@ description: "Learn system design through 85+ annotated examples covering 95% of
 tags: ["system-design", "tutorial", "by-example", "code-first", "scalability"]
 ---
 
-This section teaches system design through heavily annotated examples. Each example
-is self-contained and includes annotations explaining the reasoning behind every
-design decision.
+This section teaches system design through heavily annotated examples in **Go and Python**.
+Each example is self-contained and includes annotations explaining the reasoning behind
+every design decision.
 
 ## What You Will Learn
 
@@ -34,6 +34,6 @@ Every example follows a consistent five-part format:
 
 1. **Brief Explanation** — what the design addresses and why it matters (2-3 sentences)
 2. **Mermaid Diagram** — visual representation of system components, data flow, or architecture (when appropriate)
-3. **Heavily Annotated Code** — implementation or configuration with `// =>` comments documenting decisions and trade-offs
+3. **Heavily Annotated Code** — implementations in Go and Python with `// =>` comments documenting decisions and trade-offs
 4. **Key Takeaway** — the core insight to retain from the example (1-2 sentences)
 5. **Why It Matters** — production relevance and real-world impact (50-100 words)
