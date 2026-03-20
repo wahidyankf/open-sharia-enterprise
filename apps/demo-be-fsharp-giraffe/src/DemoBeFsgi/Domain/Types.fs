@@ -49,7 +49,7 @@ let parseCurrency (s: string) =
     match s.ToUpperInvariant() with
     | "USD" -> Ok USD
     | "IDR" -> Ok IDR
-    | _ -> Error(ValidationError("currency", $"Unsupported currency: {s}"))
+    | _ -> Error(ValidationError("currency", $"Unsupported currency: %s{s}"))
 
 let currencyToString =
     function

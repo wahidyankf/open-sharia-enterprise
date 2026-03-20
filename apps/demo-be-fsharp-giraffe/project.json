@@ -86,7 +86,8 @@
       "options": {
         "commands": [
           "DOTNET_ROOT=$(dirname $(readlink -f $(which dotnet))) DOTNET_ROLL_FORWARD=LatestMajor fantomas --check src/ tests/",
-          "DOTNET_ROOT=$(dirname $(readlink -f $(which dotnet))) DOTNET_ROLL_FORWARD=LatestMajor dotnet fsharplint lint --lint-config fsharplint.json src/DemoBeFsgi/DemoBeFsgi.fsproj"
+          "DOTNET_ROOT=$(dirname $(readlink -f $(which dotnet))) DOTNET_ROLL_FORWARD=LatestMajor dotnet fsharplint lint --lint-config fsharplint.json src/DemoBeFsgi/DemoBeFsgi.fsproj",
+          "dotnet tool restore && dotnet fsharp-analyzers --project src/DemoBeFsgi/DemoBeFsgi.fsproj --analyzers-path $(find $(dotnet nuget locals global-packages --list | sed 's/.*: //')g-research.fsharp.analyzers -path '*/analyzers/dotnet/fs' -type d | head -1) --treat-as-error GRA-STRING-001 GRA-STRING-002 GRA-STRING-003 GRA-STRING-004 GRA-UNIONCASE-001 GRA-VIRTUALCALL-001 GRA-JSONOPTS-001 GRA-DISPBEFOREASYNC-001 GRA-IMMUTABLECOLLECTIONEQUALITY-001 GRA-LOGARGFUNCFULLAPP-001 GRA-LOGTEMPLMISSVALS-001 GRA-TYPE-ANNOTATE-001 GRA-INTERPOLATED-001"
         ],
         "parallel": false,
         "cwd": "apps/demo-be-fsharp-giraffe"

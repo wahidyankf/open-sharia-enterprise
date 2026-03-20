@@ -21,7 +21,7 @@ let validateContentType (contentType: string) =
     if supportedContentTypes.Contains(contentType) then
         Ok contentType
     else
-        Error(UnsupportedMediaType $"Unsupported content type: {contentType}")
+        Error(UnsupportedMediaType $"Unsupported content type: %s{contentType}")
 
 let validateFileSize (size: int64) =
     if size > maxFileSize then

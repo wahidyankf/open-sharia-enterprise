@@ -35,7 +35,7 @@ let validateCurrencyPrecision (currency: string) (amount: decimal) =
             Error(ValidationError("amount", "IDR requires 0 decimal places"))
         else
             Ok amount
-    | _ -> Error(ValidationError("currency", $"Unsupported currency: {currency}"))
+    | _ -> Error(ValidationError("currency", $"Unsupported currency: %s{currency}"))
 
 let validateUnit (unit: string option) =
     match unit with
@@ -45,4 +45,4 @@ let validateUnit (unit: string option) =
         if supportedUnits.Contains(u.ToLowerInvariant()) then
             Ok(Some(u.ToLowerInvariant()))
         else
-            Error(ValidationError("unit", $"Unsupported unit: {u}"))
+            Error(ValidationError("unit", $"Unsupported unit: %s{u}"))

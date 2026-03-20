@@ -4,7 +4,16 @@
   "tools": {
     "altcover.global": {
       "version": "9.0.102",
-      "commands": ["altcover"],
+      "commands": [
+        "altcover"
+      ],
+      "rollForward": false
+    },
+    "fsharp-analyzers": {
+      "version": "0.36.0",
+      "commands": [
+        "fsharp-analyzers"
+      ],
       "rollForward": false
     }
   }

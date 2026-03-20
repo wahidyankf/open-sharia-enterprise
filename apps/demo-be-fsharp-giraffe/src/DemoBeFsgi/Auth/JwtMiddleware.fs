@@ -12,7 +12,10 @@ let requireAuth: HttpHandler =
         task {
             let authHeader = ctx.Request.Headers["Authorization"].ToString()
 
-            if String.IsNullOrEmpty authHeader || not (authHeader.StartsWith("Bearer ")) then
+            if
+                String.IsNullOrEmpty authHeader
+                || not (authHeader.StartsWith("Bearer ", StringComparison.Ordinal))
+            then
                 ctx.Response.StatusCode <- 401
 
                 return!

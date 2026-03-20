@@ -373,7 +373,7 @@ let logout: HttpHandler =
             let authHeader = ctx.Request.Headers["Authorization"].ToString()
 
             let token =
-                if authHeader.StartsWith("Bearer ") then
+                if authHeader.StartsWith("Bearer ", StringComparison.Ordinal) then
                     authHeader.Substring(7)
                 else
                     ""
@@ -415,7 +415,7 @@ let logoutAll: HttpHandler =
             let authHeader = ctx.Request.Headers["Authorization"].ToString()
 
             let token =
-                if authHeader.StartsWith("Bearer ") then
+                if authHeader.StartsWith("Bearer ", StringComparison.Ordinal) then
                     authHeader.Substring(7)
                 else
                     ""

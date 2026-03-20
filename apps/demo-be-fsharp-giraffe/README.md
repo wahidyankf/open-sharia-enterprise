@@ -59,7 +59,7 @@ nx run demo-be-fsharp-giraffe:test:unit
 # Run integration tests against real PostgreSQL via Docker Compose
 nx run demo-be-fsharp-giraffe:test:integration
 
-# Lint with Fantomas (format check) and FSharpLint (style rules)
+# Lint with Fantomas (format check), FSharpLint (style rules), and G-Research analyzers (static analysis)
 nx lint demo-be-fsharp-giraffe
 
 # Type check (build with TreatWarningsAsErrors; depends on codegen)
