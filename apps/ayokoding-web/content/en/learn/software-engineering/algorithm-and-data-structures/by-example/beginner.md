@@ -17,6 +17,7 @@ Arrays (Python lists) store elements in contiguous memory locations with zero-ba
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 1: Creating and Accessing Arrays
 
@@ -52,8 +53,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 1: Creating and Accessing Arrays
 package main
@@ -88,8 +91,10 @@ func main() {
     // => Output: 5
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 1: Creating and Accessing Arrays
 
@@ -120,8 +125,10 @@ length = len(numbers)
 print(length)
 # => Output: 5
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 1: Creating and Accessing Arrays
 
@@ -155,6 +162,7 @@ public class Example01 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -170,6 +178,7 @@ Dynamic arrays grow automatically when you append. Insert and delete at arbitrar
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 2: Modifying Arrays — Append, Insert, and Delete
 
@@ -294,8 +303,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 2: Modifying Arrays — Append, Insert, and Delete
 package main
@@ -349,8 +360,10 @@ func main() {
     // => Output: apple [avocado cherry]
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 2: Modifying Arrays — Append, Insert, and Delete
 
@@ -402,8 +415,10 @@ removed = fruits.pop(0)
 print(removed, fruits)
 # => Output: apple ['avocado', 'cherry']
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 2: Modifying Arrays — Append, Insert, and Delete
 
@@ -458,6 +473,7 @@ public class Example02 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -473,6 +489,7 @@ Slicing creates a new list containing a contiguous subrange. The syntax `list[st
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 3: Array Slicing
 
@@ -533,8 +550,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 3: Array Slicing
 package main
@@ -589,8 +608,10 @@ func main() {
     // => Output: [9 8 7 6 5 4 3 2 1 0]
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 3: Array Slicing
 
@@ -636,8 +657,10 @@ reversed_data = data[::-1]
 print(reversed_data)
 # => Output: [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 3: Array Slicing
 
@@ -690,6 +713,7 @@ public class Example03 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -705,6 +729,7 @@ Python provides multiple iteration patterns. Choose the one that best communicat
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 4: Iterating Over Arrays
 
@@ -757,8 +782,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 4: Iterating Over Arrays
 package main
@@ -809,8 +836,10 @@ func main() {
     // => Output: Average: 23.14°C
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 4: Iterating Over Arrays
 
@@ -856,8 +885,10 @@ average = total / len(temperatures)
 print(f"Average: {average:.2f}°C")
 # => Output: Average: 23.14°C
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 4: Iterating Over Arrays
 
@@ -907,6 +938,7 @@ public class Example04 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -922,6 +954,7 @@ A 2D array is a list of lists. Row access is O(1); cell access `grid[row][col]` 
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 5: Two-Dimensional Arrays
 
@@ -968,8 +1001,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 5: Two-Dimensional Arrays
 package main
@@ -1018,8 +1053,10 @@ func main() {
     // => Output: [0 0 0 99]
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 5: Two-Dimensional Arrays
 
@@ -1068,8 +1105,10 @@ matrix[2][3] = 99
 print(matrix[2])
 # => Output: [0, 0, 0, 99]
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 5: Two-Dimensional Arrays
 
@@ -1117,6 +1156,7 @@ public class Example05 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -1125,6 +1165,7 @@ public class Example05 {
 **Why It Matters:** 2D arrays model matrices, game boards, images (pixel grids), and adjacency matrices for graphs. The aliasing pitfall with `* rows` is one of the most common subtle bugs in Python; understanding memory layout prevents hours of debugging.
 
 ---
+
 ## Linked Lists
 
 ### Example 6: Singly Linked List — Structure and Traversal
@@ -1148,6 +1189,7 @@ graph LR
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 6: Singly Linked List — Structure and Traversal
 
@@ -1227,8 +1269,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 6: Singly Linked List — Structure and Traversal
 package main
@@ -1292,8 +1336,10 @@ func main() {
     // => Output: [10 20 30]
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 6: Singly Linked List — Structure and Traversal
 
@@ -1350,8 +1396,10 @@ linked.append(30)   # => head -> Node(10) -> Node(20) -> Node(30) -> None
 print(linked.traverse())
 # => Output: [10, 20, 30]
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 6: Singly Linked List — Structure and Traversal
 
@@ -1422,6 +1470,7 @@ public class Example06 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -1437,6 +1486,7 @@ Prepend (inserting at the head) is O(1) because only the head pointer needs upda
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 7: Singly Linked List — Prepend and Search
 
@@ -1522,8 +1572,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 7: Singly Linked List — Prepend and Search
 package main
@@ -1597,8 +1649,10 @@ func main() {
     // => Output: false
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 7: Singly Linked List — Prepend and Search
 
@@ -1660,8 +1714,10 @@ print(ll.search(99))
 # => Walk: 10, 20, 30, None — exhausted — returns False
 # => Output: False
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 7: Singly Linked List — Prepend and Search
 
@@ -1738,6 +1794,7 @@ public class Example07 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -1753,6 +1810,7 @@ Deleting a node by value requires finding its predecessor so we can re-link arou
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 8: Singly Linked List — Delete a Node
 
@@ -1852,8 +1910,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 8: Singly Linked List — Delete a Node
 package main
@@ -1945,8 +2005,10 @@ func main() {
     // => Output: [30 40]
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 8: Singly Linked List — Delete a Node
 
@@ -2023,8 +2085,10 @@ ll.delete(10)
 print(ll.traverse())
 # => Output: [30, 40]
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 8: Singly Linked List — Delete a Node
 
@@ -2109,6 +2173,7 @@ public class Example08 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -2139,6 +2204,7 @@ graph TD
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 9: Stack Using an Array — Push and Pop
 
@@ -2217,8 +2283,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 9: Stack Using a Slice — Push and Pop
 package main
@@ -2286,8 +2354,10 @@ func main() {
     fmt.Println(stack.IsEmpty()) // => Output: false
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 9: Stack Using a List — Push and Pop
 
@@ -2342,8 +2412,10 @@ print(stack.peek()) # => Output: 10
 
 print(stack.is_empty())  # => Output: False
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 9: Stack Using an ArrayList — Push and Pop
 
@@ -2409,6 +2481,7 @@ public class Example09 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -2424,6 +2497,7 @@ Checking whether parentheses, brackets, and braces are balanced is a classic sta
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 10: Stack Application — Balanced Parentheses
 
@@ -2487,8 +2561,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 10: Stack Application — Balanced Parentheses
 package main
@@ -2542,8 +2618,10 @@ func main() {
     // => Output: true
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 10: Stack Application — Balanced Parentheses
 
@@ -2599,8 +2677,10 @@ print(is_balanced("{[}"))
 print(is_balanced(""))
 # => No characters processed; stack is empty — Output: True
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 10: Stack Application — Balanced Parentheses
 
@@ -2657,6 +2737,7 @@ public class Example10 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -2665,12 +2746,14 @@ public class Example10 {
 **Why It Matters:** This exact algorithm runs inside code editors (syntax highlighting), compilers (parse tree construction), and JSON/XML validators. Interviewers use it to probe whether candidates understand LIFO semantics and can handle edge cases (empty stack before pop, leftover elements at end).
 
 ---
+
 ### Example 11: Stack Application — Reverse a String
 
 Stacks reverse sequences naturally — push all characters, then pop them all. The first character pushed is the last popped.
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 11: Stack Application — Reverse a String
 
@@ -2725,8 +2808,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 11: Stack Application — Reverse a String
 package main
@@ -2774,8 +2859,10 @@ func main() {
     // => Push: a — Pop: a — Output: a (single char reverses to itself)
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 11: Stack Application — Reverse a String
 
@@ -2816,8 +2903,10 @@ print(reverse_string(""))
 print(reverse_string("a"))
 # => Push: a — Pop: a — Output: a (single char reverses to itself)
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 11: Stack Application — Reverse a String
 
@@ -2863,6 +2952,7 @@ public class Example11 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -2895,6 +2985,7 @@ graph LR
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 12: Queue Using an Array — Enqueue and Dequeue
 
@@ -2982,8 +3073,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 12: Queue Using a Slice — Enqueue and Dequeue
 package main
@@ -3050,8 +3143,10 @@ func main() {
     fmt.Println(q.IsEmpty()) // => Output: false (one element remains)
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 12: Queue Using collections.deque — Enqueue and Dequeue
 
@@ -3107,8 +3202,10 @@ print(item)           # => Output: second
 
 print(q.is_empty())   # => Output: False (one element remains)
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 12: Queue Using ArrayDeque — Enqueue and Dequeue
 
@@ -3167,6 +3264,7 @@ public class Example12 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -3182,6 +3280,7 @@ A simple simulation where customers arrive in order and are served one at a time
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 13: Queue Application — First-Come First-Served Simulation
 
@@ -3238,8 +3337,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 13: Queue Application — First-Come First-Served Simulation
 package main
@@ -3288,8 +3389,10 @@ func main() {
     // => FIFO preserved: arrival order = service order
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 13: Queue Application — First-Come First-Served Simulation
 
@@ -3335,8 +3438,10 @@ print(f"\nFinal order: {result}")
 # => Output: Final order: ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve']
 # => FIFO preserved: arrival order = service order
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 13: Queue Application — First-Come First-Served Simulation
 
@@ -3388,6 +3493,7 @@ public class Example13 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -3405,6 +3511,7 @@ A deque (double-ended queue) supports O(1) push and pop at both ends. Python's `
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 14: Deque — Double-Ended Operations
 
@@ -3504,8 +3611,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 14: Deque — Double-Ended Operations
 package main
@@ -3588,8 +3697,10 @@ func main() {
     // => Output: [3 4 5]
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 14: Deque — Double-Ended Operations
 
@@ -3644,8 +3755,10 @@ for val in [1, 2, 3, 4, 5]:
 print(window)
 # => Output: deque([3, 4, 5], maxlen=3) — sliding window of last 3 values
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 14: Deque — Double-Ended Operations
 
@@ -3701,6 +3814,7 @@ public class Example14 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -3716,6 +3830,7 @@ A palindrome reads the same forwards and backwards. A deque lets us compare the 
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 15: Deque Application — Palindrome Check
 
@@ -3775,8 +3890,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 15: Deque Application — Palindrome Check
 package main
@@ -3835,8 +3952,10 @@ func main() {
     // => a vs b — mismatch — Output: false
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 15: Deque Application — Palindrome Check
 
@@ -3887,8 +4006,10 @@ print(is_palindrome("a"))
 print(is_palindrome("ab"))
 # => a vs b — mismatch — Output: False
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 15: Deque Application — Palindrome Check
 
@@ -3942,6 +4063,7 @@ public class Example15 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -3950,6 +4072,7 @@ public class Example15 {
 **Why It Matters:** Palindrome checking is a foundational interview question, but the deque pattern generalizes to any problem requiring simultaneous front-back processing: two-pointer comparisons on linked lists, verifying mirror-image structures, and bidirectional BFS meeting-in-the-middle optimizations.
 
 ---
+
 ## Linear Search
 
 ### Example 16: Linear Search — Unsorted Array
@@ -3958,6 +4081,7 @@ Linear search scans every element from left to right until the target is found o
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 16: Linear Search — Unsorted Array
 
@@ -3995,8 +4119,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 16: Linear Search — Unsorted Array
 package main
@@ -4047,8 +4173,10 @@ func main() {
     // => Output: 2
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 16: Linear Search — Unsorted Array
 
@@ -4093,8 +4221,10 @@ try:
 except ValueError:
     print("Not found")
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 16: Linear Search — Unsorted Array
 
@@ -4142,6 +4272,7 @@ public class Example16 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -4157,6 +4288,7 @@ Rather than stopping at the first match, collecting all matching indices require
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 17: Linear Search — Finding All Occurrences
 
@@ -4213,8 +4345,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 17: Linear Search — Finding All Occurrences
 package main
@@ -4267,8 +4401,10 @@ func main() {
     // => Output: 92 appears 3 times
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 17: Linear Search — Finding All Occurrences
 
@@ -4315,8 +4451,10 @@ count = len(find_all(scores, 92))
 print(f"92 appears {count} times")
 # => Output: 92 appears 3 times
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 17: Linear Search — Finding All Occurrences
 
@@ -4370,6 +4508,7 @@ public class Example17 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -4402,6 +4541,7 @@ graph TD
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 18: Big-O — O(1), O(n), and O(n²) in Practice
 
@@ -4468,8 +4608,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 18: Big-O — O(1), O(n), and O(n²) in Practice
 package main
@@ -4537,8 +4679,10 @@ func main() {
     // => Output: [[1 3] [4 8]]
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 18: Big-O — O(1), O(n), and O(n²) in Practice
 
@@ -4599,8 +4743,10 @@ print(dups)
 
 # Growth demonstration: n=100 → O(n²) does 10,000 operations; n=1000 → 1,000,000
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 18: Big-O — O(1), O(n), and O(n²) in Practice
 
@@ -4673,6 +4819,7 @@ public class Example18 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -4703,6 +4850,7 @@ graph LR
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 19: Bubble Sort
 
@@ -4764,8 +4912,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 19: Bubble Sort
 package main
@@ -4810,8 +4960,10 @@ func main() {
     // => Output: [1 2 3 4 5]
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 19: Bubble Sort
 
@@ -4863,8 +5015,10 @@ print(result2)
 # => Only ONE pass over n elements: O(n) for this case
 # => Output: [1, 2, 3, 4, 5]
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 19: Bubble Sort
 
@@ -4909,6 +5063,7 @@ public class Example19 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -4924,6 +5079,7 @@ Selection sort repeatedly finds the minimum element in the unsorted portion and 
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 20: Selection Sort
 
@@ -4972,8 +5128,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 20: Selection Sort
 package main
@@ -5010,8 +5168,10 @@ func main() {
     // => Output: [11 12 22 25 64]
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 20: Selection Sort
 
@@ -5057,8 +5217,10 @@ print(result)
 # Compare with bubble sort: bubble sort does many swaps per pass
 # Selection sort does at most 1 swap per pass — 4 swaps total for n=5
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 20: Selection Sort
 
@@ -5097,6 +5259,7 @@ public class Example20 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -5112,6 +5275,7 @@ Insertion sort builds a sorted portion from left to right, inserting each new el
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 21: Insertion Sort
 
@@ -5163,8 +5327,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 21: Insertion Sort
 package main
@@ -5201,8 +5367,10 @@ func main() {
     // => Output: [1 2 3 4 5]
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 21: Insertion Sort
 
@@ -5253,8 +5421,10 @@ print(result2)
 # => Very close to O(n) performance for this input
 # => Output: [1, 2, 3, 4, 5]
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 21: Insertion Sort
 
@@ -5291,6 +5461,7 @@ public class Example21 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -5306,6 +5477,7 @@ Seeing all three sorting algorithms process the same input side-by-side reinforc
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 22: Comparing Sorting Algorithms
 
@@ -5385,8 +5557,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 22: Comparing Sorting Algorithms
 package main
@@ -5470,8 +5644,10 @@ func main() {
     fmt.Println("\nAll three produce identical sorted output.")
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 22: Comparing Sorting Algorithms
 
@@ -5542,8 +5718,10 @@ print("Choice depends on: input characteristics, swap cost, memory constraints."
 # => Selection: minimizes swaps — good for write-expensive storage
 # => Insertion: best for small n and nearly-sorted data (used in Timsort)
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 22: Comparing Sorting Algorithms
 
@@ -5607,6 +5785,7 @@ public class Example22 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -5615,6 +5794,7 @@ public class Example22 {
 **Why It Matters:** Algorithm selection is a practical engineering skill. Picking bubble sort for a large unsorted array in a hot path is a real performance bug. Understanding when each algorithm excels prevents premature optimization and avoids the opposite mistake: using an overly complex algorithm for a 10-element array that insertion sort would sort faster.
 
 ---
+
 ## Basic Recursion
 
 ### Example 23: Factorial — Recursive vs Iterative
@@ -5644,6 +5824,7 @@ graph TD
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 23: Factorial — Recursive vs Iterative
 
@@ -5689,8 +5870,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 23: Factorial — Recursive vs Iterative
 package main
@@ -5732,8 +5915,10 @@ func main() {
     // => Output: 3628800
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 23: Factorial — Recursive vs Iterative
 
@@ -5781,8 +5966,10 @@ print(factorial_recursive(0))
 print(factorial_iterative(10))
 # => 3628800 — Output: 3628800
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 23: Factorial — Recursive vs Iterative
 
@@ -5821,6 +6008,7 @@ public class Example23 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -5836,6 +6024,7 @@ Naive Fibonacci recursion recomputes the same values exponentially. Memoization 
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 24: Fibonacci — Naive Recursion and Memoization
 
@@ -5898,8 +6087,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 24: Fibonacci — Naive Recursion and Memoization
 package main
@@ -5958,8 +6149,10 @@ func main() {
     // => Output: fib_memo(35) = 9227465
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 24: Fibonacci — Naive Recursion and Memoization
 
@@ -6018,8 +6211,10 @@ for i in range(8):
 print(f"\nfib_memo(35) = {fib_memo(35)}")
 # => Output: fib_memo(35) = 9227465
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 24: Fibonacci — Naive Recursion and Memoization
 
@@ -6071,6 +6266,7 @@ public class Example24 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -6086,6 +6282,7 @@ Applying recursion to a sorted array with binary search demonstrates divide-and-
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 25: Recursive Sum and Binary Search (Recursive)
 
@@ -6149,8 +6346,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 25: Recursive Sum and Binary Search (Recursive)
 package main
@@ -6204,8 +6403,10 @@ func main() {
     // => Output: -1
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 25: Recursive Sum and Binary Search (Recursive)
 
@@ -6269,8 +6470,10 @@ print(idx)
 # => 99 > all elements, search space eventually becomes empty: low > high
 # => Output: -1
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 25: Recursive Sum and Binary Search (Recursive)
 
@@ -6319,6 +6522,7 @@ public class Example25 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -6336,6 +6540,7 @@ Every recursive function implicitly uses the call stack. Converting recursion to
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 26: Simulating Recursion with an Explicit Stack
 
@@ -6381,8 +6586,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 26: Simulating Recursion with an Explicit Stack
 package main
@@ -6432,8 +6639,10 @@ func main() {
     // => A very large integer — 1135 digits for 500!
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 26: Simulating Recursion with an Explicit Stack
 
@@ -6482,8 +6691,10 @@ print(factorial_explicit_stack(500))
 # => Explicit stack handles it fine — just a list growing in heap memory
 # => Output: (a very large integer — 1135 digits for 500!)
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 26: Simulating Recursion with an Explicit Stack
 
@@ -6529,6 +6740,7 @@ public class Example26 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -6546,6 +6758,7 @@ Real data is rarely flat integers. Linear search on a list of dictionaries (reco
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 27: Linear Search on Structured Data
 
@@ -6623,8 +6836,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 27: Linear Search on Structured Data
 package main
@@ -6703,8 +6918,10 @@ func main() {
     // => Output: <nil>
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 27: Linear Search on Structured Data
 
@@ -6763,8 +6980,10 @@ result = search_by_field(products, "name", "Phone")
 print(result)
 # => Scans all 5 records — no match — Output: None
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 27: Linear Search on Structured Data
 
@@ -6828,6 +7047,7 @@ public class Example27 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
@@ -6843,6 +7063,7 @@ Python's built-in `sorted()` accepts a `key` argument — a function that extrac
 
 {{< tabs items="C,Go,Python,Java" >}}
 {{< tab >}}
+
 ```c
 // Example 28: Sorting Structured Data with a Key Function
 
@@ -6923,8 +7144,10 @@ int main(void) {
     return 0;
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```go
 // Example 28: Sorting Structured Data with a Key Function
 package main
@@ -6992,8 +7215,10 @@ func main() {
     // => Output: Alice
 }
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```python
 # Example 28: Sorting Structured Data with a Key Function
 
@@ -7047,8 +7272,10 @@ for emp in by_dept_then_salary:
 print(f"\nOriginal first employee: {employees[0]['name']}")
 # => Output: Alice — original order preserved
 ```
+
 {{< /tab >}}
 {{< tab >}}
+
 ```java
 // Example 28: Sorting Structured Data with a Key Function
 
@@ -7105,6 +7332,7 @@ public class Example28 {
     }
 }
 ```
+
 {{< /tab >}}
 {{< /tabs >}}
 
