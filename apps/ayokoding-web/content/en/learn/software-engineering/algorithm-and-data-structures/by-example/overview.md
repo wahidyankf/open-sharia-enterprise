@@ -8,8 +8,8 @@ tags: ["algorithm", "data-structures", "tutorial", "by-example", "code-first"]
 ---
 
 **Want to master algorithms and data structures through practical, annotated code?** This by-example guide
-teaches essential algorithmic thinking and data structure usage through heavily annotated examples organized
-by complexity level.
+teaches essential algorithmic thinking and data structure usage through heavily annotated examples in
+**C, Go, Python, and Java**, organized by complexity level.
 
 ## What Is Algorithms and Data Structures By-Example Learning?
 
@@ -63,7 +63,7 @@ Every example follows a consistent five-part format:
 
 1. **Brief Explanation** — what the example demonstrates and why it matters (2-3 sentences)
 2. **Mermaid Diagram** — visual representation of data flow, state transitions, or structure (when appropriate)
-3. **Heavily Annotated Code** — runnable implementation with `// =>` comments documenting values and outcomes
+3. **Heavily Annotated Code** — runnable implementations in C, Go, Python, and Java with `// =>` comments documenting values and outcomes
 4. **Key Takeaway** — the core insight to retain from the example (1-2 sentences)
 5. **Why It Matters** — production relevance and real-world impact (50-100 words)
 
