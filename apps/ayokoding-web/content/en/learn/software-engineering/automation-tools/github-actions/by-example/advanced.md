@@ -7,7 +7,7 @@ description: "Examples 58-85: Reusable workflows, custom actions, OIDC cloud aut
 tags: ["github-actions", "ci-cd", "tutorial", "by-example", "code-first", "advanced"]
 ---
 
-## Example 58: Reusable Workflow with Inputs, Outputs, and Secrets
+### Example 58: Reusable Workflow with Inputs, Outputs, and Secrets
 
 A reusable workflow is a separate `.yml` file that other workflows call via `workflow_call`. It accepts typed inputs, returns outputs back to the caller, and inherits secrets explicitly. This pattern eliminates duplication when many repositories share the same CI logic.
 
@@ -129,7 +129,7 @@ jobs:
 
 ---
 
-## Example 59: Composite Action in action.yml
+### Example 59: Composite Action in action.yml
 
 A composite action bundles multiple workflow steps into a reusable unit defined in an `action.yml` file. Unlike reusable workflows (which run as separate jobs), composite actions run as steps inside the caller's job, sharing the runner environment, file system, and step context.
 
@@ -213,7 +213,7 @@ jobs:
 
 ---
 
-## Example 60: JavaScript Action with action.yml and index.js
+### Example 60: JavaScript Action with action.yml and index.js
 
 A JavaScript action runs Node.js code directly on the runner. It receives inputs, performs arbitrary logic, sets outputs, and reports success or failure — all without shell scripting limitations. The `action.yml` declares the interface and `index.js` implements the logic.
 
@@ -323,7 +323,7 @@ run(); // => Invoke the async function
 
 ---
 
-## Example 61: Docker Container Action
+### Example 61: Docker Container Action
 
 A Docker container action packages the action runtime and all dependencies into a container image. This guarantees identical behavior across all runner environments and supports languages beyond JavaScript (Python, Ruby, Go, Rust, etc.).
 
@@ -415,7 +415,7 @@ echo "report-path=$REPORT_FILE" >> "$GITHUB_OUTPUT"
 
 ---
 
-## Example 62: Matrix with include/exclude and Dynamic fromJSON
+### Example 62: Matrix with include/exclude and Dynamic fromJSON
 
 The `matrix` strategy runs a job multiple times with different parameter combinations. The `include` key adds extra variables to specific combinations, while `exclude` removes unwanted combinations. Dynamic matrices computed from `fromJSON` enable data-driven job generation.
 
@@ -529,7 +529,7 @@ jobs:
 
 ---
 
-## Example 63: Workflow Chaining with workflow_run
+### Example 63: Workflow Chaining with workflow_run
 
 The `workflow_run` trigger starts a workflow when another workflow completes, succeeds, or fails. This enables multi-stage pipelines where later stages only run after earlier stages succeed, without combining all stages into one monolithic workflow file.
 
@@ -614,7 +614,7 @@ jobs:
 
 ---
 
-## Example 64: Deployment Environments with Required Approvals
+### Example 64: Deployment Environments with Required Approvals
 
 GitHub deployment environments enforce protection rules before a workflow deploys to them. Required reviewers pause the workflow until a human approves, and environment-scoped secrets are only available when deploying to that specific environment.
 
@@ -707,7 +707,7 @@ jobs:
 
 ---
 
-## Example 65: OIDC Federated Identity for AWS (No Long-Lived Credentials)
+### Example 65: OIDC Federated Identity for AWS (No Long-Lived Credentials)
 
 OpenID Connect (OIDC) federation allows GitHub Actions to authenticate to cloud providers using short-lived tokens instead of long-lived static credentials stored as secrets. AWS assumes an IAM role after verifying the GitHub-issued JWT token's claims (repository, branch, workflow).
 
@@ -806,7 +806,7 @@ jobs:
 
 ---
 
-## Example 66: OIDC for GCP and Azure
+### Example 66: OIDC for GCP and Azure
 
 The OIDC pattern extends to GCP Workload Identity Federation and Azure Federated Identity Credentials using the same GitHub-issued JWT. The trust configuration differs per provider but the workflow pattern is identical.
 
@@ -881,7 +881,7 @@ jobs:
 
 ---
 
-## Example 67: Self-Hosted Runners and Runner Groups
+### Example 67: Self-Hosted Runners and Runner Groups
 
 Self-hosted runners execute workflow jobs on your own infrastructure — on-premises servers, private cloud VMs, or bare-metal machines with specialized hardware (GPUs, HSMs, specific OS versions). Runner groups control which repositories can use which runners.
 
@@ -958,7 +958,7 @@ jobs:
 
 ---
 
-## Example 68: GitHub Apps for Workflow Authentication
+### Example 68: GitHub Apps for Workflow Authentication
 
 GitHub Apps provide fine-grained, repository-scoped tokens for workflows that need to create commits, push branches, or perform actions that `GITHUB_TOKEN` cannot do (like triggering downstream workflows or bypassing branch protections for automation accounts).
 
@@ -1028,7 +1028,7 @@ jobs:
 
 ---
 
-## Example 69: GitHub API in Workflows with gh CLI and Octokit
+### Example 69: GitHub API in Workflows with gh CLI and Octokit
 
 Workflows interact with the GitHub API using either the pre-installed `gh` CLI (for shell-based interactions) or `actions/github-script` (for JavaScript-based Octokit calls). Both are pre-authenticated with `GITHUB_TOKEN`.
 
@@ -1109,7 +1109,7 @@ jobs:
 
 ---
 
-## Example 70: Release Automation with Semantic Release
+### Example 70: Release Automation with Semantic Release
 
 Release automation generates changelogs, bumps versions, creates GitHub Releases, and publishes packages based on Conventional Commits. Semantic release analyzes commit messages since the last tag to determine the next version automatically.
 
@@ -1212,7 +1212,7 @@ module.exports = {
 
 ---
 
-## Example 71: Monorepo CI with Path Filters and Conditional Jobs
+### Example 71: Monorepo CI with Path Filters and Conditional Jobs
 
 Monorepo workflows run only the CI relevant to changed packages using `paths` filters and `dorny/paths-filter` for fine-grained conditional logic. This prevents rebuilding all services when only one service's code changes.
 
@@ -1335,7 +1335,7 @@ jobs:
 
 ---
 
-## Example 72: Advanced Dependency Caching Strategies
+### Example 72: Advanced Dependency Caching Strategies
 
 Effective caching strategies match cache keys to the granularity of their dependencies. Over-broad keys cause unnecessary cache misses; over-narrow keys prevent sharing across branches and produce redundant downloads.
 
@@ -1438,7 +1438,7 @@ jobs:
 
 ---
 
-## Example 73: Build Artifact Retention and Cross-Job Sharing
+### Example 73: Build Artifact Retention and Cross-Job Sharing
 
 Artifacts enable sharing build outputs between jobs without re-building. Retention policies control storage costs, and artifact attestation adds supply chain provenance for security-conscious deployments.
 
@@ -1518,7 +1518,7 @@ jobs:
 
 ---
 
-## Example 74: Security Hardening — Pin Actions to SHA and Least-Privilege Permissions
+### Example 74: Security Hardening — Pin Actions to SHA and Least-Privilege Permissions
 
 Workflow security depends on two practices: pinning third-party actions to full commit SHAs (not mutable tags) and granting only the specific permissions each job needs. These practices mitigate supply chain attacks and limit blast radius from compromised tokens.
 
@@ -1592,7 +1592,7 @@ jobs:
 
 ---
 
-## Example 75: Workflow Dispatch with Complex Inputs
+### Example 75: Workflow Dispatch with Complex Inputs
 
 `workflow_dispatch` enables manual workflow triggers from the GitHub UI or API, with typed input forms that validate values before the workflow runs. This pattern is ideal for operational runbooks, one-off deployments, and debugging triggers.
 
@@ -1686,7 +1686,7 @@ jobs:
 
 ---
 
-## Example 76: Caching Build Outputs for Incremental Compilation
+### Example 76: Caching Build Outputs for Incremental Compilation
 
 Beyond dependency caching, some build systems support incremental compilation where only changed files are recompiled. Go, Rust, and Gradle support this through build caches that persist between runs.
 
@@ -1780,7 +1780,7 @@ jobs:
 
 ---
 
-## Example 77: Artifact Attestation and SLSA Provenance
+### Example 77: Artifact Attestation and SLSA Provenance
 
 Software supply chain security requires verifiable build provenance. GitHub Actions integrates with Sigstore's cosign to generate cryptographically signed SLSA (Supply-chain Levels for Software Artifacts) provenance attestations that consumers can verify independently.
 
@@ -1852,7 +1852,7 @@ gh attestation verify my-app-linux-amd64 \
 
 ---
 
-## Example 78: Large Runner Features and GPU Workflows
+### Example 78: Large Runner Features and GPU Workflows
 
 GitHub offers larger hosted runners (up to 64 vCPU, 256 GB RAM) and GPU-enabled runners for machine learning workloads. These runners support workflows that exceed standard runner constraints without the operational overhead of self-hosted infrastructure.
 
@@ -1934,7 +1934,7 @@ jobs:
 
 ---
 
-## Example 79: Concurrency Control and Workflow Cancellation
+### Example 79: Concurrency Control and Workflow Cancellation
 
 The `concurrency` key prevents redundant workflow runs by cancelling in-progress runs when new ones start, or queuing them to run sequentially. This pattern is essential for deployment workflows that must not run in parallel.
 
@@ -2004,7 +2004,7 @@ jobs:
 
 ---
 
-## Example 80: Status Checks and Branch Protection Integration
+### Example 80: Status Checks and Branch Protection Integration
 
 Workflows create status checks that branch protection rules enforce. Required status checks prevent merging PRs until specific workflow jobs succeed, creating a quality gate that scales across hundreds of developers without manual oversight.
 
@@ -2084,7 +2084,7 @@ jobs:
 
 ---
 
-## Example 81: Debugging Workflows with tmate and Step Summaries
+### Example 81: Debugging Workflows with tmate and Step Summaries
 
 When workflows fail for non-obvious reasons, `tmate` provides an interactive SSH session into the runner, and step summaries write structured diagnostic output to the workflow run's summary page.
 
@@ -2179,7 +2179,7 @@ jobs:
 
 ---
 
-## Example 82: Calling GitHub REST API with Pagination
+### Example 82: Calling GitHub REST API with Pagination
 
 The GitHub API returns paginated responses for list endpoints. Workflows that process all items (repositories, issues, artifacts) must handle pagination using `Link` headers or `octokit` auto-pagination.
 
@@ -2274,7 +2274,7 @@ jobs:
 
 ---
 
-## Example 83: Workflow Job Dependencies and Fan-Out/Fan-In Patterns
+### Example 83: Workflow Job Dependencies and Fan-Out/Fan-In Patterns
 
 Complex CI pipelines fan out to parallel jobs and fan in to aggregate results. The `needs` array controls dependency ordering, and `always()` with result inspection ensures aggregation runs correctly when some upstream jobs were conditionally skipped.
 
@@ -2431,7 +2431,7 @@ jobs:
 
 ---
 
-## Example 84: OpenID Connect Token Claims and Advanced Trust Policies
+### Example 84: OpenID Connect Token Claims and Advanced Trust Policies
 
 Beyond basic repository-level OIDC federation, GitHub's JWT token includes rich claims that cloud provider trust policies can use for fine-grained authorization — restricting deployment by environment, job workflow, branch, tag pattern, and pull request status.
 
@@ -2523,7 +2523,7 @@ jobs:
 
 ---
 
-## Example 85: Complete Production Workflow — Integration of All Advanced Patterns
+### Example 85: Complete Production Workflow — Integration of All Advanced Patterns
 
 A production-grade workflow integrates multiple advanced patterns: OIDC authentication, reusable workflows, environment approvals, path filtering, concurrency control, artifact attestation, and step summaries. This example shows how the patterns compose.
 
