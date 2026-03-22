@@ -1,22 +1,20 @@
 use cucumber::{given, then, when};
 
-use crate::world::{get_req, json_req, AppWorld};
+use crate::world::AppWorld;
 
 #[given("the API is running")]
 async fn api_is_running(_world: &mut AppWorld) {
-    // Router is already initialized in AppWorld::new()
+    // AppState is already initialized in AppWorld::new()
 }
 
 #[when("an operations engineer sends GET /health")]
 async fn get_health(world: &mut AppWorld) {
-    let req = get_req("/health", None);
-    world.send(req).await.unwrap();
+    world.svc_health().await;
 }
 
 #[when("an unauthenticated engineer sends GET /health")]
 async fn get_health_unauth(world: &mut AppWorld) {
-    let req = get_req("/health", None);
-    world.send(req).await.unwrap();
+    world.svc_health().await;
 }
 
 #[then(expr = "the response status code should be {int}")]
@@ -143,10 +141,7 @@ async fn error_duplicate_username(world: &mut AppWorld) {
 #[given(expr = "a user {string} is registered with password {string}")]
 async fn register_user_with_password(world: &mut AppWorld, username: String, password: String) {
     let email = format!("{username}@example.com");
-    let body =
-        format!(r#"{{"username": "{username}", "email": "{email}", "password": "{password}"}}"#);
-    let req = json_req("POST", "/api/v1/auth/register", &body, None);
-    world.send(req).await.unwrap();
+    world.svc_register(&username, &email, &password).await;
     if world.last_status == 201 && username == "alice" {
         world.alice_id = world
             .last_body
@@ -158,9 +153,7 @@ async fn register_user_with_password(world: &mut AppWorld, username: String, pas
 
 #[given(expr = "{string} has logged in and stored the access token and refresh token")]
 async fn login_store_both_tokens(world: &mut AppWorld, username: String) {
-    let body = format!(r#"{{"username": "{username}", "password": "Str0ng#Pass1"}}"#);
-    let req = json_req("POST", "/api/v1/auth/login", &body, None);
-    world.send(req).await.unwrap();
+    world.svc_login(&username, "Str0ng#Pass1").await;
     if world.last_status == 200 {
         world.auth_token = world
             .last_body
@@ -174,8 +167,7 @@ async fn login_store_both_tokens(world: &mut AppWorld, username: String) {
             .map(String::from);
         if username == "alice" {
             let token = world.auth_token.clone().unwrap_or_default();
-            let req2 = get_req("/api/v1/users/me", Some(&format!("Bearer {token}")));
-            world.send(req2).await.unwrap();
+            world.svc_get_profile(&format!("Bearer {token}")).await;
             world.user_id = world
                 .last_body
                 .get("id")
@@ -190,9 +182,7 @@ async fn login_store_both_tokens(world: &mut AppWorld, username: String) {
 async fn login_store_access_token(world: &mut AppWorld, username: String) {
     let passwords = ["Str0ng#Pass1", "Str0ng#Pass2"];
     for password in passwords {
-        let body = format!(r#"{{"username": "{username}", "password": "{password}"}}"#);
-        let req = json_req("POST", "/api/v1/auth/login", &body, None);
-        world.send(req).await.unwrap();
+        world.svc_login(&username, password).await;
         if world.last_status == 200 {
             world.auth_token = world
                 .last_body
@@ -206,8 +196,7 @@ async fn login_store_access_token(world: &mut AppWorld, username: String) {
                 .map(String::from);
             if username == "alice" {
                 let token = world.auth_token.clone().unwrap_or_default();
-                let req2 = get_req("/api/v1/users/me", Some(&format!("Bearer {token}")));
-                world.send(req2).await.unwrap();
+                world.svc_get_profile(&format!("Bearer {token}")).await;
                 world.user_id = world
                     .last_body
                     .get("id")
