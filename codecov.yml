@@ -84,3 +84,11 @@ flags:
     paths:
       - apps/demo-fe-ts-nextjs/
     carryforward: true
+  demo-fe-ts-tanstack-start:
+    paths:
+      - apps/demo-fe-ts-tanstack-start/
+    carryforward: true
+  demo-fe-dart-flutterweb:
+    paths:
+      - apps/demo-fe-dart-flutterweb/
+    carryforward: true
