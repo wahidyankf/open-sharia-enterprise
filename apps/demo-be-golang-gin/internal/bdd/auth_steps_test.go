@@ -1,10 +1,10 @@
 package bdd_test
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/cucumber/godog"
+	"github.com/gin-gonic/gin"
 )
 
 func registerAuthSteps(sc *godog.ScenarioContext, ctx *scenarioCtx) {
@@ -24,27 +24,45 @@ func registerAuthSteps(sc *godog.ScenarioContext, ctx *scenarioCtx) {
 	sc.Step(`^"([^"]*)" has logged in and stored the access token$`, ctx.userHasLoggedInAndStoredAccessToken)
 }
 
+// register calls the Register handler directly and returns status + body.
+func (ctx *scenarioCtx) register(username, email, password string) (int, map[string]interface{}) {
+	body := map[string]string{
+		"username": username,
+		"email":    email,
+		"password": password,
+	}
+	c, w := buildGinContext("POST", "/api/v1/auth/register", body, "", gin.Params{}, nil)
+	ctx.Handler.Register(c)
+	return w.Code, readResponse(w)
+}
+
+// login calls the Login handler directly and returns status + body.
+func (ctx *scenarioCtx) login(username, password string) (int, map[string]interface{}) {
+	body := map[string]string{"username": username, "password": password}
+	c, w := buildGinContext("POST", "/api/v1/auth/login", body, "", gin.Params{}, nil)
+	ctx.Handler.Login(c)
+	return w.Code, readResponse(w)
+}
+
+// deactivateSelf calls the Deactivate handler directly.
+func (ctx *scenarioCtx) deactivateSelf(token string) (int, map[string]interface{}) {
+	c, w := buildGinContext("POST", "/api/v1/users/me/deactivate", nil, token, gin.Params{}, ctx.JWTSvc)
+	ctx.Handler.Deactivate(c)
+	return w.Code, readResponse(w)
+}
+
 func (ctx *scenarioCtx) aUserIsRegisteredWithPassword(username, password string) error {
 	email := username + "@example.com"
 	return ctx.aUserIsRegisteredWithEmailAndPassword(username, email, password)
 }
 
 func (ctx *scenarioCtx) aUserIsRegisteredWithEmailAndPassword(username, email, password string) error {
-	body := map[string]string{
-		"username": username,
-		"email":    email,
-		"password": password,
-	}
-	resp, respBody := doRequest(ctx.Router, "POST", "/api/v1/auth/register", body, "")
-	if resp.StatusCode != 201 {
-		return fmt.Errorf("registration failed with status %d: %s", resp.StatusCode, string(respBody))
-	}
-	var parsed map[string]interface{}
-	if err := json.Unmarshal(respBody, &parsed); err != nil {
-		return err
+	status, body := ctx.register(username, email, password)
+	if status != 201 {
+		return fmt.Errorf("registration failed with status %d: %v", status, body)
 	}
 	if username == "alice" {
-		if id, ok := parsed["id"].(string); ok {
+		if id, ok := body["id"].(string); ok {
 			ctx.AliceID = id
 			ctx.UserID = id
 		}
@@ -54,90 +72,43 @@ func (ctx *scenarioCtx) aUserIsRegisteredWithEmailAndPassword(username, email, p
 
 func (ctx *scenarioCtx) aUserIsRegisteredAndDeactivated(username string) error {
 	password := "Str0ng#Pass1"
-	// Try to register; ignore conflict (already exists) errors.
-	regErr := ctx.aUserIsRegisteredWithPassword(username, password)
-	if regErr != nil {
-		_ = regErr
+	if err := ctx.aUserIsRegisteredWithPassword(username, password); err != nil {
+		// Ignore registration errors (e.g. user may already exist in some scenarios).
+		_ = err
 	}
-	loginBody := map[string]string{"username": username, "password": password}
-	resp, body := doRequest(ctx.Router, "POST", "/api/v1/auth/login", loginBody, "")
-	if resp.StatusCode != 200 {
-		return fmt.Errorf("login failed: %s", string(body))
+	loginStatus, loginBody := ctx.login(username, password)
+	if loginStatus != 200 {
+		return fmt.Errorf("login failed: %v", loginBody)
 	}
-	var parsed map[string]interface{}
-	if err := json.Unmarshal(body, &parsed); err != nil {
-		return err
-	}
-	token, ok := parsed["accessToken"].(string)
+	token, ok := loginBody["accessToken"].(string)
 	if !ok {
-		return fmt.Errorf("access_token is not a string")
+		return fmt.Errorf("accessToken is not a string")
 	}
-	// Deactivate.
-	resp2, body2 := doRequest(ctx.Router, "POST", "/api/v1/users/me/deactivate", nil, token)
-	if resp2.StatusCode != 200 {
-		return fmt.Errorf("deactivation failed: %s", string(body2))
+	deactivateStatus, deactivateBody := ctx.deactivateSelf(token)
+	if deactivateStatus != 200 {
+		return fmt.Errorf("deactivation failed: %v", deactivateBody)
 	}
 	return nil
 }
 
 func (ctx *scenarioCtx) theClientSendsPostRegister(username, email, password string) error {
-	body := map[string]string{
-		"username": username,
-		"email":    email,
-		"password": password,
-	}
-	resp, respBody := doRequest(ctx.Router, "POST", "/api/v1/auth/register", body, "")
-	ctx.LastResponse = resp
-	ctx.LastBody = respBody
+	status, body := ctx.register(username, email, password)
+	ctx.LastStatus = status
+	ctx.LastBody = body
 	return nil
 }
 
 func (ctx *scenarioCtx) theClientSendsPostLogin(username, password string) error {
-	body := map[string]string{
-		"username": username,
-		"password": password,
-	}
-	resp, respBody := doRequest(ctx.Router, "POST", "/api/v1/auth/login", body, "")
-	ctx.LastResponse = resp
-	ctx.LastBody = respBody
+	status, body := ctx.login(username, password)
+	ctx.LastStatus = status
+	ctx.LastBody = body
 	return nil
 }
 
-// fieldAlias maps legacy field names from the shared Gherkin spec to the
-// camelCase field names returned by the backend.
-func fieldAlias(field string) string {
-	switch field {
-	case "income_total":
-		return "totalIncome"
-	case "expense_total":
-		return "totalExpense"
-	case "access_token":
-		return "accessToken"
-	case "refresh_token":
-		return "refreshToken"
-	case "display_name":
-		return "displayName"
-	case "reset_token":
-		return "token"
-	case "data":
-		return "content"
-	case "total":
-		return "totalElements"
-	case "content_type":
-		return "contentType"
-	case "expense_id":
-		return "expenseId"
-	default:
-		return field
-	}
-}
-
 func (ctx *scenarioCtx) theResponseBodyShouldContainFieldEqualTo(field, value string) error {
-	body := parseBody(ctx.LastBody)
-	resolved := fieldAlias(field)
-	v, ok := body[resolved]
+	v, ok := ctx.LastBody[field]
 	if !ok {
-		return fmt.Errorf("response does not contain field %q; body: %s", field, string(ctx.LastBody))
+		return fmt.Errorf("response does not contain field %q; body: %v", field, ctx.LastBody)
 	}
 	if fmt.Sprintf("%v", v) != value {
 		return fmt.Errorf("expected field %q = %q, got %q", field, value, fmt.Sprintf("%v", v))
@@ -146,53 +117,44 @@ func (ctx *scenarioCtx) theResponseBodyShouldContainFieldEqualTo(field, value st
 }
 
 func (ctx *scenarioCtx) theResponseBodyShouldContainNonNullField(field string) error {
-	body := parseBody(ctx.LastBody)
-	resolved := fieldAlias(field)
-	v, ok := body[resolved]
+	v, ok := ctx.LastBody[field]
 	if !ok || v == nil || v == "" {
-		return fmt.Errorf("field %q is missing or null; body: %s", field, string(ctx.LastBody))
+		return fmt.Errorf("field %q is missing or null; body: %v", field, ctx.LastBody)
 	}
 	return nil
 }
 
 func (ctx *scenarioCtx) theResponseBodyShouldNotContainField(field string) error {
-	body := parseBody(ctx.LastBody)
-	resolved := fieldAlias(field)
-	if _, ok := body[resolved]; ok {
+	if _, ok := ctx.LastBody[field]; ok {
 		return fmt.Errorf("response unexpectedly contains field %q", field)
 	}
 	return nil
 }
 
 func (ctx *scenarioCtx) theResponseBodyShouldContainErrorAboutInvalidCredentials() error {
-	body := parseBody(ctx.LastBody)
-	msg, ok := body["message"]
+	msg, ok := ctx.LastBody["message"]
 	if !ok {
-		return fmt.Errorf("response does not contain 'message' field; body: %s", string(ctx.LastBody))
+		return fmt.Errorf("response does not contain 'message' field; body: %v", ctx.LastBody)
 	}
-	msgStr := fmt.Sprintf("%v", msg)
-	if msgStr == "" {
+	if fmt.Sprintf("%v", msg) == "" {
 		return fmt.Errorf("error message is empty")
 	}
 	return nil
 }
 
 func (ctx *scenarioCtx) theResponseBodyShouldContainErrorAboutAccountDeactivation() error {
-	body := parseBody(ctx.LastBody)
-	msg, ok := body["message"]
+	msg, ok := ctx.LastBody["message"]
 	if !ok {
-		return fmt.Errorf("response does not contain 'message' field; body: %s", string(ctx.LastBody))
+		return fmt.Errorf("response does not contain 'message' field; body: %v", ctx.LastBody)
 	}
-	msgStr := fmt.Sprintf("%v", msg)
-	if msgStr == "" {
+	if fmt.Sprintf("%v", msg) == "" {
 		return fmt.Errorf("error message is empty")
 	}
 	return nil
 }
 
 func (ctx *scenarioCtx) theResponseBodyShouldContainErrorAboutDuplicateUsername() error {
-	body := parseBody(ctx.LastBody)
-	msg, ok := body["message"]
+	msg, ok := ctx.LastBody["message"]
 	if !ok {
 		return fmt.Errorf("response does not contain 'message' field")
 	}
@@ -203,32 +165,26 @@ func (ctx *scenarioCtx) theResponseBodyShouldContainErrorAboutDuplicateUsername(
 }
 
 func (ctx *scenarioCtx) theResponseBodyShouldContainValidationErrorFor(_ string) error {
-	body := parseBody(ctx.LastBody)
-	if _, ok := body["message"]; !ok {
-		return fmt.Errorf("response does not contain 'message' field; body: %s", string(ctx.LastBody))
+	if _, ok := ctx.LastBody["message"]; !ok {
+		return fmt.Errorf("response does not contain 'message' field; body: %v", ctx.LastBody)
 	}
 	return nil
 }
 
 func (ctx *scenarioCtx) userHasLoggedInAndStoredBothTokens(username string) error {
 	password := "Str0ng#Pass1"
-	loginBody := map[string]string{"username": username, "password": password}
-	resp, body := doRequest(ctx.Router, "POST", "/api/v1/auth/login", loginBody, "")
-	if resp.StatusCode != 200 {
-		return fmt.Errorf("login failed with status %d: %s", resp.StatusCode, string(body))
+	status, body := ctx.login(username, password)
+	if status != 200 {
+		return fmt.Errorf("login failed with status %d: %v", status, body)
 	}
-	var parsed map[string]interface{}
-	if err := json.Unmarshal(body, &parsed); err != nil {
-		return err
-	}
-	accessToken, ok := parsed["accessToken"].(string)
+	accessToken, ok := body["accessToken"].(string)
 	if !ok {
-		return fmt.Errorf("access_token is not a string")
+		return fmt.Errorf("accessToken is not a string")
 	}
 	ctx.AccessToken = accessToken
-	refreshToken, ok := parsed["refreshToken"].(string)
+	refreshToken, ok := body["refreshToken"].(string)
 	if !ok {
-		return fmt.Errorf("refresh_token is not a string")
+		return fmt.Errorf("refreshToken is not a string")
 	}
 	ctx.RefreshToken = refreshToken
 	return nil

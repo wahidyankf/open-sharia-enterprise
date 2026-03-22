@@ -2,10 +2,10 @@ package bdd_test
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"github.com/cucumber/godog"
+	"github.com/gin-gonic/gin"
 
 	"github.com/wahidyankf/open-sharia-enterprise/apps/demo-be-golang-gin/internal/domain"
 )
@@ -22,9 +22,10 @@ func registerSecuritySteps(sc *godog.ScenarioContext, ctx *scenarioCtx) {
 func (ctx *scenarioCtx) userHasHadMaxFailedLoginAttempts(username string) error {
 	for i := 0; i < 5; i++ {
 		body := map[string]string{"username": username, "password": "WrongPassword!"}
-		resp, respBody := doRequest(ctx.Router, "POST", "/api/v1/auth/login", body, "")
-		if resp.StatusCode != 401 {
-			return fmt.Errorf("expected 401 on failed attempt %d, got %d: %s", i+1, resp.StatusCode, string(respBody))
+		c, w := buildGinContext("POST", "/api/v1/auth/login", body, "", gin.Params{}, nil)
+		ctx.Handler.Login(c)
+		if w.Code != 401 {
+			return fmt.Errorf("expected 401 on failed attempt %d, got %d", i+1, w.Code)
 		}
 	}
 	return nil
@@ -65,7 +66,10 @@ func (ctx *scenarioCtx) aUserIsRegisteredAndLockedAfterTooManyFailedLogins(usern
 	ctx.AliceID = user.ID
 	for i := 0; i < 5; i++ {
 		body := map[string]string{"username": username, "password": "WrongPassword!"}
-		doRequest(ctx.Router, "POST", "/api/v1/auth/login", body, "")
+		c, w := buildGinContext("POST", "/api/v1/auth/login", body, "", gin.Params{}, nil)
+		ctx.Handler.Login(c)
+		// Ignore status; just drive the failed attempt count.
+		_ = w.Code
 	}
 	return nil
 }
@@ -73,22 +77,14 @@ func (ctx *scenarioCtx) aUserIsRegisteredAndLockedAfterTooManyFailedLogins(usern
 func (ctx *scenarioCtx) anAdminUserIsRegisteredAndLoggedIn(username string) error {
 	password := "Admin#Pass123"
 	email := username + "@example.com"
-	regBody := map[string]string{
-		"username": username,
-		"email":    email,
-		"password": password,
+
+	regStatus, regBody := ctx.register(username, email, password)
+	if regStatus != 201 {
+		return fmt.Errorf("admin registration failed: %v", regBody)
 	}
-	resp, body := doRequest(ctx.Router, "POST", "/api/v1/auth/register", regBody, "")
-	if resp.StatusCode != 201 {
-		return fmt.Errorf("admin registration failed: %s", string(body))
-	}
-	var parsed map[string]interface{}
-	if err := json.Unmarshal(body, &parsed); err != nil {
-		return err
-	}
-	adminID, ok := parsed["id"].(string)
+	adminID, ok := regBody["id"].(string)
 	if !ok {
-		return fmt.Errorf("id is not a string")
+		return fmt.Errorf("id not returned from registration")
 	}
 	user, err := ctx.Store.GetUserByID(context.Background(), adminID)
 	if err != nil {
@@ -98,18 +94,13 @@ func (ctx *scenarioCtx) anAdminUserIsRegisteredAndLoggedIn(username string) erro
 	if err := ctx.Store.UpdateUser(context.Background(), user); err != nil {
 		return err
 	}
-	loginBody := map[string]string{"username": username, "password": password}
-	resp2, body2 := doRequest(ctx.Router, "POST", "/api/v1/auth/login", loginBody, "")
-	if resp2.StatusCode != 200 {
-		return fmt.Errorf("admin login failed: %s", string(body2))
+	loginStatus, loginBody := ctx.login(username, password)
+	if loginStatus != 200 {
+		return fmt.Errorf("admin login failed: %v", loginBody)
 	}
-	var loginParsed map[string]interface{}
-	if err := json.Unmarshal(body2, &loginParsed); err != nil {
-		return err
-	}
-	adminToken, ok := loginParsed["accessToken"].(string)
+	adminToken, ok := loginBody["accessToken"].(string)
 	if !ok {
-		return fmt.Errorf("access_token is not a string")
+		return fmt.Errorf("accessToken is not a string")
 	}
 	ctx.AdminToken = adminToken
 	return nil
@@ -119,9 +110,11 @@ func (ctx *scenarioCtx) theAdminSendsUnlockAlice() error {
 	if ctx.AliceID == "" {
 		return fmt.Errorf("alice's ID not set")
 	}
-	resp, body := doRequest(ctx.Router, "POST", fmt.Sprintf("/api/v1/admin/users/%s/unlock", ctx.AliceID), nil, ctx.AdminToken)
-	ctx.LastResponse = resp
-	ctx.LastBody = body
+	params := gin.Params{{Key: "id", Value: ctx.AliceID}}
+	c, w := buildGinContext("POST", fmt.Sprintf("/api/v1/admin/users/%s/unlock", ctx.AliceID), nil, ctx.AdminToken, params, ctx.JWTSvc)
+	ctx.Handler.UnlockUser(c)
+	ctx.LastStatus = w.Code
+	ctx.LastBody = readResponse(w)
 	return nil
 }
 
@@ -136,9 +129,11 @@ func (ctx *scenarioCtx) anAdminHasUnlockedAlicesAccount() error {
 		}
 		ctx.AliceID = user.ID
 	}
-	resp, body := doRequest(ctx.Router, "POST", fmt.Sprintf("/api/v1/admin/users/%s/unlock", ctx.AliceID), nil, ctx.AdminToken)
-	if resp.StatusCode != 200 {
-		return fmt.Errorf("unlock failed with %d: %s", resp.StatusCode, string(body))
+	params := gin.Params{{Key: "id", Value: ctx.AliceID}}
+	c, w := buildGinContext("POST", fmt.Sprintf("/api/v1/admin/users/%s/unlock", ctx.AliceID), nil, ctx.AdminToken, params, ctx.JWTSvc)
+	ctx.Handler.UnlockUser(c)
+	if w.Code != 200 {
+		return fmt.Errorf("unlock failed with %d: %v", w.Code, readResponse(w))
 	}
 	return nil
 }

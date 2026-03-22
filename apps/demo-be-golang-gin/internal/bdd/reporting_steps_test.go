@@ -2,9 +2,9 @@ package bdd_test
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/cucumber/godog"
+	"github.com/gin-gonic/gin"
 )
 
 func registerReportingSteps(sc *godog.ScenarioContext, ctx *scenarioCtx) {
@@ -14,19 +14,19 @@ func registerReportingSteps(sc *godog.ScenarioContext, ctx *scenarioCtx) {
 }
 
 func (ctx *scenarioCtx) aliceSendsGetPLReport(from, to, currency string) error {
-	// Map legacy from/to params to startDate/endDate.
-	url := fmt.Sprintf("/api/v1/reports/pl?startDate=%s&endDate=%s&currency=%s", from, to, currency)
-	resp, body := doRequest(ctx.Router, "GET", url, nil, ctx.AccessToken)
-	ctx.LastResponse = resp
-	ctx.LastBody = body
+	rawQuery := fmt.Sprintf("startDate=%s&endDate=%s&currency=%s", from, to, currency)
+	c, w := buildGinContext("GET", "/api/v1/reports/pl?"+rawQuery, nil, ctx.AccessToken, gin.Params{}, ctx.JWTSvc)
+	c.Request.URL.RawQuery = rawQuery
+	ctx.Handler.PLReport(c)
+	ctx.LastStatus = w.Code
+	ctx.LastBody = readResponse(w)
 	return nil
 }
 
 func (ctx *scenarioCtx) theIncomeBreakdownShouldContainCategory(category, amount string) error {
-	body := parseBody(ctx.LastBody)
-	breakdown, ok := body["incomeBreakdown"]
+	breakdown, ok := ctx.LastBody["incomeBreakdown"]
 	if !ok {
-		return fmt.Errorf("response does not contain 'incomeBreakdown'; body: %s", string(ctx.LastBody))
+		return fmt.Errorf("response does not contain 'incomeBreakdown'; body: %v", ctx.LastBody)
 	}
 	items, ok := breakdown.([]interface{})
 	if !ok {
@@ -38,11 +38,7 @@ func (ctx *scenarioCtx) theIncomeBreakdownShouldContainCategory(category, amount
 			continue
 		}
 		if fmt.Sprintf("%v", m["category"]) == category {
-			got := strings.TrimRight(fmt.Sprintf("%v", m["total"]), "0")
-			got = strings.TrimRight(got, ".")
-			want := strings.TrimRight(amount, "0")
-			want = strings.TrimRight(want, ".")
-			if got == want || fmt.Sprintf("%v", m["total"]) == amount {
+			if fmt.Sprintf("%v", m["total"]) == amount {
 				return nil
 			}
 			return fmt.Errorf("incomeBreakdown category %q: expected amount %q, got %q", category, amount, fmt.Sprintf("%v", m["total"]))
@@ -52,10 +48,9 @@ func (ctx *scenarioCtx) theIncomeBreakdownShouldContainCategory(category, amount
 }
 
 func (ctx *scenarioCtx) theExpenseBreakdownShouldContainCategory(category, amount string) error {
-	body := parseBody(ctx.LastBody)
-	breakdown, ok := body["expenseBreakdown"]
+	breakdown, ok := ctx.LastBody["expenseBreakdown"]
 	if !ok {
-		return fmt.Errorf("response does not contain 'expenseBreakdown'; body: %s", string(ctx.LastBody))
+		return fmt.Errorf("response does not contain 'expenseBreakdown'; body: %v", ctx.LastBody)
 	}
 	items, ok := breakdown.([]interface{})
 	if !ok {

@@ -1,10 +1,10 @@
 package bdd_test
 
 import (
-	"encoding/json"
 	"fmt"
 	"strconv"
 
+	"github.com/gin-gonic/gin"
 	"github.com/cucumber/godog"
 )
 
@@ -14,30 +14,28 @@ func registerUnitHandlingSteps(sc *godog.ScenarioContext, ctx *scenarioCtx) {
 	sc.Step(`^the response body should contain "quantity" equal to ([^\s]+)$`, ctx.theResponseBodyShouldContainQuantityEqual)
 }
 
+// createExpenseWithUnit calls CreateExpense with quantity and unit fields.
+func (ctx *scenarioCtx) createExpenseWithUnit(amount, currency, category, description, date, expType string, quantity float64, unit, token string) (int, map[string]interface{}) {
+	body := map[string]interface{}{
+		"amount": amount, "currency": currency, "category": category,
+		"description": description, "date": date, "type": expType,
+		"quantity": quantity, "unit": unit,
+	}
+	c, w := buildGinContext("POST", "/api/v1/expenses", body, token, gin.Params{}, ctx.JWTSvc)
+	ctx.Handler.CreateExpense(c)
+	return w.Code, readResponse(w)
+}
+
 func (ctx *scenarioCtx) aliceHasCreatedExpenseWithUnit(amount, currency, category, description, date, expType, quantityStr, unit string) error {
 	quantity, err := strconv.ParseFloat(quantityStr, 64)
 	if err != nil {
 		return fmt.Errorf("invalid quantity %q: %w", quantityStr, err)
 	}
-	body := map[string]interface{}{
-		"amount":      amount,
-		"currency":    currency,
-		"category":    category,
-		"description": description,
-		"date":        date,
-		"type":        expType,
-		"quantity":    quantity,
-		"unit":        unit,
+	status, body := ctx.createExpenseWithUnit(amount, currency, category, description, date, expType, quantity, unit, ctx.AccessToken)
+	if status != 201 {
+		return fmt.Errorf("create expense failed with %d: %v", status, body)
 	}
-	resp, respBody := doRequest(ctx.Router, "POST", "/api/v1/expenses", body, ctx.AccessToken)
-	if resp.StatusCode != 201 {
-		return fmt.Errorf("create expense failed with %d: %s", resp.StatusCode, string(respBody))
-	}
-	var parsed map[string]interface{}
-	if err := json.Unmarshal(respBody, &parsed); err != nil {
-		return err
-	}
-	if id, ok := parsed["id"].(string); ok {
+	if id, ok := body["id"].(string); ok {
 		ctx.ExpenseID = id
 	}
 	return nil
@@ -48,25 +46,12 @@ func (ctx *scenarioCtx) aliceSendsCreateExpenseWithUnit(amount, currency, catego
 	if err != nil {
 		return fmt.Errorf("invalid quantity %q: %w", quantityStr, err)
 	}
-	body := map[string]interface{}{
-		"amount":      amount,
-		"currency":    currency,
-		"category":    category,
-		"description": description,
-		"date":        date,
-		"type":        expType,
-		"quantity":    quantity,
-		"unit":        unit,
-	}
-	resp, respBody := doRequest(ctx.Router, "POST", "/api/v1/expenses", body, ctx.AccessToken)
-	ctx.LastResponse = resp
-	ctx.LastBody = respBody
-	if resp.StatusCode == 201 {
-		var parsed map[string]interface{}
-		if err := json.Unmarshal(respBody, &parsed); err == nil {
-			if id, ok := parsed["id"].(string); ok {
-				ctx.ExpenseID = id
-			}
+	status, body := ctx.createExpenseWithUnit(amount, currency, category, description, date, expType, quantity, unit, ctx.AccessToken)
+	ctx.LastStatus = status
+	ctx.LastBody = body
+	if status == 201 {
+		if id, ok := body["id"].(string); ok {
+			ctx.ExpenseID = id
 		}
 	}
 	return nil
@@ -77,10 +62,9 @@ func (ctx *scenarioCtx) theResponseBodyShouldContainQuantityEqual(quantityStr st
 	if err != nil {
 		return fmt.Errorf("invalid expected quantity %q: %w", quantityStr, err)
 	}
-	body := parseBody(ctx.LastBody)
-	v, ok := body["quantity"]
+	v, ok := ctx.LastBody["quantity"]
 	if !ok {
-		return fmt.Errorf("response does not contain 'quantity' field; body: %s", string(ctx.LastBody))
+		return fmt.Errorf("response does not contain 'quantity' field; body: %v", ctx.LastBody)
 	}
 	actual, ok := v.(float64)
 	if !ok {

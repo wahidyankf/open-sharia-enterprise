@@ -3,6 +3,7 @@ package bdd_test
 import (
 	"fmt"
 
+	"github.com/gin-gonic/gin"
 	"github.com/cucumber/godog"
 )
 
@@ -20,34 +21,32 @@ func (ctx *scenarioCtx) theAPIIsRunning() error {
 }
 
 func (ctx *scenarioCtx) operationsEngineerSendsGETHealth() error {
-	resp, body := doRequest(ctx.Router, "GET", "/health", nil, "")
-	ctx.LastResponse = resp
-	ctx.LastBody = body
+	c, w := buildGinContext("GET", "/health", nil, "", gin.Params{}, ctx.JWTSvc)
+	ctx.Handler.Health(c)
+	ctx.LastStatus = w.Code
+	ctx.LastBody = readResponse(w)
 	return nil
 }
 
 func (ctx *scenarioCtx) unauthenticatedEngineerSendsGETHealth() error {
-	resp, body := doRequest(ctx.Router, "GET", "/health", nil, "")
-	ctx.LastResponse = resp
-	ctx.LastBody = body
+	c, w := buildGinContext("GET", "/health", nil, "", gin.Params{}, ctx.JWTSvc)
+	ctx.Handler.Health(c)
+	ctx.LastStatus = w.Code
+	ctx.LastBody = readResponse(w)
 	return nil
 }
 
 func (ctx *scenarioCtx) theResponseStatusCodeShouldBe(code int) error {
-	if ctx.LastResponse == nil {
-		return fmt.Errorf("no response received")
-	}
-	if ctx.LastResponse.StatusCode != code {
-		return fmt.Errorf("expected status %d, got %d; body: %s", code, ctx.LastResponse.StatusCode, string(ctx.LastBody))
+	if ctx.LastStatus != code {
+		return fmt.Errorf("expected status %d, got %d; body: %v", code, ctx.LastStatus, ctx.LastBody)
 	}
 	return nil
 }
 
 func (ctx *scenarioCtx) theHealthStatusShouldBe(status string) error {
-	body := parseBody(ctx.LastBody)
-	s, ok := body["status"]
+	s, ok := ctx.LastBody["status"]
 	if !ok {
-		return fmt.Errorf("response does not contain 'status' field; body: %s", string(ctx.LastBody))
+		return fmt.Errorf("response does not contain 'status' field; body: %v", ctx.LastBody)
 	}
 	if s != status {
 		return fmt.Errorf("expected status %q, got %q", status, s)
@@ -56,8 +55,7 @@ func (ctx *scenarioCtx) theHealthStatusShouldBe(status string) error {
 }
 
 func (ctx *scenarioCtx) theResponseShouldNotIncludeDetailedComponentHealthInformation() error {
-	body := parseBody(ctx.LastBody)
-	if _, ok := body["components"]; ok {
+	if _, ok := ctx.LastBody["components"]; ok {
 		return fmt.Errorf("response includes 'components' field, which should not be present")
 	}
 	return nil

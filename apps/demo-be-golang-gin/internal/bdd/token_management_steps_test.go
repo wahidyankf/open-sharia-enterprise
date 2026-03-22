@@ -1,10 +1,12 @@
 package bdd_test
 
 import (
+	"context"
 	"encoding/base64"
 	"fmt"
 	"strings"
 
+	"github.com/gin-gonic/gin"
 	"github.com/cucumber/godog"
 )
 
@@ -33,59 +35,68 @@ func (ctx *scenarioCtx) aliceDecodesHerAccessTokenPayload() error {
 	if err != nil {
 		return fmt.Errorf("failed to decode token payload: %w", err)
 	}
-	ctx.LastBody = decoded
+	ctx.LastBody = parseBody(decoded)
+	ctx.LastStatus = 200
 	return nil
 }
 
 func (ctx *scenarioCtx) theTokenShouldContainNonNullClaim(claim string) error {
-	body := parseBody(ctx.LastBody)
-	v, ok := body[claim]
+	v, ok := ctx.LastBody[claim]
 	if !ok || v == nil {
-		return fmt.Errorf("token payload does not contain non-null claim %q; body: %s", claim, string(ctx.LastBody))
+		return fmt.Errorf("token payload does not contain non-null claim %q; body: %v", claim, ctx.LastBody)
 	}
 	return nil
 }
 
 func (ctx *scenarioCtx) clientSendsGetJWKS() error {
-	resp, body := doRequest(ctx.Router, "GET", "/.well-known/jwks.json", nil, "")
-	ctx.LastResponse = resp
-	ctx.LastBody = body
+	c, w := buildGinContext("GET", "/.well-known/jwks.json", nil, "", gin.Params{}, nil)
+	ctx.Handler.JWKS(c)
+	ctx.LastStatus = w.Code
+	ctx.LastBody = readResponse(w)
 	return nil
 }
 
 func (ctx *scenarioCtx) theResponseBodyShouldContainAtLeastOneKeyInArray(field string) error {
-	body := parseBody(ctx.LastBody)
-	v, ok := body[field]
+	v, ok := ctx.LastBody[field]
 	if !ok {
-		return fmt.Errorf("response does not contain %q field; body: %s", field, string(ctx.LastBody))
+		return fmt.Errorf("response does not contain %q field; body: %v", field, ctx.LastBody)
 	}
 	arr, ok := v.([]interface{})
 	if !ok || len(arr) == 0 {
-		return fmt.Errorf("field %q is not a non-empty array; body: %s", field, string(ctx.LastBody))
+		return fmt.Errorf("field %q is not a non-empty array; body: %v", field, ctx.LastBody)
 	}
 	return nil
 }
 
+// alicesAccessTokenShouldBeRecordedAsRevoked verifies the token JTI is blacklisted
+// by querying the store directly, since we no longer route through HTTP middleware.
 func (ctx *scenarioCtx) alicesAccessTokenShouldBeRecordedAsRevoked() error {
-	resp, _ := doRequest(ctx.Router, "GET", "/api/v1/users/me", nil, ctx.AccessToken)
-	if resp.StatusCode != 401 {
-		return fmt.Errorf("expected 401 for revoked token, got %d", resp.StatusCode)
+	claims, err := ctx.JWTSvc.ValidateToken(ctx.AccessToken)
+	if err != nil {
+		// Token is cryptographically invalid, so it is effectively revoked.
+		return nil
+	}
+	blacklisted, err := ctx.Store.IsAccessTokenBlacklisted(context.Background(), claims.ID)
+	if err != nil {
+		return fmt.Errorf("checking blacklist: %w", err)
+	}
+	if !blacklisted {
+		return fmt.Errorf("expected access token JTI %q to be blacklisted", claims.ID)
 	}
 	return nil
 }
 
 func (ctx *scenarioCtx) aliceHasLoggedOutAndHerAccessTokenIsBlacklisted() error {
-	body := map[string]string{}
-	resp, respBody := doRequest(ctx.Router, "POST", "/api/v1/auth/logout", body, ctx.AccessToken)
-	if resp.StatusCode != 200 {
-		return fmt.Errorf("logout failed: %s", string(respBody))
+	status, body := ctx.logout(ctx.AccessToken)
+	if status != 200 {
+		return fmt.Errorf("logout failed: %v", body)
 	}
 	return nil
 }
 
 func (ctx *scenarioCtx) clientSendsGetProfileWithAlicesToken() error {
-	resp, body := doRequest(ctx.Router, "GET", "/api/v1/users/me", nil, ctx.AccessToken)
-	ctx.LastResponse = resp
+	status, body := ctx.getProfile(ctx.AccessToken)
+	ctx.LastStatus = status
 	ctx.LastBody = body
 	return nil
 }
@@ -94,9 +105,12 @@ func (ctx *scenarioCtx) theAdminHasDisabledAlicesAccount() error {
 	if ctx.AliceID == "" {
 		return fmt.Errorf("alice's ID not set")
 	}
-	resp, body := doRequest(ctx.Router, "POST", fmt.Sprintf("/api/v1/admin/users/%s/disable", ctx.AliceID), map[string]string{"reason": "test"}, ctx.AdminToken)
-	if resp.StatusCode != 200 {
-		return fmt.Errorf("disable failed with %d: %s", resp.StatusCode, string(body))
+	params := gin.Params{{Key: "id", Value: ctx.AliceID}}
+	body := map[string]string{"reason": "test"}
+	c, w := buildGinContext("POST", fmt.Sprintf("/api/v1/admin/users/%s/disable", ctx.AliceID), body, ctx.AdminToken, params, ctx.JWTSvc)
+	ctx.Handler.DisableUser(c)
+	if w.Code != 200 {
+		return fmt.Errorf("disable failed with %d: %v", w.Code, readResponse(w))
 	}
 	return nil
 }

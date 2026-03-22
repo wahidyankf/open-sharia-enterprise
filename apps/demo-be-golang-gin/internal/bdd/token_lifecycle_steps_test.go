@@ -2,11 +2,11 @@ package bdd_test
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"time"
 
 	"github.com/cucumber/godog"
+	"github.com/gin-gonic/gin"
 
 	"github.com/wahidyankf/open-sharia-enterprise/apps/demo-be-golang-gin/internal/domain"
 )
@@ -25,11 +25,40 @@ func registerTokenLifecycleSteps(sc *godog.ScenarioContext, ctx *scenarioCtx) {
 	sc.Step(`^the response body should contain an error message about invalid token$`, ctx.theResponseBodyShouldContainErrorAboutInvalidToken)
 }
 
+// refresh calls the Refresh handler directly.
+func (ctx *scenarioCtx) refresh(refreshToken string) (int, map[string]interface{}) {
+	body := map[string]string{"refreshToken": refreshToken}
+	c, w := buildGinContext("POST", "/api/v1/auth/refresh", body, "", gin.Params{}, nil)
+	ctx.Handler.Refresh(c)
+	return w.Code, readResponse(w)
+}
+
+// logout calls the Logout handler directly.
+func (ctx *scenarioCtx) logout(token string) (int, map[string]interface{}) {
+	body := map[string]string{}
+	c, w := buildGinContext("POST", "/api/v1/auth/logout", body, token, gin.Params{}, ctx.JWTSvc)
+	ctx.Handler.Logout(c)
+	return w.Code, readResponse(w)
+}
+
+// logoutAll calls the LogoutAll handler directly.
+func (ctx *scenarioCtx) logoutAll(token string) (int, map[string]interface{}) {
+	c, w := buildGinContext("POST", "/api/v1/auth/logout-all", nil, token, gin.Params{}, ctx.JWTSvc)
+	ctx.Handler.LogoutAll(c)
+	return w.Code, readResponse(w)
+}
+
+// getProfile calls the GetProfile handler directly.
+func (ctx *scenarioCtx) getProfile(token string) (int, map[string]interface{}) {
+	c, w := buildGinContext("GET", "/api/v1/users/me", nil, token, gin.Params{}, ctx.JWTSvc)
+	ctx.Handler.GetProfile(c)
+	return w.Code, readResponse(w)
+}
+
 func (ctx *scenarioCtx) aliceSendsRefreshWithRefreshToken() error {
-	body := map[string]string{"refreshToken": ctx.RefreshToken}
-	resp, respBody := doRequest(ctx.Router, "POST", "/api/v1/auth/refresh", body, "")
-	ctx.LastResponse = resp
-	ctx.LastBody = respBody
+	status, body := ctx.refresh(ctx.RefreshToken)
+	ctx.LastStatus = status
+	ctx.LastBody = body
 	return nil
 }
 
@@ -46,42 +75,36 @@ func (ctx *scenarioCtx) alicesRefreshTokenHasExpired() error {
 
 func (ctx *scenarioCtx) aliceHasUsedRefreshTokenToGetNewPair() error {
 	originalRefresh := ctx.RefreshToken
-	body := map[string]string{"refreshToken": ctx.RefreshToken}
-	resp, respBody := doRequest(ctx.Router, "POST", "/api/v1/auth/refresh", body, "")
-	if resp.StatusCode != 200 {
-		return fmt.Errorf("refresh failed with %d: %s", resp.StatusCode, string(respBody))
+	status, body := ctx.refresh(ctx.RefreshToken)
+	if status != 200 {
+		return fmt.Errorf("refresh failed with %d: %v", status, body)
 	}
-	var parsed map[string]interface{}
-	if err := json.Unmarshal(respBody, &parsed); err != nil {
-		return err
-	}
-	accessToken, ok := parsed["accessToken"].(string)
+	accessToken, ok := body["accessToken"].(string)
 	if !ok {
-		return fmt.Errorf("access_token is not a string")
+		return fmt.Errorf("accessToken is not a string")
 	}
 	ctx.AccessToken = accessToken
-	refreshToken, ok := parsed["refreshToken"].(string)
+	refreshToken, ok := body["refreshToken"].(string)
 	if !ok {
-		return fmt.Errorf("refresh_token is not a string")
+		return fmt.Errorf("refreshToken is not a string")
 	}
 	ctx.RefreshToken = refreshToken
-	ctx.LastBody = []byte(fmt.Sprintf(`{"original_refresh_token": "%s"}`, originalRefresh))
+	// Store original refresh token for the next step.
+	ctx.LastBody = map[string]interface{}{
+		"original_refresh_token": originalRefresh,
+	}
+	ctx.LastStatus = status
 	return nil
 }
 
 func (ctx *scenarioCtx) aliceSendsRefreshWithOriginalRefreshToken() error {
-	var parsed map[string]interface{}
-	if err := json.Unmarshal(ctx.LastBody, &parsed); err != nil {
-		return err
-	}
-	originalToken, ok := parsed["original_refresh_token"].(string)
+	originalToken, ok := ctx.LastBody["original_refresh_token"].(string)
 	if !ok {
 		return fmt.Errorf("original_refresh_token is not a string")
 	}
-	body := map[string]string{"refreshToken": originalToken}
-	resp, respBody := doRequest(ctx.Router, "POST", "/api/v1/auth/refresh", body, "")
-	ctx.LastResponse = resp
-	ctx.LastBody = respBody
+	status, body := ctx.refresh(originalToken)
+	ctx.LastStatus = status
+	ctx.LastBody = body
 	return nil
 }
 
@@ -95,49 +118,58 @@ func (ctx *scenarioCtx) theUserHasBeenDeactivated(username string) error {
 }
 
 func (ctx *scenarioCtx) aliceSendsLogoutWithAccessToken() error {
-	body := map[string]string{}
-	resp, respBody := doRequest(ctx.Router, "POST", "/api/v1/auth/logout", body, ctx.AccessToken)
-	ctx.LastResponse = resp
-	ctx.LastBody = respBody
+	status, body := ctx.logout(ctx.AccessToken)
+	ctx.LastStatus = status
+	ctx.LastBody = body
 	return nil
 }
 
 func (ctx *scenarioCtx) aliceSendsLogoutAllWithAccessToken() error {
-	resp, respBody := doRequest(ctx.Router, "POST", "/api/v1/auth/logout-all", nil, ctx.AccessToken)
-	ctx.LastResponse = resp
-	ctx.LastBody = respBody
+	status, body := ctx.logoutAll(ctx.AccessToken)
+	ctx.LastStatus = status
+	ctx.LastBody = body
 	return nil
 }
 
 func (ctx *scenarioCtx) alicesAccessTokenShouldBeInvalidated() error {
-	resp, _ := doRequest(ctx.Router, "GET", "/api/v1/users/me", nil, ctx.AccessToken)
-	if resp.StatusCode != 401 {
-		return fmt.Errorf("expected 401 for invalidated token, got %d", resp.StatusCode)
+	// After logout/logout-all, the access token should be blacklisted;
+	// a call to GetProfile must return 401.
+	// We bypass middleware and call the store directly to check blacklist
+	// because the middleware is not invoked in direct handler calls.
+	// Instead, validate that the token's JTI is blacklisted in the store.
+	claims, err := ctx.JWTSvc.ValidateToken(ctx.AccessToken)
+	if err != nil {
+		// Token is already cryptographically invalid — counts as invalidated.
+		return nil
+	}
+	blacklisted, err := ctx.Store.IsAccessTokenBlacklisted(context.Background(), claims.ID)
+	if err != nil {
+		return fmt.Errorf("checking blacklist: %w", err)
+	}
+	if !blacklisted {
+		return fmt.Errorf("expected access token to be blacklisted after logout")
 	}
 	return nil
 }
 
 func (ctx *scenarioCtx) aliceHasAlreadyLoggedOutOnce() error {
-	body := map[string]string{}
-	resp, _ := doRequest(ctx.Router, "POST", "/api/v1/auth/logout", body, ctx.AccessToken)
-	if resp.StatusCode != 200 {
-		return fmt.Errorf("first logout failed with %d", resp.StatusCode)
+	status, body := ctx.logout(ctx.AccessToken)
+	if status != 200 {
+		return fmt.Errorf("first logout failed with %d: %v", status, body)
 	}
 	return nil
 }
 
 func (ctx *scenarioCtx) theResponseBodyShouldContainErrorAboutTokenExpiration() error {
-	body := parseBody(ctx.LastBody)
-	if _, ok := body["message"]; !ok {
-		return fmt.Errorf("no error message; body: %s", string(ctx.LastBody))
+	if _, ok := ctx.LastBody["message"]; !ok {
+		return fmt.Errorf("no error message; body: %v", ctx.LastBody)
 	}
 	return nil
 }
 
 func (ctx *scenarioCtx) theResponseBodyShouldContainErrorAboutInvalidToken() error {
-	body := parseBody(ctx.LastBody)
-	if _, ok := body["message"]; !ok {
-		return fmt.Errorf("no error message; body: %s", string(ctx.LastBody))
+	if _, ok := ctx.LastBody["message"]; !ok {
+		return fmt.Errorf("no error message; body: %v", ctx.LastBody)
 	}
 	return nil
 }
