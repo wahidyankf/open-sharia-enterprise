@@ -52,31 +52,31 @@
 
 ## Phase 5: API Route Handlers
 
-- [ ] Create `src/app/api/v1/auth/register/route.ts` — POST register
-- [ ] Create `src/app/api/v1/auth/login/route.ts` — POST login
-- [ ] Create `src/app/api/v1/auth/logout/route.ts` — POST logout
-- [ ] Create `src/app/api/v1/auth/logout-all/route.ts` — POST logout all sessions
-- [ ] Create `src/app/api/v1/auth/refresh/route.ts` — POST refresh token
-- [ ] Create `src/app/api/v1/users/me/route.ts` — GET profile, PATCH display name
-- [ ] Create `src/app/api/v1/users/me/password/route.ts` — POST change password
-- [ ] Create `src/app/api/v1/users/me/deactivate/route.ts` — POST self-deactivate
-- [ ] Create `src/app/api/v1/admin/users/route.ts` — GET user list (admin)
-- [ ] Create `src/app/api/v1/admin/users/[id]/disable/route.ts` — POST disable user
-- [ ] Create `src/app/api/v1/admin/users/[id]/enable/route.ts` — POST enable user
-- [ ] Create `src/app/api/v1/admin/users/[id]/unlock/route.ts` — POST unlock user
-- [ ] Create `src/app/api/v1/admin/users/[id]/force-password-reset/route.ts` — POST force reset
-- [ ] Create `src/app/api/v1/expenses/route.ts` — GET list, POST create
-- [ ] Create `src/app/api/v1/expenses/summary/route.ts` — GET summary
-- [ ] Create `src/app/api/v1/expenses/[id]/route.ts` — GET, PUT, DELETE
-- [ ] Create `src/app/api/v1/expenses/[id]/attachments/route.ts` — GET list, POST upload
-- [ ] Create `src/app/api/v1/expenses/[id]/attachments/[attId]/route.ts` — GET, DELETE
-- [ ] Create `src/app/api/v1/reports/pl/route.ts` — GET P&L report
-- [ ] Create `src/app/api/v1/tokens/claims/route.ts` — GET current token claims
-- [ ] Create `src/app/health/route.ts` — GET health check
-- [ ] Create `src/app/.well-known/jwks.json/route.ts` — GET JWKS public key
-- [ ] Create `src/app/api/v1/test/reset-db/route.ts` — POST reset database (test-only,
+- [x] Create `src/app/api/v1/auth/register/route.ts` — POST register
+- [x] Create `src/app/api/v1/auth/login/route.ts` — POST login
+- [x] Create `src/app/api/v1/auth/logout/route.ts` — POST logout
+- [x] Create `src/app/api/v1/auth/logout-all/route.ts` — POST logout all sessions
+- [x] Create `src/app/api/v1/auth/refresh/route.ts` — POST refresh token
+- [x] Create `src/app/api/v1/users/me/route.ts` — GET profile, PATCH display name
+- [x] Create `src/app/api/v1/users/me/password/route.ts` — POST change password
+- [x] Create `src/app/api/v1/users/me/deactivate/route.ts` — POST self-deactivate
+- [x] Create `src/app/api/v1/admin/users/route.ts` — GET user list (admin)
+- [x] Create `src/app/api/v1/admin/users/[id]/disable/route.ts` — POST disable user
+- [x] Create `src/app/api/v1/admin/users/[id]/enable/route.ts` — POST enable user
+- [x] Create `src/app/api/v1/admin/users/[id]/unlock/route.ts` — POST unlock user
+- [x] Create `src/app/api/v1/admin/users/[id]/force-password-reset/route.ts` — POST force reset
+- [x] Create `src/app/api/v1/expenses/route.ts` — GET list, POST create
+- [x] Create `src/app/api/v1/expenses/summary/route.ts` — GET summary
+- [x] Create `src/app/api/v1/expenses/[id]/route.ts` — GET, PUT, DELETE
+- [x] Create `src/app/api/v1/expenses/[id]/attachments/route.ts` — GET list, POST upload
+- [x] Create `src/app/api/v1/expenses/[id]/attachments/[attId]/route.ts` — GET, DELETE
+- [x] Create `src/app/api/v1/reports/pl/route.ts` — GET P&L report
+- [x] Create `src/app/api/v1/tokens/claims/route.ts` — GET current token claims
+- [x] Create `src/app/health/route.ts` — GET health check
+- [x] Create `src/app/.well-known/jwks.json/route.ts` — GET JWKS public key
+- [x] Create `src/app/api/v1/test/reset-db/route.ts` — POST reset database (test-only,
       guarded by `ENABLE_TEST_API` env var)
-- [ ] Create `src/app/api/v1/test/promote-admin/route.ts` — POST promote user to admin
+- [x] Create `src/app/api/v1/test/promote-admin/route.ts` — POST promote user to admin
       (test-only, guarded by `ENABLE_TEST_API` env var)
 
 ## Phase 6: Backend Unit Tests (BE Gherkin)
