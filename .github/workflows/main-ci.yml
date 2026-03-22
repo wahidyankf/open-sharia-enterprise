@@ -286,3 +286,19 @@ jobs:
           files: apps/demo-fe-ts-nextjs/coverage/lcov.info
           flags: demo-fe-ts-nextjs
           fail_ci_if_error: false
+
+      - name: Upload coverage — demo-fe-ts-tanstack-start
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: apps/demo-fe-ts-tanstack-start/coverage/lcov.info
+          flags: demo-fe-ts-tanstack-start
+          fail_ci_if_error: false
+
+      - name: Upload coverage — demo-fe-dart-flutterweb
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: apps/demo-fe-dart-flutterweb/coverage/lcov.info
+          flags: demo-fe-dart-flutterweb
+          fail_ci_if_error: false
