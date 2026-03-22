@@ -137,7 +137,7 @@ Scenario: All FE E2E scenarios pass
 
 Scenario: Unit test coverage meets threshold
   Given demo-fs-ts-nextjs unit tests are run with coverage
-  When rhino-cli test-coverage validate coverage/lcov.info 80 is executed
+  When rhino-cli test-coverage validate apps/demo-fs-ts-nextjs/coverage/lcov.info 80 is executed
   Then the validation should pass with 80%+ line coverage
 
 Scenario: Production build runs correctly in Docker

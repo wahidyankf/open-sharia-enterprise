@@ -1,5 +1,8 @@
 # Delivery
 
+> **Note**: All `npm install` commands run from `apps/demo-fs-ts-nextjs/` (project root),
+> not the workspace root. This ensures packages are added to the app's own `package.json`.
+
 ## Phase 1: Project Scaffolding
 
 - [ ] Create `apps/demo-fs-ts-nextjs/` directory
@@ -9,6 +12,9 @@
 - [ ] Create `project.json` with 7 mandatory Nx targets (codegen, typecheck, lint, build,
       test:unit, test:quick, test:integration) + `dev`
 - [ ] Set up `tsconfig.json` with strict mode
+- [ ] Install test dependencies: `npm install -D vitest @vitest/coverage-v8 @vitejs/plugin-react
+  jsdom vite-tsconfig-paths @testing-library/react @testing-library/jest-dom
+  @testing-library/user-event`
 - [ ] Set up `vitest.config.ts` with v8 coverage
 - [ ] Add `codegen` target (same openapi-ts config as demo-fe-ts-nextjs)
 - [ ] Run `nx run demo-fs-ts-nextjs:codegen` to verify types generate
