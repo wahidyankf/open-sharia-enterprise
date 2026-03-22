@@ -128,7 +128,9 @@ graph RL
   EC --> EG
   EC --> RC
   EG --> RC
+  EOC --> DC
   EOC --> RC
+  COC --> DC
   COC --> RC
 
   %% OrganicLever
@@ -183,9 +185,11 @@ graph RL
   BEE2E --> CSHARP
   BEE2E --> CLOJURE
   BEE2E --> ELIXIR
+  BEE2E --> DC
   FEE2E --> NEXTJS
   FEE2E --> TANSTACK
   FEE2E --> FLUTTER
+  FEE2E --> DC
 
   %% Styles
   classDef spec fill:#0173B2,stroke:#01537F,color:#FFFFFF
@@ -224,7 +228,7 @@ These projects are dependencies of many other projects.
 
 The OpenAPI 3.1 specification consumed by all demo apps for type generation.
 
-- **Dependents**: All 11 `demo-be-*` backends + all 3 `demo-fe-*` frontends (14 total)
+- **Dependents**: All 11 `demo-be-*` backends + all 3 `demo-fe-*` frontends + 2 E2E suites + 2 codegen libs (18 total)
 - **Mechanism**: `implicitDependencies` + `codegen.dependsOn: ["demo-contracts:bundle"]`
 - **Spec input**: `{workspaceRoot}/specs/apps/demo/contracts/generated/openapi-bundled.yaml`
 
@@ -293,11 +297,11 @@ All demo backends share the same dependency pattern.
 
 ### E2E Test Projects
 
-| Project              | Dependencies               | Spec Inputs                                 |
-| -------------------- | -------------------------- | ------------------------------------------- |
-| demo-be-e2e          | all 11 demo-be-\* backends | be/gherkin/\* (typecheck, test:quick)       |
-| demo-fe-e2e          | all 3 demo-fe-\* frontends | fe/gherkin/\* (typecheck, test:quick)       |
-| organiclever-web-e2e | organiclever-web           | organiclever-web/\* (typecheck, test:quick) |
+| Project              | Dependencies                               | Spec Inputs                                 |
+| -------------------- | ------------------------------------------ | ------------------------------------------- |
+| demo-be-e2e          | all 11 demo-be-\* backends, demo-contracts | be/gherkin/\* (typecheck, test:quick)       |
+| demo-fe-e2e          | all 3 demo-fe-\* frontends, demo-contracts | fe/gherkin/\* (typecheck, test:quick)       |
+| organiclever-web-e2e | organiclever-web                           | organiclever-web/\* (typecheck, test:quick) |
 
 E2E projects use `bddgen` to generate TypeScript from `.feature` files in
 `test:quick` and `typecheck`. Gherkin spec inputs ensure cache invalidation
@@ -336,8 +340,8 @@ title generation, navigation updates). The CLI tools are built via
 | hugo-commons            | golang-commons, rhino-cli | hugo-commons/\* (test:integration)   |
 | elixir-gherkin          | rhino-cli                 | (none)                               |
 | elixir-cabbage          | elixir-gherkin, rhino-cli | (none)                               |
-| elixir-openapi-codegen  | rhino-cli                 | (none)                               |
-| clojure-openapi-codegen | rhino-cli                 | (none)                               |
+| elixir-openapi-codegen  | demo-contracts, rhino-cli | (none)                               |
+| clojure-openapi-codegen | demo-contracts, rhino-cli | (none)                               |
 
 ### Specs
 

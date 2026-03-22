@@ -50,6 +50,7 @@
     "lang:elixir"
   ],
   "implicitDependencies": [
+    "demo-contracts",
     "rhino-cli"
   ]
 }

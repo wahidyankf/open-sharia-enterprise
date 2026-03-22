@@ -32,7 +32,10 @@
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["tsc --noEmit", "npx oxlint@latest ."],
+        "commands": [
+          "tsc --noEmit",
+          "npx oxlint@latest ."
+        ],
         "parallel": true,
         "cwd": "{projectRoot}"
       },
@@ -70,6 +73,16 @@
       }
     }
   },
-  "tags": ["type:e2e", "platform:playwright", "lang:ts", "domain:demo-fe"],
-  "implicitDependencies": ["demo-fe-ts-nextjs", "demo-fe-dart-flutterweb", "demo-fe-ts-tanstack-start"]
+  "tags": [
+    "type:e2e",
+    "platform:playwright",
+    "lang:ts",
+    "domain:demo-fe"
+  ],
+  "implicitDependencies": [
+    "demo-fe-ts-nextjs",
+    "demo-fe-dart-flutterweb",
+    "demo-fe-ts-tanstack-start",
+    "demo-contracts"
+  ]
 }
