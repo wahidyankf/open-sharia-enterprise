@@ -1,5 +1,5 @@
 import { setWorldConstructor, World } from "@cucumber/cucumber";
-import { TEST_PORT } from "./hooks.js";
+import { dispatchRequest, uploadAttachment } from "./service-layer.js";
 
 export interface HttpResponse {
   readonly status: number;
@@ -8,8 +8,22 @@ export interface HttpResponse {
   readonly headers: Record<string, string>;
 }
 
+/**
+ * CustomWorld provides an HTTP-like interface over the Effect service layer.
+ *
+ * All methods previously used fetch() to call a real HTTP server. They now
+ * call Effect service functions directly through the ManagedRuntime created
+ * in hooks.ts. The response shape (status, body, headers) is preserved so
+ * that all existing step definitions continue to work without changes.
+ *
+ * No HTTP server is started. No fetch() calls are made.
+ *
+ * baseUrl is kept as a field for backward compatibility with step definitions
+ * that set it (e.g. common.steps.ts "the API is running"). It is not used
+ * for routing — routing goes through dispatchRequest() instead.
+ */
 export class CustomWorld extends World {
-  public baseUrl: string = `http://localhost:${TEST_PORT}`;
+  public baseUrl: string = "";
   public response: HttpResponse | null = null;
   public tokens: Map<string, string> = new Map();
   public userIds: Map<string, string> = new Map();
@@ -17,19 +31,8 @@ export class CustomWorld extends World {
   public context: Record<string, any> = {};
 
   async get(path: string, token?: string): Promise<HttpResponse> {
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-    };
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
-    const res = await fetch(`${this.baseUrl}${path}`, { headers });
-    const body = await res.json().catch(() => null);
-    return {
-      status: res.status,
-      body,
-      headers: Object.fromEntries(res.headers.entries()),
-    };
+    const authHeader = token ? `Bearer ${token}` : undefined;
+    return dispatchRequest("GET", path, {}, authHeader);
   }
 
   async post(
@@ -38,23 +41,8 @@ export class CustomWorld extends World {
     body: any,
     token?: string,
   ): Promise<HttpResponse> {
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-    };
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
-    const res = await fetch(`${this.baseUrl}${path}`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(body),
-    });
-    const responseBody = await res.json().catch(() => null);
-    return {
-      status: res.status,
-      body: responseBody,
-      headers: Object.fromEntries(res.headers.entries()),
-    };
+    const authHeader = token ? `Bearer ${token}` : undefined;
+    return dispatchRequest("POST", path, body as Record<string, unknown>, authHeader);
   }
 
   async patch(
@@ -63,23 +51,8 @@ export class CustomWorld extends World {
     body: any,
     token?: string,
   ): Promise<HttpResponse> {
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-    };
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
-    const res = await fetch(`${this.baseUrl}${path}`, {
-      method: "PATCH",
-      headers,
-      body: JSON.stringify(body),
-    });
-    const responseBody = await res.json().catch(() => null);
-    return {
-      status: res.status,
-      body: responseBody,
-      headers: Object.fromEntries(res.headers.entries()),
-    };
+    const authHeader = token ? `Bearer ${token}` : undefined;
+    return dispatchRequest("PATCH", path, body as Record<string, unknown>, authHeader);
   }
 
   async put(
@@ -88,42 +61,13 @@ export class CustomWorld extends World {
     body: any,
     token?: string,
   ): Promise<HttpResponse> {
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-    };
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
-    const res = await fetch(`${this.baseUrl}${path}`, {
-      method: "PUT",
-      headers,
-      body: JSON.stringify(body),
-    });
-    const responseBody = await res.json().catch(() => null);
-    return {
-      status: res.status,
-      body: responseBody,
-      headers: Object.fromEntries(res.headers.entries()),
-    };
+    const authHeader = token ? `Bearer ${token}` : undefined;
+    return dispatchRequest("PUT", path, body as Record<string, unknown>, authHeader);
   }
 
   async delete(path: string, token?: string): Promise<HttpResponse> {
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-    };
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
-    const res = await fetch(`${this.baseUrl}${path}`, {
-      method: "DELETE",
-      headers,
-    });
-    const responseBody = await res.json().catch(() => null);
-    return {
-      status: res.status,
-      body: responseBody,
-      headers: Object.fromEntries(res.headers.entries()),
-    };
+    const authHeader = token ? `Bearer ${token}` : undefined;
+    return dispatchRequest("DELETE", path, {}, authHeader);
   }
 
   async uploadFile(
@@ -133,24 +77,14 @@ export class CustomWorld extends World {
     content: Buffer,
     token?: string,
   ): Promise<HttpResponse> {
-    const headers: Record<string, string> = {};
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
+    // Extract the expenseId from the path: /api/v1/expenses/:expenseId/attachments
+    const match = path.match(/\/api\/v1\/expenses\/([^/]+)\/attachments/);
+    if (!match) {
+      return { status: 400, body: { error: "Invalid upload path" }, headers: {} };
     }
-    const formData = new FormData();
-    const blob = new Blob([content], { type: contentType });
-    formData.append("file", blob, filename);
-    const res = await fetch(`${this.baseUrl}${path}`, {
-      method: "POST",
-      headers,
-      body: formData,
-    });
-    const responseBody = await res.json().catch(() => null);
-    return {
-      status: res.status,
-      body: responseBody,
-      headers: Object.fromEntries(res.headers.entries()),
-    };
+    const expenseId = match[1]!;
+    const authHeader = token ? `Bearer ${token}` : undefined;
+    return uploadAttachment(authHeader, expenseId, filename, contentType, content);
   }
 }
 

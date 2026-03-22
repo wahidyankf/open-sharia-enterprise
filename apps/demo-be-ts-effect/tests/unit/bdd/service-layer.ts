@@ -18,12 +18,12 @@
  */
 
 import { Effect } from "effect";
-import { UserRepository } from "../../src/infrastructure/db/user-repo.js";
-import { ExpenseRepository } from "../../src/infrastructure/db/expense-repo.js";
-import { AttachmentRepository } from "../../src/infrastructure/db/attachment-repo.js";
-import { RevokedTokenRepository } from "../../src/infrastructure/db/token-repo.js";
-import { PasswordService } from "../../src/infrastructure/password.js";
-import { JwtService } from "../../src/auth/jwt.js";
+import { UserRepository } from "../../../src/infrastructure/db/user-repo.js";
+import { ExpenseRepository } from "../../../src/infrastructure/db/expense-repo.js";
+import { AttachmentRepository } from "../../../src/infrastructure/db/attachment-repo.js";
+import { RevokedTokenRepository } from "../../../src/infrastructure/db/token-repo.js";
+import { PasswordService } from "../../../src/infrastructure/password.js";
+import { JwtService } from "../../../src/auth/jwt.js";
 import {
   ValidationError,
   NotFoundError,
@@ -32,13 +32,13 @@ import {
   ConflictError,
   FileTooLargeError,
   UnsupportedMediaTypeError,
-} from "../../src/domain/errors.js";
-import { validatePasswordStrength, validateEmailFormat, validateUsername } from "../../src/domain/user.js";
-import { validateAmount, validateUnit } from "../../src/domain/expense.js";
-import { CURRENCY_DECIMALS, isSupportedCurrency } from "../../src/domain/types.js";
-import { isAllowedContentType, MAX_ATTACHMENT_SIZE } from "../../src/domain/attachment.js";
-import type { ExpenseType } from "../../src/domain/expense.js";
-import type { UserStatus } from "../../src/domain/types.js";
+} from "../../../src/domain/errors.js";
+import { validatePasswordStrength, validateEmailFormat, validateUsername } from "../../../src/domain/user.js";
+import { validateAmount, validateUnit } from "../../../src/domain/expense.js";
+import { CURRENCY_DECIMALS, isSupportedCurrency } from "../../../src/domain/types.js";
+import { isAllowedContentType, MAX_ATTACHMENT_SIZE } from "../../../src/domain/attachment.js";
+import type { ExpenseType } from "../../../src/domain/expense.js";
+import type { UserStatus } from "../../../src/domain/types.js";
 import { serviceRuntime } from "./hooks.js";
 
 export interface HttpResponse {
@@ -113,7 +113,7 @@ async function runEffect<A>(
 function verifyToken(
   token: string,
 ): Effect.Effect<
-  import("../../src/auth/jwt.js").JwtClaims,
+  import("../../../src/auth/jwt.js").JwtClaims,
   UnauthorizedError | import("@effect/sql/SqlError").SqlError,
   JwtService | RevokedTokenRepository
 > {
@@ -758,7 +758,7 @@ export async function updateExpense(
         yield* validateUnit(unitRaw);
       }
 
-      const updateData: Partial<import("../../src/domain/expense.js").CreateExpenseData> = {
+      const updateData: Partial<import("../../../src/domain/expense.js").CreateExpenseData> = {
         ...(typeRaw !== undefined ? { type: typeRaw } : {}),
         ...(amountRaw !== undefined ? { amount } : {}),
         ...(currencyRaw !== undefined ? { currency } : {}),
@@ -1060,7 +1060,7 @@ export async function getReport(
 function requireAdminToken(
   tokenStr: string,
 ): Effect.Effect<
-  import("../../src/auth/jwt.js").JwtClaims,
+  import("../../../src/auth/jwt.js").JwtClaims,
   UnauthorizedError | ForbiddenError | import("@effect/sql/SqlError").SqlError,
   JwtService | RevokedTokenRepository
 > {
