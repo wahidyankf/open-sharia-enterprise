@@ -8,7 +8,13 @@ When("the app fetches the JWKS endpoint", async ({}) => {
 });
 
 When("{word} attempts to access the dashboard directly", async ({ page }) => {
-  await page.goto("/expenses");
+  // With a blacklisted token the auth guard may redirect to /login mid-navigation.
+  // Catch the "interrupted" error and let the redirect settle.
+  try {
+    await page.goto("/expenses");
+  } catch {
+    await page.waitForURL("**/*", { timeout: 5000 });
+  }
 });
 
 Then("the panel should display {word}'s user ID", async ({ page }, _username: string) => {

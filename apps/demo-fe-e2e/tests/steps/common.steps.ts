@@ -205,10 +205,13 @@ When("{word} navigates to a protected page", async ({ page }) => {
 });
 
 When("{word} navigates to the login page", async ({ page }) => {
-  // Wait for any in-flight navigation (e.g. auto-redirect after logout) to settle
-  // before issuing goto, to avoid "Navigation interrupted by another navigation".
-  await page.waitForLoadState("load").catch(() => {});
-  await page.goto("/login");
+  // After logout or token invalidation, the app may auto-redirect to /login.
+  // If goto races with that redirect, catch the "interrupted" error and wait.
+  try {
+    await page.goto("/login");
+  } catch {
+    await page.waitForURL("**/login", { timeout: 5000 });
+  }
 });
 
 When("{word} navigates to the dashboard", async ({ page }) => {
