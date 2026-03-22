@@ -234,3 +234,7 @@ See [Nx Target Standards](../infra/nx-targets.md) for CI schedule details.
 | All levels consume shared Gherkin specs               | [Automation Over Manual](../../principles/software-engineering/automation-over-manual.md) |
 | No HTTP in integration tests                          | [Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)      |
 | Coverage measured only at unit level                  | [Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)      |
+
+## See Also
+
+- [Code Coverage Reference](../../../docs/reference/re__code-coverage.md) - How coverage is measured (rhino-cli algorithm, per-project tools, exclusion patterns, local vs Codecov differences)
