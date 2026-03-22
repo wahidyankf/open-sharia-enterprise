@@ -7,7 +7,9 @@ import {
   type PagedResult,
   SUPPORTED_CURRENCIES,
   CURRENCY_DECIMALS,
+  SUPPORTED_UNITS,
   type SupportedCurrency,
+  type SupportedUnit,
 } from "@/lib/types";
 
 interface ExpenseDeps {
@@ -47,6 +49,10 @@ export async function createExpense(
 
   const amount = parseFloat(data.amount);
   if (isNaN(amount) || amount < 0) return err("Amount must be a non-negative number", 400);
+
+  if (data.unit && !SUPPORTED_UNITS.includes(data.unit as SupportedUnit)) {
+    return err(`Unsupported unit: ${data.unit}`, 400);
+  }
 
   const decimals = CURRENCY_DECIMALS[upperCurrency as SupportedCurrency];
   const normalizedAmount = amount.toFixed(decimals);

@@ -1,4 +1,4 @@
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, gte, lte } from "drizzle-orm";
 import type { Database } from "@/db/client";
 import { expenses } from "@/db/schema";
 import type { ExpenseRepository } from "./interfaces";
@@ -111,6 +111,18 @@ export function createExpenseRepository(db: Database): ExpenseRepository {
         .where(eq(expenses.userId, userId))
         .groupBy(expenses.currency);
       return rows;
+    },
+
+    async findByUserIdFiltered(userId, from, to, currency) {
+      const conditions = [eq(expenses.userId, userId)];
+      if (from) conditions.push(gte(expenses.date, from));
+      if (to) conditions.push(lte(expenses.date, to));
+      if (currency) conditions.push(eq(expenses.currency, currency.toUpperCase()));
+      const rows = await db
+        .select()
+        .from(expenses)
+        .where(and(...conditions));
+      return rows.map(rowToExpense);
     },
 
     async deleteAll() {

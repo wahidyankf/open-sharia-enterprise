@@ -11,23 +11,18 @@ export const CURRENCY_DECIMALS: Record<SupportedCurrency, number> = {
 };
 
 export const SUPPORTED_UNITS = [
+  "liter",
+  "ml",
   "kg",
   "g",
-  "mg",
+  "km",
+  "meter",
+  "gallon",
   "lb",
   "oz",
-  "l",
-  "ml",
-  "m",
-  "cm",
-  "km",
-  "ft",
-  "in",
-  "unit",
-  "pcs",
-  "dozen",
-  "box",
-  "pack",
+  "mile",
+  "piece",
+  "hour",
 ] as const;
 export type SupportedUnit = (typeof SUPPORTED_UNITS)[number];
 

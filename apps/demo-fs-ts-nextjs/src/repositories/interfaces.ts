@@ -55,6 +55,12 @@ export interface ExpenseRepository {
   delete(id: string): Promise<void>;
   listByUserId(userId: string, page: number, size: number): Promise<PagedResult<Expense>>;
   summaryByUserId(userId: string): Promise<{ currency: string; totalIncome: string; totalExpense: string }[]>;
+  findByUserIdFiltered(
+    userId: string,
+    from?: string,
+    to?: string,
+    currency?: string,
+  ): Promise<import("@/lib/types").Expense[]>;
   deleteAll(): Promise<void>;
 }
 

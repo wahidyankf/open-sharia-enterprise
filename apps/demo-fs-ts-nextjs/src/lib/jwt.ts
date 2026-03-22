@@ -1,4 +1,4 @@
-import { SignJWT, jwtVerify, exportJWK, generateSecret } from "jose";
+import { SignJWT, jwtVerify, base64url } from "jose";
 import type { Role } from "./types";
 
 export interface JwtClaims {
@@ -64,8 +64,8 @@ let cachedJwks: object | null = null;
 
 export async function getJwks(): Promise<object> {
   if (cachedJwks) return cachedJwks;
-  const key = await generateSecret("HS256");
-  const jwk = await exportJWK(key);
-  cachedJwks = { keys: [{ ...jwk, use: "sig", alg: "HS256" }] };
+  const secret = getSecret();
+  const k = base64url.encode(secret);
+  cachedJwks = { keys: [{ kty: "oct", k, use: "sig", alg: "HS256" }] };
   return cachedJwks;
 }
