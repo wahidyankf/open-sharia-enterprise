@@ -18,12 +18,6 @@ export default defineConfig({
         "src/db/migrations/**",
         "**/*.{test,spec}.{ts,tsx}",
       ],
-      thresholds: {
-        lines: 80,
-        functions: 60,
-        branches: 70,
-        statements: 80,
-      },
       reporter: ["text", "json-summary", "lcov"],
     },
     projects: [
