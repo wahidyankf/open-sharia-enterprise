@@ -197,7 +197,6 @@ src/demo_be_cjpd/
     └── multipart.clj     # File upload parsing
 ```
 
-
 ## Related Documentation
 
 - [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) — Unit, integration, and E2E testing boundaries

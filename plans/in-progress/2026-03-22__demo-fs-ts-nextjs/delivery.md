@@ -5,50 +5,50 @@
 
 ## Phase 1: Project Scaffolding
 
-- [ ] Create `apps/demo-fs-ts-nextjs/` directory
-- [ ] Run `npx create-next-app@16` with TypeScript, App Router, src/ directory
-- [ ] Remove default Next.js boilerplate (placeholder pages, globals.css)
-- [ ] Configure `next.config.ts` with `output: 'standalone'` for Docker builds
-- [ ] Create `project.json` with 7 mandatory Nx targets (codegen, typecheck, lint, build,
-      test:unit, test:quick, test:integration) + `dev`
-- [ ] Set up `tsconfig.json` with strict mode
-- [ ] Install test dependencies: `npm install -D vitest @vitest/coverage-v8 @vitejs/plugin-react
-  jsdom vite-tsconfig-paths @testing-library/react @testing-library/jest-dom
-  @testing-library/user-event`
-- [ ] Set up `vitest.config.ts` with v8 coverage
-- [ ] Add `codegen` target (same openapi-ts config as demo-fe-ts-nextjs)
-- [ ] Run `nx run demo-fs-ts-nextjs:codegen` to verify types generate
-- [ ] Add oxlint config (same as demo-fe-ts-nextjs)
+- [x] Create `apps/demo-fs-ts-nextjs/` directory
+- [x] Initialize Next.js 16 project with TypeScript, App Router, src/ directory
+- [x] Configure `next.config.ts` with `output: 'standalone'` for Docker builds
+- [x] Create `project.json` with 7 mandatory Nx targets (codegen, typecheck, lint, build,
+      test:unit, test:quick, test:integration) + `dev` + `start`
+- [x] Set up `tsconfig.json` with strict mode
+- [x] Install all dependencies via `package.json` (including test deps, Drizzle, jose,
+      TanStack Query, cucumber)
+- [x] Set up `vitest.config.ts` with v8 coverage (80% threshold)
+- [x] Add `codegen` target (same openapi-ts config as demo-fe-ts-nextjs)
+- [x] Run `nx run demo-fs-ts-nextjs:codegen` — verified types generate successfully
+- [x] Verify `nx run demo-fs-ts-nextjs:lint` passes (oxlint)
 
 ## Phase 2: Database Layer
 
-- [ ] Install Drizzle ORM and PostgreSQL driver: `npm install drizzle-orm postgres`
-- [ ] Install Drizzle Kit as dev dependency: `npm install -D drizzle-kit`
-- [ ] Create `src/db/schema.ts` with users, sessions, expenses, attachments tables
-- [ ] Create `drizzle.config.ts` for migration generation
-- [ ] Generate initial SQL migration
-- [ ] Create `src/db/client.ts` — Drizzle client singleton
-- [ ] Verify migration runs against local PostgreSQL
+- [x] Install Drizzle ORM and PostgreSQL driver (included in package.json)
+- [x] Install Drizzle Kit as dev dependency (included in package.json)
+- [x] Create `src/db/schema.ts` with users, refresh_tokens, revoked_tokens, expenses,
+      attachments tables (5 tables, matching existing backend schema)
+- [x] Create `drizzle.config.ts` for migration generation
+- [x] Generate initial SQL migration via `npx drizzle-kit generate`
+- [x] Create `src/db/client.ts` — Drizzle client singleton
+- [ ] Verify migration runs against local PostgreSQL (deferred to Phase 10/11)
 
 ## Phase 3: Repository Layer
 
-- [ ] Create `src/repositories/user-repository.ts` — CRUD for users
-- [ ] Create `src/repositories/session-repository.ts` — token session management
-- [ ] Create `src/repositories/expense-repository.ts` — expense CRUD + pagination
-- [ ] Create `src/repositories/attachment-repository.ts` — file metadata + binary storage
-- [ ] Define repository interfaces for mock injection in tests
+- [x] Create `src/repositories/interfaces.ts` — repository interfaces for all 4 domains
+- [x] Create `src/repositories/user-repository.ts` — Drizzle CRUD for users
+- [x] Create `src/repositories/session-repository.ts` — Drizzle token session management
+- [x] Create `src/repositories/expense-repository.ts` — Drizzle expense CRUD + pagination
+- [x] Create `src/repositories/attachment-repository.ts` — Drizzle file metadata + binary
 
 ## Phase 4: Service Layer
 
-- [ ] Install `jose` for JWT signing/verification: `npm install jose`
-- [ ] Create `src/services/auth-service.ts` — register, login, logout, refresh, JWT
-      signing/verification
-- [ ] Create `src/services/user-service.ts` — profile update, password change,
-      deactivation, admin operations
-- [ ] Create `src/services/expense-service.ts` — expense CRUD, pagination, summary
-- [ ] Create `src/services/attachment-service.ts` — upload, download metadata, delete
-- [ ] Create `src/services/report-service.ts` — P&L report generation
-- [ ] Create `src/lib/jwt.ts` — JWT utilities (sign, verify, decode) using jose library
+- [x] Install `jose` for JWT signing/verification (included in package.json)
+- [x] Create `src/lib/jwt.ts` — JWT utilities (sign, verify, decode) using jose
+- [x] Create `src/lib/password.ts` — scrypt password hashing (Node.js built-in)
+- [x] Create `src/lib/validation.ts` — username, email, password validators
+- [x] Create `src/lib/types.ts` — shared types, constants, ServiceResult pattern
+- [x] Create `src/services/auth-service.ts` — register, login, logout, logout-all, refresh
+- [x] Create `src/services/user-service.ts` — profile, password, deactivation, admin ops
+- [x] Create `src/services/expense-service.ts` — expense CRUD, pagination, summary
+- [x] Create `src/services/attachment-service.ts` — upload, download metadata, delete
+- [x] Create `src/services/report-service.ts` — P&L report generation
 
 ## Phase 5: API Route Handlers
 

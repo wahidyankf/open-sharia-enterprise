@@ -536,7 +536,6 @@ nx run demo-be-e2e:test:e2e
 - Add CI/CD pipeline (registry push, Kubernetes deploy)
 - Add task management endpoints
 
-
 ## Related Documentation
 
 - [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) — Unit, integration, and E2E testing boundaries

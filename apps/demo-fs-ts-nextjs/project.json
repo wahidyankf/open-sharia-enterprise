@@ -1,0 +1,96 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "demo-fs-ts-nextjs",
+  "sourceRoot": "apps/demo-fs-ts-nextjs/src",
+  "projectType": "application",
+  "targets": {
+    "codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx @hey-api/openapi-ts -i specs/apps/demo/contracts/generated/openapi-bundled.yaml -o apps/demo-fs-ts-nextjs/src/generated-contracts -s"
+      },
+      "dependsOn": ["demo-contracts:bundle"],
+      "cache": true,
+      "inputs": ["{workspaceRoot}/specs/apps/demo/contracts/generated/openapi-bundled.yaml"],
+      "outputs": ["{projectRoot}/src/generated-contracts"]
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "next dev --port 3401",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "next build",
+        "cwd": "{projectRoot}"
+      },
+      "outputs": ["{projectRoot}/.next"],
+      "dependsOn": ["codegen"]
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "next start --port 3401",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit",
+        "cwd": "{projectRoot}"
+      },
+      "dependsOn": ["codegen"]
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx oxlint@latest .",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "default",
+        "{projectRoot}/src/generated-contracts/**/*",
+        "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/apps/demo/fe/gherkin/**/*.feature"
+      ],
+      "outputs": ["{projectRoot}/coverage"],
+      "options": {
+        "command": "npx vitest run --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-fs-ts-nextjs/coverage/lcov.info 80)",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "default",
+        "{projectRoot}/src/generated-contracts/**/*",
+        "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature",
+        "{workspaceRoot}/specs/apps/demo/fe/gherkin/**/*.feature"
+      ],
+      "options": {
+        "command": "npx vitest run --project unit",
+        "cwd": "{projectRoot}"
+      },
+      "dependsOn": ["codegen"]
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f docker-compose.integration.yml down -v && docker compose -f docker-compose.integration.yml up --abort-on-container-exit --exit-code-from test-runner --build",
+        "cwd": "apps/demo-fs-ts-nextjs"
+      },
+      "cache": false
+    }
+  },
+  "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:demo-fs"],
+  "implicitDependencies": ["demo-contracts", "rhino-cli"]
+}

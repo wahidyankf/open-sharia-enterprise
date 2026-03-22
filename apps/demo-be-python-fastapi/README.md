@@ -169,7 +169,6 @@ deterministic execution without external services. Integration-level BDD tests
 (`tests/integration/steps/`) use the same `TestClient` approach locally but run against a real
 PostgreSQL instance in Docker.
 
-
 ## Related Documentation
 
 - [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) — Unit, integration, and E2E testing boundaries

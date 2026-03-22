@@ -118,7 +118,6 @@ three-level architecture. It runs the same Godog scenarios against `MemoryStore`
 `-tags=integration` to execute. It is kept for reference but is superseded by `internal/bdd/`
 for coverage purposes.
 
-
 ## Related Documentation
 
 - [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) — Unit, integration, and E2E testing boundaries
