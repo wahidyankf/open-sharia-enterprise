@@ -24,8 +24,13 @@
         "cwd": "libs/golang-commons"
       },
       "cache": true,
-      "inputs": ["{projectRoot}/**/*.go", "{workspaceRoot}/specs/libs/golang-commons/**/*.feature"],
-      "outputs": ["{projectRoot}/cover_spec.out"]
+      "inputs": [
+        "{projectRoot}/**/*.go",
+        "{workspaceRoot}/specs/libs/golang-commons/**/*.feature"
+      ],
+      "outputs": [
+        "{projectRoot}/cover_spec.out"
+      ]
     },
     "lint": {
       "executor": "nx:run-commands",
@@ -42,5 +47,8 @@
       }
     }
   },
-  "tags": ["type:lib", "lang:golang"]
+  "tags": [
+    "type:lib",
+    "lang:golang"
+  ]
 }

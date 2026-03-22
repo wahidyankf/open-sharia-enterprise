@@ -58,7 +58,11 @@
         "command": "npx vitest run --project integration",
         "cwd": "{projectRoot}"
       },
-      "cache": true
+      "cache": true,
+      "inputs": [
+        "default",
+        "{workspaceRoot}/specs/apps/organiclever-web/**/*.feature"
+      ]
     },
     "lint": {
       "executor": "nx:run-commands",
@@ -84,5 +88,5 @@
     }
   },
   "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:organiclever"],
-  "implicitDependencies": []
+  "implicitDependencies": ["rhino-cli"]
 }

@@ -2,7 +2,7 @@
   "name": "elixir-cabbage",
   "sourceRoot": "libs/elixir-cabbage/lib",
   "projectType": "library",
-  "implicitDependencies": ["elixir-gherkin"],
+  "implicitDependencies": ["elixir-gherkin", "rhino-cli"],
   "targets": {
     "test:quick": {
       "executor": "nx:run-commands",

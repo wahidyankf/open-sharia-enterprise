@@ -45,5 +45,11 @@
       }
     }
   },
-  "tags": ["type:lib", "lang:elixir"]
+  "tags": [
+    "type:lib",
+    "lang:elixir"
+  ],
+  "implicitDependencies": [
+    "rhino-cli"
+  ]
 }

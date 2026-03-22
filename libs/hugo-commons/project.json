@@ -43,5 +43,5 @@
     }
   },
   "tags": ["type:lib", "lang:golang"],
-  "implicitDependencies": ["golang-commons"]
+  "implicitDependencies": ["golang-commons", "rhino-cli"]
 }
