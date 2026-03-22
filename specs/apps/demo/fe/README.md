@@ -1,7 +1,7 @@
 # Demo Frontend App Specs
 
 Platform-agnostic Gherkin acceptance specifications for a demo-scale frontend application that
-consumes the [demo-be API](../be/README.md). The spec covers 8 domains with 92 scenarios
+consumes the [demo-be API](../be/README.md). The spec covers 8 domains (see [gherkin/README](./gherkin/README.md) for counts)
 including: authentication forms, session management, user profile, admin panel, expense CRUD,
 financial reporting, file attachment handling, and responsive layout with accessibility.
 
@@ -25,7 +25,7 @@ financial reporting, file attachment handling, and responsive layout with access
 | Perspective | Backend API — HTTP-semantic                      | Frontend UI — user interaction-semantic |
 | Steps       | `sends GET/POST`, `status code`, `response body` | `clicks`, `types`, `sees`, `navigates`  |
 | Background  | `Given the API is running`                       | `Given the app is running`              |
-| Scenarios   | 76 across 13 features                            | 92 across 15 features                   |
+| Scenarios   | See [be/gherkin/](../be/gherkin/README.md)       | See [fe/gherkin/](gherkin/README.md)    |
 | Domains     | 7 domains                                        | 8 domains (7 shared + layout)           |
 
 Both spec sets cover the same functional surface. The frontend app consumes the backend API — step
@@ -53,14 +53,14 @@ frontend via `BASE_URL` env var against `demo-be-java-springboot` on port 8201.
 - Steps test component logic and state management with fully mocked dependencies
 - No DOM rendering, no HTTP calls
 - Coverage is measured here (>=90% line coverage via `rhino-cli test-coverage validate`)
-- All 92 scenarios must pass
+- All shared scenarios must pass
 
 ### E2E Level
 
 - Playwright drives a real browser
 - Frontend runs against `demo-be-java-springboot` with real PostgreSQL
 - Tests verify full user journeys end-to-end
-- All 92 scenarios must pass
+- All shared scenarios must pass
 
 ## Feature File Organization
 

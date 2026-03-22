@@ -76,7 +76,7 @@ Three-level testing strategy with clear separation of concerns.
 
 Runs with `mvn test` (default Maven profile, no `-P` flag needed).
 
-- **Cucumber BDD scenarios** (76 scenarios): All Gherkin feature files from
+- **Cucumber BDD scenarios**: All Gherkin feature files from
   `specs/apps/demo/be/gherkin/` run against an in-process Vert.x HTTP server
   backed by in-memory repositories (ConcurrentHashMap). Step definitions live in
   `src/test/java/.../unit/steps/`. Runner: `UnitCucumberTest.java`.
@@ -112,3 +112,12 @@ Runs Playwright against any backend implementation. See `apps/demo-be-e2e/`.
 | `nx run demo-be-java-vertx:test:unit`                  | Unit only       | Fast    | Yes    |
 | `nx run demo-be-java-vertx:test:integration`           | Docker + PG     | Slow    | No     |
 | `nx run demo-be-e2e:test:e2e --app=demo-be-java-vertx` | Full E2E        | Slowest | No     |
+
+
+## Related Documentation
+
+- [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) — Unit, integration, and E2E testing boundaries
+- [Code Coverage Reference](../../docs/reference/re__code-coverage.md) — Coverage tools, thresholds, and local vs Codecov
+- [Project Dependency Graph](../../docs/reference/re__project-dependency-graph.md) — Nx dependency visualization
+- [Backend Gherkin Specs](../../specs/apps/demo/be/gherkin/README.md) — Shared feature files (source of truth)
+- [OpenAPI Contract](../../specs/apps/demo/contracts/README.md) — API contract and codegen

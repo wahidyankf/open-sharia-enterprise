@@ -88,14 +88,14 @@ This project follows a three-level test strategy that separates concerns by exec
 - Location: `tests/unit/` (pure function tests) and `tests/unit/steps/` (BDD step definitions)
 - Database: SQLite shared-cache in-memory (no external services required)
 - Coverage: Measures ≥90% line coverage from unit tests alone
-- Includes all 76 Gherkin scenarios via pytest-bdd with `TestClient` + SQLite override
+- Includes all shared Gherkin scenarios via pytest-bdd with `TestClient` + SQLite override
 - Fast, fully deterministic, safe to cache
 
 ### Level 2: Integration tests (`pytest -m integration`, local)
 
 - Location: `tests/integration/steps/`
 - Database: SQLite shared-cache in-memory (same as unit level, but for clarity)
-- Includes all 76 Gherkin scenarios via pytest-bdd with `TestClient` + SQLite override
+- Includes all shared Gherkin scenarios via pytest-bdd with `TestClient` + SQLite override
 - Identical functional coverage to level 1; distinguishes test intent
 
 ### Level 3: Docker integration tests (`nx run demo-be-python-fastapi:test:integration`)
@@ -161,10 +161,19 @@ uv run coverage lcov -o coverage/lcov.info
 
 ## Gherkin BDD Tests
 
-Tests consume the shared `specs/apps/demo/be/gherkin/` feature files (76 scenarios across 13
-features) using **pytest-bdd**.
+Tests consume the shared [`specs/apps/demo/be/gherkin/`](../../specs/apps/demo/be/gherkin/README.md)
+feature files using **pytest-bdd**.
 
 Unit-level BDD tests (`tests/unit/steps/`) use `TestClient` backed by SQLite in-memory for fast,
 deterministic execution without external services. Integration-level BDD tests
 (`tests/integration/steps/`) use the same `TestClient` approach locally but run against a real
 PostgreSQL instance in Docker.
+
+
+## Related Documentation
+
+- [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) — Unit, integration, and E2E testing boundaries
+- [Code Coverage Reference](../../docs/reference/re__code-coverage.md) — Coverage tools, thresholds, and local vs Codecov
+- [Project Dependency Graph](../../docs/reference/re__project-dependency-graph.md) — Nx dependency visualization
+- [Backend Gherkin Specs](../../specs/apps/demo/be/gherkin/README.md) — Shared feature files (source of truth)
+- [OpenAPI Contract](../../specs/apps/demo/contracts/README.md) — API contract and codegen

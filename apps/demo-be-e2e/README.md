@@ -145,8 +145,11 @@ The scenario "Anonymous health check does not expose component details" validate
 in the base Spring config. If the backend runs with the dev profile (`show-details: always`),
 this scenario will fail — which is expected, as E2E tests validate production-like behavior.
 
-## Related
+## Related Documentation
 
-- [demo-be-java-springboot](../demo-be-java-springboot/README.md) — The backend being tested
-- [specs/apps/demo/be/gherkin](../../specs/apps/demo/be/gherkin/) — Gherkin feature files (source of truth)
-- [Playwright docs](../../docs/explanation/software-engineering/automation-testing/tools/playwright/README.md) — Playwright standards for this project
+- [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) — Unit, integration, and E2E testing boundaries
+- [Code Coverage Reference](../../docs/reference/re__code-coverage.md) — Coverage tools, thresholds, and local vs Codecov
+- [Project Dependency Graph](../../docs/reference/re__project-dependency-graph.md) — Nx dependency visualization
+- [Backend Gherkin Specs](../../specs/apps/demo/be/gherkin/README.md) — Shared feature files (source of truth)
+- [OpenAPI Contract](../../specs/apps/demo/contracts/README.md) — API contract and codegen
+- [Playwright docs](../../docs/explanation/software-engineering/automation-testing/tools/playwright/README.md) — Playwright standards

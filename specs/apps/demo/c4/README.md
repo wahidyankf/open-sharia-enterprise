@@ -72,7 +72,7 @@ All implementations conform to a single OpenAPI 3.1 specification:
 All implementations consume shared Gherkin feature files. Backend and frontend
 have separate spec trees with different domain coverage.
 
-### Backend Gherkin — 14 features, 82 scenarios
+### Backend Gherkin
 
 **Location**: [`specs/apps/demo/be/gherkin/`](../be/gherkin/README.md)
 
@@ -93,7 +93,7 @@ have separate spec trees with different domain coverage.
 | user-lifecycle   | registration.feature       | 6         |
 | user-lifecycle   | user-account.feature       | 6         |
 
-### Frontend Gherkin — 15 features, 92 scenarios
+### Frontend Gherkin
 
 **Location**: [`specs/apps/demo/fe/gherkin/`](../fe/gherkin/README.md)
 

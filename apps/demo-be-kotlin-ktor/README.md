@@ -111,3 +111,12 @@ which step definitions are used:
 
 JUnit test separation uses `@Tag("integration")` annotations on integration-only test classes,
 excluded via `excludeTags("integration")` in `testUnit`.
+
+
+## Related Documentation
+
+- [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) — Unit, integration, and E2E testing boundaries
+- [Code Coverage Reference](../../docs/reference/re__code-coverage.md) — Coverage tools, thresholds, and local vs Codecov
+- [Project Dependency Graph](../../docs/reference/re__project-dependency-graph.md) — Nx dependency visualization
+- [Backend Gherkin Specs](../../specs/apps/demo/be/gherkin/README.md) — Shared feature files (source of truth)
+- [OpenAPI Contract](../../specs/apps/demo/contracts/README.md) — API contract and codegen

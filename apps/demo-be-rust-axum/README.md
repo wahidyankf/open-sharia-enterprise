@@ -69,7 +69,7 @@ This project uses a three-level test architecture:
 
 ### Unit Tests (`tests/unit/`)
 
-- Run all 76 Gherkin scenarios using cucumber-rs with Tower TestClient
+- Run all shared Gherkin scenarios using cucumber-rs with Tower TestClient
 - Use SQLite in-memory database (no external services required)
 - Also include inline `#[cfg(test)]` unit tests in source modules
 - Run via `cargo test --lib --test unit`
@@ -78,7 +78,7 @@ This project uses a three-level test architecture:
 
 ### Integration Tests (`tests/integration/`)
 
-- Run all 76 Gherkin scenarios against a real PostgreSQL 17 database
+- Run all shared Gherkin scenarios against a real PostgreSQL 17 database
 - Launched via Docker Compose (`docker-compose.integration.yml`)
 - Reads specs from `/specs/apps/demo/be/gherkin/` (mounted volume)
 - Not cached — always runs fresh
@@ -95,3 +95,12 @@ This project uses a three-level test architecture:
 # Runs PostgreSQL + test-runner in Docker, tears down on completion
 nx run demo-be-rust-axum:test:integration
 ```
+
+
+## Related Documentation
+
+- [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) — Unit, integration, and E2E testing boundaries
+- [Code Coverage Reference](../../docs/reference/re__code-coverage.md) — Coverage tools, thresholds, and local vs Codecov
+- [Project Dependency Graph](../../docs/reference/re__project-dependency-graph.md) — Nx dependency visualization
+- [Backend Gherkin Specs](../../specs/apps/demo/be/gherkin/README.md) — Shared feature files (source of truth)
+- [OpenAPI Contract](../../specs/apps/demo/contracts/README.md) — API contract and codegen

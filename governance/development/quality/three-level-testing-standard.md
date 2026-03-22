@@ -134,7 +134,7 @@ Playwright -> HTTP Request -> Running Server -> Real PostgreSQL
 
 ## Spec Consumption Summary
 
-All three levels consume the same 76 Gherkin scenarios from 13 feature files in `specs/apps/demo/be/gherkin/`. The difference is HOW the step definitions execute them:
+All three levels consume the same shared Gherkin scenarios from [`specs/apps/demo/be/gherkin/`](../../../specs/apps/demo/be/gherkin/README.md). The difference is HOW the step definitions execute them:
 
 | Level       | Step Implementation                          | What Varies                |
 | ----------- | -------------------------------------------- | -------------------------- |

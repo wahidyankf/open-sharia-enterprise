@@ -169,9 +169,12 @@ environment variable:
 All BDD tests share the same Gherkin feature files from `specs/apps/demo/be/gherkin/` as
 `demo-be-golang-gin`, `demo-be-elixir-phoenix`, and other backend implementations.
 
-## See Also
+## Related Documentation
 
-- [demo-be-java-springboot](../demo-be-java-springboot/README.md) - Spring Boot implementation (same API)
-- [demo-be-elixir-phoenix](../demo-be-elixir-phoenix/README.md) - Elixir/Phoenix implementation (same API)
-- [demo-be-e2e](../demo-be-e2e/README.md) - Shared E2E tests
-- [Nx Target Standards](../../governance/development/infra/nx-targets.md)
+- [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) — Unit, integration, and E2E testing boundaries
+- [Code Coverage Reference](../../docs/reference/re__code-coverage.md) — Coverage tools, thresholds, and local vs Codecov
+- [Project Dependency Graph](../../docs/reference/re__project-dependency-graph.md) — Nx dependency visualization
+- [Backend Gherkin Specs](../../specs/apps/demo/be/gherkin/README.md) — Shared feature files (source of truth)
+- [OpenAPI Contract](../../specs/apps/demo/contracts/README.md) — API contract and codegen
+- [Nx Target Standards](../../governance/development/infra/nx-targets.md) — Canonical targets and caching rules
+- [demo-be-e2e](../demo-be-e2e/README.md) — Shared E2E tests

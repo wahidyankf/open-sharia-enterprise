@@ -8,7 +8,7 @@ Tests use Playwright to drive a real browser against a running frontend + backen
 
 ## What This Tests
 
-Feature files in `specs/apps/demo/fe/gherkin/` are the source of truth (92 scenarios across 15 features):
+Feature files in [`specs/apps/demo/fe/gherkin/`](../../specs/apps/demo/fe/gherkin/README.md) are the source of truth:
 
 - `health/` - Service health status indicator
 - `authentication/` - Login form, session lifecycle, logout
@@ -128,8 +128,11 @@ apps/demo-fe-e2e/
 └── .features-gen/                 # Auto-generated spec files (gitignored)
 ```
 
-## Related
+## Related Documentation
 
-- [demo-fe-ts-nextjs](../demo-fe-ts-nextjs/README.md) - Next.js frontend implementation
-- [demo-be-golang-gin](../demo-be-golang-gin/README.md) - Backend API
-- [specs/apps/demo/fe/gherkin](../../specs/apps/demo/fe/gherkin/) - Gherkin feature files (source of truth)
+- [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) — Unit, integration, and E2E testing boundaries
+- [Code Coverage Reference](../../docs/reference/re__code-coverage.md) — Coverage tools, thresholds, and local vs Codecov
+- [Project Dependency Graph](../../docs/reference/re__project-dependency-graph.md) — Nx dependency visualization
+- [Frontend Gherkin Specs](../../specs/apps/demo/fe/gherkin/README.md) — Shared feature files (source of truth)
+- [OpenAPI Contract](../../specs/apps/demo/contracts/README.md) — API contract and codegen
+- [Playwright docs](../../docs/explanation/software-engineering/automation-testing/tools/playwright/README.md) — Playwright standards

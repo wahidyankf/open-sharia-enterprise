@@ -267,7 +267,7 @@ Each backend workflow runs its own backend stack — never a different backend.
 2. **`e2e-fe`** (all backends):
    - Starts the full stack: DB + this backend (with `ENABLE_TEST_API=true`) + `demo-fe-ts-nextjs`
    - Waits for the frontend on port 3301
-   - Runs `demo-fe-e2e:test:e2e` (92 scenarios) against the full stack
+   - Runs `demo-fe-e2e:test:e2e` against the full stack
    - Uploads artifact: `playwright-report-fe-e2e-<backend-slug>`
 
 **Why per-backend FE E2E**: Every backend implements the test-only API (`POST /api/v1/test/reset-db`, `POST /api/v1/test/promote-admin`) enabled via `ENABLE_TEST_API=true`. This allows `demo-fe-e2e` to reset database state between scenarios against any backend. Running FE E2E against each backend independently ensures the frontend works correctly with all supported API implementations, not just the reference Go/Gin backend.

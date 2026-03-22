@@ -481,7 +481,7 @@ apps/demo-be-java-springboot/
 
 ## Testing
 
-Three levels of testing consume the same 76 Gherkin scenarios from `specs/apps/demo/be/gherkin/`:
+Three levels of testing consume the shared Gherkin scenarios from [`specs/apps/demo/be/gherkin/`](../../specs/apps/demo/be/gherkin/README.md):
 
 | Level       | Tool                           | Dependencies         | Command                                           | Cached? |
 | ----------- | ------------------------------ | -------------------- | ------------------------------------------------- | ------- |
@@ -502,7 +502,7 @@ Three levels of testing consume the same 76 Gherkin scenarios from `specs/apps/d
 ### Unit Tests
 
 Cucumber JVM with mocked repositories. No database, no Spring Data JPA autoconfiguration.
-All 76 scenarios run against `UnitInMemoryDataStore`:
+All scenarios run against `UnitInMemoryDataStore`:
 
 ```bash
 nx run demo-be-java-springboot:test:unit
@@ -512,7 +512,7 @@ nx run demo-be-java-springboot:test:unit
 ### Integration Tests (PostgreSQL via Docker Compose)
 
 Real PostgreSQL database via `docker-compose.integration.yml`. The `test-runner` service builds
-the app, runs Liquibase migrations, and executes all 76 Cucumber scenarios against real SQL.
+the app, runs Liquibase migrations, and executes all Cucumber scenarios against real SQL.
 Not cached — always re-runs:
 
 ```bash
@@ -535,3 +535,12 @@ nx run demo-be-e2e:test:e2e
 - Add API documentation (Swagger/OpenAPI)
 - Add CI/CD pipeline (registry push, Kubernetes deploy)
 - Add task management endpoints
+
+
+## Related Documentation
+
+- [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) — Unit, integration, and E2E testing boundaries
+- [Code Coverage Reference](../../docs/reference/re__code-coverage.md) — Coverage tools, thresholds, and local vs Codecov
+- [Project Dependency Graph](../../docs/reference/re__project-dependency-graph.md) — Nx dependency visualization
+- [Backend Gherkin Specs](../../specs/apps/demo/be/gherkin/README.md) — Shared feature files (source of truth)
+- [OpenAPI Contract](../../specs/apps/demo/contracts/README.md) — API contract and codegen

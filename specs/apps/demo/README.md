@@ -16,10 +16,10 @@ specs/apps/demo/
 │   └── component-fe.md    # L3 — SPA internals
 ├── be/                    # Backend specs (HTTP-semantic)
 │   ├── README.md
-│   └── gherkin/           # 13 features, 76 scenarios, 7 domains
+│   └── gherkin/           # Backend Gherkin scenarios (see be/gherkin/README)
 └── fe/                    # Frontend specs (UI-semantic)
     ├── README.md
-    └── gherkin/           # 15 features, 92 scenarios, 8 domains
+    └── gherkin/           # Frontend Gherkin scenarios (see fe/gherkin/README)
 ```
 
 ## Backend vs Frontend
@@ -28,7 +28,7 @@ specs/apps/demo/
 | ----------- | ------------------------------------------------ | ------------------------------------------------ |
 | Perspective | HTTP-semantic (GET, POST, status codes)          | UI-semantic (clicks, types, sees)                |
 | Background  | `Given the API is running`                       | `Given the app is running`                       |
-| Scenarios   | 76 across 13 features                            | 92 across 15 features                            |
+| Scenarios   | See [be/gherkin/](./be/gherkin/README.md)        | See [fe/gherkin/](./fe/gherkin/README.md)        |
 | Domains     | 7 domains                                        | 8 domains (7 shared + layout)                    |
 | Consumed by | `apps/demo-be-{lang}-{framework}/` (11 backends) | `apps/demo-fe-{lang}-{framework}/` (5 frontends) |
 
@@ -51,8 +51,8 @@ consumes the backend API.
 ## Spec Artifacts
 
 - **[c4/](./c4/README.md)** — C4 architecture diagrams (context, container, 2 component)
-- **[be/](./be/README.md)** — Backend API specs (13 Gherkin features, 78 scenarios)
-- **[fe/](./fe/README.md)** — Frontend app specs (15 Gherkin features, 92 scenarios)
+- **[be/](./be/README.md)** — Backend API specs ([Gherkin features](./be/gherkin/README.md))
+- **[fe/](./fe/README.md)** — Frontend app specs ([Gherkin features](./fe/gherkin/README.md))
 - **[contracts/](./contracts/README.md)** — OpenAPI 3.1 API contract (request/response shapes,
   code generation, browsable documentation)
 

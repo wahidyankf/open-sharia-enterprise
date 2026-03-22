@@ -131,7 +131,7 @@ graph LR
 ## Gherkin Coverage by Component
 
 Each component above is exercised by Gherkin features from
-[`specs/apps/demo/fe/gherkin/`](../fe/gherkin/README.md) (15 features, 92 scenarios):
+[`specs/apps/demo/fe/gherkin/`](../fe/gherkin/README.md):
 
 | Component                             | Gherkin Domain(s) | Features                                                         |
 | ------------------------------------- | ----------------- | ---------------------------------------------------------------- |
@@ -158,10 +158,10 @@ All 3 frontend implementations generate types from the same OpenAPI 3.1 spec:
 
 ## Testing
 
-| Level       | What                            | Gherkin            | Coverage |
-| ----------- | ------------------------------- | ------------------ | -------- |
-| `test:unit` | Service-layer calls, mocked API | Yes (92 scenarios) | >= 70%   |
-| `test:e2e`  | Full browser via Playwright     | Yes (92 scenarios) | N/A      |
+| Level       | What                            | Gherkin             | Coverage |
+| ----------- | ------------------------------- | ------------------- | -------- |
+| `test:unit` | Service-layer calls, mocked API | Yes (all scenarios) | >= 70%   |
+| `test:e2e`  | Full browser via Playwright     | Yes (all scenarios) | N/A      |
 
 Frontends do not have `test:integration` — the unit/E2E split covers the
 same ground. Unit tests use in-memory service clients (Flutter) or mocked

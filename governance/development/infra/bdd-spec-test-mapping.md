@@ -154,7 +154,7 @@ expects. This will be addressed in a follow-up plan.
 
 ## Demo-be Backend: Three-Level Spec Consumption
 
-All 11 demo-be backends consume the **same 76 Gherkin scenarios** from `specs/apps/demo/be/gherkin/` at three test levels. The feature files are the shared contract — only the step implementations change per level.
+All 11 demo-be backends consume the **same shared Gherkin scenarios** from [`specs/apps/demo/be/gherkin/`](../../../specs/apps/demo/be/gherkin/README.md) at three test levels. The feature files are the shared contract — only the step implementations change per level.
 
 ### Shared Specs
 
@@ -167,7 +167,7 @@ specs/apps/demo/be/gherkin/
 ├── users/
 │   ├── list-users.feature
 │   └── ...
-└── ... (13 feature files, 76 scenarios total)
+└── ... (see gherkin README for full list)
 ```
 
 ### Three Levels
@@ -185,7 +185,7 @@ Unit steps call application service/repository functions directly. All dependenc
 - No Spring context, no HTTP framework, no database connections
 - Steps instantiate services with mocked repositories
 - Coverage is measured at this level (≥90% line coverage)
-- Must run all 76 scenarios
+- Must run all shared scenarios
 
 ### Integration-Level Step Definitions
 
@@ -193,9 +193,9 @@ Integration steps call application service/repository functions directly against
 
 - `docker-compose.integration.yml` starts PostgreSQL + test runner
 - `Dockerfile.integration` contains language runtime + test execution
-- Steps connect to PostgreSQL, run migrations, execute all 76 scenarios
+- Steps connect to PostgreSQL, run migrations, execute all shared scenarios
 - Coverage is NOT measured at this level
-- Must run all 76 scenarios
+- Must run all shared scenarios
 
 ### E2E-Level Step Definitions
 
@@ -203,12 +203,12 @@ E2E tests live in `apps/demo-be-e2e/` (shared Playwright suite). Steps make real
 
 - Runs against any of the 11 backends
 - Tests the full HTTP API contract
-- Must run all 76 scenarios
+- Must run all shared scenarios
 - Managed by `demo-be-e2e` project, not individual backends
 
 ### Validation
 
-To verify all 76 scenarios pass at each level for a given backend:
+To verify all scenarios pass at each level for a given backend:
 
 ```bash
 # Unit tests (mocked dependencies)
@@ -221,7 +221,7 @@ nx run demo-be-{lang}-{framework}:test:integration
 nx run demo-be-e2e:test:e2e
 ```
 
-All three commands must report 76 scenarios passing. The Gherkin feature files serve as the single source of truth — if a scenario fails at any level, the backend is non-compliant.
+All three commands must report all scenarios passing. The Gherkin feature files serve as the single source of truth — if a scenario fails at any level, the backend is non-compliant.
 
 ## Related Documentation
 

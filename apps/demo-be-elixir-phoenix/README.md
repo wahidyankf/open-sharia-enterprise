@@ -150,7 +150,7 @@ deployed stack. See that project's README for details.
 ## BDD Feature Specifications
 
 Feature specifications live in `specs/apps/demo/be/gherkin/` (workspace root) and are shared
-across all demo backend implementations. 76 scenarios across 13 feature domains cover:
+across all demo backend implementations. The scenarios cover:
 
 - Health check
 - User registration
@@ -167,4 +167,13 @@ across all demo backend implementations. 76 scenarios across 13 feature domains 
 - Attachments
 
 Both `test/unit/steps/` and `test/integration/steps/` contain step definitions for all
-76 scenarios — the unit steps use in-memory stores, the integration steps use the real Ecto repo.
+All scenarios are shared — the unit steps use in-memory stores, the integration steps use the real Ecto repo.
+
+
+## Related Documentation
+
+- [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) — Unit, integration, and E2E testing boundaries
+- [Code Coverage Reference](../../docs/reference/re__code-coverage.md) — Coverage tools, thresholds, and local vs Codecov
+- [Project Dependency Graph](../../docs/reference/re__project-dependency-graph.md) — Nx dependency visualization
+- [Backend Gherkin Specs](../../specs/apps/demo/be/gherkin/README.md) — Shared feature files (source of truth)
+- [OpenAPI Contract](../../specs/apps/demo/contracts/README.md) — API contract and codegen

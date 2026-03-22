@@ -11,7 +11,7 @@ Demo Frontend - TanStack Start (TypeScript) implementation consuming the
 - **State Management**: TanStack Query v5
 - **BDD Tool**: @amiceli/vitest-cucumber
 - **Port**: 3301
-- **Specs**: `specs/apps/demo/fe/gherkin/` (92 scenarios across 15 features)
+- **Specs**: [`specs/apps/demo/fe/gherkin/`](../../specs/apps/demo/fe/gherkin/README.md)
 
 ## Prerequisites
 
@@ -65,7 +65,7 @@ apps/demo-fe-ts-tanstack-start/
 
 ## Testing
 
-Two levels of testing consume the 92 Gherkin scenarios from `specs/apps/demo/fe/gherkin/`:
+Two levels of testing consume the shared Gherkin scenarios from [`specs/apps/demo/fe/gherkin/`](../../specs/apps/demo/fe/gherkin/README.md):
 
 | Level | Tool                        | Dependencies | Command                                      | Cached? |
 | ----- | --------------------------- | ------------ | -------------------------------------------- | ------- |
@@ -99,8 +99,11 @@ nx dev demo-fe-ts-tanstack-start
 BASE_URL=http://localhost:3301 nx run demo-fe-e2e:test:e2e
 ```
 
-## Related
+## Related Documentation
 
-- [demo-fe-e2e](../demo-fe-e2e/README.md) - Centralized E2E tests for all demo-fe frontends
-- [demo-be-golang-gin](../demo-be-golang-gin/README.md) - Backend API consumed by this frontend
-- [specs/apps/demo/fe/gherkin](../../specs/apps/demo/fe/gherkin/) - Gherkin feature files (source of truth)
+- [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) — Unit, integration, and E2E testing boundaries
+- [Code Coverage Reference](../../docs/reference/re__code-coverage.md) — Coverage tools, thresholds, and local vs Codecov
+- [Project Dependency Graph](../../docs/reference/re__project-dependency-graph.md) — Nx dependency visualization
+- [Frontend Gherkin Specs](../../specs/apps/demo/fe/gherkin/README.md) — Shared feature files (source of truth)
+- [OpenAPI Contract](../../specs/apps/demo/contracts/README.md) — API contract and codegen
+- [demo-fe-e2e](../demo-fe-e2e/README.md) — Centralized E2E tests for all demo-fe frontends

@@ -68,10 +68,10 @@ Pure clojure.test unit tests plus kaocha-cucumber BDD scenarios that run against
 SQLite database. No external services required.
 
 - `test/demo_be_cjpd/**/*_test.clj` — clojure.test namespaces
-- `test/features/**/*.feature` + `test/step_definitions/` — BDD scenarios (76 total)
+- `test/features/**/*.feature` + `test/step_definitions/` — BDD scenarios
 
 The BDD step definitions start the Pedestal server in-process against a named in-memory SQLite
-database (`:memory:` with shared cache), so all 76 Gherkin scenarios run without Docker.
+database (`:memory:` with shared cache), so all shared Gherkin scenarios run without Docker.
 
 ### Level 2: Quick gate (`test:quick`)
 
@@ -196,3 +196,12 @@ src/demo_be_cjpd/
     ├── error.clj         # Global error handling
     └── multipart.clj     # File upload parsing
 ```
+
+
+## Related Documentation
+
+- [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) — Unit, integration, and E2E testing boundaries
+- [Code Coverage Reference](../../docs/reference/re__code-coverage.md) — Coverage tools, thresholds, and local vs Codecov
+- [Project Dependency Graph](../../docs/reference/re__project-dependency-graph.md) — Nx dependency visualization
+- [Backend Gherkin Specs](../../specs/apps/demo/be/gherkin/README.md) — Shared feature files (source of truth)
+- [OpenAPI Contract](../../specs/apps/demo/contracts/README.md) — API contract and codegen

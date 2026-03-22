@@ -34,7 +34,7 @@ fast with no external dependencies.
 ### Level 2: Unit BDD (`tests/unit/bdd/`)
 
 Cucumber.js BDD scenarios from `specs/apps/demo/be/gherkin/` run against an in-process server
-backed by SQLite in-memory. All 76 Gherkin scenarios execute with no real database required.
+backed by SQLite in-memory. All shared Gherkin scenarios execute with no real database required.
 Deterministic, fast, and safe to cache.
 
 Step definitions in `tests/unit/bdd/steps/` mirror the shared spec. The hooks start a local HTTP
@@ -134,8 +134,11 @@ The application uses Effect TS throughout:
 - **Errors**: `Data.TaggedError` domain errors mapped to HTTP responses
 - **Tests**: Three-level strategy — unit (Vitest), unit BDD (Cucumber+SQLite), integration (Cucumber+PostgreSQL+Docker)
 
-## Related
+## Related Documentation
 
-- [specs/apps/demo/be/](../../specs/apps/demo/be/) — shared Gherkin specifications
-- [apps/demo-be-e2e/](../demo-be-e2e/) — Playwright E2E test suite
-- [infra/dev/demo-be-ts-effect/](../../infra/dev/demo-be-ts-effect/) — Docker Compose dev environment
+- [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) — Unit, integration, and E2E testing boundaries
+- [Code Coverage Reference](../../docs/reference/re__code-coverage.md) — Coverage tools, thresholds, and local vs Codecov
+- [Project Dependency Graph](../../docs/reference/re__project-dependency-graph.md) — Nx dependency visualization
+- [Backend Gherkin Specs](../../specs/apps/demo/be/gherkin/README.md) — Shared feature files (source of truth)
+- [OpenAPI Contract](../../specs/apps/demo/contracts/README.md) — API contract and codegen
+- [demo-be-e2e](../demo-be-e2e/README.md) — Shared E2E test suite

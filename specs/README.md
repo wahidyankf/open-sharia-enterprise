@@ -30,8 +30,8 @@ Acceptance specs belong at the monorepo root rather than inside app directories 
   Cucumber JVM + playwright-bdd)
 - **[organiclever-web/](./apps/organiclever-web/README.md)** — Web landing page specifications (Next.js,
   vitest-cucumber + playwright-bdd)
-- **[demo-be/](./apps/demo-be/README.md)** — Demo backend API specifications
-  (platform-agnostic Gherkin, 13 files, ~73 scenarios)
+- **[demo/](./apps/demo/README.md)** — Demo application specifications
+  (platform-agnostic Gherkin — see [be/gherkin](./apps/demo/be/gherkin/README.md) and [fe/gherkin](./apps/demo/fe/gherkin/README.md) for details)
 - **[rhino-cli/](./apps/rhino-cli/README.md)** — Repository management CLI specifications (Go, godog)
 - **[ayokoding-cli/](./apps/ayokoding-cli/README.md)** — Content automation CLI specifications (Go, godog)
 - **[oseplatform-cli/](./apps/oseplatform-cli/README.md)** — OSE Platform site CLI specifications (Go, godog)
