@@ -107,7 +107,7 @@ produce the LCOV report, then validates coverage with `rhino-cli test-coverage v
 
 **What runs:**
 
-- All 76 Gherkin BDD scenarios re-implemented in `test/unit/steps/` with `@moduletag :unit`
+- All shared Gherkin BDD scenarios re-implemented in `test/unit/steps/` with `@moduletag :unit`
 - Controller error-path tests in `test/demo_be_exph_web/controllers/coverage_test.exs`
 - (`test:quick` only) ExCoveralls LCOV report generated to `cover/lcov.info`
 - (`test:quick` only) `rhino-cli test-coverage validate` enforces ≥90% line coverage
@@ -126,7 +126,7 @@ deterministic with no external service dependencies, making them safe for Nx cac
 
 ### Level 2: Integration Tests (`test:integration`)
 
-Integration tests run the same 76 Gherkin BDD scenarios (`test/integration/steps/`) against
+Integration tests run the same shared Gherkin BDD scenarios (`test/integration/steps/`) against
 a real PostgreSQL 17 database via Docker Compose. These tests are **never cached**.
 
 ```bash
@@ -168,7 +168,6 @@ across all demo backend implementations. The scenarios cover:
 
 Both `test/unit/steps/` and `test/integration/steps/` contain step definitions for all
 All scenarios are shared — the unit steps use in-memory stores, the integration steps use the real Ecto repo.
-
 
 ## Related Documentation
 
