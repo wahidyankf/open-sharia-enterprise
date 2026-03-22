@@ -1,12 +1,11 @@
 use cucumber::{given, then, when};
 
-use crate::world::{get_req, json_req, AppWorld};
+use crate::world::AppWorld;
 
 #[when("alice decodes her access token payload")]
 async fn decode_alice_token(world: &mut AppWorld) {
     let bearer = world.bearer();
-    let req = get_req("/api/v1/tokens/claims", Some(&bearer));
-    world.send(req).await.unwrap();
+    world.svc_get_claims(&bearer).await;
 }
 
 #[then(expr = "the token should contain a non-null {string} claim")]
@@ -21,8 +20,7 @@ async fn token_claim_non_null(world: &mut AppWorld, claim: String) {
 
 #[when("the client sends GET /.well-known/jwks.json")]
 async fn get_jwks(world: &mut AppWorld) {
-    let req = get_req("/.well-known/jwks.json", None);
-    world.send(req).await.unwrap();
+    world.svc_jwks().await;
 }
 
 #[then(expr = "the response body should contain at least one key in the {string} array")]
@@ -41,10 +39,8 @@ async fn jwks_has_keys(world: &mut AppWorld, field: String) {
 
 #[then("alice's access token should be recorded as revoked")]
 async fn token_is_revoked(world: &mut AppWorld) {
-    // Try to use the token to access a protected endpoint
     let token = world.auth_token.clone().unwrap_or_default();
-    let req = get_req("/api/v1/users/me", Some(&format!("Bearer {token}")));
-    world.send(req).await.unwrap();
+    world.svc_get_profile(&format!("Bearer {token}")).await;
     assert_eq!(
         world.last_status, 401,
         "Expected 401 for revoked token, got {}",
@@ -55,13 +51,7 @@ async fn token_is_revoked(world: &mut AppWorld) {
 #[given("alice has logged out and her access token is blacklisted")]
 async fn alice_logged_out_blacklisted(world: &mut AppWorld) {
     let token = world.auth_token.clone().unwrap_or_default();
-    let req = json_req(
-        "POST",
-        "/api/v1/auth/logout",
-        "{}",
-        Some(&format!("Bearer {token}")),
-    );
-    world.send(req).await.unwrap();
+    world.svc_logout(&format!("Bearer {token}")).await;
 }
 
 #[given(
@@ -69,14 +59,11 @@ async fn alice_logged_out_blacklisted(world: &mut AppWorld) {
 )]
 async fn admin_disabled_alice(world: &mut AppWorld) {
     let admin_bearer = world.admin_bearer();
-    let alice_id = world.alice_id.map(|id| id.to_string()).unwrap_or_default();
-    if !alice_id.is_empty() && !admin_bearer.is_empty() {
-        let req = json_req(
-            "POST",
-            &format!("/api/v1/admin/users/{alice_id}/disable"),
-            r#"{"reason": "test"}"#,
-            Some(&admin_bearer),
-        );
-        world.send(req).await.unwrap();
+    let alice_id = match world.alice_id {
+        Some(id) => id,
+        None => return,
+    };
+    if !admin_bearer.is_empty() {
+        world.svc_admin_disable_user(&admin_bearer, alice_id).await;
     }
 }

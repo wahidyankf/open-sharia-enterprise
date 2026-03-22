@@ -1,7 +1,7 @@
 use cucumber::{given, then, when};
 
 use crate::steps::expense_steps::create_expense_helper;
-use crate::world::{get_req, json_req, AppWorld};
+use crate::world::AppWorld;
 
 #[given(
     regex = r#"alice has created an expense with body \{ "amount": "75000", "currency": "IDR", "category": "fuel", "description": "Petrol", "date": "2025-01-15", "type": "expense", "quantity": 50\.5, "unit": "liter" \}"#
@@ -10,7 +10,8 @@ async fn alice_created_liter_expense(world: &mut AppWorld) {
     create_expense_helper(
         world,
         r#"{"amount": "75000", "currency": "IDR", "category": "fuel", "description": "Petrol", "date": "2025-01-15", "type": "expense", "quantity": 50.5, "unit": "liter"}"#,
-    ).await;
+    )
+    .await;
 }
 
 #[given(
@@ -20,7 +21,8 @@ async fn alice_created_gallon_expense(world: &mut AppWorld) {
     create_expense_helper(
         world,
         r#"{"amount": "45.00", "currency": "USD", "category": "fuel", "description": "Gas", "date": "2025-01-15", "type": "expense", "quantity": 10, "unit": "gallon"}"#,
-    ).await;
+    )
+    .await;
 }
 
 #[when(
@@ -28,13 +30,19 @@ async fn alice_created_gallon_expense(world: &mut AppWorld) {
 )]
 async fn alice_create_unsupported_unit(world: &mut AppWorld) {
     let bearer = world.bearer();
-    let req = json_req(
-        "POST",
-        "/api/v1/expenses",
-        r#"{"amount": "10.00", "currency": "USD", "category": "misc", "description": "Cargo", "date": "2025-01-15", "type": "expense", "quantity": 5, "unit": "fathom"}"#,
-        Some(&bearer),
-    );
-    world.send(req).await.unwrap();
+    world
+        .svc_create_expense(
+            &bearer,
+            "10.00",
+            "USD",
+            "misc",
+            "Cargo",
+            "2025-01-15",
+            "expense",
+            Some(5.0),
+            Some("fathom"),
+        )
+        .await;
 }
 
 #[when(
@@ -42,20 +50,19 @@ async fn alice_create_unsupported_unit(world: &mut AppWorld) {
 )]
 async fn alice_create_no_unit(world: &mut AppWorld) {
     let bearer = world.bearer();
-    let req = json_req(
-        "POST",
-        "/api/v1/expenses",
-        r#"{"amount": "25.00", "currency": "USD", "category": "food", "description": "Dinner", "date": "2025-01-15", "type": "expense"}"#,
-        Some(&bearer),
-    );
-    world.send(req).await.unwrap();
-    if world.last_status == 201 {
-        world.last_expense_id = world
-            .last_body
-            .get("id")
-            .and_then(|v| v.as_str())
-            .and_then(|s| uuid::Uuid::parse_str(s).ok());
-    }
+    world
+        .svc_create_expense(
+            &bearer,
+            "25.00",
+            "USD",
+            "food",
+            "Dinner",
+            "2025-01-15",
+            "expense",
+            None,
+            None,
+        )
+        .await;
 }
 
 #[then(expr = "the response body should contain {string} equal to {float}")]
@@ -77,10 +84,9 @@ async fn body_field_equals_float(world: &mut AppWorld, field: String, value: f64
 #[when("alice sends GET /api/v1/expenses/{expenseId}")]
 async fn alice_get_expense_by_id(world: &mut AppWorld) {
     let bearer = world.bearer();
-    let expense_id = world
-        .last_expense_id
-        .map(|id| id.to_string())
-        .unwrap_or_default();
-    let req = get_req(&format!("/api/v1/expenses/{expense_id}"), Some(&bearer));
-    world.send(req).await.unwrap();
+    let expense_id = match world.last_expense_id {
+        Some(id) => id,
+        None => return,
+    };
+    world.svc_get_expense(&bearer, expense_id).await;
 }

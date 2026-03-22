@@ -1,6 +1,6 @@
 use cucumber::{given, then, when};
 
-use crate::world::{get_req, json_req, AppWorld};
+use crate::world::AppWorld;
 
 #[given(expr = "users {string}, {string}, and {string} are registered")]
 async fn register_multiple_users(world: &mut AppWorld, u1: String, u2: String, u3: String) {
@@ -9,11 +9,7 @@ async fn register_multiple_users(world: &mut AppWorld, u1: String, u2: String, u
         (u2.as_str(), format!("{u2}@example.com")),
         (u3.as_str(), format!("{u3}@example.com")),
     ] {
-        let body = format!(
-            r#"{{"username": "{username}", "email": "{email}", "password": "Str0ng#Pass1"}}"#
-        );
-        let req = json_req("POST", "/api/v1/auth/register", &body, None);
-        world.send(req).await.unwrap();
+        world.svc_register(username, &email, "Str0ng#Pass1").await;
         if world.last_status == 201 && username == u1.as_str() {
             world.alice_id = world
                 .last_body
@@ -27,18 +23,15 @@ async fn register_multiple_users(world: &mut AppWorld, u1: String, u2: String, u
 #[when("the admin sends GET /api/v1/admin/users")]
 async fn admin_list_users(world: &mut AppWorld) {
     let bearer = world.admin_bearer();
-    let req = get_req("/api/v1/admin/users", Some(&bearer));
-    world.send(req).await.unwrap();
+    world.svc_admin_list_users(&bearer, None).await;
 }
 
 #[when(regex = r#"the admin sends GET /api/v1/admin/users\?search=alice@example\.com"#)]
 async fn admin_search_users_by_email(world: &mut AppWorld) {
     let bearer = world.admin_bearer();
-    let req = get_req(
-        "/api/v1/admin/users?search=alice@example.com",
-        Some(&bearer),
-    );
-    world.send(req).await.unwrap();
+    world
+        .svc_admin_list_users(&bearer, Some("alice@example.com"))
+        .await;
 }
 
 #[then(expr = "the response body should contain at least one user with {string} equal to {string}")]
@@ -66,57 +59,45 @@ async fn response_has_user_with_field(world: &mut AppWorld, field: String, value
 )]
 async fn admin_disable_alice(world: &mut AppWorld) {
     let bearer = world.admin_bearer();
-    let alice_id = world.alice_id.map(|id| id.to_string()).unwrap_or_default();
-    let req = json_req(
-        "POST",
-        &format!("/api/v1/admin/users/{alice_id}/disable"),
-        r#"{"reason": "Policy violation"}"#,
-        Some(&bearer),
-    );
-    world.send(req).await.unwrap();
+    let alice_id = match world.alice_id {
+        Some(id) => id,
+        None => return,
+    };
+    world.svc_admin_disable_user(&bearer, alice_id).await;
 }
 
 #[given("alice's account has been disabled by the admin")]
 async fn alice_account_disabled_by_admin(world: &mut AppWorld) {
     let bearer = world.admin_bearer();
-    let alice_id = world.alice_id.map(|id| id.to_string()).unwrap_or_default();
-    if !alice_id.is_empty() {
-        let req = json_req(
-            "POST",
-            &format!("/api/v1/admin/users/{alice_id}/disable"),
-            r#"{"reason": "Policy violation"}"#,
-            Some(&bearer),
-        );
-        world.send(req).await.unwrap();
+    let alice_id = match world.alice_id {
+        Some(id) => id,
+        None => return,
+    };
+    if !bearer.is_empty() {
+        world.svc_admin_disable_user(&bearer, alice_id).await;
     }
 }
 
 #[given("alice's account has been disabled")]
 async fn alice_account_disabled_simple(world: &mut AppWorld) {
     let bearer = world.admin_bearer();
-    let alice_id = world.alice_id.map(|id| id.to_string()).unwrap_or_default();
-    if !alice_id.is_empty() && !bearer.is_empty() {
-        let req = json_req(
-            "POST",
-            &format!("/api/v1/admin/users/{alice_id}/disable"),
-            r#"{"reason": "test"}"#,
-            Some(&bearer),
-        );
-        world.send(req).await.unwrap();
+    let alice_id = match world.alice_id {
+        Some(id) => id,
+        None => return,
+    };
+    if !bearer.is_empty() {
+        world.svc_admin_disable_user(&bearer, alice_id).await;
     }
 }
 
 #[when("the admin sends POST /api/v1/admin/users/{alice_id}/enable")]
 async fn admin_enable_alice(world: &mut AppWorld) {
     let bearer = world.admin_bearer();
-    let alice_id = world.alice_id.map(|id| id.to_string()).unwrap_or_default();
-    let req = json_req(
-        "POST",
-        &format!("/api/v1/admin/users/{alice_id}/enable"),
-        "{}",
-        Some(&bearer),
-    );
-    world.send(req).await.unwrap();
+    let alice_id = match world.alice_id {
+        Some(id) => id,
+        None => return,
+    };
+    world.svc_admin_enable_user(&bearer, alice_id).await;
 }
 
 #[then(expr = "alice's account status should be {string}")]
@@ -144,12 +125,11 @@ async fn alice_account_status(world: &mut AppWorld, expected: String) {
 #[when("the admin sends POST /api/v1/admin/users/{alice_id}/force-password-reset")]
 async fn admin_force_password_reset(world: &mut AppWorld) {
     let bearer = world.admin_bearer();
-    let alice_id = world.alice_id.map(|id| id.to_string()).unwrap_or_default();
-    let req = json_req(
-        "POST",
-        &format!("/api/v1/admin/users/{alice_id}/force-password-reset"),
-        "{}",
-        Some(&bearer),
-    );
-    world.send(req).await.unwrap();
+    let alice_id = match world.alice_id {
+        Some(id) => id,
+        None => return,
+    };
+    world
+        .svc_admin_force_password_reset(&bearer, alice_id)
+        .await;
 }
