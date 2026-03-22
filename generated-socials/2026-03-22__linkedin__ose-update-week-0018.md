@@ -8,66 +8,63 @@ Week 0018, Phase 1 Week 6
 
 ---
 
-188 commits. 3 frontends fully Gherkin-compliant. Dependency graph audited to 68 edges.
+Phase 1 Week 6: 3 Frontends, Full Gherkin Compliance, Nx Graph Audit
 
-Last week was 11 backends. This week: the frontend side caught up, and the entire monorepo's dependency graph got a deep audit and fix.
+Last week: 11 backends, 1 frontend, all CI green. This week: 2 new frontends built and deployed, all 3 frontends now fully Gherkin-compliant, and the entire Nx dependency graph audited and fixed.
 
-**Frontend Gherkin Compliance (all 3 now at 100%)**
+**What changed since last week:**
 
-- demo-fe-ts-tanstack-start: Built from scratch this week. TanStack Router SPA with full auth, expenses, admin. All 15 features, 92 scenarios covered in unit tests. 76% coverage.
-- demo-fe-dart-flutterweb: Pure Dart Web app (no Flutter widgets in VM). Built an in-memory ServiceClient that mirrors backend business logic. All 15 features, 92 scenarios. 89% coverage.
-- demo-fe-ts-nextjs: Was already compliant. Unchanged.
+Frontends: 1 -> 3 (all Gherkin-compliant)
 
-**Backend Unit Test Refactoring**
+- demo-fe-ts-tanstack-start (NEW): TanStack Router SPA. Full auth, expenses, admin. All 15 FE features, 92 scenarios covered. 76% coverage.
+- demo-fe-dart-flutterweb (NEW): Pure Dart Web app using package:web (no Flutter widgets in VM). Built an in-memory ServiceClient for BDD tests. All 15 features, 92 scenarios. 89% coverage.
+- demo-fe-ts-nextjs: Was already compliant at 74% coverage. Unchanged.
 
-Refactored 4 backends (Go/Gin, Rust/Axum, Python/FastAPI, TypeScript/Effect) to call service functions directly instead of making HTTP calls in unit tests. Unit tests now match the three-level testing standard: mocked deps, no HTTP, Gherkin-driven.
+Backend Unit Tests: HTTP -> Service-Layer
 
-**Nx Dependency Graph Audit**
+Refactored 4 backends (Go/Gin, Rust/Axum, Python/FastAPI, TypeScript/Effect) to call service functions directly instead of making HTTP calls in unit tests. Now all 11 backends match the three-level testing standard: mocked deps, no HTTP, Gherkin-driven.
 
-Deep audit of all 30 projects and 68 dependency edges:
+Nx Dependency Graph: Unaudited -> 30 projects, 68 edges, 0 cycles
 
-- Added demo-contracts to implicitDependencies for all 18 consumers (14 demo apps + 2 E2E suites + 2 codegen libs)
-- Added rhino-cli to 10 projects that use it for coverage validation but never declared it
-- Added Gherkin spec inputs to all frontend test targets and E2E projects
-- Added elixir-openapi-codegen and clojure-openapi-codegen as explicit dependencies
-- Fixed one circular dependency (golang-commons <-> rhino-cli)
-- Created docs/reference/re\_\_project-dependency-graph.md with full Mermaid diagram
-- Zero circular dependencies. 68 edges verified against actual graph.
+Previously, the Nx graph was missing many real dependencies. Deep audit found and fixed:
 
-**C4 Architecture Docs**
+- demo-contracts was invisible to nx affected (zero dependents). Now 18 projects depend on it.
+- rhino-cli missing from 10 projects that invoke it for coverage validation.
+- Frontend Gherkin spec inputs missing from all 3 frontends and 3 E2E projects.
+- Codegen lib dependencies (elixir-openapi-codegen, clojure-openapi-codegen) undeclared.
+- One circular dependency found and resolved (golang-commons <-> rhino-cli).
+- Created docs/reference/re\_\_project-dependency-graph.md with full Mermaid diagram.
 
-Updated all 5 C4 diagrams (context, container, component-be, component-fe, README) with:
+C4 Architecture Docs: Updated
 
-- All 11 backend and 3 frontend implementations listed with CI workflows
-- Gherkin coverage mapped per component (which features exercise which handlers)
-- API contract integration details
-- Three-level testing standard tables
-- CI pipeline actors added to context diagram
+All 5 C4 diagrams (context, container, component-be, component-fe, README) now include:
 
-**CI Fixes**
+- All 11 backend and 3 frontend implementations with CI workflows
+- Gherkin coverage mapped per component
+- API contract and three-level testing details
+- CI pipeline actors
 
-- Codecov coverage upload for TanStack Start and Flutter Web
-- E2E navigation race condition fix (try/catch + waitForURL)
-- Main CI aligned with all runtime setups
+CI: 1 -> 3 frontend Codecov uploads
 
-**rhino-cli v0.13.0**
+- Added Codecov coverage upload for TanStack Start and Flutter Web.
+- Fixed E2E navigation race condition (try/catch + waitForURL).
 
-- New commands: contracts java-clean-imports, contracts dart-scaffold
-- Coverage improvements plan completed
-- All demo codegen scripts replaced with rhino-cli contracts commands
+rhino-cli: v0.13.0
 
-**AyoKoding Content**
+- New commands: contracts java-clean-imports, contracts dart-scaffold.
+- All demo codegen shell scripts replaced with rhino-cli contracts commands.
 
-- 17 new by-example tutorials (frameworks, algorithms, system design)
-- Go, C, Java examples for data structures and algorithms
+AyoKoding: 17 new by-example tutorials
 
-**By the numbers:**
+Frameworks, algorithms, system design content in Go, C, Java.
 
-- 188 commits
+**Current state:**
+
 - 11 demo backends (10 languages), all CI green, all >= 90% coverage
 - 3 demo frontends, all Gherkin-compliant, all >= 70% coverage
 - 30 Nx projects, 68 dependency edges, 0 circular dependencies
 - 29 Gherkin feature files (14 BE + 15 FE), 174 total scenarios
+- OpenAPI 3.1 contract with codegen for all 14 demo apps
 
 ---
 
