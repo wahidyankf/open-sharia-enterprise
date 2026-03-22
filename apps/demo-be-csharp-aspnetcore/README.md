@@ -144,7 +144,6 @@ apps/demo-be-csharp-aspnetcore/
     └── Integration/     # Reqnroll BDD step definitions (WebApplicationFactory)
 ```
 
-
 ## Related Documentation
 
 - [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) — Unit, integration, and E2E testing boundaries

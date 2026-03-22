@@ -112,7 +112,6 @@ which step definitions are used:
 JUnit test separation uses `@Tag("integration")` annotations on integration-only test classes,
 excluded via `excludeTags("integration")` in `testUnit`.
 
-
 ## Related Documentation
 
 - [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) — Unit, integration, and E2E testing boundaries

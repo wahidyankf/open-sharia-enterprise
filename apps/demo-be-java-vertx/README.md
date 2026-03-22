@@ -113,7 +113,6 @@ Runs Playwright against any backend implementation. See `apps/demo-be-e2e/`.
 | `nx run demo-be-java-vertx:test:integration`           | Docker + PG     | Slow    | No     |
 | `nx run demo-be-e2e:test:e2e --app=demo-be-java-vertx` | Full E2E        | Slowest | No     |
 
-
 ## Related Documentation
 
 - [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) — Unit, integration, and E2E testing boundaries

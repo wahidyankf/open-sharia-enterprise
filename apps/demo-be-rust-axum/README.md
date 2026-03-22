@@ -96,7 +96,6 @@ This project uses a three-level test architecture:
 nx run demo-be-rust-axum:test:integration
 ```
 
-
 ## Related Documentation
 
 - [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) — Unit, integration, and E2E testing boundaries
