@@ -18,7 +18,7 @@ This is the first **fullstack** (`fs`) demo app — all existing demos are eithe
 - Implements the full API surface via Next.js Route Handlers (replacing a separate backend)
 - Implements the full UI via Next.js App Router pages (replacing a separate frontend)
 - Connects directly to PostgreSQL (no API proxy needed — it IS the API)
-- Must pass **both** [BE Gherkin specs](../../specs/apps/demo/be/gherkin/README.md) and [FE Gherkin specs](../../specs/apps/demo/fe/gherkin/README.md)
+- Must pass **both** [BE Gherkin specs](../../../specs/apps/demo/be/gherkin/README.md) and [FE Gherkin specs](../../../specs/apps/demo/fe/gherkin/README.md)
 - Serves everything on a single port (3401)
 
 ---
@@ -239,15 +239,18 @@ apps/demo-fs-ts-nextjs/
 │   │   ├── be-steps/                 # BE Gherkin step definitions
 │   │   │   ├── health-steps.ts
 │   │   │   ├── auth-steps.ts
-│   │   │   ├── user-steps.ts
+│   │   │   ├── token-lifecycle-steps.ts
+│   │   │   ├── registration-steps.ts
+│   │   │   ├── user-account-steps.ts
+│   │   │   ├── security-steps.ts
+│   │   │   ├── token-management-steps.ts
 │   │   │   ├── admin-steps.ts
 │   │   │   ├── expense-steps.ts
 │   │   │   ├── currency-steps.ts
 │   │   │   ├── unit-handling-steps.ts
 │   │   │   ├── reporting-steps.ts
 │   │   │   ├── attachment-steps.ts
-│   │   │   ├── security-steps.ts
-│   │   │   └── token-steps.ts
+│   │   │   └── test-api-steps.ts
 │   │   └── fe-steps/                 # FE Gherkin step definitions
 │   │       ├── health-steps.ts
 │   │       ├── login-steps.ts
