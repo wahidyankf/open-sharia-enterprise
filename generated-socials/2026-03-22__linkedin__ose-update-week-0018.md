@@ -17,11 +17,9 @@ Introduced an OpenAPI 3.1 spec covering all demo endpoints. Codegen now auto-gen
 Frontends: 1 to 3
 Two new frontends built and deployed, all three now fully Gherkin-compliant with shared BDD scenarios.
 
-demo-fe-ts-tanstack-start (NEW) — TanStack Router SPA. Full auth, expenses, admin. 76% test coverage.
-
-demo-fe-dart-flutterweb (NEW) — Pure Dart Web app using package:web. Custom in-memory ServiceClient for BDD tests. 89% coverage.
-
-demo-fe-ts-nextjs — Already compliant at 74%. Unchanged.
+- demo-fe-ts-tanstack-start (NEW) — TanStack Router SPA. Full auth, expenses, admin. 76% test coverage.
+- demo-fe-dart-flutterweb (NEW) — Pure Dart Web app using package:web. Custom in-memory ServiceClient for BDD tests. 89% coverage.
+- demo-fe-ts-nextjs — Already compliant at 74%. Unchanged.
 
 Backend Unit Tests: HTTP to Service-Layer
 Refactored 4 backends (Go/Gin, Rust/Axum, Python/FastAPI, TypeScript/Effect) from HTTP calls to direct service function calls. All 11 backends now match the three-level testing standard: mocked deps, no HTTP, Gherkin-driven.
@@ -37,15 +35,11 @@ AyoKoding
 
 Current state:
 
-11 demo backends (10 languages), all CI green, all at or above 90% coverage
-
-3 demo frontends, all Gherkin-compliant, all at or above 70% coverage
-
-30 Nx projects, 68 dependency edges, 0 circular dependencies
-
-29 Gherkin feature files (14 BE + 15 FE), 170 total scenarios
-
-OpenAPI 3.1 contract with codegen for all 14 demo apps
+- 11 demo backends (10 languages), all CI green, all at or above 90% coverage
+- 3 demo frontends, all Gherkin-compliant, all at or above 70% coverage
+- 30 Nx projects, 68 dependency edges, 0 circular dependencies
+- 29 Gherkin feature files (14 BE + 15 FE), 170 total scenarios
+- OpenAPI 3.1 contract with codegen for all 14 demo apps
 
 Phase 1 Goal: OrganicLever (productivity tracker)
 Stack leaning: Next.js + XState + Effect TS (frontend), F#/Giraffe (backend) — still evaluating
