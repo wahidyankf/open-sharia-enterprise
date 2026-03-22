@@ -16,7 +16,8 @@
 
 ## Phase 2: Database Layer
 
-- [ ] Install Drizzle ORM + drizzle-kit + pg driver
+- [ ] Install Drizzle ORM and PostgreSQL driver: `npm install drizzle-orm postgres`
+- [ ] Install Drizzle Kit as dev dependency: `npm install -D drizzle-kit`
 - [ ] Create `src/db/schema.ts` with users, sessions, expenses, attachments tables
 - [ ] Create `drizzle.config.ts` for migration generation
 - [ ] Generate initial SQL migration
@@ -33,6 +34,7 @@
 
 ## Phase 4: Service Layer
 
+- [ ] Install `jose` for JWT signing/verification: `npm install jose`
 - [ ] Create `src/services/auth-service.ts` — register, login, logout, refresh, JWT
       signing/verification
 - [ ] Create `src/services/user-service.ts` — profile update, password change,
@@ -73,6 +75,7 @@
 
 ## Phase 6: Backend Unit Tests (BE Gherkin)
 
+- [ ] Install BDD test tooling: `npm install -D @amiceli/vitest-cucumber`
 - [ ] Create `test/unit/be-steps/` directory
 - [ ] Create in-memory repository implementations for unit testing
 - [ ] Implement step definitions for all BE Gherkin domains:
@@ -94,6 +97,7 @@
 
 ## Phase 7: Frontend Components and Pages
 
+- [ ] Install TanStack Query: `npm install @tanstack/react-query`
 - [ ] Create `src/lib/auth-provider.tsx` — client-side auth context with token refresh
 - [ ] Create `src/lib/api-client.ts` — fetch wrapper for `/api/v1/*` (no proxy needed)
 - [ ] Create navigation sidebar component (desktop/tablet/mobile responsive)
@@ -112,8 +116,12 @@
 - [ ] Create `src/app/(dashboard)/tokens/page.tsx` — token inspector
 - [ ] Create `src/app/(dashboard)/admin/page.tsx` — admin user management panel
 - [ ] Create `src/app/page.tsx` — home page with health indicator
-- [ ] Implement responsive layout (desktop/tablet/mobile) with sidebar navigation
-- [ ] Add all required ARIA attributes and data-testid values
+- [ ] Add responsive breakpoints: sidebar visible on desktop, icons-only on tablet,
+      hamburger drawer on mobile
+- [ ] Add ARIA attributes: `role="alert"` on errors, `role="alertdialog"` on modals,
+      `role="menu"`/`role="menuitem"` on user dropdown, `aria-label` on icon buttons
+- [ ] Add data-testid attributes: `entry-card`, `health-status`, `pl-chart`,
+      `reset-token`, `token-subject`, `nav-drawer`, `pagination`
 
 ## Phase 8: Frontend Unit Tests (FE Gherkin)
 
@@ -145,8 +153,9 @@
 
 ## Phase 10: Integration Tests
 
+- [ ] Install integration BDD runner: `npm install -D @cucumber/cucumber`
 - [ ] Create `docker-compose.integration.yml` with PostgreSQL 17
-- [ ] Configure integration test BDD runner (`@cucumber/cucumber` with `cucumber.integration.js`)
+- [ ] Configure `cucumber.integration.js` for integration test discovery
 - [ ] Create `test/integration/be-steps/` — same BE Gherkin steps but with real DB
 - [ ] Implement Drizzle-based test setup/teardown (transaction rollback or truncation)
 - [ ] Verify all BE integration tests pass:
