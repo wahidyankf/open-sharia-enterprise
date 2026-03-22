@@ -33,7 +33,7 @@ definitions translate UI actions into API calls and verify the rendered output.
 
 ## Implementations
 
-Frontend implementations consume these 92 Gherkin scenarios at **two test levels**. The feature
+Frontend implementations consume these shared Gherkin scenarios at **two test levels**. The feature
 files are the shared contract — only the step implementations differ per level.
 
 | Implementation      | Framework               | BDD Tool                 | Port |
