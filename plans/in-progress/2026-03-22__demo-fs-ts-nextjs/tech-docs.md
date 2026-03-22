@@ -225,25 +225,58 @@ Note: Both BE and FE Gherkin specs are included as cache inputs since this app c
 
 ```yaml
 services:
-  postgres:
+  demo-fs-ts-nextjs-db:
     image: postgres:17-alpine
+    container_name: demo-fs-ts-nextjs-db
     environment:
-      POSTGRES_USER: demo_fs_nextjs
-      POSTGRES_PASSWORD: demo_fs_nextjs
       POSTGRES_DB: demo_fs_nextjs
+      POSTGRES_USER: ${POSTGRES_USER:-demo_fs_nextjs}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-demo_fs_nextjs}
     ports:
       - "5432:5432"
-  app:
-    build: ../../../apps/demo-fs-ts-nextjs
+    volumes:
+      - demo-fs-ts-nextjs-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-demo_fs_nextjs} -d demo_fs_nextjs"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      - demo-fs-ts-nextjs-network
+
+  demo-fs-ts-nextjs:
+    build:
+      context: ../../../apps/demo-fs-ts-nextjs
+    container_name: demo-fs-ts-nextjs
     ports:
       - "3401:3401"
-    environment:
-      DATABASE_URL: postgresql://demo_fs_nextjs:demo_fs_nextjs@postgres:5432/demo_fs_nextjs
-      APP_JWT_SECRET: dev-secret-key-do-not-use-in-production
-      ENABLE_TEST_API: "true"
-      PORT: 3401
     depends_on:
-      - postgres
+      demo-fs-ts-nextjs-db:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql://demo_fs_nextjs:demo_fs_nextjs@demo-fs-ts-nextjs-db:5432/demo_fs_nextjs
+      - APP_JWT_SECRET=${APP_JWT_SECRET:-change-me-in-dev-only-not-for-production}
+      - ENABLE_TEST_API=true
+      - PORT=3401
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3401/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      - demo-fs-ts-nextjs-network
+
+networks:
+  demo-fs-ts-nextjs-network:
+    driver: bridge
+    name: demo-fs-ts-nextjs-network
+
+volumes:
+  demo-fs-ts-nextjs-db-data:
 ```
 
 **Integration tests** (`apps/demo-fs-ts-nextjs/docker-compose.integration.yml`):
