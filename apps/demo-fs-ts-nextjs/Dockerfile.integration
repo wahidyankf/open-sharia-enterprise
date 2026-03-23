@@ -1,0 +1,27 @@
+FROM node:24-alpine
+
+WORKDIR /app
+
+# Install workspace root deps
+COPY package.json package-lock.json ./
+COPY apps/demo-fs-ts-nextjs/package.json ./apps/demo-fs-ts-nextjs/
+RUN npm ci --ignore-scripts
+
+# Copy source and test files
+COPY apps/demo-fs-ts-nextjs/src/ ./apps/demo-fs-ts-nextjs/src/
+COPY apps/demo-fs-ts-nextjs/test/integration/ ./apps/demo-fs-ts-nextjs/test/integration/
+COPY apps/demo-fs-ts-nextjs/tsconfig.json ./apps/demo-fs-ts-nextjs/
+COPY apps/demo-fs-ts-nextjs/cucumber.integration.js ./apps/demo-fs-ts-nextjs/
+
+# Copy contract spec for codegen
+COPY specs/apps/demo/contracts/generated/ ./specs/apps/demo/contracts/generated/
+
+# Generate contract types
+RUN npx @hey-api/openapi-ts -i specs/apps/demo/contracts/generated/openapi-bundled.yaml -o apps/demo-fs-ts-nextjs/src/generated-contracts -s
+
+WORKDIR /app/apps/demo-fs-ts-nextjs
+
+# Copy gherkin specs into container
+COPY specs/apps/demo/be/gherkin/ /specs/apps/demo/be/gherkin/
+
+CMD sh -c "npx cucumber-js --config cucumber.integration.js 2>&1; EXIT=$?; echo \"EXIT CODE: $EXIT\"; exit $EXIT"

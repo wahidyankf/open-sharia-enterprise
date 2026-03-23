@@ -1,11 +1,11 @@
-import type { Repositories } from "@/repositories/interfaces";
-import type { ServiceResult } from "@/lib/types";
-import { verifyToken, getJwks } from "@/lib/jwt";
-import * as authService from "@/services/auth-service";
-import * as userService from "@/services/user-service";
-import * as expenseService from "@/services/expense-service";
-import * as attachmentService from "@/services/attachment-service";
-import * as reportService from "@/services/report-service";
+import type { Repositories } from "../../src/repositories/interfaces";
+import type { ServiceResult } from "../../src/lib/types";
+import { verifyToken, getJwks } from "../../src/lib/jwt";
+import * as authService from "../../src/services/auth-service";
+import * as userService from "../../src/services/user-service";
+import * as expenseService from "../../src/services/expense-service";
+import * as attachmentService from "../../src/services/attachment-service";
+import * as reportService from "../../src/services/report-service";
 
 export interface ServiceResponse {
   status: number;
@@ -30,7 +30,10 @@ async function extractClaims(repos: Repositories, authHeader: string | null) {
 }
 
 export class ServiceClient {
-  constructor(private repos: Repositories) {}
+  private repos: Repositories;
+  constructor(repos: Repositories) {
+    this.repos = repos;
+  }
 
   async dispatch(
     method: string,

@@ -6,7 +6,9 @@ import { sql } from "drizzle-orm";
 const connectionString =
   process.env.DATABASE_URL ?? "postgresql://demo_fs_nextjs:demo_fs_nextjs@localhost:5432/demo_fs_nextjs";
 
-const queryClient = postgres(connectionString);
+const queryClient = postgres(connectionString, {
+  onnotice: () => {},
+});
 
 export const db = drizzle(queryClient, { schema });
 
