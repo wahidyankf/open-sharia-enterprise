@@ -71,7 +71,7 @@ Feature: User switches language
 Scenario: Switch from English to Indonesian
   Given the user is on /en/learn/overview
   When the user clicks the language switcher and selects Indonesian
-  Then the user should be redirected to /id/belajar/overview
+  Then the user should be redirected to /id/belajar/ikhtisar
   And the sidebar and UI labels should be in Indonesian
 
 Scenario: Default language redirect
@@ -188,8 +188,8 @@ Scenario: Mobile hamburger opens sidebar overlay
 ## Non-Functional Requirements
 
 - **Coverage**: 80% or higher line coverage (Codecov algorithm) on unit tests via Vitest
-  v8 + `rhino-cli test-coverage validate`. Rationale: same as demo-fs-ts-nextjs — fullstack
-  blend of BE (90%+) and FE (70%+)
+  v8 + `rhino-cli test-coverage validate`. Rationale: fullstack blend — backends enforce
+  90%, frontends enforce 70%, 80% is the midpoint for a combined BE+FE codebase
 - **TypeScript**: Strict mode, no `any` escapes in production code
 - **Port**: 3101 (next to current ayokoding-web at 3100)
 - **CI**: 2x daily cron (WIB 06, 18) + manual dispatch (same schedule as other apps)
@@ -242,7 +242,7 @@ Scenario: Bilingual routing works
   When a user visits /en/learn/overview
   Then the page should render in English
   When the user switches to Indonesian
-  Then the URL should change to /id/belajar/overview
+  Then the URL should change to /id/belajar/ikhtisar
   And the UI should be in Indonesian
 
 Scenario: Docker build works

@@ -392,6 +392,7 @@ folder names** but equivalent structure:
 | Human skills  | `en/learn/human/`            | `id/belajar/manusia/`        |
 | Essays        | `en/rants/2023/`             | `id/celoteh/2023/`           |
 | Video content | (none)                       | `id/konten-video/`           |
+| About         | `en/about-ayokoding.md`      | `id/tentang-ayokoding.md`    |
 | Terms         | `en/terms-and-conditions.md` | `id/syarat-dan-ketentuan.md` |
 
 **Important**: Not all content has bilateral equivalents. Indonesian has `konten-video/`
@@ -687,7 +688,7 @@ the `unknown → typed` boundary at runtime (frontmatter parsing, tRPC inputs).
 | Deployment          | Vercel                                    | Same as ayokoding-web + organiclever-web                            |
 | Prod branch         | `prod-ayokoding-web-v2`                   | Vercel listens for pushes (never commit directly)                   |
 | Route architecture  | Route groups `(content)` + `(app)`        | Content isolated; future fullstack routes added without restructure |
-| Content rendering   | On-demand ISR (no `generateStaticParams`) | Scales to thousands of pages without slow builds                    |
+| ISR strategy        | On-demand ISR (no `generateStaticParams`) | Scales to thousands of pages without slow builds                    |
 
 ## Future Extensibility
 
@@ -1122,7 +1123,9 @@ RUN npm ci --ignore-scripts
 # Stage 2: Build
 FROM node:24-alpine AS builder
 WORKDIR /app
+ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=deps /app/node_modules ./node_modules
+COPY package.json ./
 COPY apps/ayokoding-web-v2/ ./apps/ayokoding-web-v2/
 COPY apps/ayokoding-web/content/ ./apps/ayokoding-web/content/
 WORKDIR /app/apps/ayokoding-web-v2
@@ -1132,10 +1135,12 @@ RUN npx next build
 FROM node:24-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV HOSTNAME=0.0.0.0
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
-COPY --from=builder /app/apps/ayokoding-web-v2/public ./public
-COPY --from=builder /app/apps/ayokoding-web-v2/.next/standalone ./
-COPY --from=builder /app/apps/ayokoding-web-v2/.next/static ./apps/ayokoding-web-v2/.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/apps/ayokoding-web-v2/public ./apps/ayokoding-web-v2/public
+COPY --from=builder --chown=nextjs:nodejs /app/apps/ayokoding-web-v2/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/ayokoding-web-v2/.next/static ./apps/ayokoding-web-v2/.next/static
 COPY --from=builder /app/apps/ayokoding-web/content/ ./apps/ayokoding-web/content/
 USER nextjs
 EXPOSE 3101

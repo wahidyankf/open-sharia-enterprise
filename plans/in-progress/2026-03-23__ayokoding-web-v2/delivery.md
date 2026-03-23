@@ -20,7 +20,7 @@
   - [ ] Extract typography scale (font family, heading sizes, body size, line height)
   - [ ] Extract responsive breakpoints (sm, md, lg, xl)
   - [ ] Extract spacing system (padding, margins, gaps)
-- [ ] Create component mapping document (`plans/.../design-mapping.md`):
+- [ ] Create component mapping document (`plans/in-progress/2026-03-23__ayokoding-web-v2/design-mapping.md`):
   - [ ] Map each Hextra element to shadcn/ui + Tailwind equivalent
   - [ ] Document responsive behavior per breakpoint:
     - Desktop (≥1280px): sidebar (250px) + content (max-w-3xl) + TOC (200px)
