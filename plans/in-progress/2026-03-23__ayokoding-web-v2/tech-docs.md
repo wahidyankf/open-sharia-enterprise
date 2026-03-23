@@ -24,7 +24,314 @@ flowchart TD
     style Index fill:#CC78BC,color:#ffffff
 ```
 
-## Content Pipeline
+## Content Consumption (Detailed)
+
+### Content Directory Reference
+
+The app reads markdown files from `apps/ayokoding-web/content/` — the **same directory**
+used by the Hugo site. No content is copied or duplicated. The path is resolved via the
+`CONTENT_DIR` environment variable with a fallback:
+
+```typescript
+// src/server/content/reader.ts
+const CONTENT_DIR = process.env.CONTENT_DIR ?? path.resolve(process.cwd(), "../../apps/ayokoding-web/content");
+```
+
+**Path resolution by environment:**
+
+| Environment       | `CONTENT_DIR`  | Resolves To                                               |
+| ----------------- | -------------- | --------------------------------------------------------- |
+| Dev (`nx dev`)    | Not set        | `../../apps/ayokoding-web/content` (relative to app root) |
+| Vercel            | Not set        | Same relative path (workspace root is build context)      |
+| Docker            | `/app/content` | Content copied into image at build time                   |
+| Integration tests | Not set        | Same relative path (runs from workspace)                  |
+
+### Directory Structure on Disk
+
+```
+apps/ayokoding-web/content/
+├── en/                                    # English content (809 files)
+│   ├── _index.md                          # Root section index (cascade: type: docs)
+│   ├── about-ayokoding.md                 # Top-level static page
+│   ├── terms-and-conditions.md            # Top-level static page
+│   ├── learn/                             # Main learning section
+│   │   ├── _index.md                      # Section index (manual nav list)
+│   │   ├── overview.md                    # Content page
+│   │   └── software-engineering/          # Subdomain
+│   │       ├── _index.md                  # Section index
+│   │       ├── overview.md                # Content page
+│   │       └── programming-languages/     # Category
+│   │           ├── _index.md              # Section index
+│   │           ├── overview.md            # Content page
+│   │           └── golang/               # Tool/language
+│   │               ├── _index.md          # Section index
+│   │               ├── overview.md        # Weight: 100000
+│   │               ├── by-example/        # Content type
+│   │               │   ├── _index.md
+│   │               │   ├── beginner.md    # Level page
+│   │               │   ├── intermediate.md
+│   │               │   └── advanced.md
+│   │               └── in-the-field/      # Content type
+│   │                   ├── _index.md
+│   │                   └── *.md           # Production guides
+│   └── rants/                             # Blog-style essays
+│       ├── _index.md
+│       └── 2023/
+│           ├── _index.md
+│           └── 04/
+│               ├── _index.md
+│               └── my-article-title.md
+└── id/                                    # Indonesian content (124 files)
+    ├── _index.md
+    ├── syarat-dan-ketentuan.md
+    ├── belajar/                           # = en/learn/
+    │   ├── _index.md
+    │   ├── ikhtisar.md                    # = en/learn/overview
+    │   └── manusia/                       # = en/learn/human/ (partial mirror)
+    ├── celoteh/                           # = en/rants/
+    └── konten-video/                      # Indonesian-only (no EN equivalent)
+        └── cerita-programmer/
+```
+
+### File Types and Slug Derivation
+
+The content reader processes two types of markdown files differently:
+
+**1. Section pages (`_index.md`):**
+
+```
+File: content/en/learn/software-engineering/_index.md
+ → locale: "en"
+ → slug: "learn/software-engineering"
+ → isSection: true
+ → children: [overview.md, programming-languages/_index.md, ...]
+```
+
+In Hugo, `_index.md` represents a "branch bundle" — a directory listing page.
+The slug is the directory path (the `_index.md` filename is stripped).
+
+**2. Regular content pages (`*.md`):**
+
+```
+File: content/en/learn/software-engineering/programming-languages/golang/overview.md
+ → locale: "en"
+ → slug: "learn/software-engineering/programming-languages/golang/overview"
+ → isSection: false
+```
+
+The slug is the full file path minus the locale prefix and `.md` extension.
+
+**Slug derivation algorithm:**
+
+```typescript
+function deriveSlug(filePath: string, contentDir: string): { locale: string; slug: string } {
+  // filePath: "/abs/path/content/en/learn/overview.md"
+  // contentDir: "/abs/path/content"
+  const relative = path.relative(contentDir, filePath);
+  // relative: "en/learn/overview.md"
+
+  const parts = relative.split(path.sep);
+  const locale = parts[0]; // "en"
+  const rest = parts.slice(1).join("/"); // "learn/overview.md"
+
+  let slug = rest.replace(/\.md$/, ""); // "learn/overview"
+  slug = slug.replace(/\/_index$/, ""); // strip _index for sections
+  if (slug === "_index") slug = ""; // root _index → empty slug
+
+  return { locale, slug };
+}
+```
+
+### Frontmatter Parsing and Validation
+
+Every markdown file starts with YAML frontmatter. The reader extracts it with
+`gray-matter` and validates it with Zod:
+
+```typescript
+// Actual frontmatter examples from content:
+//
+// Section index (_index.md):
+//   title: "Learn"
+//   date: 2025-07-07T07:20:00+07:00
+//   draft: false
+//   weight: 10
+//
+// Root index (_index.md) — has cascade:
+//   title: "English Content"
+//   date: 2025-03-16T07:20:00+07:00
+//   draft: false
+//   weight: 1
+//   cascade:
+//     type: docs
+//   breadcrumbs: false
+//
+// Content page:
+//   title: Overview
+//   date: 2025-12-03T00:00:00+07:00
+//   draft: false
+//   weight: 100000
+//   description: "Complete learning path from installation to expert mastery..."
+
+const frontmatterSchema = z.object({
+  title: z.string(),
+  date: z.coerce.date().optional(),
+  draft: z.boolean().default(false),
+  weight: z.number().default(0),
+  description: z.string().optional(),
+  tags: z.array(z.string()).default([]),
+  // Hugo-specific fields (consumed but not displayed)
+  layout: z.string().optional(),
+  type: z.string().optional(),
+  cascade: z.record(z.unknown()).optional(),
+  breadcrumbs: z.boolean().optional(),
+  bookCollapseSection: z.boolean().optional(),
+  bookFlatSection: z.boolean().optional(),
+});
+```
+
+**Draft handling**: Files with `draft: true` are excluded from the content index
+(same behavior as Hugo's default). In dev mode, drafts can optionally be included
+via `SHOW_DRAFTS=true` env var.
+
+### Section Index Content (`_index.md` Body)
+
+Section index pages in Hugo contain **manually-written navigation lists** in their
+markdown body (not auto-generated). Example:
+
+```markdown
+---
+title: "Learn"
+weight: 10
+---
+
+- [Overview](/en/learn/overview)
+- [Software Engineering](/en/learn/software-engineering)
+  - [Overview](/en/learn/software-engineering/overview)
+  - [Programming Languages](/en/learn/software-engineering/programming-languages)
+    ...
+```
+
+The Next.js app handles this in two ways:
+
+1. **Render the body as-is**: The markdown body is parsed and rendered like any
+   content page. Internal links like `/en/learn/overview` are rewritten to Next.js
+   routes during the rehype pass.
+2. **Auto-generated child listing**: Additionally, the `content.listChildren`
+   tRPC procedure returns structured child data for programmatic sidebar rendering.
+   The sidebar does NOT parse the `_index.md` body — it uses the content index tree.
+
+### Content Index Build Process
+
+At startup (or first request), the content reader scans the entire content directory
+and builds an in-memory index. This is a one-time operation:
+
+```
+Startup
+  │
+  ├─ 1. Glob all *.md files in content/{en,id}/
+  │     → ~933 files found
+  │
+  ├─ 2. For each file:
+  │     ├─ Read file contents (fs.readFile)
+  │     ├─ Extract frontmatter (gray-matter)
+  │     ├─ Validate frontmatter (Zod)
+  │     ├─ Derive slug + locale
+  │     ├─ Detect _index.md → isSection: true
+  │     ├─ Strip markdown to plain text (for search indexing)
+  │     └─ Store in ContentMeta map: key = "en:learn/overview"
+  │
+  ├─ 3. Build navigation tree:
+  │     ├─ Group by locale
+  │     ├─ Build parent-child hierarchy from slug paths
+  │     ├─ Sort children by weight (ascending)
+  │     └─ Store as TreeNode[] per locale
+  │
+  ├─ 4. Compute prev/next links:
+  │     ├─ For each section, collect non-section children
+  │     ├─ Sort by weight
+  │     └─ Assign prev/next pointers between adjacent pages
+  │
+  └─ 5. Build FlexSearch index:
+        ├─ Create separate index per locale
+        ├─ Add each page: { id: slug, title, content: plainText }
+        └─ ~933 documents indexed in ~200ms
+```
+
+**Lazy singleton**: The index is built once and cached in a module-level variable.
+Subsequent requests read from the cache:
+
+```typescript
+let contentIndex: ContentIndex | null = null;
+
+export async function getContentIndex(): Promise<ContentIndex> {
+  if (!contentIndex) {
+    contentIndex = await buildContentIndex(CONTENT_DIR);
+  }
+  return contentIndex;
+}
+```
+
+**Dev mode hot-reload**: In development, the index is rebuilt when content files
+change (via Next.js file watching or manual refresh). In production (Vercel/Docker),
+the index is built once at startup and remains static.
+
+### Internal Link Resolution
+
+Hugo content uses absolute paths with locale prefix for internal links:
+
+```markdown
+See [Programming Languages Overview](/en/learn/software-engineering/programming-languages/overview)
+```
+
+These paths work as-is in the Next.js app because the URL structure is preserved:
+`/en/learn/...` maps to `app/[locale]/[...slug]/page.tsx`. No link rewriting is
+needed for standard internal links.
+
+However, links to `_index.md` sections (e.g., `/en/learn/software-engineering`)
+need to resolve correctly — the catch-all `[...slug]` route handles this by checking
+if the slug maps to a section page.
+
+### Static Assets
+
+The Hugo site has static assets in `apps/ayokoding-web/static/`:
+
+```
+static/
+├── favicon.ico
+├── favicon.png
+├── robots.txt
+├── js/link-handler.js
+└── images/
+    └── en/takeaways/books/*/book-image.jpeg  (4 files)
+```
+
+These are copied to the Next.js `public/` directory (favicon, robots.txt) or
+handled by the content pipeline (images referenced in markdown). The `link-handler.js`
+is not needed — Next.js handles link navigation natively.
+
+### Bilingual Content Mapping
+
+English and Indonesian content live in separate directory trees with **different
+folder names** but equivalent structure:
+
+| Concept       | English Path                 | Indonesian Path              |
+| ------------- | ---------------------------- | ---------------------------- |
+| Learning root | `en/learn/`                  | `id/belajar/`                |
+| Overview page | `en/learn/overview.md`       | `id/belajar/ikhtisar.md`     |
+| Human skills  | `en/learn/human/`            | `id/belajar/manusia/`        |
+| Essays        | `en/rants/2023/`             | `id/celoteh/2023/`           |
+| Video content | (none)                       | `id/konten-video/`           |
+| Terms         | `en/terms-and-conditions.md` | `id/syarat-dan-ketentuan.md` |
+
+**Important**: Not all content has bilateral equivalents. Indonesian has `konten-video/`
+with no English counterpart. English has extensive `learn/software-engineering/`
+content that Indonesian mirrors only partially (`belajar/manusia/` only).
+
+The tRPC API handles each locale independently — there is no requirement that a slug
+exists in both locales. The language switcher checks if a corresponding page exists
+in the target locale and falls back to the locale's root page if not.
+
+## Content Pipeline (Rendering)
 
 ```
 Markdown File (apps/ayokoding-web/content/en/learn/...)
@@ -56,14 +363,27 @@ pattern and transforms it to a structured HTML node that maps to a React compone
 | `{{< callout type="info" >}}`    | `<Callout variant="info">`                   |
 | `{{< callout type="tip" >}}`     | `<Callout variant="tip">`                    |
 
-### Content Index
+### Content Caching
 
-At startup, the app scans all markdown files and builds two in-memory structures:
+Parsed HTML is cached in-memory after first render to avoid re-parsing on subsequent
+requests. The cache key is `"${locale}:${slug}"`:
 
-1. **Content Map** (`Map<string, ContentMeta>`): slug → metadata (title, weight,
-   description, date, tags, children, locale). Used for navigation tree and page lookups.
-2. **Search Index** (FlexSearch): Full-text index of title + content per locale.
-   Rebuilt on startup. ~933 documents indexed.
+```typescript
+const htmlCache = new Map<string, { html: string; headings: Heading[] }>();
+
+export async function getRenderedContent(locale: string, slug: string) {
+  const key = `${locale}:${slug}`;
+  if (htmlCache.has(key)) return htmlCache.get(key)!;
+
+  const raw = await readContentFile(locale, slug);
+  const result = await parseMarkdown(raw.content);
+  htmlCache.set(key, result);
+  return result;
+}
+```
+
+In production, this cache persists for the lifetime of the server process.
+In dev mode, the cache is invalidated on file changes.
 
 ## Project Structure
 
