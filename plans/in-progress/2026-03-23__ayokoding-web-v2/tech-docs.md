@@ -565,7 +565,7 @@ apps/ayokoding-web-v2/
 │   │   │   └── route.ts                  # RSS 2.0 feed generation
 │   │   ├── robots.ts                     # Generated robots.txt with sitemap URL
 │   │   ├── sitemap.ts                    # Sitemap generation from content index
-│   │   ├── layout.tsx                    # Root layout (providers, fonts, GA4)
+│   │   ├── layout.tsx                    # Root layout (providers, fonts, KaTeX CSS, GA4)
 │   │   └── page.tsx                      # / → redirect to /en
 │   ├── server/                           # Server-side code
 │   │   ├── trpc/

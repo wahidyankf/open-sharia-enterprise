@@ -8,8 +8,8 @@
 - [ ] Start the current Hugo site locally (`nx dev ayokoding-web` on port 3100)
 - [ ] Capture screenshots at 4 breakpoints using Playwright:
   - [ ] **Desktop (1280px)**: Homepage, section index (`/en/learn/`), content page
-        with code blocks, content page with callouts + math + mermaid, search dialog,
-        rants page
+        with code blocks, by-example page with tabs (e.g., golang by-example beginner),
+        content page with callouts + math + mermaid, search dialog, rants page
   - [ ] **Laptop (1024px)**: Same pages — verify TOC hidden, sidebar still visible
   - [ ] **Tablet (768px)**: Same pages — verify sidebar behavior
   - [ ] **Mobile (375px)**: Same pages — verify hamburger menu, collapsed layout
@@ -67,6 +67,7 @@
       `rehype-katex`, `rehype-slug`, `rehype-autolink-headings`,
       `rehype-stringify`, `gray-matter`
 - [ ] Install FlexSearch for search indexing
+- [ ] Install `mermaid` (client-side diagram rendering in mermaid.tsx component)
 - [ ] Install `next-themes` (dark/light/system theme toggle)
 - [ ] Install `@next/third-parties` (Google Analytics GA4)
 - [ ] Install test dependencies: `vitest`, `@vitest/coverage-v8`,
@@ -221,6 +222,8 @@
 
 - [ ] Create `src/app/layout.tsx` — root layout:
   - [ ] Import fonts (Inter or system)
+  - [ ] Import `katex/dist/katex.min.css` (required for KaTeX equation styling —
+        `rehype-katex` generates HTML but CSS must be loaded separately)
   - [ ] Wrap with TRPCProvider + QueryClientProvider
   - [ ] Add `suppressHydrationWarning` to `<html>` element
   - [ ] Add global metadata (site title, description)
@@ -483,7 +486,8 @@ All other content is server-rendered.
   - [ ] `baseURL` from `BASE_URL` env var (default `http://localhost:3101`)
 - [ ] Create `apps/ayokoding-web-v2-fe-e2e/tsconfig.json`
 - [ ] Create test specs consuming `specs/apps/ayokoding-web/fe/gherkin/`:
-  - [ ] `src/tests/content-rendering.spec.ts` — page rendering, code blocks, callouts
+  - [ ] `src/tests/content-rendering.spec.ts` — page rendering, code blocks, callouts,
+        tabs, YouTube embeds, steps, raw HTML
   - [ ] `src/tests/navigation.spec.ts` — sidebar, breadcrumb, TOC, prev/next
   - [ ] `src/tests/search.spec.ts` — search dialog flow
   - [ ] `src/tests/responsive.spec.ts` — breakpoint layout verification
