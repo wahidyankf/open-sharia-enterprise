@@ -65,7 +65,10 @@
 - [ ] Install test dependencies: `vitest`, `@vitest/coverage-v8`,
       `@amiceli/vitest-cucumber`, `@testing-library/react`, `jsdom`
 - [ ] Create `project.json` with 7 mandatory Nx targets (codegen, typecheck, lint, build,
-      test:unit, test:quick, test:integration) + `dev` + `start`
+      test:unit, test:quick, test:integration) + `dev` + `start`:
+  - [ ] Add `implicitDependencies: ["rhino-cli", "ayokoding-cli"]`
+  - [ ] Add `ayokoding-cli links check` to `test:quick` target (validates internal
+        links in shared content directory)
 - [ ] Set up `tsconfig.json` with strict mode
 - [ ] Set up `vitest.config.ts` with v8 coverage (80% threshold)
 - [ ] Copy static assets to `public/`: `favicon.ico`, `favicon.png`, `robots.txt`
@@ -297,7 +300,10 @@ All other content is server-rendered.
 
 ## Phase 10: Coverage Gate
 
-- [ ] Run `nx run ayokoding-web-v2:test:quick` (unit tests + rhino-cli 80%+)
+- [ ] Run `nx run ayokoding-web-v2:test:quick`:
+  - [ ] Unit tests pass (BE + FE Gherkin scenarios)
+  - [ ] Coverage validation passes (rhino-cli 80%+)
+  - [ ] Link validation passes (`ayokoding-cli links check`)
 - [ ] Add coverage exclusions if needed (tRPC HTTP adapter, middleware,
       static params — tested at integration/E2E level)
 - [ ] Ensure `typecheck` and `lint` pass cleanly
