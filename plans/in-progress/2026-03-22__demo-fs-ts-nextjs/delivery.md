@@ -175,9 +175,11 @@
 
 - [x] Start app + PostgreSQL locally with `ENABLE_TEST_API=true`
 - [x] Run `demo-be-e2e` with `BASE_URL=http://localhost:3401` — all 78 BE scenarios pass
-- [ ] Run `demo-fe-e2e` — deferred (requires frontend build in Docker with browser)
+- [x] Run `demo-fe-e2e` with `BASE_URL=http://localhost:3401` and
+      `BACKEND_URL=http://localhost:3401` — all 92 FE scenarios pass
 - [x] Fix E2E compatibility issues (error message format, amount formatting,
-      paginated response fields, password change endpoint, delete status codes)
+      paginated response fields, password change endpoint, delete status codes,
+      Dockerfile static file paths, token storage keys, admin search, dialog focus)
 
 ## Phase 13: CI and Documentation
 
@@ -187,7 +189,7 @@
 - [x] Add Codecov upload for unit test coverage
 - [x] Update `specs/apps/demo/README.md` to mention fullstack category
 - [x] Update CLAUDE.md to include demo-fs-ts-nextjs in Current Apps listing
-- [ ] Verify CI workflow passes on push (requires push to trigger)
+- [x] Verify CI workflow passes (run 23422641622 — unit + BE E2E + FE E2E all green)
 
 ## Validation Checklist
 
@@ -196,10 +198,10 @@
 - [x] `nx run demo-fs-ts-nextjs:lint` succeeds
 - [x] `nx run demo-fs-ts-nextjs:build` succeeds
 - [x] `nx run demo-fs-ts-nextjs:test:unit` — all BE + FE Gherkin scenarios pass (1133 tests)
-- [x] `nx run demo-fs-ts-nextjs:test:quick` — 76.91% >= 75% threshold
+- [x] `nx run demo-fs-ts-nextjs:test:quick` — 76.66% >= 75% threshold
 - [ ] `nx run demo-fs-ts-nextjs:test:integration` — deferred (needs integration runner)
 - [x] `demo-be-e2e` passes — all 78 scenarios pass
-- [ ] `demo-fe-e2e` passes — deferred (needs frontend in Docker with browser)
+- [x] `demo-fe-e2e` passes — all 92 scenarios pass
 - [x] Docker Compose local dev setup works
-- [ ] CI workflow passes (requires push)
+- [x] CI workflow passes (run 23422641622)
 - [x] README.md is complete with related documentation links
