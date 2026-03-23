@@ -5,7 +5,7 @@ import { SignJWT } from "jose";
 import { createTestContext, registerUser, loginUser, getAuth, type TestContext } from "./helpers/test-context";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../specs/apps/demo/be/gherkin/authentication/token-lifecycle.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/demo/be/gherkin/authentication/token-lifecycle.feature"),
 );
 
 const JWT_SECRET = process.env.APP_JWT_SECRET ?? "test-jwt-secret-at-least-32-chars-long!!";

@@ -10,7 +10,7 @@ import * as clientModule from "@/lib/api/client";
 import LoginPage from "@/app/(auth)/login/page";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../../specs/apps/demo/fe/gherkin/authentication/login.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/demo/fe/gherkin/authentication/login.feature"),
 );
 
 const mockPush = vi.fn();
