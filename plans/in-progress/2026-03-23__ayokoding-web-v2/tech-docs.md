@@ -615,6 +615,51 @@ apps/ayokoding-web-v2-fe-e2e/            # Frontend E2E (Playwright browser)
 └── project.json
 ```
 
+## End-to-End Type Safety
+
+Type safety flows from content files through tRPC to the React UI with **zero
+unsafe casts**. Every boundary is validated by Zod.
+
+```
+Markdown File
+  │
+  ├─ gray-matter → raw object
+  │                    │
+  │           Zod frontmatterSchema.parse()  ← runtime validation
+  │                    │
+  │                    ▼
+  │              ContentMeta (typed)
+  │
+  ├─ tRPC procedure (input validated by Zod)
+  │         │
+  │         ▼
+  │   ContentPage (typed output schema)
+  │
+  └─ React Server Component
+            │
+            ├─ tRPC server caller → fully typed return
+            │   (no HTTP, direct function call)
+            │
+            └─ tRPC React Query hooks → auto-inferred types
+                (search only, client-side)
+```
+
+**Type safety enforcement points:**
+
+| Layer              | Mechanism                                | What it guarantees                                     |
+| ------------------ | ---------------------------------------- | ------------------------------------------------------ |
+| Frontmatter        | Zod `frontmatterSchema.parse()`          | Every markdown file's metadata is validated at runtime |
+| tRPC inputs        | Zod `.input(z.object({...}))`            | Every API call validates its parameters                |
+| tRPC outputs       | Zod `.output(schema)`                    | Every API response conforms to the declared shape      |
+| tRPC server caller | `createCallerFactory()`                  | RSC calls are fully typed (same types as client)       |
+| tRPC React Query   | `@trpc/tanstack-react-query`             | `useQuery` returns auto-inferred types from router     |
+| TypeScript         | `strict: true`, no `any`                 | Compile-time safety across entire codebase             |
+| Content types      | `ContentMeta`, `ContentPage`, `TreeNode` | Typed interfaces shared between server and client      |
+
+**No `any` allowed**: Requirements explicitly prohibit `any` escapes in production
+code. TypeScript strict mode catches implicit `any` at compile time. Zod handles
+the `unknown → typed` boundary at runtime (frontmatter parsing, tRPC inputs).
+
 ## Design Decisions
 
 | Decision            | Choice                                    | Reason                                                              |

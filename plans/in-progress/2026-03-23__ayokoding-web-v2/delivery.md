@@ -64,6 +64,7 @@
       test:unit, test:quick, test:integration) + `dev` + `start`
 - [ ] Set up `tsconfig.json` with strict mode
 - [ ] Set up `vitest.config.ts` with v8 coverage (80% threshold)
+- [ ] Copy static assets to `public/`: `favicon.ico`, `favicon.png`, `robots.txt`
 - [ ] Configure oxlint for linting
 - [ ] Verify `nx run ayokoding-web-v2:lint` passes
 - [ ] Verify `nx run ayokoding-web-v2:typecheck` passes
@@ -238,6 +239,9 @@ grows (933+ files and counting).
 - [ ] Create `src/components/content/code-block.tsx` — server-rendered syntax highlighting
 - [ ] Create `src/components/content/mermaid.tsx` — client-side Mermaid renderer
       (only interactive component on content pages, uses `"use client"`)
+- [ ] Create `src/app/[locale]/(content)/error.tsx` — error boundary for content
+      rendering failures (`"use client"`, shows friendly error message)
+- [ ] Create `src/app/[locale]/(content)/not-found.tsx` — custom 404 for invalid slugs
 - [ ] Add `generateMetadata` for SEO (Open Graph, Twitter Cards, hreflang, canonical)
 - [ ] Add JSON-LD structured data (Article/WebSite schema)
 - [ ] Add sitemap generation (`app/sitemap.ts`) — reads content index, no full build
