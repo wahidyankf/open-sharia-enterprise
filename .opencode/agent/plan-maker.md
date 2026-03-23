@@ -7,11 +7,14 @@ tools:
   glob: true
   grep: true
   read: true
+  webfetch: true
+  websearch: true
   write: true
 skills:
   - docs-applying-content-quality
   - plan-writing-gherkin-criteria
   - plan-creating-project-plans
+  - docs-validating-factual-accuracy
 ---
 
 # Plan Maker Agent
@@ -20,7 +23,7 @@ skills:
 
 - **Role**: Writer (blue)
 - **Created**: 2025-12-28
-- **Last Updated**: 2026-01-03
+- **Last Updated**: 2026-03-23
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
@@ -68,14 +71,6 @@ Read and understand user requirements:
 
 ```bash
 # Read existing docs
-
-**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
-
-- Advanced reasoning to create comprehensive project plans
-- Sophisticated plan generation with requirements and delivery checklists
-- Deep understanding of Gherkin acceptance criteria
-- Complex decision-making for plan structure and organization
-- Multi-step planning workflow orchestration
 Read AGENTS.md
 Glob docs/**/*.md
 Grep "relevant topics"
@@ -92,14 +87,6 @@ Clarify with user if needed:
 
 ```bash
 # Create plan folder with date prefix
-
-**Model Selection Justification**: This agent uses `model: sonnet` because it requires:
-
-- Advanced reasoning to create comprehensive project plans
-- Sophisticated plan generation with requirements and delivery checklists
-- Deep understanding of Gherkin acceptance criteria
-- Complex decision-making for plan structure and organization
-- Multi-step planning workflow orchestration
 mkdir -p plans/in-progress/YYYY-MM-DD-project-identifier
 ```
 
@@ -182,3 +169,16 @@ See [Trunk Based Development Convention](../../governance/development/workflow/t
 - `plan-fixer` - Fixes plan issues
 
 **Remember**: Good plans are executable blueprints, not vague intentions. Make them specific, structured, and actionable.
+
+## Factual Accuracy Verification
+
+When creating plans that reference specific technologies, versions, APIs, or tools:
+
+1. **Verify claims via WebSearch/WebFetch** before writing them into the plan
+2. **Check version compatibility** — confirm library versions work together (e.g., tRPC v11 + Zod v3, shiki 1.x + rehype-pretty-code)
+3. **Validate command syntax** — confirm CLI commands, flags, and options are current
+4. **Confirm API signatures** — verify function names, parameters, and return types against official docs
+5. **Check deprecation status** — ensure recommended packages are not deprecated or renamed
+6. **Document verification** — when a claim is verified, note it in the plan (e.g., "Validated Dependencies" table)
+
+Use the `docs-validating-factual-accuracy` Skill for systematic verification methodology.

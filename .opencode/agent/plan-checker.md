@@ -6,11 +6,14 @@ tools:
   glob: true
   grep: true
   read: true
+  webfetch: true
+  websearch: true
   write: true
 skills:
   - docs-applying-content-quality
   - plan-writing-gherkin-criteria
   - plan-creating-project-plans
+  - docs-validating-factual-accuracy
   - repo-generating-validation-reports
   - repo-assessing-criticality-confidence
   - repo-applying-maker-checker-fixer
@@ -22,7 +25,7 @@ skills:
 
 - **Role**: Checker (green)
 - **Created**: 2025-12-28
-- **Last Updated**: 2026-01-03
+- **Last Updated**: 2026-03-23
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
@@ -157,3 +160,35 @@ Update status to "Complete", add summary statistics and prioritized recommendati
 - `plan-fixer` - Fixes plan issues
 
 **Remember**: Good validation identifies issues early, before execution. Be thorough, specific, and constructive.
+
+## Factual Accuracy Validation (Step 4b — NEW)
+
+After validating technical documentation (Step 4), verify factual claims using web tools:
+
+### What to Verify
+
+1. **Dependency versions** — confirm packages exist at specified versions, check for deprecation
+2. **API compatibility** — verify libraries work together (e.g., tRPC v11 + Zod v3)
+3. **Command syntax** — confirm CLI commands and flags are current
+4. **Platform behavior** — verify claimed behavior (e.g., "Next.js serves `app/robots.ts` over `public/robots.txt`")
+5. **Configuration options** — confirm config keys and values are valid for specified versions
+
+### How to Verify
+
+Use `docs-validating-factual-accuracy` Skill methodology:
+
+- **WebSearch** for version compatibility, deprecation notices, breaking changes
+- **WebFetch** official docs for API signatures, config options, behavior claims
+- Classify each claim: `[Verified]`, `[Error]`, `[Outdated]`, `[Unverified]`
+- Report unverified claims as MEDIUM findings (may be correct but cannot confirm)
+
+### Delivery Checklist Granularity Standard
+
+When validating delivery checklists (Step 5), enforce these granularity rules:
+
+- **Each checkbox must be a single, independently verifiable action** — not a paragraph of multiple actions
+- **Multi-action items must be split** — e.g., "Install X, configure Y, and verify Z" should be 3 checkboxes
+- **Every item must have a clear done-state** — how does the executor know it's complete?
+- **Phase transitions must have explicit verification steps** — e.g., "Verify `nx run app:typecheck` passes"
+- **Maximum nesting depth: 2 levels** — top-level checkbox with sub-checkboxes, no deeper
+- **Sub-items should be independently checkable** — completing a parent doesn't auto-complete children
