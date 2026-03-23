@@ -389,6 +389,12 @@ All other content is server-rendered.
 - [ ] Search returns relevant results for both locales
 - [ ] Language switching works correctly
 - [ ] Responsive layout works (desktop, tablet, mobile)
+- [ ] **ayokoding-cli backward compatibility** — Hugo v1 still works:
+  - [ ] `ayokoding-cli nav regen` still generates correct nav for Hugo site
+  - [ ] `ayokoding-cli titles update` still updates titles correctly
+  - [ ] `ayokoding-cli links check` still validates links correctly
+  - [ ] `nx run ayokoding-web:test:quick` still passes (Hugo v1 quality gate)
+  - [ ] `nx run ayokoding-web:build` still succeeds (Hugo build)
 - [ ] CI workflow passes
 - [ ] Vercel deployment succeeds from `prod-ayokoding-web-v2` branch
 - [ ] README.md is complete
