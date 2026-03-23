@@ -5,7 +5,7 @@ import { createTestContext, registerUser, loginUser, getAuth, type TestContext }
 import { MAX_ATTACHMENT_SIZE } from "@/lib/types";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../specs/apps/demo/be/gherkin/expenses/attachments.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/demo/be/gherkin/expenses/attachments.feature"),
 );
 
 async function createExpense(ctx: TestContext, username: string, body: Record<string, unknown>): Promise<string> {

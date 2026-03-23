@@ -4,7 +4,7 @@ import { expect } from "vitest";
 import { createTestContext, type TestContext } from "./helpers/test-context";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../specs/apps/demo/be/gherkin/health/health-check.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/demo/be/gherkin/health/health-check.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background }) => {

@@ -4,7 +4,7 @@ import { expect } from "vitest";
 import { createTestContext, registerUser, type TestContext } from "./helpers/test-context";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../specs/apps/demo/be/gherkin/authentication/password-login.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/demo/be/gherkin/authentication/password-login.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background }) => {

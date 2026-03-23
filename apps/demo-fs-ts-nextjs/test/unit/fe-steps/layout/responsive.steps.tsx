@@ -12,7 +12,7 @@ import * as reportsApi from "@/lib/api/reports";
 import * as attachmentsApi from "@/lib/api/attachments";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../../specs/apps/demo/fe/gherkin/layout/responsive.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/demo/fe/gherkin/layout/responsive.feature"),
 );
 
 const mockPush = vi.fn();

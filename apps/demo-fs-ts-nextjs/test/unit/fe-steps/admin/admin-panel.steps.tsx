@@ -8,7 +8,7 @@ import { vi, expect } from "vitest";
 import * as adminApi from "@/lib/api/admin";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../../specs/apps/demo/fe/gherkin/admin/admin-panel.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/demo/fe/gherkin/admin/admin-panel.feature"),
 );
 
 const mockPush = vi.fn();

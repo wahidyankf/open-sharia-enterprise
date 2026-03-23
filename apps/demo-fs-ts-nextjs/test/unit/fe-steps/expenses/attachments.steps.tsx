@@ -10,7 +10,7 @@ import * as attachmentsApi from "@/lib/api/attachments";
 import * as usersApi from "@/lib/api/users";
 
 const feature = await loadFeature(
-  path.resolve(__dirname, "../../../../../../../specs/apps/demo/fe/gherkin/expenses/attachments.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/demo/fe/gherkin/expenses/attachments.feature"),
 );
 
 const mockPush = vi.fn();
