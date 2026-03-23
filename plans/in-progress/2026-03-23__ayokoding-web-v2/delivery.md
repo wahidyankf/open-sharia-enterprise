@@ -181,40 +181,72 @@
 - [ ] Create `src/lib/trpc/provider.tsx` — TRPCProvider + QueryClientProvider wrapper
 - [ ] Verify tRPC API responds at `/api/trpc/meta.health`
 
-## Phase 5: Frontend Core (Layout & Navigation)
+## Phase 5a: i18n & Routing Foundation
 
-- [ ] Create `src/lib/i18n/config.ts` — locale config, path mappings (en↔id)
-- [ ] Create `src/lib/i18n/translations.ts` — UI string translations (9 keys from Hugo i18n files)
-- [ ] Create `src/lib/i18n/middleware.ts` — locale detection + redirect
-- [ ] Create `src/middleware.ts` — Next.js middleware for locale routing
-- [ ] Create `src/app/layout.tsx` — root layout (fonts, providers, metadata)
-- [ ] Create `src/app/page.tsx` — redirect `/` → `/en`
+- [ ] Create `src/lib/i18n/config.ts` — locale enum (`en`, `id`), segment mappings
+- [ ] Create `src/lib/i18n/translations.ts` — 9 UI string translations from Hugo i18n files
+- [ ] Create `src/lib/i18n/middleware.ts` — locale detection + redirect logic
+- [ ] Create `src/middleware.ts` — Next.js middleware (detect locale, redirect `/` → `/en`)
+- [ ] Create `src/lib/hooks/use-locale.ts` — current locale hook from route params
+- [ ] Verify: navigating to `/` redirects to `/en`
+
+## Phase 5b: Root & Locale Layouts
+
+- [ ] Create `src/app/layout.tsx` — root layout:
+  - [ ] Import fonts (Inter or system)
+  - [ ] Wrap with TRPCProvider + QueryClientProvider
+  - [ ] Add `suppressHydrationWarning` to `<html>` element
+  - [ ] Add global metadata (site title, description)
+- [ ] Create `src/app/page.tsx` — redirect `/` → `/en` (server component)
 - [ ] Create `src/app/[locale]/layout.tsx` — shared locale layout:
-  - [ ] Header component (site title, search trigger, language switcher, theme toggle)
-  - [ ] Footer component (copyright, links)
-  - [ ] Mobile navigation drawer (Sheet component)
-- [ ] Create `src/app/[locale]/(content)/layout.tsx` — content-specific layout:
-  - [ ] Sidebar component (collapsible navigation tree)
-  - [ ] Table of contents (right column)
-  - [ ] Note: `(content)` route group isolates content layout from future `(app)` routes
+  - [ ] Import Header and Footer components
+  - [ ] Wrap children with ThemeProvider (`"use client"` boundary)
+  - [ ] Pass locale to context
+- [ ] Create `src/app/[locale]/(content)/layout.tsx` — content layout:
+  - [ ] Import Sidebar (left) and TOC (right) components
+  - [ ] Three-column grid: sidebar | content | TOC
+  - [ ] Note: `(content)` route group isolates from future `(app)` routes
 - [ ] Create `src/app/[locale]/(app)/.gitkeep` — placeholder for future fullstack routes
-- [ ] Create `src/components/layout/header.tsx`
+
+## Phase 5c: Layout Components
+
+- [ ] Create `src/components/layout/header.tsx`:
+  - [ ] Site title/logo link
+  - [ ] Search trigger button (opens Cmd+K dialog)
+  - [ ] Language switcher dropdown (EN/ID)
+  - [ ] Theme toggle (light/dark/system via next-themes)
+  - [ ] Mobile hamburger button (visible <768px only)
+- [ ] Create `src/components/layout/footer.tsx`:
+  - [ ] Copyright notice
+  - [ ] Open Source Project link (matching current Hugo site)
 - [ ] Create `src/components/layout/sidebar.tsx`:
-  - [ ] Fetch navigation tree via tRPC
-  - [ ] Collapsible sections with weight-based ordering
-  - [ ] Highlight active page
-  - [ ] Responsive: visible on desktop, drawer on mobile
-- [ ] Create `src/components/layout/breadcrumb.tsx`
-- [ ] Create `src/components/layout/toc.tsx` — table of contents from headings
-- [ ] Create `src/components/layout/footer.tsx`
-- [ ] Create `src/components/layout/mobile-nav.tsx` — hamburger drawer
-- [ ] Create `src/components/layout/prev-next.tsx` — bottom prev/next navigation
-- [ ] Create `src/lib/hooks/use-locale.ts` — current locale hook
-- [ ] Add dark/light mode toggle (next-themes):
-  - [ ] Add `suppressHydrationWarning` to `<html>` element in root layout
-  - [ ] `ThemeProvider` is a client component — wrap in `"use client"` boundary
-- [ ] Add responsive breakpoints: desktop (sidebar + TOC), tablet (sidebar),
-      mobile (hamburger)
+  - [ ] Fetch navigation tree via tRPC server caller
+  - [ ] Render collapsible tree sections (weight-ordered)
+  - [ ] Highlight currently active page
+  - [ ] Desktop: persistent 250px left column
+- [ ] Create `src/components/layout/mobile-nav.tsx`:
+  - [ ] shadcn Sheet component (slide-in from left)
+  - [ ] Reuses sidebar tree component inside sheet
+  - [ ] Opens on hamburger button click
+  - [ ] Closes on navigation or escape
+- [ ] Create `src/components/layout/breadcrumb.tsx`:
+  - [ ] Build breadcrumb from slug segments
+  - [ ] Locale-aware labels (using content index titles)
+  - [ ] Truncate with ellipsis on mobile
+- [ ] Create `src/components/layout/toc.tsx`:
+  - [ ] Accept headings array (H2-H4)
+  - [ ] Render as right-side sticky list
+  - [ ] Highlight active heading on scroll (Intersection Observer)
+  - [ ] Hidden on tablet and mobile
+- [ ] Create `src/components/layout/prev-next.tsx`:
+  - [ ] Accept prev/next ContentMeta objects
+  - [ ] Side-by-side on desktop, stacked on mobile
+  - [ ] Show title and section path
+- [ ] Verify responsive behavior at all 4 breakpoints:
+  - [ ] Desktop (≥1280px): sidebar + content + TOC
+  - [ ] Laptop (≥1024px): sidebar + content (TOC hidden)
+  - [ ] Tablet (≥768px): collapsed sidebar + content
+  - [ ] Mobile (<768px): hamburger + full-width content
 
 ## Phase 6: Content Pages (Server-Rendered for SEO)
 
@@ -276,26 +308,49 @@ All other content is server-rendered.
 ## Phase 8: Backend Unit Tests (BE Gherkin)
 
 - [ ] Create `test/unit/be-steps/` directory
-- [ ] Create mock content reader (in-memory content map) for unit testing
-- [ ] Implement step definitions for all BE Gherkin domains:
-  - [ ] content-api.steps.ts — test content.getBySlug, listChildren, getTree
-  - [ ] search-api.steps.ts — test search.query with mock index
-  - [ ] navigation-api.steps.ts — test tree structure and ordering
-  - [ ] i18n-api.steps.ts — test locale-specific content
-  - [ ] health-check.steps.ts — test meta.health
+- [ ] Create `test/unit/be-steps/helpers/` directory
+- [ ] Create `test/unit/be-steps/helpers/mock-content.ts`:
+  - [ ] In-memory content map with 5-10 test pages (mix of sections + content)
+  - [ ] Both `en` and `id` locales represented
+  - [ ] Pages with varying weights for ordering tests
+  - [ ] At least one page with code blocks, callouts, math
+- [ ] Create `test/unit/be-steps/helpers/mock-search-index.ts`:
+  - [ ] In-memory FlexSearch index seeded with mock content
+- [ ] Create `test/unit/be-steps/helpers/test-caller.ts`:
+  - [ ] tRPC caller factory using mock content (no filesystem)
+- [ ] Implement step definitions:
+  - [ ] `content-api.steps.ts` — getBySlug (found, not found, draft), listChildren
+        (weight ordering), getTree (hierarchy)
+  - [ ] `search-api.steps.ts` — query match, locale scope, empty query error, result shape
+  - [ ] `navigation-api.steps.ts` — tree structure, weight ordering, section children
+  - [ ] `i18n-api.steps.ts` — en content, id content, invalid locale
+  - [ ] `health-check.steps.ts` — meta.health returns `{ status: "ok" }`
 - [ ] Verify all BE unit tests pass: `nx run ayokoding-web-v2:test:unit`
 
 ## Phase 9: Frontend Unit Tests (FE Gherkin)
 
 - [ ] Create `test/unit/fe-steps/` directory
-- [ ] Create mock tRPC client for frontend unit tests
-- [ ] Implement step definitions for all FE Gherkin domains:
-  - [ ] content-rendering.steps.ts — test markdown rendering components
-  - [ ] navigation.steps.ts — test sidebar, breadcrumb, TOC, prev/next
-  - [ ] search.steps.ts — test search dialog behavior
-  - [ ] responsive.steps.ts — test responsive layout states
-  - [ ] i18n.steps.ts — test language switcher
-  - [ ] accessibility.steps.ts — test ARIA attributes, keyboard nav
+- [ ] Create `test/unit/fe-steps/helpers/` directory
+- [ ] Create `test/unit/fe-steps/helpers/mock-trpc.ts`:
+  - [ ] Mock tRPC client returning predefined responses
+  - [ ] Mock content.getBySlug → returns test page HTML
+  - [ ] Mock content.getTree → returns test navigation tree
+  - [ ] Mock search.query → returns test search results
+- [ ] Create `test/unit/fe-steps/helpers/render-with-providers.tsx`:
+  - [ ] Test wrapper with TRPCProvider + QueryClientProvider + ThemeProvider
+  - [ ] Configurable locale parameter
+- [ ] Implement step definitions:
+  - [ ] `content-rendering.steps.ts` — markdown HTML rendered, code blocks present,
+        callouts rendered as Alert, math rendered
+  - [ ] `navigation.steps.ts` — sidebar renders tree, breadcrumb shows path,
+        TOC renders headings, prev/next links present
+  - [ ] `search.steps.ts` — dialog opens on Cmd+K, results appear on input,
+        navigation on click, escape closes
+  - [ ] `responsive.steps.ts` — sidebar visible/hidden at breakpoints,
+        hamburger visible/hidden
+  - [ ] `i18n.steps.ts` — language switcher renders, locale changes on click
+  - [ ] `accessibility.steps.ts` — ARIA labels on buttons, keyboard tab order,
+        skip-to-content link
 - [ ] Verify all FE unit tests pass: `nx run ayokoding-web-v2:test:unit`
 
 ## Phase 10: Coverage Gate
@@ -320,58 +375,116 @@ All other content is server-rendered.
 - [ ] Configure `test:integration` Nx target: `npx cucumber-js --config cucumber.integration.js`
 - [ ] Verify all integration tests pass: `nx run ayokoding-web-v2:test:integration`
 
-## Phase 12: Docker, Vercel & Infrastructure
+## Phase 12a: Docker Infrastructure
 
 - [ ] Build standalone output locally and inspect structure:
-  - [ ] Run `next build` with `output: 'standalone'` + `outputFileTracingRoot`
-  - [ ] Verify `server.js` path in `.next/standalone/` (adjust Dockerfile CMD if needed)
-  - [ ] Verify `public/` and `.next/static/` locations for COPY commands
-- [ ] Create `Dockerfile` (multi-stage: deps → build → runtime)
-  - [ ] Copy content files (`apps/ayokoding-web/content/`) into image
-  - [ ] No database needed
-- [ ] Create `infra/dev/ayokoding-web-v2/docker-compose.yml`
-- [ ] Verify app starts correctly via Docker Compose
-- [ ] Verify health check at `http://localhost:3101/api/trpc/meta.health`
-- [ ] Verify content pages render correctly in Docker
+  - [ ] Run `nx build ayokoding-web-v2` (triggers `next build` with standalone)
+  - [ ] Inspect `.next/standalone/` — find exact `server.js` path
+  - [ ] Inspect `.next/static/` — confirm static assets location
+  - [ ] Inspect `public/` — confirm public assets location
+- [ ] Create `apps/ayokoding-web-v2/Dockerfile`:
+  - [ ] Stage 1 (deps): copy workspace + app `package.json`, `npm ci`
+  - [ ] Stage 2 (builder): copy app source + content, `next build`
+  - [ ] Stage 3 (runner): copy standalone + static + public + content
+  - [ ] Set `HOSTNAME=0.0.0.0`, `NEXT_TELEMETRY_DISABLED=1`
+  - [ ] Set `--chown=nextjs:nodejs` on all COPY commands
+  - [ ] Adjust CMD path based on standalone inspection above
+- [ ] Create `infra/dev/ayokoding-web-v2/docker-compose.yml`:
+  - [ ] Set `CONTENT_DIR=/app/apps/ayokoding-web/content`
+  - [ ] Set `PORT=3101`
+  - [ ] Health check: `curl -f http://localhost:3101/api/trpc/meta.health`
+- [ ] Run `docker compose up` from `infra/dev/ayokoding-web-v2/`
+- [ ] Verify health check passes: `curl http://localhost:3101/api/trpc/meta.health`
+- [ ] Verify content page renders: `curl -s http://localhost:3101/en/learn/overview`
+- [ ] Verify no JS-only content: compare Docker output with dev server output
+
+## Phase 12b: Vercel Configuration
+
+- [ ] Configure `next.config.ts` content path resolution:
+  - [ ] `CONTENT_DIR` env var for Docker
+  - [ ] Fallback `../../apps/ayokoding-web/content` for dev + Vercel
 - [ ] Create `apps/ayokoding-web-v2/vercel.json`:
-  - [ ] `installCommand`: `npm install --prefix=../.. --ignore-scripts`
-  - [ ] `ignoreCommand`: only build on `prod-ayokoding-web-v2` branch
-  - [ ] Security headers (X-Content-Type-Options, X-Frame-Options, X-XSS-Protection,
-        Referrer-Policy)
-- [ ] Configure `next.config.ts` content path to work in both Docker (`CONTENT_DIR` env)
-      and Vercel (workspace-relative fallback) environments
+  - [ ] Set `installCommand`: `npm install --prefix=../.. --ignore-scripts`
+  - [ ] Set `ignoreCommand`: only build on `prod-ayokoding-web-v2` branch
+  - [ ] Add security headers: X-Content-Type-Options, X-Frame-Options,
+        X-XSS-Protection, Referrer-Policy
 
-## Phase 13: E2E Test Apps
+## Phase 13a: Backend E2E Test App
 
-- [ ] Create `apps/ayokoding-web-v2-be-e2e/`:
-  - [ ] `project.json` with E2E targets (install, test:e2e, test:e2e:ui)
-  - [ ] `playwright.config.ts` configured for `BASE_URL`
-  - [ ] Test specs consuming `specs/apps/ayokoding-web/be/gherkin/` features
-  - [ ] Tests hit tRPC HTTP endpoints directly
-- [ ] Create `apps/ayokoding-web-v2-fe-e2e/`:
-  - [ ] `project.json` with E2E targets
-  - [ ] `playwright.config.ts` configured for `BASE_URL`
-  - [ ] Test specs consuming `specs/apps/ayokoding-web/fe/gherkin/` features
-  - [ ] Tests use Playwright browser automation
-- [ ] Start app via Docker, run BE E2E — all scenarios pass
-- [ ] Start app via Docker, run FE E2E — all scenarios pass
+- [ ] Create `apps/ayokoding-web-v2-be-e2e/` directory
+- [ ] Create `apps/ayokoding-web-v2-be-e2e/package.json` with Playwright dependency
+- [ ] Create `apps/ayokoding-web-v2-be-e2e/project.json`:
+  - [ ] Tags: `["type:e2e", "platform:playwright", "lang:ts", "domain:ayokoding"]`
+  - [ ] Targets: `install`, `test:e2e`, `test:e2e:ui`, `test:e2e:report`
+- [ ] Create `apps/ayokoding-web-v2-be-e2e/playwright.config.ts`:
+  - [ ] `baseURL` from `BASE_URL` env var (default `http://localhost:3101`)
+- [ ] Create `apps/ayokoding-web-v2-be-e2e/tsconfig.json`
+- [ ] Create test specs consuming `specs/apps/ayokoding-web/be/gherkin/`:
+  - [ ] `src/tests/content-api.spec.ts` — tRPC content procedures via HTTP
+  - [ ] `src/tests/search-api.spec.ts` — tRPC search procedures via HTTP
+  - [ ] `src/tests/navigation-api.spec.ts` — tRPC navigation via HTTP
+  - [ ] `src/tests/health.spec.ts` — health endpoint
+- [ ] Start app via Docker, run BE E2E: `nx run ayokoding-web-v2-be-e2e:test:e2e`
+- [ ] Verify all BE E2E scenarios pass
 
-## Phase 14: CI, Deployment & Documentation
+## Phase 13b: Frontend E2E Test App
+
+- [ ] Create `apps/ayokoding-web-v2-fe-e2e/` directory
+- [ ] Create `apps/ayokoding-web-v2-fe-e2e/package.json` with Playwright dependency
+- [ ] Create `apps/ayokoding-web-v2-fe-e2e/project.json`:
+  - [ ] Tags: `["type:e2e", "platform:playwright", "lang:ts", "domain:ayokoding"]`
+  - [ ] Targets: `install`, `test:e2e`, `test:e2e:ui`, `test:e2e:report`
+- [ ] Create `apps/ayokoding-web-v2-fe-e2e/playwright.config.ts`:
+  - [ ] `baseURL` from `BASE_URL` env var (default `http://localhost:3101`)
+- [ ] Create `apps/ayokoding-web-v2-fe-e2e/tsconfig.json`
+- [ ] Create test specs consuming `specs/apps/ayokoding-web/fe/gherkin/`:
+  - [ ] `src/tests/content-rendering.spec.ts` — page rendering, code blocks, callouts
+  - [ ] `src/tests/navigation.spec.ts` — sidebar, breadcrumb, TOC, prev/next
+  - [ ] `src/tests/search.spec.ts` — search dialog flow
+  - [ ] `src/tests/responsive.spec.ts` — breakpoint layout verification
+  - [ ] `src/tests/i18n.spec.ts` — language switching
+  - [ ] `src/tests/accessibility.spec.ts` — ARIA, keyboard nav
+- [ ] Start app via Docker, run FE E2E: `nx run ayokoding-web-v2-fe-e2e:test:e2e`
+- [ ] Verify all FE E2E scenarios pass
+
+## Phase 14a: CI Workflow
 
 - [ ] Create `.github/workflows/test-ayokoding-web-v2.yml`:
-  - [ ] Unit tests job with Codecov upload
-  - [ ] E2E job: Docker build → start → health check → run BE + FE E2E
-  - [ ] 2x daily cron (WIB 06, 18) + manual dispatch
-- [ ] Create `prod-ayokoding-web-v2` branch from `main` for Vercel deployment
-- [ ] Configure Vercel project pointing to `apps/ayokoding-web-v2` with root directory
-- [ ] Verify Vercel deployment builds and serves content correctly
-- [ ] Create `apps/ayokoding-web-v2/README.md` with project overview, commands,
-      architecture, Vercel deployment docs, and related documentation links
-- [ ] Update `specs/apps/ayokoding-web/README.md` if needed
-- [ ] Update CLAUDE.md to include ayokoding-web-v2 in Current Apps listing
-  - [ ] Add to Current Apps list
+  - [ ] Trigger: 2x daily cron (23:00, 11:00 UTC = WIB 06, 18) + manual dispatch
+  - [ ] Job 1 (`unit`): checkout → npm ci → `nx run ayokoding-web-v2:test:quick`
+  - [ ] Job 1: upload coverage to Codecov
+  - [ ] Job 2 (`e2e`): checkout → Docker build → start → wait for health check
+  - [ ] Job 2: install Playwright browsers in BE + FE E2E apps
+  - [ ] Job 2: run `nx run ayokoding-web-v2-be-e2e:test:e2e`
+  - [ ] Job 2: run `nx run ayokoding-web-v2-fe-e2e:test:e2e`
+  - [ ] Job 2: upload Playwright reports as artifacts
+  - [ ] Job 2: docker compose down (cleanup)
+- [ ] Trigger workflow manually and verify all jobs pass
+
+## Phase 14b: Vercel Deployment
+
+- [ ] Create `prod-ayokoding-web-v2` branch from `main`
+- [ ] Configure Vercel project:
+  - [ ] Root directory: `apps/ayokoding-web-v2`
+  - [ ] Framework: Next.js (auto-detected)
+  - [ ] Production branch: `prod-ayokoding-web-v2`
+- [ ] Push to `prod-ayokoding-web-v2` branch
+- [ ] Verify Vercel build succeeds (check build logs)
+- [ ] Verify deployed site serves content correctly
+- [ ] Verify SEO: `curl` deployed URL returns full HTML with meta tags
+
+## Phase 14c: Documentation
+
+- [ ] Create `apps/ayokoding-web-v2/README.md`:
+  - [ ] Project overview and architecture
+  - [ ] Quick start commands (`nx dev`, `nx build`, `nx run test:quick`)
+  - [ ] Docker setup instructions
+  - [ ] Vercel deployment docs
+  - [ ] Related documentation links
+- [ ] Update `specs/apps/ayokoding-web/README.md` — reference v2 test apps
+- [ ] Update CLAUDE.md:
+  - [ ] Add `ayokoding-web-v2` to Current Apps list with description
   - [ ] Add `prod-ayokoding-web-v2` to environment branches list
-- [ ] Verify CI workflow passes
 
 ## Validation Checklist
 
