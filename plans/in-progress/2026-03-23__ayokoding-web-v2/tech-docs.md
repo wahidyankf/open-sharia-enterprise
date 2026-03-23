@@ -1007,8 +1007,11 @@ languages. The tRPC `locale` parameter determines which content directory to rea
 **Implicit dependencies:**
 
 ```json
-"implicitDependencies": ["rhino-cli"]
+"implicitDependencies": ["rhino-cli", "ayokoding-cli"]
 ```
+
+`ayokoding-cli` is needed for `titles update` (pre-commit) and `links check`
+(`test:quick`). See [ayokoding-cli Integration](#ayokoding-cli-integration) below.
 
 **7 mandatory targets + dev + start:**
 
@@ -1021,7 +1024,7 @@ languages. The tRPC `locale` parameter determines which content directory to rea
 | `lint`             | oxlint                                              | Yes       |
 | `build`            | `next build`                                        | Yes       |
 | `test:unit`        | Unit tests — BE (tRPC procedures) + FE (components) | Yes       |
-| `test:quick`       | Unit tests + coverage validation (80%+)             | Yes       |
+| `test:quick`       | Unit tests + coverage + link validation (80%+)      | Yes       |
 | `test:integration` | tRPC procedures with real filesystem                | No        |
 
 **Cache inputs for `test:unit` and `test:quick`:**
@@ -1037,6 +1040,52 @@ languages. The tRPC `locale` parameter determines which content directory to rea
 
 Note: Content markdown files are included as cache inputs since content changes
 could affect test results.
+
+## ayokoding-cli Integration
+
+The content directory (`apps/ayokoding-web/content/`) is **shared** between the
+Hugo v1 site and the Next.js v2 app. `ayokoding-cli` operates on this shared
+content — it's a content maintenance tool, not tied to either frontend.
+
+**Backward compatibility**: `ayokoding-cli` must remain fully compatible with
+the current Hugo v1 site (`apps/ayokoding-web/`) until v1 is deprecated and
+removed. All 3 commands (`nav regen`, `titles update`, `links check`) must
+continue working unchanged for Hugo. No breaking changes to the CLI during the
+v1→v2 transition period. The v2 app consumes CLI output (titles, link validation)
+but does NOT require CLI modifications.
+
+### Commands Relevant to v2
+
+| Command         | Used By v2? | Where               | Why                                                                                                                                       |
+| --------------- | ----------- | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `titles update` | **Yes**     | Pre-commit hook     | Keeps frontmatter `title` consistent with filename. v2 reads title via Zod schema.                                                        |
+| `links check`   | **Yes**     | `test:quick` target | Same `/en/learn/...` absolute paths. If link target file exists, v2's `[...slug]` route serves it.                                        |
+| `nav regen`     | **No**      | Hugo v1 only        | Writes nav lists into `_index.md` body. v2 sidebar uses `content.getTree` (filesystem scan). Still needed for Hugo v1 during coexistence. |
+
+### test:quick Composition
+
+```
+test:quick = test:unit + coverage validation (rhino-cli) + link validation (ayokoding-cli)
+```
+
+The `test:quick` target runs `ayokoding-cli links check` as a final step to catch
+broken internal links. This is the same validation that `ayokoding-web` runs, but
+declared as v2's own target so it's included in `nx affected -t test:quick`.
+
+### Pre-commit Hook
+
+When content files change, the existing pre-commit hook (configured in
+`ayokoding-web/project.json`) already runs `titles update` and `nav regen`. Since
+both apps share the content directory, v2 benefits from this without additional
+configuration. The v2 app does NOT need its own pre-commit script for content.
+
+### No New CLI Commands Needed
+
+| Considered                        | Decision       | Reason                                                                                                                                                                              |
+| --------------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `content validate` (frontmatter)  | **Not needed** | v2's content reader runs `frontmatterSchema.parse()` on all files at startup. Invalid files are caught immediately. Duplicating the Zod schema in Go would create dual maintenance. |
+| `content build-index` (pre-build) | **Not needed** | Content index builds in ~200ms for 933 files. Not a bottleneck worth optimizing.                                                                                                    |
+| `content check-shortcodes`        | **Not needed** | Custom remark plugin handles shortcode errors gracefully at render time.                                                                                                            |
 
 ## Vercel Deployment
 
