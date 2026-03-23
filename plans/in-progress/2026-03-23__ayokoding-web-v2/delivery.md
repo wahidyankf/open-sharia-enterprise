@@ -92,6 +92,7 @@
 - [ ] Copy static assets to `public/`: `favicon.ico`, `favicon.png`
 - [ ] Create `src/app/robots.ts` — generate `robots.txt` with correct sitemap URL
       (do NOT copy Hugo's `robots.txt` — it hardcodes `https://ayokoding.com/sitemap.xml`)
+- [ ] Create `postcss.config.ts` for Tailwind v4 (uses `@tailwindcss/postcss` plugin)
 - [ ] Configure oxlint for linting
 - [ ] Verify `nx run ayokoding-web-v2:lint` passes
 - [ ] Verify `nx run ayokoding-web-v2:typecheck` passes
@@ -117,7 +118,7 @@
 - [ ] Write `i18n-api.feature` — locale scenarios:
   - [ ] English content served for locale "en"
   - [ ] Indonesian content served for locale "id"
-  - [ ] Invalid locale returns error
+  - [ ] Invalid locale returns 404
 - [ ] Write `health-check.feature` — health endpoint scenario
 - [ ] Create `specs/apps/ayokoding-web/fe/gherkin/` directory
 - [ ] Write `content-rendering.feature` — page rendering scenarios:
@@ -245,7 +246,7 @@
         `"id"` (the `[locale]` segment accepts any string — without this check,
         `/fr/learn/overview` or `/xyz/anything` would reach the content layer
         and fail silently). Pattern from official Next.js i18n guide:
-        `if (!hasLocale(lang)) notFound()`
+        `if (!hasLocale(locale)) notFound()`
   - [ ] Import Header and Footer components
   - [ ] Wrap children with ThemeProvider (`"use client"` boundary)
   - [ ] Pass locale to context
@@ -498,6 +499,7 @@ All other content is server-rendered.
   - [ ] `src/tests/content-api.spec.ts` — tRPC content procedures via HTTP
   - [ ] `src/tests/search-api.spec.ts` — tRPC search procedures via HTTP
   - [ ] `src/tests/navigation-api.spec.ts` — tRPC navigation via HTTP
+  - [ ] `src/tests/i18n-api.spec.ts` — locale-specific content, invalid locale 404
   - [ ] `src/tests/health.spec.ts` — health endpoint
 - [ ] Start app via Docker, run BE E2E: `nx run ayokoding-web-v2-be-e2e:test:e2e`
 - [ ] Verify all BE E2E scenarios pass
@@ -584,6 +586,7 @@ All other content is server-rendered.
 - [ ] **SEO: `curl` returns full HTML** — content visible without JS execution:
   - [ ] `curl -s http://localhost:3101/en/learn/overview` contains page content
   - [ ] `curl -s http://localhost:3101/en/learn/overview` contains `<meta property="og:title"`
+  - [ ] `curl -s http://localhost:3101/en/learn/overview` contains `<link rel="canonical"`
   - [ ] `curl -s http://localhost:3101/en/learn/overview` contains `<script type="application/ld+json"`
   - [ ] `curl -s http://localhost:3101/sitemap.xml` lists all content URLs
   - [ ] `curl -s http://localhost:3101/feed.xml` returns valid RSS 2.0 XML
@@ -592,6 +595,8 @@ All other content is server-rendered.
 - [ ] Search returns relevant results for both locales
 - [ ] Language switching works correctly
 - [ ] Responsive layout works (desktop, tablet, mobile)
+- [ ] **Locale validation**: `curl -s -o /dev/null -w "%{http_code}" http://localhost:3101/fr/learn/overview`
+      returns 404 (invalid locales rejected)
 - [ ] **ayokoding-cli backward compatibility** — Hugo v1 still works:
   - [ ] `ayokoding-cli nav regen` still generates correct nav for Hugo site
   - [ ] `ayokoding-cli titles update` still updates titles correctly

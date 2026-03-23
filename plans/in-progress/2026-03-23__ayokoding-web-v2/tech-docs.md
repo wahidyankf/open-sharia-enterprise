@@ -747,6 +747,7 @@ apps/ayokoding-web-v2-be-e2e/            # Backend E2E (tRPC API via HTTP)
 │       ├── content-api.spec.ts           # tRPC content procedures
 │       ├── search-api.spec.ts            # tRPC search procedures
 │       ├── navigation-api.spec.ts        # tRPC navigation procedures
+│       ├── i18n-api.spec.ts             # Locale content + invalid locale 404
 │       └── health.spec.ts                # Health endpoint
 ├── playwright.config.ts
 └── project.json
