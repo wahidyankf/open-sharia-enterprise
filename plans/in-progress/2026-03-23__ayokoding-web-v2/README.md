@@ -22,7 +22,8 @@ This is the first **content platform** rewrite in the monorepo. Unlike demo apps
 - Support bilingual content (809 EN + 124 ID files) with language-prefixed URLs
 - Provide full-text search across all content via FlexSearch
 - Replicate Hugo Hextra features: sidebar navigation, table of contents, breadcrumbs,
-  callout admonitions, Mermaid diagrams, KaTeX math
+  callout admonitions, tabbed code comparisons, YouTube embeds, Mermaid diagrams,
+  KaTeX math, inline HTML, RSS feeds, Google Analytics
 - Handle 5-level deep content hierarchy (domain > subdomain > tool > type > level)
 - Serve everything via tRPC (type-safe end-to-end from API to UI)
 - Use **on-demand ISR** (not full SSG) so builds stay fast as content grows

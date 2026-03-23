@@ -136,14 +136,21 @@ Scenario: Mobile hamburger opens sidebar overlay
 2. **Frontmatter**: Extract and validate YAML frontmatter with Zod schema (title, date,
    draft, weight, description, tags)
 3. **Code blocks**: Syntax highlighting via shiki (server-side, all languages)
-4. **Math**: KaTeX rendering for `$$..$$` and `\(...\)` delimiters
+4. **Math**: KaTeX rendering for `$...$` (inline), `$$...$$` (block) delimiters.
+   `remark-math` handles both by default (`singleDollarTextMath: true`). The Hugo
+   config also lists `\(...\)` and `\[...\]` but content only uses `$`/`$$` forms
 5. **Diagrams**: Client-side Mermaid rendering with color-blind-friendly palette
-6. **Callouts**: Convert Hugo `{{< callout type="warning|info|tip" >}}` shortcodes to
-   shadcn Alert components
+6. **Hugo shortcodes**: Convert all shortcodes actually used in content:
+   - `{{< callout type="warning|info|tip" >}}` (19 occurrences) → shadcn Alert
+   - `{{< tabs items="..." >}}` / `{{< tab >}}` (508 occurrences) → shadcn Tabs
+   - `{{< youtube ID >}}` (45 files, Indonesian only) → responsive iframe embed
+   - `{{% steps %}}` (1 file) → ordered step list with visual connectors
 7. **Tables**: Standard markdown tables with proper styling
 8. **Images**: Responsive images with lazy loading
 9. **Internal links**: Resolve Hugo-style absolute paths (`/en/learn/...`) to Next.js routes
-10. **Raw HTML**: Support inline HTML in markdown (same as Hugo `unsafe: true`)
+10. **Raw HTML**: Support inline HTML in markdown (same as Hugo `unsafe: true`) via
+    `rehype-raw` with `allowDangerousHtml: true` on `remark-rehype`
+    (1,343 raw HTML occurrences across 30 content files)
 
 ### Navigation
 
@@ -181,11 +188,19 @@ Scenario: Mobile hamburger opens sidebar overlay
 
 ### Theme & Layout
 
-1. **Dark/Light mode**: Theme toggle with system preference detection
+1. **Dark/Light mode**: Theme toggle with system preference detection (via `next-themes`)
 2. **Header**: Site title, search trigger, language switcher, theme toggle
 3. **Footer**: Copyright, Open Source Project link (matching current site)
 4. **Responsive**: Desktop (sidebar + TOC), tablet (sidebar only), mobile (hamburger drawer)
 5. **Typography**: Clean documentation typography (similar to Hextra)
+
+### Analytics & Feeds
+
+1. **Google Analytics**: GA4 tracking with measurement ID `G-1NHDR7S3GV`
+   (same as current Hugo site) via `@next/third-parties/google`
+2. **RSS feed**: RSS 2.0 feed at `/feed.xml` for home + section content
+   (matching Hugo's RSS output for home and section pages)
+3. **robots.txt**: Generated with correct sitemap URL (not copied from Hugo)
 
 ## Non-Functional Requirements
 
@@ -205,8 +220,12 @@ Scenario: Mobile hamburger opens sidebar overlay
 - **SEO**: All content must be server-rendered (RSC) — no client-side rendering for
   content pages. Full HTML available to crawlers without JavaScript execution.
   Equivalent meta tags to current Hugo site (Open Graph, Twitter Cards, JSON-LD,
-  hreflang, sitemap, canonical URLs)
+  hreflang, sitemap, canonical URLs). RSS feed at `/feed.xml`
+- **Analytics**: Google Analytics GA4 (`G-1NHDR7S3GV`) via `@next/third-parties/google`
+  (same tracking ID as current Hugo site — no data gap during migration)
 - **Accessibility**: WCAG AA compliance, keyboard navigation, ARIA labels, color contrast
+- **Resilience**: Malformed frontmatter in individual markdown files must not crash the
+  app. Invalid files are skipped with a console warning during content index build
 
 ## Acceptance Criteria
 

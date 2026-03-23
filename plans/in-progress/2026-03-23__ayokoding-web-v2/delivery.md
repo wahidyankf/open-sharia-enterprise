@@ -47,23 +47,31 @@
 - [ ] Configure `next.config.ts`:
   - [ ] `output: 'standalone'` for Docker builds (Vercel ignores this)
   - [ ] `outputFileTracingRoot: path.join(__dirname, '../../')` for monorepo
+  - [ ] `outputFileTracingIncludes: { '/**': ['../../apps/ayokoding-web/content/**/*'] }`
+        (required — `@vercel/nft` cannot trace dynamic `fs.readFile` paths; without
+        this, standalone builds contain zero content files and every page 404s)
 - [ ] Install and configure Tailwind CSS v4 + PostCSS (v4 uses CSS-based config
       via `@theme` directive in `globals.css` — no `tailwind.config.ts` file)
 - [ ] Initialize shadcn/ui (`npx shadcn@latest init`) with `components.json`
-- [ ] Install core shadcn/ui components: Button, Input, Dialog, Alert, Separator,
-      ScrollArea, Sheet, DropdownMenu, Tooltip, Badge, Command
+- [ ] Install core shadcn/ui components: Button, Input, Dialog, Alert, Tabs,
+      Separator, ScrollArea, Sheet, DropdownMenu, Tooltip, Badge, Command
 - [ ] Install tRPC: `@trpc/server`, `@trpc/client`, `@trpc/tanstack-react-query`,
       `@tanstack/react-query@^5.62.8`
 - [ ] Install Zod: `zod@^3` (tRPC v11 validated with Zod v3; v4 has breaking changes,
       migrate later once tRPC confirms v4 support)
 - [ ] Install markdown tooling: `unified`, `remark-parse`, `remark-gfm`, `remark-math`,
-      `remark-rehype` (MDAST→HAST bridge — required), `rehype-pretty-code`,
+      `remark-rehype` (MDAST→HAST bridge — required), `rehype-raw` (required for
+      inline HTML — 1,343 occurrences in content; must come after `remark-rehype`
+      with `allowDangerousHtml: true`), `rehype-pretty-code`,
       `shiki@^1` (pin to 1.x — 2.x incompatible with rehype-pretty-code),
       `rehype-katex`, `rehype-slug`, `rehype-autolink-headings`,
       `rehype-stringify`, `gray-matter`
 - [ ] Install FlexSearch for search indexing
+- [ ] Install `next-themes` (dark/light/system theme toggle)
+- [ ] Install `@next/third-parties` (Google Analytics GA4)
 - [ ] Install test dependencies: `vitest`, `@vitest/coverage-v8`,
-      `@amiceli/vitest-cucumber`, `@testing-library/react`, `jsdom`
+      `@amiceli/vitest-cucumber`, `@cucumber/cucumber` (for integration tests
+      in Phase 11), `@testing-library/react`, `jsdom`
 - [ ] Create `project.json` with 7 mandatory Nx targets (codegen, typecheck, lint, build,
       test:unit, test:quick, test:integration) + `dev` + `start`:
   - [ ] Add `implicitDependencies: ["rhino-cli", "ayokoding-cli"]`
@@ -71,7 +79,9 @@
         `./apps/ayokoding-cli/dist/ayokoding-cli links check --content apps/ayokoding-web/content`
 - [ ] Set up `tsconfig.json` with strict mode
 - [ ] Set up `vitest.config.ts` with v8 coverage (80% threshold)
-- [ ] Copy static assets to `public/`: `favicon.ico`, `favicon.png`, `robots.txt`
+- [ ] Copy static assets to `public/`: `favicon.ico`, `favicon.png`
+- [ ] Create `src/app/robots.ts` — generate `robots.txt` with correct sitemap URL
+      (do NOT copy Hugo's `robots.txt` — it hardcodes `https://ayokoding.com/sitemap.xml`)
 - [ ] Configure oxlint for linting
 - [ ] Verify `nx run ayokoding-web-v2:lint` passes
 - [ ] Verify `nx run ayokoding-web-v2:typecheck` passes
@@ -104,8 +114,12 @@
   - [ ] Markdown renders with proper formatting
   - [ ] Code blocks have syntax highlighting
   - [ ] Callout shortcodes render as admonitions
+  - [ ] Tabs shortcodes render as tabbed panels
+  - [ ] YouTube shortcodes render as responsive embeds
+  - [ ] Steps shortcodes render as numbered step lists
   - [ ] Math expressions render via KaTeX
   - [ ] Mermaid diagrams render
+  - [ ] Raw HTML (inline `<div>`, `<table>`, etc.) renders correctly
 - [ ] Write `navigation.feature` — UI navigation scenarios:
   - [ ] Sidebar shows section tree
   - [ ] Breadcrumb shows path hierarchy
@@ -138,16 +152,29 @@
 - [ ] Create `src/server/content/reader.ts`:
   - [ ] Glob all `*.md` files from content directory
   - [ ] Parse frontmatter with gray-matter + Zod validation
+  - [ ] Handle Zod validation failures gracefully: log `console.warn` with file path
+        and error details, skip the file, continue indexing remaining files
+        (one bad frontmatter must not crash the app or block 932 other pages)
   - [ ] Detect `_index.md` as section pages
   - [ ] Build slug from file path (relative to content/locale/)
   - [ ] Handle both `en/` and `id/` content directories
 - [ ] Create `src/server/content/shortcodes.ts`:
-  - [ ] Custom remark plugin to transform Hugo `{{< callout >}}` to HTML nodes
-  - [ ] Map callout types (warning, info, tip) to data attributes
+  - [ ] Custom remark plugin to transform all Hugo shortcodes used in content:
+    - [ ] `{{< callout type="warning|info|tip" >}}...{{< /callout >}}` (19 occurrences)
+          → `<div data-callout="warning|info|tip">` nodes → maps to Callout component
+    - [ ] `{{< tabs items="C,Go,Python,Java" >}}...{{< /tabs >}}` (169 blocks,
+          508 tab instances) → `<div data-tabs="...">` with `<div data-tab="...">` children
+          → maps to Tabs component (shadcn Tabs)
+    - [ ] `{{< youtube ID >}}` (45 files, Indonesian content) → responsive iframe embed
+          `<div data-youtube="ID">` → maps to YouTube component
+    - [ ] `{{% steps %}}...{{% /steps %}}` (1 file) → `<div data-steps>` with numbered
+          children → maps to Steps component
+  - [ ] Handle both `{{< >}}` and `{{% %}}` delimiter styles
 - [ ] Create `src/server/content/parser.ts`:
   - [ ] unified pipeline: remark-parse → remark-gfm → remark-math → shortcodes →
-        remark-rehype → rehype-pretty-code → rehype-katex → rehype-slug →
-        rehype-autolink-headings → rehype-stringify
+        remark-rehype (with `allowDangerousHtml: true`) → rehype-raw (parses
+        raw HTML strings into proper HAST nodes) → rehype-pretty-code →
+        rehype-katex → rehype-slug → rehype-autolink-headings → rehype-stringify
   - [ ] Extract headings (H2-H4) for table of contents
   - [ ] Return { html, headings }
 - [ ] Create `src/server/content/index.ts`:
@@ -197,6 +224,7 @@
   - [ ] Wrap with TRPCProvider + QueryClientProvider
   - [ ] Add `suppressHydrationWarning` to `<html>` element
   - [ ] Add global metadata (site title, description)
+  - [ ] Add `<GoogleAnalytics gaId="G-1NHDR7S3GV" />` from `@next/third-parties/google`
 - [ ] Create `src/app/page.tsx` — redirect `/` → `/en` (server component)
 - [ ] Create `src/app/[locale]/layout.tsx` — shared locale layout:
   - [ ] Import Header and Footer components
@@ -271,21 +299,38 @@ grows (933+ files and counting).
 - [ ] Create `src/components/content/markdown-renderer.tsx`:
   - [ ] Render HTML string with component mapping (server component)
   - [ ] Map callout HTML nodes to Callout React component
+  - [ ] Map tabs HTML nodes to Tabs React component
+  - [ ] Map youtube HTML nodes to YouTube embed component
+  - [ ] Map steps HTML nodes to Steps component
   - [ ] Map code blocks to CodeBlock component (server-rendered with shiki)
   - [ ] Map mermaid code blocks to Mermaid component (client-side exception —
         Mermaid requires DOM)
 - [ ] Create `src/components/content/callout.tsx` — admonition component (shadcn Alert)
+- [ ] Create `src/components/content/tabs.tsx` — tabbed content component (`"use client"`,
+      shadcn Tabs); parses `data-tabs` items attribute to create tab labels,
+      renders `data-tab` children as tab panels
+- [ ] Create `src/components/content/youtube.tsx` — responsive YouTube iframe embed
+      (`"use client"`); accepts video ID from `data-youtube` attribute, renders
+      16:9 aspect ratio iframe with lazy loading
+- [ ] Create `src/components/content/steps.tsx` — numbered step list with visual
+      connectors; renders `data-steps` children as ordered steps with headings
 - [ ] Create `src/components/content/code-block.tsx` — server-rendered syntax highlighting
 - [ ] Create `src/components/content/mermaid.tsx` — client-side Mermaid renderer
-      (only interactive component on content pages, uses `"use client"`)
+      (uses `"use client"`)
 - [ ] Create `src/app/[locale]/(content)/error.tsx` — error boundary for content
       rendering failures (`"use client"`, shows friendly error message)
 - [ ] Create `src/app/[locale]/(content)/not-found.tsx` — custom 404 for invalid slugs
 - [ ] Add `generateMetadata` for SEO (Open Graph, Twitter Cards, hreflang, canonical)
 - [ ] Add JSON-LD structured data (Article/WebSite schema)
 - [ ] Add sitemap generation (`app/sitemap.ts`) — reads content index, no full build
+- [ ] Add RSS feed generation (`app/feed.xml/route.ts`) — RSS 2.0 feed matching
+      Hugo's output format (home + section pages). Reads content index for latest
+      pages, returns XML with `Content-Type: application/rss+xml`
 - [ ] **SEO verification**: `curl -s http://localhost:3101/en/learn/overview | grep -c '<pre'`
       returns >0 (code blocks rendered in HTML, not loading placeholders)
+- [ ] **RSS verification**: `curl -s http://localhost:3101/feed.xml` returns valid RSS XML
+- [ ] **robots.txt verification**: `curl -s http://localhost:3101/robots.txt` contains
+      correct sitemap URL (not the Hugo `ayokoding.com` URL)
 
 ## Phase 7: Search UI (Client-Side — Only Interactive Feature)
 
@@ -498,12 +543,21 @@ All other content is server-rendered.
 - [ ] `ayokoding-web-v2-be-e2e` passes — all BE E2E scenarios pass
 - [ ] `ayokoding-web-v2-fe-e2e` passes — all FE E2E scenarios pass
 - [ ] Docker build and run works
-- [ ] All content pages render correctly (spot check: overview, by-example, rants)
+- [ ] All content pages render correctly (spot check: overview, by-example with tabs, rants)
+- [ ] **Hugo shortcodes render correctly**:
+  - [ ] Tabs render as tabbed panels (spot check a by-example page with multi-language tabs)
+  - [ ] Callouts render as styled admonitions
+  - [ ] YouTube embeds render as responsive iframes (spot check Indonesian video content)
+  - [ ] Steps render as numbered step list
+- [ ] **Raw HTML renders** — inline `<div>`, `<table>`, `<details>`, etc. not stripped
 - [ ] **SEO: `curl` returns full HTML** — content visible without JS execution:
   - [ ] `curl -s http://localhost:3101/en/learn/overview` contains page content
   - [ ] `curl -s http://localhost:3101/en/learn/overview` contains `<meta property="og:title"`
   - [ ] `curl -s http://localhost:3101/en/learn/overview` contains `<script type="application/ld+json"`
   - [ ] `curl -s http://localhost:3101/sitemap.xml` lists all content URLs
+  - [ ] `curl -s http://localhost:3101/feed.xml` returns valid RSS 2.0 XML
+  - [ ] `curl -s http://localhost:3101/robots.txt` contains correct sitemap URL
+- [ ] **Google Analytics**: page source contains GA4 tracking script (`G-1NHDR7S3GV`)
 - [ ] Search returns relevant results for both locales
 - [ ] Language switching works correctly
 - [ ] Responsive layout works (desktop, tablet, mobile)

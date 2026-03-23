@@ -75,25 +75,55 @@ rendering, producing complete HTML with all content, meta tags, and structured d
 Search engine crawlers receive the same full HTML as with static generation. The
 page is then cached for subsequent requests.
 
+### Standalone Output and File Tracing
+
+The `next.config.ts` uses `output: 'standalone'` for Docker builds. Next.js uses
+`@vercel/nft` to statically analyze imports and `fs` usage to determine which files
+to include in the standalone output. However, content files read via dynamic
+`fs.readFile` paths are **not automatically traced** — `@vercel/nft` cannot follow
+runtime-computed paths.
+
+`outputFileTracingIncludes` explicitly tells Next.js to include the content directory:
+
+```typescript
+// next.config.ts
+const nextConfig = {
+  output: "standalone",
+  outputFileTracingRoot: path.join(__dirname, "../../"),
+  outputFileTracingIncludes: {
+    "/**": ["../../apps/ayokoding-web/content/**/*"],
+  },
+};
+```
+
+**Without `outputFileTracingIncludes`**, the standalone build contains zero markdown
+files, and every content page returns 404 in Docker. This is a known Next.js
+behavior documented in [vercel/next.js#43973](https://github.com/vercel/next.js/issues/43973).
+
 ### Server-Side vs Client-Side Rendering
 
-| Feature                                         | Rendering                       | Why                                       |
-| ----------------------------------------------- | ------------------------------- | ----------------------------------------- |
-| Content pages (`/[locale]/(content)/[...slug]`) | **Server (RSC + ISR)**          | SEO: full HTML; cached after first render |
-| Section index pages                             | **Server (RSC + ISR)**          | SEO: full HTML; cached after first render |
-| Homepage                                        | **Server (RSC)**                | SEO: full HTML for crawlers               |
-| Navigation sidebar                              | **Server (RSC)**                | SEO: crawlable links                      |
-| Breadcrumb                                      | **Server (RSC)**                | SEO: structured navigation                |
-| Table of contents                               | **Server (RSC)**                | SEO: heading links                        |
-| Prev/Next navigation                            | **Server (RSC)**                | SEO: crawlable links                      |
-| Open Graph / meta tags                          | **Server (`generateMetadata`)** | SEO: social sharing                       |
-| JSON-LD structured data                         | **Server (RSC)**                | SEO: rich snippets                        |
-| Sitemap                                         | **Server (`app/sitemap.ts`)**   | SEO: crawler discovery                    |
-| Search dialog                                   | **Client (React Query)**        | Interactive: user-driven                  |
-| Theme toggle                                    | **Client**                      | Interactive: preference                   |
-| Mobile menu drawer                              | **Client**                      | Interactive: UI state                     |
-| Mermaid diagrams                                | **Client**                      | Dynamic: JS rendering                     |
-| Future app routes                               | **Server or Client**            | Depends on feature                        |
+| Feature                                         | Rendering                          | Why                                       |
+| ----------------------------------------------- | ---------------------------------- | ----------------------------------------- |
+| Content pages (`/[locale]/(content)/[...slug]`) | **Server (RSC + ISR)**             | SEO: full HTML; cached after first render |
+| Section index pages                             | **Server (RSC + ISR)**             | SEO: full HTML; cached after first render |
+| Homepage                                        | **Server (RSC)**                   | SEO: full HTML for crawlers               |
+| Navigation sidebar                              | **Server (RSC)**                   | SEO: crawlable links                      |
+| Breadcrumb                                      | **Server (RSC)**                   | SEO: structured navigation                |
+| Table of contents                               | **Server (RSC)**                   | SEO: heading links                        |
+| Prev/Next navigation                            | **Server (RSC)**                   | SEO: crawlable links                      |
+| Open Graph / meta tags                          | **Server (`generateMetadata`)**    | SEO: social sharing                       |
+| JSON-LD structured data                         | **Server (RSC)**                   | SEO: rich snippets                        |
+| Sitemap                                         | **Server (`app/sitemap.ts`)**      | SEO: crawler discovery                    |
+| RSS feed                                        | **Server (`app/feed.xml/`)**       | SEO: content syndication                  |
+| robots.txt                                      | **Server (`app/robots.ts`)**       | SEO: crawler directives + sitemap URL     |
+| Google Analytics                                | **Client (`@next/third-parties`)** | Analytics: GA4 tracking                   |
+| Search dialog                                   | **Client (React Query)**           | Interactive: user-driven                  |
+| Theme toggle                                    | **Client (`next-themes`)**         | Interactive: preference                   |
+| Mobile menu drawer                              | **Client**                         | Interactive: UI state                     |
+| Tabs (shortcode)                                | **Client**                         | Interactive: tab switching                |
+| YouTube embeds (shortcode)                      | **Client**                         | Dynamic: iframe embed                     |
+| Mermaid diagrams                                | **Client**                         | Dynamic: JS rendering                     |
+| Future app routes                               | **Server or Client**               | Depends on feature                        |
 
 ## Content Consumption (Detailed)
 
@@ -260,6 +290,12 @@ const frontmatterSchema = z.object({
 });
 ```
 
+**Frontmatter validation error handling**: If Zod validation fails for a markdown
+file, the content reader logs a `console.warn` with the file path and Zod error
+details, skips the file, and continues indexing remaining files. This ensures one
+malformed frontmatter does not crash the app or block 932 other pages from rendering.
+In dev mode, validation warnings are also surfaced in the browser console.
+
 **Draft handling**: Files with `draft: true` are excluded from the content index
 (same behavior as Hugo's default). In dev mode, drafts can optionally be included
 via `SHOW_DRAFTS=true` env var.
@@ -413,9 +449,10 @@ Markdown File (apps/ayokoding-web/content/en/learn/...)
   └─ unified pipeline:
        remark-parse (markdown → MDAST)
        → remark-gfm (tables, strikethrough)
-       → remark-math (LaTeX delimiters)
+       → remark-math (LaTeX: $...$ inline, $$...$$ block — singleDollarTextMath default)
        → custom remark plugin (Hugo shortcodes → custom nodes)
-       → remark-rehype (MDAST → HAST — bridge from remark to rehype)
+       → remark-rehype (MDAST → HAST — with allowDangerousHtml: true)
+       → rehype-raw (parses raw HTML strings into proper HAST nodes)
        → rehype-pretty-code + shiki (syntax highlighting)
        → rehype-katex (math rendering)
        → rehype-slug (heading IDs)
@@ -425,15 +462,59 @@ Markdown File (apps/ayokoding-web/content/en/learn/...)
 
 ### Hugo Shortcode Handling
 
-Hugo shortcodes like `{{< callout type="warning" >}}...{{< /callout >}}` are converted
-to custom HTML during the remark pass. A custom remark plugin matches the shortcode
-pattern and transforms it to a structured HTML node that maps to a React component:
+Hugo shortcodes are converted to custom HTML during the remark pass. A custom remark
+plugin matches both `{{< >}}` and `{{% %}}` delimiter styles and transforms them
+to structured HTML nodes that map to React components. Only shortcodes actually used
+in content are handled (audited via `grep -roh '{{[<%][^>%]*[>%]}}' content/ | sort -u`):
 
-| Hugo Shortcode                   | React Component                              |
-| -------------------------------- | -------------------------------------------- |
-| `{{< callout type="warning" >}}` | `<Callout variant="warning">` (shadcn Alert) |
-| `{{< callout type="info" >}}`    | `<Callout variant="info">`                   |
-| `{{< callout type="tip" >}}`     | `<Callout variant="tip">`                    |
+| Hugo Shortcode                              | Count | React Component                                 |
+| ------------------------------------------- | ----- | ----------------------------------------------- |
+| `{{< callout type="warning\|info\|tip" >}}` | 19    | `<Callout variant="...">` (shadcn Alert)        |
+| `{{< tabs items="C,Go,Python,Java" >}}`     | 169   | `<Tabs>` (shadcn Tabs, `"use client"`)          |
+| `{{< tab >}}`                               | 508   | `<TabPanel>` (child of Tabs)                    |
+| `{{< youtube ID >}}`                        | 45    | `<YouTube>` (responsive iframe, `"use client"`) |
+| `{{% steps %}}`                             | 1     | `<Steps>` (numbered list with connectors)       |
+
+**Tabs** are the most-used shortcode — they render multi-language code comparisons
+in by-example tutorials. The `items` attribute provides tab labels (e.g.,
+`"C,Go,Python,Java"`), and each `{{< tab >}}` child corresponds to one panel.
+
+**YouTube** embeds are only in Indonesian content (`id/konten-video/`). The embed
+renders a 16:9 responsive iframe with `loading="lazy"`.
+
+**Steps** use the `{{% %}}` delimiter (not `{{< >}}`), which means Hugo processes
+inner markdown. The remark plugin handles both delimiter styles.
+
+### Raw HTML Handling (`rehype-raw`)
+
+Content files contain 1,343 raw HTML occurrences across 30 files (inline `<div>`,
+`<table>`, `<details>`, `<summary>`, `<kbd>`, `<sup>`, `<img>`, etc.). Hugo renders
+these via `goldmark.renderer.unsafe: true` in `hugo.yaml`.
+
+In the unified pipeline, `remark-rehype` converts markdown AST to HTML AST, but by
+default it **strips raw HTML nodes**. Two changes are required:
+
+1. Pass `allowDangerousHtml: true` to `remark-rehype` — this preserves raw HTML as
+   semistandard `raw` nodes in the HAST tree (instead of dropping them)
+2. Add `rehype-raw` after `remark-rehype` — this parses the raw HTML strings into
+   proper HAST element nodes so downstream rehype plugins can process them
+
+Without both changes, all inline HTML is silently removed from rendered output.
+
+### Math Delimiters
+
+Hugo config (`hugo.yaml`) supports four math delimiter pairs:
+
+| Delimiter | Type   | Used in Content                    | remark-math Default                |
+| --------- | ------ | ---------------------------------- | ---------------------------------- |
+| `$...$`   | Inline | 424 occurrences                    | Yes (`singleDollarTextMath: true`) |
+| `$$...$$` | Block  | Yes                                | Yes                                |
+| `\(...\)` | Inline | 0 (false positives — shell syntax) | No                                 |
+| `\[...\]` | Block  | 0                                  | No                                 |
+
+Only `$...$` and `$$...$$` are actually used in content. `remark-math` handles
+both by default — no custom delimiter configuration is needed. The Hugo config
+lists `\(...\)` and `\[...\]` for forward compatibility but content doesn't use them.
 
 ### Content Caching
 
@@ -480,7 +561,11 @@ apps/ayokoding-web-v2/
 │   │   │   └── trpc/
 │   │   │       └── [trpc]/
 │   │   │           └── route.ts          # tRPC HTTP adapter
-│   │   ├── layout.tsx                    # Root layout (providers, fonts)
+│   │   ├── feed.xml/
+│   │   │   └── route.ts                  # RSS 2.0 feed generation
+│   │   ├── robots.ts                     # Generated robots.txt with sitemap URL
+│   │   ├── sitemap.ts                    # Sitemap generation from content index
+│   │   ├── layout.tsx                    # Root layout (providers, fonts, GA4)
 │   │   └── page.tsx                      # / → redirect to /en
 │   ├── server/                           # Server-side code
 │   │   ├── trpc/
@@ -496,6 +581,7 @@ apps/ayokoding-web-v2/
 │   │       ├── index.ts                  # Content index builder (scans all files at startup)
 │   │       ├── search-index.ts           # FlexSearch index management
 │   │       ├── shortcodes.ts             # Hugo shortcode → custom node transformer
+│   │       │                             # (callout, tabs/tab, youtube, steps)
 │   │       └── types.ts                  # ContentMeta, ContentPage, TreeNode types
 │   ├── components/                       # UI components
 │   │   ├── ui/                           # shadcn/ui generated components
@@ -510,6 +596,9 @@ apps/ayokoding-web-v2/
 │   │   ├── content/
 │   │   │   ├── markdown-renderer.tsx     # Renders parsed HTML with components
 │   │   │   ├── callout.tsx               # Admonition/callout component
+│   │   │   ├── tabs.tsx                  # Tabbed content (shadcn Tabs, "use client")
+│   │   │   ├── youtube.tsx               # Responsive YouTube iframe ("use client")
+│   │   │   ├── steps.tsx                 # Numbered step list with connectors
 │   │   │   ├── code-block.tsx            # Syntax highlighted code block
 │   │   │   └── mermaid.tsx               # Client-side Mermaid diagram
 │   │   └── search/
@@ -676,9 +765,15 @@ the `unknown → typed` boundary at runtime (frontmatter parsing, tRPC inputs).
 | Content source      | Flat markdown files                       | Same as Hugo, no migration needed, no database                      |
 | Markdown parser     | unified (remark + rehype)                 | Extensible, server-side, plugin ecosystem                           |
 | Syntax highlighting | shiki ^1.x (via rehype-pretty-code)       | Server-side; pin to 1.x (2.x incompatible with rehype-pretty-code)  |
-| Math                | KaTeX (via rehype-katex)                  | Same as Hugo site, fast client-side rendering                       |
+| Raw HTML            | rehype-raw + allowDangerousHtml           | 1,343 raw HTML occurrences in content; required for Hugo parity     |
+| Math                | KaTeX (via rehype-katex)                  | $/$$ delimiters only (no \(\)/\[\] — not used in content)           |
 | Diagrams            | Mermaid (client-side)                     | Same as Hugo site, dynamic rendering                                |
 | Search              | FlexSearch                                | Same as Hugo Hextra, proven, in-memory                              |
+| Analytics           | GA4 via @next/third-parties               | Same measurement ID (G-1NHDR7S3GV) as Hugo site                     |
+| RSS                 | Route handler (`app/feed.xml/route.ts`)   | Hugo outputs RSS for home + sections; preserve for subscribers      |
+| Theme               | next-themes                               | Dark/light/system toggle with SSR flash prevention                  |
+| robots.txt          | Generated (`app/robots.ts`)               | Dynamic sitemap URL; Hugo's static copy hardcodes domain            |
+| File tracing        | outputFileTracingIncludes                 | @vercel/nft can't trace dynamic fs.readFile; standalone needs this  |
 | i18n                | [locale] route segment                    | Next.js native, no extra library                                    |
 | CSS                 | Tailwind CSS v4                           | shadcn/ui requirement, utility-first                                |
 | Port                | 3101                                      | Adjacent to current Hugo site (3100)                                |
