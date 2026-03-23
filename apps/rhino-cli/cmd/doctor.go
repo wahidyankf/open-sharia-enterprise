@@ -16,13 +16,25 @@ Reads version requirements from existing repository config files and checks each
 tool against those requirements.
 
 Tools checked:
-  git      — any version (no config file)
-  volta    — any version (no config file)
-  node     — from package.json → volta.node
-  npm      — from package.json → volta.npm
-  java     — from apps/organiclever-be-jasb/pom.xml → <java.version> (major version only)
-  maven    — any version (no config file)
-  golang   — from apps/rhino-cli/go.mod → go directive
+  git            — any version (no config file)
+  volta          — any version (no config file)
+  node           — from package.json → volta.node
+  npm            — from package.json → volta.npm
+  java           — from apps/organiclever-be-jasb/pom.xml → <java.version>
+  maven          — any version (no config file)
+  golang         — from apps/rhino-cli/go.mod → go directive
+  hugo           — from apps/oseplatform-web/vercel.json → HUGO_VERSION
+  python         — from apps/demo-be-python-fastapi/.python-version
+  rust           — any version (no config file)
+  cargo-llvm-cov — any version (cargo subcommand)
+  elixir         — from .tool-versions → elixir
+  erlang         — from .tool-versions → erlang
+  dotnet         — from apps/demo-be-fsharp-giraffe/global.json → sdk.version
+  clojure        — any version (no config file)
+  dart           — from apps/demo-fe-dart-flutterweb/pubspec.yaml → environment.sdk
+  flutter        — any version (no config file)
+  docker         — any version (no config file)
+  jq             — any version (no config file)
 
 Status codes:
   ✓ ok      — tool is installed with the correct version

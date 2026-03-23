@@ -29,28 +29,35 @@ func setupDoctorTestRepo(t *testing.T) func() {
 		t.Fatalf("Failed to create .git dir: %v", err)
 	}
 
-	// package.json with volta config
-	packageJSON := `{"name":"test","volta":{"node":"24.11.1","npm":"11.6.3"}}`
-	if err := os.WriteFile(filepath.Join(tmpDir, "package.json"), []byte(packageJSON), 0644); err != nil {
-		t.Fatalf("Failed to create package.json: %v", err)
+	// Create all required directories
+	for _, dir := range []string{
+		"apps/organiclever-be-jasb",
+		"apps/rhino-cli",
+		"apps/oseplatform-web",
+		"apps/demo-be-python-fastapi",
+		"apps/demo-be-fsharp-giraffe",
+		"apps/demo-fe-dart-flutterweb",
+	} {
+		if err := os.MkdirAll(filepath.Join(tmpDir, dir), 0755); err != nil {
+			t.Fatalf("Failed to create dir %s: %v", dir, err)
+		}
 	}
 
-	// pom.xml
-	if err := os.MkdirAll(filepath.Join(tmpDir, "apps", "organiclever-be-jasb"), 0755); err != nil {
-		t.Fatalf("Failed to create pom.xml dir: %v", err)
+	// Write all config files
+	files := map[string]string{
+		"package.json":                                `{"name":"test","volta":{"node":"24.11.1","npm":"11.6.3"}}`,
+		"apps/organiclever-be-jasb/pom.xml":           `<project><properties><java.version>25</java.version></properties></project>`,
+		"apps/rhino-cli/go.mod":                       "module foo\n\ngo 1.24.2\n",
+		"apps/oseplatform-web/vercel.json":            `{"build":{"env":{"HUGO_VERSION":"0.156.0"}}}`,
+		"apps/demo-be-python-fastapi/.python-version": "3.13\n",
+		".tool-versions":                              "erlang 27.3\nelixir 1.19.5-otp-27\n",
+		"apps/demo-be-fsharp-giraffe/global.json":     `{"sdk":{"version":"10.0.103","rollForward":"latestMinor"}}`,
+		"apps/demo-fe-dart-flutterweb/pubspec.yaml":   "name: demo\n\nenvironment:\n  sdk: ^3.11.1\n",
 	}
-	pomXML := `<project><properties><java.version>25</java.version></properties></project>`
-	if err := os.WriteFile(filepath.Join(tmpDir, "apps", "organiclever-be-jasb", "pom.xml"), []byte(pomXML), 0644); err != nil {
-		t.Fatalf("Failed to create pom.xml: %v", err)
-	}
-
-	// go.mod
-	if err := os.MkdirAll(filepath.Join(tmpDir, "apps", "rhino-cli"), 0755); err != nil {
-		t.Fatalf("Failed to create go.mod dir: %v", err)
-	}
-	goMod := "module foo\n\ngo 1.24.2\n"
-	if err := os.WriteFile(filepath.Join(tmpDir, "apps", "rhino-cli", "go.mod"), []byte(goMod), 0644); err != nil {
-		t.Fatalf("Failed to create go.mod: %v", err)
+	for relPath, content := range files {
+		if err := os.WriteFile(filepath.Join(tmpDir, relPath), []byte(content), 0644); err != nil {
+			t.Fatalf("Failed to create %s: %v", relPath, err)
+		}
 	}
 
 	return func() {
@@ -91,8 +98,8 @@ func TestDoctorCommand_TextOutput(t *testing.T) {
 		t.Error("expected output to contain 'Doctor Report'")
 	}
 
-	// All 7 tool names should appear in the output
-	for _, toolName := range []string{"git", "volta", "node", "npm", "java", "maven", "golang"} {
+	// All 19 tool names should appear in the output
+	for _, toolName := range []string{"git", "volta", "node", "npm", "java", "maven", "golang", "hugo", "python", "rust", "cargo-llvm-cov", "elixir", "erlang", "dotnet", "clojure", "dart", "flutter", "docker", "jq"} {
 		if !strings.Contains(outputStr, toolName) {
 			t.Errorf("expected output to contain tool name %q", toolName)
 		}
@@ -130,8 +137,8 @@ func TestDoctorCommand_JSONOutput(t *testing.T) {
 	tools, ok := parsed["tools"].([]interface{})
 	if !ok {
 		t.Error("expected 'tools' to be an array")
-	} else if len(tools) != 7 {
-		t.Errorf("expected 7 tools in JSON output, got %d", len(tools))
+	} else if len(tools) != 19 {
+		t.Errorf("expected 19 tools in JSON output, got %d", len(tools))
 	}
 }
 

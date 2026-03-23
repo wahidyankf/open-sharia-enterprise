@@ -122,28 +122,37 @@ func detectGoVersion() string {
 	return ""
 }
 
-// writeDoctorConfigFiles writes package.json, pom.xml, and go.mod into tmpDir
-// using the provided version strings.
+// writeDoctorConfigFiles writes all config files into tmpDir using the provided version strings.
 func writeDoctorConfigFiles(tmpDir, nodeVer, npmVer, javaMajor, goVer string) error {
-	packageJSON := fmt.Sprintf(`{"name":"test","volta":{"node":%q,"npm":%q}}`, nodeVer, npmVer)
-	if err := os.WriteFile(filepath.Join(tmpDir, "package.json"), []byte(packageJSON), 0644); err != nil {
-		return fmt.Errorf("write package.json: %w", err)
+	dirs := []string{
+		"apps/organiclever-be-jasb",
+		"apps/rhino-cli",
+		"apps/oseplatform-web",
+		"apps/demo-be-python-fastapi",
+		"apps/demo-be-fsharp-giraffe",
+		"apps/demo-fe-dart-flutterweb",
+	}
+	for _, dir := range dirs {
+		if err := os.MkdirAll(filepath.Join(tmpDir, dir), 0755); err != nil {
+			return fmt.Errorf("mkdir %s: %w", dir, err)
+		}
 	}
 
-	if err := os.MkdirAll(filepath.Join(tmpDir, "apps", "organiclever-be-jasb"), 0755); err != nil {
-		return fmt.Errorf("mkdir organiclever-be-jasb: %w", err)
+	files := map[string]string{
+		"package.json":                      fmt.Sprintf(`{"name":"test","volta":{"node":%q,"npm":%q}}`, nodeVer, npmVer),
+		"apps/organiclever-be-jasb/pom.xml": fmt.Sprintf(`<project><properties><java.version>%s</java.version></properties></project>`, javaMajor),
+		"apps/rhino-cli/go.mod":             fmt.Sprintf("module foo\n\ngo %s\n", goVer),
+		// New tool config files — use sensible defaults that match common installed versions
+		"apps/oseplatform-web/vercel.json":            `{"build":{"env":{"HUGO_VERSION":"0.156.0"}}}`,
+		"apps/demo-be-python-fastapi/.python-version": "3.13\n",
+		".tool-versions":                              "erlang 27.3\nelixir 1.19.5-otp-27\n",
+		"apps/demo-be-fsharp-giraffe/global.json":     `{"sdk":{"version":"10.0.103","rollForward":"latestMinor"}}`,
+		"apps/demo-fe-dart-flutterweb/pubspec.yaml":   "name: demo\n\nenvironment:\n  sdk: ^3.11.1\n",
 	}
-	pomXML := fmt.Sprintf(`<project><properties><java.version>%s</java.version></properties></project>`, javaMajor)
-	if err := os.WriteFile(filepath.Join(tmpDir, "apps", "organiclever-be-jasb", "pom.xml"), []byte(pomXML), 0644); err != nil {
-		return fmt.Errorf("write pom.xml: %w", err)
-	}
-
-	if err := os.MkdirAll(filepath.Join(tmpDir, "apps", "rhino-cli"), 0755); err != nil {
-		return fmt.Errorf("mkdir rhino-cli: %w", err)
-	}
-	goMod := fmt.Sprintf("module foo\n\ngo %s\n", goVer)
-	if err := os.WriteFile(filepath.Join(tmpDir, "apps", "rhino-cli", "go.mod"), []byte(goMod), 0644); err != nil {
-		return fmt.Errorf("write go.mod: %w", err)
+	for relPath, content := range files {
+		if err := os.WriteFile(filepath.Join(tmpDir, relPath), []byte(content), 0644); err != nil {
+			return fmt.Errorf("write %s: %w", relPath, err)
+		}
 	}
 
 	return nil
@@ -188,28 +197,12 @@ func (s *doctorSteps) aRequiredDevelopmentToolIsInstalledWithANonMatchingVersion
 		goVer = "1.24.0"
 	}
 
-	// Override node requirement to "1.0.0" — guaranteed mismatch regardless of installed version
-	packageJSON := fmt.Sprintf(`{"name":"test","volta":{"node":"1.0.0","npm":%q}}`, npmVer)
-	if err := os.WriteFile(filepath.Join(s.tmpDir, "package.json"), []byte(packageJSON), 0644); err != nil {
-		return fmt.Errorf("write package.json: %w", err)
+	// Write all config files first using standard helper (creates dirs too)
+	if err := writeDoctorConfigFiles(s.tmpDir, "1.0.0", npmVer, javaMajor, goVer); err != nil {
+		return err
 	}
 
-	if err := os.MkdirAll(filepath.Join(s.tmpDir, "apps", "organiclever-be-jasb"), 0755); err != nil {
-		return fmt.Errorf("mkdir organiclever-be-jasb: %w", err)
-	}
-	pomXML := fmt.Sprintf(`<project><properties><java.version>%s</java.version></properties></project>`, javaMajor)
-	if err := os.WriteFile(filepath.Join(s.tmpDir, "apps", "organiclever-be-jasb", "pom.xml"), []byte(pomXML), 0644); err != nil {
-		return fmt.Errorf("write pom.xml: %w", err)
-	}
-
-	if err := os.MkdirAll(filepath.Join(s.tmpDir, "apps", "rhino-cli"), 0755); err != nil {
-		return fmt.Errorf("mkdir rhino-cli: %w", err)
-	}
-	goMod := fmt.Sprintf("module foo\n\ngo %s\n", goVer)
-	if err := os.WriteFile(filepath.Join(s.tmpDir, "apps", "rhino-cli", "go.mod"), []byte(goMod), 0644); err != nil {
-		return fmt.Errorf("write go.mod: %w", err)
-	}
-
+	// Override node requirement to "1.0.0" is already done above — guaranteed mismatch
 	return nil
 }
 
@@ -290,8 +283,8 @@ func (s *doctorSteps) theJSONListsEveryCheckedToolWithItsStatus() error {
 	if !ok {
 		return fmt.Errorf("expected 'tools' array in JSON but got: %s", s.cmdOutput)
 	}
-	if len(tools) != 7 {
-		return fmt.Errorf("expected 7 tools in JSON output, got %d\nOutput: %s", len(tools), s.cmdOutput)
+	if len(tools) != 19 {
+		return fmt.Errorf("expected 19 tools in JSON output, got %d\nOutput: %s", len(tools), s.cmdOutput)
 	}
 	return nil
 }

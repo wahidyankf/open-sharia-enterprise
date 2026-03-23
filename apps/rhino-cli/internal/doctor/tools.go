@@ -30,10 +30,16 @@ func buildToolDefs(repoRoot string) []toolDef {
 	packageJSONPath := filepath.Join(repoRoot, "package.json")
 	pomXMLPath := filepath.Join(repoRoot, "apps", "organiclever-be-jasb", "pom.xml")
 	goModPath := filepath.Join(repoRoot, "apps", "rhino-cli", "go.mod")
+	vercelJSONPath := filepath.Join(repoRoot, "apps", "oseplatform-web", "vercel.json")
+	pythonVersionPath := filepath.Join(repoRoot, "apps", "demo-be-python-fastapi", ".python-version")
+	toolVersionsPath := filepath.Join(repoRoot, ".tool-versions")
+	globalJSONPath := filepath.Join(repoRoot, "apps", "demo-be-fsharp-giraffe", "global.json")
+	pubspecPath := filepath.Join(repoRoot, "apps", "demo-fe-dart-flutterweb", "pubspec.yaml")
 
 	noReq := func() string { return "" }
 
 	return []toolDef{
+		// --- Core tools ---
 		{
 			name:     "git",
 			binary:   "git",
@@ -97,6 +103,133 @@ func buildToolDefs(repoRoot string) []toolDef {
 			parseVer: func(s string) string { return parseLineWord(s, "go version ", 2, "go") },
 			compare:  compareGTE,
 			readReq:  func() string { v, _ := readGoVersion(goModPath); return v },
+		},
+		// --- Hugo ---
+		{
+			name:     "hugo",
+			binary:   "hugo",
+			source:   "apps/oseplatform-web/vercel.json → HUGO_VERSION",
+			args:     []string{"version"},
+			parseVer: parseHugoVersion,
+			compare:  compareGTE,
+			readReq:  func() string { v, _ := readHugoVersion(vercelJSONPath); return v },
+		},
+		// --- Python ---
+		{
+			name:     "python",
+			binary:   "python3",
+			source:   "apps/demo-be-python-fastapi/.python-version",
+			args:     []string{"--version"},
+			parseVer: parsePythonVersion,
+			compare:  compareGTE,
+			readReq:  func() string { v, _ := readPythonVersion(pythonVersionPath); return v },
+		},
+		// --- Rust ---
+		{
+			name:     "rust",
+			binary:   "rustc",
+			source:   "(no config file)",
+			args:     []string{"--version"},
+			parseVer: parseRustVersion,
+			compare:  compareExact,
+			readReq:  noReq,
+		},
+		{
+			name:     "cargo-llvm-cov",
+			binary:   "cargo",
+			source:   "(no config file)",
+			args:     []string{"llvm-cov", "--version"},
+			parseVer: parseCargoLlvmCov,
+			compare:  compareExact,
+			readReq:  noReq,
+		},
+		// --- Elixir/Erlang ---
+		{
+			name:     "elixir",
+			binary:   "elixir",
+			source:   ".tool-versions → elixir",
+			args:     []string{"--version"},
+			parseVer: parseElixirVersion,
+			compare:  compareGTE,
+			readReq: func() string {
+				v, _ := readToolVersionsEntry(toolVersionsPath, "elixir")
+				// Strip -otp-XX suffix: "1.19.5-otp-27" → "1.19.5"
+				if idx := strings.Index(v, "-otp-"); idx != -1 {
+					return v[:idx]
+				}
+				return v
+			},
+		},
+		{
+			name:     "erlang",
+			binary:   "erl",
+			source:   ".tool-versions → erlang",
+			args:     []string{"-noshell", "-eval", `io:format("~s",[erlang:system_info(otp_release)]),halt().`},
+			parseVer: parseErlangVersion,
+			compare:  compareMajorGTE,
+			readReq: func() string {
+				v, _ := readToolVersionsEntry(toolVersionsPath, "erlang")
+				return v
+			},
+		},
+		// --- .NET ---
+		{
+			name:     "dotnet",
+			binary:   "dotnet",
+			source:   "apps/demo-be-fsharp-giraffe/global.json → sdk.version",
+			args:     []string{"--version"},
+			parseVer: parseDotnetVersion,
+			compare:  compareMajorGTE,
+			readReq:  func() string { v, _ := readDotnetVersion(globalJSONPath); return v },
+		},
+		// --- Clojure ---
+		{
+			name:      "clojure",
+			binary:    "clj",
+			source:    "(no config file)",
+			args:      []string{"--version"},
+			useStderr: false,
+			parseVer:  parseClojureVersion,
+			compare:   compareExact,
+			readReq:   noReq,
+		},
+		// --- Dart/Flutter ---
+		{
+			name:     "dart",
+			binary:   "dart",
+			source:   "apps/demo-fe-dart-flutterweb/pubspec.yaml → environment.sdk",
+			args:     []string{"--version"},
+			parseVer: parseDartVersion,
+			compare:  compareGTE,
+			readReq:  func() string { v, _ := readDartSDKVersion(pubspecPath); return v },
+		},
+		{
+			name:     "flutter",
+			binary:   "flutter",
+			source:   "(no config file)",
+			args:     []string{"--version"},
+			parseVer: parseFlutterVersion,
+			compare:  compareExact,
+			readReq:  noReq,
+		},
+		// --- Infrastructure ---
+		{
+			name:     "docker",
+			binary:   "docker",
+			source:   "(no config file)",
+			args:     []string{"--version"},
+			parseVer: parseDockerVersion,
+			compare:  compareExact,
+			readReq:  noReq,
+		},
+		{
+			name:     "jq",
+			binary:   "jq",
+			source:   "(no config file)",
+			args:     []string{"--version"},
+			parseVer: parseJqVersion,
+			compare:  compareExact,
+			readReq:  noReq,
 		},
 	}
 }
