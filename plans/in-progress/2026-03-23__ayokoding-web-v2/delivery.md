@@ -52,6 +52,10 @@
         this, standalone builds contain zero content files and every page 404s)
 - [ ] Install and configure Tailwind CSS v4 + PostCSS (v4 uses CSS-based config
       via `@theme` directive in `globals.css` — no `tailwind.config.ts` file)
+- [ ] Install `@tailwindcss/typography` and add `@plugin "@tailwindcss/typography"`
+      to `globals.css` (provides `prose` classes for styling rendered markdown —
+      headings, paragraphs, lists, blockquotes, tables, code, `<hr>` etc.
+      Without this, markdown content renders as unstyled plain text)
 - [ ] Initialize shadcn/ui (`npx shadcn@latest init`) with `components.json`
 - [ ] Install core shadcn/ui components: Button, Input, Dialog, Alert, Tabs,
       Separator, ScrollArea, Sheet, DropdownMenu, Tooltip, Badge, Command
@@ -66,6 +70,11 @@
       `shiki@^1` (pin to 1.x — 2.x incompatible with rehype-pretty-code),
       `rehype-katex`, `rehype-slug`, `rehype-autolink-headings`,
       `rehype-stringify`, `gray-matter`
+- [ ] Install `html-react-parser` (renders HTML string as React elements with
+      component replacement — required for mapping shortcode HTML nodes like
+      `data-callout`, `data-tabs`, `data-youtube`, `data-steps` to interactive
+      React components, and for replacing internal `<a>` tags with `next/link`
+      `<Link>` for SPA navigation)
 - [ ] Install FlexSearch for search indexing
 - [ ] Install `mermaid` (client-side diagram rendering in mermaid.tsx component)
 - [ ] Install `next-themes` (dark/light/system theme toggle)
@@ -226,10 +235,17 @@
         `rehype-katex` generates HTML but CSS must be loaded separately)
   - [ ] Wrap with TRPCProvider + QueryClientProvider
   - [ ] Add `suppressHydrationWarning` to `<html>` element
-  - [ ] Add global metadata (site title, description)
+  - [ ] Add global metadata (site title, description) with
+        `metadataBase: new URL('https://ayokoding.com')` (required for
+        `alternates.canonical` to resolve to absolute URLs)
   - [ ] Add `<GoogleAnalytics gaId="G-1NHDR7S3GV" />` from `@next/third-parties/google`
 - [ ] Create `src/app/page.tsx` — redirect `/` → `/en` (server component)
 - [ ] Create `src/app/[locale]/layout.tsx` — shared locale layout:
+  - [ ] Validate locale parameter: call `notFound()` if locale is not `"en"` or
+        `"id"` (the `[locale]` segment accepts any string — without this check,
+        `/fr/learn/overview` or `/xyz/anything` would reach the content layer
+        and fail silently). Pattern from official Next.js i18n guide:
+        `if (!hasLocale(lang)) notFound()`
   - [ ] Import Header and Footer components
   - [ ] Wrap children with ThemeProvider (`"use client"` boundary)
   - [ ] Pass locale to context
@@ -300,14 +316,21 @@ grows (933+ files and counting).
   - [ ] Verify: `curl` to any content URL returns full HTML with content visible
         (no loading spinners, no "loading..." placeholders)
 - [ ] Create `src/components/content/markdown-renderer.tsx`:
-  - [ ] Render HTML string with component mapping (server component)
-  - [ ] Map callout HTML nodes to Callout React component
-  - [ ] Map tabs HTML nodes to Tabs React component
-  - [ ] Map youtube HTML nodes to YouTube embed component
-  - [ ] Map steps HTML nodes to Steps component
-  - [ ] Map code blocks to CodeBlock component (server-rendered with shiki)
-  - [ ] Map mermaid code blocks to Mermaid component (client-side exception —
+  - [ ] Use `html-react-parser` with `replace` callbacks to convert HTML string
+        into React elements with component mapping (server component for static
+        content; client sub-components for interactive elements)
+  - [ ] Wrap content in `<div className="prose dark:prose-invert max-w-none">`
+        for Tailwind Typography styling of rendered markdown
+  - [ ] Replace `<div data-callout="...">` → Callout React component
+  - [ ] Replace `<div data-tabs="...">` + `<div data-tab="...">` → Tabs component
+  - [ ] Replace `<div data-youtube="...">` → YouTube embed component
+  - [ ] Replace `<div data-steps>` → Steps component
+  - [ ] Replace `<pre>` code blocks → CodeBlock component (server-rendered with shiki)
+  - [ ] Replace mermaid code blocks → Mermaid component (client-side exception —
         Mermaid requires DOM)
+  - [ ] Replace internal `<a href="/en/...">` and `<a href="/id/...">` tags →
+        Next.js `<Link>` components for SPA client-side navigation (prevents
+        full page reloads on internal link clicks)
 - [ ] Create `src/components/content/callout.tsx` — admonition component (shadcn Alert)
 - [ ] Create `src/components/content/tabs.tsx` — tabbed content component (`"use client"`,
       shadcn Tabs); parses `data-tabs` items attribute to create tab labels,
@@ -323,7 +346,11 @@ grows (933+ files and counting).
 - [ ] Create `src/app/[locale]/(content)/error.tsx` — error boundary for content
       rendering failures (`"use client"`, shows friendly error message)
 - [ ] Create `src/app/[locale]/(content)/not-found.tsx` — custom 404 for invalid slugs
-- [ ] Add `generateMetadata` for SEO (Open Graph, Twitter Cards, hreflang, canonical)
+- [ ] Add `generateMetadata` for SEO (Open Graph, Twitter Cards, hreflang, canonical):
+  - [ ] Set `alternates.canonical` in content page metadata (Next.js does NOT
+        auto-set canonical URLs — missing canonical causes duplicate content
+        issues in search engines). `metadataBase` is already set in root layout
+        (Phase 5b) so relative canonical paths resolve to absolute URLs
 - [ ] Add JSON-LD structured data (Article/WebSite schema)
 - [ ] Add sitemap generation (`app/sitemap.ts`) — reads content index, no full build
 - [ ] Add RSS feed generation (`app/feed.xml/route.ts`) — RSS 2.0 feed matching

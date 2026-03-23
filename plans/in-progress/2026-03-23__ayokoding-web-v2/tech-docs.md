@@ -538,6 +538,65 @@ export async function getRenderedContent(locale: string, slug: string) {
 In production, this cache persists for the lifetime of the server process.
 In dev mode, the cache is invalidated on file changes.
 
+### HTML-to-React Rendering (`html-react-parser`)
+
+The unified pipeline produces an HTML **string** (via `rehype-stringify`). But the
+React renderer needs to map certain HTML nodes to interactive React components
+(tabs need state, Mermaid needs DOM, internal links need `next/link` for SPA
+navigation). Raw `dangerouslySetInnerHTML` cannot do this.
+
+`html-react-parser` bridges the gap — it parses the HTML string into React
+elements, with `replace` callbacks that swap specific nodes for React components:
+
+```typescript
+// src/components/content/markdown-renderer.tsx
+import parse, { domToReact, type HTMLReactParserOptions } from "html-react-parser";
+import Link from "next/link";
+
+const options: HTMLReactParserOptions = {
+  replace(domNode) {
+    if (domNode.type === "tag") {
+      // Shortcode components
+      if (domNode.attribs?.["data-callout"]) return <Callout variant={domNode.attribs["data-callout"]}>{domToReact(domNode.children, options)}</Callout>;
+      if (domNode.attribs?.["data-tabs"]) return <Tabs items={domNode.attribs["data-tabs"]}>{domToReact(domNode.children, options)}</Tabs>;
+      if (domNode.attribs?.["data-youtube"]) return <YouTube id={domNode.attribs["data-youtube"]} />;
+      if (domNode.attribs?.["data-steps"]) return <Steps>{domToReact(domNode.children, options)}</Steps>;
+
+      // Internal links → next/link for SPA navigation
+      if (domNode.name === "a" && domNode.attribs?.href?.startsWith("/")) {
+        return <Link href={domNode.attribs.href}>{domToReact(domNode.children, options)}</Link>;
+      }
+    }
+  },
+};
+
+export function MarkdownRenderer({ html }: { html: string }) {
+  return <div className="prose dark:prose-invert max-w-none">{parse(html, options)}</div>;
+}
+```
+
+**Why `html-react-parser` over `rehype-react`?** Both work, but `html-react-parser`
+preserves the HTML string caching architecture — strings are serializable and
+cacheable in a `Map<string, string>`. With `rehype-react`, the pipeline outputs
+JSX elements directly, which cannot be cached as strings. The trade-off is parsing
+HTML twice (stringify then re-parse), but the cached HTML avoids re-running the
+expensive unified pipeline on every request.
+
+### Prose Typography (`@tailwindcss/typography`)
+
+Rendered markdown content (headings, paragraphs, lists, blockquotes, tables, code,
+`<hr>`, etc.) requires the Tailwind Typography plugin for proper styling. Without
+it, all HTML elements render as unstyled plain text. The plugin is enabled in CSS:
+
+```css
+/* globals.css */
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+```
+
+The content wrapper uses `prose dark:prose-invert` classes for automatic light/dark
+mode typography styling.
+
 ## Project Structure
 
 ```
@@ -643,10 +702,9 @@ apps/ayokoding-web-v2/
 │           ├── content-api.steps.ts
 │           ├── search-api.steps.ts
 │           └── navigation-api.steps.ts
-├── public/                               # Static assets
+├── public/                               # Static assets (NO robots.txt — see app/robots.ts)
 │   ├── favicon.ico
-│   ├── favicon.png
-│   └── robots.txt
+│   └── favicon.png
 ├── next.config.ts                        # Next.js config (standalone output)
 ├── vitest.config.ts                      # Vitest with v8 coverage
 ├── tsconfig.json                         # Strict TypeScript
@@ -753,39 +811,62 @@ the `unknown → typed` boundary at runtime (frontmatter parsing, tRPC inputs).
 
 ## Design Decisions
 
-| Decision            | Choice                                    | Reason                                                              |
-| ------------------- | ----------------------------------------- | ------------------------------------------------------------------- |
-| App type            | Fullstack (fs)                            | Content API + UI in one app                                         |
-| Framework           | Next.js 16 (App Router)                   | Proven fullstack, existing team experience                          |
-| API layer           | tRPC v11                                  | Type-safe end-to-end, native Zod + React Query integration          |
-| Validation          | Zod                                       | tRPC native, frontmatter validation, input/output schemas           |
-| Content rendering   | React Server Components (RSC)             | SEO: full HTML for crawlers, no client JS needed                    |
-| Data fetching       | tRPC server caller + React Query          | Server-side for content (SEO); client-side for search only          |
-| UI components       | shadcn/ui (Radix + Tailwind)              | Accessible, customizable, no vendor lock-in                         |
-| Content source      | Flat markdown files                       | Same as Hugo, no migration needed, no database                      |
-| Markdown parser     | unified (remark + rehype)                 | Extensible, server-side, plugin ecosystem                           |
-| Syntax highlighting | shiki ^1.x (via rehype-pretty-code)       | Server-side; pin to 1.x (2.x incompatible with rehype-pretty-code)  |
-| Raw HTML            | rehype-raw + allowDangerousHtml           | 1,343 raw HTML occurrences in content; required for Hugo parity     |
-| Math                | KaTeX (via rehype-katex)                  | $/$$ delimiters only (no \(\)/\[\] — not used in content)           |
-| Diagrams            | Mermaid (client-side)                     | Same as Hugo site, dynamic rendering                                |
-| Search              | FlexSearch                                | Same as Hugo Hextra, proven, in-memory                              |
-| Analytics           | GA4 via @next/third-parties               | Same measurement ID (G-1NHDR7S3GV) as Hugo site                     |
-| RSS                 | Route handler (`app/feed.xml/route.ts`)   | Hugo outputs RSS for home + sections; preserve for subscribers      |
-| Theme               | next-themes                               | Dark/light/system toggle with SSR flash prevention                  |
-| robots.txt          | Generated (`app/robots.ts`)               | Dynamic sitemap URL; Hugo's static copy hardcodes domain            |
-| File tracing        | outputFileTracingIncludes                 | @vercel/nft can't trace dynamic fs.readFile; standalone needs this  |
-| i18n                | [locale] route segment                    | Next.js native, no extra library                                    |
-| CSS                 | Tailwind CSS v4                           | shadcn/ui requirement, utility-first                                |
-| Port                | 3101                                      | Adjacent to current Hugo site (3100)                                |
-| Coverage            | Vitest v8 + rhino-cli 80%                 | BE+FE blend: backends 90%, frontends 70%, fullstack 80%             |
-| Linter              | oxlint                                    | Same as other TypeScript apps                                       |
-| BDD (unit)          | @amiceli/vitest-cucumber                  | Same as demo-fs-ts-nextjs                                           |
-| BDD (integration)   | @cucumber/cucumber                        | Proven pattern                                                      |
-| Docker              | Multi-stage, no DB                        | Local dev + CI E2E (standalone + outputFileTracingRoot)             |
-| Deployment          | Vercel                                    | Same as ayokoding-web + organiclever-web                            |
-| Prod branch         | `prod-ayokoding-web-v2`                   | Vercel listens for pushes (never commit directly)                   |
-| Route architecture  | Route groups `(content)` + `(app)`        | Content isolated; future fullstack routes added without restructure |
-| ISR strategy        | On-demand ISR (no `generateStaticParams`) | Scales to thousands of pages without slow builds                    |
+| Decision            | Choice                                       | Reason                                                              |
+| ------------------- | -------------------------------------------- | ------------------------------------------------------------------- |
+| App type            | Fullstack (fs)                               | Content API + UI in one app                                         |
+| Framework           | Next.js 16 (App Router)                      | Proven fullstack, existing team experience                          |
+| API layer           | tRPC v11                                     | Type-safe end-to-end, native Zod + React Query integration          |
+| Validation          | Zod                                          | tRPC native, frontmatter validation, input/output schemas           |
+| Content rendering   | React Server Components (RSC)                | SEO: full HTML for crawlers, no client JS needed                    |
+| Data fetching       | tRPC server caller + React Query             | Server-side for content (SEO); client-side for search only          |
+| UI components       | shadcn/ui (Radix + Tailwind)                 | Accessible, customizable, no vendor lock-in                         |
+| Content source      | Flat markdown files                          | Same as Hugo, no migration needed, no database                      |
+| Markdown parser     | unified (remark + rehype)                    | Extensible, server-side, plugin ecosystem                           |
+| Syntax highlighting | shiki ^1.x (via rehype-pretty-code)          | Server-side; pin to 1.x (2.x incompatible with rehype-pretty-code)  |
+| Raw HTML            | rehype-raw + allowDangerousHtml              | 1,343 raw HTML occurrences in content; required for Hugo parity     |
+| Math                | KaTeX (via rehype-katex)                     | $/$$ delimiters only (no \(\)/\[\] — not used in content)           |
+| Diagrams            | Mermaid (client-side)                        | Same as Hugo site, dynamic rendering                                |
+| Search              | FlexSearch (in-memory)                       | Same as Hugo Hextra; ~200ms cold start to rebuild index (see below) |
+| Analytics           | GA4 via @next/third-parties                  | Same measurement ID (G-1NHDR7S3GV) as Hugo site                     |
+| RSS                 | Route handler (`app/feed.xml/route.ts`)      | Hugo outputs RSS for home + sections; preserve for subscribers      |
+| Theme               | next-themes                                  | Dark/light/system toggle with SSR flash prevention                  |
+| robots.txt          | Generated (`app/robots.ts`)                  | Dynamic sitemap URL; Hugo's static copy hardcodes domain            |
+| File tracing        | outputFileTracingIncludes                    | @vercel/nft can't trace dynamic fs.readFile; standalone needs this  |
+| i18n                | [locale] route segment                       | Next.js native, no extra library                                    |
+| CSS                 | Tailwind CSS v4                              | shadcn/ui requirement, utility-first                                |
+| Typography          | @tailwindcss/typography                      | `prose` classes for rendered markdown; `@plugin` in globals.css     |
+| HTML-to-React       | html-react-parser                            | Component mapping + next/link replacement from HTML strings         |
+| Locale validation   | `hasLocale()` + `notFound()`                 | Official Next.js i18n pattern; rejects invalid `[locale]` values    |
+| Canonical URLs      | `alternates.canonical` in `generateMetadata` | Next.js does not auto-set canonical; required for SEO               |
+| Port                | 3101                                         | Adjacent to current Hugo site (3100)                                |
+| Coverage            | Vitest v8 + rhino-cli 80%                    | BE+FE blend: backends 90%, frontends 70%, fullstack 80%             |
+| Linter              | oxlint                                       | Same as other TypeScript apps                                       |
+| BDD (unit)          | @amiceli/vitest-cucumber                     | Same as demo-fs-ts-nextjs                                           |
+| BDD (integration)   | @cucumber/cucumber                           | Proven pattern                                                      |
+| Docker              | Multi-stage, no DB                           | Local dev + CI E2E (standalone + outputFileTracingRoot)             |
+| Deployment          | Vercel                                       | Same as ayokoding-web + organiclever-web                            |
+| Prod branch         | `prod-ayokoding-web-v2`                      | Vercel listens for pushes (never commit directly)                   |
+| Route architecture  | Route groups `(content)` + `(app)`           | Content isolated; future fullstack routes added without restructure |
+| ISR strategy        | On-demand ISR (no `generateStaticParams`)    | Scales to thousands of pages without slow builds                    |
+
+### FlexSearch Cold Start on Vercel
+
+The in-memory FlexSearch index + content map is a **lazy singleton** — built once
+and cached for the lifetime of the server process. On Vercel serverless, each
+function instance can cold start independently, triggering a full index rebuild
+(scan 933 files, parse frontmatter, build FlexSearch index, ~200ms).
+
+**Impact**: Vercel Pro keeps instances warm for 99.37% of requests. ISR-cached
+content pages don't trigger the content index at all (served from edge cache).
+Only **search queries** and **first-hit uncached pages** trigger the tRPC route
+handler, which may cold start. The ~200ms rebuild is acceptable — users don't
+notice it within the overall request latency.
+
+**Future optimization**: If cold start becomes measurable, pre-build the
+FlexSearch index to a JSON file at build time via FlexSearch's
+[export/import API](https://github.com/nextapps-de/flexsearch/blob/master/doc/export-import.md)
+and load from disk instead of scanning the filesystem. This is not needed at
+launch but documented here for future reference.
 
 ## Future Extensibility
 
@@ -1114,6 +1195,32 @@ async function mapSlugToLocale(slug: string, targetLocale: "en" | "id"): Promise
 This handles both path segment translation (`learn`→`belajar`) AND filename
 translation (`overview`→`ikhtisar`).
 
+### Locale Validation
+
+The `[locale]` route segment is dynamic and accepts any string. Without
+validation, requests to `/fr/learn/overview` or `/xyz/anything` would pass
+through middleware and reach the content layer, producing empty results or
+errors. Following the [official Next.js i18n guide](https://nextjs.org/docs/app/guides/internationalization),
+the locale layout validates the parameter:
+
+```typescript
+// app/[locale]/layout.tsx
+import { notFound } from "next/navigation";
+
+const supportedLocales = ["en", "id"] as const;
+type Locale = (typeof supportedLocales)[number];
+
+const hasLocale = (locale: string): locale is Locale => (supportedLocales as readonly string[]).includes(locale);
+
+export default async function LocaleLayout({ children, params }: LayoutProps<"/[locale]">) {
+  const { locale } = await params;
+  if (!hasLocale(locale)) notFound();
+  // ... rest of layout
+}
+```
+
+This ensures only `en` and `id` proceed to render; all other values return 404.
+
 Content slugs in tRPC use the **filesystem path relative to the locale directory**
 (e.g., `learn/overview` for English, `belajar/ikhtisar` for Indonesian). Slugs are
 locale-specific because folder and file names differ between languages. The tRPC
@@ -1343,13 +1450,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, slug } = await params;
   const slugPath = slug.join("/");
   const page = await getContentBySlug(locale, slugPath);
-  const mappedSlug = mapSlugToLocale(slugPath, locale === "en" ? "id" : "en");
+  const otherLocale = locale === "en" ? "id" : "en";
+  const mappedSlug = await mapSlugToLocale(slugPath, otherLocale);
   return {
     title: page.title,
     description: page.description,
     openGraph: { title: page.title, description: page.description, type: "article" },
     alternates: {
-      languages: { en: `/en/${slugPath}`, id: `/id/${mappedSlug}` },
+      canonical: `/${locale}/${slugPath}`,
+      languages: {
+        [locale]: `/${locale}/${slugPath}`,
+        ...(mappedSlug ? { [otherLocale]: `/${otherLocale}/${mappedSlug}` } : {}),
+      },
     },
   };
 }
@@ -1378,6 +1490,8 @@ All dependencies have been verified via web search against latest releases and d
 | @amiceli/vitest-cucumber   | 6.3.0   | Active         | Recently updated March 2025                                         |
 | oxlint                     | v1.39+  | Stable         | 50-100x faster than ESLint, 695+ rules                              |
 | unified (remark + rehype)  | Latest  | Active         | ESM-only — use `.ts`/`.mjs` config files                            |
+| html-react-parser          | Latest  | Active         | Parses HTML string → React elements with `replace` callbacks        |
+| @tailwindcss/typography    | Latest  | Active         | `prose` classes for markdown; v4 via `@plugin` in CSS               |
 
 ### Key Caveats
 

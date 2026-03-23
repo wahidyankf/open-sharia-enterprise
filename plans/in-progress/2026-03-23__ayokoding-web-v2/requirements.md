@@ -147,10 +147,20 @@ Scenario: Mobile hamburger opens sidebar overlay
    - `{{% steps %}}` (1 file) → ordered step list with visual connectors
 7. **Tables**: Standard markdown tables with proper styling
 8. **Images**: Responsive images with lazy loading
-9. **Internal links**: Resolve Hugo-style absolute paths (`/en/learn/...`) to Next.js routes
+9. **Internal links**: Resolve Hugo-style absolute paths (`/en/learn/...`) to Next.js
+   `<Link>` components for SPA client-side navigation (via `html-react-parser`
+   `replace` — plain `<a>` tags cause full page reloads losing SPA behavior)
 10. **Raw HTML**: Support inline HTML in markdown (same as Hugo `unsafe: true`) via
     `rehype-raw` with `allowDangerousHtml: true` on `remark-rehype`
     (1,343 raw HTML occurrences across 30 content files)
+11. **Component mapping**: HTML string from unified pipeline rendered via
+    `html-react-parser` with `replace` callbacks — maps shortcode HTML nodes
+    (`data-callout`, `data-tabs`, `data-youtube`, `data-steps`) to interactive
+    React components (tabs need state, Mermaid needs DOM, YouTube needs iframe).
+    `dangerouslySetInnerHTML` cannot provide this interactivity.
+12. **Typography**: Rendered markdown styled via `@tailwindcss/typography` `prose`
+    classes (headings, paragraphs, lists, blockquotes, tables, code — without
+    this plugin, all HTML renders as unstyled plain text)
 
 ### Navigation
 
@@ -174,6 +184,9 @@ Scenario: Mobile hamburger opens sidebar overlay
 3. **UI translations**: All UI strings translated (9 translation keys from i18n files)
 4. **Content mapping**: EN `learn/` maps to ID `belajar/`, EN `rants/` maps to ID `celoteh/`
 5. **Default redirect**: `/` redirects to `/en`
+6. **Locale validation**: Invalid locales (e.g., `/fr/...`, `/xyz/...`) return 404
+   (the `[locale]` segment accepts any string — must validate against supported
+   locales `en` and `id`)
 
 ### API (tRPC)
 
@@ -220,7 +233,9 @@ Scenario: Mobile hamburger opens sidebar overlay
 - **SEO**: All content must be server-rendered (RSC) — no client-side rendering for
   content pages. Full HTML available to crawlers without JavaScript execution.
   Equivalent meta tags to current Hugo site (Open Graph, Twitter Cards, JSON-LD,
-  hreflang, sitemap, canonical URLs). RSS feed at `/feed.xml`
+  hreflang, sitemap). Explicit `alternates.canonical` on every content page (Next.js
+  does NOT auto-set canonical URLs — requires `metadataBase` + `alternates.canonical`
+  in `generateMetadata`). RSS feed at `/feed.xml`
 - **Analytics**: Google Analytics GA4 (`G-1NHDR7S3GV`) via `@next/third-parties/google`
   (same tracking ID as current Hugo site — no data gap during migration)
 - **Accessibility**: WCAG AA compliance, keyboard navigation, ARIA labels, color contrast
