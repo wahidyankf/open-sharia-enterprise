@@ -913,6 +913,11 @@ const frontmatterSchema = z.object({
   tags: z.array(z.string()).default([]),
   layout: z.string().optional(),
   type: z.string().optional(),
+  // Hugo-specific fields (consumed but not displayed)
+  cascade: z.record(z.unknown()).optional(),
+  breadcrumbs: z.boolean().optional(),
+  bookCollapseSection: z.boolean().optional(),
+  bookFlatSection: z.boolean().optional(),
 });
 
 // Content metadata (used in listings and navigation)
@@ -985,8 +990,10 @@ const pathMappings: Record<string, Record<string, string>> = {
 };
 ```
 
-Content slugs in tRPC use the **filesystem path** (e.g., `learn/software-engineering/...`)
-which is locale-independent. The URL uses locale-specific paths via the mapping above.
+Content slugs in tRPC use the **filesystem path relative to the locale directory**
+(e.g., `learn/software-engineering/...` for English, `belajar/manusia/...` for
+Indonesian). Slugs are locale-specific because the folder names differ between
+languages. The tRPC `locale` parameter determines which content directory to read from.
 
 ## Nx Configuration
 
@@ -1002,12 +1009,13 @@ which is locale-independent. The URL uses locale-specific paths via the mapping 
 "implicitDependencies": ["rhino-cli"]
 ```
 
-**7 mandatory targets + dev:**
+**7 mandatory targets + dev + start:**
 
 | Target             | Purpose                                             | Cacheable |
 | ------------------ | --------------------------------------------------- | --------- |
 | `codegen`          | No-op (no OpenAPI contract)                         | Yes       |
 | `dev`              | Start dev server (port 3101)                        | No        |
+| `start`            | Start production server (port 3101)                 | No        |
 | `typecheck`        | `tsc --noEmit`                                      | Yes       |
 | `lint`             | oxlint                                              | Yes       |
 | `build`            | `next build`                                        | Yes       |
@@ -1103,19 +1111,21 @@ markdown files.
 ## Dockerfile
 
 ```dockerfile
+# Build context: workspace root (docker-compose sets context: ../../../)
 # Stage 1: Dependencies
 FROM node:24-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
+COPY apps/ayokoding-web-v2/package.json ./apps/ayokoding-web-v2/
 RUN npm ci --ignore-scripts
 
 # Stage 2: Build
 FROM node:24-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-# Copy content files into the build context
-COPY apps/ayokoding-web/content ./content
+COPY apps/ayokoding-web-v2/ ./apps/ayokoding-web-v2/
+COPY apps/ayokoding-web/content/ ./apps/ayokoding-web/content/
+WORKDIR /app/apps/ayokoding-web-v2
 RUN npx next build
 
 # Stage 3: Production
@@ -1123,14 +1133,14 @@ FROM node:24-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/content ./content
+COPY --from=builder /app/apps/ayokoding-web-v2/public ./public
+COPY --from=builder /app/apps/ayokoding-web-v2/.next/standalone ./
+COPY --from=builder /app/apps/ayokoding-web-v2/.next/static ./apps/ayokoding-web-v2/.next/static
+COPY --from=builder /app/apps/ayokoding-web/content/ ./apps/ayokoding-web/content/
 USER nextjs
 EXPOSE 3101
 ENV PORT=3101
-CMD ["node", "server.js"]
+CMD ["node", "apps/ayokoding-web-v2/server.js"]
 ```
 
 ## CI Workflow
@@ -1148,15 +1158,18 @@ CMD ["node", "server.js"]
 Next.js Metadata API replaces Hugo's custom `head-end.html` partial:
 
 ```typescript
-// app/[locale]/[...slug]/page.tsx
-export async function generateMetadata({ params }): Promise<Metadata> {
-  const page = await getContentBySlug(params.locale, params.slug.join("/"));
+// app/[locale]/(content)/[...slug]/page.tsx
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale, slug } = await params;
+  const slugPath = slug.join("/");
+  const page = await getContentBySlug(locale, slugPath);
+  const mappedSlug = mapSlugToLocale(slugPath, locale === "en" ? "id" : "en");
   return {
     title: page.title,
     description: page.description,
     openGraph: { title: page.title, description: page.description, type: "article" },
     alternates: {
-      languages: { en: `/en/${slug}`, id: `/id/${mappedSlug}` },
+      languages: { en: `/en/${slugPath}`, id: `/id/${mappedSlug}` },
     },
   };
 }

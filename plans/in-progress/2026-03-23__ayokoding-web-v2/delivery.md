@@ -181,7 +181,7 @@
 ## Phase 5: Frontend Core (Layout & Navigation)
 
 - [ ] Create `src/lib/i18n/config.ts` — locale config, path mappings (en↔id)
-- [ ] Create `src/lib/i18n/translations.ts` — UI string translations (7 keys)
+- [ ] Create `src/lib/i18n/translations.ts` — UI string translations (9 keys from Hugo i18n files)
 - [ ] Create `src/lib/i18n/middleware.ts` — locale detection + redirect
 - [ ] Create `src/middleware.ts` — Next.js middleware for locale routing
 - [ ] Create `src/app/layout.tsx` — root layout (fonts, providers, metadata)
@@ -266,8 +266,8 @@ All other content is server-rendered.
   - [ ] Escape to close
 - [ ] Create `src/components/search/search-results.tsx` — result item component
 - [ ] Create `src/lib/hooks/use-search.ts` — search dialog open/close state
-- [ ] Create `src/app/[locale]/search/page.tsx` — dedicated search results page
-      (for direct URL access)
+- [ ] Create `src/app/[locale]/(content)/search/page.tsx` — dedicated search results page
+      (for direct URL access, inside `(content)` for sidebar layout)
 - [ ] Verify search works for both locales
 
 ## Phase 8: Backend Unit Tests (BE Gherkin)
