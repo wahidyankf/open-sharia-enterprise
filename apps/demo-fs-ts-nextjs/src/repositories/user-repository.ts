@@ -85,6 +85,10 @@ export function createUserRepository(db: Database): UserRepository {
         .where(eq(users.id, id));
     },
 
+    async updateRole(id, role) {
+      await db.update(users).set({ role, updatedAt: new Date() }).where(eq(users.id, id));
+    },
+
     async resetFailedAttempts(id) {
       await db.update(users).set({ failedLoginAttempts: 0, updatedAt: new Date() }).where(eq(users.id, id));
     },

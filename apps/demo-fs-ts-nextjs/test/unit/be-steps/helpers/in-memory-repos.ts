@@ -58,6 +58,9 @@ export function createInMemoryUserRepository(): UserRepository {
         u.id === id ? { ...u, failedLoginAttempts: u.failedLoginAttempts + 1, updatedAt: new Date() } : u,
       );
     },
+    async updateRole(id, role) {
+      users = users.map((u) => (u.id === id ? { ...u, role, updatedAt: new Date() } : u));
+    },
     async resetFailedAttempts(id) {
       users = users.map((u) => (u.id === id ? { ...u, failedLoginAttempts: 0, updatedAt: new Date() } : u));
     },

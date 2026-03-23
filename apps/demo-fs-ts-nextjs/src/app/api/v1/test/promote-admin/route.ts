@@ -18,12 +18,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "User not found" }, { status: 404 });
   }
 
-  await repos.users.updateStatus(user.id, "ACTIVE");
-  // Promote to admin by directly updating the role via raw update
-  const { db } = await import("@/db/client");
-  const { users } = await import("@/db/schema");
-  const { eq } = await import("drizzle-orm");
-  await db.update(users).set({ role: "ADMIN" }).where(eq(users.id, user.id));
-
+  await repos.users.updateRole(user.id, "ADMIN");
   return NextResponse.json({ message: `User ${username} promoted to ADMIN` });
 }

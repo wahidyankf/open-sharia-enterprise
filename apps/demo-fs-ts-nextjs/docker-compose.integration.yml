@@ -5,9 +5,11 @@ services:
       POSTGRES_DB: demo_fs_nextjs_test
       POSTGRES_USER: demo_fs_nextjs_test
       POSTGRES_PASSWORD: demo_fs_nextjs_test
+    tmpfs:
+      - /var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U demo_fs_nextjs_test"]
-      interval: 3s
+      interval: 2s
       timeout: 3s
       retries: 10
     networks:

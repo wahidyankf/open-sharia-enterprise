@@ -11,6 +11,7 @@ export interface UserRepository {
   updatePasswordResetToken(id: string, token: string | null): Promise<void>;
   incrementFailedAttempts(id: string): Promise<void>;
   resetFailedAttempts(id: string): Promise<void>;
+  updateRole(id: string, role: import("@/lib/types").Role): Promise<void>;
   listUsers(page: number, size: number, email?: string): Promise<PagedResult<User>>;
   deleteAll(): Promise<void>;
 }

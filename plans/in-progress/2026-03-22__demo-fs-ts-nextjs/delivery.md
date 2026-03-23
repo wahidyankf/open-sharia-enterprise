@@ -161,8 +161,9 @@
 ## Phase 10: Integration Tests
 
 - [x] Create `docker-compose.integration.yml` with PostgreSQL 17
-- [ ] Create integration test runner (deferred — requires Docker environment)
-- [ ] Verify all BE integration tests pass (deferred to Phase 12/E2E)
+- [x] Create Dockerfile.integration, cucumber config, hooks, world, service-client
+- [x] Create integration step definitions (13 files) for all BE domains
+- [x] Verify all BE integration tests pass with real PostgreSQL
 
 ## Phase 11: Docker and Local Development
 
@@ -199,7 +200,7 @@
 - [x] `nx run demo-fs-ts-nextjs:build` succeeds
 - [x] `nx run demo-fs-ts-nextjs:test:unit` — all BE + FE Gherkin scenarios pass (1133 tests)
 - [x] `nx run demo-fs-ts-nextjs:test:quick` — 76.66% >= 75% threshold
-- [ ] `nx run demo-fs-ts-nextjs:test:integration` — deferred (needs integration runner)
+- [x] `nx run demo-fs-ts-nextjs:test:integration` — all 73 BE scenarios pass with real PG
 - [x] `demo-be-e2e` passes — all 78 scenarios pass
 - [x] `demo-fe-e2e` passes — all 92 scenarios pass
 - [x] Docker Compose local dev setup works
