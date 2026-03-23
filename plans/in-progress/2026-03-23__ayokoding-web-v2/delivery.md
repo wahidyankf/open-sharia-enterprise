@@ -1,0 +1,313 @@
+# Delivery
+
+> **Note**: All `npm install` commands run from `apps/ayokoding-web-v2/` (project root),
+> not the workspace root. This ensures packages are added to the app's own `package.json`.
+
+## Phase 1: Project Scaffolding
+
+- [ ] Create `apps/ayokoding-web-v2/` directory
+- [ ] Initialize Next.js 16 project with TypeScript, App Router, src/ directory
+- [ ] Configure `next.config.ts` with `output: 'standalone'` for Docker builds
+- [ ] Install and configure Tailwind CSS v4 + PostCSS
+- [ ] Initialize shadcn/ui (`npx shadcn@latest init`) with `components.json`
+- [ ] Install core shadcn/ui components: Button, Input, Dialog, Alert, Separator,
+      ScrollArea, Sheet, DropdownMenu, Tooltip, Badge, Command
+- [ ] Install tRPC: `@trpc/server`, `@trpc/client`, `@trpc/react-query`,
+      `@tanstack/react-query`
+- [ ] Install Zod
+- [ ] Install markdown tooling: `unified`, `remark-parse`, `remark-gfm`, `remark-math`,
+      `rehype-stringify`, `rehype-pretty-code`, `shiki`, `rehype-katex`,
+      `rehype-slug`, `rehype-autolink-headings`, `gray-matter`
+- [ ] Install FlexSearch for search indexing
+- [ ] Install test dependencies: `vitest`, `@vitest/coverage-v8`,
+      `@amiceli/vitest-cucumber`, `@testing-library/react`, `jsdom`
+- [ ] Create `project.json` with 7 mandatory Nx targets (codegen, typecheck, lint, build,
+      test:unit, test:quick, test:integration) + `dev` + `start`
+- [ ] Set up `tsconfig.json` with strict mode
+- [ ] Set up `vitest.config.ts` with v8 coverage (80% threshold)
+- [ ] Configure oxlint for linting
+- [ ] Verify `nx run ayokoding-web-v2:lint` passes
+- [ ] Verify `nx run ayokoding-web-v2:typecheck` passes
+
+## Phase 2: Specs (Gherkin Feature Files)
+
+- [ ] Create `specs/apps/ayokoding-web/README.md` with overview
+- [ ] Create `specs/apps/ayokoding-web/be/gherkin/` directory
+- [ ] Write `content-api.feature` — content retrieval scenarios:
+  - [ ] Get page by slug (existing page, non-existent page, draft page)
+  - [ ] List children of a section (with weight ordering)
+  - [ ] Get navigation tree (full hierarchy)
+  - [ ] Content includes rendered HTML with code blocks
+- [ ] Write `search-api.feature` — search scenarios:
+  - [ ] Search returns matching results
+  - [ ] Search is scoped to locale
+  - [ ] Empty query returns error
+  - [ ] Search results include title, slug, excerpt
+- [ ] Write `navigation-api.feature` — navigation scenarios:
+  - [ ] Tree structure matches filesystem hierarchy
+  - [ ] Nodes are ordered by weight
+  - [ ] Section nodes have children
+- [ ] Write `i18n-api.feature` — locale scenarios:
+  - [ ] English content served for locale "en"
+  - [ ] Indonesian content served for locale "id"
+  - [ ] Invalid locale returns error
+- [ ] Write `health-check.feature` — health endpoint scenario
+- [ ] Create `specs/apps/ayokoding-web/fe/gherkin/` directory
+- [ ] Write `content-rendering.feature` — page rendering scenarios:
+  - [ ] Markdown renders with proper formatting
+  - [ ] Code blocks have syntax highlighting
+  - [ ] Callout shortcodes render as admonitions
+  - [ ] Math expressions render via KaTeX
+  - [ ] Mermaid diagrams render
+- [ ] Write `navigation.feature` — UI navigation scenarios:
+  - [ ] Sidebar shows section tree
+  - [ ] Breadcrumb shows path hierarchy
+  - [ ] Table of contents shows heading links
+  - [ ] Prev/Next links navigate between siblings
+- [ ] Write `search.feature` — search UI scenarios:
+  - [ ] Cmd+K opens search dialog
+  - [ ] Typing shows results
+  - [ ] Clicking result navigates to page
+  - [ ] Escape closes search
+- [ ] Write `responsive.feature` — responsive layout scenarios:
+  - [ ] Desktop: sidebar + TOC visible
+  - [ ] Mobile: hamburger menu, hidden sidebar
+- [ ] Write `i18n.feature` — language switching scenarios:
+  - [ ] Language switcher changes locale
+  - [ ] URL updates to locale-specific path
+  - [ ] UI labels change language
+- [ ] Write `accessibility.feature` — WCAG scenarios:
+  - [ ] Keyboard navigation works
+  - [ ] ARIA labels present on interactive elements
+  - [ ] Color contrast meets AA standard
+  - [ ] Skip to content link present
+
+## Phase 3: Content Layer
+
+- [ ] Create `src/server/content/types.ts` — ContentMeta, ContentPage, TreeNode types
+- [ ] Create `src/lib/schemas/content.ts` — Zod frontmatter schema
+- [ ] Create `src/lib/schemas/search.ts` — Zod search query/result schemas
+- [ ] Create `src/lib/schemas/navigation.ts` — Zod tree node schema
+- [ ] Create `src/server/content/reader.ts`:
+  - [ ] Glob all `*.md` files from content directory
+  - [ ] Parse frontmatter with gray-matter + Zod validation
+  - [ ] Detect `_index.md` as section pages
+  - [ ] Build slug from file path (relative to content/locale/)
+  - [ ] Handle both `en/` and `id/` content directories
+- [ ] Create `src/server/content/shortcodes.ts`:
+  - [ ] Custom remark plugin to transform Hugo `{{< callout >}}` to HTML nodes
+  - [ ] Map callout types (warning, info, tip) to data attributes
+- [ ] Create `src/server/content/parser.ts`:
+  - [ ] unified pipeline: remark-parse → remark-gfm → remark-math → shortcodes →
+        rehype-stringify → rehype-pretty-code → rehype-katex → rehype-slug →
+        rehype-autolink-headings
+  - [ ] Extract headings (H2-H4) for table of contents
+  - [ ] Return { html, headings }
+- [ ] Create `src/server/content/index.ts`:
+  - [ ] Scan all markdown files at startup
+  - [ ] Build content map (slug → ContentMeta)
+  - [ ] Build navigation tree (hierarchical, weight-sorted)
+  - [ ] Compute prev/next for each page within its section
+  - [ ] Lazy initialization (singleton, built once)
+- [ ] Create `src/server/content/search-index.ts`:
+  - [ ] Initialize FlexSearch document index per locale
+  - [ ] Index title + raw content (stripped markdown) for each page
+  - [ ] Provide search function returning ranked results with excerpts
+
+## Phase 4: tRPC API
+
+- [ ] Create `src/server/trpc/init.ts` — tRPC initialization, context factory
+- [ ] Create `src/server/trpc/procedures/content.ts`:
+  - [ ] `content.getBySlug` — read + parse markdown, return HTML + metadata + headings
+  - [ ] `content.listChildren` — list child pages with metadata, sorted by weight
+  - [ ] `content.getTree` — return navigation tree for a locale (optionally scoped
+        to a root slug)
+- [ ] Create `src/server/trpc/procedures/search.ts`:
+  - [ ] `search.query` — search FlexSearch index, return results with excerpts
+- [ ] Create `src/server/trpc/procedures/meta.ts`:
+  - [ ] `meta.health` — return `{ status: "ok" }`
+  - [ ] `meta.languages` — return available locales with labels
+- [ ] Create `src/server/trpc/router.ts` — merge all sub-routers
+- [ ] Create `src/app/api/trpc/[trpc]/route.ts` — tRPC HTTP adapter for App Router
+- [ ] Create `src/lib/trpc/client.ts` — tRPC React Query hooks
+- [ ] Create `src/lib/trpc/server.ts` — tRPC server-side caller (for RSC)
+- [ ] Create `src/lib/trpc/provider.tsx` — TRPCProvider + QueryClientProvider wrapper
+- [ ] Verify tRPC API responds at `/api/trpc/meta.health`
+
+## Phase 5: Frontend Core (Layout & Navigation)
+
+- [ ] Create `src/lib/i18n/config.ts` — locale config, path mappings (en↔id)
+- [ ] Create `src/lib/i18n/translations.ts` — UI string translations (7 keys)
+- [ ] Create `src/lib/i18n/middleware.ts` — locale detection + redirect
+- [ ] Create `src/middleware.ts` — Next.js middleware for locale routing
+- [ ] Create `src/app/layout.tsx` — root layout (fonts, providers, metadata)
+- [ ] Create `src/app/page.tsx` — redirect `/` → `/en`
+- [ ] Create `src/app/[locale]/layout.tsx`:
+  - [ ] Header component (site title, search trigger, language switcher, theme toggle)
+  - [ ] Sidebar component (collapsible navigation tree)
+  - [ ] Footer component (copyright, links)
+  - [ ] Mobile navigation drawer (Sheet component)
+- [ ] Create `src/components/layout/header.tsx`
+- [ ] Create `src/components/layout/sidebar.tsx`:
+  - [ ] Fetch navigation tree via tRPC
+  - [ ] Collapsible sections with weight-based ordering
+  - [ ] Highlight active page
+  - [ ] Responsive: visible on desktop, drawer on mobile
+- [ ] Create `src/components/layout/breadcrumb.tsx`
+- [ ] Create `src/components/layout/toc.tsx` — table of contents from headings
+- [ ] Create `src/components/layout/footer.tsx`
+- [ ] Create `src/components/layout/mobile-nav.tsx` — hamburger drawer
+- [ ] Create `src/components/layout/prev-next.tsx` — bottom prev/next navigation
+- [ ] Create `src/lib/hooks/use-locale.ts` — current locale hook
+- [ ] Add dark/light mode toggle (next-themes or manual)
+- [ ] Add responsive breakpoints: desktop (sidebar + TOC), tablet (sidebar),
+      mobile (hamburger)
+
+## Phase 6: Content Pages
+
+- [ ] Create `src/app/[locale]/page.tsx` — locale homepage
+- [ ] Create `src/app/[locale]/[...slug]/page.tsx`:
+  - [ ] Fetch content via tRPC server caller
+  - [ ] Render parsed HTML with custom components
+  - [ ] Show breadcrumb, TOC, prev/next
+  - [ ] Handle section pages (`_index.md`) — show child listing
+  - [ ] Handle 404 (slug not found)
+- [ ] Create `src/components/content/markdown-renderer.tsx`:
+  - [ ] Render HTML string with component mapping
+  - [ ] Map callout HTML nodes to Callout React component
+  - [ ] Map code blocks to CodeBlock component
+  - [ ] Map mermaid code blocks to Mermaid component
+- [ ] Create `src/components/content/callout.tsx` — admonition component (shadcn Alert)
+- [ ] Create `src/components/content/code-block.tsx` — syntax highlighted code
+- [ ] Create `src/components/content/mermaid.tsx` — client-side Mermaid renderer
+- [ ] Add `generateStaticParams` for SSG of all content pages
+- [ ] Add `generateMetadata` for SEO (Open Graph, Twitter Cards, hreflang)
+- [ ] Add JSON-LD structured data (Article/WebSite schema)
+- [ ] Add sitemap generation (`app/sitemap.ts`)
+
+## Phase 7: Search UI
+
+- [ ] Create `src/components/search/search-dialog.tsx`:
+  - [ ] shadcn Command component for search
+  - [ ] Cmd+K / Ctrl+K keyboard shortcut
+  - [ ] Debounced input → tRPC search.query
+  - [ ] Result list with title, section path, excerpt
+  - [ ] Click result → navigate to page
+  - [ ] Escape to close
+- [ ] Create `src/components/search/search-results.tsx` — result item component
+- [ ] Create `src/lib/hooks/use-search.ts` — search dialog open/close state
+- [ ] Create `src/app/[locale]/search/page.tsx` — dedicated search results page
+      (for direct URL access)
+- [ ] Verify search works for both locales
+
+## Phase 8: Backend Unit Tests (BE Gherkin)
+
+- [ ] Create `test/unit/be-steps/` directory
+- [ ] Create mock content reader (in-memory content map) for unit testing
+- [ ] Implement step definitions for all BE Gherkin domains:
+  - [ ] content-api.steps.ts — test content.getBySlug, listChildren, getTree
+  - [ ] search-api.steps.ts — test search.query with mock index
+  - [ ] navigation-api.steps.ts — test tree structure and ordering
+  - [ ] i18n-api.steps.ts — test locale-specific content
+  - [ ] health-check.steps.ts — test meta.health
+- [ ] Verify all BE unit tests pass: `nx run ayokoding-web-v2:test:unit`
+
+## Phase 9: Frontend Unit Tests (FE Gherkin)
+
+- [ ] Create `test/unit/fe-steps/` directory
+- [ ] Create mock tRPC client for frontend unit tests
+- [ ] Implement step definitions for all FE Gherkin domains:
+  - [ ] content-rendering.steps.ts — test markdown rendering components
+  - [ ] navigation.steps.ts — test sidebar, breadcrumb, TOC, prev/next
+  - [ ] search.steps.ts — test search dialog behavior
+  - [ ] responsive.steps.ts — test responsive layout states
+  - [ ] i18n.steps.ts — test language switcher
+  - [ ] accessibility.steps.ts — test ARIA attributes, keyboard nav
+- [ ] Verify all FE unit tests pass: `nx run ayokoding-web-v2:test:unit`
+
+## Phase 10: Coverage Gate
+
+- [ ] Run `nx run ayokoding-web-v2:test:quick` (unit tests + rhino-cli 80%+)
+- [ ] Add coverage exclusions if needed (tRPC HTTP adapter, middleware,
+      static params — tested at integration/E2E level)
+- [ ] Ensure `typecheck` and `lint` pass cleanly
+
+## Phase 11: Integration Tests
+
+- [ ] Create `cucumber.integration.js` config
+- [ ] Create integration test hooks (startup content index with real filesystem)
+- [ ] Create integration test world (tRPC caller with real content)
+- [ ] Create integration step definitions:
+  - [ ] content-api.steps.ts — test against real markdown files
+  - [ ] search-api.steps.ts — test FlexSearch with real content
+  - [ ] navigation-api.steps.ts — test tree with real hierarchy
+- [ ] Verify all integration tests pass
+
+## Phase 12: Docker, Vercel & Infrastructure
+
+- [ ] Create `Dockerfile` (multi-stage: deps → build → runtime)
+  - [ ] Copy content files (`apps/ayokoding-web/content/`) into image
+  - [ ] No database needed
+- [ ] Create `infra/dev/ayokoding-web-v2/docker-compose.yml`
+- [ ] Verify app starts correctly via Docker Compose
+- [ ] Verify health check at `http://localhost:3101/api/trpc/meta.health`
+- [ ] Verify content pages render correctly in Docker
+- [ ] Create `apps/ayokoding-web-v2/vercel.json`:
+  - [ ] `installCommand`: `npm install --prefix=../.. --ignore-scripts`
+  - [ ] `ignoreCommand`: only build on `prod-ayokoding-web-v2` branch
+  - [ ] Security headers (X-Content-Type-Options, X-Frame-Options, X-XSS-Protection,
+        Referrer-Policy)
+- [ ] Configure `next.config.ts` content path to work in both Docker (`CONTENT_DIR` env)
+      and Vercel (workspace-relative fallback) environments
+
+## Phase 13: E2E Test Apps
+
+- [ ] Create `apps/ayokoding-web-v2-be-e2e/`:
+  - [ ] `project.json` with E2E targets (install, test:e2e, test:e2e:ui)
+  - [ ] `playwright.config.ts` configured for `BASE_URL`
+  - [ ] Test specs consuming `specs/apps/ayokoding-web/be/gherkin/` features
+  - [ ] Tests hit tRPC HTTP endpoints directly
+- [ ] Create `apps/ayokoding-web-v2-fe-e2e/`:
+  - [ ] `project.json` with E2E targets
+  - [ ] `playwright.config.ts` configured for `BASE_URL`
+  - [ ] Test specs consuming `specs/apps/ayokoding-web/fe/gherkin/` features
+  - [ ] Tests use Playwright browser automation
+- [ ] Start app via Docker, run BE E2E — all scenarios pass
+- [ ] Start app via Docker, run FE E2E — all scenarios pass
+
+## Phase 14: CI, Deployment & Documentation
+
+- [ ] Create `.github/workflows/test-ayokoding-web-v2.yml`:
+  - [ ] Unit tests job with Codecov upload
+  - [ ] E2E job: Docker build → start → health check → run BE + FE E2E
+  - [ ] 2x daily cron (WIB 06, 18) + manual dispatch
+- [ ] Create `prod-ayokoding-web-v2` branch from `main` for Vercel deployment
+- [ ] Configure Vercel project pointing to `apps/ayokoding-web-v2` with root directory
+- [ ] Verify Vercel deployment builds and serves content correctly
+- [ ] Create `apps/ayokoding-web-v2/README.md` with project overview, commands,
+      architecture, Vercel deployment docs, and related documentation links
+- [ ] Update `specs/apps/ayokoding-web/README.md` if needed
+- [ ] Update CLAUDE.md to include ayokoding-web-v2 in Current Apps listing
+  - [ ] Add to Current Apps list
+  - [ ] Add `prod-ayokoding-web-v2` to environment branches list
+- [ ] Verify CI workflow passes
+
+## Validation Checklist
+
+- [ ] `nx run ayokoding-web-v2:codegen` succeeds (no-op)
+- [ ] `nx run ayokoding-web-v2:typecheck` succeeds
+- [ ] `nx run ayokoding-web-v2:lint` succeeds
+- [ ] `nx run ayokoding-web-v2:build` succeeds
+- [ ] `nx run ayokoding-web-v2:test:unit` — all BE + FE Gherkin scenarios pass
+- [ ] `nx run ayokoding-web-v2:test:quick` — 80%+ coverage threshold met
+- [ ] `nx run ayokoding-web-v2:test:integration` — all scenarios pass with real filesystem
+- [ ] `ayokoding-web-v2-be-e2e` passes — all BE E2E scenarios pass
+- [ ] `ayokoding-web-v2-fe-e2e` passes — all FE E2E scenarios pass
+- [ ] Docker build and run works
+- [ ] All content pages render correctly (spot check: overview, by-example, rants)
+- [ ] Search returns relevant results for both locales
+- [ ] Language switching works correctly
+- [ ] Responsive layout works (desktop, tablet, mobile)
+- [ ] CI workflow passes
+- [ ] Vercel deployment succeeds from `prod-ayokoding-web-v2` branch
+- [ ] README.md is complete
