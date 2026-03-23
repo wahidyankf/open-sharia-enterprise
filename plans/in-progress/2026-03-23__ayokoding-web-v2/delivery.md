@@ -322,6 +322,10 @@ All other content is server-rendered.
 
 ## Phase 12: Docker, Vercel & Infrastructure
 
+- [ ] Build standalone output locally and inspect structure:
+  - [ ] Run `next build` with `output: 'standalone'` + `outputFileTracingRoot`
+  - [ ] Verify `server.js` path in `.next/standalone/` (adjust Dockerfile CMD if needed)
+  - [ ] Verify `public/` and `.next/static/` locations for COPY commands
 - [ ] Create `Dockerfile` (multi-stage: deps → build → runtime)
   - [ ] Copy content files (`apps/ayokoding-web/content/`) into image
   - [ ] No database needed

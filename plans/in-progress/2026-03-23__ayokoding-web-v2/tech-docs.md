@@ -979,6 +979,7 @@ The i18n config maps between them:
 // Segment-level mappings: translate each path segment between locales.
 // Key = English segment, Value = Indonesian equivalent.
 // Applied to EVERY segment in the path, not just top-level.
+// EN→ID segment mappings. Segments not in this map are kept as-is.
 const segmentMappings: Record<string, string> = {
   // Top-level sections
   learn: "belajar",
@@ -991,11 +992,9 @@ const segmentMappings: Record<string, string> = {
   // Subsections
   human: "manusia",
   tools: "peralatan",
-  // Indonesian-only (no English equivalent)
-  "konten-video": null, // No mapping — ID-only content
 };
 
-function mapSlugToLocale(slug: string, targetLocale: "en" | "id"): string | null {
+async function mapSlugToLocale(slug: string, targetLocale: "en" | "id"): Promise<string | null> {
   const segments = slug.split("/");
   const mapped = segments.map((seg) => {
     if (targetLocale === "id") return segmentMappings[seg] ?? seg;
@@ -1004,8 +1003,9 @@ function mapSlugToLocale(slug: string, targetLocale: "en" | "id"): string | null
     return entry ? entry[0] : seg;
   });
   // Verify the mapped slug actually exists in the target locale's content
+  const index = await getContentIndex();
   const targetSlug = mapped.join("/");
-  return contentIndex.has(`${targetLocale}:${targetSlug}`) ? targetSlug : null;
+  return index.has(`${targetLocale}:${targetSlug}`) ? targetSlug : null;
 }
 ```
 
