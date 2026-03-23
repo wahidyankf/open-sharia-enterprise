@@ -108,16 +108,22 @@ Scenario: Search content
 ```gherkin
 Feature: Site is responsive
 
-Scenario: Desktop layout
+Scenario: Desktop layout shows sidebar and TOC
   Given the viewport width is 1280px
+  When the user navigates to a content page
   Then the sidebar should be visible on the left
   And the table of contents should be visible on the right
   And the content should fill the center
 
-Scenario: Mobile layout
+Scenario: Mobile layout uses hamburger menu
   Given the viewport width is 375px
+  When the user navigates to a content page
   Then the sidebar should be hidden
   And a hamburger menu button should be visible
+
+Scenario: Mobile hamburger opens sidebar overlay
+  Given the viewport width is 375px
+  And the user is on a content page
   When the user taps the hamburger button
   Then the sidebar should slide in as an overlay
 ```
@@ -158,7 +164,7 @@ Scenario: Mobile layout
 
 1. **URL structure**: `/en/...` for English, `/id/...` for Indonesian
 2. **Language switcher**: UI component to switch between locales
-3. **UI translations**: All UI strings translated (7 translation keys from i18n files)
+3. **UI translations**: All UI strings translated (9 translation keys from i18n files)
 4. **Content mapping**: EN `learn/` maps to ID `belajar/`, EN `rants/` maps to ID `celoteh/`
 5. **Default redirect**: `/` redirects to `/en`
 
