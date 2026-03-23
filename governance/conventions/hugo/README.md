@@ -30,13 +30,6 @@ These conventions define **WHAT Hugo content rules apply** to our Hugo-based web
 - [Hugo Content - Shared](./shared.md) - Common Hugo content conventions applying to all Hugo sites in this repository
 - [Indonesian Content Policy - ayokoding-web](./indonesian-content-policy.md) - Policy defining when and how to create Indonesian content in ayokoding-web. Establishes English-first policy for technical tutorials, defines Indonesian content categories (unique content, strategic translations, discouraged mirrors), and provides decision tree for language selection
 
-## Related Documentation
-
-- [Conventions Index](../README.md) - All documentation conventions
-- [Hugo Development Convention](../../development/hugo/development.md) - Hugo theme/layout development standards
-- [Tutorial Conventions](../tutorials/README.md) - Tutorial structure and naming
-- [Repository Architecture](../../repository-governance-architecture.md) - Six-layer governance model
-
 ## Principles Implemented/Respected
 
 This set of conventions implements/respects the following core principles:
@@ -46,6 +39,13 @@ This set of conventions implements/respects the following core principles:
 - **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Frontmatter requirements and weight-based ordering make content structure explicit rather than implicit, ensuring predictable site navigation and organization.
 
 - **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: Bilingual content strategy and structured frontmatter enable layering content complexity for different audience levels.
+
+## Related Documentation
+
+- [Conventions Index](../README.md) - All documentation conventions
+- [Hugo Development Convention](../../development/hugo/development.md) - Hugo theme/layout development standards
+- [Tutorial Conventions](../tutorials/README.md) - Tutorial structure and naming
+- [Repository Architecture](../../repository-governance-architecture.md) - Six-layer governance model
 
 ---
 

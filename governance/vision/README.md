@@ -8,7 +8,7 @@ tags:
   - purpose
   - index
 created: 2025-12-24
-updated: 2025-12-24
+updated: 2026-03-23
 ---
 
 # Vision
@@ -32,11 +32,10 @@ graph TD
     E[Agents - WHO implements]
     F[Workflows - WHEN we orchestrate]
 
-    A --> B
-    A --> C
-    A --> D
+    A -->|inspires| B
     B --> C
     B --> D
+    C --> D
     C --> E
     D --> E
     E --> F
@@ -57,6 +56,8 @@ graph TD
 - **Development** (Layer 3) - Practices implementing principles
 - **Agents** (Layer 4) - Tools enforcing conventions and practices
 - **Workflows** (Layer 5) - Processes orchestrating agents
+
+See [Repository Governance Architecture](../repository-governance-architecture.md) for the authoritative reference on all layer relationships, governance flows, and traceability examples.
 
 ## The Layer Test for Vision
 
@@ -113,25 +114,25 @@ Each core principle supports specific aspects of the vision:
 - **Progressive Disclosure** → Supports learners at all skill levels
 - **No Time Estimates** → Respects individual learning and working pace
 
-### Vision → Conventions
+### Vision → Principles → Conventions
 
-Documentation standards enable our mission:
+Documentation standards enable our mission (via Principles that govern Conventions):
 
 - **Open documentation** → Knowledge shared freely, not hoarded
 - **Accessible diagrams** → Learning materials available to all (color-blind friendly)
 - **Clear linking** → Easy navigation supports learning and contribution
 - **Quality standards** → Professional documentation attracts serious developers
 
-### Vision → Development
+### Vision → Principles → Development
 
-Development practices embody our values:
+Development practices embody our values (via Principles that govern Development):
 
 - **Open source (MIT)** → Freedom to use, study, modify, distribute
 - **Trunk-based development** → Continuous integration, transparent collaboration
 - **Automated quality** → Reliability without expensive manual processes
 - **AI-assisted workflows** → Automation serves the community
 
-### Vision → Agents
+### Vision → Principles → Conventions/Development → Agents
 
 Automation serves the mission:
 
@@ -181,4 +182,4 @@ Automation serves the mission:
 
 ---
 
-**Last Updated**: 2025-12-24
+**Last Updated**: 2026-03-23

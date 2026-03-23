@@ -12,17 +12,17 @@ Linking conventions ensure consistent, maintainable internal references across t
 
 Standards for linking between AyoKoding educational content and OSE Platform documentation, including language prefix requirements, absolute path conventions, and cross-repository reference patterns.
 
-## Related Conventions
-
-- [File Naming Convention](../structure/file-naming.md) - Correct file names enable accurate linking
-- [Diátaxis Framework](../structure/diataxis-framework.md) - Documentation organization affects link paths
-- [Hugo Linking Conventions](../hugo/README.md) - Hugo-specific linking patterns
-
 ## Principles Implemented/Respected
 
 - **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)**: Direct markdown links, no complex indirection
 - **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Links are explicit paths, not computed references
 - **[Documentation First](../../principles/content/documentation-first.md)**: Clear linking standards prevent broken references
+
+## Related Conventions
+
+- [File Naming Convention](../structure/file-naming.md) - Correct file names enable accurate linking
+- [Diátaxis Framework](../structure/diataxis-framework.md) - Documentation organization affects link paths
+- [Hugo Linking Conventions](../hugo/README.md) - Hugo-specific linking patterns
 
 ---
 
