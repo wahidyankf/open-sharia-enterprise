@@ -64,6 +64,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
   });
 
   Scenario("Successful registration navigates to the login page with success message", ({ When, Then, And }) => {
+    let user: ReturnType<typeof userEvent.setup>;
+
     When(
       'a visitor fills in the registration form with username "alice", email "alice@example.com", and password "Str0ng#Pass1"',
       async () => {
@@ -73,7 +75,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
             <RegisterPage />
           </QueryClientProvider>,
         );
-        const user = userEvent.setup();
+        user = userEvent.setup();
         await user.type(screen.getByLabelText(/username/i), "alice");
         await user.type(screen.getByLabelText(/email/i), "alice@example.com");
         await user.type(screen.getByLabelText(/password/i), "Str0ng#Pass1");
@@ -81,7 +83,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
     );
 
     And("the visitor submits the registration form", async () => {
-      const user = userEvent.setup();
       await user.click(screen.getByRole("button", { name: /create account/i }));
       await waitFor(() => {
         expect(mockPush).toHaveBeenCalledWith("/login?registered=true");
@@ -98,6 +99,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
   });
 
   Scenario("Successful registration does not display the password in any confirmation", ({ When, Then, And }) => {
+    let user: ReturnType<typeof userEvent.setup>;
+
     When(
       'a visitor fills in the registration form with username "alice", email "alice@example.com", and password "Str0ng#Pass1"',
       async () => {
@@ -107,7 +110,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
             <RegisterPage />
           </QueryClientProvider>,
         );
-        const user = userEvent.setup();
+        user = userEvent.setup();
         await user.type(screen.getByLabelText(/username/i), "alice");
         await user.type(screen.getByLabelText(/email/i), "alice@example.com");
         await user.type(screen.getByLabelText(/password/i), "Str0ng#Pass1");
@@ -115,7 +118,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
     );
 
     And("the visitor submits the registration form", async () => {
-      const user = userEvent.setup();
       await user.click(screen.getByRole("button", { name: /create account/i }));
       await waitFor(() => {
         expect(mockPush).toHaveBeenCalledWith("/login?registered=true");
@@ -128,6 +130,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
   });
 
   Scenario("Registration with duplicate username shows an error", ({ Given, When, Then, And }) => {
+    let user: ReturnType<typeof userEvent.setup>;
+
     Given('a user "alice" is registered with email "alice@example.com" and password "Str0ng#Pass1"', () => {});
 
     When(
@@ -140,7 +144,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
             <RegisterPage />
           </QueryClientProvider>,
         );
-        const user = userEvent.setup();
+        user = userEvent.setup();
         await user.type(screen.getByLabelText(/username/i), "alice");
         await user.type(screen.getByLabelText(/email/i), "new@example.com");
         await user.type(screen.getByLabelText(/password/i), "Str0ng#Pass1");
@@ -148,7 +152,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
     );
 
     And("the visitor submits the registration form", async () => {
-      const user = userEvent.setup();
       await user.click(screen.getByRole("button", { name: /create account/i }));
       await waitFor(() => {
         expect(screen.getByText(/username or email already exists/i)).toBeInTheDocument();
@@ -165,6 +168,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
   });
 
   Scenario("Registration with invalid email shows a validation error", ({ When, Then, And }) => {
+    let user: ReturnType<typeof userEvent.setup>;
+
     When(
       'a visitor fills in the registration form with username "alice", email "not-an-email", and password "Str0ng#Pass1"',
       async () => {
@@ -173,7 +178,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
             <RegisterPage />
           </QueryClientProvider>,
         );
-        const user = userEvent.setup();
+        user = userEvent.setup();
         await user.type(screen.getByLabelText(/username/i), "alice");
         await user.type(screen.getByLabelText(/email/i), "not-an-email");
         await user.type(screen.getByLabelText(/password/i), "Str0ng#Pass1");
@@ -181,7 +186,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
     );
 
     And("the visitor submits the registration form", async () => {
-      const user = userEvent.setup();
       await user.click(screen.getByRole("button", { name: /create account/i }));
       await waitFor(() => {
         expect(screen.getByText(/enter a valid email/i)).toBeInTheDocument();
@@ -198,6 +202,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
   });
 
   Scenario("Registration with empty password shows a validation error", ({ When, Then, And }) => {
+    let user: ReturnType<typeof userEvent.setup>;
+
     When(
       'a visitor fills in the registration form with username "alice", email "alice@example.com", and password ""',
       async () => {
@@ -206,7 +212,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
             <RegisterPage />
           </QueryClientProvider>,
         );
-        const user = userEvent.setup();
+        user = userEvent.setup();
         await user.type(screen.getByLabelText(/username/i), "alice");
         await user.type(screen.getByLabelText(/email/i), "alice@example.com");
         // Leave password empty
@@ -214,7 +220,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
     );
 
     And("the visitor submits the registration form", async () => {
-      const user = userEvent.setup();
       await user.click(screen.getByRole("button", { name: /create account/i }));
       await waitFor(() => {
         expect(screen.getByText(/password must meet/i)).toBeInTheDocument();
@@ -231,6 +236,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
   });
 
   Scenario("Registration with weak password shows a validation error", ({ When, Then, And }) => {
+    let user: ReturnType<typeof userEvent.setup>;
+
     When(
       'a visitor fills in the registration form with username "alice", email "alice@example.com", and password "str0ng#pass1"',
       async () => {
@@ -239,7 +246,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
             <RegisterPage />
           </QueryClientProvider>,
         );
-        const user = userEvent.setup();
+        user = userEvent.setup();
         await user.type(screen.getByLabelText(/username/i), "alice");
         await user.type(screen.getByLabelText(/email/i), "alice@example.com");
         // "str0ng#pass1" has no uppercase
@@ -248,7 +255,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
     );
 
     And("the visitor submits the registration form", async () => {
-      const user = userEvent.setup();
       await user.click(screen.getByRole("button", { name: /create account/i }));
       await waitFor(() => {
         expect(screen.getByText(/password must meet/i)).toBeInTheDocument();
