@@ -1,7 +1,5 @@
 #!/usr/bin/env sh
 set -e
 
-# Run affected quality gates: type checking, linting, and fast tests
-npx nx affected -t typecheck
-npx nx affected -t lint
-npx nx affected -t test:quick
+# Run all affected quality gates in a single Nx invocation (maximizes parallelism)
+npx nx affected -t typecheck lint test:quick --parallel=8
