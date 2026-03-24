@@ -15,12 +15,6 @@ func resetFlags() {
 	verbose = false
 	output = "text"
 	linksContentDir = ""
-	regenPath = ""
-	regenExclude = []string{}
-	titlesLang = "both"
-	titlesDryRun = false
-	titlesConfigEn = ""
-	titlesConfigID = ""
 }
 
 func TestRunLinksCheck_NoMarkdownFiles(t *testing.T) {

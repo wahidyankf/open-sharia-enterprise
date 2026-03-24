@@ -85,7 +85,7 @@ Maker:
 - ✅ REQUIRED: New content created from scratch
 - ✅ REQUIRED: Major refactoring or updates
 - ✅ REQUIRED: Before publishing to production
-- ✅ REQUIRED: Complex content (tutorials, Hugo)
+- ✅ REQUIRED: Complex content (tutorials, web platforms)
 - ✅ REQUIRED: Critical files (AGENTS.md, conventions)
 - ⚠️ OPTIONAL: Small updates to high-quality content
 
@@ -318,7 +318,7 @@ Checker:
 1. Reads tutorial file
 2. Validates frontmatter (date format, required fields, weight)
 3. Checks content structure (heading hierarchy, links)
-4. Validates Hugo conventions (absolute paths, no .md)
+4. Validates content conventions (links, structure)
 5. Checks content quality (alt text, accessible colors)
 6. Generates audit report: generated-reports/ayokoding-web**2025-12-14--20-45**audit.md
 7. Reports findings summary in conversation
@@ -650,7 +650,7 @@ Fixer:
 Seven agent families implement this pattern:
 
 1. **repo-governance-\*** - Repository-wide consistency
-2. **apps-ayokoding-web-\*** - Hugo content (ayokoding-web)
+2. **apps-ayokoding-web-\*** - Content (ayokoding-web, Next.js)
 3. **docs-tutorial-\*** - Tutorial quality
 4. **apps-oseplatform-web-content-\*** - Hugo content (oseplatform-web)
 5. **readme-\*** - README quality

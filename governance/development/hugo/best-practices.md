@@ -4,7 +4,7 @@
 
 ## Overview
 
-This document outlines best practices for developing Hugo sites in the `apps/ayokoding-web/` and `apps/oseplatform-web/` projects. Following these practices ensures maintainable, performant, and accessible Hugo implementations.
+This document outlines best practices for developing Hugo sites in the `apps/oseplatform-web/` project. (ayokoding-web has migrated to Next.js 16 and is no longer a Hugo site.) Following these practices ensures maintainable, performant, and accessible Hugo implementations.
 
 ## Purpose
 

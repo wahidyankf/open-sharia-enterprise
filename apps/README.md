@@ -11,8 +11,10 @@ Apps follow the naming pattern: **`[domain]-[type]`**
 ### Current Apps
 
 - `oseplatform-web` - OSE Platform website ([oseplatform.com](https://oseplatform.com)) - Hugo static site
-- `ayokoding-web` - AyoKoding educational platform ([ayokoding.com](https://ayokoding.com)) - Hugo static site
-- `ayokoding-cli` - AyoKoding CLI tool for navigation generation - Go application
+- `ayokoding-web` - AyoKoding educational platform ([ayokoding.com](https://ayokoding.com)) - Next.js 16 fullstack content platform (TypeScript, tRPC)
+- `ayokoding-web-be-e2e` - Playwright BE E2E tests for ayokoding-web tRPC API
+- `ayokoding-web-fe-e2e` - Playwright FE E2E tests for ayokoding-web UI
+- `ayokoding-cli` - AyoKoding CLI tool for link validation - Go application
 - `rhino-cli` - Repository management CLI tools (includes `java validate-annotations`) - Go application
 - `oseplatform-cli` - OSE Platform CLI tool for link validation - Go application
 - `organiclever-web` - OrganicLever landing website (www.organiclever.com) - Next.js app (port 3200)
@@ -30,7 +32,7 @@ Apps follow the naming pattern: **`[domain]-[type]`**
 
 ## App Structure Examples
 
-### Hugo Static Site (Current)
+### Hugo Static Site (oseplatform-web)
 
 ```
 apps/oseplatform-web/
@@ -213,12 +215,12 @@ Path mappings are configured in the workspace `tsconfig.base.json` file.
 Use Nx commands to run apps:
 
 ```bash
-# Development mode (Hugo sites)
+# Development mode (Hugo site)
 nx dev oseplatform-web
-nx dev ayokoding-web
 
 # Development mode (Next.js)
 nx dev organiclever-web
+nx dev ayokoding-web
 
 # Build for production
 nx build oseplatform-web
@@ -250,9 +252,15 @@ Vercel-deployed apps use dedicated production branches (deployment-only — neve
 | `prod-oseplatform-web`  | [oseplatform.com](https://oseplatform.com)            | oseplatform-web  |
 | `prod-organiclever-web` | [www.organiclever.com](https://www.organiclever.com/) | organiclever-web |
 
-**ayokoding-web and oseplatform-web**: Deployed automatically by scheduled GitHub Actions
-workflows (`test-and-deploy-ayokoding-web.yml`, `test-and-deploy-oseplatform-web.yml`) running at 6 AM and 6 PM
-WIB. Each workflow detects changes scoped to the app directory before building and deploying.
+**ayokoding-web**: Deploy by force-pushing `main` to the production branch:
+
+```bash
+git push origin main:prod-ayokoding-web --force
+```
+
+**oseplatform-web**: Deployed automatically by scheduled GitHub Actions
+workflow (`test-and-deploy-oseplatform-web.yml`) running at 6 AM and 6 PM
+WIB. The workflow detects changes scoped to the app directory before building and deploying.
 Trigger on-demand from the GitHub Actions UI (set `force_deploy=true` to skip change detection).
 
 **organiclever-web**: Deploy by force-pushing `main` to the production branch:
@@ -267,9 +275,9 @@ Use the corresponding deployer agent (e.g. `apps-organiclever-web-deployer`) for
 
 Currently:
 
-- **Hugo** (static sites) - oseplatform-web, ayokoding-web
+- **Hugo** (static sites) - oseplatform-web
 - **Go** (CLI tools) - ayokoding-cli, rhino-cli
-- **TypeScript/Next.js** (landing website) - organiclever-web
+- **TypeScript/Next.js** (web applications) - organiclever-web, ayokoding-web
 - **Go/Gin** (backend API) - demo-be-golang-gin
 - **TypeScript/Playwright** (E2E testing) - demo-be-e2e, organiclever-web-e2e
 

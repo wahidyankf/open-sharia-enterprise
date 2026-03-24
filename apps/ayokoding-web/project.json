@@ -1,63 +1,82 @@
 {
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "name": "ayokoding-web",
-  "sourceRoot": "apps/ayokoding-web",
+  "sourceRoot": "apps/ayokoding-web/src",
   "projectType": "application",
-  "tags": ["type:app", "platform:hugo", "domain:ayokoding"],
-  "implicitDependencies": ["ayokoding-cli"],
   "targets": {
+    "codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'No codegen needed — ayokoding-web has no OpenAPI contract'",
+        "cwd": "{projectRoot}"
+      }
+    },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "hugo server -D --port 3100",
-        "cwd": "apps/ayokoding-web"
+        "command": "next dev --port 3101",
+        "cwd": "{projectRoot}"
       }
     },
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "./build.sh",
-        "cwd": "apps/ayokoding-web"
+        "command": "next build",
+        "cwd": "{projectRoot}"
       },
-      "outputs": ["{projectRoot}/public"],
+      "outputs": ["{projectRoot}/.next"],
       "dependsOn": []
     },
-    "clean": {
+    "start": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "rm -rf public resources .hugo_build.lock",
-        "cwd": "apps/ayokoding-web"
+        "command": "next start --port 3101",
+        "cwd": "{projectRoot}"
       }
     },
-    "run-pre-commit": {
+    "typecheck": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "nx build ayokoding-cli",
-          "./apps/ayokoding-cli/dist/ayokoding-cli titles update --quiet",
-          "./apps/ayokoding-cli/dist/ayokoding-cli nav regen --quiet"
-        ],
-        "parallel": false
+        "command": "tsc --noEmit",
+        "cwd": "{projectRoot}"
       }
-    },
-    "links:check": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "./apps/ayokoding-cli/dist/ayokoding-cli links check"
-      },
-      "dependsOn": [{ "projects": "ayokoding-cli", "target": "build" }]
-    },
-    "test:quick": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "./apps/ayokoding-cli/dist/ayokoding-cli links check"
-      },
-      "dependsOn": [{ "projects": "ayokoding-cli", "target": "build" }]
     },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "markdownlint-cli2 \"apps/ayokoding-web/content/**/*.md\""
+        "command": "npx oxlint@latest .",
+        "cwd": "{projectRoot}"
       }
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding-web/**/*.feature"],
+      "options": {
+        "command": "npx vitest run",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx vitest run --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/ayokoding-web/coverage/lcov.info 80)",
+          "../../apps/ayokoding-cli/dist/ayokoding-cli links check --content content"
+        ],
+        "parallel": true,
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx vitest run --project integration",
+        "cwd": "{projectRoot}"
+      },
+      "cache": false
     }
-  }
+  },
+  "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:ayokoding"],
+  "implicitDependencies": ["rhino-cli", "ayokoding-cli"]
 }

@@ -1,7 +1,7 @@
 ---
 name: ayokoding-web-general-quality-gate
-goal: Validate all ayokoding-web content quality, apply fixes iteratively until zero findings, then regenerate titles and navigation
-termination: Zero findings across all validators and navigation regenerated (runs indefinitely until achieved unless max-iterations provided)
+goal: Validate all ayokoding-web content quality, apply fixes iteratively until zero findings
+termination: Zero findings across all validators (runs indefinitely until achieved unless max-iterations provided)
 inputs:
   - name: scope
     type: string
@@ -37,10 +37,6 @@ outputs:
     type: file
     pattern: generated-reports/ayokoding-web-facts__*__audit.md
     description: Final facts validation report
-  - name: structure-report
-    type: file
-    pattern: generated-reports/ayokoding-web-structure__*__audit.md
-    description: Final structure validation report
   - name: links-report
     type: file
     pattern: generated-reports/ayokoding-web-link__*__audit.md
@@ -49,7 +45,7 @@ outputs:
 
 # AyoKoding Content General Quality Gate Workflow
 
-**Purpose**: Comprehensively validate all ayokoding-web content (Hugo conventions, factual accuracy, structure, links), apply fixes iteratively until all issues are resolved, then regenerate titles and navigation.
+**Purpose**: Comprehensively validate all ayokoding-web content (factual accuracy, links), apply fixes iteratively until all issues are resolved.
 
 **When to use**:
 
@@ -61,10 +57,9 @@ outputs:
 ## Execution Mode
 
 **Preferred Mode**: Agent Delegation — invoke `apps-ayokoding-web-general-checker`,
-`apps-ayokoding-web-facts-checker`, `apps-ayokoding-web-structure-checker`,
+`apps-ayokoding-web-facts-checker`,
 `apps-ayokoding-web-link-checker`, `apps-ayokoding-web-general-fixer`,
-`apps-ayokoding-web-facts-fixer`, `apps-ayokoding-web-structure-fixer`,
-`apps-ayokoding-web-title-maker`, and `apps-ayokoding-web-navigation-maker`
+and `apps-ayokoding-web-facts-fixer`
 via the Agent tool with `subagent_type`
 (see [Workflow Execution Modes Convention](../meta/execution-modes.md)).
 
@@ -82,13 +77,11 @@ User: "Run ayokoding-web general quality gate workflow for ayokoding-web/content
 
 The AI will:
 
-1. Invoke all four checkers via the Agent tool in parallel (general, facts, structure, links — validate, write audits)
-2. Invoke all three fixers via the Agent tool in sequence (general, facts, structure — read audits, apply fixes, write fix reports)
+1. Invoke checkers via the Agent tool in parallel (general, facts, links — validate, write audits)
+2. Invoke fixers via the Agent tool in sequence (general, facts — read audits, apply fixes, write fix reports)
 3. Iterate until zero findings achieved across all validators
-4. Invoke `apps-ayokoding-web-title-maker` via the Agent tool (regenerate titles)
-5. Invoke `apps-ayokoding-web-navigation-maker` via the Agent tool (regenerate 2-layer navigation)
-6. Show git status with modified files
-7. Wait for user commit approval
+4. Show git status with modified files
+5. Wait for user commit approval
 
 **Fallback (Manual Mode)**:
 
@@ -108,24 +101,19 @@ Run all ayokoding validators concurrently to identify all issues across differen
 **Agent 1a**: `apps-ayokoding-web-general-checker`
 
 - **Args**: `scope: {input.scope}`
-- **Output**: `{content-report-N}` - Hugo conventions, bilingual consistency, navigation validation
+- **Output**: `{content-report-N}` - Content quality, bilingual consistency
 
 **Agent 1b**: `apps-ayokoding-web-facts-checker`
 
 - **Args**: `scope: {input.scope}`
 - **Output**: `{facts-report-N}` - Factual accuracy, code examples, tutorial sequences
 
-**Agent 1c**: `apps-ayokoding-web-structure-checker`
+**Agent 1c**: `apps-ayokoding-web-link-checker`
 
 - **Args**: `scope: {input.scope}`
-- **Output**: `{structure-report-N}` - Weight conventions, ordering, navigation structure
+- **Output**: `{links-report-N}` - Internal/external link validation
 
-**Agent 1d**: `apps-ayokoding-web-link-checker`
-
-- **Args**: `scope: {input.scope}`
-- **Output**: `{links-report-N}` - Internal/external link validation, Hugo link format
-
-**Success criteria**: All four checkers complete and generate audit reports.
+**Success criteria**: All checkers complete and generate audit reports.
 
 **On failure**: Terminate workflow with status `fail`.
 
@@ -189,28 +177,7 @@ Fix factual errors, outdated information, and incorrect code examples.
 - Re-validates findings before applying
 - Preserves educational content intent
 
-### 5. Apply Structure Fixes (Sequential, Conditional)
-
-Fix weight ordering, navigation structure, and coverage issues.
-
-**Agent**: `apps-ayokoding-web-structure-fixer`
-
-- **Args**: `report: {step1.outputs.structure-report-N}, approved: all`
-- **Output**: `{structure-fixes-applied}`
-- **Condition**: Structure findings exist from step 2
-- **Depends on**: Step 4 completion
-
-**Success criteria**: Fixer successfully applies structure fixes without errors.
-
-**On failure**: Log errors, proceed to re-validation.
-
-**Notes**:
-
-- Adjusts weights to maintain proper ordering
-- Fixes navigation structure issues
-- Does NOT regenerate navigation (that happens in step 8)
-
-### 6. Iteration Control (Sequential)
+### 5. Iteration Control (Sequential)
 
 Determine whether to continue fixing or move to finalization.
 
@@ -218,12 +185,12 @@ Determine whether to continue fixing or move to finalization.
 
 - Re-run all checkers (step 1) to get fresh reports
 - Count ALL findings (HIGH, MEDIUM, MINOR) across all new reports
-- If findings = 0 AND iterations >= min-iterations (or min not provided): Proceed to step 7 (Finalization)
+- If findings = 0 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Final Validation)
 - If findings = 0 AND iterations < min-iterations: Loop back to step 3 (need more iterations)
-- If findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed to step 7 with status `partial`
+- If findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed to step 6 with status `partial`
 - If findings > 0 AND (max-iterations not provided OR iterations < max-iterations): Loop back to step 3
 
-**Depends on**: Step 5 completion
+**Depends on**: Step 4 completion
 
 **Notes**:
 
@@ -233,55 +200,14 @@ Determine whether to continue fixing or move to finalization.
 - Each iteration gets fresh validation reports across all four validators
 - Tracks iteration count and finding trends
 
-### 7. Regenerate Titles (Sequential)
-
-Update title fields in all ayokoding-web markdown files based on filenames and configuration.
-
-**Agent**: `apps-ayokoding-web-title-maker`
-
-- **Args**: `scope: {input.scope}`
-- **Output**: `{titles-updated}`
-- **Depends on**: Zero findings or max-iterations reached
-
-**Success criteria**: All titles regenerated successfully.
-
-**On failure**: Log errors, continue to navigation regeneration.
-
-**Notes**:
-
-- Runs after all fixes applied
-- Updates titles based on filename conventions
-- Handles language-specific title overrides
-
-### 8. Regenerate Navigation (Sequential)
-
-Regenerate 2-layer navigation listings in all \_index.md files from file structure.
-
-**Agent**: `apps-ayokoding-web-navigation-maker`
-
-- **Args**: `scope: {input.scope}`
-- **Output**: `{navigation-updated}`
-- **Depends on**: Step 7 completion
-
-**Success criteria**: All navigation listings regenerated successfully.
-
-**On failure**: Terminate workflow with status `fail`.
-
-**Notes**:
-
-- Runs AFTER title regeneration (titles affect navigation)
-- Automatically generates 2-layer navigation from file structure
-- Ensures complete navigation coverage
-
-### 9. Final Validation (Sequential)
+### 6. Final Validation (Sequential)
 
 Run all checkers one final time to confirm zero issues remain.
 
-**Agents**: All four checkers in parallel
+**Agents**: All checkers in parallel
 
 - apps-ayokoding-web-general-checker
 - apps-ayokoding-web-facts-checker
-- apps-ayokoding-web-structure-checker
 - apps-ayokoding-web-link-checker
 
 **Args**: `scope: {input.scope}, expect: zero-issues`
@@ -292,9 +218,9 @@ Run all checkers one final time to confirm zero issues remain.
 
 **On failure**: Set status to `partial`.
 
-**Depends on**: Step 8 completion
+**Depends on**: Step 5 completion
 
-### 10. Finalization (Sequential)
+### 7. Finalization (Sequential)
 
 Report final status and summary.
 
@@ -306,7 +232,7 @@ Report final status and summary.
 - **Partial** (`partial`): Findings remain after max-iterations OR final validation failed
 - **Failure** (`fail`): Technical errors during check, fix, or finalization
 
-**Depends on**: Step 9 completion
+**Depends on**: Step 6 completion
 
 ## Termination Criteria
 
@@ -324,9 +250,8 @@ User: "Run ayokoding-web general quality gate workflow"
 
 The AI will invoke specialized agents via the Agent tool:
 
-- Validate all ayokoding-web content in parallel (`apps-ayokoding-web-general-checker`, `apps-ayokoding-web-facts-checker`, `apps-ayokoding-web-structure-checker`, `apps-ayokoding-web-link-checker` subagents)
-- Fix all findings (`apps-ayokoding-web-general-fixer`, `apps-ayokoding-web-facts-fixer`, `apps-ayokoding-web-structure-fixer` subagents)
-- Regenerate titles and navigation (`apps-ayokoding-web-title-maker`, `apps-ayokoding-web-navigation-maker` subagents)
+- Validate all ayokoding-web content in parallel (`apps-ayokoding-web-general-checker`, `apps-ayokoding-web-facts-checker`, `apps-ayokoding-web-link-checker` subagents)
+- Fix all findings (`apps-ayokoding-web-general-fixer`, `apps-ayokoding-web-facts-fixer` subagents)
 - Iterate until zero findings achieved
 
 ### Validate Specific Language
@@ -339,7 +264,6 @@ The AI will invoke agents with language-scoped validation:
 
 - Validate only English content
 - Fix issues in English files only
-- Regenerate titles and navigation for English content
 
 ### Validate Specific Section
 
@@ -351,7 +275,6 @@ The AI will invoke agents with section-scoped validation:
 
 - Validate only programming section
 - Fix issues in that section
-- Regenerate titles and navigation for affected files
 
 ### With Iteration Bounds
 
@@ -371,22 +294,19 @@ Typical execution flow:
 
 ```
 Iteration 1:
-  Parallel Check (4 validators) → 25 total findings
+  Parallel Check (3 validators) → 20 total findings
     - Content: 10 findings
     - Facts: 8 findings
-    - Structure: 5 findings
     - Links: 2 findings
-  Sequential Fix → Content → Facts → Structure
-  Re-check → 8 findings remain
+  Sequential Fix → Content → Facts
+  Re-check → 5 findings remain
 
 Iteration 2:
-  Parallel Check → 8 findings
-  Sequential Fix → Content → Facts → Structure
+  Parallel Check → 5 findings
+  Sequential Fix → Content → Facts
   Re-check → 0 findings
 
 Finalization:
-  Regenerate Titles → Success
-  Regenerate Navigation → Success
   Final Validation → Zero issues
 
 Result: SUCCESS (2 iterations)
@@ -416,7 +336,7 @@ Result: SUCCESS (2 iterations)
 
 **Comprehensive Coverage**:
 
-- Four validation dimensions (content, facts, structure, links)
+- Three validation dimensions (content, facts, links)
 - Parallel validation for efficiency
 - Sequential fixing for dependency management
 - Post-fix regeneration for consistency
@@ -425,10 +345,8 @@ Result: SUCCESS (2 iterations)
 
 ### Content Validation (apps-ayokoding-web-general-checker)
 
-- Hugo conventions (frontmatter, theme-specific)
-- Bilingual consistency
-- Navigation structure
 - Content quality principles
+- Bilingual consistency
 
 ### Facts Validation (apps-ayokoding-web-facts-checker)
 
@@ -437,18 +355,10 @@ Result: SUCCESS (2 iterations)
 - Tutorial sequences validity
 - Bilingual factual consistency
 
-### Structure Validation (apps-ayokoding-web-structure-checker)
-
-- Weight conventions and ordering
-- Navigation structure completeness
-- Coverage gaps
-- Pedagogical progression
-
 ### Links Validation (apps-ayokoding-web-link-checker)
 
 - Internal link validity
 - External link accessibility
-- Hugo link format compliance (absolute paths, no .md)
 - Broken link detection
 
 ## Related Workflows
@@ -475,12 +385,12 @@ Track across executions:
 - **Comprehensive**: Validates all quality dimensions
 - **Parallel validation**: Efficient checking across dimensions
 - **Sequential fixing**: Manages dependencies between fixers
-- **Post-fix regeneration**: Ensures titles and navigation are current
+- **Iterative fixing**: Ensures all findings are resolved
 - **Idempotent**: Safe to run multiple times
 - **Observable**: Generates detailed audit reports for each dimension
 - **Bounded**: Max-iterations prevents runaway execution
 
-This workflow ensures comprehensive ayokoding-web content quality through multi-dimensional validation, iterative fixing, and automated regeneration of titles and navigation.
+This workflow ensures comprehensive ayokoding-web content quality through multi-dimensional validation and iterative fixing.
 
 ## Principles Implemented/Respected
 

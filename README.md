@@ -76,7 +76,7 @@ npm install
 **Phase 0 (Complete):**
 
 - Node.js & npm (via Volta) - Tooling and development infrastructure
-- Hugo (Extended) - Static sites (ayokoding-web, oseplatform-web)
+- Hugo (Extended) - Static sites (oseplatform-web)
 - Golang - CLI tools ([ayokoding-cli](./apps/ayokoding-cli/), [rhino-cli](./apps/rhino-cli/)) and future security infrastructure
 
 **Current Phase 1 (OrganicLever):**

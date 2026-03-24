@@ -24,7 +24,7 @@ skills:
 
 - **Role**: Checker (green)
 - **Created**: 2025-12-20
-- **Last Updated**: 2026-01-03
+- **Last Updated**: 2026-03-24
 
 ### UUID Chain Generation
 
@@ -103,5 +103,4 @@ Update status to "Complete", add summary.
 ## Reference Documentation
 
 - [CLAUDE.md](../../CLAUDE.md)
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 - [Factual Validation Convention](../../governance/conventions/writing/factual-validation.md)

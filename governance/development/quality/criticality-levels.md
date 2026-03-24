@@ -36,7 +36,6 @@ This convention establishes a universal **four-level criticality system** (CRITI
 - `readme-checker`: High/Medium/Low Priority
 - `docs-checker`: [Verified]/[Error]/[Outdated] (verification-based, NOT severity)
 - `docs-link-general-checker`: [OK]/[BROKEN]/[REDIRECT] (status-based, NOT severity)
-- `apps-ayokoding-web-structure-checker`: CRITICAL/IMPORTANT/Warnings
 - `plan-checker`: Critical/Warnings/Recommendations
 
 **Solution**: Universal 4-level system that works orthogonally with existing confidence levels.
@@ -1377,7 +1376,6 @@ Existing agents using different terminology should migrate to this convention.
 **Severity-Based Family**:
 
 - apps-ayokoding-web-general-checker
-- apps-ayokoding-web-structure-checker
 - apps-ayokoding-web-by-example-checker
 - apps-ayokoding-web-in-the-field-checker
 - apps-oseplatform-web-content-checker
@@ -1409,7 +1407,6 @@ Update all fixer agents to use priority-based execution:
 - apps-ayokoding-web-facts-fixer
 - apps-ayokoding-web-in-the-field-fixer
 - apps-ayokoding-web-link-fixer
-- apps-ayokoding-web-structure-fixer
 - docs-tutorial-fixer
 - docs-software-engineering-separation-fixer
 - apps-oseplatform-web-content-fixer

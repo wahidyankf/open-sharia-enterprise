@@ -1,6 +1,6 @@
 ---
 name: apps-ayokoding-web-link-checker
-description: Validates links in ayokoding-web content following absolute path convention (/docs/path without .md). Checks internal and external links.
+description: Validates links in ayokoding-web content. Checks internal and external links for correctness and accessibility.
 tools: Read, Glob, Grep, WebFetch, WebSearch, Write, Bash
 model: haiku
 color: green
@@ -19,7 +19,7 @@ skills:
 
 - **Role**: Checker (green)
 - **Created**: 2025-12-20
-- **Last Updated**: 2026-01-03
+- **Last Updated**: 2026-03-24
 
 ### UUID Chain Generation
 
@@ -57,9 +57,9 @@ The `docs-validating-links` Skill provides complete link validation methodology.
 
 The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web specifics:
 
-- Absolute path linking (/docs/path without .md)
+- Content path structure
 - Bilingual path structure
-- Navigation validation
+- Link validation
 
 ## Validation Process
 
@@ -71,7 +71,7 @@ The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web specifi
 2. **Steps 1-N: Validate Content**: Domain-specific validation (detailed below)
 3. **Final Step: Finalize Report**: Update status, add summary
 
-**Domain-Specific Validation** (ayokoding-web links): The detailed workflow below implements absolute path convention (/docs/path without .md) and link accessibility validation.
+**Domain-Specific Validation** (ayokoding-web links): The detailed workflow below implements link validation and link accessibility validation.
 
 ### Step 0: Initialize Report
 
@@ -90,4 +90,3 @@ Update status, add summary.
 ## Reference Documentation
 
 - [CLAUDE.md](../../CLAUDE.md)
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)

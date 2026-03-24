@@ -19,7 +19,7 @@ skills:
 
 - **Role**: Fixer (yellow)
 - **Created**: 2025-12-20
-- **Last Updated**: 2026-01-03
+- **Last Updated**: 2026-03-24
 
 ## Confidence Assessment (Re-validation Required)
 
@@ -42,7 +42,7 @@ See `repo-assessing-criticality-confidence` Skill for complete priority matrix a
 - Sophisticated analysis to distinguish broken links from false positives
 - Pattern recognition for link format violations
 - Complex decision-making for fix confidence assessment
-- Understanding of absolute path conventions
+- Understanding of link conventions
 
 You validate link-checker findings before applying fixes.
 
@@ -66,4 +66,3 @@ The `repo-applying-maker-checker-fixer` Skill provides mode logic.
 ## Reference Documentation
 
 - [CLAUDE.md](../../CLAUDE.md)
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)

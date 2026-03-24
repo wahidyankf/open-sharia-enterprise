@@ -15,7 +15,7 @@ updated: 2025-12-15
 
 # Fixer Confidence Levels Convention
 
-This document defines the universal confidence level system used by all fixer agents (repo-governance-fixer, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-facts-fixer, apps-ayokoding-web-structure-fixer, docs-tutorial-fixer, apps-oseplatform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer) to assess findings from checker agents and determine which fixes can be applied automatically versus which require manual review.
+This document defines the universal confidence level system used by all fixer agents (repo-governance-fixer, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-facts-fixer, docs-tutorial-fixer, apps-oseplatform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer) to assess findings from checker agents and determine which fixes can be applied automatically versus which require manual review.
 
 ## Principles Implemented/Respected
 
@@ -111,10 +111,9 @@ Confidence levels serve multiple critical purposes:
 All fixer agents implement this confidence level system:
 
 - **repo-governance-fixer** - Repository-wide structural consistency fixes
-- **apps-ayokoding-web-general-fixer** - ayokoding-web general Hugo content fixes
+- **apps-ayokoding-web-general-fixer** - ayokoding-web general content fixes
 - **apps-ayokoding-web-by-example-fixer** - ayokoding-web by-example tutorial fixes
 - **apps-ayokoding-web-facts-fixer** - ayokoding-web factual accuracy fixes
-- **apps-ayokoding-web-structure-fixer** - ayokoding-web structure fixes
 - **apps-ayokoding-web-in-the-field-fixer** - ayokoding-web in-the-field tutorial fixes
 - **apps-ayokoding-web-link-fixer** - ayokoding-web link validation fixes
 - **docs-tutorial-fixer** - Tutorial quality fixes
@@ -889,7 +888,6 @@ FAIL: All agent files - Frontmatter comment detection
 - [apps-ayokoding-web-general-fixer.md](../../../.claude/agents/apps-ayokoding-web-general-fixer.md) - ayokoding-web general Hugo content fixer
 - [apps-ayokoding-web-by-example-fixer.md](../../../.claude/agents/apps-ayokoding-web-by-example-fixer.md) - ayokoding-web by-example tutorial fixer
 - [apps-ayokoding-web-facts-fixer.md](../../../.claude/agents/apps-ayokoding-web-facts-fixer.md) - ayokoding-web factual accuracy fixer
-- [apps-ayokoding-web-structure-fixer.md](../../../.claude/agents/apps-ayokoding-web-structure-fixer.md) - ayokoding-web structure fixer
 - [docs-tutorial-fixer.md](../../../.claude/agents/docs-tutorial-fixer.md) - Tutorial quality fixer
 - [apps-oseplatform-web-content-fixer.md](../../../.claude/agents/apps-oseplatform-web-content-fixer.md) - oseplatform-web Hugo content fixer
 - [readme-fixer.md](../../../.claude/agents/readme-fixer.md) - README quality fixer

@@ -51,7 +51,7 @@ Specialized agents organized into families:
 1. **Documentation**: `docs-maker`, `docs-checker`, `docs-fixer`, `docs-tutorial-maker`, `docs-tutorial-checker`, `docs-tutorial-fixer`, `docs-link-general-checker`, `docs-file-manager`, `docs-software-engineering-separation-checker`, `docs-software-engineering-separation-fixer`
 2. **README**: `readme-maker`, `readme-checker`, `readme-fixer`
 3. **Project Planning**: `plan-maker`, `plan-checker`, `plan-executor`, `plan-execution-checker`, `plan-fixer`
-4. **Hugo Content - ayokoding-web**: Bilingual content creators, validators, deployers (includes in-the-field agents: `apps-ayokoding-web-in-the-field-maker`, `apps-ayokoding-web-in-the-field-checker`, `apps-ayokoding-web-in-the-field-fixer`)
+4. **AyoKoding Web Content**: Bilingual content creators, validators, deployers (includes in-the-field agents: `apps-ayokoding-web-in-the-field-maker`, `apps-ayokoding-web-in-the-field-checker`, `apps-ayokoding-web-in-the-field-fixer`)
 5. **Hugo Content - oseplatform-web**: Landing page content creators, validators, deployers
 6. **Software Engineering & Specialized**: `agent-maker`, `swe-code-checker`, `swe-clojure-developer`, `swe-csharp-developer`, `swe-dart-developer`, `swe-e2e-test-developer`, `swe-elixir-developer`, `swe-fsharp-developer`, `swe-golang-developer`, `swe-hugo-developer`, `swe-java-developer`, `swe-kotlin-developer`, `swe-python-developer`, `swe-rust-developer`, `swe-typescript-developer`, `social-linkedin-post-maker`, `apps-organiclever-web-deployer`
 7. **Repository Governance**: `repo-governance-maker`, `repo-governance-checker`, `repo-governance-fixer`, `repo-workflow-maker`, `repo-workflow-checker`, `repo-workflow-fixer`

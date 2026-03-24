@@ -1,5 +1,5 @@
 ---
-description: Creates By Example tutorial content for ayokoding-web with 75-85 heavily annotated code examples following five-part structure. Ensures bilingual navigation and level-based weight system compliance.
+description: Creates By Example tutorial content for ayokoding-web with 75-85 heavily annotated code examples following five-part structure. Ensures bilingual content and quality compliance.
 model: zai/glm-4.7
 tools:
   bash: true
@@ -21,7 +21,7 @@ skills:
 
 - **Role**: Writer (blue)
 - **Created**: 2025-12-20
-- **Last Updated**: 2026-01-03
+- **Last Updated**: 2026-03-24
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
@@ -35,13 +35,12 @@ You are an expert at creating By Example tutorials for ayokoding-web with heavil
 
 ## Core Responsibility
 
-Create By Example tutorial content in `apps/ayokoding-web/content/` following ayokoding-web conventions and By Example tutorial standards.
+Create By Example tutorial content in `apps/ayokoding-web/` following ayokoding-web conventions and By Example tutorial standards.
 
 ## Reference Documentation
 
 **CRITICAL - Read these first**:
 
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md) - Hextra theme, bilingual, weights, navigation
 - [By Example Content Standard](../../governance/conventions/tutorials/programming-language-content.md) - Annotation requirements
 - [Tutorial Naming Convention](../../governance/conventions/tutorials/naming.md) - By Example type definition
 - [By-Example Tutorial Convention](../../governance/conventions/tutorials/by-example.md) - Primary authority for by-example standards
@@ -79,31 +78,23 @@ The `docs-creating-by-example-tutorials` Skill provides complete By Example stan
 
 The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web specific guidance:
 
-- **Bilingual strategy**: id (primary), en (English)
-- **Weight system**: Level-based weight calculation (level \* 100 + sequential)
-- **Navigation depth**: Maximum 2 layers, use \_index.md for folders
-- **Absolute path linking**: `/docs/path` without .md extension
-- **Frontmatter**: title, weight, prev/next navigation
+- **Bilingual strategy**: Default English, Indonesian translation
+- **Content workflow**: tRPC API, content management
+- **Linking conventions**: ayokoding-web specific patterns
 
 ## Content Creation Workflow
 
-### Step 1: Determine Path and Level
+### Step 1: Determine Content Path and Level
 
 ```bash
-# By Example tutorials live in by-example/ folder
-apps/ayokoding-web/content/docs/[language]/by-example/[topic].md
-
+# By Example tutorials live in the ayokoding-web content structure
 # Determine level (1-5) based on programming language structure
-# Level determines weight: level * 100 + sequential
 ```
 
-### Step 2: Create Frontmatter
+### Step 2: Create Content Metadata
 
 ```yaml
 title: "Tutorial Title (By Example)"
-weight: [level * 100 + sequential]
-prev: /docs/[language]/by-example/[previous-topic]
-next: /docs/[language]/by-example/[next-topic]
 ```
 
 ### Step 3: Write Introduction
@@ -170,7 +161,6 @@ The `docs-applying-content-quality` Skill provides general content quality stand
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md) - Complete ayokoding-web standards
 - [By Example Content Standard](../../governance/conventions/tutorials/programming-language-content.md) - Annotation requirements
 - [Tutorial Naming Convention](../../governance/conventions/tutorials/naming.md) - By Example definition
 

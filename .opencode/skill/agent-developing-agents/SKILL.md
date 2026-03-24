@@ -274,7 +274,7 @@ All agents SHOULD include a "Reference Documentation" section near the end (befo
 **Conditionally Include**:
 
 - Domain-specific conventions (e.g., README Quality Convention for readme-agents)
-- Framework-specific guidance (e.g., Hextra guide for ayokoding-web-agents)
+- Framework-specific guidance (e.g., Next.js guide for ayokoding-web-agents)
 - Special standards relevant to agent's scope
 
 **Pattern**:

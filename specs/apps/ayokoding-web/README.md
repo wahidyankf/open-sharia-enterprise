@@ -1,15 +1,10 @@
 # AyoKoding Web Specs
 
-Platform-agnostic specifications for the AyoKoding educational website across two generations:
-**v1** (Hugo static site) and **v2** (Next.js with tRPC backend). The specs cover content
-retrieval, search, navigation, internationalisation, and service health.
+Specifications for the AyoKoding educational website (Next.js 16 with tRPC backend).
+The specs cover content retrieval, search, navigation, internationalisation, and service health.
 
-## Versions
-
-| Version | Implementation | Type               | Status  |
-| ------- | -------------- | ------------------ | ------- |
-| v1      | Hugo (Hextra)  | Static site        | Active  |
-| v2      | Next.js + tRPC | Dynamic full-stack | In spec |
+> **Note**: The Hugo (Hextra) implementation has been archived to `archived/ayokoding-web-hugo/`.
+> ayokoding-web is now a Next.js 16 fullstack content platform.
 
 ## Structure
 
@@ -53,7 +48,7 @@ specs/apps/ayokoding-web/
 
 ## tRPC Procedures
 
-The v2 backend exposes tRPC procedures consumed by these specs:
+The backend exposes tRPC procedures consumed by these specs:
 
 | Procedure              | Domain      | Description                           |
 | ---------------------- | ----------- | ------------------------------------- |
@@ -68,4 +63,4 @@ The v2 backend exposes tRPC procedures consumed by these specs:
 
 - [Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md)
 - [BDD Standards](../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)
-- [apps/ayokoding-web/](../../../apps/ayokoding-web/README.md) — v1 Hugo implementation
+- [apps/ayokoding-web/](../../../apps/ayokoding-web/README.md) — Next.js implementation

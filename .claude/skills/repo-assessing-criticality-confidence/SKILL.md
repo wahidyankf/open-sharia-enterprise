@@ -417,11 +417,11 @@ for finding in low_priority:
 - Suggest adding related links
 - Consider alternative organization
 
-### Hugo Content (ayokoding-web)
+### ayokoding-web Content (Next.js)
 
 **CRITICAL**:
-- Missing required `title` field (build fails)
-- Invalid YAML syntax (parsing error)
+- Missing required `title` field (page fails to render)
+- Invalid content metadata (parsing error)
 - Broken internal link without language prefix (404)
 
 **HIGH**:
@@ -465,11 +465,11 @@ for finding in low_priority:
 ### 1. Missing Required Frontmatter Field
 
 **File**: `apps/ayokoding-web/content/en/programming/python/_index.md:3`
-**Criticality**: CRITICAL - Breaks Hugo build process
+****Criticality**: CRITICAL - Breaks page rendering
 **Category**: Missing Required Field
 
 **Finding**: Required `draft` field missing from frontmatter
-**Impact**: Hugo build fails with "required field missing" error
+****Impact**: Page fails to render with missing required field
 **Recommendation**: Add `draft: false` to frontmatter
 ````
 

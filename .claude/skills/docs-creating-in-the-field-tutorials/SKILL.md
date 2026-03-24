@@ -269,7 +269,7 @@ void transfer_shouldMoveMoneyBetweenAccounts() {
 **Related Conventions**:
 
 - [Tutorial Naming Convention](../../../governance/conventions/tutorials/naming.md) - In-the-field type definition
-- [Hugo ayokoding Convention](../../../governance/conventions/hugo/ayokoding.md) - Code annotation standards
+- [Content Quality Principles](../../../governance/conventions/writing/quality.md) - Code annotation standards
 
 **Related Skills**:
 

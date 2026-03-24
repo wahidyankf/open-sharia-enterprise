@@ -311,12 +311,18 @@ when feature files change.
 
 | Project         | Dependencies    | Spec Inputs |
 | --------------- | --------------- | ----------- |
-| ayokoding-web   | ayokoding-cli   | (none)      |
 | oseplatform-web | oseplatform-cli | (none)      |
 
-Hugo sites depend on their CLI tools for content automation (link checking,
-title generation, navigation updates). The CLI tools are built via
-`dependsOn` in `links:check` and `test:quick` targets.
+Hugo sites depend on their CLI tools for content automation (link checking).
+The CLI tools are built via `dependsOn` in `links:check` and `test:quick` targets.
+
+### Next.js Content Platforms
+
+| Project       | Dependencies  | Spec Inputs |
+| ------------- | ------------- | ----------- |
+| ayokoding-web | ayokoding-cli | (none)      |
+
+ayokoding-web depends on ayokoding-cli for link validation.
 
 ### CLI Tools
 

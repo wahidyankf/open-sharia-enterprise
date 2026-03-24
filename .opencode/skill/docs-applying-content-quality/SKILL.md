@@ -1,18 +1,18 @@
 ---
 name: docs-applying-content-quality
-description: Universal markdown content quality standards for active voice, heading hierarchy, accessibility compliance (alt text, WCAG AA contrast, screen reader support), and professional formatting. Essential for all markdown content creation across docs/, Hugo sites, plans/, and repository files. Auto-loads when creating or editing markdown content.
+description: Universal markdown content quality standards for active voice, heading hierarchy, accessibility compliance (alt text, WCAG AA contrast, screen reader support), and professional formatting. Essential for all markdown content creation across docs/, web sites, plans/, and repository files. Auto-loads when creating or editing markdown content.
 ---
 
 # Applying Content Quality Standards
 
 ## Purpose
 
-This Skill provides comprehensive guidance for applying **universal content quality standards** to all markdown content in the repository. It ensures consistent writing quality, accessibility compliance, and professional presentation across documentation, Hugo sites, planning documents, and root files.
+This Skill provides comprehensive guidance for applying **universal content quality standards** to all markdown content in the repository. It ensures consistent writing quality, accessibility compliance, and professional presentation across documentation, web sites, planning documents, and root files.
 
 **When to use this Skill:**
 
 - Creating or editing markdown content in docs/
-- Writing content for Hugo sites (ayokoding-web, oseplatform-web)
+- Writing content for ayokoding-web (Next.js) or oseplatform-web (Hugo)
 - Creating planning documents in plans/
 - Writing repository root files (README.md, CONTRIBUTING.md, etc.)
 - Ensuring accessibility compliance (WCAG AA)

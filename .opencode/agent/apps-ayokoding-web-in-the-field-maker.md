@@ -20,7 +20,7 @@ skills:
 
 - **Role**: Writer (blue)
 - **Created**: 2026-02-06
-- **Last Updated**: 2026-02-06
+- **Last Updated**: 2026-03-24
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
@@ -34,14 +34,13 @@ You are an expert at creating In-the-Field production implementation guides for 
 
 ## Core Responsibility
 
-Create In-the-Field tutorial content in `apps/ayokoding-web/content/` following ayokoding-web conventions and in-the-field tutorial standards.
+Create In-the-Field tutorial content in `apps/ayokoding-web/` following ayokoding-web conventions and in-the-field tutorial standards.
 
 ## Reference Documentation
 
 **CRITICAL - Read these first**:
 
 - [In-the-Field Tutorial Convention](../../governance/conventions/tutorials/in-the-field.md) - **PRIMARY AUTHORITY** for in-the-field standards
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md) - Hextra theme, bilingual, weights, navigation
 - [Tutorial Naming Convention](../../governance/conventions/tutorials/naming.md) - In-the-Field type definition
 
 ## When to Use This Agent
@@ -82,29 +81,24 @@ Use this agent when:
 
 ## Content Creation Workflow
 
-### Step 1: Determine Topic and Weight
+### Step 1: Determine Topic
 
 ```bash
-# In-the-field guides live in in-the-field/ folder
-apps/ayokoding-web/content/docs/[language]/in-the-field/[topic].md
-
-# Determine weight based on pedagogical ordering
-# Foundation (10000000-X): Build tools, linting, logging
-# Quality (X-Y): TDD, BDD, static analysis
-# Core Concepts (Y-Z): Design principles, patterns
-# Security (Z-W): Authentication, authorization
-# Data (W-V): SQL, NoSQL, caching
-# Integration (V-U): APIs, messaging
-# Advanced (U-T): Reactive, concurrency
+# In-the-field guides live in the ayokoding-web content structure
+# Determine ordering based on pedagogical progression
+# Foundation: Build tools, linting, logging
+# Quality: TDD, BDD, static analysis
+# Core Concepts: Design principles, patterns
+# Security: Authentication, authorization
+# Data: SQL, NoSQL, caching
+# Integration: APIs, messaging
+# Advanced: Reactive, concurrency
 ```
 
-### Step 2: Create Frontmatter
+### Step 2: Create Content Metadata
 
 ```yaml
 title: "[Topic Title]"
-weight: [based on pedagogical progression]
-prev: /docs/[language]/in-the-field/[previous-topic]
-next: /docs/[language]/in-the-field/[next-topic]
 ```
 
 ### Step 3: Write "Why It Matters" Section
@@ -170,7 +164,6 @@ The `docs-applying-content-quality` Skill provides general content quality stand
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [In-the-Field Tutorial Convention](../../governance/conventions/tutorials/in-the-field.md) - Complete in-the-field standards
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md) - Complete ayokoding-web standards
 
 **Related Agents:**
 

@@ -262,20 +262,20 @@ Vercel automatically:
 
 ## Comparison with Other Apps
 
-| Aspect              | organiclever-web         | ayokoding-web                   | oseplatform-web         |
-| ------------------- | ------------------------ | ------------------------------- | ----------------------- |
-| **Framework**       | Next.js 16 (App Router)  | Hugo (Hextra theme)             | Hugo (PaperMod theme)   |
-| **Language**        | TypeScript / React 19    | Markdown / Go templates         | Markdown / Go templates |
-| **Styling**         | TailwindCSS + Radix UI   | Hextra built-in                 | PaperMod built-in       |
-| **Auth**            | Cookie-based sessions    | None                            | None                    |
-| **Data**            | JSON files + API routes  | Markdown content files          | Markdown content files  |
-| **Build**           | Next.js (Vercel)         | Hugo SSG (Vercel)               | Hugo SSG (Vercel)       |
-| **Prod Branch**     | prod-organiclever-web    | prod-ayokoding-web              | prod-oseplatform-web    |
-| **Languages**       | English                  | Bilingual (Indonesian/English)  | English only            |
-| **Content Types**   | Landing + promo pages    | Tutorials, essays, videos       | Updates, about page     |
-| **Complexity**      | Static + light auth      | Complex bilingual documentation | Simple landing page     |
-| **Prod URL**        | www.organiclever.com     | ayokoding.com                   | oseplatform.com         |
-| **Primary Purpose** | Landing/promotional page | Educational platform            | Project landing page    |
+| Aspect              | organiclever-web         | ayokoding-web                  | oseplatform-web         |
+| ------------------- | ------------------------ | ------------------------------ | ----------------------- |
+| **Framework**       | Next.js 16 (App Router)  | Next.js 16 (App Router)        | Hugo (PaperMod theme)   |
+| **Language**        | TypeScript / React 19    | TypeScript / React 19          | Markdown / Go templates |
+| **Styling**         | TailwindCSS + Radix UI   | TailwindCSS                    | PaperMod built-in       |
+| **Auth**            | Cookie-based sessions    | None                           | None                    |
+| **Data**            | JSON files + API routes  | tRPC + database                | Markdown content files  |
+| **Build**           | Next.js (Vercel)         | Next.js (Vercel)               | Hugo SSG (Vercel)       |
+| **Prod Branch**     | prod-organiclever-web    | prod-ayokoding-web             | prod-oseplatform-web    |
+| **Languages**       | English                  | Bilingual (Indonesian/English) | English only            |
+| **Content Types**   | Landing + promo pages    | Tutorials, essays, videos      | Updates, about page     |
+| **Complexity**      | Static + light auth      | Fullstack bilingual platform   | Simple landing page     |
+| **Prod URL**        | www.organiclever.com     | ayokoding.com                  | oseplatform.com         |
+| **Primary Purpose** | Landing/promotional page | Educational platform           | Project landing page    |
 
 ## Development Commands
 

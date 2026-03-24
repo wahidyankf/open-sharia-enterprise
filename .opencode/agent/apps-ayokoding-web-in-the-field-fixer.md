@@ -23,7 +23,7 @@ skills:
 
 - **Role**: Fixer (yellow)
 - **Created**: 2026-02-06
-- **Last Updated**: 2026-02-06
+- **Last Updated**: 2026-03-24
 
 ## Confidence Assessment (Re-validation Required)
 
@@ -87,7 +87,6 @@ The `repo-assessing-criticality-confidence` Skill provides confidence definition
 - Missing limitations section (structural absence)
 - Annotation density <1.0 or >2.5 per code block (calculable)
 - Missing frontmatter field (objective)
-- Incorrect weight calculation (formula-based)
 - Missing error handling in code blocks (syntax-verifiable)
 - Hardcoded values present (pattern-detectable)
 
@@ -110,7 +109,6 @@ The `repo-assessing-criticality-confidence` Skill provides confidence definition
 
 - [In-the-Field Tutorial Convention](../../governance/conventions/tutorials/in-the-field.md) - Standards for fix validation
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md) - Complete standards
 
 **Related Agents:**
 

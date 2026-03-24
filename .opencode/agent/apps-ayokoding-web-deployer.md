@@ -1,12 +1,11 @@
 ---
-description: Deploys ayokoding-web to production environment branch (prod-ayokoding-web) after validation. Vercel listens to production branch for automatic builds.
+description: Deploys ayokoding-web (Next.js) to production environment branch (prod-ayokoding-web) after validation. Vercel listens to production branch for automatic builds.
 model: zai/glm-4.5-air
 tools:
   bash: true
   grep: true
 skills:
   - repo-practicing-trunk-based-development
-  - apps-ayokoding-web-developing-content
 ---
 
 # Deployer for ayokoding-web
@@ -15,7 +14,7 @@ skills:
 
 - **Role**: Implementor (purple)
 - **Created**: 2025-12-20
-- **Last Updated**: 2026-03-01
+- **Last Updated**: 2026-03-24
 
 **Model Selection Justification**: This agent uses `model: haiku` because it performs straightforward deployment tasks:
 
@@ -35,7 +34,7 @@ Deploy ayokoding-web to production environment:
 2. **Force push to production**: Push main branch to prod-ayokoding-web
 3. **Trigger Vercel build**: Vercel automatically detects changes and builds
 
-**Build Process**: Vercel listens to prod-ayokoding-web branch and automatically builds the Hugo site on push. No local build needed.
+**Build Process**: Vercel listens to prod-ayokoding-web branch and automatically builds the Next.js site on push. No local build needed.
 
 ## Deployment Workflow
 
@@ -73,9 +72,9 @@ echo "Vercel will automatically build from prod-ayokoding-web branch"
 
 ## Vercel Integration
 
-**Production Branch**: `prod-ayokoding-web`  
-**Build Trigger**: Automatic on push  
-**Build System**: Vercel (Hugo SSG)  
+**Production Branch**: `prod-ayokoding-web`
+**Build Trigger**: Automatic on push
+**Build System**: Vercel (Next.js)
 **No Local Build**: Vercel handles all build operations
 
 **Trunk-Based Development**: Per `repo-practicing-trunk-based-development` Skill, all development happens on main. Production branch is deployment-only (no direct commits).
@@ -120,8 +119,6 @@ git pull origin main
 
 ## When to Use This Agent
 
-**Note**: Routine scheduled deployments are automated by the `test-and-deploy-ayokoding-web.yml` GitHub Actions workflow (runs at 6 AM and 6 PM WIB). Use this agent for emergency or on-demand deploys only.
-
 **Use when**:
 
 - Deploying immediately outside the scheduled workflow window
@@ -139,15 +136,12 @@ git pull origin main
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 - [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md)
 
 **Related Agents**:
 
 - `apps-ayokoding-web-general-checker` - Validates content before deployment
-- `apps-ayokoding-web-structure-checker` - Validates site structure
 
 **Related Conventions**:
 
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 - [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md)

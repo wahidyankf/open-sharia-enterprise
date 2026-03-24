@@ -6,9 +6,8 @@ coverage
 .DS_Store
 .idea
 apps/organiclever-be/target
-apps/ayokoding-web
-!apps/ayokoding-web/content
 apps/ayokoding-cli
+archived
 apps/oseplatform-web
 apps/oseplatform-cli
 apps/rhino-cli

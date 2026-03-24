@@ -19,7 +19,7 @@ skills:
 
 - **Role**: Checker (green)
 - **Created**: 2026-02-06
-- **Last Updated**: 2026-02-06
+- **Last Updated**: 2026-03-24
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
@@ -44,7 +44,6 @@ The `repo-generating-validation-reports` Skill provides UUID generation, timesta
 **CRITICAL - Read these first**:
 
 - [In-the-Field Tutorial Convention](../../governance/conventions/tutorials/in-the-field.md) - Primary validation authority
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md) - Hextra theme standards
 
 ## Validation Scope
 
@@ -108,11 +107,9 @@ For each framework introduced:
 
 The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web specific validation:
 
-- Bilingual frontmatter (id/en)
-- Weight calculation (pedagogical ordering)
-- Absolute path linking (/docs/path without .md)
-- Navigation depth (max 2 layers)
-- prev/next navigation
+- Bilingual content (id/en)
+- Content structure and metadata
+- Linking conventions
 
 ## Validation Process
 
@@ -188,7 +185,7 @@ Check for progression diagrams showing standard library → framework → produc
 
 ### Step 7: Validate ayokoding-web Compliance
 
-Check frontmatter, weights, linking, navigation.
+Check content metadata, linking, bilingual completeness.
 
 ### Step 8: Finalize Report
 
@@ -200,7 +197,6 @@ Update status, add summary, prioritize findings.
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
 - [In-the-Field Tutorial Convention](../../governance/conventions/tutorials/in-the-field.md) - Complete standards
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md) - Complete standards
 
 **Related Agents:**
 

@@ -17,8 +17,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Monorepo**: Nx workspace
 - **Current Apps**:
   - `oseplatform-web` - Hugo static site (PaperMod theme)
-  - `ayokoding-web` - Hugo static site (Hextra theme, bilingual)
-  - `ayokoding-cli` - Go CLI tool for content automation
+  - `ayokoding-web` - Next.js 16 fullstack content platform (TypeScript, tRPC)
+  - `ayokoding-web-be-e2e` - Playwright BE E2E tests for ayokoding-web tRPC API
+  - `ayokoding-web-fe-e2e` - Playwright FE E2E tests for ayokoding-web UI
+  - `ayokoding-cli` - Go CLI tool for content link validation
   - `rhino-cli` - Go CLI tool for repository management (Repository Hygiene & INtegration Orchestrator; includes `java validate-annotations`)
   - `oseplatform-cli` - Go CLI tool for OSE Platform site maintenance (link validation)
   - `organiclever-web` - Next.js 16 landing and promotional website (www.organiclever.com)
@@ -42,9 +44,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `demo-fe-dart-flutterweb` - Flutter Web frontend (Dart, alternative to demo-fe-ts-nextjs)
   - `demo-fe-e2e` - Playwright E2E tests for demo-fe frontends
   - `demo-fs-ts-nextjs` - Next.js 16 fullstack app (TypeScript, App Router + Route Handlers)
-  - `ayokoding-web-v2` - Next.js 16 fullstack content platform (TypeScript, tRPC, replaces Hugo ayokoding-web)
-  - `ayokoding-web-v2-be-e2e` - Playwright BE E2E tests for ayokoding-web-v2 tRPC API
-  - `ayokoding-web-v2-fe-e2e` - Playwright FE E2E tests for ayokoding-web-v2 UI
 
 ## Project Structure
 
@@ -52,8 +51,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 open-sharia-enterprise/
 ├── apps/                     # Deployable applications (Nx)
 │   ├── oseplatform-web/    # OSE Platform website
-│   ├── ayokoding-web/       # AyoKoding website (bilingual)
-│   ├── ayokoding-cli/       # Content automation CLI
+│   ├── ayokoding-web/       # AyoKoding website (Next.js 16)
+│   ├── ayokoding-web-be-e2e/ # Playwright BE E2E tests for ayokoding-web
+│   ├── ayokoding-web-fe-e2e/ # Playwright FE E2E tests for ayokoding-web
+│   ├── ayokoding-cli/       # Content link validation CLI
 │   ├── rhino-cli/          # Repository management CLI (java validate-annotations)
 │   ├── oseplatform-cli/     # OSE Platform site CLI
 │   ├── organiclever-web/     # OrganicLever landing website (Next.js)
@@ -74,9 +75,7 @@ open-sharia-enterprise/
 │   ├── demo-fe-ts-tanstack-start/ # TanStack Start frontend (TypeScript)
 │   ├── demo-fe-dart-flutterweb/ # Flutter Web frontend (Dart)
 │   ├── demo-fe-e2e/ # Playwright E2E tests for frontend
-│   ├── ayokoding-web-v2/ # Next.js 16 fullstack content platform
-│   ├── ayokoding-web-v2-be-e2e/ # Playwright BE E2E tests
-│   └── ayokoding-web-v2-fe-e2e/ # Playwright FE E2E tests
+├── archived/                 # Archived applications (no longer active)
 ├── apps-labs/                # Experimental apps (NOT in Nx)
 ├── libs/                     # Reusable libraries (Nx, flat structure)
 │   └── golang-commons/      # Shared Go utilities (links checker, output)
@@ -161,6 +160,9 @@ npm run doctor           # Check all required tools (volta, node, npm, java, mav
 from `test:unit` (Vitest): `rhino-cli test-coverage validate apps/organiclever-web/coverage/lcov.info 90` and
 `rhino-cli test-coverage validate apps/demo-be-ts-effect/coverage/lcov.info 90` — both run as part of
 `test:quick`.
+
+**AyoKoding Web**: `ayokoding-web` enforces ≥80% **line coverage** via
+`rhino-cli test-coverage validate apps/ayokoding-web/coverage/lcov.info 80` — run as part of `test:quick`.
 
 **Java projects**: `demo-be-java-springboot` and `demo-be-java-vertx` enforce ≥90% **line coverage** (matching
 Codecov's algorithm) via `rhino-cli test-coverage validate` applied to the JaCoCo XML report from
@@ -284,7 +286,6 @@ nx graph                     # Visualize dependencies
   - `prod-ayokoding-web` → [ayokoding.com](https://ayokoding.com)
   - `prod-oseplatform-web` → [oseplatform.com](https://oseplatform.com)
   - `prod-organiclever-web` → [www.organiclever.com](https://www.organiclever.com/)
-  - `prod-ayokoding-web-v2` → ayokoding-web-v2 Vercel deployment
 - **Commit format**: Conventional Commits `<type>(<scope>): <description>`
   - Types: feat, fix, docs, style, refactor, perf, test, chore, ci, revert
   - Scope optional but recommended
@@ -303,7 +304,6 @@ Husky + lint-staged enforce quality:
     - Validates `.claude/` source format (YAML, tools, model, skills)
     - Auto-syncs `.claude/` → `.opencode/`
     - Validates `.opencode/` output (semantic equivalence)
-  - When ayokoding-web content changes: rebuilds CLI, updates titles, regenerates navigation
   - Formats staged files with Prettier (JS/TS/JSON/YAML/CSS/MD), gofmt (Go), and mix format (Elixir)
   - Validates markdown links in staged files
   - Validates all markdown files (markdownlint)
@@ -431,11 +431,11 @@ Plan mode for non-trivial tasks (3+ steps or architecture decisions), subagents 
 
 ## AI Agents
 
-**Content Creation**: docs-maker, docs-tutorial-maker, readme-maker, specs-maker, apps-ayokoding-web-general-maker, apps-ayokoding-web-by-example-maker, apps-ayokoding-web-in-the-field-maker, apps-ayokoding-web-structure-maker, apps-ayokoding-web-navigation-maker, apps-ayokoding-web-title-maker, apps-oseplatform-web-content-maker
+**Content Creation**: docs-maker, docs-tutorial-maker, readme-maker, specs-maker, apps-ayokoding-web-general-maker, apps-ayokoding-web-by-example-maker, apps-ayokoding-web-in-the-field-maker, apps-oseplatform-web-content-maker
 
-**Validation**: docs-checker, docs-tutorial-checker, docs-link-general-checker, docs-software-engineering-separation-checker, readme-checker, specs-checker, apps-ayokoding-web-general-checker, apps-ayokoding-web-by-example-checker, apps-ayokoding-web-in-the-field-checker, apps-ayokoding-web-facts-checker, apps-ayokoding-web-link-checker, apps-ayokoding-web-structure-checker, apps-oseplatform-web-content-checker
+**Validation**: docs-checker, docs-tutorial-checker, docs-link-general-checker, docs-software-engineering-separation-checker, readme-checker, specs-checker, apps-ayokoding-web-general-checker, apps-ayokoding-web-by-example-checker, apps-ayokoding-web-in-the-field-checker, apps-ayokoding-web-facts-checker, apps-ayokoding-web-link-checker, apps-oseplatform-web-content-checker
 
-**Fixing**: docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-fixer, specs-fixer, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-in-the-field-fixer, apps-ayokoding-web-facts-fixer, apps-ayokoding-web-link-fixer, apps-ayokoding-web-structure-fixer, apps-oseplatform-web-content-fixer, docs-file-manager
+**Fixing**: docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-fixer, specs-fixer, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-in-the-field-fixer, apps-ayokoding-web-facts-fixer, apps-ayokoding-web-link-fixer, apps-oseplatform-web-content-fixer, docs-file-manager
 
 **Planning**: plan-maker, plan-checker, plan-executor, plan-execution-checker, plan-fixer
 
@@ -540,23 +540,23 @@ nx build oseplatform-web  # Production build
 
 - **URL**: <https://ayokoding.com>
 - **Production branch**: `prod-ayokoding-web` → ayokoding.com
-- **Theme**: Hextra (documentation)
-- **Hugo**: 0.156.0 Extended
-- **Languages**: Indonesian (primary), English
+- **Framework**: Next.js 16 (App Router, TypeScript, tRPC)
+- **Languages**: English (primary), Indonesian
 - **Deployment**: Vercel
 - **Content**: Educational platform (programming, AI, security)
+- **E2E tests**: `ayokoding-web-be-e2e`, `ayokoding-web-fe-e2e`
 
 **Commands**:
 
 ```bash
-nx dev ayokoding-web             # Development server
-nx build ayokoding-web           # Production build
-nx run-pre-commit ayokoding-web  # Update titles + navigation
+nx dev ayokoding-web                           # Development server (localhost:3101)
+nx build ayokoding-web                         # Production build
+nx run ayokoding-web:test:quick                # Unit tests + coverage + link validation
+nx run ayokoding-web-be-e2e:test:e2e           # Backend E2E tests
+nx run ayokoding-web-fe-e2e:test:e2e           # Frontend E2E tests
 ```
 
-**Pre-commit automation**: When content changes, automatically rebuilds CLI, updates titles from filenames, regenerates navigation
-
-**See**: [apps/ayokoding-cli/README.md](./apps/ayokoding-cli/README.md), [governance/conventions/hugo/](./governance/conventions/hugo/)
+**See**: [apps/ayokoding-web/README.md](./apps/ayokoding-web/README.md)
 
 ### organiclever-web
 

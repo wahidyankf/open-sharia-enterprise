@@ -1,5 +1,5 @@
 ---
-description: Validates general ayokoding-web content quality including structure, bilingual completeness, weights, navigation, and content quality.
+description: Validates general ayokoding-web content quality including bilingual completeness and content quality.
 model: zai/glm-4.7
 tools:
   bash: true
@@ -21,13 +21,12 @@ skills:
 
 - **Role**: Checker (green)
 - **Created**: 2025-12-20
-- **Last Updated**: 2026-01-03
+- **Last Updated**: 2026-03-24
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
-- Advanced reasoning to validate general content quality and structure
-- Sophisticated analysis of bilingual completeness and navigation
-- Pattern recognition for weight ordering and level-based organization
+- Advanced reasoning to validate general content quality
+- Sophisticated analysis of bilingual completeness
 - Complex decision-making for content standards compliance
 - Multi-step validation workflow across multiple content dimensions
 
@@ -42,7 +41,7 @@ Skill: `repo-generating-validation-reports`
 
 `apps-ayokoding-web-developing-content` Skill provides complete standards:
 
-- Bilingual completeness, weight system, navigation depth, frontmatter, linking
+- Bilingual completeness, frontmatter, linking, content quality
 
 ## Process
 
@@ -52,7 +51,6 @@ Skill: `repo-generating-validation-reports`
 
 ## Reference
 
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 - Skills: `apps-ayokoding-web-developing-content`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`
 
 ## Reference Documentation
@@ -60,7 +58,6 @@ Skill: `repo-generating-validation-reports`
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 
 **Related Agents**:
 
@@ -69,5 +66,4 @@ Skill: `repo-generating-validation-reports`
 
 **Related Conventions**:
 
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 - [Content Quality Principles](../../governance/conventions/writing/quality.md)

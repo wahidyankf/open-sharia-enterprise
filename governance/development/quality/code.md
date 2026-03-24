@@ -59,7 +59,7 @@ These tools work together to ensure code consistency and quality without manual 
 - YAML: `*.{yml,yaml}`
 - CSS/SCSS: `*.{css,scss}`
 
-**Note**: Hugo archetype template files (`apps/ayokoding-web/archetypes/**/*.md`) are excluded from Prettier formatting as they contain Go template syntax.
+**Note**: Hugo archetype template files (`apps/oseplatform-web/archetypes/**/*.md`) are excluded from Prettier formatting as they contain Go template syntax.
 
 **When It Runs**: Automatically on staged files before each commit via the pre-commit hook.
 
@@ -94,7 +94,7 @@ npx prettier --write [file-path]
   "lint-staged": {
     "*.{js,jsx,ts,tsx,mjs,cjs}": "prettier --write",
     "*.json": "prettier --write",
-    "apps/ayokoding-web/archetypes/**/*.md": "echo 'Skipping Hugo archetype'",
+    "apps/oseplatform-web/archetypes/**/*.md": "echo 'Skipping Hugo archetype'",
     "*.md": "prettier --write",
     "*.{yml,yaml}": "prettier --write",
     "*.{css,scss}": "prettier --write"
@@ -437,13 +437,12 @@ git commit -m "fix: correct validation logic"
 
 ## ayokoding-web Link Validation
 
-Internal links in ayokoding-web content must use Hugo absolute paths. These links are validated
+Internal links in ayokoding-web content are validated
 automatically on every `test:quick` run via `ayokoding-cli links check`.
 
 **Convention:**
 
-- Internal links must use absolute paths with a language prefix: `/en/...` or `/id/...`
-- No `.md` extension in link targets (Hugo resolves extensions automatically)
+- Internal links are validated for correctness
 - External links (`http://`, `https://`, `mailto:`) are NOT validated by this tool — use the
   `apps-ayokoding-web-link-checker` AI agent for those
 - Same-page anchors (`#section`) are not validated

@@ -16,10 +16,11 @@ updated: 2025-12-22
 
 # Hugo Content Convention - Shared
 
-This document defines **common Hugo conventions** that apply to ALL Hugo sites in this repository:
+This document defines **common Hugo conventions** that apply to Hugo sites in this repository:
 
-- **ayokoding-web** - Educational platform using Hextra theme ([site-specific conventions](./ayokoding.md))
 - **oseplatform-web** - Project landing page using PaperMod theme ([site-specific conventions](./ose-platform.md))
+
+> **Note**: ayokoding-web has migrated to Next.js 16 and is no longer a Hugo site. Historical Hugo conventions for ayokoding-web are preserved in [ayokoding.md](./ayokoding.md) for reference only.
 
 ## Principles Implemented/Respected
 

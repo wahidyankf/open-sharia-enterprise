@@ -7,7 +7,6 @@ require (
 	github.com/spf13/cobra v1.10.2
 	github.com/wahidyankf/open-sharia-enterprise/libs/golang-commons v0.0.0-00010101000000-000000000000
 	github.com/wahidyankf/open-sharia-enterprise/libs/hugo-commons v0.0.0-00010101000000-000000000000
-	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -34,6 +33,7 @@ require (
 	golang.org/x/image v0.18.0 // indirect
 	golang.org/x/sys v0.26.0 // indirect
 	golang.org/x/tools v0.26.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
 replace github.com/wahidyankf/open-sharia-enterprise/libs/golang-commons v0.0.0-00010101000000-000000000000 => ../../libs/golang-commons

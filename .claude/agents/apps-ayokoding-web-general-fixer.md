@@ -18,7 +18,7 @@ skills:
 
 - **Role**: Fixer (yellow)
 - **Created**: 2025-12-20
-- **Last Updated**: 2026-01-03
+- **Last Updated**: 2026-03-24
 
 ## Confidence Assessment (Re-validation Required)
 
@@ -38,7 +38,7 @@ See `repo-assessing-criticality-confidence` Skill for complete priority matrix a
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
 - Advanced reasoning to re-validate general content findings
-- Sophisticated analysis of content quality and structure issues
+- Sophisticated analysis of content quality issues
 - Pattern recognition to detect false positives
 - Complex decision-making for fix safety and confidence assessment
 - Understanding of ayokoding-web content standards
@@ -57,7 +57,7 @@ Validate general-checker findings before applying fixes.
 
 `repo-assessing-criticality-confidence` Skill: definitions, examples
 
-HIGH: Incorrect weight, missing frontmatter, broken link
+HIGH: Missing frontmatter, broken link
 MEDIUM: Content quality, structure choices
 FALSE_POSITIVE: Checker error
 
@@ -70,7 +70,6 @@ Skills: `apps-ayokoding-web-developing-content`, `repo-assessing-criticality-con
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 
 **Related Agents**:
 
@@ -79,5 +78,4 @@ Skills: `apps-ayokoding-web-developing-content`, `repo-assessing-criticality-con
 
 **Related Conventions**:
 
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 - [Fixer Confidence Levels](../../governance/development/quality/fixer-confidence-levels.md)

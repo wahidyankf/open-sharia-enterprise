@@ -30,34 +30,31 @@ The platform consists of 9 applications across 4 technology stacks:
 - **Dev Command**: `nx dev oseplatform-web`
 - **Location**: `apps/oseplatform-web/`
 
+### Web Applications (Next.js)
+
 #### ayokoding-web
 
 - **Purpose**: Educational platform for programming, AI, and security
 - **URL**: <https://ayokoding.com>
-- **Technology**: Hugo 0.156.0 Extended + Hextra theme
-- **Languages**: Bilingual (Indonesian primary, English)
+- **Technology**: Next.js 16 (App Router) + TypeScript + tRPC
+- **Languages**: Bilingual (default English)
 - **Deployment**: Vercel (via `prod-ayokoding-web` branch)
 - **Build Command**: `nx build ayokoding-web`
 - **Dev Command**: `nx dev ayokoding-web`
 - **Location**: `apps/ayokoding-web/`
-- **Special Features**:
-  - Automated title updates from filenames
-  - Auto-generated navigation structure
-  - Pre-commit hooks for content processing
+- **Content**: Co-located at `apps/ayokoding-web/content/`
 
 ### CLI Tools (Go)
 
 #### ayokoding-cli
 
-- **Purpose**: Content automation for ayokoding-web
+- **Purpose**: Link validation for ayokoding-web content
 - **Language**: Go 1.26
 - **Build Command**: `nx build ayokoding-cli`
 - **Location**: `apps/ayokoding-cli/`
 - **Features**:
-  - Title extraction and update from markdown filenames
-  - Navigation structure regeneration
-  - Integrated into pre-commit hooks
-- **Usage**: Automatically runs during git commit when ayokoding-web content changes
+  - Link validation for ayokoding-web content
+- **Usage**: Runs as part of ayokoding-web quality checks
 
 #### rhino-cli
 
@@ -132,7 +129,7 @@ Shows the high-level technical building blocks (containers) of the system. In C4
 graph TB
     subgraph "Marketing & Education Sites"
         OSE[oseplatform-web<br/>Hugo Static Site]
-        AYO[ayokoding-web<br/>Hugo Static Site]
+        AYO[ayokoding-web<br/>Next.js App]
     end
 
     subgraph "OrganicLever Platform"
@@ -153,7 +150,7 @@ graph TB
         LIBS[Shared Libraries<br/>golang-commons, hugo-commons]
     end
 
-    AYOCLI -->|Updates content| AYO
+    AYOCLI -->|Validates links| AYO
     RHINO -->|Repository automation| NX
     OSECLI -->|Validates links| OSE
     OL_WEB_E2E -->|Tests| OL_WEB
@@ -189,11 +186,11 @@ graph TB
 Marketing & Education Sites:
 
 - oseplatform-web: Fully independent static site
-- ayokoding-web: Fully independent static site (with CLI automation)
+- ayokoding-web: Next.js fullstack content platform (with CLI link validation)
 
 CLI Tools:
 
-- ayokoding-cli: Processes ayokoding-web content during build
+- ayokoding-cli: Validates links in ayokoding-web content
 - rhino-cli: Repository management automation
 
 **Build-Time Dependencies:**
@@ -202,22 +199,7 @@ CLI Tools:
 - CLI tools executed during build processes
 - Shared libraries may be imported at build time via `@open-sharia-enterprise/[lib-name]`
 
-**Content Processing Pipeline (ayokoding-web):**
+**Link Validation Pipeline (ayokoding-web):**
 
-```mermaid
-sequenceDiagram
-    participant Dev as Developer
-    participant Git as Git Hook
-    participant CLI as ayokoding-cli
-    participant Content as ayokoding-web/content
-    participant Hugo as Hugo Build
-
-    Dev->>Git: git commit
-    Git->>CLI: nx build ayokoding-cli
-    CLI->>Content: Update titles from filenames
-    CLI->>Content: Regenerate navigation
-    Git->>Git: Stage updated content
-    Git->>Hugo: Continue commit
-
-    Note over Dev,Hugo: Automated content processing during commit
-```
+ayokoding-cli validates internal links in ayokoding-web content as part of the quality gate.
+Content is co-located at `apps/ayokoding-web/content/` and served by the Next.js application.

@@ -291,7 +291,7 @@ Read: docs/explanation/software-engineering/programming-languages/java/README.md
 Glob: docs/explanation/software-engineering/programming-languages/*/
 
 # Find all AyoKoding learning paths
-Glob: apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/*/
+Glob: apps/ayokoding-web/en/learn/software-engineering/programming-languages/*/
 ```
 
 **Grep**: Search for Prerequisites sections
@@ -306,7 +306,7 @@ Path: docs/explanation/software-engineering/programming-languages/java/README.md
 
 ```bash
 # Check directory exists
-if [ -d "apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java" ]; then
+if [ -d "apps/ayokoding-web/en/learn/software-engineering/programming-languages/java" ]; then
   echo "PASS: AyoKoding Java directory exists"
 else
   echo "FAIL: AyoKoding Java directory missing"
@@ -314,7 +314,7 @@ fi
 
 # Check required files exist
 for file in _index.md initial-setup.md quick-start.md; do
-  if [ -f "apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/$file" ]; then
+  if [ -f "apps/ayokoding-web/en/learn/software-engineering/programming-languages/java/$file" ]; then
     echo "PASS: $file exists"
   else
     echo "FAIL: $file missing"
@@ -346,7 +346,7 @@ Use both verification status AND criticality for findings:
 **Expected**:
 
 - README should have "## Prerequisites" section
-- Section should reference apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/
+- Section should reference apps/ayokoding-web/en/learn/software-engineering/programming-languages/java/
 
 **Actual**:
 

@@ -21,7 +21,7 @@ graph TB
     subgraph "Source Control"
         MAIN[main branch<br/>Trunk-Based Dev]
         PROD_OSE[prod-oseplatform-web<br/>Deploy Only]
-        PROD_AYO[prod-ayokoding-web<br/>Deploy Only]
+        PROD_AYO[prod-ayokoding-web<br/>Deploy Only - Next.js]
         PROD_OL[prod-organiclever-web<br/>Deploy Only]
     end
 
@@ -45,13 +45,13 @@ graph TB
     MAIN -->|Merge/Push| PROD_OL
 
     PROD_OSE --> HUGO_BUILD
-    PROD_AYO --> HUGO_BUILD
+    PROD_AYO --> NEXT_BUILD
     PROD_OL --> NEXT_BUILD
     MAIN --> GO_BUILD
     MAIN --> SPRING_BUILD
 
     HUGO_BUILD --> VERCEL_OSE
-    HUGO_BUILD --> VERCEL_AYO
+    NEXT_BUILD --> VERCEL_AYO
     NEXT_BUILD --> VERCEL_OL
     GO_BUILD --> LOCAL
 
@@ -79,7 +79,7 @@ graph TB
 
 ### Vercel Deployment
 
-**Hugo Static Sites** (oseplatform-web, ayokoding-web):
+**Hugo Static Sites** (oseplatform-web):
 
 - **Build Framework**: `@vercel/static-build`
 - **Build Script**: `build.sh` in each app directory

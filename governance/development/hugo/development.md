@@ -15,7 +15,7 @@ updated: 2025-12-07
 
 # Hugo Development Convention
 
-Standards for developing the non-content aspects of Hugo websites in this repository. This convention covers theme customization, layout development, asset management, configuration, and build processes for **ayokoding-web** (Hextra theme) and **oseplatform-web** (PaperMod theme).
+Standards for developing the non-content aspects of Hugo websites in this repository. This convention covers theme customization, layout development, asset management, configuration, and build processes for **oseplatform-web** (PaperMod theme). (ayokoding-web has migrated to Next.js 16 and is no longer a Hugo site.)
 
 ## Principles Implemented/Respected
 

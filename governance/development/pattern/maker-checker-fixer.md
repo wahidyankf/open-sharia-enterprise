@@ -427,12 +427,6 @@ See [AI Agents Convention - Agent Color Categorization](../agents/ai-agents.md#a
 - **apps-ayokoding-web-link-checker** (🟩 Checker) - Validates links in ayokoding-web content following absolute path convention (/docs/path without .md). Checks internal and external links
 - **apps-ayokoding-web-link-fixer** (🟨 Fixer) - Applies validated fixes from link-checker audit reports
 
-**Agents (Structure)**:
-
-- **apps-ayokoding-web-structure-maker** (🟦 Maker) - Creates folder structure and \_index.md files for ayokoding-web following level-based organization
-- **apps-ayokoding-web-structure-checker** (🟩 Checker) - Validates ayokoding-web content structure including folder organization, level-based weights, navigation depth, and bilingual completeness
-- **apps-ayokoding-web-structure-fixer** (🟨 Fixer) - Applies validated fixes from structure-checker audit reports
-
 **Use Case**: Creating and validating educational content for ayokoding-web
 
 **Example (General Content)**:

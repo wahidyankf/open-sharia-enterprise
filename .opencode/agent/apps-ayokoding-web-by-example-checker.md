@@ -22,7 +22,7 @@ skills:
 
 - **Role**: Checker (green)
 - **Created**: 2025-12-20
-- **Last Updated**: 2026-01-03
+- **Last Updated**: 2026-03-24
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
@@ -47,8 +47,6 @@ The `repo-generating-validation-reports` Skill provides UUID generation, timesta
 **CRITICAL - Read these first**:
 
 - [By-Example Tutorial Convention](../../governance/conventions/tutorials/by-example.md) - Primary validation authority
-
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md) - Hextra theme standards
 - [By Example Content Standard](../../governance/conventions/tutorials/programming-language-content.md) - Annotation requirements
 - [Tutorial Naming Convention](../../governance/conventions/tutorials/naming.md) - By Example definition
 
@@ -96,11 +94,9 @@ Five-part structure for each example:
 
 The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web specific validation:
 
-- Bilingual frontmatter (id/en)
-- Weight calculation (level \* 100 + sequential)
-- Absolute path linking (/docs/path without .md)
-- Navigation depth (max 2 layers)
-- prev/next navigation
+- Bilingual content (id/en)
+- Content structure and metadata
+- Linking conventions
 
 ### 7. Diagram Count Validation
 
@@ -187,6 +183,8 @@ Check thematic grouping and progressive complexity.
 
 ### Step 5: Validate ayokoding-web Compliance
 
+Check content metadata, linking, bilingual completeness.
+
 ### Step 5.6: Validate Core Features First Principle
 
 **Beginner level** (CRITICAL validation):
@@ -205,7 +203,6 @@ Check thematic grouping and progressive complexity.
 
 - Check for trade-off comparisons (core vs external)
 - Verify performance/complexity justifications present
-  Check frontmatter, weights, linking, navigation.
 
 ### Step 5.5: Validate Diagram Count
 
@@ -225,7 +222,6 @@ Update status, add summary, prioritize findings.
 **Project Guidance:**
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md) - Complete standards
 - [By Example Content Standard](../../governance/conventions/tutorials/programming-language-content.md) - Annotation requirements
 
 **Related Agents:**

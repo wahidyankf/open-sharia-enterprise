@@ -12,9 +12,6 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **apps-ayokoding-web-general-maker** - General content for AyoKoding
 - **apps-ayokoding-web-by-example-maker** - By-example tutorials
 - **apps-ayokoding-web-in-the-field-maker** - In-the-field tutorials for AyoKoding
-- **apps-ayokoding-web-structure-maker** - Site structure creation
-- **apps-ayokoding-web-navigation-maker** - Navigation generation
-- **apps-ayokoding-web-title-maker** - Title generation from filenames
 - **apps-oseplatform-web-content-maker** - OSE Platform content
 - **plan-maker** - Project plan creation
 - **repo-governance-maker** - Governance document creation
@@ -35,7 +32,6 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **apps-ayokoding-web-in-the-field-checker** - In-the-field content validation
 - **apps-ayokoding-web-facts-checker** - Factual accuracy for AyoKoding
 - **apps-ayokoding-web-link-checker** - Link validation for AyoKoding
-- **apps-ayokoding-web-structure-checker** - Site structure validation
 - **apps-oseplatform-web-content-checker** - OSE content validation
 - **plan-checker** - Project plan validation
 - **plan-execution-checker** - Plan execution validation
@@ -55,7 +51,6 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **apps-ayokoding-web-in-the-field-fixer** - Fix in-the-field content issues
 - **apps-ayokoding-web-facts-fixer** - Apply factual corrections
 - **apps-ayokoding-web-link-fixer** - Fix broken links
-- **apps-ayokoding-web-structure-fixer** - Fix structure issues
 - **apps-oseplatform-web-content-fixer** - Fix OSE content issues
 - **plan-fixer** - Apply plan fixes
 - **repo-governance-fixer** - Fix governance compliance issues
@@ -64,7 +59,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 
 ### 🟪 Operations
 
-- **apps-ayokoding-web-deployer** - AyoKoding deployment
+- **apps-ayokoding-web-deployer** - AyoKoding deployment (Next.js via Vercel)
 - **apps-oseplatform-web-deployer** - OSE Platform deployment
 - **apps-organiclever-web-deployer** - organiclever-web deployment
 - **plan-executor** - Execute project plans
@@ -79,7 +74,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **swe-elixir-developer** - Elixir application development
 - **swe-fsharp-developer** - F# application development
 - **swe-golang-developer** - Go application development
-- **swe-hugo-developer** - Hugo site development
+- **swe-hugo-developer** - Hugo site development (oseplatform-web)
 - **swe-java-developer** - Java application development
 - **swe-kotlin-developer** - Kotlin application development
 - **swe-python-developer** - Python application development
@@ -155,4 +150,4 @@ All agents follow governance principles:
 
 ---
 
-**Last Updated**: 2026-03-13
+**Last Updated**: 2026-03-24

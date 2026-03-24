@@ -16,7 +16,7 @@ Use this Skill when:
 - Implementing link validation in checker agents
 - Validating internal documentation links
 - Verifying external URL accessibility
-- Checking Hugo site link formatting
+- Checking site link formatting
 - Implementing link caching strategies
 - Understanding link validation patterns
 
@@ -43,7 +43,7 @@ Use this Skill when:
 **What to validate**:
 
 - Internal markdown links (docs/, governance/, plans/)
-- Hugo content links (apps/ayokoding-web/, apps/oseplatform-web/)
+- Content links (apps/ayokoding-web/, apps/oseplatform-web/)
 - External URLs (HTTP/HTTPS)
 - Image links (relative paths)
 - Anchor links (same-page headings)
@@ -352,4 +352,4 @@ Finding: [BROKEN] - Internal Link to Non-Existent File
 **Link Validation Agents**:
 
 - docs-link-general-checker - Validates links in docs/, governance/, plans/
-- apps-ayokoding-web-link-checker - Validates links in ayokoding-web Hugo content
+- apps-ayokoding-web-link-checker - Validates links in ayokoding-web content

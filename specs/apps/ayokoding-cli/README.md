@@ -2,7 +2,7 @@
 
 Gherkin behavioral specifications for
 [ayokoding-cli](../../apps/ayokoding-cli/README.md) — the CLI tool for
-ayokoding-web Hugo site maintenance and automation.
+ayokoding-web content validation.
 
 ## Purpose
 
@@ -13,11 +13,9 @@ the contract between the CLI implementation and its consumers.
 
 ## Structure
 
-| Directory | Command(s)      |
-| --------- | --------------- |
-| `nav/`    | `nav regen`     |
-| `titles/` | `titles update` |
-| `links/`  | `links check`   |
+| Directory | Command(s)    |
+| --------- | ------------- |
+| `links/`  | `links check` |
 
 ## Running the Tests
 
@@ -25,13 +23,11 @@ Integration tests live in `apps/ayokoding-cli/cmd/` and run in-process against
 controlled filesystem fixtures using [godog](https://github.com/cucumber/godog).
 
 ```bash
-# Run all 13 BDD integration tests
+# Run all BDD integration tests
 nx run ayokoding-cli:test:integration
 
 # Run a specific suite during development
 cd apps/ayokoding-cli
-go test -v -tags=integration -run TestIntegrationNavRegen ./cmd/...
-go test -v -tags=integration -run TestIntegrationTitlesUpdate ./cmd/...
 go test -v -tags=integration -run TestIntegrationLinksCheck ./cmd/...
 ```
 
@@ -52,6 +48,6 @@ The `test:integration` target is cached — it only re-runs when source files in
 ## Convention
 
 See
-[BDD Spec-to-Test Mapping Convention](../../governance/development/infra/bdd-spec-test-mapping.md)
+[BDD Spec-to-Test Mapping Convention](../../../governance/development/infra/bdd-spec-test-mapping.md)
 for the mandatory 1:1 mapping between commands and `@tags`, file naming patterns, and coverage
 enforcement rules.

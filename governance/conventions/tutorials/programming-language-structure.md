@@ -51,7 +51,6 @@ This convention ensures:
 
 - `apps-ayokoding-web-general-checker` (validates by-concept structure)
 - `apps-ayokoding-web-by-example-checker` (validates by-example structure)
-- `apps-ayokoding-web-structure-checker` (validates directory organization)
 - `docs-tutorial-checker` (validates docs/ tutorial quality)
 
 **Implementation Notes**: The Full Set Tutorial Package structure is universal. Hugo-specific implementation details (weight values, frontmatter, navigation) are covered in [Hugo conventions](../hugo/README.md)
@@ -571,13 +570,6 @@ weight: 100002
 - PASS: Self-containment rules
 - PASS: Educational comment standards
 - PASS: Coverage progression
-
-**apps-ayokoding-web-structure-checker** validates:
-
-- PASS: Navigation ordering (by-concept/by-example first, then setup/quick-start)
-- PASS: 2-layer navigation depth with complete coverage
-- PASS: Index files exist and are properly structured
-- PASS: Weight value consistency
 
 ### Manual Verification Checklist
 

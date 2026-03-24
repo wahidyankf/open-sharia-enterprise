@@ -14,6 +14,8 @@ updated: 2025-12-18
 
 # How to Add a Programming Language
 
+> **Note**: This guide was written when ayokoding-web was a Hugo static site. ayokoding-web has since migrated to Next.js 16. The content structure and tutorial standards remain applicable, but Hugo-specific instructions (frontmatter weights, `_index.md` navigation files, Hugo build commands, Hextra shortcodes) no longer apply. Content now lives at `apps/ayokoding-web/content/`.
+
 **Step-by-step guide for adding a new programming language to ayokoding-web following the Programming Language Content Standard.**
 
 This guide walks you through the complete process of adding a new programming language (e.g., Kotlin, TypeScript, Rust, Clojure) to ayokoding-web. Follow these steps to ensure your content meets quality standards and integrates seamlessly with existing content.

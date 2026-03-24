@@ -21,12 +21,12 @@ var osExit = os.Exit
 
 var rootCmd = &cobra.Command{
 	Use:   "ayokoding-cli",
-	Short: "CLI tools for ayokoding-web Hugo site",
-	Long: `Command-line tools for ayokoding-web Hugo site maintenance and automation.
+	Short: "CLI tools for ayokoding-web link validation",
+	Long: `Command-line tools for ayokoding-web content validation.
 
-Provides fast navigation regeneration with support for multiple output formats
+Provides fast internal link checking with support for multiple output formats
 and verbose logging.`,
-	Version: "0.4.0",
+	Version: "0.5.0",
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

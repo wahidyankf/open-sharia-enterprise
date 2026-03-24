@@ -74,7 +74,7 @@ Flat structure - all apps at the same level, no subdirectories.
 **Current Apps**:
 
 - `oseplatform-web` - OSE Platform website (Hugo static site)
-- `ayokoding-web` - AyoKoding educational platform (Hugo static site)
+- `ayokoding-web` - AyoKoding educational platform (Next.js 16 fullstack content platform)
 - `ayokoding-cli` - AyoKoding CLI tool (Go application)
 - `rhino-cli` - Repository management CLI, includes `java validate-annotations` (Go application)
 - `oseplatform-cli` - OSE Platform site maintenance CLI (Go application)
@@ -278,7 +278,7 @@ The repository contains two distinct project structures with different purposes 
 - Quick prototypes without monorepo integration overhead
 - Temporary experiments that might be deleted after evaluation
 
-**Note on Nx integration**: Even projects with non-Node.js toolchains (like Hugo, Go, Python) can be integrated with Nx using the `nx:run-commands` executor to wrap their CLI commands. This provides benefits like task caching, unified command interface, and dependency graph visualization. See `apps/ayokoding-web/` as an example of a Hugo static site integrated with Nx monorepo.
+**Note on Nx integration**: Even projects with non-Node.js toolchains (like Hugo, Go, Python) can be integrated with Nx using the `nx:run-commands` executor to wrap their CLI commands. This provides benefits like task caching, unified command interface, and dependency graph visualization. See `apps/oseplatform-web/` as an example of a Hugo static site integrated with Nx monorepo.
 
 ### Key Differences
 

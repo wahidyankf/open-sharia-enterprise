@@ -58,21 +58,20 @@ This convention establishes designated directories for temporary files created b
 All checker agents in the following families MUST write audit reports to `generated-reports/`:
 
 1. **repo-governance-checker** - Repository consistency validation
-2. **apps-ayokoding-web-general-checker** - General Hugo content validation (ayokoding-web)
+2. **apps-ayokoding-web-general-checker** - General content validation (ayokoding-web)
 3. **apps-ayokoding-web-by-example-checker** - By-example tutorial validation (ayokoding-web)
 4. **apps-ayokoding-web-facts-checker** - Educational content factual accuracy validation
 5. **apps-ayokoding-web-link-checker** - Link validation (ayokoding-web)
-6. **apps-ayokoding-web-structure-checker** - Content structure validation (ayokoding-web)
-7. **apps-oseplatform-web-content-checker** - Hugo content validation (oseplatform-web)
-8. **docs-checker** - Documentation factual accuracy validation
-9. **docs-link-general-checker** - External and internal link validation
-10. **docs-tutorial-checker** - Tutorial quality validation
-11. **readme-checker** - README quality validation
-12. **plan-checker** - Plan readiness validation
-13. **plan-execution-checker** - Implementation validation
-14. **apps-ayokoding-web-in-the-field-checker** - In-the-field content validation (ayokoding-web)
-15. **docs-software-engineering-separation-checker** - Software engineering docs separation validation
-16. **repo-workflow-checker** - Workflow documentation quality validation
+6. **apps-oseplatform-web-content-checker** - Hugo content validation (oseplatform-web)
+7. **docs-checker** - Documentation factual accuracy validation
+8. **docs-link-general-checker** - External and internal link validation
+9. **docs-tutorial-checker** - Tutorial quality validation
+10. **readme-checker** - README quality validation
+11. **plan-checker** - Plan readiness validation
+12. **plan-execution-checker** - Implementation validation
+13. **apps-ayokoding-web-in-the-field-checker** - In-the-field content validation (ayokoding-web)
+14. **docs-software-engineering-separation-checker** - Software engineering docs separation validation
+15. **repo-workflow-checker** - Workflow documentation quality validation
 
 **NO EXCEPTIONS**: Checker agents MUST NOT output results in conversation only. All validation findings MUST be written to audit report files.
 
@@ -400,17 +399,16 @@ ALL \*-checker agents must implement progressive writing:
 3. apps-ayokoding-web-by-example-checker
 4. apps-ayokoding-web-facts-checker
 5. apps-ayokoding-web-link-checker
-6. apps-ayokoding-web-structure-checker
-7. apps-oseplatform-web-content-checker
-8. docs-checker
-9. docs-link-general-checker
-10. docs-tutorial-checker
-11. readme-checker
-12. plan-checker
-13. plan-execution-checker
-14. apps-ayokoding-web-in-the-field-checker
-15. docs-software-engineering-separation-checker
-16. repo-workflow-checker
+6. apps-oseplatform-web-content-checker
+7. docs-checker
+8. docs-link-general-checker
+9. docs-tutorial-checker
+10. readme-checker
+11. plan-checker
+12. plan-execution-checker
+13. apps-ayokoding-web-in-the-field-checker
+14. docs-software-engineering-separation-checker
+15. repo-workflow-checker
 
 **Validation**: See repo-governance-checker agent for validation rules that verify progressive writing compliance across all checker agents.
 
@@ -522,7 +520,7 @@ filename="repo-rules__${uuid}__${timestamp}__audit.md"
 
 #### Fixer Reports (Universal Pattern)
 
-**Agents**: All fixer agents (repo-governance-fixer, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-facts-fixer, apps-ayokoding-web-in-the-field-fixer, apps-ayokoding-web-link-fixer, apps-ayokoding-web-structure-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, apps-oseplatform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer, repo-workflow-fixer)
+**Agents**: All fixer agents (repo-governance-fixer, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-facts-fixer, apps-ayokoding-web-in-the-field-fixer, apps-ayokoding-web-link-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, apps-oseplatform-web-content-fixer, readme-fixer, docs-fixer, plan-fixer, repo-workflow-fixer)
 
 **Pattern**: `{agent-family}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__fix.md`
 
@@ -604,7 +602,7 @@ All fixer reports include these sections:
 
 #### Content Validation Reports
 
-**Agents**: apps-ayokoding-web-general-checker, apps-ayokoding-web-by-example-checker, apps-ayokoding-web-facts-checker, apps-ayokoding-web-in-the-field-checker, apps-ayokoding-web-link-checker, apps-ayokoding-web-structure-checker, apps-oseplatform-web-content-checker
+**Agents**: apps-ayokoding-web-general-checker, apps-ayokoding-web-by-example-checker, apps-ayokoding-web-facts-checker, apps-ayokoding-web-in-the-field-checker, apps-ayokoding-web-link-checker, apps-oseplatform-web-content-checker
 **Pattern**: `{site}__{uuid-chain}__{YYYY-MM-DD--HH-MM}__audit.md`
 
 **Examples**:
@@ -614,10 +612,9 @@ All fixer reports include these sections:
 - `ayokoding-web-facts__a1b2c3__2025-12-14--15-50__audit.md`
 - `ayokoding-web-in-the-field__d4e5f6__2025-12-14--15-55__audit.md`
 - `ayokoding-web-link__g7h8i9__2025-12-14--16-00__audit.md`
-- `ayokoding-web-structure__a1b2c3__2025-12-14--16-05__audit.md`
 - `oseplatform-web-content__g7h8i9__2025-12-14--16-10__audit.md`
 
-**Content**: Hugo content validation results (frontmatter, structure, quality)
+**Content**: Content validation results (quality, factual accuracy, links)
 
 #### Documentation Validation Reports
 

@@ -56,9 +56,9 @@ This directory contains skill packages that provide progressive knowledge delive
 - **swe-programming-rust** - Rust coding standards quick reference
 - **swe-programming-typescript** - TypeScript coding standards quick reference
 
-### 🌐 Hugo Site Development Skills
+### 🌐 Site Development Skills
 
-- **apps-ayokoding-web-developing-content** - AyoKoding content development standards
+- **apps-ayokoding-web-developing-content** - AyoKoding content development standards (Next.js)
 - **apps-organiclever-web-developing-content** - OrganicLever web content development standards
 - **apps-oseplatform-web-developing-content** - OSE Platform content development standards
 

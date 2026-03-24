@@ -40,7 +40,7 @@ This Skill provides guidance for creating and managing content on the **oseplatf
 
 **Contrast with ayokoding-web**:
 
-- ayokoding-web: Bilingual (`/en/`, `/id/`) with complex structure
+- ayokoding-web (Next.js): Bilingual with complex fullstack structure
 - oseplatform-web: English-only with flat structure
 
 ## Content Structure
@@ -94,7 +94,7 @@ draft: false
 ---
 ```
 
-**Minimal frontmatter** - PaperMod has fewer required fields than Hextra.
+**Minimal frontmatter** - PaperMod has fewer required fields than Next.js content metadata.
 
 ### Recommended Fields
 
@@ -325,11 +325,11 @@ params:
 
 | Aspect               | oseplatform-web                  | ayokoding-web                                     |
 | -------------------- | -------------------------------- | ------------------------------------------------- |
-| **Theme**            | PaperMod                         | Hextra                                            |
+| **Theme**            | PaperMod                         | Next.js 16 (App Router, tRPC)                     |
 | **Languages**        | English only                     | Bilingual (Indonesian/English)                    |
 | **Structure**        | Flat (updates/, about.md)        | Deep hierarchy (learn/archived/crash-courses/...) |
-| **Archetypes**       | 1 (default)                      | 5 (learn, celoteh, konten-video, etc.)            |
-| **Weight Ordering**  | Optional (date-prefix for posts) | Strict level-based system (mandatory)             |
+| **Archetypes**       | 1 (default)                      | N/A (Next.js App Router)                          |
+| **Weight Ordering**  | Optional (date-prefix for posts) | Managed by Next.js routing                        |
 | **Navigation**       | Breadcrumbs, archive             | Auto-sidebar, 3-layer nav                         |
 | **Author Field**     | Per-post (flexible)              | Site-level default (exceptions for rants/celoteh) |
 | **Complexity**       | Simple, minimal                  | Feature-rich, complex                             |
@@ -417,11 +417,11 @@ cover:
   alt: "OSE Platform Dashboard showing metrics"
 ```
 
-### ❌ Mistake 4: Using Hextra conventions
+### ❌ Mistake 4: Using ayokoding-web conventions
 
-**Wrong**: Applying ayokoding-web conventions (weight system, ikhtisar files)
+**Wrong**: Applying ayokoding-web conventions (not applicable to Hugo PaperMod site)
 
-**Right**: Use simple PaperMod conventions (optional weight, no overview files)
+**Right**: Use simple PaperMod conventions (date-prefix for posts, minimal frontmatter)
 
 ## Best Practices
 

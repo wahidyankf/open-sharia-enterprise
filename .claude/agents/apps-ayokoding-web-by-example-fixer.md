@@ -19,7 +19,7 @@ skills:
 
 - **Role**: Fixer (yellow)
 - **Created**: 2025-12-20
-- **Last Updated**: 2026-01-03
+- **Last Updated**: 2026-03-24
 
 ## Confidence Assessment (Re-validation Required)
 
@@ -81,7 +81,6 @@ The `repo-assessing-criticality-confidence` Skill provides confidence definition
 - Missing five-part structure component (verifiable)
 - Annotation density <1.0 or >2.25 per example (calculable)
 - Missing frontmatter field (objective)
-- Incorrect weight calculation (formula-based)
 - Diagram count outside 30-50 total range (objective count)
 - Color palette violations in diagrams (non-accessible colors detected)
 - "Why It Matters" length outside 50-100 words (word count)
@@ -104,9 +103,7 @@ The `repo-assessing-criticality-confidence` Skill provides confidence definition
 **Project Guidance:**
 
 - [By-Example Tutorial Convention](../../governance/conventions/tutorials/by-example.md) - Standards for fix validation
-
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md) - Complete standards
 - [By Example Content Standard](../../governance/conventions/tutorials/programming-language-content.md) - Annotation requirements
 
 **Related Agents:**

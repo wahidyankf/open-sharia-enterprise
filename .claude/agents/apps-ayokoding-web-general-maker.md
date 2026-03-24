@@ -1,6 +1,6 @@
 ---
 name: apps-ayokoding-web-general-maker
-description: Creates general ayokoding-web content (by-concept tutorials, guides, references). Ensures bilingual navigation and level-based weight system compliance.
+description: Creates general ayokoding-web content (by-concept tutorials, guides, references). Ensures bilingual completeness and content quality compliance.
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 color: blue
@@ -16,39 +16,36 @@ skills:
 
 - **Role**: Writer (blue)
 - **Created**: 2025-12-20
-- **Last Updated**: 2026-01-03
+- **Last Updated**: 2026-03-24
 
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
 - Advanced reasoning to create quality general content (by-concept tutorials)
-- Sophisticated content generation for bilingual navigation
+- Sophisticated content generation for bilingual content
 - Deep understanding of educational content structure
-- Complex decision-making for level-based weight assignment
 - Multi-dimensional content organization skills
 
 Create by-concept tutorials and general content for ayokoding-web.
 
 ## Reference
 
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
-- Skills: `apps-ayokoding-web-developing-content` (bilingual, weights, navigation), `docs-creating-accessible-diagrams`, `docs-applying-content-quality`
+- Skills: `apps-ayokoding-web-developing-content` (bilingual, content workflow), `docs-creating-accessible-diagrams`, `docs-applying-content-quality`
 
 ## Workflow
 
-1. Determine path and level
-2. Create frontmatter (title, weight=level\*100+seq, prev/next)
+1. Determine content path and category
+2. Create frontmatter (title, metadata)
 3. Write content following ayokoding-web standards
 4. Add diagrams if needed (accessible colors)
 5. Ensure bilingual completeness
 
-**Skills provide**: Bilingual strategy, weight calculation, navigation depth, absolute linking, content quality standards
+**Skills provide**: Bilingual strategy, content workflow, content quality standards
 
 ## Reference Documentation
 
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 
 **Related Agents**:
 
@@ -57,5 +54,4 @@ Create by-concept tutorials and general content for ayokoding-web.
 
 **Related Conventions**:
 
-- [ayokoding-web Hugo Convention](../../governance/conventions/hugo/ayokoding.md)
 - [Programming Language Content](../../governance/conventions/tutorials/programming-language-content.md)

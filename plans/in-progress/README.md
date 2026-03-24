@@ -4,7 +4,7 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
-- [2026-03-23: Ayokoding Web V2](./2026-03-23__ayokoding-web-v2/README.md) — Rewrite ayokoding-web Hugo site as fullstack Next.js 16 app with tRPC, Zod, React Query, shadcn/ui. Reads same markdown content, adds type-safe API, full-text search, bilingual routing.
+- [2026-03-24: Ayokoding Web v1-to-v2 Migration](./2026-03-24__ayokoding-web-v1-to-v2-migration/README.md) — Replace Hugo-based ayokoding-web with Next.js 16 implementation, archive Hugo app, clean up obsolete tooling.
 
 ## Instructions
 

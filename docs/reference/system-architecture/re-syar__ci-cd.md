@@ -101,10 +101,7 @@ graph TB
 **Execution Order:**
 
 1. **AyoKoding Content Processing** (if affected):
-   - Rebuild ayokoding-cli binary
-   - Update titles from filenames
-   - Regenerate navigation structure
-   - Auto-stage changes to `apps/ayokoding-web/content/`
+   - Validate links in ayokoding-web content
 2. **Prettier Formatting** (via lint-staged):
    - Format all staged files
    - Auto-stage formatted changes
@@ -175,20 +172,11 @@ graph TB
 
 **Purpose**: Prevent merging PRs with broken markdown links
 
-### Test and Deploy AyoKoding Web Workflow
+### Deploy AyoKoding Web
 
-**File**: `.github/workflows/test-and-deploy-ayokoding-web.yml`
+**Deployment**: Force-push `main` to `prod-ayokoding-web` branch; Vercel auto-builds the Next.js application.
 
-**Trigger**: Scheduled (6 AM and 6 PM WIB daily) or manual `workflow_dispatch`
-
-**Steps:**
-
-1. Detect changes in `apps/ayokoding-web/` vs `prod-ayokoding-web` branch
-2. If changes exist (or `force_deploy=true`): setup Volta, Go 1.26.0, Hugo 0.156.0 extended
-3. Install dependencies and run `nx build ayokoding-web`
-4. Force-push `main` to `prod-ayokoding-web`; Vercel auto-builds
-
-**Purpose**: Automated scheduled deployments for ayokoding.com with change detection to avoid unnecessary builds
+**Purpose**: Deploy ayokoding.com (Next.js 16 fullstack content platform)
 
 ### Test and Deploy OSE Platform Web Workflow
 
