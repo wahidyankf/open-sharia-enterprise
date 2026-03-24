@@ -11,6 +11,11 @@ The specs cover content retrieval, search, navigation, internationalisation, and
 ```
 specs/apps/ayokoding-web/
 ├── README.md              # This file
+├── c4/                    # C4 architecture diagrams
+│   ├── context.md         # Level 1: System context
+│   ├── container.md       # Level 2: Containers
+│   ├── component-be.md    # Level 3: tRPC API components
+│   └── component-fe.md    # Level 3: UI components
 ├── be/                    # Backend specs (tRPC HTTP-semantic)
 │   └── gherkin/           # Backend Gherkin scenarios
 │       ├── content-api/
@@ -61,6 +66,7 @@ The backend exposes tRPC procedures consumed by these specs:
 
 ## Related
 
+- [C4 Architecture Diagrams](./c4/README.md) — Context, container, and component diagrams
 - [Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md)
 - [BDD Standards](../../../docs/explanation/software-engineering/development/behavior-driven-development-bdd/README.md)
 - [apps/ayokoding-web/](../../../apps/ayokoding-web/README.md) — Next.js implementation
