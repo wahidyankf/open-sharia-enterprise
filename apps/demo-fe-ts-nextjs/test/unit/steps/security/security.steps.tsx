@@ -116,6 +116,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
   });
 
   Scenario("Registration form rejects password shorter than 12 characters", ({ When, Then, And }) => {
+    let user: ReturnType<typeof userEvent.setup>;
+
     When(
       'a visitor fills in the registration form with username "alice", email "alice@example.com", and password "Short1!Ab"',
       async () => {
@@ -125,7 +127,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
             <RegisterPage />
           </QueryClientProvider>,
         );
-        const user = userEvent.setup();
+        user = userEvent.setup();
         await user.type(screen.getByLabelText(/username/i), "alice");
         await user.type(screen.getByLabelText(/email/i), "alice@example.com");
         await user.type(screen.getByLabelText(/password/i), "Short1!Ab");
@@ -133,7 +135,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
     );
 
     And("the visitor submits the registration form", async () => {
-      const user = userEvent.setup();
       await user.click(screen.getByRole("button", { name: /create account/i }));
       await waitFor(() => {
         expect(screen.getByText(/password must meet/i)).toBeInTheDocument();
@@ -150,6 +151,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
   });
 
   Scenario("Registration form rejects password with no special character", ({ When, Then, And }) => {
+    let user: ReturnType<typeof userEvent.setup>;
+
     When(
       'a visitor fills in the registration form with username "alice", email "alice@example.com", and password "AllUpperCase1234"',
       async () => {
@@ -159,7 +162,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
             <RegisterPage />
           </QueryClientProvider>,
         );
-        const user = userEvent.setup();
+        user = userEvent.setup();
         await user.type(screen.getByLabelText(/username/i), "alice");
         await user.type(screen.getByLabelText(/email/i), "alice@example.com");
         await user.type(screen.getByLabelText(/password/i), "AllUpperCase1234");
@@ -167,7 +170,6 @@ describeFeature(feature, ({ Scenario, Background }) => {
     );
 
     And("the visitor submits the registration form", async () => {
-      const user = userEvent.setup();
       await user.click(screen.getByRole("button", { name: /create account/i }));
       await waitFor(() => {
         expect(screen.getByText(/password must meet/i)).toBeInTheDocument();
@@ -216,6 +218,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
   });
 
   Scenario("Admin unlocks a locked account via the admin panel", ({ Given, When, Then, And }) => {
+    let user: ReturnType<typeof userEvent.setup>;
+
     Given('a user "alice" is registered and locked after too many failed logins', () => {});
 
     And('an admin user "superadmin" is logged in', () => {
@@ -252,7 +256,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
         page: 0,
         size: 20,
       });
-      const user = userEvent.setup();
+      user = userEvent.setup();
       await user.click(screen.getByRole("button", { name: /unlock user alice/i }));
       await waitFor(() => {
         expect(adminApi.unlockUser).toHaveBeenCalled();

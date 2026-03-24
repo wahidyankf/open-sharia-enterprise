@@ -150,6 +150,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
   });
 
   Scenario("Searching users by email filters the list", ({ When, Then, And }) => {
+    let user: ReturnType<typeof userEvent.setup>;
+
     When("the admin navigates to the user management page", async () => {
       const AdminPage = (await import("@/app/admin/page")).default;
       render(
@@ -170,7 +172,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
         page: 0,
         size: 20,
       });
-      const user = userEvent.setup();
+      user = userEvent.setup();
       await user.type(screen.getByPlaceholderText(/search by (email|username)/i), "alice@example.com");
       await user.click(screen.getByRole("button", { name: /^search$/i }));
       await waitFor(() => {
@@ -185,6 +187,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
   });
 
   Scenario("Admin disables a user account from the user detail page", ({ When, Then, And }) => {
+    let user: ReturnType<typeof userEvent.setup>;
+
     When("the admin navigates to alice's user detail page", async () => {
       vi.mocked(adminApi.listUsers).mockResolvedValue({
         content: [aliceUser],
@@ -216,7 +220,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
         page: 0,
         size: 20,
       });
-      const user = userEvent.setup();
+      user = userEvent.setup();
       await user.click(screen.getByRole("button", { name: /disable user alice/i }));
       await waitFor(() => {
         expect(screen.getByLabelText(/reason/i)).toBeInTheDocument();
@@ -253,6 +257,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
   });
 
   Scenario("Admin re-enables a disabled user account", ({ Given, When, Then, And }) => {
+    let user: ReturnType<typeof userEvent.setup>;
+
     Given("alice's account has been disabled", () => {
       vi.mocked(adminApi.listUsers).mockResolvedValue({
         content: [{ ...aliceUser, status: "DISABLED" }],
@@ -287,7 +293,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
         page: 0,
         size: 20,
       });
-      const user = userEvent.setup();
+      user = userEvent.setup();
       await user.click(screen.getByRole("button", { name: /enable user alice/i }));
       await waitFor(() => {
         expect(adminApi.enableUser).toHaveBeenCalled();
@@ -302,6 +308,8 @@ describeFeature(feature, ({ Scenario, Background }) => {
   });
 
   Scenario("Admin generates a password-reset token for a user", ({ When, Then, And }) => {
+    let user: ReturnType<typeof userEvent.setup>;
+
     When("the admin navigates to alice's user detail page", async () => {
       vi.mocked(adminApi.listUsers).mockResolvedValue({
         content: [aliceUser],
@@ -325,7 +333,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
     });
 
     And('the admin clicks the "Generate Reset Token" button', async () => {
-      const user = userEvent.setup();
+      user = userEvent.setup();
       await user.click(
         screen.getByRole("button", {
           name: /generate reset token for alice/i,
