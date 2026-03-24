@@ -1,7 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 
 async function navigateToContentPage(page: Page): Promise<void> {
-  await page.goto("/en/programming");
+  await page.goto("/en/learn/overview");
 }
 
 test.describe("Responsive Layout - Desktop", () => {

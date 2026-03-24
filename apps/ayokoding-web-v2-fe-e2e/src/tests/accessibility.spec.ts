@@ -40,14 +40,14 @@ test.describe("Accessibility", () => {
   });
 
   test("images have alt text", async ({ page }) => {
-    await page.goto("/en");
+    await page.goto("/en/learn/overview");
 
-    const images = page.getByRole("img");
+    // Only check actual <img> elements (not SVG icons from lucide-react)
+    const images = page.locator("img[src]");
     const count = await images.count();
 
     for (let i = 0; i < count; i++) {
       const img = images.nth(i);
-      // alt attribute must be present (may be empty string for decorative images)
       await expect(img).toHaveAttribute("alt", /.*/);
     }
   });
