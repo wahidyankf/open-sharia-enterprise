@@ -1,5 +1,4 @@
 Feature: Service Health and Metadata
-
   As an operations engineer
   I want to monitor the health of the ayokoding-web backend and discover available locales
   So that I can detect service outages and configure locale-aware clients

@@ -3,6 +3,7 @@ description: Validates links in ayokoding-web content. Checks internal and exter
 model: zai/glm-4.5-air
 tools:
   bash: true
+  edit: true
   glob: true
   grep: true
   read: true
