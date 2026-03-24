@@ -7,6 +7,7 @@ coverage
 .idea
 apps/organiclever-be/target
 apps/ayokoding-web
+!apps/ayokoding-web/content
 apps/ayokoding-cli
 apps/oseplatform-web
 apps/oseplatform-cli
