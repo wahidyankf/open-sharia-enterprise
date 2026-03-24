@@ -1,6 +1,6 @@
 # Plan: Rewrite `ayokoding-web` as Fullstack Next.js (`ayokoding-web-v2`)
 
-**Status**: In Progress
+**Status**: Done
 **Created**: 2026-03-23
 **Git Workflow**: Work on `main` (Trunk Based Development)
 
