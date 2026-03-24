@@ -15,6 +15,8 @@ func TestUnit(t *testing.T) {
 			Format:   "pretty",
 			Paths:    []string{"../../../../specs/apps/demo/be/gherkin"},
 			TestingT: t,
+			Strict:   true,
+			Tags:     "~@test-support",
 		},
 	}
 	if suite.Run() != 0 {

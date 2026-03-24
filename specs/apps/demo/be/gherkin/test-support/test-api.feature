@@ -1,3 +1,4 @@
+@test-support
 Feature: Test Support API
 
   As a test automation engineer
