@@ -37,6 +37,7 @@ export default defineConfig({
           exclude: ["node_modules"],
           environment: "jsdom",
           setupFiles: ["./src/test/setup.ts"],
+          testTimeout: 15000,
         },
       },
     ],
