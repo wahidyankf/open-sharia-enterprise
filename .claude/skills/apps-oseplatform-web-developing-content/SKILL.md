@@ -453,8 +453,8 @@ cover:
 
 **Related Skills**:
 
-- `hugo-ayokoding-development` - Comparison with ayokoding-web patterns
-- `color-accessibility-diagrams` - Accessible diagrams for technical content
+- `apps-ayokoding-web-developing-content` - Comparison with ayokoding-web patterns (Next.js)
+- `docs-creating-accessible-diagrams` - Accessible diagrams for technical content
 
 **Related Agents**:
 
