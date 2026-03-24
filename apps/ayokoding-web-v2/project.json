@@ -1,0 +1,82 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "ayokoding-web-v2",
+  "sourceRoot": "apps/ayokoding-web-v2/src",
+  "projectType": "application",
+  "targets": {
+    "codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'No codegen needed — ayokoding-web-v2 has no OpenAPI contract'",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "next dev --port 3101",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "next build",
+        "cwd": "{projectRoot}"
+      },
+      "outputs": ["{projectRoot}/.next"],
+      "dependsOn": []
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "next start --port 3101",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx oxlint@latest .",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding-web/**/*.feature"],
+      "options": {
+        "command": "npx vitest run",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx vitest run --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/ayokoding-web-v2/coverage/lcov.info 80)",
+          "../../apps/ayokoding-cli/dist/ayokoding-cli links check --content ../../apps/ayokoding-web/content"
+        ],
+        "parallel": true,
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx vitest run --project integration",
+        "cwd": "{projectRoot}"
+      },
+      "cache": false
+    }
+  },
+  "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:ayokoding"],
+  "implicitDependencies": ["rhino-cli", "ayokoding-cli"]
+}

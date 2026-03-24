@@ -42,6 +42,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `demo-fe-dart-flutterweb` - Flutter Web frontend (Dart, alternative to demo-fe-ts-nextjs)
   - `demo-fe-e2e` - Playwright E2E tests for demo-fe frontends
   - `demo-fs-ts-nextjs` - Next.js 16 fullstack app (TypeScript, App Router + Route Handlers)
+  - `ayokoding-web-v2` - Next.js 16 fullstack content platform (TypeScript, tRPC, replaces Hugo ayokoding-web)
+  - `ayokoding-web-v2-be-e2e` - Playwright BE E2E tests for ayokoding-web-v2 tRPC API
+  - `ayokoding-web-v2-fe-e2e` - Playwright FE E2E tests for ayokoding-web-v2 UI
 
 ## Project Structure
 
@@ -70,7 +73,10 @@ open-sharia-enterprise/
 │   ├── demo-fe-ts-nextjs/ # Next.js 16 frontend (TypeScript)
 │   ├── demo-fe-ts-tanstack-start/ # TanStack Start frontend (TypeScript)
 │   ├── demo-fe-dart-flutterweb/ # Flutter Web frontend (Dart)
-│   └── demo-fe-e2e/ # Playwright E2E tests for frontend
+│   ├── demo-fe-e2e/ # Playwright E2E tests for frontend
+│   ├── ayokoding-web-v2/ # Next.js 16 fullstack content platform
+│   ├── ayokoding-web-v2-be-e2e/ # Playwright BE E2E tests
+│   └── ayokoding-web-v2-fe-e2e/ # Playwright FE E2E tests
 ├── apps-labs/                # Experimental apps (NOT in Nx)
 ├── libs/                     # Reusable libraries (Nx, flat structure)
 │   └── golang-commons/      # Shared Go utilities (links checker, output)
@@ -278,6 +284,7 @@ nx graph                     # Visualize dependencies
   - `prod-ayokoding-web` → [ayokoding.com](https://ayokoding.com)
   - `prod-oseplatform-web` → [oseplatform.com](https://oseplatform.com)
   - `prod-organiclever-web` → [www.organiclever.com](https://www.organiclever.com/)
+  - `prod-ayokoding-web-v2` → ayokoding-web-v2 Vercel deployment
 - **Commit format**: Conventional Commits `<type>(<scope>): <description>`
   - Types: feat, fix, docs, style, refactor, perf, test, chore, ci, revert
   - Scope optional but recommended
