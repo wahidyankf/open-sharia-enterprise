@@ -7,7 +7,7 @@ description: Comprehensive guide for creating content on ayokoding-web, a Next.j
 
 ## Purpose
 
-This Skill provides comprehensive knowledge for creating and managing content on **ayokoding-web**, a Next.js 16 fullstack content platform (formerly Hugo/Hextra, now `ayokoding-web`) that serves as a bilingual educational platform for Indonesian developers.
+This Skill provides comprehensive knowledge for creating and managing content on **ayokoding-web**, a Next.js 16 fullstack content platform that serves as a bilingual educational platform for Indonesian developers.
 
 **When to use this Skill:**
 
@@ -129,4 +129,4 @@ Or use the `apps-ayokoding-web-deployer` agent for a guided deployment.
 
 ---
 
-This Skill packages critical ayokoding-web development knowledge for progressive disclosure. The site has migrated from Hugo/Hextra to Next.js 16 (ayokoding-web).
+This Skill packages critical ayokoding-web development knowledge for progressive disclosure.
