@@ -11,6 +11,7 @@ import { TRPCError } from "@trpc/server";
 
 export const dynamicParams = true;
 export const revalidate = 3600;
+export const maxDuration = 60;
 
 interface Props {
   params: Promise<{ locale: string; slug: string[] }>;
