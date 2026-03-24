@@ -64,3 +64,6 @@ jobs:
 
       - name: Test quick (affected)
         run: npx nx affected -t test:quick
+
+      - name: Markdown linting
+        run: npm run lint:md
