@@ -18,6 +18,8 @@ ayokoding-web declares these targets:
 | `test:quick`       | vitest + coverage + link check (parallel) | yes (inherited) | **default only (missing Gherkin specs)** |
 | `test:integration` | `npx vitest run --project integration`    | no              | default                                  |
 
+> **Cache inheritance note**: `test:quick` has no explicit `cache` or `inputs` field in `project.json`. The `yes (inherited)` cache value is confirmed from `nx.json` workspace defaults — `test:quick` is listed as a cacheable target in the workspace-level cache configuration.
+
 ### CI Workflows
 
 **PR Quality Gate** (`pr-quality-gate.yml`):
@@ -109,6 +111,20 @@ Update the `deploy` job dependency:
 +   needs: [unit, integration, e2e, detect-changes]
 ```
 
+Update the `deploy` job `if:` condition:
+
+```diff
+  deploy:
+    if: >-
+-     (needs.detect-changes.outputs.has_changes == 'true' || inputs.force_deploy == 'true')
+-     && needs.unit.result == 'success'
+-     && needs.e2e.result == 'success'
++     (needs.detect-changes.outputs.has_changes == 'true' || inputs.force_deploy == 'true')
++     && needs.unit.result == 'success'
++     && needs.integration.result == 'success'
++     && needs.e2e.result == 'success'
+```
+
 ### Change 3: Add Gherkin Spec Inputs to test:quick
 
 In `apps/ayokoding-web/project.json`, add explicit inputs to `test:quick`:
@@ -126,18 +142,217 @@ This mirrors the `test:unit` inputs declaration and ensures cache invalidation o
 
 The current step names in `pr-quality-gate.yml` are already reasonable. This is a low-priority polish item — verify current names are clear and add `name:` annotations if any steps lack them.
 
+### Change 5: Introduce Repository Pattern for Content Layer
+
+#### Architecture: Current vs Target
+
+**Current** — tRPC procedures call module functions directly, no injection:
+
+```
+tRPC procedures ──→ reader.ts (fs.readFile, fs.readdir)
+                ──→ index.ts (module-level singleton cache)
+                ──→ parser.ts (markdown → HTML)
+                ──→ search-index.ts (FlexSearch, module-level Map)
+
+sitemap.ts ────────→ index.ts (getContentIndex() directly)
+feed.xml/route.ts ─→ index.ts (getContentIndex() directly)
+generateStaticParams → index.ts (getContentIndex() directly)
+
+Unit tests: vi.mock() on 4 modules with inline mock data
+Integration tests: (effectively none for content layer)
+```
+
+**Target** — repository interface with dependency injection:
+
+```
+ContentRepository (interface)
+├── readAllContent(): Promise<ContentMeta[]>
+└── readFileContent(filePath: string): Promise<{ content: string; frontmatter: Record<string, unknown> }>
+
+InMemoryContentRepository (unit tests)
+├── Stores ContentMeta[] and file contents in Maps
+├── Populated from fixture data (must pre-populate content for ALL fixture items)
+├── readFileContent() must return meaningful content for each filePath key
+│   so that ContentService.search() can call buildSearchIndex without I/O
+└── No filesystem access
+
+FileSystemContentRepository (production + integration tests)
+├── Wraps current reader.ts functions
+├── Reads from real content/ directory
+└── Respects CONTENT_DIR env var and SHOW_DRAFTS flag
+
+ContentService
+├── constructor(repository: ContentRepository)
+├── getBySlug(locale, slug) → ContentPage
+├── listChildren(locale, parentSlug) → ContentMeta[]
+├── getTree(locale, rootSlug?) → TreeNode[]
+├── search(locale, query, limit) → SearchResult[]
+├── getIndex() → ContentIndex (for sitemap, RSS, generateStaticParams)
+└── Encapsulates: index building, tree computation, prev/next, search indexing, markdown parsing
+
+tRPC procedures ──→ ContentService (via tRPC context)
+sitemap.ts ────────→ ContentService (singleton)
+feed.xml/route.ts ─→ ContentService (singleton)
+generateStaticParams → ContentService (singleton)
+```
+
+#### File Structure (Target)
+
+```
+src/server/content/
+├── types.ts                        # Existing — no changes
+├── repository.ts                   # NEW: ContentRepository interface
+├── repository-fs.ts                # NEW: FileSystemContentRepository (wraps reader.ts)
+├── repository-memory.ts            # NEW: InMemoryContentRepository (test fixture data)
+├── service.ts                      # NEW: ContentService (refactored from index.ts + search-index.ts)
+├── parser.ts                       # Existing — pure function, no changes needed
+├── shortcodes.ts                   # Existing — no changes
+├── reader.ts                       # Existing — becomes internal to FileSystemContentRepository
+├── index.ts                        # REMOVE: logic moves into ContentService
+└── search-index.ts                 # REMOVE: logic moves into ContentService
+```
+
+#### Dependency Injection via tRPC Context
+
+```typescript
+// src/server/trpc/init.ts — add ContentService to context
+import { ContentService } from "@/server/content/service";
+import { FileSystemContentRepository } from "@/server/content/repository-fs";
+
+const contentService = new ContentService(new FileSystemContentRepository());
+
+export const createTRPCContext = () => ({ contentService });
+
+// Change initTRPC.create(...) to initTRPC.context<...>().create(...)
+const t = initTRPC.context<{ contentService: ContentService }>().create({
+  transformer: superjson,
+});
+export const router = t.router;
+export const publicProcedure = t.procedure;
+export const createCallerFactory = t.createCallerFactory;
+```
+
+```typescript
+// src/app/api/trpc/[trpc]/route.ts — pass context factory to fetch handler
+import { createTRPCContext } from "@/server/trpc/init";
+
+const handler = (req: Request) =>
+  fetchRequestHandler({
+    endpoint: "/api/trpc",
+    req,
+    router: appRouter,
+    createContext: createTRPCContext,
+  });
+```
+
+```typescript
+// src/lib/trpc/server.ts — pass real ContentService context to server caller
+import { createTRPCContext } from "@/server/trpc/init";
+
+const createCaller = createCallerFactory(appRouter);
+export const serverCaller = createCaller(createTRPCContext());
+```
+
+```typescript
+// test/unit/be-steps/helpers/test-caller.ts — pass InMemoryContentRepository context
+import { createCallerFactory } from "@/server/trpc/init";
+import { ContentService } from "@/server/content/service";
+import { InMemoryContentRepository } from "@/server/content/repository-memory";
+
+const createCaller = createCallerFactory(appRouter);
+export const testCaller = createCaller({
+  contentService: new ContentService(new InMemoryContentRepository(populateFixtureData())),
+});
+```
+
+```typescript
+// src/server/trpc/procedures/content.ts — use context instead of imports
+export const contentRouter = router({
+  getBySlug: publicProcedure
+    .input(...)
+    .query(async ({ input, ctx }) => {
+      return ctx.contentService.getBySlug(input.locale, input.slug);
+    }),
+});
+```
+
+#### Test Architecture (Target)
+
+```
+specs/apps/ayokoding-web/be/gherkin/**/*.feature
+                ↓ (same specs, different repository)
+┌────────────────────────────────────────────────┐
+│ test:unit (vitest, "unit" project)             │
+│                                                │
+│ InMemoryContentRepository ──→ ContentService   │
+│ ├── Fixture data in Maps                       │
+│ ├── No vi.mock() on content modules            │
+│ ├── Tests service logic: indexing, tree,       │
+│ │   prev/next, search, slug resolution         │
+│ └── Coverage measured here                     │
+└────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────┐
+│ test:integration (vitest, "integration" proj)  │
+│                                                │
+│ FileSystemContentRepository ──→ ContentService │
+│ ├── Reads real content/ directory              │
+│ ├── Verifies frontmatter parsing, glob,        │
+│ │   slug derivation against real files         │
+│ ├── No HTTP calls (calls service directly)     │
+│ └── cache: false (filesystem is non-det.)      │
+└────────────────────────────────────────────────┘
+```
+
+**Pattern alignment with demo-be**: This mirrors the demo-be-golang-gin pattern where `MemoryStore` and `GORMStore` both implement `Store`, and unit/integration BDD suites differ only in which implementation is wired into the scenario context.
+
+#### Coverage Exclusion Changes
+
+Current exclusions to **remove** (now testable through ContentService):
+
+```diff
+  exclude: [
+    "src/components/ui/**",
+    "src/components/layout/**",
+    "src/components/content/**",
+    "src/components/search/**",
+    "src/app/**",
+    "src/lib/hooks/**",
+    "src/lib/trpc/client.ts",
+    "src/lib/trpc/provider.tsx",
+    "src/lib/trpc/server.ts",
+    "src/middleware.ts",
+-   "src/server/content/index.ts",
++   "src/server/content/reader.ts",
++   "src/server/content/repository-fs.ts",
+    "src/server/content/parser.ts",
+-   "src/server/content/reader.ts",
+-   "src/server/content/search-index.ts",
+    "src/server/content/types.ts",
+    "src/server/trpc/procedures/**",
+    "src/test/**",
+  ],
+```
+
+Note: `reader.ts` appears as both removed (`-`) and added (`+`) in the diff above because it moves to a new alphabetical position alongside `repository-fs.ts`. `reader.ts` remains excluded — it is not being un-excluded. The net change is: remove `index.ts` and `search-index.ts` from the exclusion list; add `repository-fs.ts`.
+
+`reader.ts` and `repository-fs.ts` stay excluded (thin I/O wrappers — covered by integration tests). `parser.ts` stays excluded (heavy rehype pipeline — covered by integration tests). `types.ts` stays excluded (type-only). tRPC procedures stay excluded (thin delegation to ContentService). The newly testable service logic (`service.ts`) is **not** excluded — covered by unit tests through `InMemoryContentRepository`.
+
 ## Risks and Mitigations
 
-| Risk                                 | Likelihood | Impact | Mitigation                                                        |
-| ------------------------------------ | ---------- | ------ | ----------------------------------------------------------------- |
-| Integration tests add CI time        | Medium     | Low    | Run in parallel with unit and e2e jobs                            |
-| Integration tests flaky in CI        | Low        | Medium | ayokoding-web uses MSW (in-process), not real DB — deterministic  |
-| Cache input change triggers rebuilds | Certain    | Low    | One-time cache miss, subsequent runs benefit from correct caching |
+| Risk                                                      | Likelihood | Impact | Mitigation                                                                                           |
+| --------------------------------------------------------- | ---------- | ------ | ---------------------------------------------------------------------------------------------------- |
+| Integration tests add CI time                             | Medium     | Low    | Run in parallel with unit and e2e jobs                                                               |
+| Integration tests flaky in CI                             | Low        | Medium | ayokoding-web uses MSW (in-process), not real DB — deterministic                                     |
+| Cache input change triggers rebuilds                      | Certain    | Low    | One-time cache miss, subsequent runs benefit from correct caching                                    |
+| Repository refactor breaks existing tests                 | Medium     | Medium | Incremental approach: introduce interface first, then migrate tests one file at a time               |
+| Coverage threshold harder to meet with more code included | Low        | Medium | Service logic is well-structured; InMemoryContentRepository enables thorough unit testing            |
+| Integration tests sensitive to content/ directory changes | Medium     | Low    | Integration tests assert structural properties (non-empty, ordered, valid HTML) not specific content |
 
 ## Out of Scope
 
 - Changing the 80% coverage threshold (it exceeds the standard — no action needed)
-- Adding new test targets or test levels
-- Restructuring the vitest project configuration
 - Changing the E2E test architecture
 - Modifying the pre-push hook (already correct)
+- Introducing a database or external CMS — the repository pattern abstracts filesystem access, not storage migration
+- Refactoring `parser.ts` — it remains a pure function called by ContentService

@@ -18,10 +18,15 @@ Align ayokoding-web's CI pipelines, quality gates, and Nx target configurations 
 ## Goals
 
 1. Fix the stale tag in `nx-targets.md` that still lists ayokoding-web as `platform:hugo` instead of `platform:nextjs`
-2. Align the PR quality gate CI workflow (`pr-quality-gate.yml`) to run `typecheck`, `lint`, and `test:quick` as three separate explicit steps matching the pre-push hook
+2. Polish the PR quality gate CI workflow (`pr-quality-gate.yml`) step naming — the current three-step structure is already correct and matches the pre-push hook; this is a low-priority improvement to ensure step names are maximally clear for PR reviewers
 3. Add `test:integration` to the scheduled CI workflow (`test-and-deploy-ayokoding-web.yml`) so all three test levels run in CI
 4. Ensure `test:quick` Nx cache inputs include Gherkin specs correctly and consistently
 5. Document ayokoding-web's testing architecture (unit projects, coverage exclusions, BDD integration) in relation to the three-level standard
+6. Introduce a repository pattern for content access — extract a `ContentRepository` interface with `InMemoryContentRepository` (unit) and `FileSystemContentRepository` (integration) implementations, enabling clean separation of unit and integration tests that both consume the same Gherkin specs
+
+## Delivery Notes
+
+Goals 1–4 (documentation drift, CI gaps, cache inputs, step naming) map to Phases 1–3 in the delivery plan and are independently committable. Goals 5–6 (repository pattern, ContentService) map to Phases 4–7, with Phase 8 as the final validation covering all goals, and form a cohesive refactoring that should be committed as a unit. Either set can be delivered without the other.
 
 ## Context
 
@@ -34,4 +39,6 @@ ayokoding-web is a Next.js 16 fullstack content platform with:
 - **E2E tests**: Separate `ayokoding-web-be-e2e` and `ayokoding-web-fe-e2e` projects
 - **Scheduled CI**: 2x daily (WIB 06:00, 18:00) with conditional deploy to `prod-ayokoding-web`
 
-The app is substantially compliant but has documentation drift and a missing CI step.
+The app is substantially compliant but has documentation drift, a missing CI step, and an opportunity to align its backend architecture with the monorepo's repository pattern and three-level testing standard.
+
+Currently, all server-side content code (`src/server/content/*`, `src/server/trpc/procedures/**`) is excluded from coverage. Unit tests use `vi.mock()` at the module level rather than injecting through an interface. This prevents clean separation between unit tests (mocked data access) and integration tests (real filesystem reads), unlike the established demo-be pattern.
