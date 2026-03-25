@@ -26,8 +26,10 @@ specs/apps/ayokoding-web/
 │       │   └── navigation-api.feature
 │       ├── i18n/
 │       │   └── i18n-api.feature
-│       ├── health/
-│       │   └── health-check.feature
+│       └── health/
+│           └── health-check.feature
+├── build-tools/                 # Build-time specs (not API-semantic)
+│   └── gherkin/
 │       └── index-generation/
 │           └── index-generation.feature
 └── fe/                    # Frontend specs (UI-semantic)
@@ -41,18 +43,23 @@ specs/apps/ayokoding-web/
 | Perspective | HTTP-semantic (tRPC calls, status codes) | UI-semantic (clicks, types, sees) |
 | Background  | `Given the API is running`               | `Given the app is running`        |
 | Transport   | tRPC over HTTP (procedure names)         | Browser interactions              |
-| Domains     | 6 domains                                | Defined separately (future)       |
+| Domains     | 5 domains                                | Defined separately (future)       |
 
 ## Backend Domains
 
-| Domain           | File                                        | Description                                     |
-| ---------------- | ------------------------------------------- | ----------------------------------------------- |
-| content-api      | `content-api/content-api.feature`           | Page retrieval by slug, children listing, trees |
-| search-api       | `search-api/search-api.feature`             | Full-text search scoped to locale               |
-| navigation-api   | `navigation-api/navigation-api.feature`     | Navigation tree structure and ordering          |
-| i18n             | `i18n/i18n-api.feature`                     | Locale-scoped content serving                   |
-| health           | `health/health-check.feature`               | Service liveness and available locales          |
-| index-generation | `index-generation/index-generation.feature` | Auto-generated \_index.md child listings        |
+| Domain         | File                                    | Description                                     |
+| -------------- | --------------------------------------- | ----------------------------------------------- |
+| content-api    | `content-api/content-api.feature`       | Page retrieval by slug, children listing, trees |
+| search-api     | `search-api/search-api.feature`         | Full-text search scoped to locale               |
+| navigation-api | `navigation-api/navigation-api.feature` | Navigation tree structure and ordering          |
+| i18n           | `i18n/i18n-api.feature`                 | Locale-scoped content serving                   |
+| health         | `health/health-check.feature`           | Service liveness and available locales          |
+
+## Build-time Domains
+
+| Domain           | File                                                            | Description                              |
+| ---------------- | --------------------------------------------------------------- | ---------------------------------------- |
+| index-generation | `build-tools/gherkin/index-generation/index-generation.feature` | Auto-generated \_index.md child listings |
 
 ## tRPC Procedures
 

@@ -6,7 +6,10 @@ import { expect } from "vitest";
 import { processAllIndexFiles } from "../../../src/server/content/index-generator";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ayokoding-web/be/gherkin/index-generation/index-generation.feature"),
+  path.resolve(
+    process.cwd(),
+    "../../specs/apps/ayokoding-web/build-tools/gherkin/index-generation/index-generation.feature",
+  ),
 );
 
 async function createTmpContentDir(): Promise<string> {
