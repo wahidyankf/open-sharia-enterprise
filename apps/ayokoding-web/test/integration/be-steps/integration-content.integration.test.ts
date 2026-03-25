@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import path from "path";
 import fs from "fs/promises";
 
-const CONTENT_DIR = path.resolve(process.cwd(), "../../apps/ayokoding-web/content");
+const CONTENT_DIR = path.resolve(process.cwd(), "content");
 
 describe("integration: content directory", () => {
   it("content directory exists", async () => {

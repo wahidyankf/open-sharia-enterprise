@@ -144,7 +144,7 @@
 - [x] Run `nx run ayokoding-web:lint` and fix any existing violations surfaced by the new error-level rules and plugin categories
 - [x] Run `nx run ayokoding-web-be-e2e:lint` and `nx run ayokoding-web-fe-e2e:lint` and fix any violations
 - [x] Verify TypeScript strict mode is already enabled (`strict: true`, `noUnusedLocals: true`, `noUnusedParameters: true` in tsconfig.json)
-- [ ] Commit: `feat(ayokoding-web): add oxlint config with plugins, categories, and strict rules`
+- [x] Commit: `feat(ayokoding-web): add oxlint config with plugins, categories, and strict rules`
 
 ### Phase 9: Enforce Unit Test Purity — Move Integration-Level Test
 
@@ -154,11 +154,11 @@
 
 **Implementation Steps**:
 
-- [ ] Move `test/unit/be-steps/integration-content.unit.test.ts` to `test/integration/be-steps/integration-content.integration.test.ts`
-- [ ] Rename from `.unit.test.ts` to `.integration.test.ts`
-- [ ] Update the `integration` vitest project include pattern to also match `**/*.integration.{test,spec}.{ts,tsx}` alongside `test/integration/be-steps/**/*.steps.ts`
-- [ ] Verify `nx run ayokoding-web:test:unit` no longer runs the moved test
-- [ ] Verify `nx run ayokoding-web:test:integration` runs it successfully
+- [x] Move `test/unit/be-steps/integration-content.unit.test.ts` to `test/integration/be-steps/integration-content.integration.test.ts`
+- [x] Rename from `.unit.test.ts` to `.integration.test.ts`
+- [x] Update the `integration` vitest project include pattern to also match `**/*.integration.{test,spec}.{ts,tsx}` alongside `test/integration/be-steps/**/*.steps.ts`
+- [x] Verify `nx run ayokoding-web:test:unit` no longer runs the moved test
+- [x] Verify `nx run ayokoding-web:test:integration` runs it successfully
 - [ ] Commit: `refactor(ayokoding-web): move integration-content test from unit to integration project`
 
 ### Phase 10: Create FE Unit Step Files for All FE Gherkin Specs
