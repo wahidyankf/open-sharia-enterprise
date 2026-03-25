@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/gin-gonic/gin"
 	"github.com/cucumber/godog"
+	"github.com/gin-gonic/gin"
 
 	"github.com/wahidyankf/open-sharia-enterprise/apps/demo-be-golang-gin/internal/domain"
 )
@@ -14,6 +14,7 @@ func registerAdminSteps(sc *godog.ScenarioContext, ctx *scenarioCtx) {
 	sc.Step(`^users "([^"]*)", "([^"]*)", and "([^"]*)" are registered$`, ctx.multipleUsersAreRegistered)
 	sc.Step(`^the admin sends GET /api/v1/admin/users$`, ctx.theAdminSendsGetAdminUsers)
 	sc.Step(`^the admin sends GET /api/v1/admin/users\?email=([^\s]*)$`, ctx.theAdminSendsGetAdminUsersWithEmail)
+	sc.Step(`^the admin sends GET /api/v1/admin/users\?search=([^\s]*)$`, ctx.theAdminSendsGetAdminUsersWithSearch)
 	sc.Step(`^the response body should contain at least one user with "([^"]*)" equal to "([^"]*)"$`, ctx.responseBodyContainsAtLeastOneUserWithField)
 	sc.Step(`^the admin sends POST /api/v1/admin/users/\{alice_id\}/disable with body \{ "reason": "([^"]*)" \}$`, ctx.theAdminSendsDisableAlice)
 	sc.Step(`^the admin sends POST /api/v1/admin/users/\{alice_id\}/enable$`, ctx.theAdminSendsEnableAlice)
@@ -35,7 +36,16 @@ func (ctx *scenarioCtx) multipleUsersAreRegistered(user1, user2, user3 string) e
 func (ctx *scenarioCtx) theAdminSendsGetAdminUsers() error {
 	c, w := buildGinContext("GET", "/api/v1/admin/users", nil, ctx.AdminToken, gin.Params{}, ctx.JWTSvc)
 	// Inject query parameters: page=1, size=20 (defaults).
-	c.Request.URL.RawQuery = "page=1&size=20"
+	c.Request.URL.RawQuery = "page=0&size=20"
+	ctx.Handler.ListUsers(c)
+	ctx.LastStatus = w.Code
+	ctx.LastBody = readResponse(w)
+	return nil
+}
+
+func (ctx *scenarioCtx) theAdminSendsGetAdminUsersWithSearch(search string) error {
+	c, w := buildGinContext("GET", "/api/v1/admin/users?search="+search, nil, ctx.AdminToken, gin.Params{}, ctx.JWTSvc)
+	c.Request.URL.RawQuery = "search=" + search + "&page=0&size=20"
 	ctx.Handler.ListUsers(c)
 	ctx.LastStatus = w.Code
 	ctx.LastBody = readResponse(w)
@@ -52,13 +62,13 @@ func (ctx *scenarioCtx) theAdminSendsGetAdminUsersWithEmail(email string) error 
 }
 
 func (ctx *scenarioCtx) responseBodyContainsAtLeastOneUserWithField(field, value string) error {
-	data, ok := ctx.LastBody["data"]
+	data, ok := ctx.LastBody["content"]
 	if !ok {
-		return fmt.Errorf("response does not contain 'data' field; body: %v", ctx.LastBody)
+		return fmt.Errorf("response does not contain 'content' field; body: %v", ctx.LastBody)
 	}
 	users, ok := data.([]interface{})
 	if !ok {
-		return fmt.Errorf("'data' field is not an array")
+		return fmt.Errorf("'content' field is not an array")
 	}
 	for _, u := range users {
 		uMap, ok := u.(map[string]interface{})

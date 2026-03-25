@@ -23,6 +23,7 @@ func registerAttachmentSteps(sc *godog.ScenarioContext, ctx *scenarioCtx) {
 	sc.Step(`^the response body should contain an attachment with "([^"]*)" equal to "([^"]*)"$`, ctx.theResponseBodyShouldContainAttachmentWithField)
 	sc.Step(`^bob has created an entry with body \{ "amount": "([^"]*)", "currency": "([^"]*)", "category": "([^"]*)", "description": "([^"]*)", "date": "([^"]*)", "type": "([^"]*)" \}$`, ctx.bobHasCreatedEntry)
 	sc.Step(`^alice uploads file "([^"]*)" with content type "([^"]*)" to the entry$`, ctx.aliceHasUploadedFileTo)
+	sc.Step(`^the response body should contain an error message about file size$`, ctx.theResponseBodyShouldContainErrorAboutFileSize)
 }
 
 // uploadAttachment calls UploadAttachment handler directly using multipart form data.
@@ -163,6 +164,17 @@ func (ctx *scenarioCtx) theResponseBodyShouldContainAttachmentWithField(field, v
 		}
 	}
 	return fmt.Errorf("no attachment found with %q = %q", field, value)
+}
+
+func (ctx *scenarioCtx) theResponseBodyShouldContainErrorAboutFileSize() error {
+	msg, ok := ctx.LastBody["message"]
+	if !ok {
+		return fmt.Errorf("response does not contain 'message' field; body: %v", ctx.LastBody)
+	}
+	if fmt.Sprintf("%v", msg) == "" {
+		return fmt.Errorf("error message is empty")
+	}
+	return nil
 }
 
 func (ctx *scenarioCtx) bobHasCreatedEntry(amount, currency, category, description, date, expType string) error {

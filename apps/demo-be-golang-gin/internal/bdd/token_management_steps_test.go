@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/gin-gonic/gin"
 	"github.com/cucumber/godog"
+	"github.com/gin-gonic/gin"
 )
 
 func registerTokenManagementSteps(sc *godog.ScenarioContext, ctx *scenarioCtx) {
@@ -18,7 +18,6 @@ func registerTokenManagementSteps(sc *godog.ScenarioContext, ctx *scenarioCtx) {
 	sc.Step(`^alice's access token should be recorded as revoked$`, ctx.alicesAccessTokenShouldBeRecordedAsRevoked)
 	sc.Step(`^alice has logged out and her access token is blacklisted$`, ctx.aliceHasLoggedOutAndHerAccessTokenIsBlacklisted)
 	sc.Step(`^the client sends GET /api/v1/users/me with alice's access token$`, ctx.clientSendsGetProfileWithAlicesToken)
-	sc.Step(`^an admin user "([^"]*)" is registered and logged in$`, ctx.anAdminUserIsRegisteredAndLoggedIn)
 	sc.Step(`^the admin has disabled alice's account via POST /api/v1/admin/users/\{alice_id\}/disable$`, ctx.theAdminHasDisabledAlicesAccount)
 }
 
