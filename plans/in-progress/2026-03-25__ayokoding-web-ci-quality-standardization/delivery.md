@@ -178,7 +178,7 @@
 - [x] All step files must use mocks only — mocked tRPC responses, mocked router, `@testing-library/react` for rendering
 - [x] Run `nx run ayokoding-web:test:unit` and verify all 6 FE step files execute
 - [x] Run `nx run ayokoding-web:test:quick` to verify coverage threshold still passes
-- [ ] Commit: `feat(ayokoding-web): add FE unit step files consuming all FE Gherkin specs`
+- [x] Commit: `feat(ayokoding-web): add FE unit step files consuming all FE Gherkin specs`
 
 ### Phase 11: Convert BE E2E Tests to Consume Gherkin Specs via playwright-bdd
 
@@ -186,17 +186,17 @@
 
 **Implementation Steps**:
 
-- [ ] Install `playwright-bdd` in `apps/ayokoding-web-be-e2e`: `npm install -D playwright-bdd`
-- [ ] Update `playwright.config.ts` to use `defineBddConfig` with feature file paths pointing to `../../specs/apps/ayokoding-web/be/gherkin/`
-- [ ] Create step files in `src/steps/` for all 5 BE features:
-  - [ ] `health-check.steps.ts` → `health/health-check.feature`
-  - [ ] `content-api.steps.ts` → `content-api/content-api.feature`
-  - [ ] `search-api.steps.ts` → `search-api/search-api.feature`
-  - [ ] `navigation-api.steps.ts` → `navigation-api/navigation-api.feature` (NEW — was missing)
-  - [ ] `i18n-api.steps.ts` → `i18n/i18n-api.feature`
-- [ ] Remove old plain Playwright spec files from `src/tests/`
-- [ ] Update `apps/ayokoding-web-be-e2e/project.json` — add Gherkin spec inputs: `"inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding-web/be/gherkin/**/*.feature"]`
-- [ ] Add `.features-gen/` to `.gitignore`
+- [x] Install `playwright-bdd` in `apps/ayokoding-web-be-e2e`: `npm install -D playwright-bdd`
+- [x] Update `playwright.config.ts` to use `defineBddConfig` with feature file paths pointing to `../../specs/apps/ayokoding-web/be/gherkin/`
+- [x] Create step files in `src/steps/` for all 5 BE features:
+  - [x] `health-check.steps.ts` → `health/health-check.feature`
+  - [x] `content-api.steps.ts` → `content-api/content-api.feature`
+  - [x] `search-api.steps.ts` → `search-api/search-api.feature`
+  - [x] `navigation-api.steps.ts` → `navigation-api/navigation-api.feature` (NEW — was missing)
+  - [x] `i18n-api.steps.ts` → `i18n/i18n-api.feature`
+- [x] Remove old plain Playwright spec files from `src/tests/`
+- [x] Update `apps/ayokoding-web-be-e2e/project.json` — add Gherkin spec inputs: `"inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding-web/be/gherkin/**/*.feature"]`
+- [x] Add `.features-gen/` to `.gitignore`
 - [ ] Verify `nx run ayokoding-web-be-e2e:test:e2e` passes against running server
 - [ ] Commit: `feat(ayokoding-web-be-e2e): convert to playwright-bdd consuming BE Gherkin specs`
 

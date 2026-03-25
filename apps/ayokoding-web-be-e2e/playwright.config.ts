@@ -1,7 +1,13 @@
 import { defineConfig } from "@playwright/test";
+import { defineBddConfig } from "playwright-bdd";
+
+const testDir = defineBddConfig({
+  features: "../../specs/apps/ayokoding-web/be/gherkin/**/*.feature",
+  steps: "./src/steps/**/*.steps.ts",
+});
 
 export default defineConfig({
-  testDir: "./src/tests",
+  testDir,
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
