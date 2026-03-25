@@ -4,7 +4,7 @@ Active project plans currently being worked on.
 
 ## Active Plans
 
-(none)
+- [Standardize ayokoding-web CI and Quality Gate Practices](./2026-03-25__ayokoding-web-ci-quality-standardization/) - Align CI pipelines, Nx targets, and quality gates with monorepo standards
 
 ## Instructions
 
