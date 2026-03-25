@@ -86,7 +86,7 @@
 - [x] Remove `src/server/content/index.ts` (logic moved to `service.ts`)
 - [x] Remove `src/server/content/search-index.ts` (logic moved to `service.ts`)
 - [x] Run `nx run ayokoding-web:typecheck` to verify no broken imports after deletions
-- [ ] Commit: `refactor(ayokoding-web): extract ContentService with repository injection`
+- [x] Commit: `refactor(ayokoding-web): extract ContentService with repository injection`
 
 ### Phase 6: Refactor Unit Tests to Use InMemoryContentRepository
 
@@ -94,15 +94,15 @@
 
 **Implementation Steps**:
 
-- [ ] Create `test/unit/be-steps/helpers/test-service.ts` — instantiate `ContentService` with `InMemoryContentRepository` populated with fixture data
-- [ ] Substantially rewrite `test/unit/be-steps/helpers/test-caller.ts`:
-  - [ ] Replace the empty `createCaller({})` context with `createCaller({ contentService: new ContentService(new InMemoryContentRepository(populateFixtureData())) })`
-  - [ ] Delete the entire `vi.hoisted()` block and all four `vi.mock()` calls (`@/server/content/index`, `@/server/content/reader`, `@/server/content/parser`, `@/server/content/search-index`)
-  - [ ] Convert the existing `mock-content.ts` fixture data file into the `InMemoryContentRepository` fixture population function rather than deleting it
-- [ ] Run `nx run ayokoding-web:typecheck` to confirm `test-caller.ts` compiles with the new context shape before running tests
-- [ ] Verify all 5 existing step files still pass: `content-api`, `search-api`, `navigation-api`, `i18n-api`, `health-check`
-- [ ] Update `vitest.config.ts` coverage exclusions — remove `index.ts` and `search-index.ts`, keep `reader.ts`, `repository-fs.ts`, `parser.ts`, `types.ts`
-- [ ] Run `nx run ayokoding-web:test:quick` to verify coverage threshold still passes
+- [x] Create `test/unit/be-steps/helpers/test-service.ts` — instantiate `ContentService` with `InMemoryContentRepository` populated with fixture data
+- [x] Substantially rewrite `test/unit/be-steps/helpers/test-caller.ts`:
+  - [x] Replace the empty `createCaller({})` context with `createCaller({ contentService: new ContentService(new InMemoryContentRepository(populateFixtureData())) })`
+  - [x] Delete the entire `vi.hoisted()` block and all four `vi.mock()` calls (`@/server/content/index`, `@/server/content/reader`, `@/server/content/parser`, `@/server/content/search-index`)
+  - [x] Convert the existing `mock-content.ts` fixture data file into the `InMemoryContentRepository` fixture population function rather than deleting it
+- [x] Run `nx run ayokoding-web:typecheck` to confirm `test-caller.ts` compiles with the new context shape before running tests
+- [x] Verify all 5 existing step files still pass: `content-api`, `search-api`, `navigation-api`, `i18n-api`, `health-check`
+- [x] Update `vitest.config.ts` coverage exclusions — remove `index.ts` and `search-index.ts`, keep `reader.ts`, `repository-fs.ts`, `parser.ts`, `types.ts`
+- [x] Run `nx run ayokoding-web:test:quick` to verify coverage threshold still passes
 - [ ] Commit: `refactor(ayokoding-web): unit tests use InMemoryContentRepository instead of vi.mock`
 
 ### Phase 7: Add Integration Tests with FileSystemContentRepository
