@@ -64,7 +64,7 @@
     "*.{js,jsx,ts,tsx,mjs,cjs}": "prettier --write",
     "*.json": "prettier --write",
     "*.go": "gofmt -w",
-    "*.fs": "bash -c 'DOTNET_ROOT=$HOME/.dotnet fantomas \"$@\"' --",
+    "*.fs": "fantomas",
     "*.md": "prettier --write",
     "*.{yml,yaml}": "prettier --write",
     "*.{css,scss}": "prettier --write"
