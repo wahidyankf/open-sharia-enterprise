@@ -60,6 +60,7 @@
     "test:quick": {
       "executor": "nx:run-commands",
       "dependsOn": ["ayokoding-cli:build"],
+      "inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding-web/**/*.feature"],
       "options": {
         "commands": [
           "npx vitest run --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/ayokoding-web/coverage/lcov.info 80)",

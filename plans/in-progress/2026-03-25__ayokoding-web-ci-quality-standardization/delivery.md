@@ -19,7 +19,7 @@
 - [x] Open `governance/development/infra/nx-targets.md`
 - [x] In the Current Project Tags table, update ayokoding-web row from `["type:app", "platform:hugo", "domain:ayokoding"]` to `["type:app", "platform:nextjs", "lang:ts", "domain:ayokoding"]`
 - [x] Verify no other references to ayokoding-web as a Hugo site in nx-targets.md
-- [ ] Commit: `docs(nx-targets): fix stale ayokoding-web tag — platform:nextjs not hugo`
+- [x] Commit: `docs(nx-targets): fix stale ayokoding-web tag — platform:nextjs not hugo`
 
 ### Phase 2: Add Gherkin Spec Inputs to test:quick
 
@@ -27,9 +27,9 @@
 
 **Implementation Steps**:
 
-- [ ] Open `apps/ayokoding-web/project.json`
-- [ ] Add `"inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding-web/**/*.feature"]` to the `test:quick` target
-- [ ] Run `nx run ayokoding-web:test:quick` locally to verify it still passes
+- [x] Open `apps/ayokoding-web/project.json`
+- [x] Add `"inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding-web/**/*.feature"]` to the `test:quick` target
+- [x] Run `nx run ayokoding-web:test:quick` locally to verify it still passes
   - Note: `test:integration` will fail at this stage — the `integration` vitest project config is not added until Phase 7. Only `test:quick` is required to pass here.
 - [ ] Commit: `fix(ayokoding-web): add Gherkin spec inputs to test:quick cache`
 
