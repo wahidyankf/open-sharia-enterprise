@@ -27,6 +27,8 @@ export default defineConfig({
         "src/server/content/repository.ts",
         "src/server/content/repository-fs.ts",
         "src/server/content/types.ts",
+        "src/server/content/index-generator.ts",
+        "src/scripts/**",
         "src/server/trpc/procedures/**",
         "src/test/**",
         "**/*.{test,spec}.{ts,tsx}",

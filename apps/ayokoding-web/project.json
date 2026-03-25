@@ -11,10 +11,24 @@
         "cwd": "{projectRoot}"
       }
     },
+    "generate-indexes": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx tsx src/scripts/generate-indexes.ts",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "validate-indexes": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx tsx src/scripts/generate-indexes.ts --validate",
+        "cwd": "{projectRoot}"
+      }
+    },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "next dev --port 3101",
+        "command": "npx tsx src/scripts/generate-indexes.ts && next dev --port 3101",
         "cwd": "{projectRoot}"
       }
     },
@@ -25,7 +39,7 @@
         "cwd": "{projectRoot}"
       },
       "outputs": ["{projectRoot}/.next"],
-      "dependsOn": []
+      "dependsOn": ["generate-indexes"]
     },
     "start": {
       "executor": "nx:run-commands",
@@ -64,7 +78,8 @@
       "options": {
         "commands": [
           "npx vitest run --project unit --project unit-fe --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/ayokoding-web/coverage/lcov.info 80)",
-          "../../apps/ayokoding-cli/dist/ayokoding-cli links check --content content"
+          "../../apps/ayokoding-cli/dist/ayokoding-cli links check --content content",
+          "npx tsx src/scripts/generate-indexes.ts --validate"
         ],
         "parallel": true,
         "cwd": "{projectRoot}"

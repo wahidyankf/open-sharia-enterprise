@@ -6,6 +6,8 @@ draft: false
 ---
 
 - [Overview](/en/learn/software-engineering/automation-testing/tools/overview)
+- [Testing Library](/en/learn/software-engineering/automation-testing/tools/testing-library)
+  - [By Example](/en/learn/software-engineering/automation-testing/tools/testing-library/by-example)
 - [Playwright](/en/learn/software-engineering/automation-testing/tools/playwright)
   - [In the Field](/en/learn/software-engineering/automation-testing/tools/playwright/in-the-field)
   - [Overview](/en/learn/software-engineering/automation-testing/tools/playwright/overview)

@@ -14,5 +14,8 @@ layout: list
   - [Jvm Spring Boot](/en/learn/software-engineering/platform-web/tools/jvm-spring-boot)
   - [Fe React](/en/learn/software-engineering/platform-web/tools/fe-react)
   - [Fe Nextjs](/en/learn/software-engineering/platform-web/tools/fe-nextjs)
+  - [Ts Trpc](/en/learn/software-engineering/platform-web/tools/ts-trpc)
+  - [Ts Zod](/en/learn/software-engineering/platform-web/tools/ts-zod)
+  - [Fe Tailwindcss](/en/learn/software-engineering/platform-web/tools/fe-tailwindcss)
   - [Elixir Phoenix Liveview](/en/learn/software-engineering/platform-web/tools/elixir-phoenix-liveview)
 - [Overview](/en/learn/software-engineering/platform-web/overview)

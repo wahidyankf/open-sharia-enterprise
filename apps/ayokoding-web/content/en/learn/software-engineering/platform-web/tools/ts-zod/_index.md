@@ -1,6 +1,8 @@
 ---
 title: "Ts Zod"
 weight: 100021
+date: 2026-03-25T14:23:13.206Z
+draft: false
 ---
 
 - [By Example](/en/learn/software-engineering/platform-web/tools/ts-zod/by-example)
