@@ -198,7 +198,7 @@
 - [x] Update `apps/ayokoding-web-be-e2e/project.json` — add Gherkin spec inputs: `"inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding-web/be/gherkin/**/*.feature"]`
 - [x] Add `.features-gen/` to `.gitignore`
 - [ ] Verify `nx run ayokoding-web-be-e2e:test:e2e` passes against running server
-- [ ] Commit: `feat(ayokoding-web-be-e2e): convert to playwright-bdd consuming BE Gherkin specs`
+- [x] Commit: `feat(ayokoding-web-be-e2e): convert to playwright-bdd consuming BE Gherkin specs`
 
 ### Phase 12: Convert FE E2E Tests to Consume Gherkin Specs via playwright-bdd
 
@@ -206,18 +206,18 @@
 
 **Implementation Steps**:
 
-- [ ] Install `playwright-bdd` in `apps/ayokoding-web-fe-e2e`: `npm install -D playwright-bdd`
-- [ ] Update `playwright.config.ts` to use `defineBddConfig` with feature file paths pointing to `../../specs/apps/ayokoding-web/fe/gherkin/`
-- [ ] Create step files in `src/steps/` for all 6 FE features:
-  - [ ] `content-rendering.steps.ts` → `content-rendering.feature`
-  - [ ] `navigation.steps.ts` → `navigation.feature`
-  - [ ] `search.steps.ts` → `search.feature`
-  - [ ] `responsive.steps.ts` → `responsive.feature`
-  - [ ] `i18n.steps.ts` → `i18n.feature`
-  - [ ] `accessibility.steps.ts` → `accessibility.feature`
-- [ ] Remove old plain Playwright spec files from `src/tests/`
-- [ ] Update `apps/ayokoding-web-fe-e2e/project.json` — add Gherkin spec inputs: `"inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding-web/fe/gherkin/**/*.feature"]`
-- [ ] Add `.features-gen/` to `.gitignore`
+- [x] Install `playwright-bdd` in `apps/ayokoding-web-fe-e2e`: `npm install -D playwright-bdd`
+- [x] Update `playwright.config.ts` to use `defineBddConfig` with feature file paths pointing to `../../specs/apps/ayokoding-web/fe/gherkin/`
+- [x] Create step files in `src/steps/` for all 6 FE features:
+  - [x] `content-rendering.steps.ts` → `content-rendering.feature`
+  - [x] `navigation.steps.ts` → `navigation.feature`
+  - [x] `search.steps.ts` → `search.feature`
+  - [x] `responsive.steps.ts` → `responsive.feature`
+  - [x] `i18n.steps.ts` → `i18n.feature`
+  - [x] `accessibility.steps.ts` → `accessibility.feature`
+- [x] Remove old plain Playwright spec files from `src/tests/`
+- [x] Update `apps/ayokoding-web-fe-e2e/project.json` — add Gherkin spec inputs: `"inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding-web/fe/gherkin/**/*.feature"]`
+- [x] Add `.features-gen/` to `.gitignore`
 - [ ] Verify `nx run ayokoding-web-fe-e2e:test:e2e` passes against running server
 - [ ] Commit: `feat(ayokoding-web-fe-e2e): convert to playwright-bdd consuming FE Gherkin specs`
 
