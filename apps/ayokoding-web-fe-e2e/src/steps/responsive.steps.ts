@@ -3,24 +3,16 @@ import { expect } from "@playwright/test";
 
 const { Given, When, Then } = createBdd();
 
-Given("the app is running", async () => {
-  // Base URL is configured in playwright.config.ts — no action needed
-});
-
-Given('the viewport is set to "desktop" (1280x800)', async ({ page }) => {
+Given(/the viewport is set to "desktop" \(1280x800\)/, async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
 });
 
-Given('the viewport is set to "laptop" (1024x768)', async ({ page }) => {
+Given(/the viewport is set to "laptop" \(1024x768\)/, async ({ page }) => {
   await page.setViewportSize({ width: 1024, height: 768 });
 });
 
-Given('the viewport is set to "mobile" (375x667)', async ({ page }) => {
+Given(/the viewport is set to "mobile" \(375x667\)/, async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 667 });
-});
-
-When("a visitor opens a content page", async ({ page }) => {
-  await page.goto("/en/learn/overview");
 });
 
 Then("the sidebar navigation should be visible", async ({ page }) => {

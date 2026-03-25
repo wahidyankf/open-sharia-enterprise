@@ -1,11 +1,7 @@
 import { createBdd } from "playwright-bdd";
 import { expect } from "@playwright/test";
 
-const { Given, When, Then } = createBdd();
-
-Given("the app is running", async () => {
-  // Base URL is configured in playwright.config.ts — no action needed
-});
+const { When, Then } = createBdd();
 
 When("a visitor opens a content page with prose body text", async ({ page }) => {
   await page.goto("/en/learn/overview");

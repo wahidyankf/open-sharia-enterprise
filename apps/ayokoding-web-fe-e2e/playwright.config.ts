@@ -1,8 +1,12 @@
+import path from "node:path";
 import { defineConfig, devices } from "@playwright/test";
 import { defineBddConfig } from "playwright-bdd";
 
+const workspaceRoot = path.resolve(__dirname, "../..");
+
 const testDir = defineBddConfig({
-  features: "../../specs/apps/ayokoding-web/fe/gherkin/**/*.feature",
+  featuresRoot: workspaceRoot,
+  features: path.join(workspaceRoot, "specs/apps/ayokoding-web/fe/gherkin/**/*.feature"),
   steps: "./src/steps/**/*.steps.ts",
 });
 

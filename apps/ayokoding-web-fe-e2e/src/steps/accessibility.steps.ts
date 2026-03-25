@@ -1,15 +1,7 @@
 import { createBdd } from "playwright-bdd";
 import { expect } from "@playwright/test";
 
-const { Given, When, Then } = createBdd();
-
-Given("the app is running", async () => {
-  // Base URL is configured in playwright.config.ts — no action needed
-});
-
-When("a visitor opens a content page", async ({ page }) => {
-  await page.goto("/en/learn/overview");
-});
+const { When, Then } = createBdd();
 
 // Gherkin "And" following a "When" is registered with When
 When("the visitor presses Tab repeatedly", async ({ page }) => {

@@ -3,11 +3,7 @@ import { expect } from "@playwright/test";
 
 const { Given, When, Then } = createBdd();
 
-Given("the app is running", async () => {
-  // Base URL is configured in playwright.config.ts — no action needed
-});
-
-When("a visitor is on a page under the /en locale", async ({ page }) => {
+When(/a visitor is on a page under the \/en locale/, async ({ page }) => {
   await page.goto("/en");
 });
 
@@ -18,7 +14,7 @@ Then('the language switcher should display "English" as the current language', a
   expect(text?.toLowerCase()).toContain("en");
 });
 
-Given("a visitor is on the English version of a content page at /en/some-page", async ({ page }) => {
+Given(/a visitor is on the English version of a content page at \/en\/some-page/, async ({ page }) => {
   await page.goto("/en");
 });
 
@@ -30,7 +26,7 @@ When("the visitor selects Indonesian from the language switcher", async ({ page 
   await idOption.click();
 });
 
-Then("the visitor should be redirected to the Indonesian version of that page at /id/some-page", async ({ page }) => {
+Then(/the visitor should be redirected to the Indonesian version of that page at \/id\/some-page/, async ({ page }) => {
   await expect(page).toHaveURL(/\/id/);
 });
 
@@ -40,7 +36,6 @@ Given("a visitor is on the Indonesian version of a page", async ({ page }) => {
 
 Then("navigation labels and UI text should be displayed in Indonesian", async ({ page }) => {
   await expect(page).toHaveTitle(/.+/);
-  // The page should render — Indonesian locale content is loaded
   const heading = page.getByRole("heading", { level: 1 });
   await expect(heading).toBeVisible();
 });
@@ -52,11 +47,11 @@ Then("the page title and headings should reflect the Indonesian locale content",
   expect(text?.trim().length).toBeGreaterThan(0);
 });
 
-When("a visitor opens the root URL /", async ({ page }) => {
+When(/a visitor opens the root URL \//, async ({ page }) => {
   await page.goto("/");
 });
 
-Then("they should be redirected to /en", async ({ page }) => {
+Then(/they should be redirected to \/en/, async ({ page }) => {
   await expect(page).toHaveURL(/\/en/);
 });
 

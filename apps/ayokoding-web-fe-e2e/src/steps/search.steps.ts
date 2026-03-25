@@ -3,10 +3,6 @@ import { expect } from "@playwright/test";
 
 const { Given, When, Then } = createBdd();
 
-Given("the app is running", async () => {
-  // Base URL is configured in playwright.config.ts — no action needed
-});
-
 When("a visitor presses Cmd+K on the page", async ({ page }) => {
   await page.goto("/en");
   await page.keyboard.press("ControlOrMeta+k");

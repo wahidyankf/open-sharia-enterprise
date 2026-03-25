@@ -227,36 +227,36 @@
 
 **Implementation Steps**:
 
-- [ ] Run `nx run ayokoding-web:test:quick` and confirm it passes
-- [ ] Run `nx run ayokoding-web:test:integration` and confirm it passes
-- [ ] Run `nx affected -t typecheck lint test:quick` and confirm pre-push gate passes
-- [ ] Verify `nx-targets.md` renders correctly and the tag table is accurate
-- [ ] Verify oxlint config catches unused vars/imports as errors
-- [ ] Verify all BE Gherkin specs consumed at 3 levels (unit, integration, E2E)
-- [ ] Verify all FE Gherkin specs consumed at 2 levels (unit, E2E)
-- [ ] Verify no unit test performs real filesystem I/O
-- [ ] Push to `main` and verify pre-push hook succeeds
+- [x] Run `nx run ayokoding-web:test:quick` and confirm it passes
+- [x] Run `nx run ayokoding-web:test:integration` and confirm it passes
+- [x] Run `nx affected -t typecheck lint test:quick` and confirm pre-push gate passes
+- [x] Verify `nx-targets.md` renders correctly and the tag table is accurate
+- [x] Verify oxlint config catches unused vars/imports as errors
+- [x] Verify all BE Gherkin specs consumed at 3 levels (unit, integration, E2E)
+- [x] Verify all FE Gherkin specs consumed at 2 levels (unit, E2E)
+- [x] Verify no unit test performs real filesystem I/O
+- [x] Push to `main` and verify pre-push hook succeeds
 
 ## Validation Checklist
 
-- [ ] `nx-targets.md` tag table matches `apps/ayokoding-web/project.json` tags
-- [ ] `test:quick` target has explicit Gherkin spec cache inputs
-- [ ] Scheduled CI workflow has unit, integration, and e2e jobs
-- [ ] Deploy job depends on all three test jobs passing (both `needs` array and `if:` condition)
-- [ ] `ContentRepository` interface exists with `InMemoryContentRepository` and `FileSystemContentRepository` implementations
-- [ ] `ContentService` encapsulates all business logic and is the sole entry point for content access
-- [ ] BE unit tests use `InMemoryContentRepository` — no `vi.mock()` on content modules
-- [ ] Integration tests use `FileSystemContentRepository` against real `content/` directory — no HTTP calls
-- [ ] Both BE unit and integration tests consume all 5 BE Gherkin specs
-- [ ] Coverage exclusions updated in `vitest.config.ts` — confirm `service.ts` is NOT in the exclusion list and `repository-fs.ts` IS in the exclusion list; run `nx run ayokoding-web:test:quick` to confirm the 80% threshold passes
-- [ ] `oxlint.json` exists in ayokoding-web, ayokoding-web-be-e2e, and ayokoding-web-fe-e2e with `no-unused-vars: error`
-- [ ] TypeScript strict mode verified: `strict: true`, `noUnusedLocals: true`, `noUnusedParameters: true`
-- [ ] No unit test performs real filesystem I/O — `integration-content.unit.test.ts` moved to integration project
-- [ ] FE unit step files exist for all 6 FE Gherkin specs with mock-only dependencies
-- [ ] `ayokoding-web-be-e2e` consumes all 5 BE Gherkin specs via `playwright-bdd` (including navigation-api)
-- [ ] `ayokoding-web-fe-e2e` consumes all 6 FE Gherkin specs via `playwright-bdd`
-- [ ] Both E2E projects declare Gherkin spec inputs in `project.json`
-- [ ] All local quality gates pass (`nx affected -t typecheck lint test:quick`)
+- [x] `nx-targets.md` tag table matches `apps/ayokoding-web/project.json` tags
+- [x] `test:quick` target has explicit Gherkin spec cache inputs
+- [x] Scheduled CI workflow has unit, integration, and e2e jobs
+- [x] Deploy job depends on all three test jobs passing (both `needs` array and `if:` condition)
+- [x] `ContentRepository` interface exists with `InMemoryContentRepository` and `FileSystemContentRepository` implementations
+- [x] `ContentService` encapsulates all business logic and is the sole entry point for content access
+- [x] BE unit tests use `InMemoryContentRepository` — no `vi.mock()` on content modules
+- [x] Integration tests use `FileSystemContentRepository` against real `content/` directory — no HTTP calls
+- [x] Both BE unit and integration tests consume all 5 BE Gherkin specs
+- [x] Coverage exclusions updated in `vitest.config.ts` — confirm `service.ts` is NOT in the exclusion list and `repository-fs.ts` IS in the exclusion list; run `nx run ayokoding-web:test:quick` to confirm the 80% threshold passes
+- [x] `oxlint.json` exists in ayokoding-web, ayokoding-web-be-e2e, and ayokoding-web-fe-e2e with `no-unused-vars: error`
+- [x] TypeScript strict mode verified: `strict: true`, `noUnusedLocals: true`, `noUnusedParameters: true`
+- [x] No unit test performs real filesystem I/O — `integration-content.unit.test.ts` moved to integration project
+- [x] FE unit step files exist for all 6 FE Gherkin specs with mock-only dependencies
+- [x] `ayokoding-web-be-e2e` consumes all 5 BE Gherkin specs via `playwright-bdd` (including navigation-api)
+- [x] `ayokoding-web-fe-e2e` consumes all 6 FE Gherkin specs via `playwright-bdd`
+- [x] Both E2E projects declare Gherkin spec inputs in `project.json`
+- [x] All local quality gates pass (`nx affected -t typecheck lint test:quick`)
 
 ## Success Metrics
 

@@ -4,6 +4,7 @@ Archived plans and completed project planning documents.
 
 ## Completed Projects
 
+- [2026-03-25: AyoKoding Web CI and Quality Gate Standardization](./2026-03-25__ayokoding-web-ci-quality-standardization/README.md) — Align ayokoding-web CI pipelines, quality gates, and Nx targets with monorepo standards. Introduced ContentRepository pattern with DI, added integration tests with FileSystemContentRepository, created FE unit step files for all 6 Gherkin specs, converted both E2E projects to playwright-bdd, added rich oxlint config with 7 plugins, enforced unit test purity (Completed: 2026-03-25)
 - [2026-03-24: AyoKoding Web v1-to-v2 Migration](./2026-03-24__ayokoding-web-v1-to-v2-migration/README.md) — Replace Hugo-based ayokoding-web with Next.js 16 implementation, archive Hugo app to archived/, rename v2 to primary, remove Hugo-specific CLI commands, update 60+ docs/agents/skills, deploy to production (Completed: 2026-03-24)
 - [2026-03-23: AyoKoding Web V2](./2026-03-23__ayokoding-web-v2/README.md) — Rewrite ayokoding-web Hugo site as fullstack Next.js 16 app with tRPC, Zod, React Query, shadcn/ui, FlexSearch. Reads same markdown content, adds type-safe API, full-text search, bilingual routing (Completed: 2026-03-23)
 - [2026-03-22: Demo Fullstack Next.js](./2026-03-22__demo-fs-ts-nextjs/README.md) — Fullstack Next.js 16 app (TypeScript, App Router + Route Handlers) with Drizzle ORM, PostgreSQL, 1133 unit tests, 73 integration tests (real PG), 170 E2E tests (78 BE + 92 FE), 76.66% coverage. All CI workflows green (Completed: 2026-03-23)
