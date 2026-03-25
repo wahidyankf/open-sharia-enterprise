@@ -103,7 +103,7 @@
 - [x] Verify all 5 existing step files still pass: `content-api`, `search-api`, `navigation-api`, `i18n-api`, `health-check`
 - [x] Update `vitest.config.ts` coverage exclusions — remove `index.ts` and `search-index.ts`, keep `reader.ts`, `repository-fs.ts`, `parser.ts`, `types.ts`
 - [x] Run `nx run ayokoding-web:test:quick` to verify coverage threshold still passes
-- [ ] Commit: `refactor(ayokoding-web): unit tests use InMemoryContentRepository instead of vi.mock`
+- [x] Commit: `refactor(ayokoding-web): unit tests use InMemoryContentRepository instead of vi.mock`
 
 ### Phase 7: Add Integration Tests with FileSystemContentRepository
 
@@ -111,19 +111,19 @@
 
 **Implementation Steps**:
 
-- [ ] Add `integration` vitest project to `vitest.config.ts`:
+- [x] Add `integration` vitest project to `vitest.config.ts`:
   - `include: ["test/integration/be-steps/**/*.steps.ts"]`
   - `environment: "node"`
-- [ ] Create `test/integration/be-steps/helpers/test-service.ts` — instantiate `ContentService` with `FileSystemContentRepository` pointing at real `content/` directory
-- [ ] Create `test/integration/be-steps/helpers/test-caller.ts` — tRPC caller backed by real filesystem service
-- [ ] Create integration step files consuming the same Gherkin specs — assertions verify structural properties (non-empty results, valid HTML, correct ordering) not specific content:
-  - [ ] `test/integration/be-steps/health-check.steps.ts` → `specs/apps/ayokoding-web/be/gherkin/health/health-check.feature`
-  - [ ] `test/integration/be-steps/content-api.steps.ts` → `specs/apps/ayokoding-web/be/gherkin/content-api/content-api.feature`
-  - [ ] `test/integration/be-steps/search-api.steps.ts` → `specs/apps/ayokoding-web/be/gherkin/search-api/search-api.feature`
-  - [ ] `test/integration/be-steps/navigation-api.steps.ts` → `specs/apps/ayokoding-web/be/gherkin/navigation-api/navigation-api.feature`
-  - [ ] `test/integration/be-steps/i18n-api.steps.ts` → `specs/apps/ayokoding-web/be/gherkin/i18n/i18n-api.feature`
-- [ ] Add Gherkin spec inputs to `test:integration` in `project.json`: `"inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding-web/**/*.feature"]` (even though `cache: false`, this documents the dependency for consistency with `test:unit` and `test:quick`)
-- [ ] Verify `nx run ayokoding-web:test:integration` passes
+- [x] Create `test/integration/be-steps/helpers/test-service.ts` — instantiate `ContentService` with `FileSystemContentRepository` pointing at real `content/` directory
+- [x] Create `test/integration/be-steps/helpers/test-caller.ts` — tRPC caller backed by real filesystem service
+- [x] Create integration step files consuming the same Gherkin specs — assertions verify structural properties (non-empty results, valid HTML, correct ordering) not specific content:
+  - [x] `test/integration/be-steps/health-check.steps.ts` → `specs/apps/ayokoding-web/be/gherkin/health/health-check.feature`
+  - [x] `test/integration/be-steps/content-api.steps.ts` → `specs/apps/ayokoding-web/be/gherkin/content-api/content-api.feature`
+  - [x] `test/integration/be-steps/search-api.steps.ts` → `specs/apps/ayokoding-web/be/gherkin/search-api/search-api.feature`
+  - [x] `test/integration/be-steps/navigation-api.steps.ts` → `specs/apps/ayokoding-web/be/gherkin/navigation-api/navigation-api.feature`
+  - [x] `test/integration/be-steps/i18n-api.steps.ts` → `specs/apps/ayokoding-web/be/gherkin/i18n/i18n-api.feature`
+- [x] Add Gherkin spec inputs to `test:integration` in `project.json`: `"inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding-web/**/*.feature"]` (even though `cache: false`, this documents the dependency for consistency with `test:unit` and `test:quick`)
+- [x] Verify `nx run ayokoding-web:test:integration` passes
 - [ ] Commit: `feat(ayokoding-web): add integration tests with FileSystemContentRepository`
 
 ### Phase 8: Add Oxlint Config for Unused Code Errors

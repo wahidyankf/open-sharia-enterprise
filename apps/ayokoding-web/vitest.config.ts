@@ -59,6 +59,15 @@ export default defineConfig({
           setupFiles: ["./src/test/setup.ts"],
         },
       },
+      {
+        plugins: sharedPlugins,
+        test: {
+          name: "integration",
+          include: ["test/integration/be-steps/**/*.steps.ts", "**/*.integration.{test,spec}.{ts,tsx}"],
+          exclude: ["node_modules"],
+          environment: "node",
+        },
+      },
     ],
   },
 });
