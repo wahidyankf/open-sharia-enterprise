@@ -8,12 +8,13 @@ import { TableOfContents } from "@/components/layout/toc";
 import { PrevNext } from "@/components/layout/prev-next";
 import { MarkdownRenderer } from "@/components/content/markdown-renderer";
 import { TRPCError } from "@trpc/server";
-import { getContentIndex } from "@/server/content/index";
+import { createTRPCContext } from "@/server/trpc/init";
 
 export const dynamicParams = false;
 
 export async function generateStaticParams({ params }: { params: { locale: string } }) {
-  const index = await getContentIndex();
+  const { contentService } = createTRPCContext();
+  const index = await contentService.getIndex();
   const slugs: { slug: string[] }[] = [];
 
   for (const [key, meta] of index.contentMap) {

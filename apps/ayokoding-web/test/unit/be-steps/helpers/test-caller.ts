@@ -144,7 +144,14 @@ vi.mock("@/server/content/search-index", () => ({
 }));
 
 import { createCallerFactory } from "@/server/trpc/init";
+import type { TRPCContext } from "@/server/trpc/init";
 import { appRouter } from "@/server/trpc/router";
+import { ContentService } from "@/server/content/service";
+import { InMemoryContentRepository } from "@/server/content/repository-memory";
+
+// Provide a typed context — actual calls are intercepted by vi.mock() above
+const stubRepository = new InMemoryContentRepository([], new Map());
+const stubContext: TRPCContext = { contentService: new ContentService(stubRepository) };
 
 const createCaller = createCallerFactory(appRouter);
-export const testCaller = createCaller({});
+export const testCaller = createCaller(stubContext);

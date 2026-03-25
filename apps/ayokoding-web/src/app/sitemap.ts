@@ -1,8 +1,9 @@
 import type { MetadataRoute } from "next";
-import { getContentIndex } from "@/server/content/index";
+import { createTRPCContext } from "@/server/trpc/init";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const index = await getContentIndex();
+  const { contentService } = createTRPCContext();
+  const index = await contentService.getIndex();
   const entries: MetadataRoute.Sitemap = [];
 
   for (const [, meta] of index.contentMap) {

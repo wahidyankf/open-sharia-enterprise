@@ -1,7 +1,19 @@
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
+import { ContentService } from "@/server/content/service";
+import { FileSystemContentRepository } from "@/server/content/repository-fs";
 
-const t = initTRPC.create({
+export interface TRPCContext {
+  contentService: ContentService;
+}
+
+const defaultContentService = new ContentService(new FileSystemContentRepository());
+
+export function createTRPCContext(): TRPCContext {
+  return { contentService: defaultContentService };
+}
+
+const t = initTRPC.context<TRPCContext>().create({
   transformer: superjson,
 });
 

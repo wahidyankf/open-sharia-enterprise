@@ -1,9 +1,10 @@
-import { getContentIndex } from "@/server/content/index";
+import { createTRPCContext } from "@/server/trpc/init";
 
 export const dynamic = "force-static";
 
 export async function GET() {
-  const index = await getContentIndex();
+  const { contentService } = createTRPCContext();
+  const index = await contentService.getIndex();
   const items: string[] = [];
 
   for (const [, meta] of index.contentMap) {

@@ -59,7 +59,7 @@
 - [x] Create `src/server/content/repository-fs.ts` — `FileSystemContentRepository` wrapping current `reader.ts` functions
 - [x] Create `src/server/content/repository-memory.ts` — `InMemoryContentRepository` with Maps for fixture data
 - [x] Run `nx run ayokoding-web:typecheck` to confirm both implementations satisfy the `ContentRepository` interface
-- [ ] Commit: `feat(ayokoding-web): add ContentRepository interface with fs and in-memory implementations`
+- [x] Commit: `feat(ayokoding-web): add ContentRepository interface with fs and in-memory implementations`
 
 ### Phase 5: Refactor Content Service Layer
 
@@ -67,25 +67,25 @@
 
 **Implementation Steps**:
 
-- [ ] Create `src/server/content/service.ts` — `ContentService` class:
+- [x] Create `src/server/content/service.ts` — `ContentService` class:
   - Constructor takes `ContentRepository`
   - Moves index building logic from `index.ts` (`buildContentIndex`, `buildTrees`, `computePrevNext`)
   - Moves search logic from `search-index.ts` (`buildSearchIndex`, `searchContent`)
   - Exposes: `getBySlug()`, `listChildren()`, `getTree()`, `search()`, `getIndex()`
   - Calls `parseMarkdown()` internally for `getBySlug()`
-- [ ] Update `src/server/trpc/init.ts`:
-  - [ ] Change `initTRPC.create(...)` to `initTRPC.context<{ contentService: ContentService }>().create(...)`
-  - [ ] Instantiate `ContentService` with `FileSystemContentRepository` above the `initTRPC` call
-  - [ ] Export `createTRPCContext` returning `{ contentService }`
-- [ ] Update the tRPC route handler adapter (`src/app/api/trpc/[trpc]/route.ts`) to call `createTRPCContext` and pass it to the fetch handler
-- [ ] Update the server-side tRPC caller (`src/lib/trpc/server.ts`) to pass a real `ContentService` context when creating the caller
-- [ ] Refactor `src/server/trpc/procedures/content.ts` — delegate to `ctx.contentService` instead of importing module functions
-- [ ] Refactor `src/server/trpc/procedures/search.ts` — delegate to `ctx.contentService`
-- [ ] Update `src/app/sitemap.ts`, `src/app/feed.xml/route.ts`, `generateStaticParams` — use shared `ContentService` singleton
-- [ ] Run `nx run ayokoding-web:typecheck` to confirm all consumers compile before removing source files
-- [ ] Remove `src/server/content/index.ts` (logic moved to `service.ts`)
-- [ ] Remove `src/server/content/search-index.ts` (logic moved to `service.ts`)
-- [ ] Run `nx run ayokoding-web:typecheck` to verify no broken imports after deletions
+- [x] Update `src/server/trpc/init.ts`:
+  - [x] Change `initTRPC.create(...)` to `initTRPC.context<{ contentService: ContentService }>().create(...)`
+  - [x] Instantiate `ContentService` with `FileSystemContentRepository` above the `initTRPC` call
+  - [x] Export `createTRPCContext` returning `{ contentService }`
+- [x] Update the tRPC route handler adapter (`src/app/api/trpc/[trpc]/route.ts`) to call `createTRPCContext` and pass it to the fetch handler
+- [x] Update the server-side tRPC caller (`src/lib/trpc/server.ts`) to pass a real `ContentService` context when creating the caller
+- [x] Refactor `src/server/trpc/procedures/content.ts` — delegate to `ctx.contentService` instead of importing module functions
+- [x] Refactor `src/server/trpc/procedures/search.ts` — delegate to `ctx.contentService`
+- [x] Update `src/app/sitemap.ts`, `src/app/feed.xml/route.ts`, `generateStaticParams` — use shared `ContentService` singleton
+- [x] Run `nx run ayokoding-web:typecheck` to confirm all consumers compile before removing source files
+- [x] Remove `src/server/content/index.ts` (logic moved to `service.ts`)
+- [x] Remove `src/server/content/search-index.ts` (logic moved to `service.ts`)
+- [x] Run `nx run ayokoding-web:typecheck` to verify no broken imports after deletions
 - [ ] Commit: `refactor(ayokoding-web): extract ContentService with repository injection`
 
 ### Phase 6: Refactor Unit Tests to Use InMemoryContentRepository
