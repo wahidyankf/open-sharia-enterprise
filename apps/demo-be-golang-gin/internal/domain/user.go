@@ -56,12 +56,15 @@ type RefreshToken struct {
 	CreatedAt time.Time
 }
 
-// BlacklistedToken represents a blacklisted access token JTI.
-type BlacklistedToken struct {
+// RevokedToken represents a revoked access token JTI.
+type RevokedToken struct {
 	JTI       string    `gorm:"primaryKey"`
 	ExpiresAt time.Time `gorm:"not null"`
 	CreatedAt time.Time
 }
+
+// TableName overrides the default GORM table name.
+func (RevokedToken) TableName() string { return "revoked_tokens" }
 
 var (
 	emailRegex    = regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`)

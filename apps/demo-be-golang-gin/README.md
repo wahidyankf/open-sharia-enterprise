@@ -60,6 +60,50 @@ nx lint demo-be-golang-gin                    # Run golangci-lint
 `codegen` generates Go types from the OpenAPI contract spec into `generated-contracts/` and is a
 dependency of both `typecheck` and `build`.
 
+## Database Migrations
+
+Schema migrations use [goose v3](https://github.com/pressly/goose) with SQL migration files
+embedded at compile time via `embed.FS`. GORM is retained for all query operations — only schema
+creation has moved to goose.
+
+### Migration files
+
+Migration files live in `db/migrations/` and follow the `NNN_description.sql` naming convention:
+
+| File                            | Table            | Description                            |
+| ------------------------------- | ---------------- | -------------------------------------- |
+| `001_create_users.sql`          | `users`          | User accounts with 6 audit columns     |
+| `002_create_refresh_tokens.sql` | `refresh_tokens` | Refresh token storage                  |
+| `003_create_revoked_tokens.sql` | `revoked_tokens` | Revoked access token JTIs              |
+| `004_create_expenses.sql`       | `expenses`       | Financial entries (income and expense) |
+| `005_create_attachments.sql`    | `attachments`    | Files attached to expense entries      |
+
+### How migrations run
+
+`GORMStore.Migrate()` is called at startup. It creates a goose provider from the embedded
+`db/migrations/*.sql` files and applies any pending `Up` migrations. The goose version table
+(`goose_db_version`) tracks applied migrations.
+
+The dialect is auto-detected from the GORM dialector name (`postgres` or `sqlite`), so the
+same code path works in production (PostgreSQL) and in legacy SQLite-based local development.
+
+### Adding a new migration
+
+```bash
+# Create a new sequential migration file
+touch apps/demo-be-golang-gin/db/migrations/006_description.sql
+```
+
+Each file must contain `-- +goose Up` and `-- +goose Down` sections:
+
+```sql
+-- +goose Up
+ALTER TABLE users ADD COLUMN phone TEXT;
+
+-- +goose Down
+ALTER TABLE users DROP COLUMN phone;
+```
+
 ## API Endpoints
 
 See [plan README](../../plans/done/2026-03-11__demo-be-golang-gin/README.md) for the full API surface.
