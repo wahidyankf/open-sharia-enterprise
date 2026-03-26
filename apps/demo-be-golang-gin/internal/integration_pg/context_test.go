@@ -84,7 +84,7 @@ func cleanDB(db *gorm.DB) error {
 	tables := []string{
 		"attachments",
 		"expenses",
-		"blacklisted_tokens",
+		"revoked_tokens",
 		"refresh_tokens",
 		"users",
 	}

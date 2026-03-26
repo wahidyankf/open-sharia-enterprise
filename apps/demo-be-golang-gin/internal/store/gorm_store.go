@@ -7,8 +7,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/pressly/goose/v3"
 	"gorm.io/gorm"
 
+	dbmigrations "github.com/wahidyankf/open-sharia-enterprise/apps/demo-be-golang-gin/db"
 	"github.com/wahidyankf/open-sharia-enterprise/apps/demo-be-golang-gin/internal/domain"
 )
 
@@ -22,15 +24,28 @@ func NewGORMStore(db *gorm.DB) *GORMStore {
 	return &GORMStore{db: db}
 }
 
-// Migrate runs auto-migrations for all domain models.
+// Migrate runs goose SQL migrations from the embedded migration files.
+// It selects the goose dialect based on the GORM dialector name so the same
+// method works with both PostgreSQL (production) and SQLite (legacy tests).
 func (s *GORMStore) Migrate() error {
-	return s.db.AutoMigrate(
-		&domain.User{},
-		&domain.RefreshToken{},
-		&domain.BlacklistedToken{},
-		&domain.Expense{},
-		&domain.Attachment{},
+	sqlDB, err := s.db.DB()
+	if err != nil {
+		return err
+	}
+
+	dialect := goose.DialectPostgres
+	if s.db.Dialector.Name() == "sqlite" {
+		dialect = goose.DialectSQLite3
+	}
+
+	provider, err := goose.NewProvider(dialect, sqlDB, dbmigrations.EmbedMigrations,
+		goose.WithVerbose(false),
 	)
+	if err != nil {
+		return err
+	}
+	_, err = provider.Up(context.Background())
+	return err
 }
 
 // CreateUser stores a new user.
@@ -147,15 +162,15 @@ func (s *GORMStore) RevokeAllRefreshTokensForUser(_ context.Context, userID stri
 	return s.db.Model(&domain.RefreshToken{}).Where("user_id = ?", userID).Update("revoked", true).Error
 }
 
-// BlacklistAccessToken adds an access token JTI to the blacklist.
+// BlacklistAccessToken adds an access token JTI to the revoked tokens table.
 func (s *GORMStore) BlacklistAccessToken(_ context.Context, jti string, expiresAt time.Time) error {
-	return s.db.Create(&domain.BlacklistedToken{JTI: jti, ExpiresAt: expiresAt}).Error
+	return s.db.Create(&domain.RevokedToken{JTI: jti, ExpiresAt: expiresAt}).Error
 }
 
-// IsAccessTokenBlacklisted checks if an access token JTI is blacklisted.
+// IsAccessTokenBlacklisted checks if an access token JTI is in the revoked tokens table.
 func (s *GORMStore) IsAccessTokenBlacklisted(_ context.Context, jti string) (bool, error) {
 	var count int64
-	err := s.db.Model(&domain.BlacklistedToken{}).Where("jti = ?", jti).Count(&count).Error
+	err := s.db.Model(&domain.RevokedToken{}).Where("jti = ?", jti).Count(&count).Error
 	return count > 0, err
 }
 
@@ -360,7 +375,7 @@ func (s *GORMStore) PLReport(_ context.Context, q PLReportQuery) (*domain.PLRepo
 }
 
 // ResetDB deletes all user-created data (for test use only).
-// Deletions follow FK constraint order: attachments → expenses → refresh_tokens → blacklisted_tokens → users.
+// Deletions follow FK constraint order: attachments → expenses → refresh_tokens → revoked_tokens → users.
 func (s *GORMStore) ResetDB(_ context.Context) error {
 	if err := s.db.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&domain.Attachment{}).Error; err != nil {
 		return err
@@ -371,7 +386,7 @@ func (s *GORMStore) ResetDB(_ context.Context) error {
 	if err := s.db.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&domain.RefreshToken{}).Error; err != nil {
 		return err
 	}
-	if err := s.db.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&domain.BlacklistedToken{}).Error; err != nil {
+	if err := s.db.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&domain.RevokedToken{}).Error; err != nil {
 		return err
 	}
 	return s.db.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&domain.User{}).Error
