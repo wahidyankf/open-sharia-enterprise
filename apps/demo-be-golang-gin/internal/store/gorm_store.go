@@ -3,6 +3,8 @@ package store
 import (
 	"context"
 	"errors"
+	"fmt"
+	"io/fs"
 	"math"
 	"strings"
 	"time"
@@ -38,7 +40,14 @@ func (s *GORMStore) Migrate() error {
 		dialect = goose.DialectSQLite3
 	}
 
-	provider, err := goose.NewProvider(dialect, sqlDB, dbmigrations.EmbedMigrations,
+	// The embed.FS has files under "migrations/" subdirectory — use fs.Sub to
+	// give goose an FS rooted at the migrations directory.
+	migrationsFS, err := fs.Sub(dbmigrations.EmbedMigrations, "migrations")
+	if err != nil {
+		return fmt.Errorf("failed to get migrations sub-FS: %w", err)
+	}
+
+	provider, err := goose.NewProvider(dialect, sqlDB, migrationsFS,
 		goose.WithVerbose(false),
 	)
 	if err != nil {
