@@ -100,17 +100,19 @@
     margin: 1rem 0;
   }
 
+  .prose figure[data-rehype-pretty-code-figure] pre,
   figure[data-rehype-pretty-code-figure] pre {
     padding: 1rem;
     border-radius: 0.5rem;
     overflow-x: auto;
-    background-color: var(--shiki-light-bg);
-    color: var(--shiki-light);
+    background-color: var(--shiki-light-bg, #f6f8fa);
+    color: var(--shiki-light, #24292e);
   }
 
+  .dark .prose figure[data-rehype-pretty-code-figure] pre,
   .dark figure[data-rehype-pretty-code-figure] pre {
-    background-color: var(--shiki-dark-bg);
-    color: var(--shiki-dark);
+    background-color: var(--shiki-dark-bg, #24292e);
+    color: var(--shiki-dark, #e1e4e8);
   }
 
   figure[data-rehype-pretty-code-figure] code {
@@ -125,5 +127,21 @@
 
   .dark figure[data-rehype-pretty-code-figure] code span {
     color: var(--shiki-dark);
+  }
+
+  /* Plain code blocks (no language / not processed by rehype-pretty-code) */
+  .prose pre:not(figure[data-rehype-pretty-code-figure] pre) {
+    background-color: #f6f8fa;
+    color: #24292e;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    font-size: 0.875rem;
+    line-height: 1.7;
+  }
+
+  .dark .prose pre:not(figure[data-rehype-pretty-code-figure] pre) {
+    background-color: #24292e;
+    color: #e1e4e8;
   }
 }
