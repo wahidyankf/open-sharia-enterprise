@@ -11,7 +11,8 @@
         ch.qos.logback/logback-classic {:mvn/version "1.5.18"}
         com.zaxxer/HikariCP          {:mvn/version "6.3.0"}
         org.clojure/clojure          {:mvn/version "1.12.0"}
-        metosin/malli                {:mvn/version "0.20.1"}}
+        metosin/malli                {:mvn/version "0.20.1"}
+        migratus/migratus            {:mvn/version "1.6.5"}}
 
  :aliases
  {:test

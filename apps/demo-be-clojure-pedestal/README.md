@@ -58,6 +58,25 @@ export DB_PASSWORD="demo_be_cjpd"
 docker-compose up
 ```
 
+## Database Migrations
+
+Production schema is managed by [Migratus](https://github.com/yogthos/migratus). Migration files live
+in `resources/migrations/` and follow the numbered-pair convention:
+
+| File                                                                      | Purpose                                      |
+| ------------------------------------------------------------------------- | -------------------------------------------- |
+| `001-create-users.up.sql` / `001-create-users.down.sql`                   | Users table (with 6 audit columns)           |
+| `002-create-refresh-tokens.up.sql` / `002-create-refresh-tokens.down.sql` | Refresh tokens (PostgreSQL UUID/TIMESTAMPTZ) |
+| `003-create-revoked-tokens.up.sql` / `003-create-revoked-tokens.down.sql` | Revoked JWTs                                 |
+| `004-create-expenses.up.sql` / `004-create-expenses.down.sql`             | Expenses                                     |
+| `005-create-attachments.up.sql` / `005-create-attachments.down.sql`       | Attachments (BYTEA)                          |
+
+Migrations run automatically on application startup via `migratus/migrate`. Migratus tracks applied
+migrations in a `schema_migrations` table it creates on first run.
+
+Unit and BDD tests bypass Migratus entirely — they call `schema/create-schema!` directly against
+an in-memory SQLite database where PostgreSQL-specific syntax is not supported.
+
 ## Test Architecture
 
 The project uses a three-level test architecture aligned with the monorepo standard:
