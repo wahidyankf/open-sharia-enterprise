@@ -34,7 +34,7 @@ func (s *GORMStore) Migrate() error {
 	}
 
 	dialect := goose.DialectPostgres
-	if s.db.Dialector.Name() == "sqlite" {
+	if s.db.Name() == "sqlite" {
 		dialect = goose.DialectSQLite3
 	}
 
