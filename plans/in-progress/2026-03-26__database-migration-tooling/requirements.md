@@ -176,6 +176,13 @@ Feature: Database migration tooling for all demo apps
     Then it names the migration tool used
     And it describes how to create a new migration
     And it describes how migrations run (startup vs CLI)
+
+  Scenario: All related CI workflows pass
+    Given all changes are pushed to main
+    When the following GitHub Actions workflows run
+    Then "main-ci.yml" passes
+    And all 11 "test-demo-be-*.yml" workflows pass (or pre-existing failures are documented)
+    And "test-demo-fs-ts-nextjs.yml" passes
 ```
 
 ## Risk Assessment

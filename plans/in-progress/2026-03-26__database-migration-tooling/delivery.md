@@ -173,7 +173,7 @@ for reference. Phase 6 (validation) runs after all phases complete.
   - Add migration tool as a component in C4 diagram if not already present
 - [ ] Commit: `docs(governance): generalize database audit trail pattern, add licensing decisions`
 
-### Phase 6: Validation
+### Phase 6: Local Validation
 
 - [ ] `nx affected -t test:quick` passes for all modified apps
 - [ ] `nx affected -t test:integration` passes for all modified apps with docker-compose
@@ -185,3 +185,55 @@ for reference. Phase 6 (validation) runs after all phases complete.
 - [ ] Verify no remaining `AutoMigrate()`, `create_all()`, `EnsureCreated()`, `create-schema!`, or
       inline DDL `CREATE TABLE` calls in modified apps (except within migration files themselves)
 - [ ] Verify all Dockerfiles, docker-compose files, and GitHub Actions workflows still work
+
+### Phase 7: CI Verification
+
+Push all changes and verify all related GitHub Actions workflows pass. Trigger manually via
+`gh workflow run` if needed (all workflows below support `workflow_dispatch`).
+
+#### Main CI
+
+- [ ] `main-ci.yml` — passes on push to `main`
+
+#### Demo Backend E2E Workflows (all must pass)
+
+- [ ] `test-demo-be-java-springboot.yml` — Test - Demo BE (Java/Spring Boot)
+- [ ] `test-demo-be-java-vertx.yml` — Test - Demo BE (Java/Vert.x)
+- [ ] `test-demo-be-python-fastapi.yml` — Test - Demo BE (Python/FastAPI)
+- [ ] `test-demo-be-golang-gin.yml` — Test - Demo BE (Go/Gin)
+- [ ] `test-demo-be-kotlin-ktor.yml` — Test - Demo BE (Kotlin/Ktor)
+- [ ] `test-demo-be-fsharp-giraffe.yml` — Test - Demo BE (F#/Giraffe)
+- [ ] `test-demo-be-csharp-aspnetcore.yml` — Test - Demo BE (C#/ASP.NET Core)
+- [ ] `test-demo-be-clojure-pedestal.yml` — Test - Demo BE (Clojure/Pedestal)
+- [ ] `test-demo-be-ts-effect.yml` — Test - Demo BE (TypeScript/Effect)
+- [ ] `test-demo-be-rust-axum.yml` — Test - Demo BE (Rust/Axum)
+- [ ] `test-demo-be-elixir-phoenix.yml` — Test - Demo BE (Elixir/Phoenix)
+
+#### Demo Fullstack E2E Workflows (must pass)
+
+- [ ] `test-demo-fs-ts-nextjs.yml` — Test - Demo FS (TypeScript/Next.js)
+
+#### Pre-Existing Failures (document, do not block)
+
+If a workflow was already failing before this plan's changes (e.g., `test-demo-be-ts-effect` has
+been failing due to a Docker `npm ci` issue since 2026-03-24), document the pre-existing failure
+and do not block the plan on it. Verify the failure is unrelated to migration changes by checking
+the failure predates the plan's commits.
+
+#### Trigger Commands
+
+```bash
+# Trigger all 12 demo workflows manually
+gh workflow run test-demo-be-java-springboot.yml --ref main
+gh workflow run test-demo-be-java-vertx.yml --ref main
+gh workflow run test-demo-be-python-fastapi.yml --ref main
+gh workflow run test-demo-be-golang-gin.yml --ref main
+gh workflow run test-demo-be-kotlin-ktor.yml --ref main
+gh workflow run test-demo-be-fsharp-giraffe.yml --ref main
+gh workflow run test-demo-be-csharp-aspnetcore.yml --ref main
+gh workflow run test-demo-be-clojure-pedestal.yml --ref main
+gh workflow run test-demo-be-ts-effect.yml --ref main
+gh workflow run test-demo-be-rust-axum.yml --ref main
+gh workflow run test-demo-be-elixir-phoenix.yml --ref main
+gh workflow run test-demo-fs-ts-nextjs.yml --ref main
+```
