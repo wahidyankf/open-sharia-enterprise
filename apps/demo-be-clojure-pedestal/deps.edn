@@ -17,11 +17,15 @@
  :aliases
  {:test
   {:extra-paths ["test"]
+   ;; Force English locale so Cucumber's {double} parser uses '.' as decimal
+   ;; separator regardless of the host JVM locale (fixes id_ID locale issues).
+   :jvm-opts ["-Duser.language=en" "-Duser.country=US"]
    :extra-deps  {lambdaisland/kaocha            {:mvn/version "1.91.1392"}
                  lambdaisland/kaocha-cucumber    {:mvn/version "0.11.100"}}}
 
   :coverage
   {:extra-paths ["test"]
+   :jvm-opts ["-Duser.language=en" "-Duser.country=US"]
    :extra-deps  {lambdaisland/kaocha            {:mvn/version "1.91.1392"}
                  lambdaisland/kaocha-cucumber    {:mvn/version "0.11.100"}
                  cloverage/cloverage            {:mvn/version "1.2.4"}
