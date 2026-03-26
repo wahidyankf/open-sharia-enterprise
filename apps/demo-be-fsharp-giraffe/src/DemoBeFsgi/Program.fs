@@ -7,6 +7,7 @@ open Microsoft.EntityFrameworkCore
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Hosting
 open Giraffe
+open DbUp
 open DemoBeFsgi.Infrastructure.AppDbContext
 open DemoBeFsgi.Auth.JwtMiddleware
 open DemoBeFsgi.Auth.AdminMiddleware
@@ -122,11 +123,19 @@ let main args =
                 |> ignore)
             .Build()
 
-    use scope = host.Services.CreateScope()
+    let connStr = Environment.GetEnvironmentVariable("DATABASE_URL")
 
-    let db = scope.ServiceProvider.GetRequiredService<AppDbContext>()
+    if not (String.IsNullOrEmpty connStr) then
+        let result =
+            DeployChanges.To
+                .PostgresqlDatabase(connStr)
+                .WithScriptsEmbeddedInAssembly(Reflection.Assembly.GetExecutingAssembly())
+                .LogToConsole()
+                .Build()
+                .PerformUpgrade()
 
-    db.Database.EnsureCreated() |> ignore
+        if not result.Successful then
+            failwith (sprintf "Database migration failed: %s" result.Error.Message)
 
     host.Run()
     0
