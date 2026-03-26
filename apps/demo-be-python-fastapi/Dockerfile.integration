@@ -14,8 +14,10 @@ COPY pyproject.toml uv.lock ./
 # Sync all dependencies (including dev) without the project itself
 RUN uv sync --dev --no-install-project --frozen
 
-# Copy source and tests
+# Copy source, migrations, and tests
 COPY src/ src/
+COPY alembic/ alembic/
+COPY alembic.ini alembic.ini
 COPY generated_contracts/ generated_contracts/
 COPY tests/ tests/
 
