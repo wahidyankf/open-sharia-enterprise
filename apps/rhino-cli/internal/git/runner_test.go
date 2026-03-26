@@ -1167,3 +1167,167 @@ func TestStep6ElixirFormat_RelPathPassedToMix(t *testing.T) {
 		t.Errorf("expected %q, got %q", expected, rel)
 	}
 }
+
+// --------------------------------------------------------------------------
+// step5bSyncLockfiles
+// --------------------------------------------------------------------------
+
+func TestStep5bSyncLockfiles_NoPackageJsonStaged_Noop(t *testing.T) {
+	d := fakeDeps()
+	out := &bytes.Buffer{}
+	d.Stdout = out
+	err := step5bSyncLockfiles(t.TempDir(), []string{"README.md", "apps/foo/src/main.ts"}, d)
+	if err != nil {
+		t.Fatalf("expected no error, got: %v", err)
+	}
+	// No output when nothing to sync.
+	if strings.Contains(out.String(), "Syncing") {
+		t.Error("expected no sync message when no package.json staged")
+	}
+}
+
+func TestStep5bSyncLockfiles_PackageJsonStagedButNoLockfile_Noop(t *testing.T) {
+	d := fakeDeps()
+	out := &bytes.Buffer{}
+	d.Stdout = out
+	tmpDir := t.TempDir()
+
+	// Create apps/myapp/package.json but NO package-lock.json.
+	appDir := filepath.Join(tmpDir, "apps", "myapp")
+	_ = os.MkdirAll(appDir, 0o755)
+	_ = os.WriteFile(filepath.Join(appDir, "package.json"), []byte("{}"), 0o644)
+
+	err := step5bSyncLockfiles(tmpDir, []string{"apps/myapp/package.json"}, d)
+	if err != nil {
+		t.Fatalf("expected no error, got: %v", err)
+	}
+	if strings.Contains(out.String(), "Syncing") {
+		t.Error("expected no sync message when no lockfile exists")
+	}
+}
+
+func TestStep5bSyncLockfiles_PackageJsonStagedWithLockfile_RegeneratesAndStages(t *testing.T) {
+	rec := &recordingExec{}
+	d := fakeDeps()
+	d.ExecCommand = rec.exec
+	out := &bytes.Buffer{}
+	d.Stdout = out
+	tmpDir := t.TempDir()
+
+	// Create apps/myapp/ with both package.json and package-lock.json.
+	appDir := filepath.Join(tmpDir, "apps", "myapp")
+	_ = os.MkdirAll(appDir, 0o755)
+	_ = os.WriteFile(filepath.Join(appDir, "package.json"), []byte("{}"), 0o644)
+	_ = os.WriteFile(filepath.Join(appDir, "package-lock.json"), []byte("{}"), 0o644)
+
+	err := step5bSyncLockfiles(tmpDir, []string{"apps/myapp/package.json"}, d)
+	if err != nil {
+		t.Fatalf("expected no error, got: %v", err)
+	}
+
+	// Verify npm install --package-lock-only was called.
+	foundNpm := false
+	for _, call := range rec.calls {
+		if len(call) >= 3 && call[0] == "npm" && call[1] == "install" && call[2] == "--package-lock-only" {
+			foundNpm = true
+		}
+	}
+	if !foundNpm {
+		t.Error("expected npm install --package-lock-only to be called")
+	}
+
+	// Verify git add was called for the lockfile.
+	foundGitAdd := false
+	for _, call := range rec.calls {
+		if len(call) >= 3 && call[0] == "git" && call[1] == "add" {
+			if strings.Contains(call[2], "package-lock.json") {
+				foundGitAdd = true
+			}
+		}
+	}
+	if !foundGitAdd {
+		t.Error("expected git add for package-lock.json to be called")
+	}
+
+	if !strings.Contains(out.String(), "✅ All app lockfiles synced") {
+		t.Error("expected success message")
+	}
+}
+
+func TestStep5bSyncLockfiles_NestedPackageJson_Ignored(t *testing.T) {
+	d := fakeDeps()
+	out := &bytes.Buffer{}
+	d.Stdout = out
+	tmpDir := t.TempDir()
+
+	// Create deeply nested package.json (should be ignored — only direct apps/*/package.json).
+	nestedDir := filepath.Join(tmpDir, "apps", "myapp", "subdir")
+	_ = os.MkdirAll(nestedDir, 0o755)
+	_ = os.WriteFile(filepath.Join(nestedDir, "package.json"), []byte("{}"), 0o644)
+	_ = os.WriteFile(filepath.Join(nestedDir, "package-lock.json"), []byte("{}"), 0o644)
+
+	err := step5bSyncLockfiles(tmpDir, []string{"apps/myapp/subdir/package.json"}, d)
+	if err != nil {
+		t.Fatalf("expected no error, got: %v", err)
+	}
+	if strings.Contains(out.String(), "Syncing") {
+		t.Error("expected no sync for nested package.json")
+	}
+}
+
+func TestStep5bSyncLockfiles_NpmFails_ReturnsError(t *testing.T) {
+	d := fakeDeps()
+	d.ExecCommand = failExec
+	d.Stdout = &bytes.Buffer{}
+	d.Stderr = &bytes.Buffer{}
+	tmpDir := t.TempDir()
+
+	appDir := filepath.Join(tmpDir, "apps", "myapp")
+	_ = os.MkdirAll(appDir, 0o755)
+	_ = os.WriteFile(filepath.Join(appDir, "package.json"), []byte("{}"), 0o644)
+	_ = os.WriteFile(filepath.Join(appDir, "package-lock.json"), []byte("{}"), 0o644)
+
+	err := step5bSyncLockfiles(tmpDir, []string{"apps/myapp/package.json"}, d)
+	if err == nil {
+		t.Fatal("expected error when npm fails")
+	}
+	if !strings.Contains(err.Error(), "failed to regenerate package-lock.json") {
+		t.Errorf("unexpected error: %v", err)
+	}
+}
+
+func TestStep5bSyncLockfiles_MultipleApps_AllSynced(t *testing.T) {
+	rec := &recordingExec{}
+	d := fakeDeps()
+	d.ExecCommand = rec.exec
+	out := &bytes.Buffer{}
+	d.Stdout = out
+	tmpDir := t.TempDir()
+
+	// Create two apps with lockfiles.
+	for _, app := range []string{"app-a", "app-b"} {
+		appDir := filepath.Join(tmpDir, "apps", app)
+		_ = os.MkdirAll(appDir, 0o755)
+		_ = os.WriteFile(filepath.Join(appDir, "package.json"), []byte("{}"), 0o644)
+		_ = os.WriteFile(filepath.Join(appDir, "package-lock.json"), []byte("{}"), 0o644)
+	}
+
+	err := step5bSyncLockfiles(tmpDir, []string{
+		"apps/app-a/package.json",
+		"apps/app-b/package.json",
+	}, d)
+	if err != nil {
+		t.Fatalf("expected no error, got: %v", err)
+	}
+
+	// Count npm install calls — should be 2.
+	npmCalls := 0
+	for _, call := range rec.calls {
+		if len(call) >= 3 && call[0] == "npm" && call[1] == "install" {
+			npmCalls++
+		}
+	}
+	if npmCalls != 2 {
+		t.Errorf("expected 2 npm install calls, got %d", npmCalls)
+	}
+}

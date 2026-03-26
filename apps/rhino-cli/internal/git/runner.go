@@ -74,6 +74,9 @@ func Run(gitRoot string, deps Deps) error {
 	if err := step5LintStaged(gitRoot, deps); err != nil {
 		return err
 	}
+	if err := step5bSyncLockfiles(gitRoot, staged, deps); err != nil {
+		return err
+	}
 	if err := step6ElixirFormat(gitRoot, staged, deps); err != nil {
 		return err
 	}
@@ -207,6 +210,66 @@ func step5LintStaged(gitRoot string, deps Deps) error {
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("lint-staged failed: %w", err)
 	}
+	return nil
+}
+
+// step5bSyncLockfiles regenerates app-level package-lock.json when package.json is staged.
+//
+// Some apps (e.g. demo-be-ts-effect, organiclever-web) have their own package-lock.json
+// used by Dockerfile for `npm ci`. If package.json is updated but the lockfile is not
+// regenerated, `npm ci` fails in Docker builds (EUSAGE: lockfile out of sync).
+//
+// This step detects staged package.json files in app directories that have a sibling
+// package-lock.json, regenerates the lockfile, and auto-stages it.
+func step5bSyncLockfiles(gitRoot string, staged []string, deps Deps) error {
+	var appsToSync []string
+
+	for _, f := range staged {
+		// Match apps/*/package.json (exactly two path segments under apps/).
+		if !strings.HasPrefix(f, "apps/") || !strings.HasSuffix(f, "/package.json") {
+			continue
+		}
+		// Ensure it's a direct child of apps/ (e.g. apps/demo-be-ts-effect/package.json),
+		// not a nested path like apps/foo/bar/package.json.
+		parts := strings.Split(f, "/")
+		if len(parts) != 3 {
+			continue
+		}
+		appDir := filepath.Join(gitRoot, filepath.Dir(f))
+		lockfile := filepath.Join(appDir, "package-lock.json")
+		if _, err := os.Stat(lockfile); err == nil {
+			appsToSync = append(appsToSync, filepath.Dir(f))
+		}
+	}
+
+	if len(appsToSync) == 0 {
+		return nil
+	}
+
+	_, _ = fmt.Fprintln(deps.Stdout, "🔒 Syncing app-level package-lock.json files...")
+
+	for _, appRel := range appsToSync {
+		appDir := filepath.Join(gitRoot, appRel)
+		_, _ = fmt.Fprintf(deps.Stdout, "  Regenerating %s/package-lock.json...\n", appRel)
+
+		cmd := deps.ExecCommand("npm", "install", "--package-lock-only")
+		cmd.Dir = appDir
+		cmd.Stdout = deps.Stdout
+		cmd.Stderr = deps.Stderr
+		if err := cmd.Run(); err != nil {
+			return fmt.Errorf("failed to regenerate package-lock.json in %s: %w", appRel, err)
+		}
+
+		// Auto-stage the regenerated lockfile.
+		lockRel := filepath.Join(appRel, "package-lock.json")
+		addCmd := deps.ExecCommand("git", "add", lockRel)
+		addCmd.Dir = gitRoot
+		_ = addCmd.Run()
+
+		_, _ = fmt.Fprintf(deps.Stdout, "  ✅ %s/package-lock.json synced and staged\n", appRel)
+	}
+
+	_, _ = fmt.Fprintln(deps.Stdout, "✅ All app lockfiles synced")
 	return nil
 }
 

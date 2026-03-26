@@ -17,6 +17,7 @@ var gitPreCommitCmd = &cobra.Command{
   3. Run nx affected run-pre-commit (warn only on failure)
   4. Stage ayokoding-web content changes
   5. Run lint-staged
+  5b. Sync app-level package-lock.json files (if apps/*/package.json staged)
   6. Auto-format staged Elixir files with mix format
   7. Validate and fix docs file naming (if docs/ staged)
   8. Validate markdown links in staged files
