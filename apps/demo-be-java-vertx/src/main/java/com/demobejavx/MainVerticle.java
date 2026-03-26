@@ -81,7 +81,7 @@ public class MainVerticle extends AbstractVerticle {
         }
 
         Pool pool = createPgPool(databaseUrl);
-        return SchemaInitializer.initialize(pool)
+        return SchemaInitializer.initialize(vertx, databaseUrl)
                 .map(ignored -> new Repositories(
                         new PgUserRepository(pool),
                         new PgExpenseRepository(pool),

@@ -113,6 +113,56 @@ Runs Playwright against any backend implementation. See `apps/demo-be-e2e/`.
 | `nx run demo-be-java-vertx:test:integration`           | Docker + PG     | Slow    | No     |
 | `nx run demo-be-e2e:test:e2e --app=demo-be-java-vertx` | Full E2E        | Slowest | No     |
 
+## Database Migrations
+
+This project uses [Liquibase](https://www.liquibase.com/) for database schema management.
+
+**License**: Liquibase Core is licensed under the FSL-1.1-ALv2 license. This is not an OSI-approved
+open-source license, but it is acceptable for use in this project.
+
+### Migration file location
+
+Changelog files live under `src/main/resources/db/changelog/`:
+
+```
+db/changelog/
+├── db.changelog-master.yaml          # Master changelog — includes all changes/ files
+└── changes/
+    ├── 001-create-users.sql
+    ├── 002-create-refresh-tokens.sql
+    ├── 003-create-revoked-tokens.sql
+    ├── 004-create-expenses.sql
+    └── 005-create-attachments.sql
+```
+
+### How migrations run
+
+Migrations run automatically on application startup via the `SchemaInitializer` class. The
+`SchemaInitializer.initialize(vertx, databaseUrl)` method:
+
+1. Opens a short-lived standard JDBC connection (required by Liquibase) derived from the same
+   `DATABASE_URL` environment variable used to configure the reactive Vert.x pool.
+2. Runs `liquibase.update("")` on a Vert.x worker thread so the event loop is never blocked.
+3. Closes the JDBC connection after migrations complete.
+4. The reactive Vert.x `Pool` continues to handle all normal application queries.
+
+### How to create a new migration
+
+1. Create a new file in `src/main/resources/db/changelog/changes/` following the naming pattern
+   `NNN-description.sql` where `NNN` is the next sequence number.
+2. Start the file with the Liquibase SQL header:
+
+   ```sql
+   -- liquibase formatted sql
+
+   -- changeset demo-be:NNN-description dbms:postgresql
+   -- your SQL here
+   -- rollback DROP TABLE tablename;
+   ```
+
+3. The `includeAll` directive in `db.changelog-master.yaml` picks up the new file automatically on
+   the next startup.
+
 ## Related Documentation
 
 - [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) — Unit, integration, and E2E testing boundaries

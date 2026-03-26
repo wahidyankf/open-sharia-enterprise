@@ -23,6 +23,8 @@
         <jbcrypt.version>0.4</jbcrypt.version>
         <jspecify.version>1.0.0</jspecify.version>
         <jackson.version>2.18.3</jackson.version>
+        <liquibase.version>4.31.0</liquibase.version>
+        <postgresql.jdbc.version>42.7.5</postgresql.jdbc.version>
     </properties>
 
     <dependencyManagement>
@@ -108,6 +110,21 @@
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
             <version>3.0.2</version>
+        </dependency>
+
+        <!-- Liquibase for database migrations (programmatic API, no Spring Boot starter) -->
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>${liquibase.version}</version>
+        </dependency>
+
+        <!-- PostgreSQL JDBC driver — required by Liquibase to open a standard JDBC connection
+             for migration. Vert.x reactive client uses its own transport and does not pull this in. -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.jdbc.version}</version>
         </dependency>
 
         <!-- Jackson for JSON serialization -->

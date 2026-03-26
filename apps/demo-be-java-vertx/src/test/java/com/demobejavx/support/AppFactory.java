@@ -53,8 +53,8 @@ public final class AppFactory {
 
         pool = createPgPool(databaseUrl);
 
-        // Initialise schema (idempotent DDL — safe to call on every test run)
-        SchemaInitializer.initialize(pool)
+        // Run Liquibase migrations (idempotent — safe to call on every test run)
+        SchemaInitializer.initialize(vertx, databaseUrl)
                 .toCompletionStage()
                 .toCompletableFuture()
                 .get(30, TimeUnit.SECONDS);

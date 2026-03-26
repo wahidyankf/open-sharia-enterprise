@@ -1,78 +1,85 @@
 package com.demobejavx.db;
 
 import io.vertx.core.Future;
-import io.vertx.sqlclient.Pool;
+import io.vertx.core.Vertx;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.net.URI;
+import liquibase.Liquibase;
+import liquibase.database.Database;
+import liquibase.database.DatabaseFactory;
+import liquibase.database.jvm.JdbcConnection;
+import liquibase.resource.ClassLoaderResourceAccessor;
 
 /**
- * Creates all required database tables on first startup. Uses CREATE TABLE IF NOT EXISTS so it is
- * idempotent and safe to run on every application start.
+ * Runs Liquibase database migrations on application startup using the programmatic API.
+ *
+ * <p>Liquibase requires a standard JDBC connection. Since this is a Vert.x application that uses
+ * the reactive {@code Pool} for normal queries, {@code SchemaInitializer} opens a short-lived JDBC
+ * connection solely for the migration step, then closes it. The blocking Liquibase call is
+ * executed on a worker thread via {@link Vertx#executeBlocking} so the Vert.x event loop is never
+ * blocked.
  */
 public final class SchemaInitializer {
 
     private SchemaInitializer() {}
 
-    public static Future<Void> initialize(Pool pool) {
-        return pool.query(
-                        "CREATE TABLE IF NOT EXISTS users ("
-                                + "  id                    UUID         NOT NULL DEFAULT gen_random_uuid(),"
-                                + "  username              VARCHAR(50)  NOT NULL,"
-                                + "  email                 VARCHAR(255),"
-                                + "  display_name          VARCHAR(255),"
-                                + "  password_hash         VARCHAR(255) NOT NULL,"
-                                + "  role                  VARCHAR(20)  NOT NULL DEFAULT 'USER',"
-                                + "  status                VARCHAR(20)  NOT NULL DEFAULT 'ACTIVE',"
-                                + "  failed_login_attempts INT          NOT NULL DEFAULT 0,"
-                                + "  password_reset_token  VARCHAR(255),"
-                                + "  created_at            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),"
-                                + "  updated_at            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),"
-                                + "  CONSTRAINT pk_users PRIMARY KEY (id),"
-                                + "  CONSTRAINT uq_users_username UNIQUE (username)"
-                                + ")")
-                .execute()
-                .compose(ignored -> pool.query(
-                                "CREATE TABLE IF NOT EXISTS expenses ("
-                                        + "  id          UUID           NOT NULL DEFAULT gen_random_uuid(),"
-                                        + "  user_id     UUID           NOT NULL,"
-                                        + "  type        VARCHAR(10)    NOT NULL,"
-                                        + "  amount      DECIMAL        NOT NULL,"
-                                        + "  currency    VARCHAR(3)     NOT NULL,"
-                                        + "  category    VARCHAR(100)   NOT NULL,"
-                                        + "  description VARCHAR(500)   NOT NULL,"
-                                        + "  date        DATE           NOT NULL,"
-                                        + "  quantity    DECIMAL,"
-                                        + "  unit        VARCHAR(20),"
-                                        + "  created_at  TIMESTAMPTZ    NOT NULL DEFAULT NOW(),"
-                                        + "  updated_at  TIMESTAMPTZ    NOT NULL DEFAULT NOW(),"
-                                        + "  CONSTRAINT pk_expenses PRIMARY KEY (id),"
-                                        + "  CONSTRAINT fk_expenses_user FOREIGN KEY (user_id)"
-                                        + "    REFERENCES users(id)"
-                                        + ")")
-                        .execute())
-                .compose(ignored -> pool.query(
-                                "CREATE TABLE IF NOT EXISTS attachments ("
-                                        + "  id           UUID           NOT NULL DEFAULT gen_random_uuid(),"
-                                        + "  expense_id   UUID           NOT NULL,"
-                                        + "  user_id      UUID           NOT NULL,"
-                                        + "  filename     VARCHAR(255)   NOT NULL,"
-                                        + "  content_type VARCHAR(100)   NOT NULL,"
-                                        + "  size         BIGINT         NOT NULL,"
-                                        + "  data         BYTEA          NOT NULL,"
-                                        + "  created_at   TIMESTAMPTZ    NOT NULL DEFAULT NOW(),"
-                                        + "  CONSTRAINT pk_attachments PRIMARY KEY (id),"
-                                        + "  CONSTRAINT fk_attachments_expense FOREIGN KEY (expense_id)"
-                                        + "    REFERENCES expenses(id)"
-                                        + ")")
-                        .execute())
-                .compose(ignored -> pool.query(
-                                "CREATE TABLE IF NOT EXISTS revoked_tokens ("
-                                        + "  id         UUID         NOT NULL DEFAULT gen_random_uuid(),"
-                                        + "  jti        VARCHAR(512) NOT NULL,"
-                                        + "  user_id    UUID         NOT NULL,"
-                                        + "  revoked_at TIMESTAMPTZ  NOT NULL DEFAULT NOW(),"
-                                        + "  CONSTRAINT pk_revoked_tokens PRIMARY KEY (id),"
-                                        + "  CONSTRAINT uq_revoked_tokens_jti UNIQUE (jti)"
-                                        + ")")
-                        .execute())
-                .mapEmpty();
+    /**
+     * Runs all pending Liquibase migrations and returns a {@link Future} that completes when the
+     * migrations have finished.
+     *
+     * @param vertx      the Vert.x instance used to dispatch the blocking migration work
+     * @param databaseUrl the PostgreSQL URL in {@code postgresql://user:pass@host:port/db} format
+     * @return a {@code Future<Void>} that succeeds when migrations complete or fails on error
+     */
+    public static Future<Void> initialize(Vertx vertx, String databaseUrl) {
+        return vertx.executeBlocking(() -> {
+            runMigrations(databaseUrl);
+            return null;
+        });
+    }
+
+    private static void runMigrations(String databaseUrl) throws Exception {
+        String jdbcUrl = toJdbcUrl(databaseUrl);
+        URI uri = URI.create(databaseUrl);
+        String[] credentials = parseCredentials(uri);
+        String user = credentials[0];
+        String password = credentials[1];
+
+        try (Connection connection = DriverManager.getConnection(jdbcUrl, user, password)) {
+            Database database = DatabaseFactory.getInstance()
+                    .findCorrectDatabaseImplementation(new JdbcConnection(connection));
+            try (Liquibase liquibase = new Liquibase(
+                    "db/changelog/db.changelog-master.yaml",
+                    new ClassLoaderResourceAccessor(),
+                    database)) {
+                liquibase.update("");
+            }
+        }
+    }
+
+    /**
+     * Converts a {@code postgresql://user:pass@host:port/db} URL to a JDBC URL in the form
+     * {@code jdbc:postgresql://host:port/db}.
+     */
+    static String toJdbcUrl(String databaseUrl) {
+        URI uri = URI.create(databaseUrl);
+        String host = uri.getHost();
+        int port = uri.getPort() > 0 ? uri.getPort() : 5432;
+        String path = uri.getPath();
+        String database = path != null && path.startsWith("/") ? path.substring(1) : path;
+        return "jdbc:postgresql://" + host + ":" + port + "/" + database;
+    }
+
+    private static String[] parseCredentials(URI uri) {
+        String userInfo = uri.getUserInfo();
+        if (userInfo == null || userInfo.isBlank()) {
+            return new String[]{"", ""};
+        }
+        int colon = userInfo.indexOf(':');
+        if (colon >= 0) {
+            return new String[]{userInfo.substring(0, colon), userInfo.substring(colon + 1)};
+        }
+        return new String[]{userInfo, ""};
     }
 }
