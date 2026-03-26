@@ -1,7 +1,7 @@
 ---
 name: ayokoding-web-in-the-field-quality-gate
 goal: Validate in-the-field production guide quality and apply fixes iteratively until EXCELLENT status achieved with zero mechanical issues
-termination: Tutorial achieves EXCELLENT status with 20-40 guides, production code quality, and zero mechanical issues (runs indefinitely until achieved unless max-iterations provided)
+termination: "Tutorial achieves EXCELLENT status with 20-40 guides, production code quality, and zero mechanical issues on two consecutive validations (max-iterations defaults to 15)"
 inputs:
   - name: tutorial-path
     type: string
@@ -19,8 +19,9 @@ inputs:
     required: false
   - name: max-iterations
     type: number
-    description: Maximum check-fix cycles to prevent infinite loops (if not provided, runs until zero findings)
+    description: Maximum check-fix cycles to prevent infinite loops
     required: false
+    default: 15
   - name: max-concurrency
     type: number
     description: Maximum number of agents/tasks that can run concurrently during workflow execution
@@ -325,8 +326,11 @@ Determine whether to continue fixing or finalize.
 
 - Re-run checker (step 2) to get fresh report
 - Count findings based on mode level (same as Step 3)
-- If threshold-level findings = 0 AND iterations >= min-iterations: Proceed to step 6 (Finalization)
-- If threshold-level findings = 0 AND iterations < min-iterations: Loop back to step 3
+- Track `consecutive_zero_count` across iterations (resets to 0 when threshold-level findings > 0, increments when = 0)
+- If consecutive_zero_count >= 2 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Finalization — double-zero confirmed)
+- If consecutive_zero_count >= 2 AND iterations < min-iterations: Re-run checker and re-evaluate (need more iterations)
+- If consecutive_zero_count < 2 AND threshold-level findings = 0: Re-run checker and re-evaluate
+  (confirmation check — no fix or user review needed, just re-verify within this step)
 - If threshold-level findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed to step 6 with status `needs-improvement`
 - If threshold-level findings > 0 AND (max-iterations not provided OR iterations < max-iterations): Loop back to step 3
 
@@ -350,10 +354,10 @@ Report final status and summary.
 
 **Success** (`excellent`):
 
-- **lax**: Zero CRITICAL findings, 20-40 guides, production quality (HIGH/MEDIUM/LOW may exist)
-- **normal**: Zero CRITICAL/HIGH findings, 20-40 guides, production quality (MEDIUM/LOW may exist)
-- **strict**: Zero CRITICAL/HIGH/MEDIUM findings, 20-40 guides, production quality (LOW may exist)
-- **ocd**: Zero findings at all levels, 20-40 guides, production quality
+- **lax**: Zero CRITICAL findings on 2 consecutive checks, 20-40 guides, production quality (HIGH/MEDIUM/LOW may exist)
+- **normal**: Zero CRITICAL/HIGH findings on 2 consecutive checks, 20-40 guides, production quality (MEDIUM/LOW may exist)
+- **strict**: Zero CRITICAL/HIGH/MEDIUM findings on 2 consecutive checks, 20-40 guides, production quality (LOW may exist)
+- **ocd**: Zero findings at all levels on 2 consecutive checks, 20-40 guides, production quality
 
 **Partial** (`needs-improvement`):
 

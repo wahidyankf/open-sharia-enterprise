@@ -491,7 +491,7 @@ inputs:
     type: number
     description: Maximum check-fix cycles to prevent infinite loops
     required: false
-    default: 5
+    default: 15
 
 outputs:
   - name: final-status
@@ -531,8 +531,9 @@ outputs:
 
 **Decision**:
 
-- If threshold-level findings > 0: Proceed to fixing
-- If threshold-level findings = 0: Skip to success
+- If threshold-level findings > 0: Proceed to fixing (reset `consecutive_zero_count` to 0)
+- If threshold-level findings = 0: Initialize `consecutive_zero_count` to 1 (this check is the first
+  zero), proceed to Step 4 for confirmation re-check (see Consecutive Pass Requirement)
 ```
 
 **Step 3: Apply Fixes**
@@ -568,12 +569,21 @@ outputs:
   - **normal**: Count CRITICAL + HIGH
   - **strict**: Count CRITICAL + HIGH + MEDIUM
   - **ocd**: Count all levels
-- If threshold-level findings = 0 AND iterations >= min-iterations: Success
-- If threshold-level findings = 0 AND iterations < min-iterations: Loop back
+- Track `consecutive_zero_count` across iterations:
+  - If threshold-level findings = 0: increment `consecutive_zero_count`
+  - If threshold-level findings > 0: reset `consecutive_zero_count` to 0
+- If consecutive_zero_count >= 2 AND iterations >= min-iterations: Success (double-zero confirmed)
+- If consecutive_zero_count >= 2 AND iterations < min-iterations: Loop back to Step 4 (re-validate)
+- If consecutive_zero_count < 2 AND threshold-level findings = 0: Loop back to Step 4
+  (confirmation check — no fix needed, just re-verify)
 - If threshold-level findings > 0 AND iterations >= max-iterations: Partial
-- If threshold-level findings > 0 AND iterations < max-iterations: Loop back
+- If threshold-level findings > 0 AND iterations < max-iterations: Loop back to Step 3 (fix)
 
 **Below-threshold findings**: Continue to be reported in audit but don't affect iteration logic
+
+**Note**: Each check iteration (whether after a fix or a confirmation re-check) counts toward
+both `iterations` and `max-iterations`. The minimum iterations to achieve success is 2
+(two consecutive zero-finding checks), even when `min-iterations` is not set.
 ```
 
 ### Termination Criteria (Mandatory)
@@ -582,9 +592,10 @@ All \*-check-fix workflows MUST use termination criteria based on mode level:
 
 **Success** (`pass`):
 
-- **normal**: Zero CRITICAL/HIGH findings (MEDIUM/LOW may exist)
-- **strict**: Zero CRITICAL/HIGH/MEDIUM findings (LOW may exist)
-- **ocd**: Zero findings at all levels
+- Requires **two consecutive** zero-finding validations at the mode's threshold level (consecutive pass requirement)
+- **normal**: Zero CRITICAL/HIGH findings on 2 consecutive checks (MEDIUM/LOW may exist)
+- **strict**: Zero CRITICAL/HIGH/MEDIUM findings on 2 consecutive checks (LOW may exist)
+- **ocd**: Zero findings at all levels on 2 consecutive checks
 
 **Partial** (`partial`):
 
@@ -596,11 +607,49 @@ All \*-check-fix workflows MUST use termination criteria based on mode level:
 
 **Note**: Below-threshold findings are reported in final audit but don't prevent success status.
 
+### Consecutive Pass Requirement
+
+All \*-check-fix workflows require **two consecutive zero-finding validations** before declaring
+success. A single zero-finding check is insufficient — the checker must confirm zero findings
+on a second independent run before the workflow terminates with `pass`.
+
+**Rationale**: A single zero-finding check may be a false negative. Checker agents operate
+non-deterministically — prompt variation, context window limitations, or evaluation order can
+cause a checker to miss findings on one run that it catches on the next. Requiring two
+consecutive zero-finding checks provides statistical confidence that the content truly meets
+the quality standard for the active mode.
+
+**Mechanism**:
+
+- The workflow tracks `consecutive_zero_count` across check iterations
+- Each zero-finding check increments the counter; any non-zero check resets it to 0
+- Success requires `consecutive_zero_count >= 2`
+
+**Impact on workflow flow**:
+
+- After the first zero-finding check, the workflow loops back to Step 4 (re-validate) — no fix
+  is needed, just a confirmation re-check
+- If the confirmation check also returns zero findings, the workflow succeeds (double-zero)
+- If the confirmation check finds new issues, the counter resets and the workflow loops back to
+  Step 3 (fix) — then the cycle continues
+
+**Impact on iteration budget**:
+
+- The minimum iterations to achieve success is **2** (initial zero + confirmation zero), even
+  when `min-iterations` is not explicitly set
+- Each confirmation re-check counts toward `max-iterations`, so the default `max-iterations: 15`
+  allows ample room for fix cycles and confirmation checks
+- Workflows with `max-iterations: 1` can never achieve `pass` — they will always terminate
+  with `partial` at best
+
+**Applies to all modes**: lax, normal, strict, and ocd all require double-zero confirmation.
+No mode is exempt.
+
 ### Safety Features (Mandatory)
 
 **Infinite Loop Prevention**:
 
-- MUST include `max-iterations` parameter (default: 5)
+- MUST include `max-iterations` parameter (default: 15)
 - MUST terminate with `partial` if limit reached
 - MUST track iteration count
 

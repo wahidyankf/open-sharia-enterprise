@@ -1,7 +1,7 @@
 ---
 name: ayokoding-web-general-quality-gate
 goal: Validate all ayokoding-web content quality, apply fixes iteratively until zero findings
-termination: Zero findings across all validators (runs indefinitely until achieved unless max-iterations provided)
+termination: "Zero findings across all validators on two consecutive validations (max-iterations defaults to 15)"
 inputs:
   - name: scope
     type: string
@@ -14,8 +14,9 @@ inputs:
     required: false
   - name: max-iterations
     type: number
-    description: Maximum check-fix cycles to prevent infinite loops (if not provided, runs until zero findings)
+    description: Maximum check-fix cycles to prevent infinite loops
     required: false
+    default: 15
   - name: max-concurrency
     type: number
     description: Maximum number of agents/tasks that can run concurrently during workflow execution
@@ -129,8 +130,9 @@ Analyze all audit reports to determine if fixes are needed.
 
 **Condition Check**: Count ALL findings (HIGH, MEDIUM, and MINOR) across all four reports
 
-- If total findings > 0: Proceed to step 3
-- If total findings = 0: Skip to step 7 (Finalization)
+- If total findings > 0: Proceed to step 3 (reset `consecutive_zero_count` to 0)
+- If total findings = 0: Initialize `consecutive_zero_count` to 1 (this check is the first zero),
+  proceed to step 1 for confirmation re-check (consecutive pass requirement)
 
 **Depends on**: Step 1 completion
 
@@ -185,8 +187,10 @@ Determine whether to continue fixing or move to finalization.
 
 - Re-run all checkers (step 1) to get fresh reports
 - Count ALL findings (HIGH, MEDIUM, MINOR) across all new reports
-- If findings = 0 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Final Validation)
-- If findings = 0 AND iterations < min-iterations: Loop back to step 3 (need more iterations)
+- Track `consecutive_zero_count` across iterations (resets to 0 when findings > 0, increments when findings = 0)
+- If consecutive_zero_count >= 2 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Final Validation — double-zero confirmed)
+- If consecutive_zero_count >= 2 AND iterations < min-iterations: Loop back to step 1 (re-validate)
+- If consecutive_zero_count < 2 AND findings = 0: Loop back to step 1 (confirmation check — no fix needed, just re-verify)
 - If findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed to step 6 with status `partial`
 - If findings > 0 AND (max-iterations not provided OR iterations < max-iterations): Loop back to step 3
 
@@ -194,9 +198,9 @@ Determine whether to continue fixing or move to finalization.
 
 **Notes**:
 
-- **Default behavior**: Runs indefinitely until zero findings (no max-iterations limit)
+- **Default behavior**: Runs up to 15 iterations (default max-iterations). Override with higher value for more attempts
+- **Consecutive pass requirement**: Zero findings must be confirmed by a second independent check before declaring success
 - **Optional min-iterations**: Prevents premature termination before sufficient iterations
-- **Optional max-iterations**: Prevents infinite loops when explicitly provided
 - Each iteration gets fresh validation reports across all four validators
 - Tracks iteration count and finding trends
 
@@ -236,7 +240,7 @@ Report final status and summary.
 
 ## Termination Criteria
 
-- PASS: **Success** (`pass`): Zero findings of ANY confidence level (HIGH, MEDIUM, MINOR) across all validators after finalization
+- PASS: **Success** (`pass`): Zero findings of ANY confidence level (HIGH, MEDIUM, MINOR) across all validators on **two consecutive** validations (consecutive pass requirement)
 - **Partial** (`partial`): Any findings remain after max-iterations OR final validation found issues
 - FAIL: **Failure** (`fail`): Checkers, fixers, or finalization agents encountered technical errors
 
@@ -316,7 +320,7 @@ Result: SUCCESS (2 iterations)
 
 **Infinite Loop Prevention**:
 
-- Optional max-iterations parameter (no default - runs until zero findings)
+- max-iterations defaults to 15 (override with higher value for more attempts)
 - When provided, workflow terminates with `partial` if limit reached
 - Tracks iteration count and finding trends
 - Use max-iterations when fix convergence is uncertain

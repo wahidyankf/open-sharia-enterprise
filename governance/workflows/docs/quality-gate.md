@@ -1,7 +1,7 @@
 ---
 name: docs-quality-gate
 goal: Validate all docs/ content quality (factual accuracy, pedagogical structure, link validity), apply fixes iteratively until zero findings achieved
-termination: Zero findings across all validators (runs indefinitely until achieved unless max-iterations provided)
+termination: "Zero findings across all validators on two consecutive validations (max-iterations defaults to 15)"
 inputs:
   - name: scope
     type: string
@@ -20,8 +20,9 @@ inputs:
     required: false
   - name: max-iterations
     type: number
-    description: Maximum check-fix cycles to prevent infinite loops (if not provided, runs until zero findings)
+    description: Maximum check-fix cycles to prevent infinite loops
     required: false
+    default: 15
   - name: max-concurrency
     type: number
     description: Maximum number of validators that can run in parallel during workflow execution
@@ -117,7 +118,7 @@ graph TB
     Check2 --> Step2
     Check3 --> Step2
 
-    Step2 -->|Zero findings| Step6[Step 6: Finalization]
+    Step2 -->|Zero findings| Step1
     Step2 -->|Findings exist| Step3[Step 3: Apply<br/>Factual Fixes]
 
     Step3 --> Step4[Step 4: Apply<br/>Tutorial Fixes]
@@ -190,8 +191,9 @@ Analyze all audit reports to determine if fixes are needed.
 
 **Decision**:
 
-- If threshold-level findings > 0: Proceed to step 3
-- If threshold-level findings = 0: Skip to step 6 (Success)
+- If threshold-level findings > 0: Proceed to step 3 (reset `consecutive_zero_count` to 0)
+- If threshold-level findings = 0: Initialize `consecutive_zero_count` to 1 (this check is the
+  first zero), proceed to step 1 for confirmation re-check (consecutive pass requirement)
 
 **Depends on**: Step 1 completion
 
@@ -265,8 +267,10 @@ Determine whether to continue fixing or finalize.
   - **normal**: Count CRITICAL + HIGH
   - **strict**: Count CRITICAL + HIGH + MEDIUM
   - **ocd**: Count all levels
-- If threshold-level findings = 0 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Success)
-- If threshold-level findings = 0 AND iterations < min-iterations: Loop back to step 3 (need more iterations)
+- Track `consecutive_zero_count` across iterations (resets to 0 when threshold-level findings > 0, increments when = 0)
+- If consecutive_zero_count >= 2 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Success — double-zero confirmed)
+- If consecutive_zero_count >= 2 AND iterations < min-iterations: Loop back to step 1 (re-validate)
+- If consecutive_zero_count < 2 AND threshold-level findings = 0: Loop back to step 1 (confirmation check — no fix needed, just re-verify)
 - If threshold-level findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed to step 6 (Partial)
 - If threshold-level findings > 0 AND (max-iterations not provided OR iterations < max-iterations): Loop back to step 3
 
@@ -276,9 +280,9 @@ Determine whether to continue fixing or finalize.
 
 **Notes**:
 
-- **Default behavior**: Runs indefinitely until zero threshold-level findings (no max-iterations limit)
+- **Default behavior**: Runs up to 15 iterations (default max-iterations). Override with higher value for more attempts
+- **Consecutive pass requirement**: Zero findings must be confirmed by a second independent check before declaring success
 - **Optional min-iterations**: Prevents premature termination before sufficient iterations
-- **Optional max-iterations**: Prevents infinite loops when explicitly provided
 - Each iteration uses the latest audit reports from all validators
 - Tracks iteration count for observability
 - **Broken links block zero-finding achievement** (no auto-fix available)
@@ -307,12 +311,12 @@ Report final status and summary.
 
 **Success** (`pass`):
 
-- **lax**: Zero CRITICAL findings (HIGH/MEDIUM/LOW may exist)
-- **normal**: Zero CRITICAL/HIGH findings (MEDIUM/LOW may exist)
-- **strict**: Zero CRITICAL/HIGH/MEDIUM findings (LOW may exist)
-- **ocd**: Zero findings at all levels
+- **lax**: Zero CRITICAL findings on 2 consecutive checks (HIGH/MEDIUM/LOW may exist)
+- **normal**: Zero CRITICAL/HIGH findings on 2 consecutive checks (MEDIUM/LOW may exist)
+- **strict**: Zero CRITICAL/HIGH/MEDIUM findings on 2 consecutive checks (LOW may exist)
+- **ocd**: Zero findings at all levels on 2 consecutive checks
 
-**Requires**: Zero threshold-level findings across ALL three validators (docs, tutorial, links)
+**Requires**: Zero threshold-level findings across ALL three validators (docs, tutorial, links) confirmed by two consecutive validations (consecutive pass requirement)
 
 **Partial** (`partial`):
 
@@ -442,7 +446,7 @@ Result: SUCCESS (3 iterations)
 
 **Infinite Loop Prevention**:
 
-- Optional max-iterations parameter (no default - runs until zero findings)
+- max-iterations defaults to 15 (override with higher value for more attempts)
 - When provided, workflow terminates with `partial` if limit reached
 - Tracks iteration count for monitoring
 - Use max-iterations when fix convergence is uncertain

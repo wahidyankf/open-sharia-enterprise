@@ -1,7 +1,7 @@
 ---
 name: docs-software-engineering-separation-quality-gate
 goal: Validate software engineering documentation separation between OSE Platform style guides and AyoKoding educational content, apply fixes iteratively until zero findings achieved
-termination: Zero findings remain after validation (runs indefinitely until achieved unless max-iterations provided)
+termination: "Zero findings on two consecutive validations (max-iterations defaults to 15)"
 inputs:
   - name: scope
     type: string
@@ -14,8 +14,9 @@ inputs:
     required: false
   - name: max-iterations
     type: number
-    description: Maximum check-fix cycles to prevent infinite loops (if not provided, runs until zero findings)
+    description: Maximum check-fix cycles to prevent infinite loops
     required: false
+    default: 15
   - name: max-concurrency
     type: number
     description: Maximum number of agents/tasks that can run concurrently during workflow execution
@@ -111,8 +112,9 @@ Analyze audit report to determine if fixes are needed.
 
 **Condition Check**: Count ALL findings (CRITICAL, HIGH, MEDIUM) in `{step1.outputs.audit-report-1}`
 
-- If findings > 0: Proceed to step 3
-- If findings = 0: Skip to step 6 (Success)
+- If findings > 0: Proceed to step 3 (reset `consecutive_zero_count` to 0)
+- If findings = 0: Initialize `consecutive_zero_count` to 1 (this check is the first zero),
+  proceed to step 4 for confirmation re-check (consecutive pass requirement)
 
 **Depends on**: Step 1 completion
 
@@ -165,8 +167,10 @@ Determine whether to continue fixing or terminate.
 **Logic**:
 
 - Count ALL findings in `{step4.outputs.audit-report-N}` (CRITICAL, HIGH, MEDIUM)
-- If findings = 0 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Success)
-- If findings = 0 AND iterations < min-iterations: Loop back to step 3 (need more iterations)
+- Track `consecutive_zero_count` across iterations (resets to 0 when findings > 0, increments when findings = 0)
+- If consecutive_zero_count >= 2 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Success — double-zero confirmed)
+- If consecutive_zero_count >= 2 AND iterations < min-iterations: Loop back to step 4 (re-validate)
+- If consecutive_zero_count < 2 AND findings = 0: Loop back to step 4 (confirmation check — no fix needed, just re-verify)
 - If findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed to step 6 (Partial)
 - If findings > 0 AND (max-iterations not provided OR iterations < max-iterations): Loop back to step 3
 
@@ -174,9 +178,9 @@ Determine whether to continue fixing or terminate.
 
 **Notes**:
 
-- **Default behavior**: Runs indefinitely until zero findings (no max-iterations limit)
+- **Default behavior**: Runs up to 15 iterations (default max-iterations). Override with higher value for more attempts
+- **Consecutive pass requirement**: Zero findings must be confirmed by a second independent check before declaring success
 - **Optional min-iterations**: Prevents premature termination before sufficient iterations
-- **Optional max-iterations**: Prevents infinite loops when explicitly provided
 - Each iteration uses the latest audit report
 - Tracks iteration count for observability
 
@@ -196,7 +200,7 @@ Report final status and summary.
 
 ## Termination Criteria
 
-- PASS: **Success** (`pass`): Zero findings of ANY level (CRITICAL, HIGH, MEDIUM) in final validation
+- PASS: **Success** (`pass`): Zero findings of ANY level (CRITICAL, HIGH, MEDIUM) on **two consecutive** validations (consecutive pass requirement)
 - **Partial** (`partial`): Any findings remain after max-iterations cycles
 - FAIL: **Failure** (`fail`): Checker or fixer encountered technical errors
 
@@ -259,16 +263,19 @@ Iteration 1:
   Check → 8 findings (missing prerequisites, duplicated content) → Fix → Re-check → 3 findings
 
 Iteration 2:
-  Check (reuse) → 3 findings (style guide lacks OSE Platform context) → Fix → Re-check → 0 findings
+  Check (reuse) → 3 findings (style guide lacks OSE Platform context) → Fix → Re-check → 0 findings (consecutive_zero: 1)
 
-Result: SUCCESS (2 iterations)
+Iteration 3 (confirmation):
+  Re-check → 0 findings (consecutive_zero: 2 — double-zero confirmed)
+
+Result: SUCCESS (3 iterations)
 ```
 
 ## Safety Features
 
 **Infinite Loop Prevention**:
 
-- Optional max-iterations parameter (no default - runs until zero findings)
+- max-iterations defaults to 15 (override with higher value for more attempts)
 - When provided, workflow terminates with `partial` if limit reached
 - Tracks iteration count for monitoring
 - Use max-iterations when fix convergence is uncertain

@@ -1,7 +1,7 @@
 ---
 name: specs-validation
 goal: "Validate explicitly listed specs/ folders for structural completeness, content accuracy, internal consistency, and cross-folder coherence, then apply fixes iteratively until zero findings achieved"
-termination: "Zero findings remain after validation at the configured mode threshold (runs indefinitely until achieved unless max-iterations provided)"
+termination: "Zero findings at the configured mode threshold on two consecutive validations (max-iterations defaults to 15)"
 inputs:
   - name: folders
     type: file-list
@@ -19,8 +19,9 @@ inputs:
     required: false
   - name: max-iterations
     type: number
-    description: "Maximum check-fix cycles to prevent infinite loops (if not provided, runs until zero findings)"
+    description: "Maximum check-fix cycles to prevent infinite loops"
     required: false
+    default: 15
   - name: max-concurrency
     type: number
     description: "Maximum number of agents/tasks that can run concurrently during workflow execution"
@@ -165,8 +166,9 @@ Analyze audit report to determine if fixes are needed.
 
 **Decision**:
 
-- If threshold-level findings > 0: Proceed to step 3
-- If threshold-level findings = 0: Skip to step 6 (Success)
+- If threshold-level findings > 0: Proceed to step 3 (reset `consecutive_zero_count` to 0)
+- If threshold-level findings = 0: Initialize `consecutive_zero_count` to 1 (this check is the
+  first zero), proceed to step 4 for confirmation re-check (consecutive pass requirement)
 
 **Depends on**: Step 1 completion
 
@@ -220,10 +222,13 @@ Determine whether to continue fixing or terminate.
   - **normal**: Count CRITICAL + HIGH
   - **strict**: Count CRITICAL + HIGH + MEDIUM
   - **ocd**: Count all levels
-- If threshold-level findings = 0 AND iterations >= min-iterations (or min not provided):
-  Proceed to step 6 (Success)
-- If threshold-level findings = 0 AND iterations < min-iterations:
-  Loop back to step 3 (need more iterations)
+- Track `consecutive_zero_count` across iterations (resets to 0 when threshold-level findings > 0, increments when = 0)
+- If consecutive_zero_count >= 2 AND iterations >= min-iterations (or min not provided):
+  Proceed to step 6 (Success — double-zero confirmed)
+- If consecutive_zero_count >= 2 AND iterations < min-iterations:
+  Loop back to step 4 (re-validate)
+- If consecutive_zero_count < 2 AND threshold-level findings = 0:
+  Loop back to step 4 (confirmation check — no fix needed, just re-verify)
 - If threshold-level findings > 0 AND max-iterations provided AND iterations >= max-iterations:
   Proceed to step 6 (Partial)
 - If threshold-level findings > 0 AND (max-iterations not provided OR iterations < max-iterations):
@@ -251,10 +256,10 @@ Report final status and summary.
 
 **Success** (`pass`):
 
-- **lax**: Zero CRITICAL findings (HIGH/MEDIUM/LOW may exist)
-- **normal**: Zero CRITICAL/HIGH findings (MEDIUM/LOW may exist)
-- **strict**: Zero CRITICAL/HIGH/MEDIUM findings (LOW may exist)
-- **ocd**: Zero findings at all levels
+- **lax**: Zero CRITICAL findings on 2 consecutive checks (HIGH/MEDIUM/LOW may exist)
+- **normal**: Zero CRITICAL/HIGH findings on 2 consecutive checks (MEDIUM/LOW may exist)
+- **strict**: Zero CRITICAL/HIGH/MEDIUM findings on 2 consecutive checks (LOW may exist)
+- **ocd**: Zero findings at all levels on 2 consecutive checks
 
 **Partial** (`partial`):
 
@@ -264,7 +269,7 @@ Report final status and summary.
 
 - Technical errors during check or fix
 
-**Note**: Below-threshold findings are reported in final audit but don't prevent success status.
+**Note**: Below-threshold findings are reported in final audit but don't prevent success status. Success requires two consecutive zero-finding validations (consecutive pass requirement).
 
 ## Example Usage
 
@@ -335,16 +340,19 @@ Iteration 1:
 
 Iteration 2:
   Fix 1 (1 HIGH — cross-ref broken by README update in iteration 1)
-  Re-check → 3 findings (0 CRITICAL, 0 HIGH, 2 MEDIUM, 1 LOW)
+  Re-check → 3 findings (0 CRITICAL, 0 HIGH, 2 MEDIUM, 1 LOW) (consecutive_zero: 1)
 
-Result: SUCCESS (2 iterations, 3 below-threshold findings reported)
+Iteration 3 (confirmation):
+  Re-check → 3 findings (0 CRITICAL, 0 HIGH, 2 MEDIUM, 1 LOW) (consecutive_zero: 2 — double-zero confirmed)
+
+Result: SUCCESS (3 iterations, 3 below-threshold findings reported)
 ```
 
 ## Safety Features
 
 **Infinite Loop Prevention**:
 
-- Optional max-iterations parameter (no default — runs until zero findings)
+- max-iterations defaults to 15 (override with higher value for more attempts)
 - When provided, workflow terminates with `partial` if limit reached
 - Tracks iteration count for monitoring
 

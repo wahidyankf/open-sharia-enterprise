@@ -1,7 +1,7 @@
 ---
 name: ayokoding-web-by-example-quality-gate
 goal: Validate by-example tutorial quality and apply fixes iteratively until EXCELLENT status achieved with zero mechanical issues
-termination: Tutorial achieves EXCELLENT status with 75-85 examples, 95% coverage, and zero mechanical issues (runs indefinitely until achieved unless max-iterations provided)
+termination: "Tutorial achieves EXCELLENT status with 75-85 examples, 95% coverage, and zero mechanical issues on two consecutive validations (max-iterations defaults to 15)"
 inputs:
   - name: tutorial-path
     type: string
@@ -19,8 +19,9 @@ inputs:
     required: false
   - name: max-iterations
     type: number
-    description: Maximum check-fix cycles to prevent infinite loops (if not provided, runs until zero findings)
+    description: Maximum check-fix cycles to prevent infinite loops
     required: false
+    default: 15
   - name: max-concurrency
     type: number
     description: Maximum number of agents/tasks that can run concurrently during workflow execution
@@ -350,8 +351,11 @@ Determine whether to continue fixing or finalize.
   - **normal**: Count CRITICAL + HIGH
   - **strict**: Count CRITICAL + HIGH + MEDIUM
   - **ocd**: Count all levels (CRITICAL, HIGH, MEDIUM, LOW)
-- If threshold-level findings = 0 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Finalization)
-- If threshold-level findings = 0 AND iterations < min-iterations: Loop back to step 3 (need more iterations)
+- Track `consecutive_zero_count` across iterations (resets to 0 when threshold-level findings > 0, increments when = 0)
+- If consecutive_zero_count >= 2 AND iterations >= min-iterations (or min not provided): Proceed to step 6 (Finalization — double-zero confirmed)
+- If consecutive_zero_count >= 2 AND iterations < min-iterations: Re-run checker and re-evaluate (need more iterations)
+- If consecutive_zero_count < 2 AND threshold-level findings = 0: Re-run checker and re-evaluate
+  (confirmation check — no fix or user review needed, just re-verify within this step)
 - If threshold-level findings > 0 AND max-iterations provided AND iterations >= max-iterations: Proceed to step 6 with status `needs-improvement`
 - If threshold-level findings > 0 AND (max-iterations not provided OR iterations < max-iterations): Loop back to step 3
 
@@ -361,9 +365,9 @@ Determine whether to continue fixing or finalize.
 
 **Notes**:
 
-- **Default behavior**: Runs indefinitely until zero threshold-level findings (no max-iterations limit)
+- **Default behavior**: Runs up to 15 iterations (default max-iterations). Override with higher value for more attempts
+- **Consecutive pass requirement**: Zero findings must be confirmed by a second independent check before declaring success
 - **Optional min-iterations**: Prevents premature termination before sufficient iterations
-- **Optional max-iterations**: Prevents infinite loops when explicitly provided
 - Each iteration gets fresh validation report
 - Tracks iteration count and finding trends
 - Below-threshold findings remain visible but don't block convergence
@@ -407,10 +411,10 @@ Report final status and summary.
 
 **Success** (`excellent`):
 
-- **lax**: Zero CRITICAL findings, 75-85 examples, 95% coverage (HIGH/MEDIUM/LOW may exist)
-- **normal**: Zero CRITICAL/HIGH findings, 75-85 examples, 95% coverage (MEDIUM/LOW may exist)
-- **strict**: Zero CRITICAL/HIGH/MEDIUM findings, 75-85 examples, 95% coverage (LOW may exist)
-- **ocd**: Zero findings at all levels, 75-85 examples, 95% coverage
+- **lax**: Zero CRITICAL findings on 2 consecutive checks, 75-85 examples, 95% coverage (HIGH/MEDIUM/LOW may exist)
+- **normal**: Zero CRITICAL/HIGH findings on 2 consecutive checks, 75-85 examples, 95% coverage (MEDIUM/LOW may exist)
+- **strict**: Zero CRITICAL/HIGH/MEDIUM findings on 2 consecutive checks, 75-85 examples, 95% coverage (LOW may exist)
+- **ocd**: Zero findings at all levels on 2 consecutive checks, 75-85 examples, 95% coverage
 
 **Partial** (`needs-improvement`):
 
@@ -716,7 +720,7 @@ The AI invokes agents with mode-based fixing and iteration limits.
 
 **Infinite Loop Prevention**:
 
-- Optional max-iterations parameter (no default - runs until zero findings)
+- max-iterations defaults to 15 (override with higher value for more attempts)
 - When provided, workflow terminates with `needs-improvement` if limit reached
 - Tracks iteration count and finding trends
 - Use max-iterations when fix convergence is uncertain
