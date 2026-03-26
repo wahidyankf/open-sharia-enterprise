@@ -107,6 +107,36 @@ The `apps-ayokoding-web-developing-content` Skill provides ayokoding-web specifi
 - **Color palette**: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 - **Appropriate usage**: Only for complex concepts (data flow, state machines, concurrency)
 
+## Convergence Safeguards
+
+### Known False Positive Skip List
+
+**Before beginning validation, load the skip list**:
+
+- **File**: `generated-reports/.known-false-positives.md`
+- If file exists, read contents and reference during ALL validation steps
+- Before reporting any finding, check if it matches an entry using stable key: `[category] | [file] | [brief-description]`
+- **If matched**: Log as `[PREVIOUSLY ACCEPTED FALSE_POSITIVE — skipped]` in informational section. Do NOT count in findings total.
+
+### Re-validation Mode (Scoped Scan)
+
+When a UUID chain exists from a previous iteration (multi-part UUID chain like `abc123_def456`):
+
+1. Check for `## Changed Files (for Scoped Re-validation)` section in the latest fix report
+2. **If found**: Run validation only on CHANGED files from the fix report. Skip unchanged files entirely.
+3. **If not found**: Run full scan as normal
+
+### Escalation After Repeated Disagreements
+
+If a finding was flagged in iteration N, marked FALSE_POSITIVE by fixer, and re-flagged in iteration N+2:
+
+- Mark as `[ESCALATED — manual review required]` instead of a countable finding
+- Do NOT count in findings total
+
+### Convergence Target
+
+Workflow should stabilize in 3-5 iterations. If not converged after 7 iterations, log a warning in the audit report.
+
 ## Validation Process
 
 ## Workflow Overview

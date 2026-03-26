@@ -610,6 +610,25 @@ See [Java Official Documentation](https://docs.oracle.com/en/java/javase/17/) fo
 
 **Never use Write tool** for existing files (use Edit instead)
 
+## Capture Changed Files for Scoped Re-validation
+
+After applying all fixes, capture the changed files list:
+
+```bash
+git diff --name-only HEAD
+```
+
+Include in the fix report under `## Changed Files (for Scoped Re-validation)`:
+
+```markdown
+## Changed Files (for Scoped Re-validation)
+
+The following files were modified. The next checker run uses this list to enable scoped re-validation:
+
+- path/to/modified-file-1.md
+- path/to/modified-file-2.md
+```
+
 ## FALSE_POSITIVE Carry-Forward (Persistent Memory)
 
 At the end of every fix report, add an `## Accepted FALSE_POSITIVE Findings` section listing each skipped finding by stable key.

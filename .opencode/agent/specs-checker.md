@@ -159,6 +159,36 @@ Verify that listed spec folders reference correct paths and implementations exis
 **MEDIUM**: Spec area has no consuming implementation (empty spec — acceptable for new areas)
 **LOW**: Implementation exists but spec area doesn't mention it
 
+## Convergence Safeguards
+
+### Known False Positive Skip List
+
+**Before beginning validation, load the skip list**:
+
+- **File**: `generated-reports/.known-false-positives.md`
+- If file exists, read contents and reference during ALL validation steps
+- Before reporting any finding, check if it matches an entry using stable key: `[category] | [file] | [brief-description]`
+- **If matched**: Log as `[PREVIOUSLY ACCEPTED FALSE_POSITIVE — skipped]` in informational section. Do NOT count in findings total.
+
+### Re-validation Mode (Scoped Scan)
+
+When a UUID chain exists from a previous iteration (multi-part UUID chain like `abc123_def456`):
+
+1. Check for `## Changed Files (for Scoped Re-validation)` section in the latest fix report
+2. **If found**: Run validation only on CHANGED files from the fix report. Skip unchanged files entirely.
+3. **If not found**: Run full scan as normal
+
+### Escalation After Repeated Disagreements
+
+If a finding was flagged in iteration N, marked FALSE_POSITIVE by fixer, and re-flagged in iteration N+2:
+
+- Mark as `[ESCALATED — manual review required]` instead of a countable finding
+- Do NOT count in findings total
+
+### Convergence Target
+
+Workflow should stabilize in 3-5 iterations. If not converged after 7 iterations, log a warning in the audit report.
+
 ## Execution Pattern
 
 1. **Initialize**: Generate UUID, create report file in `generated-reports/`

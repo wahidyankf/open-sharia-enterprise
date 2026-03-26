@@ -491,7 +491,7 @@ inputs:
     type: number
     description: Maximum check-fix cycles to prevent infinite loops
     required: false
-    default: 15
+    default: 10
 
 outputs:
   - name: final-status
@@ -649,7 +649,7 @@ No mode is exempt.
 
 **Infinite Loop Prevention**:
 
-- MUST include `max-iterations` parameter (default: 15)
+- MUST include `max-iterations` parameter (default: 10)
 - MUST terminate with `partial` if limit reached
 - MUST track iteration count
 

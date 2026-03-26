@@ -1,7 +1,7 @@
 ---
 name: ayokoding-web-general-quality-gate
 goal: Validate all ayokoding-web content quality, apply fixes iteratively until zero findings
-termination: "Zero findings across all validators on two consecutive validations (max-iterations defaults to 15)"
+termination: "Zero findings across all validators on two consecutive validations (max-iterations defaults to 10, escalation warning at 7)"
 inputs:
   - name: scope
     type: string
@@ -16,7 +16,7 @@ inputs:
     type: number
     description: Maximum check-fix cycles to prevent infinite loops
     required: false
-    default: 15
+    default: 10
   - name: max-concurrency
     type: number
     description: Maximum number of agents/tasks that can run concurrently during workflow execution
@@ -320,10 +320,18 @@ Result: SUCCESS (2 iterations)
 
 **Infinite Loop Prevention**:
 
-- max-iterations defaults to 15 (override with higher value for more attempts)
+- max-iterations defaults to 10 (override with higher value for more attempts)
 - When provided, workflow terminates with `partial` if limit reached
 - Tracks iteration count and finding trends
 - Use max-iterations when fix convergence is uncertain
+
+**Convergence Safeguards**:
+
+- Checker loads `.known-false-positives.md` skip list at start of each iteration
+- Fixer persists new FALSE_POSITIVEs to skip list after each run
+- Re-validation uses scoped scan (changed files only) to prevent scope expansion
+- Factual claims verified in iteration 1 are cached, not re-verified with WebSearch
+- Escalation after repeated checker-fixer disagreements on the same finding
 
 **False Positive Protection**:
 

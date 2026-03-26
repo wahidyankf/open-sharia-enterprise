@@ -133,6 +133,25 @@ the validated scope.
 - **Root Cause Orientation**: Fixes root cause (README accuracy) not symptoms
 - **Simplicity Over Complexity**: Clear fix/skip/fail categorization
 
+### Capture Changed Files for Scoped Re-validation
+
+After applying all fixes, capture the changed files list:
+
+```bash
+git diff --name-only HEAD
+```
+
+Include in the fix report under `## Changed Files (for Scoped Re-validation)`:
+
+```markdown
+## Changed Files (for Scoped Re-validation)
+
+The following files were modified. The next checker run uses this list to enable scoped re-validation:
+
+- path/to/modified-file-1.md
+- path/to/modified-file-2.md
+```
+
 ## Reference Documentation
 
 - [AGENTS.md](../../AGENTS.md) — OpenCode agent documentation

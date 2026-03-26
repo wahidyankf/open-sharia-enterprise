@@ -159,6 +159,47 @@ $
 
 **Rule**: Single `$` ONLY for inline math (same line as text). Display-level equations and `\begin{aligned}` blocks MUST use `$$`. Multi-line equations must use `\begin{aligned}...\end{aligned}` (NOT `\begin{align}`) for KaTeX compatibility.
 
+## Convergence Safeguards
+
+### Known False Positive Skip List
+
+**Before beginning validation, load the skip list**:
+
+- **File**: `generated-reports/.known-false-positives.md`
+- If file exists, read contents and reference during ALL validation steps
+- Before reporting any finding, check if it matches an entry using stable key: `[category] | [file] | [brief-description]`
+- **If matched**: Log as `[PREVIOUSLY ACCEPTED FALSE_POSITIVE — skipped]` in informational section. Do NOT count in findings total.
+
+### Re-validation Mode (Scoped Scan)
+
+When a UUID chain exists from a previous iteration (multi-part UUID chain like `abc123_def456`):
+
+1. Check for `## Changed Files (for Scoped Re-validation)` section in the latest fix report
+2. **If found**: Run validation only on CHANGED files from the fix report. Skip unchanged files entirely.
+3. **If not found**: Run full scan as normal
+
+### Cached Factual Verification (Iterations 2+)
+
+On re-validation iterations (multi-part UUID chain):
+
+1. Read the iteration 1 audit report's factual verification results
+2. For claims marked `[Verified]` in iteration 1: carry forward as `[Verified — cached from iteration 1]`. Do NOT re-verify with WebSearch/WebFetch.
+3. For claims marked `[Error]` or `[Outdated]` that were fixed: re-verify ONLY those specific claims
+4. For NEW claims introduced by fixer edits: verify normally
+
+This prevents non-deterministic WebSearch results from generating new findings on unchanged claims.
+
+### Escalation After Repeated Disagreements
+
+If a finding was flagged in iteration N, marked FALSE_POSITIVE by fixer, and re-flagged in iteration N+2:
+
+- Mark as `[ESCALATED — manual review required]` instead of a countable finding
+- Do NOT count in findings total
+
+### Convergence Target
+
+Workflow should stabilize in 3-5 iterations. If not converged after 7 iterations, log a warning in the audit report.
+
 ## Validation Process
 
 ## Workflow Overview

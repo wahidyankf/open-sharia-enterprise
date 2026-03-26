@@ -1,7 +1,7 @@
 ---
 name: ayokoding-web-in-the-field-quality-gate
 goal: Validate in-the-field production guide quality and apply fixes iteratively until EXCELLENT status achieved with zero mechanical issues
-termination: "Tutorial achieves EXCELLENT status with 20-40 guides, production code quality, and zero mechanical issues on two consecutive validations (max-iterations defaults to 15)"
+termination: "Tutorial achieves EXCELLENT status with 20-40 guides, production code quality, and zero mechanical issues on two consecutive validations (max-iterations defaults to 10, escalation warning at 7)"
 inputs:
   - name: tutorial-path
     type: string
@@ -21,7 +21,7 @@ inputs:
     type: number
     description: Maximum check-fix cycles to prevent infinite loops
     required: false
-    default: 15
+    default: 10
   - name: max-concurrency
     type: number
     description: Maximum number of agents/tasks that can run concurrently during workflow execution
@@ -366,6 +366,35 @@ Report final status and summary.
 **Failure** (`failing`):
 
 - Major structural issues require maker rework, auto-fixing not applicable
+
+## Safety Features
+
+**Infinite Loop Prevention**:
+
+- max-iterations defaults to 10 (override with higher value for more attempts)
+- When provided, workflow terminates with `partial` if limit reached
+- Tracks iteration count for monitoring
+- Escalation warning at iteration 7 if not converging
+
+**Convergence Safeguards**:
+
+- Checker loads `.known-false-positives.md` skip list at start of each iteration
+- Fixer persists new FALSE_POSITIVEs to skip list after each run
+- Re-validation uses scoped scan (changed files only) to prevent scope expansion
+- Factual claims verified in iteration 1 are cached, not re-verified with WebSearch
+- Escalation after repeated checker-fixer disagreements on the same finding
+
+**False Positive Protection**:
+
+- Fixer re-validates each finding before applying
+- Skips FALSE_POSITIVE findings automatically
+- Progressive writing ensures audit history survives
+
+**Error Recovery**:
+
+- Continues to verification even if some fixes fail
+- Reports which fixes succeeded/failed
+- Generates final report regardless of status
 
 ## Related Workflows
 
