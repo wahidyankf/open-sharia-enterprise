@@ -61,6 +61,8 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.*" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.*" />
     <PackageReference Include="FSharp.SystemTextJson" Version="1.*" />
+    <PackageReference Include="dbup-core" Version="5.*" />
+    <PackageReference Include="dbup-postgresql" Version="5.*" />
     <!-- F# static analyzers (G-Research) — runs via dotnet msbuild /t:AnalyzeFSharpProject -->
     <PackageReference Include="FSharp.Analyzers.Build" Version="0.*">
       <PrivateAssets>all</PrivateAssets>
@@ -69,6 +71,10 @@
     <PackageReference Include="G-Research.FSharp.Analyzers" Version="0.*">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="db/migrations/*.sql" />
   </ItemGroup>
 
   <Target Name="CopyGherkinSpecs" BeforeTargets="Build">
