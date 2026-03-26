@@ -3,15 +3,17 @@
 import logging
 import os
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import Any
 
+from alembic import command
+from alembic.config import Config
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import IntegrityError
 
 from demo_be_python_fastapi.auth.jwt_service import get_jwks
-from demo_be_python_fastapi.database import engine
 from demo_be_python_fastapi.domain.errors import (
     AccountLockedError,
     ConflictError,
@@ -22,7 +24,6 @@ from demo_be_python_fastapi.domain.errors import (
     UnsupportedMediaTypeError,
     ValidationError,
 )
-from demo_be_python_fastapi.infrastructure.models import Base
 from demo_be_python_fastapi.routers import (
     admin,
     attachments,
@@ -37,11 +38,17 @@ from demo_be_python_fastapi.routers import (
 
 logger = logging.getLogger(__name__)
 
+# Resolve alembic.ini relative to the project root (two levels above this file's src/ directory).
+_ALEMBIC_INI = Path(__file__).parents[3] / "alembic.ini"
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):  # type: ignore[no-untyped-def]
-    """Application lifespan: create database tables on startup."""
-    Base.metadata.create_all(bind=engine)
+    """Application lifespan: run Alembic migrations to head on startup."""
+    database_url = os.environ.get("DATABASE_URL", "")
+    if database_url.startswith("postgresql"):
+        alembic_cfg = Config(str(_ALEMBIC_INI))
+        command.upgrade(alembic_cfg, "head")
     yield
 
 

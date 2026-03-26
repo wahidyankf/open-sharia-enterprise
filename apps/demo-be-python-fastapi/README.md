@@ -79,6 +79,46 @@ docker compose up --build
 `codegen` generates Pydantic models from the OpenAPI contract spec into `generated_contracts/` and
 is a dependency of both `typecheck` and `build`.
 
+## Database Migrations
+
+This project uses [Alembic](https://alembic.sqlalchemy.org/) for database schema migrations.
+
+### Migration files
+
+Migration scripts live in `alembic/versions/` and run in revision order:
+
+| Revision | Description                   |
+| -------- | ----------------------------- |
+| `001`    | Create `users` table          |
+| `002`    | Create `refresh_tokens` table |
+| `003`    | Create `revoked_tokens` table |
+| `004`    | Create `expenses` table       |
+| `005`    | Create `attachments` table    |
+
+### How migrations run
+
+When the application starts with a PostgreSQL `DATABASE_URL`, the lifespan handler
+runs `alembic upgrade head` programmatically before the app begins serving requests.
+SQLite (used for unit and integration tests) continues to use `Base.metadata.create_all()`
+directly, as Alembic's SQL DDL is not compatible with in-memory SQLite.
+
+### Running migrations manually
+
+```bash
+# Apply all pending migrations
+cd apps/demo-be-python-fastapi
+DATABASE_URL=postgresql://user:pass@host/db uv run alembic upgrade head
+
+# Show current revision
+DATABASE_URL=postgresql://user:pass@host/db uv run alembic current
+
+# Downgrade one step
+DATABASE_URL=postgresql://user:pass@host/db uv run alembic downgrade -1
+
+# Generate a new migration (after modifying models.py)
+DATABASE_URL=postgresql://user:pass@host/db uv run alembic revision --autogenerate -m "describe change"
+```
+
 ## Three-Level Test Architecture
 
 This project follows a three-level test strategy that separates concerns by execution context:

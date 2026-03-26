@@ -28,14 +28,22 @@ class UserModel(Base):
     role: Mapped[str] = mapped_column(String(20), nullable=False, default="USER")
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="ACTIVE")
     failed_login_attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    # Audit columns
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=_now
     )
+    created_by: Mapped[str | None] = mapped_column(String(255), nullable=True)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=_now, onupdate=_now
     )
+    updated_by: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    deleted_by: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
     expenses: Mapped[list["ExpenseModel"]] = relationship("ExpenseModel", back_populates="user")
+    refresh_tokens: Mapped[list["RefreshTokenModel"]] = relationship(
+        "RefreshTokenModel", back_populates="user", cascade="all, delete-orphan"
+    )
 
 
 class ExpenseModel(Base):
@@ -86,6 +94,25 @@ class AttachmentModel(Base):
     )
 
     expense: Mapped["ExpenseModel"] = relationship("ExpenseModel", back_populates="attachments")
+
+
+class RefreshTokenModel(Base):
+    """Refresh token ORM model."""
+
+    __tablename__ = "refresh_tokens"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    token_hash: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    revoked: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=_now
+    )
+
+    user: Mapped["UserModel"] = relationship("UserModel", back_populates="refresh_tokens")
 
 
 class RevokedTokenModel(Base):
