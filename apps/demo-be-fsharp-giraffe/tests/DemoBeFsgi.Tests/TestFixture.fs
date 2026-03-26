@@ -37,7 +37,8 @@ let createDb () : AppDbContext * (unit -> unit) =
         if not result.Successful then
             failwith (sprintf "Database migration failed: %s" result.Error.Message)
 
-        let options = DbContextOptionsBuilder<AppDbContext>().UseNpgsql(connStr).Options
+        let options =
+            DbContextOptionsBuilder<AppDbContext>().UseNpgsql(connStr).UseSnakeCaseNamingConvention().Options
 
         let db = new AppDbContext(options)
 
@@ -57,7 +58,8 @@ let createDb () : AppDbContext * (unit -> unit) =
         let conn = new SqliteConnection("DataSource=:memory:")
         conn.Open()
 
-        let options = DbContextOptionsBuilder<AppDbContext>().UseSqlite(conn).Options
+        let options =
+            DbContextOptionsBuilder<AppDbContext>().UseSqlite(conn).UseSnakeCaseNamingConvention().Options
 
         let db = new AppDbContext(options)
         db.Database.EnsureCreated() |> ignore

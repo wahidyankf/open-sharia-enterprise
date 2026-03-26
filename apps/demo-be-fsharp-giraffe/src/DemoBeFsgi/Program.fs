@@ -103,7 +103,8 @@ let configureServices (services: IServiceCollection) =
     let connStr = Environment.GetEnvironmentVariable("DATABASE_URL")
 
     if not (String.IsNullOrEmpty connStr) then
-        services.AddDbContext<AppDbContext>(fun opts -> opts.UseNpgsql(connStr) |> ignore)
+        services.AddDbContext<AppDbContext>(fun opts ->
+            opts.UseNpgsql(connStr).UseSnakeCaseNamingConvention() |> ignore)
         |> ignore
     else
         services.AddDbContext<AppDbContext>(fun opts -> opts.UseSqlite("DataSource=demo.db") |> ignore)
