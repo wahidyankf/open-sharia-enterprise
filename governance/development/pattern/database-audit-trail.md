@@ -9,8 +9,9 @@ tags:
   - soft-delete
   - jpa
   - liquibase
+  - migrations
 created: 2026-03-09
-updated: 2026-03-09
+updated: 2026-03-26
 ---
 
 # Database Audit Trail Pattern
@@ -25,7 +26,7 @@ This pattern implements the following core principles:
 
 - **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Spring Data JPA Auditing populates `created_at`, `created_by`, `updated_at`, and `updated_by` automatically via `@EntityListeners`. Manual annotation in service code is only required for soft-delete columns.
 
-- **[Reproducibility First](../../principles/software-engineering/reproducibility.md)**: Liquibase SQL changelogs with `dbms` qualifiers ensure the schema is reproducible across PostgreSQL (dev/staging/prod) and H2 (test) without divergence.
+- **[Reproducibility First](../../principles/software-engineering/reproducibility.md)**: Migration tool changelogs with environment qualifiers ensure the schema is reproducible across PostgreSQL (dev/staging/prod) and in-process test databases without divergence.
 
 - **[Documentation First](../../principles/content/documentation-first.md)**: This pattern documents the required columns, types, and implementation approach before any table is created, ensuring teams follow a consistent and verifiable standard.
 
@@ -86,7 +87,40 @@ Blue columns (required) are always non-null and managed by JPA Auditing. Green c
 
 **Production Debugging**: When an incident occurs, `updated_at` narrows the time window and `updated_by` identifies the service or user responsible. Without these columns, incident investigation relies on log search, which is slower and less reliable.
 
-## Schema Migration: Liquibase
+## Migration Tool by Language
+
+Each demo backend uses the idiomatic migration tool for its language and framework ecosystem. All tools must apply the same six audit columns to every table.
+
+| App                       | Migration Tool       | License          |
+| ------------------------- | -------------------- | ---------------- |
+| demo-be-java-springboot   | Liquibase            | FSL-1.1-ALv2     |
+| demo-be-java-vertx        | Liquibase            | FSL-1.1-ALv2     |
+| demo-be-elixir-phoenix    | Ecto                 | Apache 2.0       |
+| demo-be-python-fastapi    | Alembic              | MIT              |
+| demo-be-golang-gin        | goose                | MIT              |
+| demo-be-kotlin-ktor       | Flyway Community     | Apache 2.0       |
+| demo-be-fsharp-giraffe    | DbUp                 | MIT              |
+| demo-be-csharp-aspnetcore | EF Core Migrations   | MIT              |
+| demo-be-clojure-pedestal  | Migratus             | Apache 2.0       |
+| demo-be-ts-effect         | @effect/sql Migrator | MIT              |
+| demo-be-rust-axum         | SQLx                 | MIT / Apache 2.0 |
+| demo-fs-ts-nextjs         | Drizzle              | Apache 2.0       |
+
+For licensing decisions related to Liquibase's FSL-1.1-ALv2 licence (introduced in version 5.0), see [Licensing Decisions](../../../docs/explanation/software-engineering/licensing/ex-soen-lc__licensing-decisions.md).
+
+## Schema Migration
+
+Every demo backend applies the six audit columns through its migration tool. The canonical column definitions are identical regardless of tool — only the migration file format differs.
+
+Regardless of the tool used, migrations must satisfy:
+
+- All six audit columns present in every table, in the order listed above
+- `created_at` and `updated_at` use timezone-aware timestamps (`TIMESTAMPTZ` for PostgreSQL, equivalent for other databases)
+- `created_by` and `updated_by` default to `'system'` so raw migrations and background jobs produce a traceable actor
+- `deleted_at` and `deleted_by` are nullable with no default — `NULL` is the active-row state
+- Each migration is reversible (rollback support where the tool provides it)
+
+### Java / Spring Boot: Liquibase
 
 Use a SQL-formatted Liquibase changeset. The `dbms` qualifier selects the correct SQL for each environment. Both PostgreSQL and H2 variants live in the same file.
 
@@ -283,14 +317,18 @@ Under `@NullMarked`, all types are non-null by default. Only `deletedAt` and `de
 
 Use this checklist when adding a new table or reviewing an existing one.
 
-### Schema (Liquibase)
+### Schema (All Migration Tools)
 
-- [ ] Changeset includes all six audit columns in the correct order
-- [ ] `created_at` and `updated_at` are `TIMESTAMPTZ NOT NULL DEFAULT NOW()`
-- [ ] `created_by` and `updated_by` are `VARCHAR(255) NOT NULL DEFAULT 'system'`
+- [ ] Migration includes all six audit columns in the correct order
+- [ ] `created_at` and `updated_at` are timezone-aware timestamps, NOT NULL, defaulting to the current time
+- [ ] `created_by` and `updated_by` are string columns (max 255 chars), NOT NULL, defaulting to `'system'`
 - [ ] `deleted_at` and `deleted_by` are nullable with no default
+- [ ] Migration is reversible (rollback or down migration provided where the tool supports it)
+
+**Java / Spring Boot (Liquibase) additional checks:**
+
 - [ ] Separate `-- changeset` blocks use `dbms:postgresql` and `dbms:h2` qualifiers
-- [ ] Rollback statement present
+- [ ] Rollback statement present in each changeset
 
 ### Entity (Java)
 
@@ -325,6 +363,7 @@ Use this checklist when adding a new table or reviewing an existing one.
 - [Acceptance Criteria Convention](../infra/acceptance-criteria.md) - Writing testable criteria for features involving audited entities
 - [Functional Programming Practices](./functional-programming.md) - Pure functions for business logic separate from audit side effects
 - [Reproducible Environments Convention](../workflow/reproducible-environments.md) - Why H2/PostgreSQL parity matters for test reliability
+- [Licensing Decisions](../../../docs/explanation/software-engineering/licensing/ex-soen-lc__licensing-decisions.md) - License analysis for migration tools (Liquibase FSL-1.1-ALv2, Hibernate LGPL-2.1, and others)
 
 ## References
 
@@ -332,12 +371,25 @@ Use this checklist when adding a new table or reviewing an existing one.
 
 - [Auth Register/Login Tech Docs](../../../plans/done/2026-03-09__auth-register-login/tech-docs.md) - Reference implementation of the `users` table applying this pattern
 
-**External:**
+**External (Java / Spring Boot):**
 
 - [Spring Data JPA Auditing Reference](https://docs.spring.io/spring-data/jpa/reference/auditing.html)
 - [Liquibase SQL Format Changelogs](https://docs.liquibase.com/concepts/changelogs/sql-format.html)
 - [JSpecify `@NullMarked`](https://jspecify.dev/docs/user-guide/)
 
+**External (Other Ecosystems):**
+
+- [goose migrations (Go)](https://github.com/pressly/goose)
+- [Alembic migrations (Python)](https://alembic.sqlalchemy.org/)
+- [SQLx migrations (Rust)](https://docs.rs/sqlx/latest/sqlx/macro.migrate.html)
+- [Ecto migrations (Elixir)](https://hexdocs.pm/ecto_sql/Ecto.Migration.html)
+- [DbUp migrations (F#/.NET)](https://dbup.readthedocs.io/)
+- [EF Core Migrations (C#/.NET)](https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/)
+- [Flyway Community (Kotlin/JVM)](https://documentation.red-gate.com/flyway/flyway-cli-and-api)
+- [Migratus (Clojure)](https://github.com/yogthos/migratus)
+- [@effect/sql Migrator (TypeScript)](https://effect.website/docs/sql/sql-migrator)
+- [Drizzle migrations (TypeScript)](https://orm.drizzle.team/docs/migrations)
+
 ---
 
-**Last Updated**: 2026-03-09
+**Last Updated**: 2026-03-26
