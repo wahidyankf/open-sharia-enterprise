@@ -22,6 +22,57 @@ variants.
 | Linting          | oxlint                                           |
 | Port             | **8201**                                         |
 
+## Database Migrations
+
+Schema management uses `@effect/sql` migrators (`PgMigrator` for PostgreSQL,
+`SqliteMigrator` for SQLite) with numbered TypeScript migration files.
+
+### Migration files
+
+Migration files live in `src/infrastructure/db/migrations/` and follow the naming
+convention `NNN_<name>.ts` (e.g. `001_create_users.ts`). Each file exports a default
+`Effect` that runs the DDL for that migration step:
+
+```typescript
+import { SqlClient } from "@effect/sql";
+import { Effect } from "effect";
+
+export default Effect.gen(function* () {
+  const sql = yield* SqlClient.SqlClient;
+  yield* sql`CREATE TABLE IF NOT EXISTS ...`;
+});
+```
+
+The migrator tracks applied migrations in a `effect_sql_migrations` table and runs
+only pending migrations on startup — idempotent and safe to call on every boot.
+
+### Current migrations
+
+| File                           | Creates                |
+| ------------------------------ | ---------------------- |
+| `001_create_users.ts`          | `users` table          |
+| `002_create_refresh_tokens.ts` | `refresh_tokens` table |
+| `003_create_revoked_tokens.ts` | `revoked_tokens` table |
+| `004_create_expenses.ts`       | `expenses` table       |
+| `005_create_attachments.ts`    | `attachments` table    |
+
+### How migrations run
+
+- **Production / dev server** (`src/main.ts`): migrations run automatically before
+  the HTTP server layer starts, using `PgMigrator` (PostgreSQL) or `SqliteMigrator`
+  (SQLite) depending on `DATABASE_URL`.
+- **Unit BDD tests** (`tests/unit/bdd/hooks.ts`): `SqliteMigrator.fromRecord` loads
+  migrations in-process against a temp SQLite file before each test run.
+- **Integration tests** (`tests/integration/hooks.ts`): `PgMigrator.fromRecord` or
+  `SqliteMigrator.fromRecord` (depending on `DATABASE_URL`) runs migrations against
+  the real database before the test suite starts.
+
+### Adding a migration
+
+1. Create `src/infrastructure/db/migrations/NNN_<name>.ts` with a default Effect export.
+2. Register it in `src/infrastructure/db/migrations/index.ts` under a matching key
+   (`"NNNN_<name>"`).
+
 ## Test Architecture
 
 This project uses a three-level testing strategy:

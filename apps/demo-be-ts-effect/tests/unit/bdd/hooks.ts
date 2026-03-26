@@ -1,10 +1,11 @@
 import { BeforeAll, AfterAll, Before } from "@cucumber/cucumber";
 import { Effect, Layer, ManagedRuntime } from "effect";
 import { SqliteClient } from "@effect/sql-sqlite-node";
+import { SqliteMigrator } from "@effect/sql-sqlite-node";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { existsSync, unlinkSync } from "node:fs";
-import { CREATE_TABLE_STATEMENTS } from "../../../src/infrastructure/db/schema.js";
+import { migrations } from "../../../src/infrastructure/db/migrations/index.js";
 import { UserRepositoryLive } from "../../../src/infrastructure/db/user-repo.js";
 import { ExpenseRepositoryLive } from "../../../src/infrastructure/db/expense-repo.js";
 import { AttachmentRepositoryLive } from "../../../src/infrastructure/db/attachment-repo.js";
@@ -26,6 +27,11 @@ const TEST_DB_PATH = join(tmpdir(), `demo-be-ts-effect-unit-bdd-${process.pid}.d
 
 const SqlLayer = SqliteClient.layer({ filename: TEST_DB_PATH });
 
+const MigratorLayer = SqliteMigrator.layer({
+  loader: SqliteMigrator.fromRecord(migrations),
+  table: "effect_sql_migrations",
+}).pipe(Layer.provide(SqlLayer)) as unknown as Layer.Layer<never, never, never>;
+
 /**
  * Service layer — all domain services backed by SQLite.
  * No HTTP server is started. Unit BDD tests call service functions directly.
@@ -43,15 +49,8 @@ const ServiceLayer = Layer.mergeAll(
 export let serviceRuntime: any = null;
 
 BeforeAll(async function () {
-  // Initialize schema - execute each statement individually (SQLite doesn't support multi-statement prepare)
-  await Effect.runPromise(
-    Effect.gen(function* () {
-      const sql = yield* SqlClient.SqlClient;
-      for (const statement of CREATE_TABLE_STATEMENTS) {
-        yield* sql.unsafe(statement);
-      }
-    }).pipe(Effect.provide(SqlLayer)),
-  );
+  // Run migrations to initialize schema
+  await Effect.runPromise(Layer.build(MigratorLayer).pipe(Effect.scoped));
 
   serviceRuntime = ManagedRuntime.make(ServiceLayer);
 });

@@ -1,11 +1,14 @@
 import { BeforeAll, AfterAll, Before } from "@cucumber/cucumber";
 import { Effect, Layer, ManagedRuntime, Redacted } from "effect";
 import { PgClient } from "@effect/sql-pg";
+import { PgMigrator } from "@effect/sql-pg";
 import { SqliteClient } from "@effect/sql-sqlite-node";
+import { SqliteMigrator } from "@effect/sql-sqlite-node";
+import { NodeContext } from "@effect/platform-node";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { existsSync, unlinkSync } from "node:fs";
-import { CREATE_TABLE_STATEMENTS, CREATE_TABLES_SQL_PG } from "../../src/infrastructure/db/schema.js";
+import { migrations } from "../../src/infrastructure/db/migrations/index.js";
 import { UserRepositoryLive } from "../../src/infrastructure/db/user-repo.js";
 import { ExpenseRepositoryLive } from "../../src/infrastructure/db/expense-repo.js";
 import { AttachmentRepositoryLive } from "../../src/infrastructure/db/attachment-repo.js";
@@ -27,27 +30,26 @@ type DbLayer = Layer.Layer<SqlClient.SqlClient, SqlError, never>;
 
 interface DbSetup {
   layer: DbLayer;
-  schemaSql: string | null;
-  tableStatements: string[] | null;
+  migratorLayer: Layer.Layer<never, never, never>;
   dbPath: string | null;
 }
 
 function makeDbSetup(): DbSetup {
   if (isPostgres(DATABASE_URL)) {
-    return {
-      layer: PgClient.layer({ url: Redacted.make(DATABASE_URL) }) as unknown as DbLayer,
-      schemaSql: CREATE_TABLES_SQL_PG,
-      tableStatements: null,
-      dbPath: null,
-    };
+    const layer = PgClient.layer({ url: Redacted.make(DATABASE_URL) }) as unknown as DbLayer;
+    const migratorLayer = PgMigrator.layer({
+      loader: PgMigrator.fromRecord(migrations),
+      table: "effect_sql_migrations",
+    }).pipe(Layer.provide(layer), Layer.provide(NodeContext.layer)) as unknown as Layer.Layer<never, never, never>;
+    return { layer, migratorLayer, dbPath: null };
   }
   const dbPath = join(tmpdir(), `demo-be-ts-effect-integration-test-${process.pid}.db`);
-  return {
-    layer: SqliteClient.layer({ filename: dbPath }) as unknown as DbLayer,
-    schemaSql: null,
-    tableStatements: CREATE_TABLE_STATEMENTS,
-    dbPath,
-  };
+  const layer = SqliteClient.layer({ filename: dbPath }) as unknown as DbLayer;
+  const migratorLayer = SqliteMigrator.layer({
+    loader: SqliteMigrator.fromRecord(migrations),
+    table: "effect_sql_migrations",
+  }).pipe(Layer.provide(layer)) as unknown as Layer.Layer<never, never, never>;
+  return { layer, migratorLayer, dbPath };
 }
 
 const DB = makeDbSetup();
@@ -80,19 +82,8 @@ export type ServiceRuntime = ManagedRuntime.ManagedRuntime<
 export let serviceRuntime: any = null;
 
 BeforeAll(async function () {
-  // Initialize schema
-  await Effect.runPromise(
-    Effect.gen(function* () {
-      const sql = yield* SqlClient.SqlClient;
-      if (DB.schemaSql) {
-        yield* sql.unsafe(DB.schemaSql);
-      } else if (DB.tableStatements) {
-        for (const statement of DB.tableStatements) {
-          yield* sql.unsafe(statement);
-        }
-      }
-    }).pipe(Effect.provide(SqlLayer)),
-  );
+  // Run migrations to initialize schema
+  await Effect.runPromise(Layer.build(DB.migratorLayer).pipe(Effect.scoped));
 
   serviceRuntime = ManagedRuntime.make(ServiceLayer);
 });
