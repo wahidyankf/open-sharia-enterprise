@@ -8,6 +8,6 @@ CREATE TABLE attachments (
   stored_path  VARCHAR(500) NOT NULL,
   created_at   TIMESTAMPTZ  NOT NULL,
   CONSTRAINT pk_attachments PRIMARY KEY (id),
-  CONSTRAINT fk_attachments_expense FOREIGN KEY (expense_id) REFERENCES expenses (id),
-  CONSTRAINT fk_attachments_user FOREIGN KEY (user_id) REFERENCES users (id)
+  CONSTRAINT fk_attachments_expense FOREIGN KEY (expense_id) REFERENCES expenses (id) ON DELETE CASCADE,
+  CONSTRAINT fk_attachments_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );

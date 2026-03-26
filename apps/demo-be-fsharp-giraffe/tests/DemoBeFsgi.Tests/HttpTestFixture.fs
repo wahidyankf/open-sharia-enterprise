@@ -43,8 +43,7 @@ type TestWebAppFactory() =
                 services.Remove(d) |> ignore
 
             // Add SQLite in-memory with the open connection so schema is preserved
-            services.AddDbContext<AppDbContext>(fun opts ->
-                opts.UseSqlite(conn).UseSnakeCaseNamingConvention() |> ignore)
+            services.AddDbContext<AppDbContext>(fun opts -> opts.UseSqlite(conn) |> ignore)
             |> ignore)
         |> ignore
 

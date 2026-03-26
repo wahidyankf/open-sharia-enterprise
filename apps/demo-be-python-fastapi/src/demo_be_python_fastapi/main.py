@@ -39,7 +39,7 @@ from demo_be_python_fastapi.routers import (
 logger = logging.getLogger(__name__)
 
 # Resolve alembic.ini relative to the project root (two levels above this file's src/ directory).
-_ALEMBIC_INI = Path(__file__).parents[3] / "alembic.ini"
+_ALEMBIC_INI = Path(__file__).parents[2] / "alembic.ini"
 
 
 @asynccontextmanager

@@ -1,7 +1,7 @@
 # Development Docker Image for Demo Backend (GOGN — Go/Gin)
-# Uses Go 1.24 Alpine for building and running the application.
+# Uses Go 1.25 Alpine for building and running the application.
 
-FROM golang:1.24-alpine
+FROM golang:1.25-alpine
 
 # Install curl for health checks
 RUN apk add --no-cache curl

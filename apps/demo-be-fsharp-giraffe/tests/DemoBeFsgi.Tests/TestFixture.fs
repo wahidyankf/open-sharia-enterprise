@@ -37,8 +37,7 @@ let createDb () : AppDbContext * (unit -> unit) =
         if not result.Successful then
             failwith (sprintf "Database migration failed: %s" result.Error.Message)
 
-        let options =
-            DbContextOptionsBuilder<AppDbContext>().UseNpgsql(connStr).UseSnakeCaseNamingConvention().Options
+        let options = DbContextOptionsBuilder<AppDbContext>().UseNpgsql(connStr).Options
 
         let db = new AppDbContext(options)
 

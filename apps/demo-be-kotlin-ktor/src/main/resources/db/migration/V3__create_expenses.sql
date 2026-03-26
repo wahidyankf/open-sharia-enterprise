@@ -12,5 +12,5 @@ CREATE TABLE expenses (
   created_at  TIMESTAMPTZ    NOT NULL DEFAULT NOW(),
   updated_at  TIMESTAMPTZ    NOT NULL DEFAULT NOW(),
   CONSTRAINT pk_expenses PRIMARY KEY (id),
-  CONSTRAINT fk_expenses_user FOREIGN KEY (user_id) REFERENCES users (id)
+  CONSTRAINT fk_expenses_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );

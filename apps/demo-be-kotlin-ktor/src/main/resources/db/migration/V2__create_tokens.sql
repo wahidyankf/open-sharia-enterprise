@@ -5,5 +5,5 @@ CREATE TABLE tokens (
   expires_at TIMESTAMPTZ  NOT NULL,
   revoked_at TIMESTAMPTZ,
   CONSTRAINT pk_tokens PRIMARY KEY (jti),
-  CONSTRAINT fk_tokens_user FOREIGN KEY (user_id) REFERENCES users (id)
+  CONSTRAINT fk_tokens_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );

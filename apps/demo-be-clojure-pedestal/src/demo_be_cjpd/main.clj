@@ -7,13 +7,17 @@
   (:gen-class))
 
 (defn- migratus-config
-  "Build Migratus configuration from the database URL."
+  "Build Migratus configuration from the database URL.
+   Embeds user and password as query parameters because Migratus passes
+   the :db map directly to next.jdbc which requires credentials in the URI."
   [database-url]
-  {:store         :database
-   :migration-dir "migrations/"
-   :db            {:connection-uri database-url
-                   :user           (or (System/getenv "DB_USER") "demo_be_cjpd")
-                   :password       (or (System/getenv "DB_PASSWORD") "demo_be_cjpd")}})
+  (let [user     (or (System/getenv "DB_USER") "demo_be_cjpd")
+        password (or (System/getenv "DB_PASSWORD") "demo_be_cjpd")
+        sep      (if (.contains database-url "?") "&" "?")
+        uri      (str database-url sep "user=" user "&password=" password)]
+    {:store         :database
+     :migration-dir "migrations"
+     :db            {:connection-uri uri}}))
 
 (defn -main
   "Start the demo-be-cjpd Pedestal application."
