@@ -17,7 +17,7 @@ defmodule DemoBeExphWeb.Plugs.CheckUserActive do
     claims = GuardianPlug.current_claims(conn)
 
     if claims do
-      user_id = claims |> Map.get("sub") |> String.to_integer()
+      user_id = Map.get(claims, "sub")
       user = accounts().get_user(user_id)
 
       cond do

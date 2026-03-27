@@ -9,7 +9,7 @@ use crate::domain::types::{Currency, EntryType};
 pub struct Expense {
     pub id: Uuid,
     pub user_id: Uuid,
-    pub amount_stored: i64,
+    pub amount: i64,
     pub currency: String,
     pub category: String,
     pub description: String,
@@ -17,6 +17,12 @@ pub struct Expense {
     pub entry_type: String,
     pub quantity: Option<f64>,
     pub unit: Option<String>,
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    pub created_by: String,
+    pub updated_at: chrono::DateTime<chrono::Utc>,
+    pub updated_by: String,
+    pub deleted_at: Option<chrono::DateTime<chrono::Utc>>,
+    pub deleted_by: Option<String>,
 }
 
 impl Expense {
@@ -32,7 +38,7 @@ impl Expense {
 
     #[must_use]
     pub fn display_amount(&self) -> String {
-        self.currency().format_amount(self.amount_stored)
+        self.currency().format_amount(self.amount)
     }
 }
 

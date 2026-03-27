@@ -86,14 +86,12 @@ type RevokedTokenEntity =
     { [<Key>]
       [<Column("id")>]
       Id: Guid
-      [<Column("token_jti")>]
-      TokenJti: string
+      [<Column("jti")>]
+      Jti: string
       [<Column("user_id")>]
       UserId: Guid
       [<Column("revoked_at")>]
-      RevokedAt: DateTime
-      [<Column("expires_at")>]
-      ExpiresAt: DateTime }
+      RevokedAt: DateTime }
 
 [<CLIMutable>]
 [<Table("refresh_tokens")>]

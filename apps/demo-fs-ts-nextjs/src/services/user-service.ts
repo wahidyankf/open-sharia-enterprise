@@ -11,7 +11,7 @@ export interface UserProfile {
   id: string;
   username: string;
   email: string;
-  displayName: string | null;
+  displayName: string;
   role: string;
   status: string;
 }

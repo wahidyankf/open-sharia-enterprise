@@ -119,7 +119,7 @@ func TestUnitGORMStoreTokens(t *testing.T) {
 	rt := &domain.RefreshToken{
 		ID:        "rt1",
 		UserID:    "u1",
-		TokenStr:  "tok1",
+		TokenHash: "tok1",
 		ExpiresAt: futureTime(),
 	}
 	if err := gs.SaveRefreshToken(ctx, rt); err != nil {
@@ -150,7 +150,7 @@ func TestUnitGORMStoreTokens(t *testing.T) {
 	rt2 := &domain.RefreshToken{
 		ID:        "rt2",
 		UserID:    "u2",
-		TokenStr:  "tok2",
+		TokenHash: "tok2",
 		ExpiresAt: futureTime(),
 	}
 	_ = gs.SaveRefreshToken(ctx, rt2)
@@ -270,7 +270,7 @@ func TestUnitGORMStoreAttachments(t *testing.T) {
 		Filename:    "receipt.jpg",
 		ContentType: "image/jpeg",
 		Size:        1024,
-		URL:         "/files/ge1/ga1",
+		Data:        []byte("fake file content"),
 	}
 	if err := gs.CreateAttachment(ctx, a); err != nil {
 		t.Fatalf("CreateAttachment failed: %v", err)

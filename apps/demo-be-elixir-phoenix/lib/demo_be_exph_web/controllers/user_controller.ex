@@ -16,7 +16,7 @@ defmodule DemoBeExphWeb.UserController do
       display_name: user.display_name || user.username,
       status: user.status,
       roles: [user.role],
-      created_at: to_string(user.inserted_at),
+      created_at: to_string(user.created_at),
       updated_at: to_string(user.updated_at)
     }
 
@@ -43,7 +43,7 @@ defmodule DemoBeExphWeb.UserController do
           display_name: updated_user.display_name || updated_user.username,
           status: updated_user.status,
           roles: [updated_user.role],
-          created_at: to_string(updated_user.inserted_at),
+          created_at: to_string(updated_user.created_at),
           updated_at: to_string(updated_user.updated_at)
         }
 

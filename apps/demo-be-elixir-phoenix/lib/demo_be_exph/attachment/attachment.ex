@@ -2,17 +2,19 @@ defmodule DemoBeExph.Attachment.Attachment do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @primary_key {:id, :binary_id, autogenerate: true}
+  @foreign_key_type :binary_id
+
   @supported_content_types ~w(image/jpeg image/png application/pdf)
   @max_size_bytes 5 * 1024 * 1024
 
   schema "attachments" do
-    field :expense_id, :integer
+    field :expense_id, :binary_id
     field :filename, :string
     field :content_type, :string
     field :size, :integer
     field :data, :binary
-
-    timestamps()
+    field :created_at, :utc_datetime
   end
 
   def changeset(attachment, attrs) do

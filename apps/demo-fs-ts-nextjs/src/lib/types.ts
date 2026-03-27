@@ -36,7 +36,7 @@ export interface User {
   readonly username: string;
   readonly email: string;
   readonly passwordHash: string;
-  readonly displayName: string | null;
+  readonly displayName: string;
   readonly role: Role;
   readonly status: UserStatus;
   readonly failedLoginAttempts: number;

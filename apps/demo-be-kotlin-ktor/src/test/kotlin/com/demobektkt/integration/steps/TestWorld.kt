@@ -15,7 +15,8 @@ import com.demobektkt.infrastructure.repositories.TokenRepository
 import com.demobektkt.infrastructure.repositories.UserRepository
 import com.demobektkt.infrastructure.tables.AttachmentsTable
 import com.demobektkt.infrastructure.tables.ExpensesTable
-import com.demobektkt.infrastructure.tables.TokensTable
+import com.demobektkt.infrastructure.tables.RefreshTokensTable
+import com.demobektkt.infrastructure.tables.RevokedTokensTable
 import com.demobektkt.infrastructure.tables.UsersTable
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
@@ -61,7 +62,8 @@ object TestWorld {
     transaction {
       AttachmentsTable.deleteAll()
       ExpensesTable.deleteAll()
-      TokensTable.deleteAll()
+      RevokedTokensTable.deleteAll()
+      RefreshTokensTable.deleteAll()
       UsersTable.deleteAll()
     }
   }

@@ -19,11 +19,10 @@ class ExposedAttachmentRepository : AttachmentRepository {
     Attachment(
       id = row[AttachmentsTable.id],
       expenseId = row[AttachmentsTable.expenseId],
-      userId = row[AttachmentsTable.userId],
       filename = row[AttachmentsTable.filename],
       contentType = row[AttachmentsTable.contentType],
-      sizeBytes = row[AttachmentsTable.sizeBytes],
-      storedPath = row[AttachmentsTable.storedPath],
+      size = row[AttachmentsTable.size],
+      data = row[AttachmentsTable.data],
       createdAt = row[AttachmentsTable.createdAt],
     )
 
@@ -32,11 +31,10 @@ class ExposedAttachmentRepository : AttachmentRepository {
       val id =
         AttachmentsTable.insert {
             it[expenseId] = request.expenseId
-            it[userId] = request.userId
             it[filename] = request.filename
             it[contentType] = request.contentType
-            it[sizeBytes] = request.sizeBytes
-            it[storedPath] = request.storedPath
+            it[size] = request.size
+            it[data] = request.data
             it[createdAt] = Instant.now()
           }[AttachmentsTable.id]
       AttachmentsTable.selectAll()

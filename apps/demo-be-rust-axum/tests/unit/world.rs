@@ -1093,7 +1093,7 @@ pub async fn svc_create_expense(
         }
     };
 
-    let amount_stored = match parse_amount(&currency, amount) {
+    let amount = match parse_amount(&currency, amount) {
         Ok(v) => v,
         Err(e) => return ServiceResponse::from_error(&e),
     };
@@ -1132,7 +1132,7 @@ pub async fn svc_create_expense(
         &state.pool,
         expense_id,
         auth.user_id,
-        amount_stored,
+        amount,
         currency_str,
         category,
         description,
@@ -1240,7 +1240,7 @@ pub async fn svc_update_expense(
         }
     };
 
-    let amount_stored = match parse_amount(&currency, amount) {
+    let amount = match parse_amount(&currency, amount) {
         Ok(v) => v,
         Err(e) => return ServiceResponse::from_error(&e),
     };
@@ -1277,7 +1277,7 @@ pub async fn svc_update_expense(
     match expense_repo::update_expense(
         &state.pool,
         expense_id,
-        amount_stored,
+        amount,
         currency_str,
         category,
         description,
@@ -1398,7 +1398,6 @@ pub async fn svc_upload_attachment(
         NewAttachment {
             id: att_id,
             expense_id,
-            user_id: auth.user_id,
             filename,
             content_type,
             size: data.len() as i64,
@@ -1590,7 +1589,7 @@ pub async fn svc_pl_report(
 fn expense_to_json(expense: &Expense) -> Value {
     use serde_json::json;
     let currency = expense.currency();
-    let amount_display = currency.format_amount(expense.amount_stored);
+    let amount_display = currency.format_amount(expense.amount);
     json!({
         "id": expense.id.to_string(),
         "amount": amount_display,

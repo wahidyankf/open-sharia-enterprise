@@ -66,7 +66,7 @@ func (ctx *scenarioCtx) alicesRefreshTokenHasExpired() error {
 	expiredToken := &domain.RefreshToken{
 		ID:        "expired-id",
 		UserID:    ctx.UserID,
-		TokenStr:  ctx.RefreshToken,
+		TokenHash: ctx.RefreshToken,
 		ExpiresAt: time.Now().Add(-1 * time.Hour),
 	}
 	_ = ctx.Store.SaveRefreshToken(context.Background(), expiredToken)

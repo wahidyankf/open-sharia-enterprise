@@ -9,7 +9,6 @@ use crate::domain::errors::AppError;
 pub struct NewAttachment<'a> {
     pub id: Uuid,
     pub expense_id: Uuid,
-    pub user_id: Uuid,
     pub filename: &'a str,
     pub content_type: &'a str,
     pub size: i64,
@@ -20,12 +19,10 @@ fn row_to_attachment(row: &AnyRow) -> Attachment {
     use sqlx::Row;
     let id_str: String = row.get("id");
     let expense_id_str: String = row.get("expense_id");
-    let user_id_str: String = row.get("user_id");
     let created_str: String = row.get("created_at");
     Attachment {
         id: Uuid::parse_str(&id_str).unwrap_or_else(|_| Uuid::new_v4()),
         expense_id: Uuid::parse_str(&expense_id_str).unwrap_or_else(|_| Uuid::new_v4()),
-        user_id: Uuid::parse_str(&user_id_str).unwrap_or_else(|_| Uuid::new_v4()),
         filename: row.get("filename"),
         content_type: row.get("content_type"),
         size: row.get("size"),
@@ -42,16 +39,14 @@ pub async fn create_attachment(
 ) -> Result<Attachment, AppError> {
     let id_str = new.id.to_string();
     let expense_id_str = new.expense_id.to_string();
-    let user_id_str = new.user_id.to_string();
     let now_str = Utc::now().to_rfc3339();
 
     sqlx::query(
-        r#"INSERT INTO attachments (id, expense_id, user_id, filename, content_type, size, data, created_at)
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)"#,
+        r#"INSERT INTO attachments (id, expense_id, filename, content_type, size, data, created_at)
+           VALUES ($1, $2, $3, $4, $5, $6, $7)"#,
     )
     .bind(&id_str)
     .bind(&expense_id_str)
-    .bind(&user_id_str)
     .bind(new.filename)
     .bind(new.content_type)
     .bind(new.size)
@@ -70,7 +65,7 @@ pub async fn create_attachment(
 pub async fn find_by_id(pool: &AnyPool, id: Uuid) -> Result<Option<Attachment>, AppError> {
     let id_str = id.to_string();
     let row = sqlx::query(
-        r#"SELECT id, expense_id, user_id, filename, content_type, size, data, created_at
+        r#"SELECT id, expense_id, filename, content_type, size, data, created_at
            FROM attachments WHERE id = $1"#,
     )
     .bind(&id_str)
@@ -86,7 +81,7 @@ pub async fn list_for_expense(
 ) -> Result<Vec<Attachment>, AppError> {
     let expense_id_str = expense_id.to_string();
     let rows = sqlx::query(
-        r#"SELECT id, expense_id, user_id, filename, content_type, size, data, created_at
+        r#"SELECT id, expense_id, filename, content_type, size, data, created_at
            FROM attachments WHERE expense_id = $1 ORDER BY created_at ASC"#,
     )
     .bind(&expense_id_str)

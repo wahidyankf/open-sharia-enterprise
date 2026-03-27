@@ -26,80 +26,67 @@ defmodule DemoBeExphWeb.AttachmentController do
 
   def index(conn, %{"expense_id" => expense_id}) do
     user = GuardianPlug.current_resource(conn)
-    expense_id_int = String.to_integer(expense_id)
 
-    case expense_ctx().get_expense(user.id, expense_id_int) do
+    case expense_ctx().get_expense(user.id, expense_id) do
       nil ->
         conn |> put_status(:forbidden) |> json(%{message: "Expense not found or access denied"})
 
       _expense ->
-        attachments = attachment_ctx().list_attachments(expense_id_int)
+        attachments = attachment_ctx().list_attachments(expense_id)
         json(conn, %{attachments: Enum.map(attachments, &attachment_json/1)})
     end
   end
 
   def create(conn, %{"expense_id" => expense_id} = params) do
     user = GuardianPlug.current_resource(conn)
-    expense_id_int = String.to_integer(expense_id)
 
-    case expense_ctx().get_expense(user.id, expense_id_int) do
+    case expense_ctx().get_expense(user.id, expense_id) do
       nil ->
         conn |> put_status(:forbidden) |> json(%{message: "Expense not found or access denied"})
 
       _expense ->
-        upload_file(conn, expense_id_int, params)
+        upload_file(conn, expense_id, params)
     end
   end
 
   def show(conn, %{"expense_id" => expense_id, "att_id" => att_id}) do
     user = GuardianPlug.current_resource(conn)
-    expense_id_int = String.to_integer(expense_id)
 
-    case expense_ctx().get_expense(user.id, expense_id_int) do
+    case expense_ctx().get_expense(user.id, expense_id) do
       nil ->
         conn |> put_status(:not_found) |> json(%{message: "Expense not found"})
 
       _expense ->
-        show_attachment(conn, expense_id_int, att_id)
+        show_attachment(conn, expense_id, att_id)
     end
   end
 
   def delete(conn, %{"expense_id" => expense_id, "att_id" => att_id}) do
     user = GuardianPlug.current_resource(conn)
-    expense_id_int = String.to_integer(expense_id)
 
-    case expense_ctx().get_expense(user.id, expense_id_int) do
+    case expense_ctx().get_expense(user.id, expense_id) do
       nil ->
         conn |> put_status(:forbidden) |> json(%{message: "Expense not found or access denied"})
 
       _expense ->
-        delete_attachment(conn, expense_id_int, att_id)
+        delete_attachment(conn, expense_id, att_id)
     end
   end
 
-  defp show_attachment(conn, expense_id_int, att_id) do
-    with {:ok, att_id_int} <- safe_parse_int(att_id),
-         attachment when not is_nil(attachment) <-
-           attachment_ctx().get_attachment(expense_id_int, att_id_int) do
+  defp show_attachment(conn, expense_id, att_id) do
+    attachment = attachment_ctx().get_attachment(expense_id, att_id)
+
+    if attachment do
       json(conn, attachment_json(attachment))
     else
-      _ -> conn |> put_status(:not_found) |> json(%{message: "Attachment not found"})
+      conn |> put_status(:not_found) |> json(%{message: "Attachment not found"})
     end
   end
 
-  defp delete_attachment(conn, expense_id_int, att_id) do
-    with {:ok, att_id_int} <- safe_parse_int(att_id),
-         {:ok, _} <- attachment_ctx().delete_attachment(expense_id_int, att_id_int) do
-      conn |> put_status(:no_content) |> json(%{})
-    else
+  defp delete_attachment(conn, expense_id, att_id) do
+    case attachment_ctx().delete_attachment(expense_id, att_id) do
+      {:ok, _} -> conn |> put_status(:no_content) |> json(%{})
       _ -> conn |> put_status(:not_found) |> json(%{message: "Attachment not found"})
-    end
-  end
-
-  defp safe_parse_int(value) do
-    case Integer.parse(value) do
-      {int, ""} -> {:ok, int}
-      _ -> :error
     end
   end
 
@@ -158,7 +145,7 @@ defmodule DemoBeExphWeb.AttachmentController do
       filename: attachment.filename,
       content_type: attachment.content_type,
       size: attachment.size,
-      created_at: to_string(attachment.inserted_at)
+      created_at: to_string(attachment.created_at)
     }
 
     %{
@@ -168,7 +155,7 @@ defmodule DemoBeExphWeb.AttachmentController do
       contentType: attachment.content_type,
       size: attachment.size,
       url: "/api/v1/expenses/#{attachment.expense_id}/attachments/#{attachment.id}",
-      inserted_at: attachment.inserted_at
+      created_at: attachment.created_at
     }
   end
 

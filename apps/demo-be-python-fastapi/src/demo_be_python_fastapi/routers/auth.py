@@ -67,7 +67,7 @@ def _ensure_utc(dt: datetime) -> datetime:
 def _user_to_contract(user) -> User:  # type: ignore[no-untyped-def]
     """Map a UserModel ORM instance to the generated User contract type."""
     return User(
-        id=user.id,
+        id=str(user.id),
         username=user.username,
         email=user.email,
         displayName=user.display_name or "",
@@ -120,15 +120,15 @@ def login(
         raise UnauthorizedError("Account has been disabled")
 
     if not verify_password(body.password, user.password_hash):
-        attempts = user_repo.increment_failed_attempts(user.id)
+        attempts = user_repo.increment_failed_attempts(str(user.id))
         if attempts >= settings.max_failed_login_attempts:
-            user_repo.update_status(user.id, "LOCKED")
+            user_repo.update_status(str(user.id), "LOCKED")
             raise AccountLockedError("Account locked due to too many failed login attempts")
         raise UnauthorizedError("Invalid credentials")
 
-    user_repo.reset_failed_attempts(user.id)
-    access_token = create_access_token(user.id, user.username, user.role)
-    refresh_token = create_refresh_token(user.id)
+    user_repo.reset_failed_attempts(str(user.id))
+    access_token = create_access_token(str(user.id), user.username, user.role)
+    refresh_token = create_refresh_token(str(user.id))
     return AuthTokens(accessToken=access_token, refreshToken=refresh_token, tokenType="Bearer")
 
 
@@ -167,8 +167,8 @@ def refresh(
     # Revoke the old refresh token (single-use rotation)
     revoked_repo.revoke(jti, user_id)
 
-    access_token = create_access_token(user.id, user.username, user.role)
-    new_refresh_token = create_refresh_token(user.id)
+    access_token = create_access_token(str(user.id), user.username, user.role)
+    new_refresh_token = create_refresh_token(str(user.id))
     return AuthTokens(accessToken=access_token, refreshToken=new_refresh_token, tokenType="Bearer")
 
 

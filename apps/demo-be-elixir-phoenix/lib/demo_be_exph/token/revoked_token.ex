@@ -2,9 +2,12 @@ defmodule DemoBeExph.Token.RevokedToken do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @primary_key {:id, :binary_id, autogenerate: true}
+  @foreign_key_type :binary_id
+
   schema "revoked_tokens" do
     field :jti, :string
-    field :user_id, :integer
+    field :user_id, :binary_id
     field :revoked_at, :utc_datetime
   end
 

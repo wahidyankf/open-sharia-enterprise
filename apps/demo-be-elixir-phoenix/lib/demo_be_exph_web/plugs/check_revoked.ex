@@ -24,7 +24,7 @@ defmodule DemoBeExphWeb.Plugs.CheckRevoked do
       |> halt()
     else
       if claims do
-        user_id = claims |> Map.get("sub") |> String.to_integer()
+        user_id = Map.get(claims, "sub")
         assign(conn, :current_user_id, user_id)
       else
         conn

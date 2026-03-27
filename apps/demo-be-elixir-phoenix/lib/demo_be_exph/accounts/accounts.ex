@@ -100,7 +100,7 @@ defmodule DemoBeExph.Accounts do
   @doc "Enable (re-activate) a user account (status -> ACTIVE)."
   def enable_user(user) do
     user
-    |> User.status_changeset(%{status: "ACTIVE", failed_login_attempts: 0, locked_at: nil})
+    |> User.status_changeset(%{status: "ACTIVE", failed_login_attempts: 0})
     |> Repo.update()
   end
 
@@ -111,13 +111,12 @@ defmodule DemoBeExph.Accounts do
     |> Repo.update()
   end
 
-  @doc "Unlock a locked user (clears failed_login_attempts and locked_at)."
+  @doc "Unlock a locked user (clears failed_login_attempts)."
   def unlock_user(user) do
     user
     |> User.status_changeset(%{
       status: "ACTIVE",
-      failed_login_attempts: 0,
-      locked_at: nil
+      failed_login_attempts: 0
     })
     |> Repo.update()
   end
@@ -150,7 +149,7 @@ defmodule DemoBeExph.Accounts do
   defp reset_failed_attempts(user) do
     if user.failed_login_attempts > 0 do
       user
-      |> User.status_changeset(%{failed_login_attempts: 0, locked_at: nil})
+      |> User.status_changeset(%{failed_login_attempts: 0})
       |> Repo.update()
     end
   end
@@ -162,8 +161,7 @@ defmodule DemoBeExph.Accounts do
       user
       |> User.status_changeset(%{
         status: "LOCKED",
-        failed_login_attempts: new_attempts,
-        locked_at: DateTime.utc_now() |> DateTime.truncate(:second)
+        failed_login_attempts: new_attempts
       })
       |> Repo.update()
 

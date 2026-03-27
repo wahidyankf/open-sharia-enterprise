@@ -20,7 +20,7 @@ defmodule DemoBeExphWeb.AuthController do
           display_name: user.display_name || user.username,
           status: user.status,
           roles: [user.role],
-          created_at: to_string(user.inserted_at),
+          created_at: to_string(user.created_at),
           updated_at: to_string(user.updated_at)
         }
 
@@ -67,7 +67,7 @@ defmodule DemoBeExphWeb.AuthController do
     case Guardian.decode_and_verify(token) do
       {:ok, claims} ->
         jti = Map.get(claims, "jti")
-        user_id = claims |> Map.get("sub") |> parse_user_id()
+        user_id = Map.get(claims, "sub")
         token_ctx().revoke_access_token(jti, user_id)
 
       {:error, _reason} ->
@@ -83,7 +83,7 @@ defmodule DemoBeExphWeb.AuthController do
     case Guardian.decode_and_verify(token) do
       {:ok, claims} ->
         jti = Map.get(claims, "jti")
-        user_id = claims |> Map.get("sub") |> parse_user_id()
+        user_id = Map.get(claims, "sub")
         token_ctx().revoke_access_token(jti, user_id)
         token_ctx().revoke_all_refresh_tokens(user_id)
 
@@ -190,10 +190,6 @@ defmodule DemoBeExphWeb.AuthController do
     |> List.first("")
     |> String.replace_prefix("Bearer ", "")
   end
-
-  defp parse_user_id(nil), do: nil
-  defp parse_user_id(sub) when is_binary(sub), do: String.to_integer(sub)
-  defp parse_user_id(sub) when is_integer(sub), do: sub
 
   defp username_taken?(%Ecto.Changeset{} = changeset) do
     changeset.errors

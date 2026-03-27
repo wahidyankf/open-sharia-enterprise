@@ -1,7 +1,6 @@
 export interface Attachment {
   readonly id: string;
   readonly expenseId: string;
-  readonly userId: string;
   readonly filename: string;
   readonly contentType: string;
   readonly size: number;
@@ -11,7 +10,6 @@ export interface Attachment {
 
 export interface CreateAttachmentData {
   readonly expenseId: string;
-  readonly userId: string;
   readonly filename: string;
   readonly contentType: string;
   readonly size: number;

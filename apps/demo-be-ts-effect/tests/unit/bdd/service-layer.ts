@@ -97,9 +97,7 @@ async function runEffect<A>(
   // domain error (ConflictError, ValidationError, …) rather than a wrapped
   // FiberFailureImpl whose `instanceof` checks fail.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const either = await (serviceRuntime as any).runPromise(
-    Effect.either(effect),
-  );
+  const either = await (serviceRuntime as any).runPromise(Effect.either(effect));
   if (either._tag === "Right") {
     return { ok: true, value: either.right };
   }
@@ -877,7 +875,6 @@ export async function uploadAttachment(
       const attachmentRepo = yield* AttachmentRepository;
       const attachment = yield* attachmentRepo.create({
         expenseId,
-        userId: claims.sub,
         filename,
         contentType,
         size: content.length,
@@ -953,9 +950,6 @@ export async function deleteAttachment(
       const attachment = yield* attachmentRepo.findById(attachmentId);
       if (!attachment) {
         return yield* Effect.fail(new NotFoundError({ resource: "Attachment" }));
-      }
-      if (attachment.userId !== claims.sub) {
-        return yield* Effect.fail(new ForbiddenError({ reason: "Access denied" }));
       }
 
       yield* attachmentRepo.delete(attachmentId);

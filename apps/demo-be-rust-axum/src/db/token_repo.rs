@@ -6,11 +6,13 @@ use uuid::Uuid;
 use crate::domain::errors::AppError;
 
 pub async fn revoke_token(pool: &AnyPool, jti: &str, user_id: Uuid) -> Result<(), AppError> {
+    let id_str = Uuid::new_v4().to_string();
     let user_id_str = user_id.to_string();
     let now_str = Utc::now().to_rfc3339();
     sqlx::query(
-        "INSERT INTO token_revocations (jti, user_id, revoked_at) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING",
+        "INSERT INTO revoked_tokens (id, jti, user_id, revoked_at) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING",
     )
+    .bind(&id_str)
     .bind(jti)
     .bind(&user_id_str)
     .bind(&now_str)
@@ -20,6 +22,7 @@ pub async fn revoke_token(pool: &AnyPool, jti: &str, user_id: Uuid) -> Result<()
 }
 
 pub async fn revoke_all_for_user(pool: &AnyPool, user_id: Uuid) -> Result<(), AppError> {
+    let id_str = Uuid::new_v4().to_string();
     let user_id_str = user_id.to_string();
     let sentinel_jti = format!(
         "user-revoke-all-{}-{}",
@@ -28,8 +31,9 @@ pub async fn revoke_all_for_user(pool: &AnyPool, user_id: Uuid) -> Result<(), Ap
     );
     let now_str = Utc::now().to_rfc3339();
     sqlx::query(
-        "INSERT INTO token_revocations (jti, user_id, revoked_at) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING",
+        "INSERT INTO revoked_tokens (id, jti, user_id, revoked_at) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING",
     )
+    .bind(&id_str)
     .bind(&sentinel_jti)
     .bind(&user_id_str)
     .bind(&now_str)
@@ -40,7 +44,7 @@ pub async fn revoke_all_for_user(pool: &AnyPool, user_id: Uuid) -> Result<(), Ap
 
 pub async fn is_revoked(pool: &AnyPool, jti: &str) -> Result<bool, AppError> {
     use sqlx::Row;
-    let row: AnyRow = sqlx::query("SELECT COUNT(*) as cnt FROM token_revocations WHERE jti = $1")
+    let row: AnyRow = sqlx::query("SELECT COUNT(*) as cnt FROM revoked_tokens WHERE jti = $1")
         .bind(jti)
         .fetch_one(pool)
         .await?;
@@ -61,7 +65,7 @@ pub async fn is_user_all_revoked_after(
         .to_rfc3339();
     let prefix = format!("user-revoke-all-{user_id}-%");
     let row: AnyRow = sqlx::query(
-        r#"SELECT COUNT(*) as cnt FROM token_revocations
+        r#"SELECT COUNT(*) as cnt FROM revoked_tokens
            WHERE user_id = $1 AND jti LIKE $2 AND revoked_at > $3"#,
     )
     .bind(&user_id_str)

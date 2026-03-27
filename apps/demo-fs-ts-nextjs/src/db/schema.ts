@@ -22,15 +22,15 @@ export const users = pgTable("users", {
   username: varchar("username", { length: 50 }).notNull().unique(),
   passwordHash: varchar("password_hash", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull().unique(),
-  displayName: varchar("display_name", { length: 255 }),
+  displayName: varchar("display_name", { length: 255 }).notNull().default(""),
   role: varchar("role", { length: 20 }).notNull().default("USER"),
   status: varchar("status", { length: 20 }).notNull().default("ACTIVE"),
   failedLoginAttempts: integer("failed_login_attempts").notNull().default(0),
   passwordResetToken: varchar("password_reset_token", { length: 255 }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-  createdBy: varchar("created_by", { length: 255 }).default("system"),
+  createdBy: varchar("created_by", { length: 255 }).notNull().default("system"),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
-  updatedBy: varchar("updated_by", { length: 255 }).default("system"),
+  updatedBy: varchar("updated_by", { length: 255 }).notNull().default("system"),
   deletedAt: timestamp("deleted_at", { withTimezone: true }),
   deletedBy: varchar("deleted_by", { length: 255 }),
 });
@@ -40,7 +40,7 @@ export const refreshTokens = pgTable("refresh_tokens", {
   userId: uuid("user_id")
     .notNull()
     .references(() => users.id),
-  tokenHash: varchar("token_hash", { length: 255 }).notNull().unique(),
+  tokenHash: varchar("token_hash", { length: 512 }).notNull().unique(),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
   revoked: boolean("revoked").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -49,9 +49,7 @@ export const refreshTokens = pgTable("refresh_tokens", {
 export const revokedTokens = pgTable("revoked_tokens", {
   id: uuid("id").primaryKey().defaultRandom(),
   jti: varchar("jti", { length: 255 }).notNull().unique(),
-  userId: uuid("user_id")
-    .notNull()
-    .references(() => users.id),
+  userId: uuid("user_id").notNull(),
   revokedAt: timestamp("revoked_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -61,15 +59,19 @@ export const expenses = pgTable("expenses", {
     .notNull()
     .references(() => users.id),
   amount: decimal("amount", { precision: 19, scale: 4 }).notNull(),
-  currency: varchar("currency", { length: 3 }).notNull(),
+  currency: varchar("currency", { length: 10 }).notNull(),
   category: varchar("category", { length: 100 }).notNull(),
-  description: varchar("description", { length: 500 }).notNull(),
+  description: varchar("description", { length: 500 }).notNull().default(""),
   date: date("date").notNull(),
-  type: varchar("type", { length: 10 }).notNull(),
+  type: varchar("type", { length: 20 }).notNull(),
   quantity: decimal("quantity", { precision: 19, scale: 4 }),
-  unit: varchar("unit", { length: 20 }),
+  unit: varchar("unit", { length: 50 }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  createdBy: varchar("created_by", { length: 255 }).notNull().default("system"),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedBy: varchar("updated_by", { length: 255 }).notNull().default("system"),
+  deletedAt: timestamp("deleted_at", { withTimezone: true }),
+  deletedBy: varchar("deleted_by", { length: 255 }),
 });
 
 export const attachments = pgTable("attachments", {

@@ -56,7 +56,7 @@ defmodule DemoBeExphWeb.ExpenseController do
   def show(conn, %{"id" => id}) do
     user = GuardianPlug.current_resource(conn)
 
-    case expense_ctx().get_expense(user.id, String.to_integer(id)) do
+    case expense_ctx().get_expense(user.id, id) do
       nil ->
         conn |> put_status(:not_found) |> json(%{message: "Not found"})
 
@@ -69,7 +69,7 @@ defmodule DemoBeExphWeb.ExpenseController do
   def update(conn, %{"id" => id} = params) do
     user = GuardianPlug.current_resource(conn)
 
-    case expense_ctx().update_expense(user.id, String.to_integer(id), params) do
+    case expense_ctx().update_expense(user.id, id, params) do
       {:ok, expense} ->
         _ = validate_expense_shape(expense)
         json(conn, expense_json(expense))
@@ -85,7 +85,7 @@ defmodule DemoBeExphWeb.ExpenseController do
   def delete(conn, %{"id" => id}) do
     user = GuardianPlug.current_resource(conn)
 
-    case expense_ctx().delete_expense(user.id, String.to_integer(id)) do
+    case expense_ctx().delete_expense(user.id, id) do
       {:ok, _} ->
         conn |> put_status(:no_content) |> json(%{})
 
@@ -111,7 +111,7 @@ defmodule DemoBeExphWeb.ExpenseController do
       date: Date.to_iso8601(expense.date),
       type: expense.type,
       user_id: to_string(expense.user_id),
-      created_at: to_string(expense.inserted_at),
+      created_at: to_string(expense.created_at),
       updated_at: to_string(expense.updated_at)
     }
   end
@@ -128,7 +128,7 @@ defmodule DemoBeExphWeb.ExpenseController do
       date: Date.to_iso8601(expense.date),
       unit: expense.unit,
       quantity: format_quantity(expense.quantity),
-      inserted_at: expense.inserted_at,
+      created_at: expense.created_at,
       updated_at: expense.updated_at
     }
   end

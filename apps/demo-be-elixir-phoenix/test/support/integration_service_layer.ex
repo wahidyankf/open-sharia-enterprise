@@ -738,9 +738,7 @@ defmodule DemoBeExph.Integration.ServiceLayer do
     claims |> Map.get("sub") |> parse_user_id()
   end
 
-  defp parse_user_id(nil), do: nil
-  defp parse_user_id(sub) when is_binary(sub), do: String.to_integer(sub)
-  defp parse_user_id(sub) when is_integer(sub), do: sub
+  defp parse_user_id(sub), do: sub
 
   defp username_taken?(%Ecto.Changeset{} = changeset) do
     changeset.errors
@@ -783,7 +781,7 @@ defmodule DemoBeExph.Integration.ServiceLayer do
       "date" => Date.to_iso8601(expense.date),
       "unit" => expense.unit,
       "quantity" => format_quantity(expense.quantity),
-      "inserted_at" => expense.inserted_at,
+      "created_at" => expense.created_at,
       "updated_at" => expense.updated_at
     }
   end
@@ -806,7 +804,7 @@ defmodule DemoBeExph.Integration.ServiceLayer do
       "contentType" => attachment.content_type,
       "size" => attachment.size,
       "url" => "/api/v1/expenses/#{attachment.expense_id}/attachments/#{attachment.id}",
-      "inserted_at" => attachment.inserted_at
+      "created_at" => attachment.created_at
     }
   end
 

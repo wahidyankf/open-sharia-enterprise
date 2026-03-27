@@ -1,11 +1,10 @@
 import { BeforeAll, AfterAll, Before } from "@cucumber/cucumber";
 import { Effect, Layer, ManagedRuntime } from "effect";
 import { SqliteClient } from "@effect/sql-sqlite-node";
-import { SqliteMigrator } from "@effect/sql-sqlite-node";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { existsSync, unlinkSync } from "node:fs";
-import { migrations } from "../../../src/infrastructure/db/migrations/index.js";
+import { CREATE_TABLE_STATEMENTS } from "../../../src/infrastructure/db/schema.js";
 import { UserRepositoryLive } from "../../../src/infrastructure/db/user-repo.js";
 import { ExpenseRepositoryLive } from "../../../src/infrastructure/db/expense-repo.js";
 import { AttachmentRepositoryLive } from "../../../src/infrastructure/db/attachment-repo.js";
@@ -27,10 +26,18 @@ const TEST_DB_PATH = join(tmpdir(), `demo-be-ts-effect-unit-bdd-${process.pid}.d
 
 const SqlLayer = SqliteClient.layer({ filename: TEST_DB_PATH });
 
-const MigratorLayer = SqliteMigrator.layer({
-  loader: SqliteMigrator.fromRecord(migrations),
-  table: "effect_sql_migrations",
-}).pipe(Layer.provide(SqlLayer)) as unknown as Layer.Layer<never, never, never>;
+// Initialize the SQLite schema using SQLite-compatible DDL statements.
+// The migration files use PostgreSQL-specific syntax (UUID, gen_random_uuid(), TIMESTAMPTZ)
+// and cannot be run against SQLite. We use CREATE_TABLE_STATEMENTS which provides
+// equivalent SQLite-compatible DDL for unit test purposes.
+const InitDbLayer = Layer.effectDiscard(
+  Effect.gen(function* () {
+    const sql = yield* SqlClient.SqlClient;
+    for (const stmt of CREATE_TABLE_STATEMENTS) {
+      yield* sql.unsafe(stmt);
+    }
+  }),
+).pipe(Layer.provide(SqlLayer)) as unknown as Layer.Layer<never, never, never>;
 
 /**
  * Service layer — all domain services backed by SQLite.
@@ -49,8 +56,8 @@ const ServiceLayer = Layer.mergeAll(
 export let serviceRuntime: any = null;
 
 BeforeAll(async function () {
-  // Run migrations to initialize schema
-  await Effect.runPromise(Layer.build(MigratorLayer).pipe(Effect.scoped));
+  // Initialize SQLite schema using SQLite-compatible DDL
+  await Effect.runPromise(Layer.build(InitDbLayer).pipe(Effect.scoped));
 
   serviceRuntime = ManagedRuntime.make(ServiceLayer);
 });
@@ -82,6 +89,7 @@ Before(async function () {
       Effect.gen(function* () {
         const sql = yield* SqlClient.SqlClient;
         yield* sql.unsafe("DELETE FROM revoked_tokens");
+        yield* sql.unsafe("DELETE FROM refresh_tokens");
         yield* sql.unsafe("DELETE FROM attachments");
         yield* sql.unsafe("DELETE FROM expenses");
         yield* sql.unsafe("DELETE FROM users");

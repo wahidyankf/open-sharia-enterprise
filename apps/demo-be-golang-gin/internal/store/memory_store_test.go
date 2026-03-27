@@ -115,7 +115,7 @@ func TestUnitMemoryStoreRefreshTokens(t *testing.T) {
 	token := &domain.RefreshToken{
 		ID:        "rt1",
 		UserID:    "user1",
-		TokenStr:  "token-string-1",
+		TokenHash: "token-string-1",
 		ExpiresAt: time.Now().Add(time.Hour),
 	}
 	if err := ms.SaveRefreshToken(ctx, token); err != nil {
@@ -150,7 +150,7 @@ func TestUnitMemoryStoreRefreshTokens(t *testing.T) {
 	token2 := &domain.RefreshToken{
 		ID:        "rt2",
 		UserID:    "user2",
-		TokenStr:  "token-string-2",
+		TokenHash: "token-string-2",
 		ExpiresAt: time.Now().Add(time.Hour),
 	}
 	_ = ms.SaveRefreshToken(ctx, token2)
@@ -302,7 +302,7 @@ func TestUnitMemoryStoreAttachments(t *testing.T) {
 		Filename:    "receipt.jpg",
 		ContentType: "image/jpeg",
 		Size:        1024,
-		URL:         "/files/exp1/att1",
+		Data:        []byte("fake file content"),
 	}
 	if err := ms.CreateAttachment(ctx, a); err != nil {
 		t.Fatalf("CreateAttachment failed: %v", err)

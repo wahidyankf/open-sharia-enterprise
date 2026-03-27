@@ -7,7 +7,8 @@ import com.demobektkt.infrastructure.repositories.UpdateUserPatch
 import com.demobektkt.infrastructure.repositories.UserRepository
 import com.demobektkt.infrastructure.tables.AttachmentsTable
 import com.demobektkt.infrastructure.tables.ExpensesTable
-import com.demobektkt.infrastructure.tables.TokensTable
+import com.demobektkt.infrastructure.tables.RefreshTokensTable
+import com.demobektkt.infrastructure.tables.RevokedTokensTable
 import com.demobektkt.infrastructure.tables.UsersTable
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
@@ -29,7 +30,8 @@ object TestRoutes : KoinComponent {
     newSuspendedTransaction(Dispatchers.IO) {
       AttachmentsTable.deleteAll()
       ExpensesTable.deleteAll()
-      TokensTable.deleteAll()
+      RevokedTokensTable.deleteAll()
+      RefreshTokensTable.deleteAll()
       UsersTable.deleteAll()
     }
     call.respond(HttpStatusCode.OK, mapOf("message" to "Database reset successful"))

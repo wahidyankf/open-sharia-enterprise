@@ -24,10 +24,9 @@ const initDb = Effect.gen(function* () {
   }
 });
 
-function makeAttachmentData(expenseId: string, userId: string): CreateAttachmentData {
+function makeAttachmentData(expenseId: string): CreateAttachmentData {
   return {
     expenseId,
-    userId,
     filename: "receipt.jpg",
     contentType: "image/jpeg",
     size: 1024,
@@ -58,7 +57,7 @@ describe("AttachmentRepository", () => {
             date: "2024-01-01",
           });
           const repo = yield* AttachmentRepository;
-          return yield* repo.create(makeAttachmentData(expense.id, user.id));
+          return yield* repo.create(makeAttachmentData(expense.id));
         }),
       );
       expect(attachment.filename).toBe("receipt.jpg");
@@ -90,9 +89,9 @@ describe("AttachmentRepository", () => {
             date: "2024-01-01",
           });
           const repo = yield* AttachmentRepository;
-          yield* repo.create(makeAttachmentData(expense.id, user.id));
+          yield* repo.create(makeAttachmentData(expense.id));
           yield* repo.create({
-            ...makeAttachmentData(expense.id, user.id),
+            ...makeAttachmentData(expense.id),
             filename: "invoice.pdf",
             contentType: "application/pdf",
           });
@@ -136,7 +135,7 @@ describe("AttachmentRepository", () => {
             date: "2024-01-01",
           });
           const repo = yield* AttachmentRepository;
-          const created = yield* repo.create(makeAttachmentData(expense.id, user.id));
+          const created = yield* repo.create(makeAttachmentData(expense.id));
           return yield* repo.findById(created.id);
         }),
       );
@@ -178,7 +177,7 @@ describe("AttachmentRepository", () => {
             date: "2024-01-01",
           });
           const repo = yield* AttachmentRepository;
-          const created = yield* repo.create(makeAttachmentData(expense.id, user.id));
+          const created = yield* repo.create(makeAttachmentData(expense.id));
           yield* repo.delete(created.id);
           return yield* repo.findById(created.id);
         }),

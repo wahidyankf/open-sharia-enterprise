@@ -2,12 +2,16 @@ defmodule DemoBeExph.Expense.Expense do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @primary_key {:id, :binary_id, autogenerate: true}
+  @foreign_key_type :binary_id
+  @timestamps_opts [inserted_at: :created_at, updated_at: :updated_at, type: :utc_datetime]
+
   @supported_currencies ~w(USD IDR)
   @supported_units ~w(liter ml kg g km meter gallon lb oz mile piece hour)
   @supported_types ~w(income expense)
 
   schema "expenses" do
-    field :user_id, :integer
+    field :user_id, :binary_id
     field :amount, :decimal
     field :currency, :string
     field :category, :string
@@ -16,6 +20,10 @@ defmodule DemoBeExph.Expense.Expense do
     field :unit, :string
     field :quantity, :decimal
     field :date, :date
+    field :created_by, :string
+    field :updated_by, :string
+    field :deleted_at, :utc_datetime
+    field :deleted_by, :string
 
     timestamps()
   end

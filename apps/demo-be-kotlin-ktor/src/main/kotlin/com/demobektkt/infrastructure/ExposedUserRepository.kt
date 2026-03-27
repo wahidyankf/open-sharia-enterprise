@@ -28,7 +28,7 @@ class ExposedUserRepository : UserRepository {
       passwordHash = row[UsersTable.passwordHash],
       role = row[UsersTable.role],
       status = row[UsersTable.status],
-      failedLoginCount = row[UsersTable.failedLoginCount],
+      failedLoginAttempts = row[UsersTable.failedLoginAttempts],
       createdAt = row[UsersTable.createdAt],
       updatedAt = row[UsersTable.updatedAt],
     )
@@ -65,7 +65,7 @@ class ExposedUserRepository : UserRepository {
             it[passwordHash] = request.passwordHash
             it[role] = request.role
             it[status] = UserStatus.ACTIVE
-            it[failedLoginCount] = 0
+            it[failedLoginAttempts] = 0
             it[createdAt] = now
             it[updatedAt] = now
           }[UsersTable.id]
@@ -79,7 +79,7 @@ class ExposedUserRepository : UserRepository {
         patch.displayName?.let { v -> it[displayName] = v }
         patch.passwordHash?.let { v -> it[passwordHash] = v }
         patch.status?.let { v -> it[status] = v }
-        patch.failedLoginCount?.let { v -> it[failedLoginCount] = v }
+        patch.failedLoginAttempts?.let { v -> it[failedLoginAttempts] = v }
         patch.role?.let { v -> it[role] = v }
         it[updatedAt] = now
       }
@@ -89,9 +89,9 @@ class ExposedUserRepository : UserRepository {
   override suspend fun incrementFailedLogins(id: UUID): Int =
     newSuspendedTransaction(Dispatchers.IO) {
       val user = UsersTable.selectAll().where { UsersTable.id eq id }.map { rowToUser(it) }.single()
-      val newCount = user.failedLoginCount + 1
+      val newCount = user.failedLoginAttempts + 1
       UsersTable.update({ UsersTable.id eq id }) {
-        it[failedLoginCount] = newCount
+        it[failedLoginAttempts] = newCount
         it[updatedAt] = Instant.now()
       }
       newCount
@@ -100,7 +100,7 @@ class ExposedUserRepository : UserRepository {
   override suspend fun resetFailedLogins(id: UUID) {
     newSuspendedTransaction(Dispatchers.IO) {
       UsersTable.update({ UsersTable.id eq id }) {
-        it[failedLoginCount] = 0
+        it[failedLoginAttempts] = 0
         it[updatedAt] = Instant.now()
       }
     }

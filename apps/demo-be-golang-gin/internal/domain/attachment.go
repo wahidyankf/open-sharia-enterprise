@@ -19,7 +19,7 @@ type Attachment struct {
 	Filename    string    `gorm:"not null" json:"filename"`
 	ContentType string    `gorm:"not null" json:"content_type"`
 	Size        int64     `gorm:"not null" json:"size"`
-	URL         string    `json:"url"`
+	Data        []byte    `gorm:"not null" json:"-"`
 	CreatedAt   time.Time `json:"created_at"`
 }
 

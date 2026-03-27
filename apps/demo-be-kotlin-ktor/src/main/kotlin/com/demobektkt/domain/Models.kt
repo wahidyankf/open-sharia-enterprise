@@ -48,7 +48,7 @@ data class User(
   val passwordHash: String,
   val role: Role,
   val status: UserStatus,
-  val failedLoginCount: Int,
+  val failedLoginAttempts: Int,
   val createdAt: Instant,
   val updatedAt: Instant,
 )
@@ -71,12 +71,34 @@ data class Expense(
 data class Attachment(
   val id: UUID,
   val expenseId: UUID,
-  val userId: UUID,
   val filename: String,
   val contentType: String,
-  val sizeBytes: Long,
-  val storedPath: String,
+  val size: Long,
+  val data: ByteArray,
   val createdAt: Instant,
-)
+) {
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (other !is Attachment) return false
+    return id == other.id &&
+      expenseId == other.expenseId &&
+      filename == other.filename &&
+      contentType == other.contentType &&
+      size == other.size &&
+      data.contentEquals(other.data) &&
+      createdAt == other.createdAt
+  }
+
+  override fun hashCode(): Int {
+    var result = id.hashCode()
+    result = 31 * result + expenseId.hashCode()
+    result = 31 * result + filename.hashCode()
+    result = 31 * result + contentType.hashCode()
+    result = 31 * result + size.hashCode()
+    result = 31 * result + data.contentHashCode()
+    result = 31 * result + createdAt.hashCode()
+    return result
+  }
+}
 
 data class Page<T>(val data: List<T>, val total: Long, val page: Int, val pageSize: Int)

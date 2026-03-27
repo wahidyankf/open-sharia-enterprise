@@ -97,8 +97,7 @@ func (h *Handler) UnlockUser(c *gin.Context) {
 		return
 	}
 	user.Status = domain.StatusActive
-	user.FailedAttempts = 0
-	user.LockedAt = nil
+	user.FailedLoginAttempts = 0
 	user.UpdatedAt = time.Now()
 	if err := h.store.UpdateUser(c.Request.Context(), user); err != nil {
 		RespondError(c, err)

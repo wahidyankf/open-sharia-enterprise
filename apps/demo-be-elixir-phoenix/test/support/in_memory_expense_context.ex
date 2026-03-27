@@ -101,13 +101,13 @@ defmodule DemoBeExph.Test.InMemoryExpenseContext do
   # Private helpers
 
   defp store_new_expense(changeset) do
-    id = InMemoryStore.next_id()
+    id = Ecto.UUID.generate()
     now = DateTime.utc_now() |> DateTime.truncate(:second)
 
     expense =
       changeset
       |> Ecto.Changeset.apply_changes()
-      |> Map.merge(%{id: id, inserted_at: now, updated_at: now})
+      |> Map.merge(%{id: id, created_at: now, updated_at: now})
 
     InMemoryStore.update_state(fn s ->
       Map.update!(s, :expenses, &Map.put(&1, id, expense))

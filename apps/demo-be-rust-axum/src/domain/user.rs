@@ -14,9 +14,13 @@ pub struct User {
     pub password_hash: String,
     pub role: String,
     pub status: String,
-    pub failed_attempts: i64,
+    pub failed_login_attempts: i64,
     pub created_at: DateTime<Utc>,
+    pub created_by: String,
     pub updated_at: DateTime<Utc>,
+    pub updated_by: String,
+    pub deleted_at: Option<DateTime<Utc>>,
+    pub deleted_by: Option<String>,
 }
 
 impl User {

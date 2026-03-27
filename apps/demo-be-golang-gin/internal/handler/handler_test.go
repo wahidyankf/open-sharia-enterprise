@@ -878,3 +878,61 @@ func TestUnitAttachmentNoFile(t *testing.T) {
 		t.Errorf("expected 400 for missing file, got %d", w.Code)
 	}
 }
+
+// newTestAPIRouter creates a router with EnableTestAPI enabled.
+func newTestAPIRouter() (*gin.Engine, *store.MemoryStore) { //nolint:unparam // ms used in future tests
+	gin.SetMode(gin.TestMode)
+	ms := store.NewMemoryStore()
+	jwtSvc := auth.NewJWTService(testSecret)
+	r := router.NewRouter(ms, jwtSvc, &config.Config{EnableTestAPI: true})
+	return r, ms
+}
+
+func TestUnitTestAPIResetDB(t *testing.T) {
+	r, _ := newTestAPIRouter()
+
+	// Register a user so there is data in the store.
+	doReq(r, "POST", "/api/v1/auth/register", map[string]string{
+		"username": "alice", "email": "alice@example.com", "password": "Str0ng#Pass1",
+	}, "")
+
+	// Reset the database via test API.
+	code, body := doReq(r, "POST", "/api/v1/test/reset-db", nil, "")
+	if code != 200 {
+		t.Errorf("expected 200 for reset-db, got %d; body: %v", code, body)
+	}
+	if body["message"] != "Database reset successful" {
+		t.Errorf("unexpected reset-db message: %v", body["message"])
+	}
+}
+
+func TestUnitTestAPIPromoteAdmin(t *testing.T) {
+	r, _ := newTestAPIRouter()
+
+	// Register alice first.
+	doReq(r, "POST", "/api/v1/auth/register", map[string]string{
+		"username": "alice", "email": "alice@example.com", "password": "Str0ng#Pass1",
+	}, "")
+
+	// Promote alice to admin.
+	code, body := doReq(r, "POST", "/api/v1/test/promote-admin", map[string]string{
+		"username": "alice",
+	}, "")
+	if code != 200 {
+		t.Errorf("expected 200 for promote-admin, got %d; body: %v", code, body)
+	}
+
+	// Missing username returns 400.
+	code2, _ := doReq(r, "POST", "/api/v1/test/promote-admin", map[string]string{}, "")
+	if code2 != 400 {
+		t.Errorf("expected 400 for missing username, got %d", code2)
+	}
+
+	// Non-existent username returns 404.
+	code3, _ := doReq(r, "POST", "/api/v1/test/promote-admin", map[string]string{
+		"username": "ghost",
+	}, "")
+	if code3 != 404 {
+		t.Errorf("expected 404 for non-existent username, got %d", code3)
+	}
+}

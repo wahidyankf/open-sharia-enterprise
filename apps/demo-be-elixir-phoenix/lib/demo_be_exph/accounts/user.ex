@@ -2,6 +2,10 @@ defmodule DemoBeExph.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @primary_key {:id, :binary_id, autogenerate: true}
+  @foreign_key_type :binary_id
+  @timestamps_opts [inserted_at: :created_at, updated_at: :updated_at, type: :utc_datetime]
+
   schema "users" do
     field :username, :string
     field :email, :string
@@ -11,7 +15,11 @@ defmodule DemoBeExph.Accounts.User do
     field :role, :string, default: "USER"
     field :status, :string, default: "ACTIVE"
     field :failed_login_attempts, :integer, default: 0
-    field :locked_at, :utc_datetime
+    field :password_reset_token, :string
+    field :created_by, :string
+    field :updated_by, :string
+    field :deleted_at, :utc_datetime
+    field :deleted_by, :string
 
     timestamps()
   end
@@ -55,7 +63,7 @@ defmodule DemoBeExph.Accounts.User do
   """
   def status_changeset(user, attrs) do
     user
-    |> cast(attrs, [:status, :failed_login_attempts, :locked_at, :role])
+    |> cast(attrs, [:status, :failed_login_attempts, :role])
   end
 
   @doc """

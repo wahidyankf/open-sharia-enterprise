@@ -88,7 +88,7 @@ fun Attachment.toAttachmentWithUrl(expenseId: java.util.UUID): AttachmentWithUrl
     id = id.toString(),
     filename = filename,
     contentType = contentType,
-    propertySize = sizeBytes.toInt(),
+    propertySize = size.toInt(),
     createdAt = createdAt.toContractInstant(),
     url = "/api/v1/expenses/$expenseId/attachments/$id/download",
   )

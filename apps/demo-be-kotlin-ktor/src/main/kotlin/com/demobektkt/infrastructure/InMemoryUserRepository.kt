@@ -32,7 +32,7 @@ class InMemoryUserRepository : UserRepository {
         passwordHash = request.passwordHash,
         role = request.role,
         status = UserStatus.ACTIVE,
-        failedLoginCount = 0,
+        failedLoginAttempts = 0,
         createdAt = now,
         updatedAt = now,
       )
@@ -47,7 +47,7 @@ class InMemoryUserRepository : UserRepository {
         displayName = patch.displayName ?: user.displayName,
         passwordHash = patch.passwordHash ?: user.passwordHash,
         status = patch.status ?: user.status,
-        failedLoginCount = patch.failedLoginCount ?: user.failedLoginCount,
+        failedLoginAttempts = patch.failedLoginAttempts ?: user.failedLoginAttempts,
         updatedAt = Instant.now(),
       )
     store[id] = updated
@@ -56,14 +56,14 @@ class InMemoryUserRepository : UserRepository {
 
   override suspend fun incrementFailedLogins(id: UUID): Int {
     val user = store[id] ?: return 0
-    val newCount = user.failedLoginCount + 1
-    store[id] = user.copy(failedLoginCount = newCount, updatedAt = Instant.now())
+    val newCount = user.failedLoginAttempts + 1
+    store[id] = user.copy(failedLoginAttempts = newCount, updatedAt = Instant.now())
     return newCount
   }
 
   override suspend fun resetFailedLogins(id: UUID) {
     val user = store[id] ?: return
-    store[id] = user.copy(failedLoginCount = 0, updatedAt = Instant.now())
+    store[id] = user.copy(failedLoginAttempts = 0, updatedAt = Instant.now())
   }
 
   override suspend fun findAll(page: Int, pageSize: Int, searchFilter: String?): Page<User> {
@@ -105,7 +105,7 @@ class InMemoryUserRepository : UserRepository {
         passwordHash = passwordHash,
         role = Role.ADMIN,
         status = UserStatus.ACTIVE,
-        failedLoginCount = 0,
+        failedLoginAttempts = 0,
         createdAt = now,
         updatedAt = now,
       )

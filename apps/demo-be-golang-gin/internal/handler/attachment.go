@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"time"
 
@@ -12,6 +13,14 @@ import (
 	"github.com/wahidyankf/open-sharia-enterprise/apps/demo-be-golang-gin/internal/auth"
 	"github.com/wahidyankf/open-sharia-enterprise/apps/demo-be-golang-gin/internal/domain"
 )
+
+// attachmentUploadResponse extends contracts.Attachment with a download URL.
+// The canonical schema stores file data as BYTEA in the database, so the URL
+// is derived dynamically rather than persisted.
+type attachmentUploadResponse struct {
+	contracts.Attachment
+	URL string `json:"url"`
+}
 
 // UploadAttachment handles POST /api/v1/expenses/:id/attachments.
 func (h *Handler) UploadAttachment(c *gin.Context) {
@@ -45,6 +54,17 @@ func (h *Handler) UploadAttachment(c *gin.Context) {
 		RespondError(c, err)
 		return
 	}
+	f, err := fileHeader.Open()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to read file"})
+		return
+	}
+	defer func() { _ = f.Close() }()
+	data, err := io.ReadAll(f)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to read file"})
+		return
+	}
 	attachmentID := uuid.New().String()
 	attachment := &domain.Attachment{
 		ID:          attachmentID,
@@ -52,20 +72,17 @@ func (h *Handler) UploadAttachment(c *gin.Context) {
 		Filename:    fileHeader.Filename,
 		ContentType: contentType,
 		Size:        fileHeader.Size,
-		URL:         fmt.Sprintf("/files/%s/%s", expenseID, attachmentID),
+		Data:        data,
 		CreatedAt:   time.Now(),
 	}
 	if err := h.store.CreateAttachment(c.Request.Context(), attachment); err != nil {
 		RespondError(c, err)
 		return
 	}
-	// Respond with contracts.Attachment fields plus the URL (not in contract spec
-	// but required by the attachments BDD feature).
-	type attachmentResponse struct {
-		contracts.Attachment
-		URL string `json:"url"`
-	}
-	c.JSON(http.StatusCreated, attachmentResponse{
+	// Generate a download URL dynamically — the URL is not stored in the DB
+	// since the canonical schema uses BYTEA for file content.
+	downloadURL := fmt.Sprintf("/api/v1/expenses/%s/attachments/%s/download", expenseID, attachmentID)
+	c.JSON(http.StatusCreated, attachmentUploadResponse{
 		Attachment: contracts.Attachment{
 			Id:          attachment.ID,
 			Filename:    attachment.Filename,
@@ -73,7 +90,7 @@ func (h *Handler) UploadAttachment(c *gin.Context) {
 			Size:        int(attachment.Size),
 			CreatedAt:   attachment.CreatedAt,
 		},
-		URL: attachment.URL,
+		URL: downloadURL,
 	})
 }
 

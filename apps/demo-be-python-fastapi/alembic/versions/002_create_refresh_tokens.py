@@ -28,7 +28,7 @@ def upgrade() -> None:
             sa.ForeignKey("users.id", ondelete="CASCADE"),
             nullable=False,
         ),
-        sa.Column("token_hash", sa.String(255), nullable=False),
+        sa.Column("token_hash", sa.String(512), nullable=False),
         sa.Column("expires_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("revoked", sa.Boolean, nullable=False, server_default=sa.false()),
         sa.Column(
