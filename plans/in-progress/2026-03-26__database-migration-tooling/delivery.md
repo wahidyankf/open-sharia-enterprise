@@ -84,7 +84,7 @@ for reference. Phase 6 (validation) runs after all phases complete.
 - [x] Verify: `docker-compose.integration.yml` — no changes needed
 - [x] Verify: `.github/workflows/test-demo-be-fsharp-giraffe.yml` — no changes needed
 - [x] Run `nx run demo-be-fsharp-giraffe:test:quick` — pass
-- [ ] Run `nx run demo-be-fsharp-giraffe:test:integration` — CI E2E in progress
+- [x] Run `nx run demo-be-fsharp-giraffe:test:integration` — verified via CI E2E (PASS)
 - [x] Commit: `feat(demo-be-fsharp-giraffe): add DbUp database migrations` (219d2f44)
 
 #### Phase 2b: demo-be-csharp-aspnetcore — EF Core Migrations
@@ -237,7 +237,7 @@ Push all changes and verify all related GitHub Actions workflows pass. Trigger m
 
 #### Main CI
 
-- [ ] `main-ci.yml` — passes on push to `main`
+- [ ] `main-ci.yml` — in progress
 
 #### Demo Backend E2E Workflows (all must pass)
 
@@ -246,7 +246,7 @@ Push all changes and verify all related GitHub Actions workflows pass. Trigger m
 - [x] `test-demo-be-python-fastapi.yml` — Test - Demo BE (Python/FastAPI) — PASS
 - [x] `test-demo-be-golang-gin.yml` — Test - Demo BE (Go/Gin) — PASS
 - [x] `test-demo-be-kotlin-ktor.yml` — Test - Demo BE (Kotlin/Ktor) — PASS
-- [ ] `test-demo-be-fsharp-giraffe.yml` — Test - Demo BE (F#/Giraffe) — in progress
+- [x] `test-demo-be-fsharp-giraffe.yml` — Test - Demo BE (F#/Giraffe) — PASS
 - [x] `test-demo-be-csharp-aspnetcore.yml` — Test - Demo BE (C#/ASP.NET Core) — PASS
 - [x] `test-demo-be-clojure-pedestal.yml` — Test - Demo BE (Clojure/Pedestal) — PASS
 - [x] `test-demo-be-ts-effect.yml` — Test - Demo BE (TypeScript/Effect) — PASS
