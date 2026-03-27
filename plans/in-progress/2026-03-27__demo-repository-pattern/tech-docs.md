@@ -150,6 +150,11 @@ pub struct AppState {
   `RefreshTokenRepository` class (extract from routers)
 - `tests/unit/in_memory_repos.py` — in-memory dict-based implementations of all Protocols
 
+> **Note**: The codebase already contains `src/demo_be_python_fastapi/infrastructure/in_memory/`
+> (an empty package directory with only `__init__.py`). In-memory mock implementations are
+> test-only concerns and belong in the test tree, not in production infrastructure. The existing
+> empty `infrastructure/in_memory/` package is a prior scaffolding stub and is not extended here.
+
 **Files to modify**:
 
 - `src/demo_be_python_fastapi/infrastructure/repositories.py` — add Protocol conformance (type
@@ -157,8 +162,8 @@ pub struct AppState {
 - `src/demo_be_python_fastapi/dependencies.py` — type-hint return values as Protocol types, add
   `get_refresh_token_repo` provider (note: `auth/dependencies.py` is a separate file and is NOT
   the target here)
-- `routers/auth.py` and `routers/tokens.py` — replace inline RefreshToken DB calls with
-  `RefreshTokenRepository`
+- `src/demo_be_python_fastapi/routers/auth.py` and `src/demo_be_python_fastapi/routers/tokens.py`
+  — replace inline RefreshToken DB calls with `RefreshTokenRepository`
 - `tests/unit/conftest.py` — inject in-memory repos instead of creating SQLite engine/session
 
 **Key pattern**:
@@ -205,7 +210,7 @@ class ExpenseRepository:  # implicitly satisfies ExpenseRepositoryProtocol
   token, user) + `interceptors/auth.clj` — accept protocol instances from context map instead of
   calling namespace functions with datasource. Handler namespaces that don't access the DB (health,
   jwks) need no changes.
-- `server.clj` or `system.clj` — create records and inject into Pedestal context map
+- `server.clj` — create records and inject into Pedestal context map
 - `test/step_definitions/steps.clj` — inject in-memory records instead of real datasource
 - `test/demo_be_cjpd/db/*_repo_test.clj` — can remain as-is (they test the jdbc implementation
   directly, which is valid for repo-level tests)

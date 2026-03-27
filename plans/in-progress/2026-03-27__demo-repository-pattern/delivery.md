@@ -23,14 +23,16 @@ for unit tests.
       `UserRepositoryProtocol`, `ExpenseRepositoryProtocol`, `AttachmentRepositoryProtocol`,
       `RevokedTokenRepositoryProtocol`, `RefreshTokenRepositoryProtocol`
 - [ ] Create `src/demo_be_python_fastapi/infrastructure/refresh_token_repository.py` — extract
-      RefreshToken DB logic from `routers/auth.py` and `routers/tokens.py`
+      RefreshToken DB logic from `src/demo_be_python_fastapi/routers/auth.py` and
+      `src/demo_be_python_fastapi/routers/tokens.py`
 - [ ] Update `src/demo_be_python_fastapi/infrastructure/repositories.py` — ensure method signatures
       conform to Protocols
 - [ ] Update `src/demo_be_python_fastapi/dependencies.py` — type-hint return values as Protocol
       types, add `get_refresh_token_repo` provider (target is `dependencies.py` in the package
       root, not `auth/dependencies.py`)
-- [ ] Update `routers/auth.py` and `routers/tokens.py` — replace inline RefreshToken Session
-      calls with `RefreshTokenRepository`
+- [ ] Update `src/demo_be_python_fastapi/routers/auth.py` and
+      `src/demo_be_python_fastapi/routers/tokens.py` — replace inline RefreshToken Session calls
+      with `RefreshTokenRepository`
 - [ ] Create `tests/unit/in_memory_repos.py` — dict-based in-memory implementations of all 5
       Protocols
 - [ ] Update `tests/unit/conftest.py` — inject in-memory repos instead of SQLite engine/session
@@ -60,7 +62,8 @@ in-memory records for unit tests.
 - [ ] Update handler namespaces that access the DB (`admin`, `attachment`, `auth`, `expense`,
       `report`, `test_api`, `token`, `user`) and `interceptors/auth.clj` — accept protocol
       instances from context map (skip `health.clj` and `jwks.clj` which don't access the DB)
-- [ ] Update server/system setup — create `Jdbc*Repo` records and inject into Pedestal context
+- [ ] Update `src/demo_be_cjpd/server.clj` — create `Jdbc*Repo` records and inject into Pedestal
+      context map
 - [ ] Create `test/demo_be_cjpd/in_memory_repos.clj` — atom-backed `defrecord` implementations
 - [ ] Update `test/step_definitions/steps.clj` — inject in-memory records for unit tests
 - [ ] Verify `nx run demo-be-clojure-pedestal:typecheck` passes
@@ -129,11 +132,10 @@ wire in-memory implementations for unit tests.
 - [ ] Create `tests/DemoBeFsgi.Tests/InMemory/InMemoryTokenRepository.fs` — test mock
 - [ ] Create `tests/DemoBeFsgi.Tests/InMemory/InMemoryRefreshTokenRepository.fs` — test mock
 - [ ] Update `DemoBeFsgi.Tests.fsproj` — add new test files in correct compilation order
-- [ ] Update `DirectServices.fs` and `Unit/UnitFeatureRunner.fs` — replace `AppDbContext` with
-      injected repository interfaces: refactor `DirectServices.fs` to accept repository interfaces
-      as parameters instead of calling `AppDbContext` inline; update `UnitScenarioServiceProvider`
-      in `UnitFeatureRunner.fs` to inject in-memory repository implementations instead of
-      constructing an `AppDbContext` via `createDb()`
+- [ ] Update `DirectServices.fs` — refactor to accept repository interfaces as parameters instead
+      of calling `AppDbContext` inline
+- [ ] Update `Unit/UnitFeatureRunner.fs` — update `UnitScenarioServiceProvider` to inject
+      in-memory repository implementations instead of constructing an `AppDbContext` via `createDb()`
 - [ ] Update `tests/DemoBeFsgi.Tests/State.fs` — replace `Db: AppDbContext` field with repository
       interface fields; update `empty` constructor to accept in-memory repository instances
 - [ ] Update all 13 `tests/DemoBeFsgi.Tests/Integration/Steps/*.fs` files (AuthSteps.fs,
@@ -152,6 +154,7 @@ wire in-memory implementations for unit tests.
 - [ ] Run `nx run-many -t typecheck --projects=demo-be-python-fastapi,demo-be-clojure-pedestal,demo-be-rust-axum,demo-be-fsharp-giraffe` — all pass
 - [ ] Run `nx run-many -t lint --projects=demo-be-python-fastapi,demo-be-clojure-pedestal,demo-be-rust-axum,demo-be-fsharp-giraffe` — all pass
 - [ ] Run `nx run-many -t test:quick --projects=demo-be-python-fastapi,demo-be-clojure-pedestal,demo-be-rust-axum,demo-be-fsharp-giraffe` — all pass
+- [ ] Run `nx run-many -t test:integration --projects=demo-be-python-fastapi,demo-be-clojure-pedestal,demo-be-rust-axum,demo-be-fsharp-giraffe` — all pass
 - [ ] Verify all 4 apps have abstract repository interfaces for every entity
 - [ ] Verify no handler/router/controller in the 4 apps imports DB libraries directly
 - [ ] Verify unit tests in all 4 apps use in-memory mock repos (no DB connection)

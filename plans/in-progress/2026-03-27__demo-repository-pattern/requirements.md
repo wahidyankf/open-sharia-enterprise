@@ -101,10 +101,8 @@ Feature: Consistent repository pattern across demo apps
     Then every app has abstract repository interfaces
     And every app injects repositories rather than accessing DB directly
 
-  Scenario: demo-fs-ts-nextjs remains compliant (pre-existing)
-    Given demo-fs-ts-nextjs already uses TypeScript interfaces with in-memory test doubles
-    When I inspect its data access layer
-    Then it still has abstract repository interfaces (no changes made by this plan)
+  # Constraint: demo-fs-ts-nextjs is already compliant and is not modified by this plan.
+  # It is listed in the README compliance table for completeness.
 
   Scenario: Three-level testing works with repository seams
     Given any demo backend app
@@ -115,6 +113,17 @@ Feature: Consistent repository pattern across demo apps
     When e2e tests run
     Then the full stack runs with real DB
 ```
+
+## Non-Functional Requirements
+
+- **Coverage**: Line coverage must remain >= 90% for all four apps after refactor (enforced by
+  `rhino-cli test-coverage validate` in `test:quick`)
+- **No DB in unit tests**: Unit tests must pass without a real database connection — in-memory
+  implementations must satisfy all Gherkin specs previously satisfied by SQLite in-memory
+- **No API change**: The public REST API contract (routes, request/response schemas) must not
+  change — only internal data-access wiring is affected
+- **No test runtime regression**: Replacing SQLite in-memory startup with pure in-memory
+  implementations must not increase overall unit test suite duration
 
 ## Out of Scope
 
