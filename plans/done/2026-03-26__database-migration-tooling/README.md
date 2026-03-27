@@ -1,6 +1,6 @@
 # Plan: Add Dedicated Database Migration Tooling to All Demo Apps
 
-**Status**: Complete (pending main-ci.yml verification)
+**Status**: Done
 **Created**: 2026-03-26
 **Completed**: 2026-03-27
 
