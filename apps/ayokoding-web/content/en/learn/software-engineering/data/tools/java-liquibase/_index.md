@@ -10,3 +10,5 @@ layout: list
 - [By Example](/en/learn/software-engineering/data/tools/java-liquibase/by-example)
   - [Overview](/en/learn/software-engineering/data/tools/java-liquibase/by-example/overview)
   - [Beginner](/en/learn/software-engineering/data/tools/java-liquibase/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/data/tools/java-liquibase/by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/data/tools/java-liquibase/by-example/advanced)
