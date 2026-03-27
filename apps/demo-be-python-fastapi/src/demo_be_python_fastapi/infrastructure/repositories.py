@@ -233,7 +233,7 @@ class ExpenseRepository:
             currency = exp.currency
             amount = Decimal(str(exp.amount))
             totals[currency] = totals.get(currency, Decimal("0")) + amount
-        return [{"currency": k, "total": str(v)} for k, v in totals.items()]
+        return [{"currency": k, "total": v} for k, v in totals.items()]
 
     def pl_report(
         self,
