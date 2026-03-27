@@ -7,6 +7,7 @@ import io.vertx.sqlclient.Pool;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.Tuple;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -135,17 +136,41 @@ public class PgExpenseRepository implements ExpenseRepository {
         BigDecimal quantityDecimal = row.getBigDecimal("quantity");
         Double quantity = quantityDecimal != null ? quantityDecimal.doubleValue() : null;
         LocalDate date = row.getLocalDate("date");
+        String currency = row.getString("currency");
+        BigDecimal rawAmount = row.getBigDecimal("amount");
+        BigDecimal amount = normalizeAmountScale(rawAmount, currency);
         return new Expense(
                 row.getUUID("id").toString(),
                 row.getUUID("user_id").toString(),
                 row.getString("type"),
-                row.getBigDecimal("amount"),
-                row.getString("currency"),
+                amount,
+                currency,
                 row.getString("category"),
                 row.getString("description"),
                 date != null ? date : LocalDate.now(),
                 quantity,
                 row.getString("unit"),
                 instant);
+    }
+
+    /**
+     * Re-applies currency-specific scale to an amount read from the database.
+     *
+     * <p>PostgreSQL {@code DECIMAL(19,4)} always returns values at scale 4 (e.g. {@code 10.5000}).
+     * This method reduces the scale to match the contract expectations: USD → 2 decimal places,
+     * IDR → 0 decimal places. Any other currency defaults to the DB scale.
+     */
+    private static BigDecimal normalizeAmountScale(BigDecimal amount, String currency) {
+        if (amount == null) {
+            return BigDecimal.ZERO;
+        }
+        if (currency == null) {
+            return amount;
+        }
+        return switch (currency.toUpperCase()) {
+            case "USD" -> amount.setScale(2, RoundingMode.HALF_UP);
+            case "IDR" -> amount.setScale(0, RoundingMode.HALF_UP);
+            default -> amount;
+        };
     }
 }

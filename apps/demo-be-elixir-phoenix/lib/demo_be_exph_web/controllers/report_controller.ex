@@ -26,19 +26,23 @@ defmodule DemoBeExphWeb.ReportController do
 
       income_breakdown =
         report.income_breakdown
-        |> Enum.map(fn {k, v} -> %{category: k, type: "income", total: Decimal.to_string(v)} end)
+        |> Enum.map(fn {k, v} ->
+          %{category: k, type: "income", total: format_amount(v, currency)}
+        end)
 
       expense_breakdown =
         report.expense_breakdown
-        |> Enum.map(fn {k, v} -> %{category: k, type: "expense", total: Decimal.to_string(v)} end)
+        |> Enum.map(fn {k, v} ->
+          %{category: k, type: "expense", total: format_amount(v, currency)}
+        end)
 
       _ = %PLReport{
         start_date: Date.to_iso8601(from_date),
         end_date: Date.to_iso8601(to_date),
         currency: currency,
-        total_income: Decimal.to_string(report.income_total),
-        total_expense: Decimal.to_string(report.expense_total),
-        net: Decimal.to_string(report.net),
+        total_income: format_amount(report.income_total, currency),
+        total_expense: format_amount(report.expense_total, currency),
+        net: format_amount(report.net, currency),
         income_breakdown:
           Enum.map(income_breakdown, fn b ->
             %CategoryBreakdown{category: b.category, type: b.type, total: b.total}
@@ -50,9 +54,9 @@ defmodule DemoBeExphWeb.ReportController do
       }
 
       json(conn, %{
-        totalIncome: Decimal.to_string(report.income_total),
-        totalExpense: Decimal.to_string(report.expense_total),
-        net: Decimal.to_string(report.net),
+        totalIncome: format_amount(report.income_total, currency),
+        totalExpense: format_amount(report.expense_total, currency),
+        net: format_amount(report.net, currency),
         incomeBreakdown: income_breakdown,
         expenseBreakdown: expense_breakdown,
         currency: currency
@@ -63,6 +67,14 @@ defmodule DemoBeExphWeb.ReportController do
         |> put_status(:bad_request)
         |> json(%{message: "Invalid date format. Use YYYY-MM-DD."})
     end
+  end
+
+  # Currency decimal precision: IDR uses 0 decimals, all others use 2.
+  @zero_decimal_currencies ~w(IDR)
+
+  defp format_amount(%Decimal{} = d, currency) when is_binary(currency) do
+    scale = if currency in @zero_decimal_currencies, do: 0, else: 2
+    d |> Decimal.round(scale) |> Decimal.to_string(:normal)
   end
 
   defp parse_date(""), do: {:error, :invalid_date}

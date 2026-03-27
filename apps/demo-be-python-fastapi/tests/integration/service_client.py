@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
+from decimal import Decimal
 from typing import Any
 
 from sqlalchemy.exc import IntegrityError
@@ -719,9 +720,19 @@ class ServiceClient:
             user = _get_current_user(token, self._db)
             expense_repo = get_expense_repo(self._db)
             summaries = expense_repo.summary_by_currency(str(user.id))
-            return _ok({s["currency"]: s["total"] for s in summaries})
+            return _ok({s["currency"]: self._fmt_amount(s["total"]) for s in summaries})
         except (UnauthorizedError, ForbiddenError) as exc:
             return _err(exc)
+
+    @staticmethod
+    def _fmt_amount(val: object) -> str:
+        """Normalize an amount value to a clean string without trailing zeros."""
+        if isinstance(val, Decimal):
+            s = format(val, "f")
+            if "." in s:
+                s = s.rstrip("0").rstrip(".")
+            return s
+        return str(val)
 
     @staticmethod
     def _expense_to_dict(m: Any) -> dict:
@@ -733,7 +744,7 @@ class ServiceClient:
                 quantity = None
         return {
             "id": str(m.id),
-            "amount": str(m.amount),
+            "amount": ServiceClient._fmt_amount(m.amount),
             "currency": m.currency,
             "category": m.category,
             "description": m.description,

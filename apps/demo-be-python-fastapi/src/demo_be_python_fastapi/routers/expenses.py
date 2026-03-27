@@ -2,6 +2,7 @@
 
 import math
 from datetime import UTC, date, datetime
+from decimal import Decimal
 
 from fastapi import APIRouter, Depends, Query
 from generated_contracts import CreateExpenseRequest, Expense, ExpenseListResponse
@@ -14,6 +15,20 @@ from demo_be_python_fastapi.domain.expense import validate_amount, validate_curr
 from demo_be_python_fastapi.infrastructure.models import UserModel
 
 router = APIRouter()
+
+
+def _fmt_amount(val: object) -> str:
+    """Normalize an amount value to a clean string without trailing zeros.
+
+    Handles Decimal objects returned by PostgreSQL DECIMAL columns as well as
+    plain strings stored by SQLite in tests.
+    """
+    if isinstance(val, Decimal):
+        s = format(val, "f")
+        if "." in s:
+            s = s.rstrip("0").rstrip(".")
+        return s
+    return str(val)
 
 
 def _ensure_utc(dt: datetime) -> datetime:
@@ -40,7 +55,7 @@ def _model_to_contract(m) -> Expense:  # type: ignore[no-untyped-def]
     return Expense(
         id=str(m.id),
         userId=str(m.user_id),
-        amount=str(m.amount),
+        amount=_fmt_amount(m.amount),
         currency=m.currency,
         category=m.category,
         description=m.description or "",
@@ -94,7 +109,7 @@ def get_summary(
     """Get expense summary grouped by currency as a flat currency-to-total mapping."""
     expense_repo = get_expense_repo(db)
     summaries = expense_repo.summary_by_currency(str(current_user.id))
-    return {s["currency"]: s["total"] for s in summaries}
+    return {s["currency"]: _fmt_amount(s["total"]) for s in summaries}
 
 
 @router.get("", response_model=ExpenseListResponse)

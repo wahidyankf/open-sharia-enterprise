@@ -97,7 +97,7 @@ defmodule DemoBeExphWeb.ExpenseController do
   def summary(conn, _params) do
     user = GuardianPlug.current_resource(conn)
     totals = expense_ctx().summary(user.id)
-    serializable = Enum.into(totals, %{}, fn {k, v} -> {k, Decimal.to_string(v)} end)
+    serializable = Enum.into(totals, %{}, fn {k, v} -> {k, format_amount(v, k)} end)
     json(conn, serializable)
   end
 
@@ -120,7 +120,7 @@ defmodule DemoBeExphWeb.ExpenseController do
     %{
       id: expense.id,
       userId: expense.user_id,
-      amount: Decimal.to_string(expense.amount),
+      amount: format_amount(expense.amount, expense.currency),
       currency: expense.currency,
       category: expense.category,
       type: expense.type,
@@ -131,6 +131,14 @@ defmodule DemoBeExphWeb.ExpenseController do
       created_at: expense.created_at,
       updated_at: expense.updated_at
     }
+  end
+
+  # Currency decimal precision: IDR uses 0 decimals, all others use 2.
+  @zero_decimal_currencies ~w(IDR)
+
+  defp format_amount(%Decimal{} = d, currency) when is_binary(currency) do
+    scale = if currency in @zero_decimal_currencies, do: 0, else: 2
+    d |> Decimal.round(scale) |> Decimal.to_string(:normal)
   end
 
   defp format_quantity(nil), do: nil
