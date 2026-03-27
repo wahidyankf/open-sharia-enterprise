@@ -240,16 +240,12 @@ for reference. Phase 6 (validation) runs after all phases complete.
   # scripts) manually if they exist.
   ```
 
-- [ ] Verify 5-table schema for apps adding `refresh_tokens` (java-vertx, python-fastapi,
-      clojure-pedestal, ts-effect, golang-gin Option A): use `psql \dt` or equivalent after
-      running integration tests to confirm all 5 tables are present:
-      `docker exec <db_container> psql -U postgres -c "\dt" | grep -E "refresh_tokens|revoked_tokens"`
-- [ ] Confirm all per-phase Dockerfile verifications are complete and no Docker-affecting changes
-      were made
-- [ ] Confirm all per-phase docker-compose verifications are complete and no compose-affecting
-      changes were made
-- [ ] Confirm all per-phase GitHub Actions workflow verifications are complete and no CI-affecting
-      changes were made
+- [x] Verify 5-table schema — confirmed via passing CI E2E tests for java-vertx, python-fastapi,
+      clojure-pedestal, ts-effect, golang-gin (all E2E workflows pass with real PostgreSQL)
+- [x] Confirm Dockerfile verifications — Go/Gin Dockerfile bumped to golang:1.25 (required);
+      Python Dockerfile.integration updated to copy alembic files; all others unchanged
+- [x] Confirm docker-compose verifications — no compose-affecting changes
+- [x] Confirm GitHub Actions workflow verifications — no CI-affecting changes
 
 ### Phase 7: CI Verification
 
@@ -263,13 +259,13 @@ Push all changes and verify all related GitHub Actions workflows pass. Trigger m
 #### Demo Backend E2E Workflows (all must pass)
 
 - [x] `test-demo-be-java-springboot.yml` — Test - Demo BE (Java/Spring Boot) — PASS (regression)
-- [ ] `test-demo-be-java-vertx.yml` — Test - Demo BE (Java/Vert.x) — awaiting re-run
+- [x] `test-demo-be-java-vertx.yml` — Test - Demo BE (Java/Vert.x) — PASS
 - [x] `test-demo-be-python-fastapi.yml` — Test - Demo BE (Python/FastAPI) — PASS
-- [ ] `test-demo-be-golang-gin.yml` — Test - Demo BE (Go/Gin) — awaiting re-run (fs.Sub fix)
+- [x] `test-demo-be-golang-gin.yml` — Test - Demo BE (Go/Gin) — PASS
 - [x] `test-demo-be-kotlin-ktor.yml` — Test - Demo BE (Kotlin/Ktor) — PASS
-- [ ] `test-demo-be-fsharp-giraffe.yml` — Test - Demo BE (F#/Giraffe) — awaiting re-run
+- [ ] `test-demo-be-fsharp-giraffe.yml` — Test - Demo BE (F#/Giraffe) — in progress
 - [x] `test-demo-be-csharp-aspnetcore.yml` — Test - Demo BE (C#/ASP.NET Core) — PASS
-- [ ] `test-demo-be-clojure-pedestal.yml` — Test - Demo BE (Clojure/Pedestal) — awaiting re-run
+- [x] `test-demo-be-clojure-pedestal.yml` — Test - Demo BE (Clojure/Pedestal) — PASS
 - [x] `test-demo-be-ts-effect.yml` — Test - Demo BE (TypeScript/Effect) — PASS
 - [x] `test-demo-be-rust-axum.yml` — Test - Demo BE (Rust/Axum) — PASS (regression)
 - [x] `test-demo-be-elixir-phoenix.yml` — Test - Demo BE (Elixir/Phoenix) — PASS (regression)
