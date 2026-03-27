@@ -69,7 +69,7 @@ in-memory records for unit tests.
 - [x] Verify `nx run demo-be-clojure-pedestal:typecheck` passes
 - [x] Verify `nx run demo-be-clojure-pedestal:lint` passes
 - [x] Verify `nx run demo-be-clojure-pedestal:test:quick` passes (unit tests + coverage >= 90%)
-- [ ] Verify `nx run demo-be-clojure-pedestal:test:integration` passes (real Postgres)
+- [x] Verify `nx run demo-be-clojure-pedestal:test:integration` passes (real Postgres)
 - [x] Commit: `refactor(demo-be-clojure-pedestal): add defprotocol abstractions for repository pattern`
 
 ### Phase 3: demo-be-rust-axum (Rust — larger diff)
@@ -143,7 +143,7 @@ extract DB access from handlers, and wire in-memory constructor functions for un
 - [x] Verify `nx run demo-be-fsharp-giraffe:typecheck` passes
 - [x] Verify `nx run demo-be-fsharp-giraffe:lint` passes
 - [x] Verify `nx run demo-be-fsharp-giraffe:test:quick` passes (unit tests + coverage >= 90%)
-- [ ] Verify `nx run demo-be-fsharp-giraffe:test:integration` passes (real Postgres)
+- [x] Verify `nx run demo-be-fsharp-giraffe:test:integration` passes (real Postgres)
 - [x] Commit: `refactor(demo-be-fsharp-giraffe): add function-record abstractions for repository pattern`
 
 ## Final Validation
@@ -151,7 +151,7 @@ extract DB access from handlers, and wire in-memory constructor functions for un
 - [x] Run `nx run-many -t typecheck --projects=demo-be-python-fastapi,demo-be-clojure-pedestal,demo-be-rust-axum,demo-be-fsharp-giraffe` — all pass (Clojure typecheck blocked by pre-existing codegen build failure)
 - [x] Run `nx run-many -t lint --projects=demo-be-python-fastapi,demo-be-clojure-pedestal,demo-be-rust-axum,demo-be-fsharp-giraffe` — all pass
 - [x] Run `nx run-many -t test:quick --projects=demo-be-python-fastapi,demo-be-clojure-pedestal,demo-be-rust-axum,demo-be-fsharp-giraffe` — all pass
-- [x] Run `nx run-many -t test:integration --projects=demo-be-python-fastapi,demo-be-clojure-pedestal,demo-be-rust-axum,demo-be-fsharp-giraffe` — Python PASS, Rust PASS; Clojure/F# blocked by pre-existing Docker build issues on main
+- [x] Run `nx run-many -t test:integration --projects=demo-be-python-fastapi,demo-be-clojure-pedestal,demo-be-rust-axum,demo-be-fsharp-giraffe` — all 4 PASS in GitHub CI
 - [x] Verify all 4 apps have abstract repository interfaces for every entity
 - [x] Verify no handler/router/controller in the 4 apps imports DB libraries directly
 - [x] Verify unit tests in all 4 apps use in-memory mock repos (no DB connection)
