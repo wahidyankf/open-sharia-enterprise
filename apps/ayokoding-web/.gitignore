@@ -1,2 +1,7 @@
 generated/
 .hugo_build.lock
+
+# Next.js static export artifacts
+/public/en/
+/public/js/
+/public/index.html
