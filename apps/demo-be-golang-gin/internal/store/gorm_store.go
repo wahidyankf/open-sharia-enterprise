@@ -169,23 +169,23 @@ func (s *GORMStore) RevokeRefreshToken(_ context.Context, tokenHash string) erro
 
 // RevokeAllRefreshTokensForUser revokes all refresh tokens for a user.
 func (s *GORMStore) RevokeAllRefreshTokensForUser(_ context.Context, userID string) error {
-	return s.db.Model(&domain.RefreshToken{}).Where("user_id = ?", userID).Update("revoked", true).Error
+	return s.db.Table("refresh_tokens").Where("user_id = ?", userID).Update("revoked", true).Error
 }
 
 // BlacklistAccessToken adds an access token JTI to the revoked tokens table.
 func (s *GORMStore) BlacklistAccessToken(_ context.Context, jti string, _ time.Time) error {
-	return s.db.Create(&domain.RevokedToken{
-		ID:        uuid.New().String(),
-		JTI:       jti,
-		UserID:    "00000000-0000-0000-0000-000000000000",
-		RevokedAt: time.Now(),
+	return s.db.Table("revoked_tokens").Create(map[string]interface{}{
+		"id":         uuid.New().String(),
+		"jti":        jti,
+		"user_id":    "00000000-0000-0000-0000-000000000000",
+		"revoked_at": time.Now(),
 	}).Error
 }
 
 // IsAccessTokenBlacklisted checks if an access token JTI is in the revoked tokens table.
 func (s *GORMStore) IsAccessTokenBlacklisted(_ context.Context, jti string) (bool, error) {
 	var count int64
-	err := s.db.Model(&domain.RevokedToken{}).Where("jti = ?", jti).Count(&count).Error
+	err := s.db.Table("revoked_tokens").Where("jti = ?", jti).Count(&count).Error
 	return count > 0, err
 }
 
@@ -247,8 +247,10 @@ func (s *GORMStore) SumExpensesByCurrency(_ context.Context, userID string) ([]d
 		Total    float64
 	}
 	var rows []row
+	// CAST to DOUBLE PRECISION ensures pgx/GORM scans the NUMERIC aggregate
+	// result directly into float64 without intermediate string conversion.
 	err := s.db.Model(&domain.Expense{}).
-		Select("currency, SUM(amount) as total").
+		Select("currency, CAST(SUM(amount) AS DOUBLE PRECISION) as total").
 		Where("user_id = ? AND type = ?", userID, domain.EntryTypeExpense).
 		Group("currency").
 		Scan(&rows).Error
@@ -272,7 +274,7 @@ func (s *GORMStore) ExpenseSummaryByCurrency(_ context.Context, userID string) (
 	}
 	var rows []row
 	err := s.db.Model(&domain.Expense{}).
-		Select("currency, type, category, SUM(amount) as total").
+		Select("currency, type, category, CAST(SUM(amount) AS DOUBLE PRECISION) as total").
 		Where("user_id = ?", userID).
 		Group("currency, type, category").
 		Scan(&rows).Error
@@ -361,7 +363,7 @@ func (s *GORMStore) PLReport(_ context.Context, q PLReportQuery) (*domain.PLRepo
 	}
 	var rows []row
 	err := s.db.Model(&domain.Expense{}).
-		Select("type, category, SUM(amount) as total").
+		Select("type, category, CAST(SUM(amount) AS DOUBLE PRECISION) as total").
 		Where("user_id = ? AND currency = ? AND date >= ? AND date <= ?", q.UserID, strings.ToUpper(q.Currency), q.From, q.To).
 		Group("type, category").
 		Scan(&rows).Error

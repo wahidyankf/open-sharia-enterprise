@@ -523,7 +523,7 @@ defmodule DemoBeExph.Integration.ServiceLayer do
 
       {:ok, user} ->
         totals = expense_ctx().summary(user.id)
-        serializable = Enum.into(totals, %{}, fn {k, v} -> {k, Decimal.to_string(v)} end)
+        serializable = Enum.into(totals, %{}, fn {k, v} -> {k, format_amount(v, k)} end)
         %{status: 200, body: serializable}
     end
   end
@@ -546,16 +546,16 @@ defmodule DemoBeExph.Integration.ServiceLayer do
           %{
             status: 200,
             body: %{
-              "totalIncome" => Decimal.to_string(report.income_total),
-              "totalExpense" => Decimal.to_string(report.expense_total),
-              "net" => Decimal.to_string(report.net),
+              "totalIncome" => format_amount(report.income_total, currency),
+              "totalExpense" => format_amount(report.expense_total, currency),
+              "net" => format_amount(report.net, currency),
               "incomeBreakdown" =>
                 Enum.map(report.income_breakdown, fn {k, v} ->
-                  %{"category" => k, "type" => "income", "total" => Decimal.to_string(v)}
+                  %{"category" => k, "type" => "income", "total" => format_amount(v, currency)}
                 end),
               "expenseBreakdown" =>
                 Enum.map(report.expense_breakdown, fn {k, v} ->
-                  %{"category" => k, "type" => "expense", "total" => Decimal.to_string(v)}
+                  %{"category" => k, "type" => "expense", "total" => format_amount(v, currency)}
                 end),
               "currency" => currency
             }
@@ -773,7 +773,7 @@ defmodule DemoBeExph.Integration.ServiceLayer do
   defp expense_json(expense) do
     %{
       "id" => expense.id,
-      "amount" => Decimal.to_string(expense.amount),
+      "amount" => format_amount(expense.amount, expense.currency),
       "currency" => expense.currency,
       "category" => expense.category,
       "type" => expense.type,
@@ -785,6 +785,15 @@ defmodule DemoBeExph.Integration.ServiceLayer do
       "updated_at" => expense.updated_at
     }
   end
+
+  @zero_decimal_currencies ~w(IDR)
+
+  defp format_amount(%Decimal{} = d, currency) when is_binary(currency) do
+    scale = if currency in @zero_decimal_currencies, do: 0, else: 2
+    d |> Decimal.round(scale) |> Decimal.to_string(:normal)
+  end
+
+  defp format_amount(other, _currency), do: to_string(other)
 
   defp format_quantity(nil), do: nil
 

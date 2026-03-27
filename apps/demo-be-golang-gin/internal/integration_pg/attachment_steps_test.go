@@ -7,6 +7,7 @@ import (
 
 	"github.com/cucumber/godog"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 
 	"github.com/wahidyankf/open-sharia-enterprise/apps/demo-be-golang-gin/internal/domain"
 )
@@ -100,11 +101,12 @@ func (ctx *scenarioCtx) aliceSendsDeleteAttachment() error {
 }
 
 func (ctx *scenarioCtx) aliceSendsDeleteNonExistentAttachment() error {
+	randomID := uuid.New().String()
 	params := gin.Params{
 		{Key: "id", Value: ctx.ExpenseID},
-		{Key: "aid", Value: "nonexistent-attachment-id"},
+		{Key: "aid", Value: randomID},
 	}
-	c, w := buildGinContext("DELETE", fmt.Sprintf("/api/v1/expenses/%s/attachments/nonexistent-attachment-id", ctx.ExpenseID), nil, ctx.AccessToken, params, ctx.JWTSvc)
+	c, w := buildGinContext("DELETE", fmt.Sprintf("/api/v1/expenses/%s/attachments/%s", ctx.ExpenseID, randomID), nil, ctx.AccessToken, params, ctx.JWTSvc)
 	ctx.Handler.DeleteAttachment(c)
 	ctx.LastStatus = w.Code
 	ctx.LastBody = readResponse(w)
