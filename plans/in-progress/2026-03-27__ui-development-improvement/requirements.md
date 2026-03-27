@@ -3,115 +3,212 @@
 ## Problem Statement
 
 The monorepo has multiple frontend applications with no shared UI infrastructure. Design tokens
-are duplicated, component patterns diverge across apps, and there is no automated enforcement
-of design quality, accessibility, or consistency. AI agents lack UI-specific knowledge to assist
-with frontend development effectively.
+are duplicated with divergent values, component patterns differ across apps, and there is no
+automated enforcement of design quality, accessibility, or consistency. AI agents lack
+UI-specific knowledge to assist with frontend development effectively.
 
 ## Current State
 
-### Design Tokens
+### Design Tokens — Detailed Analysis
 
-Both `organiclever-web` and `ayokoding-web` define CSS custom properties in `globals.css`:
+Both `organiclever-web` and `ayokoding-web` define CSS custom properties in `globals.css`, but
+with architecturally different approaches:
 
-- **organiclever-web**: HSL-based color tokens with variable references, `@theme` directive
-  integration, chart colors, radius scale
-- **ayokoding-web**: Direct HSL values (not variable references), extended sidebar tokens,
-  typography plugin, rehype-pretty-code integration
+**organiclever-web** uses **double indirection**:
 
-Token values are **similar but not identical** — there is no single source of truth.
+```css
+/* @theme block defines Tailwind aliases pointing to bare HSL variables */
+@theme {
+  --color-background: hsl(var(--background));
+  --color-primary: hsl(var(--primary));
+}
+/* Actual values live in :root and .dark selectors */
+:root { --primary: 0 0% 9%; }
+.dark { --primary: 0 0% 98%; }
+```
 
-### Components
+**ayokoding-web** uses **direct values** in `@theme`:
 
-Both apps use shadcn/ui (new-york style) with Radix UI primitives:
+```css
+@theme {
+  --color-background: hsl(0 0% 100%);
+  --color-primary: hsl(221.2 83.2% 53.3%);
+}
+.dark { --color-primary: hsl(217.2 91.2% 59.8%); }
+```
 
-- **organiclever-web**: 8 UI components (Alert, AlertDialog, Button, Card, Dialog, Input,
-  Label, Table)
-- **ayokoding-web**: 12 UI components (Alert, Badge, Button, Command, Dialog, DropdownMenu,
-  Input, ScrollArea, Separator, Sheet, Tabs, Tooltip)
+**Consequences of divergence**:
 
-Button component differs between apps — ayokoding-web has extra size variants (`xs`, `icon-xs`,
-`icon-sm`, `icon-lg`) and data attributes.
+- organiclever-web tokens are neutral (grayscale primary) — business/productivity brand
+- ayokoding-web tokens are blue-tinted — educational/tech brand
+- Different token formats mean you cannot copy-paste between apps
+- organiclever-web has chart tokens (chart-1 through chart-5) that ayokoding-web lacks
+- ayokoding-web has sidebar tokens (7 extra) that organiclever-web lacks
+- ayokoding-web includes `@plugin "@tailwindcss/typography"` and rehype-pretty-code CSS;
+  organiclever-web does not
+- ayokoding-web has `@source` directive; organiclever-web does not
+- ayokoding-web uses hardcoded hex colors (`#f6f8fa`, `#24292e`, `#e1e4e8`) for code blocks
+  — violating the token principle
+
+### Components — Detailed Comparison
+
+Both apps use shadcn/ui (new-york style) with Radix UI primitives, but component
+implementations have diverged:
+
+| Component | organiclever-web | ayokoding-web | Shared? |
+| --- | --- | --- | --- |
+| Alert | Yes | Yes | Different implementations |
+| AlertDialog | Yes | No | organiclever-only |
+| Badge | No | Yes | ayokoding-only |
+| Button | Yes (4 sizes) | Yes (8 sizes) | Different — see README |
+| Card | Yes | No | organiclever-only |
+| Command | No | Yes | ayokoding-only |
+| Dialog | Yes | Yes | Different implementations |
+| DropdownMenu | No | Yes | ayokoding-only |
+| Input | Yes | Yes | Different implementations |
+| Label | Yes | No | organiclever-only |
+| ScrollArea | No | Yes | ayokoding-only |
+| Separator | No | Yes | ayokoding-only |
+| Sheet | No | Yes | ayokoding-only |
+| Table | Yes | No | organiclever-only |
+| Tabs | No | Yes | ayokoding-only |
+| Tooltip | No | Yes | ayokoding-only |
+
+**Union**: 16 unique components across both apps
+**Intersection**: 4 components present in both (Alert, Button, Dialog, Input)
+**Non-overlapping**: 12 components exist in only one app
+
+**Radix UI import pattern divergence**:
+
+- organiclever-web: `import { Slot } from "@radix-ui/react-slot"` (individual packages)
+- ayokoding-web: `import { Slot } from "radix-ui"` (unified package, newer approach)
+
+**Component pattern divergence**:
+
+- organiclever-web: `React.forwardRef` pattern (older, more boilerplate)
+- ayokoding-web: Direct function with `React.ComponentProps<"element">` (newer, cleaner)
 
 ### Demo Frontends
 
-- `demo-fe-ts-nextjs`: Inline styles only, no design system
-- `demo-fe-dart-flutterweb`: Flutter Material 3 theme
-- `demo-fe-ts-tanstack-start`: Minimal styling
-- `demo-fs-ts-nextjs`: Minimal styling
+- **demo-fe-ts-nextjs**: Uses inline styles with a custom `useBreakpoint()` hook for responsive
+  design. Components: `AppShell`, `Header`, `Sidebar` in `src/components/layout/`. No design
+  system at all — entirely self-contained.
+- **demo-fe-dart-flutterweb**: Flutter Material 3 theme with Dart `ThemeData`. Entirely separate
+  ecosystem — cannot share React components but could consume CSS tokens via generated Dart
+  constants.
+- **demo-fe-ts-tanstack-start**: Minimal styling, early stage.
+- **demo-fs-ts-nextjs**: Minimal styling, uses TypeScript interfaces for data layer.
 
-### AI Assistance
+### AI Assistance — Current State
 
-- Vercel `frontend-design` plugin enabled (generic, not repo-aware)
-- No repo-specific UI skill or agent
-- No design context file (`.impeccable.md` equivalent)
+- **Vercel `frontend-design` plugin**: Enabled in `.claude/settings.json`. Provides generic
+  design guidance (avoid AI slop, use proper typography, etc.) but knows nothing about our
+  specific tokens, components, or brand.
+- **Vercel `react-best-practices`**: Auto-triggers after TSX edits with quality checklist for
+  hooks, a11y, performance, TypeScript patterns.
+- **Vercel `shadcn`**: Available for shadcn/ui component guidance.
+- **No repo-specific UI skill**: No skill references our actual `--color-primary`,
+  `--color-destructive`, or other token values. No skill documents our CVA variant patterns or
+  Radix composition approach.
 
-### Testing
+### Testing — Current State
 
-- No visual regression tests
-- No automated accessibility checks in unit tests
-- No component-level testing (Storybook interaction tests)
-- Storybook only in organiclever-web
+- **Unit tests**: Vitest in organiclever-web and demo-fe-ts-nextjs; no a11y assertions
+- **E2E tests**: Playwright in organiclever-web-e2e and demo-fe-e2e; no visual regression
+- **Storybook**: Only in organiclever-web with `@storybook/nextjs-vite` framework; stories exist
+  for Alert, AlertDialog, Button, Card, Dialog, Input, Label, Table
+- **No axe-core integration anywhere**
+- **No `toHaveScreenshot()` usage anywhere**
 
-### Conventions
+### Linting — Current State
 
-- No documented UI/CSS conventions in `governance/`
-- No ESLint rules for design token enforcement
-- No Stylelint configuration
-- `prettier-plugin-tailwindcss` not installed for class ordering
+- **ESLint**: `next/core-web-vitals` + `next/typescript` via `FlatCompat` in both Next.js apps.
+  No `jsx-a11y` plugin configured.
+- **Prettier**: `.prettierrc.json` with `printWidth: 120` and `proseWrap: preserve`. No
+  `prettier-plugin-tailwindcss` — Tailwind classes are unsorted.
+- **No Stylelint**: Not installed, not configured.
 
-## Gaps
+## Gaps — Detailed
 
 ### G1: No Shared Design Token Source of Truth
 
-Each app maintains its own `globals.css` with tokens that can drift independently.
+**What exists**: Two independent `globals.css` files with similar-but-different token values.
+
+**Impact**: A developer changing the border radius in organiclever-web has no mechanism to
+propagate that change to ayokoding-web. Token values drift silently. New apps
+(demo-fe-ts-nextjs, demo-fs-ts-nextjs) start from scratch with no tokens at all.
+
+**Complication**: The two apps have genuinely different brand colors (neutral vs. blue) — tokens
+cannot be blindly unified. The shared layer must provide structural tokens (radius, spacing,
+typography scale) and allow per-app color overrides.
 
 ### G2: No Shared Component Library
 
-shadcn/ui components are copied independently into each app. Fixes or improvements in one app
-do not propagate.
+**What exists**: 16 unique shadcn/ui components across two apps, with only 4 overlapping.
+The 4 overlapping components have different implementations (different Radix imports, different
+component patterns, different variant sets).
+
+**Impact**: A bug fix in ayokoding-web's Button (e.g., the `aria-invalid` handling) does not
+propagate to organiclever-web. Adding a new variant requires changes in multiple places.
+
+**Complication**: shadcn/ui's model is "copy to your project and own the code." Extracting to a
+shared lib changes this model — the shared lib becomes a governed package rather than per-app
+owned code. This tension must be managed explicitly (see trade-offs in tech-docs.md).
 
 ### G3: No AI UI Development Skill
 
-The generic Vercel `frontend-design` plugin does not understand:
+**What exists**: Three Vercel plugins (frontend-design, react-best-practices, shadcn) providing
+generic guidance.
 
-- Our design tokens and their intended usage
-- Our brand personality and target audience
-- Our component composition patterns
-- Our accessibility requirements beyond WCAG defaults
-- Anti-patterns specific to our codebase
+**Impact**: When an AI agent generates a new component, it does not know to use
+`hsl(var(--primary))` vs. `hsl(221.2 83.2% 53.3%)`, which Radix import style to use, whether
+to use `React.forwardRef` or `React.ComponentProps`, or what size variants are standard.
+
+**Complication**: The skill must be opinionated enough to provide useful guidance but flexible
+enough to accommodate different brand palettes across apps.
 
 ### G4: No UI Conventions Documentation
 
-No governance documents for:
+**What exists**: No files in `governance/development/` address frontend UI conventions.
 
-- Design token naming and usage rules
-- Component composition patterns
-- Color usage (when to use which token)
-- Typography scale and usage
-- Spacing system
-- Dark mode implementation
-- Animation guidelines
-- Accessibility requirements specific to our apps
+**Impact**: New developers (human or AI) have no reference for:
+
+- Which token to use for a given purpose (e.g., `--muted` vs. `--secondary` for backgrounds)
+- When to create a new component vs. composing existing ones
+- What states a component must support (hover, focus, active, disabled, loading, error, success)
+- Whether to use `@apply` or utility classes (answer: utility classes, except in `@layer base`)
+- How to handle dark mode (token-based automatic vs. explicit `dark:` prefixes)
 
 ### G5: No Automated Design Enforcement
 
-- No ESLint rules preventing hardcoded colors/spacing in TSX
-- No Stylelint rules for CSS token usage
-- No `prettier-plugin-tailwindcss` for class ordering
-- No axe-core in unit tests for accessibility validation
+**What exists**: ESLint with `next/core-web-vitals` only. No a11y linting. No token enforcement.
+
+**Impact**: Hardcoded hex colors can be introduced without any CI failure. Missing `alt`
+attributes, `aria-label`, or `<label>` elements are not caught. Tailwind class order is
+inconsistent across files.
+
+**Specific violations currently in codebase**:
+
+- ayokoding-web `globals.css` has hardcoded hex colors (`#f6f8fa`, `#24292e`, `#e1e4e8`) for
+  code block styling
+- ayokoding-web `globals.css` uses `!important` declarations (10 occurrences)
+- organiclever-web body font is `Arial, Helvetica, sans-serif` set via `@layer utilities` —
+  should be configured via `next/font` for optimization
 
 ### G6: No Visual Regression Testing
 
-No mechanism to catch unintended visual changes to UI components. Playwright is available
-but not configured for visual comparisons.
+**What exists**: Playwright configured for E2E testing but no `toHaveScreenshot()` usage.
+
+**Impact**: CSS changes can unintentionally alter component appearance with no automated
+detection. The only safety net is manual visual review.
 
 ### G7: No UI-Focused Agent
 
-No maker-checker-fixer agent trio for:
+**What exists**: No agent in `.claude/agents/` for UI validation.
 
-- Creating UI components following conventions
-- Validating component quality (a11y, token usage, pattern compliance)
-- Fixing component issues automatically
+**Impact**: No automated way to audit existing components against conventions. The
+maker-checker-fixer pattern is well-established in this repo for docs and plans but missing
+for UI code.
 
 ## Acceptance Criteria
 
@@ -120,45 +217,48 @@ No maker-checker-fixer agent trio for:
 ```gherkin
 Feature: UI Conventions and AI Skills
 
-  Scenario: UI conventions are documented
-    Given the governance directory exists
+  Background:
+    Given the monorepo has frontend apps organiclever-web, ayokoding-web, and demo-fe-ts-nextjs
+    And the governance directory exists at governance/development/
+
+  Scenario: UI conventions are documented with concrete examples
     When I check governance/development/frontend/
     Then I find documented conventions for:
-      | Convention | File |
-      | Design tokens | design-tokens.md |
-      | Component patterns | component-patterns.md |
-      | Accessibility | accessibility.md |
-      | Styling | styling.md |
+      | Convention | File | Must Include |
+      | Design tokens | design-tokens.md | Token categories, naming rules, per-app override pattern, dark mode |
+      | Component patterns | component-patterns.md | CVA variants, Radix composition, cn(), state coverage |
+      | Accessibility | accessibility.md | WCAG AA rules, focus-visible, reduced-motion, hit targets |
+      | Styling | styling.md | Tailwind v4 patterns, class ordering, defensive CSS |
+    And each convention file includes concrete code examples (not just prose)
+    And each convention file references the actual token names from our globals.css
 
-  Scenario: Repo-specific UI skill exists
+  Scenario: Repo-specific UI skill references actual codebase patterns
     Given the .claude/skills/ directory
-    When I check for a UI development skill
-    Then I find a skill that:
-      | Aspect | Requirement |
-      | Design tokens | References our actual CSS custom properties |
-      | Component patterns | Documents shadcn/ui + Radix composition |
-      | Anti-patterns | Lists repo-specific UI anti-patterns |
-      | Brand context | Includes target audience and personality |
+    When I check for swe-developing-frontend-ui/SKILL.md
+    Then the skill references our actual CSS custom properties by name
+    And the skill documents both token formats (indirection vs. direct)
+    And the skill lists at least 10 repo-specific anti-patterns with code examples
+    And the skill includes brand context for each app (audience, personality, tone)
+    And the skill has reference modules in a reference/ subdirectory
 
-  Scenario: Impeccable-inspired slash commands work
-    Given the UI skill is installed
-    When a developer invokes /audit on a component
-    Then the AI checks against our conventions for:
-      | Check | Description |
-      | Token usage | All colors/spacing use design tokens |
-      | Accessibility | WCAG AA compliance, focus management |
-      | Responsive | Container queries, mobile-first |
-      | Component quality | Proper variant usage, state coverage |
+  Scenario: UI checker agent validates components against conventions
+    Given a TypeScript frontend component exists in organiclever-web
+    When the swe-ui-checker agent runs against it
+    Then it produces a report in generated-reports/ covering:
+      | Dimension | What It Checks | Example Violation |
+      | Token compliance | No hardcoded colors, spacing, or radii | color: '#ff0000' in className |
+      | Accessibility | aria-*, role, focus-visible, reduced-motion | Missing aria-label on icon button |
+      | Component patterns | CVA variants, cn() usage, Radix primitives | Inline style instead of cn() |
+      | Dark mode | All visual tokens have dark mode variants | Missing dark: prefix on bg |
+      | Responsive | Container queries, mobile-first patterns | Desktop-only layout with no mobile breakpoints |
+      | Anti-patterns | Known bad patterns from catalog | Nested Card inside Card |
+    And the report uses the criticality/confidence classification system
 
-  Scenario: UI checker agent validates components
-    Given a TypeScript frontend component exists
-    When the swe-ui-checker agent runs
-    Then it produces a report covering:
-      | Dimension | What It Checks |
-      | Token compliance | No hardcoded colors, spacing, or radii |
-      | Accessibility | aria-*, role, focus-visible, reduced-motion |
-      | Component patterns | CVA variants, cn() usage, Radix primitives |
-      | Dark mode | All visual tokens have dark mode variants |
+  Scenario: Prettier sorts Tailwind classes deterministically
+    Given prettier-plugin-tailwindcss is installed with tailwindStylesheet configured
+    When a TSX file with unsorted Tailwind classes is staged
+    Then the pre-commit hook sorts classes into Tailwind's canonical order
+    And the sorted output is deterministic across developer machines
 ```
 
 ### Phase 2: Shared Library
@@ -166,24 +266,47 @@ Feature: UI Conventions and AI Skills
 ```gherkin
 Feature: Shared UI Library
 
-  Scenario: Design tokens are centralized
+  Background:
     Given libs/ts-ui-tokens/ exists as an Nx library
-    When organiclever-web and ayokoding-web import tokens
-    Then both apps use the same CSS custom property values
-    And token changes propagate to all consuming apps
+    And libs/ts-ui/ exists as an Nx library
 
-  Scenario: Base components are shared
-    Given libs/ts-ui/ exists as an Nx library
-    When a developer needs a Button component
-    Then they import from @open-sharia-enterprise/ts-ui
-    And the component uses shared design tokens
-    And app-specific variants can extend the base
+  Scenario: Design tokens are centralized with per-app overrides
+    When organiclever-web imports tokens from ts-ui-tokens
+    Then it receives structural tokens (radius, spacing scale, typography)
+    And it can override brand tokens (primary, accent) in its own globals.css
+    And no structural token definitions are duplicated in app globals.css
+
+  Scenario: Token changes propagate through the dependency graph
+    Given organiclever-web depends on ts-ui-tokens
+    When I change --radius from 0.5rem to 0.375rem in ts-ui-tokens
+    And I run nx affected -t build
+    Then organiclever-web rebuilds with the new radius value
+    And the Nx dependency graph shows ts-ui-tokens → organiclever-web
+
+  Scenario: Shared components use the unified Radix import pattern
+    Given libs/ts-ui/ exports a Button component
+    When I inspect the import statements
+    Then it uses the radix-ui unified package (not @radix-ui/react-slot)
+    And it uses React.ComponentProps pattern (not React.forwardRef)
+    And it includes data-slot attributes for testing and styling
+
+  Scenario: App-specific components extend shared components
+    Given organiclever-web needs a chart-specific Button variant
+    When it creates a local ChartButton component
+    Then ChartButton imports and wraps Button from @open-sharia-enterprise/ts-ui
+    And the local variant uses tokens from ts-ui-tokens
+    And the shared Button is not modified
 
   Scenario: Demo frontends adopt shared tokens
-    Given demo-fe-ts-nextjs uses the shared library
+    Given demo-fe-ts-nextjs depends on ts-ui-tokens
     When it renders components
-    Then it uses design tokens from ts-ui-tokens
-    And it follows the same component patterns
+    Then it uses design tokens from ts-ui-tokens via Tailwind utility classes
+    And inline styles from src/components/layout/ are replaced
+
+  Scenario: Build and test pass after migration
+    When I run nx affected -t typecheck lint test:quick build
+    Then all targets pass for organiclever-web, ayokoding-web, and demo-fe-ts-nextjs
+    And no app has duplicate token definitions in its globals.css
 ```
 
 ### Phase 3: Automated Enforcement
@@ -191,29 +314,37 @@ Feature: Shared UI Library
 ```gherkin
 Feature: Automated UI Quality Enforcement
 
-  Scenario: ESLint prevents hardcoded design values
-    Given a TSX file contains color: '#ff0000'
-    When ESLint runs
-    Then it reports an error recommending a design token
-    And the error includes the correct token name
+  Scenario: ESLint catches accessibility violations in TSX
+    Given eslint-plugin-jsx-a11y is configured in ESLint flat config
+    When a TSX file has an <img> without alt attribute
+    Then nx run organiclever-web:lint reports a jsx-a11y/alt-text error
+    And the error message includes remediation guidance
 
-  Scenario: Tailwind classes are consistently ordered
-    Given a TSX file with Tailwind classes
-    When Prettier formats the file
-    Then classes are sorted by prettier-plugin-tailwindcss
-    And the sort order is deterministic
+  Scenario: ESLint catches hardcoded design values
+    Given the custom no-hardcoded-colors rule is active
+    When a TSX file contains className="text-[#ff0000]"
+    Then ESLint reports an error: "Use a design token instead of hardcoded color"
+    And when a TSX file contains style={{ color: '#ff0000' }}
+    Then ESLint reports an error: "Use Tailwind utility with design token"
 
-  Scenario: Accessibility is tested in unit tests
-    Given a component has unit tests
-    When vitest runs with vitest-axe
-    Then accessibility violations are reported as test failures
-    And the violations include remediation guidance
+  Scenario: Unit tests verify accessibility with axe-core
+    Given vitest-axe is configured in ts-ui's vitest setup file
+    When the Button component renders with all variant combinations
+    Then axe-core finds no WCAG AA violations
+    And when a component is missing an accessible name
+    Then the unit test fails with a specific axe rule violation
 
-  Scenario: Visual regression catches unintended changes
-    Given a component has Playwright visual tests
-    When the component's appearance changes
-    Then the visual regression test fails
-    And a diff image shows the change
+  Scenario: Visual regression catches unintended component changes
+    Given baseline screenshots exist for shared components
+    When a CSS change alters the Button's border-radius
+    Then Playwright's toHaveScreenshot() fails
+    And a diff image shows the pixel-level change
+    And the developer can update baselines with --update-snapshots
+
+  Scenario: Pre-push hook catches all new violations
+    When a developer pushes code with a new a11y violation
+    Then the pre-push hook runs nx affected -t lint test:quick
+    And the push is blocked with a clear error message
 ```
 
 ### Phase 4: Component Catalog
@@ -222,14 +353,23 @@ Feature: Automated UI Quality Enforcement
 Feature: Component Catalog
 
   Scenario: All shared components have Storybook stories
-    Given libs/ts-ui/ contains components
+    Given libs/ts-ui/ exports N components
     When I check for .stories.tsx files
-    Then every exported component has at least one story
-    And stories cover all variant combinations
+    Then every exported component has at least one story file
+    And each story file includes: default state, all variants, dark mode, disabled state
+    And the Storybook sidebar groups components by category
 
-  Scenario: Storybook runs accessibility checks
-    Given Storybook is configured with a11y addon
-    When stories render
-    Then axe-core runs automatically
-    And violations are displayed in the accessibility panel
+  Scenario: Storybook shows accessibility status inline
+    Given @storybook/addon-a11y is configured
+    When I view a component story
+    Then the accessibility panel shows axe-core results
+    And violations are highlighted with element outlines
+    And each violation links to remediation documentation
+
+  Scenario: Component documentation is self-contained
+    Given a new developer opens nx storybook ts-ui
+    When they browse the Button component
+    Then they see: description, props table, variant gallery, do/don't examples
+    And they can copy-paste usage code from the docs panel
+    And dark mode toggle shows the component in both themes
 ```
