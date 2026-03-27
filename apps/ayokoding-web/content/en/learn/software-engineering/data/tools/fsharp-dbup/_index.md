@@ -10,3 +10,5 @@ layout: list
 - [By Example](/en/learn/software-engineering/data/tools/fsharp-dbup/by-example)
   - [Overview](/en/learn/software-engineering/data/tools/fsharp-dbup/by-example/overview)
   - [Beginner](/en/learn/software-engineering/data/tools/fsharp-dbup/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/data/tools/fsharp-dbup/by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/data/tools/fsharp-dbup/by-example/advanced)

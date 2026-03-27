@@ -10,3 +10,5 @@ layout: list
 - [By Example](/en/learn/software-engineering/data/tools/python-alembic/by-example)
   - [Overview](/en/learn/software-engineering/data/tools/python-alembic/by-example/overview)
   - [Beginner](/en/learn/software-engineering/data/tools/python-alembic/by-example/beginner)
+  - [Intermediate](/en/learn/software-engineering/data/tools/python-alembic/by-example/intermediate)
+  - [Advanced](/en/learn/software-engineering/data/tools/python-alembic/by-example/advanced)
