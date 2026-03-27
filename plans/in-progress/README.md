@@ -8,6 +8,8 @@ Active project plans currently being worked on.
   dependencies with permissive alternatives
 - [Demo Repository Pattern](./2026-03-27__demo-repository-pattern/) — Enforce repository pattern
   across all demo backend apps
+- [UI Development Improvement](./2026-03-27__ui-development-improvement/) — Shared design tokens,
+  AI skills, conventions, and automated quality for frontend apps
 
 ## Instructions
 
