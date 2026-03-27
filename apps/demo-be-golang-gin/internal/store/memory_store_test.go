@@ -197,7 +197,7 @@ func TestUnitMemoryStoreExpenses(t *testing.T) {
 		Amount:   10.50,
 		Currency: "USD",
 		Category: "food",
-		Date:     "2025-01-15",
+		Date:     time.Date(2025, 1, 15, 0, 0, 0, 0, time.UTC),
 		Type:     domain.EntryTypeExpense,
 	}
 	if err := ms.CreateExpense(ctx, expense); err != nil {
@@ -253,7 +253,7 @@ func TestUnitMemoryStoreExpenses(t *testing.T) {
 		Amount:   100,
 		Currency: "USD",
 		Category: "salary",
-		Date:     "2025-01-01",
+		Date:     time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC),
 		Type:     domain.EntryTypeIncome,
 	}
 	_ = ms.CreateExpense(ctx, income)
@@ -347,10 +347,10 @@ func TestUnitMemoryStorePLReport(t *testing.T) {
 	ms := store.NewMemoryStore()
 
 	entries := []*domain.Expense{
-		{ID: "e1", UserID: "u1", Amount: 5000, Currency: "USD", Category: "salary", Date: "2025-01-15", Type: domain.EntryTypeIncome},
-		{ID: "e2", UserID: "u1", Amount: 150, Currency: "USD", Category: "food", Date: "2025-01-20", Type: domain.EntryTypeExpense},
-		{ID: "e3", UserID: "u1", Amount: 100000, Currency: "IDR", Category: "misc", Date: "2025-01-10", Type: domain.EntryTypeExpense},
-		{ID: "e4", UserID: "u2", Amount: 999, Currency: "USD", Category: "other", Date: "2025-01-01", Type: domain.EntryTypeExpense},
+		{ID: "e1", UserID: "u1", Amount: 5000, Currency: "USD", Category: "salary", Date: time.Date(2025, 1, 15, 0, 0, 0, 0, time.UTC), Type: domain.EntryTypeIncome},
+		{ID: "e2", UserID: "u1", Amount: 150, Currency: "USD", Category: "food", Date: time.Date(2025, 1, 20, 0, 0, 0, 0, time.UTC), Type: domain.EntryTypeExpense},
+		{ID: "e3", UserID: "u1", Amount: 100000, Currency: "IDR", Category: "misc", Date: time.Date(2025, 1, 10, 0, 0, 0, 0, time.UTC), Type: domain.EntryTypeExpense},
+		{ID: "e4", UserID: "u2", Amount: 999, Currency: "USD", Category: "other", Date: time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC), Type: domain.EntryTypeExpense},
 	}
 	for _, e := range entries {
 		_ = ms.CreateExpense(ctx, e)

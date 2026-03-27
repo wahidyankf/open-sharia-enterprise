@@ -187,7 +187,7 @@ func TestUnitGORMStoreExpenses(t *testing.T) {
 		Amount:   10.50,
 		Currency: "USD",
 		Category: "food",
-		Date:     "2025-01-15",
+		Date:     time.Date(2025, 1, 15, 0, 0, 0, 0, time.UTC),
 		Type:     domain.EntryTypeExpense,
 	}
 	if err := gs.CreateExpense(ctx, e); err != nil {
@@ -235,7 +235,7 @@ func TestUnitGORMStoreExpenses(t *testing.T) {
 		Amount:   100,
 		Currency: "USD",
 		Category: "salary",
-		Date:     "2025-01-01",
+		Date:     time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC),
 		Type:     domain.EntryTypeIncome,
 	}
 	_ = gs.CreateExpense(ctx, income)
@@ -316,8 +316,8 @@ func TestUnitGORMStorePLReport(t *testing.T) {
 	ctx := context.Background()
 
 	entries := []*domain.Expense{
-		{ID: "pe1", UserID: "u1", Amount: 5000, Currency: "USD", Category: "salary", Date: "2025-01-15", Type: domain.EntryTypeIncome},
-		{ID: "pe2", UserID: "u1", Amount: 150, Currency: "USD", Category: "food", Date: "2025-01-20", Type: domain.EntryTypeExpense},
+		{ID: "pe1", UserID: "u1", Amount: 5000, Currency: "USD", Category: "salary", Date: time.Date(2025, 1, 15, 0, 0, 0, 0, time.UTC), Type: domain.EntryTypeIncome},
+		{ID: "pe2", UserID: "u1", Amount: 150, Currency: "USD", Category: "food", Date: time.Date(2025, 1, 20, 0, 0, 0, 0, time.UTC), Type: domain.EntryTypeExpense},
 	}
 	for _, e := range entries {
 		_ = gs.CreateExpense(ctx, e)

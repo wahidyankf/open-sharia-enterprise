@@ -381,6 +381,8 @@ func (m *MemoryStore) PLReport(_ context.Context, q PLReportQuery) (*domain.PLRe
 		IncomeBreakdown:  make(map[string]float64),
 		ExpenseBreakdown: make(map[string]float64),
 	}
+	fromTime, _ := time.Parse("2006-01-02", q.From)
+	toTime, _ := time.Parse("2006-01-02", q.To)
 	for _, e := range m.expenses {
 		if e.UserID != q.UserID {
 			continue
@@ -388,7 +390,7 @@ func (m *MemoryStore) PLReport(_ context.Context, q PLReportQuery) (*domain.PLRe
 		if !strings.EqualFold(e.Currency, q.Currency) {
 			continue
 		}
-		if e.Date < q.From || e.Date > q.To {
+		if e.Date.Before(fromTime) || e.Date.After(toTime) {
 			continue
 		}
 		switch e.Type {

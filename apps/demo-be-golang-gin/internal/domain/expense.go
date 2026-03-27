@@ -46,7 +46,7 @@ type Expense struct {
 	Currency    string     `gorm:"not null" json:"currency"`
 	Category    string     `gorm:"not null" json:"category"`
 	Description string     `json:"description"`
-	Date        string     `gorm:"not null;type:date" json:"date"`
+	Date        time.Time  `gorm:"not null;type:date" json:"date"`
 	Type        EntryType  `gorm:"not null" json:"type"`
 	Quantity    *float64   `json:"quantity,omitempty"`
 	Unit        string     `json:"unit,omitempty"`

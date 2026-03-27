@@ -29,7 +29,6 @@ func formatAmountString(currency string, amount float64) string {
 }
 
 func domainExpenseToContract(e *domain.Expense) contracts.Expense {
-	dateTime, _ := time.Parse("2006-01-02", e.Date)
 	resp := contracts.Expense{
 		Id:          e.ID,
 		UserId:      e.UserID,
@@ -37,7 +36,7 @@ func domainExpenseToContract(e *domain.Expense) contracts.Expense {
 		Currency:    e.Currency,
 		Category:    e.Category,
 		Description: e.Description,
-		Date:        openapi_types.Date{Time: dateTime},
+		Date:        openapi_types.Date{Time: e.Date},
 		Type:        contracts.ExpenseType(e.Type),
 		CreatedAt:   e.CreatedAt,
 		UpdatedAt:   e.UpdatedAt,
@@ -99,7 +98,7 @@ func (h *Handler) CreateExpense(c *gin.Context) {
 		Currency:    strings.ToUpper(req.Currency),
 		Category:    req.Category,
 		Description: req.Description,
-		Date:        req.Date.Format("2006-01-02"),
+		Date:        req.Date.Time,
 		Type:        domain.EntryType(req.Type),
 		Quantity:    quantity,
 		Unit:        unit,
@@ -228,7 +227,7 @@ func (h *Handler) UpdateExpense(c *gin.Context) {
 		expense.Description = *req.Description
 	}
 	if req.Date != nil {
-		expense.Date = req.Date.Format("2006-01-02")
+		expense.Date = req.Date.Time
 	}
 	if req.Type != nil {
 		expense.Type = domain.EntryType(*req.Type)
