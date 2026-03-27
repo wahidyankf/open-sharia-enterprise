@@ -8,6 +8,7 @@ open Xunit
 open Microsoft.EntityFrameworkCore
 open DemoBeFsgi.Tests.TestFixture
 open DemoBeFsgi.Tests.State
+open DemoBeFsgi.Infrastructure.Repositories.EfRepositories
 
 /// xUnit collection that forces all integration test classes to run sequentially.
 /// Required because integration tests share a single PostgreSQL database.
@@ -28,12 +29,18 @@ let private getFeatureFile (namePart: string) =
         None
 
 /// Each scenario gets its own isolated AppDbContext (fresh database state).
-/// The service provider injects a StepState seeded with that context.
+/// The service provider injects a StepState seeded with EF repository function records
+/// constructed from that context.
 type private ScenarioServiceProvider(db: DemoBeFsgi.Infrastructure.AppDbContext.AppDbContext) =
     interface IServiceProvider with
         member _.GetService(serviceType: Type) =
             if serviceType = typeof<StepState> then
-                empty db :> obj
+                let userRepo = createUserRepo db
+                let expenseRepo = createExpenseRepo db
+                let attachmentRepo = createAttachmentRepo db
+                let tokenRepo = createTokenRepo db
+                let refreshTokenRepo = createRefreshTokenRepo db
+                empty userRepo expenseRepo attachmentRepo tokenRepo refreshTokenRepo :> obj
             else
                 null
 

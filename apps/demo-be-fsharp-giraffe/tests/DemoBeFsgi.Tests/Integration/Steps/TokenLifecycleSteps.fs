@@ -37,7 +37,9 @@ let private makeExpiredRefreshToken (userId: string) =
 [<When>]
 let ``alice sends POST /api/v1/auth/refresh with her refresh token`` (state: StepState) =
     let rt = state.RefreshToken |> Option.defaultValue ""
-    let status, body = refresh state.Db rt |> Async.RunSynchronously
+
+    let status, body =
+        refresh state.UserRepo state.RefreshTokenRepo rt |> Async.RunSynchronously
 
     { state with
         Response = Some { Status = status; Body = body }
@@ -54,7 +56,10 @@ let ``alice's refresh token has expired`` (state: StepState) =
 [<Given>]
 let ``alice has used her refresh token to get a new token pair`` (state: StepState) =
     let rt = state.RefreshToken |> Option.defaultValue ""
-    refresh state.Db rt |> Async.RunSynchronously |> ignore
+
+    refresh state.UserRepo state.RefreshTokenRepo rt
+    |> Async.RunSynchronously
+    |> ignore
     // Preserve the original refresh token in ExtraData for reuse test
     { state with
         ExtraData = state.ExtraData |> Map.add "originalRefreshToken" rt }
@@ -64,7 +69,8 @@ let ``alice sends POST /api/v1/auth/refresh with her original refresh token`` (s
     let rt =
         state.ExtraData |> Map.tryFind "originalRefreshToken" |> Option.defaultValue ""
 
-    let status, body = refresh state.Db rt |> Async.RunSynchronously
+    let status, body =
+        refresh state.UserRepo state.RefreshTokenRepo rt |> Async.RunSynchronously
 
     { state with
         Response = Some { Status = status; Body = body }
@@ -72,12 +78,16 @@ let ``alice sends POST /api/v1/auth/refresh with her original refresh token`` (s
 
 [<Given>]
 let ``the user "(.+)" has been deactivated`` (username: string) (state: StepState) =
-    deactivate state.Db state.AccessToken |> Async.RunSynchronously |> ignore
+    deactivate state.UserRepo state.TokenRepo state.AccessToken
+    |> Async.RunSynchronously
+    |> ignore
+
     state
 
 [<When>]
 let ``alice sends POST /api/v1/auth/logout with her access token`` (state: StepState) =
-    let status, body = logout state.Db state.AccessToken |> Async.RunSynchronously
+    let status, body =
+        logout state.TokenRepo state.AccessToken |> Async.RunSynchronously
 
     { state with
         Response = Some { Status = status; Body = body }
@@ -85,7 +95,9 @@ let ``alice sends POST /api/v1/auth/logout with her access token`` (state: StepS
 
 [<When>]
 let ``alice sends POST /api/v1/auth/logout-all with her access token`` (state: StepState) =
-    let status, body = logoutAll state.Db state.AccessToken |> Async.RunSynchronously
+    let status, body =
+        logoutAll state.UserRepo state.TokenRepo state.RefreshTokenRepo state.AccessToken
+        |> Async.RunSynchronously
 
     { state with
         Response = Some { Status = status; Body = body }
@@ -93,11 +105,14 @@ let ``alice sends POST /api/v1/auth/logout-all with her access token`` (state: S
 
 [<Then>]
 let ``alice's access token should be invalidated`` (state: StepState) =
-    let status, _body = getProfile state.Db state.AccessToken |> Async.RunSynchronously
+    let status, _body =
+        getProfile state.UserRepo state.TokenRepo state.AccessToken
+        |> Async.RunSynchronously
+
     Assert.Equal(401, status)
     state
 
 [<Given>]
 let ``alice has already logged out once`` (state: StepState) =
-    logout state.Db state.AccessToken |> Async.RunSynchronously |> ignore
+    logout state.TokenRepo state.AccessToken |> Async.RunSynchronously |> ignore
     state

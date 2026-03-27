@@ -3,9 +3,9 @@ module DemoBeFsgi.Handlers.UserHandler
 open System
 open System.Text.Json
 open Giraffe
-open Microsoft.EntityFrameworkCore
 open DemoBeFsgi.Infrastructure.AppDbContext
 open DemoBeFsgi.Infrastructure.PasswordHasher
+open DemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
 open DemoBeFsgi.Domain.Types
 open DemoBeFsgi.Contracts.ContractWrappers
 
@@ -13,11 +13,12 @@ let getProfile: HttpHandler =
     fun next ctx ->
         task {
             let userId = ctx.Items["UserId"] :?> Guid
-            let db = ctx.GetService<AppDbContext>()
+            let userRepo = ctx.GetService<UserRepository>()
 
-            let! user = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
+            let! userOpt = userRepo.FindById userId
 
-            if obj.ReferenceEquals(user, null) then
+            match userOpt with
+            | None ->
                 ctx.Response.StatusCode <- 404
 
                 return!
@@ -26,7 +27,7 @@ let getProfile: HttpHandler =
                            message = "User not found" |}
                         earlyReturn
                         ctx
-            else
+            | Some user ->
                 return!
                     json
                         {| id = user.Id
@@ -66,11 +67,12 @@ let updateProfile: HttpHandler =
                         ctx
             | Some r ->
                 let userId = ctx.Items["UserId"] :?> Guid
-                let db = ctx.GetService<AppDbContext>()
+                let userRepo = ctx.GetService<UserRepository>()
 
-                let! user = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
+                let! userOpt = userRepo.FindById userId
 
-                if obj.ReferenceEquals(user, null) then
+                match userOpt with
+                | None ->
                     ctx.Response.StatusCode <- 404
 
                     return!
@@ -79,7 +81,7 @@ let updateProfile: HttpHandler =
                                message = "User not found" |}
                             earlyReturn
                             ctx
-                else
+                | Some user ->
                     let updated =
                         { user with
                             DisplayName =
@@ -89,15 +91,14 @@ let updateProfile: HttpHandler =
                                     user.DisplayName
                             UpdatedAt = DateTime.UtcNow }
 
-                    db.Users.Update(updated) |> ignore
-                    let! _ = db.SaveChangesAsync()
+                    let! saved = userRepo.Update updated
 
                     return!
                         json
-                            {| id = updated.Id
-                               username = updated.Username
-                               email = updated.Email
-                               displayName = updated.DisplayName |}
+                            {| id = saved.Id
+                               username = saved.Username
+                               email = saved.Email
+                               displayName = saved.DisplayName |}
                             next
                             ctx
         }
@@ -129,11 +130,12 @@ let changePassword: HttpHandler =
                         ctx
             | Some r ->
                 let userId = ctx.Items["UserId"] :?> Guid
-                let db = ctx.GetService<AppDbContext>()
+                let userRepo = ctx.GetService<UserRepository>()
 
-                let! user = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
+                let! userOpt = userRepo.FindById userId
 
-                if obj.ReferenceEquals(user, null) then
+                match userOpt with
+                | None ->
                     ctx.Response.StatusCode <- 404
 
                     return!
@@ -142,7 +144,7 @@ let changePassword: HttpHandler =
                                message = "User not found" |}
                             earlyReturn
                             ctx
-                elif not (verifyPassword r.oldPassword user.PasswordHash) then
+                | Some user when not (verifyPassword r.oldPassword user.PasswordHash) ->
                     ctx.Response.StatusCode <- 401
 
                     return!
@@ -151,14 +153,13 @@ let changePassword: HttpHandler =
                                message = "Invalid credentials" |}
                             earlyReturn
                             ctx
-                else
+                | Some user ->
                     let updated =
                         { user with
                             PasswordHash = hashPassword r.newPassword
                             UpdatedAt = DateTime.UtcNow }
 
-                    db.Users.Update(updated) |> ignore
-                    let! _ = db.SaveChangesAsync()
+                    let! _ = userRepo.Update updated
 
                     return! json {| message = "Password changed successfully" |} next ctx
         }
@@ -167,11 +168,12 @@ let deactivate: HttpHandler =
     fun next ctx ->
         task {
             let userId = ctx.Items["UserId"] :?> Guid
-            let db = ctx.GetService<AppDbContext>()
+            let userRepo = ctx.GetService<UserRepository>()
 
-            let! user = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
+            let! userOpt = userRepo.FindById userId
 
-            if obj.ReferenceEquals(user, null) then
+            match userOpt with
+            | None ->
                 ctx.Response.StatusCode <- 404
 
                 return!
@@ -180,14 +182,13 @@ let deactivate: HttpHandler =
                            message = "User not found" |}
                         earlyReturn
                         ctx
-            else
+            | Some user ->
                 let updated =
                     { user with
                         Status = statusToString Inactive
                         UpdatedAt = DateTime.UtcNow }
 
-                db.Users.Update(updated) |> ignore
-                let! _ = db.SaveChangesAsync()
+                let! _ = userRepo.Update updated
 
                 return! json {| message = "Account deactivated" |} next ctx
         }

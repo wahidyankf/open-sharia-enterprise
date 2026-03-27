@@ -28,7 +28,16 @@ let ``alice uploads file "(.+)" with content type "(.+)" to POST /api/v1/expense
         let data = Array.create 1024 0uy // 1 KB test file
 
         let status, responseBody =
-            uploadAttachment state.Db state.AccessToken id filename contentType data
+            uploadAttachment
+                state.UserRepo
+                state.TokenRepo
+                state.ExpenseRepo
+                state.AttachmentRepo
+                state.AccessToken
+                id
+                filename
+                contentType
+                data
             |> Async.RunSynchronously
 
         let attachmentId = getStringProp responseBody "id"
@@ -65,7 +74,16 @@ let ``alice uploads file "(.+)" with content type "(.+)" to POST /api/v1/expense
         let data = Array.create 1024 0uy
 
         let status, responseBody =
-            uploadAttachment state.Db state.AccessToken id filename contentType data
+            uploadAttachment
+                state.UserRepo
+                state.TokenRepo
+                state.ExpenseRepo
+                state.AttachmentRepo
+                state.AccessToken
+                id
+                filename
+                contentType
+                data
             |> Async.RunSynchronously
 
         { state with
@@ -94,7 +112,16 @@ let ``alice uploads an oversized file to POST /api/v1/expenses/\{expenseId\}/att
         let data = Array.create (11 * 1024 * 1024) 0uy // 11 MB — over the 10 MB limit
 
         let status, responseBody =
-            uploadAttachment state.Db state.AccessToken id "large.jpg" "image/jpeg" data
+            uploadAttachment
+                state.UserRepo
+                state.TokenRepo
+                state.ExpenseRepo
+                state.AttachmentRepo
+                state.AccessToken
+                id
+                "large.jpg"
+                "image/jpeg"
+                data
             |> Async.RunSynchronously
 
         { state with
@@ -127,7 +154,16 @@ let ``alice has uploaded file "(.+)" with content type "(.+)" to the entry``
         let data = Array.create 1024 0uy
 
         let _status, responseBody =
-            uploadAttachment state.Db state.AccessToken id filename contentType data
+            uploadAttachment
+                state.UserRepo
+                state.TokenRepo
+                state.ExpenseRepo
+                state.AttachmentRepo
+                state.AccessToken
+                id
+                filename
+                contentType
+                data
             |> Async.RunSynchronously
 
         let attachmentId = getStringProp responseBody "id"
@@ -149,7 +185,8 @@ let ``alice sends GET /api/v1/expenses/\{expenseId\}/attachments`` (state: StepS
     match expenseId with
     | Some id ->
         let status, body =
-            listAttachments state.Db state.AccessToken id |> Async.RunSynchronously
+            listAttachments state.UserRepo state.TokenRepo state.ExpenseRepo state.AttachmentRepo state.AccessToken id
+            |> Async.RunSynchronously
 
         { state with
             Response = Some { Status = status; Body = body }
@@ -176,7 +213,8 @@ let ``alice sends GET /api/v1/expenses/\{bobExpenseId\}/attachments`` (state: St
     match bobExpenseId with
     | Some id ->
         let status, body =
-            listAttachments state.Db state.AccessToken id |> Async.RunSynchronously
+            listAttachments state.UserRepo state.TokenRepo state.ExpenseRepo state.AttachmentRepo state.AccessToken id
+            |> Async.RunSynchronously
 
         { state with
             Response = Some { Status = status; Body = body }
@@ -210,7 +248,15 @@ let ``alice sends DELETE /api/v1/expenses/\{expenseId\}/attachments/\{attachment
     match expenseId, attachmentId with
     | Some eid, Some aid ->
         let status, body =
-            deleteAttachment state.Db state.AccessToken eid aid |> Async.RunSynchronously
+            deleteAttachment
+                state.UserRepo
+                state.TokenRepo
+                state.ExpenseRepo
+                state.AttachmentRepo
+                state.AccessToken
+                eid
+                aid
+            |> Async.RunSynchronously
 
         { state with
             Response = Some { Status = status; Body = body }
@@ -245,7 +291,15 @@ let ``alice sends DELETE /api/v1/expenses/\{bobExpenseId\}/attachments/\{attachm
     match bobExpenseId, attachmentId with
     | Some eid, Some aid ->
         let status, body =
-            deleteAttachment state.Db state.AccessToken eid aid |> Async.RunSynchronously
+            deleteAttachment
+                state.UserRepo
+                state.TokenRepo
+                state.ExpenseRepo
+                state.AttachmentRepo
+                state.AccessToken
+                eid
+                aid
+            |> Async.RunSynchronously
 
         { state with
             Response = Some { Status = status; Body = body }
@@ -273,7 +327,14 @@ let ``alice sends DELETE /api/v1/expenses/\{expenseId\}/attachments/\{randomAtta
     match expenseId with
     | Some eid ->
         let status, body =
-            deleteAttachment state.Db state.AccessToken eid randomId
+            deleteAttachment
+                state.UserRepo
+                state.TokenRepo
+                state.ExpenseRepo
+                state.AttachmentRepo
+                state.AccessToken
+                eid
+                randomId
             |> Async.RunSynchronously
 
         { state with

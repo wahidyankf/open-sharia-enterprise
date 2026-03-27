@@ -1,12 +1,11 @@
 module DemoBeFsgi.Handlers.AuthHandler
 
 open System
-open System.Linq
 open System.Text.Json
 open Giraffe
-open Microsoft.EntityFrameworkCore
 open DemoBeFsgi.Infrastructure.AppDbContext
 open DemoBeFsgi.Infrastructure.PasswordHasher
+open DemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
 open DemoBeFsgi.Domain.User
 open DemoBeFsgi.Domain.Types
 open DemoBeFsgi.Auth.JwtService
@@ -76,11 +75,11 @@ let register: HttpHandler =
                             earlyReturn
                             ctx
                 | Ok _, Ok _, Ok _ ->
-                    let db = ctx.GetService<AppDbContext>()
+                    let userRepo = ctx.GetService<UserRepository>()
 
-                    let! existingUser = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Username = r.username)
+                    let! existingUser = userRepo.FindByUsername r.username
 
-                    if not (obj.ReferenceEquals(existingUser, null)) then
+                    if existingUser.IsSome then
                         ctx.Response.StatusCode <- 409
 
                         return!
@@ -105,8 +104,7 @@ let register: HttpHandler =
                               CreatedAt = now
                               UpdatedAt = now }
 
-                        db.Users.Add(entity) |> ignore
-                        let! _ = db.SaveChangesAsync()
+                        let! _ = userRepo.Create entity
 
                         ctx.Response.StatusCode <- 201
 
@@ -155,11 +153,13 @@ let login: HttpHandler =
                         earlyReturn
                         ctx
             | Some r ->
-                let db = ctx.GetService<AppDbContext>()
+                let userRepo = ctx.GetService<UserRepository>()
+                let rtRepo = ctx.GetService<RefreshTokenRepository>()
 
-                let! user = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Username = r.username)
+                let! userOpt = userRepo.FindByUsername r.username
 
-                if obj.ReferenceEquals(user, null) then
+                match userOpt with
+                | None ->
                     ctx.Response.StatusCode <- 401
 
                     return!
@@ -168,7 +168,7 @@ let login: HttpHandler =
                                message = "Invalid credentials" |}
                             earlyReturn
                             ctx
-                elif user.Status = statusToString Locked then
+                | Some user when user.Status = statusToString Locked ->
                     ctx.Response.StatusCode <- 401
 
                     return!
@@ -177,7 +177,7 @@ let login: HttpHandler =
                                message = "Account is locked after too many failed attempts" |}
                             earlyReturn
                             ctx
-                elif user.Status = statusToString Inactive then
+                | Some user when user.Status = statusToString Inactive ->
                     ctx.Response.StatusCode <- 401
 
                     return!
@@ -186,7 +186,7 @@ let login: HttpHandler =
                                message = "Account has been deactivated" |}
                             earlyReturn
                             ctx
-                elif user.Status = statusToString Disabled then
+                | Some user when user.Status = statusToString Disabled ->
                     ctx.Response.StatusCode <- 401
 
                     return!
@@ -195,7 +195,7 @@ let login: HttpHandler =
                                message = "Account has been disabled" |}
                             earlyReturn
                             ctx
-                elif not (verifyPassword r.password user.PasswordHash) then
+                | Some user when not (verifyPassword r.password user.PasswordHash) ->
                     let newAttempts = user.FailedLoginAttempts + 1
 
                     let newStatus =
@@ -210,8 +210,7 @@ let login: HttpHandler =
                             Status = newStatus
                             UpdatedAt = DateTime.UtcNow }
 
-                    db.Users.Update(updated) |> ignore
-                    let! _ = db.SaveChangesAsync()
+                    let! _ = userRepo.Update updated
 
                     if newAttempts >= maxFailedAttempts then
                         ctx.Response.StatusCode <- 401
@@ -231,14 +230,13 @@ let login: HttpHandler =
                                    message = "Invalid credentials" |}
                                 earlyReturn
                                 ctx
-                else
+                | Some user ->
                     let updated =
                         { user with
                             FailedLoginAttempts = 0
                             UpdatedAt = DateTime.UtcNow }
 
-                    db.Users.Update(updated) |> ignore
-                    let! _ = db.SaveChangesAsync()
+                    let! _ = userRepo.Update updated
 
                     let accessToken = generateAccessToken user.Id user.Username user.Email user.Role
                     let refreshTokenStr = generateRefreshToken user.Id
@@ -253,8 +251,7 @@ let login: HttpHandler =
                           CreatedAt = now
                           Revoked = false }
 
-                    db.RefreshTokens.Add(rtEntity) |> ignore
-                    let! _ = db.SaveChangesAsync()
+                    let! _ = rtRepo.Create rtEntity
 
                     return!
                         json
@@ -291,14 +288,13 @@ let refresh: HttpHandler =
                         earlyReturn
                         ctx
             | Some r ->
-                let db = ctx.GetService<AppDbContext>()
+                let userRepo = ctx.GetService<UserRepository>()
+                let rtRepo = ctx.GetService<RefreshTokenRepository>()
 
-                let! rtEntity =
-                    db.RefreshTokens
-                        .AsNoTracking()
-                        .FirstOrDefaultAsync(fun rt -> rt.TokenHash = r.refreshToken && not rt.Revoked)
+                let! rtEntityOpt = rtRepo.FindActiveByHash r.refreshToken
 
-                if obj.ReferenceEquals(rtEntity, null) then
+                match rtEntityOpt with
+                | None ->
                     ctx.Response.StatusCode <- 401
 
                     return!
@@ -307,7 +303,7 @@ let refresh: HttpHandler =
                                message = "Invalid or already used token" |}
                             earlyReturn
                             ctx
-                elif rtEntity.ExpiresAt < DateTime.UtcNow then
+                | Some rtEntity when rtEntity.ExpiresAt < DateTime.UtcNow ->
                     ctx.Response.StatusCode <- 401
 
                     return!
@@ -316,10 +312,11 @@ let refresh: HttpHandler =
                                message = "Token has expired" |}
                             earlyReturn
                             ctx
-                else
-                    let! user = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = rtEntity.UserId)
+                | Some rtEntity ->
+                    let! userOpt = userRepo.FindById rtEntity.UserId
 
-                    if obj.ReferenceEquals(user, null) then
+                    match userOpt with
+                    | None ->
                         ctx.Response.StatusCode <- 401
 
                         return!
@@ -328,7 +325,7 @@ let refresh: HttpHandler =
                                    message = "User not found" |}
                                 earlyReturn
                                 ctx
-                    elif user.Status <> statusToString Active then
+                    | Some user when user.Status <> statusToString Active ->
                         ctx.Response.StatusCode <- 401
 
                         return!
@@ -337,10 +334,9 @@ let refresh: HttpHandler =
                                    message = "Account has been deactivated" |}
                                 earlyReturn
                                 ctx
-                    else
+                    | Some user ->
                         let revokedRt = { rtEntity with Revoked = true }
-                        db.RefreshTokens.Update(revokedRt) |> ignore
-                        let! _ = db.SaveChangesAsync()
+                        let! _ = rtRepo.Update revokedRt
 
                         let accessToken = generateAccessToken user.Id user.Username user.Email user.Role
                         let newRefreshToken = generateRefreshToken user.Id
@@ -355,8 +351,7 @@ let refresh: HttpHandler =
                               CreatedAt = now
                               Revoked = false }
 
-                        db.RefreshTokens.Add(newRtEntity) |> ignore
-                        let! _ = db.SaveChangesAsync()
+                        let! _ = rtRepo.Create newRtEntity
 
                         return!
                             json
@@ -378,12 +373,12 @@ let logout: HttpHandler =
                 else
                     ""
 
-            let db = ctx.GetService<AppDbContext>()
+            let tokenRepo = ctx.GetService<TokenRepository>()
             let jti = getTokenJti token
 
             match jti with
             | Some j ->
-                let! exists = db.RevokedTokens.AnyAsync(fun rt -> rt.Jti = j)
+                let! exists = tokenRepo.ExistsJti j
 
                 if not exists then
                     let userId =
@@ -398,8 +393,7 @@ let logout: HttpHandler =
                           UserId = userId
                           RevokedAt = DateTime.UtcNow }
 
-                    db.RevokedTokens.Add(revokedEntity) |> ignore
-                    let! _ = db.SaveChangesAsync()
+                    let! _ = tokenRepo.Create revokedEntity
                     ()
             | None -> ()
 
@@ -409,7 +403,8 @@ let logout: HttpHandler =
 let logoutAll: HttpHandler =
     fun next ctx ->
         task {
-            let db = ctx.GetService<AppDbContext>()
+            let tokenRepo = ctx.GetService<TokenRepository>()
+            let rtRepo = ctx.GetService<RefreshTokenRepository>()
             let authHeader = ctx.Request.Headers["Authorization"].ToString()
 
             let token =
@@ -428,7 +423,7 @@ let logoutAll: HttpHandler =
 
             match jti with
             | Some j ->
-                let! exists = db.RevokedTokens.AnyAsync(fun rt -> rt.Jti = j)
+                let! exists = tokenRepo.ExistsJti j
 
                 if not exists then
                     let revokedEntity: RevokedTokenEntity =
@@ -437,18 +432,15 @@ let logoutAll: HttpHandler =
                           UserId = userId
                           RevokedAt = DateTime.UtcNow }
 
-                    db.RevokedTokens.Add(revokedEntity) |> ignore
-                    let! _ = db.SaveChangesAsync()
+                    let! _ = tokenRepo.Create revokedEntity
                     ()
             | None -> ()
 
-            let! activeTokens =
-                db.RefreshTokens.AsNoTracking().Where(fun rt -> rt.UserId = userId && not rt.Revoked).ToListAsync()
+            let! activeTokens = rtRepo.ListActiveByUser userId
 
             for rt in activeTokens do
-                db.RefreshTokens.Update({ rt with Revoked = true }) |> ignore
-
-            let! _ = db.SaveChangesAsync()
+                let! _ = rtRepo.Update { rt with Revoked = true }
+                ()
 
             return! json {| message = "All sessions logged out" |} next ctx
         }

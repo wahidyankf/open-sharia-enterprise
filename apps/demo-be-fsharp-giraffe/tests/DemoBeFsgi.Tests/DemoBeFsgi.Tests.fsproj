@@ -23,6 +23,7 @@
   <ItemGroup>
     <Compile Include="State.fs" />
     <Compile Include="TestFixture.fs" />
+    <Compile Include="InMemory/InMemoryRepositories.fs" />
     <Compile Include="DirectServices.fs" />
     <Compile Include="HttpTestFixture.fs" />
     <Compile Include="Unit/DomainValidationTests.fs" />

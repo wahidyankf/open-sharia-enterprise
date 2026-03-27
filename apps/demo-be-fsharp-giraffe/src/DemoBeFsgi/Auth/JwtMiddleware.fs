@@ -1,10 +1,8 @@
 module DemoBeFsgi.Auth.JwtMiddleware
 
 open System
-open System.Security.Claims
 open Giraffe
-open Microsoft.EntityFrameworkCore
-open DemoBeFsgi.Infrastructure.AppDbContext
+open DemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
 open DemoBeFsgi.Domain.Types
 
 let requireAuth: HttpHandler =
@@ -40,12 +38,12 @@ let requireAuth: HttpHandler =
                             ctx
                 | Some claims ->
                     let jti = JwtService.getTokenJti token
-                    let db = ctx.GetService<AppDbContext>()
+                    let tokenRepo = ctx.GetService<TokenRepository>()
 
                     let! isRevoked =
                         match jti with
                         | None -> Threading.Tasks.Task.FromResult(true)
-                        | Some j -> db.RevokedTokens.AsNoTracking().AnyAsync(fun rt -> rt.Jti = j)
+                        | Some j -> tokenRepo.ExistsJti j
 
                     if isRevoked then
                         ctx.Response.StatusCode <- 401
@@ -94,9 +92,11 @@ let requireAuth: HttpHandler =
                                         earlyReturn
                                         ctx
                             | Some uid ->
-                                let! user = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = uid)
+                                let userRepo = ctx.GetService<UserRepository>()
+                                let! userOpt = userRepo.FindById uid
 
-                                if obj.ReferenceEquals(user, null) then
+                                match userOpt with
+                                | None ->
                                     ctx.Response.StatusCode <- 401
 
                                     return!
@@ -105,7 +105,7 @@ let requireAuth: HttpHandler =
                                                message = "User not found" |}
                                             earlyReturn
                                             ctx
-                                elif user.Status <> statusToString Active then
+                                | Some user when user.Status <> statusToString Active ->
                                     ctx.Response.StatusCode <- 401
 
                                     if user.Status = statusToString Locked then
@@ -122,7 +122,7 @@ let requireAuth: HttpHandler =
                                                    message = "Account has been deactivated" |}
                                                 earlyReturn
                                                 ctx
-                                else
+                                | Some user ->
                                     ctx.Items["UserId"] <- uid :> obj
                                     ctx.Items["Username"] <- user.Username :> obj
                                     ctx.Items["Email"] <- user.Email :> obj

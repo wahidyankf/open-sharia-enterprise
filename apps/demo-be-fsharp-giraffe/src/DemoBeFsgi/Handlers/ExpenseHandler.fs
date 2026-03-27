@@ -1,11 +1,10 @@
 module DemoBeFsgi.Handlers.ExpenseHandler
 
 open System
-open System.Linq
 open System.Text.Json
 open Giraffe
-open Microsoft.EntityFrameworkCore
 open DemoBeFsgi.Infrastructure.AppDbContext
+open DemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
 open DemoBeFsgi.Domain.Types
 open DemoBeFsgi.Domain.Expense
 open DemoBeFsgi.Contracts.ContractWrappers
@@ -141,7 +140,7 @@ let create: HttpHandler =
                                         earlyReturn
                                         ctx
                             | Ok validUnit ->
-                                let db = ctx.GetService<AppDbContext>()
+                                let expenseRepo = ctx.GetService<ExpenseRepository>()
                                 let userId = ctx.Items["UserId"] :?> Guid
 
                                 let dateVal =
@@ -177,8 +176,7 @@ let create: HttpHandler =
                                       CreatedAt = now
                                       UpdatedAt = now }
 
-                                db.Expenses.Add(entity) |> ignore
-                                let! _ = db.SaveChangesAsync()
+                                let! _ = expenseRepo.Create entity
 
                                 ctx.Response.StatusCode <- 201
 
@@ -205,7 +203,7 @@ let list: HttpHandler =
     fun next ctx ->
         task {
             let userId = ctx.Items["UserId"] :?> Guid
-            let db = ctx.GetService<AppDbContext>()
+            let expenseRepo = ctx.GetService<ExpenseRepository>()
             let pageParam = ctx.TryGetQueryStringValue("page") |> Option.defaultValue "1"
             let sizeParam = ctx.TryGetQueryStringValue("size") |> Option.defaultValue "20"
 
@@ -227,15 +225,11 @@ let list: HttpHandler =
                         20
                 )
 
-            let query = db.Expenses.Where(fun e -> e.UserId = userId)
-            let! total = query.CountAsync()
-            let offset = (page - 1) * size
-
-            let! expenses = query.OrderByDescending(fun e -> e.Date).Skip(offset).Take(size).ToListAsync()
+            let! total, expenses = expenseRepo.ListByUser userId page size
 
             let data =
                 expenses
-                |> Seq.map (fun e ->
+                |> List.map (fun e ->
                     let formattedAmount =
                         match e.Currency with
                         | "IDR" -> e.Amount.ToString("0")
@@ -257,7 +251,7 @@ let list: HttpHandler =
                        ``type`` = e.Type.ToLowerInvariant()
                        quantity = qtyOpt
                        unit = if e.Unit = null then None else Some e.Unit |})
-                |> Seq.toArray
+                |> List.toArray
 
             return!
                 json
@@ -272,11 +266,12 @@ let getById (expenseId: Guid) : HttpHandler =
     fun next ctx ->
         task {
             let userId = ctx.Items["UserId"] :?> Guid
-            let db = ctx.GetService<AppDbContext>()
+            let expenseRepo = ctx.GetService<ExpenseRepository>()
 
-            let! expense = db.Expenses.AsNoTracking().FirstOrDefaultAsync(fun e -> e.Id = expenseId)
+            let! expenseOpt = expenseRepo.FindById expenseId
 
-            if obj.ReferenceEquals(expense, null) then
+            match expenseOpt with
+            | None ->
                 ctx.Response.StatusCode <- 404
 
                 return!
@@ -285,7 +280,7 @@ let getById (expenseId: Guid) : HttpHandler =
                            message = "Expense not found" |}
                         earlyReturn
                         ctx
-            elif expense.UserId <> userId then
+            | Some expense when expense.UserId <> userId ->
                 ctx.Response.StatusCode <- 403
 
                 return!
@@ -294,7 +289,7 @@ let getById (expenseId: Guid) : HttpHandler =
                            message = "Access denied" |}
                         earlyReturn
                         ctx
-            else
+            | Some expense ->
                 let formattedAmount =
                     match expense.Currency with
                     | "IDR" -> expense.Amount.ToString("0")
@@ -349,11 +344,12 @@ let update (expenseId: Guid) : HttpHandler =
                         ctx
             | Some r ->
                 let userId = ctx.Items["UserId"] :?> Guid
-                let db = ctx.GetService<AppDbContext>()
+                let expenseRepo = ctx.GetService<ExpenseRepository>()
 
-                let! expense = db.Expenses.AsNoTracking().FirstOrDefaultAsync(fun e -> e.Id = expenseId)
+                let! expenseOpt = expenseRepo.FindById expenseId
 
-                if obj.ReferenceEquals(expense, null) then
+                match expenseOpt with
+                | None ->
                     ctx.Response.StatusCode <- 404
 
                     return!
@@ -362,7 +358,7 @@ let update (expenseId: Guid) : HttpHandler =
                                message = "Expense not found" |}
                             earlyReturn
                             ctx
-                elif expense.UserId <> userId then
+                | Some expense when expense.UserId <> userId ->
                     ctx.Response.StatusCode <- 403
 
                     return!
@@ -371,7 +367,7 @@ let update (expenseId: Guid) : HttpHandler =
                                message = "Access denied" |}
                             earlyReturn
                             ctx
-                else
+                | Some expense ->
                     let amountResult = parseAmount r.amount
 
                     match amountResult with
@@ -423,24 +419,23 @@ let update (expenseId: Guid) : HttpHandler =
                                         expense.Type
                                 UpdatedAt = DateTime.UtcNow }
 
-                        db.Expenses.Update(updated) |> ignore
-                        let! _ = db.SaveChangesAsync()
+                        let! saved = expenseRepo.Update updated
 
                         let formattedAmount =
-                            match updated.Currency with
-                            | "IDR" -> updated.Amount.ToString("0")
-                            | _ -> updated.Amount.ToString("0.00")
+                            match saved.Currency with
+                            | "IDR" -> saved.Amount.ToString("0")
+                            | _ -> saved.Amount.ToString("0.00")
 
                         return!
                             json
-                                {| id = updated.Id
-                                   userId = updated.UserId
+                                {| id = saved.Id
+                                   userId = saved.UserId
                                    amount = formattedAmount
-                                   currency = updated.Currency
-                                   category = updated.Category
-                                   description = updated.Description
-                                   date = updated.Date.ToString("yyyy-MM-dd")
-                                   ``type`` = updated.Type.ToLowerInvariant() |}
+                                   currency = saved.Currency
+                                   category = saved.Category
+                                   description = saved.Description
+                                   date = saved.Date.ToString("yyyy-MM-dd")
+                                   ``type`` = saved.Type.ToLowerInvariant() |}
                                 next
                                 ctx
         }
@@ -449,11 +444,12 @@ let delete (expenseId: Guid) : HttpHandler =
     fun _next ctx ->
         task {
             let userId = ctx.Items["UserId"] :?> Guid
-            let db = ctx.GetService<AppDbContext>()
+            let expenseRepo = ctx.GetService<ExpenseRepository>()
 
-            let! expense = db.Expenses.AsNoTracking().FirstOrDefaultAsync(fun e -> e.Id = expenseId)
+            let! expenseOpt = expenseRepo.FindById expenseId
 
-            if obj.ReferenceEquals(expense, null) then
+            match expenseOpt with
+            | None ->
                 ctx.Response.StatusCode <- 404
 
                 return!
@@ -462,7 +458,7 @@ let delete (expenseId: Guid) : HttpHandler =
                            message = "Expense not found" |}
                         earlyReturn
                         ctx
-            elif expense.UserId <> userId then
+            | Some expense when expense.UserId <> userId ->
                 ctx.Response.StatusCode <- 403
 
                 return!
@@ -471,9 +467,8 @@ let delete (expenseId: Guid) : HttpHandler =
                            message = "Access denied" |}
                         earlyReturn
                         ctx
-            else
-                db.Expenses.Remove(expense) |> ignore
-                let! _ = db.SaveChangesAsync()
+            | Some expense ->
+                do! expenseRepo.Delete expense
 
                 ctx.Response.StatusCode <- 204
                 return! text "" earlyReturn ctx
@@ -483,15 +478,15 @@ let summary: HttpHandler =
     fun next ctx ->
         task {
             let userId = ctx.Items["UserId"] :?> Guid
-            let db = ctx.GetService<AppDbContext>()
+            let expenseRepo = ctx.GetService<ExpenseRepository>()
 
-            let! expenses = db.Expenses.Where(fun e -> e.UserId = userId && e.Type = "EXPENSE").ToListAsync()
+            let! expenses = expenseRepo.ListSummaryByUser userId
 
             let grouped =
                 expenses
-                |> Seq.groupBy (fun e -> e.Currency)
-                |> Seq.map (fun (currency, items) ->
-                    let total = items |> Seq.sumBy (fun e -> e.Amount)
+                |> List.groupBy (fun e -> e.Currency)
+                |> List.map (fun (currency, items) ->
+                    let total = items |> List.sumBy (fun e -> e.Amount)
 
                     let formattedTotal =
                         match currency with
@@ -499,7 +494,7 @@ let summary: HttpHandler =
                         | _ -> total.ToString("0.00")
 
                     currency, formattedTotal)
-                |> Map.ofSeq
+                |> Map.ofList
 
             return! json grouped next ctx
         }

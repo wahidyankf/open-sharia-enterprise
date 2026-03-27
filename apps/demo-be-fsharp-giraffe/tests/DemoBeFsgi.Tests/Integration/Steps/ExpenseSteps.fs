@@ -31,7 +31,9 @@ let internal createExpenseFromBody (state: StepState) (bodyStr: string) : int * 
 
         let status, responseBody =
             createExpense
-                state.Db
+                state.UserRepo
+                state.TokenRepo
+                state.ExpenseRepo
                 state.AccessToken
                 (str "amount")
                 (str "currency")
@@ -98,7 +100,8 @@ let ``alice sends GET /api/v1/expenses/\{expenseId\}`` (state: StepState) =
     match expenseId with
     | Some id ->
         let status, body =
-            getExpenseById state.Db state.AccessToken id |> Async.RunSynchronously
+            getExpenseById state.UserRepo state.TokenRepo state.ExpenseRepo state.AccessToken id
+            |> Async.RunSynchronously
 
         { state with
             Response = Some { Status = status; Body = body }
@@ -114,7 +117,8 @@ let ``alice sends GET /api/v1/expenses/\{expenseId\}`` (state: StepState) =
 [<When>]
 let ``alice sends GET /api/v1/expenses`` (state: StepState) =
     let status, body =
-        listExpenses state.Db state.AccessToken 1 20 |> Async.RunSynchronously
+        listExpenses state.UserRepo state.TokenRepo state.ExpenseRepo state.AccessToken 1 20
+        |> Async.RunSynchronously
 
     { state with
         Response = Some { Status = status; Body = body }
@@ -143,7 +147,9 @@ let ``alice sends PUT /api/v1/expenses/\{expenseId\} with body (.+)`` (bodyStr: 
                     | _ -> null
 
                 updateExpense
-                    state.Db
+                    state.UserRepo
+                    state.TokenRepo
+                    state.ExpenseRepo
                     state.AccessToken
                     id
                     (str "amount")
@@ -180,7 +186,8 @@ let ``alice sends DELETE /api/v1/expenses/\{expenseId\}`` (state: StepState) =
     match expenseId with
     | Some id ->
         let status, body =
-            deleteExpense state.Db state.AccessToken id |> Async.RunSynchronously
+            deleteExpense state.UserRepo state.TokenRepo state.ExpenseRepo state.AccessToken id
+            |> Async.RunSynchronously
 
         { state with
             Response = Some { Status = status; Body = body }
@@ -196,7 +203,8 @@ let ``alice sends DELETE /api/v1/expenses/\{expenseId\}`` (state: StepState) =
 [<When>]
 let ``alice sends GET /api/v1/expenses/summary`` (state: StepState) =
     let status, body =
-        expenseSummary state.Db state.AccessToken |> Async.RunSynchronously
+        expenseSummary state.UserRepo state.TokenRepo state.ExpenseRepo state.AccessToken
+        |> Async.RunSynchronously
 
     { state with
         Response = Some { Status = status; Body = body }

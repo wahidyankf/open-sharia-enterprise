@@ -74,13 +74,16 @@ let ``the response body should contain at least one key in the "keys" array`` (s
 [<Then>]
 let ``alice's access token should be recorded as revoked`` (state: StepState) =
     // Attempt to use the token — it should be rejected because it was revoked
-    let status, _body = getProfile state.Db state.AccessToken |> Async.RunSynchronously
+    let status, _body =
+        getProfile state.UserRepo state.TokenRepo state.AccessToken
+        |> Async.RunSynchronously
+
     Assert.Equal(401, status)
     state
 
 [<Given>]
 let ``alice has logged out and her access token is blacklisted`` (state: StepState) =
-    logout state.Db state.AccessToken |> Async.RunSynchronously |> ignore
+    logout state.TokenRepo state.AccessToken |> Async.RunSynchronously |> ignore
     state
 
 [<Given>]
@@ -89,12 +92,14 @@ let ``an admin user "(.+)" is registered and logged in`` (adminName: string) (st
     registerUser state adminName email "Str0ng#Admin1" |> ignore
 
     // Use direct service to set admin role (test-only)
-    setAdminRole state.Db adminName |> Async.RunSynchronously |> ignore
+    setAdminRole state.UserRepo adminName |> Async.RunSynchronously |> ignore
 
     let accessToken, _ = loginUser state adminName "Str0ng#Admin1"
 
     // Get user ID
-    let _status, body = getProfile state.Db accessToken |> Async.RunSynchronously
+    let _status, body =
+        getProfile state.UserRepo state.TokenRepo accessToken |> Async.RunSynchronously
+
     let userId = getStringProp body "id" |> Option.defaultValue ""
 
     { state with
@@ -116,7 +121,10 @@ let ``the admin has disabled alice's account via POST /api/v1/admin/users/\{alic
     let adminToken = state.ExtraData |> Map.tryFind "adminToken"
 
     match aliceId with
-    | Some id -> disableUser state.Db adminToken id |> Async.RunSynchronously |> ignore
+    | Some id ->
+        disableUser state.UserRepo state.TokenRepo adminToken id
+        |> Async.RunSynchronously
+        |> ignore
     | None -> ()
 
     state

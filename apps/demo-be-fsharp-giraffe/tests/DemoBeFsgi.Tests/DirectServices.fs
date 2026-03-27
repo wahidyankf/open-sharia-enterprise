@@ -1,16 +1,15 @@
 /// Direct service layer for integration tests.
 ///
-/// Each function mirrors a Giraffe handler but works entirely via AppDbContext —
+/// Each function mirrors a Giraffe handler but works entirely via repository function records —
 /// no HTTP, no HttpContext, no WebApplicationFactory. Each function returns a
 /// (status: int * body: string) pair that the step definitions treat as a
 /// simulated HTTP response, preserving the HTTP-oriented Gherkin language.
 module DemoBeFsgi.Tests.DirectServices
 
 open System
-open System.Linq
 open System.Text.Json
-open Microsoft.EntityFrameworkCore
 open DemoBeFsgi.Infrastructure.AppDbContext
+open DemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
 open DemoBeFsgi.Infrastructure.PasswordHasher
 open DemoBeFsgi.Domain.Types
 open DemoBeFsgi.Domain.User
@@ -110,9 +109,13 @@ let private parseAmount (s: string) =
 // Token auth — resolves a JWT to a UserId (replaces requireAuth middleware)
 // ─────────────────────────────────────────────────────────────────────────────
 
-/// Validates the JWT token string against the DB.
+/// Validates the JWT token string against the repositories.
 /// Returns Ok userId or Error (status, body).
-let resolveAuth (db: AppDbContext) (token: string option) : Async<Result<Guid, int * string>> =
+let resolveAuth
+    (userRepo: UserRepository)
+    (tokenRepo: TokenRepository)
+    (token: string option)
+    : Async<Result<Guid, int * string>> =
     async {
         match token with
         | None -> return Error(unauthorized "Missing or invalid Authorization header")
@@ -127,9 +130,7 @@ let resolveAuth (db: AppDbContext) (token: string option) : Async<Result<Guid, i
                 let! isRevoked =
                     match jti with
                     | None -> async { return true }
-                    | Some j ->
-                        db.RevokedTokens.AsNoTracking().AnyAsync(fun rt -> rt.Jti = j)
-                        |> Async.AwaitTask
+                    | Some j -> tokenRepo.ExistsJti j |> Async.AwaitTask
 
                 if isRevoked then
                     return Error(unauthorized "Token has been revoked")
@@ -156,42 +157,39 @@ let resolveAuth (db: AppDbContext) (token: string option) : Async<Result<Guid, i
                         match userId with
                         | None -> return Error(unauthorized "Invalid user ID in token")
                         | Some uid ->
-                            let! user =
-                                db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = uid)
-                                |> Async.AwaitTask
+                            let! userOpt = userRepo.FindById uid |> Async.AwaitTask
 
-                            if obj.ReferenceEquals(user, null) then
-                                return Error(unauthorized "User not found")
-                            elif user.Status = statusToString Locked then
+                            match userOpt with
+                            | None -> return Error(unauthorized "User not found")
+                            | Some user when user.Status = statusToString Locked ->
                                 return Error(unauthorized "Account is locked after too many failed attempts")
-                            elif user.Status = statusToString Inactive then
+                            | Some user when user.Status = statusToString Inactive ->
                                 return Error(unauthorized "Account has been deactivated")
-                            elif user.Status = statusToString Disabled then
+                            | Some user when user.Status = statusToString Disabled ->
                                 return Error(unauthorized "Account has been disabled by an administrator")
-                            elif user.Status <> statusToString Active then
+                            | Some user when user.Status <> statusToString Active ->
                                 return Error(unauthorized "Account is not active")
-                            else
-                                return Ok uid
+                            | Some _ -> return Ok uid
     }
 
 /// Validates the JWT token string and additionally checks that the user is admin.
-let resolveAdmin (db: AppDbContext) (token: string option) : Async<Result<Guid, int * string>> =
+let resolveAdmin
+    (userRepo: UserRepository)
+    (tokenRepo: TokenRepository)
+    (token: string option)
+    : Async<Result<Guid, int * string>> =
     async {
-        let! authResult = resolveAuth db token
+        let! authResult = resolveAuth userRepo tokenRepo token
 
         match authResult with
         | Error e -> return Error e
         | Ok uid ->
-            let! user =
-                db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = uid)
-                |> Async.AwaitTask
+            let! userOpt = userRepo.FindById uid |> Async.AwaitTask
 
-            if obj.ReferenceEquals(user, null) then
-                return Error(forbidden "User not found")
-            elif user.Role <> roleToString Admin then
-                return Error(forbidden "Admin role required")
-            else
-                return Ok uid
+            match userOpt with
+            | None -> return Error(forbidden "User not found")
+            | Some user when user.Role <> roleToString Admin -> return Error(forbidden "Admin role required")
+            | Some _ -> return Ok uid
     }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -204,7 +202,7 @@ let health () : int * string = ok {| status = "UP" |}
 // Auth
 // ─────────────────────────────────────────────────────────────────────────────
 
-let register (db: AppDbContext) (username: string) (email: string) (password: string) : Async<int * string> =
+let register (userRepo: UserRepository) (username: string) (email: string) (password: string) : Async<int * string> =
     async {
         let usernameResult = validateUsername (if username = null then "" else username)
         let emailResult = validateEmail (if email = null then "" else email)
@@ -215,11 +213,9 @@ let register (db: AppDbContext) (username: string) (email: string) (password: st
         | _, Error(ValidationError(f, m)), _ -> return validationError f m
         | _, _, Error(ValidationError(f, m)) -> return validationError f m
         | Ok _, Ok _, Ok _ ->
-            let! existing =
-                db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Username = username)
-                |> Async.AwaitTask
+            let! existing = userRepo.FindByUsername username |> Async.AwaitTask
 
-            if not (obj.ReferenceEquals(existing, null)) then
+            if existing.IsSome then
                 return conflict "Username already exists"
             else
                 let now = DateTime.UtcNow
@@ -237,8 +233,7 @@ let register (db: AppDbContext) (username: string) (email: string) (password: st
                       CreatedAt = now
                       UpdatedAt = now }
 
-                db.Users.Add(entity) |> ignore
-                let! _ = db.SaveChangesAsync() |> Async.AwaitTask
+                let! _ = userRepo.Create entity |> Async.AwaitTask
 
                 return
                     created
@@ -251,21 +246,22 @@ let register (db: AppDbContext) (username: string) (email: string) (password: st
 
 let private maxFailedAttempts = 5
 
-let login (db: AppDbContext) (username: string) (password: string) : Async<int * string> =
+let login
+    (userRepo: UserRepository)
+    (rtRepo: RefreshTokenRepository)
+    (username: string)
+    (password: string)
+    : Async<int * string> =
     async {
-        let! user =
-            db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Username = username)
-            |> Async.AwaitTask
+        let! userOpt = userRepo.FindByUsername username |> Async.AwaitTask
 
-        if obj.ReferenceEquals(user, null) then
-            return unauthorized "Invalid credentials"
-        elif user.Status = statusToString Locked then
+        match userOpt with
+        | None -> return unauthorized "Invalid credentials"
+        | Some user when user.Status = statusToString Locked ->
             return unauthorized "Account is locked after too many failed attempts"
-        elif user.Status = statusToString Inactive then
-            return unauthorized "Account has been deactivated"
-        elif user.Status = statusToString Disabled then
-            return unauthorized "Account has been disabled"
-        elif not (verifyPassword password user.PasswordHash) then
+        | Some user when user.Status = statusToString Inactive -> return unauthorized "Account has been deactivated"
+        | Some user when user.Status = statusToString Disabled -> return unauthorized "Account has been disabled"
+        | Some user when not (verifyPassword password user.PasswordHash) ->
             let newAttempts = user.FailedLoginAttempts + 1
 
             let newStatus =
@@ -280,25 +276,19 @@ let login (db: AppDbContext) (username: string) (password: string) : Async<int *
                     Status = newStatus
                     UpdatedAt = DateTime.UtcNow }
 
-            // Detach any tracked entity with same Id so Update does not conflict
-            db.ChangeTracker.Clear()
-            db.Users.Update(updated) |> ignore
-            let! _ = db.SaveChangesAsync() |> Async.AwaitTask
+            let! _ = userRepo.Update updated |> Async.AwaitTask
 
             if newAttempts >= maxFailedAttempts then
                 return unauthorized "Account is locked after too many failed attempts"
             else
                 return unauthorized "Invalid credentials"
-        else
+        | Some user ->
             let updated =
                 { user with
                     FailedLoginAttempts = 0
                     UpdatedAt = DateTime.UtcNow }
 
-            // Detach any tracked entity with same Id so Update does not conflict
-            db.ChangeTracker.Clear()
-            db.Users.Update(updated) |> ignore
-            let! _ = db.SaveChangesAsync() |> Async.AwaitTask
+            let! _ = userRepo.Update updated |> Async.AwaitTask
 
             let accessToken = generateAccessToken user.Id user.Username user.Email user.Role
             let refreshTokenStr = generateRefreshToken user.Id
@@ -312,8 +302,7 @@ let login (db: AppDbContext) (username: string) (password: string) : Async<int *
                   CreatedAt = now
                   Revoked = false }
 
-            db.RefreshTokens.Add(rtEntity) |> ignore
-            let! _ = db.SaveChangesAsync() |> Async.AwaitTask
+            let! _ = rtRepo.Create rtEntity |> Async.AwaitTask
 
             return
                 ok
@@ -322,32 +311,26 @@ let login (db: AppDbContext) (username: string) (password: string) : Async<int *
                        tokenType = "Bearer" |}
     }
 
-let refresh (db: AppDbContext) (refreshTokenStr: string) : Async<int * string> =
+let refresh
+    (userRepo: UserRepository)
+    (rtRepo: RefreshTokenRepository)
+    (refreshTokenStr: string)
+    : Async<int * string> =
     async {
-        let! rtEntity =
-            db.RefreshTokens
-                .AsNoTracking()
-                .FirstOrDefaultAsync(fun rt -> rt.TokenHash = refreshTokenStr && not rt.Revoked)
-            |> Async.AwaitTask
+        let! rtEntityOpt = rtRepo.FindActiveByHash refreshTokenStr |> Async.AwaitTask
 
-        if obj.ReferenceEquals(rtEntity, null) then
-            return unauthorized "Invalid or already used token"
-        elif rtEntity.ExpiresAt < DateTime.UtcNow then
-            return unauthorized "Token has expired"
-        else
-            let! user =
-                db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = rtEntity.UserId)
-                |> Async.AwaitTask
+        match rtEntityOpt with
+        | None -> return unauthorized "Invalid or already used token"
+        | Some rtEntity when rtEntity.ExpiresAt < DateTime.UtcNow -> return unauthorized "Token has expired"
+        | Some rtEntity ->
+            let! userOpt = userRepo.FindById rtEntity.UserId |> Async.AwaitTask
 
-            if obj.ReferenceEquals(user, null) then
-                return unauthorized "User not found"
-            elif user.Status <> statusToString Active then
-                return unauthorized "Account has been deactivated"
-            else
+            match userOpt with
+            | None -> return unauthorized "User not found"
+            | Some user when user.Status <> statusToString Active -> return unauthorized "Account has been deactivated"
+            | Some user ->
                 let revokedRt = { rtEntity with Revoked = true }
-                db.ChangeTracker.Clear()
-                db.RefreshTokens.Update(revokedRt) |> ignore
-                let! _ = db.SaveChangesAsync() |> Async.AwaitTask
+                let! _ = rtRepo.Update revokedRt |> Async.AwaitTask
 
                 let accessToken = generateAccessToken user.Id user.Username user.Email user.Role
                 let newRefreshToken = generateRefreshToken user.Id
@@ -361,8 +344,7 @@ let refresh (db: AppDbContext) (refreshTokenStr: string) : Async<int * string> =
                       CreatedAt = now
                       Revoked = false }
 
-                db.RefreshTokens.Add(newRtEntity) |> ignore
-                let! _ = db.SaveChangesAsync() |> Async.AwaitTask
+                let! _ = rtRepo.Create newRtEntity |> Async.AwaitTask
 
                 return
                     ok
@@ -371,15 +353,14 @@ let refresh (db: AppDbContext) (refreshTokenStr: string) : Async<int * string> =
                            tokenType = "Bearer" |}
     }
 
-let logout (db: AppDbContext) (token: string option) : Async<int * string> =
+let logout (tokenRepo: TokenRepository) (token: string option) : Async<int * string> =
     async {
         let tokenStr = token |> Option.defaultValue ""
         let jti = getTokenJti tokenStr
-        let expiry = getTokenExpiry tokenStr
 
         match jti with
         | Some j ->
-            let! exists = db.RevokedTokens.AnyAsync(fun rt -> rt.Jti = j) |> Async.AwaitTask
+            let! exists = tokenRepo.ExistsJti j |> Async.AwaitTask
 
             if not exists then
                 // Resolve userId from token (best-effort; use Guid.Empty if not available)
@@ -406,28 +387,31 @@ let logout (db: AppDbContext) (token: string option) : Async<int * string> =
                       UserId = userId
                       RevokedAt = DateTime.UtcNow }
 
-                db.RevokedTokens.Add(revokedEntity) |> ignore
-                let! _ = db.SaveChangesAsync() |> Async.AwaitTask
+                let! _ = tokenRepo.Create revokedEntity |> Async.AwaitTask
                 ()
         | None -> ()
 
         return ok {| message = "Logged out successfully" |}
     }
 
-let logoutAll (db: AppDbContext) (token: string option) : Async<int * string> =
+let logoutAll
+    (userRepo: UserRepository)
+    (tokenRepo: TokenRepository)
+    (rtRepo: RefreshTokenRepository)
+    (token: string option)
+    : Async<int * string> =
     async {
-        let! authResult = resolveAuth db token
+        let! authResult = resolveAuth userRepo tokenRepo token
 
         match authResult with
         | Error e -> return e
         | Ok userId ->
             let tokenStr = token |> Option.defaultValue ""
             let jti = getTokenJti tokenStr
-            let expiry = getTokenExpiry tokenStr
 
             match jti with
             | Some j ->
-                let! exists = db.RevokedTokens.AnyAsync(fun rt -> rt.Jti = j) |> Async.AwaitTask
+                let! exists = tokenRepo.ExistsJti j |> Async.AwaitTask
 
                 if not exists then
                     let revokedEntity: RevokedTokenEntity =
@@ -436,21 +420,15 @@ let logoutAll (db: AppDbContext) (token: string option) : Async<int * string> =
                           UserId = userId
                           RevokedAt = DateTime.UtcNow }
 
-                    db.RevokedTokens.Add(revokedEntity) |> ignore
-                    let! _ = db.SaveChangesAsync() |> Async.AwaitTask
+                    let! _ = tokenRepo.Create revokedEntity |> Async.AwaitTask
                     ()
             | None -> ()
 
-            let! activeTokens =
-                db.RefreshTokens.AsNoTracking().Where(fun rt -> rt.UserId = userId && not rt.Revoked).ToListAsync()
-                |> Async.AwaitTask
-
-            db.ChangeTracker.Clear()
+            let! activeTokens = rtRepo.ListActiveByUser userId |> Async.AwaitTask
 
             for rt in activeTokens do
-                db.RefreshTokens.Update({ rt with Revoked = true }) |> ignore
-
-            let! _ = db.SaveChangesAsync() |> Async.AwaitTask
+                let! _ = rtRepo.Update { rt with Revoked = true } |> Async.AwaitTask
+                ()
 
             return ok {| message = "All sessions logged out" |}
     }
@@ -459,20 +437,18 @@ let logoutAll (db: AppDbContext) (token: string option) : Async<int * string> =
 // User profile
 // ─────────────────────────────────────────────────────────────────────────────
 
-let getProfile (db: AppDbContext) (token: string option) : Async<int * string> =
+let getProfile (userRepo: UserRepository) (tokenRepo: TokenRepository) (token: string option) : Async<int * string> =
     async {
-        let! authResult = resolveAuth db token
+        let! authResult = resolveAuth userRepo tokenRepo token
 
         match authResult with
         | Error e -> return e
         | Ok userId ->
-            let! user =
-                db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
-                |> Async.AwaitTask
+            let! userOpt = userRepo.FindById userId |> Async.AwaitTask
 
-            if obj.ReferenceEquals(user, null) then
-                return notFound "User not found"
-            else
+            match userOpt with
+            | None -> return notFound "User not found"
+            | Some user ->
                 return
                     ok
                         {| id = user.Id
@@ -483,20 +459,23 @@ let getProfile (db: AppDbContext) (token: string option) : Async<int * string> =
                            status = user.Status |}
     }
 
-let updateProfile (db: AppDbContext) (token: string option) (displayName: string) : Async<int * string> =
+let updateProfile
+    (userRepo: UserRepository)
+    (tokenRepo: TokenRepository)
+    (token: string option)
+    (displayName: string)
+    : Async<int * string> =
     async {
-        let! authResult = resolveAuth db token
+        let! authResult = resolveAuth userRepo tokenRepo token
 
         match authResult with
         | Error e -> return e
         | Ok userId ->
-            let! user =
-                db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
-                |> Async.AwaitTask
+            let! userOpt = userRepo.FindById userId |> Async.AwaitTask
 
-            if obj.ReferenceEquals(user, null) then
-                return notFound "User not found"
-            else
+            match userOpt with
+            | None -> return notFound "User not found"
+            | Some user ->
                 let updated =
                     { user with
                         DisplayName =
@@ -506,72 +485,63 @@ let updateProfile (db: AppDbContext) (token: string option) (displayName: string
                                 user.DisplayName
                         UpdatedAt = DateTime.UtcNow }
 
-                db.ChangeTracker.Clear()
-                db.Users.Update(updated) |> ignore
-                let! _ = db.SaveChangesAsync() |> Async.AwaitTask
+                let! saved = userRepo.Update updated |> Async.AwaitTask
 
                 return
                     ok
-                        {| id = updated.Id
-                           username = updated.Username
-                           email = updated.Email
-                           displayName = updated.DisplayName |}
+                        {| id = saved.Id
+                           username = saved.Username
+                           email = saved.Email
+                           displayName = saved.DisplayName |}
     }
 
 let changePassword
-    (db: AppDbContext)
+    (userRepo: UserRepository)
+    (tokenRepo: TokenRepository)
     (token: string option)
     (oldPassword: string)
     (newPassword: string)
     : Async<int * string> =
     async {
-        let! authResult = resolveAuth db token
+        let! authResult = resolveAuth userRepo tokenRepo token
 
         match authResult with
         | Error e -> return e
         | Ok userId ->
-            let! user =
-                db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
-                |> Async.AwaitTask
+            let! userOpt = userRepo.FindById userId |> Async.AwaitTask
 
-            if obj.ReferenceEquals(user, null) then
-                return notFound "User not found"
-            elif not (verifyPassword oldPassword user.PasswordHash) then
+            match userOpt with
+            | None -> return notFound "User not found"
+            | Some user when not (verifyPassword oldPassword user.PasswordHash) ->
                 return unauthorized "Invalid credentials"
-            else
+            | Some user ->
                 let updated =
                     { user with
                         PasswordHash = hashPassword newPassword
                         UpdatedAt = DateTime.UtcNow }
 
-                db.ChangeTracker.Clear()
-                db.Users.Update(updated) |> ignore
-                let! _ = db.SaveChangesAsync() |> Async.AwaitTask
+                let! _ = userRepo.Update updated |> Async.AwaitTask
                 return ok {| message = "Password changed successfully" |}
     }
 
-let deactivate (db: AppDbContext) (token: string option) : Async<int * string> =
+let deactivate (userRepo: UserRepository) (tokenRepo: TokenRepository) (token: string option) : Async<int * string> =
     async {
-        let! authResult = resolveAuth db token
+        let! authResult = resolveAuth userRepo tokenRepo token
 
         match authResult with
         | Error e -> return e
         | Ok userId ->
-            let! user =
-                db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
-                |> Async.AwaitTask
+            let! userOpt = userRepo.FindById userId |> Async.AwaitTask
 
-            if obj.ReferenceEquals(user, null) then
-                return notFound "User not found"
-            else
+            match userOpt with
+            | None -> return notFound "User not found"
+            | Some user ->
                 let updated =
                     { user with
                         Status = statusToString Inactive
                         UpdatedAt = DateTime.UtcNow }
 
-                db.ChangeTracker.Clear()
-                db.Users.Update(updated) |> ignore
-                let! _ = db.SaveChangesAsync() |> Async.AwaitTask
+                let! _ = userRepo.Update updated |> Async.AwaitTask
                 return ok {| message = "Account deactivated" |}
     }
 
@@ -580,14 +550,15 @@ let deactivate (db: AppDbContext) (token: string option) : Async<int * string> =
 // ─────────────────────────────────────────────────────────────────────────────
 
 let listUsers
-    (db: AppDbContext)
+    (userRepo: UserRepository)
+    (tokenRepo: TokenRepository)
     (token: string option)
     (page: int)
     (size: int)
     (emailFilter: string option)
     : Async<int * string> =
     async {
-        let! authResult = resolveAdmin db token
+        let! authResult = resolveAdmin userRepo tokenRepo token
 
         match authResult with
         | Error e -> return e
@@ -595,25 +566,19 @@ let listUsers
             let p = Math.Max(1, page)
             let s = Math.Max(1, size)
 
-            let query =
-                match emailFilter with
-                | Some email -> db.Users.Where(fun u -> u.Email = email)
-                | None -> db.Users :> IQueryable<UserEntity>
-
-            let! total = query.CountAsync() |> Async.AwaitTask
-            let offset = (p - 1) * s
-            let! users = query.Skip(offset).Take(s).ToListAsync() |> Async.AwaitTask
+            let! total = userRepo.CountByFilter emailFilter |> Async.AwaitTask
+            let! users = userRepo.ListByFilter emailFilter p s |> Async.AwaitTask
 
             let userData =
                 users
-                |> Seq.map (fun u ->
+                |> List.map (fun u ->
                     {| id = u.Id
                        username = u.Username
                        email = u.Email
                        displayName = u.DisplayName
                        role = u.Role
                        status = u.Status |})
-                |> Seq.toArray
+                |> List.toArray
 
             return
                 ok
@@ -623,28 +588,29 @@ let listUsers
                        size = s |}
     }
 
-let disableUser (db: AppDbContext) (token: string option) (targetUserId: Guid) : Async<int * string> =
+let disableUser
+    (userRepo: UserRepository)
+    (tokenRepo: TokenRepository)
+    (token: string option)
+    (targetUserId: Guid)
+    : Async<int * string> =
     async {
-        let! authResult = resolveAdmin db token
+        let! authResult = resolveAdmin userRepo tokenRepo token
 
         match authResult with
         | Error e -> return e
         | Ok _ ->
-            let! user =
-                db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = targetUserId)
-                |> Async.AwaitTask
+            let! userOpt = userRepo.FindById targetUserId |> Async.AwaitTask
 
-            if obj.ReferenceEquals(user, null) then
-                return notFound "User not found"
-            else
+            match userOpt with
+            | None -> return notFound "User not found"
+            | Some user ->
                 let updated =
                     { user with
                         Status = statusToString Disabled
                         UpdatedAt = DateTime.UtcNow }
 
-                db.ChangeTracker.Clear()
-                db.Users.Update(updated) |> ignore
-                let! _ = db.SaveChangesAsync() |> Async.AwaitTask
+                let! _ = userRepo.Update updated |> Async.AwaitTask
 
                 return
                     ok
@@ -653,28 +619,29 @@ let disableUser (db: AppDbContext) (token: string option) (targetUserId: Guid) :
                            status = statusToString Disabled |}
     }
 
-let enableUser (db: AppDbContext) (token: string option) (targetUserId: Guid) : Async<int * string> =
+let enableUser
+    (userRepo: UserRepository)
+    (tokenRepo: TokenRepository)
+    (token: string option)
+    (targetUserId: Guid)
+    : Async<int * string> =
     async {
-        let! authResult = resolveAdmin db token
+        let! authResult = resolveAdmin userRepo tokenRepo token
 
         match authResult with
         | Error e -> return e
         | Ok _ ->
-            let! user =
-                db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = targetUserId)
-                |> Async.AwaitTask
+            let! userOpt = userRepo.FindById targetUserId |> Async.AwaitTask
 
-            if obj.ReferenceEquals(user, null) then
-                return notFound "User not found"
-            else
+            match userOpt with
+            | None -> return notFound "User not found"
+            | Some user ->
                 let updated =
                     { user with
                         Status = statusToString Active
                         UpdatedAt = DateTime.UtcNow }
 
-                db.ChangeTracker.Clear()
-                db.Users.Update(updated) |> ignore
-                let! _ = db.SaveChangesAsync() |> Async.AwaitTask
+                let! _ = userRepo.Update updated |> Async.AwaitTask
 
                 return
                     ok
@@ -683,29 +650,30 @@ let enableUser (db: AppDbContext) (token: string option) (targetUserId: Guid) : 
                            status = statusToString Active |}
     }
 
-let unlockUser (db: AppDbContext) (token: string option) (targetUserId: Guid) : Async<int * string> =
+let unlockUser
+    (userRepo: UserRepository)
+    (tokenRepo: TokenRepository)
+    (token: string option)
+    (targetUserId: Guid)
+    : Async<int * string> =
     async {
-        let! authResult = resolveAdmin db token
+        let! authResult = resolveAdmin userRepo tokenRepo token
 
         match authResult with
         | Error e -> return e
         | Ok _ ->
-            let! user =
-                db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = targetUserId)
-                |> Async.AwaitTask
+            let! userOpt = userRepo.FindById targetUserId |> Async.AwaitTask
 
-            if obj.ReferenceEquals(user, null) then
-                return notFound "User not found"
-            else
+            match userOpt with
+            | None -> return notFound "User not found"
+            | Some user ->
                 let updated =
                     { user with
                         Status = statusToString Active
                         FailedLoginAttempts = 0
                         UpdatedAt = DateTime.UtcNow }
 
-                db.ChangeTracker.Clear()
-                db.Users.Update(updated) |> ignore
-                let! _ = db.SaveChangesAsync() |> Async.AwaitTask
+                let! _ = userRepo.Update updated |> Async.AwaitTask
 
                 return
                     ok
@@ -714,20 +682,23 @@ let unlockUser (db: AppDbContext) (token: string option) (targetUserId: Guid) : 
                            status = statusToString Active |}
     }
 
-let forcePasswordReset (db: AppDbContext) (token: string option) (targetUserId: Guid) : Async<int * string> =
+let forcePasswordReset
+    (userRepo: UserRepository)
+    (tokenRepo: TokenRepository)
+    (token: string option)
+    (targetUserId: Guid)
+    : Async<int * string> =
     async {
-        let! authResult = resolveAdmin db token
+        let! authResult = resolveAdmin userRepo tokenRepo token
 
         match authResult with
         | Error e -> return e
         | Ok _ ->
-            let! user =
-                db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = targetUserId)
-                |> Async.AwaitTask
+            let! userOpt = userRepo.FindById targetUserId |> Async.AwaitTask
 
-            if obj.ReferenceEquals(user, null) then
-                return notFound "User not found"
-            else
+            match userOpt with
+            | None -> return notFound "User not found"
+            | Some _ ->
                 let resetToken = Guid.NewGuid().ToString("N")
 
                 return
@@ -737,19 +708,15 @@ let forcePasswordReset (db: AppDbContext) (token: string option) (targetUserId: 
     }
 
 /// Test-only: set a user's role to ADMIN without authentication.
-let setAdminRole (db: AppDbContext) (username: string) : Async<int * string> =
+let setAdminRole (userRepo: UserRepository) (username: string) : Async<int * string> =
     async {
-        let! user =
-            db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Username = username)
-            |> Async.AwaitTask
+        let! userOpt = userRepo.FindByUsername username |> Async.AwaitTask
 
-        if obj.ReferenceEquals(user, null) then
-            return notFound "User not found"
-        else
+        match userOpt with
+        | None -> return notFound "User not found"
+        | Some user ->
             let updated = { user with Role = roleToString Admin }
-            db.ChangeTracker.Clear()
-            db.Users.Update(updated) |> ignore
-            let! _ = db.SaveChangesAsync() |> Async.AwaitTask
+            let! _ = userRepo.Update updated |> Async.AwaitTask
             return ok {| message = "Role set to admin" |}
     }
 
@@ -758,7 +725,9 @@ let setAdminRole (db: AppDbContext) (username: string) : Async<int * string> =
 // ─────────────────────────────────────────────────────────────────────────────
 
 let createExpense
-    (db: AppDbContext)
+    (userRepo: UserRepository)
+    (tokenRepo: TokenRepository)
+    (expenseRepo: ExpenseRepository)
     (token: string option)
     (amount: string)
     (currency: string)
@@ -770,7 +739,7 @@ let createExpense
     (unit: string option)
     : Async<int * string> =
     async {
-        let! authResult = resolveAuth db token
+        let! authResult = resolveAuth userRepo tokenRepo token
 
         match authResult with
         | Error e -> return e
@@ -832,8 +801,7 @@ let createExpense
                                   CreatedAt = now
                                   UpdatedAt = now }
 
-                            db.Expenses.Add(entity) |> ignore
-                            let! _ = db.SaveChangesAsync() |> Async.AwaitTask
+                            let! _ = expenseRepo.Create entity |> Async.AwaitTask
 
                             let formattedAmount =
                                 match currency.ToUpperInvariant() with
@@ -851,26 +819,28 @@ let createExpense
                                        ``type`` = entity.Type.ToLowerInvariant() |}
     }
 
-let listExpenses (db: AppDbContext) (token: string option) (page: int) (size: int) : Async<int * string> =
+let listExpenses
+    (userRepo: UserRepository)
+    (tokenRepo: TokenRepository)
+    (expenseRepo: ExpenseRepository)
+    (token: string option)
+    (page: int)
+    (size: int)
+    : Async<int * string> =
     async {
-        let! authResult = resolveAuth db token
+        let! authResult = resolveAuth userRepo tokenRepo token
 
         match authResult with
         | Error e -> return e
         | Ok userId ->
             let p = Math.Max(1, page)
             let s = Math.Max(1, size)
-            let query = db.Expenses.Where(fun e -> e.UserId = userId)
-            let! total = query.CountAsync() |> Async.AwaitTask
-            let offset = (p - 1) * s
 
-            let! expenses =
-                query.OrderByDescending(fun e -> e.Date).Skip(offset).Take(s).ToListAsync()
-                |> Async.AwaitTask
+            let! total, expenses = expenseRepo.ListByUser userId p s |> Async.AwaitTask
 
             let data =
                 expenses
-                |> Seq.map (fun e ->
+                |> List.map (fun e ->
                     let formattedAmount =
                         match e.Currency with
                         | "IDR" -> e.Amount.ToString("0")
@@ -891,7 +861,7 @@ let listExpenses (db: AppDbContext) (token: string option) (page: int) (size: in
                        ``type`` = e.Type.ToLowerInvariant()
                        quantity = qtyOpt
                        unit = if e.Unit = null then None else Some e.Unit |})
-                |> Seq.toArray
+                |> List.toArray
 
             return
                 ok
@@ -900,22 +870,25 @@ let listExpenses (db: AppDbContext) (token: string option) (page: int) (size: in
                        page = p |}
     }
 
-let getExpenseById (db: AppDbContext) (token: string option) (expenseId: Guid) : Async<int * string> =
+let getExpenseById
+    (userRepo: UserRepository)
+    (tokenRepo: TokenRepository)
+    (expenseRepo: ExpenseRepository)
+    (token: string option)
+    (expenseId: Guid)
+    : Async<int * string> =
     async {
-        let! authResult = resolveAuth db token
+        let! authResult = resolveAuth userRepo tokenRepo token
 
         match authResult with
         | Error e -> return e
         | Ok userId ->
-            let! expense =
-                db.Expenses.AsNoTracking().FirstOrDefaultAsync(fun e -> e.Id = expenseId)
-                |> Async.AwaitTask
+            let! expenseOpt = expenseRepo.FindById expenseId |> Async.AwaitTask
 
-            if obj.ReferenceEquals(expense, null) then
-                return notFound "Expense not found"
-            elif expense.UserId <> userId then
-                return forbidden "Access denied"
-            else
+            match expenseOpt with
+            | None -> return notFound "Expense not found"
+            | Some expense when expense.UserId <> userId -> return forbidden "Access denied"
+            | Some expense ->
                 let formattedAmount =
                     match expense.Currency with
                     | "IDR" -> expense.Amount.ToString("0")
@@ -941,7 +914,9 @@ let getExpenseById (db: AppDbContext) (token: string option) (expenseId: Guid) :
     }
 
 let updateExpense
-    (db: AppDbContext)
+    (userRepo: UserRepository)
+    (tokenRepo: TokenRepository)
+    (expenseRepo: ExpenseRepository)
     (token: string option)
     (expenseId: Guid)
     (amount: string)
@@ -952,20 +927,17 @@ let updateExpense
     (entryType: string)
     : Async<int * string> =
     async {
-        let! authResult = resolveAuth db token
+        let! authResult = resolveAuth userRepo tokenRepo token
 
         match authResult with
         | Error e -> return e
         | Ok userId ->
-            let! expense =
-                db.Expenses.AsNoTracking().FirstOrDefaultAsync(fun e -> e.Id = expenseId)
-                |> Async.AwaitTask
+            let! expenseOpt = expenseRepo.FindById expenseId |> Async.AwaitTask
 
-            if obj.ReferenceEquals(expense, null) then
-                return notFound "Expense not found"
-            elif expense.UserId <> userId then
-                return forbidden "Access denied"
-            else
+            match expenseOpt with
+            | None -> return notFound "Expense not found"
+            | Some expense when expense.UserId <> userId -> return forbidden "Access denied"
+            | Some expense ->
                 let amountResult = parseAmount amount
 
                 match amountResult with
@@ -999,64 +971,66 @@ let updateExpense
                                     expense.Type
                             UpdatedAt = DateTime.UtcNow }
 
-                    db.ChangeTracker.Clear()
-                    db.Expenses.Update(updated) |> ignore
-                    let! _ = db.SaveChangesAsync() |> Async.AwaitTask
+                    let! saved = expenseRepo.Update updated |> Async.AwaitTask
 
                     let formattedAmount =
-                        match updated.Currency with
-                        | "IDR" -> updated.Amount.ToString("0")
-                        | _ -> updated.Amount.ToString("0.00")
+                        match saved.Currency with
+                        | "IDR" -> saved.Amount.ToString("0")
+                        | _ -> saved.Amount.ToString("0.00")
 
                     return
                         ok
-                            {| id = updated.Id
+                            {| id = saved.Id
                                amount = formattedAmount
-                               currency = updated.Currency
-                               category = updated.Category
-                               description = updated.Description
-                               date = updated.Date.ToString("yyyy-MM-dd")
-                               ``type`` = updated.Type.ToLowerInvariant() |}
+                               currency = saved.Currency
+                               category = saved.Category
+                               description = saved.Description
+                               date = saved.Date.ToString("yyyy-MM-dd")
+                               ``type`` = saved.Type.ToLowerInvariant() |}
     }
 
-let deleteExpense (db: AppDbContext) (token: string option) (expenseId: Guid) : Async<int * string> =
+let deleteExpense
+    (userRepo: UserRepository)
+    (tokenRepo: TokenRepository)
+    (expenseRepo: ExpenseRepository)
+    (token: string option)
+    (expenseId: Guid)
+    : Async<int * string> =
     async {
-        let! authResult = resolveAuth db token
+        let! authResult = resolveAuth userRepo tokenRepo token
 
         match authResult with
         | Error e -> return e
         | Ok userId ->
-            let! expense =
-                db.Expenses.AsNoTracking().FirstOrDefaultAsync(fun e -> e.Id = expenseId)
-                |> Async.AwaitTask
+            let! expenseOpt = expenseRepo.FindById expenseId |> Async.AwaitTask
 
-            if obj.ReferenceEquals(expense, null) then
-                return notFound "Expense not found"
-            elif expense.UserId <> userId then
-                return forbidden "Access denied"
-            else
-                db.ChangeTracker.Clear()
-                db.Expenses.Remove(expense) |> ignore
-                let! _ = db.SaveChangesAsync() |> Async.AwaitTask
+            match expenseOpt with
+            | None -> return notFound "Expense not found"
+            | Some expense when expense.UserId <> userId -> return forbidden "Access denied"
+            | Some expense ->
+                do! expenseRepo.Delete expense |> Async.AwaitTask
                 return noContent ()
     }
 
-let expenseSummary (db: AppDbContext) (token: string option) : Async<int * string> =
+let expenseSummary
+    (userRepo: UserRepository)
+    (tokenRepo: TokenRepository)
+    (expenseRepo: ExpenseRepository)
+    (token: string option)
+    : Async<int * string> =
     async {
-        let! authResult = resolveAuth db token
+        let! authResult = resolveAuth userRepo tokenRepo token
 
         match authResult with
         | Error e -> return e
         | Ok userId ->
-            let! expenses =
-                db.Expenses.Where(fun e -> e.UserId = userId && e.Type = "EXPENSE").ToListAsync()
-                |> Async.AwaitTask
+            let! expenses = expenseRepo.ListSummaryByUser userId |> Async.AwaitTask
 
             let grouped =
                 expenses
-                |> Seq.groupBy (fun e -> e.Currency)
-                |> Seq.map (fun (currency, items) ->
-                    let total = items |> Seq.sumBy (fun e -> e.Amount)
+                |> List.groupBy (fun e -> e.Currency)
+                |> List.map (fun (currency, items) ->
+                    let total = items |> List.sumBy (fun e -> e.Amount)
 
                     let formattedTotal =
                         match currency with
@@ -1064,7 +1038,7 @@ let expenseSummary (db: AppDbContext) (token: string option) : Async<int * strin
                         | _ -> total.ToString("0.00")
 
                     currency, formattedTotal)
-                |> Map.ofSeq
+                |> Map.ofList
 
             return ok grouped
     }
@@ -1074,7 +1048,10 @@ let expenseSummary (db: AppDbContext) (token: string option) : Async<int * strin
 // ─────────────────────────────────────────────────────────────────────────────
 
 let uploadAttachment
-    (db: AppDbContext)
+    (userRepo: UserRepository)
+    (tokenRepo: TokenRepository)
+    (expenseRepo: ExpenseRepository)
+    (attachmentRepo: AttachmentRepository)
     (token: string option)
     (expenseId: Guid)
     (filename: string)
@@ -1082,20 +1059,17 @@ let uploadAttachment
     (data: byte[])
     : Async<int * string> =
     async {
-        let! authResult = resolveAuth db token
+        let! authResult = resolveAuth userRepo tokenRepo token
 
         match authResult with
         | Error e -> return e
         | Ok userId ->
-            let! expense =
-                db.Expenses.AsNoTracking().FirstOrDefaultAsync(fun e -> e.Id = expenseId)
-                |> Async.AwaitTask
+            let! expenseOpt = expenseRepo.FindById expenseId |> Async.AwaitTask
 
-            if obj.ReferenceEquals(expense, null) then
-                return notFound "Expense not found"
-            elif expense.UserId <> userId then
-                return forbidden "Access denied"
-            else
+            match expenseOpt with
+            | None -> return notFound "Expense not found"
+            | Some expense when expense.UserId <> userId -> return forbidden "Access denied"
+            | Some _ ->
                 match validateContentType contentType with
                 | Error(UnsupportedMediaType m) -> return unsupportedMediaType "file" m
                 | Error _ -> return unsupportedMediaType "file" "Unsupported content type"
@@ -1117,8 +1091,7 @@ let uploadAttachment
                               Data = data
                               CreatedAt = now }
 
-                        db.Attachments.Add(entity) |> ignore
-                        let! _ = db.SaveChangesAsync() |> Async.AwaitTask
+                        let! _ = attachmentRepo.Create entity |> Async.AwaitTask
 
                         return
                             created
@@ -1129,72 +1102,68 @@ let uploadAttachment
                                    url = url |}
     }
 
-let listAttachments (db: AppDbContext) (token: string option) (expenseId: Guid) : Async<int * string> =
+let listAttachments
+    (userRepo: UserRepository)
+    (tokenRepo: TokenRepository)
+    (expenseRepo: ExpenseRepository)
+    (attachmentRepo: AttachmentRepository)
+    (token: string option)
+    (expenseId: Guid)
+    : Async<int * string> =
     async {
-        let! authResult = resolveAuth db token
+        let! authResult = resolveAuth userRepo tokenRepo token
 
         match authResult with
         | Error e -> return e
         | Ok userId ->
-            let! expense =
-                db.Expenses.AsNoTracking().FirstOrDefaultAsync(fun e -> e.Id = expenseId)
-                |> Async.AwaitTask
+            let! expenseOpt = expenseRepo.FindById expenseId |> Async.AwaitTask
 
-            if obj.ReferenceEquals(expense, null) then
-                return notFound "Expense not found"
-            elif expense.UserId <> userId then
-                return forbidden "Access denied"
-            else
-                let! attachments =
-                    db.Attachments.Where(fun a -> a.ExpenseId = expenseId).ToListAsync()
-                    |> Async.AwaitTask
+            match expenseOpt with
+            | None -> return notFound "Expense not found"
+            | Some expense when expense.UserId <> userId -> return forbidden "Access denied"
+            | Some _ ->
+                let! attachments = attachmentRepo.ListByExpense expenseId |> Async.AwaitTask
 
                 let data =
                     attachments
-                    |> Seq.map (fun a ->
+                    |> List.map (fun a ->
                         {| id = a.Id
                            filename = a.Filename
                            contentType = a.ContentType
                            size = a.Size
                            url = sprintf "/api/v1/expenses/%O/attachments/%O/download" expenseId a.Id |})
-                    |> Seq.toArray
+                    |> List.toArray
 
                 return ok {| attachments = data |}
     }
 
 let deleteAttachment
-    (db: AppDbContext)
+    (userRepo: UserRepository)
+    (tokenRepo: TokenRepository)
+    (expenseRepo: ExpenseRepository)
+    (attachmentRepo: AttachmentRepository)
     (token: string option)
     (expenseId: Guid)
     (attachmentId: Guid)
     : Async<int * string> =
     async {
-        let! authResult = resolveAuth db token
+        let! authResult = resolveAuth userRepo tokenRepo token
 
         match authResult with
         | Error e -> return e
         | Ok userId ->
-            let! expense =
-                db.Expenses.AsNoTracking().FirstOrDefaultAsync(fun e -> e.Id = expenseId)
-                |> Async.AwaitTask
+            let! expenseOpt = expenseRepo.FindById expenseId |> Async.AwaitTask
 
-            if obj.ReferenceEquals(expense, null) then
-                return notFound "Expense not found"
-            elif expense.UserId <> userId then
-                return forbidden "Access denied"
-            else
-                let! attachment =
-                    db.Attachments
-                        .AsNoTracking()
-                        .FirstOrDefaultAsync(fun a -> a.Id = attachmentId && a.ExpenseId = expenseId)
-                    |> Async.AwaitTask
+            match expenseOpt with
+            | None -> return notFound "Expense not found"
+            | Some expense when expense.UserId <> userId -> return forbidden "Access denied"
+            | Some _ ->
+                let! attachmentOpt = attachmentRepo.FindById attachmentId expenseId |> Async.AwaitTask
 
-                if obj.ReferenceEquals(attachment, null) then
-                    return notFound "Attachment not found"
-                else
-                    db.ChangeTracker.Clear()
-                    db.Attachments.Remove(attachment) |> ignore
-                    let! _ = db.SaveChangesAsync() |> Async.AwaitTask
+                match attachmentOpt with
+                | None -> return notFound "Attachment not found"
+                | Some attachment ->
+                    do! attachmentRepo.Delete attachment |> Async.AwaitTask
                     return noContent ()
     }
 
@@ -1203,14 +1172,16 @@ let deleteAttachment
 // ─────────────────────────────────────────────────────────────────────────────
 
 let profitAndLoss
-    (db: AppDbContext)
+    (userRepo: UserRepository)
+    (tokenRepo: TokenRepository)
+    (expenseRepo: ExpenseRepository)
     (token: string option)
     (fromDate: string)
     (toDate: string)
     (currency: string)
     : Async<int * string> =
     async {
-        let! authResult = resolveAuth db token
+        let! authResult = resolveAuth userRepo tokenRepo token
 
         match authResult with
         | Error e -> return e
@@ -1227,17 +1198,13 @@ let profitAndLoss
 
             let curr = currency.ToUpperInvariant()
 
-            let! entries =
-                db.Expenses
-                    .Where(fun e -> e.UserId = userId && e.Currency = curr && e.Date >= from && e.Date <= ``to``)
-                    .ToListAsync()
-                |> Async.AwaitTask
+            let! entries = expenseRepo.ListByUserAndFilter userId curr from ``to`` |> Async.AwaitTask
 
-            let incomeEntries = entries |> Seq.filter (fun e -> e.Type = "INCOME")
-            let expenseEntries = entries |> Seq.filter (fun e -> e.Type = "EXPENSE")
+            let incomeEntries = entries |> List.filter (fun e -> e.Type = "INCOME")
+            let expenseEntries = entries |> List.filter (fun e -> e.Type = "EXPENSE")
 
-            let incomeTotal = incomeEntries |> Seq.sumBy (fun e -> e.Amount)
-            let expenseTotal = expenseEntries |> Seq.sumBy (fun e -> e.Amount)
+            let incomeTotal = incomeEntries |> List.sumBy (fun e -> e.Amount)
+            let expenseTotal = expenseEntries |> List.sumBy (fun e -> e.Amount)
             let net = incomeTotal - expenseTotal
 
             let formatAmount (a: decimal) =
@@ -1247,21 +1214,21 @@ let profitAndLoss
 
             let incomeBreakdown =
                 incomeEntries
-                |> Seq.groupBy (fun e -> e.Category)
-                |> Seq.map (fun (cat, items) ->
+                |> List.groupBy (fun e -> e.Category)
+                |> List.map (fun (cat, items) ->
                     {| category = cat
                        ``type`` = "income"
-                       total = formatAmount (items |> Seq.sumBy (fun e -> e.Amount)) |})
-                |> Seq.toArray
+                       total = formatAmount (items |> List.sumBy (fun e -> e.Amount)) |})
+                |> List.toArray
 
             let expenseBreakdown =
                 expenseEntries
-                |> Seq.groupBy (fun e -> e.Category)
-                |> Seq.map (fun (cat, items) ->
+                |> List.groupBy (fun e -> e.Category)
+                |> List.map (fun (cat, items) ->
                     {| category = cat
                        ``type`` = "expense"
-                       total = formatAmount (items |> Seq.sumBy (fun e -> e.Amount)) |})
-                |> Seq.toArray
+                       total = formatAmount (items |> List.sumBy (fun e -> e.Amount)) |})
+                |> List.toArray
 
             return
                 ok

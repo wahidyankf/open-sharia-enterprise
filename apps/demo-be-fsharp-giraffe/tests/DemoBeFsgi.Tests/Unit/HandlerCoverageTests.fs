@@ -14,6 +14,7 @@ open DemoBeFsgi.Domain.Expense
 open DemoBeFsgi.Tests.TestFixture
 open DemoBeFsgi.Tests.HttpTestFixture
 open DemoBeFsgi.Tests.DirectServices
+open DemoBeFsgi.Infrastructure.Repositories.EfRepositories
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Pure function branch coverage
@@ -224,9 +225,16 @@ let private shortId () =
     raw.Substring(0, 8)
 
 let private registerAndLogin (db: DemoBeFsgi.Infrastructure.AppDbContext.AppDbContext) (username: string) =
+    let userRepo = createUserRepo db
+    let rtRepo = createRefreshTokenRepo db
     let email = $"{username}@example.com"
-    register db username email "Str0ng#Pass1!" |> Async.RunSynchronously |> ignore
-    let status, body = login db username "Str0ng#Pass1!" |> Async.RunSynchronously
+
+    register userRepo username email "Str0ng#Pass1!"
+    |> Async.RunSynchronously
+    |> ignore
+
+    let status, body =
+        login userRepo rtRepo username "Str0ng#Pass1!" |> Async.RunSynchronously
 
     if status = 200 then
         let doc = JsonDocument.Parse(body)
@@ -236,7 +244,19 @@ let private registerAndLogin (db: DemoBeFsgi.Infrastructure.AppDbContext.AppDbCo
 
 let private createExpenseForUser (db: DemoBeFsgi.Infrastructure.AppDbContext.AppDbContext) (token: string) =
     let status, body =
-        createExpense db (Some token) "10.00" "USD" "food" "test" "2024-01-01" "expense" None None
+        createExpense
+            (createUserRepo db)
+            (createTokenRepo db)
+            (createExpenseRepo db)
+            (Some token)
+            "10.00"
+            "USD"
+            "food"
+            "test"
+            "2024-01-01"
+            "expense"
+            None
+            None
         |> Async.RunSynchronously
 
     if status = 201 then
@@ -261,7 +281,10 @@ type ProgramHandlerCoverageTests() =
                 member _.Dispose() = cleanup () }
 
         let fakeUsername = $"nobody_{shortId ()}"
-        let status, _ = setAdminRole db fakeUsername |> Async.RunSynchronously
+
+        let status, _ =
+            setAdminRole (createUserRepo db) fakeUsername |> Async.RunSynchronously
+
         Assert.Equal(404, status)
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -280,7 +303,8 @@ type AuthHandlerCoverageTests() =
                 member _.Dispose() = cleanup () }
 
         let status, _ =
-            register db "" "a@example.com" "Str0ng#Pass1!" |> Async.RunSynchronously
+            register (createUserRepo db) "" "a@example.com" "Str0ng#Pass1!"
+            |> Async.RunSynchronously
 
         Assert.Equal(400, status)
 
@@ -292,7 +316,10 @@ type AuthHandlerCoverageTests() =
             { new IDisposable with
                 member _.Dispose() = cleanup () }
 
-        let status, _ = register db "alice" "" "Str0ng#Pass1!" |> Async.RunSynchronously
+        let status, _ =
+            register (createUserRepo db) "alice" "" "Str0ng#Pass1!"
+            |> Async.RunSynchronously
+
         Assert.Equal(400, status)
 
     [<Fact>]
@@ -303,7 +330,10 @@ type AuthHandlerCoverageTests() =
             { new IDisposable with
                 member _.Dispose() = cleanup () }
 
-        let status, _ = register db "alice" "a@example.com" "" |> Async.RunSynchronously
+        let status, _ =
+            register (createUserRepo db) "alice" "a@example.com" ""
+            |> Async.RunSynchronously
+
         Assert.Equal(400, status)
 
     [<Fact>]
@@ -315,7 +345,8 @@ type AuthHandlerCoverageTests() =
                 member _.Dispose() = cleanup () }
 
         let status, _ =
-            register db null "a@example.com" "Str0ng#Pass1!" |> Async.RunSynchronously
+            register (createUserRepo db) null "a@example.com" "Str0ng#Pass1!"
+            |> Async.RunSynchronously
 
         Assert.Equal(400, status)
 
@@ -329,8 +360,15 @@ type AuthHandlerCoverageTests() =
 
         let username = $"ina_{shortId ()}"
         let token = registerAndLogin db username
-        deactivate db (Some token) |> Async.RunSynchronously |> ignore
-        let status, _ = login db username "Str0ng#Pass1!" |> Async.RunSynchronously
+
+        deactivate (createUserRepo db) (createTokenRepo db) (Some token)
+        |> Async.RunSynchronously
+        |> ignore
+
+        let status, _ =
+            login (createUserRepo db) (createRefreshTokenRepo db) username "Str0ng#Pass1!"
+            |> Async.RunSynchronously
+
         Assert.Equal(401, status)
 
     [<Fact>]
@@ -346,25 +384,29 @@ type AuthHandlerCoverageTests() =
         let email = $"{username}@example.com"
 
         let _s, regBody =
-            register db username email "Str0ng#Pass1!" |> Async.RunSynchronously
+            register (createUserRepo db) username email "Str0ng#Pass1!"
+            |> Async.RunSynchronously
 
         let userId = JsonDocument.Parse(regBody).RootElement.GetProperty("id").GetString()
 
         let adminName = $"adm_{shortId ()}"
         let adminEmail = $"{adminName}@example.com"
 
-        register db adminName adminEmail "Str0ng#Pass1!"
+        register (createUserRepo db) adminName adminEmail "Str0ng#Pass1!"
         |> Async.RunSynchronously
         |> ignore
 
-        setAdminRole db adminName |> Async.RunSynchronously |> ignore
+        setAdminRole (createUserRepo db) adminName |> Async.RunSynchronously |> ignore
         let adminToken, _ = Some(registerAndLogin db adminName), None
 
-        disableUser db adminToken (Guid.Parse(userId))
+        disableUser (createUserRepo db) (createTokenRepo db) adminToken (Guid.Parse(userId))
         |> Async.RunSynchronously
         |> ignore
 
-        let status, _ = login db username "Str0ng#Pass1!" |> Async.RunSynchronously
+        let status, _ =
+            login (createUserRepo db) (createRefreshTokenRepo db) username "Str0ng#Pass1!"
+            |> Async.RunSynchronously
+
         Assert.Equal(401, status)
 
     [<Fact>]
@@ -377,13 +419,22 @@ type AuthHandlerCoverageTests() =
 
         let username = $"lck_{shortId ()}"
         let email = $"{username}@example.com"
-        register db username email "Str0ng#Pass1!" |> Async.RunSynchronously |> ignore
+
+        register (createUserRepo db) username email "Str0ng#Pass1!"
+        |> Async.RunSynchronously
+        |> ignore
 
         for _ in 1..4 do
-            let status, _ = login db username "WrongPass1!" |> Async.RunSynchronously
+            let status, _ =
+                login (createUserRepo db) (createRefreshTokenRepo db) username "WrongPass1!"
+                |> Async.RunSynchronously
+
             Assert.Equal(401, status)
 
-        let status, _ = login db username "WrongPass1!" |> Async.RunSynchronously
+        let status, _ =
+            login (createUserRepo db) (createRefreshTokenRepo db) username "WrongPass1!"
+            |> Async.RunSynchronously
+
         Assert.Equal(401, status)
 
     [<Fact>]
@@ -394,7 +445,10 @@ type AuthHandlerCoverageTests() =
             { new IDisposable with
                 member _.Dispose() = cleanup () }
 
-        let status, _ = refresh db "nonexistent" |> Async.RunSynchronously
+        let status, _ =
+            refresh (createUserRepo db) (createRefreshTokenRepo db) "nonexistent"
+            |> Async.RunSynchronously
+
         Assert.Equal(401, status)
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -449,7 +503,7 @@ type UserHandlerCoverageTests() =
         let token = registerAndLogin db username
 
         let status, _ =
-            changePassword db (Some token) "WrongPass1!" "NewStr0ng#Pass1!"
+            changePassword (createUserRepo db) (createTokenRepo db) (Some token) "WrongPass1!" "NewStr0ng#Pass1!"
             |> Async.RunSynchronously
 
         Assert.Equal(401, status)
@@ -464,7 +518,11 @@ type UserHandlerCoverageTests() =
 
         let username = $"prf_{shortId ()}"
         let token = registerAndLogin db username
-        let status, _ = updateProfile db (Some token) null |> Async.RunSynchronously
+
+        let status, _ =
+            updateProfile (createUserRepo db) (createTokenRepo db) (Some token) null
+            |> Async.RunSynchronously
+
         Assert.Equal(200, status)
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -479,11 +537,11 @@ type AdminHandlerCoverageTests() =
         let adminName = $"adm_{shortId ()}"
         let adminEmail = $"{adminName}@example.com"
 
-        register db adminName adminEmail "Str0ng#Pass1!"
+        register (createUserRepo db) adminName adminEmail "Str0ng#Pass1!"
         |> Async.RunSynchronously
         |> ignore
 
-        setAdminRole db adminName |> Async.RunSynchronously |> ignore
+        setAdminRole (createUserRepo db) adminName |> Async.RunSynchronously |> ignore
         let adminToken = registerAndLogin db adminName
         db, cleanup, adminToken
 
@@ -496,7 +554,11 @@ type AdminHandlerCoverageTests() =
                 member _.Dispose() = cleanup () }
 
         let fakeId = Guid.NewGuid()
-        let status, _ = disableUser db (Some adminToken) fakeId |> Async.RunSynchronously
+
+        let status, _ =
+            disableUser (createUserRepo db) (createTokenRepo db) (Some adminToken) fakeId
+            |> Async.RunSynchronously
+
         Assert.Equal(404, status)
 
     [<Fact>]
@@ -508,7 +570,11 @@ type AdminHandlerCoverageTests() =
                 member _.Dispose() = cleanup () }
 
         let fakeId = Guid.NewGuid()
-        let status, _ = enableUser db (Some adminToken) fakeId |> Async.RunSynchronously
+
+        let status, _ =
+            enableUser (createUserRepo db) (createTokenRepo db) (Some adminToken) fakeId
+            |> Async.RunSynchronously
+
         Assert.Equal(404, status)
 
     [<Fact>]
@@ -520,7 +586,11 @@ type AdminHandlerCoverageTests() =
                 member _.Dispose() = cleanup () }
 
         let fakeId = Guid.NewGuid()
-        let status, _ = unlockUser db (Some adminToken) fakeId |> Async.RunSynchronously
+
+        let status, _ =
+            unlockUser (createUserRepo db) (createTokenRepo db) (Some adminToken) fakeId
+            |> Async.RunSynchronously
+
         Assert.Equal(404, status)
 
     [<Fact>]
@@ -534,7 +604,8 @@ type AdminHandlerCoverageTests() =
         let fakeId = Guid.NewGuid()
 
         let status, _ =
-            forcePasswordReset db (Some adminToken) fakeId |> Async.RunSynchronously
+            forcePasswordReset (createUserRepo db) (createTokenRepo db) (Some adminToken) fakeId
+            |> Async.RunSynchronously
 
         Assert.Equal(404, status)
 
@@ -547,7 +618,7 @@ type AdminHandlerCoverageTests() =
                 member _.Dispose() = cleanup () }
 
         let status, _ =
-            listUsers db (Some adminToken) 1 20 (Some "notexists@example.com")
+            listUsers (createUserRepo db) (createTokenRepo db) (Some adminToken) 1 20 (Some "notexists@example.com")
             |> Async.RunSynchronously
 
         Assert.Equal(200, status)
@@ -562,7 +633,11 @@ type AdminHandlerCoverageTests() =
 
         let username = $"nonadm_{shortId ()}"
         let token = registerAndLogin db username
-        let status, _ = listUsers db (Some token) 1 20 None |> Async.RunSynchronously
+
+        let status, _ =
+            listUsers (createUserRepo db) (createTokenRepo db) (Some token) 1 20 None
+            |> Async.RunSynchronously
+
         Assert.Equal(403, status)
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -587,7 +662,19 @@ type ExpenseHandlerCoverageTests() =
                 member _.Dispose() = cleanup () }
 
         let status, _ =
-            createExpense db (Some token) "10.00" "EUR" "food" "test" "2024-01-01" "expense" None None
+            createExpense
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (Some token)
+                "10.00"
+                "EUR"
+                "food"
+                "test"
+                "2024-01-01"
+                "expense"
+                None
+                None
             |> Async.RunSynchronously
 
         Assert.Equal(400, status)
@@ -601,7 +688,19 @@ type ExpenseHandlerCoverageTests() =
                 member _.Dispose() = cleanup () }
 
         let status, _ =
-            createExpense db (Some token) "" "USD" "food" "test" "2024-01-01" "expense" None None
+            createExpense
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (Some token)
+                ""
+                "USD"
+                "food"
+                "test"
+                "2024-01-01"
+                "expense"
+                None
+                None
             |> Async.RunSynchronously
 
         Assert.Equal(400, status)
@@ -615,7 +714,19 @@ type ExpenseHandlerCoverageTests() =
                 member _.Dispose() = cleanup () }
 
         let status, _ =
-            createExpense db (Some token) "not-a-number" "USD" "food" "test" "2024-01-01" "expense" None None
+            createExpense
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (Some token)
+                "not-a-number"
+                "USD"
+                "food"
+                "test"
+                "2024-01-01"
+                "expense"
+                None
+                None
             |> Async.RunSynchronously
 
         Assert.Equal(400, status)
@@ -629,7 +740,19 @@ type ExpenseHandlerCoverageTests() =
                 member _.Dispose() = cleanup () }
 
         let status, _ =
-            createExpense db (Some token) "-5.00" "USD" "food" "test" "2024-01-01" "expense" None None
+            createExpense
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (Some token)
+                "-5.00"
+                "USD"
+                "food"
+                "test"
+                "2024-01-01"
+                "expense"
+                None
+                None
             |> Async.RunSynchronously
 
         Assert.Equal(400, status)
@@ -643,7 +766,19 @@ type ExpenseHandlerCoverageTests() =
                 member _.Dispose() = cleanup () }
 
         let status, _ =
-            createExpense db (Some token) "10.00" "USD" "food" "test" "2024-01-01" "expense" None (Some "fathom")
+            createExpense
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (Some token)
+                "10.00"
+                "USD"
+                "food"
+                "test"
+                "2024-01-01"
+                "expense"
+                None
+                (Some "fathom")
             |> Async.RunSynchronously
 
         Assert.Equal(400, status)
@@ -657,7 +792,19 @@ type ExpenseHandlerCoverageTests() =
                 member _.Dispose() = cleanup () }
 
         let status, respBody =
-            createExpense db (Some token) "150000" "IDR" "food" "test" "2024-01-01" "expense" None None
+            createExpense
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (Some token)
+                "150000"
+                "IDR"
+                "food"
+                "test"
+                "2024-01-01"
+                "expense"
+                None
+                None
             |> Async.RunSynchronously
 
         Assert.Equal(201, status)
@@ -672,7 +819,19 @@ type ExpenseHandlerCoverageTests() =
                 member _.Dispose() = cleanup () }
 
         let status, _ =
-            createExpense db (Some token) "10.00" "USD" "food" "test" "not-a-date" "expense" None None
+            createExpense
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (Some token)
+                "10.00"
+                "USD"
+                "food"
+                "test"
+                "not-a-date"
+                "expense"
+                None
+                None
             |> Async.RunSynchronously
 
         Assert.Equal(201, status)
@@ -686,7 +845,19 @@ type ExpenseHandlerCoverageTests() =
                 member _.Dispose() = cleanup () }
 
         let status, _ =
-            createExpense db (Some token) "10.00" "USD" null null "2024-01-01" null None None
+            createExpense
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (Some token)
+                "10.00"
+                "USD"
+                null
+                null
+                "2024-01-01"
+                null
+                None
+                None
             |> Async.RunSynchronously
 
         Assert.Equal(201, status)
@@ -700,7 +871,19 @@ type ExpenseHandlerCoverageTests() =
                 member _.Dispose() = cleanup () }
 
         let status, _ =
-            createExpense db (Some token) "10.00" "USD" "food" "test" "2024-01-01" "expense" (Some 2.5) (Some "kg")
+            createExpense
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (Some token)
+                "10.00"
+                "USD"
+                "food"
+                "test"
+                "2024-01-01"
+                "expense"
+                (Some 2.5)
+                (Some "kg")
             |> Async.RunSynchronously
 
         Assert.Equal(201, status)
@@ -714,7 +897,8 @@ type ExpenseHandlerCoverageTests() =
                 member _.Dispose() = cleanup () }
 
         let status, _ =
-            getExpenseById db (Some token) (Guid.NewGuid()) |> Async.RunSynchronously
+            getExpenseById (createUserRepo db) (createTokenRepo db) (createExpenseRepo db) (Some token) (Guid.NewGuid())
+            |> Async.RunSynchronously
 
         Assert.Equal(404, status)
 
@@ -731,7 +915,13 @@ type ExpenseHandlerCoverageTests() =
         let expId = createExpenseForUser db token1
 
         let status, _ =
-            getExpenseById db (Some token2) (Guid.Parse(expId)) |> Async.RunSynchronously
+            getExpenseById
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (Some token2)
+                (Guid.Parse(expId))
+            |> Async.RunSynchronously
 
         Assert.Equal(403, status)
 
@@ -744,14 +934,27 @@ type ExpenseHandlerCoverageTests() =
                 member _.Dispose() = cleanup () }
 
         let _s, body =
-            createExpense db (Some token) "10.00" "USD" "food" "test" "2024-01-01" "expense" (Some 2.0) (Some "kg")
+            createExpense
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (Some token)
+                "10.00"
+                "USD"
+                "food"
+                "test"
+                "2024-01-01"
+                "expense"
+                (Some 2.0)
+                (Some "kg")
             |> Async.RunSynchronously
 
         let expId =
             Guid.Parse(JsonDocument.Parse(body).RootElement.GetProperty("id").GetString())
 
         let status, respBody =
-            getExpenseById db (Some token) expId |> Async.RunSynchronously
+            getExpenseById (createUserRepo db) (createTokenRepo db) (createExpenseRepo db) (Some token) expId
+            |> Async.RunSynchronously
 
         Assert.Equal(200, status)
         Assert.Contains("kg", respBody)
@@ -765,14 +968,27 @@ type ExpenseHandlerCoverageTests() =
                 member _.Dispose() = cleanup () }
 
         let _s, body =
-            createExpense db (Some token) "150000" "IDR" "food" "test" "2024-01-01" "expense" None None
+            createExpense
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (Some token)
+                "150000"
+                "IDR"
+                "food"
+                "test"
+                "2024-01-01"
+                "expense"
+                None
+                None
             |> Async.RunSynchronously
 
         let expId =
             Guid.Parse(JsonDocument.Parse(body).RootElement.GetProperty("id").GetString())
 
         let status, respBody =
-            getExpenseById db (Some token) expId |> Async.RunSynchronously
+            getExpenseById (createUserRepo db) (createTokenRepo db) (createExpenseRepo db) (Some token) expId
+            |> Async.RunSynchronously
 
         Assert.Equal(200, status)
         Assert.Contains("150000", respBody)
@@ -786,7 +1002,18 @@ type ExpenseHandlerCoverageTests() =
                 member _.Dispose() = cleanup () }
 
         let status, _ =
-            updateExpense db (Some token) (Guid.NewGuid()) "20.00" "USD" "food" "updated" "2024-01-01" "expense"
+            updateExpense
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (Some token)
+                (Guid.NewGuid())
+                "20.00"
+                "USD"
+                "food"
+                "updated"
+                "2024-01-01"
+                "expense"
             |> Async.RunSynchronously
 
         Assert.Equal(404, status)
@@ -804,7 +1031,18 @@ type ExpenseHandlerCoverageTests() =
         let expId = createExpenseForUser db token1
 
         let status, _ =
-            updateExpense db (Some token2) (Guid.Parse(expId)) "20.00" "USD" "food" "test" "2024-01-01" "expense"
+            updateExpense
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (Some token2)
+                (Guid.Parse(expId))
+                "20.00"
+                "USD"
+                "food"
+                "test"
+                "2024-01-01"
+                "expense"
             |> Async.RunSynchronously
 
         Assert.Equal(403, status)
@@ -820,7 +1058,18 @@ type ExpenseHandlerCoverageTests() =
         let expId = createExpenseForUser db token
 
         let status, _ =
-            updateExpense db (Some token) (Guid.Parse(expId)) "bad" "USD" "food" "test" "2024-01-01" "expense"
+            updateExpense
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (Some token)
+                (Guid.Parse(expId))
+                "bad"
+                "USD"
+                "food"
+                "test"
+                "2024-01-01"
+                "expense"
             |> Async.RunSynchronously
 
         Assert.Equal(400, status)
@@ -834,14 +1083,37 @@ type ExpenseHandlerCoverageTests() =
                 member _.Dispose() = cleanup () }
 
         let _s, body =
-            createExpense db (Some token) "150000" "IDR" "food" "test" "2024-01-01" "expense" None None
+            createExpense
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (Some token)
+                "150000"
+                "IDR"
+                "food"
+                "test"
+                "2024-01-01"
+                "expense"
+                None
+                None
             |> Async.RunSynchronously
 
         let expId =
             Guid.Parse(JsonDocument.Parse(body).RootElement.GetProperty("id").GetString())
 
         let status, respBody =
-            updateExpense db (Some token) expId "200000" "IDR" "food" "updated" "2024-01-02" "expense"
+            updateExpense
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (Some token)
+                expId
+                "200000"
+                "IDR"
+                "food"
+                "updated"
+                "2024-01-02"
+                "expense"
             |> Async.RunSynchronously
 
         Assert.Equal(200, status)
@@ -858,7 +1130,18 @@ type ExpenseHandlerCoverageTests() =
         let expId = createExpenseForUser db token
 
         let status, _ =
-            updateExpense db (Some token) (Guid.Parse(expId)) "15.00" null null null "not-a-date" null
+            updateExpense
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (Some token)
+                (Guid.Parse(expId))
+                "15.00"
+                null
+                null
+                null
+                "not-a-date"
+                null
             |> Async.RunSynchronously
 
         Assert.Equal(200, status)
@@ -872,7 +1155,8 @@ type ExpenseHandlerCoverageTests() =
                 member _.Dispose() = cleanup () }
 
         let status, _ =
-            deleteExpense db (Some token) (Guid.NewGuid()) |> Async.RunSynchronously
+            deleteExpense (createUserRepo db) (createTokenRepo db) (createExpenseRepo db) (Some token) (Guid.NewGuid())
+            |> Async.RunSynchronously
 
         Assert.Equal(404, status)
 
@@ -889,7 +1173,13 @@ type ExpenseHandlerCoverageTests() =
         let expId = createExpenseForUser db token1
 
         let status, _ =
-            deleteExpense db (Some token2) (Guid.Parse(expId)) |> Async.RunSynchronously
+            deleteExpense
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (Some token2)
+                (Guid.Parse(expId))
+            |> Async.RunSynchronously
 
         Assert.Equal(403, status)
 
@@ -901,11 +1191,26 @@ type ExpenseHandlerCoverageTests() =
             { new IDisposable with
                 member _.Dispose() = cleanup () }
 
-        createExpense db (Some token) "150000" "IDR" "food" "test" "2024-01-01" "expense" None None
+        createExpense
+            (createUserRepo db)
+            (createTokenRepo db)
+            (createExpenseRepo db)
+            (Some token)
+            "150000"
+            "IDR"
+            "food"
+            "test"
+            "2024-01-01"
+            "expense"
+            None
+            None
         |> Async.RunSynchronously
         |> ignore
 
-        let status, respBody = listExpenses db (Some token) 1 20 |> Async.RunSynchronously
+        let status, respBody =
+            listExpenses (createUserRepo db) (createTokenRepo db) (createExpenseRepo db) (Some token) 1 20
+            |> Async.RunSynchronously
+
         Assert.Equal(200, status)
         Assert.Contains("150000", respBody)
 
@@ -917,11 +1222,26 @@ type ExpenseHandlerCoverageTests() =
             { new IDisposable with
                 member _.Dispose() = cleanup () }
 
-        createExpense db (Some token) "10.00" "USD" "food" "test" "2024-01-01" "expense" (Some 1.5) (Some "kg")
+        createExpense
+            (createUserRepo db)
+            (createTokenRepo db)
+            (createExpenseRepo db)
+            (Some token)
+            "10.00"
+            "USD"
+            "food"
+            "test"
+            "2024-01-01"
+            "expense"
+            (Some 1.5)
+            (Some "kg")
         |> Async.RunSynchronously
         |> ignore
 
-        let status, respBody = listExpenses db (Some token) 1 20 |> Async.RunSynchronously
+        let status, respBody =
+            listExpenses (createUserRepo db) (createTokenRepo db) (createExpenseRepo db) (Some token) 1 20
+            |> Async.RunSynchronously
+
         Assert.Equal(200, status)
         Assert.Contains("1.5", respBody)
 
@@ -933,11 +1253,26 @@ type ExpenseHandlerCoverageTests() =
             { new IDisposable with
                 member _.Dispose() = cleanup () }
 
-        createExpense db (Some token) "150000" "IDR" "food" "test" "2024-01-01" "expense" None None
+        createExpense
+            (createUserRepo db)
+            (createTokenRepo db)
+            (createExpenseRepo db)
+            (Some token)
+            "150000"
+            "IDR"
+            "food"
+            "test"
+            "2024-01-01"
+            "expense"
+            None
+            None
         |> Async.RunSynchronously
         |> ignore
 
-        let status, respBody = expenseSummary db (Some token) |> Async.RunSynchronously
+        let status, respBody =
+            expenseSummary (createUserRepo db) (createTokenRepo db) (createExpenseRepo db) (Some token)
+            |> Async.RunSynchronously
+
         Assert.Equal(200, status)
         Assert.Contains("IDR", respBody)
 
@@ -966,7 +1301,16 @@ type AttachmentHandlerCoverageTests() =
         let data = [| 0uy; 1uy; 2uy |]
 
         let status, _ =
-            uploadAttachment db (Some token) fakeId "test.jpg" "image/jpeg" data
+            uploadAttachment
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (createAttachmentRepo db)
+                (Some token)
+                fakeId
+                "test.jpg"
+                "image/jpeg"
+                data
             |> Async.RunSynchronously
 
         Assert.Equal(404, status)
@@ -985,7 +1329,16 @@ type AttachmentHandlerCoverageTests() =
         let data = [| 0uy; 1uy; 2uy |]
 
         let status, _ =
-            uploadAttachment db (Some token2) (Guid.Parse(expId)) "test.jpg" "image/jpeg" data
+            uploadAttachment
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (createAttachmentRepo db)
+                (Some token2)
+                (Guid.Parse(expId))
+                "test.jpg"
+                "image/jpeg"
+                data
             |> Async.RunSynchronously
 
         Assert.Equal(403, status)
@@ -1002,7 +1355,16 @@ type AttachmentHandlerCoverageTests() =
         let data = [| 0uy; 1uy; 2uy |]
 
         let status, _ =
-            uploadAttachment db (Some token) (Guid.Parse(expId)) "test.bin" "application/octet-stream" data
+            uploadAttachment
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (createAttachmentRepo db)
+                (Some token)
+                (Guid.Parse(expId))
+                "test.bin"
+                "application/octet-stream"
+                data
             |> Async.RunSynchronously
 
         Assert.Equal(415, status)
@@ -1016,7 +1378,14 @@ type AttachmentHandlerCoverageTests() =
                 member _.Dispose() = cleanup () }
 
         let status, _ =
-            listAttachments db (Some token) (Guid.NewGuid()) |> Async.RunSynchronously
+            listAttachments
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (createAttachmentRepo db)
+                (Some token)
+                (Guid.NewGuid())
+            |> Async.RunSynchronously
 
         Assert.Equal(404, status)
 
@@ -1033,7 +1402,14 @@ type AttachmentHandlerCoverageTests() =
         let expId = createExpenseForUser db token1
 
         let status, _ =
-            listAttachments db (Some token2) (Guid.Parse(expId)) |> Async.RunSynchronously
+            listAttachments
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (createAttachmentRepo db)
+                (Some token2)
+                (Guid.Parse(expId))
+            |> Async.RunSynchronously
 
         Assert.Equal(403, status)
 
@@ -1049,7 +1425,15 @@ type AttachmentHandlerCoverageTests() =
         let fakeAttId = Guid.NewGuid()
 
         let status, _ =
-            deleteAttachment db (Some token) fakeId fakeAttId |> Async.RunSynchronously
+            deleteAttachment
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (createAttachmentRepo db)
+                (Some token)
+                fakeId
+                fakeAttId
+            |> Async.RunSynchronously
 
         Assert.Equal(404, status)
 
@@ -1067,7 +1451,14 @@ type AttachmentHandlerCoverageTests() =
         let fakeAttId = Guid.NewGuid()
 
         let status, _ =
-            deleteAttachment db (Some token2) (Guid.Parse(expId)) fakeAttId
+            deleteAttachment
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (createAttachmentRepo db)
+                (Some token2)
+                (Guid.Parse(expId))
+                fakeAttId
             |> Async.RunSynchronously
 
         Assert.Equal(403, status)
@@ -1084,7 +1475,14 @@ type AttachmentHandlerCoverageTests() =
         let fakeAttId = Guid.NewGuid()
 
         let status, _ =
-            deleteAttachment db (Some token) (Guid.Parse(expId)) fakeAttId
+            deleteAttachment
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (createAttachmentRepo db)
+                (Some token)
+                (Guid.Parse(expId))
+                fakeAttId
             |> Async.RunSynchronously
 
         Assert.Equal(404, status)
@@ -1104,7 +1502,10 @@ type JwtMiddlewareCoverageTests() =
             { new IDisposable with
                 member _.Dispose() = cleanup () }
 
-        let status, _ = getProfile db None |> Async.RunSynchronously
+        let status, _ =
+            getProfile (createUserRepo db) (createTokenRepo db) None
+            |> Async.RunSynchronously
+
         Assert.Equal(401, status)
 
     [<Fact>]
@@ -1115,7 +1516,10 @@ type JwtMiddlewareCoverageTests() =
             { new IDisposable with
                 member _.Dispose() = cleanup () }
 
-        let status, _ = getProfile db (Some "invalid.jwt.token") |> Async.RunSynchronously
+        let status, _ =
+            getProfile (createUserRepo db) (createTokenRepo db) (Some "invalid.jwt.token")
+            |> Async.RunSynchronously
+
         Assert.Equal(401, status)
 
     [<Fact>]
@@ -1128,8 +1532,12 @@ type JwtMiddlewareCoverageTests() =
 
         let username = $"rev_{shortId ()}"
         let token = registerAndLogin db username
-        logout db (Some token) |> Async.RunSynchronously |> ignore
-        let status, _ = getProfile db (Some token) |> Async.RunSynchronously
+        logout (createTokenRepo db) (Some token) |> Async.RunSynchronously |> ignore
+
+        let status, _ =
+            getProfile (createUserRepo db) (createTokenRepo db) (Some token)
+            |> Async.RunSynchronously
+
         Assert.Equal(401, status)
 
     [<Fact>]
@@ -1143,7 +1551,11 @@ type JwtMiddlewareCoverageTests() =
         let userId = Guid.NewGuid()
         let claimsArr = [| Claim(JwtRegisteredClaimNames.Sub, userId.ToString()) |]
         let token = makeCustomToken claimsArr false
-        let status, _ = getProfile db (Some token) |> Async.RunSynchronously
+
+        let status, _ =
+            getProfile (createUserRepo db) (createTokenRepo db) (Some token)
+            |> Async.RunSynchronously
+
         Assert.Equal(401, status)
 
     [<Fact>]
@@ -1156,7 +1568,11 @@ type JwtMiddlewareCoverageTests() =
 
         let claimsArr = [| Claim(JwtRegisteredClaimNames.Sub, "not-a-guid") |]
         let token = makeCustomToken claimsArr true
-        let status, _ = getProfile db (Some token) |> Async.RunSynchronously
+
+        let status, _ =
+            getProfile (createUserRepo db) (createTokenRepo db) (Some token)
+            |> Async.RunSynchronously
+
         Assert.Equal(401, status)
 
     [<Fact>]
@@ -1173,7 +1589,11 @@ type JwtMiddlewareCoverageTests() =
             [| Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier", nonExistentGuid.ToString()) |]
 
         let token = makeCustomToken claimsArr true
-        let status, _ = getProfile db (Some token) |> Async.RunSynchronously
+
+        let status, _ =
+            getProfile (createUserRepo db) (createTokenRepo db) (Some token)
+            |> Async.RunSynchronously
+
         Assert.Equal(401, status)
 
     [<Fact>]
@@ -1186,8 +1606,15 @@ type JwtMiddlewareCoverageTests() =
 
         let username = $"dact_{shortId ()}"
         let token = registerAndLogin db username
-        deactivate db (Some token) |> Async.RunSynchronously |> ignore
-        let status, body = getProfile db (Some token) |> Async.RunSynchronously
+
+        deactivate (createUserRepo db) (createTokenRepo db) (Some token)
+        |> Async.RunSynchronously
+        |> ignore
+
+        let status, body =
+            getProfile (createUserRepo db) (createTokenRepo db) (Some token)
+            |> Async.RunSynchronously
+
         Assert.Equal(401, status)
         Assert.Contains("deactivated", body)
 
@@ -1201,15 +1628,27 @@ type JwtMiddlewareCoverageTests() =
 
         let username = $"lkm_{shortId ()}"
         let email = $"{username}@example.com"
-        register db username email "Str0ng#Pass1!" |> Async.RunSynchronously |> ignore
-        let _s, loginResp = login db username "Str0ng#Pass1!" |> Async.RunSynchronously
+
+        register (createUserRepo db) username email "Str0ng#Pass1!"
+        |> Async.RunSynchronously
+        |> ignore
+
+        let _s, loginResp =
+            login (createUserRepo db) (createRefreshTokenRepo db) username "Str0ng#Pass1!"
+            |> Async.RunSynchronously
+
         let doc = JsonDocument.Parse(loginResp)
         let token = doc.RootElement.GetProperty("accessToken").GetString()
 
         for _ in 1..5 do
-            login db username "WrongPass1!" |> Async.RunSynchronously |> ignore
+            login (createUserRepo db) (createRefreshTokenRepo db) username "WrongPass1!"
+            |> Async.RunSynchronously
+            |> ignore
 
-        let status, body = getProfile db (Some token) |> Async.RunSynchronously
+        let status, body =
+            getProfile (createUserRepo db) (createTokenRepo db) (Some token)
+            |> Async.RunSynchronously
+
         Assert.Equal(401, status)
         Assert.Contains("locked", body)
 
@@ -1234,16 +1673,41 @@ type ReportHandlerCoverageTests() =
             { new IDisposable with
                 member _.Dispose() = cleanup () }
 
-        createExpense db (Some token) "500000" "IDR" "salary" "income" "2024-01-15" "income" None None
+        createExpense
+            (createUserRepo db)
+            (createTokenRepo db)
+            (createExpenseRepo db)
+            (Some token)
+            "500000"
+            "IDR"
+            "salary"
+            "income"
+            "2024-01-15"
+            "income"
+            None
+            None
         |> Async.RunSynchronously
         |> ignore
 
-        createExpense db (Some token) "100000" "IDR" "food" "expense" "2024-01-15" "expense" None None
+        createExpense
+            (createUserRepo db)
+            (createTokenRepo db)
+            (createExpenseRepo db)
+            (Some token)
+            "100000"
+            "IDR"
+            "food"
+            "expense"
+            "2024-01-15"
+            "expense"
+            None
+            None
         |> Async.RunSynchronously
         |> ignore
 
         let status, respBody =
-            profitAndLoss db (Some token) "" "" "IDR" |> Async.RunSynchronously
+            profitAndLoss (createUserRepo db) (createTokenRepo db) (createExpenseRepo db) (Some token) "" "" "IDR"
+            |> Async.RunSynchronously
 
         Assert.Equal(200, status)
         Assert.Contains("500000", respBody)
@@ -1257,7 +1721,14 @@ type ReportHandlerCoverageTests() =
                 member _.Dispose() = cleanup () }
 
         let status, _ =
-            profitAndLoss db (Some token) "notadate" "notadate" "USD"
+            profitAndLoss
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (Some token)
+                "notadate"
+                "notadate"
+                "USD"
             |> Async.RunSynchronously
 
         Assert.Equal(200, status)
@@ -1271,7 +1742,14 @@ type ReportHandlerCoverageTests() =
                 member _.Dispose() = cleanup () }
 
         let status, _ =
-            profitAndLoss db (Some token) "2024-01-01" "2024-12-31" "USD"
+            profitAndLoss
+                (createUserRepo db)
+                (createTokenRepo db)
+                (createExpenseRepo db)
+                (Some token)
+                "2024-01-01"
+                "2024-12-31"
+                "USD"
             |> Async.RunSynchronously
 
         Assert.Equal(200, status)
@@ -1284,7 +1762,10 @@ type ReportHandlerCoverageTests() =
             { new IDisposable with
                 member _.Dispose() = cleanup () }
 
-        let status, _ = profitAndLoss db (Some token) "" "" "USD" |> Async.RunSynchronously
+        let status, _ =
+            profitAndLoss (createUserRepo db) (createTokenRepo db) (createExpenseRepo db) (Some token) "" "" "USD"
+            |> Async.RunSynchronously
+
         Assert.Equal(200, status)
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1304,13 +1785,27 @@ type AuthHandlerAdditionalTests() =
 
         let username = $"rfi_{shortId ()}"
         let email = $"{username}@example.com"
-        register db username email "Str0ng#Pass1!" |> Async.RunSynchronously |> ignore
-        let _s, loginResp = login db username "Str0ng#Pass1!" |> Async.RunSynchronously
+
+        register (createUserRepo db) username email "Str0ng#Pass1!"
+        |> Async.RunSynchronously
+        |> ignore
+
+        let _s, loginResp =
+            login (createUserRepo db) (createRefreshTokenRepo db) username "Str0ng#Pass1!"
+            |> Async.RunSynchronously
+
         let doc = JsonDocument.Parse(loginResp)
         let token = doc.RootElement.GetProperty("accessToken").GetString()
         let rt = doc.RootElement.GetProperty("refreshToken").GetString()
-        deactivate db (Some token) |> Async.RunSynchronously |> ignore
-        let status, _ = refresh db rt |> Async.RunSynchronously
+
+        deactivate (createUserRepo db) (createTokenRepo db) (Some token)
+        |> Async.RunSynchronously
+        |> ignore
+
+        let status, _ =
+            refresh (createUserRepo db) (createRefreshTokenRepo db) rt
+            |> Async.RunSynchronously
+
         Assert.Equal(401, status)
 
     [<Fact>]
@@ -1323,9 +1818,9 @@ type AuthHandlerAdditionalTests() =
 
         let username = $"dbl_{shortId ()}"
         let token = registerAndLogin db username
-        logout db (Some token) |> Async.RunSynchronously |> ignore
+        logout (createTokenRepo db) (Some token) |> Async.RunSynchronously |> ignore
         // Second logout with same token — logout is safe to call twice
-        let status, _ = logout db (Some token) |> Async.RunSynchronously
+        let status, _ = logout (createTokenRepo db) (Some token) |> Async.RunSynchronously
         // logout returns 200 regardless; the token is already revoked in DB
         Assert.Equal(200, status)
 

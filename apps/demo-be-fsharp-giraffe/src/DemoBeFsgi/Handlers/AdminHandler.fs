@@ -1,21 +1,20 @@
 module DemoBeFsgi.Handlers.AdminHandler
 
 open System
-open System.Linq
 open System.Text.Json
 open Giraffe
-open Microsoft.EntityFrameworkCore
 open DemoBeFsgi.Infrastructure.AppDbContext
+open DemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
 open DemoBeFsgi.Domain.Types
 open DemoBeFsgi.Contracts.ContractWrappers
 
 let listUsers: HttpHandler =
     fun next ctx ->
         task {
-            let db = ctx.GetService<AppDbContext>()
+            let userRepo = ctx.GetService<UserRepository>()
             let pageParam = ctx.TryGetQueryStringValue("page") |> Option.defaultValue "1"
             let sizeParam = ctx.TryGetQueryStringValue("size") |> Option.defaultValue "20"
-            let emailFilter = ctx.TryGetQueryStringValue("search")
+            let searchFilter = ctx.TryGetQueryStringValue("search")
 
             let page =
                 Math.Max(
@@ -35,26 +34,19 @@ let listUsers: HttpHandler =
                         20
                 )
 
-            let query =
-                match emailFilter with
-                | Some search -> db.Users.Where(fun u -> u.Username.Contains(search) || u.Email.Contains(search))
-                | None -> db.Users :> IQueryable<UserEntity>
-
-            let! total = query.CountAsync()
-            let offset = (page - 1) * size
-
-            let! users = query.Skip(offset).Take(size).ToListAsync()
+            let! total = userRepo.CountByFilter searchFilter
+            let! users = userRepo.ListByFilter searchFilter page size
 
             let userData =
                 users
-                |> Seq.map (fun u ->
+                |> List.map (fun u ->
                     {| id = u.Id
                        username = u.Username
                        email = u.Email
                        displayName = u.DisplayName
                        role = u.Role
                        status = u.Status |})
-                |> Seq.toArray
+                |> List.toArray
 
             return!
                 json
@@ -81,11 +73,12 @@ let disableUser (userId: Guid) : HttpHandler =
                 with _ ->
                     None
 
-            let db = ctx.GetService<AppDbContext>()
+            let userRepo = ctx.GetService<UserRepository>()
 
-            let! user = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
+            let! userOpt = userRepo.FindById userId
 
-            if obj.ReferenceEquals(user, null) then
+            match userOpt with
+            | None ->
                 ctx.Response.StatusCode <- 404
 
                 return!
@@ -94,14 +87,13 @@ let disableUser (userId: Guid) : HttpHandler =
                            message = "User not found" |}
                         earlyReturn
                         ctx
-            else
+            | Some user ->
                 let updated =
                     { user with
                         Status = statusToString Disabled
                         UpdatedAt = DateTime.UtcNow }
 
-                db.Users.Update(updated) |> ignore
-                let! _ = db.SaveChangesAsync()
+                let! _ = userRepo.Update updated
 
                 return!
                     json
@@ -115,11 +107,12 @@ let disableUser (userId: Guid) : HttpHandler =
 let enableUser (userId: Guid) : HttpHandler =
     fun next ctx ->
         task {
-            let db = ctx.GetService<AppDbContext>()
+            let userRepo = ctx.GetService<UserRepository>()
 
-            let! user = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
+            let! userOpt = userRepo.FindById userId
 
-            if obj.ReferenceEquals(user, null) then
+            match userOpt with
+            | None ->
                 ctx.Response.StatusCode <- 404
 
                 return!
@@ -128,14 +121,13 @@ let enableUser (userId: Guid) : HttpHandler =
                            message = "User not found" |}
                         earlyReturn
                         ctx
-            else
+            | Some user ->
                 let updated =
                     { user with
                         Status = statusToString Active
                         UpdatedAt = DateTime.UtcNow }
 
-                db.Users.Update(updated) |> ignore
-                let! _ = db.SaveChangesAsync()
+                let! _ = userRepo.Update updated
 
                 return!
                     json
@@ -149,11 +141,12 @@ let enableUser (userId: Guid) : HttpHandler =
 let unlockUser (userId: Guid) : HttpHandler =
     fun next ctx ->
         task {
-            let db = ctx.GetService<AppDbContext>()
+            let userRepo = ctx.GetService<UserRepository>()
 
-            let! user = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
+            let! userOpt = userRepo.FindById userId
 
-            if obj.ReferenceEquals(user, null) then
+            match userOpt with
+            | None ->
                 ctx.Response.StatusCode <- 404
 
                 return!
@@ -162,15 +155,14 @@ let unlockUser (userId: Guid) : HttpHandler =
                            message = "User not found" |}
                         earlyReturn
                         ctx
-            else
+            | Some user ->
                 let updated =
                     { user with
                         Status = statusToString Active
                         FailedLoginAttempts = 0
                         UpdatedAt = DateTime.UtcNow }
 
-                db.Users.Update(updated) |> ignore
-                let! _ = db.SaveChangesAsync()
+                let! _ = userRepo.Update updated
 
                 return!
                     json
@@ -184,11 +176,12 @@ let unlockUser (userId: Guid) : HttpHandler =
 let forcePasswordReset (userId: Guid) : HttpHandler =
     fun next ctx ->
         task {
-            let db = ctx.GetService<AppDbContext>()
+            let userRepo = ctx.GetService<UserRepository>()
 
-            let! user = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = userId)
+            let! userOpt = userRepo.FindById userId
 
-            if obj.ReferenceEquals(user, null) then
+            match userOpt with
+            | None ->
                 ctx.Response.StatusCode <- 404
 
                 return!
@@ -197,7 +190,7 @@ let forcePasswordReset (userId: Guid) : HttpHandler =
                            message = "User not found" |}
                         earlyReturn
                         ctx
-            else
+            | Some _ ->
                 let resetToken = Guid.NewGuid().ToString("N")
 
                 return!

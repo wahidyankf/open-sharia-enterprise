@@ -21,7 +21,10 @@ let ``users "(.+)", "(.+)", and "(.+)" are registered`` (u1: string) (u2: string
 [<When>]
 let ``the admin sends GET /api/v1/admin/users`` (state: StepState) =
     let adminToken = state.ExtraData |> Map.tryFind "adminToken"
-    let status, body = listUsers state.Db adminToken 1 20 None |> Async.RunSynchronously
+
+    let status, body =
+        listUsers state.UserRepo state.TokenRepo adminToken 1 20 None
+        |> Async.RunSynchronously
 
     { state with
         Response = Some { Status = status; Body = body }
@@ -32,7 +35,8 @@ let ``the admin sends GET /api/v1/admin/users\?search=(.+)`` (email: string) (st
     let adminToken = state.ExtraData |> Map.tryFind "adminToken"
 
     let status, body =
-        listUsers state.Db adminToken 1 20 (Some email) |> Async.RunSynchronously
+        listUsers state.UserRepo state.TokenRepo adminToken 1 20 (Some email)
+        |> Async.RunSynchronously
 
     { state with
         Response = Some { Status = status; Body = body }
@@ -83,7 +87,9 @@ let ``the admin sends POST /api/v1/admin/users/\{alice_id\}/disable with body (.
 
     match aliceGuid with
     | Some id ->
-        let status, body = disableUser state.Db adminToken id |> Async.RunSynchronously
+        let status, body =
+            disableUser state.UserRepo state.TokenRepo adminToken id
+            |> Async.RunSynchronously
 
         { state with
             Response = Some { Status = status; Body = body }
@@ -109,7 +115,10 @@ let ``alice's account has been disabled by the admin`` (state: StepState) =
                 None)
 
     match aliceGuid with
-    | Some id -> disableUser state.Db adminToken id |> Async.RunSynchronously |> ignore
+    | Some id ->
+        disableUser state.UserRepo state.TokenRepo adminToken id
+        |> Async.RunSynchronously
+        |> ignore
     | None -> ()
 
     state
@@ -127,7 +136,10 @@ let ``alice's account has been disabled`` (state: StepState) =
                 None)
 
     match aliceGuid with
-    | Some id -> disableUser state.Db adminToken id |> Async.RunSynchronously |> ignore
+    | Some id ->
+        disableUser state.UserRepo state.TokenRepo adminToken id
+        |> Async.RunSynchronously
+        |> ignore
     | None -> ()
 
     state
@@ -146,7 +158,9 @@ let ``the admin sends POST /api/v1/admin/users/\{alice_id\}/enable`` (state: Ste
 
     match aliceGuid with
     | Some id ->
-        let status, body = enableUser state.Db adminToken id |> Async.RunSynchronously
+        let status, body =
+            enableUser state.UserRepo state.TokenRepo adminToken id
+            |> Async.RunSynchronously
 
         { state with
             Response = Some { Status = status; Body = body }
@@ -174,7 +188,8 @@ let ``the admin sends POST /api/v1/admin/users/\{alice_id\}/force-password-reset
     match aliceGuid with
     | Some id ->
         let status, body =
-            forcePasswordReset state.Db adminToken id |> Async.RunSynchronously
+            forcePasswordReset state.UserRepo state.TokenRepo adminToken id
+            |> Async.RunSynchronously
 
         { state with
             Response = Some { Status = status; Body = body }

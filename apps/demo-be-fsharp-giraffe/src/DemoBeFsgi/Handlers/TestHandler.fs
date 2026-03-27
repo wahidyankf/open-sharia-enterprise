@@ -5,6 +5,7 @@ open System.Text.Json
 open Giraffe
 open Microsoft.EntityFrameworkCore
 open DemoBeFsgi.Infrastructure.AppDbContext
+open DemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
 open DemoBeFsgi.Contracts.ContractWrappers
 
 let private testApiEnabled () =
@@ -56,12 +57,13 @@ let promoteAdmin: HttpHandler =
                             earlyReturn
                             ctx
                 | Some r ->
-                    let db = ctx.GetService<AppDbContext>()
+                    let userRepo = ctx.GetService<UserRepository>()
                     let username = if r.username = null then "" else r.username
 
-                    let! user = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Username = username)
+                    let! userOpt = userRepo.FindByUsername username
 
-                    if obj.ReferenceEquals(user, null) then
+                    match userOpt with
+                    | None ->
                         ctx.Response.StatusCode <- 404
 
                         return!
@@ -70,10 +72,9 @@ let promoteAdmin: HttpHandler =
                                    message = "User not found" |}
                                 earlyReturn
                                 ctx
-                    else
+                    | Some user ->
                         let updated = { user with Role = "ADMIN" }
-                        db.Users.Update(updated) |> ignore
-                        let! _ = db.SaveChangesAsync()
+                        let! _ = userRepo.Update updated
 
                         return! json {| message = sprintf "User %s promoted to ADMIN" username |} next ctx
             }

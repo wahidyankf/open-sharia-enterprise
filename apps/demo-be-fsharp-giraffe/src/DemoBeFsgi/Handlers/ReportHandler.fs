@@ -1,16 +1,14 @@
 module DemoBeFsgi.Handlers.ReportHandler
 
 open System
-open System.Linq
 open Giraffe
-open Microsoft.EntityFrameworkCore
-open DemoBeFsgi.Infrastructure.AppDbContext
+open DemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
 
 let profitAndLoss: HttpHandler =
     fun next ctx ->
         task {
             let userId = ctx.Items["UserId"] :?> Guid
-            let db = ctx.GetService<AppDbContext>()
+            let expenseRepo = ctx.GetService<ExpenseRepository>()
 
             let fromParam =
                 ctx.TryGetQueryStringValue("startDate")
@@ -41,20 +39,13 @@ let profitAndLoss: HttpHandler =
 
             let currency = currencyParam.ToUpperInvariant()
 
-            let! entries =
-                db.Expenses
-                    .Where(fun e ->
-                        e.UserId = userId
-                        && e.Currency = currency
-                        && e.Date >= fromDate
-                        && e.Date <= toDate)
-                    .ToListAsync()
+            let! entries = expenseRepo.ListByUserAndFilter userId currency fromDate toDate
 
-            let incomeEntries = entries |> Seq.filter (fun e -> e.Type = "INCOME")
-            let expenseEntries = entries |> Seq.filter (fun e -> e.Type = "EXPENSE")
+            let incomeEntries = entries |> List.filter (fun e -> e.Type = "INCOME")
+            let expenseEntries = entries |> List.filter (fun e -> e.Type = "EXPENSE")
 
-            let incomeTotal = incomeEntries |> Seq.sumBy (fun e -> e.Amount)
-            let expenseTotal = expenseEntries |> Seq.sumBy (fun e -> e.Amount)
+            let incomeTotal = incomeEntries |> List.sumBy (fun e -> e.Amount)
+            let expenseTotal = expenseEntries |> List.sumBy (fun e -> e.Amount)
             let net = incomeTotal - expenseTotal
 
             let formatAmount (a: decimal) =
@@ -64,21 +55,21 @@ let profitAndLoss: HttpHandler =
 
             let incomeBreakdown =
                 incomeEntries
-                |> Seq.groupBy (fun e -> e.Category)
-                |> Seq.map (fun (cat, items) ->
+                |> List.groupBy (fun e -> e.Category)
+                |> List.map (fun (cat, items) ->
                     {| category = cat
                        ``type`` = "income"
-                       total = formatAmount (items |> Seq.sumBy (fun e -> e.Amount)) |})
-                |> Seq.toArray
+                       total = formatAmount (items |> List.sumBy (fun e -> e.Amount)) |})
+                |> List.toArray
 
             let expenseBreakdown =
                 expenseEntries
-                |> Seq.groupBy (fun e -> e.Category)
-                |> Seq.map (fun (cat, items) ->
+                |> List.groupBy (fun e -> e.Category)
+                |> List.map (fun (cat, items) ->
                     {| category = cat
                        ``type`` = "expense"
-                       total = formatAmount (items |> Seq.sumBy (fun e -> e.Amount)) |})
-                |> Seq.toArray
+                       total = formatAmount (items |> List.sumBy (fun e -> e.Amount)) |})
+                |> List.toArray
 
             return!
                 json

@@ -38,6 +38,8 @@
     <Compile Include="Domain/Attachment.fs" />
     <Compile Include="Infrastructure/AppDbContext.fs" />
     <Compile Include="Infrastructure/PasswordHasher.fs" />
+    <Compile Include="Infrastructure/Repositories/RepositoryTypes.fs" />
+    <Compile Include="Infrastructure/Repositories/EfRepositories.fs" />
     <Compile Include="Auth/JwtService.fs" />
     <Compile Include="Auth/JwtMiddleware.fs" />
     <Compile Include="Auth/AdminMiddleware.fs" />

@@ -8,7 +8,9 @@ open DemoBeFsgi.Tests.Integration.Steps.CommonSteps
 
 [<When>]
 let ``alice sends GET /api/v1/users/me`` (state: StepState) =
-    let status, body = getProfile state.Db state.AccessToken |> Async.RunSynchronously
+    let status, body =
+        getProfile state.UserRepo state.TokenRepo state.AccessToken
+        |> Async.RunSynchronously
 
     { state with
         Response = Some { Status = status; Body = body }
@@ -27,7 +29,8 @@ let ``alice sends PATCH /api/v1/users/me with body (.+)`` (bodyStr: string) (sta
             null
 
     let status, body =
-        updateProfile state.Db state.AccessToken displayName |> Async.RunSynchronously
+        updateProfile state.UserRepo state.TokenRepo state.AccessToken displayName
+        |> Async.RunSynchronously
 
     { state with
         Response = Some { Status = status; Body = body }
@@ -52,7 +55,8 @@ let ``alice sends POST /api/v1/users/me/password with body (.+)`` (bodyStr: stri
             null, null
 
     let status, body =
-        changePassword state.Db state.AccessToken oldPw newPw |> Async.RunSynchronously
+        changePassword state.UserRepo state.TokenRepo state.AccessToken oldPw newPw
+        |> Async.RunSynchronously
 
     { state with
         Response = Some { Status = status; Body = body }
@@ -60,7 +64,9 @@ let ``alice sends POST /api/v1/users/me/password with body (.+)`` (bodyStr: stri
 
 [<When>]
 let ``alice sends POST /api/v1/users/me/deactivate`` (state: StepState) =
-    let status, body = deactivate state.Db state.AccessToken |> Async.RunSynchronously
+    let status, body =
+        deactivate state.UserRepo state.TokenRepo state.AccessToken
+        |> Async.RunSynchronously
 
     { state with
         Response = Some { Status = status; Body = body }
@@ -68,5 +74,8 @@ let ``alice sends POST /api/v1/users/me/deactivate`` (state: StepState) =
 
 [<Given>]
 let ``alice has deactivated her own account via POST /api/v1/users/me/deactivate`` (state: StepState) =
-    deactivate state.Db state.AccessToken |> Async.RunSynchronously |> ignore
+    deactivate state.UserRepo state.TokenRepo state.AccessToken
+    |> Async.RunSynchronously
+    |> ignore
+
     state

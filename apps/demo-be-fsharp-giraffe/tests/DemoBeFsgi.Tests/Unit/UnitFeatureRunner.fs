@@ -5,8 +5,8 @@ open System.IO
 open System.Reflection
 open TickSpec
 open Xunit
-open DemoBeFsgi.Tests.TestFixture
 open DemoBeFsgi.Tests.State
+open DemoBeFsgi.Tests.InMemory.InMemoryRepositories
 
 /// Unit-level BDD runner.
 ///
@@ -14,7 +14,7 @@ open DemoBeFsgi.Tests.State
 /// marks every scenario with [Trait("Category", "Unit")] so they are picked up by
 /// `dotnet test --filter Category=Unit`.
 ///
-/// Uses a fresh SQLite in-memory AppDbContext per scenario (via createDb) so no
+/// Uses fresh in-memory repository function records per scenario so no
 /// external services are required. Step definitions are shared with the integration
 /// runner: all TickSpec [Given]/[When]/[Then] functions in the Integration.Steps.*
 /// modules are discovered from the executing assembly and resolve identically here.
@@ -32,11 +32,16 @@ let private getFeatureFile (namePart: string) =
     else
         None
 
-type private UnitScenarioServiceProvider(db: DemoBeFsgi.Infrastructure.AppDbContext.AppDbContext) =
+type private UnitScenarioServiceProvider() =
     interface IServiceProvider with
         member _.GetService(serviceType: Type) =
             if serviceType = typeof<StepState> then
-                empty db :> obj
+                let userRepo = createUserRepo ()
+                let expenseRepo = createExpenseRepo ()
+                let attachmentRepo = createAttachmentRepo ()
+                let tokenRepo = createTokenRepo ()
+                let refreshTokenRepo = createRefreshTokenRepo ()
+                empty userRepo expenseRepo attachmentRepo tokenRepo refreshTokenRepo :> obj
             else
                 null
 
@@ -57,10 +62,7 @@ let private buildScenarioData (namePart: string) : seq<obj[]> =
     | Some path ->
         let defs = StepDefinitions(assembly)
 
-        defs.ServiceProviderFactory <-
-            fun () ->
-                let db, _cleanup = createDb ()
-                UnitScenarioServiceProvider(db) :> IServiceProvider
+        defs.ServiceProviderFactory <- fun () -> UnitScenarioServiceProvider() :> IServiceProvider
 
         let lines = preprocessFeatureLines path
         let feature = defs.GenerateFeature(path, lines)

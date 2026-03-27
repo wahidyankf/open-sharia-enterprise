@@ -1,21 +1,21 @@
 module DemoBeFsgi.Handlers.AttachmentHandler
 
 open System
-open System.Linq
 open Giraffe
-open Microsoft.EntityFrameworkCore
 open DemoBeFsgi.Infrastructure.AppDbContext
+open DemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
 open DemoBeFsgi.Domain.Attachment
 
 let upload (expenseId: Guid) : HttpHandler =
     fun _next ctx ->
         task {
             let userId = ctx.Items["UserId"] :?> Guid
-            let db = ctx.GetService<AppDbContext>()
+            let expenseRepo = ctx.GetService<ExpenseRepository>()
 
-            let! expense = db.Expenses.AsNoTracking().FirstOrDefaultAsync(fun e -> e.Id = expenseId)
+            let! expenseOpt = expenseRepo.FindById expenseId
 
-            if obj.ReferenceEquals(expense, null) then
+            match expenseOpt with
+            | None ->
                 ctx.Response.StatusCode <- 404
 
                 return!
@@ -24,7 +24,7 @@ let upload (expenseId: Guid) : HttpHandler =
                            message = "Expense not found" |}
                         earlyReturn
                         ctx
-            elif expense.UserId <> userId then
+            | Some expense when expense.UserId <> userId ->
                 ctx.Response.StatusCode <- 403
 
                 return!
@@ -33,7 +33,7 @@ let upload (expenseId: Guid) : HttpHandler =
                            message = "Access denied" |}
                         earlyReturn
                         ctx
-            else
+            | Some _ ->
                 let form =
                     try
                         ctx.Request.ReadFormAsync() |> Async.AwaitTask |> Async.RunSynchronously |> Some
@@ -124,8 +124,8 @@ let upload (expenseId: Guid) : HttpHandler =
                                       Data = data
                                       CreatedAt = now }
 
-                                db.Attachments.Add(entity) |> ignore
-                                let! _ = db.SaveChangesAsync()
+                                let attachmentRepo = ctx.GetService<AttachmentRepository>()
+                                let! _ = attachmentRepo.Create entity
 
                                 ctx.Response.StatusCode <- 201
 
@@ -144,11 +144,12 @@ let list (expenseId: Guid) : HttpHandler =
     fun next ctx ->
         task {
             let userId = ctx.Items["UserId"] :?> Guid
-            let db = ctx.GetService<AppDbContext>()
+            let expenseRepo = ctx.GetService<ExpenseRepository>()
 
-            let! expense = db.Expenses.AsNoTracking().FirstOrDefaultAsync(fun e -> e.Id = expenseId)
+            let! expenseOpt = expenseRepo.FindById expenseId
 
-            if obj.ReferenceEquals(expense, null) then
+            match expenseOpt with
+            | None ->
                 ctx.Response.StatusCode <- 404
 
                 return!
@@ -157,7 +158,7 @@ let list (expenseId: Guid) : HttpHandler =
                            message = "Expense not found" |}
                         earlyReturn
                         ctx
-            elif expense.UserId <> userId then
+            | Some expense when expense.UserId <> userId ->
                 ctx.Response.StatusCode <- 403
 
                 return!
@@ -166,18 +167,19 @@ let list (expenseId: Guid) : HttpHandler =
                            message = "Access denied" |}
                         earlyReturn
                         ctx
-            else
-                let! attachments = db.Attachments.Where(fun a -> a.ExpenseId = expenseId).ToListAsync()
+            | Some _ ->
+                let attachmentRepo = ctx.GetService<AttachmentRepository>()
+                let! attachments = attachmentRepo.ListByExpense expenseId
 
                 let data =
                     attachments
-                    |> Seq.map (fun a ->
+                    |> List.map (fun a ->
                         {| id = a.Id
                            filename = a.Filename
                            contentType = a.ContentType
                            size = a.Size
                            url = sprintf "/api/v1/expenses/%O/attachments/%O/download" expenseId a.Id |})
-                    |> Seq.toArray
+                    |> List.toArray
 
                 return! json {| attachments = data |} next ctx
         }
@@ -186,11 +188,12 @@ let delete (expenseId: Guid, attachmentId: Guid) : HttpHandler =
     fun _next ctx ->
         task {
             let userId = ctx.Items["UserId"] :?> Guid
-            let db = ctx.GetService<AppDbContext>()
+            let expenseRepo = ctx.GetService<ExpenseRepository>()
 
-            let! expense = db.Expenses.AsNoTracking().FirstOrDefaultAsync(fun e -> e.Id = expenseId)
+            let! expenseOpt = expenseRepo.FindById expenseId
 
-            if obj.ReferenceEquals(expense, null) then
+            match expenseOpt with
+            | None ->
                 ctx.Response.StatusCode <- 404
 
                 return!
@@ -199,7 +202,7 @@ let delete (expenseId: Guid, attachmentId: Guid) : HttpHandler =
                            message = "Expense not found" |}
                         earlyReturn
                         ctx
-            elif expense.UserId <> userId then
+            | Some expense when expense.UserId <> userId ->
                 ctx.Response.StatusCode <- 403
 
                 return!
@@ -208,13 +211,12 @@ let delete (expenseId: Guid, attachmentId: Guid) : HttpHandler =
                            message = "Access denied" |}
                         earlyReturn
                         ctx
-            else
-                let! attachment =
-                    db.Attachments
-                        .AsNoTracking()
-                        .FirstOrDefaultAsync(fun a -> a.Id = attachmentId && a.ExpenseId = expenseId)
+            | Some _ ->
+                let attachmentRepo = ctx.GetService<AttachmentRepository>()
+                let! attachmentOpt = attachmentRepo.FindById attachmentId expenseId
 
-                if obj.ReferenceEquals(attachment, null) then
+                match attachmentOpt with
+                | None ->
                     ctx.Response.StatusCode <- 404
 
                     return!
@@ -223,9 +225,8 @@ let delete (expenseId: Guid, attachmentId: Guid) : HttpHandler =
                                message = "Attachment not found" |}
                             earlyReturn
                             ctx
-                else
-                    db.Attachments.Remove(attachment) |> ignore
-                    let! _ = db.SaveChangesAsync()
+                | Some attachment ->
+                    do! attachmentRepo.Delete attachment
 
                     ctx.Response.StatusCode <- 204
                     return! text "" earlyReturn ctx

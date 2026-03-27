@@ -14,6 +14,8 @@ let ``a user "(.+)" is registered and deactivated`` (username: string) (state: S
     let accessToken, _ = loginUser state username "Str0ng#Pass1"
 
     // Deactivate the account
-    deactivate state.Db accessToken |> Async.RunSynchronously |> ignore
+    deactivate state.UserRepo state.TokenRepo accessToken
+    |> Async.RunSynchronously
+    |> ignore
 
     state

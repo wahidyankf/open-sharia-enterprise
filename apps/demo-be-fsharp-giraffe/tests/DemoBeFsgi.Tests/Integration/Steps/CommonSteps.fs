@@ -47,12 +47,19 @@ let internal applyResult (status: int) (body: string) (state: StepState) : StepS
 
 let internal registerUser (state: StepState) (username: string) (email: string) (password: string) : string =
     let pw = decode password
-    let status, body = register state.Db username email pw |> Async.RunSynchronously
+
+    let status, body =
+        register state.UserRepo username email pw |> Async.RunSynchronously
+
     body
 
 let internal loginUser (state: StepState) (username: string) (password: string) : string option * string option =
     let pw = decode password
-    let _status, body = login state.Db username pw |> Async.RunSynchronously
+
+    let _status, body =
+        login state.UserRepo state.RefreshTokenRepo username pw
+        |> Async.RunSynchronously
+
     let accessToken = getStringProp body "accessToken"
     let refreshToken = getStringProp body "refreshToken"
     accessToken, refreshToken
@@ -97,7 +104,9 @@ let ``"(.+)" has logged in and stored the access token`` (username: string) (sta
             let at, _ = loginUser state username pw
 
             if at.IsSome then
-                let _status, body = getProfile state.Db at |> Async.RunSynchronously
+                let _status, body =
+                    getProfile state.UserRepo state.TokenRepo at |> Async.RunSynchronously
+
                 accessToken <- at
                 userId <- getStringProp body "id"
 
@@ -117,7 +126,9 @@ let ``"(.+)" has logged in and stored the access token and refresh token`` (user
             let at, rt = loginUser state username pw
 
             if at.IsSome then
-                let _status, body = getProfile state.Db at |> Async.RunSynchronously
+                let _status, body =
+                    getProfile state.UserRepo state.TokenRepo at |> Async.RunSynchronously
+
                 accessToken <- at
                 refreshToken <- rt
                 userId <- getStringProp body "id"
@@ -222,7 +233,7 @@ let private dispatchCall
             | true, el -> el.GetString()
             | _ -> ""
 
-        register state.Db (str "username") (str "email") (str "password")
+        register state.UserRepo (str "username") (str "email") (str "password")
         |> Async.RunSynchronously
     elif u = "/api/v1/auth/login" && m = "POST" then
         let doc = JsonDocument.Parse(if body = "" then "{}" else body)
@@ -233,36 +244,58 @@ let private dispatchCall
             | true, el -> el.GetString()
             | _ -> ""
 
-        login state.Db (str "username") (str "password") |> Async.RunSynchronously
+        login state.UserRepo state.RefreshTokenRepo (str "username") (str "password")
+        |> Async.RunSynchronously
     elif u = "/api/v1/auth/refresh" && m = "POST" then
         let rt = parseRefreshBody body
-        refresh state.Db (if rt = null then "" else rt) |> Async.RunSynchronously
+
+        refresh state.UserRepo state.RefreshTokenRepo (if rt = null then "" else rt)
+        |> Async.RunSynchronously
     elif u = "/api/v1/auth/logout" && m = "POST" then
-        logout state.Db token |> Async.RunSynchronously
+        logout state.TokenRepo token |> Async.RunSynchronously
     elif u = "/api/v1/auth/logout-all" && m = "POST" then
-        logoutAll state.Db token |> Async.RunSynchronously
+        logoutAll state.UserRepo state.TokenRepo state.RefreshTokenRepo token
+        |> Async.RunSynchronously
     elif u = "/health" && m = "GET" then
         health ()
     elif u = "/api/v1/users/me" && m = "GET" then
-        getProfile state.Db token |> Async.RunSynchronously
+        getProfile state.UserRepo state.TokenRepo token |> Async.RunSynchronously
     elif u = "/api/v1/users/me" && m = "PATCH" then
         let displayName = parseProfileBody body
-        updateProfile state.Db token displayName |> Async.RunSynchronously
+
+        updateProfile state.UserRepo state.TokenRepo token displayName
+        |> Async.RunSynchronously
     elif u = "/api/v1/users/me/password" && m = "POST" then
         let oldPw, newPw = parsePasswordBody body
-        changePassword state.Db token oldPw newPw |> Async.RunSynchronously
+
+        changePassword state.UserRepo state.TokenRepo token oldPw newPw
+        |> Async.RunSynchronously
     elif u = "/api/v1/users/me/deactivate" && m = "POST" then
-        deactivate state.Db token |> Async.RunSynchronously
+        deactivate state.UserRepo state.TokenRepo token |> Async.RunSynchronously
     elif u = "/api/v1/expenses" && m = "POST" then
         let amount, currency, category, description, date, entryType, quantity, unit =
             parseExpenseBody body
 
-        createExpense state.Db token amount currency category description date entryType quantity unit
+        createExpense
+            state.UserRepo
+            state.TokenRepo
+            state.ExpenseRepo
+            token
+            amount
+            currency
+            category
+            description
+            date
+            entryType
+            quantity
+            unit
         |> Async.RunSynchronously
     elif u = "/api/v1/expenses" && m = "GET" then
-        listExpenses state.Db token 1 20 |> Async.RunSynchronously
+        listExpenses state.UserRepo state.TokenRepo state.ExpenseRepo token 1 20
+        |> Async.RunSynchronously
     elif u = "/api/v1/expenses/summary" && m = "GET" then
-        expenseSummary state.Db token |> Async.RunSynchronously
+        expenseSummary state.UserRepo state.TokenRepo state.ExpenseRepo token
+        |> Async.RunSynchronously
     elif u.StartsWith("/api/v1/expenses/") && u.EndsWith("/attachments") && m = "GET" then
         let expId =
             let parts = u.Split('/')
@@ -272,7 +305,8 @@ let private dispatchCall
             with _ ->
                 System.Guid.Empty
 
-        listAttachments state.Db token expId |> Async.RunSynchronously
+        listAttachments state.UserRepo state.TokenRepo state.ExpenseRepo state.AttachmentRepo token expId
+        |> Async.RunSynchronously
     elif u.StartsWith("/api/v1/admin/users") && m = "GET" then
         let emailFilter =
             if url.Contains("?search=") then
@@ -281,10 +315,11 @@ let private dispatchCall
             else
                 None
 
-        listUsers state.Db token 1 20 emailFilter |> Async.RunSynchronously
+        listUsers state.UserRepo state.TokenRepo token 1 20 emailFilter
+        |> Async.RunSynchronously
     elif url.StartsWith("/test/set-admin-role/") && m = "POST" then
         let username = url.Substring("/test/set-admin-role/".Length)
-        setAdminRole state.Db username |> Async.RunSynchronously
+        setAdminRole state.UserRepo username |> Async.RunSynchronously
     elif u = "/.well-known/jwks.json" && m = "GET" then
         getJwks ()
     elif u.StartsWith("/api/v1/tokens") && m = "GET" then

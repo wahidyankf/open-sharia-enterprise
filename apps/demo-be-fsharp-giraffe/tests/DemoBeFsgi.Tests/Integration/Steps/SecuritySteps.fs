@@ -11,19 +11,22 @@ open DemoBeFsgi.Tests.Integration.Steps.TokenManagementSteps
 let ``"(.+)" has had the maximum number of failed login attempts`` (username: string) (state: StepState) =
     // Send 5 failed login attempts with a wrong password
     for _ in 1..5 do
-        login state.Db username "WrongPass1234!" |> Async.RunSynchronously |> ignore
+        login state.UserRepo state.RefreshTokenRepo username "WrongPass1234!"
+        |> Async.RunSynchronously
+        |> ignore
 
     // Get alice's user ID via admin: register a temp admin, set admin role, list users
     registerUser state "tempAdmin_fail" "tempAdmin_fail@example.com" "Str0ng#Admin1"
     |> ignore
 
-    setAdminRole state.Db "tempAdmin_fail" |> Async.RunSynchronously |> ignore
+    setAdminRole state.UserRepo "tempAdmin_fail" |> Async.RunSynchronously |> ignore
     let adminToken, _ = loginUser state "tempAdmin_fail" "Str0ng#Admin1"
 
     let email = $"{username}@example.com"
 
     let _status, body =
-        listUsers state.Db adminToken 1 20 (Some email) |> Async.RunSynchronously
+        listUsers state.UserRepo state.TokenRepo adminToken 1 20 (Some email)
+        |> Async.RunSynchronously
 
     let userId = ref ""
 
@@ -76,17 +79,20 @@ let ``a user "(.+)" is registered and locked after too many failed logins`` (use
 
     // Trigger lockout with wrong password
     for _ in 1..5 do
-        login state.Db username "WrongPass123!" |> Async.RunSynchronously |> ignore
+        login state.UserRepo state.RefreshTokenRepo username "WrongPass123!"
+        |> Async.RunSynchronously
+        |> ignore
 
     // Get alice's ID by registering a temp admin and listing users
     registerUser state "tempAdmin_lock" "tempAdmin_lock@example.com" "Str0ng#Admin1"
     |> ignore
 
-    setAdminRole state.Db "tempAdmin_lock" |> Async.RunSynchronously |> ignore
+    setAdminRole state.UserRepo "tempAdmin_lock" |> Async.RunSynchronously |> ignore
     let adminToken, _ = loginUser state "tempAdmin_lock" "Str0ng#Admin1"
 
     let _status, body =
-        listUsers state.Db adminToken 1 20 (Some email) |> Async.RunSynchronously
+        listUsers state.UserRepo state.TokenRepo adminToken 1 20 (Some email)
+        |> Async.RunSynchronously
 
     let aliceId = ref ""
 
@@ -112,14 +118,15 @@ let ``an admin has unlocked alice's account`` (state: StepState) =
     registerUser state "testadmin_sec" "testadmin_sec@example.com" "Str0ng#Admin1"
     |> ignore
 
-    setAdminRole state.Db "testadmin_sec" |> Async.RunSynchronously |> ignore
+    setAdminRole state.UserRepo "testadmin_sec" |> Async.RunSynchronously |> ignore
     let adminToken, _ = loginUser state "testadmin_sec" "Str0ng#Admin1"
 
     // Find alice's user ID
     let email = "alice@example.com"
 
     let _status, body =
-        listUsers state.Db adminToken 1 20 (Some email) |> Async.RunSynchronously
+        listUsers state.UserRepo state.TokenRepo adminToken 1 20 (Some email)
+        |> Async.RunSynchronously
 
     let aliceId = ref ""
 
@@ -144,7 +151,10 @@ let ``an admin has unlocked alice's account`` (state: StepState) =
                 None
 
         match aliceGuid with
-        | Some id -> unlockUser state.Db adminToken id |> Async.RunSynchronously |> ignore
+        | Some id ->
+            unlockUser state.UserRepo state.TokenRepo adminToken id
+            |> Async.RunSynchronously
+            |> ignore
         | None -> ()
 
     { state with
@@ -164,7 +174,9 @@ let ``the admin sends POST /api/v1/admin/users/\{alice_id\}/unlock`` (state: Ste
 
     match aliceGuid with
     | Some id ->
-        let status, body = unlockUser state.Db adminToken id |> Async.RunSynchronously
+        let status, body =
+            unlockUser state.UserRepo state.TokenRepo adminToken id
+            |> Async.RunSynchronously
 
         { state with
             Response = Some { Status = status; Body = body }

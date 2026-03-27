@@ -9,6 +9,8 @@ open Microsoft.Extensions.Hosting
 open Giraffe
 open DbUp
 open DemoBeFsgi.Infrastructure.AppDbContext
+open DemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
+open DemoBeFsgi.Infrastructure.Repositories.EfRepositories
 open DemoBeFsgi.Auth.JwtMiddleware
 open DemoBeFsgi.Auth.AdminMiddleware
 
@@ -19,17 +21,17 @@ let healthHandler: HttpHandler = fun next ctx -> json {| status = "UP" |} next c
 let setAdminRoleForUser (username: string) : HttpHandler =
     fun next ctx ->
         task {
-            let db = ctx.GetService<AppDbContext>()
+            let userRepo = ctx.GetService<UserRepository>()
 
-            let! user = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Username = username)
+            let! userOpt = userRepo.FindByUsername username
 
-            if obj.ReferenceEquals(user, null) then
+            match userOpt with
+            | None ->
                 ctx.Response.StatusCode <- 404
                 return! json {| error = "Not Found" |} earlyReturn ctx
-            else
+            | Some user ->
                 let updated = { user with Role = "ADMIN" }
-                db.Users.Update(updated) |> ignore
-                let! _ = db.SaveChangesAsync()
+                let! _ = userRepo.Update updated
                 return! json {| message = "Role set to admin" |} next ctx
         }
 
@@ -109,6 +111,32 @@ let configureServices (services: IServiceCollection) =
     else
         services.AddDbContext<AppDbContext>(fun opts -> opts.UseSqlite("DataSource=demo.db") |> ignore)
         |> ignore
+
+    // Register repository function records as scoped services (AppDbContext is scoped)
+    services.AddScoped<UserRepository>(fun sp ->
+        let db = sp.GetRequiredService<AppDbContext>()
+        createUserRepo db)
+    |> ignore
+
+    services.AddScoped<ExpenseRepository>(fun sp ->
+        let db = sp.GetRequiredService<AppDbContext>()
+        createExpenseRepo db)
+    |> ignore
+
+    services.AddScoped<AttachmentRepository>(fun sp ->
+        let db = sp.GetRequiredService<AppDbContext>()
+        createAttachmentRepo db)
+    |> ignore
+
+    services.AddScoped<TokenRepository>(fun sp ->
+        let db = sp.GetRequiredService<AppDbContext>()
+        createTokenRepo db)
+    |> ignore
+
+    services.AddScoped<RefreshTokenRepository>(fun sp ->
+        let db = sp.GetRequiredService<AppDbContext>()
+        createRefreshTokenRepo db)
+    |> ignore
 
 type Marker = class end
 
