@@ -1115,7 +1115,6 @@ let uploadAttachment
                               ContentType = contentType
                               Size = int64 data.Length
                               Data = data
-                              Url = url
                               CreatedAt = now }
 
                         db.Attachments.Add(entity) |> ignore
@@ -1126,8 +1125,8 @@ let uploadAttachment
                                 {| id = attachmentId
                                    filename = entity.Filename
                                    contentType = entity.ContentType
-                                   file_size = entity.Size
-                                   url = entity.Url |}
+                                   size = entity.Size
+                                   url = url |}
     }
 
 let listAttachments (db: AppDbContext) (token: string option) (expenseId: Guid) : Async<int * string> =
@@ -1156,8 +1155,8 @@ let listAttachments (db: AppDbContext) (token: string option) (expenseId: Guid) 
                         {| id = a.Id
                            filename = a.Filename
                            contentType = a.ContentType
-                           file_size = a.Size
-                           url = a.Url |})
+                           size = a.Size
+                           url = sprintf "/api/v1/expenses/%O/attachments/%O/download" expenseId a.Id |})
                     |> Seq.toArray
 
                 return ok {| attachments = data |}

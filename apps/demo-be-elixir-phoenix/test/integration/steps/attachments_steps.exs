@@ -93,7 +93,7 @@ defmodule DemoBeExphWeb.Integration.AttachmentsSteps do
   defwhen ~r/^alice sends DELETE \/api\/v1\/expenses\/\{expenseId\}\/attachments\/\{randomAttachmentId\}$/,
           _vars,
           %{access_token: access_token, expense_id: expense_id} = state do
-    random_id = :rand.uniform(999_999_999)
+    random_id = Ecto.UUID.generate()
     response = ServiceLayer.delete_attachment(access_token, expense_id, random_id)
     {:ok, Map.put(state, :response, response)}
   end

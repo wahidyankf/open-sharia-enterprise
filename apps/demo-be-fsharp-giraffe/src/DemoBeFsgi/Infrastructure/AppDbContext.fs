@@ -75,8 +75,6 @@ type AttachmentEntity =
       Size: int64
       [<Column("data")>]
       Data: byte[]
-      [<Column("url")>]
-      Url: string
       [<Column("created_at")>]
       CreatedAt: DateTime }
 

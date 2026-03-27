@@ -122,7 +122,6 @@ let upload (expenseId: Guid) : HttpHandler =
                                       ContentType = contentType
                                       Size = file.Length
                                       Data = data
-                                      Url = url
                                       CreatedAt = now }
 
                                 db.Attachments.Add(entity) |> ignore
@@ -135,8 +134,8 @@ let upload (expenseId: Guid) : HttpHandler =
                                         {| id = attachmentId
                                            filename = entity.Filename
                                            contentType = entity.ContentType
-                                           file_size = entity.Size
-                                           url = entity.Url |}
+                                           size = entity.Size
+                                           url = url |}
                                         earlyReturn
                                         ctx
         }
@@ -176,8 +175,8 @@ let list (expenseId: Guid) : HttpHandler =
                         {| id = a.Id
                            filename = a.Filename
                            contentType = a.ContentType
-                           file_size = a.Size
-                           url = a.Url |})
+                           size = a.Size
+                           url = sprintf "/api/v1/expenses/%O/attachments/%O/download" expenseId a.Id |})
                     |> Seq.toArray
 
                 return! json {| attachments = data |} next ctx

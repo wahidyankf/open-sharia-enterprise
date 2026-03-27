@@ -389,22 +389,23 @@ func (s *GORMStore) PLReport(_ context.Context, q PLReportQuery) (*domain.PLRepo
 	return report, nil
 }
 
-// ResetDB deletes all user-created data (for test use only).
-// Deletions follow FK constraint order: attachments → expenses → refresh_tokens → revoked_tokens → users.
+// ResetDB hard-deletes all user-created data (for test use only).
+// Uses TRUNCATE CASCADE so FK-referenced rows are removed in a single
+// statement regardless of soft-delete fields (deleted_at).
 func (s *GORMStore) ResetDB(_ context.Context) error {
-	if err := s.db.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&domain.Attachment{}).Error; err != nil {
-		return err
+	tables := []string{
+		"attachments",
+		"expenses",
+		"revoked_tokens",
+		"refresh_tokens",
+		"users",
 	}
-	if err := s.db.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&domain.Expense{}).Error; err != nil {
-		return err
+	for _, table := range tables {
+		if err := s.db.Exec("TRUNCATE TABLE " + table + " CASCADE").Error; err != nil {
+			return fmt.Errorf("truncate %s: %w", table, err)
+		}
 	}
-	if err := s.db.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&domain.RefreshToken{}).Error; err != nil {
-		return err
-	}
-	if err := s.db.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&domain.RevokedToken{}).Error; err != nil {
-		return err
-	}
-	return s.db.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&domain.User{}).Error
+	return nil
 }
 
 // PromoteToAdmin sets the role of the given username to "ADMIN" (for test use only).

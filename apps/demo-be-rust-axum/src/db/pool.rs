@@ -15,7 +15,9 @@ async fn run_migrations(pool: &AnyPool) -> Result<(), sqlx::Error> {
         MIGRATION_004,
         MIGRATION_005,
     ] {
-        sqlx::query(sql).execute(pool).await?;
+        for statement in sql.split(';').filter(|s| !s.trim().is_empty()) {
+            sqlx::query(statement).execute(pool).await?;
+        }
     }
     Ok(())
 }
