@@ -2,12 +2,19 @@ use sqlx::any::AnyPoolOptions;
 use sqlx::AnyPool;
 
 const MIGRATION_001: &str = include_str!("migrations/001_users.sql");
-const MIGRATION_002: &str = include_str!("migrations/002_token_revocations.sql");
-const MIGRATION_003: &str = include_str!("migrations/003_expenses.sql");
-const MIGRATION_004: &str = include_str!("migrations/004_attachments.sql");
+const MIGRATION_002: &str = include_str!("migrations/002_refresh_tokens.sql");
+const MIGRATION_003: &str = include_str!("migrations/003_revoked_tokens.sql");
+const MIGRATION_004: &str = include_str!("migrations/004_expenses.sql");
+const MIGRATION_005: &str = include_str!("migrations/005_attachments.sql");
 
 async fn run_migrations(pool: &AnyPool) -> Result<(), sqlx::Error> {
-    for sql in [MIGRATION_001, MIGRATION_002, MIGRATION_003, MIGRATION_004] {
+    for sql in [
+        MIGRATION_001,
+        MIGRATION_002,
+        MIGRATION_003,
+        MIGRATION_004,
+        MIGRATION_005,
+    ] {
         sqlx::query(sql).execute(pool).await?;
     }
     Ok(())

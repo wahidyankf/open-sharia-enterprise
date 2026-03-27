@@ -1,12 +1,12 @@
 -- +goose Up
 CREATE TABLE attachments (
-    id           TEXT    NOT NULL PRIMARY KEY,
-    expense_id   TEXT    NOT NULL,
-    filename     TEXT    NOT NULL,
-    content_type TEXT    NOT NULL,
-    size         BIGINT  NOT NULL,
-    url          TEXT    NOT NULL DEFAULT '',
-    created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    id           UUID         NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+    expense_id   UUID         NOT NULL REFERENCES expenses(id) ON DELETE CASCADE,
+    filename     VARCHAR(255) NOT NULL,
+    content_type VARCHAR(100) NOT NULL,
+    size         BIGINT       NOT NULL,
+    data         BYTEA        NOT NULL,
+    created_at   TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX idx_attachments_expense_id ON attachments (expense_id);

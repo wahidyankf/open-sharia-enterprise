@@ -33,24 +33,28 @@ const (
 
 // User represents a user account in the system.
 type User struct {
-	ID             string     `gorm:"primaryKey" json:"id"`
-	Username       string     `gorm:"uniqueIndex;not null" json:"username"`
-	Email          string     `gorm:"not null" json:"email"`
-	PasswordHash   string     `gorm:"not null" json:"-"`
-	DisplayName    string     `json:"display_name"`
-	Status         UserStatus `gorm:"not null;default:ACTIVE" json:"status"`
-	Role           Role       `gorm:"not null;default:USER" json:"role"`
-	FailedAttempts int        `gorm:"default:0" json:"failed_attempts,omitempty"`
-	LockedAt       *time.Time `json:"locked_at,omitempty"`
-	CreatedAt      time.Time  `json:"created_at"`
-	UpdatedAt      time.Time  `json:"updated_at"`
+	ID                  string     `gorm:"primaryKey" json:"id"`
+	Username            string     `gorm:"uniqueIndex;not null" json:"username"`
+	Email               string     `gorm:"not null" json:"email"`
+	PasswordHash        string     `gorm:"not null" json:"-"`
+	DisplayName         string     `json:"display_name"`
+	Role                Role       `gorm:"not null;default:USER" json:"role"`
+	Status              UserStatus `gorm:"not null;default:ACTIVE" json:"status"`
+	FailedLoginAttempts int        `gorm:"default:0" json:"failed_login_attempts,omitempty"`
+	PasswordResetToken  *string    `json:"-"`
+	CreatedAt           time.Time  `json:"created_at"`
+	CreatedBy           string     `gorm:"default:system" json:"-"`
+	UpdatedAt           time.Time  `json:"updated_at"`
+	UpdatedBy           string     `gorm:"default:system" json:"-"`
+	DeletedAt           *time.Time `json:"-"`
+	DeletedBy           *string    `json:"-"`
 }
 
 // RefreshToken represents a stored refresh token.
 type RefreshToken struct {
 	ID        string    `gorm:"primaryKey"`
 	UserID    string    `gorm:"not null;index"`
-	TokenStr  string    `gorm:"uniqueIndex;not null"`
+	TokenHash string    `gorm:"column:token_hash;uniqueIndex;not null"`
 	Revoked   bool      `gorm:"default:false"`
 	ExpiresAt time.Time `gorm:"not null"`
 	CreatedAt time.Time
@@ -58,9 +62,10 @@ type RefreshToken struct {
 
 // RevokedToken represents a revoked access token JTI.
 type RevokedToken struct {
-	JTI       string    `gorm:"primaryKey"`
-	ExpiresAt time.Time `gorm:"not null"`
-	CreatedAt time.Time
+	ID        string    `gorm:"primaryKey"`
+	JTI       string    `gorm:"column:jti;uniqueIndex;not null"`
+	UserID    string    `gorm:"column:user_id;not null"`
+	RevokedAt time.Time `gorm:"column:revoked_at;not null"`
 }
 
 // TableName overrides the default GORM table name.

@@ -1,6 +1,7 @@
 """SQLAlchemy repository implementations."""
 
-from datetime import UTC, datetime
+import uuid as _uuid_mod
+from datetime import date, datetime
 from decimal import Decimal
 
 from sqlalchemy import func, select
@@ -12,6 +13,11 @@ from demo_be_python_fastapi.infrastructure.models import (
     RevokedTokenModel,
     UserModel,
 )
+
+
+def _to_str(value: str | _uuid_mod.UUID) -> str:
+    """Coerce a UUID or string to a string for session.get() lookups."""
+    return str(value)
 
 
 class UserRepository:
@@ -47,7 +53,7 @@ class UserRepository:
         ).scalar_one_or_none()
 
     def find_by_id(self, user_id: str) -> UserModel | None:
-        return self._db.get(UserModel, user_id)
+        return self._db.get(UserModel, _to_str(user_id))
 
     def update_status(self, user_id: str, status: str) -> UserModel | None:
         user = self.find_by_id(user_id)
@@ -127,50 +133,29 @@ class RevokedTokenRepository:
         self._db = db
 
     def revoke(self, jti: str, user_id: str) -> None:
-        existing = self._db.get(RevokedTokenModel, jti)
+        # Check if already revoked by jti — idempotent
+        existing = self._db.execute(
+            select(RevokedTokenModel).where(RevokedTokenModel.jti == jti)
+        ).scalar_one_or_none()
         if existing is not None:
-            return  # Already revoked — idempotent
+            return
         token = RevokedTokenModel(jti=jti, user_id=user_id)
         self._db.add(token)
         self._db.commit()
 
     def is_revoked(self, jti: str, user_id: str, issued_at: datetime | None = None) -> bool:
-        # Check direct revocation
-        token = self._db.get(RevokedTokenModel, jti)
-        if token is not None:
-            return True
-        # Check revoke-all markers
-        stmt = select(RevokedTokenModel).where(
-            RevokedTokenModel.user_id == user_id,
-            RevokedTokenModel.is_all_revoke == True,  # noqa: E712
-        )
-        markers = list(self._db.execute(stmt).scalars().all())
-        if not markers:
-            return False
-        if issued_at is None:
-            return True
-        # Normalize issued_at to UTC-naive for comparison
-        issued_at_naive = (
-            issued_at.replace(tzinfo=None) if issued_at.tzinfo is not None else issued_at
-        )
-        for marker in markers:
-            if marker.revoke_all_before is not None:
-                revoke_before = marker.revoke_all_before
-                if revoke_before.tzinfo is not None:
-                    revoke_before = revoke_before.replace(tzinfo=None)
-                if issued_at_naive <= revoke_before:
-                    return True
-        return False
+        # Check direct revocation by jti
+        token = self._db.execute(
+            select(RevokedTokenModel).where(RevokedTokenModel.jti == jti)
+        ).scalar_one_or_none()
+        return token is not None
 
     def revoke_all_for_user(self, user_id: str) -> None:
-        marker = RevokedTokenModel(
-            jti=f"all-{user_id}-{datetime.now(UTC).isoformat()}",
-            user_id=user_id,
-            is_all_revoke=True,
-            revoke_all_before=datetime.now(UTC),
-        )
-        self._db.add(marker)
-        self._db.commit()
+        # The canonical schema has no bulk-revoke marker.
+        # Callers (logout-all, deactivate) already revoke the current JTI explicitly
+        # via revoke(jti, user_id) before calling this method, so the current token
+        # is already invalidated. This method is kept for API compatibility.
+        pass
 
 
 class ExpenseRepository:
@@ -180,14 +165,18 @@ class ExpenseRepository:
         self._db = db
 
     def create(self, user_id: str, data: dict) -> ExpenseModel:
+        # date may come in as a string ISO date or a date object
+        expense_date = data["date"]
+        if isinstance(expense_date, str):
+            expense_date = date.fromisoformat(expense_date)
         expense = ExpenseModel(
             user_id=user_id,
-            amount=data["amount"],
+            amount=str(data["amount"]),
             currency=data["currency"],
             category=data["category"],
-            description=data.get("description"),
-            date=data["date"],
-            entry_type=data.get("type", "expense").lower(),
+            description=data.get("description") or "",
+            date=expense_date,
+            type=data.get("type", "expense").lower(),
             quantity=str(data["quantity"]) if data.get("quantity") is not None else None,
             unit=data.get("unit"),
         )
@@ -197,10 +186,10 @@ class ExpenseRepository:
         return expense
 
     def find_by_id(self, expense_id: str) -> ExpenseModel | None:
-        return self._db.get(ExpenseModel, expense_id)
+        return self._db.get(ExpenseModel, _to_str(expense_id))
 
     def list_by_user(self, user_id: str, page: int, size: int) -> tuple[list[ExpenseModel], int]:
-        query = select(ExpenseModel).where(ExpenseModel.user_id == user_id)
+        query = select(ExpenseModel).where(ExpenseModel.user_id == _to_str(user_id))
         total = self._db.execute(select(func.count()).select_from(query.subquery())).scalar_one()
         offset = (page - 1) * size
         items = list(self._db.execute(query.offset(offset).limit(size)).scalars().all())
@@ -210,12 +199,15 @@ class ExpenseRepository:
         expense = self.find_by_id(expense_id)
         if expense is None:
             return None
-        expense.amount = data["amount"]
+        expense_date = data["date"]
+        if isinstance(expense_date, str):
+            expense_date = date.fromisoformat(expense_date)
+        expense.amount = str(data["amount"])
         expense.currency = data["currency"]
         expense.category = data["category"]
-        expense.description = data.get("description")
-        expense.date = data["date"]
-        expense.entry_type = data.get("type", "expense").lower()
+        expense.description = data.get("description") or ""
+        expense.date = expense_date
+        expense.type = data.get("type", "expense").lower()
         if "quantity" in data:
             expense.quantity = str(data["quantity"]) if data["quantity"] is not None else None
         if "unit" in data:
@@ -232,29 +224,31 @@ class ExpenseRepository:
 
     def summary_by_currency(self, user_id: str) -> list[dict]:
         stmt = select(ExpenseModel).where(
-            ExpenseModel.user_id == user_id,
-            ExpenseModel.entry_type == "expense",
+            ExpenseModel.user_id == _to_str(user_id),
+            ExpenseModel.type == "expense",
         )
         expenses = list(self._db.execute(stmt).scalars().all())
         totals: dict[str, Decimal] = {}
         for exp in expenses:
             currency = exp.currency
-            amount = Decimal(exp.amount)
+            amount = Decimal(str(exp.amount))
             totals[currency] = totals.get(currency, Decimal("0")) + amount
         return [{"currency": k, "total": str(v)} for k, v in totals.items()]
 
     def pl_report(
         self,
-        user_id: str,
+        user_id: str | _uuid_mod.UUID,
         from_date: str,
         to_date: str,
         currency: str,
     ) -> dict:
+        from_date_obj = date.fromisoformat(from_date) if isinstance(from_date, str) else from_date
+        to_date_obj = date.fromisoformat(to_date) if isinstance(to_date, str) else to_date
         stmt = select(ExpenseModel).where(
-            ExpenseModel.user_id == user_id,
+            ExpenseModel.user_id == _to_str(user_id),
             ExpenseModel.currency == currency,
-            ExpenseModel.date >= from_date,
-            ExpenseModel.date <= to_date,
+            ExpenseModel.date >= from_date_obj,
+            ExpenseModel.date <= to_date_obj,
         )
         entries = list(self._db.execute(stmt).scalars().all())
         income_total = Decimal("0")
@@ -262,8 +256,8 @@ class ExpenseRepository:
         income_breakdown: dict[str, Decimal] = {}
         expense_breakdown: dict[str, Decimal] = {}
         for entry in entries:
-            amount = Decimal(entry.amount)
-            if entry.entry_type == "income":
+            amount = Decimal(str(entry.amount))
+            if entry.type == "income":
                 income_total += amount
                 income_breakdown[entry.category] = (
                     income_breakdown.get(entry.category, Decimal("0")) + amount
@@ -304,14 +298,14 @@ class AttachmentRepository:
         filename: str,
         content_type: str,
         size: int,
-        url: str,
+        data: bytes,
     ) -> AttachmentModel:
         attachment = AttachmentModel(
             expense_id=expense_id,
             filename=filename,
             content_type=content_type,
             size=size,
-            url=url,
+            data=data,
         )
         self._db.add(attachment)
         self._db.commit()
@@ -319,11 +313,13 @@ class AttachmentRepository:
         return attachment
 
     def list_by_expense(self, expense_id: str) -> list[AttachmentModel]:
-        stmt = select(AttachmentModel).where(AttachmentModel.expense_id == expense_id)
+        stmt = select(AttachmentModel).where(
+            AttachmentModel.expense_id == _to_str(expense_id)
+        )
         return list(self._db.execute(stmt).scalars().all())
 
     def find_by_id(self, attachment_id: str) -> AttachmentModel | None:
-        return self._db.get(AttachmentModel, attachment_id)
+        return self._db.get(AttachmentModel, _to_str(attachment_id))
 
     def delete(self, attachment_id: str) -> None:
         attachment = self.find_by_id(attachment_id)

@@ -25,7 +25,7 @@ def _ensure_utc(dt: datetime) -> datetime:
 def _user_to_contract(user: UserModel) -> User:
     """Map a UserModel ORM instance to the generated User contract type."""
     return User(
-        id=user.id,
+        id=str(user.id),
         username=user.username,
         email=user.email,
         displayName=user.display_name or "",
@@ -52,7 +52,7 @@ def update_profile(
 ) -> User:
     """Update current user display name."""
     user_repo = get_user_repo(db)
-    user = user_repo.update_display_name(current_user.id, body.displayName)
+    user = user_repo.update_display_name(str(current_user.id), body.displayName)
     if user is None:
         raise UnauthorizedError("User not found")
     return _user_to_contract(user)
@@ -69,7 +69,7 @@ def change_password(
         raise UnauthorizedError("Invalid credentials")
     new_hash = hash_password(body.newPassword)
     user_repo = get_user_repo(db)
-    user_repo.update_password(current_user.id, new_hash)
+    user_repo.update_password(str(current_user.id), new_hash)
     return {"message": "Password changed"}
 
 
@@ -80,7 +80,7 @@ def deactivate(
 ) -> dict:
     """Self-deactivate the current user's account."""
     user_repo = get_user_repo(db)
-    user_repo.update_status(current_user.id, "INACTIVE")
+    user_repo.update_status(str(current_user.id), "INACTIVE")
     revoked_repo = get_revoked_token_repo(db)
-    revoked_repo.revoke_all_for_user(current_user.id)
+    revoked_repo.revoke_all_for_user(str(current_user.id))
     return {"message": "Account deactivated"}

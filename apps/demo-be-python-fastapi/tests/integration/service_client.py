@@ -13,7 +13,6 @@ Exception-to-HTTP-status mapping mirrors the exception handlers registered in
 from __future__ import annotations
 
 import json
-import uuid
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -68,6 +67,22 @@ class FakeResponse:
     @property
     def text(self) -> str:
         return json.dumps(self._body)
+
+
+def _format_amount(value: Any) -> str:
+    """Format a Decimal/float amount by stripping DB-imposed trailing zeros.
+
+    DECIMAL(19,4) in PostgreSQL always returns 4 decimal places. We normalise
+    by removing trailing zeros while keeping at least 1 fractional digit so
+    that e.g. ``Decimal('10.5000')`` → ``'10.5'`` and ``Decimal('100.0000')``
+    → ``'100'``.  The original app stored amounts as plain strings that were
+    already formatted by the caller, so the database never added padding.
+    """
+    from decimal import Decimal
+
+    if isinstance(value, Decimal):
+        return str(value.normalize())
+    return str(value)
 
 
 def _ok(body: Any, status: int = 200) -> FakeResponse:
@@ -207,7 +222,7 @@ class ServiceClient:
             user = user_repo.create(username=username, email=email, password_hash=ph)
             return _ok(
                 {
-                    "id": user.id,
+                    "id": str(user.id),
                     "username": user.username,
                     "email": user.email,
                     "displayName": user.display_name,
@@ -235,9 +250,9 @@ class ServiceClient:
                 raise UnauthorizedError("Account has been disabled")
 
             if not verify_password(password, user.password_hash):
-                attempts = user_repo.increment_failed_attempts(user.id)
+                attempts = user_repo.increment_failed_attempts(str(user.id))
                 if attempts >= settings.max_failed_login_attempts:
-                    user_repo.update_status(user.id, "LOCKED")
+                    user_repo.update_status(str(user.id), "LOCKED")
                     raise AccountLockedError(
                         "Account locked due to too many failed login attempts"
                     )
@@ -245,9 +260,9 @@ class ServiceClient:
 
             from demo_be_python_fastapi.auth.jwt_service import create_refresh_token
 
-            user_repo.reset_failed_attempts(user.id)
-            access_token = create_access_token(user.id, user.username, user.role)
-            refresh_token = create_refresh_token(user.id)
+            user_repo.reset_failed_attempts(str(user.id))
+            access_token = create_access_token(str(user.id), user.username, user.role)
+            refresh_token = create_refresh_token(str(user.id))
             return _ok(
                 {
                     "accessToken": access_token,
@@ -290,8 +305,8 @@ class ServiceClient:
                 raise UnauthorizedError("Token has been revoked")
 
             revoked_repo.revoke(jti, user_id)
-            new_access = create_access_token(user.id, user.username, user.role)
-            new_refresh = create_refresh_token(user.id)
+            new_access = create_access_token(str(user.id), user.username, user.role)
+            new_refresh = create_refresh_token(str(user.id))
             return _ok(
                 {
                     "accessToken": new_access,
@@ -344,7 +359,7 @@ class ServiceClient:
             user = _get_current_user(token, self._db)
             return _ok(
                 {
-                    "id": user.id,
+                    "id": str(user.id),
                     "username": user.username,
                     "email": user.email,
                     "displayName": user.display_name,
@@ -362,12 +377,12 @@ class ServiceClient:
         try:
             user = _get_current_user(token, self._db)
             user_repo = get_user_repo(self._db)
-            updated = user_repo.update_display_name(user.id, display_name)
+            updated = user_repo.update_display_name(str(user.id), display_name)
             if updated is None:
                 raise UnauthorizedError("User not found")
             return _ok(
                 {
-                    "id": updated.id,
+                    "id": str(updated.id),
                     "username": updated.username,
                     "email": updated.email,
                     "displayName": updated.display_name,
@@ -390,7 +405,7 @@ class ServiceClient:
                 raise UnauthorizedError("Invalid credentials")
             new_hash = hash_password(new_password)
             user_repo = get_user_repo(self._db)
-            user_repo.update_password(user.id, new_hash)
+            user_repo.update_password(str(user.id), new_hash)
             return _ok({"message": "Password changed"})
         except (UnauthorizedError, ForbiddenError) as exc:
             return _err(exc)
@@ -403,9 +418,9 @@ class ServiceClient:
         try:
             user = _get_current_user(token, self._db)
             user_repo = get_user_repo(self._db)
-            user_repo.update_status(user.id, "INACTIVE")
+            user_repo.update_status(str(user.id), "INACTIVE")
             revoked_repo = get_revoked_token_repo(self._db)
-            revoked_repo.revoke_all_for_user(user.id)
+            revoked_repo.revoke_all_for_user(str(user.id))
             return _ok({"message": "Account deactivated"})
         except (UnauthorizedError, ForbiddenError) as exc:
             return _err(exc)
@@ -433,7 +448,7 @@ class ServiceClient:
                 {
                     "content": [
                         {
-                            "id": u.id,
+                            "id": str(u.id),
                             "username": u.username,
                             "email": u.email,
                             "status": u.status,
@@ -573,7 +588,7 @@ class ServiceClient:
         try:
             expense_repo = get_expense_repo(self._db)
             expense = expense_repo.create(
-                user_id=user.id,
+                user_id=str(user.id),
                 data={
                     "amount": data["amount"],
                     "currency": validate_currency(data["currency"]),
@@ -600,7 +615,7 @@ class ServiceClient:
             expense = expense_repo.find_by_id(expense_id)
             if expense is None:
                 raise NotFoundError(f"Expense {expense_id} not found")
-            if expense.user_id != user.id:
+            if str(expense.user_id) != str(user.id):
                 raise ForbiddenError("Access denied")
             return _ok(self._expense_to_dict(expense))
         except (UnauthorizedError, ForbiddenError, NotFoundError) as exc:
@@ -619,7 +634,7 @@ class ServiceClient:
         try:
             user = _get_current_user(token, self._db)
             expense_repo = get_expense_repo(self._db)
-            items, total = expense_repo.list_by_user(user.id, page, size)
+            items, total = expense_repo.list_by_user(str(user.id), page, size)
             return _ok(
                 {
                     "content": [self._expense_to_dict(e) for e in items],
@@ -656,7 +671,7 @@ class ServiceClient:
             expense = expense_repo.find_by_id(expense_id)
             if expense is None:
                 raise NotFoundError(f"Expense {expense_id} not found")
-            if expense.user_id != user.id:
+            if str(expense.user_id) != str(user.id):
                 raise ForbiddenError("Access denied")
             updated = expense_repo.update(
                 expense_id,
@@ -688,7 +703,7 @@ class ServiceClient:
             expense = expense_repo.find_by_id(expense_id)
             if expense is None:
                 raise NotFoundError(f"Expense {expense_id} not found")
-            if expense.user_id != user.id:
+            if str(expense.user_id) != str(user.id):
                 raise ForbiddenError("Access denied")
             expense_repo.delete(expense_id)
             return FakeResponse(status_code=204, _body=None)
@@ -703,7 +718,7 @@ class ServiceClient:
         try:
             user = _get_current_user(token, self._db)
             expense_repo = get_expense_repo(self._db)
-            summaries = expense_repo.summary_by_currency(user.id)
+            summaries = expense_repo.summary_by_currency(str(user.id))
             return _ok({s["currency"]: s["total"] for s in summaries})
         except (UnauthorizedError, ForbiddenError) as exc:
             return _err(exc)
@@ -717,13 +732,13 @@ class ServiceClient:
             except (ValueError, TypeError):
                 quantity = None
         return {
-            "id": m.id,
-            "amount": m.amount,
+            "id": str(m.id),
+            "amount": str(m.amount),
             "currency": m.currency,
             "category": m.category,
             "description": m.description,
             "date": m.date,
-            "type": m.entry_type,
+            "type": m.type,
             "quantity": quantity,
             "unit": m.unit,
         }
@@ -747,7 +762,7 @@ class ServiceClient:
             user = _get_current_user(token, self._db)
             validated_currency = validate_currency(currency)
             expense_repo = get_expense_repo(self._db)
-            report = expense_repo.pl_report(user.id, from_, to, validated_currency)
+            report = expense_repo.pl_report(str(user.id), from_, to, validated_currency)
             income_breakdown = [
                 {"category": cat, "type": "income", "total": amt}
                 for cat, amt in report["income_breakdown"].items()
@@ -788,7 +803,7 @@ class ServiceClient:
             expense = expense_repo.find_by_id(expense_id)
             if expense is None:
                 raise NotFoundError(f"Expense {expense_id} not found")
-            if expense.user_id != user.id:
+            if str(expense.user_id) != str(user.id):
                 raise ForbiddenError("Access denied")
 
             if content_type not in ALLOWED_CONTENT_TYPES:
@@ -797,23 +812,22 @@ class ServiceClient:
             if len(file_content) > MAX_ATTACHMENT_SIZE:
                 raise FileTooLargeError("File exceeds maximum size limit")
 
-            attachment_id = str(uuid.uuid4())
-            url = f"/attachments/{attachment_id}/{filename}"
             attachment_repo = get_attachment_repo(self._db)
             attachment = attachment_repo.create(
                 expense_id=expense_id,
                 filename=filename,
                 content_type=content_type,
                 size=len(file_content),
-                url=url,
+                data=file_content,
             )
+            attachment_id_str = str(attachment.id)
             return _ok(
                 {
-                    "id": attachment.id,
+                    "id": attachment_id_str,
                     "filename": attachment.filename,
                     "contentType": attachment.content_type,
                     "size": attachment.size,
-                    "url": attachment.url,
+                    "url": f"/attachments/{attachment_id_str}/{attachment.filename}",
                 },
                 status=201,
             )
@@ -837,7 +851,7 @@ class ServiceClient:
             expense = expense_repo.find_by_id(expense_id)
             if expense is None:
                 raise NotFoundError(f"Expense {expense_id} not found")
-            if expense.user_id != user.id:
+            if str(expense.user_id) != str(user.id):
                 raise ForbiddenError("Access denied")
             attachment_repo = get_attachment_repo(self._db)
             attachments = attachment_repo.list_by_expense(expense_id)
@@ -845,11 +859,11 @@ class ServiceClient:
                 {
                     "attachments": [
                         {
-                            "id": a.id,
+                            "id": str(a.id),
                             "filename": a.filename,
                             "contentType": a.content_type,
                             "size": a.size,
-                            "url": a.url,
+                            "url": f"/attachments/{a.id}/{a.filename}",
                         }
                         for a in attachments
                     ]
@@ -874,13 +888,13 @@ class ServiceClient:
             expense = expense_repo.find_by_id(expense_id)
             if expense is None:
                 raise NotFoundError(f"Expense {expense_id} not found")
-            if expense.user_id != user.id:
+            if str(expense.user_id) != str(user.id):
                 raise ForbiddenError("Access denied")
             attachment_repo = get_attachment_repo(self._db)
             attachment = attachment_repo.find_by_id(attachment_id)
             if attachment is None:
                 raise NotFoundError(f"Attachment {attachment_id} not found")
-            if attachment.expense_id != expense_id:
+            if str(attachment.expense_id) != expense_id:
                 raise ForbiddenError("Access denied")
             attachment_repo.delete(attachment_id)
             return FakeResponse(status_code=204, _body=None)
@@ -927,10 +941,7 @@ class ServiceClient:
 
     def promote_to_admin(self, user_id: str) -> None:
         """Directly set the user's role to ADMIN via the repository."""
-        user = self._db.get(__import__(
-            "demo_be_python_fastapi.infrastructure.models",
-            fromlist=["UserModel"],
-        ).UserModel, user_id)
+        user = self._db.get(UserModel, str(user_id))
         if user is not None:
             user.role = "ADMIN"
             self._db.commit()

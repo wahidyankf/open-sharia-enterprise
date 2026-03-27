@@ -48,7 +48,7 @@ defmodule DemoBeExphWeb.AdminController do
 
   def disable_user(conn, %{"id" => id} = params) do
     with :ok <- require_admin(conn),
-         user when not is_nil(user) <- accounts().get_user(String.to_integer(id)) do
+         user when not is_nil(user) <- accounts().get_user(id) do
       _reason = Map.get(params, "reason", "")
 
       case accounts().disable_user(user) do
@@ -70,7 +70,7 @@ defmodule DemoBeExphWeb.AdminController do
 
   def enable_user(conn, %{"id" => id}) do
     with :ok <- require_admin(conn),
-         user when not is_nil(user) <- accounts().get_user(String.to_integer(id)) do
+         user when not is_nil(user) <- accounts().get_user(id) do
       case accounts().enable_user(user) do
         {:ok, _} -> json(conn, %{message: "User enabled"})
         {:error, _} -> conn |> put_status(:internal_server_error) |> json(%{message: "Failed"})
@@ -83,7 +83,7 @@ defmodule DemoBeExphWeb.AdminController do
 
   def unlock_user(conn, %{"id" => id}) do
     with :ok <- require_admin(conn),
-         user when not is_nil(user) <- accounts().get_user(String.to_integer(id)) do
+         user when not is_nil(user) <- accounts().get_user(id) do
       case accounts().unlock_user(user) do
         {:ok, _} -> json(conn, %{message: "User unlocked"})
         {:error, _} -> conn |> put_status(:internal_server_error) |> json(%{message: "Failed"})
@@ -96,7 +96,7 @@ defmodule DemoBeExphWeb.AdminController do
 
   def force_password_reset(conn, %{"id" => id}) do
     with :ok <- require_admin(conn),
-         user when not is_nil(user) <- accounts().get_user(String.to_integer(id)) do
+         user when not is_nil(user) <- accounts().get_user(id) do
       reset_token = :crypto.strong_rand_bytes(24) |> Base.url_encode64(padding: false)
 
       _ = %PasswordResetResponse{token: reset_token}
@@ -108,7 +108,7 @@ defmodule DemoBeExphWeb.AdminController do
         display_name: user.display_name || user.username,
         status: user.status,
         roles: [user.role],
-        created_at: to_string(user.inserted_at),
+        created_at: to_string(user.created_at),
         updated_at: to_string(user.updated_at)
       }
 

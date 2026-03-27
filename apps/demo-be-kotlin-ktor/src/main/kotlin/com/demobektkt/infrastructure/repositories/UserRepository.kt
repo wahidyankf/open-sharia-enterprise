@@ -17,7 +17,7 @@ data class UpdateUserPatch(
   val displayName: String? = null,
   val passwordHash: String? = null,
   val status: UserStatus? = null,
-  val failedLoginCount: Int? = null,
+  val failedLoginAttempts: Int? = null,
   val role: com.demobektkt.domain.Role? = null,
 )
 

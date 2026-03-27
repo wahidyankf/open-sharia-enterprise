@@ -6,7 +6,6 @@ use uuid::Uuid;
 pub struct Attachment {
     pub id: Uuid,
     pub expense_id: Uuid,
-    pub user_id: Uuid,
     pub filename: String,
     pub content_type: String,
     pub size: i64,

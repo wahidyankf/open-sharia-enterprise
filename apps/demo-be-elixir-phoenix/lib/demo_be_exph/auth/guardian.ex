@@ -12,7 +12,7 @@ defmodule DemoBeExph.Auth.Guardian do
   def subject_for_token(_, _), do: {:error, :unknown_resource}
 
   def resource_from_claims(%{"sub" => id}) do
-    user = accounts().get_user(String.to_integer(id))
+    user = accounts().get_user(id)
 
     case user do
       nil -> {:error, :resource_not_found}

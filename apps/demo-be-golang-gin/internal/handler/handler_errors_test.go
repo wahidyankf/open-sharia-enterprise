@@ -52,6 +52,7 @@ type errStore struct {
 	listAttachmentsErr            error
 	deleteAttachmentErr           error
 	plReportErr                   error
+	resetDBErr                    error
 }
 
 var errForced = errors.New("forced error")
@@ -221,6 +222,9 @@ func (s *errStore) PLReport(ctx context.Context, q store.PLReportQuery) (*domain
 }
 
 func (s *errStore) ResetDB(ctx context.Context) error {
+	if s.resetDBErr != nil {
+		return s.resetDBErr
+	}
 	return s.inner.ResetDB(ctx)
 }
 
@@ -244,6 +248,14 @@ func newErrRouter(es *errStore) *gin.Engine {
 	es.inner = store.NewMemoryStore()
 	jwtSvc := auth.NewJWTService(testSecret)
 	return router.NewRouter(es, jwtSvc, &config.Config{})
+}
+
+// newErrRouterWithTestAPI creates a router with EnableTestAPI enabled for testing test API handlers.
+func newErrRouterWithTestAPI(es *errStore) *gin.Engine {
+	gin.SetMode(gin.TestMode)
+	es.inner = store.NewMemoryStore()
+	jwtSvc := auth.NewJWTService(testSecret)
+	return router.NewRouter(es, jwtSvc, &config.Config{EnableTestAPI: true})
 }
 
 const defaultErrStorePassword = "Str0ng#Pass1"
@@ -356,7 +368,7 @@ func TestUnitRefreshHandlerErrorPaths(t *testing.T) {
 		expiredRT := &domain.RefreshToken{
 			ID:        "expired-rt-id",
 			UserID:    "some-user",
-			TokenStr:  "expired-token-str",
+			TokenHash: "expired-token-str",
 			ExpiresAt: time.Now().Add(-time.Hour), // already expired
 		}
 		_ = es.inner.SaveRefreshToken(context.Background(), expiredRT)
@@ -378,7 +390,7 @@ func TestUnitRefreshHandlerErrorPaths(t *testing.T) {
 		validRT := &domain.RefreshToken{
 			ID:        "orphan-rt-id",
 			UserID:    "nonexistent-user",
-			TokenStr:  "orphan-token-str",
+			TokenHash: "orphan-token-str",
 			ExpiresAt: time.Now().Add(time.Hour),
 		}
 		_ = es.inner.SaveRefreshToken(context.Background(), validRT)
@@ -1173,4 +1185,17 @@ func multipartFile(buf *bytes.Buffer, content []byte) *multipart.Writer {
 	_, _ = part.Write(content)
 	_ = writer.Close()
 	return writer
+}
+
+// TestUnitTestAPIStoreErrors tests error paths for the test API handlers.
+func TestUnitTestAPIStoreErrors(t *testing.T) {
+	t.Run("ResetDB store error returns 500", func(t *testing.T) {
+		es := &errStore{}
+		r := newErrRouterWithTestAPI(es)
+		es.resetDBErr = errForced
+		code, _ := doReq(r, "POST", "/api/v1/test/reset-db", nil, "")
+		if code != 500 {
+			t.Errorf("expected 500 for ResetDB store error, got %d", code)
+		}
+	})
 }

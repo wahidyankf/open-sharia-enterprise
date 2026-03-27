@@ -1,6 +1,5 @@
 """Attachments router: upload, list, delete."""
 
-import uuid
 from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, File, UploadFile
@@ -28,8 +27,8 @@ def _ensure_utc(dt: datetime) -> datetime:
     return dt
 
 
-# AttachmentResponse is kept local: the generated Attachment type is missing the `url` field
-# which the Gherkin spec explicitly requires in attachment responses.
+# AttachmentResponse is kept local: returns metadata including a virtual download URL.
+# Binary data is stored as BYTEA in the database; the url field provides a download path.
 class AttachmentResponse(BaseModel):
     """Attachment metadata response."""
 
@@ -53,7 +52,7 @@ def _check_expense_owner(expense_id: str, current_user: UserModel, db: Session) 
     expense = expense_repo.find_by_id(expense_id)
     if expense is None:
         raise NotFoundError(f"Expense {expense_id} not found")
-    if expense.user_id != current_user.id:
+    if str(expense.user_id) != str(current_user.id):
         raise ForbiddenError("Access denied")
 
 
@@ -75,9 +74,7 @@ async def upload_attachment(
     if len(contents) > MAX_ATTACHMENT_SIZE:
         raise FileTooLargeError("File exceeds maximum size limit")
 
-    attachment_id = str(uuid.uuid4())
     filename = file.filename or "upload"
-    url = f"/attachments/{attachment_id}/{filename}"
 
     attachment_repo = get_attachment_repo(db)
     attachment = attachment_repo.create(
@@ -85,14 +82,15 @@ async def upload_attachment(
         filename=filename,
         content_type=content_type,
         size=len(contents),
-        url=url,
+        data=contents,
     )
+    attachment_id_str = str(attachment.id)
     return AttachmentResponse(
-        id=attachment.id,
+        id=attachment_id_str,
         filename=attachment.filename,
         contentType=attachment.content_type,
         size=attachment.size,
-        url=attachment.url,
+        url=f"/attachments/{attachment_id_str}/{attachment.filename}",
     )
 
 
@@ -109,11 +107,11 @@ def list_attachments(
     return AttachmentListResponse(
         attachments=[
             AttachmentResponse(
-                id=a.id,
+                id=str(a.id),
                 filename=a.filename,
                 contentType=a.content_type,
                 size=a.size,
-                url=a.url,
+                url=f"/attachments/{a.id}/{a.filename}",
             )
             for a in attachments
         ]
@@ -133,6 +131,6 @@ def delete_attachment(
     attachment = attachment_repo.find_by_id(attachment_id)
     if attachment is None:
         raise NotFoundError(f"Attachment {attachment_id} not found")
-    if attachment.expense_id != expense_id:
+    if str(attachment.expense_id) != expense_id:
         raise ForbiddenError("Access denied")
     attachment_repo.delete(attachment_id)

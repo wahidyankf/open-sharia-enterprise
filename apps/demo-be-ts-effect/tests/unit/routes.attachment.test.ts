@@ -33,7 +33,6 @@ const mockExpense: Expense = {
 const mockAttachment: Attachment = {
   id: "attachment-1",
   expenseId: "expense-1",
-  userId: "user-1",
   filename: "receipt.jpg",
   contentType: "image/jpeg",
   size: 1024,
@@ -299,6 +298,20 @@ describe("POST /api/v1/expenses/:expenseId/attachments", () => {
     expect(status).toBe(413);
   });
 
+  it("returns 413 when content-length header exceeds limit", async () => {
+    const req = makeRequest({
+      url: "/api/v1/expenses/expense-1/attachments",
+      method: "POST",
+      headers: {
+        authorization: "Bearer valid-access-token",
+        "content-length": String(11 * 1024 * 1024),
+      },
+      multipartStream: Stream.empty,
+    });
+    const { status } = await runRouter(req, makeTestLayer());
+    expect(status).toBe(413);
+  });
+
   it("uses default filename when part name is empty", async () => {
     const filePart = makeFilePart("", "image/jpeg", Buffer.from("data"));
     const req = makeRequest({
@@ -402,16 +415,5 @@ describe("DELETE /api/v1/expenses/:expenseId/attachments/:attachmentId", () => {
     });
     const { status } = await runRouter(req, makeTestLayer({}, { findById: () => Effect.succeed(null) }));
     expect(status).toBe(404);
-  });
-
-  it("returns 403 when attachment belongs to another user", async () => {
-    const otherAttachment = { ...mockAttachment, userId: "other-user" };
-    const req = makeRequest({
-      url: "/api/v1/expenses/expense-1/attachments/attachment-1",
-      method: "DELETE",
-      headers: { authorization: "Bearer valid-access-token" },
-    });
-    const { status } = await runRouter(req, makeTestLayer({}, { findById: () => Effect.succeed(otherAttachment) }));
-    expect(status).toBe(403);
   });
 });

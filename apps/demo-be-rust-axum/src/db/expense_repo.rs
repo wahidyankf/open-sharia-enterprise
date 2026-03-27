@@ -12,22 +12,46 @@ fn row_to_expense(row: &AnyRow) -> Expense {
     let id_str: String = row.get("id");
     let user_id_str: String = row.get("user_id");
     let date_str: String = row.get("date");
+    let created_str: String = row.get("created_at");
+    let updated_str: String = row.get("updated_at");
+    let deleted_str: Option<String> = row.try_get("deleted_at").ok().flatten();
     Expense {
         id: Uuid::parse_str(&id_str).unwrap_or_else(|_| Uuid::new_v4()),
         user_id: Uuid::parse_str(&user_id_str).unwrap_or_else(|_| Uuid::new_v4()),
-        amount_stored: row.get("amount_stored"),
+        amount: row.get("amount"),
         currency: row.get("currency"),
         category: row.get("category"),
         description: row.get("description"),
         date: NaiveDate::parse_from_str(&date_str, "%Y-%m-%d")
             .unwrap_or_else(|_| Utc::now().date_naive()),
-        entry_type: row.get("entry_type"),
+        entry_type: row.get("type"),
         quantity: row
-            .try_get::<Option<String>, _>("quantity")
+            .try_get::<Option<f64>, _>("quantity")
+            .or_else(|_| {
+                row.try_get::<Option<String>, _>("quantity")
+                    .map(|opt| opt.and_then(|s| s.parse::<f64>().ok()))
+            })
             .ok()
-            .flatten()
-            .and_then(|s| s.parse::<f64>().ok()),
+            .flatten(),
         unit: row.try_get("unit").ok().flatten(),
+        created_at: chrono::DateTime::parse_from_rfc3339(&created_str)
+            .map(|dt| dt.with_timezone(&Utc))
+            .unwrap_or_else(|_| Utc::now()),
+        created_by: row
+            .try_get("created_by")
+            .unwrap_or_else(|_| "system".to_string()),
+        updated_at: chrono::DateTime::parse_from_rfc3339(&updated_str)
+            .map(|dt| dt.with_timezone(&Utc))
+            .unwrap_or_else(|_| Utc::now()),
+        updated_by: row
+            .try_get("updated_by")
+            .unwrap_or_else(|_| "system".to_string()),
+        deleted_at: deleted_str.as_deref().and_then(|s| {
+            chrono::DateTime::parse_from_rfc3339(s)
+                .map(|dt| dt.with_timezone(&Utc))
+                .ok()
+        }),
+        deleted_by: row.try_get("deleted_by").ok().flatten(),
     }
 }
 
@@ -36,7 +60,7 @@ pub async fn create_expense(
     pool: &AnyPool,
     id: Uuid,
     user_id: Uuid,
-    amount_stored: i64,
+    amount: i64,
     currency: &str,
     category: &str,
     description: &str,
@@ -51,12 +75,12 @@ pub async fn create_expense(
     let now_str = Utc::now().to_rfc3339();
 
     sqlx::query(
-        r#"INSERT INTO expenses (id, user_id, amount_stored, currency, category, description, date, entry_type, quantity, unit, created_at, updated_at)
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)"#,
+        r#"INSERT INTO expenses (id, user_id, amount, currency, category, description, date, type, quantity, unit, created_at, created_by, updated_at, updated_by)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'system', $12, 'system')"#,
     )
     .bind(&id_str)
     .bind(&user_id_str)
-    .bind(amount_stored)
+    .bind(amount)
     .bind(currency)
     .bind(category)
     .bind(description)
@@ -79,7 +103,8 @@ pub async fn create_expense(
 pub async fn find_by_id(pool: &AnyPool, id: Uuid) -> Result<Option<Expense>, AppError> {
     let id_str = id.to_string();
     let row = sqlx::query(
-        r#"SELECT id, user_id, amount_stored, currency, category, description, date, entry_type, quantity, unit
+        r#"SELECT id, user_id, amount, currency, category, description, date, type, quantity, unit,
+                  created_at, created_by, updated_at, updated_by, deleted_at, deleted_by
            FROM expenses WHERE id = $1"#,
     )
     .bind(&id_str)
@@ -104,7 +129,8 @@ pub async fn list_for_user(
     let offset = (page - 1) * page_size;
 
     let rows = sqlx::query(
-        r#"SELECT id, user_id, amount_stored, currency, category, description, date, entry_type, quantity, unit
+        r#"SELECT id, user_id, amount, currency, category, description, date, type, quantity, unit,
+                  created_at, created_by, updated_at, updated_by, deleted_at, deleted_by
            FROM expenses WHERE user_id = $1 ORDER BY date DESC LIMIT $2 OFFSET $3"#,
     )
     .bind(&user_id_str)
@@ -129,7 +155,7 @@ pub async fn list_for_user(
 pub async fn update_expense(
     pool: &AnyPool,
     id: Uuid,
-    amount_stored: i64,
+    amount: i64,
     currency: &str,
     category: &str,
     description: &str,
@@ -143,10 +169,10 @@ pub async fn update_expense(
     let now_str = Utc::now().to_rfc3339();
 
     sqlx::query(
-        r#"UPDATE expenses SET amount_stored = $1, currency = $2, category = $3, description = $4, date = $5,
-           entry_type = $6, quantity = $7, unit = $8, updated_at = $9 WHERE id = $10"#,
+        r#"UPDATE expenses SET amount = $1, currency = $2, category = $3, description = $4, date = $5,
+           type = $6, quantity = $7, unit = $8, updated_at = $9, updated_by = 'system' WHERE id = $10"#,
     )
-    .bind(amount_stored)
+    .bind(amount)
     .bind(currency)
     .bind(category)
     .bind(description)
@@ -191,8 +217,8 @@ pub async fn summarize_by_currency(
     use sqlx::Row;
     let user_id_str = user_id.to_string();
     let rows = sqlx::query(
-        r#"SELECT currency, SUM(amount_stored) as total FROM expenses
-           WHERE user_id = $1 AND entry_type = 'expense' GROUP BY currency"#,
+        r#"SELECT currency, SUM(amount) as total FROM expenses
+           WHERE user_id = $1 AND type = 'expense' GROUP BY currency"#,
     )
     .bind(&user_id_str)
     .fetch_all(pool)
@@ -233,8 +259,8 @@ pub async fn pl_report(
     let to_str = to.to_string();
 
     let income_row: AnyRow = sqlx::query(
-        r#"SELECT COALESCE(SUM(amount_stored), 0) as total FROM expenses
-           WHERE user_id = $1 AND currency = $2 AND entry_type = 'income'
+        r#"SELECT COALESCE(SUM(amount), 0) as total FROM expenses
+           WHERE user_id = $1 AND currency = $2 AND type = 'income'
            AND date >= $3 AND date <= $4"#,
     )
     .bind(&user_id_str)
@@ -246,8 +272,8 @@ pub async fn pl_report(
     let income_total: i64 = income_row.get("total");
 
     let expense_row: AnyRow = sqlx::query(
-        r#"SELECT COALESCE(SUM(amount_stored), 0) as total FROM expenses
-           WHERE user_id = $1 AND currency = $2 AND entry_type = 'expense'
+        r#"SELECT COALESCE(SUM(amount), 0) as total FROM expenses
+           WHERE user_id = $1 AND currency = $2 AND type = 'expense'
            AND date >= $3 AND date <= $4"#,
     )
     .bind(&user_id_str)
@@ -259,8 +285,8 @@ pub async fn pl_report(
     let expense_total: i64 = expense_row.get("total");
 
     let income_rows = sqlx::query(
-        r#"SELECT category, SUM(amount_stored) as total FROM expenses
-           WHERE user_id = $1 AND currency = $2 AND entry_type = 'income'
+        r#"SELECT category, SUM(amount) as total FROM expenses
+           WHERE user_id = $1 AND currency = $2 AND type = 'income'
            AND date >= $3 AND date <= $4 GROUP BY category"#,
     )
     .bind(&user_id_str)
@@ -271,8 +297,8 @@ pub async fn pl_report(
     .await?;
 
     let expense_rows = sqlx::query(
-        r#"SELECT category, SUM(amount_stored) as total FROM expenses
-           WHERE user_id = $1 AND currency = $2 AND entry_type = 'expense'
+        r#"SELECT category, SUM(amount) as total FROM expenses
+           WHERE user_id = $1 AND currency = $2 AND type = 'expense'
            AND date >= $3 AND date <= $4 GROUP BY category"#,
     )
     .bind(&user_id_str)

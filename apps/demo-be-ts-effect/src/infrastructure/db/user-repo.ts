@@ -51,8 +51,8 @@ export const UserRepositoryLive = Layer.effect(
           const id = crypto.randomUUID();
           const now = new Date().toISOString();
           yield* sql`
-            INSERT INTO users (id, username, email, password_hash, display_name, role, status, failed_login_attempts, created_at, updated_at)
-            VALUES (${id}, ${data.username}, ${data.email}, ${data.passwordHash}, ${data.displayName}, 'USER', 'ACTIVE', 0, ${now}, ${now})
+            INSERT INTO users (id, username, email, password_hash, display_name, role, status, failed_login_attempts, created_at, created_by, updated_at, updated_by)
+            VALUES (${id}, ${data.username}, ${data.email}, ${data.passwordHash}, ${data.displayName}, 'USER', 'ACTIVE', 0, ${now}, 'system', ${now}, 'system')
           `.pipe(
             Effect.catchAll(() =>
               Effect.fail(

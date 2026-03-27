@@ -15,11 +15,10 @@ class InMemoryAttachmentRepository : AttachmentRepository {
       Attachment(
         id = UUID.randomUUID(),
         expenseId = request.expenseId,
-        userId = request.userId,
         filename = request.filename,
         contentType = request.contentType,
-        sizeBytes = request.sizeBytes,
-        storedPath = request.storedPath,
+        size = request.size,
+        data = request.data,
         createdAt = Instant.now(),
       )
     store[attachment.id] = attachment

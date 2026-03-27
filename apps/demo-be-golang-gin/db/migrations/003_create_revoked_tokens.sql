@@ -1,9 +1,12 @@
 -- +goose Up
 CREATE TABLE revoked_tokens (
-    jti        TEXT        NOT NULL PRIMARY KEY,
-    expires_at TIMESTAMPTZ NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    id         UUID        NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+    jti        VARCHAR(255) NOT NULL UNIQUE,
+    user_id    UUID        NOT NULL,
+    revoked_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+CREATE INDEX idx_revoked_tokens_user_id ON revoked_tokens (user_id);
 
 -- +goose Down
 DROP TABLE IF EXISTS revoked_tokens;

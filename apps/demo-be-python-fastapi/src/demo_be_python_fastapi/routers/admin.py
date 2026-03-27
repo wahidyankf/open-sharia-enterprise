@@ -31,7 +31,7 @@ def _ensure_utc(dt: datetime) -> datetime:
 def _user_to_contract(user: UserModel) -> User:
     """Map a UserModel ORM instance to the generated User contract type."""
     return User(
-        id=user.id,
+        id=str(user.id),
         username=user.username,
         email=user.email,
         displayName=user.display_name or "",

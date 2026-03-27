@@ -139,15 +139,15 @@ func (m *MemoryStore) SaveRefreshToken(_ context.Context, t *domain.RefreshToken
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	cp := *t
-	m.refreshTokens[t.TokenStr] = &cp
+	m.refreshTokens[t.TokenHash] = &cp
 	return nil
 }
 
-// GetRefreshToken retrieves a refresh token by its string value.
-func (m *MemoryStore) GetRefreshToken(_ context.Context, tokenStr string) (*domain.RefreshToken, error) {
+// GetRefreshToken retrieves a refresh token by its hash value.
+func (m *MemoryStore) GetRefreshToken(_ context.Context, tokenHash string) (*domain.RefreshToken, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
-	t, ok := m.refreshTokens[tokenStr]
+	t, ok := m.refreshTokens[tokenHash]
 	if !ok {
 		return nil, domain.NewUnauthorizedError("invalid or expired refresh token")
 	}
@@ -156,10 +156,10 @@ func (m *MemoryStore) GetRefreshToken(_ context.Context, tokenStr string) (*doma
 }
 
 // RevokeRefreshToken marks a refresh token as revoked.
-func (m *MemoryStore) RevokeRefreshToken(_ context.Context, tokenStr string) error {
+func (m *MemoryStore) RevokeRefreshToken(_ context.Context, tokenHash string) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	t, ok := m.refreshTokens[tokenStr]
+	t, ok := m.refreshTokens[tokenHash]
 	if !ok {
 		return nil
 	}

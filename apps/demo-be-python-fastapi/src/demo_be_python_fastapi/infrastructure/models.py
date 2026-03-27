@@ -1,9 +1,10 @@
 """SQLAlchemy ORM models."""
 
+import datetime as _dt
 import uuid
 from datetime import UTC, datetime
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import BigInteger, Boolean, Date, DateTime, ForeignKey, LargeBinary, Numeric, String
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -20,23 +21,26 @@ class UserModel(Base):
 
     __tablename__ = "users"
 
-    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    username: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True)
-    email: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
+    id: Mapped[str] = mapped_column(
+        String(36), primary_key=True, default=lambda: str(uuid.uuid4())
+    )
+    username: Mapped[str] = mapped_column(String(50), unique=True, nullable=False, index=True)
+    email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
-    display_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    display_name: Mapped[str] = mapped_column(String(255), nullable=False, default="")
     role: Mapped[str] = mapped_column(String(20), nullable=False, default="USER")
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="ACTIVE")
-    failed_login_attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    failed_login_attempts: Mapped[int] = mapped_column(nullable=False, default=0)
+    password_reset_token: Mapped[str | None] = mapped_column(String(255), nullable=True)
     # Audit columns
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=_now
     )
-    created_by: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    created_by: Mapped[str] = mapped_column(String(255), nullable=False, default="system")
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=_now, onupdate=_now
     )
-    updated_by: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    updated_by: Mapped[str] = mapped_column(String(255), nullable=False, default="system")
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     deleted_by: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
@@ -51,24 +55,30 @@ class ExpenseModel(Base):
 
     __tablename__ = "expenses"
 
-    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    id: Mapped[str] = mapped_column(
+        String(36), primary_key=True, default=lambda: str(uuid.uuid4())
+    )
     user_id: Mapped[str] = mapped_column(
         String(36), ForeignKey("users.id"), nullable=False, index=True
     )
     amount: Mapped[str] = mapped_column(String(50), nullable=False)
     currency: Mapped[str] = mapped_column(String(10), nullable=False)
     category: Mapped[str] = mapped_column(String(100), nullable=False)
-    description: Mapped[str | None] = mapped_column(Text, nullable=True)
-    date: Mapped[str] = mapped_column(String(20), nullable=False)
-    entry_type: Mapped[str] = mapped_column(String(20), nullable=False, default="expense")
+    description: Mapped[str] = mapped_column(String(500), nullable=False, default="")
+    date: Mapped[_dt.date] = mapped_column(Date, nullable=False)  # type: ignore[assignment]
+    type: Mapped[str] = mapped_column(String(20), nullable=False, default="expense")
     quantity: Mapped[str | None] = mapped_column(String(50), nullable=True)
     unit: Mapped[str | None] = mapped_column(String(50), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=_now
     )
+    created_by: Mapped[str] = mapped_column(String(255), nullable=False, default="system")
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=_now, onupdate=_now
     )
+    updated_by: Mapped[str] = mapped_column(String(255), nullable=False, default="system")
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    deleted_by: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
     user: Mapped["UserModel"] = relationship("UserModel", back_populates="expenses")
     attachments: Mapped[list["AttachmentModel"]] = relationship(
@@ -81,14 +91,19 @@ class AttachmentModel(Base):
 
     __tablename__ = "attachments"
 
-    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    id: Mapped[str] = mapped_column(
+        String(36), primary_key=True, default=lambda: str(uuid.uuid4())
+    )
     expense_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("expenses.id"), nullable=False, index=True
+        String(36),
+        ForeignKey("expenses.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
     filename: Mapped[str] = mapped_column(String(255), nullable=False)
     content_type: Mapped[str] = mapped_column(String(100), nullable=False)
-    size: Mapped[int] = mapped_column(Integer, nullable=False)
-    url: Mapped[str] = mapped_column(String(512), nullable=False)
+    size: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    data: Mapped[bytes] = mapped_column(LargeBinary, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=_now
     )
@@ -101,11 +116,13 @@ class RefreshTokenModel(Base):
 
     __tablename__ = "refresh_tokens"
 
-    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    user_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    id: Mapped[str] = mapped_column(
+        String(36), primary_key=True, default=lambda: str(uuid.uuid4())
     )
-    token_hash: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    user_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("users.id"), nullable=False, index=True
+    )
+    token_hash: Mapped[str] = mapped_column(String(512), unique=True, nullable=False)
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     revoked: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     created_at: Mapped[datetime] = mapped_column(
@@ -120,14 +137,11 @@ class RevokedTokenModel(Base):
 
     __tablename__ = "revoked_tokens"
 
-    jti: Mapped[str] = mapped_column(String(255), primary_key=True)
-    user_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("users.id"), nullable=False, index=True
+    id: Mapped[str] = mapped_column(
+        String(36), primary_key=True, default=lambda: str(uuid.uuid4())
     )
+    jti: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    user_id: Mapped[str] = mapped_column(String(36), nullable=False, index=True)
     revoked_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=_now
-    )
-    is_all_revoke: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
-    revoke_all_before: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True
     )

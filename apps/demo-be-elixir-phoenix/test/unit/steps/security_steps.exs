@@ -29,8 +29,7 @@ defmodule DemoBeExphWeb.Unit.SecuritySteps do
       locked_user =
         Map.merge(user, %{
           status: "LOCKED",
-          failed_login_attempts: 5,
-          locked_at: DateTime.utc_now() |> DateTime.truncate(:second)
+          failed_login_attempts: 5
         })
 
       Map.update!(s, :users, fn users -> Map.put(users, user.id, locked_user) end)

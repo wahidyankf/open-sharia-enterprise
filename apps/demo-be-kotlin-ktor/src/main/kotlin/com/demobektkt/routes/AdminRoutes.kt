@@ -80,7 +80,7 @@ object AdminRoutes : KoinComponent {
     val user =
       userRepository.update(
         userId,
-        UpdateUserPatch(status = UserStatus.ACTIVE, failedLoginCount = 0),
+        UpdateUserPatch(status = UserStatus.ACTIVE, failedLoginAttempts = 0),
       ) ?: throw DomainException(DomainError.NotFound("user"))
 
     call.respond(mapOf("id" to user.id.toString(), "status" to user.status.name))

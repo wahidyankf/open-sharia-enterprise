@@ -19,7 +19,7 @@ export interface RegisterResult {
   id: string;
   username: string;
   email: string;
-  displayName: string | null;
+  displayName: string;
   role: string;
   status: string;
 }

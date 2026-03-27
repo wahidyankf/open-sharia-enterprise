@@ -31,21 +31,21 @@ def _model_to_contract(m) -> Expense:  # type: ignore[no-untyped-def]
             quantity = float(m.quantity)
         except (ValueError, TypeError):
             quantity = None
-    # ORM stores date as a string; convert to date object for contract compliance
+    # ORM stores date as a date object; ensure it is a date for contract compliance
     expense_date: date
     if isinstance(m.date, str):
         expense_date = date.fromisoformat(m.date)
     else:
         expense_date = m.date
     return Expense(
-        id=m.id,
-        userId=m.user_id,
-        amount=m.amount,
+        id=str(m.id),
+        userId=str(m.user_id),
+        amount=str(m.amount),
         currency=m.currency,
         category=m.category,
         description=m.description or "",
         date=expense_date,
-        type=m.entry_type,
+        type=m.type,
         quantity=quantity,
         unit=m.unit,
         createdAt=_ensure_utc(m.created_at),
@@ -71,7 +71,7 @@ def create_expense(
     _validate_expense_data(body)
     expense_repo = get_expense_repo(db)
     expense = expense_repo.create(
-        user_id=current_user.id,
+        user_id=str(current_user.id),
         data={
             "amount": body.amount,
             "currency": validate_currency(body.currency),
@@ -93,7 +93,7 @@ def get_summary(
 ) -> dict[str, str]:
     """Get expense summary grouped by currency as a flat currency-to-total mapping."""
     expense_repo = get_expense_repo(db)
-    summaries = expense_repo.summary_by_currency(current_user.id)
+    summaries = expense_repo.summary_by_currency(str(current_user.id))
     return {s["currency"]: s["total"] for s in summaries}
 
 
@@ -107,7 +107,7 @@ def list_expenses(
     """List own expense entries (paginated)."""
     expense_repo = get_expense_repo(db)
     page = max(1, page)
-    items, total = expense_repo.list_by_user(current_user.id, page, size)
+    items, total = expense_repo.list_by_user(str(current_user.id), page, size)
     total_pages = math.ceil(total / size) if size > 0 else 0
     return ExpenseListResponse(
         content=[_model_to_contract(e) for e in items],
@@ -129,7 +129,7 @@ def get_expense(
     expense = expense_repo.find_by_id(expense_id)
     if expense is None:
         raise NotFoundError(f"Expense {expense_id} not found")
-    if expense.user_id != current_user.id:
+    if str(expense.user_id) != str(current_user.id):
         raise ForbiddenError("Access denied")
     return _model_to_contract(expense)
 
@@ -146,7 +146,7 @@ def update_expense(
     expense = expense_repo.find_by_id(expense_id)
     if expense is None:
         raise NotFoundError(f"Expense {expense_id} not found")
-    if expense.user_id != current_user.id:
+    if str(expense.user_id) != str(current_user.id):
         raise ForbiddenError("Access denied")
     _validate_expense_data(body)
     updated = expense_repo.update(
@@ -178,6 +178,6 @@ def delete_expense(
     expense = expense_repo.find_by_id(expense_id)
     if expense is None:
         raise NotFoundError(f"Expense {expense_id} not found")
-    if expense.user_id != current_user.id:
+    if str(expense.user_id) != str(current_user.id):
         raise ForbiddenError("Access denied")
     expense_repo.delete(expense_id)

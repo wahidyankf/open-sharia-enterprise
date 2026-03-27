@@ -95,11 +95,9 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password)); err != nil {
-		user.FailedAttempts++
-		if user.FailedAttempts >= maxFailedAttempts {
-			now := time.Now()
+		user.FailedLoginAttempts++
+		if user.FailedLoginAttempts >= maxFailedAttempts {
 			user.Status = domain.StatusLocked
-			user.LockedAt = &now
 		}
 		user.UpdatedAt = time.Now()
 		_ = h.store.UpdateUser(c.Request.Context(), user)
@@ -107,8 +105,7 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 	// Reset failed attempts on successful login.
-	user.FailedAttempts = 0
-	user.LockedAt = nil
+	user.FailedLoginAttempts = 0
 	user.UpdatedAt = time.Now()
 	if err := h.store.UpdateUser(c.Request.Context(), user); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "internal server error"})
@@ -127,7 +124,7 @@ func (h *Handler) Login(c *gin.Context) {
 	rt := &domain.RefreshToken{
 		ID:        uuid.New().String(),
 		UserID:    user.ID,
-		TokenStr:  refreshTokenStr,
+		TokenHash: refreshTokenStr,
 		ExpiresAt: refreshExp,
 	}
 	if err := h.store.SaveRefreshToken(c.Request.Context(), rt); err != nil {
@@ -211,7 +208,7 @@ func (h *Handler) Refresh(c *gin.Context) {
 	newRT := &domain.RefreshToken{
 		ID:        uuid.New().String(),
 		UserID:    user.ID,
-		TokenStr:  newRefreshStr,
+		TokenHash: newRefreshStr,
 		ExpiresAt: refreshExp,
 	}
 	if err := h.store.SaveRefreshToken(c.Request.Context(), newRT); err != nil {

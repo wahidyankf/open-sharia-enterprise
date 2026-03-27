@@ -39,7 +39,7 @@ fn parse_entry_type(s: &str) -> Result<String, AppError> {
 
 fn expense_to_json(expense: &crate::domain::expense::Expense) -> Value {
     let currency = expense.currency();
-    let amount_display = currency.format_amount(expense.amount_stored);
+    let amount_display = currency.format_amount(expense.amount);
     json!({
         "id": expense.id.to_string(),
         "userId": expense.user_id.to_string(),
@@ -68,7 +68,7 @@ pub async fn create_expense(
     let entry_type_str = format!("{:?}", body.r#type).to_lowercase();
 
     let currency = parse_currency(&currency_str)?;
-    let amount_stored = parse_amount(&currency, &amount_str)?;
+    let amount = parse_amount(&currency, &amount_str)?;
     let entry_type = parse_entry_type(&entry_type_str)?;
 
     let date =
@@ -92,7 +92,7 @@ pub async fn create_expense(
         &state.pool,
         expense_id,
         auth_user.user_id,
-        amount_stored,
+        amount,
         &currency_str,
         &category,
         &description,
@@ -182,7 +182,7 @@ pub async fn update_expense(
         .unwrap_or_default();
 
     let currency = parse_currency(&currency_str)?;
-    let amount_stored = parse_amount(&currency, &amount_str)?;
+    let amount = parse_amount(&currency, &amount_str)?;
     let entry_type = parse_entry_type(&entry_type_str)?;
 
     let date =
@@ -203,7 +203,7 @@ pub async fn update_expense(
     let updated = expense_repo::update_expense(
         &state.pool,
         expense_id,
-        amount_stored,
+        amount,
         &currency_str,
         &category,
         &description,

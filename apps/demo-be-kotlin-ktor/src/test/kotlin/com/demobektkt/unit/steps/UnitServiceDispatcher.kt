@@ -376,7 +376,7 @@ object UnitServiceDispatcher {
         val user =
           UnitTestWorld.userRepo.update(
             id,
-            UpdateUserPatch(status = UserStatus.ACTIVE, failedLoginCount = 0),
+            UpdateUserPatch(status = UserStatus.ACTIVE, failedLoginAttempts = 0),
           ) ?: throw DomainException(DomainError.NotFound("user"))
         Pair(
           200,
@@ -609,16 +609,14 @@ object UnitServiceDispatcher {
         validateContentType(contentType).getOrThrow()
         validateFileSize(fileContent.size.toLong()).getOrThrow()
 
-        val storedPath = "memory://${UUID.randomUUID()}/$filename"
         val attachment =
           UnitTestWorld.attachmentRepo.create(
             CreateAttachmentRequest(
               expenseId = id,
-              userId = userId,
               filename = filename,
               contentType = contentType.split(";").first().trim(),
-              sizeBytes = fileContent.size.toLong(),
-              storedPath = storedPath,
+              size = fileContent.size.toLong(),
+              data = fileContent,
             )
           )
 
@@ -1004,7 +1002,7 @@ object UnitServiceDispatcher {
     put("expense_id", attachment.expenseId.toString())
     put("filename", attachment.filename)
     put("contentType", attachment.contentType)
-    put("size_bytes", attachment.sizeBytes)
+    put("size_bytes", attachment.size)
     put("url", "/api/v1/expenses/${attachment.expenseId}/attachments/${attachment.id}")
     put("created_at", attachment.createdAt.toString())
   }

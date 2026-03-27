@@ -78,17 +78,14 @@ object AttachmentRoutes : KoinComponent {
     validateContentType(actualContentType).getOrThrow()
     validateFileSize(actualBytes.size.toLong()).getOrThrow()
 
-    val storedPath = "memory://${UUID.randomUUID()}/$actualFilename"
-
     val attachment =
       attachmentRepository.create(
         CreateAttachmentRequest(
           expenseId = expenseId,
-          userId = userId,
           filename = actualFilename,
           contentType = actualContentType.split(";").first().trim(),
-          sizeBytes = actualBytes.size.toLong(),
-          storedPath = storedPath,
+          size = actualBytes.size.toLong(),
+          data = actualBytes,
         )
       )
 

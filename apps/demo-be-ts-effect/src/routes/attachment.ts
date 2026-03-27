@@ -76,7 +76,6 @@ const uploadAttachment = HttpRouter.params.pipe(
           const attachmentRepo = yield* AttachmentRepository;
           const attachment = yield* attachmentRepo.create({
             expenseId,
-            userId: claims.sub,
             filename,
             contentType,
             size: fileData.length,
@@ -143,9 +142,6 @@ const deleteAttachment = HttpRouter.params.pipe(
           const attachment = yield* attachmentRepo.findById(attachmentId);
           if (!attachment) {
             return yield* Effect.fail(new NotFoundError({ resource: "Attachment" }));
-          }
-          if (attachment.userId !== claims.sub) {
-            return yield* Effect.fail(new ForbiddenError({ reason: "Access denied" }));
           }
 
           yield* attachmentRepo.delete(attachmentId);

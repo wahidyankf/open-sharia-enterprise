@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/pressly/goose/v3"
 	"gorm.io/gorm"
 
@@ -129,17 +130,17 @@ func (s *GORMStore) ListUsers(_ context.Context, q ListUsersQuery) ([]*domain.Us
 }
 
 // SaveRefreshToken stores a refresh token.  When a record with the same
-// token_str already exists (e.g. test helpers that back-date ExpiresAt),
+// token_hash already exists (e.g. test helpers that back-date ExpiresAt),
 // the existing row is updated in-place so the latest ExpiresAt and Revoked
 // values are applied.
 func (s *GORMStore) SaveRefreshToken(_ context.Context, t *domain.RefreshToken) error {
-	// Try to create; on unique-constraint conflict for token_str, update the
+	// Try to create; on unique-constraint conflict for token_hash, update the
 	// expiry and revoked fields of the existing row.
-	result := s.db.Where("token_str = ?", t.TokenStr).First(&domain.RefreshToken{})
+	result := s.db.Where("token_hash = ?", t.TokenHash).First(&domain.RefreshToken{})
 	if result.Error == nil {
 		// Row already exists — update its mutable fields.
 		return s.db.Model(&domain.RefreshToken{}).
-			Where("token_str = ?", t.TokenStr).
+			Where("token_hash = ?", t.TokenHash).
 			Updates(map[string]interface{}{
 				"expires_at": t.ExpiresAt,
 				"revoked":    t.Revoked,
@@ -148,10 +149,10 @@ func (s *GORMStore) SaveRefreshToken(_ context.Context, t *domain.RefreshToken) 
 	return s.db.Create(t).Error
 }
 
-// GetRefreshToken retrieves a refresh token by its string value.
-func (s *GORMStore) GetRefreshToken(_ context.Context, tokenStr string) (*domain.RefreshToken, error) {
+// GetRefreshToken retrieves a refresh token by its hash value.
+func (s *GORMStore) GetRefreshToken(_ context.Context, tokenHash string) (*domain.RefreshToken, error) {
 	var t domain.RefreshToken
-	result := s.db.Where("token_str = ?", tokenStr).First(&t)
+	result := s.db.Where("token_hash = ?", tokenHash).First(&t)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, domain.NewUnauthorizedError("invalid or expired refresh token")
@@ -162,8 +163,8 @@ func (s *GORMStore) GetRefreshToken(_ context.Context, tokenStr string) (*domain
 }
 
 // RevokeRefreshToken marks a refresh token as revoked.
-func (s *GORMStore) RevokeRefreshToken(_ context.Context, tokenStr string) error {
-	return s.db.Model(&domain.RefreshToken{}).Where("token_str = ?", tokenStr).Update("revoked", true).Error
+func (s *GORMStore) RevokeRefreshToken(_ context.Context, tokenHash string) error {
+	return s.db.Model(&domain.RefreshToken{}).Where("token_hash = ?", tokenHash).Update("revoked", true).Error
 }
 
 // RevokeAllRefreshTokensForUser revokes all refresh tokens for a user.
@@ -172,8 +173,13 @@ func (s *GORMStore) RevokeAllRefreshTokensForUser(_ context.Context, userID stri
 }
 
 // BlacklistAccessToken adds an access token JTI to the revoked tokens table.
-func (s *GORMStore) BlacklistAccessToken(_ context.Context, jti string, expiresAt time.Time) error {
-	return s.db.Create(&domain.RevokedToken{JTI: jti, ExpiresAt: expiresAt}).Error
+func (s *GORMStore) BlacklistAccessToken(_ context.Context, jti string, _ time.Time) error {
+	return s.db.Create(&domain.RevokedToken{
+		ID:        uuid.New().String(),
+		JTI:       jti,
+		UserID:    "system",
+		RevokedAt: time.Now(),
+	}).Error
 }
 
 // IsAccessTokenBlacklisted checks if an access token JTI is in the revoked tokens table.

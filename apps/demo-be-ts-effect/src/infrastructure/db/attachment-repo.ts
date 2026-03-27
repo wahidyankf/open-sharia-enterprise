@@ -21,7 +21,6 @@ function rowToAttachment(row: any): Attachment {
   return {
     id: row.id as string,
     expenseId: row.expense_id as string,
-    userId: row.user_id as string,
     filename: row.filename as string,
     contentType: row.content_type as string,
     size: row.size as number,
@@ -41,8 +40,8 @@ export const AttachmentRepositoryLive = Layer.effect(
           const id = crypto.randomUUID();
           const now = new Date().toISOString();
           yield* sql`
-            INSERT INTO attachments (id, expense_id, user_id, filename, content_type, size, data, created_at)
-            VALUES (${id}, ${data.expenseId}, ${data.userId}, ${data.filename}, ${data.contentType}, ${data.size}, ${data.data}, ${now})
+            INSERT INTO attachments (id, expense_id, filename, content_type, size, data, created_at)
+            VALUES (${id}, ${data.expenseId}, ${data.filename}, ${data.contentType}, ${data.size}, ${data.data}, ${now})
           `;
           const rows = yield* sql`SELECT * FROM attachments WHERE id = ${id}`;
           return rowToAttachment(rows[0]);

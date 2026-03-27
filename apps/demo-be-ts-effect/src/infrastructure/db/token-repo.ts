@@ -24,10 +24,11 @@ export const RevokedTokenRepositoryLive = Layer.effect(
     return {
       revoke: (jti: string, userId: string) =>
         Effect.gen(function* () {
+          const id = crypto.randomUUID();
           const now = new Date().toISOString();
           yield* sql`
-            INSERT INTO revoked_tokens (jti, user_id, revoked_at)
-            VALUES (${jti}, ${userId}, ${now})
+            INSERT INTO revoked_tokens (id, jti, user_id, revoked_at)
+            VALUES (${id}, ${jti}, ${userId}, ${now})
             ON CONFLICT(jti) DO NOTHING
           `;
         }),
@@ -60,10 +61,11 @@ export const RevokedTokenRepositoryLive = Layer.effect(
         Effect.gen(function* () {
           const now = new Date().toISOString();
           const logoutAllJti = `${USER_LOGOUT_ALL_PREFIX}${userId}`;
+          const id = crypto.randomUUID();
           // Upsert: update revoked_at if already exists, or insert new
           yield* sql`
-            INSERT INTO revoked_tokens (jti, user_id, revoked_at)
-            VALUES (${logoutAllJti}, ${userId}, ${now})
+            INSERT INTO revoked_tokens (id, jti, user_id, revoked_at)
+            VALUES (${id}, ${logoutAllJti}, ${userId}, ${now})
             ON CONFLICT(jti) DO UPDATE SET revoked_at = ${now}
           `;
         }),

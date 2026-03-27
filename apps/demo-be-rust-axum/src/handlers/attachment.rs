@@ -128,7 +128,6 @@ pub async fn upload_attachment(
         NewAttachment {
             id: att_id,
             expense_id,
-            user_id: auth_user.user_id,
             filename: &filename,
             content_type: &content_type,
             size: data.len() as i64,

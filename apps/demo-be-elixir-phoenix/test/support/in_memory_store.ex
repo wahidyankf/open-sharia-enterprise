@@ -1,7 +1,7 @@
 defmodule DemoBeExph.Test.InMemoryStore do
   @moduledoc """
   Agent-based in-memory store shared across Cabbage step files within a scenario.
-  Holds users, refresh tokens, revoked JTIs, expenses, attachments, and a monotonic ID counter.
+  Holds users, refresh tokens, revoked JTIs, expenses, and attachments.
   """
 
   use Agent
@@ -11,8 +11,7 @@ defmodule DemoBeExph.Test.InMemoryStore do
     refresh_tokens: %{},
     revoked_jtis: MapSet.new(),
     expenses: %{},
-    attachments: %{},
-    next_id: 1
+    attachments: %{}
   }
 
   def start_link(_opts) do
@@ -32,13 +31,5 @@ defmodule DemoBeExph.Test.InMemoryStore do
   @doc "Apply an update function to the state and return the new state."
   def update_state(fun) do
     Agent.update(__MODULE__, fun)
-  end
-
-  @doc "Atomically fetch-and-increment the next ID. Returns the ID to use."
-  def next_id do
-    Agent.get_and_update(__MODULE__, fn state ->
-      id = state.next_id
-      {id, Map.put(state, :next_id, id + 1)}
-    end)
   end
 end

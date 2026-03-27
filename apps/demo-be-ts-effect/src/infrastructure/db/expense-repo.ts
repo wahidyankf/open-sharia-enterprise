@@ -32,17 +32,19 @@ export interface ExpenseRepositoryApi {
 
 export class ExpenseRepository extends Context.Tag("ExpenseRepository")<ExpenseRepository, ExpenseRepositoryApi>() {}
 
+// DECIMAL(19,4) is returned as a string by PostgreSQL drivers; SQLite returns it as a number.
+// parseFloat handles both cases safely.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function rowToExpense(row: any): Expense {
   return {
     id: row.id as string,
     userId: row.user_id as string,
     type: row.type as Expense["type"],
-    amount: row.amount as number,
+    amount: parseFloat(String(row.amount)),
     currency: row.currency as string,
     category: (row.category as string) ?? "",
     description: row.description as string,
-    quantity: row.quantity as string | null,
+    quantity: row.quantity != null ? String(row.quantity) : null,
     unit: row.unit as string | null,
     date: row.date as string,
     createdAt: new Date(row.created_at as string),
@@ -64,8 +66,8 @@ export const ExpenseRepositoryLive = Layer.effect(
           const unit = data.unit ?? null;
           const category = data.category ?? "";
           yield* sql`
-            INSERT INTO expenses (id, user_id, type, amount, currency, category, description, quantity, unit, date, created_at, updated_at)
-            VALUES (${id}, ${data.userId}, ${data.type}, ${data.amount}, ${data.currency}, ${category}, ${data.description}, ${quantity}, ${unit}, ${data.date}, ${now}, ${now})
+            INSERT INTO expenses (id, user_id, amount, currency, category, description, date, type, quantity, unit, created_at, created_by, updated_at, updated_by)
+            VALUES (${id}, ${data.userId}, ${data.amount}, ${data.currency}, ${category}, ${data.description}, ${data.date}, ${data.type}, ${quantity}, ${unit}, ${now}, 'system', ${now}, 'system')
           `;
           const rows = yield* sql`SELECT * FROM expenses WHERE id = ${id}`;
           return rowToExpense(rows[0]);
@@ -109,7 +111,7 @@ export const ExpenseRepositoryLive = Layer.effect(
             SET type = ${type}, amount = ${amount}, currency = ${currency},
                 category = ${category}, description = ${description},
                 quantity = ${quantity}, unit = ${unit},
-                date = ${date}, updated_at = ${now}
+                date = ${date}, updated_at = ${now}, updated_by = 'system'
             WHERE id = ${id}
           `;
           const rows = yield* sql`SELECT * FROM expenses WHERE id = ${id}`;
@@ -138,9 +140,9 @@ export const ExpenseRepositoryLive = Layer.effect(
             const entry = summary[currency];
             if (entry) {
               if (row.type === "INCOME") {
-                entry.income += row.total as number;
+                entry.income += parseFloat(String(row.total));
               } else {
-                entry.expense += row.total as number;
+                entry.expense += parseFloat(String(row.total));
               }
             }
           }
@@ -160,7 +162,7 @@ export const ExpenseRepositoryLive = Layer.effect(
             yield* sql`SELECT category, SUM(amount) as total FROM expenses WHERE user_id = ${userId} AND currency = ${currency} AND type = ${type} AND date >= ${from} AND date <= ${to} GROUP BY category`;
           return rows.map((r) => ({
             category: r.category as string,
-            total: r.total as number,
+            total: parseFloat(String(r.total)),
           }));
         }),
     };

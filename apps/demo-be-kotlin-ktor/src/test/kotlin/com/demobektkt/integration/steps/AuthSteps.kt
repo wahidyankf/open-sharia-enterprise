@@ -84,7 +84,7 @@ class AuthSteps {
       val user = TestWorld.userRepo.findByUsername(username) ?: return@runBlocking
       TestWorld.userRepo.update(
         user.id,
-        UpdateUserPatch(status = UserStatus.LOCKED, failedLoginCount = 5),
+        UpdateUserPatch(status = UserStatus.LOCKED, failedLoginAttempts = 5),
       )
       TestWorld.userIds[username] = user.id.toString()
     }
@@ -155,7 +155,7 @@ class AuthSteps {
       val alice = TestWorld.userRepo.findByUsername("alice") ?: return@runBlocking
       TestWorld.userRepo.update(
         alice.id,
-        UpdateUserPatch(status = UserStatus.ACTIVE, failedLoginCount = 0),
+        UpdateUserPatch(status = UserStatus.ACTIVE, failedLoginAttempts = 0),
       )
     }
   }

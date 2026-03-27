@@ -97,7 +97,7 @@ defmodule DemoBeExph.Test.InMemoryAccounts do
 
   @impl true
   def enable_user(user) do
-    update_user_status(user, %{status: "ACTIVE", failed_login_attempts: 0, locked_at: nil})
+    update_user_status(user, %{status: "ACTIVE", failed_login_attempts: 0})
   end
 
   @impl true
@@ -107,7 +107,7 @@ defmodule DemoBeExph.Test.InMemoryAccounts do
 
   @impl true
   def unlock_user(user) do
-    update_user_status(user, %{status: "ACTIVE", failed_login_attempts: 0, locked_at: nil})
+    update_user_status(user, %{status: "ACTIVE", failed_login_attempts: 0})
   end
 
   # Private helpers
@@ -145,7 +145,7 @@ defmodule DemoBeExph.Test.InMemoryAccounts do
   end
 
   defp store_new_user(changeset) do
-    id = InMemoryStore.next_id()
+    id = Ecto.UUID.generate()
     now = DateTime.utc_now() |> DateTime.truncate(:second)
 
     user =
@@ -153,10 +153,9 @@ defmodule DemoBeExph.Test.InMemoryAccounts do
       |> Ecto.Changeset.apply_changes()
       |> Map.merge(%{
         id: id,
-        inserted_at: now,
+        created_at: now,
         updated_at: now,
         failed_login_attempts: 0,
-        locked_at: nil,
         role: Map.get(changeset.changes, :role, "USER"),
         status: Map.get(changeset.changes, :status, "ACTIVE")
       })
@@ -226,7 +225,7 @@ defmodule DemoBeExph.Test.InMemoryAccounts do
 
   defp reset_failed_attempts(user) do
     if user.failed_login_attempts > 0 do
-      update_user_status(user, %{failed_login_attempts: 0, locked_at: nil})
+      update_user_status(user, %{failed_login_attempts: 0})
     end
   end
 
@@ -243,8 +242,7 @@ defmodule DemoBeExph.Test.InMemoryAccounts do
   defp lock_user(user, new_attempts) do
     update_user_status(user, %{
       status: "LOCKED",
-      failed_login_attempts: new_attempts,
-      locked_at: DateTime.utc_now() |> DateTime.truncate(:second)
+      failed_login_attempts: new_attempts
     })
 
     {:error, :account_locked}
