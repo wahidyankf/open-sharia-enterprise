@@ -20,7 +20,8 @@
     ".idea/**",
     "apps/*/playwright-report/**",
     "apps/*/test-results/**",
-    "apps/*/.venv/**"
+    "apps/*/.venv/**",
+    ".claude/worktrees/**"
   ],
 
   // Repository-specific markdown linting rules
