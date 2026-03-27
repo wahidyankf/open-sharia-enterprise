@@ -3,7 +3,7 @@
    These endpoints are used by FE E2E tests to reset state between runs."
   (:require [cheshire.core :as json]
             [next.jdbc :as jdbc]
-            [demo-be-cjpd.db.user-repo :as user-repo]))
+            [demo-be-cjpd.db.protocols :as proto]))
 
 (defn- json-response [status body]
   {:status  status
@@ -17,7 +17,8 @@
 
 (defn reset-db-handler!
   "POST /api/v1/test/reset-db — Delete all data in dependency order.
-   Deletion order: attachments → expenses → revoked_tokens → users."
+   Deletion order: attachments → expenses → revoked_tokens → users.
+   Takes a raw datasource for direct truncation (test infra only)."
   [ds]
   (fn [_request]
     (jdbc/execute! ds ["DELETE FROM attachments"])
@@ -30,13 +31,13 @@
   "POST /api/v1/test/promote-admin — Set a user's role to ADMIN by username.
    Body: {\"username\": \"...\"}
    Returns 200 with message or 404 if user not found."
-  [ds]
+  [ds user-repo]
   (fn [request]
     (let [params   (or (:json-params request) {})
           username (:username params)]
       (if-not username
         (error-response 400 "Missing required field: username")
-        (let [user (user-repo/find-by-username ds username)]
+        (let [user (proto/find-user-by-username user-repo username)]
           (if-not user
             (error-response 404 (str "User not found: " username))
             (do

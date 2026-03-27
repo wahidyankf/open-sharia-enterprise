@@ -1,11 +1,11 @@
 (ns demo-be-cjpd.handlers.report
   "P&L report handler."
   (:require [cheshire.core :as json]
-            [demo-be-cjpd.db.expense-repo :as expense-repo]))
+            [demo-be-cjpd.db.protocols :as proto]))
 
 (defn pl-report-handler
   "GET /api/v1/reports/pl — Return profit and loss report."
-  [ds]
+  [expense-repo]
   (fn [request]
     (let [user-id  (:user-id (:identity request))
           params   (:query-params request)
@@ -15,7 +15,7 @@
           to       (or (get params :endDate) (get params "endDate")
                        (get params :to) (get params "to"))
           currency (or (get params :currency) (get params "currency") "USD")
-          report   (expense-repo/pl-report ds user-id from to currency)
+          report   (proto/pl-report expense-repo user-id from to currency)
           income-breakdown
           (mapv (fn [[cat amt]] {"category" cat "type" "income" "total" amt})
                 (:income-breakdown report))

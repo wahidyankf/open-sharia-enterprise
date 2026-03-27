@@ -3,8 +3,7 @@
   (:require [cheshire.core :as json]
             [clojure.string :as str]
             [demo-be-cjpd.auth.jwt :as jwt]
-            [demo-be-cjpd.db.user-repo :as user-repo]
-            [demo-be-cjpd.db.token-repo :as token-repo]))
+            [demo-be-cjpd.db.protocols :as proto]))
 
 (defn- kebab->camel [s]
   (let [parts (str/split s #"-")]
@@ -26,62 +25,62 @@
 
 (defn list-users-handler
   "GET /api/v1/admin/users — List all users with pagination and optional search."
-  [ds]
+  [user-repo]
   (fn [request]
     (let [params  (:query-params request)
           search  (or (:search params) (:email params)
                       (get params "search") (get params "email"))
           page    (Integer/parseInt (or (some-> params :page str) (get params "page") "1"))
           size    (Integer/parseInt (or (some-> params :size str) (get params "size") "20"))
-          result  (user-repo/list-users ds {:search search :page page :size size})]
-      (json-response 200 {:content       (mapv user->public (:data result))
+          result  (proto/list-users user-repo {:search search :page page :size size})]
+      (json-response 200 {:content        (mapv user->public (:data result))
                           :total-elements (:total result)
                           :page           (:page result)
                           :size           (:size result)}))))
 
 (defn disable-user-handler
   "POST /api/v1/admin/users/:id/disable — Disable a user account."
-  [ds]
+  [user-repo token-repo]
   (fn [request]
     (let [user-id (get-in request [:path-params :id])
-          user    (user-repo/find-by-id ds user-id)]
+          user    (proto/find-user-by-id user-repo user-id)]
       (if-not user
         (error-response 404 "User not found")
-        (let [updated (user-repo/update-status! ds user-id "DISABLED")]
-          (token-repo/revoke-all-for-user! ds user-id)
+        (let [updated (proto/update-status! user-repo user-id "DISABLED")]
+          (proto/revoke-all-for-user! token-repo user-id)
           (json-response 200 (user->public updated)))))))
 
 (defn enable-user-handler
   "POST /api/v1/admin/users/:id/enable — Enable a disabled user account."
-  [ds]
+  [user-repo]
   (fn [request]
     (let [user-id (get-in request [:path-params :id])
-          user    (user-repo/find-by-id ds user-id)]
+          user    (proto/find-user-by-id user-repo user-id)]
       (if-not user
         (error-response 404 "User not found")
-        (let [updated (user-repo/update-status! ds user-id "ACTIVE")]
+        (let [updated (proto/update-status! user-repo user-id "ACTIVE")]
           (json-response 200 (user->public updated)))))))
 
 (defn unlock-user-handler
   "POST /api/v1/admin/users/:id/unlock — Unlock a locked user account."
-  [ds]
+  [user-repo]
   (fn [request]
     (let [user-id (get-in request [:path-params :id])
-          user    (user-repo/find-by-id ds user-id)]
+          user    (proto/find-user-by-id user-repo user-id)]
       (if-not user
         (error-response 404 "User not found")
         (do
-          (user-repo/update-status! ds user-id "ACTIVE")
-          (user-repo/reset-failed-attempts! ds user-id)
-          (let [updated (user-repo/find-by-id ds user-id)]
+          (proto/update-status! user-repo user-id "ACTIVE")
+          (proto/reset-failed-attempts! user-repo user-id)
+          (let [updated (proto/find-user-by-id user-repo user-id)]
             (json-response 200 (user->public updated))))))))
 
 (defn force-password-reset-handler
   "POST /api/v1/admin/users/:id/force-password-reset — Generate reset token."
-  [config ds]
+  [config user-repo]
   (fn [request]
     (let [user-id (get-in request [:path-params :id])
-          user    (user-repo/find-by-id ds user-id)]
+          user    (proto/find-user-by-id user-repo user-id)]
       (if-not user
         (error-response 404 "User not found")
         (let [reset-token (jwt/sign-access-token (:jwt-secret config)

@@ -49,28 +49,28 @@ for unit tests.
 **Goal**: Add `defprotocol` definitions, wrap existing repo functions in `defrecord`, and wire
 in-memory records for unit tests.
 
-- [ ] Create `src/demo_be_cjpd/db/protocols.clj` with protocols: `UserRepo`, `ExpenseRepo`,
+- [x] Create `src/demo_be_cjpd/db/protocols.clj` with protocols: `UserRepo`, `ExpenseRepo`,
       `AttachmentRepo`, `TokenRepo`
-- [ ] Create `src/demo_be_cjpd/db/jdbc_user_repo.clj` — `defrecord JdbcUserRepo [ds]`
+- [x] Create `src/demo_be_cjpd/db/jdbc_user_repo.clj` — `defrecord JdbcUserRepo [ds]`
       implementing `UserRepo` (wrap existing `user_repo.clj` functions)
-- [ ] Create `src/demo_be_cjpd/db/jdbc_expense_repo.clj` — `defrecord JdbcExpenseRepo [ds]`
+- [x] Create `src/demo_be_cjpd/db/jdbc_expense_repo.clj` — `defrecord JdbcExpenseRepo [ds]`
       implementing `ExpenseRepo`
-- [ ] Create `src/demo_be_cjpd/db/jdbc_attachment_repo.clj` — `defrecord JdbcAttachmentRepo [ds]`
+- [x] Create `src/demo_be_cjpd/db/jdbc_attachment_repo.clj` — `defrecord JdbcAttachmentRepo [ds]`
       implementing `AttachmentRepo`
-- [ ] Create `src/demo_be_cjpd/db/jdbc_token_repo.clj` — `defrecord JdbcTokenRepo [ds]`
+- [x] Create `src/demo_be_cjpd/db/jdbc_token_repo.clj` — `defrecord JdbcTokenRepo [ds]`
       implementing `TokenRepo`
-- [ ] Update handler namespaces that access the DB (`admin`, `attachment`, `auth`, `expense`,
+- [x] Update handler namespaces that access the DB (`admin`, `attachment`, `auth`, `expense`,
       `report`, `test_api`, `token`, `user`) and `interceptors/auth.clj` — accept protocol
       instances from context map (skip `health.clj` and `jwks.clj` which don't access the DB)
-- [ ] Update `src/demo_be_cjpd/server.clj` — create `Jdbc*Repo` records and inject into Pedestal
+- [x] Update `src/demo_be_cjpd/server.clj` — create `Jdbc*Repo` records and inject into Pedestal
       context map
-- [ ] Create `test/demo_be_cjpd/in_memory_repos.clj` — atom-backed `defrecord` implementations
-- [ ] Update `test/step_definitions/steps.clj` — inject in-memory records for unit tests
-- [ ] Verify `nx run demo-be-clojure-pedestal:typecheck` passes
-- [ ] Verify `nx run demo-be-clojure-pedestal:lint` passes
-- [ ] Verify `nx run demo-be-clojure-pedestal:test:quick` passes (unit tests + coverage >= 90%)
+- [x] Create `test/demo_be_cjpd/in_memory_repos.clj` — atom-backed `defrecord` implementations
+- [x] Update `test/step_definitions/steps.clj` — inject in-memory records for unit tests
+- [x] Verify `nx run demo-be-clojure-pedestal:typecheck` passes
+- [x] Verify `nx run demo-be-clojure-pedestal:lint` passes
+- [x] Verify `nx run demo-be-clojure-pedestal:test:quick` passes (unit tests + coverage >= 90%)
 - [ ] Verify `nx run demo-be-clojure-pedestal:test:integration` passes (real Postgres)
-- [ ] Commit: `refactor(demo-be-clojure-pedestal): add defprotocol abstractions for repository pattern`
+- [x] Commit: `refactor(demo-be-clojure-pedestal): add defprotocol abstractions for repository pattern`
 
 ### Phase 3: demo-be-rust-axum (Rust — larger diff)
 

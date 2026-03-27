@@ -2,8 +2,7 @@
   "Attachment upload, list, and delete handlers."
   (:require [cheshire.core :as json]
             [clojure.string :as str]
-            [demo-be-cjpd.db.attachment-repo :as attachment-repo]
-            [demo-be-cjpd.db.expense-repo :as expense-repo]
+            [demo-be-cjpd.db.protocols :as proto]
             [demo-be-cjpd.domain.attachment :as attachment-domain]))
 
 (defn- kebab->camel [s]
@@ -36,11 +35,11 @@
 
 (defn upload-attachment-handler
   "POST /api/v1/expenses/:id/attachments — Upload an attachment."
-  [ds]
+  [expense-repo attachment-repo]
   (fn [request]
     (let [user-id    (:user-id (:identity request))
           expense-id (get-in request [:path-params :id])
-          expense    (expense-repo/find-by-id ds expense-id)]
+          expense    (proto/find-expense-by-id expense-repo expense-id)]
       (cond
         (nil? expense)
         (error-response 404 "Expense not found")
@@ -71,8 +70,8 @@
                  :body    (json/generate-string {:message "File size exceeds the 10MB limit"})}
 
                 :else
-                (let [attachment (attachment-repo/create-attachment!
-                                   ds
+                (let [attachment (proto/create-attachment!
+                                   attachment-repo
                                    {:expense-id   expense-id
                                     :user-id      user-id
                                     :filename     filename
@@ -87,11 +86,11 @@
 
 (defn list-attachments-handler
   "GET /api/v1/expenses/:id/attachments — List attachments for an expense."
-  [ds]
+  [expense-repo attachment-repo]
   (fn [request]
     (let [user-id    (:user-id (:identity request))
           expense-id (get-in request [:path-params :id])
-          expense    (expense-repo/find-by-id ds expense-id)]
+          expense    (proto/find-expense-by-id expense-repo expense-id)]
       (cond
         (nil? expense)
         (error-response 404 "Expense not found")
@@ -100,7 +99,7 @@
         (error-response 403 "Forbidden")
 
         :else
-        (let [attachments (attachment-repo/list-by-expense ds expense-id)
+        (let [attachments (proto/list-attachments-by-expense attachment-repo expense-id)
               scheme      (or (get-in request [:headers "x-forwarded-proto"]) "http")
               host        (or (get-in request [:headers "host"]) "localhost")
               base-url    (str scheme "://" host)]
@@ -109,12 +108,12 @@
 
 (defn delete-attachment-handler
   "DELETE /api/v1/expenses/:id/attachments/:attachment-id — Delete an attachment."
-  [ds]
+  [expense-repo attachment-repo]
   (fn [request]
     (let [user-id       (:user-id (:identity request))
           expense-id    (get-in request [:path-params :id])
           attachment-id (get-in request [:path-params :attachment-id])
-          expense       (expense-repo/find-by-id ds expense-id)]
+          expense       (proto/find-expense-by-id expense-repo expense-id)]
       (cond
         (nil? expense)
         (error-response 404 "Expense not found")
@@ -123,7 +122,7 @@
         (error-response 403 "Forbidden")
 
         :else
-        (let [attachment (attachment-repo/find-by-id ds attachment-id)]
+        (let [attachment (proto/find-attachment-by-id attachment-repo attachment-id)]
           (cond
             (nil? attachment)
             (error-response 404 "Attachment not found")
@@ -133,7 +132,7 @@
 
             :else
             (do
-              (attachment-repo/delete-attachment! ds attachment-id)
+              (proto/delete-attachment! attachment-repo attachment-id)
               {:status  204
                :headers {"Content-Type" "application/json"}
                :body    ""})))))))

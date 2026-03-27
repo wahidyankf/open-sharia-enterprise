@@ -4,8 +4,7 @@
   (:require [clojure.string :as str]
             [malli.core :as m]
             [demo-be-cjpd.auth.jwt :as jwt]
-            [demo-be-cjpd.db.token-repo :as token-repo]
-            [demo-be-cjpd.db.user-repo :as user-repo]
+            [demo-be-cjpd.db.protocols :as proto]
             [demo-be-cjpd.domain.schemas :as schemas]))
 
 (defn- extract-bearer-token [request]
@@ -19,24 +18,24 @@
   (assoc ctx :response
          {:status  401
           :headers {"Content-Type" "application/json"}
-          :body    (str "{\"error\":\"" message "\"}")}))
+          :body    (str "{\"error\":\"" message "\"")}))
 
 (defn- check-token-revocation
   "Check if the token's jti or the user's tokens have been revoked.
    Returns true if revoked, false otherwise. Treats DB errors as revoked
    (fail-closed) to prevent 500s from reaching the client."
-  [ds jti user-id iat]
+  [token-repo jti user-id iat]
   (try
-    (or (token-repo/revoked? ds jti)
-        (token-repo/all-revoked-for-user? ds user-id (long iat)))
+    (or (proto/token-revoked? token-repo jti)
+        (proto/all-revoked-for-user? token-repo user-id (long iat)))
     (catch Exception _
       true)))
 
 (defn require-auth
   "Interceptor factory that validates JWT and attaches identity to request.
    The identity map conforms to schemas/Identity.
-   Takes app config and datasource."
-  [config ds]
+   Takes app config, user-repo and token-repo."
+  [config user-repo token-repo]
   {:name  ::require-auth
    :enter (fn [ctx]
             (let [request (:request ctx)
@@ -49,9 +48,9 @@
                     (let [jti     (:jti claims)
                           user-id (:sub claims)
                           iat     (or (:iat claims) 0)]
-                      (if (check-token-revocation ds jti user-id iat)
+                      (if (check-token-revocation token-repo jti user-id iat)
                         (auth-error-response ctx "Token has been revoked")
-                        (let [user (user-repo/find-by-id ds user-id)]
+                        (let [user (proto/find-user-by-id user-repo user-id)]
                           (if-not user
                             (auth-error-response ctx "User not found")
                             (if (not= "ACTIVE" (:status user))

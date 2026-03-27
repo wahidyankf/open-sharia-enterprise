@@ -2,7 +2,7 @@
   "Expense CRUD handlers."
   (:require [cheshire.core :as json]
             [clojure.string :as str]
-            [demo-be-cjpd.db.expense-repo :as expense-repo]
+            [demo-be-cjpd.db.protocols :as proto]
             [demo-be-cjpd.domain.expense :as expense-domain]))
 
 (defn- kebab->camel [s]
@@ -54,7 +54,7 @@
 
 (defn create-expense-handler
   "POST /api/v1/expenses — Create a new expense entry."
-  [ds]
+  [expense-repo]
   (fn [request]
     (let [user-id  (:user-id (:identity request))
           params   (:json-params request)
@@ -71,38 +71,38 @@
         {:status  (:status error)
          :headers {"Content-Type" "application/json"}
          :body    (json/generate-string {:message (:message error) :field (:field error)})}
-        (let [expense (expense-repo/create-expense! ds
-                                                    {:user-id     user-id
-                                                     :type        type
-                                                     :amount      amount
-                                                     :currency    currency
-                                                     :description (or desc "")
-                                                     :category    (or category "")
-                                                     :unit        unit
-                                                     :quantity    quantity
-                                                     :date        date})]
+        (let [expense (proto/create-expense! expense-repo
+                                             {:user-id     user-id
+                                              :type        type
+                                              :amount      amount
+                                              :currency    currency
+                                              :description (or desc "")
+                                              :category    (or category "")
+                                              :unit        unit
+                                              :quantity    quantity
+                                              :date        date})]
           (json-response 201 (expense->response expense)))))))
 
 (defn get-expense-handler
   "GET /api/v1/expenses/:id — Get a single expense."
-  [ds]
+  [expense-repo]
   (fn [request]
     (let [user-id    (:user-id (:identity request))
           expense-id (get-in request [:path-params :id])
-          expense    (expense-repo/find-by-id-and-user ds expense-id user-id)]
+          expense    (proto/find-expense-by-id-and-user expense-repo expense-id user-id)]
       (if expense
         (json-response 200 (expense->response expense))
         (error-response 404 "Expense not found")))))
 
 (defn list-expenses-handler
   "GET /api/v1/expenses — List expenses for the authenticated user."
-  [ds]
+  [expense-repo]
   (fn [request]
     (let [user-id  (:user-id (:identity request))
           params   (:query-params request)
           page     (Integer/parseInt (or (some-> params :page str) (get params "page") "1"))
           size     (Integer/parseInt (or (some-> params :size str) (get params "size") "20"))
-          result   (expense-repo/list-by-user ds user-id {:page page :size size})]
+          result   (proto/list-expenses-by-user expense-repo user-id {:page page :size size})]
       (json-response 200 {:content        (mapv expense->response (:data result))
                           :total-elements (:total result)
                           :page           (:page result)
@@ -110,11 +110,11 @@
 
 (defn update-expense-handler
   "PUT /api/v1/expenses/:id — Update an existing expense."
-  [ds]
+  [expense-repo]
   (fn [request]
     (let [user-id    (:user-id (:identity request))
           expense-id (get-in request [:path-params :id])
-          existing   (expense-repo/find-by-id-and-user ds expense-id user-id)]
+          existing   (proto/find-expense-by-id-and-user expense-repo expense-id user-id)]
       (if-not existing
         (error-response 404 "Expense not found")
         (let [params   (:json-params request)
@@ -131,38 +131,38 @@
             {:status  (:status error)
              :headers {"Content-Type" "application/json"}
              :body    (json/generate-string {:message (:message error) :field (:field error)})}
-            (let [updated (expense-repo/update-expense! ds expense-id
-                                                        {:type        type
-                                                         :amount      amount
-                                                         :currency    currency
-                                                         :description desc
-                                                         :category    category
-                                                         :unit        unit
-                                                         :quantity    quantity
-                                                         :date        date})]
+            (let [updated (proto/update-expense! expense-repo expense-id
+                                                 {:type        type
+                                                  :amount      amount
+                                                  :currency    currency
+                                                  :description desc
+                                                  :category    category
+                                                  :unit        unit
+                                                  :quantity    quantity
+                                                  :date        date})]
               (json-response 200 (expense->response updated)))))))))
 
 (defn delete-expense-handler
   "DELETE /api/v1/expenses/:id — Delete an expense."
-  [ds]
+  [expense-repo]
   (fn [request]
     (let [user-id    (:user-id (:identity request))
           expense-id (get-in request [:path-params :id])
-          existing   (expense-repo/find-by-id-and-user ds expense-id user-id)]
+          existing   (proto/find-expense-by-id-and-user expense-repo expense-id user-id)]
       (if-not existing
         (error-response 404 "Expense not found")
         (do
-          (expense-repo/delete-expense! ds expense-id)
+          (proto/delete-expense! expense-repo expense-id)
           {:status  204
            :headers {"Content-Type" "application/json"}
            :body    ""})))))
 
 (defn summary-handler
   "GET /api/v1/expenses/summary — Return expense totals grouped by currency (expenses only)."
-  [ds]
+  [expense-repo]
   (fn [request]
     (let [user-id  (:user-id (:identity request))
-          summary  (expense-repo/summary-by-user ds user-id)
+          summary  (proto/summary-by-user expense-repo user-id)
           ;; Only sum expense entries (not income), matching Go/Java implementations
           result   (into {}
                          (keep (fn [[currency by-type]]

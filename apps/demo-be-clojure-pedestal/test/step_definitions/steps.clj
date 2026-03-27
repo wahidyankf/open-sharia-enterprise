@@ -4,8 +4,7 @@
   (:require [clojure.string :as str]
             [clojure.test :refer [is]]
             [cheshire.core :as json]
-            [next.jdbc :as jdbc]
-            [next.jdbc.result-set :as rs]
+            [demo-be-cjpd.db.protocols :as proto]
             [lambdaisland.cucumber.dsl :refer [Given When Then]]
             [step-definitions.common :as common]))
 
@@ -57,12 +56,9 @@
   (let [new-state (-> state
                       (common/register-user! username)
                       (common/login-user! username))
-        ds        (:ds new-state)
         user-id   (common/get-user-id new-state username)]
     ;; Promote user to ADMIN and re-login so the JWT reflects the ADMIN role
-    (when (and ds user-id)
-      (jdbc/execute! ds
-                     ["UPDATE users SET role = 'ADMIN' WHERE id = ?" user-id]))
+    (common/promote-to-admin! new-state user-id)
     (common/login-user! new-state username)))
 
 (Given "{string} has logged in and stored the access token" [state username]
@@ -90,11 +86,8 @@
   (let [admin-state (-> state
                         (common/register-user! "superadmin-unlock")
                         (common/login-user! "superadmin-unlock"))
-        ds          (:ds admin-state)
         admin-id    (common/get-user-id admin-state "superadmin-unlock")
-        _           (when (and ds admin-id)
-                      (jdbc/execute! ds
-                                     ["UPDATE users SET role = 'ADMIN' WHERE id = ?" admin-id]))
+        _           (common/promote-to-admin! admin-state admin-id)
         admin-state (common/login-user! admin-state "superadmin-unlock")
         alice-id    (common/get-user-id state "alice")
         admin-token (common/get-access-token admin-state "superadmin-unlock")]
@@ -152,11 +145,8 @@
   (let [admin-state (-> state
                         (common/register-user! "superadmin-disable")
                         (common/login-user! "superadmin-disable"))
-        ds          (:ds admin-state)
         admin-id    (common/get-user-id admin-state "superadmin-disable")
-        _           (when (and ds admin-id)
-                      (jdbc/execute! ds
-                                     ["UPDATE users SET role = 'ADMIN' WHERE id = ?" admin-id]))
+        _           (common/promote-to-admin! admin-state admin-id)
         admin-state (common/login-user! admin-state "superadmin-disable")
         alice-id    (common/get-user-id state "alice")
         admin-token (common/get-access-token admin-state "superadmin-disable")]
@@ -629,14 +619,12 @@
             alice  (first (filter #(= alice-id (:id %)) users))]
         (is (= (str/lower-case expected-status)
                (str/lower-case (or (:status alice) "")))))
-      ;; No admin token — query the DB directly
-      (let [ds   (:ds state)
-            row  (when (and ds alice-id)
-                   (jdbc/execute-one! ds
-                                      ["SELECT status FROM users WHERE id = ?" alice-id]
-                                      {:builder-fn rs/as-unqualified-maps}))]
+      ;; No admin token — query via user-repo protocol
+      (let [user-repo (:user-repo state)
+            user      (when (and user-repo alice-id)
+                        (proto/find-user-by-id user-repo alice-id))]
         (is (= (str/lower-case expected-status)
-               (str/lower-case (or (:status row) "")))))))
+               (str/lower-case (or (:status user) "")))))))
   state)
 
 (Then "alice's access token should be invalidated" [state]

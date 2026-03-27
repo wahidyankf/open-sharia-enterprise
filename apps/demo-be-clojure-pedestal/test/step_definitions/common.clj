@@ -6,9 +6,13 @@
             [demo-be-cjpd.auth.jwt :as jwt]
             [demo-be-cjpd.config :as config]
             [demo-be-cjpd.db.core :as db]
+            [demo-be-cjpd.db.jdbc-attachment-repo :as jdbc-attachment-repo]
+            [demo-be-cjpd.db.jdbc-expense-repo :as jdbc-expense-repo]
+            [demo-be-cjpd.db.jdbc-token-repo :as jdbc-token-repo]
+            [demo-be-cjpd.db.jdbc-user-repo :as jdbc-user-repo]
+            [demo-be-cjpd.db.protocols :as proto]
             [demo-be-cjpd.db.schema :as schema]
-            [demo-be-cjpd.db.token-repo :as token-repo]
-            [demo-be-cjpd.db.user-repo :as user-repo]
+            [demo-be-cjpd.in-memory-repos :as mem]
             [demo-be-cjpd.handlers.admin :as admin-handler]
             [demo-be-cjpd.handlers.attachment :as attachment-handler]
             [demo-be-cjpd.handlers.auth :as auth-handler]
@@ -23,45 +27,80 @@
 ;; Test context bootstrap
 ;; ============================================================
 
-(defn- build-database-url []
-  (or (System/getenv "DATABASE_URL")
-      (let [db-name (str "testdb_" (java.util.UUID/randomUUID))]
-        (str "jdbc:sqlite:file:" db-name "?mode=memory&cache=shared"))))
+(defn- integration-mode? []
+  (some? (System/getenv "DATABASE_URL")))
 
 ;; Shared datasource: created once for the entire test suite run.
 ;; Prevents exhausting PostgreSQL's max_connections across 70+ scenarios.
 (defonce ^:private shared-test-context
   (delay
-    (let [database-url (build-database-url)
-          cfg          (assoc (config/load-config) :database-url database-url)
-          ds           (db/create-datasource database-url)
-          _            (schema/create-schema! ds database-url)]
-      {:ds       ds
-       :config   cfg
-       :database-url database-url
-       :server   :direct
-       :base-url "http://localhost:0"})))
+    (if (integration-mode?)
+      ;; Integration mode: real PostgreSQL via DATABASE_URL
+      (let [database-url (System/getenv "DATABASE_URL")
+            cfg          (assoc (config/load-config) :database-url database-url)
+            ds           (db/create-datasource database-url)
+            _            (schema/create-schema! ds database-url)
+            user-repo       (jdbc-user-repo/create ds)
+            expense-repo    (jdbc-expense-repo/create ds)
+            attachment-repo (jdbc-attachment-repo/create ds)
+            token-repo      (jdbc-token-repo/create ds)]
+        {:ds             ds
+         :config         cfg
+         :database-url   database-url
+         :server         :direct
+         :base-url       "http://localhost:0"
+         :user-repo      user-repo
+         :expense-repo   expense-repo
+         :attachment-repo attachment-repo
+         :token-repo     token-repo})
+      ;; Unit mode: in-memory repos — no real DB connection
+      (let [cfg (config/load-config)]
+        {:ds              nil
+         :config          cfg
+         :database-url    nil
+         :server          :direct
+         :base-url        "http://localhost:0"
+         :in-memory?      true
+         :user-repo       (mem/make-user-repo)
+         :expense-repo    (mem/make-expense-repo)
+         :attachment-repo (mem/make-attachment-repo)
+         :token-repo      (mem/make-token-repo)}))))
 
-(defn- truncate-all-tables!
-  "Delete all rows from every table to reset state between scenarios.
-   Uses DELETE rather than TRUNCATE for SQLite compatibility."
+(defn- truncate-in-memory-repos!
+  "Reset all in-memory repo stores for test isolation."
+  [ctx]
+  (when-let [user-repo (:user-repo ctx)]
+    (reset! (:store user-repo) {}))
+  (when-let [expense-repo (:expense-repo ctx)]
+    (reset! (:store expense-repo) {}))
+  (when-let [attachment-repo (:attachment-repo ctx)]
+    (reset! (:store attachment-repo) {})
+    (reset! (:data-store attachment-repo) {}))
+  (when-let [token-repo (:token-repo ctx)]
+    (reset! (:store token-repo) {})))
+
+(defn- truncate-db-tables!
+  "Delete all rows from every table (used in integration mode)."
   [ds]
-  (jdbc/execute! ds ["DELETE FROM attachments"])
-  (jdbc/execute! ds ["DELETE FROM expenses"])
-  (jdbc/execute! ds ["DELETE FROM revoked_tokens"])
-  (jdbc/execute! ds ["DELETE FROM users"]))
+  (when ds
+    (jdbc/execute! ds ["DELETE FROM attachments"])
+    (jdbc/execute! ds ["DELETE FROM expenses"])
+    (jdbc/execute! ds ["DELETE FROM revoked_tokens"])
+    (jdbc/execute! ds ["DELETE FROM users"])))
 
 (defn start-test-server!
-  "Return the shared test context, resetting all table data for test isolation.
-   A single datasource is reused across scenarios to avoid exhausting
-   PostgreSQL's max_connections limit."
+  "Return the shared test context, resetting all data for test isolation.
+   In unit mode: resets in-memory stores.
+   In integration mode: truncates DB tables."
   []
   (let [ctx @shared-test-context]
-    (truncate-all-tables! (:ds ctx))
+    (if (integration-mode?)
+      (truncate-db-tables! (:ds ctx))
+      (truncate-in-memory-repos! ctx))
     ctx))
 
 (defn stop-test-server! [{:keys [ds]}]
-  (.close ds))
+  (when ds (.close ds)))
 
 ;; ============================================================
 ;; Request / response helpers
@@ -91,7 +130,7 @@
   "Replicates the require-auth interceptor logic.
    Returns identity map if the token is valid and the user is ACTIVE,
    or throws an ex-info whose :status and :message describe the error."
-  [config ds token]
+  [config user-repo token-repo token]
   (when-not token
     (throw (ex-info "Missing or invalid authorization token"
                     {:status 401 :message "Missing or invalid authorization token"})))
@@ -102,13 +141,13 @@
     (let [jti     (:jti claims)
           user-id (:sub claims)
           iat     (or (:iat claims) 0)]
-      (when (token-repo/revoked? ds jti)
+      (when (proto/token-revoked? token-repo jti)
         (throw (ex-info "Token has been revoked"
                         {:status 401 :message "Token has been revoked"})))
-      (when (token-repo/all-revoked-for-user? ds user-id iat)
+      (when (proto/all-revoked-for-user? token-repo user-id iat)
         (throw (ex-info "Token has been revoked"
                         {:status 401 :message "Token has been revoked"})))
-      (let [user (user-repo/find-by-id ds user-id)]
+      (let [user (proto/find-user-by-id user-repo user-id)]
         (when-not user
           (throw (ex-info "User not found"
                           {:status 401 :message "User not found"})))
@@ -180,9 +219,9 @@
 (defn- call-protected-handler
   "Resolve identity from token, enforce auth, then call handler.
    Returns {:status N :body parsed-map}."
-  [config ds token handler request-fn]
+  [config user-repo token-repo token handler request-fn]
   (try
-    (let [identity (resolve-identity config ds token)
+    (let [identity (resolve-identity config user-repo token-repo token)
           request  (request-fn identity)]
       (call-handler handler request))
     (catch clojure.lang.ExceptionInfo e
@@ -195,9 +234,9 @@
 (defn- call-admin-handler
   "Resolve identity, enforce ADMIN role, then call handler.
    Returns {:status N :body parsed-map}."
-  [config ds token handler request-fn]
+  [config user-repo token-repo token handler request-fn]
   (try
-    (let [identity (resolve-identity config ds token)
+    (let [identity (resolve-identity config user-repo token-repo token)
           _        (require-admin-identity identity)
           request  (request-fn identity)]
       (call-handler handler request))
@@ -229,6 +268,24 @@
   "http://localhost:0")
 
 ;; ============================================================
+;; Admin promotion helper
+;; ============================================================
+
+(defn promote-to-admin!
+  "Promote the user with the given ID to ADMIN role.
+   Works for both in-memory repos (unit mode) and JDBC repos (integration mode)."
+  [ctx user-id]
+  (let [user-repo (:user-repo ctx)]
+    (when (and user-repo user-id)
+      (if (:in-memory? ctx)
+        ;; Unit mode: update the atom store directly
+        (swap! (:store user-repo) update user-id assoc :role "ADMIN")
+        ;; Integration mode: direct SQL (role is not in the UserRepo protocol)
+        (when-let [ds (:ds ctx)]
+          (jdbc/execute! ds ["UPDATE users SET role = 'ADMIN' WHERE id = ?" user-id])))))
+  ctx)
+
+;; ============================================================
 ;; Core scenario helpers
 ;; ============================================================
 
@@ -238,8 +295,8 @@
   [ctx username & {:keys [email password display-name]
                    :or   {email    (str username "@example.com")
                           password "Str0ng#Pass1"}}]
-  (let [{:keys [config ds]} ctx
-        handler (auth-handler/register-handler config ds)
+  (let [{:keys [config user-repo]} ctx
+        handler (auth-handler/register-handler config user-repo)
         request (public-request (json/generate-string
                                   {:username    username
                                    :email       email
@@ -256,11 +313,11 @@
   "Authenticate a user by calling the login handler directly.
    Returns updated context with access and refresh tokens stored."
   [ctx username & {:keys [password]}]
-  (let [{:keys [config ds]} ctx
+  (let [{:keys [config user-repo]} ctx
         pw      (or password
                     (get ctx (keyword (str username "-password")))
                     "Str0ng#Pass1")
-        handler (auth-handler/login-handler config ds)
+        handler (auth-handler/login-handler config user-repo)
         request (public-request (json/generate-string {:username username :password pw}))
         result  (call-handler handler request)
         body    (:body result)]
@@ -276,8 +333,8 @@
 (defn call-register
   "POST /api/v1/auth/register — direct handler call."
   [ctx body-str]
-  (let [{:keys [config ds]} ctx
-        handler (auth-handler/register-handler config ds)
+  (let [{:keys [config user-repo]} ctx
+        handler (auth-handler/register-handler config user-repo)
         result  (call-handler handler (public-request body-str))]
     (assoc ctx
            :last-response result
@@ -286,8 +343,8 @@
 (defn call-login
   "POST /api/v1/auth/login — direct handler call."
   [ctx body-str]
-  (let [{:keys [config ds]} ctx
-        handler (auth-handler/login-handler config ds)
+  (let [{:keys [config user-repo]} ctx
+        handler (auth-handler/login-handler config user-repo)
         result  (call-handler handler (public-request body-str))]
     (assoc ctx
            :last-response result
@@ -296,8 +353,8 @@
 (defn call-refresh
   "POST /api/v1/auth/refresh — direct handler call."
   [ctx body-str]
-  (let [{:keys [config ds]} ctx
-        handler (auth-handler/refresh-handler config ds)
+  (let [{:keys [config user-repo token-repo]} ctx
+        handler (auth-handler/refresh-handler config user-repo token-repo)
         result  (call-handler handler (public-request body-str))]
     (assoc ctx
            :last-response result
@@ -343,9 +400,9 @@
 (defn call-get-profile
   "GET /api/v1/users/me — direct handler call with auth."
   [ctx token]
-  (let [{:keys [config ds]} ctx
-        handler  (user-handler/get-profile-handler ds)
-        result   (call-protected-handler config ds token handler
+  (let [{:keys [config user-repo token-repo]} ctx
+        handler  (user-handler/get-profile-handler user-repo)
+        result   (call-protected-handler config user-repo token-repo token handler
                                          #(auth-request %))]
     (assoc ctx
            :last-response result
@@ -354,9 +411,9 @@
 (defn call-update-profile
   "PATCH /api/v1/users/me — direct handler call with auth."
   [ctx token body-str]
-  (let [{:keys [config ds]} ctx
-        handler  (user-handler/update-profile-handler ds)
-        result   (call-protected-handler config ds token handler
+  (let [{:keys [config user-repo token-repo]} ctx
+        handler  (user-handler/update-profile-handler user-repo)
+        result   (call-protected-handler config user-repo token-repo token handler
                                          #(auth-request % :json-body body-str))]
     (assoc ctx
            :last-response result
@@ -365,9 +422,9 @@
 (defn call-change-password
   "POST /api/v1/users/me/password — direct handler call with auth."
   [ctx token body-str]
-  (let [{:keys [config ds]} ctx
-        handler  (user-handler/change-password-handler ds)
-        result   (call-protected-handler config ds token handler
+  (let [{:keys [config user-repo token-repo]} ctx
+        handler  (user-handler/change-password-handler user-repo)
+        result   (call-protected-handler config user-repo token-repo token handler
                                          #(auth-request % :json-body body-str))]
     (assoc ctx
            :last-response result
@@ -376,9 +433,9 @@
 (defn call-deactivate
   "POST /api/v1/users/me/deactivate — direct handler call with auth."
   [ctx token]
-  (let [{:keys [config ds]} ctx
-        handler  (user-handler/deactivate-handler ds)
-        result   (call-protected-handler config ds token handler
+  (let [{:keys [config user-repo token-repo]} ctx
+        handler  (user-handler/deactivate-handler user-repo)
+        result   (call-protected-handler config user-repo token-repo token handler
                                          #(auth-request %))]
     (assoc ctx
            :last-response result
@@ -388,8 +445,8 @@
   "POST /api/v1/auth/logout — direct handler call with auth.
    Passes the token via the Authorization header in the request map."
   [ctx token]
-  (let [{:keys [config ds]} ctx
-        handler (auth-handler/logout-handler config ds)
+  (let [{:keys [config token-repo]} ctx
+        handler (auth-handler/logout-handler config token-repo)
         request {:headers      {"authorization" (str "Bearer " token)}
                  :json-params  {}
                  :query-params {}
@@ -402,9 +459,9 @@
 (defn call-logout-all
   "POST /api/v1/auth/logout-all — direct handler call with auth."
   [ctx token]
-  (let [{:keys [config ds]} ctx
-        handler  (auth-handler/logout-all-handler config ds)
-        result   (call-protected-handler config ds token handler
+  (let [{:keys [config user-repo token-repo]} ctx
+        handler  (auth-handler/logout-all-handler config token-repo)
+        result   (call-protected-handler config user-repo token-repo token handler
                                          #(auth-request %))]
     (assoc ctx
            :last-response result
@@ -431,9 +488,9 @@
 (defn call-create-expense
   "POST /api/v1/expenses — direct handler call with auth."
   [ctx token body-str]
-  (let [{:keys [config ds]} ctx
-        handler  (expense-handler/create-expense-handler ds)
-        result   (call-protected-handler config ds token handler
+  (let [{:keys [config user-repo expense-repo token-repo]} ctx
+        handler  (expense-handler/create-expense-handler expense-repo)
+        result   (call-protected-handler config user-repo token-repo token handler
                                          #(auth-request % :json-body body-str))]
     (assoc ctx
            :last-response result
@@ -442,9 +499,9 @@
 (defn call-get-expense
   "GET /api/v1/expenses/:id — direct handler call with auth."
   [ctx token expense-id]
-  (let [{:keys [config ds]} ctx
-        handler  (expense-handler/get-expense-handler ds)
-        result   (call-protected-handler config ds token handler
+  (let [{:keys [config user-repo expense-repo token-repo]} ctx
+        handler  (expense-handler/get-expense-handler expense-repo)
+        result   (call-protected-handler config user-repo token-repo token handler
                                          #(auth-request % :path-params {"id" expense-id}))]
     (assoc ctx
            :last-response result
@@ -453,9 +510,9 @@
 (defn call-list-expenses
   "GET /api/v1/expenses — direct handler call with auth."
   [ctx token & {:keys [query-params] :or {query-params {}}}]
-  (let [{:keys [config ds]} ctx
-        handler  (expense-handler/list-expenses-handler ds)
-        result   (call-protected-handler config ds token handler
+  (let [{:keys [config user-repo expense-repo token-repo]} ctx
+        handler  (expense-handler/list-expenses-handler expense-repo)
+        result   (call-protected-handler config user-repo token-repo token handler
                                          #(auth-request % :query-params query-params))]
     (assoc ctx
            :last-response result
@@ -464,9 +521,9 @@
 (defn call-update-expense
   "PUT /api/v1/expenses/:id — direct handler call with auth."
   [ctx token expense-id body-str]
-  (let [{:keys [config ds]} ctx
-        handler  (expense-handler/update-expense-handler ds)
-        result   (call-protected-handler config ds token handler
+  (let [{:keys [config user-repo expense-repo token-repo]} ctx
+        handler  (expense-handler/update-expense-handler expense-repo)
+        result   (call-protected-handler config user-repo token-repo token handler
                                          #(auth-request % :json-body body-str
                                                         :path-params {"id" expense-id}))]
     (assoc ctx
@@ -476,9 +533,9 @@
 (defn call-delete-expense
   "DELETE /api/v1/expenses/:id — direct handler call with auth."
   [ctx token expense-id]
-  (let [{:keys [config ds]} ctx
-        handler  (expense-handler/delete-expense-handler ds)
-        result   (call-protected-handler config ds token handler
+  (let [{:keys [config user-repo expense-repo token-repo]} ctx
+        handler  (expense-handler/delete-expense-handler expense-repo)
+        result   (call-protected-handler config user-repo token-repo token handler
                                          #(auth-request % :path-params {"id" expense-id}))]
     (assoc ctx
            :last-response result
@@ -487,9 +544,9 @@
 (defn call-expense-summary
   "GET /api/v1/expenses/summary — direct handler call with auth."
   [ctx token]
-  (let [{:keys [config ds]} ctx
-        handler  (expense-handler/summary-handler ds)
-        result   (call-protected-handler config ds token handler
+  (let [{:keys [config user-repo expense-repo token-repo]} ctx
+        handler  (expense-handler/summary-handler expense-repo)
+        result   (call-protected-handler config user-repo token-repo token handler
                                          #(auth-request %))]
     (assoc ctx
            :last-response result
@@ -498,9 +555,9 @@
 (defn call-pl-report
   "GET /api/v1/reports/pl?from=...&to=...&currency=... — direct handler call with auth."
   [ctx token query-params]
-  (let [{:keys [config ds]} ctx
-        handler  (report-handler/pl-report-handler ds)
-        result   (call-protected-handler config ds token handler
+  (let [{:keys [config user-repo expense-repo token-repo]} ctx
+        handler  (report-handler/pl-report-handler expense-repo)
+        result   (call-protected-handler config user-repo token-repo token handler
                                          #(auth-request % :query-params query-params))]
     (assoc ctx
            :last-response result
@@ -514,13 +571,13 @@
   "POST /api/v1/expenses/:id/attachments — direct handler call with auth.
    Builds a multipart-params map mimicking Ring's byte-array-store format."
   [ctx token expense-id filename content-type file-bytes]
-  (let [{:keys [config ds]} ctx
-        handler  (attachment-handler/upload-attachment-handler ds)
+  (let [{:keys [config user-repo expense-repo attachment-repo token-repo]} ctx
+        handler  (attachment-handler/upload-attachment-handler expense-repo attachment-repo)
         file-map {:filename     filename
                   :content-type content-type
                   :bytes        file-bytes}
         result   (try
-                   (let [identity (resolve-identity config ds token)
+                   (let [identity (resolve-identity config user-repo token-repo token)
                          request  (assoc (auth-request identity
                                                         :path-params {"id" expense-id}
                                                         :headers {"host" "localhost"})
@@ -539,9 +596,9 @@
 (defn call-list-attachments
   "GET /api/v1/expenses/:id/attachments — direct handler call with auth."
   [ctx token expense-id]
-  (let [{:keys [config ds]} ctx
-        handler  (attachment-handler/list-attachments-handler ds)
-        result   (call-protected-handler config ds token handler
+  (let [{:keys [config user-repo expense-repo attachment-repo token-repo]} ctx
+        handler  (attachment-handler/list-attachments-handler expense-repo attachment-repo)
+        result   (call-protected-handler config user-repo token-repo token handler
                                          #(auth-request %
                                                         :path-params {"id" expense-id}
                                                         :headers {"host" "localhost"}))]
@@ -552,9 +609,9 @@
 (defn call-delete-attachment
   "DELETE /api/v1/expenses/:id/attachments/:attachment-id — direct handler call with auth."
   [ctx token expense-id attachment-id]
-  (let [{:keys [config ds]} ctx
-        handler  (attachment-handler/delete-attachment-handler ds)
-        result   (call-protected-handler config ds token handler
+  (let [{:keys [config user-repo expense-repo attachment-repo token-repo]} ctx
+        handler  (attachment-handler/delete-attachment-handler expense-repo attachment-repo)
+        result   (call-protected-handler config user-repo token-repo token handler
                                          #(auth-request %
                                                         :path-params {"id"            expense-id
                                                                       "attachment-id" attachment-id}))]
@@ -569,9 +626,9 @@
 (defn call-admin-list-users
   "GET /api/v1/admin/users — direct admin handler call."
   [ctx token & {:keys [query-params] :or {query-params {}}}]
-  (let [{:keys [config ds]} ctx
-        handler  (admin-handler/list-users-handler ds)
-        result   (call-admin-handler config ds token handler
+  (let [{:keys [config user-repo token-repo]} ctx
+        handler  (admin-handler/list-users-handler user-repo)
+        result   (call-admin-handler config user-repo token-repo token handler
                                      #(auth-request % :query-params query-params))]
     (assoc ctx
            :last-response result
@@ -580,9 +637,9 @@
 (defn call-admin-disable-user
   "POST /api/v1/admin/users/:id/disable — direct admin handler call."
   [ctx token user-id body-str]
-  (let [{:keys [config ds]} ctx
-        handler  (admin-handler/disable-user-handler ds)
-        result   (call-admin-handler config ds token handler
+  (let [{:keys [config user-repo token-repo]} ctx
+        handler  (admin-handler/disable-user-handler user-repo token-repo)
+        result   (call-admin-handler config user-repo token-repo token handler
                                      #(auth-request %
                                                     :path-params {"id" user-id}
                                                     :json-body body-str))]
@@ -593,9 +650,9 @@
 (defn call-admin-enable-user
   "POST /api/v1/admin/users/:id/enable — direct admin handler call."
   [ctx token user-id]
-  (let [{:keys [config ds]} ctx
-        handler  (admin-handler/enable-user-handler ds)
-        result   (call-admin-handler config ds token handler
+  (let [{:keys [config user-repo token-repo]} ctx
+        handler  (admin-handler/enable-user-handler user-repo)
+        result   (call-admin-handler config user-repo token-repo token handler
                                      #(auth-request %
                                                     :path-params {"id" user-id}))]
     (assoc ctx
@@ -605,9 +662,9 @@
 (defn call-admin-unlock-user
   "POST /api/v1/admin/users/:id/unlock — direct admin handler call."
   [ctx token user-id]
-  (let [{:keys [config ds]} ctx
-        handler  (admin-handler/unlock-user-handler ds)
-        result   (call-admin-handler config ds token handler
+  (let [{:keys [config user-repo token-repo]} ctx
+        handler  (admin-handler/unlock-user-handler user-repo)
+        result   (call-admin-handler config user-repo token-repo token handler
                                      #(auth-request %
                                                     :path-params {"id" user-id}))]
     (assoc ctx
@@ -617,9 +674,9 @@
 (defn call-admin-force-password-reset
   "POST /api/v1/admin/users/:id/force-password-reset — direct admin handler call."
   [ctx token user-id]
-  (let [{:keys [config ds]} ctx
-        handler  (admin-handler/force-password-reset-handler config ds)
-        result   (call-admin-handler config ds token handler
+  (let [{:keys [config user-repo token-repo]} ctx
+        handler  (admin-handler/force-password-reset-handler config user-repo)
+        result   (call-admin-handler config user-repo token-repo token handler
                                      #(auth-request %
                                                     :path-params {"id" user-id}))]
     (assoc ctx
@@ -633,9 +690,9 @@
 (defn token-valid?
   "Returns true if the token can still be used to authenticate."
   [ctx token]
-  (let [{:keys [config ds]} ctx]
+  (let [{:keys [config user-repo token-repo]} ctx]
     (try
-      (resolve-identity config ds token)
+      (resolve-identity config user-repo token-repo token)
       true
       (catch Exception _
         false))))
