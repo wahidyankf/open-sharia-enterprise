@@ -42,13 +42,13 @@ var supportedUnits = map[string]bool{
 type Expense struct {
 	ID          string     `gorm:"primaryKey" json:"id"`
 	UserID      string     `gorm:"not null;index" json:"user_id"`
-	Amount      float64    `gorm:"not null;type:decimal(19,4)" json:"amount"`
+	Amount      float64    `gorm:"not null" json:"amount"`
 	Currency    string     `gorm:"not null" json:"currency"`
 	Category    string     `gorm:"not null" json:"category"`
 	Description string     `json:"description"`
-	Date        string     `gorm:"not null;type:date" json:"date"`
+	Date        string     `gorm:"not null" json:"date"`
 	Type        EntryType  `gorm:"not null" json:"type"`
-	Quantity    *float64   `gorm:"type:decimal(19,4)" json:"quantity,omitempty"`
+	Quantity    *float64   `json:"quantity,omitempty"`
 	Unit        string     `json:"unit,omitempty"`
 	CreatedAt   time.Time  `json:"created_at"`
 	CreatedBy   string     `gorm:"default:system" json:"-"`
