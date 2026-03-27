@@ -70,19 +70,17 @@ class FakeResponse:
         return json.dumps(self._body)
 
 
-def _format_amount(value: Any) -> str:
-    """Format a Decimal/float amount by stripping DB-imposed trailing zeros.
+_ZERO_DECIMAL_CURRENCIES = {"IDR"}
 
-    DECIMAL(19,4) in PostgreSQL always returns 4 decimal places. We normalise
-    by removing trailing zeros while keeping at least 1 fractional digit so
-    that e.g. ``Decimal('10.5000')`` → ``'10.5'`` and ``Decimal('100.0000')``
-    → ``'100'``.  The original app stored amounts as plain strings that were
-    already formatted by the caller, so the database never added padding.
-    """
+
+def _format_amount(value: Any, currency: str = "USD") -> str:
+    """Format amount with currency-aware decimal places (2 for USD, 0 for IDR)."""
     from decimal import Decimal
 
+    scale = 0 if currency.upper() in _ZERO_DECIMAL_CURRENCIES else 2
     if isinstance(value, Decimal):
-        return str(value.normalize())
+        rounded = value.quantize(Decimal(10) ** -scale)
+        return format(rounded, "f")
     return str(value)
 
 
@@ -720,7 +718,11 @@ class ServiceClient:
             user = _get_current_user(token, self._db)
             expense_repo = get_expense_repo(self._db)
             summaries = expense_repo.summary_by_currency(str(user.id))
-            return _ok({s["currency"]: self._fmt_amount(s["total"]) for s in summaries})
+            result = {
+                s["currency"]: _format_amount(s["total"], s["currency"])
+                for s in summaries
+            }
+            return _ok(result)
         except (UnauthorizedError, ForbiddenError) as exc:
             return _err(exc)
 
@@ -744,7 +746,7 @@ class ServiceClient:
                 quantity = None
         return {
             "id": str(m.id),
-            "amount": ServiceClient._fmt_amount(m.amount),
+            "amount": _format_amount(m.amount, m.currency),
             "currency": m.currency,
             "category": m.category,
             "description": m.description,
