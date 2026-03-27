@@ -237,7 +237,7 @@ Push all changes and verify all related GitHub Actions workflows pass. Trigger m
 
 #### Main CI
 
-- [ ] `main-ci.yml` — in progress
+- [x] `main-ci.yml` — PASS
 
 #### Demo Backend E2E Workflows (all must pass)
 
