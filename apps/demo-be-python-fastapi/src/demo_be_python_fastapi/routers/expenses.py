@@ -17,17 +17,20 @@ from demo_be_python_fastapi.infrastructure.models import UserModel
 router = APIRouter()
 
 
-def _fmt_amount(val: object) -> str:
-    """Normalize an amount value to a clean string without trailing zeros.
+_ZERO_DECIMAL_CURRENCIES = {"IDR"}
 
-    Handles Decimal objects returned by PostgreSQL DECIMAL columns as well as
-    plain strings stored by SQLite in tests.
+
+def _fmt_amount(val: object, currency: str = "USD") -> str:
+    """Format amount with currency-aware decimal places.
+
+    USD → 2 decimals ("10.50"), IDR → 0 decimals ("150000").
+    Handles Decimal (PostgreSQL) and str (SQLite) values.
     """
+    scale = 0 if currency.upper() in _ZERO_DECIMAL_CURRENCIES else 2
     if isinstance(val, Decimal):
-        s = format(val, "f")
-        if "." in s:
-            s = s.rstrip("0").rstrip(".")
-        return s
+        rounded = val.quantize(Decimal(10) ** -scale)
+        return format(rounded, "f")
+    # String value (SQLite) — return as-is (already formatted by caller)
     return str(val)
 
 
@@ -55,7 +58,7 @@ def _model_to_contract(m) -> Expense:  # type: ignore[no-untyped-def]
     return Expense(
         id=str(m.id),
         userId=str(m.user_id),
-        amount=_fmt_amount(m.amount),
+        amount=_fmt_amount(m.amount, m.currency),
         currency=m.currency,
         category=m.category,
         description=m.description or "",
@@ -109,7 +112,7 @@ def get_summary(
     """Get expense summary grouped by currency as a flat currency-to-total mapping."""
     expense_repo = get_expense_repo(db)
     summaries = expense_repo.summary_by_currency(str(current_user.id))
-    return {s["currency"]: _fmt_amount(s["total"]) for s in summaries}
+    return {s["currency"]: _fmt_amount(s["total"], s["currency"]) for s in summaries}
 
 
 @router.get("", response_model=ExpenseListResponse)
