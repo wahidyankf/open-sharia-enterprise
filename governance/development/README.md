@@ -138,6 +138,13 @@ Development practices in this directory fall into several categories:
 - [GitHub Actions Workflow Naming Convention](./infra/github-actions-workflow-naming.md) - Workflow filenames must mirror their `name:` field using a consistent kebab-case derivation rule, enabling developers to navigate between the GitHub UI and the filesystem without ambiguity
 - [Vercel Deployment Convention](./infra/vercel-deployment.md) - Rules for configuring `vercel.json` when Nx build targets must run before the framework build
 
+### Frontend Development Documentation
+
+- [Design Tokens Convention](./frontend/design-tokens.md) - Token categories (structural vs. brand), naming rules, per-app override pattern, dark mode requirements, and Tailwind v4 integration
+- [Component Patterns Convention](./frontend/component-patterns.md) - CVA variant definitions, Radix UI composition, React.ComponentProps pattern, cn() utility, data-slot attributes, and required component states
+- [Accessibility Convention](./frontend/accessibility.md) - WCAG AA compliance, focus-visible management, reduced-motion support, ARIA attributes by component type, hit targets, and form input requirements
+- [Styling Convention](./frontend/styling.md) - Tailwind v4 patterns, utility-first approach, class ordering via prettier-plugin-tailwindcss, responsive design, and defensive CSS
+
 ### Hugo Development Documentation
 
 - [Hugo Development Convention](./hugo/development.md) - Standards for developing Hugo sites (layouts, themes, assets, configuration) for ayokoding-web and oseplatform-web. Covers theme development, asset pipeline, i18n/l10n, performance optimization, and SEO best practices
