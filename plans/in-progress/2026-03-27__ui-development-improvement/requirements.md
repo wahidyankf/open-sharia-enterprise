@@ -223,13 +223,19 @@ inconsistent across files.
 **Impact**: CSS changes can unintentionally alter component appearance with no automated
 detection. The only safety net is manual visual review.
 
-### G8: No UI-Focused Agent
+### G8: No UI-Focused Agent Trio or Quality Gate Workflow
 
-**What exists**: No agent in `.claude/agents/` for UI validation.
+**What exists**: No agents in `.claude/agents/` for UI creation, validation, or fixing. No
+workflow in `governance/workflows/` for UI quality automation.
 
-**Impact**: No automated way to audit existing components against conventions. The
-maker-checker-fixer pattern is well-established in this repo for docs and plans but missing
-for UI code.
+**Impact**: No automated way to audit existing components against conventions. No automated
+way to create new components following all conventions. No iterative quality gate for UI changes.
+The maker-checker-fixer pattern is well-established in this repo for docs, ayokoding-web content,
+plans, and specs — but completely missing for UI code.
+
+**What other domains have**: docs (docs-maker/checker/fixer + quality-gate), ayokoding-web
+(general-maker/checker/fixer + quality-gate), plans (plan-maker/checker/fixer + quality-gate),
+specs (specs-maker/checker/fixer). UI has zero coverage.
 
 ## Acceptance Criteria
 
@@ -290,6 +296,33 @@ Feature: UI Conventions and AI Skills
     And no content is hidden or inaccessible at any viewport size
     And touch targets meet the 44px minimum on mobile viewports
     And visual regression tests capture screenshots at all three viewport sizes
+
+  Scenario: UI maker agent creates components following all conventions
+    Given the swe-ui-maker agent is invoked to create a new Badge component
+    When the agent completes
+    Then libs/ts-ui/src/components/badge/ contains:
+      | File | Content |
+      | badge.tsx | CVA variants, data-slot, React.ComponentProps, radix-ui import |
+      | badge.variants.ts | Exportable variant definitions |
+      | badge.test.tsx | Unit tests with vitest-axe accessibility assertions |
+      | badge.stories.tsx | Storybook stories for all variants and viewports |
+    And the component uses only design tokens (no hardcoded colors)
+    And the barrel export in libs/ts-ui/src/index.ts is updated
+
+  Scenario: UI quality gate workflow achieves zero findings
+    Given the ui-quality-gate workflow is invoked for libs/ts-ui/
+    When the swe-ui-checker finds violations in existing components
+    Then the swe-ui-fixer applies validated fixes
+    And the swe-ui-checker re-validates the fixed files
+    And the workflow iterates until zero findings on two consecutive checks
+    And the final status is "pass"
+
+  Scenario: UI fixer re-validates before applying changes
+    Given the swe-ui-checker reports a "hardcoded hex color" finding
+    When the swe-ui-fixer processes the audit report
+    Then it re-reads the file to verify the finding still exists
+    And only applies the fix if the finding is confirmed
+    And skips findings classified as FALSE_POSITIVE
 
   Scenario: Prettier sorts Tailwind classes deterministically
     Given prettier-plugin-tailwindcss is installed with tailwindStylesheet configured

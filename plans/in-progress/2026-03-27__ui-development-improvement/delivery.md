@@ -115,31 +115,86 @@ governance docs, skill files, agent files, and Prettier config._
   - oseplatform-web: Hugo/PaperMod, marketing, not applicable to component design
 - [ ] Run `npm run sync:claude-to-opencode` to sync skill to OpenCode
 
-### 1.3 Create UI Checker Agent
+### 1.3 Create UI Agent Trio (Maker-Checker-Fixer)
 
-**Goal**: Create `swe-ui-checker` agent following maker-checker-fixer pattern.
+**Goal**: Create all three agents following the established maker-checker-fixer pattern.
 
-- [ ] Create `.claude/agents/swe-ui-checker.md`:
-  - Tools: Read, Glob, Grep, Write, Bash
-  - Model: sonnet (cost-effective for validation; checker does not need opus reasoning depth)
-  - Skills reference: `swe-developing-frontend-ui`
-  - Input: path to component file or directory to audit
-  - Output: report in `generated-reports/` using standard format
-  - Six check dimensions with severity levels:
-    1. Token compliance (HIGH): grep for hardcoded hex/rgb/hsl in TSX className and style props
-    2. Accessibility (HIGH): check aria-*, role, focus-visible, labels, reduced-motion
-    3. Component patterns (MEDIUM): verify CVA usage, cn() calls, data-slot, React.ComponentProps
-    4. Dark mode (MEDIUM): verify dark variants exist for all visual tokens
-    5. Responsive (LOW): check for mobile-first patterns, container queries
-    6. Anti-patterns (VARIES): check against catalog from skill reference
-  - Report format: criticality/confidence classification per finding
-- [ ] Update `.claude/agents/README.md` to list `swe-ui-checker` under Validation agents
-- [ ] Update `CLAUDE.md` AI Agents section to include `swe-ui-checker` under Validation
-- [ ] Run `npm run sync:claude-to-opencode` to sync agent to OpenCode
-- [ ] Test agent by running it against `apps/organiclever-web/src/components/ui/button.tsx`
-- [ ] Verify report contains at least findings for: old Radix import, forwardRef pattern, missing data-slot
+#### 1.3a Create swe-ui-checker (Green)
 
-### 1.4 Add Prettier Tailwind Plugin
+- [ ] Create `.claude/agents/swe-ui-checker.md` with frontmatter:
+  - `name: swe-ui-checker`
+  - `description: Validates UI component quality including token compliance, accessibility, responsive design, component patterns, and dark mode. Use when auditing frontend components.`
+  - `tools: Read, Glob, Grep, Write, Bash`
+  - `model: sonnet`
+  - `color: green`
+  - `skills: [swe-developing-frontend-ui, repo-generating-validation-reports, repo-assessing-criticality-confidence, repo-applying-maker-checker-fixer]`
+  - Body: seven check dimensions (token compliance, accessibility, color palette, component
+    patterns, dark mode, responsive, anti-patterns) with severity levels and example violations
+  - Report output to `generated-reports/` using `swe-ui__{uuid}__{timestamp}__audit.md` pattern
+- [ ] Test agent against `apps/organiclever-web/src/components/ui/button.tsx`
+- [ ] Verify report contains findings for: old Radix import, forwardRef pattern, missing data-slot
+
+#### 1.3b Create swe-ui-fixer (Yellow)
+
+- [ ] Create `.claude/agents/swe-ui-fixer.md` with frontmatter:
+  - `name: swe-ui-fixer`
+  - `description: Applies validated fixes from swe-ui-checker audit reports. Re-validates findings before applying changes. Use after reviewing swe-ui-checker output.`
+  - `tools: Read, Write, Edit, Glob, Grep, Bash`
+  - `model: sonnet`
+  - `color: yellow`
+  - `skills: [swe-developing-frontend-ui, repo-assessing-criticality-confidence, repo-applying-maker-checker-fixer, repo-generating-validation-reports]`
+  - Body: fix capabilities table (what it can auto-fix vs. partial vs. manual), re-validation
+    protocol, confidence-based application rules
+
+#### 1.3c Create swe-ui-maker (Blue)
+
+- [ ] Create `.claude/agents/swe-ui-maker.md` with frontmatter:
+  - `name: swe-ui-maker`
+  - `description: Creates UI components following all conventions — CVA variants, Radix composition, accessibility, responsive design, unit tests, and Storybook stories. Use when creating new shared components.`
+  - `tools: Read, Write, Edit, Glob, Grep, Bash`
+  - `model: sonnet`
+  - `color: blue`
+  - `skills: [swe-developing-frontend-ui, docs-applying-content-quality]`
+  - Body: component creation checklist (file structure, CVA template, Radix usage, data-slot,
+    unit test template with vitest-axe, Storybook story template, barrel export update)
+
+#### 1.3d Register Agents
+
+- [ ] Update `.claude/agents/README.md`:
+  - Add `swe-ui-maker` under "Content Creation (Makers)"
+  - Add `swe-ui-checker` under "Validation (Checkers)"
+  - Add `swe-ui-fixer` under "Fixing (Fixers)"
+- [ ] Update `CLAUDE.md` AI Agents section:
+  - Add `swe-ui-maker` under Content Creation
+  - Add `swe-ui-checker` under Validation
+  - Add `swe-ui-fixer` under Fixing
+- [ ] Run `npm run sync:claude-to-opencode` to sync all three agents to OpenCode
+
+### 1.4 Create UI Quality Gate Workflow
+
+**Goal**: Create `governance/workflows/ui/ui-quality-gate.md` following the established quality
+gate pattern (modeled on `plan-quality-gate.md` and `ayokoding-web-general-quality-gate.md`).
+
+- [ ] Create `governance/workflows/ui/` directory
+- [ ] Create `governance/workflows/ui/README.md` — index for UI workflows
+- [ ] Create `governance/workflows/ui/ui-quality-gate.md` with:
+  - YAML frontmatter: name, goal, termination, inputs (scope, max-iterations, max-concurrency),
+    outputs (final-status, iterations-completed, final-report)
+  - Steps:
+    1. Initial Validation (`swe-ui-checker`) — full scan, generates audit report
+    2. Check for Findings — count all findings, route to fix or confirmation
+    3. Apply Fixes (`swe-ui-fixer`) — applies validated fixes from audit report
+    4. Re-validate (`swe-ui-checker`) — scoped re-check of changed files
+    5. Iteration Control — loop back or terminate (double-zero confirmation)
+    6. Finalization — report pass/partial/fail status
+  - Safety features: max-iterations (default 10), convergence monitoring, false-positive
+    persistence, escalation at iteration 7
+  - Execution mode: Agent Delegation (preferred) or Manual Orchestration (fallback)
+  - Example usage section with concrete invocation commands
+- [ ] Update `governance/workflows/README.md` to list the UI quality gate workflow
+- [ ] Verify workflow file passes `npm run lint:md`
+
+### 1.5 Add Prettier Tailwind Plugin
 
 **Goal**: Install and configure `prettier-plugin-tailwindcss` for deterministic class ordering.
 
@@ -549,13 +604,15 @@ _Make the design system browsable and self-documenting._
 
 ```mermaid
 flowchart TD
-  subgraph Phase1[Phase 1: Conventions + Skills]
+  subgraph Phase1[Phase 1: Conventions + Skills + Agents]
     A[1.1 Document UI Conventions]
     B[1.2 Create UI Skill]
-    C[1.3 Create UI Checker Agent]
-    D[1.4 Add Prettier Plugin]
+    C[1.3 Create Agent Trio]
+    D[1.4 Create Quality Gate Workflow]
+    D2[1.5 Add Prettier Plugin]
     A --> B
     B --> C
+    C --> D
   end
 
   subgraph Phase2[Phase 2: Shared Library]
@@ -592,7 +649,7 @@ flowchart TD
     Q --> S
   end
 
-  A & C & D --> E
+  A & D & D2 --> E
   G & H & I & J --> K
   G & H & I & J --> L
   G & H & I & J --> N

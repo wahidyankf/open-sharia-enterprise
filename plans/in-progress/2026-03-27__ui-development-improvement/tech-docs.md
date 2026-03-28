@@ -223,34 +223,136 @@ or `bashPattern` fields.
 | `transition: all` | `className="transition-all"` | `className="transition-colors"` (explicit properties) |
 | bounce/elastic easing | `animate-bounce` | `animate-ease-out` or custom exponential easing |
 
-### AD6: Agent Strategy — Checker Only vs. Full Trio
+### AD6: Agent Strategy — Full Maker-Checker-Fixer Trio + Quality Gate Workflow
 
-**Decision**: Create only `swe-ui-checker` in Phase 1. Defer maker and fixer to later phases.
+**Decision**: Create the full agent trio (`swe-ui-maker`, `swe-ui-checker`, `swe-ui-fixer`)
+plus a `ui-quality-gate` workflow in `governance/workflows/`.
 
 **Trade-offs**:
 
-| Factor | Checker Only (Chosen) | Full Trio (checker + maker + fixer) |
+| Factor | Checker Only | Full Trio + Workflow (Chosen) |
 | --- | --- | --- |
-| Effort | 1 agent definition | 3 agent definitions + coordination |
-| Value | Identifies violations | Identifies AND fixes violations |
-| Risk | Low — read-only analysis | Higher — fixer may introduce regressions |
-| Dependency | Only needs conventions + skill | Fixer needs deep component knowledge |
-| Precedent | Matches other checker-first rollouts in repo | No precedent for UI fixer |
+| Effort | 1 agent | 3 agents + 1 workflow |
+| Value | Identifies violations | Identifies, creates, AND fixes — full lifecycle |
+| Risk | Low — read-only | Medium — fixer modifies TSX; mitigated by re-validation |
+| Automation | Manual fix cycle | Automated quality gate with iteration control |
+| Consistency | Depends on who fixes | Fixer applies fixes consistently per conventions |
+| Precedent | N/A | Follows established pattern (docs, ayokoding-web, plans) |
 
-**Rationale**: The checker provides the most diagnostic value with the least risk. A fixer that
-modifies component TSX is high-risk — it could break visual appearance, accessibility, or
-functionality. Better to validate conventions are stable before automating fixes.
+**Rationale**: The repo already has successful maker-checker-fixer trios for docs, ayokoding-web
+content, plans, specs, and README files. The pattern is proven. A UI fixer that modifies TSX is
+higher-risk than a docs fixer, but the re-validation step (checker runs after fixer) catches
+regressions. The quality gate workflow automates the iteration loop.
 
-**swe-ui-checker dimensions with severity**:
+**Agent definitions**:
+
+#### swe-ui-maker (Blue)
+
+| Field | Value |
+| --- | --- |
+| Color | blue |
+| Model | sonnet |
+| Tools | Read, Write, Edit, Glob, Grep, Bash |
+| Skills | swe-developing-frontend-ui, docs-applying-content-quality |
+
+**Purpose**: Creates new UI components following all conventions — proper CVA variants, Radix
+composition, data-slot attributes, unit tests with vitest-axe, Storybook stories, responsive
+variants. Also creates component documentation and updates barrel exports.
+
+**When to use**: Developer requests a new shared component, or needs to add variants/sizes to
+an existing component.
+
+#### swe-ui-checker (Green)
+
+| Field | Value |
+| --- | --- |
+| Color | green |
+| Model | sonnet |
+| Tools | Read, Glob, Grep, Write, Bash |
+| Skills | swe-developing-frontend-ui, repo-generating-validation-reports, repo-assessing-criticality-confidence, repo-applying-maker-checker-fixer |
+
+**Purpose**: Validates UI components against all conventions. Produces audit reports in
+`generated-reports/` with criticality/confidence classification.
+
+**Check dimensions with severity**:
 
 | Dimension | Checks | Severity |
 | --- | --- | --- |
 | Token compliance | Hardcoded hex/rgb/hsl in className, style props, CSS | HIGH — drift source |
-| Accessibility | aria-*, role, focus-visible, labels, reduced-motion | HIGH — legal/compliance |
+| Accessibility | aria-*, role, focus-visible, labels, reduced-motion, contrast | HIGH — legal/compliance |
+| Color palette | Non-accessible colors (red, green, yellow outside palette) | HIGH — governance violation |
 | Component patterns | CVA usage, cn() calls, Radix primitives, data-slot | MEDIUM — consistency |
 | Dark mode | All visual tokens have dark variants, no light-only colors | MEDIUM — user experience |
-| Responsive | Container queries, mobile-first, no desktop-only features | LOW — depends on app |
+| Responsive | Mobile-first, viewport adaptations, 44px touch targets | MEDIUM — usability |
 | Anti-patterns | All items from anti-pattern catalog | Varies by pattern |
+
+**When to use**: Before merging UI changes, during periodic audits, or as part of the quality
+gate workflow.
+
+#### swe-ui-fixer (Yellow)
+
+| Field | Value |
+| --- | --- |
+| Color | yellow |
+| Model | sonnet |
+| Tools | Read, Write, Edit, Glob, Grep, Bash |
+| Skills | swe-developing-frontend-ui, repo-assessing-criticality-confidence, repo-applying-maker-checker-fixer, repo-generating-validation-reports |
+
+**Purpose**: Applies validated fixes from `swe-ui-checker` audit reports. Re-validates each
+finding before applying. Produces fix reports.
+
+**Fix capabilities**:
+
+| Finding Type | Auto-Fixable? | How |
+| --- | --- | --- |
+| Hardcoded hex in className | Yes | Replace with token-based Tailwind class |
+| Missing aria-label | Yes | Add aria-label from component context |
+| Missing data-slot | Yes | Add data-slot attribute |
+| Old Radix import | Yes | Replace `@radix-ui/react-slot` with `radix-ui` |
+| forwardRef → ComponentProps | Partial | Requires manual review for complex cases |
+| Missing dark mode variant | Yes | Add `dark:` prefix with appropriate token |
+| Missing focus-visible | Yes | Replace `focus:` with `focus-visible:` |
+| Non-accessible color | Partial | Suggest replacement from accessible palette |
+
+**When to use**: After `swe-ui-checker` produces a report, or as part of the quality gate
+workflow.
+
+### AD6b: Quality Gate Workflow
+
+**Decision**: Create `governance/workflows/ui/ui-quality-gate.md` following the established
+quality gate pattern.
+
+**Workflow structure**:
+
+```
+1. Initial Validation (swe-ui-checker) → audit report
+2. Check for Findings → if zero, confirmation check; if >0, proceed
+3. Apply Fixes (swe-ui-fixer) → fix report
+4. Re-validate (swe-ui-checker) → verification report
+5. Iteration Control → loop or terminate
+6. Finalization → pass/partial/fail
+```
+
+**Inputs**:
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| scope | string | all | Files/directories to validate |
+| max-iterations | number | 10 | Maximum check-fix cycles |
+| max-concurrency | number | 2 | Max concurrent agents |
+
+**Outputs**:
+
+| Name | Type | Description |
+| --- | --- | --- |
+| final-status | enum (pass/partial/fail) | Final quality gate result |
+| iterations-completed | number | Cycles executed |
+| final-report | file | Last audit report in generated-reports/ |
+
+**Termination**: Zero findings on two consecutive validations (double-zero confirmation).
+
+**Safety features**: Max-iterations cap, convergence monitoring, false-positive persistence,
+scoped re-validation after fixes.
 
 ### AD7: Testing Strategy — Where to Put What
 
