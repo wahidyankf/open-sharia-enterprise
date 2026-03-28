@@ -59,9 +59,9 @@ Execute phases in order. Each phase produces a working, committable state.
 
 - [ ] Create `vitest.config.ts` with three test projects (unit, unit-fe, integration), coverage exclusions (see tech-docs.md)
 - [ ] Create `oxlint.json` with plugins: typescript, react, nextjs, import, unicorn, jsx-a11y, vitest (copy from ayokoding-web)
-- [ ] Create `components.json` for shadcn/ui (new-york style, rsc: true, neutral base color)
-- [ ] Initialize shadcn/ui (`npx shadcn@latest init`)
-- [ ] Install shadcn/ui components: badge, command, dropdown-menu, scroll-area, separator, sheet, tabs, tooltip
+- [ ] Create `components.json` manually (new-york style, rsc: true, neutral base color — see tech-docs.md for full content)
+  - Note: Do NOT run `npx shadcn@latest init` separately — it would overwrite the manually crafted `components.json`. The `init` command is only needed if generating `components.json` interactively. Use the manual file from tech-docs.md directly.
+- [ ] Install shadcn/ui components: badge, card, command, dropdown-menu, scroll-area, separator, sheet, tabs, tooltip
 - [ ] Create `src/lib/utils.ts` with `cn()` utility (clsx + tailwind-merge)
 - [ ] Create `src/test/setup.ts` for frontend tests (import `@testing-library/jest-dom`)
 
@@ -372,7 +372,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ### Run Tests
 
-- [ ] Run `nx run oseplatform-web:test:unit` -- all tests pass
+- [ ] Run `npx vitest run --project unit --project unit-fe` -- all tests pass (both backend and frontend scenarios)
 - [ ] Verify all 21 Gherkin scenarios covered
 
 **Commit**: `test(oseplatform-web): implement unit tests with Gherkin step definitions`
@@ -411,7 +411,7 @@ Execute phases in order. Each phase produces a working, committable state.
 ### Docker
 
 - [ ] Create `Dockerfile` (multi-stage: deps -> build -> runner, see tech-docs.md)
-  - [ ] Include shared lib symlinks for `ts-ui` and `ts-ui-tokens` in builder stage
+  - [ ] Inject `ts-ui` and `ts-ui-tokens` into `node_modules` via direct COPY commands in builder stage (see tech-docs.md)
   - [ ] Copy content/ and generated/ into runner stage
   - [ ] Run as non-root `nextjs` user
 - [ ] Verify `docker build` succeeds
@@ -574,6 +574,13 @@ Execute phases in order. Each phase produces a working, committable state.
 - [ ] `nx affected -t typecheck lint test:quick` passes for all affected projects
 - [ ] No stale references to Hugo for oseplatform-web (grep for `platform:hugo.*oseplatform`)
 - [ ] `oseplatform-cli links check` passes
+
+### Cleanup Reference Capture Script
+
+- [ ] Archive or remove `scripts/capture-hugo-reference.ts` (it served its one-time purpose in Phase 0)
+  - Option A: Delete the file (screenshots remain in `local-temp/` as the reference)
+  - Option B: Move to `local-temp/oseplatform-web-hugo-reference/capture-hugo-reference.ts` for historical context
+  - Add a `# One-time Hugo reference capture script - archived` comment if keeping
 
 ---
 

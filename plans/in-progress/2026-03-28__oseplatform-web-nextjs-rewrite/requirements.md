@@ -107,11 +107,15 @@ Scenario: Visitor toggles dark mode
 ### US-9: SEO
 
 ```gherkin
-Scenario: Search engine crawls the site
-  Given a search engine requests "/robots.txt"
-  Then it receives valid robots.txt with sitemap reference
-  When it requests "/sitemap.xml"
-  Then it receives a valid sitemap with all public page URLs
+Scenario: Robots.txt is valid
+  Given the Next.js app is running
+  When a search engine requests "/robots.txt"
+  Then the response contains valid robots.txt with sitemap reference
+
+Scenario: Sitemap is valid
+  Given the Next.js app is running
+  When a search engine requests "/sitemap.xml"
+  Then the response contains a valid sitemap with all public page URLs
   And each page has proper meta title, description, and Open Graph tags
 ```
 
@@ -214,6 +218,9 @@ Scenario: Rendered content matches Hugo output
 ### AC-3: Build & Test
 
 ```gherkin
+# Integration-level quality gate: intentionally tests the full pipeline in one scenario.
+# Each When/Then pair tests a separate Nx target. Not split into separate scenarios
+# because the quality gate must pass as a whole before deployment proceeds.
 Scenario: Quality gate passes
   Given the Next.js app source code
   When "nx run oseplatform-web:test:quick" is executed

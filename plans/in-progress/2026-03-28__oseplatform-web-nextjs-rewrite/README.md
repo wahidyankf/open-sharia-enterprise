@@ -41,7 +41,7 @@ The current Hugo site is functional but:
 | **Framework**  | Next.js 16 (App Router, RSC, TypeScript)                             |
 | **Content**    | Same markdown files, rendered by unified/remark/rehype pipeline      |
 | **i18n**       | English only (no locale routing)                                     |
-| **Features**   | Same as current + dark mode, search, extensible route groups         |
+| **Features**   | Same as current + dark mode, search, flat extensible structure       |
 | **Dev port**   | 3100                                                                 |
 | **Deployment** | Vercel via `prod-oseplatform-web` branch (unchanged)                 |
 | **Nx targets** | dev, build, typecheck, lint, test:unit, test:quick, test:integration |
@@ -99,7 +99,7 @@ The current Hugo site is functional but:
 | **i18n**              | English + Indonesian                                   | English only                |
 | **Rendering**         | SSG (`generateStaticParams` + `dynamicParams = false`) | SSG (same pattern)          |
 | **Shortcodes**        | callout, tabs, youtube, steps, mermaid                 | Mermaid only                |
-| **Route groups**      | `(content)` + `(app)`                                  | `(marketing)` + `(updates)` |
+| **Route groups**      | `(content)` + `(app)`                                  | None (flat structure)       |
 | **Navigation**        | Deep 5-level tree sidebar                              | Flat header nav             |
 | **Search complexity** | Heavy (933+ docs)                                      | Light (~6 pages)            |
 | **CLI dependency**    | ayokoding-cli                                          | oseplatform-cli             |

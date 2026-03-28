@@ -201,6 +201,9 @@ export const frontmatterSchema = z.object({
   summary: z.string().optional(),
   categories: z.array(z.string()).default([]),
   showtoc: z.boolean().default(false),
+  // url: Hugo URL override field (e.g. "/about/" on about.md). Stored for reference only.
+  // Slug derivation always uses file path, not this field. Ignored for routing.
+  url: z.string().optional(),
 });
 ```
 
@@ -394,6 +397,8 @@ Server component that calls `serverCaller.content.getBySlug("about")` and render
 
 Server component that calls `serverCaller.content.listUpdates()` and renders update cards with title, date, summary, and tags.
 
+**`_index.md` handling**: The `content/updates/_index.md` file contains section introductory text ("Stay informed about the latest developments..."). This content is displayed above the update list on the `/updates/` page, maintaining parity with the Hugo site's section intro. The executor should call `serverCaller.content.getBySlug("updates/_index")` (or equivalent) to retrieve and render the `_index.md` intro content, or pass it directly as a static prop. If `_index.md` is absent or empty, the intro text is omitted gracefully. The `isSection: true` flag in `ContentMeta` identifies these files.
+
 ### Update Detail (`app/updates/[slug]/page.tsx`)
 
 Server component with `generateStaticParams()` that pre-builds all update pages. Renders full markdown with TOC, reading time, tags, and prev/next navigation.
@@ -513,9 +518,8 @@ export const dynamicParams = false;
       "options": {
         "cwd": "apps/oseplatform-web",
         "commands": [
-          "vitest run --project unit --coverage",
-          "npx rhino-cli test-coverage validate apps/oseplatform-web/coverage/lcov.info 80",
-          "npx oseplatform-cli links check"
+          "npx vitest run --project unit --project unit-fe --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/oseplatform-web/coverage/lcov.info 80)",
+          "../../apps/oseplatform-cli/dist/oseplatform-cli links check"
         ],
         "parallel": false
       },
@@ -535,7 +539,7 @@ export const dynamicParams = false;
       "cache": true
     },
     "links:check": {
-      "command": "npx oseplatform-cli links check",
+      "command": "../../apps/oseplatform-cli/dist/oseplatform-cli links check",
       "options": {
         "cwd": "apps/oseplatform-web"
       }
@@ -624,12 +628,13 @@ Aligned with ayokoding-web's current `package.json` (post-shared-UI-libs migrati
     "jsdom": "^26.0.0",
     "tailwindcss": "^4.0.0",
     "@tailwindcss/postcss": "^4.0.0",
-    "@tailwindcss/typography": "^0.5.0"
+    "@tailwindcss/typography": "^0.5.0",
+    "@playwright/test": "^1.50.0"
   }
 }
 ```
 
-**Note**: `@open-sharia-enterprise/ts-ui` and `@open-sharia-enterprise/ts-ui-tokens` are not listed in `package.json` -- they are monorepo workspace packages resolved via npm workspaces (declared in root `package.json`). The Dockerfile injects them as symlinks into `node_modules`. Components like `Button` are imported from `@open-sharia-enterprise/ts-ui`.
+**Note**: `@open-sharia-enterprise/ts-ui` and `@open-sharia-enterprise/ts-ui-tokens` are not listed in `package.json` -- they are monorepo workspace packages resolved via npm workspaces (declared in root `package.json`). The Dockerfile injects them into `node_modules` via direct COPY commands (matching the ayokoding-web pattern). Components like `Button` are imported from `@open-sharia-enterprise/ts-ui`.
 
 **Omitted vs ayokoding-web** (not needed):
 
@@ -647,7 +652,7 @@ Aligned with ayokoding-web's current `package.json` (post-shared-UI-libs migrati
 import type { NextConfig } from "next";
 import path from "node:path";
 
-const config: NextConfig = {
+const nextConfig: NextConfig = {
   output: "standalone",
   outputFileTracingRoot: path.join(__dirname, "../../"),
   outputFileTracingIncludes: {
@@ -656,7 +661,7 @@ const config: NextConfig = {
   serverExternalPackages: ["flexsearch"],
 };
 
-export default config;
+export default nextConfig;
 ````
 
 ## Vercel Configuration
@@ -668,6 +673,12 @@ export default config;
   "buildCommand": "npx tsx src/scripts/generate-search-data.ts && next build",
   "ignoreCommand": "[ \"$VERCEL_GIT_COMMIT_REF\" != \"prod-oseplatform-web\" ]",
   "headers": [
+    {
+      "source": "/_next/static/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
     {
       "source": "/(.*)",
       "headers": [
@@ -681,7 +692,7 @@ export default config;
 }
 ```
 
-**Note**: Security headers preserved identically from current Hugo vercel.json.
+**Note**: Security headers preserved from current Hugo vercel.json. Static asset cache-control header updated to use Next.js path pattern `/_next/static/(.*)` instead of Hugo's CSS/JS/fonts pattern.
 
 ## Additional Configuration Files
 
@@ -862,9 +873,9 @@ export default defineConfig({
 ## Docker Configuration
 
 ```dockerfile
-# Dockerfile - Multi-stage build (mirrors ayokoding-web pattern with shared lib symlinks)
+# Dockerfile - Multi-stage build (mirrors ayokoding-web pattern with direct COPY for shared libs)
 FROM node:24-alpine AS deps
-WORKDIR /app
+WORKDIR /workspace
 # Copy root package files for workspace resolution
 COPY ../../package.json ../../package-lock.json ./
 # Copy app + shared lib package.json files
@@ -874,38 +885,39 @@ COPY libs/ts-ui-tokens/package.json libs/ts-ui-tokens/
 RUN npm ci --ignore-scripts
 
 FROM node:24-alpine AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+WORKDIR /workspace
+COPY --from=deps /workspace/node_modules ./node_modules
 COPY apps/oseplatform-web/ apps/oseplatform-web/
 COPY libs/ts-ui/ libs/ts-ui/
 COPY libs/ts-ui-tokens/ libs/ts-ui-tokens/
-# Inject shared libs into node_modules (same pattern as ayokoding-web Dockerfile)
-RUN mkdir -p node_modules/@open-sharia-enterprise && \
-    ln -sf /app/libs/ts-ui node_modules/@open-sharia-enterprise/ts-ui && \
-    ln -sf /app/libs/ts-ui-tokens node_modules/@open-sharia-enterprise/ts-ui-tokens
-WORKDIR /app/apps/oseplatform-web
+# Inject shared libs into node_modules (direct copy pattern from ayokoding-web Dockerfile)
+COPY libs/ts-ui/src/ ./node_modules/@open-sharia-enterprise/ts-ui/src/
+COPY libs/ts-ui/package.json ./node_modules/@open-sharia-enterprise/ts-ui/
+COPY libs/ts-ui-tokens/src/ ./node_modules/@open-sharia-enterprise/ts-ui-tokens/src/
+COPY libs/ts-ui-tokens/package.json ./node_modules/@open-sharia-enterprise/ts-ui-tokens/
+WORKDIR /workspace/apps/oseplatform-web
 RUN npx tsx src/scripts/generate-search-data.ts
 RUN npm run build
 
 FROM node:24-alpine AS runner
-WORKDIR /app
+WORKDIR /workspace
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV HOSTNAME=0.0.0.0
 ENV PORT=3100
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
-COPY --from=builder /app/apps/oseplatform-web/.next/standalone ./
-COPY --from=builder /app/apps/oseplatform-web/.next/static apps/oseplatform-web/.next/static
-COPY --from=builder /app/apps/oseplatform-web/public apps/oseplatform-web/public
-COPY --from=builder /app/apps/oseplatform-web/content apps/oseplatform-web/content
-COPY --from=builder /app/apps/oseplatform-web/generated apps/oseplatform-web/generated
+COPY --from=builder --chown=nextjs:nodejs /workspace/apps/oseplatform-web/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /workspace/apps/oseplatform-web/.next/static apps/oseplatform-web/.next/static
+COPY --from=builder --chown=nextjs:nodejs /workspace/apps/oseplatform-web/public apps/oseplatform-web/public
+COPY --from=builder --chown=nextjs:nodejs /workspace/apps/oseplatform-web/content apps/oseplatform-web/content
+COPY --from=builder --chown=nextjs:nodejs /workspace/apps/oseplatform-web/generated apps/oseplatform-web/generated
 USER nextjs
 EXPOSE 3100
 CMD ["node", "apps/oseplatform-web/server.js"]
 ```
 
-**Critical**: The Dockerfile must inject shared libs (`ts-ui`, `ts-ui-tokens`) as symlinks into `node_modules/@open-sharia-enterprise/`. This is the same pattern used by ayokoding-web's Dockerfile after the shared UI libs migration (commit `73b4b322`).
+**Critical**: The Dockerfile must inject shared libs (`ts-ui`, `ts-ui-tokens`) into `node_modules/@open-sharia-enterprise/` using direct COPY commands. This is the same pattern used by ayokoding-web's Dockerfile. Runner-stage COPY commands use `--chown=nextjs:nodejs` to ensure proper file ownership.
 
 ## Gherkin Specs
 
@@ -958,11 +970,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: volta-cli/action@v4
-      - name: Install Go 1.26
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+      - name: Install Go 1.24
         uses: actions/setup-go@v5
         with:
-          go-version: "1.26"
+          go-version: "1.24"
       - run: npm ci --ignore-scripts
       - name: Build rhino-cli and oseplatform-cli
         run: |
@@ -972,16 +988,21 @@ jobs:
       - run: npx nx run oseplatform-web:lint
       - run: npx nx run oseplatform-web:test:quick
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v4
         with:
-          files: apps/oseplatform-web/coverage/lcov.info
+          file: apps/oseplatform-web/coverage/lcov.info
           flags: oseplatform-web
+          fail_ci_if_error: false
 
   integration:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: volta-cli/action@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
       - run: npm ci --ignore-scripts
       - run: npx nx run oseplatform-web:test:integration
 
@@ -989,7 +1010,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: volta-cli/action@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
       - run: npm ci --ignore-scripts
       - name: Build Next.js app
         run: npx nx run oseplatform-web:build
@@ -1146,7 +1171,7 @@ Before archiving Hugo files, capture reference screenshots of the current site:
 
 ```typescript
 // scripts/capture-hugo-reference.ts (temporary, run once)
-import { chromium } from "playwright";
+import { chromium } from "@playwright/test";
 
 const VIEWPORTS = [
   { name: "mobile", width: 375, height: 812 },
