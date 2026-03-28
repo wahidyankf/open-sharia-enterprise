@@ -14,10 +14,11 @@ WORKDIR /workspace
 COPY --from=deps /workspace/node_modules ./node_modules
 COPY --from=deps /workspace/apps/ayokoding-web/node_modules ./apps/ayokoding-web/node_modules
 COPY apps/ayokoding-web/ ./apps/ayokoding-web/
-COPY libs/ts-ui/src/ ./libs/ts-ui/src/
-COPY libs/ts-ui/package.json ./libs/ts-ui/
-COPY libs/ts-ui-tokens/src/ ./libs/ts-ui-tokens/src/
-COPY libs/ts-ui-tokens/package.json ./libs/ts-ui-tokens/
+# Provide shared libs as resolvable node_modules packages
+COPY libs/ts-ui/src/ ./node_modules/@open-sharia-enterprise/ts-ui/src/
+COPY libs/ts-ui/package.json ./node_modules/@open-sharia-enterprise/ts-ui/
+COPY libs/ts-ui-tokens/src/ ./node_modules/@open-sharia-enterprise/ts-ui-tokens/src/
+COPY libs/ts-ui-tokens/package.json ./node_modules/@open-sharia-enterprise/ts-ui-tokens/
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN cd apps/ayokoding-web && npm run build
 

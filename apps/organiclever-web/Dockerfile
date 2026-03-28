@@ -14,10 +14,11 @@ FROM node:24-alpine AS build
 WORKDIR /app
 COPY --from=deps /app/ ./
 COPY apps/organiclever-web/ ./apps/organiclever-web/
-COPY libs/ts-ui/src/ ./libs/ts-ui/src/
-COPY libs/ts-ui/package.json ./libs/ts-ui/
-COPY libs/ts-ui-tokens/src/ ./libs/ts-ui-tokens/src/
-COPY libs/ts-ui-tokens/package.json ./libs/ts-ui-tokens/
+# Provide shared libs as resolvable node_modules packages (overwrite symlinks from npm ci)
+COPY libs/ts-ui/src/ ./node_modules/@open-sharia-enterprise/ts-ui/src/
+COPY libs/ts-ui/package.json ./node_modules/@open-sharia-enterprise/ts-ui/
+COPY libs/ts-ui-tokens/src/ ./node_modules/@open-sharia-enterprise/ts-ui-tokens/src/
+COPY libs/ts-ui-tokens/package.json ./node_modules/@open-sharia-enterprise/ts-ui-tokens/
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN cd apps/organiclever-web && npx next build
 

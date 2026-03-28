@@ -2,7 +2,6 @@ FROM node:24-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY apps/demo-fs-ts-nextjs/package.json ./apps/demo-fs-ts-nextjs/
-COPY libs/ts-ui-tokens/package.json ./libs/ts-ui-tokens/
 RUN npm ci --ignore-scripts
 
 FROM node:24-alpine AS builder
@@ -13,8 +12,9 @@ COPY package.json ./
 COPY apps/demo-fs-ts-nextjs/src/ ./apps/demo-fs-ts-nextjs/src/
 COPY apps/demo-fs-ts-nextjs/public/ ./apps/demo-fs-ts-nextjs/public/
 COPY apps/demo-fs-ts-nextjs/package.json apps/demo-fs-ts-nextjs/tsconfig.json apps/demo-fs-ts-nextjs/next.config.ts apps/demo-fs-ts-nextjs/vitest.config.ts apps/demo-fs-ts-nextjs/postcss.config.mjs ./apps/demo-fs-ts-nextjs/
-COPY libs/ts-ui-tokens/src/ ./libs/ts-ui-tokens/src/
-COPY libs/ts-ui-tokens/package.json ./libs/ts-ui-tokens/
+# Provide shared tokens as a resolvable node_modules package
+COPY libs/ts-ui-tokens/src/ ./node_modules/@open-sharia-enterprise/ts-ui-tokens/src/
+COPY libs/ts-ui-tokens/package.json ./node_modules/@open-sharia-enterprise/ts-ui-tokens/
 COPY specs/apps/demo/contracts/generated/ ./specs/apps/demo/contracts/generated/
 ENV NEXT_TELEMETRY_DISABLED=1
 WORKDIR /app/apps/demo-fs-ts-nextjs
