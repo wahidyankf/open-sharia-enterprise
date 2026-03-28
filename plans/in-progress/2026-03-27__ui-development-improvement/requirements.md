@@ -181,9 +181,9 @@ enough to accommodate different brand palettes across apps.
 
 ### G5: No Accessible Color Palette Enforcement in UI Components
 
-**What exists**: The repo has a well-defined [Color Accessibility Convention](../../governance/conventions/formatting/color-accessibility.md)
+**What exists**: The repo has a well-defined [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md)
 with a mandatory 5-color palette (#0173B2, #DE8F05, #029E73, #CC78BC, #CA9161) and
-[Accessibility First](../../governance/principles/content/accessibility-first.md) principle
+[Accessibility First](../../../governance/principles/content/accessibility-first.md) principle
 requiring WCAG AA compliance.
 
 **Impact**: These conventions are enforced for documentation (diagrams, markdown) but **not for

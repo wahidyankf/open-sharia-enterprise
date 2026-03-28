@@ -295,8 +295,8 @@ or `bashPattern` fields.
 | Missing data-slot | `<button className={...}>` | `<button data-slot="button" className={...}>` |
 | Inline styles in production | `style={{ color: 'red' }}` | Use Tailwind utility: `className="text-destructive"` |
 | Card inside Card | `<Card><Card>nested</Card></Card>` | Use spacing/dividers for hierarchy |
-| Color-only status | `<span className="text-red-500">Error</span>` | Include text label + shape per [Accessibility First](../../governance/principles/content/accessibility-first.md) |
-| Non-accessible palette color | `className="text-red-500"` or `bg-green-500` | Use accessible palette or semantic tokens per [Color Accessibility Convention](../../governance/conventions/formatting/color-accessibility.md) |
+| Color-only status | `<span className="text-red-500">Error</span>` | Include text label + shape per [Accessibility First](../../../governance/principles/content/accessibility-first.md) |
+| Non-accessible palette color | `className="text-red-500"` or `bg-green-500` | Use accessible palette or semantic tokens per [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md) |
 | Missing focus-visible | `focus:ring-2` | `focus-visible:ring-2` (keyboard users only) |
 | `transition: all` | `className="transition-all"` | `className="transition-colors"` (explicit properties) |
 | bounce/elastic easing | `animate-bounce` | `animate-ease-out` or custom exponential easing |
@@ -674,8 +674,8 @@ Every architecture decision in this plan traces to one or more governance princi
 
 ### Color Accessibility Compliance
 
-The [Color Accessibility Convention](../../governance/conventions/formatting/color-accessibility.md)
-and [Accessibility First](../../governance/principles/content/accessibility-first.md) principle
+The [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md)
+and [Accessibility First](../../../governance/principles/content/accessibility-first.md) principle
 require:
 
 - **Semantic color tokens** (`--color-destructive`, `--color-primary`) must produce WCAG AA
