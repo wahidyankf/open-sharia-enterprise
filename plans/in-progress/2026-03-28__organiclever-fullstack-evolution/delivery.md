@@ -107,6 +107,11 @@ follow-up plan.
 - [ ] Create `src/OrganicLeverBe/Infrastructure/AppDbContext.fs` (EF Core DbContext,
   PostgreSQL + SQLite, snake_case naming)
 - [ ] Create `src/OrganicLeverBe/Infrastructure/Migrator.fs` (DbUp runner using embedded SQL)
+- [ ] Create `src/OrganicLeverBe/Infrastructure/Repositories/RepositoryTypes.fs`
+  (UserRepository, RefreshTokenRepository, HelloRepository as function records)
+- [ ] Create `src/OrganicLeverBe/Infrastructure/Repositories/EfRepositories.fs`
+  (EF Core implementations of all repository function records)
+- [ ] Register repositories in `Program.fs` DI container (`AddScoped`)
 - [ ] Create `src/OrganicLeverBe/Contracts/ContractWrappers.fs` (CLIMutable DTOs)
 - [ ] Add NuGet packages: `Npgsql.EntityFrameworkCore.PostgreSQL` 10.x,
   `EFCore.NamingConventions` 10.x, `dbup-core` 5.x, `dbup-postgresql` 5.x
@@ -121,9 +126,11 @@ follow-up plan.
 ### Milestone 3.3: Backend Testing
 
 - [ ] Create test project `tests/OrganicLeverBe.Tests/`
-- [ ] Create unit tests consuming `be/gherkin/hello/`, `be/gherkin/health/`, and
-  `be/gherkin/authentication/` specs
-- [ ] Create integration tests with real PostgreSQL
+- [ ] Create unit tests consuming `be/gherkin/` specs with **mocked repository function records**
+  (hello, health, authentication domains). Use SQLite in-memory, no HTTP.
+- [ ] Create integration tests consuming the **same `be/gherkin/` specs** with **real EF Core
+  repositories** against PostgreSQL via Docker Compose. No HTTP, no mocks.
+- [ ] Verify all test assertions use **generated contract types** (not hand-written DTOs)
 - [ ] Verify `nx run organiclever-be:test:quick` passes with 90% coverage
 - [ ] Verify `nx run organiclever-be:lint` passes
 - [ ] Verify `nx run organiclever-be:typecheck` passes

@@ -61,8 +61,12 @@
 
 - **FR-2.2.1**: F#/Giraffe HttpHandler composition
 - **FR-2.2.2**: Clean Architecture: Handlers, Domain, Infrastructure layers
-- **FR-2.2.3**: OpenAPI codegen for contract types (`generated-contracts/`)
-- **FR-2.2.4**: Port 8202
+- **FR-2.2.3**: **Repository pattern** using F# function records (following demo-be-fsharp-giraffe):
+  `UserRepository`, `RefreshTokenRepository`, `HelloRepository` as interfaces; `EfRepositories`
+  as EF Core implementations; injected via DI, mockable for unit tests
+- **FR-2.2.4**: OpenAPI codegen for contract types (`generated-contracts/`). All API
+  request/response types derived from OpenAPI spec -- no hand-written DTOs
+- **FR-2.2.5**: Port 8202
 
 #### FR-2.3: Database & Migrations
 
@@ -81,9 +85,13 @@
 - **FR-2.4.2**: `typecheck` -- `dotnet build` with warnings as errors (depends on codegen)
 - **FR-2.4.3**: `lint` -- Fantomas + FSharpLint + G-Research analyzers
 - **FR-2.4.4**: `build` -- `dotnet publish` (depends on codegen)
-- **FR-2.4.5**: `test:unit` -- xUnit with mocked dependencies, Gherkin specs
+- **FR-2.4.5**: `test:unit` -- xUnit with **mocked repository function records**, consuming
+  Gherkin specs from `specs/apps/organiclever/be/gherkin/`. Calls service/handler functions
+  directly (no HTTP). Uses SQLite in-memory.
 - **FR-2.4.6**: `test:quick` -- Unit tests + AltCover coverage + rhino-cli validation (90%)
-- **FR-2.4.7**: `test:integration` -- Docker Compose with real PostgreSQL, Gherkin specs
+- **FR-2.4.7**: `test:integration` -- Docker Compose with **real PostgreSQL and real EF Core
+  repositories**, consuming the **same Gherkin specs**. Calls service/handler functions directly
+  (no HTTP). No mocks.
 - **FR-2.4.8**: `dev` (optional) -- `dotnet watch run`
 - **FR-2.4.9**: `start` (optional) -- `dotnet run`
 
@@ -110,12 +118,15 @@
 - **FR-3.2.4**: Token refresh: BFF proxy automatically refreshes expired access tokens
   using refresh token before returning 401 to client
 
-#### FR-3.3: Effect TS Integration
+#### FR-3.3: Effect TS Integration + Contract Types
 
 - **FR-3.3.1**: Server-side API client using Effect TS (`Effect`, `Layer`, `Context`)
 - **FR-3.3.2**: Structured error types (`NetworkError`, `ApiError`)
 - **FR-3.3.3**: Service layer with dependency injection (server-side only)
 - **FR-3.3.4**: `BackendClient` service encapsulates all HTTP calls to `organiclever-be`
+- **FR-3.3.5**: All API calls use **generated contract types** from `@hey-api/openapi-ts` codegen.
+  No hand-written request/response types -- all derived from the shared OpenAPI spec.
+  Request payloads, response types, and error shapes match the contract exactly.
 
 #### FR-3.4: Nx Targets (Standard 7 + Optional)
 
@@ -131,8 +142,9 @@
 
 ### FR-4: Backend E2E Tests (`apps/organiclever-be-e2e`)
 
-- **FR-4.1**: Playwright-based E2E tests against running `organiclever-be`
-- **FR-4.2**: Consumes `specs/apps/organiclever/be/gherkin/` specs via `bddgen`
+- **FR-4.1**: Playwright-based E2E tests against running `organiclever-be` (real HTTP + real DB)
+- **FR-4.2**: Consumes the **same Gherkin specs** from `specs/apps/organiclever/be/gherkin/`
+  via `bddgen` (third level of the three-level testing standard)
 - **FR-4.3**: Nx targets: `install`, `lint`, `typecheck`, `test:quick`, `test:e2e`, `test:e2e:ui`
 
 ### FR-5: Frontend E2E Tests (`apps/organiclever-fe-e2e`)
@@ -197,11 +209,14 @@
 
 ### NFR-1: Testing Standards
 
-- **NFR-1.1**: Three-level testing for backend: unit (mocked), integration (real PostgreSQL),
-  E2E (Playwright HTTP)
+- **NFR-1.1**: Three-level testing for backend: unit (mocked repos), integration (real
+  PostgreSQL), E2E (Playwright HTTP). All three levels consume the **same Gherkin specs**
+  from `specs/apps/organiclever/be/gherkin/` -- only step implementations differ.
 - **NFR-1.2**: Three-level testing for frontend: unit (mocked), integration (MSW),
-  E2E (Playwright browser)
-- **NFR-1.3**: All test levels consume Gherkin specs from `specs/apps/organiclever/`
+  E2E (Playwright browser). All three levels consume the **same Gherkin specs**
+  from `specs/apps/organiclever/fe/gherkin/`.
+- **NFR-1.3**: All API types (request, response, error) derived from OpenAPI contract via
+  codegen in both backend and frontend -- no hand-written DTOs
 - **NFR-1.4**: Coverage: BE 90% line, FE 70% line (matching demo standards)
 - **NFR-1.5**: Gherkin spec paths included in Nx cache inputs
 
