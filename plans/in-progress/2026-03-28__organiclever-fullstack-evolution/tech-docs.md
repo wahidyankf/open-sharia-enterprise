@@ -93,6 +93,7 @@ specs/apps/organiclever/
 apps/organiclever-be/
 ├── src/
 │   └── OrganicLeverBe/
+│       ├── OrganicLeverBe.fsproj         # Project file (inside src/, matching demo pattern)
 │       ├── Program.fs                    # Entry point, routing, DI
 │       ├── Domain/
 │       │   └── Types.fs                  # Core types (User, HealthResponse, DomainError)
@@ -110,8 +111,11 @@ apps/organiclever-be/
 │       │   └── Repositories/
 │       │       ├── RepositoryTypes.fs    # Repository interfaces as function records
 │       │       └── EfRepositories.fs     # EF Core implementations
-│       └── Contracts/
-│           └── ContractWrappers.fs       # CLIMutable request DTOs from codegen
+│       ├── Contracts/
+│       │   └── ContractWrappers.fs       # CLIMutable request DTOs from codegen
+│       └── db/
+│           └── migrations/
+│               └── 001-initial-schema.sql  # Minimal schema (embedded resource)
 ├── tests/
 │   └── OrganicLeverBe.Tests/
 │       ├── Unit/                         # Mocked repositories, same Gherkin specs
@@ -121,11 +125,8 @@ apps/organiclever-be/
 │           ├── HealthIntegrationTests.fs
 │           └── AuthIntegrationTests.fs
 ├── generated-contracts/                  # From OpenAPI codegen (gitignored)
-├── db/
-│   └── migrations/
-│       └── 001-initial-schema.sql        # Minimal schema
 ├── project.json
-├── OrganicLeverBe.fsproj
+├── global.json
 ├── docker-compose.integration.yml
 ├── Dockerfile.integration
 ├── fsharplint.json
@@ -178,11 +179,15 @@ type RefreshTokenRepository = {
 let createUserRepo (db: AppDbContext) : UserRepository = {
     FindById = fun id -> task {
         return! db.Users.AsNoTracking()
-            |> Seq.tryFindAsync (fun u -> u.Id = id)
+            .Where(fun u -> u.Id = id)
+            .FirstOrDefaultAsync()
+            |> Task.map Option.ofObj
     }
     FindByGoogleId = fun googleId -> task {
         return! db.Users.AsNoTracking()
-            |> Seq.tryFindAsync (fun u -> u.GoogleId = googleId)
+            .Where(fun u -> u.GoogleId = googleId)
+            .FirstOrDefaultAsync()
+            |> Task.map Option.ofObj
     }
     // ...
 }
@@ -275,8 +280,8 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
 ```xml
 <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.*" />
 <PackageReference Include="EFCore.NamingConventions" Version="10.*" />
-<PackageReference Include="dbup-core" Version="5.*" />
-<PackageReference Include="dbup-postgresql" Version="5.*" />
+<PackageReference Include="dbup-core" Version="7.*" />
+<PackageReference Include="dbup-postgresql" Version="7.*" />
 ```
 
 **Environment variables**:
@@ -322,7 +327,7 @@ Browser ──GET /profile──▶ Next.js Server Component
                         organiclever-be:8202
                               │
                               ▼
-                        {"message":"world"}
+                        {"name":"Alice","email":"alice@example.com","avatarUrl":"..."}
 ```
 
 **Why**: Keeps the backend URL private (not exposed to browser), enables server-side caching,
@@ -618,7 +623,7 @@ paths:
 | Backend runtime    | .NET                         | 10.0    | LTS                          |
 | Backend web        | Giraffe                      | 7.x     | Functional HttpHandler       |
 | Backend ORM        | EF Core (Npgsql)             | 10.x    | PostgreSQL provider          |
-| Backend migrations | DbUp (dbup-postgresql)       | 5.x     | SQL file migrations          |
+| Backend migrations | DbUp (dbup-postgresql)       | 7.x     | SQL file migrations          |
 | Backend JSON       | FSharp.SystemTextJson         | Latest  | F# type serialization        |
 | Backend lint       | Fantomas, FSharpLint         | Latest  | Formatting + style           |
 | Backend coverage   | AltCover                     | Latest  | 90% line coverage            |

@@ -164,15 +164,15 @@
 
 ### FR-7: CI Pipelines (No CD/Deployment)
 
-- **FR-6.1**: GitHub Actions workflow `test-organiclever-be.yml` -- Scheduled 2x daily
+- **FR-7.1**: GitHub Actions workflow `test-organiclever-be.yml` -- Scheduled 2x daily
   (integration + E2E tests for backend)
-- **FR-6.2**: GitHub Actions workflow `test-organiclever-fe.yml` -- Scheduled 2x daily
+- **FR-7.2**: GitHub Actions workflow `test-organiclever-fe.yml` -- Scheduled 2x daily
   (integration + E2E tests for frontend)
-- **FR-6.3**: Both workflows follow same pattern as `test-demo-be-*.yml` / `test-demo-fe-*.yml`
-- **FR-6.4**: All 4 apps included in `main-ci.yml` affected targets (`typecheck`, `lint`,
+- **FR-7.3**: Both workflows follow same pattern as `test-demo-be-*.yml` / `test-demo-fe-*.yml`
+- **FR-7.4**: All 4 apps included in `main-ci.yml` affected targets (`typecheck`, `lint`,
   `test:quick`)
-- **FR-6.5**: All 4 apps included in `pr-quality-gate.yml` affected targets
-- **FR-6.6**: CD/deployment is **out of scope** -- no Vercel setup, no production branches,
+- **FR-7.5**: All 4 apps included in `pr-quality-gate.yml` affected targets
+- **FR-7.6**: CD/deployment is **out of scope** -- no Vercel setup, no production branches,
   no deployer agents. organiclever.com is expected to break.
 
 ### FR-8: Documentation Updates
@@ -239,7 +239,6 @@
 - **NFR-4.1**: Pre-push hook: `typecheck`, `lint`, `test:quick` for affected projects
 - **NFR-4.2**: PR quality gate: Same as pre-push via GitHub Actions
 - **NFR-4.3**: Scheduled: Integration + E2E tests 2x daily (matching demo-* cron schedule)
-- **NFR-4.4**: Frontend deployment to Vercel via `prod-organiclever-fe` branch
 
 ## Acceptance Criteria
 
@@ -312,6 +311,9 @@ Scenario: All 4 apps have standard targets
     | organiclever-fe-e2e  |
 ```
 
+Note: `organiclever-contracts` has `lint`, `bundle`, `docs` targets but not `test:quick` —
+this is expected. It is an OpenAPI spec project, not an app with unit tests.
+
 ### AC-5: Contract Codegen
 
 ```gherkin
@@ -334,4 +336,16 @@ Scenario: No stale references to organiclever-web
   And no results are found in governance/
   And no results are found in docs/
   And the only results are in archived/organiclever-web/ or plans/
+```
+
+### AC-7: Local Dev Stack Works
+
+```gherkin
+Scenario: Local development stack starts successfully
+  Given infra/dev/organiclever/ directory exists with Docker Compose files
+  When I run npm run organiclever:dev
+  Then all 3 services start (organiclever-db, organiclever-be, organiclever-fe)
+  And organiclever-be is reachable at http://localhost:8202/api/v1/health
+  And organiclever-fe is reachable at http://localhost:3200
+  And the frontend can reach the backend via ORGANICLEVER_BE_URL=http://organiclever-be:8202
 ```
