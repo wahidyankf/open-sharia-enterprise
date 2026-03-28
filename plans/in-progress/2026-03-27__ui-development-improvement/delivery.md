@@ -1,6 +1,6 @@
 # Delivery Plan: UI Development Improvement
 
-## Phase 1: Conventions + Skills (Foundation)
+## Phase 1: Conventions + Skills + Agents (Foundation)
 
 _Establish the knowledge layer before building infrastructure. No code changes to apps — only
 governance docs, skill files, agent files, and Prettier config._

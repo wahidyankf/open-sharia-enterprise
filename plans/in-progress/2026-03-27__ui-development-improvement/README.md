@@ -89,7 +89,7 @@ This plan introduces a layered UI development improvement strategy:
 | 1 | Conventions + Skills + Agents | Document UI conventions; create AI skill + agent trio + quality gate workflow | Knowledge before infrastructure |
 | 2 | Shared Library | Extract tokens and components into `libs/` | Coupling vs. consistency |
 | 3 | Automated Enforcement | ESLint rules, a11y tests, visual regression | Strictness vs. velocity |
-| 4 | Component Catalog | Storybook/component docs | Maintenance cost vs. discoverability |
+| 4 | Catalog + Visual Regression | Storybook/component docs + visual regression | Maintenance cost vs. discoverability |
 
 ## Governance Alignment
 
