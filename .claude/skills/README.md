@@ -40,6 +40,7 @@ This directory contains skill packages that provide progressive knowledge delive
 ### 💻 Development Workflow Skills
 
 - **swe-developing-applications-common** - Common development workflow patterns shared across all language developers
+- **swe-developing-frontend-ui** - UI component development standards — CVA variants, Radix composition, design tokens, accessibility, responsive design, and anti-patterns
 - **swe-developing-e2e-test-with-playwright** - End-to-end testing with Playwright methodology and standards
 
 ### 🔤 Programming Language Skills
@@ -136,4 +137,4 @@ All skills follow governance principles:
 
 ---
 
-**Last Updated**: 2026-02-22
+**Last Updated**: 2026-03-28

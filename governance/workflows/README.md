@@ -9,7 +9,7 @@ tags:
   - orchestration
   - agents
 created: 2026-01-04
-updated: 2026-03-13
+updated: 2026-03-28
 ---
 
 # Workflows Index
@@ -301,4 +301,4 @@ See [Workflow Pattern Convention](./meta/workflow-identifier.md) and [Execution 
 
 ---
 
-**Last Updated**: 2026-03-13
+**Last Updated**: 2026-03-28

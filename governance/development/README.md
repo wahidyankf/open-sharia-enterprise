@@ -9,7 +9,7 @@ tags:
   - conventions
   - ai-agents
 created: 2025-11-23
-updated: 2026-03-24
+updated: 2026-03-28
 ---
 
 # Development
@@ -137,6 +137,7 @@ Development practices in this directory fall into several categories:
 - [BDD Spec-to-Test Mapping Convention](./infra/bdd-spec-test-mapping.md) - Mandatory 1:1 mapping between CLI commands and Gherkin specifications. Covers domain-prefixed subcommand pattern, Go file naming (underscores), feature file naming (hyphens), and coverage enforcement via `spec-coverage validate`
 - [GitHub Actions Workflow Naming Convention](./infra/github-actions-workflow-naming.md) - Workflow filenames must mirror their `name:` field using a consistent kebab-case derivation rule, enabling developers to navigate between the GitHub UI and the filesystem without ambiguity
 - [Vercel Deployment Convention](./infra/vercel-deployment.md) - Rules for configuring `vercel.json` when Nx build targets must run before the framework build
+- [Docker Monorepo Build Patterns](./infra/docker-monorepo-builds.md) - Patterns and pitfalls for building Docker images in an npm workspace monorepo (workspace symlink resolution, direct node_modules injection, transitive dependency hoisting)
 
 ### Frontend Development Documentation
 
@@ -156,7 +157,7 @@ Each primary practice document in this directory has companion files providing p
 - **anti-patterns.md** - Common mistakes to avoid (with examples and corrections)
 - **best-practices.md** - Recommended patterns and techniques
 
-These companion files exist in each subdirectory: `workflow/`, `quality/`, `pattern/`, `agents/`, `infra/`, and `hugo/`.
+These companion files exist in each subdirectory: `workflow/`, `quality/`, `pattern/`, `agents/`, `infra/`, and `hugo/`. The `frontend/` directory embeds anti-patterns and best practices inline within its convention documents.
 
 ## 🔗 Related Documentation
 
@@ -167,4 +168,4 @@ These companion files exist in each subdirectory: `workflow/`, `quality/`, `patt
 
 ---
 
-**Last Updated**: 2026-03-24
+**Last Updated**: 2026-03-28

@@ -74,6 +74,17 @@ import { Slot } from "@radix-ui/react-slot";
 import * as Dialog from "@radix-ui/react-dialog";
 ```
 
+**Note**: Always use `Slot.Root` (not bare `Slot`) when rendering the slot component. `Slot` is
+imported as a namespace from the unified `radix-ui` package; `Slot.Root` is the composable element.
+
+```tsx
+// Correct
+const Comp = asChild ? Slot.Root : "button";
+
+// Wrong — bare Slot is a namespace, not a renderable element
+const Comp = asChild ? Slot : "button";
+```
+
 ### `data-slot` Attribute
 
 Every component root element carries a `data-slot` attribute identifying the component part. This enables CSS selection and test targeting without relying on class names.

@@ -69,6 +69,11 @@ Validate UI components across seven dimensions, producing audit reports in `gene
 
 ## Reference Documentation
 
+**Project Guidance**:
+
+- [CLAUDE.md](../../CLAUDE.md) - Primary project guidance
+- [Frontend Development Documentation](../../governance/development/README.md#frontend-development-documentation) - Frontend governance overview
+
 **Related Agents**:
 
 - `swe-ui-maker` - Creates components this checker validates
@@ -80,3 +85,10 @@ Validate UI components across seven dimensions, producing audit reports in `gene
 - [Component Patterns Convention](../../governance/development/frontend/component-patterns.md)
 - [Accessibility Convention](../../governance/development/frontend/accessibility.md)
 - [Styling Convention](../../governance/development/frontend/styling.md)
+
+**Skills**:
+
+- `swe-developing-frontend-ui` - UI component development standards
+- `repo-generating-validation-reports` - Progressive report writing with UUID chains
+- `repo-assessing-criticality-confidence` - Criticality and confidence assessment system
+- `repo-applying-maker-checker-fixer` - Three-stage quality workflow pattern
