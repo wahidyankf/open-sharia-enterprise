@@ -1,0 +1,21 @@
+{
+  "name": "ts-ui-tokens",
+  "sourceRoot": "libs/ts-ui-tokens/src",
+  "projectType": "library",
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx tsc --noEmit",
+        "cwd": "libs/ts-ui-tokens"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'No lint configured for ts-ui-tokens (CSS + minimal TS)'"
+      }
+    }
+  },
+  "tags": ["type:lib", "lang:ts", "domain:ui"]
+}

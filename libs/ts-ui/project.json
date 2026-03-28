@@ -1,0 +1,35 @@
+{
+  "name": "ts-ui",
+  "sourceRoot": "libs/ts-ui/src",
+  "projectType": "library",
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx tsc --noEmit",
+        "cwd": "libs/ts-ui"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'ts-ui lint: pending ESLint config in Phase 3'"
+      }
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx vitest run --coverage",
+        "cwd": "libs/ts-ui"
+      }
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx vitest run --coverage && cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate libs/ts-ui/coverage/lcov.info 70",
+        "cwd": "libs/ts-ui"
+      }
+    }
+  },
+  "tags": ["type:lib", "lang:ts", "domain:ui"]
+}

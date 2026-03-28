@@ -1,0 +1,22 @@
+/** Semantic color token names. Use these for programmatic access to CSS custom properties. */
+export const colorTokens = {
+  background: "--color-background",
+  foreground: "--color-foreground",
+  card: "--color-card",
+  cardForeground: "--color-card-foreground",
+  popover: "--color-popover",
+  popoverForeground: "--color-popover-foreground",
+  primary: "--color-primary",
+  primaryForeground: "--color-primary-foreground",
+  secondary: "--color-secondary",
+  secondaryForeground: "--color-secondary-foreground",
+  muted: "--color-muted",
+  mutedForeground: "--color-muted-foreground",
+  accent: "--color-accent",
+  accentForeground: "--color-accent-foreground",
+  destructive: "--color-destructive",
+  destructiveForeground: "--color-destructive-foreground",
+  border: "--color-border",
+  input: "--color-input",
+  ring: "--color-ring",
+} as const;
