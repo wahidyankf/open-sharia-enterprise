@@ -6,6 +6,8 @@ Active project plans currently being worked on.
 
 - [LGPL Dependency Replacement](./2026-03-26__lgpl-dependency-replacement/) — Replace LGPL
   dependencies with permissive alternatives
+- [OSE Platform Web - Next.js Rewrite](./2026-03-28__oseplatform-web-nextjs-rewrite/) — Rewrite
+  oseplatform-web from Hugo to Next.js 16, following ayokoding-web patterns
 
 ## Instructions
 
