@@ -114,17 +114,22 @@ apps/organiclever-be/
 │       │   └── TestHandler.fs            # Test-only utilities (reset-db)
 │       ├── Infrastructure/
 │       │   ├── AppDbContext.fs            # EF Core DbContext (PostgreSQL + SQLite for tests)
-│       │   └── Migrator.fs               # DbUp migration runner
+│       │   ├── Migrator.fs               # DbUp migration runner
+│       │   └── Repositories/
+│       │       ├── RepositoryTypes.fs    # Repository interfaces as function records
+│       │       └── EfRepositories.fs     # EF Core implementations
 │       └── Contracts/
-│           └── ContractWrappers.fs       # CLIMutable response DTOs
+│           └── ContractWrappers.fs       # CLIMutable request DTOs from codegen
 ├── tests/
 │   └── OrganicLeverBe.Tests/
-│       ├── Unit/
+│       ├── Unit/                         # Mocked repositories, same Gherkin specs
 │       │   ├── HelloHandlerTests.fs
-│       │   └── HealthHandlerTests.fs
-│       └── Integration/
+│       │   ├── HealthHandlerTests.fs
+│       │   └── AuthHandlerTests.fs
+│       └── Integration/                  # Real PostgreSQL, same Gherkin specs
 │           ├── HelloIntegrationTests.fs
-│           └── HealthIntegrationTests.fs
+│           ├── HealthIntegrationTests.fs
+│           └── AuthIntegrationTests.fs
 ├── generated-contracts/                  # From OpenAPI codegen (gitignored)
 ├── db/
 │   └── migrations/
@@ -167,6 +172,86 @@ let hello : HttpHandler =
     fun (next: HttpFunc) (ctx: HttpContext) ->
         json {| message = "world" |} next ctx
 ```
+
+### Repository Pattern (Function Records)
+
+Following `demo-be-fsharp-giraffe` exactly. Repositories are defined as F# function records
+(interfaces) and implemented using EF Core. Handlers receive repositories via DI, making them
+easily mockable for unit tests.
+
+```fsharp
+// Infrastructure/Repositories/RepositoryTypes.fs
+type UserRepository = {
+    FindById: Guid -> Task<UserEntity option>
+    FindByGoogleId: string -> Task<UserEntity option>
+    Create: UserEntity -> Task<UserEntity>
+    Update: UserEntity -> Task<UserEntity>
+}
+
+type RefreshTokenRepository = {
+    Create: RefreshTokenEntity -> Task<RefreshTokenEntity>
+    FindByTokenHash: string -> Task<RefreshTokenEntity option>
+    DeleteByUserId: Guid -> Task<unit>
+    Delete: Guid -> Task<unit>
+}
+
+type HelloRepository = {
+    GetMessage: unit -> Task<string>
+}
+```
+
+```fsharp
+// Infrastructure/Repositories/EfRepositories.fs
+let createUserRepo (db: AppDbContext) : UserRepository = {
+    FindById = fun id -> task {
+        return! db.Users.AsNoTracking()
+            |> Seq.tryFindAsync (fun u -> u.Id = id)
+    }
+    FindByGoogleId = fun googleId -> task {
+        return! db.Users.AsNoTracking()
+            |> Seq.tryFindAsync (fun u -> u.GoogleId = googleId)
+    }
+    // ...
+}
+```
+
+**DI registration** in `Program.fs`:
+
+```fsharp
+services.AddScoped<UserRepository>(fun sp ->
+    createUserRepo (sp.GetRequiredService<AppDbContext>()))
+services.AddScoped<RefreshTokenRepository>(fun sp ->
+    createRefreshTokenRepo (sp.GetRequiredService<AppDbContext>()))
+services.AddScoped<HelloRepository>(fun sp ->
+    createHelloRepo (sp.GetRequiredService<AppDbContext>()))
+```
+
+### Three-Level Testing (Same Gherkin Specs)
+
+All three test levels consume the **same Gherkin specs** from `specs/apps/organiclever/be/gherkin/`.
+Only the step implementations differ:
+
+| Level       | Target             | DB                   | Repositories          | HTTP       | Gherkin Specs                  |
+| ----------- | ------------------ | -------------------- | --------------------- | ---------- | ------------------------------ |
+| Unit        | `test:unit`        | SQLite in-memory     | Mocked function records | No HTTP  | `specs/apps/organiclever/be/gherkin/` |
+| Integration | `test:integration` | PostgreSQL (Docker)  | Real EF Core           | No HTTP  | `specs/apps/organiclever/be/gherkin/` |
+| E2E         | `test:e2e`         | PostgreSQL (Docker)  | Real EF Core           | Playwright | `specs/apps/organiclever/be/gherkin/` |
+
+- **Unit**: Steps call handler/service functions directly with mocked repositories (function
+  records with test values). Coverage measured here (90%).
+- **Integration**: Steps call handler/service functions with real EF Core repositories against
+  PostgreSQL via Docker Compose. No HTTP layer.
+- **E2E**: Playwright sends real HTTP requests against a running `organiclever-be` instance.
+  Separate project (`organiclever-be-e2e`).
+
+### Contract Types in All Layers
+
+Generated contract types from OpenAPI codegen (`generated-contracts/`) are used throughout:
+
+- **Handlers**: Return contract response types (e.g., `HelloResponse`, `AuthTokenResponse`)
+- **Tests**: Assert against contract types (unit, integration, E2E all validate same shapes)
+- **Frontend**: Consumes the same contract types via `@hey-api/openapi-ts` codegen
+- **No hand-written DTOs**: All API request/response types derive from the OpenAPI spec
 
 ### Database & Migrations
 
