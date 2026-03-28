@@ -59,15 +59,12 @@
         "cwd": "{projectRoot}"
       },
       "cache": true,
-      "inputs": [
-        "default",
-        "{workspaceRoot}/specs/apps/organiclever-web/**/*.feature"
-      ]
+      "inputs": ["default", "{workspaceRoot}/specs/apps/organiclever-web/**/*.feature"]
     },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx oxlint@latest .",
+        "command": "npx oxlint@latest --jsx-a11y-plugin .",
         "cwd": "{projectRoot}"
       }
     },
