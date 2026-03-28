@@ -2,16 +2,16 @@
 
 ## Phase Overview
 
-| Phase | Name                        | Description                                              |
-| ----- | --------------------------- | -------------------------------------------------------- |
-| 1     | Unified Specifications      | Create `specs/apps/organiclever/`, migrate health + auth specs |
-| 2     | OpenAPI Contract            | Contract with codegen for F# and TypeScript              |
-| 3     | Backend (`organiclever-be`) | F#/Giraffe app with health + auth endpoints              |
-| 4     | Frontend (`organiclever-fe`)| Next.js + Effect TS with /login + /profile (protected)   |
-| 5     | E2E Test Apps               | Playwright E2E for backend and frontend                  |
-| 6     | CI Pipelines                | GitHub Actions workflows for all 4 apps (CI only, no CD) |
-| 7     | Documentation Updates       | CLAUDE.md, agents, skills, governance, docs              |
-| 8     | Cleanup                     | Archive old apps, remove old specs, verify no stale refs |
+| Phase | Name                             | Description                                              |
+| ----- | -------------------------------- | -------------------------------------------------------- |
+| 1     | Unified Specifications           | Create `specs/apps/organiclever/`, migrate health + auth specs |
+| 2     | OpenAPI Contract                 | Contract with codegen for F# and TypeScript              |
+| 3     | Backend (`organiclever-be`)      | F#/Giraffe app with health + auth endpoints              |
+| 4     | Frontend (`organiclever-fe`)     | Next.js + Effect TS with /login + /profile (protected)   |
+| 5     | E2E Test Apps + Infrastructure   | Playwright E2E for backend and frontend; local dev Docker Compose |
+| 6     | CI Pipelines                     | GitHub Actions workflows for all 4 apps (CI only, no CD) |
+| 7     | Documentation Updates            | CLAUDE.md, agents, skills, governance, docs              |
+| 8     | Cleanup                          | Archive old apps, remove old specs, verify no stale refs |
 
 **Note**: CD/deployment (Vercel, production branches, deployer agents) is **out of scope**.
 organiclever.com is expected to break during this transition. Deployment will be addressed in a
@@ -50,6 +50,8 @@ follow-up plan.
 - [ ] Create `fe/gherkin/authentication/route-protection.feature` (unauthenticated access to
   /profile redirects to /login)
 - [ ] Verify all FE features follow demo conventions (UI-semantic, user story blocks)
+- [ ] Verify `specs/apps/organiclever/` structure matches tech-docs.md spec structure diagram
+- [ ] Verify AC-1 (unified spec structure) is satisfied before proceeding to Phase 2
 
 ## Phase 2: OpenAPI Contract
 
@@ -61,7 +63,7 @@ follow-up plan.
 - [ ] Create `specs/apps/organiclever/contracts/paths/auth.yaml` (google, refresh, me)
 - [ ] Create `specs/apps/organiclever/contracts/schemas/health.yaml` (HealthResponse)
 - [ ] Create `specs/apps/organiclever/contracts/schemas/auth.yaml` (AuthGoogleRequest,
-  AuthGoogleRequest, AuthTokenResponse, RefreshRequest)
+  AuthTokenResponse, RefreshRequest)
 - [ ] Create `specs/apps/organiclever/contracts/schemas/user.yaml` (UserProfile)
 - [ ] Create `specs/apps/organiclever/contracts/schemas/error.yaml` (ErrorResponse)
 - [ ] Create `specs/apps/organiclever/contracts/examples/auth-login.yaml`
@@ -77,7 +79,9 @@ follow-up plan.
 
 ### Milestone 3.1: Project Scaffold
 
-- [ ] Create `apps/organiclever-be/OrganicLeverBe.fsproj` (net10.0)
+- [ ] Create `apps/organiclever-be/src/OrganicLeverBe/OrganicLeverBe.fsproj` (net10.0, inside
+  `src/` matching demo-be-fsharp-giraffe pattern)
+- [ ] Create `apps/organiclever-be/global.json` (pin .NET SDK version, `rollForward: latestMinor`)
 - [ ] Create `apps/organiclever-be/project.json` with all 9 Nx targets
   (codegen, typecheck, lint, build, test:unit, test:quick, test:integration, dev, start)
 - [ ] Create `apps/organiclever-be/README.md`
@@ -106,9 +110,10 @@ follow-up plan.
 - [ ] Register repositories in `Program.fs` DI container (`AddScoped`)
 - [ ] Create `src/OrganicLeverBe/Contracts/ContractWrappers.fs` (CLIMutable DTOs)
 - [ ] Add NuGet packages: `Npgsql.EntityFrameworkCore.PostgreSQL` 10.x,
-  `EFCore.NamingConventions` 10.x, `dbup-core` 5.x, `dbup-postgresql` 5.x
-- [ ] Add `<EmbeddedResource Include="db/migrations/*.sql" />` to `.fsproj`
-- [ ] Create `db/migrations/001-initial-schema.sql` (users, refresh_tokens tables)
+  `EFCore.NamingConventions` 10.x, `dbup-core` 7.x, `dbup-postgresql` 7.x
+- [ ] Add `<EmbeddedResource Include="db/migrations/*.sql" />` to
+  `src/OrganicLeverBe/OrganicLeverBe.fsproj` (path relative to `.fsproj` location)
+- [ ] Create `src/OrganicLeverBe/db/migrations/001-initial-schema.sql` (users, refresh_tokens tables)
 - [ ] Wire DbUp migration call in `Program.fs` startup (before `app.Run()`)
 - [ ] Create `docker-compose.integration.yml` (PostgreSQL 17 + test runner)
 - [ ] Create `Dockerfile.integration`
@@ -155,7 +160,6 @@ follow-up plan.
 ### Milestone 4.3: Pages + API Proxy
 
 - [ ] Create `src/app/layout.tsx` (root layout)
-- [ ] Create `src/app/page.tsx` (minimal root page)
 - [ ] Create `src/app/page.tsx` (root: redirect to /profile if authenticated, /login if not)
 - [ ] Create `src/app/login/page.tsx` ("Sign in with Google" button only)
 - [ ] Create `src/app/profile/page.tsx` (protected: user name, email, avatar)
@@ -179,7 +183,7 @@ follow-up plan.
 - [ ] Verify `nx run organiclever-fe:build` passes
 - [ ] Verify `nx run organiclever-fe:codegen` generates contracts
 
-## Phase 5: E2E Test Apps
+## Phase 5: E2E Test Apps + Infrastructure
 
 ### Milestone 5.1: Backend E2E (`organiclever-be-e2e`)
 
@@ -270,7 +274,7 @@ follow-up plan.
   no API routes, no JSON data files)
 - [ ] Sync `.opencode/` mirrors via `npm run sync:claude-to-opencode`
 
-### Milestone 7.4: Governance Files (14+ files)
+### Milestone 7.4: Governance Files
 
 - [ ] Update `governance/development/agents/ai-agents.md`
 - [ ] Update `governance/development/frontend/component-patterns.md`
@@ -287,7 +291,7 @@ follow-up plan.
 - [ ] Update `governance/development/quality/best-practices.md`
 - [ ] Update `governance/conventions/writing/dynamic-collection-references.md`
 
-### Milestone 7.5: Docs Files (14+ files)
+### Milestone 7.5: Docs Files
 
 - [ ] Update `docs/reference/system-architecture/re-syar__ci-cd.md`
 - [ ] Update `docs/reference/system-architecture/re-syar__technology-stack.md`
