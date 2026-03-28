@@ -104,7 +104,7 @@ This plan implements and respects the following governance layers:
 | [Explicit Over Implicit](../../../governance/principles/software-engineering/explicit-over-implicit.md) | All component props documented via TypeScript + JSDoc; data-slot attributes for explicit identity; no magic defaults; explicit token naming |
 | [Progressive Disclosure](../../../governance/principles/content/progressive-disclosure.md) | Storybook stories layer from default → variants → advanced; convention docs start with essentials; skill reference modules for deeper topics |
 | [Documentation First](../../../governance/principles/content/documentation-first.md) | Conventions documented before code (Phase 1); component catalog (Phase 4); JSDoc on all exports |
-| [Automation Over Manual](../../../governance/principles/software-engineering/automation-over-manual.md) | ESLint rules, Prettier plugin, vitest-axe, Playwright visual regression — all automated in CI |
+| [Automation Over Manual](../../../governance/principles/software-engineering/automation-over-manual.md) | All deterministic checks enforced in CI (pre-commit, pre-push, PR quality gate) — not just in agents. ESLint a11y + token rules flow through `nx affected -t lint`, vitest-axe through `test:quick`, Prettier through pre-commit. See AD11. |
 | [Root Cause Orientation](../../../governance/principles/general/root-cause-orientation.md) | Addresses root cause (no shared tokens/components) not symptoms (inconsistent UIs) |
 
 ### Conventions Respected

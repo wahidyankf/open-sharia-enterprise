@@ -23,8 +23,12 @@ with architecturally different approaches:
   --color-primary: hsl(var(--primary));
 }
 /* Actual values live in :root and .dark selectors */
-:root { --primary: 0 0% 9%; }
-.dark { --primary: 0 0% 98%; }
+:root {
+  --primary: 0 0% 9%;
+}
+.dark {
+  --primary: 0 0% 98%;
+}
 ```
 
 **ayokoding-web** uses **direct values** in `@theme`:
@@ -34,7 +38,9 @@ with architecturally different approaches:
   --color-background: hsl(0 0% 100%);
   --color-primary: hsl(221.2 83.2% 53.3%);
 }
-.dark { --color-primary: hsl(217.2 91.2% 59.8%); }
+.dark {
+  --color-primary: hsl(217.2 91.2% 59.8%);
+}
 ```
 
 **Consequences of divergence**:
@@ -55,24 +61,24 @@ with architecturally different approaches:
 Both apps use shadcn/ui (new-york style) with Radix UI primitives, but component
 implementations have diverged:
 
-| Component | organiclever-web | ayokoding-web | Shared? |
-| --- | --- | --- | --- |
-| Alert | Yes | Yes | Different implementations |
-| AlertDialog | Yes | No | organiclever-only |
-| Badge | No | Yes | ayokoding-only |
-| Button | Yes (4 sizes) | Yes (8 sizes) | Different — see README |
-| Card | Yes | No | organiclever-only |
-| Command | No | Yes | ayokoding-only |
-| Dialog | Yes | Yes | Different implementations |
-| DropdownMenu | No | Yes | ayokoding-only |
-| Input | Yes | Yes | Different implementations |
-| Label | Yes | No | organiclever-only |
-| ScrollArea | No | Yes | ayokoding-only |
-| Separator | No | Yes | ayokoding-only |
-| Sheet | No | Yes | ayokoding-only |
-| Table | Yes | No | organiclever-only |
-| Tabs | No | Yes | ayokoding-only |
-| Tooltip | No | Yes | ayokoding-only |
+| Component    | organiclever-web | ayokoding-web | Shared?                   |
+| ------------ | ---------------- | ------------- | ------------------------- |
+| Alert        | Yes              | Yes           | Different implementations |
+| AlertDialog  | Yes              | No            | organiclever-only         |
+| Badge        | No               | Yes           | ayokoding-only            |
+| Button       | Yes (4 sizes)    | Yes (8 sizes) | Different — see README    |
+| Card         | Yes              | No            | organiclever-only         |
+| Command      | No               | Yes           | ayokoding-only            |
+| Dialog       | Yes              | Yes           | Different implementations |
+| DropdownMenu | No               | Yes           | ayokoding-only            |
+| Input        | Yes              | Yes           | Different implementations |
+| Label        | Yes              | No            | organiclever-only         |
+| ScrollArea   | No               | Yes           | ayokoding-only            |
+| Separator    | No               | Yes           | ayokoding-only            |
+| Sheet        | No               | Yes           | ayokoding-only            |
+| Table        | Yes              | No            | organiclever-only         |
+| Tabs         | No               | Yes           | ayokoding-only            |
+| Tooltip      | No               | Yes           | ayokoding-only            |
 
 **Union**: 16 unique components across both apps
 **Intersection**: 4 components present in both (Alert, Button, Dialog, Input)
@@ -270,7 +276,7 @@ Feature: UI Conventions and AI Skills
     When I check for swe-developing-frontend-ui/SKILL.md
     Then the skill references our actual CSS custom properties by name
     And the skill documents both token formats (indirection vs. direct)
-    And the skill lists at least 10 repo-specific anti-patterns with code examples
+    And the skill lists at least 13 repo-specific anti-patterns with code examples (matching AD5 catalog)
     And the skill includes brand context for each app (audience, personality, tone)
     And the skill has reference modules in a reference/ subdirectory
 
@@ -281,6 +287,7 @@ Feature: UI Conventions and AI Skills
       | Dimension | What It Checks | Example Violation |
       | Token compliance | No hardcoded colors, spacing, or radii | color: '#ff0000' in className |
       | Accessibility | aria-*, role, focus-visible, reduced-motion | Missing aria-label on icon button |
+      | Color contrast | WCAG AA contrast ratios, color-only indicators | Text below 4.5:1 contrast ratio |
       | Component patterns | CVA variants, cn() usage, Radix primitives | Inline style instead of cn() |
       | Dark mode | All visual tokens have dark mode variants | Missing dark: prefix on bg |
       | Responsive | Container queries, mobile-first patterns | Desktop-only layout with no mobile breakpoints |

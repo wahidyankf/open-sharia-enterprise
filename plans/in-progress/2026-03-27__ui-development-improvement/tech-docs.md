@@ -9,16 +9,16 @@ installing impeccable directly.
 
 **Trade-offs**:
 
-| Factor | Install Impeccable Directly | Build Repo-Specific Skill (Chosen) |
-| --- | --- | --- |
-| Setup effort | `npx skills add pbakaus/impeccable` (minutes) | Create SKILL.md + 5 reference modules (hours) |
-| Token awareness | Generic — no knowledge of our tokens | References our actual `--color-primary`, `--radius`, etc. |
-| Brand context | `.impeccable.md` at root (generic format) | Brand context embedded in skill (per-app specifics) |
-| Anti-patterns | Universal anti-patterns (24 items) | Universal + repo-specific (hardcoded hex in code blocks, etc.) |
-| Maintenance | Upstream updates automatically | We maintain it — more control, more work |
-| Slash commands | 20 built-in commands | Build equivalent into agent workflows |
-| Compatibility | Claude Code, Cursor, Codex, etc. | Claude Code + OpenCode only (our two systems) |
-| Measured impact | 59% quality improvement (Tessl) | Unknown — no benchmark yet |
+| Factor          | Install Impeccable Directly                   | Build Repo-Specific Skill (Chosen)                             |
+| --------------- | --------------------------------------------- | -------------------------------------------------------------- |
+| Setup effort    | `npx skills add pbakaus/impeccable` (minutes) | Create SKILL.md + 5 reference modules (hours)                  |
+| Token awareness | Generic — no knowledge of our tokens          | References our actual `--color-primary`, `--radius`, etc.      |
+| Brand context   | `.impeccable.md` at root (generic format)     | Brand context embedded in skill (per-app specifics)            |
+| Anti-patterns   | Universal anti-patterns (24 items)            | Universal + repo-specific (hardcoded hex in code blocks, etc.) |
+| Maintenance     | Upstream updates automatically                | We maintain it — more control, more work                       |
+| Slash commands  | 20 built-in commands                          | Build equivalent into agent workflows                          |
+| Compatibility   | Claude Code, Cursor, Codex, etc.              | Claude Code + OpenCode only (our two systems)                  |
+| Measured impact | 59% quality improvement (Tessl)               | Unknown — no benchmark yet                                     |
 
 **Rationale**: The token-awareness and repo-specific anti-patterns are essential. Impeccable
 teaches universal design principles but cannot know that our `--primary` is neutral gray in one
@@ -27,14 +27,14 @@ incremental effort to build a repo-specific skill is justified by the precision 
 
 **What we take from impeccable**:
 
-| Concept | How We Adapt It |
-| --- | --- |
-| 7 reference modules | Create 5 reference docs covering our specific tokens and patterns |
-| Anti-pattern library | Document repo-specific anti-patterns with actual code from our codebase |
-| Context file (`.impeccable.md`) | Include brand context directly in `reference/brand-context.md` |
-| `/audit` workflow | Build into `swe-ui-checker` agent as validation dimensions |
-| `/critique` UX review | Include UX heuristics in skill's component-patterns reference |
-| Measured quality vocabulary | Adopt structured design terminology (rhythm, hierarchy, measure) |
+| Concept                         | How We Adapt It                                                         |
+| ------------------------------- | ----------------------------------------------------------------------- |
+| 7 reference modules             | Create 5 reference docs covering our specific tokens and patterns       |
+| Anti-pattern library            | Document repo-specific anti-patterns with actual code from our codebase |
+| Context file (`.impeccable.md`) | Include brand context directly in `reference/brand-context.md`          |
+| `/audit` workflow               | Build into `swe-ui-checker` agent as validation dimensions              |
+| `/critique` UX review           | Include UX heuristics in skill's component-patterns reference           |
+| Measured quality vocabulary     | Adopt structured design terminology (rhythm, hierarchy, measure)        |
 
 **What we intentionally leave out**: `/animate`, `/colorize`, `/bolder`, `/quieter`, `/delight`,
 `/overdrive` — these are creative steering commands more suited to greenfield design than our
@@ -46,15 +46,15 @@ convention-driven approach. We focus on consistency and quality, not creative ex
 
 **Trade-offs**:
 
-| Factor | No Shared Lib (Status Quo) | One Monolithic Lib | Two Separate Libs (Chosen) |
-| --- | --- | --- | --- |
-| Token-only consumers | N/A — each app owns tokens | Must import all of ts-ui for just tokens | Import ts-ui-tokens alone |
-| Nx caching | N/A | One cache key for everything | Tokens cached separately from components |
-| Change frequency | N/A | Token change invalidates component cache | Token change only invalidates token consumers |
-| Flutter/TanStack compat | N/A | Cannot use React lib | Can use token CSS vars without React |
-| Complexity | Zero | Low | Moderate — two libs to maintain |
-| Dependency graph | Flat | One edge per consumer | Two edges per consumer (tokens + components) |
-| shadcn/ui model | "Copy and own" per app | Centrally governed | Centrally governed tokens, shared components |
+| Factor                  | No Shared Lib (Status Quo) | One Monolithic Lib                       | Two Separate Libs (Chosen)                    |
+| ----------------------- | -------------------------- | ---------------------------------------- | --------------------------------------------- |
+| Token-only consumers    | N/A — each app owns tokens | Must import all of ts-ui for just tokens | Import ts-ui-tokens alone                     |
+| Nx caching              | N/A                        | One cache key for everything             | Tokens cached separately from components      |
+| Change frequency        | N/A                        | Token change invalidates component cache | Token change only invalidates token consumers |
+| Flutter/TanStack compat | N/A                        | Cannot use React lib                     | Can use token CSS vars without React          |
+| Complexity              | Zero                       | Low                                      | Moderate — two libs to maintain               |
+| Dependency graph        | Flat                       | One edge per consumer                    | Two edges per consumer (tokens + components)  |
+| shadcn/ui model         | "Copy and own" per app     | Centrally governed                       | Centrally governed tokens, shared components  |
 
 **Why not keep status quo**: Token drift is already happening (neutral vs. blue primary). Without
 a shared source, every new app starts from zero and diverges further.
@@ -121,13 +121,13 @@ overridden per app.
 
 **Trade-offs**:
 
-| Factor | Share Everything | Share Structure Only (Chosen) | Share Nothing |
-| --- | --- | --- | --- |
-| Consistency | Maximum — all apps look identical | Structural consistency, brand freedom | Zero consistency |
-| Brand identity | Apps lose unique identity | Apps keep unique brand colors | Full brand freedom |
-| Token count shared | ~25 tokens | ~10 structural tokens | 0 tokens |
-| Override complexity | No overrides needed | Per-app color overrides in globals.css | N/A |
-| Maintenance | One file for all tokens | One shared + per-app overrides | Per-app everything |
+| Factor              | Share Everything                  | Share Structure Only (Chosen)          | Share Nothing      |
+| ------------------- | --------------------------------- | -------------------------------------- | ------------------ |
+| Consistency         | Maximum — all apps look identical | Structural consistency, brand freedom  | Zero consistency   |
+| Brand identity      | Apps lose unique identity         | Apps keep unique brand colors          | Full brand freedom |
+| Token count shared  | ~25 tokens                        | ~10 structural tokens                  | 0 tokens           |
+| Override complexity | No overrides needed               | Per-app color overrides in globals.css | N/A                |
+| Maintenance         | One file for all tokens           | One shared + per-app overrides         | Per-app everything |
 
 **Rationale**: organiclever-web is a business productivity app (neutral, professional).
 ayokoding-web is an educational platform (blue, approachable). Forcing identical brand colors
@@ -213,13 +213,13 @@ a component that says `bg-primary` inherits whatever `--color-primary` the proje
 
 **Trade-offs**:
 
-| Factor | Fully Themeable (Chosen) | Preset Themes | No Customization |
-| --- | --- | --- | --- |
-| New project onboarding | Import tokens + override brand | Pick a preset | Use as-is |
-| Visual uniqueness | Full brand freedom | Limited to presets | All projects look identical |
-| Component complexity | Semantic tokens only | Theme-switching logic | Simplest |
-| Maintenance | Per-project globals.css | Theme registry | One globals.css |
-| Compatibility | Any brand color works | Only tested presets work | N/A |
+| Factor                 | Fully Themeable (Chosen)       | Preset Themes            | No Customization            |
+| ---------------------- | ------------------------------ | ------------------------ | --------------------------- |
+| New project onboarding | Import tokens + override brand | Pick a preset            | Use as-is                   |
+| Visual uniqueness      | Full brand freedom             | Limited to presets       | All projects look identical |
+| Component complexity   | Semantic tokens only           | Theme-switching logic    | Simplest                    |
+| Maintenance            | Per-project globals.css        | Theme registry           | One globals.css             |
+| Compatibility          | Any brand color works          | Only tested presets work | N/A                         |
 
 **Why not preset themes**: Presets (like "blue theme", "green theme") add a layer of indirection
 that is unnecessary. CSS cascade already provides per-project theming — each project's
@@ -236,22 +236,22 @@ identity matters for product differentiation.
 
 **Trade-offs**:
 
-| Factor | One Big File | Four Focused Files (Chosen) | Inline in CLAUDE.md |
-| --- | --- | --- | --- |
-| Discoverability | One place to look | Must check index | Already loaded in context |
-| Context window | Large single load | Load only what's needed | Always in context (bloat) |
-| Maintenance | Merge conflicts | Independent editing | CLAUDE.md already large |
-| Agent access | One read call | Multiple reads, or skill reference | Automatic |
-| Reusability | Hard to reference specific section | Link to specific file | Cannot link subsections |
+| Factor          | One Big File                       | Four Focused Files (Chosen)        | Inline in CLAUDE.md       |
+| --------------- | ---------------------------------- | ---------------------------------- | ------------------------- |
+| Discoverability | One place to look                  | Must check index                   | Already loaded in context |
+| Context window  | Large single load                  | Load only what's needed            | Always in context (bloat) |
+| Maintenance     | Merge conflicts                    | Independent editing                | CLAUDE.md already large   |
+| Agent access    | One read call                      | Multiple reads, or skill reference | Automatic                 |
+| Reusability     | Hard to reference specific section | Link to specific file              | Cannot link subsections   |
 
 **Files and their scope**:
 
-| File | Content | Approx. Lines |
-| --- | --- | --- |
-| `design-tokens.md` | Token categories, naming convention, the structural-vs-brand split, per-app override pattern, dark mode token requirements, when to create new tokens vs. reuse | 80-120 |
-| `component-patterns.md` | CVA variant definitions, Radix primitive composition, cn() utility usage, slot/asChild pattern, React.ComponentProps pattern (not forwardRef), data-slot attributes, required state coverage list, component file structure | 100-150 |
-| `accessibility.md` | WCAG AA compliance rules, focus-visible (not focus) requirement, reduced-motion support, aria attributes by component type, label requirements, color-contrast rules (APCA preferred), minimum hit targets (24px desktop, 44px mobile), form input requirements | 80-120 |
-| `styling.md` | Tailwind v4 conventions (@theme, @layer, @custom-variant), utility-first approach (no @apply except in @layer base), class ordering via prettier-plugin-tailwindcss, no inline styles in production apps, no !important, defensive CSS patterns, container queries over breakpoints, mobile-first | 80-120 |
+| File                    | Content                                                                                                                                                                                                                                                                                           | Approx. Lines |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| `design-tokens.md`      | Token categories, naming convention, the structural-vs-brand split, per-app override pattern, dark mode token requirements, when to create new tokens vs. reuse                                                                                                                                   | 80-120        |
+| `component-patterns.md` | CVA variant definitions, Radix primitive composition, cn() utility usage, slot/asChild pattern, React.ComponentProps pattern (not forwardRef), data-slot attributes, required state coverage list, component file structure                                                                       | 100-150       |
+| `accessibility.md`      | WCAG AA compliance rules, focus-visible (not focus) requirement, reduced-motion support, aria attributes by component type, label requirements, color-contrast rules (APCA preferred), minimum hit targets (24px desktop, 44px mobile), form input requirements                                   | 80-120        |
+| `styling.md`            | Tailwind v4 conventions (@theme, @layer, @custom-variant), utility-first approach (no @apply except in @layer base), class ordering via prettier-plugin-tailwindcss, no inline styles in production apps, no !important, defensive CSS patterns, container queries over breakpoints, mobile-first | 80-120        |
 
 ### AD5: UI Skill Architecture
 
@@ -259,13 +259,13 @@ identity matters for product differentiation.
 
 **Trade-offs**:
 
-| Factor | Single Skill (Chosen) | Multiple Skills (one per domain) |
-| --- | --- | --- |
-| Context loading | One skill, selective reference reads | Multiple skills may all trigger |
-| Maintenance | One SKILL.md to update | 5+ SKILL.md files |
-| Coherence | Cross-cutting concerns in one place | Fragmented knowledge |
-| Size | Larger SKILL.md (~200 lines) | Smaller individual files |
-| Trigger precision | Broader match (any TSX/CSS) | Could scope per domain |
+| Factor            | Single Skill (Chosen)                | Multiple Skills (one per domain) |
+| ----------------- | ------------------------------------ | -------------------------------- |
+| Context loading   | One skill, selective reference reads | Multiple skills may all trigger  |
+| Maintenance       | One SKILL.md to update               | 5+ SKILL.md files                |
+| Coherence         | Cross-cutting concerns in one place  | Fragmented knowledge             |
+| Size              | Larger SKILL.md (~200 lines)         | Smaller individual files         |
+| Trigger precision | Broader match (any TSX/CSS)          | Could scope per domain           |
 
 **SKILL.md frontmatter**:
 
@@ -285,21 +285,21 @@ or `bashPattern` fields.
 
 **Anti-pattern catalog** (repo-specific, with code examples):
 
-| Anti-Pattern | Example From Our Codebase | Correct Approach |
-| --- | --- | --- |
-| Hardcoded hex in CSS | `background-color: #f6f8fa !important;` (ayokoding-web globals.css) | Use token: `bg-muted` or `var(--color-muted)` |
-| `!important` in Tailwind | `color: #24292e !important;` (ayokoding-web globals.css, 10 occurrences) | Use `@layer` specificity or Tailwind modifiers |
-| Font via `@layer utilities` | `font-family: Arial, Helvetica, sans-serif;` (organiclever-web) | Use `next/font` for optimization |
-| Old Radix imports | `import { Slot } from "@radix-ui/react-slot"` | `import { Slot } from "radix-ui"` |
-| forwardRef pattern | `React.forwardRef<HTMLButtonElement, Props>` | `function Button(props: React.ComponentProps<"button">)` |
-| Missing data-slot | `<button className={...}>` | `<button data-slot="button" className={...}>` |
-| Inline styles in production | `style={{ color: 'red' }}` | Use Tailwind utility: `className="text-destructive"` |
-| Card inside Card | `<Card><Card>nested</Card></Card>` | Use spacing/dividers for hierarchy |
-| Color-only status | `<span className="text-red-500">Error</span>` | Include text label + shape per [Accessibility First](../../../governance/principles/content/accessibility-first.md) |
-| Unverified color contrast | Using arbitrary colors without checking WCAG AA contrast | Use semantic tokens with verified contrast, or verify new colors meet 4.5:1 (text) / 3:1 (UI) ratios |
-| Missing focus-visible | `focus:ring-2` | `focus-visible:ring-2` (keyboard users only) |
-| `transition: all` | `className="transition-all"` | `className="transition-colors"` (explicit properties) |
-| bounce/elastic easing | `animate-bounce` | `animate-ease-out` or custom exponential easing |
+| Anti-Pattern                | Example From Our Codebase                                                | Correct Approach                                                                                                    |
+| --------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| Hardcoded hex in CSS        | `background-color: #f6f8fa !important;` (ayokoding-web globals.css)      | Use token: `bg-muted` or `var(--color-muted)`                                                                       |
+| `!important` in Tailwind    | `color: #24292e !important;` (ayokoding-web globals.css, 10 occurrences) | Use `@layer` specificity or Tailwind modifiers                                                                      |
+| Font via `@layer utilities` | `font-family: Arial, Helvetica, sans-serif;` (organiclever-web)          | Use `next/font` for optimization                                                                                    |
+| Old Radix imports           | `import { Slot } from "@radix-ui/react-slot"`                            | `import { Slot } from "radix-ui"`                                                                                   |
+| forwardRef pattern          | `React.forwardRef<HTMLButtonElement, Props>`                             | `function Button(props: React.ComponentProps<"button">)`                                                            |
+| Missing data-slot           | `<button className={...}>`                                               | `<button data-slot="button" className={...}>`                                                                       |
+| Inline styles in production | `style={{ color: 'red' }}`                                               | Use Tailwind utility: `className="text-destructive"`                                                                |
+| Card inside Card            | `<Card><Card>nested</Card></Card>`                                       | Use spacing/dividers for hierarchy                                                                                  |
+| Color-only status           | `<span className="text-red-500">Error</span>`                            | Include text label + shape per [Accessibility First](../../../governance/principles/content/accessibility-first.md) |
+| Unverified color contrast   | Using arbitrary colors without checking WCAG AA contrast                 | Use semantic tokens with verified contrast, or verify new colors meet 4.5:1 (text) / 3:1 (UI) ratios                |
+| Missing focus-visible       | `focus:ring-2`                                                           | `focus-visible:ring-2` (keyboard users only)                                                                        |
+| `transition: all`           | `className="transition-all"`                                             | `className="transition-colors"` (explicit properties)                                                               |
+| bounce/elastic easing       | `animate-bounce`                                                         | Custom `@keyframes` with `ease-out` or `cubic-bezier(0, 0, 0.2, 1)` timing                                          |
 
 ### AD6: Agent Strategy — Full Maker-Checker-Fixer Trio + Quality Gate Workflow
 
@@ -308,14 +308,14 @@ plus a `ui-quality-gate` workflow in `governance/workflows/`.
 
 **Trade-offs**:
 
-| Factor | Checker Only | Full Trio + Workflow (Chosen) |
-| --- | --- | --- |
-| Effort | 1 agent | 3 agents + 1 workflow |
-| Value | Identifies violations | Identifies, creates, AND fixes — full lifecycle |
-| Risk | Low — read-only | Medium — fixer modifies TSX; mitigated by re-validation |
-| Automation | Manual fix cycle | Automated quality gate with iteration control |
-| Consistency | Depends on who fixes | Fixer applies fixes consistently per conventions |
-| Precedent | N/A | Follows established pattern (docs, ayokoding-web, plans) |
+| Factor      | Checker Only          | Full Trio + Workflow (Chosen)                            |
+| ----------- | --------------------- | -------------------------------------------------------- |
+| Effort      | 1 agent               | 3 agents + 1 workflow                                    |
+| Value       | Identifies violations | Identifies, creates, AND fixes — full lifecycle          |
+| Risk        | Low — read-only       | Medium — fixer modifies TSX; mitigated by re-validation  |
+| Automation  | Manual fix cycle      | Automated quality gate with iteration control            |
+| Consistency | Depends on who fixes  | Fixer applies fixes consistently per conventions         |
+| Precedent   | N/A                   | Follows established pattern (docs, ayokoding-web, plans) |
 
 **Rationale**: The repo already has successful maker-checker-fixer trios for docs, ayokoding-web
 content, plans, specs, and README files. The pattern is proven. A UI fixer that modifies TSX is
@@ -326,11 +326,11 @@ regressions. The quality gate workflow automates the iteration loop.
 
 #### swe-ui-maker (Blue)
 
-| Field | Value |
-| --- | --- |
-| Color | blue |
-| Model | sonnet |
-| Tools | Read, Write, Edit, Glob, Grep, Bash |
+| Field  | Value                                                     |
+| ------ | --------------------------------------------------------- |
+| Color  | blue                                                      |
+| Model  | sonnet                                                    |
+| Tools  | Read, Write, Edit, Glob, Grep, Bash                       |
 | Skills | swe-developing-frontend-ui, docs-applying-content-quality |
 
 **Purpose**: Creates new UI components following all conventions — proper CVA variants, Radix
@@ -342,11 +342,11 @@ an existing component.
 
 #### swe-ui-checker (Green)
 
-| Field | Value |
-| --- | --- |
-| Color | green |
-| Model | sonnet |
-| Tools | Read, Glob, Grep, Write, Bash |
+| Field  | Value                                                                                                                                    |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Color  | green                                                                                                                                    |
+| Model  | sonnet                                                                                                                                   |
+| Tools  | Read, Glob, Grep, Write, Bash                                                                                                            |
 | Skills | swe-developing-frontend-ui, repo-generating-validation-reports, repo-assessing-criticality-confidence, repo-applying-maker-checker-fixer |
 
 **Purpose**: Validates UI components against all conventions. Produces audit reports in
@@ -354,26 +354,26 @@ an existing component.
 
 **Check dimensions with severity**:
 
-| Dimension | Checks | Severity |
-| --- | --- | --- |
-| Token compliance | Hardcoded hex/rgb/hsl in className, style props, CSS | HIGH — drift source |
-| Accessibility | aria-*, role, focus-visible, labels, reduced-motion, contrast | HIGH — legal/compliance |
-| Color contrast | Unverified WCAG AA contrast ratios, color-only status indicators | HIGH — accessibility violation |
-| Component patterns | CVA usage, cn() calls, Radix primitives, data-slot | MEDIUM — consistency |
-| Dark mode | All visual tokens have dark variants, no light-only colors | MEDIUM — user experience |
-| Responsive | Mobile-first, viewport adaptations, 44px touch targets | MEDIUM — usability |
-| Anti-patterns | All items from anti-pattern catalog | Varies by pattern |
+| Dimension          | Checks                                                           | Severity                       |
+| ------------------ | ---------------------------------------------------------------- | ------------------------------ |
+| Token compliance   | Hardcoded hex/rgb/hsl in className, style props, CSS             | HIGH — drift source            |
+| Accessibility      | aria-\*, role, focus-visible, labels, reduced-motion, contrast   | HIGH — legal/compliance        |
+| Color contrast     | Unverified WCAG AA contrast ratios, color-only status indicators | HIGH — accessibility violation |
+| Component patterns | CVA usage, cn() calls, Radix primitives, data-slot               | MEDIUM — consistency           |
+| Dark mode          | All visual tokens have dark variants, no light-only colors       | MEDIUM — user experience       |
+| Responsive         | Mobile-first, viewport adaptations, 44px touch targets           | MEDIUM — usability             |
+| Anti-patterns      | All items from anti-pattern catalog                              | Varies by pattern              |
 
 **When to use**: Before merging UI changes, during periodic audits, or as part of the quality
 gate workflow.
 
 #### swe-ui-fixer (Yellow)
 
-| Field | Value |
-| --- | --- |
-| Color | yellow |
-| Model | sonnet |
-| Tools | Read, Write, Edit, Glob, Grep, Bash |
+| Field  | Value                                                                                                                                    |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Color  | yellow                                                                                                                                   |
+| Model  | sonnet                                                                                                                                   |
+| Tools  | Read, Write, Edit, Glob, Grep, Bash                                                                                                      |
 | Skills | swe-developing-frontend-ui, repo-assessing-criticality-confidence, repo-applying-maker-checker-fixer, repo-generating-validation-reports |
 
 **Purpose**: Applies validated fixes from `swe-ui-checker` audit reports. Re-validates each
@@ -381,16 +381,16 @@ finding before applying. Produces fix reports.
 
 **Fix capabilities**:
 
-| Finding Type | Auto-Fixable? | How |
-| --- | --- | --- |
-| Hardcoded hex in className | Yes | Replace with token-based Tailwind class |
-| Missing aria-label | Yes | Add aria-label from component context |
-| Missing data-slot | Yes | Add data-slot attribute |
-| Old Radix import | Yes | Replace `@radix-ui/react-slot` with `radix-ui` |
-| forwardRef → ComponentProps | Partial | Requires manual review for complex cases |
-| Missing dark mode variant | Yes | Add `dark:` prefix with appropriate token |
-| Missing focus-visible | Yes | Replace `focus:` with `focus-visible:` |
-| Non-accessible color | Partial | Suggest replacement from accessible palette |
+| Finding Type                | Auto-Fixable? | How                                            |
+| --------------------------- | ------------- | ---------------------------------------------- |
+| Hardcoded hex in className  | Yes           | Replace with token-based Tailwind class        |
+| Missing aria-label          | Yes           | Add aria-label from component context          |
+| Missing data-slot           | Yes           | Add data-slot attribute                        |
+| Old Radix import            | Yes           | Replace `@radix-ui/react-slot` with `radix-ui` |
+| forwardRef → ComponentProps | Partial       | Requires manual review for complex cases       |
+| Missing dark mode variant   | Yes           | Add `dark:` prefix with appropriate token      |
+| Missing focus-visible       | Yes           | Replace `focus:` with `focus-visible:`         |
+| Non-accessible color        | Partial       | Suggest replacement from accessible palette    |
 
 **When to use**: After `swe-ui-checker` produces a report, or as part of the quality gate
 workflow.
@@ -413,19 +413,19 @@ quality gate pattern.
 
 **Inputs**:
 
-| Parameter | Type | Default | Description |
-| --- | --- | --- | --- |
-| scope | string | all | Files/directories to validate |
-| max-iterations | number | 10 | Maximum check-fix cycles |
-| max-concurrency | number | 2 | Max concurrent agents |
+| Parameter       | Type   | Default | Description                   |
+| --------------- | ------ | ------- | ----------------------------- |
+| scope           | string | all     | Files/directories to validate |
+| max-iterations  | number | 10      | Maximum check-fix cycles      |
+| max-concurrency | number | 2       | Max concurrent agents         |
 
 **Outputs**:
 
-| Name | Type | Description |
-| --- | --- | --- |
-| final-status | enum (pass/partial/fail) | Final quality gate result |
-| iterations-completed | number | Cycles executed |
-| final-report | file | Last audit report in generated-reports/ |
+| Name                 | Type                     | Description                             |
+| -------------------- | ------------------------ | --------------------------------------- |
+| final-status         | enum (pass/partial/fail) | Final quality gate result               |
+| iterations-completed | number                   | Cycles executed                         |
+| final-report         | file                     | Last audit report in generated-reports/ |
 
 **Termination**: Zero findings on two consecutive validations (double-zero confirmation).
 
@@ -438,34 +438,34 @@ scoped re-validation after fixes.
 
 **Trade-offs**:
 
-| Test Type | In Unit Tests | In Integration Tests | In E2E Tests |
-| --- | --- | --- | --- |
-| axe-core a11y | Fast, component-level (Chosen) | Slower, needs browser | Slowest, full page |
-| Visual regression | No browser, cannot screenshot | Can screenshot components | Full page screenshots (Chosen for pages) |
-| Component interaction | JSDOM limitations | Real browser | Real browser + real backend |
-| Execution speed | Milliseconds | Seconds | Seconds to minutes |
-| CI cost | Low | Medium | High |
+| Test Type             | In Unit Tests                  | In Integration Tests      | In E2E Tests                             |
+| --------------------- | ------------------------------ | ------------------------- | ---------------------------------------- |
+| axe-core a11y         | Fast, component-level (Chosen) | Slower, needs browser     | Slowest, full page                       |
+| Visual regression     | No browser, cannot screenshot  | Can screenshot components | Full page screenshots (Chosen for pages) |
+| Component interaction | JSDOM limitations              | Real browser              | Real browser + real backend              |
+| Execution speed       | Milliseconds                   | Seconds                   | Seconds to minutes                       |
+| CI cost               | Low                            | Medium                    | High                                     |
 
 **Chosen allocation**:
 
-| Level | UI Addition | Tool | What It Catches | Responsive |
-| --- | --- | --- | --- | --- |
-| Unit (`test:unit`) | axe-core a11y assertions | vitest-axe | Missing aria, roles, labels, contrast | N/A (JSDOM) |
-| Integration (`test:integration`) | Component visual snapshots | Playwright `toHaveScreenshot()` | Unintended visual changes to individual components | 3 viewports per component |
-| E2E (`test:e2e`) | Full-page visual regression | Playwright `toHaveScreenshot()` | Layout breaks, theme issues across full pages | 3 viewports per page |
+| Level                            | UI Addition                 | Tool                            | What It Catches                                    | Responsive                |
+| -------------------------------- | --------------------------- | ------------------------------- | -------------------------------------------------- | ------------------------- |
+| Unit (`test:unit`)               | axe-core a11y assertions    | vitest-axe                      | Missing aria, roles, labels, contrast              | N/A (JSDOM)               |
+| Integration (`test:integration`) | Component visual snapshots  | Playwright `toHaveScreenshot()` | Unintended visual changes to individual components | 3 viewports per component |
+| E2E (`test:e2e`)                 | Full-page visual regression | Playwright `toHaveScreenshot()` | Layout breaks, theme issues across full pages      | 3 viewports per page      |
 
 **axe-core integration pattern** (using setup file for global extension):
 
 ```typescript
 // libs/ts-ui/vitest.setup.ts
-import 'vitest-axe/extend-expect';
+import "vitest-axe/extend-expect";
 ```
 
 ```typescript
 // libs/ts-ui/vitest.config.ts
 export default defineConfig({
   test: {
-    setupFiles: ['./vitest.setup.ts'],
+    setupFiles: ["./vitest.setup.ts"],
   },
 });
 ```
@@ -498,13 +498,13 @@ and `expect.extend({ toHaveNoViolations })` per test file.
 
 **Trade-offs**:
 
-| Factor | jsx-a11y Only | jsx-a11y + Custom Token Rule (Chosen) | Full Custom Plugin |
-| --- | --- | --- | --- |
-| Effort | Install + configure | Install + write one custom rule | Build plugin package |
-| Coverage | A11y only | A11y + token enforcement | A11y + tokens + patterns |
-| Maintenance | Zero (community-maintained) | One rule to maintain | Full plugin lifecycle |
-| False positives | Low (mature plugin) | Medium (regex-based detection) | Low (AST-based) |
-| Adoption friction | Low | Low-medium | High |
+| Factor            | jsx-a11y Only               | jsx-a11y + Custom Token Rule (Chosen) | Full Custom Plugin       |
+| ----------------- | --------------------------- | ------------------------------------- | ------------------------ |
+| Effort            | Install + configure         | Install + write one custom rule       | Build plugin package     |
+| Coverage          | A11y only                   | A11y + token enforcement              | A11y + tokens + patterns |
+| Maintenance       | Zero (community-maintained) | One rule to maintain                  | Full plugin lifecycle    |
+| False positives   | Low (mature plugin)         | Medium (regex-based detection)        | Low (AST-based)          |
+| Adoption friction | Low                         | Low-medium                            | High                     |
 
 **Why not Stylelint**: Our apps use Tailwind utility classes in TSX, not traditional CSS. The
 only significant CSS file is `globals.css`, which is managed by the token system. The primary
@@ -526,13 +526,13 @@ positives (e.g., hex in SVG data URIs) can be suppressed with eslint-disable com
 
 **Trade-offs**:
 
-| Factor | No Class Ordering (Status Quo) | Prettier Plugin (Chosen) | ESLint Rule |
-| --- | --- | --- | --- |
-| Enforcement | None | Automatic on save + pre-commit | Manual fix required |
-| Developer friction | Zero | Zero (automatic) | Must run fix command |
-| Integration | N/A | Prettier already in pre-commit | ESLint already in pre-push |
-| Diff noise | Inconsistent ordering across PRs | One-time reformat, then stable | Same as Prettier |
-| Multi-app config | N/A | Need `tailwindStylesheet` per app | Need config per app |
+| Factor             | No Class Ordering (Status Quo)   | Prettier Plugin (Chosen)          | ESLint Rule                |
+| ------------------ | -------------------------------- | --------------------------------- | -------------------------- |
+| Enforcement        | None                             | Automatic on save + pre-commit    | Manual fix required        |
+| Developer friction | Zero                             | Zero (automatic)                  | Must run fix command       |
+| Integration        | N/A                              | Prettier already in pre-commit    | ESLint already in pre-push |
+| Diff noise         | Inconsistent ordering across PRs | One-time reformat, then stable    | Same as Prettier           |
+| Multi-app config   | N/A                              | Need `tailwindStylesheet` per app | Need config per app        |
 
 **Configuration challenge**: The repo has multiple apps with different `globals.css` files.
 `prettier-plugin-tailwindcss` accepts a single `tailwindStylesheet` path. Options:
@@ -562,13 +562,13 @@ positives (e.g., hex in SVG data URIs) can be suppressed with eslint-disable com
 
 **Trade-offs**:
 
-| Factor | Per-App Storybook | Shared Lib Storybook (Chosen) | Both |
-| --- | --- | --- | --- |
-| What it documents | App-specific components + shared | Shared components only | Everything |
-| Maintenance | N Storybook configs | 1 Storybook config | N+1 configs |
-| Version conflicts | Each app pins own version | One version | Must align all |
-| Build time | Slower (per-app builds) | Fast (one lib) | Slowest |
-| Coverage | App-specific patterns visible | Only shared components | Full coverage |
+| Factor            | Per-App Storybook                | Shared Lib Storybook (Chosen) | Both           |
+| ----------------- | -------------------------------- | ----------------------------- | -------------- |
+| What it documents | App-specific components + shared | Shared components only        | Everything     |
+| Maintenance       | N Storybook configs              | 1 Storybook config            | N+1 configs    |
+| Version conflicts | Each app pins own version        | One version                   | Must align all |
+| Build time        | Slower (per-app builds)          | Fast (one lib)                | Slowest        |
+| Coverage          | App-specific patterns visible    | Only shared components        | Full coverage  |
 
 **Rationale**: organiclever-web already has Storybook. Rather than maintaining two (or more)
 Storybook instances, consolidate into the shared lib. App-specific components that need
@@ -579,18 +579,89 @@ README.
 shared components are extracted. The app-level `.storybook/` can be removed once all stories
 are moved.
 
+### AD11: CI Enforcement — Deterministic Checks in Git Hooks and GitHub Workflows
+
+**Decision**: All deterministic UI quality checks must be enforced in CI (git hooks + GitHub
+Actions). AI agents (swe-ui-checker/maker/fixer) are supplementary — they handle non-deterministic
+reviews but are NOT the enforcement mechanism.
+
+**Principle**: If a check is deterministic (same input always produces same pass/fail), it belongs
+in CI. If it requires judgment (context-dependent, heuristic), it belongs in an agent. Never rely
+on an agent to catch what a lint rule or test can catch deterministically.
+
+**Enforcement map**:
+
+| Check | Deterministic? | Enforcement Point | CI Layer |
+| --- | --- | --- | --- |
+| Tailwind class ordering | Yes | `prettier-plugin-tailwindcss` | Pre-commit (lint-staged runs Prettier on .tsx) |
+| Accessibility lint (jsx-a11y) | Yes | `eslint-plugin-jsx-a11y` in ESLint config | Pre-push (`nx affected -t lint`) + PR quality gate |
+| Hardcoded color detection | Yes | Custom ESLint rule `no-hardcoded-design-values` | Pre-push (`nx affected -t lint`) + PR quality gate |
+| axe-core a11y assertions | Yes | `vitest-axe` in component unit tests | Pre-push (`nx affected -t test:quick`) + PR quality gate |
+| Visual regression screenshots | Yes | Playwright `toHaveScreenshot()` | `test:visual` Nx target (manual or CI workflow) |
+| Markdown quality | Yes | markdownlint-cli2 | Pre-push (`npm run lint:md`) + PR quality gate |
+| TypeScript type safety | Yes | `tsc --noEmit` via `typecheck` target | Pre-push (`nx affected -t typecheck`) + PR quality gate |
+| Token usage patterns | Partial | Custom ESLint rule (regex-based) | Pre-push + PR quality gate |
+| Component quality audit | No | `swe-ui-checker` agent | On-demand or quality gate workflow |
+| Component creation | No | `swe-ui-maker` agent | On-demand |
+| Automated fix application | No | `swe-ui-fixer` agent | On-demand or quality gate workflow |
+
+**How it flows through existing CI infrastructure**:
+
+```text
+Pre-commit (lint-staged via Husky):
+├── Prettier formats .tsx files → prettier-plugin-tailwindcss sorts classes
+├── rhino-cli validates links, config sync
+└── Auto-stages formatted files
+
+Pre-push (Husky):
+├── nx affected -t typecheck → catches type errors in shared components
+├── nx affected -t lint → eslint-plugin-jsx-a11y + no-hardcoded-design-values
+├── nx affected -t test:quick → vitest-axe catches a11y violations
+└── npm run lint:md → markdownlint on convention docs
+
+PR Quality Gate (.github/workflows/pr-quality-gate.yml):
+├── npx nx affected -t typecheck → same as pre-push
+├── npx nx affected -t lint → same as pre-push
+├── npx nx affected -t test:quick → same as pre-push
+└── npm run lint:md → same as pre-push
+```
+
+**What does NOT need CI changes**: The PR quality gate already runs `typecheck`, `lint`, and
+`test:quick` for affected projects. Adding `eslint-plugin-jsx-a11y` to ESLint config and
+`vitest-axe` to unit tests automatically flows through these existing targets — no workflow
+file changes needed. The only new infrastructure is:
+
+1. `prettier-plugin-tailwindcss` — flows through existing pre-commit lint-staged config
+2. Visual regression (`test:visual`) — new Nx target, optionally added to a GitHub workflow
+
+**Trade-off: visual regression in CI**:
+
+| Factor | In CI (GitHub Actions) | Manual Only |
+| --- | --- | --- |
+| Enforcement | Automatic on every PR | Developer must remember |
+| Cost | ~2min CI time for screenshots | Zero |
+| Flakiness | OS-dependent rendering diffs | N/A |
+| Baseline management | Must match CI OS exactly | Developer machine baselines |
+| Recommendation | Defer to Phase 4; start manual | Start here |
+
+**Recommendation**: Do NOT add `test:visual` to the PR quality gate initially. Playwright
+screenshots are OS-dependent (fonts, rendering) — baselines generated on macOS will fail on
+Ubuntu CI runners. Start with manual visual regression (`nx run ts-ui:test:visual` locally)
+and add to CI only after establishing consistent baselines on a Docker image or using a
+tolerance threshold that accommodates OS differences.
+
 ## Technology Choices
 
-| Need | Choice | Rationale | Alternatives Considered |
-| --- | --- | --- | --- |
-| Class ordering | prettier-plugin-tailwindcss | Prettier already in pre-commit | eslint-plugin-tailwindcss (manual fix) |
-| A11y unit tests | vitest-axe | Vitest already used in all TS apps | jest-axe (Jest, not our runner) |
-| A11y lint | eslint-plugin-jsx-a11y | ESLint already configured | axe-linter (VS Code only) |
-| Visual regression | Playwright toHaveScreenshot() | Playwright already in E2E tests | Chromatic (SaaS, cost), Percy (SaaS, cost) |
-| Component catalog | Storybook 10 | Already in organiclever-web | Ladle (less mature), React Cosmos (niche) |
-| Component variants | CVA (already in use) | Type-safe, composable | Tailwind Variants (similar, less adopted) |
-| Class utilities | cn() via clsx + tailwind-merge | Already the pattern | Only clsx (no merge), only tw-merge (no conditional) |
-| Design tokens | CSS custom properties + Tailwind @theme | Already the pattern | Style Dictionary (overkill), Tokens Studio (Figma-dependent) |
+| Need               | Choice                                  | Rationale                          | Alternatives Considered                                      |
+| ------------------ | --------------------------------------- | ---------------------------------- | ------------------------------------------------------------ |
+| Class ordering     | prettier-plugin-tailwindcss             | Prettier already in pre-commit     | eslint-plugin-tailwindcss (manual fix)                       |
+| A11y unit tests    | vitest-axe                              | Vitest already used in all TS apps | jest-axe (Jest, not our runner)                              |
+| A11y lint          | eslint-plugin-jsx-a11y                  | ESLint already configured          | axe-linter (VS Code only)                                    |
+| Visual regression  | Playwright toHaveScreenshot()           | Playwright already in E2E tests    | Chromatic (SaaS, cost), Percy (SaaS, cost)                   |
+| Component catalog  | Storybook 10                            | Already in organiclever-web        | Ladle (less mature), React Cosmos (niche)                    |
+| Component variants | CVA (already in use)                    | Type-safe, composable              | Tailwind Variants (similar, less adopted)                    |
+| Class utilities    | cn() via clsx + tailwind-merge          | Already the pattern                | Only clsx (no merge), only tw-merge (no conditional)         |
+| Design tokens      | CSS custom properties + Tailwind @theme | Already the pattern                | Style Dictionary (overkill), Tokens Studio (Figma-dependent) |
 
 ## Migration Path — Detailed
 
@@ -659,18 +730,18 @@ are moved.
 
 Every architecture decision in this plan traces to one or more governance principles:
 
-| AD | Primary Principle | How It Aligns |
-| --- | --- | --- |
-| AD1 (Repo-specific skill) | Explicit Over Implicit | Skill references our actual tokens explicitly, not generic guidance |
-| AD2 (Two packages) | Simplicity Over Complexity | Each lib has one clear purpose; no monolithic abstraction |
-| AD3 (Structural vs. brand) | Accessibility First | Shared tokens enforce consistent contrast ratios and dark mode |
-| AD4 (Convention docs) | Documentation First | Conventions documented before code exists |
-| AD5 (Single skill) | Simplicity Over Complexity | One skill over fragmented five; minimum viable approach |
-| AD6 (Full agent trio + workflow) | Automation Over Manual | Full maker-checker-fixer lifecycle with automated quality gate |
-| AD7 (Testing layers) | Three-Level Testing Standard | axe-core maps to unit, visual regression to integration/E2E |
-| AD8 (Targeted lint) | Automation Over Manual | Automated enforcement in CI; developer does not need to remember rules |
-| AD9 (Prettier plugin) | Automation Over Manual | Class ordering happens automatically on save; zero friction |
-| AD10 (Shared Storybook) | Progressive Disclosure | Stories layer from default → variants → advanced patterns |
+| AD                               | Primary Principle            | How It Aligns                                                          |
+| -------------------------------- | ---------------------------- | ---------------------------------------------------------------------- |
+| AD1 (Repo-specific skill)        | Explicit Over Implicit       | Skill references our actual tokens explicitly, not generic guidance    |
+| AD2 (Two packages)               | Simplicity Over Complexity   | Each lib has one clear purpose; no monolithic abstraction              |
+| AD3 (Structural vs. brand)       | Accessibility First          | Shared tokens enforce consistent contrast ratios and dark mode         |
+| AD4 (Convention docs)            | Documentation First          | Conventions documented before code exists                              |
+| AD5 (Single skill)               | Simplicity Over Complexity   | One skill over fragmented five; minimum viable approach                |
+| AD6 (Full agent trio + workflow) | Automation Over Manual       | Full maker-checker-fixer lifecycle with automated quality gate         |
+| AD7 (Testing layers)             | Three-Level Testing Standard | axe-core maps to unit, visual regression to integration/E2E            |
+| AD8 (Targeted lint)              | Automation Over Manual       | Automated enforcement in CI; developer does not need to remember rules |
+| AD9 (Prettier plugin)            | Automation Over Manual       | Class ordering happens automatically on save; zero friction            |
+| AD10 (Shared Storybook)          | Progressive Disclosure       | Stories layer from default → variants → advanced patterns              |
 
 ### Color Accessibility Compliance
 

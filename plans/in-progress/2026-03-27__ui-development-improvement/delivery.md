@@ -100,8 +100,8 @@ governance docs, skill files, agent files, and Prettier config._
   - cn() usage patterns: conditional classes, responsive classes, variant overrides
   - Component file structure template
 - [ ] Create `reference/anti-patterns.md`:
-  - At least 12 anti-patterns with before/after code examples
-  - Include the 13 patterns from tech-docs.md AD5
+  - At least 13 anti-patterns with before/after code examples (matching AD5 catalog)
+  - Include all 13 patterns from tech-docs.md AD5
   - Each pattern: description, example violation (from our actual codebase where possible),
     correct approach, severity level
 - [ ] Create `reference/accessibility.md`:
@@ -198,6 +198,7 @@ gate pattern (modeled on `plan-quality-gate.md` and `ayokoding-web-general-quali
 ### 1.5 Add Prettier Tailwind Plugin
 
 **Goal**: Install and configure `prettier-plugin-tailwindcss` for deterministic class ordering.
+**CI enforcement**: Flows through pre-commit hook (lint-staged runs Prettier on staged .tsx files).
 
 - [ ] Install: `npm install --save-dev prettier-plugin-tailwindcss`
 - [ ] Update `.prettierrc.json` to add plugin and tailwindStylesheet:
@@ -280,7 +281,9 @@ _Extract shared tokens and components into Nx libraries. One app migration at a 
   ```typescript
   import { type ClassValue, clsx } from "clsx";
   import { twMerge } from "tailwind-merge";
-  export function cn(...inputs: ClassValue[]) { return twMerge(clsx(inputs)); }
+  export function cn(...inputs: ClassValue[]) {
+    return twMerge(clsx(inputs));
+  }
   ```
 
 - [ ] Set up `components.json` for shadcn/ui CLI pointing to this library
@@ -324,7 +327,7 @@ _Extract shared tokens and components into Nx libraries. One app migration at a 
   - Remove `@layer utilities { body { font-family: ... } }` — replace with `next/font`
 - [ ] Update font loading: Add `next/font/google` import for body font in `layout.tsx`
 - [ ] Update component imports: Replace `@/components/ui/button` with
-  `@open-sharia-enterprise/ts-ui` for the 4 shared components (Alert, Button, Dialog, Input)
+      `@open-sharia-enterprise/ts-ui` for the 4 shared components (Alert, Button, Dialog, Input)
 - [ ] Remove `src/lib/utils.ts` — import `cn` from `@open-sharia-enterprise/ts-ui` instead
 - [ ] Delete migrated component files from `src/components/ui/` (Alert, Button, Dialog, Input)
 - [ ] Keep app-specific components: AlertDialog, Card, Label, Table (still in `src/components/ui/`)
@@ -351,7 +354,7 @@ _Extract shared tokens and components into Nx libraries. One app migration at a 
 - [ ] Remove `src/lib/utils.ts` — import `cn` from shared lib
 - [ ] Delete migrated component files from `src/components/ui/` (Alert, Button, Dialog, Input)
 - [ ] Keep app-specific components: Badge, Command, DropdownMenu, ScrollArea, Separator, Sheet,
-  Tabs, Tooltip, plus all content components (Breadcrumb, Footer, Header, etc.)
+      Tabs, Tooltip, plus all content components (Breadcrumb, Footer, Header, etc.)
 - [ ] Verify: `nx run ayokoding-web:test:quick`
 - [ ] Verify dev server: `nx dev ayokoding-web`, check content pages render correctly
 
@@ -360,7 +363,7 @@ _Extract shared tokens and components into Nx libraries. One app migration at a 
 **Goal**: Replace inline styles with Tailwind + shared tokens.
 
 - [ ] Add dependencies: `@tailwindcss/postcss`, `@tailwindcss/vite`,
-  `@open-sharia-enterprise/ts-ui-tokens`, `@open-sharia-enterprise/ts-ui`
+      `@open-sharia-enterprise/ts-ui-tokens`, `@open-sharia-enterprise/ts-ui`
 - [ ] Create `src/app/globals.css`:
   - `@import "tailwindcss"`
   - `@import "@open-sharia-enterprise/ts-ui-tokens/tokens.css"`
@@ -400,11 +403,15 @@ _Extract shared tokens and components into Nx libraries. One app migration at a 
 
 ## Phase 3: Automated Enforcement (Quality Gate)
 
-_Add programmatic checks to the CI pipeline. Fix existing violations before enabling rules._
+_Add deterministic checks that are enforced by CI (git hooks + GitHub Actions). Every check
+added here flows through the existing enforcement chain: pre-push runs `nx affected -t lint
+test:quick`, PR quality gate runs the same in GitHub Actions. No workflow file changes needed —
+adding rules to ESLint config and tests to vitest automatically enforces them._
 
 ### 3.1 Add eslint-plugin-jsx-a11y
 
 **Goal**: Catch accessibility violations at lint time.
+**CI enforcement**: Flows through `nx affected -t lint` in pre-push hook + PR quality gate.
 
 - [ ] Install: `npm install --save-dev eslint-plugin-jsx-a11y`
 - [ ] Update ESLint flat config in each TypeScript frontend app (`eslint.config.mjs`):
@@ -416,7 +423,7 @@ _Add programmatic checks to the CI pipeline. Fix existing violations before enab
   ```
 
 - [ ] Run `nx run-many -t lint --projects=organiclever-web,ayokoding-web,demo-fe-ts-nextjs` to
-  find existing violations
+      find existing violations
 - [ ] Fix all existing violations (expect: missing alt text, missing labels, etc.)
 - [ ] Verify `nx affected -t lint` passes cleanly
 - [ ] Commit fixes separately from config change: first config, then fixes
@@ -424,6 +431,7 @@ _Add programmatic checks to the CI pipeline. Fix existing violations before enab
 ### 3.2 Add vitest-axe to Unit Tests
 
 **Goal**: Automated accessibility assertions in component unit tests.
+**CI enforcement**: Flows through `nx affected -t test:quick` in pre-push hook + PR quality gate.
 
 - [ ] Install in root: `npm install --save-dev vitest-axe`
 - [ ] Verify `@testing-library/react` is already available:
@@ -433,7 +441,7 @@ _Add programmatic checks to the CI pipeline. Fix existing violations before enab
 - [ ] Create `libs/ts-ui/vitest.setup.ts`:
 
   ```typescript
-  import 'vitest-axe/extend-expect';
+  import "vitest-axe/extend-expect";
   ```
 
 - [ ] Update `libs/ts-ui/vitest.config.ts` to include setup file:
@@ -445,7 +453,7 @@ _Add programmatic checks to the CI pipeline. Fix existing violations before enab
 - [ ] Add `expectAccessible()` test helper in `libs/ts-ui/src/test-utils/a11y.ts`:
 
   ```typescript
-  import { axe } from 'vitest-axe';
+  import { axe } from "vitest-axe";
   export async function expectAccessible(container: HTMLElement) {
     const results = await axe(container);
     expect(results).toHaveNoViolations();
@@ -457,6 +465,11 @@ _Add programmatic checks to the CI pipeline. Fix existing violations before enab
 - [ ] Verify: `nx run ts-ui:test:quick`
 
 ### 3.3 Add Playwright Visual Regression (Executes in Phase 4, After Step 4.1)
+
+**CI enforcement**: Manual only initially (`nx run ts-ui:test:visual`). NOT added to pre-push
+or PR quality gate — Playwright screenshots are OS-dependent and would fail on CI runners with
+different fonts/rendering. Add to CI only after establishing Docker-based baselines or
+sufficient pixel tolerance. See AD11 trade-off analysis.
 
 **Goal**: Catch unintended visual changes to shared components.
 
@@ -489,6 +502,7 @@ be reduced by limiting viewport coverage to components that actually change acro
 ### 3.4 Add Custom ESLint Rule for Token Usage
 
 **Goal**: Prevent hardcoded design values in TSX files.
+**CI enforcement**: Flows through `nx affected -t lint` in pre-push hook + PR quality gate.
 
 - [ ] Create a custom ESLint rule in the shared ESLint config (or a local plugin file):
   - Rule name: `no-hardcoded-design-values`
@@ -511,6 +525,8 @@ occasional false positive vs. building a full AST visitor plugin.
 - [ ] `nx affected -t lint` catches hardcoded hex colors in TSX files
 - [ ] `nx affected -t test:quick` includes a11y assertions for all shared components
 - [ ] Visual regression tests run via `nx run ts-ui:test:visual` and catch visual changes
+- [ ] Visual regression screenshots capture all 3 viewports (375px, 768px, 1280px)
+- [ ] Accessibility test helper documents 44px mobile touch target minimum
 - [ ] Pre-push hook (`nx affected -t typecheck lint test:quick`) catches all new violations
 - [ ] Zero existing violations in the codebase after cleanup
 
@@ -622,6 +638,7 @@ flowchart TD
     D[1.4 Create Quality Gate Workflow]
     D2[1.5 Add Prettier Plugin]
     A --> B
+    A --> D2
     B --> C
     C --> D
   end
@@ -676,13 +693,13 @@ flowchart TD
 
 ## Risk Considerations
 
-| Risk | Likelihood | Impact | Mitigation |
-| --- | --- | --- | --- |
-| Token reconciliation between apps produces unexpected visual changes | Medium | High | Use organiclever-web as structural canonical; screenshot before/after each migration; per-app brand overrides preserve existing look |
-| Breaking existing components during extraction | Medium | High | Migrate one app at a time; run full `test:quick` after each; keep app-specific components local |
-| Storybook version conflicts in monorepo | Low | Medium | Pin version in root package.json; use same `@storybook/nextjs-vite` already in use |
-| Visual regression flakiness in CI | Medium | Medium | Set 1% pixel threshold; use consistent CI environment; document baseline update process |
-| Skill triggers too broadly on TSX edits | Low | Low | Refine skill `description` wording to scope context-matching to UI component work |
-| Prettier plugin reformats too aggressively | Low | Medium | Run initial format as separate commit; review diff before merging; revert if unexpected changes |
-| Custom ESLint rule false positives | Medium | Low | Start with `warn` severity; suppress known false positives; promote to `error` after stabilization |
-| shadcn/ui model tension (copy-own vs. shared) | Medium | Medium | Clearly document that shared components are governed by ts-ui maintainers; app-specific extensions are app-owned |
+| Risk                                                                 | Likelihood | Impact | Mitigation                                                                                                                           |
+| -------------------------------------------------------------------- | ---------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Token reconciliation between apps produces unexpected visual changes | Medium     | High   | Use organiclever-web as structural canonical; screenshot before/after each migration; per-app brand overrides preserve existing look |
+| Breaking existing components during extraction                       | Medium     | High   | Migrate one app at a time; run full `test:quick` after each; keep app-specific components local                                      |
+| Storybook version conflicts in monorepo                              | Low        | Medium | Pin version in root package.json; use same `@storybook/nextjs-vite` already in use                                                   |
+| Visual regression flakiness in CI                                    | Medium     | Medium | Set 1% pixel threshold; use consistent CI environment; document baseline update process                                              |
+| Skill triggers too broadly on TSX edits                              | Low        | Low    | Refine skill `description` wording to scope context-matching to UI component work                                                    |
+| Prettier plugin reformats too aggressively                           | Low        | Medium | Run initial format as separate commit; review diff before merging; revert if unexpected changes                                      |
+| Custom ESLint rule false positives                                   | Medium     | Low    | Start with `warn` severity; suppress known false positives; promote to `error` after stabilization                                   |
+| shadcn/ui model tension (copy-own vs. shared)                        | Medium     | Medium | Clearly document that shared components are governed by ts-ui maintainers; app-specific extensions are app-owned                     |
