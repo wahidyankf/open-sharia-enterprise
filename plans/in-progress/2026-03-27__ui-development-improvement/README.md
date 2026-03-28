@@ -99,20 +99,20 @@ This plan implements and respects the following governance layers:
 
 | Principle | How This Plan Implements It |
 | --- | --- |
-| [Accessibility First](../../governance/principles/content/accessibility-first.md) | WCAG AA compliance in shared components; axe-core in unit tests; eslint-plugin-jsx-a11y; accessible color palette in design tokens; focus-visible, reduced-motion, aria attributes in conventions |
-| [Simplicity Over Complexity](../../governance/principles/general/simplicity-over-complexity.md) | Minimum viable component set (6 initial); single-purpose components; flat lib structure; no premature abstractions |
-| [Explicit Over Implicit](../../governance/principles/software-engineering/explicit-over-implicit.md) | All component props documented via TypeScript + JSDoc; data-slot attributes for explicit identity; no magic defaults; explicit token naming |
-| [Progressive Disclosure](../../governance/principles/content/progressive-disclosure.md) | Storybook stories layer from default → variants → advanced; convention docs start with essentials; skill reference modules for deeper topics |
-| [Documentation First](../../governance/principles/content/documentation-first.md) | Conventions documented before code (Phase 1); component catalog (Phase 4); JSDoc on all exports |
-| [Automation Over Manual](../../governance/principles/software-engineering/automation-over-manual.md) | ESLint rules, Prettier plugin, vitest-axe, Playwright visual regression — all automated in CI |
-| [Root Cause Orientation](../../governance/principles/general/root-cause-orientation.md) | Addresses root cause (no shared tokens/components) not symptoms (inconsistent UIs) |
+| [Accessibility First](../../../governance/principles/content/accessibility-first.md) | WCAG AA compliance in shared components; axe-core in unit tests; eslint-plugin-jsx-a11y; accessible color palette in design tokens; focus-visible, reduced-motion, aria attributes in conventions |
+| [Simplicity Over Complexity](../../../governance/principles/general/simplicity-over-complexity.md) | Minimum viable component set (6 initial); single-purpose components; flat lib structure; no premature abstractions |
+| [Explicit Over Implicit](../../../governance/principles/software-engineering/explicit-over-implicit.md) | All component props documented via TypeScript + JSDoc; data-slot attributes for explicit identity; no magic defaults; explicit token naming |
+| [Progressive Disclosure](../../../governance/principles/content/progressive-disclosure.md) | Storybook stories layer from default → variants → advanced; convention docs start with essentials; skill reference modules for deeper topics |
+| [Documentation First](../../../governance/principles/content/documentation-first.md) | Conventions documented before code (Phase 1); component catalog (Phase 4); JSDoc on all exports |
+| [Automation Over Manual](../../../governance/principles/software-engineering/automation-over-manual.md) | ESLint rules, Prettier plugin, vitest-axe, Playwright visual regression — all automated in CI |
+| [Root Cause Orientation](../../../governance/principles/general/root-cause-orientation.md) | Addresses root cause (no shared tokens/components) not symptoms (inconsistent UIs) |
 
 ### Conventions Respected
 
 | Convention | How This Plan Respects It |
 | --- | --- |
-| [Color Accessibility](../../governance/conventions/formatting/color-accessibility.md) | Design token conventions reference the mandatory 5-color accessible palette; anti-patterns include color-only status indicators |
-| [Content Quality](../../governance/conventions/writing/quality.md) | All convention docs follow heading hierarchy, active voice, alt text rules; no time estimates |
-| [Diagrams](../../governance/conventions/formatting/diagrams.md) | Mermaid dependency graph uses accessible colors; vertical orientation |
-| [Three-Level Testing](../../governance/development/quality/three-level-testing-standard.md) | axe-core in unit tests, visual regression in integration, full-page regression in E2E — maps to the existing three-level pipeline |
-| [Implementation Workflow](../../governance/development/workflow/implementation.md) | Phase ordering follows make-it-work (conventions) → make-it-right (shared lib) → make-it-fast (enforcement) |
+| [Color Accessibility](../../../governance/conventions/formatting/color-accessibility.md) | Design token conventions reference the mandatory 5-color accessible palette; anti-patterns include color-only status indicators |
+| [Content Quality](../../../governance/conventions/writing/quality.md) | All convention docs follow heading hierarchy, active voice, alt text rules; no time estimates |
+| [Diagrams](../../../governance/conventions/formatting/diagrams.md) | Mermaid dependency graph uses accessible colors; vertical orientation |
+| [Three-Level Testing](../../../governance/development/quality/three-level-testing-standard.md) | axe-core in unit tests, visual regression in integration, full-page regression in E2E — maps to the existing three-level pipeline |
+| [Implementation Workflow](../../../governance/development/workflow/implementation.md) | Phase ordering follows make-it-work (conventions) → make-it-right (shared lib) → make-it-fast (enforcement) |

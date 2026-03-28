@@ -12,7 +12,7 @@ governance docs, skill files, agent files, and Prettier config._
 - [ ] Create `governance/development/frontend/` directory
 - [ ] Write `governance/development/frontend/README.md` — index linking all four convention docs
 - [ ] Write `design-tokens.md`:
-  - Reference [Color Accessibility Convention](../../governance/conventions/formatting/color-accessibility.md)
+  - Reference [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md)
     — all color tokens must produce WCAG AA compliant contrast ratios; chart/status colors
     must come from the mandatory accessible palette
   - Token categories: structural (radius, spacing, typography) vs. brand (primary, accent)
@@ -23,11 +23,11 @@ governance docs, skill files, agent files, and Prettier config._
   - Code examples showing correct token usage in Tailwind utilities
   - Code examples showing the per-app override pattern
 - [ ] Write `component-patterns.md`:
-  - Reference [Simplicity Over Complexity](../../governance/principles/general/simplicity-over-complexity.md)
+  - Reference [Simplicity Over Complexity](../../../governance/principles/general/simplicity-over-complexity.md)
     — single-purpose components, minimum viable abstraction, Rule of Three for extraction
-  - Reference [Explicit Over Implicit](../../governance/principles/software-engineering/explicit-over-implicit.md)
+  - Reference [Explicit Over Implicit](../../../governance/principles/software-engineering/explicit-over-implicit.md)
     — all props typed and documented, no hidden defaults, data-slot for explicit identity
-  - Reference [Progressive Disclosure](../../governance/principles/content/progressive-disclosure.md)
+  - Reference [Progressive Disclosure](../../../governance/principles/content/progressive-disclosure.md)
     — basic usage first, advanced patterns (compound variants, asChild) in separate sections
   - File structure: `component-name/component-name.tsx`, `.variants.ts`, `.stories.tsx`, `.test.tsx`
   - CVA variant definitions: how to define variants, compound variants, default variants
@@ -39,9 +39,9 @@ governance docs, skill files, agent files, and Prettier config._
   - asChild pattern: when and how to use `<Slot>` for composition
   - Code example: complete component following all patterns
 - [ ] Write `accessibility.md`:
-  - Reference [Accessibility First](../../governance/principles/content/accessibility-first.md)
+  - Reference [Accessibility First](../../../governance/principles/content/accessibility-first.md)
     principle as the governing principle
-  - Reference [Color Accessibility Convention](../../governance/conventions/formatting/color-accessibility.md)
+  - Reference [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md)
     for the mandatory 5-color accessible palette (#0173B2, #DE8F05, #029E73, #CC78BC, #CA9161)
   - WCAG AA compliance: minimum requirements for all components (4.5:1 normal text, 3:1 UI)
   - `focus-visible` (not `focus`): only show focus ring for keyboard users
@@ -56,7 +56,7 @@ governance docs, skill files, agent files, and Prettier config._
   - Keyboard navigation: all interactive elements reachable via Tab, activatable via Enter/Space
   - Screen reader compatibility: logical reading order, descriptive link text
 - [ ] Write `styling.md`:
-  - Reference [Implementation Workflow](../../governance/development/workflow/implementation.md)
+  - Reference [Implementation Workflow](../../../governance/development/workflow/implementation.md)
     — make it work (utility classes) → make it right (extract patterns) → make it fast (optimize)
   - Tailwind v4 conventions: `@theme`, `@layer`, `@custom-variant`, `@source`, `@plugin`
   - Utility-first: use Tailwind classes in TSX, not CSS files (except `@layer base` in globals.css)
