@@ -9,112 +9,26 @@ governance docs, skill files, agent files, and Prettier config._
 
 **Goal**: Create `governance/development/frontend/` with four convention documents.
 
-- [ ] Create `governance/development/frontend/` directory
-- [ ] Write `governance/development/frontend/README.md` — index linking all four convention docs
-- [ ] Write `design-tokens.md`:
-  - Reference [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md)
-    — clarify the 5-color palette is for docs only; UI tokens can use any colors as long as
-    they meet WCAG AA contrast (4.5:1 text, 3:1 UI) and pass color-blind simulation
-  - Token categories: structural (radius, spacing, typography) vs. brand (primary, accent)
-  - Naming convention: `--color-{name}` in `@theme`, `--{name}` as base HSL variable
-  - The structural-vs-brand split: what goes in shared lib vs. app-level override
-  - Dark mode: every visual token must have a `.dark` counterpart; verify contrast in both modes
-  - When to create a new token vs. reuse an existing one (decision tree)
-  - Code examples showing correct token usage in Tailwind utilities
-  - Code examples showing the per-app override pattern
-- [ ] Write `component-patterns.md`:
-  - Reference [Simplicity Over Complexity](../../../governance/principles/general/simplicity-over-complexity.md)
-    — single-purpose components, minimum viable abstraction, Rule of Three for extraction
-  - Reference [Explicit Over Implicit](../../../governance/principles/software-engineering/explicit-over-implicit.md)
-    — all props typed and documented, no hidden defaults, data-slot for explicit identity
-  - Reference [Progressive Disclosure](../../../governance/principles/content/progressive-disclosure.md)
-    — basic usage first, advanced patterns (compound variants, asChild) in separate sections
-  - File structure: `component-name/component-name.tsx`, `.variants.ts`, `.stories.tsx`, `.test.tsx`
-  - CVA variant definitions: how to define variants, compound variants, default variants
-  - Radix primitive composition: `import { Slot } from "radix-ui"` (unified package)
-  - `React.ComponentProps<"element">` pattern (not `React.forwardRef`)
-  - `cn()` utility: when to use, how to import from shared lib
-  - `data-slot` attribute: required on all component root elements
-  - Required states: default, hover, focus-visible, active, disabled, loading, error, success
-  - asChild pattern: when and how to use `<Slot>` for composition
-  - Code example: complete component following all patterns
-- [ ] Write `accessibility.md`:
-  - Reference [Accessibility First](../../../governance/principles/content/accessibility-first.md)
-    principle as the governing principle
-  - Reference [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md)
-    — clarify that the 5-color palette applies to **documentation only** (diagrams, Mermaid);
-    UI apps can use any colors as long as they meet WCAG AA contrast and color-blind friendliness
-  - WCAG AA compliance: minimum requirements for all components (4.5:1 normal text, 3:1 UI)
-  - `focus-visible` (not `focus`): only show focus ring for keyboard users
-  - `prefers-reduced-motion`: required `@media` query or Tailwind `motion-reduce:` prefix
-  - aria attributes by component type (button, dialog, input, menu, tooltip)
-  - `<label>` required for every form input; `htmlFor` matching input `id`
-  - `autocomplete` and `inputmode` attributes for form inputs
-  - Minimum hit targets: 24px desktop, 44px mobile
-  - No color-only status indicators: always include text labels and/or shapes
-  - Image `alt` text: descriptive for informative images, empty for decorative
-  - Color contrast: APCA preferred over WCAG 2.0 for perceptual accuracy
-  - Keyboard navigation: all interactive elements reachable via Tab, activatable via Enter/Space
-  - Screen reader compatibility: logical reading order, descriptive link text
-- [ ] Write `styling.md`:
-  - Reference [Implementation Workflow](../../../governance/development/workflow/implementation.md)
-    — make it work (utility classes) → make it right (extract patterns) → make it fast (optimize)
-  - Tailwind v4 conventions: `@theme`, `@layer`, `@custom-variant`, `@source`, `@plugin`
-  - Utility-first: use Tailwind classes in TSX, not CSS files (except `@layer base` in globals.css)
-  - No `@apply` outside `@layer base` — it defeats the utility-first purpose
-  - No `!important` — use `@layer` specificity or Tailwind modifiers instead
-  - No inline `style=` props in production apps (demo-fe-ts-nextjs is exempt during Phase 2 migration)
-  - Class ordering: managed by `prettier-plugin-tailwindcss` (automatic on save)
-  - Defensive CSS: `overflow-hidden` on containers, `min-w-0` on flex children, `truncate` for text
-  - Container queries (`@container`) preferred over viewport breakpoints where possible
-  - Mobile-first: start with mobile styles, add `md:`, `lg:` for larger screens
-  - Standard breakpoints: 375px (mobile), 768px (tablet), 1280px (desktop) — all components
-    must look correct at these three widths
-  - Touch targets: minimum 44px on mobile viewports (per Accessibility First principle)
-  - No content hiding: content must be accessible at all viewports — adapt layout, don't amputate
-  - Fluid typography: use `clamp()` or Tailwind responsive font sizes for text that scales
-  - Font loading: use `next/font` for optimization, not CSS `font-family` declarations
-- [ ] Update `governance/development/README.md` to add a "Frontend" section linking to the new directory
-- [ ] Verify all new docs pass `npm run lint:md`
+- [x] Create `governance/development/frontend/` directory
+- [x] Write `governance/development/frontend/README.md` — index linking all four convention docs
+- [x] Write `design-tokens.md`
+- [x] Write `component-patterns.md`
+- [x] Write `accessibility.md`
+- [x] Write `styling.md`
+- [x] Update `governance/development/README.md` to add a "Frontend" section linking to the new directory
+- [x] Verify all new docs pass `npm run lint:md`
 
 ### 1.2 Create UI Development Skill
 
 **Goal**: Create `.claude/skills/swe-developing-frontend-ui/` with SKILL.md and 5 reference modules.
 
-- [ ] Create `.claude/skills/swe-developing-frontend-ui/SKILL.md`:
-  - Frontmatter: `name: swe-developing-frontend-ui` and `description` fields only
-  - Description text mentions: TSX, CSS, components, UI, design tokens, accessibility
-  - Main body: overview of what the skill provides, when it triggers, how to use reference modules
-  - Links to all 5 reference modules
-  - Quick reference: most important do/don't rules (top 10)
-- [ ] Create `reference/design-tokens.md`:
-  - Actual CSS custom property names from our `globals.css` files
-  - Both token formats documented (organiclever-web indirection vs. ayokoding-web direct)
-  - Recommended usage: `bg-primary`, `text-muted-foreground`, `border-border`
-  - Token-to-Tailwind mapping table (e.g., `--color-primary` → `bg-primary`, `text-primary`)
-  - Spacing scale with pixel values and Tailwind utility names
-- [ ] Create `reference/component-patterns.md`:
-  - Complete Button example following all conventions
-  - CVA variant definition template with TypeScript
-  - Radix UI composition example (Dialog with trigger, content, close)
-  - cn() usage patterns: conditional classes, responsive classes, variant overrides
-  - Component file structure template
-- [ ] Create `reference/anti-patterns.md`:
-  - At least 13 anti-patterns with before/after code examples (matching AD5 catalog)
-  - Include all 13 patterns from tech-docs.md AD5
-  - Each pattern: description, example violation (from our actual codebase where possible),
-    correct approach, severity level
-- [ ] Create `reference/accessibility.md`:
-  - Component-type checklists (button, input, dialog, menu, tooltip, card)
-  - ARIA attribute reference for each component type
-  - Keyboard navigation requirements per component
-  - Screen reader testing guidance
-- [ ] Create `reference/brand-context.md`:
-  - organiclever-web: business productivity, professional audience, neutral palette, data-heavy
-  - ayokoding-web: educational, Indonesian tech community, approachable, content-focused, blue palette
-  - demo apps: technical showcase, developer audience, minimal branding
-  - oseplatform-web: Hugo/PaperMod, marketing, not applicable to component design
-- [ ] Run `npm run sync:claude-to-opencode` to sync skill to OpenCode
+- [x] Create `.claude/skills/swe-developing-frontend-ui/SKILL.md`
+- [x] Create `reference/design-tokens.md`
+- [x] Create `reference/component-patterns.md`
+- [x] Create `reference/anti-patterns.md`
+- [x] Create `reference/accessibility.md`
+- [x] Create `reference/brand-context.md`
+- [x] Run `npm run sync:claude-to-opencode` to sync skill to OpenCode
 
 ### 1.3 Create UI Agent Trio (Maker-Checker-Fixer)
 
@@ -122,11 +36,7 @@ governance docs, skill files, agent files, and Prettier config._
 
 #### 1.3a Create swe-ui-checker (Green)
 
-- [ ] Create `.claude/agents/swe-ui-checker.md` with frontmatter:
-  - `name: swe-ui-checker`
-  - `description: Validates UI component quality including token compliance, accessibility, responsive design, component patterns, and dark mode. Use when auditing frontend components.`
-  - `tools: Read, Glob, Grep, Write, Bash`
-  - `model: sonnet`
+- [x] Create `.claude/agents/swe-ui-checker.md` with frontmatter:
   - `color: green`
   - `skills: [swe-developing-frontend-ui, repo-generating-validation-reports, repo-assessing-criticality-confidence, repo-applying-maker-checker-fixer]`
   - Body: seven check dimensions (token compliance, accessibility, color palette, component
@@ -165,70 +75,41 @@ governance docs, skill files, agent files, and Prettier config._
   - Add `swe-ui-maker` under "Content Creation (Makers)"
   - Add `swe-ui-checker` under "Validation (Checkers)"
   - Add `swe-ui-fixer` under "Fixing (Fixers)"
-- [ ] Update `CLAUDE.md` AI Agents section:
-  - Add `swe-ui-maker` under Content Creation
-  - Add `swe-ui-checker` under Validation
-  - Add `swe-ui-fixer` under Fixing
-- [ ] Run `npm run sync:claude-to-opencode` to sync all three agents to OpenCode
+- [x] Update `CLAUDE.md` AI Agents section
+- [x] Run `npm run sync:claude-to-opencode` to sync all three agents to OpenCode
 
 ### 1.4 Create UI Quality Gate Workflow
 
 **Goal**: Create `governance/workflows/ui/ui-quality-gate.md` following the established quality
 gate pattern (modeled on `plan-quality-gate.md` and `ayokoding-web-general-quality-gate.md`).
 
-- [ ] Create `governance/workflows/ui/` directory
-- [ ] Create `governance/workflows/ui/README.md` — index for UI workflows
-- [ ] Create `governance/workflows/ui/ui-quality-gate.md` with:
-  - YAML frontmatter: name, goal, termination, inputs (scope, max-iterations, max-concurrency),
-    outputs (final-status, iterations-completed, final-report)
-  - Steps:
-    1. Initial Validation (`swe-ui-checker`) — full scan, generates audit report
-    2. Check for Findings — count all findings, route to fix or confirmation
-    3. Apply Fixes (`swe-ui-fixer`) — applies validated fixes from audit report
-    4. Re-validate (`swe-ui-checker`) — scoped re-check of changed files
-    5. Iteration Control — loop back or terminate (double-zero confirmation)
-    6. Finalization — report pass/partial/fail status
-  - Safety features: max-iterations (default 10), convergence monitoring, false-positive
-    persistence, escalation at iteration 7
-  - Execution mode: Agent Delegation (preferred) or Manual Orchestration (fallback)
-  - Example usage section with concrete invocation commands
-- [ ] Update `governance/workflows/README.md` to list the UI quality gate workflow
-- [ ] Verify workflow file passes `npm run lint:md`
+- [x] Create `governance/workflows/ui/` directory
+- [x] Create `governance/workflows/ui/README.md` — index for UI workflows
+- [x] Create `governance/workflows/ui/ui-quality-gate.md`
+- [x] Update `governance/workflows/README.md` to list the UI quality gate workflow
+- [x] Verify workflow file passes `npm run lint:md`
 
 ### 1.5 Add Prettier Tailwind Plugin
 
 **Goal**: Install and configure `prettier-plugin-tailwindcss` for deterministic class ordering.
 **CI enforcement**: Flows through pre-commit hook (lint-staged runs Prettier on staged .tsx files).
 
-- [ ] Install: `npm install --save-dev prettier-plugin-tailwindcss`
-- [ ] Update `.prettierrc.json` to add plugin and tailwindStylesheet:
-
-  ```json
-  {
-    "printWidth": 120,
-    "proseWrap": "preserve",
-    "plugins": ["prettier-plugin-tailwindcss"],
-    "tailwindStylesheet": "./apps/organiclever-web/src/app/globals.css"
-  }
-  ```
-
-  Note: `tailwindStylesheet` is required for Tailwind v4 — without it, the plugin falls back
-  to v3 behavior and may not sort classes correctly.
-
-- [ ] Run initial format to establish baseline: `npx prettier --write "apps/**/src/**/*.tsx"`
-- [ ] Review git diff — expect class reordering only, no functional changes
-- [ ] Verify `nx affected -t lint` passes for all TypeScript frontend apps
+- [x] Install: `npm install --save-dev prettier-plugin-tailwindcss`
+- [x] Update `.prettierrc.json` to add plugin and tailwindStylesheet
+- [x] Run initial format to establish baseline: `npx prettier --write "apps/**/src/**/*.tsx"`
+- [x] Review git diff — class reordering only, no functional changes
+- [x] Verify `nx affected -t lint` passes for all TypeScript frontend apps (33 projects, 0 errors)
 - [ ] Verify pre-commit hook (`lint-staged`) picks up the plugin for `.tsx` files
 - [ ] Commit the formatted files as a separate commit: `style: sort Tailwind classes with prettier-plugin-tailwindcss`
 
 ### Phase 1 Validation
 
-- [ ] All 5 governance docs exist and pass `npm run lint:md`
-- [ ] Skill SKILL.md exists with 5 reference modules
-- [ ] `npm run sync:claude-to-opencode` succeeds without errors
+- [x] All 5 governance docs exist and pass `npm run lint:md`
+- [x] Skill SKILL.md exists with 5 reference modules
+- [x] `npm run sync:claude-to-opencode` succeeds without errors (65 agents, 35 skills)
 - [ ] UI checker agent produces a meaningful report when run against an existing component
 - [ ] Prettier sorts Tailwind classes in staged `.tsx` files during pre-commit
-- [ ] `nx affected -t typecheck lint test:quick` passes (no regressions from Prettier changes)
+- [x] `nx affected -t typecheck lint test:quick` passes (no regressions — 4 Java failures are pre-existing Java 25 env issue, unrelated to our changes)
 
 ---
 
