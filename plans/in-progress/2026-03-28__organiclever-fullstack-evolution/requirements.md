@@ -16,20 +16,27 @@
 - **FR-1.2.1**: `health/health-check.feature` -- Health endpoint returns 200 with `{"status":"UP"}`
 - **FR-1.2.2**: `hello/hello-endpoint.feature` -- Hello endpoint returns 200 with
   `{"message":"world"}`; requires no authentication
-- **FR-1.2.3**: Background step convention: `Given the API is running`
+- **FR-1.2.3**: `authentication/google-login.feature` -- Google OAuth token exchange returns JWT;
+  invalid token returns 401; user record created on first login
+- **FR-1.2.4**: `authentication/me.feature` -- Authenticated user can fetch own profile;
+  unauthenticated request returns 401
+- **FR-1.2.5**: Background step convention: `Given the API is running`
 
 #### FR-1.3: Frontend Gherkin Specs (`fe/gherkin/`)
 
 - **FR-1.3.1**: `hello/hello-page.feature` -- `/hello` page displays "world" from backend;
   shows loading state; handles backend errors gracefully
-- **FR-1.3.2**: Background step convention: `Given the app is running`
+- **FR-1.3.2**: `authentication/google-login.feature` -- `/login` page shows "Sign in with Google"
+  button; successful OAuth redirects to app; user info displayed after login
+- **FR-1.3.3**: Background step convention: `Given the app is running`
 
 #### FR-1.4: OpenAPI Contract (`contracts/`)
 
-- **FR-1.4.1**: OpenAPI 3.1 spec with two endpoints: `/api/v1/hello`, `/api/v1/health`
-- **FR-1.4.2**: Schemas: `HelloResponse` (`{"message": "world"}`),
-  `HealthResponse` (`{"status": "UP"}`), `ErrorResponse`
-- **FR-1.4.3**: Paths: `paths/hello.yaml`, `paths/health.yaml`
+- **FR-1.4.1**: OpenAPI 3.1 spec with endpoints: `/api/v1/hello`, `/api/v1/health`,
+  `/api/v1/auth/google`, `/api/v1/auth/me`
+- **FR-1.4.2**: Schemas: `HelloResponse`, `HealthResponse`, `AuthGoogleRequest`,
+  `AuthGoogleResponse` (JWT token), `UserProfile`, `ErrorResponse`
+- **FR-1.4.3**: Paths: `paths/hello.yaml`, `paths/health.yaml`, `paths/auth.yaml`
 - **FR-1.4.4**: Spectral linting rules (camelCase enforcement)
 - **FR-1.4.5**: Nx `project.json` with lint, bundle, docs targets (as `organiclever-contracts`)
 - **FR-1.4.6**: Codegen configuration for both F# backend and TypeScript frontend
@@ -38,9 +45,20 @@
 
 #### FR-2.1: Endpoints
 
-- **FR-2.1.1**: `GET /api/v1/hello` -- Returns `{"message":"world"}` with status 200
-- **FR-2.1.2**: `GET /api/v1/health` -- Returns `{"status":"UP"}` with status 200
-- **FR-2.1.3**: Both endpoints require no authentication
+- **FR-2.1.1**: `GET /api/v1/hello` -- Returns `{"message":"world"}` (200, no auth required)
+- **FR-2.1.2**: `GET /api/v1/health` -- Returns `{"status":"UP"}` (200, no auth required)
+- **FR-2.1.3**: `POST /api/v1/auth/google` -- Accepts Google OAuth ID token, validates with
+  Google, creates user record on first login, returns JWT access token + refresh token (200, 401)
+- **FR-2.1.4**: `POST /api/v1/auth/register` -- Email/password registration with validation,
+  returns JWT access token + refresh token (201, 400, 409)
+- **FR-2.1.5**: `POST /api/v1/auth/login` -- Email/password login, returns JWT access token +
+  refresh token (200, 401)
+- **FR-2.1.6**: `POST /api/v1/auth/refresh` -- Accepts refresh token, returns new access token +
+  new refresh token (200, 401). Old refresh token invalidated (rotation).
+- **FR-2.1.7**: `GET /api/v1/auth/me` -- Returns authenticated user profile (200, 401)
+- **FR-2.1.8**: JWT access token: short-lived (15 min), includes userId, email, name
+- **FR-2.1.9**: Refresh token: long-lived (7 days), stored hashed in DB, single-use (rotation)
+- **FR-2.1.10**: BCrypt password hashing for email/password auth
 
 #### FR-2.2: Architecture
 
@@ -49,17 +67,28 @@
 - **FR-2.2.3**: OpenAPI codegen for contract types (`generated-contracts/`)
 - **FR-2.2.4**: Port 8202
 
-#### FR-2.3: Nx Targets (Standard 7 + Optional)
+#### FR-2.3: Database & Migrations
 
-- **FR-2.3.1**: `codegen` -- Generate types from OpenAPI contract
-- **FR-2.3.2**: `typecheck` -- `dotnet build` with warnings as errors (depends on codegen)
-- **FR-2.3.3**: `lint` -- Fantomas + FSharpLint + G-Research analyzers
-- **FR-2.3.4**: `build` -- `dotnet publish` (depends on codegen)
-- **FR-2.3.5**: `test:unit` -- xUnit with mocked dependencies, Gherkin specs
-- **FR-2.3.6**: `test:quick` -- Unit tests + AltCover coverage + rhino-cli validation (90%)
-- **FR-2.3.7**: `test:integration` -- Docker Compose with real PostgreSQL, Gherkin specs
-- **FR-2.3.8**: `dev` (optional) -- `dotnet watch run`
-- **FR-2.3.9**: `start` (optional) -- `dotnet run`
+- **FR-2.3.1**: PostgreSQL 17 via EF Core with `Npgsql.EntityFrameworkCore.PostgreSQL`
+- **FR-2.3.2**: DbUp (`dbup-core` + `dbup-postgresql`) for SQL file migrations
+- **FR-2.3.3**: Migration files at `src/OrganicLeverBe/db/migrations/*.sql` as embedded resources
+- **FR-2.3.4**: Migrations run automatically on startup via `Program.fs`
+- **FR-2.3.5**: `DATABASE_URL` env var for PostgreSQL connection string
+- **FR-2.3.6**: Unit tests use SQLite in-memory via `EnsureCreated()` (no DbUp)
+- **FR-2.3.7**: Integration tests use real PostgreSQL via Docker Compose with DbUp migrations
+- **FR-2.3.8**: Initial schema: `001-initial-schema.sql`
+
+#### FR-2.4: Nx Targets (Standard 7 + Optional)
+
+- **FR-2.4.1**: `codegen` -- Generate types from OpenAPI contract
+- **FR-2.4.2**: `typecheck` -- `dotnet build` with warnings as errors (depends on codegen)
+- **FR-2.4.3**: `lint` -- Fantomas + FSharpLint + G-Research analyzers
+- **FR-2.4.4**: `build` -- `dotnet publish` (depends on codegen)
+- **FR-2.4.5**: `test:unit` -- xUnit with mocked dependencies, Gherkin specs
+- **FR-2.4.6**: `test:quick` -- Unit tests + AltCover coverage + rhino-cli validation (90%)
+- **FR-2.4.7**: `test:integration` -- Docker Compose with real PostgreSQL, Gherkin specs
+- **FR-2.4.8**: `dev` (optional) -- `dotnet watch run`
+- **FR-2.4.9**: `start` (optional) -- `dotnet run`
 
 ### FR-3: Frontend Application (`apps/organiclever-fe`)
 
@@ -77,6 +106,13 @@
 
 - **FR-3.2.1**: `/hello` page -- Server Component that calls `organiclever-be` via the Effect
   service layer on the server side, then renders the message
+- **FR-3.2.2**: `/login` page -- "Sign in with Google" button + email/password form;
+  sends credentials to backend via BFF proxy; stores JWT in httpOnly cookie
+- **FR-3.2.3**: `/register` page -- Email/password registration form
+- **FR-3.2.4**: `/profile` page (protected) -- Displays user name, email, avatar;
+  redirects to `/login` if not authenticated
+- **FR-3.2.5**: Token refresh: BFF proxy automatically refreshes expired access tokens
+  using refresh token before returning 401 to client
 
 #### FR-3.3: Effect TS Integration
 
