@@ -19,10 +19,10 @@
     <description>Demo Backend</description>
 
     <properties>
-        <java.version>25</java.version>
-        <maven.compiler.source>25</maven.compiler.source>
-        <maven.compiler.target>25</maven.compiler.target>
-        <!-- Note: Spring Boot 4.0 supports Java 17-25, with 17 as minimum baseline -->
+        <java.version>17</java.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <!-- Note: Spring Boot 4.0 supports Java 17+, with 17 as minimum baseline -->
         <cucumber.version>7.34.2</cucumber.version>
         <jjwt.version>0.12.6</jjwt.version>
     </properties>
@@ -205,8 +205,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>25</source>
-                    <target>25</target>
+                    <source>17</source>
+                    <target>17</target>
                     <compilerArgs>
                         <arg>-Xlint:deprecation</arg>
                         <arg>-Xlint:removal</arg>
@@ -449,8 +449,8 @@
                         <artifactId>maven-compiler-plugin</artifactId>
                         <configuration>
                             <fork>true</fork>
-                            <source>25</source>
-                            <target>25</target>
+                            <source>17</source>
+                            <target>17</target>
                             <compilerArgs>
                                 <!-- Module access required by Error Prone on Java 17+ -->
                                 <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
@@ -466,7 +466,7 @@
                                 <!-- Error Prone plugin mode -->
                                 <arg>-XDcompilePolicy=simple</arg>
                                 <arg>--should-stop=ifError=FLOW</arg>
-                                <!-- Enable only NullAway; JSpecifyMode requires JDK 22+ (satisfied by Java 25) -->
+                                <!-- Enable only NullAway; JSpecifyMode requires JDK 22+ (not available on Java 17) -->
                                 <arg>-Xplugin:ErrorProne -XepDisableAllChecks -Xep:NullAway:ERROR -XepOpt:NullAway:AnnotatedPackages=com.demobejasb -XepOpt:NullAway:UnannotatedSubPackages=com.demobejasb.contracts -XepOpt:NullAway:JSpecifyMode=true</arg>
                             </compilerArgs>
                             <annotationProcessorPaths>
