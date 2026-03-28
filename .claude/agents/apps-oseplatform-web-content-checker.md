@@ -1,6 +1,6 @@
 ---
 name: apps-oseplatform-web-content-checker
-description: Validates oseplatform-web content quality including PaperMod theme compliance and landing page standards.
+description: Validates oseplatform-web content quality including Next.js content layer compliance and landing page standards.
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
@@ -41,7 +41,7 @@ skills:
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
 - Advanced reasoning to validate oseplatform-web content quality
-- Sophisticated analysis of PaperMod theme compliance
+- Sophisticated analysis of Next.js content layer compliance
 - Pattern recognition for landing page standards
 - Complex decision-making for content structure assessment
 - Understanding of site-specific conventions and requirements
@@ -85,7 +85,7 @@ Workflow should stabilize in 3-5 iterations. If not converged after 7 iterations
 
 ## Reference
 
-- [oseplatform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [oseplatform-web Convention](../../governance/conventions/structure/plans.md)
 - Skills: `apps-oseplatform-web-developing-content`, `repo-assessing-criticality-confidence`, `repo-generating-validation-reports`
 
 ## Reference Documentation
@@ -93,7 +93,7 @@ Workflow should stabilize in 3-5 iterations. If not converged after 7 iterations
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [oseplatform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [oseplatform-web Convention](../../governance/conventions/structure/plans.md)
 
 **Related Agents**:
 
@@ -102,5 +102,5 @@ Workflow should stabilize in 3-5 iterations. If not converged after 7 iterations
 
 **Related Conventions**:
 
-- [oseplatform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [oseplatform-web Convention](../../governance/conventions/structure/plans.md)
 - [Content Quality Principles](../../governance/conventions/writing/quality.md)

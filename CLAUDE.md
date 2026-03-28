@@ -16,7 +16,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **npm**: 11.10.1
 - **Monorepo**: Nx workspace
 - **Current Apps**:
-  - `oseplatform-web` - Hugo static site (PaperMod theme)
+  - `oseplatform-web` - Next.js 16 content platform (TypeScript, tRPC)
   - `ayokoding-web` - Next.js 16 fullstack content platform (TypeScript, tRPC)
   - `ayokoding-web-be-e2e` - Playwright BE E2E tests for ayokoding-web tRPC API
   - `ayokoding-web-fe-e2e` - Playwright FE E2E tests for ayokoding-web UI
@@ -163,6 +163,9 @@ from `test:unit` (Vitest): `rhino-cli test-coverage validate apps/organiclever-w
 
 **AyoKoding Web**: `ayokoding-web` enforces ≥80% **line coverage** via
 `rhino-cli test-coverage validate apps/ayokoding-web/coverage/lcov.info 80` — run as part of `test:quick`.
+
+**OSE Platform Web**: `oseplatform-web` enforces ≥80% **line coverage** via
+`rhino-cli test-coverage validate apps/oseplatform-web/coverage/lcov.info 80` — run as part of `test:quick`.
 
 **Java projects**: `demo-be-java-springboot` and `demo-be-java-vertx` enforce ≥90% **line coverage** (matching
 Codecov's algorithm) via `rhino-cli test-coverage validate` applied to the JaCoCo XML report from
@@ -531,23 +534,27 @@ Six-layer governance hierarchy:
 
 **See**: [governance/repository-governance-architecture.md](./governance/repository-governance-architecture.md)
 
-## Hugo Sites
+## Web Sites
 
 ### oseplatform-web
 
 - **URL**: <https://oseplatform.com>
 - **Production branch**: `prod-oseplatform-web` → oseplatform.com
-- **Theme**: PaperMod
-- **Hugo**: 0.156.0 Extended
+- **Framework**: Next.js 16 (App Router, TypeScript, tRPC)
 - **Deployment**: Vercel
 - **Content**: Marketing site for platform
+- **Dev port**: 3100
 
 **Commands**:
 
 ```bash
-nx dev oseplatform-web    # Development server
-nx build oseplatform-web  # Production build
+nx dev oseplatform-web                           # Development server (localhost:3100)
+nx build oseplatform-web                         # Production build
+nx run oseplatform-web:test:quick                # Unit tests + coverage + link validation
+nx run oseplatform-web:test:integration          # Integration tests
 ```
+
+**See**: [apps/oseplatform-web/README.md](./apps/oseplatform-web/README.md)
 
 ### ayokoding-web
 

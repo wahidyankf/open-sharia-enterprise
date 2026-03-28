@@ -1,53 +1,102 @@
 {
-  "name": "oseplatform-web",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/oseplatform-web",
+  "sourceRoot": "apps/oseplatform-web/src",
   "projectType": "application",
   "implicitDependencies": ["oseplatform-cli"],
   "targets": {
-    "dev": {
-      "executor": "nx:run-commands",
+    "generate-search-data": {
+      "command": "npx tsx src/scripts/generate-search-data.ts",
       "options": {
-        "command": "hugo server --buildDrafts --buildFuture --port 3000",
         "cwd": "apps/oseplatform-web"
       }
     },
-    "build": {
-      "executor": "nx:run-commands",
+    "dev": {
+      "command": "next dev --port 3100",
       "options": {
-        "command": "bash build.sh",
         "cwd": "apps/oseplatform-web"
       },
-      "outputs": ["{projectRoot}/public"],
       "dependsOn": []
     },
-    "clean": {
-      "executor": "nx:run-commands",
+    "build": {
+      "command": "next build",
       "options": {
-        "command": "rm -rf public resources .hugo_build.lock",
+        "cwd": "apps/oseplatform-web"
+      },
+      "dependsOn": ["generate-search-data"],
+      "outputs": ["{projectRoot}/.next"],
+      "inputs": [
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/content/**/*",
+        "{projectRoot}/next.config.ts",
+        "{projectRoot}/tsconfig.json",
+        "{projectRoot}/package.json"
+      ],
+      "cache": true
+    },
+    "start": {
+      "command": "next start --port 3100",
+      "options": {
         "cwd": "apps/oseplatform-web"
       }
     },
-    "links:check": {
-      "executor": "nx:run-commands",
+    "typecheck": {
+      "command": "tsc --noEmit",
       "options": {
-        "command": "./apps/oseplatform-cli/dist/oseplatform-cli links check"
+        "cwd": "apps/oseplatform-web"
       },
-      "dependsOn": [{ "projects": "oseplatform-cli", "target": "build" }]
+      "inputs": ["{projectRoot}/src/**/*", "{projectRoot}/tsconfig.json"],
+      "cache": true
+    },
+    "lint": {
+      "command": "npx oxlint@latest --jsx-a11y-plugin -c oxlint.json --tsconfig tsconfig.json src/",
+      "options": {
+        "cwd": "apps/oseplatform-web"
+      },
+      "inputs": ["{projectRoot}/src/**/*", "{projectRoot}/oxlint.json", "{projectRoot}/tsconfig.json"],
+      "cache": true
+    },
+    "test:unit": {
+      "command": "vitest run --project unit",
+      "options": {
+        "cwd": "apps/oseplatform-web"
+      },
+      "inputs": ["{projectRoot}/src/**/*", "{projectRoot}/test/unit/**/*", "{projectRoot}/vitest.config.ts"],
+      "cache": true
     },
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "./apps/oseplatform-cli/dist/oseplatform-cli links check"
+        "cwd": "apps/oseplatform-web",
+        "commands": [
+          "npx vitest run --project unit --project unit-fe --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/oseplatform-web/coverage/lcov.info 80)",
+          "../../apps/oseplatform-cli/dist/oseplatform-cli links check --content content"
+        ],
+        "parallel": false
       },
-      "dependsOn": [{ "projects": "oseplatform-cli", "target": "build" }]
+      "inputs": [
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/test/unit/**/*",
+        "{projectRoot}/content/**/*.md",
+        "{projectRoot}/vitest.config.ts"
+      ],
+      "cache": true
     },
-    "lint": {
-      "executor": "nx:run-commands",
+    "test:integration": {
+      "command": "vitest run --project integration",
       "options": {
-        "command": "markdownlint-cli2 \"apps/oseplatform-web/content/**/*.md\""
+        "cwd": "apps/oseplatform-web"
+      },
+      "cache": true
+    },
+    "links:check": {
+      "command": "../../apps/oseplatform-cli/dist/oseplatform-cli links check --content content",
+      "options": {
+        "cwd": "apps/oseplatform-web"
       }
+    },
+    "clean": {
+      "command": "rm -rf .next"
     }
   },
-  "tags": ["type:app", "platform:hugo", "domain:oseplatform"]
+  "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:oseplatform"]
 }

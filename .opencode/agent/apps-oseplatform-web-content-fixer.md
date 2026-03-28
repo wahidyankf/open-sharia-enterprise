@@ -42,7 +42,7 @@ See `repo-assessing-criticality-confidence` Skill for complete priority matrix a
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
 - Advanced reasoning to re-validate oseplatform-web content findings
-- Sophisticated analysis of PaperMod theme compliance issues
+- Sophisticated analysis of Next.js content layer compliance issues
 - Pattern recognition to detect false positives
 - Complex decision-making for confidence assessment
 - Understanding of landing page content standards
@@ -113,7 +113,7 @@ After every edit (Edit tool or Bash sed/awk):
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [oseplatform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [oseplatform-web Convention](../../governance/conventions/structure/plans.md)
 
 **Related Agents**:
 
@@ -122,5 +122,5 @@ After every edit (Edit tool or Bash sed/awk):
 
 **Related Conventions**:
 
-- [oseplatform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [oseplatform-web Convention](../../governance/conventions/structure/plans.md)
 - [Fixer Confidence Levels](../../governance/development/quality/fixer-confidence-levels.md)

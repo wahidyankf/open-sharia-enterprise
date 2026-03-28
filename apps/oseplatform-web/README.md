@@ -1,161 +1,72 @@
-# OSE Platform Web
+# oseplatform-web
 
 Official website for the **Open Sharia Enterprise** platform - an open-source Sharia-compliant enterprise solutions platform built in the open.
 
 **Why This Matters**: Islamic finance is a multi-trillion dollar industry, but most Sharia-compliant enterprise solutions are proprietary and expensive. We're building an open-source alternative with Sharia-compliance at its core - not bolted on as an afterthought.
 
-**What This Site Does**: Showcases the platform and shares our journey. Weekly and monthly updates keep the community informed as we build this long-term project with radical transparency.
+**What This Site Does**: Showcases the platform and shares our journey. Regular updates keep the community informed as we build with radical transparency.
 
-**Why Open Source**: Transparency builds trust in Sharia-compliant systems. By building in the open, we make trustworthy enterprise technology accessible to organizations of all sizes - not just those who can afford expensive proprietary solutions.
+**Why Open Source**: Transparency builds trust in Sharia-compliant systems. By building in the open, we make trustworthy enterprise technology accessible to organizations of all sizes.
 
-## 🌐 Website
+## Architecture
 
-- **Production**: <https://oseplatform.com> (under construction)
-- **Main Project**: [Open Sharia Enterprise on GitHub](https://github.com/wahidyankf/open-sharia-enterprise) - The full platform repository
-- **This Site**: Part of the OSE monorepo under `apps/oseplatform-web/`
+- **Framework**: Next.js 16 (App Router, React Server Components)
+- **Language**: TypeScript (strict mode)
+- **API**: tRPC for type-safe server-client communication
+- **Content**: Reads markdown with YAML frontmatter from `content/` (~6 pages: Landing, About, update posts)
+- **Styling**: Tailwind CSS v4 + shadcn/ui
+- **Search**: FlexSearch for full-text search
+- **Diagrams**: Mermaid diagram support
+- **Testing**: Vitest (unit + integration), 80% line coverage enforced via rhino-cli
 
-## 🛠️ Tech Stack
-
-- **Hugo**: v0.156.0 (Extended)
-- **Go**: 1.26
-- **Theme**: [PaperMod](https://github.com/adityatelange/hugo-PaperMod) - Fast, clean, responsive theme for landing pages and blogs
-- **Build System**: Nx monorepo
-
-## 🚀 Development
-
-### Prerequisites
-
-- Hugo Extended 0.156.0 or later
-- Go 1.26 or later
-- Node.js (for Nx commands)
-
-### Local Development
-
-Start the development server:
+## Quick Start
 
 ```bash
-# From repository root
+# Development server (port 3100)
 nx dev oseplatform-web
 
-# Or from this directory
-hugo server --buildDrafts --buildFuture
-```
-
-The site will be available at `http://localhost:3000`
-
-### Building
-
-Build the site for production:
-
-```bash
-# From repository root
+# Production build
 nx build oseplatform-web
 
-# Or from this directory
-./build.sh
+# Typecheck
+nx run oseplatform-web:typecheck
+
+# Lint (oxlint)
+nx run oseplatform-web:lint
+
+# Unit tests + coverage + links
+nx run oseplatform-web:test:quick
+
+# Integration tests
+nx run oseplatform-web:test:integration
 ```
 
-The built site will be in the `public/` directory.
-
-### Cleaning
-
-Remove generated files:
-
-```bash
-# From repository root
-nx clean oseplatform-web
-
-# Or from this directory
-rm -rf public resources
-```
-
-## 📂 Project Structure
+## Project Structure
 
 ```
 oseplatform-web/
-├── archetypes/          # Content templates
-├── assets/              # Source assets (SCSS, JS, images)
-├── content/             # Markdown content
-├── data/                # Data files (YAML, JSON, TOML)
-├── layouts/             # HTML templates
-├── static/              # Static files (images, fonts, etc.)
-├── hugo.yaml            # Hugo configuration
-├── go.mod               # Go module definition
-├── go.sum               # Go module checksums
-├── project.json         # Nx project configuration
-├── build.sh             # Production build script
-└── README.md            # This file
+├── src/
+│   ├── app/          # Next.js App Router pages and layouts
+│   ├── server/       # tRPC routers and server-side logic
+│   ├── components/   # React components (shadcn/ui + custom)
+│   └── lib/          # Utilities, search, markdown processing
+├── test/             # Test files (Vitest unit + integration)
+├── content/          # Markdown pages with YAML frontmatter
+└── project.json      # Nx project configuration
 ```
 
-## 🎨 Theme
+## Deployment
 
-This site uses the [PaperMod](https://github.com/adityatelange/hugo-PaperMod) theme - a fast, clean, and responsive Hugo theme perfect for landing pages and blogs.
+Deployed to Vercel via production branch `prod-oseplatform-web`.
 
-### Theme Features
-
-- ✨ Clean and minimalist design
-- 🌙 Dark mode support (auto/light/dark)
-- 📱 Fully responsive and mobile-friendly
-- ⚡ Extremely fast page loads
-- 🎨 Syntax highlighting with code copy
-- 📊 Reading time and word count
-- 🔗 Social icons and sharing
-- 📡 RSS feed support
-
-## 📝 Content Management
-
-Content is written in Markdown and organized in the `content/` directory.
-
-### Site Structure
-
-- **Landing Page** - Homepage with project overview (configured in `hugo.yaml` homeInfoParams)
-- **About** - Project mission and details (`content/about.md`)
-- **Updates** - Weekly/monthly blog posts (`content/updates/`)
-
-### Creating New Updates
+- **Production**: <https://oseplatform.com>
+- **Deploy**: Push `main` to `prod-oseplatform-web`; Vercel builds automatically
 
 ```bash
-# Create a new update post
-hugo new content/updates/YYYY-MM-DD-post-title.md
-
-# Edit the frontmatter:
-# - title: Post title
-# - date: Publication date (YYYY-MM-DDTHH:MM:SS+07:00)
-# - draft: false (set to false to publish)
-# - tags: ["tag1", "tag2"]
-# - categories: ["updates"]
-# - summary: Brief description
+git push origin main:prod-oseplatform-web
 ```
 
-## 🚢 Deployment
-
-**Production Branch**: `prod-oseplatform-web`
-
-### Automated Deployment (Primary)
-
-Deployment is automated via the `test-and-deploy-oseplatform-web.yml` GitHub Actions workflow:
-
-- **Schedule**: Runs at **6 AM and 6 PM WIB** (UTC+7) every day
-- **Change detection**: Compares `HEAD` on `main` against `prod-oseplatform-web`, scoped to `apps/oseplatform-web/`. Skips build and deploy if nothing changed
-- **Build**: Runs `nx build oseplatform-web` (Hugo extended build with PaperMod theme)
-- **Deploy**: Force-pushes `main` to `prod-oseplatform-web`; Vercel detects the push and builds automatically
-
-**Manual trigger**: The workflow can also be triggered on-demand from the GitHub Actions UI. Set `force_deploy=true` to deploy even if no changes are detected.
-
-### Emergency / On-Demand Deployment
-
-For immediate deployments outside the scheduled window, use the `apps-oseplatform-web-deployer` AI agent or run directly:
-
-```bash
-git push --force origin HEAD:prod-oseplatform-web
-```
-
-## 📜 License
-
-This project is part of the Open Sharia Enterprise platform and is licensed under the MIT License.
-
-## 🔗 Links
+## Related
 
 - [Main Repository](https://github.com/wahidyankf/open-sharia-enterprise)
-- [Hugo Documentation](https://gohugo.io/documentation/)
-- [PaperMod Theme Documentation](https://github.com/adityatelange/hugo-PaperMod/wiki)
+- [apps-oseplatform-web-deployer](.claude/agents/) - AI agent for deployments

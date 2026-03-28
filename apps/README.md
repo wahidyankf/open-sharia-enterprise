@@ -186,7 +186,7 @@ Each app must have a `project.json` file with Nx configuration.
       }
     }
   },
-  "tags": ["type:app", "platform:hugo", "domain:oseplatform"]
+  "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:oseplatform"]
 }
 ```
 

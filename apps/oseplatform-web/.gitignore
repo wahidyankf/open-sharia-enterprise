@@ -1,9 +1,7 @@
-# Hugo build output
-public/
-resources/
-
-# Hugo cache
-.hugo_build.lock
+# Next.js build output
+.next/
+generated/
+coverage/
 
 # OS files
 .DS_Store
