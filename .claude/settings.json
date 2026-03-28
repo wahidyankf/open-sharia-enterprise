@@ -7,10 +7,9 @@
       "Read(.opencode/**)",
       "Write(.opencode/**)",
       "Edit(.opencode/**)",
-      "Bash(cat > .claude:*)",
-      "Bash(cat > .opencode:*)",
-      "Bash(sed:*)",
-      "Bash(awk:*)",
+      "Write(/tmp/**)",
+      "Read(/tmp/**)",
+      "Bash",
       "Bash(npm run sync\\:claude-to-opencode:*)"
     ]
   },

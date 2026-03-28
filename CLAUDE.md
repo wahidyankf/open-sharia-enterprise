@@ -432,11 +432,11 @@ Plan mode for non-trivial tasks (3+ steps or architecture decisions), subagents 
 
 ## AI Agents
 
-**Content Creation**: docs-maker, docs-tutorial-maker, readme-maker, specs-maker, apps-ayokoding-web-general-maker, apps-ayokoding-web-by-example-maker, apps-ayokoding-web-in-the-field-maker, apps-oseplatform-web-content-maker
+**Content Creation**: docs-maker, docs-tutorial-maker, readme-maker, specs-maker, apps-ayokoding-web-general-maker, apps-ayokoding-web-by-example-maker, apps-ayokoding-web-in-the-field-maker, apps-oseplatform-web-content-maker, swe-ui-maker
 
-**Validation**: docs-checker, docs-tutorial-checker, docs-link-general-checker, docs-software-engineering-separation-checker, readme-checker, specs-checker, apps-ayokoding-web-general-checker, apps-ayokoding-web-by-example-checker, apps-ayokoding-web-in-the-field-checker, apps-ayokoding-web-facts-checker, apps-ayokoding-web-link-checker, apps-oseplatform-web-content-checker, swe-code-checker
+**Validation**: docs-checker, docs-tutorial-checker, docs-link-general-checker, docs-software-engineering-separation-checker, readme-checker, specs-checker, apps-ayokoding-web-general-checker, apps-ayokoding-web-by-example-checker, apps-ayokoding-web-in-the-field-checker, apps-ayokoding-web-facts-checker, apps-ayokoding-web-link-checker, apps-oseplatform-web-content-checker, swe-code-checker, swe-ui-checker
 
-**Fixing**: docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-fixer, specs-fixer, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-in-the-field-fixer, apps-ayokoding-web-facts-fixer, apps-ayokoding-web-link-fixer, apps-oseplatform-web-content-fixer, docs-file-manager
+**Fixing**: docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-fixer, specs-fixer, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-in-the-field-fixer, apps-ayokoding-web-facts-fixer, apps-ayokoding-web-link-fixer, apps-oseplatform-web-content-fixer, docs-file-manager, swe-ui-fixer
 
 **Planning**: plan-maker, plan-checker, plan-executor, plan-execution-checker, plan-fixer
 
@@ -455,14 +455,24 @@ Plan mode for non-trivial tasks (3+ steps or architecture decisions), subagents 
 
 Skills serve agents with knowledge and execution services but don't govern them (service relationship, not governance).
 
-### Working with .claude/ Directory
+### Working with .claude/ and .opencode/ Directories
 
-**IMPORTANT**: When creating or modifying files in `.claude/` directory (agents, skills, settings), use **Bash tools** (heredoc, sed, awk) instead of Write/Edit tools. This avoids user approval prompts and enables autonomous operation.
+**CRITICAL**: ALL file operations in `.claude/` and `.opencode/` directories MUST use **Bash tools** (heredoc, sed, awk) — NEVER use Write or Edit tools for these paths. This applies to the orchestrating conversation AND all subagents/delegated tasks.
+
+**Why**: Write and Edit tools trigger permission approval prompts that block autonomous agent execution. Bash heredoc and sed commands are pre-authorized via project settings.
+
+**Applies to all paths**:
+
+- `.claude/agents/*.md` — agent definitions
+- `.claude/skills/*/SKILL.md` — skill files
+- `.claude/skills/*/reference/*.md` — skill reference modules
+- `.opencode/agent/*.md` — OpenCode agent mirrors
+- `.opencode/skill/*/SKILL.md` — OpenCode skill mirrors
 
 **Examples**:
 
 ```bash
-# Create new agent with heredoc
+# Create new file with heredoc
 cat > .claude/agents/new-agent.md <<'EOF'
 ---
 name: new-agent
@@ -472,8 +482,10 @@ Content here
 EOF
 
 # Update existing file with sed
-sed -i 's/old-value/new-value/' .claude/agents/existing-agent.md
+sed -i '' 's/old-value/new-value/' .claude/agents/existing-agent.md
 ```
+
+**When delegating to subagents**: NEVER delegate `.claude/` or `.opencode/` file creation to subagents via the Agent tool. Handle these files directly in the orchestrating conversation using Bash. Subagents should only be delegated work on files outside `.claude/` and `.opencode/` (e.g., `governance/`, `apps/`, `libs/`).
 
 **See**: [.claude/agents/README.md](./.claude/agents/README.md), [governance/development/pattern/maker-checker-fixer.md](./governance/development/pattern/maker-checker-fixer.md)
 

@@ -86,6 +86,7 @@ All workflows support standard input parameters:
 | [AyoKoding Web In-the-Field Quality Gate](./ayokoding-web/ayokoding-web-in-the-field-quality-gate.md)                     | Validate in-the-field production guide quality and apply fixes iteratively until EXCELLENT status achieved                                                               | apps-ayokoding-web-in-the-field-checker, apps-ayokoding-web-in-the-field-fixer                                                                                          | Medium     |
 | [Documentation Software Engineering Separation Quality Gate](./docs/docs-software-engineering-separation-quality-gate.md) | Validate software engineering documentation separation between OSE Platform style guides and AyoKoding educational content, apply fixes iteratively until ZERO findings  | docs-software-engineering-separation-checker, docs-software-engineering-separation-fixer                                                                                | Medium     |
 | [Specs Validation](./specs/specs-validation.md)                                                                           | Validate specs/ directory for structural completeness, content accuracy, cross-spec consistency, and C4 diagram correctness, apply fixes iteratively until ZERO findings | specs-checker, specs-fixer                                                                                                                                              | Medium     |
+| [UI Quality Gate](./ui/ui-quality-gate.md)                                                                                | Validate UI component quality (tokens, accessibility, patterns, dark mode, responsive), apply fixes iteratively until ZERO findings                                      | swe-ui-checker, swe-ui-fixer                                                                                                                                            | Medium     |
 
 All _-quality-gate workflows follow the [_-check-fix Workflow Pattern](./meta/workflow-identifier.md#-check-fix-workflow-pattern) which fixes ALL findings (CRITICAL, HIGH, MEDIUM, LOW criticality levels) and iterates until ZERO findings remain.
 
@@ -113,6 +114,12 @@ Workflows for Hugo website content:
 Workflows for specification quality:
 
 - **specs**: Validate specs/ for structural completeness, content accuracy, cross-spec consistency, C4 diagrams
+
+### UI Workflows
+
+Workflows for UI component quality:
+
+- **ui**: UI component quality validation (tokens, accessibility, patterns, dark mode, responsive)
 
 ### Repository Governance Workflows
 
