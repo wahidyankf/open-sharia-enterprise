@@ -11,7 +11,7 @@ tags:
   - verification
   - subagents
 created: 2026-03-09
-updated: 2026-03-19
+updated: 2026-03-28
 ---
 
 # Agent Workflow Orchestration Convention
@@ -35,8 +35,6 @@ This practice respects the following core principles:
 This practice respects the following conventions:
 
 - **[Content Quality Principles](../../conventions/writing/quality.md)**: Plan documents and lessons files follow active voice, clear structure, and actionable content - not vague notes.
-
-- **[Implementation Workflow](../workflow/implementation.md)**: The make-it-work, make-it-right, make-it-fast stages apply within individual execution steps. Verification before done corresponds to the goal-driven execution practice.
 
 ## When to Plan
 
@@ -162,6 +160,21 @@ When CI tests fail, fix them without being told how. The steps are:
 3. Determine the root cause (broken code, broken test, or environment issue)
 4. Apply the fix
 5. Verify locally before reporting completion
+
+### Preexisting Errors Discovered During Other Work
+
+Autonomous bug fixing applies not only when a bug report is the primary task, but also when broken state is discovered incidentally during any other work. An agent that opens a file to add a feature and finds a broken import, a failing test, or an incorrect configuration is responsible for fixing it.
+
+The required behavior is identical whether the error was assigned or discovered:
+
+1. Diagnose the root cause before proceeding with the primary task
+2. Fix the root cause — not around it, not in a note at the end of a response
+3. Verify the fix works
+4. Communicate what was found and what was fixed
+
+Scope judgment determines commit strategy: small fixes go inline, medium fixes get their own commit, large fixes require a plan in `plans/in-progress/` with execution underway.
+
+See [Proactive Preexisting Error Resolution](../../development/practice/proactive-preexisting-error-resolution.md) for the full practice including the three anti-patterns to avoid (acting ignorant, monkey-patching, passive mentioning) and the complete agent checklist.
 
 ## Demand Elegance (Balanced)
 
@@ -327,4 +340,4 @@ After any correction, update `local-temp/lessons.md`. This is the direct applica
 
 ---
 
-**Last Updated**: 2026-03-09
+**Last Updated**: 2026-03-28

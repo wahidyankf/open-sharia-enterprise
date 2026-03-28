@@ -10,7 +10,7 @@ tags:
   - senior-engineer
   - minimal-impact
 created: 2026-03-09
-updated: 2026-03-09
+updated: 2026-03-28
 ---
 
 # Root Cause Orientation
@@ -90,7 +90,7 @@ FAIL: Fix the function AND rename variables you find unclear AND restructure the
 
 - Every changed line traces directly to the problem being solved
 - Unrelated code is left in its current state, even if it could be improved
-- Unrelated issues that are noticed are mentioned, not silently fixed
+- Unrelated code improvements (style, refactoring, naming) that are noticed are mentioned, not silently applied. Exception: preexisting errors and broken state are fixed at root cause per [Proactive Preexisting Error Resolution](../../development/practice/proactive-preexisting-error-resolution.md)
 - Style preferences are not applied to unchanged lines
 
 See [Implementation Workflow - Surgical Changes](../../development/workflow/implementation.md#surgical-changes) for detailed guidance on applying minimal impact in practice.
@@ -190,7 +190,7 @@ Before declaring a task complete:
 - [ ] No unrelated code has been modified
 - [ ] All edge cases related to the root cause are handled
 - [ ] A senior engineer would approve the approach and the scope
-- [ ] Unrelated issues that were noticed have been mentioned (not silently fixed)
+- [ ] Preexisting errors encountered during this work have been fixed at root cause, not mentioned and deferred
 
 ## For AI Agents
 
@@ -199,7 +199,7 @@ All agents must follow this principle by:
 1. **Diagnosing before acting** - Read the relevant code and understand the actual cause before proposing changes
 2. **Scoping precisely** - Limit changes to what the task requires; do not improve adjacent code
 3. **Applying the senior engineer test** - Evaluate solutions against what a senior engineer would approve, not just what makes tests pass
-4. **Mentioning, not fixing, unrelated issues** - Surface other problems noticed during work without silently addressing them
+4. **Proactively fixing preexisting errors** - When encountering preexisting bugs, broken tests, or incorrect configurations, fix the root cause rather than mentioning without action or working around the problem. See [Proactive Preexisting Error Resolution](../../development/practice/proactive-preexisting-error-resolution.md) for the full practice including scope judgment and agent requirements.
 
 See [Implementation Workflow - Surgical Changes](../../development/workflow/implementation.md#surgical-changes) for the detailed surgical changes practice that implements minimal impact for software changes.
 
@@ -211,7 +211,8 @@ See [Agent Workflow Orchestration](../../development/agents/agent-workflow-orche
 - [Simplicity Over Complexity](./simplicity-over-complexity.md) - Minimum viable changes; avoid over-engineering
 - [Implementation Workflow](../../development/workflow/implementation.md) - Three-stage workflow with surgical changes practice
 - [Agent Workflow Orchestration](../../development/agents/agent-workflow-orchestration.md) - How this principle applies to AI agent task execution
+- [Proactive Preexisting Error Resolution](../../development/practice/proactive-preexisting-error-resolution.md) - Practice extending this principle: fix preexisting errors on encounter rather than noting and deferring
 
 ---
 
-**Last Updated**: 2026-03-09
+**Last Updated**: 2026-03-28

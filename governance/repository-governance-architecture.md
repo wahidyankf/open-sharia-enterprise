@@ -9,7 +9,7 @@ tags:
   - six-layer
   - structure
 created: 2026-02-09
-updated: 2026-03-09
+updated: 2026-03-28
 ---
 
 # Repository Governance Architecture
@@ -17,7 +17,7 @@ updated: 2026-03-09
 **Document Type**: Explanation
 **Purpose**: Comprehensive architectural overview of the six-layer governance hierarchy governing the open-sharia-enterprise repository
 **Audience**: All contributors, AI agents, governance designers
-**Last Updated**: 2026-03-09
+**Last Updated**: 2026-03-28
 
 ---
 
@@ -294,6 +294,8 @@ Development: Hugo Development Convention (semantic HTML)
 - **Workflows**: Trunk-based development, commit messages, implementation workflow, reproducible environments
 - **Infrastructure**: Temporary files, AI agents convention
 - **Hugo-Specific**: Development practices for Hugo sites
+- **Frontend**: Design tokens, component patterns, accessibility, styling conventions
+- **Practices**: Proactive Preexisting Error Resolution (and future practice-level guidance)
 
 **Example Practices**:
 
@@ -821,6 +823,6 @@ As the repository grows, additional layers might be considered:
 
 ---
 
-**Last Updated**: 2026-03-09 (Updated to reflect 4-color scheme and agent role descriptions)
+**Last Updated**: 2026-03-28
 **Maintained By**: Repository governance team
 **Review Cycle**: Quarterly (ensure layer descriptions remain accurate)
