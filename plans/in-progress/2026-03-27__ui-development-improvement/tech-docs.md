@@ -152,6 +152,84 @@ Per-app override (in app's `globals.css`):
 - `--chart-1` through `--chart-5` (organiclever-web only)
 - `--sidebar-*` (ayokoding-web only)
 
+### AD3b: Per-Project Customization at Scale
+
+**Decision**: Design the shared UI kit for a growing monorepo where many projects will share
+components but each project needs its own visual identity.
+
+**Problem**: The monorepo already has 6+ frontend projects and will grow. Each project (OrganicLever
+productivity tracker, AyoKoding educational platform, demo apps, future Sharia-compliant finance
+apps) has a different audience, brand, and use case. A shared UI kit that cannot be customized
+per-project will either: (a) force all projects to look identical, or (b) be abandoned as
+projects fork their own components.
+
+**Customization layers** (from most shared to most project-specific):
+
+```text
+Layer 1: Shared structural tokens (ts-ui-tokens)
+  ├── Spacing scale (4pt system)
+  ├── Typography scale (text-xs through text-4xl)
+  ├── Border radius scale (radius, radius-md, radius-sm)
+  ├── Base neutral palette (background, foreground, border)
+  └── Semantic tokens (muted, destructive)
+
+Layer 2: Per-project brand tokens (app's globals.css)
+  ├── Primary + primary-foreground (brand color)
+  ├── Secondary + secondary-foreground
+  ├── Accent + accent-foreground
+  └── Project-specific tokens (chart-*, sidebar-*, etc.)
+
+Layer 3: Per-project component extensions (app's src/components/)
+  ├── Local components that wrap shared components with project-specific behavior
+  ├── Project-only components (Breadcrumb, TOC, SidebarTree for ayokoding-web)
+  └── Project-specific variant additions
+
+Layer 4: Per-project Tailwind configuration (app's globals.css)
+  ├── @source directives (content scan paths)
+  ├── @plugin directives (@tailwindcss/typography for ayokoding-web)
+  ├── Custom @utility definitions
+  └── App-specific @layer base styles
+```
+
+**How a new project customizes**:
+
+1. **Import shared tokens**: `@import "@open-sharia-enterprise/ts-ui-tokens/tokens.css"` —
+   gets spacing, typography, radius, neutrals
+2. **Override brand tokens**: Add `@theme { --color-primary: hsl(150 60% 40%); }` in its own
+   `globals.css` — gets a green brand without touching the shared lib
+3. **Import shared components**: `import { Button, Card } from "@open-sharia-enterprise/ts-ui"` —
+   components automatically use the project's brand tokens because they reference
+   `bg-primary`, `text-primary-foreground`, etc. (CSS cascade)
+4. **Extend with local components**: Create project-specific components in `src/components/`
+   that compose shared components. Example: a `FinanceCard` that wraps `Card` with
+   Sharia-compliance indicators.
+5. **Add project-specific tokens**: Define `--sidebar-*`, `--chart-*`, or domain-specific
+   tokens in the project's `globals.css`. These do not pollute the shared token package.
+
+**Key design principle**: Shared components must NEVER reference hardcoded colors — only
+semantic token names (`bg-primary`, `text-destructive`, etc.). This ensures CSS cascade
+customization works. A component that says `bg-blue-500` cannot be customized per-project;
+a component that says `bg-primary` inherits whatever `--color-primary` the project defines.
+
+**Trade-offs**:
+
+| Factor | Fully Themeable (Chosen) | Preset Themes | No Customization |
+| --- | --- | --- | --- |
+| New project onboarding | Import tokens + override brand | Pick a preset | Use as-is |
+| Visual uniqueness | Full brand freedom | Limited to presets | All projects look identical |
+| Component complexity | Semantic tokens only | Theme-switching logic | Simplest |
+| Maintenance | Per-project globals.css | Theme registry | One globals.css |
+| Compatibility | Any brand color works | Only tested presets work | N/A |
+
+**Why not preset themes**: Presets (like "blue theme", "green theme") add a layer of indirection
+that is unnecessary. CSS cascade already provides per-project theming — each project's
+`globals.css` overrides the shared tokens. Adding a theme registry would violate Simplicity
+Over Complexity.
+
+**Why not no customization**: The monorepo serves multiple products with different audiences.
+A Sharia-compliant finance app should not look like an educational coding platform. Visual
+identity matters for product differentiation.
+
 ### AD4: Convention Documentation Location
 
 **Decision**: Create `governance/development/frontend/` directory with four focused documents.

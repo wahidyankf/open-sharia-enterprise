@@ -257,7 +257,14 @@ _Extract shared tokens and components into Nx libraries. One app migration at a 
   - `src/radius.ts`: export radius values as object
   - `src/index.ts`: barrel export
 - [ ] Add `package.json` with name `@open-sharia-enterprise/ts-ui-tokens`
-- [ ] Write `README.md` documenting: what tokens are shared, how to import, how to override per-app
+- [ ] Write `README.md` documenting:
+  - What tokens are shared (structural) vs. per-project (brand)
+  - How to import: `@import "@open-sharia-enterprise/ts-ui-tokens/tokens.css"`
+  - How to override per-project: `@theme { --color-primary: hsl(H S% L%); }` in globals.css
+  - The four customization layers (structural → brand → component extensions → Tailwind config)
+  - Example: "Adding a new project" walkthrough showing complete globals.css
+  - Why components use semantic tokens (`bg-primary`) not hardcoded colors — CSS cascade enables
+    per-project theming without touching the shared lib
 - [ ] Verify `nx build ts-ui-tokens` succeeds
 
 ### 2.2 Create ts-ui Library

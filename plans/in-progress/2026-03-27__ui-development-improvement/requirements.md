@@ -373,6 +373,24 @@ Feature: Shared UI Library
     Then it uses design tokens from ts-ui-tokens via Tailwind utility classes
     And inline styles from src/components/layout/ are replaced
 
+  Scenario: A new project customizes the shared UI kit
+    Given a new Next.js project "finance-web" is added to the monorepo
+    When it imports ts-ui-tokens and creates a globals.css with:
+      | Line | Content |
+      | 1 | @import "@open-sharia-enterprise/ts-ui-tokens/tokens.css" |
+      | 2 | @theme { --color-primary: hsl(150 60% 40%); } |
+    And it imports Button from @open-sharia-enterprise/ts-ui
+    Then the Button renders with a green primary color (not blue or neutral)
+    And the spacing, radius, and typography match all other projects
+    And no changes were needed in ts-ui-tokens or ts-ui
+
+  Scenario: Shared components use only semantic tokens
+    Given libs/ts-ui/ exports components
+    When I grep for hardcoded Tailwind color classes (e.g., "blue-500", "red-500")
+    Then zero matches are found in component source files
+    And all color references use semantic tokens (primary, destructive, muted, etc.)
+    And CSS cascade enables per-project theming automatically
+
   Scenario: Build and test pass after migration
     When I run nx affected -t typecheck lint test:quick build
     Then all targets pass for organiclever-web, ayokoding-web, and demo-fe-ts-nextjs
