@@ -1,4 +1,7 @@
-import { BeforeAll, AfterAll, Before } from "@cucumber/cucumber";
+import { BeforeAll, AfterAll, Before, setDefaultTimeout } from "@cucumber/cucumber";
+
+// Effect runtime initialization can be slow on cold starts — increase from default 5s
+setDefaultTimeout(30_000);
 import { Effect, Layer, ManagedRuntime } from "effect";
 import { SqliteClient } from "@effect/sql-sqlite-node";
 import { tmpdir } from "node:os";
