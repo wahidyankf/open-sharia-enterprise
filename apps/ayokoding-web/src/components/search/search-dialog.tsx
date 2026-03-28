@@ -87,7 +87,7 @@ export function SearchDialog() {
               >
                 <div className="flex flex-col gap-1">
                   <span className="font-medium">{result.title}</span>
-                  <span className="text-xs text-muted-foreground line-clamp-1">{result.excerpt}</span>
+                  <span className="line-clamp-1 text-xs text-muted-foreground">{result.excerpt}</span>
                 </div>
               </CommandItem>
             ))}

@@ -139,10 +139,23 @@ export default function AdminPage() {
       </button>
       {generatedToken?.userId === user.id && (
         <span style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem", marginTop: "0.35rem" }}>
-          <code data-testid="reset-token" style={{ fontSize: "0.75rem", background: "#f4f4f4", padding: "0.2rem 0.4rem", borderRadius: "3px", wordBreak: "break-all" }}>
+          <code
+            data-testid="reset-token"
+            style={{
+              fontSize: "0.75rem",
+              background: "#f4f4f4",
+              padding: "0.2rem 0.4rem",
+              borderRadius: "3px",
+              wordBreak: "break-all",
+            }}
+          >
             {generatedToken.token}
           </code>
-          <button style={btnStyle(generatedToken.copied ? "#27ae60" : "#555")} onClick={handleCopyToClipboard} aria-label="Copy token">
+          <button
+            style={btnStyle(generatedToken.copied ? "#27ae60" : "#555")}
+            onClick={handleCopyToClipboard}
+            aria-label="Copy token"
+          >
             {generatedToken.copied ? "Copied!" : "Copy"}
           </button>
         </span>
@@ -292,9 +305,7 @@ export default function AdminPage() {
 
       {data && (
         <>
-          <p style={{ color: "#888", fontSize: "0.85rem", marginBottom: "0.75rem" }}>
-            {data.totalElements} users
-          </p>
+          <p style={{ color: "#888", fontSize: "0.85rem", marginBottom: "0.75rem" }}>{data.totalElements} users</p>
           <div style={{ overflowX: "auto" }}>
             <table
               style={{

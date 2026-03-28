@@ -70,7 +70,7 @@ export default function DashboardPage() {
   return (
     <div className="flex h-screen bg-gray-100">
       <Navigation logout={logout} />
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex flex-1 flex-col overflow-hidden">
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
           <DashboardContent router={router} />
         </main>

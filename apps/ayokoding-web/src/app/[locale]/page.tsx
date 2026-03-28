@@ -24,7 +24,7 @@ export default async function LocaleHomePage({ params }: Props) {
               {node.title}
             </Link>
             {node.children.length > 0 && (
-              <ul className="ml-4 mt-1 space-y-1">
+              <ul className="mt-1 ml-4 space-y-1">
                 {node.children.map((child) => (
                   <li key={child.slug}>
                     <Link href={`/${locale}/${child.slug}`} className="text-primary hover:underline">

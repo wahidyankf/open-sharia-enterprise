@@ -11,7 +11,7 @@ import { TentTree } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const Header = () => (
-  <header className="px-4 lg:px-6 h-14 flex items-center border-b bg-white">
+  <header className="flex h-14 items-center border-b bg-white px-4 lg:px-6">
     <Link href="/" className="flex items-center justify-center">
       <TentTree className="h-6 w-6" />
       <span className="ml-2 text-lg font-bold">Organic Lever</span>
@@ -29,8 +29,8 @@ interface LoginFormProps {
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ email, setEmail, password, setPassword, handleSubmit, error }) => (
-  <div className="px-8 py-6 mt-4 text-left bg-white shadow-lg rounded-lg">
-    <h3 className="text-2xl font-bold text-center">Login to Organic Lever</h3>
+  <div className="mt-4 rounded-lg bg-white px-8 py-6 text-left shadow-lg">
+    <h3 className="text-center text-2xl font-bold">Login to Organic Lever</h3>
     <form onSubmit={handleSubmit}>
       <div className="mt-4">
         <div>
@@ -39,7 +39,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ email, setEmail, password, setPas
             type="email"
             placeholder="Email"
             id="email"
-            className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-hidden focus:ring-1 focus:ring-primary"
+            className="mt-2 w-full rounded-md border px-4 py-2 focus:ring-1 focus:ring-primary focus:outline-hidden"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -51,14 +51,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ email, setEmail, password, setPas
             type="password"
             placeholder="Password"
             id="password"
-            className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-hidden focus:ring-1 focus:ring-primary"
+            className="mt-2 w-full rounded-md border px-4 py-2 focus:ring-1 focus:ring-primary focus:outline-hidden"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
         <div className="flex items-baseline justify-between">
-          <Button type="submit" className="px-6 py-2 mt-4">
+          <Button type="submit" className="mt-4 px-6 py-2">
             Login
           </Button>
           <a href="#" className="text-sm text-primary hover:underline">
@@ -76,7 +76,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ email, setEmail, password, setPas
 );
 
 const Footer = () => (
-  <footer className="flex justify-center items-center px-4 lg:px-6 py-4 border-t bg-white">
+  <footer className="flex items-center justify-center border-t bg-white px-4 py-4 lg:px-6">
     <p className="text-xs text-gray-500">
       Don&apos;t have an account?{" "}
       <Link href="/" className="text-primary hover:underline">
@@ -110,9 +110,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
+    <div className="flex min-h-screen flex-col bg-gray-100">
       <Header />
-      <main className="flex-1 flex items-center justify-center">
+      <main className="flex flex-1 items-center justify-center">
         <LoginForm
           email={email}
           setEmail={setEmail}

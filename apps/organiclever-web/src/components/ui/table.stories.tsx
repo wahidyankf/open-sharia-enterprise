@@ -99,7 +99,7 @@ export const Empty: Story = {
       </TableHeader>
       <TableBody>
         <TableRow>
-          <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
+          <TableCell colSpan={3} className="py-8 text-center text-muted-foreground">
             No results found.
           </TableCell>
         </TableRow>

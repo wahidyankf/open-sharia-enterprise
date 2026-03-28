@@ -24,7 +24,7 @@ const Breadcrumb: React.FC = () => {
             <li key={segment}>
               <span className="mx-2">/</span>
               {isLast ? (
-                <span className="text-gray-900 font-semibold">{capitalize(segment)}</span>
+                <span className="font-semibold text-gray-900">{capitalize(segment)}</span>
               ) : (
                 <Link href={href} className="hover:text-gray-900">
                   {capitalize(segment)}

@@ -38,7 +38,7 @@ interface SearchBarProps {
 
 const SearchBar: React.FC<SearchBarProps> = ({ searchTerm, setSearchTerm }) => (
   <div className="relative">
-    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+    <Search className="absolute top-2.5 left-2 h-4 w-4 text-muted-foreground" />
     <Input
       type="text"
       placeholder="Search members"
@@ -63,14 +63,14 @@ const MemberRow: React.FC<MemberRowProps> = ({ member, onEdit, onDelete, onView 
     <TableCell>
       {member.email && (
         <div className="flex items-center">
-          <Mail className="h-4 w-4 mr-2" />
+          <Mail className="mr-2 h-4 w-4" />
           <span>{member.email}</span>
         </div>
       )}
     </TableCell>
     <TableCell>
       <div className="flex items-center">
-        <Github className="h-4 w-4 mr-2" />
+        <Github className="mr-2 h-4 w-4" />
         <a
           href={`https://github.com/${member.github}`}
           target="_blank"
@@ -235,11 +235,11 @@ export default function MembersPage() {
   return (
     <div className="flex h-screen bg-gray-100">
       <Navigation logout={logout} />
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex flex-1 flex-col overflow-hidden">
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
           <div className="container mx-auto px-6 py-8">
             <Breadcrumb />
-            <div className="mb-6 flex justify-between items-center">
+            <div className="mb-6 flex items-center justify-between">
               <h1 className="text-2xl font-semibold text-gray-900">Members</h1>
               <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
             </div>
@@ -248,7 +248,7 @@ export default function MembersPage() {
                 {deleteError}
               </p>
             )}
-            <div className="bg-white shadow-md rounded-lg overflow-hidden">
+            <div className="overflow-hidden rounded-lg bg-white shadow-md">
               <MembersTable
                 members={filteredMembers}
                 onEdit={handleEditMember}
@@ -273,7 +273,10 @@ export default function MembersPage() {
                 <Input
                   id="name"
                   value={editingMember?.name || ""}
-                  onChange={/* v8 ignore next */(e) => setEditingMember((prev) => (prev ? { ...prev, name: e.target.value } : null))}
+                  onChange={
+                    /* v8 ignore next */ (e) =>
+                      setEditingMember((prev) => (prev ? { ...prev, name: e.target.value } : null))
+                  }
                   className="col-span-3"
                 />
               </div>
@@ -284,7 +287,10 @@ export default function MembersPage() {
                 <Input
                   id="role"
                   value={editingMember?.role || ""}
-                  onChange={/* v8 ignore next */(e) => setEditingMember((prev) => (prev ? { ...prev, role: e.target.value } : null))}
+                  onChange={
+                    /* v8 ignore next */ (e) =>
+                      setEditingMember((prev) => (prev ? { ...prev, role: e.target.value } : null))
+                  }
                   className="col-span-3"
                 />
               </div>
@@ -295,7 +301,10 @@ export default function MembersPage() {
                 <Input
                   id="email"
                   value={editingMember?.email || ""}
-                  onChange={/* v8 ignore next */(e) => setEditingMember((prev) => (prev ? { ...prev, email: e.target.value } : null))}
+                  onChange={
+                    /* v8 ignore next */ (e) =>
+                      setEditingMember((prev) => (prev ? { ...prev, email: e.target.value } : null))
+                  }
                   className="col-span-3"
                 />
               </div>
@@ -306,7 +315,10 @@ export default function MembersPage() {
                 <Input
                   id="github"
                   value={editingMember?.github || ""}
-                  onChange={/* v8 ignore next */(e) => setEditingMember((prev) => (prev ? { ...prev, github: e.target.value } : null))}
+                  onChange={
+                    /* v8 ignore next */ (e) =>
+                      setEditingMember((prev) => (prev ? { ...prev, github: e.target.value } : null))
+                  }
                   className="col-span-3"
                 />
               </div>
