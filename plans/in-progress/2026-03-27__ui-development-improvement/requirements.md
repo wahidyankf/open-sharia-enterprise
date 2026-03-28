@@ -43,7 +43,7 @@ with architecturally different approaches:
 - ayokoding-web tokens are blue-tinted — educational/tech brand
 - Different token formats mean you cannot copy-paste between apps
 - organiclever-web has chart tokens (chart-1 through chart-5) that ayokoding-web lacks
-- ayokoding-web has sidebar tokens (7 extra) that organiclever-web lacks
+- ayokoding-web has sidebar tokens (8 extra) that organiclever-web lacks
 - ayokoding-web includes `@plugin "@tailwindcss/typography"` and rehype-pretty-code CSS;
   organiclever-web does not
 - ayokoding-web has `@source` directive; organiclever-web does not
