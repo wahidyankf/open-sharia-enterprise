@@ -65,7 +65,8 @@ Given("the visitor has typed a query that returns at least one result", async ({
 When("the visitor clicks a search result", async ({ page }) => {
   const searchDialog = page.getByRole("dialog");
   const firstResult = searchDialog.getByRole("option").first();
-  await firstResult.click({ force: true });
+  await firstResult.scrollIntoViewIfNeeded();
+  await firstResult.dispatchEvent("click");
 });
 
 Then("the search dialog should close", async ({ page }) => {
