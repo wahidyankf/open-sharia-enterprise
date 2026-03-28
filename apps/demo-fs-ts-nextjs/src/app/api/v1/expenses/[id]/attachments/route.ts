@@ -17,28 +17,40 @@ export async function GET(req: NextRequest, { params }: Params) {
 }
 
 export async function POST(req: NextRequest, { params }: Params) {
-  const repos = await getRepositories();
-  const authResult = await requireAuth(req, repos.sessions);
-  if (authResult instanceof NextResponse) return authResult;
+  try {
+    const repos = await getRepositories();
+    const authResult = await requireAuth(req, repos.sessions);
+    if (authResult instanceof NextResponse) return authResult;
 
-  const { id } = await params;
-  const formData = await req.formData();
-  const file = formData.get("file") as File | null;
+    const { id } = await params;
 
-  if (!file) {
-    return NextResponse.json({ message: "File is required" }, { status: 400 });
+    let formData: FormData;
+    try {
+      formData = await req.formData();
+    } catch {
+      return NextResponse.json({ message: "Failed to parse multipart form data" }, { status: 400 });
+    }
+
+    const file = formData.get("file") as File | null;
+
+    if (!file) {
+      return NextResponse.json({ message: "File is required" }, { status: 400 });
+    }
+
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const result = await uploadAttachment(repos, id, authResult.sub, {
+      filename: file.name,
+      contentType: file.type,
+      size: file.size,
+      data: buffer,
+    });
+    if (!result.ok) return serviceResponse(result);
+    return NextResponse.json(
+      { ...result.data, url: `/api/v1/expenses/${id}/attachments/${result.data.id}` },
+      { status: 201 },
+    );
+  } catch (err) {
+    console.error("[POST /attachments] Unhandled error:", err);
+    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }
-
-  const buffer = Buffer.from(await file.arrayBuffer());
-  const result = await uploadAttachment(repos, id, authResult.sub, {
-    filename: file.name,
-    contentType: file.type,
-    size: file.size,
-    data: buffer,
-  });
-  if (!result.ok) return serviceResponse(result);
-  return NextResponse.json(
-    { ...result.data, url: `/api/v1/expenses/${id}/attachments/${result.data.id}` },
-    { status: 201 },
-  );
 }
