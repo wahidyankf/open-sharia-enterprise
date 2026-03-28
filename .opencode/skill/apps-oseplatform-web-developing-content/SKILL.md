@@ -1,20 +1,20 @@
 ---
 name: apps-oseplatform-web-developing-content
-description: Guide for creating content on oseplatform-web Hugo site using PaperMod theme. Covers English-only landing page structure, update posts with date-prefixed filenames, PaperMod frontmatter (cover images, table of contents, author field), simple flat organization, and oseplatform-web specific conventions. Essential for oseplatform-web content creation tasks
+description: Guide for creating content on oseplatform-web Next.js 16 content platform. Covers English-only landing page structure, update posts with date-prefixed filenames, markdown frontmatter (title, date, tags, summary, showtoc), simple flat organization, and oseplatform-web specific conventions. Essential for oseplatform-web content creation tasks
 ---
 
-# Hugo OSE Platform Development Skill
+# OSE Platform Web Content Development Skill
 
 ## Purpose
 
-This Skill provides guidance for creating and managing content on the **oseplatform-web** Hugo site, which uses the PaperMod theme and serves as an English-only project landing page.
+This Skill provides guidance for creating and managing content on the **oseplatform-web** Next.js 16 content platform which serves as an English-only project landing page.
 
 **When to use this Skill:**
 
 - Creating platform updates on oseplatform-web
 - Writing about page content
 - Managing landing page structure
-- Configuring PaperMod frontmatter
+- Configuring markdown frontmatter
 - Understanding oseplatform-web specific patterns
 
 ## Core Concepts
@@ -24,7 +24,7 @@ This Skill provides guidance for creating and managing content on the **oseplatf
 **oseplatform-web** (`apps/oseplatform-web/`):
 
 - **Site**: oseplatform.com
-- **Theme**: PaperMod v7.0+ (compatible with v8.0)
+- **Theme**: Next.js 16 (App Router, TypeScript, tRPC)
 - **Purpose**: English-only project landing page
 - **Content Types**: Platform updates, about page
 - **Structure**: Flat, simple organization
@@ -82,7 +82,7 @@ apps/oseplatform-web/content/
 
 **Example**: `about.md`
 
-## PaperMod Frontmatter
+## Next.js 16 Frontmatter
 
 ### Required Fields
 
@@ -94,7 +94,7 @@ draft: false
 ---
 ```
 
-**Minimal frontmatter** - PaperMod has fewer required fields than Next.js content metadata.
+**Minimal frontmatter** - Next.js 16 has fewer required fields than Next.js content metadata.
 
 ### Recommended Fields
 
@@ -115,7 +115,7 @@ cover:
 ---
 ```
 
-### PaperMod-Specific Fields
+### Next.js 16-Specific Fields
 
 **Table of Contents**:
 
@@ -217,7 +217,7 @@ showtoc: false
 
 **Format**: Absolute paths without `.md` extension
 
-**Hugo shortcodes available**:
+**Next.js shortcodes available**:
 
 ```markdown
 # Using ref shortcode for content references
@@ -255,7 +255,7 @@ static/
 
 ![OSE Platform Dashboard](/images/updates/dashboard.png)
 
-# Hugo figure shortcode
+# Next.js figure shortcode
 
 {{< figure src="/images/updates/architecture.png" alt="System Architecture" caption="OSE Platform Architecture" >}}
 ```
@@ -265,11 +265,11 @@ static/
 - `static/images/dashboard.png` → `/images/dashboard.png`
 - `static/casts/demo.cast` → `/casts/demo.cast`
 
-## PaperMod Features
+## Next.js 16 Features
 
 ### Navigation
 
-PaperMod provides:
+Next.js 16 provides:
 
 - **Breadcrumbs**: Automatic breadcrumb navigation
 - **Archive**: Chronological post listing
@@ -325,7 +325,7 @@ params:
 
 | Aspect               | oseplatform-web                  | ayokoding-web                                     |
 | -------------------- | -------------------------------- | ------------------------------------------------- |
-| **Theme**            | PaperMod                         | Next.js 16 (App Router, tRPC)                     |
+| **Theme**            | Next.js 16                         | Next.js 16 (App Router, tRPC)                     |
 | **Languages**        | English only                     | Bilingual (Indonesian/English)                    |
 | **Structure**        | Flat (updates/, about.md)        | Deep hierarchy (learn/archived/crash-courses/...) |
 | **Archetypes**       | 1 (default)                      | N/A (Next.js App Router)                          |
@@ -419,9 +419,9 @@ cover:
 
 ### ❌ Mistake 4: Using ayokoding-web conventions
 
-**Wrong**: Applying ayokoding-web conventions (not applicable to Hugo PaperMod site)
+**Wrong**: Applying ayokoding-web conventions (not applicable to Next.js Next.js 16 site)
 
-**Right**: Use simple PaperMod conventions (date-prefix for posts, minimal frontmatter)
+**Right**: Use simple Next.js 16 conventions (date-prefix for posts, minimal frontmatter)
 
 ## Best Practices
 
@@ -444,11 +444,11 @@ cover:
 
 ## Reference Documentation
 
-**Primary Convention**: [Hugo Content Convention - oseplatform-web](../../../governance/conventions/hugo/ose-platform.md)
+**Primary Convention**: [Next.js Content Convention - oseplatform-web](../../../governance/conventions/hugo/ose-platform.md)
 
 **Related Conventions**:
 
-- [Hugo Content Shared](../../../governance/conventions/hugo/shared.md) - Shared Hugo patterns
+- [Next.js Content Shared](../../../governance/conventions/hugo/shared.md) - Shared Next.js patterns
 - [Content Quality Principles](../../../governance/conventions/writing/quality.md) - Universal quality standards
 
 **Related Skills**:
@@ -464,8 +464,8 @@ cover:
 
 **External Resources**:
 
-- [PaperMod Official Documentation](https://adityatelange.github.io/hugo-PaperMod/)
-- [PaperMod GitHub Repository](https://github.com/adityatelange/hugo-PaperMod)
+- [Next.js 16 Official Documentation](https://adityatelange.github.io/hugo-Next.js 16/)
+- [Next.js 16 GitHub Repository](https://github.com/adityatelange/hugo-Next.js 16)
 
 ---
 
@@ -479,7 +479,7 @@ Deploy oseplatform-web to production using automated CI or the deployer agent.
 
 **Branch**: `prod-oseplatform-web`
 **Purpose**: Deployment-only branch that Vercel monitors
-**Build System**: Vercel (Hugo SSG with PaperMod theme)
+**Build System**: Vercel (Next.js SSG with Next.js 16 theme)
 
 ### Automated Deployment (Primary)
 
@@ -487,7 +487,7 @@ The `test-and-deploy-oseplatform-web.yml` GitHub Actions workflow handles routin
 
 - **Schedule**: Runs at 6 AM and 6 PM WIB (UTC+7) every day
 - **Change detection**: Diffs `HEAD` vs `prod-oseplatform-web` scoped to `apps/oseplatform-web/` — skips build/deploy when nothing changed
-- **Build**: Runs `nx build oseplatform-web` (Hugo extended build with PaperMod theme)
+- **Build**: Runs `nx build oseplatform-web` (Next.js extended build with Next.js 16 theme)
 - **Deploy**: Force-pushes `main` to `prod-oseplatform-web`; Vercel auto-builds
 
 **Manual trigger**: From the GitHub Actions UI, trigger `test-and-deploy-oseplatform-web.yml` with `force_deploy=true` to deploy immediately regardless of changes.
@@ -512,11 +512,11 @@ Or use the `apps-oseplatform-web-deployer` agent for a guided deployment.
 
 ## References
 
-**Primary Convention**: [Hugo Content Convention - oseplatform-web](../../../governance/conventions/hugo/ose-platform.md)
+**Primary Convention**: [Next.js Content Convention - oseplatform-web](../../../governance/conventions/hugo/ose-platform.md)
 
 **Related Conventions**:
 
-- [Hugo Content Shared](../../../governance/conventions/hugo/shared.md) - Shared Hugo patterns
+- [Next.js Content Shared](../../../governance/conventions/hugo/shared.md) - Shared Next.js patterns
 - [Content Quality Principles](../../../governance/conventions/writing/quality.md) - Universal quality standards
 
 **Related Skills**:

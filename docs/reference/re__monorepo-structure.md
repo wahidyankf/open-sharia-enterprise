@@ -346,7 +346,7 @@ Location: `apps/[app-name]/project.json` or `libs/[lib-name]/project.json`
       }
     }
   },
-  "tags": ["type:app", "platform:hugo", "domain:oseplatform"]
+  "tags": ["type:app", "platform:nextjs", "lang:ts", "domain:oseplatform"]
 }
 ```
 

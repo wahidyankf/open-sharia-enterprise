@@ -35,7 +35,7 @@ Deploy oseplatform-web to production environment:
 2. **Force push to production**: Push main branch to prod-oseplatform-web
 3. **Trigger Vercel build**: Vercel automatically detects changes and builds
 
-**Build Process**: Vercel listens to prod-oseplatform-web branch and automatically builds the Hugo site (PaperMod theme) on push. No local build needed.
+**Build Process**: Vercel listens to prod-oseplatform-web branch and automatically builds the Next.js 16 content platform on push. No local build needed.
 
 ## Deployment Workflow
 
@@ -75,7 +75,7 @@ echo "Vercel will automatically build from prod-oseplatform-web branch"
 
 **Production Branch**: `prod-oseplatform-web`  
 **Build Trigger**: Automatic on push  
-**Build System**: Vercel (Hugo SSG with PaperMod theme)  
+**Build System**: Vercel (Next.js 16)  
 **No Local Build**: Vercel handles all build operations
 
 **Trunk-Based Development**: Per `repo-practicing-trunk-based-development` Skill, all development happens on main. Production branch is deployment-only (no direct commits).
@@ -139,7 +139,7 @@ git pull origin main
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [oseplatform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [oseplatform-web Convention](../../governance/conventions/structure/plans.md)
 - [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md)
 
 **Related Agents**:
@@ -148,5 +148,5 @@ git pull origin main
 
 **Related Conventions**:
 
-- [oseplatform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [oseplatform-web Convention](../../governance/conventions/structure/plans.md)
 - [Trunk Based Development](../../governance/development/workflow/trunk-based-development.md)

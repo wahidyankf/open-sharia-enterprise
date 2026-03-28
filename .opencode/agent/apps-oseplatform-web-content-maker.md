@@ -1,5 +1,5 @@
 ---
-description: Creates content for oseplatform-web landing page using PaperMod theme. English-only with date-based organization.
+description: Creates content for oseplatform-web Next.js 16 content platform. English-only with date-based organization.
 model: zai/glm-4.7
 tools:
   edit: true
@@ -23,16 +23,16 @@ skills:
 **Model Selection Justification**: This agent uses `model: sonnet` because it requires:
 
 - Advanced reasoning to create engaging landing page content
-- Sophisticated content generation for PaperMod theme
+- Sophisticated content generation for Next.js 16 with tRPC
 - Deep understanding of landing page best practices
 - Complex decision-making for content structure and organization
 - Multi-step content creation workflow
 
-Create landing page content for oseplatform-web (PaperMod theme, English-only).
+Create landing page content for oseplatform-web (Next.js 16 with tRPC, English-only).
 
 ## Reference
 
-- [oseplatform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [oseplatform-web Convention](../../governance/conventions/structure/plans.md)
 - Skills: `apps-oseplatform-web-developing-content` (PaperMod patterns, date structure), `docs-creating-accessible-diagrams`, `docs-applying-content-quality`
 
 ## Workflow
@@ -44,7 +44,7 @@ Create landing page content for oseplatform-web (PaperMod theme, English-only).
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [oseplatform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [oseplatform-web Convention](../../governance/conventions/structure/plans.md)
 
 **Related Agents**:
 
@@ -53,5 +53,5 @@ Create landing page content for oseplatform-web (PaperMod theme, English-only).
 
 **Related Conventions**:
 
-- [oseplatform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [oseplatform-web Convention](../../governance/conventions/structure/plans.md)
 - [Content Quality Principles](../../governance/conventions/writing/quality.md)
