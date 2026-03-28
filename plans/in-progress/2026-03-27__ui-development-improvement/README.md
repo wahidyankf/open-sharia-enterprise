@@ -86,7 +86,7 @@ This plan introduces a layered UI development improvement strategy:
 
 | Phase | Focus | Scope | Key Trade-off |
 | --- | --- | --- | --- |
-| 1 | Conventions + Skills | Document UI conventions; create AI skills | Knowledge before infrastructure |
+| 1 | Conventions + Skills + Agents | Document UI conventions; create AI skill + agent trio + quality gate workflow | Knowledge before infrastructure |
 | 2 | Shared Library | Extract tokens and components into `libs/` | Coupling vs. consistency |
 | 3 | Automated Enforcement | ESLint rules, a11y tests, visual regression | Strictness vs. velocity |
 | 4 | Component Catalog | Storybook/component docs | Maintenance cost vs. discoverability |
