@@ -405,6 +405,14 @@ Feature: Shared UI Library
     And all color references use semantic tokens (primary, destructive, muted, etc.)
     And CSS cascade enables per-project theming automatically
 
+  Scenario: Shared components have Gherkin specs and step definitions
+    Given specs/libs/ts-ui/gherkin/ contains .feature files for each shared component
+    When I run nx run ts-ui:test:unit
+    Then Gherkin step definitions execute via @amiceli/vitest-cucumber
+    And behavior tests (from specs) pass with mocked dependencies
+    And UI-specific tests (axe-core, variant rendering) pass alongside Gherkin tests
+    And both test types contribute to the ts-ui coverage threshold
+
   Scenario: Build and test pass after migration
     When I run nx affected -t typecheck lint test:quick build
     Then all targets pass for organiclever-web, ayokoding-web, and demo-fe-ts-nextjs

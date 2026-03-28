@@ -450,9 +450,72 @@ scoped re-validation after fixes.
 
 | Level                            | UI Addition                 | Tool                            | What It Catches                                    | Responsive                |
 | -------------------------------- | --------------------------- | ------------------------------- | -------------------------------------------------- | ------------------------- |
-| Unit (`test:unit`)               | axe-core a11y assertions    | vitest-axe                      | Missing aria, roles, labels, contrast              | N/A (JSDOM)               |
+| Unit (`test:unit`)               | Gherkin specs + axe-core    | vitest-cucumber + vitest-axe    | Behavior from specs + a11y from axe                | N/A (JSDOM)               |
 | Integration (`test:integration`) | Component visual snapshots  | Playwright `toHaveScreenshot()` | Unintended visual changes to individual components | 3 viewports per component |
 | E2E (`test:e2e`)                 | Full-page visual regression | Playwright `toHaveScreenshot()` | Layout breaks, theme issues across full pages      | 3 viewports per page      |
+
+### AD7b: Frontend Unit Tests — Gherkin Specs + UI-Specific Tests
+
+**Decision**: Frontend unit tests compose **two types** of tests:
+
+1. **Gherkin-driven mock tests** — consume `.feature` files from `specs/` and implement step
+   definitions with mocked dependencies (APIs, routing, state). This is the **existing pattern**
+   already used by `demo-fe-ts-nextjs`, `demo-fe-ts-tanstack-start`, `demo-fe-dart-flutterweb`,
+   and `demo-fs-ts-nextjs` via `@amiceli/vitest-cucumber`.
+
+2. **UI-specific tests** — axe-core accessibility assertions, component rendering tests,
+   variant coverage. These test concerns that Gherkin specs do not naturally express (DOM
+   accessibility tree, WCAG contrast ratios, component API surface).
+
+Both coexist at the `test:unit` level. Gherkin tests validate **behavior** (what the user
+experiences). UI tests validate **quality** (accessibility, rendering correctness).
+
+**Existing pattern** (already in the codebase):
+
+```text
+apps/demo-fe-ts-nextjs/test/unit/steps/
+├── layout/
+│   ├── accessibility.steps.tsx    ← Gherkin: specs/apps/demo/fe/gherkin/layout/accessibility.feature
+│   └── responsive.steps.tsx       ← Gherkin: specs/apps/demo/fe/gherkin/layout/responsive.feature
+├── authentication/
+│   ├── login.steps.tsx            ← Gherkin: specs/apps/demo/fe/gherkin/authentication/login.feature
+│   └── session.steps.tsx          ← Gherkin: specs/apps/demo/fe/gherkin/authentication/session.feature
+└── ...
+```
+
+**How this applies to shared UI library (`libs/ts-ui/`)**:
+
+```text
+specs/libs/ts-ui/gherkin/           ← NEW: Gherkin specs for shared component behavior
+├── button/
+│   └── button.feature             ← "Given a Button with variant destructive..."
+├── dialog/
+│   └── dialog.feature             ← "When the user opens a dialog..."
+└── ...
+
+libs/ts-ui/src/components/button/
+├── button.tsx                      ← Component implementation
+├── button.variants.ts              ← CVA definitions
+├── button.steps.tsx                ← Gherkin step definitions (mock tests)
+├── button.test.tsx                 ← UI-specific tests (axe-core, rendering)
+└── button.stories.tsx              ← Storybook stories
+```
+
+**Trade-offs**:
+
+| Factor | Gherkin Only | UI Tests Only | Both (Chosen) |
+| --- | --- | --- | --- |
+| Behavior coverage | Full (from specs) | None | Full |
+| A11y coverage | Partial (if specs include it) | Full (axe-core) | Full |
+| Rendering coverage | Implicit | Explicit | Both |
+| Spec alignment | Backends + frontends share same specs | N/A | Frontends align with backends |
+| Test count | ~15 per component | ~5 per component | ~20 per component |
+| Maintenance | Spec changes propagate | Independent | Spec changes + independent UI tests |
+
+**Why both**: Gherkin specs express user-facing behavior ("When I click the submit button, then
+the form submits"). But they do not naturally express "the Button component has no WCAG AA
+violations" or "all variant combinations render without crashing." These are quality assertions,
+not behavior assertions. Both are needed.
 
 **axe-core integration pattern** (using setup file for global extension):
 

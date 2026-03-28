@@ -301,15 +301,25 @@ _Extract shared tokens and components into Nx libraries. One app migration at a 
   - Use `radix-ui` unified import (not `@radix-ui/react-slot`); note: use `Slot.Root`
     (not bare `Slot`) from the unified package
   - Keep all 6 variant types (default, destructive, outline, secondary, ghost, link)
-- [ ] Configure `vitest.config.ts` with vitest-axe setup file
-- [ ] Add unit tests for each component:
-  - Renders without crashing
-  - All variant combinations render
-  - axe-core finds no a11y violations
+- [ ] Configure `vitest.config.ts` with vitest-axe setup file and vitest-cucumber
+- [ ] Create Gherkin specs for shared component behavior:
+  - Create `specs/libs/ts-ui/gherkin/` directory structure
+  - Write `.feature` files for each component's user-facing behavior (e.g.,
+    `button/button.feature`: "Given a Button with variant destructive, When clicked, Then...")
+  - Follow the existing `specs/apps/demo/fe/gherkin/` pattern
+- [ ] Add Gherkin step definition files for each component (`button.steps.tsx`):
+  - Load feature file via `@amiceli/vitest-cucumber` `loadFeature()`
+  - Implement step definitions with `@testing-library/react` + mocked context
+  - Follow the existing pattern from `demo-fe-ts-nextjs/test/unit/steps/`
+- [ ] Add UI-specific test files for each component (`button.test.tsx`):
+  - axe-core accessibility: `expect(await axe(container)).toHaveNoViolations()`
+  - All variant combinations render without crashing
   - Supports `asChild` prop
   - Forwards `className` via cn()
   - Has `data-slot` attribute
+  - Icon-only variants have accessible names
 - [ ] Add `package.json` with name `@open-sharia-enterprise/ts-ui`
+- [ ] Install `@amiceli/vitest-cucumber` as devDependency for Gherkin step definitions
 - [ ] Configure `project.json` with targets: `build`, `lint`, `test:unit`, `test:quick`
 - [ ] Verify `nx build ts-ui` and `nx run ts-ui:test:quick` succeed
 
