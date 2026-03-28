@@ -8,7 +8,7 @@ tags:
   - conventions
   - standards
 created: 2025-11-22
-updated: 2026-02-22
+updated: 2026-03-24
 ---
 
 # Conventions
@@ -149,4 +149,4 @@ Hugo site-specific content conventions.
 
 ---
 
-**Last Updated**: 2026-02-22
+**Last Updated**: 2026-03-24

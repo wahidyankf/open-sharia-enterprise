@@ -28,6 +28,7 @@ These standards define **HOW to execute development workflows**, covering the th
 - [Implementation Workflow Convention](./implementation.md) - Three-stage development workflow: make it work, make it right, make it fast. Includes surgical changes (touch only what you must) and goal-driven execution (define success criteria, loop until verified)
 - [Reproducible Environments Convention](./reproducible-environments.md) - Practices for creating consistent, reproducible development and build environments
 - [Trunk Based Development Convention](./trunk-based-development.md) - Git workflow using Trunk Based Development for continuous integration
+- [Worktree Setup](./worktree-setup.md) - Practice for running npm install in the root repository worktree after creating a new git worktree. Ensures Nx workspace and all tools remain functional across worktrees
 
 ## Companion Documents
 
@@ -49,6 +50,10 @@ This set of development practices implements/respects the following core princip
 
 - **[Reproducibility First](../../principles/software-engineering/reproducibility.md)**: Reproducible environments convention ensures consistent development and build environments across machines and team members.
 
+- **[Explicit Over Implicit](../../principles/software-engineering/explicit-over-implicit.md)**: Runtime versions pinned explicitly (Volta), required setup steps codified as deliberate actions rather than assumed side effects.
+
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Automated CI triggers on every commit, automated environment setup through version managers, and codified worktree procedures replace manual, error-prone steps.
+
 ## Conventions Implemented/Respected
 
 This set of development practices respects the following conventions:
@@ -59,4 +64,4 @@ This set of development practices respects the following conventions:
 
 ---
 
-**Last Updated**: 2026-01-29
+**Last Updated**: 2026-03-28
