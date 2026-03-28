@@ -11,6 +11,7 @@ build/
 out/
 cover.out
 /static/
+storybook-static/
 
 # Nx cache
 .nx/

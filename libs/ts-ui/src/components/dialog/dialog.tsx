@@ -6,22 +6,30 @@ import { Dialog as DialogPrimitive } from "radix-ui";
 
 import { cn } from "../../utils/cn";
 
+/** Root dialog component that manages open/closed state. Compose with DialogTrigger and DialogContent.
+ * @example
+ * <Dialog><DialogTrigger asChild><Button>Open</Button></DialogTrigger><DialogContent><DialogHeader><DialogTitle>Title</DialogTitle></DialogHeader></DialogContent></Dialog>
+ */
 function Dialog({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;
 }
 
+/** Element that opens the Dialog when interacted with. Use `asChild` to render as a custom element. */
 function DialogTrigger({ ...props }: React.ComponentProps<typeof DialogPrimitive.Trigger>) {
   return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />;
 }
 
+/** Portals dialog content outside the current DOM tree, typically to `document.body`. */
 function DialogPortal({ ...props }: React.ComponentProps<typeof DialogPrimitive.Portal>) {
   return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />;
 }
 
+/** Button that closes the Dialog when activated. */
 function DialogClose({ ...props }: React.ComponentProps<typeof DialogPrimitive.Close>) {
   return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
 }
 
+/** Semi-transparent backdrop rendered behind the dialog content. */
 function DialogOverlay({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Overlay>) {
   return (
     <DialogPrimitive.Overlay
@@ -35,6 +43,7 @@ function DialogOverlay({ className, ...props }: React.ComponentProps<typeof Dial
   );
 }
 
+/** Centered modal panel rendered over the overlay. Includes a close button by default (set `showCloseButton={false}` to hide). */
 function DialogContent({
   className,
   children,
@@ -69,6 +78,7 @@ function DialogContent({
   );
 }
 
+/** Container for the dialog's title and optional description, aligned left on larger screens. */
 function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -79,6 +89,7 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/** Container for dialog action buttons, stacked on mobile and right-aligned on larger screens. */
 function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -89,6 +100,7 @@ function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+/** Accessible title for the dialog, announced by screen readers when the dialog opens. */
 function DialogTitle({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Title>) {
   return (
     <DialogPrimitive.Title
@@ -99,6 +111,7 @@ function DialogTitle({ className, ...props }: React.ComponentProps<typeof Dialog
   );
 }
 
+/** Supplementary description for the dialog, rendered in muted text below the title. */
 function DialogDescription({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Description>) {
   return (
     <DialogPrimitive.Description

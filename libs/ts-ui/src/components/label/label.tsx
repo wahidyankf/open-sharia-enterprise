@@ -5,6 +5,10 @@ import { Label as LabelPrimitive } from "radix-ui";
 
 import { cn } from "../../utils/cn";
 
+/** Accessible form label built on Radix Label. Automatically dims when its paired input is disabled.
+ * @example
+ * <Label htmlFor="email">Email address</Label>
+ */
 function Label({ className, ...props }: React.ComponentProps<typeof LabelPrimitive.Root>) {
   return (
     <LabelPrimitive.Root

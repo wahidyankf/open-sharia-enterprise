@@ -2,6 +2,10 @@ import * as React from "react";
 
 import { cn } from "../../utils/cn";
 
+/** Styled text input that forwards all native `<input>` props. Includes focus ring, error, and disabled states.
+ * @example
+ * <Input type="email" placeholder="you@example.com" />
+ */
 function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return (
     <input
