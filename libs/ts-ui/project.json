@@ -13,7 +13,8 @@
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "echo 'ts-ui lint: pending ESLint config in Phase 3'"
+        "command": "npx oxlint@latest --jsx-a11y-plugin .",
+        "cwd": "libs/ts-ui"
       }
     },
     "test:unit": {
@@ -27,6 +28,28 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "npx vitest run --coverage && cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate libs/ts-ui/coverage/lcov.info 70",
+        "cwd": "libs/ts-ui"
+      }
+    },
+    "storybook": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx storybook dev -p 6006 --no-open",
+        "cwd": "libs/ts-ui"
+      }
+    },
+    "build-storybook": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx storybook build -o storybook-static",
+        "cwd": "libs/ts-ui"
+      },
+      "outputs": ["{projectRoot}/storybook-static"]
+    },
+    "test:visual": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx playwright test --config e2e/playwright.config.ts",
         "cwd": "libs/ts-ui"
       }
     }
