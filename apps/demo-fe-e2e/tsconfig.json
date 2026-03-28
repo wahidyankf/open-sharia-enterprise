@@ -12,6 +12,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "target": "ES2022",
+    "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["./tests/*"]
