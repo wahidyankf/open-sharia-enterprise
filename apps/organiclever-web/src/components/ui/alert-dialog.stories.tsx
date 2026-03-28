@@ -11,7 +11,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "./alert-dialog";
-import { Button } from "./button";
+import { Button } from "@open-sharia-enterprise/ts-ui";
 
 const meta: Meta = {
   title: "UI/AlertDialog",

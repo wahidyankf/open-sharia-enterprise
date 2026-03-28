@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Menu, Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@open-sharia-enterprise/ts-ui";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { MobileNav } from "@/components/layout/mobile-nav";

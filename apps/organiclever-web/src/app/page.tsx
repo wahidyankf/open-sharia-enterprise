@@ -1,9 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@open-sharia-enterprise/ts-ui";
 import { TentTree, AlertTriangle, Code, GitBranch, Trello, BarChart3, LucideIcon } from "lucide-react";
 import { useAuth } from "./contexts/auth-context";
 

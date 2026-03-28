@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@open-sharia-enterprise/ts-ui";
 import { TentTree, LayoutDashboard, Users, Settings, Menu, X, ChevronLeft, ChevronRight } from "lucide-react";
 
 export function Navigation({ logout }: { logout: () => Promise<void> }) {

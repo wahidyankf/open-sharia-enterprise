@@ -2,7 +2,7 @@
 
 import { Globe } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { Button } from "@open-sharia-enterprise/ts-ui";
 import {
   DropdownMenu,
   DropdownMenuContent,

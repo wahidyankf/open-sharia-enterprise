@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, use } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../../contexts/auth-context";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@open-sharia-enterprise/ts-ui";
 import { Github, Mail } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import Breadcrumb from "@/components/Breadcrumb";

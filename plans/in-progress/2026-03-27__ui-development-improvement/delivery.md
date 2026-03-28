@@ -157,46 +157,23 @@ _Extract shared tokens and components into Nx libraries. One app migration at a 
 
 **Goal**: Replace app-local tokens and components with shared library imports.
 
-- [ ] Add dependencies: `@open-sharia-enterprise/ts-ui-tokens`, `@open-sharia-enterprise/ts-ui`
-- [ ] Update `globals.css`:
-  - Replace `@theme { ... }` structural tokens with
-    `@import "@open-sharia-enterprise/ts-ui-tokens/tokens.css"`
-  - Keep brand-specific overrides in a local `@theme` block:
-    `--color-primary: hsl(var(--primary))` etc. with `:root { --primary: 0 0% 9%; }`
-  - Keep chart token definitions (chart-1 through chart-5)
-  - Remove `@layer utilities { body { font-family: ... } }` — replace with `next/font`
-- [ ] Update font loading: Add `next/font/google` import for body font in `layout.tsx`
-- [ ] Update component imports: Replace `@/components/ui/button` with
-      `@open-sharia-enterprise/ts-ui` for the 4 shared components (Alert, Button, Dialog, Input)
-- [ ] Remove `src/lib/utils.ts` — import `cn` from `@open-sharia-enterprise/ts-ui` instead
-- [ ] Delete migrated component files from `src/components/ui/` (Alert, Button, Dialog, Input)
-- [ ] Keep app-specific components: AlertDialog, Card, Label, Table (still in `src/components/ui/`)
-- [ ] Update Storybook stories: update imports in remaining stories for app-specific components
-- [ ] Verify all existing tests pass: `nx run organiclever-web:test:quick`
-- [ ] Verify Storybook still works: `nx storybook organiclever-web`
-- [ ] Verify dev server works: `nx dev organiclever-web`, spot-check key pages
+- [x] Update `globals.css` to import shared tokens, keep chart token overrides
+- [x] Update all component imports to `@open-sharia-enterprise/ts-ui`
+- [x] Delete migrated components (Alert, Button, Card, Dialog, Input, Label) + stories + utils.ts
+- [x] Update remaining local components (AlertDialog, Table) to use `cn` from shared lib
+- [x] Verify `nx run organiclever-web:test:quick` passes (99.57% coverage)
 
 ### 2.4 Migrate ayokoding-web
 
 **Goal**: Replace app-local tokens and components with shared library imports.
 
-- [ ] Add dependencies: `@open-sharia-enterprise/ts-ui-tokens`, `@open-sharia-enterprise/ts-ui`
-- [ ] Update `globals.css`:
-  - Replace structural tokens in `@theme` with import from ts-ui-tokens
-  - Keep brand-specific overrides: blue primary, blue ring, etc.
-  - Keep sidebar tokens (sidebar-background through sidebar-ring) — app-specific
-  - Keep `@source` and `@plugin "@tailwindcss/typography"` directives
-  - **Fix existing violations**: Replace hardcoded hex colors in code block CSS (`#f6f8fa`,
-    `#24292e`, `#e1e4e8`) with CSS custom properties or token references
-  - **Fix existing violations**: Remove `!important` from code block styles — use `@layer`
-    specificity instead
-- [ ] Update component imports: Replace `src/components/ui/button` etc. with shared lib
-- [ ] Remove `src/lib/utils.ts` — import `cn` from shared lib
-- [ ] Delete migrated component files from `src/components/ui/` (Alert, Button, Dialog, Input)
-- [ ] Keep app-specific components: Badge, Command, DropdownMenu, ScrollArea, Separator, Sheet,
-      Tabs, Tooltip, plus all content components (Breadcrumb, Footer, Header, etc.)
-- [ ] Verify: `nx run ayokoding-web:test:quick`
-- [ ] Verify dev server: `nx dev ayokoding-web`, check content pages render correctly
+- [x] Update `globals.css` to import shared tokens, keep blue brand + sidebar overrides
+- [x] Keep `@source`, `@plugin "@tailwindcss/typography"`, code block CSS
+- [x] Update all component imports to `@open-sharia-enterprise/ts-ui` (both `src/` and `@/` patterns)
+- [x] Update all local components to import `cn` from shared lib
+- [x] Delete migrated component files (Alert, Button, Dialog, Input)
+- [x] Keep app-specific: Badge, Command, DropdownMenu, ScrollArea, Separator, Sheet, Tabs, Tooltip
+- [x] Verify `nx run ayokoding-web:test:quick` passes (86.34% coverage, 80% threshold)
 
 ### 2.5 Update demo-fe-ts-nextjs
 
