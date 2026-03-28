@@ -34,9 +34,7 @@ describe("MemberDetailPage uncovered branches", () => {
 
   it("returns null when authenticated but member fetch is still pending — covers !member branch", async () => {
     // Use a handler that never resolves so member stays null
-    server.use(
-      http.get("/api/members/:id", () => new Promise<never>(() => {})),
-    );
+    server.use(http.get("/api/members/:id", () => new Promise<never>(() => {})));
 
     await act(async () => {
       render(

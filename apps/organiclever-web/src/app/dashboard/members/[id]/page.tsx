@@ -23,12 +23,12 @@ const MemberInfo = ({ member }: { member: Member }) => (
     </div>
     {member.email && (
       <div className="flex items-center">
-        <Mail className="h-4 w-4 mr-2" />
+        <Mail className="mr-2 h-4 w-4" />
         <span>{member.email}</span>
       </div>
     )}
     <div className="flex items-center">
-      <Github className="h-4 w-4 mr-2" />
+      <Github className="mr-2 h-4 w-4" />
       <a
         href={`https://github.com/${member.github}`}
         target="_blank"
@@ -55,7 +55,7 @@ const MemberCard = ({ member }: { member: Member }) => (
 const MemberDetailContent = ({ member }: { member: Member }) => (
   <div className="container mx-auto px-6 py-8">
     <Breadcrumb />
-    <div className="mb-6 flex justify-between items-center">
+    <div className="mb-6 flex items-center justify-between">
       <h1 className="text-2xl font-bold">Member Details</h1>
     </div>
     <MemberCard member={member} />
@@ -99,7 +99,7 @@ export default function MemberDetailPage({ params }: { params: Promise<{ id: str
   return (
     <div className="flex h-screen bg-gray-100">
       <Navigation logout={logout} />
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex flex-1 flex-col overflow-hidden">
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
           <MemberDetailContent member={member} />
         </main>

@@ -266,7 +266,7 @@ describeFeature(feature, ({ Scenario, Background }) => {
       });
     });
 
-    Then("alice's status should display as \"active\"", async () => {
+    Then('alice\'s status should display as "active"', async () => {
       await waitFor(() => {
         expect(adminApi.unlockUser).toHaveBeenCalled();
       });

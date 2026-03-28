@@ -42,13 +42,9 @@ export function Navigation({ logout }: { logout: () => Promise<void> }) {
 
       {/* Navigation content */}
       <div
-        className={`
-        fixed inset-y-0 left-0 transform ${isOpen ? "translate-x-0" : "-translate-x-full"}
-        md:relative md:translate-x-0 transition duration-200 ease-in-out
-        flex flex-col ${isCollapsed ? "w-16" : "w-64"} bg-white border-r z-10
-      `}
+        className={`fixed inset-y-0 left-0 transform ${isOpen ? "translate-x-0" : "-translate-x-full"} flex flex-col transition duration-200 ease-in-out md:relative md:translate-x-0 ${isCollapsed ? "w-16" : "w-64"} z-10 border-r bg-white`}
       >
-        <div className={`p-4 flex ${isCollapsed ? "justify-center" : "justify-between"} items-center`}>
+        <div className={`flex p-4 ${isCollapsed ? "justify-center" : "justify-between"} items-center`}>
           {!isCollapsed && (
             <Link href="/dashboard" className="flex items-center">
               <TentTree className="h-6 w-6" />
@@ -64,7 +60,7 @@ export function Navigation({ logout }: { logout: () => Promise<void> }) {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center p-2 mt-2 rounded-md hover:bg-gray-100 ${
+              className={`mt-2 flex items-center rounded-md p-2 hover:bg-gray-100 ${
                 isCollapsed ? "justify-center" : ""
               }`}
               onClick={() => setIsOpen(false)}
@@ -83,7 +79,7 @@ export function Navigation({ logout }: { logout: () => Promise<void> }) {
 
       {/* Overlay to close menu on mobile */}
       {isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-0 md:hidden" onClick={() => setIsOpen(false)} />
+        <div className="bg-opacity-50 fixed inset-0 z-0 bg-black md:hidden" onClick={() => setIsOpen(false)} />
       )}
     </>
   );

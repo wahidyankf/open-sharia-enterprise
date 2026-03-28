@@ -84,7 +84,7 @@ export function MarkdownRenderer({ html }: MarkdownRendererProps) {
   };
 
   return (
-    <div className="prose prose-neutral max-w-none dark:prose-invert prose-headings:scroll-mt-20 prose-a:text-primary">
+    <div className="prose prose-neutral dark:prose-invert prose-headings:scroll-mt-20 prose-a:text-primary max-w-none">
       {parse(html, options)}
     </div>
   );

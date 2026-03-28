@@ -58,6 +58,7 @@
     "markdownlint-cli2": "^0.21.0",
     "nx": "22.5.2",
     "prettier": "^3.6.2",
+    "prettier-plugin-tailwindcss": "^0.7.2",
     "tsx": "^4.20.6"
   },
   "lint-staged": {

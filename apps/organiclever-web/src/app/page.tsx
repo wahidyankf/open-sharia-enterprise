@@ -12,22 +12,22 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ isAuthenticated }) => (
-  <header className="px-4 lg:px-6 h-14 flex items-center">
-    <div className="max-w-[1440px] w-full mx-auto flex justify-between items-center">
+  <header className="flex h-14 items-center px-4 lg:px-6">
+    <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between">
       <Link className="flex items-center justify-center" href="/">
         <TentTree className="h-6 w-6" />
         <span className="ml-2 text-lg font-bold">Organic Lever</span>
       </Link>
       <nav className="flex gap-4 sm:gap-6">
-        <Link className="text-sm font-medium hover:underline underline-offset-4" href="#">
+        <Link className="text-sm font-medium underline-offset-4 hover:underline" href="#">
           About
         </Link>
         {isAuthenticated ? (
-          <Link className="text-sm font-medium hover:underline underline-offset-4" href="/dashboard">
+          <Link className="text-sm font-medium underline-offset-4 hover:underline" href="/dashboard">
             Dashboard
           </Link>
         ) : (
-          <Link className="text-sm font-medium hover:underline underline-offset-4" href="/login">
+          <Link className="text-sm font-medium underline-offset-4 hover:underline" href="/login">
             Login
           </Link>
         )}
@@ -49,7 +49,7 @@ const HeroSection: React.FC = () => (
             performance with powerful insights and intuitive tools.
           </p>
         </div>
-        <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+        <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
           <Button size="lg" asChild>
             <Link href="/login">Get Started</Link>
           </Button>
@@ -71,7 +71,7 @@ interface FeatureCardProps {
 const FeatureCard: React.FC<FeatureCardProps> = ({ icon: Icon, title, description }) => (
   <Card>
     <CardHeader>
-      <Icon className="h-6 w-6 mb-2" />
+      <Icon className="mb-2 h-6 w-6" />
       <CardTitle>{title}</CardTitle>
     </CardHeader>
     <CardContent>
@@ -81,9 +81,9 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ icon: Icon, title, descriptio
 );
 
 const FeaturesSection: React.FC = () => (
-  <section className="w-full py-12 md:py-24 lg:py-32 bg-gray-100 dark:bg-gray-800">
+  <section className="w-full bg-gray-100 py-12 md:py-24 lg:py-32 dark:bg-gray-800">
     <div className="container px-4 md:px-6">
-      <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-8 md:mb-12">
+      <h2 className="mb-8 text-center text-3xl font-bold tracking-tighter sm:text-4xl md:mb-12 md:text-5xl">
         Key Features
       </h2>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -115,7 +115,7 @@ const FeaturesSection: React.FC = () => (
 const TeamSection: React.FC = () => (
   <section className="w-full py-12 md:py-24 lg:py-32">
     <div className="container px-4 md:px-6">
-      <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-8 md:mb-12">
+      <h2 className="mb-8 text-center text-3xl font-bold tracking-tighter sm:text-4xl md:mb-12 md:text-5xl">
         Empower Your Software Teams
       </h2>
       <div className="grid gap-6 md:grid-cols-2">
@@ -147,16 +147,16 @@ const TeamSection: React.FC = () => (
 );
 
 const Footer: React.FC = () => (
-  <footer className="px-4 lg:px-6 py-6 w-full shrink-0 border-t">
-    <div className="max-w-[1440px] w-full mx-auto flex flex-col sm:flex-row justify-between items-center">
-      <p className="text-xs text-gray-500 dark:text-gray-400 mb-4 sm:mb-0">
+  <footer className="w-full shrink-0 border-t px-4 py-6 lg:px-6">
+    <div className="mx-auto flex w-full max-w-[1440px] flex-col items-center justify-between sm:flex-row">
+      <p className="mb-4 text-xs text-gray-500 sm:mb-0 dark:text-gray-400">
         © 2024 Organic Lever. All rights reserved.
       </p>
       <nav className="flex gap-4 sm:gap-6">
-        <Link className="text-xs hover:underline underline-offset-4" href="#">
+        <Link className="text-xs underline-offset-4 hover:underline" href="#">
           Terms of Service
         </Link>
-        <Link className="text-xs hover:underline underline-offset-4" href="#">
+        <Link className="text-xs underline-offset-4 hover:underline" href="#">
           Privacy
         </Link>
       </nav>
@@ -168,8 +168,8 @@ export default function Home() {
   const { isAuthenticated } = useAuth();
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Alert variant="destructive" className="rounded-none max-w-[1440px] mx-auto">
+    <div className="flex min-h-screen flex-col">
+      <Alert variant="destructive" className="mx-auto max-w-[1440px] rounded-none">
         <AlertTriangle className="h-4 w-4" />
         <AlertTitle>Work in Progress</AlertTitle>
         <AlertDescription>
@@ -178,7 +178,7 @@ export default function Home() {
       </Alert>
       <Header isAuthenticated={isAuthenticated} />
       <main className="flex-1">
-        <div className="max-w-[1440px] mx-auto px-4">
+        <div className="mx-auto max-w-[1440px] px-4">
           <HeroSection />
           <FeaturesSection />
           <TeamSection />
