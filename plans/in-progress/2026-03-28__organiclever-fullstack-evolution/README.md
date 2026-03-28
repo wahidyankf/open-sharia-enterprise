@@ -15,9 +15,10 @@ same patterns as `apps/demo-*`:
 - **`organiclever-be-e2e`** -- Playwright E2E tests for backend API
 - **`organiclever-fe-e2e`** -- Playwright E2E tests for frontend UI
 
-The initial scope is intentionally minimal: a single `/api/v1/hello` endpoint returning `"world"`,
-consumed by a `/hello` page on the frontend. This establishes the fullstack scaffold, CI/CD
-pipelines, contract-driven codegen, and three-level testing standard before adding domain features.
+The initial scope is intentionally minimal: a `/api/v1/hello` endpoint returning `"world"` consumed
+by a `/hello` page, plus Google OAuth login as the first real database-backed feature. This
+establishes the fullstack scaffold, CI/CD pipelines, contract-driven codegen, and three-level
+testing standard before adding domain features.
 
 Existing `specs/apps/organiclever-be/` and `specs/apps/organiclever-web/` are merged into a unified
 `specs/apps/organiclever/` following the `specs/apps/demo/` structure (c4, be, fe, contracts).
@@ -56,8 +57,8 @@ Existing `specs/apps/organiclever-be/` and `specs/apps/organiclever-web/` are me
 | **Backend**    | F#/Giraffe REST API with PostgreSQL                                        |
 | **Frontend**   | Next.js 16 + TypeScript + Effect TS                                        |
 | **Specs**      | Unified `specs/apps/organiclever/` (c4, be, fe, contracts)                |
-| **Initial API**| `GET /api/v1/hello` -> `{"message":"world"}`                              |
-| **Initial UI** | `/hello` page consuming the backend endpoint                               |
+| **Initial API**| `GET /api/v1/hello`, `POST /api/v1/auth/google`, `GET /api/v1/auth/me`    |
+| **Initial UI** | `/hello` page, `/login` page (Google OAuth), authenticated user display   |
 | **CI/CD**      | 4 GitHub Actions workflows (matching demo-* patterns)                      |
 | **Agents**     | Updated deployer + new agents as needed                                    |
 | **Skills**     | Updated developing-content skill                                           |
@@ -103,7 +104,8 @@ Existing `specs/apps/organiclever-be/` and `specs/apps/organiclever-web/` are me
 | Decision          | Choice                              | Rationale                                                    |
 | ----------------- | ----------------------------------- | ------------------------------------------------------------ |
 | **FE name**       | `organiclever-fe` (not `-web`)      | Matches `[domain]-[type]` convention (`demo-fe-*`)           |
-| **Initial scope** | Hello endpoint only                 | Establishes scaffold + CI before adding domain complexity    |
+| **Initial scope** | Hello + Google login                | Establishes scaffold + CI + first DB-backed auth feature     |
+| **Auth provider** | Google OAuth 2.0                    | Widely used, well-documented, free, no password management   |
 | **Backend lang**  | F# / Giraffe                        | Functional-first, proven by `demo-be-fsharp-giraffe`         |
 | **Frontend extra**| Effect TS                           | Structured errors, DI, composable services                   |
 | **FE-BE comm**  | BFF proxy (Next.js server-side)     | Backend URL private, no CORS, centralized middleware         |
@@ -114,6 +116,28 @@ Existing `specs/apps/organiclever-be/` and `specs/apps/organiclever-web/` are me
 | **BE coverage**   | 90%                                 | Standard for backends                                        |
 | **FE coverage**   | 70%                                 | Standard for frontends (demo-fe-ts-nextjs uses 70%)          |
 | **Archive**       | `archived/organiclever-web/`        | Preserves git history of current app                         |
+
+## Prerequisites (Manual Setup Before Development)
+
+Google OAuth requires manual credential setup that cannot be automated:
+
+1. **Google Cloud Console** ([console.cloud.google.com](https://console.cloud.google.com)):
+   - Create a project (or use existing) for OrganicLever
+   - Navigate to **APIs & Services** > **Credentials**
+   - Create an **OAuth 2.0 Client ID** (Web application type)
+   - Add authorized redirect URIs:
+     - `http://localhost:3200/api/auth/callback/google` (local dev)
+     - Production URL (when CD is set up later)
+   - Note the **Client ID** and **Client Secret**
+2. **Enable Google People API** (or Google+ API) in the same project for profile data
+3. **Environment variables** to set locally (in `.env` or `infra/dev/organiclever/.env`):
+   - `GOOGLE_CLIENT_ID` -- OAuth Client ID from step 1
+   - `GOOGLE_CLIENT_SECRET` -- OAuth Client Secret from step 1
+4. **Test accounts**: Any Google account can be used during development (no domain restrictions
+   unless configured in the consent screen)
+
+These credentials are **secrets** and must never be committed. The `.env.example` file will
+document the required variables without values.
 
 ## Quick Links
 

@@ -36,6 +36,13 @@ follow-up plan.
   (update background to `Given the API is running`)
 - [ ] Migrate `organiclever-be/hello/hello-endpoint.feature` -> `be/gherkin/hello/`
   (update background to `Given the API is running`)
+- [ ] Create `be/gherkin/authentication/google-login.feature` (Google OAuth token exchange,
+  user creation on first login, JWT + refresh token response)
+- [ ] Create `be/gherkin/authentication/register.feature` (email/password registration,
+  validation, duplicate email rejection)
+- [ ] Create `be/gherkin/authentication/login.feature` (email/password login, JWT + refresh
+  token response, wrong password/unknown email errors)
+- [ ] Create `be/gherkin/authentication/me.feature` (get profile with valid JWT, 401 without)
 - [ ] Verify all BE features follow demo conventions (HTTP-semantic, user story blocks)
 
 ### Milestone 1.3: Frontend Gherkin Specs
@@ -44,6 +51,15 @@ follow-up plan.
 - [ ] Create `specs/apps/organiclever/fe/gherkin/README.md`
 - [ ] Create `fe/gherkin/hello/hello-page.feature` (new: /hello page shows "world" from backend,
   loading state, error handling)
+- [ ] Create `fe/gherkin/authentication/google-login.feature` ("Sign in with Google" button,
+  successful OAuth redirects, user info displayed)
+- [ ] Create `fe/gherkin/authentication/register.feature` (registration form, validation,
+  success redirect)
+- [ ] Create `fe/gherkin/authentication/login.feature` (login form, error messages, success
+  redirect)
+- [ ] Create `fe/gherkin/authentication/profile.feature` (/profile shows name, email, avatar)
+- [ ] Create `fe/gherkin/authentication/route-protection.feature` (unauthenticated access to
+  /profile redirects to /login)
 - [ ] Verify all FE features follow demo conventions (UI-semantic, user story blocks)
 
 ## Phase 2: OpenAPI Contract
@@ -51,13 +67,19 @@ follow-up plan.
 ### Milestone 2.1: Contract Spec
 
 - [ ] Create `specs/apps/organiclever/contracts/README.md`
-- [ ] Create `specs/apps/organiclever/contracts/openapi.yaml` (root spec, 2 endpoints)
+- [ ] Create `specs/apps/organiclever/contracts/openapi.yaml` (root spec, hello + health + auth)
 - [ ] Create `specs/apps/organiclever/contracts/paths/hello.yaml`
 - [ ] Create `specs/apps/organiclever/contracts/paths/health.yaml`
+- [ ] Create `specs/apps/organiclever/contracts/paths/auth.yaml` (google, register, login,
+  refresh, me)
 - [ ] Create `specs/apps/organiclever/contracts/schemas/hello.yaml` (HelloResponse)
 - [ ] Create `specs/apps/organiclever/contracts/schemas/health.yaml` (HealthResponse)
+- [ ] Create `specs/apps/organiclever/contracts/schemas/auth.yaml` (AuthGoogleRequest,
+  RegisterRequest, LoginRequest, AuthTokenResponse, RefreshRequest)
+- [ ] Create `specs/apps/organiclever/contracts/schemas/user.yaml` (UserProfile)
 - [ ] Create `specs/apps/organiclever/contracts/schemas/error.yaml` (ErrorResponse)
 - [ ] Create `specs/apps/organiclever/contracts/examples/hello-response.yaml`
+- [ ] Create `specs/apps/organiclever/contracts/examples/auth-login.yaml`
 - [ ] Create `specs/apps/organiclever/contracts/.spectral.yaml` (camelCase rules)
 
 ### Milestone 2.2: Contract Nx Project
@@ -80,21 +102,38 @@ follow-up plan.
 
 ### Milestone 3.2: Application Code
 
-- [ ] Create `src/OrganicLeverBe/Program.fs` (routing: /api/v1/hello, /api/v1/health)
-- [ ] Create `src/OrganicLeverBe/Domain/Types.fs` (HelloResponse, HealthResponse)
+- [ ] Create `src/OrganicLeverBe/Program.fs` (routing: hello, health, auth endpoints)
+- [ ] Create `src/OrganicLeverBe/Domain/Types.fs` (HelloResponse, HealthResponse, User,
+  DomainError, AuthTokens)
 - [ ] Create `src/OrganicLeverBe/Handlers/HelloHandler.fs` (returns `{"message":"world"}`)
 - [ ] Create `src/OrganicLeverBe/Handlers/HealthHandler.fs` (returns `{"status":"UP"}`)
+- [ ] Create `src/OrganicLeverBe/Handlers/AuthHandler.fs` (google login, register, login,
+  refresh, me)
 - [ ] Create `src/OrganicLeverBe/Handlers/TestHandler.fs` (test-only: reset-db)
-- [ ] Create `src/OrganicLeverBe/Infrastructure/AppDbContext.fs` (minimal EF Core)
+- [ ] Create `src/OrganicLeverBe/Auth/JwtService.fs` (access token 15min + refresh token 7d)
+- [ ] Create `src/OrganicLeverBe/Auth/JwtMiddleware.fs` (requireAuth handler)
+- [ ] Create `src/OrganicLeverBe/Auth/GoogleAuthService.fs` (verify Google ID token)
+- [ ] Add NuGet packages: `System.IdentityModel.Tokens.Jwt`, `BCrypt.Net-Next`,
+  `Google.Apis.Auth`
+- [ ] Create `src/OrganicLeverBe/Infrastructure/AppDbContext.fs` (EF Core DbContext,
+  PostgreSQL + SQLite, snake_case naming)
+- [ ] Create `src/OrganicLeverBe/Infrastructure/Migrator.fs` (DbUp runner using embedded SQL)
 - [ ] Create `src/OrganicLeverBe/Contracts/ContractWrappers.fs` (CLIMutable DTOs)
-- [ ] Create `db/migrations/001-initial-schema.sql` (minimal)
-- [ ] Create `docker-compose.integration.yml` (PostgreSQL)
+- [ ] Add NuGet packages: `Npgsql.EntityFrameworkCore.PostgreSQL` 10.x,
+  `EFCore.NamingConventions` 10.x, `dbup-core` 5.x, `dbup-postgresql` 5.x
+- [ ] Add `<EmbeddedResource Include="db/migrations/*.sql" />` to `.fsproj`
+- [ ] Create `db/migrations/001-initial-schema.sql` (users, refresh_tokens, hello_config tables)
+- [ ] Wire DbUp migration call in `Program.fs` startup (before `app.Run()`)
+- [ ] Create `docker-compose.integration.yml` (PostgreSQL 17 + test runner)
 - [ ] Create `Dockerfile.integration`
+- [ ] Verify DbUp migrations run on startup against PostgreSQL
+- [ ] Verify unit tests use SQLite in-memory via `EnsureCreated()` (no DbUp)
 
 ### Milestone 3.3: Backend Testing
 
 - [ ] Create test project `tests/OrganicLeverBe.Tests/`
-- [ ] Create unit tests consuming `be/gherkin/hello/` and `be/gherkin/health/` specs
+- [ ] Create unit tests consuming `be/gherkin/hello/`, `be/gherkin/health/`, and
+  `be/gherkin/authentication/` specs
 - [ ] Create integration tests with real PostgreSQL
 - [ ] Verify `nx run organiclever-be:test:quick` passes with 90% coverage
 - [ ] Verify `nx run organiclever-be:lint` passes
@@ -122,6 +161,7 @@ follow-up plan.
 - [ ] Create `src/services/errors.ts` (NetworkError, ApiError)
 - [ ] Create `src/services/backend-client.ts` (server-side HTTP client to organiclever-be)
 - [ ] Create `src/services/hello-service.ts` (HelloService tag + implementation)
+- [ ] Create `src/services/auth-service.ts` (Google login, register, login, refresh, me)
 - [ ] Create `src/layers/backend-client-live.ts` (live HTTP layer, server-side only)
 - [ ] Create `src/layers/backend-client-test.ts` (mock layer for tests)
 
@@ -130,8 +170,17 @@ follow-up plan.
 - [ ] Create `src/app/layout.tsx` (root layout)
 - [ ] Create `src/app/page.tsx` (minimal root page)
 - [ ] Create `src/app/hello/page.tsx` (Server Component: fetches from backend via Effect service)
-- [ ] Create `src/app/api/hello/route.ts` (Route Handler: proxies to organiclever-be for
-  any client-side consumers)
+- [ ] Create `src/app/login/page.tsx` ("Sign in with Google" button + email/password form)
+- [ ] Create `src/app/register/page.tsx` (email/password registration form)
+- [ ] Create `src/app/profile/page.tsx` (protected: user name, email, avatar)
+- [ ] Create `src/app/api/hello/route.ts` (Route Handler: proxies to organiclever-be)
+- [ ] Create `src/app/api/auth/google/route.ts` (proxies Google token to backend)
+- [ ] Create `src/app/api/auth/register/route.ts` (proxies register to backend)
+- [ ] Create `src/app/api/auth/login/route.ts` (proxies login to backend)
+- [ ] Create `src/app/api/auth/refresh/route.ts` (proxies refresh to backend)
+- [ ] Create `src/app/api/auth/me/route.ts` (proxies me to backend)
+- [ ] Implement JWT storage in httpOnly cookie via BFF proxy
+- [ ] Implement automatic token refresh in BFF proxy layer
 - [ ] Create `src/app/globals.css`
 - [ ] Create `src/app/metadata.ts`
 - [ ] Add `ORGANICLEVER_BE_URL` server-only environment variable (no `NEXT_PUBLIC_` prefix)

@@ -11,7 +11,7 @@ C4Container
     Container_Boundary(organiclever, "OrganicLever System") {
         Container(spa, "organiclever-fe", "Next.js 16, TypeScript, Effect TS", "/hello page")
         Container(api, "organiclever-be", "F#, Giraffe", "GET /api/v1/hello, GET /api/v1/health")
-        ContainerDb(db, "PostgreSQL", "Database", "Future use")
+        ContainerDb(db, "PostgreSQL", "Database", "Users, hello config")
     }
 
     Rel(user, spa, "Visits /hello", "HTTPS")
@@ -36,14 +36,25 @@ specs/apps/organiclever/
 │       ├── README.md
 │       ├── health/
 │       │   └── health-check.feature
-│       └── hello/
-│           └── hello-endpoint.feature
+│       ├── hello/
+│       │   └── hello-endpoint.feature
+│       └── authentication/
+│           ├── google-login.feature
+│           ├── register.feature
+│           ├── login.feature
+│           └── me.feature
 ├── fe/
 │   ├── README.md
 │   └── gherkin/
 │       ├── README.md
-│       └── hello/
-│           └── hello-page.feature
+│       ├── hello/
+│       │   └── hello-page.feature
+│       └── authentication/
+│           ├── google-login.feature
+│           ├── register.feature
+│           ├── login.feature
+│           ├── profile.feature
+│           └── route-protection.feature
 └── contracts/
     ├── README.md
     ├── openapi.yaml
@@ -51,21 +62,26 @@ specs/apps/organiclever/
     ├── project.json             # Nx project: organiclever-contracts
     ├── paths/
     │   ├── hello.yaml
-    │   └── health.yaml
+    │   ├── health.yaml
+    │   └── auth.yaml
     ├── schemas/
     │   ├── hello.yaml
     │   ├── health.yaml
+    │   ├── auth.yaml
+    │   ├── user.yaml
     │   └── error.yaml
     └── examples/
-        └── hello-response.yaml
+        ├── hello-response.yaml
+        └── auth-login.yaml
 ```
 
 ### Domain Table
 
-| Domain | BE Features | FE Features | Description              |
-| ------ | ----------- | ----------- | ------------------------ |
-| health | 1           | --          | Service health status    |
-| hello  | 1           | 1           | Hello world endpoint/page |
+| Domain         | BE Features | FE Features | Description                          |
+| -------------- | ----------- | ----------- | ------------------------------------ |
+| health         | 1           | --          | Service health status                |
+| hello          | 1           | 1           | Hello world endpoint/page            |
+| authentication | 4           | 5           | Google login, register, login, profile |
 
 ### Spec Migration Map
 
@@ -73,9 +89,9 @@ specs/apps/organiclever/
 | ---------------------------------------------------- | ---------------------------------------------------- |
 | `specs/apps/organiclever-be/health/health-check.feature`    | Move to `be/gherkin/health/health-check.feature`     |
 | `specs/apps/organiclever-be/hello/hello-endpoint.feature`   | Move to `be/gherkin/hello/hello-endpoint.feature`    |
-| `specs/apps/organiclever-be/auth/*.feature`                 | Remove (out of scope for initial version)            |
+| `specs/apps/organiclever-be/auth/*.feature`                 | Rewrite as `be/gherkin/authentication/` (new Google OAuth + register/login) |
 | `specs/apps/organiclever-web/landing/*.feature`             | Remove (out of scope)                                |
-| `specs/apps/organiclever-web/auth/*.feature`                | Remove (out of scope)                                |
+| `specs/apps/organiclever-web/auth/*.feature`                | Rewrite as `fe/gherkin/authentication/` (new Google OAuth + register/login/profile) |
 | `specs/apps/organiclever-web/dashboard/*.feature`           | Remove (out of scope)                                |
 | `specs/apps/organiclever-web/members/*.feature`             | Remove (out of scope)                                |
 | (new)                                                       | Create `fe/gherkin/hello/hello-page.feature`         |
@@ -91,12 +107,18 @@ apps/organiclever-be/
 │       ├── Program.fs                    # Entry point, routing, DI
 │       ├── Domain/
 │       │   └── Types.fs                  # Core types (HelloResponse, HealthResponse)
+│       ├── Auth/
+│       │   ├── JwtService.fs             # JWT token generation/validation
+│       │   ├── JwtMiddleware.fs          # Bearer token auth middleware
+│       │   └── GoogleAuthService.fs      # Google ID token verification
 │       ├── Handlers/
 │       │   ├── HelloHandler.fs           # GET /api/v1/hello -> {"message":"world"}
 │       │   ├── HealthHandler.fs          # GET /api/v1/health -> {"status":"UP"}
+│       │   ├── AuthHandler.fs            # POST /auth/google, POST /auth/register, POST /auth/login, GET /auth/me
 │       │   └── TestHandler.fs            # Test-only utilities (reset-db)
 │       ├── Infrastructure/
-│       │   └── AppDbContext.fs            # EF Core DbContext (minimal, for future use)
+│       │   ├── AppDbContext.fs            # EF Core DbContext (PostgreSQL + SQLite for tests)
+│       │   └── Migrator.fs               # DbUp migration runner
 │       └── Contracts/
 │           └── ContractWrappers.fs       # CLIMutable response DTOs
 ├── tests/
@@ -128,6 +150,13 @@ let webApp : HttpHandler =
         subRoute "/api/v1" (choose [
             GET >=> route "/health" >=> HealthHandler.check
             GET >=> route "/hello" >=> HelloHandler.hello
+            subRoute "/auth" (choose [
+                POST >=> route "/google" >=> AuthHandler.googleLogin
+                POST >=> route "/register" >=> AuthHandler.register
+                POST >=> route "/login" >=> AuthHandler.login
+                POST >=> route "/refresh" >=> AuthHandler.refresh
+                GET >=> route "/me" >=> requireAuth >=> AuthHandler.me
+            ])
         ])
     ]
 ```
@@ -144,6 +173,79 @@ let hello : HttpHandler =
     fun (next: HttpFunc) (ctx: HttpContext) ->
         json {| message = "world" |} next ctx
 ```
+
+### Database & Migrations
+
+Following `demo-be-fsharp-giraffe` exactly:
+
+- **ORM**: EF Core 10.x with `Npgsql.EntityFrameworkCore.PostgreSQL`
+- **Migrations**: [DbUp](https://dbup.readthedocs.io/) (MIT license) with `dbup-postgresql`
+- **Migration files**: `src/OrganicLeverBe/db/migrations/*.sql` (embedded resources)
+- **Naming convention**: `NNN-description.sql` (e.g., `001-initial-schema.sql`)
+- **Startup behavior**: `Program.fs` runs DbUp against `DATABASE_URL` on startup; idempotent
+  (skips already-applied scripts)
+- **Test strategy**: Unit tests use SQLite in-memory via `EnsureCreated()` (DbUp does not support
+  SQLite); integration tests use real PostgreSQL via Docker Compose and run DbUp normally
+
+```fsharp
+// Infrastructure/Migrator.fs (simplified)
+let runMigrations (connectionString: string) =
+    DeployChanges.To
+        .PostgresqlDatabase(connectionString)
+        .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
+        .LogToConsole()
+        .Build()
+        .PerformUpgrade()
+```
+
+```sql
+-- db/migrations/001-initial-schema.sql
+CREATE TABLE IF NOT EXISTS users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email VARCHAR(255) NOT NULL UNIQUE,
+    name VARCHAR(200) NOT NULL,
+    avatar_url VARCHAR(500),
+    google_id VARCHAR(100) UNIQUE,
+    password_hash VARCHAR(255),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS refresh_tokens (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    token_hash VARCHAR(255) NOT NULL,
+    expires_at TIMESTAMPTZ NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS hello_config (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    message VARCHAR(100) NOT NULL DEFAULT 'world',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+INSERT INTO hello_config (message) VALUES ('world')
+ON CONFLICT DO NOTHING;
+```
+
+**NuGet packages** (in `OrganicLeverBe.fsproj`):
+
+```xml
+<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.*" />
+<PackageReference Include="EFCore.NamingConventions" Version="10.*" />
+<PackageReference Include="dbup-core" Version="5.*" />
+<PackageReference Include="dbup-postgresql" Version="5.*" />
+```
+
+**Environment variables**:
+
+| Variable                | Required       | Description                                        |
+| ----------------------- | -------------- | -------------------------------------------------- |
+| `DATABASE_URL`          | Yes (non-test) | PostgreSQL connection string                       |
+| `APP_JWT_SECRET`        | No             | JWT signing secret (dev default provided)          |
+| `GOOGLE_CLIENT_ID`      | Yes            | Google OAuth Client ID (from Cloud Console)        |
+| `GOOGLE_CLIENT_SECRET`  | Yes            | Google OAuth Client Secret (from Cloud Console)    |
 
 ### Nx Targets (project.json)
 
@@ -193,18 +295,34 @@ apps/organiclever-fe/
 ├── src/
 │   ├── app/
 │   │   ├── api/
-│   │   │   └── hello/
-│   │   │       └── route.ts              # Route Handler: proxies to organiclever-be
+│   │   │   ├── hello/
+│   │   │   │   └── route.ts              # Route Handler: proxies to organiclever-be
+│   │   │   └── auth/
+│   │   │       ├── google/
+│   │   │       │   └── route.ts          # Proxies Google token to backend
+│   │   │       ├── register/
+│   │   │       │   └── route.ts          # Proxies register to backend
+│   │   │       ├── login/
+│   │   │       │   └── route.ts          # Proxies login to backend
+│   │   │       └── me/
+│   │   │           └── route.ts          # Proxies /auth/me to backend
 │   │   ├── hello/
 │   │   │   └── page.tsx                  # /hello page (Server Component)
+│   │   ├── login/
+│   │   │   └── page.tsx                  # /login page (Google + email/password)
+│   │   ├── register/
+│   │   │   └── page.tsx                  # /register page
+│   │   ├── profile/
+│   │   │   └── page.tsx                  # /profile page (protected)
 │   │   ├── layout.tsx
-│   │   ├── page.tsx                      # Root redirect or minimal landing
+│   │   ├── page.tsx                      # Root page
 │   │   ├── globals.css
 │   │   └── metadata.ts
 │   ├── services/
 │   │   ├── errors.ts                     # Effect TS error types
 │   │   ├── backend-client.ts             # Server-side HTTP client to organiclever-be (Effect)
-│   │   └── hello-service.ts              # Hello service (server-side, calls backend)
+│   │   ├── hello-service.ts              # Hello service (server-side, calls backend)
+│   │   └── auth-service.ts              # Auth service (Google login, register, login, me)
 │   ├── layers/
 │   │   ├── backend-client-live.ts        # Live HTTP layer (server-side only)
 │   │   └── backend-client-test.ts        # Mock layer for tests
@@ -363,7 +481,11 @@ apps/organiclever-be-e2e/
 ├── features/                     # Generated by bddgen from specs
 ├── steps/                        # Step definitions
 │   ├── hello.steps.ts
-│   └── health.steps.ts
+│   ├── health.steps.ts
+│   ├── google-login.steps.ts
+│   ├── register.steps.ts
+│   ├── login.steps.ts
+│   └── me.steps.ts
 ├── playwright.config.ts
 ├── project.json
 ├── package.json
@@ -381,7 +503,12 @@ Tags: `type:e2e`, `platform:playwright`, `lang:ts`, `domain:organiclever-be`
 apps/organiclever-fe-e2e/
 ├── features/                     # Generated by bddgen from specs
 ├── steps/                        # Step definitions
-│   └── hello-page.steps.ts
+│   ├── hello-page.steps.ts
+│   ├── google-login.steps.ts
+│   ├── register.steps.ts
+│   ├── login.steps.ts
+│   ├── profile.steps.ts
+│   └── route-protection.steps.ts
 ├── playwright.config.ts
 ├── project.json
 ├── package.json
@@ -445,6 +572,16 @@ paths:
     $ref: "./paths/hello.yaml#/hello"
   /api/v1/health:
     $ref: "./paths/health.yaml#/health"
+  /api/v1/auth/google:
+    $ref: "./paths/auth.yaml#/googleLogin"
+  /api/v1/auth/register:
+    $ref: "./paths/auth.yaml#/register"
+  /api/v1/auth/login:
+    $ref: "./paths/auth.yaml#/login"
+  /api/v1/auth/refresh:
+    $ref: "./paths/auth.yaml#/refresh"
+  /api/v1/auth/me:
+    $ref: "./paths/auth.yaml#/me"
 ```
 
 ```yaml
@@ -481,7 +618,8 @@ HelloResponse:
 | ------------------ | ---------------------------- | ------- | ---------------------------- |
 | Backend runtime    | .NET                         | 10.0    | LTS                          |
 | Backend web        | Giraffe                      | 7.x     | Functional HttpHandler       |
-| Backend ORM        | EF Core (Npgsql)             | 10.x    | PostgreSQL (future use)      |
+| Backend ORM        | EF Core (Npgsql)             | 10.x    | PostgreSQL provider          |
+| Backend migrations | DbUp (dbup-postgresql)       | 5.x     | SQL file migrations          |
 | Backend JSON       | FSharp.SystemTextJson         | Latest  | F# type serialization        |
 | Backend lint       | Fantomas, FSharpLint         | Latest  | Formatting + style           |
 | Backend coverage   | AltCover                     | Latest  | 90% line coverage            |
