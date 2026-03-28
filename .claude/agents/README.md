@@ -19,6 +19,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **specs-maker** - Spec area scaffolding and feature file creation
 - **social-linkedin-post-maker** - LinkedIn content creation
 - **agent-maker** - Agent definition creation
+- **swe-ui-maker** - UI component creation
 
 ### 🟩 Validation (Checkers)
 
@@ -39,6 +40,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **repo-workflow-checker** - Workflow documentation validation
 - **specs-checker** - Gherkin/BDD specs directory structural and content validation
 - **swe-code-checker** - Validates projects against platform coding standards (validates application code rather than documentation)
+- **swe-ui-checker** - UI component quality validation
 
 ### 🟨 Fixing (Fixers)
 
@@ -57,6 +59,7 @@ This directory contains specialized AI agents for the open-sharia-enterprise pro
 - **repo-governance-fixer** - Fix governance compliance issues
 - **repo-workflow-fixer** - Fix workflow documentation
 - **specs-fixer** - Fix specs structural and accuracy issues
+- **swe-ui-fixer** - Apply validated UI component fixes
 
 ### 🟪 Operations
 
