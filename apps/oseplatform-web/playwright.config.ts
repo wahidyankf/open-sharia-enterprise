@@ -7,8 +7,8 @@ export default defineConfig({
     baseURL: "http://localhost:3100",
   },
   projects: [
-    { name: "mobile", use: { ...devices["iPhone 14"] } },
-    { name: "tablet", use: { ...devices["iPad Mini"] } },
+    { name: "mobile", use: { ...devices["Pixel 7"] } },
+    { name: "tablet", use: { ...devices["Galaxy Tab S4"] } },
     { name: "desktop", use: { viewport: { width: 1440, height: 900 } } },
   ],
 });
