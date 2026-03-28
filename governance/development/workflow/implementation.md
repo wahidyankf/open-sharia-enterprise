@@ -13,14 +13,14 @@ tags:
   - goal-driven
   - test-driven
 created: 2025-12-15
-updated: 2026-03-09
+updated: 2026-03-28
 ---
 
 # Implementation Workflow
 
 **Make it work, make it right, make it fast** - a three-stage development workflow that prioritizes functionality first, quality second, and optimization last (only when proven necessary).
 
-## What
+## Workflow Overview
 
 The implementation workflow follows three sequential stages:
 
@@ -35,14 +35,12 @@ Additionally, this workflow includes two cross-cutting practices:
 - **Surgical Changes** - Touch only what you must when editing existing code
 - **Goal-Driven Execution** - Define success criteria, loop until verified
 
-## Why
-
 ## Principles Implemented/Respected
 
 This workflow respects three core principles:
 
 - **[Simplicity Over Complexity](../../principles/general/simplicity-over-complexity.md)** - Start with the simplest solution that works
-- **[YAGNI (You Aren't Gonna Need It)](../../principles/general/simplicity-over-complexity.md#yagni-principles)** - Don't optimize prematurely
+- **[YAGNI (You Aren't Gonna Need It)](../../principles/general/simplicity-over-complexity.md#kiss-and-yagni-principles)** - Don't optimize prematurely
 - **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)** - Layer refinement gradually
 
 ## Conventions Implemented/Respected
@@ -372,7 +370,7 @@ Before committing:
 - [ ] No refactoring of unrelated code
 - [ ] Existing style matched consistently
 - [ ] Only orphans created BY YOUR changes were removed
-- [ ] Pre-existing issues were mentioned, not silently fixed
+- [ ] Pre-existing errors were fixed at root cause (see [Proactive Preexisting Error Resolution](../practice/proactive-preexisting-error-resolution.md)), or if scope is too large, a follow-up plan was created in `plans/in-progress/` and execution has begun
 
 ### Relationship to Principles
 
@@ -387,7 +385,7 @@ Agents must practice surgical precision by:
 1. **Scoping changes** to exactly what was requested
 2. **Avoiding refactoring** unrelated code
 3. **Matching existing patterns** rather than imposing preferences
-4. **Mentioning (not fixing)** unrelated issues
+4. **Fixing preexisting errors at root cause** — not ignoring them, not patching around them, not mentioning without action. See [Proactive Preexisting Error Resolution](../practice/proactive-preexisting-error-resolution.md) for scope judgment and full requirements.
 5. **Cleaning up only** what their changes made unused
 
 This practice is especially important in large codebases where unintended changes can introduce bugs or merge conflicts.
@@ -743,7 +741,7 @@ FAIL: **Problem**: Guessing which parts are slow.
 
 **Why it's bad**: Optimizing the wrong thing. Real bottleneck remains unoptimized.
 
-## PASS: Best Practices
+## Best Practices
 
 ### 1. Always Start Simple
 
@@ -852,7 +850,7 @@ console.timeEnd("calculateOrderTotal");
 
 ## When to Apply
 
-### PASS: Use This Workflow For
+### Apply This Workflow For
 
 **New feature development**:
 
@@ -878,7 +876,7 @@ console.timeEnd("calculateOrderTotal");
 3. Make it fast: Only if measurements show need
 ```
 
-### FAIL: Exceptions to the Workflow
+### Exceptions to the Workflow
 
 **Security fixes**: Priority is "make it secure" (right), not "make it work"
 
@@ -943,4 +941,4 @@ function processVideoFrame(frame: Frame): ProcessedFrame {
 
 ---
 
-**Last Updated**: 2026-03-09
+**Last Updated**: 2026-03-28

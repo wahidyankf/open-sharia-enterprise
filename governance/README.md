@@ -12,7 +12,7 @@ tags:
   - development
   - workflows
 created: 2026-01-04
-updated: 2026-03-15
+updated: 2026-03-28
 ---
 
 # Rules - Repository Governance
@@ -91,7 +91,7 @@ graph TD
 #### Layer 3: Development (HOW - Software Practices)
 
 - **[Development](./development/README.md)** - Software development practices and workflows
-  - Practices organized across categories (workflow, quality, pattern, agents, infra, hugo)
+  - Practices organized across categories (workflow, quality, pattern, practice, agents, infra, frontend, hugo)
   - Implements principles in concrete software standards
   - Each practice includes "Principles Implemented/Respected" AND "Conventions Implemented/Respected" sections
   - Enforced by AI agents and automation (git hooks, build tools)
@@ -216,4 +216,4 @@ When changing a layer, all lower layers may need updates. Use `repo-governance-m
 
 ---
 
-**Last Updated**: 2026-03-15
+**Last Updated**: 2026-03-28

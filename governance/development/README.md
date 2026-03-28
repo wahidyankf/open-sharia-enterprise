@@ -123,6 +123,10 @@ Development practices in this directory fall into several categories:
 - [Maker-Checker-Fixer Pattern Convention](./pattern/maker-checker-fixer.md) - Three-stage quality workflow for content creation and validation. Covers agent roles, workflow stages with user review gates, and confidence level integration
 - [Functional Programming Practices](./pattern/functional-programming.md) - Guidelines for applying functional programming principles in TypeScript/JavaScript. Covers immutability patterns, pure functions, and function composition
 
+### Practice Documentation
+
+- [Proactive Preexisting Error Resolution](./practice/proactive-preexisting-error-resolution.md) - When encountering preexisting errors, bugs, broken tests, or incorrect configurations during any work, fix the root cause rather than ignoring, monkey-patching, or passively mentioning the problem. Covers the three anti-patterns (acting ignorant, monkey-patching, passive mentioning), scope judgment (inline/separate commit/plan), and full agent requirements
+
 ### Agent Standards Documentation
 
 - [AI Agents Convention](./agents/ai-agents.md) - Standards for creating and managing AI agents in the `.claude/agents/` directory (primary source of truth), synced to `.opencode/agent/`. Covers agent naming, file structure, frontmatter requirements, tool access patterns, model selection, and size limits
@@ -157,7 +161,7 @@ Each primary practice document in this directory has companion files providing p
 - **anti-patterns.md** - Common mistakes to avoid (with examples and corrections)
 - **best-practices.md** - Recommended patterns and techniques
 
-These companion files exist in each subdirectory: `workflow/`, `quality/`, `pattern/`, `agents/`, `infra/`, and `hugo/`. The `frontend/` directory embeds anti-patterns and best practices inline within its convention documents.
+These companion files exist in each subdirectory: `workflow/`, `quality/`, `pattern/`, `agents/`, `infra/`, and `hugo/`. The `frontend/` directory embeds anti-patterns and best practices inline within its convention documents. The `practice/` subdirectory currently contains only one document; companion files will be added as the category grows.
 
 ## 🔗 Related Documentation
 

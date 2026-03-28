@@ -342,7 +342,7 @@ All work follows foundational principles from `governance/principles/` (key prin
 
 - **Deliberate Problem-Solving**: Understand before acting; prefer reversible decisions
 - **Simplicity Over Complexity**: Minimum viable abstraction
-- **Root Cause Orientation**: Fix root causes, not symptoms; minimal impact; senior engineer standard
+- **Root Cause Orientation**: Fix root causes, not symptoms; minimal impact; senior engineer standard; proactively fix preexisting errors encountered during work (do not mention and defer)
 - **Accessibility First**: WCAG AA compliance, color-blind friendly
 - **Documentation First**: Documentation is mandatory, not optional
 - **No Time Estimates**: Never give time estimates; focus on outcomes

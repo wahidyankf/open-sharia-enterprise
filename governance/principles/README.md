@@ -9,7 +9,7 @@ tags:
   - philosophy
   - index
 created: 2025-12-15
-updated: 2026-03-09
+updated: 2026-03-28
 ---
 
 # Core Principles
@@ -128,7 +128,8 @@ Find root causes and fix them properly. No temporary patches. Changes touch only
 - Diagnose before acting - understand the actual cause before writing a fix
 - Minimal impact - every changed line traces directly to the task
 - Senior engineer test - ask "would a senior engineer approve this?" before declaring done
-- Mention unrelated issues found during work; do not silently fix them
+- Mention unrelated code improvements (style, refactoring) found during work; do not silently apply them
+- Proactively fix preexisting errors encountered during work — do not mention and defer
 
 ### Content Principles
 
@@ -408,4 +409,4 @@ Check that changes:
 
 ---
 
-**Last Updated**: 2026-03-09
+**Last Updated**: 2026-03-28
