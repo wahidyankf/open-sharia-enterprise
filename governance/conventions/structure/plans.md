@@ -328,6 +328,41 @@ Files in `plans/` folder should use **Mermaid diagrams** as the primary format (
 
 For complete diagram standards, see [Diagram and Schema Convention](../formatting/diagrams.md).
 
+## Relative Link Paths in Plan Files
+
+Plan files sit three directory levels deep from the repository root: `plans/` → `in-progress/` (or `backlog/` or `done/`) → `YYYY-MM-DD__identifier/`. Any markdown file inside a plan folder must use `../../../` to reach root-level directories such as `governance/`, `docs/`, `apps/`, or `libs/`.
+
+### Correct Path Depth
+
+| Target from a plan file                             | Correct prefix    |
+| --------------------------------------------------- | ----------------- |
+| `governance/conventions/structure/plans.md`         | `../../../`       |
+| `docs/how-to/hoto__organize-work.md`                | `../../../`       |
+| `apps/demo-be-golang-gin/README.md`                 | `../../../`       |
+| Sibling file in the same plan folder                | `./`              |
+
+### Example
+
+A plan at `plans/in-progress/2026-03-27__my-feature/README.md` links to the AI Agents Convention:
+
+```markdown
+<!-- PASS: Three levels up to reach repo root, then down into governance/ -->
+
+[AI Agents Convention](../../../governance/development/agents/ai-agents.md)
+```
+
+```markdown
+<!-- FAIL: Only two levels up — resolves to plans/governance/ (does not exist) -->
+
+[AI Agents Convention](../../governance/development/agents/ai-agents.md)
+```
+
+### Why Three Levels
+
+The plan subfolder adds a third level of nesting that `docs/` files at two levels deep (e.g., `governance/conventions/structure/plans.md`) do not have. Forgetting this extra level produces a path that points into the `plans/` directory tree instead of the repository root.
+
+Use the verification tip from the [Linking Convention](../formatting/linking.md#verification-tip): start at the plan file's location, count each `../` as one directory up, and confirm you reach the repo root before descending into the target directory.
+
 ## Related Documentation
 
 **Decision Guides**:
@@ -449,4 +484,4 @@ Quick ideas and todos that haven't been formalized into plans yet.
 
 ---
 
-**Last Updated**: 2026-03-19
+**Last Updated**: 2026-03-27

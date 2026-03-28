@@ -1821,6 +1821,31 @@ If information cannot be verified: (1) State the limitation explicitly, (2) Prov
 - **Validation agents (repo-governance-checker)**: Read all files before validating, provide specific line numbers, verify links and frontmatter
 - **Development agents**: Read test files, verify command outputs, check error messages, confirm tool availability
 
+### Git Worktree Awareness
+
+Agents spawned via the Agent tool (subagents) run with a working directory that may be a git worktree, not the main checkout. For example, the active worktree may be at `/Users/wkf/ose-projects/open-sharia-enterprise/.claude/worktrees/repo/` while the main checkout is at `/Users/wkf/ose-projects/open-sharia-enterprise/`. Reading a file using an absolute path from the main checkout returns stale content from the wrong tree and causes false verification failures.
+
+**Rules for file access in agents**:
+
+1. **Prefer relative paths** — Use paths relative to the current working directory when reading or writing files. This resolves correctly regardless of which worktree the agent runs in.
+2. **Never hardcode main-checkout absolute paths** — Do not construct absolute paths by prepending the known main-checkout root (e.g., `/Users/wkf/ose-projects/open-sharia-enterprise/governance/...`). These paths bypass the active worktree and return main-tree content.
+3. **Read files fresh before verifying** — When a checker or fixer agent verifies that a fix was applied, it must read the file again from the current working directory. It must not rely on a previously cached read from a different path.
+4. **Confirm the working directory when uncertain** — If an agent cannot determine which worktree it runs in, it should use `Bash` (`pwd`) to confirm the working directory before constructing any path.
+
+**Example**:
+
+```markdown
+<!-- PASS: Relative path — resolves correctly in any worktree -->
+
+Read: governance/development/agents/ai-agents.md
+
+<!-- FAIL: Hardcoded main-checkout path — reads stale content when run in a worktree -->
+
+Read: /Users/wkf/ose-projects/open-sharia-enterprise/governance/development/agents/ai-agents.md
+```
+
+**Consequence of violation**: A checker agent reads a file from the main checkout after a fixer has already corrected it in the active worktree. The checker reports the issue as "not fixed" because it compared against stale content, producing a false negative and blocking the workflow.
+
 ### Verification Checklist for Agents
 
 Before providing information, verify:
@@ -1835,6 +1860,7 @@ Before providing information, verify:
 - [ ] Have I cited sources with URLs and access dates?
 - [ ] If I cannot verify, have I stated this limitation clearly?
 - [ ] Have I provided steps for the user to verify themselves?
+- [ ] Am I reading files from the correct worktree (relative paths, not hardcoded main-checkout absolute paths)?
 
 ## Creating New Agents
 
@@ -2451,7 +2477,7 @@ See [Skills README](../../../.claude/skills/README.md) for complete catalog.
 
 ---
 
-**Last Updated**: 2026-03-09
+**Last Updated**: 2026-03-27
 
 ---
 
