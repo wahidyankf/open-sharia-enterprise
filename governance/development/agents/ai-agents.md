@@ -10,7 +10,7 @@ tags:
   - development
   - standards
 created: 2025-11-23
-updated: 2026-03-09
+updated: 2026-03-28
 ---
 
 # AI Agents Convention
@@ -1831,6 +1831,7 @@ Agents spawned via the Agent tool (subagents) run with a working directory that 
 2. **Never hardcode main-checkout absolute paths** — Do not construct absolute paths by prepending the known main-checkout root (e.g., `/Users/wkf/ose-projects/open-sharia-enterprise/governance/...`). These paths bypass the active worktree and return main-tree content.
 3. **Read files fresh before verifying** — When a checker or fixer agent verifies that a fix was applied, it must read the file again from the current working directory. It must not rely on a previously cached read from a different path.
 4. **Confirm the working directory when uncertain** — If an agent cannot determine which worktree it runs in, it should use `Bash` (`pwd`) to confirm the working directory before constructing any path.
+5. **Run `npm install` in the root worktree after creating a new worktree** — When an agent creates a worktree via `git worktree add` or the `EnterWorktree` tool, it must immediately run `npm install` in the root repository worktree. This keeps `node_modules/` consistent with `package-lock.json` and ensures Nx task caching, builds, tests, and linting function correctly across all worktrees. See [Worktree Setup](../workflow/worktree-setup.md) for the full rationale and procedure.
 
 **Example**:
 

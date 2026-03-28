@@ -104,6 +104,7 @@ Development practices in this directory fall into several categories:
 - [Trunk Based Development Convention](./workflow/trunk-based-development.md) - Git workflow using Trunk Based Development for continuous integration
 - [Commit Message Convention](./workflow/commit-messages.md) - Understanding Conventional Commits, commit granularity, and why we use them
 - [Reproducible Environments Convention](./workflow/reproducible-environments.md) - Practices for creating consistent, reproducible development and build environments. Covers runtime version management (Volta), dependency locking, environment configuration, and containerization
+- [Worktree Setup](./workflow/worktree-setup.md) - Practice for running `npm install` in the root repository worktree after creating a new git worktree. Keeps `node_modules/` consistent with `package-lock.json` and ensures Nx task caching, builds, and linting function correctly across all worktrees
 
 ### Quality Standards Documentation
 
