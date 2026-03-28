@@ -8,7 +8,7 @@ export default defineConfig({
     globals: true,
     environment: "jsdom",
     setupFiles: [path.resolve(__dirname, "vitest.setup.ts")],
-    include: ["src/**/*.test.{ts,tsx}"],
+    include: ["src/**/*.test.{ts,tsx}", "src/**/*.steps.{ts,tsx}"],
     coverage: {
       provider: "v8",
       reporter: ["text", "lcov"],

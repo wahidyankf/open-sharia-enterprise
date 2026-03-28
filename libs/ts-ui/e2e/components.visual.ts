@@ -19,19 +19,19 @@ test.describe("Button", () => {
   });
 
   test("destructive variant renders correctly", async ({ page }) => {
-    await loadStory(page, "feedback-button--destructive");
+    await loadStory(page, "feedback-button--variant-destructive");
     const screenshot = await page.screenshot();
     expect(screenshot).toMatchSnapshot("button-destructive.png");
   });
 
   test("outline variant renders correctly", async ({ page }) => {
-    await loadStory(page, "feedback-button--outline");
+    await loadStory(page, "feedback-button--variant-outline");
     const screenshot = await page.screenshot();
     expect(screenshot).toMatchSnapshot("button-outline.png");
   });
 
   test("ghost variant renders correctly", async ({ page }) => {
-    await loadStory(page, "feedback-button--ghost");
+    await loadStory(page, "feedback-button--variant-ghost");
     const screenshot = await page.screenshot();
     expect(screenshot).toMatchSnapshot("button-ghost.png");
   });

@@ -28,21 +28,9 @@ const SUPPORTED_UNITS = [
 ];
 const EXPENSE_TYPES = ["income", "expense"];
 
-const inputStyle: React.CSSProperties = {
-  width: "100%",
-  padding: "0.5rem 0.75rem",
-  border: "1px solid #ccc",
-  borderRadius: "4px",
-  fontSize: "0.9rem",
-  boxSizing: "border-box",
-};
+const inputClassName = "w-full px-3 py-2 border border-gray-400 rounded text-[0.9rem] box-border";
 
-const labelStyle: React.CSSProperties = {
-  display: "block",
-  marginBottom: "0.3rem",
-  fontWeight: "600",
-  fontSize: "0.85rem",
-};
+const labelClassName = "block mb-[0.3rem] font-semibold text-[0.85rem]";
 
 interface FormErrors {
   amount?: string;
@@ -132,69 +120,28 @@ export default function ExpensesPage() {
 
   return (
     <AppShell>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "1.5rem",
-        }}
-      >
-        <h1 style={{ margin: 0 }}>Expenses</h1>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="m-0">Expenses</h1>
         <button
           onClick={() => setShowForm((s) => !s)}
-          style={{
-            padding: "0.6rem 1.25rem",
-            backgroundColor: "#1a73e8",
-            color: "#fff",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontWeight: "600",
-          }}
+          className="cursor-pointer rounded border-none bg-blue-600 px-5 py-[0.6rem] font-semibold text-white"
         >
           {showForm ? "Cancel" : "New Expense"}
         </button>
       </div>
 
       {showForm && (
-        <div
-          style={{
-            backgroundColor: "#fff",
-            padding: "1.5rem",
-            borderRadius: "8px",
-            border: "1px solid #ddd",
-            marginBottom: "1.5rem",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-          }}
-        >
-          <h2 style={{ marginTop: 0 }}>New Expense</h2>
+        <div className="mb-6 rounded-lg border border-gray-300 bg-white p-6 shadow-md">
+          <h2 className="mt-0">New Expense</h2>
           {createError && (
-            <div
-              id="create-error"
-              role="alert"
-              style={{
-                backgroundColor: "#fdf2f2",
-                color: "#c0392b",
-                padding: "0.6rem 1rem",
-                borderRadius: "4px",
-                marginBottom: "1rem",
-              }}
-            >
+            <div id="create-error" role="alert" className="mb-4 rounded bg-red-50 px-4 py-[0.6rem] text-red-700">
               {createError}
             </div>
           )}
           <form onSubmit={handleCreate} noValidate aria-describedby={createError ? "create-error" : undefined}>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-                gap: "1rem",
-                marginBottom: "1rem",
-              }}
-            >
+            <div className="mb-4 grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4">
               <div>
-                <label htmlFor="amount" style={labelStyle}>
+                <label htmlFor="amount" className={labelClassName}>
                   Amount
                 </label>
                 <input
@@ -207,17 +154,17 @@ export default function ExpensesPage() {
                   aria-required="true"
                   aria-describedby={formErrors.amount ? "amount-error" : undefined}
                   aria-invalid={!!formErrors.amount}
-                  style={inputStyle}
+                  className={inputClassName}
                 />
                 {formErrors.amount && (
-                  <span id="amount-error" role="alert" style={{ color: "#c0392b", fontSize: "0.8rem" }}>
+                  <span id="amount-error" role="alert" className="text-[0.8rem] text-red-700">
                     {formErrors.amount}
                   </span>
                 )}
               </div>
 
               <div>
-                <label htmlFor="currency" style={labelStyle}>
+                <label htmlFor="currency" className={labelClassName}>
                   Currency
                 </label>
                 <input
@@ -227,7 +174,7 @@ export default function ExpensesPage() {
                   value={form.currency}
                   onChange={(e) => setForm({ ...form, currency: e.target.value })}
                   aria-required="true"
-                  style={inputStyle}
+                  className={inputClassName}
                 />
                 <datalist id="create-currency-list">
                   {SUPPORTED_CURRENCIES.map((c) => (
@@ -235,14 +182,14 @@ export default function ExpensesPage() {
                   ))}
                 </datalist>
                 {formErrors.currency && (
-                  <span role="alert" style={{ color: "#c0392b", fontSize: "0.8rem" }}>
+                  <span role="alert" className="text-[0.8rem] text-red-700">
                     {formErrors.currency}
                   </span>
                 )}
               </div>
 
               <div>
-                <label htmlFor="type" style={labelStyle}>
+                <label htmlFor="type" className={labelClassName}>
                   Type
                 </label>
                 <input
@@ -251,7 +198,7 @@ export default function ExpensesPage() {
                   list="create-type-list"
                   value={form.type}
                   onChange={(e) => setForm({ ...form, type: e.target.value as CreateExpenseRequest["type"] })}
-                  style={inputStyle}
+                  className={inputClassName}
                 />
                 <datalist id="create-type-list">
                   {EXPENSE_TYPES.map((t) => (
@@ -259,14 +206,14 @@ export default function ExpensesPage() {
                   ))}
                 </datalist>
                 {formErrors.type && (
-                  <span role="alert" style={{ color: "#c0392b", fontSize: "0.8rem" }}>
+                  <span role="alert" className="text-[0.8rem] text-red-700">
                     {formErrors.type}
                   </span>
                 )}
               </div>
 
               <div>
-                <label htmlFor="category" style={labelStyle}>
+                <label htmlFor="category" className={labelClassName}>
                   Category
                 </label>
                 <input
@@ -277,17 +224,17 @@ export default function ExpensesPage() {
                   aria-required="true"
                   aria-describedby={formErrors.category ? "category-error" : undefined}
                   aria-invalid={!!formErrors.category}
-                  style={inputStyle}
+                  className={inputClassName}
                 />
                 {formErrors.category && (
-                  <span id="category-error" role="alert" style={{ color: "#c0392b", fontSize: "0.8rem" }}>
+                  <span id="category-error" role="alert" className="text-[0.8rem] text-red-700">
                     {formErrors.category}
                   </span>
                 )}
               </div>
 
               <div>
-                <label htmlFor="date" style={labelStyle}>
+                <label htmlFor="date" className={labelClassName}>
                   Date
                 </label>
                 <input
@@ -296,12 +243,12 @@ export default function ExpensesPage() {
                   value={form.date}
                   onChange={(e) => setForm({ ...form, date: e.target.value })}
                   aria-required="true"
-                  style={inputStyle}
+                  className={inputClassName}
                 />
               </div>
 
               <div>
-                <label htmlFor="quantity" style={labelStyle}>
+                <label htmlFor="quantity" className={labelClassName}>
                   Quantity (optional)
                 </label>
                 <input
@@ -316,12 +263,12 @@ export default function ExpensesPage() {
                       quantity: e.target.value ? parseFloat(e.target.value) : undefined,
                     })
                   }
-                  style={inputStyle}
+                  className={inputClassName}
                 />
               </div>
 
               <div>
-                <label htmlFor="unit" style={labelStyle}>
+                <label htmlFor="unit" className={labelClassName}>
                   Unit (optional)
                 </label>
                 <input
@@ -330,7 +277,7 @@ export default function ExpensesPage() {
                   list="create-unit-list"
                   value={form.unit ?? ""}
                   onChange={(e) => setForm({ ...form, unit: e.target.value || undefined })}
-                  style={inputStyle}
+                  className={inputClassName}
                 />
                 <datalist id="create-unit-list">
                   {SUPPORTED_UNITS.map((u) => (
@@ -338,15 +285,15 @@ export default function ExpensesPage() {
                   ))}
                 </datalist>
                 {formErrors.unit && (
-                  <span role="alert" style={{ color: "#c0392b", fontSize: "0.8rem" }}>
+                  <span role="alert" className="text-[0.8rem] text-red-700">
                     {formErrors.unit}
                   </span>
                 )}
               </div>
             </div>
 
-            <div style={{ marginBottom: "1rem" }}>
-              <label htmlFor="description" style={labelStyle}>
+            <div className="mb-4">
+              <label htmlFor="description" className={labelClassName}>
                 Description
               </label>
               <input
@@ -357,10 +304,10 @@ export default function ExpensesPage() {
                 aria-required="true"
                 aria-describedby={formErrors.description ? "desc-error" : undefined}
                 aria-invalid={!!formErrors.description}
-                style={inputStyle}
+                className={inputClassName}
               />
               {formErrors.description && (
-                <span id="desc-error" role="alert" style={{ color: "#c0392b", fontSize: "0.8rem" }}>
+                <span id="desc-error" role="alert" className="text-[0.8rem] text-red-700">
                   {formErrors.description}
                 </span>
               )}
@@ -369,15 +316,9 @@ export default function ExpensesPage() {
             <button
               type="submit"
               disabled={createMutation.isPending}
-              style={{
-                padding: "0.6rem 1.25rem",
-                backgroundColor: "#1a73e8",
-                color: "#fff",
-                border: "none",
-                borderRadius: "4px",
-                cursor: createMutation.isPending ? "not-allowed" : "pointer",
-                fontWeight: "600",
-              }}
+              className={`rounded border-none bg-blue-600 px-5 py-[0.6rem] font-semibold text-white ${
+                createMutation.isPending ? "cursor-not-allowed" : "cursor-pointer"
+              }`}
             >
               {createMutation.isPending ? "Creating..." : "Create Expense"}
             </button>
@@ -387,7 +328,7 @@ export default function ExpensesPage() {
 
       {isLoading && <p>Loading expenses...</p>}
       {isError && (
-        <p role="alert" style={{ color: "#c0392b" }}>
+        <p role="alert" className="text-red-700">
           Failed to load expenses.
         </p>
       )}
@@ -397,54 +338,24 @@ export default function ExpensesPage() {
           role="alertdialog"
           aria-modal="true"
           aria-labelledby="delete-dialog-title"
-          style={{
-            position: "fixed",
-            inset: 0,
-            backgroundColor: "rgba(0,0,0,0.4)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 300,
-          }}
+          className="fixed inset-0 z-[300] flex items-center justify-center bg-black/40"
         >
-          <div
-            style={{
-              backgroundColor: "#fff",
-              padding: "1.5rem",
-              borderRadius: "8px",
-              width: "22rem",
-            }}
-          >
-            <h2 id="delete-dialog-title" style={{ marginTop: 0 }}>
+          <div className="w-[22rem] rounded-lg bg-white p-6">
+            <h2 id="delete-dialog-title" className="mt-0">
               Delete Expense
             </h2>
             <p>Are you sure you want to delete this expense?</p>
-            <div style={{ display: "flex", gap: "0.75rem" }}>
+            <div className="flex gap-3">
               <button
                 onClick={() => handleDelete(deleteConfirmId)}
                 disabled={deleteMutation.isPending}
-                style={{
-                  padding: "0.5rem 1rem",
-                  backgroundColor: "#c0392b",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                  fontWeight: "600",
-                }}
+                className="cursor-pointer rounded border-none bg-red-700 px-4 py-2 font-semibold text-white"
               >
                 {deleteMutation.isPending ? "Deleting..." : "Delete"}
               </button>
               <button
                 onClick={() => setDeleteConfirmId(null)}
-                style={{
-                  padding: "0.5rem 1rem",
-                  backgroundColor: "#fff",
-                  color: "#333",
-                  border: "1px solid #ccc",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                }}
+                className="cursor-pointer rounded border border-gray-400 bg-white px-4 py-2 text-gray-800"
               >
                 Cancel
               </button>
@@ -456,33 +367,16 @@ export default function ExpensesPage() {
       {data && (
         <>
           {data.totalElements !== undefined && (
-            <p style={{ color: "#555", marginBottom: "0.75rem", fontSize: "0.9rem" }}>{data.totalElements} entries</p>
+            <p className="mb-3 text-[0.9rem] text-gray-600">{data.totalElements} entries</p>
           )}
-          <div style={{ overflowX: "auto" }}>
-            <table
-              style={{
-                width: "100%",
-                borderCollapse: "collapse",
-                backgroundColor: "#fff",
-                borderRadius: "8px",
-                overflow: "hidden",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-              }}
-            >
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse overflow-hidden rounded-lg bg-white shadow-md">
               <thead>
-                <tr style={{ backgroundColor: "#f0f0f0" }}>
+                <tr className="bg-gray-100">
                   {["Date", "Description", "Category", "Type", "Amount", "Actions"].map((h) => (
                     <th
                       key={h}
-                      style={{
-                        padding: "0.75rem",
-                        textAlign: "left",
-                        fontWeight: "700",
-                        fontSize: "0.85rem",
-                        color: "#555",
-                        textTransform: "uppercase",
-                        letterSpacing: "0.04em",
-                      }}
+                      className="p-3 text-left text-[0.85rem] font-bold tracking-[0.04em] text-gray-600 uppercase"
                     >
                       {h}
                     </th>
@@ -494,67 +388,38 @@ export default function ExpensesPage() {
                   <tr
                     key={expense.id}
                     data-testid="entry-card"
-                    style={{
-                      backgroundColor: idx % 2 === 0 ? "#fff" : "#fafafa",
-                      borderBottom: "1px solid #eee",
-                    }}
+                    className={`border-b border-gray-200 ${idx % 2 === 0 ? "bg-white" : "bg-gray-50"}`}
                   >
-                    <td style={{ padding: "0.75rem", fontSize: "0.9rem" }}>{expense.date}</td>
-                    <td style={{ padding: "0.75rem" }}>
-                      <Link href={`/expenses/${expense.id}`} style={{ color: "#1a73e8", textDecoration: "none" }}>
+                    <td className="p-3 text-[0.9rem]">{expense.date}</td>
+                    <td className="p-3">
+                      <Link href={`/expenses/${expense.id}`} className="text-blue-600 no-underline">
                         {expense.description}
                       </Link>
                     </td>
-                    <td style={{ padding: "0.75rem", fontSize: "0.9rem" }}>{expense.category}</td>
-                    <td style={{ padding: "0.75rem", fontSize: "0.9rem" }}>
+                    <td className="p-3 text-[0.9rem]">{expense.category}</td>
+                    <td className="p-3 text-[0.9rem]">
                       <span
-                        style={{
-                          color: expense.type === "income" ? "#27ae60" : "#c0392b",
-                          fontWeight: "600",
-                        }}
+                        className={`font-semibold ${expense.type === "income" ? "text-green-600" : "text-red-700"}`}
                       >
                         {expense.type}
                       </span>
                     </td>
                     <td
-                      style={{
-                        padding: "0.75rem",
-                        fontWeight: "600",
-                        color: expense.type === "income" ? "#27ae60" : "#c0392b",
-                      }}
+                      className={`p-3 font-semibold ${expense.type === "income" ? "text-green-600" : "text-red-700"}`}
                     >
                       {expense.currency} {expense.amount}
                     </td>
-                    <td style={{ padding: "0.75rem", whiteSpace: "nowrap" }}>
+                    <td className="p-3 whitespace-nowrap">
                       <Link
                         href={`/expenses/${expense.id}`}
-                        style={{
-                          display: "inline-block",
-                          marginRight: "0.5rem",
-                          padding: "0.3rem 0.6rem",
-                          backgroundColor: "#1a73e8",
-                          color: "#fff",
-                          borderRadius: "4px",
-                          textDecoration: "none",
-                          fontSize: "0.8rem",
-                          fontWeight: "600",
-                        }}
+                        className="mr-2 inline-block rounded bg-blue-600 px-[0.6rem] py-[0.3rem] text-[0.8rem] font-semibold text-white no-underline"
                         aria-label={`Edit expense: ${expense.description}`}
                       >
                         Edit
                       </Link>
                       <button
                         onClick={() => setDeleteConfirmId(expense.id)}
-                        style={{
-                          padding: "0.3rem 0.6rem",
-                          backgroundColor: "#c0392b",
-                          color: "#fff",
-                          border: "none",
-                          borderRadius: "4px",
-                          cursor: "pointer",
-                          fontSize: "0.8rem",
-                          fontWeight: "600",
-                        }}
+                        className="cursor-pointer rounded border-none bg-red-700 px-[0.6rem] py-[0.3rem] text-[0.8rem] font-semibold text-white"
                         aria-label={`Delete expense: ${expense.description}`}
                       >
                         Delete
@@ -567,48 +432,30 @@ export default function ExpensesPage() {
           </div>
 
           {data.content.length === 0 && (
-            <p style={{ textAlign: "center", color: "#888", marginTop: "2rem" }}>
-              No expenses found. Create your first expense!
-            </p>
+            <p className="mt-8 text-center text-gray-500">No expenses found. Create your first expense!</p>
           )}
 
-          <div
-            style={{
-              display: "flex",
-              gap: "0.5rem",
-              alignItems: "center",
-              justifyContent: "center",
-              marginTop: "1.5rem",
-            }}
-          >
+          <div className="mt-6 flex items-center justify-center gap-2">
             <button
               onClick={() => setPage((p) => Math.max(0, p - 1))}
               disabled={page === 0}
               aria-label="Previous page"
-              style={{
-                padding: "0.5rem 1rem",
-                border: "1px solid #ccc",
-                borderRadius: "4px",
-                cursor: page === 0 ? "not-allowed" : "pointer",
-                backgroundColor: page === 0 ? "#f5f5f5" : "#fff",
-              }}
+              className={`rounded border border-gray-400 px-4 py-2 ${
+                page === 0 ? "cursor-not-allowed bg-gray-100" : "cursor-pointer bg-white"
+              }`}
             >
               Previous
             </button>
-            <span style={{ color: "#555" }}>
+            <span className="text-gray-600">
               Page {page + 1} of {totalPages}
             </span>
             <button
               onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
               disabled={page >= totalPages - 1}
               aria-label="Next page"
-              style={{
-                padding: "0.5rem 1rem",
-                border: "1px solid #ccc",
-                borderRadius: "4px",
-                cursor: page >= totalPages - 1 ? "not-allowed" : "pointer",
-                backgroundColor: page >= totalPages - 1 ? "#f5f5f5" : "#fff",
-              }}
+              className={`rounded border border-gray-400 px-4 py-2 ${
+                page >= totalPages - 1 ? "cursor-not-allowed bg-gray-100" : "cursor-pointer bg-white"
+              }`}
             >
               Next
             </button>

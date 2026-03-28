@@ -13,45 +13,30 @@ function getDefaultDates(): { start: string; end: string } {
   return { start: fmt(firstDay), end: fmt(now) };
 }
 
-const cardStyle: React.CSSProperties = {
-  backgroundColor: "#fff",
-  padding: "1.5rem",
-  borderRadius: "8px",
-  border: "1px solid #ddd",
-  boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-  marginBottom: "1.5rem",
-};
+const cardCn = "bg-white p-6 rounded-lg border border-gray-300 shadow-md mb-6";
 
 function CategoryTable({ rows, title }: { rows: CategoryBreakdown[]; title: string }) {
   return (
-    <div style={cardStyle}>
-      <h2 style={{ marginTop: 0 }}>{title}</h2>
+    <div className={cardCn}>
+      <h2 className="mt-0">{title}</h2>
       {rows.length === 0 ? (
-        <p style={{ color: "#888" }}>No data for this period.</p>
+        <p className="text-gray-500">No data for this period.</p>
       ) : (
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <table className="w-full border-collapse">
           <thead>
-            <tr style={{ backgroundColor: "#f0f0f0" }}>
-              <th
-                style={{ padding: "0.6rem", textAlign: "left", fontWeight: "700", fontSize: "0.85rem", color: "#555" }}
-              >
-                Category
-              </th>
-              <th
-                style={{ padding: "0.6rem", textAlign: "right", fontWeight: "700", fontSize: "0.85rem", color: "#555" }}
-              >
-                Total
-              </th>
+            <tr className="bg-gray-200">
+              <th className="px-2.5 py-2.5 text-left text-sm font-bold text-gray-600">Category</th>
+              <th className="px-2.5 py-2.5 text-right text-sm font-bold text-gray-600">Total</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row, idx) => (
               <tr
                 key={`${row.category}-${idx}`}
-                style={{ borderBottom: "1px solid #eee", backgroundColor: idx % 2 === 0 ? "#fff" : "#fafafa" }}
+                className={`border-b border-gray-200 ${idx % 2 === 0 ? "bg-white" : "bg-gray-50"}`}
               >
-                <td style={{ padding: "0.6rem" }}>{row.category}</td>
-                <td style={{ padding: "0.6rem", textAlign: "right", fontWeight: "500" }}>{row.total}</td>
+                <td className="px-2.5 py-2.5">{row.category}</td>
+                <td className="px-2.5 py-2.5 text-right font-medium">{row.total}</td>
               </tr>
             ))}
           </tbody>
@@ -93,26 +78,16 @@ export default function ExpenseSummaryPage() {
 
   return (
     <>
-      <h1 style={{ marginBottom: "1.5rem" }}>Expense Summary</h1>
+      <h1 className="mb-6">Expense Summary</h1>
 
       {summaryEntries.length > 0 && !submitted && (
-        <div style={cardStyle}>
-          <h2 style={{ marginTop: 0 }}>Total by Currency</h2>
-          <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+        <div className={cardCn}>
+          <h2 className="mt-0">Total by Currency</h2>
+          <div className="flex flex-wrap gap-4">
             {summaryEntries.map(([cur, total]) => (
-              <div
-                key={cur}
-                style={{
-                  backgroundColor: "#f8f9fa",
-                  borderRadius: "8px",
-                  padding: "1rem",
-                  minWidth: "140px",
-                  textAlign: "center",
-                  border: "1px solid #e0e0e0",
-                }}
-              >
-                <div style={{ fontSize: "0.85rem", color: "#666", marginBottom: "0.25rem" }}>{cur}</div>
-                <div style={{ fontSize: "1.2rem", fontWeight: "700", color: "#c0392b" }}>
+              <div key={cur} className="min-w-[140px] rounded-lg border border-gray-200 bg-gray-50 p-4 text-center">
+                <div className="mb-1 text-sm text-gray-500">{cur}</div>
+                <div className="text-xl font-bold text-red-700">
                   {cur} {total}
                 </div>
               </div>
@@ -121,17 +96,11 @@ export default function ExpenseSummaryPage() {
         </div>
       )}
 
-      <div style={cardStyle}>
-        <h2 style={{ marginTop: 0 }}>Filter</h2>
-        <form
-          onSubmit={handleSubmit}
-          style={{ display: "flex", gap: "1rem", flexWrap: "wrap", alignItems: "flex-end" }}
-        >
+      <div className={cardCn}>
+        <h2 className="mt-0">Filter</h2>
+        <form onSubmit={handleSubmit} className="flex flex-wrap items-end gap-4">
           <div>
-            <label
-              htmlFor="start-date"
-              style={{ display: "block", marginBottom: "0.3rem", fontWeight: "600", fontSize: "0.85rem" }}
-            >
+            <label htmlFor="start-date" className="mb-1 block text-sm font-semibold">
               Start Date
             </label>
             <input
@@ -140,14 +109,11 @@ export default function ExpenseSummaryPage() {
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
               aria-required="true"
-              style={{ padding: "0.5rem 0.75rem", border: "1px solid #ccc", borderRadius: "4px", fontSize: "0.9rem" }}
+              className="rounded border border-gray-400 px-3 py-2 text-sm"
             />
           </div>
           <div>
-            <label
-              htmlFor="end-date"
-              style={{ display: "block", marginBottom: "0.3rem", fontWeight: "600", fontSize: "0.85rem" }}
-            >
+            <label htmlFor="end-date" className="mb-1 block text-sm font-semibold">
               End Date
             </label>
             <input
@@ -156,21 +122,18 @@ export default function ExpenseSummaryPage() {
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
               aria-required="true"
-              style={{ padding: "0.5rem 0.75rem", border: "1px solid #ccc", borderRadius: "4px", fontSize: "0.9rem" }}
+              className="rounded border border-gray-400 px-3 py-2 text-sm"
             />
           </div>
           <div>
-            <label
-              htmlFor="currency"
-              style={{ display: "block", marginBottom: "0.3rem", fontWeight: "600", fontSize: "0.85rem" }}
-            >
+            <label htmlFor="currency" className="mb-1 block text-sm font-semibold">
               Currency
             </label>
             <select
               id="currency"
               value={currency}
               onChange={(e) => setCurrency(e.target.value)}
-              style={{ padding: "0.5rem 0.75rem", border: "1px solid #ccc", borderRadius: "4px", fontSize: "0.9rem" }}
+              className="rounded border border-gray-400 px-3 py-2 text-sm"
             >
               {SUPPORTED_CURRENCIES.map((c) => (
                 <option key={c} value={c}>
@@ -181,16 +144,7 @@ export default function ExpenseSummaryPage() {
           </div>
           <button
             type="submit"
-            style={{
-              padding: "0.55rem 1.25rem",
-              backgroundColor: "#1a73e8",
-              color: "#fff",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-              fontWeight: "600",
-              fontSize: "0.9rem",
-            }}
+            className="cursor-pointer rounded border-none bg-blue-600 px-5 py-2 text-sm font-semibold text-white"
           >
             Generate Report
           </button>
@@ -200,35 +154,30 @@ export default function ExpenseSummaryPage() {
       {isLoading && <p>Generating report...</p>}
 
       {isError && (
-        <p role="alert" style={{ color: "#c0392b" }}>
+        <p role="alert" className="text-red-700">
           Failed to load report. Please try again.
         </p>
       )}
 
       {data && (
         <div data-testid="pl-chart">
-          <div style={cardStyle}>
-            <h2 style={{ marginTop: 0 }}>
+          <div className={cardCn}>
+            <h2 className="mt-0">
               Summary: {queryParams.currency} &mdash; {queryParams.startDate} to {queryParams.endDate}
             </h2>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: "1rem" }}>
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-4">
               {[
-                { label: "Total Income", value: data.totalIncome, color: "#27ae60" },
-                { label: "Total Expense", value: data.totalExpense, color: "#c0392b" },
-                { label: "Net", value: data.net, color: parseFloat(data.net) >= 0 ? "#27ae60" : "#c0392b" },
-              ].map(({ label, value, color }) => (
-                <div
-                  key={label}
-                  style={{
-                    backgroundColor: "#f8f9fa",
-                    borderRadius: "8px",
-                    padding: "1rem",
-                    textAlign: "center",
-                    border: "1px solid #e0e0e0",
-                  }}
-                >
-                  <div style={{ fontSize: "0.85rem", color: "#666", marginBottom: "0.25rem" }}>{label}</div>
-                  <div style={{ fontSize: "1.4rem", fontWeight: "700", color }}>
+                { label: "Total Income", value: data.totalIncome, colorCn: "text-green-600" },
+                { label: "Total Expense", value: data.totalExpense, colorCn: "text-red-700" },
+                {
+                  label: "Net",
+                  value: data.net,
+                  colorCn: parseFloat(data.net) >= 0 ? "text-green-600" : "text-red-700",
+                },
+              ].map(({ label, value, colorCn }) => (
+                <div key={label} className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-center">
+                  <div className="mb-1 text-sm text-gray-500">{label}</div>
+                  <div className={`text-2xl font-bold ${colorCn}`}>
                     {data.currency} {value}
                   </div>
                 </div>
@@ -242,9 +191,7 @@ export default function ExpenseSummaryPage() {
       )}
 
       {!submitted && !isLoading && (
-        <p style={{ color: "#888", textAlign: "center" }}>
-          Select a date range and currency, then click Generate Report.
-        </p>
+        <p className="text-center text-gray-500">Select a date range and currency, then click Generate Report.</p>
       )}
     </>
   );

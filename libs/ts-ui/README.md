@@ -27,6 +27,27 @@ nx run ts-ui:test:unit        # Unit tests with vitest-axe
 nx run ts-ui:test:quick       # Tests + coverage validation (>=70%)
 ```
 
+## Storybook
+
+```bash
+nx storybook ts-ui             # Dev server on http://localhost:6006
+nx build-storybook ts-ui       # Static build
+```
+
+## Visual Regression
+
+Playwright-based screenshot tests compare components against committed baselines.
+
+```bash
+nx run ts-ui:test:visual                           # Run visual tests
+nx run ts-ui:test:visual -- --update-snapshots     # Update baselines after intentional changes
+```
+
+**When to update baselines**: After intentional visual changes to components (new variants, color
+changes, layout adjustments). Review the `git diff` on `.png` files before committing.
+
+**Baselines location**: `libs/ts-ui/e2e/screenshots/`
+
 ## Conventions
 
 All components follow the patterns in [Component Patterns Convention](../../governance/development/frontend/component-patterns.md):

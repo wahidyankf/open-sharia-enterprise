@@ -85,10 +85,7 @@ apps/organiclever-web/
 │   ├── components/             # App-specific components (business logic, hardcoded content)
 │   │   ├── Navigation.tsx      # Sidebar nav with app routes and logout
 │   │   ├── Breadcrumb.tsx      # Pathname-aware breadcrumb
-│   │   └── ui/                 # Generic UI primitives (shadcn-ui, data-agnostic)
-│   │       ├── button.tsx
-│   │       ├── card.tsx
-│   │       ├── dialog.tsx
+│   │   └── ui/                 # App-specific UI primitives (AlertDialog, Table, etc.)
 │   │       └── ...
 │   ├── contexts/               # Shared React contexts
 │   ├── data/                   # JSON data files
@@ -190,6 +187,17 @@ scenario.
 ## E2E Tests
 
 E2E tests live in [`apps/organiclever-web-e2e/`](../organiclever-web-e2e/). See that directory's README for details.
+
+## Shared UI Components
+
+Core UI components (Button, Alert, Dialog, Input, Card, Label) are imported from the shared
+`@open-sharia-enterprise/ts-ui` library. Browse the component catalog:
+
+```bash
+nx storybook ts-ui    # Storybook at http://localhost:6006
+```
+
+App-specific components (AlertDialog, Table) remain in `src/components/ui/`.
 
 ## Related
 

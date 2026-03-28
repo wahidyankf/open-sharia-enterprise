@@ -11,17 +11,9 @@ import {
 } from "@/lib/queries/use-admin";
 import type { User } from "@/lib/api/types";
 
-const btnStyle = (color: string): React.CSSProperties => ({
-  padding: "0.35rem 0.7rem",
-  backgroundColor: color,
-  color: "#fff",
-  border: "none",
-  borderRadius: "4px",
-  cursor: "pointer",
-  fontSize: "0.8rem",
-  fontWeight: "600",
-  marginRight: "0.35rem",
-});
+function btnClassName(color: string): string {
+  return `py-[0.35rem] px-[0.7rem] text-white border-none rounded cursor-pointer text-[0.8rem] font-semibold mr-[0.35rem] ${color}`;
+}
 
 export default function AdminPage() {
   const [page, setPage] = useState(0);
@@ -75,22 +67,15 @@ export default function AdminPage() {
   const totalPages = data?.totalPages ?? 1;
 
   const statusBadge = (status: string) => {
-    const colors: Record<string, string> = {
-      ACTIVE: "#27ae60",
-      INACTIVE: "#e67e22",
-      DISABLED: "#c0392b",
-      LOCKED: "#8e44ad",
+    const colorMap: Record<string, string> = {
+      ACTIVE: "bg-green-600",
+      INACTIVE: "bg-orange-500",
+      DISABLED: "bg-red-700",
+      LOCKED: "bg-purple-700",
     };
     return (
       <span
-        style={{
-          backgroundColor: colors[status] ?? "#888",
-          color: "#fff",
-          padding: "0.2rem 0.5rem",
-          borderRadius: "3px",
-          fontSize: "0.75rem",
-          fontWeight: "600",
-        }}
+        className={`${colorMap[status] ?? "bg-gray-500"} rounded px-2 py-[0.2rem] text-[0.75rem] font-semibold text-white`}
       >
         {status}
       </span>
@@ -98,10 +83,10 @@ export default function AdminPage() {
   };
 
   const renderActions = (user: User) => (
-    <td style={{ padding: "0.75rem", whiteSpace: "nowrap" }}>
+    <td className="p-3 whitespace-nowrap">
       {user.status === "ACTIVE" && (
         <button
-          style={btnStyle("#c0392b")}
+          className={btnClassName("bg-red-700")}
           onClick={() => setDisablingUserId(user.id)}
           disabled={disableMutation.isPending}
           aria-label={`Disable user ${user.username}`}
@@ -111,7 +96,7 @@ export default function AdminPage() {
       )}
       {user.status === "DISABLED" && (
         <button
-          style={btnStyle("#27ae60")}
+          className={btnClassName("bg-green-600")}
           onClick={() => enableMutation.mutate(user.id)}
           disabled={enableMutation.isPending}
           aria-label={`Enable user ${user.username}`}
@@ -121,7 +106,7 @@ export default function AdminPage() {
       )}
       {user.status === "LOCKED" && (
         <button
-          style={btnStyle("#8e44ad")}
+          className={btnClassName("bg-purple-700")}
           onClick={() => unlockMutation.mutate(user.id)}
           disabled={unlockMutation.isPending}
           aria-label={`Unlock user ${user.username}`}
@@ -130,7 +115,7 @@ export default function AdminPage() {
         </button>
       )}
       <button
-        style={btnStyle("#1a73e8")}
+        className={btnClassName("bg-blue-600")}
         onClick={() => handleCopyToken(user.id)}
         disabled={resetMutation.isPending}
         aria-label={`Generate Reset Token for ${user.username}`}
@@ -138,21 +123,15 @@ export default function AdminPage() {
         Generate Reset Token
       </button>
       {generatedToken?.userId === user.id && (
-        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem", marginTop: "0.35rem" }}>
+        <span className="mt-[0.35rem] inline-flex items-center gap-[0.35rem]">
           <code
             data-testid="reset-token"
-            style={{
-              fontSize: "0.75rem",
-              background: "#f4f4f4",
-              padding: "0.2rem 0.4rem",
-              borderRadius: "3px",
-              wordBreak: "break-all",
-            }}
+            className="rounded bg-gray-100 px-[0.4rem] py-[0.2rem] text-[0.75rem] break-all"
           >
             {generatedToken.token}
           </code>
           <button
-            style={btnStyle(generatedToken.copied ? "#27ae60" : "#555")}
+            className={btnClassName(generatedToken.copied ? "bg-green-600" : "bg-gray-600")}
             onClick={handleCopyToClipboard}
             aria-label="Copy token"
           >
@@ -165,10 +144,10 @@ export default function AdminPage() {
 
   return (
     <AppShell>
-      <h1 style={{ marginBottom: "1.5rem" }}>Admin: Users</h1>
+      <h1 className="mb-6">Admin: Users</h1>
 
-      <form onSubmit={handleSearch} style={{ display: "flex", gap: "0.75rem", marginBottom: "1.5rem" }}>
-        <label htmlFor="search-users" style={{ display: "none" }}>
+      <form onSubmit={handleSearch} className="mb-6 flex gap-3">
+        <label htmlFor="search-users" className="hidden">
           Search users
         </label>
         <input
@@ -177,25 +156,11 @@ export default function AdminPage() {
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           placeholder="Search by username or email"
-          style={{
-            flex: 1,
-            padding: "0.6rem 0.75rem",
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            fontSize: "1rem",
-          }}
+          className="flex-1 rounded border border-gray-400 px-3 py-[0.6rem] text-base"
         />
         <button
           type="submit"
-          style={{
-            padding: "0.6rem 1.25rem",
-            backgroundColor: "#1a73e8",
-            color: "#fff",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontWeight: "600",
-          }}
+          className="cursor-pointer rounded border-none bg-blue-600 px-5 py-[0.6rem] font-semibold text-white"
         >
           Search
         </button>
@@ -206,14 +171,7 @@ export default function AdminPage() {
               setSearch(undefined);
               setSearchInput("");
             }}
-            style={{
-              padding: "0.6rem 1rem",
-              backgroundColor: "#fff",
-              color: "#333",
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
+            className="cursor-pointer rounded border border-gray-400 bg-white px-4 py-[0.6rem] text-gray-800"
           >
             Clear
           </button>
@@ -225,30 +183,14 @@ export default function AdminPage() {
           role="alertdialog"
           aria-modal="true"
           aria-labelledby="disable-dialog-title"
-          style={{
-            position: "fixed",
-            inset: 0,
-            backgroundColor: "rgba(0,0,0,0.4)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 300,
-          }}
+          className="fixed inset-0 z-[300] flex items-center justify-center bg-black/40"
         >
-          <div
-            style={{
-              backgroundColor: "#fff",
-              padding: "1.5rem",
-              borderRadius: "8px",
-              width: "24rem",
-              boxShadow: "0 8px 32px rgba(0,0,0,0.2)",
-            }}
-          >
-            <h2 id="disable-dialog-title" style={{ marginTop: 0 }}>
+          <div className="w-[24rem] rounded-lg bg-white p-6 shadow-2xl">
+            <h2 id="disable-dialog-title" className="mt-0">
               Disable User
             </h2>
-            <div style={{ marginBottom: "1rem" }}>
-              <label htmlFor="disable-reason" style={{ display: "block", marginBottom: "0.4rem", fontWeight: "600" }}>
+            <div className="mb-4">
+              <label htmlFor="disable-reason" className="mb-[0.4rem] block font-semibold">
                 Reason
               </label>
               <textarea
@@ -256,22 +198,14 @@ export default function AdminPage() {
                 value={disableReason}
                 onChange={(e) => setDisableReason(e.target.value)}
                 rows={3}
-                style={{
-                  width: "100%",
-                  padding: "0.6rem",
-                  border: "1px solid #ccc",
-                  borderRadius: "4px",
-                  fontSize: "1rem",
-                  boxSizing: "border-box",
-                  resize: "vertical",
-                }}
+                className="box-border w-full resize-y rounded border border-gray-400 p-[0.6rem] text-base"
               />
             </div>
-            <div style={{ display: "flex", gap: "0.75rem" }}>
+            <div className="flex gap-3">
               <button
                 onClick={() => handleDisable(disablingUserId)}
                 disabled={disableMutation.isPending || !disableReason.trim()}
-                style={btnStyle("#c0392b")}
+                className={btnClassName("bg-red-700")}
               >
                 {disableMutation.isPending ? "Disabling..." : "Disable"}
               </button>
@@ -280,14 +214,7 @@ export default function AdminPage() {
                   setDisablingUserId(null);
                   setDisableReason("");
                 }}
-                style={{
-                  padding: "0.35rem 0.7rem",
-                  backgroundColor: "#fff",
-                  color: "#333",
-                  border: "1px solid #ccc",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                }}
+                className="cursor-pointer rounded border border-gray-400 bg-white px-[0.7rem] py-[0.35rem] text-gray-800"
               >
                 Cancel
               </button>
@@ -298,39 +225,22 @@ export default function AdminPage() {
 
       {isLoading && <p>Loading users...</p>}
       {isError && (
-        <p role="alert" style={{ color: "#c0392b" }}>
+        <p role="alert" className="text-red-700">
           Failed to load users.
         </p>
       )}
 
       {data && (
         <>
-          <p style={{ color: "#888", fontSize: "0.85rem", marginBottom: "0.75rem" }}>{data.totalElements} users</p>
-          <div style={{ overflowX: "auto" }}>
-            <table
-              style={{
-                width: "100%",
-                borderCollapse: "collapse",
-                backgroundColor: "#fff",
-                borderRadius: "8px",
-                overflow: "hidden",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-              }}
-            >
+          <p className="mb-3 text-[0.85rem] text-gray-500">{data.totalElements} users</p>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse overflow-hidden rounded-lg bg-white shadow-md">
               <thead>
-                <tr style={{ backgroundColor: "#f0f0f0" }}>
+                <tr className="bg-gray-100">
                   {["Username", "Email", "Status", "Actions"].map((h) => (
                     <th
                       key={h}
-                      style={{
-                        padding: "0.75rem",
-                        textAlign: "left",
-                        fontWeight: "700",
-                        fontSize: "0.85rem",
-                        color: "#555",
-                        textTransform: "uppercase",
-                        letterSpacing: "0.04em",
-                      }}
+                      className="p-3 text-left text-[0.85rem] font-bold tracking-[0.04em] text-gray-600 uppercase"
                     >
                       {h}
                     </th>
@@ -339,16 +249,10 @@ export default function AdminPage() {
               </thead>
               <tbody>
                 {data.content.map((user, idx) => (
-                  <tr
-                    key={user.id}
-                    style={{
-                      backgroundColor: idx % 2 === 0 ? "#fff" : "#fafafa",
-                      borderBottom: "1px solid #eee",
-                    }}
-                  >
-                    <td style={{ padding: "0.75rem" }}>{user.username}</td>
-                    <td style={{ padding: "0.75rem" }}>{user.email}</td>
-                    <td style={{ padding: "0.75rem" }}>{statusBadge(user.status)}</td>
+                  <tr key={user.id} className={`border-b border-gray-200 ${idx % 2 === 0 ? "bg-white" : "bg-gray-50"}`}>
+                    <td className="p-3">{user.username}</td>
+                    <td className="p-3">{user.email}</td>
+                    <td className="p-3">{statusBadge(user.status)}</td>
                     {renderActions(user)}
                   </tr>
                 ))}
@@ -356,43 +260,27 @@ export default function AdminPage() {
             </table>
           </div>
 
-          <div
-            style={{
-              display: "flex",
-              gap: "0.5rem",
-              alignItems: "center",
-              justifyContent: "center",
-              marginTop: "1.5rem",
-            }}
-          >
+          <div className="mt-6 flex items-center justify-center gap-2">
             <button
               onClick={() => setPage((p) => Math.max(0, p - 1))}
               disabled={page === 0}
               aria-label="Previous page"
-              style={{
-                padding: "0.5rem 1rem",
-                border: "1px solid #ccc",
-                borderRadius: "4px",
-                cursor: page === 0 ? "not-allowed" : "pointer",
-                backgroundColor: page === 0 ? "#f5f5f5" : "#fff",
-              }}
+              className={`rounded border border-gray-400 px-4 py-2 ${
+                page === 0 ? "cursor-not-allowed bg-gray-100" : "cursor-pointer bg-white"
+              }`}
             >
               Previous
             </button>
-            <span style={{ color: "#555" }}>
+            <span className="text-gray-600">
               Page {page + 1} of {totalPages}
             </span>
             <button
               onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
               disabled={page >= totalPages - 1}
               aria-label="Next page"
-              style={{
-                padding: "0.5rem 1rem",
-                border: "1px solid #ccc",
-                borderRadius: "4px",
-                cursor: page >= totalPages - 1 ? "not-allowed" : "pointer",
-                backgroundColor: page >= totalPages - 1 ? "#f5f5f5" : "#fff",
-              }}
+              className={`rounded border border-gray-400 px-4 py-2 ${
+                page >= totalPages - 1 ? "cursor-not-allowed bg-gray-100" : "cursor-pointer bg-white"
+              }`}
             >
               Next
             </button>

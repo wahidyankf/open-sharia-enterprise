@@ -33,28 +33,14 @@ export function AppShell({ children }: AppShellProps) {
 
   return (
     <AuthGuard>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          minHeight: "100vh",
-        }}
-      >
+      <div className="flex min-h-screen flex-col">
         <Header onMenuToggle={() => setMenuOpen((open) => !open)} />
-        <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+        <div className="flex flex-1 overflow-hidden">
           {(isDesktop || isTablet) && (
             <Sidebar isOpen={true} onClose={() => setMenuOpen(false)} variant={isTablet ? "tablet" : "desktop"} />
           )}
           {!isDesktop && !isTablet && <Sidebar isOpen={menuOpen} onClose={() => setMenuOpen(false)} variant="mobile" />}
-          <main
-            id="main-content"
-            style={{
-              flex: 1,
-              padding: "1.5rem",
-              overflowY: "auto",
-              backgroundColor: "#f5f7fa",
-            }}
-          >
+          <main id="main-content" className="flex-1 overflow-y-auto bg-[#f5f7fa] p-6">
             {children}
           </main>
         </div>

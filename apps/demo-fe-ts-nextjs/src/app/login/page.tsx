@@ -67,27 +67,11 @@ function LoginContent() {
   const errorMessage = getErrorMessage();
 
   return (
-    <main
-      style={{
-        maxWidth: "28rem",
-        margin: "4rem auto",
-        padding: "2rem",
-      }}
-    >
-      <h1 style={{ marginBottom: "1.5rem" }}>Log In</h1>
+    <main className="mx-auto mt-16 max-w-[28rem] p-8">
+      <h1 className="mb-6">Log In</h1>
 
       {successMessage && (
-        <div
-          role="status"
-          style={{
-            backgroundColor: "#eaf7ea",
-            color: "#2d7a2d",
-            padding: "0.75rem 1rem",
-            borderRadius: "4px",
-            marginBottom: "1rem",
-            border: "1px solid #c3e6c3",
-          }}
-        >
+        <div role="status" className="mb-4 rounded border border-green-200 bg-green-50 px-4 py-3 text-green-700">
           {successMessage}
         </div>
       )}
@@ -96,14 +80,7 @@ function LoginContent() {
         <div
           id="login-error"
           role="alert"
-          style={{
-            backgroundColor: "#fdf2f2",
-            color: "#c0392b",
-            padding: "0.75rem 1rem",
-            borderRadius: "4px",
-            marginBottom: "1rem",
-            border: "1px solid #f5c6cb",
-          }}
+          className="mb-4 rounded border border-red-200 bg-red-50 px-4 py-3 text-red-700"
         >
           {errorMessage}
         </div>
@@ -113,16 +90,10 @@ function LoginContent() {
         onSubmit={handleSubmit}
         noValidate
         aria-describedby={errorMessage ? "login-error" : undefined}
-        style={{
-          backgroundColor: "#ffffff",
-          padding: "2rem",
-          borderRadius: "8px",
-          border: "1px solid #ddd",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-        }}
+        className="rounded-lg border border-gray-300 bg-white p-8 shadow-md"
       >
-        <div style={{ marginBottom: "1.25rem" }}>
-          <label htmlFor="username" style={{ display: "block", marginBottom: "0.4rem", fontWeight: "600" }}>
+        <div className="mb-5">
+          <label htmlFor="username" className="mb-[0.4rem] block font-semibold">
             Username
           </label>
           <input
@@ -134,28 +105,19 @@ function LoginContent() {
             aria-required="true"
             aria-describedby={fieldErrors.username ? "username-error" : undefined}
             aria-invalid={!!fieldErrors.username}
-            style={{
-              width: "100%",
-              padding: "0.75rem 0.75rem",
-              border: fieldErrors.username ? "1px solid #c0392b" : "1px solid #ccc",
-              borderRadius: "4px",
-              fontSize: "1rem",
-              boxSizing: "border-box",
-            }}
+            className={`box-border w-full rounded px-3 py-3 text-base ${
+              fieldErrors.username ? "border border-red-700" : "border border-gray-400"
+            }`}
           />
           {fieldErrors.username && (
-            <span
-              id="username-error"
-              role="alert"
-              style={{ color: "#c0392b", fontSize: "0.85rem", marginTop: "0.25rem", display: "block" }}
-            >
+            <span id="username-error" role="alert" className="mt-1 block text-[0.85rem] text-red-700">
               {fieldErrors.username}
             </span>
           )}
         </div>
 
-        <div style={{ marginBottom: "1.5rem" }}>
-          <label htmlFor="password" style={{ display: "block", marginBottom: "0.4rem", fontWeight: "600" }}>
+        <div className="mb-6">
+          <label htmlFor="password" className="mb-[0.4rem] block font-semibold">
             Password
           </label>
           <input
@@ -167,21 +129,12 @@ function LoginContent() {
             aria-required="true"
             aria-describedby={fieldErrors.password ? "password-error" : undefined}
             aria-invalid={!!fieldErrors.password}
-            style={{
-              width: "100%",
-              padding: "0.6rem 0.75rem",
-              border: fieldErrors.password ? "1px solid #c0392b" : "1px solid #ccc",
-              borderRadius: "4px",
-              fontSize: "1rem",
-              boxSizing: "border-box",
-            }}
+            className={`box-border w-full rounded px-3 py-[0.6rem] text-base ${
+              fieldErrors.password ? "border border-red-700" : "border border-gray-400"
+            }`}
           />
           {fieldErrors.password && (
-            <span
-              id="password-error"
-              role="alert"
-              style={{ color: "#c0392b", fontSize: "0.85rem", marginTop: "0.25rem", display: "block" }}
-            >
+            <span id="password-error" role="alert" className="mt-1 block text-[0.85rem] text-red-700">
               {fieldErrors.password}
             </span>
           )}
@@ -190,25 +143,17 @@ function LoginContent() {
         <button
           type="submit"
           disabled={loginMutation.isPending}
-          style={{
-            width: "100%",
-            padding: "0.75rem",
-            backgroundColor: "#1a73e8",
-            color: "#ffffff",
-            border: "none",
-            borderRadius: "4px",
-            fontSize: "1rem",
-            cursor: loginMutation.isPending ? "not-allowed" : "pointer",
-            fontWeight: "600",
-          }}
+          className={`w-full rounded border-none bg-blue-600 py-3 text-base font-semibold text-white ${
+            loginMutation.isPending ? "cursor-not-allowed" : "cursor-pointer"
+          }`}
         >
           {loginMutation.isPending ? "Logging in..." : "Log In"}
         </button>
       </form>
 
-      <p style={{ marginTop: "1rem", textAlign: "center", color: "#666" }}>
+      <p className="mt-4 text-center text-gray-500">
         Don&apos;t have an account?{" "}
-        <a href="/register" style={{ color: "#1a73e8" }}>
+        <a href="/register" className="text-blue-600">
           Register
         </a>
       </p>
@@ -218,7 +163,7 @@ function LoginContent() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div style={{ maxWidth: "28rem", margin: "4rem auto", padding: "2rem" }}>Loading...</div>}>
+    <Suspense fallback={<div className="mx-auto mt-16 max-w-[28rem] p-8">Loading...</div>}>
       <LoginContent />
     </Suspense>
   );

@@ -27,21 +27,8 @@ const SUPPORTED_UNITS = [
 ];
 const EXPENSE_TYPES = ["income", "expense"];
 
-const inputStyle: React.CSSProperties = {
-  width: "100%",
-  padding: "0.5rem 0.75rem",
-  border: "1px solid #ccc",
-  borderRadius: "4px",
-  fontSize: "0.9rem",
-  boxSizing: "border-box",
-};
-
-const labelStyle: React.CSSProperties = {
-  display: "block",
-  marginBottom: "0.3rem",
-  fontWeight: "600",
-  fontSize: "0.85rem",
-};
+const inputCn = "w-full px-3 py-2 border border-gray-400 rounded text-sm box-border";
+const labelCn = "block mb-1 font-semibold text-sm";
 
 interface FormErrors {
   amount?: string;
@@ -112,49 +99,24 @@ export default function NewExpensePage() {
 
   return (
     <>
-      <div style={{ marginBottom: "1.5rem" }}>
-        <a href="/expenses" style={{ color: "#1a73e8", fontSize: "0.9rem" }}>
+      <div className="mb-6">
+        <a href="/expenses" className="text-sm text-blue-600">
           &#8592; Back to Expenses
         </a>
-        <h1 style={{ marginTop: "0.5rem", marginBottom: 0 }}>New Expense</h1>
+        <h1 className="mt-2 mb-0">New Expense</h1>
       </div>
 
-      <div
-        style={{
-          backgroundColor: "#fff",
-          padding: "1.5rem",
-          borderRadius: "8px",
-          border: "1px solid #ddd",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-        }}
-      >
+      <div className="rounded-lg border border-gray-300 bg-white p-6 shadow-md">
         {createError && (
-          <div
-            id="create-error"
-            role="alert"
-            style={{
-              backgroundColor: "#fdf2f2",
-              color: "#c0392b",
-              padding: "0.6rem 1rem",
-              borderRadius: "4px",
-              marginBottom: "1rem",
-            }}
-          >
+          <div id="create-error" role="alert" className="mb-4 rounded bg-red-50 px-4 py-2.5 text-red-700">
             {createError}
           </div>
         )}
 
         <form onSubmit={handleSubmit} noValidate aria-describedby={createError ? "create-error" : undefined}>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-              gap: "1rem",
-              marginBottom: "1rem",
-            }}
-          >
+          <div className="mb-4 grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4">
             <div>
-              <label htmlFor="amount" style={labelStyle}>
+              <label htmlFor="amount" className={labelCn}>
                 Amount
               </label>
               <input
@@ -167,17 +129,17 @@ export default function NewExpensePage() {
                 aria-required="true"
                 aria-describedby={formErrors.amount ? "amount-error" : undefined}
                 aria-invalid={!!formErrors.amount}
-                style={inputStyle}
+                className={inputCn}
               />
               {formErrors.amount && (
-                <span id="amount-error" role="alert" style={{ color: "#c0392b", fontSize: "0.8rem" }}>
+                <span id="amount-error" role="alert" className="text-xs text-red-700">
                   {formErrors.amount}
                 </span>
               )}
             </div>
 
             <div>
-              <label htmlFor="currency" style={labelStyle}>
+              <label htmlFor="currency" className={labelCn}>
                 Currency
               </label>
               <input
@@ -187,7 +149,7 @@ export default function NewExpensePage() {
                 value={form.currency}
                 onChange={(e) => setForm({ ...form, currency: e.target.value })}
                 aria-required="true"
-                style={inputStyle}
+                className={inputCn}
               />
               <datalist id="currency-list">
                 {SUPPORTED_CURRENCIES.map((c) => (
@@ -195,14 +157,14 @@ export default function NewExpensePage() {
                 ))}
               </datalist>
               {formErrors.currency && (
-                <span role="alert" style={{ color: "#c0392b", fontSize: "0.8rem" }}>
+                <span role="alert" className="text-xs text-red-700">
                   {formErrors.currency}
                 </span>
               )}
             </div>
 
             <div>
-              <label htmlFor="type" style={labelStyle}>
+              <label htmlFor="type" className={labelCn}>
                 Type
               </label>
               <input
@@ -211,7 +173,7 @@ export default function NewExpensePage() {
                 list="type-list"
                 value={form.type}
                 onChange={(e) => setForm({ ...form, type: e.target.value as CreateExpenseRequest["type"] })}
-                style={inputStyle}
+                className={inputCn}
               />
               <datalist id="type-list">
                 {EXPENSE_TYPES.map((t) => (
@@ -219,14 +181,14 @@ export default function NewExpensePage() {
                 ))}
               </datalist>
               {formErrors.type && (
-                <span role="alert" style={{ color: "#c0392b", fontSize: "0.8rem" }}>
+                <span role="alert" className="text-xs text-red-700">
                   {formErrors.type}
                 </span>
               )}
             </div>
 
             <div>
-              <label htmlFor="category" style={labelStyle}>
+              <label htmlFor="category" className={labelCn}>
                 Category
               </label>
               <input
@@ -237,17 +199,17 @@ export default function NewExpensePage() {
                 aria-required="true"
                 aria-describedby={formErrors.category ? "category-error" : undefined}
                 aria-invalid={!!formErrors.category}
-                style={inputStyle}
+                className={inputCn}
               />
               {formErrors.category && (
-                <span id="category-error" role="alert" style={{ color: "#c0392b", fontSize: "0.8rem" }}>
+                <span id="category-error" role="alert" className="text-xs text-red-700">
                   {formErrors.category}
                 </span>
               )}
             </div>
 
             <div>
-              <label htmlFor="date" style={labelStyle}>
+              <label htmlFor="date" className={labelCn}>
                 Date
               </label>
               <input
@@ -256,12 +218,12 @@ export default function NewExpensePage() {
                 value={form.date}
                 onChange={(e) => setForm({ ...form, date: e.target.value })}
                 aria-required="true"
-                style={inputStyle}
+                className={inputCn}
               />
             </div>
 
             <div>
-              <label htmlFor="quantity" style={labelStyle}>
+              <label htmlFor="quantity" className={labelCn}>
                 Quantity (optional)
               </label>
               <input
@@ -273,12 +235,12 @@ export default function NewExpensePage() {
                 onChange={(e) =>
                   setForm({ ...form, quantity: e.target.value ? parseFloat(e.target.value) : undefined })
                 }
-                style={inputStyle}
+                className={inputCn}
               />
             </div>
 
             <div>
-              <label htmlFor="unit" style={labelStyle}>
+              <label htmlFor="unit" className={labelCn}>
                 Unit (optional)
               </label>
               <input
@@ -287,7 +249,7 @@ export default function NewExpensePage() {
                 list="unit-list"
                 value={form.unit ?? ""}
                 onChange={(e) => setForm({ ...form, unit: e.target.value || undefined })}
-                style={inputStyle}
+                className={inputCn}
               />
               <datalist id="unit-list">
                 {SUPPORTED_UNITS.map((u) => (
@@ -297,8 +259,8 @@ export default function NewExpensePage() {
             </div>
           </div>
 
-          <div style={{ marginBottom: "1rem" }}>
-            <label htmlFor="description" style={labelStyle}>
+          <div className="mb-4">
+            <label htmlFor="description" className={labelCn}>
               Description
             </label>
             <input
@@ -309,42 +271,27 @@ export default function NewExpensePage() {
               aria-required="true"
               aria-describedby={formErrors.description ? "desc-error" : undefined}
               aria-invalid={!!formErrors.description}
-              style={inputStyle}
+              className={inputCn}
             />
             {formErrors.description && (
-              <span id="desc-error" role="alert" style={{ color: "#c0392b", fontSize: "0.8rem" }}>
+              <span id="desc-error" role="alert" className="text-xs text-red-700">
                 {formErrors.description}
               </span>
             )}
           </div>
 
-          <div style={{ display: "flex", gap: "0.75rem" }}>
+          <div className="flex gap-3">
             <button
               type="submit"
               disabled={createMutation.isPending}
-              style={{
-                padding: "0.6rem 1.25rem",
-                backgroundColor: "#1a73e8",
-                color: "#fff",
-                border: "none",
-                borderRadius: "4px",
-                cursor: createMutation.isPending ? "not-allowed" : "pointer",
-                fontWeight: "600",
-              }}
+              className={`rounded border-none bg-blue-600 px-5 py-2.5 font-semibold text-white ${createMutation.isPending ? "cursor-not-allowed" : "cursor-pointer"}`}
             >
               {createMutation.isPending ? "Creating..." : "Create Expense"}
             </button>
             <button
               type="button"
               onClick={() => router.push("/expenses")}
-              style={{
-                padding: "0.6rem 1.25rem",
-                backgroundColor: "#fff",
-                color: "#333",
-                border: "1px solid #ccc",
-                borderRadius: "4px",
-                cursor: "pointer",
-              }}
+              className="cursor-pointer rounded border border-gray-400 bg-white px-5 py-2.5 text-gray-800"
             >
               Cancel
             </button>

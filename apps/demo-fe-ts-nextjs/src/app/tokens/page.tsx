@@ -3,14 +3,7 @@
 import { AppShell } from "@/components/layout/app-shell";
 import { useTokenClaims, useJwks } from "@/lib/queries/use-tokens";
 
-const cardStyle: React.CSSProperties = {
-  backgroundColor: "#fff",
-  padding: "1.5rem",
-  borderRadius: "8px",
-  border: "1px solid #ddd",
-  boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-  marginBottom: "1.5rem",
-};
+const cardClassName = "bg-white p-6 rounded-lg border border-gray-300 shadow-md mb-6";
 
 function formatTimestamp(ts: unknown): string {
   if (typeof ts !== "number") return "—";
@@ -23,20 +16,20 @@ export default function TokensPage() {
 
   return (
     <AppShell>
-      <h1 style={{ marginBottom: "1.5rem" }}>Token Inspector</h1>
+      <h1 className="mb-6">Token Inspector</h1>
 
-      <div style={cardStyle}>
-        <h2 style={{ marginTop: 0 }}>Access Token Claims</h2>
+      <div className={cardClassName}>
+        <h2 className="mt-0">Access Token Claims</h2>
 
         {claimsLoading && <p>Decoding token...</p>}
         {claimsError && (
-          <p role="alert" style={{ color: "#c0392b" }}>
+          <p role="alert" className="text-red-700">
             Failed to decode token. You may not be logged in.
           </p>
         )}
 
         {claims && (
-          <dl style={{ margin: 0 }}>
+          <dl className="m-0">
             {[
               ["Subject (User ID)", claims["sub"]],
               ["Issuer", claims["iss"]],
@@ -44,34 +37,11 @@ export default function TokensPage() {
               ["Expires At", formatTimestamp(claims["exp"])],
               ["Roles", Array.isArray(claims["roles"]) ? (claims["roles"] as string[]).join(", ") : "—"],
             ].map(([label, value]) => (
-              <div
-                key={String(label)}
-                style={{
-                  display: "flex",
-                  gap: "1rem",
-                  marginBottom: "0.75rem",
-                  borderBottom: "1px solid #f0f0f0",
-                  paddingBottom: "0.75rem",
-                }}
-              >
-                <dt
-                  style={{
-                    fontWeight: "600",
-                    minWidth: "10rem",
-                    color: "#555",
-                    fontSize: "0.9rem",
-                  }}
-                >
-                  {String(label)}
-                </dt>
+              <div key={String(label)} className="mb-3 flex gap-4 border-b border-gray-100 pb-3">
+                <dt className="min-w-[10rem] text-[0.9rem] font-semibold text-gray-600">{String(label)}</dt>
                 <dd
                   data-testid={String(label) === "Subject (User ID)" ? "token-subject" : undefined}
-                  style={{
-                    margin: 0,
-                    fontFamily: "monospace",
-                    wordBreak: "break-all",
-                    fontSize: "0.9rem",
-                  }}
+                  className="m-0 font-mono text-[0.9rem] break-all"
                 >
                   {String(value ?? "—")}
                 </dd>
@@ -81,93 +51,50 @@ export default function TokensPage() {
         )}
 
         {claims && (
-          <details style={{ marginTop: "1rem" }}>
-            <summary style={{ cursor: "pointer", fontWeight: "600", color: "#1a73e8" }}>Raw Claims (JSON)</summary>
-            <pre
-              style={{
-                backgroundColor: "#f8f8f8",
-                padding: "1rem",
-                borderRadius: "4px",
-                fontSize: "0.8rem",
-                overflowX: "auto",
-                marginTop: "0.75rem",
-              }}
-            >
+          <details className="mt-4">
+            <summary className="cursor-pointer font-semibold text-blue-600">Raw Claims (JSON)</summary>
+            <pre className="mt-3 overflow-x-auto rounded bg-gray-50 p-4 text-[0.8rem]">
               {JSON.stringify(claims, null, 2)}
             </pre>
           </details>
         )}
       </div>
 
-      <div style={cardStyle}>
-        <h2 style={{ marginTop: 0 }}>JWKS Endpoint</h2>
+      <div className={cardClassName}>
+        <h2 className="mt-0">JWKS Endpoint</h2>
 
         {jwksLoading && <p>Loading JWKS...</p>}
         {jwksError && (
-          <p role="alert" style={{ color: "#c0392b" }}>
+          <p role="alert" className="text-red-700">
             Failed to load JWKS.
           </p>
         )}
 
         {jwks && (
           <>
-            <p style={{ marginTop: 0 }}>
+            <p className="mt-0">
               <strong>Key count:</strong>{" "}
-              <span
-                style={{
-                  backgroundColor: "#1a73e8",
-                  color: "#fff",
-                  borderRadius: "12px",
-                  padding: "0.1rem 0.6rem",
-                  fontWeight: "600",
-                }}
-              >
+              <span className="rounded-full bg-blue-600 px-[0.6rem] py-[0.1rem] font-semibold text-white">
                 {jwks.keys.length}
               </span>
             </p>
 
-            <p style={{ color: "#666", fontSize: "0.9rem" }}>
+            <p className="text-[0.9rem] text-gray-500">
               JWKS endpoint: <code>/.well-known/jwks.json</code>
             </p>
 
-            <ul style={{ padding: 0, margin: 0, listStyle: "none" }}>
+            <ul className="m-0 list-none p-0">
               {jwks.keys.map((key) => (
-                <li
-                  key={key.kid}
-                  style={{
-                    backgroundColor: "#f8f9fa",
-                    borderRadius: "6px",
-                    padding: "1rem",
-                    marginBottom: "0.75rem",
-                    border: "1px solid #e0e0e0",
-                  }}
-                >
-                  <dl style={{ margin: 0 }}>
+                <li key={key.kid} className="mb-3 rounded-md border border-gray-200 bg-gray-50 p-4">
+                  <dl className="m-0">
                     {[
                       ["Key ID (kid)", key.kid],
                       ["Key Type (kty)", key.kty],
                       ["Use", key.use],
                     ].map(([label, value]) => (
-                      <div key={String(label)} style={{ display: "flex", gap: "1rem", marginBottom: "0.4rem" }}>
-                        <dt
-                          style={{
-                            fontWeight: "600",
-                            minWidth: "9rem",
-                            color: "#555",
-                            fontSize: "0.85rem",
-                          }}
-                        >
-                          {String(label)}
-                        </dt>
-                        <dd
-                          style={{
-                            margin: 0,
-                            fontFamily: "monospace",
-                            fontSize: "0.85rem",
-                          }}
-                        >
-                          {String(value)}
-                        </dd>
+                      <div key={String(label)} className="mb-[0.4rem] flex gap-4">
+                        <dt className="min-w-[9rem] text-[0.85rem] font-semibold text-gray-600">{String(label)}</dt>
+                        <dd className="m-0 font-mono text-[0.85rem]">{String(value)}</dd>
                       </div>
                     ))}
                   </dl>

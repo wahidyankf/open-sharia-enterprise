@@ -40,6 +40,7 @@
     },
     "build-storybook": {
       "executor": "nx:run-commands",
+      "cache": true,
       "options": {
         "command": "npx storybook build -o storybook-static",
         "cwd": "libs/ts-ui"

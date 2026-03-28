@@ -30,30 +30,9 @@ const SUPPORTED_UNITS = [
 ];
 const EXPENSE_TYPES = ["income", "expense"];
 
-const inputStyle: React.CSSProperties = {
-  width: "100%",
-  padding: "0.5rem 0.75rem",
-  border: "1px solid #ccc",
-  borderRadius: "4px",
-  fontSize: "0.9rem",
-  boxSizing: "border-box",
-};
-
-const labelStyle: React.CSSProperties = {
-  display: "block",
-  marginBottom: "0.3rem",
-  fontWeight: "600",
-  fontSize: "0.85rem",
-};
-
-const cardStyle: React.CSSProperties = {
-  backgroundColor: "#fff",
-  padding: "1.5rem",
-  borderRadius: "8px",
-  border: "1px solid #ddd",
-  boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-  marginBottom: "1.5rem",
-};
+const inputCn = "w-full px-3 py-2 border border-gray-400 rounded text-sm box-border";
+const labelCn = "block mb-1 font-semibold text-sm";
+const cardCn = "bg-white p-6 rounded-lg border border-gray-300 shadow-md mb-6";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -188,10 +167,10 @@ export default function ExpenseDetailPage({ params }: PageProps) {
   if (isError || !expense) {
     return (
       <>
-        <p role="alert" style={{ color: "#c0392b" }}>
+        <p role="alert" className="text-red-700">
           Expense not found or failed to load.
         </p>
-        <a href="/expenses" style={{ color: "#1a73e8" }}>
+        <a href="/expenses" className="text-blue-600">
           Back to Expenses
         </a>
       </>
@@ -200,51 +179,25 @@ export default function ExpenseDetailPage({ params }: PageProps) {
 
   return (
     <>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "1.5rem",
-        }}
-      >
+      <div className="mb-6 flex items-center justify-between">
         <div>
-          <a
-            href="/expenses"
-            style={{ color: "#1a73e8", fontSize: "0.9rem", display: "block", marginBottom: "0.25rem" }}
-          >
+          <a href="/expenses" className="mb-1 block text-sm text-blue-600">
             &#8592; Back to Expenses
           </a>
-          <h1 style={{ margin: 0 }}>{expense.description}</h1>
+          <h1 className="m-0">{expense.description}</h1>
         </div>
-        <div style={{ display: "flex", gap: "0.5rem" }}>
+        <div className="flex gap-2">
           {!isEditing && (
             <button
               onClick={handleStartEdit}
-              style={{
-                padding: "0.6rem 1.25rem",
-                backgroundColor: "#1a73e8",
-                color: "#fff",
-                border: "none",
-                borderRadius: "4px",
-                cursor: "pointer",
-                fontWeight: "600",
-              }}
+              className="cursor-pointer rounded border-none bg-blue-600 px-5 py-2.5 font-semibold text-white"
             >
               Edit
             </button>
           )}
           <button
             onClick={() => setDeleteConfirm(true)}
-            style={{
-              padding: "0.6rem 1.25rem",
-              backgroundColor: "#c0392b",
-              color: "#fff",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-              fontWeight: "600",
-            }}
+            className="cursor-pointer rounded border-none bg-red-700 px-5 py-2.5 font-semibold text-white"
           >
             Delete
           </button>
@@ -261,57 +214,26 @@ export default function ExpenseDetailPage({ params }: PageProps) {
           }}
           tabIndex={-1}
           ref={(el) => el?.focus()}
-          style={{
-            position: "fixed",
-            inset: 0,
-            backgroundColor: "rgba(0,0,0,0.4)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 300,
-            outline: "none",
-          }}
+          className="fixed inset-0 z-[300] flex items-center justify-center bg-black/40 outline-none"
         >
-          <div
-            style={{
-              backgroundColor: "#fff",
-              padding: "1.5rem",
-              borderRadius: "8px",
-              width: "22rem",
-            }}
-          >
-            <h2 id="delete-dialog-title" style={{ marginTop: 0 }}>
+          <div className="w-[22rem] rounded-lg bg-white p-6">
+            <h2 id="delete-dialog-title" className="mt-0">
               Delete Expense
             </h2>
             <p>Are you sure you want to delete this expense?</p>
-            <div style={{ display: "flex", gap: "0.75rem" }}>
+            <div className="flex gap-3">
               <button
                 // eslint-disable-next-line jsx-a11y/no-autofocus
                 autoFocus
                 onClick={handleDelete}
                 disabled={deleteMutation.isPending}
-                style={{
-                  padding: "0.5rem 1rem",
-                  backgroundColor: "#c0392b",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                  fontWeight: "600",
-                }}
+                className="cursor-pointer rounded border-none bg-red-700 px-4 py-2 font-semibold text-white"
               >
                 {deleteMutation.isPending ? "Deleting..." : "Delete"}
               </button>
               <button
                 onClick={() => setDeleteConfirm(false)}
-                style={{
-                  padding: "0.5rem 1rem",
-                  backgroundColor: "#fff",
-                  color: "#333",
-                  border: "1px solid #ccc",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                }}
+                className="cursor-pointer rounded border border-gray-400 bg-white px-4 py-2 text-gray-800"
               >
                 Cancel
               </button>
@@ -321,8 +243,8 @@ export default function ExpenseDetailPage({ params }: PageProps) {
       )}
 
       {!isEditing ? (
-        <div style={cardStyle}>
-          <h2 style={{ marginTop: 0 }}>Details</h2>
+        <div className={cardCn}>
+          <h2 className="mt-0">Details</h2>
           <dl>
             {[
               ["Amount", `${expense.currency} ${expense.amount}`],
@@ -332,44 +254,27 @@ export default function ExpenseDetailPage({ params }: PageProps) {
               ["Quantity", expense.quantity ? String(expense.quantity) : "—"],
               ["Unit", expense.unit ?? "—"],
             ].map(([label, value]) => (
-              <div key={label} style={{ display: "flex", gap: "1rem", marginBottom: "0.5rem" }}>
-                <dt style={{ fontWeight: "600", minWidth: "8rem" }}>{label}</dt>
-                <dd style={{ margin: 0, color: "#555" }}>{value}</dd>
+              <div key={label} className="mb-2 flex gap-4">
+                <dt className="min-w-[8rem] font-semibold">{label}</dt>
+                <dd className="m-0 text-gray-600">{value}</dd>
               </div>
             ))}
           </dl>
         </div>
       ) : (
-        <div style={cardStyle}>
-          <h2 style={{ marginTop: 0 }}>Edit Expense</h2>
+        <div className={cardCn}>
+          <h2 className="mt-0">Edit Expense</h2>
 
           {updateError && (
-            <div
-              id="update-error"
-              role="alert"
-              style={{
-                backgroundColor: "#fdf2f2",
-                color: "#c0392b",
-                padding: "0.6rem 1rem",
-                borderRadius: "4px",
-                marginBottom: "1rem",
-              }}
-            >
+            <div id="update-error" role="alert" className="mb-4 rounded bg-red-50 px-4 py-2.5 text-red-700">
               {updateError}
             </div>
           )}
 
           <form onSubmit={handleUpdate} noValidate aria-describedby={updateError ? "update-error" : undefined}>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-                gap: "1rem",
-                marginBottom: "1rem",
-              }}
-            >
+            <div className="mb-4 grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4">
               <div>
-                <label htmlFor="edit-amount" style={labelStyle}>
+                <label htmlFor="edit-amount" className={labelCn}>
                   Amount
                 </label>
                 <input
@@ -379,12 +284,12 @@ export default function ExpenseDetailPage({ params }: PageProps) {
                   step="0.01"
                   value={editForm.amount ?? ""}
                   onChange={(e) => setEditForm({ ...editForm, amount: e.target.value })}
-                  style={inputStyle}
+                  className={inputCn}
                 />
               </div>
 
               <div>
-                <label htmlFor="edit-currency" style={labelStyle}>
+                <label htmlFor="edit-currency" className={labelCn}>
                   Currency
                 </label>
                 <input
@@ -393,7 +298,7 @@ export default function ExpenseDetailPage({ params }: PageProps) {
                   list="edit-currency-list"
                   value={editForm.currency ?? "USD"}
                   onChange={(e) => setEditForm({ ...editForm, currency: e.target.value })}
-                  style={inputStyle}
+                  className={inputCn}
                 />
                 <datalist id="edit-currency-list">
                   {SUPPORTED_CURRENCIES.map((c) => (
@@ -403,7 +308,7 @@ export default function ExpenseDetailPage({ params }: PageProps) {
               </div>
 
               <div>
-                <label htmlFor="edit-type" style={labelStyle}>
+                <label htmlFor="edit-type" className={labelCn}>
                   Type
                 </label>
                 <input
@@ -412,7 +317,7 @@ export default function ExpenseDetailPage({ params }: PageProps) {
                   list="edit-type-list"
                   value={editForm.type ?? "expense"}
                   onChange={(e) => setEditForm({ ...editForm, type: e.target.value as UpdateExpenseRequest["type"] })}
-                  style={inputStyle}
+                  className={inputCn}
                 />
                 <datalist id="edit-type-list">
                   {EXPENSE_TYPES.map((t) => (
@@ -422,7 +327,7 @@ export default function ExpenseDetailPage({ params }: PageProps) {
               </div>
 
               <div>
-                <label htmlFor="edit-category" style={labelStyle}>
+                <label htmlFor="edit-category" className={labelCn}>
                   Category
                 </label>
                 <input
@@ -430,12 +335,12 @@ export default function ExpenseDetailPage({ params }: PageProps) {
                   type="text"
                   value={editForm.category ?? ""}
                   onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
-                  style={inputStyle}
+                  className={inputCn}
                 />
               </div>
 
               <div>
-                <label htmlFor="edit-date" style={labelStyle}>
+                <label htmlFor="edit-date" className={labelCn}>
                   Date
                 </label>
                 <input
@@ -443,12 +348,12 @@ export default function ExpenseDetailPage({ params }: PageProps) {
                   type="date"
                   value={editForm.date ?? ""}
                   onChange={(e) => setEditForm({ ...editForm, date: e.target.value })}
-                  style={inputStyle}
+                  className={inputCn}
                 />
               </div>
 
               <div>
-                <label htmlFor="edit-quantity" style={labelStyle}>
+                <label htmlFor="edit-quantity" className={labelCn}>
                   Quantity (optional)
                 </label>
                 <input
@@ -463,12 +368,12 @@ export default function ExpenseDetailPage({ params }: PageProps) {
                       quantity: e.target.value ? parseFloat(e.target.value) : undefined,
                     })
                   }
-                  style={inputStyle}
+                  className={inputCn}
                 />
               </div>
 
               <div>
-                <label htmlFor="edit-unit" style={labelStyle}>
+                <label htmlFor="edit-unit" className={labelCn}>
                   Unit (optional)
                 </label>
                 <input
@@ -477,7 +382,7 @@ export default function ExpenseDetailPage({ params }: PageProps) {
                   list="edit-unit-list"
                   value={editForm.unit ?? ""}
                   onChange={(e) => setEditForm({ ...editForm, unit: e.target.value || undefined })}
-                  style={inputStyle}
+                  className={inputCn}
                 />
                 <datalist id="edit-unit-list">
                   {SUPPORTED_UNITS.map((u) => (
@@ -487,8 +392,8 @@ export default function ExpenseDetailPage({ params }: PageProps) {
               </div>
             </div>
 
-            <div style={{ marginBottom: "1rem" }}>
-              <label htmlFor="edit-description" style={labelStyle}>
+            <div className="mb-4">
+              <label htmlFor="edit-description" className={labelCn}>
                 Description
               </label>
               <input
@@ -496,37 +401,22 @@ export default function ExpenseDetailPage({ params }: PageProps) {
                 type="text"
                 value={editForm.description ?? ""}
                 onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
-                style={inputStyle}
+                className={inputCn}
               />
             </div>
 
-            <div style={{ display: "flex", gap: "0.75rem" }}>
+            <div className="flex gap-3">
               <button
                 type="submit"
                 disabled={updateMutation.isPending}
-                style={{
-                  padding: "0.6rem 1.25rem",
-                  backgroundColor: "#1a73e8",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: updateMutation.isPending ? "not-allowed" : "pointer",
-                  fontWeight: "600",
-                }}
+                className={`rounded border-none bg-blue-600 px-5 py-2.5 font-semibold text-white ${updateMutation.isPending ? "cursor-not-allowed" : "cursor-pointer"}`}
               >
                 {updateMutation.isPending ? "Saving..." : "Save Changes"}
               </button>
               <button
                 type="button"
                 onClick={() => setIsEditing(false)}
-                style={{
-                  padding: "0.6rem 1.25rem",
-                  backgroundColor: "#fff",
-                  color: "#333",
-                  border: "1px solid #ccc",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                }}
+                className="cursor-pointer rounded border border-gray-400 bg-white px-5 py-2.5 text-gray-800"
               >
                 Cancel
               </button>
@@ -535,43 +425,24 @@ export default function ExpenseDetailPage({ params }: PageProps) {
         </div>
       )}
 
-      <div style={cardStyle}>
-        <h2 style={{ marginTop: 0 }}>Attachments</h2>
+      <div className={cardCn}>
+        <h2 className="mt-0">Attachments</h2>
 
         {deleteAttachmentError && (
-          <div
-            role="alert"
-            style={{
-              backgroundColor: "#fdf2f2",
-              color: "#c0392b",
-              padding: "0.6rem 1rem",
-              borderRadius: "4px",
-              marginBottom: "1rem",
-            }}
-          >
+          <div role="alert" className="mb-4 rounded bg-red-50 px-4 py-2.5 text-red-700">
             {deleteAttachmentError}
           </div>
         )}
 
         {uploadError && (
-          <div
-            id="upload-error"
-            role="alert"
-            style={{
-              backgroundColor: "#fdf2f2",
-              color: "#c0392b",
-              padding: "0.6rem 1rem",
-              borderRadius: "4px",
-              marginBottom: "1rem",
-            }}
-          >
+          <div id="upload-error" role="alert" className="mb-4 rounded bg-red-50 px-4 py-2.5 text-red-700">
             {uploadError}
           </div>
         )}
 
         {isOwner && (
-          <div style={{ marginBottom: "1rem" }}>
-            <label htmlFor="file-upload" style={{ display: "block", marginBottom: "0.4rem", fontWeight: "600" }}>
+          <div className="mb-4">
+            <label htmlFor="file-upload" className="mb-1.5 block font-semibold">
               Upload Attachment
             </label>
             <input
@@ -580,10 +451,10 @@ export default function ExpenseDetailPage({ params }: PageProps) {
               onChange={handleUpload}
               disabled={uploadMutation.isPending}
               aria-describedby={uploadError ? "upload-error" : undefined}
-              style={{ fontSize: "0.9rem" }}
+              className="text-sm"
               accept="image/*,.pdf,.txt"
             />
-            {uploadMutation.isPending && <span style={{ marginLeft: "0.75rem", color: "#888" }}>Uploading...</span>}
+            {uploadMutation.isPending && <span className="ml-3 text-gray-500">Uploading...</span>}
           </div>
         )}
 
@@ -596,43 +467,22 @@ export default function ExpenseDetailPage({ params }: PageProps) {
               if (e.key === "Escape") setDeleteAttachmentId(null);
             }}
             tabIndex={-1}
-            style={{
-              backgroundColor: "#fdf2f2",
-              border: "1px solid #f5c6cb",
-              borderRadius: "4px",
-              padding: "1rem",
-              marginBottom: "1rem",
-            }}
+            className="mb-4 rounded border border-red-300 bg-red-50 p-4"
           >
-            <p id="del-attach-title" style={{ marginTop: 0, fontWeight: "600" }}>
+            <p id="del-attach-title" className="mt-0 font-semibold">
               Delete this attachment?
             </p>
-            <div style={{ display: "flex", gap: "0.75rem" }}>
+            <div className="flex gap-3">
               <button
                 onClick={() => handleDeleteAttachment(deleteAttachmentId)}
                 disabled={deleteAttachmentMutation.isPending}
-                style={{
-                  padding: "0.4rem 0.9rem",
-                  backgroundColor: "#c0392b",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                  fontWeight: "600",
-                }}
+                className="cursor-pointer rounded border-none bg-red-700 px-3.5 py-1.5 font-semibold text-white"
               >
                 {deleteAttachmentMutation.isPending ? "Deleting..." : "Delete"}
               </button>
               <button
                 onClick={() => setDeleteAttachmentId(null)}
-                style={{
-                  padding: "0.4rem 0.9rem",
-                  backgroundColor: "#fff",
-                  color: "#333",
-                  border: "1px solid #ccc",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                }}
+                className="cursor-pointer rounded border border-gray-400 bg-white px-3.5 py-1.5 text-gray-800"
               >
                 Cancel
               </button>
@@ -641,20 +491,11 @@ export default function ExpenseDetailPage({ params }: PageProps) {
         )}
 
         {attachmentsLoading && <p>Loading attachments...</p>}
-        {attachments && attachments.length === 0 && <p style={{ color: "#888" }}>No attachments.</p>}
+        {attachments && attachments.length === 0 && <p className="text-gray-500">No attachments.</p>}
         {attachments && attachments.length > 0 && (
-          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+          <ul className="m-0 list-none p-0">
             {attachments.map((attachment) => (
-              <li
-                key={attachment.id}
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  padding: "0.6rem 0",
-                  borderBottom: "1px solid #eee",
-                }}
-              >
+              <li key={attachment.id} className="flex items-center justify-between border-b border-gray-200 py-2.5">
                 <div>
                   {attachment.contentType.startsWith("image/") && (
                     <img
@@ -662,33 +503,18 @@ export default function ExpenseDetailPage({ params }: PageProps) {
                       alt={`Attachment: ${attachment.filename}`}
                       width={120}
                       height={80}
-                      style={{
-                        display: "block",
-                        marginBottom: "0.5rem",
-                        objectFit: "contain",
-                        border: "1px solid #eee",
-                        borderRadius: "4px",
-                        backgroundColor: "#f8f9fa",
-                      }}
+                      className="mb-2 block rounded border border-gray-200 bg-gray-50 object-contain"
                     />
                   )}
-                  <span style={{ fontWeight: "500" }}>{attachment.filename}</span>
-                  <span style={{ color: "#666", fontSize: "0.85rem", marginLeft: "0.75rem" }}>
+                  <span className="font-medium">{attachment.filename}</span>
+                  <span className="ml-3 text-sm text-gray-500">
                     {attachment.contentType} &middot; {formatFileSize(attachment.size)}
                   </span>
                 </div>
                 {isOwner && (
                   <button
                     onClick={() => setDeleteAttachmentId(attachment.id)}
-                    style={{
-                      padding: "0.3rem 0.6rem",
-                      backgroundColor: "#c0392b",
-                      color: "#fff",
-                      border: "none",
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                      fontSize: "0.8rem",
-                    }}
+                    className="cursor-pointer rounded border-none bg-red-700 px-2.5 py-1 text-xs text-white"
                     aria-label={`Delete attachment ${attachment.filename}`}
                   >
                     Delete

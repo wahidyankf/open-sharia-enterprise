@@ -7,9 +7,6 @@ Active project plans currently being worked on.
 - [LGPL Dependency Replacement](./2026-03-26__lgpl-dependency-replacement/) — Replace LGPL
   dependencies with permissive alternatives
 
-- [UI Development Improvement](./2026-03-27__ui-development-improvement/) — Shared design tokens,
-  AI skills, conventions, and automated quality for frontend apps
-
 ## Instructions
 
 **Quick Idea Capture**: For 1-3 liner ideas not ready for formal planning, use `../ideas.md`.

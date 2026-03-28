@@ -503,14 +503,14 @@ libs/ts-ui/src/components/button/
 
 **Trade-offs**:
 
-| Factor | Gherkin Only | UI Tests Only | Both (Chosen) |
-| --- | --- | --- | --- |
-| Behavior coverage | Full (from specs) | None | Full |
-| A11y coverage | Partial (if specs include it) | Full (axe-core) | Full |
-| Rendering coverage | Implicit | Explicit | Both |
-| Spec alignment | Backends + frontends share same specs | N/A | Frontends align with backends |
-| Test count | ~15 per component | ~5 per component | ~20 per component |
-| Maintenance | Spec changes propagate | Independent | Spec changes + independent UI tests |
+| Factor             | Gherkin Only                          | UI Tests Only    | Both (Chosen)                       |
+| ------------------ | ------------------------------------- | ---------------- | ----------------------------------- |
+| Behavior coverage  | Full (from specs)                     | None             | Full                                |
+| A11y coverage      | Partial (if specs include it)         | Full (axe-core)  | Full                                |
+| Rendering coverage | Implicit                              | Explicit         | Both                                |
+| Spec alignment     | Backends + frontends share same specs | N/A              | Frontends align with backends       |
+| Test count         | ~15 per component                     | ~5 per component | ~20 per component                   |
+| Maintenance        | Spec changes propagate                | Independent      | Spec changes + independent UI tests |
 
 **Why both**: Gherkin specs express user-facing behavior ("When I click the submit button, then
 the form submits"). But they do not naturally express "the Button component has no WCAG AA
@@ -654,19 +654,19 @@ on an agent to catch what a lint rule or test can catch deterministically.
 
 **Enforcement map**:
 
-| Check | Deterministic? | Enforcement Point | CI Layer |
-| --- | --- | --- | --- |
-| Tailwind class ordering | Yes | `prettier-plugin-tailwindcss` | Pre-commit (lint-staged runs Prettier on .tsx) |
-| Accessibility lint (jsx-a11y) | Yes | `eslint-plugin-jsx-a11y` in ESLint config | Pre-push (`nx affected -t lint`) + PR quality gate |
-| Hardcoded color detection | Yes | Custom ESLint rule `no-hardcoded-design-values` | Pre-push (`nx affected -t lint`) + PR quality gate |
-| axe-core a11y assertions | Yes | `vitest-axe` in component unit tests | Pre-push (`nx affected -t test:quick`) + PR quality gate |
-| Visual regression screenshots | Yes | Playwright `toHaveScreenshot()` | `test:visual` Nx target (manual or CI workflow) |
-| Markdown quality | Yes | markdownlint-cli2 | Pre-push (`npm run lint:md`) + PR quality gate |
-| TypeScript type safety | Yes | `tsc --noEmit` via `typecheck` target | Pre-push (`nx affected -t typecheck`) + PR quality gate |
-| Token usage patterns | Partial | Custom ESLint rule (regex-based) | Pre-push + PR quality gate |
-| Component quality audit | No | `swe-ui-checker` agent | On-demand or quality gate workflow |
-| Component creation | No | `swe-ui-maker` agent | On-demand |
-| Automated fix application | No | `swe-ui-fixer` agent | On-demand or quality gate workflow |
+| Check                         | Deterministic? | Enforcement Point                               | CI Layer                                                 |
+| ----------------------------- | -------------- | ----------------------------------------------- | -------------------------------------------------------- |
+| Tailwind class ordering       | Yes            | `prettier-plugin-tailwindcss`                   | Pre-commit (lint-staged runs Prettier on .tsx)           |
+| Accessibility lint (jsx-a11y) | Yes            | `eslint-plugin-jsx-a11y` in ESLint config       | Pre-push (`nx affected -t lint`) + PR quality gate       |
+| Hardcoded color detection     | Yes            | Custom ESLint rule `no-hardcoded-design-values` | Pre-push (`nx affected -t lint`) + PR quality gate       |
+| axe-core a11y assertions      | Yes            | `vitest-axe` in component unit tests            | Pre-push (`nx affected -t test:quick`) + PR quality gate |
+| Visual regression screenshots | Yes            | Playwright `toHaveScreenshot()`                 | `test:visual` Nx target (manual or CI workflow)          |
+| Markdown quality              | Yes            | markdownlint-cli2                               | Pre-push (`npm run lint:md`) + PR quality gate           |
+| TypeScript type safety        | Yes            | `tsc --noEmit` via `typecheck` target           | Pre-push (`nx affected -t typecheck`) + PR quality gate  |
+| Token usage patterns          | Partial        | Custom ESLint rule (regex-based)                | Pre-push + PR quality gate                               |
+| Component quality audit       | No             | `swe-ui-checker` agent                          | On-demand or quality gate workflow                       |
+| Component creation            | No             | `swe-ui-maker` agent                            | On-demand                                                |
+| Automated fix application     | No             | `swe-ui-fixer` agent                            | On-demand or quality gate workflow                       |
 
 **How it flows through existing CI infrastructure**:
 
@@ -699,13 +699,13 @@ file changes needed. The only new infrastructure is:
 
 **Trade-off: visual regression in CI**:
 
-| Factor | In CI (GitHub Actions) | Manual Only |
-| --- | --- | --- |
-| Enforcement | Automatic on every PR | Developer must remember |
-| Cost | ~2min CI time for screenshots | Zero |
-| Flakiness | OS-dependent rendering diffs | N/A |
-| Baseline management | Must match CI OS exactly | Developer machine baselines |
-| Recommendation | Defer to Phase 4; start manual | Start here |
+| Factor              | In CI (GitHub Actions)         | Manual Only                 |
+| ------------------- | ------------------------------ | --------------------------- |
+| Enforcement         | Automatic on every PR          | Developer must remember     |
+| Cost                | ~2min CI time for screenshots  | Zero                        |
+| Flakiness           | OS-dependent rendering diffs   | N/A                         |
+| Baseline management | Must match CI OS exactly       | Developer machine baselines |
+| Recommendation      | Defer to Phase 4; start manual | Start here                  |
 
 **Recommendation**: Do NOT add `test:visual` to the PR quality gate initially. Playwright
 screenshots are OS-dependent (fonts, rendering) — baselines generated on macOS will fail on

@@ -33,56 +33,25 @@ export function Header({ onMenuToggle }: HeaderProps) {
   };
 
   return (
-    <header
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "0 1rem",
-        height: "3.5rem",
-        backgroundColor: "#1a1a2e",
-        color: "#ffffff",
-        position: "sticky",
-        top: 0,
-        zIndex: 100,
-        boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+    <header className="sticky top-0 z-[100] flex h-14 items-center justify-between bg-slate-900 px-4 text-white shadow-md">
+      <div className="flex items-center gap-4">
         <button
           aria-label="Toggle navigation"
           onClick={onMenuToggle}
-          style={{
-            background: "none",
-            border: "none",
-            color: "#ffffff",
-            cursor: "pointer",
-            fontSize: "1.5rem",
-            padding: "0.25rem",
-            display: "flex",
-            alignItems: "center",
-          }}
+          className="flex cursor-pointer items-center border-none bg-transparent px-1 text-2xl text-white"
         >
           &#9776;
         </button>
-        <span style={{ fontWeight: "bold", fontSize: "1.1rem" }}>Demo Fullstack</span>
+        <span className="text-lg font-bold">Demo Fullstack</span>
       </div>
 
-      <div style={{ position: "relative" }}>
+      <div className="relative">
         <button
           aria-label="User menu"
           aria-expanded={userMenuOpen}
           aria-haspopup="true"
           onClick={() => setUserMenuOpen((open) => !open)}
-          style={{
-            background: "none",
-            border: "1px solid #444",
-            color: "#ffffff",
-            cursor: "pointer",
-            padding: "0.4rem 0.8rem",
-            borderRadius: "4px",
-            fontSize: "0.9rem",
-          }}
+          className="cursor-pointer rounded border border-gray-600 bg-transparent px-3 py-1.5 text-sm text-white"
         >
           {user?.username ?? "Account"} &#9660;
         </button>
@@ -90,33 +59,13 @@ export function Header({ onMenuToggle }: HeaderProps) {
         {userMenuOpen && (
           <div
             role="menu"
-            style={{
-              position: "absolute",
-              right: 0,
-              top: "calc(100% + 0.25rem)",
-              backgroundColor: "#ffffff",
-              color: "#333",
-              border: "1px solid #ddd",
-              borderRadius: "4px",
-              minWidth: "12rem",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-              zIndex: 200,
-            }}
+            className="absolute top-[calc(100%+0.25rem)] right-0 z-[200] min-w-[12rem] rounded border border-gray-300 bg-white text-gray-800 shadow-lg"
           >
             <button
               role="menuitem"
               onClick={handleLogout}
               disabled={logoutMutation.isPending}
-              style={{
-                display: "block",
-                width: "100%",
-                padding: "0.75rem 1rem",
-                background: "none",
-                border: "none",
-                textAlign: "left",
-                cursor: "pointer",
-                fontSize: "0.9rem",
-              }}
+              className="block w-full cursor-pointer border-none bg-transparent px-4 py-3 text-left text-sm"
             >
               {logoutMutation.isPending ? "Logging out..." : "Log out"}
             </button>
@@ -124,17 +73,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
               role="menuitem"
               onClick={handleLogoutAll}
               disabled={logoutAllMutation.isPending}
-              style={{
-                display: "block",
-                width: "100%",
-                padding: "0.75rem 1rem",
-                background: "none",
-                border: "none",
-                borderTop: "1px solid #eee",
-                textAlign: "left",
-                cursor: "pointer",
-                fontSize: "0.9rem",
-              }}
+              className="block w-full cursor-pointer border-t border-none border-gray-200 bg-transparent px-4 py-3 text-left text-sm"
             >
               {logoutAllMutation.isPending ? "Logging out..." : "Log out all devices"}
             </button>

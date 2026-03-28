@@ -151,7 +151,7 @@ _Extract shared tokens and components into Nx libraries. One app migration at a 
 - [x] Add unit tests for all 6 components with axe-core accessibility assertions
 - [x] Configure `project.json` with targets: typecheck, lint, test:unit, test:quick
 - [x] Verify `nx run ts-ui:test:quick` succeeds (95.65% coverage, 70% threshold)
-- [ ] Create Gherkin specs (deferred — Gherkin step definitions require @amiceli/vitest-cucumber integration which adds complexity; standard unit tests provide equivalent coverage)
+- [x] Create Gherkin specs in `specs/libs/ts-ui/gherkin/` with vitest-cucumber step definitions for all 6 components
 
 ### 2.3 Migrate organiclever-web
 
@@ -179,11 +179,11 @@ _Extract shared tokens and components into Nx libraries. One app migration at a 
 
 **Goal**: Replace inline styles with Tailwind + shared tokens.
 
-- [ ] Deferred — demo-fe-ts-nextjs uses inline styles; converting to Tailwind is a separate refactoring effort
+- [x] Install Tailwind CSS v4 with `@tailwindcss/postcss`, create `globals.css` with shared tokens import, convert all 12 TSX files from inline styles to Tailwind utility classes. All tests pass (74.12% coverage).
 
 ### 2.6 Update demo-fs-ts-nextjs
 
-- [ ] Deferred — same as 2.5
+- [x] Install Tailwind CSS v4 with `@tailwindcss/postcss`, create `globals.css` with shared tokens import, convert all 14 TSX files from inline styles to Tailwind utility classes. All tests pass (76.44% coverage).
 
 ### Phase 2 Validation
 
@@ -191,7 +191,7 @@ _Extract shared tokens and components into Nx libraries. One app migration at a 
 - [x] No duplicate structural token definitions in migrated apps
 - [x] Each migrated app's `globals.css` contains only brand overrides and app-specific tokens
 - [x] All shared components use unified `radix-ui` import and `React.ComponentProps` pattern
-- [ ] Demo app migrations deferred to future iteration
+- [x] Demo app migrations complete (demo-fe-ts-nextjs and demo-fs-ts-nextjs converted to Tailwind + shared tokens)
 
 ---
 
@@ -244,8 +244,8 @@ because it uses Storybook URLs as test targets. See the dependency graph for exe
   - Default state, all variants, dark mode toggle, disabled state
   - **Three viewport sizes per component**: 375px (mobile), 768px (tablet), 1280px (desktop)
   - Screenshot naming: `{component}-{variant}-{theme}-{viewport}.png`
-- [ ] Generate initial baseline screenshots: `npx playwright test --update-snapshots` (deferred — run manually after review)
-- [ ] Commit baselines to git under `libs/ts-ui/e2e/screenshots/` (deferred — run manually after review)
+- [x] Generate initial baseline screenshots: 22 screenshots generated across all 6 components (fixed 3 incorrect story IDs)
+- [x] Commit baselines to git under `libs/ts-ui/e2e/screenshots/`
 - [x] Add Nx target `test:visual` to ts-ui `project.json`
 - [x] Document baseline update process in `libs/ts-ui/README.md`:
   - When: after intentional visual changes
@@ -262,9 +262,9 @@ be reduced by limiting viewport coverage to components that actually change acro
 **Goal**: Prevent hardcoded design values in TSX files.
 **CI enforcement**: Flows through `nx affected -t lint` in pre-push hook + PR quality gate.
 
-- [x] Deferred — all frontend apps use oxlint (not ESLint), which does not support custom rules.
+- [x] Cancelled — all frontend apps use oxlint (not ESLint), which does not support custom JavaScript rules.
       The swe-ui-checker agent provides equivalent coverage by detecting hardcoded design values
-      during code review. A future oxlint plugin could be written in Rust if enforcement is needed.
+      during code review.
 
 **Trade-off note**: This is a regex-based rule, not AST-based. It may produce false positives
 for hex values in SVG data URIs, test fixtures, or commented code. These cases can be suppressed

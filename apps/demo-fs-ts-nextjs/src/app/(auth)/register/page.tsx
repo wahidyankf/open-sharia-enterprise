@@ -70,27 +70,14 @@ export default function RegisterPage() {
   const passwordErrors = password ? validatePassword(password) : [];
 
   return (
-    <main
-      style={{
-        maxWidth: "28rem",
-        margin: "4rem auto",
-        padding: "2rem",
-      }}
-    >
-      <h1 style={{ marginBottom: "1.5rem" }}>Create Account</h1>
+    <main className="mx-auto mt-16 max-w-[28rem] p-8">
+      <h1 className="mb-6">Create Account</h1>
 
       {errorMessage && (
         <div
           id="register-error"
           role="alert"
-          style={{
-            backgroundColor: "#fdf2f2",
-            color: "#c0392b",
-            padding: "0.75rem 1rem",
-            borderRadius: "4px",
-            marginBottom: "1rem",
-            border: "1px solid #f5c6cb",
-          }}
+          className="mb-4 rounded border border-red-300 bg-red-50 px-4 py-3 text-red-700"
         >
           {errorMessage}
         </div>
@@ -100,16 +87,10 @@ export default function RegisterPage() {
         onSubmit={handleSubmit}
         noValidate
         aria-describedby={errorMessage ? "register-error" : undefined}
-        style={{
-          backgroundColor: "#ffffff",
-          padding: "2rem",
-          borderRadius: "8px",
-          border: "1px solid #ddd",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-        }}
+        className="rounded-lg border border-gray-300 bg-white p-8 shadow-md"
       >
-        <div style={{ marginBottom: "1.25rem" }}>
-          <label htmlFor="username" style={{ display: "block", marginBottom: "0.4rem", fontWeight: "600" }}>
+        <div className="mb-5">
+          <label htmlFor="username" className="mb-1.5 block font-semibold">
             Username
           </label>
           <input
@@ -121,28 +102,17 @@ export default function RegisterPage() {
             aria-required="true"
             aria-describedby={fieldErrors.username ? "username-error" : undefined}
             aria-invalid={!!fieldErrors.username}
-            style={{
-              width: "100%",
-              padding: "0.6rem 0.75rem",
-              border: fieldErrors.username ? "1px solid #c0392b" : "1px solid #ccc",
-              borderRadius: "4px",
-              fontSize: "1rem",
-              boxSizing: "border-box",
-            }}
+            className={`box-border w-full rounded border px-3 py-2.5 text-base ${fieldErrors.username ? "border-red-700" : "border-gray-400"}`}
           />
           {fieldErrors.username && (
-            <span
-              id="username-error"
-              role="alert"
-              style={{ color: "#c0392b", fontSize: "0.85rem", marginTop: "0.25rem", display: "block" }}
-            >
+            <span id="username-error" role="alert" className="mt-1 block text-sm text-red-700">
               {fieldErrors.username}
             </span>
           )}
         </div>
 
-        <div style={{ marginBottom: "1.25rem" }}>
-          <label htmlFor="email" style={{ display: "block", marginBottom: "0.4rem", fontWeight: "600" }}>
+        <div className="mb-5">
+          <label htmlFor="email" className="mb-1.5 block font-semibold">
             Email
           </label>
           <input
@@ -154,28 +124,17 @@ export default function RegisterPage() {
             aria-required="true"
             aria-describedby={fieldErrors.email ? "email-error" : undefined}
             aria-invalid={!!fieldErrors.email}
-            style={{
-              width: "100%",
-              padding: "0.6rem 0.75rem",
-              border: fieldErrors.email ? "1px solid #c0392b" : "1px solid #ccc",
-              borderRadius: "4px",
-              fontSize: "1rem",
-              boxSizing: "border-box",
-            }}
+            className={`box-border w-full rounded border px-3 py-2.5 text-base ${fieldErrors.email ? "border-red-700" : "border-gray-400"}`}
           />
           {fieldErrors.email && (
-            <span
-              id="email-error"
-              role="alert"
-              style={{ color: "#c0392b", fontSize: "0.85rem", marginTop: "0.25rem", display: "block" }}
-            >
+            <span id="email-error" role="alert" className="mt-1 block text-sm text-red-700">
               {fieldErrors.email}
             </span>
           )}
         </div>
 
-        <div style={{ marginBottom: "1.5rem" }}>
-          <label htmlFor="password" style={{ display: "block", marginBottom: "0.4rem", fontWeight: "600" }}>
+        <div className="mb-6">
+          <label htmlFor="password" className="mb-1.5 block font-semibold">
             Password
           </label>
           <input
@@ -187,41 +146,19 @@ export default function RegisterPage() {
             aria-required="true"
             aria-describedby={fieldErrors.password ? "password-error" : "password-hint"}
             aria-invalid={!!fieldErrors.password}
-            style={{
-              width: "100%",
-              padding: "0.6rem 0.75rem",
-              border: fieldErrors.password ? "1px solid #c0392b" : "1px solid #ccc",
-              borderRadius: "4px",
-              fontSize: "1rem",
-              boxSizing: "border-box",
-            }}
+            className={`box-border w-full rounded border px-3 py-2.5 text-base ${fieldErrors.password ? "border-red-700" : "border-gray-400"}`}
           />
           {fieldErrors.password ? (
-            <span
-              id="password-error"
-              role="alert"
-              style={{ color: "#c0392b", fontSize: "0.85rem", marginTop: "0.25rem", display: "block" }}
-            >
+            <span id="password-error" role="alert" className="mt-1 block text-sm text-red-700">
               {fieldErrors.password}
             </span>
           ) : (
-            <span
-              id="password-hint"
-              style={{ color: "#666", fontSize: "0.85rem", marginTop: "0.25rem", display: "block" }}
-            >
+            <span id="password-hint" className="mt-1 block text-sm text-gray-500">
               Min 12 chars, 1 uppercase, 1 special character
             </span>
           )}
           {password.length > 0 && passwordErrors.length > 0 && !fieldErrors.password && (
-            <ul
-              aria-live="polite"
-              style={{
-                marginTop: "0.5rem",
-                paddingLeft: "1.25rem",
-                color: "#e67e22",
-                fontSize: "0.85rem",
-              }}
-            >
+            <ul aria-live="polite" className="mt-2 pl-5 text-sm text-orange-500">
               {passwordErrors.map((e) => (
                 <li key={e}>{e}</li>
               ))}
@@ -232,25 +169,15 @@ export default function RegisterPage() {
         <button
           type="submit"
           disabled={registerMutation.isPending}
-          style={{
-            width: "100%",
-            padding: "0.75rem",
-            backgroundColor: "#1a73e8",
-            color: "#ffffff",
-            border: "none",
-            borderRadius: "4px",
-            fontSize: "1rem",
-            cursor: registerMutation.isPending ? "not-allowed" : "pointer",
-            fontWeight: "600",
-          }}
+          className={`w-full rounded border-none bg-blue-600 py-3 text-base font-semibold text-white ${registerMutation.isPending ? "cursor-not-allowed" : "cursor-pointer"}`}
         >
           {registerMutation.isPending ? "Creating account..." : "Create Account"}
         </button>
       </form>
 
-      <p style={{ marginTop: "1rem", textAlign: "center", color: "#666" }}>
+      <p className="mt-4 text-center text-gray-500">
         Already have an account?{" "}
-        <a href="/login" style={{ color: "#1a73e8" }}>
+        <a href="/login" className="text-blue-600">
           Log in
         </a>
       </p>

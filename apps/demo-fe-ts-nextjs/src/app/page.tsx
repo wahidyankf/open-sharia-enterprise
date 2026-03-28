@@ -6,69 +6,35 @@ export default function HomePage() {
   const { data, isLoading, isError } = useHealth();
 
   return (
-    <main
-      style={{
-        maxWidth: "40rem",
-        margin: "4rem auto",
-        padding: "2rem",
-        textAlign: "center",
-      }}
-    >
-      <h1 style={{ marginBottom: "1.5rem" }}>Demo Frontend</h1>
+    <main className="mx-auto mt-16 max-w-[40rem] p-8 text-center">
+      <h1 className="mb-6">Demo Frontend</h1>
 
-      <div
-        style={{
-          border: "1px solid #ddd",
-          borderRadius: "8px",
-          padding: "2rem",
-          backgroundColor: "#ffffff",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-        }}
-      >
-        <h2 style={{ marginTop: 0, marginBottom: "1rem" }}>Backend Status</h2>
+      <div className="rounded-lg border border-gray-300 bg-white p-8 shadow-md">
+        <h2 className="mt-0 mb-4">Backend Status</h2>
 
-        {isLoading && <p style={{ color: "#666" }}>Checking backend status...</p>}
+        {isLoading && <p className="text-gray-500">Checking backend status...</p>}
 
         {isError && (
-          <p
-            role="alert"
-            style={{
-              color: "#c0392b",
-              backgroundColor: "#fdf2f2",
-              padding: "0.75rem",
-              borderRadius: "4px",
-            }}
-          >
+          <p role="alert" className="rounded bg-red-50 p-3 text-red-700">
             Backend unavailable
           </p>
         )}
 
         {data && (
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", justifyContent: "center" }}>
+          <div className="flex items-center justify-center gap-2">
             <span
               aria-hidden="true"
-              style={{
-                width: "0.75rem",
-                height: "0.75rem",
-                borderRadius: "50%",
-                backgroundColor: data.status === "UP" ? "#2d7a2d" : "#c0392b",
-                display: "inline-block",
-              }}
+              className={`inline-block h-3 w-3 rounded-full ${data.status === "UP" ? "bg-green-700" : "bg-red-700"}`}
             />
-            <span
-              style={{
-                fontWeight: "bold",
-                color: data.status === "UP" ? "#2d7a2d" : "#c0392b",
-              }}
-            >
+            <span className={`font-bold ${data.status === "UP" ? "text-green-700" : "text-red-700"}`}>
               {data.status}
             </span>
           </div>
         )}
       </div>
 
-      <p style={{ marginTop: "2rem", color: "#666" }}>
-        <a href="/login" style={{ color: "#1558c0" }}>
+      <p className="mt-8 text-gray-500">
+        <a href="/login" className="text-blue-700">
           Log in
         </a>{" "}
         to access the full dashboard.

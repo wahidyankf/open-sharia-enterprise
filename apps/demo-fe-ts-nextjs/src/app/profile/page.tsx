@@ -7,29 +7,11 @@ import { useCurrentUser, useUpdateProfile, useChangePassword, useDeactivateAccou
 import { useAuth } from "@/lib/auth/auth-provider";
 import { ApiError } from "@/lib/api/client";
 
-const inputStyle: React.CSSProperties = {
-  width: "100%",
-  padding: "0.6rem 0.75rem",
-  border: "1px solid #ccc",
-  borderRadius: "4px",
-  fontSize: "1rem",
-  boxSizing: "border-box",
-};
+const inputClassName = "w-full px-3 py-[0.6rem] border border-gray-400 rounded text-base box-border";
 
-const labelStyle: React.CSSProperties = {
-  display: "block",
-  marginBottom: "0.4rem",
-  fontWeight: "600",
-};
+const labelClassName = "block mb-[0.4rem] font-semibold";
 
-const cardStyle: React.CSSProperties = {
-  backgroundColor: "#ffffff",
-  padding: "1.5rem",
-  borderRadius: "8px",
-  border: "1px solid #ddd",
-  boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-  marginBottom: "1.5rem",
-};
+const cardClassName = "bg-white p-6 rounded-lg border border-gray-300 shadow-md mb-6";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -116,61 +98,42 @@ export default function ProfilePage() {
 
   return (
     <AppShell>
-      <h1 style={{ marginBottom: "1.5rem" }}>Profile</h1>
+      <h1 className="mb-6">Profile</h1>
 
-      <div style={cardStyle}>
-        <h2 style={{ marginTop: 0 }}>Account Information</h2>
-        <dl style={{ margin: 0 }}>
+      <div className={cardClassName}>
+        <h2 className="mt-0">Account Information</h2>
+        <dl className="m-0">
           {[
             ["Username", user?.username],
             ["Email", user?.email],
             ["Display Name", user?.displayName],
             ["Status", user?.status],
           ].map(([label, value]) => (
-            <div key={label} style={{ display: "flex", gap: "1rem", marginBottom: "0.5rem" }}>
-              <dt style={{ fontWeight: "600", minWidth: "8rem" }}>{label}</dt>
-              <dd style={{ margin: 0, color: "#555" }}>{value}</dd>
+            <div key={label} className="mb-2 flex gap-4">
+              <dt className="min-w-[8rem] font-semibold">{label}</dt>
+              <dd className="m-0 text-gray-600">{value}</dd>
             </div>
           ))}
         </dl>
       </div>
 
-      <div style={cardStyle}>
-        <h2 style={{ marginTop: 0 }}>Edit Display Name</h2>
+      <div className={cardClassName}>
+        <h2 className="mt-0">Edit Display Name</h2>
 
         {profileSuccess && (
-          <div
-            role="status"
-            style={{
-              backgroundColor: "#eaf7ea",
-              color: "#2d7a2d",
-              padding: "0.6rem 1rem",
-              borderRadius: "4px",
-              marginBottom: "1rem",
-            }}
-          >
+          <div role="status" className="mb-4 rounded bg-green-50 px-4 py-[0.6rem] text-green-700">
             {profileSuccess}
           </div>
         )}
         {profileError && (
-          <div
-            id="profile-error"
-            role="alert"
-            style={{
-              backgroundColor: "#fdf2f2",
-              color: "#c0392b",
-              padding: "0.6rem 1rem",
-              borderRadius: "4px",
-              marginBottom: "1rem",
-            }}
-          >
+          <div id="profile-error" role="alert" className="mb-4 rounded bg-red-50 px-4 py-[0.6rem] text-red-700">
             {profileError}
           </div>
         )}
 
         <form onSubmit={handleUpdateProfile} aria-describedby={profileError ? "profile-error" : undefined}>
-          <div style={{ marginBottom: "1rem" }}>
-            <label htmlFor="displayName" style={labelStyle}>
+          <div className="mb-4">
+            <label htmlFor="displayName" className={labelClassName}>
               Display Name
             </label>
             <input
@@ -178,63 +141,38 @@ export default function ProfilePage() {
               type="text"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
-              style={inputStyle}
+              className={inputClassName}
             />
           </div>
           <button
             type="submit"
             disabled={updateProfileMutation.isPending}
-            style={{
-              padding: "0.6rem 1.25rem",
-              backgroundColor: "#1a73e8",
-              color: "#fff",
-              border: "none",
-              borderRadius: "4px",
-              cursor: updateProfileMutation.isPending ? "not-allowed" : "pointer",
-              fontWeight: "600",
-            }}
+            className={`rounded border-none bg-blue-600 px-5 py-[0.6rem] font-semibold text-white ${
+              updateProfileMutation.isPending ? "cursor-not-allowed" : "cursor-pointer"
+            }`}
           >
             {updateProfileMutation.isPending ? "Saving..." : "Save Changes"}
           </button>
         </form>
       </div>
 
-      <div style={cardStyle}>
-        <h2 style={{ marginTop: 0 }}>Change Password</h2>
+      <div className={cardClassName}>
+        <h2 className="mt-0">Change Password</h2>
 
         {pwSuccess && (
-          <div
-            role="status"
-            style={{
-              backgroundColor: "#eaf7ea",
-              color: "#2d7a2d",
-              padding: "0.6rem 1rem",
-              borderRadius: "4px",
-              marginBottom: "1rem",
-            }}
-          >
+          <div role="status" className="mb-4 rounded bg-green-50 px-4 py-[0.6rem] text-green-700">
             {pwSuccess}
           </div>
         )}
         {pwError && (
-          <div
-            id="pw-error"
-            role="alert"
-            style={{
-              backgroundColor: "#fdf2f2",
-              color: "#c0392b",
-              padding: "0.6rem 1rem",
-              borderRadius: "4px",
-              marginBottom: "1rem",
-            }}
-          >
+          <div id="pw-error" role="alert" className="mb-4 rounded bg-red-50 px-4 py-[0.6rem] text-red-700">
             {pwError}
           </div>
         )}
 
         <form onSubmit={handleChangePassword} aria-describedby={pwError ? "pw-error" : undefined}>
-          <div style={{ marginBottom: "1rem" }}>
-            <label htmlFor="oldPassword" style={labelStyle}>
+          <div className="mb-4">
+            <label htmlFor="oldPassword" className={labelClassName}>
               Current Password
             </label>
             <input
@@ -243,11 +181,11 @@ export default function ProfilePage() {
               value={oldPassword}
               onChange={(e) => setOldPassword(e.target.value)}
               autoComplete="current-password"
-              style={inputStyle}
+              className={inputClassName}
             />
           </div>
-          <div style={{ marginBottom: "1rem" }}>
-            <label htmlFor="newPassword" style={labelStyle}>
+          <div className="mb-4">
+            <label htmlFor="newPassword" className={labelClassName}>
               New Password
             </label>
             <input
@@ -256,42 +194,28 @@ export default function ProfilePage() {
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               autoComplete="new-password"
-              style={inputStyle}
+              className={inputClassName}
             />
           </div>
           <button
             type="submit"
             disabled={changePasswordMutation.isPending}
-            style={{
-              padding: "0.6rem 1.25rem",
-              backgroundColor: "#1a73e8",
-              color: "#fff",
-              border: "none",
-              borderRadius: "4px",
-              cursor: changePasswordMutation.isPending ? "not-allowed" : "pointer",
-              fontWeight: "600",
-            }}
+            className={`rounded border-none bg-blue-600 px-5 py-[0.6rem] font-semibold text-white ${
+              changePasswordMutation.isPending ? "cursor-not-allowed" : "cursor-pointer"
+            }`}
           >
             {changePasswordMutation.isPending ? "Changing..." : "Change Password"}
           </button>
         </form>
       </div>
 
-      <div style={cardStyle}>
-        <h2 style={{ marginTop: 0, color: "#c0392b" }}>Danger Zone</h2>
+      <div className={cardClassName}>
+        <h2 className="mt-0 text-red-700">Danger Zone</h2>
 
         {!showDeactivateConfirm ? (
           <button
             onClick={() => setShowDeactivateConfirm(true)}
-            style={{
-              padding: "0.6rem 1.25rem",
-              backgroundColor: "#c0392b",
-              color: "#fff",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-              fontWeight: "600",
-            }}
+            className="cursor-pointer rounded border-none bg-red-700 px-5 py-[0.6rem] font-semibold text-white"
           >
             Deactivate Account
           </button>
@@ -300,45 +224,27 @@ export default function ProfilePage() {
             role="alertdialog"
             aria-modal="true"
             aria-labelledby="deactivate-dialog-title"
-            style={{
-              backgroundColor: "#fdf2f2",
-              border: "1px solid #f5c6cb",
-              borderRadius: "4px",
-              padding: "1rem",
-            }}
+            className="rounded border border-red-200 bg-red-50 p-4"
           >
-            <p id="deactivate-dialog-title" style={{ fontWeight: "600", marginTop: 0 }}>
+            <p id="deactivate-dialog-title" className="mt-0 font-semibold">
               Are you sure you want to deactivate your account?
             </p>
-            <p style={{ color: "#666", fontSize: "0.9rem" }}>
+            <p className="text-[0.9rem] text-gray-500">
               This action cannot be undone. You will be logged out immediately.
             </p>
-            <div style={{ display: "flex", gap: "0.75rem" }}>
+            <div className="flex gap-3">
               <button
                 onClick={handleDeactivate}
                 disabled={deactivateMutation.isPending}
-                style={{
-                  padding: "0.6rem 1.25rem",
-                  backgroundColor: "#c0392b",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: deactivateMutation.isPending ? "not-allowed" : "pointer",
-                  fontWeight: "600",
-                }}
+                className={`rounded border-none bg-red-700 px-5 py-[0.6rem] font-semibold text-white ${
+                  deactivateMutation.isPending ? "cursor-not-allowed" : "cursor-pointer"
+                }`}
               >
                 {deactivateMutation.isPending ? "Deactivating..." : "Yes, Deactivate"}
               </button>
               <button
                 onClick={() => setShowDeactivateConfirm(false)}
-                style={{
-                  padding: "0.6rem 1.25rem",
-                  backgroundColor: "#fff",
-                  color: "#333",
-                  border: "1px solid #ccc",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                }}
+                className="cursor-pointer rounded border border-gray-400 bg-white px-5 py-[0.6rem] text-gray-800"
               >
                 Cancel
               </button>
