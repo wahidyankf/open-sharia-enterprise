@@ -15,7 +15,7 @@ C4Container
     }
 
     Rel(user, spa, "Visits /hello", "HTTPS")
-    Rel(spa, api, "GET /api/v1/hello", "HTTP/JSON")
+    Rel(spa, api, "Server-side proxy call", "HTTP/JSON")
     Rel(api, db, "Reads/Writes", "TCP/SQL")
 ```
 
@@ -163,25 +163,51 @@ Following `demo-be-fsharp-giraffe` pattern exactly:
 
 ## Frontend Architecture (`apps/organiclever-fe`)
 
+### BFF Proxy Pattern
+
+All calls from `organiclever-fe` to `organiclever-be` go through Next.js server-side code (Route
+Handlers), never directly from the browser. The browser only talks to Next.js; Next.js talks to the
+F# backend on the server side.
+
+```
+Browser ──GET /hello──▶ Next.js Server Component
+                              │
+                              ▼ (server-side fetch)
+                        Route Handler / Server Action
+                              │
+                              ▼ (HTTP, server-to-server)
+                        organiclever-be:8202
+                              │
+                              ▼
+                        {"message":"world"}
+```
+
+**Why**: Keeps the backend URL private (not exposed to browser), enables server-side caching,
+simplifies CORS (no cross-origin from browser), and allows the frontend to add middleware logic
+(auth header injection, error normalization) in one place.
+
 ### Directory Structure
 
 ```
 apps/organiclever-fe/
 ├── src/
 │   ├── app/
+│   │   ├── api/
+│   │   │   └── hello/
+│   │   │       └── route.ts              # Route Handler: proxies to organiclever-be
 │   │   ├── hello/
-│   │   │   └── page.tsx                  # /hello page
+│   │   │   └── page.tsx                  # /hello page (Server Component)
 │   │   ├── layout.tsx
 │   │   ├── page.tsx                      # Root redirect or minimal landing
 │   │   ├── globals.css
 │   │   └── metadata.ts
 │   ├── services/
 │   │   ├── errors.ts                     # Effect TS error types
-│   │   ├── api-client.ts                 # Base HTTP client (Effect)
-│   │   └── hello-service.ts              # Hello endpoint service
+│   │   ├── backend-client.ts             # Server-side HTTP client to organiclever-be (Effect)
+│   │   └── hello-service.ts              # Hello service (server-side, calls backend)
 │   ├── layers/
-│   │   ├── api-client-live.ts            # Live HTTP layer
-│   │   └── api-client-test.ts            # Mock layer for tests
+│   │   ├── backend-client-live.ts        # Live HTTP layer (server-side only)
+│   │   └── backend-client-test.ts        # Mock layer for tests
 │   ├── components/
 │   │   └── ui/                           # shadcn/ui components
 │   └── generated-contracts/              # From OpenAPI codegen (gitignored)
@@ -199,7 +225,10 @@ apps/organiclever-fe/
 └── README.md
 ```
 
-### Effect TS Service Layer
+### Effect TS Service Layer (Server-Side)
+
+The Effect TS service layer runs on the Next.js server, not in the browser. It handles all
+communication with `organiclever-be`.
 
 ```typescript
 // services/errors.ts
@@ -215,8 +244,21 @@ export class ApiError extends Data.TaggedError("ApiError")<{
   readonly message: string
 }> {}
 
+// services/backend-client.ts
+import { Effect, Context } from "effect"
+import type { NetworkError } from "./errors"
+
+// Server-side only: calls organiclever-be using ORGANICLEVER_BE_URL env var
+export class BackendClient extends Context.Tag("BackendClient")<
+  BackendClient,
+  {
+    readonly get: (path: string) => Effect.Effect<unknown, NetworkError>
+  }
+>() {}
+
 // services/hello-service.ts
 import { Effect, Context } from "effect"
+import { BackendClient } from "./backend-client"
 import type { NetworkError } from "./errors"
 
 export interface HelloResponse {
@@ -229,42 +271,72 @@ export class HelloService extends Context.Tag("HelloService")<
     readonly getMessage: () => Effect.Effect<HelloResponse, NetworkError>
   }
 >() {}
+
+// Implementation uses BackendClient to call GET /api/v1/hello on organiclever-be
 ```
 
-### Hello Page
+### Hello Page (Server Component)
+
+The `/hello` page is a **Server Component** -- it calls the backend via the Effect service layer
+on the server side and renders the result. No client-side fetch, no `"use client"`.
 
 ```tsx
 // app/hello/page.tsx
-"use client"
-
-import { useEffect, useState } from "react"
 import { Effect, Exit } from "effect"
 import { HelloService } from "@/services/hello-service"
-import { ApiClientLive } from "@/layers/api-client-live"
+import { BackendClientLive } from "@/layers/backend-client-live"
 
-export default function HelloPage() {
-  const [message, setMessage] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
+export default async function HelloPage() {
+  const program = Effect.gen(function* () {
+    const helloService = yield* HelloService
+    return yield* helloService.getMessage()
+  }).pipe(Effect.provide(BackendClientLive))
 
-  useEffect(() => {
-    const program = Effect.gen(function* () {
-      const helloService = yield* HelloService
-      return yield* helloService.getMessage()
-    }).pipe(Effect.provide(ApiClientLive))
+  const exit = await Effect.runPromiseExit(program)
 
-    Effect.runPromiseExit(program).then((exit) => {
-      if (Exit.isSuccess(exit)) {
-        setMessage(exit.value.message)
-      } else {
-        setError("Failed to load message")
-      }
-    })
-  }, [])
+  if (Exit.isFailure(exit)) {
+    return <div>Failed to load message</div>
+  }
 
-  if (error) return <div>{error}</div>
-  if (!message) return <div>Loading...</div>
-  return <div>{message}</div>
+  return <div>{exit.value.message}</div>
 }
+```
+
+### Route Handler (API Proxy)
+
+For any client-side code that needs backend data, Route Handlers act as the proxy layer:
+
+```typescript
+// app/api/hello/route.ts
+import { NextResponse } from "next/server"
+import { Effect, Exit } from "effect"
+import { HelloService } from "@/services/hello-service"
+import { BackendClientLive } from "@/layers/backend-client-live"
+
+export async function GET() {
+  const program = Effect.gen(function* () {
+    const helloService = yield* HelloService
+    return yield* helloService.getMessage()
+  }).pipe(Effect.provide(BackendClientLive))
+
+  const exit = await Effect.runPromiseExit(program)
+
+  if (Exit.isFailure(exit)) {
+    return NextResponse.json({ error: "Backend unavailable" }, { status: 502 })
+  }
+
+  return NextResponse.json(exit.value)
+}
+```
+
+### Environment Variables
+
+| Variable               | Scope       | Description                                    |
+| ---------------------- | ----------- | ---------------------------------------------- |
+| `ORGANICLEVER_BE_URL`  | Server-only | Backend base URL (e.g., `http://localhost:8202`) |
+
+This variable is **not** prefixed with `NEXT_PUBLIC_` -- it is only available on the server side,
+keeping the backend URL private from the browser.
 ```
 
 ### Nx Targets (project.json)

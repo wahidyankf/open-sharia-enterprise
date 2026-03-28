@@ -63,27 +63,39 @@
 
 ### FR-3: Frontend Application (`apps/organiclever-fe`)
 
-#### FR-3.1: Pages
+#### FR-3.1: BFF Proxy Pattern
 
-- **FR-3.1.1**: `/hello` page -- Calls `GET /api/v1/hello` on backend, displays the message
+- **FR-3.1.1**: All calls to `organiclever-be` MUST go through Next.js server-side code
+  (Server Components, Route Handlers, or Server Actions) -- never directly from the browser
+- **FR-3.1.2**: Backend URL (`ORGANICLEVER_BE_URL`) is a server-only env var (no `NEXT_PUBLIC_`
+  prefix), keeping the backend address private from the client
+- **FR-3.1.3**: Route Handlers under `src/app/api/` act as proxy endpoints for any client-side
+  code that needs backend data
+- **FR-3.1.4**: Server Components fetch backend data directly during SSR
 
-#### FR-3.2: Effect TS Integration
+#### FR-3.2: Pages
 
-- **FR-3.2.1**: API client using Effect TS (`Effect`, `Layer`, `Schema`)
-- **FR-3.2.2**: Structured error types (`NetworkError`, `ApiError`)
-- **FR-3.2.3**: Service layer with dependency injection
+- **FR-3.2.1**: `/hello` page -- Server Component that calls `organiclever-be` via the Effect
+  service layer on the server side, then renders the message
 
-#### FR-3.3: Nx Targets (Standard 7 + Optional)
+#### FR-3.3: Effect TS Integration
 
-- **FR-3.3.1**: `codegen` -- Generate types from OpenAPI contract
-- **FR-3.3.2**: `typecheck` -- `tsc --noEmit` (depends on codegen)
-- **FR-3.3.3**: `lint` -- `oxlint` with jsx-a11y plugin
-- **FR-3.3.4**: `build` -- `next build` (depends on codegen)
-- **FR-3.3.5**: `test:unit` -- Vitest with mocked services, Gherkin specs
-- **FR-3.3.6**: `test:quick` -- Unit tests + coverage + rhino-cli validation (70%)
-- **FR-3.3.7**: `test:integration` -- Vitest with MSW, Gherkin specs
-- **FR-3.3.8**: `dev` (optional) -- `next dev --port 3200`
-- **FR-3.3.9**: `start` (optional) -- `next start --port 3200`
+- **FR-3.3.1**: Server-side API client using Effect TS (`Effect`, `Layer`, `Context`)
+- **FR-3.3.2**: Structured error types (`NetworkError`, `ApiError`)
+- **FR-3.3.3**: Service layer with dependency injection (server-side only)
+- **FR-3.3.4**: `BackendClient` service encapsulates all HTTP calls to `organiclever-be`
+
+#### FR-3.4: Nx Targets (Standard 7 + Optional)
+
+- **FR-3.4.1**: `codegen` -- Generate types from OpenAPI contract
+- **FR-3.4.2**: `typecheck` -- `tsc --noEmit` (depends on codegen)
+- **FR-3.4.3**: `lint` -- `oxlint` with jsx-a11y plugin
+- **FR-3.4.4**: `build` -- `next build` (depends on codegen)
+- **FR-3.4.5**: `test:unit` -- Vitest with mocked services, Gherkin specs
+- **FR-3.4.6**: `test:quick` -- Unit tests + coverage + rhino-cli validation (70%)
+- **FR-3.4.7**: `test:integration` -- Vitest with MSW, Gherkin specs
+- **FR-3.4.8**: `dev` (optional) -- `next dev --port 3200`
+- **FR-3.4.9**: `start` (optional) -- `next start --port 3200`
 
 ### FR-4: Backend E2E Tests (`apps/organiclever-be-e2e`)
 

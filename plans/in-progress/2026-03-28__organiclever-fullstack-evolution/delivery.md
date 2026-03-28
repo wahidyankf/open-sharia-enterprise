@@ -112,23 +112,25 @@
 - [ ] Create `apps/organiclever-fe/README.md`
 - [ ] Create `apps/organiclever-fe/.gitignore`
 
-### Milestone 4.2: Effect TS Service Layer
+### Milestone 4.2: Effect TS Service Layer (Server-Side BFF Proxy)
 
 - [ ] Install `effect` and `@effect/platform` packages
 - [ ] Create `src/services/errors.ts` (NetworkError, ApiError)
-- [ ] Create `src/services/api-client.ts` (base HTTP client with Effect)
+- [ ] Create `src/services/backend-client.ts` (server-side HTTP client to organiclever-be)
 - [ ] Create `src/services/hello-service.ts` (HelloService tag + implementation)
-- [ ] Create `src/layers/api-client-live.ts` (live HTTP layer)
-- [ ] Create `src/layers/api-client-test.ts` (mock layer for tests)
+- [ ] Create `src/layers/backend-client-live.ts` (live HTTP layer, server-side only)
+- [ ] Create `src/layers/backend-client-test.ts` (mock layer for tests)
 
-### Milestone 4.3: Hello Page
+### Milestone 4.3: Hello Page + API Proxy
 
 - [ ] Create `src/app/layout.tsx` (root layout)
 - [ ] Create `src/app/page.tsx` (minimal root page)
-- [ ] Create `src/app/hello/page.tsx` (calls backend, displays message)
+- [ ] Create `src/app/hello/page.tsx` (Server Component: fetches from backend via Effect service)
+- [ ] Create `src/app/api/hello/route.ts` (Route Handler: proxies to organiclever-be for
+  any client-side consumers)
 - [ ] Create `src/app/globals.css`
 - [ ] Create `src/app/metadata.ts`
-- [ ] Add `ORGANICLEVER_API_URL` environment variable support
+- [ ] Add `ORGANICLEVER_BE_URL` server-only environment variable (no `NEXT_PUBLIC_` prefix)
 
 ### Milestone 4.4: Frontend Testing
 

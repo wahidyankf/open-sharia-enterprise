@@ -102,6 +102,7 @@ Existing `specs/apps/organiclever-be/` and `specs/apps/organiclever-web/` are me
 | **Initial scope** | Hello endpoint only                 | Establishes scaffold + CI before adding domain complexity    |
 | **Backend lang**  | F# / Giraffe                        | Functional-first, proven by `demo-be-fsharp-giraffe`         |
 | **Frontend extra**| Effect TS                           | Structured errors, DI, composable services                   |
+| **FE-BE comm**  | BFF proxy (Next.js server-side)     | Backend URL private, no CORS, centralized middleware         |
 | **Spec structure**| Unified `specs/apps/organiclever`   | Follows `specs/apps/demo/` pattern                           |
 | **Contract**      | OpenAPI 3.1                         | Codegen for F# backend and TypeScript frontend               |
 | **BE port**       | 8202                                | Follows demo-be port convention                              |
