@@ -12,14 +12,23 @@ governance docs, skill files, agent files, and Prettier config._
 - [ ] Create `governance/development/frontend/` directory
 - [ ] Write `governance/development/frontend/README.md` — index linking all four convention docs
 - [ ] Write `design-tokens.md`:
+  - Reference [Color Accessibility Convention](../../governance/conventions/formatting/color-accessibility.md)
+    — all color tokens must produce WCAG AA compliant contrast ratios; chart/status colors
+    must come from the mandatory accessible palette
   - Token categories: structural (radius, spacing, typography) vs. brand (primary, accent)
   - Naming convention: `--color-{name}` in `@theme`, `--{name}` as base HSL variable
   - The structural-vs-brand split: what goes in shared lib vs. app-level override
-  - Dark mode: every visual token must have a `.dark` counterpart
+  - Dark mode: every visual token must have a `.dark` counterpart; verify contrast in both modes
   - When to create a new token vs. reuse an existing one (decision tree)
   - Code examples showing correct token usage in Tailwind utilities
   - Code examples showing the per-app override pattern
 - [ ] Write `component-patterns.md`:
+  - Reference [Simplicity Over Complexity](../../governance/principles/general/simplicity-over-complexity.md)
+    — single-purpose components, minimum viable abstraction, Rule of Three for extraction
+  - Reference [Explicit Over Implicit](../../governance/principles/software-engineering/explicit-over-implicit.md)
+    — all props typed and documented, no hidden defaults, data-slot for explicit identity
+  - Reference [Progressive Disclosure](../../governance/principles/content/progressive-disclosure.md)
+    — basic usage first, advanced patterns (compound variants, asChild) in separate sections
   - File structure: `component-name/component-name.tsx`, `.variants.ts`, `.stories.tsx`, `.test.tsx`
   - CVA variant definitions: how to define variants, compound variants, default variants
   - Radix primitive composition: `import { Slot } from "radix-ui"` (unified package)
@@ -30,17 +39,25 @@ governance docs, skill files, agent files, and Prettier config._
   - asChild pattern: when and how to use `<Slot>` for composition
   - Code example: complete component following all patterns
 - [ ] Write `accessibility.md`:
-  - WCAG AA compliance: minimum requirements for all components
+  - Reference [Accessibility First](../../governance/principles/content/accessibility-first.md)
+    principle as the governing principle
+  - Reference [Color Accessibility Convention](../../governance/conventions/formatting/color-accessibility.md)
+    for the mandatory 5-color accessible palette (#0173B2, #DE8F05, #029E73, #CC78BC, #CA9161)
+  - WCAG AA compliance: minimum requirements for all components (4.5:1 normal text, 3:1 UI)
   - `focus-visible` (not `focus`): only show focus ring for keyboard users
   - `prefers-reduced-motion`: required `@media` query or Tailwind `motion-reduce:` prefix
   - aria attributes by component type (button, dialog, input, menu, tooltip)
   - `<label>` required for every form input; `htmlFor` matching input `id`
   - `autocomplete` and `inputmode` attributes for form inputs
   - Minimum hit targets: 24px desktop, 44px mobile
-  - No color-only status indicators: always include text labels
+  - No color-only status indicators: always include text labels and/or shapes
   - Image `alt` text: descriptive for informative images, empty for decorative
   - Color contrast: APCA preferred over WCAG 2.0 for perceptual accuracy
+  - Keyboard navigation: all interactive elements reachable via Tab, activatable via Enter/Space
+  - Screen reader compatibility: logical reading order, descriptive link text
 - [ ] Write `styling.md`:
+  - Reference [Implementation Workflow](../../governance/development/workflow/implementation.md)
+    — make it work (utility classes) → make it right (extract patterns) → make it fast (optimize)
   - Tailwind v4 conventions: `@theme`, `@layer`, `@custom-variant`, `@source`, `@plugin`
   - Utility-first: use Tailwind classes in TSX, not CSS files (except `@layer base` in globals.css)
   - No `@apply` outside `@layer base` — it defeats the utility-first purpose
@@ -50,6 +67,11 @@ governance docs, skill files, agent files, and Prettier config._
   - Defensive CSS: `overflow-hidden` on containers, `min-w-0` on flex children, `truncate` for text
   - Container queries (`@container`) preferred over viewport breakpoints where possible
   - Mobile-first: start with mobile styles, add `md:`, `lg:` for larger screens
+  - Standard breakpoints: 375px (mobile), 768px (tablet), 1280px (desktop) — all components
+    must look correct at these three widths
+  - Touch targets: minimum 44px on mobile viewports (per Accessibility First principle)
+  - No content hiding: content must be accessible at all viewports — adapt layout, don't amputate
+  - Fluid typography: use `clamp()` or Tailwind responsive font sizes for text that scales
   - Font loading: use `next/font` for optimization, not CSS `font-family` declarations
 - [ ] Update `governance/development/README.md` to add a "Frontend" section linking to the new directory
 - [ ] Verify all new docs pass `npm run lint:md`
@@ -383,7 +405,8 @@ _Add programmatic checks to the CI pipeline. Fix existing violations before enab
   - Set `toHaveScreenshot()` threshold: `maxDiffPixelRatio: 0.01` (1% tolerance)
 - [ ] Write visual tests for each shared component:
   - Default state, all variants, dark mode toggle, disabled state
-  - Screenshot naming: `{component}-{variant}-{theme}.png`
+  - **Three viewport sizes per component**: 375px (mobile), 768px (tablet), 1280px (desktop)
+  - Screenshot naming: `{component}-{variant}-{theme}-{viewport}.png`
 - [ ] Generate initial baseline screenshots: `npx playwright test --update-snapshots`
 - [ ] Commit baselines to git under `libs/ts-ui/e2e/screenshots/`
 - [ ] Add Nx target `test:visual` to ts-ui `project.json`
@@ -393,8 +416,9 @@ _Add programmatic checks to the CI pipeline. Fix existing violations before enab
   - Review: `git diff` on `.png` files before committing
 
 **Trade-off note**: Git-committed screenshots add repository size but are simpler than SaaS
-alternatives (Chromatic, Percy). With ~6 components × ~10 variants × 2 themes = ~120 screenshots
-at ~50KB each = ~6MB — acceptable for a monorepo of this size.
+alternatives (Chromatic, Percy). With ~6 components × ~10 variants × 2 themes × 3 viewports
+= ~360 screenshots at ~50KB each = ~18MB — larger but still acceptable for a monorepo. Can
+be reduced by limiting viewport coverage to components that actually change across breakpoints.
 
 ### 3.4 Add Custom ESLint Rule for Token Usage
 
@@ -441,7 +465,7 @@ _Make the design system browsable and self-documenting._
 - [ ] Set up `libs/ts-ui/.storybook/preview.ts`:
   - Import shared tokens CSS
   - Configure dark mode support via `@storybook/addon-themes`
-  - Set default viewport sizes
+  - Set viewport presets: Mobile (375px), Tablet (768px), Desktop (1280px)
 - [ ] Install Storybook addons:
   - `@storybook/addon-a11y` — inline accessibility checking
   - `@storybook/addon-themes` — light/dark mode toggle
@@ -460,6 +484,7 @@ _Make the design system browsable and self-documenting._
   - **Dark Mode**: Same stories with dark theme applied
   - **Disabled**: Component in disabled state
   - **With Icon**: Component with icon child (where applicable)
+  - **Responsive**: Component at mobile/tablet/desktop viewports (where layout changes)
   - **Interactive**: Story with args controls for live manipulation
   - **Do/Don't**: Side-by-side correct vs. incorrect usage
 - [ ] Organize stories in sidebar: group by category (Forms, Feedback, Layout, Navigation)

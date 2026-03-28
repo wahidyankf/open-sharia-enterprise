@@ -179,7 +179,28 @@ enough to accommodate different brand palettes across apps.
 - Whether to use `@apply` or utility classes (answer: utility classes, except in `@layer base`)
 - How to handle dark mode (token-based automatic vs. explicit `dark:` prefixes)
 
-### G5: No Automated Design Enforcement
+### G5: No Accessible Color Palette Enforcement in UI Components
+
+**What exists**: The repo has a well-defined [Color Accessibility Convention](../../governance/conventions/formatting/color-accessibility.md)
+with a mandatory 5-color palette (#0173B2, #DE8F05, #029E73, #CC78BC, #CA9161) and
+[Accessibility First](../../governance/principles/content/accessibility-first.md) principle
+requiring WCAG AA compliance.
+
+**Impact**: These conventions are enforced for documentation (diagrams, markdown) but **not for
+UI components**. A developer can introduce `text-red-500` or `bg-green-500` in a component
+without any CI failure, violating the color accessibility convention. The gap between documented
+principles and UI code enforcement is a governance inconsistency.
+
+**Specific issues**:
+
+- Chart tokens in organiclever-web (`--chart-1` through `--chart-5`) have not been verified
+  against the accessible palette
+- No mechanism to verify that semantic tokens (`--destructive`, `--primary`) produce WCAG AA
+  contrast ratios in both light and dark modes
+- Components can use arbitrary Tailwind colors (`text-red-500`, `bg-green-500`) that are not
+  in the accessible palette
+
+### G6: No Automated Design Enforcement (General)
 
 **What exists**: ESLint with `next/core-web-vitals` only. No a11y linting. No token enforcement.
 
@@ -195,14 +216,14 @@ inconsistent across files.
 - organiclever-web body font is `Arial, Helvetica, sans-serif` set via `@layer utilities` —
   should be configured via `next/font` for optimization
 
-### G6: No Visual Regression Testing
+### G7: No Visual Regression Testing
 
 **What exists**: Playwright configured for E2E testing but no `toHaveScreenshot()` usage.
 
 **Impact**: CSS changes can unintentionally alter component appearance with no automated
 detection. The only safety net is manual visual review.
 
-### G7: No UI-Focused Agent
+### G8: No UI-Focused Agent
 
 **What exists**: No agent in `.claude/agents/` for UI validation.
 
@@ -253,6 +274,22 @@ Feature: UI Conventions and AI Skills
       | Responsive | Container queries, mobile-first patterns | Desktop-only layout with no mobile breakpoints |
       | Anti-patterns | Known bad patterns from catalog | Nested Card inside Card |
     And the report uses the criticality/confidence classification system
+
+  Scenario: Accessible color palette is enforced in UI components
+    Given the Color Accessibility Convention mandates a 5-color accessible palette
+    And the Accessibility First principle requires WCAG AA compliance
+    When a developer uses className="text-red-500" in a component
+    Then the swe-ui-checker agent flags it as a non-accessible palette violation
+    And the custom ESLint rule flags arbitrary Tailwind color values
+    And vitest-axe catches contrast violations in unit tests
+
+  Scenario: Components are responsive across all device sizes
+    Given a shared component from ts-ui is rendered
+    When viewed at mobile viewport (375px), tablet (768px), and desktop (1280px)
+    Then the component adapts its layout appropriately at each breakpoint
+    And no content is hidden or inaccessible at any viewport size
+    And touch targets meet the 44px minimum on mobile viewports
+    And visual regression tests capture screenshots at all three viewport sizes
 
   Scenario: Prettier sorts Tailwind classes deterministically
     Given prettier-plugin-tailwindcss is installed with tailwindStylesheet configured

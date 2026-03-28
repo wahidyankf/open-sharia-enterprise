@@ -217,7 +217,8 @@ or `bashPattern` fields.
 | Missing data-slot | `<button className={...}>` | `<button data-slot="button" className={...}>` |
 | Inline styles in production | `style={{ color: 'red' }}` | Use Tailwind utility: `className="text-destructive"` |
 | Card inside Card | `<Card><Card>nested</Card></Card>` | Use spacing/dividers for hierarchy |
-| Color-only status | `<span className="text-red-500">Error</span>` | Include text label: `<span className="text-destructive">Error: ...</span>` |
+| Color-only status | `<span className="text-red-500">Error</span>` | Include text label + shape per [Accessibility First](../../governance/principles/content/accessibility-first.md) |
+| Non-accessible palette color | `className="text-red-500"` or `bg-green-500` | Use accessible palette or semantic tokens per [Color Accessibility Convention](../../governance/conventions/formatting/color-accessibility.md) |
 | Missing focus-visible | `focus:ring-2` | `focus-visible:ring-2` (keyboard users only) |
 | `transition: all` | `className="transition-all"` | `className="transition-colors"` (explicit properties) |
 | bounce/elastic easing | `animate-bounce` | `animate-ease-out` or custom exponential easing |
@@ -267,11 +268,11 @@ functionality. Better to validate conventions are stable before automating fixes
 
 **Chosen allocation**:
 
-| Level | UI Addition | Tool | What It Catches |
-| --- | --- | --- | --- |
-| Unit (`test:unit`) | axe-core a11y assertions | vitest-axe | Missing aria, roles, labels, contrast |
-| Integration (`test:integration`) | Component visual snapshots | Playwright `toHaveScreenshot()` | Unintended visual changes to individual components |
-| E2E (`test:e2e`) | Full-page visual regression | Playwright `toHaveScreenshot()` | Layout breaks, theme issues across full pages |
+| Level | UI Addition | Tool | What It Catches | Responsive |
+| --- | --- | --- | --- | --- |
+| Unit (`test:unit`) | axe-core a11y assertions | vitest-axe | Missing aria, roles, labels, contrast | N/A (JSDOM) |
+| Integration (`test:integration`) | Component visual snapshots | Playwright `toHaveScreenshot()` | Unintended visual changes to individual components | 3 viewports per component |
+| E2E (`test:e2e`) | Full-page visual regression | Playwright `toHaveScreenshot()` | Layout breaks, theme issues across full pages | 3 viewports per page |
 
 **axe-core integration pattern** (using setup file for global extension):
 
@@ -473,3 +474,41 @@ are moved.
    (manual or script). Flutter cannot consume CSS vars directly.
 2. **No component sharing**: Flutter uses Material 3 — React components are not applicable.
 3. **Structural alignment**: Use same radius, spacing scale values in `ThemeData`.
+
+## Governance Alignment
+
+Every architecture decision in this plan traces to one or more governance principles:
+
+| AD | Primary Principle | How It Aligns |
+| --- | --- | --- |
+| AD1 (Repo-specific skill) | Explicit Over Implicit | Skill references our actual tokens explicitly, not generic guidance |
+| AD2 (Two packages) | Simplicity Over Complexity | Each lib has one clear purpose; no monolithic abstraction |
+| AD3 (Structural vs. brand) | Accessibility First | Shared tokens enforce consistent contrast ratios and dark mode |
+| AD4 (Convention docs) | Documentation First | Conventions documented before code exists |
+| AD5 (Single skill) | Simplicity Over Complexity | One skill over fragmented five; minimum viable approach |
+| AD6 (Checker only) | Root Cause Orientation | Diagnose first (checker), fix later; surgical approach |
+| AD7 (Testing layers) | Three-Level Testing Standard | axe-core maps to unit, visual regression to integration/E2E |
+| AD8 (Targeted lint) | Automation Over Manual | Automated enforcement in CI; developer does not need to remember rules |
+| AD9 (Prettier plugin) | Automation Over Manual | Class ordering happens automatically on save; zero friction |
+| AD10 (Shared Storybook) | Progressive Disclosure | Stories layer from default → variants → advanced patterns |
+
+### Color Accessibility Compliance
+
+The [Color Accessibility Convention](../../governance/conventions/formatting/color-accessibility.md)
+and [Accessibility First](../../governance/principles/content/accessibility-first.md) principle
+require:
+
+- **Semantic color tokens** (`--color-destructive`, `--color-primary`) must produce WCAG AA
+  contrast ratios in both light and dark modes
+- **Chart and status colors** must come from the mandatory accessible 5-color palette
+  (#0173B2, #DE8F05, #029E73, #CC78BC, #CA9161)
+- **Never rely on color alone** — status indicators must include text labels and/or shapes
+- **Anti-pattern catalog** includes color-only status and non-accessible palette violations
+
+These requirements are enforced through:
+
+1. **Conventions** (Phase 1): `accessibility.md` references the palette and contrast rules
+2. **Skill** (Phase 1): Anti-pattern catalog flags color-only and non-accessible colors
+3. **Agent** (Phase 1): `swe-ui-checker` validates token contrast and color usage
+4. **Lint** (Phase 3): `eslint-plugin-jsx-a11y` catches missing labels and aria attributes
+5. **Tests** (Phase 3): `vitest-axe` catches contrast and semantic violations at unit test time
