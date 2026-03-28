@@ -105,7 +105,7 @@ This plan implements and respects the following governance layers:
 | [Progressive Disclosure](../../governance/principles/content/progressive-disclosure.md) | Storybook stories layer from default → variants → advanced; convention docs start with essentials; skill reference modules for deeper topics |
 | [Documentation First](../../governance/principles/content/documentation-first.md) | Conventions documented before code (Phase 1); component catalog (Phase 4); JSDoc on all exports |
 | [Automation Over Manual](../../governance/principles/software-engineering/automation-over-manual.md) | ESLint rules, Prettier plugin, vitest-axe, Playwright visual regression — all automated in CI |
-| [Root Cause Orientation](../../governance/principles/software-engineering/root-cause-orientation.md) | Addresses root cause (no shared tokens/components) not symptoms (inconsistent UIs) |
+| [Root Cause Orientation](../../governance/principles/general/root-cause-orientation.md) | Addresses root cause (no shared tokens/components) not symptoms (inconsistent UIs) |
 
 ### Conventions Respected
 

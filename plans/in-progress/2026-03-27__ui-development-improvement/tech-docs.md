@@ -619,7 +619,7 @@ are moved.
 
 1. **Token extraction**: Same as organiclever-web for structural tokens. Keep blue brand
    overrides (`--primary: 221.2 83.2% 53.3%`) and sidebar tokens in app's `globals.css`.
-2. **Fix existing violations**: Replace 6 hardcoded hex colors in code block CSS with token
+2. **Fix existing violations**: Replace hardcoded hex colors (8 occurrences of 3 unique values) in code block CSS with token
    references or CSS variables. Replace `!important` declarations with `@layer` specificity
    management.
 3. **Import shared tokens**: Same pattern as organiclever-web.
@@ -666,7 +666,7 @@ Every architecture decision in this plan traces to one or more governance princi
 | AD3 (Structural vs. brand) | Accessibility First | Shared tokens enforce consistent contrast ratios and dark mode |
 | AD4 (Convention docs) | Documentation First | Conventions documented before code exists |
 | AD5 (Single skill) | Simplicity Over Complexity | One skill over fragmented five; minimum viable approach |
-| AD6 (Checker only) | Root Cause Orientation | Diagnose first (checker), fix later; surgical approach |
+| AD6 (Full agent trio + workflow) | Automation Over Manual | Full maker-checker-fixer lifecycle with automated quality gate |
 | AD7 (Testing layers) | Three-Level Testing Standard | axe-core maps to unit, visual regression to integration/E2E |
 | AD8 (Targeted lint) | Automation Over Manual | Automated enforcement in CI; developer does not need to remember rules |
 | AD9 (Prettier plugin) | Automation Over Manual | Class ordering happens automatically on save; zero friction |

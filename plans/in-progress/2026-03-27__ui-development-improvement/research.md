@@ -179,4 +179,4 @@ the performance impact is minimal.
 7. **Add eslint-plugin-jsx-a11y** for static a11y analysis
 8. **Add custom ESLint rule** for design token enforcement (regex-based)
 9. **Add `prettier-plugin-tailwindcss`** for deterministic class ordering
-10. **Create `swe-ui-checker` agent** — checker only in Phase 1, defer maker/fixer
+10. **Create full agent trio** (`swe-ui-maker`, `swe-ui-checker`, `swe-ui-fixer`) + `ui-quality-gate` workflow

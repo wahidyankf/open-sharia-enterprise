@@ -100,7 +100,7 @@ governance docs, skill files, agent files, and Prettier config._
   - Component file structure template
 - [ ] Create `reference/anti-patterns.md`:
   - At least 12 anti-patterns with before/after code examples
-  - Include the 12 patterns from tech-docs.md AD5
+  - Include the 13 patterns from tech-docs.md AD5
   - Each pattern: description, example violation (from our actual codebase where possible),
     correct approach, severity level
 - [ ] Create `reference/accessibility.md`:
@@ -455,9 +455,12 @@ _Add programmatic checks to the CI pipeline. Fix existing violations before enab
 - [ ] Ensure test:unit includes a11y tests — failures break test:quick
 - [ ] Verify: `nx run ts-ui:test:quick`
 
-### 3.3 Add Playwright Visual Regression
+### 3.3 Add Playwright Visual Regression (Executes in Phase 4, After Step 4.1)
 
 **Goal**: Catch unintended visual changes to shared components.
+
+**Note**: Although numbered 3.3, this step executes after Phase 4 step 4.1 (Configure Storybook)
+because it uses Storybook URLs as test targets. See the dependency graph for execution order.
 
 - [ ] Create `libs/ts-ui/e2e/` directory for component visual tests
 - [ ] Create Playwright config for component screenshots:
@@ -512,9 +515,9 @@ occasional false positive vs. building a full AST visitor plugin.
 
 ---
 
-## Phase 4: Component Catalog (Documentation)
+## Phase 4: Component Catalog + Visual Regression
 
-_Make the design system browsable and self-documenting._
+_Make the design system browsable, self-documenting, and visually tested._
 
 ### 4.1 Configure Storybook for ts-ui
 
@@ -665,9 +668,9 @@ flowchart TD
 
 **Parallelism opportunities**:
 
-- Phase 1: Steps 1.1-1.3 are sequential, but 1.4 (Prettier plugin) is independent
+- Phase 1: Steps 1.1-1.4 are sequential, but 1.5 (Prettier plugin) is independent
 - Phase 2: Steps 2.3-2.6 (app migrations) can run in parallel after 2.2
-- Phase 3: All four steps (3.1-3.4) can run in parallel
+- Phase 3: Steps 3.1, 3.2, 3.4 can run in parallel; 3.3 depends on Phase 4 step 4.1 (Storybook)
 - Phase 4: Steps 4.1 and 4.3 are parallel; 4.2 and 4.4 follow
 
 ## Risk Considerations
