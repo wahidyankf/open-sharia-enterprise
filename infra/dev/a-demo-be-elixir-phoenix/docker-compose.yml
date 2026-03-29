@@ -26,8 +26,8 @@ services:
 
   a-demo-be-elixir-phoenix:
     build:
-      context: .
-      dockerfile: Dockerfile.be.dev
+      context: ../../..
+      dockerfile: infra/dev/a-demo-be-elixir-phoenix/Dockerfile.be.dev
     container_name: a-demo-be-elixir-phoenix
     working_dir: /workspace
 
