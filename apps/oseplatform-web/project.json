@@ -65,6 +65,7 @@
     },
     "test:quick": {
       "executor": "nx:run-commands",
+      "dependsOn": ["oseplatform-cli:build"],
       "options": {
         "cwd": "apps/oseplatform-web",
         "commands": [
