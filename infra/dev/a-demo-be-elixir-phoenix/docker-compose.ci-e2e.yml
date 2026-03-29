@@ -38,10 +38,10 @@ services:
     command: ["sh", "-c", "mix ecto.migrate && mix phx.server"]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8201/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
+      interval: 30s
+      timeout: 10s
+      retries: 30
+      start_period: 600s
     networks:
       - a-demo-be-elixir-phoenix-network
 
