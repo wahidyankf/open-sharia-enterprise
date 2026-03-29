@@ -37,11 +37,12 @@ export async function POST(req: NextRequest, { params }: Params) {
       return NextResponse.json({ message: "File is required" }, { status: 400 });
     }
 
-    const buffer = Buffer.from(await file.arrayBuffer());
+    const arrayBuf = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuf);
     const result = await uploadAttachment(repos, id, authResult.sub, {
       filename: file.name,
       contentType: file.type,
-      size: file.size,
+      size: buffer.length,
       data: buffer,
     });
     if (!result.ok) return serviceResponse(result);
