@@ -1,4 +1,4 @@
-defmodule AAAADemoBeExphWeb.Plugs.CheckRevoked do
+defmodule AAADemoBeExphWeb.Plugs.CheckRevoked do
   @moduledoc """
   Plug that rejects requests carrying a blacklisted access token.
   Must be placed after Guardian.Plug.EnsureAuthenticated.
@@ -9,7 +9,7 @@ defmodule AAAADemoBeExphWeb.Plugs.CheckRevoked do
   alias Guardian.Plug, as: GuardianPlug
 
   defp token_ctx,
-    do: Application.get_env(:a_demo_be_exph, :token_module, AADemoBeExph.Token.TokenContext)
+    do: Application.get_env(:a_demo_be_exph, :token_module, ADemoBeExph.Token.TokenContext)
 
   def init(opts), do: opts
 

@@ -1,5 +1,5 @@
-defmodule AAAADemoBeExphWeb.ExpenseController do
-  use AAAADemoBeExphWeb, :controller
+defmodule AAADemoBeExphWeb.ExpenseController do
+  use AAADemoBeExphWeb, :controller
 
   alias GeneratedSchemas.Expense, as: ExpenseSchema
   alias GeneratedSchemas.ExpenseListResponse
@@ -10,7 +10,7 @@ defmodule AAAADemoBeExphWeb.ExpenseController do
       Application.get_env(
         :a_demo_be_exph,
         :expense_module,
-        AADemoBeExph.Expense.ExpenseContext
+        ADemoBeExph.Expense.ExpenseContext
       )
 
   def index(conn, params) do

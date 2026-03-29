@@ -1,14 +1,14 @@
-defmodule AADemoBeExph.Accounts do
+defmodule ADemoBeExph.Accounts do
   @moduledoc """
   Accounts context for user registration, authentication, and profile management.
   """
 
-  @behaviour AADemoBeExph.Accounts.Behaviour
+  @behaviour ADemoBeExph.Accounts.Behaviour
 
   import Ecto.Query
 
-  alias AADemoBeExph.Accounts.User
-  alias AADemoBeExph.Repo
+  alias ADemoBeExph.Accounts.User
+  alias ADemoBeExph.Repo
 
   @max_failed_attempts 5
 

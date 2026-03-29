@@ -1,4 +1,4 @@
 @NullMarked
-package com.aademobejavx.handler;
+package com.ademobejavx.handler;
 
 import org.jspecify.annotations.NullMarked;

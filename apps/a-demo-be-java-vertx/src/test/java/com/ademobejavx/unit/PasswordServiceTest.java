@@ -1,6 +1,6 @@
-package com.aademobejavx.unit;
+package com.ademobejavx.unit;
 
-import com.aademobejavx.auth.PasswordService;
+import com.ademobejavx.auth.PasswordService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

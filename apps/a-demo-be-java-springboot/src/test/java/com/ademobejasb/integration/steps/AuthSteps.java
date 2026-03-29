@@ -1,16 +1,16 @@
-package com.aademobejasb.integration.steps;
+package com.ademobejasb.integration.steps;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.aademobejasb.auth.repository.UserRepository;
-import com.aademobejasb.auth.service.AccountNotActiveException;
-import com.aademobejasb.auth.service.AuthService;
-import com.aademobejasb.auth.service.InvalidCredentialsException;
-import com.aademobejasb.auth.service.UsernameAlreadyExistsException;
-import com.aademobejasb.contracts.AuthTokens;
-import com.aademobejasb.contracts.LoginRequest;
-import com.aademobejasb.contracts.RegisterRequest;
-import com.aademobejasb.integration.ResponseStore;
-import com.aademobejasb.security.JwtUtil;
+import com.ademobejasb.auth.repository.UserRepository;
+import com.ademobejasb.auth.service.AccountNotActiveException;
+import com.ademobejasb.auth.service.AuthService;
+import com.ademobejasb.auth.service.InvalidCredentialsException;
+import com.ademobejasb.auth.service.UsernameAlreadyExistsException;
+import com.ademobejasb.contracts.AuthTokens;
+import com.ademobejasb.contracts.LoginRequest;
+import com.ademobejasb.contracts.RegisterRequest;
+import com.ademobejasb.integration.ResponseStore;
+import com.ademobejasb.security.JwtUtil;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -68,7 +68,7 @@ public class AuthSteps {
     @Given("a user {string} is registered with email {string} and password {string}")
     public void aUserIsRegisteredWithEmailAndPassword(
             final String username, final String email, final String password) {
-        com.aademobejasb.contracts.User response = registerOrFail(username, email, password);
+        com.ademobejasb.contracts.User response = registerOrFail(username, email, password);
         if ("alice".equals(username)) {
             tokenStore.setAliceId(java.util.UUID.fromString(response.getId()));
         }
@@ -77,7 +77,7 @@ public class AuthSteps {
     @Given("a user {string} is registered with password {string}")
     public void aUserIsRegisteredWithPassword(final String username, final String password) {
         String email = username + "@example.com";
-        com.aademobejasb.contracts.User response = registerOrFail(username, email, password);
+        com.ademobejasb.contracts.User response = registerOrFail(username, email, password);
         if ("alice".equals(username)) {
             tokenStore.setAliceId(java.util.UUID.fromString(response.getId()));
         }
@@ -144,7 +144,7 @@ public class AuthSteps {
     public void anAdminUserIsRegisteredAndLoggedIn(final String username) {
         String email = username + "@example.com";
         String password = "Adm1n#Secure123";
-        com.aademobejasb.contracts.User reg = registerOrFail(username, email, password);
+        com.ademobejasb.contracts.User reg = registerOrFail(username, email, password);
         // Promote to ADMIN
         userRepository.findByUsername(username).ifPresent(user -> {
             user.setRole("ADMIN");
@@ -360,9 +360,9 @@ public class AuthSteps {
             req.setUsername(username);
             req.setEmail(email);
             req.setPassword(password);
-            com.aademobejasb.contracts.User resp = authService.register(req);
+            com.ademobejasb.contracts.User resp = authService.register(req);
             responseStore.setResponse(201, resp);
-        } catch (com.aademobejasb.config.ValidationException e) {
+        } catch (com.ademobejasb.config.ValidationException e) {
             responseStore.setResponse(400, Map.of("message", e.getMessage()));
         } catch (UsernameAlreadyExistsException e) {
             responseStore.setResponse(409, Map.of("message", e.getMessage()));
@@ -372,7 +372,7 @@ public class AuthSteps {
     /**
      * Performs registration and throws if it fails (used in Given steps where failure is unexpected).
      */
-    public com.aademobejasb.contracts.User registerOrFail(
+    public com.ademobejasb.contracts.User registerOrFail(
             final String username, final String email, final String password) {
         try {
             RegisterRequest req = new RegisterRequest();

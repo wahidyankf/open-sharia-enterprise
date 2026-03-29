@@ -4,18 +4,18 @@
 /// no HTTP, no HttpContext, no WebApplicationFactory. Each function returns a
 /// (status: int * body: string) pair that the step definitions treat as a
 /// simulated HTTP response, preserving the HTTP-oriented Gherkin language.
-module AADemoBeFsgi.Tests.DirectServices
+module ADemoBeFsgi.Tests.DirectServices
 
 open System
 open System.Text.Json
-open AADemoBeFsgi.Infrastructure.AppDbContext
-open AADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
-open AADemoBeFsgi.Infrastructure.PasswordHasher
-open AADemoBeFsgi.Domain.Types
-open AADemoBeFsgi.Domain.User
-open AADemoBeFsgi.Domain.Expense
-open AADemoBeFsgi.Domain.Attachment
-open AADemoBeFsgi.Auth.JwtService
+open ADemoBeFsgi.Infrastructure.AppDbContext
+open ADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
+open ADemoBeFsgi.Infrastructure.PasswordHasher
+open ADemoBeFsgi.Domain.Types
+open ADemoBeFsgi.Domain.User
+open ADemoBeFsgi.Domain.Expense
+open ADemoBeFsgi.Domain.Attachment
+open ADemoBeFsgi.Auth.JwtService
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers
@@ -1260,4 +1260,4 @@ let getTokenClaims (token: string option) : int * string =
     | Some claimsMap -> ok claimsMap
 
 let getJwks () : int * string =
-    ok (AADemoBeFsgi.Auth.JwtService.getJwks ())
+    ok (ADemoBeFsgi.Auth.JwtService.getJwks ())

@@ -1,10 +1,10 @@
-module AADemoBeFsgi.Tests.Integration.Steps.ReportingSteps
+module ADemoBeFsgi.Tests.Integration.Steps.ReportingSteps
 
 open System.Text.Json
 open TickSpec
 open Xunit
-open AADemoBeFsgi.Tests.State
-open AADemoBeFsgi.Tests.DirectServices
+open ADemoBeFsgi.Tests.State
+open ADemoBeFsgi.Tests.DirectServices
 
 [<When>]
 let ``alice sends GET /api/v1/reports/pl\?from=(.+)&to=(.+)&currency=(.+)``

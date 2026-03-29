@@ -1,6 +1,6 @@
-package com.aademobejasb.integration.expense_management;
+package com.ademobejasb.integration.expense_management;
 
-import com.aademobejasb.integration.steps.BaseCucumberContextConfig;
+import com.ademobejasb.integration.steps.BaseCucumberContextConfig;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;

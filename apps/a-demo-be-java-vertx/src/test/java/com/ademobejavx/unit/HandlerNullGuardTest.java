@@ -1,21 +1,21 @@
-package com.aademobejavx.unit;
+package com.ademobejavx.unit;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.aademobejavx.auth.JwtService;
-import com.aademobejavx.auth.PasswordService;
-import com.aademobejavx.handler.AdminHandler;
-import com.aademobejavx.handler.AttachmentHandler;
-import com.aademobejavx.handler.AuthHandler;
-import com.aademobejavx.handler.ExpenseHandler;
-import com.aademobejavx.handler.ReportHandler;
-import com.aademobejavx.handler.UserHandler;
-import com.aademobejavx.repository.AttachmentRepository;
-import com.aademobejavx.repository.ExpenseRepository;
-import com.aademobejavx.repository.TokenRevocationRepository;
-import com.aademobejavx.repository.UserRepository;
+import com.ademobejavx.auth.JwtService;
+import com.ademobejavx.auth.PasswordService;
+import com.ademobejavx.handler.AdminHandler;
+import com.ademobejavx.handler.AttachmentHandler;
+import com.ademobejavx.handler.AuthHandler;
+import com.ademobejavx.handler.ExpenseHandler;
+import com.ademobejavx.handler.ReportHandler;
+import com.ademobejavx.handler.UserHandler;
+import com.ademobejavx.repository.AttachmentRepository;
+import com.ademobejavx.repository.ExpenseRepository;
+import com.ademobejavx.repository.TokenRevocationRepository;
+import com.ademobejavx.repository.UserRepository;
 import io.vertx.ext.web.RoutingContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

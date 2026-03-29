@@ -1,4 +1,4 @@
 @NullMarked
-package com.aademobejasb.auth.controller;
+package com.ademobejasb.auth.controller;
 
 import org.jspecify.annotations.NullMarked;

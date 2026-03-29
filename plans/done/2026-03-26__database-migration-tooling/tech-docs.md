@@ -129,8 +129,8 @@ dependencies.
 tool — it cannot handle incremental changes. Switching to proper EF Core migrations
 (`dotnet ef migrations add`, `Database.MigrateAsync()`) requires adding
 `Microsoft.EntityFrameworkCore.Design` (with `PrivateAssets="all"` since it is a build-time only
-dependency) to `AADemoBeCsas.csproj`. Without it, `dotnet ef migrations add` fails with:
-`Your startup project 'AADemoBeCsas' doesn't reference Microsoft.EntityFrameworkCore.Design.`
+dependency) to `ADemoBeCsas.csproj`. Without it, `dotnet ef migrations add` fails with:
+`Your startup project 'ADemoBeCsas' doesn't reference Microsoft.EntityFrameworkCore.Design.`
 
 **Alternatives considered:**
 

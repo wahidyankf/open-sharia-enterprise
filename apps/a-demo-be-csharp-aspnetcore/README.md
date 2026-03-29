@@ -24,7 +24,7 @@ docker compose up --build
 cd apps/a-demo-be-csharp-aspnetcore
 export APP_JWT_SECRET="change-me-in-dev-only-not-for-production"
 export DATABASE_URL="Host=localhost;Port=5432;Database=a_demo_be_csharp_aspnetcore;Username=a_demo_be_csharp_aspnetcore;Password=a_demo_be_csharp_aspnetcore"
-dotnet run --project src/AADemoBeCsas/AADemoBeCsas.csproj
+dotnet run --project src/ADemoBeCsas/ADemoBeCsas.csproj
 ```
 
 ## Database Migrations
@@ -48,8 +48,8 @@ SQLite in-memory provider).
 ```bash
 cd apps/a-demo-be-csharp-aspnetcore
 dotnet ef migrations add <MigrationName> \
-  --project src/AADemoBeCsas/AADemoBeCsas.csproj \
-  --startup-project src/AADemoBeCsas/AADemoBeCsas.csproj
+  --project src/ADemoBeCsas/ADemoBeCsas.csproj \
+  --startup-project src/ADemoBeCsas/ADemoBeCsas.csproj
 ```
 
 If `dotnet ef` is not installed:
@@ -58,7 +58,7 @@ If `dotnet ef` is not installed:
 dotnet tool install --global dotnet-ef
 ```
 
-Migration files are committed to git under `src/AADemoBeCsas/Migrations/`.
+Migration files are committed to git under `src/ADemoBeCsas/Migrations/`.
 
 ## Test Architecture
 
@@ -66,7 +66,7 @@ This project uses a three-level test architecture:
 
 ### Level 1: Unit tests (`test:unit`)
 
-All tests in `tests/AADemoBeCsas.Tests/` run against SQLite in-memory using
+All tests in `tests/ADemoBeCsas.Tests/` run against SQLite in-memory using
 `WebApplicationFactory`. No external services are required. This includes:
 
 - **Reqnroll BDD scenarios** (`Integration/Steps/`) — Gherkin feature scenarios run
@@ -167,12 +167,12 @@ nx run a-demo-be-csharp-aspnetcore:test:integration
 apps/a-demo-be-csharp-aspnetcore/
 ├── docker-compose.integration.yml  # PostgreSQL + test-runner for integration tests
 ├── Dockerfile.integration          # .NET 10 SDK image for docker-compose integration tests
-├── src/AADemoBeCsas/
+├── src/ADemoBeCsas/
 │   ├── Domain/          # Records, enums, validation functions
 │   ├── Infrastructure/  # EF Core DbContext, repositories, password hasher
 │   ├── Auth/            # JWT service, authorization extensions
 │   └── Endpoints/       # Minimal API route handlers
-└── tests/AADemoBeCsas.Tests/
+└── tests/ADemoBeCsas.Tests/
     ├── Unit/            # Pure function tests (xUnit, Category=Unit)
     └── Integration/     # Reqnroll BDD step definitions (WebApplicationFactory)
 ```

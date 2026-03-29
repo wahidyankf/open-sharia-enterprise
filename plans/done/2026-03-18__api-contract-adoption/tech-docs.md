@@ -247,13 +247,13 @@ is `a-demo-contracts`, not `generated-contracts`. Import with:
 app's `.fsproj` compile list:
 
 ```xml
-<Compile Include="../generated-contracts/OpenAPI/src/AADemoBeFsgi.Contracts/*.fs" />
+<Compile Include="../generated-contracts/OpenAPI/src/ADemoBeFsgi.Contracts/*.fs" />
 ```
 
 Note: F# compilation order matters — add the `<Compile>` entries before any files that reference
 the generated types.
 
-Open `OpenAPI.AADemoBeFsgi.Contracts` namespace in handler files.
+Open `OpenAPI.ADemoBeFsgi.Contracts` namespace in handler files.
 
 **IMPORTANT**: Generated F# records do NOT carry `[<CLIMutable>]`. Giraffe's `bindJsonAsync<T>()`
 and ASP.NET Core model binding require a default constructor, which immutable F# records lack
@@ -283,12 +283,12 @@ response construction (where `[<CLIMutable>]` is not needed).
 app's `.csproj` compile list:
 
 ```xml
-<Compile Include="../generated-contracts/src/Org.OpenAPITools/AADemoBeCsas.Contracts/*.cs" />
+<Compile Include="../generated-contracts/src/Org.OpenAPITools/ADemoBeCsas.Contracts/*.cs" />
 ```
 
-Add `using Org.OpenAPITools.AADemoBeCsas.Contracts;` to endpoint files. The actual namespace
-(verified from generated files) is `Org.OpenAPITools.AADemoBeCsas.Contracts`, not
-`AADemoBeCsas.Contracts`.
+Add `using Org.OpenAPITools.ADemoBeCsas.Contracts;` to endpoint files. The actual namespace
+(verified from generated files) is `Org.OpenAPITools.ADemoBeCsas.Contracts`, not
+`ADemoBeCsas.Contracts`.
 
 ### Python — a-demo-be-python-fastapi
 
@@ -602,7 +602,7 @@ The codegen generates `.fs` source files only — no `.fsproj` project file exis
 source inclusion instead of `<ProjectReference>`:
 
 ```xml
-<Compile Include="../generated-contracts/OpenAPI/src/AADemoBeFsgi.Contracts/*.fs" />
+<Compile Include="../generated-contracts/OpenAPI/src/ADemoBeFsgi.Contracts/*.fs" />
 ```
 
 Add this to the main app's `.fsproj` before any files that reference the generated types.
@@ -615,11 +615,11 @@ The codegen generates `.cs` source files only — no `.csproj` project file exis
 source inclusion instead of `<ProjectReference>`:
 
 ```xml
-<Compile Include="../generated-contracts/src/Org.OpenAPITools/AADemoBeCsas.Contracts/*.cs" />
+<Compile Include="../generated-contracts/src/Org.OpenAPITools/ADemoBeCsas.Contracts/*.cs" />
 ```
 
-Add `using Org.OpenAPITools.AADemoBeCsas.Contracts;` to endpoint files. The namespace is
-`Org.OpenAPITools.AADemoBeCsas.Contracts` (verified from generated files).
+Add `using Org.OpenAPITools.ADemoBeCsas.Contracts;` to endpoint files. The namespace is
+`Org.OpenAPITools.ADemoBeCsas.Contracts` (verified from generated files).
 
 ### Python: generated_contracts package
 

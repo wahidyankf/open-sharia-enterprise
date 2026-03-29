@@ -1,4 +1,4 @@
-package com.aademobejasb.config;
+package com.ademobejasb.config;
 
 /** Thrown when request data fails programmatic validation. */
 public class ValidationException extends RuntimeException {

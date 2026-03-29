@@ -405,7 +405,7 @@ records/classes with generated types for both request parsing and response const
 **a-demo-be-fsharp-giraffe**:
 
 - [x] **Add source inclusion** in main app's `.fsproj` (no `.fsproj` in `generated-contracts/`)
-  - [x] Add `<Compile Include="../generated-contracts/OpenAPI/src/AADemoBeFsgi.Contracts/*.fs" />`
+  - [x] Add `<Compile Include="../generated-contracts/OpenAPI/src/ADemoBeFsgi.Contracts/*.fs" />`
         to main `.fsproj` before any files that reference generated types
 - [x] **Create `[<CLIMutable>]` wrapper records** for request binding
   - [x] Generated F# records do NOT carry `[<CLIMutable>]`; Giraffe's `bindJsonAsync<T>()` fails
@@ -416,7 +416,7 @@ records/classes with generated types for both request parsing and response const
   - [x] Use generated types directly for response construction (no `[<CLIMutable>]` needed)
 - [x] **Wire `AuthHandler.fs`** (request + response)
   - [x] Remove local `RegisterRequest`, `LoginRequest`, `RefreshRequest` records
-  - [x] Open `OpenAPI.AADemoBeFsgi.Contracts` namespace
+  - [x] Open `OpenAPI.ADemoBeFsgi.Contracts` namespace
   - [x] Use thin `[<CLIMutable>]` wrapper records for request deserialization
   - [x] Map wrapper records to generated types for business logic
   - [x] Use generated types for response construction (`AuthTokens`, `User`)
@@ -445,11 +445,11 @@ records/classes with generated types for both request parsing and response const
 **a-demo-be-csharp-aspnetcore**:
 
 - [x] **Add source inclusion** in main app's `.csproj` (no `.csproj` in `generated-contracts/`)
-  - [x] Add `<Compile Include="../generated-contracts/src/Org.OpenAPITools/AADemoBeCsas.Contracts/*.cs" />`
+  - [x] Add `<Compile Include="../generated-contracts/src/Org.OpenAPITools/ADemoBeCsas.Contracts/*.cs" />`
         to main `.csproj`
 - [x] **Wire `AuthEndpoints.cs`** (request + response)
   - [x] Remove local `RegisterRequest`, `LoginRequest`, `RefreshRequest` sealed records
-  - [x] Add `using Org.OpenAPITools.AADemoBeCsas.Contracts;` (actual namespace — not `AADemoBeCsas.Contracts`)
+  - [x] Add `using Org.OpenAPITools.ADemoBeCsas.Contracts;` (actual namespace — not `ADemoBeCsas.Contracts`)
   - [x] Use generated types for request binding and response (`AuthTokens`, `User`)
 - [x] **Wire `UserEndpoints.cs`** (request + response)
   - [x] Remove local `PatchMeRequest` (replace with `UpdateProfileRequest`)

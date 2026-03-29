@@ -1,6 +1,6 @@
-using AADemoBeCsas.Domain;
+using ADemoBeCsas.Domain;
 
-namespace AADemoBeCsas.Infrastructure.Models;
+namespace ADemoBeCsas.Infrastructure.Models;
 
 public class UserModel
 {

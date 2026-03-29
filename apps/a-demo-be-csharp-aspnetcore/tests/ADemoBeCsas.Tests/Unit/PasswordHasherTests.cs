@@ -1,8 +1,8 @@
-using AADemoBeCsas.Infrastructure;
+using ADemoBeCsas.Infrastructure;
 using FluentAssertions;
 using Xunit;
 
-namespace AADemoBeCsas.Tests.Unit;
+namespace ADemoBeCsas.Tests.Unit;
 
 [Trait("Category", "Unit")]
 public class PasswordHasherTests

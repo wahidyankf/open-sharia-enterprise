@@ -1,15 +1,15 @@
-module AADemoBeFsgi.Handlers.AuthHandler
+module ADemoBeFsgi.Handlers.AuthHandler
 
 open System
 open System.Text.Json
 open Giraffe
-open AADemoBeFsgi.Infrastructure.AppDbContext
-open AADemoBeFsgi.Infrastructure.PasswordHasher
-open AADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
-open AADemoBeFsgi.Domain.User
-open AADemoBeFsgi.Domain.Types
-open AADemoBeFsgi.Auth.JwtService
-open AADemoBeFsgi.Contracts.ContractWrappers
+open ADemoBeFsgi.Infrastructure.AppDbContext
+open ADemoBeFsgi.Infrastructure.PasswordHasher
+open ADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
+open ADemoBeFsgi.Domain.User
+open ADemoBeFsgi.Domain.Types
+open ADemoBeFsgi.Auth.JwtService
+open ADemoBeFsgi.Contracts.ContractWrappers
 
 let private maxFailedAttempts = 5
 

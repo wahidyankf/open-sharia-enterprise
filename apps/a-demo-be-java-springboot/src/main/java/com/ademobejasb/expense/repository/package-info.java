@@ -1,4 +1,4 @@
 @NullMarked
-package com.aademobejasb.expense.repository;
+package com.ademobejasb.expense.repository;
 
 import org.jspecify.annotations.NullMarked;

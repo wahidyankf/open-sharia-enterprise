@@ -1,13 +1,13 @@
-package com.aademobejavx.handler;
+package com.ademobejavx.handler;
 
-import com.aademobejavx.contracts.CreateExpenseRequest;
-import com.aademobejavx.contracts.Expense;
-import com.aademobejavx.contracts.ExpenseListResponse;
-import com.aademobejavx.contracts.UpdateExpenseRequest;
-import com.aademobejavx.domain.validation.DomainException;
-import com.aademobejavx.domain.validation.ExpenseValidator;
-import com.aademobejavx.domain.validation.ValidationException;
-import com.aademobejavx.repository.ExpenseRepository;
+import com.ademobejavx.contracts.CreateExpenseRequest;
+import com.ademobejavx.contracts.Expense;
+import com.ademobejavx.contracts.ExpenseListResponse;
+import com.ademobejavx.contracts.UpdateExpenseRequest;
+import com.ademobejavx.domain.validation.DomainException;
+import com.ademobejavx.domain.validation.ExpenseValidator;
+import com.ademobejavx.domain.validation.ValidationException;
+import com.ademobejavx.repository.ExpenseRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -81,7 +81,7 @@ public class ExpenseHandler implements Handler<RoutingContext> {
         String unit = req.getUnit();
 
         BigDecimal normalizedAmount;
-        com.aademobejavx.domain.model.Expense expense;
+        com.ademobejavx.domain.model.Expense expense;
         try {
             ExpenseValidator.validateCurrency(currency);
             BigDecimal amount = new BigDecimal(amountStr);
@@ -93,7 +93,7 @@ public class ExpenseHandler implements Handler<RoutingContext> {
                 throw new ValidationException("date", "Date is required");
             }
             Double quantity = quantityVal != null ? quantityVal.doubleValue() : null;
-            expense = new com.aademobejavx.domain.model.Expense(null, userId, type,
+            expense = new com.ademobejavx.domain.model.Expense(null, userId, type,
                     normalizedAmount, currency, category, description, parsedDate, quantity, unit,
                     Instant.now());
         } catch (ValidationException e) {
@@ -129,13 +129,13 @@ public class ExpenseHandler implements Handler<RoutingContext> {
                     int total = expenses.size();
                     int totalPages = size > 0 ? (int) Math.ceil((double) total / size) : 0;
                     int start = (page - 1) * size;
-                    List<com.aademobejavx.domain.model.Expense> pageExpenses = expenses.stream()
+                    List<com.ademobejavx.domain.model.Expense> pageExpenses = expenses.stream()
                             .skip(start)
                             .limit(size)
                             .toList();
 
                     List<Expense> content = new ArrayList<>();
-                    for (com.aademobejavx.domain.model.Expense e : pageExpenses) {
+                    for (com.ademobejavx.domain.model.Expense e : pageExpenses) {
                         content.add(buildContractExpense(e));
                     }
 
@@ -165,7 +165,7 @@ public class ExpenseHandler implements Handler<RoutingContext> {
                         ctx.fail(404);
                         return;
                     }
-                    com.aademobejavx.domain.model.Expense exp = expOpt.get();
+                    com.ademobejavx.domain.model.Expense exp = expOpt.get();
                     if (!exp.userId().equals(userId)) {
                         ctx.fail(403);
                         return;
@@ -202,7 +202,7 @@ public class ExpenseHandler implements Handler<RoutingContext> {
                     if (expOpt.isEmpty()) {
                         return Future.failedFuture(new DomainException(404, "Not found"));
                     }
-                    com.aademobejavx.domain.model.Expense existing = expOpt.get();
+                    com.ademobejavx.domain.model.Expense existing = expOpt.get();
                     if (!existing.userId().equals(userId)) {
                         return Future.failedFuture(new DomainException(403, "Forbidden"));
                     }
@@ -232,8 +232,8 @@ public class ExpenseHandler implements Handler<RoutingContext> {
                         BigDecimal normalizedAmount = ExpenseValidator.validateAndNormalizeAmount(
                                 currency, amount);
 
-                        com.aademobejavx.domain.model.Expense updated =
-                                new com.aademobejavx.domain.model.Expense(existing.id(), userId,
+                        com.ademobejavx.domain.model.Expense updated =
+                                new com.ademobejavx.domain.model.Expense(existing.id(), userId,
                                         type, normalizedAmount, currency, category, description,
                                         date, existing.quantity(), existing.unit(),
                                         existing.createdAt());
@@ -262,7 +262,7 @@ public class ExpenseHandler implements Handler<RoutingContext> {
                     if (expOpt.isEmpty()) {
                         return Future.failedFuture(new DomainException(404, "Not found"));
                     }
-                    com.aademobejavx.domain.model.Expense exp = expOpt.get();
+                    com.ademobejavx.domain.model.Expense exp = expOpt.get();
                     if (!exp.userId().equals(userId)) {
                         return Future.failedFuture(new DomainException(403, "Forbidden"));
                     }
@@ -282,8 +282,8 @@ public class ExpenseHandler implements Handler<RoutingContext> {
         expenseRepo.findByUserId(userId)
                 .onSuccess(expenses -> {
                     Map<String, BigDecimal> totals = new HashMap<>();
-                    for (com.aademobejavx.domain.model.Expense e : expenses) {
-                        if (!com.aademobejavx.domain.model.Expense.TYPE_INCOME.equals(e.type())) {
+                    for (com.ademobejavx.domain.model.Expense e : expenses) {
+                        if (!com.ademobejavx.domain.model.Expense.TYPE_INCOME.equals(e.type())) {
                             totals.merge(e.currency(), e.amount(), BigDecimal::add);
                         }
                     }
@@ -301,8 +301,8 @@ public class ExpenseHandler implements Handler<RoutingContext> {
                 .onFailure(ctx::fail);
     }
 
-    static Expense buildContractExpense(com.aademobejavx.domain.model.Expense expense) {
-        Expense.TypeEnum typeEnum = com.aademobejavx.domain.model.Expense.TYPE_INCOME
+    static Expense buildContractExpense(com.ademobejavx.domain.model.Expense expense) {
+        Expense.TypeEnum typeEnum = com.ademobejavx.domain.model.Expense.TYPE_INCOME
                 .equals(expense.type())
                 ? Expense.TypeEnum.INCOME
                 : Expense.TypeEnum.EXPENSE;

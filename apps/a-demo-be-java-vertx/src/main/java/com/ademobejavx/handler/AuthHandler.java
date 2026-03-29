@@ -1,19 +1,19 @@
-package com.aademobejavx.handler;
+package com.ademobejavx.handler;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.aademobejavx.auth.JwtService;
-import com.aademobejavx.auth.PasswordService;
-import com.aademobejavx.contracts.AuthTokens;
-import com.aademobejavx.contracts.LoginRequest;
-import com.aademobejavx.contracts.RefreshRequest;
-import com.aademobejavx.contracts.RegisterRequest;
-import com.aademobejavx.contracts.User;
-import com.aademobejavx.domain.model.TokenRevocation;
-import com.aademobejavx.domain.validation.DomainException;
-import com.aademobejavx.domain.validation.UserValidator;
-import com.aademobejavx.domain.validation.ValidationException;
-import com.aademobejavx.repository.TokenRevocationRepository;
-import com.aademobejavx.repository.UserRepository;
+import com.ademobejavx.auth.JwtService;
+import com.ademobejavx.auth.PasswordService;
+import com.ademobejavx.contracts.AuthTokens;
+import com.ademobejavx.contracts.LoginRequest;
+import com.ademobejavx.contracts.RefreshRequest;
+import com.ademobejavx.contracts.RegisterRequest;
+import com.ademobejavx.contracts.User;
+import com.ademobejavx.domain.model.TokenRevocation;
+import com.ademobejavx.domain.validation.DomainException;
+import com.ademobejavx.domain.validation.UserValidator;
+import com.ademobejavx.domain.validation.ValidationException;
+import com.ademobejavx.repository.TokenRevocationRepository;
+import com.ademobejavx.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -91,10 +91,10 @@ public class AuthHandler implements Handler<RoutingContext> {
                                 "Username already exists"));
                     }
                     String hash = passwordService.hash(password);
-                    com.aademobejavx.domain.model.User newUser = new com.aademobejavx.domain.model.User(
+                    com.ademobejavx.domain.model.User newUser = new com.ademobejavx.domain.model.User(
                             null, username, email, username,
-                            hash, com.aademobejavx.domain.model.User.ROLE_USER,
-                            com.aademobejavx.domain.model.User.STATUS_ACTIVE, 0, Instant.now());
+                            hash, com.ademobejavx.domain.model.User.ROLE_USER,
+                            com.ademobejavx.domain.model.User.STATUS_ACTIVE, 0, Instant.now());
                     return userRepo.save(newUser);
                 })
                 .onSuccess(user -> {
@@ -128,32 +128,32 @@ public class AuthHandler implements Handler<RoutingContext> {
                         return Future.failedFuture(new DomainException(401,
                                 "Invalid credentials"));
                     }
-                    com.aademobejavx.domain.model.User user = userOpt.get();
-                    if (com.aademobejavx.domain.model.User.STATUS_INACTIVE.equals(user.status())) {
+                    com.ademobejavx.domain.model.User user = userOpt.get();
+                    if (com.ademobejavx.domain.model.User.STATUS_INACTIVE.equals(user.status())) {
                         return Future.failedFuture(new DomainException(401,
                                 "Account deactivated"));
                     }
-                    if (com.aademobejavx.domain.model.User.STATUS_DISABLED.equals(user.status())) {
+                    if (com.ademobejavx.domain.model.User.STATUS_DISABLED.equals(user.status())) {
                         return Future.failedFuture(new DomainException(401,
                                 "Account disabled"));
                     }
-                    if (com.aademobejavx.domain.model.User.STATUS_LOCKED.equals(user.status())) {
+                    if (com.ademobejavx.domain.model.User.STATUS_LOCKED.equals(user.status())) {
                         return Future.failedFuture(new DomainException(401,
                                 "Account locked"));
                     }
                     if (!passwordService.verify(password, user.passwordHash())) {
                         int attempts = user.failedLoginAttempts() + 1;
-                        com.aademobejavx.domain.model.User updated =
+                        com.ademobejavx.domain.model.User updated =
                                 user.withFailedLoginAttempts(attempts);
                         if (attempts >= MAX_FAILED_ATTEMPTS) {
                             updated = updated.withStatus(
-                                    com.aademobejavx.domain.model.User.STATUS_LOCKED);
+                                    com.ademobejavx.domain.model.User.STATUS_LOCKED);
                         }
                         return userRepo.update(updated)
                                 .compose(u -> Future.failedFuture(
                                         new DomainException(401, "Invalid credentials")));
                     }
-                    com.aademobejavx.domain.model.User resetUser =
+                    com.ademobejavx.domain.model.User resetUser =
                             user.withFailedLoginAttempts(0);
                     return userRepo.update(resetUser);
                 })
@@ -213,12 +213,12 @@ public class AuthHandler implements Handler<RoutingContext> {
                     if (userOpt.isEmpty()) {
                         return Future.failedFuture(new DomainException(401, "User not found"));
                     }
-                    com.aademobejavx.domain.model.User user = userOpt.get();
-                    if (com.aademobejavx.domain.model.User.STATUS_DISABLED.equals(user.status())) {
+                    com.ademobejavx.domain.model.User user = userOpt.get();
+                    if (com.ademobejavx.domain.model.User.STATUS_DISABLED.equals(user.status())) {
                         return Future.failedFuture(new DomainException(401,
                                 "Account disabled"));
                     }
-                    if (!com.aademobejavx.domain.model.User.STATUS_ACTIVE.equals(user.status())) {
+                    if (!com.ademobejavx.domain.model.User.STATUS_ACTIVE.equals(user.status())) {
                         return Future.failedFuture(new DomainException(401,
                                 "Account deactivated"));
                     }
@@ -292,14 +292,14 @@ public class AuthHandler implements Handler<RoutingContext> {
                 .onFailure(ctx::fail);
     }
 
-    static User buildContractUser(com.aademobejavx.domain.model.User user) {
+    static User buildContractUser(com.ademobejavx.domain.model.User user) {
         User.StatusEnum status;
         switch (user.status()) {
-            case com.aademobejavx.domain.model.User.STATUS_INACTIVE ->
+            case com.ademobejavx.domain.model.User.STATUS_INACTIVE ->
                 status = User.StatusEnum.INACTIVE;
-            case com.aademobejavx.domain.model.User.STATUS_DISABLED ->
+            case com.ademobejavx.domain.model.User.STATUS_DISABLED ->
                 status = User.StatusEnum.DISABLED;
-            case com.aademobejavx.domain.model.User.STATUS_LOCKED ->
+            case com.ademobejavx.domain.model.User.STATUS_LOCKED ->
                 status = User.StatusEnum.LOCKED;
             default -> status = User.StatusEnum.ACTIVE;
         }

@@ -1,10 +1,10 @@
-module AADemoBeFsgi.Tests.Unit.DomainValidationTests
+module ADemoBeFsgi.Tests.Unit.DomainValidationTests
 
 open Xunit
-open AADemoBeFsgi.Domain.Types
-open AADemoBeFsgi.Domain.User
-open AADemoBeFsgi.Domain.Expense
-open AADemoBeFsgi.Domain.Attachment
+open ADemoBeFsgi.Domain.Types
+open ADemoBeFsgi.Domain.User
+open ADemoBeFsgi.Domain.Expense
+open ADemoBeFsgi.Domain.Attachment
 
 [<Trait("Category", "Unit")>]
 type DomainValidationTests() =

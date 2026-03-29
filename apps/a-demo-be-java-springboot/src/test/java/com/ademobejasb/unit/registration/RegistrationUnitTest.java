@@ -1,4 +1,4 @@
-package com.aademobejasb.unit.registration;
+package com.ademobejasb.unit.registration;
 
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.IncludeEngines;
@@ -17,8 +17,8 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 @SelectClasspathResource("user-lifecycle/registration.feature")
 @ConfigurationParameter(
         key = GLUE_PROPERTY_NAME,
-        value = "com.aademobejasb.unit.registration"
-                + ",com.aademobejasb.unit.steps")
+        value = "com.ademobejasb.unit.registration"
+                + ",com.ademobejasb.unit.steps")
 @ConfigurationParameter(
         key = PLUGIN_PROPERTY_NAME,
         value = "pretty,html:target/cucumber-reports/unit-registration.html")

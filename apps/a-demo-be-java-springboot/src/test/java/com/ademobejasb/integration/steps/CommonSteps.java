@@ -1,6 +1,6 @@
-package com.aademobejasb.integration.steps;
+package com.ademobejasb.integration.steps;
 
-import com.aademobejasb.integration.ResponseStore;
+import com.ademobejasb.integration.ResponseStore;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;

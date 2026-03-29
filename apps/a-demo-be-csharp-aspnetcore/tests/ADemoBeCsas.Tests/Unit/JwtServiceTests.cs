@@ -1,9 +1,9 @@
-using AADemoBeCsas.Auth;
+using ADemoBeCsas.Auth;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 
-namespace AADemoBeCsas.Tests.Unit;
+namespace ADemoBeCsas.Tests.Unit;
 
 /// <summary>
 /// Tests for JwtService covering token creation, decoding, and exception paths.

@@ -1,6 +1,6 @@
-package com.aademobejasb.auth.service;
+package com.ademobejasb.auth.service;
 
-import com.aademobejasb.auth.repository.UserRepository;
+import com.ademobejasb.auth.repository.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,7 +18,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-        com.aademobejasb.auth.model.User user =
+        com.ademobejasb.auth.model.User user =
                 userRepository
                         .findByUsername(username)
                         .orElseThrow(

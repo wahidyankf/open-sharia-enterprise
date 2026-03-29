@@ -1,7 +1,7 @@
-package com.aademobejavx.unit;
+package com.ademobejavx.unit;
 
-import com.aademobejavx.domain.validation.ExpenseValidator;
-import com.aademobejavx.domain.validation.ValidationException;
+import com.ademobejavx.domain.validation.ExpenseValidator;
+import com.ademobejavx.domain.validation.ValidationException;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 

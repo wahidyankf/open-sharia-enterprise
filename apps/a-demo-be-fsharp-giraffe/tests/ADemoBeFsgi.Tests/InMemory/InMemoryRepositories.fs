@@ -1,10 +1,10 @@
-module AADemoBeFsgi.Tests.InMemory.InMemoryRepositories
+module ADemoBeFsgi.Tests.InMemory.InMemoryRepositories
 
 open System
 open System.Collections.Concurrent
 open System.Linq
-open AADemoBeFsgi.Infrastructure.AppDbContext
-open AADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
+open ADemoBeFsgi.Infrastructure.AppDbContext
+open ADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
 
 let createUserRepo () : UserRepository =
     let store = ConcurrentDictionary<Guid, UserEntity>()

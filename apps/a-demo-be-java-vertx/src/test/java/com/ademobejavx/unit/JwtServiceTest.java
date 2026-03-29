@@ -1,8 +1,8 @@
-package com.aademobejavx.unit;
+package com.ademobejavx.unit;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.aademobejavx.auth.JwtService;
-import com.aademobejavx.domain.model.User;
+import com.ademobejavx.auth.JwtService;
+import com.ademobejavx.domain.model.User;
 import java.time.Instant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

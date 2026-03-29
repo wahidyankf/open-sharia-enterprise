@@ -1,11 +1,11 @@
-package com.aademobejavx.handler;
+package com.ademobejavx.handler;
 
-import com.aademobejavx.contracts.Attachment;
-import com.aademobejavx.domain.model.Expense;
-import com.aademobejavx.domain.validation.DomainException;
-import com.aademobejavx.domain.validation.ExpenseValidator;
-import com.aademobejavx.repository.AttachmentRepository;
-import com.aademobejavx.repository.ExpenseRepository;
+import com.ademobejavx.contracts.Attachment;
+import com.ademobejavx.domain.model.Expense;
+import com.ademobejavx.domain.validation.DomainException;
+import com.ademobejavx.domain.validation.ExpenseValidator;
+import com.ademobejavx.repository.AttachmentRepository;
+import com.ademobejavx.repository.ExpenseRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -82,8 +82,8 @@ public class AttachmentHandler implements Handler<RoutingContext> {
                                 "Unsupported file type: " + contentType));
                     }
 
-                    com.aademobejavx.domain.model.Attachment attachment =
-                            new com.aademobejavx.domain.model.Attachment(null, expenseId,
+                    com.ademobejavx.domain.model.Attachment attachment =
+                            new com.ademobejavx.domain.model.Attachment(null, expenseId,
                                     upload.fileName(), contentType, size, new byte[0],
                                     Instant.now());
                     return attachmentRepo.save(attachment);
@@ -116,7 +116,7 @@ public class AttachmentHandler implements Handler<RoutingContext> {
                 })
                 .onSuccess(attachments -> {
                     List<Attachment> items = new ArrayList<>();
-                    for (com.aademobejavx.domain.model.Attachment a : attachments) {
+                    for (com.ademobejavx.domain.model.Attachment a : attachments) {
                         items.add(buildContractAttachment(a));
                     }
                     try {
@@ -165,7 +165,7 @@ public class AttachmentHandler implements Handler<RoutingContext> {
     }
 
     private Attachment buildContractAttachment(
-            com.aademobejavx.domain.model.Attachment attachment) {
+            com.ademobejavx.domain.model.Attachment attachment) {
         java.time.OffsetDateTime createdAt = attachment.createdAt() != null
                 ? attachment.createdAt().atOffset(java.time.ZoneOffset.UTC)
                 : java.time.OffsetDateTime.now(java.time.ZoneOffset.UTC);
@@ -178,7 +178,7 @@ public class AttachmentHandler implements Handler<RoutingContext> {
     }
 
     private java.util.Map<String, Object> buildUploadResponse(
-            com.aademobejavx.domain.model.Attachment attachment) {
+            com.ademobejavx.domain.model.Attachment attachment) {
         java.util.Map<String, Object> resp = new java.util.LinkedHashMap<>();
         resp.put("id", attachment.id() != null ? attachment.id() : "");
         resp.put("filename", attachment.filename());

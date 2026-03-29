@@ -1,15 +1,15 @@
-package com.aademobejasb.integration.steps;
+package com.ademobejasb.integration.steps;
 
-import com.aademobejasb.attachment.model.Attachment;
-import com.aademobejasb.attachment.repository.AttachmentRepository;
-import com.aademobejasb.auth.model.RefreshToken;
-import com.aademobejasb.auth.model.RevokedToken;
-import com.aademobejasb.auth.model.User;
-import com.aademobejasb.auth.repository.RefreshTokenRepository;
-import com.aademobejasb.auth.repository.RevokedTokenRepository;
-import com.aademobejasb.auth.repository.UserRepository;
-import com.aademobejasb.expense.model.Expense;
-import com.aademobejasb.expense.repository.ExpenseRepository;
+import com.ademobejasb.attachment.model.Attachment;
+import com.ademobejasb.attachment.repository.AttachmentRepository;
+import com.ademobejasb.auth.model.RefreshToken;
+import com.ademobejasb.auth.model.RevokedToken;
+import com.ademobejasb.auth.model.User;
+import com.ademobejasb.auth.repository.RefreshTokenRepository;
+import com.ademobejasb.auth.repository.RevokedTokenRepository;
+import com.ademobejasb.auth.repository.UserRepository;
+import com.ademobejasb.expense.model.Expense;
+import com.ademobejasb.expense.repository.ExpenseRepository;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -8,23 +8,23 @@
 import Config
 
 config :a_demo_be_exph,
-  ecto_repos: [AADemoBeExph.Repo],
+  ecto_repos: [ADemoBeExph.Repo],
   generators: [timestamp_type: :utc_datetime]
 
-config :a_demo_be_exph, :accounts_module, AADemoBeExph.Accounts
-config :a_demo_be_exph, :token_module, AADemoBeExph.Token.TokenContext
-config :a_demo_be_exph, :expense_module, AADemoBeExph.Expense.ExpenseContext
-config :a_demo_be_exph, :attachment_module, AADemoBeExph.Attachment.AttachmentContext
+config :a_demo_be_exph, :accounts_module, ADemoBeExph.Accounts
+config :a_demo_be_exph, :token_module, ADemoBeExph.Token.TokenContext
+config :a_demo_be_exph, :expense_module, ADemoBeExph.Expense.ExpenseContext
+config :a_demo_be_exph, :attachment_module, ADemoBeExph.Attachment.AttachmentContext
 
 # Configure the endpoint
-config :a_demo_be_exph, AAAADemoBeExphWeb.Endpoint,
+config :a_demo_be_exph, AADemoBeExphWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
-    formats: [json: AAAADemoBeExphWeb.ErrorJSON],
+    formats: [json: AADemoBeExphWeb.ErrorJSON],
     layout: false
   ],
-  pubsub_server: AADemoBeExph.PubSub,
+  pubsub_server: ADemoBeExph.PubSub,
   live_view: [signing_salt: "8pJ4Iu2a"]
 
 # Configure Elixir's Logger

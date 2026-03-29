@@ -1,4 +1,4 @@
 @NullMarked
-package com.aademobejasb.integration.jwtprotected;
+package com.ademobejasb.integration.jwtprotected;
 
 import org.jspecify.annotations.NullMarked;

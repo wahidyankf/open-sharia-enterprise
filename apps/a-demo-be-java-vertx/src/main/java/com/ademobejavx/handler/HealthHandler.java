@@ -1,6 +1,6 @@
-package com.aademobejavx.handler;
+package com.ademobejavx.handler;
 
-import com.aademobejavx.contracts.HealthResponse;
+import com.ademobejavx.contracts.HealthResponse;
 import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
 

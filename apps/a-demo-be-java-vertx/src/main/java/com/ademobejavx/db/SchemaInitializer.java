@@ -1,4 +1,4 @@
-package com.aademobejavx.db;
+package com.ademobejavx.db;
 
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;

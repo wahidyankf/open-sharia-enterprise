@@ -1,4 +1,4 @@
-package com.aademobejasb.integration.registration;
+package com.ademobejasb.integration.registration;
 
 // All steps for the registration feature are provided by AuthSteps in integration.steps package.
 // This class intentionally has no step definitions to avoid duplicate step conflicts.

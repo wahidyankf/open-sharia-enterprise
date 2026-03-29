@@ -1,4 +1,4 @@
-defmodule AADemoBeExph.Token.RevokedToken do
+defmodule ADemoBeExph.Token.RevokedToken do
   use Ecto.Schema
   import Ecto.Changeset
 

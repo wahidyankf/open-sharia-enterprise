@@ -79,8 +79,8 @@ Reqnroll is chosen over SpecFlow because:
 ```
 apps/a-demo-be-csharp-aspnetcore/
 ├── src/
-│   └── AADemoBeCsas/
-│       ├── AADemoBeCsas.csproj              # Main application
+│   └── ADemoBeCsas/
+│       ├── ADemoBeCsas.csproj              # Main application
 │       ├── Program.cs                      # Entry point + ASP.NET Core configuration
 │       ├── Domain/
 │       │   ├── Types.cs                    # Enums: Currency, Role, UserStatus
@@ -114,8 +114,8 @@ apps/a-demo-be-csharp-aspnetcore/
 │           ├── AttachmentEndpoints.cs      # file upload/list/delete
 │           └── TokenEndpoints.cs           # claims, JWKS
 ├── tests/
-│   └── AADemoBeCsas.Tests/
-│       ├── AADemoBeCsas.Tests.csproj         # Test project
+│   └── ADemoBeCsas.Tests/
+│       ├── ADemoBeCsas.Tests.csproj         # Test project
 │       ├── TestWebApplicationFactory.cs    # WebApplicationFactory + SQLite in-memory
 │       ├── ScenarioContext/
 │       │   └── SharedState.cs              # Per-scenario HTTP state holder
@@ -156,7 +156,7 @@ replaces the traditional Controller-based approach with a concise, functional st
 well to the functional core/imperative shell pattern:
 
 ```csharp
-// src/AADemoBeCsas/Endpoints/HealthEndpoints.cs
+// src/ADemoBeCsas/Endpoints/HealthEndpoints.cs
 public static class HealthEndpoints
 {
     public static IEndpointRouteBuilder MapHealthEndpoints(this IEndpointRouteBuilder app)
@@ -166,7 +166,7 @@ public static class HealthEndpoints
     }
 }
 
-// src/AADemoBeCsas/Program.cs
+// src/ADemoBeCsas/Program.cs
 var app = builder.Build();
 
 app.MapHealthEndpoints();
@@ -187,7 +187,7 @@ Repositories and services are registered in `Program.cs` and injected into endpo
 via ASP.NET Core's built-in DI container:
 
 ```csharp
-// src/AADemoBeCsas/Program.cs
+// src/ADemoBeCsas/Program.cs
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration["DATABASE_URL"]));
 
@@ -202,7 +202,7 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 Integration tests override the database via `WebApplicationFactory<Program>`:
 
 ```csharp
-// tests/AADemoBeCsas.Tests/TestWebApplicationFactory.cs
+// tests/ADemoBeCsas.Tests/TestWebApplicationFactory.cs
 public class TestWebApplicationFactory : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -229,7 +229,7 @@ Domain entities use C# `record` types for immutability and structural equality, 
 OSE Platform C# coding standards:
 
 ```csharp
-// src/AADemoBeCsas/Domain/User.cs
+// src/ADemoBeCsas/Domain/User.cs
 public sealed record UserDomain(
     Guid Id,
     string Username,
@@ -264,7 +264,7 @@ Domain operations return a lightweight `Result<T>` type. The Minimal API endpoin
 to HTTP responses without exposing domain logic to the web layer:
 
 ```csharp
-// src/AADemoBeCsas/Domain/Errors.cs
+// src/ADemoBeCsas/Domain/Errors.cs
 public abstract record DomainError(string Message);
 public sealed record ValidationError(string Field, string Message) : DomainError(Message);
 public sealed record NotFoundError(string Entity) : DomainError($"{Entity} not found");
@@ -274,7 +274,7 @@ public sealed record UnauthorizedError(string Message) : DomainError(Message);
 public sealed record FileTooLargeError(long LimitBytes) : DomainError("File size exceeds the maximum allowed limit");
 public sealed record UnsupportedMediaTypeError(string Type) : DomainError("Unsupported media type");
 
-// src/AADemoBeCsas/Endpoints/AuthEndpoints.cs
+// src/ADemoBeCsas/Endpoints/AuthEndpoints.cs
 public static IResult ToHttpResult(DomainError error) => error switch
 {
     ValidationError e => Results.BadRequest(new { message = e.Message }),
@@ -294,7 +294,7 @@ Production uses PostgreSQL via `Npgsql.EntityFrameworkCore.PostgreSQL`. Integrat
 SQLite in-memory via `Microsoft.EntityFrameworkCore.Sqlite` for isolation:
 
 ```csharp
-// src/AADemoBeCsas/Infrastructure/AppDbContext.cs
+// src/ADemoBeCsas/Infrastructure/AppDbContext.cs
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     public DbSet<UserModel> Users => Set<UserModel>();
@@ -336,7 +336,7 @@ implementations:
 - Claims: `sub` (user ID), `username`, `role`, `exp`, `iat`, `jti`
 
 ```csharp
-// src/AADemoBeCsas/Auth/JwtService.cs
+// src/ADemoBeCsas/Auth/JwtService.cs
 public class JwtService(IConfiguration config) : IJwtService
 {
     private readonly string _secret = config["APP_JWT_SECRET"]
@@ -369,7 +369,7 @@ public class JwtService(IConfiguration config) : IJwtService
 Amounts stored as `decimal` with currency-specific precision enforced at the domain level:
 
 ```csharp
-// src/AADemoBeCsas/Domain/Expense.cs
+// src/ADemoBeCsas/Domain/Expense.cs
 public static class CurrencyValidation
 {
     private static readonly IReadOnlyDictionary<string, int> DecimalPlaces =
@@ -402,7 +402,7 @@ Reqnroll injects `ScenarioContext` for per-scenario state sharing between step d
 Each step class receives shared state via constructor injection:
 
 ```csharp
-// tests/AADemoBeCsas.Tests/ScenarioContext/SharedState.cs
+// tests/ADemoBeCsas.Tests/ScenarioContext/SharedState.cs
 public class SharedState
 {
     public HttpResponseMessage? LastResponse { get; set; }
@@ -411,7 +411,7 @@ public class SharedState
     public Guid? LastCreatedId { get; set; }
 }
 
-// tests/AADemoBeCsas.Tests/Integration/Steps/AuthSteps.cs
+// tests/ADemoBeCsas.Tests/Integration/Steps/AuthSteps.cs
 [Binding]
 public class AuthSteps(HttpClient client, SharedState state)
 {
@@ -438,7 +438,7 @@ public class AuthSteps(HttpClient client, SharedState state)
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet publish src/AADemoBeCsas/AADemoBeCsas.csproj -c Release -o dist",
+        "command": "dotnet publish src/ADemoBeCsas/ADemoBeCsas.csproj -c Release -o dist",
         "cwd": "apps/a-demo-be-csharp-aspnetcore"
       },
       "outputs": ["{projectRoot}/dist"]
@@ -446,14 +446,14 @@ public class AuthSteps(HttpClient client, SharedState state)
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet watch run --project src/AADemoBeCsas/AADemoBeCsas.csproj",
+        "command": "dotnet watch run --project src/ADemoBeCsas/ADemoBeCsas.csproj",
         "cwd": "apps/a-demo-be-csharp-aspnetcore"
       }
     },
     "start": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet run --project src/AADemoBeCsas/AADemoBeCsas.csproj",
+        "command": "dotnet run --project src/ADemoBeCsas/ADemoBeCsas.csproj",
         "cwd": "apps/a-demo-be-csharp-aspnetcore"
       }
     },
@@ -461,10 +461,10 @@ public class AuthSteps(HttpClient client, SharedState state)
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "dotnet test tests/AADemoBeCsas.Tests/AADemoBeCsas.Tests.csproj --collect:\"XPlat Code Coverage\" --results-directory ./coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov",
+          "dotnet test tests/ADemoBeCsas.Tests/ADemoBeCsas.Tests.csproj --collect:\"XPlat Code Coverage\" --results-directory ./coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov",
           "(cd ../../ && apps/rhino-cli/rhino-cli test-coverage validate apps/a-demo-be-csharp-aspnetcore/coverage/**/coverage.info 90)",
           "dotnet format --verify-no-changes",
-          "dotnet build src/AADemoBeCsas/AADemoBeCsas.csproj /p:TreatWarningsAsErrors=true --no-restore"
+          "dotnet build src/ADemoBeCsas/ADemoBeCsas.csproj /p:TreatWarningsAsErrors=true --no-restore"
         ],
         "parallel": false,
         "cwd": "apps/a-demo-be-csharp-aspnetcore"
@@ -473,14 +473,14 @@ public class AuthSteps(HttpClient client, SharedState state)
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet test tests/AADemoBeCsas.Tests/AADemoBeCsas.Tests.csproj --filter Category=Unit",
+        "command": "dotnet test tests/ADemoBeCsas.Tests/ADemoBeCsas.Tests.csproj --filter Category=Unit",
         "cwd": "apps/a-demo-be-csharp-aspnetcore"
       }
     },
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet test tests/AADemoBeCsas.Tests/AADemoBeCsas.Tests.csproj --filter Category=Integration",
+        "command": "dotnet test tests/ADemoBeCsas.Tests/ADemoBeCsas.Tests.csproj --filter Category=Integration",
         "cwd": "apps/a-demo-be-csharp-aspnetcore"
       },
       "cache": true,
@@ -493,14 +493,14 @@ public class AuthSteps(HttpClient client, SharedState state)
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet build src/AADemoBeCsas/AADemoBeCsas.csproj /p:TreatWarningsAsErrors=true --no-restore",
+        "command": "dotnet build src/ADemoBeCsas/ADemoBeCsas.csproj /p:TreatWarningsAsErrors=true --no-restore",
         "cwd": "apps/a-demo-be-csharp-aspnetcore"
       }
     },
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet build src/AADemoBeCsas/AADemoBeCsas.csproj /p:TreatWarningsAsErrors=true --no-restore",
+        "command": "dotnet build src/ADemoBeCsas/ADemoBeCsas.csproj /p:TreatWarningsAsErrors=true --no-restore",
         "cwd": "apps/a-demo-be-csharp-aspnetcore"
       }
     }
@@ -585,14 +585,14 @@ public class AuthSteps(HttpClient client, SharedState state)
 </Project>
 ```
 
-### `AADemoBeCsas.csproj` (main application)
+### `ADemoBeCsas.csproj` (main application)
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <AssemblyName>AADemoBeCsas</AssemblyName>
-    <RootNamespace>AADemoBeCsas</RootNamespace>
+    <AssemblyName>ADemoBeCsas</AssemblyName>
+    <RootNamespace>ADemoBeCsas</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -609,7 +609,7 @@ public class AuthSteps(HttpClient client, SharedState state)
 </Project>
 ```
 
-### `AADemoBeCsas.Tests.csproj` (test project)
+### `ADemoBeCsas.Tests.csproj` (test project)
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
@@ -632,7 +632,7 @@ public class AuthSteps(HttpClient client, SharedState state)
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\AADemoBeCsas\AADemoBeCsas.csproj" />
+    <ProjectReference Include="..\..\src\ADemoBeCsas\ADemoBeCsas.csproj" />
   </ItemGroup>
 
   <!-- Copy shared Gherkin feature files to output directory -->
@@ -706,7 +706,7 @@ services:
     depends_on:
       a-demo-be-db:
         condition: service_healthy
-    command: sh -c "dotnet ef database update --project src/AADemoBeCsas/AADemoBeCsas.csproj && dotnet watch run --project src/AADemoBeCsas/AADemoBeCsas.csproj"
+    command: sh -c "dotnet ef database update --project src/ADemoBeCsas/ADemoBeCsas.csproj && dotnet watch run --project src/ADemoBeCsas/ADemoBeCsas.csproj"
     networks:
       - a-demo-be-csharp-aspnetcore-network
 
@@ -728,7 +728,7 @@ ENV PATH="$PATH:/root/.dotnet/tools"
 
 WORKDIR /workspace
 
-CMD ["dotnet", "watch", "run", "--project", "src/AADemoBeCsas/AADemoBeCsas.csproj"]
+CMD ["dotnet", "watch", "run", "--project", "src/ADemoBeCsas/ADemoBeCsas.csproj"]
 ```
 
 ---
@@ -763,7 +763,7 @@ The `.NET SDK` setup step already exists for `a-demo-be-fsharp-giraffe`. Add onl
 
 ## Dependencies Summary
 
-### NuGet Packages (`AADemoBeCsas.csproj` — runtime)
+### NuGet Packages (`ADemoBeCsas.csproj` — runtime)
 
 | Package                                       | Purpose                                    |
 | --------------------------------------------- | ------------------------------------------ |
@@ -776,7 +776,7 @@ The `.NET SDK` setup step already exists for `a-demo-be-fsharp-giraffe`. Add onl
 | Microsoft.CodeAnalysis.NetAnalyzers           | Roslyn static analysis (PrivateAssets=all) |
 | SonarAnalyzer.CSharp                          | SonarQube rules for C# (PrivateAssets=all) |
 
-### NuGet Packages (`AADemoBeCsas.Tests.csproj` — test)
+### NuGet Packages (`ADemoBeCsas.Tests.csproj` — test)
 
 | Package                              | Purpose                                    |
 | ------------------------------------ | ------------------------------------------ |

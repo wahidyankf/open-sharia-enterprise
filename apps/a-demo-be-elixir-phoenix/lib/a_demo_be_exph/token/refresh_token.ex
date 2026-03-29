@@ -1,4 +1,4 @@
-defmodule AADemoBeExph.Token.RefreshToken do
+defmodule ADemoBeExph.Token.RefreshToken do
   use Ecto.Schema
   import Ecto.Changeset
 

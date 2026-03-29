@@ -1,7 +1,7 @@
-using AADemoBeCsas.Domain;
-using AADemoBeCsas.Infrastructure.Repositories;
+using ADemoBeCsas.Domain;
+using ADemoBeCsas.Infrastructure.Repositories;
 
-namespace AADemoBeCsas.Endpoints;
+namespace ADemoBeCsas.Endpoints;
 
 public static class AttachmentEndpoints
 {

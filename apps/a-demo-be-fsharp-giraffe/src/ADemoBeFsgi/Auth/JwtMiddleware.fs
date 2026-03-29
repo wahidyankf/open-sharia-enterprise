@@ -1,9 +1,9 @@
-module AADemoBeFsgi.Auth.JwtMiddleware
+module ADemoBeFsgi.Auth.JwtMiddleware
 
 open System
 open Giraffe
-open AADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
-open AADemoBeFsgi.Domain.Types
+open ADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
+open ADemoBeFsgi.Domain.Types
 
 let requireAuth: HttpHandler =
     fun next ctx ->

@@ -1,4 +1,4 @@
-namespace AADemoBeCsas.Endpoints;
+namespace ADemoBeCsas.Endpoints;
 
 public static class HealthEndpoints
 {

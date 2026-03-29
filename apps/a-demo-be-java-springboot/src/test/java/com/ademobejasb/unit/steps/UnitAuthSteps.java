@@ -1,14 +1,14 @@
-package com.aademobejasb.unit.steps;
+package com.ademobejasb.unit.steps;
 
-import com.aademobejasb.auth.controller.AuthController;
-import com.aademobejasb.auth.repository.UserRepository;
-import com.aademobejasb.auth.service.AccountNotActiveException;
-import com.aademobejasb.auth.service.AuthService;
-import com.aademobejasb.auth.service.InvalidCredentialsException;
-import com.aademobejasb.auth.service.UsernameAlreadyExistsException;
-import com.aademobejasb.contracts.AuthTokens;
-import com.aademobejasb.contracts.LoginRequest;
-import com.aademobejasb.contracts.RegisterRequest;
+import com.ademobejasb.auth.controller.AuthController;
+import com.ademobejasb.auth.repository.UserRepository;
+import com.ademobejasb.auth.service.AccountNotActiveException;
+import com.ademobejasb.auth.service.AuthService;
+import com.ademobejasb.auth.service.InvalidCredentialsException;
+import com.ademobejasb.auth.service.UsernameAlreadyExistsException;
+import com.ademobejasb.contracts.AuthTokens;
+import com.ademobejasb.contracts.LoginRequest;
+import com.ademobejasb.contracts.RegisterRequest;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -49,10 +49,10 @@ public class UnitAuthSteps {
     private AuthController authController;
 
     @Autowired
-    private com.aademobejasb.admin.controller.AdminController adminController;
+    private com.ademobejasb.admin.controller.AdminController adminController;
 
     @Autowired
-    private com.aademobejasb.user.controller.UserController userController;
+    private com.ademobejasb.user.controller.UserController userController;
 
     @Autowired
     private UserRepository userRepository;
@@ -123,7 +123,7 @@ public class UnitAuthSteps {
     public void anAdminUserIsRegisteredAndLoggedIn(final String username) {
         String email = username + "@example.com";
         String password = "Adm1n#Secure123";
-        com.aademobejasb.contracts.User regResp = null;
+        com.ademobejasb.contracts.User regResp = null;
         try {
             RegisterRequest req = new RegisterRequest();
             req.setUsername(username);
@@ -195,7 +195,7 @@ public class UnitAuthSteps {
         // For AuthTokens (accessToken, refreshToken, tokenType), same
         // If the response is null or the field is genuinely absent, the test passes
         Object body = stateStore.getResponseBody();
-        if (body instanceof com.aademobejasb.contracts.User) {
+        if (body instanceof com.ademobejasb.contracts.User) {
             // password field is never in contracts.User by design
             assertThat(field).isEqualTo("password");
         }
@@ -291,7 +291,7 @@ public class UnitAuthSteps {
             stateStore.setStatusCode(401);
             return;
         }
-        ResponseEntity<com.aademobejasb.contracts.User>
+        ResponseEntity<com.ademobejasb.contracts.User>
                 resp = userController.getProfile(userDetails("alice"));
         stateStore.setStatusCode(resp.getStatusCode().value());
         stateStore.setResponseBody(resp.getBody());
@@ -305,7 +305,7 @@ public class UnitAuthSteps {
             return;
         }
         try {
-            ResponseEntity<com.aademobejasb.contracts.User>
+            ResponseEntity<com.ademobejasb.contracts.User>
                     resp = adminController.unlockUser(aliceId);
             stateStore.setStatusCode(resp.getStatusCode().value());
             stateStore.setResponseBody(resp.getBody());
@@ -334,7 +334,7 @@ public class UnitAuthSteps {
         request.setEmail(email);
         request.setPassword(password);
         try {
-            ResponseEntity<com.aademobejasb.contracts.User> response =
+            ResponseEntity<com.ademobejasb.contracts.User> response =
                     authController.register(request);
             stateStore.setStatusCode(response.getStatusCode().value());
             stateStore.setResponseBody(response.getBody());
@@ -342,7 +342,7 @@ public class UnitAuthSteps {
             if (response.getBody() != null && "alice".equals(username)) {
                 stateStore.setAliceId(java.util.UUID.fromString(response.getBody().getId()));
             }
-        } catch (com.aademobejasb.config.ValidationException e) {
+        } catch (com.ademobejasb.config.ValidationException e) {
             stateStore.setStatusCode(400);
             stateStore.setLastException(e);
         } catch (UsernameAlreadyExistsException e) {
@@ -420,7 +420,7 @@ public class UnitAuthSteps {
                 default -> null;
             };
         }
-        if (body instanceof com.aademobejasb.contracts.User resp) {
+        if (body instanceof com.ademobejasb.contracts.User resp) {
             return switch (jsonField) {
                 case "id" -> resp.getId();
                 case "username" -> resp.getUsername();
@@ -435,7 +435,7 @@ public class UnitAuthSteps {
                 default -> null;
             };
         }
-        if (body instanceof com.aademobejasb.contracts.UserListResponse resp) {
+        if (body instanceof com.ademobejasb.contracts.UserListResponse resp) {
             return switch (jsonField) {
                 case "data", "content" -> resp.getContent();
                 case "total", "totalElements" -> resp.getTotalElements();
@@ -443,7 +443,7 @@ public class UnitAuthSteps {
                 default -> null;
             };
         }
-        if (body instanceof com.aademobejasb.contracts.Expense resp) {
+        if (body instanceof com.ademobejasb.contracts.Expense resp) {
             return switch (jsonField) {
                 case "id" -> resp.getId();
                 case "amount" -> resp.getAmount();
@@ -457,7 +457,7 @@ public class UnitAuthSteps {
                 default -> null;
             };
         }
-        if (body instanceof com.aademobejasb.contracts.ExpenseListResponse resp) {
+        if (body instanceof com.ademobejasb.contracts.ExpenseListResponse resp) {
             return switch (jsonField) {
                 case "data", "content" -> resp.getContent();
                 case "total", "totalElements" -> resp.getTotalElements();
@@ -465,7 +465,7 @@ public class UnitAuthSteps {
                 default -> null;
             };
         }
-        if (body instanceof com.aademobejasb.attachment.dto.AttachmentResponse resp) {
+        if (body instanceof com.ademobejasb.attachment.dto.AttachmentResponse resp) {
             return switch (jsonField) {
                 case "id" -> resp.id();
                 case "filename" -> resp.filename();
@@ -474,7 +474,7 @@ public class UnitAuthSteps {
                 default -> null;
             };
         }
-        if (body instanceof com.aademobejasb.contracts.PLReport resp) {
+        if (body instanceof com.ademobejasb.contracts.PLReport resp) {
             return switch (jsonField) {
                 case "totalIncome" -> resp.getTotalIncome();
                 case "totalExpense" -> resp.getTotalExpense();
@@ -484,7 +484,7 @@ public class UnitAuthSteps {
                 default -> null;
             };
         }
-        if (body instanceof com.aademobejasb.contracts.PasswordResetResponse resp) {
+        if (body instanceof com.ademobejasb.contracts.PasswordResetResponse resp) {
             return switch (jsonField) {
                 case "reset_token", "token" -> resp.getToken();
                 default -> null;

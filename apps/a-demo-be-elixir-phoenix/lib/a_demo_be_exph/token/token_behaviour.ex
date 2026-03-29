@@ -1,4 +1,4 @@
-defmodule AADemoBeExph.Token.TokenBehaviour do
+defmodule ADemoBeExph.Token.TokenBehaviour do
   @moduledoc """
   Behaviour contract for the Token context.
   Allows swapping real Ecto implementation for in-memory implementation in tests.

@@ -1,9 +1,9 @@
-package com.aademobejavx.unit;
+package com.ademobejavx.unit;
 
-import com.aademobejavx.auth.JwtService;
-import com.aademobejavx.domain.model.User;
-import com.aademobejavx.support.DirectCallService;
-import com.aademobejavx.support.ServiceResponse;
+import com.ademobejavx.auth.JwtService;
+import com.ademobejavx.domain.model.User;
+import com.ademobejavx.support.DirectCallService;
+import com.ademobejavx.support.ServiceResponse;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import java.time.Instant;

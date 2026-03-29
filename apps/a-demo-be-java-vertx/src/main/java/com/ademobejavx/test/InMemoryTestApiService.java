@@ -1,10 +1,10 @@
-package com.aademobejavx.test;
+package com.ademobejavx.test;
 
-import com.aademobejavx.domain.model.User;
-import com.aademobejavx.repository.memory.InMemoryAttachmentRepository;
-import com.aademobejavx.repository.memory.InMemoryExpenseRepository;
-import com.aademobejavx.repository.memory.InMemoryTokenRevocationRepository;
-import com.aademobejavx.repository.memory.InMemoryUserRepository;
+import com.ademobejavx.domain.model.User;
+import com.ademobejavx.repository.memory.InMemoryAttachmentRepository;
+import com.ademobejavx.repository.memory.InMemoryExpenseRepository;
+import com.ademobejavx.repository.memory.InMemoryTokenRevocationRepository;
+import com.ademobejavx.repository.memory.InMemoryUserRepository;
 import io.vertx.core.Future;
 
 /**

@@ -1,11 +1,11 @@
-package com.aademobejasb.user.controller;
+package com.ademobejasb.user.controller;
 
-import com.aademobejasb.auth.model.User;
-import com.aademobejasb.auth.repository.UserRepository;
-import com.aademobejasb.auth.service.AuthService;
-import com.aademobejasb.auth.service.InvalidCredentialsException;
-import com.aademobejasb.contracts.ChangePasswordRequest;
-import com.aademobejasb.contracts.UpdateProfileRequest;
+import com.ademobejasb.auth.model.User;
+import com.ademobejasb.auth.repository.UserRepository;
+import com.ademobejasb.auth.service.AuthService;
+import com.ademobejasb.auth.service.InvalidCredentialsException;
+import com.ademobejasb.contracts.ChangePasswordRequest;
+import com.ademobejasb.contracts.UpdateProfileRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -32,14 +32,14 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<com.aademobejasb.contracts.User> getProfile(
+    public ResponseEntity<com.ademobejasb.contracts.User> getProfile(
             @AuthenticationPrincipal final UserDetails userDetails) {
         User user = getUser(userDetails);
         return ResponseEntity.ok(AuthService.buildUserResponse(user));
     }
 
     @PatchMapping("/me")
-    public ResponseEntity<com.aademobejasb.contracts.User> updateProfile(
+    public ResponseEntity<com.ademobejasb.contracts.User> updateProfile(
             @AuthenticationPrincipal final UserDetails userDetails,
             @Valid @RequestBody final UpdateProfileRequest request) {
         User user = getUser(userDetails);

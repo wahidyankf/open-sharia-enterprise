@@ -1,12 +1,12 @@
-package com.aademobejavx.unit;
+package com.ademobejavx.unit;
 
-import com.aademobejavx.auth.JwtService;
-import com.aademobejavx.auth.PasswordService;
-import com.aademobejavx.repository.memory.InMemoryAttachmentRepository;
-import com.aademobejavx.repository.memory.InMemoryExpenseRepository;
-import com.aademobejavx.repository.memory.InMemoryTokenRevocationRepository;
-import com.aademobejavx.repository.memory.InMemoryUserRepository;
-import com.aademobejavx.support.DirectCallService;
+import com.ademobejavx.auth.JwtService;
+import com.ademobejavx.auth.PasswordService;
+import com.ademobejavx.repository.memory.InMemoryAttachmentRepository;
+import com.ademobejavx.repository.memory.InMemoryExpenseRepository;
+import com.ademobejavx.repository.memory.InMemoryTokenRevocationRepository;
+import com.ademobejavx.repository.memory.InMemoryUserRepository;
+import com.ademobejavx.support.DirectCallService;
 
 /**
  * Singleton factory used by unit tests. It creates a {@link DirectCallService}

@@ -1,9 +1,9 @@
-package com.aademobejavx.auth;
+package com.ademobejavx.auth;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.aademobejavx.domain.model.User;
-import com.aademobejavx.repository.TokenRevocationRepository;
-import com.aademobejavx.repository.UserRepository;
+import com.ademobejavx.domain.model.User;
+import com.ademobejavx.repository.TokenRevocationRepository;
+import com.ademobejavx.repository.UserRepository;
 import io.vertx.core.Future;
 import io.vertx.ext.web.RoutingContext;
 import java.util.Optional;

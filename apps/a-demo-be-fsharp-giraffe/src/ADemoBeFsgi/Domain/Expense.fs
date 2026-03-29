@@ -1,7 +1,7 @@
-module AADemoBeFsgi.Domain.Expense
+module ADemoBeFsgi.Domain.Expense
 
 open System
-open AADemoBeFsgi.Domain.Types
+open ADemoBeFsgi.Domain.Types
 
 type Expense =
     { Id: Guid

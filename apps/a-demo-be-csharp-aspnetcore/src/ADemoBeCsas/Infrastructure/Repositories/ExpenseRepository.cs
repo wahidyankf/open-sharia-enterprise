@@ -1,8 +1,8 @@
-using AADemoBeCsas.Domain;
-using AADemoBeCsas.Infrastructure.Models;
+using ADemoBeCsas.Domain;
+using ADemoBeCsas.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace AADemoBeCsas.Infrastructure.Repositories;
+namespace ADemoBeCsas.Infrastructure.Repositories;
 
 public record CurrencySummary(string Currency, decimal IncomeTotal, decimal ExpenseTotal);
 

@@ -1,4 +1,4 @@
-package com.aademobejasb.integration.jwtprotected;
+package com.ademobejasb.integration.jwtprotected;
 
 import org.springframework.context.annotation.Scope;
 

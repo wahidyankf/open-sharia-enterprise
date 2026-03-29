@@ -1,8 +1,8 @@
-module AADemoBeFsgi.Handlers.ReportHandler
+module ADemoBeFsgi.Handlers.ReportHandler
 
 open System
 open Giraffe
-open AADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
+open ADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
 
 let profitAndLoss: HttpHandler =
     fun next ctx ->

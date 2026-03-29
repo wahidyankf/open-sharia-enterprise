@@ -1,6 +1,6 @@
-package com.aademobejasb.integration.login;
+package com.ademobejasb.integration.login;
 
-import com.aademobejasb.integration.steps.BaseCucumberContextConfig;
+import com.ademobejasb.integration.steps.BaseCucumberContextConfig;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;

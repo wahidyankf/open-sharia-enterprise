@@ -1,10 +1,10 @@
-defmodule AAAADemoBeExphWeb.UserController do
-  use AAAADemoBeExphWeb, :controller
+defmodule AAADemoBeExphWeb.UserController do
+  use AAADemoBeExphWeb, :controller
 
   alias GeneratedSchemas.User, as: UserSchema
   alias Guardian.Plug, as: GuardianPlug
 
-  defp accounts, do: Application.get_env(:a_demo_be_exph, :accounts_module, AADemoBeExph.Accounts)
+  defp accounts, do: Application.get_env(:a_demo_be_exph, :accounts_module, ADemoBeExph.Accounts)
 
   def me(conn, _params) do
     user = GuardianPlug.current_resource(conn)

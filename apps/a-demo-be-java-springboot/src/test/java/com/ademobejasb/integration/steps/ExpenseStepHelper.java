@@ -1,14 +1,14 @@
-package com.aademobejasb.integration.steps;
+package com.ademobejasb.integration.steps;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.aademobejasb.auth.model.User;
-import com.aademobejasb.auth.repository.UserRepository;
-import com.aademobejasb.contracts.Expense;
-import com.aademobejasb.contracts.ExpenseListResponse;
-import com.aademobejasb.expense.controller.ExpenseController;
-import com.aademobejasb.expense.repository.ExpenseRepository;
-import com.aademobejasb.integration.ResponseStore;
-import com.aademobejasb.security.JwtUtil;
+import com.ademobejasb.auth.model.User;
+import com.ademobejasb.auth.repository.UserRepository;
+import com.ademobejasb.contracts.Expense;
+import com.ademobejasb.contracts.ExpenseListResponse;
+import com.ademobejasb.expense.controller.ExpenseController;
+import com.ademobejasb.expense.repository.ExpenseRepository;
+import com.ademobejasb.integration.ResponseStore;
+import com.ademobejasb.security.JwtUtil;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -82,7 +82,7 @@ public class ExpenseStepHelper {
             responseStore.setResponse(400, Map.of("message", "Validation failed"));
             return;
         }
-        com.aademobejasb.expense.model.Expense expense = new com.aademobejasb.expense.model.Expense(
+        com.ademobejasb.expense.model.Expense expense = new com.ademobejasb.expense.model.Expense(
                 user,
                 parsed.amount,
                 parsed.currency,
@@ -92,7 +92,7 @@ public class ExpenseStepHelper {
                 parsed.type);
         expense.setQuantity(parsed.quantity);
         expense.setUnit(parsed.unit);
-        com.aademobejasb.expense.model.Expense saved = expenseRepository.save(expense);
+        com.ademobejasb.expense.model.Expense saved = expenseRepository.save(expense);
         Expense resp = ExpenseController.buildExpenseResponse(saved);
         responseStore.setResponse(201, resp);
         if (storeId) {
@@ -112,7 +112,7 @@ public class ExpenseStepHelper {
         if (parsed == null) {
             throw new RuntimeException("Could not parse expense body: " + body);
         }
-        com.aademobejasb.expense.model.Expense expense = new com.aademobejasb.expense.model.Expense(
+        com.ademobejasb.expense.model.Expense expense = new com.ademobejasb.expense.model.Expense(
                 user,
                 parsed.amount,
                 parsed.currency,
@@ -154,7 +154,7 @@ public class ExpenseStepHelper {
         String username = jwtUtil.extractUsername(token);
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Page<com.aademobejasb.expense.model.Expense> page = expenseRepository.findAllByUser(
+        Page<com.ademobejasb.expense.model.Expense> page = expenseRepository.findAllByUser(
                 user, PageRequest.of(0, 20, Sort.by("createdAt").descending()));
         List<Expense> data = page.getContent().stream()
                 .map(ExpenseController::buildExpenseResponse).toList();
@@ -194,7 +194,7 @@ public class ExpenseStepHelper {
             expense.setQuantity(parsed.quantity);
             expense.setUnit(parsed.unit);
             expense.setUpdatedAt(Instant.now());
-            com.aademobejasb.expense.model.Expense saved = expenseRepository.save(expense);
+            com.ademobejasb.expense.model.Expense saved = expenseRepository.save(expense);
             responseStore.setResponse(200, ExpenseController.buildExpenseResponse(saved));
         }, () -> responseStore.setResponse(404, Map.of("message", "Expense not found")));
     }
@@ -229,11 +229,11 @@ public class ExpenseStepHelper {
         String username = jwtUtil.extractUsername(token);
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        List<com.aademobejasb.expense.model.Expense> all = expenseRepository
+        List<com.ademobejasb.expense.model.Expense> all = expenseRepository
                 .findAllByUser(user, PageRequest.of(0, Integer.MAX_VALUE, Sort.unsorted()))
                 .getContent();
         java.util.Map<String, BigDecimal> totals = new java.util.HashMap<>();
-        for (com.aademobejasb.expense.model.Expense e : all) {
+        for (com.ademobejasb.expense.model.Expense e : all) {
             if ("expense".equals(e.getType())) {
                 totals.merge(e.getCurrency(), e.getAmount(), BigDecimal::add);
             }

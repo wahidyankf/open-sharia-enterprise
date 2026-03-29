@@ -1,14 +1,14 @@
-defmodule AADemoBeExph.Attachment.AttachmentContext do
+defmodule ADemoBeExph.Attachment.AttachmentContext do
   @moduledoc """
   Context for managing file attachments on expense entries.
   """
 
-  @behaviour AADemoBeExph.Attachment.AttachmentBehaviour
+  @behaviour ADemoBeExph.Attachment.AttachmentBehaviour
 
   import Ecto.Query
 
-  alias AADemoBeExph.Attachment.Attachment
-  alias AADemoBeExph.Repo
+  alias ADemoBeExph.Attachment.Attachment
+  alias ADemoBeExph.Repo
 
   @doc "Create an attachment for an expense."
   def create_attachment(expense_id, attrs) do

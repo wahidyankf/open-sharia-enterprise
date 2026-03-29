@@ -1,13 +1,13 @@
-module AADemoBeFsgi.Handlers.UserHandler
+module ADemoBeFsgi.Handlers.UserHandler
 
 open System
 open System.Text.Json
 open Giraffe
-open AADemoBeFsgi.Infrastructure.AppDbContext
-open AADemoBeFsgi.Infrastructure.PasswordHasher
-open AADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
-open AADemoBeFsgi.Domain.Types
-open AADemoBeFsgi.Contracts.ContractWrappers
+open ADemoBeFsgi.Infrastructure.AppDbContext
+open ADemoBeFsgi.Infrastructure.PasswordHasher
+open ADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
+open ADemoBeFsgi.Domain.Types
+open ADemoBeFsgi.Contracts.ContractWrappers
 
 let getProfile: HttpHandler =
     fun next ctx ->

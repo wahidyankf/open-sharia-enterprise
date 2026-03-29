@@ -1,4 +1,4 @@
-package com.aademobejasb.unit.steps;
+package com.ademobejasb.unit.steps;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -32,7 +32,7 @@ import org.springframework.context.annotation.Profile;
         scanBasePackages = {})
 @ComponentScan(
         basePackages = {
-            "com.aademobejasb.unit.steps"
+            "com.ademobejasb.unit.steps"
         })
 @Profile("unit-test")
 public class UnitTestApplication {

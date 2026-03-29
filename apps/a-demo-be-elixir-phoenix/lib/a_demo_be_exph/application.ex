@@ -1,4 +1,4 @@
-defmodule AADemoBeExph.Application do
+defmodule ADemoBeExph.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
@@ -8,22 +8,22 @@ defmodule AADemoBeExph.Application do
   @impl true
   def start(_type, _args) do
     base_children = [
-      AAAADemoBeExphWeb.Telemetry,
+      AAADemoBeExphWeb.Telemetry,
       {DNSCluster, query: Application.get_env(:a_demo_be_exph, :dns_cluster_query) || :ignore},
-      {Phoenix.PubSub, name: AADemoBeExph.PubSub},
-      AAAADemoBeExphWeb.Endpoint
+      {Phoenix.PubSub, name: ADemoBeExph.PubSub},
+      AAADemoBeExphWeb.Endpoint
     ]
 
     children =
       if Mix.env() != :test do
-        [AADemoBeExph.Repo | base_children]
+        [ADemoBeExph.Repo | base_children]
       else
         base_children
       end
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: AADemoBeExph.Supervisor]
+    opts = [strategy: :one_for_one, name: ADemoBeExph.Supervisor]
     Supervisor.start_link(children, opts)
   end
 
@@ -31,7 +31,7 @@ defmodule AADemoBeExph.Application do
   # whenever the application is updated.
   @impl true
   def config_change(changed, _new, removed) do
-    AAAADemoBeExphWeb.Endpoint.config_change(changed, removed)
+    AAADemoBeExphWeb.Endpoint.config_change(changed, removed)
     :ok
   end
 end

@@ -1,6 +1,6 @@
-package com.aademobejasb.auth.repository;
+package com.ademobejasb.auth.repository;
 
-import com.aademobejasb.auth.model.RevokedToken;
+import com.ademobejasb.auth.model.RevokedToken;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 

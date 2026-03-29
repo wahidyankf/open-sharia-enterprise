@@ -1,7 +1,7 @@
-package com.aademobejasb.expense.repository;
+package com.ademobejasb.expense.repository;
 
-import com.aademobejasb.auth.model.User;
-import com.aademobejasb.expense.model.Expense;
+import com.ademobejasb.auth.model.User;
+import com.ademobejasb.expense.model.Expense;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.Page;

@@ -1,4 +1,4 @@
-module AADemoBeFsgi.Domain.Types
+module ADemoBeFsgi.Domain.Types
 
 type Currency =
     | USD

@@ -1,15 +1,15 @@
-defmodule AADemoBeExph.Token.TokenContext do
+defmodule ADemoBeExph.Token.TokenContext do
   @moduledoc """
   Token context for refresh token rotation and access token revocation.
   """
 
-  @behaviour AADemoBeExph.Token.TokenBehaviour
+  @behaviour ADemoBeExph.Token.TokenBehaviour
 
   import Ecto.Query
 
-  alias AADemoBeExph.Repo
-  alias AADemoBeExph.Token.RefreshToken
-  alias AADemoBeExph.Token.RevokedToken
+  alias ADemoBeExph.Repo
+  alias ADemoBeExph.Token.RefreshToken
+  alias ADemoBeExph.Token.RevokedToken
 
   @refresh_token_ttl_days 30
 

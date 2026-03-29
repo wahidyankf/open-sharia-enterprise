@@ -1,8 +1,8 @@
-module AADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
+module ADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
 
 open System
 open System.Threading.Tasks
-open AADemoBeFsgi.Infrastructure.AppDbContext
+open ADemoBeFsgi.Infrastructure.AppDbContext
 
 /// Repository for user operations.
 type UserRepository =

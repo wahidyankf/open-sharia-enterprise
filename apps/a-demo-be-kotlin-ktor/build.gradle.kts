@@ -23,11 +23,11 @@ val javaJwtVersion = "4.4.0"
 val kotlinxDatetimeVersion = "0.6.1"
 val flywayVersion = "11.4.0"
 
-group = "com.aademobektkt"
+group = "com.ademobektkt"
 
 version = "0.0.1"
 
-application { mainClass.set("com.aademobektkt.ApplicationKt") }
+application { mainClass.set("com.ademobektkt.ApplicationKt") }
 
 ktor { fatJar { archiveFileName.set("a-demo-be-kotlin-ktor-all.jar") } }
 
@@ -52,7 +52,7 @@ tasks.withType<KotlinCompile> {
 // kotlin.Any has no serializer and causes a compile-time crash in the Kotlin serialization plugin.
 sourceSets.main {
   kotlin.srcDirs("generated-contracts/src/main/kotlin")
-  kotlin.exclude("com/aademobektkt/contracts/ErrorResponse.kt")
+  kotlin.exclude("com/ademobektkt/contracts/ErrorResponse.kt")
 }
 
 repositories { mavenCentral() }
@@ -134,7 +134,7 @@ tasks.register<Test>("testUnit") {
   }
   systemProperty("cucumber.junit-platform.naming-strategy", "long")
   // Override cucumber.glue to use unit step definitions only
-  systemProperty("cucumber.glue", "com.aademobektkt.unit.steps")
+  systemProperty("cucumber.glue", "com.ademobektkt.unit.steps")
   maxParallelForks = 1
   reports.junitXml.required.set(false)
   reports.html.required.set(false)
@@ -151,12 +151,12 @@ tasks.register<Test>("testIntegration") {
   }
   systemProperty("cucumber.junit-platform.naming-strategy", "long")
   // Set cucumber.glue to integration step definitions
-  systemProperty("cucumber.glue", "com.aademobektkt.integration.steps")
+  systemProperty("cucumber.glue", "com.ademobektkt.integration.steps")
   maxParallelForks = 1
   reports.junitXml.required.set(false)
   reports.html.required.set(false)
   // Exclude unit JUnit test classes
-  exclude("com/aademobektkt/unit/**")
+  exclude("com/ademobektkt/unit/**")
 }
 
 // Copy Gherkin specs into test resources classpath.
@@ -178,20 +178,20 @@ kover {
         // Exclude Exposed production DB repositories (untestable without real DB in integration
         // tests)
         classes(
-          "com.aademobektkt.infrastructure.Exposed*",
-          "com.aademobektkt.infrastructure.DatabaseFactory",
-          "com.aademobektkt.infrastructure.tables.*",
+          "com.ademobektkt.infrastructure.Exposed*",
+          "com.ademobektkt.infrastructure.DatabaseFactory",
+          "com.ademobektkt.infrastructure.tables.*",
           // Exclude main entry point (only calls embeddedServer)
-          "com.aademobektkt.ApplicationKt",
+          "com.ademobektkt.ApplicationKt",
           // Exclude DI module setup (wires Exposed repos, not testable without DB)
-          "com.aademobektkt.plugins.DIKt",
+          "com.ademobektkt.plugins.DIKt",
           // Exclude HTTP/route layer — unit tests call domain logic directly via
           // UnitServiceDispatcher (no HTTP). Routes are covered by integration/e2e tests.
-          "com.aademobektkt.routes.*",
-          "com.aademobektkt.plugins.*",
+          "com.ademobektkt.routes.*",
+          "com.ademobektkt.plugins.*",
           // Exclude generated contract types — data classes + companion serializer objects
           // are exercised only by integration/e2e tests (HTTP serialization layer).
-          "com.aademobektkt.contracts.*",
+          "com.ademobektkt.contracts.*",
         )
       }
     }

@@ -3,5 +3,5 @@
  * -Pintegration profile.
  */
 @NullMarked
-package com.aademobejasb.integration;
+package com.ademobejasb.integration;
 import org.jspecify.annotations.NullMarked;

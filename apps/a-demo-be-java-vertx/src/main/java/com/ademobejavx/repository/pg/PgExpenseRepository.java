@@ -1,7 +1,7 @@
-package com.aademobejavx.repository.pg;
+package com.ademobejavx.repository.pg;
 
-import com.aademobejavx.domain.model.Expense;
-import com.aademobejavx.repository.ExpenseRepository;
+import com.ademobejavx.domain.model.Expense;
+import com.ademobejavx.repository.ExpenseRepository;
 import io.vertx.core.Future;
 import io.vertx.sqlclient.Pool;
 import io.vertx.sqlclient.Row;

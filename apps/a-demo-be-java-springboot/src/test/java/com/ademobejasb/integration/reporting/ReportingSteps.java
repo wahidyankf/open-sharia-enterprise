@@ -1,15 +1,15 @@
-package com.aademobejasb.integration.reporting;
+package com.ademobejasb.integration.reporting;
 
-import com.aademobejasb.auth.model.User;
-import com.aademobejasb.auth.repository.UserRepository;
-import com.aademobejasb.expense.model.Expense;
-import com.aademobejasb.expense.repository.ExpenseRepository;
-import com.aademobejasb.integration.ResponseStore;
-import com.aademobejasb.integration.steps.ExpenseStepHelper;
-import com.aademobejasb.integration.steps.TokenStore;
-import com.aademobejasb.contracts.CategoryBreakdown;
-import com.aademobejasb.contracts.PLReport;
-import com.aademobejasb.security.JwtUtil;
+import com.ademobejasb.auth.model.User;
+import com.ademobejasb.auth.repository.UserRepository;
+import com.ademobejasb.expense.model.Expense;
+import com.ademobejasb.expense.repository.ExpenseRepository;
+import com.ademobejasb.integration.ResponseStore;
+import com.ademobejasb.integration.steps.ExpenseStepHelper;
+import com.ademobejasb.integration.steps.TokenStore;
+import com.ademobejasb.contracts.CategoryBreakdown;
+import com.ademobejasb.contracts.PLReport;
+import com.ademobejasb.security.JwtUtil;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;

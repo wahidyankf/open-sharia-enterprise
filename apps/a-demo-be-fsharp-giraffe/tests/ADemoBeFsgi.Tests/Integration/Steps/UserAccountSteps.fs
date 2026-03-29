@@ -1,10 +1,10 @@
-module AADemoBeFsgi.Tests.Integration.Steps.UserAccountSteps
+module ADemoBeFsgi.Tests.Integration.Steps.UserAccountSteps
 
 open System.Text.Json
 open TickSpec
-open AADemoBeFsgi.Tests.State
-open AADemoBeFsgi.Tests.DirectServices
-open AADemoBeFsgi.Tests.Integration.Steps.CommonSteps
+open ADemoBeFsgi.Tests.State
+open ADemoBeFsgi.Tests.DirectServices
+open ADemoBeFsgi.Tests.Integration.Steps.CommonSteps
 
 [<When>]
 let ``alice sends GET /api/v1/users/me`` (state: StepState) =

@@ -1,8 +1,8 @@
-package com.aademobejavx.handler;
+package com.ademobejavx.handler;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.aademobejavx.auth.JwtService;
-import com.aademobejavx.contracts.TokenClaims;
+import com.ademobejavx.auth.JwtService;
+import com.ademobejavx.contracts.TokenClaims;
 import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
 import java.util.List;

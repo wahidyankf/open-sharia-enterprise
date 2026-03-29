@@ -1,10 +1,10 @@
-defmodule AADemoBeExph.Attachment.AttachmentBehaviour do
+defmodule ADemoBeExph.Attachment.AttachmentBehaviour do
   @moduledoc """
   Behaviour contract for the Attachment context.
   Allows swapping real Ecto implementation for in-memory implementation in tests.
   """
 
-  alias AADemoBeExph.Attachment.Attachment
+  alias ADemoBeExph.Attachment.Attachment
 
   @callback create_attachment(integer(), map()) ::
               {:ok, Attachment.t()} | {:error, Ecto.Changeset.t()}

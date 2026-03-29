@@ -1,14 +1,14 @@
-defmodule AADemoBeExph.Test.InMemoryTokenContext do
+defmodule ADemoBeExph.Test.InMemoryTokenContext do
   @moduledoc """
-  In-memory implementation of AADemoBeExph.Token.TokenBehaviour backed by InMemoryStore Agent.
+  In-memory implementation of ADemoBeExph.Token.TokenBehaviour backed by InMemoryStore Agent.
   Used in test environment to avoid real PostgreSQL.
   """
 
-  @behaviour AADemoBeExph.Token.TokenBehaviour
+  @behaviour ADemoBeExph.Token.TokenBehaviour
 
-  alias AADemoBeExph.Test.InMemoryStore
-  alias AADemoBeExph.Token.RefreshToken
-  alias AADemoBeExph.Token.RevokedToken
+  alias ADemoBeExph.Test.InMemoryStore
+  alias ADemoBeExph.Token.RefreshToken
+  alias ADemoBeExph.Token.RevokedToken
 
   @refresh_token_ttl_days 30
 

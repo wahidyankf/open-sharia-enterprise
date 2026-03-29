@@ -1,6 +1,6 @@
-package com.aademobejavx.test;
+package com.ademobejavx.test;
 
-import com.aademobejavx.domain.validation.DomainException;
+import com.ademobejavx.domain.validation.DomainException;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;

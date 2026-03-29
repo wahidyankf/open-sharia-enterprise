@@ -1,6 +1,6 @@
-package com.aademobejasb.integration.currency_handling;
+package com.ademobejasb.integration.currency_handling;
 
-import com.aademobejasb.integration.steps.BaseCucumberContextConfig;
+import com.ademobejasb.integration.steps.BaseCucumberContextConfig;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;

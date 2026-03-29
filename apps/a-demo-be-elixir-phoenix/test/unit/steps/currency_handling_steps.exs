@@ -1,9 +1,9 @@
-defmodule AAAADemoBeExphWeb.Unit.CurrencyHandlingSteps do
+defmodule AAADemoBeExphWeb.Unit.CurrencyHandlingSteps do
   use Cabbage.Feature, async: false, file: "expenses/currency-handling.feature"
 
-  use AAAADemoBeExphWeb.ConnCase
+  use AAADemoBeExphWeb.ConnCase
 
-  alias AADemoBeExph.Integration.Helpers
+  alias ADemoBeExph.Integration.Helpers
 
   @moduletag :unit
 

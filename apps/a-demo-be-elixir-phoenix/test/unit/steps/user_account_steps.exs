@@ -1,9 +1,9 @@
-defmodule AAAADemoBeExphWeb.Unit.UserAccountSteps do
+defmodule AAADemoBeExphWeb.Unit.UserAccountSteps do
   use Cabbage.Feature, async: false, file: "user-lifecycle/user-account.feature"
 
-  use AAAADemoBeExphWeb.ConnCase
+  use AAADemoBeExphWeb.ConnCase
 
-  alias AADemoBeExph.Integration.Helpers
+  alias ADemoBeExph.Integration.Helpers
 
   @moduletag :unit
 

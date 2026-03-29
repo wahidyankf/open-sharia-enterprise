@@ -1,5 +1,5 @@
-defmodule AAAADemoBeExphWeb.JwksController do
-  use AAAADemoBeExphWeb, :controller
+defmodule AAADemoBeExphWeb.JwksController do
+  use AAADemoBeExphWeb, :controller
 
   alias GeneratedSchemas.JwkKey
   alias GeneratedSchemas.JwksResponse

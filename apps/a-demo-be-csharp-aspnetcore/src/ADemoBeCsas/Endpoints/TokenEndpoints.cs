@@ -1,9 +1,9 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using AADemoBeCsas.Auth;
+using ADemoBeCsas.Auth;
 using Microsoft.IdentityModel.Tokens;
 
-namespace AADemoBeCsas.Endpoints;
+namespace ADemoBeCsas.Endpoints;
 
 public static class TokenEndpoints
 {

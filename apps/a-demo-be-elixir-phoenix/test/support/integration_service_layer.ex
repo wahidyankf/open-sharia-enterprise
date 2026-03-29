@@ -1,4 +1,4 @@
-defmodule AADemoBeExph.Integration.ServiceLayer do
+defmodule ADemoBeExph.Integration.ServiceLayer do
   @moduledoc """
   Service-layer facade for integration tests.
 
@@ -11,23 +11,23 @@ defmodule AADemoBeExph.Integration.ServiceLayer do
   need to change.
   """
 
-  alias AADemoBeExph.Attachment.Attachment
-  alias AADemoBeExph.Auth.Guardian
+  alias ADemoBeExph.Attachment.Attachment
+  alias ADemoBeExph.Auth.Guardian
 
   @supported_content_types ~w(image/jpeg image/png application/pdf)
   @max_size_bytes Attachment.max_size_bytes()
 
-  defp accounts, do: Application.get_env(:a_demo_be_exph, :accounts_module, AADemoBeExph.Accounts)
+  defp accounts, do: Application.get_env(:a_demo_be_exph, :accounts_module, ADemoBeExph.Accounts)
 
   defp token_ctx,
-    do: Application.get_env(:a_demo_be_exph, :token_module, AADemoBeExph.Token.TokenContext)
+    do: Application.get_env(:a_demo_be_exph, :token_module, ADemoBeExph.Token.TokenContext)
 
   defp expense_ctx,
     do:
       Application.get_env(
         :a_demo_be_exph,
         :expense_module,
-        AADemoBeExph.Expense.ExpenseContext
+        ADemoBeExph.Expense.ExpenseContext
       )
 
   defp attachment_ctx,
@@ -35,7 +35,7 @@ defmodule AADemoBeExph.Integration.ServiceLayer do
       Application.get_env(
         :a_demo_be_exph,
         :attachment_module,
-        AADemoBeExph.Attachment.AttachmentContext
+        ADemoBeExph.Attachment.AttachmentContext
       )
 
   # ---------------------------------------------------------------------------

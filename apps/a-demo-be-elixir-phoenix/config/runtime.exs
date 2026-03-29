@@ -17,10 +17,10 @@ import Config
 # Alternatively, you can use `mix phx.gen.release` to generate a `bin/server`
 # script that automatically sets the env var above.
 if System.get_env("PHX_SERVER") do
-  config :a_demo_be_exph, AAAADemoBeExphWeb.Endpoint, server: true
+  config :a_demo_be_exph, AADemoBeExphWeb.Endpoint, server: true
 end
 
-config :a_demo_be_exph, AAAADemoBeExphWeb.Endpoint,
+config :a_demo_be_exph, AADemoBeExphWeb.Endpoint,
   http: [port: String.to_integer(System.get_env("PORT", "8201"))]
 
 # Guardian JWT config — evaluated at runtime so Docker/CI can inject secrets.
@@ -29,7 +29,7 @@ config :a_demo_be_exph, AAAADemoBeExphWeb.Endpoint,
 # key before runtime.exs is evaluated, so the || raise(...) guard never fires during tests.
 # In :integration env, APP_JWT_SECRET is supplied by docker-compose.
 if config_env() not in [:test] do
-  config :a_demo_be_exph, AADemoBeExph.Auth.Guardian,
+  config :a_demo_be_exph, ADemoBeExph.Auth.Guardian,
     issuer: "a_demo_be_exph",
     secret_key: System.get_env("APP_JWT_SECRET") || raise("APP_JWT_SECRET is not set"),
     ttl: {24, :hours}
@@ -37,7 +37,7 @@ end
 
 # DATABASE_URL for dev/prod/integration Docker environments
 if config_env() in [:dev, :prod, :integration] and System.get_env("DATABASE_URL") do
-  config :a_demo_be_exph, AADemoBeExph.Repo,
+  config :a_demo_be_exph, ADemoBeExph.Repo,
     url: System.get_env("DATABASE_URL"),
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
 end
@@ -52,7 +52,7 @@ if config_env() == :prod do
 
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
-  config :a_demo_be_exph, AADemoBeExph.Repo,
+  config :a_demo_be_exph, ADemoBeExph.Repo,
     # ssl: true,
     url: database_url,
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
@@ -76,7 +76,7 @@ if config_env() == :prod do
 
   config :a_demo_be_exph, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
-  config :a_demo_be_exph, AAAADemoBeExphWeb.Endpoint,
+  config :a_demo_be_exph, AADemoBeExphWeb.Endpoint,
     url: [host: host, port: 443, scheme: "https"],
     http: [
       # Enable IPv6 and bind on all interfaces.
@@ -92,7 +92,7 @@ if config_env() == :prod do
   # To get SSL working, you will need to add the `https` key
   # to your endpoint configuration:
   #
-  #     config :a_demo_be_exph, AAAADemoBeExphWeb.Endpoint,
+  #     config :a_demo_be_exph, AADemoBeExphWeb.Endpoint,
   #       https: [
   #         ...,
   #         port: 443,
@@ -114,7 +114,7 @@ if config_env() == :prod do
   # We also recommend setting `force_ssl` in your config/prod.exs,
   # ensuring no data is ever sent via http, always redirecting to https:
   #
-  #     config :a_demo_be_exph, AAAADemoBeExphWeb.Endpoint,
+  #     config :a_demo_be_exph, AADemoBeExphWeb.Endpoint,
   #       force_ssl: [hsts: true]
   #
   # Check `Plug.SSL` for all available options in `force_ssl`.

@@ -1,13 +1,13 @@
-package com.aademobejavx.handler;
+package com.ademobejavx.handler;
 
-import com.aademobejavx.auth.PasswordService;
-import com.aademobejavx.contracts.ChangePasswordRequest;
-import com.aademobejavx.contracts.UpdateProfileRequest;
-import com.aademobejavx.contracts.User;
-import com.aademobejavx.domain.validation.DomainException;
-import com.aademobejavx.domain.validation.ValidationException;
-import com.aademobejavx.repository.TokenRevocationRepository;
-import com.aademobejavx.repository.UserRepository;
+import com.ademobejavx.auth.PasswordService;
+import com.ademobejavx.contracts.ChangePasswordRequest;
+import com.ademobejavx.contracts.UpdateProfileRequest;
+import com.ademobejavx.contracts.User;
+import com.ademobejavx.domain.validation.DomainException;
+import com.ademobejavx.domain.validation.ValidationException;
+import com.ademobejavx.repository.TokenRevocationRepository;
+import com.ademobejavx.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -91,7 +91,7 @@ public class UserHandler implements Handler<RoutingContext> {
                     if (userOpt.isEmpty()) {
                         return Future.failedFuture(new DomainException(404, "User not found"));
                     }
-                    com.aademobejavx.domain.model.User updated =
+                    com.ademobejavx.domain.model.User updated =
                             userOpt.get().withDisplayName(displayName);
                     return userRepo.update(updated);
                 })
@@ -135,7 +135,7 @@ public class UserHandler implements Handler<RoutingContext> {
                     if (userOpt.isEmpty()) {
                         return Future.failedFuture(new DomainException(404, "User not found"));
                     }
-                    com.aademobejavx.domain.model.User user = userOpt.get();
+                    com.ademobejavx.domain.model.User user = userOpt.get();
                     if (!passwordService.verify(oldPassword, user.passwordHash())) {
                         return Future.failedFuture(new DomainException(401,
                                 "Invalid credentials"));
@@ -159,8 +159,8 @@ public class UserHandler implements Handler<RoutingContext> {
                     if (userOpt.isEmpty()) {
                         return Future.failedFuture(new DomainException(404, "User not found"));
                     }
-                    com.aademobejavx.domain.model.User updated = userOpt.get()
-                            .withStatus(com.aademobejavx.domain.model.User.STATUS_INACTIVE);
+                    com.ademobejavx.domain.model.User updated = userOpt.get()
+                            .withStatus(com.ademobejavx.domain.model.User.STATUS_INACTIVE);
                     return userRepo.update(updated);
                 })
                 .compose(user -> revocationRepo.deleteByUserId(userId))

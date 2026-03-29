@@ -1,4 +1,4 @@
-defmodule AAAADemoBeExphWeb.ConnCaseIntegration do
+defmodule AAADemoBeExphWeb.ConnCaseIntegration do
   @moduledoc """
   Test case for integration tests that run against a real PostgreSQL database.
 
@@ -10,18 +10,18 @@ defmodule AAAADemoBeExphWeb.ConnCaseIntegration do
 
   using do
     quote do
-      @endpoint AAAADemoBeExphWeb.Endpoint
+      @endpoint AAADemoBeExphWeb.Endpoint
 
-      use AAAADemoBeExphWeb, :verified_routes
+      use AAADemoBeExphWeb, :verified_routes
 
       import Plug.Conn
       import Phoenix.ConnTest
-      import AAAADemoBeExphWeb.ConnCaseIntegration
+      import AAADemoBeExphWeb.ConnCaseIntegration
     end
   end
 
   setup _tags do
-    pid = Ecto.Adapters.SQL.Sandbox.start_owner!(AADemoBeExph.Repo, shared: true)
+    pid = Ecto.Adapters.SQL.Sandbox.start_owner!(ADemoBeExph.Repo, shared: true)
     on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end

@@ -1,7 +1,7 @@
-defmodule AADemoBeExph.UserChangesetTest do
+defmodule ADemoBeExph.UserChangesetTest do
   use ExUnit.Case, async: true
 
-  alias AADemoBeExph.Accounts.User
+  alias ADemoBeExph.Accounts.User
 
   @moduletag :unit
 

@@ -1,12 +1,12 @@
-package com.aademobejasb.config;
+package com.ademobejasb.config;
 
-import com.aademobejasb.attachment.FileSizeLimitExceededException;
-import com.aademobejasb.auth.service.AccountNotActiveException;
-import com.aademobejasb.auth.service.InvalidCredentialsException;
-import com.aademobejasb.auth.service.InvalidTokenException;
-import com.aademobejasb.auth.service.TokenExpiredException;
-import com.aademobejasb.auth.service.UsernameAlreadyExistsException;
-import com.aademobejasb.test.controller.UserNotFoundException;
+import com.ademobejasb.attachment.FileSizeLimitExceededException;
+import com.ademobejasb.auth.service.AccountNotActiveException;
+import com.ademobejasb.auth.service.InvalidCredentialsException;
+import com.ademobejasb.auth.service.InvalidTokenException;
+import com.ademobejasb.auth.service.TokenExpiredException;
+import com.ademobejasb.auth.service.UsernameAlreadyExistsException;
+import com.ademobejasb.test.controller.UserNotFoundException;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package com.aademobejasb.integration.jwtprotected;
+package com.ademobejasb.integration.jwtprotected;
 
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.IncludeEngines;
@@ -13,8 +13,8 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 @SelectClasspathResource("security/security.feature")
 @ConfigurationParameter(
     key = GLUE_PROPERTY_NAME,
-    value = "com.aademobejasb.integration.jwtprotected"
-        + ",com.aademobejasb.integration.steps")
+    value = "com.ademobejasb.integration.jwtprotected"
+        + ",com.ademobejasb.integration.steps")
 @ConfigurationParameter(
     key = PLUGIN_PROPERTY_NAME,
     value = "pretty,html:target/cucumber-reports/jwt-protected.html")

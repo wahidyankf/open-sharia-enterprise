@@ -135,7 +135,7 @@ via Giraffe. Response construction uses generated types directly.
 
 **C#** (`a-demo-be-csharp-aspnetcore`): Add source inclusion of generated `.cs` files (no `.csproj`
 exists in `generated-contracts/`). Replace 6 inline records with generated types. Type response
-construction using generated classes. Namespace is `Org.OpenAPITools.AADemoBeCsas.Contracts`.
+construction using generated classes. Namespace is `Org.OpenAPITools.ADemoBeCsas.Contracts`.
 
 **Python** (`a-demo-be-python-fastapi`): Replace 22 local Pydantic models (8 request + 14 response)
 with generated imports. Update `response_model=` in FastAPI decorators to use generated types.

@@ -1,4 +1,4 @@
-module AADemoBeFsgi.Tests.Integration.FeatureRunner
+module ADemoBeFsgi.Tests.Integration.FeatureRunner
 
 open System
 open System.IO
@@ -6,9 +6,9 @@ open System.Reflection
 open TickSpec
 open Xunit
 open Microsoft.EntityFrameworkCore
-open AADemoBeFsgi.Tests.TestFixture
-open AADemoBeFsgi.Tests.State
-open AADemoBeFsgi.Infrastructure.Repositories.EfRepositories
+open ADemoBeFsgi.Tests.TestFixture
+open ADemoBeFsgi.Tests.State
+open ADemoBeFsgi.Infrastructure.Repositories.EfRepositories
 
 /// xUnit collection that forces all integration test classes to run sequentially.
 /// Required because integration tests share a single PostgreSQL database.
@@ -31,7 +31,7 @@ let private getFeatureFile (namePart: string) =
 /// Each scenario gets its own isolated AppDbContext (fresh database state).
 /// The service provider injects a StepState seeded with EF repository function records
 /// constructed from that context.
-type private ScenarioServiceProvider(db: AADemoBeFsgi.Infrastructure.AppDbContext.AppDbContext) =
+type private ScenarioServiceProvider(db: ADemoBeFsgi.Infrastructure.AppDbContext.AppDbContext) =
     interface IServiceProvider with
         member _.GetService(serviceType: Type) =
             if serviceType = typeof<StepState> then

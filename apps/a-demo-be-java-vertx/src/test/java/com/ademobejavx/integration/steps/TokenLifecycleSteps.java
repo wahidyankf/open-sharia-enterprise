@@ -1,9 +1,9 @@
-package com.aademobejavx.integration.steps;
+package com.ademobejavx.integration.steps;
 
-import com.aademobejavx.domain.model.User;
-import com.aademobejavx.support.AppFactory;
-import com.aademobejavx.support.ScenarioState;
-import com.aademobejavx.support.ServiceResponse;
+import com.ademobejavx.domain.model.User;
+import com.ademobejavx.support.AppFactory;
+import com.ademobejavx.support.ScenarioState;
+import com.ademobejavx.support.ServiceResponse;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;

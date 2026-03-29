@@ -1,10 +1,10 @@
-using AADemoBeCsas.Domain;
-using AADemoBeCsas.Endpoints;
+using ADemoBeCsas.Domain;
+using ADemoBeCsas.Endpoints;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Xunit;
 
-namespace AADemoBeCsas.Tests.Unit;
+namespace ADemoBeCsas.Tests.Unit;
 
 /// <summary>
 /// Tests for DomainErrorMapper covering all switch arms including the default case.

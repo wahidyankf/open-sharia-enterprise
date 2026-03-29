@@ -1,4 +1,4 @@
-namespace AADemoBeCsas.Domain;
+namespace ADemoBeCsas.Domain;
 
 public abstract record DomainError(string Message);
 

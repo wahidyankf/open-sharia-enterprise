@@ -1,7 +1,7 @@
-package com.aademobejavx.integration.steps;
+package com.ademobejavx.integration.steps;
 
-import com.aademobejavx.support.ScenarioState;
-import com.aademobejavx.support.ServiceResponse;
+import com.ademobejavx.support.ScenarioState;
+import com.ademobejavx.support.ServiceResponse;
 import io.cucumber.java.en.Then;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;

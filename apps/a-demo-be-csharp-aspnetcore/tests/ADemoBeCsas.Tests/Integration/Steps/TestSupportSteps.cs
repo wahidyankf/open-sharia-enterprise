@@ -1,12 +1,12 @@
-using AADemoBeCsas.Infrastructure;
-using AADemoBeCsas.Tests.ScenarioContext;
+using ADemoBeCsas.Infrastructure;
+using ADemoBeCsas.Tests.ScenarioContext;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Reqnroll;
 using Xunit;
 
-namespace AADemoBeCsas.Tests.Integration.Steps;
+namespace ADemoBeCsas.Tests.Integration.Steps;
 
 [Binding]
 [Trait("Category", "Integration")]

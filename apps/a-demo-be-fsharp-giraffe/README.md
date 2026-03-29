@@ -27,10 +27,10 @@ This application mirrors the same REST API contract as `a-demo-be-golang-gin` (G
 
 ```bash
 # Restore NuGet packages
-dotnet restore src/AADemoBeFsgi/AADemoBeFsgi.fsproj
+dotnet restore src/ADemoBeFsgi/ADemoBeFsgi.fsproj
 
 # Run in development mode
-dotnet run --project src/AADemoBeFsgi/AADemoBeFsgi.fsproj
+dotnet run --project src/ADemoBeFsgi/ADemoBeFsgi.fsproj
 
 # Or via Nx
 nx start a-demo-be-fsharp-giraffe
@@ -113,7 +113,7 @@ version control.
 This application uses [DbUp](https://dbup.readthedocs.io/) (MIT license) to manage PostgreSQL
 schema migrations.
 
-**Migration file location**: `src/AADemoBeFsgi/db/migrations/`
+**Migration file location**: `src/ADemoBeFsgi/db/migrations/`
 
 Migration files follow the naming convention `NNN-description.sql` (e.g.,
 `001-create-users.sql`). DbUp applies them in lexicographic order and tracks applied scripts in
@@ -125,7 +125,7 @@ Migration scripts are embedded as `EmbeddedResource` in the assembly.
 
 **How to create a new migration**:
 
-1. Add a new `.sql` file in `src/AADemoBeFsgi/db/migrations/` with the next sequential number
+1. Add a new `.sql` file in `src/ADemoBeFsgi/db/migrations/` with the next sequential number
    (e.g., `006-add-tags-to-expenses.sql`).
 2. Write the SQL DDL (PostgreSQL syntax).
 3. The file is automatically picked up as an `EmbeddedResource` via the glob pattern in the
@@ -157,12 +157,12 @@ docker compose -f docker-compose.integration.yml up --abort-on-container-exit --
 ```
 apps/a-demo-be-fsharp-giraffe/
 ├── src/
-│   └── AADemoBeFsgi/
-│       ├── AADemoBeFsgi.fsproj    # Main project (net10.0, Giraffe)
+│   └── ADemoBeFsgi/
+│       ├── ADemoBeFsgi.fsproj    # Main project (net10.0, Giraffe)
 │       └── Program.fs           # Entry point, Giraffe web app config
 ├── tests/
-│   └── AADemoBeFsgi.Tests/
-│       ├── AADemoBeFsgi.Tests.fsproj  # Test project (TickSpec, xunit, AltCover)
+│   └── ADemoBeFsgi.Tests/
+│       ├── ADemoBeFsgi.Tests.fsproj  # Test project (TickSpec, xunit, AltCover)
 │       ├── TestFixture.fs           # WebApplicationFactory (SQLite or PostgreSQL)
 │       ├── State.fs                 # BDD step state record
 │       ├── Unit/                    # Isolated unit tests (Category=Unit)

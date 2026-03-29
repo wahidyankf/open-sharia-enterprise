@@ -1,4 +1,4 @@
-namespace AADemoBeCsas.Infrastructure.Models;
+namespace ADemoBeCsas.Infrastructure.Models;
 
 public class AttachmentModel
 {

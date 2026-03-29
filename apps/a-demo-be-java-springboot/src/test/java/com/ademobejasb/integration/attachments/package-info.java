@@ -1,4 +1,4 @@
 /** Cucumber integration tests for attachments. */
 @NullMarked
-package com.aademobejasb.integration.attachments;
+package com.ademobejasb.integration.attachments;
 import org.jspecify.annotations.NullMarked;

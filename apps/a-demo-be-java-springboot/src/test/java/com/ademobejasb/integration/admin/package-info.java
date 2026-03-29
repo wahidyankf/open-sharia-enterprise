@@ -1,4 +1,4 @@
 /** Cucumber integration tests for admin. */
 @NullMarked
-package com.aademobejasb.integration.admin;
+package com.ademobejasb.integration.admin;
 import org.jspecify.annotations.NullMarked;

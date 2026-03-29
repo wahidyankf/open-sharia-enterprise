@@ -1,7 +1,7 @@
-using AADemoBeCsas.Infrastructure.Models;
+using ADemoBeCsas.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace AADemoBeCsas.Infrastructure.Repositories;
+namespace ADemoBeCsas.Infrastructure.Repositories;
 
 public interface IAttachmentRepository
 {

@@ -1,11 +1,11 @@
 using System.Text;
 using System.Text.Json;
-using AADemoBeCsas.Tests.ScenarioContext;
+using ADemoBeCsas.Tests.ScenarioContext;
 using FluentAssertions;
 using Reqnroll;
 using Xunit;
 
-namespace AADemoBeCsas.Tests.Integration.Steps;
+namespace ADemoBeCsas.Tests.Integration.Steps;
 
 [Binding]
 [Trait("Category", "Integration")]

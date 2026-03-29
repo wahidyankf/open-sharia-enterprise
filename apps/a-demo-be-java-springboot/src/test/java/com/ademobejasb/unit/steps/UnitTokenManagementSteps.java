@@ -1,10 +1,10 @@
-package com.aademobejasb.unit.steps;
+package com.ademobejasb.unit.steps;
 
-import com.aademobejasb.auth.controller.JwksController;
-import com.aademobejasb.auth.repository.RevokedTokenRepository;
-import com.aademobejasb.auth.repository.UserRepository;
-import com.aademobejasb.auth.service.AuthService;
-import com.aademobejasb.security.JwtUtil;
+import com.ademobejasb.auth.controller.JwksController;
+import com.ademobejasb.auth.repository.RevokedTokenRepository;
+import com.ademobejasb.auth.repository.UserRepository;
+import com.ademobejasb.auth.service.AuthService;
+import com.ademobejasb.security.JwtUtil;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;

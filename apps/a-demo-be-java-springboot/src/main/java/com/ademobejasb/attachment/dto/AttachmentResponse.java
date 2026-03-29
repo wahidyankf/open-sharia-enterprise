@@ -1,7 +1,7 @@
-package com.aademobejasb.attachment.dto;
+package com.ademobejasb.attachment.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.aademobejasb.attachment.model.Attachment;
+import com.ademobejasb.attachment.model.Attachment;
 import java.util.UUID;
 
 public record AttachmentResponse(

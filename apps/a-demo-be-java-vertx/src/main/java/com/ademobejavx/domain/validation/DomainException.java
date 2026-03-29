@@ -1,4 +1,4 @@
-package com.aademobejavx.domain.validation;
+package com.ademobejavx.domain.validation;
 
 public class DomainException extends RuntimeException {
 

@@ -1,4 +1,4 @@
-package com.aademobejasb.unit.reporting;
+package com.ademobejasb.unit.reporting;
 
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.IncludeEngines;
@@ -16,8 +16,8 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 @SelectClasspathResource("expenses/reporting.feature")
 @ConfigurationParameter(
         key = GLUE_PROPERTY_NAME,
-        value = "com.aademobejasb.unit.reporting"
-                + ",com.aademobejasb.unit.steps")
+        value = "com.ademobejasb.unit.reporting"
+                + ",com.ademobejasb.unit.steps")
 @ConfigurationParameter(
         key = PLUGIN_PROPERTY_NAME,
         value = "pretty,html:target/cucumber-reports/unit-reporting.html")

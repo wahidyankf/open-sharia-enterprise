@@ -1,8 +1,8 @@
-using AADemoBeCsas.Domain;
-using AADemoBeCsas.Infrastructure.Repositories;
+using ADemoBeCsas.Domain;
+using ADemoBeCsas.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authorization;
 
-namespace AADemoBeCsas.Auth;
+namespace ADemoBeCsas.Auth;
 
 /// <summary>
 /// Middleware that checks token revocation and user status after authentication.

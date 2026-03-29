@@ -1,7 +1,7 @@
-package com.aademobejavx.unit;
+package com.ademobejavx.unit;
 
-import com.aademobejavx.domain.validation.UserValidator;
-import com.aademobejavx.domain.validation.ValidationException;
+import com.ademobejavx.domain.validation.UserValidator;
+import com.ademobejavx.domain.validation.ValidationException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;

@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
-namespace AADemoBeCsas.Auth;
+namespace ADemoBeCsas.Auth;
 
 public interface IJwtService
 {

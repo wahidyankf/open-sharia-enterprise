@@ -1,6 +1,6 @@
-using AADemoBeCsas.Domain;
+using ADemoBeCsas.Domain;
 
-namespace AADemoBeCsas.Endpoints;
+namespace ADemoBeCsas.Endpoints;
 
 public static class DomainErrorMapper
 {

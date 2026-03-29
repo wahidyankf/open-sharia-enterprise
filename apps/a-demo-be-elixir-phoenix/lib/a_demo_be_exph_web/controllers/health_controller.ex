@@ -1,5 +1,5 @@
-defmodule AAAADemoBeExphWeb.HealthController do
-  use AAAADemoBeExphWeb, :controller
+defmodule AAADemoBeExphWeb.HealthController do
+  use AAADemoBeExphWeb, :controller
 
   alias GeneratedSchemas.HealthResponse
 

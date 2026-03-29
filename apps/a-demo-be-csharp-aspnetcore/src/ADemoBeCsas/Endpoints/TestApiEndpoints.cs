@@ -1,9 +1,9 @@
-using AADemoBeCsas.Domain;
-using AADemoBeCsas.Infrastructure;
+using ADemoBeCsas.Domain;
+using ADemoBeCsas.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace AADemoBeCsas.Endpoints;
+namespace ADemoBeCsas.Endpoints;
 
 public static class TestApiEndpoints
 {

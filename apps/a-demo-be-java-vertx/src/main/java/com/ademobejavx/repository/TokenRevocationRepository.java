@@ -1,6 +1,6 @@
-package com.aademobejavx.repository;
+package com.ademobejavx.repository;
 
-import com.aademobejavx.domain.model.TokenRevocation;
+import com.ademobejavx.domain.model.TokenRevocation;
 import io.vertx.core.Future;
 
 public interface TokenRevocationRepository {

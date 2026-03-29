@@ -110,32 +110,32 @@ and wire in-memory implementations for unit tests.
 **Goal**: Add idiomatic F# function-record repositories, create EF Core constructor functions,
 extract DB access from handlers, and wire in-memory constructor functions for unit tests.
 
-- [x] Create `src/AADemoBeFsgi/Infrastructure/Repositories/RepositoryTypes.fs` — function-record
+- [x] Create `src/ADemoBeFsgi/Infrastructure/Repositories/RepositoryTypes.fs` — function-record
       type definitions for all 5 entities (`UserRepository`, `ExpenseRepository`,
       `AttachmentRepository`, `TokenRepository`, `RefreshTokenRepository`) where each field is a
       function (e.g., `FindById: Guid -> Guid -> Task<ExpenseEntity option>`)
-- [x] Create `src/AADemoBeFsgi/Infrastructure/Repositories/EfRepositories.fs` — module with
+- [x] Create `src/ADemoBeFsgi/Infrastructure/Repositories/EfRepositories.fs` — module with
       constructor functions that return function records wired to `AppDbContext`
       (e.g., `EfRepositories.createUserRepo: AppDbContext -> UserRepository`)
-- [x] Update `AADemoBeFsgi.fsproj` — add `RepositoryTypes.fs` before `EfRepositories.fs`, both
+- [x] Update `ADemoBeFsgi.fsproj` — add `RepositoryTypes.fs` before `EfRepositories.fs`, both
       before handler files (F# requires explicit compilation ordering)
 - [x] Update all 8 handler files (Admin, Attachment, Auth, Expense, Report, Test, Token, User) —
       replace `ctx.GetService<AppDbContext>()` with function-record repositories resolved from DI
       (e.g., `ctx.GetService<UserRepository>()`)
 - [x] Update `Program.fs` — register function records in DI via factory lambdas
       (e.g., `services.AddScoped<UserRepository>(fun sp -> EfRepositories.createUserRepo(sp.GetService<AppDbContext>()))`)
-- [x] Create `tests/AADemoBeFsgi.Tests/InMemory/InMemoryRepositories.fs` — module with constructor
+- [x] Create `tests/ADemoBeFsgi.Tests/InMemory/InMemoryRepositories.fs` — module with constructor
       functions that return function records backed by `ConcurrentDictionary`
-- [x] Update `AADemoBeFsgi.Tests.fsproj` — add `InMemoryRepositories.fs` in correct compilation
+- [x] Update `ADemoBeFsgi.Tests.fsproj` — add `InMemoryRepositories.fs` in correct compilation
       order
 - [x] Update `DirectServices.fs` — replace `db: AppDbContext` parameter with individual
       function-record repositories
 - [x] Update `Unit/UnitFeatureRunner.fs` — update `UnitScenarioServiceProvider` to inject
       in-memory function records instead of constructing an `AppDbContext` via `createDb()`
-- [x] Update `tests/AADemoBeFsgi.Tests/State.fs` — replace `Db: AppDbContext` field with
+- [x] Update `tests/ADemoBeFsgi.Tests/State.fs` — replace `Db: AppDbContext` field with
       function-record repository fields (e.g., `UserRepo: UserRepository`,
       `ExpenseRepo: ExpenseRepository`); update `empty` constructor accordingly
-- [x] Update all 13 `tests/AADemoBeFsgi.Tests/Integration/Steps/*.fs` files (AuthSteps.fs,
+- [x] Update all 13 `tests/ADemoBeFsgi.Tests/Integration/Steps/*.fs` files (AuthSteps.fs,
       CommonSteps.fs, TokenLifecycleSteps.fs, TokenManagementSteps.fs, UserAccountSteps.fs,
       SecuritySteps.fs, AdminSteps.fs, ExpenseSteps.fs, CurrencySteps.fs, UnitHandlingSteps.fs,
       ReportingSteps.fs, AttachmentSteps.fs, HealthSteps.fs) — replace all `state.Db` call sites

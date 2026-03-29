@@ -1,10 +1,10 @@
-defmodule AAAADemoBeExphWeb.Unit.SecuritySteps do
+defmodule AAADemoBeExphWeb.Unit.SecuritySteps do
   use Cabbage.Feature, async: false, file: "security/security.feature"
 
-  use AAAADemoBeExphWeb.ConnCase
+  use AAADemoBeExphWeb.ConnCase
 
-  alias AADemoBeExph.Integration.Helpers
-  alias AADemoBeExph.Test.InMemoryStore
+  alias ADemoBeExph.Integration.Helpers
+  alias ADemoBeExph.Test.InMemoryStore
 
   @moduletag :unit
 

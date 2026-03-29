@@ -1,6 +1,6 @@
-module AADemoBeFsgi.Tests.State
+module ADemoBeFsgi.Tests.State
 
-open AADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
+open ADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
 
 /// Represents a simulated HTTP-style response from a direct service call.
 /// Status maps to HTTP status codes; Body is JSON text.

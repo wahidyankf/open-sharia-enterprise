@@ -1,10 +1,10 @@
-defmodule AADemoBeExph.Expense.ExpenseBehaviour do
+defmodule ADemoBeExph.Expense.ExpenseBehaviour do
   @moduledoc """
   Behaviour contract for the Expense context.
   Allows swapping real Ecto implementation for in-memory implementation in tests.
   """
 
-  alias AADemoBeExph.Expense.Expense
+  alias ADemoBeExph.Expense.Expense
 
   @callback create_expense(integer(), map()) :: {:ok, Expense.t()} | {:error, Ecto.Changeset.t()}
   @callback get_expense(integer(), integer()) :: Expense.t() | nil

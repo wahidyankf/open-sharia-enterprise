@@ -1,4 +1,4 @@
-module AADemoBeFsgi.Tests.Unit.HandlerCoverageTests
+module ADemoBeFsgi.Tests.Unit.HandlerCoverageTests
 
 open System
 open System.IdentityModel.Tokens.Jwt
@@ -9,12 +9,12 @@ open System.Text
 open System.Text.Json
 open Microsoft.IdentityModel.Tokens
 open Xunit
-open AADemoBeFsgi.Domain.Types
-open AADemoBeFsgi.Domain.Expense
-open AADemoBeFsgi.Tests.TestFixture
-open AADemoBeFsgi.Tests.HttpTestFixture
-open AADemoBeFsgi.Tests.DirectServices
-open AADemoBeFsgi.Infrastructure.Repositories.EfRepositories
+open ADemoBeFsgi.Domain.Types
+open ADemoBeFsgi.Domain.Expense
+open ADemoBeFsgi.Tests.TestFixture
+open ADemoBeFsgi.Tests.HttpTestFixture
+open ADemoBeFsgi.Tests.DirectServices
+open ADemoBeFsgi.Infrastructure.Repositories.EfRepositories
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Pure function branch coverage
@@ -134,17 +134,17 @@ type JwtServiceTests() =
 
     [<Fact>]
     member _.``validateToken returns None for invalid token``() =
-        let result = AADemoBeFsgi.Auth.JwtService.validateToken "not-a-valid-token"
+        let result = ADemoBeFsgi.Auth.JwtService.validateToken "not-a-valid-token"
         Assert.Equal(None, result)
 
     [<Fact>]
     member _.``getTokenJti returns None for invalid token``() =
-        let result = AADemoBeFsgi.Auth.JwtService.getTokenJti "not-a-valid-token"
+        let result = ADemoBeFsgi.Auth.JwtService.getTokenJti "not-a-valid-token"
         Assert.Equal(None, result)
 
     [<Fact>]
     member _.``getTokenExpiry returns None for invalid token``() =
-        let result = AADemoBeFsgi.Auth.JwtService.getTokenExpiry "not-a-valid-token"
+        let result = ADemoBeFsgi.Auth.JwtService.getTokenExpiry "not-a-valid-token"
         Assert.Equal(None, result)
 
     [<Fact>]
@@ -152,23 +152,23 @@ type JwtServiceTests() =
         let userId = Guid.NewGuid()
 
         let token =
-            AADemoBeFsgi.Auth.JwtService.generateAccessToken userId "alice" "alice@example.com" "user"
+            ADemoBeFsgi.Auth.JwtService.generateAccessToken userId "alice" "alice@example.com" "user"
 
         Assert.False(String.IsNullOrEmpty(token))
-        let jti = AADemoBeFsgi.Auth.JwtService.getTokenJti token
+        let jti = ADemoBeFsgi.Auth.JwtService.getTokenJti token
         Assert.True(jti.IsSome)
 
     [<Fact>]
     member _.``generateRefreshToken produces a parseable JWT``() =
         let userId = Guid.NewGuid()
-        let token = AADemoBeFsgi.Auth.JwtService.generateRefreshToken userId
+        let token = ADemoBeFsgi.Auth.JwtService.generateRefreshToken userId
         Assert.False(String.IsNullOrEmpty(token))
-        let expiry = AADemoBeFsgi.Auth.JwtService.getTokenExpiry token
+        let expiry = ADemoBeFsgi.Auth.JwtService.getTokenExpiry token
         Assert.True(expiry.IsSome)
 
     [<Fact>]
     member _.``getJwks returns keys array``() =
-        let jwks = AADemoBeFsgi.Auth.JwtService.getJwks ()
+        let jwks = ADemoBeFsgi.Auth.JwtService.getJwks ()
         let json = JsonSerializer.Serialize(jwks)
         Assert.Contains("keys", json)
 
@@ -182,7 +182,7 @@ type JwtServiceTests() =
             let userId = Guid.NewGuid()
 
             let token =
-                AADemoBeFsgi.Auth.JwtService.generateAccessToken userId "bob" "bob@example.com" "user"
+                ADemoBeFsgi.Auth.JwtService.generateAccessToken userId "bob" "bob@example.com" "user"
 
             Assert.False(String.IsNullOrEmpty(token))
         finally
@@ -224,7 +224,7 @@ let private shortId () =
     let raw = Guid.NewGuid().ToString("N")
     raw.Substring(0, 8)
 
-let private registerAndLogin (db: AADemoBeFsgi.Infrastructure.AppDbContext.AppDbContext) (username: string) =
+let private registerAndLogin (db: ADemoBeFsgi.Infrastructure.AppDbContext.AppDbContext) (username: string) =
     let userRepo = createUserRepo db
     let rtRepo = createRefreshTokenRepo db
     let email = $"{username}@example.com"
@@ -242,7 +242,7 @@ let private registerAndLogin (db: AADemoBeFsgi.Infrastructure.AppDbContext.AppDb
     else
         failwith $"Login failed for {username}: {status} {body}"
 
-let private createExpenseForUser (db: AADemoBeFsgi.Infrastructure.AppDbContext.AppDbContext) (token: string) =
+let private createExpenseForUser (db: ADemoBeFsgi.Infrastructure.AppDbContext.AppDbContext) (token: string) =
     let status, body =
         createExpense
             (createUserRepo db)

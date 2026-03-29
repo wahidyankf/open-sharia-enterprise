@@ -1,4 +1,4 @@
 @NullMarked
-package com.aademobejavx.repository;
+package com.ademobejavx.repository;
 
 import org.jspecify.annotations.NullMarked;

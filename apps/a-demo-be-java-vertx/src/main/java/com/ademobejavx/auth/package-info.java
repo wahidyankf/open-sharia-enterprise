@@ -1,4 +1,4 @@
 @NullMarked
-package com.aademobejavx.auth;
+package com.ademobejavx.auth;
 
 import org.jspecify.annotations.NullMarked;

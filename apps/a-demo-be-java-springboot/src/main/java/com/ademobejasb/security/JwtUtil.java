@@ -1,4 +1,4 @@
-package com.aademobejasb.security;
+package com.ademobejasb.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;

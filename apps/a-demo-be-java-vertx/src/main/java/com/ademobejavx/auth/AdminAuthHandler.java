@@ -1,6 +1,6 @@
-package com.aademobejavx.auth;
+package com.ademobejavx.auth;
 
-import com.aademobejavx.domain.model.User;
+import com.ademobejavx.domain.model.User;
 import io.vertx.ext.web.RoutingContext;
 
 public class AdminAuthHandler implements io.vertx.core.Handler<RoutingContext> {

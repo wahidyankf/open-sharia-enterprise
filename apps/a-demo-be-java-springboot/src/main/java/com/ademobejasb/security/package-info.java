@@ -1,4 +1,4 @@
 @NullMarked
-package com.aademobejasb.security;
+package com.ademobejasb.security;
 
 import org.jspecify.annotations.NullMarked;

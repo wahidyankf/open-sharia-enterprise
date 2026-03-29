@@ -1,4 +1,4 @@
-package com.aademobejavx.domain.model;
+package com.ademobejavx.domain.model;
 
 import java.time.Instant;
 import org.jspecify.annotations.Nullable;

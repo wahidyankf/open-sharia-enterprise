@@ -1,4 +1,4 @@
-module AADemoBeFsgi.Program
+module ADemoBeFsgi.Program
 
 open System
 open Microsoft.AspNetCore.Builder
@@ -8,11 +8,11 @@ open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Hosting
 open Giraffe
 open DbUp
-open AADemoBeFsgi.Infrastructure.AppDbContext
-open AADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
-open AADemoBeFsgi.Infrastructure.Repositories.EfRepositories
-open AADemoBeFsgi.Auth.JwtMiddleware
-open AADemoBeFsgi.Auth.AdminMiddleware
+open ADemoBeFsgi.Infrastructure.AppDbContext
+open ADemoBeFsgi.Infrastructure.Repositories.RepositoryTypes
+open ADemoBeFsgi.Infrastructure.Repositories.EfRepositories
+open ADemoBeFsgi.Auth.JwtMiddleware
+open ADemoBeFsgi.Auth.AdminMiddleware
 
 let healthHandler: HttpHandler = fun next ctx -> json {| status = "UP" |} next ctx
 

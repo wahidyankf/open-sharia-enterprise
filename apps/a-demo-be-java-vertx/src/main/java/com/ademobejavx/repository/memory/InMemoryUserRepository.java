@@ -1,7 +1,7 @@
-package com.aademobejavx.repository.memory;
+package com.ademobejavx.repository.memory;
 
-import com.aademobejavx.domain.model.User;
-import com.aademobejavx.repository.UserRepository;
+import com.ademobejavx.domain.model.User;
+import com.ademobejavx.repository.UserRepository;
 import io.vertx.core.Future;
 import java.util.ArrayList;
 import java.util.List;

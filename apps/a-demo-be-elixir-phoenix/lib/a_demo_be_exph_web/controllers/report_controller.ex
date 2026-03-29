@@ -1,5 +1,5 @@
-defmodule AAAADemoBeExphWeb.ReportController do
-  use AAAADemoBeExphWeb, :controller
+defmodule AAADemoBeExphWeb.ReportController do
+  use AAADemoBeExphWeb, :controller
 
   alias GeneratedSchemas.CategoryBreakdown
   alias GeneratedSchemas.PLReport
@@ -10,7 +10,7 @@ defmodule AAAADemoBeExphWeb.ReportController do
       Application.get_env(
         :a_demo_be_exph,
         :expense_module,
-        AADemoBeExph.Expense.ExpenseContext
+        ADemoBeExph.Expense.ExpenseContext
       )
 
   def pl(conn, params) do
