@@ -124,15 +124,15 @@ jobs:
           (cd libs/clojure-openapi-codegen && JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -P)
           (cd apps/demo-be-clojure-pedestal && JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -P && JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -P -M:test:coverage)
 
-      - name: Install Flutter dependencies
-        run: (cd apps/demo-fe-dart-flutterweb && flutter pub get)
-
-      - name: Generate contract types (required before typecheck/test:quick)
+      - name: Generate contract types (required before Flutter pub get and typecheck/test:quick)
         run: |
           mkdir -p libs/clojure-openapi-codegen/classes
           npx nx run demo-contracts:bundle
           npx nx run organiclever-contracts:bundle
           npx nx run-many -t codegen --projects=demo-*,organiclever-*
+
+      - name: Install Flutter dependencies
+        run: (cd apps/demo-fe-dart-flutterweb && flutter pub get)
 
       - name: Restore .NET dependencies (required before --no-restore typecheck)
         run: |
