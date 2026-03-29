@@ -130,8 +130,8 @@ apps/organiclever-be/
 ├── generated-contracts/                  # From OpenAPI codegen (gitignored)
 ├── project.json
 ├── global.json
-├── docker-compose.integration.yml
-├── Dockerfile.integration
+├── docker-compose.integration.yml  # PostgreSQL 17 for integration tests
+├── Dockerfile.integration           # Test runner image
 ├── fsharplint.json
 ├── dotnet-tools.json
 └── README.md
@@ -155,9 +155,15 @@ let webApp : HttpHandler =
 
 ### Repository Pattern (Function Records)
 
-Following `demo-be-fsharp-giraffe` exactly. Repositories are defined as F# function records
+Following `demo-be-fsharp-giraffe` pattern: repositories are defined as F# function records
 (interfaces) and implemented using EF Core. Handlers receive repositories via DI, making them
 easily mockable for unit tests.
+
+`UserRepository` follows the demo exactly. `RefreshTokenRepository` intentionally diverges
+from the demo: this app uses single-use refresh token rotation (delete old token, create new
+one), which requires `Delete` and `DeleteByUserId` operations rather than the demo's
+`Update`/`ListActiveByUser` model. The member names (`FindByTokenHash` vs `FindActiveByHash`)
+also reflect this different auth model (Google OAuth vs email/password in the demo).
 
 ```fsharp
 // Infrastructure/Repositories/RepositoryTypes.fs
@@ -180,18 +186,24 @@ type RefreshTokenRepository = {
 ```fsharp
 // Infrastructure/Repositories/EfRepositories.fs
 let createUserRepo (db: AppDbContext) : UserRepository = {
-    FindById = fun id -> task {
-        return! db.Users.AsNoTracking()
-            .Where(fun u -> u.Id = id)
-            .FirstOrDefaultAsync()
-            |> Task.map Option.ofObj
-    }
-    FindByGoogleId = fun googleId -> task {
-        return! db.Users.AsNoTracking()
-            .Where(fun u -> u.GoogleId = googleId)
-            .FirstOrDefaultAsync()
-            |> Task.map Option.ofObj
-    }
+    FindById =
+        fun id ->
+            task {
+                let! entity = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.Id = id)
+                if obj.ReferenceEquals(entity, null) then
+                    return None
+                else
+                    return Some entity
+            }
+    FindByGoogleId =
+        fun googleId ->
+            task {
+                let! entity = db.Users.AsNoTracking().FirstOrDefaultAsync(fun u -> u.GoogleId = googleId)
+                if obj.ReferenceEquals(entity, null) then
+                    return None
+                else
+                    return Some entity
+            }
     // ...
 }
 ```
@@ -244,9 +256,17 @@ Following `demo-be-fsharp-giraffe` exactly:
   (skips already-applied scripts)
 - **Test strategy**: Unit tests use SQLite in-memory via `EnsureCreated()` (DbUp does not support
   SQLite); integration tests use real PostgreSQL via Docker Compose and run DbUp normally
+- **Google OAuth in integration tests**: `GoogleAuthService.fs` must be injectable/mockable.
+  Integration tests inject a stub `GoogleAuthService` that bypasses actual Google token
+  verification, accepting a pre-configured test token. `docker-compose.integration.yml`
+  sets `GOOGLE_CLIENT_ID=test` and `GOOGLE_CLIENT_SECRET=test`; the stub verifier accepts
+  any well-formed token when running in test mode (detected via an `APP_ENV=test` env var).
 
 ```fsharp
 // Infrastructure/Migrator.fs (simplified)
+// Note: The demo (demo-be-fsharp-giraffe) inlines the DbUp call directly in Program.fs
+// rather than using a separate Migrator.fs file. This plan deliberately extracts it into
+// a dedicated module for clarity and testability — an intentional divergence from the demo.
 let runMigrations (connectionString: string) =
     DeployChanges.To
         .PostgresqlDatabase(connectionString)
@@ -283,8 +303,8 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
 ```xml
 <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.*" />
 <PackageReference Include="EFCore.NamingConventions" Version="10.*" />
-<PackageReference Include="dbup-core" Version="7.*" />
-<PackageReference Include="dbup-postgresql" Version="7.*" />
+<PackageReference Include="dbup-core" Version="5.*" />
+<PackageReference Include="dbup-postgresql" Version="5.*" />
 ```
 
 **Environment variables**:
@@ -383,7 +403,7 @@ apps/organiclever-fe/
 │       └── profile-page.integration.test.tsx
 ├── project.json
 ├── package.json
-├── next.config.mjs
+├── next.config.ts
 ├── tsconfig.json
 ├── vitest.config.ts
 └── README.md
@@ -458,7 +478,7 @@ export default async function ProfilePage() {
 
   const exit = await Effect.runPromiseExit(program)
 
-  if (Exit.isFailure(exit)) {
+  if (!Exit.isSuccess(exit)) {
     redirect("/login")
   }
 
@@ -492,7 +512,7 @@ export async function GET() {
 
   const exit = await Effect.runPromiseExit(program)
 
-  if (Exit.isFailure(exit)) {
+  if (!Exit.isSuccess(exit)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
@@ -619,14 +639,43 @@ servers:
     description: Local development
 paths:
   /api/v1/health:
-    $ref: "./paths/health.yaml#/health"
+    $ref: "./paths/health.yaml#/~1api~1v1~1health"
   /api/v1/auth/google:
-    $ref: "./paths/auth.yaml#/googleLogin"
+    $ref: "./paths/auth.yaml#/~1api~1v1~1auth~1google"
   /api/v1/auth/refresh:
-    $ref: "./paths/auth.yaml#/refresh"
+    $ref: "./paths/auth.yaml#/~1api~1v1~1auth~1refresh"
   /api/v1/auth/me:
-    $ref: "./paths/auth.yaml#/me"
+    $ref: "./paths/auth.yaml#/~1api~1v1~1auth~1me"
 ```
+
+The `$ref` fragments use JSON Pointer URL-encoding (`~1` = `/`), matching the demo pattern.
+Path files use the full path as the top-level key:
+
+```yaml
+# specs/apps/organiclever/contracts/paths/health.yaml
+/api/v1/health:
+  get:
+    summary: Health check
+    # ...
+```
+
+```yaml
+# specs/apps/organiclever/contracts/paths/auth.yaml
+/api/v1/auth/google:
+  post:
+    summary: Google OAuth login
+    # ...
+/api/v1/auth/refresh:
+  post:
+    summary: Refresh access token
+    # ...
+/api/v1/auth/me:
+  get:
+    summary: Get authenticated user profile
+    # ...
+```
+
+This follows the same pattern used in `specs/apps/demo/contracts/paths/`.
 
 ## Technology Stack
 
@@ -635,8 +684,8 @@ paths:
 | Backend runtime    | .NET                         | 10.0    | LTS                          |
 | Backend web        | Giraffe                      | 7.x     | Functional HttpHandler       |
 | Backend ORM        | EF Core (Npgsql)             | 10.x    | PostgreSQL provider          |
-| Backend migrations | DbUp (dbup-postgresql)       | 7.x     | SQL file migrations          |
-| Backend JSON       | FSharp.SystemTextJson         | Latest  | F# type serialization        |
+| Backend migrations | DbUp (dbup-postgresql)       | 5.x     | SQL file migrations (matches demo-be-fsharp-giraffe) |
+| Backend JSON       | FSharp.SystemTextJson         | 1.*     | F# type serialization (matches demo-be-fsharp-giraffe) |
 | Backend lint       | Fantomas, FSharpLint         | Latest  | Formatting + style           |
 | Backend coverage   | AltCover                     | Latest  | 90% line coverage            |
 | Frontend runtime   | Node.js                      | 24.x    | LTS via Volta                |

@@ -112,7 +112,7 @@ follow-up plan.
 - [ ] Register repositories in `Program.fs` DI container (`AddScoped`)
 - [ ] Create `src/OrganicLeverBe/Contracts/ContractWrappers.fs` (CLIMutable DTOs)
 - [ ] Add NuGet packages: `Npgsql.EntityFrameworkCore.PostgreSQL` 10.x,
-  `EFCore.NamingConventions` 10.x, `dbup-core` 7.x, `dbup-postgresql` 7.x
+  `EFCore.NamingConventions` 10.x, `dbup-core` 5.x, `dbup-postgresql` 5.x
 - [ ] Add `<EmbeddedResource Include="db/migrations/*.sql" />` to
   `src/OrganicLeverBe/OrganicLeverBe.fsproj` (path relative to `.fsproj` location)
 - [ ] Create `src/OrganicLeverBe/db/migrations/001-initial-schema.sql` (users, refresh_tokens tables)
@@ -124,6 +124,7 @@ follow-up plan.
 
 ### Milestone 3.3: Backend Testing
 
+- [ ] Verify `nx run organiclever-be:codegen` generates contracts (must pass before typecheck)
 - [ ] Create test project `tests/OrganicLeverBe.Tests/`
 - [ ] Create unit tests consuming `be/gherkin/` specs with **mocked repository function records**
   (health, authentication domains). Use SQLite in-memory, no HTTP.
@@ -134,7 +135,6 @@ follow-up plan.
 - [ ] Verify `nx run organiclever-be:lint` passes
 - [ ] Verify `nx run organiclever-be:typecheck` passes
 - [ ] Verify `nx run organiclever-be:build` passes
-- [ ] Verify `nx run organiclever-be:codegen` generates contracts
 
 ## Phase 4: Frontend (`organiclever-fe`)
 
@@ -145,7 +145,7 @@ follow-up plan.
   (codegen, typecheck, lint, build, test:unit, test:quick, test:integration, storybook,
   build-storybook, dev, start)
 - [ ] Create `apps/organiclever-fe/package.json` (next, react, effect, typescript)
-- [ ] Create `apps/organiclever-fe/next.config.mjs`
+- [ ] Create `apps/organiclever-fe/next.config.ts`
 - [ ] Create `apps/organiclever-fe/tsconfig.json` (strict mode)
 - [ ] Create `apps/organiclever-fe/vitest.config.ts`
 - [ ] Create `apps/organiclever-fe/README.md`
