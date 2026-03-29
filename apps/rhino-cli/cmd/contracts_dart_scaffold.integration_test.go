@@ -65,7 +65,7 @@ func (s *dartScaffoldSteps) anExistingGeneratedContractsDirWithOldScaffoldFiles(
 	if err := os.WriteFile(filepath.Join(s.srcDir, "pubspec.yaml"), []byte("name: old_name\n"), 0644); err != nil {
 		return err
 	}
-	return os.WriteFile(filepath.Join(libDir, "demo_contracts.dart"), []byte("// old barrel\n"), 0644)
+	return os.WriteFile(filepath.Join(libDir, "a_demo_contracts.dart"), []byte("// old barrel\n"), 0644)
 }
 
 func (s *dartScaffoldSteps) theDeveloperRunsContractsDartScaffold() error {
@@ -89,14 +89,14 @@ func (s *dartScaffoldSteps) pubspecYamlIsCreatedWithCorrectContent() error {
 	if err != nil {
 		return fmt.Errorf("reading pubspec.yaml: %w", err)
 	}
-	if !strings.Contains(string(data), "name: demo_contracts") {
-		return fmt.Errorf("expected pubspec.yaml to contain 'name: demo_contracts', got: %s", string(data))
+	if !strings.Contains(string(data), "name: a_demo_contracts") {
+		return fmt.Errorf("expected pubspec.yaml to contain 'name: a_demo_contracts', got: %s", string(data))
 	}
 	return nil
 }
 
 func (s *dartScaffoldSteps) theBarrelLibraryIsCreatedWithPartDirectivesForEachModel() error {
-	data, err := os.ReadFile(filepath.Join(s.srcDir, "lib", "demo_contracts.dart"))
+	data, err := os.ReadFile(filepath.Join(s.srcDir, "lib", "a_demo_contracts.dart"))
 	if err != nil {
 		return fmt.Errorf("reading barrel library: %w", err)
 	}
@@ -118,7 +118,7 @@ func (s *dartScaffoldSteps) pubspecYamlIsCreated() error {
 }
 
 func (s *dartScaffoldSteps) theBarrelLibraryIsCreatedWithoutPartDirectives() error {
-	data, err := os.ReadFile(filepath.Join(s.srcDir, "lib", "demo_contracts.dart"))
+	data, err := os.ReadFile(filepath.Join(s.srcDir, "lib", "a_demo_contracts.dart"))
 	if err != nil {
 		return fmt.Errorf("reading barrel library: %w", err)
 	}
@@ -134,12 +134,12 @@ func (s *dartScaffoldSteps) theExistingFilesAreOverwrittenWithFreshScaffold() er
 	if err != nil {
 		return fmt.Errorf("reading pubspec.yaml: %w", err)
 	}
-	if !strings.Contains(string(data), "name: demo_contracts") {
-		return fmt.Errorf("expected pubspec.yaml to be overwritten with 'name: demo_contracts', got: %s", string(data))
+	if !strings.Contains(string(data), "name: a_demo_contracts") {
+		return fmt.Errorf("expected pubspec.yaml to be overwritten with 'name: a_demo_contracts', got: %s", string(data))
 	}
 
 	// barrel should have been overwritten
-	barrelData, err := os.ReadFile(filepath.Join(s.srcDir, "lib", "demo_contracts.dart"))
+	barrelData, err := os.ReadFile(filepath.Join(s.srcDir, "lib", "a_demo_contracts.dart"))
 	if err != nil {
 		return fmt.Errorf("reading barrel library: %w", err)
 	}

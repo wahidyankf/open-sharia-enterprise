@@ -14,7 +14,7 @@ var (
 	dartGlob      = filepath.Glob
 )
 
-const pubspecContent = `name: demo_contracts
+const pubspecContent = `name: a_demo_contracts
 publish_to: "none"
 version: 1.0.0
 environment:
@@ -104,7 +104,7 @@ func ScaffoldDart(opts DartScaffoldOptions) (*DartScaffoldResult, error) {
 	sb.WriteString(barrelUtils)
 
 	// Step 5: Write barrel file.
-	barrelPath := filepath.Join(opts.Dir, "lib", "demo_contracts.dart")
+	barrelPath := filepath.Join(opts.Dir, "lib", "a_demo_contracts.dart")
 	if err := dartWriteFile(barrelPath, []byte(sb.String()), 0644); err != nil {
 		return nil, fmt.Errorf("writing barrel library: %w", err)
 	}
