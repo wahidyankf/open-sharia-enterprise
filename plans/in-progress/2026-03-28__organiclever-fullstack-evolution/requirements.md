@@ -324,6 +324,10 @@ Scenario: All 4 apps have standard targets
 Note: `organiclever-contracts` has `lint`, `bundle`, `docs` targets but not `test:quick` —
 this is expected. It is an OpenAPI spec project, not an app with unit tests.
 
+Note: For E2E apps (`organiclever-be-e2e`, `organiclever-fe-e2e`), `test:quick` runs
+`lint + typecheck` only — there is no unit test suite or coverage validation for E2E
+projects. This matches the pattern in `demo-be-e2e` and `demo-fe-e2e`.
+
 ### AC-5: Contract Codegen
 
 ```gherkin
