@@ -118,7 +118,7 @@ Examples prioritize:
 - Platform-specific advanced features
 - Deprecated features
 
-**Coverage verification**: The apps-ayokoding-fs-by-example-checker agent validates coverage against comprehensive checklists for each language/framework.
+**Coverage verification**: The apps-ayokoding-web-by-example-checker agent validates coverage against comprehensive checklists for each language/framework.
 
 ### 3. Example Count: 75-85 Total
 
@@ -130,7 +130,7 @@ Examples prioritize:
 - **Intermediate**: 25-30 examples (40-75% coverage) - Production patterns
 - **Advanced**: 25-28 examples (75-95% coverage) - Expert mastery
 
-**Actual ranges observed in production** (ayokoding-fs):
+**Actual ranges observed in production** (ayokoding-web):
 
 - Golang: 85 examples (30/30/25)
 - Python: 80 examples (27/27/26)
@@ -420,7 +420,7 @@ The Java by-example tutorial demonstrates this principle for programming languag
 
 ### Validation Criteria
 
-The apps-ayokoding-fs-by-example-checker validates:
+The apps-ayokoding-web-by-example-checker validates:
 
 - **Beginner dependency count**: 0 external dependencies/abstractions (CRITICAL)
 - **Intermediate dependency justification**: Each external dependency has explicit "Why Not Core Features" explanation (HIGH)
@@ -615,7 +615,7 @@ result := transform(y)           // => result is "20-transformed" (string)
 fmt.Println(result)              // => Output: 20-transformed
 ```
 
-**Production example from ayokoding-fs** (Golang Example 1):
+**Production example from ayokoding-web** (Golang Example 1):
 
 ```go
 package main // => Declares this is the main executable package
@@ -698,13 +698,13 @@ func main() { // => Entry point - every executable needs main() in main package
 - **Contextual**: Specific to the concept, NOT generic statements
 - **Production-focused**: Reference real usage, companies, or measurable impacts
 
-**Production example from ayokoding-fs** (Golang Example 1, 62 words):
+**Production example from ayokoding-web** (Golang Example 1, 62 words):
 
 ```markdown
 **Why It Matters**: Single-binary deployment makes Go ideal for containers and microservices, where `go build` produces a statically-linked executable with no runtime dependencies unlike Java (requires JVM) or Python (requires interpreter and packages). Docker containers for Go services are 5-10MB (vs 200MB+ for equivalent Java apps), enabling faster deployments, reduced attack surface, and simplified distribution as a single file that runs anywhere.
 ```
 
-**Production example from ayokoding-fs** (Rust Example 2, 78 words):
+**Production example from ayokoding-web** (Rust Example 2, 78 words):
 
 ```markdown
 **Why It Matters**: Microsoft research shows that 70% of security vulnerabilities stem from memory safety issues, many caused by unexpected mutations in concurrent contexts. Rust's immutable-by-default design eliminates data races at compile time—bugs that cost companies millions in C++ codebases—while enabling aggressive compiler optimizations since immutable values can be safely cached and parallelized without locks.
@@ -714,7 +714,7 @@ func main() { // => Entry point - every executable needs main() in main package
 
 ## Complete Example Structure (Production Reference)
 
-Below is a complete example from ayokoding-fs demonstrating all five parts in practice:
+Below is a complete example from ayokoding-web demonstrating all five parts in practice:
 
 ### Example 1: Hello World and Go Compilation (Golang)
 
@@ -934,7 +934,7 @@ go processRequest(req)  // => Goroutine spawned (runs concurrently with minimal 
 - Keep code annotations focused on state tracking (`// =>` notation)
 - Reserve extensive explanations for "Brief Explanation" and "Why It Matters" sections
 
-**Note**: This annotation density standard (1-2.25 per example) is the general [ayokoding-fs code annotation standard](../hugo/ayokoding.md#code-annotation-standards) applied to all content. By-example tutorials follow the same standard as other tutorial types, with additional requirements for self-containment and five-part format.
+**Note**: This annotation density standard (1-2.25 per example) is the general [ayokoding-web code annotation standard](../hugo/ayokoding.md#code-annotation-standards) applied to all content. By-example tutorials follow the same standard as other tutorial types, with additional requirements for self-containment and five-part format.
 
 ### Output Annotation Pattern
 
@@ -1044,7 +1044,7 @@ fmt.Println(value)               // => Output: 42
 
 **Guideline**: 30-50% of examples should include diagrams (30-50 total diagrams per language)
 
-**Actual diagram counts in production** (ayokoding-fs):
+**Actual diagram counts in production** (ayokoding-web):
 
 - **Beginner level**: 7-11 diagrams (25-37% of 27-30 examples)
 - **Intermediate level**: 8-17 diagrams (30-60% of 20-30 examples)
@@ -1213,7 +1213,7 @@ content/
 - **Intermediate**: Examples 31-60 (40-75% coverage)
 - **Advanced**: Examples 61-85 (75-95% coverage)
 
-**Actual distributions in production** (ayokoding-fs):
+**Actual distributions in production** (ayokoding-web):
 
 - Golang: 1-30 (beginner), 31-60 (intermediate), 61-85 (advanced)
 - Python: 1-27 (beginner), 28-54 (intermediate), 55-80 (advanced)
@@ -1308,7 +1308,7 @@ Before publishing by-example content, verify:
 
 ### Automated Validation
 
-The **apps-ayokoding-fs-by-example-checker** agent validates:
+The **apps-ayokoding-web-by-example-checker** agent validates:
 
 - **Coverage percentage**: 95% target achieved
 - **Example count**: 75-85 total (beginner: 27-30, intermediate: 20-30, advanced: 25-28)
@@ -1320,7 +1320,7 @@ The **apps-ayokoding-fs-by-example-checker** agent validates:
 - **Five-part structure**: Brief explanation, diagram (when appropriate), annotated code, key takeaway, why it matters
 - **Frontmatter completeness**: Title, date, weight, description, tags present
 
-**Production validation results** (ayokoding-fs languages):
+**Production validation results** (ayokoding-web languages):
 
 - Golang: ✅ 85 examples, 33 diagrams, 2.1 avg density
 - Python: ✅ 80 examples, 34 diagrams, 2.0 avg density
@@ -1334,10 +1334,10 @@ The **apps-ayokoding-fs-by-example-checker** agent validates:
 
 The **by-example-quality-gate** workflow orchestrates:
 
-1. **apps-ayokoding-fs-by-example-maker**: Creates/updates examples
-2. **apps-ayokoding-fs-by-example-checker**: Validates against standards
+1. **apps-ayokoding-web-by-example-maker**: Creates/updates examples
+2. **apps-ayokoding-web-by-example-checker**: Validates against standards
 3. **User review**: Reviews audit report
-4. **apps-ayokoding-fs-by-example-fixer**: Applies validated fixes
+4. **apps-ayokoding-web-by-example-fixer**: Applies validated fixes
 
 ## Relationship to Other Tutorial Types
 
@@ -1378,7 +1378,7 @@ When creating by-example tutorials for multiple languages:
 
 ## Production-Validated Standards Summary
 
-This convention reflects standards validated by **7 production languages** (75-85 examples each) on ayokoding-fs:
+This convention reflects standards validated by **7 production languages** (75-85 examples each) on ayokoding-web:
 
 **Example Count**: 75-85 total (refined from initial 75-85 target)
 
@@ -1417,7 +1417,7 @@ This convention reflects standards validated by **7 production languages** (75-8
 
 This convention implements and respects:
 
-- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Automated validation via apps-ayokoding-fs-by-example-checker agent
+- **[Automation Over Manual](../../principles/software-engineering/automation-over-manual.md)**: Automated validation via apps-ayokoding-web-by-example-checker agent
 - **[Progressive Disclosure](../../principles/content/progressive-disclosure.md)**: Content organized in complexity levels (beginner/intermediate/advanced)
 - **[No Time Estimates](../../principles/content/no-time-estimates.md)**: Uses coverage percentages instead of time-based estimates
 - **[Accessibility First](../../principles/content/accessibility-first.md)**: Color-blind friendly diagrams and accessible formatting
@@ -1428,8 +1428,8 @@ This convention implements and respects:
 **Universal Application**: This convention applies to **all by-example tutorial content** across the repository:
 
 - **docs/tutorials/** - Programming language tutorials in docs
-- **apps/ayokoding-fs/content/** - Programming language tutorials (Java, Golang, Python, etc.)
-- **apps/oseplatform-fs/content/** - Platform tutorials using by-example approach
+- **apps/ayokoding-web/content/** - Programming language tutorials (Java, Golang, Python, etc.)
+- **apps/oseplatform-web/content/** - Platform tutorials using by-example approach
 - **Any other location** - By-example tutorials regardless of directory
 
 **Implementation Notes**: While these standards apply universally, Hugo-specific details (frontmatter, weights, navigation) are covered in [Hugo conventions](../hugo/README.md)
@@ -1450,7 +1450,7 @@ This convention implements and respects:
 - **Tutorial naming** - Covered in [Tutorial Naming Convention](./naming.md)
 - **Hugo-specific implementation** - Frontmatter, weights, navigation covered in [Hugo conventions](../hugo/README.md)
 - **Code quality** - Source code standards in development conventions
-- **Tutorial validation** - Covered by apps-ayokoding-fs-by-example-checker agent
+- **Tutorial validation** - Covered by apps-ayokoding-web-by-example-checker agent
 
 ## Related Documentation
 
@@ -1462,13 +1462,13 @@ This convention implements and respects:
 
 ## Related Agents
 
-- [apps-ayokoding-fs-by-example-maker](../../../.claude/agents/apps-ayokoding-fs-by-example-maker.md) - Creates by-example content
-- [apps-ayokoding-fs-by-example-checker](../../../.claude/agents/apps-ayokoding-fs-by-example-checker.md) - Validates by-example standards
-- [apps-ayokoding-fs-by-example-fixer](../../../.claude/agents/apps-ayokoding-fs-by-example-fixer.md) - Applies validated fixes
+- [apps-ayokoding-web-by-example-maker](../../../.claude/agents/apps-ayokoding-web-by-example-maker.md) - Creates by-example content
+- [apps-ayokoding-web-by-example-checker](../../../.claude/agents/apps-ayokoding-web-by-example-checker.md) - Validates by-example standards
+- [apps-ayokoding-web-by-example-fixer](../../../.claude/agents/apps-ayokoding-web-by-example-fixer.md) - Applies validated fixes
 
 ## Related Workflows
 
-- [ayokoding-fs-by-example-quality-gate](../../workflows/ayokoding-fs/ayokoding-fs-by-example-quality-gate.md) - Quality assurance workflow for by-example tutorials
+- [ayokoding-web-by-example-quality-gate](../../workflows/ayokoding-web/ayokoding-web-by-example-quality-gate.md) - Quality assurance workflow for by-example tutorials
 
 ## Related Skills
 

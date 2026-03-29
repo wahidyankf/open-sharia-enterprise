@@ -1,4 +1,4 @@
-# Plan: Rewrite `ayokoding-fs` as Fullstack Next.js (`ayokoding-fs-v2`)
+# Plan: Rewrite `ayokoding-web` as Fullstack Next.js (`ayokoding-web-v2`)
 
 **Status**: Done
 **Created**: 2026-03-23
@@ -6,10 +6,10 @@
 
 ## Goal
 
-Rewrite the ayokoding-fs Hugo site as a fullstack Next.js 16 application
-(`apps/ayokoding-fs-v2`) using modern TypeScript tooling: tRPC for type-safe API,
+Rewrite the ayokoding-web Hugo site as a fullstack Next.js 16 application
+(`apps/ayokoding-web-v2`) using modern TypeScript tooling: tRPC for type-safe API,
 Zod for validation, React Query for data fetching, and shadcn/ui for components.
-The new app reads the same markdown content from `apps/ayokoding-fs/content/` and
+The new app reads the same markdown content from `apps/ayokoding-web/content/` and
 serves it through a tRPC API with full-text search, bilingual routing (EN/ID),
 syntax highlighting, and all features of the current Hugo site.
 
@@ -30,7 +30,7 @@ interactive agent verification during development, E2E tests are for CI regressi
 ## What Makes This Different
 
 This is the first **content platform** rewrite in the monorepo. Unlike demo apps
-(CRUD + auth) or marketing sites (static pages), ayokoding-fs-v2 must:
+(CRUD + auth) or marketing sites (static pages), ayokoding-web-v2 must:
 
 - Parse and render 933+ markdown files with frontmatter, code blocks, math, diagrams
 - Support bilingual content (809 EN + 124 ID files) with language-prefixed URLs
@@ -46,21 +46,21 @@ This is the first **content platform** rewrite in the monorepo. Unlike demo apps
 
 ## Deployment
 
-- **Platform**: Vercel (same as current ayokoding-fs and organiclever-fe)
-- **Production branch**: `prod-ayokoding-fs-v2` (Vercel listens for pushes)
+- **Platform**: Vercel (same as current ayokoding-web and organiclever-fe)
+- **Production branch**: `prod-ayokoding-web-v2` (Vercel listens for pushes)
 - **Local dev / CI E2E**: Docker Compose (no Vercel dependency)
 
 ## New Artifacts
 
-| Artifact                                     | Purpose                              |
-| -------------------------------------------- | ------------------------------------ |
-| `apps/ayokoding-fs-v2`                       | Fullstack Next.js 16 app (port 3101) |
-| `apps/ayokoding-fs-v2-fe-e2e`                | Playwright FE E2E tests              |
-| `apps/ayokoding-fs-v2-be-e2e`                | Playwright BE E2E tests (tRPC API)   |
-| `specs/apps/ayokoding/`                      | Gherkin specs (be/ + fe/)            |
-| `infra/dev/ayokoding-fs-v2/`                 | Docker Compose for local dev / CI    |
-| `.github/workflows/test-ayokoding-fs-v2.yml` | CI workflow                          |
-| `prod-ayokoding-fs-v2` branch                | Vercel production deployment trigger |
+| Artifact                                      | Purpose                              |
+| --------------------------------------------- | ------------------------------------ |
+| `apps/ayokoding-web-v2`                       | Fullstack Next.js 16 app (port 3101) |
+| `apps/ayokoding-web-v2-fe-e2e`                | Playwright FE E2E tests              |
+| `apps/ayokoding-web-v2-be-e2e`                | Playwright BE E2E tests (tRPC API)   |
+| `specs/apps/ayokoding/`                       | Gherkin specs (be/ + fe/)            |
+| `infra/dev/ayokoding-web-v2/`                 | Docker Compose for local dev / CI    |
+| `.github/workflows/test-ayokoding-web-v2.yml` | CI workflow                          |
+| `prod-ayokoding-web-v2` branch                | Vercel production deployment trigger |
 
 ## Plan Documents
 

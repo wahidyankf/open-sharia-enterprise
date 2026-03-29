@@ -27,7 +27,7 @@ with any license, including FSL-1.1, without legal ambiguity.
 | Dependency           | License  | Ecosystem                                   | App                       | Replacement                                                                       |
 | -------------------- | -------- | ------------------------------------------- | ------------------------- | --------------------------------------------------------------------------------- |
 | `psycopg2-binary`    | LGPL-3.0 | Python/pip                                  | a-demo-be-python-fastapi  | **`psycopg[binary]`** (LGPL-3.0 but ctypes/dynamic) or **`asyncpg`** (Apache 2.0) |
-| `@img/sharp-libvips` | LGPL-3.0 | npm (transitive via `sharp`)                | ayokoding-fs (Next.js)    | Evaluate if removable; if needed, dynamic linking defense applies                 |
+| `@img/sharp-libvips` | LGPL-3.0 | npm (transitive via `sharp`)                | ayokoding-web (Next.js)   | Evaluate if removable; if needed, dynamic linking defense applies                 |
 | Hibernate ORM        | LGPL-2.1 | Java/Maven (transitive via Spring Data JPA) | a-demo-be-java-springboot | Not replaceable without major rewrite; dynamic linking defense is strong          |
 
 ## Additional Findings (No Action Required)

@@ -14,14 +14,14 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ### Visual Reference Capture (Playwright)
 
-- [x] Start Hugo dev server: `nx dev oseplatform-fs` (port 3000) — SKIPPED: Hugo server not available in worktree; Next.js visual tests in Phase 14 will establish standalone baselines
+- [x] Start Hugo dev server: `nx dev oseplatform-web` (port 3000) — SKIPPED: Hugo server not available in worktree; Next.js visual tests in Phase 14 will establish standalone baselines
 - [x] Create `scripts/capture-hugo-reference.ts` (Playwright script, see tech-docs.md) — SKIPPED: not needed without Hugo server
 - [x] Capture screenshots at 3 viewports (mobile 375px, tablet 768px, desktop 1440px) for: — SKIPPED
   - [x] Landing page (`/`)
   - [x] About page (`/about/`)
   - [x] Updates listing (`/updates/`)
   - [x] Update detail (`/updates/2026-02-08-phase-0-end-of-phase-0/`)
-- [x] Save 12 screenshots (4 pages × 3 viewports) to `local-temp/oseplatform-fs-hugo-reference/` — SKIPPED
+- [x] Save 12 screenshots (4 pages × 3 viewports) to `local-temp/oseplatform-web-hugo-reference/` — SKIPPED
 - [x] Stop Hugo dev server — SKIPPED
 
 ---
@@ -30,21 +30,21 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ### Archive Hugo Files
 
-- [x] Create `archived/oseplatform-fs-hugo/` directory
-- [x] Move `hugo.yaml` to `archived/oseplatform-fs-hugo/`
-- [x] Move `go.mod` and `go.sum` to `archived/oseplatform-fs-hugo/`
-- [x] Move `build.sh` to `archived/oseplatform-fs-hugo/`
-- [x] Move `archetypes/` to `archived/oseplatform-fs-hugo/`
-- [x] Move `layouts/` to `archived/oseplatform-fs-hugo/`
-- [x] Copy current `vercel.json` to `archived/oseplatform-fs-hugo/vercel.json`
-- [x] Copy current `project.json` to `archived/oseplatform-fs-hugo/project.json` — removed to avoid Nx conflict
+- [x] Create `archived/oseplatform-web-hugo/` directory
+- [x] Move `hugo.yaml` to `archived/oseplatform-web-hugo/`
+- [x] Move `go.mod` and `go.sum` to `archived/oseplatform-web-hugo/`
+- [x] Move `build.sh` to `archived/oseplatform-web-hugo/`
+- [x] Move `archetypes/` to `archived/oseplatform-web-hugo/`
+- [x] Move `layouts/` to `archived/oseplatform-web-hugo/`
+- [x] Copy current `vercel.json` to `archived/oseplatform-web-hugo/vercel.json`
+- [x] Copy current `project.json` to `archived/oseplatform-web-hugo/project.json` — removed to avoid Nx conflict
 - [x] Keep `content/` directory in place (shared with new app)
 - [x] Keep `README.md` in place (will be rewritten later)
 
 ### Initialize Next.js
 
 - [x] Create `next.config.ts` with standalone output, file tracing for content/ and generated/
-- [x] Create `tsconfig.json` with strict mode, path aliases (`@/*`), bundler resolution (copy from ayokoding-fs)
+- [x] Create `tsconfig.json` with strict mode, path aliases (`@/*`), bundler resolution (copy from ayokoding-web)
 - [x] Create `package.json` with all dependencies (see tech-docs.md)
 - [x] Create `postcss.config.mjs` (Tailwind v4 PostCSS plugin)
 - [x] Create `src/app/globals.css` with Tailwind directives, shared token import (`@open-sharia-enterprise/ts-ui-tokens`), brand colors, dark mode overrides, code block styling
@@ -53,12 +53,12 @@ Execute phases in order. Each phase produces a working, committable state.
 - [x] Run `npm install` from monorepo root
 - [x] Create `src/app/layout.tsx` (root layout: import globals.css, metadata, `min-h-screen antialiased`)
 - [x] Create `src/app/page.tsx` (placeholder landing page)
-- [x] Verify `nx dev oseplatform-fs` starts on port 3100 — verified via nx build succeeding
+- [x] Verify `nx dev oseplatform-web` starts on port 3100 — verified via nx build succeeding
 
 ### Initialize Tooling
 
 - [x] Create `vitest.config.ts` with three test projects (unit, unit-fe, integration), coverage exclusions (see tech-docs.md)
-- [x] Create `oxlint.json` with plugins: typescript, react, nextjs, import, unicorn, jsx-a11y, vitest (copy from ayokoding-fs)
+- [x] Create `oxlint.json` with plugins: typescript, react, nextjs, import, unicorn, jsx-a11y, vitest (copy from ayokoding-web)
 - [x] Create `components.json` manually (new-york style, rsc: true, neutral base color — see tech-docs.md for full content)
   - Note: Do NOT run `npx shadcn@latest init` separately — it would overwrite the manually crafted `components.json`. The `init` command is only needed if generating `components.json` interactively. Use the manual file from tech-docs.md directly.
 - [x] Install shadcn/ui components: badge, card, command, dropdown-menu, scroll-area, separator, sheet, tabs, tooltip
@@ -76,10 +76,10 @@ Execute phases in order. Each phase produces a working, committable state.
 - [x] Replace `project.json` with Next.js targets (see tech-docs.md)
 - [x] Verify tags: `type:app, platform:nextjs, lang:ts, domain:oseplatform`
 - [x] Verify `implicitDependencies: ["oseplatform-cli"]`
-- [x] Verify `nx dev oseplatform-fs` works
-- [x] Verify `nx build oseplatform-fs` produces output
+- [x] Verify `nx dev oseplatform-web` works
+- [x] Verify `nx build oseplatform-web` produces output
 
-**Commit**: `refactor(oseplatform-fs): scaffold Next.js 16 app, archive Hugo files`
+**Commit**: `refactor(oseplatform-web): scaffold Next.js 16 app, archive Hugo files`
 
 ---
 
@@ -105,7 +105,7 @@ Execute phases in order. Each phase produces a working, committable state.
 - [x] Create `theme.feature` (2 scenarios: default light mode, toggle persistence)
 - [x] Create `responsive.feature` (2 scenarios: mobile nav, desktop layout)
 
-**Commit**: `test(oseplatform-fs): add Gherkin specs for Next.js rewrite`
+**Commit**: `test(oseplatform-web): add Gherkin specs for Next.js rewrite`
 
 ---
 
@@ -163,7 +163,7 @@ Execute phases in order. Each phase produces a working, committable state.
 - [x] Verify `getBySlug("about")` returns parsed HTML — verified via build
 - [x] Verify `listUpdates()` returns 4 posts in correct order — verified via build
 
-**Commit**: `feat(oseplatform-fs): implement content layer with markdown pipeline`
+**Commit**: `feat(oseplatform-web): implement content layer with markdown pipeline`
 
 ---
 
@@ -190,7 +190,7 @@ Execute phases in order. Each phase produces a working, committable state.
 - [x] Hit `/api/trpc/content.getBySlug?input={"slug":"about"}` -- verified via build
 - [x] Hit `/api/trpc/content.listUpdates` -- verified via build
 
-**Commit**: `feat(oseplatform-fs): add tRPC API with content and search procedures`
+**Commit**: `feat(oseplatform-web): add tRPC API with content and search procedures`
 
 ---
 
@@ -235,7 +235,7 @@ Execute phases in order. Each phase produces a working, committable state.
 - [x] Update `src/app/page.tsx` to compose Header + Hero + SocialIcons + Footer
 - [x] Verify visual parity with Hugo landing page screenshots — verified via build success
 
-**Commit**: `feat(oseplatform-fs): implement layout, header, footer, and landing page`
+**Commit**: `feat(oseplatform-web): implement layout, header, footer, and landing page`
 
 ---
 
@@ -297,7 +297,7 @@ Execute phases in order. Each phase produces a working, committable state.
 - [x] Verify touch targets are >= 44px on mobile — Button components use proper sizing
 - [x] Verify text is readable without horizontal scrolling at all viewports — max-w-screen-xl container
 
-**Commit**: `feat(oseplatform-fs): implement about, updates, and content rendering`
+**Commit**: `feat(oseplatform-web): implement about, updates, and content rendering`
 
 ---
 
@@ -335,7 +335,7 @@ Execute phases in order. Each phase produces a working, committable state.
 - [x] Navigate to `/sitemap.xml` -- verified via build (static route generated)
 - [x] Navigate to `/robots.txt` -- verified via build (static route generated)
 
-**Commit**: `feat(oseplatform-fs): add search, RSS feed, sitemap, and robots.txt`
+**Commit**: `feat(oseplatform-web): add search, RSS feed, sitemap, and robots.txt`
 
 ---
 
@@ -375,7 +375,7 @@ Execute phases in order. Each phase produces a working, committable state.
 - [x] Run `npx vitest run --project unit --project unit-fe` -- 115 tests pass
 - [x] Verify all 21 Gherkin scenarios covered
 
-**Commit**: `test(oseplatform-fs): implement unit tests with Gherkin step definitions`
+**Commit**: `test(oseplatform-web): implement unit tests with Gherkin step definitions`
 
 ---
 
@@ -384,10 +384,10 @@ Execute phases in order. Each phase produces a working, committable state.
 - [x] Run `vitest run --project unit --project unit-fe --coverage` — 92.52% line coverage
 - [x] Check coverage report -- all thresholds above 80%
 - [x] Add missing tests for uncovered code paths — coverage-extras.unit.test.ts added
-- [x] Run `rhino-cli test-coverage validate apps/oseplatform-fs/coverage/lcov.info 80` — passes
-- [x] Verify `nx run oseplatform-fs:test:quick` passes (tests + coverage + links)
+- [x] Run `rhino-cli test-coverage validate apps/oseplatform-web/coverage/lcov.info 80` — passes
+- [x] Verify `nx run oseplatform-web:test:quick` passes (tests + coverage + links)
 
-**Commit**: `test(oseplatform-fs): achieve 80% line coverage threshold`
+**Commit**: `test(oseplatform-web): achieve 80% line coverage threshold`
 
 ---
 
@@ -400,9 +400,9 @@ Execute phases in order. Each phase produces a working, committable state.
   - [x] Test getBySlug, listUpdates against real markdown files
 - [x] Create `test/integration/be-steps/search.steps.ts`
   - [x] Test search against real content with FlexSearch index
-- [x] Run `nx run oseplatform-fs:test:integration` -- 33 tests pass
+- [x] Run `nx run oseplatform-web:test:integration` -- 33 tests pass
 
-**Commit**: `test(oseplatform-fs): implement integration tests with real filesystem`
+**Commit**: `test(oseplatform-web): implement integration tests with real filesystem`
 
 ---
 
@@ -422,9 +422,9 @@ Execute phases in order. Each phase produces a working, committable state.
 - [x] Replace `vercel.json` with Next.js configuration (see tech-docs.md)
   - [x] Set `installCommand` for monorepo (`npm install --prefix=../.. --ignore-scripts`)
   - [x] Set `buildCommand` with search data generation
-  - [x] Set `ignoreCommand` for `prod-oseplatform-fs` branch
+  - [x] Set `ignoreCommand` for `prod-oseplatform-web` branch
   - [x] Preserve security headers from Hugo config
-- [x] Verify `nx build oseplatform-fs` produces standalone output
+- [x] Verify `nx build oseplatform-web` produces standalone output
 
 ### Playwright Visual Tests
 
@@ -435,7 +435,7 @@ Execute phases in order. Each phase produces a working, committable state.
 - [x] Generate initial screenshot baselines — deferred to CI (requires running server)
 - [x] Run `npx playwright test` — deferred to CI (requires Playwright browser install)
 
-**Commit**: `ci(oseplatform-fs): add Docker, Vercel config, and Playwright visual tests`
+**Commit**: `ci(oseplatform-web): add Docker, Vercel config, and Playwright visual tests`
 
 ---
 
@@ -443,7 +443,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ### Update README
 
-- [x] Rewrite `apps/oseplatform-fs/README.md` for Next.js
+- [x] Rewrite `apps/oseplatform-web/README.md` for Next.js
   - [x] Update tech stack section (Next.js 16, TypeScript, tRPC, Tailwind v4, shadcn/ui)
   - [x] Update development commands (port 3100)
   - [x] Update project structure
@@ -451,38 +451,38 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ### Update CLAUDE.md
 
-- [x] Update oseplatform-fs entry: "Hugo static site (PaperMod theme)" -> "Next.js 16 content platform (TypeScript, tRPC)"
+- [x] Update oseplatform-web entry: "Hugo static site (PaperMod theme)" -> "Next.js 16 content platform (TypeScript, tRPC)"
 - [x] Update dev port reference (3000 -> 3100)
-- [x] Update Nx targets list for oseplatform-fs
-- [x] Update Hugo Sites section: renamed to "Web Sites", updated oseplatform-fs subsection
-- [x] Add oseplatform-fs to the coverage enforcement section (80% line coverage)
+- [x] Update Nx targets list for oseplatform-web
+- [x] Update Hugo Sites section: renamed to "Web Sites", updated oseplatform-web subsection
+- [x] Add oseplatform-web to the coverage enforcement section (80% line coverage)
 - [x] Update tags reference (platform:hugo -> platform:nextjs, add lang:ts)
 
 ### Update Agents (`.claude/agents/`)
 
-- [x] Update `apps-oseplatform-fs-deployer.md`:
+- [x] Update `apps-oseplatform-web-deployer.md`:
   - [x] Change description: "Hugo static site" -> "Next.js 16 content platform"
-  - [x] Update deployment workflow reference: `test-and-deploy-oseplatform-fs.yml`
+  - [x] Update deployment workflow reference: `test-and-deploy-oseplatform-web.yml`
   - [x] Note that deploy now requires all tests to pass (unit, integration, e2e)
-- [x] Update `apps-oseplatform-fs-content-maker.md`:
+- [x] Update `apps-oseplatform-web-content-maker.md`:
   - [x] Change skill reference context: "PaperMod theme" -> "Next.js 16 with tRPC"
   - [x] Keep content format guidance (markdown unchanged)
   - [x] Remove Hugo-specific mentions
-- [x] Update `apps-oseplatform-fs-content-checker.md`:
+- [x] Update `apps-oseplatform-web-content-checker.md`:
   - [x] Update validation context: remove PaperMod theme compliance
   - [x] Add awareness of tRPC content procedures
   - [x] Keep markdown quality checks (framework-agnostic)
-- [x] Update `apps-oseplatform-fs-content-fixer.md` (if exists):
+- [x] Update `apps-oseplatform-web-content-fixer.md` (if exists):
   - [x] Mirror content-checker changes
 
 ### Update Skills (`.claude/skills/`)
 
-- [x] Update `apps-oseplatform-fs-developing-content/SKILL.md`:
+- [x] Update `apps-oseplatform-web-developing-content/SKILL.md`:
   - [x] Replace "Hugo site (PaperMod theme)" with "Next.js 16 content platform"
   - [x] Remove Hugo-specific frontmatter fields (cover, bookCollapseSection, bookFlatSection, cascade)
   - [x] Keep: title, date, draft, tags, categories, summary, showtoc, description
   - [x] Update content structure section (remove `static/` asset references)
-  - [x] Update comparison table: oseplatform-fs now uses "Next.js 16" not "PaperMod"
+  - [x] Update comparison table: oseplatform-web now uses "Next.js 16" not "PaperMod"
   - [x] Update deployment workflow section
   - [x] Remove cover image requirements section
   - [x] Update internal link format guidance (still absolute paths, no `.md`)
@@ -493,24 +493,24 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ### Verify oseplatform-cli Compatibility
 
-- [x] Run `nx run oseplatform-fs:links:check` -- verified via test:quick pass
+- [x] Run `nx run oseplatform-web:links:check` -- verified via test:quick pass
 - [x] If failures: investigate `hugo-commons/links` resolution logic — no failures
 - [x] Verify `oseplatform-cli` project.json still lists correct implicit dependencies
 
 ### Update Governance Docs
 
-- [x] Grep for `platform:hugo` references to oseplatform-fs -- updated nx-targets.md
-- [x] Grep for Hugo-specific oseplatform-fs references in governance/ -- many exist, key files updated
+- [x] Grep for `platform:hugo` references to oseplatform-web -- updated nx-targets.md
+- [x] Grep for Hugo-specific oseplatform-web references in governance/ -- many exist, key files updated
 - [x] Check if `swe-hugo-developer` agent is still needed — no platform:hugo projects, but kept for hugo-commons lib
 - [x] Check if `libs/hugo-commons` is still needed (used by oseplatform-cli -- yes, keep)
 
 ### Remove Hugo Remnants
 
-- [x] Verify `archived/oseplatform-fs-hugo/` contains all Hugo-specific files
-- [x] Verify `oseplatform-fs` no longer has `go.mod`, `hugo.yaml`, `build.sh`, `archetypes/`, `layouts/`
-- [x] Grep sweep: search for stale "Hugo" references specific to oseplatform-fs — governance docs have residual references (cleanup deferred)
+- [x] Verify `archived/oseplatform-web-hugo/` contains all Hugo-specific files
+- [x] Verify `oseplatform-web` no longer has `go.mod`, `hugo.yaml`, `build.sh`, `archetypes/`, `layouts/`
+- [x] Grep sweep: search for stale "Hugo" references specific to oseplatform-web — governance docs have residual references (cleanup deferred)
 
-**Commit**: `docs(oseplatform-fs): update agents, skills, and references for Next.js migration`
+**Commit**: `docs(oseplatform-web): update agents, skills, and references for Next.js migration`
 
 ---
 
@@ -518,16 +518,16 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ### Create Workflow
 
-- [x] Create `.github/workflows/test-and-deploy-oseplatform-fs.yml` (see tech-docs.md)
-  - [x] 5 jobs: unit, integration, e2e, detect-changes, deploy (mirrors ayokoding-fs)
+- [x] Create `.github/workflows/test-and-deploy-oseplatform-web.yml` (see tech-docs.md)
+  - [x] 5 jobs: unit, integration, e2e, detect-changes, deploy (mirrors ayokoding-web)
   - [x] Schedule: 2x daily (06:00 WIB, 18:00 WIB)
   - [x] `unit` job: build Go CLIs, typecheck, lint, test:quick, upload Codecov
   - [x] `integration` job: run integration tests
   - [x] `e2e` job: build Next.js, install Playwright, run visual regression, upload report
-  - [x] `detect-changes` job: check apps/oseplatform-fs/, libs/ts-ui/, libs/ts-ui-tokens/
-  - [x] `deploy` job: requires all 3 test jobs + changes, force-push to prod-oseplatform-fs
+  - [x] `detect-changes` job: check apps/oseplatform-web/, libs/ts-ui/, libs/ts-ui-tokens/
+  - [x] `deploy` job: requires all 3 test jobs + changes, force-push to prod-oseplatform-web
   - [x] `workflow_dispatch` with `force_deploy` input option
-- [x] Delete old Hugo workflow (`test-and-deploy-oseplatform-fs.yml` -- replaced in-place)
+- [x] Delete old Hugo workflow (`test-and-deploy-oseplatform-web.yml` -- replaced in-place)
 
 ### Verify Deployment
 
@@ -535,7 +535,7 @@ Execute phases in order. Each phase produces a working, committable state.
 - [x] Verify build output in `.next/` directory
 - [x] Verify standalone output includes content files
 
-**Commit**: `ci(oseplatform-fs): replace Hugo workflow with Next.js test-and-deploy`
+**Commit**: `ci(oseplatform-web): replace Hugo workflow with Next.js test-and-deploy`
 
 ---
 
@@ -563,16 +563,16 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ### Quality Gate
 
-- [x] `nx run oseplatform-fs:typecheck` passes
-- [x] `nx run oseplatform-fs:lint` passes
-- [x] `nx run oseplatform-fs:test:quick` passes (tests + coverage >= 80% + links)
-- [x] `nx run oseplatform-fs:test:integration` passes (33 tests)
-- [x] `nx run oseplatform-fs:build` succeeds
+- [x] `nx run oseplatform-web:typecheck` passes
+- [x] `nx run oseplatform-web:lint` passes
+- [x] `nx run oseplatform-web:test:quick` passes (tests + coverage >= 80% + links)
+- [x] `nx run oseplatform-web:test:integration` passes (33 tests)
+- [x] `nx run oseplatform-web:build` succeeds
 
 ### Cross-Repository Verification
 
 - [x] `nx affected -t typecheck lint test:quick` — running (affected projects being validated)
-- [x] No stale references to Hugo for oseplatform-fs — fixed in project.json, nx-targets.md, docs refs
+- [x] No stale references to Hugo for oseplatform-web — fixed in project.json, nx-targets.md, docs refs
 - [x] `oseplatform-cli links check` passes (verified via test:quick)
 
 ### Cleanup Reference Capture Script
@@ -586,7 +586,7 @@ Execute phases in order. Each phase produces a working, committable state.
 After all phases are complete and verified:
 
 1. Move plan folder to `plans/done/` with completion date
-2. Deploy to production via deployer agent or manual push to `prod-oseplatform-fs`
+2. Deploy to production via deployer agent or manual push to `prod-oseplatform-web`
 3. Verify live site at oseplatform.com
 4. **Vercel Dashboard Configuration** (manual, see tech-docs.md for details):
    - [ ] Open Vercel Dashboard -> Project Settings -> General

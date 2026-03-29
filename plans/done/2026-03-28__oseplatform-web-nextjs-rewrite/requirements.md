@@ -11,7 +11,7 @@
 7. Achieve 80% line coverage with Gherkin-driven tests
 8. Archive Hugo version for historical reference
 9. Update all monorepo references (agents, skills, CI, docs)
-10. Maintain existing deployment workflow (`prod-oseplatform-fs` branch, Vercel)
+10. Maintain existing deployment workflow (`prod-oseplatform-web` branch, Vercel)
 
 ## User Stories
 
@@ -223,15 +223,15 @@ Scenario: Rendered content matches Hugo output
 # because the quality gate must pass as a whole before deployment proceeds.
 Scenario: Quality gate passes
   Given the Next.js app source code
-  When "nx run oseplatform-fs:test:quick" is executed
+  When "nx run oseplatform-web:test:quick" is executed
   Then unit tests pass
   And line coverage >= 80%
   And link validation passes
-  When "nx run oseplatform-fs:typecheck" is executed
+  When "nx run oseplatform-web:typecheck" is executed
   Then TypeScript compilation succeeds with no errors
-  When "nx run oseplatform-fs:lint" is executed
+  When "nx run oseplatform-web:lint" is executed
   Then no linting violations are reported
-  When "nx run oseplatform-fs:build" is executed
+  When "nx run oseplatform-web:build" is executed
   Then the build completes successfully under 30 seconds
 ```
 
@@ -240,7 +240,7 @@ Scenario: Quality gate passes
 ```gherkin
 Scenario: Vercel deployment succeeds
   Given the Next.js app is committed to main
-  When the deployer pushes to prod-oseplatform-fs branch
+  When the deployer pushes to prod-oseplatform-web branch
   Then Vercel detects Next.js framework and builds successfully
   And the site is accessible at oseplatform.com
   And security headers are present on all responses
@@ -253,8 +253,8 @@ Scenario: Vercel deployment succeeds
 Scenario: Hugo version is properly archived
   Given the Next.js rewrite is complete and verified
   When the Hugo app is archived
-  Then it exists at archived/oseplatform-fs-hugo/
+  Then it exists at archived/oseplatform-web-hugo/
   And it is removed from the Nx workspace (no project.json)
   And the swe-hugo-developer agent is preserved (shared with other Hugo needs)
-  And all monorepo references to "platform:hugo" for oseplatform-fs are updated
+  And all monorepo references to "platform:hugo" for oseplatform-web are updated
 ```

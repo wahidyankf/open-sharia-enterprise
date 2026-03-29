@@ -59,7 +59,7 @@ These tools work together to ensure code consistency and quality without manual 
 - YAML: `*.{yml,yaml}`
 - CSS/SCSS: `*.{css,scss}`
 
-**Note**: Hugo archetype template files (`apps/oseplatform-fs/archetypes/**/*.md`) are excluded from Prettier formatting as they contain Go template syntax.
+**Note**: Hugo archetype template files (`apps/oseplatform-web/archetypes/**/*.md`) are excluded from Prettier formatting as they contain Go template syntax.
 
 **When It Runs**: Automatically on staged files before each commit via the pre-commit hook.
 
@@ -94,7 +94,7 @@ npx prettier --write [file-path]
   "lint-staged": {
     "*.{js,jsx,ts,tsx,mjs,cjs}": "prettier --write",
     "*.json": "prettier --write",
-    "apps/oseplatform-fs/archetypes/**/*.md": "echo 'Skipping Hugo archetype'",
+    "apps/oseplatform-web/archetypes/**/*.md": "echo 'Skipping Hugo archetype'",
     "*.md": "prettier --write",
     "*.{yml,yaml}": "prettier --write",
     "*.{css,scss}": "prettier --write"
@@ -132,7 +132,7 @@ npx prettier --write [file-path]
 | 1    | `.claude/` or `.opencode/` staged | Validate → Sync → Validate-sync                                       | exit 1     |
 | 2    | `docker-compose.ya?ml` staged     | `docker compose -f <file> config` per file                            | exit 1     |
 | 3    | always                            | `nx affected -t run-pre-commit --skip-nx-cache`                       | warn only  |
-| 4    | always                            | `git add apps/ayokoding-fs/content/`                                  | ignored    |
+| 4    | always                            | `git add apps/ayokoding-web/content/`                                 | ignored    |
 | 5    | always                            | `npx lint-staged`                                                     | exit 1     |
 | 6    | `.ex`/`.exs` staged, `mix` found  | `mix format <files>` per project root, then `git add`                 | exit 1     |
 | 7    | `docs/` staged                    | Validate + auto-fix naming, then `git add docs/ governance/ .claude/` | exit 1     |
@@ -451,16 +451,16 @@ git commit -m "fix: correct validation logic"
 # Commit includes formatted version automatically
 ```
 
-## ayokoding-fs Link Validation
+## ayokoding-web Link Validation
 
-Internal links in ayokoding-fs content are validated
+Internal links in ayokoding-web content are validated
 automatically on every `test:quick` run via `ayokoding-cli links check`.
 
 **Convention:**
 
 - Internal links are validated for correctness
 - External links (`http://`, `https://`, `mailto:`) are NOT validated by this tool — use the
-  `apps-ayokoding-fs-link-checker` AI agent for those
+  `apps-ayokoding-web-link-checker` AI agent for those
 - Same-page anchors (`#section`) are not validated
 
 **Examples:**
@@ -487,10 +487,10 @@ automatically on every `test:quick` run via `ayokoding-cli links check`.
 
 ```bash
 # Full quality gate including link check
-nx run ayokoding-fs:test:quick
+nx run ayokoding-web:test:quick
 
 # Link check only (standalone)
-nx run ayokoding-fs:links:check
+nx run ayokoding-web:links:check
 ```
 
 **When broken links are found:**
@@ -498,9 +498,9 @@ nx run ayokoding-fs:links:check
 1. The command exits with code 1 — CI fails
 2. Output table shows source file, line number, link text, and broken target
 3. Fix by correcting the target path in the source file
-4. Re-run `nx run ayokoding-fs:links:check` to confirm
+4. Re-run `nx run ayokoding-web:links:check` to confirm
 
-**Dependency chain:** `ayokoding-cli:build` → `ayokoding-fs:links:check` → `ayokoding-fs:test:quick`
+**Dependency chain:** `ayokoding-cli:build` → `ayokoding-web:links:check` → `ayokoding-web:test:quick`
 
 ## Go CLI Linting
 

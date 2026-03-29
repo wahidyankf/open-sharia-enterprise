@@ -167,7 +167,7 @@ Update broken or incorrect links to point to correct AyoKoding paths.
 
 - **Report finding**: Log that AyoKoding content needs creation
 - **Skip fix**: Don't attempt to create content (requires specialized maker agent)
-- **Recommend**: Suggest using apps-ayokoding-fs-general-maker or relevant maker
+- **Recommend**: Suggest using apps-ayokoding-web-general-maker or relevant maker
 
 **Why**: Content creation requires domain expertise and follows specific conventions (by-example annotation density, in-the-field production patterns, etc.)
 
@@ -414,7 +414,7 @@ After every edit (Edit tool or Bash sed/awk):
 **Related Agents**:
 
 - **docs-software-engineering-separation-checker** - Generates audit reports this agent processes
-- **apps-ayokoding-fs-general-maker** - Creates general AyoKoding content
+- **apps-ayokoding-web-general-maker** - Creates general AyoKoding content
 
 ## Project Guidance
 
@@ -455,13 +455,13 @@ After every edit (Edit tool or Bash sed/awk):
 
 **Content Creation** (for missing AyoKoding content):
 
-- **apps-ayokoding-fs-general-maker** - Creates general AyoKoding content
-- **apps-ayokoding-fs-by-example-maker** - Creates By Example tutorials
-- **apps-ayokoding-fs-in-the-field-maker** - Creates In-the-Field guides
+- **apps-ayokoding-web-general-maker** - Creates general AyoKoding content
+- **apps-ayokoding-web-by-example-maker** - Creates By Example tutorials
+- **apps-ayokoding-web-in-the-field-maker** - Creates In-the-Field guides
 
 **Content Validation**:
 
-- **apps-ayokoding-fs-general-checker** - Validates AyoKoding content quality
+- **apps-ayokoding-web-general-checker** - Validates AyoKoding content quality
 - **docs-checker** - Validates docs/explanation factual accuracy
 
 ## Skills Used by This Agent

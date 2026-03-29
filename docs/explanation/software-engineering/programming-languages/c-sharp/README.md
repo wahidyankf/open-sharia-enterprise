@@ -85,12 +85,12 @@ OSE Platform C# applications MUST use the following stack:
 
 **You MUST understand C# fundamentals before using these standards:**
 
-- **[C# Learning Path](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/c-sharp/)** - Complete 0-95% language coverage
-- **[C# By Example](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/c-sharp/by-example/)** - Annotated code examples (beginner to advanced)
+- **[C# Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/c-sharp/)** - Complete 0-95% language coverage
+- **[C# By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/c-sharp/by-example/)** - Annotated code examples (beginner to advanced)
 
 **What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply C# knowledge in THIS codebase.
 
-**What this documentation does NOT cover**: C# syntax, language fundamentals, generic patterns (those are in ayokoding-fs).
+**What this documentation does NOT cover**: C# syntax, language fundamentals, generic patterns (those are in ayokoding-web).
 
 **See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 

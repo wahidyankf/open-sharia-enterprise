@@ -20,8 +20,8 @@ Deployment architecture, environment branches, and Vercel configuration for the 
 graph TB
     subgraph "Source Control"
         MAIN[main branch<br/>Trunk-Based Dev]
-        PROD_OSE[prod-oseplatform-fs<br/>Deploy Only]
-        PROD_AYO[prod-ayokoding-fs<br/>Deploy Only - Next.js]
+        PROD_OSE[prod-oseplatform-web<br/>Deploy Only]
+        PROD_AYO[prod-ayokoding-web<br/>Deploy Only - Next.js]
         PROD_OL[prod-organiclever-fe<br/>Deploy Only]
     end
 
@@ -79,7 +79,7 @@ graph TB
 
 ### Vercel Deployment
 
-**Hugo Static Sites** (oseplatform-fs):
+**Hugo Static Sites** (oseplatform-web):
 
 - **Build Framework**: `@vercel/static-build`
 - **Build Script**: `build.sh` in each app directory
@@ -101,8 +101,8 @@ graph TB
 ### Environment Branches
 
 - **Purpose**: Deployment triggers only
-- **Branches**: `prod-oseplatform-fs`, `prod-ayokoding-fs`, `prod-organiclever-fe`
+- **Branches**: `prod-oseplatform-web`, `prod-ayokoding-web`, `prod-organiclever-fe`
 - **Policy**: NEVER commit directly to these branches outside CI automation
-- **Workflow**: Automated by scheduled GitHub Actions workflows (`test-and-deploy-ayokoding-fs.yml`,
-  `test-and-deploy-oseplatform-fs.yml`, `deploy-organiclever-fe.yml`) running at 6 AM and 6 PM WIB; or
+- **Workflow**: Automated by scheduled GitHub Actions workflows (`test-and-deploy-ayokoding-web.yml`,
+  `test-and-deploy-oseplatform-web.yml`, `deploy-organiclever-fe.yml`) running at 6 AM and 6 PM WIB; or
   trigger manually from GitHub Actions UI

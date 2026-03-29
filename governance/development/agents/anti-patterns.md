@@ -340,7 +340,7 @@ tool.md
 
 ```
 docs-tutorial-checker.md
-apps-ayokoding-fs-deployer.md
+apps-ayokoding-web-deployer.md
 plan-execution-checker.md
 readme-maker.md
 ```

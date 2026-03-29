@@ -21,7 +21,7 @@ updated: 2026-02-06
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Spring Framework fundamentals from [AyoKoding Spring Framework Learning Path](../../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/platform-web/tools/jvm-spring/).
+**REQUIRED**: You MUST understand Spring Framework fundamentals from [AyoKoding Spring Framework Learning Path](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/).
 
 **This document is OSE Platform-specific**, not a Spring Framework tutorial.
 

@@ -51,7 +51,7 @@ is invisible to Vercel unless it is explicitly added to `buildCommand`.
 ## Why This Matters
 
 Nx `dependsOn` is an orchestration instruction for the Nx task runner. When you run `nx build
-ayokoding-fs` locally, Nx resolves the dependency graph and runs `generate-indexes` and
+ayokoding-web` locally, Nx resolves the dependency graph and runs `generate-indexes` and
 `generate-search-data` first, then `next build`.
 
 Vercel bypasses Nx entirely. It calls `next build` (or the configured `buildCommand`) in the app
@@ -113,9 +113,9 @@ Include any directory that contains build-time generated files the runtime depen
 
 | App               | `vercel.json` location             | `buildCommand` status                             | Notes                                                    |
 | ----------------- | ---------------------------------- | ------------------------------------------------- | -------------------------------------------------------- |
-| `ayokoding-fs`    | `apps/ayokoding-fs/vercel.json`    | Set (fixed after incident)                        | Runs `generate-indexes` and `generate-search-data` first |
+| `ayokoding-web`   | `apps/ayokoding-web/vercel.json`   | Set (fixed after incident)                        | Runs `generate-indexes` and `generate-search-data` first |
 | `organiclever-fe` | `apps/organiclever-fe/vercel.json` | Not set (no build-time targets at present)        | At risk if build-time targets are added                  |
-| `oseplatform-fs`  | `apps/oseplatform-fs/vercel.json`  | Uses custom `build.sh` via `@vercel/static-build` | Hugo static build; no Nx involvement                     |
+| `oseplatform-web` | `apps/oseplatform-web/vercel.json` | Uses custom `build.sh` via `@vercel/static-build` | Hugo static build; no Nx involvement                     |
 
 ## When to Check
 
@@ -140,7 +140,7 @@ absent at runtime.
 
 ### Pitfall 2: Assuming Nx orchestration applies to Vercel builds
 
-**Scenario**: A developer runs `nx build ayokoding-fs` and confirms the full pipeline works, then
+**Scenario**: A developer runs `nx build ayokoding-web` and confirms the full pipeline works, then
 assumes Vercel will do the same.
 
 **Fix**: `nx build` and Vercel's build are independent pipelines. `vercel.json`'s `buildCommand`
@@ -162,13 +162,13 @@ Vercel project settings).
 
 **Fix**: Confirm the Vercel project's root directory setting. Scripts in `buildCommand` run
 relative to that directory. In this monorepo, `buildCommand` runs from the app directory (e.g.,
-`apps/ayokoding-fs/`).
+`apps/ayokoding-web/`).
 
 ## Examples
 
-### PASS: `ayokoding-fs` — `buildCommand` mirrors `dependsOn`
+### PASS: `ayokoding-web` — `buildCommand` mirrors `dependsOn`
 
-`apps/ayokoding-fs/project.json`:
+`apps/ayokoding-web/project.json`:
 
 ```json
 "build": {
@@ -176,7 +176,7 @@ relative to that directory. In this monorepo, `buildCommand` runs from the app d
 }
 ```
 
-`apps/ayokoding-fs/vercel.json`:
+`apps/ayokoding-web/vercel.json`:
 
 ```json
 {
@@ -188,7 +188,7 @@ Both entries are present and in the same order.
 
 ### FAIL: `dependsOn` target added but `vercel.json` not updated
 
-`apps/ayokoding-fs/project.json`:
+`apps/ayokoding-web/project.json`:
 
 ```json
 "build": {
@@ -196,7 +196,7 @@ Both entries are present and in the same order.
 }
 ```
 
-`apps/ayokoding-fs/vercel.json`:
+`apps/ayokoding-web/vercel.json`:
 
 ```json
 {

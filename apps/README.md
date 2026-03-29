@@ -10,10 +10,10 @@ Apps follow the naming pattern: **`[domain]-[type]`**
 
 ### Current Apps
 
-- `oseplatform-fs` - OSE Platform website ([oseplatform.com](https://oseplatform.com)) - Hugo static site
-- `ayokoding-fs` - AyoKoding educational platform ([ayokoding.com](https://ayokoding.com)) - Next.js 16 fullstack content platform (TypeScript, tRPC)
-- `ayokoding-fs-be-e2e` - Playwright BE E2E tests for ayokoding-fs tRPC API
-- `ayokoding-fs-fe-e2e` - Playwright FE E2E tests for ayokoding-fs UI
+- `oseplatform-web` - OSE Platform website ([oseplatform.com](https://oseplatform.com)) - Hugo static site
+- `ayokoding-web` - AyoKoding educational platform ([ayokoding.com](https://ayokoding.com)) - Next.js 16 fullstack content platform (TypeScript, tRPC)
+- `ayokoding-web-be-e2e` - Playwright BE E2E tests for ayokoding-web tRPC API
+- `ayokoding-web-fe-e2e` - Playwright FE E2E tests for ayokoding-web UI
 - `ayokoding-cli` - AyoKoding CLI tool for link validation - Go application
 - `rhino-cli` - Repository management CLI tools (includes `java validate-annotations`) - Go application
 - `oseplatform-cli` - OSE Platform CLI tool for link validation - Go application
@@ -34,10 +34,10 @@ Apps follow the naming pattern: **`[domain]-[type]`**
 
 ## App Structure Examples
 
-### Hugo Static Site (oseplatform-fs)
+### Hugo Static Site (oseplatform-web)
 
 ```
-apps/oseplatform-fs/
+apps/oseplatform-web/
 ├── content/                 # Markdown content files
 ├── layouts/                 # Hugo templates
 ├── static/                  # Static assets (images, CSS, JS)
@@ -157,26 +157,26 @@ Kotlin, Python apps will have language-specific structures and tooling.
 
 Each app must have a `project.json` file with Nx configuration.
 
-**Hugo App Example** (`oseplatform-fs`):
+**Hugo App Example** (`oseplatform-web`):
 
 ```json
 {
-  "name": "oseplatform-fs",
-  "sourceRoot": "apps/oseplatform-fs",
+  "name": "oseplatform-web",
+  "sourceRoot": "apps/oseplatform-web",
   "projectType": "application",
   "targets": {
     "dev": {
       "executor": "nx:run-commands",
       "options": {
         "command": "hugo server --buildDrafts --buildFuture",
-        "cwd": "apps/oseplatform-fs"
+        "cwd": "apps/oseplatform-web"
       }
     },
     "build": {
       "executor": "nx:run-commands",
       "options": {
         "command": "bash build.sh",
-        "cwd": "apps/oseplatform-fs"
+        "cwd": "apps/oseplatform-web"
       },
       "outputs": ["{projectRoot}/public"]
     },
@@ -184,7 +184,7 @@ Each app must have a `project.json` file with Nx configuration.
       "executor": "nx:run-commands",
       "options": {
         "command": "rm -rf public resources",
-        "cwd": "apps/oseplatform-fs"
+        "cwd": "apps/oseplatform-web"
       }
     }
   },
@@ -218,15 +218,15 @@ Use Nx commands to run apps:
 
 ```bash
 # Development mode (Hugo site)
-nx dev oseplatform-fs
+nx dev oseplatform-web
 
 # Development mode (Next.js)
 nx dev organiclever-fe
-nx dev ayokoding-fs
+nx dev ayokoding-web
 
 # Build for production
-nx build oseplatform-fs
-nx build ayokoding-fs
+nx build oseplatform-web
+nx build ayokoding-web
 nx build ayokoding-cli
 nx build rhino-cli
 nx build organiclever-fe
@@ -235,7 +235,7 @@ nx build organiclever-fe
 nx run rhino-cli
 
 # Clean build artifacts
-nx clean oseplatform-fs
+nx clean oseplatform-web
 
 # Run E2E tests for organiclever-fe (organiclever-fe must be running first)
 nx run organiclever-fe-e2e:test:e2e
@@ -250,18 +250,18 @@ Vercel-deployed apps use dedicated production branches (deployment-only — neve
 
 | Branch                 | Production URL                                        | App             |
 | ---------------------- | ----------------------------------------------------- | --------------- |
-| `prod-ayokoding-fs`    | [ayokoding.com](https://ayokoding.com)                | ayokoding-fs    |
-| `prod-oseplatform-fs`  | [oseplatform.com](https://oseplatform.com)            | oseplatform-fs  |
+| `prod-ayokoding-web`   | [ayokoding.com](https://ayokoding.com)                | ayokoding-web   |
+| `prod-oseplatform-web` | [oseplatform.com](https://oseplatform.com)            | oseplatform-web |
 | `prod-organiclever-fe` | [www.organiclever.com](https://www.organiclever.com/) | organiclever-fe |
 
-**ayokoding-fs**: Deploy by force-pushing `main` to the production branch:
+**ayokoding-web**: Deploy by force-pushing `main` to the production branch:
 
 ```bash
-git push origin main:prod-ayokoding-fs --force
+git push origin main:prod-ayokoding-web --force
 ```
 
-**oseplatform-fs**: Deployed automatically by scheduled GitHub Actions
-workflow (`test-and-deploy-oseplatform-fs.yml`) running at 6 AM and 6 PM
+**oseplatform-web**: Deployed automatically by scheduled GitHub Actions
+workflow (`test-and-deploy-oseplatform-web.yml`) running at 6 AM and 6 PM
 WIB. The workflow detects changes scoped to the app directory before building and deploying.
 Trigger on-demand from the GitHub Actions UI (set `force_deploy=true` to skip change detection).
 
@@ -277,9 +277,9 @@ Use the corresponding deployer agent (e.g. `apps-organiclever-fe-deployer`) for 
 
 Currently:
 
-- **Hugo** (static sites) - oseplatform-fs
+- **Hugo** (static sites) - oseplatform-web
 - **Go** (CLI tools) - ayokoding-cli, rhino-cli
-- **TypeScript/Next.js** (web applications) - organiclever-fe, ayokoding-fs
+- **TypeScript/Next.js** (web applications) - organiclever-fe, ayokoding-web
 - **F#/Giraffe** (backend API) - organiclever-be
 - **Go/Gin** (backend API) - a-demo-be-golang-gin
 - **TypeScript/Playwright** (E2E testing) - a-demo-be-e2e, organiclever-fe-e2e, organiclever-be-e2e

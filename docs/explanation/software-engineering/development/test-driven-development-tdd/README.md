@@ -47,13 +47,13 @@ All code developed for the OSE Platform MUST follow the TDD methodology and stan
 
 **You MUST understand TDD fundamentals before using these standards:**
 
-- **[Test-Driven Development Learning Path](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/development/test-driven-development-tdd/)** - Educational foundation for TDD practices
-- **[Test-Driven Development Overview](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/development/test-driven-development-tdd/overview.md)** - Core TDD concepts (Red-Green-Refactor, test types, FIRST principles)
-- **[Test-Driven Development By Example](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/development/test-driven-development-tdd/by-example/)** - Practical TDD examples
+- **[Test-Driven Development Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/development/test-driven-development-tdd/)** - Educational foundation for TDD practices
+- **[Test-Driven Development Overview](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/development/test-driven-development-tdd/overview.md)** - Core TDD concepts (Red-Green-Refactor, test types, FIRST principles)
+- **[Test-Driven Development By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/development/test-driven-development-tdd/by-example/)** - Practical TDD examples
 
 **What this documentation covers**: OSE Platform-specific TDD patterns, Islamic finance domain testing, Nx monorepo testing strategy, repository-specific test organization, integration with DDD patterns.
 
-**What this documentation does NOT cover**: TDD fundamentals, Red-Green-Refactor basics, generic testing patterns (those are in ayokoding-fs).
+**What this documentation does NOT cover**: TDD fundamentals, Red-Green-Refactor basics, generic testing patterns (those are in ayokoding-web).
 
 **See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 

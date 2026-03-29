@@ -88,7 +88,7 @@ rm -rf apps/orca-grid-be/
 ```bash
 # Verify project list
 nx show projects
-# Expected: ose-platform-web, ayokoding-fs, ayokoding-cli, rhino-cli
+# Expected: ose-platform-web, ayokoding-web, ayokoding-cli, rhino-cli
 
 # Verify dependency graph
 nx graph
@@ -96,7 +96,7 @@ nx graph
 
 # Build all apps
 nx build ose-platform-web
-nx build ayokoding-fs
+nx build ayokoding-web
 nx build ayokoding-cli
 nx build rhino-cli
 # Expected: All builds succeed
@@ -202,7 +202,7 @@ Refs: plans/done/2026-01-17__dolphin-be-init/"
 | Application      | Build Status | Notes            |
 | ---------------- | ------------ | ---------------- |
 | ose-platform-web | ✓ SUCCESS    | Hugo site builds |
-| ayokoding-fs     | ✓ SUCCESS    | Hugo site builds |
+| ayokoding-web    | ✓ SUCCESS    | Hugo site builds |
 | ayokoding-cli    | ✓ SUCCESS    | Go CLI builds    |
 | rhino-cli        | ✓ SUCCESS    | Go CLI builds    |
 
@@ -216,7 +216,7 @@ Refs: plans/done/2026-01-17__dolphin-be-init/"
 ### Nx Workspace Verification ✓
 
 - **Project Count**: 4 projects
-- **Projects Listed**: ose-platform-web, ayokoding-fs, ayokoding-cli, rhino-cli
+- **Projects Listed**: ose-platform-web, ayokoding-web, ayokoding-cli, rhino-cli
 - **Dependency Graph**: Clean, no broken dependencies
 - **orca-grid-be Present**: ✗ No (expected)
 
@@ -278,7 +278,7 @@ git checkout <commit-hash> -- apps/orca-grid-be
 
 **Monorepo Now Focused On**:
 
-- 2 Hugo static sites (ose-platform-web, ayokoding-fs)
+- 2 Hugo static sites (ose-platform-web, ayokoding-web)
 - 2 Go CLI tools (ayokoding-cli, rhino-cli)
 
 **Documentation Quality**: Accurate, concise, reflects actual implementation

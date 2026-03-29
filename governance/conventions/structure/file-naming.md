@@ -109,7 +109,7 @@ This apparent inconsistency is intentional and follows standard documentation co
 
 **For Subdirectories:**
 
-1. **Hyphenated compounds** - Concatenate first 2 letters of each word WITHOUT dash (`ayokoding-fs` → `aywe`, `software-engineering` → `se`)
+1. **Hyphenated compounds** - Concatenate first 2 letters of each word WITHOUT dash (`ayokoding-web` → `aywe`, `software-engineering` → `se`)
 2. **Single words** - First 2 characters (`formatting` → `fo`, `content` → `co`, `meta` → `me`)
 
 **Current Subdirectory Structure:**
@@ -138,13 +138,13 @@ This apparent inconsistency is intentional and follows standard documentation co
 
 ### Workflows Subdirectories (`governance/workflows/`)
 
-| Subdirectory    | Code   | Example File                           |
-| --------------- | ------ | -------------------------------------- |
-| `ayokoding-fs/` | `aywe` | `ayokoding-fs-general-quality-gate.md` |
-| `docs/`         | `do`   | `quality-gate.md`                      |
-| `meta/`         | `me`   | `workflow-identifier.md`               |
-| `plan/`         | `pl`   | `plan-execution.md`                    |
-| `repository/`   | `re`   | `repository-rules-validation.md`       |
+| Subdirectory     | Code   | Example File                            |
+| ---------------- | ------ | --------------------------------------- |
+| `ayokoding-web/` | `aywe` | `ayokoding-web-general-quality-gate.md` |
+| `docs/`          | `do`   | `quality-gate.md`                       |
+| `meta/`          | `me`   | `workflow-identifier.md`                |
+| `plan/`          | `pl`   | `plan-execution.md`                     |
+| `repository/`    | `re`   | `repository-rules-validation.md`        |
 
 ### Principles Subdirectories (`governance/principles/`)
 
@@ -165,7 +165,7 @@ Use a systematic encoding rule based on directory characteristics:
 
 **For Subdirectories:**
 
-1. **Hyphenated compounds** - Concatenate first 2 letters of each word WITHOUT dash (`ayokoding-fs` → `aywe`, `software-engineering` → `se`)
+1. **Hyphenated compounds** - Concatenate first 2 letters of each word WITHOUT dash (`ayokoding-web` → `aywe`, `software-engineering` → `se`)
 2. **Single words** - First 2 characters (`formatting` → `fo`, `content` → `co`, `meta` → `me`, `workflow` → `wo`, `agents` → `ag`, `quality` → `qu`, `pattern` → `pa`, `hugo` → `hu`, `infra` → `in`, `docs` → `do`, `plan` → `pl`, `repository` → `re`, `general` → `ge`, `tutorial` → `tu`, `project` → `pr`)
 
 **Key Rule**: For hyphenated directory names, take first 2 letters of EACH word and concatenate them WITHOUT inserting a dash. The dash in the directory name does NOT appear in the abbreviation.
@@ -175,7 +175,7 @@ Use a systematic encoding rule based on directory characteristics:
 ```
 indentation.md          (explanation/governance/conventions/formatting)
 ai-agents.md            (explanation/governance/development/agents)
-ayokoding-fs-general-quality-gate.md  (explanation/governance/workflows/ayokoding-fs)
+ayokoding-web-general-quality-gate.md  (explanation/governance/workflows/ayokoding-web)
 explicit-over-implicit.md  (explanation/governance/principles/software-engineering)
 ```
 
@@ -395,8 +395,8 @@ explicit-over-implicit.md
 └─ explanation → principles → software-engineering
    (ex+pr+se)
 
-ayokoding-fs-general-quality-gate.md
-└─ explanation → workflows → ayokoding-fs
+ayokoding-web-general-quality-gate.md
+└─ explanation → workflows → ayokoding-web
    (ex+wf+aywe)
 ```
 
@@ -413,29 +413,29 @@ ayokoding-fs-general-quality-gate.md
 
 ### Explanation Subdirectories (Complete Reference)
 
-| Directory Path                                         | Prefix            | Example                                |
-| ------------------------------------------------------ | ----------------- | -------------------------------------- |
-| explanation/governance/conventions/formatting          | `ex-go-co-fo__`   | `indentation.md`                       |
-| explanation/governance/conventions/writing             | `ex-go-co-wr__`   | `quality.md`                           |
-| explanation/governance/conventions/structure           | `ex-go-co-st__`   | `file-naming.md`                       |
-| explanation/governance/conventions/tutorials           | `ex-go-co-tu__`   | `naming.md`                            |
-| explanation/governance/conventions/hugo                | `ex-go-co-hu__`   | `shared.md`                            |
-| explanation/governance/conventions/linking             | `ex-go-co-li__`   | `internal-ayokoding-references.md`     |
-| explanation/governance/development/workflow            | `ex-go-de-wo__`   | `commit-messages.md`                   |
-| explanation/governance/development/agents              | `ex-go-de-ag__`   | `ai-agents.md`                         |
-| explanation/governance/development/quality             | `ex-go-de-qu__`   | `code.md`                              |
-| explanation/governance/development/pattern             | `ex-go-de-pa__`   | `functional-programming.md`            |
-| explanation/governance/development/hugo                | `ex-go-de-hu__`   | `development.md`                       |
-| explanation/governance/development/infra               | `ex-go-de-in__`   | `temporary-files.md`                   |
-| explanation/governance/workflows/ayokoding-fs          | `ex-go-wo-ayfs__` | `ayokoding-fs-general-quality-gate.md` |
-| explanation/governance/workflows/docs                  | `ex-go-wo-do__`   | `quality-gate.md`                      |
-| explanation/governance/workflows/meta                  | `ex-go-wo-me__`   | `workflow-identifier.md`               |
-| explanation/governance/workflows/plan                  | `ex-go-wo-pl__`   | `plan-execution.md`                    |
-| explanation/governance/workflows/repository            | `ex-go-wo-re__`   | `repository-rules-validation.md`       |
-| explanation/governance/principles/general              | `ex-go-pr-ge__`   | `simplicity-over-complexity.md`        |
-| explanation/governance/principles/content              | `ex-go-pr-co__`   | `accessibility-first.md`               |
-| explanation/governance/principles/software-engineering | `ex-go-pr-se__`   | `explicit-over-implicit.md`            |
-| explanation/vision                                     | `ex-vi__`         | `open-sharia-enterprise.md`            |
+| Directory Path                                         | Prefix            | Example                                 |
+| ------------------------------------------------------ | ----------------- | --------------------------------------- |
+| explanation/governance/conventions/formatting          | `ex-go-co-fo__`   | `indentation.md`                        |
+| explanation/governance/conventions/writing             | `ex-go-co-wr__`   | `quality.md`                            |
+| explanation/governance/conventions/structure           | `ex-go-co-st__`   | `file-naming.md`                        |
+| explanation/governance/conventions/tutorials           | `ex-go-co-tu__`   | `naming.md`                             |
+| explanation/governance/conventions/hugo                | `ex-go-co-hu__`   | `shared.md`                             |
+| explanation/governance/conventions/linking             | `ex-go-co-li__`   | `internal-ayokoding-references.md`      |
+| explanation/governance/development/workflow            | `ex-go-de-wo__`   | `commit-messages.md`                    |
+| explanation/governance/development/agents              | `ex-go-de-ag__`   | `ai-agents.md`                          |
+| explanation/governance/development/quality             | `ex-go-de-qu__`   | `code.md`                               |
+| explanation/governance/development/pattern             | `ex-go-de-pa__`   | `functional-programming.md`             |
+| explanation/governance/development/hugo                | `ex-go-de-hu__`   | `development.md`                        |
+| explanation/governance/development/infra               | `ex-go-de-in__`   | `temporary-files.md`                    |
+| explanation/governance/workflows/ayokoding-web         | `ex-go-wo-ayfs__` | `ayokoding-web-general-quality-gate.md` |
+| explanation/governance/workflows/docs                  | `ex-go-wo-do__`   | `quality-gate.md`                       |
+| explanation/governance/workflows/meta                  | `ex-go-wo-me__`   | `workflow-identifier.md`                |
+| explanation/governance/workflows/plan                  | `ex-go-wo-pl__`   | `plan-execution.md`                     |
+| explanation/governance/workflows/repository            | `ex-go-wo-re__`   | `repository-rules-validation.md`        |
+| explanation/governance/principles/general              | `ex-go-pr-ge__`   | `simplicity-over-complexity.md`         |
+| explanation/governance/principles/content              | `ex-go-pr-co__`   | `accessibility-first.md`                |
+| explanation/governance/principles/software-engineering | `ex-go-pr-se__`   | `explicit-over-implicit.md`             |
+| explanation/vision                                     | `ex-vi__`         | `open-sharia-enterprise.md`             |
 
 ## Migration History
 

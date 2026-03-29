@@ -262,7 +262,7 @@ Vercel automatically:
 
 ## Comparison with Other Apps
 
-| Aspect              | organiclever-fe          | ayokoding-fs                   | oseplatform-fs          |
+| Aspect              | organiclever-fe          | ayokoding-web                  | oseplatform-web         |
 | ------------------- | ------------------------ | ------------------------------ | ----------------------- |
 | **Framework**       | Next.js 16 (App Router)  | Next.js 16 (App Router)        | Hugo (PaperMod theme)   |
 | **Language**        | TypeScript / React 19    | TypeScript / React 19          | Markdown / Go templates |
@@ -270,7 +270,7 @@ Vercel automatically:
 | **Auth**            | Cookie-based sessions    | None                           | None                    |
 | **Data**            | JSON files + API routes  | tRPC + database                | Markdown content files  |
 | **Build**           | Next.js (Vercel)         | Next.js (Vercel)               | Hugo SSG (Vercel)       |
-| **Prod Branch**     | prod-organiclever-fe     | prod-ayokoding-fs              | prod-oseplatform-fs     |
+| **Prod Branch**     | prod-organiclever-fe     | prod-ayokoding-web             | prod-oseplatform-web    |
 | **Languages**       | English                  | Bilingual (Indonesian/English) | English only            |
 | **Content Types**   | Landing + promo pages    | Tutorials, essays, videos      | Updates, about page     |
 | **Complexity**      | Static + light auth      | Fullstack bilingual platform   | Simple landing page     |

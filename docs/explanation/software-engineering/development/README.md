@@ -175,7 +175,7 @@ See [TDD Standards](test-driven-development-tdd/README.md) and [BDD Standards](b
 
 ### For Developers
 
-**Prerequisites**: Complete [AyoKoding TDD](../../../../apps/ayokoding-fs/content/en/learn/software-engineering/development/test-driven-development-tdd/) and [AyoKoding BDD](../../../../apps/ayokoding-fs/content/en/learn/software-engineering/development/behavior-driven-development-bdd/) learning paths first.
+**Prerequisites**: Complete [AyoKoding TDD](../../../../apps/ayokoding-web/content/en/learn/software-engineering/development/test-driven-development-tdd/) and [AyoKoding BDD](../../../../apps/ayokoding-web/content/en/learn/software-engineering/development/behavior-driven-development-bdd/) learning paths first.
 
 1. **TDD Workflow** - Follow [TDD Cycle Standards](test-driven-development-tdd/ex-soen-de-tedrdetd__tdd-cycle-standards.md) for Red-Green-Refactor
 2. **Testing Standards** - Apply [Testing Standards](test-driven-development-tdd/ex-soen-de-tedrdetd__testing-standards.md) for FIRST principles
@@ -184,7 +184,7 @@ See [TDD Standards](test-driven-development-tdd/README.md) and [BDD Standards](b
 
 ### For Teams Adopting BDD
 
-**Prerequisites**: Complete [AyoKoding BDD](../../../../apps/ayokoding-fs/content/en/learn/software-engineering/development/behavior-driven-development-bdd/) learning path first.
+**Prerequisites**: Complete [AyoKoding BDD](../../../../apps/ayokoding-web/content/en/learn/software-engineering/development/behavior-driven-development-bdd/) learning path first.
 
 1. **Collaboration** - Follow [Three Amigos Standards](behavior-driven-development-bdd/ex-soen-de-bedrdebd__three-amigos-standards.md) for discovery sessions
 2. **Gherkin Writing** - Apply [Gherkin Standards](behavior-driven-development-bdd/ex-soen-de-bedrdebd__gherkin-standards.md) for feature files
@@ -193,7 +193,7 @@ See [TDD Standards](test-driven-development-tdd/README.md) and [BDD Standards](b
 
 ### For Architects and Technical Leads
 
-**Prerequisites**: Complete [AyoKoding TDD](../../../../apps/ayokoding-fs/content/en/learn/software-engineering/development/test-driven-development-tdd/) and [AyoKoding BDD](../../../../apps/ayokoding-fs/content/en/learn/software-engineering/development/behavior-driven-development-bdd/) learning paths first.
+**Prerequisites**: Complete [AyoKoding TDD](../../../../apps/ayokoding-web/content/en/learn/software-engineering/development/test-driven-development-tdd/) and [AyoKoding BDD](../../../../apps/ayokoding-web/content/en/learn/software-engineering/development/behavior-driven-development-bdd/) learning paths first.
 
 1. **Review Complete Standards** - Read [TDD Standards](test-driven-development-tdd/README.md) and [BDD Standards](behavior-driven-development-bdd/README.md)
 2. **Architecture Integration** - Follow [TDD with DDD Standards](test-driven-development-tdd/ex-soen-de-tedrdetd__tdd-with-ddd-standards.md)
@@ -202,7 +202,7 @@ See [TDD Standards](test-driven-development-tdd/README.md) and [BDD Standards](b
 
 ### For QA Engineers and Business Analysts
 
-**Prerequisites**: Complete [AyoKoding BDD](../../../../apps/ayokoding-fs/content/en/learn/software-engineering/development/behavior-driven-development-bdd/) learning path first.
+**Prerequisites**: Complete [AyoKoding BDD](../../../../apps/ayokoding-web/content/en/learn/software-engineering/development/behavior-driven-development-bdd/) learning path first.
 
 1. **Collaboration Standards** - Follow [Three Amigos Standards](behavior-driven-development-bdd/ex-soen-de-bedrdebd__three-amigos-standards.md)
 2. **Gherkin Writing** - Apply [Gherkin Standards](behavior-driven-development-bdd/ex-soen-de-bedrdebd__gherkin-standards.md)

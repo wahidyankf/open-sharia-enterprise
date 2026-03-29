@@ -1,6 +1,6 @@
 Feature: Health Check
   As an operations engineer
-  I want to monitor the health of the oseplatform-fs backend
+  I want to monitor the health of the oseplatform-web backend
   So that I can detect service outages quickly
 
   Background:

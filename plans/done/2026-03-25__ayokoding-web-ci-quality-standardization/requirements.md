@@ -1,10 +1,10 @@
-# Requirements: ayokoding-fs CI and Quality Gate Standardization
+# Requirements: ayokoding-web CI and Quality Gate Standardization
 
 ## Identified Gaps and Inconsistencies
 
 ### Gap 1: Stale Tag in nx-targets.md Documentation
 
-The [Current Project Tags table](../../../governance/development/infra/nx-targets.md) lists ayokoding-fs as `platform:hugo`, but the actual `project.json` declares `["type:app", "platform:nextjs", "lang:ts", "domain:ayokoding"]`. The documentation is stale.
+The [Current Project Tags table](../../../governance/development/infra/nx-targets.md) lists ayokoding-web as `platform:hugo`, but the actual `project.json` declares `["type:app", "platform:nextjs", "lang:ts", "domain:ayokoding"]`. The documentation is stale.
 
 **Impact**: Misleading for anyone referencing the governance doc to understand the workspace.
 
@@ -26,9 +26,9 @@ This is correct and matches the pre-push hook. However, the workflow does **not*
 
 ### Gap 3: test:integration Not in Scheduled CI
 
-The scheduled workflow `test-and-deploy-ayokoding-fs.yml` runs:
+The scheduled workflow `test-and-deploy-ayokoding-web.yml` runs:
 
-1. `unit` job: `nx run ayokoding-fs:test:quick`
+1. `unit` job: `nx run ayokoding-web:test:quick`
 2. `e2e` job: BE and FE E2E tests via Playwright
 
 But `test:integration` (vitest `--project integration`) is never run in any CI workflow. Per the [Three-Level Testing Standard](../../../governance/development/quality/three-level-testing-standard.md), integration tests should run in scheduled CI.
@@ -47,9 +47,9 @@ But `test:quick` (which runs vitest internally) does not declare its own `inputs
 
 **Impact**: Low — cache could serve stale results if only Gherkin specs change without source changes. In practice this is rare since specs and source usually change together.
 
-### Gap 5: Missing Mandatory Targets Documentation for ayokoding-fs
+### Gap 5: Missing Mandatory Targets Documentation for ayokoding-web
 
-The `nx-targets.md` Mandatory Targets Summary Matrix categorizes project types (API Backend, Web UI App, CLI App, etc.) but does not explicitly list ayokoding-fs's expected target set. ayokoding-fs is a "Web UI App" but also has tRPC API routes, making it a hybrid.
+The `nx-targets.md` Mandatory Targets Summary Matrix categorizes project types (API Backend, Web UI App, CLI App, etc.) but does not explicitly list ayokoding-web's expected target set. ayokoding-web is a "Web UI App" but also has tRPC API routes, making it a hybrid.
 
 **Impact**: Low — the targets exist and work, but the governance doc should clarify the expected target set for fullstack Next.js apps.
 
@@ -89,18 +89,18 @@ None are consumed by any unit test.
 
 ### Gap 8: E2E Tests Do Not Consume Gherkin Specs
 
-Both `ayokoding-fs-be-e2e` (4 spec files) and `ayokoding-fs-fe-e2e` (6 spec files) are plain Playwright tests written independently of the Gherkin feature files. They do not load or reference any `.feature` files from `specs/apps/ayokoding/`. This means:
+Both `ayokoding-web-be-e2e` (4 spec files) and `ayokoding-web-fe-e2e` (6 spec files) are plain Playwright tests written independently of the Gherkin feature files. They do not load or reference any `.feature` files from `specs/apps/ayokoding/`. This means:
 
 1. The E2E test scenarios may drift from the Gherkin specifications
 2. The three-level testing standard's principle of "same specs, different implementations" is not applied at the E2E level
-3. `ayokoding-fs-be-e2e` is missing coverage for `navigation-api` (only 4 of 5 BE features covered)
+3. `ayokoding-web-be-e2e` is missing coverage for `navigation-api` (only 4 of 5 BE features covered)
 4. Neither E2E project declares Gherkin spec inputs in their `project.json`
 
 **Impact**: Medium — E2E tests work but are disconnected from the specification layer, preventing spec-driven test coverage validation.
 
 ### Gap 9: Oxlint Has No Project-Level Config
 
-The lint target runs `npx oxlint@latest .` with zero configuration. No `.oxlintrc.json` or `oxlint.json` exists in `apps/ayokoding-fs/`, `apps/ayokoding-fs-be-e2e/`, or `apps/ayokoding-fs-fe-e2e/`. Oxlint bare defaults include `no-unused-vars` as a warning, not an error. There are no rules for unused imports or dead code detection.
+The lint target runs `npx oxlint@latest .` with zero configuration. No `.oxlintrc.json` or `oxlint.json` exists in `apps/ayokoding-web/`, `apps/ayokoding-web-be-e2e/`, or `apps/ayokoding-web-fe-e2e/`. Oxlint bare defaults include `no-unused-vars` as a warning, not an error. There are no rules for unused imports or dead code detection.
 
 TypeScript's `noUnusedLocals` and `noUnusedParameters` (both `true` in tsconfig) catch unused variables at the type level, but unused imports that are type-only or have side effects may slip through without linter enforcement.
 
@@ -111,7 +111,7 @@ TypeScript's `noUnusedLocals` and `noUnusedParameters` (both `true` in tsconfig)
 `test/unit/be-steps/integration-content.unit.test.ts` reads the real filesystem:
 
 ```typescript
-const CONTENT_DIR = path.resolve(process.cwd(), "../../apps/ayokoding-fs/content");
+const CONTENT_DIR = path.resolve(process.cwd(), "../../apps/ayokoding-web/content");
 const stat = await fs.stat(CONTENT_DIR);
 const entries = await fs.readdir(CONTENT_DIR);
 ```
@@ -122,7 +122,7 @@ This violates the three-level testing standard where unit tests must use mocked 
 
 ## Non-Functional Requirements
 
-1. **CI determinism**: Integration tests must be deterministic in CI. ayokoding-fs's integration tests use `FileSystemContentRepository` reading checked-in `content/` directory files (not a real database or external service), so results are consistent across CI runs. `test:integration` should have `cache: false` per Nx convention for non-cacheable targets, even though in practice the content files are stable.
+1. **CI determinism**: Integration tests must be deterministic in CI. ayokoding-web's integration tests use `FileSystemContentRepository` reading checked-in `content/` directory files (not a real database or external service), so results are consistent across CI runs. `test:integration` should have `cache: false` per Nx convention for non-cacheable targets, even though in practice the content files are stable.
 2. **Coverage regression prevention**: The repository refactor must not regress the 80% line coverage threshold. `service.ts` replaces the previously excluded `index.ts` and `search-index.ts` and must be covered by unit tests through `InMemoryContentRepository`.
 3. **Phase atomicity**: Each delivery phase must be a self-contained commit that leaves the codebase in a passing state (typecheck, lint, and test:quick all green). No phase may leave the build broken.
 4. **Unit test purity**: All unit tests (`test:unit`) must use mocks only — no filesystem reads, no HTTP calls, no external dependencies. Tests that require real resources belong in `test:integration`.
@@ -134,7 +134,7 @@ This violates the three-level testing standard where unit tests must use mocked 
 ### Story 1: Fix Documentation Drift
 
 **As a** contributor reading governance documentation
-**I want** the nx-targets.md tag table to accurately reflect ayokoding-fs's actual tags
+**I want** the nx-targets.md tag table to accurately reflect ayokoding-web's actual tags
 **So that** I understand the workspace structure without checking each project.json
 
 **Acceptance Criteria**:
@@ -142,14 +142,14 @@ This violates the three-level testing standard where unit tests must use mocked 
 ```gherkin
 Scenario: Tag table matches actual project.json
   Given the nx-targets.md Current Project Tags table
-  When I look up ayokoding-fs
+  When I look up ayokoding-web
   Then the tags show ["type:app", "platform:nextjs", "lang:ts", "domain:ayokoding"]
-  And the tags match what is declared in apps/ayokoding-fs/project.json
+  And the tags match what is declared in apps/ayokoding-web/project.json
 ```
 
 ### Story 2: Add test:integration to Scheduled CI
 
-**As a** maintainer of ayokoding-fs
+**As a** maintainer of ayokoding-web
 **I want** integration tests to run in the scheduled CI workflow
 **So that** regressions in filesystem-based content loading are caught automatically in CI
 
@@ -157,7 +157,7 @@ Scenario: Tag table matches actual project.json
 
 ```gherkin
 Scenario: Integration tests run in scheduled CI
-  Given the test-and-deploy-ayokoding-fs.yml workflow
+  Given the test-and-deploy-ayokoding-web.yml workflow
   When the scheduled workflow runs
   Then test:integration runs as a CI job
   And the deploy job's needs array includes unit, integration, and e2e
@@ -180,9 +180,9 @@ Scenario: Integration test failure blocks deployment
 
 ```gherkin
 Scenario: Gherkin spec change invalidates test:quick cache
-  Given a cached test:quick result for ayokoding-fs
+  Given a cached test:quick result for ayokoding-web
   When I modify a file in specs/apps/ayokoding/**/*.feature
-  And I run nx run ayokoding-fs:test:quick
+  And I run nx run ayokoding-web:test:quick
   Then the cache is missed and tests re-run
 ```
 
@@ -196,7 +196,7 @@ Scenario: Gherkin spec change invalidates test:quick cache
 
 ```gherkin
 Scenario: PR quality gate steps are clearly labeled
-  Given a PR is opened with ayokoding-fs changes
+  Given a PR is opened with ayokoding-web changes
   When the quality gate workflow runs
   Then I see separate named steps for typecheck, lint, and test:quick
   And each step name clearly identifies the gate it represents
@@ -204,7 +204,7 @@ Scenario: PR quality gate steps are clearly labeled
 
 ### Story 5: Introduce ContentRepository Interface with Two Implementations
 
-**As a** developer working on ayokoding-fs's backend
+**As a** developer working on ayokoding-web's backend
 **I want** a `ContentRepository` interface with `InMemoryContentRepository` and `FileSystemContentRepository` implementations
 **So that** unit tests use in-memory data and integration tests use real filesystem reads, both through the same contract
 
@@ -234,7 +234,7 @@ Scenario: Integration tests use FileSystemContentRepository
 
 ### Story 6: Refactor Content Service Layer to Accept Repository via Injection
 
-**As a** developer maintaining ayokoding-fs
+**As a** developer maintaining ayokoding-web
 **I want** a `ContentService` that receives a `ContentRepository` and encapsulates business logic (index building, tree computation, search)
 **So that** business logic is testable independently of the data source and all consumers use a single entry point
 
@@ -265,7 +265,7 @@ Scenario: Server-side content code is no longer excluded from coverage
 
 ### Story 7: Unused Code Treated as Errors via Oxlint Config
 
-**As a** developer working on ayokoding-fs
+**As a** developer working on ayokoding-web
 **I want** unused variables, imports, and dead code to be flagged as errors by the linter
 **So that** dead code does not accumulate and the codebase stays clean
 
@@ -273,20 +273,20 @@ Scenario: Server-side content code is no longer excluded from coverage
 
 ```gherkin
 Scenario: Oxlint config enforces unused code as errors
-  Given an oxlint.json config exists in apps/ayokoding-fs/
-  When the linter runs via nx run ayokoding-fs:lint
+  Given an oxlint.json config exists in apps/ayokoding-web/
+  When the linter runs via nx run ayokoding-web:lint
   Then unused variables are reported as errors (not warnings)
   And the lint target fails if any unused code is detected
 
 Scenario: Oxlint config enforces no-console as error
-  Given an oxlint.json config exists in apps/ayokoding-fs/
-  When the linter runs via nx run ayokoding-fs:lint
+  Given an oxlint.json config exists in apps/ayokoding-web/
+  When the linter runs via nx run ayokoding-web:lint
   Then console.log and other console calls are reported as errors
   And the lint target fails if any console usage is detected
   And any existing console.log calls in the codebase are fixed in the Phase 8 commit
 
 Scenario: TypeScript strict mode is verified
-  Given the apps/ayokoding-fs/tsconfig.json
+  Given the apps/ayokoding-web/tsconfig.json
   Then strict is true
   And noUnusedLocals is true
   And noUnusedParameters is true
@@ -295,7 +295,7 @@ Scenario: TypeScript strict mode is verified
 
 ### Story 8: FE Unit Tests Consume All FE Gherkin Specs
 
-**As a** developer working on ayokoding-fs's frontend
+**As a** developer working on ayokoding-web's frontend
 **I want** FE unit tests that consume all 6 FE Gherkin specs with mock-only dependencies
 **So that** FE behavior is verified at the unit level and the `unit-fe` vitest project is no longer empty
 
@@ -316,13 +316,13 @@ Scenario: FE unit tests use mocks only
 
 Scenario: All 6 FE Gherkin specs are consumed
   Given the FE Gherkin specs: content-rendering, navigation, search, responsive, i18n, accessibility
-  When nx run ayokoding-fs:test:unit runs
+  When nx run ayokoding-web:test:unit runs
   Then all 6 FE feature files are loaded and their scenarios executed
 ```
 
 ### Story 9: Unit Tests Are Mock-Only (No Real I/O)
 
-**As a** developer maintaining ayokoding-fs
+**As a** developer maintaining ayokoding-web
 **I want** all unit tests to use mocks only with no real filesystem reads
 **So that** unit tests are fast, deterministic, and independent of the environment
 
@@ -343,7 +343,7 @@ Scenario: No unit test performs real I/O
 
 ### Story 10: BE E2E Tests Consume All BE Gherkin Specs
 
-**As a** maintainer of ayokoding-fs-be-e2e
+**As a** maintainer of ayokoding-web-be-e2e
 **I want** the BE E2E tests to consume all BE Gherkin specs via playwright-bdd
 **So that** E2E test scenarios are driven by the same specifications as unit and integration tests
 
@@ -352,21 +352,21 @@ Scenario: No unit test performs real I/O
 ```gherkin
 Scenario: BE E2E tests consume all 5 BE Gherkin specs
   Given the specs/apps/ayokoding/be/gherkin/ directory
-  Then every .feature file has a corresponding step file in ayokoding-fs-be-e2e
+  Then every .feature file has a corresponding step file in ayokoding-web-be-e2e
   And the tests are driven by playwright-bdd
 
 Scenario: BE E2E project declares Gherkin spec inputs
-  Given the ayokoding-fs-be-e2e project.json
+  Given the ayokoding-web-be-e2e project.json
   Then the test:e2e target includes specs/apps/ayokoding/be/gherkin/**/*.feature in its inputs
 
 Scenario: Missing navigation-api E2E coverage is added
   Given the navigation-api.feature spec
-  Then ayokoding-fs-be-e2e has a step file that covers all navigation-api scenarios
+  Then ayokoding-web-be-e2e has a step file that covers all navigation-api scenarios
 ```
 
 ### Story 11: FE E2E Tests Consume All FE Gherkin Specs
 
-**As a** maintainer of ayokoding-fs-fe-e2e
+**As a** maintainer of ayokoding-web-fe-e2e
 **I want** the FE E2E tests to consume all FE Gherkin specs via playwright-bdd
 **So that** E2E test scenarios are driven by the same specifications as FE unit tests
 
@@ -375,10 +375,10 @@ Scenario: Missing navigation-api E2E coverage is added
 ```gherkin
 Scenario: FE E2E tests consume all 6 FE Gherkin specs
   Given the specs/apps/ayokoding/fe/gherkin/ directory
-  Then every .feature file has a corresponding step file in ayokoding-fs-fe-e2e
+  Then every .feature file has a corresponding step file in ayokoding-web-fe-e2e
   And the tests are driven by playwright-bdd
 
 Scenario: FE E2E project declares Gherkin spec inputs
-  Given the ayokoding-fs-fe-e2e project.json
+  Given the ayokoding-web-fe-e2e project.json
   Then the test:e2e target includes specs/apps/ayokoding/fe/gherkin/**/*.feature in its inputs
 ```

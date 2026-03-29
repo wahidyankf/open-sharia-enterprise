@@ -58,13 +58,13 @@ OSE Platform C4 diagrams MUST use the following tools and conventions:
 
 **You MUST understand C4 fundamentals before using these standards:**
 
-- **[C4 Architecture Model Learning Path](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/architecture/c4-architecture-model/)** - Educational foundation for C4 visualization
-- **[C4 Architecture Model Overview](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/architecture/c4-architecture-model/overview.md)** - Core C4 concepts (Context, Container, Component, Code)
-- **[C4 Architecture Model By Example](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/architecture/c4-architecture-model/by-example/)** - Practical C4 diagram examples
+- **[C4 Architecture Model Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/c4-architecture-model/)** - Educational foundation for C4 visualization
+- **[C4 Architecture Model Overview](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/c4-architecture-model/overview.md)** - Core C4 concepts (Context, Container, Component, Code)
+- **[C4 Architecture Model By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/c4-architecture-model/by-example/)** - Practical C4 diagram examples
 
 **What this documentation covers**: OSE Platform-specific C4 patterns, Mermaid syntax conventions, color-blind friendly palettes, integration with DDD bounded contexts, repository diagram standards.
 
-**What this documentation does NOT cover**: C4 fundamentals, basic diagram types, generic C4 notation (those are in ayokoding-fs).
+**What this documentation does NOT cover**: C4 fundamentals, basic diagram types, generic C4 notation (those are in ayokoding-web).
 
 **See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 

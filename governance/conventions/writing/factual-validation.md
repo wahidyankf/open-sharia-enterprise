@@ -765,7 +765,7 @@ Recommendation: Clarify which context applies or use HTTPS everywhere
 
 **Agent:** `docs-checker`, `docs-fixer`
 
-### Hugo Educational Content (ayokoding-fs)
+### Hugo Educational Content (ayokoding-web)
 
 **Validation Focus:**
 
@@ -775,9 +775,9 @@ Recommendation: Clarify which context applies or use HTTPS everywhere
 - Indonesian/English consistency
 - Educational sequences are logical
 
-**Agent:** `apps-ayokoding-fs-facts-checker`, `apps-ayokoding-fs-facts-fixer`
+**Agent:** `apps-ayokoding-web-facts-checker`, `apps-ayokoding-web-facts-fixer`
 
-### Hugo Platform Content (oseplatform-fs)
+### Hugo Platform Content (oseplatform-web)
 
 **Validation Focus:**
 
@@ -813,7 +813,7 @@ Recommendation: Clarify which context applies or use HTTPS everywhere
 **Implementation Agents:**
 
 - `docs-checker.md` - Documentation factual accuracy validator (implements this convention for `docs/`)
-- `apps-ayokoding-fs-facts-checker.md` - Educational content factual validator (implements this convention for ayokoding-fs)
+- `apps-ayokoding-web-facts-checker.md` - Educational content factual validator (implements this convention for ayokoding-web)
 - `plan-checker.md` - Plan accuracy validator (implements portions of this convention)
 
 **Quality Standards:**
@@ -822,7 +822,7 @@ Recommendation: Clarify which context applies or use HTTPS everywhere
 - [Mathematical Notation Convention](../formatting/mathematical-notation.md) - LaTeX notation standards
 - [Color Accessibility Convention](../formatting/color-accessibility.md) - Accessible color palette
 - [Hugo Content Convention - Shared](../hugo/shared.md) - Hugo content standards
-- [Hugo Content Convention - ayokoding](../hugo/ayokoding.md) - ayokoding-fs specifics
+- [Hugo Content Convention - ayokoding](../hugo/ayokoding.md) - ayokoding-web specifics
 
 **Development Practices:**
 

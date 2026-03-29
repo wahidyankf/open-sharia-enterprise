@@ -18,7 +18,7 @@ updated: 2026-02-09
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: Complete [AyoKoding TDD By Example](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/development/test-driven-development-tdd/by-example/) and [AyoKoding DDD By Example](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/by-example/) before using these standards.
+**REQUIRED**: Complete [AyoKoding TDD By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/development/test-driven-development-tdd/by-example/) and [AyoKoding DDD By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/by-example/) before using these standards.
 
 ## Purpose
 

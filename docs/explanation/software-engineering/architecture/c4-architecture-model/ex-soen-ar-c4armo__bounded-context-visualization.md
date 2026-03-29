@@ -20,8 +20,8 @@ updated: 2026-02-09
 
 **REQUIRED**: You MUST understand both C4 and DDD fundamentals before using these standards:
 
-- [AyoKoding C4 Architecture Model](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/architecture/c4-architecture-model/)
-- [AyoKoding Domain-Driven Design](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/)
+- [AyoKoding C4 Architecture Model](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/c4-architecture-model/)
+- [AyoKoding Domain-Driven Design](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/)
 
 **This document is OSE Platform-specific**, defining how to visualize DDD bounded contexts in C4 diagrams for THIS codebase.
 

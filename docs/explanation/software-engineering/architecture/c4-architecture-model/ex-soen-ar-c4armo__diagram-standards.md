@@ -19,7 +19,7 @@ updated: 2026-02-09
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand C4 fundamentals from [AyoKoding C4 Architecture Model](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/architecture/c4-architecture-model/) before using these standards.
+**REQUIRED**: You MUST understand C4 fundamentals from [AyoKoding C4 Architecture Model](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/c4-architecture-model/) before using these standards.
 
 **This document is OSE Platform-specific**, not a C4 tutorial. We define HOW to apply C4 in THIS codebase, not WHAT C4 is.
 

@@ -37,7 +37,7 @@ Scenario: First-time OpenCode user opens repository
 Scenario: OpenCode user creates content
   Given OpenCode is running in the repository
   When the developer asks to create Hugo content
-  Then OpenCode loads apps__ayokoding-fs__developing-content skill
+  Then OpenCode loads apps__ayokoding-web__developing-content skill
   And follows the same conventions as Claude Code
   And produces identical output quality
 ```

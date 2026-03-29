@@ -94,7 +94,7 @@ This plan elevates 4 programming languages (Python, Java, Kotlin, Golang) to the
   - **Implementation Notes**: Successfully expanded from 308 to 823 lines (167% increase, exceeds 100% target)
   - **Date**: 2025-12-19
   - **Status**: Completed
-  - **Files Changed**: apps/ayokoding-fs/content/en/learn/swe/programming-languages/python/tutorials/initial-setup.md
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/python/tutorials/initial-setup.md
   - **Content Added**:
     - Windows installation: Official installer, winget, chocolatey (3 options with guidance)
     - macOS installation: Official installer, Homebrew, pyenv (3 options with shell config)
@@ -117,7 +117,7 @@ This plan elevates 4 programming languages (Python, Java, Kotlin, Golang) to the
   - **Implementation Notes**: Successfully expanded from 440 to 1,654 lines (276% increase, exceeds 150% target)
   - **Date**: 2025-12-19
   - **Status**: Completed
-  - **Files Changed**: apps/ayokoding-fs/content/en/learn/swe/programming-languages/python/tutorials/quick-start.md
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/python/tutorials/quick-start.md
   - **Content Added**:
     - 10 comprehensive touchpoints covering 5-30% of Python knowledge
     - Enhanced Mermaid learning path diagram with all 10 touchpoints (color-blind friendly palette)
@@ -197,7 +197,7 @@ This plan elevates 4 programming languages (Python, Java, Kotlin, Golang) to the
   - **Implementation Notes**: Created comprehensive Python cheat sheet (~450 lines)
   - **Date**: 2025-12-19
   - **Status**: Completed
-  - **Files Changed**: apps/ayokoding-fs/content/en/learn/swe/programming-languages/python/reference/cheat-sheet.md (new file)
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/python/reference/cheat-sheet.md (new file)
   - **Content Added**:
     - Basic syntax (variables, comments, data types)
     - All operators (arithmetic, comparison, logical, bitwise, membership, identity)
@@ -229,7 +229,7 @@ This plan elevates 4 programming languages (Python, Java, Kotlin, Golang) to the
   - **Implementation Notes**: Created comprehensive Python glossary (~750 lines) with alphabetically organized terms
   - **Date**: 2025-12-19
   - **Status**: Completed
-  - **Files Changed**: apps/ayokoding-fs/content/en/learn/swe/programming-languages/python/reference/glossary.md (new file)
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/python/reference/glossary.md (new file)
   - **Content Added**:
     - 60+ Python terms with definitions and examples
     - Organized alphabetically (A-Z sections)
@@ -253,7 +253,7 @@ This plan elevates 4 programming languages (Python, Java, Kotlin, Golang) to the
   - **Implementation Notes**: Created curated Python resources guide (~450 lines)
   - **Date**: 2025-12-19
   - **Status**: Completed
-  - **Files Changed**: apps/ayokoding-fs/content/en/learn/swe/programming-languages/python/reference/resources.md (new file)
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/python/reference/resources.md (new file)
   - **Content Added**:
     - Official Documentation: Python.org, PEP index, PEP 8, Standard Library
     - Learning Platforms: Real Python, Python Tutor, Exercism, Coursera, Codecademy
@@ -283,9 +283,9 @@ This plan elevates 4 programming languages (Python, Java, Kotlin, Golang) to the
   - **Date**: 2025-12-19
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/python/how-to/advanced-async-patterns.md (new)
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/python/how-to/testing-strategies.md (new)
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/python/how-to/api-development-best-practices.md (new)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/python/how-to/advanced-async-patterns.md (new)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/python/how-to/testing-strategies.md (new)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/python/how-to/api-development-best-practices.md (new)
   - [x] Guide 1: Advanced Async Patterns (~500 lines)
     - When to use async (I/O-bound vs CPU-bound)
     - 9 async patterns: concurrent API requests, task management, rate limiting, producer-consumer, timeout/cancellation, retry with backoff, graceful shutdown, error handling in gather(), async context managers
@@ -359,7 +359,7 @@ This plan elevates 4 programming languages (Python, Java, Kotlin, Golang) to the
 #### Validation Checklist
 
 - [ ] **Content Validation**
-  - [ ] ayokoding-fs-general-checker passes with zero issues
+  - [ ] ayokoding-web-general-checker passes with zero issues
   - [ ] All frontmatter correct (title, date, draft, description, weight)
   - [ ] Weight numbering follows hundred-range pattern
   - [ ] All Mermaid diagrams use color-blind friendly palette
@@ -367,14 +367,14 @@ This plan elevates 4 programming languages (Python, Java, Kotlin, Golang) to the
   - [ ] Single H1 per file
 
 - [ ] **Factual Validation**
-  - [ ] ayokoding-fs-facts-checker passes with zero issues
+  - [ ] ayokoding-web-facts-checker passes with zero issues
   - [ ] Python 3.11+ syntax verified
   - [ ] Standard library references accurate
   - [ ] Version-specific information marked
   - [ ] All commands tested on macOS, Linux, Windows
 
 - [ ] **Link Validation**
-  - [ ] ayokoding-fs-link-checker passes with zero issues
+  - [ ] ayokoding-web-link-checker passes with zero issues
   - [ ] All internal links point to existing files
   - [ ] All external links return 200 status
   - [ ] All anchor links target valid headings
@@ -401,9 +401,9 @@ This plan elevates 4 programming languages (Python, Java, Kotlin, Golang) to the
 Scenario: Python content meets highest standard
   Given the Python language content is complete
   When validation agents run
-  Then ayokoding-fs-general-checker reports zero issues
-  And ayokoding-fs-facts-checker reports zero issues
-  And ayokoding-fs-link-checker reports zero issues
+  Then ayokoding-web-general-checker reports zero issues
+  And ayokoding-web-facts-checker reports zero issues
+  And ayokoding-web-link-checker reports zero issues
   And all tutorials meet minimum line count benchmarks
   And reference section has all three files (cheat-sheet, glossary, resources)
   And all code examples work on macOS, Linux, and Windows
@@ -466,7 +466,7 @@ Scenario: Python tutorials cover stated ranges
   - **Date**: 2025-12-19
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/kotlin/how-to/cookbook.md (modified, 2,671 → 4,543 lines, +1,872 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/how-to/cookbook.md (modified, 2,671 → 4,543 lines, +1,872 lines)
   - [x] Add 12 key recipes across modern Kotlin topics
   - [x] Recipe 36: Reified Type Parameters for Generic Functions
   - [x] Recipe 37: Advanced Flow Operators (combine, debounce, flatMapLatest, retry, shareIn)
@@ -489,7 +489,7 @@ Scenario: Python tutorials cover stated ranges
   - **Date**: 2025-12-19
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/kotlin/explanation/best-practices.md (modified, 509 → 779 lines, +270 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/explanation/best-practices.md (modified, 509 → 779 lines, +270 lines)
   - [x] Add advanced null safety patterns section
     - [x] Safe calls (?.) vs unsafe (!!)
     - [x] Elvis operator (?:) patterns
@@ -512,7 +512,7 @@ Scenario: Python tutorials cover stated ranges
   - **Date**: 2025-12-19
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/kotlin/explanation/anti-patterns.md (modified, 636 → 952 lines, +316 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/explanation/anti-patterns.md (modified, 636 → 952 lines, +316 lines)
   - [x] Add Java-to-Kotlin migration mistakes
     - [x] Overusing !! (force unwrap)
     - [x] Using mutable collections unnecessarily
@@ -530,7 +530,7 @@ Scenario: Python tutorials cover stated ranges
   - **Date**: 2025-12-19
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/kotlin/explanation/overview.md (modified, 74 → 153 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/explanation/overview.md (modified, 74 → 153 lines)
   - [x] Add "What Makes Kotlin Special" section
     - [x] Null safety by design
     - [x] Concise syntax reducing boilerplate
@@ -567,21 +567,21 @@ Scenario: Python tutorials cover stated ranges
 #### Validation Checklist
 
 - [ ] **Content Validation**
-  - [ ] ayokoding-fs-general-checker passes with zero issues
+  - [ ] ayokoding-web-general-checker passes with zero issues
   - [ ] All frontmatter correct
   - [ ] Weight numbering correct (cookbook at 603)
   - [ ] Mermaid diagrams use accessible colors
   - [ ] Heading hierarchy proper
 
 - [ ] **Factual Validation**
-  - [ ] ayokoding-fs-facts-checker passes with zero issues
+  - [ ] ayokoding-web-facts-checker passes with zero issues
   - [ ] Kotlin 1.9+ syntax verified
   - [ ] Coroutine patterns accurate
   - [ ] Java interop examples correct
   - [ ] Standard library references accurate
 
 - [ ] **Link Validation**
-  - [ ] ayokoding-fs-link-checker passes with zero issues
+  - [ ] ayokoding-web-link-checker passes with zero issues
   - [ ] All internal links valid
   - [ ] All external links working
 
@@ -630,7 +630,7 @@ Scenario: Kotlin philosophy content is comprehensive
   - anti-patterns.md: 636 → 952 lines (+316 lines, +50%)
   - overview.md: 74 → 153 lines (+79 lines, +107%)
   - Total expansion: +2,537 lines
-- **Validation**: Ready for ayokoding-fs-general-checker and ayokoding-fs-facts-checker
+- **Validation**: Ready for ayokoding-web-general-checker and ayokoding-web-facts-checker
 - **PR Status**: Not submitted (implementation complete, ready for validation)
 - **Note**: Reference section already complete from commit 4495e22 (no work required)
 
@@ -659,7 +659,7 @@ Scenario: Kotlin philosophy content is comprehensive
   - **Date**: 2025-12-19
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/java/reference/cheat-sheet.md (new, 663 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/reference/cheat-sheet.md (new, 663 lines)
   - [x] JVM-specific syntax reference
   - [x] Common patterns (streams, optionals, lambdas)
   - [x] Collections framework quick reference
@@ -673,7 +673,7 @@ Scenario: Kotlin philosophy content is comprehensive
   - **Date**: 2025-12-19
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/java/reference/glossary.md (new, 853 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/reference/glossary.md (new, 853 lines)
   - [x] JVM terminology (bytecode, classloader, heap, stack)
   - [x] Java concepts (interface, abstract class, annotation, generic)
   - [x] Enterprise terms (bean, dependency injection, ORM)
@@ -687,7 +687,7 @@ Scenario: Kotlin philosophy content is comprehensive
   - **Date**: 2025-12-19
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/java/reference/resources.md (new, 487 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/reference/resources.md (new, 487 lines)
   - [x] Official Java documentation (Oracle, OpenJDK)
   - [x] JEPs (Java Enhancement Proposals) - important ones
   - [x] Enterprise framework documentation (Spring, Jakarta EE)
@@ -781,19 +781,19 @@ Scenario: Kotlin philosophy content is comprehensive
 #### Validation Checklist
 
 - [ ] **Content Validation**
-  - [ ] ayokoding-fs-general-checker passes with zero issues
+  - [ ] ayokoding-web-general-checker passes with zero issues
   - [ ] All frontmatter correct
   - [ ] Weight numbering correct
   - [ ] Mermaid diagrams use accessible colors
 
 - [ ] **Factual Validation**
-  - [ ] ayokoding-fs-facts-checker passes with zero issues
+  - [ ] ayokoding-web-facts-checker passes with zero issues
   - [ ] Java 17 LTS syntax verified
   - [ ] JVM concepts accurate
   - [ ] Enterprise framework references correct
 
 - [ ] **Link Validation**
-  - [ ] ayokoding-fs-link-checker passes with zero issues
+  - [ ] ayokoding-web-link-checker passes with zero issues
   - [ ] All internal and external links working
 
 - [ ] **Code Example Validation**
@@ -867,7 +867,7 @@ Scenario: Java has 18 how-to guides
   - **Implementation Notes**:
     - **Date**: 2025-12-19
     - **Status**: Completed
-    - **File**: apps/ayokoding-fs/content/en/learn/swe/programming-languages/golang/reference/cheat-sheet.md
+    - **File**: apps/ayokoding-web/content/en/learn/swe/programming-languages/golang/reference/cheat-sheet.md
     - **Lines**: 575 lines (~17KB)
     - **Content**: Complete syntax reference, control flow, data structures, functions, error handling, concurrency, defer/panic/recover, common patterns
 
@@ -881,7 +881,7 @@ Scenario: Java has 18 how-to guides
   - **Implementation Notes**:
     - **Date**: 2025-12-19
     - **Status**: Completed
-    - **File**: apps/ayokoding-fs/content/en/learn/swe/programming-languages/golang/reference/glossary.md
+    - **File**: apps/ayokoding-web/content/en/learn/swe/programming-languages/golang/reference/glossary.md
     - **Lines**: 349 lines (~11KB)
     - **Content**: Comprehensive terms (Channel, Composition, Defer, Goroutine, Go Module, Interface, Method, Mutex, Package, Panic, Receiver, Rune, Select, Slice, Struct) with code examples
 
@@ -896,7 +896,7 @@ Scenario: Java has 18 how-to guides
   - **Implementation Notes**:
     - **Date**: 2025-12-19
     - **Status**: Completed
-    - **File**: apps/ayokoding-fs/content/en/learn/swe/programming-languages/golang/reference/resources.md
+    - **File**: apps/ayokoding-web/content/en/learn/swe/programming-languages/golang/reference/resources.md
     - **Lines**: 337 lines (~16KB)
     - **Content**: Official docs, books, online courses, dev tools, frameworks, communities, learning paths
 
@@ -951,7 +951,7 @@ Scenario: Java has 18 how-to guides
   - **Implementation Notes**:
     - **Date**: 2025-12-19
     - **Status**: Completed
-    - **File**: apps/ayokoding-fs/content/en/learn/swe/programming-languages/golang/explanation/best-practices.md
+    - **File**: apps/ayokoding-web/content/en/learn/swe/programming-languages/golang/explanation/best-practices.md
     - **Lines**: 751 → 1,029 lines (+278 lines, +37%)
     - **Sections Added**: Testing and Code Quality, Performance Optimization, Context Management, Package Organization
     - **Cross-references**: Updated to link to all 5 new how-to guides
@@ -985,19 +985,19 @@ Scenario: Java has 18 how-to guides
 #### Validation Checklist
 
 - [ ] **Content Validation**
-  - [ ] ayokoding-fs-general-checker passes with zero issues
+  - [ ] ayokoding-web-general-checker passes with zero issues
   - [ ] All frontmatter correct
   - [ ] Weight numbering correct
   - [ ] Mermaid diagrams use accessible colors
 
 - [ ] **Factual Validation**
-  - [ ] ayokoding-fs-facts-checker passes with zero issues
+  - [ ] ayokoding-web-facts-checker passes with zero issues
   - [ ] Go 1.21+ syntax verified (generics era)
   - [ ] Concurrency patterns accurate
   - [ ] Module system references correct
 
 - [ ] **Link Validation**
-  - [ ] ayokoding-fs-link-checker passes with zero issues
+  - [ ] ayokoding-web-link-checker passes with zero issues
   - [ ] All internal and external links working
 
 - [ ] **Code Example Validation**
@@ -1038,7 +1038,7 @@ Scenario: Golang has 18 how-to guides
   - **Reference Files**: cheat-sheet.md (575 lines), glossary.md (349 lines), resources.md (337 lines)
   - **How-To Guides**: concurrency-patterns.md (628), error-handling.md (432), http-server-patterns.md (485), testing-strategies.md (423), performance-optimization.md (382)
   - **Best Practices**: best-practices.md (+278 lines, +37% expansion)
-- **Validation**: Pending (ready for ayokoding-fs-general-checker, ayokoding-fs-facts-checker, ayokoding-fs-link-checker)
+- **Validation**: Pending (ready for ayokoding-web-general-checker, ayokoding-web-facts-checker, ayokoding-web-link-checker)
 - **PR Status**: Ready to submit after validation
 
 ---
@@ -1082,9 +1082,9 @@ graph LR
 - **Hugo 0.119.0+**: Static site generator (required for build)
 - **Node.js + npm**: Development environment via Volta (required for Prettier)
 - **Git**: Version control (required for commits and PRs)
-- **ayokoding-fs-general-checker**: Validation agent (required for structural checks)
-- **ayokoding-fs-facts-checker**: Validation agent (required for factual verification)
-- **ayokoding-fs-link-checker**: Validation agent (required for link validation)
+- **ayokoding-web-general-checker**: Validation agent (required for structural checks)
+- **ayokoding-web-facts-checker**: Validation agent (required for factual verification)
+- **ayokoding-web-link-checker**: Validation agent (required for link validation)
 
 **Official Documentation**:
 
@@ -1144,7 +1144,7 @@ graph LR
 **Mitigation**:
 
 - Test ALL code examples on multiple platforms
-- Use ayokoding-fs-facts-checker for verification
+- Use ayokoding-web-facts-checker for verification
 - Reference official documentation for every fact
 - Run examples in clean environments (fresh venvs, new projects)
 
@@ -1239,9 +1239,9 @@ Before marking entire plan as complete:
 
 ### Quality Benchmarks Met
 
-- [ ] All content passes ayokoding-fs-general-checker
-- [ ] All content passes ayokoding-fs-facts-checker
-- [ ] All content passes ayokoding-fs-link-checker
+- [ ] All content passes ayokoding-web-general-checker
+- [ ] All content passes ayokoding-web-facts-checker
+- [ ] All content passes ayokoding-web-link-checker
 - [ ] All code examples tested on macOS, Linux, Windows
 - [ ] All Mermaid diagrams use color-blind friendly palette
 - [ ] All cross-references are valid and helpful
@@ -1338,7 +1338,7 @@ Before marking entire plan as complete:
 
 ### Next Actions
 
-1. **Immediate**: Run validation agents on all 4 languages (ayokoding-fs-general-checker, ayokoding-fs-facts-checker, ayokoding-fs-link-checker)
+1. **Immediate**: Run validation agents on all 4 languages (ayokoding-web-general-checker, ayokoding-web-facts-checker, ayokoding-web-link-checker)
 2. **Next**: Address any validation issues found
 3. **Then**: Submit PRs for each language (separate PRs as planned)
 4. **Final**: Move plan to done/ after all PRs merged

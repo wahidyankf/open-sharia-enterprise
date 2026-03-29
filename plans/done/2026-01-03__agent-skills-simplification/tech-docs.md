@@ -369,18 +369,18 @@ graph TD
 **Key Patterns**:
 
 1. **Annotation density standards** - ~150 lines duplicated across by-example agents
-2. **Hugo weight system** - ~400 lines duplicated across ayokoding-fs agents
+2. **Hugo weight system** - ~400 lines duplicated across ayokoding-web agents
 3. **Criticality levels system** - 2,800-4,200 lines duplicated across 25+ checker/fixer agents
 4. **Accessible color palette** - ~80 lines duplicated across diagram-using agents
 5. **Maker-Checker-Fixer workflow** - ~150 lines duplicated across multiple agents
 
 **Top Agents by Duplication**:
 
-1. apps**ayokoding-fs**by-example-maker (~800 lines)
-2. apps**ayokoding-fs**general-checker (~400 lines)
+1. apps**ayokoding-web**by-example-maker (~800 lines)
+2. apps**ayokoding-web**general-checker (~400 lines)
 3. docs\_\_checker (~300 lines)
-4. apps**ayokoding-fs**structure-maker (~300 lines)
-5. apps**ayokoding-fs**by-example-checker (~300 lines)
+4. apps**ayokoding-web**structure-maker (~300 lines)
+5. apps**ayokoding-web**by-example-checker (~300 lines)
 
 **Most-Duplicated Skills**:
 
@@ -450,11 +450,11 @@ graph TD
 
 #### Example Agent Transformation
 
-**Before** (apps**ayokoding-fs**by-example-checker.md - ~1,100 lines):
+**Before** (apps**ayokoding-web**by-example-checker.md - ~1,100 lines):
 
 ```markdown
 ---
-name: apps__ayokoding-fs__by-example-checker
+name: apps__ayokoding-web__by-example-checker
 description: Validates by-example tutorial quality...
 tools: [Read, Glob, Grep, Write, Bash]
 model: sonnet
@@ -462,7 +462,7 @@ color: yellow
 skills: []
 ---
 
-# Apps - ayokoding-fs - By-Example Checker
+# Apps - ayokoding-web - By-Example Checker
 
 ...
 
@@ -491,15 +491,15 @@ skills: []
 
 ## Hugo Weight System
 
-ayokoding-fs uses level-based weight system with powers of 10...
+ayokoding-web uses level-based weight system with powers of 10...
 [~100 lines of weight system explanation]
 ```
 
-**After** (apps**ayokoding-fs**by-example-checker.md - ~650 lines):
+**After** (apps**ayokoding-web**by-example-checker.md - ~650 lines):
 
 ```markdown
 ---
-name: apps__ayokoding-fs__by-example-checker
+name: apps__ayokoding-web__by-example-checker
 description: Validates by-example tutorial quality...
 tools: [Read, Glob, Grep, Write, Bash]
 model: sonnet
@@ -511,7 +511,7 @@ skills:
   - generating-checker-reports
 ---
 
-# Apps - ayokoding-fs - By-Example Checker
+# Apps - ayokoding-web - By-Example Checker
 
 Validates by-example tutorial quality using annotation density standards
 and educational value criteria from Skills.
@@ -653,7 +653,7 @@ for complete catalog.
 **Approach**:
 
 1. **Batch Processing**
-   - Group agents by family (ayokoding-fs, ose-platform-web, readme, plan, workflow, etc.)
+   - Group agents by family (ayokoding-web, ose-platform-web, readme, plan, workflow, etc.)
    - Apply simplification family-by-family
    - Enables focused validation per family
 
@@ -751,7 +751,7 @@ docs__maker                    | applying-content-quality,                      
                                | creating-accessible-diagrams                   |
 docs__checker                  | applying-content-quality,                      | None
                                | validating-factual-accuracy                    |
-ayokoding-fs-general-maker    | developing-ayokoding-content,                  | None
+ayokoding-web-general-maker    | developing-ayokoding-content,                  | None
                                | applying-content-quality,                      |
                                | creating-by-example-tutorials                  |
 ```
@@ -825,7 +825,7 @@ Skills don't grant agents additional tool access. Skill references are knowledge
 
 - wow**rules**quality-gate workflow passes
 - Documentation workflows (make → check → fix) execute successfully
-- Content workflows (ayokoding-fs, ose-platform-web) execute successfully
+- Content workflows (ayokoding-web, ose-platform-web) execute successfully
 - Planning workflows (plan creation, execution, validation) execute successfully
 
 ### Regression Testing: Effectiveness

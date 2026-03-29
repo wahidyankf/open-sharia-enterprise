@@ -63,12 +63,12 @@ Dart's design principles guide development:
 
 **You MUST understand Dart fundamentals before using these standards:**
 
-- **[Dart Learning Path](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/dart/_index.md)** - Complete 0-95% language coverage
-- **[Dart By Example](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/dart/by-example/_index.md)** - 75-85 annotated code examples (beginner → advanced)
+- **[Dart Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/dart/_index.md)** - Complete 0-95% language coverage
+- **[Dart By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/dart/by-example/_index.md)** - 75-85 annotated code examples (beginner → advanced)
 
 **What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply Dart knowledge in THIS codebase.
 
-**What this documentation does NOT cover**: Dart syntax, language fundamentals, generic patterns (those are in ayokoding-fs).
+**What this documentation does NOT cover**: Dart syntax, language fundamentals, generic patterns (those are in ayokoding-web).
 
 **See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 

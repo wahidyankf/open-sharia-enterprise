@@ -52,13 +52,13 @@ OSE Platform Islamic finance systems MUST use the following DDD patterns:
 
 **You MUST understand DDD fundamentals before using these standards:**
 
-- **[Domain-Driven Design Learning Path](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/)** - Educational foundation for DDD concepts
-- **[Domain-Driven Design Overview](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/overview.md)** - Core DDD principles (Ubiquitous Language, Bounded Contexts, Strategic/Tactical patterns)
-- **[Domain-Driven Design By Example](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/by-example/)** - Practical DDD implementation examples
+- **[Domain-Driven Design Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/)** - Educational foundation for DDD concepts
+- **[Domain-Driven Design Overview](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/overview.md)** - Core DDD principles (Ubiquitous Language, Bounded Contexts, Strategic/Tactical patterns)
+- **[Domain-Driven Design By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/architecture/domain-driven-design-ddd/by-example/)** - Practical DDD implementation examples
 
 **What this documentation covers**: OSE Platform-specific DDD patterns, Islamic finance domain modeling, aggregate boundaries, bounded context mapping in OSE Platform, integration with C4 and FSM, repository-specific tactical patterns.
 
-**What this documentation does NOT cover**: DDD fundamentals, basic aggregate/entity/value object concepts, generic strategic design (those are in ayokoding-fs).
+**What this documentation does NOT cover**: DDD fundamentals, basic aggregate/entity/value object concepts, generic strategic design (those are in ayokoding-web).
 
 **See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 

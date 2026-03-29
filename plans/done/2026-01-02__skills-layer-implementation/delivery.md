@@ -157,7 +157,7 @@ And existing agents should continue working without modification
 #### Implementation Steps
 
 - [x] **Step 2.1: Create Skill 4 - `hugo-ayokoding-development`**
-  - **Implementation Notes**: Created hugo-ayokoding-development Skill with comprehensive SKILL.md covering ayokoding-fs Hugo site development. Includes bilingual strategy (default English, no auto-mirroring), level-based weight system (powers of 10), by-example annotation standards (1-2.25 comments per code line), absolute path linking with language prefixes, no H1 headings rule, overview/ikhtisar requirements, 2-layer navigation depth, programming language dual-path organization, and PaperMod-specific frontmatter. Description triggers on "ayokoding-fs", "Hextra", "bilingual content", "weight system", "by-example tutorials".
+  - **Implementation Notes**: Created hugo-ayokoding-development Skill with comprehensive SKILL.md covering ayokoding-web Hugo site development. Includes bilingual strategy (default English, no auto-mirroring), level-based weight system (powers of 10), by-example annotation standards (1-2.25 comments per code line), absolute path linking with language prefixes, no H1 headings rule, overview/ikhtisar requirements, 2-layer navigation depth, programming language dual-path organization, and PaperMod-specific frontmatter. Description triggers on "ayokoding-web", "Hextra", "bilingual content", "weight system", "by-example tutorials".
   - **Date**: 2026-01-02
   - **Status**: Completed
   - **Files Changed**:
@@ -192,7 +192,7 @@ And existing agents should continue working without modification
     - .claude/skills/gherkin-acceptance-criteria/SKILL.md (new)
 
 - [x] **Step 2.6: Create Skill 9 - `hugo-ose-development` (optional)**
-  - **Implementation Notes**: Created hugo-ose-development Skill with comprehensive SKILL.md covering ose-platform-web Hugo site development using PaperMod theme. Includes English-only content strategy, flat simple structure (updates/, about.md), date-prefixed filenames for automatic chronological sorting (YYYY-MM-DD-title.md), PaperMod frontmatter (minimal required fields, table of contents, cover images with required alt text, flexible author field), content types (update posts, about page), internal links (absolute paths without language prefix), asset organization, PaperMod features (navigation, theme toggle, social sharing, home page config), comparison table with ayokoding-fs (simplicity contrast), common patterns, and validation checklist. Description triggers on "ose-platform-web", "PaperMod", "landing page", "English-only".
+  - **Implementation Notes**: Created hugo-ose-development Skill with comprehensive SKILL.md covering ose-platform-web Hugo site development using PaperMod theme. Includes English-only content strategy, flat simple structure (updates/, about.md), date-prefixed filenames for automatic chronological sorting (YYYY-MM-DD-title.md), PaperMod frontmatter (minimal required fields, table of contents, cover images with required alt text, flexible author field), content types (update posts, about page), internal links (absolute paths without language prefix), asset organization, PaperMod features (navigation, theme toggle, social sharing, home page config), comparison table with ayokoding-web (simplicity contrast), common patterns, and validation checklist. Description triggers on "ose-platform-web", "PaperMod", "landing page", "English-only".
   - **Date**: 2026-01-02
   - **Status**: Completed
   - **Files Changed**:
@@ -214,7 +214,7 @@ And existing agents should continue working without modification
   - **Sections Optimized**:
     - Diagram Convention: Condensed palette details, added `color-accessibility-diagrams` Skill reference
     - Tutorial Standards: Simplified By Example description, added `by-example-tutorial-creation` Skill reference
-    - Hugo Content Convention: Condensed ayokoding-fs and ose-platform-web details, added `hugo-ayokoding-development` and `hugo-ose-development` Skill references
+    - Hugo Content Convention: Condensed ayokoding-web and ose-platform-web details, added `hugo-ayokoding-development` and `hugo-ose-development` Skill references
     - Factual Validation Convention: Added `factual-validation-methodology` Skill reference
   - **Character Count**: 27,435 (well under 30k target, 2,565 chars headroom)
 
@@ -269,7 +269,7 @@ And existing agents should continue working without modification
   - **Date**: 2026-01-02
   - **Status**: Completed
   - **Files Changed**:
-    - 41 agent files updated (agent**maker, all apps**ayokoding-fs**\*, all apps**ose-platform-web**\*, all docs**\_, all plan\_\_\_, all readme**\*, social**linkedin**post-maker, swe**hugo**developer, wow**workflow-\*)
+    - 41 agent files updated (agent**maker, all apps**ayokoding-web**\*, all apps**ose-platform-web**\*, all docs**\_, all plan\_\_\_, all readme**\*, social**linkedin**post-maker, swe**hugo**developer, wow**workflow-\*)
     - 3 agents already had field (wow**rules-maker, wow**rules-checker, wow\_\_rules-fixer)
   - **Verification**:
     - Total agents: 44 (excluding README.md)
@@ -282,8 +282,8 @@ And existing agents should continue working without modification
   - **Files Changed**:
     - .claude/agents/docs\_\_maker.md → skills: [color-accessibility-diagrams, maker-checker-fixer-pattern]
     - .claude/agents/docs\_\_checker.md → skills: [maker-checker-fixer-pattern, criticality-confidence-system]
-    - .claude/agents/apps**ayokoding-fs**general-maker.md → skills: [hugo-ayokoding-development, color-accessibility-diagrams]
-    - .claude/agents/apps**ayokoding-fs**by-example-maker.md → skills: [by-example-tutorial-creation, hugo-ayokoding-development]
+    - .claude/agents/apps**ayokoding-web**general-maker.md → skills: [hugo-ayokoding-development, color-accessibility-diagrams]
+    - .claude/agents/apps**ayokoding-web**by-example-maker.md → skills: [by-example-tutorial-creation, hugo-ayokoding-development]
     - .claude/agents/plan\_\_maker.md → skills: [gherkin-acceptance-criteria, trunk-based-development]
   - **Verification**:
     - All 5 agents have non-empty skills arrays
@@ -313,10 +313,10 @@ And existing agents should continue working without modification
     - **docs\_\_checker** (skills: maker-checker-fixer-pattern, criticality-confidence-system):
       - Auto-loads when validating documentation
       - Provides audit workflow and criticality/confidence classification knowledge
-    - **apps**ayokoding-fs**general-maker** (skills: hugo-ayokoding-development, color-accessibility-diagrams):
-      - Auto-loads when creating ayokoding-fs content
+    - **apps**ayokoding-web**general-maker** (skills: hugo-ayokoding-development, color-accessibility-diagrams):
+      - Auto-loads when creating ayokoding-web content
       - Provides Hextra theme conventions and diagram accessibility knowledge
-    - **apps**ayokoding-fs**by-example-maker** (skills: by-example-tutorial-creation, hugo-ayokoding-development):
+    - **apps**ayokoding-web**by-example-maker** (skills: by-example-tutorial-creation, hugo-ayokoding-development):
       - Auto-loads when creating by-example tutorials
       - Provides annotation density standards and Hugo-specific formatting
     - **plan\_\_maker** (skills: gherkin-acceptance-criteria, trunk-based-development):
@@ -339,7 +339,7 @@ And existing agents should continue working without modification
     - ✅ Git branch: main (correct)
     - ✅ Skills created: 10/10 (100% of target range 8-10)
     - ✅ Agents with skills field: 44/44 (100%)
-    - ✅ Agents with Skills references: 5 (docs**maker, docs**checker, apps**ayokoding-fs**general-maker, apps**ayokoding-fs**by-example-maker, plan\_\_maker)
+    - ✅ Agents with Skills references: 5 (docs**maker, docs**checker, apps**ayokoding-web**general-maker, apps**ayokoding-web**by-example-maker, plan\_\_maker)
     - ✅ CLAUDE.md character count: 28,305 / 30,000 (94.4% utilization, 5.6% headroom)
     - ✅ Skills auto-loading: All 10 Skills have clear, action-oriented descriptions
     - ✅ Rules components updated: 3/3 (wow**rules-maker, wow**rules-checker, wow\_\_rules-fixer)
@@ -439,8 +439,8 @@ And existing agents should continue working without modification
     - **Agents with Skills references** (5 agents):
       - docs\_\_maker: Auto-loads color-accessibility-diagrams + maker-checker-fixer-pattern
       - docs\_\_checker: Auto-loads maker-checker-fixer-pattern + criticality-confidence-system
-      - apps**ayokoding-fs**general-maker: Auto-loads hugo-ayokoding-development + color-accessibility-diagrams
-      - apps**ayokoding-fs**by-example-maker: Auto-loads by-example-tutorial-creation + hugo-ayokoding-development
+      - apps**ayokoding-web**general-maker: Auto-loads hugo-ayokoding-development + color-accessibility-diagrams
+      - apps**ayokoding-web**by-example-maker: Auto-loads by-example-tutorial-creation + hugo-ayokoding-development
       - plan\_\_maker: Auto-loads gherkin-acceptance-criteria + trunk-based-development
       - Skills composition: Multiple Skills load together when agent invoked
   - **Backward Compatibility**: Zero breaking changes confirmed (agents with empty Skills work normally)
@@ -458,7 +458,7 @@ And existing agents should continue working without modification
     - **maker-checker-fixer-pattern**: Triggers on "content quality workflows", "validation processes", "audit reports", "maker/checker/fixer roles"
     - **color-accessibility-diagrams**: Triggers on "diagrams", "flowcharts", "Mermaid", "accessibility compliance", "color blindness"
     - **repository-architecture**: Triggers on "repository structure", "six-layer", "governance hierarchy", "layer relationships"
-    - **hugo-ayokoding-development**: Triggers on "ayokoding-fs", "Hextra", "bilingual content", "weight system", "by-example tutorials"
+    - **hugo-ayokoding-development**: Triggers on "ayokoding-web", "Hextra", "bilingual content", "weight system", "by-example tutorials"
     - **by-example-tutorial-creation**: Triggers on "by-example tutorials", "code annotation", "annotation density"
     - **factual-validation-methodology**: Triggers on "factual validation", "verification", "WebSearch", "confidence classification"
     - **trunk-based-development**: Triggers on "git workflow", "trunk-based", "main branch", "feature flags"
@@ -544,7 +544,7 @@ And existing agents should continue working without modification
 - [x] CLAUDE.md includes Skills Infrastructure section (line 247)
 - [x] All Skills accessible (no information loss - all content available via Skills auto-loading)
 - [x] All agents have required `skills:` frontmatter field (44/44 agents = 100%)
-- [x] 5 demonstration agents have actual Skills references (docs**maker, docs**checker, apps**ayokoding-fs**general-maker, apps**ayokoding-fs**by-example-maker, plan\_\_maker)
+- [x] 5 demonstration agents have actual Skills references (docs**maker, docs**checker, apps**ayokoding-web**general-maker, apps**ayokoding-web**by-example-maker, plan\_\_maker)
 - [x] Rules components updated (wow**rules-maker, wow**rules-checker, wow\_\_rules-fixer all have Skills support)
 - [x] All Skills auto-load when relevant tasks described (verified by design - all descriptions action-oriented, 150-250 words, explicit triggers)
 - [x] Skills composition works (multiple Skills load together - documented in Step 2.21)
@@ -675,7 +675,7 @@ Before completing any phase, verify:
 - [x] CLAUDE.md character count ≤30,000 (28,305 characters)
 - [x] CLAUDE.md includes Skills Infrastructure section (line 247)
 - [x] All agents have required `skills:` frontmatter field (44/44 = 100%)
-- [x] 5 demonstration agents have actual Skills references (docs**maker, docs**checker, apps**ayokoding-fs**general-maker, apps**ayokoding-fs**by-example-maker, plan\_\_maker)
+- [x] 5 demonstration agents have actual Skills references (docs**maker, docs**checker, apps**ayokoding-web**general-maker, apps**ayokoding-web**by-example-maker, plan\_\_maker)
 - [x] Rules components updated (wow**rules-maker, wow**rules-checker, wow\_\_rules-fixer)
 - [x] Skills composition tested (documented in Step 2.21)
 - [x] Backward compatibility maintained (39 agents with `skills: []` work normally)

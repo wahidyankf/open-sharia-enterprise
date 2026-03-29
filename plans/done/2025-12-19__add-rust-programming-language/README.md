@@ -11,7 +11,7 @@
 
 ## Overview
 
-This plan outlines the comprehensive implementation of Rust programming language content on ayokoding-fs to meet the highest standards defined in the [Programming Language Content Standard](../../../governance/conventions/tutorials/programming-language-content.md). The project delivers production-ready Rust content with complete tutorials (5 levels), cookbook (30-35 recipes), how-to guides (18), reference documentation, and philosophy sections.
+This plan outlines the comprehensive implementation of Rust programming language content on ayokoding-web to meet the highest standards defined in the [Programming Language Content Standard](../../../governance/conventions/tutorials/programming-language-content.md). The project delivers production-ready Rust content with complete tutorials (5 levels), cookbook (30-35 recipes), how-to guides (18), reference documentation, and philosophy sections.
 
 ### Goals
 
@@ -24,7 +24,7 @@ This plan outlines the comprehensive implementation of Rust programming language
 
 ### Context
 
-Rust is a systems programming language focused on safety, concurrency, and performance. It introduces unique concepts (ownership, borrowing, lifetimes) that require careful pedagogical treatment. Rust's growing adoption in systems programming, WebAssembly, blockchain, and cloud infrastructure makes it essential for ayokoding-fs's programming language coverage.
+Rust is a systems programming language focused on safety, concurrency, and performance. It introduces unique concepts (ownership, borrowing, lifetimes) that require careful pedagogical treatment. Rust's growing adoption in systems programming, WebAssembly, blockchain, and cloud infrastructure makes it essential for ayokoding-web's programming language coverage.
 
 **Rust's Unique Value Proposition:**
 
@@ -45,9 +45,9 @@ Rust language achieves:
 - ✅ 30-35 recipe cookbook (4,000-5,500 lines)
 - ✅ 18 how-to guides covering Rust-specific patterns
 - ✅ Enhanced philosophy sections (overview, best-practices, anti-patterns)
-- ✅ Pass ayokoding-fs-general-checker validation
-- ✅ Pass ayokoding-fs-facts-checker verification
-- ✅ Pass ayokoding-fs-link-checker validation
+- ✅ Pass ayokoding-web-general-checker validation
+- ✅ Pass ayokoding-web-facts-checker verification
+- ✅ Pass ayokoding-web-link-checker validation
 
 ## Plan Structure
 

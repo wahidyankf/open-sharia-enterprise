@@ -1,21 +1,21 @@
 ---
-title: "Hugo Content Convention - oseplatform-fs"
-description: Hugo content conventions specific to oseplatform-fs (PaperMod theme, project landing page)
+title: "Hugo Content Convention - oseplatform-web"
+description: Hugo content conventions specific to oseplatform-web (PaperMod theme, project landing page)
 category: explanation
 subcategory: conventions
 tags:
   - hugo
   - content
-  - oseplatform-fs
+  - oseplatform-web
   - papermod
   - landing-page
 created: 2025-12-13
 updated: 2025-12-13
 ---
 
-# Hugo Content Convention - oseplatform-fs
+# Hugo Content Convention - oseplatform-web
 
-This document defines Hugo content conventions specific to **oseplatform-fs** - an English-only project landing page using the PaperMod theme.
+This document defines Hugo content conventions specific to **oseplatform-web** - an English-only project landing page using the PaperMod theme.
 
 ## Principles Implemented/Respected
 
@@ -27,7 +27,7 @@ This convention implements the following core principles:
 
 ## Purpose
 
-This convention defines content creation standards specific to the oseplatform-fs Hugo site, which uses the PaperMod theme and serves as an English-only landing page. It establishes frontmatter requirements and content patterns unique to oseplatform-fs, complementing the shared Hugo conventions.
+This convention defines content creation standards specific to the oseplatform-web Hugo site, which uses the PaperMod theme and serves as an English-only landing page. It establishes frontmatter requirements and content patterns unique to oseplatform-web, complementing the shared Hugo conventions.
 
 ## Scope
 
@@ -42,9 +42,9 @@ This convention defines content creation standards specific to the oseplatform-f
 ### What This Convention Does NOT Cover
 
 - **Shared Hugo conventions** - Covered in [Hugo Content Shared Convention](./shared.md)
-- **Bilingual content** - This site is English-only, see ayokoding-fs for bilingual patterns
+- **Bilingual content** - This site is English-only, see ayokoding-web for bilingual patterns
 - **Hugo theme development** - Covered in [Hugo Development Convention](../../development/hugo/development.md)
-- **Deployment** - Covered by oseplatform-fs-deployer agent
+- **Deployment** - Covered by oseplatform-web-deployer agent
 
 ## Prerequisites
 
@@ -56,17 +56,17 @@ Read the shared conventions first, as they cover:
 - Adapted conventions (Hugo-specific modifications)
 - Hugo-specific conventions (basic concepts)
 
-This document covers **oseplatform-fs specific patterns only**.
+This document covers **oseplatform-web specific patterns only**.
 
 ---
 
-## oseplatform-fs Overview
+## oseplatform-web Overview
 
 **Site**: [oseplatform.com](https://oseplatform.com)
 **Theme**: PaperMod v7.0+ (compatible with v8.0)
 **Purpose**: English-only project landing page with progress updates
 **Languages**: English only
-**Repository Path**: `apps/oseplatform-fs/`
+**Repository Path**: `apps/oseplatform-web/`
 
 **Content Types**:
 
@@ -78,7 +78,7 @@ This document covers **oseplatform-fs specific patterns only**.
 ## Content Structure
 
 ```
-apps/oseplatform-fs/content/
+apps/oseplatform-web/content/
 ├── updates/                               # Platform updates
 │   ├── _index.md
 │   ├── 2025-12-07-initial-release.md
@@ -161,7 +161,7 @@ Check out our [getting started guide]({{< ref "/updates/getting-started" >}})
 
 ---
 
-## oseplatform-fs Site Patterns
+## oseplatform-web Site Patterns
 
 ### English-Only Content
 
@@ -233,7 +233,7 @@ showtoc: false
 
 - `author:` field is allowed and used per-post
 - Can be single author or multiple authors
-- No site-level default author restriction (unlike ayokoding-fs)
+- No site-level default author restriction (unlike ayokoding-web)
 
 **Example**:
 
@@ -250,7 +250,7 @@ author: ["John Doe", "Jane Smith"]
 
 ## Archetypes
 
-**Location**: `apps/oseplatform-fs/archetypes/`
+**Location**: `apps/oseplatform-web/archetypes/`
 
 **Available Archetypes** (1 total):
 
@@ -304,7 +304,7 @@ series: ["platform-architecture"]
 
 ## Configuration Highlights
 
-**File**: `apps/oseplatform-fs/hugo.yaml`
+**File**: `apps/oseplatform-web/hugo.yaml`
 
 ### Basic Configuration
 
@@ -401,7 +401,7 @@ Before publishing, verify:
 
 ## Asset Organization
 
-**Location**: `apps/oseplatform-fs/static/`
+**Location**: `apps/oseplatform-web/static/`
 
 **Structure**:
 
@@ -431,9 +431,9 @@ static/
 
 ---
 
-## Comparison with ayokoding-fs
+## Comparison with ayokoding-web
 
-| Aspect                 | oseplatform-fs                         | ayokoding-fs                                      |
+| Aspect                 | oseplatform-web                        | ayokoding-web                                     |
 | ---------------------- | -------------------------------------- | ------------------------------------------------- |
 | **Theme**              | PaperMod                               | Hextra                                            |
 | **Languages**          | English only                           | Bilingual (Indonesian/English)                    |
@@ -465,6 +465,6 @@ static/
 
 **Related AI Agents**:
 
-- [apps-oseplatform-fs-content-maker](../../../.claude/agents/apps-oseplatform-fs-content-maker.md) - Creates oseplatform-fs content
-- [apps-oseplatform-fs-content-checker](../../../.claude/agents/apps-oseplatform-fs-content-checker.md) - Validates oseplatform-fs content
-- [apps-oseplatform-fs-deployer](../../../.claude/agents/apps-oseplatform-fs-deployer.md) - Deploys oseplatform-fs to production
+- [apps-oseplatform-web-content-maker](../../../.claude/agents/apps-oseplatform-web-content-maker.md) - Creates oseplatform-web content
+- [apps-oseplatform-web-content-checker](../../../.claude/agents/apps-oseplatform-web-content-checker.md) - Validates oseplatform-web content
+- [apps-oseplatform-web-deployer](../../../.claude/agents/apps-oseplatform-web-deployer.md) - Deploys oseplatform-web to production

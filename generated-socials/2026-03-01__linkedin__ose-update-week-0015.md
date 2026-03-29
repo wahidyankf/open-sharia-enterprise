@@ -31,14 +31,14 @@ Go Ecosystem Expansion:
 - 80% test coverage enforced on all 5 Go projects
 - New `golang-commons` + `hugo-commons` shared libs (link checker utilities)
 - New `oseplatform-cli` (links check) + `javaproject-cli` (Java null-safety validator, extracted from rhino-cli)
-- ayokoding-fs: 96 broken internal links fixed; links check added to test:quick
+- ayokoding-web: 96 broken internal links fixed; links check added to test:quick
 
 OrganicLever Hardening:
 
 - Storybook 10 added; 12 E2E tests fixed across Chromium, Firefox, and WebKit; WebKit auth bug fixed
 - Docker Compose dev + CI integration; PR quality gate + scheduled E2E workflows
 - organiclever-be: JSpecify + NullAway null safety enforcement; organiclever-app-web-e2e deferred
-- Scheduled deploy workflows for ayokoding-fs + oseplatform-fs; Nx cascade builds fixed
+- Scheduled deploy workflows for ayokoding-web + oseplatform-web; Nx cascade builds fixed
 - apps-labs: hello-rust-be (Actix Web + Tokio) — early Rust exploration
 
 **Infrastructure Checklist:**

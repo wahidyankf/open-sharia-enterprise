@@ -40,7 +40,7 @@ so that the tools build cleanly and use current language features.
 
 ### US-3: Hugo Themes
 
-As a content author updating `ayokoding-fs` or `oseplatform-fs`,
+As a content author updating `ayokoding-web` or `oseplatform-web`,
 I want the Hugo themes (Hextra, PaperMod) updated to their latest stable releases
 so that I receive upstream bug fixes and new theme features without manual patching.
 
@@ -92,20 +92,20 @@ And `nx build organiclever-fe` produces a successful production build
 ```gherkin
 Given the Go module audit is complete
 When `go get -u ./...` is run (or targeted updates applied) in each Go module root
-Then go.mod and go.sum are updated for ayokoding-cli, rhino-cli, ayokoding-fs, oseplatform-fs
+Then go.mod and go.sum are updated for ayokoding-cli, rhino-cli, ayokoding-web, oseplatform-web
 And the `go` directive is consistent across all four go.mod files
 And `go build ./...` succeeds in ayokoding-cli and rhino-cli
-And `nx build ayokoding-fs` and `nx build oseplatform-fs` produce successful Hugo builds
+And `nx build ayokoding-web` and `nx build oseplatform-web` produce successful Hugo builds
 ```
 
 ### AC-4: Hugo Themes Updated
 
 ```gherkin
 Given the Hugo theme audit identifies newer releases of Hextra and PaperMod
-When `hugo mod get -u` is run in ayokoding-fs and oseplatform-fs
+When `hugo mod get -u` is run in ayokoding-web and oseplatform-web
 Then go.mod and go.sum reflect the updated theme module versions
-And `nx build ayokoding-fs` succeeds with no layout or shortcode errors
-And `nx build oseplatform-fs` succeeds with no layout or shortcode errors
+And `nx build ayokoding-web` succeeds with no layout or shortcode errors
+And `nx build oseplatform-web` succeeds with no layout or shortcode errors
 ```
 
 ### AC-5: Flutter / Dart Packages Updated

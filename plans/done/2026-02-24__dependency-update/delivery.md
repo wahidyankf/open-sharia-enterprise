@@ -16,7 +16,7 @@ Produce a comprehensive audit report before touching any file.
 
 - [x] Run `npm outdated` in root workspace; capture output to `generated-reports/`
 - [x] Run `go list -u -m all` in each Go module root (`ayokoding-cli`, `rhino-cli`)
-- [x] Run `hugo mod graph` in `ayokoding-fs` and `oseplatform-fs`
+- [x] Run `hugo mod graph` in `ayokoding-web` and `oseplatform-web`
 - [x] Run `flutter pub outdated` in `apps/organiclever-app/`
 - [x] Run `mvn versions:display-dependency-updates` and `mvn versions:display-parent-updates`
       in `apps/organiclever-be/`
@@ -56,16 +56,16 @@ Low-risk. Normalizes Go toolchain version and updates transitive deps.
 
 - [x] Update `ayokoding-cli/go.mod`: change `go 1.24.2` → `go 1.26`
 - [x] Update `rhino-cli/go.mod`: change `go 1.24.2` → `go 1.26`
-- [x] Update `ayokoding-fs/go.mod`: change `go 1.25` → `go 1.26`
-- [x] Update `oseplatform-fs/go.mod`: change `go 1.25` → `go 1.26`
+- [x] Update `ayokoding-web/go.mod`: change `go 1.25` → `go 1.26`
+- [x] Update `oseplatform-web/go.mod`: change `go 1.25` → `go 1.26`
 - [x] Run `go mod tidy` in `apps/ayokoding-cli/` — go.sum updated
 - [x] Run `go mod tidy` in `apps/rhino-cli/` — go.sum updated
-- [x] Run `hugo mod tidy` in `apps/ayokoding-fs/` — go.sum updated
-- [x] Run `hugo mod tidy` in `apps/oseplatform-fs/` — go.sum updated
+- [x] Run `hugo mod tidy` in `apps/ayokoding-web/` — go.sum updated
+- [x] Run `hugo mod tidy` in `apps/oseplatform-web/` — go.sum updated
 - [x] Run `go build ./...` in `apps/ayokoding-cli/` — succeeds
 - [x] Run `go build ./...` in `apps/rhino-cli/` — succeeds
-- [x] Run `nx build ayokoding-fs` — successful Hugo build
-- [x] Run `nx build oseplatform-fs` — successful Hugo build
+- [x] Run `nx build ayokoding-web` — successful Hugo build
+- [x] Run `nx build oseplatform-web` — successful Hugo build
 - [ ] Commit: `chore(deps): normalize go toolchain to 1.26 across all go modules`
 
 ### Phase 4: Hugo Theme Updates
@@ -73,16 +73,16 @@ Low-risk. Normalizes Go toolchain version and updates transitive deps.
 Low-risk. Themes are additive; unlikely to break content rendering.
 
 - [x] Read Hextra v0.12.0 release notes for breaking changes (layout, shortcodes, config)
-- [x] Update Hextra in `ayokoding-fs`:
-      `cd apps/ayokoding-fs && hugo mod get github.com/imfing/hextra@v0.12.0`
-- [x] Run `hugo mod tidy` in `apps/ayokoding-fs/`
-- [x] Run `nx build ayokoding-fs` — no layout errors, no shortcode failures
-- [x] Visually spot-check rendered pages locally: `nx dev ayokoding-fs`
-- [x] Update PaperMod to latest commit in `oseplatform-fs`:
-      `cd apps/oseplatform-fs && hugo mod get -u`
-- [x] Run `hugo mod tidy` in `apps/oseplatform-fs/`
-- [x] Run `nx build oseplatform-fs` — succeeds
-- [x] Visually spot-check: `nx dev oseplatform-fs`
+- [x] Update Hextra in `ayokoding-web`:
+      `cd apps/ayokoding-web && hugo mod get github.com/imfing/hextra@v0.12.0`
+- [x] Run `hugo mod tidy` in `apps/ayokoding-web/`
+- [x] Run `nx build ayokoding-web` — no layout errors, no shortcode failures
+- [x] Visually spot-check rendered pages locally: `nx dev ayokoding-web`
+- [x] Update PaperMod to latest commit in `oseplatform-web`:
+      `cd apps/oseplatform-web && hugo mod get -u`
+- [x] Run `hugo mod tidy` in `apps/oseplatform-web/`
+- [x] Run `nx build oseplatform-web` — succeeds
+- [x] Visually spot-check: `nx dev oseplatform-web`
 - [x] Update Hugo binary version reference in `CLAUDE.md` and any CI config if Hugo version
       changed to `0.156.0 Extended`
 - [ ] Commit: `chore(deps): update hugo themes (hextra v0.12.0, papermod latest)`
@@ -237,8 +237,8 @@ Run after all phases are complete to confirm nothing regressed.
 - [x] `nx affected -t lint` (all projects) — no lint errors
       — `ayokoding-cli:lint` flaky (passes on direct run; Nx detected as flaky task)
 - [x] `nx affected -t test:quick` (all projects) — all pass (10 projects + 1 dependency)
-- [x] `nx build ayokoding-fs` — Hugo build succeeds
-- [x] `nx build oseplatform-fs` — Hugo build succeeds
+- [x] `nx build ayokoding-web` — Hugo build succeeds
+- [x] `nx build oseplatform-web` — Hugo build succeeds
 - [x] `nx build organiclever-fe` — Next.js production build succeeds (11/11 static pages)
 - [x] `go build ./...` in `apps/ayokoding-cli/` — CLI compiles
 - [x] `go build ./...` in `apps/rhino-cli/` — CLI compiles

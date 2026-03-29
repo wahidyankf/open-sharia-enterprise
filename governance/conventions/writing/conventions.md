@@ -394,8 +394,8 @@ Where:
 - `ex-co__file-naming-convention.md`
 - `ex-co__color-accessibility.md`
 - `ex-co__hugo-content-shared.md` (shared Hugo conventions)
-- `ex-co__hugo-content-ayokoding.md` (ayokoding-fs specific)
-- `ex-co__hugo-content-ose-platform.md` (oseplatform-fs specific)
+- `ex-co__hugo-content-ayokoding.md` (ayokoding-web specific)
+- `ex-co__hugo-content-ose-platform.md` (oseplatform-web specific)
 - `ex-co__convention-writing.md` (this file)
 
 **Title vs Filename:**
@@ -551,8 +551,8 @@ Conventions are most effective when enforced or assisted by agents:
 
 - **docs-checker** - Validates documentation follows conventions
 - **docs-link-general-checker** - Enforces linking convention
-- **apps-ayokoding-fs-general-checker** - Validates general Hugo content conventions
-- **apps-ayokoding-fs-by-example-checker** - Validates by-example tutorial conventions
+- **apps-ayokoding-web-general-checker** - Validates general Hugo content conventions
+- **apps-ayokoding-web-by-example-checker** - Validates by-example tutorial conventions
 - **repo-governance-checker** - Audits convention compliance
 
 ### Agent Integration Checklist

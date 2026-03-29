@@ -16,10 +16,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **npm**: 11.10.1
 - **Monorepo**: Nx workspace
 - **Current Apps**:
-  - `oseplatform-fs` - Next.js 16 content platform (TypeScript, tRPC)
-  - `ayokoding-fs` - Next.js 16 fullstack content platform (TypeScript, tRPC)
-  - `ayokoding-fs-be-e2e` - Playwright BE E2E tests for ayokoding-fs tRPC API
-  - `ayokoding-fs-fe-e2e` - Playwright FE E2E tests for ayokoding-fs UI
+  - `oseplatform-web` - Next.js 16 content platform (TypeScript, tRPC)
+  - `ayokoding-web` - Next.js 16 fullstack content platform (TypeScript, tRPC)
+  - `ayokoding-web-be-e2e` - Playwright BE E2E tests for ayokoding-web tRPC API
+  - `ayokoding-web-fe-e2e` - Playwright FE E2E tests for ayokoding-web UI
   - `ayokoding-cli` - Go CLI tool for content link validation
   - `rhino-cli` - Go CLI tool for repository management (Repository Hygiene & INtegration Orchestrator; includes `java validate-annotations`)
   - `oseplatform-cli` - Go CLI tool for OSE Platform site maintenance (link validation)
@@ -54,10 +54,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```
 open-sharia-enterprise/
 ├── apps/                     # Deployable applications (Nx)
-│   ├── oseplatform-fs/    # OSE Platform website
-│   ├── ayokoding-fs/       # AyoKoding website (Next.js 16)
-│   ├── ayokoding-fs-be-e2e/ # Playwright BE E2E tests for ayokoding-fs
-│   ├── ayokoding-fs-fe-e2e/ # Playwright FE E2E tests for ayokoding-fs
+│   ├── oseplatform-web/    # OSE Platform website
+│   ├── ayokoding-web/       # AyoKoding website (Next.js 16)
+│   ├── ayokoding-web-be-e2e/ # Playwright BE E2E tests for ayokoding-web
+│   ├── ayokoding-web-fe-e2e/ # Playwright FE E2E tests for ayokoding-web
 │   ├── ayokoding-cli/       # Content link validation CLI
 │   ├── rhino-cli/          # Repository management CLI (java validate-annotations)
 │   ├── oseplatform-cli/     # OSE Platform site CLI
@@ -170,11 +170,11 @@ from `test:unit` (Vitest): `rhino-cli test-coverage validate apps/a-demo-be-ts-e
 `rhino-cli test-coverage validate` applied to the LCOV output from `test:unit` (Vitest):
 `rhino-cli test-coverage validate apps/organiclever-fe/coverage/lcov.info 70` — run as part of `test:quick`.
 
-**AyoKoding Web**: `ayokoding-fs` enforces ≥80% **line coverage** via
-`rhino-cli test-coverage validate apps/ayokoding-fs/coverage/lcov.info 80` — run as part of `test:quick`.
+**AyoKoding Web**: `ayokoding-web` enforces ≥80% **line coverage** via
+`rhino-cli test-coverage validate apps/ayokoding-web/coverage/lcov.info 80` — run as part of `test:quick`.
 
-**OSE Platform Web**: `oseplatform-fs` enforces ≥80% **line coverage** via
-`rhino-cli test-coverage validate apps/oseplatform-fs/coverage/lcov.info 80` — run as part of `test:quick`.
+**OSE Platform Web**: `oseplatform-web` enforces ≥80% **line coverage** via
+`rhino-cli test-coverage validate apps/oseplatform-web/coverage/lcov.info 80` — run as part of `test:quick`.
 
 **Java projects**: `a-demo-be-java-springboot` and `a-demo-be-java-vertx` enforce ≥90% **line coverage** (matching
 Codecov's algorithm) via `rhino-cli test-coverage validate` applied to the JaCoCo XML report from
@@ -301,8 +301,8 @@ nx graph                     # Visualize dependencies
 
 - **Default branch**: `main`
 - **Environment branches** (Vercel deployment only — never commit directly):
-  - `prod-ayokoding-fs` → [ayokoding.com](https://ayokoding.com)
-  - `prod-oseplatform-fs` → [oseplatform.com](https://oseplatform.com)
+  - `prod-ayokoding-web` → [ayokoding.com](https://ayokoding.com)
+  - `prod-oseplatform-web` → [oseplatform.com](https://oseplatform.com)
   - `prod-organiclever-fe` → [www.organiclever.com](https://www.organiclever.com/)
 - **Commit format**: Conventional Commits `<type>(<scope>): <description>`
   - Types: feat, fix, docs, style, refactor, perf, test, chore, ci, revert
@@ -450,17 +450,17 @@ Plan mode for non-trivial tasks (3+ steps or architecture decisions), subagents 
 
 ## AI Agents
 
-**Content Creation**: docs-maker, docs-tutorial-maker, readme-maker, specs-maker, apps-ayokoding-fs-general-maker, apps-ayokoding-fs-by-example-maker, apps-ayokoding-fs-in-the-field-maker, apps-oseplatform-fs-content-maker, swe-ui-maker
+**Content Creation**: docs-maker, docs-tutorial-maker, readme-maker, specs-maker, apps-ayokoding-web-general-maker, apps-ayokoding-web-by-example-maker, apps-ayokoding-web-in-the-field-maker, apps-oseplatform-web-content-maker, swe-ui-maker
 
-**Validation**: docs-checker, docs-tutorial-checker, docs-link-general-checker, docs-software-engineering-separation-checker, readme-checker, specs-checker, apps-ayokoding-fs-general-checker, apps-ayokoding-fs-by-example-checker, apps-ayokoding-fs-in-the-field-checker, apps-ayokoding-fs-facts-checker, apps-ayokoding-fs-link-checker, apps-oseplatform-fs-content-checker, swe-code-checker, swe-ui-checker
+**Validation**: docs-checker, docs-tutorial-checker, docs-link-general-checker, docs-software-engineering-separation-checker, readme-checker, specs-checker, apps-ayokoding-web-general-checker, apps-ayokoding-web-by-example-checker, apps-ayokoding-web-in-the-field-checker, apps-ayokoding-web-facts-checker, apps-ayokoding-web-link-checker, apps-oseplatform-web-content-checker, swe-code-checker, swe-ui-checker
 
-**Fixing**: docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-fixer, specs-fixer, apps-ayokoding-fs-general-fixer, apps-ayokoding-fs-by-example-fixer, apps-ayokoding-fs-in-the-field-fixer, apps-ayokoding-fs-facts-fixer, apps-ayokoding-fs-link-fixer, apps-oseplatform-fs-content-fixer, docs-file-manager, swe-ui-fixer
+**Fixing**: docs-fixer, docs-tutorial-fixer, docs-software-engineering-separation-fixer, readme-fixer, specs-fixer, apps-ayokoding-web-general-fixer, apps-ayokoding-web-by-example-fixer, apps-ayokoding-web-in-the-field-fixer, apps-ayokoding-web-facts-fixer, apps-ayokoding-web-link-fixer, apps-oseplatform-web-content-fixer, docs-file-manager, swe-ui-fixer
 
 **Planning**: plan-maker, plan-checker, plan-executor, plan-execution-checker, plan-fixer
 
 **Development**: swe-hugo-developer, swe-elixir-developer, swe-golang-developer, swe-java-developer, swe-python-developer, swe-typescript-developer, swe-e2e-test-developer, swe-dart-developer, swe-kotlin-developer, swe-csharp-developer, swe-fsharp-developer, swe-clojure-developer, swe-rust-developer
 
-**Operations**: apps-ayokoding-fs-deployer, apps-oseplatform-fs-deployer, apps-organiclever-fe-deployer
+**Operations**: apps-ayokoding-web-deployer, apps-oseplatform-web-deployer, apps-organiclever-fe-deployer
 
 **Meta**: agent-maker, repo-governance-maker, repo-governance-checker, repo-governance-fixer, repo-workflow-maker, repo-workflow-checker, repo-workflow-fixer, social-linkedin-post-maker
 
@@ -551,10 +551,10 @@ Six-layer governance hierarchy:
 
 ## Web Sites
 
-### oseplatform-fs
+### oseplatform-web
 
 - **URL**: <https://oseplatform.com>
-- **Production branch**: `prod-oseplatform-fs` → oseplatform.com
+- **Production branch**: `prod-oseplatform-web` → oseplatform.com
 - **Framework**: Next.js 16 (App Router, TypeScript, tRPC)
 - **Deployment**: Vercel
 - **Content**: Marketing site for platform
@@ -563,35 +563,35 @@ Six-layer governance hierarchy:
 **Commands**:
 
 ```bash
-nx dev oseplatform-fs                           # Development server (localhost:3100)
-nx build oseplatform-fs                         # Production build
-nx run oseplatform-fs:test:quick                # Unit tests + coverage + link validation
-nx run oseplatform-fs:test:integration          # Integration tests
+nx dev oseplatform-web                           # Development server (localhost:3100)
+nx build oseplatform-web                         # Production build
+nx run oseplatform-web:test:quick                # Unit tests + coverage + link validation
+nx run oseplatform-web:test:integration          # Integration tests
 ```
 
-**See**: [apps/oseplatform-fs/README.md](./apps/oseplatform-fs/README.md)
+**See**: [apps/oseplatform-web/README.md](./apps/oseplatform-web/README.md)
 
-### ayokoding-fs
+### ayokoding-web
 
 - **URL**: <https://ayokoding.com>
-- **Production branch**: `prod-ayokoding-fs` → ayokoding.com
+- **Production branch**: `prod-ayokoding-web` → ayokoding.com
 - **Framework**: Next.js 16 (App Router, TypeScript, tRPC)
 - **Languages**: English (primary), Indonesian
 - **Deployment**: Vercel
 - **Content**: Educational platform (programming, AI, security)
-- **E2E tests**: `ayokoding-fs-be-e2e`, `ayokoding-fs-fe-e2e`
+- **E2E tests**: `ayokoding-web-be-e2e`, `ayokoding-web-fe-e2e`
 
 **Commands**:
 
 ```bash
-nx dev ayokoding-fs                           # Development server (localhost:3101)
-nx build ayokoding-fs                         # Production build
-nx run ayokoding-fs:test:quick                # Unit tests + coverage + link validation
-nx run ayokoding-fs-be-e2e:test:e2e           # Backend E2E tests
-nx run ayokoding-fs-fe-e2e:test:e2e           # Frontend E2E tests
+nx dev ayokoding-web                           # Development server (localhost:3101)
+nx build ayokoding-web                         # Production build
+nx run ayokoding-web:test:quick                # Unit tests + coverage + link validation
+nx run ayokoding-web-be-e2e:test:e2e           # Backend E2E tests
+nx run ayokoding-web-fe-e2e:test:e2e           # Frontend E2E tests
 ```
 
-**See**: [apps/ayokoding-fs/README.md](./apps/ayokoding-fs/README.md)
+**See**: [apps/ayokoding-web/README.md](./apps/ayokoding-web/README.md)
 
 ### organiclever-fe
 

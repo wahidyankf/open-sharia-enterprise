@@ -15,7 +15,7 @@ Per-app brand guidance for UI development decisions.
 - **UI character**: Dense data tables, charts, minimal decoration, productivity-focused
 - **Framework**: Next.js 16, Tailwind v4, shadcn/ui, Storybook
 
-## ayokoding-fs
+## ayokoding-web
 
 - **Product**: Educational coding platform (AyoKoding)
 - **URL**: ayokoding.com
@@ -45,7 +45,7 @@ Per-app brand guidance for UI development decisions.
 - **Palette**: Material 3 theme defaults
 - **Note**: Cannot share React components — can consume CSS tokens via generated Dart constants
 
-## oseplatform-fs
+## oseplatform-web
 
 - **Product**: OSE Platform marketing site
 - **URL**: oseplatform.com

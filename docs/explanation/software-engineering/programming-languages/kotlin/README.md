@@ -86,12 +86,12 @@ OSE Platform Kotlin applications MUST use the following stack:
 
 **You MUST understand Kotlin fundamentals before using these standards:**
 
-- **[Kotlin Learning Path](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/kotlin/)** - Complete 0-95% language coverage
-- **[Kotlin By Example](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/kotlin/by-example/)** - Annotated code examples (beginner to advanced)
+- **[Kotlin Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/kotlin/)** - Complete 0-95% language coverage
+- **[Kotlin By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/kotlin/by-example/)** - Annotated code examples (beginner to advanced)
 
 **What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply Kotlin knowledge in THIS codebase.
 
-**What this documentation does NOT cover**: Kotlin syntax, language fundamentals, generic patterns (those are in ayokoding-fs).
+**What this documentation does NOT cover**: Kotlin syntax, language fundamentals, generic patterns (those are in ayokoding-web).
 
 **See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 

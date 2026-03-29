@@ -23,7 +23,7 @@ Week 8: Established comprehensive governance hierarchy: Vision → Principles �
 🤖 **45 Specialized AI Agents: NEW**
 
 Week 7: 20+ agents in development.
-Week 8: Completed Agent Simplification Plan with scope-prefixed naming (`docs-*`, `apps-ayokoding-fs-*`, `apps-ose-platform-web-*`, `readme-*`, `plan-*`). All 45 agents follow consistent patterns with maker-checker-fixer quality workflow.
+Week 8: Completed Agent Simplification Plan with scope-prefixed naming (`docs-*`, `apps-ayokoding-web-*`, `apps-ose-platform-web-*`, `readme-*`, `plan-*`). All 45 agents follow consistent patterns with maker-checker-fixer quality workflow.
 
 📦 **23 Skills Infrastructure: NEW**
 

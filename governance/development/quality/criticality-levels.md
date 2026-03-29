@@ -32,7 +32,7 @@ This convention establishes a universal **four-level criticality system** (CRITI
 **Problem**: Seven different severity classification systems existed across checker agents, causing confusion and inconsistency:
 
 - `repo-governance-checker`: Critical/Important/Minor
-- `apps-ayokoding-fs-general-checker`: Must Fix/Warnings/Suggestions
+- `apps-ayokoding-web-general-checker`: Must Fix/Warnings/Suggestions
 - `readme-checker`: High/Medium/Low Priority
 - `docs-checker`: [Verified]/[Error]/[Outdated] (verification-based, NOT severity)
 - `docs-link-general-checker`: [OK]/[BROKEN]/[REDIRECT] (status-based, NOT severity)
@@ -56,7 +56,7 @@ See [Fixer Confidence Levels Convention](./fixer-confidence-levels.md) for compl
 
 ### 1. Missing Required Field Breaks Hugo Build
 
-**File**: `apps/ayokoding-fs/content/en/programming/python/_index.md:3`
+**File**: `apps/ayokoding-web/content/en/programming/python/_index.md:3`
 **Criticality**: CRITICAL - Breaks Hugo build process
 **Confidence**: HIGH - Field objectively missing from frontmatter
 
@@ -95,7 +95,7 @@ See [Fixer Confidence Levels Convention](./fixer-confidence-levels.md) for compl
 - Agent `name` field doesn't match filename (breaks agent discovery)
 - Broken internal link to non-existent file in documentation
 
-**Hugo Content (ayokoding-fs/oseplatform-fs)**:
+**Hugo Content (ayokoding-web/oseplatform-web)**:
 
 - Missing required `title` field (Hugo build fails)
 - Invalid frontmatter syntax (YAML parsing error)
@@ -547,9 +547,9 @@ Run `{agent-family}-fixer` on this audit report:
 
 - `docs-checker` - Verification labels ([Verified], [Error], [Outdated], [Unverified])
 - `docs-tutorial-checker` - Verification labels
-- `apps-ayokoding-fs-facts-checker` - Verification labels
+- `apps-ayokoding-web-facts-checker` - Verification labels
 - `docs-link-general-checker` - Status labels ([OK], [BROKEN], [REDIRECT])
-- `apps-ayokoding-fs-link-checker` - Status labels
+- `apps-ayokoding-web-link-checker` - Status labels
 
 **Format for dual-label findings**:
 
@@ -654,7 +654,7 @@ Update link to current documentation URL or find alternative resource
 - Consider alternative organization
 - Potential future sections
 
-### Hugo Content - ayokoding-fs (general-checker, facts-checker, structure-checker, link-checker)
+### Hugo Content - ayokoding-web (general-checker, facts-checker, structure-checker, link-checker)
 
 **CRITICAL**:
 
@@ -684,7 +684,7 @@ Update link to current documentation URL or find alternative resource
 - Potential cross-linking opportunity
 - Suggest mentioning alternative approach
 
-### Hugo Content - oseplatform-fs (content-checker)
+### Hugo Content - oseplatform-web (content-checker)
 
 **CRITICAL**:
 
@@ -819,7 +819,7 @@ Update link to current documentation URL or find alternative resource
 - Consider alternative agent selection
 - Potential optimization
 
-### By-Example Tutorials (apps-ayokoding-fs-by-example-checker)
+### By-Example Tutorials (apps-ayokoding-web-by-example-checker)
 
 **CRITICAL**:
 
@@ -1375,10 +1375,10 @@ Existing agents using different terminology should migrate to this convention.
 
 **Severity-Based Family**:
 
-- apps-ayokoding-fs-general-checker
-- apps-ayokoding-fs-by-example-checker
-- apps-ayokoding-fs-in-the-field-checker
-- apps-oseplatform-fs-content-checker
+- apps-ayokoding-web-general-checker
+- apps-ayokoding-web-by-example-checker
+- apps-ayokoding-web-in-the-field-checker
+- apps-oseplatform-web-content-checker
 - repo-workflow-checker
 
 **Dual-Label Family** (preserve existing labels + add criticality):
@@ -1386,8 +1386,8 @@ Existing agents using different terminology should migrate to this convention.
 - docs-checker ([Verified]/[Error]/[Outdated] + CRITICAL/HIGH/MEDIUM/LOW)
 - docs-tutorial-checker
 - docs-software-engineering-separation-checker
-- apps-ayokoding-fs-facts-checker
-- apps-ayokoding-fs-link-checker
+- apps-ayokoding-web-facts-checker
+- apps-ayokoding-web-link-checker
 - docs-link-general-checker ([OK]/[BROKEN]/[REDIRECT] + CRITICAL/HIGH/MEDIUM/LOW)
 - repo-governance-checker
 
@@ -1402,14 +1402,14 @@ Existing agents using different terminology should migrate to this convention.
 Update all fixer agents to use priority-based execution:
 
 - repo-governance-fixer (pilot)
-- apps-ayokoding-fs-general-fixer
-- apps-ayokoding-fs-by-example-fixer
-- apps-ayokoding-fs-facts-fixer
-- apps-ayokoding-fs-in-the-field-fixer
-- apps-ayokoding-fs-link-fixer
+- apps-ayokoding-web-general-fixer
+- apps-ayokoding-web-by-example-fixer
+- apps-ayokoding-web-facts-fixer
+- apps-ayokoding-web-in-the-field-fixer
+- apps-ayokoding-web-link-fixer
 - docs-tutorial-fixer
 - docs-software-engineering-separation-fixer
-- apps-oseplatform-fs-content-fixer
+- apps-oseplatform-web-content-fixer
 - readme-fixer
 - docs-fixer
 - plan-fixer

@@ -21,9 +21,9 @@ Technology stack summary, quality tools, and future architecture considerations 
 **Static Sites** (Hugo):
 
 - **Hugo**: 0.156.0 Extended
-- **Themes**: PaperMod (oseplatform-fs)
+- **Themes**: PaperMod (oseplatform-web)
 - **Deployment**: Vercel
-- **Applications**: oseplatform-fs
+- **Applications**: oseplatform-web
 
 **Web Applications** (Next.js):
 
@@ -31,7 +31,7 @@ Technology stack summary, quality tools, and future architecture considerations 
 - **React**: 19
 - **Styling**: TailwindCSS + Radix UI / shadcn-ui
 - **Deployment**: Vercel
-- **Applications**: organiclever-fe, ayokoding-fs (with tRPC backend)
+- **Applications**: organiclever-fe, ayokoding-web (with tRPC backend)
 
 ### Backend
 

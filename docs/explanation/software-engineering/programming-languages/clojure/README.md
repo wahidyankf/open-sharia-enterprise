@@ -86,12 +86,12 @@ OSE Platform Clojure applications MUST use the following stack:
 
 **You MUST understand Clojure fundamentals before using these standards:**
 
-- **[Clojure Learning Path](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/clojure/)** - Complete language coverage
-- **[Clojure By Example](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/clojure/by-example/)** - Annotated code examples (beginner to advanced)
+- **[Clojure Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/clojure/)** - Complete language coverage
+- **[Clojure By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/clojure/by-example/)** - Annotated code examples (beginner to advanced)
 
 **What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply Clojure knowledge in THIS codebase.
 
-**What this documentation does NOT cover**: Clojure syntax, language fundamentals, REPL basics, S-expression syntax (those are in ayokoding-fs).
+**What this documentation does NOT cover**: Clojure syntax, language fundamentals, REPL basics, S-expression syntax (those are in ayokoding-web).
 
 **See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 

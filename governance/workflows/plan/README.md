@@ -19,7 +19,7 @@ These workflows define **WHEN and HOW to validate and execute plans**, orchestra
 **❌ Not Included:**
 
 - Content quality validation (that's docs/)
-- Hugo content validation (that's ayokoding-fs/)
+- Hugo content validation (that's ayokoding-web/)
 - Single-agent operations (use agents directly)
 
 ## Workflows

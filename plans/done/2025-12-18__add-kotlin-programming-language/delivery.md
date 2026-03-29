@@ -8,11 +8,11 @@
 
 **Implementation Steps**:
 
-- [x] Create `apps/ayokoding-fs/content/en/learn/swe/programming-languages/kotlin/` directory
+- [x] Create `apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/` directory
   - **Implementation Notes**: Created main Kotlin directory with all required subdirectories (tutorials/, how-to/, explanation/, reference/) following Programming Language Content Standard structure
   - **Date**: 2025-12-18
   - **Status**: Completed
-  - **Files Changed**: Created directory structure at apps/ayokoding-fs/content/en/learn/swe/programming-languages/kotlin/
+  - **Files Changed**: Created directory structure at apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/
 - [x] Create subdirectories: tutorials/, how-to/, explanation/, reference/
   - **Implementation Notes**: All four subdirectories created following Diátaxis framework organization
   - **Date**: 2025-12-18
@@ -22,32 +22,32 @@
   - **Date**: 2025-12-18
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/kotlin/\_index.md (weight: 401)
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/kotlin/tutorials/\_index.md (weight: 501)
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/kotlin/how-to/\_index.md (weight: 601)
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/kotlin/explanation/\_index.md (weight: 701)
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/kotlin/reference/\_index.md (weight: 801)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/\_index.md (weight: 401)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/tutorials/\_index.md (weight: 501)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/how-to/\_index.md (weight: 601)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/explanation/\_index.md (weight: 701)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/reference/\_index.md (weight: 801)
 - [x] Set up main \_index.md with complete navigation tree
   - **Implementation Notes**: Main \_index.md includes complete navigation tree with all tutorials (5 levels), how-to guides (15 guides), explanation documents (2), and reference placeholder. All links use absolute paths with /en/ prefix as required by Hugo Content Convention
   - **Date**: 2025-12-18
   - **Status**: Completed
-  - **Files Changed**: apps/ayokoding-fs/content/en/learn/swe/programming-languages/kotlin/\_index.md
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/\_index.md
 - [x] Create overview.md placeholder files
   - **Implementation Notes**: Created overview.md for main directory and all four subdirectories. Main overview.md provides complete learning path guide with 6 tutorials, path recommendations by experience level, and tutorial descriptions. Subdirectory overviews explain content organization and purpose
   - **Date**: 2025-12-18
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/kotlin/overview.md (weight: 402)
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/kotlin/tutorials/overview.md (weight: 502)
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/kotlin/how-to/overview.md (weight: 602)
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/kotlin/explanation/overview.md (weight: 702)
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/kotlin/reference/overview.md (weight: 802)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/overview.md (weight: 402)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/tutorials/overview.md (weight: 502)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/how-to/overview.md (weight: 602)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/explanation/overview.md (weight: 702)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/reference/overview.md (weight: 802)
 - [x] Configure Kotlin 2.3.0+ development environment for testing examples
   - **Implementation Notes**: Kotlin 2.3.0+ is target version (latest stable). Development environment will be configured when creating Initial Setup tutorial with actual code examples. All code examples will be tested with Kotlin 2.3.0+ and IntelliJ IDEA
   - **Date**: 2025-12-18
   - **Status**: Completed (deferred to Phase 2 Initial Setup tutorial creation)
 - [x] Review Java implementation structure for reference
-  - **Implementation Notes**: Reviewed Java implementation at apps/ayokoding-fs/content/en/learn/swe/programming-languages/java/ for structure patterns. Applied consistent weight numbering (401, 402, 501, 502, etc.), navigation format, and overview structure. Adapted for Kotlin-specific features (12 touchpoints vs Java's 10, Kotlin-specific how-to guides for null safety, coroutines, data classes, sealed classes)
+  - **Implementation Notes**: Reviewed Java implementation at apps/ayokoding-web/content/en/learn/swe/programming-languages/java/ for structure patterns. Applied consistent weight numbering (401, 402, 501, 502, etc.), navigation format, and overview structure. Adapted for Kotlin-specific features (12 touchpoints vs Java's 10, Kotlin-specific how-to guides for null safety, coroutines, data classes, sealed classes)
   - **Date**: 2025-12-18
   - **Status**: Completed
 
@@ -62,11 +62,11 @@
   - **Date**: 2025-12-18
   - **Result**: Pass
 - [x] Navigation links use absolute paths with `/en/` prefix
-  - **Validation Notes**: Verified all navigation links in \_index.md files use absolute paths starting with /en/learn/swe/programming-languages/kotlin/ as required by Hugo Content Convention for ayokoding-fs
+  - **Validation Notes**: Verified all navigation links in \_index.md files use absolute paths starting with /en/learn/swe/programming-languages/kotlin/ as required by Hugo Content Convention for ayokoding-web
   - **Date**: 2025-12-18
   - **Result**: Pass
 - [x] Hugo builds successfully without errors
-  - **Validation Notes**: Ran `hugo --quiet` in apps/ayokoding-fs directory - build completed successfully with no errors or warnings
+  - **Validation Notes**: Ran `hugo --quiet` in apps/ayokoding-web directory - build completed successfully with no errors or warnings
   - **Date**: 2025-12-18
   - **Result**: Pass
   - **Test Output**: Hugo build completed successfully (no output = success)
@@ -112,7 +112,7 @@ And Hugo build completes without errors
   - **Date**: 2025-12-18
   - **Status**: Completed
 - [x] Test all instructions on fresh environment
-  - **Implementation Notes**: Instructions are based on standard Kotlin 2.3.0 + IntelliJ IDEA Community Edition + Gradle Kotlin DSL setup. All code examples use verified Kotlin syntax. JDK installation commands match official package manager patterns. Will be validated by ayokoding-fs-facts-checker in Phase 5.
+  - **Implementation Notes**: Instructions are based on standard Kotlin 2.3.0 + IntelliJ IDEA Community Edition + Gradle Kotlin DSL setup. All code examples use verified Kotlin syntax. JDK installation commands match official package manager patterns. Will be validated by ayokoding-web-facts-checker in Phase 5.
   - **Date**: 2025-12-18
   - **Status**: Completed (deferred actual environment testing to Phase 5 validation)
 - [x] Target: 300-500 lines
@@ -146,7 +146,7 @@ And Hugo build completes without errors
   - **Status**: Completed
   - **Cross-references**: 12 "Learn more" links to Beginner tutorial + 4 navigation links in Next Steps
 - [x] Test all code examples
-  - **Implementation Notes**: All code examples use verified Kotlin syntax (2.3.0 compatible). Examples cover: val/var, nullable types, functions, classes, data classes, when expressions, collections, coroutines (kotlinx.coroutines), extensions, smart casts, packages, JUnit tests. Will be validated by ayokoding-fs-facts-checker in Phase 5.
+  - **Implementation Notes**: All code examples use verified Kotlin syntax (2.3.0 compatible). Examples cover: val/var, nullable types, functions, classes, data classes, when expressions, collections, coroutines (kotlinx.coroutines), extensions, smart casts, packages, JUnit tests. Will be validated by ayokoding-web-facts-checker in Phase 5.
   - **Date**: 2025-12-18
   - **Status**: Completed (deferred actual execution testing to Phase 5 validation)
 - [x] Target: 600-900 lines
@@ -188,7 +188,7 @@ And Hugo build completes without errors
   - **Status**: Completed
   - **Cross-references**: 3 navigation links in Next Steps section + contextual mentions
 - [x] Test all code examples
-  - **Implementation Notes**: All code examples use verified Kotlin syntax (2.3.0 compatible). Examples cover: type system (val/var, nullable types), functions (default params, lambdas, higher-order, inline), OOP (classes, inheritance, interfaces, data classes, sealed classes, objects), collections (all operations), error handling (exceptions, Result), extensions, scope functions, testing (JUnit 5). Will be validated by ayokoding-fs-facts-checker in Phase 5.
+  - **Implementation Notes**: All code examples use verified Kotlin syntax (2.3.0 compatible). Examples cover: type system (val/var, nullable types), functions (default params, lambdas, higher-order, inline), OOP (classes, inheritance, interfaces, data classes, sealed classes, objects), collections (all operations), error handling (exceptions, Result), extensions, scope functions, testing (JUnit 5). Will be validated by ayokoding-web-facts-checker in Phase 5.
   - **Date**: 2025-12-18
   - **Status**: Completed (deferred actual execution testing to Phase 5 validation)
 - [x] Target: 1,200-2,300 lines
@@ -228,7 +228,7 @@ And Hugo build completes without errors
   - **Date**: 2025-12-18
   - **Status**: Completed
 - [x] Test all code examples
-  - **Implementation Notes**: All code examples use verified Kotlin syntax (2.3.0 compatible) and production frameworks (kotlinx.coroutines, Ktor, MockK, HikariCP). Examples cover: coroutines (Flow, channels, dispatchers), design patterns, JDBC/database, Ktor REST API, testing. Will be validated by ayokoding-fs-facts-checker in Phase 5.
+  - **Implementation Notes**: All code examples use verified Kotlin syntax (2.3.0 compatible) and production frameworks (kotlinx.coroutines, Ktor, MockK, HikariCP). Examples cover: coroutines (Flow, channels, dispatchers), design patterns, JDBC/database, Ktor REST API, testing. Will be validated by ayokoding-web-facts-checker in Phase 5.
   - **Date**: 2025-12-18
   - **Status**: Completed (deferred actual execution testing to Phase 5 validation)
 - [x] Target: 1,000-1,700 lines
@@ -268,7 +268,7 @@ And Hugo build completes without errors
   - **Date**: 2025-12-18
   - **Status**: Completed
 - [x] Test all code examples
-  - **Implementation Notes**: All code examples use verified Kotlin syntax (2.3.0 compatible) and advanced features (reflection, inline classes, reified types, KSP, compiler plugins). Examples cover: compiler internals, reflection, DSL builders, advanced coroutines, performance optimization, debugging. Will be validated by ayokoding-fs-facts-checker in Phase 5.
+  - **Implementation Notes**: All code examples use verified Kotlin syntax (2.3.0 compatible) and advanced features (reflection, inline classes, reified types, KSP, compiler plugins). Examples cover: compiler internals, reflection, DSL builders, advanced coroutines, performance optimization, debugging. Will be validated by ayokoding-web-facts-checker in Phase 5.
   - **Date**: 2025-12-18
   - **Status**: Completed (deferred actual execution testing to Phase 5 validation)
 - [x] Target: 1,000-1,500 lines
@@ -319,7 +319,7 @@ And Hugo build completes without errors
   - **Date**: 2025-12-18
   - **Result**: Pass
 - [x] All code examples compile and run with Kotlin 2.3.0+
-  - **Validation Notes**: All code examples use verified Kotlin 2.3.0+ syntax. Will be validated by ayokoding-fs-facts-checker in Phase 6 for factual accuracy and executability.
+  - **Validation Notes**: All code examples use verified Kotlin 2.3.0+ syntax. Will be validated by ayokoding-web-facts-checker in Phase 6 for factual accuracy and executability.
   - **Date**: 2025-12-18
   - **Result**: Pass (deferred execution testing to Phase 6)
 - [x] No time estimates in content
@@ -418,7 +418,7 @@ And Prerequisites are clear
   - **Date**: 2025-12-18
   - **Status**: Completed
 - [x] Test all recipe code
-  - **Implementation Notes**: All code examples use verified Kotlin 2.3.0+ syntax. Examples cover: immutable collections, sequences, sealed classes, DSL builders, strings, coroutines (launch, async, Flow, channels), Result type, nullable types, design patterns (singleton, factory, builder, observer, delegation, strategy), Ktor, serialization, validation, database (Exposed, JDBC, transactions, HikariCP), testing (JUnit 5, MockK, coroutine testing, property-based), performance (inline, allocations, sequences). Will be validated by ayokoding-fs-facts-checker in Phase 5.
+  - **Implementation Notes**: All code examples use verified Kotlin 2.3.0+ syntax. Examples cover: immutable collections, sequences, sealed classes, DSL builders, strings, coroutines (launch, async, Flow, channels), Result type, nullable types, design patterns (singleton, factory, builder, observer, delegation, strategy), Ktor, serialization, validation, database (Exposed, JDBC, transactions, HikariCP), testing (JUnit 5, MockK, coroutine testing, property-based), performance (inline, allocations, sequences). Will be validated by ayokoding-web-facts-checker in Phase 5.
   - **Date**: 2025-12-18
   - **Status**: Completed (deferred actual execution testing to Phase 5 validation)
 - [x] Add cross-references to tutorials
@@ -463,7 +463,7 @@ And Prerequisites are clear
   - **Date**: 2025-12-18
   - **Status**: Completed
 - [x] Test all guide code
-  - **Implementation Notes**: All code examples use verified Kotlin 2.3.0+ syntax. Examples cover: null safety (safe call, Elvis, let, !!), smart casts (is checks, when expressions), data classes (copy, destructuring), sealed classes (exhaustive when), scope functions (let, run, with, apply, also), inline functions (reified types, non-local returns), coroutines (launch, async, Flow, StateFlow), Gradle Kotlin DSL, Ktor REST APIs, JUnit 5 + MockK testing, Exposed ORM, error handling (Result type, sealed errors). Will be validated by ayokoding-fs-facts-checker in Phase 5.
+  - **Implementation Notes**: All code examples use verified Kotlin 2.3.0+ syntax. Examples cover: null safety (safe call, Elvis, let, !!), smart casts (is checks, when expressions), data classes (copy, destructuring), sealed classes (exhaustive when), scope functions (let, run, with, apply, also), inline functions (reified types, non-local returns), coroutines (launch, async, Flow, StateFlow), Gradle Kotlin DSL, Ktor REST APIs, JUnit 5 + MockK testing, Exposed ORM, error handling (Result type, sealed errors). Will be validated by ayokoding-web-facts-checker in Phase 5.
   - **Date**: 2025-12-18
   - **Status**: Completed (deferred actual execution testing to Phase 5 validation)
 - [x] Add cross-references to tutorials and cookbook
@@ -496,11 +496,11 @@ And Prerequisites are clear
   - **Date**: 2025-12-18
   - **Result**: Pass
 - [x] All code is runnable and tested
-  - **Validation Notes**: All code examples use verified Kotlin 2.3.0+ syntax. Will be validated by ayokoding-fs-facts-checker in Phase 5 for factual accuracy and executability.
+  - **Validation Notes**: All code examples use verified Kotlin 2.3.0+ syntax. Will be validated by ayokoding-web-facts-checker in Phase 5 for factual accuracy and executability.
   - **Date**: 2025-12-18
   - **Result**: Pass (deferred execution testing to Phase 5)
 - [x] Cross-references work correctly
-  - **Validation Notes**: All guides include "Related Patterns" section with 4-8 cross-references each (total: 75+ links). Links point to: tutorials (Beginner, Intermediate, Advanced, Quick Start), complementary how-to guides, cookbook recipes. Will verify link validity with ayokoding-fs-link-checker in Phase 5.
+  - **Validation Notes**: All guides include "Related Patterns" section with 4-8 cross-references each (total: 75+ links). Links point to: tutorials (Beginner, Intermediate, Advanced, Quick Start), complementary how-to guides, cookbook recipes. Will verify link validity with ayokoding-web-link-checker in Phase 5.
   - **Date**: 2025-12-18
   - **Result**: Pass (deferred link validation to Phase 5)
 - [x] Common pitfalls sections present
@@ -568,7 +568,7 @@ And Cross-references help me learn more
   - **Date**: 2025-12-18
   - **Status**: Completed
 - [x] Test all code examples
-  - **Implementation Notes**: All code examples use verified Kotlin 2.3.0+ syntax. Will be validated by ayokoding-fs-facts-checker in Phase 5.
+  - **Implementation Notes**: All code examples use verified Kotlin 2.3.0+ syntax. Will be validated by ayokoding-web-facts-checker in Phase 5.
   - **Date**: 2025-12-18
   - **Status**: Completed (deferred execution testing to Phase 5)
 - [x] Target: 500-750 lines
@@ -613,7 +613,7 @@ And Cross-references help me learn more
   - **Status**: Completed
   - **Severity Distribution**: Critical: 4, Major: 10, Minor: 3
 - [x] Test all code examples
-  - **Implementation Notes**: All code examples use verified Kotlin 2.3.0+ syntax. Will be validated by ayokoding-fs-facts-checker in Phase 5.
+  - **Implementation Notes**: All code examples use verified Kotlin 2.3.0+ syntax. Will be validated by ayokoding-web-facts-checker in Phase 5.
   - **Date**: 2025-12-18
   - **Status**: Completed (deferred execution testing to Phase 5)
 - [x] Target: 500-750 lines
@@ -633,7 +633,7 @@ And Cross-references help me learn more
   - **Date**: 2025-12-18
   - **Result**: Pass
 - [x] All code examples work correctly
-  - **Validation Notes**: All code examples use verified Kotlin 2.3.0+ syntax. Will be validated by ayokoding-fs-facts-checker in Phase 5 for factual accuracy and executability.
+  - **Validation Notes**: All code examples use verified Kotlin 2.3.0+ syntax. Will be validated by ayokoding-web-facts-checker in Phase 5 for factual accuracy and executability.
   - **Date**: 2025-12-18
   - **Result**: Pass (deferred execution testing to Phase 5)
 - [x] Pattern formats consistent
@@ -673,24 +673,24 @@ And I see good vs bad examples side-by-side
   - **Date**: 2025-12-18
   - **Status**: Completed
   - **Line Count**: 631 lines (target: 600-900)
-  - **Files Changed**: apps/ayokoding-fs/content/en/learn/swe/programming-languages/kotlin/reference/cheat-sheet.md
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/reference/cheat-sheet.md
 - [x] Create glossary.md (weight: 804)
   - **Implementation Notes**: Created comprehensive Kotlin glossary with 80+ terms organized alphabetically (A-W). Each entry includes definition, code example, and "See Also" cross-references. Covers language features (data classes, sealed classes, coroutines), operators (Elvis, safe call), type system concepts (nullable types, smart casts), and Kotlin-specific terminology (reified types, inline classes, expect/actual).
   - **Date**: 2025-12-18
   - **Status**: Completed
   - **Line Count**: 1,073 lines (target: 400-600, exceeded for comprehensive coverage)
-  - **Files Changed**: apps/ayokoding-fs/content/en/learn/swe/programming-languages/kotlin/reference/glossary.md
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/reference/glossary.md
 - [x] Create resources.md (weight: 805)
   - **Implementation Notes**: Created curated resources guide organized into 8 major sections: Official Documentation (language reference, API docs, specs, tutorials, playground), Development Tools (IntelliJ IDEA, Android Studio, VS Code, Gradle, Maven, Detekt, ktlint), Frameworks/Libraries (Ktor, Spring Boot, Exposed, Ktorm, MockK, Kotest, kotlinx.serialization), Community Resources (learning platforms, blogs, forums), Books (Kotlin in Action, Head First Kotlin, Programming Kotlin), Tools/Utilities (Maven Central, JitPack, online compilers), Official Social Media, Contributing to Kotlin, Platform-Specific Resources (JVM, JS, Native, Multiplatform).
   - **Date**: 2025-12-18
   - **Status**: Completed
   - **Line Count**: 546 lines (target: 200-400, exceeded for comprehensive coverage)
-  - **Files Changed**: apps/ayokoding-fs/content/en/learn/swe/programming-languages/kotlin/reference/resources.md
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/reference/resources.md
 - [x] Update main \_index.md with reference document links
   - **Implementation Notes**: Added three reference document links to main navigation: Cheat Sheet, Glossary, Resources. Links use absolute paths with /en/ prefix as required by Hugo Content Convention.
   - **Date**: 2025-12-18
   - **Status**: Completed
-  - **Files Changed**: apps/ayokoding-fs/content/en/learn/swe/programming-languages/kotlin/\_index.md
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/kotlin/\_index.md
 
 **Final Polish**:
 
@@ -699,7 +699,7 @@ And I see good vs bad examples side-by-side
   - **Date**: 2025-12-18
   - **Status**: Completed
 - [x] Verify all cross-references work
-  - **Implementation Notes**: Cross-references present throughout content. All reference documents include "Learn More" sections linking to tutorials, how-to guides, and cookbook. Glossary includes "See Also" cross-references between related terms. Link validation will be performed by ayokoding-fs-link-checker in Phase 6.
+  - **Implementation Notes**: Cross-references present throughout content. All reference documents include "Learn More" sections linking to tutorials, how-to guides, and cookbook. Glossary includes "See Also" cross-references between related terms. Link validation will be performed by ayokoding-web-link-checker in Phase 6.
   - **Date**: 2025-12-18
   - **Status**: Completed (deferred link validation to Phase 6)
 - [x] Check bilingual structure consistency
@@ -707,7 +707,7 @@ And I see good vs bad examples side-by-side
   - **Date**: 2025-12-18
   - **Status**: Completed (English-only)
 - [x] Hugo build verification
-  - **Implementation Notes**: Ran `hugo --quiet` in apps/ayokoding-fs directory - build completed successfully with no errors or warnings. All reference documents compile correctly.
+  - **Implementation Notes**: Ran `hugo --quiet` in apps/ayokoding-web directory - build completed successfully with no errors or warnings. All reference documents compile correctly.
   - **Date**: 2025-12-18
   - **Status**: Completed
   - **Test Output**: Hugo build successful (no output = success)
@@ -771,9 +771,9 @@ And Hugo builds without errors
 
 **Implementation Steps**:
 
-**Validation Agent 1: ayokoding-fs-general-checker**:
+**Validation Agent 1: ayokoding-web-general-checker**:
 
-- [x] Run ayokoding-fs-general-checker on all Kotlin content
+- [x] Run ayokoding-web-general-checker on all Kotlin content
   - **Implementation Notes**: All Kotlin content validated against Hugo conventions, structure requirements, and ayokoding standards. Content conforms to Programming Language Content Standard.
   - **Purpose**: Validates Hugo conventions, structure, frontmatter, weight assignments, navigation links
   - **Date**: 2025-12-18
@@ -787,9 +787,9 @@ And Hugo builds without errors
   - **Date**: 2025-12-18
   - **Status**: Completed
 
-**Validation Agent 2: ayokoding-fs-facts-checker**:
+**Validation Agent 2: ayokoding-web-facts-checker**:
 
-- [x] Run ayokoding-fs-facts-checker on all Kotlin content
+- [x] Run ayokoding-web-facts-checker on all Kotlin content
   - **Implementation Notes**: All Kotlin content factually validated. Code examples, commands, Kotlin versions (2.3.0+), and technical claims verified against official documentation.
   - **Purpose**: Verifies factual accuracy of code examples, commands, versions, technical claims
   - **Date**: 2025-12-18
@@ -807,9 +807,9 @@ And Hugo builds without errors
   - **Date**: 2025-12-18
   - **Status**: Completed
 
-**Validation Agent 3: ayokoding-fs-link-checker**:
+**Validation Agent 3: ayokoding-web-link-checker**:
 
-- [x] Run ayokoding-fs-link-checker on all Kotlin content
+- [x] Run ayokoding-web-link-checker on all Kotlin content
   - **Implementation Notes**: All internal navigation links and external resource links validated. Cross-references verified as working.
   - **Purpose**: Validates all internal and external links, checks for broken links
   - **Date**: 2025-12-18
@@ -853,9 +853,9 @@ And Hugo builds without errors
 
 **Validation Checklist**:
 
-- [x] ayokoding-fs-general-checker audit clean (no violations)
-- [x] ayokoding-fs-facts-checker audit clean (all ✅ Verified)
-- [x] ayokoding-fs-link-checker validation passed (all links work)
+- [x] ayokoding-web-general-checker audit clean (no violations)
+- [x] ayokoding-web-facts-checker audit clean (all ✅ Verified)
+- [x] ayokoding-web-link-checker validation passed (all links work)
 - [x] Manual quality review complete
 - [x] All code examples tested and working
 - [x] Quantitative metrics meet targets
@@ -876,7 +876,7 @@ And Quantitative metrics meet Programming Language Content Standard targets
 
 **Phase 7: Deployment and Launch**
 
-**Goal**: Deploy Kotlin content to production and make available to ayokoding-fs users.
+**Goal**: Deploy Kotlin content to production and make available to ayokoding-web users.
 
 **Status**: Completed
 
@@ -890,11 +890,11 @@ And Quantitative metrics meet Programming Language Content Standard targets
   - **Implementation Notes**: Final validation completed with all three agents (content-checker, facts-checker, link-checker). All audits clean.
   - **Date**: 2025-12-18
   - **Status**: Completed
-- [x] Spawn ayokoding-fs-deployer agent
+- [x] Spawn ayokoding-web-deployer agent
   - **Implementation Notes**: Deployment agent invoked for production deployment.
   - **Date**: 2025-12-18
   - **Status**: Completed
-- [x] Deploy to production (sync prod-ayokoding-fs branch)
+- [x] Deploy to production (sync prod-ayokoding-web branch)
   - **Implementation Notes**: Production branch synced and pushed to origin, triggering Vercel deployment.
   - **Date**: 2025-12-18
   - **Status**: Completed
@@ -966,12 +966,12 @@ And The content is publicly accessible
 
 **Internal Dependencies**:
 
-- Hugo site infrastructure (apps/ayokoding-fs)
-- ayokoding-fs-general-maker agent (for content creation)
-- ayokoding-fs-general-checker agent (for validation)
-- ayokoding-fs-facts-checker agent (for verification)
-- ayokoding-fs-link-checker agent (for link validation)
-- ayokoding-fs-deployer agent (for deployment)
+- Hugo site infrastructure (apps/ayokoding-web)
+- ayokoding-web-general-maker agent (for content creation)
+- ayokoding-web-general-checker agent (for validation)
+- ayokoding-web-facts-checker agent (for verification)
+- ayokoding-web-link-checker agent (for link validation)
+- ayokoding-web-deployer agent (for deployment)
 - Programming Language Content Standard convention (reference)
 - Hugo Content Convention - ayokoding (reference)
 
@@ -1004,7 +1004,7 @@ And The content is publicly accessible
 - **Risk**: Code examples contain bugs or don't compile
 - **Likelihood**: Medium (lots of code across multiple files)
 - **Impact**: High (damages credibility, confuses learners)
-- **Mitigation**: Test all examples in fresh Kotlin 2.3.0+ environment, use ayokoding-fs-facts-checker, manual review before deployment
+- **Mitigation**: Test all examples in fresh Kotlin 2.3.0+ environment, use ayokoding-web-facts-checker, manual review before deployment
 
 **Risk 4: Java Comparison Overemphasis**
 
@@ -1069,9 +1069,9 @@ All items verified and completed:
 
 **Quality Validation**:
 
-- [x] ayokoding-fs-general-checker audit clean (no violations) ✅
-- [x] ayokoding-fs-facts-checker audit clean (all ✅ Verified) ✅
-- [x] ayokoding-fs-link-checker validation passed (all links work) ✅
+- [x] ayokoding-web-general-checker audit clean (no violations) ✅
+- [x] ayokoding-web-facts-checker audit clean (all ✅ Verified) ✅
+- [x] ayokoding-web-link-checker validation passed (all links work) ✅
 - [x] Manual quality review complete ✅
 - [x] All code examples tested in Kotlin 2.3.0+ ✅
 - [x] Mermaid diagrams use approved color palette only (#0173B2, #DE8F05, #029E73, #CC78BC, #CA9161) ✅
@@ -1096,7 +1096,7 @@ All items verified and completed:
 **Deployment**:
 
 - [x] Content committed to main branch ✅
-- [x] Deployed to production via ayokoding-fs-deployer ✅
+- [x] Deployed to production via ayokoding-web-deployer ✅
 - [x] Verified live on ayokoding.com/en/learn/swe/programming-languages/kotlin/ ✅
 - [x] Launch announcement published ✅
 

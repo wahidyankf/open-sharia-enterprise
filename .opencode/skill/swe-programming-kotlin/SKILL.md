@@ -19,12 +19,12 @@ Progressive disclosure of Kotlin coding standards for agents writing Kotlin code
 
 **You MUST understand Kotlin fundamentals before using these standards.** Complete the AyoKoding Kotlin learning path first:
 
-1. **[Kotlin Learning Path](../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/kotlin/)** - Initial setup, language overview, quick start guide (0-95% language coverage)
-2. **[Kotlin By Example](../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/kotlin/by-example/)** - 75+ heavily annotated code examples (beginner to advanced patterns)
+1. **[Kotlin Learning Path](../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/kotlin/)** - Initial setup, language overview, quick start guide (0-95% language coverage)
+2. **[Kotlin By Example](../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/kotlin/by-example/)** - 75+ heavily annotated code examples (beginner to advanced patterns)
 
 **What this skill covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply Kotlin knowledge in THIS codebase.
 
-**What this skill does NOT cover**: Kotlin syntax, language fundamentals, generic patterns (those are in ayokoding-fs).
+**What this skill does NOT cover**: Kotlin syntax, language fundamentals, generic patterns (those are in ayokoding-web).
 
 **See**: [Programming Language Documentation Separation](../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 

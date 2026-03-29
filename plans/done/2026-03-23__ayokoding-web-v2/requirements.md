@@ -2,12 +2,12 @@
 
 ## Objectives
 
-- Build `apps/ayokoding-fs-v2` as a fullstack Next.js 16 application (App Router)
-  that replaces the Hugo-based `ayokoding-fs` site, with architecture designed for
+- Build `apps/ayokoding-web-v2` as a fullstack Next.js 16 application (App Router)
+  that replaces the Hugo-based `ayokoding-web` site, with architecture designed for
   future fullstack features (auth, dashboard, database) without restructuring
 - Serve all content via tRPC API with type-safe procedures for content retrieval,
   navigation tree, and full-text search
-- Use the same markdown content source (`apps/ayokoding-fs/content/`) — no content
+- Use the same markdown content source (`apps/ayokoding-web/content/`) — no content
   migration or duplication
 - Implement bilingual routing (English + Indonesian) with `[locale]` URL segments
 - Use shadcn/ui (Radix + Tailwind CSS) for all UI components, replacing Hugo Hextra theme
@@ -16,13 +16,13 @@
   for SEO (no client-side rendering for content). React Query (via
   `@trpc/tanstack-react-query`) used only for interactive features like search
 - Create Gherkin specs at `specs/apps/ayokoding/` (both `be/` and `fe/`)
-- Create E2E test apps: `apps/ayokoding-fs-v2-be-e2e` and `apps/ayokoding-fs-v2-fe-e2e`
+- Create E2E test apps: `apps/ayokoding-web-v2-be-e2e` and `apps/ayokoding-web-v2-fe-e2e`
 - Enforce 80%+ line coverage via `rhino-cli test-coverage validate`
 - Serve on port **3101**
-- Add Docker Compose at `infra/dev/ayokoding-fs-v2/` (local dev + CI E2E)
-- Add CI workflow `.github/workflows/test-ayokoding-fs-v2.yml`
-- Deploy to Vercel via production branch `prod-ayokoding-fs-v2` (same pattern as
-  `ayokoding-fs` and `organiclever-fe`)
+- Add Docker Compose at `infra/dev/ayokoding-web-v2/` (local dev + CI E2E)
+- Add CI workflow `.github/workflows/test-ayokoding-web-v2.yml`
+- Deploy to Vercel via production branch `prod-ayokoding-web-v2` (same pattern as
+  `ayokoding-web` and `organiclever-fe`)
 - Create `vercel.json` with install command, ignore command, and security headers
 
 ## User Stories
@@ -226,14 +226,14 @@ Scenario: Mobile hamburger opens sidebar overlay
   v8 + `rhino-cli test-coverage validate`. Rationale: fullstack blend — backends enforce
   90%, frontends enforce 70%, 80% is the midpoint for a combined BE+FE codebase. Note:
   `organiclever-fe` (pure marketing site, Next.js) enforces 90%; this plan uses 80%
-  because ayokoding-fs-v2 is a full-stack content platform with both BE pipeline code
+  because ayokoding-web-v2 is a full-stack content platform with both BE pipeline code
   (content parsing, tRPC, search) and FE components, making the 80% midpoint appropriate
 - **TypeScript**: Strict mode, no `any` escapes in production code
-- **Port**: 3101 (next to current ayokoding-fs at 3100)
+- **Port**: 3101 (next to current ayokoding-web at 3100)
 - **CI**: 2x daily cron (WIB 06, 18) + manual dispatch (same schedule as other apps)
 - **Docker**: Multi-stage build for local dev + CI E2E, no database required
-- **Deployment**: Vercel (production branch `prod-ayokoding-fs-v2`), same as
-  `ayokoding-fs` (`prod-ayokoding-fs`) and `organiclever-fe` (`prod-organiclever-fe`)
+- **Deployment**: Vercel (production branch `prod-ayokoding-web-v2`), same as
+  `ayokoding-web` (`prod-ayokoding-web`) and `organiclever-fe` (`prod-organiclever-fe`)
 - **Linting**: oxlint (same as a-demo-fe-ts-nextjs and a-demo-fs-ts-nextjs)
 - **Performance**: All content pages should return Time to First Byte (TTFB) under
   2s on cached requests in Vercel production (aspirational; monitor post-launch).
@@ -255,35 +255,35 @@ Scenario: Mobile hamburger opens sidebar overlay
 
 ```gherkin
 Scenario: All BE E2E scenarios pass
-  Given ayokoding-fs-v2 is running on port 3101
-  When nx run ayokoding-fs-v2-be-e2e:test:e2e is executed with BASE_URL=http://localhost:3101
+  Given ayokoding-web-v2 is running on port 3101
+  When nx run ayokoding-web-v2-be-e2e:test:e2e is executed with BASE_URL=http://localhost:3101
   Then all tRPC API Gherkin scenarios should pass
 
 Scenario: All FE E2E scenarios pass
-  Given ayokoding-fs-v2 is running on port 3101
-  When nx run ayokoding-fs-v2-fe-e2e:test:e2e is executed with BASE_URL=http://localhost:3101
+  Given ayokoding-web-v2 is running on port 3101
+  When nx run ayokoding-web-v2-fe-e2e:test:e2e is executed with BASE_URL=http://localhost:3101
   Then all frontend Gherkin scenarios should pass
 
 Scenario: Unit test coverage meets threshold
-  Given ayokoding-fs-v2 unit tests are run with coverage
-  When rhino-cli test-coverage validate apps/ayokoding-fs-v2/coverage/lcov.info 80 is executed
+  Given ayokoding-web-v2 unit tests are run with coverage
+  When rhino-cli test-coverage validate apps/ayokoding-web-v2/coverage/lcov.info 80 is executed
   Then the validation should pass with 80%+ line coverage
 
 Scenario: Content renders correctly
-  Given ayokoding-fs-v2 is running
+  Given ayokoding-web-v2 is running
   When a user navigates to any content page that exists in the Hugo site
   Then the content should render with proper formatting
   And code blocks should have syntax highlighting
   And navigation should match the Hugo site structure
 
 Scenario: Search works across all content
-  Given ayokoding-fs-v2 is running
+  Given ayokoding-web-v2 is running
   When a user searches for "python" in English locale
   Then results should include Python programming language content
   And results should not include Indonesian-only content
 
 Scenario: English page renders in English
-  Given ayokoding-fs-v2 is running
+  Given ayokoding-web-v2 is running
   When a user visits /en/learn/overview
   Then the page should render in English
 
@@ -294,23 +294,23 @@ Scenario: Language switch redirects to Indonesian URL
   And the UI should be in Indonesian
 
 Scenario: Math expressions render correctly
-  Given ayokoding-fs-v2 is running
+  Given ayokoding-web-v2 is running
   When a user navigates to a page with KaTeX math expressions
   Then inline math expressions ($...$) should be rendered as formatted equations
   And block math expressions ($$...$$) should be rendered as centered display equations
 
 Scenario: Docker build works
-  Given docker compose up for infra/dev/ayokoding-fs-v2/ is run
+  Given docker compose up for infra/dev/ayokoding-web-v2/ is run
   When the health check hits http://localhost:3101/api/trpc/meta.health
   Then the response should contain status "ok"
 
 Scenario: CI workflow passes end-to-end
-  Given the GitHub Actions workflow test-ayokoding-fs-v2.yml is triggered
+  Given the GitHub Actions workflow test-ayokoding-web-v2.yml is triggered
   When the workflow completes
   Then all jobs should report success
 
 Scenario: Vercel deployment succeeds
-  Given code is pushed to the prod-ayokoding-fs-v2 branch
+  Given code is pushed to the prod-ayokoding-web-v2 branch
   When Vercel builds the Next.js app
   Then the deployment should succeed
   And the site should be accessible at the Vercel URL
@@ -318,7 +318,7 @@ Scenario: Vercel deployment succeeds
 
 Scenario: Visual parity with Hugo site (Playwright MCP)
   Given the Hugo site is running on port 3100
-  And ayokoding-fs-v2 is running on port 3101
+  And ayokoding-web-v2 is running on port 3101
   When the agent navigates to 5 key pages on both sites via Playwright MCP
   Then the layout structure (sidebar, content, TOC) should match
   And content rendering (code blocks, tabs, callouts, math) should be equivalent

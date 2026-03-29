@@ -58,7 +58,7 @@ identical. No model or repository code changes needed.
   wheels include pre-built `libpq`)
 - `README.md` — Update dependency documentation
 
-### 2. `@img/sharp-libvips` (LGPL-3.0) — ayokoding-fs
+### 2. `@img/sharp-libvips` (LGPL-3.0) — ayokoding-web
 
 **Context**: `sharp` is an **optional** dependency of Next.js used for server-side image
 optimization (`next/image`). On Vercel, image optimization is handled by Vercel's edge

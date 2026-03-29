@@ -23,7 +23,7 @@ All reports follow the 4-part pattern:
 
 **Components**:
 
-- `{agent-family}`: Agent name WITHOUT `-checker` suffix (e.g., `docs`, `ayokoding-fs`, `plan`)
+- `{agent-family}`: Agent name WITHOUT `-checker` suffix (e.g., `docs`, `ayokoding-web`, `plan`)
 - `{uuid-chain}`: Execution hierarchy as 6-char hex UUIDs separated by underscores
 - `{YYYY-MM-DD--HH-MM}`: UTC+7 timestamp (double dash between date and time)
 - `{type}`: Report type (`audit`, `validation`, `fix`)
@@ -198,8 +198,8 @@ Common scopes for execution tracking:
 | docs-tutorial-checker   | `docs-tutorial`    | `.execution-chain-docs-tutorial`    |
 | readme-checker          | `readme`           | `.execution-chain-readme`           |
 | plan-checker            | `plan`             | `.execution-chain-plan`             |
-| ayokoding-fs-\*         | `ayokoding-[lang]` | `.execution-chain-ayokoding-[lang]` |
-| oseplatform-fs-\*       | `ose-platform`     | `.execution-chain-ose-platform`     |
+| ayokoding-web-\*        | `ayokoding-[lang]` | `.execution-chain-ayokoding-[lang]` |
+| oseplatform-web-\*      | `ose-platform`     | `.execution-chain-ose-platform`     |
 
 ### Tool Requirements
 
@@ -307,7 +307,7 @@ Works alongside:
 
 - `repo-assessing-criticality-confidence` - Categorize findings by severity
 - `repo-applying-maker-checker-fixer` - Fixer agents read these reports
-- Domain Skills (`apps-ayokoding-fs-developing-content`, etc.) - Provide validation criteria
+- Domain Skills (`apps-ayokoding-web-developing-content`, etc.) - Provide validation criteria
 
 ## Benefits
 

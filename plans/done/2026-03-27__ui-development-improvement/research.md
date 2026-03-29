@@ -23,15 +23,15 @@ code instead of generic "AI slop."
 
 **Structure** (7 reference modules):
 
-| Module             | Coverage                                                              | Relevance to Us                                        |
-| ------------------ | --------------------------------------------------------------------- | ------------------------------------------------------ |
-| Typography         | Modular scales, font pairing, fluid sizing, OpenType features         | High — we have no type scale convention                |
-| Color and Contrast | OKLCH color space, palette construction, dark mode, tinted neutrals   | High — our tokens use HSL, not OKLCH                   |
-| Spatial Design     | 4pt grid system, visual rhythm, container queries, asymmetry          | High — we have no spacing convention                   |
-| Motion Design      | Exponential easing, duration guidelines, reduced-motion support       | Medium — limited animation in our apps                 |
-| Interaction Design | Optimistic UI, state design, progressive disclosure, focus management | High — state coverage is inconsistent                  |
-| Responsive Design  | Container queries, input detection, mobile-first, fluid design        | Medium — our apps are mostly desktop-first             |
-| UX Writing         | Labels, errors, empty states, microcopy                               | Low — our apps are content-light (except ayokoding-fs) |
+| Module             | Coverage                                                              | Relevance to Us                                         |
+| ------------------ | --------------------------------------------------------------------- | ------------------------------------------------------- |
+| Typography         | Modular scales, font pairing, fluid sizing, OpenType features         | High — we have no type scale convention                 |
+| Color and Contrast | OKLCH color space, palette construction, dark mode, tinted neutrals   | High — our tokens use HSL, not OKLCH                    |
+| Spatial Design     | 4pt grid system, visual rhythm, container queries, asymmetry          | High — we have no spacing convention                    |
+| Motion Design      | Exponential easing, duration guidelines, reduced-motion support       | Medium — limited animation in our apps                  |
+| Interaction Design | Optimistic UI, state design, progressive disclosure, focus management | High — state coverage is inconsistent                   |
+| Responsive Design  | Container queries, input detection, mobile-first, fluid design        | Medium — our apps are mostly desktop-first              |
+| UX Writing         | Labels, errors, empty states, microcopy                               | Low — our apps are content-light (except ayokoding-web) |
 
 **20 slash commands** for workflow: `/audit`, `/critique`, `/normalize`, `/polish`, `/distill`,
 `/clarify`, `/optimize`, `/harden`, `/animate`, `/colorize`, `/bolder`, `/quieter`, `/delight`,
@@ -105,9 +105,9 @@ JavaScript config files to merge. The `@theme` directive in CSS is directly impo
 packages.
 
 **Our specific situation**: organiclever-fe uses double indirection
-(`--color-primary: hsl(var(--primary))`) while ayokoding-fs uses direct values
+(`--color-primary: hsl(var(--primary))`) while ayokoding-web uses direct values
 (`--color-primary: hsl(221.2 83.2% 53.3%)`). The shared token package should use the direct
-value approach (simpler, ayokoding-fs pattern) with per-app overrides using CSS cascade.
+value approach (simpler, ayokoding-web pattern) with per-app overrides using CSS cascade.
 
 ### 5. Automated UI Quality Tools — Evaluation
 

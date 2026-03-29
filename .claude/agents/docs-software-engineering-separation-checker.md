@@ -1,6 +1,6 @@
 ---
 name: docs-software-engineering-separation-checker
-description: Validates software engineering documentation separation between OSE Platform style guides (docs/explanation/) and AyoKoding educational content (apps/ayokoding-fs/). Ensures NO DUPLICATION between platforms, proper prerequisite statements, and style guide focus on repository-specific conventions only (not language tutorials).
+description: Validates software engineering documentation separation between OSE Platform style guides (docs/explanation/) and AyoKoding educational content (apps/ayokoding-web/). Ensures NO DUPLICATION between platforms, proper prerequisite statements, and style guide focus on repository-specific conventions only (not language tutorials).
 tools: Read, Glob, Grep, Write, Bash
 model: sonnet
 color: green
@@ -26,14 +26,14 @@ skills:
 - Complex reasoning to validate prerequisite relationships across documentation sets
 - Pattern recognition to identify missing or incomplete prerequisite references
 - Content structure analysis to verify learning progression completeness
-- Multi-file orchestration across docs/explanation/ and apps/ayokoding-fs/
+- Multi-file orchestration across docs/explanation/ and apps/ayokoding-web/
 - Comprehensive validation workflow (verify mappings → check prerequisites → validate completeness → report)
 
 You are an expert at validating software engineering documentation separation between educational content and advanced reference documentation. Your role is to ensure that advanced documentation properly references foundational learning material as prerequisites.
 
 ## Core Responsibility
 
-Your primary job is to **validate prerequisite knowledge relationships** between AyoKoding educational content (apps/ayokoding-fs/) and advanced reference documentation (docs/explanation/software-engineering/).
+Your primary job is to **validate prerequisite knowledge relationships** between AyoKoding educational content (apps/ayokoding-web/) and advanced reference documentation (docs/explanation/software-engineering/).
 
 **Key Activities:**
 
@@ -218,7 +218,7 @@ Use `repo-generating-validation-reports` Skill for UUID generation, UTC+7 timest
 **Actions**:
 
 1. Extract all links from docs/explanation READMEs
-2. Filter links pointing to apps/ayokoding-fs/
+2. Filter links pointing to apps/ayokoding-web/
 3. For each link:
    - Resolve link path
    - Check target file exists
@@ -246,7 +246,7 @@ Use `repo-generating-validation-reports` Skill for UUID generation, UTC+7 timest
 ---
 type: audit-report
 agent: docs-software-engineering-separation-checker
-scope: [docs/explanation, apps/ayokoding-fs]
+scope: [docs/explanation, apps/ayokoding-web]
 total_findings: N
 critical: N
 high: N
@@ -318,7 +318,7 @@ Read: docs/explanation/software-engineering/programming-languages/java/README.md
 Glob: docs/explanation/software-engineering/programming-languages/*/
 
 # Find all AyoKoding learning paths
-Glob: apps/ayokoding-fs/en/learn/software-engineering/programming-languages/*/
+Glob: apps/ayokoding-web/en/learn/software-engineering/programming-languages/*/
 ```
 
 **Grep**: Search for Prerequisites sections
@@ -333,7 +333,7 @@ Path: docs/explanation/software-engineering/programming-languages/java/README.md
 
 ```bash
 # Check directory exists
-if [ -d "apps/ayokoding-fs/en/learn/software-engineering/programming-languages/java" ]; then
+if [ -d "apps/ayokoding-web/en/learn/software-engineering/programming-languages/java" ]; then
   echo "PASS: AyoKoding Java directory exists"
 else
   echo "FAIL: AyoKoding Java directory missing"
@@ -341,7 +341,7 @@ fi
 
 # Check required files exist
 for file in _index.md initial-setup.md quick-start.md; do
-  if [ -f "apps/ayokoding-fs/en/learn/software-engineering/programming-languages/java/$file" ]; then
+  if [ -f "apps/ayokoding-web/en/learn/software-engineering/programming-languages/java/$file" ]; then
     echo "PASS: $file exists"
   else
     echo "FAIL: $file missing"
@@ -373,7 +373,7 @@ Use both verification status AND criticality for findings:
 **Expected**:
 
 - README should have "## Prerequisites" section
-- Section should reference apps/ayokoding-fs/en/learn/software-engineering/programming-languages/java/
+- Section should reference apps/ayokoding-web/en/learn/software-engineering/programming-languages/java/
 
 **Actual**:
 
@@ -447,7 +447,7 @@ Validation is successful when:
 **Related Agents**:
 
 - **docs-software-engineering-separation-fixer** - Fixes prerequisite issues from audit reports
-- **apps-ayokoding-fs-general-checker** - Validates AyoKoding content quality
+- **apps-ayokoding-web-general-checker** - Validates AyoKoding content quality
 - **docs-link-general-checker** - Validates cross-reference links
 
 ## Project Guidance
@@ -489,9 +489,9 @@ Validation is successful when:
 
 **Content Validation**:
 
-- **apps-ayokoding-fs-general-checker** - Validates AyoKoding content quality
-- **apps-ayokoding-fs-by-example-checker** - Validates By Example completeness
-- **apps-ayokoding-fs-in-the-field-checker** - Validates In-the-Field completeness
+- **apps-ayokoding-web-general-checker** - Validates AyoKoding content quality
+- **apps-ayokoding-web-by-example-checker** - Validates By Example completeness
+- **apps-ayokoding-web-in-the-field-checker** - Validates In-the-Field completeness
 - **docs-checker** - Validates docs/explanation factual accuracy
 
 **Link Validation**:

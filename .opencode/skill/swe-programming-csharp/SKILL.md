@@ -19,8 +19,8 @@ Progressive disclosure of C# coding standards for agents writing C# code.
 
 Complete the AyoKoding C# learning path first:
 
-1. **[C# Learning Path](../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/c-sharp/)** - 0-95% language coverage
-2. **[C# By Example](../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/c-sharp/by-example/)** - 75+ annotated examples
+1. **[C# Learning Path](../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/c-sharp/)** - 0-95% language coverage
+2. **[C# By Example](../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/c-sharp/by-example/)** - 75+ annotated examples
 
 **See**: [Programming Language Documentation Separation](../../../governance/conventions/structure/programming-language-docs-separation.md)
 

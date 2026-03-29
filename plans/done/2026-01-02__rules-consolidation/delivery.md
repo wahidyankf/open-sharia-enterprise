@@ -70,12 +70,12 @@ Rename Skills to follow official best practices: lowercase only, gerund form (ve
 
 - [x] **0.3 Update all agent skills: references**
   - [x] Update 5 agents that reference renamed Skills
-  - **Implementation Notes**: Updated skills references in 5 agents using `sed` commands: apps**ayokoding-fs**by-example-maker, apps**ayokoding-fs**general-maker, docs**checker, docs**maker, plan\_\_maker. All old skill names replaced with new gerund-form names.
+  - **Implementation Notes**: Updated skills references in 5 agents using `sed` commands: apps**ayokoding-web**by-example-maker, apps**ayokoding-web**general-maker, docs**checker, docs**maker, plan\_\_maker. All old skill names replaced with new gerund-form names.
   - **Date**: 2026-01-02
   - **Status**: Completed
   - **Files Changed**:
-    - .claude/agents/apps**ayokoding-fs**by-example-maker.md
-    - .claude/agents/apps**ayokoding-fs**general-maker.md
+    - .claude/agents/apps**ayokoding-web**by-example-maker.md
+    - .claude/agents/apps**ayokoding-web**general-maker.md
     - .claude/agents/docs\_\_checker.md
     - .claude/agents/docs\_\_maker.md
     - .claude/agents/plan\_\_maker.md
@@ -257,21 +257,21 @@ Ensure all 44 agents have non-empty `skills:` field. Use new gerund-form skill n
 
 #### 3.1 Ayokoding-Web Agents (15 agents)
 
-- [x] `apps__ayokoding-fs__by-example-checker`: `[creating-by-example-tutorials, assessing-criticality-confidence]`
-- [x] `apps__ayokoding-fs__by-example-fixer`: `[creating-by-example-tutorials, assessing-criticality-confidence]`
-- [x] `apps__ayokoding-fs__by-example-maker`: `[creating-by-example-tutorials, developing-ayokoding-content]`
-- [x] `apps__ayokoding-fs__general-checker`: `[developing-ayokoding-content, assessing-criticality-confidence]`
-- [x] `apps__ayokoding-fs__general-fixer`: `[developing-ayokoding-content, assessing-criticality-confidence]`
-- [x] `apps__ayokoding-fs__general-maker`: `[developing-ayokoding-content, creating-accessible-diagrams]`
-- [x] `apps__ayokoding-fs__facts-checker`: `[validating-factual-accuracy, assessing-criticality-confidence]`
-- [x] `apps__ayokoding-fs__facts-fixer`: `[validating-factual-accuracy, assessing-criticality-confidence]`
-- [x] `apps__ayokoding-fs__link-checker`: `[validating-links, assessing-criticality-confidence]`
-- [x] `apps__ayokoding-fs__structure-checker`: `[developing-ayokoding-content, assessing-criticality-confidence]`
-- [x] `apps__ayokoding-fs__structure-fixer`: `[developing-ayokoding-content, assessing-criticality-confidence]`
-- [x] `apps__ayokoding-fs__structure-maker`: `[developing-ayokoding-content]`
-- [x] `apps__ayokoding-fs__navigation-maker`: `[developing-ayokoding-content]`
-- [x] `apps__ayokoding-fs__title-maker`: `[developing-ayokoding-content]`
-- [x] `apps__ayokoding-fs__deployer`: `[practicing-trunk-based-development]`
+- [x] `apps__ayokoding-web__by-example-checker`: `[creating-by-example-tutorials, assessing-criticality-confidence]`
+- [x] `apps__ayokoding-web__by-example-fixer`: `[creating-by-example-tutorials, assessing-criticality-confidence]`
+- [x] `apps__ayokoding-web__by-example-maker`: `[creating-by-example-tutorials, developing-ayokoding-content]`
+- [x] `apps__ayokoding-web__general-checker`: `[developing-ayokoding-content, assessing-criticality-confidence]`
+- [x] `apps__ayokoding-web__general-fixer`: `[developing-ayokoding-content, assessing-criticality-confidence]`
+- [x] `apps__ayokoding-web__general-maker`: `[developing-ayokoding-content, creating-accessible-diagrams]`
+- [x] `apps__ayokoding-web__facts-checker`: `[validating-factual-accuracy, assessing-criticality-confidence]`
+- [x] `apps__ayokoding-web__facts-fixer`: `[validating-factual-accuracy, assessing-criticality-confidence]`
+- [x] `apps__ayokoding-web__link-checker`: `[validating-links, assessing-criticality-confidence]`
+- [x] `apps__ayokoding-web__structure-checker`: `[developing-ayokoding-content, assessing-criticality-confidence]`
+- [x] `apps__ayokoding-web__structure-fixer`: `[developing-ayokoding-content, assessing-criticality-confidence]`
+- [x] `apps__ayokoding-web__structure-maker`: `[developing-ayokoding-content]`
+- [x] `apps__ayokoding-web__navigation-maker`: `[developing-ayokoding-content]`
+- [x] `apps__ayokoding-web__title-maker`: `[developing-ayokoding-content]`
+- [x] `apps__ayokoding-web__deployer`: `[practicing-trunk-based-development]`
 
 #### 3.2 OSE-Platform-Web Agents (4 agents)
 
@@ -441,16 +441,16 @@ Enhance wow\_\_rules-checker to validate Skills coverage and prevent future drif
 
 ### Goal
 
-Complete the Maker-Checker-Fixer pattern for ayokoding-fs links by adding the missing fixer agent.
+Complete the Maker-Checker-Fixer pattern for ayokoding-web links by adding the missing fixer agent.
 
 ### Background
 
-The `apps__ayokoding-fs__link-checker` agent exists but has no corresponding fixer. This breaks the MCF pattern and requires manual fixes after link audits.
+The `apps__ayokoding-web__link-checker` agent exists but has no corresponding fixer. This breaks the MCF pattern and requires manual fixes after link audits.
 
 ### Implementation Steps
 
-- [x] **6.1 Create apps**ayokoding-fs**link-fixer agent**
-  - [x] Create `.claude/agents/apps__ayokoding-fs__link-fixer.md`
+- [x] **6.1 Create apps**ayokoding-web**link-fixer agent**
+  - [x] Create `.claude/agents/apps__ayokoding-web__link-fixer.md`
   - [x] Follow agent file structure from AI Agents Convention
   - [x] Include frontmatter: name, description, tools, model, color, skills
   - [x] Assign skills: `[validating-links, assessing-criticality-confidence]`
@@ -482,7 +482,7 @@ The `apps__ayokoding-fs__link-checker` agent exists but has no corresponding fix
 - [x] Agent follows Maker-Checker-Fixer pattern
 - [x] Agent registered in README.md
 - [x] CLAUDE.md updated
-  - **Validation Notes**: apps**ayokoding-fs**link-fixer agent created with complete frontmatter, MCF workflow, confidence-based fixing, and proper References section. Skills field includes [validating-links, assessing-criticality-confidence]. Added to agents README and CLAUDE.md Fixing section.
+  - **Validation Notes**: apps**ayokoding-web**link-fixer agent created with complete frontmatter, MCF workflow, confidence-based fixing, and proper References section. Skills field includes [validating-links, assessing-criticality-confidence]. Added to agents README and CLAUDE.md Fixing section.
   - **Date**: 2026-01-02
   - **Result**: Pass
 
@@ -606,7 +606,7 @@ awk '...' .claude/agents/agent.md > temp && mv temp .claude/agents/agent.md
 - [x] All 45 agents have non-empty `skills:` field (44 existing + 1 new)
 - [x] All 4 factual inaccuracies fixed (6 initially planned, 4 actual documents)
 - [x] wow\_\_rules-checker validates Skills coverage (already implemented)
-- [x] apps**ayokoding-fs**link-fixer agent created
+- [x] apps**ayokoding-web**link-fixer agent created
 - [x] Tutorial documentation analyzed (kept separate by SRP decision)
 - [x] All `.claude/` modifications used Bash tools (not Write/Edit)
 
@@ -615,7 +615,7 @@ awk '...' .claude/agents/agent.md > temp && mv temp .claude/agents/agent.md
 - [ ] Run wow\_\_rules-checker to verify no violations
 - [ ] Verify all Skills reference links resolve
 - [ ] Verify all agent skills references resolve
-- [ ] Verify link-fixer completes MCF pattern for ayokoding-fs links
+- [ ] Verify link-fixer completes MCF pattern for ayokoding-web links
 - [ ] Verify no broken links to consolidated tutorial doc
 
 ---

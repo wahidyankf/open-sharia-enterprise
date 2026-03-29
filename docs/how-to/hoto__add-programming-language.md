@@ -1,6 +1,6 @@
 ---
 title: "How to Add a Programming Language"
-description: "Step-by-step guide for adding programming languages to ayokoding-fs following the Programming Language Content Standard"
+description: "Step-by-step guide for adding programming languages to ayokoding-web following the Programming Language Content Standard"
 category: how-to
 tags:
   - programming-languages
@@ -14,29 +14,29 @@ updated: 2025-12-18
 
 # How to Add a Programming Language
 
-> **Note**: This guide was written when ayokoding-fs was a Hugo static site. ayokoding-fs has since migrated to Next.js 16. The content structure and tutorial standards remain applicable, but Hugo-specific instructions (frontmatter weights, `_index.md` navigation files, Hugo build commands, Hextra shortcodes) no longer apply. Content now lives at `apps/ayokoding-fs/content/`.
+> **Note**: This guide was written when ayokoding-web was a Hugo static site. ayokoding-web has since migrated to Next.js 16. The content structure and tutorial standards remain applicable, but Hugo-specific instructions (frontmatter weights, `_index.md` navigation files, Hugo build commands, Hextra shortcodes) no longer apply. Content now lives at `apps/ayokoding-web/content/`.
 
-**Step-by-step guide for adding a new programming language to ayokoding-fs following the Programming Language Content Standard.**
+**Step-by-step guide for adding a new programming language to ayokoding-web following the Programming Language Content Standard.**
 
-This guide walks you through the complete process of adding a new programming language (e.g., Kotlin, TypeScript, Rust, Clojure) to ayokoding-fs. Follow these steps to ensure your content meets quality standards and integrates seamlessly with existing content.
+This guide walks you through the complete process of adding a new programming language (e.g., Kotlin, TypeScript, Rust, Clojure) to ayokoding-web. Follow these steps to ensure your content meets quality standards and integrates seamlessly with existing content.
 
 ## Prerequisites
 
 Before starting, ensure you have:
 
 - [ ] **Deep expertise** in the target language (5+ years experience recommended)
-- [ ] **Access to repository** with write permissions to `apps/ayokoding-fs/`
+- [ ] **Access to repository** with write permissions to `apps/ayokoding-web/`
 - [ ] **Familiarity with conventions**:
   - [Programming Language Content Standard](../../governance/conventions/tutorials/programming-language-content.md)
   - [Hugo Content Convention - ayokoding](../../governance/conventions/hugo/ayokoding.md)
   - [Content Quality Principles](../../governance/conventions/writing/quality.md)
 - [ ] **AI agents available**:
-  - `ayokoding-fs-general-maker` (general content creation)
-  - `ayokoding-fs-by-example-maker` (by-example tutorial creation)
-  - `ayokoding-fs-general-checker` (general quality validation)
-  - `ayokoding-fs-by-example-checker` (by-example tutorial validation)
-  - `ayokoding-fs-facts-checker` (factual verification)
-  - `ayokoding-fs-link-checker` (link validation)
+  - `ayokoding-web-general-maker` (general content creation)
+  - `ayokoding-web-by-example-maker` (by-example tutorial creation)
+  - `ayokoding-web-general-checker` (general quality validation)
+  - `ayokoding-web-by-example-checker` (by-example tutorial validation)
+  - `ayokoding-web-facts-checker` (factual verification)
+  - `ayokoding-web-link-checker` (link validation)
 - [ ] **Reference implementations** studied (review Golang, Python, or Java content)
 
 **Time Investment:** Adding a complete programming language requires creating 12,000-15,000 lines of high-quality content. Plan accordingly.
@@ -45,7 +45,7 @@ Before starting, ensure you have:
 
 ### Step 1.1: Choose Language and Validate Demand
 
-**Why:** Ensure the language addition provides value to ayokoding-fs users.
+**Why:** Ensure the language addition provides value to ayokoding-web users.
 
 **Actions:**
 
@@ -103,10 +103,10 @@ Before starting, ensure you have:
 
 **Actions:**
 
-1. Navigate to ayokoding-fs content directory:
+1. Navigate to ayokoding-web content directory:
 
    ```bash
-   cd apps/ayokoding-fs/content/en/learn/swe/programming-languages/
+   cd apps/ayokoding-web/content/en/learn/swe/programming-languages/
    ```
 
 2. Create language directory (use lowercase, no special characters):
@@ -211,7 +211,7 @@ Before starting, ensure you have:
    **Note**: Programming language folders are at level 5 (`/en/learn/swe/programming-languages/[language]/`). The folder's `_index.md` uses level 5 weight (10002 to position among other languages), while content INSIDE the folder (like `overview.md`, `tutorials/`, etc.) uses level 6 weights starting at 100000.
 
 2. **Create `overview.md` (learning path guide)**:
-   - See [Golang overview.md](../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/golang/overview.md) as template
+   - See [Golang overview.md](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/overview.md) as template
    - Include: Full Set description, learning path table, tutorial structure, topics covered
 
 **Deliverable:** Navigation files with proper frontmatter and structure
@@ -224,11 +224,11 @@ Before starting, ensure you have:
 
 **Actions:**
 
-1. **Use ayokoding-fs-general-maker agent**:
+1. **Use ayokoding-web-general-maker agent**:
 
    ```
-   Spawn ayokoding-fs-general-maker agent:
-   "Create Initial Setup tutorial for [Language] at apps/ayokoding-fs/content/en/learn/swe/programming-languages/[language]/tutorials/initial-setup.md
+   Spawn ayokoding-web-general-maker agent:
+   "Create Initial Setup tutorial for [Language] at apps/ayokoding-web/content/en/learn/swe/programming-languages/[language]/tutorials/initial-setup.md
 
    Coverage: 0-5% (Installation and verification)
    Topics: Installation (Windows/macOS/Linux), version verification, first Hello World program, basic tool setup
@@ -273,11 +273,11 @@ Before starting, ensure you have:
    - Use color-blind friendly palette (#0173B2, #DE8F05, #029E73)
    - Show progression: Concept A → Concept B → ... → Ready!
 
-3. **Use ayokoding-fs-general-maker agent**:
+3. **Use ayokoding-web-general-maker agent**:
 
    ```
-   Spawn ayokoding-fs-general-maker agent:
-   "Create Quick Start tutorial for [Language] at apps/ayokoding-fs/content/en/learn/swe/programming-languages/[language]/tutorials/quick-start.md
+   Spawn ayokoding-web-general-maker agent:
+   "Create Quick Start tutorial for [Language] at apps/ayokoding-web/content/en/learn/swe/programming-languages/[language]/tutorials/quick-start.md
 
    Coverage: 5-30% (Touchpoints and core concepts)
    Touchpoints: [Your 8-12 concepts]
@@ -320,11 +320,11 @@ Before starting, ensure you have:
    - Level 3: Combine concepts
    - Level 4: Problem-solving challenges
 
-3. **Use ayokoding-fs-general-maker agent**:
+3. **Use ayokoding-web-general-maker agent**:
 
    ```
-   Spawn ayokoding-fs-general-maker agent:
-   "Create Beginner tutorial for [Language] at apps/ayokoding-fs/content/en/learn/swe/programming-languages/[language]/tutorials/beginner.md
+   Spawn ayokoding-web-general-maker agent:
+   "Create Beginner tutorial for [Language] at apps/ayokoding-web/content/en/learn/swe/programming-languages/[language]/tutorials/beginner.md
 
    Coverage: 0-60% (Comprehensive fundamentals)
    Topics: [Your 10-15 major sections]
@@ -361,11 +361,11 @@ Before starting, ensure you have:
    - Security best practices
    - Deployment patterns
 
-2. **Use ayokoding-fs-general-maker agent**:
+2. **Use ayokoding-web-general-maker agent**:
 
    ```
-   Spawn ayokoding-fs-general-maker agent:
-   "Create Intermediate tutorial for [Language] at apps/ayokoding-fs/content/en/learn/swe/programming-languages/[language]/tutorials/intermediate.md
+   Spawn ayokoding-web-general-maker agent:
+   "Create Intermediate tutorial for [Language] at apps/ayokoding-web/content/en/learn/swe/programming-languages/[language]/tutorials/intermediate.md
 
    Coverage: 60-85% (Production-grade techniques)
    Topics: [Your 8-12 production topics]
@@ -400,11 +400,11 @@ Before starting, ensure you have:
    - Debugging strategies
    - Tooling and ecosystem
 
-2. **Use ayokoding-fs-general-maker agent**:
+2. **Use ayokoding-web-general-maker agent**:
 
    ```
-   Spawn ayokoding-fs-general-maker agent:
-   "Create Advanced tutorial for [Language] at apps/ayokoding-fs/content/en/learn/swe/programming-languages/[language]/tutorials/advanced.md
+   Spawn ayokoding-web-general-maker agent:
+   "Create Advanced tutorial for [Language] at apps/ayokoding-web/content/en/learn/swe/programming-languages/[language]/tutorials/advanced.md
 
    Coverage: 85-95% (Expert mastery)
    Topics: [Your 6-10 expert topics]
@@ -463,11 +463,11 @@ Before starting, ensure you have:
 
    ```
 
-3. **Use ayokoding-fs-general-maker agent**:
+3. **Use ayokoding-web-general-maker agent**:
 
    ```
-   Spawn ayokoding-fs-general-maker agent:
-   "Create Cookbook for [Language] at apps/ayokoding-fs/content/en/learn/swe/programming-languages/[language]/how-to/cookbook.md
+   Spawn ayokoding-web-general-maker agent:
+   "Create Cookbook for [Language] at apps/ayokoding-web/content/en/learn/swe/programming-languages/[language]/how-to/cookbook.md
 
    Include: 30-40 recipes organized by category
    Format: Problem → Solution → How It Works → Use Cases for each recipe
@@ -511,8 +511,8 @@ Before starting, ensure you have:
 3. **Create each guide** (can parallelize with agent):
 
    ```
-   Spawn ayokoding-fs-general-maker agent:
-   "Create how-to guide: [Guide Title] for [Language] at apps/ayokoding-fs/content/en/learn/swe/programming-languages/[language]/how-to/[filename].md
+   Spawn ayokoding-web-general-maker agent:
+   "Create how-to guide: [Guide Title] for [Language] at apps/ayokoding-web/content/en/learn/swe/programming-languages/[language]/how-to/[filename].md
 
    Include: Problem statement, solution (step-by-step), how it works, variations, common pitfalls
    Reference: [Link to similar guide in reference language]"
@@ -555,11 +555,11 @@ Before starting, ensure you have:
 
 3. **Include "What Makes [Language] Special" section**
 
-4. **Use ayokoding-fs-general-maker agent**:
+4. **Use ayokoding-web-general-maker agent**:
 
    ```
-   Spawn ayokoding-fs-general-maker agent:
-   "Create Best Practices document for [Language] at apps/ayokoding-fs/content/en/learn/swe/programming-languages/[language]/explanation/best-practices.md
+   Spawn ayokoding-web-general-maker agent:
+   "Create Best Practices document for [Language] at apps/ayokoding-web/content/en/learn/swe/programming-languages/[language]/explanation/best-practices.md
 
    Include: Language philosophy, idiomatic patterns, good/bad examples, category organization
    Reference: [Link to reference language best-practices.md]"
@@ -593,11 +593,11 @@ Before starting, ensure you have:
    - Major (performance, maintainability)
    - Minor (style, idioms)
 
-4. **Use ayokoding-fs-general-maker agent**:
+4. **Use ayokoding-web-general-maker agent**:
 
    ```
-   Spawn ayokoding-fs-general-maker agent:
-   "Create Anti-Patterns document for [Language] at apps/ayokoding-fs/content/en/learn/swe/programming-languages/[language]/explanation/anti-patterns.md
+   Spawn ayokoding-web-general-maker agent:
+   "Create Anti-Patterns document for [Language] at apps/ayokoding-web/content/en/learn/swe/programming-languages/[language]/explanation/anti-patterns.md
 
    Include: Common mistakes, bad/better examples, severity categorization
    Reference: [Link to reference language anti-patterns.md]"
@@ -633,11 +633,11 @@ Before starting, ensure you have:
 
 **Actions:**
 
-1. **Run ayokoding-fs-general-checker**:
+1. **Run ayokoding-web-general-checker**:
 
    ```
-   Spawn ayokoding-fs-general-checker agent:
-   "Validate all [Language] content at apps/ayokoding-fs/content/en/learn/swe/programming-languages/[language]/
+   Spawn ayokoding-web-general-checker agent:
+   "Validate all [Language] content at apps/ayokoding-web/content/en/learn/swe/programming-languages/[language]/
 
    Check: Hugo conventions, content quality principles, structure compliance"
    ```
@@ -656,11 +656,11 @@ Before starting, ensure you have:
 
 **Actions:**
 
-1. **Run ayokoding-fs-facts-checker**:
+1. **Run ayokoding-web-facts-checker**:
 
    ```
-   Spawn ayokoding-fs-facts-checker agent:
-   "Verify factual accuracy for [Language] content at apps/ayokoding-fs/content/en/learn/swe/programming-languages/[language]/
+   Spawn ayokoding-web-facts-checker agent:
+   "Verify factual accuracy for [Language] content at apps/ayokoding-web/content/en/learn/swe/programming-languages/[language]/
 
    Validate: Code examples, command syntax, version numbers, external references, technical claims"
    ```
@@ -679,11 +679,11 @@ Before starting, ensure you have:
 
 **Actions:**
 
-1. **Run ayokoding-fs-link-checker**:
+1. **Run ayokoding-web-link-checker**:
 
    ```
-   Spawn ayokoding-fs-link-checker agent:
-   "Validate links in [Language] content at apps/ayokoding-fs/content/en/learn/swe/programming-languages/[language]/
+   Spawn ayokoding-web-link-checker agent:
+   "Validate links in [Language] content at apps/ayokoding-web/content/en/learn/swe/programming-languages/[language]/
 
    Check: Internal links, external URLs, cross-references"
    ```
@@ -741,24 +741,24 @@ Before starting, ensure you have:
 
 ### Step 5.2: Deploy to Production
 
-**Why:** Make content available to ayokoding-fs users.
+**Why:** Make content available to ayokoding-web users.
 
 **Actions:**
 
 1. **Verify on main branch**: Ensure all changes are committed to `main`
 
-2. **Run ayokoding-fs-deployer**:
+2. **Run ayokoding-web-deployer**:
 
    ```
-   Spawn ayokoding-fs-deployer agent:
-   "Deploy ayokoding-fs to production (ayokoding.com)
+   Spawn ayokoding-web-deployer agent:
+   "Deploy ayokoding-web to production (ayokoding.com)
 
-   This will sync prod-ayokoding-fs branch with main and trigger Vercel deployment."
+   This will sync prod-ayokoding-web branch with main and trigger Vercel deployment."
    ```
 
 3. **Verify deployment**:
    - Check Vercel deployment status
-   - Visit <../../apps/ayokoding-fs/content/en/learn/swe/programming-languages/[language]/>
+   - Visit <../../apps/ayokoding-web/content/en/learn/swe/programming-languages/[language]/>
    - Navigate through tutorials
    - Test a few code examples
 
@@ -791,14 +791,14 @@ Before starting, ensure you have:
 
 1. Make updates on `main` branch (Trunk Based Development)
 2. Run validation agents (content-checker, facts-checker, link-checker)
-3. Deploy via ayokoding-fs-deployer
+3. Deploy via ayokoding-web-deployer
 4. No need for feature branches for small updates
 
 ## Troubleshooting
 
 ### Common Issues
 
-**Issue:** ayokoding-fs-general-checker reports Hugo convention violations
+**Issue:** ayokoding-web-general-checker reports Hugo convention violations
 
 **Solution:** Review [Hugo Content Convention - ayokoding](../../governance/conventions/hugo/ayokoding.md) and fix violations. Common issues:
 
@@ -819,7 +819,7 @@ Before starting, ensure you have:
   - `tutorials/overview.md`: **1000000** (level 7)
   - `how-to/overview.md`: **1000000** (RESET - different parent)
 
-**Issue:** ayokoding-fs-facts-checker reports ❌ Error or 📅 Outdated
+**Issue:** ayokoding-web-facts-checker reports ❌ Error or 📅 Outdated
 
 **Solution:** Update technical claims with current information:
 
@@ -879,9 +879,9 @@ Use this final checklist to verify completion:
 
 ### Quality
 
-- [ ] ayokoding-fs-general-checker audit clean
-- [ ] ayokoding-fs-facts-checker audit clean (✅ Verified)
-- [ ] ayokoding-fs-link-checker validation passed
+- [ ] ayokoding-web-general-checker audit clean
+- [ ] ayokoding-web-facts-checker audit clean (✅ Verified)
+- [ ] ayokoding-web-link-checker validation passed
 - [ ] Manual quality review complete
 - [ ] All code examples tested and runnable
 - [ ] Mermaid diagrams use approved color palette
@@ -890,7 +890,7 @@ Use this final checklist to verify completion:
 ### Publishing
 
 - [ ] Content committed to main branch
-- [ ] Deployed to production via ayokoding-fs-deployer
+- [ ] Deployed to production via ayokoding-web-deployer
 - [ ] Verified live on ayokoding.com
 - [ ] Announcement published
 
@@ -903,7 +903,7 @@ Use this final checklist to verify completion:
 - [ ] Cross-references: 15+ per tutorial
 - [ ] Code examples: 25+ per major tutorial
 
-**Congratulations!** You've successfully added a new programming language to ayokoding-fs following the Programming Language Content Standard. Your content is now part of a consistent, high-quality educational platform.
+**Congratulations!** You've successfully added a new programming language to ayokoding-web following the Programming Language Content Standard. Your content is now part of a consistent, high-quality educational platform.
 
 ## Related Documentation
 

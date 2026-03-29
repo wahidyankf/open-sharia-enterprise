@@ -1,6 +1,6 @@
 # Hugo Content Conventions
 
-Hugo site-specific content conventions for oseplatform-fs. (ayokoding-fs has migrated to Next.js 16 and is no longer a Hugo site.)
+Hugo site-specific content conventions for oseplatform-web. (ayokoding-web has migrated to Next.js 16 and is no longer a Hugo site.)
 
 ## Purpose
 
@@ -25,10 +25,10 @@ These conventions define **WHAT Hugo content rules apply** to our Hugo-based web
 
 ## Conventions
 
-- [Hugo Content - ayokoding](./ayokoding.md) - **DEPRECATED** — Historical Hugo conventions for ayokoding-fs (Hextra theme). ayokoding-fs has migrated to Next.js 16
-- [Hugo Content - OSE Platform](./ose-platform.md) - Site-specific conventions for oseplatform-fs (PaperMod theme, English-only)
+- [Hugo Content - ayokoding](./ayokoding.md) - **DEPRECATED** — Historical Hugo conventions for ayokoding-web (Hextra theme). ayokoding-web has migrated to Next.js 16
+- [Hugo Content - OSE Platform](./ose-platform.md) - Site-specific conventions for oseplatform-web (PaperMod theme, English-only)
 - [Hugo Content - Shared](./shared.md) - Common Hugo content conventions applying to all Hugo sites in this repository
-- [Indonesian Content Policy - ayokoding-fs](./indonesian-content-policy.md) - Policy defining when and how to create Indonesian content in ayokoding-fs. Establishes English-first policy for technical tutorials, defines Indonesian content categories (unique content, strategic translations, discouraged mirrors), and provides decision tree for language selection
+- [Indonesian Content Policy - ayokoding-web](./indonesian-content-policy.md) - Policy defining when and how to create Indonesian content in ayokoding-web. Establishes English-first policy for technical tutorials, defines Indonesian content categories (unique content, strategic translations, discouraged mirrors), and provides decision tree for language selection
 
 ## Principles Implemented/Respected
 

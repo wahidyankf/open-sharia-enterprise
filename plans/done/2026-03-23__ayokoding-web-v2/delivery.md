@@ -1,6 +1,6 @@
 # Delivery
 
-> **Note**: All `npm install` commands run from `apps/ayokoding-fs-v2/` (project root),
+> **Note**: All `npm install` commands run from `apps/ayokoding-web-v2/` (project root),
 > not the workspace root. This ensures packages are added to the app's own `package.json`.
 >
 > **Playwright MCP**: This plan is designed for execution by AI agents with access to
@@ -13,7 +13,7 @@
 
 ## Phase 0: Visual Design Capture (via Playwright MCP)
 
-- [x] Start the current Hugo site locally (`nx dev ayokoding-fs` on port 3100)
+- [x] Start the current Hugo site locally (`nx dev ayokoding-web` on port 3100)
 - [x] Use **Playwright MCP** to browse the Hugo site and capture reference state
 - [x] `browser_navigate` to Homepage (`http://localhost:3100/en`)
   - [x] `browser_take_screenshot` — visual reference at current viewport
@@ -49,9 +49,9 @@
       use `browser_click` on hamburger to verify drawer opens
   - [x] `browser_take_screenshot` — visual reference at 375px viewport
   - [x] `browser_snapshot` — DOM/accessibility tree at 375px
-- [x] Create directory `plans/in-progress/2026-03-23__ayokoding-fs-v2/screenshots/`
-      (`mkdir -p plans/in-progress/2026-03-23__ayokoding-fs-v2/screenshots/`)
-- [x] Save screenshots to `plans/in-progress/2026-03-23__ayokoding-fs-v2/screenshots/`
+- [x] Create directory `plans/in-progress/2026-03-23__ayokoding-web-v2/screenshots/`
+      (`mkdir -p plans/in-progress/2026-03-23__ayokoding-web-v2/screenshots/`)
+- [x] Save screenshots to `plans/in-progress/2026-03-23__ayokoding-web-v2/screenshots/`
 - [x] Capture interactive behavior references via Playwright MCP:
   - [x] Search dialog: `browser_press_key` Cmd+K, verify dialog opens via
         `browser_snapshot`, type a query, verify results appear
@@ -65,7 +65,7 @@
   - [x] Extract typography scale (font family, heading sizes, body size, line height)
   - [x] Extract responsive breakpoints (sm, md, lg, xl)
   - [x] Extract spacing system (padding, margins, gaps)
-- [x] Create component mapping document (`plans/in-progress/2026-03-23__ayokoding-fs-v2/design-mapping.md`):
+- [x] Create component mapping document (`plans/in-progress/2026-03-23__ayokoding-web-v2/design-mapping.md`):
   - [x] Map each Hextra element to shadcn/ui + Tailwind equivalent
   - [x] Document responsive behavior — Desktop (≥1280px): sidebar (250px) + content (max-w-3xl) + TOC (200px)
   - [x] Document responsive behavior — Laptop (≥1024px): sidebar (250px) + content + TOC hidden
@@ -80,19 +80,19 @@
   - [x] Document component-specific responsive rules: TOC (right column desktop / hidden tablet+mobile)
   - [x] Document component-specific responsive rules: breadcrumb (truncated mobile)
   - [x] Document component-specific responsive rules: prev/next nav (stacked mobile / side-by-side desktop)
-- [x] Review `apps/ayokoding-fs/assets/css/custom.css` for site-specific overrides
+- [x] Review `apps/ayokoding-web/assets/css/custom.css` for site-specific overrides
       to replicate in Tailwind
 
 ## Phase 1: Project Scaffolding
 
-- [x] Verify `apps/ayokoding-fs/content/` exists and is non-empty
+- [x] Verify `apps/ayokoding-web/content/` exists and is non-empty
       (pre-condition for content layer — must contain 933+ markdown files)
-- [x] Create `apps/ayokoding-fs-v2/` directory
+- [x] Create `apps/ayokoding-web-v2/` directory
 - [x] Initialize Next.js 16 project with TypeScript, App Router, src/ directory
 - [x] Configure `next.config.ts`:
   - [x] `output: 'standalone'` for Docker builds (Vercel ignores this)
   - [x] `outputFileTracingRoot: path.join(__dirname, '../../')` for monorepo
-  - [x] `outputFileTracingIncludes: { '/**': ['../../apps/ayokoding-fs/content/**/*'] }`
+  - [x] `outputFileTracingIncludes: { '/**': ['../../apps/ayokoding-web/content/**/*'] }`
         (required — `@vercel/nft` cannot trace dynamic `fs.readFile` paths; without
         this, standalone builds contain zero content files and every page 404s)
 - [x] Install and configure Tailwind CSS v4 + PostCSS (v4 uses CSS-based config
@@ -136,7 +136,7 @@
   - [x] Add `implicitDependencies: ["rhino-cli", "ayokoding-cli"]`
         (rhino-cli: link + coverage validation; ayokoding-cli: link checker used in test:quick target)
   - [x] Add link validation to `test:quick` target:
-        `./apps/ayokoding-cli/dist/ayokoding-cli links check --content apps/ayokoding-fs/content`
+        `./apps/ayokoding-cli/dist/ayokoding-cli links check --content apps/ayokoding-web/content`
 - [x] Set up `tsconfig.json` with strict mode
 - [x] Set up `vitest.config.ts` with v8 coverage (80% threshold)
 - [x] Copy static assets to `public/`: `favicon.ico`, `favicon.png`
@@ -145,8 +145,8 @@
 - [x] Create `postcss.config.mjs` for Tailwind v4 (uses `@tailwindcss/postcss` plugin;
       `.mjs` matches organiclever-fe pattern — not `.ts`)
 - [x] Configure oxlint for linting
-- [x] Verify `nx run ayokoding-fs-v2:lint` passes
-- [x] Verify `nx run ayokoding-fs-v2:typecheck` passes
+- [x] Verify `nx run ayokoding-web-v2:lint` passes
+- [x] Verify `nx run ayokoding-web-v2:typecheck` passes
 
 ## Phase 2: Specs (Gherkin Feature Files)
 
@@ -315,7 +315,7 @@
 
 ## Phase 5c: Layout Components
 
-> Consult `plans/in-progress/2026-03-23__ayokoding-fs-v2/design-mapping.md` from
+> Consult `plans/in-progress/2026-03-23__ayokoding-web-v2/design-mapping.md` from
 > Phase 0 for component mapping and breakpoint specifications.
 
 - [x] Create `src/components/layout/header.tsx`:
@@ -501,7 +501,7 @@ All other content is server-rendered.
         section children
   - [x] `test/unit/be-steps/i18n-api.steps.ts` — en content, id content, invalid locale
   - [x] `test/unit/be-steps/health-check.steps.ts` — meta.health returns `{ status: "ok" }`
-- [x] Verify all BE unit tests pass: `nx run ayokoding-fs-v2:test:unit`
+- [x] Verify all BE unit tests pass: `nx run ayokoding-web-v2:test:unit`
 
 ## Phase 9: Frontend Unit Tests (FE Gherkin)
 
@@ -527,11 +527,11 @@ All other content is server-rendered.
   - [x] `i18n.steps.ts` — language switcher renders, locale changes on click
   - [x] `accessibility.steps.ts` — ARIA labels on buttons, keyboard tab order,
         skip-to-content link
-- [x] Verify all FE unit tests pass: `nx run ayokoding-fs-v2:test:unit`
+- [x] Verify all FE unit tests pass: `nx run ayokoding-web-v2:test:unit`
 
 ## Phase 10: Coverage Gate
 
-- [x] Run `nx run ayokoding-fs-v2:test:quick`:
+- [x] Run `nx run ayokoding-web-v2:test:quick`:
   - [x] Unit tests pass (BE + FE Gherkin scenarios)
   - [x] Coverage validation passes (rhino-cli 80%+)
   - [x] Link validation passes (`ayokoding-cli links check`)
@@ -549,28 +549,28 @@ All other content is server-rendered.
   - [x] search-api.steps.ts — test FlexSearch with real content
   - [x] navigation-api.steps.ts — test tree with real hierarchy
 - [x] Configure `test:integration` Nx target: `npx cucumber-js --config cucumber.integration.js`
-- [x] Verify all integration tests pass: `nx run ayokoding-fs-v2:test:integration`
+- [x] Verify all integration tests pass: `nx run ayokoding-web-v2:test:integration`
 
 ## Phase 12a: Docker Infrastructure
 
 - [x] Build standalone output locally and inspect structure:
-  - [x] Run `nx build ayokoding-fs-v2` (triggers `next build` with standalone)
+  - [x] Run `nx build ayokoding-web-v2` (triggers `next build` with standalone)
   - [x] Inspect `.next/standalone/` — find exact `server.js` path
-        (in Nx monorepos typically at `.next/standalone/apps/ayokoding-fs-v2/server.js` — verify)
+        (in Nx monorepos typically at `.next/standalone/apps/ayokoding-web-v2/server.js` — verify)
   - [x] Inspect `.next/static/` — confirm static assets location
   - [x] Inspect `public/` — confirm public assets location
-- [x] Create `apps/ayokoding-fs-v2/Dockerfile`:
+- [x] Create `apps/ayokoding-web-v2/Dockerfile`:
   - [x] Stage 1 (deps): copy workspace + app `package.json`, `npm ci`
   - [x] Stage 2 (builder): copy app source + content, `next build`
   - [x] Stage 3 (runner): copy standalone + static + public + content
   - [x] Set `HOSTNAME=0.0.0.0`, `NEXT_TELEMETRY_DISABLED=1`
   - [x] Set `--chown=nextjs:nodejs` on all COPY commands
   - [x] Adjust CMD path based on standalone inspection above
-- [x] Create `infra/dev/ayokoding-fs-v2/docker-compose.yml`:
+- [x] Create `infra/dev/ayokoding-web-v2/docker-compose.yml`:
   - [x] Set `CONTENT_DIR=/app/content`
   - [x] Set `PORT=3101`
   - [x] Health check: `curl -f http://localhost:3101/api/trpc/meta.health`
-- [x] Run `docker compose up` from `infra/dev/ayokoding-fs-v2/`
+- [x] Run `docker compose up` from `infra/dev/ayokoding-web-v2/`
 - [x] Verify health check passes: `curl http://localhost:3101/api/trpc/meta.health`
 - [x] Verify content page renders: `curl -s http://localhost:3101/en/learn/overview`
 - [x] Verify no JS-only content: compare Docker output with dev server output
@@ -589,48 +589,48 @@ All other content is server-rendered.
 
 - [x] Configure `next.config.ts` content path resolution:
   - [x] `CONTENT_DIR` env var for Docker
-  - [x] Fallback `../../apps/ayokoding-fs/content` for dev + Vercel
-- [x] Create `apps/ayokoding-fs-v2/vercel.json`:
+  - [x] Fallback `../../apps/ayokoding-web/content` for dev + Vercel
+- [x] Create `apps/ayokoding-web-v2/vercel.json`:
   - [x] Set `installCommand`: `npm install --prefix=../.. --ignore-scripts`
-  - [x] Set `ignoreCommand`: `[ "$VERCEL_GIT_COMMIT_REF" != "prod-ayokoding-fs-v2" ]`
+  - [x] Set `ignoreCommand`: `[ "$VERCEL_GIT_COMMIT_REF" != "prod-ayokoding-web-v2" ]`
         (mirrors organiclever-fe pattern — only builds on the production branch)
   - [x] Add security headers: X-Content-Type-Options, X-Frame-Options,
         X-XSS-Protection, Referrer-Policy
 
 ## Phase 13a: Backend E2E Test App
 
-- [x] Create `apps/ayokoding-fs-v2-be-e2e/` directory
-- [x] Create `apps/ayokoding-fs-v2-be-e2e/package.json` with Playwright dependency
-- [x] Create `apps/ayokoding-fs-v2-be-e2e/project.json`:
+- [x] Create `apps/ayokoding-web-v2-be-e2e/` directory
+- [x] Create `apps/ayokoding-web-v2-be-e2e/package.json` with Playwright dependency
+- [x] Create `apps/ayokoding-web-v2-be-e2e/project.json`:
   - [x] Tags: `["type:e2e", "platform:playwright", "lang:ts", "domain:ayokoding"]`
   - [x] Targets: `install`, `test:e2e`, `test:e2e:ui`, `test:e2e:report`
         (E2E-only apps follow the 4-target pattern; the mandatory 7-target rule
         applies to content/backend apps, not pure Playwright runner apps —
         consistent with `a-demo-be-e2e`, `a-demo-fe-e2e`, `organiclever-fe-e2e`)
-- [x] Create `apps/ayokoding-fs-v2-be-e2e/playwright.config.ts`:
+- [x] Create `apps/ayokoding-web-v2-be-e2e/playwright.config.ts`:
   - [x] `baseURL` from `BASE_URL` env var (default `http://localhost:3101`)
-- [x] Create `apps/ayokoding-fs-v2-be-e2e/tsconfig.json`
+- [x] Create `apps/ayokoding-web-v2-be-e2e/tsconfig.json`
 - [x] Create test specs consuming `specs/apps/ayokoding/be/gherkin/`:
   - [x] `src/tests/content-api.spec.ts` — tRPC content procedures via HTTP
   - [x] `src/tests/search-api.spec.ts` — tRPC search procedures via HTTP
   - [x] `src/tests/navigation-api.spec.ts` — tRPC navigation via HTTP
   - [x] `src/tests/i18n-api.spec.ts` — locale-specific content, invalid locale 404
   - [x] `src/tests/health.spec.ts` — health endpoint
-- [x] Start app via Docker, run BE E2E: `nx run ayokoding-fs-v2-be-e2e:test:e2e`
+- [x] Start app via Docker, run BE E2E: `nx run ayokoding-web-v2-be-e2e:test:e2e`
 - [x] Verify all BE E2E scenarios pass
 
 ## Phase 13b: Frontend E2E Test App
 
-- [x] Create `apps/ayokoding-fs-v2-fe-e2e/` directory
-- [x] Create `apps/ayokoding-fs-v2-fe-e2e/package.json` with Playwright dependency
-- [x] Create `apps/ayokoding-fs-v2-fe-e2e/project.json`:
+- [x] Create `apps/ayokoding-web-v2-fe-e2e/` directory
+- [x] Create `apps/ayokoding-web-v2-fe-e2e/package.json` with Playwright dependency
+- [x] Create `apps/ayokoding-web-v2-fe-e2e/project.json`:
   - [x] Tags: `["type:e2e", "platform:playwright", "lang:ts", "domain:ayokoding"]`
   - [x] Targets: `install`, `test:e2e`, `test:e2e:ui`, `test:e2e:report`
         (E2E-only apps follow the 4-target pattern; same as `a-demo-be-e2e`,
         `a-demo-fe-e2e`, `organiclever-fe-e2e`)
-- [x] Create `apps/ayokoding-fs-v2-fe-e2e/playwright.config.ts`:
+- [x] Create `apps/ayokoding-web-v2-fe-e2e/playwright.config.ts`:
   - [x] `baseURL` from `BASE_URL` env var (default `http://localhost:3101`)
-- [x] Create `apps/ayokoding-fs-v2-fe-e2e/tsconfig.json`
+- [x] Create `apps/ayokoding-web-v2-fe-e2e/tsconfig.json`
 - [x] Create test specs consuming `specs/apps/ayokoding/fe/gherkin/`:
   - [x] `src/tests/content-rendering.spec.ts` — page rendering, code blocks, callouts,
         tabs, YouTube embeds, steps, raw HTML
@@ -639,40 +639,40 @@ All other content is server-rendered.
   - [x] `src/tests/responsive.spec.ts` — breakpoint layout verification
   - [x] `src/tests/i18n.spec.ts` — language switching
   - [x] `src/tests/accessibility.spec.ts` — ARIA, keyboard nav
-- [x] Start app via Docker, run FE E2E: `nx run ayokoding-fs-v2-fe-e2e:test:e2e`
+- [x] Start app via Docker, run FE E2E: `nx run ayokoding-web-v2-fe-e2e:test:e2e`
 - [x] Verify all FE E2E scenarios pass
 
 ## Phase 14a: CI Workflow
 
-- [x] Create `.github/workflows/test-ayokoding-fs-v2.yml`:
+- [x] Create `.github/workflows/test-ayokoding-web-v2.yml`:
   - [x] Trigger: 2x daily cron (23:00, 11:00 UTC = WIB 06, 18) + manual dispatch
-  - [x] Job 1 (`unit`): checkout → npm ci → `nx run ayokoding-fs-v2:test:quick`
+  - [x] Job 1 (`unit`): checkout → npm ci → `nx run ayokoding-web-v2:test:quick`
   - [x] Job 1: upload coverage to Codecov
   - [x] Job 2 (`e2e`): checkout → Docker build → start → wait for health check
   - [x] Job 2: install Playwright browsers in BE + FE E2E apps
-  - [x] Job 2: run `nx run ayokoding-fs-v2-be-e2e:test:e2e`
-  - [x] Job 2: run `nx run ayokoding-fs-v2-fe-e2e:test:e2e`
+  - [x] Job 2: run `nx run ayokoding-web-v2-be-e2e:test:e2e`
+  - [x] Job 2: run `nx run ayokoding-web-v2-fe-e2e:test:e2e`
   - [x] Job 2: upload Playwright reports as artifacts
   - [x] Job 2: docker compose down (cleanup)
 - [x] Trigger workflow manually and verify all jobs pass
 
 ## Phase 14b: Vercel Deployment
 
-- [x] Create `prod-ayokoding-fs-v2` branch from `main`
+- [x] Create `prod-ayokoding-web-v2` branch from `main`
 - [x] Configure Vercel project:
-  - [x] Root directory: `apps/ayokoding-fs-v2`
+  - [x] Root directory: `apps/ayokoding-web-v2`
   - [x] Framework: Next.js (auto-detected)
-  - [x] Production branch: `prod-ayokoding-fs-v2`
+  - [x] Production branch: `prod-ayokoding-web-v2`
   - [x] (See `apps/organiclever-fe/vercel.json` and its Vercel project for reference
         configuration pattern)
-- [x] Push to `prod-ayokoding-fs-v2` branch
+- [x] Push to `prod-ayokoding-web-v2` branch
 - [x] Verify Vercel build succeeds (check build logs)
 - [x] Verify deployed site serves content correctly
 - [x] Verify SEO: `curl` deployed URL returns full HTML with meta tags
 
 ## Phase 14c: Documentation
 
-- [x] Create `apps/ayokoding-fs-v2/README.md`:
+- [x] Create `apps/ayokoding-web-v2/README.md`:
   - [x] Project overview and architecture
   - [x] Quick start commands (`nx dev`, `nx build`, `nx run test:quick`)
   - [x] Docker setup instructions
@@ -680,24 +680,24 @@ All other content is server-rendered.
   - [x] Related documentation links
 - [x] Update `specs/apps/ayokoding/README.md` — reference v2 test apps
 - [x] Update CLAUDE.md:
-  - [x] Add `ayokoding-fs-v2` to Current Apps list with description
-  - [x] Add `ayokoding-fs-v2-be-e2e` to Current Apps list with description
-  - [x] Add `ayokoding-fs-v2-fe-e2e` to Current Apps list with description
-  - [x] Add `prod-ayokoding-fs-v2` to environment branches list
+  - [x] Add `ayokoding-web-v2` to Current Apps list with description
+  - [x] Add `ayokoding-web-v2-be-e2e` to Current Apps list with description
+  - [x] Add `ayokoding-web-v2-fe-e2e` to Current Apps list with description
+  - [x] Add `prod-ayokoding-web-v2` to environment branches list
 
 ## Validation Checklist
 
-- [x] `nx run ayokoding-fs-v2:codegen` succeeds (no-op: ayokoding-fs-v2 has no
+- [x] `nx run ayokoding-web-v2:codegen` succeeds (no-op: ayokoding-web-v2 has no
       OpenAPI contract; target exists to satisfy mandatory 7-target requirement
       per nx-targets convention)
-- [x] `nx run ayokoding-fs-v2:typecheck` succeeds
-- [x] `nx run ayokoding-fs-v2:lint` succeeds
-- [x] `nx run ayokoding-fs-v2:build` succeeds
-- [x] `nx run ayokoding-fs-v2:test:unit` — all BE + FE Gherkin scenarios pass
-- [x] `nx run ayokoding-fs-v2:test:quick` — 80%+ coverage threshold met
-- [x] `nx run ayokoding-fs-v2:test:integration` — all scenarios pass with real filesystem
-- [x] `ayokoding-fs-v2-be-e2e` passes — all BE E2E scenarios pass
-- [x] `ayokoding-fs-v2-fe-e2e` passes — all FE E2E scenarios pass
+- [x] `nx run ayokoding-web-v2:typecheck` succeeds
+- [x] `nx run ayokoding-web-v2:lint` succeeds
+- [x] `nx run ayokoding-web-v2:build` succeeds
+- [x] `nx run ayokoding-web-v2:test:unit` — all BE + FE Gherkin scenarios pass
+- [x] `nx run ayokoding-web-v2:test:quick` — 80%+ coverage threshold met
+- [x] `nx run ayokoding-web-v2:test:integration` — all scenarios pass with real filesystem
+- [x] `ayokoding-web-v2-be-e2e` passes — all BE E2E scenarios pass
+- [x] `ayokoding-web-v2-fe-e2e` passes — all FE E2E scenarios pass
 - [x] Docker build and run works
 - [x] All content pages render correctly (spot check: overview, by-example with tabs, rants)
 - [x] **Hugo shortcodes render correctly**:
@@ -734,11 +734,11 @@ All other content is server-rendered.
   - [x] `ayokoding-cli nav regen` still generates correct nav for Hugo site
   - [x] `ayokoding-cli titles update` still updates titles correctly
   - [x] `ayokoding-cli links check` still validates links correctly
-  - [x] `nx run ayokoding-fs:test:quick` still passes (Hugo v1 quality gate)
-  - [x] `nx run ayokoding-fs:build` still succeeds (Hugo build)
+  - [x] `nx run ayokoding-web:test:quick` still passes (Hugo v1 quality gate)
+  - [x] `nx run ayokoding-web:build` still succeeds (Hugo build)
 - [x] CI workflow passes
-- [x] Vercel deployment succeeds from `prod-ayokoding-fs-v2` branch
+- [x] Vercel deployment succeeds from `prod-ayokoding-web-v2` branch
 - [x] README.md is complete
 - [x] `specs/apps/ayokoding/README.md` updated with v2 test app references
-- [x] CLAUDE.md updated: `ayokoding-fs-v2` in Current Apps list,
-      `prod-ayokoding-fs-v2` in environment branches list
+- [x] CLAUDE.md updated: `ayokoding-web-v2` in Current Apps list,
+      `prod-ayokoding-web-v2` in environment branches list

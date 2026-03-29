@@ -11,7 +11,7 @@ UI-specific knowledge to assist with frontend development effectively.
 
 ### Design Tokens — Detailed Analysis
 
-Both `organiclever-fe` and `ayokoding-fs` define CSS custom properties in `globals.css`, but
+Both `organiclever-fe` and `ayokoding-web` define CSS custom properties in `globals.css`, but
 with architecturally different approaches:
 
 **organiclever-fe** uses **double indirection**:
@@ -31,7 +31,7 @@ with architecturally different approaches:
 }
 ```
 
-**ayokoding-fs** uses **direct values** in `@theme`:
+**ayokoding-web** uses **direct values** in `@theme`:
 
 ```css
 @theme {
@@ -46,14 +46,14 @@ with architecturally different approaches:
 **Consequences of divergence**:
 
 - organiclever-fe tokens are neutral (grayscale primary) — business/productivity brand
-- ayokoding-fs tokens are blue-tinted — educational/tech brand
+- ayokoding-web tokens are blue-tinted — educational/tech brand
 - Different token formats mean you cannot copy-paste between apps
-- organiclever-fe has chart tokens (chart-1 through chart-5) that ayokoding-fs lacks
-- ayokoding-fs has sidebar tokens (8 extra) that organiclever-fe lacks
-- ayokoding-fs includes `@plugin "@tailwindcss/typography"` and rehype-pretty-code CSS;
+- organiclever-fe has chart tokens (chart-1 through chart-5) that ayokoding-web lacks
+- ayokoding-web has sidebar tokens (8 extra) that organiclever-fe lacks
+- ayokoding-web includes `@plugin "@tailwindcss/typography"` and rehype-pretty-code CSS;
   organiclever-fe does not
-- ayokoding-fs has `@source` directive; organiclever-fe does not
-- ayokoding-fs uses hardcoded hex colors (`#f6f8fa`, `#24292e`, `#e1e4e8`) for code blocks
+- ayokoding-web has `@source` directive; organiclever-fe does not
+- ayokoding-web uses hardcoded hex colors (`#f6f8fa`, `#24292e`, `#e1e4e8`) for code blocks
   — violating the token principle
 
 ### Components — Detailed Comparison
@@ -61,7 +61,7 @@ with architecturally different approaches:
 Both apps use shadcn/ui (new-york style) with Radix UI primitives, but component
 implementations have diverged:
 
-| Component    | organiclever-fe | ayokoding-fs  | Shared?                   |
+| Component    | organiclever-fe | ayokoding-web | Shared?                   |
 | ------------ | --------------- | ------------- | ------------------------- |
 | Alert        | Yes             | Yes           | Different implementations |
 | AlertDialog  | Yes             | No            | organiclever-only         |
@@ -87,12 +87,12 @@ implementations have diverged:
 **Radix UI import pattern divergence**:
 
 - organiclever-fe: `import { Slot } from "@radix-ui/react-slot"` (individual packages)
-- ayokoding-fs: `import { Slot } from "radix-ui"` (unified package, newer approach)
+- ayokoding-web: `import { Slot } from "radix-ui"` (unified package, newer approach)
 
 **Component pattern divergence**:
 
 - organiclever-fe: `React.forwardRef` pattern (older, more boilerplate)
-- ayokoding-fs: Direct function with `React.ComponentProps<"element">` (newer, cleaner)
+- ayokoding-web: Direct function with `React.ComponentProps<"element">` (newer, cleaner)
 
 ### Demo Frontends
 
@@ -141,7 +141,7 @@ implementations have diverged:
 **What exists**: Two independent `globals.css` files with similar-but-different token values.
 
 **Impact**: A developer changing the border radius in organiclever-fe has no mechanism to
-propagate that change to ayokoding-fs. Token values drift silently. New apps
+propagate that change to ayokoding-web. Token values drift silently. New apps
 (a-demo-fe-ts-nextjs, a-demo-fs-ts-nextjs) start from scratch with no tokens at all.
 
 **Complication**: The two apps have genuinely different brand colors (neutral vs. blue) — tokens
@@ -154,7 +154,7 @@ typography scale) and allow per-app color overrides.
 The 4 overlapping components have different implementations (different Radix imports, different
 component patterns, different variant sets).
 
-**Impact**: A bug fix in ayokoding-fs's Button (e.g., the `aria-invalid` handling) does not
+**Impact**: A bug fix in ayokoding-web's Button (e.g., the `aria-invalid` handling) does not
 propagate to organiclever-fe. Adding a new variant requires changes in multiple places.
 
 **Complication**: shadcn/ui's model is "copy to your project and own the code." Extracting to a
@@ -222,9 +222,9 @@ inconsistent across files.
 
 **Specific violations currently in codebase**:
 
-- ayokoding-fs `globals.css` has hardcoded hex colors (`#f6f8fa`, `#24292e`, `#e1e4e8`) for
+- ayokoding-web `globals.css` has hardcoded hex colors (`#f6f8fa`, `#24292e`, `#e1e4e8`) for
   code block styling
-- ayokoding-fs `globals.css` uses `!important` declarations (10 occurrences)
+- ayokoding-web `globals.css` uses `!important` declarations (10 occurrences)
 - organiclever-fe body font is `Arial, Helvetica, sans-serif` set via `@layer utilities` —
   should be configured via `next/font` for optimization
 
@@ -242,10 +242,10 @@ workflow in `governance/workflows/` for UI quality automation.
 
 **Impact**: No automated way to audit existing components against conventions. No automated
 way to create new components following all conventions. No iterative quality gate for UI changes.
-The maker-checker-fixer pattern is well-established in this repo for docs, ayokoding-fs content,
+The maker-checker-fixer pattern is well-established in this repo for docs, ayokoding-web content,
 plans, and specs — but completely missing for UI code.
 
-**What other domains have**: docs (docs-maker/checker/fixer + quality-gate), ayokoding-fs
+**What other domains have**: docs (docs-maker/checker/fixer + quality-gate), ayokoding-web
 (general-maker/checker/fixer + quality-gate), plans (plan-maker/checker/fixer + quality-gate),
 specs (specs-maker/checker/fixer). UI has zero coverage.
 
@@ -257,7 +257,7 @@ specs (specs-maker/checker/fixer). UI has zero coverage.
 Feature: UI Conventions and AI Skills
 
   Background:
-    Given the monorepo has frontend apps organiclever-fe, ayokoding-fs, and a-demo-fe-ts-nextjs
+    Given the monorepo has frontend apps organiclever-fe, ayokoding-web, and a-demo-fe-ts-nextjs
     And the governance directory exists at governance/development/
 
   Scenario: UI conventions are documented with concrete examples
@@ -415,7 +415,7 @@ Feature: Shared UI Library
 
   Scenario: Build and test pass after migration
     When I run nx affected -t typecheck lint test:quick build
-    Then all targets pass for organiclever-fe, ayokoding-fs, and a-demo-fe-ts-nextjs
+    Then all targets pass for organiclever-fe, ayokoding-web, and a-demo-fe-ts-nextjs
     And no app has duplicate token definitions in its globals.css
 ```
 

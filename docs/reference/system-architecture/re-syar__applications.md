@@ -20,41 +20,41 @@ The platform consists of 9 applications across 4 technology stacks:
 
 ### Frontend Applications (Hugo Static Sites)
 
-#### oseplatform-fs
+#### oseplatform-web
 
 - **Purpose**: Marketing and documentation website for OSE Platform
 - **URL**: <https://oseplatform.com>
 - **Technology**: Hugo 0.156.0 Extended + PaperMod theme
-- **Deployment**: Vercel (via `prod-oseplatform-fs` branch)
-- **Build Command**: `nx build oseplatform-fs`
-- **Dev Command**: `nx dev oseplatform-fs`
-- **Location**: `apps/oseplatform-fs/`
+- **Deployment**: Vercel (via `prod-oseplatform-web` branch)
+- **Build Command**: `nx build oseplatform-web`
+- **Dev Command**: `nx dev oseplatform-web`
+- **Location**: `apps/oseplatform-web/`
 
 ### Web Applications (Next.js)
 
-#### ayokoding-fs
+#### ayokoding-web
 
 - **Purpose**: Educational platform for programming, AI, and security
 - **URL**: <https://ayokoding.com>
 - **Technology**: Next.js 16 (App Router) + TypeScript + tRPC
 - **Languages**: Bilingual (default English)
-- **Deployment**: Vercel (via `prod-ayokoding-fs` branch)
-- **Build Command**: `nx build ayokoding-fs`
-- **Dev Command**: `nx dev ayokoding-fs`
-- **Location**: `apps/ayokoding-fs/`
-- **Content**: Co-located at `apps/ayokoding-fs/content/`
+- **Deployment**: Vercel (via `prod-ayokoding-web` branch)
+- **Build Command**: `nx build ayokoding-web`
+- **Dev Command**: `nx dev ayokoding-web`
+- **Location**: `apps/ayokoding-web/`
+- **Content**: Co-located at `apps/ayokoding-web/content/`
 
 ### CLI Tools (Go)
 
 #### ayokoding-cli
 
-- **Purpose**: Link validation for ayokoding-fs content
+- **Purpose**: Link validation for ayokoding-web content
 - **Language**: Go 1.26
 - **Build Command**: `nx build ayokoding-cli`
 - **Location**: `apps/ayokoding-cli/`
 - **Features**:
-  - Link validation for ayokoding-fs content
-- **Usage**: Runs as part of ayokoding-fs quality checks
+  - Link validation for ayokoding-web content
+- **Usage**: Runs as part of ayokoding-web quality checks
 
 #### rhino-cli
 
@@ -71,9 +71,9 @@ The platform consists of 9 applications across 4 technology stacks:
 - **Build Command**: `nx build oseplatform-cli`
 - **Location**: `apps/oseplatform-cli/`
 - **Features**:
-  - Validates all internal links in oseplatform-fs content
+  - Validates all internal links in oseplatform-web content
   - Text, JSON, and markdown output formats
-- **Usage**: Runs as first step of `oseplatform-fs`'s `test:quick` target
+- **Usage**: Runs as first step of `oseplatform-web`'s `test:quick` target
 
 ### Web Applications (Next.js)
 
@@ -136,8 +136,8 @@ Shows the high-level technical building blocks (containers) of the system. In C4
 ```mermaid
 graph TB
     subgraph "Marketing & Education Sites"
-        OSE[oseplatform-fs<br/>Hugo Static Site]
-        AYO[ayokoding-fs<br/>Next.js App]
+        OSE[oseplatform-web<br/>Hugo Static Site]
+        AYO[ayokoding-web<br/>Next.js App]
     end
 
     subgraph "OrganicLever Platform"
@@ -193,12 +193,12 @@ graph TB
 
 Marketing & Education Sites:
 
-- oseplatform-fs: Fully independent static site
-- ayokoding-fs: Next.js fullstack content platform (with CLI link validation)
+- oseplatform-web: Fully independent static site
+- ayokoding-web: Next.js fullstack content platform (with CLI link validation)
 
 CLI Tools:
 
-- ayokoding-cli: Validates links in ayokoding-fs content
+- ayokoding-cli: Validates links in ayokoding-web content
 - rhino-cli: Repository management automation
 
 **Build-Time Dependencies:**
@@ -207,7 +207,7 @@ CLI Tools:
 - CLI tools executed during build processes
 - Shared libraries may be imported at build time via `@open-sharia-enterprise/[lib-name]`
 
-**Link Validation Pipeline (ayokoding-fs):**
+**Link Validation Pipeline (ayokoding-web):**
 
-ayokoding-cli validates internal links in ayokoding-fs content as part of the quality gate.
-Content is co-located at `apps/ayokoding-fs/content/` and served by the Next.js application.
+ayokoding-cli validates internal links in ayokoding-web content as part of the quality gate.
+Content is co-located at `apps/ayokoding-web/content/` and served by the Next.js application.

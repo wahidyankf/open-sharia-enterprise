@@ -232,8 +232,8 @@ No code changes expected for most. Verify compliance, adapt where needed.
   - [x] Run `nx run organiclever-fe:test:quick` — passes
 - [x] **3.2 `organiclever-fe-e2e`** — already compliant
   - [x] `test:e2e` runs Playwright, `test:quick` runs bddgen + tsc
-- [x] **3.3 `oseplatform-fs`** — already compliant, `test:quick` runs link validation
-- [x] **3.4 `ayokoding-fs`** — already compliant, `test:quick` runs link validation
+- [x] **3.3 `oseplatform-web`** — already compliant, `test:quick` runs link validation
+- [x] **3.4 `ayokoding-web`** — already compliant, `test:quick` runs link validation
 - [x] **3.5 `ayokoding-cli`** — added `test:unit` target
   - [x] `test:quick` already runs unit tests only (`go test ./...` excludes `-tags=integration`)
   - [x] Added `test:unit` target for explicit unit test execution

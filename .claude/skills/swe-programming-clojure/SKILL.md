@@ -19,8 +19,8 @@ Progressive disclosure of Clojure coding standards for agents writing Clojure co
 
 Complete the AyoKoding Clojure learning path first:
 
-1. **[Clojure Learning Path](../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/clojure/)** - 0-95% language coverage
-2. **[Clojure By Example](../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/clojure/by-example/)** - 75+ annotated examples
+1. **[Clojure Learning Path](../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/clojure/)** - 0-95% language coverage
+2. **[Clojure By Example](../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/clojure/by-example/)** - 75+ annotated examples
 
 **See**: [Programming Language Documentation Separation](../../../governance/conventions/structure/programming-language-docs-separation.md)
 

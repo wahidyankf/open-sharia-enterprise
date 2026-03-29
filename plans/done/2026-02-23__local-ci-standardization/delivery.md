@@ -43,8 +43,8 @@ reference `test:quick`, not bare `test`.
 
 These two apps are **excluded from the pre-push hook and PR merge gate** until fixed.
 
-- [x] **2.1** `oseplatform-fs/project.json`: Add `test:quick` (runs `bash build.sh` with outputs)
-- [x] **2.2** `oseplatform-fs/project.json`: Fix `clean` to include `.hugo_build.lock`
+- [x] **2.1** `oseplatform-web/project.json`: Add `test:quick` (runs `bash build.sh` with outputs)
+- [x] **2.2** `oseplatform-web/project.json`: Fix `clean` to include `.hugo_build.lock`
 - [x] **2.3** `organiclever-fe/package.json`: Add vitest devDependencies via
       `npm install --save-dev vitest @vitejs/plugin-react jsdom @testing-library/react vite-tsconfig-paths`
       (run from `apps/organiclever-fe`)
@@ -60,14 +60,14 @@ These two apps are **excluded from the pre-push hook and PR merge gate** until f
 
 **Verify**:
 
-- `nx run oseplatform-fs:test:quick`, `nx run organiclever-fe:test:quick`,
+- `nx run oseplatform-web:test:quick`, `nx run organiclever-fe:test:quick`,
   `nx run organiclever-fe:typecheck`, `nx run organiclever-fe:test:unit`,
   `nx run organiclever-fe:test:integration`, and
   `nx run organiclever-fe:lint` all return exit code 0.
-- The `clean` fix for oseplatform-fs includes `.hugo_build.lock`:
+- The `clean` fix for oseplatform-web includes `.hugo_build.lock`:
 
   ```bash
-  grep -F ".hugo_build.lock" apps/oseplatform-fs/project.json
+  grep -F ".hugo_build.lock" apps/oseplatform-web/project.json
   # Expected: one match
   ```
 
@@ -79,11 +79,11 @@ These four apps cannot participate in `nx affected -t lint` until fixed.
 
 - [x] **3.1** `ayokoding-cli/project.json`: Add `lint` (`golangci-lint run ./...`)
 - [x] **3.2** `rhino-cli/project.json`: Add `lint` (`CGO_ENABLED=0 golangci-lint run ./...`)
-- [x] **3.3** `ayokoding-fs/project.json`: Add `lint` (`markdownlint-cli2 "apps/ayokoding-fs/content/**/*.md"` — workspace root cwd to pick up `.markdownlint-cli2.jsonc`)
-- [x] **3.4** `oseplatform-fs/project.json`: Add `lint` (`markdownlint-cli2 "apps/oseplatform-fs/content/**/*.md"` — workspace root cwd)
+- [x] **3.3** `ayokoding-web/project.json`: Add `lint` (`markdownlint-cli2 "apps/ayokoding-web/content/**/*.md"` — workspace root cwd to pick up `.markdownlint-cli2.jsonc`)
+- [x] **3.4** `oseplatform-web/project.json`: Add `lint` (`markdownlint-cli2 "apps/oseplatform-web/content/**/*.md"` — workspace root cwd)
 
-**Verify**: `nx run ayokoding-cli:lint`, `nx run rhino-cli:lint`, `nx run ayokoding-fs:lint`,
-`nx run oseplatform-fs:lint` — all exit 0.
+**Verify**: `nx run ayokoding-cli:lint`, `nx run rhino-cli:lint`, `nx run ayokoding-web:lint`,
+`nx run oseplatform-web:lint` — all exit 0.
 
 ---
 

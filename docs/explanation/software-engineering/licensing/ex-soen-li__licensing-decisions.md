@@ -110,7 +110,7 @@ LGPL-3.0 has similar requirements to LGPL-2.1 with one additional condition: use
 
 ### Usage in This Project
 
-sharp is used in Node.js applications (primarily `ayokoding-fs`) for server-side image optimisation. sharp loads libvips as a **native dynamic addon** via Node.js's N-API interface. The libvips binary is distributed as a platform-specific prebuilt package (`@img/sharp-linux-x64` etc.) and loaded at runtime with `require()`.
+sharp is used in Node.js applications (primarily `ayokoding-web`) for server-side image optimisation. sharp loads libvips as a **native dynamic addon** via Node.js's N-API interface. The libvips binary is distributed as a platform-specific prebuilt package (`@img/sharp-linux-x64` etc.) and loaded at runtime with `require()`.
 
 This constitutes **dynamic linking** through the native addon interface. The application:
 

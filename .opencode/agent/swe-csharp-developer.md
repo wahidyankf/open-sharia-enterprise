@@ -69,13 +69,13 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 
 **Documentation Separation**:
 
-- **[AyoKoding](../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/c-sharp/)** - "How to code in C#" (educational, universal patterns)
+- **[AyoKoding](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/c-sharp/)** - "How to code in C#" (educational, universal patterns)
 - **[docs/explanation](../../docs/explanation/software-engineering/programming-languages/c-sharp/)** - "How to code C# in OSE Platform" (repository conventions, framework choices)
 
 **You MUST complete AyoKoding C# learning path before using OSE standards:**
 
-1. **[C# Learning Path](../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/c-sharp/)** - Initial setup, overview, quick start (0-95% language coverage)
-2. **[C# By Example](../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/c-sharp/by-example/)** - 75+ annotated code examples
+1. **[C# Learning Path](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/c-sharp/)** - Initial setup, overview, quick start (0-95% language coverage)
+2. **[C# By Example](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/c-sharp/by-example/)** - 75+ annotated code examples
 
 **See**: [Programming Language Documentation Separation](../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 

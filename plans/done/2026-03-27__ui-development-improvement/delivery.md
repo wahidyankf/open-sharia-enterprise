@@ -81,7 +81,7 @@ governance docs, skill files, agent files, and Prettier config._
 ### 1.4 Create UI Quality Gate Workflow
 
 **Goal**: Create `governance/workflows/ui/ui-quality-gate.md` following the established quality
-gate pattern (modeled on `plan-quality-gate.md` and `ayokoding-fs-general-quality-gate.md`).
+gate pattern (modeled on `plan-quality-gate.md` and `ayokoding-web-general-quality-gate.md`).
 
 - [x] Create `governance/workflows/ui/` directory
 - [x] Create `governance/workflows/ui/README.md` — index for UI workflows
@@ -146,7 +146,7 @@ _Extract shared tokens and components into Nx libraries. One app migration at a 
 - [x] Extract and modernize 6 components: Button (reconciled), Alert, Dialog, Input, Card, Label
   - All use `React.ComponentProps`, `data-slot`, `radix-ui` unified imports, `cn()`
   - Card and Label modernized from forwardRef to function component pattern
-  - Button uses ayokoding-fs's 8 sizes, 6 variants, asChild, aria-invalid, SVG auto-sizing
+  - Button uses ayokoding-web's 8 sizes, 6 variants, asChild, aria-invalid, SVG auto-sizing
 - [x] Configure `vitest.config.ts` with vitest-axe, @vitejs/plugin-react, v8 coverage
 - [x] Add unit tests for all 6 components with axe-core accessibility assertions
 - [x] Configure `project.json` with targets: typecheck, lint, test:unit, test:quick
@@ -163,7 +163,7 @@ _Extract shared tokens and components into Nx libraries. One app migration at a 
 - [x] Update remaining local components (AlertDialog, Table) to use `cn` from shared lib
 - [x] Verify `nx run organiclever-fe:test:quick` passes (99.57% coverage)
 
-### 2.4 Migrate ayokoding-fs
+### 2.4 Migrate ayokoding-web
 
 **Goal**: Replace app-local tokens and components with shared library imports.
 
@@ -173,7 +173,7 @@ _Extract shared tokens and components into Nx libraries. One app migration at a 
 - [x] Update all local components to import `cn` from shared lib
 - [x] Delete migrated component files (Alert, Button, Dialog, Input)
 - [x] Keep app-specific: Badge, Command, DropdownMenu, ScrollArea, Separator, Sheet, Tabs, Tooltip
-- [x] Verify `nx run ayokoding-fs:test:quick` passes (86.34% coverage, 80% threshold)
+- [x] Verify `nx run ayokoding-web:test:quick` passes (86.34% coverage, 80% threshold)
 
 ### 2.5 Update a-demo-fe-ts-nextjs
 
@@ -187,7 +187,7 @@ _Extract shared tokens and components into Nx libraries. One app migration at a 
 
 ### Phase 2 Validation
 
-- [x] `nx affected -t typecheck lint test:quick` succeeds for organiclever-fe and ayokoding-fs
+- [x] `nx affected -t typecheck lint test:quick` succeeds for organiclever-fe and ayokoding-web
 - [x] No duplicate structural token definitions in migrated apps
 - [x] Each migrated app's `globals.css` contains only brand overrides and app-specific tokens
 - [x] All shared components use unified `radix-ui` import and `React.ComponentProps` pattern
@@ -210,7 +210,7 @@ adding rules to ESLint config and tests to vitest automatically enforces them._
 - [x] Install `eslint-plugin-jsx-a11y` (for organiclever-fe ESLint config)
 - [x] Add `jsxA11y.flatConfigs.recommended` to organiclever-fe's `eslint.config.mjs`
 - [x] Enable oxlint `--jsx-a11y-plugin` for all 5 TypeScript frontend apps via project.json
-  - organiclever-fe, ayokoding-fs, a-demo-fe-ts-nextjs, a-demo-fs-ts-nextjs, a-demo-fe-ts-tanstack-start
+  - organiclever-fe, ayokoding-web, a-demo-fe-ts-nextjs, a-demo-fs-ts-nextjs, a-demo-fe-ts-tanstack-start
 - [x] Verify `nx run-many -t lint` passes cleanly (0 errors, all 5 projects)
 
 ### 3.2 Add vitest-axe to Unit Tests
@@ -397,7 +397,7 @@ flowchart TD
     E[2.1 Create ts-ui-tokens]
     F[2.2 Create ts-ui]
     G[2.3 Migrate organiclever-fe]
-    H[2.4 Migrate ayokoding-fs]
+    H[2.4 Migrate ayokoding-web]
     I[2.5 Update a-demo-fe-ts-nextjs]
     J[2.6 Update a-demo-fs-ts-nextjs]
     E --> F

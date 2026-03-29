@@ -36,7 +36,7 @@ updated: 2026-03-06
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You **MUST** understand Go fundamentals from [AyoKoding Go Learning Path](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/golang/_index.md) before using these standards.
+**REQUIRED**: You **MUST** understand Go fundamentals from [AyoKoding Go Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/_index.md) before using these standards.
 
 **This document is OSE Platform-specific**, not a Go tutorial. It assumes proficiency in:
 
@@ -3962,7 +3962,7 @@ type ReadCloser interface {
 
 **Cross-Language Comparisons:**
 
-- [Java Finite State Machines](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/java/by-example/advanced.md) - Comparison with Java approach
+- [Java Finite State Machines](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/java/by-example/advanced.md) - Comparison with Java approach
 
 **Governance Principles:**
 

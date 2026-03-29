@@ -12,24 +12,24 @@ var linksContentDir string
 
 var linksCheckCmd = &cobra.Command{
 	Use:   "check",
-	Short: "Validate internal links in ayokoding-fs content",
-	Long: `Validate all internal links in ayokoding-fs markdown content.
+	Short: "Validate internal links in ayokoding-web content",
+	Long: `Validate all internal links in ayokoding-web markdown content.
 
 Walks all .md files in the content directory, extracts internal links, and
 checks that each link resolves to a real file on disk. Internal links use
 Hugo absolute paths (/en/... or /id/...) without .md extension.
 
 External links (http://, https://, mailto://) are skipped — use the
-apps-ayokoding-fs-link-checker AI agent for external link validation.`,
+apps-ayokoding-web-link-checker AI agent for external link validation.`,
 	Example: `  ayokoding-cli links check
-  ayokoding-cli links check --content apps/ayokoding-fs/content
+  ayokoding-cli links check --content apps/ayokoding-web/content
   ayokoding-cli links check -o json`,
 	RunE: runLinksCheck,
 }
 
 func init() {
 	linksCmd.AddCommand(linksCheckCmd)
-	linksCheckCmd.Flags().StringVar(&linksContentDir, "content", "apps/ayokoding-fs/content", "content directory path")
+	linksCheckCmd.Flags().StringVar(&linksContentDir, "content", "apps/ayokoding-web/content", "content directory path")
 }
 
 func runLinksCheck(_ *cobra.Command, _ []string) error {

@@ -13,7 +13,7 @@ This section documents the findings from the comprehensive audit conducted befor
 | Skills References                 | ⚠️ Incomplete     | 7 of 10 Skills missing "References" section                |
 | Skills Naming                     | ⚠️ Improvements   | 1 violation (uppercase), 10 could use gerund form          |
 | Agent Skills Coverage             | ❌ Incomplete     | 39 of 44 agents have empty `skills: []`                    |
-| Missing Agents                    | ❌ Incomplete MCF | `apps__ayokoding-fs__link-fixer` missing                   |
+| Missing Agents                    | ❌ Incomplete MCF | `apps__ayokoding-web__link-fixer` missing                  |
 | CLAUDE.md Size                    | ✅ Under Limit    | 28,473 characters (target: 30k)                            |
 | Factual Accuracy                  | ❌ Issues Found   | 6 documents have incorrect delivery model                  |
 
@@ -73,7 +73,7 @@ The following 39 agents have `skills: []` and need appropriate skills assigned:
 
 **Content Makers (7 agents):**
 
-- `apps__ayokoding-fs__title-maker`
+- `apps__ayokoding-web__title-maker`
 - `apps__ose-platform-web__content-maker`
 - `docs__tutorial-maker`
 - `readme__maker`
@@ -83,11 +83,11 @@ The following 39 agents have `skills: []` and need appropriate skills assigned:
 
 **Content Checkers (12 agents):**
 
-- `apps__ayokoding-fs__by-example-checker`
-- `apps__ayokoding-fs__facts-checker`
-- `apps__ayokoding-fs__general-checker`
-- `apps__ayokoding-fs__link-checker`
-- `apps__ayokoding-fs__structure-checker`
+- `apps__ayokoding-web__by-example-checker`
+- `apps__ayokoding-web__facts-checker`
+- `apps__ayokoding-web__general-checker`
+- `apps__ayokoding-web__link-checker`
+- `apps__ayokoding-web__structure-checker`
 - `apps__ose-platform-web__content-checker`
 - `docs__link-general-checker`
 - `docs__tutorial-checker`
@@ -99,10 +99,10 @@ The following 39 agents have `skills: []` and need appropriate skills assigned:
 
 **Content Fixers (11 agents):**
 
-- `apps__ayokoding-fs__by-example-fixer`
-- `apps__ayokoding-fs__facts-fixer`
-- `apps__ayokoding-fs__general-fixer`
-- `apps__ayokoding-fs__structure-fixer`
+- `apps__ayokoding-web__by-example-fixer`
+- `apps__ayokoding-web__facts-fixer`
+- `apps__ayokoding-web__general-fixer`
+- `apps__ayokoding-web__structure-fixer`
 - `apps__ose-platform-web__content-fixer`
 - `docs__fixer`
 - `docs__tutorial-fixer`
@@ -114,9 +114,9 @@ The following 39 agents have `skills: []` and need appropriate skills assigned:
 **Operations/Other (9 agents):**
 
 - `agent__maker`
-- `apps__ayokoding-fs__deployer`
-- `apps__ayokoding-fs__navigation-maker`
-- `apps__ayokoding-fs__structure-maker`
+- `apps__ayokoding-web__deployer`
+- `apps__ayokoding-web__navigation-maker`
+- `apps__ayokoding-web__structure-maker`
 - `apps__ose-platform-web__deployer`
 - `docs__file-manager`
 - `plan__executor`
@@ -124,8 +124,8 @@ The following 39 agents have `skills: []` and need appropriate skills assigned:
 
 **Agents with Skills (5 agents, will be updated to new names):**
 
-- `apps__ayokoding-fs__by-example-maker`: `[creating-by-example-tutorials, developing-ayokoding-content]`
-- `apps__ayokoding-fs__general-maker`: `[developing-ayokoding-content, creating-accessible-diagrams]`
+- `apps__ayokoding-web__by-example-maker`: `[creating-by-example-tutorials, developing-ayokoding-content]`
+- `apps__ayokoding-web__general-maker`: `[developing-ayokoding-content, creating-accessible-diagrams]`
 - `docs__checker`: `[applying-maker-checker-fixer, assessing-criticality-confidence]`
 - `docs__maker`: `[creating-accessible-diagrams, applying-maker-checker-fixer]`
 - `plan__maker`: `[writing-gherkin-criteria, practicing-trunk-based-development]`
@@ -161,11 +161,11 @@ The following 39 agents have `skills: []` and need appropriate skills assigned:
 
 Analysis of the 44 agents revealed one incomplete Maker-Checker-Fixer pattern:
 
-| Agent Family       | Maker | Checker                            | Fixer      | Issue                              |
-| ------------------ | ----- | ---------------------------------- | ---------- | ---------------------------------- |
-| ayokoding-fs links | N/A   | `apps__ayokoding-fs__link-checker` | ❌ Missing | No fixer to apply link audit fixes |
+| Agent Family        | Maker | Checker                             | Fixer      | Issue                              |
+| ------------------- | ----- | ----------------------------------- | ---------- | ---------------------------------- |
+| ayokoding-web links | N/A   | `apps__ayokoding-web__link-checker` | ❌ Missing | No fixer to apply link audit fixes |
 
-**Action Required**: Create `apps__ayokoding-fs__link-fixer` agent to complete the MCF pattern.
+**Action Required**: Create `apps__ayokoding-web__link-fixer` agent to complete the MCF pattern.
 
 **Skills Assignment**: `[validating-links, assessing-criticality-confidence]`
 
@@ -226,23 +226,23 @@ Recommended skills for each agent based on domain (using new gerund-form names):
 
 ### Ayokoding-Web Agents
 
-| Agent                                    | Recommended Skills                                                                |
-| ---------------------------------------- | --------------------------------------------------------------------------------- |
-| `apps__ayokoding-fs__by-example-maker`   | `creating-by-example-tutorials`, `developing-ayokoding-content` (update existing) |
-| `apps__ayokoding-fs__by-example-checker` | `creating-by-example-tutorials`, `assessing-criticality-confidence`               |
-| `apps__ayokoding-fs__by-example-fixer`   | `creating-by-example-tutorials`, `assessing-criticality-confidence`               |
-| `apps__ayokoding-fs__general-maker`      | `developing-ayokoding-content`, `creating-accessible-diagrams` (update existing)  |
-| `apps__ayokoding-fs__general-checker`    | `developing-ayokoding-content`, `assessing-criticality-confidence`                |
-| `apps__ayokoding-fs__general-fixer`      | `developing-ayokoding-content`, `assessing-criticality-confidence`                |
-| `apps__ayokoding-fs__facts-checker`      | `validating-factual-accuracy`, `assessing-criticality-confidence`                 |
-| `apps__ayokoding-fs__facts-fixer`        | `validating-factual-accuracy`, `assessing-criticality-confidence`                 |
-| `apps__ayokoding-fs__link-checker`       | `validating-links`, `assessing-criticality-confidence`                            |
-| `apps__ayokoding-fs__structure-checker`  | `developing-ayokoding-content`, `assessing-criticality-confidence`                |
-| `apps__ayokoding-fs__structure-fixer`    | `developing-ayokoding-content`, `assessing-criticality-confidence`                |
-| `apps__ayokoding-fs__structure-maker`    | `developing-ayokoding-content`                                                    |
-| `apps__ayokoding-fs__navigation-maker`   | `developing-ayokoding-content`                                                    |
-| `apps__ayokoding-fs__title-maker`        | `developing-ayokoding-content`                                                    |
-| `apps__ayokoding-fs__deployer`           | `practicing-trunk-based-development`                                              |
+| Agent                                     | Recommended Skills                                                                |
+| ----------------------------------------- | --------------------------------------------------------------------------------- |
+| `apps__ayokoding-web__by-example-maker`   | `creating-by-example-tutorials`, `developing-ayokoding-content` (update existing) |
+| `apps__ayokoding-web__by-example-checker` | `creating-by-example-tutorials`, `assessing-criticality-confidence`               |
+| `apps__ayokoding-web__by-example-fixer`   | `creating-by-example-tutorials`, `assessing-criticality-confidence`               |
+| `apps__ayokoding-web__general-maker`      | `developing-ayokoding-content`, `creating-accessible-diagrams` (update existing)  |
+| `apps__ayokoding-web__general-checker`    | `developing-ayokoding-content`, `assessing-criticality-confidence`                |
+| `apps__ayokoding-web__general-fixer`      | `developing-ayokoding-content`, `assessing-criticality-confidence`                |
+| `apps__ayokoding-web__facts-checker`      | `validating-factual-accuracy`, `assessing-criticality-confidence`                 |
+| `apps__ayokoding-web__facts-fixer`        | `validating-factual-accuracy`, `assessing-criticality-confidence`                 |
+| `apps__ayokoding-web__link-checker`       | `validating-links`, `assessing-criticality-confidence`                            |
+| `apps__ayokoding-web__structure-checker`  | `developing-ayokoding-content`, `assessing-criticality-confidence`                |
+| `apps__ayokoding-web__structure-fixer`    | `developing-ayokoding-content`, `assessing-criticality-confidence`                |
+| `apps__ayokoding-web__structure-maker`    | `developing-ayokoding-content`                                                    |
+| `apps__ayokoding-web__navigation-maker`   | `developing-ayokoding-content`                                                    |
+| `apps__ayokoding-web__title-maker`        | `developing-ayokoding-content`                                                    |
+| `apps__ayokoding-web__deployer`           | `practicing-trunk-based-development`                                              |
 
 ### OSE-Platform-Web Agents
 
@@ -399,21 +399,21 @@ Recommended skills for each agent based on domain (using new gerund-form names):
 | Agent                                     | Current Skills                                                 | New Skills (Phase 3)                                                        |
 | ----------------------------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------- |
 | `agent__maker`                            | `[]`                                                           | `[developing-agents, understanding-repository-architecture]`                |
-| `apps__ayokoding-fs__by-example-checker`  | `[]`                                                           | `[creating-by-example-tutorials, assessing-criticality-confidence]`         |
-| `apps__ayokoding-fs__by-example-fixer`    | `[]`                                                           | `[creating-by-example-tutorials, assessing-criticality-confidence]`         |
-| `apps__ayokoding-fs__by-example-maker`    | `[by-example-tutorial-creation, hugo-ayokoding-development]`   | `[creating-by-example-tutorials, developing-ayokoding-content]`             |
-| `apps__ayokoding-fs__deployer`            | `[]`                                                           | `[practicing-trunk-based-development]`                                      |
-| `apps__ayokoding-fs__facts-checker`       | `[]`                                                           | `[validating-factual-accuracy, assessing-criticality-confidence]`           |
-| `apps__ayokoding-fs__facts-fixer`         | `[]`                                                           | `[validating-factual-accuracy, assessing-criticality-confidence]`           |
-| `apps__ayokoding-fs__general-checker`     | `[]`                                                           | `[developing-ayokoding-content, assessing-criticality-confidence]`          |
-| `apps__ayokoding-fs__general-fixer`       | `[]`                                                           | `[developing-ayokoding-content, assessing-criticality-confidence]`          |
-| `apps__ayokoding-fs__general-maker`       | `[hugo-ayokoding-development, color-accessibility-diagrams]`   | `[developing-ayokoding-content, creating-accessible-diagrams]`              |
-| `apps__ayokoding-fs__link-checker`        | `[]`                                                           | `[validating-links, assessing-criticality-confidence]`                      |
-| `apps__ayokoding-fs__navigation-maker`    | `[]`                                                           | `[developing-ayokoding-content]`                                            |
-| `apps__ayokoding-fs__structure-checker`   | `[]`                                                           | `[developing-ayokoding-content, assessing-criticality-confidence]`          |
-| `apps__ayokoding-fs__structure-fixer`     | `[]`                                                           | `[developing-ayokoding-content, assessing-criticality-confidence]`          |
-| `apps__ayokoding-fs__structure-maker`     | `[]`                                                           | `[developing-ayokoding-content]`                                            |
-| `apps__ayokoding-fs__title-maker`         | `[]`                                                           | `[developing-ayokoding-content]`                                            |
+| `apps__ayokoding-web__by-example-checker` | `[]`                                                           | `[creating-by-example-tutorials, assessing-criticality-confidence]`         |
+| `apps__ayokoding-web__by-example-fixer`   | `[]`                                                           | `[creating-by-example-tutorials, assessing-criticality-confidence]`         |
+| `apps__ayokoding-web__by-example-maker`   | `[by-example-tutorial-creation, hugo-ayokoding-development]`   | `[creating-by-example-tutorials, developing-ayokoding-content]`             |
+| `apps__ayokoding-web__deployer`           | `[]`                                                           | `[practicing-trunk-based-development]`                                      |
+| `apps__ayokoding-web__facts-checker`      | `[]`                                                           | `[validating-factual-accuracy, assessing-criticality-confidence]`           |
+| `apps__ayokoding-web__facts-fixer`        | `[]`                                                           | `[validating-factual-accuracy, assessing-criticality-confidence]`           |
+| `apps__ayokoding-web__general-checker`    | `[]`                                                           | `[developing-ayokoding-content, assessing-criticality-confidence]`          |
+| `apps__ayokoding-web__general-fixer`      | `[]`                                                           | `[developing-ayokoding-content, assessing-criticality-confidence]`          |
+| `apps__ayokoding-web__general-maker`      | `[hugo-ayokoding-development, color-accessibility-diagrams]`   | `[developing-ayokoding-content, creating-accessible-diagrams]`              |
+| `apps__ayokoding-web__link-checker`       | `[]`                                                           | `[validating-links, assessing-criticality-confidence]`                      |
+| `apps__ayokoding-web__navigation-maker`   | `[]`                                                           | `[developing-ayokoding-content]`                                            |
+| `apps__ayokoding-web__structure-checker`  | `[]`                                                           | `[developing-ayokoding-content, assessing-criticality-confidence]`          |
+| `apps__ayokoding-web__structure-fixer`    | `[]`                                                           | `[developing-ayokoding-content, assessing-criticality-confidence]`          |
+| `apps__ayokoding-web__structure-maker`    | `[]`                                                           | `[developing-ayokoding-content]`                                            |
+| `apps__ayokoding-web__title-maker`        | `[]`                                                           | `[developing-ayokoding-content]`                                            |
 | `apps__ose-platform-web__content-checker` | `[]`                                                           | `[developing-ose-content, assessing-criticality-confidence]`                |
 | `apps__ose-platform-web__content-fixer`   | `[]`                                                           | `[developing-ose-content, assessing-criticality-confidence]`                |
 | `apps__ose-platform-web__content-maker`   | `[]`                                                           | `[developing-ose-content, applying-content-quality]`                        |
@@ -442,7 +442,7 @@ Recommended skills for each agent based on domain (using new gerund-form names):
 | `wow__workflow-checker`                   | `[]`                                                           | `[defining-workflows, assessing-criticality-confidence]`                    |
 | `wow__workflow-fixer`                     | `[]`                                                           | `[defining-workflows, assessing-criticality-confidence]`                    |
 | `wow__workflow-maker`                     | `[]`                                                           | `[defining-workflows, writing-gherkin-criteria]`                            |
-| —                                         | —                                                              | **NEW**: `apps__ayokoding-fs__link-fixer` (Phase 6)                         |
+| —                                         | —                                                              | **NEW**: `apps__ayokoding-web__link-fixer` (Phase 6)                        |
 
 ### Layer 5: Workflows (8 files) - NO CHANGES
 
@@ -462,7 +462,7 @@ Recommended skills for each agent based on domain (using new gerund-form names):
 | ---------------------- | ------------------------------------------------------------- |
 | Skills Infrastructure  | ⚠️ **Phase 4**: Fix "delivery to agents through auto-loading" |
 | Skills Infrastructure  | Update skill names to gerund form                             |
-| Available Agents       | Add `apps__ayokoding-fs__link-fixer` to Fixing section        |
+| Available Agents       | Add `apps__ayokoding-web__link-fixer` to Fixing section       |
 | Agent count references | Update 44 → 45                                                |
 
 ### Other Files Changed

@@ -2,7 +2,7 @@
 
 Gherkin behavioral specifications for
 [oseplatform-cli](../../apps/oseplatform-cli/README.md) — the CLI tool for
-oseplatform-fs Hugo site maintenance.
+oseplatform-web Hugo site maintenance.
 
 ## Purpose
 

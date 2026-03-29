@@ -1,6 +1,6 @@
 ---
 title: "Hugo Content Convention - Shared"
-description: Common Hugo conventions shared between ayokoding-fs and oseplatform-fs
+description: Common Hugo conventions shared between ayokoding-web and oseplatform-web
 category: explanation
 subcategory: conventions
 tags:
@@ -18,9 +18,9 @@ updated: 2025-12-22
 
 This document defines **common Hugo conventions** that apply to Hugo sites in this repository:
 
-- **oseplatform-fs** - Project landing page using PaperMod theme ([site-specific conventions](./ose-platform.md))
+- **oseplatform-web** - Project landing page using PaperMod theme ([site-specific conventions](./ose-platform.md))
 
-> **Note**: ayokoding-fs has migrated to Next.js 16 and is no longer a Hugo site. Historical Hugo conventions for ayokoding-fs are preserved in [ayokoding.md](./ayokoding.md) for reference only.
+> **Note**: ayokoding-web has migrated to Next.js 16 and is no longer a Hugo site. Historical Hugo conventions for ayokoding-web are preserved in [ayokoding.md](./ayokoding.md) for reference only.
 
 ## Principles Implemented/Respected
 
@@ -34,7 +34,7 @@ This convention implements the following core principles:
 
 ## Purpose
 
-This convention establishes shared standards that apply to **all Hugo sites** in the repository (ayokoding-fs and oseplatform-fs). It defines universal frontmatter requirements, markdown formatting, and content quality rules that every Hugo site must follow, providing a common foundation before site-specific conventions apply.
+This convention establishes shared standards that apply to **all Hugo sites** in the repository (ayokoding-web and oseplatform-web). It defines universal frontmatter requirements, markdown formatting, and content quality rules that every Hugo site must follow, providing a common foundation before site-specific conventions apply.
 
 ## Scope
 
@@ -48,7 +48,7 @@ This convention establishes shared standards that apply to **all Hugo sites** in
 
 ### What This Convention Does NOT Cover
 
-- **Site-specific conventions** - See [ayokoding-fs convention](./ayokoding.md) and [oseplatform-fs convention](./ose-platform.md)
+- **Site-specific conventions** - See [ayokoding-web convention](./ayokoding.md) and [oseplatform-web convention](./ose-platform.md)
 - **Hugo theme development** - Covered in [Hugo Development Convention](../../development/hugo/development.md)
 - **Content strategy** - What content to create (covered in domain conventions)
 - **Deployment** - Covered by site-specific deployer agents
@@ -63,16 +63,16 @@ This shared document contains conventions that apply to **both sites**:
 
 **Site-specific patterns** (themes, configurations, workflows) are documented in separate files:
 
-- [ayokoding-fs specific conventions](./ayokoding.md)
-- [oseplatform-fs specific conventions](./ose-platform.md)
+- [ayokoding-web specific conventions](./ayokoding.md)
+- [oseplatform-web specific conventions](./ose-platform.md)
 
 ```mermaid
 %% Color Palette: Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161
 %% All colors are color-blind friendly and meet WCAG AA contrast standards
 graph TD
     A[Hugo Content] --> B[Shared Conventions<br/>This Document]
-    A --> C[ayokoding-fs<br/>Site-Specific]
-    A --> D[oseplatform-fs<br/>Site-Specific]
+    A --> C[ayokoding-web<br/>Site-Specific]
+    A --> D[oseplatform-web<br/>Site-Specific]
 
     B --> B1[Inherited<br/>Standards]
     B --> B2[Adapted<br/>Standards]
@@ -103,9 +103,9 @@ These conventions from `docs/` directory apply to Hugo content without modificat
 
 - **Inline math**: `$...$` for inline equations (e.g., $r_f$, $\beta$)
 - **Display math**: `$$...$$` for block equations
-- **Applies to**: Learning content in ayokoding-fs (tutorials, technical explanations)
+- **Applies to**: Learning content in ayokoding-web (tutorials, technical explanations)
 
-**Example (ayokoding-fs learning content)**:
+**Example (ayokoding-web learning content)**:
 
 ```markdown
 The risk-free rate $r_f$ is typically represented using the formula:
@@ -133,7 +133,7 @@ where $\pi$ represents the expected inflation rate.
 - Purple: `#CC78BC`
 - Brown: `#CA9161`
 
-**Applies to**: All diagrams in both sites (ayokoding-fs and oseplatform-fs)
+**Applies to**: All diagrams in both sites (ayokoding-web and oseplatform-web)
 
 **Example**:
 
@@ -168,7 +168,7 @@ graph LR
 - Class diagrams for architecture
 - State diagrams for workflows
 
-**Example (ayokoding-fs tutorial)**:
+**Example (ayokoding-web tutorial)**:
 
 ````markdown
 ```mermaid
@@ -226,7 +226,7 @@ flowchart LR
 
 **Application to Hugo**: Selective use of semantic emojis to enhance document scannability.
 
-**Applies to**: Both ayokoding-fs and oseplatform-fs content
+**Applies to**: Both ayokoding-web and oseplatform-web content
 
 **Allowed Usage**:
 
@@ -234,7 +234,7 @@ flowchart LR
 - Status indicators (Launch, Maintenance, Analytics)
 - Category icons ( Tutorial, Goal, Tip)
 
-**Example (oseplatform-fs update)**:
+**Example (oseplatform-web update)**:
 
 ```markdown
 ## Release Update
@@ -277,9 +277,9 @@ lastmod: 2025-12-07T15:45:00+07:00
 
 **Reference**: [Tutorial Convention](../tutorials/general.md)
 
-**Application to Hugo**: Applies to learning content in **ayokoding-fs only**.
+**Application to Hugo**: Applies to learning content in **ayokoding-web only**.
 
-**Scope**: `apps/ayokoding-fs/content/id/belajar/` and `apps/ayokoding-fs/content/en/learn/`
+**Scope**: `apps/ayokoding-web/content/id/belajar/` and `apps/ayokoding-web/content/en/learn/`
 
 **Key Requirements**:
 
@@ -289,7 +289,7 @@ lastmod: 2025-12-07T15:45:00+07:00
 - Clear learning objectives
 - Narrative flow with context
 
-**Example (ayokoding-fs tutorial structure)**:
+**Example (ayokoding-web tutorial structure)**:
 
 ```markdown
 ---
@@ -327,9 +327,9 @@ Let's start by creating a new project...
 
 **Reference**: [Tutorial Naming Convention](../tutorials/naming.md)
 
-**Application to Hugo**: Use standardized tutorial types in **ayokoding-fs learning content only**.
+**Application to Hugo**: Use standardized tutorial types in **ayokoding-web learning content only**.
 
-**Scope**: ayokoding-fs only (oseplatform-fs does not use tutorials)
+**Scope**: ayokoding-web only (oseplatform-web does not use tutorials)
 
 **Tutorial Types**:
 
@@ -342,7 +342,7 @@ Let's start by creating a new project...
 
 **Note**: Coverage percentages indicate depth/scope, NOT time required. See "No Time Estimates" convention below.
 
-**Example (ayokoding-fs file naming)**:
+**Example (ayokoding-web file naming)**:
 
 ```
 content/id/belajar/nodejs/
@@ -359,7 +359,7 @@ content/id/belajar/nodejs/
 
 **Application to Hugo**: Do NOT include time estimates in educational/tutorial content.
 
-**Scope**: ayokoding-fs learning content (`content/en/learn/`, `content/id/belajar/`)
+**Scope**: ayokoding-web learning content (`content/en/learn/`, `content/id/belajar/`)
 
 **Rationale**:
 
@@ -512,7 +512,7 @@ FAIL: **Incorrect (relative paths or .md extension)**:
 
 The approach depends on your Hugo configuration:
 
-**For sites with `defaultContentLanguageInSubdir: true`** (like ayokoding-fs and oseplatform-fs):
+**For sites with `defaultContentLanguageInSubdir: true`** (like ayokoding-web and oseplatform-web):
 
 - **INCLUDE language prefix** explicitly in internal links
 - Both languages are served from subdirectories (`/en/`, `/id/`, etc.)
@@ -570,7 +570,7 @@ Hugo Content Naming Patterns:
    about.en.md (English)
 ```
 
-**Example (ayokoding-fs structure)**:
+**Example (ayokoding-web structure)**:
 
 ```
 content/
@@ -588,7 +588,7 @@ content/
             └── getting-started.md     # English version
 ```
 
-**Example (oseplatform-fs structure)**:
+**Example (oseplatform-web structure)**:
 
 ```
 content/
@@ -673,11 +673,11 @@ These conventions are unique to Hugo static site generation and apply to both si
 
 **CRITICAL**: Hugo content markdown files MUST NOT include H1 headings (`# ...`) that duplicate the frontmatter `title` field.
 
-**Why this matters**: Hugo themes (Hextra for ayokoding-fs, PaperMod for oseplatform-fs) automatically render the `title` field from frontmatter as the page heading (H1). When markdown content also includes an H1 heading, it creates duplicate heading display on the rendered page.
+**Why this matters**: Hugo themes (Hextra for ayokoding-web, PaperMod for oseplatform-web) automatically render the `title` field from frontmatter as the page heading (H1). When markdown content also includes an H1 heading, it creates duplicate heading display on the rendered page.
 
 **Rule**: Content should start with introduction text or H2 headings (`## ...`). If an H1 is needed for structural reasons, it must be semantically different from the title.
 
-**Applies to**: ALL Hugo content files in both ayokoding-fs and oseplatform-fs.
+**Applies to**: ALL Hugo content files in both ayokoding-web and oseplatform-web.
 
 PASS: **Good (no duplicate H1)**:
 
@@ -747,8 +747,8 @@ This section covers common patterns...
 
 **Site-Specific Archetypes**: Each site defines its own archetypes - see site-specific convention documents:
 
-- [ayokoding-fs archetypes](./ayokoding.md#archetypes)
-- [oseplatform-fs archetypes](./ose-platform.md#archetypes)
+- [ayokoding-web archetypes](./ayokoding.md#archetypes)
+- [oseplatform-web archetypes](./ose-platform.md#archetypes)
 
 ### 3. Shortcodes
 
@@ -765,8 +765,8 @@ This section covers common patterns...
 
 **Theme-Specific Shortcodes**: Each theme provides additional shortcodes - see site-specific convention documents:
 
-- [Hextra shortcodes (ayokoding-fs)](./ayokoding.md#hextra-shortcodes)
-- [PaperMod shortcodes (oseplatform-fs)](./ose-platform.md#papermod-shortcodes)
+- [Hextra shortcodes (ayokoding-web)](./ayokoding.md#hextra-shortcodes)
+- [PaperMod shortcodes (oseplatform-web)](./ose-platform.md#papermod-shortcodes)
 
 **Example (using Hugo built-in shortcodes)**:
 
@@ -839,8 +839,8 @@ Run `npm install`
 
 **Site-Specific Taxonomy**: Each site defines specific category values - see site-specific convention documents:
 
-- [ayokoding-fs taxonomy](./ayokoding.md#taxonomy)
-- [oseplatform-fs taxonomy](./ose-platform.md#taxonomy)
+- [ayokoding-web taxonomy](./ayokoding.md#taxonomy)
+- [oseplatform-web taxonomy](./ose-platform.md#taxonomy)
 
 **Example (generic usage)**:
 
@@ -947,14 +947,14 @@ This tutorial covers...
 **URL Pattern Examples**:
 
 ```
-# ayokoding-fs
+# ayokoding-web
 content/id/belajar/nodejs/getting-started.md
 → URL: https://ayokoding.com/id/belajar/nodejs/getting-started
 
 content/en/learn/typescript/basics.md
 → URL: https://ayokoding.com/en/learn/typescript/basics
 
-# oseplatform-fs
+# oseplatform-web
 content/updates/2025-12-07-initial-release.md
 → URL: https://oseplatform.com/updates/2025-12-07-initial-release
 
@@ -1016,8 +1016,8 @@ Before publishing Hugo content, verify:
 
 **Site-Specific Conventions**:
 
-- [ayokoding-fs Hugo Content Convention](./ayokoding.md)
-- [oseplatform-fs Hugo Content Convention](./ose-platform.md)
+- [ayokoding-web Hugo Content Convention](./ayokoding.md)
+- [oseplatform-web Hugo Content Convention](./ose-platform.md)
 
 **External Resources**:
 

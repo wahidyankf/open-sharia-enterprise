@@ -902,18 +902,18 @@ This section provides comprehensive listing of ALL components affected by Skills
 
 **All agents require `skills:` frontmatter field** (required field, can be empty `[]`).
 
-| Agent                                  | Impact Description                                            | Phase   |
-| -------------------------------------- | ------------------------------------------------------------- | ------- |
-| `wow__rules-maker`                     | Add Skills creation/validation capabilities + `skills:` field | Phase 2 |
-| `wow__rules-checker`                   | Add Skills validation checks + `skills:` field                | Phase 2 |
-| `wow__rules-fixer`                     | Add Skills fix capabilities + `skills:` field                 | Phase 2 |
-| `docs__maker`                          | Add `skills:` with actual Skills references                   | Phase 2 |
-| `docs__checker`                        | Add `skills:` with actual Skills references                   | Phase 2 |
-| `apps__ayokoding-fs__general-maker`    | Add `skills:` with actual Skills references                   | Phase 2 |
-| `apps__ayokoding-fs__by-example-maker` | Add `skills:` with actual Skills references                   | Phase 2 |
-| `plan__maker`                          | Add `skills:` with actual Skills references                   | Phase 2 |
-| `agent__maker`                         | Update templates to include required `skills:` field          | Phase 2 |
-| **All other agents (~36)**             | Add `skills: []` to frontmatter (batch update)                | Phase 2 |
+| Agent                                   | Impact Description                                            | Phase   |
+| --------------------------------------- | ------------------------------------------------------------- | ------- |
+| `wow__rules-maker`                      | Add Skills creation/validation capabilities + `skills:` field | Phase 2 |
+| `wow__rules-checker`                    | Add Skills validation checks + `skills:` field                | Phase 2 |
+| `wow__rules-fixer`                      | Add Skills fix capabilities + `skills:` field                 | Phase 2 |
+| `docs__maker`                           | Add `skills:` with actual Skills references                   | Phase 2 |
+| `docs__checker`                         | Add `skills:` with actual Skills references                   | Phase 2 |
+| `apps__ayokoding-web__general-maker`    | Add `skills:` with actual Skills references                   | Phase 2 |
+| `apps__ayokoding-web__by-example-maker` | Add `skills:` with actual Skills references                   | Phase 2 |
+| `plan__maker`                           | Add `skills:` with actual Skills references                   | Phase 2 |
+| `agent__maker`                          | Update templates to include required `skills:` field          | Phase 2 |
+| **All other agents (~36)**              | Add `skills: []` to frontmatter (batch update)                | Phase 2 |
 
 ### Workflows Affected
 
@@ -999,13 +999,13 @@ See [Skills README](../../.claude/skills/README.md) for creating and using Skill
 
 These agents will be updated with optional `skills:` frontmatter in Phase 2:
 
-| Agent                                  | Skills References                                              |
-| -------------------------------------- | -------------------------------------------------------------- |
-| `docs__maker`                          | `color-accessibility-diagrams`, `maker-checker-fixer-pattern`  |
-| `docs__checker`                        | `maker-checker-fixer-pattern`, `criticality-confidence-system` |
-| `apps__ayokoding-fs__general-maker`    | `hugo-ayokoding-development`, `color-accessibility-diagrams`   |
-| `apps__ayokoding-fs__by-example-maker` | `by-example-tutorial-creation`, `hugo-ayokoding-development`   |
-| `plan__maker`                          | `gherkin-acceptance-criteria`, `trunk-based-development`       |
+| Agent                                   | Skills References                                              |
+| --------------------------------------- | -------------------------------------------------------------- |
+| `docs__maker`                           | `color-accessibility-diagrams`, `maker-checker-fixer-pattern`  |
+| `docs__checker`                         | `maker-checker-fixer-pattern`, `criticality-confidence-system` |
+| `apps__ayokoding-web__general-maker`    | `hugo-ayokoding-development`, `color-accessibility-diagrams`   |
+| `apps__ayokoding-web__by-example-maker` | `by-example-tutorial-creation`, `hugo-ayokoding-development`   |
+| `plan__maker`                           | `gherkin-acceptance-criteria`, `trunk-based-development`       |
 
 ---
 

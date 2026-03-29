@@ -71,15 +71,15 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 
 **Documentation Separation**:
 
-- **[AyoKoding](../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/golang/)** - "How to code in Go" (educational, universal patterns)
+- **[AyoKoding](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/)** - "How to code in Go" (educational, universal patterns)
 - **[docs/explanation](../../docs/explanation/software-engineering/programming-languages/golang/)** - "How to code Go in OSE Platform" (repository conventions, framework choices)
 
 **You MUST complete AyoKoding Go learning path before using OSE standards:**
 
-1. **[Go Learning Path](../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/golang/)** - Initial setup, overview, quick start (0-95% language coverage)
-2. **[Go By Example](../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/golang/by-example/)** - 75+ annotated code examples (beginner to advanced)
-3. **[Go In the Field](../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/golang/in-the-field/)** - 37+ production implementation guides (standard library first, framework integration)
-4. **[Go Release Highlights](../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/golang/release-highlights/)** - Go 1.18-1.26 features (generics, fuzzing, PGO, iterators, Green Tea GC default, self-referential generics, errors.AsType)
+1. **[Go Learning Path](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/)** - Initial setup, overview, quick start (0-95% language coverage)
+2. **[Go By Example](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/by-example/)** - 75+ annotated code examples (beginner to advanced)
+3. **[Go In the Field](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/in-the-field/)** - 37+ production implementation guides (standard library first, framework integration)
+4. **[Go Release Highlights](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/golang/release-highlights/)** - Go 1.18-1.26 features (generics, fuzzing, PGO, iterators, Green Tea GC default, self-referential generics, errors.AsType)
 
 **See**: [Programming Language Documentation Separation](../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 

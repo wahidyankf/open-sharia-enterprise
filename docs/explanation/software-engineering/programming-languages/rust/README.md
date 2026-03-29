@@ -93,12 +93,12 @@ OSE Platform Rust applications MUST use the following stack:
 
 **You MUST understand Rust fundamentals before using these standards:**
 
-- **[Rust Learning Path](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/rust/)** - Complete language coverage
-- **[Rust By Example](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/rust/by-example/)** - Annotated code examples from basic to advanced
+- **[Rust Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/rust/)** - Complete language coverage
+- **[Rust By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/rust/by-example/)** - Annotated code examples from basic to advanced
 
 **What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply Rust knowledge in THIS codebase.
 
-**What this documentation does NOT cover**: Rust syntax, ownership/borrowing fundamentals, language concepts (those are in ayokoding-fs).
+**What this documentation does NOT cover**: Rust syntax, ownership/borrowing fundamentals, language concepts (those are in ayokoding-web).
 
 **See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 

@@ -21,8 +21,8 @@ var osExit = os.Exit
 
 var rootCmd = &cobra.Command{
 	Use:   "oseplatform-cli",
-	Short: "CLI tools for oseplatform-fs Hugo site",
-	Long: `Command-line tools for oseplatform-fs Hugo site maintenance and automation.
+	Short: "CLI tools for oseplatform-web Hugo site",
+	Long: `Command-line tools for oseplatform-web Hugo site maintenance and automation.
 
 Provides link validation with support for multiple output formats
 and verbose logging.`,

@@ -46,21 +46,21 @@ graph TD
 
 ### Content Infrastructure
 
-- **Hugo Static Site Generator**: 0.139.4 (ayokoding-fs site engine)
+- **Hugo Static Site Generator**: 0.139.4 (ayokoding-web site engine)
 - **Hextra Theme**: Custom fork with bilingual support and level-based weight system
 - **Mermaid**: Diagram rendering in markdown
 
 ### Validation Tools
 
-- **ayokoding-fs-structure-checker**: Validates directory structure, file presence, weight ordering
-- **ayokoding-fs-general-checker**: Validates Hugo conventions, quality principles, pedagogical patterns
-- **ayokoding-fs-facts-checker**: Validates factual correctness (command syntax, versions, code examples)
-- **ayokoding-fs-link-checker**: Validates all internal and external links
+- **ayokoding-web-structure-checker**: Validates directory structure, file presence, weight ordering
+- **ayokoding-web-general-checker**: Validates Hugo conventions, quality principles, pedagogical patterns
+- **ayokoding-web-facts-checker**: Validates factual correctness (command syntax, versions, code examples)
+- **ayokoding-web-link-checker**: Validates all internal and external links
 
 ### Content Tools
 
-- **ayokoding-fs-general-maker**: Creates new content following conventions
-- **ayokoding-fs-general-fixer**: Applies automated fixes from audit reports
+- **ayokoding-web-general-maker**: Creates new content following conventions
+- **ayokoding-web-general-fixer**: Applies automated fixes from audit reports
 - **Manual editing**: For content requiring human judgment
 
 ### Analysis Tools
@@ -301,15 +301,15 @@ graph TD
    - Add missing files (create from templates)
    - Fix weights (cookbook to 1000001, others sequential)
    - Fix file naming (if any violations)
-   - Commit: `fix(ayokoding-fs): [language] structural parity (files, weights, naming)`
+   - Commit: `fix(ayokoding-web): [language] structural parity (files, weights, naming)`
 
 2. **Content Additions**
-   - Add missing tutorials (use ayokoding-fs-general-maker)
-   - Add missing how-to guides (use ayokoding-fs-general-maker)
+   - Add missing tutorials (use ayokoding-web-general-maker)
+   - Add missing how-to guides (use ayokoding-web-general-maker)
    - Add missing explanation content (best-practices, anti-patterns)
    - Add missing reference content (cheat-sheet, glossary, resources)
    - Expand short content to meet minimum line counts
-   - Commit per content type: `feat(ayokoding-fs): [language] add missing [content-type]`
+   - Commit per content type: `feat(ayokoding-web): [language] add missing [content-type]`
 
 3. **Quality Improvements**
    - Add missing pedagogical patterns (front hooks, learning paths, prerequisites)
@@ -318,7 +318,7 @@ graph TD
    - Add cross-references (minimum 10 per tutorial)
    - Make code examples runnable (add missing context, fix syntax)
    - Remove time estimates
-   - Commit per quality type: `refactor(ayokoding-fs): [language] quality parity ([pattern-name])`
+   - Commit per quality type: `refactor(ayokoding-web): [language] quality parity ([pattern-name])`
 
 **Language Order:**
 
@@ -333,8 +333,8 @@ Process in this order (easiest to hardest):
 
 **Tools:**
 
-- **ayokoding-fs-general-maker**: Generate new content following conventions
-- **ayokoding-fs-general-fixer**: Apply automated fixes from checker audits
+- **ayokoding-web-general-maker**: Generate new content following conventions
+- **ayokoding-web-general-fixer**: Apply automated fixes from checker audits
 - **Manual editing**: For nuanced content requiring judgment
 - **Template files**: Create templates for common structures (tutorial outline, cookbook recipe, how-to guide)
 
@@ -348,12 +348,12 @@ Process in this order (easiest to hardest):
 
    ```bash
    # Run for each language
-   ayokoding-fs-structure-checker --language python
-   ayokoding-fs-structure-checker --language golang
-   ayokoding-fs-structure-checker --language java
-   ayokoding-fs-structure-checker --language kotlin
-   ayokoding-fs-structure-checker --language rust
-   ayokoding-fs-structure-checker --language elixir
+   ayokoding-web-structure-checker --language python
+   ayokoding-web-structure-checker --language golang
+   ayokoding-web-structure-checker --language java
+   ayokoding-web-structure-checker --language kotlin
+   ayokoding-web-structure-checker --language rust
+   ayokoding-web-structure-checker --language elixir
    ```
 
    - Expected: Zero violations for all languages
@@ -363,12 +363,12 @@ Process in this order (easiest to hardest):
 
    ```bash
    # Run for each language
-   ayokoding-fs-general-checker --language python
-   ayokoding-fs-general-checker --language golang
-   ayokoding-fs-general-checker --language java
-   ayokoding-fs-general-checker --language kotlin
-   ayokoding-fs-general-checker --language rust
-   ayokoding-fs-general-checker --language elixir
+   ayokoding-web-general-checker --language python
+   ayokoding-web-general-checker --language golang
+   ayokoding-web-general-checker --language java
+   ayokoding-web-general-checker --language kotlin
+   ayokoding-web-general-checker --language rust
+   ayokoding-web-general-checker --language elixir
    ```
 
    - Expected: Zero violations for all languages
@@ -378,8 +378,8 @@ Process in this order (easiest to hardest):
 
    ```bash
    # Run for each language (focuses on code examples, commands, versions)
-   ayokoding-fs-facts-checker --language python --scope tutorials
-   ayokoding-fs-facts-checker --language golang --scope tutorials
+   ayokoding-web-facts-checker --language python --scope tutorials
+   ayokoding-web-facts-checker --language golang --scope tutorials
    # ... etc for all languages
    ```
 
@@ -390,7 +390,7 @@ Process in this order (easiest to hardest):
 
    ```bash
    # Run for entire site
-   ayokoding-fs-link-checker --scope prog-lang
+   ayokoding-web-link-checker --scope prog-lang
    ```
 
    - Expected: Zero broken links
@@ -504,7 +504,7 @@ parity_gaps:
 highest_standards:
   tutorials:
     initial_setup:
-      example: "apps/ayokoding-fs/content/en/learn/swe/programming-languages/python/tutorials/initial-setup.md"
+      example: "apps/ayokoding-web/content/en/learn/swe/programming-languages/python/tutorials/initial-setup.md"
       line_count: 412
       highlights:
         - "Clear platform-specific installation instructions"
@@ -512,7 +512,7 @@ highest_standards:
         - "Troubleshooting section"
 
     quick_start:
-      example: "apps/ayokoding-fs/content/en/learn/swe/programming-languages/golang/tutorials/quick-start.md"
+      example: "apps/ayokoding-web/content/en/learn/swe/programming-languages/golang/tutorials/quick-start.md"
       line_count: 892
       highlights:
         - "Excellent learning path diagram"
@@ -520,7 +520,7 @@ highest_standards:
         - "Progressive complexity"
 
     beginner:
-      example: "apps/ayokoding-fs/content/en/learn/swe/programming-languages/java/tutorials/beginner.md"
+      example: "apps/ayokoding-web/content/en/learn/swe/programming-languages/java/tutorials/beginner.md"
       line_count: 2156
       highlights:
         - "Comprehensive type system coverage"
@@ -530,7 +530,7 @@ highest_standards:
     # ... etc for all content types
 
   cookbook:
-    example: "apps/ayokoding-fs/content/en/learn/swe/programming-languages/golang/how-to/cookbook.md"
+    example: "apps/ayokoding-web/content/en/learn/swe/programming-languages/golang/how-to/cookbook.md"
     line_count: 5169
     recipe_count: 42
     highlights:
@@ -546,36 +546,36 @@ highest_standards:
 ### Content Security
 
 - **CS-1**: All code examples are educational and do not contain security vulnerabilities
-- **CS-2**: External links verified for safety (ayokoding-fs-link-checker validates against known-safe domains)
+- **CS-2**: External links verified for safety (ayokoding-web-link-checker validates against known-safe domains)
 - **CS-3**: No personally identifiable information in examples
 
 ### Process Security
 
 - **PS-1**: All changes validated before commit (run checkers on changed files)
-- **PS-2**: No direct commits to environment deployment branches (prod-ayokoding-fs, prod-ose-platform-web)
+- **PS-2**: No direct commits to environment deployment branches (prod-ayokoding-web, prod-ose-platform-web)
 - **PS-3**: Validation checkers run in sandboxed environment (no execution of untrusted code)
 
 ## Testing Strategy
 
 ### Automated Testing
 
-1. **Structure Tests**: ayokoding-fs-structure-checker
+1. **Structure Tests**: ayokoding-web-structure-checker
    - File presence validation
    - Weight ordering validation
    - Naming convention validation
 
-2. **Content Tests**: ayokoding-fs-general-checker
+2. **Content Tests**: ayokoding-web-general-checker
    - Hugo convention compliance
    - Quality principle compliance
    - Pedagogical pattern presence
    - Color palette compliance
 
-3. **Factual Tests**: ayokoding-fs-facts-checker
+3. **Factual Tests**: ayokoding-web-facts-checker
    - Command syntax validation
    - Version accuracy validation
    - Code example syntax validation
 
-4. **Link Tests**: ayokoding-fs-link-checker
+4. **Link Tests**: ayokoding-web-link-checker
    - Internal link validation
    - External link validation (with cache)
 

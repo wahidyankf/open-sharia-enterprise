@@ -40,7 +40,7 @@ func (s *linksCheckOseplatformSteps) before(_ context.Context, _ *godog.Scenario
 	verbose = false
 	quiet = false
 	output = "text"
-	linksContentDir = "apps/oseplatform-fs/content"
+	linksContentDir = "apps/oseplatform-web/content"
 	outputLinksJSONFn = links.OutputLinksJSON
 	_ = os.Chdir(s.tmpDir)
 	return context.Background(), nil
@@ -148,9 +148,9 @@ func InitializeLinksCheckOseplatformScenario(sc *godog.ScenarioContext) {
 	sc.Before(s.before)
 	sc.After(s.after)
 
-	sc.Step(`^oseplatform-fs content where all internal links resolve correctly$`, s.oseplatformWebContentWhereAllInternalLinksResolveCorrectly)
-	sc.Step(`^oseplatform-fs content with a link pointing to a non-existent page$`, s.oseplatformWebContentWithALinkPointingToANonExistentPage)
-	sc.Step(`^oseplatform-fs content with only external HTTPS links$`, s.oseplatformWebContentWithOnlyExternalHTTPSLinks)
+	sc.Step(`^oseplatform-web content where all internal links resolve correctly$`, s.oseplatformWebContentWhereAllInternalLinksResolveCorrectly)
+	sc.Step(`^oseplatform-web content with a link pointing to a non-existent page$`, s.oseplatformWebContentWithALinkPointingToANonExistentPage)
+	sc.Step(`^oseplatform-web content with only external HTTPS links$`, s.oseplatformWebContentWithOnlyExternalHTTPSLinks)
 	sc.Step(`^the developer runs links check$`, s.theDeveloperRunsLinksCheck)
 	sc.Step(`^the developer runs links check with JSON output$`, s.theDeveloperRunsLinksCheckWithJSONOutput)
 	sc.Step(`^the command exits successfully$`, s.theOseplatformLinksCommandExitsSuccessfully)

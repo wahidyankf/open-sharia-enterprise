@@ -65,13 +65,13 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 
 **Documentation Separation**:
 
-- **[AyoKoding](../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/clojure/)** - "How to code in Clojure" (educational, universal patterns)
+- **[AyoKoding](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/clojure/)** - "How to code in Clojure" (educational, universal patterns)
 - **[docs/explanation](../../docs/explanation/software-engineering/programming-languages/clojure/)** - "How to code Clojure in OSE Platform" (repository conventions, framework choices)
 
 **You MUST complete AyoKoding Clojure learning path before using OSE standards:**
 
-1. **[Clojure Learning Path](../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/clojure/)** - Initial setup, overview (0-95% language coverage)
-2. **[Clojure By Example](../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/clojure/by-example/)** - 75+ annotated code examples
+1. **[Clojure Learning Path](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/clojure/)** - Initial setup, overview (0-95% language coverage)
+2. **[Clojure By Example](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/clojure/by-example/)** - 75+ annotated code examples
 
 **See**: [Programming Language Documentation Separation](../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 

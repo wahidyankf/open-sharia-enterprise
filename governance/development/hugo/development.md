@@ -1,6 +1,6 @@
 ---
 title: "Hugo Development Convention"
-description: Standards for developing Hugo sites (layouts, themes, assets, configuration) for ayokoding-fs and oseplatform-fs
+description: Standards for developing Hugo sites (layouts, themes, assets, configuration) for ayokoding-web and oseplatform-web
 category: explanation
 subcategory: development
 tags:
@@ -15,7 +15,7 @@ updated: 2025-12-07
 
 # Hugo Development Convention
 
-Standards for developing the non-content aspects of Hugo websites in this repository. This convention covers theme customization, layout development, asset management, configuration, and build processes for **oseplatform-fs** (PaperMod theme). (ayokoding-fs has migrated to Next.js 16 and is no longer a Hugo site.)
+Standards for developing the non-content aspects of Hugo websites in this repository. This convention covers theme customization, layout development, asset management, configuration, and build processes for **oseplatform-web** (PaperMod theme). (ayokoding-web has migrated to Next.js 16 and is no longer a Hugo site.)
 
 ## Principles Implemented/Respected
 
@@ -33,9 +33,9 @@ This practice implements/respects the following conventions:
 
 - **[Hugo Content Convention - Shared](../../conventions/hugo/shared.md)**: Theme development supports content conventions (frontmatter processing, multilingual support, navigation rendering) defined for Hugo sites.
 
-- **[Hugo Content Convention - ayokoding](../../conventions/hugo/ayokoding.md)**: ayokoding-fs theme customizations implement Hextra-specific conventions (language switching, overview/ikhtisar links, level-based weights).
+- **[Hugo Content Convention - ayokoding](../../conventions/hugo/ayokoding.md)**: ayokoding-web theme customizations implement Hextra-specific conventions (language switching, overview/ikhtisar links, level-based weights).
 
-- **[Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md)**: oseplatform-fs theme customizations implement PaperMod-specific conventions (cover images, summary handling, English-only structure).
+- **[Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md)**: oseplatform-web theme customizations implement PaperMod-specific conventions (cover images, summary handling, English-only structure).
 
 - **[Color Accessibility Convention](../../conventions/formatting/color-accessibility.md)**: Theme CSS and components use verified accessible color palette (#0173B2, #DE8F05, #029E73, #CC78BC) meeting WCAG AA standards.
 
@@ -59,8 +59,8 @@ This convention defines standards for:
 
 **This Convention Applies To:**
 
-- `apps/ayokoding-fs/` - Educational platform (Hextra theme)
-- `apps/oseplatform-fs/` - Project landing page (PaperMod theme v7.0+)
+- `apps/ayokoding-web/` - Educational platform (Hextra theme)
+- `apps/oseplatform-web/` - Project landing page (PaperMod theme v7.0+)
 
 **Files In Scope:**
 
@@ -85,8 +85,8 @@ This convention defines standards for:
 This convention builds upon and references:
 
 - [Hugo Content Convention - Shared](../../conventions/hugo/shared.md) - Shared content standards (complementary)
-- [Hugo Content Convention - ayokoding](../../conventions/hugo/ayokoding.md) - ayokoding-fs content standards
-- [Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md) - oseplatform-fs content standards
+- [Hugo Content Convention - ayokoding](../../conventions/hugo/ayokoding.md) - ayokoding-web content standards
+- [Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md) - oseplatform-web content standards
 - [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - Accessible color palette for themes
 - [Diagram Convention](../../conventions/formatting/diagrams.md) - Mermaid diagrams in documentation (includes Mermaid comment syntax)
 - [Content Quality Principles](../../conventions/writing/quality.md) - Universal markdown standards
@@ -123,7 +123,7 @@ graph TD
 **Override Individual Files:**
 
 ```
-apps/ayokoding-fs/
+apps/ayokoding-web/
 ├── layouts/
 │   ├── _default/
 │   │   └── baseof.html       # Overrides theme's baseof.html
@@ -142,7 +142,7 @@ apps/ayokoding-fs/
 | Major theme changes                 | Consider forking theme                        | Full control, harder updates |
 | Bug fix                             | Override temporarily, PR to upstream          | Contribute back              |
 
-### ayokoding-fs (Hextra Theme) Specifics
+### ayokoding-web (Hextra Theme) Specifics
 
 **Theme Repository:** `imfing/hextra`
 
@@ -175,7 +175,7 @@ params:
     displayToggle: true
 ```
 
-### oseplatform-fs (PaperMod Theme v7.0+) Specifics
+### oseplatform-web (PaperMod Theme v7.0+) Specifics
 
 **Theme Repository:** `adityatelange/hugo-PaperMod`
 
@@ -1089,8 +1089,8 @@ chmod +x build.sh
 
 ```json
 {
-  "buildCommand": "cd apps/ayokoding-fs && bash build.sh",
-  "outputDirectory": "apps/ayokoding-fs/public",
+  "buildCommand": "cd apps/ayokoding-web && bash build.sh",
+  "outputDirectory": "apps/ayokoding-web/public",
   "framework": "hugo",
   "env": {
     "HUGO_VERSION": "0.156.0"
@@ -1143,25 +1143,25 @@ chmod +x build.sh
 
 ### Deployment Workflow
 
-**ayokoding-fs:**
+**ayokoding-web:**
 
 1. Make changes in `main` branch
 2. Test locally: `hugo server`
 3. Commit and push to `main`
-4. Deploy: The `test-and-deploy-ayokoding-fs.yml` GitHub Actions workflow runs automatically at 6 AM and 6 PM WIB, detects changes in `apps/ayokoding-fs/`, builds, and force-pushes `main` to `prod-ayokoding-fs`
+4. Deploy: The `test-and-deploy-ayokoding-web.yml` GitHub Actions workflow runs automatically at 6 AM and 6 PM WIB, detects changes in `apps/ayokoding-web/`, builds, and force-pushes `main` to `prod-ayokoding-web`
 5. Vercel detects the push and builds the production site
 
-For immediate deployment, trigger the workflow manually from the GitHub Actions UI (set `force_deploy=true`), or use the `apps-ayokoding-fs-deployer` agent.
+For immediate deployment, trigger the workflow manually from the GitHub Actions UI (set `force_deploy=true`), or use the `apps-ayokoding-web-deployer` agent.
 
-**oseplatform-fs:**
+**oseplatform-web:**
 
 1. Make changes in `main` branch
 2. Test locally: `hugo server`
 3. Commit and push to `main`
-4. Deploy: The `test-and-deploy-oseplatform-fs.yml` GitHub Actions workflow runs automatically at 6 AM and 6 PM WIB, detects changes in `apps/oseplatform-fs/`, builds, and force-pushes `main` to `prod-oseplatform-fs`
+4. Deploy: The `test-and-deploy-oseplatform-web.yml` GitHub Actions workflow runs automatically at 6 AM and 6 PM WIB, detects changes in `apps/oseplatform-web/`, builds, and force-pushes `main` to `prod-oseplatform-web`
 5. Vercel detects the push and builds the production site
 
-For immediate deployment, trigger the workflow manually from the GitHub Actions UI (set `force_deploy=true`), or use the `apps-oseplatform-fs-deployer` agent.
+For immediate deployment, trigger the workflow manually from the GitHub Actions UI (set `force_deploy=true`), or use the `apps-oseplatform-web-deployer` agent.
 
 ## Testing and Validation
 
@@ -1170,7 +1170,7 @@ For immediate deployment, trigger the workflow manually from the GitHub Actions 
 **Development Server:**
 
 ```bash
-cd apps/ayokoding-fs
+cd apps/ayokoding-web
 hugo server -D  # Include drafts
 ```
 
@@ -2188,8 +2188,8 @@ Wrong:   {{% shortcode %}}  <!-- Only for shortcodes that return markdown -->
 ### Related Conventions
 
 - [Hugo Content Convention - Shared](../../conventions/hugo/shared.md) - Shared content standards
-- [Hugo Content Convention - ayokoding](../../conventions/hugo/ayokoding.md) - ayokoding-fs content standards
-- [Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md) - oseplatform-fs content standards
+- [Hugo Content Convention - ayokoding](../../conventions/hugo/ayokoding.md) - ayokoding-web content standards
+- [Hugo Content Convention - OSE Platform](../../conventions/hugo/ose-platform.md) - oseplatform-web content standards
 - [Color Accessibility Convention](../../conventions/formatting/color-accessibility.md) - Accessible colors
 - [Content Quality Principles](../../conventions/writing/quality.md) - Universal standards
 

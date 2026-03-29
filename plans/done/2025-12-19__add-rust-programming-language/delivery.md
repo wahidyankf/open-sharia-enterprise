@@ -24,7 +24,7 @@ Rationale:
 
 ### Summary
 
-This plan delivers comprehensive Rust programming language content to ayokoding-fs, meeting the highest standard defined in the Programming Language Content Standard. Total work: ~520KB (~20,000 lines) of new content across tutorials, cookbook, how-to guides, reference, and philosophy sections.
+This plan delivers comprehensive Rust programming language content to ayokoding-web, meeting the highest standard defined in the Programming Language Content Standard. Total work: ~520KB (~20,000 lines) of new content across tutorials, cookbook, how-to guides, reference, and philosophy sections.
 
 **Content Breakdown**:
 
@@ -1979,7 +1979,7 @@ Before including any code example in content, verify:
 
 ##### Step 3.1.1: Content Structure Validation
 
-- [x] **Run ayokoding-fs-general-checker**
+- [x] **Run ayokoding-web-general-checker**
   - [x] Verify file naming conventions
   - [x] Check directory structure
   - [x] Validate frontmatter (title, date, draft, description, weight, tags)
@@ -1998,7 +1998,7 @@ Before including any code example in content, verify:
 
 ##### Step 3.1.2: Factual Accuracy Validation
 
-- [x] **Run ayokoding-fs-facts-checker**
+- [x] **Run ayokoding-web-facts-checker**
   - [x] Verify Rust 2024 edition syntax
   - [x] Check ownership rules accuracy
   - [x] Validate lifetime annotation syntax
@@ -2016,7 +2016,7 @@ Before including any code example in content, verify:
 
 ##### Step 3.1.3: Link Integrity Validation
 
-- [x] **Run ayokoding-fs-link-checker**
+- [x] **Run ayokoding-web-link-checker**
   - [x] Verify all internal links (tutorials, guides, cookbook)
   - [x] Check external links:
     - [x] rust-lang.org
@@ -2205,9 +2205,9 @@ Before including any code example in content, verify:
 
 **Validation Exit Criteria**:
 
-- [x] ayokoding-fs-general-checker: PASS (zero issues)
-- [x] ayokoding-fs-facts-checker: PASS (zero issues, Rust 2024 edition)
-- [x] ayokoding-fs-link-checker: PASS (zero issues)
+- [x] ayokoding-web-general-checker: PASS (zero issues)
+- [x] ayokoding-web-facts-checker: PASS (zero issues, Rust 2024 edition)
+- [x] ayokoding-web-link-checker: PASS (zero issues)
 - [x] All code compiles with rustc stable (zero errors)
 - [x] Clippy approves code (zero warnings)
 - [x] Manual review approves ownership clarity
@@ -2322,8 +2322,8 @@ Before including any code example in content, verify:
 
 #### Step 4.3: Test Hugo Build Locally
 
-- [x] **Build ayokoding-fs with Rust content**
-  - [x] Navigate to ayokoding-fs directory
+- [x] **Build ayokoding-web with Rust content**
+  - [x] Navigate to ayokoding-web directory
   - [x] Run Hugo build: `hugo --minify`
   - [x] Check for build errors (should be zero)
   - [x] Check for warnings (investigate any)
@@ -2359,7 +2359,7 @@ Before including any code example in content, verify:
   ```
   docs(rust): add comprehensive Rust programming language content
 
-  Add production-ready Rust content to ayokoding-fs per Programming
+  Add production-ready Rust content to ayokoding-web per Programming
   Language Content Standard. Includes 5 tutorial levels, 30-35 recipe
   cookbook, 18 how-to guides, complete reference section, and philosophy
   documents with strong ownership focus.
@@ -2374,9 +2374,9 @@ Before including any code example in content, verify:
   Total: ~520KB (~20,000 lines)
 
   Validation:
-  - ayokoding-fs-general-checker: PASS
-  - ayokoding-fs-facts-checker: PASS (Rust 2024 edition)
-  - ayokoding-fs-link-checker: PASS
+  - ayokoding-web-general-checker: PASS
+  - ayokoding-web-facts-checker: PASS (Rust 2024 edition)
+  - ayokoding-web-link-checker: PASS
   - Code compilation: PASS (rustc stable)
   - Clippy: PASS (idiomatic code)
 
@@ -2412,9 +2412,9 @@ Before including any code example in content, verify:
   - [x] No placeholders or TODOs
 
 - [x] **Validation**
-  - [x] ayokoding-fs-general-checker: PASS
-  - [x] ayokoding-fs-facts-checker: PASS
-  - [x] ayokoding-fs-link-checker: PASS
+  - [x] ayokoding-web-general-checker: PASS
+  - [x] ayokoding-web-facts-checker: PASS
+  - [x] ayokoding-web-link-checker: PASS
   - [x] All code compiles with rustc stable
   - [x] Clippy approves code
   - [x] Manual review approves quality
@@ -2456,9 +2456,9 @@ Before including any code example in content, verify:
 - **Hugo 0.119.0+**: Static site generator (required for build)
 - **Node.js + npm**: Development environment via Volta (required for Prettier)
 - **Git**: Version control (required for commits and PR)
-- **ayokoding-fs-general-checker**: Validation agent (required for structural checks)
-- **ayokoding-fs-facts-checker**: Validation agent (required for factual verification)
-- **ayokoding-fs-link-checker**: Validation agent (required for link validation)
+- **ayokoding-web-general-checker**: Validation agent (required for structural checks)
+- **ayokoding-web-facts-checker**: Validation agent (required for factual verification)
+- **ayokoding-web-link-checker**: Validation agent (required for link validation)
 
 **Rust Toolchain**:
 
@@ -2645,9 +2645,9 @@ Before marking plan as complete and PR as ready:
 
 ### Quality Benchmarks Met
 
-- [x] All content passes ayokoding-fs-general-checker
-- [x] All content passes ayokoding-fs-facts-checker (Rust 2024 edition verified)
-- [x] All content passes ayokoding-fs-link-checker
+- [x] All content passes ayokoding-web-general-checker
+- [x] All content passes ayokoding-web-facts-checker (Rust 2024 edition verified)
+- [x] All content passes ayokoding-web-link-checker
 - [x] All code examples compile with rustc stable
 - [x] All code examples tested on macOS, Linux, Windows
 - [x] All Mermaid diagrams use color-blind friendly palette
@@ -2695,9 +2695,9 @@ Before marking plan as complete and PR as ready:
 
 **Validation Results**:
 
-- [x] ayokoding-fs-general-checker: PASS (zero issues)
-- [x] ayokoding-fs-facts-checker: PASS (zero issues, Rust 2024 edition)
-- [x] ayokoding-fs-link-checker: PASS (zero issues)
+- [x] ayokoding-web-general-checker: PASS (zero issues)
+- [x] ayokoding-web-facts-checker: PASS (zero issues, Rust 2024 edition)
+- [x] ayokoding-web-link-checker: PASS (zero issues)
 - [x] Code compilation: PASS (rustc stable, all platforms)
 - [x] Clippy: PASS (idiomatic Rust code)
 - [x] Manual review: PASS (ownership clarity, pedagogical flow, writing quality)

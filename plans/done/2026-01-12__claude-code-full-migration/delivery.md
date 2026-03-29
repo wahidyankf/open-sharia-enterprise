@@ -20,7 +20,7 @@
 1. List all 46 agents in `.opencode/agent/`
 2. For each agent, document:
    - Agent name
-   - Agent family (docs, readme, plan, apps-ayokoding-fs, apps-ose-platform-web, etc.)
+   - Agent family (docs, readme, plan, apps-ayokoding-web, apps-ose-platform-web, etc.)
    - Tools required
    - Skills used
    - Model configured
@@ -51,7 +51,7 @@
 **Inventory Fields**:
 
 - **Agent Name**: Filename (e.g., `docs-checker.md`)
-- **Family**: Agent family (docs, readme, plan, apps-ayokoding-fs, etc.)
+- **Family**: Agent family (docs, readme, plan, apps-ayokoding-web, etc.)
 - **Tools Required**: OpenCode tool names (read, grep, glob, write, edit, bash)
 - **Skills Used**: Skill patterns used (e.g., `docs-applying-*`, `wow-executing-*`)
 - **Model**: GLM model name (zai/glm-4.7, zai/glm-4.5-air, inherit)

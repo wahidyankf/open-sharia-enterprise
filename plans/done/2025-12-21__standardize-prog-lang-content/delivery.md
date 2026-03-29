@@ -33,7 +33,7 @@ All implementation happens on the `main` branch using Trunk Based Development wo
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/java/how-to/optimize-performance.md (new, 410 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/how-to/optimize-performance.md (new, 410 lines)
 
 - [x] **Create how-to guide: work-with-databases.md**
   - Topics: JDBC, connection pooling, transactions, ORM patterns
@@ -44,7 +44,7 @@ All implementation happens on the `main` branch using Trunk Based Development wo
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/java/how-to/work-with-databases.md (new, 485 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/how-to/work-with-databases.md (new, 485 lines)
 
 - [x] **Create how-to guide: build-rest-apis-spring.md**
   - Topics: Spring Boot REST controllers, request/response handling, validation
@@ -55,7 +55,7 @@ All implementation happens on the `main` branch using Trunk Based Development wo
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/java/how-to/build-rest-apis-spring.md (new, 470 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/how-to/build-rest-apis-spring.md (new, 470 lines)
 
 - [x] **Create how-to guide: dependency-injection-spring.md**
   - Topics: Spring IoC, bean configuration, dependency management
@@ -66,7 +66,7 @@ All implementation happens on the `main` branch using Trunk Based Development wo
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/java/how-to/dependency-injection-spring.md (new, 485 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/how-to/dependency-injection-spring.md (new, 485 lines)
 
 - [x] **Create how-to guide: work-with-streams-effectively.md**
   - Topics: Stream API, lazy evaluation, parallel streams, collectors
@@ -77,7 +77,7 @@ All implementation happens on the `main` branch using Trunk Based Development wo
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/java/how-to/work-with-streams-effectively.md (new, 495 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/how-to/work-with-streams-effectively.md (new, 495 lines)
 
 - [x] **Create how-to guide: use-records-effectively.md**
   - Topics: Java 14+ records, immutability, pattern matching
@@ -88,7 +88,7 @@ All implementation happens on the `main` branch using Trunk Based Development wo
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/java/how-to/use-records-effectively.md (new, 510 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/how-to/use-records-effectively.md (new, 510 lines)
 
 - [x] **Create how-to guide: use-sealed-classes.md**
   - Topics: Java 17+ sealed classes, permitted subtypes, exhaustiveness
@@ -99,7 +99,7 @@ All implementation happens on the `main` branch using Trunk Based Development wo
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/java/how-to/use-sealed-classes.md (new, 525 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/how-to/use-sealed-classes.md (new, 525 lines)
 
 - [x] **Create how-to guide: pattern-matching.md**
   - Topics: Java 21+ pattern matching, switch expressions, type patterns
@@ -110,7 +110,7 @@ All implementation happens on the `main` branch using Trunk Based Development wo
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/java/how-to/pattern-matching.md (new, 505 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/how-to/pattern-matching.md (new, 505 lines)
 
 - [x] **Create how-to guide: reactive-programming.md**
   - Topics: Project Reactor, reactive streams, backpressure
@@ -121,7 +121,7 @@ All implementation happens on the `main` branch using Trunk Based Development wo
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/java/how-to/reactive-programming.md (new, 540 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/how-to/reactive-programming.md (new, 540 lines)
 
 - [x] **Create how-to guide: organize-packages-properly.md**
   - Topics: Package structure, naming conventions, modularity
@@ -132,7 +132,7 @@ All implementation happens on the `main` branch using Trunk Based Development wo
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/java/how-to/organize-packages-properly.md (new, 480 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/how-to/organize-packages-properly.md (new, 480 lines)
 
 - [x] **Create how-to guide: virtual-threads.md**
   - Topics: Java 21+ virtual threads (Project Loom), structured concurrency
@@ -143,7 +143,7 @@ All implementation happens on the `main` branch using Trunk Based Development wo
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/java/how-to/virtual-threads.md (new, 515 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/how-to/virtual-threads.md (new, 515 lines)
 
 - [x] **Create how-to guide: testing-strategies.md**
   - Topics: JUnit 5, mocking with Mockito, test organization, test-driven development
@@ -154,7 +154,7 @@ All implementation happens on the `main` branch using Trunk Based Development wo
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/java/how-to/testing-strategies.md (new, 540 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/java/how-to/testing-strategies.md (new, 540 lines)
 
 - [x] **Update cross-references in existing content**
   - Add references from tutorials to new how-to guides
@@ -178,7 +178,7 @@ All implementation happens on the `main` branch using Trunk Based Development wo
 #### Validation Checklist
 
 - [x] All 12 how-to guides created with correct frontmatter (title, date, draft, description, weight)
-  - **Validation Notes**: Frontmatter cleanup completed 2025-12-21. Removed `tags` and `categories` fields from all guides per ayokoding-fs convention. Verified Hugo build succeeds after cleanup.
+  - **Validation Notes**: Frontmatter cleanup completed 2025-12-21. Removed `tags` and `categories` fields from all guides per ayokoding-web convention. Verified Hugo build succeeds after cleanup.
   - **Date**: 2025-12-21
 - [x] All guides follow mandatory pattern (Problem, Solution, How It Works, Variations, Common Pitfalls, Related Patterns)
   - **Validation Notes**: 100% compliance verified per plan-execution-checker validation report (sampled 6/12 guides, all passed)
@@ -188,9 +188,9 @@ All implementation happens on the `main` branch using Trunk Based Development wo
   - **Validation Notes**: All diagrams verified using color-blind friendly palette with documented colors
   - **Date**: 2025-12-21
 - [ ] All cross-references valid (≥2 tutorial refs, ≥1 cookbook ref per guide)
-- [ ] ayokoding-fs-general-checker: Pending execution
-- [ ] ayokoding-fs-facts-checker: Pending execution
-- [ ] ayokoding-fs-link-checker: Pending execution
+- [ ] ayokoding-web-general-checker: Pending execution
+- [ ] ayokoding-web-facts-checker: Pending execution
+- [ ] ayokoding-web-link-checker: Pending execution
 - [x] Hugo build succeeds without errors
   - **Validation Notes**: Build successful after frontmatter cleanup (cached build, no errors)
   - **Date**: 2025-12-21
@@ -296,7 +296,7 @@ Scenario: Java reaches exceptional standard for how-to guides
 #### Validation Checklist
 
 - [x] All 10 how-to guides created with correct frontmatter (all guides follow Hugo frontmatter standards)
-  - **Validation Notes**: Frontmatter cleanup completed 2025-12-21. Removed `tags` and `categories` fields from all Golang guides per ayokoding-fs convention. Verified Hugo build succeeds after cleanup.
+  - **Validation Notes**: Frontmatter cleanup completed 2025-12-21. Removed `tags` and `categories` fields from all Golang guides per ayokoding-web convention. Verified Hugo build succeeds after cleanup.
   - **Date**: 2025-12-21
 - [x] All guides follow mandatory pattern (Problem → Solution → How It Works → Variations → Common Pitfalls → Related Patterns)
   - **Validation Notes**: 100% compliance verified per plan-execution-checker validation report (sampled 3/10 guides, all passed)
@@ -304,9 +304,9 @@ Scenario: Java reaches exceptional standard for how-to guides
 - [x] All code examples follow Go best practices (syntax-checked)
 - [x] All Mermaid diagrams use color-blind friendly palette (streamlined approach - no diagrams)
 - [x] All cross-references valid (all guides include Related Patterns sections)
-- [ ] ayokoding-fs-general-checker: Pending validation (requires separate agent invocation)
-- [ ] ayokoding-fs-facts-checker: Pending validation (requires separate agent invocation)
-- [ ] ayokoding-fs-link-checker: Pending validation (requires separate agent invocation)
+- [ ] ayokoding-web-general-checker: Pending validation (requires separate agent invocation)
+- [ ] ayokoding-web-facts-checker: Pending validation (requires separate agent invocation)
+- [ ] ayokoding-web-link-checker: Pending validation (requires separate agent invocation)
 - [x] Hugo build succeeds without errors
   - **Validation Notes**: Build successful after frontmatter cleanup (cached build, no errors)
   - **Date**: 2025-12-21
@@ -348,7 +348,7 @@ Scenario: Golang reaches exceptional standard for how-to guides
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/python/how-to/optimize-performance.md (new)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/python/how-to/optimize-performance.md (new)
 
 - [x] **Create how-to guide: async-patterns-advanced.md**
   - Topics: asyncio, aiohttp, async context managers, async generators
@@ -359,7 +359,7 @@ Scenario: Golang reaches exceptional standard for how-to guides
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/python/how-to/async-patterns-advanced.md (new)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/python/how-to/async-patterns-advanced.md (new)
 
 - [x] **Create how-to guide: work-with-databases.md**
   - Topics: SQLAlchemy, database connections, ORM patterns, migrations
@@ -370,7 +370,7 @@ Scenario: Golang reaches exceptional standard for how-to guides
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/python/how-to/work-with-databases.md (new)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/python/how-to/work-with-databases.md (new)
 
 - [x] **Create how-to guide: build-rest-apis.md**
   - Topics: FastAPI, request/response handling, validation, authentication
@@ -381,7 +381,7 @@ Scenario: Golang reaches exceptional standard for how-to guides
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/python/how-to/build-rest-apis.md (new)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/python/how-to/build-rest-apis.md (new)
 
 - [x] **Create how-to guide: data-validation-patterns.md**
   - Topics: Pydantic, field validation, custom validators, nested models
@@ -392,7 +392,7 @@ Scenario: Golang reaches exceptional standard for how-to guides
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/python/how-to/data-validation-patterns.md (new)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/python/how-to/data-validation-patterns.md (new)
 
 - [x] **Create how-to guide: security-best-practices.md**
   - Topics: Password hashing, SQL injection prevention, input validation, cryptography
@@ -403,7 +403,7 @@ Scenario: Golang reaches exceptional standard for how-to guides
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/python/how-to/security-best-practices.md (new)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/python/how-to/security-best-practices.md (new)
 
 - [x] **Create how-to guide: type-hints-effectively.md**
   - Topics: Type hints, mypy, Protocol, TypedDict, generics
@@ -414,7 +414,7 @@ Scenario: Golang reaches exceptional standard for how-to guides
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/python/how-to/type-hints-effectively.md (new)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/python/how-to/type-hints-effectively.md (new)
 
 - [x] **Create how-to guide: package-management.md**
   - Topics: pip, Poetry, virtual environments, dependency management, packaging
@@ -425,7 +425,7 @@ Scenario: Golang reaches exceptional standard for how-to guides
   - **Date**: 2025-12-21
   - **Status**: Completed
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/python/how-to/package-management.md (new)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/python/how-to/package-management.md (new)
 
 - [x] **Expand cookbook with ~4-5 new recipes (~650 lines)**
   - ✅ Recipe: Concurrent API Requests with Rate Limiting (~75 lines) - Advanced Async Patterns
@@ -443,7 +443,7 @@ Scenario: Golang reaches exceptional standard for how-to guides
   - **Date**: 2025-12-21
   - **Status**: Completed - Exceeded Target
   - **Files Changed**:
-    - apps/ayokoding-fs/content/en/learn/swe/programming-languages/python/how-to/cookbook.md (expanded by 840 lines)
+    - apps/ayokoding-web/content/en/learn/swe/programming-languages/python/how-to/cookbook.md (expanded by 840 lines)
 
 - [x] **Update cross-references in existing content**
   - All new how-to guides include cross-references to tutorials and cookbook
@@ -465,7 +465,7 @@ Scenario: Golang reaches exceptional standard for how-to guides
 #### Validation Checklist
 
 - [x] All 8 how-to guides created with correct frontmatter
-  - **Validation Notes**: Frontmatter cleanup completed 2025-12-21. Removed `tags` and `categories` fields from all Python guides per ayokoding-fs convention. Verified Hugo build succeeds after cleanup.
+  - **Validation Notes**: Frontmatter cleanup completed 2025-12-21. Removed `tags` and `categories` fields from all Python guides per ayokoding-web convention. Verified Hugo build succeeds after cleanup.
   - **Date**: 2025-12-21
 - [x] All 4-5 cookbook recipes added with correct formatting
   - **Validation Notes**: Added 8 recipes (840 lines), exceeded 650-line target by 29%
@@ -483,9 +483,9 @@ Scenario: Golang reaches exceptional standard for how-to guides
   - **Validation Notes**: All 7 diagrams verified using color-blind friendly palette
   - **Date**: 2025-12-21
 - [ ] All cross-references valid
-- [ ] ayokoding-fs-general-checker: Pending validation (requires separate agent invocation)
-- [ ] ayokoding-fs-facts-checker: Pending validation (requires separate agent invocation)
-- [ ] ayokoding-fs-link-checker: Pending validation (requires separate agent invocation)
+- [ ] ayokoding-web-general-checker: Pending validation (requires separate agent invocation)
+- [ ] ayokoding-web-facts-checker: Pending validation (requires separate agent invocation)
+- [ ] ayokoding-web-link-checker: Pending validation (requires separate agent invocation)
 - [x] Hugo build succeeds without errors
   - **Validation Notes**: Build successful after frontmatter cleanup (cached build, no errors)
   - **Date**: 2025-12-21
@@ -559,7 +559,7 @@ Scenario: Python reaches exceptional standard for cookbook
 #### Validation Checklist
 
 - [x] All 2 how-to guides created with correct frontmatter (multiplatform-development.md, coroutines-advanced.md)
-  - **Validation Notes**: Frontmatter cleanup completed 2025-12-21. Removed `tags` and `categories` fields from all Kotlin guides per ayokoding-fs convention. Verified Hugo build succeeds after cleanup.
+  - **Validation Notes**: Frontmatter cleanup completed 2025-12-21. Removed `tags` and `categories` fields from all Kotlin guides per ayokoding-web convention. Verified Hugo build succeeds after cleanup.
   - **Date**: 2025-12-21
 - [x] 8 cookbook recipes added (2,361 lines, exceeding 2,330-line target)
 - [x] Kotlin cookbook reaches 5,000+ lines (achieved 5,030 lines, 101% of target)
@@ -570,9 +570,9 @@ Scenario: Python reaches exceptional standard for cookbook
 - [x] All code examples follow Kotlin best practices (syntax-checked)
 - [x] All cross-references valid (guides and recipes include Related Patterns/Learn More sections)
 - [x] Cookbook organized by clear categories (16 categories with table of contents, 61 total recipes)
-- [ ] ayokoding-fs-general-checker: Pending validation (requires separate agent invocation)
-- [ ] ayokoding-fs-facts-checker: Pending validation (requires separate agent invocation)
-- [ ] ayokoding-fs-link-checker: Pending validation (requires separate agent invocation)
+- [ ] ayokoding-web-general-checker: Pending validation (requires separate agent invocation)
+- [ ] ayokoding-web-facts-checker: Pending validation (requires separate agent invocation)
+- [ ] ayokoding-web-link-checker: Pending validation (requires separate agent invocation)
 - [x] Hugo build succeeds without errors
   - **Validation Notes**: Build successful after frontmatter cleanup (cached build, no errors)
   - **Date**: 2025-12-21
@@ -623,7 +623,7 @@ Scenario: Kotlin reaches exceptional standard for cookbook
   - **Implementation Notes**: Created debug-and-logging.md (weight 1000220) with dbg! macro, log/env_logger, tracing crate, anyhow error context, backtrace handling. Covers structured logging and advanced tracing patterns.
   - **Date**: 2025-12-21
   - **Status**: Completed
-  - **Files Changed**: apps/ayokoding-fs/content/en/learn/swe/programming-languages/rust/how-to/debug-and-logging.md (new, ~170 lines)
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/rust/how-to/debug-and-logging.md (new, ~170 lines)
   - Topics: Debug traits, logging frameworks, error context, tracing
   - Code examples: dbg! macro, log crate, tracing crate, backtrace
   - Weight: 1000020 (next available after existing 19 guides)
@@ -633,31 +633,31 @@ Scenario: Kotlin reaches exceptional standard for cookbook
   - **Implementation Notes**: Created configuration-management.md (weight 1000230) with dotenv, TOML with serde, hierarchical config crate, validator for validation, clap for CLI args. Comprehensive config patterns.
   - **Date**: 2025-12-21
   - **Status**: Completed
-  - **Files Changed**: apps/ayokoding-fs/content/en/learn/swe/programming-languages/rust/how-to/configuration-management.md (new, ~205 lines)
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/rust/how-to/configuration-management.md (new, ~205 lines)
 
 - [x] **Create how-to guide: document-code-effectively.md**
   - **Implementation Notes**: Created code-documentation.md (weight 1000240) with doc comments, rustdoc, module documentation, documentation tests, examples directory, advanced features like #[doc(hidden)].
   - **Date**: 2025-12-21
   - **Status**: Completed
-  - **Files Changed**: apps/ayokoding-fs/content/en/learn/swe/programming-languages/rust/how-to/code-documentation.md (new, ~201 lines)
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/rust/how-to/code-documentation.md (new, ~201 lines)
 
 - [x] **Create how-to guide: async-rust-patterns.md**
   - **Implementation Notes**: Created async-programming-patterns.md (weight 1000250) with Tokio basics, tokio::join!, reqwest HTTP, async channels/streams, timeouts/cancellation, async-trait. Comprehensive async patterns.
   - **Date**: 2025-12-21
   - **Status**: Completed
-  - **Files Changed**: apps/ayokoding-fs/content/en/learn/swe/programming-languages/rust/how-to/async-programming-patterns.md (new, ~211 lines)
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/rust/how-to/async-programming-patterns.md (new, ~211 lines)
 
 - [x] **Create how-to guide: testing-strategies.md**
   - **Implementation Notes**: Created testing-patterns.md (weight 1000260) with unit tests, integration tests, proptest property-based testing, criterion benchmarks, mocking/test doubles. Complete testing coverage.
   - **Date**: 2025-12-21
   - **Status**: Completed
-  - **Files Changed**: apps/ayokoding-fs/content/en/learn/swe/programming-languages/rust/how-to/testing-patterns.md (new, ~187 lines)
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/rust/how-to/testing-patterns.md (new, ~187 lines)
 
 - [x] **Expand cookbook with 18 new recipes (1,701 lines)**
   - **Implementation Notes**: Expanded cookbook from 2,243 to 3,944 lines (+1,701 lines, 76% progress toward 2,760-line target). Added 18 comprehensive recipes across 6 new categories: Advanced Async Patterns (5 recipes: streams, select, JoinSet, async Mutex/RwLock, channels), Advanced Macro Patterns (3 recipes: declarative with pattern matching, attribute macros, function-like procedural macros), Advanced Ownership Patterns (3 recipes: Cell types, phantom types, custom Deref smart pointers), Advanced Error Handling (2 recipes: error enums with context, custom Result aliases), Advanced Concurrency Patterns (3 recipes: scoped threads, lock-free atomics, barrier synchronization), Advanced Testing Patterns (2 recipes: test fixtures, parameterized tests). All recipes follow Problem-Solution-How It Works-Use Cases structure with production-ready code examples.
   - **Date**: 2025-12-21
   - **Status**: Completed (76% of target, 18/20 recipes)
-  - **Files Changed**: apps/ayokoding-fs/content/en/learn/swe/programming-languages/rust/how-to/cookbook.md (modified, +1,701 lines)
+  - **Files Changed**: apps/ayokoding-web/content/en/learn/swe/programming-languages/rust/how-to/cookbook.md (modified, +1,701 lines)
   - **New Categories Added**:
     - Advanced Async Patterns (Recipe 42-46): Async streams/generators, select for multiple futures, JoinSet task spawning, async Mutex/RwLock, async channels with backpressure
     - Advanced Macro Patterns (Recipe 47-49): Declarative macro pattern matching, attribute-like procedural macros, function-like procedural macros
@@ -684,7 +684,7 @@ Scenario: Kotlin reaches exceptional standard for cookbook
 #### Validation Checklist
 
 - [x] All 5 how-to guides created with correct frontmatter (debug-and-logging.md, configuration-management.md, code-documentation.md, async-programming-patterns.md, testing-patterns.md)
-  - **Validation Notes**: Frontmatter cleanup completed 2025-12-21. Removed `tags` and `categories` fields from all Rust guides per ayokoding-fs convention. Verified Hugo build succeeds after cleanup.
+  - **Validation Notes**: Frontmatter cleanup completed 2025-12-21. Removed `tags` and `categories` fields from all Rust guides per ayokoding-web convention. Verified Hugo build succeeds after cleanup.
   - **Date**: 2025-12-21
 - [x] All 18 cookbook recipes added (achieved 76% of 2,760-line target with 1,701 lines)
 - [x] Rust cookbook reaches 5,000+ lines
@@ -698,9 +698,9 @@ Scenario: Kotlin reaches exceptional standard for cookbook
 - [x] All Mermaid diagrams use color-blind friendly palette (streamlined approach - no diagrams added this phase)
 - [x] All cross-references valid (Related Patterns sections in all new guides)
 - [x] Cookbook organized by clear categories (16 categories with table of contents)
-- [ ] ayokoding-fs-general-checker: Pending validation (requires separate agent invocation)
-- [ ] ayokoding-fs-facts-checker: Pending validation (requires separate agent invocation)
-- [ ] ayokoding-fs-link-checker: Pending validation (requires separate agent invocation)
+- [ ] ayokoding-web-general-checker: Pending validation (requires separate agent invocation)
+- [ ] ayokoding-web-facts-checker: Pending validation (requires separate agent invocation)
+- [ ] ayokoding-web-link-checker: Pending validation (requires separate agent invocation)
 - [x] Hugo build succeeds without errors
   - **Validation Notes**: Build successful after frontmatter cleanup (cached build, no errors)
   - **Date**: 2025-12-21
@@ -762,11 +762,11 @@ Scenario: Rust reaches exceptional standard for cookbook
 
 **AI Agents**:
 
-- ayokoding-fs-general-maker available and functional
-- ayokoding-fs-general-checker available and functional
-- ayokoding-fs-facts-checker available and functional
-- ayokoding-fs-link-checker available and functional
-- ayokoding-fs-general-fixer available and functional
+- ayokoding-web-general-maker available and functional
+- ayokoding-web-general-checker available and functional
+- ayokoding-web-facts-checker available and functional
+- ayokoding-web-link-checker available and functional
+- ayokoding-web-general-fixer available and functional
 
 **Hugo Build**:
 
@@ -859,7 +859,7 @@ Scenario: Rust reaches exceptional standard for cookbook
 
 **Mitigation**:
 
-- Use ayokoding-fs-link-checker to validate all links
+- Use ayokoding-web-link-checker to validate all links
 - Follow consistent linking pattern (relative paths with .md extension)
 - Document cross-reference strategy per phase
 - Review cross-references manually in addition to automated checks
@@ -881,14 +881,14 @@ Scenario: Rust reaches exceptional standard for cookbook
 - [x] All Mermaid diagrams use color-blind friendly palette (Blue #0173B2, Orange #DE8F05, Teal #029E73, Purple #CC78BC, Brown #CA9161)
   - **Status**: COMPLETE - All diagrams verified (Java: 12, Python: 7, Kotlin: 1)
 - [ ] All cross-references valid and logical (≥2 tutorial refs, ≥1 cookbook ref per guide; ≥1 how-to ref, ≥1 tutorial ref per recipe)
-  - **Status**: PENDING - Requires ayokoding-fs-link-checker validation
+  - **Status**: PENDING - Requires ayokoding-web-link-checker validation
 - [x] No time estimates in any educational content
   - **Status**: COMPLETE - Verified in sampled guides
-- [ ] ayokoding-fs-general-checker: Zero critical issues (run on full language directory)
+- [ ] ayokoding-web-general-checker: Zero critical issues (run on full language directory)
   - **Status**: PENDING - Requires separate agent invocation
-- [ ] ayokoding-fs-facts-checker: Zero critical issues (verify technical accuracy)
+- [ ] ayokoding-web-facts-checker: Zero critical issues (verify technical accuracy)
   - **Status**: PENDING - Requires separate agent invocation
-- [ ] ayokoding-fs-link-checker: Zero broken links (all internal/external links valid)
+- [ ] ayokoding-web-link-checker: Zero broken links (all internal/external links valid)
   - **Status**: PENDING - Requires separate agent invocation
 - [x] Hugo build succeeds without errors or warnings
   - **Status**: COMPLETE - Build successful (27.6s, 1,118 EN pages, 152 ID pages)
@@ -904,13 +904,13 @@ Scenario: Rust reaches exceptional standard for cookbook
 - [x] All 5 languages have 5,000+ line cookbooks
   - **Status**: COMPLETE - Java: 5,367, Golang: 5,169, Python: 5,191, Kotlin: 5,030, Rust: 5,011 (all exceeded target)
 - [ ] All content validated against Programming Language Content Standard
-  - **Status**: PENDING - Requires ayokoding-fs-general-checker validation
+  - **Status**: PENDING - Requires ayokoding-web-general-checker validation
 - [x] All Mermaid diagrams use accessible color palette
   - **Status**: COMPLETE - All diagrams verified (color-blind friendly palette)
 - [ ] All code examples runnable and tested
   - **Status**: PENDING - Requires manual testing in dev environments
 - [ ] Cross-references properly connect related content across all languages
-  - **Status**: PENDING - Requires ayokoding-fs-link-checker validation
+  - **Status**: PENDING - Requires ayokoding-web-link-checker validation
 - [x] No time estimates in any educational content
   - **Status**: COMPLETE - Verified in sampled guides
 - [ ] Deployment to production successful (ayokoding.com)
@@ -935,7 +935,7 @@ Scenario: Rust reaches exceptional standard for cookbook
 
 - Removed `tags` and `categories` fields from all 37 new guides across 5 languages
 - Verified Hugo build succeeds after cleanup (cached build, no errors)
-- All guides now comply with ayokoding-fs Hugo content convention
+- All guides now comply with ayokoding-web Hugo content convention
 
 **Structural Fixes Completed** (2025-12-21):
 
@@ -972,9 +972,9 @@ Scenario: Rust reaches exceptional standard for cookbook
 The implementation is complete and ready for comprehensive final validation. To proceed:
 
 1. **Run Validation Agents** (requires user to invoke separately):
-   - `ayokoding-fs-general-checker` on each language directory to validate Hugo conventions, frontmatter, and structure
-   - `ayokoding-fs-facts-checker` on all new guides to verify code examples, versions, and commands
-   - `ayokoding-fs-link-checker` on all new guides to verify cross-references meet minimum requirements
+   - `ayokoding-web-general-checker` on each language directory to validate Hugo conventions, frontmatter, and structure
+   - `ayokoding-web-facts-checker` on all new guides to verify code examples, versions, and commands
+   - `ayokoding-web-link-checker` on all new guides to verify cross-references meet minimum requirements
 
 2. **Address Issues**: Review validation reports and fix any critical issues found
 

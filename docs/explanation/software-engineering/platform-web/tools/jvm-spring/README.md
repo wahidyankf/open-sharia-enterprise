@@ -36,22 +36,22 @@ This documentation covers Spring Framework 6.x (latest stable) with Java 17+ and
 
 ## Prerequisite Knowledge
 
-**REQUIRED**: You MUST understand Spring Framework fundamentals from the [AyoKoding Spring Framework Learning Path](../../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/platform-web/tools/jvm-spring/).
+**REQUIRED**: You MUST understand Spring Framework fundamentals from the [AyoKoding Spring Framework Learning Path](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/).
 
 **This documentation is OSE Platform-specific explanation**, not Spring Framework tutorials. We assume you have completed the learning content.
 
 **Before Reading These Docs**:
 
-- Complete [Spring Framework Initial Setup](../../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/platform-web/tools/jvm-spring/initial-setup.md) - Environment and tooling setup
-- Understand [Spring Framework Overview](../../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/platform-web/tools/jvm-spring/overview.md) - Core concepts (IoC, DI, AOP)
-- Work through [Spring Framework By Example](../../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/) (75+ annotated examples) - Hands-on code learning
-- Reference [Spring Framework In-the-Field](../../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/) (30 production guides) - Production patterns
+- Complete [Spring Framework Initial Setup](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/initial-setup.md) - Environment and tooling setup
+- Understand [Spring Framework Overview](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/overview.md) - Core concepts (IoC, DI, AOP)
+- Work through [Spring Framework By Example](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/by-example/) (75+ annotated examples) - Hands-on code learning
+- Reference [Spring Framework In-the-Field](../../../../../../apps/ayokoding-web/content/en/learn/software-engineering/platform-web/tools/jvm-spring/in-the-field/) (30 production guides) - Production patterns
 
-**Separation of Concerns**: See [Programming Language Documentation Separation Convention](../../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation between learning (ayokoding-fs) and standards (this documentation).
+**Separation of Concerns**: See [Programming Language Documentation Separation Convention](../../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation between learning (ayokoding-web) and standards (this documentation).
 
 **What this documentation covers**: OSE Platform Spring Framework standards, naming conventions, framework integration patterns, how to apply Spring knowledge in THIS codebase.
 
-**What this documentation does NOT cover**: Spring Framework tutorials, basic IoC/DI concepts, generic patterns (those are in ayokoding-fs).
+**What this documentation does NOT cover**: Spring Framework tutorials, basic IoC/DI concepts, generic patterns (those are in ayokoding-web).
 
 ## Framework Standards
 

@@ -21,19 +21,19 @@ graph TD
     style H fill:#dc2626,color:#fff
 ```
 
-The architecture mirrors ayokoding-fs but is simplified:
+The architecture mirrors ayokoding-web but is simplified:
 
 - **No i18n layer** -- single locale, no locale routing, no middleware
 - **No tree builder** -- flat content structure (landing, about, updates list)
 - **No generate-indexes script** -- no `_index.md` management needed (simple structure)
-- **SSG** -- all ~6 pages pre-built at build time (same pattern as ayokoding-fs: `generateStaticParams` + `dynamicParams = false`)
+- **SSG** -- all ~6 pages pre-built at build time (same pattern as ayokoding-web: `generateStaticParams` + `dynamicParams = false`)
 - **Simpler navigation** -- header links instead of sidebar tree
-- **Shared UI libs** -- uses `@open-sharia-enterprise/ts-ui` (Button, etc.) and `@open-sharia-enterprise/ts-ui-tokens` (design tokens), same as ayokoding-fs and organiclever-fe
+- **Shared UI libs** -- uses `@open-sharia-enterprise/ts-ui` (Button, etc.) and `@open-sharia-enterprise/ts-ui-tokens` (design tokens), same as ayokoding-web and organiclever-fe
 
 ## Project Structure
 
 ```
-apps/oseplatform-fs/
+apps/oseplatform-web/
 ├── content/                          # Markdown content (migrated from Hugo)
 │   ├── about.md                      # About page
 │   └── updates/                      # Update posts
@@ -217,7 +217,7 @@ Hugo content paths map to Next.js routes as follows:
 | `content/updates/_index.md`       | `/updates/`              | `app/updates/page.tsx`        |
 | `content/updates/2025-12-14-*.md` | `/updates/2025-12-14-*/` | `app/updates/[slug]/page.tsx` |
 
-**Key difference from ayokoding-fs**: No locale prefix in URLs. The landing page (`/`) is a custom component, not a content page.
+**Key difference from ayokoding-web**: No locale prefix in URLs. The landing page (`/`) is a custom component, not a content page.
 
 ### Hugo Frontmatter Adaptation
 
@@ -238,7 +238,7 @@ The Hugo content uses these frontmatter fields that need mapping:
 
 ```typescript
 // src/server/content/parser.ts
-// Unified pipeline (same as ayokoding-fs)
+// Unified pipeline (same as ayokoding-web)
 
 import { unified } from "unified";
 import remarkParse from "remark-parse";
@@ -254,7 +254,7 @@ import rehypeStringify from "rehype-stringify";
 // No shortcode transformation needed (only mermaid, handled natively)
 ```
 
-**Mermaid handling**: The Hugo site uses fenced code blocks with `mermaid` language. The `markdown-renderer.tsx` component detects `<pre><code class="language-mermaid">` elements and replaces them with the `<MermaidDiagram>` React component, identical to ayokoding-fs's approach.
+**Mermaid handling**: The Hugo site uses fenced code blocks with `mermaid` language. The `markdown-renderer.tsx` component detects `<pre><code class="language-mermaid">` elements and replaces them with the `<MermaidDiagram>` React component, identical to ayokoding-web's approach.
 
 ### ContentService
 
@@ -280,7 +280,7 @@ export class ContentService {
 }
 ```
 
-**Differences from ayokoding-fs's ContentService**:
+**Differences from ayokoding-web's ContentService**:
 
 - No `locale` parameter on any method (single locale)
 - No `getTree()` method (no sidebar navigation tree)
@@ -356,7 +356,7 @@ export function TRPCProvider({ children }: { children: ReactNode }) {
 }
 ```
 
-**Important**: The TRPCProvider is just a `QueryClientProvider` wrapper. The search dialog uses the vanilla `trpcClient` directly (not React Query hooks). This is the same pattern ayokoding-fs uses.
+**Important**: The TRPCProvider is just a `QueryClientProvider` wrapper. The search dialog uses the vanilla `trpcClient` directly (not React Query hooks). This is the same pattern ayokoding-web uses.
 
 ## Page Components
 
@@ -450,27 +450,27 @@ export const dynamicParams = false;
 ```json
 {
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/oseplatform-fs/src",
+  "sourceRoot": "apps/oseplatform-web/src",
   "projectType": "application",
   "implicitDependencies": ["oseplatform-cli"],
   "targets": {
     "generate-search-data": {
       "command": "npx tsx src/scripts/generate-search-data.ts",
       "options": {
-        "cwd": "apps/oseplatform-fs"
+        "cwd": "apps/oseplatform-web"
       }
     },
     "dev": {
       "command": "next dev --port 3100",
       "options": {
-        "cwd": "apps/oseplatform-fs"
+        "cwd": "apps/oseplatform-web"
       },
       "dependsOn": []
     },
     "build": {
       "command": "next build",
       "options": {
-        "cwd": "apps/oseplatform-fs"
+        "cwd": "apps/oseplatform-web"
       },
       "dependsOn": ["generate-search-data"],
       "outputs": ["{projectRoot}/.next"],
@@ -486,13 +486,13 @@ export const dynamicParams = false;
     "start": {
       "command": "next start --port 3100",
       "options": {
-        "cwd": "apps/oseplatform-fs"
+        "cwd": "apps/oseplatform-web"
       }
     },
     "typecheck": {
       "command": "tsc --noEmit",
       "options": {
-        "cwd": "apps/oseplatform-fs"
+        "cwd": "apps/oseplatform-web"
       },
       "inputs": ["{projectRoot}/src/**/*", "{projectRoot}/tsconfig.json"],
       "cache": true
@@ -500,7 +500,7 @@ export const dynamicParams = false;
     "lint": {
       "command": "npx oxlint@latest --jsx-a11y-plugin -c oxlint.json --tsconfig tsconfig.json src/",
       "options": {
-        "cwd": "apps/oseplatform-fs"
+        "cwd": "apps/oseplatform-web"
       },
       "inputs": ["{projectRoot}/src/**/*", "{projectRoot}/oxlint.json", "{projectRoot}/tsconfig.json"],
       "cache": true
@@ -508,7 +508,7 @@ export const dynamicParams = false;
     "test:unit": {
       "command": "vitest run --project unit",
       "options": {
-        "cwd": "apps/oseplatform-fs"
+        "cwd": "apps/oseplatform-web"
       },
       "inputs": ["{projectRoot}/src/**/*", "{projectRoot}/test/unit/**/*", "{projectRoot}/vitest.config.ts"],
       "cache": true
@@ -516,9 +516,9 @@ export const dynamicParams = false;
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
-        "cwd": "apps/oseplatform-fs",
+        "cwd": "apps/oseplatform-web",
         "commands": [
-          "npx vitest run --project unit --project unit-fe --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/oseplatform-fs/coverage/lcov.info 80)",
+          "npx vitest run --project unit --project unit-fe --coverage && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/oseplatform-web/coverage/lcov.info 80)",
           "../../apps/oseplatform-cli/dist/oseplatform-cli links check"
         ],
         "parallel": false
@@ -534,14 +534,14 @@ export const dynamicParams = false;
     "test:integration": {
       "command": "vitest run --project integration",
       "options": {
-        "cwd": "apps/oseplatform-fs"
+        "cwd": "apps/oseplatform-web"
       },
       "cache": true
     },
     "links:check": {
       "command": "../../apps/oseplatform-cli/dist/oseplatform-cli links check",
       "options": {
-        "cwd": "apps/oseplatform-fs"
+        "cwd": "apps/oseplatform-web"
       }
     },
     "clean": {
@@ -563,11 +563,11 @@ export const dynamicParams = false;
 
 ## Dependencies (`package.json`)
 
-Aligned with ayokoding-fs's current `package.json` (post-shared-UI-libs migration).
+Aligned with ayokoding-web's current `package.json` (post-shared-UI-libs migration).
 
 ```json
 {
-  "name": "oseplatform-fs",
+  "name": "oseplatform-web",
   "private": true,
   "scripts": {
     "dev": "next dev --port 3100",
@@ -634,12 +634,12 @@ Aligned with ayokoding-fs's current `package.json` (post-shared-UI-libs migratio
 }
 ```
 
-**Note**: `@open-sharia-enterprise/ts-ui` and `@open-sharia-enterprise/ts-ui-tokens` are not listed in `package.json` -- they are monorepo workspace packages resolved via npm workspaces (declared in root `package.json`). The Dockerfile injects them into `node_modules` via direct COPY commands (matching the ayokoding-fs pattern). Components like `Button` are imported from `@open-sharia-enterprise/ts-ui`.
+**Note**: `@open-sharia-enterprise/ts-ui` and `@open-sharia-enterprise/ts-ui-tokens` are not listed in `package.json` -- they are monorepo workspace packages resolved via npm workspaces (declared in root `package.json`). The Dockerfile injects them into `node_modules` via direct COPY commands (matching the ayokoding-web pattern). Components like `Button` are imported from `@open-sharia-enterprise/ts-ui`.
 
-**Omitted vs ayokoding-fs** (not needed):
+**Omitted vs ayokoding-web** (not needed):
 
 - `@next/third-parties` -- no Google Analytics (currently disabled in Hugo)
-- `remark-math`, `rehype-katex` -- no math content in oseplatform-fs
+- `remark-math`, `rehype-katex` -- no math content in oseplatform-web
 - `katex` CSS import -- not needed
 - Locale/i18n modules -- single locale
 
@@ -671,7 +671,7 @@ export default nextConfig;
   "version": 2,
   "installCommand": "npm install --prefix=../.. --ignore-scripts",
   "buildCommand": "npx tsx src/scripts/generate-search-data.ts && next build",
-  "ignoreCommand": "[ \"$VERCEL_GIT_COMMIT_REF\" != \"prod-oseplatform-fs\" ]",
+  "ignoreCommand": "[ \"$VERCEL_GIT_COMMIT_REF\" != \"prod-oseplatform-web\" ]",
   "headers": [
     {
       "source": "/_next/static/(.*)",
@@ -717,13 +717,13 @@ export default config;
 @import "@open-sharia-enterprise/ts-ui-tokens/src/tokens.css";
 
 @theme {
-  /* oseplatform-fs brand: primary blue */
+  /* oseplatform-web brand: primary blue */
   --color-primary: hsl(221.2 83.2% 53.3%);
   --color-primary-foreground: hsl(210 40% 98%);
   --color-ring: hsl(221.2 83.2% 53.3%);
 }
 
-/* Dark mode overrides, code block styling, etc. — follow ayokoding-fs pattern */
+/* Dark mode overrides, code block styling, etc. — follow ayokoding-web pattern */
 ```
 
 **Key**: The `@import "@open-sharia-enterprise/ts-ui-tokens/src/tokens.css"` line imports shared design tokens (colors, radii, spacing) from the monorepo's `libs/ts-ui-tokens` package, ensuring visual consistency across all apps.
@@ -784,7 +784,7 @@ export default config;
 ## Vitest Configuration
 
 ```typescript
-// vitest.config.ts — mirrors ayokoding-fs pattern
+// vitest.config.ts — mirrors ayokoding-web pattern
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import tsconfigPaths from "vite-tsconfig-paths";
@@ -861,7 +861,7 @@ export default defineConfig({
 });
 ```
 
-**Key patterns from ayokoding-fs**:
+**Key patterns from ayokoding-web**:
 
 - Three test projects: `unit` (node), `unit-fe` (jsdom), `integration` (node)
 - Coverage excludes UI/layout/content components, app routes, hooks, tRPC client/server, parser, reader, repository interfaces, scripts, and procedures
@@ -871,13 +871,13 @@ export default defineConfig({
 ## Docker Configuration
 
 ```dockerfile
-# Dockerfile - Multi-stage build (mirrors ayokoding-fs pattern with direct COPY for shared libs)
+# Dockerfile - Multi-stage build (mirrors ayokoding-web pattern with direct COPY for shared libs)
 FROM node:24-alpine AS deps
 WORKDIR /workspace
 # Copy root package files for workspace resolution
 COPY ../../package.json ../../package-lock.json ./
 # Copy app + shared lib package.json files
-COPY apps/oseplatform-fs/package.json apps/oseplatform-fs/
+COPY apps/oseplatform-web/package.json apps/oseplatform-web/
 COPY libs/ts-ui/package.json libs/ts-ui/
 COPY libs/ts-ui-tokens/package.json libs/ts-ui-tokens/
 RUN npm ci --ignore-scripts
@@ -885,15 +885,15 @@ RUN npm ci --ignore-scripts
 FROM node:24-alpine AS builder
 WORKDIR /workspace
 COPY --from=deps /workspace/node_modules ./node_modules
-COPY apps/oseplatform-fs/ apps/oseplatform-fs/
+COPY apps/oseplatform-web/ apps/oseplatform-web/
 COPY libs/ts-ui/ libs/ts-ui/
 COPY libs/ts-ui-tokens/ libs/ts-ui-tokens/
-# Inject shared libs into node_modules (direct copy pattern from ayokoding-fs Dockerfile)
+# Inject shared libs into node_modules (direct copy pattern from ayokoding-web Dockerfile)
 COPY libs/ts-ui/src/ ./node_modules/@open-sharia-enterprise/ts-ui/src/
 COPY libs/ts-ui/package.json ./node_modules/@open-sharia-enterprise/ts-ui/
 COPY libs/ts-ui-tokens/src/ ./node_modules/@open-sharia-enterprise/ts-ui-tokens/src/
 COPY libs/ts-ui-tokens/package.json ./node_modules/@open-sharia-enterprise/ts-ui-tokens/
-WORKDIR /workspace/apps/oseplatform-fs
+WORKDIR /workspace/apps/oseplatform-web
 RUN npx tsx src/scripts/generate-search-data.ts
 RUN npm run build
 
@@ -905,21 +905,21 @@ ENV HOSTNAME=0.0.0.0
 ENV PORT=3100
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
-COPY --from=builder --chown=nextjs:nodejs /workspace/apps/oseplatform-fs/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /workspace/apps/oseplatform-fs/.next/static apps/oseplatform-fs/.next/static
-COPY --from=builder --chown=nextjs:nodejs /workspace/apps/oseplatform-fs/public apps/oseplatform-fs/public
-COPY --from=builder --chown=nextjs:nodejs /workspace/apps/oseplatform-fs/content apps/oseplatform-fs/content
-COPY --from=builder --chown=nextjs:nodejs /workspace/apps/oseplatform-fs/generated apps/oseplatform-fs/generated
+COPY --from=builder --chown=nextjs:nodejs /workspace/apps/oseplatform-web/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /workspace/apps/oseplatform-web/.next/static apps/oseplatform-web/.next/static
+COPY --from=builder --chown=nextjs:nodejs /workspace/apps/oseplatform-web/public apps/oseplatform-web/public
+COPY --from=builder --chown=nextjs:nodejs /workspace/apps/oseplatform-web/content apps/oseplatform-web/content
+COPY --from=builder --chown=nextjs:nodejs /workspace/apps/oseplatform-web/generated apps/oseplatform-web/generated
 USER nextjs
 EXPOSE 3100
-CMD ["node", "apps/oseplatform-fs/server.js"]
+CMD ["node", "apps/oseplatform-web/server.js"]
 ```
 
-**Critical**: The Dockerfile must inject shared libs (`ts-ui`, `ts-ui-tokens`) into `node_modules/@open-sharia-enterprise/` using direct COPY commands. This is the same pattern used by ayokoding-fs's Dockerfile. Runner-stage COPY commands use `--chown=nextjs:nodejs` to ensure proper file ownership.
+**Critical**: The Dockerfile must inject shared libs (`ts-ui`, `ts-ui-tokens`) into `node_modules/@open-sharia-enterprise/` using direct COPY commands. This is the same pattern used by ayokoding-web's Dockerfile. Runner-stage COPY commands use `--chown=nextjs:nodejs` to ensure proper file ownership.
 
 ## Gherkin Specs
 
-Specs follow the same directory pattern as ayokoding-fs (`specs/apps/ayokoding/be/gherkin/`, `specs/apps/ayokoding/fe/gherkin/`):
+Specs follow the same directory pattern as ayokoding-web (`specs/apps/ayokoding/be/gherkin/`, `specs/apps/ayokoding/fe/gherkin/`):
 
 ### Backend Specs (`specs/apps/oseplatform/be/gherkin/`)
 
@@ -947,9 +947,9 @@ All three test levels (unit, integration, E2E-ready) will consume these same spe
 ## CI/CD Workflow
 
 ```yaml
-# .github/workflows/test-and-deploy-oseplatform-fs.yml
-# Mirrors test-and-deploy-ayokoding-fs.yml structure (5 jobs)
-name: Test and Deploy - oseplatform-fs
+# .github/workflows/test-and-deploy-oseplatform-web.yml
+# Mirrors test-and-deploy-ayokoding-web.yml structure (5 jobs)
+name: Test and Deploy - oseplatform-web
 on:
   schedule:
     - cron: "0 23 * * *" # 06:00 WIB
@@ -982,14 +982,14 @@ jobs:
         run: |
           cd apps/rhino-cli && go build -o ../../node_modules/.bin/rhino-cli . && cd ../..
           cd apps/oseplatform-cli && go build -o ../../node_modules/.bin/oseplatform-cli . && cd ../..
-      - run: npx nx run oseplatform-fs:typecheck
-      - run: npx nx run oseplatform-fs:lint
-      - run: npx nx run oseplatform-fs:test:quick
+      - run: npx nx run oseplatform-web:typecheck
+      - run: npx nx run oseplatform-web:lint
+      - run: npx nx run oseplatform-web:test:quick
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
-          file: apps/oseplatform-fs/coverage/lcov.info
-          flags: oseplatform-fs
+          file: apps/oseplatform-web/coverage/lcov.info
+          flags: oseplatform-web
           fail_ci_if_error: false
 
   integration:
@@ -1002,7 +1002,7 @@ jobs:
           node-version: "24"
           cache: "npm"
       - run: npm ci --ignore-scripts
-      - run: npx nx run oseplatform-fs:test:integration
+      - run: npx nx run oseplatform-web:test:integration
 
   e2e:
     runs-on: ubuntu-latest
@@ -1015,20 +1015,20 @@ jobs:
           cache: "npm"
       - run: npm ci --ignore-scripts
       - name: Build Next.js app
-        run: npx nx run oseplatform-fs:build
+        run: npx nx run oseplatform-web:build
       - name: Install Playwright
         run: npx playwright install --with-deps chromium
       - name: Start server and run visual regression
         run: |
-          npx nx run oseplatform-fs:start &
+          npx nx run oseplatform-web:start &
           sleep 5
-          npx playwright test --config=apps/oseplatform-fs/playwright.config.ts
+          npx playwright test --config=apps/oseplatform-web/playwright.config.ts
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report-oseplatform-fs
-          path: apps/oseplatform-fs/playwright-report/
+          name: playwright-report-oseplatform-web
+          path: apps/oseplatform-web/playwright-report/
 
   detect-changes:
     runs-on: ubuntu-latest
@@ -1041,11 +1041,11 @@ jobs:
       - name: Check for changes vs prod branch
         id: changes
         run: |
-          PROD_SHA=$(git rev-parse origin/prod-oseplatform-fs 2>/dev/null || echo "")
+          PROD_SHA=$(git rev-parse origin/prod-oseplatform-web 2>/dev/null || echo "")
           if [ -z "$PROD_SHA" ]; then
             echo "deploy=true" >> "$GITHUB_OUTPUT"
           else
-            CHANGED=$(git diff --name-only "$PROD_SHA" HEAD -- apps/oseplatform-fs/ libs/ts-ui/ libs/ts-ui-tokens/ | wc -l)
+            CHANGED=$(git diff --name-only "$PROD_SHA" HEAD -- apps/oseplatform-web/ libs/ts-ui/ libs/ts-ui-tokens/ | wc -l)
             echo "deploy=$( [ "$CHANGED" -gt 0 ] && echo true || echo false )" >> "$GITHUB_OUTPUT"
           fi
 
@@ -1059,24 +1059,24 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Deploy to prod-oseplatform-fs
-        run: git push origin HEAD:prod-oseplatform-fs --force
+      - name: Deploy to prod-oseplatform-web
+        run: git push origin HEAD:prod-oseplatform-web --force
 ```
 
 **Key differences from current Hugo workflow**:
 
-- **5 jobs** instead of 2 (matches ayokoding-fs pattern)
+- **5 jobs** instead of 2 (matches ayokoding-web pattern)
 - **Unit job**: Builds Go CLIs (rhino-cli, oseplatform-cli), runs typecheck + lint + test:quick, uploads Codecov
 - **Integration job**: Runs integration tests with real filesystem
 - **E2E job**: Builds Next.js, starts server, runs Playwright visual regression tests
-- **detect-changes**: Checks `apps/oseplatform-fs/`, `libs/ts-ui/`, `libs/ts-ui-tokens/` for changes
+- **detect-changes**: Checks `apps/oseplatform-web/`, `libs/ts-ui/`, `libs/ts-ui-tokens/` for changes
 - **deploy**: Requires all 3 test jobs + changes detected (or force_deploy)
 
 ## Migration Strategy
 
 ### Phase 1: Build in Place
 
-Unlike ayokoding-fs (which was built as a separate `ayokoding-fs-v2` app), this rewrite will be done **in-place** because:
+Unlike ayokoding-web (which was built as a separate `ayokoding-web-v2` app), this rewrite will be done **in-place** because:
 
 1. The Hugo app is tiny (~6 files of content)
 2. No risk of content divergence during parallel development
@@ -1084,7 +1084,7 @@ Unlike ayokoding-fs (which was built as a separate `ayokoding-fs-v2` app), this 
 
 ### Phase 2: Archive Hugo
 
-1. Move Hugo-specific files to `archived/oseplatform-fs-hugo/`:
+1. Move Hugo-specific files to `archived/oseplatform-web-hugo/`:
    - `hugo.yaml`, `go.mod`, `go.sum`, `build.sh`
    - `archetypes/`, `layouts/`
    - Old `vercel.json` (replaced, not moved)
@@ -1116,15 +1116,15 @@ Unlike ayokoding-fs (which was built as a separate `ayokoding-fs-v2` app), this 
 
 After archival, update references across the monorepo:
 
-- CLAUDE.md: `platform:hugo` -> `platform:nextjs` for oseplatform-fs
-- Agent files: `apps-oseplatform-fs-content-maker.md`, `apps-oseplatform-fs-content-checker.md`, `apps-oseplatform-fs-deployer.md`
-- Skill files: `apps-oseplatform-fs-developing-content/SKILL.md`
-- Governance docs referencing Hugo for oseplatform-fs
+- CLAUDE.md: `platform:hugo` -> `platform:nextjs` for oseplatform-web
+- Agent files: `apps-oseplatform-web-content-maker.md`, `apps-oseplatform-web-content-checker.md`, `apps-oseplatform-web-deployer.md`
+- Skill files: `apps-oseplatform-web-developing-content/SKILL.md`
+- Governance docs referencing Hugo for oseplatform-web
 - Check if `swe-hugo-developer` agent still needed (only if other Hugo sites exist)
 
 ## Vercel Deployment Configuration Transition
 
-The Vercel dashboard must be manually updated after the first successful Next.js deploy. This is the same process used during the ayokoding-fs Hugo-to-Next.js migration.
+The Vercel dashboard must be manually updated after the first successful Next.js deploy. This is the same process used during the ayokoding-web Hugo-to-Next.js migration.
 
 ### Pre-Migration (Current Hugo Config)
 
@@ -1149,7 +1149,7 @@ The Vercel dashboard must be manually updated after the first successful Next.js
 ### Migration Steps (Manual in Vercel Dashboard)
 
 1. **Before first Next.js deploy**: Verify `vercel.json` is committed with correct Next.js config
-2. **Deploy**: Push to `prod-oseplatform-fs` (Vercel will auto-detect framework change from `vercel.json`)
+2. **Deploy**: Push to `prod-oseplatform-web` (Vercel will auto-detect framework change from `vercel.json`)
 3. **After deploy**: Open Vercel Dashboard → Project Settings → General
    - Verify Framework Preset shows "Next.js"
    - Remove `HUGO_VERSION` environment variable (no longer needed)
@@ -1157,7 +1157,7 @@ The Vercel dashboard must be manually updated after the first successful Next.js
 4. **Verify**: Check deployment logs show `next build` (not Hugo)
 5. **DNS/Domain**: No changes needed -- `oseplatform.com` domain stays attached to the same project
 
-**Note**: The `vercel.json` `ignoreCommand` ensures only pushes to `prod-oseplatform-fs` trigger builds. The `installCommand` uses `--prefix=../..` for monorepo root-level `npm install`.
+**Note**: The `vercel.json` `ignoreCommand` ensures only pushes to `prod-oseplatform-web` trigger builds. The `installCommand` uses `--prefix=../..` for monorepo root-level `npm install`.
 
 ## Playwright Visual Regression
 
@@ -1185,7 +1185,7 @@ const PAGES = [
 ];
 
 // Capture screenshots at all viewport × page combinations
-// Save to local-temp/oseplatform-fs-hugo-reference/
+// Save to local-temp/oseplatform-web-hugo-reference/
 ```
 
 ### 2. Post-Migration Visual Comparison (Phase 14)
@@ -1268,17 +1268,17 @@ The `oseplatform-cli` tool performs link validation on markdown content files us
 | **Internal link format**  | No change -- Hugo absolute paths like `/about/` are used in markdown, CLI strips trailing slashes | None        |
 | **`_index.md` files**     | Still present in content/ for updates section                                                     | None        |
 | **Link resolution logic** | `hugo-commons/links` checks `{slug}.md` and `{slug}/_index.md`                                    | Still valid |
-| **CLI entry point**       | `oseplatform-cli links check --content apps/oseplatform-fs/content`                               | No change   |
+| **CLI entry point**       | `oseplatform-cli links check --content apps/oseplatform-web/content`                              | No change   |
 
 ### Verification Steps
 
-1. Run `nx run oseplatform-fs:links:check` after migration -- must pass
+1. Run `nx run oseplatform-web:links:check` after migration -- must pass
 2. If any failures, check if link resolution needs updating in `hugo-commons/links`
 3. The CLI is **not framework-aware** -- it validates markdown-to-markdown links, not rendered routes
 
 ### Potential Issue: `hugo-commons` Library Name
 
-After migration, `oseplatform-fs` is no longer a Hugo site, but still depends on `hugo-commons` for link checking. Options:
+After migration, `oseplatform-web` is no longer a Hugo site, but still depends on `hugo-commons` for link checking. Options:
 
 - **Keep as-is**: The library name is a historical artifact; the link checker is framework-agnostic
 - **Future refactor**: Rename `hugo-commons` to `markdown-commons` or `content-commons` (out of scope for this plan)
@@ -1289,18 +1289,18 @@ The `oseplatform-cli` project.json already lists `hugo-commons` as an implicit d
 
 ### Agents to Update
 
-| Agent                                 | Current Context                      | New Context                                     | Key Changes                                                                            |
-| ------------------------------------- | ------------------------------------ | ----------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `apps-oseplatform-fs-deployer`        | Hugo framework, `nx build` runs Hugo | Next.js framework, `nx build` runs `next build` | Update description, remove Hugo references, add test verification step                 |
-| `apps-oseplatform-fs-content-maker`   | PaperMod theme, Hugo frontmatter     | Next.js content layer, same markdown format     | Update framework reference, keep content format guidance (markdown unchanged)          |
-| `apps-oseplatform-fs-content-checker` | PaperMod theme compliance            | Next.js content quality                         | Update validation context, remove Hugo-specific checks, add tRPC integration awareness |
-| `apps-oseplatform-fs-content-fixer`   | PaperMod fixes                       | Next.js content fixes                           | Mirror content-checker changes                                                         |
+| Agent                                  | Current Context                      | New Context                                     | Key Changes                                                                            |
+| -------------------------------------- | ------------------------------------ | ----------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `apps-oseplatform-web-deployer`        | Hugo framework, `nx build` runs Hugo | Next.js framework, `nx build` runs `next build` | Update description, remove Hugo references, add test verification step                 |
+| `apps-oseplatform-web-content-maker`   | PaperMod theme, Hugo frontmatter     | Next.js content layer, same markdown format     | Update framework reference, keep content format guidance (markdown unchanged)          |
+| `apps-oseplatform-web-content-checker` | PaperMod theme compliance            | Next.js content quality                         | Update validation context, remove Hugo-specific checks, add tRPC integration awareness |
+| `apps-oseplatform-web-content-fixer`   | PaperMod fixes                       | Next.js content fixes                           | Mirror content-checker changes                                                         |
 
 ### Skills to Update
 
-| Skill                                             | Current Context                                           | Key Changes                                                                                                                                                 |
-| ------------------------------------------------- | --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `apps-oseplatform-fs-developing-content/SKILL.md` | Hugo/PaperMod conventions, cover images, Hugo frontmatter | Update to Next.js content patterns, remove Hugo-specific fields (cover, bookCollapseSection), update comparison table, update deployment workflow reference |
+| Skill                                              | Current Context                                           | Key Changes                                                                                                                                                 |
+| -------------------------------------------------- | --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps-oseplatform-web-developing-content/SKILL.md` | Hugo/PaperMod conventions, cover images, Hugo frontmatter | Update to Next.js content patterns, remove Hugo-specific fields (cover, bookCollapseSection), update comparison table, update deployment workflow reference |
 
 ### What Stays the Same in Content Agents/Skills
 
@@ -1317,5 +1317,5 @@ The `oseplatform-cli` project.json already lists `hugo-commons` as an implicit d
 - Build system: "Hugo build" → "Next.js build"
 - Remove: cover image guidance (not used in Next.js version)
 - Remove: Hugo-specific fields (bookCollapseSection, bookFlatSection, cascade)
-- Update: deployment workflow name (`test-and-deploy-oseplatform-fs.yml`)
+- Update: deployment workflow name (`test-and-deploy-oseplatform-web.yml`)
 - Add: tRPC content API context (content is now served via tRPC procedures)

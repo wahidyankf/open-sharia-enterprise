@@ -8,7 +8,7 @@
 
 ## Overview
 
-Bring all 6 programming languages (Python, Golang, Java, Kotlin, Rust, Elixir) to complete parity based on the highest standards identified across all languages. This ensures consistent learner experience, complete coverage, and uniform quality across all programming language content on ayokoding-fs.
+Bring all 6 programming languages (Python, Golang, Java, Kotlin, Rust, Elixir) to complete parity based on the highest standards identified across all languages. This ensures consistent learner experience, complete coverage, and uniform quality across all programming language content on ayokoding-web.
 
 ## Quick Links
 
@@ -33,7 +33,7 @@ Bring all 6 programming languages (Python, Golang, Java, Kotlin, Rust, Elixir) t
 
 ## Context
 
-The ayokoding-fs site has 6 programming languages under `/en/learn/swe/programming-languages/`:
+The ayokoding-web site has 6 programming languages under `/en/learn/swe/programming-languages/`:
 
 - Python (reference implementation for dynamic languages)
 - Golang (reference implementation for concurrent programming)
@@ -53,9 +53,9 @@ This plan establishes the highest standard from each language and brings all oth
 
 ## Success Criteria
 
-1. All 6 languages pass `ayokoding-fs-general-checker` with zero violations
-2. All 6 languages pass `ayokoding-fs-structure-checker` with zero violations
-3. All 6 languages pass `ayokoding-fs-facts-checker` with zero factual errors
+1. All 6 languages pass `ayokoding-web-general-checker` with zero violations
+2. All 6 languages pass `ayokoding-web-structure-checker` with zero violations
+3. All 6 languages pass `ayokoding-web-facts-checker` with zero factual errors
 4. All 6 languages have identical file counts for structural files (tutorials, explanation, reference overview files)
 5. Cookbook positioned at weight 1000001 in all languages
 6. All languages meet or exceed quality benchmarks from Programming Language Content Standard

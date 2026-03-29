@@ -1,10 +1,10 @@
-# Technical Documentation: ayokoding-fs CI and Quality Gate Standardization
+# Technical Documentation: ayokoding-web CI and Quality Gate Standardization
 
 ## Current State
 
 ### Nx Target Configuration (`project.json`)
 
-ayokoding-fs declares these targets:
+ayokoding-web declares these targets:
 
 | Target             | Command                                   | Cache           | Inputs                                                                     |
 | ------------------ | ----------------------------------------- | --------------- | -------------------------------------------------------------------------- |
@@ -38,7 +38,7 @@ ayokoding-fs declares these targets:
 
 This is already well-structured with named steps. Improvement opportunity: add markdown linting as a separate named step.
 
-**Scheduled Workflow** (`test-and-deploy-ayokoding-fs.yml`):
+**Scheduled Workflow** (`test-and-deploy-ayokoding-web.yml`):
 
 ```
 Jobs: unit → e2e → detect-changes → deploy
@@ -72,8 +72,8 @@ specs/apps/ayokoding/**/*.feature
 
 ┌───────────────────────────────────┐
 │ test:e2e (Playwright)             │
-│ ├── ayokoding-fs-be-e2e          │  tRPC API tests
-│ └── ayokoding-fs-fe-e2e          │  UI tests
+│ ├── ayokoding-web-be-e2e          │  tRPC API tests
+│ └── ayokoding-web-fe-e2e          │  UI tests
 │     Runs against Docker compose   │
 └───────────────────────────────────┘
 ```
@@ -85,13 +85,13 @@ specs/apps/ayokoding/**/*.feature
 In `governance/development/infra/nx-targets.md`, update the Current Project Tags table:
 
 ```diff
-- | `ayokoding-fs`           | `["type:app", "platform:hugo", "domain:ayokoding"]`                     |
-+ | `ayokoding-fs`           | `["type:app", "platform:nextjs", "lang:ts", "domain:ayokoding"]`        |
+- | `ayokoding-web`           | `["type:app", "platform:hugo", "domain:ayokoding"]`                     |
++ | `ayokoding-web`           | `["type:app", "platform:nextjs", "lang:ts", "domain:ayokoding"]`        |
 ```
 
 ### Change 2: Add test:integration to Scheduled CI
 
-Add a new `integration` job to `test-and-deploy-ayokoding-fs.yml`:
+Add a new `integration` job to `test-and-deploy-ayokoding-web.yml`:
 
 ```yaml
 integration:
@@ -102,7 +102,7 @@ integration:
     -  # Volta + Node setup (same as unit job)
     - run: npm ci
     - name: Run integration tests
-      run: npx nx run ayokoding-fs:test:integration
+      run: npx nx run ayokoding-web:test:integration
 ```
 
 Update the `deploy` job dependency:
@@ -129,7 +129,7 @@ Update the `deploy` job `if:` condition:
 
 ### Change 3: Add Gherkin Spec Inputs to test:quick
 
-In `apps/ayokoding-fs/project.json`, add explicit inputs to `test:quick`:
+In `apps/ayokoding-web/project.json`, add explicit inputs to `test:quick`:
 
 ```diff
   "test:quick": {
@@ -350,9 +350,9 @@ The net change is: remove `index.ts` and `search-index.ts` from the exclusion li
 
 **Current state**: `npx oxlint@latest .` runs with zero configuration. No `.oxlintrc.json` exists. TypeScript's `noUnusedLocals`/`noUnusedParameters` (both `true`) catch unused variables/parameters at typecheck time, but the linter adds no additional enforcement.
 
-**Verified**: `apps/ayokoding-fs/tsconfig.json` already has `strict: true`, `noUnusedLocals: true`, `noUnusedParameters: true`, `noUncheckedIndexedAccess: true`. No TypeScript changes needed.
+**Verified**: `apps/ayokoding-web/tsconfig.json` already has `strict: true`, `noUnusedLocals: true`, `noUnusedParameters: true`, `noUncheckedIndexedAccess: true`. No TypeScript changes needed.
 
-**Target**: Create `apps/ayokoding-fs/oxlint.json` with full plugin and category configuration:
+**Target**: Create `apps/ayokoding-web/oxlint.json` with full plugin and category configuration:
 
 ```json
 {
@@ -404,7 +404,7 @@ The net change is: remove `index.ts` and `search-index.ts` from the exclusion li
 
 **Skipped plugins**: `jest` (we use vitest), `vue` (not used), `jsdoc` (not used), `react-perf` (premature optimization), `promise` (TypeScript strict mode covers most cases), `node` (Next.js handles Node.js APIs).
 
-Create slimmer E2E project configs for `apps/ayokoding-fs-be-e2e/oxlint.json` and `apps/ayokoding-fs-fe-e2e/oxlint.json`:
+Create slimmer E2E project configs for `apps/ayokoding-web-be-e2e/oxlint.json` and `apps/ayokoding-web-fe-e2e/oxlint.json`:
 
 ```json
 {
@@ -470,12 +470,12 @@ Rename from `.unit.test.ts` to `.integration.test.ts` to match the integration p
 
 ### Change 9: Convert BE E2E to Consume Gherkin Specs via playwright-bdd
 
-**Current state**: `ayokoding-fs-be-e2e/src/tests/` has 4 plain Playwright spec files. No Gherkin consumption. Missing `navigation-api` coverage.
+**Current state**: `ayokoding-web-be-e2e/src/tests/` has 4 plain Playwright spec files. No Gherkin consumption. Missing `navigation-api` coverage.
 
 **Target**: Install `playwright-bdd` and restructure tests:
 
 ```
-apps/ayokoding-fs-be-e2e/
+apps/ayokoding-web-be-e2e/
 ├── playwright.config.ts         # Updated: add playwright-bdd defineBddConfig
 ├── .features-gen/               # Auto-generated by playwright-bdd from .feature files
 ├── src/
@@ -499,12 +499,12 @@ Update `project.json` to include spec inputs:
 
 ### Change 10: Convert FE E2E to Consume Gherkin Specs via playwright-bdd
 
-**Current state**: `ayokoding-fs-fe-e2e/src/tests/` has 6 plain Playwright spec files corresponding to the 6 FE Gherkin specs by name, but they do not load `.feature` files.
+**Current state**: `ayokoding-web-fe-e2e/src/tests/` has 6 plain Playwright spec files corresponding to the 6 FE Gherkin specs by name, but they do not load `.feature` files.
 
 **Target**: Install `playwright-bdd` and restructure tests:
 
 ```
-apps/ayokoding-fs-fe-e2e/
+apps/ayokoding-web-fe-e2e/
 ├── playwright.config.ts         # Updated: add playwright-bdd defineBddConfig
 ├── .features-gen/               # Auto-generated by playwright-bdd
 ├── src/
@@ -534,11 +534,11 @@ specs/apps/ayokoding/
 ├── be/gherkin/**/*.feature (5 features)
 │   ├──→ test:unit       (vitest, "unit" project)        Mock-only: InMemoryContentRepository → ContentService
 │   ├──→ test:integration (vitest, "integration" project) Real fs: FileSystemContentRepository → ContentService
-│   └──→ test:e2e        (playwright-bdd, ayokoding-fs-be-e2e)  Real HTTP against running server
+│   └──→ test:e2e        (playwright-bdd, ayokoding-web-be-e2e)  Real HTTP against running server
 │
 └── fe/gherkin/**/*.feature (6 features)
     ├──→ test:unit       (vitest, "unit-fe" project)      Mock-only: jsdom + mocked tRPC + @testing-library/react
-    └──→ test:e2e        (playwright-bdd, ayokoding-fs-fe-e2e)   Real browser against running server
+    └──→ test:e2e        (playwright-bdd, ayokoding-web-fe-e2e)   Real browser against running server
 ```
 
 **Key principles**:
@@ -550,17 +550,17 @@ specs/apps/ayokoding/
 
 ## Risks and Mitigations
 
-| Risk                                                      | Likelihood | Impact | Mitigation                                                                                                                                               |
-| --------------------------------------------------------- | ---------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Integration tests add CI time                             | Medium     | Low    | Run in parallel with unit and e2e jobs                                                                                                                   |
-| Integration tests flaky in CI                             | Low        | Medium | ayokoding-fs's integration tests read from the checked-in `content/` directory (no external DB or service) — filesystem content is stable across CI runs |
-| Cache input change triggers rebuilds                      | Certain    | Low    | One-time cache miss, subsequent runs benefit from correct caching                                                                                        |
-| Repository refactor breaks existing tests                 | Medium     | Medium | Incremental approach: introduce interface first, then migrate tests one file at a time                                                                   |
-| Coverage threshold harder to meet with more code included | Low        | Medium | Service logic is well-structured; InMemoryContentRepository enables thorough unit testing                                                                |
-| Integration tests sensitive to content/ directory changes | Medium     | Low    | Integration tests assert structural properties (non-empty, ordered, valid HTML) not specific content                                                     |
-| playwright-bdd adds complexity to E2E projects            | Medium     | Medium | Well-established library; follows same Gherkin pattern as vitest-cucumber; one-time setup cost                                                           |
-| FE unit tests require extensive component mocking         | Medium     | Medium | Start with structural/smoke scenarios; use @testing-library/react best practices; mock at boundaries                                                     |
-| Oxlint error rules may break existing code                | Low        | Low    | Run oxlint with new config first, fix any existing violations in the same commit                                                                         |
+| Risk                                                      | Likelihood | Impact | Mitigation                                                                                                                                                |
+| --------------------------------------------------------- | ---------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Integration tests add CI time                             | Medium     | Low    | Run in parallel with unit and e2e jobs                                                                                                                    |
+| Integration tests flaky in CI                             | Low        | Medium | ayokoding-web's integration tests read from the checked-in `content/` directory (no external DB or service) — filesystem content is stable across CI runs |
+| Cache input change triggers rebuilds                      | Certain    | Low    | One-time cache miss, subsequent runs benefit from correct caching                                                                                         |
+| Repository refactor breaks existing tests                 | Medium     | Medium | Incremental approach: introduce interface first, then migrate tests one file at a time                                                                    |
+| Coverage threshold harder to meet with more code included | Low        | Medium | Service logic is well-structured; InMemoryContentRepository enables thorough unit testing                                                                 |
+| Integration tests sensitive to content/ directory changes | Medium     | Low    | Integration tests assert structural properties (non-empty, ordered, valid HTML) not specific content                                                      |
+| playwright-bdd adds complexity to E2E projects            | Medium     | Medium | Well-established library; follows same Gherkin pattern as vitest-cucumber; one-time setup cost                                                            |
+| FE unit tests require extensive component mocking         | Medium     | Medium | Start with structural/smoke scenarios; use @testing-library/react best practices; mock at boundaries                                                      |
+| Oxlint error rules may break existing code                | Low        | Low    | Run oxlint with new config first, fix any existing violations in the same commit                                                                          |
 
 ## Out of Scope
 

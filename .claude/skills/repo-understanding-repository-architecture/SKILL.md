@@ -119,7 +119,7 @@ Development: Hugo Development Convention (semantic HTML)
 **Scope**:
 
 - docs/ directory (all markdown)
-- ayokoding-fs (Next.js), oseplatform-fs (Hugo)
+- ayokoding-web (Next.js), oseplatform-web (Hugo)
 - plans/ directory
 - README files
 

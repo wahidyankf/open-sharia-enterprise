@@ -69,13 +69,13 @@ Follow the standard 6-step workflow (see `swe-developing-applications-common` Sk
 
 **Documentation Separation**:
 
-- **[AyoKoding](../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/kotlin/)** - "How to code in Kotlin" (educational, universal patterns)
+- **[AyoKoding](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/kotlin/)** - "How to code in Kotlin" (educational, universal patterns)
 - **[docs/explanation](../../docs/explanation/software-engineering/programming-languages/kotlin/)** - "How to code Kotlin in OSE Platform" (repository conventions, framework choices)
 
 **You MUST complete AyoKoding Kotlin learning path before using OSE standards:**
 
-1. **[Kotlin Learning Path](../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/kotlin/)** - Initial setup, overview, quick start (0-95% language coverage)
-2. **[Kotlin By Example](../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/kotlin/by-example/)** - 75+ annotated code examples (beginner to advanced)
+1. **[Kotlin Learning Path](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/kotlin/)** - Initial setup, overview, quick start (0-95% language coverage)
+2. **[Kotlin By Example](../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/kotlin/by-example/)** - 75+ annotated code examples (beginner to advanced)
 
 **See**: [Programming Language Documentation Separation](../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 

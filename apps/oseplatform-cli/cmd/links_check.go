@@ -15,24 +15,24 @@ var outputLinksJSONFn = links.OutputLinksJSON
 
 var linksCheckCmd = &cobra.Command{
 	Use:   "check",
-	Short: "Validate internal links in oseplatform-fs content",
-	Long: `Validate all internal links in oseplatform-fs markdown content.
+	Short: "Validate internal links in oseplatform-web content",
+	Long: `Validate all internal links in oseplatform-web markdown content.
 
 Walks all .md files in the content directory, extracts internal links, and
 checks that each link resolves to a real file on disk. Internal links use
 Hugo absolute paths without .md extension.
 
 External links (http://, https://, mailto://) are skipped — use the
-apps-oseplatform-fs-link-checker AI agent for external link validation.`,
+apps-oseplatform-web-link-checker AI agent for external link validation.`,
 	Example: `  oseplatform-cli links check
-  oseplatform-cli links check --content apps/oseplatform-fs/content
+  oseplatform-cli links check --content apps/oseplatform-web/content
   oseplatform-cli links check -o json`,
 	RunE: runLinksCheck,
 }
 
 func init() {
 	linksCmd.AddCommand(linksCheckCmd)
-	linksCheckCmd.Flags().StringVar(&linksContentDir, "content", "apps/oseplatform-fs/content", "content directory path")
+	linksCheckCmd.Flags().StringVar(&linksContentDir, "content", "apps/oseplatform-web/content", "content directory path")
 }
 
 func runLinksCheck(_ *cobra.Command, _ []string) error {

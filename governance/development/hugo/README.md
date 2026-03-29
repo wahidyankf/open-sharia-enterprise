@@ -1,6 +1,6 @@
 # Hugo Development
 
-Standards for developing Hugo sites (layouts, themes, assets, configuration) for oseplatform-fs. (ayokoding-fs has migrated to Next.js 16 and is no longer a Hugo site.)
+Standards for developing Hugo sites (layouts, themes, assets, configuration) for oseplatform-web. (ayokoding-web has migrated to Next.js 16 and is no longer a Hugo site.)
 
 ## Purpose
 
