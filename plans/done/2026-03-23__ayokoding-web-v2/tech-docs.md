@@ -720,7 +720,7 @@ apps/ayokoding-web-v2/
 ## Specs Structure
 
 ```
-specs/apps/ayokoding-web/
+specs/apps/ayokoding/
 ├── README.md
 ├── be/
 │   └── gherkin/
@@ -1266,8 +1266,8 @@ locale-specific because folder and file names differ between languages. The tRPC
 ```json
 "inputs": [
   "default",
-  "{workspaceRoot}/specs/apps/ayokoding-web/be/gherkin/**/*.feature",
-  "{workspaceRoot}/specs/apps/ayokoding-web/fe/gherkin/**/*.feature",
+  "{workspaceRoot}/specs/apps/ayokoding/be/gherkin/**/*.feature",
+  "{workspaceRoot}/specs/apps/ayokoding/fe/gherkin/**/*.feature",
   "{workspaceRoot}/apps/ayokoding-web/content/**/*.md"
 ]
 ```

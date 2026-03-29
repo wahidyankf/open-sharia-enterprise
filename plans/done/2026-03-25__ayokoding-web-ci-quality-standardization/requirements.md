@@ -40,7 +40,7 @@ But `test:integration` (vitest `--project integration`) is never run in any CI w
 `test:unit` declares explicit cache inputs:
 
 ```json
-"inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding-web/**/*.feature"]
+"inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding/**/*.feature"]
 ```
 
 But `test:quick` (which runs vitest internally) does not declare its own `inputs`. It inherits workspace defaults from `nx.json` but does not explicitly include the Gherkin specs. Since `test:quick` composes `test:unit` inline (not via `dependsOn`), Nx does not automatically chain the inputs.
@@ -74,7 +74,7 @@ Unit tests compensate by using `vi.mock()` on 4 modules (`reader`, `index`, `par
 
 ### Gap 7: FE Unit Tests Are Completely Empty
 
-The `unit-fe` vitest project (jsdom env) is defined in `vitest.config.ts` with include pattern `test/unit/fe-steps/**/*.steps.{ts,tsx}`, but the `test/unit/fe-steps/` directory exists with only an empty `helpers/` subdirectory — no step files are present. Meanwhile, 6 FE Gherkin specs exist under `specs/apps/ayokoding-web/fe/gherkin/`:
+The `unit-fe` vitest project (jsdom env) is defined in `vitest.config.ts` with include pattern `test/unit/fe-steps/**/*.steps.{ts,tsx}`, but the `test/unit/fe-steps/` directory exists with only an empty `helpers/` subdirectory — no step files are present. Meanwhile, 6 FE Gherkin specs exist under `specs/apps/ayokoding/fe/gherkin/`:
 
 - `content-rendering.feature`
 - `navigation.feature`
@@ -89,7 +89,7 @@ None are consumed by any unit test.
 
 ### Gap 8: E2E Tests Do Not Consume Gherkin Specs
 
-Both `ayokoding-web-be-e2e` (4 spec files) and `ayokoding-web-fe-e2e` (6 spec files) are plain Playwright tests written independently of the Gherkin feature files. They do not load or reference any `.feature` files from `specs/apps/ayokoding-web/`. This means:
+Both `ayokoding-web-be-e2e` (4 spec files) and `ayokoding-web-fe-e2e` (6 spec files) are plain Playwright tests written independently of the Gherkin feature files. They do not load or reference any `.feature` files from `specs/apps/ayokoding/`. This means:
 
 1. The E2E test scenarios may drift from the Gherkin specifications
 2. The three-level testing standard's principle of "same specs, different implementations" is not applied at the E2E level
@@ -126,7 +126,7 @@ This violates the three-level testing standard where unit tests must use mocked 
 2. **Coverage regression prevention**: The repository refactor must not regress the 80% line coverage threshold. `service.ts` replaces the previously excluded `index.ts` and `search-index.ts` and must be covered by unit tests through `InMemoryContentRepository`.
 3. **Phase atomicity**: Each delivery phase must be a self-contained commit that leaves the codebase in a passing state (typecheck, lint, and test:quick all green). No phase may leave the build broken.
 4. **Unit test purity**: All unit tests (`test:unit`) must use mocks only — no filesystem reads, no HTTP calls, no external dependencies. Tests that require real resources belong in `test:integration`.
-5. **Complete spec consumption**: Every Gherkin feature file under `specs/apps/ayokoding-web/be/` must be consumed by BE unit tests, BE integration tests, and BE E2E tests. Every Gherkin feature file under `specs/apps/ayokoding-web/fe/` must be consumed by FE unit tests and FE E2E tests. All three test levels consume the same specs — only step implementations differ.
+5. **Complete spec consumption**: Every Gherkin feature file under `specs/apps/ayokoding/be/` must be consumed by BE unit tests, BE integration tests, and BE E2E tests. Every Gherkin feature file under `specs/apps/ayokoding/fe/` must be consumed by FE unit tests and FE E2E tests. All three test levels consume the same specs — only step implementations differ.
 6. **Unused code as errors**: Unused variables, unused imports, and dead code must be treated as errors (not warnings) by either typecheck or linting. TypeScript strict mode (`noUnusedLocals`, `noUnusedParameters`) handles variables/parameters; oxlint config must enforce `no-unused-vars` as error for additional coverage. `no-console: error` is also enforced — this is a deliberate policy choice (not a default). Phase 8 may require fixing existing `console.log` calls in the codebase as part of the same commit.
 
 ## User Stories
@@ -181,7 +181,7 @@ Scenario: Integration test failure blocks deployment
 ```gherkin
 Scenario: Gherkin spec change invalidates test:quick cache
   Given a cached test:quick result for ayokoding-web
-  When I modify a file in specs/apps/ayokoding-web/**/*.feature
+  When I modify a file in specs/apps/ayokoding/**/*.feature
   And I run nx run ayokoding-web:test:quick
   Then the cache is missed and tests re-run
 ```
@@ -222,14 +222,14 @@ Scenario: Unit tests use InMemoryContentRepository
   When the tests run
   Then they use InMemoryContentRepository with fixture data
   And they do not perform any filesystem reads
-  And they consume Gherkin specs from specs/apps/ayokoding-web/be/gherkin/**/*.feature
+  And they consume Gherkin specs from specs/apps/ayokoding/be/gherkin/**/*.feature
 
 Scenario: Integration tests use FileSystemContentRepository
   Given the integration test suite for content-api
   When the tests run
   Then they use FileSystemContentRepository reading from the real content/ directory
   And they do not make any HTTP calls
-  And they consume the same Gherkin specs from specs/apps/ayokoding-web/be/gherkin/**/*.feature
+  And they consume the same Gherkin specs from specs/apps/ayokoding/be/gherkin/**/*.feature
 ```
 
 ### Story 6: Refactor Content Service Layer to Accept Repository via Injection
@@ -303,7 +303,7 @@ Scenario: TypeScript strict mode is verified
 
 ```gherkin
 Scenario: FE unit step files exist for all FE specs
-  Given the specs/apps/ayokoding-web/fe/gherkin/ directory
+  Given the specs/apps/ayokoding/fe/gherkin/ directory
   Then every .feature file has a corresponding step file in test/unit/fe-steps/
   And all step files are included by the unit-fe vitest project
 
@@ -351,13 +351,13 @@ Scenario: No unit test performs real I/O
 
 ```gherkin
 Scenario: BE E2E tests consume all 5 BE Gherkin specs
-  Given the specs/apps/ayokoding-web/be/gherkin/ directory
+  Given the specs/apps/ayokoding/be/gherkin/ directory
   Then every .feature file has a corresponding step file in ayokoding-web-be-e2e
   And the tests are driven by playwright-bdd
 
 Scenario: BE E2E project declares Gherkin spec inputs
   Given the ayokoding-web-be-e2e project.json
-  Then the test:e2e target includes specs/apps/ayokoding-web/be/gherkin/**/*.feature in its inputs
+  Then the test:e2e target includes specs/apps/ayokoding/be/gherkin/**/*.feature in its inputs
 
 Scenario: Missing navigation-api E2E coverage is added
   Given the navigation-api.feature spec
@@ -374,11 +374,11 @@ Scenario: Missing navigation-api E2E coverage is added
 
 ```gherkin
 Scenario: FE E2E tests consume all 6 FE Gherkin specs
-  Given the specs/apps/ayokoding-web/fe/gherkin/ directory
+  Given the specs/apps/ayokoding/fe/gherkin/ directory
   Then every .feature file has a corresponding step file in ayokoding-web-fe-e2e
   And the tests are driven by playwright-bdd
 
 Scenario: FE E2E project declares Gherkin spec inputs
   Given the ayokoding-web-fe-e2e project.json
-  Then the test:e2e target includes specs/apps/ayokoding-web/fe/gherkin/**/*.feature in its inputs
+  Then the test:e2e target includes specs/apps/ayokoding/fe/gherkin/**/*.feature in its inputs
 ```

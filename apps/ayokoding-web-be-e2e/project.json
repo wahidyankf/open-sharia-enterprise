@@ -35,7 +35,7 @@
     },
     "test:e2e": {
       "executor": "nx:run-commands",
-      "inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding-web/be/gherkin/**/*.feature"],
+      "inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding/be/gherkin/**/*.feature"],
       "options": {
         "command": "npx bddgen && npx playwright test",
         "cwd": "apps/ayokoding-web-be-e2e"

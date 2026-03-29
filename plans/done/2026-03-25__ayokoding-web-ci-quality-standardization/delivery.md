@@ -28,7 +28,7 @@
 **Implementation Steps**:
 
 - [x] Open `apps/ayokoding-web/project.json`
-- [x] Add `"inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding-web/**/*.feature"]` to the `test:quick` target
+- [x] Add `"inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding/**/*.feature"]` to the `test:quick` target
 - [x] Run `nx run ayokoding-web:test:quick` locally to verify it still passes
   - Note: `test:integration` will fail at this stage — the `integration` vitest project config is not added until Phase 7. Only `test:quick` is required to pass here.
 - [x] Commit: `fix(ayokoding-web): add Gherkin spec inputs to test:quick cache`
@@ -117,12 +117,12 @@
 - [x] Create `test/integration/be-steps/helpers/test-service.ts` — instantiate `ContentService` with `FileSystemContentRepository` pointing at real `content/` directory
 - [x] Create `test/integration/be-steps/helpers/test-caller.ts` — tRPC caller backed by real filesystem service
 - [x] Create integration step files consuming the same Gherkin specs — assertions verify structural properties (non-empty results, valid HTML, correct ordering) not specific content:
-  - [x] `test/integration/be-steps/health-check.steps.ts` → `specs/apps/ayokoding-web/be/gherkin/health/health-check.feature`
-  - [x] `test/integration/be-steps/content-api.steps.ts` → `specs/apps/ayokoding-web/be/gherkin/content-api/content-api.feature`
-  - [x] `test/integration/be-steps/search-api.steps.ts` → `specs/apps/ayokoding-web/be/gherkin/search-api/search-api.feature`
-  - [x] `test/integration/be-steps/navigation-api.steps.ts` → `specs/apps/ayokoding-web/be/gherkin/navigation-api/navigation-api.feature`
-  - [x] `test/integration/be-steps/i18n-api.steps.ts` → `specs/apps/ayokoding-web/be/gherkin/i18n/i18n-api.feature`
-- [x] Add Gherkin spec inputs to `test:integration` in `project.json`: `"inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding-web/**/*.feature"]` (even though `cache: false`, this documents the dependency for consistency with `test:unit` and `test:quick`)
+  - [x] `test/integration/be-steps/health-check.steps.ts` → `specs/apps/ayokoding/be/gherkin/health/health-check.feature`
+  - [x] `test/integration/be-steps/content-api.steps.ts` → `specs/apps/ayokoding/be/gherkin/content-api/content-api.feature`
+  - [x] `test/integration/be-steps/search-api.steps.ts` → `specs/apps/ayokoding/be/gherkin/search-api/search-api.feature`
+  - [x] `test/integration/be-steps/navigation-api.steps.ts` → `specs/apps/ayokoding/be/gherkin/navigation-api/navigation-api.feature`
+  - [x] `test/integration/be-steps/i18n-api.steps.ts` → `specs/apps/ayokoding/be/gherkin/i18n/i18n-api.feature`
+- [x] Add Gherkin spec inputs to `test:integration` in `project.json`: `"inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding/**/*.feature"]` (even though `cache: false`, this documents the dependency for consistency with `test:unit` and `test:quick`)
 - [x] Verify `nx run ayokoding-web:test:integration` passes
 - [x] Commit: `feat(ayokoding-web): add integration tests with FileSystemContentRepository`
 
@@ -169,12 +169,12 @@
 
 - [x] Create `test/unit/fe-steps/helpers/test-setup.ts` — jsdom setup, mock tRPC client, mock router, render helpers
 - [x] Create step files for all 6 FE features using `@amiceli/vitest-cucumber`:
-  - [x] `test/unit/fe-steps/content-rendering.steps.tsx` → `specs/apps/ayokoding-web/fe/gherkin/content-rendering.feature`
-  - [x] `test/unit/fe-steps/navigation.steps.tsx` → `specs/apps/ayokoding-web/fe/gherkin/navigation.feature`
-  - [x] `test/unit/fe-steps/search.steps.tsx` → `specs/apps/ayokoding-web/fe/gherkin/search.feature`
-  - [x] `test/unit/fe-steps/responsive.steps.tsx` → `specs/apps/ayokoding-web/fe/gherkin/responsive.feature`
-  - [x] `test/unit/fe-steps/i18n.steps.tsx` → `specs/apps/ayokoding-web/fe/gherkin/i18n.feature`
-  - [x] `test/unit/fe-steps/accessibility.steps.tsx` → `specs/apps/ayokoding-web/fe/gherkin/accessibility.feature`
+  - [x] `test/unit/fe-steps/content-rendering.steps.tsx` → `specs/apps/ayokoding/fe/gherkin/content-rendering.feature`
+  - [x] `test/unit/fe-steps/navigation.steps.tsx` → `specs/apps/ayokoding/fe/gherkin/navigation.feature`
+  - [x] `test/unit/fe-steps/search.steps.tsx` → `specs/apps/ayokoding/fe/gherkin/search.feature`
+  - [x] `test/unit/fe-steps/responsive.steps.tsx` → `specs/apps/ayokoding/fe/gherkin/responsive.feature`
+  - [x] `test/unit/fe-steps/i18n.steps.tsx` → `specs/apps/ayokoding/fe/gherkin/i18n.feature`
+  - [x] `test/unit/fe-steps/accessibility.steps.tsx` → `specs/apps/ayokoding/fe/gherkin/accessibility.feature`
 - [x] All step files must use mocks only — mocked tRPC responses, mocked router, `@testing-library/react` for rendering
 - [x] Run `nx run ayokoding-web:test:unit` and verify all 6 FE step files execute
 - [x] Run `nx run ayokoding-web:test:quick` to verify coverage threshold still passes
@@ -187,7 +187,7 @@
 **Implementation Steps**:
 
 - [x] Install `playwright-bdd` in `apps/ayokoding-web-be-e2e`: `npm install -D playwright-bdd`
-- [x] Update `playwright.config.ts` to use `defineBddConfig` with feature file paths pointing to `../../specs/apps/ayokoding-web/be/gherkin/`
+- [x] Update `playwright.config.ts` to use `defineBddConfig` with feature file paths pointing to `../../specs/apps/ayokoding/be/gherkin/`
 - [x] Create step files in `src/steps/` for all 5 BE features:
   - [x] `health-check.steps.ts` → `health/health-check.feature`
   - [x] `content-api.steps.ts` → `content-api/content-api.feature`
@@ -195,7 +195,7 @@
   - [x] `navigation-api.steps.ts` → `navigation-api/navigation-api.feature` (NEW — was missing)
   - [x] `i18n-api.steps.ts` → `i18n/i18n-api.feature`
 - [x] Remove old plain Playwright spec files from `src/tests/`
-- [x] Update `apps/ayokoding-web-be-e2e/project.json` — add Gherkin spec inputs: `"inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding-web/be/gherkin/**/*.feature"]`
+- [x] Update `apps/ayokoding-web-be-e2e/project.json` — add Gherkin spec inputs: `"inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding/be/gherkin/**/*.feature"]`
 - [x] Add `.features-gen/` to `.gitignore`
 - [ ] Verify `nx run ayokoding-web-be-e2e:test:e2e` passes against running server
 - [x] Commit: `feat(ayokoding-web-be-e2e): convert to playwright-bdd consuming BE Gherkin specs`
@@ -207,7 +207,7 @@
 **Implementation Steps**:
 
 - [x] Install `playwright-bdd` in `apps/ayokoding-web-fe-e2e`: `npm install -D playwright-bdd`
-- [x] Update `playwright.config.ts` to use `defineBddConfig` with feature file paths pointing to `../../specs/apps/ayokoding-web/fe/gherkin/`
+- [x] Update `playwright.config.ts` to use `defineBddConfig` with feature file paths pointing to `../../specs/apps/ayokoding/fe/gherkin/`
 - [x] Create step files in `src/steps/` for all 6 FE features:
   - [x] `content-rendering.steps.ts` → `content-rendering.feature`
   - [x] `navigation.steps.ts` → `navigation.feature`
@@ -216,7 +216,7 @@
   - [x] `i18n.steps.ts` → `i18n.feature`
   - [x] `accessibility.steps.ts` → `accessibility.feature`
 - [x] Remove old plain Playwright spec files from `src/tests/`
-- [x] Update `apps/ayokoding-web-fe-e2e/project.json` — add Gherkin spec inputs: `"inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding-web/fe/gherkin/**/*.feature"]`
+- [x] Update `apps/ayokoding-web-fe-e2e/project.json` — add Gherkin spec inputs: `"inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding/fe/gherkin/**/*.feature"]`
 - [x] Add `.features-gen/` to `.gitignore`
 - [ ] Verify `nx run ayokoding-web-fe-e2e:test:e2e` passes against running server
 - [x] Commit: `feat(ayokoding-web-fe-e2e): convert to playwright-bdd consuming FE Gherkin specs`

@@ -56,4 +56,4 @@ git push origin main:prod-ayokoding-web
 
 - [ayokoding-web-be-e2e](../ayokoding-web-be-e2e/) - Backend E2E tests
 - [ayokoding-web-fe-e2e](../ayokoding-web-fe-e2e/) - Frontend E2E tests
-- [specs/apps/ayokoding-web/](../../specs/apps/ayokoding-web/) - Gherkin specifications
+- [specs/apps/ayokoding/](../../specs/apps/ayokoding/) - Gherkin specifications

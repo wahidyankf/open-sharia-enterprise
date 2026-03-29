@@ -9,7 +9,7 @@ The specs cover content retrieval, search, navigation, internationalisation, and
 ## Structure
 
 ```
-specs/apps/ayokoding-web/
+specs/apps/ayokoding/
 ├── README.md              # This file
 ├── c4/                    # C4 architecture diagrams
 │   ├── context.md         # Level 1: System context

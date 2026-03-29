@@ -53,7 +53,7 @@
   - [x] **2.2d** Verify the full links check command resolves: from `cwd: apps/ayokoding-web`, the path `../../apps/ayokoding-cli/dist/ayokoding-cli` correctly resolves to the CLI binary (depth is identical to the former `apps/ayokoding-web-v2` cwd)
   - [x] **2.2e** Keep `"ayokoding-cli"` in `implicitDependencies` — the `test:quick` links check still depends on the CLI binary; only update the `--content` path within the command (done in 2.2c)
   - [x] **2.2f** Update `test:quick` coverage validation path in `project.json`: change `apps/ayokoding-web-v2/coverage/lcov.info` to `apps/ayokoding-web/coverage/lcov.info` (this is the rhino-cli validate argument — separate from the Codecov path updated in step 4.6c)
-  - [x] **2.2g** Update `specs` input path in `test:unit`: `{workspaceRoot}/specs/apps/ayokoding-web/**/*.feature` (already correct after rename)
+  - [x] **2.2g** Update `specs` input path in `test:unit`: `{workspaceRoot}/specs/apps/ayokoding/**/*.feature` (already correct after rename)
 - [x] **2.3** Update `apps/ayokoding-web/package.json`:
   - [x] **2.3a** Change `"name"` from `"ayokoding-web-v2"` to `"ayokoding-web"`
 
@@ -488,7 +488,7 @@
 
 ### 7k: specs/ files
 
-- [x] **7.81** Update `specs/apps/ayokoding-web/README.md`:
+- [x] **7.81** Update `specs/apps/ayokoding/README.md`:
   - [x] **7.81a** Remove v1/v2 version table — describe Next.js app only
   - [x] **7.81b** Update "Related" links: remove Hugo v1 reference
   - [x] **7.81c** Change status from "In spec" to "Active"

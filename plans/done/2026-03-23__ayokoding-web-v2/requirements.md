@@ -15,7 +15,7 @@
 - Render all content pages as **React Server Components (RSC)** — server-side HTML
   for SEO (no client-side rendering for content). React Query (via
   `@trpc/tanstack-react-query`) used only for interactive features like search
-- Create Gherkin specs at `specs/apps/ayokoding-web/` (both `be/` and `fe/`)
+- Create Gherkin specs at `specs/apps/ayokoding/` (both `be/` and `fe/`)
 - Create E2E test apps: `apps/ayokoding-web-v2-be-e2e` and `apps/ayokoding-web-v2-fe-e2e`
 - Enforce 80%+ line coverage via `rhino-cli test-coverage validate`
 - Serve on port **3101**

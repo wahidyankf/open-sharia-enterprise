@@ -4,7 +4,7 @@ import { expect } from "vitest";
 import "./helpers/test-setup";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ayokoding-web/fe/gherkin/responsive.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/fe/gherkin/responsive.feature"),
 );
 
 // Responsive layout testing requires real viewport resizing — tested at E2E level
