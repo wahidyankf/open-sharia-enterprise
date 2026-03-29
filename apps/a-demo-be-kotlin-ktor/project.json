@@ -7,7 +7,7 @@
     "codegen": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "npx openapi-generator-cli generate -i $(pwd)/specs/apps/a-demo/contracts/generated/openapi-bundled.yaml -g kotlin -o $(pwd)/apps/a-demo-be-kotlin-ktor/generated-contracts --model-package com.aademobektkt.contracts --additional-properties=library=jvm-ktor,serializationLibrary=kotlinx_serialization,dateLibrary=kotlinx-datetime --global-property=models,modelDocs=false,apiDocs=false"
+        "command": "npx openapi-generator-cli generate -i $(pwd)/specs/apps/a-demo/contracts/generated/openapi-bundled.yaml -g kotlin -o $(pwd)/apps/a-demo-be-kotlin-ktor/generated-contracts --model-package com.ademobektkt.contracts --additional-properties=library=jvm-ktor,serializationLibrary=kotlinx_serialization,dateLibrary=kotlinx-datetime --global-property=models,modelDocs=false,apiDocs=false"
       },
       "dependsOn": ["a-demo-contracts:bundle"],
       "cache": true,
