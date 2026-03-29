@@ -19,8 +19,8 @@ Progressive disclosure of C# coding standards for agents writing C# code.
 
 Complete the AyoKoding C# learning path first:
 
-1. **[C# Learning Path](../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/c-sharp/)** - 0-95% language coverage
-2. **[C# By Example](../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/c-sharp/by-example/)** - 75+ annotated examples
+1. **[C# Learning Path](../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/c-sharp/)** - 0-95% language coverage
+2. **[C# By Example](../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/c-sharp/by-example/)** - 75+ annotated examples
 
 **See**: [Programming Language Documentation Separation](../../../governance/conventions/structure/programming-language-docs-separation.md)
 
@@ -157,21 +157,21 @@ public class ZakatCalculatorTests
 
 ### Mandatory Standards
 
-1. **[Coding Standards](../../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-cs__coding-standards.md)**
-2. **[Testing Standards](../../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-cs__testing-standards.md)**
-3. **[Code Quality Standards](../../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-cs__code-quality-standards.md)**
-4. **[Build Configuration](../../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-cs__build-configuration.md)**
+1. **[Coding Standards](../../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-csh__coding-standards.md)**
+2. **[Testing Standards](../../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-csh__testing-standards.md)**
+3. **[Code Quality Standards](../../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-csh__code-quality-standards.md)**
+4. **[Build Configuration](../../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-csh__build-configuration.md)**
 
 ### Context-Specific Standards
 
-1. **[Error Handling](../../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-cs__error-handling-standards.md)**
-2. **[Concurrency](../../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-cs__concurrency-standards.md)**
-3. **[Type Safety](../../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-cs__type-safety-standards.md)**
-4. **[Performance](../../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-cs__performance-standards.md)**
-5. **[Security](../../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-cs__security-standards.md)**
-6. **[API Standards](../../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-cs__api-standards.md)**
-7. **[DDD Standards](../../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-cs__ddd-standards.md)**
-8. **[Framework Integration](../../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-cs__framework-integration.md)**
+1. **[Error Handling](../../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-csh__error-handling-standards.md)**
+2. **[Concurrency](../../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-csh__concurrency-standards.md)**
+3. **[Type Safety](../../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-csh__type-safety-standards.md)**
+4. **[Performance](../../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-csh__performance-standards.md)**
+5. **[Security](../../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-csh__security-standards.md)**
+6. **[API Standards](../../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-csh__api-standards.md)**
+7. **[DDD Standards](../../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-csh__ddd-standards.md)**
+8. **[Framework Integration](../../../docs/explanation/software-engineering/programming-languages/c-sharp/ex-soen-prla-csh__framework-integration.md)**
 
 ## Related Skills
 

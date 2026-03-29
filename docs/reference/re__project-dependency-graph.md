@@ -78,8 +78,8 @@ graph RL
   OPC[oseplatform-cli]
 
   %% Hugo sites
-  AKW[ayokoding-web]
-  OPW[oseplatform-web]
+  AKW[ayokoding-fs]
+  OPW[oseplatform-fs]
 
   %% OrganicLever
   OLW[organiclever-fe]
@@ -309,20 +309,20 @@ when feature files change.
 
 ### Hugo Sites
 
-| Project         | Dependencies    | Spec Inputs |
-| --------------- | --------------- | ----------- |
-| oseplatform-web | oseplatform-cli | (none)      |
+| Project        | Dependencies    | Spec Inputs |
+| -------------- | --------------- | ----------- |
+| oseplatform-fs | oseplatform-cli | (none)      |
 
 Hugo sites depend on their CLI tools for content automation (link checking).
 The CLI tools are built via `dependsOn` in `links:check` and `test:quick` targets.
 
 ### Next.js Content Platforms
 
-| Project       | Dependencies  | Spec Inputs |
-| ------------- | ------------- | ----------- |
-| ayokoding-web | ayokoding-cli | (none)      |
+| Project      | Dependencies  | Spec Inputs |
+| ------------ | ------------- | ----------- |
+| ayokoding-fs | ayokoding-cli | (none)      |
 
-ayokoding-web depends on ayokoding-cli for link validation.
+ayokoding-fs depends on ayokoding-cli for link validation.
 
 ### CLI Tools
 

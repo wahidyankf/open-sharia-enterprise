@@ -127,7 +127,7 @@ func writeDoctorConfigFiles(tmpDir, nodeVer, npmVer, javaMajor, goVer string) er
 	dirs := []string{
 		"apps/organiclever-be-jasb",
 		"apps/rhino-cli",
-		"apps/oseplatform-web",
+		"apps/oseplatform-fs",
 		"apps/demo-be-python-fastapi",
 		"apps/demo-be-fsharp-giraffe",
 		"apps/demo-fe-dart-flutterweb",
@@ -143,7 +143,7 @@ func writeDoctorConfigFiles(tmpDir, nodeVer, npmVer, javaMajor, goVer string) er
 		"apps/organiclever-be-jasb/pom.xml": fmt.Sprintf(`<project><properties><java.version>%s</java.version></properties></project>`, javaMajor),
 		"apps/rhino-cli/go.mod":             fmt.Sprintf("module foo\n\ngo %s\n", goVer),
 		// New tool config files — use sensible defaults that match common installed versions
-		"apps/oseplatform-web/vercel.json":            `{"build":{"env":{"HUGO_VERSION":"0.156.0"}}}`,
+		"apps/oseplatform-fs/vercel.json":             `{"build":{"env":{"HUGO_VERSION":"0.156.0"}}}`,
 		"apps/demo-be-python-fastapi/.python-version": "3.13\n",
 		".tool-versions":                              "erlang 27.3\nelixir 1.19.5-otp-27\n",
 		"apps/demo-be-fsharp-giraffe/global.json":     `{"sdk":{"version":"10.0.103","rollForward":"latestMinor"}}`,

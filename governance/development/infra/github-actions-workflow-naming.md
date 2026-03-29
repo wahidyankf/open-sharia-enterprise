@@ -81,30 +81,30 @@ The result must exactly match the filename (without path).
 
 Every workflow currently in the repository follows this rule:
 
-| `name:` field                                | Filename                              |
-| -------------------------------------------- | ------------------------------------- |
-| `Main CI`                                    | `main-ci.yml`                         |
-| `PR - Quality Gate`                          | `pr-quality-gate.yml`                 |
-| `PR - Format`                                | `pr-format.yml`                       |
-| `PR - Validate Links`                        | `pr-validate-links.yml`               |
-| `Test and Deploy - AyoKoding Web`            | `test-and-deploy-ayokoding-web.yml`   |
-| `Test and Deploy - OSE Platform Web`         | `test-and-deploy-oseplatform-web.yml` |
-| `Test - Demo BE (Java/Spring Boot)`          | `test-demo-be-java-springboot.yml`    |
-| `Test - Demo BE (Java/Vert.x)`               | `test-demo-be-java-vertx.yml`         |
-| `Test - Demo BE (Elixir/Phoenix)`            | `test-demo-be-elixir-phoenix.yml`     |
-| `Test - Demo BE (F#/Giraffe)`                | `test-demo-be-fsharp-giraffe.yml`     |
-| `Test - Demo BE (Go/Gin)`                    | `test-demo-be-golang-gin.yml`         |
-| `Test - Demo BE (Python/FastAPI)`            | `test-demo-be-python-fastapi.yml`     |
-| `Test - Demo BE (Rust/Axum)`                 | `test-demo-be-rust-axum.yml`          |
-| `Test - Demo BE (Kotlin/Ktor)`               | `test-demo-be-kotlin-ktor.yml`        |
-| `Test - Demo BE (TypeScript/Effect)`         | `test-demo-be-ts-effect.yml`          |
-| `Test - Demo BE (C#/ASP.NET Core)`           | `test-demo-be-csharp-aspnetcore.yml`  |
-| `Test - Demo BE (Clojure/Pedestal)`          | `test-demo-be-clojure-pedestal.yml`   |
-| `Test - OrganicLever FE`                     | `test-organiclever-fe.yml`            |
-| `Test - OrganicLever BE`                     | `test-organiclever-be.yml`            |
-| `Test - Demo FE (TypeScript/Next.js)`        | `test-demo-fe-ts-nextjs.yml`          |
-| `Test - Demo FE (TypeScript/TanStack Start)` | `test-demo-fe-ts-tanstack-start.yml`  |
-| `Test - Demo FE (Dart/Flutter Web)`          | `test-demo-fe-dart-flutterweb.yml`    |
+| `name:` field                                | Filename                             |
+| -------------------------------------------- | ------------------------------------ |
+| `Main CI`                                    | `main-ci.yml`                        |
+| `PR - Quality Gate`                          | `pr-quality-gate.yml`                |
+| `PR - Format`                                | `pr-format.yml`                      |
+| `PR - Validate Links`                        | `pr-validate-links.yml`              |
+| `Test and Deploy - AyoKoding Web`            | `test-and-deploy-ayokoding-fs.yml`   |
+| `Test and Deploy - OSE Platform Web`         | `test-and-deploy-oseplatform-fs.yml` |
+| `Test - Demo BE (Java/Spring Boot)`          | `test-demo-be-java-springboot.yml`   |
+| `Test - Demo BE (Java/Vert.x)`               | `test-demo-be-java-vertx.yml`        |
+| `Test - Demo BE (Elixir/Phoenix)`            | `test-demo-be-elixir-phoenix.yml`    |
+| `Test - Demo BE (F#/Giraffe)`                | `test-demo-be-fsharp-giraffe.yml`    |
+| `Test - Demo BE (Go/Gin)`                    | `test-demo-be-golang-gin.yml`        |
+| `Test - Demo BE (Python/FastAPI)`            | `test-demo-be-python-fastapi.yml`    |
+| `Test - Demo BE (Rust/Axum)`                 | `test-demo-be-rust-axum.yml`         |
+| `Test - Demo BE (Kotlin/Ktor)`               | `test-demo-be-kotlin-ktor.yml`       |
+| `Test - Demo BE (TypeScript/Effect)`         | `test-demo-be-ts-effect.yml`         |
+| `Test - Demo BE (C#/ASP.NET Core)`           | `test-demo-be-csharp-aspnetcore.yml` |
+| `Test - Demo BE (Clojure/Pedestal)`          | `test-demo-be-clojure-pedestal.yml`  |
+| `Test - OrganicLever FE`                     | `test-organiclever-fe.yml`           |
+| `Test - OrganicLever BE`                     | `test-organiclever-be.yml`           |
+| `Test - Demo FE (TypeScript/Next.js)`        | `test-demo-fe-ts-nextjs.yml`         |
+| `Test - Demo FE (TypeScript/TanStack Start)` | `test-demo-fe-ts-tanstack-start.yml` |
+| `Test - Demo FE (Dart/Flutter Web)`          | `test-demo-fe-dart-flutterweb.yml`   |
 
 ## Examples
 

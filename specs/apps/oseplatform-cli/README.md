@@ -2,7 +2,7 @@
 
 Gherkin behavioral specifications for
 [oseplatform-cli](../../apps/oseplatform-cli/README.md) — the CLI tool for
-oseplatform-web Hugo site maintenance.
+oseplatform-fs Hugo site maintenance.
 
 ## Purpose
 
@@ -48,6 +48,6 @@ The `test:integration` target is cached — it only re-runs when source files in
 ## Convention
 
 See
-[BDD Spec-to-Test Mapping Convention](../../governance/development/infra/bdd-spec-test-mapping.md)
+[BDD Spec-to-Test Mapping Convention](../../../governance/development/infra/bdd-spec-test-mapping.md)
 for the mandatory 1:1 mapping between commands and `@tags`, file naming patterns, and coverage
 enforcement rules.

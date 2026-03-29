@@ -18,7 +18,7 @@ These workflows define **WHEN and HOW to validate repository rules**, orchestrat
 **❌ Not Included:**
 
 - Content quality validation (that's docs/)
-- Hugo content validation (that's ayokoding-web/)
+- Hugo content validation (that's ayokoding-fs/)
 - Plan validation (that's plan/)
 
 ## Workflows

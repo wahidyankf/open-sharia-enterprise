@@ -2,7 +2,7 @@
 
 Gherkin behavioral specifications for
 [ayokoding-cli](../../apps/ayokoding-cli/README.md) — the CLI tool for
-ayokoding-web content validation.
+ayokoding-fs content validation.
 
 ## Purpose
 

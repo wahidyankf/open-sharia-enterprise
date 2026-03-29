@@ -19,8 +19,8 @@ Progressive disclosure of Rust coding standards for agents writing Rust code.
 
 Complete the AyoKoding Rust learning path first:
 
-1. **[Rust Learning Path](../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/rust/)** - 0-95% language coverage
-2. **[Rust By Example](../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/rust/by-example/)** - 75+ annotated examples
+1. **[Rust Learning Path](../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/rust/)** - 0-95% language coverage
+2. **[Rust By Example](../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/rust/by-example/)** - 75+ annotated examples
 
 **See**: [Programming Language Documentation Separation](../../../governance/conventions/structure/programming-language-docs-separation.md)
 
@@ -173,21 +173,21 @@ cargo test           # Run all tests
 
 ### Mandatory Standards
 
-1. **[Coding Standards](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-rs__coding-standards.md)**
-2. **[Testing Standards](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-rs__testing-standards.md)**
-3. **[Code Quality Standards](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-rs__code-quality-standards.md)**
-4. **[Build Configuration](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-rs__build-configuration.md)**
+1. **[Coding Standards](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__coding-standards.md)**
+2. **[Testing Standards](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__testing-standards.md)**
+3. **[Code Quality Standards](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__code-quality-standards.md)**
+4. **[Build Configuration](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__build-configuration.md)**
 
 ### Context-Specific Standards
 
-1. **[Error Handling](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-rs__error-handling-standards.md)**
-2. **[Concurrency](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-rs__concurrency-standards.md)**
-3. **[Memory Management](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-rs__memory-management-standards.md)**
-4. **[Type Safety](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-rs__type-safety-standards.md)**
-5. **[Performance](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-rs__performance-standards.md)**
-6. **[Security](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-rs__security-standards.md)**
-7. **[API Standards](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-rs__api-standards.md)**
-8. **[DDD Standards](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-rs__ddd-standards.md)**
+1. **[Error Handling](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__error-handling-standards.md)**
+2. **[Concurrency](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__concurrency-standards.md)**
+3. **[Memory Management](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__memory-management-standards.md)**
+4. **[Type Safety](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__type-safety-standards.md)**
+5. **[Performance](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__performance-standards.md)**
+6. **[Security](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__security-standards.md)**
+7. **[API Standards](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__api-standards.md)**
+8. **[DDD Standards](../../../docs/explanation/software-engineering/programming-languages/rust/ex-soen-prla-ru__ddd-standards.md)**
 
 ## Related Skills
 

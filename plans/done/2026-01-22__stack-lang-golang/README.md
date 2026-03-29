@@ -45,7 +45,7 @@ Create high-quality, verified explanation documentation for Golang that:
 - Markdown formatting auto-runs via Prettier (auto-fixes and auto-stages)
 - Markdown linting auto-runs via markdownlint (may require manual fixes)
 - Link validation runs on staged markdown files
-- ayokoding-web content changes trigger CLI rebuild and navigation updates
+- ayokoding-fs content changes trigger CLI rebuild and navigation updates
 - If hook fails, fix reported issues and re-commit (changes are preserved)
 
 **No Feature Branches**: Work directly on `main` branch (standard TBD workflow)
@@ -169,7 +169,7 @@ Create `templates/` directory with:
 
 **NFR1: Content Quality**
 
-- All content follows [Content Quality Convention](../../../../governance/conventions/writing/quality.md)
+- All content follows [Content Quality Convention](../../../governance/conventions/writing/quality.md)
 - Active voice throughout
 - Professional, welcoming tone
 - Exactly one H1 heading per file
@@ -181,7 +181,7 @@ Create `templates/` directory with:
 
 - All diagrams use WCAG AA color-blind friendly palette
 - All images have descriptive alt text
-- Mermaid diagrams follow [Diagrams Convention](../../../../governance/conventions/formatting/diagrams.md)
+- Mermaid diagrams follow [Diagrams Convention](../../../governance/conventions/formatting/diagrams.md)
 - Code blocks specify language for syntax highlighting
 
 **NFR3: Technical Accuracy**
@@ -195,8 +195,8 @@ Create `templates/` directory with:
 **NFR4: Repository Conventions**
 
 - File naming follows [File Naming Convention](../../../governance/conventions/structure/file-naming.md)
-- Links follow [Linking Convention](../../../../governance/conventions/formatting/linking.md)
-- Indentation follows [Indentation Convention](../../../../governance/conventions/formatting/indentation.md)
+- Links follow [Linking Convention](../../../governance/conventions/formatting/linking.md)
+- Indentation follows [Indentation Convention](../../../governance/conventions/formatting/indentation.md)
 - Markdown formatted with Prettier
 - Markdown linted with markdownlint-cli2
 
@@ -388,7 +388,7 @@ Templates: Variable based on examples
 **DD4: Diagram Strategy**
 
 - Use Mermaid diagrams for architecture, flows, state machines
-- Follow [Color Accessibility Convention](../../../../governance/conventions/formatting/color-accessibility.md)
+- Follow [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md)
 - Include accessibility notes in diagram code
 - Provide alt text describing diagram content
 
@@ -413,7 +413,7 @@ Templates: Variable based on examples
 **Diagram Creation Workflow**:
 
 1. **Draft**: Sketch diagram structure and identify key concepts to visualize
-2. **Create**: Write Mermaid diagram code using WCAG-compliant color palette from [Color Accessibility Convention](../../../../governance/conventions/formatting/color-accessibility.md)
+2. **Create**: Write Mermaid diagram code using WCAG-compliant color palette from [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md)
 3. **Test Rendering**: Preview diagram in GitHub markdown viewer to verify correct rendering
 4. **Add Alt Text**: Write descriptive alt text explaining diagram content for screen readers
 5. **Verify Accessibility**: Confirm color contrast meets WCAG AA standards (4.5:1 for text)
@@ -432,11 +432,11 @@ Templates: Variable based on examples
 
 **Internal Dependencies**:
 
-- [Content Quality Convention](../../../../governance/conventions/writing/quality.md) - Universal standards
+- [Content Quality Convention](../../../governance/conventions/writing/quality.md) - Universal standards
 - [File Naming Convention](../../../governance/conventions/structure/file-naming.md) - Naming rules
 - [Diátaxis Framework](../../../governance/conventions/structure/diataxis-framework.md) - Documentation structure
-- [Diagrams Convention](../../../../governance/conventions/formatting/diagrams.md) - Mermaid diagram standards
-- [Color Accessibility Convention](../../../../governance/conventions/formatting/color-accessibility.md) - WCAG colors
+- [Diagrams Convention](../../../governance/conventions/formatting/diagrams.md) - Mermaid diagram standards
+- [Color Accessibility Convention](../../../governance/conventions/formatting/color-accessibility.md) - WCAG colors
 
 **External Dependencies**:
 
@@ -1064,10 +1064,10 @@ When marking steps complete, add the following metadata:
 ## Related Documentation
 
 - [Java Documentation](../../../docs/explanation/software-engineering/programming-languages/java/README.md) - Reference structure
-- [Content Quality Convention](../../../../governance/conventions/writing/quality.md) - Quality standards
+- [Content Quality Convention](../../../governance/conventions/writing/quality.md) - Quality standards
 - [Diátaxis Framework](../../../governance/conventions/structure/diataxis-framework.md) - Documentation structure
 - [File Naming Convention](../../../governance/conventions/structure/file-naming.md) - Naming rules
-- [Diagrams Convention](../../../../governance/conventions/formatting/diagrams.md) - Mermaid standards
+- [Diagrams Convention](../../../governance/conventions/formatting/diagrams.md) - Mermaid standards
 - [Software Engineering Principles](../../../governance/principles/software-engineering/README.md) - Core principles
 
 ---

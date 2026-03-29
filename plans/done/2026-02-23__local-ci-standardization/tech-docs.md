@@ -207,19 +207,19 @@ Full updated file:
 
 ---
 
-## apps/ayokoding-web/project.json
+## apps/ayokoding-fs/project.json
 
 **Add `lint` target** (after `test:quick`):
 
 > **Note**: Run from workspace root (no `cwd`) so `markdownlint-cli2` picks up the workspace root
 > `.markdownlint-cli2.jsonc` config (which disables MD013 and other project-specific rules).
-> The glob path must therefore include the `apps/ayokoding-web/` prefix.
+> The glob path must therefore include the `apps/ayokoding-fs/` prefix.
 
 ```json
 "lint": {
   "executor": "nx:run-commands",
   "options": {
-    "command": "markdownlint-cli2 \"apps/ayokoding-web/content/**/*.md\""
+    "command": "markdownlint-cli2 \"apps/ayokoding-fs/content/**/*.md\""
   }
 }
 ```
@@ -228,22 +228,22 @@ Full updated file:
 
 ```json
 {
-  "name": "ayokoding-web",
-  "sourceRoot": "apps/ayokoding-web",
+  "name": "ayokoding-fs",
+  "sourceRoot": "apps/ayokoding-fs",
   "projectType": "application",
   "targets": {
     "dev": {
       "executor": "nx:run-commands",
       "options": {
         "command": "hugo server -D",
-        "cwd": "apps/ayokoding-web"
+        "cwd": "apps/ayokoding-fs"
       }
     },
     "build": {
       "executor": "nx:run-commands",
       "options": {
         "command": "./build.sh",
-        "cwd": "apps/ayokoding-web"
+        "cwd": "apps/ayokoding-fs"
       },
       "outputs": ["{projectRoot}/public"]
     },
@@ -251,7 +251,7 @@ Full updated file:
       "executor": "nx:run-commands",
       "options": {
         "command": "rm -rf public resources .hugo_build.lock",
-        "cwd": "apps/ayokoding-web"
+        "cwd": "apps/ayokoding-fs"
       }
     },
     "run-pre-commit": {
@@ -269,14 +269,14 @@ Full updated file:
       "executor": "nx:run-commands",
       "options": {
         "command": "./build.sh",
-        "cwd": "apps/ayokoding-web"
+        "cwd": "apps/ayokoding-fs"
       },
       "outputs": ["{projectRoot}/public"]
     },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "markdownlint-cli2 \"apps/ayokoding-web/content/**/*.md\""
+        "command": "markdownlint-cli2 \"apps/ayokoding-fs/content/**/*.md\""
       }
     }
   }
@@ -285,7 +285,7 @@ Full updated file:
 
 ---
 
-## apps/oseplatform-web/project.json
+## apps/oseplatform-fs/project.json
 
 **Add `test:quick`, add `lint`, fix `clean`:**
 
@@ -298,23 +298,23 @@ Full updated file (reference — final state after all phases):
 
 ```json
 {
-  "name": "oseplatform-web",
+  "name": "oseplatform-fs",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/oseplatform-web",
+  "sourceRoot": "apps/oseplatform-fs",
   "projectType": "application",
   "targets": {
     "dev": {
       "executor": "nx:run-commands",
       "options": {
         "command": "hugo server --buildDrafts --buildFuture",
-        "cwd": "apps/oseplatform-web"
+        "cwd": "apps/oseplatform-fs"
       }
     },
     "build": {
       "executor": "nx:run-commands",
       "options": {
         "command": "bash build.sh",
-        "cwd": "apps/oseplatform-web"
+        "cwd": "apps/oseplatform-fs"
       },
       "outputs": ["{projectRoot}/public"]
     },
@@ -322,21 +322,21 @@ Full updated file (reference — final state after all phases):
       "executor": "nx:run-commands",
       "options": {
         "command": "rm -rf public resources .hugo_build.lock",
-        "cwd": "apps/oseplatform-web"
+        "cwd": "apps/oseplatform-fs"
       }
     },
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
         "command": "bash build.sh",
-        "cwd": "apps/oseplatform-web"
+        "cwd": "apps/oseplatform-fs"
       },
       "outputs": ["{projectRoot}/public"]
     },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "markdownlint-cli2 \"apps/oseplatform-web/content/**/*.md\""
+        "command": "markdownlint-cli2 \"apps/oseplatform-fs/content/**/*.md\""
       }
     }
   },

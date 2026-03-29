@@ -21,7 +21,7 @@ A comprehensive audit was conducted before plan creation. Key findings:
 | Skills Naming                     | ⚠️ 1 violation, 10 improvements | 1 uppercase, 10 could use gerund form                      |
 | Skills References                 | ⚠️ 7 missing                    | 7 of 10 Skills need "References" section                   |
 | Agent Skills Coverage             | ❌ 39 empty                     | 39 of 44 agents have empty `skills: []`                    |
-| Missing Agents                    | ❌ 1 missing                    | `apps__ayokoding-web__link-fixer` needed for MCF pattern   |
+| Missing Agents                    | ❌ 1 missing                    | `apps__ayokoding-fs__link-fixer` needed for MCF pattern    |
 | New Skills Needed                 | ❌ 7 needed                     | 7 new Skills to cover all agent domains                    |
 | Factual Accuracy                  | ❌ 6 errors                     | 6 documents have incorrect delivery model                  |
 | Tutorial Docs Consolidation       | ⚠️ 2 files overlap              | `programming-language-*` can be merged                     |
@@ -102,7 +102,7 @@ Add non-empty skills validation to wow\_\_rules-checker.
 
 ### Phase 6: Create Missing Link Fixer Agent
 
-Create `apps__ayokoding-web__link-fixer` to complete the Maker-Checker-Fixer pattern for ayokoding-web link validation.
+Create `apps__ayokoding-fs__link-fixer` to complete the Maker-Checker-Fixer pattern for ayokoding-fs link validation.
 
 ### Phase 7: Consolidate Tutorial Documentation
 
@@ -112,7 +112,7 @@ Merge overlapping tutorial convention documents:
 
 ## Implementation Constraint: Bash Tools for .claude/
 
-**CRITICAL**: All file operations in `.claude/` folders MUST use Bash tools (heredoc, sed, awk), NOT Write/Edit tools. This enables autonomous agent operation without user approval prompts. See [AI Agents Convention](../../../../governance/development/agents/ai-agents.md#writing-to-claude-folders).
+**CRITICAL**: All file operations in `.claude/` folders MUST use Bash tools (heredoc, sed, awk), NOT Write/Edit tools. This enables autonomous agent operation without user approval prompts. See [AI Agents Convention](../../../governance/development/agents/ai-agents.md#writing-to-claude-folders).
 
 ## Correct Delivery Model
 
@@ -178,10 +178,10 @@ This plan uses **multi-file structure**:
 
 ## Related Documentation
 
-- [Repository Governance Architecture](../../../../governance/repository-governance-architecture.md)
+- [Repository Governance Architecture](../../../governance/repository-governance-architecture.md)
 - [Skills Directory](../../.././.claude/skills/README.md)
-- [Agents Index](../../../../.claude/agents/README.md)
-- [AI Agents Convention](../../../../governance/development/agents/ai-agents.md)
+- [Agents Index](../../../.claude/agents/README.md)
+- [AI Agents Convention](../../../governance/development/agents/ai-agents.md)
 
 ## Git Workflow
 

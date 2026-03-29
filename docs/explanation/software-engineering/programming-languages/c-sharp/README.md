@@ -85,12 +85,12 @@ OSE Platform C# applications MUST use the following stack:
 
 **You MUST understand C# fundamentals before using these standards:**
 
-- **[C# Learning Path](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/c-sharp/)** - Complete 0-95% language coverage
-- **[C# By Example](../../../../../apps/ayokoding-web/content/en/learn/software-engineering/programming-languages/c-sharp/by-example/)** - Annotated code examples (beginner to advanced)
+- **[C# Learning Path](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/c-sharp/)** - Complete 0-95% language coverage
+- **[C# By Example](../../../../../apps/ayokoding-fs/content/en/learn/software-engineering/programming-languages/c-sharp/by-example/)** - Annotated code examples (beginner to advanced)
 
 **What this documentation covers**: OSE Platform naming conventions, framework choices, repository-specific patterns, how to apply C# knowledge in THIS codebase.
 
-**What this documentation does NOT cover**: C# syntax, language fundamentals, generic patterns (those are in ayokoding-web).
+**What this documentation does NOT cover**: C# syntax, language fundamentals, generic patterns (those are in ayokoding-fs).
 
 **See**: [Programming Language Documentation Separation Convention](../../../../../governance/conventions/structure/programming-language-docs-separation.md) for content separation rules.
 
@@ -152,18 +152,18 @@ OSE Platform follows a three-tier .NET versioning strategy aligned with Microsof
 
 **MUST follow these mandatory standards for all C# code in OSE Platform:**
 
-1. **[Coding Standards](./ex-soen-prla-cs__coding-standards.md)** - Naming conventions, namespace organization, C# 12 idioms, anti-patterns
-2. **[Testing Standards](./ex-soen-prla-cs__testing-standards.md)** - xUnit, FluentAssertions, Moq, TestContainers.Net, WebApplicationFactory
-3. **[Code Quality Standards](./ex-soen-prla-cs__code-quality-standards.md)** - Roslyn analyzers, dotnet format, .editorconfig, nullable reference types
-4. **[Build Configuration](./ex-soen-prla-cs__build-configuration.md)** - .csproj SDK-style, Directory.Build.props, NuGet Central Package Management
-5. **[Error Handling Standards](./ex-soen-prla-cs__error-handling-standards.md)** - Exception hierarchy, ProblemDetails, Result pattern, global middleware
-6. **[Concurrency Standards](./ex-soen-prla-cs__concurrency-standards.md)** - async/await, CancellationToken, Channel<T>, Parallel.ForEachAsync
-7. **[Performance Standards](./ex-soen-prla-cs__performance-standards.md)** - Span<T>, ArrayPool<T>, BenchmarkDotNet, dotnet-trace profiling
-8. **[Security Standards](./ex-soen-prla-cs__security-standards.md)** - Data Protection API, JWT, FluentValidation, CORS, secrets management
-9. **[API Standards](./ex-soen-prla-cs__api-standards.md)** - Controller-based vs Minimal API, versioning, OpenAPI, CQRS with MediatR
-10. **[DDD Standards](./ex-soen-prla-cs__ddd-standards.md)** - Value Objects with records, Aggregate roots, Domain Events, Clean Architecture
-11. **[Framework Integration](./ex-soen-prla-cs__framework-integration.md)** - ASP.NET Core DI, EF Core configuration, SignalR, middleware pipeline
-12. **[Type Safety Standards](./ex-soen-prla-cs__type-safety-standards.md)** - Nullable reference types, generics, discriminated unions, pattern matching
+1. **[Coding Standards](ex-soen-prla-csh__coding-standards.md)** - Naming conventions, namespace organization, C# 12 idioms, anti-patterns
+2. **[Testing Standards](ex-soen-prla-csh__testing-standards.md)** - xUnit, FluentAssertions, Moq, TestContainers.Net, WebApplicationFactory
+3. **[Code Quality Standards](ex-soen-prla-csh__code-quality-standards.md)** - Roslyn analyzers, dotnet format, .editorconfig, nullable reference types
+4. **[Build Configuration](ex-soen-prla-csh__build-configuration.md)** - .csproj SDK-style, Directory.Build.props, NuGet Central Package Management
+5. **[Error Handling Standards](ex-soen-prla-csh__error-handling-standards.md)** - Exception hierarchy, ProblemDetails, Result pattern, global middleware
+6. **[Concurrency Standards](ex-soen-prla-csh__concurrency-standards.md)** - async/await, CancellationToken, Channel<T>, Parallel.ForEachAsync
+7. **[Performance Standards](ex-soen-prla-csh__performance-standards.md)** - Span<T>, ArrayPool<T>, BenchmarkDotNet, dotnet-trace profiling
+8. **[Security Standards](ex-soen-prla-csh__security-standards.md)** - Data Protection API, JWT, FluentValidation, CORS, secrets management
+9. **[API Standards](ex-soen-prla-csh__api-standards.md)** - Controller-based vs Minimal API, versioning, OpenAPI, CQRS with MediatR
+10. **[DDD Standards](ex-soen-prla-csh__ddd-standards.md)** - Value Objects with records, Aggregate roots, Domain Events, Clean Architecture
+11. **[Framework Integration](ex-soen-prla-csh__framework-integration.md)** - ASP.NET Core DI, EF Core configuration, SignalR, middleware pipeline
+12. **[Type Safety Standards](ex-soen-prla-csh__type-safety-standards.md)** - Nullable reference types, generics, discriminated unions, pattern matching
 
 ## Documentation Structure
 
@@ -171,21 +171,21 @@ OSE Platform follows a three-tier .NET versioning strategy aligned with Microsof
 
 **Mandatory Standards (All C# Developers MUST follow)**:
 
-1. [Coding Standards](./ex-soen-prla-cs__coding-standards.md) - Naming, namespace structure, C# 12 idioms compliance
-2. [Testing Standards](./ex-soen-prla-cs__testing-standards.md) - xUnit, FluentAssertions, coverage requirements
-3. [Code Quality Standards](./ex-soen-prla-cs__code-quality-standards.md) - Roslyn analyzers, dotnet format, nullable reference types
+1. [Coding Standards](ex-soen-prla-csh__coding-standards.md) - Naming, namespace structure, C# 12 idioms compliance
+2. [Testing Standards](ex-soen-prla-csh__testing-standards.md) - xUnit, FluentAssertions, coverage requirements
+3. [Code Quality Standards](ex-soen-prla-csh__code-quality-standards.md) - Roslyn analyzers, dotnet format, nullable reference types
 
 **Context-Specific Standards (Apply when relevant)**:
 
-- **Security**: [Security Standards](./ex-soen-prla-cs__security-standards.md) - JWT, CORS, secrets for user-facing services
-- **Concurrency**: [Concurrency Standards](./ex-soen-prla-cs__concurrency-standards.md) - async/await, CancellationToken for asynchronous code
-- **Domain Modeling**: [DDD Standards](./ex-soen-prla-cs__ddd-standards.md) - records, aggregates, value objects for business domains
-- **APIs**: [API Standards](./ex-soen-prla-cs__api-standards.md) - REST conventions, versioning for HTTP endpoints
-- **Performance**: [Performance Standards](./ex-soen-prla-cs__performance-standards.md) - Span<T>, profiling for optimization
-- **Error Handling**: [Error Handling Standards](./ex-soen-prla-cs__error-handling-standards.md) - ProblemDetails, Result pattern for resilience
-- **Build**: [Build Configuration](./ex-soen-prla-cs__build-configuration.md) - .csproj, NuGet Central Package Management
-- **Framework**: [Framework Integration](./ex-soen-prla-cs__framework-integration.md) - ASP.NET Core DI, EF Core for web services
-- **Type Safety**: [Type Safety Standards](./ex-soen-prla-cs__type-safety-standards.md) - Nullable reference types, generics, pattern matching
+- **Security**: [Security Standards](ex-soen-prla-csh__security-standards.md) - JWT, CORS, secrets for user-facing services
+- **Concurrency**: [Concurrency Standards](ex-soen-prla-csh__concurrency-standards.md) - async/await, CancellationToken for asynchronous code
+- **Domain Modeling**: [DDD Standards](ex-soen-prla-csh__ddd-standards.md) - records, aggregates, value objects for business domains
+- **APIs**: [API Standards](ex-soen-prla-csh__api-standards.md) - REST conventions, versioning for HTTP endpoints
+- **Performance**: [Performance Standards](ex-soen-prla-csh__performance-standards.md) - Span<T>, profiling for optimization
+- **Error Handling**: [Error Handling Standards](ex-soen-prla-csh__error-handling-standards.md) - ProblemDetails, Result pattern for resilience
+- **Build**: [Build Configuration](ex-soen-prla-csh__build-configuration.md) - .csproj, NuGet Central Package Management
+- **Framework**: [Framework Integration](ex-soen-prla-csh__framework-integration.md) - ASP.NET Core DI, EF Core for web services
+- **Type Safety**: [Type Safety Standards](ex-soen-prla-csh__type-safety-standards.md) - Nullable reference types, generics, pattern matching
 
 ### Documentation Organization
 

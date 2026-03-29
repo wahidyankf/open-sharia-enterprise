@@ -631,7 +631,7 @@ func setupCheckAllRepo(t *testing.T) string {
 	for _, dir := range []string{
 		"apps/organiclever-be-jasb",
 		"apps/rhino-cli",
-		"apps/oseplatform-web",
+		"apps/oseplatform-fs",
 		"apps/demo-be-python-fastapi",
 		"apps/demo-be-fsharp-giraffe",
 		"apps/demo-fe-dart-flutterweb",
@@ -645,7 +645,7 @@ func setupCheckAllRepo(t *testing.T) string {
 		"package.json":                                `{"volta":{"node":"24.11.1","npm":"11.6.3"}}`,
 		"apps/organiclever-be-jasb/pom.xml":           `<project><properties><java.version>25</java.version></properties></project>`,
 		"apps/rhino-cli/go.mod":                       "module foo\n\ngo 1.24.2\n",
-		"apps/oseplatform-web/vercel.json":            `{"build":{"env":{"HUGO_VERSION":"0.156.0"}}}`,
+		"apps/oseplatform-fs/vercel.json":             `{"build":{"env":{"HUGO_VERSION":"0.156.0"}}}`,
 		"apps/demo-be-python-fastapi/.python-version": "3.13\n",
 		".tool-versions":                              "erlang 27.3\nelixir 1.19.5-otp-27\n",
 		"apps/demo-be-fsharp-giraffe/global.json":     `{"sdk":{"version":"10.0.103","rollForward":"latestMinor"}}`,

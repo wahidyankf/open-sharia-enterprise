@@ -1,12 +1,12 @@
 ---
 name: swe-hugo-developer
-description: Develops Hugo sites (oseplatform-web) including theme customization, template development, and build optimization.
+description: Develops Hugo sites (oseplatform-fs) including theme customization, template development, and build optimization.
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 color: purple
 skills:
   - docs-applying-content-quality
-  - apps-oseplatform-web-developing-content
+  - apps-oseplatform-fs-developing-content
 ---
 
 # Hugo Developer Agent
@@ -25,12 +25,12 @@ skills:
 - Complex decision-making for theme customization and development
 - Multi-step development workflow orchestration
 
-Develop Hugo sites (oseplatform-web with PaperMod).
+Develop Hugo sites (oseplatform-fs with PaperMod).
 
 ## Reference
 
-- [oseplatform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
-- Skills: `apps-oseplatform-web-developing-content`
+- [oseplatform-fs Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- Skills: `apps-oseplatform-fs-developing-content`
 
 ## Responsibilities
 
@@ -41,13 +41,13 @@ Theme customization, template development, build optimization, deployment config
 **Project Guidance**:
 
 - [CLAUDE.md](../../CLAUDE.md) - Primary guidance
-- [oseplatform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [oseplatform-fs Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
 
 **Related Agents**:
 
-- `apps-oseplatform-web-content-maker` - Creates oseplatform-web content
+- `apps-oseplatform-fs-content-maker` - Creates oseplatform-fs content
 
 **Related Conventions**:
 
-- [oseplatform-web Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
+- [oseplatform-fs Hugo Convention](../../governance/conventions/hugo/ose-platform.md)
 - [Code Quality Convention](../../governance/development/quality/code.md)
