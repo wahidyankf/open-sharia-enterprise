@@ -198,6 +198,14 @@ follow-up plan.
 - [ ] Verify `nx run organiclever-fe:build` passes
 - [ ] Verify `nx run organiclever-fe:codegen` generates contracts
 
+### Milestone 4.6: UI Quality Gate
+
+- [ ] Run UI quality gate workflow (`governance/workflows/ui/ui-quality-gate.md`) for
+  `apps/organiclever-fe/src/components/` -- validates token compliance, accessibility,
+  component patterns, dark mode, responsive design
+- [ ] Resolve all findings from `swe-ui-checker` (iterate with `swe-ui-fixer` until zero findings)
+- [ ] Verify final audit report shows PASS status
+
 ## Phase 5: E2E Test Apps + Infrastructure
 
 ### Milestone 5.1: Backend E2E (`organiclever-be-e2e`)
