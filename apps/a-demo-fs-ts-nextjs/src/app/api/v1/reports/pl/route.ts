@@ -9,8 +9,8 @@ export async function GET(req: NextRequest) {
   if (authResult instanceof NextResponse) return authResult;
 
   const url = new URL(req.url);
-  const from = url.searchParams.get("from") ?? undefined;
-  const to = url.searchParams.get("to") ?? undefined;
+  const from = url.searchParams.get("startDate") ?? undefined;
+  const to = url.searchParams.get("endDate") ?? undefined;
   const currency = url.searchParams.get("currency") ?? undefined;
 
   const result = await generatePLReport(repos, authResult.sub, from, to, currency);

@@ -133,6 +133,9 @@ jobs:
           dotnet restore apps/a-demo-be-csharp-aspnetcore/src/ADemoBeCsas/ADemoBeCsas.csproj
           dotnet restore apps/organiclever-be/src/OrganicLeverBe/OrganicLeverBe.fsproj
 
+      - name: typecheck (all projects)
+        run: npx nx run-many -t typecheck --all
+
       - name: test:quick (all projects)
         run: npx nx run-many -t test:quick --all
 
