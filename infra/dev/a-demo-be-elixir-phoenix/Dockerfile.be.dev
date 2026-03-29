@@ -5,9 +5,6 @@ RUN apk add --no-cache build-base curl git && \
     mix local.hex --force && \
     mix local.rebar --force
 
-# Pre-install dependencies at build time so container startup is fast
-COPY apps/a-demo-be-elixir-phoenix/mix.exs apps/a-demo-be-elixir-phoenix/mix.lock /tmp/deps/
-RUN cd /tmp/deps && MIX_ENV=dev mix deps.get && mix deps.compile && rm -rf /tmp/deps
 
 WORKDIR /workspace
 
