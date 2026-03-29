@@ -75,10 +75,10 @@ jobs:
           npx nx run a-demo-fe-ts-tanstack-start:codegen
 
       - name: Build Docker images
-        run: docker compose -f infra/dev/a-demo-be-elixir-phoenix/docker-compose.yml -f infra/dev/a-demo-be-elixir-phoenix/docker-compose.ci.yml build
+        run: docker compose -f infra/dev/a-demo-be-elixir-phoenix/docker-compose.ci-e2e.yml build
 
       - name: Start backend stack (DB + backend)
-        run: docker compose -f infra/dev/a-demo-be-elixir-phoenix/docker-compose.yml -f infra/dev/a-demo-be-elixir-phoenix/docker-compose.ci.yml up -d a-demo-be-elixir-phoenix-db a-demo-be-elixir-phoenix
+        run: docker compose -f infra/dev/a-demo-be-elixir-phoenix/docker-compose.ci-e2e.yml up -d a-demo-be-elixir-phoenix-db a-demo-be-elixir-phoenix
 
       - name: Wait for backend to be healthy
         run: |
@@ -105,7 +105,7 @@ jobs:
           fi
 
       - name: Start frontend
-        run: docker compose -f infra/dev/a-demo-be-elixir-phoenix/docker-compose.yml -f infra/dev/a-demo-be-elixir-phoenix/docker-compose.ci.yml up -d demo-fe
+        run: docker compose -f infra/dev/a-demo-be-elixir-phoenix/docker-compose.ci-e2e.yml up -d demo-fe
 
       - name: Wait for frontend to be ready
         run: |
@@ -119,7 +119,7 @@ jobs:
             sleep 10
           done
           echo "Frontend did not start within 6 minutes"
-          docker compose -f infra/dev/a-demo-be-elixir-phoenix/docker-compose.yml -f infra/dev/a-demo-be-elixir-phoenix/docker-compose.ci.yml logs
+          docker compose -f infra/dev/a-demo-be-elixir-phoenix/docker-compose.ci-e2e.yml logs
           exit 1
 
       - name: Setup Volta
@@ -162,4 +162,4 @@ jobs:
 
       - name: Stop full stack
         if: always()
-        run: docker compose -f infra/dev/a-demo-be-elixir-phoenix/docker-compose.yml -f infra/dev/a-demo-be-elixir-phoenix/docker-compose.ci.yml down -v
+        run: docker compose -f infra/dev/a-demo-be-elixir-phoenix/docker-compose.ci-e2e.yml down -v
