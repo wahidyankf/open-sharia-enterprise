@@ -8,7 +8,7 @@
 
 **Implementation Steps**:
 
-- [x] Create `specs/apps/demo/contracts/` directory structure (paths/, schemas/, examples/)
+- [x] Create `specs/apps/a-demo/contracts/` directory structure (paths/, schemas/, examples/)
 - [x] Write `README.md` with purpose, usage guide, and contribution rules
 - [x] Write root `openapi.yaml` with server config, security schemes, and `$ref` path mappings
 - [x] Write all schema files:
@@ -36,9 +36,9 @@
 - [x] Write `.spectral.yaml` with strict camelCase (zero exceptions), description, and example
       rules
 - [x] Write `redocly.yaml` with docs theme config and `x-test-only` filtering
-- [x] Add `demo-contracts` as Nx project (`project.json`) with `lint`, `bundle`, and `docs` targets
+- [x] Add `a-demo-contracts` as Nx project (`project.json`) with `lint`, `bundle`, and `docs` targets
 - [x] Add `**/generated-contracts/`, `**/generated_contracts/` (Python), and
-      `specs/apps/demo/contracts/generated/` to root `.gitignore`
+      `specs/apps/a-demo/contracts/generated/` to root `.gitignore`
 - [x] Verify Spectral lint passes with zero errors (includes camelCase enforcement)
 - [x] Verify Redocly CLI bundle resolves all `$ref`s into `generated/openapi-bundled.yaml` and
       `generated/openapi-bundled.json` (JSON needed for ajv in E2E tests)
@@ -64,39 +64,39 @@ for all statically typed apps. Wire `codegen` as dependency of `typecheck`/`buil
 
 **Implementation Steps**:
 
-- [x] **demo-be-golang-gin**: Install `oapi-codegen`, create config (`oapi-codegen.yaml` with
+- [x] **a-demo-be-golang-gin**: Install `oapi-codegen`, create config (`oapi-codegen.yaml` with
       strict-server + gin output), add `codegen` target, update handlers to implement generated
       strict server interface, verify `go build` passes
-- [x] **demo-be-java-springboot**: Add `openapi-generator-maven-plugin` to `pom.xml`, configure
+- [x] **a-demo-be-java-springboot**: Add `openapi-generator-maven-plugin` to `pom.xml`, configure
       Spring generator, add `codegen` target, update controllers to use generated DTOs with Jackson
       annotations, verify `mvn compile` passes
-- [x] **demo-be-java-vertx**: Add `openapi-generator-maven-plugin`, configure Java generator, add
+- [x] **a-demo-be-java-vertx**: Add `openapi-generator-maven-plugin`, configure Java generator, add
       `codegen` target, update handlers to use generated DTOs, verify `mvn compile` passes
-- [x] **demo-be-kotlin-ktor**: Add `openapi-generator-gradle-plugin` to `build.gradle.kts`,
+- [x] **a-demo-be-kotlin-ktor**: Add `openapi-generator-gradle-plugin` to `build.gradle.kts`,
       configure Kotlin generator with kotlinx.serialization, add `codegen` target, update routes to
       use generated data classes, verify `./gradlew build` passes
-- [x] **demo-be-rust-axum**: Add `openapi-generator` Rust generator via build script, add `codegen`
+- [x] **a-demo-be-rust-axum**: Add `openapi-generator` Rust generator via build script, add `codegen`
       target, update handlers to use generated serde structs, verify `cargo build` passes
-- [x] **demo-be-fsharp-giraffe**: Add `openapi-generator` with `fsharp-giraffe-server` generator
+- [x] **a-demo-be-fsharp-giraffe**: Add `openapi-generator` with `fsharp-giraffe-server` generator
       (beta), configure to generate F# model types only, add `codegen` target, update handlers to use
       generated types, verify `dotnet build` passes
-- [x] **demo-be-csharp-aspnetcore**: Add `NSwag.MSBuild` NuGet package, configure C# class
+- [x] **a-demo-be-csharp-aspnetcore**: Add `NSwag.MSBuild` NuGet package, configure C# class
       generation, add `codegen` target, update controllers to use generated classes, verify
       `dotnet build` passes
-- [x] **demo-be-ts-effect**: Add `@hey-api/openapi-ts` dev dependency, add `codegen` target
+- [x] **a-demo-be-ts-effect**: Add `@hey-api/openapi-ts` dev dependency, add `codegen` target
       generating TS types + Effect Schema definitions, update handlers to use generated types with
       `Schema.decode`/`Schema.encode`, verify `tsc` passes
-- [x] **demo-fe-ts-nextjs**: Add `@hey-api/openapi-ts` with Zod plugin, add `codegen` target
+- [x] **a-demo-fe-ts-nextjs**: Add `@hey-api/openapi-ts` with Zod plugin, add `codegen` target
       generating TS types + Zod schemas + SDK client, replace hand-written `types.ts` with generated
       types, use generated Zod schemas as runtime decoders for API responses, verify `tsc` passes
-- [x] **demo-fe-ts-tanstack-start**: Same as demo-fe-ts-nextjs — `@hey-api/openapi-ts` + Zod
+- [x] **a-demo-fe-ts-tanstack-start**: Same as a-demo-fe-ts-nextjs — `@hey-api/openapi-ts` + Zod
       plugin, add `codegen` target, replace types, use Zod runtime decoders, verify `tsc` passes
-- [x] **demo-fe-dart-flutterweb**: Add `openapi-generator` Dart generator, add `codegen` target,
+- [x] **a-demo-fe-dart-flutterweb**: Add `openapi-generator` Dart generator, add `codegen` target,
       replace hand-written models with generated classes using `json_serializable`, verify
       `dart analyze` passes
 - [x] Wire `codegen` as dependency of `typecheck`/`build`/`test:unit` in each app's `project.json`
-- [x] Verify `nx run-many -t typecheck --projects=demo-fe-*` passes
-- [x] Verify `nx run-many -t build --projects=demo-be-golang-gin,demo-be-rust-axum` passes
+- [x] Verify `nx run-many -t typecheck --projects=a-demo-fe-*` passes
+- [x] Verify `nx run-many -t build --projects=a-demo-be-golang-gin,a-demo-be-rust-axum` passes
 
 **Validation**:
 
@@ -140,17 +140,17 @@ Clojure. Enforcement via `test:unit` (part of `test:quick`).
 
 **Implementation Steps — App Integration**:
 
-- [x] **demo-be-python-fastapi**: Add `datamodel-code-generator` dev dependency, add `codegen`
+- [x] **a-demo-be-python-fastapi**: Add `datamodel-code-generator` dev dependency, add `codegen`
       target generating Pydantic v2 models into `generated_contracts/`, update FastAPI route handlers
       to use generated models as `response_model`, verify `pytest` passes
-- [x] **demo-be-elixir-phoenix**: Add `codegen` target that invokes
+- [x] **a-demo-be-elixir-phoenix**: Add `codegen` target that invokes
       `libs/elixir-openapi-codegen` to generate structs into `generated-contracts/`, update
       controllers to return generated structs, verify `mix test` passes
-- [x] **demo-be-clojure-pedestal**: Add `codegen` target that invokes
+- [x] **a-demo-be-clojure-pedestal**: Add `codegen` target that invokes
       `libs/clojure-openapi-codegen` to generate Malli schemas into `generated_contracts/`, add
       middleware validating responses against generated schemas, verify `lein test` passes
 - [x] Wire `codegen` as dependency of `test:unit` in each app's `project.json`
-- [x] Verify `nx run-many -t test:quick --projects=elixir-openapi-codegen,clojure-openapi-codegen,demo-be-python-fastapi,demo-be-elixir-phoenix,demo-be-clojure-pedestal` passes
+- [x] Verify `nx run-many -t test:quick --projects=elixir-openapi-codegen,clojure-openapi-codegen,a-demo-be-python-fastapi,a-demo-be-elixir-phoenix,a-demo-be-clojure-pedestal` passes
 
 **Validation**:
 
@@ -160,7 +160,7 @@ Clojure. Enforcement via `test:unit` (part of `test:quick`).
 - `test:unit` validates responses against generated schemas/models
 - `nx affected -t test:quick` catches violations before push
 - Intentionally removing a required field causes `test:unit` failure
-- `nx graph` shows correct dependency: app → codegen lib → demo-contracts
+- `nx graph` shows correct dependency: app → codegen lib → a-demo-contracts
 
 ---
 
@@ -170,16 +170,16 @@ Clojure. Enforcement via `test:unit` (part of `test:quick`).
 
 **Implementation Steps**:
 
-- [x] Add `ajv` + `ajv-formats` to `demo-be-e2e` dev dependencies
-- [x] Create `demo-be-e2e/tests/utils/contract-validator.ts`
+- [x] Add `ajv` + `ajv-formats` to `a-demo-be-e2e` dev dependencies
+- [x] Create `a-demo-be-e2e/tests/utils/contract-validator.ts`
 - [x] Integrate validator into existing backend E2E step definitions
-- [x] Add same validator to `demo-fe-e2e` test utilities
+- [x] Add same validator to `a-demo-fe-e2e` test utilities
 - [x] Run full E2E suites — fix any discovered drift
 
 **Validation**:
 
-- `nx run demo-be-e2e:test:e2e` passes with contract validation enabled
-- `nx run demo-fe-e2e:test:e2e` passes with contract validation enabled
+- `nx run a-demo-be-e2e:test:e2e` passes with contract validation enabled
+- `nx run a-demo-fe-e2e:test:e2e` passes with contract validation enabled
 
 ---
 
@@ -191,13 +191,13 @@ Clojure. Enforcement via `test:unit` (part of `test:quick`).
 
 - [x] Add postinstall script to `package.json`: `npx nx run-many -t codegen --projects=demo-*`
 - [x] Verify root `.gitignore` has `**/generated-contracts/` and `**/generated_contracts/` patterns
-- [x] Update `specs/apps/demo/README.md` — add contracts section with link to
-      `specs/apps/demo/contracts/README.md`
-- [x] Update `specs/apps/demo/contracts/README.md` — document codegen workflow, how to modify
+- [x] Update `specs/apps/a-demo/README.md` — add contracts section with link to
+      `specs/apps/a-demo/contracts/README.md`
+- [x] Update `specs/apps/a-demo/contracts/README.md` — document codegen workflow, how to modify
       contract, how generated code flows to each app, how to generate/view docs
 - [x] Update `libs/README.md` — add `elixir-openapi-codegen` and `clojure-openapi-codegen` entries
 - [x] Update `CLAUDE.md`:
-  - Add `demo-contracts` to Current Apps list
+  - Add `a-demo-contracts` to Current Apps list
   - Document `codegen` and `docs` Nx targets and dependency chain
   - Document `generated-contracts/` gitignore pattern
   - Add note about contract enforcement in Three-Level Testing section
@@ -205,7 +205,7 @@ Clojure. Enforcement via `test:unit` (part of `test:quick`).
       targets for demo apps
 - [x] Verify fresh clone workflow: `git clone` → `npm install` → `nx affected -t typecheck` passes
 - [x] Verify contract change workflow: modify schema → `nx affected -t typecheck` catches all apps
-- [x] Verify docs workflow: `nx run demo-contracts:docs` → open `generated/docs/index.html` in
+- [x] Verify docs workflow: `nx run a-demo-contracts:docs` → open `generated/docs/index.html` in
       browser → verify all endpoints visible, test-only excluded
 
 **Validation**:
@@ -214,7 +214,7 @@ Clojure. Enforcement via `test:unit` (part of `test:quick`).
 - Contract change: `nx affected` shows all demo apps, codegen re-runs, compile catches mismatches
 - Pre-push: `git push` triggers `typecheck` + `lint` + `test:quick`, all pass
 - PR: quality gate runs same checks, all pass
-- Docs: `nx run demo-contracts:docs` produces browsable HTML with all public endpoints
+- Docs: `nx run a-demo-contracts:docs` produces browsable HTML with all public endpoints
 
 ---
 

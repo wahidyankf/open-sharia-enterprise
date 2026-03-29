@@ -232,7 +232,7 @@ actively maintained.
 
 **Pros**:
 
-- TypeScript types already exist in `demo-fe-ts-nextjs` — low authoring friction
+- TypeScript types already exist in `a-demo-fe-ts-nextjs` — low authoring friction
 - TypeScript is expressive (unions, intersections, generics, mapped types)
 - Generated JSON Schema bridges to other languages
 
@@ -729,13 +729,13 @@ Feature: Contract prevents unnoticed API drift
 Scenario: Adding a field without updating the contract
   Given the OpenAPI contract defines the Expense response schema
   And the generated Go struct does not include a "tags" field
-  When I try to set response.Tags in demo-be-golang-gin
+  When I try to set response.Tags in a-demo-be-golang-gin
   Then the Go compiler should fail because the field does not exist
   And I must update the contract and re-run codegen to add it
 
 Scenario: Removing a required field
   Given the generated Python Pydantic model requires "currency"
-  When I remove "currency" from demo-be-python-fastapi's handler return
+  When I remove "currency" from a-demo-be-python-fastapi's handler return
   Then Pydantic validation should fail in test:unit
   And pre-push hook catches this via test:quick
 ```
@@ -750,14 +750,14 @@ Feature: Frontend types are auto-generated from contract
 
 Scenario: Contract change updates frontend types
   Given the OpenAPI contract adds an optional "tags" field to Expense
-  When I run nx run demo-fe-ts-nextjs:codegen
+  When I run nx run a-demo-fe-ts-nextjs:codegen
   Then the generated types include "tags?: string[]"
   And the generated Zod schema includes the new field for runtime validation
   And TypeScript compilation succeeds
 
 Scenario: Frontend code references non-existent field
   Given the generated types do not include a "notes" field on Expense
-  When I reference expense.notes in demo-fe-ts-nextjs
+  When I reference expense.notes in a-demo-fe-ts-nextjs
   Then tsc should produce a compile error
   And pre-push hook blocks the push via typecheck
 ```
@@ -771,10 +771,10 @@ Feature: Nx dependency graph triggers codegen cascade
   So that no project silently falls out of compliance
 
 Scenario: Modifying a schema triggers codegen for all apps
-  Given I modify specs/apps/demo/contracts/schemas/expense.yaml
+  Given I modify specs/apps/a-demo/contracts/schemas/expense.yaml
   When Nx computes affected projects
-  Then demo-contracts:bundle runs first
-  Then all demo-be-* and demo-fe-* codegen targets run
+  Then a-demo-contracts:bundle runs first
+  Then all a-demo-be-* and a-demo-fe-* codegen targets run
   Then typecheck/build/test:quick runs against the new generated code
   And any mismatch fails the PR quality gate
 ```
@@ -794,7 +794,7 @@ Scenario: Fresh clone regenerates all contract code
   And typecheck/build succeeds immediately
 
 Scenario: Generated code is excluded from git
-  Given apps/demo-be-golang-gin/generated-contracts/ exists locally
+  Given apps/a-demo-be-golang-gin/generated-contracts/ exists locally
   When I run git status
   Then generated-contracts/ should not appear as untracked
 ```
@@ -809,15 +809,15 @@ Feature: Browsable API documentation from the contract
 
 Scenario: Generate API documentation locally
   Given the OpenAPI contract is valid
-  When I run nx run demo-contracts:docs
-  Then a browsable HTML page is generated at specs/apps/demo/contracts/generated/docs/index.html
+  When I run nx run a-demo-contracts:docs
+  Then a browsable HTML page is generated at specs/apps/a-demo/contracts/generated/docs/index.html
   And it shows all endpoints with request/response schemas
   And it includes example request/response pairs
   And test-only endpoints (/api/v1/test/*) are excluded
 
 Scenario: Documentation reflects latest contract
   Given I add a new "tags" field to the Expense schema
-  When I run nx run demo-contracts:docs
+  When I run nx run a-demo-contracts:docs
   Then the Expense section in the docs shows the new "tags" field
 ```
 
@@ -829,13 +829,13 @@ Scenario: Documentation reflects latest contract
 Feature: API contract enforcement via code generation
 
   Scenario: Contract spec exists and is valid
-    Given the file specs/apps/demo/contracts/openapi.yaml exists
+    Given the file specs/apps/a-demo/contracts/openapi.yaml exists
     When Spectral lints the OpenAPI specification
     Then there should be zero errors
     And the spec should cover all endpoints from the Gherkin features
 
   Scenario: Each app has a codegen target
-    Given every demo-be-* and demo-fe-* project has a "codegen" Nx target
+    Given every a-demo-be-* and a-demo-fe-* project has a "codegen" Nx target
     When nx run <app>:codegen runs
     Then a generated-contracts/ folder is created with language-specific types
     And the folder contains encoders and decoders for each schema
@@ -846,25 +846,25 @@ Feature: API contract enforcement via code generation
     Then no generated-contracts/ folder appears as untracked
 
   Scenario: Backend compile-time enforcement (statically typed)
-    Given demo-be-golang-gin uses generated Go structs as handler return types
+    Given a-demo-be-golang-gin uses generated Go structs as handler return types
     When the contract changes and codegen re-runs
     Then any handler returning the old shape fails compilation
     And this is caught by nx affected -t test:quick before push
 
   Scenario: Backend test-time enforcement (dynamically typed)
-    Given demo-be-elixir-phoenix uses generated structs with @enforce_keys
+    Given a-demo-be-elixir-phoenix uses generated structs with @enforce_keys
     When the contract changes and codegen re-runs
     Then any handler returning the old shape fails in test:unit
     And this is caught by nx affected -t test:quick before push
 
   Scenario: Frontend compile-time enforcement
-    Given demo-fe-ts-nextjs imports generated TypeScript types
+    Given a-demo-fe-ts-nextjs imports generated TypeScript types
     When the contract changes and codegen re-runs
     Then any component using old field names fails tsc
     And this is caught by nx affected -t typecheck before push
 
   Scenario: PR quality gate catches violations
-    Given a PR modifies specs/apps/demo/contracts/schemas/expense.yaml
+    Given a PR modifies specs/apps/a-demo/contracts/schemas/expense.yaml
     When the PR quality gate runs
     Then nx affected -t typecheck runs (catches TS/Dart mismatches)
     And nx affected -t test:quick runs (catches all language mismatches)
@@ -878,7 +878,7 @@ Feature: API contract enforcement via code generation
 
   Scenario: API documentation is generated
     Given the OpenAPI specification is valid
-    When nx run demo-contracts:docs runs
+    When nx run a-demo-contracts:docs runs
     Then a browsable HTML page is generated
     And it shows all endpoints grouped by domain
     And it includes request/response schemas with examples

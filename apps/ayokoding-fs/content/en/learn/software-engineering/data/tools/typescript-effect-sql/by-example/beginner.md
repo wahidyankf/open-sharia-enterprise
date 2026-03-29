@@ -648,7 +648,7 @@ import { Effect } from "effect";
 export default Effect.gen(function* () {
   const sql = yield* SqlClient.SqlClient;
 
-  // => UUID primary key pattern used throughout the demo-be-ts-effect codebase
+  // => UUID primary key pattern used throughout the a-demo-be-ts-effect codebase
   yield* sql`
     CREATE TABLE IF NOT EXISTS sessions (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -671,7 +671,7 @@ export default Effect.gen(function* () {
     )
   `;
   // => "id UUID PRIMARY KEY DEFAULT gen_random_uuid()" is the canonical Effect SQL pattern
-  // => Seen in 001_create_users.ts, 002_create_refresh_tokens.ts, etc. in demo-be-ts-effect
+  // => Seen in 001_create_users.ts, 002_create_refresh_tokens.ts, etc. in a-demo-be-ts-effect
 });
 ```
 
@@ -711,7 +711,7 @@ export default Effect.gen(function* () {
       updated_at TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
       -- => Does NOT auto-update on UPDATE — this is a creation timestamp with wrong semantics
       -- => To auto-update on UPDATE, use a PostgreSQL trigger or set it in the repository layer
-      -- => The demo-be-ts-effect repos update this column explicitly in UPDATE statements
+      -- => The a-demo-be-ts-effect repos update this column explicitly in UPDATE statements
 
       updated_by VARCHAR(255) NOT NULL DEFAULT 'system'
       -- => Audit field: who last updated the record
@@ -915,14 +915,14 @@ export default Effect.gen(function* () {
       -- => Violation: "check constraint accounts_status_check violated"
     )
   `;
-  // => The demo-be-ts-effect codebase uses this VARCHAR pattern for portability
+  // => The a-demo-be-ts-effect codebase uses this VARCHAR pattern for portability
   // => (enables SQLite test runs alongside PostgreSQL production runs)
 });
 ```
 
 **Key Takeaway**: Use PostgreSQL native `ENUM` types for maximum type safety in PostgreSQL-only deployments; use `VARCHAR` with a `CHECK` constraint for portability across databases including SQLite for testing.
 
-**Why It Matters**: The demo-be-ts-effect codebase uses `VARCHAR` with documented valid values rather than PostgreSQL enums precisely because migrations run on both PostgreSQL (production) and SQLite (tests). PostgreSQL enums have operational costs too: adding a new enum value with `ALTER TYPE ... ADD VALUE` cannot run inside a transaction in some PostgreSQL versions, complicating zero-downtime deployments. `VARCHAR + CHECK` avoids these issues at the cost of slightly weaker type enforcement.
+**Why It Matters**: The a-demo-be-ts-effect codebase uses `VARCHAR` with documented valid values rather than PostgreSQL enums precisely because migrations run on both PostgreSQL (production) and SQLite (tests). PostgreSQL enums have operational costs too: adding a new enum value with `ALTER TYPE ... ADD VALUE` cannot run inside a transaction in some PostgreSQL versions, complicating zero-downtime deployments. `VARCHAR + CHECK` avoids these issues at the cost of slightly weaker type enforcement.
 
 ---
 
@@ -1260,7 +1260,7 @@ export default Effect.gen(function* () {
       title      VARCHAR(255) NOT NULL
     )
   `;
-  // => See 005_create_attachments.ts in demo-be-ts-effect:
+  // => See 005_create_attachments.ts in a-demo-be-ts-effect:
   // => expense_id UUID NOT NULL REFERENCES expenses(id) ON DELETE CASCADE
   // => Attachments are meaningless without their expense — CASCADE is correct there
 });
@@ -1268,7 +1268,7 @@ export default Effect.gen(function* () {
 
 **Key Takeaway**: Choose `ON DELETE CASCADE` when child rows are semantically owned by the parent (no meaning without it); choose `ON DELETE SET NULL` when child rows persist independently with a nullable reference.
 
-**Why It Matters**: Incorrect cascade behavior is one of the hardest bugs to diagnose: `CASCADE` can silently delete thousands of rows, while `RESTRICT` can block deletion with cryptic foreign key violation errors. The correct choice depends on the domain invariant. In the demo-be-ts-effect codebase, attachments `ON DELETE CASCADE` to expenses because an attachment without an expense is meaningless data. Users `ON DELETE RESTRICT` refresh tokens because you might want to audit who had tokens before deleting the user. These decisions belong in the migration, not the application code.
+**Why It Matters**: Incorrect cascade behavior is one of the hardest bugs to diagnose: `CASCADE` can silently delete thousands of rows, while `RESTRICT` can block deletion with cryptic foreign key violation errors. The correct choice depends on the domain invariant. In the a-demo-be-ts-effect codebase, attachments `ON DELETE CASCADE` to expenses because an attachment without an expense is meaningless data. Users `ON DELETE RESTRICT` refresh tokens because you might want to audit who had tokens before deleting the user. These decisions belong in the migration, not the application code.
 
 ---
 
@@ -1277,7 +1277,7 @@ export default Effect.gen(function* () {
 Migration file naming conventions ensure deterministic execution order. The `effect_sql_migrations` table uses migration keys for tracking; the key format `\d+_<name>` determines sort order. Zero-padded numbers guarantee lexicographic sorting matches numeric intent.
 
 ```typescript
-// => Migration file naming convention (from demo-be-ts-effect):
+// => Migration file naming convention (from a-demo-be-ts-effect):
 //
 // 001_create_users.ts         => key: "0001_create_users"
 // 002_create_refresh_tokens.ts => key: "0002_create_refresh_tokens"

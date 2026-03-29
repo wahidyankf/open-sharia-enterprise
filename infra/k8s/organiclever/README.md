@@ -33,4 +33,4 @@ For local development, use Docker Compose with `dev` profile:
 npm run demo-be:dev
 ```
 
-See [infra/dev/demo-be-java-springboot/README.md](../../dev/demo-be-java-springboot/README.md) and [infra/dev/organiclever/README.md](../../dev/organiclever/README.md)
+See [infra/dev/a-demo-be-java-springboot/README.md](../../dev/a-demo-be-java-springboot/README.md) and [infra/dev/organiclever/README.md](../../dev/organiclever/README.md)

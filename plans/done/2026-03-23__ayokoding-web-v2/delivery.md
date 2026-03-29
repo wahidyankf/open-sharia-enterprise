@@ -128,7 +128,7 @@
 - [x] Install `next-themes` (dark/light/system theme toggle)
 - [x] Install `@next/third-parties` (Google Analytics GA4)
 - [x] Install test dependencies: `vitest`, `@vitest/coverage-v8`,
-      `@amiceli/vitest-cucumber@^6.3.0` (matches demo-fs-ts-nextjs pattern),
+      `@amiceli/vitest-cucumber@^6.3.0` (matches a-demo-fs-ts-nextjs pattern),
       `@cucumber/cucumber` (for integration tests
       in Phase 11), `@testing-library/react`, `jsdom`
 - [x] Create `project.json` with 7 mandatory Nx targets (codegen, typecheck, lint, build,
@@ -606,7 +606,7 @@ All other content is server-rendered.
   - [x] Targets: `install`, `test:e2e`, `test:e2e:ui`, `test:e2e:report`
         (E2E-only apps follow the 4-target pattern; the mandatory 7-target rule
         applies to content/backend apps, not pure Playwright runner apps —
-        consistent with `demo-be-e2e`, `demo-fe-e2e`, `organiclever-fe-e2e`)
+        consistent with `a-demo-be-e2e`, `a-demo-fe-e2e`, `organiclever-fe-e2e`)
 - [x] Create `apps/ayokoding-fs-v2-be-e2e/playwright.config.ts`:
   - [x] `baseURL` from `BASE_URL` env var (default `http://localhost:3101`)
 - [x] Create `apps/ayokoding-fs-v2-be-e2e/tsconfig.json`
@@ -626,8 +626,8 @@ All other content is server-rendered.
 - [x] Create `apps/ayokoding-fs-v2-fe-e2e/project.json`:
   - [x] Tags: `["type:e2e", "platform:playwright", "lang:ts", "domain:ayokoding"]`
   - [x] Targets: `install`, `test:e2e`, `test:e2e:ui`, `test:e2e:report`
-        (E2E-only apps follow the 4-target pattern; same as `demo-be-e2e`,
-        `demo-fe-e2e`, `organiclever-fe-e2e`)
+        (E2E-only apps follow the 4-target pattern; same as `a-demo-be-e2e`,
+        `a-demo-fe-e2e`, `organiclever-fe-e2e`)
 - [x] Create `apps/ayokoding-fs-v2-fe-e2e/playwright.config.ts`:
   - [x] `baseURL` from `BASE_URL` env var (default `http://localhost:3101`)
 - [x] Create `apps/ayokoding-fs-v2-fe-e2e/tsconfig.json`

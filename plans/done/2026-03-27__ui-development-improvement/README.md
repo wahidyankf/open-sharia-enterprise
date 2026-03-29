@@ -8,7 +8,7 @@
 
 UI development across the monorepo lacks shared infrastructure, automated quality enforcement,
 and AI-assisted design guidance. Each frontend app (`organiclever-fe`, `ayokoding-fs`,
-`demo-fe-ts-nextjs`) independently maintains its own components, tokens, and patterns — leading
+`a-demo-fe-ts-nextjs`) independently maintains its own components, tokens, and patterns — leading
 to drift, duplication, and inconsistent quality.
 
 This plan introduces a layered UI development improvement strategy:
@@ -31,14 +31,14 @@ This plan introduces a layered UI development improvement strategy:
 
 ## Current State Summary
 
-| App                         | Styling        | UI Library        | Design Tokens             | Storybook | Token Format                   |
-| --------------------------- | -------------- | ----------------- | ------------------------- | --------- | ------------------------------ |
-| `organiclever-fe`           | Tailwind v4    | shadcn/ui + Radix | CSS vars in globals.css   | Yes       | `hsl(var(--name))` indirection |
-| `ayokoding-fs`              | Tailwind v4    | shadcn/ui + Radix | CSS vars in globals.css   | No        | Direct `hsl(H S% L%)` values   |
-| `demo-fe-ts-nextjs`         | Tailwind v4    | Shared tokens     | CSS vars via ts-ui-tokens | No        | Shared structural tokens       |
-| `demo-fe-dart-flutterweb`   | Flutter themes | Material 3        | ThemeData                 | N/A       | Dart constants                 |
-| `demo-fe-ts-tanstack-start` | (minimal)      | None              | None                      | No        | N/A                            |
-| `demo-fs-ts-nextjs`         | Tailwind v4    | Shared tokens     | CSS vars via ts-ui-tokens | No        | Shared structural tokens       |
+| App                           | Styling        | UI Library        | Design Tokens             | Storybook | Token Format                   |
+| ----------------------------- | -------------- | ----------------- | ------------------------- | --------- | ------------------------------ |
+| `organiclever-fe`             | Tailwind v4    | shadcn/ui + Radix | CSS vars in globals.css   | Yes       | `hsl(var(--name))` indirection |
+| `ayokoding-fs`                | Tailwind v4    | shadcn/ui + Radix | CSS vars in globals.css   | No        | Direct `hsl(H S% L%)` values   |
+| `a-demo-fe-ts-nextjs`         | Tailwind v4    | Shared tokens     | CSS vars via ts-ui-tokens | No        | Shared structural tokens       |
+| `a-demo-fe-dart-flutterweb`   | Flutter themes | Material 3        | ThemeData                 | N/A       | Dart constants                 |
+| `a-demo-fe-ts-tanstack-start` | (minimal)      | None              | None                      | No        | N/A                            |
+| `a-demo-fs-ts-nextjs`         | Tailwind v4    | Shared tokens     | CSS vars via ts-ui-tokens | No        | Shared structural tokens       |
 
 ### Token Divergence (Specific Examples)
 

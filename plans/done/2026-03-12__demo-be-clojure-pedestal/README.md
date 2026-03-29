@@ -1,24 +1,24 @@
-# Plan: demo-be-clojure-pedestal (In Progress)
+# Plan: a-demo-be-clojure-pedestal (In Progress)
 
 Clojure / Pedestal reimplementation of the demo backend REST API — a functional twin of
-`apps/demo-be-java-springboot` (Java/Spring Boot), `apps/demo-be-elixir-phoenix` (Elixir/Phoenix),
-`apps/demo-be-fsharp-giraffe` (F#/Giraffe), `apps/demo-be-golang-gin` (Go/Gin),
-`apps/demo-be-python-fastapi` (Python/FastAPI), `apps/demo-be-rust-axum` (Rust/Axum),
-`apps/demo-be-kotlin-ktor` (Kotlin/Ktor), `apps/demo-be-java-vertx` (Java/Vert.x),
-`apps/demo-be-ts-effect` (TypeScript/Effect), and `apps/demo-be-csharp-aspnetcore` (C#/ASP.NET Core)
+`apps/a-demo-be-java-springboot` (Java/Spring Boot), `apps/a-demo-be-elixir-phoenix` (Elixir/Phoenix),
+`apps/a-demo-be-fsharp-giraffe` (F#/Giraffe), `apps/a-demo-be-golang-gin` (Go/Gin),
+`apps/a-demo-be-python-fastapi` (Python/FastAPI), `apps/a-demo-be-rust-axum` (Rust/Axum),
+`apps/a-demo-be-kotlin-ktor` (Kotlin/Ktor), `apps/a-demo-be-java-vertx` (Java/Vert.x),
+`apps/a-demo-be-ts-effect` (TypeScript/Effect), and `apps/a-demo-be-csharp-aspnetcore` (C#/ASP.NET Core)
 using Clojure 1.12+ and Pedestal 0.7.
 
 **Status**: Done
 
 ## Goals
 
-- Provide a functionally equivalent backend to all existing `demo-be-*` implementations using
+- Provide a functionally equivalent backend to all existing `a-demo-be-*` implementations using
   the Clojure / Pedestal ecosystem
-- Consume the shared `specs/apps/demo/be/gherkin/` Gherkin feature files (76 scenarios across
+- Consume the shared `specs/apps/a-demo/be/gherkin/` Gherkin feature files (76 scenarios across
   13 feature files) for BDD integration tests
 - Integrate into the Nx monorepo with the same target surface (`build`, `dev`, `start`,
   `test:quick`, `test:unit`, `test:integration`, `lint`)
-- Reuse the existing `demo-be-e2e` Playwright BDD test suite for E2E validation
+- Reuse the existing `a-demo-be-e2e` Playwright BDD test suite for E2E validation
 - Add a dedicated GitHub Actions workflow and Docker Compose infra
 
 ## Naming
@@ -98,23 +98,23 @@ and `-csas` (C# ASP.NET Core).
 
 ## Related Files
 
-- `apps/demo-be-clojure-pedestal/` — application source
-- `infra/dev/demo-be-clojure-pedestal/` — Docker Compose dev infra
-- `.github/workflows/e2e-demo-be-clojure-pedestal.yml` — E2E workflow
+- `apps/a-demo-be-clojure-pedestal/` — application source
+- `infra/dev/a-demo-be-clojure-pedestal/` — Docker Compose dev infra
+- `.github/workflows/e2e-a-demo-be-clojure-pedestal.yml` — E2E workflow
 - `.github/workflows/main-ci.yml` — Clojure setup + coverage upload
-- `specs/apps/demo/be/` — shared Gherkin specs (consumed, not modified)
-- `apps/demo-be-e2e/` — reused Playwright E2E suite (consumed, not modified)
+- `specs/apps/a-demo/be/` — shared Gherkin specs (consumed, not modified)
+- `apps/a-demo-be-e2e/` — reused Playwright E2E suite (consumed, not modified)
 
 ## Files to Update
 
-| File                            | Change                                                                       |
-| ------------------------------- | ---------------------------------------------------------------------------- |
-| `CLAUDE.md`                     | Add demo-be-clojure-pedestal to Current Apps list, add Clojure coverage info |
-| `README.md`                     | Add demo-be-clojure-pedestal badge and description in demo apps section      |
-| `specs/apps/demo/be/README.md`  | Add Clojure/Pedestal row to Implementations table                            |
-| `apps/demo-be-e2e/project.json` | Add `demo-be-clojure-pedestal` to `implicitDependencies`                     |
-| `.github/workflows/main-ci.yml` | Add Clojure setup + coverage upload step                                     |
-| `codecov.yml`                   | Add `demo-be-clojure-pedestal` flag                                          |
+| File                              | Change                                                                         |
+| --------------------------------- | ------------------------------------------------------------------------------ |
+| `CLAUDE.md`                       | Add a-demo-be-clojure-pedestal to Current Apps list, add Clojure coverage info |
+| `README.md`                       | Add a-demo-be-clojure-pedestal badge and description in demo apps section      |
+| `specs/apps/a-demo/be/README.md`  | Add Clojure/Pedestal row to Implementations table                              |
+| `apps/a-demo-be-e2e/project.json` | Add `a-demo-be-clojure-pedestal` to `implicitDependencies`                     |
+| `.github/workflows/main-ci.yml`   | Add Clojure setup + coverage upload step                                       |
+| `codecov.yml`                     | Add `a-demo-be-clojure-pedestal` flag                                          |
 
 ## Git Workflow
 

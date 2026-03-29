@@ -2,7 +2,7 @@
 
 ## Integration Approach by Language Family
 
-### TypeScript — demo-be-ts-effect
+### TypeScript — a-demo-be-ts-effect
 
 **Current state**: `generated-contracts/types.gen.ts` exists with all API types (97+ object types;
 23 primary domain types are re-exported by the re-export layer). Route handlers in `src/routes/*.ts`
@@ -33,7 +33,7 @@ casts to the generated type. Response building uses generated type shapes.
 `src/routes/attachment.ts`, `src/routes/report.ts`, `src/routes/admin.ts`, `src/routes/token.ts`,
 `src/routes/health.ts`
 
-### Go — demo-be-golang-gin
+### Go — a-demo-be-golang-gin
 
 **Current state**: `generated-contracts/types.gen.go` (package `contracts`) exists with 23 types
 plus enum types and query param types. Handler files define 4 local request structs
@@ -79,13 +79,13 @@ Note: `ExpenseSummary` exists in the Go generated types. Verify whether any Go e
 directly or only as a nested field in `ExpenseListResponse`/`PLReport`. Add to the table above if
 returned directly.
 
-**Import path**: `"github.com/wahidyankf/open-sharia-enterprise/apps/demo-be-golang-gin/generated-contracts"`
+**Import path**: `"github.com/wahidyankf/open-sharia-enterprise/apps/a-demo-be-golang-gin/generated-contracts"`
 aliased as `contracts`.
 
 **Caveat**: Generated Go types may use `openapi_types.Date` instead of `string` for date fields,
 and `*float32` instead of `*float64` for amounts. Verify field type compatibility before replacing.
 
-### Java — demo-be-java-springboot
+### Java — a-demo-be-java-springboot
 
 **Current state**: 18 local DTO classes across `auth/dto/`, `user/dto/`, `expense/dto/`,
 `admin/dto/`, `attachment/dto/`, `report/dto/` packages. Many names differ from generated types.
@@ -121,7 +121,7 @@ and `*float32` instead of `*float64` for amounts. Verify field type compatibilit
 **Domain models to PRESERVE** (JPA entities, NOT API types):
 `User`, `Expense`, `Attachment`, `RefreshToken`, `RevokedToken`
 
-### Java — demo-be-java-vertx
+### Java — a-demo-be-java-vertx
 
 **Current state**: ZERO DTO classes. All handlers use raw `JsonObject`:
 
@@ -154,7 +154,7 @@ and serialize generated contract types into responses.
 
 **Domain models to PRESERVE**: `User`, `Expense`, `Attachment`, `TokenRevocation`
 
-### Kotlin — demo-be-kotlin-ktor
+### Kotlin — a-demo-be-kotlin-ktor
 
 **Current state**: 9 inline `@Serializable` data classes in route files for request parsing.
 Responses use `mapOf()` or `buildJsonObject{}` — no typed response classes.
@@ -182,7 +182,7 @@ Same set as other backends: `AuthTokens`, `User`, `Expense`, `ExpenseListRespons
 **Domain models to PRESERVE**: `User`, `Expense`, `Attachment`, `Page<T>`, `DomainError`, `Role`,
 `UserStatus`, `EntryType`
 
-### Rust — demo-be-rust-axum
+### Rust — a-demo-be-rust-axum
 
 **Current state**: 12 local structs across handler files with `#[derive(Serialize, Deserialize)]`.
 
@@ -215,7 +215,7 @@ Same set as other backends: `AuthTokens`, `User`, `Expense`, `ExpenseListRespons
 **Crate dependency**: The `generated-contracts/` directory contains only source files with no
 `Cargo.toml`. Before adding the path dependency, the following files must be created:
 
-1. `generated-contracts/Cargo.toml` with `[package] name = "demo-contracts"` and `edition = "2021"`
+1. `generated-contracts/Cargo.toml` with `[package] name = "a-demo-contracts"` and `edition = "2021"`
 2. `generated-contracts/src/lib.rs` with `pub mod models;`
 3. `generated-contracts/src/models/mod.rs` that re-exports all generated model files
 
@@ -223,14 +223,14 @@ Then add to main `Cargo.toml`:
 
 ```toml
 [dependencies]
-demo-contracts = { path = "generated-contracts" }
+a-demo-contracts = { path = "generated-contracts" }
 ```
 
-The codegen uses `packageName=demo-contracts` (verified in `project.json`), so the crate name
-is `demo-contracts`, not `generated-contracts`. Import with:
-`use demo_contracts::models::{RegisterRequest, ...};` (Rust converts hyphens to underscores).
+The codegen uses `packageName=a-demo-contracts` (verified in `project.json`), so the crate name
+is `a-demo-contracts`, not `generated-contracts`. Import with:
+`use a_demo_contracts::models::{RegisterRequest, ...};` (Rust converts hyphens to underscores).
 
-### F# — demo-be-fsharp-giraffe
+### F# — a-demo-be-fsharp-giraffe
 
 **Current state**: 8 inline `[<CLIMutable>]` records in handler files. Responses built inline.
 
@@ -247,13 +247,13 @@ is `demo-contracts`, not `generated-contracts`. Import with:
 app's `.fsproj` compile list:
 
 ```xml
-<Compile Include="../generated-contracts/OpenAPI/src/DemoBeFsgi.Contracts/*.fs" />
+<Compile Include="../generated-contracts/OpenAPI/src/AADemoBeFsgi.Contracts/*.fs" />
 ```
 
 Note: F# compilation order matters — add the `<Compile>` entries before any files that reference
 the generated types.
 
-Open `OpenAPI.DemoBeFsgi.Contracts` namespace in handler files.
+Open `OpenAPI.AADemoBeFsgi.Contracts` namespace in handler files.
 
 **IMPORTANT**: Generated F# records do NOT carry `[<CLIMutable>]`. Giraffe's `bindJsonAsync<T>()`
 and ASP.NET Core model binding require a default constructor, which immutable F# records lack
@@ -261,7 +261,7 @@ without this attribute. The mitigation is to create thin `[<CLIMutable>]` wrappe
 map to/from generated types for request binding. Generated types can be used directly for
 response construction (where `[<CLIMutable>]` is not needed).
 
-### C# — demo-be-csharp-aspnetcore
+### C# — a-demo-be-csharp-aspnetcore
 
 **Current state**: 6 sealed records in `Endpoints/` files. Responses built inline.
 
@@ -283,14 +283,14 @@ response construction (where `[<CLIMutable>]` is not needed).
 app's `.csproj` compile list:
 
 ```xml
-<Compile Include="../generated-contracts/src/Org.OpenAPITools/DemoBeCsas.Contracts/*.cs" />
+<Compile Include="../generated-contracts/src/Org.OpenAPITools/AADemoBeCsas.Contracts/*.cs" />
 ```
 
-Add `using Org.OpenAPITools.DemoBeCsas.Contracts;` to endpoint files. The actual namespace
-(verified from generated files) is `Org.OpenAPITools.DemoBeCsas.Contracts`, not
-`DemoBeCsas.Contracts`.
+Add `using Org.OpenAPITools.AADemoBeCsas.Contracts;` to endpoint files. The actual namespace
+(verified from generated files) is `Org.OpenAPITools.AADemoBeCsas.Contracts`, not
+`AADemoBeCsas.Contracts`.
 
-### Python — demo-be-python-fastapi
+### Python — a-demo-be-python-fastapi
 
 **Current state**: 22 local Pydantic models (8 request-type + 14 response-type) defined inline in
 router files. Many name mismatches. Note: `PromoteAdminRequest` is test-only and may not need
@@ -330,7 +330,7 @@ replacement.
 **Integration**: Replace inline Pydantic models with `from generated_contracts import ...`. Update
 FastAPI `response_model=` parameters.
 
-### Elixir — demo-be-elixir-phoenix
+### Elixir — a-demo-be-elixir-phoenix
 
 **Current state**: No local request/response types — controllers use raw maps. Codegen target
 exists but has never been run.
@@ -343,7 +343,7 @@ generated structs for responses. `@enforce_keys` catches missing fields at test 
 the `codegen` target, so generated modules will be named `GeneratedSchemas.User`,
 `GeneratedSchemas.AuthTokens`, etc. Verify the exact namespace by inspecting the Phase 1 codegen
 output. If a different namespace is desired, update the codegen invocation in
-`apps/demo-be-elixir-phoenix/project.json` to pass a `:namespace` option.
+`apps/a-demo-be-elixir-phoenix/project.json` to pass a `:namespace` option.
 
 **Types to wire** (all via struct construction in controllers, using `GeneratedSchemas.*` prefix):
 `GeneratedSchemas.User`, `GeneratedSchemas.AuthTokens`, `GeneratedSchemas.Expense`,
@@ -358,7 +358,7 @@ pattern matching or `Map.take/2` with struct keys.
 **Ecto schemas to PRESERVE**: `Accounts.User`, `Expense.Expense`, `Attachment.Attachment`,
 `Token.RevokedToken`, `Token.RefreshToken`
 
-### Clojure — demo-be-clojure-pedestal
+### Clojure — a-demo-be-clojure-pedestal
 
 **Current state**: 6 request schemas + 1 response schema (`TokenResponse`) + many domain schemas in
 `domain/schemas.clj`. Codegen target exists but has never been run.
@@ -398,7 +398,7 @@ Confirm exact namespaces by inspecting the Phase 1 codegen output.
 `AccessTokenClaims`, `RefreshTokenClaims`, `Expense`, `Attachment`, `PaginationParams`,
 `PaginatedResponse`, `Config`
 
-### Dart — demo-fe-dart-flutterweb
+### Dart — a-demo-fe-dart-flutterweb
 
 **Current state**: 20 hand-written model classes across `lib/models/*.dart` with `fromJson`/`toJson`.
 Codegen target exists but may not have been verified.
@@ -432,7 +432,7 @@ Codegen target exists but may not have been verified.
 **Integration**: Replace hand-written classes with imports from generated package, or create
 re-export layer in `lib/models/` that imports generated types.
 
-### E2E Tests — demo-be-e2e and demo-fe-e2e
+### E2E Tests — a-demo-be-e2e and a-demo-fe-e2e
 
 **Current state**: `validateResponseAgainstContract(path, method, statusCode, body)` is defined in
 `tests/utils/contract-validator.ts` but no step definition imports or calls it.
@@ -453,8 +453,8 @@ schema violation.
 
 ### Decision 1: Re-export Layer for TypeScript Apps
 
-**Decision**: Use a re-export layer (`src/lib/api/types.ts`) for `demo-be-ts-effect`, mirroring
-the existing pattern in `demo-fe-ts-nextjs` and `demo-fe-ts-tanstack-start`.
+**Decision**: Use a re-export layer (`src/lib/api/types.ts`) for `a-demo-be-ts-effect`, mirroring
+the existing pattern in `a-demo-fe-ts-nextjs` and `a-demo-fe-ts-tanstack-start`.
 
 **Rationale**: Stable internal import path. If generated type names change, only the re-export
 layer needs updating.
@@ -529,7 +529,7 @@ The test is `test:unit`:
 
 ### E2E Tests
 
-1. Run `nx run demo-be-e2e:test:e2e` against a running backend
+1. Run `nx run a-demo-be-e2e:test:e2e` against a running backend
 2. Verify `validateResponseAgainstContract` is called (grep for imports in step files)
 3. Enforcement smoke test: introduce a contract violation and verify the E2E scenario fails with
    a contract error
@@ -538,7 +538,7 @@ The test is `test:unit`:
 
 ### Go: oapi-codegen package path
 
-Import path: `"github.com/wahidyankf/open-sharia-enterprise/apps/demo-be-golang-gin/generated-contracts"`
+Import path: `"github.com/wahidyankf/open-sharia-enterprise/apps/a-demo-be-golang-gin/generated-contracts"`
 (aliased as `contracts`). Generated types may use `openapi_types.Date` for dates.
 
 ### Java: Maven source directory
@@ -564,8 +564,8 @@ does not exist yet and must be added. Use the `build-helper-maven-plugin` `add-s
 </plugin>
 ```
 
-This applies to both `demo-be-java-springboot` and `demo-be-java-vertx` (each has its own
-`pom.xml`). The Vert.x model package is `com.demobejavx.contracts` (verified from
+This applies to both `a-demo-be-java-springboot` and `a-demo-be-java-vertx` (each has its own
+`pom.xml`). The Vert.x model package is `com.aademobejavx.contracts` (verified from
 `project.json`'s `--model-package` argument). Generated DTOs carry `@JsonProperty` annotations.
 
 ### Kotlin: Gradle source set
@@ -578,7 +578,7 @@ sourceSets.main {
 }
 ```
 
-This configuration does not exist yet and must be added. The `demo-be-kotlin-ktor` project uses
+This configuration does not exist yet and must be added. The `a-demo-be-kotlin-ktor` project uses
 `build.gradle.kts` (Kotlin DSL), so the Groovy-style
 `kotlin.sourceSets["main"].kotlin.srcDirs(...)` syntax will cause a compilation error.
 
@@ -590,11 +590,11 @@ Once created, add to main `Cargo.toml`:
 
 ```toml
 [dependencies]
-demo-contracts = { path = "generated-contracts" }
+a-demo-contracts = { path = "generated-contracts" }
 ```
 
-The crate name is `demo-contracts` (from `packageName=demo-contracts` in the codegen command),
-not `generated-contracts`. Import with `use demo_contracts::models::{...};`.
+The crate name is `a-demo-contracts` (from `packageName=a-demo-contracts` in the codegen command),
+not `generated-contracts`. Import with `use a_demo_contracts::models::{...};`.
 
 ### F#: Source inclusion (no .fsproj in generated-contracts)
 
@@ -602,7 +602,7 @@ The codegen generates `.fs` source files only — no `.fsproj` project file exis
 source inclusion instead of `<ProjectReference>`:
 
 ```xml
-<Compile Include="../generated-contracts/OpenAPI/src/DemoBeFsgi.Contracts/*.fs" />
+<Compile Include="../generated-contracts/OpenAPI/src/AADemoBeFsgi.Contracts/*.fs" />
 ```
 
 Add this to the main app's `.fsproj` before any files that reference the generated types.
@@ -615,11 +615,11 @@ The codegen generates `.cs` source files only — no `.csproj` project file exis
 source inclusion instead of `<ProjectReference>`:
 
 ```xml
-<Compile Include="../generated-contracts/src/Org.OpenAPITools/DemoBeCsas.Contracts/*.cs" />
+<Compile Include="../generated-contracts/src/Org.OpenAPITools/AADemoBeCsas.Contracts/*.cs" />
 ```
 
-Add `using Org.OpenAPITools.DemoBeCsas.Contracts;` to endpoint files. The namespace is
-`Org.OpenAPITools.DemoBeCsas.Contracts` (verified from generated files).
+Add `using Org.OpenAPITools.AADemoBeCsas.Contracts;` to endpoint files. The namespace is
+`Org.OpenAPITools.AADemoBeCsas.Contracts` (verified from generated files).
 
 ### Python: generated_contracts package
 
@@ -633,13 +633,13 @@ Add `generated-contracts/` to `elixirc_paths` in `mix.exs`.
 ### Clojure: classpath
 
 Generated `.clj` files must be on the classpath. Add `generated_contracts/` as a source path in
-`deps.edn` (the `demo-be-clojure-pedestal` app uses `deps.edn`).
+`deps.edn` (the `a-demo-be-clojure-pedestal` app uses `deps.edn`).
 
 ### Dart: pubspec.yaml path dependency
 
 ```yaml
 dependencies:
-  demo_contracts:
+  a_demo_contracts:
     path: ./generated-contracts
 ```
 

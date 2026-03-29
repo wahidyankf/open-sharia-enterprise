@@ -59,7 +59,7 @@ convention-driven approach. We focus on consistency and quality, not creative ex
 **Why not keep status quo**: Token drift is already happening (neutral vs. blue primary). Without
 a shared source, every new app starts from zero and diverges further.
 
-**Why not one lib**: `demo-fe-dart-flutterweb` and `demo-fe-ts-tanstack-start` need tokens but
+**Why not one lib**: `a-demo-fe-dart-flutterweb` and `a-demo-fe-ts-tanstack-start` need tokens but
 cannot use React components. Forcing them to depend on React would be wrong.
 
 **Token package structure**:
@@ -460,8 +460,8 @@ scoped re-validation after fixes.
 
 1. **Gherkin-driven mock tests** — consume `.feature` files from `specs/` and implement step
    definitions with mocked dependencies (APIs, routing, state). This is the **existing pattern**
-   already used by `demo-fe-ts-nextjs`, `demo-fe-ts-tanstack-start`, `demo-fe-dart-flutterweb`,
-   and `demo-fs-ts-nextjs` via `@amiceli/vitest-cucumber`.
+   already used by `a-demo-fe-ts-nextjs`, `a-demo-fe-ts-tanstack-start`, `a-demo-fe-dart-flutterweb`,
+   and `a-demo-fs-ts-nextjs` via `@amiceli/vitest-cucumber`.
 
 2. **UI-specific tests** — axe-core accessibility assertions, component rendering tests,
    variant coverage. These test concerns that Gherkin specs do not naturally express (DOM
@@ -473,13 +473,13 @@ experiences). UI tests validate **quality** (accessibility, rendering correctnes
 **Existing pattern** (already in the codebase):
 
 ```text
-apps/demo-fe-ts-nextjs/test/unit/steps/
+apps/a-demo-fe-ts-nextjs/test/unit/steps/
 ├── layout/
-│   ├── accessibility.steps.tsx    ← Gherkin: specs/apps/demo/fe/gherkin/layout/accessibility.feature
-│   └── responsive.steps.tsx       ← Gherkin: specs/apps/demo/fe/gherkin/layout/responsive.feature
+│   ├── accessibility.steps.tsx    ← Gherkin: specs/apps/a-demo/fe/gherkin/layout/accessibility.feature
+│   └── responsive.steps.tsx       ← Gherkin: specs/apps/a-demo/fe/gherkin/layout/responsive.feature
 ├── authentication/
-│   ├── login.steps.tsx            ← Gherkin: specs/apps/demo/fe/gherkin/authentication/login.feature
-│   └── session.steps.tsx          ← Gherkin: specs/apps/demo/fe/gherkin/authentication/session.feature
+│   ├── login.steps.tsx            ← Gherkin: specs/apps/a-demo/fe/gherkin/authentication/login.feature
+│   └── session.steps.tsx          ← Gherkin: specs/apps/a-demo/fe/gherkin/authentication/session.feature
 └── ...
 ```
 
@@ -765,7 +765,7 @@ tolerance threshold that accommodates OS differences.
    since it's content-specific.
 7. **Verify**: Run `nx run ayokoding-fs:test:quick`.
 
-### For demo-fe-ts-nextjs
+### For a-demo-fe-ts-nextjs
 
 1. **Add Tailwind v4**: Install `@tailwindcss/postcss` and `@tailwindcss/vite`. Create
    `globals.css` importing shared tokens.
@@ -776,13 +776,13 @@ tolerance threshold that accommodates OS differences.
    of JavaScript breakpoint detection.
 4. **Import shared components**: Use Button, Card, etc. from `@open-sharia-enterprise/ts-ui`
    where appropriate.
-5. **Verify**: Run `nx run demo-fe-ts-nextjs:test:quick`.
+5. **Verify**: Run `nx run a-demo-fe-ts-nextjs:test:quick`.
 
-### For demo-fs-ts-nextjs
+### For a-demo-fs-ts-nextjs
 
-1. Same approach as demo-fe-ts-nextjs (minimal styling, add tokens + shared components).
+1. Same approach as a-demo-fe-ts-nextjs (minimal styling, add tokens + shared components).
 
-### For demo-fe-dart-flutterweb (limited scope)
+### For a-demo-fe-dart-flutterweb (limited scope)
 
 1. **Token consumption only**: Generate a `tokens.dart` file from `ts-ui-tokens/src/tokens.css`
    (manual or script). Flutter cannot consume CSS vars directly.

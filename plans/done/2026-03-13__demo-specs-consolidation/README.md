@@ -4,7 +4,7 @@
 
 ## Overview
 
-Merge `specs/apps/demo-be/` and `specs/apps/demo-fe/` into a unified `specs/apps/demo/` directory.
+Merge `specs/apps/demo-be/` and `specs/apps/demo-fe/` into a unified `specs/apps/a-demo/` directory.
 The demo application is one system with two perspectives (backend API and frontend SPA). Consolidating
 under a single `demo/` root with shared C4 architecture diagrams and separate `be/` and `fe/` Gherkin
 specs reflects this reality.
@@ -19,7 +19,7 @@ specs reflects this reality.
    governance, plans)
 4. Ensure every directory has a `README.md`
 5. Run [specs-validation](../../../governance/workflows/specs/specs-validation.md) in **OCD mode**
-   on the merged `specs/apps/demo/` before rewiring app references — fix all issues while the
+   on the merged `specs/apps/a-demo/` before rewiring app references — fix all issues while the
    blast radius is small (specs only, no app code touched yet)
 6. Pass ALL CI — locally (lint, typecheck, test:quick) and on GitHub Actions (Main CI, all 11
    integration + E2E workflows, organiclever-fe, PR workflows). Trigger CI manually and verify.
@@ -27,7 +27,7 @@ specs reflects this reality.
 ## Target Structure
 
 ```
-specs/apps/demo/
+specs/apps/a-demo/
 ├── README.md                    # Unified demo app specs overview
 ├── c4/
 │   ├── README.md                # C4 index (4 diagrams)

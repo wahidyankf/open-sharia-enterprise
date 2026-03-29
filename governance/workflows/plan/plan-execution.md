@@ -97,7 +97,7 @@ The executor selects the best agent for each delivery checklist item using these
 in priority order:
 
 1. **Match by project/app name**: If the checklist item names a specific app (e.g.,
-   `demo-be-java-vertx`), use the agent for that app's language (e.g., `swe-java-developer`).
+   `a-demo-be-java-vertx`), use the agent for that app's language (e.g., `swe-java-developer`).
    Refer to [CLAUDE.md](../../../CLAUDE.md) for the full app list and their tech stacks.
 
 2. **Match by file extension**: If the item references files with a recognizable extension (`.ts`,

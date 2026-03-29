@@ -1,13 +1,13 @@
-# Technical Design: demo-be-csharp-aspnetcore
+# Technical Design: a-demo-be-csharp-aspnetcore
 
 ## BDD Integration Tests: Reqnroll + WebApplicationFactory
 
-Integration tests parse the canonical `.feature` files in `specs/apps/demo/be/gherkin/` using
+Integration tests parse the canonical `.feature` files in `specs/apps/a-demo/be/gherkin/` using
 **Reqnroll**, the actively maintained successor to SpecFlow. Reqnroll integrates natively with
 xUnit and discovers step definitions via attributes on plain C# methods.
 
 HTTP calls use ASP.NET Core's `WebApplicationFactory` (in-process — no live server needed,
-matching `demo-be-java-springboot`'s MockMvc approach and `demo-be-fsharp-giraffe`'s TickSpec approach). The
+matching `a-demo-be-java-springboot`'s MockMvc approach and `a-demo-be-fsharp-giraffe`'s TickSpec approach). The
 database layer uses EF Core's SQLite in-memory provider for full isolation and determinism.
 
 Step definitions follow Reqnroll conventions using `[Given]`, `[When]`, and `[Then]`
@@ -46,7 +46,7 @@ public class HealthSteps
 
 ### Feature File Path Resolution
 
-Feature files are referenced from the `specs/apps/demo/be/gherkin/` workspace root. Reqnroll
+Feature files are referenced from the `specs/apps/a-demo/be/gherkin/` workspace root. Reqnroll
 discovers feature files via the `FeatureFiles` item group in the `.csproj`:
 
 ```xml
@@ -77,10 +77,10 @@ Reqnroll is chosen over SpecFlow because:
 ### Project Structure
 
 ```
-apps/demo-be-csharp-aspnetcore/
+apps/a-demo-be-csharp-aspnetcore/
 ├── src/
-│   └── DemoBeCsas/
-│       ├── DemoBeCsas.csproj              # Main application
+│   └── AADemoBeCsas/
+│       ├── AADemoBeCsas.csproj              # Main application
 │       ├── Program.cs                      # Entry point + ASP.NET Core configuration
 │       ├── Domain/
 │       │   ├── Types.cs                    # Enums: Currency, Role, UserStatus
@@ -114,8 +114,8 @@ apps/demo-be-csharp-aspnetcore/
 │           ├── AttachmentEndpoints.cs      # file upload/list/delete
 │           └── TokenEndpoints.cs           # claims, JWKS
 ├── tests/
-│   └── DemoBeCsas.Tests/
-│       ├── DemoBeCsas.Tests.csproj         # Test project
+│   └── AADemoBeCsas.Tests/
+│       ├── AADemoBeCsas.Tests.csproj         # Test project
 │       ├── TestWebApplicationFactory.cs    # WebApplicationFactory + SQLite in-memory
 │       ├── ScenarioContext/
 │       │   └── SharedState.cs              # Per-scenario HTTP state holder
@@ -156,7 +156,7 @@ replaces the traditional Controller-based approach with a concise, functional st
 well to the functional core/imperative shell pattern:
 
 ```csharp
-// src/DemoBeCsas/Endpoints/HealthEndpoints.cs
+// src/AADemoBeCsas/Endpoints/HealthEndpoints.cs
 public static class HealthEndpoints
 {
     public static IEndpointRouteBuilder MapHealthEndpoints(this IEndpointRouteBuilder app)
@@ -166,7 +166,7 @@ public static class HealthEndpoints
     }
 }
 
-// src/DemoBeCsas/Program.cs
+// src/AADemoBeCsas/Program.cs
 var app = builder.Build();
 
 app.MapHealthEndpoints();
@@ -187,7 +187,7 @@ Repositories and services are registered in `Program.cs` and injected into endpo
 via ASP.NET Core's built-in DI container:
 
 ```csharp
-// src/DemoBeCsas/Program.cs
+// src/AADemoBeCsas/Program.cs
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration["DATABASE_URL"]));
 
@@ -202,7 +202,7 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 Integration tests override the database via `WebApplicationFactory<Program>`:
 
 ```csharp
-// tests/DemoBeCsas.Tests/TestWebApplicationFactory.cs
+// tests/AADemoBeCsas.Tests/TestWebApplicationFactory.cs
 public class TestWebApplicationFactory : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -229,7 +229,7 @@ Domain entities use C# `record` types for immutability and structural equality, 
 OSE Platform C# coding standards:
 
 ```csharp
-// src/DemoBeCsas/Domain/User.cs
+// src/AADemoBeCsas/Domain/User.cs
 public sealed record UserDomain(
     Guid Id,
     string Username,
@@ -264,7 +264,7 @@ Domain operations return a lightweight `Result<T>` type. The Minimal API endpoin
 to HTTP responses without exposing domain logic to the web layer:
 
 ```csharp
-// src/DemoBeCsas/Domain/Errors.cs
+// src/AADemoBeCsas/Domain/Errors.cs
 public abstract record DomainError(string Message);
 public sealed record ValidationError(string Field, string Message) : DomainError(Message);
 public sealed record NotFoundError(string Entity) : DomainError($"{Entity} not found");
@@ -274,7 +274,7 @@ public sealed record UnauthorizedError(string Message) : DomainError(Message);
 public sealed record FileTooLargeError(long LimitBytes) : DomainError("File size exceeds the maximum allowed limit");
 public sealed record UnsupportedMediaTypeError(string Type) : DomainError("Unsupported media type");
 
-// src/DemoBeCsas/Endpoints/AuthEndpoints.cs
+// src/AADemoBeCsas/Endpoints/AuthEndpoints.cs
 public static IResult ToHttpResult(DomainError error) => error switch
 {
     ValidationError e => Results.BadRequest(new { message = e.Message }),
@@ -294,7 +294,7 @@ Production uses PostgreSQL via `Npgsql.EntityFrameworkCore.PostgreSQL`. Integrat
 SQLite in-memory via `Microsoft.EntityFrameworkCore.Sqlite` for isolation:
 
 ```csharp
-// src/DemoBeCsas/Infrastructure/AppDbContext.cs
+// src/AADemoBeCsas/Infrastructure/AppDbContext.cs
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     public DbSet<UserModel> Users => Set<UserModel>();
@@ -336,7 +336,7 @@ implementations:
 - Claims: `sub` (user ID), `username`, `role`, `exp`, `iat`, `jti`
 
 ```csharp
-// src/DemoBeCsas/Auth/JwtService.cs
+// src/AADemoBeCsas/Auth/JwtService.cs
 public class JwtService(IConfiguration config) : IJwtService
 {
     private readonly string _secret = config["APP_JWT_SECRET"]
@@ -369,7 +369,7 @@ public class JwtService(IConfiguration config) : IJwtService
 Amounts stored as `decimal` with currency-specific precision enforced at the domain level:
 
 ```csharp
-// src/DemoBeCsas/Domain/Expense.cs
+// src/AADemoBeCsas/Domain/Expense.cs
 public static class CurrencyValidation
 {
     private static readonly IReadOnlyDictionary<string, int> DecimalPlaces =
@@ -402,7 +402,7 @@ Reqnroll injects `ScenarioContext` for per-scenario state sharing between step d
 Each step class receives shared state via constructor injection:
 
 ```csharp
-// tests/DemoBeCsas.Tests/ScenarioContext/SharedState.cs
+// tests/AADemoBeCsas.Tests/ScenarioContext/SharedState.cs
 public class SharedState
 {
     public HttpResponseMessage? LastResponse { get; set; }
@@ -411,7 +411,7 @@ public class SharedState
     public Guid? LastCreatedId { get; set; }
 }
 
-// tests/DemoBeCsas.Tests/Integration/Steps/AuthSteps.cs
+// tests/AADemoBeCsas.Tests/Integration/Steps/AuthSteps.cs
 [Binding]
 public class AuthSteps(HttpClient client, SharedState state)
 {
@@ -430,82 +430,82 @@ public class AuthSteps(HttpClient client, SharedState state)
 
 ```json
 {
-  "name": "demo-be-csharp-aspnetcore",
+  "name": "a-demo-be-csharp-aspnetcore",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/demo-be-csharp-aspnetcore/src",
+  "sourceRoot": "apps/a-demo-be-csharp-aspnetcore/src",
   "projectType": "application",
   "targets": {
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet publish src/DemoBeCsas/DemoBeCsas.csproj -c Release -o dist",
-        "cwd": "apps/demo-be-csharp-aspnetcore"
+        "command": "dotnet publish src/AADemoBeCsas/AADemoBeCsas.csproj -c Release -o dist",
+        "cwd": "apps/a-demo-be-csharp-aspnetcore"
       },
       "outputs": ["{projectRoot}/dist"]
     },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet watch run --project src/DemoBeCsas/DemoBeCsas.csproj",
-        "cwd": "apps/demo-be-csharp-aspnetcore"
+        "command": "dotnet watch run --project src/AADemoBeCsas/AADemoBeCsas.csproj",
+        "cwd": "apps/a-demo-be-csharp-aspnetcore"
       }
     },
     "start": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet run --project src/DemoBeCsas/DemoBeCsas.csproj",
-        "cwd": "apps/demo-be-csharp-aspnetcore"
+        "command": "dotnet run --project src/AADemoBeCsas/AADemoBeCsas.csproj",
+        "cwd": "apps/a-demo-be-csharp-aspnetcore"
       }
     },
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "dotnet test tests/DemoBeCsas.Tests/DemoBeCsas.Tests.csproj --collect:\"XPlat Code Coverage\" --results-directory ./coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov",
-          "(cd ../../ && apps/rhino-cli/rhino-cli test-coverage validate apps/demo-be-csharp-aspnetcore/coverage/**/coverage.info 90)",
+          "dotnet test tests/AADemoBeCsas.Tests/AADemoBeCsas.Tests.csproj --collect:\"XPlat Code Coverage\" --results-directory ./coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov",
+          "(cd ../../ && apps/rhino-cli/rhino-cli test-coverage validate apps/a-demo-be-csharp-aspnetcore/coverage/**/coverage.info 90)",
           "dotnet format --verify-no-changes",
-          "dotnet build src/DemoBeCsas/DemoBeCsas.csproj /p:TreatWarningsAsErrors=true --no-restore"
+          "dotnet build src/AADemoBeCsas/AADemoBeCsas.csproj /p:TreatWarningsAsErrors=true --no-restore"
         ],
         "parallel": false,
-        "cwd": "apps/demo-be-csharp-aspnetcore"
+        "cwd": "apps/a-demo-be-csharp-aspnetcore"
       }
     },
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet test tests/DemoBeCsas.Tests/DemoBeCsas.Tests.csproj --filter Category=Unit",
-        "cwd": "apps/demo-be-csharp-aspnetcore"
+        "command": "dotnet test tests/AADemoBeCsas.Tests/AADemoBeCsas.Tests.csproj --filter Category=Unit",
+        "cwd": "apps/a-demo-be-csharp-aspnetcore"
       }
     },
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet test tests/DemoBeCsas.Tests/DemoBeCsas.Tests.csproj --filter Category=Integration",
-        "cwd": "apps/demo-be-csharp-aspnetcore"
+        "command": "dotnet test tests/AADemoBeCsas.Tests/AADemoBeCsas.Tests.csproj --filter Category=Integration",
+        "cwd": "apps/a-demo-be-csharp-aspnetcore"
       },
       "cache": true,
       "inputs": [
         "{projectRoot}/src/**/*.cs",
         "{projectRoot}/tests/**/*.cs",
-        "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature"
+        "{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature"
       ]
     },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet build src/DemoBeCsas/DemoBeCsas.csproj /p:TreatWarningsAsErrors=true --no-restore",
-        "cwd": "apps/demo-be-csharp-aspnetcore"
+        "command": "dotnet build src/AADemoBeCsas/AADemoBeCsas.csproj /p:TreatWarningsAsErrors=true --no-restore",
+        "cwd": "apps/a-demo-be-csharp-aspnetcore"
       }
     },
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet build src/DemoBeCsas/DemoBeCsas.csproj /p:TreatWarningsAsErrors=true --no-restore",
-        "cwd": "apps/demo-be-csharp-aspnetcore"
+        "command": "dotnet build src/AADemoBeCsas/AADemoBeCsas.csproj /p:TreatWarningsAsErrors=true --no-restore",
+        "cwd": "apps/a-demo-be-csharp-aspnetcore"
       }
     }
   },
-  "tags": ["type:app", "platform:aspnetcore", "lang:csharp", "domain:demo-be"],
+  "tags": ["type:app", "platform:aspnetcore", "lang:csharp", "domain:a-demo-be"],
   "implicitDependencies": ["rhino-cli"]
 }
 ```
@@ -520,7 +520,7 @@ public class AuthSteps(HttpClient client, SharedState state)
 > **Note on `lint` and `typecheck`**: Both targets invoke `dotnet build` with
 > `TreatWarningsAsErrors=true`. This runs Roslyn analyzers (NetAnalyzers + SonarAnalyzer.CSharp)
 > as part of the build, making compilation the enforcement mechanism for both linting and type
-> safety — consistent with the F# approach in `demo-be-fsharp-giraffe`.
+> safety — consistent with the F# approach in `a-demo-be-fsharp-giraffe`.
 
 ---
 
@@ -585,14 +585,14 @@ public class AuthSteps(HttpClient client, SharedState state)
 </Project>
 ```
 
-### `DemoBeCsas.csproj` (main application)
+### `AADemoBeCsas.csproj` (main application)
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <AssemblyName>DemoBeCsas</AssemblyName>
-    <RootNamespace>DemoBeCsas</RootNamespace>
+    <AssemblyName>AADemoBeCsas</AssemblyName>
+    <RootNamespace>AADemoBeCsas</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -609,7 +609,7 @@ public class AuthSteps(HttpClient client, SharedState state)
 </Project>
 ```
 
-### `DemoBeCsas.Tests.csproj` (test project)
+### `AADemoBeCsas.Tests.csproj` (test project)
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
@@ -632,7 +632,7 @@ public class AuthSteps(HttpClient client, SharedState state)
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\DemoBeCsas\DemoBeCsas.csproj" />
+    <ProjectReference Include="..\..\src\AADemoBeCsas\AADemoBeCsas.csproj" />
   </ItemGroup>
 
   <!-- Copy shared Gherkin feature files to output directory -->
@@ -654,67 +654,67 @@ public class AuthSteps(HttpClient client, SharedState state)
 
 ### Port Assignment
 
-| Service                   | Port                                               |
-| ------------------------- | -------------------------------------------------- |
-| demo-be-db                | 5432                                               |
-| demo-be-java-springboot   | 8201                                               |
-| demo-be-elixir-phoenix    | 8201 (same port — mutually exclusive alternatives) |
-| demo-be-fsharp-giraffe    | 8201 (same port — mutually exclusive alternatives) |
-| demo-be-golang-gin        | 8201 (same port — mutually exclusive alternatives) |
-| demo-be-python-fastapi    | 8201 (same port — mutually exclusive alternatives) |
-| demo-be-rust-axum         | 8201 (same port — mutually exclusive alternatives) |
-| demo-be-kotlin-ktor       | 8201 (same port — mutually exclusive alternatives) |
-| demo-be-csharp-aspnetcore | 8201 (same port — mutually exclusive alternatives) |
+| Service                     | Port                                               |
+| --------------------------- | -------------------------------------------------- |
+| a-demo-be-db                | 5432                                               |
+| a-demo-be-java-springboot   | 8201                                               |
+| a-demo-be-elixir-phoenix    | 8201 (same port — mutually exclusive alternatives) |
+| a-demo-be-fsharp-giraffe    | 8201 (same port — mutually exclusive alternatives) |
+| a-demo-be-golang-gin        | 8201 (same port — mutually exclusive alternatives) |
+| a-demo-be-python-fastapi    | 8201 (same port — mutually exclusive alternatives) |
+| a-demo-be-rust-axum         | 8201 (same port — mutually exclusive alternatives) |
+| a-demo-be-kotlin-ktor       | 8201 (same port — mutually exclusive alternatives) |
+| a-demo-be-csharp-aspnetcore | 8201 (same port — mutually exclusive alternatives) |
 
-### Docker Compose (`infra/dev/demo-be-csharp-aspnetcore/docker-compose.yml`)
+### Docker Compose (`infra/dev/a-demo-be-csharp-aspnetcore/docker-compose.yml`)
 
 ```yaml
 services:
-  demo-be-db:
+  a-demo-be-db:
     image: postgres:17-alpine
-    container_name: demo-be-db
+    container_name: a-demo-be-db
     environment:
-      POSTGRES_DB: demo_be_csharp_aspnetcore
-      POSTGRES_USER: demo_be_csharp_aspnetcore
-      POSTGRES_PASSWORD: demo_be_csharp_aspnetcore
+      POSTGRES_DB: a_demo_be_csharp_aspnetcore
+      POSTGRES_USER: a_demo_be_csharp_aspnetcore
+      POSTGRES_PASSWORD: a_demo_be_csharp_aspnetcore
     ports:
       - "5432:5432"
     volumes:
-      - demo-be-csharp-aspnetcore-db-data:/var/lib/postgresql/data
+      - a-demo-be-csharp-aspnetcore-db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U demo_be_csharp_aspnetcore"]
+      test: ["CMD-SHELL", "pg_isready -U a_demo_be_csharp_aspnetcore"]
       interval: 5s
       timeout: 3s
       retries: 5
     networks:
-      - demo-be-csharp-aspnetcore-network
+      - a-demo-be-csharp-aspnetcore-network
 
-  demo-be-csharp-aspnetcore:
+  a-demo-be-csharp-aspnetcore:
     build:
       context: .
       dockerfile: Dockerfile.be.dev
-    container_name: demo-be-csharp-aspnetcore
+    container_name: a-demo-be-csharp-aspnetcore
     ports:
       - "8201:8201"
     environment:
       - ASPNETCORE_URLS=http://+:8201
-      - DATABASE_URL=Host=demo-be-db;Database=demo_be_csharp_aspnetcore;Username=demo_be_csharp_aspnetcore;Password=demo_be_csharp_aspnetcore
+      - DATABASE_URL=Host=a-demo-be-db;Database=a_demo_be_csharp_aspnetcore;Username=a_demo_be_csharp_aspnetcore;Password=a_demo_be_csharp_aspnetcore
       - APP_JWT_SECRET=dev-jwt-secret-at-least-32-chars-long
     volumes:
-      - ../../../apps/demo-be-csharp-aspnetcore:/workspace:rw
-      - ../../../specs/apps/demo/be:/specs/apps/demo/be:ro
+      - ../../../apps/a-demo-be-csharp-aspnetcore:/workspace:rw
+      - ../../../specs/apps/a-demo/be:/specs/apps/a-demo/be:ro
     depends_on:
-      demo-be-db:
+      a-demo-be-db:
         condition: service_healthy
-    command: sh -c "dotnet ef database update --project src/DemoBeCsas/DemoBeCsas.csproj && dotnet watch run --project src/DemoBeCsas/DemoBeCsas.csproj"
+    command: sh -c "dotnet ef database update --project src/AADemoBeCsas/AADemoBeCsas.csproj && dotnet watch run --project src/AADemoBeCsas/AADemoBeCsas.csproj"
     networks:
-      - demo-be-csharp-aspnetcore-network
+      - a-demo-be-csharp-aspnetcore-network
 
 volumes:
-  demo-be-csharp-aspnetcore-db-data:
+  a-demo-be-csharp-aspnetcore-db-data:
 
 networks:
-  demo-be-csharp-aspnetcore-network:
+  a-demo-be-csharp-aspnetcore-network:
 ```
 
 ### Dockerfile.be.dev
@@ -728,34 +728,34 @@ ENV PATH="$PATH:/root/.dotnet/tools"
 
 WORKDIR /workspace
 
-CMD ["dotnet", "watch", "run", "--project", "src/DemoBeCsas/DemoBeCsas.csproj"]
+CMD ["dotnet", "watch", "run", "--project", "src/AADemoBeCsas/AADemoBeCsas.csproj"]
 ```
 
 ---
 
 ## GitHub Actions
 
-### New Workflow: `e2e-demo-be-csharp-aspnetcore.yml`
+### New Workflow: `e2e-a-demo-be-csharp-aspnetcore.yml`
 
-Mirrors `e2e-demo-be-fsharp-giraffe.yml` with:
+Mirrors `e2e-a-demo-be-fsharp-giraffe.yml` with:
 
 - Name: `E2E - Demo BE (CSAS)`
 - Schedule: same crons as jasb/exph/fsgi
 - Job: checkout → docker compose up → wait-healthy → Volta → npm ci →
-  `nx run demo-be-e2e:test:e2e` with `BASE_URL=http://localhost:8201` →
+  `nx run a-demo-be-e2e:test:e2e` with `BASE_URL=http://localhost:8201` →
   upload artifact `playwright-report-be-csas` → docker down (always)
 
 ### Updated Workflow: `main-ci.yml`
 
-The `.NET SDK` setup step already exists for `demo-be-fsharp-giraffe`. Add only the coverage upload step:
+The `.NET SDK` setup step already exists for `a-demo-be-fsharp-giraffe`. Add only the coverage upload step:
 
 ```yaml
-- name: Upload coverage — demo-be-csharp-aspnetcore
+- name: Upload coverage — a-demo-be-csharp-aspnetcore
   uses: codecov/codecov-action@v5
   with:
     token: ${{ secrets.CODECOV_TOKEN }}
-    files: apps/demo-be-csharp-aspnetcore/coverage/**/coverage.info
-    flags: demo-be-csharp-aspnetcore
+    files: apps/a-demo-be-csharp-aspnetcore/coverage/**/coverage.info
+    flags: a-demo-be-csharp-aspnetcore
     fail_ci_if_error: false
 ```
 
@@ -763,7 +763,7 @@ The `.NET SDK` setup step already exists for `demo-be-fsharp-giraffe`. Add only 
 
 ## Dependencies Summary
 
-### NuGet Packages (`DemoBeCsas.csproj` — runtime)
+### NuGet Packages (`AADemoBeCsas.csproj` — runtime)
 
 | Package                                       | Purpose                                    |
 | --------------------------------------------- | ------------------------------------------ |
@@ -776,7 +776,7 @@ The `.NET SDK` setup step already exists for `demo-be-fsharp-giraffe`. Add only 
 | Microsoft.CodeAnalysis.NetAnalyzers           | Roslyn static analysis (PrivateAssets=all) |
 | SonarAnalyzer.CSharp                          | SonarQube rules for C# (PrivateAssets=all) |
 
-### NuGet Packages (`DemoBeCsas.Tests.csproj` — test)
+### NuGet Packages (`AADemoBeCsas.Tests.csproj` — test)
 
 | Package                              | Purpose                                    |
 | ------------------------------------ | ------------------------------------------ |

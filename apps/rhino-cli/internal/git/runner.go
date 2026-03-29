@@ -215,7 +215,7 @@ func step5LintStaged(gitRoot string, deps Deps) error {
 
 // step5bSyncLockfiles regenerates app-level package-lock.json when package.json is staged.
 //
-// Some apps (e.g. demo-be-ts-effect, organiclever-fe) have their own package-lock.json
+// Some apps (e.g. a-demo-be-ts-effect, organiclever-fe) have their own package-lock.json
 // used by Dockerfile for `npm ci`. If package.json is updated but the lockfile is not
 // regenerated, `npm ci` fails in Docker builds (EUSAGE: lockfile out of sync).
 //
@@ -229,7 +229,7 @@ func step5bSyncLockfiles(gitRoot string, staged []string, deps Deps) error {
 		if !strings.HasPrefix(f, "apps/") || !strings.HasSuffix(f, "/package.json") {
 			continue
 		}
-		// Ensure it's a direct child of apps/ (e.g. apps/demo-be-ts-effect/package.json),
+		// Ensure it's a direct child of apps/ (e.g. apps/a-demo-be-ts-effect/package.json),
 		// not a nested path like apps/foo/bar/package.json.
 		parts := strings.Split(f, "/")
 		if len(parts) != 3 {

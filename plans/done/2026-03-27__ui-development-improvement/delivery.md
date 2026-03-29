@@ -175,13 +175,13 @@ _Extract shared tokens and components into Nx libraries. One app migration at a 
 - [x] Keep app-specific: Badge, Command, DropdownMenu, ScrollArea, Separator, Sheet, Tabs, Tooltip
 - [x] Verify `nx run ayokoding-fs:test:quick` passes (86.34% coverage, 80% threshold)
 
-### 2.5 Update demo-fe-ts-nextjs
+### 2.5 Update a-demo-fe-ts-nextjs
 
 **Goal**: Replace inline styles with Tailwind + shared tokens.
 
 - [x] Install Tailwind CSS v4 with `@tailwindcss/postcss`, create `globals.css` with shared tokens import, convert all 12 TSX files from inline styles to Tailwind utility classes. All tests pass (74.12% coverage).
 
-### 2.6 Update demo-fs-ts-nextjs
+### 2.6 Update a-demo-fs-ts-nextjs
 
 - [x] Install Tailwind CSS v4 with `@tailwindcss/postcss`, create `globals.css` with shared tokens import, convert all 14 TSX files from inline styles to Tailwind utility classes. All tests pass (76.44% coverage).
 
@@ -191,7 +191,7 @@ _Extract shared tokens and components into Nx libraries. One app migration at a 
 - [x] No duplicate structural token definitions in migrated apps
 - [x] Each migrated app's `globals.css` contains only brand overrides and app-specific tokens
 - [x] All shared components use unified `radix-ui` import and `React.ComponentProps` pattern
-- [x] Demo app migrations complete (demo-fe-ts-nextjs and demo-fs-ts-nextjs converted to Tailwind + shared tokens)
+- [x] Demo app migrations complete (a-demo-fe-ts-nextjs and a-demo-fs-ts-nextjs converted to Tailwind + shared tokens)
 
 ---
 
@@ -210,7 +210,7 @@ adding rules to ESLint config and tests to vitest automatically enforces them._
 - [x] Install `eslint-plugin-jsx-a11y` (for organiclever-fe ESLint config)
 - [x] Add `jsxA11y.flatConfigs.recommended` to organiclever-fe's `eslint.config.mjs`
 - [x] Enable oxlint `--jsx-a11y-plugin` for all 5 TypeScript frontend apps via project.json
-  - organiclever-fe, ayokoding-fs, demo-fe-ts-nextjs, demo-fs-ts-nextjs, demo-fe-ts-tanstack-start
+  - organiclever-fe, ayokoding-fs, a-demo-fe-ts-nextjs, a-demo-fs-ts-nextjs, a-demo-fe-ts-tanstack-start
 - [x] Verify `nx run-many -t lint` passes cleanly (0 errors, all 5 projects)
 
 ### 3.2 Add vitest-axe to Unit Tests
@@ -398,8 +398,8 @@ flowchart TD
     F[2.2 Create ts-ui]
     G[2.3 Migrate organiclever-fe]
     H[2.4 Migrate ayokoding-fs]
-    I[2.5 Update demo-fe-ts-nextjs]
-    J[2.6 Update demo-fs-ts-nextjs]
+    I[2.5 Update a-demo-fe-ts-nextjs]
+    J[2.6 Update a-demo-fs-ts-nextjs]
     E --> F
     F --> G
     F --> H

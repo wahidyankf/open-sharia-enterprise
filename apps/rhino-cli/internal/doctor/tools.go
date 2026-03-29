@@ -31,10 +31,10 @@ func buildToolDefs(repoRoot string) []toolDef {
 	pomXMLPath := filepath.Join(repoRoot, "apps", "organiclever-be-jasb", "pom.xml")
 	goModPath := filepath.Join(repoRoot, "apps", "rhino-cli", "go.mod")
 	vercelJSONPath := filepath.Join(repoRoot, "apps", "oseplatform-fs", "vercel.json")
-	pythonVersionPath := filepath.Join(repoRoot, "apps", "demo-be-python-fastapi", ".python-version")
+	pythonVersionPath := filepath.Join(repoRoot, "apps", "a-demo-be-python-fastapi", ".python-version")
 	toolVersionsPath := filepath.Join(repoRoot, ".tool-versions")
-	globalJSONPath := filepath.Join(repoRoot, "apps", "demo-be-fsharp-giraffe", "global.json")
-	pubspecPath := filepath.Join(repoRoot, "apps", "demo-fe-dart-flutterweb", "pubspec.yaml")
+	globalJSONPath := filepath.Join(repoRoot, "apps", "a-demo-be-fsharp-giraffe", "global.json")
+	pubspecPath := filepath.Join(repoRoot, "apps", "a-demo-fe-dart-flutterweb", "pubspec.yaml")
 
 	noReq := func() string { return "" }
 
@@ -118,7 +118,7 @@ func buildToolDefs(repoRoot string) []toolDef {
 		{
 			name:     "python",
 			binary:   "python3",
-			source:   "apps/demo-be-python-fastapi/.python-version",
+			source:   "apps/a-demo-be-python-fastapi/.python-version",
 			args:     []string{"--version"},
 			parseVer: parsePythonVersion,
 			compare:  compareGTE,
@@ -176,7 +176,7 @@ func buildToolDefs(repoRoot string) []toolDef {
 		{
 			name:     "dotnet",
 			binary:   "dotnet",
-			source:   "apps/demo-be-fsharp-giraffe/global.json → sdk.version",
+			source:   "apps/a-demo-be-fsharp-giraffe/global.json → sdk.version",
 			args:     []string{"--version"},
 			parseVer: parseDotnetVersion,
 			compare:  compareMajorGTE,
@@ -197,7 +197,7 @@ func buildToolDefs(repoRoot string) []toolDef {
 		{
 			name:     "dart",
 			binary:   "dart",
-			source:   "apps/demo-fe-dart-flutterweb/pubspec.yaml → environment.sdk",
+			source:   "apps/a-demo-fe-dart-flutterweb/pubspec.yaml → environment.sdk",
 			args:     []string{"--version"},
 			parseVer: parseDartVersion,
 			compare:  compareGTE,

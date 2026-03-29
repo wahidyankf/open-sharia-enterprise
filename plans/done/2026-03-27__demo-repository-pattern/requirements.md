@@ -11,7 +11,7 @@ Four demo backend apps access the database without an abstract repository layer.
 
 ## Current State
 
-### demo-be-fsharp-giraffe
+### a-demo-be-fsharp-giraffe
 
 - **No repository layer at all** — 8 handler files call `ctx.GetService<AppDbContext>()` directly
   and run EF Core queries inline (Admin, Attachment, Auth, Expense, Report, Test, Token, User)
@@ -19,7 +19,7 @@ Four demo backend apps access the database without an abstract repository layer.
 - Entities: User, Expense, Attachment, RevokedToken, RefreshToken
 - ORM: Entity Framework Core
 
-### demo-be-rust-axum
+### a-demo-be-rust-axum
 
 - **Free functions, no trait abstraction** — 5 files in `src/db/` contain async functions that
   take `&AnyPool` as a parameter; handlers call them directly
@@ -27,7 +27,7 @@ Four demo backend apps access the database without an abstract repository layer.
 - Entities: User, Expense, Attachment, RevokedToken, RefreshToken
 - DB library: sqlx with raw SQL
 
-### demo-be-python-fastapi
+### a-demo-be-python-fastapi
 
 - **Concrete repository classes, no Protocol** — 4 repo classes in a single
   `infrastructure/repositories.py` file, injected via FastAPI `Depends()`, but no abstract
@@ -37,7 +37,7 @@ Four demo backend apps access the database without an abstract repository layer.
 - Entities: User, Expense, Attachment, RevokedToken, RefreshToken
 - ORM: SQLAlchemy 2.x
 
-### demo-be-clojure-pedestal
+### a-demo-be-clojure-pedestal
 
 - **Plain namespace functions, no defprotocol** — 4 repo namespaces with `defn` functions that
   take a datasource; handlers require the namespace and call functions directly
@@ -95,13 +95,13 @@ Feature: Repository pattern abstraction
 Feature: Consistent repository pattern across demo apps
 
   Scenario: All demo backend apps use repository pattern
-    Given all 4 apps modified by this plan (demo-be-python-fastapi, demo-be-clojure-pedestal,
-      demo-be-rust-axum, demo-be-fsharp-giraffe)
+    Given all 4 apps modified by this plan (a-demo-be-python-fastapi, a-demo-be-clojure-pedestal,
+      a-demo-be-rust-axum, a-demo-be-fsharp-giraffe)
     When I inspect their data access layer
     Then every app has abstract repository interfaces
     And every app injects repositories rather than accessing DB directly
 
-  # Constraint: demo-fs-ts-nextjs is already compliant and is not modified by this plan.
+  # Constraint: a-demo-fs-ts-nextjs is already compliant and is not modified by this plan.
   # It is listed in the README compliance table for completeness.
 
   Scenario: Three-level testing works with repository seams

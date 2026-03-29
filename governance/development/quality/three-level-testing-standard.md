@@ -17,7 +17,7 @@ updated: 2026-03-13
 
 # Three-Level Testing Standard
 
-Defines the mandatory three-level testing architecture for all projects in the monorepo. The standard applies universally with project-type-specific adaptations. Demo-be backends consume shared Gherkin specifications from `specs/apps/demo/be/gherkin/` at all three levels. Other projects follow the same isolation boundaries appropriate to their domain.
+Defines the mandatory three-level testing architecture for all projects in the monorepo. The standard applies universally with project-type-specific adaptations. Demo-be backends consume shared Gherkin specifications from `specs/apps/a-demo/be/gherkin/` at all three levels. Other projects follow the same isolation boundaries appropriate to their domain.
 
 ## Principles Implemented/Respected
 
@@ -42,7 +42,7 @@ Defines the mandatory three-level testing architecture for all projects in the m
 | Aspect            | Rule                                                                |
 | ----------------- | ------------------------------------------------------------------- |
 | Dependencies      | **All mocked** — no real database, no real HTTP, no real filesystem |
-| Gherkin specs     | **Must consume** shared specs from `specs/apps/demo/be/gherkin/`    |
+| Gherkin specs     | **Must consume** shared specs from `specs/apps/a-demo/be/gherkin/`  |
 | Database          | Mocked repositories / in-memory stores                              |
 | HTTP layer        | None — call service functions directly                              |
 | External services | None                                                                |
@@ -79,7 +79,7 @@ Then the product should be created successfully
 | Aspect            | Rule                                                                    |
 | ----------------- | ----------------------------------------------------------------------- |
 | Dependencies      | **Real database only** — no HTTP, no external services                  |
-| Gherkin specs     | **Must consume** shared specs from `specs/apps/demo/be/gherkin/`        |
+| Gherkin specs     | **Must consume** shared specs from `specs/apps/a-demo/be/gherkin/`      |
 | Database          | **Real PostgreSQL** via `docker-compose.integration.yml`                |
 | HTTP layer        | **None** — call service/repository functions directly, no HTTP dispatch |
 | External services | None                                                                    |
@@ -115,16 +115,16 @@ The test harness MUST:
 
 **Purpose**: Verify the complete system works end-to-end, including HTTP routing, serialization, authentication, and database persistence.
 
-| Aspect            | Rule                                                             |
-| ----------------- | ---------------------------------------------------------------- |
-| Dependencies      | **All real** — real HTTP, real database, real server             |
-| Gherkin specs     | **Must consume** shared specs from `specs/apps/demo/be/gherkin/` |
-| Database          | Real PostgreSQL (via docker-compose in CI)                       |
-| HTTP layer        | Real HTTP requests via Playwright                                |
-| External services | As needed                                                        |
-| Coverage          | Not measured at this level                                       |
-| Nx caching        | `cache: false` (full stack = non-deterministic)                  |
-| Runs in           | Scheduled CI (per-service workflows)                             |
+| Aspect            | Rule                                                               |
+| ----------------- | ------------------------------------------------------------------ |
+| Dependencies      | **All real** — real HTTP, real database, real server               |
+| Gherkin specs     | **Must consume** shared specs from `specs/apps/a-demo/be/gherkin/` |
+| Database          | Real PostgreSQL (via docker-compose in CI)                         |
+| HTTP layer        | Real HTTP requests via Playwright                                  |
+| External services | As needed                                                          |
+| Coverage          | Not measured at this level                                         |
+| Nx caching        | `cache: false` (full stack = non-deterministic)                    |
+| Runs in           | Scheduled CI (per-service workflows)                               |
 
 **Architecture**: Playwright sends real HTTP requests to a running server backed by a real database.
 
@@ -134,7 +134,7 @@ Playwright -> HTTP Request -> Running Server -> Real PostgreSQL
 
 ## Spec Consumption Summary
 
-All three levels consume the same shared Gherkin scenarios from [`specs/apps/demo/be/gherkin/`](../../../specs/apps/demo/be/gherkin/README.md). The difference is HOW the step definitions execute them:
+All three levels consume the same shared Gherkin scenarios from [`specs/apps/a-demo/be/gherkin/`](../../../specs/apps/a-demo/be/gherkin/README.md). The difference is HOW the step definitions execute them:
 
 | Level       | Step Implementation                          | What Varies                |
 | ----------- | -------------------------------------------- | -------------------------- |
@@ -150,14 +150,14 @@ For Nx to invalidate cached test results when relevant files change, all `test:u
 1. **Source files** — language-specific glob patterns (e.g., `{projectRoot}/src/**/*.go`)
 2. **Generated contracts** — `{projectRoot}/generated-contracts/**/*` (or `generated_contracts/`
    for Python and Clojure, which use underscore)
-3. **Gherkin specs** — `{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature` (demo-be
+3. **Gherkin specs** — `{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature` (demo-be
    backends only)
 
 Without these explicit inputs, Nx may serve a cached result after a Gherkin spec is updated or
 after the OpenAPI contract spec triggers a `codegen` run — causing stale test results.
 
-Frontend apps (`demo-fe-*`) include generated contracts in `inputs` but do not include Gherkin
-specs because they use a separate spec directory (`specs/apps/demo/fe/gherkin/`).
+Frontend apps (`a-demo-fe-*`) include generated contracts in `inputs` but do not include Gherkin
+specs because they use a separate spec directory (`specs/apps/a-demo/fe/gherkin/`).
 
 See [Nx Target Standards](../infra/nx-targets.md) for the full canonical inputs table per language.
 
@@ -172,7 +172,7 @@ is currently active for CLI apps only. This will be addressed in a follow-up pla
 Each demo-be backend must have:
 
 ```
-apps/demo-be-{lang}-{framework}/
+apps/a-demo-be-{lang}-{framework}/
   tests/
     unit/          # Unit test step definitions (mocked repos)
     integration/   # Integration test step definitions (real DB, no HTTP)
@@ -187,15 +187,15 @@ The exact directory structure varies by language convention (e.g., Go uses `_tes
 
 The three-level standard applies universally, with adaptations per project type:
 
-| Project Type                 | Unit                         | Integration                      | E2E                                  | Gherkin Specs                 |
-| ---------------------------- | ---------------------------- | -------------------------------- | ------------------------------------ | ----------------------------- |
-| Demo-be API backend          | All mocked + specs           | Real PostgreSQL, no HTTP + specs | Playwright + specs                   | `specs/apps/demo/be/gherkin/` |
-| Web UI app (organiclever-fe) | Vitest mocks                 | MSW in-process (cacheable)       | Playwright                           | Project-specific              |
-| CLI app (Go)                 | Go test mocks                | Godog BDD in-process (cacheable) | N/A                                  | `specs/{app}/`                |
-| Library (Go)                 | Go test mocks                | Godog BDD in-process (cacheable) | N/A                                  | `specs/{lib}/`                |
-| Demo-fe frontend             | Vitest/Flutter mocks + specs | N/A                              | Playwright (via demo-fe-e2e) + specs | `specs/apps/demo/fe/gherkin/` |
-| Hugo site                    | Exempt                       | Exempt                           | Exempt                               | N/A                           |
-| E2E runner                   | N/A                          | N/A                              | Playwright                           | Shared specs                  |
+| Project Type                 | Unit                         | Integration                      | E2E                                    | Gherkin Specs                   |
+| ---------------------------- | ---------------------------- | -------------------------------- | -------------------------------------- | ------------------------------- |
+| Demo-be API backend          | All mocked + specs           | Real PostgreSQL, no HTTP + specs | Playwright + specs                     | `specs/apps/a-demo/be/gherkin/` |
+| Web UI app (organiclever-fe) | Vitest mocks                 | MSW in-process (cacheable)       | Playwright                             | Project-specific                |
+| CLI app (Go)                 | Go test mocks                | Godog BDD in-process (cacheable) | N/A                                    | `specs/{app}/`                  |
+| Library (Go)                 | Go test mocks                | Godog BDD in-process (cacheable) | N/A                                    | `specs/{lib}/`                  |
+| Demo-fe frontend             | Vitest/Flutter mocks + specs | N/A                              | Playwright (via a-demo-fe-e2e) + specs | `specs/apps/a-demo/fe/gherkin/` |
+| Hugo site                    | Exempt                       | Exempt                           | Exempt                                 | N/A                             |
+| E2E runner                   | N/A                          | N/A                              | Playwright                             | Shared specs                    |
 
 **Key rules by project type**:
 
@@ -203,7 +203,7 @@ The three-level standard applies universally, with adaptations per project type:
 - **Web UI apps**: All three levels mandatory; integration uses in-process mocking (MSW); cacheable
 - **CLI apps**: Unit + integration mandatory; integration uses Godog BDD with in-process command execution; cacheable
 - **Libraries**: Unit mandatory; integration optional (Godog BDD with public API calls); cacheable
-- **Demo-fe frontends**: Two-level testing (unit + E2E); no integration tier; all consume Gherkin specs from `specs/apps/demo/fe/gherkin/`; E2E via centralized `demo-fe-e2e` Playwright suite
+- **Demo-fe frontends**: Two-level testing (unit + E2E); no integration tier; all consume Gherkin specs from `specs/apps/a-demo/fe/gherkin/`; E2E via centralized `a-demo-fe-e2e` Playwright suite
 - **Hugo sites**: Exempt from all test levels (only `test:quick` for link checking)
 
 ## Anti-Patterns

@@ -1,13 +1,13 @@
-# Technical Design: demo-be-golang-gin
+# Technical Design: a-demo-be-golang-gin
 
 ## BDD Integration Test: Godog + net/http/httptest
 
-Integration tests parse the canonical `.feature` files in `specs/apps/demo/be/gherkin/` using
+Integration tests parse the canonical `.feature` files in `specs/apps/a-demo/be/gherkin/` using
 **Godog**, the Go-native Gherkin BDD runner. Each step function receives a shared scenario
 context struct passed via a pointer through `ScenarioContext.Before`. HTTP calls use Go's
 standard `net/http/httptest.NewRecorder` and a Gin engine configured with the SQLite in-memory
-GORM provider — fully in-process with no live server, matching the pattern of `demo-be-java-springboot`
-(MockMvc), `demo-be-elixir-phoenix` (ConnCase), and `demo-be-fsharp-giraffe` (TestServer).
+GORM provider — fully in-process with no live server, matching the pattern of `a-demo-be-java-springboot`
+(MockMvc), `a-demo-be-elixir-phoenix` (ConnCase), and `a-demo-be-fsharp-giraffe` (TestServer).
 
 Integration test files use the `//go:build integration` build tag and the `TestIntegration`
 test function name so they are excluded from normal `go test ./...` runs and only execute via
@@ -34,7 +34,7 @@ func TestIntegration(t *testing.T) {
         ScenarioInitializer: InitializeScenario,
         Options: &godog.Options{
             Format:   "pretty",
-            Paths:    []string{"../../../../specs/apps/demo/be/gherkin"},
+            Paths:    []string{"../../../../specs/apps/a-demo/be/gherkin"},
             TestingT: t,
         },
     }
@@ -108,10 +108,10 @@ Feature files are resolved relative to the test file location using a path trave
 workspace root:
 
 ```go
-Paths: []string{"../../../../specs/apps/demo/be/gherkin"},
+Paths: []string{"../../../../specs/apps/a-demo/be/gherkin"},
 ```
 
-This resolves from `apps/demo-be-golang-gin/internal/integration/` up to the workspace root and
+This resolves from `apps/a-demo-be-golang-gin/internal/integration/` up to the workspace root and
 then into the shared specs directory.
 
 ---
@@ -121,7 +121,7 @@ then into the shared specs directory.
 ### Project Structure
 
 ```
-apps/demo-be-golang-gin/
+apps/a-demo-be-golang-gin/
 ├── cmd/
 │   └── server/
 │       └── main.go                    # Entry point — calls server.Run()
@@ -174,7 +174,7 @@ apps/demo-be-golang-gin/
 │       ├── user_test.go               # Unit tests for domain validation
 │       ├── expense_test.go            # Unit tests for currency/amount/unit validation
 │       └── attachment_test.go         # Unit tests for attachment validation
-├── go.mod                             # Module: github.com/.../apps/demo-be-golang-gin
+├── go.mod                             # Module: github.com/.../apps/a-demo-be-golang-gin
 ├── go.sum
 ├── .golangci.yml                      # golangci-lint configuration
 ├── project.json                       # Nx targets
@@ -481,16 +481,16 @@ Threshold configurable via environment variable (default: 5). After threshold, s
 
 ```json
 {
-  "name": "demo-be-golang-gin",
+  "name": "a-demo-be-golang-gin",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/demo-be-golang-gin",
+  "sourceRoot": "apps/a-demo-be-golang-gin",
   "projectType": "application",
   "targets": {
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "CGO_ENABLED=0 go build -o dist/demo-be-golang-gin ./cmd/server",
-        "cwd": "apps/demo-be-golang-gin"
+        "command": "CGO_ENABLED=0 go build -o dist/a-demo-be-golang-gin ./cmd/server",
+        "cwd": "apps/a-demo-be-golang-gin"
       },
       "outputs": ["{projectRoot}/dist"]
     },
@@ -498,14 +498,14 @@ Threshold configurable via environment variable (default: 5). After threshold, s
       "executor": "nx:run-commands",
       "options": {
         "command": "go run ./cmd/server",
-        "cwd": "apps/demo-be-golang-gin"
+        "cwd": "apps/a-demo-be-golang-gin"
       }
     },
     "start": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "./dist/demo-be-golang-gin",
-        "cwd": "apps/demo-be-golang-gin"
+        "command": "./dist/a-demo-be-golang-gin",
+        "cwd": "apps/a-demo-be-golang-gin"
       }
     },
     "test:quick": {
@@ -513,48 +513,48 @@ Threshold configurable via environment variable (default: 5). After threshold, s
       "options": {
         "commands": [
           "CGO_ENABLED=0 go test -coverprofile=cover.out ./... -count=1",
-          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-be-golang-gin/cover.out 90)"
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/a-demo-be-golang-gin/cover.out 90)"
         ],
         "parallel": false,
-        "cwd": "apps/demo-be-golang-gin"
+        "cwd": "apps/a-demo-be-golang-gin"
       }
     },
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
         "command": "CGO_ENABLED=0 go test -run TestUnit ./... -count=1",
-        "cwd": "apps/demo-be-golang-gin"
+        "cwd": "apps/a-demo-be-golang-gin"
       }
     },
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
         "command": "CGO_ENABLED=0 go test -tags=integration -run TestIntegration ./... -count=1",
-        "cwd": "apps/demo-be-golang-gin"
+        "cwd": "apps/a-demo-be-golang-gin"
       },
       "cache": true,
       "inputs": [
         "{projectRoot}/internal/**/*.go",
         "{projectRoot}/cmd/**/*.go",
-        "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature"
+        "{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature"
       ]
     },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
         "command": "CGO_ENABLED=0 golangci-lint run --allow-parallel-runners ./...",
-        "cwd": "apps/demo-be-golang-gin"
+        "cwd": "apps/a-demo-be-golang-gin"
       }
     },
     "install": {
       "executor": "nx:run-commands",
       "options": {
         "command": "go mod tidy",
-        "cwd": "apps/demo-be-golang-gin"
+        "cwd": "apps/a-demo-be-golang-gin"
       }
     }
   },
-  "tags": ["type:app", "platform:gin", "lang:golang", "domain:demo-be"],
+  "tags": ["type:app", "platform:gin", "lang:golang", "domain:a-demo-be"],
   "implicitDependencies": ["rhino-cli"]
 }
 ```
@@ -616,52 +616,52 @@ Key linters:
 
 ### Port Assignment
 
-| Service                 | Port                                               |
-| ----------------------- | -------------------------------------------------- |
-| demo-be-db              | 5432                                               |
-| demo-be-java-springboot | 8201                                               |
-| demo-be-elixir-phoenix  | 8201 (same port — mutually exclusive alternatives) |
-| demo-be-fsharp-giraffe  | 8201 (same port — mutually exclusive alternatives) |
-| demo-be-golang-gin      | 8201 (same port — mutually exclusive alternatives) |
+| Service                   | Port                                               |
+| ------------------------- | -------------------------------------------------- |
+| a-demo-be-db              | 5432                                               |
+| a-demo-be-java-springboot | 8201                                               |
+| a-demo-be-elixir-phoenix  | 8201 (same port — mutually exclusive alternatives) |
+| a-demo-be-fsharp-giraffe  | 8201 (same port — mutually exclusive alternatives) |
+| a-demo-be-golang-gin      | 8201 (same port — mutually exclusive alternatives) |
 
-### Docker Compose (`infra/dev/demo-be-golang-gin/docker-compose.yml`)
+### Docker Compose (`infra/dev/a-demo-be-golang-gin/docker-compose.yml`)
 
 ```yaml
 services:
-  demo-be-db:
+  a-demo-be-db:
     image: postgres:17-alpine
-    container_name: demo-be-db
+    container_name: a-demo-be-db
     environment:
-      POSTGRES_DB: demo_be_golang_gin
-      POSTGRES_USER: demo_be_golang_gin
-      POSTGRES_PASSWORD: demo_be_golang_gin
+      POSTGRES_DB: a_demo_be_golang_gin
+      POSTGRES_USER: a_demo_be_golang_gin
+      POSTGRES_PASSWORD: a_demo_be_golang_gin
     ports:
       - "5432:5432"
     volumes:
-      - demo-be-golang-gin-db-data:/var/lib/postgresql/data
+      - a-demo-be-golang-gin-db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U demo_be_golang_gin"]
+      test: ["CMD-SHELL", "pg_isready -U a_demo_be_golang_gin"]
       interval: 5s
       timeout: 3s
       retries: 5
     networks:
-      - demo-be-golang-gin-network
+      - a-demo-be-golang-gin-network
 
-  demo-be-golang-gin:
+  a-demo-be-golang-gin:
     build:
       context: .
       dockerfile: Dockerfile.be.dev
-    container_name: demo-be-golang-gin
+    container_name: a-demo-be-golang-gin
     ports:
       - "8201:8201"
     environment:
       - PORT=8201
-      - DATABASE_URL=host=demo-be-db user=demo_be_golang_gin password=demo_be_golang_gin dbname=demo_be_golang_gin port=5432 sslmode=disable
+      - DATABASE_URL=host=a-demo-be-db user=a_demo_be_golang_gin password=a_demo_be_golang_gin dbname=a_demo_be_golang_gin port=5432 sslmode=disable
       - APP_JWT_SECRET=dev-jwt-secret-at-least-32-chars-long
     volumes:
-      - ../../../apps/demo-be-golang-gin:/workspace:rw
+      - ../../../apps/a-demo-be-golang-gin:/workspace:rw
     depends_on:
-      demo-be-db:
+      a-demo-be-db:
         condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:8201/health || exit 1"]
@@ -669,13 +669,13 @@ services:
       timeout: 5s
       retries: 6
     networks:
-      - demo-be-golang-gin-network
+      - a-demo-be-golang-gin-network
 
 volumes:
-  demo-be-golang-gin-db-data:
+  a-demo-be-golang-gin-db-data:
 
 networks:
-  demo-be-golang-gin-network:
+  a-demo-be-golang-gin-network:
 ```
 
 ### Dockerfile.be.dev
@@ -700,27 +700,27 @@ in development. The production binary uses `CGO_ENABLED=0` and targets PostgreSQ
 
 ## GitHub Actions
 
-### New Workflow: `e2e-demo-be-golang-gin.yml`
+### New Workflow: `e2e-a-demo-be-golang-gin.yml`
 
-Mirrors `e2e-demo-be-fsharp-giraffe.yml` with:
+Mirrors `e2e-a-demo-be-fsharp-giraffe.yml` with:
 
 - Name: `E2E - Demo Backend (GOGN)`
 - Schedule: same crons as other demo-be implementations (06:00 and 18:00 WIB daily)
 - Job: checkout → docker compose up → wait-healthy → Volta → npm ci →
-  `nx run demo-be-e2e:test:e2e` with `BASE_URL=http://localhost:8201` →
-  upload artifact `playwright-report-demo-be-golang-gin` → docker down (always)
+  `nx run a-demo-be-e2e:test:e2e` with `BASE_URL=http://localhost:8201` →
+  upload artifact `playwright-report-a-demo-be-golang-gin` → docker down (always)
 
 ### Updated Workflow: `main-ci.yml`
 
 Add coverage upload step (Go SDK already present in CI — used by other Go projects):
 
 ```yaml
-- name: Upload coverage — demo-be-golang-gin
+- name: Upload coverage — a-demo-be-golang-gin
   uses: codecov/codecov-action@v5
   with:
     token: ${{ secrets.CODECOV_TOKEN }}
-    files: apps/demo-be-golang-gin/cover.out
-    flags: demo-be-golang-gin
+    files: apps/a-demo-be-golang-gin/cover.out
+    flags: a-demo-be-golang-gin
     fail_ci_if_error: false
 ```
 
@@ -731,7 +731,7 @@ Add coverage upload step (Go SDK already present in CI — used by other Go proj
 Module path follows the workspace convention:
 
 ```
-module github.com/wahidyankf/open-sharia-enterprise/apps/demo-be-golang-gin
+module github.com/wahidyankf/open-sharia-enterprise/apps/a-demo-be-golang-gin
 ```
 
 ### Direct Dependencies

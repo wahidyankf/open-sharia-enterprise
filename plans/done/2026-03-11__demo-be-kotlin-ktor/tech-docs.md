@@ -1,14 +1,14 @@
-# Technical Design: demo-be-kotlin-ktor
+# Technical Design: a-demo-be-kotlin-ktor
 
 ## BDD Integration Test: Cucumber JVM + Ktor testApplication
 
-Integration tests parse the canonical `.feature` files in `specs/apps/demo/be/gherkin/` using
+Integration tests parse the canonical `.feature` files in `specs/apps/a-demo/be/gherkin/` using
 **Cucumber JVM** with Kotlin lambda step definitions. Cucumber discovers feature files at test
 time via classpath resource loading.
 
 HTTP calls use Ktor's built-in `testApplication {}` DSL — no live server is started; requests
-are handled in-process by the same Ktor engine pipeline (matching `demo-be-java-springboot`'s MockMvc
-approach and `demo-be-fsharp-giraffe`'s ASP.NET TestServer approach). The database layer uses Exposed +
+are handled in-process by the same Ktor engine pipeline (matching `a-demo-be-java-springboot`'s MockMvc
+approach and `a-demo-be-fsharp-giraffe`'s ASP.NET TestServer approach). The database layer uses Exposed +
 SQLite in-memory for full isolation and determinism — Koin injects the in-memory data source for
 tests.
 
@@ -42,14 +42,14 @@ Feature files are copied into the test classpath via a Gradle `processTestResour
 ```kotlin
 // build.gradle.kts
 tasks.processTestResources {
-    from("${rootProject.projectDir}/../../specs/apps/demo/be/gherkin") {
-        into("specs/apps/demo/be/gherkin")
+    from("${rootProject.projectDir}/../../specs/apps/a-demo/be/gherkin") {
+        into("specs/apps/a-demo/be/gherkin")
     }
 }
 ```
 
 Cucumber discovers feature files from the classpath path
-`specs/apps/demo/be/gherkin/**/*.feature` configured in `junit-platform.properties`.
+`specs/apps/a-demo/be/gherkin/**/*.feature` configured in `junit-platform.properties`.
 
 ### Cucumber JUnit 5 Platform Configuration
 
@@ -57,8 +57,8 @@ Cucumber discovers feature files from the classpath path
 # src/test/resources/junit-platform.properties
 cucumber.publish.enabled=false
 cucumber.plugin=pretty,json:build/reports/cucumber.json
-cucumber.glue=com.demobektkt.integration.steps
-cucumber.features=classpath:specs/apps/demo/be/gherkin
+cucumber.glue=com.aademobektkt.integration.steps
+cucumber.features=classpath:specs/apps/a-demo/be/gherkin
 ```
 
 ---
@@ -68,7 +68,7 @@ cucumber.features=classpath:specs/apps/demo/be/gherkin
 ### Project Structure
 
 ```
-apps/demo-be-kotlin-ktor/
+apps/a-demo-be-kotlin-ktor/
 ├── src/
 │   ├── main/
 │   │   └── kotlin/com/organiclever/demoktkt/
@@ -336,7 +336,7 @@ class JwtService(private val secret: String) {
 
     fun generateAccessToken(userId: UUID, username: String, role: Role): String =
         JWT.create()
-            .withIssuer("demo-be-kotlin-ktor")
+            .withIssuer("a-demo-be-kotlin-ktor")
             .withSubject(userId.toString())
             .withClaim("username", username)
             .withClaim("role", role.name)
@@ -347,7 +347,7 @@ class JwtService(private val secret: String) {
 
     fun generateRefreshToken(userId: UUID): String =
         JWT.create()
-            .withIssuer("demo-be-kotlin-ktor")
+            .withIssuer("a-demo-be-kotlin-ktor")
             .withSubject(userId.toString())
             .withClaim("jti", UUID.randomUUID().toString())
             .withIssuedAt(Date())
@@ -355,7 +355,7 @@ class JwtService(private val secret: String) {
             .sign(algorithm)
 
     fun verifier(): JWTVerifier =
-        JWT.require(algorithm).withIssuer("demo-be-kotlin-ktor").build()
+        JWT.require(algorithm).withIssuer("a-demo-be-kotlin-ktor").build()
 }
 ```
 
@@ -438,16 +438,16 @@ data class Expense(
 
 ```json
 {
-  "name": "demo-be-kotlin-ktor",
+  "name": "a-demo-be-kotlin-ktor",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/demo-be-kotlin-ktor/src",
+  "sourceRoot": "apps/a-demo-be-kotlin-ktor/src",
   "projectType": "application",
   "targets": {
     "build": {
       "executor": "nx:run-commands",
       "options": {
         "command": "./gradlew build -x test",
-        "cwd": "apps/demo-be-kotlin-ktor"
+        "cwd": "apps/a-demo-be-kotlin-ktor"
       },
       "outputs": ["{projectRoot}/build"]
     },
@@ -455,14 +455,14 @@ data class Expense(
       "executor": "nx:run-commands",
       "options": {
         "command": "./gradlew run",
-        "cwd": "apps/demo-be-kotlin-ktor"
+        "cwd": "apps/a-demo-be-kotlin-ktor"
       }
     },
     "start": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "java -jar build/libs/demo-be-kotlin-ktor-all.jar",
-        "cwd": "apps/demo-be-kotlin-ktor"
+        "command": "java -jar build/libs/a-demo-be-kotlin-ktor-all.jar",
+        "cwd": "apps/a-demo-be-kotlin-ktor"
       }
     },
     "test:quick": {
@@ -470,49 +470,49 @@ data class Expense(
       "options": {
         "commands": [
           "./gradlew test koverXmlReport",
-          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-be-kotlin-ktor/build/reports/kover/report.xml 90)",
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/a-demo-be-kotlin-ktor/build/reports/kover/report.xml 90)",
           "./gradlew detekt ktfmtCheck"
         ],
         "parallel": false,
-        "cwd": "apps/demo-be-kotlin-ktor"
+        "cwd": "apps/a-demo-be-kotlin-ktor"
       }
     },
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
         "command": "./gradlew test --tests '*.unit.*'",
-        "cwd": "apps/demo-be-kotlin-ktor"
+        "cwd": "apps/a-demo-be-kotlin-ktor"
       }
     },
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
         "command": "./gradlew test --tests '*.integration.*'",
-        "cwd": "apps/demo-be-kotlin-ktor"
+        "cwd": "apps/a-demo-be-kotlin-ktor"
       },
       "cache": true,
       "inputs": [
         "{projectRoot}/src/main/**/*.kt",
         "{projectRoot}/src/test/**/*.kt",
-        "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature"
+        "{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature"
       ]
     },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
         "command": "./gradlew detekt",
-        "cwd": "apps/demo-be-kotlin-ktor"
+        "cwd": "apps/a-demo-be-kotlin-ktor"
       }
     }
   },
-  "tags": ["type:app", "platform:ktor", "lang:kotlin", "domain:demo-be"],
+  "tags": ["type:app", "platform:ktor", "lang:kotlin", "domain:a-demo-be"],
   "implicitDependencies": ["rhino-cli"]
 }
 ```
 
 > **Note on `typecheck`**: No `typecheck` target is defined. The Kotlin compiler enforces null
 > safety and type correctness at compile time. `build` already invokes the full compiler — this
-> matches the convention for `demo-be-java-springboot` (Java) and `demo-be-fsharp-giraffe` (F#).
+> matches the convention for `a-demo-be-java-springboot` (Java) and `a-demo-be-fsharp-giraffe` (F#).
 >
 > **Note on `test:quick`**: Sequential execution (`parallel: false`) is required because Kover
 > XML report must exist before `rhino-cli` validates coverage, and `detekt`/`ktfmtCheck` run
@@ -527,64 +527,64 @@ data class Expense(
 
 ### Port Assignment
 
-| Service                 | Port                                               |
-| ----------------------- | -------------------------------------------------- |
-| demo-be-db              | 5432                                               |
-| demo-be-java-springboot | 8201                                               |
-| demo-be-elixir-phoenix  | 8201 (same port — mutually exclusive alternatives) |
-| demo-be-fsharp-giraffe  | 8201 (same port — mutually exclusive alternatives) |
-| demo-be-kotlin-ktor     | 8201 (same port — mutually exclusive alternatives) |
+| Service                   | Port                                               |
+| ------------------------- | -------------------------------------------------- |
+| a-demo-be-db              | 5432                                               |
+| a-demo-be-java-springboot | 8201                                               |
+| a-demo-be-elixir-phoenix  | 8201 (same port — mutually exclusive alternatives) |
+| a-demo-be-fsharp-giraffe  | 8201 (same port — mutually exclusive alternatives) |
+| a-demo-be-kotlin-ktor     | 8201 (same port — mutually exclusive alternatives) |
 
-### Docker Compose (`infra/dev/demo-be-kotlin-ktor/docker-compose.yml`)
+### Docker Compose (`infra/dev/a-demo-be-kotlin-ktor/docker-compose.yml`)
 
 ```yaml
 services:
-  demo-be-db:
+  a-demo-be-db:
     image: postgres:17-alpine
-    container_name: demo-be-db
+    container_name: a-demo-be-db
     environment:
-      POSTGRES_DB: demo_be_kotlin_ktor
-      POSTGRES_USER: demo_be_kotlin_ktor
-      POSTGRES_PASSWORD: demo_be_kotlin_ktor
+      POSTGRES_DB: a_demo_be_kotlin_ktor
+      POSTGRES_USER: a_demo_be_kotlin_ktor
+      POSTGRES_PASSWORD: a_demo_be_kotlin_ktor
     ports:
       - "5432:5432"
     volumes:
-      - demo-be-kotlin-ktor-db-data:/var/lib/postgresql/data
+      - a-demo-be-kotlin-ktor-db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U demo_be_kotlin_ktor"]
+      test: ["CMD-SHELL", "pg_isready -U a_demo_be_kotlin_ktor"]
       interval: 5s
       timeout: 3s
       retries: 5
     networks:
-      - demo-be-kotlin-ktor-network
+      - a-demo-be-kotlin-ktor-network
 
-  demo-be-kotlin-ktor:
+  a-demo-be-kotlin-ktor:
     build:
       context: .
       dockerfile: Dockerfile.be.dev
-    container_name: demo-be-kotlin-ktor
+    container_name: a-demo-be-kotlin-ktor
     ports:
       - "8201:8201"
     environment:
       - PORT=8201
-      - DATABASE_URL=jdbc:postgresql://demo-be-db:5432/demo_be_kotlin_ktor
-      - DATABASE_USER=demo_be_kotlin_ktor
-      - DATABASE_PASSWORD=demo_be_kotlin_ktor
+      - DATABASE_URL=jdbc:postgresql://a-demo-be-db:5432/a_demo_be_kotlin_ktor
+      - DATABASE_USER=a_demo_be_kotlin_ktor
+      - DATABASE_PASSWORD=a_demo_be_kotlin_ktor
       - JWT_SECRET=dev-jwt-secret-at-least-32-chars-long
     volumes:
-      - ../../../apps/demo-be-kotlin-ktor:/workspace:rw
+      - ../../../apps/a-demo-be-kotlin-ktor:/workspace:rw
     depends_on:
-      demo-be-db:
+      a-demo-be-db:
         condition: service_healthy
     command: sh -c "./gradlew run"
     networks:
-      - demo-be-kotlin-ktor-network
+      - a-demo-be-kotlin-ktor-network
 
 volumes:
-  demo-be-kotlin-ktor-db-data:
+  a-demo-be-kotlin-ktor-db-data:
 
 networks:
-  demo-be-kotlin-ktor-network:
+  a-demo-be-kotlin-ktor-network:
 ```
 
 ### Dockerfile.be.dev
@@ -607,27 +607,27 @@ CMD ["./gradlew", "run"]
 
 ## GitHub Actions
 
-### New Workflow: `e2e-demo-be-kotlin-ktor.yml`
+### New Workflow: `e2e-a-demo-be-kotlin-ktor.yml`
 
-Mirrors `e2e-demo-be-java-springboot.yml` and `e2e-demo-be-fsharp-giraffe.yml` with:
+Mirrors `e2e-a-demo-be-java-springboot.yml` and `e2e-a-demo-be-fsharp-giraffe.yml` with:
 
 - Name: `E2E - Demo BE (KTKT)`
 - Schedule: same crons as jasb/exph/fsgi
 - Job: checkout → docker compose up → wait-healthy → Volta → npm ci →
-  `nx run demo-be-e2e:test:e2e` with `BASE_URL=http://localhost:8201` →
+  `nx run a-demo-be-e2e:test:e2e` with `BASE_URL=http://localhost:8201` →
   upload artifact `playwright-report-be-ktkt` → docker down (always)
 
 ### Updated Workflow: `main-ci.yml`
 
-JDK is already set up in `main-ci.yml` for `demo-be-java-springboot`. Add after the Kover report step:
+JDK is already set up in `main-ci.yml` for `a-demo-be-java-springboot`. Add after the Kover report step:
 
 ```yaml
-- name: Upload coverage — demo-be-kotlin-ktor
+- name: Upload coverage — a-demo-be-kotlin-ktor
   uses: codecov/codecov-action@v5
   with:
     token: ${{ secrets.CODECOV_TOKEN }}
-    files: apps/demo-be-kotlin-ktor/build/reports/kover/report.xml
-    flags: demo-be-kotlin-ktor
+    files: apps/a-demo-be-kotlin-ktor/build/reports/kover/report.xml
+    flags: a-demo-be-kotlin-ktor
     fail_ci_if_error: false
 ```
 

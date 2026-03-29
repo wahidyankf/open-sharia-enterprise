@@ -1,20 +1,20 @@
-# Plan: demo-be-fsharp-giraffe (Done)
+# Plan: a-demo-be-fsharp-giraffe (Done)
 
 F# / Giraffe reimplementation of the demo backend REST API — a functional twin of
-`apps/demo-be-java-springboot` (Java/Spring Boot) and `apps/demo-be-elixir-phoenix` (Elixir/Phoenix) using F#,
+`apps/a-demo-be-java-springboot` (Java/Spring Boot) and `apps/a-demo-be-elixir-phoenix` (Elixir/Phoenix) using F#,
 Giraffe, and ASP.NET Core.
 
 **Status**: Done
 
 ## Goals
 
-- Provide a functionally equivalent backend to `demo-be-java-springboot` and `demo-be-elixir-phoenix` using the
+- Provide a functionally equivalent backend to `a-demo-be-java-springboot` and `a-demo-be-elixir-phoenix` using the
   F# ecosystem
-- Consume the shared `specs/apps/demo/be/gherkin/` Gherkin feature files (76 scenarios across
+- Consume the shared `specs/apps/a-demo/be/gherkin/` Gherkin feature files (76 scenarios across
   13 feature files) for BDD integration tests
 - Integrate into the Nx monorepo with the same target surface (`build`, `dev`, `start`,
   `test:quick`, `test:unit`, `test:integration`, `lint`, `typecheck`)
-- Reuse the existing `demo-be-e2e` Playwright BDD test suite for E2E validation
+- Reuse the existing `a-demo-be-e2e` Playwright BDD test suite for E2E validation
 - Add a dedicated GitHub Actions workflow and Docker Compose infra
 
 ## Naming
@@ -22,7 +22,7 @@ Giraffe, and ASP.NET Core.
 `fsgi` = **F#** (**F**-**S**harp) + **Gi**raffe — matching the suffix pattern of `-jasb`
 (Java Spring Boot) and `-exph` (Elixir Phoenix).
 
-## API Surface (identical to demo-be-java-springboot and demo-be-elixir-phoenix)
+## API Surface (identical to a-demo-be-java-springboot and a-demo-be-elixir-phoenix)
 
 | Method | Path                                            | Auth  | Description           |
 | ------ | ----------------------------------------------- | ----- | --------------------- |
@@ -56,19 +56,19 @@ Giraffe, and ASP.NET Core.
 
 ## Tech Stack
 
-| Concern          | Choice                                                                            |
-| ---------------- | --------------------------------------------------------------------------------- |
-| Language         | F# (.NET 10)                                                                      |
-| Web framework    | Giraffe (functional ASP.NET Core)                                                 |
-| Database ORM     | Entity Framework Core + Npgsql (PostgreSQL)                                       |
-| JWT              | System.IdentityModel.Tokens.Jwt + Microsoft.IdentityModel.JsonWebTokens           |
-| Password hashing | BCrypt.Net-Next                                                                   |
-| BDD (int. tests) | TickSpec (F#-native Gherkin runner) + xUnit                                       |
-| Linting          | FSharpLint                                                                        |
-| Formatting       | Fantomas (MANDATORY)                                                              |
-| Type checking    | F# compiler with `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>`            |
-| Coverage         | AltCover → LCOV → `rhino-cli test-coverage validate`                              |
-| Port             | **8201** (same as demo-be-java-springboot/exph — mutually exclusive alternatives) |
+| Concern          | Choice                                                                              |
+| ---------------- | ----------------------------------------------------------------------------------- |
+| Language         | F# (.NET 10)                                                                        |
+| Web framework    | Giraffe (functional ASP.NET Core)                                                   |
+| Database ORM     | Entity Framework Core + Npgsql (PostgreSQL)                                         |
+| JWT              | System.IdentityModel.Tokens.Jwt + Microsoft.IdentityModel.JsonWebTokens             |
+| Password hashing | BCrypt.Net-Next                                                                     |
+| BDD (int. tests) | TickSpec (F#-native Gherkin runner) + xUnit                                         |
+| Linting          | FSharpLint                                                                          |
+| Formatting       | Fantomas (MANDATORY)                                                                |
+| Type checking    | F# compiler with `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>`              |
+| Coverage         | AltCover → LCOV → `rhino-cli test-coverage validate`                                |
+| Port             | **8201** (same as a-demo-be-java-springboot/exph — mutually exclusive alternatives) |
 
 ## Gherkin Scenario Count
 
@@ -91,23 +91,23 @@ Giraffe, and ASP.NET Core.
 
 ## Related Files
 
-- `apps/demo-be-fsharp-giraffe/` — application source
-- `infra/dev/demo-be-fsharp-giraffe/` — Docker Compose dev infra
-- `.github/workflows/e2e-demo-be-fsharp-giraffe.yml` — E2E workflow
+- `apps/a-demo-be-fsharp-giraffe/` — application source
+- `infra/dev/a-demo-be-fsharp-giraffe/` — Docker Compose dev infra
+- `.github/workflows/e2e-a-demo-be-fsharp-giraffe.yml` — E2E workflow
 - `.github/workflows/main-ci.yml` — .NET SDK setup + coverage upload
-- `specs/apps/demo/be/` — shared Gherkin specs (consumed, not modified)
-- `apps/demo-be-e2e/` — reused Playwright E2E suite (consumed, not modified)
+- `specs/apps/a-demo/be/` — shared Gherkin specs (consumed, not modified)
+- `apps/a-demo-be-e2e/` — reused Playwright E2E suite (consumed, not modified)
 
 ## Files to Update
 
-| File                            | Change                                                                |
-| ------------------------------- | --------------------------------------------------------------------- |
-| `CLAUDE.md`                     | Add demo-be-fsharp-giraffe to Current Apps list, add F# coverage info |
-| `README.md`                     | Add demo-be-fsharp-giraffe badge and description in demo apps section |
-| `specs/apps/demo/be/README.md`  | Add F#/Giraffe row to Implementations table                           |
-| `apps/demo-be-e2e/project.json` | Add `demo-be-fsharp-giraffe` to `implicitDependencies`                |
-| `.github/workflows/main-ci.yml` | Add .NET SDK setup + coverage upload step                             |
-| `plans/in-progress/README.md`   | Add this plan to active plans list                                    |
+| File                              | Change                                                                  |
+| --------------------------------- | ----------------------------------------------------------------------- |
+| `CLAUDE.md`                       | Add a-demo-be-fsharp-giraffe to Current Apps list, add F# coverage info |
+| `README.md`                       | Add a-demo-be-fsharp-giraffe badge and description in demo apps section |
+| `specs/apps/a-demo/be/README.md`  | Add F#/Giraffe row to Implementations table                             |
+| `apps/a-demo-be-e2e/project.json` | Add `a-demo-be-fsharp-giraffe` to `implicitDependencies`                |
+| `.github/workflows/main-ci.yml`   | Add .NET SDK setup + coverage upload step                               |
+| `plans/in-progress/README.md`     | Add this plan to active plans list                                      |
 
 ## See Also
 

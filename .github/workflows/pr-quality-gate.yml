@@ -114,30 +114,30 @@ jobs:
           (cd libs/elixir-openapi-codegen && mix deps.get)
           (cd libs/elixir-gherkin && mix deps.get)
           (cd libs/elixir-cabbage && mix deps.get)
-          (cd apps/demo-be-elixir-phoenix && mix deps.get)
+          (cd apps/a-demo-be-elixir-phoenix && mix deps.get)
 
       - name: Install Python dependencies
-        run: (cd apps/demo-be-python-fastapi && uv sync)
+        run: (cd apps/a-demo-be-python-fastapi && uv sync)
 
       - name: Install Clojure dependencies
         run: |
           (cd libs/clojure-openapi-codegen && JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -P)
-          (cd apps/demo-be-clojure-pedestal && JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -P && JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -P -M:test:coverage)
+          (cd apps/a-demo-be-clojure-pedestal && JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -P && JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -P -M:test:coverage)
 
       - name: Generate contract types (required before Flutter pub get and typecheck/test:quick)
         run: |
           mkdir -p libs/clojure-openapi-codegen/classes
-          npx nx run demo-contracts:bundle
+          npx nx run a-demo-contracts:bundle
           npx nx run organiclever-contracts:bundle
           npx nx run-many -t codegen --projects=demo-*,organiclever-*
 
       - name: Install Flutter dependencies
-        run: (cd apps/demo-fe-dart-flutterweb && flutter pub get)
+        run: (cd apps/a-demo-fe-dart-flutterweb && flutter pub get)
 
       - name: Restore .NET dependencies (required before --no-restore typecheck)
         run: |
-          dotnet restore apps/demo-be-fsharp-giraffe/src/DemoBeFsgi/DemoBeFsgi.fsproj
-          dotnet restore apps/demo-be-csharp-aspnetcore/src/DemoBeCsas/DemoBeCsas.csproj
+          dotnet restore apps/a-demo-be-fsharp-giraffe/src/ADemoBeFsgi/ADemoBeFsgi.fsproj
+          dotnet restore apps/a-demo-be-csharp-aspnetcore/src/ADemoBeCsas/ADemoBeCsas.csproj
           dotnet restore apps/organiclever-be/src/OrganicLeverBe/OrganicLeverBe.fsproj
 
       - name: Typecheck (affected)

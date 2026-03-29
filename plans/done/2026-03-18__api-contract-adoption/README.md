@@ -10,12 +10,12 @@
 
 ## Overview
 
-Wire the generated contract types from `specs/apps/demo/contracts/` into all 14 demo apps that
+Wire the generated contract types from `specs/apps/a-demo/contracts/` into all 14 demo apps that
 currently generate but do not import them. The previous plan
 (`plans/done/2026-03-17__demo-api-contract-enforcement/`) established the infrastructure:
 OpenAPI 3.1 spec, Spectral linting, Redocly bundling, `codegen` Nx targets for all 16 apps, and
 custom codegen libs for Elixir and Clojure. However, an audit revealed that only 2 of the 16 apps
-with codegen targets (`demo-fe-ts-nextjs` and `demo-fe-ts-tanstack-start`) actually import and use
+with codegen targets (`a-demo-fe-ts-nextjs` and `a-demo-fe-ts-tanstack-start`) actually import and use
 the generated types. The other 14 generate types that sit unused.
 
 This plan completes the enforcement model: apps must import generated types so that contract
@@ -38,27 +38,27 @@ Both request AND response types must be enforced for the contract to be meaningf
 
 **Already wired (2 apps)**:
 
-- `demo-fe-ts-nextjs` — imports via `src/lib/api/types.ts` re-export layer
-- `demo-fe-ts-tanstack-start` — same pattern
+- `a-demo-fe-ts-nextjs` — imports via `src/lib/api/types.ts` re-export layer
+- `a-demo-fe-ts-tanstack-start` — same pattern
 
 **Generated but unused (14 apps)**:
 
-| App                       | Language          | Request Types                                 | Response Types                                |
-| ------------------------- | ----------------- | --------------------------------------------- | --------------------------------------------- |
-| demo-be-ts-effect         | TypeScript/Effect | Inline `Record<string, unknown>` in routes    | Inline objects in routes                      |
-| demo-be-golang-gin        | Go                | 4 local structs in `internal/handler/`        | Zero — all `gin.H{}` untyped maps             |
-| demo-be-java-springboot   | Java/Spring Boot  | 7 DTOs in `*.dto` packages                    | 11 DTOs in `*.dto` packages (name mismatches) |
-| demo-be-java-vertx        | Java/Vert.x       | Zero — all raw `JsonObject`                   | Zero — all raw `JsonObject`                   |
-| demo-be-kotlin-ktor       | Kotlin/Ktor       | 9 data classes in route files                 | Zero — all `mapOf()` / inline JSON            |
-| demo-be-python-fastapi    | Python/FastAPI    | 8 request models (some differ from generated) | 14 response models (many name mismatches)     |
-| demo-be-rust-axum         | Rust/Axum         | 7 structs in `handlers/`                      | 5 structs in `handlers/` (name mismatches)    |
-| demo-be-fsharp-giraffe    | F#                | 8 `[<CLIMutable>]` records inline             | Inline responses                              |
-| demo-be-csharp-aspnetcore | C#                | 6 sealed records in `Endpoints/`              | Inline responses                              |
-| demo-be-elixir-phoenix    | Elixir            | Maps in controllers                           | Maps in controllers                           |
-| demo-be-clojure-pedestal  | Clojure           | 6 Malli schemas in `domain/schemas.clj`       | 1 schema (`TokenResponse`) + untyped maps     |
-| demo-fe-dart-flutterweb   | Dart              | 8 model classes in `lib/models/`              | 12 model classes in `lib/models/`             |
-| demo-be-e2e               | TypeScript        | N/A                                           | Validator exists but never called             |
-| demo-fe-e2e               | TypeScript        | N/A                                           | Validator exists but never called             |
+| App                         | Language          | Request Types                                 | Response Types                                |
+| --------------------------- | ----------------- | --------------------------------------------- | --------------------------------------------- |
+| a-demo-be-ts-effect         | TypeScript/Effect | Inline `Record<string, unknown>` in routes    | Inline objects in routes                      |
+| a-demo-be-golang-gin        | Go                | 4 local structs in `internal/handler/`        | Zero — all `gin.H{}` untyped maps             |
+| a-demo-be-java-springboot   | Java/Spring Boot  | 7 DTOs in `*.dto` packages                    | 11 DTOs in `*.dto` packages (name mismatches) |
+| a-demo-be-java-vertx        | Java/Vert.x       | Zero — all raw `JsonObject`                   | Zero — all raw `JsonObject`                   |
+| a-demo-be-kotlin-ktor       | Kotlin/Ktor       | 9 data classes in route files                 | Zero — all `mapOf()` / inline JSON            |
+| a-demo-be-python-fastapi    | Python/FastAPI    | 8 request models (some differ from generated) | 14 response models (many name mismatches)     |
+| a-demo-be-rust-axum         | Rust/Axum         | 7 structs in `handlers/`                      | 5 structs in `handlers/` (name mismatches)    |
+| a-demo-be-fsharp-giraffe    | F#                | 8 `[<CLIMutable>]` records inline             | Inline responses                              |
+| a-demo-be-csharp-aspnetcore | C#                | 6 sealed records in `Endpoints/`              | Inline responses                              |
+| a-demo-be-elixir-phoenix    | Elixir            | Maps in controllers                           | Maps in controllers                           |
+| a-demo-be-clojure-pedestal  | Clojure           | 6 Malli schemas in `domain/schemas.clj`       | 1 schema (`TokenResponse`) + untyped maps     |
+| a-demo-fe-dart-flutterweb   | Dart              | 8 model classes in `lib/models/`              | 12 model classes in `lib/models/`             |
+| a-demo-be-e2e               | TypeScript        | N/A                                           | Validator exists but never called             |
+| a-demo-fe-e2e               | TypeScript        | N/A                                           | Validator exists but never called             |
 
 ### Type Name Mismatches (Local vs Generated)
 
@@ -94,7 +94,7 @@ the OpenAPI spec, or handled via local types that remain alongside generated one
 After this plan:
 
 ```
-specs/apps/demo/contracts/openapi.yaml
+specs/apps/a-demo/contracts/openapi.yaml
           |
  codegen (all 16 apps)
           |
@@ -110,47 +110,47 @@ specs/apps/demo/contracts/openapi.yaml
 
 ### Integration Strategy by Language Family
 
-**TypeScript** (`demo-be-ts-effect`): Create re-export layer (`src/lib/api/types.ts`) mirroring
+**TypeScript** (`a-demo-be-ts-effect`): Create re-export layer (`src/lib/api/types.ts`) mirroring
 frontends. Type-annotate request bodies and response objects in route handlers. Domain types
 (branded Currency, Role, UserStatus) stay — they are internal concerns.
 
-**Go** (`demo-be-golang-gin`): Import `contracts` package. Replace local request structs. For
+**Go** (`a-demo-be-golang-gin`): Import `contracts` package. Replace local request structs. For
 responses, replace `gin.H{}` maps with generated response types (e.g.,
 `c.JSON(200, contracts.User{...})` instead of `c.JSON(200, gin.H{...})`).
 
-**Java** (`demo-be-java-springboot`): Replace 18 local DTO classes with generated `contracts.*`
-imports. Many names differ (see mapping table). For `demo-be-java-vertx`: refactor handlers from
+**Java** (`a-demo-be-java-springboot`): Replace 18 local DTO classes with generated `contracts.*`
+imports. Many names differ (see mapping table). For `a-demo-be-java-vertx`: refactor handlers from
 raw `JsonObject` to accept/return generated types via Jackson serialization.
 
-**Kotlin** (`demo-be-kotlin-ktor`): Replace 9 inline data classes in route files with generated
+**Kotlin** (`a-demo-be-kotlin-ktor`): Replace 9 inline data classes in route files with generated
 `contracts.*` imports. Convert `mapOf()` response construction to generated data class instances.
 
-**Rust** (`demo-be-rust-axum`): Replace 12 local structs with generated model imports. Add
+**Rust** (`a-demo-be-rust-axum`): Replace 12 local structs with generated model imports. Add
 generated-contracts crate as path dependency.
 
-**F#** (`demo-be-fsharp-giraffe`): Add source inclusion of generated `.fs` files (no `.fsproj`
+**F#** (`a-demo-be-fsharp-giraffe`): Add source inclusion of generated `.fs` files (no `.fsproj`
 exists in `generated-contracts/`). Replace 8 inline records with generated types. Note: generated
 F# records do NOT carry `[<CLIMutable>]` — thin wrapper records are required for request binding
 via Giraffe. Response construction uses generated types directly.
 
-**C#** (`demo-be-csharp-aspnetcore`): Add source inclusion of generated `.cs` files (no `.csproj`
+**C#** (`a-demo-be-csharp-aspnetcore`): Add source inclusion of generated `.cs` files (no `.csproj`
 exists in `generated-contracts/`). Replace 6 inline records with generated types. Type response
-construction using generated classes. Namespace is `Org.OpenAPITools.DemoBeCsas.Contracts`.
+construction using generated classes. Namespace is `Org.OpenAPITools.AADemoBeCsas.Contracts`.
 
-**Python** (`demo-be-python-fastapi`): Replace 22 local Pydantic models (8 request + 14 response)
+**Python** (`a-demo-be-python-fastapi`): Replace 22 local Pydantic models (8 request + 14 response)
 with generated imports. Update `response_model=` in FastAPI decorators to use generated types.
 Name mappings needed.
 
-**Elixir** (`demo-be-elixir-phoenix`): Run codegen first (never verified). Construct generated
+**Elixir** (`a-demo-be-elixir-phoenix`): Run codegen first (never verified). Construct generated
 structs for responses (`%User{...}`). `@enforce_keys` catches missing fields at runtime.
 
-**Clojure** (`demo-be-clojure-pedestal`): Run codegen first (never verified). Validate response
+**Clojure** (`a-demo-be-clojure-pedestal`): Run codegen first (never verified). Validate response
 maps against generated Malli schemas via `m/validate`.
 
-**Dart** (`demo-fe-dart-flutterweb`): Run codegen first (never verified). Replace 20 hand-written
+**Dart** (`a-demo-fe-dart-flutterweb`): Run codegen first (never verified). Replace 20 hand-written
 model classes with generated Dart classes.
 
-**E2E** (`demo-be-e2e`, `demo-fe-e2e`): Wire `validateResponseAgainstContract` into every step
+**E2E** (`a-demo-be-e2e`, `a-demo-fe-e2e`): Wire `validateResponseAgainstContract` into every step
 that receives a 2xx HTTP response body.
 
 ## Plan Structure

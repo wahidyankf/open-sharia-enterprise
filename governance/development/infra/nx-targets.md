@@ -147,30 +147,30 @@ Every project declares tags along four dimensions. Each dimension uses a fixed p
 
 ### Current Project Tags
 
-| Project                   | Tags                                                                     |
-| ------------------------- | ------------------------------------------------------------------------ |
-| `ayokoding-fs`            | `["type:app", "platform:nextjs", "lang:ts", "domain:ayokoding"]`         |
-| `ayokoding-cli`           | `["type:app", "platform:cli", "lang:golang", "domain:ayokoding"]`        |
-| `rhino-cli`               | `["type:app", "platform:cli", "lang:golang", "domain:tooling"]`          |
-| `demo-be-java-springboot` | `["type:app", "platform:spring-boot", "lang:java", "domain:demo-be"]`    |
-| `demo-be-elixir-phoenix`  | `["type:app", "platform:phoenix", "lang:elixir", "domain:demo-be"]`      |
-| `demo-be-fsharp-giraffe`  | `["type:app", "platform:giraffe", "lang:fsharp", "domain:demo-be"]`      |
-| `demo-be-golang-gin`      | `["type:app", "platform:gin", "lang:golang", "domain:demo-be"]`          |
-| `demo-be-python-fastapi`  | `["type:app", "platform:fastapi", "lang:python", "domain:demo-be"]`      |
-| `demo-be-rust-axum`       | `["type:app", "platform:axum", "lang:rust", "domain:demo-be"]`           |
-| `demo-be-kotlin-ktor`     | `["type:app", "platform:ktor", "lang:kotlin", "domain:demo-be"]`         |
-| `demo-be-java-vertx`      | `["type:app", "platform:vertx", "lang:java", "domain:demo-be"]`          |
-| `demo-be-e2e`             | `["type:e2e", "platform:playwright", "lang:ts", "domain:demo-be"]`       |
-| `organiclever-fe`         | `["type:app", "platform:nextjs", "lang:ts", "domain:organiclever"]`      |
-| `organiclever-be`         | `["type:app", "platform:giraffe", "lang:fsharp", "domain:organiclever"]` |
-| `organiclever-fe-e2e`     | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]`  |
-| `organiclever-be-e2e`     | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]`  |
-| `demo-fe-ts-nextjs`       | `["type:app", "platform:nextjs", "lang:ts", "domain:demo-fe"]`           |
-| `demo-fe-e2e`             | `["type:e2e", "platform:playwright", "lang:ts", "domain:demo-fe"]`       |
-| `oseplatform-cli`         | `["type:app", "platform:cli", "lang:golang", "domain:oseplatform"]`      |
-| `oseplatform-fs`          | `["type:app", "platform:nextjs", "lang:ts", "domain:oseplatform"]`       |
-| `hugo-commons`            | `["type:lib", "lang:golang"]`                                            |
-| `golang-commons`          | `["type:lib", "lang:golang"]`                                            |
+| Project                     | Tags                                                                     |
+| --------------------------- | ------------------------------------------------------------------------ |
+| `ayokoding-fs`              | `["type:app", "platform:nextjs", "lang:ts", "domain:ayokoding"]`         |
+| `ayokoding-cli`             | `["type:app", "platform:cli", "lang:golang", "domain:ayokoding"]`        |
+| `rhino-cli`                 | `["type:app", "platform:cli", "lang:golang", "domain:tooling"]`          |
+| `a-demo-be-java-springboot` | `["type:app", "platform:spring-boot", "lang:java", "domain:a-demo-be"]`  |
+| `a-demo-be-elixir-phoenix`  | `["type:app", "platform:phoenix", "lang:elixir", "domain:a-demo-be"]`    |
+| `a-demo-be-fsharp-giraffe`  | `["type:app", "platform:giraffe", "lang:fsharp", "domain:a-demo-be"]`    |
+| `a-demo-be-golang-gin`      | `["type:app", "platform:gin", "lang:golang", "domain:a-demo-be"]`        |
+| `a-demo-be-python-fastapi`  | `["type:app", "platform:fastapi", "lang:python", "domain:a-demo-be"]`    |
+| `a-demo-be-rust-axum`       | `["type:app", "platform:axum", "lang:rust", "domain:a-demo-be"]`         |
+| `a-demo-be-kotlin-ktor`     | `["type:app", "platform:ktor", "lang:kotlin", "domain:a-demo-be"]`       |
+| `a-demo-be-java-vertx`      | `["type:app", "platform:vertx", "lang:java", "domain:a-demo-be"]`        |
+| `a-demo-be-e2e`             | `["type:e2e", "platform:playwright", "lang:ts", "domain:a-demo-be"]`     |
+| `organiclever-fe`           | `["type:app", "platform:nextjs", "lang:ts", "domain:organiclever"]`      |
+| `organiclever-be`           | `["type:app", "platform:giraffe", "lang:fsharp", "domain:organiclever"]` |
+| `organiclever-fe-e2e`       | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]`  |
+| `organiclever-be-e2e`       | `["type:e2e", "platform:playwright", "lang:ts", "domain:organiclever"]`  |
+| `a-demo-fe-ts-nextjs`       | `["type:app", "platform:nextjs", "lang:ts", "domain:a-demo-fe"]`         |
+| `a-demo-fe-e2e`             | `["type:e2e", "platform:playwright", "lang:ts", "domain:a-demo-fe"]`     |
+| `oseplatform-cli`           | `["type:app", "platform:cli", "lang:golang", "domain:oseplatform"]`      |
+| `oseplatform-fs`            | `["type:app", "platform:nextjs", "lang:ts", "domain:oseplatform"]`       |
+| `hugo-commons`              | `["type:lib", "lang:golang"]`                                            |
+| `golang-commons`            | `["type:lib", "lang:golang"]`                                            |
 
 ### Example: Complete Tag Declaration
 
@@ -178,8 +178,8 @@ A Spring Boot app for the demo-be domain declares all four dimensions:
 
 ```json
 {
-  "name": "demo-be-java-springboot",
-  "tags": ["type:app", "platform:spring-boot", "lang:java", "domain:demo-be"]
+  "name": "a-demo-be-java-springboot",
+  "tags": ["type:app", "platform:spring-boot", "lang:java", "domain:a-demo-be"]
 }
 ```
 
@@ -218,19 +218,19 @@ Derived from three rules: (1) All apps+libs → unit tests, (2) All apps → int
 
 **Demo-be backend `typecheck` commands** (all 11 backends have `typecheck` with `dependsOn: ["codegen"]`):
 
-| Backend                     | `typecheck` command                                               |
-| --------------------------- | ----------------------------------------------------------------- |
-| `demo-be-golang-gin`        | `CGO_ENABLED=0 go vet ./...`                                      |
-| `demo-be-java-springboot`   | `rhino-cli java validate-annotations` + `mvn compile -Pnullcheck` |
-| `demo-be-java-vertx`        | `rhino-cli java validate-annotations` + `mvn compile -Pnullcheck` |
-| `demo-be-elixir-phoenix`    | `mix compile --warnings-as-errors`                                |
-| `demo-be-python-fastapi`    | `uv run pyright`                                                  |
-| `demo-be-fsharp-giraffe`    | `dotnet build .fsproj /p:TreatWarningsAsErrors=true --no-restore` |
-| `demo-be-ts-effect`         | `npx tsc --noEmit`                                                |
-| `demo-be-kotlin-ktor`       | `./gradlew compileKotlin`                                         |
-| `demo-be-csharp-aspnetcore` | `dotnet build .csproj /p:TreatWarningsAsErrors=true --no-restore` |
-| `demo-be-clojure-pedestal`  | `clj-kondo --lint src`                                            |
-| `demo-be-rust-axum`         | `cargo check`                                                     |
+| Backend                       | `typecheck` command                                               |
+| ----------------------------- | ----------------------------------------------------------------- |
+| `a-demo-be-golang-gin`        | `CGO_ENABLED=0 go vet ./...`                                      |
+| `a-demo-be-java-springboot`   | `rhino-cli java validate-annotations` + `mvn compile -Pnullcheck` |
+| `a-demo-be-java-vertx`        | `rhino-cli java validate-annotations` + `mvn compile -Pnullcheck` |
+| `a-demo-be-elixir-phoenix`    | `mix compile --warnings-as-errors`                                |
+| `a-demo-be-python-fastapi`    | `uv run pyright`                                                  |
+| `a-demo-be-fsharp-giraffe`    | `dotnet build .fsproj /p:TreatWarningsAsErrors=true --no-restore` |
+| `a-demo-be-ts-effect`         | `npx tsc --noEmit`                                                |
+| `a-demo-be-kotlin-ktor`       | `./gradlew compileKotlin`                                         |
+| `a-demo-be-csharp-aspnetcore` | `dotnet build .csproj /p:TreatWarningsAsErrors=true --no-restore` |
+| `a-demo-be-clojure-pedestal`  | `clj-kondo --lint src`                                            |
+| `a-demo-be-rust-axum`         | `cargo check`                                                     |
 
 \* E2E tests live in dedicated `*-e2e` runner projects, not in the backend/frontend project itself.
 
@@ -378,13 +378,13 @@ Playwright suites (`*-e2e`):
 **BDD suites**: When the E2E project uses playwright-bdd, `test:e2e` runs
 `npx bddgen && npx playwright test`. The `bddgen` step regenerates `.features-gen/`
 spec files from the Gherkin feature files before Playwright executes them.
-See `apps/demo-be-e2e/project.json` for the canonical example.
+See `apps/a-demo-be-e2e/project.json` for the canonical example.
 
 **Demo-be `test:integration` with docker-compose**: All 11 demo-be backends expose `test:integration`
 which runs `docker compose -f docker-compose.integration.yml down -v && docker compose -f docker-compose.integration.yml up --abort-on-container-exit --build`.
 Each backend's `docker-compose.integration.yml` defines a `postgres` service (postgres:17-alpine with healthcheck)
 and a `test-runner` service that depends on PostgreSQL being healthy. The test runner runs migrations,
-optionally loads seed data, then executes all shared Gherkin scenarios from `specs/apps/demo/be/gherkin/`
+optionally loads seed data, then executes all shared Gherkin scenarios from `specs/apps/a-demo/be/gherkin/`
 by calling application service/repository functions directly — no HTTP layer. The specs volume is
 mounted read-only at `../../specs:/specs:ro`. After tests complete, `docker-compose` tears down all
 containers and volumes.
@@ -483,23 +483,23 @@ cross-project dependencies like shared Gherkin specs or generated contracts.
 
 All demo-be backends must include Gherkin specs and generated contracts in `test:unit` and
 `test:quick` inputs. The Gherkin specs path is always
-`{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature`. The generated-contracts path varies by
+`{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature`. The generated-contracts path varies by
 language:
 
-| Language        | Source files                                                                                                       | Generated contracts                                   | Gherkin specs                                             |
-| --------------- | ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------- | --------------------------------------------------------- |
-| Go              | `{projectRoot}/internal/**/*.go`, `{projectRoot}/cmd/**/*.go`, `{projectRoot}/go.mod`, `{projectRoot}/go.sum`      | `{projectRoot}/generated-contracts/**/*`              | `{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature` |
-| Java (Maven)    | `{projectRoot}/src/**`, `{projectRoot}/pom.xml`                                                                    | `{projectRoot}/generated-contracts/**/*`              | `{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature` |
-| Kotlin (Gradle) | `{projectRoot}/src/**`, `{projectRoot}/build.gradle.kts`                                                           | `{projectRoot}/generated-contracts/**/*`              | `{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature` |
-| Rust            | `{projectRoot}/src/**/*.rs`, `{projectRoot}/tests/**/*.rs`, `{projectRoot}/Cargo.toml`, `{projectRoot}/Cargo.lock` | `{projectRoot}/generated-contracts/**/*`              | `{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature` |
-| TypeScript      | `{projectRoot}/src/**/*.ts`, `{projectRoot}/tests/**/*.ts`, `{projectRoot}/vitest.config.ts`                       | `{projectRoot}/generated-contracts/**/*`              | `{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature` |
-| Python          | `{projectRoot}/src/**/*.py`, `{projectRoot}/tests/**/*.py`                                                         | `{projectRoot}/generated_contracts/**/*` (underscore) | `{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature` |
-| Elixir          | `{projectRoot}/lib/**/*.ex`, `{projectRoot}/test/**/*.exs`                                                         | `{projectRoot}/generated-contracts/**/*`              | `{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature` |
-| F#              | `{projectRoot}/src/**/*.fs`, `{projectRoot}/tests/**/*.fs`                                                         | `{projectRoot}/generated-contracts/**/*`              | `{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature` |
-| C#              | `{projectRoot}/src/**/*.cs`, `{projectRoot}/tests/**/*.cs`                                                         | `{projectRoot}/generated-contracts/**/*`              | `{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature` |
-| Clojure         | `{projectRoot}/src/**/*`, `{projectRoot}/test/**/*`, `{projectRoot}/tests.edn`                                     | `{projectRoot}/generated_contracts/**/*` (underscore) | `{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature` |
-| Frontend TS     | `{projectRoot}/src/**/*.ts`, `{projectRoot}/src/**/*.tsx`, `{projectRoot}/vitest.config.ts`                        | `{projectRoot}/src/generated-contracts/**/*`          | N/A                                                       |
-| Frontend Dart   | `{projectRoot}/lib/**/*.dart`, `{projectRoot}/test/**/*.dart`                                                      | `{projectRoot}/generated-contracts/**/*`              | N/A                                                       |
+| Language        | Source files                                                                                                       | Generated contracts                                   | Gherkin specs                                               |
+| --------------- | ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------- | ----------------------------------------------------------- |
+| Go              | `{projectRoot}/internal/**/*.go`, `{projectRoot}/cmd/**/*.go`, `{projectRoot}/go.mod`, `{projectRoot}/go.sum`      | `{projectRoot}/generated-contracts/**/*`              | `{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature` |
+| Java (Maven)    | `{projectRoot}/src/**`, `{projectRoot}/pom.xml`                                                                    | `{projectRoot}/generated-contracts/**/*`              | `{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature` |
+| Kotlin (Gradle) | `{projectRoot}/src/**`, `{projectRoot}/build.gradle.kts`                                                           | `{projectRoot}/generated-contracts/**/*`              | `{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature` |
+| Rust            | `{projectRoot}/src/**/*.rs`, `{projectRoot}/tests/**/*.rs`, `{projectRoot}/Cargo.toml`, `{projectRoot}/Cargo.lock` | `{projectRoot}/generated-contracts/**/*`              | `{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature` |
+| TypeScript      | `{projectRoot}/src/**/*.ts`, `{projectRoot}/tests/**/*.ts`, `{projectRoot}/vitest.config.ts`                       | `{projectRoot}/generated-contracts/**/*`              | `{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature` |
+| Python          | `{projectRoot}/src/**/*.py`, `{projectRoot}/tests/**/*.py`                                                         | `{projectRoot}/generated_contracts/**/*` (underscore) | `{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature` |
+| Elixir          | `{projectRoot}/lib/**/*.ex`, `{projectRoot}/test/**/*.exs`                                                         | `{projectRoot}/generated-contracts/**/*`              | `{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature` |
+| F#              | `{projectRoot}/src/**/*.fs`, `{projectRoot}/tests/**/*.fs`                                                         | `{projectRoot}/generated-contracts/**/*`              | `{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature` |
+| C#              | `{projectRoot}/src/**/*.cs`, `{projectRoot}/tests/**/*.cs`                                                         | `{projectRoot}/generated-contracts/**/*`              | `{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature` |
+| Clojure         | `{projectRoot}/src/**/*`, `{projectRoot}/test/**/*`, `{projectRoot}/tests.edn`                                     | `{projectRoot}/generated_contracts/**/*` (underscore) | `{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature` |
+| Frontend TS     | `{projectRoot}/src/**/*.ts`, `{projectRoot}/src/**/*.tsx`, `{projectRoot}/vitest.config.ts`                        | `{projectRoot}/src/generated-contracts/**/*`          | N/A                                                         |
+| Frontend Dart   | `{projectRoot}/lib/**/*.dart`, `{projectRoot}/test/**/*.dart`                                                      | `{projectRoot}/generated-contracts/**/*`              | N/A                                                         |
 
 **Note**: Python and Clojure use underscore in `generated_contracts/` (matching their language
 conventions). All other languages use hyphen in `generated-contracts/`.
@@ -517,7 +517,7 @@ enforced for CLI apps only.
 ## Codegen Dependency Chain
 
 All demo apps share a `codegen` target that generates types and encoders/decoders from the OpenAPI
-contract spec at `specs/apps/demo/contracts/` into `generated-contracts/`.
+contract spec at `specs/apps/a-demo/contracts/` into `generated-contracts/`.
 
 The dependency chain is:
 
@@ -531,7 +531,7 @@ ensures generated contract types are always present before type-checking or buil
 
 **`test:unit` and `test:quick` do NOT directly depend on `codegen`** — they depend on source
 files being correct, which is already enforced by `typecheck` and `build`. The exceptions are
-`demo-be-rust-axum` and `demo-fe-dart-flutterweb`, which keep `dependsOn: ["codegen"]` in
+`a-demo-be-rust-axum` and `a-demo-fe-dart-flutterweb`, which keep `dependsOn: ["codegen"]` in
 `test:unit` / `test:quick` because their build systems require generated code to be present before
 test compilation.
 

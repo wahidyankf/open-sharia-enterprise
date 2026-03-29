@@ -1,11 +1,11 @@
 # Delivery
 
-> **Note**: All `npm install` commands run from `apps/demo-fs-ts-nextjs/` (project root),
+> **Note**: All `npm install` commands run from `apps/a-demo-fs-ts-nextjs/` (project root),
 > not the workspace root. This ensures packages are added to the app's own `package.json`.
 
 ## Phase 1: Project Scaffolding
 
-- [x] Create `apps/demo-fs-ts-nextjs/` directory
+- [x] Create `apps/a-demo-fs-ts-nextjs/` directory
 - [x] Initialize Next.js 16 project with TypeScript, App Router, src/ directory
 - [x] Configure `next.config.ts` with `output: 'standalone'` for Docker builds
 - [x] Create `project.json` with 7 mandatory Nx targets (codegen, typecheck, lint, build,
@@ -14,9 +14,9 @@
 - [x] Install all dependencies via `package.json` (including test deps, Drizzle, jose,
       TanStack Query, cucumber)
 - [x] Set up `vitest.config.ts` with v8 coverage (80% threshold)
-- [x] Add `codegen` target (same openapi-ts config as demo-fe-ts-nextjs)
-- [x] Run `nx run demo-fs-ts-nextjs:codegen` — verified types generate successfully
-- [x] Verify `nx run demo-fs-ts-nextjs:lint` passes (oxlint)
+- [x] Add `codegen` target (same openapi-ts config as a-demo-fe-ts-nextjs)
+- [x] Run `nx run a-demo-fs-ts-nextjs:codegen` — verified types generate successfully
+- [x] Verify `nx run a-demo-fs-ts-nextjs:lint` passes (oxlint)
 
 ## Phase 2: Database Layer
 
@@ -99,7 +99,7 @@
   - [x] reporting.steps.ts (reporting.feature)
   - [x] attachment.steps.ts (attachments.feature)
   - [x] test-api.steps.ts (test-api.feature)
-- [x] Verify all BE unit tests pass: `nx run demo-fs-ts-nextjs:test:unit`
+- [x] Verify all BE unit tests pass: `nx run a-demo-fs-ts-nextjs:test:unit`
 
 ## Phase 7: Frontend Components and Pages
 
@@ -149,11 +149,11 @@
   - [x] attachments.steps.tsx (attachments.feature)
   - [x] responsive.steps.tsx (responsive.feature)
   - [x] accessibility.steps.tsx (accessibility.feature)
-- [x] Verify all FE unit tests pass: `nx run demo-fs-ts-nextjs:test:unit`
+- [x] Verify all FE unit tests pass: `nx run a-demo-fs-ts-nextjs:test:unit`
 
 ## Phase 9: Coverage Gate
 
-- [x] Run `nx run demo-fs-ts-nextjs:test:quick` (unit tests + rhino-cli 75%+)
+- [x] Run `nx run a-demo-fs-ts-nextjs:test:quick` (unit tests + rhino-cli 75%+)
 - [x] Add coverage exclusions (route handlers, Drizzle repos, API client layer, auth layer,
       queries, layout components — all tested at integration/E2E level)
 - [x] Ensure `typecheck` and `lint` pass cleanly
@@ -168,15 +168,15 @@
 ## Phase 11: Docker and Local Development
 
 - [x] Create `Dockerfile` (multi-stage: deps → build → runtime)
-- [x] Create `infra/dev/demo-fs-ts-nextjs/docker-compose.yml`
+- [x] Create `infra/dev/a-demo-fs-ts-nextjs/docker-compose.yml`
 - [x] Verify app starts correctly via Docker Compose
 - [x] Verify health check at `http://localhost:3401/health`
 
 ## Phase 12: E2E Verification
 
 - [x] Start app + PostgreSQL locally with `ENABLE_TEST_API=true`
-- [x] Run `demo-be-e2e` with `BASE_URL=http://localhost:3401` — all 78 BE scenarios pass
-- [x] Run `demo-fe-e2e` with `BASE_URL=http://localhost:3401` and
+- [x] Run `a-demo-be-e2e` with `BASE_URL=http://localhost:3401` — all 78 BE scenarios pass
+- [x] Run `a-demo-fe-e2e` with `BASE_URL=http://localhost:3401` and
       `BACKEND_URL=http://localhost:3401` — all 92 FE scenarios pass
 - [x] Fix E2E compatibility issues (error message format, amount formatting,
       paginated response fields, password change endpoint, delete status codes,
@@ -184,25 +184,25 @@
 
 ## Phase 13: CI and Documentation
 
-- [x] Create `.github/workflows/test-demo-fs-ts-nextjs.yml`
-- [x] Create `apps/demo-fs-ts-nextjs/README.md` with project overview, commands, testing
+- [x] Create `.github/workflows/test-a-demo-fs-ts-nextjs.yml`
+- [x] Create `apps/a-demo-fs-ts-nextjs/README.md` with project overview, commands, testing
       docs, and related documentation links
 - [x] Add Codecov upload for unit test coverage
-- [x] Update `specs/apps/demo/README.md` to mention fullstack category
-- [x] Update CLAUDE.md to include demo-fs-ts-nextjs in Current Apps listing
+- [x] Update `specs/apps/a-demo/README.md` to mention fullstack category
+- [x] Update CLAUDE.md to include a-demo-fs-ts-nextjs in Current Apps listing
 - [x] Verify CI workflow passes (run 23422641622 — unit + BE E2E + FE E2E all green)
 
 ## Validation Checklist
 
-- [x] `nx run demo-fs-ts-nextjs:codegen` succeeds
-- [x] `nx run demo-fs-ts-nextjs:typecheck` succeeds
-- [x] `nx run demo-fs-ts-nextjs:lint` succeeds
-- [x] `nx run demo-fs-ts-nextjs:build` succeeds
-- [x] `nx run demo-fs-ts-nextjs:test:unit` — all BE + FE Gherkin scenarios pass (1133 tests)
-- [x] `nx run demo-fs-ts-nextjs:test:quick` — 76.66% >= 75% threshold
-- [x] `nx run demo-fs-ts-nextjs:test:integration` — all 73 BE scenarios pass with real PG
-- [x] `demo-be-e2e` passes — all 78 scenarios pass
-- [x] `demo-fe-e2e` passes — all 92 scenarios pass
+- [x] `nx run a-demo-fs-ts-nextjs:codegen` succeeds
+- [x] `nx run a-demo-fs-ts-nextjs:typecheck` succeeds
+- [x] `nx run a-demo-fs-ts-nextjs:lint` succeeds
+- [x] `nx run a-demo-fs-ts-nextjs:build` succeeds
+- [x] `nx run a-demo-fs-ts-nextjs:test:unit` — all BE + FE Gherkin scenarios pass (1133 tests)
+- [x] `nx run a-demo-fs-ts-nextjs:test:quick` — 76.66% >= 75% threshold
+- [x] `nx run a-demo-fs-ts-nextjs:test:integration` — all 73 BE scenarios pass with real PG
+- [x] `a-demo-be-e2e` passes — all 78 scenarios pass
+- [x] `a-demo-fe-e2e` passes — all 92 scenarios pass
 - [x] Docker Compose local dev setup works
 - [x] CI workflow passes (run 23422641622)
 - [x] README.md is complete with related documentation links

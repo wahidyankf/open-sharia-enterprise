@@ -31,22 +31,22 @@ See [Trunk Based Development Convention](../../../governance/development/workflo
 
 ## Apps Requiring Changes
 
-| App                        | Current State                                          | Work Required                                                                      |
-| -------------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------- |
-| `demo-be-fsharp-giraffe`   | Handlers call `AppDbContext` directly, no repo layer   | Add function-record repositories + EF Core implementations + extract from handlers |
-| `demo-be-rust-axum`        | Free functions in `db/*_repo.rs`, no trait abstraction | Add async traits + struct implementations + inject via `AppState`                  |
-| `demo-be-python-fastapi`   | Concrete repo classes, no `Protocol` abstraction       | Add `Protocol` classes + add missing `RefreshTokenRepository`                      |
-| `demo-be-clojure-pedestal` | Plain namespace functions, no `defprotocol`            | Add `defprotocol` + `defrecord` implementations + inject via context map           |
+| App                          | Current State                                          | Work Required                                                                      |
+| ---------------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------- |
+| `a-demo-be-fsharp-giraffe`   | Handlers call `AppDbContext` directly, no repo layer   | Add function-record repositories + EF Core implementations + extract from handlers |
+| `a-demo-be-rust-axum`        | Free functions in `db/*_repo.rs`, no trait abstraction | Add async traits + struct implementations + inject via `AppState`                  |
+| `a-demo-be-python-fastapi`   | Concrete repo classes, no `Protocol` abstraction       | Add `Protocol` classes + add missing `RefreshTokenRepository`                      |
+| `a-demo-be-clojure-pedestal` | Plain namespace functions, no `defprotocol`            | Add `defprotocol` + `defrecord` implementations + inject via context map           |
 
 ## Apps Already Compliant (No Changes Needed)
 
-| App                         | Pattern                                                          |
-| --------------------------- | ---------------------------------------------------------------- |
-| `demo-be-golang-gin`        | `Store` interface with gorm + memory implementations             |
-| `demo-be-java-springboot`   | Spring Data `JpaRepository` interfaces                           |
-| `demo-be-elixir-phoenix`    | `@behaviour` / `@callback` contracts                             |
-| `demo-be-kotlin-ktor`       | Kotlin interfaces + InMemory and Exposed implementations         |
-| `demo-be-java-vertx`        | Java interfaces + memory and pg implementations                  |
-| `demo-be-ts-effect`         | Effect `Context.Tag` service interfaces                          |
-| `demo-be-csharp-aspnetcore` | C# `I*Repository` interfaces                                     |
-| `demo-fs-ts-nextjs`         | TypeScript interfaces + implementations + in-memory test doubles |
+| App                           | Pattern                                                          |
+| ----------------------------- | ---------------------------------------------------------------- |
+| `a-demo-be-golang-gin`        | `Store` interface with gorm + memory implementations             |
+| `a-demo-be-java-springboot`   | Spring Data `JpaRepository` interfaces                           |
+| `a-demo-be-elixir-phoenix`    | `@behaviour` / `@callback` contracts                             |
+| `a-demo-be-kotlin-ktor`       | Kotlin interfaces + InMemory and Exposed implementations         |
+| `a-demo-be-java-vertx`        | Java interfaces + memory and pg implementations                  |
+| `a-demo-be-ts-effect`         | Effect `Context.Tag` service interfaces                          |
+| `a-demo-be-csharp-aspnetcore` | C# `I*Repository` interfaces                                     |
+| `a-demo-fs-ts-nextjs`         | TypeScript interfaces + implementations + in-memory test doubles |

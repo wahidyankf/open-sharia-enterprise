@@ -82,7 +82,7 @@ follow-up plan.
 ### Milestone 3.1: Project Scaffold
 
 - [x] Create `apps/organiclever-be/src/OrganicLeverBe/OrganicLeverBe.fsproj` (net10.0, inside
-      `src/` matching demo-be-fsharp-giraffe pattern)
+      `src/` matching a-demo-be-fsharp-giraffe pattern)
 - [x] Create `apps/organiclever-be/global.json` (pin .NET SDK version, `rollForward: latestMinor`)
 - [x] Create `apps/organiclever-be/project.json` with all 9 Nx targets
       (codegen, typecheck, lint, build, test:unit, test:quick, test:integration, dev, start)
@@ -348,7 +348,7 @@ follow-up plan.
 | Risk                                       | Likelihood | Impact | Mitigation                                                   |
 | ------------------------------------------ | ---------- | ------ | ------------------------------------------------------------ |
 | Effect TS learning curve                   | Medium     | Low    | Minimal scope (one service) reduces complexity               |
-| OpenAPI codegen F# compatibility           | Medium     | High   | Proven by demo-be-fsharp-giraffe                             |
+| OpenAPI codegen F# compatibility           | Medium     | High   | Proven by a-demo-be-fsharp-giraffe                           |
 | Stale references after rename              | High       | Medium | AC-6 grep verification catches all references                |
 | Production branch rename breaks deployment | Medium     | High   | Create new branch, update Vercel, verify before deleting old |
 | 28+ documentation files to update          | Low        | Medium | Systematic find-and-replace with verification                |

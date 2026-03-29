@@ -96,14 +96,14 @@ implementations have diverged:
 
 ### Demo Frontends
 
-- **demo-fe-ts-nextjs**: Uses inline styles with a custom `useBreakpoint()` hook for responsive
+- **a-demo-fe-ts-nextjs**: Uses inline styles with a custom `useBreakpoint()` hook for responsive
   design. Components: `AppShell`, `Header`, `Sidebar` in `src/components/layout/`. No design
   system at all — entirely self-contained.
-- **demo-fe-dart-flutterweb**: Flutter Material 3 theme with Dart `ThemeData`. Entirely separate
+- **a-demo-fe-dart-flutterweb**: Flutter Material 3 theme with Dart `ThemeData`. Entirely separate
   ecosystem — cannot share React components but could consume CSS tokens via generated Dart
   constants.
-- **demo-fe-ts-tanstack-start**: Minimal styling, early stage.
-- **demo-fs-ts-nextjs**: Minimal styling, uses TypeScript interfaces for data layer.
+- **a-demo-fe-ts-tanstack-start**: Minimal styling, early stage.
+- **a-demo-fs-ts-nextjs**: Minimal styling, uses TypeScript interfaces for data layer.
 
 ### AI Assistance — Current State
 
@@ -119,8 +119,8 @@ implementations have diverged:
 
 ### Testing — Current State
 
-- **Unit tests**: Vitest in organiclever-fe and demo-fe-ts-nextjs; no a11y assertions
-- **E2E tests**: Playwright in organiclever-fe-e2e and demo-fe-e2e; no visual regression
+- **Unit tests**: Vitest in organiclever-fe and a-demo-fe-ts-nextjs; no a11y assertions
+- **E2E tests**: Playwright in organiclever-fe-e2e and a-demo-fe-e2e; no visual regression
 - **Storybook**: Only in organiclever-fe with `@storybook/nextjs-vite` framework; stories exist
   for Alert, AlertDialog, Button, Card, Dialog, Input, Label, Table
 - **No axe-core integration anywhere**
@@ -142,7 +142,7 @@ implementations have diverged:
 
 **Impact**: A developer changing the border radius in organiclever-fe has no mechanism to
 propagate that change to ayokoding-fs. Token values drift silently. New apps
-(demo-fe-ts-nextjs, demo-fs-ts-nextjs) start from scratch with no tokens at all.
+(a-demo-fe-ts-nextjs, a-demo-fs-ts-nextjs) start from scratch with no tokens at all.
 
 **Complication**: The two apps have genuinely different brand colors (neutral vs. blue) — tokens
 cannot be blindly unified. The shared layer must provide structural tokens (radius, spacing,
@@ -257,7 +257,7 @@ specs (specs-maker/checker/fixer). UI has zero coverage.
 Feature: UI Conventions and AI Skills
 
   Background:
-    Given the monorepo has frontend apps organiclever-fe, ayokoding-fs, and demo-fe-ts-nextjs
+    Given the monorepo has frontend apps organiclever-fe, ayokoding-fs, and a-demo-fe-ts-nextjs
     And the governance directory exists at governance/development/
 
   Scenario: UI conventions are documented with concrete examples
@@ -382,7 +382,7 @@ Feature: Shared UI Library
     And the shared Button is not modified
 
   Scenario: Demo frontends adopt shared tokens
-    Given demo-fe-ts-nextjs depends on ts-ui-tokens
+    Given a-demo-fe-ts-nextjs depends on ts-ui-tokens
     When it renders components
     Then it uses design tokens from ts-ui-tokens via Tailwind utility classes
     And inline styles from src/components/layout/ are replaced
@@ -415,7 +415,7 @@ Feature: Shared UI Library
 
   Scenario: Build and test pass after migration
     When I run nx affected -t typecheck lint test:quick build
-    Then all targets pass for organiclever-fe, ayokoding-fs, and demo-fe-ts-nextjs
+    Then all targets pass for organiclever-fe, ayokoding-fs, and a-demo-fe-ts-nextjs
     And no app has duplicate token definitions in its globals.css
 ```
 

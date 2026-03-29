@@ -21,7 +21,7 @@ the fullstack scaffold, CI/CD pipelines, contract-driven codegen, and three-leve
 before adding domain features.
 
 Existing `specs/apps/organiclever-be/` and `specs/apps/organiclever-fe/` are merged into a unified
-`specs/apps/organiclever/` following the `specs/apps/demo/` structure (c4, be, fe, contracts).
+`specs/apps/organiclever/` following the `specs/apps/a-demo/` structure (c4, be, fe, contracts).
 
 ## Problem Statement
 
@@ -104,18 +104,18 @@ Existing `specs/apps/organiclever-be/` and `specs/apps/organiclever-fe/` are mer
 
 | Decision           | Choice                            | Rationale                                                  |
 | ------------------ | --------------------------------- | ---------------------------------------------------------- |
-| **FE name**        | `organiclever-fe` (not `-web`)    | Matches `[domain]-[type]` convention (`demo-fe-*`)         |
+| **FE name**        | `organiclever-fe` (not `-web`)    | Matches `[domain]-[type]` convention (`a-demo-fe-*`)       |
 | **Initial scope**  | Google login + protected profile  | First DB-backed feature, establishes scaffold + CI         |
 | **Auth provider**  | Google OAuth 2.0                  | Widely used, well-documented, free, no password management |
-| **Backend lang**   | F# / Giraffe                      | Functional-first, proven by `demo-be-fsharp-giraffe`       |
+| **Backend lang**   | F# / Giraffe                      | Functional-first, proven by `a-demo-be-fsharp-giraffe`     |
 | **Frontend extra** | Effect TS                         | Structured errors, DI, composable services                 |
 | **FE-BE comm**     | BFF proxy (Next.js server-side)   | Backend URL private, no CORS, centralized middleware       |
-| **Spec structure** | Unified `specs/apps/organiclever` | Follows `specs/apps/demo/` pattern                         |
+| **Spec structure** | Unified `specs/apps/organiclever` | Follows `specs/apps/a-demo/` pattern                       |
 | **Contract**       | OpenAPI 3.1                       | Codegen for F# backend and TypeScript frontend             |
 | **BE port**        | 8202                              | Follows demo-be port convention                            |
 | **FE port**        | 3200                              | Unchanged from current                                     |
 | **BE coverage**    | 90%                               | Standard for backends                                      |
-| **FE coverage**    | 70%                               | Standard for frontends (demo-fe-ts-nextjs uses 70%)        |
+| **FE coverage**    | 70%                               | Standard for frontends (a-demo-fe-ts-nextjs uses 70%)      |
 | **Archive**        | `archived/organiclever-fe/`       | Preserves git history of current app                       |
 
 ## Prerequisites (Manual Setup Before Development)
@@ -149,17 +149,17 @@ document the required variables without values.
 ## Related Plans
 
 - [OSE Platform Web - Next.js Rewrite](../../done/2026-03-28__oseplatform-web-nextjs-rewrite/README.md) -- Parallel effort
-- [demo-fs-ts-nextjs](../../done/2026-03-22__demo-fs-ts-nextjs/README.md) -- Fullstack Next.js patterns
+- [a-demo-fs-ts-nextjs](../../done/2026-03-22__demo-fs-ts-nextjs/README.md) -- Fullstack Next.js patterns
 
 ## Related Files
 
 - Current frontend: [`apps/organiclever-fe/`](../../../apps/organiclever-fe/)
 - Current E2E: [`apps/organiclever-fe-e2e/`](../../../apps/organiclever-fe-e2e/)
-- Reference backend: [`apps/demo-be-fsharp-giraffe/`](../../../apps/demo-be-fsharp-giraffe/)
-- Reference frontend: [`apps/demo-fe-ts-nextjs/`](../../../apps/demo-fe-ts-nextjs/)
-- Reference BE E2E: [`apps/demo-be-e2e/`](../../../apps/demo-be-e2e/)
-- Reference FE E2E: [`apps/demo-fe-e2e/`](../../../apps/demo-fe-e2e/)
-- Reference specs: [`specs/apps/demo/`](../../../specs/apps/demo/)
+- Reference backend: [`apps/a-demo-be-fsharp-giraffe/`](../../../apps/a-demo-be-fsharp-giraffe/)
+- Reference frontend: [`apps/a-demo-fe-ts-nextjs/`](../../../apps/a-demo-fe-ts-nextjs/)
+- Reference BE E2E: [`apps/a-demo-be-e2e/`](../../../apps/a-demo-be-e2e/)
+- Reference FE E2E: [`apps/a-demo-fe-e2e/`](../../../apps/a-demo-fe-e2e/)
+- Reference specs: [`specs/apps/a-demo/`](../../../specs/apps/a-demo/)
 - Current BE specs: [`specs/apps/organiclever/be/`](../../../specs/apps/organiclever/be/) (to be merged)
 - Current FE specs: [`specs/apps/organiclever/fe/`](../../../specs/apps/organiclever/fe/) (to be merged)
 - Deployer agent: [`.claude/agents/apps-organiclever-fe-deployer.md`](../../../.claude/agents/apps-organiclever-fe-deployer.md)

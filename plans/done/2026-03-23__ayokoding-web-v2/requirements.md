@@ -234,7 +234,7 @@ Scenario: Mobile hamburger opens sidebar overlay
 - **Docker**: Multi-stage build for local dev + CI E2E, no database required
 - **Deployment**: Vercel (production branch `prod-ayokoding-fs-v2`), same as
   `ayokoding-fs` (`prod-ayokoding-fs`) and `organiclever-fe` (`prod-organiclever-fe`)
-- **Linting**: oxlint (same as demo-fe-ts-nextjs and demo-fs-ts-nextjs)
+- **Linting**: oxlint (same as a-demo-fe-ts-nextjs and a-demo-fs-ts-nextjs)
 - **Performance**: All content pages should return Time to First Byte (TTFB) under
   2s on cached requests in Vercel production (aspirational; monitor post-launch).
   On-demand ISR (no `generateStaticParams`) — pages server-rendered on first request,

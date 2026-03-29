@@ -170,7 +170,7 @@ _, err = provider.Up(context.Background())  // => Executes all pending migration
 
 **Example**:
 
-> **Why It Matters**: In production deployments, embedded migrations eliminate the need to ship migration files alongside your binary or manage file paths across environments. When combined with `provider.Up(ctx)`, your application can self-migrate on startup with full context cancellation support. This pattern is used in `apps/demo-be-golang-gin` and ensures every deployed instance of the binary can bring its database schema to the correct version without external tooling or deployment scripts.
+> **Why It Matters**: In production deployments, embedded migrations eliminate the need to ship migration files alongside your binary or manage file paths across environments. When combined with `provider.Up(ctx)`, your application can self-migrate on startup with full context cancellation support. This pattern is used in `apps/a-demo-be-golang-gin` and ensures every deployed instance of the binary can bring its database schema to the correct version without external tooling or deployment scripts.
 
 ## Self-Containment Rules
 

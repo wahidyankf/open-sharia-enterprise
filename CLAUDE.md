@@ -29,25 +29,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `organiclever-be-e2e` - Playwright BE E2E tests for organiclever-be
   - `organiclever-contracts` - OpenAPI 3.1 API contract spec (in `specs/apps/organiclever/contracts/`); generates
     types + encoders/decoders for organiclever apps via `codegen` Nx target
-  - `demo-be-golang-gin` - Go/Gin REST API backend (default backend)
-  - `demo-be-java-springboot` - Spring Boot REST API backend (Java Spring Boot, alternative to demo-be-golang-gin)
-  - `demo-be-elixir-phoenix` - Elixir/Phoenix REST API backend (alternative to demo-be-golang-gin)
-  - `demo-be-fsharp-giraffe` - F#/Giraffe REST API backend (alternative to demo-be-golang-gin)
-  - `demo-be-python-fastapi` - Python/FastAPI REST API backend (alternative to demo-be-golang-gin)
-  - `demo-be-rust-axum` - Rust/Axum REST API backend (alternative to demo-be-golang-gin)
-  - `demo-be-kotlin-ktor` - Kotlin/Ktor REST API backend (alternative to demo-be-golang-gin)
-  - `demo-be-java-vertx` - Java/Vert.x REST API backend (alternative to demo-be-golang-gin)
-  - `demo-be-ts-effect` - TypeScript/Effect REST API backend (alternative to demo-be-golang-gin)
-  - `demo-be-csharp-aspnetcore` - C#/ASP.NET Core REST API backend (alternative to demo-be-golang-gin)
-  - `demo-be-clojure-pedestal` - Clojure/Pedestal REST API backend (alternative to demo-be-golang-gin)
-  - `demo-contracts` - OpenAPI 3.1 API contract spec (in `specs/apps/demo/contracts/`); generates
+  - `a-demo-be-golang-gin` - Go/Gin REST API backend (default backend)
+  - `a-demo-be-java-springboot` - Spring Boot REST API backend (Java Spring Boot, alternative to a-demo-be-golang-gin)
+  - `a-demo-be-elixir-phoenix` - Elixir/Phoenix REST API backend (alternative to a-demo-be-golang-gin)
+  - `a-demo-be-fsharp-giraffe` - F#/Giraffe REST API backend (alternative to a-demo-be-golang-gin)
+  - `a-demo-be-python-fastapi` - Python/FastAPI REST API backend (alternative to a-demo-be-golang-gin)
+  - `a-demo-be-rust-axum` - Rust/Axum REST API backend (alternative to a-demo-be-golang-gin)
+  - `a-demo-be-kotlin-ktor` - Kotlin/Ktor REST API backend (alternative to a-demo-be-golang-gin)
+  - `a-demo-be-java-vertx` - Java/Vert.x REST API backend (alternative to a-demo-be-golang-gin)
+  - `a-demo-be-ts-effect` - TypeScript/Effect REST API backend (alternative to a-demo-be-golang-gin)
+  - `a-demo-be-csharp-aspnetcore` - C#/ASP.NET Core REST API backend (alternative to a-demo-be-golang-gin)
+  - `a-demo-be-clojure-pedestal` - Clojure/Pedestal REST API backend (alternative to a-demo-be-golang-gin)
+  - `a-demo-contracts` - OpenAPI 3.1 API contract spec (in `specs/apps/a-demo/contracts/`); generates
     types + encoders/decoders for all demo apps via `codegen` Nx target
-  - `demo-be-e2e` - Playwright E2E tests for demo-be REST API backends
-  - `demo-fe-ts-nextjs` - Next.js 16 frontend (TypeScript, App Router)
-  - `demo-fe-ts-tanstack-start` - TanStack Start frontend (TypeScript, alternative to demo-fe-ts-nextjs)
-  - `demo-fe-dart-flutterweb` - Flutter Web frontend (Dart, alternative to demo-fe-ts-nextjs)
-  - `demo-fe-e2e` - Playwright E2E tests for demo-fe frontends
-  - `demo-fs-ts-nextjs` - Next.js 16 fullstack app (TypeScript, App Router + Route Handlers)
+  - `a-demo-be-e2e` - Playwright E2E tests for demo-be REST API backends
+  - `a-demo-fe-ts-nextjs` - Next.js 16 frontend (TypeScript, App Router)
+  - `a-demo-fe-ts-tanstack-start` - TanStack Start frontend (TypeScript, alternative to a-demo-fe-ts-nextjs)
+  - `a-demo-fe-dart-flutterweb` - Flutter Web frontend (Dart, alternative to a-demo-fe-ts-nextjs)
+  - `a-demo-fe-e2e` - Playwright E2E tests for demo-fe frontends
+  - `a-demo-fs-ts-nextjs` - Next.js 16 fullstack app (TypeScript, App Router + Route Handlers)
 
 ## Project Structure
 
@@ -65,22 +65,22 @@ open-sharia-enterprise/
 │   ├── organiclever-be/      # OrganicLever F#/Giraffe REST API backend
 │   ├── organiclever-fe-e2e/  # Playwright FE E2E tests for organiclever-fe
 │   ├── organiclever-be-e2e/  # Playwright BE E2E tests for organiclever-be
-│   ├── demo-be-java-springboot/ # Spring Boot REST API (Java Spring Boot)
-│   ├── demo-be-elixir-phoenix/ # Elixir/Phoenix REST API (alternative implementation)
-│   ├── demo-be-fsharp-giraffe/ # F#/Giraffe REST API (alternative implementation)
-│   ├── demo-be-golang-gin/ # Go/Gin REST API (alternative implementation)
-│   ├── demo-be-python-fastapi/ # Python/FastAPI REST API (alternative implementation)
-│   ├── demo-be-rust-axum/ # Rust/Axum REST API (alternative implementation)
-│   ├── demo-be-kotlin-ktor/ # Kotlin/Ktor REST API (alternative implementation)
-│   ├── demo-be-java-vertx/ # Java/Vert.x REST API (alternative implementation)
-│   ├── demo-be-ts-effect/ # TypeScript/Effect REST API (alternative implementation)
-│   ├── demo-be-csharp-aspnetcore/ # C#/ASP.NET Core REST API (alternative implementation)
-│   ├── demo-be-clojure-pedestal/ # Clojure/Pedestal REST API (alternative implementation)
-│   ├── demo-be-e2e/ # Playwright E2E tests for backend
-│   ├── demo-fe-ts-nextjs/ # Next.js 16 frontend (TypeScript)
-│   ├── demo-fe-ts-tanstack-start/ # TanStack Start frontend (TypeScript)
-│   ├── demo-fe-dart-flutterweb/ # Flutter Web frontend (Dart)
-│   ├── demo-fe-e2e/ # Playwright E2E tests for frontend
+│   ├── a-demo-be-java-springboot/ # Spring Boot REST API (Java Spring Boot)
+│   ├── a-demo-be-elixir-phoenix/ # Elixir/Phoenix REST API (alternative implementation)
+│   ├── a-demo-be-fsharp-giraffe/ # F#/Giraffe REST API (alternative implementation)
+│   ├── a-demo-be-golang-gin/ # Go/Gin REST API (alternative implementation)
+│   ├── a-demo-be-python-fastapi/ # Python/FastAPI REST API (alternative implementation)
+│   ├── a-demo-be-rust-axum/ # Rust/Axum REST API (alternative implementation)
+│   ├── a-demo-be-kotlin-ktor/ # Kotlin/Ktor REST API (alternative implementation)
+│   ├── a-demo-be-java-vertx/ # Java/Vert.x REST API (alternative implementation)
+│   ├── a-demo-be-ts-effect/ # TypeScript/Effect REST API (alternative implementation)
+│   ├── a-demo-be-csharp-aspnetcore/ # C#/ASP.NET Core REST API (alternative implementation)
+│   ├── a-demo-be-clojure-pedestal/ # Clojure/Pedestal REST API (alternative implementation)
+│   ├── a-demo-be-e2e/ # Playwright E2E tests for backend
+│   ├── a-demo-fe-ts-nextjs/ # Next.js 16 frontend (TypeScript)
+│   ├── a-demo-fe-ts-tanstack-start/ # TanStack Start frontend (TypeScript)
+│   ├── a-demo-fe-dart-flutterweb/ # Flutter Web frontend (Dart)
+│   ├── a-demo-fe-e2e/ # Playwright E2E tests for frontend
 ├── archived/                 # Archived applications (no longer active)
 ├── apps-labs/                # Experimental apps (NOT in Nx)
 ├── libs/                     # Reusable libraries (Nx, flat structure)
@@ -135,8 +135,8 @@ nx run [project-name]:test:integration   # Demo-be: real PostgreSQL via docker-c
 nx run [project-name]:test:e2e           # Real HTTP via Playwright. NOT cacheable
 
 # Contract codegen (generates types from OpenAPI spec into generated-contracts/)
-nx run demo-contracts:lint       # Lint + bundle the OpenAPI spec
-nx run demo-contracts:docs       # Generate browsable API documentation
+nx run a-demo-contracts:lint       # Lint + bundle the OpenAPI spec
+nx run a-demo-contracts:docs       # Generate browsable API documentation
 nx run [project-name]:codegen    # Generate types for a specific app
 nx run-many -t codegen --projects=demo-*  # Generate for all demo apps
 
@@ -156,14 +156,14 @@ npm run doctor           # Check all required tools (volta, node, npm, java, mav
 **See**: [governance/development/infra/nx-targets.md](./governance/development/infra/nx-targets.md) for canonical target names, mandatory targets per project type, and caching rules.
 
 **Go projects**: All Go projects (`ayokoding-cli`, `oseplatform-cli`, `rhino-cli`,
-`libs/golang-commons`, `libs/hugo-commons`, `demo-be-golang-gin`) enforce ≥90% **line coverage**
+`libs/golang-commons`, `libs/hugo-commons`, `a-demo-be-golang-gin`) enforce ≥90% **line coverage**
 (matching Codecov's algorithm) via `rhino-cli test-coverage validate`. Coverage is measured from
 `test:unit` with `go test -coverprofile=cover.out ./...` and enforced by
 `rhino-cli test-coverage validate <project>/cover.out 90` — both run as part of `test:quick`.
 
-**TypeScript projects**: `demo-be-ts-effect` enforces ≥90% **line coverage**
+**TypeScript projects**: `a-demo-be-ts-effect` enforces ≥90% **line coverage**
 (matching Codecov's algorithm) via `rhino-cli test-coverage validate` applied to the LCOV output
-from `test:unit` (Vitest): `rhino-cli test-coverage validate apps/demo-be-ts-effect/coverage/lcov.info 90` — run as part of
+from `test:unit` (Vitest): `rhino-cli test-coverage validate apps/a-demo-be-ts-effect/coverage/lcov.info 90` — run as part of
 `test:quick`.
 
 **OrganicLever Frontend**: `organiclever-fe` enforces ≥70% **line coverage** via
@@ -176,45 +176,45 @@ from `test:unit` (Vitest): `rhino-cli test-coverage validate apps/demo-be-ts-eff
 **OSE Platform Web**: `oseplatform-fs` enforces ≥80% **line coverage** via
 `rhino-cli test-coverage validate apps/oseplatform-fs/coverage/lcov.info 80` — run as part of `test:quick`.
 
-**Java projects**: `demo-be-java-springboot` and `demo-be-java-vertx` enforce ≥90% **line coverage** (matching
+**Java projects**: `a-demo-be-java-springboot` and `a-demo-be-java-vertx` enforce ≥90% **line coverage** (matching
 Codecov's algorithm) via `rhino-cli test-coverage validate` applied to the JaCoCo XML report from
 `test:unit` — run as part of `test:quick`.
 
-**Kotlin projects**: `demo-be-kotlin-ktor` enforces ≥90% **line coverage** (matching Codecov's algorithm)
+**Kotlin projects**: `a-demo-be-kotlin-ktor` enforces ≥90% **line coverage** (matching Codecov's algorithm)
 via `rhino-cli test-coverage validate` applied to the Kover JaCoCo XML report from `test:unit` —
 run as part of `test:quick`.
 
-**Python projects**: `demo-be-python-fastapi` enforces ≥90% **line coverage** (matching Codecov's algorithm)
+**Python projects**: `a-demo-be-python-fastapi` enforces ≥90% **line coverage** (matching Codecov's algorithm)
 via `rhino-cli test-coverage validate` applied to the LCOV output from `test:unit` (coverage.py):
-`rhino-cli test-coverage validate apps/demo-be-python-fastapi/coverage/lcov.info 90` — run as part of `test:quick`.
+`rhino-cli test-coverage validate apps/a-demo-be-python-fastapi/coverage/lcov.info 90` — run as part of `test:quick`.
 
-**Rust projects**: `demo-be-rust-axum` enforces ≥90% **line coverage** (matching Codecov's algorithm)
+**Rust projects**: `a-demo-be-rust-axum` enforces ≥90% **line coverage** (matching Codecov's algorithm)
 via `rhino-cli test-coverage validate` applied to the LCOV output from `test:unit` (cargo-llvm-cov):
-`rhino-cli test-coverage validate apps/demo-be-rust-axum/coverage/lcov.info 90` — run as part of `test:quick`.
+`rhino-cli test-coverage validate apps/a-demo-be-rust-axum/coverage/lcov.info 90` — run as part of `test:quick`.
 
-**F# projects**: `demo-be-fsharp-giraffe` and `organiclever-be` enforce ≥90% **line coverage** (matching
+**F# projects**: `a-demo-be-fsharp-giraffe` and `organiclever-be` enforce ≥90% **line coverage** (matching
 Codecov's algorithm) via `rhino-cli test-coverage validate` applied to the AltCover LCOV report from
-`test:unit`: `rhino-cli test-coverage validate apps/demo-be-fsharp-giraffe/coverage/altcov.info 90` and
+`test:unit`: `rhino-cli test-coverage validate apps/a-demo-be-fsharp-giraffe/coverage/altcov.info 90` and
 `rhino-cli test-coverage validate apps/organiclever-be/coverage/altcov.info 90` — both run as part of
 `test:quick`. Uses AltCover with `--linecover` instead of XPlat Code Coverage to avoid F#
 `task{}` async state machine BRDA inflation.
 
-**C# projects**: `demo-be-csharp-aspnetcore` enforces ≥90% **line coverage** (matching Codecov's algorithm)
+**C# projects**: `a-demo-be-csharp-aspnetcore` enforces ≥90% **line coverage** (matching Codecov's algorithm)
 via `rhino-cli test-coverage validate` applied to the Coverlet LCOV report from `test:unit`:
-`rhino-cli test-coverage validate apps/demo-be-csharp-aspnetcore/coverage/**/coverage.info 90` — run as part
+`rhino-cli test-coverage validate apps/a-demo-be-csharp-aspnetcore/coverage/**/coverage.info 90` — run as part
 of `test:quick`. Uses Coverlet XPlat Code Coverage collector with LCOV format output.
 
-**Clojure projects**: `demo-be-clojure-pedestal` enforces ≥90% **line coverage** (matching Codecov's algorithm)
+**Clojure projects**: `a-demo-be-clojure-pedestal` enforces ≥90% **line coverage** (matching Codecov's algorithm)
 via `rhino-cli test-coverage validate` applied to the cloverage LCOV report from `test:unit`:
-`rhino-cli test-coverage validate apps/demo-be-clojure-pedestal/coverage/lcov.info 90` — run as part
+`rhino-cli test-coverage validate apps/a-demo-be-clojure-pedestal/coverage/lcov.info 90` — run as part
 of `test:quick`. Uses cloverage with `--lcov` output format.
 
-**Demo-fe TypeScript frontends**: `demo-fe-ts-nextjs` enforces ≥70% **line coverage** via
+**Demo-fe TypeScript frontends**: `a-demo-fe-ts-nextjs` enforces ≥70% **line coverage** via
 `rhino-cli test-coverage validate` applied to the LCOV output from `test:unit` (Vitest) — run as
 part of `test:quick`. Lower threshold reflects that API/auth/queries layers are fully mocked in
 unit tests by design.
 
-**Dart frontends**: `demo-fe-dart-flutterweb` enforces ≥70% **line coverage** via
+**Dart frontends**: `a-demo-fe-dart-flutterweb` enforces ≥70% **line coverage** via
 `rhino-cli test-coverage validate` applied to the LCOV output from `test:unit` (Flutter test) — run
 as part of `test:quick`.
 
@@ -226,7 +226,7 @@ in-process mocking only (MSW, Godog) override to `cache: true` in their `project
 
 **Three-level testing standard** (demo-be backends):
 
-1. **Unit (`test:unit`)**: All mocked dependencies; must consume Gherkin specs from `specs/apps/demo/be/gherkin/`; call service functions directly with mocked repositories; coverage measured here (>=90%)
+1. **Unit (`test:unit`)**: All mocked dependencies; must consume Gherkin specs from `specs/apps/a-demo/be/gherkin/`; call service functions directly with mocked repositories; coverage measured here (>=90%)
 2. **Integration (`test:integration`)**: Real PostgreSQL via docker-compose; **no HTTP calls** (no MockMvc, TestClient, httptest, ConnTest, WebApplicationFactory, fetch, clj-http, Router.oneshot); must consume Gherkin specs; call service functions directly with real DB
 3. **E2E (`test:e2e`)**: Full stack via Playwright; real HTTP + real DB; must consume Gherkin specs
 
@@ -235,12 +235,12 @@ includes only `test:unit` + coverage validation. It does NOT include `lint`, `ty
 `test:integration`, or `test:e2e`. Spec-coverage validation (`rhino-cli spec-coverage validate`)
 is deferred pending tool enhancement for demo-be naming conventions.
 
-**Mandatory Nx targets for demo apps**: All `demo-be-*` and `demo-fe-*` apps must have 7 targets:
+**Mandatory Nx targets for demo apps**: All `a-demo-be-*` and `a-demo-fe-*` apps must have 7 targets:
 `codegen`, `typecheck`, `lint`, `build`, `test:unit`, `test:quick`, `test:integration`. Coverage
 thresholds: backends ≥90%, frontends ≥70%.
 
 **Contract enforcement**: All demo apps have a `codegen` Nx target that generates types +
-encoders/decoders from the OpenAPI spec at `specs/apps/demo/contracts/`. Generated code lives in
+encoders/decoders from the OpenAPI spec at `specs/apps/a-demo/contracts/`. Generated code lives in
 `generated-contracts/` (gitignored). The `codegen` target is a dependency of `typecheck` and
 `build` — so contract violations are caught by `nx affected -t typecheck` and `test:quick`
 in the pre-push hook and PR quality gate. (Exception: Rust and Flutter also declare `codegen` as a

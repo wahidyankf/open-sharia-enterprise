@@ -136,7 +136,7 @@ CREATE TABLE IF NOT EXISTS events (
 
 **Key Takeaway**: Maintain separate migration files per database backend when using SQLite for tests and PostgreSQL for production. The SQL dialects differ enough that portable SQL is often more complex than two targeted files.
 
-**Why It Matters**: Running integration tests against SQLite in-memory databases eliminates Docker dependencies from the unit test suite, making CI faster and local development easier. The tradeoff is maintaining two sets of migration files. This is the pattern used by the demo-be-rust-axum project: one connection pool for production PostgreSQL and one for SQLite in tests. The migration logic must be aware of which backend is active, which the next example demonstrates.
+**Why It Matters**: Running integration tests against SQLite in-memory databases eliminates Docker dependencies from the unit test suite, making CI faster and local development easier. The tradeoff is maintaining two sets of migration files. This is the pattern used by the a-demo-be-rust-axum project: one connection pool for production PostgreSQL and one for SQLite in tests. The migration logic must be aware of which backend is active, which the next example demonstrates.
 
 ---
 
@@ -191,7 +191,7 @@ async fn run_compatible_migration(pool: &AnyPool) -> Result<(), sqlx::Error> {
 
 **Key Takeaway**: Use `pool.any_kind()` to detect the database backend at runtime and branch on it to execute database-specific SQL within a single Rust codebase.
 
-**Why It Matters**: Multi-backend support is a deliberate architectural choice that trades portability for developer convenience. The demo-be-rust-axum project uses this pattern to run the same application binary against PostgreSQL in production and SQLite in fast unit tests, avoiding Docker in the test suite while still testing real SQL logic. The branching pattern keeps the application self-contained while accommodating both backends cleanly.
+**Why It Matters**: Multi-backend support is a deliberate architectural choice that trades portability for developer convenience. The a-demo-be-rust-axum project uses this pattern to run the same application binary against PostgreSQL in production and SQLite in fast unit tests, avoiding Docker in the test suite while still testing real SQL logic. The branching pattern keeps the application self-contained while accommodating both backends cleanly.
 
 ---
 
@@ -920,7 +920,7 @@ mod tests {
 
 **Key Takeaway**: Use `#[sqlx::test]` for database integration tests. Each test gets an isolated fresh database with migrations applied, and the database is dropped after the test completes.
 
-**Why It Matters**: Testing database logic against a real schema prevents false positives from mocked repositories. The `#[sqlx::test]` macro handles database lifecycle automatically—creating, migrating, and dropping—so each test starts from a known-clean state. This eliminates test interdependency (one test's inserts affecting another test's assertions) without requiring manual cleanup code. The tradeoff is that `sqlx::test` requires a running PostgreSQL server, making it an integration test rather than a unit test. The demo-be-rust-axum project uses SQLite in-memory pools for unit tests and reserves PostgreSQL for `test:integration`.
+**Why It Matters**: Testing database logic against a real schema prevents false positives from mocked repositories. The `#[sqlx::test]` macro handles database lifecycle automatically—creating, migrating, and dropping—so each test starts from a known-clean state. This eliminates test interdependency (one test's inserts affecting another test's assertions) without requiring manual cleanup code. The tradeoff is that `sqlx::test` requires a running PostgreSQL server, making it an integration test rather than a unit test. The a-demo-be-rust-axum project uses SQLite in-memory pools for unit tests and reserves PostgreSQL for `test:integration`.
 
 ---
 
@@ -989,7 +989,7 @@ mod tests {
 
 **Key Takeaway**: Use `sqlite::memory:` with `max_connections(1)` for unit test pools. Call the same migration function as production to ensure test schema matches production schema.
 
-**Why It Matters**: Fast unit tests that run without Docker or a PostgreSQL server make the test loop tight enough for test-driven development. The key discipline is applying the exact same migration code path in tests as in production—using a separate hand-crafted test schema is dangerous because it can diverge from production and miss schema-related bugs. The demo-be-rust-axum project uses this pattern: the `create_test_pool()` function is shared between production and test code, ensuring the test schema is always the current production schema.
+**Why It Matters**: Fast unit tests that run without Docker or a PostgreSQL server make the test loop tight enough for test-driven development. The key discipline is applying the exact same migration code path in tests as in production—using a separate hand-crafted test schema is dangerous because it can diverge from production and miss schema-related bugs. The a-demo-be-rust-axum project uses this pattern: the `create_test_pool()` function is shared between production and test code, ensuring the test schema is always the current production schema.
 
 ---
 

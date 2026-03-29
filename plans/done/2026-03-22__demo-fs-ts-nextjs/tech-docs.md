@@ -22,7 +22,7 @@ flowchart TD
 ## Project Structure
 
 ```
-apps/demo-fs-ts-nextjs/
+apps/a-demo-fs-ts-nextjs/
 ├── src/
 │   ├── app/                          # Next.js App Router
 │   │   ├── api/                      # Route Handlers (BE API)
@@ -115,34 +115,34 @@ apps/demo-fs-ts-nextjs/
 
 ## Design Decisions
 
-| Decision         | Choice                     | Reason                                                |
-| ---------------- | -------------------------- | ----------------------------------------------------- |
-| App type         | Fullstack (fs)             | First demo combining BE + FE in one app               |
-| Framework        | Next.js 16 (App Router)    | Proven fullstack framework; existing FE experience    |
-| API layer        | Next.js Route Handlers     | Native, zero-config API routes in App Router          |
-| ORM              | Drizzle ORM                | Lightweight, SQL-like, type-safe, functional style    |
-| Database         | PostgreSQL                 | Same as all other demo backends                       |
-| Auth             | JWT HS256 (jose library)   | Same token format as other backends                   |
-| State management | TanStack Query v5          | Same as existing FE apps                              |
-| HTTP client      | fetch (native)             | No extra dependency                                   |
-| Auth storage     | localStorage (client-side) | Must match keys for E2E compatibility                 |
-| Coverage tool    | Vitest v8 + rhino-cli      | Same as TS projects; 80%+ threshold (BE+FE blend)     |
-| Linter           | oxlint                     | Same as demo-fe-ts-nextjs                             |
-| Port             | 3401                       | New range for fullstack apps                          |
-| BDD tool         | @amiceli/vitest-cucumber   | Unified coverage: both BE + FE steps run in Vitest    |
-| Docker           | Multi-stage + PostgreSQL   | Same pattern as other demo backends                   |
-| Integration BDD  | @cucumber/cucumber         | Proven pattern from demo-be-ts-effect; runs in Docker |
+| Decision         | Choice                     | Reason                                                  |
+| ---------------- | -------------------------- | ------------------------------------------------------- |
+| App type         | Fullstack (fs)             | First demo combining BE + FE in one app                 |
+| Framework        | Next.js 16 (App Router)    | Proven fullstack framework; existing FE experience      |
+| API layer        | Next.js Route Handlers     | Native, zero-config API routes in App Router            |
+| ORM              | Drizzle ORM                | Lightweight, SQL-like, type-safe, functional style      |
+| Database         | PostgreSQL                 | Same as all other demo backends                         |
+| Auth             | JWT HS256 (jose library)   | Same token format as other backends                     |
+| State management | TanStack Query v5          | Same as existing FE apps                                |
+| HTTP client      | fetch (native)             | No extra dependency                                     |
+| Auth storage     | localStorage (client-side) | Must match keys for E2E compatibility                   |
+| Coverage tool    | Vitest v8 + rhino-cli      | Same as TS projects; 80%+ threshold (BE+FE blend)       |
+| Linter           | oxlint                     | Same as a-demo-fe-ts-nextjs                             |
+| Port             | 3401                       | New range for fullstack apps                            |
+| BDD tool         | @amiceli/vitest-cucumber   | Unified coverage: both BE + FE steps run in Vitest      |
+| Docker           | Multi-stage + PostgreSQL   | Same pattern as other demo backends                     |
+| Integration BDD  | @cucumber/cucumber         | Proven pattern from a-demo-be-ts-effect; runs in Docker |
 
 ## Key Architectural Differences from Existing Apps
 
-**vs `demo-be-*` backends:**
+**vs `a-demo-be-*` backends:**
 
 - API routes are Next.js Route Handlers, not standalone HTTP servers
 - Same service layer pattern (services/ + repositories/) but in TypeScript
 - Same PostgreSQL schema and migrations
 - Route Handlers receive `NextRequest` and return `NextResponse`
 
-**vs `demo-fe-*` frontends:**
+**vs `a-demo-fe-*` frontends:**
 
 - No API proxy needed — Route Handlers serve the API on the same origin
 - Frontend code can import server-side utilities via server components
@@ -166,13 +166,13 @@ demo backends). Frontend unit tests mock the API client layer (same pattern as d
 
 The fullstack app is unique in consuming **both** spec sets:
 
-| Spec Source                   | Consumed By                  | Test Level            | Step Style             |
-| ----------------------------- | ---------------------------- | --------------------- | ---------------------- |
-| `specs/apps/demo/be/gherkin/` | `test/unit/be-steps/`        | Unit (mocked repos)   | Service function calls |
-| `specs/apps/demo/be/gherkin/` | `test/integration/be-steps/` | Integration (real PG) | Service function calls |
-| `specs/apps/demo/be/gherkin/` | `demo-be-e2e`                | E2E                   | HTTP requests          |
-| `specs/apps/demo/fe/gherkin/` | `test/unit/fe-steps/`        | Unit (mocked API)     | Component logic        |
-| `specs/apps/demo/fe/gherkin/` | `demo-fe-e2e`                | E2E                   | Playwright browser     |
+| Spec Source                     | Consumed By                  | Test Level            | Step Style             |
+| ------------------------------- | ---------------------------- | --------------------- | ---------------------- |
+| `specs/apps/a-demo/be/gherkin/` | `test/unit/be-steps/`        | Unit (mocked repos)   | Service function calls |
+| `specs/apps/a-demo/be/gherkin/` | `test/integration/be-steps/` | Integration (real PG) | Service function calls |
+| `specs/apps/a-demo/be/gherkin/` | `a-demo-be-e2e`              | E2E                   | HTTP requests          |
+| `specs/apps/a-demo/fe/gherkin/` | `test/unit/fe-steps/`        | Unit (mocked API)     | Component logic        |
+| `specs/apps/a-demo/fe/gherkin/` | `a-demo-fe-e2e`              | E2E                   | Playwright browser     |
 
 ## Database Schema
 
@@ -184,13 +184,13 @@ Drizzle schema format (`src/db/schema.ts`), with SQL migrations generated by Dri
 **Tags:**
 
 ```json
-"tags": ["type:app", "platform:nextjs", "lang:ts", "domain:demo-fs"]
+"tags": ["type:app", "platform:nextjs", "lang:ts", "domain:a-demo-fs"]
 ```
 
 **Implicit dependencies:**
 
 ```json
-"implicitDependencies": ["demo-contracts", "rhino-cli"]
+"implicitDependencies": ["a-demo-contracts", "rhino-cli"]
 ```
 
 **7 mandatory targets** + optional `dev`:
@@ -212,8 +212,8 @@ Drizzle schema format (`src/db/schema.ts`), with SQL migrations generated by Dri
 "inputs": [
   "default",
   "{projectRoot}/src/generated-contracts/**/*",
-  "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature",
-  "{workspaceRoot}/specs/apps/demo/fe/gherkin/**/*.feature"
+  "{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature",
+  "{workspaceRoot}/specs/apps/a-demo/fe/gherkin/**/*.feature"
 ]
 ```
 
@@ -221,13 +221,13 @@ Note: Both BE and FE Gherkin specs are included as cache inputs since this app c
 
 ## Docker Compose
 
-**Local development** (`infra/dev/demo-fs-ts-nextjs/docker-compose.yml`):
+**Local development** (`infra/dev/a-demo-fs-ts-nextjs/docker-compose.yml`):
 
 ```yaml
 services:
-  demo-fs-ts-nextjs-db:
+  a-demo-fs-ts-nextjs-db:
     image: postgres:17-alpine
-    container_name: demo-fs-ts-nextjs-db
+    container_name: a-demo-fs-ts-nextjs-db
     environment:
       POSTGRES_DB: demo_fs_nextjs
       POSTGRES_USER: ${POSTGRES_USER:-demo_fs_nextjs}
@@ -235,7 +235,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - demo-fs-ts-nextjs-db-data:/var/lib/postgresql/data
+      - a-demo-fs-ts-nextjs-db-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-demo_fs_nextjs} -d demo_fs_nextjs"]
       interval: 10s
@@ -244,19 +244,19 @@ services:
       start_period: 30s
     restart: unless-stopped
     networks:
-      - demo-fs-ts-nextjs-network
+      - a-demo-fs-ts-nextjs-network
 
-  demo-fs-ts-nextjs:
+  a-demo-fs-ts-nextjs:
     build:
-      context: ../../../apps/demo-fs-ts-nextjs
-    container_name: demo-fs-ts-nextjs
+      context: ../../../apps/a-demo-fs-ts-nextjs
+    container_name: a-demo-fs-ts-nextjs
     ports:
       - "3401:3401"
     depends_on:
-      demo-fs-ts-nextjs-db:
+      a-demo-fs-ts-nextjs-db:
         condition: service_healthy
     environment:
-      - DATABASE_URL=postgresql://demo_fs_nextjs:demo_fs_nextjs@demo-fs-ts-nextjs-db:5432/demo_fs_nextjs
+      - DATABASE_URL=postgresql://demo_fs_nextjs:demo_fs_nextjs@a-demo-fs-ts-nextjs-db:5432/demo_fs_nextjs
       - APP_JWT_SECRET=${APP_JWT_SECRET:-change-me-in-dev-only-not-for-production}
       - ENABLE_TEST_API=true
       - PORT=3401
@@ -268,31 +268,31 @@ services:
       start_period: 30s
     restart: unless-stopped
     networks:
-      - demo-fs-ts-nextjs-network
+      - a-demo-fs-ts-nextjs-network
 
 networks:
-  demo-fs-ts-nextjs-network:
+  a-demo-fs-ts-nextjs-network:
     driver: bridge
-    name: demo-fs-ts-nextjs-network
+    name: a-demo-fs-ts-nextjs-network
 
 volumes:
-  demo-fs-ts-nextjs-db-data:
+  a-demo-fs-ts-nextjs-db-data:
 ```
 
-**Integration tests** (`apps/demo-fs-ts-nextjs/docker-compose.integration.yml`):
+**Integration tests** (`apps/a-demo-fs-ts-nextjs/docker-compose.integration.yml`):
 
 Same pattern as other backends — PostgreSQL + test runner container.
 
 ## CI Workflow
 
-`.github/workflows/test-demo-fs-ts-nextjs.yml` following the pattern of other demo app
+`.github/workflows/test-a-demo-fs-ts-nextjs.yml` following the pattern of other demo app
 workflows:
 
 - **Triggers**: 2x daily cron (WIB 06, 18) + manual dispatch
 - **Jobs**:
-  - `unit`: `nx run demo-fs-ts-nextjs:test:quick`
-  - `integration`: `nx run demo-fs-ts-nextjs:test:integration`
-  - `e2e-be`: Start app + PG, run `demo-be-e2e` with `BASE_URL=http://localhost:3401`
-  - `e2e-fe`: Start app + PG, run `demo-fe-e2e` with `BASE_URL=http://localhost:3401`
+  - `unit`: `nx run a-demo-fs-ts-nextjs:test:quick`
+  - `integration`: `nx run a-demo-fs-ts-nextjs:test:integration`
+  - `e2e-be`: Start app + PG, run `a-demo-be-e2e` with `BASE_URL=http://localhost:3401`
+  - `e2e-fe`: Start app + PG, run `a-demo-fe-e2e` with `BASE_URL=http://localhost:3401`
     and `BACKEND_URL=http://localhost:3401`
 - **Codecov**: Upload coverage from unit tests

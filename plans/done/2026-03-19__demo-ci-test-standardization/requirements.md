@@ -23,9 +23,9 @@
 ```gherkin
 Scenario: Language versions match between main CI and scheduled workflows
   Given main-ci.yml uses Go 1.26.0, Elixir 1.19, and Python 3.13
-  And test-demo-be-golang-gin.yml uses Go 1.24
-  And test-demo-be-elixir-phoenix.yml uses Elixir 1.18
-  And test-demo-be-python-fastapi.yml uses Python 3.12
+  And test-a-demo-be-golang-gin.yml uses Go 1.24
+  And test-a-demo-be-elixir-phoenix.yml uses Elixir 1.18
+  And test-a-demo-be-python-fastapi.yml uses Python 3.12
   When the CI standardization is complete
   Then all scheduled workflows use Go 1.26.0
   And all scheduled workflows use Elixir 1.19
@@ -37,15 +37,15 @@ Scenario: Language versions match between main CI and scheduled workflows
 
 ```gherkin
 Scenario: All backends have a typecheck target
-  Given demo-be-golang-gin has no typecheck target
-  And demo-be-rust-axum has no typecheck target
-  And demo-be-kotlin-ktor has no typecheck target
-  And demo-be-clojure-pedestal has no typecheck target
+  Given a-demo-be-golang-gin has no typecheck target
+  And a-demo-be-rust-axum has no typecheck target
+  And a-demo-be-kotlin-ktor has no typecheck target
+  And a-demo-be-clojure-pedestal has no typecheck target
   When the CI standardization is complete
-  Then demo-be-golang-gin has a typecheck target running "go vet ./..."
-  And demo-be-rust-axum has a typecheck target running "cargo check"
-  And demo-be-kotlin-ktor has a typecheck target running "./gradlew compileKotlin"
-  And demo-be-clojure-pedestal has a typecheck target running "clj-kondo --lint src"
+  Then a-demo-be-golang-gin has a typecheck target running "go vet ./..."
+  And a-demo-be-rust-axum has a typecheck target running "cargo check"
+  And a-demo-be-kotlin-ktor has a typecheck target running "./gradlew compileKotlin"
+  And a-demo-be-clojure-pedestal has a typecheck target running "clj-kondo --lint src"
   And all typecheck targets depend on codegen
   And nx affected -t typecheck includes all 11 backends
 ```
@@ -54,11 +54,11 @@ Scenario: All backends have a typecheck target
 
 ```gherkin
 Scenario: Existing typecheck targets depend on codegen
-  Given demo-be-elixir-phoenix has typecheck but no dependsOn: ["codegen"]
-  And demo-be-python-fastapi has typecheck but no dependsOn: ["codegen"]
+  Given a-demo-be-elixir-phoenix has typecheck but no dependsOn: ["codegen"]
+  And a-demo-be-python-fastapi has typecheck but no dependsOn: ["codegen"]
   When the CI standardization is complete
-  Then demo-be-elixir-phoenix typecheck depends on codegen
-  And demo-be-python-fastapi typecheck depends on codegen
+  Then a-demo-be-elixir-phoenix typecheck depends on codegen
+  And a-demo-be-python-fastapi typecheck depends on codegen
   And typecheck catches contract mismatches at compile time
 ```
 
@@ -66,7 +66,7 @@ Scenario: Existing typecheck targets depend on codegen
 
 ```gherkin
 Scenario: Elixir backend separates test:unit from test:quick
-  Given demo-be-elixir-phoenix test:unit and test:quick run identical commands
+  Given a-demo-be-elixir-phoenix test:unit and test:quick run identical commands
   And both run "MIX_ENV=test mix coveralls.lcov --only unit" + rhino-cli validation
   When the CI standardization is complete
   Then test:unit runs "MIX_ENV=test mix test --only unit" without coverage measurement
@@ -78,14 +78,14 @@ Scenario: Elixir backend separates test:unit from test:quick
 
 ```gherkin
 Scenario: F# backend separates lint from test:quick
-  Given demo-be-fsharp-giraffe test:quick runs fantomas + fsharplint + tests + coverage
+  Given a-demo-be-fsharp-giraffe test:quick runs fantomas + fsharplint + tests + coverage
   When the CI standardization is complete
   Then test:quick runs tests + coverage validation only
   And lint target runs fantomas --check + dotnet fsharplint
   And the pre-push hook runs typecheck, lint, and test:quick as separate targets
 
 Scenario: Flutter frontend separates lint from test:quick
-  Given demo-fe-dart-flutterweb test:quick runs "dart analyze --fatal-infos && flutter test"
+  Given a-demo-fe-dart-flutterweb test:quick runs "dart analyze --fatal-infos && flutter test"
   And "dart analyze" is a lint concern, not a test concern
   When the CI standardization is complete
   Then test:quick runs flutter test with coverage + rhino-cli validation only
@@ -97,7 +97,7 @@ Scenario: Flutter frontend separates lint from test:quick
 
 ```gherkin
 Scenario: Flutter frontend enforces coverage threshold
-  Given demo-fe-dart-flutterweb test:quick runs "dart analyze && flutter test"
+  Given a-demo-fe-dart-flutterweb test:quick runs "dart analyze && flutter test"
   And there is no coverage measurement or rhino-cli validation
   When the CI standardization is complete
   Then test:quick runs flutter test with coverage + rhino-cli validation at 70% threshold
@@ -148,21 +148,21 @@ Scenario: Codegen dependency chain is consistent
 
 ### FR-1: CI version alignment
 
-All 14 scheduled test workflows (`test-demo-be-*.yml`, `test-demo-fe-*.yml`) must use the same
+All 14 scheduled test workflows (`test-a-demo-be-*.yml`, `test-a-demo-fe-*.yml`) must use the same
 language/tool versions as `main-ci.yml`. Specifically:
 
-- Go: 1.26.0 (currently 1.24 in `test-demo-be-golang-gin.yml`)
-- Elixir: 1.19 (currently 1.18 in `test-demo-be-elixir-phoenix.yml`)
-- Python: 3.13 (currently 3.12 in `test-demo-be-python-fastapi.yml`)
+- Go: 1.26.0 (currently 1.24 in `test-a-demo-be-golang-gin.yml`)
+- Elixir: 1.19 (currently 1.18 in `test-a-demo-be-elixir-phoenix.yml`)
+- Python: 3.13 (currently 3.12 in `test-a-demo-be-python-fastapi.yml`)
 
 ### FR-2: Missing typecheck targets
 
 Add `typecheck` Nx targets to:
 
-- `demo-be-golang-gin`: `go vet ./...` (depends on codegen)
-- `demo-be-rust-axum`: `cargo check` (depends on codegen)
-- `demo-be-kotlin-ktor`: `./gradlew compileKotlin` (depends on codegen)
-- `demo-be-clojure-pedestal`: `clj-kondo --lint src` (depends on codegen)
+- `a-demo-be-golang-gin`: `go vet ./...` (depends on codegen)
+- `a-demo-be-rust-axum`: `cargo check` (depends on codegen)
+- `a-demo-be-kotlin-ktor`: `./gradlew compileKotlin` (depends on codegen)
+- `a-demo-be-clojure-pedestal`: `clj-kondo --lint src` (depends on codegen)
 
 Verify existing typecheck targets in other backends depend on codegen.
 
@@ -170,52 +170,52 @@ Verify existing typecheck targets in other backends depend on codegen.
 
 Add `dependsOn: ["codegen"]` to existing typecheck targets:
 
-- `demo-be-elixir-phoenix`: typecheck exists but lacks codegen dependency
-- `demo-be-python-fastapi`: typecheck exists but lacks codegen dependency
+- `a-demo-be-elixir-phoenix`: typecheck exists but lacks codegen dependency
+- `a-demo-be-python-fastapi`: typecheck exists but lacks codegen dependency
 
 ### FR-4: Separate test:unit from test:quick (Elixir)
 
-For `demo-be-elixir-phoenix` (the only backend where test:unit and test:quick are identical):
+For `a-demo-be-elixir-phoenix` (the only backend where test:unit and test:quick are identical):
 
 - `test:unit`: Run unit tests only (`MIX_ENV=test mix test --only unit`) — no coverage
 - `test:quick`: Run unit tests with coverage (`MIX_ENV=test mix coveralls.lcov --only unit`) +
   rhino-cli validation
 
-Note: `demo-be-clojure-pedestal` already has proper separation (test:unit uses `-M:test`,
+Note: `a-demo-be-clojure-pedestal` already has proper separation (test:unit uses `-M:test`,
 test:quick uses `-M:coverage`).
 
 ### FR-5: Remove lint/format from test:quick
 
-For `demo-be-fsharp-giraffe`:
+For `a-demo-be-fsharp-giraffe`:
 
 - Move `fantomas --check` and `dotnet fsharplint` from `test:quick` to `lint` target
 - `test:quick` retains only: build tests, run coverage, validate coverage
 
-For `demo-fe-dart-flutterweb`:
+For `a-demo-fe-dart-flutterweb`:
 
 - Move `dart analyze --fatal-infos` from `test:quick` to `lint` target (which already has it)
 - `test:quick` retains only: flutter test with coverage + rhino-cli validation
 
 ### FR-6: Flutter frontend coverage enforcement
 
-For `demo-fe-dart-flutterweb`:
+For `a-demo-fe-dart-flutterweb`:
 
 - `test:quick`: Run `flutter test test/unit --coverage` + `rhino-cli test-coverage validate
-apps/demo-fe-dart-flutterweb/coverage/lcov.info 70`
+apps/a-demo-fe-dart-flutterweb/coverage/lcov.info 70`
 - Coverage threshold: 70% (matching other frontend apps)
 - Remove `dart analyze --fatal-infos` from test:quick (it belongs in `lint`)
 
 ### FR-7: Gherkin spec inputs at all test levels
 
 Every demo backend's `test:unit`, `test:quick`, and `test:integration` inputs must include
-`{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature`. This ensures Nx cache invalidation
-when Gherkin specs change. Currently missing from `test:unit` inputs in: demo-be-golang-gin,
-demo-be-fsharp-giraffe, demo-be-kotlin-ktor, demo-be-csharp-aspnetcore.
+`{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature`. This ensures Nx cache invalidation
+when Gherkin specs change. Currently missing from `test:unit` inputs in: a-demo-be-golang-gin,
+a-demo-be-fsharp-giraffe, a-demo-be-kotlin-ktor, a-demo-be-csharp-aspnetcore.
 
 For frontend apps, `test:unit` and `test:quick` inputs must include
-`{workspaceRoot}/specs/apps/demo/fe/gherkin/**/*.feature` if the frontend consumes specs.
+`{workspaceRoot}/specs/apps/a-demo/fe/gherkin/**/*.feature` if the frontend consumes specs.
 Frontend unit tests currently don't consume Gherkin specs directly (FE specs are consumed by
-`demo-fe-e2e` via playwright-bdd), so this applies only to cache invalidation of E2E-related
+`a-demo-fe-e2e` via playwright-bdd), so this applies only to cache invalidation of E2E-related
 targets.
 
 ### FR-8: Generated contract inputs at all test levels
@@ -228,12 +228,12 @@ contracts in test target inputs.
 ### FR-9: Spec-coverage validation in test:quick
 
 Every demo backend's `test:quick` must run `rhino-cli spec-coverage validate` after test execution
-to verify that all Gherkin scenarios from `specs/apps/demo/be/gherkin/` have matching test
+to verify that all Gherkin scenarios from `specs/apps/a-demo/be/gherkin/` have matching test
 implementations. Currently **0 of 11** demo backends run this validation.
 
 Command pattern:
 `(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go spec-coverage validate
-specs/apps/demo/be/gherkin apps/demo-be-<name>)`
+specs/apps/a-demo/be/gherkin apps/a-demo-be-<name>)`
 
 ### FR-10: Explicit cache settings
 
@@ -253,22 +253,22 @@ Every backend `typecheck` and `build` target must have `dependsOn: ["codegen"]`.
 
 Currently missing `dependsOn: ["codegen"]` on `typecheck`:
 
-- demo-be-elixir-phoenix, demo-be-python-fastapi (plus 4 new targets from FR-2)
+- a-demo-be-elixir-phoenix, a-demo-be-python-fastapi (plus 4 new targets from FR-2)
 
 Currently missing `dependsOn: ["codegen"]` on `build`:
 
-- demo-be-golang-gin, demo-be-java-springboot, demo-be-java-vertx, demo-be-elixir-phoenix,
-  demo-be-python-fastapi, demo-be-fsharp-giraffe, demo-be-ts-effect, demo-be-kotlin-ktor,
-  demo-be-csharp-aspnetcore, demo-be-clojure-pedestal (only demo-be-rust-axum and
-  demo-fe-dart-flutterweb have it)
+- a-demo-be-golang-gin, a-demo-be-java-springboot, a-demo-be-java-vertx, a-demo-be-elixir-phoenix,
+  a-demo-be-python-fastapi, a-demo-be-fsharp-giraffe, a-demo-be-ts-effect, a-demo-be-kotlin-ktor,
+  a-demo-be-csharp-aspnetcore, a-demo-be-clojure-pedestal (only a-demo-be-rust-axum and
+  a-demo-fe-dart-flutterweb have it)
 
 The `test:unit` and `test:quick` targets do NOT directly depend on codegen — they rely on the
 pre-push hook running `typecheck` before `test:quick`.
 
-**Exception**: `demo-be-rust-axum` already has `dependsOn: ["codegen"]` on both `test:unit` and
+**Exception**: `a-demo-be-rust-axum` already has `dependsOn: ["codegen"]` on both `test:unit` and
 `test:quick`. This is kept because Rust's `cargo test` compiles source code (unlike interpreted
 languages), and compilation fails without generated contract types. Similarly,
-`demo-fe-dart-flutterweb` has `dependsOn: ["codegen"]` on test targets for the same reason
+`a-demo-fe-dart-flutterweb` has `dependsOn: ["codegen"]` on test targets for the same reason
 (Dart compilation requires generated types).
 
 ### FR-12: Docker health check standardization
@@ -307,15 +307,15 @@ All documentation must be updated to reflect the standardized configuration:
 
 **Per-app READMEs** (16 apps):
 
-- All `apps/demo-be-*/README.md` — test targets, new typecheck targets, spec-coverage
-- All `apps/demo-fe-*/README.md` — coverage enforcement, contract inputs
+- All `apps/a-demo-be-*/README.md` — test targets, new typecheck targets, spec-coverage
+- All `apps/a-demo-fe-*/README.md` — coverage enforcement, contract inputs
 - Both `apps/demo-*-e2e/README.md` — test:quick semantics
 
 **Specs docs**:
 
-- `specs/apps/demo/README.md` — spec-coverage enforcement
-- `specs/apps/demo/be/README.md` — all backends consume at all 3 levels
-- `specs/apps/demo/contracts/README.md` — cache invalidation via inputs
+- `specs/apps/a-demo/README.md` — spec-coverage enforcement
+- `specs/apps/a-demo/be/README.md` — all backends consume at all 3 levels
+- `specs/apps/a-demo/contracts/README.md` — cache invalidation via inputs
 
 ### FR-14: Final CI validation
 
@@ -360,7 +360,7 @@ Scenario: All CI versions are aligned
 
 Scenario: All backends have mandatory targets
   Given the CI standardization is complete
-  When I run nx show project demo-be-<any-backend>
+  When I run nx show project a-demo-be-<any-backend>
   Then the project has targets: codegen, typecheck, lint, build, test:unit, test:quick, test:integration
   And typecheck depends on codegen
   And build depends on codegen
@@ -375,7 +375,7 @@ Scenario: test:quick is pure (no lint/format)
 
 Scenario: Flutter frontend enforces coverage
   Given the CI standardization is complete
-  When I run nx run demo-fe-dart-flutterweb:test:quick
+  When I run nx run a-demo-fe-dart-flutterweb:test:quick
   Then coverage is measured and validated at 70% threshold
   And the coverage report is in LCOV format at coverage/lcov.info
 
@@ -388,14 +388,14 @@ Scenario: Docker health checks are uniform
 Scenario: All test targets include specs and contracts in inputs
   Given the CI standardization is complete
   When I inspect test:unit and test:quick inputs for any demo-be app
-  Then inputs include specs/apps/demo/be/gherkin/**/*.feature
+  Then inputs include specs/apps/a-demo/be/gherkin/**/*.feature
   And inputs include {projectRoot}/generated-contracts/**/*
   And modifying a .feature file invalidates the Nx cache for test:unit and test:quick
   And modifying a generated contract file invalidates the Nx cache for test:unit and test:quick
 
 Scenario: Spec-coverage validation runs in test:quick
   Given the CI standardization is complete
-  When I run nx run demo-be-<any-backend>:test:quick
+  When I run nx run a-demo-be-<any-backend>:test:quick
   Then rhino-cli spec-coverage validate runs after tests
   And all Gherkin scenarios have matching test implementations
   And a missing step definition causes test:quick to fail

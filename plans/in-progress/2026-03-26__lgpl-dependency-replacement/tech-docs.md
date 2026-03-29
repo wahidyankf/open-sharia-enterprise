@@ -52,7 +52,7 @@ identical. No model or repository code changes needed.
 
 **Files to modify:**
 
-- `apps/demo-be-python-fastapi/pyproject.toml` or `requirements.txt` — Swap dependency
+- `apps/a-demo-be-python-fastapi/pyproject.toml` or `requirements.txt` — Swap dependency
 - Database connection code — Change dialect from `psycopg2` to `psycopg` in connection URL
 - `Dockerfile.integration` — Verify `psycopg[binary]` installs correctly (it should — binary
   wheels include pre-built `libpq`)
@@ -82,7 +82,7 @@ edge and `sharp` is not invoked.
 - `docs/explanation/software-engineering/licensing/lgpl-justifications.md` (new) — Document the
   dynamic linking justification for `sharp-libvips`
 
-### 3. Hibernate ORM (LGPL-2.1) — demo-be-java-springboot
+### 3. Hibernate ORM (LGPL-2.1) — a-demo-be-java-springboot
 
 **Context**: Hibernate is the default JPA implementation in Spring Boot. It is loaded at runtime
 via the JPA Service Provider Interface (SPI) — the application code depends only on
@@ -141,8 +141,8 @@ compliance status, and the justification for keeping them.
 
 | File                                       | Change                                               |
 | ------------------------------------------ | ---------------------------------------------------- |
-| `apps/demo-be-python-fastapi/README.md`    | Update PostgreSQL adapter dependency section         |
-| `apps/demo-be-java-springboot/README.md`   | Add note about Hibernate LGPL and JPA SPI compliance |
+| `apps/a-demo-be-python-fastapi/README.md`  | Update PostgreSQL adapter dependency section         |
+| `apps/a-demo-be-java-springboot/README.md` | Add note about Hibernate LGPL and JPA SPI compliance |
 | `governance/development/pattern/README.md` | Add cross-reference to licensing justifications doc  |
 
 ## References

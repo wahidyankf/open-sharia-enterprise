@@ -1,4 +1,4 @@
-# Delivery Checklist: demo-be-fsharp-giraffe
+# Delivery Checklist: a-demo-be-fsharp-giraffe
 
 Execute phases in order. Each phase produces a working, committable state.
 
@@ -8,22 +8,22 @@ Execute phases in order. Each phase produces a working, committable state.
 
 - [x] Verify .NET 10 SDK available locally (`~/.dotnet/dotnet` v10.0.103)
 - [x] Verify `rhino-cli test-coverage validate` supports LCOV (it does — already used by
-      `organiclever-fe` and `demo-be-elixir-phoenix`)
+      `organiclever-fe` and `a-demo-be-elixir-phoenix`)
 - [x] Confirm TickSpec supports current Gherkin syntax (Given/When/Then with regex and
       doc_string parameters)
-- [x] Verify `demo-be-e2e` Playwright config reads `BASE_URL` from env (it does)
+- [x] Verify `a-demo-be-e2e` Playwright config reads `BASE_URL` from env (it does)
 - [x] Install Fantomas, FSharpLint, and dotnet-ef tools globally
 
 ---
 
 ## Phase 1: Project Scaffold
 
-**Commit**: `feat(demo-be-fsharp-giraffe): scaffold F#/Giraffe project`
+**Commit**: `feat(a-demo-be-fsharp-giraffe): scaffold F#/Giraffe project`
 
-- [x] Create `apps/demo-be-fsharp-giraffe/` directory structure per tech-docs.md
+- [x] Create `apps/a-demo-be-fsharp-giraffe/` directory structure per tech-docs.md
 - [x] Create `global.json` pinning .NET SDK 10.0.x
-- [x] Create `src/DemoBeFsgi/DemoBeFsgi.fsproj` with all NuGet dependencies
-- [x] Create `tests/DemoBeFsgi.Tests/DemoBeFsgi.Tests.fsproj` with test dependencies
+- [x] Create `src/AADemoBeFsgi/AADemoBeFsgi.fsproj` with all NuGet dependencies
+- [x] Create `tests/AADemoBeFsgi.Tests/AADemoBeFsgi.Tests.fsproj` with test dependencies
 - [x] Create minimal `Program.fs` with Giraffe health endpoint
 - [x] Create `project.json` with all Nx targets from tech-docs.md
 - [x] Add `.editorconfig` with Fantomas configuration
@@ -37,7 +37,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 2: Domain Types and Database
 
-**Commit**: `feat(demo-be-fsharp-giraffe): add domain types and EF Core database`
+**Commit**: `feat(a-demo-be-fsharp-giraffe): add domain types and EF Core database`
 
 - [x] Create `Domain/Types.fs` — shared discriminated unions (`Currency`, `Role`,
       `UserStatus`, `DomainError`)
@@ -55,7 +55,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 3: Health Endpoint
 
-**Commit**: `feat(demo-be-fsharp-giraffe): add /health endpoint`
+**Commit**: `feat(a-demo-be-fsharp-giraffe): add /health endpoint`
 
 - [x] Health handler already in `Program.fs` returning `{"status": "UP"}`
 - [x] Route `GET /health` (public, no auth) already wired
@@ -70,7 +70,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 4: Auth — Register and Login
 
-**Commit**: `feat(demo-be-fsharp-giraffe): add register and login endpoints`
+**Commit**: `feat(a-demo-be-fsharp-giraffe): add register and login endpoints`
 
 - [x] Create `Auth/JwtService.fs` — JWT generation (access + refresh tokens)
 - [x] Create `Auth/JwtMiddleware.fs` — authentication middleware using Giraffe
@@ -87,7 +87,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 5: Token Lifecycle and Management
 
-**Commit**: `feat(demo-be-fsharp-giraffe): add token lifecycle and management endpoints`
+**Commit**: `feat(a-demo-be-fsharp-giraffe): add token lifecycle and management endpoints`
 
 - [x] Add `POST /api/v1/auth/refresh` — refresh access token with rotation
 - [x] Add `POST /api/v1/auth/logout` — revoke current token (idempotent)
@@ -105,7 +105,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 6: User Account and Security
 
-**Commit**: `feat(demo-be-fsharp-giraffe): add user account and security endpoints`
+**Commit**: `feat(a-demo-be-fsharp-giraffe): add user account and security endpoints`
 
 - [x] Create `Handlers/UserHandler.fs`:
   - `GET /api/v1/users/me` — current user profile
@@ -122,7 +122,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 7: Admin
 
-**Commit**: `feat(demo-be-fsharp-giraffe): add admin endpoints`
+**Commit**: `feat(a-demo-be-fsharp-giraffe): add admin endpoints`
 
 - [x] Create `Auth/AdminMiddleware.fs` — admin role verification
 - [x] Create `Handlers/AdminHandler.fs`:
@@ -139,7 +139,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 8: Expenses — CRUD and Currency
 
-**Commit**: `feat(demo-be-fsharp-giraffe): add expense CRUD and currency handling`
+**Commit**: `feat(a-demo-be-fsharp-giraffe): add expense CRUD and currency handling`
 
 - [x] Create `Handlers/ExpenseHandler.fs`:
   - `POST /api/v1/expenses` — create (expense or income)
@@ -158,7 +158,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 9: Expenses — Units, Reporting, Attachments
 
-**Commit**: `feat(demo-be-fsharp-giraffe): add unit handling, reporting, and attachments`
+**Commit**: `feat(a-demo-be-fsharp-giraffe): add unit handling, reporting, and attachments`
 
 - [x] Implement unit-of-measure field on expenses (quantity, unit)
 - [x] Create `Handlers/ReportHandler.fs` — P&L per currency with date range filter
@@ -178,7 +178,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 10: Coverage and Quality Gate
 
-**Commit**: `fix(demo-be-fsharp-giraffe): achieve 90% coverage and pass quality gates`
+**Commit**: `fix(a-demo-be-fsharp-giraffe): achieve 90% coverage and pass quality gates`
 
 - [x] Run full test suite with AltCover line coverage (switched from XPlat Code Coverage
       due to F# task{} async state machine BRDA inflation)
@@ -193,24 +193,24 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 11: Infra — Docker Compose
 
-**Commit**: `feat(infra): add demo-be-fsharp-giraffe docker-compose dev environment`
+**Commit**: `feat(infra): add a-demo-be-fsharp-giraffe docker-compose dev environment`
 
-- [x] Create `infra/dev/demo-be-fsharp-giraffe/Dockerfile.be.dev` (.NET 10 SDK Alpine)
-- [x] Create `infra/dev/demo-be-fsharp-giraffe/docker-compose.yml` with PostgreSQL + app
-- [x] Create `infra/dev/demo-be-fsharp-giraffe/docker-compose.e2e.yml` (E2E overrides)
-- [x] Create `infra/dev/demo-be-fsharp-giraffe/README.md` with startup instructions
+- [x] Create `infra/dev/a-demo-be-fsharp-giraffe/Dockerfile.be.dev` (.NET 10 SDK Alpine)
+- [x] Create `infra/dev/a-demo-be-fsharp-giraffe/docker-compose.yml` with PostgreSQL + app
+- [x] Create `infra/dev/a-demo-be-fsharp-giraffe/docker-compose.e2e.yml` (E2E overrides)
+- [x] Create `infra/dev/a-demo-be-fsharp-giraffe/README.md` with startup instructions
 - [ ] Manual test: `docker compose up --build` → health check passes
 
 ---
 
 ## Phase 12: GitHub Actions — E2E Workflow
 
-**Commit**: `ci: add e2e-demo-be-fsharp-giraffe GitHub Actions workflow`
+**Commit**: `ci: add e2e-a-demo-be-fsharp-giraffe GitHub Actions workflow`
 
-- [x] Create `.github/workflows/e2e-demo-be-fsharp-giraffe.yml`:
+- [x] Create `.github/workflows/e2e-a-demo-be-fsharp-giraffe.yml`:
   - Trigger: schedule (same crons as jasb/exph) + `workflow_dispatch`
   - Job: checkout → docker compose up → wait-healthy → Volta → npm ci →
-    `nx run demo-be-e2e:test:e2e` with `BASE_URL=http://localhost:8201` →
+    `nx run a-demo-be-e2e:test:e2e` with `BASE_URL=http://localhost:8201` →
     upload artifact → docker down
 - [ ] Trigger `workflow_dispatch` manually; verify green
 
@@ -218,31 +218,31 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 13: CI — main-ci.yml Update
 
-**Commit**: `ci: add .NET SDK setup and demo-be-fsharp-giraffe coverage upload to main-ci`
+**Commit**: `ci: add .NET SDK setup and a-demo-be-fsharp-giraffe coverage upload to main-ci`
 
 - [x] Add `actions/setup-dotnet@v4` step to `main-ci.yml` (.NET 10)
-- [x] Add coverage upload step for `apps/demo-be-fsharp-giraffe/coverage/altcov.info`
-      with flag `demo-be-fsharp-giraffe`
+- [x] Add coverage upload step for `apps/a-demo-be-fsharp-giraffe/coverage/altcov.info`
+      with flag `a-demo-be-fsharp-giraffe`
 - [ ] Push to `main`; verify `Main CI` workflow passes
 
 ---
 
 ## Phase 14: Documentation Updates
 
-**Commit**: `docs: add demo-be-fsharp-giraffe to project documentation`
+**Commit**: `docs: add a-demo-be-fsharp-giraffe to project documentation`
 
 - [x] Update `CLAUDE.md`:
-  - Add `demo-be-fsharp-giraffe` to Current Apps list with description
+  - Add `a-demo-be-fsharp-giraffe` to Current Apps list with description
   - Add F# coverage info to coverage section
-  - Add `demo-be-fsharp-giraffe` to `test:integration` caching note
+  - Add `a-demo-be-fsharp-giraffe` to `test:integration` caching note
 - [x] Update `README.md`:
-  - Add demo-be-fsharp-giraffe badge in demo apps section
+  - Add a-demo-be-fsharp-giraffe badge in demo apps section
   - Add coverage badge row
   - Add to monorepo architecture listing
-- [x] Update `specs/apps/demo/be/README.md`:
+- [x] Update `specs/apps/a-demo/be/README.md`:
   - Add F#/Giraffe row to Implementations table
-- [x] Update `apps/demo-be-e2e/project.json`:
-  - Add `demo-be-fsharp-giraffe` to `implicitDependencies`
+- [x] Update `apps/a-demo-be-e2e/project.json`:
+  - Add `a-demo-be-fsharp-giraffe` to `implicitDependencies`
 - [x] Update `plans/in-progress/README.md`:
   - Remove this plan from active list (move to done)
 
@@ -250,14 +250,14 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 15: Final Validation
 
-- [x] `nx run demo-be-fsharp-giraffe:test:quick` passes (157 integration + 57 unit, 95.46% coverage, lint clean)
-- [x] `nx run demo-be-fsharp-giraffe:test:unit` passes
-- [x] `nx run demo-be-fsharp-giraffe:test:integration` passes — all 76+ scenarios (157 test cases with outlines)
-- [x] `nx run demo-be-fsharp-giraffe:lint` passes
-- [x] `nx run demo-be-fsharp-giraffe:typecheck` passes
-- [x] `nx run demo-be-fsharp-giraffe:build` produces working artifact
+- [x] `nx run a-demo-be-fsharp-giraffe:test:quick` passes (157 integration + 57 unit, 95.46% coverage, lint clean)
+- [x] `nx run a-demo-be-fsharp-giraffe:test:unit` passes
+- [x] `nx run a-demo-be-fsharp-giraffe:test:integration` passes — all 76+ scenarios (157 test cases with outlines)
+- [x] `nx run a-demo-be-fsharp-giraffe:lint` passes
+- [x] `nx run a-demo-be-fsharp-giraffe:typecheck` passes
+- [x] `nx run a-demo-be-fsharp-giraffe:build` produces working artifact
 - [ ] Docker Compose stack starts and health check passes (requires manual verification)
-- [ ] `e2e-demo-be-fsharp-giraffe.yml` workflow green (requires CI push)
+- [ ] `e2e-a-demo-be-fsharp-giraffe.yml` workflow green (requires CI push)
 - [ ] `main-ci.yml` workflow green (requires CI push)
 - [x] All documentation updated
 - [x] Move plan folder to `plans/done/`

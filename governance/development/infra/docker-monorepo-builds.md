@@ -50,13 +50,13 @@ WORKDIR /app
 
 # Copy root workspace manifests first for layer caching
 COPY package.json package-lock.json ./
-COPY apps/demo-fe-ts-nextjs/package.json ./apps/demo-fe-ts-nextjs/
+COPY apps/a-demo-fe-ts-nextjs/package.json ./apps/a-demo-fe-ts-nextjs/
 
 # Install dependencies (workspace-aware, but symlinks will be replaced below)
-RUN npm ci --workspace=apps/demo-fe-ts-nextjs --include-workspace-root
+RUN npm ci --workspace=apps/a-demo-fe-ts-nextjs --include-workspace-root
 
 # Copy app source
-COPY apps/demo-fe-ts-nextjs/ ./apps/demo-fe-ts-nextjs/
+COPY apps/a-demo-fe-ts-nextjs/ ./apps/a-demo-fe-ts-nextjs/
 
 # Inject shared library source directly into node_modules — bypasses symlinks
 COPY libs/ts-ui/src/ ./node_modules/@open-sharia-enterprise/ts-ui/src/
@@ -64,7 +64,7 @@ COPY libs/ts-ui/package.json ./node_modules/@open-sharia-enterprise/ts-ui/
 COPY libs/ts-ui-tokens/src/ ./node_modules/@open-sharia-enterprise/ts-ui-tokens/src/
 COPY libs/ts-ui-tokens/package.json ./node_modules/@open-sharia-enterprise/ts-ui-tokens/
 
-RUN npm run build --workspace=apps/demo-fe-ts-nextjs
+RUN npm run build --workspace=apps/a-demo-fe-ts-nextjs
 ```
 
 The key insight: Node.js module resolution searches `node_modules/@scope/package/` directly. Once
@@ -78,12 +78,12 @@ from `infra/dev/<app>/`) so that `COPY libs/...` instructions in the Dockerfile 
 `libs/` tree. The `dockerfile` key provides the Dockerfile path relative to the context.
 
 ```yaml
-# infra/dev/demo-fe-ts-nextjs/docker-compose.yml
+# infra/dev/a-demo-fe-ts-nextjs/docker-compose.yml
 services:
   demo-fe:
     build:
       context: ../../.. # repo root — required for COPY libs/...
-      dockerfile: apps/demo-fe-ts-nextjs/Dockerfile
+      dockerfile: apps/a-demo-fe-ts-nextjs/Dockerfile
 ```
 
 A build context scoped to the app directory (e.g., `context: .`) cannot access `libs/` and will

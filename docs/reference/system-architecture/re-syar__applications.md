@@ -122,12 +122,12 @@ The platform consists of 9 applications across 4 technology stacks:
 - **Run Command**: `nx run organiclever-be-e2e:test:e2e`
 - **Location**: `apps/organiclever-be-e2e/`
 
-#### demo-be-e2e
+#### a-demo-be-e2e
 
-- **Purpose**: End-to-end tests for demo-be-java-springboot REST API
+- **Purpose**: End-to-end tests for a-demo-be-java-springboot REST API
 - **Technology**: Playwright
-- **Run Command**: `nx run demo-be-e2e:test:e2e`
-- **Location**: `apps/demo-be-e2e/`
+- **Run Command**: `nx run a-demo-be-e2e:test:e2e`
+- **Location**: `apps/a-demo-be-e2e/`
 
 ## C4 Level 2: Container Diagram
 

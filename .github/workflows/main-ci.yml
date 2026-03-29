@@ -110,30 +110,30 @@ jobs:
           (cd libs/elixir-openapi-codegen && mix deps.get)
           (cd libs/elixir-gherkin && mix deps.get)
           (cd libs/elixir-cabbage && mix deps.get)
-          (cd apps/demo-be-elixir-phoenix && mix deps.get)
+          (cd apps/a-demo-be-elixir-phoenix && mix deps.get)
 
       - name: Install Python dependencies
-        run: (cd apps/demo-be-python-fastapi && uv sync)
+        run: (cd apps/a-demo-be-python-fastapi && uv sync)
 
       - name: Install Clojure dependencies
         run: |
           (cd libs/clojure-openapi-codegen && JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -P)
-          (cd apps/demo-be-clojure-pedestal && JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -P && JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -P -M:test:coverage)
+          (cd apps/a-demo-be-clojure-pedestal && JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -P && JAVA_HOME=${JAVA_HOME_21_X64:-$JAVA_HOME} clojure -P -M:test:coverage)
 
       - name: Generate contract types (required before test:quick and Flutter pub get)
         run: |
           mkdir -p libs/clojure-openapi-codegen/classes
-          npx nx run demo-contracts:bundle
+          npx nx run a-demo-contracts:bundle
           npx nx run organiclever-contracts:bundle
           npx nx run-many -t codegen --projects=demo-*,organiclever-*
 
       - name: Install Flutter dependencies
-        run: (cd apps/demo-fe-dart-flutterweb && flutter pub get)
+        run: (cd apps/a-demo-fe-dart-flutterweb && flutter pub get)
 
       - name: Restore .NET dependencies (required before --no-restore typecheck)
         run: |
-          dotnet restore apps/demo-be-fsharp-giraffe/src/DemoBeFsgi/DemoBeFsgi.fsproj
-          dotnet restore apps/demo-be-csharp-aspnetcore/src/DemoBeCsas/DemoBeCsas.csproj
+          dotnet restore apps/a-demo-be-fsharp-giraffe/src/ADemoBeFsgi/ADemoBeFsgi.fsproj
+          dotnet restore apps/a-demo-be-csharp-aspnetcore/src/ADemoBeCsas/ADemoBeCsas.csproj
           dotnet restore apps/organiclever-be/src/OrganicLeverBe/OrganicLeverBe.fsproj
 
       - name: typecheck (all projects)
@@ -185,12 +185,12 @@ jobs:
           flags: hugo-commons
           fail_ci_if_error: false
 
-      - name: Upload coverage — demo-be-java-springboot
+      - name: Upload coverage — a-demo-be-java-springboot
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: apps/demo-be-java-springboot/target/site/jacoco/jacoco.xml
-          flags: demo-be-java-springboot
+          files: apps/a-demo-be-java-springboot/target/site/jacoco/jacoco.xml
+          flags: a-demo-be-java-springboot
           fail_ci_if_error: false
 
       - name: Upload coverage — organiclever-fe
@@ -209,106 +209,106 @@ jobs:
           flags: organiclever-be
           fail_ci_if_error: false
 
-      - name: Upload coverage — demo-be-elixir-phoenix
+      - name: Upload coverage — a-demo-be-elixir-phoenix
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: apps/demo-be-elixir-phoenix/cover/lcov.info
-          flags: demo-be-elixir-phoenix
+          files: apps/a-demo-be-elixir-phoenix/cover/lcov.info
+          flags: a-demo-be-elixir-phoenix
           fail_ci_if_error: false
 
-      - name: Upload coverage — demo-be-fsharp-giraffe
+      - name: Upload coverage — a-demo-be-fsharp-giraffe
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: apps/demo-be-fsharp-giraffe/coverage/altcov.info
-          flags: demo-be-fsharp-giraffe
+          files: apps/a-demo-be-fsharp-giraffe/coverage/altcov.info
+          flags: a-demo-be-fsharp-giraffe
           fail_ci_if_error: false
 
-      - name: Upload coverage — demo-be-golang-gin
+      - name: Upload coverage — a-demo-be-golang-gin
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: apps/demo-be-golang-gin/cover.out
-          flags: demo-be-golang-gin
+          files: apps/a-demo-be-golang-gin/cover.out
+          flags: a-demo-be-golang-gin
           fail_ci_if_error: false
 
-      - name: Upload coverage — demo-be-python-fastapi
+      - name: Upload coverage — a-demo-be-python-fastapi
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: apps/demo-be-python-fastapi/coverage/lcov.info
-          flags: demo-be-python-fastapi
+          files: apps/a-demo-be-python-fastapi/coverage/lcov.info
+          flags: a-demo-be-python-fastapi
           fail_ci_if_error: false
 
-      - name: Upload coverage — demo-be-rust-axum
+      - name: Upload coverage — a-demo-be-rust-axum
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: apps/demo-be-rust-axum/coverage/lcov.info
-          flags: demo-be-rust-axum
+          files: apps/a-demo-be-rust-axum/coverage/lcov.info
+          flags: a-demo-be-rust-axum
           fail_ci_if_error: false
 
-      - name: Upload coverage — demo-be-kotlin-ktor
+      - name: Upload coverage — a-demo-be-kotlin-ktor
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: apps/demo-be-kotlin-ktor/build/reports/kover/report.xml
-          flags: demo-be-kotlin-ktor
+          files: apps/a-demo-be-kotlin-ktor/build/reports/kover/report.xml
+          flags: a-demo-be-kotlin-ktor
           fail_ci_if_error: false
 
-      - name: Upload coverage — demo-be-java-vertx
+      - name: Upload coverage — a-demo-be-java-vertx
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: apps/demo-be-java-vertx/target/site/jacoco/jacoco.xml
-          flags: demo-be-java-vertx
+          files: apps/a-demo-be-java-vertx/target/site/jacoco/jacoco.xml
+          flags: a-demo-be-java-vertx
           fail_ci_if_error: false
 
-      - name: Upload coverage — demo-be-ts-effect
+      - name: Upload coverage — a-demo-be-ts-effect
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: apps/demo-be-ts-effect/coverage/lcov.info
-          flags: demo-be-ts-effect
+          files: apps/a-demo-be-ts-effect/coverage/lcov.info
+          flags: a-demo-be-ts-effect
           fail_ci_if_error: false
 
-      - name: Upload coverage — demo-be-csharp-aspnetcore
+      - name: Upload coverage — a-demo-be-csharp-aspnetcore
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: apps/demo-be-csharp-aspnetcore/coverage/**/coverage.info
-          flags: demo-be-csharp-aspnetcore
+          files: apps/a-demo-be-csharp-aspnetcore/coverage/**/coverage.info
+          flags: a-demo-be-csharp-aspnetcore
           fail_ci_if_error: false
 
-      - name: Upload coverage — demo-be-clojure-pedestal
+      - name: Upload coverage — a-demo-be-clojure-pedestal
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: apps/demo-be-clojure-pedestal/coverage/lcov.info
-          flags: demo-be-clojure-pedestal
+          files: apps/a-demo-be-clojure-pedestal/coverage/lcov.info
+          flags: a-demo-be-clojure-pedestal
           fail_ci_if_error: false
 
-      - name: Upload coverage — demo-fe-ts-nextjs
+      - name: Upload coverage — a-demo-fe-ts-nextjs
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: apps/demo-fe-ts-nextjs/coverage/lcov.info
-          flags: demo-fe-ts-nextjs
+          files: apps/a-demo-fe-ts-nextjs/coverage/lcov.info
+          flags: a-demo-fe-ts-nextjs
           fail_ci_if_error: false
 
-      - name: Upload coverage — demo-fe-ts-tanstack-start
+      - name: Upload coverage — a-demo-fe-ts-tanstack-start
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: apps/demo-fe-ts-tanstack-start/coverage/lcov.info
-          flags: demo-fe-ts-tanstack-start
+          files: apps/a-demo-fe-ts-tanstack-start/coverage/lcov.info
+          flags: a-demo-fe-ts-tanstack-start
           fail_ci_if_error: false
 
-      - name: Upload coverage — demo-fe-dart-flutterweb
+      - name: Upload coverage — a-demo-fe-dart-flutterweb
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: apps/demo-fe-dart-flutterweb/coverage/lcov.info
-          flags: demo-fe-dart-flutterweb
+          files: apps/a-demo-fe-dart-flutterweb/coverage/lcov.info
+          flags: a-demo-fe-dart-flutterweb
           fail_ci_if_error: false

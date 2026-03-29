@@ -468,7 +468,7 @@ async fn main() -> Result<(), sqlx::Error> {
 
 **Key Takeaway**: Use `sqlx::migrate!("./migrations")` for production deployments. The path argument is relative to `Cargo.toml`, resolved at compile time, so changing the path requires recompilation.
 
-**Why It Matters**: Embedded migrations eliminate an entire category of deployment failure: "migrations directory not found." In containerized environments, the migrations directory is often missing from the image, causing the application to start but fail on the first database operation. With `migrate!()`, the binary is self-contained—deploy one file and migrations run automatically. This is the canonical SQLx pattern for production Rust services and the approach used in the `demo-be-rust-axum` reference implementation.
+**Why It Matters**: Embedded migrations eliminate an entire category of deployment failure: "migrations directory not found." In containerized environments, the migrations directory is often missing from the image, causing the application to start but fail on the first database operation. With `migrate!()`, the binary is self-contained—deploy one file and migrations run automatically. This is the canonical SQLx pattern for production Rust services and the approach used in the `a-demo-be-rust-axum` reference implementation.
 
 ---
 
@@ -521,7 +521,7 @@ pub async fn create_test_pool() -> Result<AnyPool, sqlx::Error> {
 
 **Key Takeaway**: Call `sqlx::any::install_default_drivers()` before creating an `AnyPool`. Forgetting this call causes a runtime panic with a confusing error about no driver being registered.
 
-**Why It Matters**: `AnyPool` enables the database-agnostic architecture pattern used in the `demo-be-rust-axum` reference implementation: SQLite in-memory for fast unit tests, PostgreSQL in integration tests and production. Tests run without a running database server, reducing CI infrastructure requirements and test execution time. The same application code, migration files, and query logic work against both databases, with only the connection URL changing between environments.
+**Why It Matters**: `AnyPool` enables the database-agnostic architecture pattern used in the `a-demo-be-rust-axum` reference implementation: SQLite in-memory for fast unit tests, PostgreSQL in integration tests and production. Tests run without a running database server, reducing CI infrastructure requirements and test execution time. The same application code, migration files, and query logic work against both databases, with only the connection URL changing between environments.
 
 ---
 
@@ -627,7 +627,7 @@ pub async fn create_test_pool() -> Result<SqlitePool, sqlx::Error> {
 
 **Key Takeaway**: Use `SqlitePool` with `"sqlite::memory:"` for unit tests that need a real database. Each test creates its own pool and gets a fresh, isolated schema with no shared state.
 
-**Why It Matters**: In-memory SQLite tests run in milliseconds, require no database server, and produce no side effects outside the test process. They let you test repository logic—including migrations—without mocking. The `create_test_pool()` pattern shown here is the standard approach in the `demo-be-rust-axum` implementation: every test gets its own migrated in-memory database, making tests fast, isolated, and reproducible in any environment including CI.
+**Why It Matters**: In-memory SQLite tests run in milliseconds, require no database server, and produce no side effects outside the test process. They let you test repository logic—including migrations—without mocking. The `create_test_pool()` pattern shown here is the standard approach in the `a-demo-be-rust-axum` implementation: every test gets its own migrated in-memory database, making tests fast, isolated, and reproducible in any environment including CI.
 
 ---
 
@@ -672,7 +672,7 @@ async fn run_migrations(pool: &sqlx::AnyPool) -> Result<(), sqlx::Error> {
 
 **Key Takeaway**: `include_str!()` provides compile-time file embedding but does not give you migration tracking (no `_sqlx_migrations` table). Use `sqlx::migrate!()` when you need proper migration management; use `include_str!()` for simpler cases where you manage execution yourself.
 
-**Why It Matters**: The `demo-be-rust-axum` implementation uses `include_str!()` with a custom `run_migrations` function to maintain compatibility with `AnyPool` across both PostgreSQL and SQLite. The `migrate!()` macro's transaction wrapping behavior and `_sqlx_migrations` tracking are not used in this implementation, making `include_str!()` the right choice. Understanding both approaches helps you choose the right tool for your deployment model.
+**Why It Matters**: The `a-demo-be-rust-axum` implementation uses `include_str!()` with a custom `run_migrations` function to maintain compatibility with `AnyPool` across both PostgreSQL and SQLite. The `migrate!()` macro's transaction wrapping behavior and `_sqlx_migrations` tracking are not used in this implementation, making `include_str!()` the right choice. Understanding both approaches helps you choose the right tool for your deployment model.
 
 ---
 
@@ -711,7 +711,7 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
 
 **Key Takeaway**: Zero-pad sequential numbers to at least 3 digits (`001` not `1`) to ensure correct lexicographic sort order beyond 9 migrations.
 
-**Why It Matters**: SQLx sorts migration files lexicographically by filename. Without zero-padding, `10_...` sorts before `2_...` because `'1' < '2'` lexicographically, causing migrations to apply in wrong order. The `demo-be-rust-axum` implementation uses `001`, `002` through `005` with this convention. For teams larger than 2-3 developers, timestamp-based names from `sqlx migrate add` are safer because each developer's timestamp is unique, eliminating merge conflicts in migration version numbering.
+**Why It Matters**: SQLx sorts migration files lexicographically by filename. Without zero-padding, `10_...` sorts before `2_...` because `'1' < '2'` lexicographically, causing migrations to apply in wrong order. The `a-demo-be-rust-axum` implementation uses `001`, `002` through `005` with this convention. For teams larger than 2-3 developers, timestamp-based names from `sqlx migrate add` are safer because each developer's timestamp is unique, eliminating merge conflicts in migration version numbering.
 
 ---
 
@@ -788,7 +788,7 @@ CREATE TABLE orders (
 
 **Key Takeaway**: PostgreSQL natively supports the `UUID` type with `gen_random_uuid()`. When using `AnyPool` for SQLite compatibility, store UUIDs as `VARCHAR(36)` and generate them in Rust with `uuid::Uuid::new_v4()`.
 
-**Why It Matters**: Auto-incrementing integer keys expose row counts and allow enumeration attacks (try IDs 1, 2, 3...). UUID primary keys prevent this without requiring application changes. Client-generated UUIDs also enable optimistic record creation: the client knows the ID before the insert completes, simplifying distributed systems where the response might be lost but the insert succeeded. The `demo-be-rust-axum` implementation uses `VARCHAR(36)` UUIDs throughout for AnyPool compatibility.
+**Why It Matters**: Auto-incrementing integer keys expose row counts and allow enumeration attacks (try IDs 1, 2, 3...). UUID primary keys prevent this without requiring application changes. Client-generated UUIDs also enable optimistic record creation: the client knows the ID before the insert completes, simplifying distributed systems where the response might be lost but the insert succeeded. The `a-demo-be-rust-axum` implementation uses `VARCHAR(36)` UUIDs throughout for AnyPool compatibility.
 
 ---
 
@@ -1124,7 +1124,7 @@ CREATE INDEX IF NOT EXISTS idx_users_username
 
 **Key Takeaway**: Use `IF NOT EXISTS` when you manage migration execution yourself (as with `include_str!()` and a custom runner). When using `sqlx::migrate!()` with `_sqlx_migrations` tracking, `IF NOT EXISTS` is optional since SQLx guarantees each migration runs exactly once.
 
-**Why It Matters**: The `demo-be-rust-axum` migration files use `IF NOT EXISTS` throughout because they are executed via a custom `run_migrations` function rather than through `sqlx::migrate!()` with its built-in tracking. This makes the migrations safe to re-execute after a crash mid-migration or after restoring a database to an earlier state. In general, `IF NOT EXISTS` guards are a good defensive practice even with migration tracking, since they make the SQL idempotent at the statement level.
+**Why It Matters**: The `a-demo-be-rust-axum` migration files use `IF NOT EXISTS` throughout because they are executed via a custom `run_migrations` function rather than through `sqlx::migrate!()` with its built-in tracking. This makes the migrations safe to re-execute after a crash mid-migration or after restoring a database to an earlier state. In general, `IF NOT EXISTS` guards are a good defensive practice even with migration tracking, since they make the SQL idempotent at the statement level.
 
 ---
 

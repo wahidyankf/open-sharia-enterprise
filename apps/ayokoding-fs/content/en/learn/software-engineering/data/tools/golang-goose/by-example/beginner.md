@@ -148,7 +148,7 @@ DROP TABLE IF EXISTS users;
 
 **Key Takeaway**: Always use `TIMESTAMPTZ` (not `TIMESTAMP`) for audit columns and `UUID` (not `SERIAL`) for primary keys in distributed systems — timezone-awareness and non-guessable IDs are production requirements, not optional extras.
 
-**Why It Matters**: The pattern in this example mirrors the actual users table in `apps/demo-be-golang-gin/db/migrations/001_create_users.sql`. UUID primary keys eliminate cross-environment ID conflicts when restoring data between staging and production. `TIMESTAMPTZ` ensures correct time math across daylight saving boundaries. These decisions are architectural: they're nearly impossible to change after the system has data.
+**Why It Matters**: The pattern in this example mirrors the actual users table in `apps/a-demo-be-golang-gin/db/migrations/001_create_users.sql`. UUID primary keys eliminate cross-environment ID conflicts when restoring data between staging and production. `TIMESTAMPTZ` ensures correct time math across daylight saving boundaries. These decisions are architectural: they're nearly impossible to change after the system has data.
 
 ---
 
@@ -712,7 +712,7 @@ var EmbedMigrations embed.FS
 
 **Key Takeaway**: Place the `embed.go` file in the same directory as the `migrations/` subdirectory — the `//go:embed` directive path is relative to the Go source file containing it.
 
-**Why It Matters**: Embedded migrations are the production-grade pattern used in `apps/demo-be-golang-gin/db/embed.go`. Without embedding, deploying your application requires shipping both the binary and the migration files in the correct directory structure, creating deployment complexity and the risk of version mismatches between binary and migration files. With embedding, a single binary contains everything needed to migrate the database to the correct schema version.
+**Why It Matters**: Embedded migrations are the production-grade pattern used in `apps/a-demo-be-golang-gin/db/embed.go`. Without embedding, deploying your application requires shipping both the binary and the migration files in the correct directory structure, creating deployment complexity and the risk of version mismatches between binary and migration files. With embedding, a single binary contains everything needed to migrate the database to the correct schema version.
 
 ---
 
@@ -777,7 +777,7 @@ func (s *GORMStore) Migrate() error {
 
 **Key Takeaway**: Call `fs.Sub(embeddedFS, "migrations")` before passing to `goose.NewProvider()` — Goose expects migration files at the root of the provided filesystem, but `embed.FS` preserves the directory structure including the `migrations/` prefix.
 
-**Why It Matters**: The `fs.Sub` call is a subtle but critical step that trips up many developers implementing embedded Goose migrations for the first time. Without it, Goose cannot find any migration files and silently applies zero migrations — your database schema stays at version 0 with no error. This exact pattern is used in the production `apps/demo-be-golang-gin` codebase, making it a battle-tested reference implementation.
+**Why It Matters**: The `fs.Sub` call is a subtle but critical step that trips up many developers implementing embedded Goose migrations for the first time. Without it, Goose cannot find any migration files and silently applies zero migrations — your database schema stays at version 0 with no error. This exact pattern is used in the production `apps/a-demo-be-golang-gin` codebase, making it a battle-tested reference implementation.
 
 ---
 

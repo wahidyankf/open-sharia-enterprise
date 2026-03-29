@@ -241,7 +241,7 @@ extraction.
 
 #### Layer 0: Shared Steps Mode (`--shared-steps`)
 
-**Problem**: E2E projects (demo-be-e2e, demo-fe-e2e) use playwright-bdd where step files are
+**Problem**: E2E projects (a-demo-be-e2e, a-demo-fe-e2e) use playwright-bdd where step files are
 shared across features (e.g., `common.steps.ts` handles steps from 14 features). The current
 `findMatchingTestFile` assumes 1:1 feature→test file mapping, which fundamentally doesn't work.
 
@@ -268,8 +268,8 @@ func checkSharedSteps(opts ScanOptions) (*CheckResult, error) {
 
 **When to use**:
 
-- `--shared-steps`: demo-be-e2e, demo-fe-e2e (playwright-bdd), any project with shared step files
-- Default (no flag): demo-be-\* backends (unit tests with 1:1 file mapping), CLI apps
+- `--shared-steps`: a-demo-be-e2e, a-demo-fe-e2e (playwright-bdd), any project with shared step files
+- Default (no flag): a-demo-be-\* backends (unit tests with 1:1 file mapping), CLI apps
 
 **playwright-bdd note**: Uses `const { Given, When, Then } = createBdd()` — the extracted
 `Given("text", fn)` syntax is identical to Cucumber.js. The existing TS/JS step regex already
@@ -277,7 +277,7 @@ handles this. No new regex needed for playwright-bdd.
 
 **Dart note**: No established runtime BDD framework exists for Flutter. `bdd_widget_test` is a
 code-generation tool (no runtime `given()`/`when()`/`then()` API). Dart step extraction is
-deferred until a BDD framework is adopted for `demo-fe-dart-flutterweb`. File matching and
+deferred until a BDD framework is adopted for `a-demo-fe-dart-flutterweb`. File matching and
 test file recognition for `.dart` are still implemented; only step/scenario extraction is deferred.
 
 #### Layer 1: File Matching (`findMatchingTestFile`)

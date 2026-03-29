@@ -3,11 +3,11 @@
 ## Contract File Structure
 
 ```
-specs/apps/demo/contracts/
+specs/apps/a-demo/contracts/
 ├── README.md                 # Purpose, usage, how to add/modify
 ├── openapi.yaml              # Root OpenAPI 3.1 document
 ├── .spectral.yaml            # Spectral linting rules
-├── project.json              # Nx project: demo-contracts (lint, bundle targets)
+├── project.json              # Nx project: a-demo-contracts (lint, bundle targets)
 ├── paths/
 │   ├── health.yaml           # GET /health
 │   ├── auth.yaml             # POST /api/v1/auth/{login,register,refresh,logout,logout-all}
@@ -45,7 +45,7 @@ specs/apps/demo/contracts/
 
 Every demo app gets a `generated-contracts/` folder that is:
 
-- **Auto-generated** from `specs/apps/demo/contracts/generated/openapi-bundled.yaml`
+- **Auto-generated** from `specs/apps/a-demo/contracts/generated/openapi-bundled.yaml`
 - **Gitignored** — not committed; regenerated via `nx run <app>:codegen`
 - **Imported by app code** — handlers/controllers use generated types for request/response
 - **Contains encoders/decoders** — type-safe JSON serialization/deserialization
@@ -53,7 +53,7 @@ Every demo app gets a `generated-contracts/` folder that is:
 ### Generated Folder Layout (per app)
 
 ```
-apps/demo-be-golang-gin/
+apps/a-demo-be-golang-gin/
 ├── generated-contracts/      # gitignored via root **/generated-contracts/
 │   ├── types.gen.go          # Go structs matching OpenAPI schemas
 │   ├── server.gen.go         # Server interface (strict mode)
@@ -62,7 +62,7 @@ apps/demo-be-golang-gin/
     ├── handler/              # Handlers implement generated interface
     └── ...
 
-apps/demo-fe-ts-nextjs/
+apps/a-demo-fe-ts-nextjs/
 ├── src/
 │   ├── generated-contracts/  # gitignored via root **/generated-contracts/
 │   │   ├── types.gen.ts      # Generated TypeScript types
@@ -79,19 +79,19 @@ apps/demo-fe-ts-nextjs/
 
 These languages catch contract violations at compile time via `typecheck` or `build` targets.
 
-| Language      | App                       | Generator                            | Generated Output                     | Encoder/Decoder                    |
-| ------------- | ------------------------- | ------------------------------------ | ------------------------------------ | ---------------------------------- |
-| Go            | demo-be-golang-gin        | `oapi-codegen` (strict)              | Go structs + strict server interface | `encoding/json` via generated code |
-| Java (Spring) | demo-be-java-springboot   | `openapi-generator` (spring)         | Java DTOs with Jackson annotations   | Jackson `@JsonProperty`            |
-| Java (Vert.x) | demo-be-java-vertx        | `openapi-generator` (java)           | Java DTOs with Jackson annotations   | Jackson `@JsonProperty`            |
-| Kotlin        | demo-be-kotlin-ktor       | `openapi-generator` (kotlin)         | Kotlin data classes                  | kotlinx.serialization              |
-| Rust          | demo-be-rust-axum         | `openapi-generator` (rust)           | Rust structs with serde derive       | `serde::Serialize/Deserialize`     |
-| F#            | demo-be-fsharp-giraffe    | `openapi-generator` (fsharp-giraffe) | F# model types                       | System.Text.Json                   |
-| C#            | demo-be-csharp-aspnetcore | `NSwag` CLI                          | C# classes with JsonProperty         | System.Text.Json / Newtonsoft      |
-| TypeScript    | demo-be-ts-effect         | `@hey-api/openapi-ts`                | TS types + Effect Schema definitions | Effect `Schema.decode`/`.encode`   |
-| TypeScript    | demo-fe-ts-nextjs         | `@hey-api/openapi-ts` + Zod          | TS types + Zod schemas + SDK client  | Zod `z.parse()` + typed SDK client |
-| TypeScript    | demo-fe-ts-tanstack-start | `@hey-api/openapi-ts` + Zod          | TS types + Zod schemas + SDK client  | Zod `z.parse()` + typed SDK client |
-| Dart          | demo-fe-dart-flutterweb   | `openapi-generator` (dart)           | Dart classes with json_serializable  | `toJson()` / `fromJson()`          |
+| Language      | App                         | Generator                            | Generated Output                     | Encoder/Decoder                    |
+| ------------- | --------------------------- | ------------------------------------ | ------------------------------------ | ---------------------------------- |
+| Go            | a-demo-be-golang-gin        | `oapi-codegen` (strict)              | Go structs + strict server interface | `encoding/json` via generated code |
+| Java (Spring) | a-demo-be-java-springboot   | `openapi-generator` (spring)         | Java DTOs with Jackson annotations   | Jackson `@JsonProperty`            |
+| Java (Vert.x) | a-demo-be-java-vertx        | `openapi-generator` (java)           | Java DTOs with Jackson annotations   | Jackson `@JsonProperty`            |
+| Kotlin        | a-demo-be-kotlin-ktor       | `openapi-generator` (kotlin)         | Kotlin data classes                  | kotlinx.serialization              |
+| Rust          | a-demo-be-rust-axum         | `openapi-generator` (rust)           | Rust structs with serde derive       | `serde::Serialize/Deserialize`     |
+| F#            | a-demo-be-fsharp-giraffe    | `openapi-generator` (fsharp-giraffe) | F# model types                       | System.Text.Json                   |
+| C#            | a-demo-be-csharp-aspnetcore | `NSwag` CLI                          | C# classes with JsonProperty         | System.Text.Json / Newtonsoft      |
+| TypeScript    | a-demo-be-ts-effect         | `@hey-api/openapi-ts`                | TS types + Effect Schema definitions | Effect `Schema.decode`/`.encode`   |
+| TypeScript    | a-demo-fe-ts-nextjs         | `@hey-api/openapi-ts` + Zod          | TS types + Zod schemas + SDK client  | Zod `z.parse()` + typed SDK client |
+| TypeScript    | a-demo-fe-ts-tanstack-start | `@hey-api/openapi-ts` + Zod          | TS types + Zod schemas + SDK client  | Zod `z.parse()` + typed SDK client |
+| Dart          | a-demo-fe-dart-flutterweb   | `openapi-generator` (dart)           | Dart classes with json_serializable  | `toJson()` / `fromJson()`          |
 
 **Library verification** (web-researched 2026-03-17):
 
@@ -113,7 +113,7 @@ These languages catch contract violations at compile time via `typecheck` or `bu
   `{success, data, error}`) that validate API responses match the contract at runtime. Request
   encoding is enforced at compile time via the generated SDK client's typed method signatures.
 - **Effect Schema** — Native to the Effect ecosystem. `Schema.decode` / `Schema.encode` provide
-  bidirectional runtime validation. Used for `demo-be-ts-effect` since the project already uses
+  bidirectional runtime validation. Used for `a-demo-be-ts-effect` since the project already uses
   Effect.
 
 ### Dynamically Typed Languages (test-time enforcement)
@@ -122,11 +122,11 @@ These languages lack static type systems, so enforcement happens at test time vi
 schemas/structs validated in `test:unit`. This is caught by `test:quick` in pre-push hook and PR
 quality gate.
 
-| Language | App                      | Generator                             | Generated Output                    | Encoder/Decoder                       |
-| -------- | ------------------------ | ------------------------------------- | ----------------------------------- | ------------------------------------- |
-| Python   | demo-be-python-fastapi   | `datamodel-code-generator` (Pydantic) | Pydantic v2 models                  | `.model_dump()` / `.model_validate()` |
-| Elixir   | demo-be-elixir-phoenix   | `libs/elixir-openapi-codegen`         | Elixir structs with `@enforce_keys` | Jason encode + CastAndValidate        |
-| Clojure  | demo-be-clojure-pedestal | `libs/clojure-openapi-codegen`        | Malli schema definitions            | `m/encode` / `m/decode`               |
+| Language | App                        | Generator                             | Generated Output                    | Encoder/Decoder                       |
+| -------- | -------------------------- | ------------------------------------- | ----------------------------------- | ------------------------------------- |
+| Python   | a-demo-be-python-fastapi   | `datamodel-code-generator` (Pydantic) | Pydantic v2 models                  | `.model_dump()` / `.model_validate()` |
+| Elixir   | a-demo-be-elixir-phoenix   | `libs/elixir-openapi-codegen`         | Elixir structs with `@enforce_keys` | Jason encode + CastAndValidate        |
+| Clojure  | a-demo-be-clojure-pedestal | `libs/clojure-openapi-codegen`        | Malli schema definitions            | `m/encode` / `m/decode`               |
 
 **Library verification** (web-researched 2026-03-17):
 
@@ -164,16 +164,16 @@ Elixir and Clojure lack off-the-shelf OpenAPI codegen tools (unlike Go's `oapi-c
 
 ### E2E Tests — Additional Runtime Validation
 
-Both `demo-be-e2e` and `demo-fe-e2e` (Playwright/TypeScript) add an `ajv`-based response validator
+Both `a-demo-be-e2e` and `a-demo-fe-e2e` (Playwright/TypeScript) add an `ajv`-based response validator
 as a safety net. This catches drift that might bypass compile-time checks (e.g., a backend returns
 extra fields not in the schema).
 
 ```typescript
-// demo-be-e2e/tests/utils/contract-validator.ts
+// a-demo-be-e2e/tests/utils/contract-validator.ts
 import Ajv from "ajv";
 import { readFileSync } from "fs";
 
-const spec = JSON.parse(readFileSync("specs/apps/demo/contracts/generated/openapi-bundled.json", "utf-8"));
+const spec = JSON.parse(readFileSync("specs/apps/a-demo/contracts/generated/openapi-bundled.json", "utf-8"));
 const ajv = new Ajv({ allErrors: true });
 
 export function validateResponse(path: string, method: string, statusCode: number, body: unknown): void {
@@ -189,13 +189,13 @@ export function validateResponse(path: string, method: string, statusCode: numbe
 ### Dependency Chain
 
 ```
-demo-contracts:lint → demo-contracts:bundle
+a-demo-contracts:lint → a-demo-contracts:bundle
     → <app>:codegen (most apps: direct tool invocation)     → <app>:typecheck/build/test:unit
-    → elixir-openapi-codegen:build → demo-be-elixir-phoenix:codegen → ...
-    → clojure-openapi-codegen:build → demo-be-clojure-pedestal:codegen → ...
+    → elixir-openapi-codegen:build → a-demo-be-elixir-phoenix:codegen → ...
+    → clojure-openapi-codegen:build → a-demo-be-clojure-pedestal:codegen → ...
 ```
 
-Every demo app's `codegen` target depends on `demo-contracts:bundle`. For Elixir and Clojure,
+Every demo app's `codegen` target depends on `a-demo-contracts:bundle`. For Elixir and Clojure,
 `codegen` also depends on the respective `libs/*-openapi-codegen:build` target. Every `typecheck`,
 `build`, and `test:unit` target depends on `codegen`. This ensures:
 
@@ -205,31 +205,31 @@ Every demo app's `codegen` target depends on `demo-contracts:bundle`. For Elixir
 4. Regenerated code triggers recompilation/type checking
 5. Any mismatch fails the chain
 
-### New Nx Project: `demo-contracts`
+### New Nx Project: `a-demo-contracts`
 
 ```json
 {
-  "name": "demo-contracts",
-  "root": "specs/apps/demo/contracts",
+  "name": "a-demo-contracts",
+  "root": "specs/apps/a-demo/contracts",
   "targets": {
     "lint": {
-      "command": "npx @stoplight/spectral-cli lint specs/apps/demo/contracts/openapi.yaml --ruleset specs/apps/demo/contracts/.spectral.yaml",
+      "command": "npx @stoplight/spectral-cli lint specs/apps/a-demo/contracts/openapi.yaml --ruleset specs/apps/a-demo/contracts/.spectral.yaml",
       "cache": true,
-      "inputs": ["specs/apps/demo/contracts/**/*.yaml"]
+      "inputs": ["specs/apps/a-demo/contracts/**/*.yaml"]
     },
     "bundle": {
-      "command": "npx @redocly/cli bundle specs/apps/demo/contracts/openapi.yaml -o specs/apps/demo/contracts/generated/openapi-bundled.yaml && npx @redocly/cli bundle specs/apps/demo/contracts/openapi.yaml -o specs/apps/demo/contracts/generated/openapi-bundled.json",
+      "command": "npx @redocly/cli bundle specs/apps/a-demo/contracts/openapi.yaml -o specs/apps/a-demo/contracts/generated/openapi-bundled.yaml && npx @redocly/cli bundle specs/apps/a-demo/contracts/openapi.yaml -o specs/apps/a-demo/contracts/generated/openapi-bundled.json",
       "dependsOn": ["lint"],
       "cache": true,
-      "inputs": ["specs/apps/demo/contracts/**/*.yaml"],
-      "outputs": ["specs/apps/demo/contracts/generated/"]
+      "inputs": ["specs/apps/a-demo/contracts/**/*.yaml"],
+      "outputs": ["specs/apps/a-demo/contracts/generated/"]
     },
     "docs": {
-      "command": "npx @redocly/cli build-docs specs/apps/demo/contracts/generated/openapi-bundled.yaml -o specs/apps/demo/contracts/generated/docs/index.html --config specs/apps/demo/contracts/redocly.yaml",
+      "command": "npx @redocly/cli build-docs specs/apps/a-demo/contracts/generated/openapi-bundled.yaml -o specs/apps/a-demo/contracts/generated/docs/index.html --config specs/apps/a-demo/contracts/redocly.yaml",
       "dependsOn": ["bundle"],
       "cache": true,
-      "inputs": ["specs/apps/demo/contracts/generated/openapi-bundled.yaml"],
-      "outputs": ["specs/apps/demo/contracts/generated/docs/"]
+      "inputs": ["specs/apps/a-demo/contracts/generated/openapi-bundled.yaml"],
+      "outputs": ["specs/apps/a-demo/contracts/generated/docs/"]
     }
   }
 }
@@ -240,11 +240,11 @@ Every demo app's `codegen` target depends on `demo-contracts:bundle`. For Elixir
 ```json
 {
   "codegen": {
-    "command": "oapi-codegen -config oapi-codegen.yaml ../../specs/apps/demo/contracts/generated/openapi-bundled.yaml",
-    "dependsOn": ["demo-contracts:bundle"],
+    "command": "oapi-codegen -config oapi-codegen.yaml ../../specs/apps/a-demo/contracts/generated/openapi-bundled.yaml",
+    "dependsOn": ["a-demo-contracts:bundle"],
     "cache": true,
-    "inputs": ["specs/apps/demo/contracts/generated/openapi-bundled.yaml"],
-    "outputs": ["apps/demo-be-golang-gin/generated-contracts/"]
+    "inputs": ["specs/apps/a-demo/contracts/generated/openapi-bundled.yaml"],
+    "outputs": ["apps/a-demo-be-golang-gin/generated-contracts/"]
   },
   "typecheck": {
     "dependsOn": ["codegen"]
@@ -260,13 +260,13 @@ Every demo app's `codegen` target depends on `demo-contracts:bundle`. For Elixir
 
 ### Implicit Dependencies
 
-All demo apps declare implicit dependency on `demo-contracts` in `nx.json` so that `nx affected`
+All demo apps declare implicit dependency on `a-demo-contracts` in `nx.json` so that `nx affected`
 detects contract changes:
 
 ```json
 {
   "namedInputs": {
-    "contract": ["specs/apps/demo/contracts/**/*.yaml"]
+    "contract": ["specs/apps/a-demo/contracts/**/*.yaml"]
   }
 }
 ```
@@ -294,7 +294,7 @@ clone is immediately buildable:
 # Python variant (Python packages use underscores, not hyphens)
 **/generated_contracts/
 # Bundled OpenAPI spec
-specs/apps/demo/contracts/generated/
+specs/apps/a-demo/contracts/generated/
 ```
 
 These root-level patterns cover all apps including Python (which uses underscores for valid
@@ -303,7 +303,7 @@ package names). No per-app `.gitignore` changes needed.
 ## Spectral Rules
 
 ```yaml
-# specs/apps/demo/contracts/.spectral.yaml
+# specs/apps/a-demo/contracts/.spectral.yaml
 extends: ["spectral:oas"]
 rules:
   # Enforce camelCase for all schema properties
@@ -416,7 +416,7 @@ The contract covers all endpoints from the existing Gherkin specs:
 
 ## Schema Definitions
 
-Based on the canonical types from `demo-fe-ts-nextjs/src/lib/api/types.ts` and Gherkin specs:
+Based on the canonical types from `a-demo-fe-ts-nextjs/src/lib/api/types.ts` and Gherkin specs:
 
 **AuthTokens**: `{ accessToken: string, refreshToken: string, tokenType: string }`
 
@@ -455,7 +455,7 @@ encoder/decoder mechanisms (Jackson, serde, Pydantic, etc.).
   runtime (defense in depth)
 - `@hey-api/openapi-ts` is production-proven (Vercel, PayPal) and generates SDK clients, Zod
   schemas, and TanStack Query hooks from a single OpenAPI spec
-- Effect Schema is native to the Effect ecosystem (no Zod dependency in `demo-be-ts-effect`)
+- Effect Schema is native to the Effect ecosystem (no Zod dependency in `a-demo-be-ts-effect`)
 - Developers get IDE autocomplete for all API types
 
 ### Decision 2: Gitignored Generated Code
@@ -476,7 +476,7 @@ encoder/decoder mechanisms (Jackson, serde, Pydantic, etc.).
 **Context**: How to ensure codegen runs before compilation.
 
 **Decision**: Each app's `typecheck`/`build`/`test:unit` depends on `codegen`. `codegen` depends
-on `demo-contracts:bundle`.
+on `a-demo-contracts:bundle`.
 
 **Rationale**:
 
@@ -519,7 +519,7 @@ filter them out.
 reading code or YAML.
 
 **Decision**: Generate static HTML documentation using `@redocly/cli build-docs`. Served locally
-via `nx run demo-contracts:docs` and optionally deployable to a public URL.
+via `nx run a-demo-contracts:docs` and optionally deployable to a public URL.
 
 **Rationale**:
 
@@ -538,7 +538,7 @@ via `nx run demo-contracts:docs` and optionally deployable to a public URL.
 - Search across all endpoints
 - Mobile-responsive layout
 
-**Redocly configuration** (`specs/apps/demo/contracts/redocly.yaml`):
+**Redocly configuration** (`specs/apps/a-demo/contracts/redocly.yaml`):
 
 ```yaml
 apis:

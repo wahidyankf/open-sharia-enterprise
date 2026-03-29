@@ -313,10 +313,10 @@ test utilities, and vendor directories.
 
 Several projects already do manual exclusion outside rhino-cli:
 
-- **demo-be-golang-gin**: `grep -v 'gorm_store|internal/server|cmd/server|generated-contracts'`
-- **demo-be-rust-axum**: `cargo llvm-cov --ignore-filename-regex 'test_api'`
-- **demo-be-clojure-pedestal**: `--cov-ns-exclude-regex 'demo-be-cjpd\\.(main|routes|...)'`
-- **demo-be-fsharp-giraffe**: AltCover `--assemblyExcludeFilter` + `--fileFilter`
+- **a-demo-be-golang-gin**: `grep -v 'gorm_store|internal/server|cmd/server|generated-contracts'`
+- **a-demo-be-rust-axum**: `cargo llvm-cov --ignore-filename-regex 'test_api'`
+- **a-demo-be-clojure-pedestal**: `--cov-ns-exclude-regex 'a-demo-be-cjpd\\.(main|routes|...)'`
+- **a-demo-be-fsharp-giraffe**: AltCover `--assemblyExcludeFilter` + `--fileFilter`
 
 The `--exclude` flag provides a standardized alternative. Go projects could replace the `grep -v`
 pipeline with `--exclude` patterns. Other projects' tool-specific flags run before rhino-cli
@@ -391,12 +391,12 @@ step libraries where multiple features share step files like `common.steps.ts`.
 
 ### Project Scope
 
-| Project Type         | Projects                                                              | Specs Dir                                                  | Step Pattern                        |
-| -------------------- | --------------------------------------------------------------------- | ---------------------------------------------------------- | ----------------------------------- |
-| **Backends (unit)**  | 11 demo-be-\* apps                                                    | `specs/apps/demo/be/gherkin/` (14 features, 152 scenarios) | 1:1 file mapping, language-specific |
-| **Frontends (unit)** | demo-fe-ts-nextjs, demo-fe-ts-tanstack-start, demo-fe-dart-flutterweb | `specs/apps/demo/fe/gherkin/` (15 features, 92 scenarios)  | 1:1 or shared steps                 |
-| **Backend E2E**      | demo-be-e2e                                                           | `specs/apps/demo/be/gherkin/` (same 14 features)           | Shared steps (playwright-bdd)       |
-| **Frontend E2E**     | demo-fe-e2e                                                           | `specs/apps/demo/fe/gherkin/` (same 15 features)           | Shared steps (playwright-bdd)       |
+| Project Type         | Projects                                                                    | Specs Dir                                                    | Step Pattern                        |
+| -------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------ | ----------------------------------- |
+| **Backends (unit)**  | 11 a-demo-be-\* apps                                                        | `specs/apps/a-demo/be/gherkin/` (14 features, 152 scenarios) | 1:1 file mapping, language-specific |
+| **Frontends (unit)** | a-demo-fe-ts-nextjs, a-demo-fe-ts-tanstack-start, a-demo-fe-dart-flutterweb | `specs/apps/a-demo/fe/gherkin/` (15 features, 92 scenarios)  | 1:1 or shared steps                 |
+| **Backend E2E**      | a-demo-be-e2e                                                               | `specs/apps/a-demo/be/gherkin/` (same 14 features)           | Shared steps (playwright-bdd)       |
+| **Frontend E2E**     | a-demo-fe-e2e                                                               | `specs/apps/a-demo/fe/gherkin/` (same 15 features)           | Shared steps (playwright-bdd)       |
 
 ### Current Support Gap
 
@@ -512,15 +512,15 @@ Feature: spec-coverage multi-language support
     Then step texts from (Given/When/Then "text" ...) forms are extracted
 
   Scenario: Dart BDD support (deferred pending framework adoption)
-    Given demo-fe-dart-flutterweb adopts a Gherkin BDD framework
+    Given a-demo-fe-dart-flutterweb adopts a Gherkin BDD framework
     When the framework's step definition pattern is known
     Then Dart step extraction is implemented for that specific pattern
     # Note: bdd_widget_test is code-gen (no runtime given/when/then API).
     # Dart BDD extraction is deferred until a framework is adopted.
 
   Scenario: Shared steps mode for E2E projects (playwright-bdd)
-    Given BE specs at specs/apps/demo/be/gherkin/ with 14 feature files
-    And demo-be-e2e has shared step files in tests/steps/ (e.g., common.steps.ts)
+    Given BE specs at specs/apps/a-demo/be/gherkin/ with 14 feature files
+    And a-demo-be-e2e has shared step files in tests/steps/ (e.g., common.steps.ts)
     When I run "rhino-cli spec-coverage validate specs-dir app-dir --shared-steps"
     Then file-level matching is skipped (no 1:1 feature→test file requirement)
     And step-level coverage is checked across ALL step files in app-dir
@@ -534,15 +534,15 @@ Feature: spec-coverage multi-language support
     Then the output reports step "C" as uncovered
     And the exit code is 1
 
-  Scenario: Shared steps mode for FE E2E (demo-fe-e2e)
-    Given FE specs at specs/apps/demo/fe/gherkin/ with 15 feature files
-    And demo-fe-e2e has shared step files in tests/steps/
+  Scenario: Shared steps mode for FE E2E (a-demo-fe-e2e)
+    Given FE specs at specs/apps/a-demo/fe/gherkin/ with 15 feature files
+    And a-demo-fe-e2e has shared step files in tests/steps/
     When I run "rhino-cli spec-coverage validate specs-dir app-dir --shared-steps"
     Then all FE spec steps are checked against extracted step definitions
 
   Scenario: Shared steps mode for FE unit tests
-    Given FE specs at specs/apps/demo/fe/gherkin/
-    And demo-fe-ts-nextjs has BDD step files in test/unit/
+    Given FE specs at specs/apps/a-demo/fe/gherkin/
+    And a-demo-fe-ts-nextjs has BDD step files in test/unit/
     When I run "rhino-cli spec-coverage validate specs-dir app-dir --shared-steps"
     Then step coverage is validated across all unit step files
 

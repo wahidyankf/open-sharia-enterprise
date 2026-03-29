@@ -997,7 +997,7 @@ Boot 4 approach is:
 
 ```java
 @NullMarked
-package com.demobejasb.controller;
+package com.ademobejasb.controller;
 
 import org.jspecify.annotations.NullMarked;
 ```
@@ -1030,7 +1030,7 @@ public class UserService {
 
 ```bash
 # Via Nx (preferred — wired into pre-push hook)
-nx typecheck demo-be-java-springboot
+nx typecheck a-demo-be-java-springboot
 
 # Via Maven directly
 mvn compile -Pnullcheck

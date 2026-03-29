@@ -63,7 +63,7 @@
 
 - **FR-2.2.1**: F#/Giraffe HttpHandler composition
 - **FR-2.2.2**: Clean Architecture: Handlers, Domain, Infrastructure layers
-- **FR-2.2.3**: **Repository pattern** using F# function records (following demo-be-fsharp-giraffe):
+- **FR-2.2.3**: **Repository pattern** using F# function records (following a-demo-be-fsharp-giraffe):
   `UserRepository`, `RefreshTokenRepository` as interfaces; `EfRepositories`
   as EF Core implementations; injected via DI, mockable for unit tests
 - **FR-2.2.4**: OpenAPI codegen for contract types (`generated-contracts/`). All API
@@ -186,7 +186,7 @@
   (integration + E2E tests for backend)
 - **FR-7.2**: GitHub Actions workflow `test-organiclever-fe.yml` -- Scheduled 2x daily
   (integration + E2E tests for frontend)
-- **FR-7.3**: Both workflows follow same pattern as `test-demo-be-*.yml` / `test-demo-fe-*.yml`
+- **FR-7.3**: Both workflows follow same pattern as `test-a-demo-be-*.yml` / `test-a-demo-fe-*.yml`
 - **FR-7.4**: All 4 apps included in `main-ci.yml` affected targets (`typecheck`, `lint`,
   `test:quick`)
 - **FR-7.5**: All 4 apps included in `pr-quality-gate.yml` affected targets
@@ -334,7 +334,7 @@ this is expected. It is an OpenAPI spec project, not an app with unit tests.
 
 Note: For E2E apps (`organiclever-be-e2e`, `organiclever-fe-e2e`), `test:quick` runs
 `lint + typecheck` only — there is no unit test suite or coverage validation for E2E
-projects. This matches the pattern in `demo-be-e2e` and `demo-fe-e2e`.
+projects. This matches the pattern in `a-demo-be-e2e` and `a-demo-fe-e2e`.
 
 ### AC-5: Contract Codegen
 

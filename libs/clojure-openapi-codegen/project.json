@@ -2,10 +2,7 @@
   "name": "clojure-openapi-codegen",
   "sourceRoot": "libs/clojure-openapi-codegen",
   "projectType": "library",
-  "tags": [
-    "type:lib",
-    "lang:clojure"
-  ],
+  "tags": ["type:lib", "lang:clojure"],
   "targets": {
     "build": {
       "executor": "nx:run-commands",
@@ -14,10 +11,7 @@
         "cwd": "libs/clojure-openapi-codegen"
       },
       "cache": true,
-      "inputs": [
-        "{projectRoot}/src/**/*.clj",
-        "{projectRoot}/deps.edn"
-      ]
+      "inputs": ["{projectRoot}/src/**/*.clj", "{projectRoot}/deps.edn"]
     },
     "test:unit": {
       "executor": "nx:run-commands",
@@ -50,9 +44,7 @@
         "{projectRoot}/deps.edn",
         "{projectRoot}/tests.edn"
       ],
-      "outputs": [
-        "{projectRoot}/coverage"
-      ]
+      "outputs": ["{projectRoot}/coverage"]
     },
     "lint": {
       "executor": "nx:run-commands",
@@ -63,8 +55,5 @@
       "cache": true
     }
   },
-  "implicitDependencies": [
-    "demo-contracts",
-    "rhino-cli"
-  ]
+  "implicitDependencies": ["a-demo-contracts", "rhino-cli"]
 }

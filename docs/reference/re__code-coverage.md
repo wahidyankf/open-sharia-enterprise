@@ -60,17 +60,17 @@ Partial lines count as NOT covered, matching Codecov's badge calculation.
 **Tool**: `go test -coverprofile=cover.out`
 **Format**: Go cover.out (statement-based, mode: set)
 
-| Project            | Coverage File               | Threshold | Exclusions                                          |
-| ------------------ | --------------------------- | --------- | --------------------------------------------------- |
-| rhino-cli          | `cover.out`                 | 90%       | None                                                |
-| ayokoding-cli      | `cover.out`                 | 90%       | None                                                |
-| oseplatform-cli    | `cover.out`                 | 90%       | None                                                |
-| golang-commons     | `cover.out`                 | 90%       | None                                                |
-| hugo-commons       | `cover.out`                 | 90%       | None                                                |
-| demo-be-golang-gin | `cover_unit.out` (filtered) | 90%       | gorm_store, server, cmd/server, generated-contracts |
+| Project              | Coverage File               | Threshold | Exclusions                                          |
+| -------------------- | --------------------------- | --------- | --------------------------------------------------- |
+| rhino-cli            | `cover.out`                 | 90%       | None                                                |
+| ayokoding-cli        | `cover.out`                 | 90%       | None                                                |
+| oseplatform-cli      | `cover.out`                 | 90%       | None                                                |
+| golang-commons       | `cover.out`                 | 90%       | None                                                |
+| hugo-commons         | `cover.out`                 | 90%       | None                                                |
+| a-demo-be-golang-gin | `cover_unit.out` (filtered) | 90%       | gorm_store, server, cmd/server, generated-contracts |
 
 **Go exclusion caveat**: Go's `go test -coverprofile` has no built-in
-exclusion mechanism. `demo-be-golang-gin` uses `grep -v` to create a
+exclusion mechanism. `a-demo-be-golang-gin` uses `grep -v` to create a
 filtered `cover_unit.out` that excludes infrastructure files. See
 [Local vs Codecov Differences](#local-vs-codecov-differences) for how
 this interacts with Codecov.
@@ -80,10 +80,10 @@ this interacts with Codecov.
 **Tool**: JaCoCo (Maven plugin)
 **Format**: JaCoCo XML at `target/site/jacoco/jacoco.xml`
 
-| Project                 | Threshold | Exclusions                                                                     |
-| ----------------------- | --------- | ------------------------------------------------------------------------------ |
-| demo-be-java-springboot | 90%       | JPA models (User, Expense), Application class, JpaAuditingConfig, package-info |
-| demo-be-java-vertx      | 90%       | Main class, package-info, META-INF                                             |
+| Project                   | Threshold | Exclusions                                                                     |
+| ------------------------- | --------- | ------------------------------------------------------------------------------ |
+| a-demo-be-java-springboot | 90%       | JPA models (User, Expense), Application class, JpaAuditingConfig, package-info |
+| a-demo-be-java-vertx      | 90%       | Main class, package-info, META-INF                                             |
 
 Exclusions are configured in `pom.xml` via JaCoCo's `<excludes>` element.
 The XML output already reflects exclusions, so rhino-cli and Codecov agree.
@@ -93,21 +93,21 @@ The XML output already reflects exclusions, so rhino-cli and Codecov agree.
 **Tool**: Kover (Gradle plugin)
 **Format**: JaCoCo-compatible XML at `build/reports/kover/report.xml`
 
-| Project             | Threshold | Exclusions                       |
-| ------------------- | --------- | -------------------------------- |
-| demo-be-kotlin-ktor | 90%       | Configured in `build.gradle.kts` |
+| Project               | Threshold | Exclusions                       |
+| --------------------- | --------- | -------------------------------- |
+| a-demo-be-kotlin-ktor | 90%       | Configured in `build.gradle.kts` |
 
 ### TypeScript Projects
 
 **Tool**: Vitest with `@vitest/coverage-v8`
 **Format**: LCOV at `coverage/lcov.info`
 
-| Project                   | Threshold | Exclusions                                              |
-| ------------------------- | --------- | ------------------------------------------------------- |
-| demo-be-ts-effect         | 90%       | `main.ts`, `routes/test-api.ts` (in `vitest.config.ts`) |
-| organiclever-fe           | 70%       | None                                                    |
-| demo-fe-ts-nextjs         | 70%       | None                                                    |
-| demo-fe-ts-tanstack-start | 70%       | None                                                    |
+| Project                     | Threshold | Exclusions                                              |
+| --------------------------- | --------- | ------------------------------------------------------- |
+| a-demo-be-ts-effect         | 90%       | `main.ts`, `routes/test-api.ts` (in `vitest.config.ts`) |
+| organiclever-fe             | 70%       | None                                                    |
+| a-demo-fe-ts-nextjs         | 70%       | None                                                    |
+| a-demo-fe-ts-tanstack-start | 70%       | None                                                    |
 
 Exclusions are configured in `vitest.config.ts` via the `coverage.exclude`
 array. LCOV output already reflects exclusions.
@@ -117,9 +117,9 @@ array. LCOV output already reflects exclusions.
 **Tool**: coverage.py via `uv run coverage`
 **Format**: LCOV at `coverage/lcov.info`
 
-| Project                | Threshold | Exclusions                                              |
-| ---------------------- | --------- | ------------------------------------------------------- |
-| demo-be-python-fastapi | 90%       | `tests/*`, `routers/*`, `main.py` (in `pyproject.toml`) |
+| Project                  | Threshold | Exclusions                                              |
+| ------------------------ | --------- | ------------------------------------------------------- |
+| a-demo-be-python-fastapi | 90%       | `tests/*`, `routers/*`, `main.py` (in `pyproject.toml`) |
 
 Exclusions are configured in `[tool.coverage.run].omit` in `pyproject.toml`.
 
@@ -128,54 +128,54 @@ Exclusions are configured in `[tool.coverage.run].omit` in `pyproject.toml`.
 **Tool**: cargo-llvm-cov
 **Format**: LCOV at `coverage/lcov.info`
 
-| Project           | Threshold | Exclusions                                  |
-| ----------------- | --------- | ------------------------------------------- |
-| demo-be-rust-axum | 90%       | None (cargo-llvm-cov covers the full crate) |
+| Project             | Threshold | Exclusions                                  |
+| ------------------- | --------- | ------------------------------------------- |
+| a-demo-be-rust-axum | 90%       | None (cargo-llvm-cov covers the full crate) |
 
 ### Elixir Projects
 
 **Tool**: excoveralls (coveralls.json config)
 **Format**: LCOV at `cover/lcov.info`
 
-| Project                | Threshold | Exclusions                                                                                   |
-| ---------------------- | --------- | -------------------------------------------------------------------------------------------- |
-| demo-be-elixir-phoenix | 90%       | 19 files in `coveralls.json` (application, repo, behaviours, contexts, telemetry, CORS plug) |
+| Project                  | Threshold | Exclusions                                                                                   |
+| ------------------------ | --------- | -------------------------------------------------------------------------------------------- |
+| a-demo-be-elixir-phoenix | 90%       | 19 files in `coveralls.json` (application, repo, behaviours, contexts, telemetry, CORS plug) |
 
 ### F# Projects
 
 **Tool**: AltCover with `--linecover`
 **Format**: LCOV at `coverage/altcov.info`
 
-| Project                | Threshold | Exclusions                                                                                           |
-| ---------------------- | --------- | ---------------------------------------------------------------------------------------------------- |
-| demo-be-fsharp-giraffe | 90%       | Uses AltCover instead of XPlat Code Coverage to avoid F# `task{}` async state machine BRDA inflation |
+| Project                  | Threshold | Exclusions                                                                                           |
+| ------------------------ | --------- | ---------------------------------------------------------------------------------------------------- |
+| a-demo-be-fsharp-giraffe | 90%       | Uses AltCover instead of XPlat Code Coverage to avoid F# `task{}` async state machine BRDA inflation |
 
 ### C# Projects
 
 **Tool**: Coverlet (XPlat Code Coverage)
 **Format**: LCOV at `coverage/**/coverage.info`
 
-| Project                   | Threshold | Exclusions |
-| ------------------------- | --------- | ---------- |
-| demo-be-csharp-aspnetcore | 90%       | None       |
+| Project                     | Threshold | Exclusions |
+| --------------------------- | --------- | ---------- |
+| a-demo-be-csharp-aspnetcore | 90%       | None       |
 
 ### Clojure Projects
 
 **Tool**: cloverage with `--lcov`
 **Format**: LCOV at `coverage/lcov.info`
 
-| Project                  | Threshold | Exclusions |
-| ------------------------ | --------- | ---------- |
-| demo-be-clojure-pedestal | 90%       | None       |
+| Project                    | Threshold | Exclusions |
+| -------------------------- | --------- | ---------- |
+| a-demo-be-clojure-pedestal | 90%       | None       |
 
 ### Dart Projects
 
 **Tool**: `flutter test --coverage`
 **Format**: LCOV at `coverage/lcov.info`
 
-| Project                 | Threshold | Exclusions |
-| ----------------------- | --------- | ---------- |
-| demo-fe-dart-flutterweb | 70%       | None       |
+| Project                   | Threshold | Exclusions |
+| ------------------------- | --------- | ---------- |
+| a-demo-fe-dart-flutterweb | 70%       | None       |
 
 ## Local vs Codecov Differences
 
@@ -204,7 +204,7 @@ same data.
 
 Go's `go test -coverprofile` has no exclusion mechanism. It instruments
 every package in the module. To exclude infrastructure code,
-`demo-be-golang-gin` uses a `grep -v` pipeline to produce a filtered
+`a-demo-be-golang-gin` uses a `grep -v` pipeline to produce a filtered
 `cover_unit.out`.
 
 The problem: Codecov receives `cover.out` (unfiltered), but also sees the
@@ -222,9 +222,9 @@ The `codecov.yml` file contains global ignore patterns:
 ```yaml
 ignore:
   - "**/types.go"
-  - "apps/demo-be-golang-gin/internal/store/gorm_store.go"
-  - "apps/demo-be-golang-gin/internal/server/server.go"
-  - "apps/demo-be-golang-gin/cmd/server/**"
+  - "apps/a-demo-be-golang-gin/internal/store/gorm_store.go"
+  - "apps/a-demo-be-golang-gin/internal/server/server.go"
+  - "apps/a-demo-be-golang-gin/cmd/server/**"
   - "**/generated-contracts/**"
 ```
 
@@ -255,9 +255,9 @@ reporting:
 
 ```yaml
 flags:
-  demo-be-golang-gin:
+  a-demo-be-golang-gin:
     paths:
-      - apps/demo-be-golang-gin/
+      - apps/a-demo-be-golang-gin/
     carryforward: true
 ```
 

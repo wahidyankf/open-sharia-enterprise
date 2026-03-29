@@ -1182,7 +1182,7 @@ graph TD
 
 ```kotlin
 // File: src/main/kotlin/com/demo/infrastructure/DatabaseFactory.kt
-// => Flyway integration with Ktor: canonical pattern from demo-be-kotlin-ktor
+// => Flyway integration with Ktor: canonical pattern from a-demo-be-kotlin-ktor
 
 package com.demo.infrastructure
 

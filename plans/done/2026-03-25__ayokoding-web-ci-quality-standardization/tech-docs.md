@@ -313,7 +313,7 @@ specs/apps/ayokoding/be/gherkin/**/*.feature
 └────────────────────────────────────────────────┘
 ```
 
-**Pattern alignment with demo-be**: This mirrors the demo-be-golang-gin pattern where `MemoryStore` and `GORMStore` both implement `Store`, and unit/integration BDD suites differ only in which implementation is wired into the scenario context.
+**Pattern alignment with demo-be**: This mirrors the a-demo-be-golang-gin pattern where `MemoryStore` and `GORMStore` both implement `Store`, and unit/integration BDD suites differ only in which implementation is wired into the scenario context.
 
 #### Coverage Exclusion Changes
 

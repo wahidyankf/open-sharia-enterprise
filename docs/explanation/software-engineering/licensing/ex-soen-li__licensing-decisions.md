@@ -41,7 +41,7 @@ The Apache Software Foundation flagged FSL as incompatible with Apache 2.0 in AS
 
 ### Decision: KEEP Liquibase
 
-**Status**: Approved for continued use in `demo-be-java-springboot` and `demo-be-java-vertx`.
+**Status**: Approved for continued use in `a-demo-be-java-springboot` and `a-demo-be-java-vertx`.
 
 **Rationale:**
 
@@ -87,7 +87,7 @@ This constitutes **dynamic linking through a standard interface**. The applicati
 
 ### Decision: COMPLIANT — No Action Required
 
-**Status**: Compliant with LGPL-2.1 terms as used in Spring Boot applications (`demo-be-java-springboot`, `demo-be-java-vertx`).
+**Status**: Compliant with LGPL-2.1 terms as used in Spring Boot applications (`a-demo-be-java-springboot`, `a-demo-be-java-vertx`).
 
 **Rationale:**
 
@@ -154,7 +154,7 @@ LGPL-2.1 characteristics (see Hibernate entry above for full analysis):
 
 ### Decision: ELECT EPL-1.0
 
-**Status**: This project elects EPL-1.0 for Logback use in `demo-be-java-springboot` and `demo-be-java-vertx`.
+**Status**: This project elects EPL-1.0 for Logback use in `a-demo-be-java-springboot` and `a-demo-be-java-vertx`.
 
 **Rationale:**
 

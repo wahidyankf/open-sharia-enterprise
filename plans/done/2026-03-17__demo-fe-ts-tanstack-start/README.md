@@ -1,12 +1,12 @@
-# Plan: Create `demo-fe-ts-tanstack-start` — TanStack Start Frontend
+# Plan: Create `a-demo-fe-ts-tanstack-start` — TanStack Start Frontend
 
 ## Overview
 
 - **Status**: Done
 - **Created**: 2026-03-17
-- **Goal**: Build a new TypeScript frontend app (`apps/demo-fe-ts-tanstack-start`) using
-  TanStack Start that mirrors `apps/demo-fe-ts-nextjs` with full feature parity, passing
-  all 92 Gherkin E2E scenarios from `demo-fe-e2e`, and following the same CI and Docker
+- **Goal**: Build a new TypeScript frontend app (`apps/a-demo-fe-ts-tanstack-start`) using
+  TanStack Start that mirrors `apps/a-demo-fe-ts-nextjs` with full feature parity, passing
+  all 92 Gherkin E2E scenarios from `a-demo-fe-e2e`, and following the same CI and Docker
   Compose patterns.
 - **Git Workflow**: Work on `main` (Trunk Based Development)
 
@@ -16,16 +16,16 @@
 
 ### Objectives
 
-- Build `apps/demo-fe-ts-tanstack-start` as a production-quality alternative frontend
+- Build `apps/a-demo-fe-ts-tanstack-start` as a production-quality alternative frontend
   implementation using TanStack Start (TanStack Router + Vinxi/Nitro)
-- Achieve feature parity with `apps/demo-fe-ts-nextjs` across all pages and interactions
-- Pass all 92 E2E Gherkin scenarios in `demo-fe-e2e` without modifying any E2E test code
+- Achieve feature parity with `apps/a-demo-fe-ts-nextjs` across all pages and interactions
+- Pass all 92 E2E Gherkin scenarios in `a-demo-fe-e2e` without modifying any E2E test code
 - Maintain the same localStorage token keys (`demo_fe_access_token`,
   `demo_fe_refresh_token`) so existing E2E auth helpers work without changes
 - Provide an identical API proxy setup (`/api/*`, `/health`, `/.well-known/*` → backend)
   that the E2E tests rely on for seamless backend communication
-- Add a CI workflow `.github/workflows/test-demo-fe-ts-tanstack-start.yml` following
-  the same pattern as `test-demo-fe-ts-nextjs.yml`
+- Add a CI workflow `.github/workflows/test-a-demo-fe-ts-tanstack-start.yml` following
+  the same pattern as `test-a-demo-fe-ts-nextjs.yml`
 - Serve the production build on port 3301 (matching the Playwright `BASE_URL` default)
 - Enforce ≥70% line coverage via `rhino-cli test-coverage validate` on unit tests
 
@@ -227,32 +227,32 @@ Scenario: Mobile drawer closes on nav item selection
   Next.js Dockerfile
 - **Port**: 3301 (E2E `BASE_URL` default)
 - **CI**: Same trigger schedule (2x daily cron + manual dispatch) as
-  `test-demo-fe-ts-nextjs.yml`
+  `test-a-demo-fe-ts-nextjs.yml`
 
 ### Acceptance Criteria
 
 ```gherkin
 Scenario: All E2E scenarios pass
-  Given demo-fe-ts-tanstack-start is running on port 3301
-  And demo-be-golang-gin is running on port 8201
-  When npx nx run demo-fe-e2e:test:e2e is executed with BASE_URL=http://localhost:3301
+  Given a-demo-fe-ts-tanstack-start is running on port 3301
+  And a-demo-be-golang-gin is running on port 8201
+  When npx nx run a-demo-fe-e2e:test:e2e is executed with BASE_URL=http://localhost:3301
   Then all 92 Gherkin scenarios should pass
   And 0 scenarios should be skipped or pending
 
 Scenario: Unit test coverage meets threshold
-  Given demo-fe-ts-tanstack-start unit tests are run with coverage
+  Given a-demo-fe-ts-tanstack-start unit tests are run with coverage
   When rhino-cli test-coverage validate coverage/lcov.info 70 is executed
   Then the validation should pass with ≥70% line coverage
 
 Scenario: Production build runs correctly in Docker
-  Given docker compose up for infra/dev/demo-fe-ts-tanstack-start/ is run
-  # Note: infra/dev/demo-fe-ts-tanstack-start/ is created in Phase 8
+  Given docker compose up for infra/dev/a-demo-fe-ts-tanstack-start/ is run
+  # Note: infra/dev/a-demo-fe-ts-tanstack-start/ is created in Phase 8
   When the frontend health check hits http://localhost:3301
   Then the response should be 200 OK
   And API proxying should forward /api/* to the backend correctly
 
 Scenario: CI workflow passes end-to-end
-  Given the GitHub Actions workflow test-demo-fe-ts-tanstack-start.yml is triggered
+  Given the GitHub Actions workflow test-a-demo-fe-ts-tanstack-start.yml is triggered
   When the workflow completes
   Then all jobs should report success
   And the Playwright report artifact should be uploaded
@@ -273,7 +273,7 @@ straightforward via Vinxi's server middleware or a custom Nitro plugin.
 flowchart TD
     Browser["Browser\n(React SPA + TanStack Query)"]
     Server["TanStack Start\nNode.js server\n(Vinxi/Nitro)\n/api/* → proxy"]
-    Backend["demo-be-golang-gin\nport 8201"]
+    Backend["a-demo-be-golang-gin\nport 8201"]
 
     Browser -- "fetch /api/*" --> Server
     Server -- "HTTP" --> Backend
@@ -387,7 +387,7 @@ pattern to Next.js `auth-guard.tsx`) that checks `getAccessToken()` — this ret
 
 ### Critical E2E Selectors
 
-The following selectors from `demo-fe-e2e` must be present in the DOM:
+The following selectors from `a-demo-fe-e2e` must be present in the DOM:
 
 | Selector                                                            | Required DOM element                           | Location                               |
 | ------------------------------------------------------------------- | ---------------------------------------------- | -------------------------------------- |
@@ -425,7 +425,7 @@ Start uses a different route announcer ID or none. The E2E steps use `.filter()`
 different announcer selector. Before completing Phase 10, verify by running:
 
 ```bash
-grep -r "next-route-announcer" apps/demo-fe-e2e/
+grep -r "next-route-announcer" apps/a-demo-fe-e2e/
 ```
 
 Confirm every usage employs `.filter({ hasNot: ... })` semantics (not positive assertion)
@@ -435,7 +435,7 @@ false failures. If any step uses it as a positive selector, a DOM adapter will b
 ### Project Structure
 
 ```
-apps/demo-fe-ts-tanstack-start/
+apps/a-demo-fe-ts-tanstack-start/
 ├── app.config.ts                  # Vinxi/TanStack Start config (proxy middleware)
 ├── routes/
 │   ├── __root.tsx                 # Root layout: QueryClient + AuthProvider
@@ -524,33 +524,33 @@ docker-compose.
 
 ### Infrastructure Files to Create
 
-**`infra/dev/demo-fe-ts-tanstack-start/docker-compose.yml`** — same structure as
-`infra/dev/demo-fe-ts-nextjs/docker-compose.yml`:
+**`infra/dev/a-demo-fe-ts-tanstack-start/docker-compose.yml`** — same structure as
+`infra/dev/a-demo-fe-ts-nextjs/docker-compose.yml`:
 
-- Service `demo-be-db`: `postgres:17-alpine`, container `demo-fe-tss-db`, volume `demo-fe-tss-db-data`
-  - Environment: `POSTGRES_DB=demo_fe_tss`, `POSTGRES_USER=demo_fe_tss`, `POSTGRES_PASSWORD=demo_fe_tss`
-- Service `demo-be`: Go/Gin backend, container `demo-fe-tss-be`, port 8201, `ENABLE_TEST_API=true`
-  - `DATABASE_URL=postgresql://demo_fe_tss:demo_fe_tss@demo-be-db:5432/demo_fe_tss`
-- Service `demo-fe`: TanStack Start, container `demo-fe-tss`, port 3301, `BACKEND_URL=http://demo-be:8201`
-- Network: `demo-fe-tss-network`
+- Service `a-demo-be-db`: `postgres:17-alpine`, container `a-demo-fe-tss-db`, volume `a-demo-fe-tss-db-data`
+  - Environment: `POSTGRES_DB=a_demo_fe_tss`, `POSTGRES_USER=a_demo_fe_tss`, `POSTGRES_PASSWORD=a_demo_fe_tss`
+- Service `demo-be`: Go/Gin backend, container `a-demo-fe-tss-be`, port 8201, `ENABLE_TEST_API=true`
+  - `DATABASE_URL=postgresql://a_demo_fe_tss:a_demo_fe_tss@a-demo-be-db:5432/a_demo_fe_tss`
+- Service `demo-fe`: TanStack Start, container `a-demo-fe-tss`, port 3301, `BACKEND_URL=http://demo-be:8201`
+- Network: `a-demo-fe-tss-network`
 
 ### CI Workflow
 
-**`.github/workflows/test-demo-fe-ts-tanstack-start.yml`** — identical pattern to
-`test-demo-fe-ts-nextjs.yml`:
+**`.github/workflows/test-a-demo-fe-ts-tanstack-start.yml`** — identical pattern to
+`test-a-demo-fe-ts-nextjs.yml`:
 
 - Triggers: schedule (2x daily), `workflow_dispatch`
-- Docker Compose: `infra/dev/demo-fe-ts-tanstack-start/docker-compose.yml`
+- Docker Compose: `infra/dev/a-demo-fe-ts-tanstack-start/docker-compose.yml`
 - Wait for port 3301
-- Run `demo-fe-e2e:test:e2e` with `BASE_URL=http://localhost:3301` and
+- Run `a-demo-fe-e2e:test:e2e` with `BASE_URL=http://localhost:3301` and
   `BACKEND_URL=http://localhost:8201`
-- Upload artifact `playwright-report-demo-fe-ts-tanstack-start`
+- Upload artifact `playwright-report-a-demo-fe-ts-tanstack-start`
 
 ### Existing Files to Modify
 
-1. **`apps/demo-fe-e2e/project.json`** — add `"demo-fe-ts-tanstack-start"` to
+1. **`apps/a-demo-fe-e2e/project.json`** — add `"a-demo-fe-ts-tanstack-start"` to
    `implicitDependencies`
-2. **`CLAUDE.md`** — add `demo-fe-ts-tanstack-start` entry under Current Apps list
+2. **`CLAUDE.md`** — add `a-demo-fe-ts-tanstack-start` entry under Current Apps list
 3. **`docs/reference/re__monorepo-structure.md`** — add to apps listing (if file exists)
 
 ### Dependencies
@@ -575,7 +575,7 @@ docker-compose.
 **Unit (`test:unit`)**:
 
 - Vitest with jsdom environment
-- Uses `@amiceli/vitest-cucumber` to consume Gherkin specs from `specs/apps/demo/fe/gherkin/`
+- Uses `@amiceli/vitest-cucumber` to consume Gherkin specs from `specs/apps/a-demo/fe/gherkin/`
 - Mocks all API calls via `vi.mock`
 - Tests component behavior: form validation, state changes, render output
 - Coverage measured with `@vitest/coverage-v8` → LCOV → `rhino-cli validate` ≥70%
@@ -583,13 +583,13 @@ docker-compose.
 **Integration (`test:integration`)**:
 
 - Not implemented in this plan (deferred to a follow-up)
-- MSW-based integration tests (as used in `demo-fe-ts-nextjs`) would be the appropriate
+- MSW-based integration tests (as used in `a-demo-fe-ts-nextjs`) would be the appropriate
   pattern when added; they would run in-process with no Docker dependency (`cache: true`)
-- This app ships with unit + E2E only, matching the initial delivery scope of `demo-fe-ts-nextjs`
+- This app ships with unit + E2E only, matching the initial delivery scope of `a-demo-fe-ts-nextjs`
 
 **E2E (`test:e2e`)**:
 
-- Reuses `demo-fe-e2e` Playwright tests unchanged
+- Reuses `a-demo-fe-e2e` Playwright tests unchanged
 - Requires full stack running (docker-compose or local processes)
 - `BASE_URL=http://localhost:3301`, `BACKEND_URL=http://localhost:8201`
 
@@ -599,7 +599,7 @@ docker-compose.
 
 ### Phase 1: Project Scaffold and Foundation
 
-- [ ] Step 1.1: Create `apps/demo-fe-ts-tanstack-start/` directory with `package.json`
+- [ ] Step 1.1: Create `apps/a-demo-fe-ts-tanstack-start/` directory with `package.json`
   - TanStack Start + TanStack Router + TanStack Query + React 19
   - Vitest, @vitest/coverage-v8, testing-library, @amiceli/vitest-cucumber
   - Pinned versions matching Next.js app where applicable
@@ -615,13 +615,13 @@ docker-compose.
   - `test:unit`: `npx vitest run --project unit` (separately runnable; cacheable)
   - `test:quick`: `npx vitest run --coverage && rhino-cli test-coverage validate coverage/lcov.info 70`
     - Calls vitest with coverage (which runs `test:unit` internally), then validates
-      coverage threshold — follows the same pattern as `demo-fe-ts-nextjs`
+      coverage threshold — follows the same pattern as `a-demo-fe-ts-nextjs`
     - Does NOT include `test:integration` or `test:e2e`
   - `test:integration`: omitted for this app — frontend integration tests via MSW are
-    deferred to a follow-up plan. This app follows the same scope as `demo-fe-ts-nextjs`
+    deferred to a follow-up plan. This app follows the same scope as `a-demo-fe-ts-nextjs`
     initial delivery (unit + E2E only). Add explicitly as `"test:integration": null`
     or document its absence in `project.json` comments.
-  - Tags: `["type:app", "platform:tanstack-start", "lang:ts", "domain:demo-fe"]`
+  - Tags: `["type:app", "platform:tanstack-start", "lang:ts", "domain:a-demo-fe"]`
 - [ ] Step 1.5: Create `routes/__root.tsx` with `QueryClientProvider`, `AuthProvider`,
       and `<Outlet />`. Include error boundary and loading state handling.
 - [ ] Step 1.6: Verify `npm install` succeeds in the app directory
@@ -843,15 +843,15 @@ Scenario: Phase 7 admin and home complete
 
 ### Phase 8: Unit Tests and Coverage
 
-- [ ] Step 8.0: Verify Gherkin specs directory exists and is shared with `demo-fe-ts-nextjs`:
+- [ ] Step 8.0: Verify Gherkin specs directory exists and is shared with `a-demo-fe-ts-nextjs`:
 
   ```bash
-  ls specs/apps/demo/fe/gherkin/
+  ls specs/apps/a-demo/fe/gherkin/
   ```
 
   Confirm subdirectories (`admin`, `authentication`, `expenses`, `health`, `layout`) are
   present. This directory is part of the monorepo and already contains all 92 feature
-  files used by `demo-fe-ts-nextjs`. No creation needed — it is shared.
+  files used by `a-demo-fe-ts-nextjs`. No creation needed — it is shared.
 
 - [ ] Step 8.1: Create `src/test/setup.ts` — Vitest setup file (same as Next.js app)
 - [ ] Step 8.2: Create `vitest.config.ts` with:
@@ -861,7 +861,7 @@ Scenario: Phase 7 admin and home complete
   - `coverage.thresholds: { lines: 70 }` (matches Next.js threshold)
   - Path aliases for `@/`
 - [ ] Step 8.3: Write unit tests using `@amiceli/vitest-cucumber` consuming
-      `specs/apps/demo/fe/gherkin/**/*.feature`:
+      `specs/apps/a-demo/fe/gherkin/**/*.feature`:
   - Authentication: login success, login failure, register, session management
   - Expenses: create, list, edit, delete, validation errors
   - Admin: user list, search, disable/enable/unlock
@@ -887,7 +887,7 @@ Scenario: Phase 8 unit tests and coverage complete
 
 ### Phase 9: Docker, Infrastructure, and CI
 
-- [ ] Step 9.1: Create `apps/demo-fe-ts-tanstack-start/Dockerfile` using multi-stage
+- [ ] Step 9.1: Create `apps/a-demo-fe-ts-tanstack-start/Dockerfile` using multi-stage
       build:
   - Stage `deps`: `node:24-alpine`, install from `package.json`/`package-lock.json`
   - Stage `build`: copy deps, copy source, run `npm run build` (no `ARG BACKEND_URL` —
@@ -895,19 +895,19 @@ Scenario: Phase 8 unit tests and coverage complete
   - Stage runtime: `node:24-alpine`, non-root `app` user, copy `.output/`, `EXPOSE 3301`,
     `ENV BACKEND_URL=http://localhost:8201` (default, override at runtime),
     `CMD ["node", "server/index.mjs"]`
-- [ ] Step 9.2: Create `infra/dev/demo-fe-ts-tanstack-start/docker-compose.yml`:
-  - Service `demo-be-db`: postgres:17-alpine, container `demo-fe-tss-db`,
-    volume `demo-fe-tss-db-data`, network `demo-fe-tss-network`
-  - Service `demo-be`: Go/Gin backend, container `demo-fe-tss-be`, port 8201,
+- [ ] Step 9.2: Create `infra/dev/a-demo-fe-ts-tanstack-start/docker-compose.yml`:
+  - Service `a-demo-be-db`: postgres:17-alpine, container `a-demo-fe-tss-db`,
+    volume `a-demo-fe-tss-db-data`, network `a-demo-fe-tss-network`
+  - Service `demo-be`: Go/Gin backend, container `a-demo-fe-tss-be`, port 8201,
     `ENABLE_TEST_API=true`
-  - Service `demo-fe`: TanStack Start, container `demo-fe-tss`, port 3301,
+  - Service `demo-fe`: TanStack Start, container `a-demo-fe-tss`, port 3301,
     `BACKEND_URL=http://demo-be:8201`
-- [ ] Step 9.3: Create `.github/workflows/test-demo-fe-ts-tanstack-start.yml`:
+- [ ] Step 9.3: Create `.github/workflows/test-a-demo-fe-ts-tanstack-start.yml`:
   - Same trigger pattern: schedule (0 23 and 0 11 UTC), `workflow_dispatch`
   - Docker compose up → wait for port 3301 (36 × 10s = 6 min max)
   - Setup Volta → `npm ci` → install Playwright chromium
-  - Run `npx nx run demo-fe-e2e:test:e2e`
-  - Upload artifact `playwright-report-demo-fe-ts-tanstack-start`
+  - Run `npx nx run a-demo-fe-e2e:test:e2e`
+  - Upload artifact `playwright-report-a-demo-fe-ts-tanstack-start`
   - Teardown: `docker compose down -v`
 
 **Phase 9 Validation:**
@@ -915,9 +915,9 @@ Scenario: Phase 8 unit tests and coverage complete
 ```gherkin
 Scenario: Phase 9 Docker build succeeds
   Given the Dockerfile is written
-  When docker build is run against apps/demo-fe-ts-tanstack-start
+  When docker build is run against apps/a-demo-fe-ts-tanstack-start
   Then the image builds without errors
-  When docker compose up is run for infra/dev/demo-fe-ts-tanstack-start/
+  When docker compose up is run for infra/dev/a-demo-fe-ts-tanstack-start/
   Then all three services start successfully
   And the frontend responds at http://localhost:3301
   And /api/v1/auth/login proxies to the backend at http://localhost:8201
@@ -925,23 +925,23 @@ Scenario: Phase 9 Docker build succeeds
 
 ### Phase 10: End-to-End Validation and Documentation
 
-- [ ] Step 10.1: Update `apps/demo-fe-e2e/project.json` — add
-      `"demo-fe-ts-tanstack-start"` to `implicitDependencies`
+- [ ] Step 10.1: Update `apps/a-demo-fe-e2e/project.json` — add
+      `"a-demo-fe-ts-tanstack-start"` to `implicitDependencies`
 - [ ] Step 10.2: Run full E2E locally:
 
   ```bash
-  docker compose -f infra/dev/demo-fe-ts-tanstack-start/docker-compose.yml up --build -d
+  docker compose -f infra/dev/a-demo-fe-ts-tanstack-start/docker-compose.yml up --build -d
   BASE_URL=http://localhost:3301 BACKEND_URL=http://localhost:8201 \
-    npx nx run demo-fe-e2e:test:e2e
+    npx nx run a-demo-fe-e2e:test:e2e
   ```
 
 - [ ] Step 10.3: Fix any E2E failures by adjusting selectors, ARIA attributes, or
       DOM structure until all 92 scenarios pass
-- [ ] Step 10.4: Create `apps/demo-fe-ts-tanstack-start/README.md`
+- [ ] Step 10.4: Create `apps/a-demo-fe-ts-tanstack-start/README.md`
 - [ ] Step 10.5: Update `CLAUDE.md`:
-  - Add `demo-fe-ts-tanstack-start` under Current Apps
+  - Add `a-demo-fe-ts-tanstack-start` under Current Apps
   - Add TanStack Start coverage note (70% threshold) under Demo-fe TypeScript frontends section
-- [ ] Step 10.6: Trigger `test-demo-fe-ts-tanstack-start.yml` via `workflow_dispatch`
+- [ ] Step 10.6: Trigger `test-a-demo-fe-ts-tanstack-start.yml` via `workflow_dispatch`
       and confirm all green
 
 **Phase 10 Validation (Final Acceptance):**
@@ -949,35 +949,35 @@ Scenario: Phase 9 Docker build succeeds
 ```gherkin
 Scenario: All 92 E2E scenarios pass
   Given the full stack is running via docker compose
-  When npx nx run demo-fe-e2e:test:e2e is executed
+  When npx nx run a-demo-fe-e2e:test:e2e is executed
   Then 92 scenarios should pass
   And 0 scenarios should fail
 
 Scenario: No regressions in existing tests
-  Given demo-fe-ts-nextjs is unchanged
-  When test-demo-fe-ts-nextjs.yml is triggered
+  Given a-demo-fe-ts-nextjs is unchanged
+  When test-a-demo-fe-ts-nextjs.yml is triggered
   Then all scenarios still pass
 
 Scenario: CI workflow succeeds
-  Given test-demo-fe-ts-tanstack-start.yml is triggered via workflow_dispatch
+  Given test-a-demo-fe-ts-tanstack-start.yml is triggered via workflow_dispatch
   When the workflow completes
   Then all jobs are green
-  And the playwright-report-demo-fe-ts-tanstack-start artifact is available
+  And the playwright-report-a-demo-fe-ts-tanstack-start artifact is available
 ```
 
 ### Validation Checklist
 
-- [ ] `npm install` succeeds in `apps/demo-fe-ts-tanstack-start/`
-- [ ] `nx typecheck demo-fe-ts-tanstack-start` passes with no TypeScript errors
-- [ ] `nx lint demo-fe-ts-tanstack-start` passes with no lint errors
-- [ ] `nx run demo-fe-ts-tanstack-start:test:quick` passes (unit tests + coverage ≥70%)
-- [ ] `nx build demo-fe-ts-tanstack-start` produces `.output/` directory
-- [ ] Docker build succeeds: `docker build apps/demo-fe-ts-tanstack-start`
+- [ ] `npm install` succeeds in `apps/a-demo-fe-ts-tanstack-start/`
+- [ ] `nx typecheck a-demo-fe-ts-tanstack-start` passes with no TypeScript errors
+- [ ] `nx lint a-demo-fe-ts-tanstack-start` passes with no lint errors
+- [ ] `nx run a-demo-fe-ts-tanstack-start:test:quick` passes (unit tests + coverage ≥70%)
+- [ ] `nx build a-demo-fe-ts-tanstack-start` produces `.output/` directory
+- [ ] Docker build succeeds: `docker build apps/a-demo-fe-ts-tanstack-start`
 - [ ] `docker compose up` starts all 3 services without error
 - [ ] Frontend responds at `http://localhost:3301`
 - [ ] API proxy works: `curl http://localhost:3301/health` returns `{"status":"ok"}`
 - [ ] All 92 E2E scenarios pass locally
-- [ ] CI workflow `test-demo-fe-ts-tanstack-start.yml` passes end-to-end
-- [ ] `demo-fe-e2e` `implicitDependencies` updated
+- [ ] CI workflow `test-a-demo-fe-ts-tanstack-start.yml` passes end-to-end
+- [ ] `a-demo-fe-e2e` `implicitDependencies` updated
 - [ ] `CLAUDE.md` updated with new app entry
-- [ ] No modifications made to `apps/demo-fe-e2e/` test code (E2E tests reused as-is)
+- [ ] No modifications made to `apps/a-demo-fe-e2e/` test code (E2E tests reused as-is)

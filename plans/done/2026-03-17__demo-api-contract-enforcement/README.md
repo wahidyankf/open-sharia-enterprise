@@ -12,8 +12,8 @@
 
 ## Overview
 
-Establish a single, enforceable API contract specification in `specs/apps/demo/contracts/` that
-governs request/response shapes between all `demo-be-*` backends (11 languages), `demo-fe-*`
+Establish a single, enforceable API contract specification in `specs/apps/a-demo/contracts/` that
+governs request/response shapes between all `a-demo-be-*` backends (11 languages), `a-demo-fe-*`
 frontends (3 frameworks), and `demo-*-e2e` test suites — with **compile-time enforcement** via
 auto-generated type-safe code (encoders/decoders) in every app.
 
@@ -29,7 +29,7 @@ auto-generated type-safe code (encoders/decoders) in every app.
 5. **Strict camelCase** — all JSON fields use camelCase (no snake_case or kebab-case), enforced
    by Spectral linting with zero exceptions
 6. **API documentation** — auto-generated browsable API docs (Redoc) viewable by
-   public/product/any team via `nx run demo-contracts:docs`
+   public/product/any team via `nx run a-demo-contracts:docs`
 7. **Language-agnostic** — the contract is YAML; code generators produce Go structs, Java DTOs,
    Kotlin data classes, Python Pydantic models, Rust serde structs, Elixir structs, F#/C# records,
    Clojure Malli schemas, TypeScript types, and Dart classes
@@ -47,7 +47,7 @@ auto-generated type-safe code (encoders/decoders) in every app.
 ### Enforcement Model
 
 ```
-  specs/apps/demo/contracts/openapi.yaml
+  specs/apps/a-demo/contracts/openapi.yaml
                     │
            ┌────────┼────────┐
            ▼        ▼        ▼

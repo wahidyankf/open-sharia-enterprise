@@ -4,7 +4,7 @@ defmodule OpenApiCodegenTest do
   alias OpenApiCodegen
 
   @bundled_spec Path.expand(
-                  "../../../specs/apps/demo/contracts/generated/openapi-bundled.yaml",
+                  "../../../specs/apps/a-demo/contracts/generated/openapi-bundled.yaml",
                   __DIR__
                 )
 
@@ -81,7 +81,7 @@ defmodule OpenApiCodegenTest do
     @tag :integration
     test "generates modules for all schemas in the bundled spec", %{tmp_dir: tmp_dir} do
       assert File.exists?(@bundled_spec),
-             "Bundled spec not found at #{@bundled_spec}. Run: npx nx run demo-contracts:bundle"
+             "Bundled spec not found at #{@bundled_spec}. Run: npx nx run a-demo-contracts:bundle"
 
       assert {:ok, paths} = OpenApiCodegen.generate(@bundled_spec, tmp_dir, namespace: "DemoApi")
 
@@ -108,7 +108,7 @@ defmodule OpenApiCodegenTest do
     @tag :integration
     test "all generated files from bundled spec compile successfully", %{tmp_dir: tmp_dir} do
       assert File.exists?(@bundled_spec),
-             "Bundled spec not found at #{@bundled_spec}. Run: npx nx run demo-contracts:bundle"
+             "Bundled spec not found at #{@bundled_spec}. Run: npx nx run a-demo-contracts:bundle"
 
       assert {:ok, paths} = OpenApiCodegen.generate(@bundled_spec, tmp_dir, namespace: "CompileDemoApi")
 
@@ -123,7 +123,7 @@ defmodule OpenApiCodegenTest do
     @tag :integration
     test "generated User struct has correct required fields from bundled spec", %{tmp_dir: tmp_dir} do
       assert File.exists?(@bundled_spec),
-             "Bundled spec not found at #{@bundled_spec}. Run: npx nx run demo-contracts:bundle"
+             "Bundled spec not found at #{@bundled_spec}. Run: npx nx run a-demo-contracts:bundle"
 
       assert {:ok, paths} = OpenApiCodegen.generate(@bundled_spec, tmp_dir, namespace: "BundledApi")
 

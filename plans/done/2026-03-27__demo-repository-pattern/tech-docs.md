@@ -11,7 +11,7 @@
 
 ## Per-App Implementation
 
-### 1. demo-be-fsharp-giraffe
+### 1. a-demo-be-fsharp-giraffe
 
 **Abstraction mechanism**: F# function records — a record type whose fields are functions. This is
 the idiomatic functional F# approach: no OOP interfaces, no classes, no DI container wiring.
@@ -20,13 +20,13 @@ with `{ repo with FindById = fun _ -> ... }`.
 
 **New files to create**:
 
-- `src/DemoBeFsgi/Infrastructure/Repositories/RepositoryTypes.fs` — function-record type
+- `src/AADemoBeFsgi/Infrastructure/Repositories/RepositoryTypes.fs` — function-record type
   definitions (`UserRepository`, `ExpenseRepository`, `AttachmentRepository`, `TokenRepository`,
   `RefreshTokenRepository`) where each field is a function (e.g.,
   `FindById: Guid -> Guid -> Task<ExpenseEntity option>`)
-- `src/DemoBeFsgi/Infrastructure/Repositories/EfRepositories.fs` — constructor functions that
+- `src/AADemoBeFsgi/Infrastructure/Repositories/EfRepositories.fs` — constructor functions that
   return function records wired to `AppDbContext` (e.g., `EfRepositories.createUserRepo: AppDbContext -> UserRepository`)
-- `tests/DemoBeFsgi.Tests/InMemory/InMemoryRepositories.fs` — constructor functions that return
+- `tests/AADemoBeFsgi.Tests/InMemory/InMemoryRepositories.fs` — constructor functions that return
   function records backed by `ConcurrentDictionary` (e.g., `InMemoryRepositories.createUserRepo: unit -> UserRepository`)
 
 **Files to modify**:
@@ -36,21 +36,21 @@ with `{ repo with FindById = fun _ -> ... }`.
   (e.g., `ctx.GetService<UserRepository>()`)
 - `Program.fs` — register function records in DI container via factory lambdas
   (e.g., `services.AddSingleton<UserRepository>(fun sp -> EfRepositories.createUserRepo(sp.GetService<AppDbContext>()))`)
-- `tests/DemoBeFsgi.Tests/DirectServices.fs` — replace `db: AppDbContext` parameter with
+- `tests/AADemoBeFsgi.Tests/DirectServices.fs` — replace `db: AppDbContext` parameter with
   individual function-record repositories (this is the actual business logic layer for unit tests)
-- `tests/DemoBeFsgi.Tests/Unit/UnitFeatureRunner.fs` — update `UnitScenarioServiceProvider` to
+- `tests/AADemoBeFsgi.Tests/Unit/UnitFeatureRunner.fs` — update `UnitScenarioServiceProvider` to
   inject in-memory function records instead of constructing an `AppDbContext` via `createDb()`
-- `tests/DemoBeFsgi.Tests/State.fs` — replace `Db: AppDbContext` field with function-record
+- `tests/AADemoBeFsgi.Tests/State.fs` — replace `Db: AppDbContext` field with function-record
   repository fields (e.g., `UserRepo: UserRepository`, `ExpenseRepo: ExpenseRepository`);
   update `empty` constructor accordingly (propagates to all Integration step files)
-- `tests/DemoBeFsgi.Tests/Integration/Steps/*.fs` (all 13 step definition files: AuthSteps.fs,
+- `tests/AADemoBeFsgi.Tests/Integration/Steps/*.fs` (all 13 step definition files: AuthSteps.fs,
   CommonSteps.fs, TokenLifecycleSteps.fs, TokenManagementSteps.fs, UserAccountSteps.fs,
   SecuritySteps.fs, AdminSteps.fs, ExpenseSteps.fs, CurrencySteps.fs, UnitHandlingSteps.fs,
   ReportingSteps.fs, AttachmentSteps.fs, HealthSteps.fs) — replace all `state.Db` call sites
   with the appropriate function-record repository from the updated `StepState`
-- `DemoBeFsgi.fsproj` — add `RepositoryTypes.fs` and `EfRepositories.fs` in correct compilation
+- `AADemoBeFsgi.fsproj` — add `RepositoryTypes.fs` and `EfRepositories.fs` in correct compilation
   order (types before constructors before handlers)
-- `tests/DemoBeFsgi.Tests/DemoBeFsgi.Tests.fsproj` — add `InMemoryRepositories.fs` in correct
+- `tests/AADemoBeFsgi.Tests/AADemoBeFsgi.Tests.fsproj` — add `InMemoryRepositories.fs` in correct
   compilation order
 
 **Key pattern**:
@@ -121,7 +121,7 @@ let repo = { InMemoryRepositories.createExpenseRepo() with
 - ASP.NET DI registers function records as singletons via factory lambdas — the `AppDbContext`
   lifetime (scoped) must be resolved per-request inside the factory, not captured at registration
 
-### 2. demo-be-rust-axum
+### 2. a-demo-be-rust-axum
 
 **Abstraction mechanism**: Rust `async_trait` traits
 
@@ -181,31 +181,31 @@ pub struct AppState {
 - `AnyPool` raw SQL may have SQLite vs Postgres dialect differences that surface when the
   abstraction changes — preserve existing query logic as-is
 
-### 3. demo-be-python-fastapi
+### 3. a-demo-be-python-fastapi
 
 **Abstraction mechanism**: Python `Protocol` (from `typing`)
 
 **New files to create**:
 
-- `src/demo_be_python_fastapi/infrastructure/protocols.py` — Protocol definitions for all 5
+- `src/a_demo_be_python_fastapi/infrastructure/protocols.py` — Protocol definitions for all 5
   entities
-- `src/demo_be_python_fastapi/infrastructure/refresh_token_repository.py` — concrete
+- `src/a_demo_be_python_fastapi/infrastructure/refresh_token_repository.py` — concrete
   `RefreshTokenRepository` class (extract from routers)
 - `tests/unit/in_memory_repos.py` — in-memory dict-based implementations of all Protocols
 
-> **Note**: The codebase already contains `src/demo_be_python_fastapi/infrastructure/in_memory/`
+> **Note**: The codebase already contains `src/a_demo_be_python_fastapi/infrastructure/in_memory/`
 > (an empty package directory with only `__init__.py`). In-memory mock implementations are
 > test-only concerns and belong in the test tree, not in production infrastructure. The existing
 > empty `infrastructure/in_memory/` package is a prior scaffolding stub and is not extended here.
 
 **Files to modify**:
 
-- `src/demo_be_python_fastapi/infrastructure/repositories.py` — add Protocol conformance (type
+- `src/a_demo_be_python_fastapi/infrastructure/repositories.py` — add Protocol conformance (type
   annotations, ensure method signatures match the Protocols)
-- `src/demo_be_python_fastapi/dependencies.py` — type-hint return values as Protocol types, add
+- `src/a_demo_be_python_fastapi/dependencies.py` — type-hint return values as Protocol types, add
   `get_refresh_token_repo` provider (note: `auth/dependencies.py` is a separate file and is NOT
   the target here)
-- `src/demo_be_python_fastapi/routers/auth.py` and `src/demo_be_python_fastapi/routers/tokens.py`
+- `src/a_demo_be_python_fastapi/routers/auth.py` and `src/a_demo_be_python_fastapi/routers/tokens.py`
   — replace inline RefreshToken DB calls with `RefreshTokenRepository`
 - `tests/unit/conftest.py` — inject in-memory repos instead of creating SQLite engine/session
 
@@ -234,18 +234,18 @@ class ExpenseRepository:  # implicitly satisfies ExpenseRepositoryProtocol
 - `Depends()` wiring must remain compatible — Protocol is structural typing, so existing classes
   conform without inheritance
 
-### 4. demo-be-clojure-pedestal
+### 4. a-demo-be-clojure-pedestal
 
 **Abstraction mechanism**: Clojure `defprotocol` + `defrecord`
 
 **New files to create**:
 
-- `src/demo_be_cjpd/db/protocols.clj` — protocol definitions for all 4 entities
-- `src/demo_be_cjpd/db/jdbc_user_repo.clj` — `defrecord JdbcUserRepo` implementing protocol
-- `src/demo_be_cjpd/db/jdbc_expense_repo.clj` — `defrecord JdbcExpenseRepo`
-- `src/demo_be_cjpd/db/jdbc_attachment_repo.clj` — `defrecord JdbcAttachmentRepo`
-- `src/demo_be_cjpd/db/jdbc_token_repo.clj` — `defrecord JdbcTokenRepo`
-- `test/demo_be_cjpd/in_memory_repos.clj` — `defrecord` with atom-backed implementations
+- `src/a_demo_be_cjpd/db/protocols.clj` — protocol definitions for all 4 entities
+- `src/a_demo_be_cjpd/db/jdbc_user_repo.clj` — `defrecord JdbcUserRepo` implementing protocol
+- `src/a_demo_be_cjpd/db/jdbc_expense_repo.clj` — `defrecord JdbcExpenseRepo`
+- `src/a_demo_be_cjpd/db/jdbc_attachment_repo.clj` — `defrecord JdbcAttachmentRepo`
+- `src/a_demo_be_cjpd/db/jdbc_token_repo.clj` — `defrecord JdbcTokenRepo`
+- `test/a_demo_be_cjpd/in_memory_repos.clj` — `defrecord` with atom-backed implementations
 
 **Files to modify**:
 
@@ -255,7 +255,7 @@ class ExpenseRepository:  # implicitly satisfies ExpenseRepositoryProtocol
   jwks) need no changes.
 - `server.clj` — create records and inject into Pedestal context map
 - `test/step_definitions/steps.clj` — inject in-memory records instead of real datasource
-- `test/demo_be_cjpd/db/*_repo_test.clj` — can remain as-is (they test the jdbc implementation
+- `test/a_demo_be_cjpd/db/*_repo_test.clj` — can remain as-is (they test the jdbc implementation
   directly, which is valid for repo-level tests)
 
 **Key pattern**:

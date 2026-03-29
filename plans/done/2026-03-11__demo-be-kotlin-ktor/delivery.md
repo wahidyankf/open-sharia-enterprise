@@ -1,4 +1,4 @@
-# Delivery Checklist: demo-be-kotlin-ktor
+# Delivery Checklist: a-demo-be-kotlin-ktor
 
 Execute phases in order. Each phase produces a working, committable state.
 
@@ -9,9 +9,9 @@ Execute phases in order. Each phase produces a working, committable state.
 - [x] Verify JDK 21 available locally (`java -version` — eclipse-temurin 21 or equivalent)
 - [x] Verify Gradle 8.x available or that Gradle wrapper will be committed
 - [x] Verify `rhino-cli test-coverage validate` supports Kover XML format (same JaCoCo-compatible
-      XML schema — already used by `demo-be-java-springboot`)
+      XML schema — already used by `a-demo-be-java-springboot`)
 - [x] Confirm Cucumber JVM 7.x supports JUnit Platform Engine with Kotlin lambda DSL
-- [x] Verify `demo-be-e2e` Playwright config reads `BASE_URL` from env (it does)
+- [x] Verify `a-demo-be-e2e` Playwright config reads `BASE_URL` from env (it does)
 - [x] Confirm Koin 4.x is compatible with Ktor 3.x integration module
 - [x] Confirm ktfmt Gradle plugin (`com.ncorti.ktfmt.gradle`) version compatible with Kotlin 2.1
 
@@ -19,13 +19,13 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 1: Project Scaffold
 
-**Commit**: `feat(demo-be-kotlin-ktor): scaffold Kotlin/Ktor project`
+**Commit**: `feat(a-demo-be-kotlin-ktor): scaffold Kotlin/Ktor project`
 
-- [x] Create `apps/demo-be-kotlin-ktor/` directory structure per tech-docs.md
-- [x] Create `settings.gradle.kts` declaring project name `demo-be-kotlin-ktor`
+- [x] Create `apps/a-demo-be-kotlin-ktor/` directory structure per tech-docs.md
+- [x] Create `settings.gradle.kts` declaring project name `a-demo-be-kotlin-ktor`
 - [x] Create `gradle.properties` pinning Kotlin, Ktor, and Exposed versions
 - [x] Create `build.gradle.kts` with all Gradle plugins and dependency groups (main + test)
-  - Add Ktor fatJar (`ktor { fatJar { archiveFileName.set("demo-be-kotlin-ktor-all.jar") } }`)
+  - Add Ktor fatJar (`ktor { fatJar { archiveFileName.set("a-demo-be-kotlin-ktor-all.jar") } }`)
   - Add Kover configuration with XML report output
   - Add detekt configuration referencing `detekt.yml`
   - Add ktfmt configuration with Google style
@@ -47,7 +47,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 2: Domain Models and Repository Interfaces
 
-**Commit**: `feat(demo-be-kotlin-ktor): add domain models and repository interfaces`
+**Commit**: `feat(a-demo-be-kotlin-ktor): add domain models and repository interfaces`
 
 - [x] Create `domain/models.kt` — data classes and sealed classes:
   - `DomainError` sealed class (ValidationError, NotFound, Forbidden, Conflict,
@@ -85,7 +85,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 3: Database Layer
 
-**Commit**: `feat(demo-be-kotlin-ktor): add Exposed database tables and implementations`
+**Commit**: `feat(a-demo-be-kotlin-ktor): add Exposed database tables and implementations`
 
 - [x] Create `infrastructure/DatabaseFactory.kt` with `init(jdbcUrl, driver)` function
   - Creates schema with `SchemaUtils.create(...)` in a transaction
@@ -117,7 +117,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 4: Health Endpoint
 
-**Commit**: `feat(demo-be-kotlin-ktor): add /health endpoint with integration tests`
+**Commit**: `feat(a-demo-be-kotlin-ktor): add /health endpoint with integration tests`
 
 - [x] Health endpoint already in `Application.kt` returning `{"status": "UP"}`
 - [x] Route `GET /health` (public, no auth) already wired
@@ -139,7 +139,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 5: Auth — Register and Login
 
-**Commit**: `feat(demo-be-kotlin-ktor): add register and login endpoints`
+**Commit**: `feat(a-demo-be-kotlin-ktor): add register and login endpoints`
 
 - [x] Create `auth/JwtService.kt` — JWT generation using `com.auth0:java-jwt`:
   - `generateAccessToken(userId, username, role)` — 15 min, HMAC-SHA256
@@ -168,7 +168,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 6: Token Lifecycle and Management
 
-**Commit**: `feat(demo-be-kotlin-ktor): add token lifecycle and management endpoints`
+**Commit**: `feat(a-demo-be-kotlin-ktor): add token lifecycle and management endpoints`
 
 - [x] Extend `routes/AuthRoutes.kt`:
   - `POST /api/v1/auth/refresh` — validates refresh token, issues new pair (rotation),
@@ -189,7 +189,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 7: User Account and Security
 
-**Commit**: `feat(demo-be-kotlin-ktor): add user account and security endpoints`
+**Commit**: `feat(a-demo-be-kotlin-ktor): add user account and security endpoints`
 
 - [x] Create `routes/UserRoutes.kt`:
   - `GET /api/v1/users/me` — current user profile from JWT principal
@@ -210,7 +210,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 8: Admin
 
-**Commit**: `feat(demo-be-kotlin-ktor): add admin endpoints`
+**Commit**: `feat(a-demo-be-kotlin-ktor): add admin endpoints`
 
 - [x] Add admin guard in `plugins/Routing.kt` — route-level check for `role == ADMIN`:
   - Extract role from `JWTPrincipal`; respond 403 if not ADMIN
@@ -228,7 +228,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 9: Expenses — CRUD and Currency
 
-**Commit**: `feat(demo-be-kotlin-ktor): add expense CRUD and currency handling`
+**Commit**: `feat(a-demo-be-kotlin-ktor): add expense CRUD and currency handling`
 
 - [x] Create `routes/ExpenseRoutes.kt`:
   - `POST /api/v1/expenses` — create (expense or income); validate amount + currency
@@ -248,7 +248,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 10: Units, Reporting, and Attachments
 
-**Commit**: `feat(demo-be-kotlin-ktor): add unit handling, reporting, and attachments`
+**Commit**: `feat(a-demo-be-kotlin-ktor): add unit handling, reporting, and attachments`
 
 - [x] Add `quantity` and `unit` fields to expense create/update request and response DTOs
 - [x] Implement supported unit validation in `domain/ExpenseDomain.kt`:
@@ -275,7 +275,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 11: Coverage and Quality Gate
 
-**Commit**: `fix(demo-be-kotlin-ktor): achieve 90% coverage and pass quality gates`
+**Commit**: `fix(a-demo-be-kotlin-ktor): achieve 90% coverage and pass quality gates`
 
 - [x] Run full test suite: `./gradlew test koverXmlReport`
 - [x] Inspect Kover XML report — identify uncovered branches and lines
@@ -284,22 +284,22 @@ Execute phases in order. Each phase produces a working, committable state.
 - [x] Add integration step definitions or separate unit tests for route-level error paths
       (missing fields, malformed JSON, missing `Authorization` header on protected routes)
 - [x] Validate coverage: `rhino-cli test-coverage validate
-apps/demo-be-kotlin-ktor/build/reports/kover/report.xml 90` passes (91.27% >= 90%)
+apps/a-demo-be-kotlin-ktor/build/reports/kover/report.xml 90` passes (91.27% >= 90%)
 - [x] Verify `./gradlew ktfmtCheck` passes (no formatting violations)
 - [x] Verify `./gradlew detekt` passes (no lint violations)
-- [x] `nx run demo-be-kotlin-ktor:test:quick` passes (all quality gates green)
+- [x] `nx run a-demo-be-kotlin-ktor:test:quick` passes (all quality gates green)
 
 ---
 
 ## Phase 12: Infra — Docker Compose
 
-**Commit**: `feat(infra): add demo-be-kotlin-ktor docker-compose dev environment`
+**Commit**: `feat(infra): add a-demo-be-kotlin-ktor docker-compose dev environment`
 
-- [x] Create `infra/dev/demo-be-kotlin-ktor/Dockerfile.be.dev` (eclipse-temurin JDK 21 Alpine)
-- [x] Create `infra/dev/demo-be-kotlin-ktor/docker-compose.yml` with PostgreSQL 17 + Ktor app on
+- [x] Create `infra/dev/a-demo-be-kotlin-ktor/Dockerfile.be.dev` (eclipse-temurin JDK 21 Alpine)
+- [x] Create `infra/dev/a-demo-be-kotlin-ktor/docker-compose.yml` with PostgreSQL 17 + Ktor app on
       port 8201
-- [x] Create `infra/dev/demo-be-kotlin-ktor/docker-compose.e2e.yml` (E2E overrides)
-- [x] Create `infra/dev/demo-be-kotlin-ktor/README.md` with startup instructions and env var
+- [x] Create `infra/dev/a-demo-be-kotlin-ktor/docker-compose.e2e.yml` (E2E overrides)
+- [x] Create `infra/dev/a-demo-be-kotlin-ktor/README.md` with startup instructions and env var
       reference
 - [x] Manual test: `docker compose up --build` → `GET http://localhost:8201/health` returns
       `{"status": "UP"}`
@@ -309,13 +309,13 @@ apps/demo-be-kotlin-ktor/build/reports/kover/report.xml 90` passes (91.27% >= 90
 
 ## Phase 13: GitHub Actions — E2E Workflow
 
-**Commit**: `ci: add e2e-demo-be-kotlin-ktor GitHub Actions workflow`
+**Commit**: `ci: add e2e-a-demo-be-kotlin-ktor GitHub Actions workflow`
 
-- [x] Create `.github/workflows/e2e-demo-be-kotlin-ktor.yml`:
+- [x] Create `.github/workflows/e2e-a-demo-be-kotlin-ktor.yml`:
   - Trigger: schedule (same crons as jasb/exph/fsgi) + `workflow_dispatch`
-  - Job: checkout → `docker compose -f infra/dev/demo-be-kotlin-ktor/docker-compose.e2e.yml up -d
+  - Job: checkout → `docker compose -f infra/dev/a-demo-be-kotlin-ktor/docker-compose.e2e.yml up -d
 --build` → wait-on health (`http://localhost:8201/health`) → Volta → `npm ci` →
-    `nx run demo-be-e2e:test:e2e` with `BASE_URL=http://localhost:8201` → upload artifact
+    `nx run a-demo-be-e2e:test:e2e` with `BASE_URL=http://localhost:8201` → upload artifact
     `playwright-report-be-ktkt` → docker down (always)
 - [x] Trigger `workflow_dispatch` manually; verify green
 
@@ -323,17 +323,17 @@ apps/demo-be-kotlin-ktor/build/reports/kover/report.xml 90` passes (91.27% >= 90
 
 ## Phase 14: CI — main-ci.yml Update
 
-**Commit**: `ci: add demo-be-kotlin-ktor coverage upload to main-ci`
+**Commit**: `ci: add a-demo-be-kotlin-ktor coverage upload to main-ci`
 
 - [x] Add Kover XML upload step to `main-ci.yml` after existing coverage steps:
 
   ```yaml
-  - name: Upload coverage — demo-be-kotlin-ktor
+  - name: Upload coverage — a-demo-be-kotlin-ktor
     uses: codecov/codecov-action@v5
     with:
       token: ${{ secrets.CODECOV_TOKEN }}
-      files: apps/demo-be-kotlin-ktor/build/reports/kover/report.xml
-      flags: demo-be-kotlin-ktor
+      files: apps/a-demo-be-kotlin-ktor/build/reports/kover/report.xml
+      flags: a-demo-be-kotlin-ktor
       fail_ci_if_error: false
   ```
 
@@ -344,20 +344,20 @@ apps/demo-be-kotlin-ktor/build/reports/kover/report.xml 90` passes (91.27% >= 90
 
 ## Phase 15: Documentation Updates
 
-**Commit**: `docs: add demo-be-kotlin-ktor to project documentation`
+**Commit**: `docs: add a-demo-be-kotlin-ktor to project documentation`
 
 - [x] Update `CLAUDE.md`:
-  - Add `demo-be-kotlin-ktor` to Current Apps list with description
+  - Add `a-demo-be-kotlin-ktor` to Current Apps list with description
   - Add Kotlin/Kover coverage info to coverage section
-  - Add `demo-be-kotlin-ktor` to `test:integration` caching note
+  - Add `a-demo-be-kotlin-ktor` to `test:integration` caching note
 - [x] Update `README.md`:
-  - Add demo-be-kotlin-ktor badge in demo apps section
+  - Add a-demo-be-kotlin-ktor badge in demo apps section
   - Add coverage badge row
   - Add to monorepo architecture listing
-- [x] Update `specs/apps/demo/be/README.md`:
+- [x] Update `specs/apps/a-demo/be/README.md`:
   - Add Kotlin/Ktor row to Implementations table
-- [x] Update `apps/demo-be-e2e/project.json`:
-  - Add `demo-be-kotlin-ktor` to `implicitDependencies`
+- [x] Update `apps/a-demo-be-e2e/project.json`:
+  - Add `a-demo-be-kotlin-ktor` to `implicitDependencies`
 - [x] Update `governance/development/infra/nx-targets.md`:
   - Add `platform:ktor` to tag vocabulary table
   - Update Kotlin/JVM row if present, or add new row
@@ -367,14 +367,14 @@ apps/demo-be-kotlin-ktor/build/reports/kover/report.xml 90` passes (91.27% >= 90
 
 ## Phase 16: Final Validation
 
-- [x] `nx run demo-be-kotlin-ktor:test:quick` passes (unit + integration tests, ≥90% coverage,
+- [x] `nx run a-demo-be-kotlin-ktor:test:quick` passes (unit + integration tests, ≥90% coverage,
       detekt clean, ktfmt clean)
-- [x] `nx run demo-be-kotlin-ktor:test:unit` passes
-- [x] `nx run demo-be-kotlin-ktor:test:integration` passes — all 76 scenarios
-- [x] `nx run demo-be-kotlin-ktor:lint` passes
-- [x] `nx run demo-be-kotlin-ktor:build` produces `build/libs/demo-be-kotlin-ktor-all.jar`
+- [x] `nx run a-demo-be-kotlin-ktor:test:unit` passes
+- [x] `nx run a-demo-be-kotlin-ktor:test:integration` passes — all 76 scenarios
+- [x] `nx run a-demo-be-kotlin-ktor:lint` passes
+- [x] `nx run a-demo-be-kotlin-ktor:build` produces `build/libs/a-demo-be-kotlin-ktor-all.jar`
 - [x] Docker Compose stack starts and health check passes (requires manual verification)
-- [x] `e2e-demo-be-kotlin-ktor.yml` workflow green (requires CI push)
+- [x] `e2e-a-demo-be-kotlin-ktor.yml` workflow green (requires CI push)
 - [x] `main-ci.yml` workflow green (requires CI push)
 - [x] All documentation updated
 - [x] Move plan folder from `plans/in-progress/` to `plans/done/`

@@ -28,7 +28,7 @@ Per-app brand guidance for UI development decisions.
 - **UI character**: Content-focused, long-form reading, code blocks with syntax highlighting
 - **Framework**: Next.js 16, Tailwind v4 + @tailwindcss/typography, shadcn/ui, rehype-pretty-code
 
-## demo-fe-ts-nextjs
+## a-demo-fe-ts-nextjs
 
 - **Product**: Technical demo frontend
 - **Audience**: Developers evaluating the platform
@@ -38,7 +38,7 @@ Per-app brand guidance for UI development decisions.
 - **UI character**: Clean layout, demonstrates API integration, minimal styling
 - **Framework**: Next.js 16, migrating to Tailwind v4 + shared tokens
 
-## demo-fe-dart-flutterweb
+## a-demo-fe-dart-flutterweb
 
 - **Product**: Flutter Web demo frontend
 - **Audience**: Developers evaluating Flutter

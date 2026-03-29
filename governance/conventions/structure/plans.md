@@ -334,12 +334,12 @@ Plan files sit three directory levels deep from the repository root: `plans/` â†
 
 ### Correct Path Depth
 
-| Target from a plan file                             | Correct prefix    |
-| --------------------------------------------------- | ----------------- |
-| `governance/conventions/structure/plans.md`         | `../../../`       |
-| `docs/how-to/hoto__organize-work.md`                | `../../../`       |
-| `apps/demo-be-golang-gin/README.md`                 | `../../../`       |
-| Sibling file in the same plan folder                | `./`              |
+| Target from a plan file                     | Correct prefix |
+| ------------------------------------------- | -------------- |
+| `governance/conventions/structure/plans.md` | `../../../`    |
+| `docs/how-to/hoto__organize-work.md`        | `../../../`    |
+| `apps/a-demo-be-golang-gin/README.md`       | `../../../`    |
+| Sibling file in the same plan folder        | `./`           |
 
 ### Example
 

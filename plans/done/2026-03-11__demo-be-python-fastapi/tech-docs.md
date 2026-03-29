@@ -1,13 +1,13 @@
-# Technical Design: demo-be-python-fastapi
+# Technical Design: a-demo-be-python-fastapi
 
 ## BDD Integration Tests: pytest-bdd
 
-Integration tests parse the canonical `.feature` files in `specs/apps/demo/be/gherkin/` using
+Integration tests parse the canonical `.feature` files in `specs/apps/a-demo/be/gherkin/` using
 **pytest-bdd**, a pytest plugin that implements the Gherkin BDD syntax natively. pytest-bdd
 discovers scenarios via `@scenario` decorators or bulk collection helpers in `conftest.py`.
 
 HTTP calls use FastAPI's `TestClient` (in-process — no live server needed, matching
-`demo-be-java-springboot`'s MockMvc approach). The database layer uses SQLAlchemy bound to a SQLite
+`a-demo-be-java-springboot`'s MockMvc approach). The database layer uses SQLAlchemy bound to a SQLite
 in-memory engine for full isolation and determinism.
 
 Step definitions follow pytest-bdd conventions using `@given`, `@when`, and `@then` decorators
@@ -34,7 +34,7 @@ def status_code_200(response):
 
 ### Feature File Path Resolution
 
-Feature files are referenced from the `specs/apps/demo/be/gherkin/` workspace root. pytest-bdd
+Feature files are referenced from the `specs/apps/a-demo/be/gherkin/` workspace root. pytest-bdd
 discovers feature files via absolute or relative paths passed to `@scenario` or
 `scenarios()` helpers. A `conftest.py` at `tests/integration/` resolves the path using
 `pathlib.Path`:
@@ -62,9 +62,9 @@ scenarios(str(GHERKIN_ROOT / "health" / "health-check.feature"))
 ### Project Structure
 
 ```
-apps/demo-be-python-fastapi/
+apps/a-demo-be-python-fastapi/
 ├── src/
-│   └── demo_be_python_fastapi/
+│   └── a_demo_be_python_fastapi/
 │       ├── __init__.py
 │       ├── main.py                     # FastAPI app factory + lifespan
 │       ├── config.py                   # Settings via pydantic-settings
@@ -134,7 +134,7 @@ apps/demo-be-python-fastapi/
 
 The `src/` layout (also called "src layout") isolates the importable package from the project
 root, preventing accidental imports of uninstalled code during tests. uv installs the package
-in editable mode (`uv pip install -e .`) so tests import `demo_be_python_fastapi` correctly.
+in editable mode (`uv pip install -e .`) so tests import `a_demo_be_python_fastapi` correctly.
 
 ---
 
@@ -145,12 +145,12 @@ in editable mode (`uv pip install -e .`) so tests import `demo_be_python_fastapi
 All routes use FastAPI's `APIRouter` with prefix-based organisation:
 
 ```python
-# src/demo_be_python_fastapi/main.py
+# src/a_demo_be_python_fastapi/main.py
 from fastapi import FastAPI
-from demo_be_python_fastapi.routers import health, auth, users, admin, expenses, reports, attachments, tokens
+from a_demo_be_python_fastapi.routers import health, auth, users, admin, expenses, reports, attachments, tokens
 
 def create_app() -> FastAPI:
-    app = FastAPI(title="demo-be-python-fastapi")
+    app = FastAPI(title="a-demo-be-python-fastapi")
 
     app.include_router(health.router)
     app.include_router(auth.router, prefix="/api/v1/auth")
@@ -170,11 +170,11 @@ Repositories are injected via FastAPI's dependency system, allowing test overrid
 monkey-patching:
 
 ```python
-# src/demo_be_python_fastapi/dependencies.py
+# src/a_demo_be_python_fastapi/dependencies.py
 from typing import Generator
 from sqlalchemy.orm import Session
-from demo_be_python_fastapi.database import SessionLocal
-from demo_be_python_fastapi.infrastructure.repositories import UserRepository
+from a_demo_be_python_fastapi.database import SessionLocal
+from a_demo_be_python_fastapi.infrastructure.repositories import UserRepository
 
 def get_db() -> Generator[Session, None, None]:
     db = SessionLocal()
@@ -193,8 +193,8 @@ Integration tests override `get_db` with an in-memory SQLite session:
 # tests/conftest.py
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from demo_be_python_fastapi.dependencies import get_db
-from demo_be_python_fastapi.infrastructure.models import Base
+from a_demo_be_python_fastapi.dependencies import get_db
+from a_demo_be_python_fastapi.infrastructure.models import Base
 
 @pytest.fixture(scope="function")
 def test_client():
@@ -221,7 +221,7 @@ def test_client():
 All request bodies and response shapes use Pydantic v2 models:
 
 ```python
-# src/demo_be_python_fastapi/routers/auth.py
+# src/a_demo_be_python_fastapi/routers/auth.py
 from pydantic import BaseModel, EmailStr
 
 class RegisterRequest(BaseModel):
@@ -246,7 +246,7 @@ Domain operations raise typed exceptions that a global exception handler convert
 responses:
 
 ```python
-# src/demo_be_python_fastapi/domain/errors.py
+# src/a_demo_be_python_fastapi/domain/errors.py
 class DomainError(Exception):
     pass
 
@@ -275,10 +275,10 @@ class UnsupportedMediaTypeError(DomainError):
 ```
 
 ```python
-# src/demo_be_python_fastapi/main.py
+# src/a_demo_be_python_fastapi/main.py
 from fastapi import Request
 from fastapi.responses import JSONResponse
-from demo_be_python_fastapi.domain.errors import (
+from a_demo_be_python_fastapi.domain.errors import (
     ValidationError, NotFoundError, ForbiddenError,
     ConflictError, UnauthorizedError, FileTooLargeError, UnsupportedMediaTypeError,
 )
@@ -318,10 +318,10 @@ Production uses PostgreSQL via the `psycopg2` or `asyncpg` driver. Integration t
 SQLite in-memory for isolation:
 
 ```python
-# src/demo_be_python_fastapi/database.py
+# src/a_demo_be_python_fastapi/database.py
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from demo_be_python_fastapi.config import settings
+from a_demo_be_python_fastapi.config import settings
 
 engine = create_engine(settings.database_url)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -341,7 +341,7 @@ RSA-256 or HMAC-SHA256 signing using PyJWT. Access tokens (short-lived) and refr
 - Claims: `sub` (user ID), `username`, `role`, `exp`, `iat`, `jti`
 
 ```python
-# src/demo_be_python_fastapi/auth/jwt_service.py
+# src/a_demo_be_python_fastapi/auth/jwt_service.py
 import jwt
 from datetime import datetime, timedelta, timezone
 from uuid import uuid4
@@ -364,9 +364,9 @@ def create_access_token(user_id: str, username: str, role: str, secret: str) -> 
 Amounts stored as `Decimal` with currency-specific precision enforced at the domain level:
 
 ```python
-# src/demo_be_python_fastapi/domain/expense.py
+# src/a_demo_be_python_fastapi/domain/expense.py
 from decimal import Decimal, ROUND_DOWN
-from demo_be_python_fastapi.domain.errors import ValidationError
+from a_demo_be_python_fastapi.domain.errors import ValidationError
 
 CURRENCY_DECIMALS: dict[str, int] = {
     "USD": 2,
@@ -391,31 +391,31 @@ def validate_amount(currency: str, amount: Decimal) -> Decimal:
 
 ```json
 {
-  "name": "demo-be-python-fastapi",
+  "name": "a-demo-be-python-fastapi",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/demo-be-python-fastapi/src",
+  "sourceRoot": "apps/a-demo-be-python-fastapi/src",
   "projectType": "application",
   "targets": {
     "build": {
       "executor": "nx:run-commands",
       "options": {
         "command": "uv build",
-        "cwd": "apps/demo-be-python-fastapi"
+        "cwd": "apps/a-demo-be-python-fastapi"
       },
       "outputs": ["{projectRoot}/dist"]
     },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "uv run uvicorn demo_be_python_fastapi.main:app --reload --port 8201",
-        "cwd": "apps/demo-be-python-fastapi"
+        "command": "uv run uvicorn a_demo_be_python_fastapi.main:app --reload --port 8201",
+        "cwd": "apps/a-demo-be-python-fastapi"
       }
     },
     "start": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "uv run uvicorn demo_be_python_fastapi.main:app --port 8201",
-        "cwd": "apps/demo-be-python-fastapi"
+        "command": "uv run uvicorn a_demo_be_python_fastapi.main:app --port 8201",
+        "cwd": "apps/a-demo-be-python-fastapi"
       }
     },
     "test:quick": {
@@ -424,51 +424,51 @@ def validate_amount(currency: str, amount: Decimal) -> Decimal:
         "commands": [
           "uv run coverage run -m pytest",
           "uv run coverage lcov -o coverage/lcov.info",
-          "(cd ../../ && apps/rhino-cli/rhino-cli test-coverage validate apps/demo-be-python-fastapi/coverage/lcov.info 90)",
+          "(cd ../../ && apps/rhino-cli/rhino-cli test-coverage validate apps/a-demo-be-python-fastapi/coverage/lcov.info 90)",
           "uv run ruff format --check .",
           "uv run ruff check .",
           "uv run pyright"
         ],
         "parallel": false,
-        "cwd": "apps/demo-be-python-fastapi"
+        "cwd": "apps/a-demo-be-python-fastapi"
       }
     },
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
         "command": "uv run pytest -m unit",
-        "cwd": "apps/demo-be-python-fastapi"
+        "cwd": "apps/a-demo-be-python-fastapi"
       }
     },
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
         "command": "uv run pytest -m integration",
-        "cwd": "apps/demo-be-python-fastapi"
+        "cwd": "apps/a-demo-be-python-fastapi"
       },
       "cache": true,
       "inputs": [
         "{projectRoot}/src/**/*.py",
         "{projectRoot}/tests/**/*.py",
-        "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature"
+        "{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature"
       ]
     },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
         "command": "uv run ruff check .",
-        "cwd": "apps/demo-be-python-fastapi"
+        "cwd": "apps/a-demo-be-python-fastapi"
       }
     },
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
         "command": "uv run pyright",
-        "cwd": "apps/demo-be-python-fastapi"
+        "cwd": "apps/a-demo-be-python-fastapi"
       }
     }
   },
-  "tags": ["type:app", "platform:fastapi", "lang:python", "domain:demo-be"],
+  "tags": ["type:app", "platform:fastapi", "lang:python", "domain:a-demo-be"],
   "implicitDependencies": ["rhino-cli"]
 }
 ```
@@ -486,7 +486,7 @@ def validate_amount(currency: str, amount: Decimal) -> Decimal:
 
 ```toml
 [project]
-name = "demo-be-python-fastapi"
+name = "a-demo-be-python-fastapi"
 version = "0.1.0"
 description = "Python/FastAPI demo backend"
 requires-python = ">=3.13"
@@ -513,7 +513,7 @@ dev = [
 ]
 
 [tool.uv]
-dev-dependencies = ["demo-be-python-fastapi[dev]"]
+dev-dependencies = ["a-demo-be-python-fastapi[dev]"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -523,7 +523,7 @@ markers = [
 ]
 
 [tool.coverage.run]
-source = ["src/demo_be_python_fastapi"]
+source = ["src/a_demo_be_python_fastapi"]
 omit = ["tests/*"]
 
 [tool.coverage.report]
@@ -551,60 +551,60 @@ venv = ".venv"
 
 ### Port Assignment
 
-| Service                 | Port                                               |
-| ----------------------- | -------------------------------------------------- |
-| demo-be-db              | 5432                                               |
-| demo-be-java-springboot | 8201                                               |
-| demo-be-elixir-phoenix  | 8201 (same port — mutually exclusive alternatives) |
-| demo-be-fsharp-giraffe  | 8201 (same port — mutually exclusive alternatives) |
-| demo-be-python-fastapi  | 8201 (same port — mutually exclusive alternatives) |
+| Service                   | Port                                               |
+| ------------------------- | -------------------------------------------------- |
+| a-demo-be-db              | 5432                                               |
+| a-demo-be-java-springboot | 8201                                               |
+| a-demo-be-elixir-phoenix  | 8201 (same port — mutually exclusive alternatives) |
+| a-demo-be-fsharp-giraffe  | 8201 (same port — mutually exclusive alternatives) |
+| a-demo-be-python-fastapi  | 8201 (same port — mutually exclusive alternatives) |
 
-### Docker Compose (`infra/dev/demo-be-python-fastapi/docker-compose.yml`)
+### Docker Compose (`infra/dev/a-demo-be-python-fastapi/docker-compose.yml`)
 
 ```yaml
 services:
-  demo-be-db:
+  a-demo-be-db:
     image: postgres:17-alpine
-    container_name: demo-be-db
+    container_name: a-demo-be-db
     environment:
-      POSTGRES_DB: demo_be_python_fastapi
-      POSTGRES_USER: demo_be_python_fastapi
-      POSTGRES_PASSWORD: demo_be_python_fastapi
+      POSTGRES_DB: a_demo_be_python_fastapi
+      POSTGRES_USER: a_demo_be_python_fastapi
+      POSTGRES_PASSWORD: a_demo_be_python_fastapi
     ports:
       - "5432:5432"
     volumes:
-      - demo-be-python-fastapi-db-data:/var/lib/postgresql/data
+      - a-demo-be-python-fastapi-db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U demo_be_python_fastapi"]
+      test: ["CMD-SHELL", "pg_isready -U a_demo_be_python_fastapi"]
       interval: 5s
       timeout: 3s
       retries: 5
     networks:
-      - demo-be-python-fastapi-network
+      - a-demo-be-python-fastapi-network
 
-  demo-be-python-fastapi:
+  a-demo-be-python-fastapi:
     build:
       context: .
       dockerfile: Dockerfile.be.dev
-    container_name: demo-be-python-fastapi
+    container_name: a-demo-be-python-fastapi
     ports:
       - "8201:8201"
     environment:
-      - DATABASE_URL=postgresql://demo_be_python_fastapi:demo_be_python_fastapi@demo-be-db:5432/demo_be_python_fastapi
+      - DATABASE_URL=postgresql://a_demo_be_python_fastapi:a_demo_be_python_fastapi@a-demo-be-db:5432/a_demo_be_python_fastapi
       - APP_JWT_SECRET=dev-jwt-secret-at-least-32-chars-long
     volumes:
-      - ../../../apps/demo-be-python-fastapi:/workspace:rw
+      - ../../../apps/a-demo-be-python-fastapi:/workspace:rw
     depends_on:
-      demo-be-db:
+      a-demo-be-db:
         condition: service_healthy
     networks:
-      - demo-be-python-fastapi-network
+      - a-demo-be-python-fastapi-network
 
 volumes:
-  demo-be-python-fastapi-db-data:
+  a-demo-be-python-fastapi-db-data:
 
 networks:
-  demo-be-python-fastapi-network:
+  a-demo-be-python-fastapi-network:
 ```
 
 ### Dockerfile.be.dev
@@ -619,21 +619,21 @@ WORKDIR /workspace
 COPY pyproject.toml ./
 RUN uv sync
 
-CMD ["uv", "run", "uvicorn", "demo_be_python_fastapi.main:app", "--host", "0.0.0.0", "--port", "8201", "--reload"]
+CMD ["uv", "run", "uvicorn", "a_demo_be_python_fastapi.main:app", "--host", "0.0.0.0", "--port", "8201", "--reload"]
 ```
 
 ---
 
 ## GitHub Actions
 
-### New Workflow: `e2e-demo-be-python-fastapi.yml`
+### New Workflow: `e2e-a-demo-be-python-fastapi.yml`
 
-Mirrors `e2e-demo-be-java-springboot.yml` with:
+Mirrors `e2e-a-demo-be-java-springboot.yml` with:
 
 - Name: `E2E - Demo BE (PYFA)`
 - Schedule: same crons as jasb/exph/fsgi
 - Job: checkout → docker compose up → wait-healthy → Volta → npm ci →
-  `nx run demo-be-e2e:test:e2e` with `BASE_URL=http://localhost:8201` →
+  `nx run a-demo-be-e2e:test:e2e` with `BASE_URL=http://localhost:8201` →
   upload artifact `playwright-report-be-pyfa` → docker down (always)
 
 ### Updated Workflow: `main-ci.yml`
@@ -649,12 +649,12 @@ Add after existing .NET setup:
 - name: Install uv
   run: pip install uv
 
-- name: Upload coverage — demo-be-python-fastapi
+- name: Upload coverage — a-demo-be-python-fastapi
   uses: codecov/codecov-action@v5
   with:
     token: ${{ secrets.CODECOV_TOKEN }}
-    files: apps/demo-be-python-fastapi/coverage/lcov.info
-    flags: demo-be-python-fastapi
+    files: apps/a-demo-be-python-fastapi/coverage/lcov.info
+    flags: a-demo-be-python-fastapi
     fail_ci_if_error: false
 ```
 
@@ -663,11 +663,11 @@ Add after existing .NET setup:
 ## lint-staged Integration
 
 Add Python formatting to `package.json` lint-staged using a bash wrapper (same pattern as the
-F# fantomas integration for `demo-be-fsharp-giraffe`):
+F# fantomas integration for `a-demo-be-fsharp-giraffe`):
 
 ```json
 "*.py": [
-  "bash -c 'cd apps/demo-be-python-fastapi && uv run ruff format \"$@\"' --"
+  "bash -c 'cd apps/a-demo-be-python-fastapi && uv run ruff format \"$@\"' --"
 ]
 ```
 

@@ -14,9 +14,9 @@ Each tool was selected based on community consensus, ecosystem integration, and 
 status as of March 2026. Web research verified GitHub stars, download stats, framework
 documentation recommendations, and community discussions.
 
-### 1. demo-be-java-vertx: **Liquibase** (programmatic API)
+### 1. a-demo-be-java-vertx: **Liquibase** (programmatic API)
 
-**Why**: Consistency with the sibling `demo-be-java-springboot` which already uses Liquibase.
+**Why**: Consistency with the sibling `a-demo-be-java-springboot` which already uses Liquibase.
 Liquibase provides a first-class
 [programmatic Java API](https://contribute.liquibase.com/extensions-integrations/integration-guides/embedding-liquibase/)
 for embedding outside Spring Boot — instantiate `Liquibase` or use `CommandScope("update")` with a
@@ -35,7 +35,7 @@ documented in governance docs. See [Licensing Decision](./README.md#licensing-de
 | **Flyway**         | ~8k   | Apache 2.0 | OSI-approved; SQL-first (`V1__name.sql`) | Undo requires paid edition; inconsistent with Spring Boot sibling |
 | **Manual scripts** | —     | —          | No dependencies                          | No tracking, no rollback, no audit trail                          |
 
-### 2. demo-be-python-fastapi: **Alembic**
+### 2. a-demo-be-python-fastapi: **Alembic**
 
 **Why**: Undisputed standard for SQLAlchemy projects (MIT license). Written by Mike Bayer, the
 author of SQLAlchemy itself. The only migration tool that can auto-generate migrations by diffing
@@ -48,7 +48,7 @@ SQLAlchemy model metadata against the live database.
 | **Yoyo-migrations** | Niche    | MIT        | SQL-file-based, lightweight              | No ORM integration; lose SQLAlchemy autogenerate |
 | **Atlas** (Ariga)   | Emerging | Apache 2.0 | Declarative; can parse SQLAlchemy models | Not yet community standard; lower adoption       |
 
-### 3. demo-be-golang-gin: **goose** (pressly/goose)
+### 3. a-demo-be-golang-gin: **goose** (pressly/goose)
 
 **Why**: MIT license, actively maintained. SQL + Go function migrations,
 transaction-safe by default. No "dirty state" problem — golang-migrate enters a dirty state on any
@@ -62,7 +62,7 @@ migration failure and requires manual `migrate force VERSION`; goose handles fai
 | **Atlas**            | ~6k      | Apache 2.0 | Graph-based diffing; official GORM integration      | Heavier dependency; vendor-backed (Ariga)              |
 | **GORM AutoMigrate** | Built-in | MIT        | Zero setup                                          | Only adds, never alters/drops; no versioning; dev-only |
 
-### 4. demo-be-kotlin-ktor: **Flyway**
+### 4. a-demo-be-kotlin-ktor: **Flyway**
 
 **Why**: De-facto standard for the Ktor ecosystem (Apache 2.0). The Ktor community has coalesced
 around Flyway — there is a dedicated
@@ -79,7 +79,7 @@ is insufficient for production. One-line integration:
 | **Liquibase**           | ~11k     | FSL-1.1-ALv2 | Richer rollback; consistent with Java apps | Ktor community does not use it; adds XML/YAML overhead |
 | **Exposed SchemaUtils** | Built-in | Apache 2.0   | Zero setup                                 | Only creates; cannot add/rename/alter/drop columns     |
 
-### 5. demo-be-fsharp-giraffe: **DbUp**
+### 5. a-demo-be-fsharp-giraffe: **DbUp**
 
 **Why**: SQL-first migration runner (~2.6k GitHub stars, MIT license). Works identically in F# and
 C#. Critically, FluentMigrator has a
@@ -94,7 +94,7 @@ defined in F# fail to be discovered. DbUp uses plain SQL scripts — no assembly
 | **EF Core Migrations** | Built-in | MIT        | Already using EF Core            | `EnsureCreated` is not versioned; code-first coupling |
 | **Evolve**             | ~900     | MIT        | Flyway-inspired, SQL-based       | Lower community support                               |
 
-### 6. demo-be-clojure-pedestal: **Migratus**
+### 6. a-demo-be-clojure-pedestal: **Migratus**
 
 **Why**: De-facto standard for Clojure database migrations (~679 GitHub stars, Apache 2.0, v1.6.5
 as of March 2026). [Luminus](https://luminusweb.com/docs/migrations.html) — the most popular Clojure
@@ -108,7 +108,7 @@ web framework — defaults to Migratus. Git-friendly: handles branch-based workf
 | **Ragtime** | ~638  | EPL-1.0 | By James Reeves (Ring, Compojure); EDN support | Less active; confused by branch workflows; new coord `dev.weavejester/ragtime` supersedes old `ragtime/ragtime` artifact |
 | **Drift**   | —     | —       | —                                              | Unmaintained                                                                                                             |
 
-### 7. demo-be-ts-effect: **@effect/sql Migrator** (built-in)
+### 7. a-demo-be-ts-effect: **@effect/sql Migrator** (built-in)
 
 **Why**: The `@effect/sql` package (MIT license) includes a built-in Migrator (`PgMigrator`,
 `SqliteMigrator`). Migrations are defined as `Effect<void, SqlError, SqlClient>` programs — fully
@@ -123,14 +123,14 @@ dependencies.
 | **node-pg-migrate** | ~1.4k | MIT        | PostgreSQL-specific; TypeScript support | Adds dependency when Effect provides built-in     |
 | **Drizzle/Prisma**  | —     | Apache/MIT | Popular ORM migration tools             | Tied to their ORMs; incompatible with @effect/sql |
 
-### 8. demo-be-csharp-aspnetcore: **EF Core Migrations** (upgrade)
+### 8. a-demo-be-csharp-aspnetcore: **EF Core Migrations** (upgrade)
 
 **Why**: Already uses EF Core (MIT license) for data access. `EnsureCreated` is not a migration
 tool — it cannot handle incremental changes. Switching to proper EF Core migrations
 (`dotnet ef migrations add`, `Database.MigrateAsync()`) requires adding
 `Microsoft.EntityFrameworkCore.Design` (with `PrivateAssets="all"` since it is a build-time only
-dependency) to `DemoBeCsas.csproj`. Without it, `dotnet ef migrations add` fails with:
-`Your startup project 'DemoBeCsas' doesn't reference Microsoft.EntityFrameworkCore.Design.`
+dependency) to `AADemoBeCsas.csproj`. Without it, `dotnet ef migrations add` fails with:
+`Your startup project 'AADemoBeCsas' doesn't reference Microsoft.EntityFrameworkCore.Design.`
 
 **Alternatives considered:**
 
@@ -181,7 +181,7 @@ This sequence is identical across all 8 apps — only the migration tool and lan
    produce equivalent schemas (allowing for language-specific type differences like TEXT vs UUID).
 3. **Migrations run on startup**: Each app runs pending migrations during application startup (dev
    and production). No separate `migrate` Nx target needed — migrations run during application
-   startup (see `demo-be-java-springboot` `Main.java` as reference).
+   startup (see `a-demo-be-java-springboot` `Main.java` as reference).
 4. **Docker-compose compatibility**: Integration tests use ephemeral PostgreSQL. Migrations must
    run before tests (via application startup or test setup).
 5. **Migration files versioned in git**: All migration SQL files are committed to the repository
@@ -192,7 +192,7 @@ This sequence is identical across all 8 apps — only the migration tool and lan
 
 ### Per-App Implementation Details
 
-#### demo-be-java-vertx (Liquibase)
+#### a-demo-be-java-vertx (Liquibase)
 
 **Schema note**: The current `SchemaInitializer.java` creates only 4 tables (users, expenses,
 attachments, revoked_tokens) — there is no `refresh_tokens` table. The SQL changelogs must include
@@ -219,9 +219,9 @@ the refresh_tokens changelog between existing ones.
 
 - `Dockerfile.integration` — No change (Liquibase runs inside the JVM)
 - `docker-compose.integration.yml` — No change
-- `.github/workflows/test-demo-be-java-vertx.yml` — No change
+- `.github/workflows/test-a-demo-be-java-vertx.yml` — No change
 
-#### demo-be-python-fastapi (Alembic)
+#### a-demo-be-python-fastapi (Alembic)
 
 **Files to create:**
 
@@ -254,9 +254,9 @@ the refresh_tokens changelog between existing ones.
 - `Dockerfile.integration` — No change expected; uses `uv sync --frozen` which installs from
   `pyproject.toml` + `uv.lock` (alembic will be included after `uv lock`)
 - `docker-compose.integration.yml` — No change
-- `.github/workflows/test-demo-be-python-fastapi.yml` — No change
+- `.github/workflows/test-a-demo-be-python-fastapi.yml` — No change
 
-#### demo-be-golang-gin (goose)
+#### a-demo-be-golang-gin (goose)
 
 **Schema note — naming conflict**: The current `gorm_store.go` uses a GORM struct `BlacklistedToken`
 without a `TableName()` override. GORM's snake_case pluralization creates a `blacklisted_tokens`
@@ -312,9 +312,9 @@ provider.Up(ctx)
 - `Dockerfile` — No change (goose is a Go library, compiled into the binary)
 - `Dockerfile.integration` — No change
 - `docker-compose.integration.yml` — No change
-- `.github/workflows/test-demo-be-golang-gin.yml` — No change
+- `.github/workflows/test-a-demo-be-golang-gin.yml` — No change
 
-#### demo-be-kotlin-ktor (Flyway)
+#### a-demo-be-kotlin-ktor (Flyway)
 
 **Schema note**: The current implementation uses a single `tokens` table (via Exposed `TokensTable`)
 that combines refresh and revoked token semantics via a `token_type` column. This does not produce
@@ -325,7 +325,7 @@ options before writing Flyway migrations and document the decision in the commit
   Flyway migration `V2__create_tokens.sql` that creates the `tokens` table. Note in the plan and
   README that this app's schema diverges from the 5-table standard (no separate `refresh_tokens`
   or `revoked_tokens`). The acceptance criteria "Migrations produce correct schema" scenario should
-  be amended to exclude `demo-be-kotlin-ktor` or add a separate scenario for it.
+  be amended to exclude `a-demo-be-kotlin-ktor` or add a separate scenario for it.
 - **Option B**: Split into `refresh_tokens` + `revoked_tokens` tables. Requires updating
   `TokensTable.kt`, `TokenRepository.kt`, and all repository code that queries by `token_type`.
   Flyway migrations then produce the standard 5-table schema.
@@ -348,9 +348,9 @@ options before writing Flyway migrations and document the decision in the commit
 
 - `Dockerfile.integration` — No change (Flyway is a JVM library)
 - `docker-compose.integration.yml` — No change
-- `.github/workflows/test-demo-be-kotlin-ktor.yml` — No change
+- `.github/workflows/test-a-demo-be-kotlin-ktor.yml` — No change
 
-#### demo-be-fsharp-giraffe (DbUp)
+#### a-demo-be-fsharp-giraffe (DbUp)
 
 **Files to create:**
 
@@ -369,9 +369,9 @@ options before writing Flyway migrations and document the decision in the commit
 
 - `Dockerfile.integration` — No change (DbUp is a NuGet package, compiled into the binary)
 - `docker-compose.integration.yml` — No change
-- `.github/workflows/test-demo-be-fsharp-giraffe.yml` — No change
+- `.github/workflows/test-a-demo-be-fsharp-giraffe.yml` — No change
 
-#### demo-be-clojure-pedestal (Migratus)
+#### a-demo-be-clojure-pedestal (Migratus)
 
 **Schema note**: The current `schema.clj` defines DDL for only 4 tables (users, expenses,
 attachments, revoked_tokens) — there is no `refresh_tokens` table. The Migratus migration pairs
@@ -387,7 +387,7 @@ must include a `refresh_tokens` migration pair (e.g., `004-create-refresh-tokens
 **Files to modify:**
 
 - `deps.edn` — Add `migratus` dependency
-- `src/demo_be_cjpd/db/schema.clj` — Replace `create-schema!` with Migratus
+- `src/a_demo_be_cjpd/db/schema.clj` — Replace `create-schema!` with Migratus
   `(migratus/migrate config)` call
 - `README.md` — Document migration approach
 
@@ -395,9 +395,9 @@ must include a `refresh_tokens` migration pair (e.g., `004-create-refresh-tokens
 
 - `Dockerfile.integration` — No change (Migratus is a Clojure library on classpath)
 - `docker-compose.integration.yml` — No change
-- `.github/workflows/test-demo-be-clojure-pedestal.yml` — No change
+- `.github/workflows/test-a-demo-be-clojure-pedestal.yml` — No change
 
-#### demo-be-ts-effect (@effect/sql Migrator)
+#### a-demo-be-ts-effect (@effect/sql Migrator)
 
 **Schema note**: The current `src/infrastructure/db/schema.ts` contains only 4 tables (users,
 expenses, attachments, revoked_tokens). A 5th migration file must create the `refresh_tokens`
@@ -456,9 +456,9 @@ database type so each environment uses the appropriate migrator.
 
 - `Dockerfile.integration` — No change (migrations are TypeScript modules compiled with the app)
 - `docker-compose.integration.yml` — No change
-- `.github/workflows/test-demo-be-ts-effect.yml` — No change
+- `.github/workflows/test-a-demo-be-ts-effect.yml` — No change
 
-#### demo-be-csharp-aspnetcore (EF Core Migrations upgrade)
+#### a-demo-be-csharp-aspnetcore (EF Core Migrations upgrade)
 
 **Files to create:**
 
@@ -473,7 +473,7 @@ database type so each environment uses the appropriate migrator.
 
 - `Dockerfile.integration` — No change (EF Core migrations run inside the app)
 - `docker-compose.integration.yml` — No change
-- `.github/workflows/test-demo-be-csharp-aspnetcore.yml` — No change
+- `.github/workflows/test-a-demo-be-csharp-aspnetcore.yml` — No change
 
 ## Documentation Updates
 
@@ -496,22 +496,22 @@ database type so each environment uses the appropriate migrator.
 
 ### App READMEs
 
-| File                                       | Change                                                                   |
-| ------------------------------------------ | ------------------------------------------------------------------------ |
-| `apps/demo-be-java-vertx/README.md`        | Add "Database Migrations" section documenting Liquibase setup            |
-| `apps/demo-be-python-fastapi/README.md`    | Add "Database Migrations" section documenting Alembic setup              |
-| `apps/demo-be-golang-gin/README.md`        | Add "Database Migrations" section documenting goose setup                |
-| `apps/demo-be-kotlin-ktor/README.md`       | Add "Database Migrations" section documenting Flyway setup               |
-| `apps/demo-be-fsharp-giraffe/README.md`    | Add "Database Migrations" section documenting DbUp setup                 |
-| `apps/demo-be-clojure-pedestal/README.md`  | Add "Database Migrations" section documenting Migratus setup             |
-| `apps/demo-be-ts-effect/README.md`         | Add "Database Migrations" section documenting @effect/sql Migrator setup |
-| `apps/demo-be-csharp-aspnetcore/README.md` | Update to document EF Core Migrations (replace EnsureCreated reference)  |
+| File                                         | Change                                                                   |
+| -------------------------------------------- | ------------------------------------------------------------------------ |
+| `apps/a-demo-be-java-vertx/README.md`        | Add "Database Migrations" section documenting Liquibase setup            |
+| `apps/a-demo-be-python-fastapi/README.md`    | Add "Database Migrations" section documenting Alembic setup              |
+| `apps/a-demo-be-golang-gin/README.md`        | Add "Database Migrations" section documenting goose setup                |
+| `apps/a-demo-be-kotlin-ktor/README.md`       | Add "Database Migrations" section documenting Flyway setup               |
+| `apps/a-demo-be-fsharp-giraffe/README.md`    | Add "Database Migrations" section documenting DbUp setup                 |
+| `apps/a-demo-be-clojure-pedestal/README.md`  | Add "Database Migrations" section documenting Migratus setup             |
+| `apps/a-demo-be-ts-effect/README.md`         | Add "Database Migrations" section documenting @effect/sql Migrator setup |
+| `apps/a-demo-be-csharp-aspnetcore/README.md` | Update to document EF Core Migrations (replace EnsureCreated reference)  |
 
 ### Specs
 
-| File                                 | Change                                                                               |
-| ------------------------------------ | ------------------------------------------------------------------------------------ |
-| `specs/apps/demo/c4/component-be.md` | Add migration tool as a component in the C4 component diagram if not already present |
+| File                                   | Change                                                                               |
+| -------------------------------------- | ------------------------------------------------------------------------------------ |
+| `specs/apps/a-demo/c4/component-be.md` | Add migration tool as a component in the C4 component diagram if not already present |
 
 ## References
 

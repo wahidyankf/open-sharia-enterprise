@@ -1,4 +1,4 @@
-# Delivery Checklist: demo-be-java-vertx
+# Delivery Checklist: a-demo-be-java-vertx
 
 Execute phases in order. Each phase produces a working, committable state.
 
@@ -8,20 +8,20 @@ Execute phases in order. Each phase produces a working, committable state.
 
 - [x] Verify Java 25 available locally (`java -version` shows 25)
 - [x] Verify Maven available (`mvn -version`)
-- [x] Verify `rhino-cli test-coverage validate` supports JaCoCo XML (same as demo-be-java-springboot — it does)
-- [x] Confirm Cucumber JVM 7+ supports the Gherkin syntax used in `specs/apps/demo/be/gherkin/`
-- [x] Verify `demo-be-e2e` Playwright config reads `BASE_URL` from env (it does)
+- [x] Verify `rhino-cli test-coverage validate` supports JaCoCo XML (same as a-demo-be-java-springboot — it does)
+- [x] Confirm Cucumber JVM 7+ supports the Gherkin syntax used in `specs/apps/a-demo/be/gherkin/`
+- [x] Verify `a-demo-be-e2e` Playwright config reads `BASE_URL` from env (it does)
 - [x] Verify Vert.x 4.x or 5.x release available on Maven Central
 - [x] Check that `rhino-cli java validate-annotations` recognizes `@NullMarked` from JSpecify
-      (same as demo-be-java-springboot — it does)
+      (same as a-demo-be-java-springboot — it does)
 
 ---
 
 ## Phase 1: Project Scaffold
 
-**Commit**: `feat(demo-be-java-vertx): scaffold Java/Vert.x project`
+**Commit**: `feat(a-demo-be-java-vertx): scaffold Java/Vert.x project`
 
-- [x] Create `apps/demo-be-java-vertx/` directory structure per tech-docs.md
+- [x] Create `apps/a-demo-be-java-vertx/` directory structure per tech-docs.md
 - [x] Create `pom.xml` with:
   - Java 25 compiler settings
   - Vert.x Core, Vert.x Web, Vert.x PG Client dependencies
@@ -40,18 +40,18 @@ Execute phases in order. Each phase produces a working, committable state.
 - [x] Create `AppRouter.java` with only the health route wired
 - [x] Create `HealthHandler.java` returning `{"status": "UP"}`
 - [x] Create `project.json` with all Nx targets from tech-docs.md
-- [x] Create `checkstyle.xml` (copy and adapt from `apps/demo-be-java-springboot/checkstyle.xml`)
+- [x] Create `checkstyle.xml` (copy and adapt from `apps/a-demo-be-java-springboot/checkstyle.xml`)
 - [x] Add `README.md` covering local dev, Docker, env vars, API endpoints, Nx targets
 - [x] Verify `mvn compile` succeeds with zero errors
 - [x] Verify `mvn checkstyle:check` passes
-- [x] Verify `nx run demo-be-java-vertx:build` succeeds
+- [x] Verify `nx run a-demo-be-java-vertx:build` succeeds
 - [x] Commit
 
 ---
 
 ## Phase 2: Domain Types and Validators
 
-**Commit**: `feat(demo-be-java-vertx): add domain model and validators`
+**Commit**: `feat(a-demo-be-java-vertx): add domain model and validators`
 
 - [x] Create `domain/model/User.java` — record with id, username, email, displayName,
       passwordHash, role, status, failedLoginAttempts, createdAt
@@ -75,7 +75,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 3: Auth Services and In-Memory Repositories
 
-**Commit**: `feat(demo-be-java-vertx): add auth services and in-memory repositories`
+**Commit**: `feat(a-demo-be-java-vertx): add auth services and in-memory repositories`
 
 - [x] Create `auth/JwtService.java` — JWT generation (access token 15min, refresh token 7d),
       validation, claims extraction; uses java-jwt (Auth0)
@@ -99,7 +99,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 4: Health Endpoint and Test Infrastructure
 
-**Commit**: `feat(demo-be-java-vertx): add /health endpoint with Cucumber test infrastructure`
+**Commit**: `feat(a-demo-be-java-vertx): add /health endpoint with Cucumber test infrastructure`
 
 - [x] Create `support/AppFactory.java` — deploys `MainVerticle` with in-memory repositories
       on a random free port; exposes `WebClient` and `reset()` for test isolation
@@ -113,7 +113,7 @@ Execute phases in order. Each phase produces a working, committable state.
 - [x] Create `integration/steps/HealthSteps.java` for `health-check.feature`
 - [x] Create integration test runner `CucumberIT.java` annotated with
       `@Suite`, `@SelectClasspathResource("specs/health")`,
-      `@ConfigurationParameter(GLUE_PROPERTY_NAME, "com.demobejavx.integration.steps")`
+      `@ConfigurationParameter(GLUE_PROPERTY_NAME, "com.aademobejavx.integration.steps")`
 - [x] Verify `mvn test -Pintegration` runs Cucumber and 2 health scenarios pass
 - [x] Commit
 
@@ -121,7 +121,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 5: Auth — Register and Login
 
-**Commit**: `feat(demo-be-java-vertx): add register and login endpoints`
+**Commit**: `feat(a-demo-be-java-vertx): add register and login endpoints`
 
 - [x] Create `auth/JwtAuthHandler.java` — validates Bearer token, checks revocation list,
       stores `userId` and `role` in `RoutingContext`; calls `ctx.next()` on success
@@ -142,7 +142,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 6: Token Lifecycle and Management
 
-**Commit**: `feat(demo-be-java-vertx): add token lifecycle and management endpoints`
+**Commit**: `feat(a-demo-be-java-vertx): add token lifecycle and management endpoints`
 
 - [x] Add to `AuthHandler.java`:
   - `POST /api/v1/auth/refresh` — validate refresh token, rotate (issue new pair), revoke old
@@ -163,7 +163,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 7: User Account and Security
 
-**Commit**: `feat(demo-be-java-vertx): add user account and security endpoints`
+**Commit**: `feat(a-demo-be-java-vertx): add user account and security endpoints`
 
 - [x] Create `handler/UserHandler.java`:
   - `GET /api/v1/users/me` — return current user profile (no password field)
@@ -183,7 +183,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 8: Admin
 
-**Commit**: `feat(demo-be-java-vertx): add admin endpoints`
+**Commit**: `feat(a-demo-be-java-vertx): add admin endpoints`
 
 - [x] Create `auth/AdminAuthHandler.java` — checks `role == "ADMIN"` from routing context;
       calls `ctx.fail(403)` if not admin
@@ -205,7 +205,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 9: Expenses — CRUD and Currency
 
-**Commit**: `feat(demo-be-java-vertx): add expense CRUD and currency handling`
+**Commit**: `feat(a-demo-be-java-vertx): add expense CRUD and currency handling`
 
 - [x] Create `handler/ExpenseHandler.java`:
   - `POST /api/v1/expenses` — create expense or income; validate currency + amount precision
@@ -228,7 +228,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 10: Expenses — Units, Reporting, Attachments
 
-**Commit**: `feat(demo-be-java-vertx): add unit handling, reporting, and attachments`
+**Commit**: `feat(a-demo-be-java-vertx): add unit handling, reporting, and attachments`
 
 - [x] Add `quantity` and `unit` fields to expense creation/retrieval
 - [x] Enforce unit allowlist (metric: liter, kg, meter, etc.; imperial: gallon, lb, foot, etc.)
@@ -255,7 +255,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 11: PostgreSQL Repository Implementations
 
-**Commit**: `feat(demo-be-java-vertx): add PostgreSQL repository implementations`
+**Commit**: `feat(a-demo-be-java-vertx): add PostgreSQL repository implementations`
 
 - [x] Create `repository/pg/PgUserRepository.java` — Vert.x SQL Client reactive queries
 - [x] Create `repository/pg/PgExpenseRepository.java`
@@ -265,7 +265,7 @@ Execute phases in order. Each phase produces a working, committable state.
       plain SQL executed at startup via `vertx-pg-client`)
 - [x] Update `MainVerticle.java` to wire `Pg*Repository` implementations using
       `PgPool.create(vertx, connectOptions, poolOptions)`
-- [x] Verify `nx run demo-be-java-vertx:build` compiles without errors
+- [x] Verify `nx run a-demo-be-java-vertx:build` compiles without errors
 - [x] Verify `mvn test -Pintegration` still passes (still uses in-memory repos)
 - [x] Commit
 
@@ -273,12 +273,12 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 12: Coverage and Quality Gate
 
-**Commit**: `fix(demo-be-java-vertx): achieve 90% coverage and pass quality gates`
+**Commit**: `fix(a-demo-be-java-vertx): achieve 90% coverage and pass quality gates`
 
 - [x] Run full test suite: `mvn test && mvn test -Pintegration`
 - [x] Check JaCoCo XML report at `target/site/jacoco-integration/jacoco.xml`
 - [x] Validate: `rhino-cli test-coverage validate ... 90` passes (92.76% line coverage)
-- [x] Verify `nx run demo-be-java-vertx:test:quick` passes end-to-end
+- [x] Verify `nx run a-demo-be-java-vertx:test:quick` passes end-to-end
 
 **Key fixes applied:**
 
@@ -297,73 +297,73 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 13: Infra — Docker Compose
 
-**Commit**: `feat(infra): add demo-be-java-vertx docker-compose dev environment`
+**Commit**: `feat(infra): add a-demo-be-java-vertx docker-compose dev environment`
 
-- [x] Create `infra/dev/demo-be-java-vertx/Dockerfile.be.dev` (eclipse-temurin:25-jdk-alpine + Maven)
-- [x] Create `infra/dev/demo-be-java-vertx/docker-compose.yml` with PostgreSQL 17 + Vert.x app
-- [x] Create `infra/dev/demo-be-java-vertx/docker-compose.e2e.yml` (E2E overrides, same pattern as jasb)
-- [x] Create `infra/dev/demo-be-java-vertx/README.md` with startup instructions, env vars, health check
+- [x] Create `infra/dev/a-demo-be-java-vertx/Dockerfile.be.dev` (eclipse-temurin:25-jdk-alpine + Maven)
+- [x] Create `infra/dev/a-demo-be-java-vertx/docker-compose.yml` with PostgreSQL 17 + Vert.x app
+- [x] Create `infra/dev/a-demo-be-java-vertx/docker-compose.e2e.yml` (E2E overrides, same pattern as jasb)
+- [x] Create `infra/dev/a-demo-be-java-vertx/README.md` with startup instructions, env vars, health check
 - [x] Manual test: `docker compose up --build` → `GET /health` returns `{"status":"UP"}`
 
 ---
 
 ## Phase 14: GitHub Actions — E2E Workflow
 
-**Commit**: `ci: add e2e-demo-be-java-vertx GitHub Actions workflow`
+**Commit**: `ci: add e2e-a-demo-be-java-vertx GitHub Actions workflow`
 
-- [x] Create `.github/workflows/e2e-demo-be-java-vertx.yml`:
+- [x] Create `.github/workflows/e2e-a-demo-be-java-vertx.yml`:
   - Trigger: schedule (same crons as jasb/exph/fsgi) + `workflow_dispatch`
   - Job steps:
     1. `actions/checkout@v4`
-    2. `docker compose -f infra/dev/demo-be-java-vertx/docker-compose.e2e.yml up -d --build`
+    2. `docker compose -f infra/dev/a-demo-be-java-vertx/docker-compose.e2e.yml up -d --build`
     3. Wait for health check (poll `http://localhost:8201/health` with retry)
     4. Volta + `npm ci`
-    5. `nx run demo-be-e2e:test:e2e` with `BASE_URL=http://localhost:8201`
+    5. `nx run a-demo-be-e2e:test:e2e` with `BASE_URL=http://localhost:8201`
     6. Upload artifact `playwright-report-be-javx` (always)
-    7. `docker compose -f infra/dev/demo-be-java-vertx/docker-compose.e2e.yml down` (always)
+    7. `docker compose -f infra/dev/a-demo-be-java-vertx/docker-compose.e2e.yml down` (always)
 - [x] Trigger `workflow_dispatch` manually; verify green
 
 ---
 
 ## Phase 15: CI — main-ci.yml Update
 
-**Commit**: `ci: add demo-be-java-vertx coverage upload to main-ci`
+**Commit**: `ci: add a-demo-be-java-vertx coverage upload to main-ci`
 
 - [x] Add coverage upload step to `.github/workflows/main-ci.yml` after existing Java steps:
 
   ```yaml
-  - name: Upload coverage — demo-be-java-vertx
+  - name: Upload coverage — a-demo-be-java-vertx
     uses: codecov/codecov-action@v5
     with:
       token: ${{ secrets.CODECOV_TOKEN }}
-      files: apps/demo-be-java-vertx/target/site/jacoco-integration/jacoco.xml
-      flags: demo-be-java-vertx
+      files: apps/a-demo-be-java-vertx/target/site/jacoco-integration/jacoco.xml
+      flags: a-demo-be-java-vertx
       fail_ci_if_error: false
   ```
 
-- [x] Note: JDK 25 setup step already exists for `demo-be-java-springboot` — reuse it, do not duplicate
+- [x] Note: JDK 25 setup step already exists for `a-demo-be-java-springboot` — reuse it, do not duplicate
 - [x] Push to `main`; verify `Main CI` workflow passes
 
 ---
 
 ## Phase 16: Documentation Updates
 
-**Commit**: `docs: add demo-be-java-vertx to project documentation`
+**Commit**: `docs: add a-demo-be-java-vertx to project documentation`
 
 - [x] Update `CLAUDE.md`:
-  - Add `demo-be-java-vertx` to Current Apps list with description (Java 25 + Vert.x reactive API)
-  - Add `demo-be-java-vertx` to `test:integration` caching note (in-memory, no external services)
+  - Add `a-demo-be-java-vertx` to Current Apps list with description (Java 25 + Vert.x reactive API)
+  - Add `a-demo-be-java-vertx` to `test:integration` caching note (in-memory, no external services)
 - [x] Update `README.md`:
-  - Add demo-be-java-vertx badge in demo apps section
+  - Add a-demo-be-java-vertx badge in demo apps section
   - Add coverage badge row
   - Add to monorepo architecture listing
-- [x] Update `specs/apps/demo/be/README.md`:
+- [x] Update `specs/apps/a-demo/be/README.md`:
   - Add Java/Vert.x row to Implementations table
-- [x] Update `apps/demo-be-e2e/project.json`:
-  - Add `demo-be-java-vertx` to `implicitDependencies`
+- [x] Update `apps/a-demo-be-e2e/project.json`:
+  - Add `a-demo-be-java-vertx` to `implicitDependencies`
 - [x] Update `governance/development/infra/nx-targets.md`:
   - Add `platform:vertx` to platform vocabulary table
-  - Add demo-be-java-vertx row to app registry
+  - Add a-demo-be-java-vertx row to app registry
 - [x] Update `plans/in-progress/README.md`:
   - Remove this plan from active list
 
@@ -371,14 +371,14 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 17: Final Validation
 
-- [x] `nx run demo-be-java-vertx:test:quick` passes (unit + integration, ≥90% coverage, lint clean)
-- [x] `nx run demo-be-java-vertx:test:unit` passes
-- [x] `nx run demo-be-java-vertx:test:integration` passes — all 76 scenarios
-- [x] `nx run demo-be-java-vertx:lint` passes
-- [x] `nx run demo-be-java-vertx:typecheck` passes (NullAway + `@NullMarked` validation)
-- [x] `nx run demo-be-java-vertx:build` produces working JAR artifact
+- [x] `nx run a-demo-be-java-vertx:test:quick` passes (unit + integration, ≥90% coverage, lint clean)
+- [x] `nx run a-demo-be-java-vertx:test:unit` passes
+- [x] `nx run a-demo-be-java-vertx:test:integration` passes — all 76 scenarios
+- [x] `nx run a-demo-be-java-vertx:lint` passes
+- [x] `nx run a-demo-be-java-vertx:typecheck` passes (NullAway + `@NullMarked` validation)
+- [x] `nx run a-demo-be-java-vertx:build` produces working JAR artifact
 - [x] Docker Compose stack starts and health check passes (manual verification)
-- [x] `e2e-demo-be-java-vertx.yml` workflow green (requires CI push)
+- [x] `e2e-a-demo-be-java-vertx.yml` workflow green (requires CI push)
 - [x] `main-ci.yml` workflow green (requires CI push)
 - [x] All documentation updated
 - [x] Move plan folder from `plans/in-progress/` to `plans/done/`

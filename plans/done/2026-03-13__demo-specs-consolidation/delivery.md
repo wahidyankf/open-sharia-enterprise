@@ -2,35 +2,35 @@
 
 ## Phase 1: Directory Restructuring
 
-- [x] Create `specs/apps/demo/` directory
-- [x] `git mv` BE gherkin specs: `specs/apps/demo-be/gherkin/` → `specs/apps/demo/be/gherkin/`
+- [x] Create `specs/apps/a-demo/` directory
+- [x] `git mv` BE gherkin specs: `specs/apps/demo-be/gherkin/` → `specs/apps/a-demo/be/gherkin/`
 - [x] `git mv` BE .gitignore if present
-- [x] `git mv` FE gherkin specs: `specs/apps/demo-fe/gherkin/` → `specs/apps/demo/fe/gherkin/`
+- [x] `git mv` FE gherkin specs: `specs/apps/demo-fe/gherkin/` → `specs/apps/a-demo/fe/gherkin/`
 - [x] Remove old `specs/apps/demo-be/` directory (after extracting gherkin)
 - [x] Remove old `specs/apps/demo-fe/` directory (after extracting gherkin)
 - [x] Verify new directory structure matches target layout
 
 ## Phase 2: C4 Diagram Merge
 
-- [x] Write unified `specs/apps/demo/c4/context.md` (L1 — combined system context)
-- [x] Write unified `specs/apps/demo/c4/container.md` (L2 — all containers in one diagram)
-- [x] Adapt `specs/apps/demo/c4/component-be.md` (L3 — from old demo-be component.md)
-- [x] Adapt `specs/apps/demo/c4/component-fe.md` (L3 — from old demo-fe component.md)
-- [x] Write `specs/apps/demo/c4/README.md` (index with 4 diagrams)
+- [x] Write unified `specs/apps/a-demo/c4/context.md` (L1 — combined system context)
+- [x] Write unified `specs/apps/a-demo/c4/container.md` (L2 — all containers in one diagram)
+- [x] Adapt `specs/apps/a-demo/c4/component-be.md` (L3 — from old demo-be component.md)
+- [x] Adapt `specs/apps/a-demo/c4/component-fe.md` (L3 — from old demo-fe component.md)
+- [x] Write `specs/apps/a-demo/c4/README.md` (index with 4 diagrams)
 
 ## Phase 3: README Files
 
-- [x] Write `specs/apps/demo/README.md` (unified overview, links to be/, fe/, c4/)
-- [x] Write `specs/apps/demo/be/README.md` (adapted from old demo-be/README.md)
-- [x] Write `specs/apps/demo/fe/README.md` (adapted from old demo-fe/README.md)
-- [x] Verify `specs/apps/demo/be/gherkin/README.md` exists and links are correct
-- [x] Verify `specs/apps/demo/fe/gherkin/README.md` exists and links are correct
+- [x] Write `specs/apps/a-demo/README.md` (unified overview, links to be/, fe/, c4/)
+- [x] Write `specs/apps/a-demo/be/README.md` (adapted from old demo-be/README.md)
+- [x] Write `specs/apps/a-demo/fe/README.md` (adapted from old demo-fe/README.md)
+- [x] Verify `specs/apps/a-demo/be/gherkin/README.md` exists and links are correct
+- [x] Verify `specs/apps/a-demo/fe/gherkin/README.md` exists and links are correct
 - [x] Update internal cross-references in all README files
 
 ## Phase 4: Specs Validation Gate (OCD Mode)
 
 Run the [specs-validation workflow](../../../governance/workflows/specs/specs-validation.md) in
-**OCD mode** on the newly merged `specs/apps/demo/` to catch all issues before propagating paths
+**OCD mode** on the newly merged `specs/apps/a-demo/` to catch all issues before propagating paths
 to 11 backends. This is the quality gate — fix everything in the specs themselves before touching
 any application code.
 
@@ -47,83 +47,83 @@ any application code.
 
 **Why before Phase 5**: If we rewire 107+ files to point at broken specs, we'd have to fix specs
 AND re-validate all 11 backends. Fixing specs in isolation (before rewiring) keeps the blast
-radius contained to `specs/apps/demo/` only.
+radius contained to `specs/apps/a-demo/` only.
 
 ## Phase 5: Backend Path Updates (HIGH priority)
 
 ### Project Configuration (11 files)
 
-- [x] `apps/demo-be-java-springboot/project.json`
-- [x] `apps/demo-be-java-vertx/project.json`
-- [x] `apps/demo-be-kotlin-ktor/project.json`
-- [x] `apps/demo-be-golang-gin/project.json`
-- [x] `apps/demo-be-python-fastapi/project.json`
-- [x] `apps/demo-be-rust-axum/project.json`
-- [x] `apps/demo-be-ts-effect/project.json`
-- [x] `apps/demo-be-fsharp-giraffe/project.json`
-- [x] `apps/demo-be-elixir-phoenix/project.json`
-- [x] `apps/demo-be-csharp-aspnetcore/project.json`
-- [x] `apps/demo-be-clojure-pedestal/project.json`
+- [x] `apps/a-demo-be-java-springboot/project.json`
+- [x] `apps/a-demo-be-java-vertx/project.json`
+- [x] `apps/a-demo-be-kotlin-ktor/project.json`
+- [x] `apps/a-demo-be-golang-gin/project.json`
+- [x] `apps/a-demo-be-python-fastapi/project.json`
+- [x] `apps/a-demo-be-rust-axum/project.json`
+- [x] `apps/a-demo-be-ts-effect/project.json`
+- [x] `apps/a-demo-be-fsharp-giraffe/project.json`
+- [x] `apps/a-demo-be-elixir-phoenix/project.json`
+- [x] `apps/a-demo-be-csharp-aspnetcore/project.json`
+- [x] `apps/a-demo-be-clojure-pedestal/project.json`
 
 ### Build Configuration (3 files)
 
-- [x] `apps/demo-be-java-springboot/pom.xml`
-- [x] `apps/demo-be-java-vertx/pom.xml`
-- [x] `apps/demo-be-kotlin-ktor/build.gradle.kts`
+- [x] `apps/a-demo-be-java-springboot/pom.xml`
+- [x] `apps/a-demo-be-java-vertx/pom.xml`
+- [x] `apps/a-demo-be-kotlin-ktor/build.gradle.kts`
 
 ### Test Runner Configuration (~12 files)
 
-- [x] `apps/demo-be-golang-gin/internal/bdd/suite_test.go`
-- [x] `apps/demo-be-golang-gin/internal/integration/suite_test.go`
-- [x] `apps/demo-be-golang-gin/internal/integration_pg/suite_test.go`
-- [x] `apps/demo-be-python-fastapi/tests/unit/conftest.py`
-- [x] `apps/demo-be-python-fastapi/tests/integration/conftest.py`
-- [x] `apps/demo-be-rust-axum/tests/unit/main.rs`
-- [x] `apps/demo-be-rust-axum/tests/integration/main.rs`
-- [x] `apps/demo-be-ts-effect/.cucumber.js`
-- [x] `apps/demo-be-ts-effect/cucumber.js`
-- [x] `apps/demo-be-ts-effect/cucumber.unit.js`
-- [x] `apps/demo-be-elixir-phoenix/config/test.exs`
-- [x] `apps/demo-be-elixir-phoenix/config/integration.exs`
+- [x] `apps/a-demo-be-golang-gin/internal/bdd/suite_test.go`
+- [x] `apps/a-demo-be-golang-gin/internal/integration/suite_test.go`
+- [x] `apps/a-demo-be-golang-gin/internal/integration_pg/suite_test.go`
+- [x] `apps/a-demo-be-python-fastapi/tests/unit/conftest.py`
+- [x] `apps/a-demo-be-python-fastapi/tests/integration/conftest.py`
+- [x] `apps/a-demo-be-rust-axum/tests/unit/main.rs`
+- [x] `apps/a-demo-be-rust-axum/tests/integration/main.rs`
+- [x] `apps/a-demo-be-ts-effect/.cucumber.js`
+- [x] `apps/a-demo-be-ts-effect/cucumber.js`
+- [x] `apps/a-demo-be-ts-effect/cucumber.unit.js`
+- [x] `apps/a-demo-be-elixir-phoenix/config/test.exs`
+- [x] `apps/a-demo-be-elixir-phoenix/config/integration.exs`
 
 ### Docker Configuration (~16 files)
 
-- [x] `apps/demo-be-fsharp-giraffe/Dockerfile.integration`
-- [x] `apps/demo-be-csharp-aspnetcore/Dockerfile.integration`
-- [x] `apps/demo-be-kotlin-ktor/Dockerfile.integration`
-- [x] `apps/demo-be-ts-effect/Dockerfile.integration`
-- [x] `apps/demo-be-clojure-pedestal/Dockerfile.integration`
-- [x] `apps/demo-be-python-fastapi/docker-compose.integration.yml`
-- [x] `infra/dev/demo-be-java-springboot/docker-compose.yml`
-- [x] `infra/dev/demo-be-java-vertx/docker-compose.yml`
-- [x] `infra/dev/demo-be-kotlin-ktor/docker-compose.yml`
-- [x] `infra/dev/demo-be-golang-gin/docker-compose.yml`
-- [x] `infra/dev/demo-be-python-fastapi/docker-compose.yml`
-- [x] `infra/dev/demo-be-fsharp-giraffe/docker-compose.yml`
-- [x] `infra/dev/demo-be-elixir-phoenix/docker-compose.yml`
-- [x] `infra/dev/demo-be-clojure-pedestal/docker-compose.yml`
-- [x] `infra/dev/demo-be-rust-axum/docker-compose.yml`
-- [x] `infra/dev/demo-be-csharp-aspnetcore/docker-compose.yml`
+- [x] `apps/a-demo-be-fsharp-giraffe/Dockerfile.integration`
+- [x] `apps/a-demo-be-csharp-aspnetcore/Dockerfile.integration`
+- [x] `apps/a-demo-be-kotlin-ktor/Dockerfile.integration`
+- [x] `apps/a-demo-be-ts-effect/Dockerfile.integration`
+- [x] `apps/a-demo-be-clojure-pedestal/Dockerfile.integration`
+- [x] `apps/a-demo-be-python-fastapi/docker-compose.integration.yml`
+- [x] `infra/dev/a-demo-be-java-springboot/docker-compose.yml`
+- [x] `infra/dev/a-demo-be-java-vertx/docker-compose.yml`
+- [x] `infra/dev/a-demo-be-kotlin-ktor/docker-compose.yml`
+- [x] `infra/dev/a-demo-be-golang-gin/docker-compose.yml`
+- [x] `infra/dev/a-demo-be-python-fastapi/docker-compose.yml`
+- [x] `infra/dev/a-demo-be-fsharp-giraffe/docker-compose.yml`
+- [x] `infra/dev/a-demo-be-elixir-phoenix/docker-compose.yml`
+- [x] `infra/dev/a-demo-be-clojure-pedestal/docker-compose.yml`
+- [x] `infra/dev/a-demo-be-rust-axum/docker-compose.yml`
+- [x] `infra/dev/a-demo-be-csharp-aspnetcore/docker-compose.yml`
 
 ### E2E Test Suite
 
-- [x] `apps/demo-be-e2e/playwright.config.ts`
+- [x] `apps/a-demo-be-e2e/playwright.config.ts`
 
 ## Phase 6: Documentation Updates (LOW priority)
 
 - [x] `CLAUDE.md` — update specs path references
-- [x] `apps/demo-be-java-springboot/README.md`
-- [x] `apps/demo-be-java-vertx/README.md`
-- [x] `apps/demo-be-golang-gin/README.md`
-- [x] `apps/demo-be-python-fastapi/README.md`
-- [x] `apps/demo-be-elixir-phoenix/README.md`
-- [x] `apps/demo-be-fsharp-giraffe/README.md`
-- [x] `apps/demo-be-rust-axum/README.md`
-- [x] `apps/demo-be-ts-effect/README.md`
-- [x] `apps/demo-be-csharp-aspnetcore/README.md`
-- [x] `apps/demo-be-kotlin-ktor/README.md`
-- [x] `apps/demo-be-clojure-pedestal/README.md`
-- [x] `apps/demo-be-e2e/README.md`
+- [x] `apps/a-demo-be-java-springboot/README.md`
+- [x] `apps/a-demo-be-java-vertx/README.md`
+- [x] `apps/a-demo-be-golang-gin/README.md`
+- [x] `apps/a-demo-be-python-fastapi/README.md`
+- [x] `apps/a-demo-be-elixir-phoenix/README.md`
+- [x] `apps/a-demo-be-fsharp-giraffe/README.md`
+- [x] `apps/a-demo-be-rust-axum/README.md`
+- [x] `apps/a-demo-be-ts-effect/README.md`
+- [x] `apps/a-demo-be-csharp-aspnetcore/README.md`
+- [x] `apps/a-demo-be-kotlin-ktor/README.md`
+- [x] `apps/a-demo-be-clojure-pedestal/README.md`
+- [x] `apps/a-demo-be-e2e/README.md`
 - [x] `governance/development/infra/bdd-spec-test-mapping.md`
 - [x] `governance/development/quality/three-level-testing-standard.md`
 - [x] `governance/development/infra/nx-targets.md`
@@ -156,17 +156,17 @@ radius contained to `specs/apps/demo/` only.
 
 ## Phase 10: Local Validation — test:quick (All 11 Backends)
 
-- [x] `nx run demo-be-java-springboot:test:quick` passes
-- [x] `nx run demo-be-java-vertx:test:quick` passes
-- [x] `nx run demo-be-kotlin-ktor:test:quick` passes
-- [x] `nx run demo-be-golang-gin:test:quick` passes
-- [x] `nx run demo-be-python-fastapi:test:quick` passes
-- [x] `nx run demo-be-rust-axum:test:quick` passes
-- [x] `nx run demo-be-ts-effect:test:quick` passes
-- [x] `nx run demo-be-fsharp-giraffe:test:quick` passes
-- [x] `nx run demo-be-elixir-phoenix:test:quick` passes
-- [x] `nx run demo-be-csharp-aspnetcore:test:quick` passes
-- [x] `nx run demo-be-clojure-pedestal:test:quick` passes
+- [x] `nx run a-demo-be-java-springboot:test:quick` passes
+- [x] `nx run a-demo-be-java-vertx:test:quick` passes
+- [x] `nx run a-demo-be-kotlin-ktor:test:quick` passes
+- [x] `nx run a-demo-be-golang-gin:test:quick` passes
+- [x] `nx run a-demo-be-python-fastapi:test:quick` passes
+- [x] `nx run a-demo-be-rust-axum:test:quick` passes
+- [x] `nx run a-demo-be-ts-effect:test:quick` passes
+- [x] `nx run a-demo-be-fsharp-giraffe:test:quick` passes
+- [x] `nx run a-demo-be-elixir-phoenix:test:quick` passes
+- [x] `nx run a-demo-be-csharp-aspnetcore:test:quick` passes
+- [x] `nx run a-demo-be-clojure-pedestal:test:quick` passes
 
 ## Phase 11: Local Validation — Non-Backend Projects
 
@@ -184,17 +184,17 @@ radius contained to `specs/apps/demo/` only.
 
 Trigger all 11 integration + E2E workflows manually and verify they pass:
 
-- [x] `test-integration-e2e-demo-be-java-springboot` — SUCCESS
-- [x] `test-integration-e2e-demo-be-java-vertx` — SUCCESS
-- [x] `test-integration-e2e-demo-be-kotlin-ktor` — SUCCESS
-- [x] `test-integration-e2e-demo-be-golang-gin` — SUCCESS
-- [x] `test-integration-e2e-demo-be-python-fastapi` — SUCCESS
-- [x] `test-integration-e2e-demo-be-rust-axum` — SUCCESS
-- [x] `test-integration-e2e-demo-be-ts-effect` — SUCCESS
-- [x] `test-integration-e2e-demo-be-fsharp-giraffe` — SUCCESS
-- [x] `test-integration-e2e-demo-be-elixir-phoenix` — SUCCESS
-- [x] `test-integration-e2e-demo-be-csharp-aspnetcore` — SUCCESS
-- [x] `test-integration-e2e-demo-be-clojure-pedestal` — SUCCESS
+- [x] `test-integration-e2e-a-demo-be-java-springboot` — SUCCESS
+- [x] `test-integration-e2e-a-demo-be-java-vertx` — SUCCESS
+- [x] `test-integration-e2e-a-demo-be-kotlin-ktor` — SUCCESS
+- [x] `test-integration-e2e-a-demo-be-golang-gin` — SUCCESS
+- [x] `test-integration-e2e-a-demo-be-python-fastapi` — SUCCESS
+- [x] `test-integration-e2e-a-demo-be-rust-axum` — SUCCESS
+- [x] `test-integration-e2e-a-demo-be-ts-effect` — SUCCESS
+- [x] `test-integration-e2e-a-demo-be-fsharp-giraffe` — SUCCESS
+- [x] `test-integration-e2e-a-demo-be-elixir-phoenix` — SUCCESS
+- [x] `test-integration-e2e-a-demo-be-csharp-aspnetcore` — SUCCESS
+- [x] `test-integration-e2e-a-demo-be-clojure-pedestal` — SUCCESS
 
 ## Phase 14: GitHub Actions — Other Workflows
 

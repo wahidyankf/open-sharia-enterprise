@@ -1,14 +1,14 @@
-# Technical Design: demo-be-rust-axum
+# Technical Design: a-demo-be-rust-axum
 
 ## BDD Integration Test: cucumber-rs
 
-Integration tests parse the canonical `.feature` files in `specs/apps/demo/be/gherkin/` using
+Integration tests parse the canonical `.feature` files in `specs/apps/a-demo/be/gherkin/` using
 **cucumber-rs**, the Rust Gherkin runner. cucumber-rs discovers step definitions via Rust async
 functions annotated with `#[given]`, `#[when]`, and `#[then]` macros, and executes scenarios
 concurrently by default (can be made sequential per feature with `@serial`).
 
 HTTP calls use Axum's `tower::ServiceExt` for in-process HTTP testing — no live server needed,
-matching `demo-be-java-springboot`'s MockMvc approach and `demo-be-fsharp-giraffe`'s TestServer approach. The
+matching `a-demo-be-java-springboot`'s MockMvc approach and `a-demo-be-fsharp-giraffe`'s TestServer approach. The
 database layer uses SQLx with an in-memory SQLite database for full isolation and determinism.
 
 Step definitions follow cucumber-rs async patterns:
@@ -82,19 +82,19 @@ impl cucumber::World for AppWorld {
 
 ### Feature File Path Resolution
 
-Feature files are located in `specs/apps/demo/be/gherkin/`. The cucumber-rs runner is
+Feature files are located in `specs/apps/a-demo/be/gherkin/`. The cucumber-rs runner is
 configured to discover them relative to the workspace root:
 
 ```rust
 // tests/integration/main.rs
 #[tokio::main]
 async fn main() {
-    AppWorld::run("../../specs/apps/demo/be/gherkin").await;
+    AppWorld::run("../../specs/apps/a-demo/be/gherkin").await;
 }
 ```
 
 The `Cargo.toml` `[[test]]` entry for integration tests points the runner binary at the
-correct path relative to the crate root (`apps/demo-be-rust-axum/`).
+correct path relative to the crate root (`apps/a-demo-be-rust-axum/`).
 
 ---
 
@@ -103,7 +103,7 @@ correct path relative to the crate root (`apps/demo-be-rust-axum/`).
 ### Project Structure
 
 ```
-apps/demo-be-rust-axum/
+apps/a-demo-be-rust-axum/
 ├── src/
 │   ├── main.rs                         # Entry point — binds port, creates AppState
 │   ├── lib.rs                          # Public lib surface for integration test reuse
@@ -458,31 +458,31 @@ pub async fn verify_password(password: String, hash: String) -> Result<bool, App
 
 ```json
 {
-  "name": "demo-be-rust-axum",
+  "name": "a-demo-be-rust-axum",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/demo-be-rust-axum/src",
+  "sourceRoot": "apps/a-demo-be-rust-axum/src",
   "projectType": "application",
   "targets": {
     "build": {
       "executor": "nx:run-commands",
       "options": {
         "command": "cargo build --release",
-        "cwd": "apps/demo-be-rust-axum"
+        "cwd": "apps/a-demo-be-rust-axum"
       },
-      "outputs": ["{workspaceRoot}/target/release/demo-be-rust-axum"]
+      "outputs": ["{workspaceRoot}/target/release/a-demo-be-rust-axum"]
     },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
         "command": "cargo watch -x run",
-        "cwd": "apps/demo-be-rust-axum"
+        "cwd": "apps/a-demo-be-rust-axum"
       }
     },
     "start": {
       "executor": "nx:run-commands",
       "options": {
         "command": "cargo run --release",
-        "cwd": "apps/demo-be-rust-axum"
+        "cwd": "apps/a-demo-be-rust-axum"
       }
     },
     "test:quick": {
@@ -490,50 +490,50 @@ pub async fn verify_password(password: String, hash: String) -> Result<bool, App
       "options": {
         "commands": [
           "cargo llvm-cov --lcov --output-path coverage/lcov.info",
-          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-be-rust-axum/coverage/lcov.info 90)",
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/a-demo-be-rust-axum/coverage/lcov.info 90)",
           "cargo fmt --check",
           "cargo clippy -- -D warnings"
         ],
         "parallel": false,
-        "cwd": "apps/demo-be-rust-axum"
+        "cwd": "apps/a-demo-be-rust-axum"
       }
     },
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
         "command": "cargo test --lib",
-        "cwd": "apps/demo-be-rust-axum"
+        "cwd": "apps/a-demo-be-rust-axum"
       }
     },
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
         "command": "cargo test --test integration",
-        "cwd": "apps/demo-be-rust-axum"
+        "cwd": "apps/a-demo-be-rust-axum"
       },
       "cache": true,
       "inputs": [
         "{projectRoot}/src/**/*.rs",
         "{projectRoot}/tests/**/*.rs",
-        "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature"
+        "{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature"
       ]
     },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
         "command": "cargo clippy -- -D warnings",
-        "cwd": "apps/demo-be-rust-axum"
+        "cwd": "apps/a-demo-be-rust-axum"
       }
     },
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
         "command": "cargo check",
-        "cwd": "apps/demo-be-rust-axum"
+        "cwd": "apps/a-demo-be-rust-axum"
       }
     }
   },
-  "tags": ["type:app", "platform:axum", "lang:rust", "domain:demo-be"],
+  "tags": ["type:app", "platform:axum", "lang:rust", "domain:a-demo-be"],
   "implicitDependencies": ["rhino-cli"]
 }
 ```
@@ -545,8 +545,8 @@ pub async fn verify_password(password: String, hash: String) -> Result<bool, App
 > **Note on `typecheck`**: Rust's compiler performs type checking during `cargo check` and
 > `cargo build`. There is no separate type-checking tool as with TypeScript or F#.
 >
-> **Note on `build` outputs**: The release binary lands in `target/release/demo-be-rust-axum` at
-> the workspace root (not inside `apps/demo-be-rust-axum/`). This is a Cargo workspace convention.
+> **Note on `build` outputs**: The release binary lands in `target/release/a-demo-be-rust-axum` at
+> the workspace root (not inside `apps/a-demo-be-rust-axum/`). This is a Cargo workspace convention.
 >
 > **Note on `test:integration` caching**: Integration tests use an in-process Axum router with
 > SQLite in-memory — no external services. Fully deterministic and safe to cache.
@@ -557,13 +557,13 @@ pub async fn verify_password(password: String, hash: String) -> Result<bool, App
 
 ### Port Assignment
 
-| Service                 | Port                                               |
-| ----------------------- | -------------------------------------------------- |
-| demo-be-db              | 5432                                               |
-| demo-be-java-springboot | 8201                                               |
-| demo-be-elixir-phoenix  | 8201 (same port — mutually exclusive alternatives) |
-| demo-be-fsharp-giraffe  | 8201 (same port — mutually exclusive alternatives) |
-| demo-be-rust-axum       | 8201 (same port — mutually exclusive alternatives) |
+| Service                   | Port                                               |
+| ------------------------- | -------------------------------------------------- |
+| a-demo-be-db              | 5432                                               |
+| a-demo-be-java-springboot | 8201                                               |
+| a-demo-be-elixir-phoenix  | 8201 (same port — mutually exclusive alternatives) |
+| a-demo-be-fsharp-giraffe  | 8201 (same port — mutually exclusive alternatives) |
+| a-demo-be-rust-axum       | 8201 (same port — mutually exclusive alternatives) |
 
 ### Docker Compile-Time Strategy
 
@@ -574,46 +574,46 @@ Rust compilation is significantly slower than other languages. Two strategies ad
 2. **Cargo registry volume mount**: Mount `~/.cargo/registry` as a named Docker volume so
    the registry cache persists across container rebuilds.
 
-### Docker Compose (`infra/dev/demo-be-rust-axum/docker-compose.yml`)
+### Docker Compose (`infra/dev/a-demo-be-rust-axum/docker-compose.yml`)
 
 ```yaml
 services:
-  demo-be-db:
+  a-demo-be-db:
     image: postgres:17-alpine
-    container_name: demo-be-db
+    container_name: a-demo-be-db
     environment:
-      POSTGRES_DB: demo_be_rust_axum
-      POSTGRES_USER: demo_be_rust_axum
-      POSTGRES_PASSWORD: demo_be_rust_axum
+      POSTGRES_DB: a_demo_be_rust_axum
+      POSTGRES_USER: a_demo_be_rust_axum
+      POSTGRES_PASSWORD: a_demo_be_rust_axum
     ports:
       - "5432:5432"
     volumes:
-      - demo-be-rust-axum-db-data:/var/lib/postgresql/data
+      - a-demo-be-rust-axum-db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U demo_be_rust_axum"]
+      test: ["CMD-SHELL", "pg_isready -U a_demo_be_rust_axum"]
       interval: 5s
       timeout: 3s
       retries: 5
     networks:
-      - demo-be-rust-axum-network
+      - a-demo-be-rust-axum-network
 
-  demo-be-rust-axum:
+  a-demo-be-rust-axum:
     build:
       context: ../../../
-      dockerfile: infra/dev/demo-be-rust-axum/Dockerfile.be.dev
-    container_name: demo-be-rust-axum
+      dockerfile: infra/dev/a-demo-be-rust-axum/Dockerfile.be.dev
+    container_name: a-demo-be-rust-axum
     ports:
       - "8201:8201"
     environment:
-      - DATABASE_URL=postgres://demo_be_rust_axum:demo_be_rust_axum@demo-be-db:5432/demo_be_rust_axum
+      - DATABASE_URL=postgres://a_demo_be_rust_axum:a_demo_be_rust_axum@a-demo-be-db:5432/a_demo_be_rust_axum
       - APP_JWT_SECRET=dev-jwt-secret-at-least-32-chars-long
       - APP_PORT=8201
     volumes:
-      - ./apps/demo-be-rust-axum:/workspace/apps/demo-be-rust-axum:rw
+      - ./apps/a-demo-be-rust-axum:/workspace/apps/a-demo-be-rust-axum:rw
       - cargo-registry:/usr/local/cargo/registry
       - cargo-target:/workspace/target
     depends_on:
-      demo-be-db:
+      a-demo-be-db:
         condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8201/health || exit 1"]
@@ -622,15 +622,15 @@ services:
       retries: 10
       start_period: 120s
     networks:
-      - demo-be-rust-axum-network
+      - a-demo-be-rust-axum-network
 
 volumes:
-  demo-be-rust-axum-db-data:
+  a-demo-be-rust-axum-db-data:
   cargo-registry:
   cargo-target:
 
 networks:
-  demo-be-rust-axum-network:
+  a-demo-be-rust-axum-network:
 ```
 
 > **Note on `start_period: 120s`**: Rust compilation inside Docker takes considerably longer
@@ -649,15 +649,15 @@ WORKDIR /workspace
 
 # Pre-fetch and compile dependencies by copying manifests first.
 # This layer is cached as long as Cargo.toml and Cargo.lock do not change.
-COPY apps/demo-be-rust-axum/Cargo.toml apps/demo-be-rust-axum/Cargo.lock ./apps/demo-be-rust-axum/
-RUN mkdir -p apps/demo-be-rust-axum/src && \
-    echo 'fn main() {}' > apps/demo-be-rust-axum/src/main.rs && \
-    cd apps/demo-be-rust-axum && cargo build && \
-    rm -rf apps/demo-be-rust-axum/src
+COPY apps/a-demo-be-rust-axum/Cargo.toml apps/a-demo-be-rust-axum/Cargo.lock ./apps/a-demo-be-rust-axum/
+RUN mkdir -p apps/a-demo-be-rust-axum/src && \
+    echo 'fn main() {}' > apps/a-demo-be-rust-axum/src/main.rs && \
+    cd apps/a-demo-be-rust-axum && cargo build && \
+    rm -rf apps/a-demo-be-rust-axum/src
 
-COPY apps/demo-be-rust-axum ./apps/demo-be-rust-axum/
+COPY apps/a-demo-be-rust-axum ./apps/a-demo-be-rust-axum/
 
-WORKDIR /workspace/apps/demo-be-rust-axum
+WORKDIR /workspace/apps/a-demo-be-rust-axum
 
 CMD ["sh", "-c", "sqlx migrate run && cargo watch -x run"]
 ```
@@ -668,10 +668,10 @@ The E2E override builds a release binary for production-like testing:
 
 ```yaml
 services:
-  demo-be-rust-axum:
+  a-demo-be-rust-axum:
     build:
       context: ../../../
-      dockerfile: infra/dev/demo-be-rust-axum/Dockerfile.be.e2e
+      dockerfile: infra/dev/a-demo-be-rust-axum/Dockerfile.be.e2e
     healthcheck:
       start_period: 300s
 ```
@@ -680,16 +680,16 @@ services:
 
 ```dockerfile
 FROM rust:latest AS builder
-WORKDIR /workspace/apps/demo-be-rust-axum
-COPY apps/demo-be-rust-axum/Cargo.toml apps/demo-be-rust-axum/Cargo.lock ./
+WORKDIR /workspace/apps/a-demo-be-rust-axum
+COPY apps/a-demo-be-rust-axum/Cargo.toml apps/a-demo-be-rust-axum/Cargo.lock ./
 RUN mkdir src && echo 'fn main() {}' > src/main.rs && cargo build --release && rm -rf src
-COPY apps/demo-be-rust-axum/src ./src/
+COPY apps/a-demo-be-rust-axum/src ./src/
 RUN cargo build --release
 
 FROM debian:bookworm-slim AS runtime
 RUN apt-get update && apt-get install -y ca-certificates libssl-dev && rm -rf /var/lib/apt/lists/*
-COPY --from=builder /workspace/target/release/demo-be-rust-axum /usr/local/bin/
-CMD ["/usr/local/bin/demo-be-rust-axum"]
+COPY --from=builder /workspace/target/release/a-demo-be-rust-axum /usr/local/bin/
+CMD ["/usr/local/bin/a-demo-be-rust-axum"]
 ```
 
 > **Note on E2E `start_period: 300s`**: The multi-stage release build inside Docker for the
@@ -700,15 +700,15 @@ CMD ["/usr/local/bin/demo-be-rust-axum"]
 
 ## GitHub Actions
 
-### New Workflow: `e2e-demo-be-rust-axum.yml`
+### New Workflow: `e2e-a-demo-be-rust-axum.yml`
 
-Mirrors `e2e-demo-be-fsharp-giraffe.yml` with:
+Mirrors `e2e-a-demo-be-fsharp-giraffe.yml` with:
 
 - Name: `E2E - Demo BE (RSAX)`
 - Schedule: same crons as jasb/exph/fsgi
 - Job: checkout → docker compose -f docker-compose.e2e.yml up --build -d →
   wait-healthy (extended timeout: `--timeout 600`) → Volta → npm ci →
-  `nx run demo-be-e2e:test:e2e` with `BASE_URL=http://localhost:8201` →
+  `nx run a-demo-be-e2e:test:e2e` with `BASE_URL=http://localhost:8201` →
   upload artifact `playwright-report-be-rsax` → docker compose down (always)
 
 > **Note**: The E2E workflow uses an extended healthcheck timeout (`--timeout 600` on
@@ -727,12 +727,12 @@ Add after existing Elixir/F# setup:
 - name: Install cargo-llvm-cov
   uses: taiki-e/install-action@cargo-llvm-cov
 
-- name: Upload coverage — demo-be-rust-axum
+- name: Upload coverage — a-demo-be-rust-axum
   uses: codecov/codecov-action@v5
   with:
     token: ${{ secrets.CODECOV_TOKEN }}
-    files: apps/demo-be-rust-axum/coverage/lcov.info
-    flags: demo-be-rust-axum
+    files: apps/a-demo-be-rust-axum/coverage/lcov.info
+    flags: a-demo-be-rust-axum
     fail_ci_if_error: false
 ```
 

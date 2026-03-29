@@ -42,26 +42,26 @@ graph TD
 
 All new packages follow the existing convention: annotated with `@NullMarked` in `package-info.java`, no wildcard imports.
 
-| Package                                   | Purpose                                                                                                                  |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `com.demobejasb.auth.controller`          | `AuthController` - REST endpoints                                                                                        |
-| `com.demobejasb.auth.service`             | `AuthService`, `UserDetailsServiceImpl`, `UsernameAlreadyExistsException`, `InvalidCredentialsException`                 |
-| `com.demobejasb.auth.repository`          | `UserRepository` (Spring Data JPA)                                                                                       |
-| `com.demobejasb.auth.model`               | `User` JPA entity                                                                                                        |
-| `com.demobejasb.auth.dto`                 | `RegisterRequest`, `LoginRequest`, `RegisterResponse`, `AuthResponse`                                                    |
-| `com.demobejasb.security`                 | `JwtUtil`, `JwtAuthFilter`, `SecurityConfig`                                                                             |
-| `com.demobejasb.config`                   | `JpaAuditingConfig`, `GlobalExceptionHandler`                                                                            |
-| `com.demobejasb.integration`              | `ResponseStore` (existing; updated to add `@Scope("cucumber-glue")`)                                                     |
-| `com.demobejasb.integration.steps`        | `AuthSteps`, `CommonSteps` (updated), `HelloSteps`, `HealthSteps`, `TokenStore`, `BaseCucumberContextConfig` (test-only) |
-| `com.demobejasb.integration.registration` | `RegistrationContextConfig`, `RegistrationIT` (test-only; runs `register.feature`)                                       |
-| `com.demobejasb.integration.login`        | `LoginContextConfig`, `LoginIT` (test-only; runs `login.feature`)                                                        |
-| `com.demobejasb.integration.jwtprotected` | `JwtProtectedContextConfig`, `JwtProtectedIT` (test-only; runs `jwt-protection.feature`)                                 |
+| Package                                    | Purpose                                                                                                                  |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `com.ademobejasb.auth.controller`          | `AuthController` - REST endpoints                                                                                        |
+| `com.ademobejasb.auth.service`             | `AuthService`, `UserDetailsServiceImpl`, `UsernameAlreadyExistsException`, `InvalidCredentialsException`                 |
+| `com.ademobejasb.auth.repository`          | `UserRepository` (Spring Data JPA)                                                                                       |
+| `com.ademobejasb.auth.model`               | `User` JPA entity                                                                                                        |
+| `com.ademobejasb.auth.dto`                 | `RegisterRequest`, `LoginRequest`, `RegisterResponse`, `AuthResponse`                                                    |
+| `com.ademobejasb.security`                 | `JwtUtil`, `JwtAuthFilter`, `SecurityConfig`                                                                             |
+| `com.ademobejasb.config`                   | `JpaAuditingConfig`, `GlobalExceptionHandler`                                                                            |
+| `com.ademobejasb.integration`              | `ResponseStore` (existing; updated to add `@Scope("cucumber-glue")`)                                                     |
+| `com.ademobejasb.integration.steps`        | `AuthSteps`, `CommonSteps` (updated), `HelloSteps`, `HealthSteps`, `TokenStore`, `BaseCucumberContextConfig` (test-only) |
+| `com.ademobejasb.integration.registration` | `RegistrationContextConfig`, `RegistrationIT` (test-only; runs `register.feature`)                                       |
+| `com.ademobejasb.integration.login`        | `LoginContextConfig`, `LoginIT` (test-only; runs `login.feature`)                                                        |
+| `com.ademobejasb.integration.jwtprotected` | `JwtProtectedContextConfig`, `JwtProtectedIT` (test-only; runs `jwt-protection.feature`)                                 |
 
 ### package-info.java template
 
 ```java
 @NullMarked
-package com.demobejasb.auth.controller;
+package com.ademobejasb.auth.controller;
 
 import org.jspecify.annotations.NullMarked;
 ```
@@ -160,7 +160,7 @@ public class User {
 ### JpaAuditingConfig
 
 Enables Spring Data JPA Auditing and supplies the `created_by` / `updated_by` values.
-Place in `com.demobejasb.config`:
+Place in `com.ademobejasb.config`:
 
 ```java
 @Configuration
@@ -393,14 +393,14 @@ public class AuthController {
 ### Custom Exceptions
 
 ```java
-// UsernameAlreadyExistsException.java (in com.demobejasb.auth.service)
+// UsernameAlreadyExistsException.java (in com.ademobejasb.auth.service)
 public class UsernameAlreadyExistsException extends Exception {
     public UsernameAlreadyExistsException(String username) {
         super("Username already exists: " + username);
     }
 }
 
-// InvalidCredentialsException.java (in com.demobejasb.auth.service)
+// InvalidCredentialsException.java (in com.ademobejasb.auth.service)
 public class InvalidCredentialsException extends Exception {
     public InvalidCredentialsException() {
         super("Invalid username or password");
@@ -408,7 +408,7 @@ public class InvalidCredentialsException extends Exception {
 }
 ```
 
-### GlobalExceptionHandler (in com.demobejasb.config)
+### GlobalExceptionHandler (in com.ademobejasb.config)
 
 ```java
 @RestControllerAdvice
@@ -910,7 +910,7 @@ Running all three feature files in parallel requires **separate Spring contexts 
 each backed by a **distinct named H2 database**. The architecture has three layers:
 
 **Layer 1 — Shared abstract base** (`BaseCucumberContextConfig.java` in
-`com.demobejasb.integration.steps`):
+`com.ademobejasb.integration.steps`):
 
 ```java
 // Not annotated with @CucumberContextConfiguration — only the concrete subclasses are.
@@ -941,7 +941,7 @@ prevents unique-constraint conflicts between parallel features that use the same
 (e.g., `"alice"` appears in all three features):
 
 ```java
-// RegistrationContextConfig.java — in com.demobejasb.integration.registration
+// RegistrationContextConfig.java — in com.ademobejasb.integration.registration
 @CucumberContextConfiguration
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @ActiveProfiles("test")
@@ -954,7 +954,7 @@ public class RegistrationContextConfig extends BaseCucumberContextConfig {}
 ```
 
 ```java
-// LoginContextConfig.java — in com.demobejasb.integration.login
+// LoginContextConfig.java — in com.ademobejasb.integration.login
 @CucumberContextConfiguration
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @ActiveProfiles("test")
@@ -967,7 +967,7 @@ public class LoginContextConfig extends BaseCucumberContextConfig {}
 ```
 
 ```java
-// JwtProtectedContextConfig.java — in com.demobejasb.integration.jwtprotected
+// JwtProtectedContextConfig.java — in com.ademobejasb.integration.jwtprotected
 @CucumberContextConfiguration
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @ActiveProfiles("test")
@@ -988,14 +988,14 @@ per runner.
 and limits the glue path to prevent Cucumber from discovering the other context configs:
 
 ```java
-// RegistrationIT.java — in com.demobejasb.integration.registration
+// RegistrationIT.java — in com.ademobejasb.integration.registration
 @Suite
 @IncludeEngines("cucumber")
 @SelectClasspathResource("auth/register.feature")
 @ConfigurationParameter(
     key = GLUE_PROPERTY_NAME,
-    value = "com.demobejasb.integration.registration"
-          + ",com.demobejasb.integration.steps")
+    value = "com.ademobejasb.integration.registration"
+          + ",com.ademobejasb.integration.steps")
 @ConfigurationParameter(
     key = PLUGIN_PROPERTY_NAME,
     value = "pretty,html:target/cucumber-reports/registration.html")
@@ -1003,14 +1003,14 @@ public class RegistrationIT {}
 ```
 
 ```java
-// LoginIT.java — in com.demobejasb.integration.login
+// LoginIT.java — in com.ademobejasb.integration.login
 @Suite
 @IncludeEngines("cucumber")
 @SelectClasspathResource("auth/login.feature")
 @ConfigurationParameter(
     key = GLUE_PROPERTY_NAME,
-    value = "com.demobejasb.integration.login"
-          + ",com.demobejasb.integration.steps")
+    value = "com.ademobejasb.integration.login"
+          + ",com.ademobejasb.integration.steps")
 @ConfigurationParameter(
     key = PLUGIN_PROPERTY_NAME,
     value = "pretty,html:target/cucumber-reports/login.html")
@@ -1018,14 +1018,14 @@ public class LoginIT {}
 ```
 
 ```java
-// JwtProtectedIT.java — in com.demobejasb.integration.jwtprotected
+// JwtProtectedIT.java — in com.ademobejasb.integration.jwtprotected
 @Suite
 @IncludeEngines("cucumber")
 @SelectClasspathResource("auth/jwt-protection.feature")
 @ConfigurationParameter(
     key = GLUE_PROPERTY_NAME,
-    value = "com.demobejasb.integration.jwtprotected"
-          + ",com.demobejasb.integration.steps")
+    value = "com.ademobejasb.integration.jwtprotected"
+          + ",com.ademobejasb.integration.steps")
 @ConfigurationParameter(
     key = PLUGIN_PROPERTY_NAME,
     value = "pretty,html:target/cucumber-reports/jwt-protected.html")

@@ -632,9 +632,9 @@ func setupCheckAllRepo(t *testing.T) string {
 		"apps/organiclever-be-jasb",
 		"apps/rhino-cli",
 		"apps/oseplatform-fs",
-		"apps/demo-be-python-fastapi",
-		"apps/demo-be-fsharp-giraffe",
-		"apps/demo-fe-dart-flutterweb",
+		"apps/a-demo-be-python-fastapi",
+		"apps/a-demo-be-fsharp-giraffe",
+		"apps/a-demo-fe-dart-flutterweb",
 	} {
 		if err := os.MkdirAll(filepath.Join(tmpDir, dir), 0755); err != nil {
 			t.Fatalf("failed to create dirs: %v", err)
@@ -642,14 +642,14 @@ func setupCheckAllRepo(t *testing.T) string {
 	}
 
 	files := map[string]string{
-		"package.json":                                `{"volta":{"node":"24.11.1","npm":"11.6.3"}}`,
-		"apps/organiclever-be-jasb/pom.xml":           `<project><properties><java.version>25</java.version></properties></project>`,
-		"apps/rhino-cli/go.mod":                       "module foo\n\ngo 1.24.2\n",
-		"apps/oseplatform-fs/vercel.json":             `{"build":{"env":{"HUGO_VERSION":"0.156.0"}}}`,
-		"apps/demo-be-python-fastapi/.python-version": "3.13\n",
-		".tool-versions":                              "erlang 27.3\nelixir 1.19.5-otp-27\n",
-		"apps/demo-be-fsharp-giraffe/global.json":     `{"sdk":{"version":"10.0.103","rollForward":"latestMinor"}}`,
-		"apps/demo-fe-dart-flutterweb/pubspec.yaml":   "name: demo\n\nenvironment:\n  sdk: ^3.11.1\n",
+		"package.json":                                  `{"volta":{"node":"24.11.1","npm":"11.6.3"}}`,
+		"apps/organiclever-be-jasb/pom.xml":             `<project><properties><java.version>25</java.version></properties></project>`,
+		"apps/rhino-cli/go.mod":                         "module foo\n\ngo 1.24.2\n",
+		"apps/oseplatform-fs/vercel.json":               `{"build":{"env":{"HUGO_VERSION":"0.156.0"}}}`,
+		"apps/a-demo-be-python-fastapi/.python-version": "3.13\n",
+		".tool-versions":                                "erlang 27.3\nelixir 1.19.5-otp-27\n",
+		"apps/a-demo-be-fsharp-giraffe/global.json":     `{"sdk":{"version":"10.0.103","rollForward":"latestMinor"}}`,
+		"apps/a-demo-fe-dart-flutterweb/pubspec.yaml":   "name: demo\n\nenvironment:\n  sdk: ^3.11.1\n",
 	}
 	for relPath, content := range files {
 		if err := os.WriteFile(filepath.Join(tmpDir, relPath), []byte(content), 0644); err != nil {

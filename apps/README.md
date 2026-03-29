@@ -21,8 +21,8 @@ Apps follow the naming pattern: **`[domain]-[type]`**
 - `organiclever-be` - OrganicLever backend API (F#/Giraffe) - F# application (port 8202)
 - `organiclever-fe-e2e` - FE E2E tests for organiclever-fe - Playwright (browser testing)
 - `organiclever-be-e2e` - BE E2E tests for organiclever-be - Playwright (API testing)
-- `demo-be-golang-gin` - OrganicLever backend API (Go/Gin) - Go application (port 8201)
-- `demo-be-e2e` - E2E tests for demo-be REST API - Playwright (API testing)
+- `a-demo-be-golang-gin` - OrganicLever backend API (Go/Gin) - Go application (port 8201)
+- `a-demo-be-e2e` - E2E tests for demo-be REST API - Playwright (API testing)
 
 ## Application Characteristics
 
@@ -88,7 +88,7 @@ apps/oseplatform-cli/
 ### Go/Gin Application (Current Default)
 
 ```
-apps/demo-be-golang-gin/
+apps/a-demo-be-golang-gin/
 ├── cmd/server/              # Main entry point
 │   └── main.go
 ├── internal/                # Internal packages
@@ -107,7 +107,7 @@ apps/demo-be-golang-gin/
 ### Playwright E2E Test App (Current)
 
 ```
-apps/demo-be-e2e/
+apps/a-demo-be-e2e/
 ├── playwright.config.ts         # Playwright configuration (baseURL, reporters)
 ├── package.json                 # Pinned @playwright/test dependency
 ├── tsconfig.json                # TypeScript config (extends workspace base)
@@ -241,7 +241,7 @@ nx clean oseplatform-fs
 nx run organiclever-fe-e2e:test:e2e
 
 # Run API E2E tests (backend must be running first)
-nx run demo-be-e2e:test:e2e
+nx run a-demo-be-e2e:test:e2e
 ```
 
 ## Deployment Branches
@@ -281,7 +281,7 @@ Currently:
 - **Go** (CLI tools) - ayokoding-cli, rhino-cli
 - **TypeScript/Next.js** (web applications) - organiclever-fe, ayokoding-fs
 - **F#/Giraffe** (backend API) - organiclever-be
-- **Go/Gin** (backend API) - demo-be-golang-gin
-- **TypeScript/Playwright** (E2E testing) - demo-be-e2e, organiclever-fe-e2e, organiclever-be-e2e
+- **Go/Gin** (backend API) - a-demo-be-golang-gin
+- **TypeScript/Playwright** (E2E testing) - a-demo-be-e2e, organiclever-fe-e2e, organiclever-be-e2e
 
 Future: Kotlin, Python apps (each language will have language-specific structure and tooling)

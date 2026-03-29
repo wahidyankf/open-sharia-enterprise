@@ -17,8 +17,8 @@ var contractsJavaCleanImportsCmd = &cobra.Command{
   - Duplicate import lines
 
 Files are only rewritten when changes are detected.`,
-	Example: `  rhino-cli contracts java-clean-imports apps/demo-be-java-springboot/generated-contracts
-  rhino-cli contracts java-clean-imports apps/demo-be-java-vertx/generated-contracts -o json`,
+	Example: `  rhino-cli contracts java-clean-imports apps/a-demo-be-java-springboot/generated-contracts
+  rhino-cli contracts java-clean-imports apps/a-demo-be-java-vertx/generated-contracts -o json`,
 	Args:          cobra.ExactArgs(1),
 	SilenceErrors: true,
 	RunE:          runContractsJavaCleanImports,

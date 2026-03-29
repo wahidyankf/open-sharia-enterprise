@@ -1,22 +1,22 @@
-# Plan: demo-be-csharp-aspnetcore (Done)
+# Plan: a-demo-be-csharp-aspnetcore (Done)
 
 C# / ASP.NET Core reimplementation of the demo backend REST API — a functional twin of
-`apps/demo-be-java-springboot` (Java/Spring Boot), `apps/demo-be-elixir-phoenix` (Elixir/Phoenix),
-`apps/demo-be-fsharp-giraffe` (F#/Giraffe), `apps/demo-be-golang-gin` (Go/Gin), `apps/demo-be-python-fastapi`
-(Python/FastAPI), `apps/demo-be-rust-axum` (Rust/Axum), and `apps/demo-be-kotlin-ktor` (Kotlin/Ktor)
+`apps/a-demo-be-java-springboot` (Java/Spring Boot), `apps/a-demo-be-elixir-phoenix` (Elixir/Phoenix),
+`apps/a-demo-be-fsharp-giraffe` (F#/Giraffe), `apps/a-demo-be-golang-gin` (Go/Gin), `apps/a-demo-be-python-fastapi`
+(Python/FastAPI), `apps/a-demo-be-rust-axum` (Rust/Axum), and `apps/a-demo-be-kotlin-ktor` (Kotlin/Ktor)
 using C# 12 and ASP.NET Core 9 Minimal APIs.
 
 **Status**: Done
 
 ## Goals
 
-- Provide a functionally equivalent backend to all existing `demo-be-*` implementations using
+- Provide a functionally equivalent backend to all existing `a-demo-be-*` implementations using
   the C# / .NET ecosystem
-- Consume the shared `specs/apps/demo/be/gherkin/` Gherkin feature files (76 scenarios across
+- Consume the shared `specs/apps/a-demo/be/gherkin/` Gherkin feature files (76 scenarios across
   13 feature files) for BDD integration tests
 - Integrate into the Nx monorepo with the same target surface (`build`, `dev`, `start`,
   `test:quick`, `test:unit`, `test:integration`, `lint`, `typecheck`)
-- Reuse the existing `demo-be-e2e` Playwright BDD test suite for E2E validation
+- Reuse the existing `a-demo-be-e2e` Playwright BDD test suite for E2E validation
 - Add a dedicated GitHub Actions workflow and Docker Compose infra
 
 ## Naming
@@ -96,22 +96,22 @@ using C# 12 and ASP.NET Core 9 Minimal APIs.
 
 ## Related Files
 
-- `apps/demo-be-csharp-aspnetcore/` — application source
-- `infra/dev/demo-be-csharp-aspnetcore/` — Docker Compose dev infra
-- `.github/workflows/e2e-demo-be-csharp-aspnetcore.yml` — E2E workflow
+- `apps/a-demo-be-csharp-aspnetcore/` — application source
+- `infra/dev/a-demo-be-csharp-aspnetcore/` — Docker Compose dev infra
+- `.github/workflows/e2e-a-demo-be-csharp-aspnetcore.yml` — E2E workflow
 - `.github/workflows/main-ci.yml` — .NET SDK setup + coverage upload
-- `specs/apps/demo/be/` — shared Gherkin specs (consumed, not modified)
-- `apps/demo-be-e2e/` — reused Playwright E2E suite (consumed, not modified)
+- `specs/apps/a-demo/be/` — shared Gherkin specs (consumed, not modified)
+- `apps/a-demo-be-e2e/` — reused Playwright E2E suite (consumed, not modified)
 
 ## Files to Update
 
-| File                            | Change                                                                   |
-| ------------------------------- | ------------------------------------------------------------------------ |
-| `CLAUDE.md`                     | Add demo-be-csharp-aspnetcore to Current Apps list, add C# coverage info |
-| `README.md`                     | Add demo-be-csharp-aspnetcore badge and description in demo apps section |
-| `specs/apps/demo/be/README.md`  | Add C#/ASP.NET Core row to Implementations table                         |
-| `apps/demo-be-e2e/project.json` | Add `demo-be-csharp-aspnetcore` to `implicitDependencies`                |
-| `.github/workflows/main-ci.yml` | Add .NET SDK setup + coverage upload step                                |
+| File                              | Change                                                                     |
+| --------------------------------- | -------------------------------------------------------------------------- |
+| `CLAUDE.md`                       | Add a-demo-be-csharp-aspnetcore to Current Apps list, add C# coverage info |
+| `README.md`                       | Add a-demo-be-csharp-aspnetcore badge and description in demo apps section |
+| `specs/apps/a-demo/be/README.md`  | Add C#/ASP.NET Core row to Implementations table                           |
+| `apps/a-demo-be-e2e/project.json` | Add `a-demo-be-csharp-aspnetcore` to `implicitDependencies`                |
+| `.github/workflows/main-ci.yml`   | Add .NET SDK setup + coverage upload step                                  |
 
 ## Git Workflow
 

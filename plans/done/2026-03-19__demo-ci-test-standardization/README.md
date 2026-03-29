@@ -25,7 +25,7 @@ existing apps can rely on.
 Four categories of drift have accumulated:
 
 1. **CI version mismatches** — The main CI pipeline (`main-ci.yml`) and individual scheduled test
-   workflows (`test-demo-be-*.yml`) use different language versions. Go is 1.26.0 in main CI but
+   workflows (`test-a-demo-be-*.yml`) use different language versions. Go is 1.26.0 in main CI but
    1.24 in scheduled workflows. Elixir is 1.19 vs 1.18. Python is 3.13 vs 3.12. Tests may pass in
    one pipeline but fail in another, or worse, pass in both but with subtly different behavior.
 
@@ -37,8 +37,8 @@ Four categories of drift have accumulated:
    unevenly implemented.
 
 3. **Spec and contract consumption gaps** — The three-level testing standard requires all test
-   levels to consume Gherkin specs from `specs/apps/demo/` and generated contracts from
-   `specs/apps/demo/contracts/`. In practice, several backends have incomplete `inputs` declarations
+   levels to consume Gherkin specs from `specs/apps/a-demo/` and generated contracts from
+   `specs/apps/a-demo/contracts/`. In practice, several backends have incomplete `inputs` declarations
    (specs/contracts missing from test:unit), no `spec-coverage` validation in `test:quick`, and
    inconsistent contract consumption across test levels.
 
@@ -64,63 +64,63 @@ Four categories of drift have accumulated:
 
 #### Missing Nx Targets
 
-| App                      | typecheck | lint | Notes                                              |
-| ------------------------ | --------- | ---- | -------------------------------------------------- |
-| demo-be-golang-gin       | Missing   | OK   | Go has `go vet` but no typecheck target            |
-| demo-be-rust-axum        | Missing   | OK   | Rust compiles = typechecks, but no Nx target       |
-| demo-be-elixir-phoenix   | Exists    | OK   | Has typecheck but missing `dependsOn: ["codegen"]` |
-| demo-be-python-fastapi   | Exists    | OK   | Has typecheck but missing `dependsOn: ["codegen"]` |
-| demo-be-kotlin-ktor      | Missing   | OK   | detekt lint exists, but no typecheck target        |
-| demo-be-clojure-pedestal | Missing   | OK   | clj-kondo lint exists, but no typecheck target     |
+| App                        | typecheck | lint | Notes                                              |
+| -------------------------- | --------- | ---- | -------------------------------------------------- |
+| a-demo-be-golang-gin       | Missing   | OK   | Go has `go vet` but no typecheck target            |
+| a-demo-be-rust-axum        | Missing   | OK   | Rust compiles = typechecks, but no Nx target       |
+| a-demo-be-elixir-phoenix   | Exists    | OK   | Has typecheck but missing `dependsOn: ["codegen"]` |
+| a-demo-be-python-fastapi   | Exists    | OK   | Has typecheck but missing `dependsOn: ["codegen"]` |
+| a-demo-be-kotlin-ktor      | Missing   | OK   | detekt lint exists, but no typecheck target        |
+| a-demo-be-clojure-pedestal | Missing   | OK   | clj-kondo lint exists, but no typecheck target     |
 
 #### Test Target Anomalies
 
-| Issue                                    | Apps Affected                                   |
-| ---------------------------------------- | ----------------------------------------------- |
-| test:unit = test:quick (identical)       | demo-be-elixir-phoenix                          |
-| lint/format bundled in test:quick        | demo-be-fsharp-giraffe, demo-fe-dart-flutterweb |
-| No coverage enforcement in test:quick    | demo-fe-dart-flutterweb                         |
-| typecheck missing codegen dependency     | demo-be-elixir-phoenix, demo-be-python-fastapi  |
-| build missing codegen dependency         | 10 of 11 backends (only Rust has it)            |
-| Non-standard test:quick (lint only)      | demo-be-e2e, demo-fe-e2e                        |
-| Inconsistent cache declarations          | Most backends (rely on nx.json default)         |
-| Missing test:quick outputs (for caching) | Most backends                                   |
+| Issue                                    | Apps Affected                                       |
+| ---------------------------------------- | --------------------------------------------------- |
+| test:unit = test:quick (identical)       | a-demo-be-elixir-phoenix                            |
+| lint/format bundled in test:quick        | a-demo-be-fsharp-giraffe, a-demo-fe-dart-flutterweb |
+| No coverage enforcement in test:quick    | a-demo-fe-dart-flutterweb                           |
+| typecheck missing codegen dependency     | a-demo-be-elixir-phoenix, a-demo-be-python-fastapi  |
+| build missing codegen dependency         | 10 of 11 backends (only Rust has it)                |
+| Non-standard test:quick (lint only)      | a-demo-be-e2e, a-demo-fe-e2e                        |
+| Inconsistent cache declarations          | Most backends (rely on nx.json default)             |
+| Missing test:quick outputs (for caching) | Most backends                                       |
 
 #### Spec and Contract Consumption Gaps
 
 **Gherkin spec consumption** — Whether test target inputs include
-`specs/apps/demo/be/gherkin/**/*.feature`:
+`specs/apps/a-demo/be/gherkin/**/*.feature`:
 
-| App                       | test:unit inputs | test:quick inputs | test:integration (Docker mount) |
-| ------------------------- | ---------------- | ----------------- | ------------------------------- |
-| demo-be-golang-gin        | Missing          | Has specs         | Has `/specs:ro` mount           |
-| demo-be-java-springboot   | Has specs        | Has specs         | Has `/specs:ro` mount           |
-| demo-be-java-vertx        | Has specs        | Has specs         | Has `/specs:ro` mount           |
-| demo-be-elixir-phoenix    | Has specs        | Has specs         | Has `/specs:ro` mount           |
-| demo-be-python-fastapi    | Has specs        | Has specs         | Has `/specs:ro` mount           |
-| demo-be-rust-axum         | Has specs        | Has specs         | Has `/specs:ro` mount           |
-| demo-be-fsharp-giraffe    | Missing          | Has specs         | Has `/specs:ro` mount           |
-| demo-be-ts-effect         | Has specs        | Has specs         | Has `/specs:ro` mount           |
-| demo-be-kotlin-ktor       | Missing          | Has specs         | Has `/specs:ro` mount           |
-| demo-be-csharp-aspnetcore | Missing          | Has specs         | Has `/specs:ro` mount           |
-| demo-be-clojure-pedestal  | Has specs        | Has specs         | Has `/specs:ro` mount           |
+| App                         | test:unit inputs | test:quick inputs | test:integration (Docker mount) |
+| --------------------------- | ---------------- | ----------------- | ------------------------------- |
+| a-demo-be-golang-gin        | Missing          | Has specs         | Has `/specs:ro` mount           |
+| a-demo-be-java-springboot   | Has specs        | Has specs         | Has `/specs:ro` mount           |
+| a-demo-be-java-vertx        | Has specs        | Has specs         | Has `/specs:ro` mount           |
+| a-demo-be-elixir-phoenix    | Has specs        | Has specs         | Has `/specs:ro` mount           |
+| a-demo-be-python-fastapi    | Has specs        | Has specs         | Has `/specs:ro` mount           |
+| a-demo-be-rust-axum         | Has specs        | Has specs         | Has `/specs:ro` mount           |
+| a-demo-be-fsharp-giraffe    | Missing          | Has specs         | Has `/specs:ro` mount           |
+| a-demo-be-ts-effect         | Has specs        | Has specs         | Has `/specs:ro` mount           |
+| a-demo-be-kotlin-ktor       | Missing          | Has specs         | Has `/specs:ro` mount           |
+| a-demo-be-csharp-aspnetcore | Missing          | Has specs         | Has `/specs:ro` mount           |
+| a-demo-be-clojure-pedestal  | Has specs        | Has specs         | Has `/specs:ro` mount           |
 
 **Generated contract consumption** — Whether test target inputs include
 `generated-contracts/` and codegen is a transitive dependency:
 
-| App                       | test:unit inputs   | test:quick inputs  | test:integration (Docker COPY) |
-| ------------------------- | ------------------ | ------------------ | ------------------------------ |
-| demo-be-golang-gin        | No contracts input | No contracts input | COPY generated-contracts/      |
-| demo-be-java-springboot   | No contracts input | No contracts input | COPY generated-contracts/      |
-| demo-be-java-vertx        | No contracts input | No contracts input | COPY generated-contracts/      |
-| demo-be-elixir-phoenix    | No contracts input | No contracts input | COPY generated-contracts/      |
-| demo-be-python-fastapi    | No contracts input | No contracts input | COPY generated-contracts/      |
-| demo-be-rust-axum         | No contracts input | No contracts input | COPY generated-contracts/      |
-| demo-be-fsharp-giraffe    | No contracts input | No contracts input | COPY generated-contracts/      |
-| demo-be-ts-effect         | No contracts input | No contracts input | COPY generated-contracts/      |
-| demo-be-kotlin-ktor       | No contracts input | No contracts input | COPY generated-contracts/      |
-| demo-be-csharp-aspnetcore | No contracts input | No contracts input | COPY generated-contracts/      |
-| demo-be-clojure-pedestal  | No contracts input | No contracts input | COPY generated-contracts/      |
+| App                         | test:unit inputs   | test:quick inputs  | test:integration (Docker COPY) |
+| --------------------------- | ------------------ | ------------------ | ------------------------------ |
+| a-demo-be-golang-gin        | No contracts input | No contracts input | COPY generated-contracts/      |
+| a-demo-be-java-springboot   | No contracts input | No contracts input | COPY generated-contracts/      |
+| a-demo-be-java-vertx        | No contracts input | No contracts input | COPY generated-contracts/      |
+| a-demo-be-elixir-phoenix    | No contracts input | No contracts input | COPY generated-contracts/      |
+| a-demo-be-python-fastapi    | No contracts input | No contracts input | COPY generated-contracts/      |
+| a-demo-be-rust-axum         | No contracts input | No contracts input | COPY generated-contracts/      |
+| a-demo-be-fsharp-giraffe    | No contracts input | No contracts input | COPY generated-contracts/      |
+| a-demo-be-ts-effect         | No contracts input | No contracts input | COPY generated-contracts/      |
+| a-demo-be-kotlin-ktor       | No contracts input | No contracts input | COPY generated-contracts/      |
+| a-demo-be-csharp-aspnetcore | No contracts input | No contracts input | COPY generated-contracts/      |
+| a-demo-be-clojure-pedestal  | No contracts input | No contracts input | COPY generated-contracts/      |
 
 **Spec-coverage validation** — Whether `test:quick` runs `rhino-cli spec-coverage validate`:
 
@@ -131,11 +131,11 @@ Four categories of drift have accumulated:
 
 #### E2E Workflow Patterns
 
-| Pattern                     | Apps                                       |
-| --------------------------- | ------------------------------------------ |
-| Uses `test:e2e` (full)      | demo-be-golang-gin only                    |
-| Uses `test:e2e:no-test-api` | All other 10 backends                      |
-| Backend E2E always builds   | demo-fe-ts-nextjs (never TanStack/Flutter) |
+| Pattern                     | Apps                                         |
+| --------------------------- | -------------------------------------------- |
+| Uses `test:e2e` (full)      | a-demo-be-golang-gin only                    |
+| Uses `test:e2e:no-test-api` | All other 10 backends                        |
+| Backend E2E always builds   | a-demo-fe-ts-nextjs (never TanStack/Flutter) |
 
 #### Docker Health Check Variance
 
@@ -164,7 +164,7 @@ Four categories of drift have accumulated:
    `test:unit` and `test:quick` are distinct
 5. **Spec consumption at all levels** — Every test target (`test:unit`, `test:quick`,
    `test:integration`) declares Gherkin specs in its `inputs` for cache invalidation; every backend
-   consumes specs from `specs/apps/demo/be/gherkin/` at all three test levels
+   consumes specs from `specs/apps/a-demo/be/gherkin/` at all three test levels
 6. **Contract consumption at all levels** — Every test target declares `generated-contracts/` in
    its `inputs` for cache invalidation; contract types are used in source code (already done per
    API contract adoption plan); Nx caching invalidates when contracts change
@@ -199,7 +199,7 @@ validate` to ensure all Gherkin scenarios have matching test implementations
 - Changing the contract codegen approach
 - Modifying E2E test infrastructure (Playwright, bddgen)
 - Changing which frontend is built in backend E2E workflows
-- Adding test:e2e targets to individual backend project.json files (E2E runs via demo-be-e2e)
+- Adding test:e2e targets to individual backend project.json files (E2E runs via a-demo-be-e2e)
 - Adding test:integration to frontend apps (unit + MSW is sufficient for frontends)
 
 ## Plan Structure

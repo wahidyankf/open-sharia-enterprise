@@ -1,4 +1,4 @@
-# Delivery Checklist: demo-be-rust-axum
+# Delivery Checklist: a-demo-be-rust-axum
 
 Execute phases in order. Each phase produces a working, committable state.
 
@@ -12,8 +12,8 @@ Execute phases in order. Each phase produces a working, committable state.
 - [x] Verify `sqlx-cli` is installed (`sqlx --version`)
 - [x] Verify `llvm-tools-preview` component is installed (`rustup component list --installed`)
 - [x] Verify `rhino-cli test-coverage validate` supports LCOV (it does — already used by
-      `organiclever-fe`, `demo-be-elixir-phoenix`, and `demo-be-fsharp-giraffe`)
-- [x] Verify `demo-be-e2e` Playwright config reads `BASE_URL` from env (it does)
+      `organiclever-fe`, `a-demo-be-elixir-phoenix`, and `a-demo-be-fsharp-giraffe`)
+- [x] Verify `a-demo-be-e2e` Playwright config reads `BASE_URL` from env (it does)
 - [x] Confirm cucumber-rs latest version supports async `World` and `#[given]`/`#[when]`/`#[then]`
       macros compatible with the shared `.feature` file syntax
 
@@ -21,9 +21,9 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 1: Project Scaffold
 
-**Commit**: `feat(demo-be-rust-axum): scaffold Rust/Axum project`
+**Commit**: `feat(a-demo-be-rust-axum): scaffold Rust/Axum project`
 
-- [x] Create `apps/demo-be-rust-axum/` directory structure per tech-docs.md
+- [x] Create `apps/a-demo-be-rust-axum/` directory structure per tech-docs.md
 - [x] Create `Cargo.toml` as a package (not workspace root) with all dependencies listed
       in the Dependencies Summary section of tech-docs.md
 - [x] Create `rust-toolchain.toml` pinning `channel = "stable"`
@@ -43,7 +43,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 2: Domain Types and Database
 
-**Commit**: `feat(demo-be-rust-axum): add domain types and SQLx database layer`
+**Commit**: `feat(a-demo-be-rust-axum): add domain types and SQLx database layer`
 
 - [x] Create `src/domain/types.rs` — enums: `Currency` (Usd/Idr), `Role` (User/Admin),
       `UserStatus` (Active/Inactive/Disabled/Locked), `EntryType` (Expense/Income), `SUPPORTED_UNITS`
@@ -71,7 +71,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 3: Health Endpoint
 
-**Commit**: `feat(demo-be-rust-axum): add /health endpoint`
+**Commit**: `feat(a-demo-be-rust-axum): add /health endpoint`
 
 - [x] Create `src/handlers/health.rs` — `get_health()` returns `Json(json!({"status": "UP"}))`
 - [x] Wire `GET /health` in `src/app.rs` router
@@ -84,7 +84,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 4: Auth — Register and Login
 
-**Commit**: `feat(demo-be-rust-axum): add register and login endpoints`
+**Commit**: `feat(a-demo-be-rust-axum): add register and login endpoints`
 
 - [x] Create `src/auth/jwt.rs` — access/refresh token encode/decode, unchecked decode
 - [x] Create `src/auth/password.rs` — bcrypt hash/verify via spawn_blocking
@@ -97,7 +97,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 5: Token Lifecycle and Management
 
-**Commit**: `feat(demo-be-rust-axum): add token lifecycle and management endpoints`
+**Commit**: `feat(a-demo-be-rust-axum): add token lifecycle and management endpoints`
 
 - [x] Add refresh, logout, logout_all to `src/handlers/auth.rs`
 - [x] Create `src/handlers/token.rs` — claims endpoint, JWKS endpoint
@@ -109,7 +109,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 6: User Account and Security
 
-**Commit**: `feat(demo-be-rust-axum): add user account and security endpoints`
+**Commit**: `feat(a-demo-be-rust-axum): add user account and security endpoints`
 
 - [x] Create `src/handlers/user.rs` — get_profile, update_profile, change_password, deactivate
       Note: change_password does NOT enforce password complexity (matches Java/Elixir behavior)
@@ -121,7 +121,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 7: Admin
 
-**Commit**: `feat(demo-be-rust-axum): add admin endpoints`
+**Commit**: `feat(a-demo-be-rust-axum): add admin endpoints`
 
 - [x] Create `src/handlers/admin.rs` — list_users, disable_user, enable_user, unlock_user,
       force_password_reset
@@ -132,7 +132,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 8: Expenses — CRUD and Currency
 
-**Commit**: `feat(demo-be-rust-axum): add expense CRUD and currency handling`
+**Commit**: `feat(a-demo-be-rust-axum): add expense CRUD and currency handling`
 
 - [x] Create `src/handlers/expense.rs` — create, list, get_by_id, update, delete, summary
 - [x] Wire expense routes in `src/app.rs`
@@ -143,7 +143,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 9: Expenses — Units, Reporting, Attachments
 
-**Commit**: `feat(demo-be-rust-axum): add unit handling, reporting, and attachments`
+**Commit**: `feat(a-demo-be-rust-axum): add unit handling, reporting, and attachments`
 
 - [x] Unit-of-measure support in expense handlers
 - [x] Create `src/handlers/report.rs` — P&L report with date range and currency filter
@@ -160,10 +160,10 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 10: Coverage and Quality Gate
 
-**Commit**: `fix(demo-be-rust-axum): achieve 90% coverage and pass quality gates`
+**Commit**: `fix(a-demo-be-rust-axum): achieve 90% coverage and pass quality gates`
 
 - [x] `cargo llvm-cov --lcov --output-path coverage/lcov.info` — generates LCOV report
-- [x] `rhino-cli test-coverage validate apps/demo-be-rust-axum/coverage/lcov.info 90` — PASS 90.27%
+- [x] `rhino-cli test-coverage validate apps/a-demo-be-rust-axum/coverage/lcov.info 90` — PASS 90.27%
 - [x] `cargo fmt --check` — passes
 - [x] `cargo clippy -- -D warnings` — passes (fixed: `from_str` renamed to `parse_str`,
       `create_attachment` parameters reduced via `NewAttachment` struct)
@@ -199,18 +199,18 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 11: Infra — Docker Compose
 
-- [x] Create `infra/dev/demo-be-rust-axum/Dockerfile.be.dev`
-- [x] Create `infra/dev/demo-be-rust-axum/Dockerfile.be.e2e`
-- [x] Create `infra/dev/demo-be-rust-axum/docker-compose.yml`
-- [x] Create `infra/dev/demo-be-rust-axum/docker-compose.e2e.yml`
-- [x] Create `infra/dev/demo-be-rust-axum/README.md`
+- [x] Create `infra/dev/a-demo-be-rust-axum/Dockerfile.be.dev`
+- [x] Create `infra/dev/a-demo-be-rust-axum/Dockerfile.be.e2e`
+- [x] Create `infra/dev/a-demo-be-rust-axum/docker-compose.yml`
+- [x] Create `infra/dev/a-demo-be-rust-axum/docker-compose.e2e.yml`
+- [x] Create `infra/dev/a-demo-be-rust-axum/README.md`
 - [x] Manual test: Docker Compose starts and health check passes
 
 ---
 
 ## Phase 12: GitHub Actions — E2E Workflow
 
-- [x] Create `.github/workflows/e2e-demo-be-rust-axum.yml`
+- [x] Create `.github/workflows/e2e-a-demo-be-rust-axum.yml`
 - [x] Trigger workflow_dispatch manually; verify green
 
 ---
@@ -219,7 +219,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 - [x] Add `dtolnay/rust-toolchain@stable` step to `main-ci.yml`
 - [x] Add `taiki-e/install-action@cargo-llvm-cov` step
-- [x] Add coverage upload step for `apps/demo-be-rust-axum/coverage/lcov.info`
+- [x] Add coverage upload step for `apps/a-demo-be-rust-axum/coverage/lcov.info`
 - [x] Push to `main`; verify `Main CI` workflow passes
 
 ---
@@ -228,8 +228,8 @@ Execute phases in order. Each phase produces a working, committable state.
 
 - [x] Update `CLAUDE.md`
 - [x] Update `README.md`
-- [x] Update `specs/apps/demo/be/README.md`
-- [x] Update `apps/demo-be-e2e/project.json`
+- [x] Update `specs/apps/a-demo/be/README.md`
+- [x] Update `apps/a-demo-be-e2e/project.json`
 
 ---
 
@@ -242,7 +242,7 @@ Execute phases in order. Each phase produces a working, committable state.
 - [x] `cargo fmt --check` clean
 - [x] `cargo build --release` succeeds
 - [x] Docker Compose stack starts and health check passes (manual verification)
-- [x] `e2e-demo-be-rust-axum.yml` workflow green (requires CI push)
+- [x] `e2e-a-demo-be-rust-axum.yml` workflow green (requires CI push)
 - [x] `main-ci.yml` workflow green (requires CI push)
 - [x] All documentation updated
 - [x] Move plan folder to `plans/done/`

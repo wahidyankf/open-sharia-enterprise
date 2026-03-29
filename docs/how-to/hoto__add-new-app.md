@@ -288,11 +288,11 @@ TypeScript path mappings are configured in `tsconfig.base.json`.
 
 ### Additional Checklist for New Demo Apps
 
-New `demo-be-*` and `demo-fe-*` apps must satisfy these additional requirements:
+New `a-demo-be-*` and `a-demo-fe-*` apps must satisfy these additional requirements:
 
 **Mandatory Nx targets** (all 7 required):
 
-- [ ] `codegen` — generates types + encoders/decoders from the OpenAPI spec at `specs/apps/demo/contracts/`
+- [ ] `codegen` — generates types + encoders/decoders from the OpenAPI spec at `specs/apps/a-demo/contracts/`
 - [ ] `typecheck` — verifies types compile; must include `dependsOn: ["codegen"]`
 - [ ] `lint` — static analysis / format check
 - [ ] `build` — production build; must include `dependsOn: ["codegen"]`
@@ -307,7 +307,7 @@ New `demo-be-*` and `demo-fe-*` apps must satisfy these additional requirements:
 **Canonical inputs for cache invalidation** (add to `test:unit` and `test:quick`):
 
 - Include `{projectRoot}/generated-contracts/**/*` (or `generated_contracts` for Python/Clojure)
-- Include `{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature` for backends
+- Include `{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature` for backends
 - Include language-specific source file globs (see `governance/development/infra/nx-targets.md` for per-language patterns)
 
 **See**: [Nx Target Standards](../../governance/development/infra/nx-targets.md) for canonical target names, caching rules, and per-language input patterns.

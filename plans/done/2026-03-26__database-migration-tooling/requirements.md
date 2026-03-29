@@ -2,20 +2,20 @@
 
 ## Current State
 
-| App                       | Language/Framework   | Current Approach                    | Migration Tool        | License          | Status      |
-| ------------------------- | -------------------- | ----------------------------------- | --------------------- | ---------------- | ----------- |
-| demo-be-java-springboot   | Java / Spring Boot   | Liquibase SQL changelogs            | Liquibase             | FSL-1.1-ALv2     | **Done**    |
-| demo-be-elixir-phoenix    | Elixir / Phoenix     | Ecto migrations                     | Ecto                  | Apache 2.0       | **Done**    |
-| demo-fs-ts-nextjs         | TypeScript / Next.js | Drizzle ORM migrations              | Drizzle               | Apache 2.0       | **Done**    |
-| demo-be-rust-axum         | Rust / Axum          | SQLx migrate feature                | SQLx                  | MIT / Apache 2.0 | **Done**    |
-| demo-be-csharp-aspnetcore | C# / ASP.NET Core    | EF Core `EnsureCreated`             | Needs migration files | MIT              | **Partial** |
-| demo-be-java-vertx        | Java / Vert.x        | `SchemaInitializer.java` inline DDL | None                  | —                | **Todo**    |
-| demo-be-python-fastapi    | Python / FastAPI     | SQLAlchemy `create_all()`           | None                  | —                | **Todo**    |
-| demo-be-golang-gin        | Go / Gin             | GORM `AutoMigrate()`                | None                  | —                | **Todo**    |
-| demo-be-kotlin-ktor       | Kotlin / Ktor        | Exposed `SchemaUtils.create()`      | None                  | —                | **Todo**    |
-| demo-be-fsharp-giraffe    | F# / Giraffe         | EF Core `EnsureCreated`             | None                  | —                | **Todo**    |
-| demo-be-clojure-pedestal  | Clojure / Pedestal   | `create-schema!` inline SQL         | None                  | —                | **Todo**    |
-| demo-be-ts-effect         | TypeScript / Effect  | `@effect/sql` inline DDL            | None                  | —                | **Todo**    |
+| App                         | Language/Framework   | Current Approach                    | Migration Tool        | License          | Status      |
+| --------------------------- | -------------------- | ----------------------------------- | --------------------- | ---------------- | ----------- |
+| a-demo-be-java-springboot   | Java / Spring Boot   | Liquibase SQL changelogs            | Liquibase             | FSL-1.1-ALv2     | **Done**    |
+| a-demo-be-elixir-phoenix    | Elixir / Phoenix     | Ecto migrations                     | Ecto                  | Apache 2.0       | **Done**    |
+| a-demo-fs-ts-nextjs         | TypeScript / Next.js | Drizzle ORM migrations              | Drizzle               | Apache 2.0       | **Done**    |
+| a-demo-be-rust-axum         | Rust / Axum          | SQLx migrate feature                | SQLx                  | MIT / Apache 2.0 | **Done**    |
+| a-demo-be-csharp-aspnetcore | C# / ASP.NET Core    | EF Core `EnsureCreated`             | Needs migration files | MIT              | **Partial** |
+| a-demo-be-java-vertx        | Java / Vert.x        | `SchemaInitializer.java` inline DDL | None                  | —                | **Todo**    |
+| a-demo-be-python-fastapi    | Python / FastAPI     | SQLAlchemy `create_all()`           | None                  | —                | **Todo**    |
+| a-demo-be-golang-gin        | Go / Gin             | GORM `AutoMigrate()`                | None                  | —                | **Todo**    |
+| a-demo-be-kotlin-ktor       | Kotlin / Ktor        | Exposed `SchemaUtils.create()`      | None                  | —                | **Todo**    |
+| a-demo-be-fsharp-giraffe    | F# / Giraffe         | EF Core `EnsureCreated`             | None                  | —                | **Todo**    |
+| a-demo-be-clojure-pedestal  | Clojure / Pedestal   | `create-schema!` inline SQL         | None                  | —                | **Todo**    |
+| a-demo-be-ts-effect         | TypeScript / Effect  | `@effect/sql` inline DDL            | None                  | —                | **Todo**    |
 
 ## Licensing Audit
 
@@ -59,17 +59,17 @@ rollback scripts are sufficient and already the pattern used by DbUp, goose, and
 
 ### Gap 1: No Versioned Migrations (7 apps)
 
-Seven apps use programmatic DDL for schema creation: `demo-be-java-vertx`,
-`demo-be-python-fastapi`, `demo-be-golang-gin`, `demo-be-kotlin-ktor`, `demo-be-fsharp-giraffe`,
-`demo-be-clojure-pedestal`, `demo-be-ts-effect`.
+Seven apps use programmatic DDL for schema creation: `a-demo-be-java-vertx`,
+`a-demo-be-python-fastapi`, `a-demo-be-golang-gin`, `a-demo-be-kotlin-ktor`, `a-demo-be-fsharp-giraffe`,
+`a-demo-be-clojure-pedestal`, `a-demo-be-ts-effect`.
 
 **Impact**: Cannot track which schema version is running, cannot roll back failed migrations,
 cannot incrementally alter schema without dropping and recreating tables.
 
 ### Gap 2: EnsureCreated Is Not a Migration System (2 apps)
 
-`demo-be-csharp-aspnetcore` uses EF Core but calls `Database.EnsureCreatedAsync()` instead of
-`Database.MigrateAsync()`. `demo-be-fsharp-giraffe` also uses EF Core `EnsureCreated()` in
+`a-demo-be-csharp-aspnetcore` uses EF Core but calls `Database.EnsureCreatedAsync()` instead of
+`Database.MigrateAsync()`. `a-demo-be-fsharp-giraffe` also uses EF Core `EnsureCreated()` in
 `Program.fs`. Both apps use `EnsureCreated` which creates the full schema idempotently but cannot
 handle incremental changes — if a column is added to a model, `EnsureCreated` does nothing because
 the table already exists. Note that the two apps take different solutions: the C# app upgrades EF
@@ -80,7 +80,7 @@ code-first and couple to C# class structure.
 
 ### Gap 3: Liquibase FSL-1.1-ALv2 Licensing Undocumented
 
-`demo-be-java-springboot` and (after this plan) `demo-be-java-vertx` use Liquibase, which switched
+`a-demo-be-java-springboot` and (after this plan) `a-demo-be-java-vertx` use Liquibase, which switched
 to the non-OSI Functional Source License (FSL-1.1-ALv2) in v5.0. While the FSL non-compete clause does
 not restrict this project (we are not building a competing migration tool), this licensing decision
 must be documented for future contributors.
@@ -142,21 +142,21 @@ Feature: Database migration tooling for all demo apps
 
     Examples:
       | app                        | tool                   |
-      | demo-be-java-vertx         | Liquibase              |
-      | demo-be-python-fastapi     | Alembic                |
-      | demo-be-golang-gin         | goose                  |
-      | demo-be-kotlin-ktor        | Flyway                 |
-      | demo-be-fsharp-giraffe     | DbUp                   |
-      | demo-be-clojure-pedestal   | Migratus               |
-      | demo-be-ts-effect          | @effect/sql Migrator   |
-      | demo-be-csharp-aspnetcore  | EF Core Migrations     |
+      | a-demo-be-java-vertx         | Liquibase              |
+      | a-demo-be-python-fastapi     | Alembic                |
+      | a-demo-be-golang-gin         | goose                  |
+      | a-demo-be-kotlin-ktor        | Flyway                 |
+      | a-demo-be-fsharp-giraffe     | DbUp                   |
+      | a-demo-be-clojure-pedestal   | Migratus               |
+      | a-demo-be-ts-effect          | @effect/sql Migrator   |
+      | a-demo-be-csharp-aspnetcore  | EF Core Migrations     |
 
   Scenario: Liquibase FSL-1.1-ALv2 licensing decision is documented
     Given the repository governance documentation
     When I look for a licensing decisions document
     Then it explains why Liquibase (FSL-1.1-ALv2, non-OSI) is accepted
     And it states that the FSL non-compete clause does not restrict this project
-    And it lists the affected apps (demo-be-java-springboot, demo-be-java-vertx)
+    And it lists the affected apps (a-demo-be-java-springboot, a-demo-be-java-vertx)
 
   Scenario Outline: Migrations produce correct schema (standard 5-table apps)
     Given the demo app "<app>" with an empty database
@@ -166,12 +166,12 @@ Feature: Database migration tooling for all demo apps
 
     Examples:
       | app                        |
-      | demo-be-java-vertx         |
-      | demo-be-python-fastapi     |
-      | demo-be-clojure-pedestal   |
-      | demo-be-ts-effect          |
+      | a-demo-be-java-vertx         |
+      | a-demo-be-python-fastapi     |
+      | a-demo-be-clojure-pedestal   |
+      | a-demo-be-ts-effect          |
 
-  # Note: demo-be-golang-gin also targets the 5-table standard (6 audit columns) but has a
+  # Note: a-demo-be-golang-gin also targets the 5-table standard (6 audit columns) but has a
   # table naming conflict requiring a choice between Option A (revoked_tokens) and Option B
   # (blacklisted_tokens). Its schema scenarios are covered by the conditional scenarios below.
 
@@ -187,60 +187,60 @@ Feature: Database migration tooling for all demo apps
 
     Examples:
       | app                        |
-      | demo-be-fsharp-giraffe     |
-      | demo-be-csharp-aspnetcore  |
+      | a-demo-be-fsharp-giraffe     |
+      | a-demo-be-csharp-aspnetcore  |
 
-  # Note on demo-be-ts-effect schema: The current `src/infrastructure/db/schema.ts` contains only 4
+  # Note on a-demo-be-ts-effect schema: The current `src/infrastructure/db/schema.ts` contains only 4
   # tables (users, expenses, attachments, revoked_tokens) — there is no separate `refresh_tokens`
   # table. Phase 4b migration files must include a `refresh_tokens` migration to align with the
   # 5-table standard shared by all other demo apps. The `revoked_tokens` table (token blacklist)
   # and `refresh_tokens` table (active token storage) serve different purposes and must both exist.
 
-  # Note on demo-be-java-vertx schema: The current `SchemaInitializer.java` creates only 4 tables
+  # Note on a-demo-be-java-vertx schema: The current `SchemaInitializer.java` creates only 4 tables
   # (users, expenses, attachments, revoked_tokens) — there is no `refresh_tokens` table. Phase 1a
   # SQL changelogs must include a `refresh_tokens` migration (e.g., `004-create-refresh-tokens.sql`)
   # to align with the 5-table standard. The revoked_tokens and refresh_tokens tables serve distinct
   # purposes and must both exist.
 
-  # Note on demo-be-python-fastapi schema: The current `models.py` defines only 4 models (users,
+  # Note on a-demo-be-python-fastapi schema: The current `models.py` defines only 4 models (users,
   # expenses, attachments, and a revoked/blacklisted tokens model) — there is no `RefreshToken`
   # model or `refresh_tokens` table. Phase 3a Alembic migration scripts must include a
   # `refresh_tokens` migration to align with the 5-table standard.
 
-  # Note on demo-be-clojure-pedestal schema: The current `schema.clj` defines DDL for only 4
+  # Note on a-demo-be-clojure-pedestal schema: The current `schema.clj` defines DDL for only 4
   # tables (users, expenses, attachments, revoked_tokens) — there is no `refresh_tokens` table.
   # Phase 3b Migratus migration pairs must include a `refresh_tokens` migration to align with
   # the 5-table standard.
 
-  # demo-be-kotlin-ktor: Schema option unresolved — two conditional scenarios below.
+  # a-demo-be-kotlin-ktor: Schema option unresolved — two conditional scenarios below.
   # Phase 1b MUST choose Option A or B and document it in the commit message.
   # Option A (recommended): Keep single `tokens` table with `token_type` column (schema divergence).
   # Option B: Split into `refresh_tokens` + `revoked_tokens` tables (standard 5-table schema).
 
-  Scenario: demo-be-kotlin-ktor migrations produce tokens table (Option A — schema divergence)
-    Given the demo app "demo-be-kotlin-ktor" with an empty database
+  Scenario: a-demo-be-kotlin-ktor migrations produce tokens table (Option A — schema divergence)
+    Given the demo app "a-demo-be-kotlin-ktor" with an empty database
     When the app starts and runs migrations (Option A chosen in Phase 1b)
     Then the database contains tables: users, tokens, expenses, attachments
     And the users table includes all 6 audit columns
     # Note: tokens table uses token_type column; no separate refresh_tokens or revoked_tokens tables.
     # This scenario applies only if Option A is chosen. If Option B is chosen, use the standard
-    # "Migrations produce correct schema" scenario above (add demo-be-kotlin-ktor to Examples).
+    # "Migrations produce correct schema" scenario above (add a-demo-be-kotlin-ktor to Examples).
 
-  # demo-be-golang-gin: Table naming conflict unresolved — two conditional scenarios below.
+  # a-demo-be-golang-gin: Table naming conflict unresolved — two conditional scenarios below.
   # Phase 4a MUST choose Option A or B and document it in the commit message.
   # Option A (recommended): Rename BlacklistedToken to RevokedToken; goose uses revoked_tokens.
   # Option B: Keep blacklisted_tokens; goose uses blacklisted_tokens (schema divergence).
 
-  Scenario: demo-be-golang-gin migrations produce revoked_tokens table (Option A — standard naming)
-    Given the demo app "demo-be-golang-gin" with an empty database
+  Scenario: a-demo-be-golang-gin migrations produce revoked_tokens table (Option A — standard naming)
+    Given the demo app "a-demo-be-golang-gin" with an empty database
     When the app starts and runs migrations (Option A chosen in Phase 4a)
     Then the database contains tables: users, refresh_tokens, revoked_tokens, expenses, attachments
     And the users table includes all 6 audit columns
     # This scenario applies only if Option A is chosen. If Option B is chosen, replace
     # revoked_tokens with blacklisted_tokens in the Then clause above.
 
-  Scenario: demo-be-golang-gin migrations produce blacklisted_tokens table (Option B — divergence)
-    Given the demo app "demo-be-golang-gin" with an empty database
+  Scenario: a-demo-be-golang-gin migrations produce blacklisted_tokens table (Option B — divergence)
+    Given the demo app "a-demo-be-golang-gin" with an empty database
     When the app starts and runs migrations (Option B chosen in Phase 4a)
     Then the database contains tables: users, refresh_tokens, blacklisted_tokens, expenses, attachments
     And the users table includes all 6 audit columns
@@ -255,19 +255,19 @@ Feature: Database migration tooling for all demo apps
 
     Examples:
       | app                        |
-      | demo-be-java-springboot    |
-      | demo-be-elixir-phoenix     |
-      | demo-fs-ts-nextjs          |
-      | demo-be-rust-axum          |
-      | demo-be-java-vertx         |
-      | demo-be-python-fastapi     |
-      | demo-be-golang-gin         |
-      | demo-be-kotlin-ktor        |
-      | demo-be-fsharp-giraffe     |
-      | demo-be-clojure-pedestal   |
-      | demo-be-ts-effect          |
-      | demo-be-csharp-aspnetcore  |
-  # Note: For demo-be-kotlin-ktor and demo-be-golang-gin, idempotency applies to whichever schema
+      | a-demo-be-java-springboot    |
+      | a-demo-be-elixir-phoenix     |
+      | a-demo-fs-ts-nextjs          |
+      | a-demo-be-rust-axum          |
+      | a-demo-be-java-vertx         |
+      | a-demo-be-python-fastapi     |
+      | a-demo-be-golang-gin         |
+      | a-demo-be-kotlin-ktor        |
+      | a-demo-be-fsharp-giraffe     |
+      | a-demo-be-clojure-pedestal   |
+      | a-demo-be-ts-effect          |
+      | a-demo-be-csharp-aspnetcore  |
+  # Note: For a-demo-be-kotlin-ktor and a-demo-be-golang-gin, idempotency applies to whichever schema
   # option was chosen in their respective phases (Option A or Option B). The idempotency guarantee
   # is tool-level and does not depend on which schema option is in use.
 
@@ -289,8 +289,8 @@ Feature: Database migration tooling for all demo apps
     Given all changes are pushed to main
     When the following GitHub Actions workflows run
     Then "main-ci.yml" passes
-    And all 11 "test-demo-be-*.yml" workflows pass (or pre-existing failures are documented)
-    And "test-demo-fs-ts-nextjs.yml" passes
+    And all 11 "test-a-demo-be-*.yml" workflows pass (or pre-existing failures are documented)
+    And "test-a-demo-fs-ts-nextjs.yml" passes
 ```
 
 ## Non-Functional Requirements

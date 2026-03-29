@@ -91,20 +91,20 @@ Blue columns (required) are always non-null and managed by JPA Auditing. Green c
 
 Each demo backend uses the idiomatic migration tool for its language and framework ecosystem. All tools must apply the same six audit columns to every table.
 
-| App                       | Migration Tool       | License          |
-| ------------------------- | -------------------- | ---------------- |
-| demo-be-java-springboot   | Liquibase            | FSL-1.1-ALv2     |
-| demo-be-java-vertx        | Liquibase            | FSL-1.1-ALv2     |
-| demo-be-elixir-phoenix    | Ecto                 | Apache 2.0       |
-| demo-be-python-fastapi    | Alembic              | MIT              |
-| demo-be-golang-gin        | goose                | MIT              |
-| demo-be-kotlin-ktor       | Flyway Community     | Apache 2.0       |
-| demo-be-fsharp-giraffe    | DbUp                 | MIT              |
-| demo-be-csharp-aspnetcore | EF Core Migrations   | MIT              |
-| demo-be-clojure-pedestal  | Migratus             | Apache 2.0       |
-| demo-be-ts-effect         | @effect/sql Migrator | MIT              |
-| demo-be-rust-axum         | SQLx                 | MIT / Apache 2.0 |
-| demo-fs-ts-nextjs         | Drizzle              | Apache 2.0       |
+| App                         | Migration Tool       | License          |
+| --------------------------- | -------------------- | ---------------- |
+| a-demo-be-java-springboot   | Liquibase            | FSL-1.1-ALv2     |
+| a-demo-be-java-vertx        | Liquibase            | FSL-1.1-ALv2     |
+| a-demo-be-elixir-phoenix    | Ecto                 | Apache 2.0       |
+| a-demo-be-python-fastapi    | Alembic              | MIT              |
+| a-demo-be-golang-gin        | goose                | MIT              |
+| a-demo-be-kotlin-ktor       | Flyway Community     | Apache 2.0       |
+| a-demo-be-fsharp-giraffe    | DbUp                 | MIT              |
+| a-demo-be-csharp-aspnetcore | EF Core Migrations   | MIT              |
+| a-demo-be-clojure-pedestal  | Migratus             | Apache 2.0       |
+| a-demo-be-ts-effect         | @effect/sql Migrator | MIT              |
+| a-demo-be-rust-axum         | SQLx                 | MIT / Apache 2.0 |
+| a-demo-fs-ts-nextjs         | Drizzle              | Apache 2.0       |
 
 For licensing decisions related to Liquibase's FSL-1.1-ALv2 licence (introduced in version 5.0), see [Licensing Decisions](../../../docs/explanation/software-engineering/licensing/ex-soen-li__licensing-decisions.md).
 
@@ -177,7 +177,7 @@ Annotate every entity with `@EntityListeners(AuditingEntityListener.class)`. Use
 
 ```java
 @NullMarked
-package com.demobejasb.auth.model;
+package com.ademobejasb.auth.model;
 
 import jakarta.persistence.*;
 import org.jspecify.annotations.Nullable;

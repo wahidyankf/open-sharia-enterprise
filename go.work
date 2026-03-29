@@ -1,8 +1,8 @@
 go 1.26
 
 use (
+	./apps/a-demo-be-golang-gin
 	./apps/ayokoding-cli
-	./apps/demo-be-golang-gin
 	./apps/oseplatform-cli
 	./apps/rhino-cli
 	./libs/golang-commons

@@ -22,12 +22,12 @@ threshold validation. The tool outputs aggregate coverage percentage and pass/fa
 
 ### Coverage Format Map (All Projects)
 
-| Format           | Projects                                                                                                                                                                                                                                                                                                                                   |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Go cover.out** | rhino-cli, ayokoding-cli, oseplatform-cli, demo-be-golang-gin, golang-commons, hugo-commons                                                                                                                                                                                                                                                |
-| **LCOV**         | demo-be-elixir-phoenix, demo-be-python-fastapi, demo-be-rust-axum, demo-be-fsharp-giraffe, demo-be-csharp-aspnetcore, demo-be-ts-effect, demo-be-clojure-pedestal, demo-fe-ts-nextjs, demo-fe-ts-tanstack-start, demo-fe-dart-flutterweb, organiclever-fe, elixir-cabbage, elixir-gherkin, elixir-openapi-codegen, clojure-openapi-codegen |
-| **JaCoCo XML**   | demo-be-java-springboot, demo-be-java-vertx, demo-be-kotlin-ktor (Kover `report.xml` -- no "jacoco" in filename, uses content-based detection)                                                                                                                                                                                             |
-| **No coverage**  | ayokoding-fs, oseplatform-fs (Hugo sites), demo-be-e2e, demo-fe-e2e, organiclever-fe-e2e (E2E test suites)                                                                                                                                                                                                                                 |
+| Format           | Projects                                                                                                                                                                                                                                                                                                                                                       |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Go cover.out** | rhino-cli, ayokoding-cli, oseplatform-cli, a-demo-be-golang-gin, golang-commons, hugo-commons                                                                                                                                                                                                                                                                  |
+| **LCOV**         | a-demo-be-elixir-phoenix, a-demo-be-python-fastapi, a-demo-be-rust-axum, a-demo-be-fsharp-giraffe, a-demo-be-csharp-aspnetcore, a-demo-be-ts-effect, a-demo-be-clojure-pedestal, a-demo-fe-ts-nextjs, a-demo-fe-ts-tanstack-start, a-demo-fe-dart-flutterweb, organiclever-fe, elixir-cabbage, elixir-gherkin, elixir-openapi-codegen, clojure-openapi-codegen |
+| **JaCoCo XML**   | a-demo-be-java-springboot, a-demo-be-java-vertx, a-demo-be-kotlin-ktor (Kover `report.xml` -- no "jacoco" in filename, uses content-based detection)                                                                                                                                                                                                           |
+| **No coverage**  | ayokoding-fs, oseplatform-fs (Hugo sites), a-demo-be-e2e, a-demo-fe-e2e, organiclever-fe-e2e (E2E test suites)                                                                                                                                                                                                                                                 |
 
 All projects are already covered by the existing 3 formats. Cobertura XML (R1) adds future-proofing
 for external use cases (GitLab CI, Python default, .NET Coverlet default).
@@ -63,14 +63,14 @@ for external use cases (GitLab CI, Python default, .NET Coverlet default).
 
 ### Projects Affected
 
-| Component                    | Change                                         |
-| ---------------------------- | ---------------------------------------------- |
-| `apps/rhino-cli/`            | New parsers, commands, flags, tests            |
-| `apps/rhino-cli/README.md`   | Document new features                          |
-| All `demo-be-*/project.json` | Potential spec-coverage integration            |
-| All `demo-fe-*/project.json` | Potential spec-coverage integration (FE specs) |
-| `demo-be-e2e/project.json`   | Potential `--shared-steps` spec-coverage       |
-| `demo-fe-e2e/project.json`   | Potential `--shared-steps` spec-coverage       |
+| Component                      | Change                                         |
+| ------------------------------ | ---------------------------------------------- |
+| `apps/rhino-cli/`              | New parsers, commands, flags, tests            |
+| `apps/rhino-cli/README.md`     | Document new features                          |
+| All `a-demo-be-*/project.json` | Potential spec-coverage integration            |
+| All `a-demo-fe-*/project.json` | Potential spec-coverage integration (FE specs) |
+| `a-demo-be-e2e/project.json`   | Potential `--shared-steps` spec-coverage       |
+| `a-demo-fe-e2e/project.json`   | Potential `--shared-steps` spec-coverage       |
 
 ### Version Bump
 

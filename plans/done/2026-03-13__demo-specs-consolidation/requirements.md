@@ -5,7 +5,7 @@
 ### US-1: Unified Demo Spec Directory
 
 As a developer working on demo apps,
-I want backend and frontend specs under a single `specs/apps/demo/` root,
+I want backend and frontend specs under a single `specs/apps/a-demo/` root,
 So that I can find all demo-related specifications in one place.
 
 **Acceptance Criteria:**
@@ -15,12 +15,12 @@ Feature: Unified demo spec directory
 
   Scenario: New directory structure exists
     Given the specs consolidation is complete
-    Then the directory "specs/apps/demo/" exists
-    And the directory "specs/apps/demo/c4/" exists
-    And the directory "specs/apps/demo/be/" exists
-    And the directory "specs/apps/demo/be/gherkin/" exists
-    And the directory "specs/apps/demo/fe/" exists
-    And the directory "specs/apps/demo/fe/gherkin/" exists
+    Then the directory "specs/apps/a-demo/" exists
+    And the directory "specs/apps/a-demo/c4/" exists
+    And the directory "specs/apps/a-demo/be/" exists
+    And the directory "specs/apps/a-demo/be/gherkin/" exists
+    And the directory "specs/apps/a-demo/fe/" exists
+    And the directory "specs/apps/a-demo/fe/gherkin/" exists
 
   Scenario: Old directories are removed
     Given the specs consolidation is complete
@@ -29,12 +29,12 @@ Feature: Unified demo spec directory
 
   Scenario: Every directory has a README
     Given the specs consolidation is complete
-    Then "specs/apps/demo/README.md" exists
-    And "specs/apps/demo/c4/README.md" exists
-    And "specs/apps/demo/be/README.md" exists
-    And "specs/apps/demo/be/gherkin/README.md" exists
-    And "specs/apps/demo/fe/README.md" exists
-    And "specs/apps/demo/fe/gherkin/README.md" exists
+    Then "specs/apps/a-demo/README.md" exists
+    And "specs/apps/a-demo/c4/README.md" exists
+    And "specs/apps/a-demo/be/README.md" exists
+    And "specs/apps/a-demo/be/gherkin/README.md" exists
+    And "specs/apps/a-demo/fe/README.md" exists
+    And "specs/apps/a-demo/fe/gherkin/README.md" exists
 ```
 
 ### US-2: Unified C4 Architecture Diagrams
@@ -49,13 +49,13 @@ So that I understand how the full demo application fits together.
 Feature: Unified C4 diagrams
 
   Scenario: Context diagram shows full system
-    Given the C4 context diagram at "specs/apps/demo/c4/context.md"
+    Given the C4 context diagram at "specs/apps/a-demo/c4/context.md"
     Then it shows the "Demo Application" as the main system
     And it shows 4 external actors (End User, Administrator, Operations Engineer, Service Integrator)
     And it shows the frontend and backend as parts of one system
 
   Scenario: Container diagram shows all containers
-    Given the C4 container diagram at "specs/apps/demo/c4/container.md"
+    Given the C4 container diagram at "specs/apps/a-demo/c4/container.md"
     Then it shows the SPA container
     And it shows the Static File Server
     And it shows the REST API container
@@ -64,8 +64,8 @@ Feature: Unified C4 diagrams
     And it shows how the SPA communicates with the REST API
 
   Scenario: Component diagrams remain separate
-    Given "specs/apps/demo/c4/component-be.md" exists
-    And "specs/apps/demo/c4/component-fe.md" exists
+    Given "specs/apps/a-demo/c4/component-be.md" exists
+    And "specs/apps/a-demo/c4/component-fe.md" exists
     Then the BE component diagram shows handlers, middleware, services, repositories
     And the FE component diagram shows pages, state, API client, guards
 ```
@@ -83,12 +83,12 @@ Feature: Specs validation gate
 
   Scenario: Merged specs pass OCD validation
     Given the directory restructuring is complete (Phases 1-3)
-    And the merged specs are at "specs/apps/demo/"
-    When the specs-validation workflow runs in ocd mode for "specs/apps/demo"
+    And the merged specs are at "specs/apps/a-demo/"
+    When the specs-validation workflow runs in ocd mode for "specs/apps/a-demo"
     Then zero findings remain at all criticality levels
 
   Scenario: Cross-spec consistency between be and fe
-    Given both "specs/apps/demo/be/" and "specs/apps/demo/fe/" contain gherkin specs
+    Given both "specs/apps/a-demo/be/" and "specs/apps/a-demo/fe/" contain gherkin specs
     When cross-folder consistency is checked
     Then shared domains (authentication, expenses, health, etc.) align between be and fe
     And C4 diagrams reference consistent actors across L1, L2, and L3
@@ -101,7 +101,7 @@ Feature: Specs validation gate
 ### US-4: All Backend References Updated
 
 As a developer building a demo-be backend,
-I want all paths pointing to `specs/apps/demo-be/gherkin/` updated to `specs/apps/demo/be/gherkin/`,
+I want all paths pointing to `specs/apps/demo-be/gherkin/` updated to `specs/apps/a-demo/be/gherkin/`,
 So that test discovery, Docker mounts, and build configs continue to work.
 
 **Acceptance Criteria:**
@@ -115,32 +115,32 @@ Feature: Backend path migration
     Then no results are found outside of "plans/done/"
 
   Scenario: All 11 backend project.json files updated
-    Given each demo-be-* app has a project.json
-    Then every "specs/apps/demo-be" path is replaced with "specs/apps/demo/be"
+    Given each a-demo-be-* app has a project.json
+    Then every "specs/apps/demo-be" path is replaced with "specs/apps/a-demo/be"
 
   Scenario: Docker volume mounts updated
     Given each backend has docker-compose files
-    Then volume mounts use "specs/apps/demo/be/gherkin" instead of "specs/apps/demo-be/gherkin"
+    Then volume mounts use "specs/apps/a-demo/be/gherkin" instead of "specs/apps/demo-be/gherkin"
 
   Scenario: Test runners discover specs at new path
     Given the path migration is complete
-    Then "nx run demo-be-java-springboot:test:quick" passes
-    And "nx run demo-be-golang-gin:test:quick" passes
-    And "nx run demo-be-python-fastapi:test:quick" passes
-    And "nx run demo-be-rust-axum:test:quick" passes
-    And "nx run demo-be-ts-effect:test:quick" passes
-    And "nx run demo-be-elixir-phoenix:test:quick" passes
-    And "nx run demo-be-fsharp-giraffe:test:quick" passes
-    And "nx run demo-be-csharp-aspnetcore:test:quick" passes
-    And "nx run demo-be-kotlin-ktor:test:quick" passes
-    And "nx run demo-be-java-vertx:test:quick" passes
-    And "nx run demo-be-clojure-pedestal:test:quick" passes
+    Then "nx run a-demo-be-java-springboot:test:quick" passes
+    And "nx run a-demo-be-golang-gin:test:quick" passes
+    And "nx run a-demo-be-python-fastapi:test:quick" passes
+    And "nx run a-demo-be-rust-axum:test:quick" passes
+    And "nx run a-demo-be-ts-effect:test:quick" passes
+    And "nx run a-demo-be-elixir-phoenix:test:quick" passes
+    And "nx run a-demo-be-fsharp-giraffe:test:quick" passes
+    And "nx run a-demo-be-csharp-aspnetcore:test:quick" passes
+    And "nx run a-demo-be-kotlin-ktor:test:quick" passes
+    And "nx run a-demo-be-java-vertx:test:quick" passes
+    And "nx run a-demo-be-clojure-pedestal:test:quick" passes
 ```
 
 ### US-5: All Frontend References Updated
 
 As a developer preparing to build a demo-fe frontend,
-I want all paths pointing to `specs/apps/demo-fe/` updated to `specs/apps/demo/fe/`,
+I want all paths pointing to `specs/apps/demo-fe/` updated to `specs/apps/a-demo/fe/`,
 So that future frontend implementations can consume specs from the new location.
 
 **Acceptance Criteria:**
@@ -155,12 +155,12 @@ Feature: Frontend path migration
 
   Scenario: FE gherkin specs accessible at new path
     Given the consolidation is complete
-    Then the directory "specs/apps/demo/fe/gherkin/" exists
+    Then the directory "specs/apps/a-demo/fe/gherkin/" exists
     And it contains the same feature files as the old "specs/apps/demo-fe/gherkin/"
 
   Scenario: FE C4 component diagram at new path
     Given the consolidation is complete
-    Then "specs/apps/demo/c4/component-fe.md" exists
+    Then "specs/apps/a-demo/c4/component-fe.md" exists
     And it describes the frontend component architecture
 ```
 
@@ -187,17 +187,17 @@ Feature: Full CI validation
 
   Scenario: Local test:quick passes for all 11 backends
     Given the consolidation is complete
-    Then "nx run demo-be-java-springboot:test:quick" passes
-    And "nx run demo-be-java-vertx:test:quick" passes
-    And "nx run demo-be-kotlin-ktor:test:quick" passes
-    And "nx run demo-be-golang-gin:test:quick" passes
-    And "nx run demo-be-python-fastapi:test:quick" passes
-    And "nx run demo-be-rust-axum:test:quick" passes
-    And "nx run demo-be-ts-effect:test:quick" passes
-    And "nx run demo-be-fsharp-giraffe:test:quick" passes
-    And "nx run demo-be-elixir-phoenix:test:quick" passes
-    And "nx run demo-be-csharp-aspnetcore:test:quick" passes
-    And "nx run demo-be-clojure-pedestal:test:quick" passes
+    Then "nx run a-demo-be-java-springboot:test:quick" passes
+    And "nx run a-demo-be-java-vertx:test:quick" passes
+    And "nx run a-demo-be-kotlin-ktor:test:quick" passes
+    And "nx run a-demo-be-golang-gin:test:quick" passes
+    And "nx run a-demo-be-python-fastapi:test:quick" passes
+    And "nx run a-demo-be-rust-axum:test:quick" passes
+    And "nx run a-demo-be-ts-effect:test:quick" passes
+    And "nx run a-demo-be-fsharp-giraffe:test:quick" passes
+    And "nx run a-demo-be-elixir-phoenix:test:quick" passes
+    And "nx run a-demo-be-csharp-aspnetcore:test:quick" passes
+    And "nx run a-demo-be-clojure-pedestal:test:quick" passes
 
   Scenario: GitHub Actions Main CI passes
     Given the consolidation is pushed to main

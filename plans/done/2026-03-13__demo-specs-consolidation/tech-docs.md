@@ -4,27 +4,27 @@
 
 ### Core Spec Paths
 
-| Old Path                      | New Path                       |
-| ----------------------------- | ------------------------------ |
-| `specs/apps/demo-be/`         | `specs/apps/demo/be/`          |
-| `specs/apps/demo-be/gherkin/` | `specs/apps/demo/be/gherkin/`  |
-| `specs/apps/demo-be/c4/`      | `specs/apps/demo/c4/` (merged) |
-| `specs/apps/demo-fe/`         | `specs/apps/demo/fe/`          |
-| `specs/apps/demo-fe/gherkin/` | `specs/apps/demo/fe/gherkin/`  |
-| `specs/apps/demo-fe/c4/`      | `specs/apps/demo/c4/` (merged) |
+| Old Path                      | New Path                         |
+| ----------------------------- | -------------------------------- |
+| `specs/apps/demo-be/`         | `specs/apps/a-demo/be/`          |
+| `specs/apps/demo-be/gherkin/` | `specs/apps/a-demo/be/gherkin/`  |
+| `specs/apps/demo-be/c4/`      | `specs/apps/a-demo/c4/` (merged) |
+| `specs/apps/demo-fe/`         | `specs/apps/a-demo/fe/`          |
+| `specs/apps/demo-fe/gherkin/` | `specs/apps/a-demo/fe/gherkin/`  |
+| `specs/apps/demo-fe/c4/`      | `specs/apps/a-demo/c4/` (merged) |
 
 ### Path Forms Across Codebase
 
 The old path `specs/apps/demo-be/gherkin` appears in three forms that must all be updated:
 
 1. **Relative from app root**: `../../specs/apps/demo-be/gherkin` (project.json, test configs)
-   - New: `../../specs/apps/demo/be/gherkin`
+   - New: `../../specs/apps/a-demo/be/gherkin`
 
 2. **Absolute container path**: `/specs/apps/demo-be/gherkin` (Docker volume mounts, Elixir config)
-   - New: `/specs/apps/demo/be/gherkin`
+   - New: `/specs/apps/a-demo/be/gherkin`
 
 3. **Relative from repo root**: `specs/apps/demo-be/gherkin` (documentation, governance)
-   - New: `specs/apps/demo/be/gherkin`
+   - New: `specs/apps/a-demo/be/gherkin`
 
 ## C4 Merge Strategy
 
@@ -66,65 +66,65 @@ Both reference each other as external systems (dashed boxes).
 
 These files contain paths used by Nx to locate specs for `test:unit` and `test:integration`:
 
-| File                                          | Path Form | Notes                        |
-| --------------------------------------------- | --------- | ---------------------------- |
-| `apps/demo-be-java-springboot/project.json`   | relative  | specs input for test targets |
-| `apps/demo-be-java-vertx/project.json`        | relative  | specs input for test targets |
-| `apps/demo-be-kotlin-ktor/project.json`       | relative  | specs input for test targets |
-| `apps/demo-be-golang-gin/project.json`        | relative  | specs input for test targets |
-| `apps/demo-be-python-fastapi/project.json`    | relative  | specs input for test targets |
-| `apps/demo-be-rust-axum/project.json`         | relative  | specs input for test targets |
-| `apps/demo-be-ts-effect/project.json`         | relative  | specs input for test targets |
-| `apps/demo-be-fsharp-giraffe/project.json`    | relative  | specs input for test targets |
-| `apps/demo-be-elixir-phoenix/project.json`    | relative  | specs input for test targets |
-| `apps/demo-be-csharp-aspnetcore/project.json` | relative  | specs input for test targets |
-| `apps/demo-be-clojure-pedestal/project.json`  | relative  | specs input for test targets |
-| `apps/demo-be-e2e/playwright.config.ts`       | relative  | E2E spec discovery           |
+| File                                            | Path Form | Notes                        |
+| ----------------------------------------------- | --------- | ---------------------------- |
+| `apps/a-demo-be-java-springboot/project.json`   | relative  | specs input for test targets |
+| `apps/a-demo-be-java-vertx/project.json`        | relative  | specs input for test targets |
+| `apps/a-demo-be-kotlin-ktor/project.json`       | relative  | specs input for test targets |
+| `apps/a-demo-be-golang-gin/project.json`        | relative  | specs input for test targets |
+| `apps/a-demo-be-python-fastapi/project.json`    | relative  | specs input for test targets |
+| `apps/a-demo-be-rust-axum/project.json`         | relative  | specs input for test targets |
+| `apps/a-demo-be-ts-effect/project.json`         | relative  | specs input for test targets |
+| `apps/a-demo-be-fsharp-giraffe/project.json`    | relative  | specs input for test targets |
+| `apps/a-demo-be-elixir-phoenix/project.json`    | relative  | specs input for test targets |
+| `apps/a-demo-be-csharp-aspnetcore/project.json` | relative  | specs input for test targets |
+| `apps/a-demo-be-clojure-pedestal/project.json`  | relative  | specs input for test targets |
+| `apps/a-demo-be-e2e/playwright.config.ts`       | relative  | E2E spec discovery           |
 
 ### Category 2: Build Configuration (HIGH priority)
 
-| File                                        | Path Form | Notes                               |
-| ------------------------------------------- | --------- | ----------------------------------- |
-| `apps/demo-be-java-springboot/pom.xml`      | relative  | maven-resources-plugin copies specs |
-| `apps/demo-be-java-vertx/pom.xml`           | relative  | maven-resources-plugin copies specs |
-| `apps/demo-be-kotlin-ktor/build.gradle.kts` | relative  | Gradle copies specs                 |
+| File                                          | Path Form | Notes                               |
+| --------------------------------------------- | --------- | ----------------------------------- |
+| `apps/a-demo-be-java-springboot/pom.xml`      | relative  | maven-resources-plugin copies specs |
+| `apps/a-demo-be-java-vertx/pom.xml`           | relative  | maven-resources-plugin copies specs |
+| `apps/a-demo-be-kotlin-ktor/build.gradle.kts` | relative  | Gradle copies specs                 |
 
 ### Category 3: Test Runner Configuration (HIGH priority)
 
-| File                                                            | Path Form | Notes                           |
-| --------------------------------------------------------------- | --------- | ------------------------------- |
-| `apps/demo-be-golang-gin/internal/bdd/suite_test.go`            | relative  | Godog suite features path       |
-| `apps/demo-be-golang-gin/internal/integration/suite_test.go`    | relative  | Godog suite features path       |
-| `apps/demo-be-golang-gin/internal/integration_pg/suite_test.go` | relative  | Godog suite features path       |
-| `apps/demo-be-python-fastapi/tests/unit/conftest.py`            | relative  | GHERKIN_ROOT                    |
-| `apps/demo-be-python-fastapi/tests/integration/conftest.py`     | relative  | GHERKIN_ROOT                    |
-| `apps/demo-be-rust-axum/tests/unit/main.rs`                     | relative  | Cucumber features path          |
-| `apps/demo-be-rust-axum/tests/integration/main.rs`              | absolute  | Cucumber features path (Docker) |
-| `apps/demo-be-ts-effect/.cucumber.js`                           | relative  | CucumberJS paths config         |
-| `apps/demo-be-ts-effect/cucumber.js`                            | relative  | CucumberJS paths config         |
-| `apps/demo-be-ts-effect/cucumber.unit.js`                       | relative  | CucumberJS paths config         |
-| `apps/demo-be-elixir-phoenix/config/test.exs`                   | relative  | Cabbage features path           |
-| `apps/demo-be-elixir-phoenix/config/integration.exs`            | absolute  | Docker container path           |
+| File                                                              | Path Form | Notes                           |
+| ----------------------------------------------------------------- | --------- | ------------------------------- |
+| `apps/a-demo-be-golang-gin/internal/bdd/suite_test.go`            | relative  | Godog suite features path       |
+| `apps/a-demo-be-golang-gin/internal/integration/suite_test.go`    | relative  | Godog suite features path       |
+| `apps/a-demo-be-golang-gin/internal/integration_pg/suite_test.go` | relative  | Godog suite features path       |
+| `apps/a-demo-be-python-fastapi/tests/unit/conftest.py`            | relative  | GHERKIN_ROOT                    |
+| `apps/a-demo-be-python-fastapi/tests/integration/conftest.py`     | relative  | GHERKIN_ROOT                    |
+| `apps/a-demo-be-rust-axum/tests/unit/main.rs`                     | relative  | Cucumber features path          |
+| `apps/a-demo-be-rust-axum/tests/integration/main.rs`              | absolute  | Cucumber features path (Docker) |
+| `apps/a-demo-be-ts-effect/.cucumber.js`                           | relative  | CucumberJS paths config         |
+| `apps/a-demo-be-ts-effect/cucumber.js`                            | relative  | CucumberJS paths config         |
+| `apps/a-demo-be-ts-effect/cucumber.unit.js`                       | relative  | CucumberJS paths config         |
+| `apps/a-demo-be-elixir-phoenix/config/test.exs`                   | relative  | Cabbage features path           |
+| `apps/a-demo-be-elixir-phoenix/config/integration.exs`            | absolute  | Docker container path           |
 
 ### Category 4: Docker Configuration (HIGH priority)
 
-| File                                                         | Path Form | Notes                     |
-| ------------------------------------------------------------ | --------- | ------------------------- |
-| `apps/demo-be-fsharp-giraffe/Dockerfile.integration`         | absolute  | COPY specs path           |
-| `apps/demo-be-csharp-aspnetcore/Dockerfile.integration`      | absolute  | COPY specs path           |
-| `apps/demo-be-kotlin-ktor/Dockerfile.integration`            | absolute  | CMD mkdir/cp specs path   |
-| `apps/demo-be-ts-effect/Dockerfile.integration`              | absolute  | CMD cp specs path         |
-| `apps/demo-be-clojure-pedestal/Dockerfile.integration`       | absolute  | COPY/CMD specs path       |
-| `apps/demo-be-python-fastapi/docker-compose.integration.yml` | relative  | volume mount              |
-| `infra/dev/demo-be-*/docker-compose.yml`                     | relative  | volume mounts (~10 files) |
+| File                                                           | Path Form | Notes                     |
+| -------------------------------------------------------------- | --------- | ------------------------- |
+| `apps/a-demo-be-fsharp-giraffe/Dockerfile.integration`         | absolute  | COPY specs path           |
+| `apps/a-demo-be-csharp-aspnetcore/Dockerfile.integration`      | absolute  | COPY specs path           |
+| `apps/a-demo-be-kotlin-ktor/Dockerfile.integration`            | absolute  | CMD mkdir/cp specs path   |
+| `apps/a-demo-be-ts-effect/Dockerfile.integration`              | absolute  | CMD cp specs path         |
+| `apps/a-demo-be-clojure-pedestal/Dockerfile.integration`       | absolute  | COPY/CMD specs path       |
+| `apps/a-demo-be-python-fastapi/docker-compose.integration.yml` | relative  | volume mount              |
+| `infra/dev/a-demo-be-*/docker-compose.yml`                     | relative  | volume mounts (~10 files) |
 
 ### Category 5: Documentation (LOW priority)
 
 | File                                                                                                   | Notes                                   |
 | ------------------------------------------------------------------------------------------------------ | --------------------------------------- |
 | `CLAUDE.md`                                                                                            | Three-level testing standard references |
-| `apps/demo-be-*/README.md`                                                                             | ~8 backend app READMEs                  |
-| `apps/demo-be-e2e/README.md`                                                                           | E2E test suite README                   |
+| `apps/a-demo-be-*/README.md`                                                                           | ~8 backend app READMEs                  |
+| `apps/a-demo-be-e2e/README.md`                                                                         | E2E test suite README                   |
 | `governance/development/infra/bdd-spec-test-mapping.md`                                                | Spec mapping convention                 |
 | `governance/development/quality/three-level-testing-standard.md`                                       | Testing standard                        |
 | `governance/development/infra/nx-targets.md`                                                           | Nx target docs                          |
@@ -135,8 +135,8 @@ These files contain paths used by Nx to locate specs for `test:unit` and `test:i
 | `.claude/agents/specs-checker.md`                                                                      | Example folder paths                    |
 | `.claude/agents/specs-maker.md`                                                                        | Example target paths                    |
 | `.claude/agents/specs-fixer.md`                                                                        | Example paths                           |
-| `specs/apps/demo/be/README.md`                                                                         | New — adapted from old demo-be README   |
-| `specs/apps/demo/fe/README.md`                                                                         | New — adapted from old demo-fe README   |
+| `specs/apps/a-demo/be/README.md`                                                                       | New — adapted from old demo-be README   |
+| `specs/apps/a-demo/fe/README.md`                                                                       | New — adapted from old demo-fe README   |
 
 ### Category 6: Historical Plans (LOW priority — update only if trivial)
 
@@ -152,13 +152,13 @@ but do not restructure completed plan content.
 mkdir -p specs/apps/demo
 
 # Move BE specs (gherkin only — C4 will be merged separately)
-mkdir -p specs/apps/demo/be
-git mv specs/apps/demo-be/gherkin specs/apps/demo/be/gherkin
-git mv specs/apps/demo-be/.gitignore specs/apps/demo/be/ 2>/dev/null || true
+mkdir -p specs/apps/a-demo/be
+git mv specs/apps/demo-be/gherkin specs/apps/a-demo/be/gherkin
+git mv specs/apps/demo-be/.gitignore specs/apps/a-demo/be/ 2>/dev/null || true
 
 # Move FE specs (gherkin only)
-mkdir -p specs/apps/demo/fe
-git mv specs/apps/demo-fe/gherkin specs/apps/demo/fe/gherkin
+mkdir -p specs/apps/a-demo/fe
+git mv specs/apps/demo-fe/gherkin specs/apps/a-demo/fe/gherkin
 
 # Remove old directories (after extracting content)
 git rm -r specs/apps/demo-be/
@@ -167,19 +167,19 @@ git rm -r specs/apps/demo-fe/
 
 ### Step 2: Create Unified C4
 
-Write new merged C4 diagrams at `specs/apps/demo/c4/`. Do not `git mv` the old C4 files since
+Write new merged C4 diagrams at `specs/apps/a-demo/c4/`. Do not `git mv` the old C4 files since
 the content is being merged/rewritten.
 
 ### Step 3: Create README Files
 
 Write new README.md files at every level:
 
-- `specs/apps/demo/README.md` — unified overview
-- `specs/apps/demo/c4/README.md` — C4 index
-- `specs/apps/demo/be/README.md` — adapted from old demo-be README
-- `specs/apps/demo/be/gherkin/README.md` — already exists (moved)
-- `specs/apps/demo/fe/README.md` — adapted from old demo-fe README
-- `specs/apps/demo/fe/gherkin/README.md` — already exists (moved)
+- `specs/apps/a-demo/README.md` — unified overview
+- `specs/apps/a-demo/c4/README.md` — C4 index
+- `specs/apps/a-demo/be/README.md` — adapted from old demo-be README
+- `specs/apps/a-demo/be/gherkin/README.md` — already exists (moved)
+- `specs/apps/a-demo/fe/README.md` — adapted from old demo-fe README
+- `specs/apps/a-demo/fe/gherkin/README.md` — already exists (moved)
 
 ### Step 4: Specs Validation Gate (OCD Mode)
 
@@ -187,7 +187,7 @@ Before touching any application code, validate the merged specs are internally c
 
 ```bash
 # Run specs-validation workflow in OCD mode
-# Validates: specs/apps/demo/ and all subfolders (be/, fe/, c4/)
+# Validates: specs/apps/a-demo/ and all subfolders (be/, fe/, c4/)
 # Mode: ocd (fix ALL levels — CRITICAL, HIGH, MEDIUM, LOW)
 # Cross-folder: checks be/ ↔ fe/ consistency (shared domains, actors, terminology)
 ```
@@ -201,7 +201,7 @@ Before touching any application code, validate the merged specs are internally c
 - `be/` ↔ `fe/` consistency (shared domains like authentication, expenses should align)
 - Spec-to-implementation alignment (README references to non-existent implementations)
 
-**Why here**: Fixing spec issues in isolation (only `specs/apps/demo/`) is cheap. After rewiring
+**Why here**: Fixing spec issues in isolation (only `specs/apps/a-demo/`) is cheap. After rewiring
 107+ files across 11 backends, any spec fix would require re-validating everything downstream.
 
 Commit any fixes from the validation before proceeding.
@@ -211,15 +211,15 @@ Commit any fixes from the validation before proceeding.
 Run targeted replacements across the codebase:
 
 ```
-specs/apps/demo-be/gherkin  →  specs/apps/demo/be/gherkin
-specs/apps/demo-be/c4       →  specs/apps/demo/c4
-specs/apps/demo-be/          →  specs/apps/demo/be/
-specs/apps/demo-be            →  specs/apps/demo/be
-/specs/apps/demo-be/gherkin  →  /specs/apps/demo/be/gherkin
-specs/apps/demo-fe/gherkin   →  specs/apps/demo/fe/gherkin
-specs/apps/demo-fe/c4        →  specs/apps/demo/c4
-specs/apps/demo-fe/           →  specs/apps/demo/fe/
-specs/apps/demo-fe            →  specs/apps/demo/fe
+specs/apps/demo-be/gherkin  →  specs/apps/a-demo/be/gherkin
+specs/apps/demo-be/c4       →  specs/apps/a-demo/c4
+specs/apps/demo-be/          →  specs/apps/a-demo/be/
+specs/apps/demo-be            →  specs/apps/a-demo/be
+/specs/apps/demo-be/gherkin  →  /specs/apps/a-demo/be/gherkin
+specs/apps/demo-fe/gherkin   →  specs/apps/a-demo/fe/gherkin
+specs/apps/demo-fe/c4        →  specs/apps/a-demo/c4
+specs/apps/demo-fe/           →  specs/apps/a-demo/fe/
+specs/apps/demo-fe            →  specs/apps/a-demo/fe
 ```
 
 **Order matters**: Replace longer, more specific paths first to avoid partial replacements.

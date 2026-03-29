@@ -36,13 +36,13 @@ rhino-cli docs validate-links --staged-only
 rhino-cli spec-coverage validate specs/apps/organiclever-fe apps/organiclever-fe
 
 # Validate Java packages have @NullMarked in package-info.java
-rhino-cli java validate-annotations apps/demo-be-java-springboot/src/main/java
+rhino-cli java validate-annotations apps/a-demo-be-java-springboot/src/main/java
 
 # Clean unused/same-package imports from generated Java contracts
-rhino-cli contracts java-clean-imports apps/demo-be-java-springboot/generated-contracts
+rhino-cli contracts java-clean-imports apps/a-demo-be-java-springboot/generated-contracts
 
 # Create Dart package scaffolding for generated contracts
-rhino-cli contracts dart-scaffold apps/demo-fe-dart-flutterweb/generated-contracts
+rhino-cli contracts dart-scaffold apps/a-demo-fe-dart-flutterweb/generated-contracts
 
 # Echo a message
 rhino-cli --say "hello world"
@@ -540,7 +540,7 @@ rhino-cli spec-coverage validate specs/apps/organiclever-fe apps/organiclever-fe
 rhino-cli spec-coverage validate specs/apps/organiclever-fe apps/organiclever-fe -q
 
 # Shared steps mode (for E2E projects with shared step files)
-rhino-cli spec-coverage validate specs/apps/demo-be/be/gherkin apps/demo-be-e2e --shared-steps
+rhino-cli spec-coverage validate specs/apps/demo-be/be/gherkin apps/a-demo-be-e2e --shared-steps
 ```
 
 **What it does:**
@@ -635,23 +635,23 @@ Missing steps (2):
 ### java validate-annotations
 
 Validate that all Java packages in a source tree have the required null-safety annotation in
-`package-info.java`. Used by `demo-be-java-springboot`'s `typecheck` target.
+`package-info.java`. Used by `a-demo-be-java-springboot`'s `typecheck` target.
 
 ```bash
 # Validate with default annotation (@NullMarked)
-rhino-cli java validate-annotations apps/demo-be-java-springboot/src/main/java
+rhino-cli java validate-annotations apps/a-demo-be-java-springboot/src/main/java
 
 # Use a custom annotation
-rhino-cli java validate-annotations apps/demo-be-java-springboot/src/main/java --annotation NonNull
+rhino-cli java validate-annotations apps/a-demo-be-java-springboot/src/main/java --annotation NonNull
 
 # Output as JSON
-rhino-cli java validate-annotations apps/demo-be-java-springboot/src/main/java -o json
+rhino-cli java validate-annotations apps/a-demo-be-java-springboot/src/main/java -o json
 
 # Output as markdown report
-rhino-cli java validate-annotations apps/demo-be-java-springboot/src/main/java -o markdown
+rhino-cli java validate-annotations apps/a-demo-be-java-springboot/src/main/java -o markdown
 
 # Quiet mode (suppress "0 violations found" on success)
-rhino-cli java validate-annotations apps/demo-be-java-springboot/src/main/java -q
+rhino-cli java validate-annotations apps/a-demo-be-java-springboot/src/main/java -q
 ```
 
 **What it does:**
@@ -663,7 +663,7 @@ rhino-cli java validate-annotations apps/demo-be-java-springboot/src/main/java -
 
 **Arguments:**
 
-- `<source-root>` - Path to the Java source root (e.g. `apps/demo-be-java-springboot/src/main/java`)
+- `<source-root>` - Path to the Java source root (e.g. `apps/a-demo-be-java-springboot/src/main/java`)
 
 **Flags:**
 
@@ -711,10 +711,10 @@ after OpenAPI code generation for Java backends.
 
 ```bash
 # Clean imports in generated contracts
-rhino-cli contracts java-clean-imports apps/demo-be-java-springboot/generated-contracts
+rhino-cli contracts java-clean-imports apps/a-demo-be-java-springboot/generated-contracts
 
 # Output as JSON
-rhino-cli contracts java-clean-imports apps/demo-be-java-vertx/generated-contracts -o json
+rhino-cli contracts java-clean-imports apps/a-demo-be-java-vertx/generated-contracts -o json
 ```
 
 **What it does:**
@@ -744,17 +744,17 @@ OpenAPI code generation for the Flutter Web frontend.
 
 ```bash
 # Create scaffold
-rhino-cli contracts dart-scaffold apps/demo-fe-dart-flutterweb/generated-contracts
+rhino-cli contracts dart-scaffold apps/a-demo-fe-dart-flutterweb/generated-contracts
 
 # Output as JSON
-rhino-cli contracts dart-scaffold apps/demo-fe-dart-flutterweb/generated-contracts -o json
+rhino-cli contracts dart-scaffold apps/a-demo-fe-dart-flutterweb/generated-contracts -o json
 ```
 
 **What it does:**
 
 - Writes `pubspec.yaml` with package metadata and dependencies
 - Creates `lib/` directory
-- Generates barrel library (`lib/demo_contracts.dart`) with:
+- Generates barrel library (`lib/a_demo_contracts.dart`) with:
   - Part directives for all model files in `lib/model/` (sorted alphabetically)
   - Utility functions required by generated model code
 
@@ -769,7 +769,7 @@ rhino-cli contracts dart-scaffold apps/demo-fe-dart-flutterweb/generated-contrac
 
 **Replaces:**
 
-This command replaces `apps/demo-fe-dart-flutterweb/scripts/post-codegen.sh`.
+This command replaces `apps/a-demo-fe-dart-flutterweb/scripts/post-codegen.sh`.
 
 ### doctor
 
@@ -809,15 +809,15 @@ rhino-cli doctor --quiet
 
 **Tools checked:**
 
-| Tool   | Binary  | Required Version Source                                   | Comparison |
-| ------ | ------- | --------------------------------------------------------- | ---------- |
-| git    | `git`   | (no config file — any version OK)                         | any        |
-| volta  | `volta` | (no config file — any version OK)                         | any        |
-| node   | `node`  | `package.json` → `volta.node`                             | exact      |
-| npm    | `npm`   | `package.json` → `volta.npm`                              | exact      |
-| java   | `java`  | `apps/demo-be-java-springboot/pom.xml` → `<java.version>` | major only |
-| maven  | `mvn`   | (no config file — any version OK)                         | any        |
-| golang | `go`    | `apps/rhino-cli/go.mod` → `go` directive                  | ≥ (GTE)    |
+| Tool   | Binary  | Required Version Source                                     | Comparison |
+| ------ | ------- | ----------------------------------------------------------- | ---------- |
+| git    | `git`   | (no config file — any version OK)                           | any        |
+| volta  | `volta` | (no config file — any version OK)                           | any        |
+| node   | `node`  | `package.json` → `volta.node`                               | exact      |
+| npm    | `npm`   | `package.json` → `volta.npm`                                | exact      |
+| java   | `java`  | `apps/a-demo-be-java-springboot/pom.xml` → `<java.version>` | major only |
+| maven  | `mvn`   | (no config file — any version OK)                           | any        |
+| golang | `go`    | `apps/rhino-cli/go.mod` → `go` directive                    | ≥ (GTE)    |
 
 **Flags:**
 
@@ -1198,11 +1198,11 @@ rhino-cli say
 - Added `contracts java-clean-imports` command: removes unused, same-package, and duplicate imports
   from generated Java files (replaces `scripts/clean-generated-java-imports.sh`)
 - Added `contracts dart-scaffold` command: creates pubspec.yaml and barrel library for generated Dart
-  contracts (replaces `apps/demo-fe-dart-flutterweb/scripts/post-codegen.sh`)
-- Updated `demo-be-java-springboot`, `demo-be-java-vertx`, and `demo-fe-dart-flutterweb` codegen
+  contracts (replaces `apps/a-demo-fe-dart-flutterweb/scripts/post-codegen.sh`)
+- Updated `a-demo-be-java-springboot`, `a-demo-be-java-vertx`, and `a-demo-fe-dart-flutterweb` codegen
   targets to use rhino-cli instead of shell scripts
 - 8 new godog BDD scenarios (5 Java import cleaning + 3 Dart scaffolding)
-- Deleted `scripts/` directory and `apps/demo-fe-dart-flutterweb/scripts/` directory
+- Deleted `scripts/` directory and `apps/a-demo-fe-dart-flutterweb/scripts/` directory
 
 ### v0.11.0 (2026-03-05)
 
@@ -1230,7 +1230,7 @@ rhino-cli say
 - Absorbed `javaproject-cli` as `java validate-annotations` subcommand
 - Validates Java packages have required null-safety annotation in `package-info.java`
 - Supports text, JSON, and markdown output formats; `--annotation` flag for custom annotations
-- Integrates into `demo-be-java-springboot` `typecheck` target (replaces standalone `javaproject-cli`)
+- Integrates into `a-demo-be-java-springboot` `typecheck` target (replaces standalone `javaproject-cli`)
 - `javaproject-cli` standalone project removed from workspace
 
 ### v0.8.0 (2026-03-04)

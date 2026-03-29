@@ -1,13 +1,13 @@
-# Technical Design: demo-be-fsharp-giraffe
+# Technical Design: a-demo-be-fsharp-giraffe
 
 ## BDD Integration Test: TickSpec + xUnit
 
-Integration tests parse the canonical `.feature` files in `specs/apps/demo/be/gherkin/` using
+Integration tests parse the canonical `.feature` files in `specs/apps/a-demo/be/gherkin/` using
 **TickSpec**, an F#-native Gherkin runner that integrates with xUnit. TickSpec discovers
 feature files at test time and maps step definitions via regex-annotated methods.
 
 HTTP calls use ASP.NET Core's `TestServer` (in-process — no live server needed, matching
-`demo-be-java-springboot`'s MockMvc approach). The database layer uses EF Core's SQLite in-memory
+`a-demo-be-java-springboot`'s MockMvc approach). The database layer uses EF Core's SQLite in-memory
 provider for full isolation and determinism.
 
 Step definitions follow F# module conventions:
@@ -59,10 +59,10 @@ TickSpec discovers features from the output directory at runtime.
 ### Project Structure
 
 ```
-apps/demo-be-fsharp-giraffe/
+apps/a-demo-be-fsharp-giraffe/
 ├── src/
-│   └── DemoBeFsgi/
-│       ├── DemoBeFsgi.fsproj              # Main application
+│   └── AADemoBeFsgi/
+│       ├── AADemoBeFsgi.fsproj              # Main application
 │       ├── Program.fs                      # Entry point + ASP.NET Core configuration
 │       ├── Domain/
 │       │   ├── Types.fs                    # Domain types (DUs, records)
@@ -86,8 +86,8 @@ apps/demo-be-fsharp-giraffe/
 │           ├── AttachmentHandler.fs        # file upload/list/delete
 │           └── TokenHandler.fs             # claims, JWKS
 ├── tests/
-│   └── DemoBeFsgi.Tests/
-│       ├── DemoBeFsgi.Tests.fsproj         # Test project
+│   └── AADemoBeFsgi.Tests/
+│       ├── AADemoBeFsgi.Tests.fsproj         # Test project
 │       ├── TestFixture.fs                  # TestServer + HttpClient setup
 │       ├── State.fs                        # Step state record
 │       ├── Unit/
@@ -228,7 +228,7 @@ services.AddDbContext<AppDbContext>(fun options ->
 ### JWT Strategy
 
 HMAC-SHA256 signing using `System.IdentityModel.Tokens.Jwt`. Access tokens (short-lived) and
-refresh tokens (long-lived) follow the same pattern as demo-be-java-springboot:
+refresh tokens (long-lived) follow the same pattern as a-demo-be-java-springboot:
 
 - Access token: 15 minutes
 - Refresh token: 7 days
@@ -253,82 +253,82 @@ let validateAmount (currency: string) (amount: decimal) =
 
 ```json
 {
-  "name": "demo-be-fsharp-giraffe",
+  "name": "a-demo-be-fsharp-giraffe",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/demo-be-fsharp-giraffe/src",
+  "sourceRoot": "apps/a-demo-be-fsharp-giraffe/src",
   "projectType": "application",
   "targets": {
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet publish src/DemoBeFsgi/DemoBeFsgi.fsproj -c Release -o dist",
-        "cwd": "apps/demo-be-fsharp-giraffe"
+        "command": "dotnet publish src/AADemoBeFsgi/AADemoBeFsgi.fsproj -c Release -o dist",
+        "cwd": "apps/a-demo-be-fsharp-giraffe"
       },
       "outputs": ["{projectRoot}/dist"]
     },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet watch run --project src/DemoBeFsgi/DemoBeFsgi.fsproj",
-        "cwd": "apps/demo-be-fsharp-giraffe"
+        "command": "dotnet watch run --project src/AADemoBeFsgi/AADemoBeFsgi.fsproj",
+        "cwd": "apps/a-demo-be-fsharp-giraffe"
       }
     },
     "start": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet run --project src/DemoBeFsgi/DemoBeFsgi.fsproj",
-        "cwd": "apps/demo-be-fsharp-giraffe"
+        "command": "dotnet run --project src/AADemoBeFsgi/AADemoBeFsgi.fsproj",
+        "cwd": "apps/a-demo-be-fsharp-giraffe"
       }
     },
     "test:quick": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "dotnet test tests/DemoBeFsgi.Tests/DemoBeFsgi.Tests.fsproj --collect:\"XPlat Code Coverage\" --results-directory ./coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov",
-          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-be-fsharp-giraffe/coverage/**/coverage.info 90)",
+          "dotnet test tests/AADemoBeFsgi.Tests/AADemoBeFsgi.Tests.fsproj --collect:\"XPlat Code Coverage\" --results-directory ./coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov",
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/a-demo-be-fsharp-giraffe/coverage/**/coverage.info 90)",
           "dotnet fantomas --check src/ tests/",
-          "dotnet fsharplint lint src/DemoBeFsgi/DemoBeFsgi.fsproj"
+          "dotnet fsharplint lint src/AADemoBeFsgi/AADemoBeFsgi.fsproj"
         ],
         "parallel": false,
-        "cwd": "apps/demo-be-fsharp-giraffe"
+        "cwd": "apps/a-demo-be-fsharp-giraffe"
       }
     },
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet test tests/DemoBeFsgi.Tests/DemoBeFsgi.Tests.fsproj --filter Category=Unit",
-        "cwd": "apps/demo-be-fsharp-giraffe"
+        "command": "dotnet test tests/AADemoBeFsgi.Tests/AADemoBeFsgi.Tests.fsproj --filter Category=Unit",
+        "cwd": "apps/a-demo-be-fsharp-giraffe"
       }
     },
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet test tests/DemoBeFsgi.Tests/DemoBeFsgi.Tests.fsproj --filter Category=Integration",
-        "cwd": "apps/demo-be-fsharp-giraffe"
+        "command": "dotnet test tests/AADemoBeFsgi.Tests/AADemoBeFsgi.Tests.fsproj --filter Category=Integration",
+        "cwd": "apps/a-demo-be-fsharp-giraffe"
       },
       "cache": true,
       "inputs": [
         "{projectRoot}/src/**/*.fs",
         "{projectRoot}/tests/**/*.fs",
-        "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature"
+        "{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature"
       ]
     },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet fsharplint lint src/DemoBeFsgi/DemoBeFsgi.fsproj",
-        "cwd": "apps/demo-be-fsharp-giraffe"
+        "command": "dotnet fsharplint lint src/AADemoBeFsgi/AADemoBeFsgi.fsproj",
+        "cwd": "apps/a-demo-be-fsharp-giraffe"
       }
     },
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "dotnet build src/DemoBeFsgi/DemoBeFsgi.fsproj --no-restore /p:TreatWarningsAsErrors=true",
-        "cwd": "apps/demo-be-fsharp-giraffe"
+        "command": "dotnet build src/AADemoBeFsgi/AADemoBeFsgi.fsproj --no-restore /p:TreatWarningsAsErrors=true",
+        "cwd": "apps/a-demo-be-fsharp-giraffe"
       }
     }
   },
-  "tags": ["type:app", "platform:giraffe", "lang:fsharp", "domain:demo-be"],
+  "tags": ["type:app", "platform:giraffe", "lang:fsharp", "domain:a-demo-be"],
   "implicitDependencies": ["rhino-cli"]
 }
 ```
@@ -346,62 +346,62 @@ let validateAmount (currency: string) (amount: decimal) =
 
 ### Port Assignment
 
-| Service                 | Port                                               |
-| ----------------------- | -------------------------------------------------- |
-| demo-be-db              | 5432                                               |
-| demo-be-java-springboot | 8201                                               |
-| demo-be-elixir-phoenix  | 8201 (same port — mutually exclusive alternatives) |
-| demo-be-fsharp-giraffe  | 8201 (same port — mutually exclusive alternatives) |
+| Service                   | Port                                               |
+| ------------------------- | -------------------------------------------------- |
+| a-demo-be-db              | 5432                                               |
+| a-demo-be-java-springboot | 8201                                               |
+| a-demo-be-elixir-phoenix  | 8201 (same port — mutually exclusive alternatives) |
+| a-demo-be-fsharp-giraffe  | 8201 (same port — mutually exclusive alternatives) |
 
-### Docker Compose (`infra/dev/demo-be-fsharp-giraffe/docker-compose.yml`)
+### Docker Compose (`infra/dev/a-demo-be-fsharp-giraffe/docker-compose.yml`)
 
 ```yaml
 services:
-  demo-be-db:
+  a-demo-be-db:
     image: postgres:17-alpine
-    container_name: demo-be-db
+    container_name: a-demo-be-db
     environment:
-      POSTGRES_DB: demo_be_fsharp_giraffe
-      POSTGRES_USER: demo_be_fsharp_giraffe
-      POSTGRES_PASSWORD: demo_be_fsharp_giraffe
+      POSTGRES_DB: a_demo_be_fsharp_giraffe
+      POSTGRES_USER: a_demo_be_fsharp_giraffe
+      POSTGRES_PASSWORD: a_demo_be_fsharp_giraffe
     ports:
       - "5432:5432"
     volumes:
-      - demo-be-fsharp-giraffe-db-data:/var/lib/postgresql/data
+      - a-demo-be-fsharp-giraffe-db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U demo_be_fsharp_giraffe"]
+      test: ["CMD-SHELL", "pg_isready -U a_demo_be_fsharp_giraffe"]
       interval: 5s
       timeout: 3s
       retries: 5
     networks:
-      - demo-be-fsharp-giraffe-network
+      - a-demo-be-fsharp-giraffe-network
 
-  demo-be-fsharp-giraffe:
+  a-demo-be-fsharp-giraffe:
     build:
       context: .
       dockerfile: Dockerfile.be.dev
-    container_name: demo-be-fsharp-giraffe
+    container_name: a-demo-be-fsharp-giraffe
     ports:
       - "8201:8201"
     environment:
       - ASPNETCORE_URLS=http://+:8201
-      - DATABASE_URL=Host=demo-be-db;Database=demo_be_fsharp_giraffe;Username=demo_be_fsharp_giraffe;Password=demo_be_fsharp_giraffe
+      - DATABASE_URL=Host=a-demo-be-db;Database=a_demo_be_fsharp_giraffe;Username=a_demo_be_fsharp_giraffe;Password=a_demo_be_fsharp_giraffe
       - APP_JWT_SECRET=dev-jwt-secret-at-least-32-chars-long
     volumes:
-      - ../../../apps/demo-be-fsharp-giraffe:/workspace:rw
-      - ../../../specs/apps/demo/be:/specs/apps/demo/be:ro
+      - ../../../apps/a-demo-be-fsharp-giraffe:/workspace:rw
+      - ../../../specs/apps/a-demo/be:/specs/apps/a-demo/be:ro
     depends_on:
-      demo-be-db:
+      a-demo-be-db:
         condition: service_healthy
-    command: sh -c "dotnet ef database update --project src/DemoBeFsgi/DemoBeFsgi.fsproj && dotnet watch run --project src/DemoBeFsgi/DemoBeFsgi.fsproj"
+    command: sh -c "dotnet ef database update --project src/AADemoBeFsgi/AADemoBeFsgi.fsproj && dotnet watch run --project src/AADemoBeFsgi/AADemoBeFsgi.fsproj"
     networks:
-      - demo-be-fsharp-giraffe-network
+      - a-demo-be-fsharp-giraffe-network
 
 volumes:
-  demo-be-fsharp-giraffe-db-data:
+  a-demo-be-fsharp-giraffe-db-data:
 
 networks:
-  demo-be-fsharp-giraffe-network:
+  a-demo-be-fsharp-giraffe-network:
 ```
 
 ### Dockerfile.be.dev
@@ -416,21 +416,21 @@ ENV PATH="$PATH:/root/.dotnet/tools"
 
 WORKDIR /workspace
 
-CMD ["dotnet", "watch", "run", "--project", "src/DemoBeFsgi/DemoBeFsgi.fsproj"]
+CMD ["dotnet", "watch", "run", "--project", "src/AADemoBeFsgi/AADemoBeFsgi.fsproj"]
 ```
 
 ---
 
 ## GitHub Actions
 
-### New Workflow: `e2e-demo-be-fsharp-giraffe.yml`
+### New Workflow: `e2e-a-demo-be-fsharp-giraffe.yml`
 
-Mirrors `e2e-demo-be-java-springboot.yml` with:
+Mirrors `e2e-a-demo-be-java-springboot.yml` with:
 
 - Name: `E2E - Demo BE (FSGI)`
 - Schedule: same crons as jasb/exph
 - Job: checkout → docker compose up → wait-healthy → Volta → npm ci →
-  `nx run demo-be-e2e:test:e2e` with `BASE_URL=http://localhost:8201` →
+  `nx run a-demo-be-e2e:test:e2e` with `BASE_URL=http://localhost:8201` →
   upload artifact `playwright-report-be-fsgi` → docker down (always)
 
 ### Updated Workflow: `main-ci.yml`
@@ -443,12 +443,12 @@ Add after existing Java/Elixir setup:
   with:
     dotnet-version: "9.0.x"
 
-- name: Upload coverage — demo-be-fsharp-giraffe
+- name: Upload coverage — a-demo-be-fsharp-giraffe
   uses: codecov/codecov-action@v5
   with:
     token: ${{ secrets.CODECOV_TOKEN }}
-    files: apps/demo-be-fsharp-giraffe/coverage/**/coverage.info
-    flags: demo-be-fsharp-giraffe
+    files: apps/a-demo-be-fsharp-giraffe/coverage/**/coverage.info
+    flags: a-demo-be-fsharp-giraffe
     fail_ci_if_error: false
 ```
 
@@ -456,7 +456,7 @@ Add after existing Java/Elixir setup:
 
 ## Dependencies Summary
 
-### NuGet Packages (DemoBeFsgi.fsproj)
+### NuGet Packages (AADemoBeFsgi.fsproj)
 
 | Package                               | Purpose                                    |
 | ------------------------------------- | ------------------------------------------ |
@@ -468,7 +468,7 @@ Add after existing Java/Elixir setup:
 | BCrypt.Net-Next                       | Password hashing                           |
 | FSharp.SystemTextJson                 | F# type serialization for System.Text.Json |
 
-### NuGet Packages (DemoBeFsgi.Tests.fsproj)
+### NuGet Packages (AADemoBeFsgi.Tests.fsproj)
 
 | Package                          | Purpose                            |
 | -------------------------------- | ---------------------------------- |

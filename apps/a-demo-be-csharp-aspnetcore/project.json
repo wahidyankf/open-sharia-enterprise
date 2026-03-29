@@ -1,0 +1,100 @@
+{
+  "name": "a-demo-be-csharp-aspnetcore",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/a-demo-be-csharp-aspnetcore/src",
+  "projectType": "application",
+  "targets": {
+    "codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx openapi-generator-cli generate -i $(pwd)/specs/apps/a-demo/contracts/generated/openapi-bundled.yaml -g csharp -o $(pwd)/apps/a-demo-be-csharp-aspnetcore/generated-contracts --model-package AADemoBeCsas.Contracts --additional-properties=netCoreProjectFile=true --global-property=models,modelDocs=false,apiDocs=false"
+      },
+      "dependsOn": ["a-demo-contracts:bundle"],
+      "cache": true,
+      "inputs": ["{workspaceRoot}/specs/apps/a-demo/contracts/generated/openapi-bundled.yaml"],
+      "outputs": ["{projectRoot}/generated-contracts"]
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet publish src/AADemoBeCsas/AADemoBeCsas.csproj -c Release -o dist",
+        "cwd": "apps/a-demo-be-csharp-aspnetcore"
+      },
+      "dependsOn": ["codegen"],
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet watch run --project src/AADemoBeCsas/AADemoBeCsas.csproj",
+        "cwd": "apps/a-demo-be-csharp-aspnetcore"
+      }
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet run --project src/AADemoBeCsas/AADemoBeCsas.csproj",
+        "cwd": "apps/a-demo-be-csharp-aspnetcore"
+      }
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "dotnet test tests/AADemoBeCsas.Tests/AADemoBeCsas.Tests.csproj --collect:'XPlat Code Coverage' --results-directory coverage --settings tests/AADemoBeCsas.Tests/coverage.runsettings",
+          "COVERAGE=$(find coverage -name 'coverage.info' | head -1) && (cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate \"apps/a-demo-be-csharp-aspnetcore/$COVERAGE\" 90)"
+        ],
+        "parallel": false,
+        "cwd": "apps/a-demo-be-csharp-aspnetcore"
+      },
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**/*.cs",
+        "{projectRoot}/tests/**/*.cs",
+        "{projectRoot}/generated-contracts/**/*",
+        "{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature"
+      ],
+      "outputs": ["{projectRoot}/coverage"]
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet test tests/AADemoBeCsas.Tests/AADemoBeCsas.Tests.csproj",
+        "cwd": "apps/a-demo-be-csharp-aspnetcore"
+      },
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**/*.cs",
+        "{projectRoot}/tests/**/*.cs",
+        "{projectRoot}/generated-contracts/**/*",
+        "{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature"
+      ]
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f docker-compose.integration.yml down -v && docker compose -f docker-compose.integration.yml up --abort-on-container-exit --build",
+        "cwd": "apps/a-demo-be-csharp-aspnetcore"
+      },
+      "cache": false
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet build src/AADemoBeCsas/AADemoBeCsas.csproj /p:TreatWarningsAsErrors=true --no-restore",
+        "cwd": "apps/a-demo-be-csharp-aspnetcore"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "dotnet build src/AADemoBeCsas/AADemoBeCsas.csproj /p:TreatWarningsAsErrors=true --no-restore",
+        "cwd": "apps/a-demo-be-csharp-aspnetcore"
+      },
+      "dependsOn": ["codegen"],
+      "cache": true
+    }
+  },
+  "tags": ["type:app", "platform:aspnetcore", "lang:csharp", "domain:a-demo-be"],
+  "implicitDependencies": ["a-demo-contracts", "rhino-cli"]
+}

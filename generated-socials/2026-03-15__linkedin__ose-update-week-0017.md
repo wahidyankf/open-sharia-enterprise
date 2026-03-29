@@ -39,7 +39,7 @@ Three-Level Testing Standard:
 
 Specs Consolidation:
 
-- Unified demo-be and demo-fe specs into specs/apps/demo/
+- Unified demo-be and demo-fe specs into specs/apps/a-demo/
 - Added specs-validation workflow + checker/fixer/maker agents
 
 CI/Infrastructure Cleanup:

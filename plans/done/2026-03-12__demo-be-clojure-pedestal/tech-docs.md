@@ -1,9 +1,9 @@
-# Technical Design: demo-be-clojure-pedestal
+# Technical Design: a-demo-be-clojure-pedestal
 
 ## Architecture
 
 ```
-apps/demo-be-clojure-pedestal/
+apps/a-demo-be-clojure-pedestal/
 ├── deps.edn                        # Dependencies and aliases (:test, :build, :coverage)
 ├── build.clj                       # tools.build uberjar script
 ├── project.json                    # Nx project config
@@ -11,7 +11,7 @@ apps/demo-be-clojure-pedestal/
 ├── .clj-kondo/                     # clj-kondo linter config
 │   └── config.edn
 ├── src/
-│   └── demo_be_cjpd/
+│   └── a_demo_be_cjpd/
 │       ├── main.clj                # Entry point (-main, :gen-class)
 │       ├── server.clj              # Pedestal server setup & config
 │       ├── config.clj              # Environment config (PORT, DATABASE_URL, JWT_SECRET)
@@ -49,7 +49,7 @@ apps/demo-be-clojure-pedestal/
 ├── resources/
 │   └── logback.xml                 # SLF4J logging config
 ├── test/
-│   ├── demo_be_cjpd/               # Unit tests
+│   ├── a_demo_be_cjpd/               # Unit tests
 │   │   ├── domain/
 │   │   │   ├── user_test.clj
 │   │   │   └── expense_test.clj
@@ -61,7 +61,7 @@ apps/demo-be-clojure-pedestal/
 │   │       ├── expense_repo_test.clj
 │   │       ├── token_repo_test.clj
 │   │       └── attachment_repo_test.clj
-│   ├── features/                   # Symlink to specs/apps/demo/be/gherkin/
+│   ├── features/                   # Symlink to specs/apps/a-demo/be/gherkin/
 │   └── step_definitions/           # Cucumber step definitions
 │       ├── common_steps.clj        # Shared steps (API running, auth)
 │       ├── health_steps.clj
@@ -103,7 +103,7 @@ Clojure's natural functional style maps well to the demo-be pattern:
 ### Test Strategy
 
 - **Integration tests**: kaocha-cucumber reads `.feature` files from
-  `specs/apps/demo/be/gherkin/` (symlinked or copied), step definitions in
+  `specs/apps/a-demo/be/gherkin/` (symlinked or copied), step definitions in
   `test/step_definitions/`. Uses real Pedestal server on random port with SQLite in-memory.
 - **Unit tests**: clojure.test for domain logic, JWT, password hashing, repo operations
 - **Coverage**: cloverage with `--lcov` output, validated by `rhino-cli ≥90%`

@@ -15,7 +15,7 @@ updated: 2026-03-28
 
 # Component Patterns Convention
 
-Standards for building UI components in the open-sharia-enterprise monorepo. These rules govern how components are structured, composed, and styled across `ayokoding-fs`, `organiclever-fe`, `demo-fe-ts-nextjs`, and `demo-fs-ts-nextjs`.
+Standards for building UI components in the open-sharia-enterprise monorepo. These rules govern how components are structured, composed, and styled across `ayokoding-fs`, `organiclever-fe`, `a-demo-fe-ts-nextjs`, and `a-demo-fs-ts-nextjs`.
 
 ## File Structure
 

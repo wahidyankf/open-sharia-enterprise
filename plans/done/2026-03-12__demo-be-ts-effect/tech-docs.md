@@ -1,16 +1,16 @@
-# Technical Design: demo-be-ts-effect
+# Technical Design: a-demo-be-ts-effect
 
 ## BDD Integration Tests: Cucumber.js
 
-Integration tests parse the canonical `.feature` files in `specs/apps/demo/be/gherkin/` using
+Integration tests parse the canonical `.feature` files in `specs/apps/a-demo/be/gherkin/` using
 **Cucumber.js**, the official JavaScript/TypeScript Gherkin BDD runner. Cucumber.js discovers
 step definitions from the configured `require` (or `import`) glob patterns in `.cucumber.js`.
 
 HTTP calls use the Effect TS HTTP client against an in-process Node.js HTTP server started
 before the test suite and stopped after — no live external server needed. The database layer
 uses `@effect/sql-sqlite-node` with an in-memory SQLite database for full isolation and
-determinism. This matches the pattern established by `demo-be-rust-axum` (cucumber + Tower
-TestClient + in-memory stores) and `demo-be-kotlin-ktor` (Cucumber JVM + Ktor testApplication +
+determinism. This matches the pattern established by `a-demo-be-rust-axum` (cucumber + Tower
+TestClient + in-memory stores) and `a-demo-be-kotlin-ktor` (Cucumber JVM + Ktor testApplication +
 SQLite in-memory).
 
 Step definitions use Cucumber.js `Given`, `When`, and `Then` functions with shared world
@@ -36,14 +36,14 @@ Then("the response status code should be {int}", async function (this: CustomWor
 
 ### Feature File Path Resolution
 
-Feature files are referenced from the `specs/apps/demo/be/gherkin/` workspace root. The
+Feature files are referenced from the `specs/apps/a-demo/be/gherkin/` workspace root. The
 Cucumber.js configuration in `.cucumber.js` (or `cucumber.js`) at the project root specifies
 the feature file paths relative to the workspace root:
 
 ```javascript
-// apps/demo-be-ts-effect/.cucumber.js
+// apps/a-demo-be-ts-effect/.cucumber.js
 const path = require("path");
-const gherkinRoot = path.resolve(__dirname, "../../specs/apps/demo/be/gherkin");
+const gherkinRoot = path.resolve(__dirname, "../../specs/apps/a-demo/be/gherkin");
 
 module.exports = {
   default: {
@@ -62,7 +62,7 @@ module.exports = {
 ### Project Structure
 
 ```
-apps/demo-be-ts-effect/
+apps/a-demo-be-ts-effect/
 ├── src/
 │   ├── main.ts                         # Entry point: start server on port 8201
 │   ├── app.ts                          # Effect app layer composition
@@ -345,16 +345,16 @@ export default defineConfig({
 
 ```json
 {
-  "name": "demo-be-ts-effect",
+  "name": "a-demo-be-ts-effect",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/demo-be-ts-effect/src",
+  "sourceRoot": "apps/a-demo-be-ts-effect/src",
   "projectType": "application",
   "targets": {
     "build": {
       "executor": "nx:run-commands",
       "options": {
         "command": "npx vite build",
-        "cwd": "apps/demo-be-ts-effect"
+        "cwd": "apps/a-demo-be-ts-effect"
       },
       "outputs": ["{projectRoot}/dist"]
     },
@@ -362,14 +362,14 @@ export default defineConfig({
       "executor": "nx:run-commands",
       "options": {
         "command": "npx tsx watch src/main.ts",
-        "cwd": "apps/demo-be-ts-effect"
+        "cwd": "apps/a-demo-be-ts-effect"
       }
     },
     "start": {
       "executor": "nx:run-commands",
       "options": {
         "command": "node dist/main.js",
-        "cwd": "apps/demo-be-ts-effect"
+        "cwd": "apps/a-demo-be-ts-effect"
       }
     },
     "test:quick": {
@@ -377,7 +377,7 @@ export default defineConfig({
       "options": {
         "commands": [
           "npx vitest run --coverage",
-          "apps/rhino-cli/rhino-cli test-coverage validate apps/demo-be-ts-effect/coverage/lcov.info 90",
+          "apps/rhino-cli/rhino-cli test-coverage validate apps/a-demo-be-ts-effect/coverage/lcov.info 90",
           "npx tsc --noEmit",
           "npx oxlint ."
         ],
@@ -389,38 +389,38 @@ export default defineConfig({
       "executor": "nx:run-commands",
       "options": {
         "command": "npx vitest run tests/unit",
-        "cwd": "apps/demo-be-ts-effect"
+        "cwd": "apps/a-demo-be-ts-effect"
       }
     },
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
         "command": "npx cucumber-js",
-        "cwd": "apps/demo-be-ts-effect"
+        "cwd": "apps/a-demo-be-ts-effect"
       },
       "cache": true,
       "inputs": [
         "{projectRoot}/src/**/*.ts",
         "{projectRoot}/tests/**/*.ts",
-        "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature"
+        "{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature"
       ]
     },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
         "command": "npx oxlint .",
-        "cwd": "apps/demo-be-ts-effect"
+        "cwd": "apps/a-demo-be-ts-effect"
       }
     },
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
         "command": "npx tsc --noEmit",
-        "cwd": "apps/demo-be-ts-effect"
+        "cwd": "apps/a-demo-be-ts-effect"
       }
     }
   },
-  "tags": ["type:app", "platform:effect", "lang:typescript", "domain:demo-be"],
+  "tags": ["type:app", "platform:effect", "lang:typescript", "domain:a-demo-be"],
   "implicitDependencies": ["rhino-cli"]
 }
 ```
@@ -471,65 +471,65 @@ export default defineConfig({
 
 ### Port Assignment
 
-| Service                 | Port                                               |
-| ----------------------- | -------------------------------------------------- |
-| demo-be-db              | 5432                                               |
-| demo-be-java-springboot | 8201                                               |
-| demo-be-elixir-phoenix  | 8201 (same port — mutually exclusive alternatives) |
-| demo-be-fsharp-giraffe  | 8201 (same port — mutually exclusive alternatives) |
-| demo-be-golang-gin      | 8201 (same port — mutually exclusive alternatives) |
-| demo-be-python-fastapi  | 8201 (same port — mutually exclusive alternatives) |
-| demo-be-rust-axum       | 8201 (same port — mutually exclusive alternatives) |
-| demo-be-kotlin-ktor     | 8201 (same port — mutually exclusive alternatives) |
-| demo-be-java-vertx      | 8201 (same port — mutually exclusive alternatives) |
-| demo-be-ts-effect       | 8201 (same port — mutually exclusive alternatives) |
+| Service                   | Port                                               |
+| ------------------------- | -------------------------------------------------- |
+| a-demo-be-db              | 5432                                               |
+| a-demo-be-java-springboot | 8201                                               |
+| a-demo-be-elixir-phoenix  | 8201 (same port — mutually exclusive alternatives) |
+| a-demo-be-fsharp-giraffe  | 8201 (same port — mutually exclusive alternatives) |
+| a-demo-be-golang-gin      | 8201 (same port — mutually exclusive alternatives) |
+| a-demo-be-python-fastapi  | 8201 (same port — mutually exclusive alternatives) |
+| a-demo-be-rust-axum       | 8201 (same port — mutually exclusive alternatives) |
+| a-demo-be-kotlin-ktor     | 8201 (same port — mutually exclusive alternatives) |
+| a-demo-be-java-vertx      | 8201 (same port — mutually exclusive alternatives) |
+| a-demo-be-ts-effect       | 8201 (same port — mutually exclusive alternatives) |
 
-### Docker Compose (`infra/dev/demo-be-ts-effect/docker-compose.yml`)
+### Docker Compose (`infra/dev/a-demo-be-ts-effect/docker-compose.yml`)
 
 ```yaml
 services:
-  demo-be-db:
+  a-demo-be-db:
     image: postgres:17-alpine
-    container_name: demo-be-db
+    container_name: a-demo-be-db
     environment:
-      POSTGRES_DB: demo_be_ts_effect
-      POSTGRES_USER: demo_be_ts_effect
-      POSTGRES_PASSWORD: demo_be_ts_effect
+      POSTGRES_DB: a_demo_be_ts_effect
+      POSTGRES_USER: a_demo_be_ts_effect
+      POSTGRES_PASSWORD: a_demo_be_ts_effect
     ports:
       - "5432:5432"
     volumes:
-      - demo-be-ts-effect-db-data:/var/lib/postgresql/data
+      - a-demo-be-ts-effect-db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U demo_be_ts_effect"]
+      test: ["CMD-SHELL", "pg_isready -U a_demo_be_ts_effect"]
       interval: 5s
       timeout: 3s
       retries: 5
     networks:
-      - demo-be-ts-effect-network
+      - a-demo-be-ts-effect-network
 
-  demo-be-ts-effect:
+  a-demo-be-ts-effect:
     build:
       context: .
       dockerfile: Dockerfile.be.dev
-    container_name: demo-be-ts-effect
+    container_name: a-demo-be-ts-effect
     ports:
       - "8201:8201"
     environment:
-      - DATABASE_URL=postgresql://demo_be_ts_effect:demo_be_ts_effect@demo-be-db:5432/demo_be_ts_effect
+      - DATABASE_URL=postgresql://a_demo_be_ts_effect:a_demo_be_ts_effect@a-demo-be-db:5432/a_demo_be_ts_effect
       - APP_JWT_SECRET=dev-jwt-secret-at-least-32-chars-long
     volumes:
-      - ../../../apps/demo-be-ts-effect:/workspace:rw
+      - ../../../apps/a-demo-be-ts-effect:/workspace:rw
     depends_on:
-      demo-be-db:
+      a-demo-be-db:
         condition: service_healthy
     networks:
-      - demo-be-ts-effect-network
+      - a-demo-be-ts-effect-network
 
 volumes:
-  demo-be-ts-effect-db-data:
+  a-demo-be-ts-effect-db-data:
 
 networks:
-  demo-be-ts-effect-network:
+  a-demo-be-ts-effect-network:
 ```
 
 ### Dockerfile.be.dev
@@ -551,27 +551,27 @@ CMD ["npx", "tsx", "src/main.ts"]
 
 ## GitHub Actions
 
-### New Workflow: `e2e-demo-be-ts-effect.yml`
+### New Workflow: `e2e-a-demo-be-ts-effect.yml`
 
-Mirrors `e2e-demo-be-python-fastapi.yml` with:
+Mirrors `e2e-a-demo-be-python-fastapi.yml` with:
 
 - Name: `E2E - Demo BE (TSEX)`
 - Schedule: same crons as other demo-be variants
 - Job: checkout → docker compose up → wait-healthy → Volta → npm ci →
-  `nx run demo-be-e2e:test:e2e` with `BASE_URL=http://localhost:8201` →
+  `nx run a-demo-be-e2e:test:e2e` with `BASE_URL=http://localhost:8201` →
   upload artifact `playwright-report-be-tsex` → docker down (always)
 
 ### Updated Workflow: `main-ci.yml`
 
-Add a coverage upload step for demo-be-ts-effect after the existing upload steps:
+Add a coverage upload step for a-demo-be-ts-effect after the existing upload steps:
 
 ```yaml
-- name: Upload coverage — demo-be-ts-effect
+- name: Upload coverage — a-demo-be-ts-effect
   uses: codecov/codecov-action@v5
   with:
     token: ${{ secrets.CODECOV_TOKEN }}
-    files: apps/demo-be-ts-effect/coverage/lcov.info
-    flags: demo-be-ts-effect
+    files: apps/a-demo-be-ts-effect/coverage/lcov.info
+    flags: a-demo-be-ts-effect
     fail_ci_if_error: false
 ```
 

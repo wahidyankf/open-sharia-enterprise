@@ -1,12 +1,12 @@
-# Requirements: demo-be-clojure-pedestal
+# Requirements: a-demo-be-clojure-pedestal
 
 ## Acceptance Criteria
 
 ### Functional Parity
 
-- All 76 Gherkin scenarios from `specs/apps/demo/be/gherkin/` pass via kaocha-cucumber
+- All 76 Gherkin scenarios from `specs/apps/a-demo/be/gherkin/` pass via kaocha-cucumber
   integration tests (in-memory SQLite, no external services)
-- All `demo-be-e2e` Playwright E2E tests pass against the Dockerized backend (PostgreSQL)
+- All `a-demo-be-e2e` Playwright E2E tests pass against the Dockerized backend (PostgreSQL)
 - API responses match the same JSON structure and HTTP status codes as existing implementations
 
 ### Quality Gates

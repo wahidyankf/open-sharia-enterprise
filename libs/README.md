@@ -58,11 +58,11 @@ checker, output formatting).
 
 **`elixir-openapi-codegen`** - Elixir library that reads an OpenAPI 3.1 bundled YAML spec and
 generates Elixir struct modules with `defstruct`, `@enforce_keys`, and `@type` typespecs. Used by
-`demo-be-elixir-phoenix` to generate contract types from `specs/apps/demo/contracts/`.
+`a-demo-be-elixir-phoenix` to generate contract types from `specs/apps/a-demo/contracts/`.
 
 **`clojure-openapi-codegen`** - Clojure library that reads an OpenAPI 3.1 bundled YAML spec and
-generates Malli schema definitions. Used by `demo-be-clojure-pedestal` to generate contract
-schemas from `specs/apps/demo/contracts/`.
+generates Malli schema definitions. Used by `a-demo-be-clojure-pedestal` to generate contract
+schemas from `specs/apps/a-demo/contracts/`.
 
 **`elixir-cabbage`** / **`elixir-gherkin`** - Elixir Gherkin BDD testing libraries.
 

@@ -115,7 +115,7 @@ The current Hugo site is functional but:
 
 - [ayokoding-fs v2 (Next.js rewrite)](../../done/2026-03-23__ayokoding-web-v2/README.md) -- Reference architecture
 - [ayokoding-fs v1-to-v2 migration](../../done/2026-03-24__ayokoding-web-v1-to-v2-migration/README.md) -- Migration strategy reference
-- [demo-fs-ts-nextjs](../../done/2026-03-22__demo-fs-ts-nextjs/README.md) -- Fullstack Next.js patterns
+- [a-demo-fs-ts-nextjs](../../done/2026-03-22__demo-fs-ts-nextjs/README.md) -- Fullstack Next.js patterns
 
 ## Related Files
 

@@ -21,8 +21,8 @@ step definitions at each test level.
 
 Gherkin feature files are shared across all implementations:
 
-- **Backend**: `specs/apps/demo/be/gherkin/` — consumed by all 11 `demo-be-*` backends
-- **Frontend**: `specs/apps/demo/fe/gherkin/` — consumed by all 3 `demo-fe-*` frontends
+- **Backend**: `specs/apps/a-demo/be/gherkin/` — consumed by all 11 `a-demo-be-*` backends
+- **Frontend**: `specs/apps/a-demo/fe/gherkin/` — consumed by all 3 `a-demo-fe-*` frontends
 
 When you add a scenario, every implementation must add step definitions for it.
 
@@ -30,7 +30,7 @@ When you add a scenario, every implementation must add step definitions for it.
 
 ### 1. Choose or Create a Feature File
 
-Feature files are organized by domain under `specs/apps/demo/be/gherkin/`:
+Feature files are organized by domain under `specs/apps/a-demo/be/gherkin/`:
 
 ```
 gherkin/
@@ -45,7 +45,7 @@ gherkin/
 ```
 
 Add your scenario to an existing feature file, or create a new one if it represents a
-new domain. See [gherkin README](../../specs/apps/demo/be/gherkin/README.md) for conventions.
+new domain. See [gherkin README](../../specs/apps/a-demo/be/gherkin/README.md) for conventions.
 
 ### 2. Write the Scenario
 
@@ -66,11 +66,11 @@ Scenario: User can update their display name
 
 ### 3. Implement Unit-Level Step Definitions
 
-In each `demo-be-*` backend, add step definitions in the unit test directory.
+In each `a-demo-be-*` backend, add step definitions in the unit test directory.
 Steps call service functions directly with **mocked repositories**:
 
 ```
-apps/demo-be-{lang}-{framework}/
+apps/a-demo-be-{lang}-{framework}/
   tests/unit/steps/   (or language-specific equivalent)
 ```
 
@@ -84,7 +84,7 @@ Add step definitions in the integration test directory.
 Steps call service functions directly with **real PostgreSQL**:
 
 ```
-apps/demo-be-{lang}-{framework}/
+apps/a-demo-be-{lang}-{framework}/
   tests/integration/steps/
 ```
 
@@ -94,16 +94,16 @@ apps/demo-be-{lang}-{framework}/
 
 ### 5. E2E Step Definitions
 
-Backend E2E tests live in `apps/demo-be-e2e/`. If your scenario uses new step patterns
+Backend E2E tests live in `apps/a-demo-be-e2e/`. If your scenario uses new step patterns
 not covered by existing step definitions, add them in
-`apps/demo-be-e2e/tests/steps/{domain}/`.
+`apps/a-demo-be-e2e/tests/steps/{domain}/`.
 
 E2E steps send real HTTP requests via Playwright.
 
 ### 6. Update the Gherkin README
 
 If you added a new feature file or changed the scenario count, update
-`specs/apps/demo/be/gherkin/README.md` — this is the
+`specs/apps/a-demo/be/gherkin/README.md` — this is the
 [authoritative source](../../governance/conventions/writing/dynamic-collection-references.md)
 for scenario counts.
 
@@ -114,7 +114,7 @@ for scenario counts.
 nx affected -t test:unit
 
 # Or test a specific backend
-nx run demo-be-golang-gin:test:quick
+nx run a-demo-be-golang-gin:test:quick
 ```
 
 All backends must pass all scenarios. The Gherkin feature files are the single source of
@@ -122,16 +122,16 @@ truth — a failing scenario means the backend is non-compliant.
 
 ## Frontend Scenarios
 
-The process is identical but uses `specs/apps/demo/fe/gherkin/` and frontend-specific
+The process is identical but uses `specs/apps/a-demo/fe/gherkin/` and frontend-specific
 step definitions:
 
 - **Unit steps**: Component logic tests with mocked API
-- **E2E steps**: Playwright browser interactions in `apps/demo-fe-e2e/`
+- **E2E steps**: Playwright browser interactions in `apps/a-demo-fe-e2e/`
 
 ## Related Documentation
 
-- [Backend Gherkin Specs](../../specs/apps/demo/be/gherkin/README.md) — Feature file conventions
-- [Frontend Gherkin Specs](../../specs/apps/demo/fe/gherkin/README.md) — Frontend feature conventions
+- [Backend Gherkin Specs](../../specs/apps/a-demo/be/gherkin/README.md) — Feature file conventions
+- [Frontend Gherkin Specs](../../specs/apps/a-demo/fe/gherkin/README.md) — Frontend feature conventions
 - [Three-Level Testing Standard](../../governance/development/quality/three-level-testing-standard.md) — What's real vs mocked at each level
 - [BDD Spec-Test Mapping](../../governance/development/infra/bdd-spec-test-mapping.md) — How specs map to tests
 - [BDD Standards](../explanation/software-engineering/development/behavior-driven-development-bdd/README.md) — Gherkin writing standards

@@ -793,7 +793,7 @@ CREATE TABLE IF NOT EXISTS orders (
 --   ...
 -- );
 -- => TEXT approach avoids PostgreSQL UUID type; portable across databases
--- => Used in demo-be-clojure-pedestal where Clojure generates UUIDs
+-- => Used in a-demo-be-clojure-pedestal where Clojure generates UUIDs
 ```
 
 ```sql
@@ -864,7 +864,7 @@ ALTER TABLE users
 -- ALTER TABLE users ADD COLUMN status user_status NOT NULL DEFAULT 'ACTIVE';
 -- => Harder to evolve: ALTER TYPE user_status ADD VALUE 'PENDING' requires careful ordering
 -- => Cannot remove values from a ENUM without complex workarounds
--- => Native ENUM is used in demo-be-clojure-pedestal as TEXT for portability
+-- => Native ENUM is used in a-demo-be-clojure-pedestal as TEXT for portability
 ```
 
 ```sql

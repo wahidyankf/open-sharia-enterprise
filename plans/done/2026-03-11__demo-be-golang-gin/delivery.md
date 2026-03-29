@@ -1,4 +1,4 @@
-# Delivery Checklist: demo-be-golang-gin
+# Delivery Checklist: a-demo-be-golang-gin
 
 Execute phases in order. Each phase produces a working, committable state.
 
@@ -10,20 +10,20 @@ Execute phases in order. Each phase produces a working, committable state.
 - [x] Verify `golangci-lint` installed (`golangci-lint --version`)
 - [x] Verify `rhino-cli test-coverage validate` supports Go coverprofile format (it does — already
       used by `rhino-cli`, `ayokoding-cli`, `oseplatform-cli`, `golang-commons`, `hugo-commons`)
-- [x] Verify `demo-be-e2e` Playwright config reads `BASE_URL` from env (it does)
+- [x] Verify `a-demo-be-e2e` Playwright config reads `BASE_URL` from env (it does)
 - [x] Verify Godog is compatible with the Gherkin feature files in
-      `specs/apps/demo/be/gherkin/` (Godog v0.15+ supports all used syntax)
+      `specs/apps/a-demo/be/gherkin/` (Godog v0.15+ supports all used syntax)
 - [x] Confirm SQLite CGO is available for integration test builds (requires `gcc` in PATH)
 
 ---
 
 ## Phase 1: Project Scaffold
 
-**Commit**: `feat(demo-be-golang-gin): scaffold Go/Gin project`
+**Commit**: `feat(a-demo-be-golang-gin): scaffold Go/Gin project`
 
-- [x] Create `apps/demo-be-golang-gin/` directory structure per tech-docs.md
+- [x] Create `apps/a-demo-be-golang-gin/` directory structure per tech-docs.md
 - [x] Create `go.mod` with module path
-      `github.com/wahidyankf/open-sharia-enterprise/apps/demo-be-golang-gin` and Go 1.24
+      `github.com/wahidyankf/open-sharia-enterprise/apps/a-demo-be-golang-gin` and Go 1.24
 - [x] Run `go get` to add all direct dependencies from tech-docs.md Dependencies Summary
 - [x] Create minimal `cmd/server/main.go` calling `server.Run()`
 - [x] Create `internal/server/server.go` with `Run()` function reading `PORT` env var
@@ -41,7 +41,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 2: Domain Types and Database
 
-**Commit**: `feat(demo-be-golang-gin): add domain types and GORM store`
+**Commit**: `feat(a-demo-be-golang-gin): add domain types and GORM store`
 
 - [x] Create `internal/domain/errors.go` — `DomainError` struct, `DomainErrorCode` constants,
       sentinel `Error()` method
@@ -68,7 +68,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 3: Health Endpoint
 
-**Commit**: `feat(demo-be-golang-gin): add /health endpoint`
+**Commit**: `feat(a-demo-be-golang-gin): add /health endpoint`
 
 - [x] Create `internal/handler/health.go` — `Health` handler returning
       `{"status": "UP"}` with HTTP 200
@@ -89,7 +89,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 4: Auth — Register and Login
 
-**Commit**: `feat(demo-be-golang-gin): add register and login endpoints`
+**Commit**: `feat(a-demo-be-golang-gin): add register and login endpoints`
 
 - [x] Create `internal/auth/jwt.go` — `JWTService` struct with `GenerateAccessToken`,
       `GenerateRefreshToken`, `ValidateToken`, `ExtractClaims` methods using golang-jwt/v5
@@ -107,7 +107,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 5: Token Lifecycle and Management
 
-**Commit**: `feat(demo-be-golang-gin): add token lifecycle and management endpoints`
+**Commit**: `feat(a-demo-be-golang-gin): add token lifecycle and management endpoints`
 
 - [x] Add `Refresh` handler to `internal/handler/auth.go`:
       `POST /api/v1/auth/refresh` — validates refresh token, rotates (issues new pair,
@@ -130,7 +130,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 6: User Account and Security
 
-**Commit**: `feat(demo-be-golang-gin): add user account and security endpoints`
+**Commit**: `feat(a-demo-be-golang-gin): add user account and security endpoints`
 
 - [x] Create `internal/handler/user.go`:
   - `GetProfile` handler: `GET /api/v1/users/me` — returns authenticated user profile
@@ -152,7 +152,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 7: Admin
 
-**Commit**: `feat(demo-be-golang-gin): add admin endpoints`
+**Commit**: `feat(a-demo-be-golang-gin): add admin endpoints`
 
 - [x] Create `internal/auth/admin_middleware.go` — Gin middleware that checks `role == "ADMIN"`
       from the JWT context set by `JWTMiddleware`; returns 403 if not admin
@@ -174,7 +174,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 8: Expenses — CRUD and Currency
 
-**Commit**: `feat(demo-be-golang-gin): add expense CRUD and currency handling`
+**Commit**: `feat(a-demo-be-golang-gin): add expense CRUD and currency handling`
 
 - [x] Create `internal/handler/expense.go`:
   - `CreateExpense` handler: `POST /api/v1/expenses` — validates amount+currency+unit, returns
@@ -197,7 +197,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 9: Expenses — Units, Reporting, Attachments
 
-**Commit**: `feat(demo-be-golang-gin): add unit handling, reporting, and attachments`
+**Commit**: `feat(a-demo-be-golang-gin): add unit handling, reporting, and attachments`
 
 - [x] Add `Quantity` and `Unit` fields to `Expense` struct; implement `validateUnit`
       (supported: metric — liter, kg, etc.; imperial — gallon, lb, etc.; empty is allowed)
@@ -223,10 +223,10 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 10: Coverage and Quality Gate
 
-**Commit**: `fix(demo-be-golang-gin): achieve 90% coverage and pass quality gates`
+**Commit**: `fix(a-demo-be-golang-gin): achieve 90% coverage and pass quality gates`
 
 - [x] Run full test suite: `CGO_ENABLED=0 go test -coverprofile=cover.out ./... -count=1`
-- [x] Validate: `rhino-cli test-coverage validate apps/demo-be-golang-gin/cover_unit.out 90` — passes
+- [x] Validate: `rhino-cli test-coverage validate apps/a-demo-be-golang-gin/cover_unit.out 90` — passes
       at 95.09% (filtering gorm_store, internal/server, cmd/server from cover.out)
 - [x] Identify uncovered lines; add targeted unit tests for domain validation branches not yet
       covered (error paths, edge cases for currency/unit/password/email validation)
@@ -255,14 +255,14 @@ if err != nil { return err }
 
 ## Phase 11: Infra — Docker Compose
 
-**Commit**: `feat(infra): add demo-be-golang-gin docker-compose dev environment`
+**Commit**: `feat(infra): add a-demo-be-golang-gin docker-compose dev environment`
 
-- [x] Create `infra/dev/demo-be-golang-gin/Dockerfile.be.dev` (golang:1.24-alpine + apk gcc)
-- [x] Create `infra/dev/demo-be-golang-gin/docker-compose.yml` with PostgreSQL 17 + app
+- [x] Create `infra/dev/a-demo-be-golang-gin/Dockerfile.be.dev` (golang:1.24-alpine + apk gcc)
+- [x] Create `infra/dev/a-demo-be-golang-gin/docker-compose.yml` with PostgreSQL 17 + app
       per tech-docs.md Infrastructure section
-- [x] Create `infra/dev/demo-be-golang-gin/docker-compose.e2e.yml` (E2E overrides — removes
+- [x] Create `infra/dev/a-demo-be-golang-gin/docker-compose.e2e.yml` (E2E overrides — removes
       volume mount and uses built binary for speed)
-- [x] Create `infra/dev/demo-be-golang-gin/README.md` with startup instructions and env vars
+- [x] Create `infra/dev/a-demo-be-golang-gin/README.md` with startup instructions and env vars
 - [x] Manual test: `docker compose up --build` → `GET http://localhost:8201/health` returns
       `{"status": "UP"}`
 
@@ -270,37 +270,37 @@ if err != nil { return err }
 
 ## Phase 12: GitHub Actions — E2E Workflow
 
-**Commit**: `ci: add e2e-demo-be-golang-gin GitHub Actions workflow`
+**Commit**: `ci: add e2e-a-demo-be-golang-gin GitHub Actions workflow`
 
-- [x] Create `.github/workflows/e2e-demo-be-golang-gin.yml`:
+- [x] Create `.github/workflows/e2e-a-demo-be-golang-gin.yml`:
   - Trigger: `schedule` (cron `0 23 * * *` and `0 11 * * *`) + `workflow_dispatch`
   - `permissions: contents: read`
   - Job `e2e-be`:
     - `actions/checkout@v4`
-    - Start backend: `docker compose -f infra/dev/demo-be-golang-gin/docker-compose.yml -f infra/dev/demo-be-golang-gin/docker-compose.e2e.yml up --build -d demo-be-golang-gin`
+    - Start backend: `docker compose -f infra/dev/a-demo-be-golang-gin/docker-compose.yml -f infra/dev/a-demo-be-golang-gin/docker-compose.e2e.yml up --build -d a-demo-be-golang-gin`
     - Wait for healthy: poll `docker inspect` health status (36 × 10s = 6 min timeout)
     - `volta-cli/action@v4`
     - `npm ci`
-    - `npx nx run demo-be-e2e:test:e2e` with `BASE_URL=http://localhost:8201`
-    - Upload artifact `playwright-report-demo-be-golang-gin` (always, 7 days)
-    - Stop backend: `docker compose -f infra/dev/demo-be-golang-gin/docker-compose.yml down` (always)
+    - `npx nx run a-demo-be-e2e:test:e2e` with `BASE_URL=http://localhost:8201`
+    - Upload artifact `playwright-report-a-demo-be-golang-gin` (always, 7 days)
+    - Stop backend: `docker compose -f infra/dev/a-demo-be-golang-gin/docker-compose.yml down` (always)
 - [x] Trigger `workflow_dispatch` manually; verify green
 
 ---
 
 ## Phase 13: CI — main-ci.yml Update
 
-**Commit**: `ci: add demo-be-golang-gin coverage upload to main-ci`
+**Commit**: `ci: add a-demo-be-golang-gin coverage upload to main-ci`
 
 - [x] Add coverage upload step to `.github/workflows/main-ci.yml`:
 
   ```yaml
-  - name: Upload coverage — demo-be-golang-gin
+  - name: Upload coverage — a-demo-be-golang-gin
     uses: codecov/codecov-action@v5
     with:
       token: ${{ secrets.CODECOV_TOKEN }}
-      files: apps/demo-be-golang-gin/cover.out
-      flags: demo-be-golang-gin
+      files: apps/a-demo-be-golang-gin/cover.out
+      flags: a-demo-be-golang-gin
       fail_ci_if_error: false
   ```
 
@@ -313,36 +313,36 @@ if err != nil { return err }
 
 ## Phase 14: Documentation Updates
 
-**Commit**: `docs: add demo-be-golang-gin to project documentation`
+**Commit**: `docs: add a-demo-be-golang-gin to project documentation`
 
 - [x] Update `CLAUDE.md`:
-  - Add `demo-be-golang-gin` to Current Apps list with description
-  - Add `demo-be-golang-gin` to `test:integration` caching note (Godog + MemoryStore)
+  - Add `a-demo-be-golang-gin` to Current Apps list with description
+  - Add `a-demo-be-golang-gin` to `test:integration` caching note (Godog + MemoryStore)
 - [x] Update `README.md`:
-  - Add demo-be-golang-gin badge in demo apps section
+  - Add a-demo-be-golang-gin badge in demo apps section
   - Add coverage badge row
   - Add to monorepo architecture listing
-- [x] Update `specs/apps/demo/be/README.md`:
+- [x] Update `specs/apps/a-demo/be/README.md`:
   - Add Go/Gin row to Implementations table
-- [x] Update `apps/demo-be-e2e/project.json`:
-  - Add `demo-be-golang-gin` to `implicitDependencies`
+- [x] Update `apps/a-demo-be-e2e/project.json`:
+  - Add `a-demo-be-golang-gin` to `implicitDependencies`
 - [x] Update `governance/development/infra/nx-targets.md`:
-  - Add `demo-be-golang-gin` row to Current Project Tags table:
-    `["type:app", "platform:gin", "lang:golang", "domain:demo-be"]`
+  - Add `a-demo-be-golang-gin` row to Current Project Tags table:
+    `["type:app", "platform:gin", "lang:golang", "domain:a-demo-be"]`
   - Add `platform:gin` to the Platform allowed values in the Four-Dimension Scheme table
 
 ---
 
 ## Phase 15: Final Validation
 
-- [x] `nx run demo-be-golang-gin:test:quick` passes (≥90% coverage, zero lint violations)
-- [x] `nx run demo-be-golang-gin:test:unit` passes (all domain unit tests)
-- [x] `nx run demo-be-golang-gin:test:integration` passes — all 76 Gherkin scenarios
-- [x] `nx run demo-be-golang-gin:lint` passes (golangci-lint clean)
-- [x] `nx run demo-be-golang-gin:build` produces working binary at `apps/demo-be-golang-gin/dist/demo-be-golang-gin`
-- [x] `gofmt -l apps/demo-be-golang-gin` returns no files (all files correctly formatted)
+- [x] `nx run a-demo-be-golang-gin:test:quick` passes (≥90% coverage, zero lint violations)
+- [x] `nx run a-demo-be-golang-gin:test:unit` passes (all domain unit tests)
+- [x] `nx run a-demo-be-golang-gin:test:integration` passes — all 76 Gherkin scenarios
+- [x] `nx run a-demo-be-golang-gin:lint` passes (golangci-lint clean)
+- [x] `nx run a-demo-be-golang-gin:build` produces working binary at `apps/a-demo-be-golang-gin/dist/a-demo-be-golang-gin`
+- [x] `gofmt -l apps/a-demo-be-golang-gin` returns no files (all files correctly formatted)
 - [x] Docker Compose stack starts and health check passes (manual verification)
-- [x] `e2e-demo-be-golang-gin.yml` workflow green (requires CI push)
+- [x] `e2e-a-demo-be-golang-gin.yml` workflow green (requires CI push)
 - [x] `main-ci.yml` workflow green (requires CI push)
 - [x] All documentation updated
 - [x] Move plan folder to `plans/done/`

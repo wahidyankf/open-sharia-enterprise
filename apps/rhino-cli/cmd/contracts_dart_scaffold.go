@@ -16,8 +16,8 @@ generated Dart model parts importable as a Dart package.
 
 The barrel library includes part directives for all model files
 and utility functions required by the generated code.`,
-	Example: `  rhino-cli contracts dart-scaffold apps/demo-fe-dart-flutterweb/generated-contracts
-  rhino-cli contracts dart-scaffold apps/demo-fe-dart-flutterweb/generated-contracts -o json`,
+	Example: `  rhino-cli contracts dart-scaffold apps/a-demo-fe-dart-flutterweb/generated-contracts
+  rhino-cli contracts dart-scaffold apps/a-demo-fe-dart-flutterweb/generated-contracts -o json`,
 	Args:          cobra.ExactArgs(1),
 	SilenceErrors: true,
 	RunE:          runContractsDartScaffold,

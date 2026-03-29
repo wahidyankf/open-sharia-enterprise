@@ -104,7 +104,7 @@ The lint target runs `npx oxlint@latest .` with zero configuration. No `.oxlintr
 
 TypeScript's `noUnusedLocals` and `noUnusedParameters` (both `true` in tsconfig) catch unused variables at the type level, but unused imports that are type-only or have side effects may slip through without linter enforcement.
 
-**Impact**: Low — TypeScript strict mode catches most cases, but explicit linter error rules provide a stronger safety net and align with `demo-be-ts-effect`'s established pattern.
+**Impact**: Low — TypeScript strict mode catches most cases, but explicit linter error rules provide a stronger safety net and align with `a-demo-be-ts-effect`'s established pattern.
 
 ### Gap 10: Unit Test Contains Integration-Level Code
 

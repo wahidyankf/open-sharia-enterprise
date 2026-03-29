@@ -14,7 +14,7 @@ for reference. Phase 6 (validation) runs after all phases complete.
 
 ### Phase 1: JVM Apps (Java Vert.x / Kotlin Ktor)
 
-#### Phase 1a: demo-be-java-vertx — Liquibase
+#### Phase 1a: a-demo-be-java-vertx — Liquibase
 
 - [x] Add `liquibase-core` dependency to `pom.xml`
 - [x] Create `src/main/resources/db/changelog/db.changelog-master.yaml` referencing change files
@@ -33,12 +33,12 @@ for reference. Phase 6 (validation) runs after all phases complete.
 - [x] Update `README.md` with "Database Migrations" section
 - [x] Verify: `Dockerfile.integration` — open file and confirm no changes needed
 - [x] Verify: `docker-compose.integration.yml` — open file and confirm no changes needed
-- [x] Verify: `.github/workflows/test-demo-be-java-vertx.yml` — open file and confirm no changes needed
-- [x] Run `nx run demo-be-java-vertx:test:quick` — verify pass (92.51% coverage)
-- [x] Run `nx run demo-be-java-vertx:test:integration` — verified via CI E2E (PASS)
-- [x] Commit: `feat(demo-be-java-vertx): add Liquibase database migrations` (1fed0f20)
+- [x] Verify: `.github/workflows/test-a-demo-be-java-vertx.yml` — open file and confirm no changes needed
+- [x] Run `nx run a-demo-be-java-vertx:test:quick` — verify pass (92.51% coverage)
+- [x] Run `nx run a-demo-be-java-vertx:test:integration` — verified via CI E2E (PASS)
+- [x] Commit: `feat(a-demo-be-java-vertx): add Liquibase database migrations` (1fed0f20)
 
-#### Phase 1b: demo-be-kotlin-ktor — Flyway
+#### Phase 1b: a-demo-be-kotlin-ktor — Flyway
 
 - [x] **Schema decision (required before writing migrations)**: Inspect `TokensTable.kt` and decide
       which option to implement (Option A or Option B — they are mutually exclusive; choose exactly
@@ -61,14 +61,14 @@ for reference. Phase 6 (validation) runs after all phases complete.
 - [x] Update `README.md` with "Database Migrations" section (documented schema divergence for Option A)
 - [x] Verify: `Dockerfile.integration` — no changes needed
 - [x] Verify: `docker-compose.integration.yml` — no changes needed
-- [x] Verify: `.github/workflows/test-demo-be-kotlin-ktor.yml` — no changes needed
-- [x] Run `nx run demo-be-kotlin-ktor:test:quick` — pass (96.71% coverage)
-- [x] Run `nx run demo-be-kotlin-ktor:test:integration` — verified via CI E2E (PASS)
-- [x] Commit: `feat(demo-be-kotlin-ktor): add Flyway database migrations` (66df89e1)
+- [x] Verify: `.github/workflows/test-a-demo-be-kotlin-ktor.yml` — no changes needed
+- [x] Run `nx run a-demo-be-kotlin-ktor:test:quick` — pass (96.71% coverage)
+- [x] Run `nx run a-demo-be-kotlin-ktor:test:integration` — verified via CI E2E (PASS)
+- [x] Commit: `feat(a-demo-be-kotlin-ktor): add Flyway database migrations` (66df89e1)
 
 ### Phase 2: .NET Apps (F# / C#)
 
-#### Phase 2a: demo-be-fsharp-giraffe — DbUp
+#### Phase 2a: a-demo-be-fsharp-giraffe — DbUp
 
 - [x] Add `DbUp-Core` and `DbUp-PostgreSQL` NuGet packages to `.fsproj`
 - [x] Create SQL migration files `001-create-users.sql` through `005-create-refresh-tokens.sql` in
@@ -82,14 +82,14 @@ for reference. Phase 6 (validation) runs after all phases complete.
 - [x] Update `README.md` with "Database Migrations" section
 - [x] Verify: `Dockerfile.integration` — no changes needed
 - [x] Verify: `docker-compose.integration.yml` — no changes needed
-- [x] Verify: `.github/workflows/test-demo-be-fsharp-giraffe.yml` — no changes needed
-- [x] Run `nx run demo-be-fsharp-giraffe:test:quick` — pass
-- [x] Run `nx run demo-be-fsharp-giraffe:test:integration` — verified via CI E2E (PASS)
-- [x] Commit: `feat(demo-be-fsharp-giraffe): add DbUp database migrations` (219d2f44)
+- [x] Verify: `.github/workflows/test-a-demo-be-fsharp-giraffe.yml` — no changes needed
+- [x] Run `nx run a-demo-be-fsharp-giraffe:test:quick` — pass
+- [x] Run `nx run a-demo-be-fsharp-giraffe:test:integration` — verified via CI E2E (PASS)
+- [x] Commit: `feat(a-demo-be-fsharp-giraffe): add DbUp database migrations` (219d2f44)
 
-#### Phase 2b: demo-be-csharp-aspnetcore — EF Core Migrations
+#### Phase 2b: a-demo-be-csharp-aspnetcore — EF Core Migrations
 
-- [x] Add `Microsoft.EntityFrameworkCore.Design` to `DemoBeCsas.csproj` (PrivateAssets="all")
+- [x] Add `Microsoft.EntityFrameworkCore.Design` to `AADemoBeCsas.csproj` (PrivateAssets="all")
 - [x] Run `dotnet ef migrations add InitialCreate` to generate `Migrations/` directory
 - [x] Replace `Database.EnsureCreatedAsync()` with `Database.MigrateAsync()` in `Program.cs`
 - [x] Search codebase for `EnsureCreated` — SQLite test paths retain EnsureCreated (expected)
@@ -97,14 +97,14 @@ for reference. Phase 6 (validation) runs after all phases complete.
 - [x] Update `README.md` with "Database Migrations" section
 - [x] Verify: `Dockerfile.integration` — no changes needed
 - [x] Verify: `docker-compose.integration.yml` — no changes needed
-- [x] Verify: `.github/workflows/test-demo-be-csharp-aspnetcore.yml` — no changes needed
-- [x] Run `nx run demo-be-csharp-aspnetcore:test:quick` — pass
-- [x] Run `nx run demo-be-csharp-aspnetcore:test:integration` — verified via CI E2E (PASS)
-- [x] Commit: `feat(demo-be-csharp-aspnetcore): upgrade to EF Core Migrations` (96d97fa7)
+- [x] Verify: `.github/workflows/test-a-demo-be-csharp-aspnetcore.yml` — no changes needed
+- [x] Run `nx run a-demo-be-csharp-aspnetcore:test:quick` — pass
+- [x] Run `nx run a-demo-be-csharp-aspnetcore:test:integration` — verified via CI E2E (PASS)
+- [x] Commit: `feat(a-demo-be-csharp-aspnetcore): upgrade to EF Core Migrations` (96d97fa7)
 
 ### Phase 3: Scripting Languages (Python / Clojure)
 
-#### Phase 3a: demo-be-python-fastapi — Alembic
+#### Phase 3a: a-demo-be-python-fastapi — Alembic
 
 - [x] Add `alembic` to `pyproject.toml` `[project.dependencies]` and run `uv lock`
 - [x] Create `alembic.ini` configuration file
@@ -115,12 +115,12 @@ for reference. Phase 6 (validation) runs after all phases complete.
 - [x] Inspect `tests/` — SQLite tests keep create_all(); PostgreSQL startup uses Alembic
 - [x] Verify `Dockerfile.integration` — updated to COPY alembic files
 - [x] Verify: `docker-compose.integration.yml` — no changes needed
-- [x] Verify: `.github/workflows/test-demo-be-python-fastapi.yml` — no changes needed
-- [x] Run `nx run demo-be-python-fastapi:test:quick` — pass (96.71% coverage)
-- [x] Run `nx run demo-be-python-fastapi:test:integration` — verified via CI E2E (PASS)
-- [x] Commit: `feat(demo-be-python-fastapi): add Alembic database migrations` (98ec99fd)
+- [x] Verify: `.github/workflows/test-a-demo-be-python-fastapi.yml` — no changes needed
+- [x] Run `nx run a-demo-be-python-fastapi:test:quick` — pass (96.71% coverage)
+- [x] Run `nx run a-demo-be-python-fastapi:test:integration` — verified via CI E2E (PASS)
+- [x] Commit: `feat(a-demo-be-python-fastapi): add Alembic database migrations` (98ec99fd)
 
-#### Phase 3b: demo-be-clojure-pedestal — Migratus
+#### Phase 3b: a-demo-be-clojure-pedestal — Migratus
 
 - [x] Add `migratus` dependency to `deps.edn`
 - [x] Create SQL migration pairs in `resources/migrations/` — 5 pairs (001-005)
@@ -128,14 +128,14 @@ for reference. Phase 6 (validation) runs after all phases complete.
 - [x] Update `README.md` with "Database Migrations" section
 - [x] Verify: `Dockerfile.integration` — no changes needed
 - [x] Verify: `docker-compose.integration.yml` — no changes needed
-- [x] Verify: `.github/workflows/test-demo-be-clojure-pedestal.yml` — no changes needed
-- [x] Run `nx run demo-be-clojure-pedestal:test:quick` — pass
-- [x] Run `nx run demo-be-clojure-pedestal:test:integration` — verified via CI E2E (PASS)
-- [x] Commit: `feat(demo-be-clojure-pedestal): add Migratus database migrations` (92664b64)
+- [x] Verify: `.github/workflows/test-a-demo-be-clojure-pedestal.yml` — no changes needed
+- [x] Run `nx run a-demo-be-clojure-pedestal:test:quick` — pass
+- [x] Run `nx run a-demo-be-clojure-pedestal:test:integration` — verified via CI E2E (PASS)
+- [x] Commit: `feat(a-demo-be-clojure-pedestal): add Migratus database migrations` (92664b64)
 
 ### Phase 4: Go and TypeScript
 
-#### Phase 4a: demo-be-golang-gin — goose
+#### Phase 4a: a-demo-be-golang-gin — goose
 
 - [x] **Naming conflict decision**: Chose Option A — renamed BlacklistedToken to RevokedToken
 - [x] Document the chosen option (A) — BlacklistedToken renamed to RevokedToken
@@ -148,13 +148,13 @@ for reference. Phase 6 (validation) runs after all phases complete.
 - [x] Verify: `Dockerfile` — no changes needed
 - [x] Verify: `Dockerfile.integration` — no changes needed
 - [x] Verify: `docker-compose.integration.yml` — no changes needed
-- [x] Verify: `.github/workflows/test-demo-be-golang-gin.yml` — no changes needed
+- [x] Verify: `.github/workflows/test-a-demo-be-golang-gin.yml` — no changes needed
 - [x] Run `go build ./...` — compiles cleanly
-- [x] Run `nx run demo-be-golang-gin:test:quick` — pass (90.27% coverage)
-- [x] Run `nx run demo-be-golang-gin:test:integration` — verified via CI E2E (PASS)
-- [x] Commit: `feat(demo-be-golang-gin): add goose database migrations` (59a0a3d2)
+- [x] Run `nx run a-demo-be-golang-gin:test:quick` — pass (90.27% coverage)
+- [x] Run `nx run a-demo-be-golang-gin:test:integration` — verified via CI E2E (PASS)
+- [x] Commit: `feat(a-demo-be-golang-gin): add goose database migrations` (59a0a3d2)
 
-#### Phase 4b: demo-be-ts-effect — @effect/sql Migrator
+#### Phase 4b: a-demo-be-ts-effect — @effect/sql Migrator
 
 - [x] Verify PgMigrator/SqliteMigrator availability — used `fromRecord` pattern
 - [x] Create Effect migration modules 001-005 in `src/infrastructure/db/migrations/` + index.ts
@@ -164,12 +164,12 @@ for reference. Phase 6 (validation) runs after all phases complete.
 - [x] Update `README.md` with "Database Migrations" section
 - [x] Verify: `Dockerfile.integration` — no changes needed
 - [x] Verify: `docker-compose.integration.yml` — no changes needed
-- [x] Verify: `.github/workflows/test-demo-be-ts-effect.yml` — no changes needed
+- [x] Verify: `.github/workflows/test-a-demo-be-ts-effect.yml` — no changes needed
 - [x] Update `tests/unit/bdd/hooks.ts` — uses SqliteMigrator.fromRecord
 - [x] Update `tests/integration/hooks.ts` — uses PgMigrator.fromRecord / SqliteMigrator.fromRecord
-- [x] Run `nx run demo-be-ts-effect:test:quick` — pass
-- [x] Run `nx run demo-be-ts-effect:test:integration` — verified via CI E2E (PASS)
-- [x] Commit: `feat(demo-be-ts-effect): add @effect/sql Migrator database migrations` (296ff3a6)
+- [x] Run `nx run a-demo-be-ts-effect:test:quick` — pass
+- [x] Run `nx run a-demo-be-ts-effect:test:integration` — verified via CI E2E (PASS)
+- [x] Commit: `feat(a-demo-be-ts-effect): add @effect/sql Migrator database migrations` (296ff3a6)
 
 ### Phase 5: Documentation, Governance, and Licensing
 
@@ -193,7 +193,7 @@ for reference. Phase 6 (validation) runs after all phases complete.
 - [x] Update `docs/explanation/software-engineering/README.md`:
   - [x] Add "Licensing" section entry
 - [x] Review `docs/explanation/README.md` — updated date
-- [x] Review `specs/apps/demo/c4/component-be.md`:
+- [x] Review `specs/apps/a-demo/c4/component-be.md`:
   - [x] Added Database Migrations note + link to audit trail pattern
 - [x] Commit governance changes (39eca7da, 5abcf1f9, 68b813a6)
 
@@ -215,7 +215,7 @@ for reference. Phase 6 (validation) runs after all phases complete.
 
   ```bash
   grep -r "AutoMigrate\|create_all\|EnsureCreated\|create-schema!\|SchemaUtils\.create\|SchemaInitializer" \
-    apps/demo-be-* \
+    apps/a-demo-be-* \
     --include="*.go" --include="*.py" --include="*.fs" --include="*.clj" --include="*.ts" \
     --include="*.cs" --include="*.kt" --include="*.java"
   # Note: *.sql files are intentionally excluded — migration files themselves contain CREATE TABLE
@@ -241,25 +241,25 @@ Push all changes and verify all related GitHub Actions workflows pass. Trigger m
 
 #### Demo Backend E2E Workflows (all must pass)
 
-- [x] `test-demo-be-java-springboot.yml` — Test - Demo BE (Java/Spring Boot) — PASS (regression)
-- [x] `test-demo-be-java-vertx.yml` — Test - Demo BE (Java/Vert.x) — PASS
-- [x] `test-demo-be-python-fastapi.yml` — Test - Demo BE (Python/FastAPI) — PASS
-- [x] `test-demo-be-golang-gin.yml` — Test - Demo BE (Go/Gin) — PASS
-- [x] `test-demo-be-kotlin-ktor.yml` — Test - Demo BE (Kotlin/Ktor) — PASS
-- [x] `test-demo-be-fsharp-giraffe.yml` — Test - Demo BE (F#/Giraffe) — PASS
-- [x] `test-demo-be-csharp-aspnetcore.yml` — Test - Demo BE (C#/ASP.NET Core) — PASS
-- [x] `test-demo-be-clojure-pedestal.yml` — Test - Demo BE (Clojure/Pedestal) — PASS
-- [x] `test-demo-be-ts-effect.yml` — Test - Demo BE (TypeScript/Effect) — PASS
-- [x] `test-demo-be-rust-axum.yml` — Test - Demo BE (Rust/Axum) — PASS (regression)
-- [x] `test-demo-be-elixir-phoenix.yml` — Test - Demo BE (Elixir/Phoenix) — PASS (regression)
+- [x] `test-a-demo-be-java-springboot.yml` — Test - Demo BE (Java/Spring Boot) — PASS (regression)
+- [x] `test-a-demo-be-java-vertx.yml` — Test - Demo BE (Java/Vert.x) — PASS
+- [x] `test-a-demo-be-python-fastapi.yml` — Test - Demo BE (Python/FastAPI) — PASS
+- [x] `test-a-demo-be-golang-gin.yml` — Test - Demo BE (Go/Gin) — PASS
+- [x] `test-a-demo-be-kotlin-ktor.yml` — Test - Demo BE (Kotlin/Ktor) — PASS
+- [x] `test-a-demo-be-fsharp-giraffe.yml` — Test - Demo BE (F#/Giraffe) — PASS
+- [x] `test-a-demo-be-csharp-aspnetcore.yml` — Test - Demo BE (C#/ASP.NET Core) — PASS
+- [x] `test-a-demo-be-clojure-pedestal.yml` — Test - Demo BE (Clojure/Pedestal) — PASS
+- [x] `test-a-demo-be-ts-effect.yml` — Test - Demo BE (TypeScript/Effect) — PASS
+- [x] `test-a-demo-be-rust-axum.yml` — Test - Demo BE (Rust/Axum) — PASS (regression)
+- [x] `test-a-demo-be-elixir-phoenix.yml` — Test - Demo BE (Elixir/Phoenix) — PASS (regression)
 
 #### Demo Fullstack E2E Workflows (must pass)
 
-- [x] `test-demo-fs-ts-nextjs.yml` — Test - Demo FS (TypeScript/Next.js) — PASS
+- [x] `test-a-demo-fs-ts-nextjs.yml` — Test - Demo FS (TypeScript/Next.js) — PASS
 
 #### Pre-Existing Failures (document, do not block)
 
-If a workflow was already failing before this plan's changes (e.g., `test-demo-be-ts-effect` has
+If a workflow was already failing before this plan's changes (e.g., `test-a-demo-be-ts-effect` has
 been failing due to a Docker `npm ci` issue since 2026-03-24), document the pre-existing failure
 and do not block the plan on it. Verify the failure is unrelated to migration changes by checking
 the failure predates the plan's commits.
@@ -268,16 +268,16 @@ the failure predates the plan's commits.
 
 ```bash
 # Trigger all 12 demo workflows manually
-gh workflow run test-demo-be-java-springboot.yml --ref main
-gh workflow run test-demo-be-java-vertx.yml --ref main
-gh workflow run test-demo-be-python-fastapi.yml --ref main
-gh workflow run test-demo-be-golang-gin.yml --ref main
-gh workflow run test-demo-be-kotlin-ktor.yml --ref main
-gh workflow run test-demo-be-fsharp-giraffe.yml --ref main
-gh workflow run test-demo-be-csharp-aspnetcore.yml --ref main
-gh workflow run test-demo-be-clojure-pedestal.yml --ref main
-gh workflow run test-demo-be-ts-effect.yml --ref main
-gh workflow run test-demo-be-rust-axum.yml --ref main
-gh workflow run test-demo-be-elixir-phoenix.yml --ref main
-gh workflow run test-demo-fs-ts-nextjs.yml --ref main
+gh workflow run test-a-demo-be-java-springboot.yml --ref main
+gh workflow run test-a-demo-be-java-vertx.yml --ref main
+gh workflow run test-a-demo-be-python-fastapi.yml --ref main
+gh workflow run test-a-demo-be-golang-gin.yml --ref main
+gh workflow run test-a-demo-be-kotlin-ktor.yml --ref main
+gh workflow run test-a-demo-be-fsharp-giraffe.yml --ref main
+gh workflow run test-a-demo-be-csharp-aspnetcore.yml --ref main
+gh workflow run test-a-demo-be-clojure-pedestal.yml --ref main
+gh workflow run test-a-demo-be-ts-effect.yml --ref main
+gh workflow run test-a-demo-be-rust-axum.yml --ref main
+gh workflow run test-a-demo-be-elixir-phoenix.yml --ref main
+gh workflow run test-a-demo-fs-ts-nextjs.yml --ref main
 ```

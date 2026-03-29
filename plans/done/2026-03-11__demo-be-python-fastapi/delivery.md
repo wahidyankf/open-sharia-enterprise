@@ -1,4 +1,4 @@
-# Delivery Checklist: demo-be-python-fastapi
+# Delivery Checklist: a-demo-be-python-fastapi
 
 Execute phases in order. Each phase produces a working, committable state.
 
@@ -12,28 +12,28 @@ Execute phases in order. Each phase produces a working, committable state.
 - [x] Verify `pyright` available globally or confirm it will be invoked via `uv run pyright`
 - [x] Verify `ruff` available globally or confirm it will be invoked via `uv run ruff`
 - [x] Verify `rhino-cli test-coverage validate` supports LCOV (it does — already used by
-      `organiclever-fe` and `demo-be-elixir-phoenix`)
-- [x] Confirm `demo-be-e2e` Playwright config reads `BASE_URL` from env (it does)
+      `organiclever-fe` and `a-demo-be-elixir-phoenix`)
+- [x] Confirm `a-demo-be-e2e` Playwright config reads `BASE_URL` from env (it does)
 - [x] Confirm pytest-bdd is compatible with the current Gherkin syntax in
-      `specs/apps/demo/be/gherkin/` (Given/When/Then with doc_string and data table parameters)
+      `specs/apps/a-demo/be/gherkin/` (Given/When/Then with doc_string and data table parameters)
 
 ---
 
 ## Phase 1: Project Scaffold
 
-**Commit**: `feat(demo-be-python-fastapi): scaffold Python/FastAPI project`
+**Commit**: `feat(a-demo-be-python-fastapi): scaffold Python/FastAPI project`
 
-- [x] Create `apps/demo-be-python-fastapi/` directory structure per tech-docs.md (src layout)
+- [x] Create `apps/a-demo-be-python-fastapi/` directory structure per tech-docs.md (src layout)
 - [x] Create `.python-version` pinning Python 3.13
 - [x] Create `pyproject.toml` with all runtime and dev dependencies per tech-docs.md
 - [x] Run `uv sync` to create `.venv` and lock `uv.lock`
-- [x] Create `src/demo_be_python_fastapi/__init__.py` and `src/demo_be_python_fastapi/main.py` with minimal
+- [x] Create `src/a_demo_be_python_fastapi/__init__.py` and `src/a_demo_be_python_fastapi/main.py` with minimal
       FastAPI app that starts on port 8201 (no routes yet)
-- [x] Create `src/demo_be_python_fastapi/config.py` using `pydantic-settings` to read `DATABASE_URL`
+- [x] Create `src/a_demo_be_python_fastapi/config.py` using `pydantic-settings` to read `DATABASE_URL`
       and `APP_JWT_SECRET` from environment
 - [x] Create `project.json` with all Nx targets from tech-docs.md
 - [x] Add `README.md` covering local dev, Docker, env vars, API endpoints, Nx targets
-- [x] Verify `uv run uvicorn demo_be_python_fastapi.main:app --port 8201` starts without error
+- [x] Verify `uv run uvicorn a_demo_be_python_fastapi.main:app --port 8201` starts without error
 - [x] Verify `uv run ruff format --check .` passes (no formatting violations)
 - [x] Verify `uv run ruff check .` passes (no lint violations)
 - [x] Verify `uv run pyright` passes (no type errors)
@@ -43,22 +43,22 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 2: Domain Types and Database
 
-**Commit**: `feat(demo-be-python-fastapi): add domain types and SQLAlchemy database layer`
+**Commit**: `feat(a-demo-be-python-fastapi): add domain types and SQLAlchemy database layer`
 
-- [x] Create `src/demo_be_python_fastapi/domain/types.py` — Python `StrEnum` classes:
+- [x] Create `src/a_demo_be_python_fastapi/domain/types.py` — Python `StrEnum` classes:
       `Currency` (USD, IDR), `Role` (USER, ADMIN), `UserStatus` (ACTIVE, INACTIVE, DISABLED, LOCKED)
-- [x] Create `src/demo_be_python_fastapi/domain/errors.py` — typed exception hierarchy:
+- [x] Create `src/a_demo_be_python_fastapi/domain/errors.py` — typed exception hierarchy:
       `DomainError`, `ValidationError`, `NotFoundError`, `ForbiddenError`,
       `ConflictError`, `UnauthorizedError`, `FileTooLargeError`, `UnsupportedMediaTypeError`
-- [x] Create `src/demo_be_python_fastapi/domain/user.py` — `User` dataclass with validation functions
+- [x] Create `src/a_demo_be_python_fastapi/domain/user.py` — `User` dataclass with validation functions
       (`validate_password_strength`, `validate_email_format`, `validate_username`)
-- [x] Create `src/demo_be_python_fastapi/domain/expense.py` — `Expense` dataclass with
+- [x] Create `src/a_demo_be_python_fastapi/domain/expense.py` — `Expense` dataclass with
       `validate_amount(currency, amount)` enforcing decimal precision per currency
-- [x] Create `src/demo_be_python_fastapi/domain/attachment.py` — `Attachment` dataclass
-- [x] Create `src/demo_be_python_fastapi/infrastructure/models.py` — SQLAlchemy ORM models:
+- [x] Create `src/a_demo_be_python_fastapi/domain/attachment.py` — `Attachment` dataclass
+- [x] Create `src/a_demo_be_python_fastapi/infrastructure/models.py` — SQLAlchemy ORM models:
       `UserModel`, `ExpenseModel`, `AttachmentModel`, `RevokedTokenModel`
-- [x] Create `src/demo_be_python_fastapi/database.py` — engine + `SessionLocal` factory
-- [x] Create `src/demo_be_python_fastapi/infrastructure/password_hasher.py` — direct bcrypt (not passlib,
+- [x] Create `src/a_demo_be_python_fastapi/database.py` — engine + `SessionLocal` factory
+- [x] Create `src/a_demo_be_python_fastapi/infrastructure/password_hasher.py` — direct bcrypt (not passlib,
       due to bcrypt 5.x incompatibility) with `hash_password` and `verify_password`
 - [x] Write unit tests in `tests/unit/` for:
   - `test_user_validation.py`: password strength (min 12 chars, uppercase, special char),
@@ -75,9 +75,9 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 3: Health Endpoint
 
-**Commit**: `feat(demo-be-python-fastapi): add /health endpoint`
+**Commit**: `feat(a-demo-be-python-fastapi): add /health endpoint`
 
-- [x] Create `src/demo_be_python_fastapi/routers/health.py` with `GET /health` returning
+- [x] Create `src/a_demo_be_python_fastapi/routers/health.py` with `GET /health` returning
       `{"status": "UP"}` (public, no auth)
 - [x] Register health router in `main.py` (no prefix)
 - [x] Register domain error exception handlers in `main.py` per tech-docs.md
@@ -99,27 +99,27 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 4: Auth — Register and Login
 
-**Commit**: `feat(demo-be-python-fastapi): add register and login endpoints`
+**Commit**: `feat(a-demo-be-python-fastapi): add register and login endpoints`
 
-- [x] Create `src/demo_be_python_fastapi/auth/jwt_service.py`:
+- [x] Create `src/a_demo_be_python_fastapi/auth/jwt_service.py`:
   - `create_access_token(user_id, username, role, secret) -> str`
   - `create_refresh_token(user_id, secret) -> str`
   - `decode_token(token, secret) -> dict`
-- [x] Create `src/demo_be_python_fastapi/auth/dependencies.py`:
+- [x] Create `src/a_demo_be_python_fastapi/auth/dependencies.py`:
   - `get_current_user(token: str = Depends(oauth2_scheme), db = Depends(get_db)) -> UserModel`
     raises `UnauthorizedError` if token invalid or revoked
   - `require_admin(current_user = Depends(get_current_user)) -> UserModel`
     raises `ForbiddenError` if not admin
-- [x] Create `src/demo_be_python_fastapi/infrastructure/repositories.py` with `UserRepository`:
+- [x] Create `src/a_demo_be_python_fastapi/infrastructure/repositories.py` with `UserRepository`:
   - `create(username, email, password_hash, display_name) -> UserModel`
   - `find_by_username(username) -> UserModel | None`
   - `find_by_id(user_id) -> UserModel | None`
-- [x] Create `src/demo_be_python_fastapi/routers/auth.py`:
+- [x] Create `src/a_demo_be_python_fastapi/routers/auth.py`:
   - `POST /api/v1/auth/register` → 201 `{id, username, email, display_name}`
     (validates password strength; returns 409 on duplicate username)
   - `POST /api/v1/auth/login` → 200 `{access_token, refresh_token, token_type: "Bearer"}`
     (raises 401 on wrong password, 401 on INACTIVE status, 423 on LOCKED)
-- [x] Create `src/demo_be_python_fastapi/dependencies.py` with `get_db` and repository providers
+- [x] Create `src/a_demo_be_python_fastapi/dependencies.py` with `get_db` and repository providers
 - [x] Write integration steps in `tests/integration/steps/auth_steps.py` consuming
       `registration.feature` (6 scenarios) and `password-login.feature` (5 scenarios)
 - [x] Verify `uv run pytest -m integration` passes — 13 scenarios
@@ -130,7 +130,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 5: Token Lifecycle and Management
 
-**Commit**: `feat(demo-be-python-fastapi): add token lifecycle and management endpoints`
+**Commit**: `feat(a-demo-be-python-fastapi): add token lifecycle and management endpoints`
 
 - [x] Add `RevokedTokenRepository` to `repositories.py`:
   - `revoke(jti: str) -> None` — idempotent (checks before INSERT)
@@ -142,7 +142,7 @@ Execute phases in order. Each phase produces a working, committable state.
   - `POST /api/v1/auth/logout` — revoke current access token jti (idempotent: 200 even if
     already revoked); public route (accepts token in Authorization header)
   - `POST /api/v1/auth/logout-all` — protected by JWT auth; revokes all tokens for user
-- [x] Create `src/demo_be_python_fastapi/routers/tokens.py`:
+- [x] Create `src/a_demo_be_python_fastapi/routers/tokens.py`:
   - `GET /api/v1/tokens/claims` — decode and return JWT claims (protected)
   - `GET /.well-known/jwks.json` — return JWKS public key info (public)
 - [x] Wire new routers in `main.py`
@@ -156,9 +156,9 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 6: User Account and Security
 
-**Commit**: `feat(demo-be-python-fastapi): add user account and security endpoints`
+**Commit**: `feat(a-demo-be-python-fastapi): add user account and security endpoints`
 
-- [x] Create `src/demo_be_python_fastapi/routers/users.py`:
+- [x] Create `src/a_demo_be_python_fastapi/routers/users.py`:
   - `GET /api/v1/users/me` — return `{id, username, email, display_name, status}` (protected)
   - `PATCH /api/v1/users/me` — update `display_name` field (protected)
   - `POST /api/v1/users/me/password` — verify old password, hash new, update (protected);
@@ -179,9 +179,9 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 7: Admin
 
-**Commit**: `feat(demo-be-python-fastapi): add admin endpoints`
+**Commit**: `feat(a-demo-be-python-fastapi): add admin endpoints`
 
-- [x] Create `src/demo_be_python_fastapi/routers/admin.py`:
+- [x] Create `src/a_demo_be_python_fastapi/routers/admin.py`:
   - `GET /api/v1/admin/users` — paginated list with optional `email` query filter
     (protected + admin role); returns `{items: [...], total, page, size}`
   - `POST /api/v1/admin/users/{id}/disable` — set status to DISABLED (admin only)
@@ -202,16 +202,16 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 8: Expenses — CRUD and Currency
 
-**Commit**: `feat(demo-be-python-fastapi): add expense CRUD and currency handling`
+**Commit**: `feat(a-demo-be-python-fastapi): add expense CRUD and currency handling`
 
-- [x] Create `src/demo_be_python_fastapi/infrastructure/repositories.py` `ExpenseRepository`:
+- [x] Create `src/a_demo_be_python_fastapi/infrastructure/repositories.py` `ExpenseRepository`:
   - `create(user_id, data) -> ExpenseModel`
   - `find_by_id(expense_id, user_id) -> ExpenseModel | None`
   - `list_by_user(user_id, page, size) -> tuple[list[ExpenseModel], int]`
   - `update(expense_id, user_id, data) -> ExpenseModel`
   - `delete(expense_id, user_id) -> None`
   - `summary_by_currency(user_id) -> list[dict]`
-- [x] Create `src/demo_be_python_fastapi/routers/expenses.py`:
+- [x] Create `src/a_demo_be_python_fastapi/routers/expenses.py`:
   - `POST /api/v1/expenses` — create expense or income (protected); validates currency and
     amount precision; returns 201 with `{id, ...}`
   - `GET /api/v1/expenses` — list own (paginated, protected)
@@ -231,15 +231,15 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 9: Expenses — Units, Reporting, Attachments
 
-**Commit**: `feat(demo-be-python-fastapi): add unit handling, reporting, and attachments`
+**Commit**: `feat(a-demo-be-python-fastapi): add unit handling, reporting, and attachments`
 
 - [x] Extend `ExpenseModel` with `quantity` (str nullable) and `unit` (str nullable)
 - [x] Implement unit-of-measure validation — supported: SI units (liter, kilogram, meter) and
       imperial equivalents (gallon, pound, foot, mile, ounce); unsupported returns 400
-- [x] Create `src/demo_be_python_fastapi/routers/reports.py`:
+- [x] Create `src/a_demo_be_python_fastapi/routers/reports.py`:
   - `GET /api/v1/reports/pl` — P&L report with `from`, `to` (ISO date), and `currency`
     query params (protected); returns `{income_total, expense_total, net, breakdown}`
-- [x] Create `src/demo_be_python_fastapi/routers/attachments.py`:
+- [x] Create `src/a_demo_be_python_fastapi/routers/attachments.py`:
   - `POST /api/v1/expenses/{id}/attachments` — upload file via multipart/form-data
     (protected); validates content type (image/jpeg, image/png, application/pdf) → 415;
     validates size ≤ 10MB → 413; returns 201 with metadata
@@ -261,30 +261,30 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 10: Coverage and Quality Gate
 
-**Commit**: `fix(demo-be-python-fastapi): achieve 90% coverage and pass quality gates`
+**Commit**: `fix(a-demo-be-python-fastapi): achieve 90% coverage and pass quality gates`
 
 - [x] Run full test suite with coverage: `uv run coverage run -m pytest`
 - [x] Generate LCOV: `uv run coverage lcov -o coverage/lcov.info`
-- [x] Validate: `rhino-cli test-coverage validate apps/demo-be-python-fastapi/coverage/lcov.info 90`
+- [x] Validate: `rhino-cli test-coverage validate apps/a-demo-be-python-fastapi/coverage/lcov.info 90`
       passes — 94.75% ≥ 90%
 - [x] Verify `uv run ruff format --check .` passes (zero formatting changes)
 - [x] Verify `uv run ruff check .` passes (zero lint violations)
 - [x] Verify `uv run pyright` passes (zero type errors)
-- [x] `nx run demo-be-python-fastapi:test:quick` passes all gates
+- [x] `nx run a-demo-be-python-fastapi:test:quick` passes all gates
 - [x] Commit
 
 ---
 
 ## Phase 11: Infra — Docker Compose
 
-**Commit**: `feat(infra): add demo-be-python-fastapi docker-compose dev environment`
+**Commit**: `feat(infra): add a-demo-be-python-fastapi docker-compose dev environment`
 
-- [x] Create `infra/dev/demo-be-python-fastapi/Dockerfile.be.dev` (python:3.13-slim + uv)
-- [x] Create `infra/dev/demo-be-python-fastapi/docker-compose.yml` with PostgreSQL 17 + app per
+- [x] Create `infra/dev/a-demo-be-python-fastapi/Dockerfile.be.dev` (python:3.13-slim + uv)
+- [x] Create `infra/dev/a-demo-be-python-fastapi/docker-compose.yml` with PostgreSQL 17 + app per
       tech-docs.md
-- [x] Create `infra/dev/demo-be-python-fastapi/docker-compose.e2e.yml` (E2E overrides: detach mode,
+- [x] Create `infra/dev/a-demo-be-python-fastapi/docker-compose.e2e.yml` (E2E overrides: detach mode,
       wait-for-healthy)
-- [x] Create `infra/dev/demo-be-python-fastapi/README.md` with startup instructions
+- [x] Create `infra/dev/a-demo-be-python-fastapi/README.md` with startup instructions
 - [x] Manual test: `docker compose up --build` → `curl http://localhost:8201/health`
       returns `{"status": "UP"}`
 

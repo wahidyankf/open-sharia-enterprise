@@ -21,11 +21,11 @@ psycopg3 adapter.
       in all configuration files and code
 - [ ] Verify `Dockerfile.integration` — `psycopg[binary]` should install via pip without changes
 - [ ] Verify `docker-compose.integration.yml` — no changes needed
-- [ ] Verify `.github/workflows/test-demo-be-python-fastapi.yml` — no changes needed
+- [ ] Verify `.github/workflows/test-a-demo-be-python-fastapi.yml` — no changes needed
 - [ ] Update `README.md` — change PostgreSQL adapter documentation
-- [ ] Run `nx run demo-be-python-fastapi:test:quick` — verify pass
-- [ ] Run `nx run demo-be-python-fastapi:test:integration` — verify database operations work
-- [ ] Commit: `fix(demo-be-python-fastapi): replace psycopg2-binary with psycopg3 for LGPL
+- [ ] Run `nx run a-demo-be-python-fastapi:test:quick` — verify pass
+- [ ] Run `nx run a-demo-be-python-fastapi:test:integration` — verify database operations work
+- [ ] Commit: `fix(a-demo-be-python-fastapi): replace psycopg2-binary with psycopg3 for LGPL
 dynamic linking compliance`
 
 ### Phase 2: Document LGPL Justifications
@@ -41,7 +41,7 @@ dynamic linking compliance`
   - Audit schedule recommendation (quarterly or on major dependency upgrades)
 - [ ] Create `docs/explanation/software-engineering/licensing/README.md` — Index file for licensing
       docs
-- [ ] Update `apps/demo-be-java-springboot/README.md` — Add note about Hibernate LGPL and JPA SPI
+- [ ] Update `apps/a-demo-be-java-springboot/README.md` — Add note about Hibernate LGPL and JPA SPI
       compliance
 - [ ] Update `governance/development/pattern/README.md` — Add cross-reference to licensing
       justifications doc
@@ -50,9 +50,9 @@ dynamic linking compliance`
 
 ### Phase 3: Validation
 
-- [ ] Run `nx run demo-be-python-fastapi:test:quick` — verify psycopg3 migration works
-- [ ] Run `nx run demo-be-python-fastapi:test:integration` — verify with real PostgreSQL
-- [ ] Verify no `psycopg2` references remain in `demo-be-python-fastapi` dependency files
+- [ ] Run `nx run a-demo-be-python-fastapi:test:quick` — verify psycopg3 migration works
+- [ ] Run `nx run a-demo-be-python-fastapi:test:integration` — verify with real PostgreSQL
+- [ ] Verify no `psycopg2` references remain in `a-demo-be-python-fastapi` dependency files
 - [ ] Verify `lgpl-justifications.md` covers all 3 runtime LGPL dependencies
 - [ ] Verify Logback EPL-1.0 election is documented
 - [ ] Run `npx license-checker --production --csv | grep -i lgpl` — confirm remaining LGPL

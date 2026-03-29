@@ -155,7 +155,7 @@ let webApp : HttpHandler =
 
 ### Repository Pattern (Function Records)
 
-Following `demo-be-fsharp-giraffe` pattern: repositories are defined as F# function records
+Following `a-demo-be-fsharp-giraffe` pattern: repositories are defined as F# function records
 (interfaces) and implemented using EF Core. Handlers receive repositories via DI, making them
 easily mockable for unit tests.
 
@@ -246,7 +246,7 @@ Generated contract types from OpenAPI codegen (`generated-contracts/`) are used 
 
 ### Database & Migrations
 
-Following `demo-be-fsharp-giraffe` exactly:
+Following `a-demo-be-fsharp-giraffe` exactly:
 
 - **ORM**: EF Core 10.x with `Npgsql.EntityFrameworkCore.PostgreSQL`
 - **Migrations**: [DbUp](https://dbup.readthedocs.io/) (MIT license) with `dbup-postgresql`
@@ -264,7 +264,7 @@ Following `demo-be-fsharp-giraffe` exactly:
 
 ```fsharp
 // Infrastructure/Migrator.fs (simplified)
-// Note: The demo (demo-be-fsharp-giraffe) inlines the DbUp call directly in Program.fs
+// Note: The demo (a-demo-be-fsharp-giraffe) inlines the DbUp call directly in Program.fs
 // rather than using a separate Migrator.fs file. This plan deliberately extracts it into
 // a dedicated module for clarity and testability — an intentional divergence from the demo.
 let runMigrations (connectionString: string) =
@@ -318,7 +318,7 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
 
 ### Nx Targets (project.json)
 
-Following `demo-be-fsharp-giraffe` pattern exactly:
+Following `a-demo-be-fsharp-giraffe` pattern exactly:
 
 | Target             | Command                                  | Cacheable | Depends On                    |
 | ------------------ | ---------------------------------------- | --------- | ----------------------------- |
@@ -531,7 +531,7 @@ keeping the backend URL private from the browser.
 
 ### Nx Targets (project.json)
 
-Following `demo-fe-ts-nextjs` pattern:
+Following `a-demo-fe-ts-nextjs` pattern:
 
 | Target             | Command                                    | Cacheable | Depends On                    |
 | ------------------ | ------------------------------------------ | --------- | ----------------------------- |
@@ -596,7 +596,7 @@ Tags: `type:e2e`, `platform:playwright`, `lang:ts`, `domain:organiclever-fe`
 
 #### `test-organiclever-be.yml` (new)
 
-Follows `test-demo-be-fsharp-giraffe.yml` pattern:
+Follows `test-a-demo-be-fsharp-giraffe.yml` pattern:
 
 - **Trigger**: Cron 2x daily (06:00 WIB, 18:00 WIB) + workflow_dispatch
 - **Job 1 -- Integration**: Docker Compose PostgreSQL, `nx run organiclever-be:test:integration`
@@ -605,7 +605,7 @@ Follows `test-demo-be-fsharp-giraffe.yml` pattern:
 
 #### `test-organiclever-fe.yml` (new, replaces `test-organiclever-fe.yml`)
 
-Follows `test-demo-fe-*.yml` pattern:
+Follows `test-a-demo-fe-*.yml` pattern:
 
 - **Trigger**: Cron 2x daily + workflow_dispatch
 - **Job 1 -- Integration**: `nx run organiclever-fe:test:integration`
@@ -675,31 +675,31 @@ Path files use the full path as the top-level key:
     # ...
 ```
 
-This follows the same pattern used in `specs/apps/demo/contracts/paths/`.
+This follows the same pattern used in `specs/apps/a-demo/contracts/paths/`.
 
 ## Technology Stack
 
-| Component            | Technology                    | Version   | Notes                                                  |
-| -------------------- | ----------------------------- | --------- | ------------------------------------------------------ |
-| Backend runtime      | .NET                          | 10.0      | LTS                                                    |
-| Backend web          | Giraffe                       | 7.x       | Functional HttpHandler                                 |
-| Backend ORM          | EF Core (Npgsql)              | 10.x      | PostgreSQL provider                                    |
-| Backend migrations   | DbUp (dbup-postgresql)        | 5.x       | SQL file migrations (matches demo-be-fsharp-giraffe)   |
-| Backend JSON         | FSharp.SystemTextJson         | 1.\*      | F# type serialization (matches demo-be-fsharp-giraffe) |
-| Backend lint         | Fantomas, FSharpLint          | Latest    | Formatting + style                                     |
-| Backend coverage     | AltCover                      | Latest    | 90% line coverage                                      |
-| Frontend runtime     | Node.js                       | 24.x      | LTS via Volta                                          |
-| Frontend web         | Next.js                       | 16.x      | App Router, RSC                                        |
-| Frontend lang        | TypeScript                    | 5.x       | Strict mode                                            |
-| Frontend effects     | Effect TS                     | Latest    | Error handling, DI                                     |
-| Frontend UI (shared) | @open-sharia-enterprise/ts-ui | Workspace | Button, Card, Alert, Input, Label, Dialog, cn          |
-| Frontend UI (style)  | shadcn/ui, Tailwind v4        | Latest    | OrganicLever-specific styling on top of ts-ui          |
-| Frontend testing     | Vitest, MSW                   | Latest    | Unit + integration                                     |
-| Database             | PostgreSQL                    | 17.x      | Initially minimal                                      |
-| Contract             | OpenAPI                       | 3.1       | API-first design                                       |
-| Codegen (BE)         | openapi-generator-cli         | Latest    | fsharp-giraffe-server                                  |
-| Codegen (FE)         | @hey-api/openapi-ts           | Latest    | TypeScript fetch client                                |
-| E2E                  | Playwright + bddgen           | Latest    | Gherkin-driven browser tests                           |
+| Component            | Technology                    | Version   | Notes                                                    |
+| -------------------- | ----------------------------- | --------- | -------------------------------------------------------- |
+| Backend runtime      | .NET                          | 10.0      | LTS                                                      |
+| Backend web          | Giraffe                       | 7.x       | Functional HttpHandler                                   |
+| Backend ORM          | EF Core (Npgsql)              | 10.x      | PostgreSQL provider                                      |
+| Backend migrations   | DbUp (dbup-postgresql)        | 5.x       | SQL file migrations (matches a-demo-be-fsharp-giraffe)   |
+| Backend JSON         | FSharp.SystemTextJson         | 1.\*      | F# type serialization (matches a-demo-be-fsharp-giraffe) |
+| Backend lint         | Fantomas, FSharpLint          | Latest    | Formatting + style                                       |
+| Backend coverage     | AltCover                      | Latest    | 90% line coverage                                        |
+| Frontend runtime     | Node.js                       | 24.x      | LTS via Volta                                            |
+| Frontend web         | Next.js                       | 16.x      | App Router, RSC                                          |
+| Frontend lang        | TypeScript                    | 5.x       | Strict mode                                              |
+| Frontend effects     | Effect TS                     | Latest    | Error handling, DI                                       |
+| Frontend UI (shared) | @open-sharia-enterprise/ts-ui | Workspace | Button, Card, Alert, Input, Label, Dialog, cn            |
+| Frontend UI (style)  | shadcn/ui, Tailwind v4        | Latest    | OrganicLever-specific styling on top of ts-ui            |
+| Frontend testing     | Vitest, MSW                   | Latest    | Unit + integration                                       |
+| Database             | PostgreSQL                    | 17.x      | Initially minimal                                        |
+| Contract             | OpenAPI                       | 3.1       | API-first design                                         |
+| Codegen (BE)         | openapi-generator-cli         | Latest    | fsharp-giraffe-server                                    |
+| Codegen (FE)         | @hey-api/openapi-ts           | Latest    | TypeScript fetch client                                  |
+| E2E                  | Playwright + bddgen           | Latest    | Gherkin-driven browser tests                             |
 
 ## Local Development Infrastructure (`infra/dev/organiclever/`)
 

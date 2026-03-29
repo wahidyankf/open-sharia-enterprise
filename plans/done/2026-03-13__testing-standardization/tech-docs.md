@@ -6,7 +6,7 @@
 
 - **Infrastructure**: Mocks exclusively. No real databases, no HTTP calls, no API calls, no external services.
 - **Entry point**: Call application code directly (service/handler/context functions). NOT through HTTP or Playwright.
-- **Spec consumption** (demo-be only): MUST consume all corresponding Gherkin specs from `specs/apps/demo/be/gherkin/`. Gherkin step definitions call service/handler functions with mocked dependencies.
+- **Spec consumption** (demo-be only): MUST consume all corresponding Gherkin specs from `specs/apps/a-demo/be/gherkin/`. Gherkin step definitions call service/handler functions with mocked dependencies.
 - **Additional scope**: Individual function tests (pure logic, validation, domain rules) that go beyond what Gherkin covers.
 - **Applies to**: All projects except Hugo static sites and E2E runners.
 - **Deterministic**: Yes. Fully cacheable.
@@ -49,7 +49,7 @@ Integration tests vary by project type:
 - **Entry point**: Through API calls or UI. Uses Playwright.
 - **Spec consumption** (demo-be only): MUST consume corresponding Gherkin specs.
 - **Purpose**: Verify the fully assembled system works end-to-end.
-- **Applies to**: `demo-be-e2e` (all 11 backends), `organiclever-fe-e2e`.
+- **Applies to**: `a-demo-be-e2e` (all 11 backends), `organiclever-fe-e2e`.
 - **Deterministic**: Depends on external services. NOT cacheable.
 
 ### Projects Without Tests
@@ -79,21 +79,21 @@ All 11 demo-be backends currently follow the same pattern:
 
 - **"Unit" tests**: Exist in some backends (F#, Go, TS). Test individual functions. Do NOT consume Gherkin specs.
 - **"Integration" tests**: Consume Gherkin specs via BDD frameworks. Use **HTTP-level testing** (MockMvc, httptest, TestClient, ConnCase, etc.) with **in-memory stores** (no real database).
-- **"E2E" tests**: Single shared Playwright suite (`apps/demo-be-e2e/`) consumes Gherkin specs via playwright-bdd. Makes real HTTP calls to running services.
+- **"E2E" tests**: Single shared Playwright suite (`apps/a-demo-be-e2e/`) consumes Gherkin specs via playwright-bdd. Makes real HTTP calls to running services.
 
-| Backend                     | Unit Tests       | Integration: HTTP?          | Integration: Database?      | Integration: BDD Framework |
-| --------------------------- | ---------------- | --------------------------- | --------------------------- | -------------------------- |
-| `demo-be-java-springboot`   | None             | Yes (MockMvc)               | In-memory maps (no real DB) | Cucumber JVM               |
-| `demo-be-elixir-phoenix`    | Controller tests | Yes (ConnCase)              | In-memory Agent stores      | Cabbage                    |
-| `demo-be-fsharp-giraffe`    | Domain + handler | Yes (WebApplicationFactory) | SQLite in-memory            | TickSpec                   |
-| `demo-be-golang-gin`        | Handler tests    | Yes (httptest.Server)       | In-memory maps              | Godog                      |
-| `demo-be-python-fastapi`    | None             | Yes (TestClient)            | In-memory maps              | pytest-bdd                 |
-| `demo-be-rust-axum`         | None             | Yes (Tower TestClient)      | In-memory maps              | cucumber-rs                |
-| `demo-be-kotlin-ktor`       | None             | Yes (testApplication)       | SQLite in-memory            | Cucumber JVM               |
-| `demo-be-java-vertx`        | None             | Yes (Vert.x WebClient)      | In-memory maps              | Cucumber JVM               |
-| `demo-be-ts-effect`         | Function tests   | Yes (HTTP client to server) | In-memory maps              | Cucumber.js                |
-| `demo-be-csharp-aspnetcore` | None             | Yes (WebApplicationFactory) | SQLite in-memory            | Reqnroll                   |
-| `demo-be-clojure-pedestal`  | None             | Yes (clj-http)              | SQLite in-memory            | kaocha-cucumber            |
+| Backend                       | Unit Tests       | Integration: HTTP?          | Integration: Database?      | Integration: BDD Framework |
+| ----------------------------- | ---------------- | --------------------------- | --------------------------- | -------------------------- |
+| `a-demo-be-java-springboot`   | None             | Yes (MockMvc)               | In-memory maps (no real DB) | Cucumber JVM               |
+| `a-demo-be-elixir-phoenix`    | Controller tests | Yes (ConnCase)              | In-memory Agent stores      | Cabbage                    |
+| `a-demo-be-fsharp-giraffe`    | Domain + handler | Yes (WebApplicationFactory) | SQLite in-memory            | TickSpec                   |
+| `a-demo-be-golang-gin`        | Handler tests    | Yes (httptest.Server)       | In-memory maps              | Godog                      |
+| `a-demo-be-python-fastapi`    | None             | Yes (TestClient)            | In-memory maps              | pytest-bdd                 |
+| `a-demo-be-rust-axum`         | None             | Yes (Tower TestClient)      | In-memory maps              | cucumber-rs                |
+| `a-demo-be-kotlin-ktor`       | None             | Yes (testApplication)       | SQLite in-memory            | Cucumber JVM               |
+| `a-demo-be-java-vertx`        | None             | Yes (Vert.x WebClient)      | In-memory maps              | Cucumber JVM               |
+| `a-demo-be-ts-effect`         | Function tests   | Yes (HTTP client to server) | In-memory maps              | Cucumber.js                |
+| `a-demo-be-csharp-aspnetcore` | None             | Yes (WebApplicationFactory) | SQLite in-memory            | Reqnroll                   |
+| `a-demo-be-clojure-pedestal`  | None             | Yes (clj-http)              | SQLite in-memory            | kaocha-cucumber            |
 
 **Key Observation**: The current "integration" tests are the **inverse** of what we want:
 
@@ -138,7 +138,7 @@ All 11 backends need to migrate to PostgreSQL. Four backends currently use SQLit
 
 E2E tests already align with the new standard:
 
-- **`demo-be-e2e`**: Uses Playwright + playwright-bdd, consumes `specs/apps/demo/be/gherkin/**/*.feature`, makes real HTTP calls. **Already compliant.**
+- **`a-demo-be-e2e`**: Uses Playwright + playwright-bdd, consumes `specs/apps/a-demo/be/gherkin/**/*.feature`, makes real HTTP calls. **Already compliant.**
 - **`organiclever-fe-e2e`**: Uses Playwright + bddgen, tests organiclever-fe. **Already compliant.**
 
 ## Gap Analysis
@@ -179,23 +179,23 @@ These projects are already architecturally compliant with the three rules. Howev
 - **Hugo sites** (`oseplatform-fs`, `ayokoding-fs`): Exempt — no changes needed, build + link validation only
 - **Libraries** (`golang-commons`, `hugo-commons`): Rule 1 — no changes needed, unit tests already working (integration exists but optional)
 - **Libraries** (`elixir-cabbage`, `elixir-gherkin`): Rule 1 — no changes needed, unit tests already working
-- **E2E runners** (`demo-be-e2e`, `organiclever-fe-e2e`): No changes needed, Playwright already working
+- **E2E runners** (`a-demo-be-e2e`, `organiclever-fe-e2e`): No changes needed, Playwright already working
 
 ### Per-Backend Work Summary (Demo-be Only)
 
-| Backend                     | Unit: Add Gherkin Steps | Integration: Remove HTTP | Integration: Add PostgreSQL | Effort |
-| --------------------------- | ----------------------- | ------------------------ | --------------------------- | ------ |
-| `demo-be-java-springboot`   | New step definitions    | Replace MockMvc          | Add PostgreSQL              | High   |
-| `demo-be-elixir-phoenix`    | New step definitions    | Replace ConnCase         | Add PostgreSQL (Ecto)       | High   |
-| `demo-be-fsharp-giraffe`    | New step definitions    | Replace WebAppFactory    | Replace SQLite → PostgreSQL | High   |
-| `demo-be-golang-gin`        | New step definitions    | Replace httptest         | Add PostgreSQL              | High   |
-| `demo-be-python-fastapi`    | New step definitions    | Replace TestClient       | Add PostgreSQL              | High   |
-| `demo-be-rust-axum`         | New step definitions    | Replace Tower TestClient | Add PostgreSQL              | High   |
-| `demo-be-kotlin-ktor`       | New step definitions    | Replace testApplication  | Replace SQLite → PostgreSQL | High   |
-| `demo-be-java-vertx`        | New step definitions    | Replace WebClient        | Add PostgreSQL              | High   |
-| `demo-be-ts-effect`         | New step definitions    | Replace HTTP client      | Add PostgreSQL              | High   |
-| `demo-be-csharp-aspnetcore` | New step definitions    | Replace WebAppFactory    | Replace SQLite → PostgreSQL | High   |
-| `demo-be-clojure-pedestal`  | New step definitions    | Replace clj-http         | Replace SQLite → PostgreSQL | High   |
+| Backend                       | Unit: Add Gherkin Steps | Integration: Remove HTTP | Integration: Add PostgreSQL | Effort |
+| ----------------------------- | ----------------------- | ------------------------ | --------------------------- | ------ |
+| `a-demo-be-java-springboot`   | New step definitions    | Replace MockMvc          | Add PostgreSQL              | High   |
+| `a-demo-be-elixir-phoenix`    | New step definitions    | Replace ConnCase         | Add PostgreSQL (Ecto)       | High   |
+| `a-demo-be-fsharp-giraffe`    | New step definitions    | Replace WebAppFactory    | Replace SQLite → PostgreSQL | High   |
+| `a-demo-be-golang-gin`        | New step definitions    | Replace httptest         | Add PostgreSQL              | High   |
+| `a-demo-be-python-fastapi`    | New step definitions    | Replace TestClient       | Add PostgreSQL              | High   |
+| `a-demo-be-rust-axum`         | New step definitions    | Replace Tower TestClient | Add PostgreSQL              | High   |
+| `a-demo-be-kotlin-ktor`       | New step definitions    | Replace testApplication  | Replace SQLite → PostgreSQL | High   |
+| `a-demo-be-java-vertx`        | New step definitions    | Replace WebClient        | Add PostgreSQL              | High   |
+| `a-demo-be-ts-effect`         | New step definitions    | Replace HTTP client      | Add PostgreSQL              | High   |
+| `a-demo-be-csharp-aspnetcore` | New step definitions    | Replace WebAppFactory    | Replace SQLite → PostgreSQL | High   |
+| `a-demo-be-clojure-pedestal`  | New step definitions    | Replace clj-http         | Replace SQLite → PostgreSQL | High   |
 
 ## Implementation Strategy
 
@@ -244,10 +244,10 @@ Verify that all other projects conform to the standard. Most need no code change
 
 ### Docker Compose Infrastructure (Demo-be)
 
-Each demo-be backend gets a `docker-compose.integration.yml` at `apps/demo-be-*/docker-compose.integration.yml` with a standardized structure:
+Each demo-be backend gets a `docker-compose.integration.yml` at `apps/a-demo-be-*/docker-compose.integration.yml` with a standardized structure:
 
 ```yaml
-# Example: apps/demo-be-java-springboot/docker-compose.integration.yml
+# Example: apps/a-demo-be-java-springboot/docker-compose.integration.yml
 services:
   postgres:
     image: postgres:17-alpine
@@ -282,7 +282,7 @@ Key design decisions:
 3. **Clean spawn**: `docker compose down -v && docker compose up --abort-on-container-exit` ensures no state carries over. The `-v` flag removes volumes (database data).
 4. **Migrations**: The test runner container runs migrations as its first step (Flyway, Ecto, EF Core, Diesel, Alembic, JDBC, etc.) before executing tests.
 5. **Seed files**: If a backend has seed data (e.g., default admin user, reference data), the seed file executes after migrations and before tests. Each backend defines its own seed mechanism.
-6. **Specs mount**: Gherkin specs from `specs/apps/demo/be/gherkin/` are mounted read-only into the test runner container at `/specs`.
+6. **Specs mount**: Gherkin specs from `specs/apps/a-demo/be/gherkin/` are mounted read-only into the test runner container at `/specs`.
 7. **Nx target**: `test:integration` runs `docker compose -f docker-compose.integration.yml down -v && docker compose -f docker-compose.integration.yml up --abort-on-container-exit --build` and checks the exit code. NOT cacheable (`cache: false` in nx.json) — Docker builds and container execution are not tracked by Nx file-based caching.
 8. **Coverage extraction**: The test runner writes coverage reports to a mounted volume so `rhino-cli test-coverage validate` can read them on the host.
 
@@ -290,17 +290,17 @@ Key design decisions:
 
 Start with the primary backend, then group by language ecosystem:
 
-1. `demo-be-java-springboot` (primary backend, sets the pattern)
-2. `demo-be-kotlin-ktor` (JVM, similar Dockerfile)
-3. `demo-be-java-vertx` (JVM, similar Dockerfile)
-4. `demo-be-fsharp-giraffe` (has unit tests, .NET)
-5. `demo-be-csharp-aspnetcore` (.NET, similar Dockerfile)
-6. `demo-be-golang-gin` (has unit tests)
-7. `demo-be-ts-effect` (has unit tests, Node.js)
-8. `demo-be-python-fastapi` (Python)
-9. `demo-be-clojure-pedestal` (JVM/Clojure)
-10. `demo-be-elixir-phoenix` (Elixir/OTP)
-11. `demo-be-rust-axum` (Rust)
+1. `a-demo-be-java-springboot` (primary backend, sets the pattern)
+2. `a-demo-be-kotlin-ktor` (JVM, similar Dockerfile)
+3. `a-demo-be-java-vertx` (JVM, similar Dockerfile)
+4. `a-demo-be-fsharp-giraffe` (has unit tests, .NET)
+5. `a-demo-be-csharp-aspnetcore` (.NET, similar Dockerfile)
+6. `a-demo-be-golang-gin` (has unit tests)
+7. `a-demo-be-ts-effect` (has unit tests, Node.js)
+8. `a-demo-be-python-fastapi` (Python)
+9. `a-demo-be-clojure-pedestal` (JVM/Clojure)
+10. `a-demo-be-elixir-phoenix` (Elixir/OTP)
+11. `a-demo-be-rust-axum` (Rust)
 
 ## Mandatory Targets Per Project Type
 
@@ -310,7 +310,7 @@ After standardization, each project type MUST have these Nx targets (derived fro
 | ------------------ | ------------------------ | ------------------- | ------------------ | ---------------- | ------------------ | ---------- |
 | `test:unit`        | Required                 | Required            | Required           | Required         | —                  | —          |
 | `test:integration` | Required (PG)            | Required (MSW)      | Required (BDD)     | Optional         | —                  | —          |
-| `test:e2e`         | via demo-be-e2e          | via \*-e2e project  | —                  | —                | —                  | Required   |
+| `test:e2e`         | via a-demo-be-e2e        | via \*-e2e project  | —                  | —                | —                  | Required   |
 | `test:quick`       | Required                 | Required            | Required           | Required         | Required           | Required   |
 | `lint`             | Required                 | Required            | Required           | Required         | —                  | Required   |
 | `build`            | Required                 | Required            | Required           | —                | Required           | —          |
@@ -397,14 +397,14 @@ Both paths guarantee `test:quick` runs. PRs additionally run `typecheck` and `li
 - **Three-level consumption** — Document that specs are consumed at unit, integration, AND e2e levels with different step implementations.
 - **Validation** — Define how to validate that all 76 scenarios pass at each level.
 
-#### 4. `specs/apps/demo/be/README.md`
+#### 4. `specs/apps/a-demo/be/README.md`
 
 **Sections to add/update**:
 
 - **Consumption model** — Document the three-level consumption: unit (mocked), integration (PostgreSQL, no HTTP), e2e (full Playwright).
 - **Step definition organization** — Recommend directory structure for separating unit vs integration steps within each backend.
 
-#### 5. Each `apps/demo-be-*/README.md` (11 files)
+#### 5. Each `apps/a-demo-be-*/README.md` (11 files)
 
 **Updates per backend**:
 
@@ -413,14 +413,14 @@ Both paths guarantee `test:quick` runs. PRs additionally run `typecheck` and `li
 - **Test architecture** — Describe what's mocked at each level and what's real.
 - **Docker compose** — Document `docker-compose.integration.yml` and `Dockerfile.integration`.
 
-#### 6. Each `apps/demo-be-*/project.json` (11 files)
+#### 6. Each `apps/a-demo-be-*/project.json` (11 files)
 
 **Updates per backend**:
 
 - **`test:unit` target** — Add or update to run BDD specs with mocked dependencies + pure function tests.
 - **`test:integration` target** — Update to run BDD specs via docker-compose with real PostgreSQL, no HTTP.
 - **`test:quick` target** — Ensure it runs `test:unit` + coverage check + specs coverage check. Does NOT include lint, typecheck, `test:integration`, or `test:e2e`.
-- **Caching inputs** — Ensure `specs/apps/demo/be/gherkin/**/*.feature`, `docker-compose.integration.yml`, and `Dockerfile.integration` are in inputs for `test:integration`. Specs also in inputs for `test:unit`.
+- **Caching inputs** — Ensure `specs/apps/a-demo/be/gherkin/**/*.feature`, `docker-compose.integration.yml`, and `Dockerfile.integration` are in inputs for `test:integration`. Specs also in inputs for `test:unit`.
 
 ### Files That Do NOT Need Documentation Overhaul
 
@@ -428,7 +428,7 @@ These projects don't need the same README/architecture documentation rewrite as 
 
 - **`apps/organiclever-fe/`** — Test architecture already correct, but `project.json` needs target splitting (unit vs MSW integration) in Phase 3.
 - **`apps/ayokoding-cli/`**, **`apps/oseplatform-cli/`**, **`apps/rhino-cli/`** — Test architecture already correct, but `project.json` may need target reconfiguration (unit vs Godog integration) in Phase 3.
-- **`apps/demo-be-e2e/`** — Already compliant, no changes needed.
+- **`apps/a-demo-be-e2e/`** — Already compliant, no changes needed.
 - **`apps/organiclever-fe-e2e/`** — Already compliant (Playwright + bddgen), no changes needed.
 - **`apps/oseplatform-fs/`** — Already compliant (link validation only), no changes needed.
 - **`apps/ayokoding-fs/`** — Already compliant (link validation only), no changes needed.
@@ -443,32 +443,32 @@ These projects don't need the same README/architecture documentation rewrite as 
 
 ##### Current State (18 workflow files)
 
-| Workflow                                             | Trigger                            | What it does                                                                     |
-| ---------------------------------------------------- | ---------------------------------- | -------------------------------------------------------------------------------- |
-| `main-ci.yml`                                        | Push to `main`                     | `npx nx run-many -t test:quick --all` + coverage uploads to Codecov              |
-| `pr-quality-gate.yml`                                | PR opened/sync/reopen              | `nx affected -t typecheck` + `nx affected -t lint` + `nx affected -t test:quick` |
-| `pr-validate-links.yml`                              | PR opened/sync/reopen              | `rhino-cli docs validate-links`                                                  |
-| `pr-format.yml`                                      | PR opened/sync/reopen              | Formatting checks                                                                |
-| `test-and-deploy-ayokoding-fs.yml`                   | Push to `prod-ayokoding-fs`        | Deploy to Vercel                                                                 |
-| `test-and-deploy-oseplatform-fs.yml`                 | Push to `prod-oseplatform-fs`      | Deploy to Vercel                                                                 |
-| `test-integration-e2e-demo-be-java-springboot.yml`   | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
-| `test-integration-e2e-demo-be-kotlin-ktor.yml`       | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
-| `test-integration-e2e-demo-be-java-vertx.yml`        | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
-| `test-integration-e2e-demo-be-fsharp-giraffe.yml`    | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
-| `test-integration-e2e-demo-be-csharp-aspnetcore.yml` | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
-| `test-integration-e2e-demo-be-golang-gin.yml`        | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
-| `test-integration-e2e-demo-be-ts-effect.yml`         | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
-| `test-integration-e2e-demo-be-python-fastapi.yml`    | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
-| `test-integration-e2e-demo-be-clojure-pedestal.yml`  | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
-| `test-integration-e2e-demo-be-elixir-phoenix.yml`    | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
-| `test-integration-e2e-demo-be-rust-axum.yml`         | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
-| `test-integration-e2e-organiclever-fe.yml`           | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
+| Workflow                                               | Trigger                            | What it does                                                                     |
+| ------------------------------------------------------ | ---------------------------------- | -------------------------------------------------------------------------------- |
+| `main-ci.yml`                                          | Push to `main`                     | `npx nx run-many -t test:quick --all` + coverage uploads to Codecov              |
+| `pr-quality-gate.yml`                                  | PR opened/sync/reopen              | `nx affected -t typecheck` + `nx affected -t lint` + `nx affected -t test:quick` |
+| `pr-validate-links.yml`                                | PR opened/sync/reopen              | `rhino-cli docs validate-links`                                                  |
+| `pr-format.yml`                                        | PR opened/sync/reopen              | Formatting checks                                                                |
+| `test-and-deploy-ayokoding-fs.yml`                     | Push to `prod-ayokoding-fs`        | Deploy to Vercel                                                                 |
+| `test-and-deploy-oseplatform-fs.yml`                   | Push to `prod-oseplatform-fs`      | Deploy to Vercel                                                                 |
+| `test-integration-e2e-a-demo-be-java-springboot.yml`   | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
+| `test-integration-e2e-a-demo-be-kotlin-ktor.yml`       | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
+| `test-integration-e2e-a-demo-be-java-vertx.yml`        | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
+| `test-integration-e2e-a-demo-be-fsharp-giraffe.yml`    | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
+| `test-integration-e2e-a-demo-be-csharp-aspnetcore.yml` | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
+| `test-integration-e2e-a-demo-be-golang-gin.yml`        | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
+| `test-integration-e2e-a-demo-be-ts-effect.yml`         | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
+| `test-integration-e2e-a-demo-be-python-fastapi.yml`    | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
+| `test-integration-e2e-a-demo-be-clojure-pedestal.yml`  | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
+| `test-integration-e2e-a-demo-be-elixir-phoenix.yml`    | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
+| `test-integration-e2e-a-demo-be-rust-axum.yml`         | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
+| `test-integration-e2e-organiclever-fe.yml`             | Cron 2x daily (WIB 06/18) + manual | Docker compose up → Playwright E2E → teardown                                    |
 
 ##### Changes Needed
 
 **`main-ci.yml`** — Update coverage file paths:
 
-- **Current**: Coverage uploads reference paths produced by integration test runs (e.g., `apps/demo-be-java-springboot/target/site/jacoco/jacoco.xml` from `mvn jacoco:report -Pintegration`). After standardization, `test:quick` only runs `test:unit`, so coverage comes from unit test runs.
+- **Current**: Coverage uploads reference paths produced by integration test runs (e.g., `apps/a-demo-be-java-springboot/target/site/jacoco/jacoco.xml` from `mvn jacoco:report -Pintegration`). After standardization, `test:quick` only runs `test:unit`, so coverage comes from unit test runs.
 - **Action**: Update each coverage upload's `files:` path to point to the unit test coverage output. The exact paths depend on how each backend configures unit test coverage reporting.
 - **JaCoCo report step**: Remove `mvn jacoco:report -Pintegration` step (line 110) — unit test coverage is generated directly by `test:unit`.
 - **No structural changes** to the workflow itself — it still runs `test:quick` for all projects on push to `main`.

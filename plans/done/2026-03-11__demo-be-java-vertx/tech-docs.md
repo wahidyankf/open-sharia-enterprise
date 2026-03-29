@@ -1,14 +1,14 @@
-# Technical Design: demo-be-java-vertx
+# Technical Design: a-demo-be-java-vertx
 
 ## Vert.x vs Spring Boot: The Fundamental Difference
 
-`demo-be-java-vertx` is a Java project, like `demo-be-java-springboot`. However, it uses Vert.x instead of
+`a-demo-be-java-vertx` is a Java project, like `a-demo-be-java-springboot`. However, it uses Vert.x instead of
 Spring Boot. The two Java frameworks have fundamentally different execution models that affect
 how every layer of the application is structured.
 
 ### Execution Model Comparison
 
-| Concern              | demo-be-java-springboot (Spring Boot)     | demo-be-java-vertx (Vert.x)                         |
+| Concern              | a-demo-be-java-springboot (Spring Boot)   | a-demo-be-java-vertx (Vert.x)                       |
 | -------------------- | ----------------------------------------- | --------------------------------------------------- |
 | Threading model      | Thread-per-request (Servlet/Tomcat)       | Event loop (Netty-based, single or few threads)     |
 | Handler style        | Blocking `@Controller` methods            | Non-blocking `Handler<RoutingContext>`              |
@@ -48,7 +48,7 @@ call it via `WebClient` over a real (but in-process) HTTP server on a random por
 ### Project Structure
 
 ```
-apps/demo-be-java-vertx/
+apps/a-demo-be-java-vertx/
 ├── src/
 │   ├── main/
 │   │   └── java/
@@ -126,7 +126,7 @@ apps/demo-be-java-vertx/
 │                       ├── UnitHandlingSteps.java
 │                       ├── ReportingSteps.java
 │                       └── AttachmentSteps.java
-├── checkstyle.xml                                   # Checkstyle rules (mirrors demo-be-java-springboot)
+├── checkstyle.xml                                   # Checkstyle rules (mirrors a-demo-be-java-springboot)
 ├── project.json                                     # Nx targets
 ├── pom.xml                                          # Maven build + profiles
 └── README.md
@@ -262,7 +262,7 @@ router.route().failureHandler(ctx -> {
 
 ## BDD Integration Tests: Cucumber JVM + Vert.x Test
 
-Integration tests parse the canonical `.feature` files from `specs/apps/demo/be/gherkin/`
+Integration tests parse the canonical `.feature` files from `specs/apps/a-demo/be/gherkin/`
 using **Cucumber JVM 7+** with Java step definitions.
 
 HTTP calls use Vert.x's own `WebClient` against a live Vert.x HTTP server deployed in the
@@ -314,7 +314,7 @@ public class AppFactory {
 ### Cucumber Step Definitions
 
 Step definitions use `ScenarioState` to share state between steps (analogous to
-`demo-be-java-springboot`'s `ScenarioContext`):
+`a-demo-be-java-springboot`'s `ScenarioContext`):
 
 ```java
 @NullMarked
@@ -384,7 +384,7 @@ source root, Maven copies them during the `generate-test-resources` phase:
         <outputDirectory>${project.build.testOutputDirectory}/specs</outputDirectory>
         <resources>
           <resource>
-            <directory>../../specs/apps/demo/be/gherkin</directory>
+            <directory>../../specs/apps/a-demo/be/gherkin</directory>
             <filtering>false</filtering>
           </resource>
         </resources>
@@ -398,7 +398,7 @@ Then in `junit-platform.properties`:
 
 ```properties
 cucumber.features=classpath:specs
-cucumber.glue=com.demobejavx.integration.steps
+cucumber.glue=com.aademobejavx.integration.steps
 cucumber.plugin=pretty,json:target/cucumber-reports/cucumber.json
 ```
 
@@ -407,7 +407,7 @@ cucumber.plugin=pretty,json:target/cucumber-reports/cucumber.json
 ## In-Memory Repository Implementations
 
 Integration tests use `ConcurrentHashMap`-backed implementations — the same pattern used by
-`demo-be-java-springboot`'s `InMemoryDataStore`:
+`a-demo-be-java-springboot`'s `InMemoryDataStore`:
 
 ```java
 @NullMarked
@@ -528,7 +528,7 @@ userRepo.findByUsername(username).onSuccess(user -> {
 ### JSpecify @NullMarked on All Packages
 
 Every `package-info.java` declares `@NullMarked`. NullAway (Error Prone) enforces this at
-compile time via the `nullcheck` Maven profile. This mirrors `demo-be-java-springboot` exactly.
+compile time via the `nullcheck` Maven profile. This mirrors `a-demo-be-java-springboot` exactly.
 
 ### Currency Precision
 
@@ -554,7 +554,7 @@ public static BigDecimal validateAmount(String currency, BigDecimal amount) {
 
 ### Password Hashing
 
-jBCrypt is used identically to `demo-be-java-springboot`:
+jBCrypt is used identically to `a-demo-be-java-springboot`:
 
 ```java
 public String hash(String plaintext) {
@@ -636,31 +636,31 @@ JaCoCo is configured in the `integration` profile to output XML for `rhino-cli`:
 
 ```json
 {
-  "name": "demo-be-java-vertx",
+  "name": "a-demo-be-java-vertx",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/demo-be-java-vertx/src",
+  "sourceRoot": "apps/a-demo-be-java-vertx/src",
   "projectType": "application",
   "targets": {
     "build": {
       "executor": "nx:run-commands",
       "options": {
         "command": "mvn clean package -DskipTests",
-        "cwd": "apps/demo-be-java-vertx"
+        "cwd": "apps/a-demo-be-java-vertx"
       },
       "outputs": ["{projectRoot}/target"]
     },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "mvn compile exec:java -Dexec.mainClass=com.demobejavx.Main",
-        "cwd": "apps/demo-be-java-vertx"
+        "command": "mvn compile exec:java -Dexec.mainClass=com.aademobejavx.Main",
+        "cwd": "apps/a-demo-be-java-vertx"
       }
     },
     "start": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "sh -c 'java -jar target/demo-be-java-vertx-*.jar'",
-        "cwd": "apps/demo-be-java-vertx"
+        "command": "sh -c 'java -jar target/a-demo-be-java-vertx-*.jar'",
+        "cwd": "apps/a-demo-be-java-vertx"
       }
     },
     "test:quick": {
@@ -669,48 +669,48 @@ JaCoCo is configured in the `integration` profile to output XML for `rhino-cli`:
         "commands": [
           "mvn test",
           "mvn test -Pintegration",
-          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/demo-be-java-vertx/target/site/jacoco-integration/jacoco.xml 90)",
+          "(cd ../../apps/rhino-cli && CGO_ENABLED=0 go run main.go test-coverage validate apps/a-demo-be-java-vertx/target/site/jacoco-integration/jacoco.xml 90)",
           "mvn checkstyle:check"
         ],
         "parallel": false,
-        "cwd": "apps/demo-be-java-vertx"
+        "cwd": "apps/a-demo-be-java-vertx"
       }
     },
     "test:unit": {
       "executor": "nx:run-commands",
       "options": {
         "command": "mvn test",
-        "cwd": "apps/demo-be-java-vertx"
+        "cwd": "apps/a-demo-be-java-vertx"
       }
     },
     "test:integration": {
       "executor": "nx:run-commands",
       "options": {
         "command": "mvn test -Pintegration",
-        "cwd": "apps/demo-be-java-vertx"
+        "cwd": "apps/a-demo-be-java-vertx"
       },
       "cache": true,
-      "inputs": ["{projectRoot}/src/**/*.java", "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature"]
+      "inputs": ["{projectRoot}/src/**/*.java", "{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature"]
     },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
         "command": "mvn checkstyle:check",
-        "cwd": "apps/demo-be-java-vertx"
+        "cwd": "apps/a-demo-be-java-vertx"
       }
     },
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli java validate-annotations apps/demo-be-java-vertx/src/main/java",
-          "cd apps/demo-be-java-vertx && mvn compile -Pnullcheck"
+          "nx run rhino-cli:build --skip-nx-cache && ./apps/rhino-cli/dist/rhino-cli java validate-annotations apps/a-demo-be-java-vertx/src/main/java",
+          "cd apps/a-demo-be-java-vertx && mvn compile -Pnullcheck"
         ],
         "parallel": false
       }
     }
   },
-  "tags": ["type:app", "platform:vertx", "lang:java", "domain:demo-be"],
+  "tags": ["type:app", "platform:vertx", "lang:java", "domain:a-demo-be"],
   "implicitDependencies": ["rhino-cli"]
 }
 ```
@@ -728,66 +728,66 @@ JaCoCo is configured in the `integration` profile to output XML for `rhino-cli`:
 
 ### Port Assignment
 
-| Service                 | Port                                               |
-| ----------------------- | -------------------------------------------------- |
-| demo-be-db              | 5432                                               |
-| demo-be-java-springboot | 8201                                               |
-| demo-be-elixir-phoenix  | 8201 (same port — mutually exclusive alternatives) |
-| demo-be-fsharp-giraffe  | 8201 (same port — mutually exclusive alternatives) |
-| demo-be-java-vertx      | 8201 (same port — mutually exclusive alternatives) |
+| Service                   | Port                                               |
+| ------------------------- | -------------------------------------------------- |
+| a-demo-be-db              | 5432                                               |
+| a-demo-be-java-springboot | 8201                                               |
+| a-demo-be-elixir-phoenix  | 8201 (same port — mutually exclusive alternatives) |
+| a-demo-be-fsharp-giraffe  | 8201 (same port — mutually exclusive alternatives) |
+| a-demo-be-java-vertx      | 8201 (same port — mutually exclusive alternatives) |
 
-### Docker Compose (`infra/dev/demo-be-java-vertx/docker-compose.yml`)
+### Docker Compose (`infra/dev/a-demo-be-java-vertx/docker-compose.yml`)
 
 ```yaml
 services:
-  demo-be-db:
+  a-demo-be-db:
     image: postgres:17-alpine
-    container_name: demo-be-db
+    container_name: a-demo-be-db
     environment:
-      POSTGRES_DB: demo_be_java_vertx
-      POSTGRES_USER: demo_be_java_vertx
-      POSTGRES_PASSWORD: demo_be_java_vertx
+      POSTGRES_DB: a_demo_be_java_vertx
+      POSTGRES_USER: a_demo_be_java_vertx
+      POSTGRES_PASSWORD: a_demo_be_java_vertx
     ports:
       - "5432:5432"
     volumes:
-      - demo-be-java-vertx-db-data:/var/lib/postgresql/data
+      - a-demo-be-java-vertx-db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U demo_be_java_vertx"]
+      test: ["CMD-SHELL", "pg_isready -U a_demo_be_java_vertx"]
       interval: 5s
       timeout: 3s
       retries: 5
     networks:
-      - demo-be-java-vertx-network
+      - a-demo-be-java-vertx-network
 
-  demo-be-java-vertx:
+  a-demo-be-java-vertx:
     build:
       context: .
       dockerfile: Dockerfile.be.dev
-    container_name: demo-be-java-vertx
+    container_name: a-demo-be-java-vertx
     ports:
       - "8201:8201"
     environment:
-      - DB_HOST=demo-be-db
+      - DB_HOST=a-demo-be-db
       - DB_PORT=5432
-      - DB_NAME=demo_be_java_vertx
-      - DB_USER=demo_be_java_vertx
-      - DB_PASSWORD=demo_be_java_vertx
+      - DB_NAME=a_demo_be_java_vertx
+      - DB_USER=a_demo_be_java_vertx
+      - DB_PASSWORD=a_demo_be_java_vertx
       - APP_JWT_SECRET=dev-jwt-secret-at-least-32-chars-long
       - APP_PORT=8201
     volumes:
-      - ../../../apps/demo-be-java-vertx:/workspace:rw
-      - ../../../specs/apps/demo/be:/specs/apps/demo/be:ro
+      - ../../../apps/a-demo-be-java-vertx:/workspace:rw
+      - ../../../specs/apps/a-demo/be:/specs/apps/a-demo/be:ro
     depends_on:
-      demo-be-db:
+      a-demo-be-db:
         condition: service_healthy
     networks:
-      - demo-be-java-vertx-network
+      - a-demo-be-java-vertx-network
 
 volumes:
-  demo-be-java-vertx-db-data:
+  a-demo-be-java-vertx-db-data:
 
 networks:
-  demo-be-java-vertx-network:
+  a-demo-be-java-vertx-network:
 ```
 
 ### Dockerfile.be.dev
@@ -799,34 +799,34 @@ RUN apk add --no-cache maven
 
 WORKDIR /workspace
 
-CMD ["mvn", "compile", "exec:java", "-Dexec.mainClass=com.demobejavx.Main"]
+CMD ["mvn", "compile", "exec:java", "-Dexec.mainClass=com.aademobejavx.Main"]
 ```
 
 ---
 
 ## GitHub Actions
 
-### New Workflow: `e2e-demo-be-java-vertx.yml`
+### New Workflow: `e2e-a-demo-be-java-vertx.yml`
 
-Mirrors `e2e-demo-be-java-springboot.yml` with:
+Mirrors `e2e-a-demo-be-java-springboot.yml` with:
 
 - Name: `E2E - Demo BE (JAVX)`
 - Schedule: same crons as jasb/exph/fsgi
 - Job: checkout → docker compose up → wait-healthy → Volta → npm ci →
-  `nx run demo-be-e2e:test:e2e` with `BASE_URL=http://localhost:8201` →
+  `nx run a-demo-be-e2e:test:e2e` with `BASE_URL=http://localhost:8201` →
   upload artifact `playwright-report-be-javx` → docker down (always)
 
 ### Updated Workflow: `main-ci.yml`
 
-JDK 25 setup is already present for `demo-be-java-springboot`. Add after the existing JaCoCo upload:
+JDK 25 setup is already present for `a-demo-be-java-springboot`. Add after the existing JaCoCo upload:
 
 ```yaml
-- name: Upload coverage — demo-be-java-vertx
+- name: Upload coverage — a-demo-be-java-vertx
   uses: codecov/codecov-action@v5
   with:
     token: ${{ secrets.CODECOV_TOKEN }}
-    files: apps/demo-be-java-vertx/target/site/jacoco-integration/jacoco.xml
-    flags: demo-be-java-vertx
+    files: apps/a-demo-be-java-vertx/target/site/jacoco-integration/jacoco.xml
+    flags: a-demo-be-java-vertx
     fail_ci_if_error: false
 ```
 

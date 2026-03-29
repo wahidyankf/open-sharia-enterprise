@@ -16,7 +16,7 @@ Full audit conducted 2026-03-26 across all 11 ecosystems (~1,700+ packages):
 
 ## LGPL Dependencies Requiring Action
 
-### 1. `psycopg2-binary` (LGPL-3.0) — demo-be-python-fastapi
+### 1. `psycopg2-binary` (LGPL-3.0) — a-demo-be-python-fastapi
 
 **What it is**: The Python PostgreSQL database adapter. `psycopg2-binary` ships pre-built wheels
 that statically bundle `libpq` (the PostgreSQL C client library, also under a permissive PostgreSQL
@@ -40,7 +40,7 @@ at runtime for image optimization. The `sharp` npm package itself is Apache 2.0 
 **Severity**: MEDIUM — dynamically loaded native binary (strong linking defense), and may not be
 used at all if `next/image` is not used or Vercel's built-in image optimization handles it.
 
-### 3. Hibernate ORM (LGPL-2.1) — demo-be-java-springboot
+### 3. Hibernate ORM (LGPL-2.1) — a-demo-be-java-springboot
 
 **What it is**: The JPA implementation loaded by Spring Data JPA at runtime via the JPA Service
 Provider Interface (SPI). Hibernate is the industry-standard JPA provider and is a transitive
@@ -61,7 +61,7 @@ a demo app.
 Feature: Remove or mitigate all LGPL runtime dependencies
 
   Scenario: Python PostgreSQL adapter uses permissive license
-    Given the demo app "demo-be-python-fastapi"
+    Given the demo app "a-demo-be-python-fastapi"
     When I inspect the Python dependencies
     Then "psycopg2-binary" is NOT in the dependency list
     And the PostgreSQL adapter uses a permissive license (Apache 2.0, MIT, BSD, or PostgreSQL)
@@ -74,7 +74,7 @@ Feature: Remove or mitigate all LGPL runtime dependencies
     Or a documented justification exists explaining dynamic linking compliance
 
   Scenario: Hibernate LGPL is documented with dynamic linking justification
-    Given the app "demo-be-java-springboot"
+    Given the app "a-demo-be-java-springboot"
     When I inspect the Maven dependency tree for LGPL licenses
     Then a documented justification exists explaining JPA SPI dynamic linking compliance
     And the justification notes that Hibernate can be swapped for EclipseLink without code changes

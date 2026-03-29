@@ -6,11 +6,11 @@
 
 ## Overview
 
-All demo backend (`demo-be-*`) and fullstack (`demo-fs-*`) apps share the same domain schema
+All demo backend (`a-demo-be-*`) and fullstack (`a-demo-fs-*`) apps share the same domain schema
 (users, refresh_tokens, revoked_tokens, expenses, attachments) defined by the OpenAPI contract in
-`specs/apps/demo/contracts/`. Currently, only 4 apps use dedicated migration tooling without
-changes (`demo-be-java-springboot`, `demo-be-elixir-phoenix`, `demo-fs-ts-nextjs`,
-`demo-be-rust-axum`). One app (`demo-be-csharp-aspnetcore`) uses EF Core but requires an upgrade
+`specs/apps/a-demo/contracts/`. Currently, only 4 apps use dedicated migration tooling without
+changes (`a-demo-be-java-springboot`, `a-demo-be-elixir-phoenix`, `a-demo-fs-ts-nextjs`,
+`a-demo-be-rust-axum`). One app (`a-demo-be-csharp-aspnetcore`) uses EF Core but requires an upgrade
 from `EnsureCreated`. The remaining 7 rely on programmatic DDL (`CREATE TABLE IF NOT EXISTS`, ORM
 auto-migrate, or `EnsureCreated`) which is not production-ready.
 
@@ -23,7 +23,7 @@ Liquibase (FSL-1.1-ALv2) is retained for existing Java apps with a documented li
 ## Goals
 
 1. Add dedicated, community-blessed migration tooling to all 7 demo apps that currently lack it
-2. Upgrade `demo-be-csharp-aspnetcore` from `EnsureCreated` to proper EF Core Migrations
+2. Upgrade `a-demo-be-csharp-aspnetcore` from `EnsureCreated` to proper EF Core Migrations
 3. Ensure all migration tools produce the same 5-table schema with 6 audit columns
 4. Generalize the [Database Audit Trail Pattern](../../../governance/development/pattern/database-audit-trail.md)
    from Liquibase/JPA-only to a language-agnostic standard
@@ -42,30 +42,30 @@ Liquibase (FSL-1.1-ALv2) is retained for existing Java apps with a documented li
 
 ### New Migration Tooling (7 apps)
 
-| App                      | Tool                     | License      | Ecosystem Rationale                                    |
-| ------------------------ | ------------------------ | ------------ | ------------------------------------------------------ |
-| demo-be-java-vertx       | **Liquibase**            | FSL-1.1-ALv2 | Consistency with Spring Boot sibling; programmatic API |
-| demo-be-python-fastapi   | **Alembic**              | MIT          | Same author as SQLAlchemy; undisputed standard         |
-| demo-be-golang-gin       | **goose**                | MIT          | Transaction-safe; no dirty-state problem               |
-| demo-be-kotlin-ktor      | **Flyway**               | Apache 2.0   | Ktor ecosystem consensus; JetBrains-endorsed           |
-| demo-be-fsharp-giraffe   | **DbUp**                 | MIT          | SQL-first; no F# compatibility issues                  |
-| demo-be-clojure-pedestal | **Migratus**             | Apache 2.0   | Luminus default; git-friendly                          |
-| demo-be-ts-effect        | **@effect/sql Migrator** | MIT          | Built-in; type-safe Effect migrations                  |
+| App                        | Tool                     | License      | Ecosystem Rationale                                    |
+| -------------------------- | ------------------------ | ------------ | ------------------------------------------------------ |
+| a-demo-be-java-vertx       | **Liquibase**            | FSL-1.1-ALv2 | Consistency with Spring Boot sibling; programmatic API |
+| a-demo-be-python-fastapi   | **Alembic**              | MIT          | Same author as SQLAlchemy; undisputed standard         |
+| a-demo-be-golang-gin       | **goose**                | MIT          | Transaction-safe; no dirty-state problem               |
+| a-demo-be-kotlin-ktor      | **Flyway**               | Apache 2.0   | Ktor ecosystem consensus; JetBrains-endorsed           |
+| a-demo-be-fsharp-giraffe   | **DbUp**                 | MIT          | SQL-first; no F# compatibility issues                  |
+| a-demo-be-clojure-pedestal | **Migratus**             | Apache 2.0   | Luminus default; git-friendly                          |
+| a-demo-be-ts-effect        | **@effect/sql Migrator** | MIT          | Built-in; type-safe Effect migrations                  |
 
 ### Upgrade (1 app)
 
-| App                       | Tool                   | License | Change                                           |
-| ------------------------- | ---------------------- | ------- | ------------------------------------------------ |
-| demo-be-csharp-aspnetcore | **EF Core Migrations** | MIT     | Upgrade from `EnsureCreated` to versioned system |
+| App                         | Tool                   | License | Change                                           |
+| --------------------------- | ---------------------- | ------- | ------------------------------------------------ |
+| a-demo-be-csharp-aspnetcore | **EF Core Migrations** | MIT     | Upgrade from `EnsureCreated` to versioned system |
 
 ### Already Done (4 apps — no changes needed)
 
-| App                     | Tool      | License          | Status   |
-| ----------------------- | --------- | ---------------- | -------- |
-| demo-be-java-springboot | Liquibase | FSL-1.1-ALv2     | **Done** |
-| demo-be-elixir-phoenix  | Ecto      | Apache 2.0       | **Done** |
-| demo-fs-ts-nextjs       | Drizzle   | Apache 2.0       | **Done** |
-| demo-be-rust-axum       | SQLx      | MIT / Apache 2.0 | **Done** |
+| App                       | Tool      | License          | Status   |
+| ------------------------- | --------- | ---------------- | -------- |
+| a-demo-be-java-springboot | Liquibase | FSL-1.1-ALv2     | **Done** |
+| a-demo-be-elixir-phoenix  | Ecto      | Apache 2.0       | **Done** |
+| a-demo-fs-ts-nextjs       | Drizzle   | Apache 2.0       | **Done** |
+| a-demo-be-rust-axum       | SQLx      | MIT / Apache 2.0 | **Done** |
 
 See [Technical Documentation](./tech-docs.md) for full rationale, alternatives considered, and
 licensing audit for each tool.
@@ -93,8 +93,8 @@ Apache 2.0.
 - This project is an enterprise platform, not a competing migration tool. The FSL non-compete
   clause does not restrict our usage.
 - FSL permits all end-user usage (development, testing, production deployments) without limitation.
-- Liquibase is already in production for `demo-be-java-springboot` with 6 proven changelogs.
-- Consistency: both Java apps (`demo-be-java-springboot` and `demo-be-java-vertx`) use the same
+- Liquibase is already in production for `a-demo-be-java-springboot` with 6 proven changelogs.
+- Consistency: both Java apps (`a-demo-be-java-springboot` and `a-demo-be-java-vertx`) use the same
   migration tool and changelog format.
 
 **This decision MUST be documented** in

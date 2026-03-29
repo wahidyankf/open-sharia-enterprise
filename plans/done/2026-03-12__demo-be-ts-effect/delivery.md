@@ -1,4 +1,4 @@
-# Delivery Checklist: demo-be-ts-effect
+# Delivery Checklist: a-demo-be-ts-effect
 
 Execute phases in order. Each phase produces a working, committable state.
 
@@ -14,25 +14,25 @@ Execute phases in order. Each phase produces a working, committable state.
 - [ ] Verify `cucumber-js` available or confirm it will be invoked via `npx cucumber-js`
 - [ ] Verify `oxlint` available or confirm it will be invoked via `npx oxlint`
 - [ ] Verify `rhino-cli test-coverage validate` supports LCOV (it does — already used by
-      `organiclever-fe`, `demo-be-python-fastapi`, and `demo-be-rust-axum`)
-- [ ] Confirm `demo-be-e2e` Playwright config reads `BASE_URL` from env (it does)
+      `organiclever-fe`, `a-demo-be-python-fastapi`, and `a-demo-be-rust-axum`)
+- [ ] Confirm `a-demo-be-e2e` Playwright config reads `BASE_URL` from env (it does)
 - [ ] Confirm Cucumber.js is compatible with the current Gherkin syntax in
-      `specs/apps/demo/be/gherkin/` (Given/When/Then with doc string and data table parameters)
+      `specs/apps/a-demo/be/gherkin/` (Given/When/Then with doc string and data table parameters)
 - [ ] Review `@effect/platform` Node.js HTTP server API for current stable version
 
 ---
 
 ## Phase 1: Project Scaffold
 
-**Commit**: `feat(demo-be-ts-effect): scaffold TypeScript/Effect project`
+**Commit**: `feat(a-demo-be-ts-effect): scaffold TypeScript/Effect project`
 
-- [ ] Create `apps/demo-be-ts-effect/` directory structure per tech-docs.md
+- [ ] Create `apps/a-demo-be-ts-effect/` directory structure per tech-docs.md
 - [ ] Create `package.json` with all runtime and dev dependencies per tech-docs.md
 - [ ] Run `npm install` to generate `package-lock.json`
 - [ ] Create `tsconfig.json` with strict TypeScript config per tech-docs.md
 - [ ] Create `vite.config.ts` with library mode build config per tech-docs.md
 - [ ] Create `vitest.config.ts` with v8 coverage config per tech-docs.md
-- [ ] Create `.cucumber.js` pointing to `specs/apps/demo/be/gherkin/**/*.feature`
+- [ ] Create `.cucumber.js` pointing to `specs/apps/a-demo/be/gherkin/**/*.feature`
 - [ ] Create `oxlint.json` with TypeScript-appropriate rules
 - [ ] Create `src/main.ts` — entry point that starts the Effect HTTP server on port 8201
 - [ ] Create `src/app.ts` — minimal Effect `Layer` composition (no routes yet)
@@ -50,7 +50,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 2: Domain Types and Database Layer
 
-**Commit**: `feat(demo-be-ts-effect): add domain types and Effect SQL database layer`
+**Commit**: `feat(a-demo-be-ts-effect): add domain types and Effect SQL database layer`
 
 - [ ] Create `src/domain/types.ts` — branded types using Effect `Brand`:
       `Currency` (USD, IDR), `Role` (USER, ADMIN), `UserStatus` (ACTIVE, INACTIVE, DISABLED, LOCKED)
@@ -85,7 +85,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 3: Health Endpoint
 
-**Commit**: `feat(demo-be-ts-effect): add /health endpoint`
+**Commit**: `feat(a-demo-be-ts-effect): add /health endpoint`
 
 - [ ] Create `src/routes/health.ts` — `GET /health` returning `{"status": "UP"}` (public, no auth)
 - [ ] Register health router in `src/app.ts`
@@ -111,7 +111,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 4: Auth — Register and Login
 
-**Commit**: `feat(demo-be-ts-effect): add register and login endpoints`
+**Commit**: `feat(a-demo-be-ts-effect): add register and login endpoints`
 
 - [ ] Create `src/auth/jwt.ts` — `JwtService` Effect service:
   - `signAccess(userId, username, role) → Effect<string, never>`
@@ -138,7 +138,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 5: Token Lifecycle and Management
 
-**Commit**: `feat(demo-be-ts-effect): add token lifecycle and management endpoints`
+**Commit**: `feat(a-demo-be-ts-effect): add token lifecycle and management endpoints`
 
 - [ ] Extend `src/infrastructure/db/token-repo.ts` `RevokedTokenRepository`:
   - `revoke(jti: string) → Effect<void, never>` — idempotent
@@ -165,7 +165,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 6: User Account and Security
 
-**Commit**: `feat(demo-be-ts-effect): add user account and security endpoints`
+**Commit**: `feat(a-demo-be-ts-effect): add user account and security endpoints`
 
 - [ ] Create `src/routes/users.ts`:
   - `GET /api/v1/users/me` — return `{id, username, email, displayName, status}` (protected)
@@ -189,7 +189,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 7: Admin
 
-**Commit**: `feat(demo-be-ts-effect): add admin endpoints`
+**Commit**: `feat(a-demo-be-ts-effect): add admin endpoints`
 
 - [ ] Create `src/routes/admin.ts`:
   - `GET /api/v1/admin/users` — paginated list with optional `email` query filter
@@ -211,7 +211,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 8: Expenses — CRUD and Currency
 
-**Commit**: `feat(demo-be-ts-effect): add expense CRUD and currency handling`
+**Commit**: `feat(a-demo-be-ts-effect): add expense CRUD and currency handling`
 
 - [ ] Create `src/routes/expenses.ts`:
   - `POST /api/v1/expenses` — create expense or income (protected); validates currency and
@@ -234,7 +234,7 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 9: Expenses — Units, Reporting, Attachments
 
-**Commit**: `feat(demo-be-ts-effect): add unit handling, reporting, and attachments`
+**Commit**: `feat(a-demo-be-ts-effect): add unit handling, reporting, and attachments`
 
 - [ ] Extend expenses table schema with `quantity` (nullable string) and `unit` (nullable string)
 - [ ] Implement unit-of-measure validation — supported: SI units (liter, kilogram, meter) and
@@ -263,29 +263,29 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 10: Coverage and Quality Gate
 
-**Commit**: `fix(demo-be-ts-effect): achieve 90% coverage and pass quality gates`
+**Commit**: `fix(a-demo-be-ts-effect): achieve 90% coverage and pass quality gates`
 
 - [ ] Run full unit test suite with coverage: `npx vitest run --coverage`
-- [ ] Validate: `apps/rhino-cli/rhino-cli test-coverage validate apps/demo-be-ts-effect/coverage/lcov.info 90`
+- [ ] Validate: `apps/rhino-cli/rhino-cli test-coverage validate apps/a-demo-be-ts-effect/coverage/lcov.info 90`
       passes — ≥90%
 - [ ] Verify `npx tsc --noEmit` passes (zero type errors)
 - [ ] Verify `npx oxlint .` passes (zero lint violations)
 - [ ] Verify `npx prettier --check .` passes (zero formatting changes)
-- [ ] `nx run demo-be-ts-effect:test:quick` passes all gates
+- [ ] `nx run a-demo-be-ts-effect:test:quick` passes all gates
 - [ ] Commit
 
 ---
 
 ## Phase 11: Infra — Docker Compose
 
-**Commit**: `feat(infra): add demo-be-ts-effect docker-compose dev environment`
+**Commit**: `feat(infra): add a-demo-be-ts-effect docker-compose dev environment`
 
-- [ ] Create `infra/dev/demo-be-ts-effect/Dockerfile.be.dev` (node:24-alpine + npm ci)
-- [ ] Create `infra/dev/demo-be-ts-effect/docker-compose.yml` with PostgreSQL 17 + app per
+- [ ] Create `infra/dev/a-demo-be-ts-effect/Dockerfile.be.dev` (node:24-alpine + npm ci)
+- [ ] Create `infra/dev/a-demo-be-ts-effect/docker-compose.yml` with PostgreSQL 17 + app per
       tech-docs.md
-- [ ] Create `infra/dev/demo-be-ts-effect/docker-compose.e2e.yml` (E2E overrides: detach mode,
+- [ ] Create `infra/dev/a-demo-be-ts-effect/docker-compose.e2e.yml` (E2E overrides: detach mode,
       wait-for-healthy)
-- [ ] Create `infra/dev/demo-be-ts-effect/README.md` with startup instructions
+- [ ] Create `infra/dev/a-demo-be-ts-effect/README.md` with startup instructions
 - [ ] Manual test: `docker compose up --build` → `curl http://localhost:8201/health`
       returns `{"status":"UP"}`
 
@@ -293,31 +293,31 @@ Execute phases in order. Each phase produces a working, committable state.
 
 ## Phase 12: CI — GitHub Actions
 
-**Commit**: `ci: add demo-be-ts-effect E2E workflow and coverage upload`
+**Commit**: `ci: add a-demo-be-ts-effect E2E workflow and coverage upload`
 
-- [ ] Create `.github/workflows/e2e-demo-be-ts-effect.yml` per tech-docs.md:
-  - Job: checkout → docker compose up (`infra/dev/demo-be-ts-effect/docker-compose.e2e.yml`) →
-    wait-for-healthy → Volta → npm ci → `nx run demo-be-e2e:test:e2e` with
+- [ ] Create `.github/workflows/e2e-a-demo-be-ts-effect.yml` per tech-docs.md:
+  - Job: checkout → docker compose up (`infra/dev/a-demo-be-ts-effect/docker-compose.e2e.yml`) →
+    wait-for-healthy → Volta → npm ci → `nx run a-demo-be-e2e:test:e2e` with
     `BASE_URL=http://localhost:8201` → upload artifact `playwright-report-be-tsex` →
     docker down (always)
-- [ ] Update `.github/workflows/main-ci.yml` — add coverage upload step for demo-be-ts-effect
+- [ ] Update `.github/workflows/main-ci.yml` — add coverage upload step for a-demo-be-ts-effect
       LCOV per tech-docs.md
 
 ---
 
 ## Phase 13: Monorepo Integration
 
-**Commit**: `feat(demo-be-ts-effect): integrate into monorepo and update documentation`
+**Commit**: `feat(a-demo-be-ts-effect): integrate into monorepo and update documentation`
 
-- [ ] Update `apps/demo-be-e2e/project.json` — add `demo-be-ts-effect` to `implicitDependencies`
-- [ ] Update `specs/apps/demo/be/README.md` — add TypeScript/Effect row to Implementations
-      table: `| demo-be-ts-effect | TypeScript (Effect) | Cucumber.js + Effect HTTP client | Playwright |`
+- [ ] Update `apps/a-demo-be-e2e/project.json` — add `a-demo-be-ts-effect` to `implicitDependencies`
+- [ ] Update `specs/apps/a-demo/be/README.md` — add TypeScript/Effect row to Implementations
+      table: `| a-demo-be-ts-effect | TypeScript (Effect) | Cucumber.js + Effect HTTP client | Playwright |`
 - [ ] Update `CLAUDE.md`:
-  - Add `demo-be-ts-effect` to Current Apps list under demo backend variants
+  - Add `a-demo-be-ts-effect` to Current Apps list under demo backend variants
   - Add TypeScript/Effect coverage note: vitest v8 → LCOV → `rhino-cli test-coverage validate`
-- [ ] Update root `README.md` — add `demo-be-ts-effect` badge and description in demo apps section
-- [ ] Verify `nx run demo-be-ts-effect:test:quick` passes
-- [ ] Verify `nx run demo-be-ts-effect:test:integration` passes with cache enabled
+- [ ] Update root `README.md` — add `a-demo-be-ts-effect` badge and description in demo apps section
+- [ ] Verify `nx run a-demo-be-ts-effect:test:quick` passes
+- [ ] Verify `nx run a-demo-be-ts-effect:test:integration` passes with cache enabled
 - [ ] Commit
 
 ---
@@ -325,25 +325,25 @@ Execute phases in order. Each phase produces a working, committable state.
 ## Acceptance Criteria
 
 ```gherkin
-Scenario: demo-be-ts-effect implementation complete
+Scenario: a-demo-be-ts-effect implementation complete
   Given all 13 phases of the delivery checklist are complete
-  When running nx run demo-be-ts-effect:test:quick
+  When running nx run a-demo-be-ts-effect:test:quick
   Then all 76 Gherkin scenarios pass in integration tests
   And coverage is ≥ 90% as validated by rhino-cli
   And tsc --noEmit passes with zero errors
   And oxlint passes with zero violations
   And the Docker stack starts and responds at port 8201
 
-Scenario: demo-be-ts-effect integrated into monorepo
-  Given demo-be-ts-effect passes all quality gates
+Scenario: a-demo-be-ts-effect integrated into monorepo
+  Given a-demo-be-ts-effect passes all quality gates
   When running nx affected -t test:quick
-  Then demo-be-ts-effect appears in affected projects
-  And demo-be-e2e lists demo-be-ts-effect as an implicit dependency
-  And specs/apps/demo/be/README.md lists demo-be-ts-effect in the Implementations table
+  Then a-demo-be-ts-effect appears in affected projects
+  And a-demo-be-e2e lists a-demo-be-ts-effect as an implicit dependency
+  And specs/apps/a-demo/be/README.md lists a-demo-be-ts-effect in the Implementations table
 
-Scenario: demo-be-ts-effect E2E tests pass
+Scenario: a-demo-be-ts-effect E2E tests pass
   Given the Docker Compose stack is running at port 8201
-  When running nx run demo-be-e2e:test:e2e with BASE_URL=http://localhost:8201
+  When running nx run a-demo-be-e2e:test:e2e with BASE_URL=http://localhost:8201
   Then all 76 Gherkin scenarios pass
   And the GitHub Actions E2E workflow completes without failure
 ```

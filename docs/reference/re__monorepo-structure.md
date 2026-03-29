@@ -132,7 +132,7 @@ apps/organiclever-fe/
 ### App Structure (Spring Boot Application)
 
 ```
-apps/demo-be-java-springboot/
+apps/a-demo-be-java-springboot/
 ├── src/                       # Source code (main + test)
 ├── target/                    # Build output (gitignored)
 ├── Dockerfile                 # Production multi-stage build

@@ -1,8 +1,8 @@
-# Delivery Checklist: demo-be-clojure-pedestal
+# Delivery Checklist: a-demo-be-clojure-pedestal
 
 ## Phase 1: Project Scaffold
 
-- [x] Create `apps/demo-be-clojure-pedestal/` directory
+- [x] Create `apps/a-demo-be-clojure-pedestal/` directory
 - [x] Create `deps.edn` with all dependencies and aliases
 - [x] Create `build.clj` for uberjar build
 - [x] Create `project.json` with Nx targets
@@ -77,13 +77,13 @@
 
 ## Phase 8: Infrastructure
 
-- [x] `infra/dev/demo-be-clojure-pedestal/docker-compose.yml`
-- [x] `infra/dev/demo-be-clojure-pedestal/docker-compose.e2e.yml`
-- [x] `infra/dev/demo-be-clojure-pedestal/Dockerfile.be.dev`
+- [x] `infra/dev/a-demo-be-clojure-pedestal/docker-compose.yml`
+- [x] `infra/dev/a-demo-be-clojure-pedestal/docker-compose.e2e.yml`
+- [x] `infra/dev/a-demo-be-clojure-pedestal/Dockerfile.be.dev`
 
 ## Phase 9: CI/CD
 
-- [x] `.github/workflows/e2e-demo-be-clojure-pedestal.yml`
+- [x] `.github/workflows/e2e-a-demo-be-clojure-pedestal.yml`
 - [x] Update `.github/workflows/main-ci.yml` — Clojure setup + coverage upload
 - [x] Update `codecov.yml` — add flag
 
@@ -91,12 +91,12 @@
 
 - [x] Update `CLAUDE.md` — add to Current Apps, add coverage info
 - [x] Update `README.md` — add badge + coverage row
-- [x] Update `specs/apps/demo/be/README.md` — add implementation row
-- [x] Update `apps/demo-be-e2e/project.json` — add to implicitDependencies
+- [x] Update `specs/apps/a-demo/be/README.md` — add implementation row
+- [x] Update `apps/a-demo-be-e2e/project.json` — add to implicitDependencies
 
 ## Phase 11: Verification
 
-- [x] `nx run demo-be-clojure-pedestal:test:quick` passes locally
-- [x] `nx run demo-be-clojure-pedestal:build` produces uberjar
+- [x] `nx run a-demo-be-clojure-pedestal:test:quick` passes locally
+- [x] `nx run a-demo-be-clojure-pedestal:build` produces uberjar
 - [x] Main CI passes on push
 - [x] E2E workflow passes (manual trigger)

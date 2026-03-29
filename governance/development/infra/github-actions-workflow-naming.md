@@ -81,30 +81,30 @@ The result must exactly match the filename (without path).
 
 Every workflow currently in the repository follows this rule:
 
-| `name:` field                                | Filename                             |
-| -------------------------------------------- | ------------------------------------ |
-| `Main CI`                                    | `main-ci.yml`                        |
-| `PR - Quality Gate`                          | `pr-quality-gate.yml`                |
-| `PR - Format`                                | `pr-format.yml`                      |
-| `PR - Validate Links`                        | `pr-validate-links.yml`              |
-| `Test and Deploy - AyoKoding Web`            | `test-and-deploy-ayokoding-fs.yml`   |
-| `Test and Deploy - OSE Platform Web`         | `test-and-deploy-oseplatform-fs.yml` |
-| `Test - Demo BE (Java/Spring Boot)`          | `test-demo-be-java-springboot.yml`   |
-| `Test - Demo BE (Java/Vert.x)`               | `test-demo-be-java-vertx.yml`        |
-| `Test - Demo BE (Elixir/Phoenix)`            | `test-demo-be-elixir-phoenix.yml`    |
-| `Test - Demo BE (F#/Giraffe)`                | `test-demo-be-fsharp-giraffe.yml`    |
-| `Test - Demo BE (Go/Gin)`                    | `test-demo-be-golang-gin.yml`        |
-| `Test - Demo BE (Python/FastAPI)`            | `test-demo-be-python-fastapi.yml`    |
-| `Test - Demo BE (Rust/Axum)`                 | `test-demo-be-rust-axum.yml`         |
-| `Test - Demo BE (Kotlin/Ktor)`               | `test-demo-be-kotlin-ktor.yml`       |
-| `Test - Demo BE (TypeScript/Effect)`         | `test-demo-be-ts-effect.yml`         |
-| `Test - Demo BE (C#/ASP.NET Core)`           | `test-demo-be-csharp-aspnetcore.yml` |
-| `Test - Demo BE (Clojure/Pedestal)`          | `test-demo-be-clojure-pedestal.yml`  |
-| `Test - OrganicLever FE`                     | `test-organiclever-fe.yml`           |
-| `Test - OrganicLever BE`                     | `test-organiclever-be.yml`           |
-| `Test - Demo FE (TypeScript/Next.js)`        | `test-demo-fe-ts-nextjs.yml`         |
-| `Test - Demo FE (TypeScript/TanStack Start)` | `test-demo-fe-ts-tanstack-start.yml` |
-| `Test - Demo FE (Dart/Flutter Web)`          | `test-demo-fe-dart-flutterweb.yml`   |
+| `name:` field                                | Filename                               |
+| -------------------------------------------- | -------------------------------------- |
+| `Main CI`                                    | `main-ci.yml`                          |
+| `PR - Quality Gate`                          | `pr-quality-gate.yml`                  |
+| `PR - Format`                                | `pr-format.yml`                        |
+| `PR - Validate Links`                        | `pr-validate-links.yml`                |
+| `Test and Deploy - AyoKoding Web`            | `test-and-deploy-ayokoding-fs.yml`     |
+| `Test and Deploy - OSE Platform Web`         | `test-and-deploy-oseplatform-fs.yml`   |
+| `Test - Demo BE (Java/Spring Boot)`          | `test-a-demo-be-java-springboot.yml`   |
+| `Test - Demo BE (Java/Vert.x)`               | `test-a-demo-be-java-vertx.yml`        |
+| `Test - Demo BE (Elixir/Phoenix)`            | `test-a-demo-be-elixir-phoenix.yml`    |
+| `Test - Demo BE (F#/Giraffe)`                | `test-a-demo-be-fsharp-giraffe.yml`    |
+| `Test - Demo BE (Go/Gin)`                    | `test-a-demo-be-golang-gin.yml`        |
+| `Test - Demo BE (Python/FastAPI)`            | `test-a-demo-be-python-fastapi.yml`    |
+| `Test - Demo BE (Rust/Axum)`                 | `test-a-demo-be-rust-axum.yml`         |
+| `Test - Demo BE (Kotlin/Ktor)`               | `test-a-demo-be-kotlin-ktor.yml`       |
+| `Test - Demo BE (TypeScript/Effect)`         | `test-a-demo-be-ts-effect.yml`         |
+| `Test - Demo BE (C#/ASP.NET Core)`           | `test-a-demo-be-csharp-aspnetcore.yml` |
+| `Test - Demo BE (Clojure/Pedestal)`          | `test-a-demo-be-clojure-pedestal.yml`  |
+| `Test - OrganicLever FE`                     | `test-organiclever-fe.yml`             |
+| `Test - OrganicLever BE`                     | `test-organiclever-be.yml`             |
+| `Test - Demo FE (TypeScript/Next.js)`        | `test-a-demo-fe-ts-nextjs.yml`         |
+| `Test - Demo FE (TypeScript/TanStack Start)` | `test-a-demo-fe-ts-tanstack-start.yml` |
+| `Test - Demo FE (Dart/Flutter Web)`          | `test-a-demo-fe-dart-flutterweb.yml`   |
 
 ## Examples
 
@@ -120,13 +120,13 @@ Derivation: `PR - Quality Gate` → lowercase → `pr - quality gate` → spaces
 ---
 
 ```yaml
-# File: .github/workflows/test-demo-be-java-springboot.yml
+# File: .github/workflows/test-a-demo-be-java-springboot.yml
 name: Test - Demo BE (Java/Spring Boot)
 ```
 
-Derivation: `Test - Demo BE (Java/Spring Boot)` → lowercase → `test - demo be (java/spring boot)` → remove `(`, `)`, `/` → `test - demo be javaspring boot` → spaces to hyphens → `test---demo-be-javaspring-boot` → collapse hyphens → `test-demo-be-javaspring-boot` → append `.yml` → `test-demo-be-java-springboot.yml`.
+Derivation: `Test - Demo BE (Java/Spring Boot)` → lowercase → `test - demo be (java/spring boot)` → remove `(`, `)`, `/` → `test - demo be javaspring boot` → spaces to hyphens → `test---a-demo-be-javaspring-boot` → collapse hyphens → `test-a-demo-be-javaspring-boot` → append `.yml` → `test-a-demo-be-java-springboot.yml`.
 
-The actual filename is `test-demo-be-java-springboot.yml`. `Java/Spring Boot` maps to `java-springboot` (slash removed, space removed). See the Special Considerations section below.
+The actual filename is `test-a-demo-be-java-springboot.yml`. `Java/Spring Boot` maps to `java-springboot` (slash removed, space removed). See the Special Considerations section below.
 
 ### FAIL: Misaligned name and filename
 
@@ -167,18 +167,18 @@ versa).
 
 **Scheduled workflows that must stay aligned**:
 
-| Language | `main-ci.yml` step | Scheduled workflows to update                                                     |
-| -------- | ------------------ | --------------------------------------------------------------------------------- |
-| Go       | `go-version`       | `test-demo-be-golang-gin.yml`, all frontend workflows that install Go for codegen |
-| Elixir   | `elixir-version`   | `test-demo-be-elixir-phoenix.yml`                                                 |
-| Python   | `python-version`   | `test-demo-be-python-fastapi.yml`                                                 |
-| Node.js  | `node-version`     | All workflows installing Node.js                                                  |
+| Language | `main-ci.yml` step | Scheduled workflows to update                                                       |
+| -------- | ------------------ | ----------------------------------------------------------------------------------- |
+| Go       | `go-version`       | `test-a-demo-be-golang-gin.yml`, all frontend workflows that install Go for codegen |
+| Elixir   | `elixir-version`   | `test-a-demo-be-elixir-phoenix.yml`                                                 |
+| Python   | `python-version`   | `test-a-demo-be-python-fastapi.yml`                                                 |
+| Node.js  | `node-version`     | All workflows installing Node.js                                                    |
 
 **Frontend workflows install Go for codegen**: The three frontend scheduled workflows
-(`test-demo-fe-ts-nextjs.yml`, `test-demo-fe-ts-tanstack-start.yml`,
-`test-demo-fe-dart-flutterweb.yml`) install Go and run `rhino-cli` for contract codegen before
+(`test-a-demo-fe-ts-nextjs.yml`, `test-a-demo-fe-ts-tanstack-start.yml`,
+`test-a-demo-fe-dart-flutterweb.yml`) install Go and run `rhino-cli` for contract codegen before
 running tests. The Go version in these workflows must match the version used in `main-ci.yml` and
-`test-demo-be-golang-gin.yml`.
+`test-a-demo-be-golang-gin.yml`.
 
 ### Adding new workflows
 

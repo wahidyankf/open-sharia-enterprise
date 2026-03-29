@@ -147,13 +147,13 @@
 - [x] Write BDD integration test with multi-language fixture files
 - [x] Write BDD integration test for shared-steps mode
 - [x] Add Gherkin feature file to `specs/apps/rhino-cli/`
-- [x] Smoke test: run against actual demo-be-golang-gin test files
-- [x] Smoke test: run against actual demo-be-java-springboot test files
-- [x] Smoke test: run against actual demo-be-elixir-phoenix test files
-- [x] Smoke test: run against actual demo-be-ts-effect test files
-- [x] Smoke test: run `--shared-steps` against actual demo-be-e2e step files
-- [x] Smoke test: run `--shared-steps` against actual demo-fe-e2e step files
-- [x] Smoke test: run against actual demo-fe-dart-flutterweb test files
+- [x] Smoke test: run against actual a-demo-be-golang-gin test files
+- [x] Smoke test: run against actual a-demo-be-java-springboot test files
+- [x] Smoke test: run against actual a-demo-be-elixir-phoenix test files
+- [x] Smoke test: run against actual a-demo-be-ts-effect test files
+- [x] Smoke test: run `--shared-steps` against actual a-demo-be-e2e step files
+- [x] Smoke test: run `--shared-steps` against actual a-demo-fe-e2e step files
+- [x] Smoke test: run against actual a-demo-fe-dart-flutterweb test files
 - [x] Verify: existing spec-coverage for organiclever-fe still works
 - [x] Verify: `nx run rhino-cli:test:quick` passes with >=90% coverage
 
@@ -177,8 +177,8 @@
 - [x] Run `nx run rhino-cli:lint` -- no golangci-lint violations
 - [x] Verify backward compatibility: existing project.json commands unchanged
 - [x] Smoke test: run `test-coverage validate` against actual project coverage files
-  - [x] Verify all demo-be-\* coverage files (Go cover.out, LCOV, JaCoCo XML)
-  - [x] Verify all demo-fe-\* coverage files (LCOV from Vitest, Flutter)
+  - [x] Verify all a-demo-be-\* coverage files (Go cover.out, LCOV, JaCoCo XML)
+  - [x] Verify all a-demo-fe-\* coverage files (LCOV from Vitest, Flutter)
   - [x] Verify all lib coverage files (Go cover.out, LCOV)
 - [x] Smoke test: run `test-coverage merge` with two real coverage files
 - [x] Smoke test: run `test-coverage diff` against actual git changes
@@ -202,8 +202,8 @@
   Elixir, Rust, F#, C#, Clojure, Dart)
 - spec-coverage step extraction works for 10 languages with framework-specific regex
   (Dart deferred pending BDD framework adoption)
-- spec-coverage `--shared-steps` mode validates E2E projects (demo-be-e2e, demo-fe-e2e)
-- spec-coverage `--shared-steps` mode validates frontend projects (demo-fe-\*)
+- spec-coverage `--shared-steps` mode validates E2E projects (a-demo-be-e2e, a-demo-fe-e2e)
+- spec-coverage `--shared-steps` mode validates frontend projects (a-demo-fe-\*)
 - spec-coverage scenario extraction works for languages with explicit scenario markers
 - Every Gherkin spec (feature and scenario) is implementable without exception
 - Backward compatibility: existing organiclever-fe and CLI app spec-coverage unchanged

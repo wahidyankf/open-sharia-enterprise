@@ -1318,14 +1318,14 @@ Migratus throws exceptions when migrations fail. Wrapping the migrate call in `t
 
 ### Example 60: Pedestal Integration Pattern
 
-The Pedestal application in `demo-be-clojure-pedestal` runs migrations at startup before the HTTP server starts. This pattern ensures the schema is always current before the server accepts requests.
+The Pedestal application in `a-demo-be-clojure-pedestal` runs migrations at startup before the HTTP server starts. This pattern ensures the schema is always current before the server accepts requests.
 
 ```clojure
-(ns demo-be-cjpd.main
+(ns a-demo-be-cjpd.main
   "Application entry point: runs migrations then starts the Pedestal server."
-  (:require [demo-be-cjpd.config :as config]   ; => Load environment configuration
-            [demo-be-cjpd.db.core :as db]       ; => HikariCP datasource setup
-            [demo-be-cjpd.server :as server]    ; => Pedestal server creation
+  (:require [a-demo-be-cjpd.config :as config]   ; => Load environment configuration
+            [a-demo-be-cjpd.db.core :as db]       ; => HikariCP datasource setup
+            [a-demo-be-cjpd.server :as server]    ; => Pedestal server creation
             [migratus.core :as migratus])        ; => Migration runner
   (:gen-class))
 
@@ -1334,8 +1334,8 @@ The Pedestal application in `demo-be-clojure-pedestal` runs migrations at startu
    Embeds user and password as query parameters because Migratus passes
    the :db map directly to next.jdbc which requires credentials in the URI."
   [database-url]
-  (let [user     (or (System/getenv "DB_USER") "demo_be_cjpd")
-        password (or (System/getenv "DB_PASSWORD") "demo_be_cjpd")
+  (let [user     (or (System/getenv "DB_USER") "a_demo_be_cjpd")
+        password (or (System/getenv "DB_PASSWORD") "a_demo_be_cjpd")
         sep      (if (.contains database-url "?") "&" "?")
         ; => Detect existing query params: use & if ? already present, else ?
         uri      (str database-url sep "user=" user "&password=" password)]
@@ -1345,7 +1345,7 @@ The Pedestal application in `demo-be-clojure-pedestal` runs migrations at startu
   ; => Returns plain config map; no side effects at this point
 
 (defn -main
-  "Start the demo-be-cjpd Pedestal application."
+  "Start the a-demo-be-cjpd Pedestal application."
   [& _args]
   (let [cfg (config/load-config)         ; => Load :database-url, :port from env vars
         ds  (db/create-datasource (:database-url cfg))]

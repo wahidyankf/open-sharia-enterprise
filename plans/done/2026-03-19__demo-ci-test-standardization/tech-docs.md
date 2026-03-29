@@ -22,21 +22,21 @@ All CI pipelines must use these exact versions:
 
 When a version changes, update ALL of these files:
 
-| Tool    | Files to Update                                                                                                                                                             |
-| ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Go      | `main-ci.yml`, `pr-quality-gate.yml`, `test-demo-be-golang-gin.yml`, `test-demo-fe-ts-nextjs.yml`, `test-demo-fe-ts-tanstack-start.yml`, `test-demo-fe-dart-flutterweb.yml` |
-| Elixir  | `main-ci.yml`, `test-demo-be-elixir-phoenix.yml`                                                                                                                            |
-| Python  | `main-ci.yml`, `test-demo-be-python-fastapi.yml`                                                                                                                            |
-| Rust    | `main-ci.yml`, `test-demo-be-rust-axum.yml` (uses Docker, not direct setup)                                                                                                 |
-| .NET    | `main-ci.yml` (scheduled workflows use Docker, no direct setup)                                                                                                             |
-| Java    | `main-ci.yml`, `pr-quality-gate.yml`, `test-demo-be-clojure-pedestal.yml` (Clojure needs Java 21)                                                                           |
-| Flutter | `main-ci.yml`, `pr-quality-gate.yml`, `test-demo-fe-dart-flutterweb.yml`                                                                                                    |
+| Tool    | Files to Update                                                                                                                                                                     |
+| ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Go      | `main-ci.yml`, `pr-quality-gate.yml`, `test-a-demo-be-golang-gin.yml`, `test-a-demo-fe-ts-nextjs.yml`, `test-a-demo-fe-ts-tanstack-start.yml`, `test-a-demo-fe-dart-flutterweb.yml` |
+| Elixir  | `main-ci.yml`, `test-a-demo-be-elixir-phoenix.yml`                                                                                                                                  |
+| Python  | `main-ci.yml`, `test-a-demo-be-python-fastapi.yml`                                                                                                                                  |
+| Rust    | `main-ci.yml`, `test-a-demo-be-rust-axum.yml` (uses Docker, not direct setup)                                                                                                       |
+| .NET    | `main-ci.yml` (scheduled workflows use Docker, no direct setup)                                                                                                                     |
+| Java    | `main-ci.yml`, `pr-quality-gate.yml`, `test-a-demo-be-clojure-pedestal.yml` (Clojure needs Java 21)                                                                                 |
+| Flutter | `main-ci.yml`, `pr-quality-gate.yml`, `test-a-demo-fe-dart-flutterweb.yml`                                                                                                          |
 
 ## Canonical Nx Target Definitions
 
 ### Demo Backend Targets (Mandatory)
 
-Every `demo-be-*` app must have these 7 targets in its `project.json`:
+Every `a-demo-be-*` app must have these 7 targets in its `project.json`:
 
 #### 1. codegen
 
@@ -46,10 +46,10 @@ Generates types from the OpenAPI spec.
 {
   "codegen": {
     "command": "<language-specific codegen command>",
-    "dependsOn": ["demo-contracts:bundle"],
+    "dependsOn": ["a-demo-contracts:bundle"],
     "cache": true,
     "inputs": [
-      "{workspaceRoot}/specs/apps/demo/contracts/generated/openapi-bundled.yaml",
+      "{workspaceRoot}/specs/apps/a-demo/contracts/generated/openapi-bundled.yaml",
       // Plus language-specific codegen tool sources if custom (Elixir, Clojure)
     ],
     "outputs": ["{projectRoot}/generated-contracts/"],
@@ -141,7 +141,7 @@ Unit tests only. No coverage measurement. No Docker. Fast feedback.
       "{projectRoot}/src/**/*",
       "{projectRoot}/tests/**/*",
       "{projectRoot}/generated-contracts/**/*",
-      "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature",
+      "{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature",
     ],
   },
 }
@@ -164,7 +164,7 @@ pre-push quality gate.
     "commands": [
       "<run tests with coverage>",
       "rhino-cli test-coverage validate <coverage-file> 90",
-      "rhino-cli spec-coverage validate specs/apps/demo/be/gherkin apps/demo-be-<name>",
+      "rhino-cli spec-coverage validate specs/apps/a-demo/be/gherkin apps/a-demo-be-<name>",
     ],
     "parallel": false,
     "cache": true,
@@ -172,7 +172,7 @@ pre-push quality gate.
       "{projectRoot}/src/**/*",
       "{projectRoot}/tests/**/*",
       "{projectRoot}/generated-contracts/**/*",
-      "{workspaceRoot}/specs/apps/demo/be/gherkin/**/*.feature",
+      "{workspaceRoot}/specs/apps/a-demo/be/gherkin/**/*.feature",
     ],
     "outputs": ["{projectRoot}/<coverage-output-path>"],
   },
@@ -217,7 +217,7 @@ Integration tests with real PostgreSQL. Never cached.
 
 ### Demo Frontend Targets (Mandatory)
 
-Every `demo-fe-*` app must have these targets:
+Every `a-demo-fe-*` app must have these targets:
 
 - `codegen` — same pattern as backends
 - `typecheck` — `tsc --noEmit` or `dart analyze`
@@ -230,7 +230,7 @@ Frontend apps do NOT have `test:integration` — they use MSW for API mocking in
 
 ### E2E App Targets
 
-`demo-be-e2e` and `demo-fe-e2e` are special — they contain only Playwright E2E tests:
+`a-demo-be-e2e` and `a-demo-fe-e2e` are special — they contain only Playwright E2E tests:
 
 - `test:quick` — typecheck + lint only (no unit tests exist). This is intentional and documented.
 - `test:e2e` — Playwright test run
@@ -335,16 +335,16 @@ without forcing artificial mocking depth.
 
 ### Decision 8: No test:integration for frontends
 
-**Decision**: Frontend apps (`demo-fe-*`) do not need a `test:integration` target.
+**Decision**: Frontend apps (`a-demo-fe-*`) do not need a `test:integration` target.
 
 **Rationale**: Frontend integration testing uses MSW (Mock Service Worker) in unit tests, which runs
-in-process without Docker. The E2E suite (`demo-fe-e2e`) provides real backend integration testing.
+in-process without Docker. The E2E suite (`a-demo-fe-e2e`) provides real backend integration testing.
 Adding a separate `test:integration` with Docker for frontends would duplicate E2E coverage without
 adding value.
 
 ### Decision 9: E2E apps keep non-standard test:quick
 
-**Decision**: `demo-be-e2e` and `demo-fe-e2e` keep their current `test:quick` semantics
+**Decision**: `a-demo-be-e2e` and `a-demo-fe-e2e` keep their current `test:quick` semantics
 (typecheck + lint, no unit tests).
 
 **Rationale**: E2E apps contain only Playwright step definitions — they have no unit-testable code.
@@ -378,7 +378,7 @@ nx affected -t test:quick
 
 # After Docker changes (Phase 6):
 # Run integration tests for affected backends:
-nx run demo-be-<affected>:test:integration
+nx run a-demo-be-<affected>:test:integration
 ```
 
 ### Smoke Tests
@@ -434,5 +434,5 @@ coverage. After separation:
 Flutter's `--coverage` flag outputs to `coverage/lcov.info` by default. The rhino-cli command:
 
 ```bash
-flutter test test/unit --coverage && rhino-cli test-coverage validate apps/demo-fe-dart-flutterweb/coverage/lcov.info 70
+flutter test test/unit --coverage && rhino-cli test-coverage validate apps/a-demo-fe-dart-flutterweb/coverage/lcov.info 70
 ```
