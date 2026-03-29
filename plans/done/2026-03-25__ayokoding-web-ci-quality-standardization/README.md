@@ -24,7 +24,7 @@ Align ayokoding-web's CI pipelines, quality gates, and Nx target configurations 
 5. Document ayokoding-web's testing architecture (unit projects, coverage exclusions, BDD integration) in relation to the three-level standard
 6. Introduce a repository pattern for content access — extract a `ContentRepository` interface with `InMemoryContentRepository` (unit) and `FileSystemContentRepository` (integration) implementations, enabling clean separation of unit and integration tests that both consume the same Gherkin specs
 7. Add oxlint project config to treat unused vars, imports, and dead code as errors in linting
-8. Create FE unit step files consuming all FE Gherkin specs (`specs/apps/ayokoding-web/fe/gherkin/`) with mock-only dependencies
+8. Create FE unit step files consuming all FE Gherkin specs (`specs/apps/ayokoding/fe/gherkin/`) with mock-only dependencies
 9. Enforce unit test purity — move `integration-content.unit.test.ts` (real filesystem reads) from unit to integration project
 10. Convert `ayokoding-web-be-e2e` to consume all BE Gherkin specs via `playwright-bdd`
 11. Convert `ayokoding-web-fe-e2e` to consume all FE Gherkin specs via `playwright-bdd`
@@ -38,7 +38,7 @@ Goals 1–4 (documentation drift, CI gaps, cache inputs, step naming) map to Pha
 ayokoding-web is a Next.js 16 fullstack content platform with:
 
 - **Two vitest projects**: `unit` (Node.js env, BE/tRPC steps) and `unit-fe` (jsdom env, FE component steps)
-- **BDD specs**: Consumed from `specs/apps/ayokoding-web/**/*.feature`
+- **BDD specs**: Consumed from `specs/apps/ayokoding/**/*.feature`
 - **Coverage threshold**: 80% line coverage (exceeds the 70% standard for web UIs)
 - **Link validation**: Integrated into `test:quick` via ayokoding-cli
 - **E2E tests**: Separate `ayokoding-web-be-e2e` and `ayokoding-web-fe-e2e` projects

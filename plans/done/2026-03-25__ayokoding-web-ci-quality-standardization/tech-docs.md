@@ -51,7 +51,7 @@ Missing: `integration` job between `unit` and `deploy`.
 ### Testing Architecture
 
 ```
-specs/apps/ayokoding-web/**/*.feature
+specs/apps/ayokoding/**/*.feature
         ↓
 ┌───────────────────────────────────┐
 │ test:unit (vitest)                │
@@ -134,7 +134,7 @@ In `apps/ayokoding-web/project.json`, add explicit inputs to `test:quick`:
 ```diff
   "test:quick": {
     "executor": "nx:run-commands",
-+   "inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding-web/**/*.feature"],
++   "inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding/**/*.feature"],
     "dependsOn": ["ayokoding-cli:build"],
 ```
 
@@ -288,7 +288,7 @@ export const contentRouter = router({
 #### Test Architecture (Target)
 
 ```
-specs/apps/ayokoding-web/be/gherkin/**/*.feature
+specs/apps/ayokoding/be/gherkin/**/*.feature
                 ↓ (same specs, different repository)
 ┌────────────────────────────────────────────────┐
 │ test:unit (vitest, "unit" project)             │
@@ -439,12 +439,12 @@ E2E configs omit `react`, `nextjs`, `jsx-a11y`, and `vitest` plugins since E2E p
 test/unit/fe-steps/
 ├── helpers/
 │   └── test-setup.ts           # jsdom setup, mock providers, render helpers
-├── content-rendering.steps.tsx  # specs/apps/ayokoding-web/fe/gherkin/content-rendering.feature
-├── navigation.steps.tsx         # specs/apps/ayokoding-web/fe/gherkin/navigation.feature
-├── search.steps.tsx             # specs/apps/ayokoding-web/fe/gherkin/search.feature
-├── responsive.steps.tsx         # specs/apps/ayokoding-web/fe/gherkin/responsive.feature
-├── i18n.steps.tsx               # specs/apps/ayokoding-web/fe/gherkin/i18n.feature
-└── accessibility.steps.tsx      # specs/apps/ayokoding-web/fe/gherkin/accessibility.feature
+├── content-rendering.steps.tsx  # specs/apps/ayokoding/fe/gherkin/content-rendering.feature
+├── navigation.steps.tsx         # specs/apps/ayokoding/fe/gherkin/navigation.feature
+├── search.steps.tsx             # specs/apps/ayokoding/fe/gherkin/search.feature
+├── responsive.steps.tsx         # specs/apps/ayokoding/fe/gherkin/responsive.feature
+├── i18n.steps.tsx               # specs/apps/ayokoding/fe/gherkin/i18n.feature
+└── accessibility.steps.tsx      # specs/apps/ayokoding/fe/gherkin/accessibility.feature
 ```
 
 All FE unit tests must use:
@@ -494,7 +494,7 @@ Update `project.json` to include spec inputs:
 
 ```diff
   "test:e2e": {
-+   "inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding-web/be/gherkin/**/*.feature"],
++   "inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding/be/gherkin/**/*.feature"],
 ```
 
 ### Change 10: Convert FE E2E to Consume Gherkin Specs via playwright-bdd
@@ -524,13 +524,13 @@ Update `project.json` to include spec inputs:
 
 ```diff
   "test:e2e": {
-+   "inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding-web/fe/gherkin/**/*.feature"],
++   "inputs": ["default", "{workspaceRoot}/specs/apps/ayokoding/fe/gherkin/**/*.feature"],
 ```
 
 ### Updated Testing Architecture (Full Target State)
 
 ```
-specs/apps/ayokoding-web/
+specs/apps/ayokoding/
 ├── be/gherkin/**/*.feature (5 features)
 │   ├──→ test:unit       (vitest, "unit" project)        Mock-only: InMemoryContentRepository → ContentService
 │   ├──→ test:integration (vitest, "integration" project) Real fs: FileSystemContentRepository → ContentService

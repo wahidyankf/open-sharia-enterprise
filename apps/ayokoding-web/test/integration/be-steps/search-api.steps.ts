@@ -8,7 +8,7 @@ import type { SearchResult } from "@/server/content/types";
 vi.setConfig({ testTimeout: 30000 });
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ayokoding-web/be/gherkin/search-api/search-api.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/be/gherkin/search-api/search-api.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background }) => {

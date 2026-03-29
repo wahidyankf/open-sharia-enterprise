@@ -106,7 +106,7 @@ graph LR
 ## Gherkin Coverage by Component
 
 Each component above is exercised by Gherkin features from
-[`specs/apps/ayokoding-web/fe/gherkin/`](../fe/) (future):
+[`specs/apps/ayokoding/fe/gherkin/`](../fe/) (future):
 
 | Component                        | Expected Domain | Scope                                  |
 | -------------------------------- | --------------- | -------------------------------------- |

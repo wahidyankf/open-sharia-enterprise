@@ -5,7 +5,7 @@ import { testCaller } from "./helpers/test-caller";
 import { TRPCError } from "@trpc/server";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ayokoding-web/be/gherkin/content-api/content-api.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/be/gherkin/content-api/content-api.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background }) => {

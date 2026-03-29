@@ -3,9 +3,7 @@ import { loadFeature, describeFeature } from "@amiceli/vitest-cucumber";
 import { expect } from "vitest";
 import "./helpers/test-setup";
 
-const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ayokoding-web/fe/gherkin/search.feature"),
-);
+const feature = await loadFeature(path.resolve(process.cwd(), "../../specs/apps/ayokoding/fe/gherkin/search.feature"));
 
 // SearchDialog depends on heavy client-side hooks (useSearchOpen, useLocale, trpcClient)
 // Full interactive testing is deferred to E2E; unit tests verify scenarios structurally

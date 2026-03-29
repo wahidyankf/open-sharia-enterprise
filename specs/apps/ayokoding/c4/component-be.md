@@ -92,7 +92,7 @@ graph LR
 ## Gherkin Coverage by Component
 
 Each component above is exercised by Gherkin features from
-[`specs/apps/ayokoding-web/be/gherkin/`](../be/):
+[`specs/apps/ayokoding/be/gherkin/`](../be/):
 
 | Component                            | Gherkin Domain | Feature                |
 | ------------------------------------ | -------------- | ---------------------- |

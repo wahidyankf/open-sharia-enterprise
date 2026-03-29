@@ -150,8 +150,8 @@
 
 ## Phase 2: Specs (Gherkin Feature Files)
 
-- [x] Create `specs/apps/ayokoding-web/README.md` with overview
-- [x] Create `specs/apps/ayokoding-web/be/gherkin/` directory
+- [x] Create `specs/apps/ayokoding/README.md` with overview
+- [x] Create `specs/apps/ayokoding/be/gherkin/` directory
 - [x] Write `content-api.feature` — content retrieval scenarios:
   - [x] Get page by slug (existing page, non-existent page, draft page)
   - [x] List children of a section (with weight ordering)
@@ -171,7 +171,7 @@
   - [x] Indonesian content served for locale "id"
   - [x] Invalid locale returns 404
 - [x] Write `health-check.feature` — health endpoint scenario
-- [x] Create `specs/apps/ayokoding-web/fe/gherkin/` directory
+- [x] Create `specs/apps/ayokoding/fe/gherkin/` directory
 - [x] Write `content-rendering.feature` — page rendering scenarios:
   - [x] Markdown renders with proper formatting
   - [x] Code blocks have syntax highlighting
@@ -610,7 +610,7 @@ All other content is server-rendered.
 - [x] Create `apps/ayokoding-web-v2-be-e2e/playwright.config.ts`:
   - [x] `baseURL` from `BASE_URL` env var (default `http://localhost:3101`)
 - [x] Create `apps/ayokoding-web-v2-be-e2e/tsconfig.json`
-- [x] Create test specs consuming `specs/apps/ayokoding-web/be/gherkin/`:
+- [x] Create test specs consuming `specs/apps/ayokoding/be/gherkin/`:
   - [x] `src/tests/content-api.spec.ts` — tRPC content procedures via HTTP
   - [x] `src/tests/search-api.spec.ts` — tRPC search procedures via HTTP
   - [x] `src/tests/navigation-api.spec.ts` — tRPC navigation via HTTP
@@ -631,7 +631,7 @@ All other content is server-rendered.
 - [x] Create `apps/ayokoding-web-v2-fe-e2e/playwright.config.ts`:
   - [x] `baseURL` from `BASE_URL` env var (default `http://localhost:3101`)
 - [x] Create `apps/ayokoding-web-v2-fe-e2e/tsconfig.json`
-- [x] Create test specs consuming `specs/apps/ayokoding-web/fe/gherkin/`:
+- [x] Create test specs consuming `specs/apps/ayokoding/fe/gherkin/`:
   - [x] `src/tests/content-rendering.spec.ts` — page rendering, code blocks, callouts,
         tabs, YouTube embeds, steps, raw HTML
   - [x] `src/tests/navigation.spec.ts` — sidebar, breadcrumb, TOC, prev/next
@@ -678,7 +678,7 @@ All other content is server-rendered.
   - [x] Docker setup instructions
   - [x] Vercel deployment docs
   - [x] Related documentation links
-- [x] Update `specs/apps/ayokoding-web/README.md` — reference v2 test apps
+- [x] Update `specs/apps/ayokoding/README.md` — reference v2 test apps
 - [x] Update CLAUDE.md:
   - [x] Add `ayokoding-web-v2` to Current Apps list with description
   - [x] Add `ayokoding-web-v2-be-e2e` to Current Apps list with description
@@ -739,6 +739,6 @@ All other content is server-rendered.
 - [x] CI workflow passes
 - [x] Vercel deployment succeeds from `prod-ayokoding-web-v2` branch
 - [x] README.md is complete
-- [x] `specs/apps/ayokoding-web/README.md` updated with v2 test app references
+- [x] `specs/apps/ayokoding/README.md` updated with v2 test app references
 - [x] CLAUDE.md updated: `ayokoding-web-v2` in Current Apps list,
       `prod-ayokoding-web-v2` in environment branches list

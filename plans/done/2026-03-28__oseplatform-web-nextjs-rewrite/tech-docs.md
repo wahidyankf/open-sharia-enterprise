@@ -919,7 +919,7 @@ CMD ["node", "apps/oseplatform-web/server.js"]
 
 ## Gherkin Specs
 
-Specs follow the same directory pattern as ayokoding-web (`specs/apps/ayokoding-web/be/gherkin/`, `specs/apps/ayokoding-web/fe/gherkin/`):
+Specs follow the same directory pattern as ayokoding-web (`specs/apps/ayokoding/be/gherkin/`, `specs/apps/ayokoding/fe/gherkin/`):
 
 ### Backend Specs (`specs/apps/oseplatform/be/gherkin/`)
 

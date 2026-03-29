@@ -57,7 +57,7 @@ This is the first **content platform** rewrite in the monorepo. Unlike demo apps
 | `apps/ayokoding-web-v2`                       | Fullstack Next.js 16 app (port 3101) |
 | `apps/ayokoding-web-v2-fe-e2e`                | Playwright FE E2E tests              |
 | `apps/ayokoding-web-v2-be-e2e`                | Playwright BE E2E tests (tRPC API)   |
-| `specs/apps/ayokoding-web/`                   | Gherkin specs (be/ + fe/)            |
+| `specs/apps/ayokoding/`                       | Gherkin specs (be/ + fe/)            |
 | `infra/dev/ayokoding-web-v2/`                 | Docker Compose for local dev / CI    |
 | `.github/workflows/test-ayokoding-web-v2.yml` | CI workflow                          |
 | `prod-ayokoding-web-v2` branch                | Vercel production deployment trigger |

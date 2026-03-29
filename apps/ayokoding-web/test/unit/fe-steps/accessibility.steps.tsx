@@ -8,7 +8,7 @@ import { TableOfContents } from "@/components/layout/toc";
 import { PrevNext } from "@/components/layout/prev-next";
 
 const feature = await loadFeature(
-  path.resolve(process.cwd(), "../../specs/apps/ayokoding-web/fe/gherkin/accessibility.feature"),
+  path.resolve(process.cwd(), "../../specs/apps/ayokoding/fe/gherkin/accessibility.feature"),
 );
 
 describeFeature(feature, ({ Scenario, Background }) => {
